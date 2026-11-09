@@ -193,6 +193,7 @@ async function seedAccountProfileDemo() {
   const demoContract = await prisma.contract.upsert({
     where: { proposalId: demoProposal.id },
     create: {
+      slug: 'frevia-review-demo-contract',
       jobId: demoJob.id,
       proposalId: demoProposal.id,
       clientId: client.id,

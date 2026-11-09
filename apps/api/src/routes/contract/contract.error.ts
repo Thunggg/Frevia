@@ -20,6 +20,30 @@ export const ProposalNotHiredException = () =>
     },
   ]);
 
+export const ProposalNotActionableException = () =>
+  new UnprocessableEntityException([
+    {
+      message: 'Proposal is not in an actionable status for contract creation',
+      path: 'proposalId',
+    },
+  ]);
+
+export const ProposalJobPositionsFilledException = () =>
+  new UnprocessableEntityException([
+    {
+      message: 'All positions for this job have already been filled',
+      path: 'proposalId',
+    },
+  ]);
+
+export const MilestoneAmountMismatchException = () =>
+  new UnprocessableEntityException([
+    {
+      message: 'Total milestone amounts must equal the contract total budget',
+      path: 'milestones',
+    },
+  ]);
+
 export const ContractAlreadyExistsException = () =>
   new ConflictException([
     {
@@ -46,6 +70,24 @@ export const ContractForbiddenException = () =>
 export const ContractNotPendingSignException = () =>
   new UnprocessableEntityException([
     { message: ManageContractMessage.CONTRACT_NOT_PENDING_SIGN, path: 'id' },
+  ]);
+
+export const ContractAwaitingPaymentException = () =>
+  new UnprocessableEntityException([
+    {
+      message:
+        'Contract is awaiting initial payment. Client must fund Milestone 1 and 3% platform fee before signing.',
+      path: 'id',
+    },
+  ]);
+
+export const ContractNotActionableForRejectionException = () =>
+  new UnprocessableEntityException([
+    {
+      message:
+        'Contract can only be rejected while awaiting payment or pending signature.',
+      path: 'id',
+    },
   ]);
 
 export const ContractDisputedException = () =>

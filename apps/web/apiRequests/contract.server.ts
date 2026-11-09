@@ -118,7 +118,10 @@ async function contractServerFetch<T>(
 
     const responseData = (await response.json()) as ApiResponse<T>;
     if (!response.ok || !responseData.success) {
-      console.error(`Contract API request failed: ${url}`, responseData);
+      console.error(
+        `Contract API request failed: ${url} (status: ${response.status})`,
+        JSON.stringify(responseData),
+      );
       return null;
     }
 
@@ -143,6 +146,12 @@ const contractServerRequest = {
   getContractDetail(contractId: number) {
     return contractServerFetch<ContractDetailType>(
       `/api/contracts/${encodeURIComponent(String(contractId))}`,
+    );
+  },
+
+  getContractBySlug(slug: string) {
+    return contractServerFetch<ContractDetailType>(
+      `/api/contracts/slug/${encodeURIComponent(slug)}`,
     );
   },
 

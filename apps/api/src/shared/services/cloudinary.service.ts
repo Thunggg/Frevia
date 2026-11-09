@@ -64,6 +64,38 @@ export class CloudinaryService {
     });
   }
 
+  async uploadBuffer(
+    buffer: Buffer,
+    fileName: string,
+    folder = 'frevia/shared-files',
+  ): Promise<UploadApiResponse> {
+    return new Promise((resolve, reject) => {
+      const uploadStream = cloudinary.uploader.upload_stream(
+        {
+          folder,
+          resource_type: 'raw',
+          filename_override: fileName,
+          use_filename: true,
+        },
+        (error, result) => {
+          if (error) {
+            this.logger.error(
+              `Cloudinary upload error: ${error.message}`,
+              error.stack,
+            );
+            return reject(new Error(error.message, { cause: error }));
+          }
+          if (!result) {
+            return reject(new Error('Cloudinary upload returned empty result'));
+          }
+          resolve(result);
+        },
+      );
+
+      uploadStream.end(buffer);
+    });
+  }
+
   async deleteFile(publicId: string): Promise<any> {
     try {
       const result = await cloudinary.uploader.destroy(publicId, {

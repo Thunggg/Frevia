@@ -7,10 +7,12 @@ import {
   ParseIntPipe,
   Post,
   Patch,
+  Query,
 } from '@nestjs/common';
 import { ZodSerializerDto } from 'nestjs-zod';
 import type {
   CreateSavedSearchBodyType,
+  GetSavedSearchesQueryType,
   UpdateSavedSearchBodyType,
 } from '@shared/types';
 import { UserActive } from '../../shared/decorators/user-active.decorators';
@@ -18,6 +20,7 @@ import {
   CreateSavedSearchBodyDto,
   CreateSavedSearchResponseDto,
   GetSavedSearchDetailResponseDto,
+  GetSavedSearchesQueryDto,
   GetSavedSearchesResponseDto,
   UpdateSavedSearchBodyDto,
   UpdateSavedSearchResponseDto,
@@ -30,8 +33,14 @@ export class SavedSearchController {
 
   @Get()
   @ZodSerializerDto(GetSavedSearchesResponseDto)
-  getSavedSearches(@UserActive('userId') userId: number) {
-    return this.savedSearchService.getSavedSearches(userId);
+  getSavedSearches(
+    @UserActive('userId') userId: number,
+    @Query() query: GetSavedSearchesQueryDto,
+  ) {
+    return this.savedSearchService.getSavedSearches(
+      userId,
+      query as GetSavedSearchesQueryType,
+    );
   }
 
   @Get(':id')

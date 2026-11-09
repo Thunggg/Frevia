@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import {
   CreateSavedSearchBodyType,
+  GetSavedSearchesQueryType,
   SavedSearchType,
   UpdateSavedSearchBodyType,
 } from '@shared/types';
@@ -19,12 +20,32 @@ const savedSearchSelect = {
 export class SavedSearchRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  async findAllByUserId(userId: number): Promise<SavedSearchType[]> {
+  async findAllByUserId(
+    userId: number,
+    query?: GetSavedSearchesQueryType,
+  ): Promise<SavedSearchType[]> {
+    const where: Prisma.SavedSearchWhereInput = { userId };
+    if (query?.search) {
+      where.name = {
+        contains: query.search,
+        mode: 'insensitive',
+      };
+    }
+    const orderBy: Prisma.SavedSearchOrderByWithRelationInput = {
+      createdAt: query?.order === 'asc' ? 'asc' : 'desc',
+    };
+
     return this.prisma.savedSearch.findMany({
-      where: { userId },
+      where,
       select: savedSearchSelect,
-      orderBy: { createdAt: 'desc' },
+      orderBy,
     }) as Promise<SavedSearchType[]>;
+  }
+
+  async countByUserId(userId: number): Promise<number> {
+    return this.prisma.savedSearch.count({
+      where: { userId },
+    });
   }
 
   async findByIdAndUserId(
@@ -56,9 +77,17 @@ export class SavedSearchRepository {
     userId: number,
     data: UpdateSavedSearchBodyType,
   ): Promise<SavedSearchType | null> {
+    const updateData: Prisma.SavedSearchUpdateInput = {};
+    if (data.name !== undefined) {
+      updateData.name = data.name;
+    }
+    if (data.searchParams !== undefined) {
+      updateData.searchParams = data.searchParams as Prisma.InputJsonValue;
+    }
+
     const result = await this.prisma.savedSearch.updateMany({
       where: { id, userId },
-      data: { name: data.name },
+      data: updateData,
     });
     if (!result.count) return null;
     return this.findByIdAndUserId(id, userId);

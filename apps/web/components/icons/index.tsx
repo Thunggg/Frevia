@@ -93,6 +93,7 @@ export const InfoIcon = createGoogleIcon("info", "InfoIcon");
 export const Italic = createGoogleIcon("format_italic", "Italic");
 export const Languages = createGoogleIcon("translate", "Languages");
 export const LayoutDashboard = createGoogleIcon("dashboard", "LayoutDashboard");
+export const LayoutGrid = createGoogleIcon("grid_view", "LayoutGrid");
 export const Link2 = createGoogleIcon("link", "Link2");
 export const List = createGoogleIcon("format_list_bulleted", "List");
 export const ListOrdered = createGoogleIcon("format_list_numbered", "ListOrdered");

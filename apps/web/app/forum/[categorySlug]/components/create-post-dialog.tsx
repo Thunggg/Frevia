@@ -30,7 +30,7 @@ type CreatePostDialogProps = {
 };
 
 const brandButtonClass =
-  "h-11 gap-1.5 bg-[#4fae2e] text-white hover:bg-[#459928] dark:bg-[#4fae2e] dark:text-white dark:hover:bg-[#5bc03a]";
+  "h-11 gap-1.5 bg-[#4fae2e] text-white hover:bg-[#459928] dark:bg-[#4fae2e] dark:text-white dark:hover:bg-[#4fae2e]";
 
 export function CreatePostDialog({
   categoryId,
@@ -59,19 +59,40 @@ export function CreatePostDialog({
       },
       {
         onSuccess: (result) => {
-          setOpen(false);
-          setTitle("");
-          setContent("");
-          // Bài bị AI đưa vào trạng thái PENDING -> chưa hiển thị công khai,
-          // không điều hướng tới chi tiết (sẽ 404), chỉ báo cho người dùng.
-          if (result?.moderationStatus === "PENDING") {
-            toast.success(t("pendingModeration"));
+          // Bài bị AI từ chối -> giữ form, hiện lỗi
+          if (result?.moderationStatus === "REJECTED") {
+            const msg =
+              (result as { moderationMessage?: string | null })
+                ?.moderationMessage || t("rejectedModeration");
+            toast.error(msg);
             return;
           }
-          if (result?.id && result?.slug) {
-            router.push(
-              `/forum/${buildSlugId(categorySlug, categoryId)}/${buildSlugId(result.slug, result.id)}`,
-            );
+          // Bài chờ duyệt -> đóng form, báo thông tin
+          if (result?.moderationStatus === "PENDING") {
+            const msg =
+              (result as { moderationMessage?: string | null })
+                ?.moderationMessage || t("pendingModeration");
+            setOpen(false);
+            setTitle("");
+            setContent("");
+            toast.info(msg);
+            return;
+          }
+          // Bài được duyệt -> đóng form, điều hướng
+          if (result?.moderationStatus === "APPROVED") {
+            const msg =
+              (result as { moderationMessage?: string | null })
+                ?.moderationMessage || t("approvedModeration");
+            setOpen(false);
+            setTitle("");
+            setContent("");
+            toast.success(msg);
+            if (result?.id && result?.slug) {
+              router.push(
+                `/forum/${buildSlugId(categorySlug, categoryId)}/${buildSlugId(result.slug, result.id)}`,
+              );
+            }
+            return;
           }
         },
         onError: (error) => {
@@ -148,7 +169,7 @@ export function CreatePostDialog({
             {t("cancel")}
           </Button>
           <Button
-            className="bg-[#4fae2e] text-white hover:bg-[#459928] dark:bg-[#4fae2e] dark:text-white dark:hover:bg-[#5bc03a]"
+            className="bg-[#4fae2e] text-white hover:bg-[#459928] dark:bg-[#4fae2e] dark:text-white dark:hover:bg-[#4fae2e]"
             onClick={handleSubmit}
             disabled={!title.trim() || !content.trim() || isSubmitting}
           >

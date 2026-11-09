@@ -30,6 +30,7 @@ import {
 } from './payment.error';
 import { PaymentRepository } from './payment.repo';
 import { StripeService } from './stripe.service';
+import { ContractPdfService } from '../../shared/services/contract-pdf.service';
 
 @Injectable()
 export class PaymentService {
@@ -38,6 +39,7 @@ export class PaymentService {
   constructor(
     private readonly paymentRepo: PaymentRepository,
     private readonly stripeService: StripeService,
+    private readonly contractPdfService: ContractPdfService,
   ) {}
 
   async getOnboardingLink(userId: number, returnUrl?: string) {
@@ -236,13 +238,55 @@ export class PaymentService {
     }
   }
 
+  async handlePlatformFeeSuccess(contractId: number, userId?: number) {
+    const contract = await this.paymentRepo.findContractById(contractId);
+    if (!contract) return;
+
+    if (userId) {
+      if (contract.clientId === userId) {
+        await this.paymentRepo.recordPartyPlatformFeePaid(contractId, 'client');
+      } else if (contract.freelancerId === userId) {
+        await this.paymentRepo.recordPartyPlatformFeePaid(
+          contractId,
+          'freelancer',
+        );
+      } else {
+        await this.paymentRepo.updateContractPlatformFee(
+          contractId,
+          PlatformFeeStatus.PAID,
+        );
+      }
+    } else {
+      await this.paymentRepo.updateContractPlatformFee(
+        contractId,
+        PlatformFeeStatus.PAID,
+      );
+    }
+
+    const activationResult =
+      await this.paymentRepo.activateContractIfReady(contractId);
+    if (activationResult?.activated) {
+      try {
+        await this.contractPdfService.generateAndSaveContractPdf(contractId);
+      } catch (pdfErr) {
+        this.logger.error(
+          `Failed to generate contract PDF on fee settlement for contract #${contractId}:`,
+          pdfErr,
+        );
+      }
+    }
+  }
+
   async chargeSavedCardForPlatformFee(
     userId: number,
     contractId: number,
     paymentMethodId?: string,
   ) {
     const contract = await this.paymentRepo.findContractById(contractId);
-    if (!contract || contract.clientId !== userId) {
+    if (
+      !contract ||
+      (contract.clientId !== userId && contract.freelancerId !== userId)
+    ) {
       throw PaymentForbiddenException();
     }
 
@@ -250,11 +294,18 @@ export class PaymentService {
       throw ContractNotSignedException();
     }
 
-    if (contract.platformFeeStatus === PlatformFeeStatus.PAID) {
+    const isClient = contract.clientId === userId;
+    const isFreelancer = contract.freelancerId === userId;
+
+    if (
+      (isClient && contract.clientFeeStatus === PlatformFeeStatus.PAID) ||
+      (isFreelancer && contract.freelancerFeeStatus === PlatformFeeStatus.PAID)
+    ) {
       throw PlatformFeeAlreadyPaidException();
     }
 
-    const customerId = contract.client.stripeCustomerId;
+    const payer = isClient ? contract.client : contract.freelancer;
+    const customerId = payer.stripeCustomerId;
     if (!customerId) {
       throw new HttpException(
         'No saved payment method found. Please pay via Stripe Checkout to save your card.',
@@ -276,7 +327,10 @@ export class PaymentService {
       targetPmId = defaultPm.id;
     }
 
-    const feeAmount = Number(contract.platformFee) || 10.0;
+    const feeAmount =
+      Math.round(Number(contract.totalAmount) * 0.01 * 100) / 100 ||
+      Number(contract.platformFee) ||
+      10.0;
     const amountInCents = Math.round(feeAmount * 100);
 
     try {
@@ -293,10 +347,7 @@ export class PaymentService {
       });
 
       if (paymentIntent.status === 'succeeded') {
-        await this.paymentRepo.updateContractPlatformFee(
-          contractId,
-          PlatformFeeStatus.PAID,
-        );
+        await this.handlePlatformFeeSuccess(contractId, userId);
 
         const tx = await this.paymentRepo.createTransaction({
           userId,
@@ -370,7 +421,15 @@ export class PaymentService {
     }
 
     const milestoneAmount = Number(milestone.amount);
-    const amountInCents = Math.round(milestoneAmount * 100);
+    const clientFeeRequired =
+      milestone.contract.clientFeeStatus !== PlatformFeeStatus.PAID;
+    const clientFeeAmount = clientFeeRequired
+      ? Number(milestone.contract.clientPlatformFee) ||
+        Math.round(Number(milestone.contract.totalAmount) * 0.03 * 100) / 100
+      : 0;
+    const totalDepositAmount =
+      Math.round((milestoneAmount + clientFeeAmount) * 100) / 100;
+    const amountInCents = Math.round(totalDepositAmount * 100);
 
     try {
       const paymentIntent = await this.stripeService.chargeOffSession({
@@ -383,6 +442,7 @@ export class PaymentService {
           contractId: String(contractId),
           milestoneId: String(milestoneId),
           userId: String(userId),
+          clientFeeAmount: String(clientFeeAmount),
         },
       });
 
@@ -392,16 +452,31 @@ export class PaymentService {
           MilestonePaymentStatus.FUNDED,
         );
 
+        await this.paymentRepo.handleEscrowDepositSuccess(contractId);
+
         const tx = await this.paymentRepo.createTransaction({
           userId,
           contractId,
           milestoneId,
-          amount: milestoneAmount,
+          amount: totalDepositAmount,
           currency: 'usd',
           type: TransactionType.ESCROW_DEPOSIT,
           status: TransactionStatus.SUCCEEDED,
           stripePaymentIntentId: paymentIntent.id,
         });
+
+        if (clientFeeAmount > 0) {
+          await this.paymentRepo.createTransaction({
+            userId,
+            contractId,
+            milestoneId,
+            amount: clientFeeAmount,
+            currency: 'usd',
+            type: TransactionType.PLATFORM_FEE,
+            status: TransactionStatus.SUCCEEDED,
+            stripePaymentIntentId: paymentIntent.id,
+          });
+        }
 
         return {
           success: true,
@@ -425,7 +500,10 @@ export class PaymentService {
 
   async createPlatformFeeIntent(userId: number, contractId: number) {
     const contract = await this.paymentRepo.findContractById(contractId);
-    if (!contract || contract.clientId !== userId) {
+    if (
+      !contract ||
+      (contract.clientId !== userId && contract.freelancerId !== userId)
+    ) {
       throw PaymentForbiddenException();
     }
 
@@ -433,22 +511,30 @@ export class PaymentService {
       throw ContractNotSignedException();
     }
 
-    if (contract.platformFeeStatus === PlatformFeeStatus.PAID) {
+    const isClient = contract.clientId === userId;
+    const isFreelancer = contract.freelancerId === userId;
+
+    if (
+      (isClient && contract.clientFeeStatus === PlatformFeeStatus.PAID) ||
+      (isFreelancer && contract.freelancerFeeStatus === PlatformFeeStatus.PAID)
+    ) {
       throw PlatformFeeAlreadyPaidException();
     }
 
-    let customerId = contract.client.stripeCustomerId;
+    const payer = isClient ? contract.client : contract.freelancer;
+    let customerId = payer.stripeCustomerId;
     if (!customerId) {
-      const customer = await this.stripeService.createCustomer(
-        contract.client.email,
-      );
+      const customer = await this.stripeService.createCustomer(payer.email);
       customerId = customer.id;
       await this.paymentRepo.updateUserStripe(userId, {
         stripeCustomerId: customerId,
       });
     }
 
-    const feeAmount = Number(contract.platformFee) || 10.0;
+    const feeAmount =
+      Math.round(Number(contract.totalAmount) * 0.01 * 100) / 100 ||
+      Number(contract.platformFee) ||
+      10.0;
     const amountInCents = Math.round(feeAmount * 100);
 
     const paymentIntent = await this.stripeService.createPaymentIntent({
@@ -483,7 +569,10 @@ export class PaymentService {
 
   async createPlatformFeeCheckoutSession(userId: number, contractId: number) {
     const contract = await this.paymentRepo.findContractById(contractId);
-    if (!contract || contract.clientId !== userId) {
+    if (
+      !contract ||
+      (contract.clientId !== userId && contract.freelancerId !== userId)
+    ) {
       throw PaymentForbiddenException();
     }
 
@@ -491,32 +580,42 @@ export class PaymentService {
       throw ContractNotSignedException();
     }
 
-    if (contract.platformFeeStatus === PlatformFeeStatus.PAID) {
+    const isClient = contract.clientId === userId;
+    const isFreelancer = contract.freelancerId === userId;
+
+    if (
+      (isClient && contract.clientFeeStatus === PlatformFeeStatus.PAID) ||
+      (isFreelancer && contract.freelancerFeeStatus === PlatformFeeStatus.PAID)
+    ) {
       throw PlatformFeeAlreadyPaidException();
     }
 
-    let customerId = contract.client.stripeCustomerId;
+    const payer = isClient ? contract.client : contract.freelancer;
+    let customerId = payer.stripeCustomerId;
     if (!customerId) {
-      const customer = await this.stripeService.createCustomer(
-        contract.client.email,
-      );
+      const customer = await this.stripeService.createCustomer(payer.email);
       customerId = customer.id;
       await this.paymentRepo.updateUserStripe(userId, {
         stripeCustomerId: customerId,
       });
     }
 
-    const feeAmount = Number(contract.platformFee) || 10.0;
+    const feeAmount =
+      Math.round(Number(contract.totalAmount) * 0.01 * 100) / 100 ||
+      Number(contract.platformFee) ||
+      10.0;
     const amountInCents = Math.round(feeAmount * 100);
 
+    const rolePath = isClient ? 'client' : 'freelancer';
+    const contractSlug = contract.slug || String(contractId);
     const session = await this.stripeService.createCheckoutSession({
       amountInCents,
       currency: 'usd',
       customerId,
       title: 'Contract Platform Activation Fee',
-      description: `One-time platform fee to activate contract #${contractId}`,
-      successUrl: `${envConfig.NEXT_URL}/client/contracts/${contractId}?payment=success&session_id={CHECKOUT_SESSION_ID}`,
-      cancelUrl: `${envConfig.NEXT_URL}/client/contracts/${contractId}?payment=cancelled`,
+      description: `One-time platform fee (1%) to activate contract #${contractId}`,
+      successUrl: `${envConfig.NEXT_URL}/${rolePath}/contracts/${contractSlug}?payment=success&session_id={CHECKOUT_SESSION_ID}`,
+      cancelUrl: `${envConfig.NEXT_URL}/${rolePath}/contracts/${contractSlug}?payment=cancelled`,
       metadata: {
         type: TransactionType.PLATFORM_FEE,
         contractId: String(contractId),
@@ -570,7 +669,15 @@ export class PaymentService {
     }
 
     const milestoneAmount = Number(milestone.amount);
-    const amountInCents = Math.round(milestoneAmount * 100);
+    const clientFeeRequired =
+      milestone.contract.clientFeeStatus !== PlatformFeeStatus.PAID;
+    const clientFeeAmount = clientFeeRequired
+      ? Number(milestone.contract.clientPlatformFee) ||
+        Math.round(Number(milestone.contract.totalAmount) * 0.03 * 100) / 100
+      : 0;
+    const totalDepositAmount =
+      Math.round((milestoneAmount + clientFeeAmount) * 100) / 100;
+    const amountInCents = Math.round(totalDepositAmount * 100);
 
     const paymentIntent = await this.stripeService.createPaymentIntent({
       amountInCents,
@@ -581,6 +688,7 @@ export class PaymentService {
         contractId: String(contractId),
         milestoneId: String(milestoneId),
         userId: String(userId),
+        clientFeeAmount: String(clientFeeAmount),
       },
     });
 
@@ -588,7 +696,7 @@ export class PaymentService {
       userId,
       contractId,
       milestoneId,
-      amount: milestoneAmount,
+      amount: totalDepositAmount,
       currency: 'usd',
       type: TransactionType.ESCROW_DEPOSIT,
       status: TransactionStatus.PENDING,
@@ -599,7 +707,7 @@ export class PaymentService {
     return {
       clientSecret: paymentIntent.client_secret ?? '',
       paymentIntentId: paymentIntent.id,
-      amount: milestoneAmount,
+      amount: totalDepositAmount,
       currency: 'usd',
     };
   }
@@ -634,21 +742,35 @@ export class PaymentService {
     }
 
     const milestoneAmount = Number(milestone.amount);
-    const amountInCents = Math.round(milestoneAmount * 100);
+    const clientFeeRequired =
+      milestone.contract.clientFeeStatus !== PlatformFeeStatus.PAID;
+    const clientFeeAmount = clientFeeRequired
+      ? Number(milestone.contract.clientPlatformFee) ||
+        Math.round(Number(milestone.contract.totalAmount) * 0.03 * 100) / 100
+      : 0;
+    const totalDepositAmount =
+      Math.round((milestoneAmount + clientFeeAmount) * 100) / 100;
+    const amountInCents = Math.round(totalDepositAmount * 100);
+
+    const description =
+      clientFeeAmount > 0
+        ? `Escrow deposit for milestone #${milestoneId} ($${milestoneAmount}) + 3% Client Platform Fee ($${clientFeeAmount}) on contract #${contractId}`
+        : `Escrow deposit for milestone #${milestoneId} on contract #${contractId}`;
 
     const session = await this.stripeService.createCheckoutSession({
       amountInCents,
       currency: 'usd',
       customerId,
-      title: `Fund Milestone: ${milestone.title}`,
-      description: `Escrow deposit for milestone #${milestoneId} on contract #${contractId}`,
-      successUrl: `${envConfig.NEXT_URL}/client/contracts/${contractId}?payment=success&session_id={CHECKOUT_SESSION_ID}`,
-      cancelUrl: `${envConfig.NEXT_URL}/client/contracts/${contractId}?payment=cancelled`,
+      title: `Fund Milestone: ${milestone.title}${clientFeeAmount > 0 ? ' (+ 3% Platform Fee)' : ''}`,
+      description,
+      successUrl: `${envConfig.NEXT_URL}/client/contracts/${milestone.contract.slug || contractId}?payment=success&session_id={CHECKOUT_SESSION_ID}`,
+      cancelUrl: `${envConfig.NEXT_URL}/client/contracts/${milestone.contract.slug || contractId}?payment=cancelled`,
       metadata: {
         type: TransactionType.ESCROW_DEPOSIT,
         contractId: String(contractId),
         milestoneId: String(milestoneId),
         userId: String(userId),
+        clientFeeAmount: String(clientFeeAmount),
       },
     });
 
@@ -656,7 +778,7 @@ export class PaymentService {
       userId,
       contractId,
       milestoneId,
-      amount: milestoneAmount,
+      amount: totalDepositAmount,
       currency: 'usd',
       type: TransactionType.ESCROW_DEPOSIT,
       status: TransactionStatus.PENDING,
@@ -846,7 +968,10 @@ export class PaymentService {
     }
 
     const milestoneAmount = Number(milestone.amount);
-    const amountInCents = Math.round(milestoneAmount * 100);
+    const freelancerFee = Math.round(milestoneAmount * 0.05 * 100) / 100;
+    const freelancerPayout =
+      Math.round((milestoneAmount - freelancerFee) * 100) / 100;
+    const amountInCents = Math.round(freelancerPayout * 100);
 
     const transfer = await this.stripeService.createTransfer({
       amountInCents,
@@ -858,6 +983,7 @@ export class PaymentService {
         contractId: String(contractId),
         milestoneId: String(milestoneId),
         freelancerId: String(freelancer.id),
+        freelancerFee: String(freelancerFee),
       },
     });
 
@@ -871,17 +997,85 @@ export class PaymentService {
       userId: freelancer.id,
       contractId,
       milestoneId,
-      amount: milestoneAmount,
+      amount: freelancerPayout,
       currency: 'usd',
       type: TransactionType.MILESTONE_PAYOUT,
       status: TransactionStatus.SUCCEEDED,
       stripeTransferId: transfer.id,
     });
 
+    if (freelancerFee > 0) {
+      await this.paymentRepo.createTransaction({
+        userId: freelancer.id,
+        contractId,
+        milestoneId,
+        amount: freelancerFee,
+        currency: 'usd',
+        type: TransactionType.PLATFORM_FEE,
+        status: TransactionStatus.SUCCEEDED,
+      });
+    }
+
+    await this.paymentRepo.checkAndCompleteFreelancerFee(contractId);
+
     return {
       success: true,
       message: 'Milestone payment released to freelancer successfully',
       transferId: transfer.id,
+    };
+  }
+
+  async refundContractEscrow(contractId: number) {
+    const deposits =
+      await this.paymentRepo.findContractEscrowDeposits(contractId);
+
+    const refundResults: { refundId: string; amount: number }[] = [];
+    for (const deposit of deposits) {
+      if (deposit.stripePaymentIntentId) {
+        try {
+          const refund = await this.stripeService.createRefund({
+            paymentIntentId: deposit.stripePaymentIntentId,
+            metadata: {
+              type: TransactionType.REFUND,
+              contractId: String(contractId),
+              reason: 'contract_rejected_or_expired',
+            },
+          });
+
+          await this.paymentRepo.createTransaction({
+            userId: deposit.userId,
+            contractId,
+            milestoneId: deposit.milestoneId ?? undefined,
+            amount: Number(deposit.amount),
+            currency: deposit.currency,
+            type: TransactionType.REFUND,
+            status: TransactionStatus.SUCCEEDED,
+            stripeRefundId: refund.id,
+          });
+
+          refundResults.push({
+            refundId: refund.id,
+            amount: Number(deposit.amount),
+          });
+        } catch (err) {
+          this.logger.error(
+            `Failed to refund deposit tx #${deposit.id} for contract #${contractId}:`,
+            err,
+          );
+        }
+      }
+    }
+
+    await this.paymentRepo.updateAllContractMilestonesPaymentStatus(
+      contractId,
+      MilestonePaymentStatus.FUNDED,
+      MilestonePaymentStatus.REFUNDED,
+    );
+
+    return {
+      success: true,
+      refundCount: refundResults.length,
+      refunds: refundResults,
     };
   }
 
@@ -1169,9 +1363,10 @@ export class PaymentService {
     }
 
     if (type === TransactionType.PLATFORM_FEE && metadata.contractId) {
-      await this.paymentRepo.updateContractPlatformFee(
+      const payerUserId = metadata.userId ? Number(metadata.userId) : undefined;
+      await this.handlePlatformFeeSuccess(
         Number(metadata.contractId),
-        PlatformFeeStatus.PAID,
+        payerUserId,
       );
     } else if (
       type === TransactionType.ESCROW_DEPOSIT &&
@@ -1181,6 +1376,11 @@ export class PaymentService {
         Number(metadata.milestoneId),
         MilestonePaymentStatus.FUNDED,
       );
+      if (metadata.contractId) {
+        await this.paymentRepo.handleEscrowDepositSuccess(
+          Number(metadata.contractId),
+        );
+      }
     } else if (type === TransactionType.DISPUTE_FEE && metadata.feeId) {
       await this.paymentRepo.updateDisputeFeeStatus(
         Number(metadata.feeId),
@@ -1231,9 +1431,10 @@ export class PaymentService {
     }
 
     if (type === TransactionType.PLATFORM_FEE && metadata.contractId) {
-      await this.paymentRepo.updateContractPlatformFee(
+      const payerUserId = metadata.userId ? Number(metadata.userId) : undefined;
+      await this.handlePlatformFeeSuccess(
         Number(metadata.contractId),
-        PlatformFeeStatus.PAID,
+        payerUserId,
       );
     } else if (
       type === TransactionType.ESCROW_DEPOSIT &&
@@ -1243,6 +1444,11 @@ export class PaymentService {
         Number(metadata.milestoneId),
         MilestonePaymentStatus.FUNDED,
       );
+      if (metadata.contractId) {
+        await this.paymentRepo.handleEscrowDepositSuccess(
+          Number(metadata.contractId),
+        );
+      }
     } else if (type === TransactionType.DISPUTE_FEE && metadata.feeId) {
       await this.paymentRepo.updateDisputeFeeStatus(
         Number(metadata.feeId),

@@ -41,3 +41,6 @@ yarn-error.log*
 .git
 .gitignore
 README.md
+
+# AI Microservices (have their own build contexts)
+ai-services/

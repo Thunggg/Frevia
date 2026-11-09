@@ -25,6 +25,7 @@ import {
   JobCannotBeDeletedWithActiveContractException,
   JobReopenPeriodExpiredException,
   JobCategoriesNotFoundException,
+  JobCategoryOnlyOneException,
   JobNotFoundException,
   PositionsRequiredBelowFilledException,
 } from './manage-job.error';
@@ -40,7 +41,6 @@ const jobSelect = {
   budgetType: true,
   deadline: true,
   status: true,
-  featured: true,
   expiryDate: true,
   hiringType: true,
   positionsRequired: true,
@@ -63,19 +63,39 @@ export class ManageJobRepository {
     jobs: ViewJobDetailResType[];
     total: number;
   }> {
-    const { page, limit } = filter;
+    const {
+      page,
+      limit,
+      search,
+      status,
+      sortBy = 'createdAt',
+      order = 'desc',
+    } = filter;
 
-    const where = {
+    const where: Prisma.JobBookmarkWhereInput = {
       userId,
       job: {
         deletedAt: null,
-        status: JobStatus.OPEN,
         client: {
           isBanned: false,
           deletedAt: null,
         },
+        ...(status ? { status } : {}),
+        ...(search
+          ? {
+              OR: [
+                { title: { contains: search, mode: 'insensitive' } },
+                { description: { contains: search, mode: 'insensitive' } },
+              ],
+            }
+          : {}),
       },
-    } satisfies Prisma.JobBookmarkWhereInput;
+    };
+
+    const orderBy: Prisma.JobBookmarkOrderByWithRelationInput =
+      sortBy === 'createdAt'
+        ? { createdAt: order }
+        : { job: { [sortBy]: order } };
 
     const [bookmarks, total] = await this.prisma.$transaction([
       this.prisma.jobBookmark.findMany({
@@ -99,9 +119,7 @@ export class ManageJobRepository {
         skip: (page - 1) * limit,
         take: limit,
 
-        orderBy: {
-          createdAt: 'desc',
-        },
+        orderBy,
       }),
 
       this.prisma.jobBookmark.count({
@@ -185,12 +203,16 @@ export class ManageJobRepository {
     return { jobs: jobs.map((job) => this.normalizeJob(job)), total };
   }
 
-  async findJobBySlug(slug: string): Promise<Pick<JobType, 'id'> | null> {
+  async findJobBySlug(
+    slug: string,
+  ): Promise<Pick<
+    JobType,
+    'id' | 'clientId' | 'status' | 'expiryDate'
+  > | null> {
     return this.prisma.job.findFirst({
       where: {
         slug,
         deletedAt: null,
-        status: JobStatus.OPEN,
         client: {
           isBanned: false,
           deletedAt: null,
@@ -199,6 +221,9 @@ export class ManageJobRepository {
 
       select: {
         id: true,
+        clientId: true,
+        status: true,
+        expiryDate: true,
       },
     });
   }
@@ -582,6 +607,10 @@ export class ManageJobRepository {
   ): Promise<void> {
     const uniqueIds = [...new Set(categoryIds)];
 
+    if (uniqueIds.length > 1) {
+      throw JobCategoryOnlyOneException();
+    }
+
     if (uniqueIds.length === 0) {
       return;
     }
@@ -605,6 +634,10 @@ export class ManageJobRepository {
     categoryIds: number[],
   ): Promise<void> {
     const uniqueIds = [...new Set(categoryIds)];
+
+    if (uniqueIds.length > 1) {
+      throw JobCategoryOnlyOneException();
+    }
 
     if (uniqueIds.length === 0) {
       return;

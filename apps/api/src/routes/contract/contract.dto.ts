@@ -9,6 +9,8 @@ import {
   ContractDetailSchema,
   CompleteContractResponseSchema,
   CancelContractResponseSchema,
+  RejectContractBodySchema,
+  RejectContractResponseSchema,
 } from '@shared/types';
 import { createZodDto } from 'nestjs-zod';
 
@@ -35,6 +37,12 @@ export class CompleteContractResponseDTO extends createZodDto(
 ) {}
 export class CancelContractResponseDTO extends createZodDto(
   CancelContractResponseSchema,
+) {}
+export class RejectContractBodyDTO extends createZodDto(
+  RejectContractBodySchema,
+) {}
+export class RejectContractResponseDTO extends createZodDto(
+  RejectContractResponseSchema,
 ) {}
 
 export class GetContractListQueryDTO extends createZodDto(

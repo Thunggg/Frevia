@@ -11,6 +11,7 @@ import {
   Send,
   Trash2,
 } from "@/components/icons";
+import { toast } from "@repo/ui/components/shadcn/sonner";
 
 import {
   AlertDialog,
@@ -59,12 +60,40 @@ export function CommentSection({ postId, currentUserId }: CommentSectionProps) {
     createComment.mutate(
       { postId, content: newComment.trim() },
       {
-        onSuccess: () => {
+        onSuccess: (result) => {
+          // Bình luận bị REJECTED -> giữ form, hiện lỗi
+          if (result?.moderationStatus === "REJECTED") {
+            const msg =
+              (result as { moderationMessage?: string | null })
+                ?.moderationMessage || t("rejectedModeration");
+            toast.error(msg);
+            return;
+          }
+          // Xóa form sau khi PENDING hoặc APPROVED
           setNewComment("");
+          if (result?.moderationStatus === "PENDING") {
+            const msg =
+              (result as { moderationMessage?: string | null })
+                ?.moderationMessage || t("pendingModeration");
+            toast.info(msg);
+            return;
+          }
+          if (result?.moderationStatus === "APPROVED") {
+            const msg = (result as { moderationMessage?: string | null })
+              ?.moderationMessage;
+            if (msg) {
+              toast.success(msg);
+            }
+          }
+        },
+        onError: (error) => {
+          toast.error(
+            error instanceof Error ? error.message : t("genericError"),
+          );
         },
       },
     );
-  }, [postId, newComment, isSubmitting, createComment]);
+  }, [postId, newComment, isSubmitting, createComment, t]);
 
   const comments: ForumCommentType[] = commentsData?.comments ?? [];
   const pagination = commentsData?.pagination;
@@ -116,7 +145,7 @@ export function CommentSection({ postId, currentUserId }: CommentSectionProps) {
                   size="sm"
                   onClick={handleSubmitComment}
                   disabled={!newComment.trim() || isSubmitting}
-                  className="h-8 gap-1.5 bg-[#4fae2e] text-[13px] text-white hover:bg-[#459928] dark:hover:bg-[#5bc03a]"
+                  className="h-8 gap-1.5 bg-[#4fae2e] text-[13px] text-white hover:bg-[#459928] dark:hover:bg-[#4fae2e]"
                 >
                   {isSubmitting ? (
                     <Loader2 className="size-3.5 animate-spin" />
@@ -134,7 +163,7 @@ export function CommentSection({ postId, currentUserId }: CommentSectionProps) {
           <p className="text-[13px] text-muted-foreground/60">
             <Link
               href="/login"
-              className="font-medium text-[#4fae2e] transition-colors hover:text-[#3f9225]"
+              className="font-medium text-[#4fae2e] transition-colors hover:text-[#459928]"
             >
               {t("logIn")}
             </Link>{" "}
@@ -232,12 +261,40 @@ function CommentItem({
     updateComment.mutate(
       { postId, commentId: comment.id, content: editContent.trim() },
       {
-        onSuccess: () => {
+        onSuccess: (result) => {
+          // Bình luận edit bị REJECTED -> giữ edit mode, hiện lỗi
+          if (result?.moderationStatus === "REJECTED") {
+            const msg =
+              (result as { moderationMessage?: string | null })
+                ?.moderationMessage || t("rejectedModeration");
+            toast.error(msg);
+            return;
+          }
+          // PENDING hoặc APPROVED -> thoát edit mode
           setIsEditing(false);
+          if (result?.moderationStatus === "PENDING") {
+            const msg =
+              (result as { moderationMessage?: string | null })
+                ?.moderationMessage || t("pendingModeration");
+            toast.info(msg);
+            return;
+          }
+          if (result?.moderationStatus === "APPROVED") {
+            const msg = (result as { moderationMessage?: string | null })
+              ?.moderationMessage;
+            if (msg) {
+              toast.success(msg);
+            }
+          }
+        },
+        onError: (error) => {
+          toast.error(
+            error instanceof Error ? error.message : t("genericError"),
+          );
         },
       },
     );
-  }, [postId, comment.id, editContent, updateComment]);
+  }, [postId, comment.id, editContent, updateComment, t]);
 
   const handleDelete = useCallback(() => {
     deleteComment.mutate({ postId, commentId: comment.id });
@@ -291,7 +348,7 @@ function CommentItem({
                   size="xs"
                   onClick={handleSaveEdit}
                   disabled={!editContent.trim() || updateComment.isPending}
-                  className="gap-1.5 bg-[#4fae2e] text-white hover:bg-[#459928] dark:hover:bg-[#5bc03a]"
+                  className="gap-1.5 bg-[#4fae2e] text-white hover:bg-[#459928] dark:hover:bg-[#4fae2e]"
                 >
                   {updateComment.isPending ? (
                     <Loader2 className="size-3 animate-spin" />
@@ -325,7 +382,7 @@ function CommentItem({
                 size="xs"
                 className={
                   liked
-                    ? "gap-1 text-[#4fae2e] hover:bg-[#4fae2e]/5 hover:text-[#3f9225] dark:hover:bg-[#4fae2e]/10"
+                    ? "gap-1 text-red-500 hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-950/20"
                     : "gap-1 text-muted-foreground/50 hover:bg-[#4fae2e]/5 hover:text-[#4fae2e] dark:hover:bg-[#4fae2e]/10"
                 }
                 onClick={handleToggleLike}

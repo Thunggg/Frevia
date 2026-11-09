@@ -27,7 +27,6 @@ export class BrowseJobRepository {
       createdAfter,
       skill,
       category,
-      featured,
       clientId,
       sortBy,
       order,
@@ -117,8 +116,6 @@ export class BrowseJobRepository {
         },
       }),
 
-      ...(featured !== undefined && { featured }),
-
       ...(clientId !== undefined && { clientId }),
     } satisfies Prisma.JobWhereInput;
 
@@ -137,7 +134,6 @@ export class BrowseJobRepository {
           budgetType: true,
           deadline: true,
           status: true,
-          featured: true,
           expiryDate: true,
           hiringType: true,
           positionsRequired: true,
@@ -202,7 +198,6 @@ export class BrowseJobRepository {
         budgetType: true,
         deadline: true,
         status: true,
-        featured: true,
         expiryDate: true,
         hiringType: true,
         positionsRequired: true,

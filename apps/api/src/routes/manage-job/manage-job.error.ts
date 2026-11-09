@@ -13,6 +13,12 @@ export const BookmarkNotFoundException = () =>
 export const JobAlreadyBookmarkedException = () =>
   new BadRequestException(ManageJobMessage.JOB_ALREADY_BOOKMARKED);
 
+export const CannotBookmarkOwnJobException = () =>
+  new BadRequestException(ManageJobMessage.CANNOT_BOOKMARK_OWN_JOB);
+
+export const CannotBookmarkUnavailableJobException = () =>
+  new BadRequestException(ManageJobMessage.CANNOT_BOOKMARK_UNAVAILABLE_JOB);
+
 export const BookmarkJobOnlyForFreelancerException = () =>
   new ForbiddenException([
     {
@@ -35,6 +41,10 @@ export const JobNotFoundException = () =>
 // Danh mục công việc gửi lên không tồn tại / đã bị vô hiệu hoá (UC-46: chỉ danh mục ACTIVE dùng được).
 export const JobCategoriesNotFoundException = () =>
   new BadRequestException(ManageJobMessage.JOB_CATEGORIES_NOT_FOUND);
+
+// Mỗi công việc chỉ thuộc duy nhất một danh mục (BR-J53).
+export const JobCategoryOnlyOneException = () =>
+  new BadRequestException(ManageJobMessage.JOB_CATEGORY_ONLY_ONE);
 
 // Không thể giảm số vị trí cần tuyển xuống dưới số vị trí đã tuyển.
 export const PositionsRequiredBelowFilledException = () =>

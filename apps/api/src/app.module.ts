@@ -29,6 +29,7 @@ import { MilestoneFileModule } from './routes/milestone-file/milestone-file.modu
 import { MilestoneSubmissionModule } from './routes/milestone-submission/milestone-submission.module';
 import { AccountProfileModule } from './routes/account-profile/account-profile.module';
 import { SavedSearchModule } from './routes/saved-search/saved-search.module';
+import { JobAlertModule } from './routes/job-alert/job-alert.module';
 import { NotificationModule } from './routes/notifications/notification.module';
 import { IdentityVerificationsAdminModule } from './routes/identity-verifications/identity-verifications-admin/identity-verifications-admin.module';
 import { ProposalModule } from './routes/proposals/proposal.module';
@@ -69,6 +70,7 @@ import { RecommendationModule } from './routes/recommendations/recommendation.mo
     MilestoneSubmissionModule,
     AccountProfileModule,
     SavedSearchModule,
+    JobAlertModule,
     NotificationModule,
     IdentityVerificationsAdminModule,
     ProposalModule,

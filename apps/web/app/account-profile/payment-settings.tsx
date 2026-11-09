@@ -151,23 +151,13 @@ export function PaymentSettings({ userRole }: PaymentSettingsProps) {
         };
       case "MILESTONE_PAYOUT":
         return {
-          label: "Milestone Payout",
+          label: "Payout",
           className: "bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-400",
         };
       case "PLATFORM_FEE":
         return {
           label: "Platform Fee",
           className: "bg-purple-50 text-purple-700 border-purple-200 dark:bg-purple-950/40 dark:text-purple-400",
-        };
-      case "DISPUTE_FEE":
-        return {
-          label: "Dispute Fee",
-          className: "bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950/40 dark:text-amber-400",
-        };
-      case "ARBITRATOR_PAYOUT":
-        return {
-          label: "Arbitrator Payout",
-          className: "bg-indigo-50 text-indigo-700 border-indigo-200 dark:bg-indigo-950/40 dark:text-indigo-400",
         };
       case "REFUND":
         return {
@@ -229,7 +219,7 @@ export function PaymentSettings({ userRole }: PaymentSettingsProps) {
                 </h3>
               </div>
               <p className="text-xs text-muted-foreground leading-relaxed max-w-2xl pt-1">
-                Link your bank account or debit card using Stripe Express. When a client releases a milestone or arbitration decision, your earnings transfer directly to your bank account.
+                Link your bank account or debit card using Stripe Express. When a client releases a payment, your earnings transfer directly to your bank account.
               </p>
             </div>
 
@@ -399,7 +389,7 @@ export function PaymentSettings({ userRole }: PaymentSettingsProps) {
             <div className="rounded-xl border border-dashed border-border/80 bg-zinc-50/50 dark:bg-zinc-900/20 p-5 text-center space-y-2">
               <CreditCard className="size-6 text-muted-foreground mx-auto stroke-1" />
               <p className="text-xs text-muted-foreground max-w-sm mx-auto">
-                No cards saved yet. When you fund a milestone or pay a platform fee via Stripe Checkout, your card will be securely remembered for 1-click payments.
+                No cards saved yet. When you fund a contract or pay a platform fee via Stripe Checkout, your card will be securely remembered for 1-click payments.
               </p>
               <Button
                 type="button"
@@ -435,10 +425,10 @@ export function PaymentSettings({ userRole }: PaymentSettingsProps) {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4 text-xs text-muted-foreground">
             <div className="rounded-xl border border-border/60 bg-zinc-50 dark:bg-zinc-900/40 p-4 space-y-1">
               <span className="font-semibold text-foreground block">
-                1. Fund Milestones
+                1. Fund Contract
               </span>
               <p>
-                Deposit milestone funds into Escrow using Stripe. Funds are securely locked until you are satisfied.
+                Deposit contract funds into Escrow using Stripe. Funds are securely locked until you are satisfied.
               </p>
             </div>
             <div className="rounded-xl border border-border/60 bg-zinc-50 dark:bg-zinc-900/40 p-4 space-y-1">
@@ -489,11 +479,9 @@ export function PaymentSettings({ userRole }: PaymentSettingsProps) {
             >
               <option value="ALL">All Transaction Types</option>
               <option value="ESCROW_DEPOSIT">Escrow Deposit</option>
-              <option value="MILESTONE_PAYOUT">Milestone Payout</option>
+              <option value="MILESTONE_PAYOUT">Payout</option>
               <option value="PLATFORM_FEE">Platform Fee</option>
-              <option value="DISPUTE_FEE">Dispute Fee</option>
               <option value="REFUND">Refund</option>
-              <option value="ARBITRATOR_PAYOUT">Arbitrator Payout</option>
             </select>
 
             <Button

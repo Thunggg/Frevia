@@ -44,8 +44,8 @@ export default async function NotFound() {
               className="bg-[#4fae2e] text-white hover:bg-[#459928] dark:bg-[#4fae2e] dark:text-white dark:hover:bg-[#5bc03a]"
               asChild
             >
-              <Link href={homeHref}>Go home</Link>
-              <Link href="/">{t("goHome")}</Link>
+              <Link href={homeHref}>{t("goHome")}</Link>
+
             </Button>
             <Button variant="outline" asChild>
               <Link href="/find-work">{t("findWork")}</Link>

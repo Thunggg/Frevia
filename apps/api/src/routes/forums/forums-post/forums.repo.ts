@@ -132,7 +132,7 @@ export class ForumRepository {
     }));
   }
 
-  // Lấy top người dùng hoạt động nhiều nhất (dựa trên số bài viết)
+  // Lấy top người dùng hoạt động nhiều nhất (dựa trên số bài viết đã được duyệt)
   async getTopActiveUsers(
     limit: number = 5,
   ): Promise<ForumTopActiveUserType[]> {
@@ -151,24 +151,29 @@ export class ForumRepository {
         },
         _count: {
           select: {
-            forumPosts: { where: { deletedAt: null } },
+            forumPosts: {
+              where: {
+                deletedAt: null,
+                moderationStatus: { in: PUBLIC_MODERATION_STATUSES },
+                category: { deletedAt: null },
+              },
+            },
             forumComments: { where: { deletedAt: null } },
           },
         },
       },
-      orderBy: {
-        forumPosts: { _count: 'desc' },
-      },
-      take: limit,
     });
 
-    return users.map((u) => ({
-      id: u.id,
-      displayName: u.profile?.displayName ?? null,
-      avatarUrl: u.profile?.avatarUrl ?? null,
-      postCount: u._count.forumPosts,
-      commentCount: u._count.forumComments,
-    }));
+    return users
+      .map((u) => ({
+        id: u.id,
+        displayName: u.profile?.displayName ?? null,
+        avatarUrl: u.profile?.avatarUrl ?? null,
+        postCount: u._count.forumPosts,
+        commentCount: u._count.forumComments,
+      }))
+      .sort((a, b) => b.postCount - a.postCount)
+      .slice(0, limit);
   }
 
   // Tìm xem category hiện tại có tồn tại không trước khi tạo post
@@ -281,6 +286,8 @@ export class ForumRepository {
           moderationStatus: true,
           moderationScore: true,
           moderationCategories: true,
+          moderationMessage: true,
+          moderationLanguage: true,
           createdAt: true,
           updatedAt: true,
           user: {
@@ -322,6 +329,8 @@ export class ForumRepository {
         moderationStatus: p.moderationStatus,
         moderationScore: p.moderationScore,
         moderationCategories: castJsonStringArray(p.moderationCategories),
+        moderationMessage: p.moderationMessage,
+        moderationLanguage: p.moderationLanguage,
         createdAt: p.createdAt,
         updatedAt: p.updatedAt,
         likeCount: p._count.likes,
@@ -353,6 +362,8 @@ export class ForumRepository {
         moderationCategories: moderation?.categories?.length
           ? moderation.categories
           : undefined,
+        moderationMessage: moderation?.message ?? null,
+        moderationLanguage: moderation?.language ?? null,
       },
       select: {
         id: true,
@@ -364,6 +375,8 @@ export class ForumRepository {
         moderationStatus: true,
         moderationScore: true,
         moderationCategories: true,
+        moderationMessage: true,
+        moderationLanguage: true,
         createdAt: true,
         updatedAt: true,
       },
@@ -392,6 +405,8 @@ export class ForumRepository {
         moderationStatus: true,
         moderationScore: true,
         moderationCategories: true,
+        moderationMessage: true,
+        moderationLanguage: true,
         createdAt: true,
         updatedAt: true,
 
@@ -445,6 +460,8 @@ export class ForumRepository {
         moderationStatus: true,
         moderationScore: true,
         moderationCategories: true,
+        moderationMessage: true,
+        moderationLanguage: true,
         createdAt: true,
         updatedAt: true,
       },
@@ -478,6 +495,7 @@ export class ForumRepository {
   async updateForumPost(
     id: number,
     data: UpdateForumPostType,
+    moderation?: ForumModerationType,
   ): Promise<ForumPostType> {
     const forumPost = await this.prisma.forumPost.update({
       where: {
@@ -491,6 +509,15 @@ export class ForumRepository {
         title: data.title,
         slug: createPostSlug(data.title),
         content: data.content,
+        ...(moderation && {
+          moderationStatus: moderation.status,
+          moderationScore: moderation.score ?? null,
+          moderationCategories: moderation.categories?.length
+            ? moderation.categories
+            : undefined,
+          moderationMessage: moderation.message ?? null,
+          moderationLanguage: moderation.language ?? null,
+        }),
       },
       select: {
         id: true,
@@ -502,6 +529,8 @@ export class ForumRepository {
         moderationStatus: true,
         moderationScore: true,
         moderationCategories: true,
+        moderationMessage: true,
+        moderationLanguage: true,
         createdAt: true,
         updatedAt: true,
       },
@@ -532,6 +561,8 @@ export class ForumRepository {
         moderationStatus: true,
         moderationScore: true,
         moderationCategories: true,
+        moderationMessage: true,
+        moderationLanguage: true,
         createdAt: true,
         updatedAt: true,
       },
@@ -567,6 +598,8 @@ export class ForumRepository {
         moderationStatus: true,
         moderationScore: true,
         moderationCategories: true,
+        moderationMessage: true,
+        moderationLanguage: true,
         createdAt: true,
         updatedAt: true,
         user: {
@@ -612,6 +645,8 @@ export class ForumRepository {
       moderationStatus: p.moderationStatus,
       moderationScore: p.moderationScore,
       moderationCategories: castJsonStringArray(p.moderationCategories),
+      moderationMessage: p.moderationMessage,
+      moderationLanguage: p.moderationLanguage,
       createdAt: p.createdAt,
       updatedAt: p.updatedAt,
       likeCount: p._count.likes,

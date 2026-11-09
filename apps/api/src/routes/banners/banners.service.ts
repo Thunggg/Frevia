@@ -1,4 +1,5 @@
 import { HttpException, Injectable } from '@nestjs/common';
+import { existsSync } from 'fs';
 import { BannerPosition } from '@prisma/client';
 import { BannerPublicListResponseType } from '@shared/types';
 import { isAbsolute, relative, resolve, extname } from 'path';
@@ -53,6 +54,9 @@ export class BannersService {
     }
     const mimeType = BANNER_EXTENSION_TO_MIME[extname(filename).toLowerCase()];
     if (!mimeType) {
+      throw BannerImageNotFoundException();
+    }
+    if (!existsSync(absolutePath)) {
       throw BannerImageNotFoundException();
     }
     return { absolutePath, mimeType };
