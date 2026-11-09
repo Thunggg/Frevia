@@ -836,12 +836,12 @@
     </mxGraphModel>
   </diagram>
   <diagram name="Client 6/6" id="Client_6">
-    <mxGraphModel dx="1603" dy="1037" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1250" pageHeight="1150" math="0" shadow="0">
+    <mxGraphModel dx="1469" dy="941" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1250" pageHeight="1150" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
         <mxCell id="swimlane_frevia" parent="1" style="swimlane;whiteSpace=wrap;html=1;startSize=30;fontSize=15;fontFamily=Tahoma;fontStyle=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="Frevia" vertex="1">
-          <mxGeometry height="1120" width="970" x="130" y="60" as="geometry" />
+          <mxGeometry height="1260" width="970" x="130" y="60" as="geometry" />
         </mxCell>
         <mxCell id="uc_2" parent="swimlane_frevia" style="ellipse;whiteSpace=wrap;html=1;fontSize=12;fontFamily=Tahoma;fontStyle=1;fillColor=#ffffff;strokeColor=#000000;" value="UC-02&#xa;Login" vertex="1">
           <mxGeometry height="55" width="105" x="780" y="475" as="geometry" />
@@ -971,6 +971,12 @@
         <mxCell id="m_64" edge="1" parent="swimlane_frevia" source="uc_mod_50" style="endArrow=none;html=1;rounded=0;fontFamily=Tahoma;fontSize=13;" target="uc_sub_63">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
+        <mxCell id="fRexLk6L3mVlSbV0H5c5-1" parent="swimlane_frevia" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;fontFamily=Tahoma;fillColor=#ffffff;strokeColor=#000000;" value="Moderate Content by AI&lt;br&gt;UC-44.01" vertex="1">
+          <mxGeometry height="48" width="135" x="30" y="1100" as="geometry" />
+        </mxCell>
+        <mxCell id="fRexLk6L3mVlSbV0H5c5-2" parent="swimlane_frevia" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;fontFamily=Tahoma;fillColor=#ffffff;strokeColor=#000000;" value="Scan Face and Detect Duplicate Identity&lt;br&gt;UC-45.01" vertex="1">
+          <mxGeometry height="48" width="135" x="30" y="1190" as="geometry" />
+        </mxCell>
         <mxCell id="act_1" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontSize=14;fontFamily=Tahoma;" value="Client" vertex="1">
           <mxGeometry height="70" width="35" x="30" y="527.5" as="geometry" />
         </mxCell>
@@ -1075,6 +1081,18 @@
         </mxCell>
         <mxCell id="m_58" edge="1" parent="1" source="uc_mod_50" style="endArrow=none;html=1;rounded=0;fontFamily=Tahoma;fontSize=13;" target="uc_sub_57">
           <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="fRexLk6L3mVlSbV0H5c5-3" edge="1" parent="1" source="act_1" style="endArrow=none;html=1;rounded=0;fontFamily=Tahoma;fontSize=13;entryX=0;entryY=0.5;entryDx=0;entryDy=0;exitX=0.5;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;" target="fRexLk6L3mVlSbV0H5c5-2">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="50" y="560" as="sourcePoint" />
+            <mxPoint x="170" y="1066" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="fRexLk6L3mVlSbV0H5c5-4" edge="1" parent="1" source="act_1" style="endArrow=none;html=1;rounded=0;fontFamily=Tahoma;fontSize=13;exitX=0.5;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="fRexLk6L3mVlSbV0H5c5-1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="67" y="583" as="sourcePoint" />
+            <mxPoint x="180" y="1076" as="targetPoint" />
+          </mxGeometry>
         </mxCell>
       </root>
     </mxGraphModel>

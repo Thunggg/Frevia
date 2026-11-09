@@ -466,12 +466,12 @@
     </mxGraphModel>
   </diagram>
   <diagram name="Admin 4/4" id="Admin_4">
-    <mxGraphModel dx="1603" dy="1037" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1250" pageHeight="1150" math="0" shadow="0">
+    <mxGraphModel dx="200" dy="130" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1250" pageHeight="1150" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
         <mxCell id="swimlane_frevia" parent="1" style="swimlane;whiteSpace=wrap;html=1;startSize=30;fontSize=15;fontFamily=Tahoma;fontStyle=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="Frevia" vertex="1">
-          <mxGeometry height="1100" width="970" x="130" y="60" as="geometry" />
+          <mxGeometry height="1150" width="890" x="130" y="50" as="geometry" />
         </mxCell>
         <mxCell id="uc_2" parent="swimlane_frevia" style="ellipse;whiteSpace=wrap;html=1;fontSize=12;fontFamily=Tahoma;fontStyle=1;fillColor=#ffffff;strokeColor=#000000;" value="UC-02&#xa;Login" vertex="1">
           <mxGeometry height="55" width="105" x="754" y="452.5" as="geometry" />
@@ -549,31 +549,33 @@
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="uc_mod_32" parent="swimlane_frevia" style="ellipse;whiteSpace=wrap;html=1;fontSize=11;fontFamily=Tahoma;fontStyle=1;fillColor=#ffffff;strokeColor=#000000;" value="Payment Management&#xa;UC-43" vertex="1">
-          <mxGeometry height="60" width="150" x="30" y="536" as="geometry" />
+          <mxGeometry height="60" width="150" x="30" y="586" as="geometry" />
         </mxCell>
         <mxCell id="uc_sub_35" parent="swimlane_frevia" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;fontFamily=Tahoma;fillColor=#ffffff;strokeColor=#000000;" value="Execute Dispute Resolution Payment&#xa;UC-43.11" vertex="1">
-          <mxGeometry height="48" width="145" x="214" y="500" as="geometry" />
+          <mxGeometry height="48" width="145" x="214" y="525" as="geometry" />
         </mxCell>
         <mxCell id="m_36" edge="1" parent="swimlane_frevia" source="uc_mod_32" style="endArrow=none;html=1;rounded=0;fontFamily=Tahoma;fontSize=13;" target="uc_sub_35">
-          <mxGeometry relative="1" as="geometry" />
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="236.9021383947504" y="569.5051276253823" as="targetPoint" />
+          </mxGeometry>
         </mxCell>
         <mxCell id="uc_mod_37" parent="swimlane_frevia" style="ellipse;whiteSpace=wrap;html=1;fontSize=11;fontFamily=Tahoma;fontStyle=1;fillColor=#ffffff;strokeColor=#000000;" value="Job Category Management&#xa;UC-46" vertex="1">
-          <mxGeometry height="60" width="150" x="30" y="640" as="geometry" />
+          <mxGeometry height="60" width="150" x="30" y="690" as="geometry" />
         </mxCell>
         <mxCell id="uc_sub_40" parent="swimlane_frevia" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;fontFamily=Tahoma;fillColor=#ffffff;strokeColor=#000000;" value="View Job Category List (Admin)&#xa;UC-46.01" vertex="1">
-          <mxGeometry height="48" width="135" x="214" y="582" as="geometry" />
+          <mxGeometry height="48" width="135" x="214" y="632" as="geometry" />
         </mxCell>
         <mxCell id="uc_sub_42" parent="swimlane_frevia" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;fontFamily=Tahoma;fillColor=#ffffff;strokeColor=#000000;" value="View Job Category Detail (Admin)&#xa;UC-46.02" vertex="1">
-          <mxGeometry height="48" width="135" x="214" y="716" as="geometry" />
+          <mxGeometry height="48" width="135" x="214" y="766" as="geometry" />
         </mxCell>
         <mxCell id="uc_sub_44" parent="swimlane_frevia" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;fontFamily=Tahoma;fillColor=#ffffff;strokeColor=#000000;" value="Create Job Category&#xa;UC-46.03" vertex="1">
-          <mxGeometry height="48" width="135" x="369" y="582" as="geometry" />
+          <mxGeometry height="48" width="135" x="369" y="632" as="geometry" />
         </mxCell>
         <mxCell id="uc_sub_46" parent="swimlane_frevia" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;fontFamily=Tahoma;fillColor=#ffffff;strokeColor=#000000;" value="Update Job Category&#xa;UC-46.04" vertex="1">
-          <mxGeometry height="48" width="135" x="369" y="716" as="geometry" />
+          <mxGeometry height="48" width="135" x="369" y="766" as="geometry" />
         </mxCell>
         <mxCell id="uc_sub_48" parent="swimlane_frevia" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;fontFamily=Tahoma;fillColor=#ffffff;strokeColor=#000000;" value="Delete Job Category&#xa;UC-46.05" vertex="1">
-          <mxGeometry height="48" width="135" x="519" y="582" as="geometry" />
+          <mxGeometry height="48" width="135" x="519" y="632" as="geometry" />
         </mxCell>
         <mxCell id="m_41" edge="1" parent="swimlane_frevia" source="uc_mod_37" style="endArrow=none;html=1;rounded=0;fontFamily=Tahoma;fontSize=13;" target="uc_sub_40">
           <mxGeometry relative="1" as="geometry" />
@@ -591,22 +593,22 @@
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="uc_mod_50" parent="swimlane_frevia" style="ellipse;whiteSpace=wrap;html=1;fontSize=11;fontFamily=Tahoma;fontStyle=1;fillColor=#ffffff;strokeColor=#000000;" value="Profile Update Review&#xa;UC-47" vertex="1">
-          <mxGeometry height="60" width="150" x="30" y="840" as="geometry" />
+          <mxGeometry height="60" width="150" x="30" y="890" as="geometry" />
         </mxCell>
         <mxCell id="uc_sub_53" parent="swimlane_frevia" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;fontFamily=Tahoma;fillColor=#ffffff;strokeColor=#000000;" value="View Pending Profile Update Request List&#xa;UC-47.01" vertex="1">
-          <mxGeometry height="48" width="135" x="214" y="776" as="geometry" />
+          <mxGeometry height="48" width="135" x="214" y="826" as="geometry" />
         </mxCell>
         <mxCell id="uc_sub_55" parent="swimlane_frevia" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;fontFamily=Tahoma;fillColor=#ffffff;strokeColor=#000000;" value="View Profile Update Request Detail&#xa;UC-47.02" vertex="1">
-          <mxGeometry height="48" width="135" x="214" y="913" as="geometry" />
+          <mxGeometry height="48" width="135" x="214" y="963" as="geometry" />
         </mxCell>
         <mxCell id="uc_sub_57" parent="swimlane_frevia" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;fontFamily=Tahoma;fillColor=#ffffff;strokeColor=#000000;" value="Approve Profile Update Request&#xa;UC-47.03" vertex="1">
-          <mxGeometry height="48" width="135" x="369" y="776" as="geometry" />
+          <mxGeometry height="48" width="135" x="369" y="826" as="geometry" />
         </mxCell>
         <mxCell id="uc_sub_59" parent="swimlane_frevia" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;fontFamily=Tahoma;fillColor=#ffffff;strokeColor=#000000;" value="Reject Profile Update Request&#xa;UC-47.04" vertex="1">
-          <mxGeometry height="48" width="135" x="369" y="913" as="geometry" />
+          <mxGeometry height="48" width="135" x="369" y="963" as="geometry" />
         </mxCell>
         <mxCell id="uc_sub_61" parent="swimlane_frevia" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;fontFamily=Tahoma;fillColor=#ffffff;strokeColor=#000000;" value="View Profile Update Request History&#xa;UC-47.05" vertex="1">
-          <mxGeometry height="48" width="135" x="519" y="776" as="geometry" />
+          <mxGeometry height="48" width="135" x="519" y="826" as="geometry" />
         </mxCell>
         <mxCell id="m_54" edge="1" parent="swimlane_frevia" source="uc_mod_50" style="endArrow=none;html=1;rounded=0;fontFamily=Tahoma;fontSize=13;" target="uc_sub_53">
           <mxGeometry relative="1" as="geometry" />
@@ -624,7 +626,7 @@
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="uc_sub_66" parent="swimlane_frevia" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;fontFamily=Tahoma;fillColor=#ffffff;strokeColor=#000000;" value="Configure ID Document Retention Policy&#xa;UC-48.02" vertex="1">
-          <mxGeometry height="48" width="145" x="214" y="967" as="geometry" />
+          <mxGeometry height="48" width="145" x="214" y="1030" as="geometry" />
         </mxCell>
         <mxCell id="inc_39" edge="1" parent="swimlane_frevia" source="uc_mod_37" style="edgeStyle=orthogonalEdgeStyle;rounded=0;endArrow=open;dashed=1;html=1;strokeColor=#000000;fontSize=10;fontFamily=Tahoma;labelBackgroundColor=#ffffff;align=center;verticalAlign=middle;" target="uc_2" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;">
           <mxGeometry relative="1" x="0.3307" as="geometry">
@@ -636,7 +638,7 @@
           <mxGeometry relative="1" x="0.5648" as="geometry">
             <mxPoint as="offset" />
             <Array as="points">
-              <mxPoint x="790" y="566" />
+              <mxPoint x="790" y="616" />
             </Array>
             <mxPoint x="820" y="555.2091498331049" as="targetPoint" />
           </mxGeometry>
@@ -645,9 +647,36 @@
           <mxGeometry relative="1" x="0.0485" as="geometry">
             <mxPoint as="offset" />
             <Array as="points">
-              <mxPoint x="820" y="870" />
+              <mxPoint x="820" y="920" />
             </Array>
             <mxPoint x="830" y="555.9688031663613" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="LuA_957VqnLcetZJ_Iu3-1" parent="swimlane_frevia" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;fontFamily=Tahoma;fillColor=#ffffff;strokeColor=#000000;" value="Restore Job Category&lt;br&gt;UC-46.06" vertex="1">
+          <mxGeometry height="48" width="135" x="519" y="766" as="geometry" />
+        </mxCell>
+        <mxCell id="LuA_957VqnLcetZJ_Iu3-2" edge="1" parent="swimlane_frevia" source="uc_mod_37" style="endArrow=none;html=1;rounded=0;fontFamily=Tahoma;fontSize=13;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="LuA_957VqnLcetZJ_Iu3-1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="181" y="744" as="sourcePoint" />
+            <mxPoint x="388" y="788" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="y-Bm3uh5_423rXkJ9wWr-1" parent="swimlane_frevia" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;fontFamily=Tahoma;fillColor=#ffffff;strokeColor=#000000;" value="Handle Stripe Webhook Event&lt;br&gt;UC-43.12" vertex="1">
+          <mxGeometry height="48" width="145" x="400" y="494" as="geometry" />
+        </mxCell>
+        <mxCell id="y-Bm3uh5_423rXkJ9wWr-2" parent="swimlane_frevia" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;fontFamily=Tahoma;fillColor=#ffffff;strokeColor=#000000;" value="Sync Payment Intent Status&lt;br&gt;UC-43.13" vertex="1">
+          <mxGeometry height="48" width="145" x="400" y="560" as="geometry" />
+        </mxCell>
+        <mxCell id="y-Bm3uh5_423rXkJ9wWr-5" edge="1" parent="swimlane_frevia" source="y-Bm3uh5_423rXkJ9wWr-1" style="endArrow=none;html=1;rounded=0;fontFamily=Tahoma;fontSize=13;" target="uc_sub_35">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="183" y="717" as="sourcePoint" />
+            <mxPoint x="387" y="677" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="y-Bm3uh5_423rXkJ9wWr-6" edge="1" parent="swimlane_frevia" source="y-Bm3uh5_423rXkJ9wWr-2" style="endArrow=none;html=1;rounded=0;fontFamily=Tahoma;fontSize=13;" target="uc_sub_35">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="418" y="539" as="sourcePoint" />
+            <mxPoint x="361" y="548" as="targetPoint" />
           </mxGeometry>
         </mxCell>
         <mxCell id="act_1" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontSize=14;fontFamily=Tahoma;" value="Admin" vertex="1">
@@ -691,16 +720,19 @@
           <mxGeometry relative="1" x="-0.1114" as="geometry">
             <mxPoint as="offset" />
             <Array as="points">
-              <mxPoint x="960" y="1100" />
+              <mxPoint x="960" y="1150" />
             </Array>
             <mxPoint x="980" y="614.4272486435068" as="targetPoint" />
           </mxGeometry>
         </mxCell>
         <mxCell id="uc_mod_63" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontSize=11;fontFamily=Tahoma;fontStyle=1;fillColor=#ffffff;strokeColor=#000000;" value="ID Document Retention Policy Management&#xa;UC-48" vertex="1">
-          <mxGeometry height="60" width="150" x="160" y="1070" as="geometry" />
+          <mxGeometry height="60" width="150" x="160" y="1120" as="geometry" />
         </mxCell>
         <mxCell id="m_67" edge="1" parent="1" source="uc_mod_63" style="endArrow=none;html=1;rounded=0;fontFamily=Tahoma;fontSize=13;" target="uc_sub_66">
           <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="nutPoKjdxA43SG6RdmBO-1" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontSize=14;fontFamily=Tahoma;" value="Stripe" vertex="1">
+          <mxGeometry height="70" width="35" x="1090" y="550" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
