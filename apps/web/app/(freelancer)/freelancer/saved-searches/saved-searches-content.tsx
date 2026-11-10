@@ -114,7 +114,7 @@ export function SavedSearchesContent({
 
   const effectiveBasePath =
     basePath ?? (embedded ? "/freelancer/saved-searches" : "/saved-searches");
-  const findWorkBaseUrl = embedded ? "/freelancer/find-work" : "/find-work";
+  const findWorkBaseUrl = "/freelancer";
 
   // Filter & Sort
   const filteredItems = useMemo(() => {

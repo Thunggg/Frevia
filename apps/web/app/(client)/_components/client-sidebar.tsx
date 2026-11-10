@@ -175,7 +175,7 @@ export function ClientSidebar() {
     try {
       await authApiRequest.switchRole({ role: RoleName.FREELANCER });
       await queryClient.invalidateQueries({ queryKey: ["me"] });
-      router.push("/freelancer/find-work");
+      router.push("/freelancer");
       router.refresh();
     } catch {
       toastError({ message: t("roleSwitchFailed") });

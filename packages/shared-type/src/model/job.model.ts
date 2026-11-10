@@ -62,6 +62,8 @@ export const JobSchema = z.object({
 
   // Danh mục công việc gắn với job (quan hệ N-N qua JobJobCategory).
   jobCategories: z.array(JobCategoryRefSchema).optional(),
+
+  proposalsCount: z.number().int().optional(),
 });
 
 export const CreateJobBodySchema = z

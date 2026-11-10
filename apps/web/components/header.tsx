@@ -82,7 +82,7 @@ const roleConfig: Record<UserRole, { nameKey: NavRoleKey; links: NavLink[] }> = 
   GUEST: {
     nameKey: "guest",
     links: [
-      { href: "/find-work", labelKey: "findWork" },
+      { href: "/freelancer", labelKey: "findWork" },
       { href: "/experts", labelKey: "hireTalent" },
       { href: "/forum", labelKey: "forum" },
     ],
@@ -104,11 +104,11 @@ const roleConfig: Record<UserRole, { nameKey: NavRoleKey; links: NavLink[] }> = 
   FREELANCER: {
     nameKey: "freelancer",
     links: [
-      { href: "/freelancer/find-work", labelKey: "findWork" },
-      { href: "/freelancer/bookmarks", labelKey: "bookmarks" },
+      { href: "/freelancer", labelKey: "findWork" },
+      { href: "/freelancer?tab=saved-jobs", labelKey: "bookmarks" },
       { href: "/freelancer/proposals", labelKey: "myProposals" },
       { href: "/freelancer/contracts", labelKey: "contracts" },
-      { href: "/freelancer/saved-searches", labelKey: "savedSearches" },
+      { href: "/freelancer?tab=saved-searches", labelKey: "savedSearches" },
       { href: "/forum", labelKey: "forum" },
     ],
   },
@@ -218,8 +218,7 @@ function HeaderSearch({
           params.delete("keyword");
         }
         params.set("page", "1");
-        const searchBase =
-          role === "FREELANCER" ? "/freelancer/find-work" : "/find-work";
+        const searchBase = "/freelancer";
         router.push(`${searchBase}?${params.toString()}`);
       }}
     >
@@ -276,7 +275,7 @@ function useRoleContextAction(role: Exclude<UserRole, "GUEST">) {
       router.push(
         targetRole === RoleName.CLIENT
           ? "/client/jobs"
-          : "/freelancer/find-work",
+          : "/freelancer",
       );
       router.refresh();
       return true;

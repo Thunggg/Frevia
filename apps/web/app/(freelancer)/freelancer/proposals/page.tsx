@@ -1,7 +1,7 @@
 import { getTranslations } from "next-intl/server";
 import proposalServerRequest from "@/apiRequests/proposal.server";
 import type { ProposalStatusType } from "@shared/types";
-import { MyProposalsContent } from "../../proposals/proposals-content";
+import { MyProposalsContent } from "./proposals-content";
 
 type ProposalsPageProps = {
   searchParams: Promise<{ page?: string; status?: string }>;

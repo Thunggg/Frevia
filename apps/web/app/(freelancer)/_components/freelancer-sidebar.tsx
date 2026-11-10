@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { useTranslations } from "next-intl";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useTheme } from "next-themes";
@@ -51,10 +51,29 @@ type NavItem = {
 
 function NavLink({ item, collapsed }: { item: NavItem; collapsed: boolean }) {
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   const t = useTranslations("sidebar");
-  const isActive = item.matchPrefix
-    ? pathname === item.href || pathname.startsWith(`${item.href}/`)
-    : pathname === item.href;
+
+  const [targetPath, targetQuery] = item.href.split("?");
+  const targetTab = targetQuery
+    ? new URLSearchParams(targetQuery).get("tab")
+    : null;
+  const currentTab = searchParams.get("tab");
+
+  let isActive = false;
+  if (targetTab) {
+    isActive = pathname === targetPath && currentTab === targetTab;
+  } else if (item.matchPrefix) {
+    isActive =
+      pathname === item.href ||
+      (item.href !== "/freelancer" && pathname.startsWith(`${item.href}/`)) ||
+      (item.href.includes("find-work") &&
+        (pathname === "/freelancer" ||
+          pathname.startsWith("/freelancer/find-work") ||
+          pathname.startsWith("/find-work")));
+  } else {
+    isActive = pathname === targetPath && !currentTab;
+  }
 
   const Icon = item.icon;
 
@@ -119,7 +138,7 @@ export function FreelancerSidebar() {
 
   const freelancerNav: NavItem[] = [
     {
-      href: "/freelancer/find-work",
+      href: "/freelancer/find-work/best-matches",
       labelKey: "navFindWork",
       icon: Search,
       matchPrefix: true,
@@ -140,18 +159,6 @@ export function FreelancerSidebar() {
       href: "/freelancer/contracts",
       labelKey: "navContracts",
       icon: FileCheck,
-      matchPrefix: true,
-    },
-    {
-      href: "/freelancer/bookmarks",
-      labelKey: "navSavedJobs",
-      icon: Bookmark,
-      matchPrefix: true,
-    },
-    {
-      href: "/freelancer/saved-searches",
-      labelKey: "navSavedSearches",
-      icon: SlidersHorizontal,
       matchPrefix: true,
     },
     {

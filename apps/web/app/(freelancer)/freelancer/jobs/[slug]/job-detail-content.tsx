@@ -32,6 +32,7 @@ import {
   AlertDialogTitle,
 } from "@repo/ui/components/shadcn/alert-dialog";
 import { toastError, toastSuccess } from "@repo/ui/components/shadcn/toast";
+import { getBookmarkErrorMessage } from "@/lib/utils";
 import type {
   JobType,
   ProposalType,
@@ -293,9 +294,9 @@ export function JobDetailContent({
               }),
             );
           }
-        } catch {
+        } catch (error) {
           toastError({
-            message: tBookmark("updateFailed"),
+            message: getBookmarkErrorMessage(error, tBookmark, false),
           });
         } finally {
           setIsBookmarkLoading(false);
@@ -318,8 +319,10 @@ export function JobDetailContent({
           }),
         );
       }
-    } catch {
-      toastError({ message: tBookmark("removeFailed") });
+    } catch (error) {
+      toastError({
+        message: getBookmarkErrorMessage(error, tBookmark, true),
+      });
     } finally {
       setIsBookmarkLoading(false);
     }

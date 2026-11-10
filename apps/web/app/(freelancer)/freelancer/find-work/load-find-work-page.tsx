@@ -1,58 +1,51 @@
-import { redirect } from "next/navigation";
 import authServerRequest from "@/apiRequests/auth.server";
 import jobServerRequest from "@/apiRequests/job.server";
 import jobCategoryServerRequest from "@/apiRequests/job-category.server";
-import type { UserRole } from "@/components/header";
-import { RoleName, type SavedSearchType } from "@shared/types";
+import recommendationServerRequest from "@/apiRequests/recommendation.server";
+import savedSearchServerRequest from "@/apiRequests/saved-search.server";
+import jobAlertServerRequest from "@/apiRequests/job-alert.server";
+import type {
+  JobAlertType,
+  RecommendedJobType,
+  SavedSearchType,
+  ViewJobDetailResType,
+} from "@shared/types";
+import { redirect } from "next/navigation";
+import { FindWorkContent, type HomeTab } from "./find-work-content";
 
-import { FindWorkContent } from "./find-work-content";
-
-type FindWorkSearchParams = Promise<{
+export type FindWorkSearchParams = Promise<{
   keyword?: string;
   category?: string;
   page?: string;
+  limit?: string;
   budget?: string;
+  budgetType?: "FIXED_PRICE";
+  proposals?: string;
+  verified?: string;
   time?: string;
   sort?: string;
+  tab?: string;
 }>;
 
-type FindWorkPageProps = {
+export async function renderFindWorkPage({
+  searchParams,
+  tab,
+  basePath = "/freelancer/find-work",
+}: {
   searchParams: FindWorkSearchParams;
-};
-
-function resolveHeaderRole(
-  user: Awaited<ReturnType<typeof authServerRequest.getMe>>,
-): UserRole {
-  if (!user) return "GUEST";
-
-  const primaryRole =
-    user.roles.find((role) => role.isPrimary) ?? user.roles[0];
-
-  if (primaryRole?.name === RoleName.CLIENT) return "CLIENT";
-  if (primaryRole?.name === RoleName.FREELANCER) return "FREELANCER";
-
-  return "FREELANCER";
-}
-
-export default async function FindWorkPage({ searchParams }: FindWorkPageProps) {
-  const params = await searchParams;
+  tab?: HomeTab;
+  basePath?: string;
+}) {
   const user = await authServerRequest.getMe();
-  const role = resolveHeaderRole(user);
-
-  if (role === "FREELANCER") {
-    const queryParams = new URLSearchParams();
-    if (params.keyword) queryParams.set("keyword", params.keyword);
-    if (params.category) queryParams.set("category", params.category);
-    if (params.page) queryParams.set("page", params.page);
-    if (params.budget) queryParams.set("budget", params.budget);
-    if (params.time) queryParams.set("time", params.time);
-    if (params.sort) queryParams.set("sort", params.sort);
-    const qs = queryParams.toString();
-    redirect(qs ? `/freelancer/find-work?${qs}` : "/freelancer/find-work");
+  if (!user) {
+    redirect(`/login?redirect=${encodeURIComponent("/freelancer/find-work/best-matches")}`);
   }
 
+  const params = await searchParams;
   const parsedPage = Number(params.page);
   const page = Number.isInteger(parsedPage) && parsedPage > 0 ? parsedPage : 1;
+  const parsedLimit = Number(params.limit);
+  const limit = [10, 20, 50].includes(parsedLimit) ? parsedLimit : 10;
   const keyword = params.keyword?.trim() || undefined;
   const budget = params.budget ?? "all";
   const time = params.time ?? "all";
@@ -89,7 +82,6 @@ export default async function FindWorkPage({ searchParams }: FindWorkPageProps) 
     ? new Date(Date.now() - timeRange * 24 * 60 * 60 * 1000)
     : undefined;
 
-  // UC-46.06: danh mục công việc đang hoạt động dùng cho bộ lọc tìm kiếm.
   const categoriesResult = await jobCategoryServerRequest.getJobCategories({
     limit: 50,
   });
@@ -98,11 +90,15 @@ export default async function FindWorkPage({ searchParams }: FindWorkPageProps) 
     ? params.category
     : undefined;
 
+  const budgetType =
+    params.budgetType === "FIXED_PRICE" ? "FIXED_PRICE" : undefined;
+
   const result = await jobServerRequest.getJobs({
     page,
-    limit: 10,
+    limit,
     search: keyword,
     category,
+    budgetType,
     ...budgetRanges[budget],
     createdAfter,
     ...selectedSort,
@@ -111,14 +107,47 @@ export default async function FindWorkPage({ searchParams }: FindWorkPageProps) 
   const jobs = result?.data ?? [];
   const pagination = result
     ? result.pagination
-    : { page: 1, limit: 10, total: 0, totalPages: 0 };
+    : { page: 1, limit, total: 0, totalPages: 0 };
 
-  const initialBookmarkedSlugs: string[] = [];
-  const initialSavedSearches: SavedSearchType[] = [];
+  let initialBookmarkedJobs: ViewJobDetailResType[] = [];
+  let initialBookmarkedSlugs: string[] = [];
+  let initialSavedSearches: SavedSearchType[] = [];
+  let initialRecommendedJobs: RecommendedJobType[] = [];
+  let initialJobAlerts: JobAlertType[] = [];
+
+  const [
+    bookmarkedJobsRes,
+    savedSearchesRes,
+    recommendationsRes,
+    jobAlertsRes,
+  ] = await Promise.allSettled([
+    jobServerRequest.getBookmarkedJobs({ limit: 20 }),
+    savedSearchServerRequest.getSavedSearches(),
+    recommendationServerRequest.getRecommendedJobs(15),
+    jobAlertServerRequest.getJobAlerts(),
+  ]);
+
+  if (bookmarkedJobsRes.status === "fulfilled" && bookmarkedJobsRes.value?.data) {
+    initialBookmarkedJobs = bookmarkedJobsRes.value.data;
+    initialBookmarkedSlugs = initialBookmarkedJobs.map((item) => item.slug);
+  }
+
+  if (savedSearchesRes.status === "fulfilled") {
+    initialSavedSearches = savedSearchesRes.value ?? [];
+  }
+
+  if (recommendationsRes.status === "fulfilled" && recommendationsRes.value) {
+    initialRecommendedJobs = recommendationsRes.value.data ?? [];
+  }
+
+  if (jobAlertsRes.status === "fulfilled" && jobAlertsRes.value) {
+    initialJobAlerts = jobAlertsRes.value ?? [];
+  }
 
   return (
     <FindWorkContent
-      role={role}
+      role="FREELANCER"
+      user={user}
       initialJobs={jobs}
       initialPagination={pagination}
       initialKeyword={keyword ?? ""}
@@ -130,7 +159,14 @@ export default async function FindWorkPage({ searchParams }: FindWorkPageProps) 
         sortOptions[sort as keyof typeof sortOptions] ? sort : "newest"
       }
       initialBookmarkedSlugs={initialBookmarkedSlugs}
+      initialBookmarkedJobs={initialBookmarkedJobs}
       initialSavedSearches={initialSavedSearches}
+      initialRecommendedJobs={initialRecommendedJobs}
+      initialJobAlerts={initialJobAlerts}
+      embedded={true}
+      basePath={basePath}
+      initialTab={tab}
     />
   );
 }
+

@@ -2669,7 +2669,15 @@
     "saveTitle": "Save to bookmarks",
     "removeTitle": "Remove from bookmarks",
     "removeFailed": "Couldn't remove bookmark. Try again.",
-    "updateFailed": "Couldn't update bookmark. Try again."
+    "updateFailed": "Couldn't update bookmark. Try again.",
+    "errorCannotBookmarkOwnJob": "You cannot bookmark your own job.",
+    "errorCannotBookmarkUnavailableJob": "This job is closed or has expired.",
+    "errorJobAlreadyBookmarked": "This job is already bookmarked.",
+    "errorBookmarkJobOnlyForFreelancer": "Only freelancers can bookmark jobs.",
+    "errorJobNotFound": "Job not found.",
+    "errorBookmarkNotFound": "Bookmark not found in your saved list.",
+    "errorFailedToBookmarkJob": "Failed to bookmark job.",
+    "errorFailedToRemoveBookmark": "Failed to remove bookmark."
   },
   "jobStatus": {
     "DRAFT": "Draft",
@@ -2814,6 +2822,11 @@
   },
   "findWork": {
     "title": "Find Work",
+    "bestMatches": "Best Matches",
+    "mostRecent": "Most Recent",
+    "savedJobs": "Saved Jobs",
+    "savedSearches": "Saved Searches",
+    "invites": "Invites",
     "metaTitle": "Find Work | Freelancer Dashboard | Frevia",
     "subtitle": "Browse open projects and apply to work that fits your skills.",
     "searchPlaceholder": "Search jobs by title or skill...",

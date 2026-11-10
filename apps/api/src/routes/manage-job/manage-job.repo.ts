@@ -57,6 +57,9 @@ const jobSelect = {
   jobCategories: {
     select: { category: { select: { id: true, name: true, slug: true } } },
   },
+  _count: {
+    select: { proposals: true },
+  },
 } satisfies Prisma.JobSelect;
 
 @Injectable()
@@ -564,20 +567,26 @@ export class ManageJobRepository {
       jobCategories?: Array<{
         category: { id: number; name: string; slug: string };
       }>;
+      _count?: {
+        proposals?: number;
+      };
     },
   >(
     job: T,
-  ): Omit<T, 'budgetMin' | 'budgetMax' | 'jobCategories'> & {
+  ): Omit<T, 'budgetMin' | 'budgetMax' | 'jobCategories' | '_count'> & {
     budgetMin: number | null;
     budgetMax: number | null;
     jobCategories?: Array<{ id: number; name: string; slug: string }>;
+    proposalsCount?: number;
   } {
-    const { jobCategories, budgetMin, budgetMax, ...rest } = job;
+    const { jobCategories, budgetMin, budgetMax, _count, ...rest } = job;
+    const proposalsCount = _count?.proposals;
 
     const normalized = {
       ...rest,
       budgetMin: budgetMin === null ? null : Number(budgetMin),
       budgetMax: budgetMax === null ? null : Number(budgetMax),
+      ...(proposalsCount !== undefined ? { proposalsCount } : {}),
     };
 
     // Quan hệ N-N: làm phẳng JobJobCategory về danh mục thực tế.
@@ -588,11 +597,7 @@ export class ManageJobRepository {
             jobCategories: jobCategories.map(({ category }) => category),
           }
         : normalized
-    ) as Omit<T, 'budgetMin' | 'budgetMax' | 'jobCategories'> & {
-      budgetMin: number | null;
-      budgetMax: number | null;
-      jobCategories?: Array<{ id: number; name: string; slug: string }>;
-    };
+    ) as any;
   }
 
   private async replaceJobSkills(

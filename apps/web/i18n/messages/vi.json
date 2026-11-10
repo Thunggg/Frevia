@@ -2661,7 +2661,15 @@
     "saveTitle": "Lưu vào mục đã lưu",
     "removeTitle": "Bỏ khỏi mục đã lưu",
     "removeFailed": "Không thể bỏ lưu. Vui lòng thử lại.",
-    "updateFailed": "Không thể cập nhật mục đã lưu. Vui lòng thử lại."
+    "updateFailed": "Không thể cập nhật mục đã lưu. Vui lòng thử lại.",
+    "errorCannotBookmarkOwnJob": "Bạn không thể lưu công việc do chính mình đăng.",
+    "errorCannotBookmarkUnavailableJob": "Công việc này đã đóng hoặc đã hết hạn.",
+    "errorJobAlreadyBookmarked": "Công việc này đã được lưu trước đó.",
+    "errorBookmarkJobOnlyForFreelancer": "Chỉ tài khoản Freelancer mới có thể lưu công việc.",
+    "errorJobNotFound": "Không tìm thấy công việc.",
+    "errorBookmarkNotFound": "Không tìm thấy công việc này trong danh sách đã lưu.",
+    "errorFailedToBookmarkJob": "Lưu công việc thất bại.",
+    "errorFailedToRemoveBookmark": "Xóa đánh dấu thất bại."
   },
   "jobStatus": {
     "DRAFT": "Bản nháp",
@@ -2806,6 +2814,11 @@
   },
   "findWork": {
     "title": "Tìm việc",
+    "bestMatches": "Phù hợp nhất",
+    "mostRecent": "Mới nhất",
+    "savedJobs": "Việc đã lưu",
+    "savedSearches": "Tìm kiếm đã lưu",
+    "invites": "Lời mời",
     "metaTitle": "Tìm việc | Bảng điều khiển Freelancer | Frevia",
     "subtitle": "Duyệt các dự án đang mở và ứng tuyển vào công việc phù hợp với kỹ năng của bạn.",
     "searchPlaceholder": "Tìm việc theo tiêu đề hoặc kỹ năng...",
