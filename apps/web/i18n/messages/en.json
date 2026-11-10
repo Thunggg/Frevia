@@ -1686,6 +1686,8 @@
   "sidebar": {
     "collapse": "Collapse sidebar",
     "expand": "Expand sidebar",
+    "mainMenu": "Main Menu",
+    "language": "Language",
     "profileMenu": "Profile menu",
     "viewPublicProfile": "View public profile",
     "profileSettings": "Profile settings",
@@ -1710,7 +1712,8 @@
     "navMessages": "Messages",
     "navNotifications": "Notifications",
     "navMyJobs": "My Jobs",
-    "navFavoriteFreelancers": "Favorite freelancers"
+    "navFavoriteFreelancers": "Favorite freelancers",
+    "navBillingPayments": "Billing & Payments"
   },
   "disputes": {
     "metaTitle": "My Disputes & Arbitration | Freelancer Dashboard | Frevia",

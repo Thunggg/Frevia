@@ -44,6 +44,39 @@ export const MilestoneAmountMismatchException = () =>
     },
   ]);
 
+export const ContractExpiresAtRequiredException = () =>
+  new UnprocessableEntityException([
+    {
+      message: 'Contract end date is required',
+      path: 'expiresAt',
+    },
+  ]);
+
+export const MilestoneDueDateRequiredException = () =>
+  new UnprocessableEntityException([
+    {
+      message: 'Every milestone must have a due date',
+      path: 'milestones',
+    },
+  ]);
+
+export const MilestoneDueDateExceedsContractException = () =>
+  new UnprocessableEntityException([
+    {
+      message: 'Milestone due date cannot exceed the contract end date',
+      path: 'milestones',
+    },
+  ]);
+
+export const ContractExpiresAtBeforeMilestonesException = () =>
+  new UnprocessableEntityException([
+    {
+      message:
+        'Contract end date cannot be earlier than existing milestone due dates',
+      path: 'expiresAt',
+    },
+  ]);
+
 export const ContractAlreadyExistsException = () =>
   new ConflictException([
     {

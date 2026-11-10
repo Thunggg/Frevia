@@ -34,6 +34,31 @@ export const MilestoneAmountExceedsContractException = () =>
     },
   ]);
 
+export const MilestoneDueDateRequiredException = () =>
+  new UnprocessableEntityException([
+    {
+      message: 'Milestone due date is required',
+      path: 'dueDate',
+    },
+  ]);
+
+export const MilestoneDueDateExceedsContractException = () =>
+  new UnprocessableEntityException([
+    {
+      message: 'Milestone due date cannot exceed the contract end date',
+      path: 'dueDate',
+    },
+  ]);
+
+export const MilestoneContractExpiresAtRequiredException = () =>
+  new UnprocessableEntityException([
+    {
+      message:
+        'Please set a contract end date before adding or editing milestones',
+      path: 'dueDate',
+    },
+  ]);
+
 export const MilestoneCannotBeEditedException = () =>
   new UnprocessableEntityException([
     { message: ManageMilestoneMessage.MILESTONE_CANNOT_BE_EDITED, path: 'id' },

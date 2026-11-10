@@ -145,9 +145,29 @@ export class ContractRepository {
     });
   }
 
+  async findContractMilestoneDueDates(contractId: number) {
+    return this.prisma.milestone.findMany({
+      where: { contractId, deletedAt: null },
+      select: { id: true, title: true, dueDate: true },
+    });
+  }
+
   async findContractBySlug(slug: string) {
-    const contract = await this.prisma.contract.findUnique({
-      where: { slug, deletedAt: null },
+    const cleanSlug = slug.replace(/^#/, '').trim();
+    const strippedId = cleanSlug.replace(/^(CON|CTR|contract)-/i, '');
+    const parsedId = Number(strippedId) || Number(cleanSlug);
+
+    const contract = await this.prisma.contract.findFirst({
+      where: {
+        OR: [
+          { slug },
+          { slug: cleanSlug },
+          ...(Number.isInteger(parsedId) && parsedId > 0
+            ? [{ id: parsedId }]
+            : []),
+        ],
+        deletedAt: null,
+      },
       select: contractDetailSelect,
     });
 
@@ -485,7 +505,7 @@ export class ContractRepository {
   }
 
   async getContractDetail(contractId: number) {
-    const contract = await this.prisma.contract.findUnique({
+    const contract = await this.prisma.contract.findFirst({
       where: { id: contractId, deletedAt: null },
       select: contractDetailSelect,
     });

@@ -2,7 +2,10 @@ export const ManageMilestoneMessage = {
     TITLE_REQUIRED: 'Error.MilestoneTitleRequired',
     AMOUNT_REQUIRED: 'Error.MilestoneAmountRequired',
     AMOUNT_POSITIVE: 'Error.MilestoneAmountMustBePositive',
+    DUE_DATE_REQUIRED: 'Error.MilestoneDueDateRequired',
     DUE_DATE_FUTURE: 'Error.MilestoneDueDateMustBeFuture',
+    DUE_DATE_EXCEEDS_CONTRACT: 'Error.MilestoneDueDateExceedsContractExpiresAt',
+    CONTRACT_EXPIRES_AT_REQUIRED: 'Error.ContractExpiresAtRequired',
 
     MILESTONE_NOT_FOUND: 'Error.MilestoneNotFound',
     MILESTONE_NOT_FUNDED: 'Error.MilestoneNotFunded',
