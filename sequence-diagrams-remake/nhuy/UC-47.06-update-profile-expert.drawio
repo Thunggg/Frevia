@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='utf-8'?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <mxfile host="app.diagrams.net" version="29.0.3">
   <diagram id="UC-47.06-update-profile-expert" name="UC-47.06 - Update Profile Expert">
     <mxGraphModel grid="1" gridSize="10" page="0" pageWidth="1600" pageHeight="8664" math="0" shadow="0">
@@ -235,7 +235,7 @@
         <mxCell id="c20" value="&lt;div&gt;3.1.3.1. Attach JWT&lt;/div&gt;&lt;div&gt;payload; continue&lt;/div&gt;" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;overflow=visible;fontSize=12;labelBackgroundColor=none;" parent="1" vertex="1">
           <mxGeometry x="770" y="1793" width="140" height="40" as="geometry" />
         </mxCell>
-        <mxCell id="c22" value="&lt;div&gt;3.2. PermissionGuard: roleId required; roleHasPermission(roleId,method,path).&lt;/div&gt;&lt;div&gt;Missing role or denied permission -&gt;403.&lt;/div&gt;" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;overflow=visible;fontSize=12;labelBackgroundColor=none;" parent="1" vertex="1">
+        <mxCell id="c22" value="&lt;div&gt;3.2. PermissionGuard: require roleId. Expert uses expertHasPermission(method,path); other&lt;/div&gt;&lt;div&gt;roles use roleHasPermission(roleId,method,path). Denied request returns 403.&lt;/div&gt;" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;overflow=visible;fontSize=12;labelBackgroundColor=none;" parent="1" vertex="1">
           <mxGeometry x="735" y="1984" width="600" height="48" as="geometry" />
         </mxCell>
         <mxCell id="c24" value="&lt;div&gt;[roleId missing OR&lt;/div&gt;&lt;div&gt;permission denied]&lt;/div&gt;" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;overflow=visible;fontSize=12;labelBackgroundColor=none;" parent="1" vertex="1">
@@ -622,13 +622,13 @@
             <mxPoint x="305" y="8122" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="c104" value="&lt;div&gt;11.2.1.2.7.2.4.2.4. Display&lt;/div&gt;&lt;div&gt;result&lt;/div&gt;" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=12;" parent="1" edge="1">
+        <mxCell id="c104" value="&lt;div&gt;11.2.1.2.7.2.4.2.4. Show pending&lt;/div&gt;&lt;div&gt;revision. After approval and activation,&lt;/div&gt;&lt;div&gt;enter /expert/disputes; Profile settings&lt;/div&gt;&lt;div&gt;remains editable via ?edit=1&lt;/div&gt;" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=12;" parent="1" edge="1">
           <mxGeometry relative="1" as="geometry">
             <mxPoint x="295" y="8214" as="sourcePoint" />
             <mxPoint x="105" y="8214" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-      </root>
+      <mxCell id="nhuy-screen-context" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=middle;fontSize=13;spacing=8;fillColor=none;strokeColor=none;" vertex="1" parent="1" value="Sprint 5 | Screen: /expert/profile?edit=1 - own Expert profile; /expert/disputes - Expert workspace | GET /expert-profile/me and GET /profile-revisions/me?type=EXPERT load own data. Pending approval is checked every 5s while visible and on focus."><mxGeometry y="80" width="1380" as="geometry" height="90" x="100" /></mxCell></root>
     </mxGraphModel>
   </diagram>
 </mxfile>

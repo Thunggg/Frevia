@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='utf-8'?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <mxfile host="app.diagrams.net" version="29.0.3">
   <diagram id="UC-47.03-approve-profile-update-request" name="UC-47.03 - Approve Profile Update Request">
     <mxGraphModel grid="1" gridSize="10" page="0" pageWidth="1600" pageHeight="7638" math="0" shadow="0">
@@ -226,7 +226,7 @@
         <mxCell id="c20" value="&lt;div&gt;3.1.3.1. Attach JWT&lt;/div&gt;&lt;div&gt;payload; continue&lt;/div&gt;" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;overflow=visible;fontSize=12;labelBackgroundColor=none;" parent="1" vertex="1">
           <mxGeometry x="770" y="1810" width="140" height="40" as="geometry" />
         </mxCell>
-        <mxCell id="c22" value="&lt;div&gt;3.2. PermissionGuard: roleId required; roleHasPermission(roleId,method,path).&lt;/div&gt;&lt;div&gt;Missing role or denied permission -&gt;403.&lt;/div&gt;" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;overflow=visible;fontSize=12;labelBackgroundColor=none;" parent="1" vertex="1">
+        <mxCell id="c22" value="&lt;div&gt;3.2. PermissionGuard: require roleId. Expert uses expertHasPermission(method,path); other&lt;/div&gt;&lt;div&gt;roles use roleHasPermission(roleId,method,path). Denied request returns 403.&lt;/div&gt;" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;overflow=visible;fontSize=12;labelBackgroundColor=none;" parent="1" vertex="1">
           <mxGeometry x="735" y="2001" width="600" height="48" as="geometry" />
         </mxCell>
         <mxCell id="c24" value="&lt;div&gt;[roleId missing OR&lt;/div&gt;&lt;div&gt;permission denied]&lt;/div&gt;" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;overflow=visible;fontSize=12;labelBackgroundColor=none;" parent="1" vertex="1">
@@ -439,7 +439,7 @@
             <mxPoint x="1120" y="5551" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="c69" value="&lt;div&gt;11.2.1.2.3. $transaction:&lt;/div&gt;&lt;div&gt;claim only PENDING via&lt;/div&gt;&lt;div&gt;updateMany; count0&lt;/div&gt;&lt;div&gt;-&gt;null; Apply proposed&lt;/div&gt;&lt;div&gt;Profile and role-specific&lt;/div&gt;&lt;div&gt;fields; recalculate&lt;/div&gt;&lt;div&gt;strength; create outcome&lt;/div&gt;&lt;div&gt;notification; return&lt;/div&gt;&lt;div&gt;reviewed revision&lt;/div&gt;" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=12;" parent="1" edge="1">
+        <mxCell id="c69" value="&lt;div&gt;11.2.1.2.3. Transaction: claim PENDING&lt;/div&gt;&lt;div&gt;revision; count 0 returns null. Apply&lt;/div&gt;&lt;div&gt;profile fields; Expert upsert sets&lt;/div&gt;&lt;div&gt;isActive=true; recalculate strength;&lt;/div&gt;&lt;div&gt;notify requester; return reviewed&lt;/div&gt;&lt;div&gt;revision&lt;/div&gt;" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=12;" parent="1" edge="1">
           <mxGeometry relative="1" as="geometry">
             <mxPoint x="1130" y="5762" as="sourcePoint" />
             <mxPoint x="1310" y="5762" as="targetPoint" />
@@ -546,7 +546,7 @@
             <mxPoint x="105" y="7253" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-      </root>
+      <mxCell id="nhuy-screen-context" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=middle;fontSize=13;spacing=8;fillColor=none;strokeColor=none;" vertex="1" parent="1" value="Sprint 5 | Screen: /admin/profile-revisions - administrator review workflow | Approved Expert revisions set Expert.isActive=true; the Expert profile UI then enters the dispute workspace."><mxGeometry y="80" width="1380" as="geometry" height="90" x="100" /></mxCell></root>
     </mxGraphModel>
   </diagram>
 </mxfile>

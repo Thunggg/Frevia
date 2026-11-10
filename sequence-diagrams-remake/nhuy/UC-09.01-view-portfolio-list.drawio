@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='utf-8'?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <mxfile host="app.diagrams.net" version="29.0.3">
   <diagram id="UC-09.01-view-portfolio-list" name="UC-09.01 - View Portfolio List">
     <mxGraphModel grid="1" gridSize="10" page="0" pageWidth="1600" pageHeight="5130" math="0" shadow="0">
@@ -389,7 +389,7 @@
             <mxPoint x="105" y="4745" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-      </root>
+      <mxCell id="nhuy-screen-context" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=middle;fontSize=13;spacing=8;fillColor=none;strokeColor=none;" vertex="1" parent="1" value="Sprint 1 | Screen: /freelancer/profile - skills / portfolio; /profiles/:profileId - public view"><mxGeometry y="80" width="1380" as="geometry" height="90" x="100" /></mxCell></root>
     </mxGraphModel>
   </diagram>
 </mxfile>

@@ -1,7 +1,7 @@
-<?xml version='1.0' encoding='utf-8'?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <mxfile host="app.diagrams.net" version="29.0.3">
   <diagram id="UC-39.03-write-review" name="UC-39.03 - Write Review">
-    <mxGraphModel grid="1" gridSize="10" page="0" pageWidth="1600" pageHeight="10467" math="0" shadow="0">
+    <mxGraphModel grid="1" gridSize="10" page="0" pageWidth="1600" pageHeight="10491" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -24,19 +24,19 @@
           <mxGeometry x="675" y="3010" width="280" height="176" as="geometry" />
         </mxCell>
         <mxCell id="c47" value="alt" style="shape=umlFrame;html=1;whiteSpace=wrap;pointerEvents=0;fillColor=none;width=45;height=24;fontSize=12;labelBackgroundColor=none;" parent="1" vertex="1">
-          <mxGeometry x="0" y="3944" width="1525" height="6328" as="geometry" />
+          <mxGeometry x="0" y="3944" width="1525" height="6352" as="geometry" />
         </mxCell>
         <mxCell id="c58" value="alt" style="shape=umlFrame;html=1;whiteSpace=wrap;pointerEvents=0;fillColor=none;width=45;height=24;fontSize=12;labelBackgroundColor=none;" parent="1" vertex="1">
-          <mxGeometry x="6" y="4665" width="1519" height="5542" as="geometry" />
+          <mxGeometry x="6" y="4665" width="1519" height="5566" as="geometry" />
         </mxCell>
         <mxCell id="c69" value="alt" style="shape=umlFrame;html=1;whiteSpace=wrap;pointerEvents=0;fillColor=none;width=45;height=24;fontSize=12;labelBackgroundColor=none;" parent="1" vertex="1">
-          <mxGeometry x="12" y="5404" width="1513" height="4738" as="geometry" />
+          <mxGeometry x="12" y="5404" width="1513" height="4762" as="geometry" />
         </mxCell>
         <mxCell id="c86" value="alt" style="shape=umlFrame;html=1;whiteSpace=wrap;pointerEvents=0;fillColor=none;width=45;height=24;fontSize=12;labelBackgroundColor=none;" parent="1" vertex="1">
-          <mxGeometry x="18" y="6761" width="1507" height="3316" as="geometry" />
+          <mxGeometry x="18" y="6761" width="1507" height="3340" as="geometry" />
         </mxCell>
         <mxCell id="c106" value="alt" style="shape=umlFrame;html=1;whiteSpace=wrap;pointerEvents=0;fillColor=none;width=45;height=24;fontSize=12;labelBackgroundColor=none;" parent="1" vertex="1">
-          <mxGeometry x="24" y="8367" width="1501" height="1645" as="geometry" />
+          <mxGeometry x="24" y="8389" width="1501" height="1647" as="geometry" />
         </mxCell>
         <mxCell id="c127" value="UC-39.03 - Write Review" style="text;html=1;align=center;fontSize=20;fontStyle=1;" parent="1" vertex="1">
           <mxGeometry x="100" y="20" width="1380" height="40" as="geometry" />
@@ -47,26 +47,26 @@
         <mxCell id="c129" value="" style="endArrow=none;dashed=1;html=1;rounded=0;" parent="1" edge="1">
           <mxGeometry relative="1" as="geometry">
             <mxPoint x="100" y="330" as="sourcePoint" />
-            <mxPoint x="100" y="10407" as="targetPoint" />
+            <mxPoint x="100" y="10431" as="targetPoint" />
           </mxGeometry>
         </mxCell>
         <mxCell id="c130" value=":ReviewView" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};labelBackgroundColor=none;" parent="1" vertex="1">
-          <mxGeometry x="225" y="240" width="150" height="10167" as="geometry" />
+          <mxGeometry x="225" y="240" width="150" height="10191" as="geometry" />
         </mxCell>
         <mxCell id="c131" value=":ReviewRoute" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};labelBackgroundColor=none;" parent="1" vertex="1">
-          <mxGeometry x="440" y="240" width="120" height="10167" as="geometry" />
+          <mxGeometry x="440" y="240" width="120" height="10191" as="geometry" />
         </mxCell>
         <mxCell id="c132" value=":ReviewController" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};labelBackgroundColor=none;" parent="1" vertex="1">
-          <mxGeometry x="640" y="240" width="140" height="10167" as="geometry" />
+          <mxGeometry x="640" y="240" width="140" height="10191" as="geometry" />
         </mxCell>
         <mxCell id="c133" value=":ReviewService" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};labelBackgroundColor=none;" parent="1" vertex="1">
-          <mxGeometry x="850" y="240" width="140" height="10167" as="geometry" />
+          <mxGeometry x="850" y="240" width="140" height="10191" as="geometry" />
         </mxCell>
         <mxCell id="c134" value=":ReviewRepo" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};labelBackgroundColor=none;" parent="1" vertex="1">
-          <mxGeometry x="1060" y="240" width="130" height="10167" as="geometry" />
+          <mxGeometry x="1060" y="240" width="130" height="10191" as="geometry" />
         </mxCell>
         <mxCell id="c135" value=":PrismaService" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};labelBackgroundColor=none;" parent="1" vertex="1">
-          <mxGeometry x="1250" y="240" width="130" height="10167" as="geometry" />
+          <mxGeometry x="1250" y="240" width="130" height="10191" as="geometry" />
         </mxCell>
         <mxCell id="c136" value="" style="strokeWidth=2;html=1;shape=mxgraph.flowchart.database;" parent="1" vertex="1">
           <mxGeometry x="1450" y="220" width="60" height="70" as="geometry" />
@@ -77,14 +77,14 @@
         <mxCell id="c138" value="" style="endArrow=none;dashed=1;html=1;rounded=0;" parent="1" edge="1">
           <mxGeometry relative="1" as="geometry">
             <mxPoint x="1480" y="330" as="sourcePoint" />
-            <mxPoint x="1480" y="10407" as="targetPoint" />
+            <mxPoint x="1480" y="10431" as="targetPoint" />
           </mxGeometry>
         </mxCell>
         <mxCell id="c139" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};fontSize=13;" parent="1" vertex="1">
-          <mxGeometry x="95" y="385" width="10" height="9567" as="geometry" />
+          <mxGeometry x="95" y="385" width="10" height="9591" as="geometry" />
         </mxCell>
         <mxCell id="c140" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};fontSize=13;" parent="1" vertex="1">
-          <mxGeometry x="295" y="385" width="10" height="9567" as="geometry" />
+          <mxGeometry x="295" y="385" width="10" height="9591" as="geometry" />
         </mxCell>
         <mxCell id="c141" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};fontSize=13;" parent="1" vertex="1">
           <mxGeometry x="495" y="494" width="10" height="172.0" as="geometry" />
@@ -93,7 +93,7 @@
           <mxGeometry x="495" y="822.0" width="10" height="1981.0" as="geometry" />
         </mxCell>
         <mxCell id="c143" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};fontSize=13;" parent="1" vertex="1">
-          <mxGeometry x="495" y="2959.0" width="10" height="6901.0" as="geometry" />
+          <mxGeometry x="495" y="2959.0" width="10" height="6925" as="geometry" />
         </mxCell>
         <mxCell id="c144" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};fontSize=13;" parent="1" vertex="1">
           <mxGeometry x="705" y="620" width="10" height="46.0" as="geometry" />
@@ -108,10 +108,10 @@
           <mxGeometry x="705" y="2959.0" width="10" height="43.0" as="geometry" />
         </mxCell>
         <mxCell id="c148" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};fontSize=13;" parent="1" vertex="1">
-          <mxGeometry x="705" y="3194.0" width="10" height="6574.0" as="geometry" />
+          <mxGeometry x="705" y="3194.0" width="10" height="6598" as="geometry" />
         </mxCell>
         <mxCell id="c149" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};fontSize=13;" parent="1" vertex="1">
-          <mxGeometry x="915" y="3283" width="10" height="6393" as="geometry" />
+          <mxGeometry x="915" y="3283" width="10" height="6417" as="geometry" />
         </mxCell>
         <mxCell id="c150" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};fontSize=13;" parent="1" vertex="1">
           <mxGeometry x="1120" y="3358" width="10" height="426" as="geometry" />
@@ -120,7 +120,7 @@
           <mxGeometry x="1120" y="6056" width="10" height="528" as="geometry" />
         </mxCell>
         <mxCell id="c152" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};fontSize=13;" parent="1" vertex="1">
-          <mxGeometry x="1120" y="7628" width="10" height="545" as="geometry" />
+          <mxGeometry x="1120" y="7650" width="10" height="545" as="geometry" />
         </mxCell>
         <mxCell id="c153" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};fontSize=13;" parent="1" vertex="1">
           <mxGeometry x="1310" y="3467" width="10" height="242" as="geometry" />
@@ -129,7 +129,7 @@
           <mxGeometry x="1310" y="6216" width="10" height="276" as="geometry" />
         </mxCell>
         <mxCell id="c155" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};fontSize=13;" parent="1" vertex="1">
-          <mxGeometry x="1310" y="7788" width="10" height="293" as="geometry" />
+          <mxGeometry x="1310" y="7810" width="10" height="293" as="geometry" />
         </mxCell>
         <mxCell id="c156" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};fontSize=13;" parent="1" vertex="1">
           <mxGeometry x="1475" y="3542" width="10" height="92" as="geometry" />
@@ -138,7 +138,7 @@
           <mxGeometry x="1475" y="6308" width="10" height="92" as="geometry" />
         </mxCell>
         <mxCell id="c158" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};fontSize=13;" parent="1" vertex="1">
-          <mxGeometry x="1475" y="7880" width="10" height="109" as="geometry" />
+          <mxGeometry x="1475" y="7902" width="10" height="109" as="geometry" />
         </mxCell>
         <mxCell id="c1" value="&lt;div&gt;1. Submit Write Review&lt;/div&gt;" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=12;" parent="1" edge="1">
           <mxGeometry relative="1" as="geometry">
@@ -235,7 +235,7 @@
         <mxCell id="c20" value="&lt;div&gt;3.1.3.1. Attach JWT&lt;/div&gt;&lt;div&gt;payload; continue&lt;/div&gt;" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;overflow=visible;fontSize=12;labelBackgroundColor=none;" parent="1" vertex="1">
           <mxGeometry x="770" y="1793" width="140" height="40" as="geometry" />
         </mxCell>
-        <mxCell id="c22" value="&lt;div&gt;3.2. PermissionGuard: roleId required; roleHasPermission(roleId,method,path).&lt;/div&gt;&lt;div&gt;Missing role or denied permission -&gt;403.&lt;/div&gt;" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;overflow=visible;fontSize=12;labelBackgroundColor=none;" parent="1" vertex="1">
+        <mxCell id="c22" value="&lt;div&gt;3.2. PermissionGuard: require roleId. Expert uses expertHasPermission(method,path); other&lt;/div&gt;&lt;div&gt;roles use roleHasPermission(roleId,method,path). Denied request returns 403.&lt;/div&gt;" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;overflow=visible;fontSize=12;labelBackgroundColor=none;" parent="1" vertex="1">
           <mxGeometry x="735" y="1984" width="600" height="48" as="geometry" />
         </mxCell>
         <mxCell id="c24" value="&lt;div&gt;[roleId missing OR&lt;/div&gt;&lt;div&gt;permission denied]&lt;/div&gt;" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;overflow=visible;fontSize=12;labelBackgroundColor=none;" parent="1" vertex="1">
@@ -498,7 +498,7 @@
             <mxPoint x="1120" y="6056" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="c78" value="&lt;div&gt;11.2.1.2.1.2.2.&lt;/div&gt;&lt;div&gt;review.findUnique&lt;/div&gt;&lt;div&gt;composite&lt;/div&gt;&lt;div&gt;contractId_reviewerId&lt;/div&gt;&lt;div&gt;(includes soft-deleted&lt;/div&gt;&lt;div&gt;records)&lt;/div&gt;" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=12;" parent="1" edge="1">
+        <mxCell id="c78" value="&lt;div&gt;11.2.1.2.1.2.2. review.findUnique by&lt;/div&gt;&lt;div&gt;contractId_reviewerId; select id and&lt;/div&gt;&lt;div&gt;deletedAt&lt;/div&gt;" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=12;" parent="1" edge="1">
           <mxGeometry relative="1" as="geometry">
             <mxPoint x="1130" y="6216" as="sourcePoint" />
             <mxPoint x="1310" y="6216" as="targetPoint" />
@@ -545,223 +545,223 @@
         <mxCell id="c85" value="&lt;div&gt;11.2.1.2.1.2.7. Handle&lt;/div&gt;&lt;div&gt;lookup result&lt;/div&gt;" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;overflow=visible;fontSize=12;labelBackgroundColor=none;" parent="1" vertex="1">
           <mxGeometry x="980" y="6636" width="140" height="40" as="geometry" />
         </mxCell>
-        <mxCell id="c87" value="&lt;div&gt;[review already exists]&lt;/div&gt;" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;overflow=visible;fontSize=12;labelBackgroundColor=none;" parent="1" vertex="1">
-          <mxGeometry x="120" y="6793" width="165" height="24" as="geometry" />
+        <mxCell id="c87" value="&lt;div&gt;[review exists AND&lt;/div&gt;&lt;div&gt;deletedAt is null]&lt;/div&gt;" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;overflow=visible;fontSize=12;labelBackgroundColor=none;" parent="1" vertex="1">
+          <mxGeometry x="120" y="6793" width="165" height="44" as="geometry" />
         </mxCell>
         <mxCell id="c88" value="&lt;div&gt;11.2.1.2.1.2.7.1.1. 409&lt;/div&gt;&lt;div&gt;ReviewAlreadyExists&lt;/div&gt;&lt;div&gt;Exception&lt;/div&gt;" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=12;" parent="1" edge="1">
           <mxGeometry relative="1" as="geometry">
-            <mxPoint x="915" y="6919" as="sourcePoint" />
-            <mxPoint x="715" y="6919" as="targetPoint" />
+            <mxPoint x="915" y="6939" as="sourcePoint" />
+            <mxPoint x="715" y="6939" as="targetPoint" />
           </mxGeometry>
         </mxCell>
         <mxCell id="c89" value="&lt;div&gt;11.2.1.2.1.2.7.1.2. Return&lt;/div&gt;&lt;div&gt;HTTP error&lt;/div&gt;" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=12;" parent="1" edge="1">
           <mxGeometry relative="1" as="geometry">
-            <mxPoint x="705" y="7011" as="sourcePoint" />
-            <mxPoint x="505" y="7011" as="targetPoint" />
+            <mxPoint x="705" y="7031" as="sourcePoint" />
+            <mxPoint x="505" y="7031" as="targetPoint" />
           </mxGeometry>
         </mxCell>
         <mxCell id="c90" value="&lt;div&gt;11.2.1.2.1.2.7.1.3. Return&lt;/div&gt;&lt;div&gt;error response&lt;/div&gt;" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=12;" parent="1" edge="1">
           <mxGeometry relative="1" as="geometry">
-            <mxPoint x="495" y="7103" as="sourcePoint" />
-            <mxPoint x="305" y="7103" as="targetPoint" />
+            <mxPoint x="495" y="7123" as="sourcePoint" />
+            <mxPoint x="305" y="7123" as="targetPoint" />
           </mxGeometry>
         </mxCell>
         <mxCell id="c91" value="&lt;div&gt;11.2.1.2.1.2.7.1.4. Display&lt;/div&gt;&lt;div&gt;error message; stop this&lt;/div&gt;&lt;div&gt;attempt&lt;/div&gt;" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=12;" parent="1" edge="1">
           <mxGeometry relative="1" as="geometry">
-            <mxPoint x="295" y="7212" as="sourcePoint" />
-            <mxPoint x="105" y="7212" as="targetPoint" />
+            <mxPoint x="295" y="7232" as="sourcePoint" />
+            <mxPoint x="105" y="7232" as="targetPoint" />
           </mxGeometry>
         </mxCell>
         <mxCell id="c92" value="" style="endArrow=none;dashed=1;html=1;rounded=0;" parent="1" edge="1">
           <mxGeometry relative="1" as="geometry">
-            <mxPoint x="18" y="7272" as="sourcePoint" />
-            <mxPoint x="1525" y="7272" as="targetPoint" />
+            <mxPoint x="18" y="7292" as="sourcePoint" />
+            <mxPoint x="1525" y="7292" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="c93" value="&lt;div&gt;[lookup satisfies required&lt;/div&gt;&lt;div&gt;condition]&lt;/div&gt;" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;overflow=visible;fontSize=12;labelBackgroundColor=none;" parent="1" vertex="1">
-          <mxGeometry x="120" y="7304" width="165" height="42" as="geometry" />
+        <mxCell id="c93" value="&lt;div&gt;[no review OR review is&lt;/div&gt;&lt;div&gt;soft-deleted]&lt;/div&gt;" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;overflow=visible;fontSize=12;labelBackgroundColor=none;" parent="1" vertex="1">
+          <mxGeometry x="120" y="7324" width="165" height="44" as="geometry" />
         </mxCell>
         <mxCell id="c94" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};fontSize=13;" parent="1" vertex="1">
-          <mxGeometry x="920" y="7502" width="10" height="20" as="geometry" />
+          <mxGeometry x="920" y="7524" width="10" height="20" as="geometry" />
         </mxCell>
         <mxCell id="c95" value="" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=12;" parent="1" edge="1" target="c94">
           <mxGeometry relative="1" as="geometry" x="0.3" y="-75">
-            <mxPoint x="925" y="7482" as="sourcePoint" />
-            <mxPoint x="930" y="7507" as="targetPoint" />
+            <mxPoint x="925" y="7504" as="sourcePoint" />
+            <mxPoint x="930" y="7529" as="targetPoint" />
             <Array as="points">
-              <mxPoint x="965" y="7482" />
-              <mxPoint x="965" y="7507" />
+              <mxPoint x="965" y="7504" />
+              <mxPoint x="965" y="7529" />
             </Array>
             <mxPoint x="75" y="75" as="offset" />
           </mxGeometry>
         </mxCell>
         <mxCell id="c96" value="&lt;div&gt;11.2.1.2.1.2.7.2.1.&lt;/div&gt;&lt;div&gt;Determine opposite&lt;/div&gt;&lt;div&gt;participant as reviewee;&lt;/div&gt;&lt;div&gt;resolve reviewer display&lt;/div&gt;&lt;div&gt;name&lt;/div&gt;" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;overflow=visible;fontSize=12;labelBackgroundColor=none;" parent="1" vertex="1">
-          <mxGeometry x="980" y="7391" width="140" height="91" as="geometry" />
+          <mxGeometry x="980" y="7413" width="140" height="91" as="geometry" />
         </mxCell>
-        <mxCell id="c97" value="&lt;div&gt;11.2.1.2.1.2.7.2.2. create&lt;/div&gt;&lt;div&gt;(contractId, userId,&lt;/div&gt;&lt;div&gt;revieweeId, reviewerName,&lt;/div&gt;&lt;div&gt;input)&lt;/div&gt;" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=12;" parent="1" edge="1">
+        <mxCell id="c97" value="&lt;div&gt;11.2.1.2.1.2.7.2.2. create(contractId,&lt;/div&gt;&lt;div&gt;userId, revieweeId, reviewerName, input,&lt;/div&gt;&lt;div&gt;existingReview?.id)&lt;/div&gt;" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=12;" parent="1" edge="1">
           <mxGeometry relative="1" as="geometry">
-            <mxPoint x="925" y="7628" as="sourcePoint" />
-            <mxPoint x="1120" y="7628" as="targetPoint" />
+            <mxPoint x="925" y="7650" as="sourcePoint" />
+            <mxPoint x="1120" y="7650" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="c98" value="&lt;div&gt;11.2.1.2.1.2.7.2.3.&lt;/div&gt;&lt;div&gt;$transaction:&lt;/div&gt;&lt;div&gt;review.create;&lt;/div&gt;&lt;div&gt;notification.create&lt;/div&gt;&lt;div&gt;REVIEW_RECEIVED for&lt;/div&gt;&lt;div&gt;reviewee&lt;/div&gt;" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=12;" parent="1" edge="1">
+        <mxCell id="c98" value="&lt;div&gt;11.2.1.2.1.2.7.2.3. Transaction: create&lt;/div&gt;&lt;div&gt;new OR restore deleted review; hide old&lt;/div&gt;&lt;div&gt;response; notify reviewee&lt;/div&gt;" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=12;" parent="1" edge="1">
           <mxGeometry relative="1" as="geometry">
-            <mxPoint x="1130" y="7788" as="sourcePoint" />
-            <mxPoint x="1310" y="7788" as="targetPoint" />
+            <mxPoint x="1130" y="7810" as="sourcePoint" />
+            <mxPoint x="1310" y="7810" as="targetPoint" />
           </mxGeometry>
         </mxCell>
         <mxCell id="c99" value="&lt;div&gt;11.2.1.2.1.2.7.2.4.&lt;/div&gt;&lt;div&gt;Execute query&lt;/div&gt;" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=12;" parent="1" edge="1">
           <mxGeometry relative="1" as="geometry">
-            <mxPoint x="1320" y="7880" as="sourcePoint" />
-            <mxPoint x="1475" y="7880" as="targetPoint" />
+            <mxPoint x="1320" y="7902" as="sourcePoint" />
+            <mxPoint x="1475" y="7902" as="targetPoint" />
           </mxGeometry>
         </mxCell>
         <mxCell id="c100" value="&lt;div&gt;11.2.1.2.1.2.7.2.5.&lt;/div&gt;&lt;div&gt;Return new review or&lt;/div&gt;&lt;div&gt;error&lt;/div&gt;" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=12;" parent="1" edge="1">
           <mxGeometry relative="1" as="geometry">
-            <mxPoint x="1475" y="7989" as="sourcePoint" />
-            <mxPoint x="1320" y="7989" as="targetPoint" />
+            <mxPoint x="1475" y="8011" as="sourcePoint" />
+            <mxPoint x="1320" y="8011" as="targetPoint" />
           </mxGeometry>
         </mxCell>
         <mxCell id="c101" value="&lt;div&gt;11.2.1.2.1.2.7.2.6. Return&lt;/div&gt;&lt;div&gt;new review or error&lt;/div&gt;" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=12;" parent="1" edge="1">
           <mxGeometry relative="1" as="geometry">
-            <mxPoint x="1310" y="8081" as="sourcePoint" />
-            <mxPoint x="1130" y="8081" as="targetPoint" />
+            <mxPoint x="1310" y="8103" as="sourcePoint" />
+            <mxPoint x="1130" y="8103" as="targetPoint" />
           </mxGeometry>
         </mxCell>
         <mxCell id="c102" value="&lt;div&gt;11.2.1.2.1.2.7.2.7. Return&lt;/div&gt;&lt;div&gt;new review or error&lt;/div&gt;" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=12;" parent="1" edge="1">
           <mxGeometry relative="1" as="geometry">
-            <mxPoint x="1120" y="8173" as="sourcePoint" />
-            <mxPoint x="925" y="8173" as="targetPoint" />
+            <mxPoint x="1120" y="8195" as="sourcePoint" />
+            <mxPoint x="925" y="8195" as="targetPoint" />
           </mxGeometry>
         </mxCell>
         <mxCell id="c103" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};fontSize=13;" parent="1" vertex="1">
-          <mxGeometry x="920" y="8302" width="10" height="20" as="geometry" />
+          <mxGeometry x="920" y="8324" width="10" height="20" as="geometry" />
         </mxCell>
         <mxCell id="c104" value="" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=12;" parent="1" edge="1" target="c103">
           <mxGeometry relative="1" as="geometry" x="0.3" y="-75">
-            <mxPoint x="925" y="8282" as="sourcePoint" />
-            <mxPoint x="930" y="8307" as="targetPoint" />
+            <mxPoint x="925" y="8304" as="sourcePoint" />
+            <mxPoint x="930" y="8329" as="targetPoint" />
             <Array as="points">
-              <mxPoint x="965" y="8282" />
-              <mxPoint x="965" y="8307" />
+              <mxPoint x="965" y="8304" />
+              <mxPoint x="965" y="8329" />
             </Array>
             <mxPoint x="75" y="75" as="offset" />
           </mxGeometry>
         </mxCell>
         <mxCell id="c105" value="&lt;div&gt;11.2.1.2.1.2.7.2.8.&lt;/div&gt;&lt;div&gt;Handle review creation&lt;/div&gt;&lt;div&gt;result&lt;/div&gt;" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;overflow=visible;fontSize=12;labelBackgroundColor=none;" parent="1" vertex="1">
-          <mxGeometry x="980" y="8225" width="140" height="57" as="geometry" />
+          <mxGeometry x="980" y="8247" width="140" height="57" as="geometry" />
         </mxCell>
-        <mxCell id="c107" value="&lt;div&gt;[Prisma P2002]&lt;/div&gt;" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;overflow=visible;fontSize=12;labelBackgroundColor=none;" parent="1" vertex="1">
-          <mxGeometry x="120" y="8399" width="165" height="24" as="geometry" />
+        <mxCell id="c107" value="&lt;div&gt;[Prisma P2002 OR P2025]&lt;/div&gt;" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;overflow=visible;fontSize=12;labelBackgroundColor=none;" parent="1" vertex="1">
+          <mxGeometry x="120" y="8421" width="165" height="26" as="geometry" />
         </mxCell>
         <mxCell id="c108" value="&lt;div&gt;11.2.1.2.1.2.7.2.8.1.1. 409&lt;/div&gt;&lt;div&gt;ReviewAlreadyExists&lt;/div&gt;&lt;div&gt;Exception&lt;/div&gt;" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=12;" parent="1" edge="1">
           <mxGeometry relative="1" as="geometry">
-            <mxPoint x="915" y="8525" as="sourcePoint" />
-            <mxPoint x="715" y="8525" as="targetPoint" />
+            <mxPoint x="915" y="8549" as="sourcePoint" />
+            <mxPoint x="715" y="8549" as="targetPoint" />
           </mxGeometry>
         </mxCell>
         <mxCell id="c109" value="&lt;div&gt;11.2.1.2.1.2.7.2.8.1.2. Return&lt;/div&gt;&lt;div&gt;HTTP error&lt;/div&gt;" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=12;" parent="1" edge="1">
           <mxGeometry relative="1" as="geometry">
-            <mxPoint x="705" y="8617" as="sourcePoint" />
-            <mxPoint x="505" y="8617" as="targetPoint" />
+            <mxPoint x="705" y="8641" as="sourcePoint" />
+            <mxPoint x="505" y="8641" as="targetPoint" />
           </mxGeometry>
         </mxCell>
         <mxCell id="c110" value="&lt;div&gt;11.2.1.2.1.2.7.2.8.1.3.&lt;/div&gt;&lt;div&gt;Return error response&lt;/div&gt;" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=12;" parent="1" edge="1">
           <mxGeometry relative="1" as="geometry">
-            <mxPoint x="495" y="8709" as="sourcePoint" />
-            <mxPoint x="305" y="8709" as="targetPoint" />
+            <mxPoint x="495" y="8733" as="sourcePoint" />
+            <mxPoint x="305" y="8733" as="targetPoint" />
           </mxGeometry>
         </mxCell>
         <mxCell id="c111" value="&lt;div&gt;11.2.1.2.1.2.7.2.8.1.4.&lt;/div&gt;&lt;div&gt;Display error message; stop&lt;/div&gt;&lt;div&gt;this attempt&lt;/div&gt;" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=12;" parent="1" edge="1">
           <mxGeometry relative="1" as="geometry">
-            <mxPoint x="295" y="8818" as="sourcePoint" />
-            <mxPoint x="105" y="8818" as="targetPoint" />
+            <mxPoint x="295" y="8842" as="sourcePoint" />
+            <mxPoint x="105" y="8842" as="targetPoint" />
           </mxGeometry>
         </mxCell>
         <mxCell id="c112" value="" style="endArrow=none;dashed=1;html=1;rounded=0;" parent="1" edge="1">
           <mxGeometry relative="1" as="geometry">
-            <mxPoint x="24" y="8878" as="sourcePoint" />
-            <mxPoint x="1525" y="8878" as="targetPoint" />
+            <mxPoint x="24" y="8902" as="sourcePoint" />
+            <mxPoint x="1525" y="8902" as="targetPoint" />
           </mxGeometry>
         </mxCell>
         <mxCell id="c113" value="&lt;div&gt;[other error]&lt;/div&gt;" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;overflow=visible;fontSize=12;labelBackgroundColor=none;" parent="1" vertex="1">
-          <mxGeometry x="120" y="8910" width="165" height="24" as="geometry" />
+          <mxGeometry x="120" y="8934" width="165" height="24" as="geometry" />
         </mxCell>
         <mxCell id="c114" value="&lt;div&gt;11.2.1.2.1.2.7.2.8.2.1.&lt;/div&gt;&lt;div&gt;Propagate original error&lt;/div&gt;" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=12;" parent="1" edge="1">
           <mxGeometry relative="1" as="geometry">
-            <mxPoint x="915" y="9019" as="sourcePoint" />
-            <mxPoint x="715" y="9019" as="targetPoint" />
+            <mxPoint x="915" y="9043" as="sourcePoint" />
+            <mxPoint x="715" y="9043" as="targetPoint" />
           </mxGeometry>
         </mxCell>
         <mxCell id="c115" value="&lt;div&gt;11.2.1.2.1.2.7.2.8.2.2. Return&lt;/div&gt;&lt;div&gt;HTTP error&lt;/div&gt;" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=12;" parent="1" edge="1">
           <mxGeometry relative="1" as="geometry">
-            <mxPoint x="705" y="9111" as="sourcePoint" />
-            <mxPoint x="505" y="9111" as="targetPoint" />
+            <mxPoint x="705" y="9135" as="sourcePoint" />
+            <mxPoint x="505" y="9135" as="targetPoint" />
           </mxGeometry>
         </mxCell>
         <mxCell id="c116" value="&lt;div&gt;11.2.1.2.1.2.7.2.8.2.3.&lt;/div&gt;&lt;div&gt;Return error response&lt;/div&gt;" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=12;" parent="1" edge="1">
           <mxGeometry relative="1" as="geometry">
-            <mxPoint x="495" y="9203" as="sourcePoint" />
-            <mxPoint x="305" y="9203" as="targetPoint" />
+            <mxPoint x="495" y="9227" as="sourcePoint" />
+            <mxPoint x="305" y="9227" as="targetPoint" />
           </mxGeometry>
         </mxCell>
         <mxCell id="c117" value="&lt;div&gt;11.2.1.2.1.2.7.2.8.2.4.&lt;/div&gt;&lt;div&gt;Display error message; stop&lt;/div&gt;&lt;div&gt;this attempt&lt;/div&gt;" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=12;" parent="1" edge="1">
           <mxGeometry relative="1" as="geometry">
-            <mxPoint x="295" y="9312" as="sourcePoint" />
-            <mxPoint x="105" y="9312" as="targetPoint" />
+            <mxPoint x="295" y="9336" as="sourcePoint" />
+            <mxPoint x="105" y="9336" as="targetPoint" />
           </mxGeometry>
         </mxCell>
         <mxCell id="c118" value="" style="endArrow=none;dashed=1;html=1;rounded=0;" parent="1" edge="1">
           <mxGeometry relative="1" as="geometry">
-            <mxPoint x="24" y="9372" as="sourcePoint" />
-            <mxPoint x="1525" y="9372" as="targetPoint" />
+            <mxPoint x="24" y="9396" as="sourcePoint" />
+            <mxPoint x="1525" y="9396" as="targetPoint" />
           </mxGeometry>
         </mxCell>
         <mxCell id="c119" value="&lt;div&gt;[transaction resolves]&lt;/div&gt;" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;overflow=visible;fontSize=12;labelBackgroundColor=none;" parent="1" vertex="1">
-          <mxGeometry x="120" y="9404" width="165" height="24" as="geometry" />
+          <mxGeometry x="120" y="9428" width="165" height="24" as="geometry" />
         </mxCell>
         <mxCell id="c120" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};fontSize=13;" parent="1" vertex="1">
-          <mxGeometry x="920" y="9584" width="10" height="20" as="geometry" />
+          <mxGeometry x="920" y="9608" width="10" height="20" as="geometry" />
         </mxCell>
         <mxCell id="c121" value="" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=12;" parent="1" edge="1" target="c120">
           <mxGeometry relative="1" as="geometry" x="0.3" y="-75">
-            <mxPoint x="925" y="9564" as="sourcePoint" />
-            <mxPoint x="930" y="9589" as="targetPoint" />
+            <mxPoint x="925" y="9588" as="sourcePoint" />
+            <mxPoint x="930" y="9613" as="targetPoint" />
             <Array as="points">
-              <mxPoint x="965" y="9564" />
-              <mxPoint x="965" y="9589" />
+              <mxPoint x="965" y="9588" />
+              <mxPoint x="965" y="9613" />
             </Array>
             <mxPoint x="75" y="75" as="offset" />
           </mxGeometry>
         </mxCell>
         <mxCell id="c122" value="&lt;div&gt;11.2.1.2.1.2.7.2.8.3.1.&lt;/div&gt;&lt;div&gt;present: Decimal&lt;/div&gt;&lt;div&gt;overallRating -&gt;&lt;/div&gt;&lt;div&gt;Number; hide&lt;/div&gt;&lt;div&gt;soft-deleted response&lt;/div&gt;" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;overflow=visible;fontSize=12;labelBackgroundColor=none;" parent="1" vertex="1">
-          <mxGeometry x="980" y="9473" width="140" height="91" as="geometry" />
+          <mxGeometry x="980" y="9497" width="140" height="91" as="geometry" />
         </mxCell>
         <mxCell id="c123" value="&lt;div&gt;11.2.1.2.1.2.7.2.8.3.2. Return&lt;/div&gt;&lt;div&gt;ReviewDto&lt;/div&gt;" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=12;" parent="1" edge="1">
           <mxGeometry relative="1" as="geometry">
-            <mxPoint x="915" y="9676" as="sourcePoint" />
-            <mxPoint x="715" y="9676" as="targetPoint" />
+            <mxPoint x="915" y="9700" as="sourcePoint" />
+            <mxPoint x="715" y="9700" as="targetPoint" />
           </mxGeometry>
         </mxCell>
         <mxCell id="c124" value="&lt;div&gt;11.2.1.2.1.2.7.2.8.3.3. Return&lt;/div&gt;&lt;div&gt;serialized response&lt;/div&gt;" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=12;" parent="1" edge="1">
           <mxGeometry relative="1" as="geometry">
-            <mxPoint x="705" y="9768" as="sourcePoint" />
-            <mxPoint x="505" y="9768" as="targetPoint" />
+            <mxPoint x="705" y="9792" as="sourcePoint" />
+            <mxPoint x="505" y="9792" as="targetPoint" />
           </mxGeometry>
         </mxCell>
         <mxCell id="c125" value="&lt;div&gt;11.2.1.2.1.2.7.2.8.3.4. 201&lt;/div&gt;&lt;div&gt;Created: response data&lt;/div&gt;" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=12;" parent="1" edge="1">
           <mxGeometry relative="1" as="geometry">
-            <mxPoint x="495" y="9860" as="sourcePoint" />
-            <mxPoint x="305" y="9860" as="targetPoint" />
+            <mxPoint x="495" y="9884" as="sourcePoint" />
+            <mxPoint x="305" y="9884" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="c126" value="&lt;div&gt;11.2.1.2.1.2.7.2.8.3.5.&lt;/div&gt;&lt;div&gt;Display result&lt;/div&gt;" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=12;" parent="1" edge="1">
+        <mxCell id="c126" value="&lt;div&gt;11.2.1.2.1.2.7.2.8.3.5. Display new&lt;/div&gt;&lt;div&gt;review; allow writing again after&lt;/div&gt;&lt;div&gt;deletion&lt;/div&gt;" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=12;" parent="1" edge="1">
           <mxGeometry relative="1" as="geometry">
-            <mxPoint x="295" y="9952" as="sourcePoint" />
-            <mxPoint x="105" y="9952" as="targetPoint" />
+            <mxPoint x="295" y="9976" as="sourcePoint" />
+            <mxPoint x="105" y="9976" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-      </root>
+      <mxCell id="nhuy-screen-context" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=middle;fontSize=13;spacing=8;fillColor=none;strokeColor=none;" vertex="1" parent="1" value="Sprint 4 | Screen: /client/reviews?contractId=:id; /freelancer/profile?tab=reviews | Only completed-contract participants can review; Expert has no review permission."><mxGeometry y="80" width="1380" as="geometry" height="90" x="100" /></mxCell></root>
     </mxGraphModel>
   </diagram>
 </mxfile>
