@@ -120,9 +120,9 @@ export class ContractPdfService {
     const platformFee =
       Number(contract.platformFee) ||
       Number(contract.clientPlatformFee) ||
-      totalAmount * 0.1;
+      Math.round(totalAmount * 0.03 * 100) / 100;
     const feePercent =
-      totalAmount > 0 ? Math.round((platformFee / totalAmount) * 100) : 10;
+      totalAmount > 0 ? Math.round((platformFee / totalAmount) * 100) : 3;
 
     // --- 1. Top Header (Logo & Contract Agreement code) ---
     page.drawText('frevia', {
@@ -416,17 +416,30 @@ export class ContractPdfService {
     });
     currentY -= 12;
 
+    const clientContractFee =
+      Number(contract.clientPlatformFee) > 0
+        ? Number(contract.clientPlatformFee)
+        : platformFee > 0
+          ? platformFee
+          : Math.round(totalAmount * 0.03 * 100) / 100;
+    const clientFeeRate =
+      totalAmount > 0 && feePercent >= 0
+        ? Math.round((clientContractFee / totalAmount) * 100)
+        : 3;
+
     page.drawText(
-      `The total contract value is ${formatMoney(totalAmount)} (USD), including a platform fee of ${feePercent}% (${formatMoney(platformFee)}). Payment will be released per milestone via Stripe.`,
+      `The total contract value is ${formatMoney(totalAmount)} (USD). Client funds at least 1 milestone (or all milestones) plus a ${clientFeeRate}% Client contract fee (${formatMoney(clientContractFee)}) before signing; Freelancer is charged a 5% platform fee on each released milestone via Stripe.`,
       {
         x: margin,
         y: currentY,
         size: 7.5,
         font,
         color: rgb(0.35, 0.35, 0.35),
+        maxWidth: contentWidth,
+        lineHeight: 10,
       },
     );
-    currentY -= 14;
+    currentY -= 26;
 
     // Table Header
     const rowHeight = 18;

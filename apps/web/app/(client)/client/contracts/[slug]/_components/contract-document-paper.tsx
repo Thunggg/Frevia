@@ -64,14 +64,12 @@ export function ContractDocumentPaper({
     contract.freelancer?.email || "freelancer@example.com";
 
   const totalAmount = Number(contract.totalAmount) || 0;
-  const platformFee =
-    Number(contract.platformFee) ||
+  const clientFeeAmount =
     Number(contract.clientPlatformFee) ||
-    totalAmount * 0.1;
-  const platformFeePercent =
-    totalAmount > 0
-      ? Math.round((platformFee / totalAmount) * 100)
-      : 10;
+    Number(contract.platformFee) ||
+    Math.round(totalAmount * 0.03 * 100) / 100;
+  const clientFeePercent =
+    totalAmount > 0 ? Math.round((clientFeeAmount / totalAmount) * 100) : 3;
 
   // Formatted Contract ID like #CON-2025-1001
   const contractYear = contract.createdAt
@@ -317,9 +315,13 @@ export function ContractDocumentPaper({
             <strong className="text-zinc-950 font-mono">
               ${totalAmount.toLocaleString("en-US", { minimumFractionDigits: 2 })} (USD)
             </strong>
-            , including a platform fee of {platformFeePercent}% ($
-            {platformFee.toLocaleString("en-US", { minimumFractionDigits: 2 })}).
-            Payment will be released per milestone via Stripe.
+            . Client authorizes an escrow hold for at least 1 milestone (or all
+            milestones) plus a {clientFeePercent}% Client contract fee ($
+            {clientFeeAmount.toLocaleString("en-US", {
+              minimumFractionDigits: 2,
+            })}
+            ) prior to signing; Freelancer is charged a 5% platform fee per
+            milestone upon release via Stripe.
           </p>
 
           <div className="overflow-x-auto border border-zinc-300 rounded-xs">
@@ -398,16 +400,20 @@ export function ContractDocumentPaper({
                                   <Pencil className="size-3.5" />
                                 </button>
                               )}
-                              {onDeleteMilestone && (
-                                <button
-                                  type="button"
-                                  onClick={() => onDeleteMilestone(m.id, m.title)}
-                                  title="Delete milestone"
-                                  className="flex size-6 items-center justify-center rounded-md text-zinc-500 hover:bg-rose-50 hover:text-rose-600 transition-colors cursor-pointer"
-                                >
-                                  <Trash2 className="size-3.5" />
-                                </button>
-                              )}
+                              {onDeleteMilestone &&
+                                !(
+                                  contract.status === "PENDING_SIGN" &&
+                                  contract.holdMilestoneIds?.includes(m.id)
+                                ) && (
+                                  <button
+                                    type="button"
+                                    onClick={() => onDeleteMilestone(m.id, m.title)}
+                                    title="Delete milestone"
+                                    className="flex size-6 items-center justify-center rounded-md text-zinc-500 hover:bg-rose-50 hover:text-rose-600 transition-colors cursor-pointer"
+                                  >
+                                    <Trash2 className="size-3.5" />
+                                  </button>
+                                )}
                             </div>
                           ) : (
                             <span className="text-[10px] text-zinc-400">—</span>

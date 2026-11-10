@@ -23,6 +23,7 @@ import {
 import { Button } from "@repo/ui/components/shadcn/button";
 import { toastError, toastSuccess } from "@repo/ui/components/shadcn/toast";
 import { contractApiRequest } from "@/apiRequests/contract";
+import { paymentApiRequest } from "@/apiRequests/payment";
 import { ApiFail } from "@/lib/http";
 import type { GetSubmissionResponseType } from "@shared/types";
 
@@ -67,6 +68,10 @@ export function ReviewSubmissionDialog({
 
   if (!submission) return null;
 
+  const freelancerFee = Math.round(milestoneAmount * 0.05 * 100) / 100;
+  const freelancerNetPayout =
+    Math.round((milestoneAmount - freelancerFee) * 100) / 100;
+
   const handleApprove = async () => {
     setIsApproving(true);
     try {
@@ -75,8 +80,19 @@ export function ReviewSubmissionDialog({
         milestoneId,
         submission.id,
       );
+
+      let releaseCompleted = false;
+      try {
+        await paymentApiRequest.releaseMilestone(contractId, milestoneId);
+        releaseCompleted = true;
+      } catch {
+        // Approval succeeded even if automatic release encounters a transient error
+      }
+
       toastSuccess({
-        message: `Milestone approved and payment of $${milestoneAmount.toLocaleString("en-US", { minimumFractionDigits: 2 })} released!`,
+        message: releaseCompleted
+          ? `Milestone approved and $${freelancerNetPayout.toLocaleString("en-US", { minimumFractionDigits: 2 })} credited to freelancer wallet (5% platform fee deducted)!`
+          : "Deliverables approved! Please release the milestone payout from the deliverables tab.",
       });
 
       await queryClient.invalidateQueries({
@@ -84,6 +100,15 @@ export function ReviewSubmissionDialog({
       });
       await queryClient.invalidateQueries({
         queryKey: ["client-contract-detail", contractId],
+      });
+      await queryClient.invalidateQueries({
+        queryKey: ["milestone-detail", contractId, milestoneId],
+      });
+      await queryClient.invalidateQueries({
+        queryKey: ["client-transactions"],
+      });
+      await queryClient.invalidateQueries({
+        queryKey: ["wallet-summary"],
       });
 
       onSuccess?.();
@@ -312,31 +337,56 @@ export function ReviewSubmissionDialog({
         </div>
 
         {!showChangesForm && (
-          <SheetFooter className="mt-8 pt-4 border-t border-border flex flex-col sm:flex-row items-center justify-end gap-2">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => setShowChangesForm(true)}
-              className="w-full sm:w-auto rounded-xl text-xs border-amber-300 text-amber-700 hover:bg-amber-50 dark:border-amber-800 dark:text-amber-400 dark:hover:bg-amber-950/30 cursor-pointer"
-            >
-              <RotateCcw className="mr-1.5 size-3.5" />
-              Request Changes
-            </Button>
+          <div className="mt-6 space-y-4">
+            <div className="rounded-xl border border-border/80 bg-muted/20 p-3.5 space-y-1.5 text-xs">
+              <div className="flex items-center justify-between">
+                <span className="text-muted-foreground">Gross Milestone</span>
+                <span className="font-mono font-semibold text-foreground">
+                  ${milestoneAmount.toLocaleString("en-US", { minimumFractionDigits: 2 })}
+                </span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-muted-foreground">
+                  Freelancer Platform Fee (5%)
+                </span>
+                <span className="font-mono text-muted-foreground">
+                  -${freelancerFee.toLocaleString("en-US", { minimumFractionDigits: 2 })}
+                </span>
+              </div>
+              <div className="pt-1.5 border-t border-border/60 flex items-center justify-between font-bold">
+                <span>Net Release to Freelancer (95%)</span>
+                <span className="font-mono text-emerald-600 dark:text-emerald-400">
+                  ${freelancerNetPayout.toLocaleString("en-US", { minimumFractionDigits: 2 })}
+                </span>
+              </div>
+            </div>
 
-            <Button
-              type="button"
-              disabled={isApproving}
-              onClick={() => void handleApprove()}
-              className="w-full sm:w-auto rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold cursor-pointer"
-            >
-              {isApproving ? (
-                <Loader2 className="mr-1.5 size-3.5 animate-spin" />
-              ) : (
-                <CheckCircle2 className="mr-1.5 size-3.5" />
-              )}
-              Approve & Release ${milestoneAmount.toLocaleString("en-US", { minimumFractionDigits: 2 })}
-            </Button>
-          </SheetFooter>
+            <SheetFooter className="pt-4 border-t border-border flex flex-col sm:flex-row items-center justify-end gap-2">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setShowChangesForm(true)}
+                className="w-full sm:w-auto rounded-xl text-xs border-amber-300 text-amber-700 hover:bg-amber-50 dark:border-amber-800 dark:text-amber-400 dark:hover:bg-amber-950/30 cursor-pointer"
+              >
+                <RotateCcw className="mr-1.5 size-3.5" />
+                Request Changes
+              </Button>
+
+              <Button
+                type="button"
+                disabled={isApproving}
+                onClick={() => void handleApprove()}
+                className="w-full sm:w-auto rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold cursor-pointer"
+              >
+                {isApproving ? (
+                  <Loader2 className="mr-1.5 size-3.5 animate-spin" />
+                ) : (
+                  <CheckCircle2 className="mr-1.5 size-3.5" />
+                )}
+                Approve & Release ${freelancerNetPayout.toLocaleString("en-US", { minimumFractionDigits: 2 })}
+              </Button>
+            </SheetFooter>
+          </div>
         )}
       </SheetContent>
     </Sheet>

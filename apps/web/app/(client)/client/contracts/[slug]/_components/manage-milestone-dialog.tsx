@@ -38,6 +38,7 @@ interface ManageMilestoneDialogProps {
   currentAllocatedAmount: number;
   contractExpiresAt?: Date | string | null;
   milestoneToEdit?: MilestoneItemData | null;
+  isAmountLocked?: boolean;
   onSuccess?: () => void;
 }
 
@@ -49,6 +50,7 @@ export function ManageMilestoneDialog({
   currentAllocatedAmount,
   contractExpiresAt,
   milestoneToEdit,
+  isAmountLocked = false,
   onSuccess,
 }: ManageMilestoneDialogProps) {
   const queryClient = useQueryClient();
@@ -245,12 +247,18 @@ export function ManageMilestoneDialog({
                   min="1"
                   step="any"
                   required
+                  disabled={isAmountLocked}
                   value={amount || ""}
                   onChange={(e) => setAmount(Number(e.target.value))}
                   placeholder="0.00"
-                  className="w-full rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 py-2 pl-9 pr-3 text-xs text-zinc-900 dark:text-zinc-100 focus:border-[#0069D3] focus:outline-hidden"
+                  className="w-full rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 py-2 pl-9 pr-3 text-xs text-zinc-900 dark:text-zinc-100 focus:border-[#0069D3] focus:outline-hidden disabled:opacity-60 disabled:cursor-not-allowed"
                 />
               </div>
+              {isAmountLocked && (
+                <p className="mt-1 text-[11px] text-amber-600 dark:text-amber-400">
+                  Amount cannot be edited while this milestone is part of an authorized escrow hold.
+                </p>
+              )}
             </div>
 
             {/* Due Date */}

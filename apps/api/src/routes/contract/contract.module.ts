@@ -9,5 +9,6 @@ import { ContractService } from './contract.service';
   imports: [SharedModule, PaymentModule],
   controllers: [ContractController],
   providers: [ContractService, ContractRepository],
+  exports: [ContractService, ContractRepository],
 })
 export class ContractModule {}

@@ -127,4 +127,150 @@ describe('ContractService date validation', () => {
       }),
     ).rejects.toThrow(UnprocessableEntityException);
   });
+
+  it('rejects signing while contract status is AWAITING_PAYMENT', async () => {
+    const { service } = buildService();
+
+    await expect(service.signContract(10, 99)).rejects.toThrow(
+      UnprocessableEntityException,
+    );
+  });
+
+  it('enforces client must sign before freelancer', async () => {
+    const { service } = buildService({
+      findContractById: jest.fn().mockResolvedValue({
+        id: 99,
+        clientId: 10,
+        freelancerId: 20,
+        status: ContractStatus.PENDING_SIGN,
+        signedByClient: false,
+        signedByFreelancer: false,
+        holdPaymentIntentId: 'pi_hold_1',
+        expiresAt: new Date('2027-02-15T16:59:59.999Z'),
+      }),
+    });
+
+    await expect(service.signContract(20, 99)).rejects.toThrow(
+      UnprocessableEntityException,
+    );
+  });
+
+  it('captures held payment intent when freelancer signs after client', async () => {
+    const captureContractHold = jest.fn().mockResolvedValue({
+      success: true,
+      paymentIntentId: 'pi_hold_1',
+      status: 'succeeded',
+      message: 'Captured',
+    });
+    const signContract = jest.fn().mockResolvedValue({
+      id: 99,
+      status: ContractStatus.ACTIVE,
+      signedByClient: true,
+      signedByFreelancer: true,
+    });
+    const repository = {
+      findContractById: jest.fn().mockResolvedValue({
+        id: 99,
+        clientId: 10,
+        freelancerId: 20,
+        status: ContractStatus.PENDING_SIGN,
+        signedByClient: true,
+        signedByFreelancer: false,
+        holdPaymentIntentId: 'pi_hold_1',
+        expiresAt: new Date('2027-02-15T16:59:59.999Z'),
+      }),
+      signContract,
+    } as unknown as ContractRepository;
+    const pdfService = {
+      generateAndSaveContractPdf: jest.fn().mockResolvedValue(null),
+    } as unknown as ContractPdfService;
+    const service = new ContractService(repository, pdfService, {
+      captureContractHold,
+    } as unknown as PaymentService);
+
+    const result = await service.signContract(20, 99);
+
+    expect(captureContractHold).toHaveBeenCalledWith('pi_hold_1');
+    expect(signContract).toHaveBeenCalledWith(99, 'freelancer');
+    expect(result.status).toBe(ContractStatus.ACTIVE);
+  });
+
+  it('cancels held payment intent without refund fee when freelancer rejects', async () => {
+    const cancelContractHold = jest.fn().mockResolvedValue({
+      success: true,
+      paymentIntentId: 'pi_hold_1',
+      status: 'canceled',
+      message: 'Canceled',
+    });
+    const refundContractEscrow = jest.fn().mockResolvedValue({ refundCount: 0 });
+    const rejectContract = jest.fn().mockResolvedValue({
+      id: 99,
+      status: ContractStatus.REJECTED,
+    });
+    const repository = {
+      findContractById: jest.fn().mockResolvedValue({
+        id: 99,
+        clientId: 10,
+        freelancerId: 20,
+        status: ContractStatus.PENDING_SIGN,
+        holdPaymentIntentId: 'pi_hold_1',
+        expiresAt: new Date('2027-02-15T16:59:59.999Z'),
+      }),
+      rejectContract,
+    } as unknown as ContractRepository;
+    const service = new ContractService(
+      repository,
+      {} as ContractPdfService,
+      {
+        cancelContractHold,
+        refundContractEscrow,
+      } as unknown as PaymentService,
+    );
+
+    const result = await service.rejectContract(20, 99, 'Budget mismatch');
+
+    expect(cancelContractHold).toHaveBeenCalledWith(
+      'pi_hold_1',
+      'Budget mismatch',
+    );
+    expect(rejectContract).toHaveBeenCalledWith(99, 'Budget mismatch');
+    expect(result.status).toBe(ContractStatus.REJECTED);
+  });
+
+  it('expires overdue contracts and cancels any payment hold', async () => {
+    const cancelContractHold = jest.fn().mockResolvedValue({
+      success: true,
+      paymentIntentId: 'pi_hold_exp',
+      status: 'canceled',
+      message: 'Canceled',
+    });
+    const expireContract = jest.fn().mockResolvedValue({
+      id: 99,
+      status: ContractStatus.EXPIRED,
+    });
+    const repository = {
+      findExpiredPendingContracts: jest.fn().mockResolvedValue([
+        {
+          id: 99,
+          holdPaymentIntentId: 'pi_hold_exp',
+        },
+      ]),
+      expireContract,
+    } as unknown as ContractRepository;
+    const service = new ContractService(
+      repository,
+      {} as ContractPdfService,
+      {
+        cancelContractHold,
+      } as unknown as PaymentService,
+    );
+
+    await service.expireOverdueContracts();
+
+    expect(cancelContractHold).toHaveBeenCalledWith(
+      'pi_hold_exp',
+      'Contract expired before both parties signed',
+    );
+    expect(expireContract).toHaveBeenCalledWith(99);
+  });
 });

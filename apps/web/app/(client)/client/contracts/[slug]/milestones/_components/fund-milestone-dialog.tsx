@@ -4,7 +4,6 @@ import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   CreditCard,
-  DollarSign,
   Loader2,
   Lock,
   ShieldCheck,
@@ -43,7 +42,7 @@ export function FundMilestoneDialog({
   const [isProcessing, setIsProcessing] = useState(false);
   const [selectedPmId, setSelectedPmId] = useState<string>("");
 
-  const { data: savedCardsData, isLoading: loadingCards } = useQuery({
+  const { data: savedCardsData } = useQuery({
     queryKey: ["client-saved-cards"],
     queryFn: async () => {
       const res = await paymentApiRequest.getSavedPaymentMethods();
@@ -157,6 +156,12 @@ export function FundMilestoneDialog({
                   {milestoneAmount.toLocaleString("en-US", {
                     minimumFractionDigits: 2,
                   })}
+                </span>
+              </div>
+              <div className="flex items-center justify-between text-[11px] pt-1 border-t border-zinc-200/70 dark:border-zinc-800/70">
+                <span className="text-zinc-500">Client Fee:</span>
+                <span className="font-medium text-emerald-600 dark:text-emerald-400">
+                  $0.00 (Covered in initial contract fee)
                 </span>
               </div>
             </div>

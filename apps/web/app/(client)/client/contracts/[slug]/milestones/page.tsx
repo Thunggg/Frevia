@@ -1,5 +1,4 @@
 import { notFound } from "next/navigation";
-import { getTranslations } from "next-intl/server";
 import contractServerRequest from "@/apiRequests/contract.server";
 import { MilestonesPageContent } from "./_components";
 
@@ -9,7 +8,6 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const t = await getTranslations("pageMeta");
 
   return {
     title: `Milestones Management - #${slug}`,

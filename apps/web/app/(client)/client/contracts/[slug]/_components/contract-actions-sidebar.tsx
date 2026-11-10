@@ -1,10 +1,8 @@
 "use client";
 
-import Link from "next/link";
 import { useTranslations } from "next-intl";
 import {
   Download,
-  FileEdit,
   FileCheck,
   MessageSquare,
   CreditCard,
@@ -13,7 +11,6 @@ import {
   XCircle,
   ShieldCheck,
   Loader2,
-  Plus,
 } from "lucide-react";
 import { Button } from "@repo/ui/components/shadcn/button";
 import { Badge } from "@repo/ui/components/shadcn/badge";
@@ -32,52 +29,55 @@ interface ContractActionsSidebarProps {
   onOpenAddMilestone?: () => void;
   onOpenConfirmComplete: () => void;
   onOpenConfirmCancel: () => void;
-  onPayPlatformFee?: () => void;
+  onOpenFundHold?: () => void;
+  onOpenConfirmReject?: () => void;
 }
 
 export function ContractActionsSidebar({
   contract,
   isFreelancer,
-  basePath = "/client",
   pdfFile,
   isStartingChat = false,
   isSigning = false,
   onMessageCounterparty,
   onOpenSignConfirm,
-  onOpenEditContract,
-  onOpenAddMilestone,
   onOpenConfirmComplete,
   onOpenConfirmCancel,
-  onPayPlatformFee,
+  onOpenFundHold,
+  onOpenConfirmReject,
 }: ContractActionsSidebarProps) {
   const t = useTranslations("contractDetail");
   const tStatus = useTranslations("contractStatus");
   const tRole = useTranslations("roleName");
 
   const canSign = isFreelancer
-    ? !contract.signedByFreelancer && contract.status === "PENDING_SIGN"
-    : !contract.signedByClient && contract.status === "PENDING_SIGN";
+    ? contract.status === "PENDING_SIGN" &&
+      contract.signedByClient &&
+      !contract.signedByFreelancer
+    : contract.status === "PENDING_SIGN" && !contract.signedByClient;
 
-  const canEdit =
-    !isFreelancer &&
-    (contract.status === "PENDING_SIGN" ||
-      contract.status === "AWAITING_PAYMENT");
+  const waitingForClientSignature =
+    isFreelancer &&
+    contract.status === "PENDING_SIGN" &&
+    !contract.signedByClient;
 
-  const canAddMilestone =
+  const canFundHold =
     !isFreelancer &&
-    (contract.status === "PENDING_SIGN" ||
-      contract.status === "AWAITING_PAYMENT");
-
-  const canPayPlatformFee =
-    !isFreelancer &&
-    contract.platformFeeStatus === "UNPAID" &&
-    Boolean(onPayPlatformFee);
+    contract.status === "AWAITING_PAYMENT" &&
+    Boolean(onOpenFundHold);
 
   const canComplete =
     !isFreelancer && contract.status === "ACTIVE";
 
+  const canReject =
+    isFreelancer &&
+    (contract.status === "PENDING_SIGN" ||
+      contract.status === "AWAITING_PAYMENT") &&
+    Boolean(onOpenConfirmReject);
+
   const canCancel =
-    contract.status === "PENDING_SIGN" || contract.status === "AWAITING_PAYMENT";
+    !isFreelancer &&
+    (contract.status === "PENDING_SIGN" || contract.status === "AWAITING_PAYMENT");
 
   const targetRoleName = isFreelancer ? tRole("CLIENT") : tRole("FREELANCER");
 
@@ -163,7 +163,33 @@ export function ContractActionsSidebar({
         <span className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground block">
           Actions
         </span>
-        {/* 1. Sign Contract Button */}
+        {/* 1. Authorize Escrow Hold (Client while AWAITING_PAYMENT) */}
+        {canFundHold && (
+          <div className="space-y-1.5">
+            <Button
+              onClick={onOpenFundHold}
+              className="w-full h-10 rounded-xl bg-[#0069D3] hover:bg-[#0055b3] text-white font-semibold text-xs shadow-sm cursor-pointer"
+            >
+              <CreditCard className="mr-2 size-4" />
+              Fund Contract Escrow
+            </Button>
+            <p className="text-[11px] text-muted-foreground leading-snug">
+              Hold at least 1 milestone + 3% contract fee to unlock signing.
+            </p>
+          </div>
+        )}
+
+        {contract.status === "PENDING_SIGN" && contract.holdPaymentIntentId && (
+          <div className="rounded-xl border border-[#0069D3]/20 bg-[#0069D3]/5 px-3 py-2 text-[11px] text-muted-foreground">
+            <span className="font-semibold text-[#0069D3] block">
+              Escrow Hold Authorized
+            </span>
+            {contract.holdMilestoneIds?.length ?? 1} milestone(s) + 3% contract
+            fee held on card. Captured upon Freelancer countersign.
+          </div>
+        )}
+
+        {/* 2. Sign Contract Button */}
         {canSign && (
           <Button
             onClick={onOpenSignConfirm}
@@ -179,15 +205,10 @@ export function ContractActionsSidebar({
           </Button>
         )}
 
-        {/* 4. Pay Platform Fee (Client) */}
-        {canPayPlatformFee && (
-          <Button
-            onClick={onPayPlatformFee}
-            className="w-full h-9 rounded-xl bg-emerald-400 hover:bg-emerald-700 text-white font-medium text-xs shadow-xs cursor-pointer"
-          >
-            <CreditCard className="mr-2 size-3.5" />
-            Pay Platform Fee
-          </Button>
+        {waitingForClientSignature && (
+          <div className="rounded-xl border border-border bg-muted/40 px-3 py-2 text-[11px] text-muted-foreground">
+            Waiting for the Client to sign first before you can countersign.
+          </div>
         )}
 
         {/* 5. Download PDF Agreement */}
@@ -221,7 +242,7 @@ export function ContractActionsSidebar({
       </div>
 
       {/* ── Secondary / Lifecycle Actions ── */}
-      {(canComplete || canCancel) && (
+      {(canComplete || canCancel || canReject) && (
         <div className="border-t border-border/70 pt-4 space-y-2">
           {canComplete && (
             <Button
@@ -231,6 +252,17 @@ export function ContractActionsSidebar({
             >
               <ShieldCheck className="mr-1.5 size-3.5 text-emerald-600" />
               {t("completeContract")}
+            </Button>
+          )}
+
+          {canReject && (
+            <Button
+              variant="ghost"
+              onClick={onOpenConfirmReject}
+              className="w-full h-8 rounded-xl text-rose-600 hover:bg-rose-50 hover:text-rose-700 dark:hover:bg-rose-950/40 text-xs font-medium cursor-pointer"
+            >
+              <XCircle className="mr-1.5 size-3.5 text-rose-500" />
+              Decline Contract Offer
             </Button>
           )}
 

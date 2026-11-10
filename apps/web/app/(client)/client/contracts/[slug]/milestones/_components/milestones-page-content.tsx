@@ -22,6 +22,7 @@ import {
 } from "@repo/ui/components/shadcn/dropdown-menu";
 import { toastError, toastSuccess } from "@repo/ui/components/shadcn/toast";
 import { contractApiRequest, extractContractData } from "@/apiRequests/contract";
+import { paymentApiRequest } from "@/apiRequests/payment";
 import { ApiFail } from "@/lib/http";
 import type {
   ContractDetailType,
@@ -153,6 +154,34 @@ export function MilestonesPageContent({
           error instanceof ApiFail
             ? error.response.error.message
             : "Failed to start milestone.",
+      });
+    }
+  };
+
+  const handleReleaseMilestone = async (milestone: MilestoneType) => {
+    try {
+      await paymentApiRequest.releaseMilestone(contract.id, milestone.id);
+      await queryClient.invalidateQueries({
+        queryKey: ["client-contract-detail", contract.id],
+      });
+      await queryClient.invalidateQueries({
+        queryKey: ["client-contract-milestones", contract.id],
+      });
+      await queryClient.invalidateQueries({
+        queryKey: ["client-transactions"],
+      });
+      await queryClient.invalidateQueries({
+        queryKey: ["wallet-summary"],
+      });
+      toastSuccess({
+        message: `Payout credited to freelancer's wallet for milestone "${milestone.title}" (5% freelancer fee deducted).`,
+      });
+    } catch (error) {
+      toastError({
+        message:
+          error instanceof ApiFail
+            ? error.response.error.message
+            : "Failed to release milestone payout.",
       });
     }
   };
@@ -325,6 +354,9 @@ export function MilestonesPageContent({
                       contract.slug || String(contract.id),
                     )}
                     contractStatus={contract.status}
+                    isHeldInContract={Boolean(
+                      contract.holdMilestoneIds?.includes(m.id),
+                    )}
                     basePath={basePath}
                     milestone={m}
                     index={idx}
@@ -346,6 +378,7 @@ export function MilestonesPageContent({
                       setMilestoneToFund(target);
                       setFundModalOpen(true);
                     }}
+                    onRelease={(target) => void handleReleaseMilestone(target)}
                     onReview={async (target) => {
                       try {
                         const res = await contractApiRequest.getSubmissions(
@@ -392,6 +425,9 @@ export function MilestonesPageContent({
                   contract.slug || String(contract.id),
                 )}
                 contractStatus={contract.status}
+                isHeldInContract={Boolean(
+                  contract.holdMilestoneIds?.includes(m.id),
+                )}
                 basePath={basePath}
                 milestone={m}
                 index={idx}
@@ -413,6 +449,7 @@ export function MilestonesPageContent({
                   setMilestoneToFund(target);
                   setFundModalOpen(true);
                 }}
+                onRelease={(target) => void handleReleaseMilestone(target)}
                 onReview={async (target) => {
                   try {
                     const res = await contractApiRequest.getSubmissions(
@@ -484,6 +521,11 @@ export function MilestonesPageContent({
           currentAllocatedAmount={currentAllocatedAmount}
           contractExpiresAt={contract.expiresAt}
           milestoneToEdit={milestoneToEdit}
+          isAmountLocked={Boolean(
+            milestoneToEdit &&
+              contract.status === "PENDING_SIGN" &&
+              contract.holdMilestoneIds?.includes(milestoneToEdit.id),
+          )}
         />
       )}
 

@@ -42,6 +42,8 @@ export class MilestoneRepository {
         status: true,
         totalAmount: true,
         expiresAt: true,
+        holdPaymentIntentId: true,
+        holdMilestoneIds: true,
       },
     });
   }

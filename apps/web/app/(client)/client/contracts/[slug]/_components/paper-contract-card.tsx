@@ -40,7 +40,10 @@ export function PaperContractCard({
     tRole("FREELANCER");
 
   const totalAmount = Number(contract.totalAmount) || 0;
-  const platformFee = Number(contract.platformFee) || totalAmount * 0.01;
+  const clientFee =
+    Number(contract.clientPlatformFee) ||
+    Number(contract.platformFee) ||
+    Math.round(totalAmount * 0.03 * 100) / 100;
 
   // Real or simulated download link for PDF
   const downloadUrl = pdfFile?.fileUrl || null;
@@ -103,10 +106,10 @@ export function PaperContractCard({
           </div>
           <div>
             <span className="text-[10px] text-zinc-500 uppercase tracking-wider block font-medium">
-              Platform Fee (1%)
+              Platform Fees (3% Client / 5% Release)
             </span>
             <p className="text-xs font-semibold text-zinc-700 font-mono">
-              ${platformFee.toLocaleString("en-US", { minimumFractionDigits: 2 })} USD / party
+              ${clientFee.toLocaleString("en-US", { minimumFractionDigits: 2 })} USD Client hold
             </p>
           </div>
         </div>

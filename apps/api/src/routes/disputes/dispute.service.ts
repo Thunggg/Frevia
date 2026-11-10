@@ -1,7 +1,6 @@
 import { HttpException, Injectable, Logger } from '@nestjs/common';
 import {
   DisputeDecisionResponse,
-  DisputeFeeStatus,
   DisputeStatus,
   MilestonePaymentStatus,
   MilestoneStatus,
@@ -10,10 +9,7 @@ import {
   AdminDisputeDecisionBodyType,
   AdminDisputeFinalDecisionBodyType,
   CreateDisputeBodyType,
-  DEFAULT_ARBITRATION_FEE,
-  FEE_DEADLINE_HOURS,
   GetDisputeListQueryType,
-  PayDisputeFeeBodyType,
   RESPONSE_DEADLINE_HOURS,
   ReviewDisputeDecisionBodyType,
   RoleName,
@@ -23,8 +19,6 @@ import {
   DisputeAlreadyFinalizedException,
   DisputeDecisionNotPendingException,
   DisputeEvidenceLimitExceededException,
-  DisputeFeeAlreadyPaidException,
-  DisputeFeeNotFoundException,
   DisputeForbiddenException,
   DisputeInvalidSplitAmountException,
   DisputeMilestoneNotFoundException,
@@ -38,7 +32,6 @@ import {
   FailedToFinalizeDisputeException,
   FailedToLoadDisputeException,
   FailedToMakeDisputeDecisionException,
-  FailedToPayDisputeFeeException,
   FailedToSubmitDisputeResponseException,
   FailedToSubmitDisputeReviewException,
   MilestoneAlreadyDisputedException,
@@ -107,9 +100,7 @@ export class DisputeService {
           ? contract.freelancerId
           : contract.clientId;
 
-      const feeDeadline = new Date(
-        Date.now() + FEE_DEADLINE_HOURS * 60 * 60 * 1000,
-      );
+      const feeDeadline = new Date();
       const responseDeadline = new Date(
         Date.now() + RESPONSE_DEADLINE_HOURS * 60 * 60 * 1000,
       );
@@ -120,7 +111,7 @@ export class DisputeService {
         respondentId,
         reason: body.reason,
         description: body.description,
-        arbitrationFee: DEFAULT_ARBITRATION_FEE,
+        arbitrationFee: 0,
         feeDeadline,
         responseDeadline,
         evidenceFiles: body.evidenceFiles,
@@ -129,55 +120,6 @@ export class DisputeService {
       if (error instanceof HttpException) throw error;
       this.logger.error('Failed to create dispute', error);
       throw FailedToCreateDisputeException();
-    }
-  }
-
-  /**
-   * Thanh toán phí trọng tài (arbitration fee).
-   */
-  async payFee(userId: number, disputeId: number, body: PayDisputeFeeBodyType) {
-    void body;
-    try {
-      const dispute = await this.disputeRepo.findDisputeById(disputeId);
-      if (!dispute) {
-        throw DisputeNotFoundException();
-      }
-
-      const isParticipant =
-        dispute.openedById === userId || dispute.respondentId === userId;
-      if (!isParticipant) {
-        throw DisputeForbiddenException();
-      }
-
-      const fee = await this.disputeRepo.findFeeByDisputeAndUser(
-        disputeId,
-        userId,
-      );
-      if (!fee) {
-        throw DisputeFeeNotFoundException();
-      }
-
-      if (fee.status === DisputeFeeStatus.PAID) {
-        throw DisputeFeeAlreadyPaidException();
-      }
-
-      const paymentReference =
-        body.paymentMethodId ?? `fee_ref_${disputeId}_${userId}`;
-      const paidFee = await this.disputeRepo.updateFeeStatus(
-        fee.id,
-        DisputeFeeStatus.PAID,
-        paymentReference,
-        new Date(),
-      );
-
-      return {
-        success: true,
-        fee: paidFee,
-      };
-    } catch (error) {
-      if (error instanceof HttpException) throw error;
-      this.logger.error('Failed to pay dispute fee', error);
-      throw FailedToPayDisputeFeeException();
     }
   }
 
@@ -266,19 +208,6 @@ export class DisputeService {
         throw DisputeForbiddenException();
       }
 
-      // Tự động kiểm tra và đánh dấu fee OVERDUE nếu quá hạn 24h mà chưa thanh toán
-      const now = new Date();
-      for (const fee of dispute.fees) {
-        if (
-          fee.status === DisputeFeeStatus.PENDING &&
-          fee.deadline &&
-          now > fee.deadline
-        ) {
-          await this.disputeRepo.markFeeOverdue(fee.id);
-          fee.status = DisputeFeeStatus.OVERDUE;
-        }
-      }
-
       return dispute;
     } catch (error) {
       if (error instanceof HttpException) throw error;
@@ -308,18 +237,6 @@ export class DisputeService {
         roleName === RoleName.ADMIN;
       if (!isParticipant) {
         throw DisputeForbiddenException();
-      }
-
-      const now = new Date();
-      for (const fee of dispute.fees) {
-        if (
-          fee.status === DisputeFeeStatus.PENDING &&
-          fee.deadline &&
-          now > fee.deadline
-        ) {
-          await this.disputeRepo.markFeeOverdue(fee.id);
-          fee.status = DisputeFeeStatus.OVERDUE;
-        }
       }
 
       return dispute;

@@ -2,39 +2,146 @@
 
 import { useFormatter } from "next-intl";
 import {
-  Calendar,
   CheckCircle2,
   Clock,
+  CreditCard,
   Download,
   ExternalLink,
   FileCheck,
   FileText,
+  Play,
   RotateCcw,
   Upload,
 } from "lucide-react";
 import { Button } from "@repo/ui/components/shadcn/button";
 import type {
+  ContractDetailType,
   GetSubmissionResponseType,
   MilestoneType,
 } from "@shared/types";
 
 interface MilestoneSubmissionsTabProps {
+  contractStatus: ContractDetailType["status"];
   milestone: MilestoneType;
   submissions: GetSubmissionResponseType[];
   isFreelancer?: boolean;
+  onFund?: () => void;
+  onStartWork?: () => void;
   onSubmitWork?: () => void;
-  onReviewSubmission?: (submission: GetSubmissionResponseType) => void;
+  onReviewSubmission?: (submission?: GetSubmissionResponseType) => void;
+  onRelease?: () => void;
 }
 
 export function MilestoneSubmissionsTab({
+  contractStatus,
   milestone,
   submissions,
   isFreelancer = false,
+  onFund,
+  onStartWork,
   onSubmitWork,
   onReviewSubmission,
+  onRelease,
 }: MilestoneSubmissionsTabProps) {
   const format = useFormatter();
   const isClient = !isFreelancer;
+
+  const renderPrimaryAction = () => {
+    if (
+      isClient &&
+      contractStatus === "ACTIVE" &&
+      milestone.paymentStatus === "PENDING" &&
+      onFund
+    ) {
+      return (
+        <Button
+          onClick={onFund}
+          className="rounded-lg bg-[#0069D3] hover:bg-[#0055b3] text-white text-xs font-semibold h-9 px-4 shadow-xs cursor-pointer self-start sm:self-auto"
+        >
+          <CreditCard className="mr-1.5 size-3.5" />
+          Fund Escrow
+        </Button>
+      );
+    }
+
+    if (isClient && milestone.status === "SUBMITTED" && onReviewSubmission) {
+      return (
+        <Button
+          onClick={() => onReviewSubmission()}
+          className="rounded-lg bg-[#0069D3] hover:bg-[#0055b3] text-white text-xs font-semibold h-9 px-4 shadow-xs cursor-pointer self-start sm:self-auto"
+        >
+          <FileCheck className="mr-1.5 size-3.5" />
+          Review Submission
+        </Button>
+      );
+    }
+
+    if (
+      isClient &&
+      milestone.status === "COMPLETED" &&
+      milestone.paymentStatus === "FUNDED" &&
+      onRelease
+    ) {
+      return (
+        <Button
+          onClick={onRelease}
+          className="rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold h-9 px-4 shadow-xs cursor-pointer self-start sm:self-auto"
+        >
+          <CreditCard className="mr-1.5 size-3.5" />
+          Release Payment
+        </Button>
+      );
+    }
+
+    if (
+      isFreelancer &&
+      milestone.status === "PENDING" &&
+      milestone.paymentStatus === "FUNDED" &&
+      onStartWork
+    ) {
+      return (
+        <Button
+          onClick={onStartWork}
+          className="rounded-lg bg-[#0069D3] hover:bg-[#0055b3] text-white text-xs font-semibold h-9 px-4 shadow-xs cursor-pointer self-start sm:self-auto"
+        >
+          <Play className="mr-1.5 size-3.5" />
+          Start Milestone
+        </Button>
+      );
+    }
+
+    if (
+      isFreelancer &&
+      (milestone.status === "IN_PROGRESS" || milestone.status === "CHANGES_REQUESTED") &&
+      onSubmitWork
+    ) {
+      const isResubmit = milestone.status === "CHANGES_REQUESTED";
+      return (
+        <Button
+          onClick={onSubmitWork}
+          className={
+            isResubmit
+              ? "rounded-lg bg-amber-600 hover:bg-amber-700 text-white text-xs font-semibold h-9 px-4 shadow-xs cursor-pointer self-start sm:self-auto"
+              : "rounded-lg bg-[#0069D3] hover:bg-[#0055b3] text-white text-xs font-semibold h-9 px-4 shadow-xs cursor-pointer self-start sm:self-auto"
+          }
+        >
+          {isResubmit ? (
+            <>
+              <RotateCcw className="mr-1.5 size-3.5" />
+              Resubmit Deliverables
+            </>
+          ) : (
+            <>
+              <Upload className="mr-1.5 size-3.5" />
+              Submit Deliverables
+            </>
+          )}
+        </Button>
+      );
+    }
+
+    return null;
+  };
 
   const formatDate = (date: string | Date | null | undefined): string => {
     if (!date) return "";
@@ -78,7 +185,7 @@ export function MilestoneSubmissionsTab({
       {/* Top action header for freelancer or client */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-zinc-100 dark:border-zinc-800/80 pb-3">
         <div>
-          <h3 className="text-sm text-zinc-950 dark:text-zinc-50">
+          <h3 className="text-sm font-medium text-zinc-950 dark:text-zinc-50">
             Work Submissions & Deliverables
           </h3>
           <p className="text-xs text-zinc-400 mt-0.5">
@@ -86,17 +193,7 @@ export function MilestoneSubmissionsTab({
           </p>
         </div>
 
-        {isFreelancer && (milestone.status === "IN_PROGRESS" || milestone.status === "CHANGES_REQUESTED") && onSubmitWork && (
-          <Button
-            onClick={onSubmitWork}
-            className="rounded-sm bg-[#0069D3] hover:bg-[#0055b3] text-white text-xs font-semibold h-8 px-3 cursor-pointer self-start sm:self-auto"
-          >
-            <Upload className="mr-1.5 size-3.5" />
-            {milestone.status === "CHANGES_REQUESTED"
-              ? "Resubmit Updated Work"
-              : "Submit New Work"}
-          </Button>
-        )}
+        {renderPrimaryAction()}
       </div>
 
       {submissions.length > 0 ? (
@@ -252,18 +349,13 @@ export function MilestoneSubmissionsTab({
           </h4>
           <p className="text-xs text-zinc-400 max-w-sm mx-auto">
             {isFreelancer
-              ? "Once you complete work for this milestone, you can upload source files, demos, or code repository links here."
-              : "The freelancer will submit project deliverables here once ready for your review."}
+              ? milestone.status === "PENDING" && milestone.paymentStatus === "FUNDED"
+                ? "Escrow is funded. Click Start Milestone above when you are ready to begin and submit deliverables."
+                : "Once you complete work for this milestone, you can upload source files, demos, or code repository links here."
+              : contractStatus === "ACTIVE" && milestone.paymentStatus === "PENDING"
+                ? "Fund escrow for this milestone using the button above so the freelancer can begin work."
+                : "The freelancer will submit project deliverables here once ready for your review."}
           </p>
-          {isFreelancer && milestone.status === "IN_PROGRESS" && onSubmitWork && (
-            <Button
-              onClick={onSubmitWork}
-              className="rounded-sm bg-[#0069D3] hover:bg-[#0055b3] text-white text-xs font-semibold cursor-pointer"
-            >
-              <Upload className="mr-1.5 size-3.5" />
-              Submit Deliverables
-            </Button>
-          )}
         </div>
       )}
     </div>
