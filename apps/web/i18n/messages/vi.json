@@ -1678,6 +1678,8 @@
   "sidebar": {
     "collapse": "Thu gọn thanh bên",
     "expand": "Mở rộng thanh bên",
+    "mainMenu": "Menu chính",
+    "language": "Ngôn ngữ",
     "profileMenu": "Menu hồ sơ",
     "viewPublicProfile": "Xem hồ sơ công khai",
     "profileSettings": "Cài đặt hồ sơ",
@@ -1702,7 +1704,8 @@
     "navMessages": "Tin nhắn",
     "navNotifications": "Thông báo",
     "navMyJobs": "Việc của tôi",
-    "navFavoriteFreelancers": "Freelancer yêu thích"
+    "navFavoriteFreelancers": "Freelancer yêu thích",
+    "navBillingPayments": "Thanh toán & Hóa đơn"
   },
   "disputes": {
     "metaTitle": "Tranh chấp & Phân xử của tôi | Bảng điều khiển Freelancer | Frevia",

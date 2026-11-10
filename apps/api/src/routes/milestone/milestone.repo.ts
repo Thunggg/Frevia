@@ -41,6 +41,7 @@ export class MilestoneRepository {
         freelancerId: true,
         status: true,
         totalAmount: true,
+        expiresAt: true,
       },
     });
   }

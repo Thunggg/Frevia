@@ -2,7 +2,10 @@ export const ManageContractMessage = {
     PROPOSAL_ID_REQUIRED: 'Error.ContractProposalIdRequired',
     TOTAL_AMOUNT_REQUIRED: 'Error.ContractTotalAmountRequired',
     TOTAL_AMOUNT_POSITIVE: 'Error.ContractTotalAmountMustBePositive',
+    EXPIRES_AT_REQUIRED: 'Error.ContractExpiresAtRequired',
     EXPIRES_AT_FUTURE: 'Error.ContractExpiresAtMustBeFuture',
+    MILESTONE_DUE_DATE_EXCEEDS_CONTRACT: 'Error.MilestoneDueDateExceedsContractExpiresAt',
+    EXPIRES_AT_BEFORE_MILESTONES: 'Error.ContractExpiresAtBeforeMilestoneDueDates',
 
     PROPOSAL_NOT_FOUND: 'Error.ContractProposalNotFound',
     PROPOSAL_ALREADY_CONTRACTED: 'Error.ContractProposalAlreadyContracted',

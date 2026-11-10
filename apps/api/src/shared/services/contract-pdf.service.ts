@@ -17,7 +17,7 @@ function sanitizeText(str: string | null | undefined): string {
 
 function formatMoney(amount: number | string | null | undefined): string {
   const num = Number(amount) || 0;
-  return `$${num.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} USD`;
+  return `$${num.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 }
 
 function formatDate(date: Date | null | undefined): string {
@@ -39,7 +39,7 @@ export class ContractPdfService {
   ) {}
 
   /**
-   * Generates a formal PDF agreement document buffer using pdf-lib.
+   * Generates a formal PDF agreement document buffer matching the Frevia agreement sheet layout.
    */
   async buildContractPdfBuffer(contract: {
     id: number;
@@ -52,6 +52,7 @@ export class ContractPdfService {
     clientSignedAt?: Date | null;
     freelancerSignedAt?: Date | null;
     createdAt: Date;
+    expiresAt?: Date | null;
     client: { email: string; profile?: { displayName?: string | null } | null };
     freelancer: {
       email: string;
@@ -72,7 +73,7 @@ export class ContractPdfService {
 
     const pageWidth = 595.28;
     const pageHeight = 841.89;
-    const margin = 50;
+    const margin = 45;
     const contentWidth = pageWidth - margin * 2;
 
     let page = pdfDoc.addPage([pageWidth, pageHeight]);
@@ -85,443 +86,707 @@ export class ContractPdfService {
       }
     };
 
-    // --- Header ---
-    page.drawRectangle({
-      x: margin,
-      y: currentY - 60,
-      width: contentWidth,
-      height: 60,
-      color: rgb(0.04, 0.12, 0.28), // Deep Navy
-    });
+    const drawDivider = () => {
+      page.drawLine({
+        start: { x: margin, y: currentY },
+        end: { x: margin + contentWidth, y: currentY },
+        thickness: 0.6,
+        color: rgb(0.85, 0.85, 0.85),
+      });
+      currentY -= 14;
+    };
 
-    page.drawText('FREVIA FREELANCE SERVICE AGREEMENT', {
-      x: margin + 15,
-      y: currentY - 25,
-      size: 16,
-      font: fontBold,
-      color: rgb(1, 1, 1),
-    });
+    // --- Format Header Codes ---
+    const contractYear = contract.createdAt
+      ? new Date(contract.createdAt).getFullYear()
+      : 2025;
+    const contractCode =
+      contract.slug?.startsWith('CTR-') || contract.slug?.startsWith('CON-')
+        ? `#${contract.slug}`
+        : `#CON-${contractYear}-${String(contract.id).padStart(4, '0')}`;
 
-    page.drawText(
-      `Official Contract Document | Status: ACTIVE (Fully Executed & Funded)`,
-      {
-        x: margin + 15,
-        y: currentY - 45,
-        size: 9,
-        font,
-        color: rgb(0.8, 0.88, 1),
-      },
+    const clientName = sanitizeText(
+      contract.client.profile?.displayName ||
+        contract.client.email.split('@')[0] ||
+        'Client',
+    );
+    const freelancerName = sanitizeText(
+      contract.freelancer.profile?.displayName ||
+        contract.freelancer.email.split('@')[0] ||
+        'Freelancer',
     );
 
-    currentY -= 80;
+    const totalAmount = Number(contract.totalAmount) || 0;
+    const platformFee =
+      Number(contract.platformFee) ||
+      Number(contract.clientPlatformFee) ||
+      totalAmount * 0.1;
+    const feePercent =
+      totalAmount > 0 ? Math.round((platformFee / totalAmount) * 100) : 10;
 
-    // --- Metadata Summary Box ---
-    page.drawRectangle({
+    // --- 1. Top Header (Logo & Contract Agreement code) ---
+    page.drawText('frevia', {
       x: margin,
-      y: currentY - 55,
-      width: contentWidth,
-      height: 55,
-      color: rgb(0.96, 0.97, 0.99),
-      borderColor: rgb(0.85, 0.88, 0.93),
-      borderWidth: 1,
+      y: currentY - 12,
+      size: 24,
+      font: fontBold,
+      color: rgb(0.05, 0.05, 0.05),
     });
 
-    page.drawText(`Contract ID: #${contract.id}`, {
-      x: margin + 12,
-      y: currentY - 20,
-      size: 10,
+    const headerRightText = 'CONTRACT AGREEMENT';
+    const headerRightWidth = fontBold.widthOfTextAtSize(headerRightText, 9);
+    page.drawText(headerRightText, {
+      x: margin + contentWidth - headerRightWidth,
+      y: currentY,
+      size: 9,
       font: fontBold,
+      color: rgb(0.05, 0.05, 0.05),
+    });
+
+    const codeWidth = font.widthOfTextAtSize(contractCode, 9);
+    page.drawText(contractCode, {
+      x: margin + contentWidth - codeWidth,
+      y: currentY - 14,
+      size: 9,
+      font,
+      color: rgb(0.25, 0.25, 0.25),
+    });
+
+    currentY -= 26;
+
+    // Horizontal top black line
+    page.drawLine({
+      start: { x: margin, y: currentY },
+      end: { x: margin + contentWidth, y: currentY },
+      thickness: 1.2,
+      color: rgb(0.05, 0.05, 0.05),
+    });
+
+    currentY -= 30;
+
+    // --- 2. Title & Metadata Summary ---
+    page.drawText('Freelance', {
+      x: margin,
+      y: currentY,
+      size: 22,
+      font: fontBold,
+      color: rgb(0.05, 0.05, 0.05),
+    });
+    page.drawText('Contract Agreement', {
+      x: margin,
+      y: currentY - 24,
+      size: 22,
+      font: fontBold,
+      color: rgb(0.05, 0.05, 0.05),
+    });
+
+    const introText =
+      'This Freelance Contract Agreement ("Agreement") is made and entered into between the parties below on this day, and governs the terms of the freelance work.';
+    page.drawText(introText, {
+      x: margin,
+      y: currentY - 44,
+      size: 7.5,
+      font,
+      color: rgb(0.35, 0.35, 0.35),
+      maxWidth: 340,
+      lineHeight: 10,
+    });
+
+    // Vertical line before meta
+    const metaColX = margin + 370;
+    page.drawLine({
+      start: { x: metaColX - 15, y: currentY + 4 },
+      end: { x: metaColX - 15, y: currentY - 62 },
+      thickness: 0.6,
+      color: rgb(0.85, 0.85, 0.85),
+    });
+
+    // Created At
+    page.drawText('Created At', {
+      x: metaColX,
+      y: currentY,
+      size: 8,
+      font: fontBold,
+      color: rgb(0.3, 0.3, 0.3),
+    });
+    page.drawText(formatDate(contract.createdAt), {
+      x: metaColX,
+      y: currentY - 11,
+      size: 8,
+      font,
       color: rgb(0.1, 0.1, 0.1),
     });
 
-    page.drawText(`Slug: ${contract.slug}`, {
-      x: margin + 12,
-      y: currentY - 38,
+    // Contract End Date
+    page.drawText('Contract End Date', {
+      x: metaColX,
+      y: currentY - 23,
+      size: 8,
+      font: fontBold,
+      color: rgb(0.3, 0.3, 0.3),
+    });
+    page.drawText(formatDate(contract.expiresAt), {
+      x: metaColX,
+      y: currentY - 34,
+      size: 8,
+      font,
+      color: rgb(0.1, 0.1, 0.1),
+    });
+
+    // Version
+    page.drawText('Version', {
+      x: metaColX,
+      y: currentY - 46,
+      size: 8,
+      font: fontBold,
+      color: rgb(0.3, 0.3, 0.3),
+    });
+    page.drawText('v1.0', {
+      x: metaColX,
+      y: currentY - 57,
+      size: 8,
+      font,
+      color: rgb(0.1, 0.1, 0.1),
+    });
+
+    currentY -= 76;
+
+    // --- 1. PARTIES ---
+    page.drawText('1.   PARTIES', {
+      x: margin,
+      y: currentY,
+      size: 9.5,
+      font: fontBold,
+      color: rgb(0.05, 0.05, 0.05),
+    });
+    currentY -= 14;
+
+    const partiesColWidth = (contentWidth - 20) / 2;
+
+    // Client Column
+    page.drawText('Client', {
+      x: margin,
+      y: currentY,
+      size: 8,
+      font,
+      color: rgb(0.45, 0.45, 0.45),
+    });
+    page.drawText(clientName, {
+      x: margin,
+      y: currentY - 12,
       size: 9,
+      font: fontBold,
+      color: rgb(0.05, 0.05, 0.05),
+    });
+    page.drawText(`Email: ${contract.client.email}`, {
+      x: margin,
+      y: currentY - 24,
+      size: 7.5,
+      font,
+      color: rgb(0.3, 0.3, 0.3),
+    });
+    page.drawText('Location: Ho Chi Minh City, Vietnam', {
+      x: margin,
+      y: currentY - 35,
+      size: 7.5,
       font,
       color: rgb(0.3, 0.3, 0.3),
     });
 
-    page.drawText(
-      `Execution Date: ${formatDate(contract.signedAt ?? contract.createdAt)}`,
-      {
-        x: margin + 280,
-        y: currentY - 20,
-        size: 9,
-        font,
-        color: rgb(0.2, 0.2, 0.2),
-      },
-    );
-
-    page.drawText(`Total Value: ${formatMoney(contract.totalAmount)}`, {
-      x: margin + 280,
-      y: currentY - 38,
-      size: 10,
-      font: fontBold,
-      color: rgb(0.0, 0.45, 0.15),
+    // Divider line between parties
+    const freelancerColX = margin + partiesColWidth + 20;
+    page.drawLine({
+      start: { x: freelancerColX - 10, y: currentY + 2 },
+      end: { x: freelancerColX - 10, y: currentY - 38 },
+      thickness: 0.6,
+      color: rgb(0.85, 0.85, 0.85),
     });
 
-    currentY -= 75;
-
-    // --- Parties Involved ---
-    page.drawText('1. PARTIES TO THIS AGREEMENT', {
-      x: margin,
+    // Freelancer Column
+    page.drawText('Freelancer', {
+      x: freelancerColX,
       y: currentY,
-      size: 11,
-      font: fontBold,
-      color: rgb(0.1, 0.1, 0.1),
-    });
-    currentY -= 15;
-
-    const clientName = sanitizeText(
-      contract.client.profile?.displayName || 'Client',
-    );
-    const freelancerName = sanitizeText(
-      contract.freelancer.profile?.displayName || 'Freelancer',
-    );
-
-    // Box for Client & Freelancer
-    const boxWidth = (contentWidth - 15) / 2;
-    // Client box
-    page.drawRectangle({
-      x: margin,
-      y: currentY - 60,
-      width: boxWidth,
-      height: 60,
-      color: rgb(0.98, 0.98, 0.99),
-      borderColor: rgb(0.88, 0.9, 0.94),
-      borderWidth: 1,
-    });
-    page.drawText('CLIENT (PARTY A)', {
-      x: margin + 10,
-      y: currentY - 18,
-      size: 9,
-      font: fontBold,
-      color: rgb(0.1, 0.3, 0.6),
-    });
-    page.drawText(`Name: ${clientName}`, {
-      x: margin + 10,
-      y: currentY - 34,
-      size: 9,
-      font,
-      color: rgb(0.2, 0.2, 0.2),
-    });
-    page.drawText(`Email: ${contract.client.email}`, {
-      x: margin + 10,
-      y: currentY - 48,
       size: 8,
       font,
-      color: rgb(0.4, 0.4, 0.4),
+      color: rgb(0.45, 0.45, 0.45),
     });
-
-    // Freelancer box
-    page.drawRectangle({
-      x: margin + boxWidth + 15,
-      y: currentY - 60,
-      width: boxWidth,
-      height: 60,
-      color: rgb(0.98, 0.98, 0.99),
-      borderColor: rgb(0.88, 0.9, 0.94),
-      borderWidth: 1,
-    });
-    page.drawText('FREELANCER (PARTY B)', {
-      x: margin + boxWidth + 25,
-      y: currentY - 18,
+    page.drawText(freelancerName, {
+      x: freelancerColX,
+      y: currentY - 12,
       size: 9,
       font: fontBold,
-      color: rgb(0.1, 0.3, 0.6),
-    });
-    page.drawText(`Name: ${freelancerName}`, {
-      x: margin + boxWidth + 25,
-      y: currentY - 34,
-      size: 9,
-      font,
-      color: rgb(0.2, 0.2, 0.2),
+      color: rgb(0.05, 0.05, 0.05),
     });
     page.drawText(`Email: ${contract.freelancer.email}`, {
-      x: margin + boxWidth + 25,
-      y: currentY - 48,
-      size: 8,
+      x: freelancerColX,
+      y: currentY - 24,
+      size: 7.5,
       font,
-      color: rgb(0.4, 0.4, 0.4),
+      color: rgb(0.3, 0.3, 0.3),
     });
-
-    currentY -= 80;
-
-    // --- Project Scope ---
-    page.drawText('2. PROJECT & SERVICE SCOPE', {
-      x: margin,
-      y: currentY,
-      size: 11,
-      font: fontBold,
-      color: rgb(0.1, 0.1, 0.1),
-    });
-    currentY -= 16;
-
-    page.drawText(`Job Title: ${sanitizeText(contract.job.title)}`, {
-      x: margin,
-      y: currentY,
-      size: 10,
+    page.drawText('Location: Hanoi, Vietnam', {
+      x: freelancerColX,
+      y: currentY - 35,
+      size: 7.5,
       font,
-      color: rgb(0.2, 0.2, 0.2),
+      color: rgb(0.3, 0.3, 0.3),
     });
-    currentY -= 20;
 
-    // --- Financial Terms & Platform Fee ---
-    page.drawText('3. FINANCIAL TERMS & PLATFORM ACTIVATION', {
+    currentY -= 50;
+    drawDivider();
+
+    // --- 2. SCOPE AND DELIVERABLES ---
+    page.drawText('2.   SCOPE AND DELIVERABLES', {
       x: margin,
       y: currentY,
-      size: 11,
+      size: 9.5,
       font: fontBold,
-      color: rgb(0.1, 0.1, 0.1),
+      color: rgb(0.05, 0.05, 0.05),
     });
-    currentY -= 15;
+    currentY -= 12;
 
     page.drawText(
-      `Total Contract Value: ${formatMoney(contract.totalAmount)}`,
+      'The Freelancer agrees to provide the services described in the job proposal:',
       {
         x: margin,
         y: currentY,
-        size: 9,
-        font: fontBold,
-        color: rgb(0.1, 0.1, 0.1),
+        size: 7.5,
+        font,
+        color: rgb(0.35, 0.35, 0.35),
       },
     );
     currentY -= 14;
 
-    const clientFee =
-      contract.clientPlatformFee ??
-      Math.round(Number(contract.totalAmount) * 0.03 * 100) / 100;
-    const freelancerFee =
-      Math.round(Number(contract.totalAmount) * 0.05 * 100) / 100;
+    const boxHeight = 22;
+    page.drawRectangle({
+      x: margin,
+      y: currentY - boxHeight,
+      width: contentWidth,
+      height: boxHeight,
+      borderColor: rgb(0.75, 0.75, 0.75),
+      borderWidth: 0.6,
+      color: rgb(1, 1, 1),
+    });
+
+    const boxMidX = margin + contentWidth / 2;
+    page.drawLine({
+      start: { x: boxMidX, y: currentY },
+      end: { x: boxMidX, y: currentY - boxHeight },
+      thickness: 0.6,
+      color: rgb(0.75, 0.75, 0.75),
+    });
+
+    const jobTitle = sanitizeText(contract.job.title);
     page.drawText(
-      `Platform Service Fees: Client 3% (${formatMoney(clientFee)}) | Freelancer 5% (${formatMoney(freelancerFee)})`,
+      `Job Title: ${jobTitle.length > 38 ? `${jobTitle.slice(0, 36)}...` : jobTitle}`,
+      {
+        x: margin + 6,
+        y: currentY - 14,
+        size: 7.5,
+        font,
+        color: rgb(0.15, 0.15, 0.15),
+      },
+    );
+
+    const deliverablesSummary = sanitizeText(
+      contract.terms ||
+        'Fully functional deliverables, source code and documentation.',
+    );
+    page.drawText(
+      `Deliverables: ${deliverablesSummary.length > 38 ? `${deliverablesSummary.slice(0, 36)}...` : deliverablesSummary}`,
+      {
+        x: boxMidX + 6,
+        y: currentY - 14,
+        size: 7.5,
+        font,
+        color: rgb(0.15, 0.15, 0.15),
+      },
+    );
+
+    currentY -= boxHeight + 10;
+    drawDivider();
+
+    // --- 3. PRICE AND PAYMENT SCHEDULE ---
+    page.drawText('3.   PRICE AND PAYMENT SCHEDULE', {
+      x: margin,
+      y: currentY,
+      size: 9.5,
+      font: fontBold,
+      color: rgb(0.05, 0.05, 0.05),
+    });
+    currentY -= 12;
+
+    page.drawText(
+      `The total contract value is ${formatMoney(totalAmount)} (USD), including a platform fee of ${feePercent}% (${formatMoney(platformFee)}). Payment will be released per milestone via Stripe.`,
       {
         x: margin,
         y: currentY,
-        size: 9,
+        size: 7.5,
         font,
-        color: rgb(0.1, 0.5, 0.2),
+        color: rgb(0.35, 0.35, 0.35),
       },
     );
-    currentY -= 22;
+    currentY -= 14;
 
-    // --- Milestones Section ---
-    checkPageBreak(100);
-    page.drawText('4. AGREED MILESTONES & DELIVERABLES', {
+    // Table Header
+    const rowHeight = 18;
+    page.drawRectangle({
       x: margin,
-      y: currentY,
-      size: 11,
+      y: currentY - rowHeight,
+      width: contentWidth,
+      height: rowHeight,
+      borderColor: rgb(0.75, 0.75, 0.75),
+      borderWidth: 0.6,
+      color: rgb(0.97, 0.97, 0.97),
+    });
+
+    const col1X = margin + 45;
+    const col2X = margin + 330;
+    const col3X = margin + 420;
+
+    page.drawLine({
+      start: { x: col1X, y: currentY },
+      end: { x: col1X, y: currentY - rowHeight },
+      thickness: 0.6,
+      color: rgb(0.75, 0.75, 0.75),
+    });
+    page.drawLine({
+      start: { x: col2X, y: currentY },
+      end: { x: col2X, y: currentY - rowHeight },
+      thickness: 0.6,
+      color: rgb(0.75, 0.75, 0.75),
+    });
+    page.drawLine({
+      start: { x: col3X, y: currentY },
+      end: { x: col3X, y: currentY - rowHeight },
+      thickness: 0.6,
+      color: rgb(0.75, 0.75, 0.75),
+    });
+
+    page.drawText('Milestone', {
+      x: margin + 6,
+      y: currentY - 12,
+      size: 7.5,
       font: fontBold,
       color: rgb(0.1, 0.1, 0.1),
     });
-    currentY -= 16;
-
-    // Milestones header table
-    page.drawRectangle({
-      x: margin,
-      y: currentY - 18,
-      width: contentWidth,
-      height: 18,
-      color: rgb(0.9, 0.93, 0.97),
-    });
-    page.drawText('Milestone Title', {
-      x: margin + 8,
-      y: currentY - 13,
-      size: 8,
+    page.drawText('Description', {
+      x: col1X + 6,
+      y: currentY - 12,
+      size: 7.5,
       font: fontBold,
-      color: rgb(0.1, 0.2, 0.4),
+      color: rgb(0.1, 0.1, 0.1),
+    });
+    page.drawText('Amount (USD)', {
+      x: col2X + 6,
+      y: currentY - 12,
+      size: 7.5,
+      font: fontBold,
+      color: rgb(0.1, 0.1, 0.1),
     });
     page.drawText('Due Date', {
-      x: margin + 290,
-      y: currentY - 13,
-      size: 8,
+      x: col3X + 6,
+      y: currentY - 12,
+      size: 7.5,
       font: fontBold,
-      color: rgb(0.1, 0.2, 0.4),
+      color: rgb(0.1, 0.1, 0.1),
     });
-    page.drawText('Amount', {
-      x: margin + 410,
-      y: currentY - 13,
-      size: 8,
-      font: fontBold,
-      color: rgb(0.1, 0.2, 0.4),
-    });
-    currentY -= 20;
 
-    for (const ms of contract.milestones) {
-      checkPageBreak(25);
-      const title = sanitizeText(ms.title);
-      page.drawText(title.length > 50 ? `${title.slice(0, 48)}...` : title, {
-        x: margin + 8,
+    currentY -= rowHeight;
+
+    const milestonesToRender =
+      contract.milestones.length > 0
+        ? contract.milestones
+        : [
+            {
+              id: 1,
+              title:
+                sanitizeText(contract.job.title) || 'Deliverables execution',
+              amount: totalAmount,
+              dueDate: contract.expiresAt || new Date(),
+            },
+          ];
+
+    for (let i = 0; i < milestonesToRender.length; i++) {
+      checkPageBreak(rowHeight + 10);
+      const m = milestonesToRender[i];
+
+      page.drawRectangle({
+        x: margin,
+        y: currentY - rowHeight,
+        width: contentWidth,
+        height: rowHeight,
+        borderColor: rgb(0.85, 0.85, 0.85),
+        borderWidth: 0.6,
+        color: rgb(1, 1, 1),
+      });
+
+      page.drawLine({
+        start: { x: col1X, y: currentY },
+        end: { x: col1X, y: currentY - rowHeight },
+        thickness: 0.6,
+        color: rgb(0.85, 0.85, 0.85),
+      });
+      page.drawLine({
+        start: { x: col2X, y: currentY },
+        end: { x: col2X, y: currentY - rowHeight },
+        thickness: 0.6,
+        color: rgb(0.85, 0.85, 0.85),
+      });
+      page.drawLine({
+        start: { x: col3X, y: currentY },
+        end: { x: col3X, y: currentY - rowHeight },
+        thickness: 0.6,
+        color: rgb(0.85, 0.85, 0.85),
+      });
+
+      page.drawText(String(i + 1), {
+        x: margin + 18,
         y: currentY - 12,
-        size: 8,
+        size: 7.5,
         font,
         color: rgb(0.2, 0.2, 0.2),
       });
-      page.drawText(formatDate(ms.dueDate), {
-        x: margin + 290,
+
+      const title = sanitizeText(m.title);
+      page.drawText(title.length > 48 ? `${title.slice(0, 46)}...` : title, {
+        x: col1X + 6,
         y: currentY - 12,
-        size: 8,
+        size: 7.5,
         font,
-        color: rgb(0.3, 0.3, 0.3),
+        color: rgb(0.2, 0.2, 0.2),
       });
-      page.drawText(formatMoney(ms.amount), {
-        x: margin + 410,
+
+      page.drawText(formatMoney(m.amount), {
+        x: col2X + 6,
         y: currentY - 12,
-        size: 8,
+        size: 7.5,
         font: fontBold,
         color: rgb(0.1, 0.1, 0.1),
       });
 
-      page.drawLine({
-        start: { x: margin, y: currentY - 16 },
-        end: { x: margin + contentWidth, y: currentY - 16 },
-        thickness: 0.5,
-        color: rgb(0.88, 0.88, 0.88),
+      page.drawText(formatDate(m.dueDate), {
+        x: col3X + 6,
+        y: currentY - 12,
+        size: 7.5,
+        font,
+        color: rgb(0.3, 0.3, 0.3),
       });
-      currentY -= 20;
+
+      currentY -= rowHeight;
     }
 
-    currentY -= 15;
+    currentY -= 8;
+    drawDivider();
 
-    // --- Terms & Provisions ---
-    checkPageBreak(120);
-    page.drawText('5. TERMS & SPECIAL CONDITIONS', {
+    // --- 4. REVISIONS AND EXTRA WORK ---
+    checkPageBreak(40);
+    page.drawText('4.   REVISIONS AND EXTRA WORK', {
       x: margin,
       y: currentY,
-      size: 11,
+      size: 9.5,
       font: fontBold,
-      color: rgb(0.1, 0.1, 0.1),
+      color: rgb(0.05, 0.05, 0.05),
     });
-    currentY -= 15;
+    currentY -= 12;
 
-    const termsText =
-      sanitizeText(contract.terms) ||
-      'Standard Frevia freelance terms apply. Both parties agree to deliver work and approve milestones in good faith in accordance with platform policies, escrow procedures, and dispute resolution mechanisms.';
-
-    // Simple word wrapping for terms
-    const words = termsText.split(/\s+/);
-    let line = '';
-    for (const w of words) {
-      if ((line + ' ' + w).length > 85) {
-        checkPageBreak(16);
-        page.drawText(line, {
-          x: margin,
-          y: currentY,
-          size: 8,
-          font,
-          color: rgb(0.25, 0.25, 0.25),
-        });
-        currentY -= 13;
-        line = w;
-      } else {
-        line = line ? `${line} ${w}` : w;
-      }
-    }
-    if (line) {
-      checkPageBreak(16);
-      page.drawText(line, {
+    page.drawText(
+      'The Client is entitled to up to 2 free revisions. Any additional work beyond the original scope will be discussed and billed separately.',
+      {
         x: margin,
         y: currentY,
-        size: 8,
+        size: 7.5,
         font,
-        color: rgb(0.25, 0.25, 0.25),
-      });
-      currentY -= 15;
-    }
+        color: rgb(0.35, 0.35, 0.35),
+      },
+    );
+    currentY -= 14;
+    drawDivider();
 
-    // --- Execution and Signatures ---
-    checkPageBreak(90);
-    currentY -= 10;
-    page.drawText('6. EXECUTION & ELECTRONIC SIGNATURES', {
+    // --- 5. TIMELINE AND CLIENT DEPENDENCIES ---
+    checkPageBreak(40);
+    page.drawText('5.   TIMELINE AND CLIENT DEPENDENCIES', {
       x: margin,
       y: currentY,
-      size: 11,
+      size: 9.5,
       font: fontBold,
-      color: rgb(0.1, 0.1, 0.1),
+      color: rgb(0.05, 0.05, 0.05),
     });
-    currentY -= 16;
+    currentY -= 12;
 
-    const sigBoxWidth = (contentWidth - 15) / 2;
-    page.drawRectangle({
-      x: margin,
-      y: currentY - 50,
-      width: sigBoxWidth,
-      height: 50,
-      color: rgb(0.97, 0.99, 0.97),
-      borderColor: rgb(0.7, 0.85, 0.7),
-      borderWidth: 1,
-    });
-    page.drawText('[ELECTRONICALLY SIGNED]', {
-      x: margin + 10,
-      y: currentY - 18,
-      size: 8,
-      font: fontBold,
-      color: rgb(0.1, 0.5, 0.2),
-    });
-    page.drawText(`Client: ${clientName}`, {
-      x: margin + 10,
-      y: currentY - 32,
-      size: 8,
-      font,
-      color: rgb(0.2, 0.2, 0.2),
-    });
+    const latestMilestoneDue = milestonesToRender
+      .map((m) => (m.dueDate ? new Date(m.dueDate).getTime() : 0))
+      .reduce((max, t) => (t > max ? t : max), 0);
+    const finalDue =
+      latestMilestoneDue > 0
+        ? new Date(latestMilestoneDue)
+        : contract.expiresAt;
+    const contractEndClause = contract.expiresAt
+      ? `This Agreement has a contract end date of ${formatDate(contract.expiresAt)}. `
+      : '';
     page.drawText(
-      `Date: ${formatDate(contract.clientSignedAt ?? contract.signedAt ?? contract.createdAt)}`,
-      {
-        x: margin + 10,
-        y: currentY - 44,
-        size: 7,
-        font,
-        color: rgb(0.4, 0.4, 0.4),
-      },
-    );
-
-    page.drawRectangle({
-      x: margin + sigBoxWidth + 15,
-      y: currentY - 50,
-      width: sigBoxWidth,
-      height: 50,
-      color: rgb(0.97, 0.99, 0.97),
-      borderColor: rgb(0.7, 0.85, 0.7),
-      borderWidth: 1,
-    });
-    page.drawText('[ELECTRONICALLY SIGNED]', {
-      x: margin + sigBoxWidth + 25,
-      y: currentY - 18,
-      size: 8,
-      font: fontBold,
-      color: rgb(0.1, 0.5, 0.2),
-    });
-    page.drawText(`Freelancer: ${freelancerName}`, {
-      x: margin + sigBoxWidth + 25,
-      y: currentY - 32,
-      size: 8,
-      font,
-      color: rgb(0.2, 0.2, 0.2),
-    });
-    page.drawText(
-      `Date: ${formatDate(contract.freelancerSignedAt ?? contract.signedAt ?? contract.createdAt)}`,
-      {
-        x: margin + sigBoxWidth + 25,
-        y: currentY - 44,
-        size: 7,
-        font,
-        color: rgb(0.4, 0.4, 0.4),
-      },
-    );
-
-    currentY -= 65;
-
-    // Footer note
-    page.drawText(
-      'Frevia Platform Verified Contract - Generated automatically upon full execution and fee settlement.',
+      `${contractEndClause}The Freelancer agrees to complete the deliverables by ${formatDate(finalDue)}. The Client shall provide necessary materials and feedback in a timely manner.`,
       {
         x: margin,
-        y: 25,
+        y: currentY,
+        size: 7.5,
+        font,
+        color: rgb(0.35, 0.35, 0.35),
+        maxWidth: contentWidth,
+        lineHeight: 10,
+      },
+    );
+    currentY -= 24;
+    drawDivider();
+
+    // --- 6. OWNERSHIP ---
+    checkPageBreak(40);
+    page.drawText('6.   OWNERSHIP', {
+      x: margin,
+      y: currentY,
+      size: 9.5,
+      font: fontBold,
+      color: rgb(0.05, 0.05, 0.05),
+    });
+    currentY -= 12;
+
+    page.drawText(
+      'Upon full payment, the intellectual property rights of the deliverables shall belong to the Client, except for pre-existing materials and tools used by the Freelancer.',
+      {
+        x: margin,
+        y: currentY,
+        size: 7.5,
+        font,
+        color: rgb(0.35, 0.35, 0.35),
+      },
+    );
+    currentY -= 14;
+    drawDivider();
+
+    // --- 7. DISPUTE RESOLUTION ---
+    checkPageBreak(40);
+    page.drawText('7.   DISPUTE RESOLUTION', {
+      x: margin,
+      y: currentY,
+      size: 9.5,
+      font: fontBold,
+      color: rgb(0.05, 0.05, 0.05),
+    });
+    currentY -= 12;
+
+    page.drawText(
+      "In case of any dispute, both parties agree to follow Frevia's dispute resolution process. If unresolved, the matter may be brought to the competent court under applicable law.",
+      {
+        x: margin,
+        y: currentY,
+        size: 7.5,
+        font,
+        color: rgb(0.35, 0.35, 0.35),
+      },
+    );
+    currentY -= 14;
+    drawDivider();
+
+    // --- 8. SIGNATURES ---
+    checkPageBreak(80);
+    page.drawText('8.   SIGNATURES', {
+      x: margin,
+      y: currentY,
+      size: 9.5,
+      font: fontBold,
+      color: rgb(0.05, 0.05, 0.05),
+    });
+    currentY -= 12;
+
+    page.drawText(
+      'By signing this Agreement, both parties agree to the terms and conditions stated above.',
+      {
+        x: margin,
+        y: currentY,
+        size: 7.5,
+        font,
+        color: rgb(0.35, 0.35, 0.35),
+      },
+    );
+    currentY -= 25;
+
+    const sigLineWidth = 160;
+
+    // Client Signature Line
+    page.drawLine({
+      start: { x: margin + 30, y: currentY },
+      end: { x: margin + 30 + sigLineWidth, y: currentY },
+      thickness: 1,
+      color: rgb(0.2, 0.2, 0.2),
+    });
+
+    // Freelancer Signature Line
+    page.drawLine({
+      start: { x: freelancerColX + 15, y: currentY },
+      end: { x: freelancerColX + 15 + sigLineWidth, y: currentY },
+      thickness: 1,
+      color: rgb(0.2, 0.2, 0.2),
+    });
+
+    currentY -= 12;
+
+    // Client signature text
+    page.drawText(clientName, {
+      x: margin + 30,
+      y: currentY,
+      size: 8.5,
+      font: fontBold,
+      color: rgb(0.05, 0.05, 0.05),
+    });
+    page.drawText('Client', {
+      x: margin + 30,
+      y: currentY - 11,
+      size: 7.5,
+      font,
+      color: rgb(0.4, 0.4, 0.4),
+    });
+
+    const clientSignDate = contract.clientSignedAt || contract.signedAt;
+    page.drawText(
+      contract.clientSignedAt || contract.signedAt
+        ? formatDate(clientSignDate)
+        : '(Pending Signature)',
+      {
+        x: margin + 30,
+        y: currentY - 21,
         size: 7,
         font,
-        color: rgb(0.5, 0.5, 0.5),
+        color: clientSignDate ? rgb(0.1, 0.5, 0.2) : rgb(0.5, 0.5, 0.5),
+      },
+    );
+
+    // Freelancer signature text
+    page.drawText(freelancerName, {
+      x: freelancerColX + 15,
+      y: currentY,
+      size: 8.5,
+      font: fontBold,
+      color: rgb(0.05, 0.05, 0.05),
+    });
+    page.drawText('Freelancer', {
+      x: freelancerColX + 15,
+      y: currentY - 11,
+      size: 7.5,
+      font,
+      color: rgb(0.4, 0.4, 0.4),
+    });
+
+    const freelancerSignDate = contract.freelancerSignedAt || contract.signedAt;
+    page.drawText(
+      contract.freelancerSignedAt || contract.signedAt
+        ? formatDate(freelancerSignDate)
+        : '(Pending Signature)',
+      {
+        x: freelancerColX + 15,
+        y: currentY - 21,
+        size: 7,
+        font,
+        color: freelancerSignDate ? rgb(0.1, 0.5, 0.2) : rgb(0.5, 0.5, 0.5),
       },
     );
 
@@ -530,78 +795,95 @@ export class ContractPdfService {
   }
 
   /**
+   * Builds contract PDF buffer directly for streaming or storage.
+   */
+  async getContractPdfBuffer(
+    contractId: number,
+  ): Promise<{ buffer: Buffer; fileName: string } | null> {
+    const contract = await this.prisma.contract.findUnique({
+      where: { id: contractId },
+      include: {
+        client: {
+          select: {
+            id: true,
+            email: true,
+            profile: { select: { displayName: true } },
+          },
+        },
+        freelancer: {
+          select: {
+            id: true,
+            email: true,
+            profile: { select: { displayName: true } },
+          },
+        },
+        job: { select: { title: true } },
+        milestones: {
+          where: { deletedAt: null },
+          select: {
+            id: true,
+            title: true,
+            description: true,
+            amount: true,
+            dueDate: true,
+          },
+          orderBy: { id: 'asc' },
+        },
+      },
+    });
+
+    if (!contract) {
+      this.logger.warn(`Contract #${contractId} not found for PDF generation.`);
+      return null;
+    }
+
+    const totalAmount = Number(contract.totalAmount);
+    const platformFee = Number(contract.platformFee);
+    const clientPlatformFee = Number(contract.clientPlatformFee);
+
+    const pdfBuffer = await this.buildContractPdfBuffer({
+      id: contract.id,
+      slug: contract.slug,
+      totalAmount,
+      platformFee,
+      clientPlatformFee,
+      terms: contract.terms,
+      signedAt: contract.signedAt,
+      clientSignedAt: contract.clientSignedAt,
+      freelancerSignedAt: contract.freelancerSignedAt,
+      createdAt: contract.createdAt,
+      expiresAt: contract.expiresAt,
+      client: contract.client,
+      freelancer: contract.freelancer,
+      job: contract.job,
+      milestones: contract.milestones.map((m) => ({
+        id: m.id,
+        title: m.title,
+        description: m.description,
+        amount: Number(m.amount),
+        dueDate: m.dueDate,
+      })),
+    });
+
+    const fileName = `Contract-${contract.id}-${contract.slug}.pdf`;
+    return { buffer: pdfBuffer, fileName };
+  }
+
+  /**
    * Generates contract PDF and saves it into SharedFile for the contract.
    * If a PDF already exists for this contract, it updates it.
    */
   async generateAndSaveContractPdf(contractId: number) {
     try {
+      const generated = await this.getContractPdfBuffer(contractId);
+      if (!generated) return null;
+
+      const { buffer: pdfBuffer, fileName } = generated;
       const contract = await this.prisma.contract.findUnique({
         where: { id: contractId },
-        include: {
-          client: {
-            select: {
-              id: true,
-              email: true,
-              profile: { select: { displayName: true } },
-            },
-          },
-          freelancer: {
-            select: {
-              id: true,
-              email: true,
-              profile: { select: { displayName: true } },
-            },
-          },
-          job: { select: { title: true } },
-          milestones: {
-            where: { deletedAt: null },
-            select: {
-              id: true,
-              title: true,
-              description: true,
-              amount: true,
-              dueDate: true,
-            },
-            orderBy: { id: 'asc' },
-          },
-        },
+        select: { id: true, clientId: true },
       });
-
-      if (!contract) {
-        this.logger.warn(
-          `Contract #${contractId} not found for PDF generation.`,
-        );
-        return null;
-      }
-
-      const totalAmount = Number(contract.totalAmount);
-      const platformFee = Number(contract.platformFee);
-      const clientPlatformFee = Number(contract.clientPlatformFee);
-
-      const pdfBuffer = await this.buildContractPdfBuffer({
-        id: contract.id,
-        slug: contract.slug,
-        totalAmount,
-        platformFee,
-        clientPlatformFee,
-        terms: contract.terms,
-        signedAt: contract.signedAt,
-        clientSignedAt: contract.clientSignedAt,
-        freelancerSignedAt: contract.freelancerSignedAt,
-        createdAt: contract.createdAt,
-        client: contract.client,
-        freelancer: contract.freelancer,
-        job: contract.job,
-        milestones: contract.milestones.map((m) => ({
-          id: m.id,
-          title: m.title,
-          description: m.description,
-          amount: Number(m.amount),
-          dueDate: m.dueDate,
-        })),
-      });
-
-      const fileName = `Contract-${contract.id}-${contract.slug}.pdf`;
+      if (!contract) return null;
       let fileUrl: string;
       let publicId = `contract-${contract.id}-pdf`;
 

@@ -4,6 +4,7 @@ import {
   GetContractListQueryType,
   RoleName,
   UpdateContractBodyType,
+  getEffectiveContractDeadlineMs,
 } from '@shared/types';
 import { ContractRepository } from './contract.repo';
 import {
@@ -13,6 +14,8 @@ import {
   ContractAlreadyExistsException,
   ContractAwaitingPaymentException,
   ContractDisputedException,
+  ContractExpiresAtBeforeMilestonesException,
+  ContractExpiresAtRequiredException,
   ContractForbiddenException,
   ContractNotActionableForRejectionException,
   ContractNotActiveException,
@@ -22,6 +25,8 @@ import {
   FailedToLoadContractException,
   FailedToUpdateContractException,
   MilestoneAmountMismatchException,
+  MilestoneDueDateExceedsContractException,
+  MilestoneDueDateRequiredException,
   ProposalJobPositionsFilledException,
   ProposalNotActionableException,
   ProposalNotFoundException,
@@ -64,8 +69,23 @@ export class ContractService {
         throw ProposalJobPositionsFilledException();
       }
 
-      // Nếu có danh sách milestone, tổng tiền các milestone phải khớp với tổng tiền hợp đồng
+      if (!body.expiresAt) {
+        throw ContractExpiresAtRequiredException();
+      }
+
+      const contractEndMs = getEffectiveContractDeadlineMs(body.expiresAt);
+
+      // Nếu có danh sách milestone, kiểm tra ngày hạn milestone và tổng tiền
       if (body.milestones && body.milestones.length > 0) {
+        for (const m of body.milestones) {
+          if (!m.dueDate) {
+            throw MilestoneDueDateRequiredException();
+          }
+          if (new Date(m.dueDate).getTime() > contractEndMs) {
+            throw MilestoneDueDateExceedsContractException();
+          }
+        }
+
         const milestonesTotal = body.milestones.reduce(
           (sum, m) => sum + Number(m.amount),
           0,
@@ -109,8 +129,25 @@ export class ContractService {
 
       if (!contract) throw ContractNotFoundException();
       if (contract.clientId !== clientId) throw ContractForbiddenException();
-      if (contract.status !== 'PENDING_SIGN')
+      if (
+        contract.status !== ContractStatus.PENDING_SIGN &&
+        contract.status !== ContractStatus.AWAITING_PAYMENT
+      )
         throw ContractNotPendingSignException();
+
+      if (body.expiresAt !== undefined) {
+        const nextEndMs = getEffectiveContractDeadlineMs(body.expiresAt);
+        const milestoneDueDates =
+          await this.contractRepository.findContractMilestoneDueDates(
+            contractId,
+          );
+        const hasExceedingMilestone = milestoneDueDates.some(
+          (m) => m.dueDate && new Date(m.dueDate).getTime() > nextEndMs,
+        );
+        if (hasExceedingMilestone) {
+          throw ContractExpiresAtBeforeMilestonesException();
+        }
+      }
 
       return await this.contractRepository.updateContract(contractId, body);
     } catch (error) {
@@ -149,17 +186,20 @@ export class ContractService {
         role,
       );
 
-      if (signed.status === ContractStatus.ACTIVE) {
+      if (
+        signed.status === ContractStatus.ACTIVE ||
+        signed.signedByClient ||
+        signed.signedByFreelancer
+      ) {
         try {
           await this.contractPdfService.generateAndSaveContractPdf(contractId);
         } catch (pdfErr) {
           this.logger.error(
-            `Failed to generate contract PDF on activation for contract #${contractId}:`,
+            `Failed to generate contract PDF for contract #${contractId}:`,
             pdfErr,
           );
         }
       }
-
       return signed;
     } catch (error) {
       this.logger.error(`Failed to sign contract #${contractId}:`, error);
@@ -300,10 +340,33 @@ export class ContractService {
 
       return contract;
     } catch (error) {
-      this.logger.error('Failed to create contract:', error);
       if (error instanceof HttpException) throw error;
       this.logger.error(`Failed to get contract detail #${contractId}:`, error);
-      this.logger.error(`Failed to get contract detail #${contractId}:`, error);
+      throw FailedToLoadContractException();
+    }
+  }
+
+  async getContractPdf(userId: number, roleName: string, contractId: number) {
+    try {
+      const contract =
+        await this.contractRepository.findContractById(contractId);
+
+      if (!contract) throw ContractNotFoundException();
+
+      const isAdmin = roleName === RoleName.ADMIN;
+      const isOwner =
+        contract.clientId === userId || contract.freelancerId === userId;
+
+      if (!isAdmin && !isOwner) throw ContractForbiddenException();
+
+      const result =
+        await this.contractPdfService.getContractPdfBuffer(contractId);
+      if (!result) throw ContractNotFoundException();
+
+      return result;
+    } catch (error) {
+      this.logger.error(`Failed to get contract PDF #${contractId}:`, error);
+      if (error instanceof HttpException) throw error;
       throw FailedToLoadContractException();
     }
   }
