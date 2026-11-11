@@ -7,6 +7,23 @@ const withNextIntl = createNextIntlPlugin("./i18n/request.ts");
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   output: "standalone",
+  experimental: {
+    turbopackFileSystemCacheForDev: false,
+  },
+  async redirects() {
+    return [
+      {
+        source: "/account-profile",
+        destination: "/freelancer/profile",
+        permanent: false,
+      },
+      {
+        source: "/search/jobs",
+        destination: "/freelancer/search/jobs",
+        permanent: false,
+      },
+    ];
+  },
   async rewrites() {
     return [
       // File upload trong hội thoại được phục vụ từ backend (NestJS) tại /uploads

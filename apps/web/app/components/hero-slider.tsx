@@ -61,7 +61,7 @@ export function HeroSlider() {
               {t("hireTalent")}
             </Link>
             <Link
-              href="/find-work"
+              href="/freelancer"
               className="rounded-full border border-white/25 bg-white/10 px-6 py-3 text-xs sm:text-sm font-semibold text-white backdrop-blur-md transition-all hover:bg-white/20 hover:border-white/40"
             >
               {t("applyAsFreelancer")}

@@ -1,18 +1,24 @@
 import {
   ChargeSavedCardBodySchema,
   ChargeSavedCardResponseSchema,
+  ContractHoldActionResponseSchema,
   CreateCheckoutSessionResponseSchema,
+  CreateContractHoldBodySchema,
+  CreateContractHoldResponseSchema,
   CreateCustomerPortalSessionResponseSchema,
   CreateOnboardingLinkBodySchema,
   CreatePaymentIntentResponseSchema,
+  CreateSetupIntentResponseSchema,
   DisputeSettlementBodySchema,
   DisputeSettlementResponseSchema,
   GetSavedPaymentMethodsResponseSchema,
   GetTransactionListQuerySchema,
   GetTransactionListResponseSchema,
+  PaymentMethodActionResponseSchema,
   RefundMilestoneBodySchema,
   RefundMilestoneResponseSchema,
   ReleaseMilestoneResponseSchema,
+  SetDefaultPaymentMethodBodySchema,
   StripeConnectStatusResponseSchema,
   StripeOnboardingLinkResponseSchema,
   SyncCheckoutSessionResponseSchema,
@@ -26,6 +32,18 @@ export class GetSavedPaymentMethodsResponseDTO extends createZodDto(
 
 export class CreateCustomerPortalSessionResponseDTO extends createZodDto(
   CreateCustomerPortalSessionResponseSchema,
+) {}
+
+export class CreateSetupIntentResponseDTO extends createZodDto(
+  CreateSetupIntentResponseSchema,
+) {}
+
+export class SetDefaultPaymentMethodBodyDTO extends createZodDto(
+  SetDefaultPaymentMethodBodySchema,
+) {}
+
+export class PaymentMethodActionResponseDTO extends createZodDto(
+  PaymentMethodActionResponseSchema,
 ) {}
 
 export class ChargeSavedCardBodyDTO extends createZodDto(
@@ -48,6 +66,18 @@ export class GetTransactionListResponseDTO extends createZodDto(
 
 export class CreatePaymentIntentResponseDTO extends createZodDto(
   CreatePaymentIntentResponseSchema,
+) {}
+
+export class CreateContractHoldBodyDTO extends createZodDto(
+  CreateContractHoldBodySchema,
+) {}
+
+export class CreateContractHoldResponseDTO extends createZodDto(
+  CreateContractHoldResponseSchema,
+) {}
+
+export class ContractHoldActionResponseDTO extends createZodDto(
+  ContractHoldActionResponseSchema,
 ) {}
 
 export class CreateCheckoutSessionResponseDTO extends createZodDto(

@@ -199,4 +199,59 @@ export type SyncPaymentIntentResponseType = z.infer<
   typeof SyncPaymentIntentResponseSchema
 >;
 
+export const CreateContractHoldBodySchema = z.object({
+  milestoneIds: z.array(z.coerce.number().int().positive()).min(1),
+  paymentMethodId: z.string().min(1).optional(),
+});
+export type CreateContractHoldBodyType = z.infer<
+  typeof CreateContractHoldBodySchema
+>;
+
+export const CreateContractHoldResponseSchema = z.object({
+  clientSecret: z.string(),
+  paymentIntentId: z.string(),
+  amount: z.number(),
+  milestonesAmount: z.number(),
+  platformFeeAmount: z.number(),
+  currency: z.string(),
+  milestoneIds: z.array(z.number()),
+  status: z.string().optional(),
+  authorized: z.boolean().optional(),
+});
+export type CreateContractHoldResponseType = z.infer<
+  typeof CreateContractHoldResponseSchema
+>;
+
+export const ContractHoldActionResponseSchema = z.object({
+  success: z.boolean(),
+  paymentIntentId: z.string(),
+  status: z.string(),
+  message: z.string(),
+});
+export type ContractHoldActionResponseType = z.infer<
+  typeof ContractHoldActionResponseSchema
+>;
+
+export const CreateSetupIntentResponseSchema = z.object({
+  clientSecret: z.string(),
+  setupIntentId: z.string(),
+});
+export type CreateSetupIntentResponseType = z.infer<
+  typeof CreateSetupIntentResponseSchema
+>;
+
+export const SetDefaultPaymentMethodBodySchema = z.object({
+  paymentMethodId: z.string().min(1),
+});
+export type SetDefaultPaymentMethodBodyType = z.infer<
+  typeof SetDefaultPaymentMethodBodySchema
+>;
+
+export const PaymentMethodActionResponseSchema = z.object({
+  success: z.boolean(),
+  message: z.string(),
+});
+export type PaymentMethodActionResponseType = z.infer<
+  typeof PaymentMethodActionResponseSchema
+>;
 

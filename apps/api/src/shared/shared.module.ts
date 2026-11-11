@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtModule } from '@nestjs/jwt';
 import { envConfig } from './config/validate-env';
+import { AuthGateway } from './gateways/auth.gateway';
 import { AuthGuard } from './guards/access-token.guard';
 import { PermissionGuard } from './guards/permission.guard';
 import { AiRecommendationService } from './services/ai-recommendation.service';
@@ -48,6 +49,7 @@ import { AIModerationService } from './services/ai-moderation.service';
     SharedRoleRepository,
     SharedPermissionRepository,
     ContractPdfService,
+    AuthGateway,
   ],
   exports: [
     PrismaService,
@@ -63,6 +65,7 @@ import { AIModerationService } from './services/ai-moderation.service';
     SharedPermissionRepository,
     TokenService,
     ContractPdfService,
+    AuthGateway,
   ],
 })
 export class SharedModule {}

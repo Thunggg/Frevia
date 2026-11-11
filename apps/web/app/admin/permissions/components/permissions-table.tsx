@@ -25,9 +25,10 @@ import {
 import { HttpMethod, type HttpMethodType } from "@shared/types";
 import { ArrowDown, ArrowUp, ArrowUpDown, Eye, Search, X } from "lucide-react";
 import Link from "next/link";
-import { useFormatter, useTranslations } from "next-intl";
+import { useFormatter, useLocale, useTranslations } from "next-intl";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
+import { getPermissionDisplayName } from "@/lib/permission-utils";
 
 const PAGE_SIZE = 10;
 
@@ -54,6 +55,7 @@ export function PermissionsTable() {
   const t = useTranslations("adminPermissions");
   const tCommon = useTranslations("adminCommon");
   const format = useFormatter();
+  const locale = useLocale();
 
   const page = Math.max(1, Number(searchParams.get("page")) || 1);
   const methodParam = searchParams.get("method") ?? "";
@@ -237,7 +239,7 @@ export function PermissionsTable() {
             <Skeleton className="h-9 w-[180px]" />
           </div>
           <AdminTableSkeleton
-            columns={["w-16", "w-24", "", "w-28", "w-28", "w-20"]}
+            columns={["w-16", "w-44", "w-24", "", "w-28", "w-28", "w-20"]}
             rows={10}
           />
         </div>
@@ -265,6 +267,7 @@ export function PermissionsTable() {
                       <SortIcon column="id" />
                     </button>
                   </TableHead>
+                  <TableHead className="min-w-[180px]">{t("permissionName")}</TableHead>
                   <TableHead className="w-24">{tCommon("method")}</TableHead>
                   <TableHead>{tCommon("path")}</TableHead>
                   <TableHead>{tCommon("module")}</TableHead>
@@ -287,7 +290,7 @@ export function PermissionsTable() {
                 {permissions.length === 0 ? (
                   <TableRow>
                     <TableCell
-                      colSpan={6}
+                      colSpan={7}
                       className="text-center py-12 text-muted-foreground"
                     >
                       {searchParam || methodParam || moduleParam
@@ -303,6 +306,9 @@ export function PermissionsTable() {
                           {permission.id}
                         </Badge>
                       </TableCell>
+                      <TableCell className="font-medium text-sm text-foreground">
+                        {getPermissionDisplayName(permission, locale)}
+                      </TableCell>
                       <TableCell>
                         <Badge
                           variant={
@@ -312,7 +318,7 @@ export function PermissionsTable() {
                           {permission.method}
                         </Badge>
                       </TableCell>
-                      <TableCell className="font-mono text-sm max-w-md truncate">
+                      <TableCell className="font-mono text-xs text-muted-foreground max-w-xs truncate">
                         {permission.path}
                       </TableCell>
                       <TableCell>

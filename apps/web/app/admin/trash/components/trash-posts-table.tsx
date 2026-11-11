@@ -65,6 +65,7 @@ export function TrashPostsTable({ posts, pagination }: TrashPostsTableProps) {
   const locale = useLocale();
   const t = useTranslations("adminTrash");
   const tCommon = useTranslations("adminCommon");
+  const tGlobal = useTranslations("common");
   const router = useRouter();
   const [restoringId, setRestoringId] = useState<number | null>(null);
   const [viewingPost, setViewingPost] = useState<ForumTrashPostType | null>(
@@ -140,7 +141,7 @@ export function TrashPostsTable({ posts, pagination }: TrashPostsTableProps) {
                         </AvatarFallback>
                       </Avatar>
                       <span className="text-muted-foreground text-sm">
-                        {post.user.profile?.displayName ?? `User #${post.user.id}`}
+                        {post.user.profile?.displayName ?? tGlobal("userFallback", { id: post.user.id })}
                       </span>
                     </div>
                   </TableCell>
@@ -244,7 +245,7 @@ export function TrashPostsTable({ posts, pagination }: TrashPostsTableProps) {
                   </Avatar>
                   <span>
                     {viewingPost.user.profile?.displayName ??
-                      `User #${viewingPost.user.id}`}
+                      tGlobal("userFallback", { id: viewingPost.user.id })}
                   </span>
                 </div>
                 <div className="flex items-center gap-1.5">

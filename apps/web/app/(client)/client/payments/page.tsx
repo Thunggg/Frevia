@@ -7,9 +7,9 @@ export const metadata = {
 
 export default function ClientPaymentsPage() {
   return (
-    <div className="min-h-full bg-background font-sans">
+    <div className="min-h-full dark:bg-background font-sans">
       <section className="border-b border-border bg-background">
-        <div className="px-6 pt-8 pb-6 lg:px-8">
+        <div className="px-6 pt-8 pb-6 lg:px-8 max-w-7xl mx-auto">
           <h1 className="text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
             Billing & Payments
           </h1>

@@ -16,6 +16,11 @@ import { toastError, toastSuccess } from "@repo/ui/components/shadcn/toast";
 import { DollarSign, FileText, Loader2 } from "@/components/icons";
 import { contractApiRequest } from "@/apiRequests/contract";
 import { ApiFail } from "@/lib/http";
+import {
+  getTodayDateInputValue,
+  toDateInputValue,
+  toEndOfDayIso,
+} from "@/lib/format";
 import type { ContractDetailType } from "@shared/types";
 
 interface EditContractSheetProps {
@@ -44,15 +49,21 @@ export function EditContractSheet({
   const [expiresAt, setExpiresAt] = useState<string>("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  const todayStr = getTodayDateInputValue();
+  const maxMilestoneDateStr = (contract.milestones ?? []).reduce((max, m) => {
+    const val = toDateInputValue(m.dueDate);
+    return val && val > max ? val : max;
+  }, "");
+  const minExpiresDateStr =
+    maxMilestoneDateStr && maxMilestoneDateStr > todayStr
+      ? maxMilestoneDateStr
+      : todayStr;
+
   useEffect(() => {
     if (open) {
       setTotalAmount(Number(contract.totalAmount) || 0);
       setTerms(contract.terms || "");
-      setExpiresAt(
-        contract.expiresAt
-          ? (new Date(contract.expiresAt).toISOString().split("T")[0] ?? "")
-          : "",
-      );
+      setExpiresAt(toDateInputValue(contract.expiresAt));
     }
   }, [open, contract]);
 
@@ -73,24 +84,42 @@ export function EditContractSheet({
       return;
     }
 
+    if (!expiresAt) {
+      toastError({ message: "Contract end date is required" });
+      return;
+    }
+
+    if (expiresAt < todayStr) {
+      toastError({ message: "Contract end date cannot be in the past" });
+      return;
+    }
+
+    if (maxMilestoneDateStr && expiresAt < maxMilestoneDateStr) {
+      toastError({
+        message: `Contract end date cannot be earlier than existing milestone due date (${maxMilestoneDateStr})`,
+      });
+      return;
+    }
+
+    const isBudgetLocked =
+      Boolean(contract.holdPaymentIntentId) ||
+      contract.status !== "AWAITING_PAYMENT";
     setIsSubmitting(true);
     try {
       const payload: {
-        totalAmount: number;
+        totalAmount?: number;
         terms?: string;
         expiresAt?: string;
       } = {
-        totalAmount: Number(totalAmount),
+        expiresAt: toEndOfDayIso(expiresAt),
       };
+
+      if (!isBudgetLocked) {
+        payload.totalAmount = Number(totalAmount);
+      }
 
       if (terms.trim()) {
         payload.terms = terms.trim();
-      }
-
-      if (expiresAt) {
-        const d = new Date(expiresAt);
-        d.setHours(23, 59, 59, 999);
-        payload.expiresAt = d.toISOString();
       }
 
       await contractApiRequest.update(contract.id, payload);
@@ -182,26 +211,42 @@ export function EditContractSheet({
                   min={minAllowedAmount > 0 ? minAllowedAmount : 1}
                   step="any"
                   required
+                  disabled={
+                    Boolean(contract.holdPaymentIntentId) ||
+                    contract.status !== "AWAITING_PAYMENT"
+                  }
                   value={totalAmount || ""}
                   onChange={(e) => setTotalAmount(Number(e.target.value))}
                   placeholder={t("amountPlaceholder")}
-                  className="w-full rounded-xl border border-border bg-background py-2 pl-9 pr-3 text-sm text-foreground focus:border-[#0069D3] focus:outline-none focus:ring-1 focus:ring-[#0069D3]"
+                  className="w-full rounded-xl border border-border bg-background py-2 pl-9 pr-3 text-sm text-foreground focus:border-[#0069D3] focus:outline-none focus:ring-1 focus:ring-[#0069D3] disabled:opacity-60 disabled:cursor-not-allowed"
                 />
               </div>
+              {(Boolean(contract.holdPaymentIntentId) ||
+                contract.status !== "AWAITING_PAYMENT") && (
+                <p className="mt-1 text-[11px] text-amber-600">
+                  Total budget cannot be edited after the escrow hold is authorized.
+                </p>
+              )}
             </div>
 
             {/* Expiration Date */}
             <div>
               <label className="text-xs font-semibold text-foreground">
-                {t("expiration")}
+                Contract End Date <span className="text-red-500">*</span>
               </label>
               <input
                 type="date"
-                min={new Date().toISOString().split("T")[0]}
+                required
+                min={minExpiresDateStr}
                 value={expiresAt}
                 onChange={(e) => setExpiresAt(e.target.value)}
                 className="mt-1.5 w-full rounded-xl border border-border bg-background px-3 py-2 text-sm text-foreground focus:border-[#0069D3] focus:outline-none focus:ring-1 focus:ring-[#0069D3]"
               />
+              {maxMilestoneDateStr && (
+                <p className="mt-1 text-[11px] text-muted-foreground">
+                  Must be on or after the latest milestone due date ({maxMilestoneDateStr}).
+                </p>
+              )}
             </div>
 
             {/* Terms of Engagement */}

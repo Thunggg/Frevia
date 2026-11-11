@@ -14,7 +14,7 @@ export default async function FreelancerDashboardLayout({
   const user = await authServerRequest.getMe();
 
   if (!user || user.isBanned) {
-    redirect("/login?redirect=/freelancer/find-work");
+    redirect("/login?redirect=/freelancer");
   }
 
   const primaryRole =

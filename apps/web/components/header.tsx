@@ -82,7 +82,7 @@ const roleConfig: Record<UserRole, { nameKey: NavRoleKey; links: NavLink[] }> = 
   GUEST: {
     nameKey: "guest",
     links: [
-      { href: "/find-work", labelKey: "findWork" },
+      { href: "/freelancer", labelKey: "findWork" },
       { href: "/experts", labelKey: "hireTalent" },
       { href: "/forum", labelKey: "forum" },
     ],
@@ -104,11 +104,12 @@ const roleConfig: Record<UserRole, { nameKey: NavRoleKey; links: NavLink[] }> = 
   FREELANCER: {
     nameKey: "freelancer",
     links: [
-      { href: "/freelancer/find-work", labelKey: "findWork" },
-      { href: "/freelancer/bookmarks", labelKey: "bookmarks" },
+      { href: "/freelancer", labelKey: "findWork" },
+      { href: "/freelancer?tab=saved-jobs", labelKey: "bookmarks" },
       { href: "/freelancer/proposals", labelKey: "myProposals" },
       { href: "/freelancer/contracts", labelKey: "contracts" },
-      { href: "/freelancer/saved-searches", labelKey: "savedSearches" },
+      { href: "/freelancer/payments", labelKey: "payments" },
+      { href: "/freelancer?tab=saved-searches", labelKey: "savedSearches" },
       { href: "/forum", labelKey: "forum" },
     ],
   },
@@ -218,8 +219,7 @@ function HeaderSearch({
           params.delete("keyword");
         }
         params.set("page", "1");
-        const searchBase =
-          role === "FREELANCER" ? "/freelancer/find-work" : "/find-work";
+        const searchBase = "/freelancer";
         router.push(`${searchBase}?${params.toString()}`);
       }}
     >
@@ -276,7 +276,7 @@ function useRoleContextAction(role: Exclude<UserRole, "GUEST">) {
       router.push(
         targetRole === RoleName.CLIENT
           ? "/client/jobs"
-          : "/freelancer/find-work",
+          : "/freelancer",
       );
       router.refresh();
       return true;
@@ -437,11 +437,11 @@ function ProfileDropdown({ role }: { role: Exclude<UserRole, "GUEST"> }) {
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
               <Link
-                href="/account-profile?tab=payments"
+                href="/freelancer/payments"
                 className="cursor-pointer"
               >
                 <CreditCard className="size-4 text-muted-foreground" />
-                Billing & Payouts
+                Billing & Payments
               </Link>
             </DropdownMenuItem>
           </>
@@ -596,7 +596,11 @@ function MobileProfileNavigation({
       ) : null}
       <Link
         href={
-          role === "FREELANCER" ? "/freelancer/profile" : "/account-profile"
+          role === "FREELANCER"
+            ? "/freelancer/profile"
+            : role === "CLIENT"
+              ? "/client/profile"
+              : "/login"
         }
         onClick={onNavigate}
         className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-[13px] font-medium text-foreground/70 transition-colors hover:bg-black/[0.04] hover:text-foreground dark:hover:bg-white/[0.06]"

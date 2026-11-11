@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { RoleName } from '@shared/types';
 import {
   AvailabilityStatus,
   CvAnalysisStatus,
@@ -49,37 +50,83 @@ export type CvAnalysisConfirmInput = {
     technologies: string[];
     description: string | null;
   }[];
+  summary?: string | null;
 };
+
+export function formatExperienceLine(item: {
+  title?: string | null;
+  company?: string | null;
+  startDate?: string | null;
+  endDate?: string | null;
+  isCurrent?: boolean;
+}): string {
+  const parts: string[] = [];
+  if (item.title && item.company) {
+    parts.push(`${item.title} - ${item.company}`);
+  } else if (item.title) {
+    parts.push(item.title);
+  } else if (item.company) {
+    parts.push(item.company);
+  }
+
+  const dateParts: string[] = [];
+  if (item.startDate) dateParts.push(item.startDate);
+  if (item.isCurrent) {
+    dateParts.push('Nay');
+  } else if (item.endDate) {
+    dateParts.push(item.endDate);
+  }
+
+  if (dateParts.length > 0) {
+    parts.push(`(${dateParts.join(' - ')})`);
+  }
+
+  return parts.join(' ').trim().slice(0, 255);
+}
+
+export function formatEducationLine(item: {
+  degree?: string | null;
+  school?: string | null;
+  startYear?: number | null;
+  endYear?: number | null;
+}): string {
+  const parts: string[] = [];
+  if (item.degree && item.school) {
+    parts.push(`${item.degree} - ${item.school}`);
+  } else if (item.degree) {
+    parts.push(item.degree);
+  } else if (item.school) {
+    parts.push(item.school);
+  }
+
+  const yearParts: string[] = [];
+  if (item.startYear) yearParts.push(String(item.startYear));
+  if (item.endYear) yearParts.push(String(item.endYear));
+
+  if (yearParts.length > 0) {
+    parts.push(`(${yearParts.join(' - ')})`);
+  }
+
+  return parts.join(' ').trim().slice(0, 255);
+}
 
 @Injectable()
 export class ProfileRepository {
   constructor(private readonly prisma: PrismaService) {}
 
   async findFreelancerProfileById(profileId: number) {
-    const byId = await this.prisma.profile.findFirst({
-      where: {
-        id: profileId,
-        user: {
-          deletedAt: null,
-        },
-      },
-      include: {
-        freelancerProfile: true,
-        user: {
-          include: {
-            userRoles: {
-              include: { role: true },
-            },
-          },
-        },
-      },
-    });
-    if (byId) return byId;
     return this.prisma.profile.findFirst({
       where: {
-        userId: profileId,
+        OR: [{ id: profileId }, { userId: profileId }],
         user: {
           deletedAt: null,
+          userRoles: {
+            some: {
+              role: {
+                name: RoleName.FREELANCER,
+              },
+            },
+          },
         },
       },
       include: {
@@ -450,6 +497,7 @@ export class ProfileRepository {
           profileId: true,
           title: true,
           education: true,
+          experience: true,
           certifications: true,
           _count: {
             select: {
@@ -459,22 +507,63 @@ export class ProfileRepository {
           },
         },
       });
+
+      // Đồng bộ vào mảng String[] của FreelancerProfile (được hiển thị trên form Hồ sơ)
+      const newExpLines = input.experience
+        .map(formatExperienceLine)
+        .filter((line) => line.length > 0);
+      const existingExp = freelancerProfile.experience || [];
+      const mergedExperience = Array.from(
+        new Set([...existingExp, ...newExpLines]),
+      ).slice(0, 20);
+
+      const newEduLines = input.education
+        .map(formatEducationLine)
+        .filter((line) => line.length > 0);
+      const existingEdu = freelancerProfile.education || [];
+      const mergedEducation = Array.from(
+        new Set([...existingEdu, ...newEduLines]),
+      ).slice(0, 20);
+
+      const suggestedTitle =
+        !freelancerProfile.title && input.experience.length > 0
+          ? input.experience.find((e) => e.title?.trim())?.title?.trim() || null
+          : null;
+
+      await tx.freelancerProfile.update({
+        where: { id: input.freelancerProfileId },
+        data: {
+          experience: mergedExperience,
+          education: mergedEducation,
+          ...(suggestedTitle ? { title: suggestedTitle.slice(0, 255) } : {}),
+        },
+      });
+
       const profile = await tx.profile.findUniqueOrThrow({
         where: { id: freelancerProfile.profileId },
         select: { displayName: true, bio: true },
       });
+
+      const rawSummary = (input.summary || '').trim();
+      const updatedBio =
+        !profile.bio && rawSummary ? rawSummary.slice(0, 5000) : profile.bio;
+
       const profileCompletionPercent = calculateFreelancerProfileStrength({
         displayName: profile.displayName,
-        bio: profile.bio,
-        title: freelancerProfile.title,
-        education: freelancerProfile.education,
+        bio: updatedBio,
+        title: suggestedTitle || freelancerProfile.title,
+        education: mergedEducation,
         certifications: freelancerProfile.certifications,
         skillCount: freelancerProfile._count.skills,
         portfolioCount: freelancerProfile._count.portfolioItems,
       });
+
       await tx.profile.update({
         where: { id: freelancerProfile.profileId },
-        data: { profileCompletionPercent },
+        data: {
+          bio: updatedBio,
+          profileCompletionPercent,
+        },
       });
 
       return { profileCompletionPercent };

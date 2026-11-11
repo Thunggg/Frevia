@@ -22,6 +22,7 @@ export class BrowseJobRepository {
       limit,
       search,
       budgetType,
+      hiringType,
       budgetMin,
       budgetMax,
       createdAfter,
@@ -73,6 +74,7 @@ export class BrowseJobRepository {
       }),
 
       ...(budgetType && { budgetType }),
+      ...(hiringType && { hiringType }),
 
       // Include jobs whose offered budget range overlaps the selected range.
       ...(budgetMin !== undefined && { budgetMax: { gte: budgetMin } }),
@@ -154,6 +156,12 @@ export class BrowseJobRepository {
               category: { select: { id: true, name: true, slug: true } },
             },
           },
+
+          _count: {
+            select: {
+              proposals: true,
+            },
+          },
         },
 
         skip: (page - 1) * limit,
@@ -218,6 +226,12 @@ export class BrowseJobRepository {
             category: { select: { id: true, name: true, slug: true } },
           },
         },
+
+        _count: {
+          select: {
+            proposals: true,
+          },
+        },
       },
     });
 
@@ -235,20 +249,26 @@ export class BrowseJobRepository {
       jobCategories?: Array<{
         category: { id: number; name: string; slug: string };
       }>;
+      _count?: {
+        proposals?: number;
+      };
     },
   >(
     job: T,
-  ): Omit<T, 'budgetMin' | 'budgetMax' | 'jobCategories'> & {
+  ): Omit<T, 'budgetMin' | 'budgetMax' | 'jobCategories' | '_count'> & {
     budgetMin: number | null;
     budgetMax: number | null;
     jobCategories?: Array<{ id: number; name: string; slug: string }>;
+    proposalsCount?: number;
   } {
-    const { jobCategories, budgetMin, budgetMax, ...rest } = job;
+    const { jobCategories, budgetMin, budgetMax, _count, ...rest } = job;
+    const proposalsCount = _count?.proposals;
 
     const normalized = {
       ...rest,
       budgetMin: budgetMin === null ? null : Number(budgetMin),
       budgetMax: budgetMax === null ? null : Number(budgetMax),
+      ...(proposalsCount !== undefined ? { proposalsCount } : {}),
     };
 
     // Quan hệ N-N: làm phẳng bảng trung gian JobJobCategory về danh mục thực tế.
@@ -259,10 +279,6 @@ export class BrowseJobRepository {
             jobCategories: jobCategories.map(({ category }) => category),
           }
         : normalized
-    ) as Omit<T, 'budgetMin' | 'budgetMax' | 'jobCategories'> & {
-      budgetMin: number | null;
-      budgetMax: number | null;
-      jobCategories?: Array<{ id: number; name: string; slug: string }>;
-    };
+    ) as any;
   }
 }

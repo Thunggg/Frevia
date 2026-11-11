@@ -3,6 +3,7 @@ import {
   ForbiddenException,
   NotFoundException,
   ServiceUnavailableException,
+  UnprocessableEntityException,
 } from '@nestjs/common';
 import { ProfileMessage } from '@shared/types';
 
@@ -54,11 +55,27 @@ export const CvFileInvalidException = () =>
 export const CvNotFoundException = () =>
   new NotFoundException([{ message: 'CV not found.', path: 'cv' }]);
 
-export const CvAiUnavailableException = () =>
-  new ServiceUnavailableException([
+export const CvTextEmptyException = (detail?: string) =>
+  new UnprocessableEntityException([
     {
       message:
-        'The AI CV analysis service is unavailable. Please try again later.',
+        detail ||
+        'Không thể trích xuất văn bản từ CV. Vui lòng đảm bảo tệp PDF chứa văn bản có thể chọn/sao chép được (không phải hình ảnh quét/ảnh chụp).',
+      path: 'cv',
+    },
+  ]);
+
+export const CvEncryptedException = () =>
+  new BadRequestException([
+    { message: 'Tệp PDF đã bị khoá mật khẩu, không thể đọc.', path: 'cv' },
+  ]);
+
+export const CvAiUnavailableException = (detail?: string) =>
+  new ServiceUnavailableException([
+    {
+      message: detail
+        ? `The AI CV analysis service is unavailable: ${detail}`
+        : 'The AI CV analysis service is unavailable. Please try again later.',
       path: 'cv',
     },
   ]);

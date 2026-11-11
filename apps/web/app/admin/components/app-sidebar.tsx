@@ -3,10 +3,7 @@
 import {
   Sidebar,
   SidebarContent,
-  SidebarFooter,
   SidebarHeader,
-  SidebarMenu,
-  SidebarMenuItem,
 } from "@repo/ui/components/shadcn/sidebar";
 import {
   FolderTree,
@@ -19,7 +16,6 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
-import { LogoutButton } from "./logout-button";
 import { NavMain, type NavItem } from "./nav-main";
 
 // Cấu hình menu sidebar Admin:
@@ -111,14 +107,6 @@ export function AppSidebar() {
       <SidebarContent>
         <NavMain label={t("menu")} items={navItems} />
       </SidebarContent>
-
-      <SidebarFooter>
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <LogoutButton />
-          </SidebarMenuItem>
-        </SidebarMenu>
-      </SidebarFooter>
     </Sidebar>
   );
 }

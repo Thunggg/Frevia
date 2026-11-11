@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import {
   type AddFreelancerSkillType,
   type CvAnalysisConfirmType,
@@ -34,6 +34,8 @@ import {
   CvFileTypeException,
   CvNotFoundException,
   CvAiUnavailableException,
+  CvTextEmptyException,
+  CvEncryptedException,
   CvAnalysisNotFoundException,
   CvAnalysisNotPendingException,
   CvAnalysisStaleException,
@@ -48,6 +50,8 @@ const CV_SOURCE_MAP: Record<AiCvSource, CvSourceType> = {
 
 @Injectable()
 export class ProfileService {
+  private readonly logger = new Logger(ProfileService.name);
+
   constructor(
     private readonly profileRepository: ProfileRepository,
     private readonly cloudinary: CloudinaryService,
@@ -170,16 +174,32 @@ export class ProfileService {
     const cvUrl = cv?.cvUrl;
     if (!cvUrl || !cv) throw CvNotFoundException();
 
+    this.logger.log(
+      `analyzeCv: profileId=${profileId}, userId=${userId}, cvUrl=${cvUrl}, cvFileName=${cv.cvFileName}`,
+    );
     const { buffer, fileName } = await this.readCvBytes(
       cvUrl,
       cv.cvFileName ?? 'cv.pdf',
+    );
+    this.logger.log(
+      `analyzeCv: readCvBytes loaded ${buffer.length} bytes for ${fileName}`,
     );
 
     let analysis: AiCvAnalysis;
     try {
       analysis = await this.aiCvAnalyzer.analyze(buffer, fileName);
-    } catch {
-      throw CvAiUnavailableException();
+    } catch (error) {
+      const errMsg = error instanceof Error ? error.message : String(error);
+      this.logger.error(
+        `Failed to analyze CV for profile ${profileId}: ${errMsg}`,
+      );
+      if (errMsg.includes('CV_TEXT_EMPTY')) {
+        throw CvTextEmptyException();
+      }
+      if (errMsg.includes('CV_ENCRYPTED')) {
+        throw CvEncryptedException();
+      }
+      throw CvAiUnavailableException(errMsg);
     }
 
     const suggestedNames = analysis.skills.map((skill) => skill.name);
@@ -351,6 +371,10 @@ export class ProfileService {
       description: item.description,
     }));
 
+    const rawPayload = analysis.payload as Record<string, unknown> | null;
+    const summary =
+      typeof rawPayload?.summary === 'string' ? rawPayload.summary : undefined;
+
     const result = await this.profileRepository.confirmCvAnalysis({
       analysisId,
       freelancerProfileId: analysis.freelancerProfile.id,
@@ -358,6 +382,7 @@ export class ProfileService {
       experience,
       education,
       projects,
+      ...(summary !== undefined ? { summary } : {}),
     });
     if (!result) throw CvAnalysisNotPendingException();
 

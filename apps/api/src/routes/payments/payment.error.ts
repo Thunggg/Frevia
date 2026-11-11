@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   ForbiddenException,
+  InternalServerErrorException,
   NotFoundException,
   UnprocessableEntityException,
 } from '@nestjs/common';
@@ -27,6 +28,54 @@ export const PlatformFeeAlreadyPaidException = () =>
     {
       message: ManagePaymentMessage.PLATFORM_FEE_ALREADY_PAID,
       path: 'platformFeeStatus',
+    },
+  ]);
+
+export const ContractNotActiveException = () =>
+  new UnprocessableEntityException([
+    {
+      message: ManagePaymentMessage.CONTRACT_NOT_ACTIVE,
+      path: 'contractId',
+    },
+  ]);
+
+export const ContractNotAwaitingPaymentException = () =>
+  new UnprocessableEntityException([
+    {
+      message: ManagePaymentMessage.CONTRACT_NOT_AWAITING_PAYMENT,
+      path: 'contractId',
+    },
+  ]);
+
+export const ContractExpiredException = () =>
+  new UnprocessableEntityException([
+    {
+      message: ManagePaymentMessage.CONTRACT_EXPIRED,
+      path: 'contractId',
+    },
+  ]);
+
+export const HoldMilestoneRequiredException = () =>
+  new BadRequestException([
+    {
+      message: ManagePaymentMessage.HOLD_MILESTONE_REQUIRED,
+      path: 'milestoneIds',
+    },
+  ]);
+
+export const HoldIntentCaptureFailedException = () =>
+  new InternalServerErrorException([
+    {
+      message: ManagePaymentMessage.HOLD_INTENT_CAPTURE_FAILED,
+      path: 'paymentIntentId',
+    },
+  ]);
+
+export const HoldIntentCancelFailedException = () =>
+  new InternalServerErrorException([
+    {
+      message: ManagePaymentMessage.HOLD_INTENT_CANCEL_FAILED,
+      path: 'paymentIntentId',
     },
   ]);
 

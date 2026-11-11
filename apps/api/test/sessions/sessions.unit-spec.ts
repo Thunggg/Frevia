@@ -10,6 +10,8 @@ import {
   SessionAlreadyExpiredException,
   SessionNotFoundException,
 } from '../../src/routes/sessions/sessions.error';
+import { AuthGateway } from '../../src/shared/gateways/auth.gateway';
+import { PrismaService } from '../../src/shared/services/prisma.service';
 import { SessionsRepository } from '../../src/routes/sessions/sessions.repo';
 import { SessionsService } from '../../src/routes/sessions/sessions.service';
 
@@ -20,8 +22,14 @@ describe('Session Management (UF-50 to UF-52)', () => {
     deleteActiveByIdForUser: jest.fn(),
   };
 
+  const authGateway = {
+    emitForceLogoutSession: jest.fn(),
+    emitForceLogoutUser: jest.fn(),
+  };
+
   const service = new SessionsService(
     repository as unknown as SessionsRepository,
+    authGateway as unknown as AuthGateway,
   );
 
   const createdAt = new Date('2026-01-01T00:00:00.000Z');
@@ -207,6 +215,10 @@ describe('Session Management (UF-50 to UF-52)', () => {
       const result = await service.revokeMySession(102, 10, 101);
 
       expect(repository.deleteActiveByIdForUser).toHaveBeenCalledWith(102, 10);
+      expect(authGateway.emitForceLogoutSession).toHaveBeenCalledWith(
+        102,
+        expect.any(String),
+      );
       expect(result).toEqual({
         message: ManageSessionMessage.SESSION_REVOKED,
         loggedOut: false,
@@ -260,6 +272,66 @@ describe('Session Management (UF-50 to UF-52)', () => {
       await expect(
         service.revokeMySession(102, 10, 101),
       ).rejects.toBeInstanceOf(InternalServerErrorException);
+    });
+  });
+
+  describe('SessionsRepository', () => {
+    it('filters out expired sessions by querying expiresAt > now in findAllByUserId', async () => {
+      const mockFindMany = jest.fn();
+      const mockCount = jest.fn();
+      const mockTransaction = jest
+        .fn()
+        .mockImplementation((promises) => Promise.all(promises));
+
+      const mockPrisma = {
+        $transaction: mockTransaction,
+        session: {
+          findMany: mockFindMany.mockResolvedValue([currentSession]),
+          count: mockCount.mockResolvedValue(1),
+        },
+      };
+
+      const realRepo = new SessionsRepository(
+        mockPrisma as unknown as PrismaService,
+      );
+      const result = await realRepo.findAllByUserId(10, defaultFilter, 101);
+
+      expect(mockPrisma.$transaction).toHaveBeenCalledTimes(1);
+      const findManyCall = mockFindMany.mock.calls[0][0];
+      expect(findManyCall.where.userId).toBe(10);
+      expect(findManyCall.where.expiresAt.gt).toBeInstanceOf(Date);
+      expect(result.sessions[0]?.isCurrent).toBe(true);
+      expect(result.total).toBe(1);
+    });
+
+    it('combines unexpired filter with search condition in findAllByUserId', async () => {
+      const mockFindMany = jest.fn();
+      const mockCount = jest.fn();
+      const mockTransaction = jest
+        .fn()
+        .mockImplementation((promises) => Promise.all(promises));
+
+      const mockPrisma = {
+        $transaction: mockTransaction,
+        session: {
+          findMany: mockFindMany.mockResolvedValue([remoteSession]),
+          count: mockCount.mockResolvedValue(1),
+        },
+      };
+
+      const realRepo = new SessionsRepository(
+        mockPrisma as unknown as PrismaService,
+      );
+      await realRepo.findAllByUserId(
+        10,
+        { ...defaultFilter, search: 'Safari' },
+        101,
+      );
+
+      const findManyCall = mockFindMany.mock.calls[0][0];
+      expect(findManyCall.where.userId).toBe(10);
+      expect(findManyCall.where.expiresAt.gt).toBeInstanceOf(Date);
+      expect(findManyCall.where.OR).toBeDefined();
     });
   });
 });

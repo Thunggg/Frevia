@@ -159,7 +159,9 @@ export function ProposalDetailSheet({
     false;
   const freelancerUserId = freelancer?.id ?? initialProposal?.freelancer.id;
   const freelancerProfileId =
-    initialProposal?.freelancer.profileId ?? freelancerUserId;
+    detail?.freelancer?.profile?.id ??
+    initialProposal?.freelancer.profileId ??
+    freelancerUserId;
 
   const handleMessageFreelancer = async () => {
     if (!freelancerUserId) return;
@@ -167,7 +169,7 @@ export function ProposalDetailSheet({
     try {
       const conv = await createConversation.mutateAsync(freelancerUserId);
       onOpenChange(false);
-      router.push(`/client/conversations/${conv.id}`);
+      router.push(`/client/conversations/${conv.slug ?? conv.id}`);
     } catch {
       onOpenChange(false);
       router.push(`/client/conversations?userId=${freelancerUserId}`);

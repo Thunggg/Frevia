@@ -7,6 +7,12 @@ export const ManagePaymentMessage = {
 
   PLATFORM_FEE_ALREADY_PAID: 'Error.PlatformFeeAlreadyPaid',
   CONTRACT_NOT_SIGNED: 'Error.ContractNotSigned',
+  CONTRACT_NOT_ACTIVE: 'Error.ContractNotActiveForFunding',
+  CONTRACT_NOT_AWAITING_PAYMENT: 'Error.ContractNotAwaitingPayment',
+  CONTRACT_EXPIRED: 'Error.ContractExpired',
+  HOLD_MILESTONE_REQUIRED: 'Error.HoldMilestoneRequired',
+  HOLD_INTENT_CAPTURE_FAILED: 'Error.HoldIntentCaptureFailed',
+  HOLD_INTENT_CANCEL_FAILED: 'Error.HoldIntentCancelFailed',
 
   MILESTONE_NOT_ELIGIBLE_FOR_FUNDING: 'Error.MilestoneNotEligibleForFunding',
   MILESTONE_NOT_FUNDED: 'Error.MilestoneNotFunded',

@@ -16,6 +16,7 @@ import { ExpertProfileService } from '../../src/routes/expert-profile/expert-pro
 import { ProfileRevisionService } from '../../src/routes/profile-revisions/profile-revision.service';
 import { UsersRepository } from '../../src/routes/users/users.repo';
 import { UsersService } from '../../src/routes/users/users.service';
+import { AuthGateway } from '../../src/shared/gateways/auth.gateway';
 import { HashingService } from '../../src/shared/services/hashing.service';
 
 describe('User Management (UF-59 to UF-67)', () => {
@@ -39,10 +40,15 @@ describe('User Management (UF-59 to UF-67)', () => {
   };
 
   const hashingService = { hash: jest.fn() };
+  const authGateway = {
+    emitForceLogoutSession: jest.fn(),
+    emitForceLogoutUser: jest.fn(),
+  };
 
   const service = new UsersService(
     repository as unknown as UsersRepository,
     hashingService as unknown as HashingService,
+    authGateway as unknown as AuthGateway,
   );
 
   const expertRepository = {

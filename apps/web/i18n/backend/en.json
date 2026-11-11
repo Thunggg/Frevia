@@ -33,11 +33,19 @@
   "Error.CannotBookmarkUnavailableJob": "This job is closed or no longer available to save",
   "Error.CannotModifySystemRole": "System roles cannot be modified",
   "Error.CannotProposeOwnJob": "You cannot submit a proposal for your own job",
+  "Error.ClientMustSignFirst": "The client must sign the contract first before the freelancer can countersign",
   "Error.CompanyDescriptionTooLong": "Company description is too long",
   "Error.CompanyNameRequired": "Company name is required",
   "Error.CompanyNameTooLong": "Company name is too long",
+  "Error.ContractExpired": "This contract has expired",
+  "Error.ContractNotActiveForFunding": "Individual milestones can only be funded after the contract is active",
+  "Error.ContractNotAwaitingPayment": "Contract escrow hold can only be authorized while the contract is awaiting payment",
   "Error.ContractNotFound": "Contract not found",
+  "Error.ContractNotPendingSign": "This action is not allowed in the current contract status",
   "Error.ContractProposalNotHired": "Only a hired proposal can be turned into a contract",
+  "Error.HoldIntentCancelFailed": "Failed to release the Stripe authorization hold",
+  "Error.HoldIntentCaptureFailed": "Failed to capture the Stripe authorization hold",
+  "Error.HoldMilestoneRequired": "Please select at least one milestone to hold",
   "Error.ConversationAccessDenied": "You do not have access to this conversation",
   "Error.ConversationNotFound": "Conversation not found",
   "Error.CreateUserRoleNotFound": "Role not found",
@@ -349,5 +357,7 @@
   "You can only update your own profile.": "You can only update your own profile",
   "Error.SavedSearchLimitExceeded": "You have reached the maximum limit of 30 saved searches. Please delete some before creating a new one.",
   "Error.JobAlertLimitExceeded": "You have reached the maximum limit of 10 job alerts. Please delete some before creating a new one.",
-  "Error.JobAlertDuplicateCriteria": "You already have a job alert with these search criteria."
+  "Error.JobAlertDuplicateCriteria": "You already have a job alert with these search criteria.",
+  "Tài khoản của bạn đã bị khóa bởi Quản trị viên.": "Your account has been suspended by an Administrator.",
+  "Phiên đăng nhập này đã bị thu hồi từ một thiết bị khác.": "This session has been revoked from another device."
 }

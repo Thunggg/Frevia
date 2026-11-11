@@ -1,4 +1,5 @@
 import {
+  ConversationListItemType,
   CreateConversationBodyType,
   CreateConversationResponseType,
   DeleteMessageResponseType,
@@ -20,36 +21,45 @@ export const conversationApiRequest = {
   getConversations: () =>
     http.get<GetConversationsResponseType>("/api/conversations"),
 
+  // Lấy thông tin chi tiết 1 hội thoại theo id hoặc slug
+  getConversation: (conversationIdOrSlug: number | string) =>
+    http.get<ConversationListItemType>(
+      `/api/conversations/${conversationIdOrSlug}`,
+    ),
+
   // Tạo mới hội thoại (hoặc trả về hội thoại đã tồn tại với user)
   createConversation: (data: CreateConversationBodyType) =>
     http.post<CreateConversationResponseType>("/api/conversations", data),
 
   // Lấy danh sách tin nhắn của 1 hội thoại
-  getMessages: (conversationId: number) =>
+  getMessages: (conversationIdOrSlug: number | string) =>
     http.get<GetMessagesResponseType>(
-      `/api/conversations/${conversationId}/messages`,
+      `/api/conversations/${conversationIdOrSlug}/messages`,
     ),
 
   // Gửi tin nhắn (REST fallback), có thể kèm file đã upload
   sendMessage: (
-    conversationId: number,
+    conversationIdOrSlug: number | string,
     message: string,
     attachment?: MessageAttachmentType,
   ) =>
     http.post<SendMessageResponseType>(
-      `/api/conversations/${conversationId}/messages`,
+      `/api/conversations/${conversationIdOrSlug}/messages`,
       attachment ? { message, attachment } : { message },
     ),
 
   // Upload file để đính kèm vào tin nhắn (multipart/form-data)
-  uploadFile: (conversationId: number, file: File) => {
+  uploadFile: (conversationIdOrSlug: number | string, file: File) => {
     const formData = new FormData();
     formData.append("file", file);
 
-    return fetch(`/api/backend/api/conversations/${conversationId}/files`, {
-      method: "POST",
-      body: formData,
-    }).then(async (res) => {
+    return fetch(
+      `/api/backend/api/conversations/${conversationIdOrSlug}/files`,
+      {
+        method: "POST",
+        body: formData,
+      },
+    ).then(async (res) => {
       const data: ApiResponse<UploadConversationFileResponseType> =
         await res.json();
       if (!res.ok) {
@@ -60,26 +70,32 @@ export const conversationApiRequest = {
   },
 
   // Đánh dấu tin nhắn đã đọc
-  markAsRead: (conversationId: number) =>
-    http.patch<{ count: number }>(`/api/conversations/${conversationId}/read`, {}),
+  markAsRead: (conversationIdOrSlug: number | string) =>
+    http.patch<{ count: number }>(
+      `/api/conversations/${conversationIdOrSlug}/read`,
+      {},
+    ),
 
   // Xóa/ẩn hội thoại về phía user hiện tại (soft delete)
-  hideConversation: (conversationId: number) =>
+  hideConversation: (conversationIdOrSlug: number | string) =>
     http.patch<HideConversationResponseType>(
-      `/api/conversations/${conversationId}/hide`,
+      `/api/conversations/${conversationIdOrSlug}/hide`,
       {},
     ),
 
   // Ghim/bỏ ghim hội thoại về phía user hiện tại
-  pinConversation: (conversationId: number, body: PinConversationBodyType) =>
+  pinConversation: (
+    conversationIdOrSlug: number | string,
+    body: PinConversationBodyType,
+  ) =>
     http.patch<PinConversationResponseType>(
-      `/api/conversations/${conversationId}/pin`,
+      `/api/conversations/${conversationIdOrSlug}/pin`,
       body,
     ),
 
   // Xóa mềm tin nhắn của bản thân (soft delete)
-  deleteMessage: (conversationId: number, messageId: number) =>
+  deleteMessage: (conversationIdOrSlug: number | string, messageId: number) =>
     http.delete<DeleteMessageResponseType>(
-      `/api/conversations/${conversationId}/messages/${messageId}`,
+      `/api/conversations/${conversationIdOrSlug}/messages/${messageId}`,
     ),
 };

@@ -2,6 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   useCallback,
   useEffect,
@@ -12,8 +13,8 @@ import {
   type ReactNode,
 } from "react";
 import {
-  Award,
-  BriefcaseBusiness,
+  ArrowLeft,
+  Award,  BriefcaseBusiness,
   CheckCircle2,
   ExternalLink,
   GraduationCap,
@@ -33,8 +34,10 @@ import {
 import { accountProfileApi } from "@/apiRequests/account-profile";
 import { profileApiRequest } from "@/apiRequests/profile";
 import { profileRevisionApiRequest } from "@/apiRequests/profile-revision";
-import { Footer } from "@/components/footer";
+
 import { Header, type UserRole } from "@/components/header";
+import { ClientSidebar } from "@/app/(client)/_components/client-sidebar";
+import { FreelancerSidebar } from "@/app/(freelancer)/_components/freelancer-sidebar";
 import { VerifiedBadge } from "@/components/verified-badge";
 import { ProfileReviewStatus } from "@/components/profile-review-status";
 import { ApiFail } from "@/lib/http";
@@ -188,6 +191,7 @@ export function ProfilePageClient({
 }: ProfilePageClientProps) {
   const t = useTranslations("freelancerProfile");
   const tCommon = useTranslations("common");
+  const router = useRouter();
   const [profile, setProfile] = useState<FreelancerProfileDetailType | null>(
     null,
   );
@@ -673,9 +677,24 @@ export function ProfilePageClient({
   };
 
   if (isLoading) {
+    const isGuestLoading = headerRole === "GUEST";
     return (
-      <div className="flex min-h-dvh flex-col bg-background">
-        <Header role={headerRole} />
+      <div
+        className={
+          isGuestLoading
+            ? "flex min-h-dvh flex-col bg-background"
+            : "flex h-dvh overflow-hidden bg-background font-sans"
+        }
+      >
+        {!isGuestLoading ? (
+          headerRole === "CLIENT" ? (
+            <ClientSidebar />
+          ) : (
+            <FreelancerSidebar />
+          )
+        ) : (
+          <Header role={headerRole} />
+        )}
         <main className="flex flex-1 items-center justify-center">
           <div className="flex items-center gap-3 text-muted-foreground">
             <Loader2 className="size-5 animate-spin" /> {t("loadingProfile")}
@@ -686,9 +705,24 @@ export function ProfilePageClient({
   }
 
   if (loadError || !profile) {
+    const isGuestError = headerRole === "GUEST";
     return (
-      <div className="flex min-h-dvh flex-col bg-background">
-        <Header role={headerRole} />
+      <div
+        className={
+          isGuestError
+            ? "flex min-h-dvh flex-col bg-background"
+            : "flex h-dvh overflow-hidden bg-background font-sans"
+        }
+      >
+        {!isGuestError ? (
+          headerRole === "CLIENT" ? (
+            <ClientSidebar />
+          ) : (
+            <FreelancerSidebar />
+          )
+        ) : (
+          <Header role={headerRole} />
+        )}
         <main className="mx-auto flex w-full max-w-xl flex-1 flex-col items-center justify-center px-6 text-center">
           <UserRound className="size-12 text-muted-foreground" />
           <h1 className="mt-4 text-2xl font-bold">
@@ -699,27 +733,68 @@ export function ProfilePageClient({
             <RefreshCw /> {t("tryAgain")}
           </Button>
         </main>
-        <Footer />
       </div>
     );
   }
 
   const freelancer = profile.freelancerProfile;
 
+  const isGuest = headerRole === "GUEST";
+
   return (
-    <div className="flex min-h-dvh flex-col bg-background font-sans">
-      <Header role={headerRole} />
-      <main className="flex-1">        <section className="border-b border-[#4fae2e]/15 bg-[#eaf8df] dark:border-white/10 dark:bg-[#1a1c1a]">
+    <div
+      className={
+        isGuest
+          ? "flex min-h-dvh flex-col bg-background font-sans"
+          : "flex h-dvh overflow-hidden bg-background font-sans"
+      }
+    >
+      {!isGuest ? (
+        headerRole === "CLIENT" ? (
+          <ClientSidebar />
+        ) : (
+          <FreelancerSidebar />
+        )
+      ) : (
+        <Header role={headerRole} />
+      )}
+      <main
+        className={
+          isGuest ? "flex-1" : "flex min-h-0 flex-1 flex-col overflow-y-auto"
+        }
+      >
+        <section className="border-b border-[#4fae2e]/15 bg-[#eaf8df] dark:border-white/10 dark:bg-[#1a1c1a]">
           <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 lg:py-10">
-            <nav className="text-sm text-foreground/60">
-              <Link href="/" className="transition-colors hover:text-[#4fae2e]">
-                {tCommon("home")}
-              </Link>
-              <span className="mx-2 text-foreground/35">/</span>
-              <span className="font-medium text-foreground">
-                {t("breadcrumbProfile")}
-              </span>
-            </nav>
+            <div className="flex items-center gap-3">
+              <button
+                type="button"
+                onClick={() => router.back()}
+                className="inline-flex items-center gap-1.5 rounded-lg px-2 py-1 text-sm text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+              >
+                <ArrowLeft className="size-4" />
+                {tCommon("back")}
+              </button>
+              <nav className="text-sm text-foreground/60">
+                <Link
+                  href={
+                    headerRole === "CLIENT"
+                      ? "/client/conversations"
+                      : headerRole === "FREELANCER"
+                        ? "/freelancer/conversations"
+                        : "/"
+                  }
+                  className="transition-colors hover:text-[#4fae2e]"
+                >
+                  {headerRole === "GUEST"
+                    ? tCommon("home")
+                    : tCommon("messages")}
+                </Link>
+                <span className="mx-2 text-foreground/35">/</span>
+                <span className="font-medium text-foreground">
+                  {t("breadcrumbProfile")}
+                </span>
+              </nav>
+            </div>
             <h1 className="mt-4 text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
               {profile.displayName ?? t("unnamed")}
             </h1>
@@ -783,7 +858,7 @@ export function ProfilePageClient({
                 {isOwner ? (
                   <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row">
                     <Button variant="outline" asChild>
-                      <Link href="/account-profile">
+                      <Link href="/freelancer/profile">
                         <UserRound /> {t("profileSettings")}
                       </Link>
                     </Button>
@@ -1136,7 +1211,6 @@ export function ProfilePageClient({
           </div>
         </div>
       </main>
-      <Footer />
 
       <Dialog open={profileEditorOpen} onOpenChange={setProfileEditorOpen}>
         <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-2xl">

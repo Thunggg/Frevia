@@ -1,7 +1,7 @@
 import { getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
 import proposalServerRequest from "@/apiRequests/proposal.server";
-import { ProposalDetailContent } from "../../../proposals/[id]/proposal-detail-content";
+import { ProposalDetailContent } from "./proposal-detail-content";
 
 export async function generateMetadata() {
   const t = await getTranslations("pageMeta");

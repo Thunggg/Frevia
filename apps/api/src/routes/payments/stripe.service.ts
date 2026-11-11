@@ -59,22 +59,76 @@ export class StripeService {
     amountInCents,
     currency = 'usd',
     customerId,
+    paymentMethodId,
+    offSessionConfirm = false,
     metadata,
+    captureMethod = 'automatic',
   }: {
     amountInCents: number;
     currency?: string;
     customerId?: string;
+    paymentMethodId?: string;
+    offSessionConfirm?: boolean;
     metadata?: Record<string, string>;
+    captureMethod?: 'automatic' | 'manual';
   }): Promise<Stripe.PaymentIntent> {
+    if (captureMethod === 'manual') {
+      if (paymentMethodId && customerId && offSessionConfirm) {
+        return this.stripe.paymentIntents.create({
+          amount: Math.round(amountInCents),
+          currency: currency.toLowerCase(),
+          customer: customerId,
+          payment_method: paymentMethodId,
+          metadata,
+          capture_method: 'manual',
+          payment_method_types: ['card'],
+          off_session: true,
+          confirm: true,
+        });
+      }
+
+      return this.stripe.paymentIntents.create({
+        amount: Math.round(amountInCents),
+        currency: currency.toLowerCase(),
+        customer: customerId,
+        ...(paymentMethodId ? { payment_method: paymentMethodId } : {}),
+        ...(customerId && !paymentMethodId
+          ? { setup_future_usage: 'off_session' }
+          : {}),
+        metadata,
+        capture_method: 'manual',
+        payment_method_types: ['card'],
+      });
+    }
+
     return this.stripe.paymentIntents.create({
       amount: Math.round(amountInCents),
       currency: currency.toLowerCase(),
       customer: customerId,
+      ...(customerId ? { setup_future_usage: 'off_session' } : {}),
       metadata,
       automatic_payment_methods: {
         enabled: true,
       },
     });
+  }
+
+  /**
+   * Bước 2 (Capture): Khớp lệnh trừ tiền thật đối với PaymentIntent đang giữ tiền (`requires_capture`).
+   */
+  async capturePaymentIntent(
+    paymentIntentId: string,
+  ): Promise<Stripe.PaymentIntent> {
+    return this.stripe.paymentIntents.capture(paymentIntentId);
+  }
+
+  /**
+   * Bước 3 (Cancel/Release): Hủy lệnh giữ tiền để nhả hạn mức thẻ cho khách hàng mà không mất phí refund.
+   */
+  async cancelPaymentIntent(
+    paymentIntentId: string,
+  ): Promise<Stripe.PaymentIntent> {
+    return this.stripe.paymentIntents.cancel(paymentIntentId);
   }
 
   async createTransfer({
@@ -201,6 +255,45 @@ export class StripeService {
     customerId: string,
   ): Promise<Stripe.Customer | Stripe.DeletedCustomer> {
     return this.stripe.customers.retrieve(customerId);
+  }
+
+  async createSetupIntent(customerId: string): Promise<Stripe.SetupIntent> {
+    return this.stripe.setupIntents.create({
+      customer: customerId,
+      payment_method_types: ['card'],
+      usage: 'off_session',
+    });
+  }
+
+  async retrievePaymentMethod(
+    paymentMethodId: string,
+  ): Promise<Stripe.PaymentMethod> {
+    return this.stripe.paymentMethods.retrieve(paymentMethodId);
+  }
+
+  async setDefaultPaymentMethod(
+    customerId: string,
+    paymentMethodId: string,
+  ): Promise<Stripe.Customer> {
+    const pm = await this.stripe.paymentMethods.retrieve(paymentMethodId);
+    const attachedCustomer =
+      typeof pm.customer === 'string' ? pm.customer : pm.customer?.id;
+    if (!attachedCustomer) {
+      await this.stripe.paymentMethods.attach(paymentMethodId, {
+        customer: customerId,
+      });
+    }
+    return this.stripe.customers.update(customerId, {
+      invoice_settings: {
+        default_payment_method: paymentMethodId,
+      },
+    });
+  }
+
+  async detachPaymentMethod(
+    paymentMethodId: string,
+  ): Promise<Stripe.PaymentMethod> {
+    return this.stripe.paymentMethods.detach(paymentMethodId);
   }
 
   async chargeOffSession({

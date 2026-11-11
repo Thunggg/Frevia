@@ -2,9 +2,11 @@
 import {
   BadRequestException,
   ForbiddenException,
+  InternalServerErrorException,
   UnprocessableEntityException,
 } from '@nestjs/common';
 import {
+  ContractStatus,
   MilestonePaymentStatus,
   MilestoneStatus,
   PlatformFeeStatus,
@@ -76,22 +78,24 @@ describe('PaymentService', () => {
       findUserById: jest.fn(),
       updateUserStripe: jest.fn(),
       findContractById: jest.fn(),
-      recordPartyPlatformFeePaid: jest.fn(),
-      activateContractIfReady: jest.fn(),
-      updateContractPlatformFee: jest.fn(),
+      setContractHoldIntent: jest.fn(),
+      clearContractHold: jest.fn(),
+      markContractHoldAuthorized: jest.fn(),
+      finalizeContractHoldCaptured: jest.fn(),
+      markContractHoldCanceled: jest.fn(),
       findMilestoneById: jest.fn(),
       updateMilestonePaymentStatus: jest.fn(),
       findDisputeById: jest.fn(),
-      findDisputeFee: jest.fn(),
-      updateDisputeFeeStatus: jest.fn(),
       updateDisputeStatus: jest.fn(),
       createTransaction: jest.fn(),
       findTransactionByPaymentIntentId: jest.fn(),
+      findTransactionBySessionId: jest.fn(),
       findEscrowDepositTransaction: jest.fn(),
+      findContractEscrowDeposits: jest.fn(),
+      updateAllContractMilestonesPaymentStatus: jest.fn(),
       updateTransactionStatus: jest.fn(),
       getTransactions: jest.fn(),
       checkAndCompleteFreelancerFee: jest.fn(),
-      handleEscrowDepositSuccess: jest.fn(),
     } as unknown as jest.Mocked<PaymentRepository>;
 
     stripeService = {
@@ -100,9 +104,16 @@ describe('PaymentService', () => {
       createAccountLink: jest.fn(),
       getAccount: jest.fn(),
       createPaymentIntent: jest.fn(),
+      retrievePaymentIntent: jest.fn(),
+      capturePaymentIntent: jest.fn(),
+      cancelPaymentIntent: jest.fn(),
       createTransfer: jest.fn(),
       createRefund: jest.fn(),
       constructWebhookEvent: jest.fn(),
+      createSetupIntent: jest.fn(),
+      retrievePaymentMethod: jest.fn(),
+      setDefaultPaymentMethod: jest.fn(),
+      detachPaymentMethod: jest.fn(),
     } as unknown as jest.Mocked<StripeService>;
 
     service = new PaymentService(
@@ -218,68 +229,226 @@ describe('PaymentService', () => {
     });
   });
 
-  describe('createPlatformFeeIntent', () => {
-    it('creates payment intent and pending transaction for signed contract', async () => {
-      repo.findContractById.mockResolvedValue(mockContract as any);
+  describe('createContractHoldIntent', () => {
+    const awaitingContract = {
+      ...mockContract,
+      status: ContractStatus.AWAITING_PAYMENT,
+      signedByClient: false,
+      signedByFreelancer: false,
+      holdPaymentIntentId: null,
+      holdMilestoneIds: [],
+      expiresAt: new Date(Date.now() + 86400000),
+      milestones: [
+        {
+          id: 20,
+          title: 'Milestone 1',
+          amount: new Prisma.Decimal(250),
+          status: MilestoneStatus.PENDING,
+          paymentStatus: MilestonePaymentStatus.PENDING,
+        },
+        {
+          id: 21,
+          title: 'Milestone 2',
+          amount: new Prisma.Decimal(750),
+          status: MilestoneStatus.PENDING,
+          paymentStatus: MilestonePaymentStatus.PENDING,
+        },
+      ],
+    };
+
+    it('creates manual-capture payment intent for selected milestones plus 3% contract fee', async () => {
+      repo.findContractById.mockResolvedValue(awaitingContract as any);
       stripeService.createPaymentIntent.mockResolvedValue({
-        id: 'pi_platform_fee',
-        client_secret: 'pi_secret_123',
+        id: 'pi_hold_123',
+        client_secret: 'pi_hold_secret',
+        status: 'requires_payment_method',
       } as any);
+      repo.setContractHoldIntent.mockResolvedValue({} as any);
       repo.createTransaction.mockResolvedValue({} as any);
 
-      const result = await service.createPlatformFeeIntent(1, 10);
+      const result = await service.createContractHoldIntent(1, 10, [20]);
 
-      expect(result).toEqual({
-        clientSecret: 'pi_secret_123',
-        paymentIntentId: 'pi_platform_fee',
-        amount: 10,
-        currency: 'usd',
-      });
-      expect(repo.createTransaction).toHaveBeenCalledWith(
+      // 250 + (1000 * 3% = 30) = 280 -> 28000 cents with captureMethod: 'manual'
+      expect(stripeService.createPaymentIntent).toHaveBeenCalledWith(
         expect.objectContaining({
-          userId: 1,
-          contractId: 10,
-          type: TransactionType.PLATFORM_FEE,
-          status: TransactionStatus.PENDING,
-          stripePaymentIntentId: 'pi_platform_fee',
+          amountInCents: 28000,
+          captureMethod: 'manual',
+          metadata: expect.objectContaining({
+            type: 'CONTRACT_HOLD',
+            contractId: '10',
+            milestoneIds: '20',
+          }),
         }),
       );
+      expect(repo.setContractHoldIntent).toHaveBeenCalledWith({
+        contractId: 10,
+        paymentIntentId: 'pi_hold_123',
+        milestoneIds: [20],
+        clientPlatformFee: 30,
+      });
+      expect(result).toEqual({
+        clientSecret: 'pi_hold_secret',
+        paymentIntentId: 'pi_hold_123',
+        amount: 280,
+        milestonesAmount: 250,
+        platformFeeAmount: 30,
+        currency: 'usd',
+        milestoneIds: [20],
+        status: 'requires_payment_method',
+        authorized: false,
+      });
     });
 
-    it('throws ForbiddenException if caller is not the contract client', async () => {
+    it('immediately authorizes hold when a saved payment method is provided', async () => {
+      repo.findContractById.mockResolvedValue(awaitingContract as any);
+      stripeService.retrievePaymentMethod.mockResolvedValue({
+        id: 'pm_saved_4242',
+        customer: 'cus_123',
+      } as any);
+      stripeService.createPaymentIntent.mockResolvedValue({
+        id: 'pi_hold_saved',
+        client_secret: 'pi_hold_saved_secret',
+        status: 'requires_capture',
+      } as any);
+      repo.setContractHoldIntent.mockResolvedValue({} as any);
+      repo.createTransaction.mockResolvedValue({} as any);
+      repo.markContractHoldAuthorized.mockResolvedValue({} as any);
+
+      const result = await service.createContractHoldIntent(
+        1,
+        10,
+        [20],
+        'pm_saved_4242',
+      );
+
+      expect(stripeService.createPaymentIntent).toHaveBeenCalledWith(
+        expect.objectContaining({
+          amountInCents: 28000,
+          customerId: 'cus_123',
+          paymentMethodId: 'pm_saved_4242',
+          offSessionConfirm: true,
+          captureMethod: 'manual',
+        }),
+      );
+      expect(repo.markContractHoldAuthorized).toHaveBeenCalledWith({
+        contractId: 10,
+        paymentIntentId: 'pi_hold_saved',
+        milestoneIds: [20],
+      });
+      expect(result.authorized).toBe(true);
+      expect(result.status).toBe('requires_capture');
+    });
+
+    it('throws BadRequestException when milestoneIds is empty', async () => {
+      repo.findContractById.mockResolvedValue(awaitingContract as any);
+
+      await expect(service.createContractHoldIntent(1, 10, [])).rejects.toThrow(
+        BadRequestException,
+      );
+    });
+
+    it('throws UnprocessableEntityException when contract is not AWAITING_PAYMENT', async () => {
+      repo.findContractById.mockResolvedValue({
+        ...awaitingContract,
+        status: ContractStatus.PENDING_SIGN,
+      } as any);
+
+      await expect(
+        service.createContractHoldIntent(1, 10, [20]),
+      ).rejects.toThrow(UnprocessableEntityException);
+    });
+  });
+
+  describe('captureContractHold', () => {
+    it('captures requires_capture payment intent and finalizes held milestones', async () => {
+      stripeService.retrievePaymentIntent.mockResolvedValue({
+        id: 'pi_hold_123',
+        status: 'requires_capture',
+        amount: 28000,
+        metadata: {
+          type: 'CONTRACT_HOLD',
+          contractId: '10',
+          milestoneIds: '20',
+          milestonesAmount: '250',
+          clientFeeAmount: '30',
+        },
+      } as any);
+      stripeService.capturePaymentIntent.mockResolvedValue({
+        id: 'pi_hold_123',
+        status: 'succeeded',
+        amount: 28000,
+        metadata: {
+          type: 'CONTRACT_HOLD',
+          contractId: '10',
+          milestoneIds: '20',
+          milestonesAmount: '250',
+          clientFeeAmount: '30',
+        },
+      } as any);
+      repo.findTransactionByPaymentIntentId.mockResolvedValue({ id: 5 } as any);
       repo.findContractById.mockResolvedValue(mockContract as any);
+      repo.finalizeContractHoldCaptured.mockResolvedValue({} as any);
 
-      await expect(service.createPlatformFeeIntent(99, 10)).rejects.toThrow(
-        ForbiddenException,
+      const result = await service.captureContractHold('pi_hold_123');
+
+      expect(stripeService.capturePaymentIntent).toHaveBeenCalledWith(
+        'pi_hold_123',
       );
+      expect(repo.finalizeContractHoldCaptured).toHaveBeenCalledWith({
+        contractId: 10,
+        paymentIntentId: 'pi_hold_123',
+        milestoneIds: [20],
+        milestonesAmount: 250,
+        clientFeeAmount: 30,
+      });
+      expect(result.success).toBe(true);
+      expect(result.status).toBe('succeeded');
     });
 
-    it('throws UnprocessableEntityException if contract is not signed by both parties', async () => {
-      repo.findContractById.mockResolvedValue({
-        ...mockContract,
-        signedByFreelancer: false,
-      } as any);
-
-      await expect(service.createPlatformFeeIntent(1, 10)).rejects.toThrow(
-        UnprocessableEntityException,
+    it('throws InternalServerErrorException when Stripe capture throws', async () => {
+      stripeService.retrievePaymentIntent.mockRejectedValue(
+        new Error('Stripe network error'),
       );
-    });
 
-    it('throws UnprocessableEntityException if platform fee is already paid', async () => {
-      repo.findContractById.mockResolvedValue({
-        ...mockContract,
-        platformFeeStatus: PlatformFeeStatus.PAID,
-        clientFeeStatus: PlatformFeeStatus.PAID,
-      } as any);
-
-      await expect(service.createPlatformFeeIntent(1, 10)).rejects.toThrow(
-        UnprocessableEntityException,
+      await expect(service.captureContractHold('pi_hold_fail')).rejects.toThrow(
+        InternalServerErrorException,
       );
     });
   });
 
+  describe('cancelContractHold', () => {
+    it('cancels uncaptured hold payment intent and updates contract/transaction state', async () => {
+      stripeService.retrievePaymentIntent.mockResolvedValue({
+        id: 'pi_hold_123',
+        status: 'requires_capture',
+        metadata: { contractId: '10' },
+      } as any);
+      stripeService.cancelPaymentIntent.mockResolvedValue({
+        id: 'pi_hold_123',
+        status: 'canceled',
+      } as any);
+      repo.findTransactionByPaymentIntentId.mockResolvedValue({ id: 5 } as any);
+      repo.markContractHoldCanceled.mockResolvedValue({} as any);
+
+      const result = await service.cancelContractHold(
+        'pi_hold_123',
+        'Freelancer rejected',
+      );
+
+      expect(stripeService.cancelPaymentIntent).toHaveBeenCalledWith(
+        'pi_hold_123',
+      );
+      expect(repo.markContractHoldCanceled).toHaveBeenCalledWith({
+        contractId: 10,
+        paymentIntentId: 'pi_hold_123',
+        reason: 'Freelancer rejected',
+      });
+      expect(result.status).toBe('canceled');
+    });
+  });
+
   describe('createMilestoneFundIntent', () => {
-    it('creates escrow deposit payment intent for pending milestone', async () => {
+    it('creates escrow deposit payment intent with 0% extra fee for active contract', async () => {
       repo.findMilestoneById.mockResolvedValue(mockMilestone as any);
       stripeService.createPaymentIntent.mockResolvedValue({
         id: 'pi_milestone_fund',
@@ -292,7 +461,7 @@ describe('PaymentService', () => {
       expect(result).toEqual({
         clientSecret: 'pi_secret_456',
         paymentIntentId: 'pi_milestone_fund',
-        amount: 280,
+        amount: 250,
         currency: 'usd',
       });
       expect(repo.createTransaction).toHaveBeenCalledWith(
@@ -300,10 +469,25 @@ describe('PaymentService', () => {
           userId: 1,
           contractId: 10,
           milestoneId: 20,
+          amount: 250,
           type: TransactionType.ESCROW_DEPOSIT,
           status: TransactionStatus.PENDING,
         }),
       );
+    });
+
+    it('throws UnprocessableEntityException if contract is not ACTIVE', async () => {
+      repo.findMilestoneById.mockResolvedValue({
+        ...mockMilestone,
+        contract: {
+          ...mockContract,
+          status: ContractStatus.AWAITING_PAYMENT,
+        },
+      } as any);
+
+      await expect(
+        service.createMilestoneFundIntent(1, 10, 20),
+      ).rejects.toThrow(UnprocessableEntityException);
     });
 
     it('throws UnprocessableEntityException if milestone is already funded', async () => {
@@ -400,6 +584,7 @@ describe('PaymentService', () => {
       expect(result.refundId).toBe('re_refund_123');
       expect(stripeService.createRefund).toHaveBeenCalledWith({
         paymentIntentId: 'pi_original_deposit',
+        amountInCents: 25000,
         metadata: expect.any(Object),
       });
       expect(repo.updateMilestonePaymentStatus).toHaveBeenCalledWith(
@@ -414,16 +599,12 @@ describe('PaymentService', () => {
       id: 5,
       milestoneId: 20,
       decisionById: 99,
-      arbitrationFee: new Prisma.Decimal(50),
+      arbitrationFee: new Prisma.Decimal(0),
       milestone: {
         id: 20,
         amount: new Prisma.Decimal(100),
         contract: mockContract,
       },
-      fees: [
-        { userId: 1, paymentIntentId: 'pi_client_fee' },
-        { userId: 2, paymentIntentId: 'pi_freelancer_fee' },
-      ],
       decisionBy: {
         id: 99,
         stripeAccountId: 'acct_expert_99',
@@ -499,29 +680,21 @@ describe('PaymentService', () => {
   });
 
   describe('handleWebhook', () => {
-    it('handles payment_intent.succeeded for platform fee', async () => {
+    it('handles payment_intent.amount_capturable_updated for manual contract hold', async () => {
       stripeService.constructWebhookEvent.mockReturnValue({
-        type: 'payment_intent.succeeded',
+        type: 'payment_intent.amount_capturable_updated',
         data: {
           object: {
-            id: 'pi_test_123',
+            id: 'pi_hold_123',
             metadata: {
-              type: TransactionType.PLATFORM_FEE,
+              type: 'CONTRACT_HOLD',
               contractId: '10',
+              milestoneIds: '20',
             },
           },
         },
       } as any);
-      repo.findContractById.mockResolvedValue(mockContract as any);
-      repo.activateContractIfReady.mockResolvedValue({
-        activated: false,
-        contract: mockContract,
-      } as any);
-      repo.findTransactionByPaymentIntentId.mockResolvedValue({
-        id: 101,
-      } as any);
-      repo.updateTransactionStatus.mockResolvedValue({} as any);
-      repo.updateContractPlatformFee.mockResolvedValue({} as any);
+      repo.markContractHoldAuthorized.mockResolvedValue({} as any);
 
       const result = await service.handleWebhook(
         Buffer.from('payload'),
@@ -529,14 +702,40 @@ describe('PaymentService', () => {
       );
 
       expect(result).toEqual({ received: true });
-      expect(repo.updateTransactionStatus).toHaveBeenCalledWith(
-        101,
-        TransactionStatus.SUCCEEDED,
+      expect(repo.markContractHoldAuthorized).toHaveBeenCalledWith({
+        contractId: 10,
+        paymentIntentId: 'pi_hold_123',
+        milestoneIds: [20],
+      });
+    });
+
+    it('handles payment_intent.canceled by releasing held contract metadata', async () => {
+      stripeService.constructWebhookEvent.mockReturnValue({
+        type: 'payment_intent.canceled',
+        data: {
+          object: {
+            id: 'pi_hold_123',
+            cancellation_reason: 'requested_by_customer',
+            metadata: {
+              type: 'CONTRACT_HOLD',
+              contractId: '10',
+            },
+          },
+        },
+      } as any);
+      repo.markContractHoldCanceled.mockResolvedValue({} as any);
+
+      const result = await service.handleWebhook(
+        Buffer.from('payload'),
+        'sig_123',
       );
-      expect(repo.updateContractPlatformFee).toHaveBeenCalledWith(
-        10,
-        PlatformFeeStatus.PAID,
-      );
+
+      expect(result).toEqual({ received: true });
+      expect(repo.markContractHoldCanceled).toHaveBeenCalledWith({
+        contractId: 10,
+        paymentIntentId: 'pi_hold_123',
+        reason: 'requested_by_customer',
+      });
     });
 
     it('handles payment_intent.succeeded for escrow deposit', async () => {
@@ -607,6 +806,55 @@ describe('PaymentService', () => {
         { page: 1, limit: 10 },
         {},
       );
+    });
+  });
+
+  describe('payment method management', () => {
+    it('creates a setup intent for the user Stripe customer', async () => {
+      repo.findUserById.mockResolvedValue({ ...mockUser } as any);
+      stripeService.createSetupIntent.mockResolvedValue({
+        id: 'seti_123',
+        client_secret: 'seti_123_secret',
+      } as any);
+
+      const res = await service.createSetupIntent(1);
+
+      expect(stripeService.createSetupIntent).toHaveBeenCalledWith('cus_123');
+      expect(res).toEqual({
+        clientSecret: 'seti_123_secret',
+        setupIntentId: 'seti_123',
+      });
+    });
+
+    it('updates the default payment method when owned by the user customer', async () => {
+      repo.findUserById.mockResolvedValue({ ...mockUser } as any);
+      stripeService.retrievePaymentMethod.mockResolvedValue({
+        id: 'pm_new',
+        customer: 'cus_123',
+      } as any);
+      stripeService.setDefaultPaymentMethod.mockResolvedValue({} as any);
+
+      const res = await service.setDefaultPaymentMethod(1, 'pm_new');
+
+      expect(stripeService.setDefaultPaymentMethod).toHaveBeenCalledWith(
+        'cus_123',
+        'pm_new',
+      );
+      expect(res.success).toBe(true);
+    });
+
+    it('detaches a saved payment method owned by the user', async () => {
+      repo.findUserById.mockResolvedValue({ ...mockUser } as any);
+      stripeService.retrievePaymentMethod.mockResolvedValue({
+        id: 'pm_old',
+        customer: 'cus_123',
+      } as any);
+      stripeService.detachPaymentMethod.mockResolvedValue({} as any);
+
+      const res = await service.removePaymentMethod(1, 'pm_old');
+
+      expect(stripeService.detachPaymentMethod).toHaveBeenCalledWith('pm_old');
+      expect(res.success).toBe(true);
     });
   });
 });

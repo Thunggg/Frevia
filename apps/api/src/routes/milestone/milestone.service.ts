@@ -3,6 +3,7 @@ import {
   CreateMilestoneBodyType,
   GetMilestoneListQueryType,
   UpdateMilestoneBodyType,
+  getEffectiveContractDeadlineMs,
 } from '@shared/types';
 import { MilestoneRepository } from './milestone.repo';
 import {
@@ -13,8 +14,11 @@ import {
   MilestoneAmountExceedsContractException,
   MilestoneCannotBeDeletedException,
   MilestoneCannotBeEditedException,
+  MilestoneContractExpiresAtRequiredException,
   MilestoneContractNotFoundException,
   MilestoneContractNotActiveException,
+  MilestoneDueDateExceedsContractException,
+  MilestoneDueDateRequiredException,
   MilestoneForbiddenException,
   MilestoneNotFoundException,
   FailedToProgressMilestoneException,
@@ -91,6 +95,22 @@ export class MilestoneService {
     }
   }
 
+  private assertDueDateWithinContract(
+    dueDate: string | Date | null | undefined,
+    contractExpiresAt: Date | null | undefined,
+  ) {
+    if (!dueDate) {
+      throw MilestoneDueDateRequiredException();
+    }
+    if (!contractExpiresAt) {
+      throw MilestoneContractExpiresAtRequiredException();
+    }
+    const contractEndMs = getEffectiveContractDeadlineMs(contractExpiresAt);
+    if (new Date(dueDate).getTime() > contractEndMs) {
+      throw MilestoneDueDateExceedsContractException();
+    }
+  }
+
   async createMilestone(
     clientId: number,
     contractId: number,
@@ -105,11 +125,13 @@ export class MilestoneService {
       if (contract.clientId !== clientId) throw MilestoneForbiddenException();
 
       if (
-        contract.status !== ContractStatus.ACTIVE &&
-        contract.status !== ContractStatus.PENDING_SIGN
+        contract.status !== ContractStatus.PENDING_SIGN &&
+        contract.status !== ContractStatus.AWAITING_PAYMENT
       ) {
         throw MilestoneContractNotActiveException();
       }
+
+      this.assertDueDateWithinContract(body.dueDate, contract.expiresAt);
 
       const totalMilestoneAmount =
         await this.milestoneRepository.getTotalMilestoneAmount(contractId);
@@ -137,15 +159,31 @@ export class MilestoneService {
       if (!contract) throw MilestoneContractNotFoundException();
       if (contract.clientId !== clientId) throw MilestoneForbiddenException();
 
+      if (
+        contract.status !== ContractStatus.PENDING_SIGN &&
+        contract.status !== ContractStatus.AWAITING_PAYMENT
+      ) {
+        throw MilestoneContractNotActiveException();
+      }
+
       const milestone =
         await this.milestoneRepository.findMilestoneById(milestoneId);
       if (!milestone) throw MilestoneNotFoundException();
       if (milestone.contractId !== contractId)
         throw MilestoneForbiddenException();
 
-      if (milestone.status !== MilestoneStatus.PENDING) {
+      if (
+        milestone.status !== MilestoneStatus.PENDING ||
+        (contract.status === ContractStatus.PENDING_SIGN &&
+          contract.holdMilestoneIds?.includes(milestoneId) &&
+          body.amount !== undefined &&
+          Number(body.amount) !== Number(milestone.amount))
+      ) {
         throw MilestoneCannotBeEditedException();
       }
+
+      const effectiveDueDate = body.dueDate ?? milestone.dueDate;
+      this.assertDueDateWithinContract(effectiveDueDate, contract.expiresAt);
 
       if (body.amount !== undefined) {
         const totalMilestoneAmount =
@@ -177,13 +215,24 @@ export class MilestoneService {
       if (!contract) throw MilestoneContractNotFoundException();
       if (contract.clientId !== clientId) throw MilestoneForbiddenException();
 
+      if (
+        contract.status !== ContractStatus.PENDING_SIGN &&
+        contract.status !== ContractStatus.AWAITING_PAYMENT
+      ) {
+        throw MilestoneContractNotActiveException();
+      }
+
       const milestone =
         await this.milestoneRepository.findMilestoneById(milestoneId);
       if (!milestone) throw MilestoneNotFoundException();
       if (milestone.contractId !== contractId)
         throw MilestoneForbiddenException();
 
-      if (milestone.status !== MilestoneStatus.PENDING) {
+      if (
+        milestone.status !== MilestoneStatus.PENDING ||
+        (contract.status === ContractStatus.PENDING_SIGN &&
+          contract.holdMilestoneIds?.includes(milestoneId))
+      ) {
         throw MilestoneCannotBeDeletedException();
       }
 
@@ -214,7 +263,10 @@ export class MilestoneService {
 
       if (!milestone) throw MilestoneNotFoundException();
 
-      if (milestone.contractId !== contractId) {
+      if (
+        milestone.contractId !== contractId ||
+        contract.status !== ContractStatus.ACTIVE
+      ) {
         throw MilestoneForbiddenException();
       }
 

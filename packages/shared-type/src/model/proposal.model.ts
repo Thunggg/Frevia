@@ -108,10 +108,12 @@ const ProposalFreelancerSchema = z.object({
   email: z.string(),
   profile: z
     .object({
+      id: z.number().optional(),
       displayName: z.string().nullable(),
       avatarUrl: z.string().nullable(),
       freelancerProfile: z
         .object({
+          id: z.number().optional(),
           title: z.string().nullable(),
           idVerified: z.boolean(),
         })

@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import {
   ContractStatus,
-  DisputeFeeStatus,
   DisputeStatus,
   MilestonePaymentStatus,
   MilestoneStatus,
@@ -12,7 +11,6 @@ import {
 } from '@prisma/client';
 import { GetTransactionListQueryType } from '@shared/types';
 import { PrismaService } from '../../shared/services/prisma.service';
-import { activateContractLifecycle } from '../../shared/helper/contract-activation.helper';
 
 @Injectable()
 export class PaymentRepository {
@@ -60,76 +58,236 @@ export class PaymentRepository {
             stripeOnboardingCompleted: true,
           },
         },
+        milestones: {
+          where: { deletedAt: null },
+          orderBy: { id: 'asc' },
+        },
       },
     });
   }
 
-  async recordPartyPlatformFeePaid(
-    contractId: number,
-    party: 'client' | 'freelancer',
-  ) {
-    const isClient = party === 'client';
-    const now = new Date();
+  async setContractHoldIntent(params: {
+    contractId: number;
+    paymentIntentId: string;
+    milestoneIds: number[];
+    clientPlatformFee: number;
+  }) {
+    const { contractId, paymentIntentId, milestoneIds, clientPlatformFee } =
+      params;
     return this.prisma.contract.update({
       where: { id: contractId },
-      data: isClient
-        ? { clientFeeStatus: PlatformFeeStatus.PAID, clientFeePaidAt: now }
-        : {
-            freelancerFeeStatus: PlatformFeeStatus.PAID,
-            freelancerFeePaidAt: now,
-          },
+      data: {
+        holdPaymentIntentId: paymentIntentId,
+        holdMilestoneIds: milestoneIds,
+        clientPlatformFee,
+        platformFee: clientPlatformFee,
+      },
     });
   }
 
-  async activateContractIfReady(contractId: number) {
+  async clearContractHold(contractId: number) {
+    return this.prisma.contract.update({
+      where: { id: contractId },
+      data: {
+        holdPaymentIntentId: null,
+        holdMilestoneIds: [],
+      },
+    });
+  }
+
+  async markContractHoldAuthorized(params: {
+    contractId: number;
+    paymentIntentId: string;
+    milestoneIds: number[];
+  }) {
+    const { contractId, paymentIntentId, milestoneIds } = params;
     return this.prisma.$transaction(async (tx) => {
       const contract = await tx.contract.findUnique({
         where: { id: contractId },
       });
       if (!contract) return null;
 
-      const bothFeesPaid =
-        contract.clientFeeStatus === PlatformFeeStatus.PAID &&
-        contract.freelancerFeeStatus === PlatformFeeStatus.PAID;
-      const bothSigned = contract.signedByClient && contract.signedByFreelancer;
+      const updatedContract =
+        contract.status === ContractStatus.AWAITING_PAYMENT
+          ? await tx.contract.update({
+              where: { id: contractId },
+              data: {
+                status: ContractStatus.PENDING_SIGN,
+                holdPaymentIntentId: paymentIntentId,
+                holdMilestoneIds: milestoneIds,
+              },
+            })
+          : contract;
 
-      if (
-        bothFeesPaid &&
-        contract.platformFeeStatus !== PlatformFeeStatus.PAID
-      ) {
-        await tx.contract.update({
-          where: { id: contractId },
+      const existingTx = await tx.transaction.findUnique({
+        where: { stripePaymentIntentId: paymentIntentId },
+      });
+      if (existingTx) {
+        const prevMeta =
+          (existingTx.metadata as Record<string, unknown> | null) ?? {};
+        await tx.transaction.update({
+          where: { id: existingTx.id },
           data: {
-            platformFeeStatus: PlatformFeeStatus.PAID,
-            platformFeePaidAt: new Date(),
+            metadata: {
+              ...prevMeta,
+              holdStatus: 'REQUIRES_CAPTURE',
+              milestoneIds,
+            } as Prisma.InputJsonValue,
           },
         });
       }
 
-      if (
-        bothFeesPaid &&
-        bothSigned &&
-        contract.status !== ContractStatus.ACTIVE
-      ) {
-        const activated = await activateContractLifecycle(tx, contractId);
-        return { activated: true, contract: activated ?? contract };
-      }
-
-      return { activated: false, contract };
+      return updatedContract;
     });
   }
 
-  async updateContractPlatformFee(
-    contractId: number,
-    status: PlatformFeeStatus,
-    paidAt?: Date,
-  ) {
-    return this.prisma.contract.update({
-      where: { id: contractId },
-      data: {
-        platformFeeStatus: status,
-        platformFeePaidAt: paidAt ?? new Date(),
-      },
+  async finalizeContractHoldCaptured(params: {
+    contractId: number;
+    paymentIntentId: string;
+    milestoneIds: number[];
+    milestonesAmount: number;
+    clientFeeAmount: number;
+  }) {
+    const {
+      contractId,
+      paymentIntentId,
+      milestoneIds,
+      milestonesAmount,
+      clientFeeAmount,
+    } = params;
+    return this.prisma.$transaction(async (tx) => {
+      const contract = await tx.contract.findUnique({
+        where: { id: contractId },
+      });
+      if (!contract) return null;
+
+      const existingTx = await tx.transaction.findUnique({
+        where: { stripePaymentIntentId: paymentIntentId },
+      });
+
+      const wasAlreadyProcessed =
+        existingTx?.status === TransactionStatus.SUCCEEDED;
+
+      if (existingTx && !wasAlreadyProcessed) {
+        const prevMeta =
+          (existingTx.metadata as Record<string, unknown> | null) ?? {};
+        await tx.transaction.update({
+          where: { id: existingTx.id },
+          data: {
+            status: TransactionStatus.SUCCEEDED,
+            amount: milestonesAmount,
+            metadata: {
+              ...prevMeta,
+              holdStatus: 'CAPTURED',
+              milestoneIds,
+              milestonesAmount,
+              clientFeeAmount,
+            } as Prisma.InputJsonValue,
+          },
+        });
+      } else if (!existingTx) {
+        await tx.transaction.create({
+          data: {
+            userId: contract.clientId,
+            contractId,
+            milestoneId: milestoneIds.length === 1 ? milestoneIds[0] : null,
+            amount: milestonesAmount,
+            currency: 'usd',
+            type: TransactionType.ESCROW_DEPOSIT,
+            status: TransactionStatus.SUCCEEDED,
+            stripePaymentIntentId: paymentIntentId,
+            metadata: {
+              type: 'CONTRACT_HOLD',
+              holdStatus: 'CAPTURED',
+              milestoneIds,
+              milestonesAmount,
+              clientFeeAmount,
+            } as Prisma.InputJsonValue,
+          },
+        });
+      }
+
+      if (!wasAlreadyProcessed && clientFeeAmount > 0) {
+        await tx.transaction.create({
+          data: {
+            userId: contract.clientId,
+            contractId,
+            amount: clientFeeAmount,
+            currency: 'usd',
+            type: TransactionType.PLATFORM_FEE,
+            status: TransactionStatus.SUCCEEDED,
+            metadata: {
+              type: 'CONTRACT_PLATFORM_FEE',
+              feeRole: 'CLIENT',
+              feePercent: 3,
+              capturedPaymentIntentId: paymentIntentId,
+            } as Prisma.InputJsonValue,
+          },
+        });
+      }
+
+      if (milestoneIds.length > 0) {
+        await tx.milestone.updateMany({
+          where: {
+            contractId,
+            id: { in: milestoneIds },
+            deletedAt: null,
+          },
+          data: {
+            paymentStatus: MilestonePaymentStatus.FUNDED,
+          },
+        });
+      }
+
+      const now = new Date();
+      return tx.contract.update({
+        where: { id: contractId },
+        data: {
+          platformFee: clientFeeAmount,
+          clientPlatformFee: clientFeeAmount,
+          clientFeeStatus: PlatformFeeStatus.PAID,
+          clientFeePaidAt: now,
+          platformFeeStatus: PlatformFeeStatus.PAID,
+          platformFeePaidAt: now,
+        },
+      });
+    });
+  }
+
+  async markContractHoldCanceled(params: {
+    contractId: number;
+    paymentIntentId: string;
+    reason?: string;
+  }) {
+    const { contractId, paymentIntentId, reason } = params;
+    return this.prisma.$transaction(async (tx) => {
+      const existingTx = await tx.transaction.findUnique({
+        where: { stripePaymentIntentId: paymentIntentId },
+      });
+
+      if (existingTx && existingTx.status === TransactionStatus.PENDING) {
+        const prevMeta =
+          (existingTx.metadata as Record<string, unknown> | null) ?? {};
+        await tx.transaction.update({
+          where: { id: existingTx.id },
+          data: {
+            status: TransactionStatus.FAILED,
+            metadata: {
+              ...prevMeta,
+              holdStatus: 'CANCELED',
+              ...(reason && { cancelReason: reason }),
+            } as Prisma.InputJsonValue,
+          },
+        });
+      }
+
+      await tx.contract.update({
+        where: { id: contractId },
+        data: {
+          holdPaymentIntentId: null,
+          holdMilestoneIds: [],
+        },
+      });
     });
   }
 
@@ -193,7 +351,6 @@ export class PaymentRepository {
             },
           },
         },
-        fees: true,
         decisionBy: {
           select: {
             id: true,
@@ -216,33 +373,6 @@ export class PaymentRepository {
       data: {
         status,
         ...(finalDecisionAt && { finalDecisionAt }),
-      },
-    });
-  }
-
-  async findDisputeFee(disputeId: number, userId: number) {
-    return this.prisma.disputeFee.findUnique({
-      where: {
-        disputeId_userId: {
-          disputeId,
-          userId,
-        },
-      },
-    });
-  }
-
-  async updateDisputeFeeStatus(
-    disputeFeeId: number,
-    status: DisputeFeeStatus,
-    paymentIntentId?: string,
-    paidAt?: Date,
-  ) {
-    return this.prisma.disputeFee.update({
-      where: { id: disputeFeeId },
-      data: {
-        status,
-        ...(paymentIntentId && { paymentIntentId }),
-        ...(paidAt && { paidAt }),
       },
     });
   }
@@ -335,8 +465,8 @@ export class PaymentRepository {
     };
   }
 
-  async findEscrowDepositTransaction(milestoneId: number) {
-    const tx = await this.prisma.transaction.findFirst({
+  async findEscrowDepositTransaction(milestoneId: number, contractId?: number) {
+    const directTx = await this.prisma.transaction.findFirst({
       where: {
         milestoneId,
         type: TransactionType.ESCROW_DEPOSIT,
@@ -344,41 +474,37 @@ export class PaymentRepository {
       },
       orderBy: { createdAt: 'desc' },
     });
-    if (!tx) return null;
-    return {
-      ...tx,
-      amount: Number(tx.amount),
-    };
-  }
+    if (directTx) {
+      return {
+        ...directTx,
+        amount: Number(directTx.amount),
+      };
+    }
 
-  async handleEscrowDepositSuccess(contractId: number) {
-    return this.prisma.$transaction(async (tx) => {
-      const contract = await tx.contract.findUnique({
-        where: { id: contractId },
-        select: { status: true, clientFeeStatus: true },
-      });
+    if (!contractId) return null;
 
-      if (!contract) return null;
-
-      const dataToUpdate: Prisma.ContractUpdateInput = {};
-      if (contract.clientFeeStatus !== PlatformFeeStatus.PAID) {
-        dataToUpdate.clientFeeStatus = PlatformFeeStatus.PAID;
-        dataToUpdate.clientFeePaidAt = new Date();
-      }
-
-      if (contract.status === ContractStatus.AWAITING_PAYMENT) {
-        dataToUpdate.status = ContractStatus.PENDING_SIGN;
-      }
-
-      if (Object.keys(dataToUpdate).length > 0) {
-        return tx.contract.update({
-          where: { id: contractId },
-          data: dataToUpdate,
-        });
-      }
-
-      return contract;
+    const contractTxs = await this.prisma.transaction.findMany({
+      where: {
+        contractId,
+        type: TransactionType.ESCROW_DEPOSIT,
+        status: TransactionStatus.SUCCEEDED,
+      },
+      orderBy: { createdAt: 'desc' },
     });
+
+    const matched = contractTxs.find((item) => {
+      const meta = item.metadata as { milestoneIds?: unknown } | null;
+      return (
+        Array.isArray(meta?.milestoneIds) &&
+        meta.milestoneIds.includes(milestoneId)
+      );
+    });
+
+    if (!matched) return null;
+    return {
+      ...matched,
+      amount: Number(matched.amount),
+    };
   }
 
   async findContractEscrowDeposits(contractId: number) {
@@ -400,6 +526,7 @@ export class PaymentRepository {
     return this.prisma.milestone.updateMany({
       where: {
         contractId,
+        deletedAt: null,
         paymentStatus: fromStatus,
       },
       data: {
@@ -412,6 +539,7 @@ export class PaymentRepository {
     const unreleasedMilestones = await this.prisma.milestone.count({
       where: {
         contractId,
+        deletedAt: null,
         paymentStatus: {
           not: MilestonePaymentStatus.RELEASED,
         },

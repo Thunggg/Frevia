@@ -8,7 +8,8 @@ import { Separator } from "@repo/ui/components/shadcn/separator";
 import { HttpMethod } from "@shared/types";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
-import { useFormatter, useTranslations } from "next-intl";
+import { useFormatter, useLocale, useTranslations } from "next-intl";
+import { getPermissionDisplayName } from "@/lib/permission-utils";
 
 const METHOD_VARIANT: Record<
   string,
@@ -25,6 +26,7 @@ export function PermissionDetail({ permissionId }: { permissionId: number }) {
   const t = useTranslations("adminPermissions");
   const tCommon = useTranslations("adminCommon");
   const format = useFormatter();
+  const locale = useLocale();
   const { data: permission, isLoading, isError } = usePermission(permissionId);
 
   if (isLoading) {
@@ -42,16 +44,20 @@ export function PermissionDetail({ permissionId }: { permissionId: number }) {
     );
   }
 
+  const displayName = getPermissionDisplayName(permission, locale);
+
   return (
     <div className="space-y-6">
       <BackToPermissions />
 
       <div className="flex items-start justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight font-mono">
-            {permission.name}
+          <h1 className="text-3xl font-bold tracking-tight">
+            {displayName}
           </h1>
-          <p className="text-muted-foreground mt-1">{t("detailTitle")}</p>
+          <p className="text-muted-foreground mt-1 font-mono text-sm">
+            {permission.method} {permission.path}
+          </p>
         </div>
         <Badge variant={METHOD_VARIANT[permission.method] ?? "outline"}>
           {permission.method}
@@ -81,8 +87,8 @@ export function PermissionDetail({ permissionId }: { permissionId: number }) {
         <Separator />
 
         <div>
-          <p className="text-xs text-muted-foreground">{tCommon("name")}</p>
-          <p className="text-sm font-medium font-mono mt-1">{permission.name}</p>
+          <p className="text-xs text-muted-foreground">{t("permissionName")}</p>
+          <p className="text-sm font-medium mt-1">{displayName}</p>
         </div>
 
         <div>

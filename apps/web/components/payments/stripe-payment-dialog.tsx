@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import {
   Elements,
   PaymentElement,
@@ -40,6 +41,7 @@ function PaymentForm({
   onSuccess,
   onClose,
 }: PaymentFormProps) {
+  const queryClient = useQueryClient();
   const stripe = useStripe();
   const elements = useElements();
   const [submitting, setSubmitting] = useState(false);
@@ -68,7 +70,8 @@ function PaymentForm({
         });
       } else if (
         result.paymentIntent &&
-        (result.paymentIntent.status === "succeeded" ||
+        (result.paymentIntent.status === "requires_capture" ||
+          result.paymentIntent.status === "succeeded" ||
           result.paymentIntent.status === "processing")
       ) {
         try {
@@ -76,7 +79,15 @@ function PaymentForm({
         } catch {
           // Non-blocking sync fallback
         }
-        toastSuccess({ message: "Payment processed successfully!" });
+        await queryClient.invalidateQueries({
+          queryKey: ["saved-payment-methods"],
+        });
+        toastSuccess({
+          message:
+            result.paymentIntent.status === "requires_capture"
+              ? "Payment authorization hold confirmed! You can now sign the contract."
+              : "Payment processed successfully!",
+        });
         onSuccess();
         onClose();
       }

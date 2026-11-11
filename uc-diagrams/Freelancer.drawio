@@ -372,7 +372,7 @@
     </mxGraphModel>
   </diagram>
   <diagram name="Freelancer 4/7" id="Freelancer_4">
-    <mxGraphModel dx="1303" dy="843" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1250" pageHeight="1150" math="0" shadow="0">
+    <mxGraphModel dx="1895" dy="1225" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1250" pageHeight="1150" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -673,6 +673,21 @@
         <mxCell id="m_56" edge="1" parent="swimlane_frevia" source="uc_mod_48" style="endArrow=none;html=1;rounded=0;fontFamily=Tahoma;fontSize=13;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" target="uc_sub_55">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
+        <mxCell id="uc_sub_62" parent="swimlane_frevia" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;fontFamily=Tahoma;fillColor=#ffffff;strokeColor=#000000;" value="Delete Milestone Submission&#xa;UC-26.02" vertex="1">
+          <mxGeometry height="48" width="145" x="240" y="1110" as="geometry" />
+        </mxCell>
+        <mxCell id="m_63" edge="1" parent="swimlane_frevia" source="uc_mod_57" style="endArrow=none;html=1;rounded=0;fontFamily=Tahoma;fontSize=13;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="uc_sub_62">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="uc_mod_57" parent="swimlane_frevia" style="ellipse;whiteSpace=wrap;html=1;fontSize=11;fontFamily=Tahoma;fontStyle=1;fillColor=#ffffff;strokeColor=#000000;" value="Milestone Submission Management&#xa;UC-26" vertex="1">
+          <mxGeometry height="60" width="150" x="30" y="1070" as="geometry" />
+        </mxCell>
+        <mxCell id="m_61" edge="1" parent="swimlane_frevia" source="uc_mod_57" style="endArrow=none;html=1;rounded=0;fontFamily=Tahoma;fontSize=13;" target="uc_sub_60">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="uc_sub_60" parent="swimlane_frevia" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;fontFamily=Tahoma;fillColor=#ffffff;strokeColor=#000000;" value="Submit Milestone&#xa;UC-26.01" vertex="1">
+          <mxGeometry height="48" width="135" x="240" y="1030" as="geometry" />
+        </mxCell>
         <mxCell id="act_1" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontSize=14;fontFamily=Tahoma;" value="Freelancer" vertex="1">
           <mxGeometry height="70" width="35" x="40" y="665" as="geometry" />
         </mxCell>
@@ -739,34 +754,19 @@
             </Array>
           </mxGeometry>
         </mxCell>
-        <mxCell id="uc_sub_62" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;fontFamily=Tahoma;fillColor=#ffffff;strokeColor=#000000;" value="Delete Milestone Submission&#xa;UC-26.02" vertex="1">
-          <mxGeometry height="48" width="145" x="370" y="1170" as="geometry" />
-        </mxCell>
-        <mxCell id="m_63" edge="1" parent="1" source="uc_mod_57" style="endArrow=none;html=1;rounded=0;fontFamily=Tahoma;fontSize=13;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="uc_sub_62">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="uc_mod_57" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontSize=11;fontFamily=Tahoma;fontStyle=1;fillColor=#ffffff;strokeColor=#000000;" value="Milestone Submission Management&#xa;UC-26" vertex="1">
-          <mxGeometry height="60" width="150" x="160" y="1130" as="geometry" />
-        </mxCell>
-        <mxCell id="m_61" edge="1" parent="1" source="uc_mod_57" style="endArrow=none;html=1;rounded=0;fontFamily=Tahoma;fontSize=13;" target="uc_sub_60">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="uc_sub_60" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;fontFamily=Tahoma;fillColor=#ffffff;strokeColor=#000000;" value="Submit Milestone&#xa;UC-26.01" vertex="1">
-          <mxGeometry height="48" width="135" x="370" y="1090" as="geometry" />
-        </mxCell>
       </root>
     </mxGraphModel>
   </diagram>
   <diagram name="Freelancer 6/7" id="Freelancer_6">
-    <mxGraphModel dx="1303" dy="843" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1250" pageHeight="1150" math="0" shadow="0">
+    <mxGraphModel dx="868" dy="562" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1250" pageHeight="1150" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
         <mxCell id="swimlane_frevia" parent="1" style="swimlane;whiteSpace=wrap;html=1;startSize=30;fontSize=15;fontFamily=Tahoma;fontStyle=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="Frevia" vertex="1">
-          <mxGeometry height="880" width="890" x="130" y="70" as="geometry" />
+          <mxGeometry height="1060" width="890" x="130" y="70" as="geometry" />
         </mxCell>
         <mxCell id="uc_2" parent="swimlane_frevia" style="ellipse;whiteSpace=wrap;html=1;fontSize=12;fontFamily=Tahoma;fontStyle=1;fillColor=#ffffff;strokeColor=#000000;" value="UC-02&#xa;Login" vertex="1">
-          <mxGeometry height="55" width="105" x="750" y="478" as="geometry" />
+          <mxGeometry height="55" width="105" x="750" y="492.5" as="geometry" />
         </mxCell>
         <mxCell id="uc_mod_4" parent="swimlane_frevia" style="ellipse;whiteSpace=wrap;html=1;fontSize=11;fontFamily=Tahoma;fontStyle=1;fillColor=#ffffff;strokeColor=#000000;" value="Conversation Management&#xa;UC-27" vertex="1">
           <mxGeometry height="60" width="150" x="30" y="150" as="geometry" />
@@ -896,8 +896,34 @@
         <mxCell id="m_53" edge="1" parent="swimlane_frevia" source="uc_mod_41" style="endArrow=none;html=1;rounded=0;fontFamily=Tahoma;fontSize=13;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" target="uc_sub_52">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
+        <mxCell id="uc_mod_44" parent="swimlane_frevia" style="ellipse;whiteSpace=wrap;html=1;fontSize=11;fontFamily=Tahoma;fontStyle=1;fillColor=#ffffff;strokeColor=#000000;" value="&lt;span style=&quot;font-size: 10px; font-weight: 400;&quot;&gt;Moderate Content by AI UC-44.01&lt;/span&gt;" vertex="1">
+          <mxGeometry height="60" width="150" x="30" y="860" as="geometry" />
+        </mxCell>
+        <mxCell id="uc_mod_45" parent="swimlane_frevia" style="ellipse;whiteSpace=wrap;html=1;fontSize=11;fontFamily=Tahoma;fontStyle=1;fillColor=#ffffff;strokeColor=#000000;" value="&lt;span style=&quot;font-size: 10px; font-weight: 400;&quot;&gt;Scan Face and Detect Duplicate Identity UC-45.01&lt;/span&gt;" vertex="1">
+          <mxGeometry height="60" width="150" x="30" y="950" as="geometry" />
+        </mxCell>
+        <mxCell id="r1zZaaNQfGkLN152SzDB-2" edge="1" parent="swimlane_frevia" source="uc_mod_44" style="edgeStyle=orthogonalEdgeStyle;rounded=0;endArrow=open;dashed=1;html=1;strokeColor=#000000;fontSize=10;fontFamily=Tahoma;labelBackgroundColor=#ffffff;align=center;verticalAlign=middle;" target="uc_2" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;">
+          <mxGeometry relative="1" x="0.0772" as="geometry">
+            <mxPoint as="offset" />
+            <Array as="points">
+              <mxPoint x="820" y="890" />
+            </Array>
+            <mxPoint x="190" y="760" as="sourcePoint" />
+            <mxPoint x="820" y="557" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="r1zZaaNQfGkLN152SzDB-3" edge="1" parent="swimlane_frevia" source="uc_mod_45" style="edgeStyle=orthogonalEdgeStyle;rounded=0;endArrow=open;dashed=1;html=1;strokeColor=#000000;fontSize=10;fontFamily=Tahoma;labelBackgroundColor=#ffffff;align=center;verticalAlign=middle;" target="uc_2" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;">
+          <mxGeometry relative="1" x="-0.0245" as="geometry">
+            <mxPoint as="offset" />
+            <Array as="points">
+              <mxPoint x="830" y="980" />
+            </Array>
+            <mxPoint x="115" y="870" as="sourcePoint" />
+            <mxPoint x="830" y="556" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
         <mxCell id="act_1" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontSize=14;fontFamily=Tahoma;" value="Freelancer" vertex="1">
-          <mxGeometry height="70" width="35" x="40" y="540" as="geometry" />
+          <mxGeometry height="70" width="35" x="30" y="555" as="geometry" />
         </mxCell>
         <mxCell id="m_3" edge="1" parent="1" source="act_1" style="endArrow=none;html=1;rounded=0;fontFamily=Tahoma;fontSize=13;exitX=0.5;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;" target="uc_2">
           <mxGeometry relative="1" as="geometry" />
@@ -915,7 +941,7 @@
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="inc_6" edge="1" parent="1" source="uc_mod_4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;endArrow=open;dashed=1;html=1;strokeColor=#000000;fontSize=10;fontFamily=Tahoma;labelBackgroundColor=#ffffff;align=center;verticalAlign=middle;" target="uc_2" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;">
-          <mxGeometry relative="1" x="0.0779" as="geometry">
+          <mxGeometry relative="1" x="0.111" as="geometry">
             <mxPoint as="offset" />
             <Array as="points">
               <mxPoint x="950" y="250" />
@@ -923,28 +949,43 @@
           </mxGeometry>
         </mxCell>
         <mxCell id="inc_25" edge="1" parent="1" source="uc_mod_23" style="edgeStyle=orthogonalEdgeStyle;rounded=0;endArrow=open;dashed=1;html=1;strokeColor=#000000;fontSize=10;fontFamily=Tahoma;labelBackgroundColor=#ffffff;align=center;verticalAlign=middle;" target="uc_2" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;">
-          <mxGeometry relative="1" x="0.3965" as="geometry">
+          <mxGeometry relative="1" x="0.4621" as="geometry">
             <mxPoint as="offset" />
           </mxGeometry>
         </mxCell>
         <mxCell id="inc_36" edge="1" parent="1" source="uc_mod_34" style="edgeStyle=orthogonalEdgeStyle;rounded=0;endArrow=open;dashed=1;html=1;strokeColor=#000000;fontSize=10;fontFamily=Tahoma;labelBackgroundColor=#ffffff;align=center;verticalAlign=middle;" target="uc_2" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;">
-          <mxGeometry relative="1" x="0.5892" y="-2" as="geometry">
+          <mxGeometry relative="1" x="0.5559" as="geometry">
             <mxPoint as="offset" />
+            <Array as="points">
+              <mxPoint x="920" y="688" />
+            </Array>
           </mxGeometry>
         </mxCell>
         <mxCell id="inc_43" edge="1" parent="1" source="uc_mod_41" style="edgeStyle=orthogonalEdgeStyle;rounded=0;endArrow=open;dashed=1;html=1;strokeColor=#000000;fontSize=10;fontFamily=Tahoma;labelBackgroundColor=#ffffff;align=center;verticalAlign=middle;" target="uc_2" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;">
-          <mxGeometry relative="1" x="0.3031" as="geometry">
+          <mxGeometry relative="1" x="0.2841" as="geometry">
             <mxPoint as="offset" />
             <Array as="points">
-              <mxPoint x="950" y="820" />
+              <mxPoint x="933" y="820" />
             </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="XpRyeTTFiKu_3gIjky5_-1" edge="1" parent="1" source="act_1" style="endArrow=none;html=1;rounded=0;fontFamily=Tahoma;fontSize=13;entryX=0;entryY=0.5;entryDx=0;entryDy=0;exitX=0.5;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;" target="uc_mod_45">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="68" y="585" as="sourcePoint" />
+            <mxPoint x="170" y="830" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="XpRyeTTFiKu_3gIjky5_-2" edge="1" parent="1" source="act_1" style="endArrow=none;html=1;rounded=0;fontFamily=Tahoma;fontSize=13;entryX=0;entryY=0.5;entryDx=0;entryDy=0;exitX=0.5;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;" target="uc_mod_44">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="78" y="595" as="sourcePoint" />
+            <mxPoint x="180" y="840" as="targetPoint" />
           </mxGeometry>
         </mxCell>
       </root>
     </mxGraphModel>
   </diagram>
   <diagram name="Freelancer 7/7" id="Freelancer_7">
-    <mxGraphModel dx="1489" dy="963" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1250" pageHeight="1150" math="0" shadow="0">
+    <mxGraphModel dx="1303" dy="843" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1250" pageHeight="1150" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -1115,8 +1156,25 @@
         <mxCell id="m_64" edge="1" parent="swimlane_frevia" source="uc_mod_50" style="endArrow=none;html=1;rounded=0;fontFamily=Tahoma;fontSize=13;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="uc_sub_63">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="uc_sub_68" parent="swimlane_frevia" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;fontFamily=Tahoma;fillColor=#ffffff;strokeColor=#000000;" value="View Job Category List (Freelancer)&#xa;UC-46.06" vertex="1">
-          <mxGeometry height="48" width="135" x="214" y="1028" as="geometry" />
+        <mxCell id="uc_sub_68" parent="swimlane_frevia" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;fontFamily=Tahoma;fillColor=#ffffff;strokeColor=#000000;" value="View Job Category List&amp;nbsp;&lt;div&gt;UC-46.07&lt;/div&gt;" vertex="1">
+          <mxGeometry height="48" width="135" x="214" y="1010" as="geometry" />
+        </mxCell>
+        <mxCell id="inc_67" edge="1" parent="swimlane_frevia" source="uc_mod_65" style="edgeStyle=orthogonalEdgeStyle;rounded=0;endArrow=open;dashed=1;html=1;strokeColor=#000000;fontSize=10;fontFamily=Tahoma;labelBackgroundColor=#ffffff;align=center;verticalAlign=middle;" target="uc_2" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;">
+          <mxGeometry relative="1" x="-0.0971" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="uc_mod_65" parent="swimlane_frevia" style="ellipse;whiteSpace=wrap;html=1;fontSize=11;fontFamily=Tahoma;fontStyle=1;fillColor=#ffffff;strokeColor=#000000;" value="Job Category Management&#xa;UC-46" vertex="1">
+          <mxGeometry height="60" width="150" x="30" y="1040" as="geometry" />
+        </mxCell>
+        <mxCell id="m_69" edge="1" parent="swimlane_frevia" source="uc_mod_65" style="endArrow=none;html=1;rounded=0;fontFamily=Tahoma;fontSize=13;" target="uc_sub_68">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="m_71" edge="1" parent="swimlane_frevia" source="uc_mod_65" style="endArrow=none;html=1;rounded=0;fontFamily=Tahoma;fontSize=13;" target="uc_sub_70">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="uc_sub_70" parent="swimlane_frevia" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;fontFamily=Tahoma;fillColor=#ffffff;strokeColor=#000000;" value="View Job Category Detail&lt;div&gt;UC-46.08&lt;/div&gt;" vertex="1">
+          <mxGeometry height="48" width="135" x="214" y="1080" as="geometry" />
         </mxCell>
         <mxCell id="act_1" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontSize=14;fontFamily=Tahoma;" value="Freelancer" vertex="1">
           <mxGeometry height="70" width="35" x="20" y="644.5" as="geometry" />
@@ -1187,26 +1245,6 @@
           <mxGeometry relative="1" x="0.1251" as="geometry">
             <mxPoint as="offset" />
           </mxGeometry>
-        </mxCell>
-        <mxCell id="inc_67" edge="1" parent="1" source="uc_mod_65" style="edgeStyle=orthogonalEdgeStyle;rounded=0;endArrow=open;dashed=1;html=1;strokeColor=#000000;fontSize=10;fontFamily=Tahoma;labelBackgroundColor=#ffffff;align=center;verticalAlign=middle;" target="uc_2" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;">
-          <mxGeometry relative="1" x="-0.0971" as="geometry">
-            <mxPoint as="offset" />
-            <Array as="points">
-              <mxPoint x="960" y="1140" />
-            </Array>
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="uc_mod_65" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontSize=11;fontFamily=Tahoma;fontStyle=1;fillColor=#ffffff;strokeColor=#000000;" value="Job Category Management&#xa;UC-46" vertex="1">
-          <mxGeometry height="60" width="150" x="160" y="1110" as="geometry" />
-        </mxCell>
-        <mxCell id="m_69" edge="1" parent="1" source="uc_mod_65" style="endArrow=none;html=1;rounded=0;fontFamily=Tahoma;fontSize=13;" target="uc_sub_68">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="m_71" edge="1" parent="1" source="uc_mod_65" style="endArrow=none;html=1;rounded=0;fontFamily=Tahoma;fontSize=13;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="uc_sub_70">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="uc_sub_70" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;fontFamily=Tahoma;fillColor=#ffffff;strokeColor=#000000;" value="View Job Category Detail (Freelancer)&#xa;UC-46.07" vertex="1">
-          <mxGeometry height="48" width="135" x="344" y="1150" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
