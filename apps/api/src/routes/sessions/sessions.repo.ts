@@ -36,6 +36,9 @@ export class SessionsRepository {
 
     const where: Prisma.SessionWhereInput = {
       userId,
+      expiresAt: {
+        gt: new Date(),
+      },
       ...(search && {
         OR: [
           {
