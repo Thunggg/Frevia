@@ -3,27 +3,19 @@
 import {
   Sidebar,
   SidebarContent,
-  SidebarFooter,
   SidebarHeader,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
 } from "@repo/ui/components/shadcn/sidebar";
 import {
   FolderTree,
   LayoutDashboard,
   Megaphone,
   MessageSquare,
-  MonitorSmartphone,
   ShieldCheck,
   Tags,
-  UserRound,
   Users,
 } from "lucide-react";
 import Image from "next/image";
-import Link from "next/link";
 import { useTranslations } from "next-intl";
-import { LogoutButton } from "./logout-button";
 import { NavMain, type NavItem } from "./nav-main";
 
 // Cấu hình menu sidebar Admin:
@@ -115,30 +107,6 @@ export function AppSidebar() {
       <SidebarContent>
         <NavMain label={t("menu")} items={navItems} />
       </SidebarContent>
-
-      <SidebarFooter>
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <SidebarMenuButton asChild tooltip={t("profileSettings")}>
-              <Link href="/admin/profile">
-                <UserRound className="h-4 w-4" />
-                <span>{t("profileSettings")}</span>
-              </Link>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-          <SidebarMenuItem>
-            <SidebarMenuButton asChild tooltip={t("sessions")}>
-              <Link href="/admin/sessions">
-                <MonitorSmartphone className="h-4 w-4" />
-                <span>{t("sessions")}</span>
-              </Link>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-          <SidebarMenuItem>
-            <LogoutButton />
-          </SidebarMenuItem>
-        </SidebarMenu>
-      </SidebarFooter>
     </Sidebar>
   );
 }

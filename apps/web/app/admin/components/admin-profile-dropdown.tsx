@@ -62,9 +62,6 @@ export function AdminProfileDropdown() {
               {initial}
             </AvatarFallback>
           </Avatar>
-          <span className="hidden max-w-[120px] truncate text-[13px] font-medium text-foreground/80 sm:inline">
-            {displayName}
-          </span>
           <ChevronDown
             className="size-3.5 text-muted-foreground"
             strokeWidth={2}
