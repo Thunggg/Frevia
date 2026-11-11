@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { ChevronDown, ChevronUp } from "@/components/icons";
+import { useTranslations } from "next-intl";
+import { ChevronDown, ChevronUp, RotateCcw } from "@/components/icons";
 import { Checkbox } from "@repo/ui/components/shadcn/checkbox";
 import {
   Select,
@@ -12,73 +13,131 @@ import {
 } from "@repo/ui/components/shadcn/select";
 import type { JobCategoryBrowseItemType } from "@shared/types";
 
+export type SearchFilterValues = {
+  category?: string;
+  budget?: string;
+  budgetMin?: string;
+  budgetMax?: string;
+  time?: string;
+  hiringType?: string;
+  skill?: string;
+};
+
 type SearchFiltersSidebarProps = {
   categories: JobCategoryBrowseItemType[];
   selectedCategory?: string;
   selectedBudget?: string;
+  selectedBudgetMin?: string;
+  selectedBudgetMax?: string;
+  selectedTime?: string;
+  selectedHiringType?: string;
+  selectedSkill?: string;
   onFilterChange: (key: string, value: string | null) => void;
+  onClearFilters: () => void;
 };
 
 export function SearchFiltersSidebar({
   categories = [],
   selectedCategory = "all",
   selectedBudget = "all",
+  selectedBudgetMin = "",
+  selectedBudgetMax = "",
+  selectedTime = "all",
+  selectedHiringType = "all",
+  selectedSkill = "",
   onFilterChange,
+  onClearFilters,
 }: SearchFiltersSidebarProps) {
-  // Collapsible accordion states
+  const t = useTranslations("findWork");
+
+  const BUDGET_PRESETS = [
+    { key: "under-500", label: t("modal.under500") },
+    { key: "500-1000", label: t("modal.500to1000") },
+    { key: "1000-5000", label: t("modal.1000to5000") },
+    { key: "5000-plus", label: t("modal.over5000") },
+  ];
+
+  const TIME_OPTIONS = [
+    { key: "all", label: t("sidebar.allDates") },
+    { key: "today", label: t("modal.today") },
+    { key: "last-3-days", label: t("modal.last3Days") },
+    { key: "last-7-days", label: t("modal.last7Days") },
+    { key: "last-30-days", label: t("modal.last30Days") },
+  ];
+
+  const HIRING_TYPES = [
+    { key: "all", label: t("sidebar.allHiringTypes") },
+    { key: "SINGLE", label: t("modal.hiringTypeSingle") },
+    { key: "MULTIPLE", label: t("modal.hiringTypeMultiple") },
+  ];
+
   const [openSections, setOpenSections] = useState({
     category: true,
-    experience: true,
-    jobType: true,
-    proposals: true,
+    budget: true,
+    hiringType: true,
+    time: true,
+    skill: true,
   });
+
+  const [minInput, setMinInput] = useState(selectedBudgetMin);
+  const [maxInput, setMaxInput] = useState(selectedBudgetMax);
+  const [skillInput, setSkillInput] = useState(selectedSkill);
 
   const toggleSection = (section: keyof typeof openSections) => {
     setOpenSections((prev) => ({ ...prev, [section]: !prev[section] }));
   };
 
-  const [selectedExperience, setSelectedExperience] = useState<string[]>([]);
-  const [selectedProposals, setSelectedProposals] = useState<string[]>([]);
-  const [hourlyChecked, setHourlyChecked] = useState(false);
-  const [fixedPriceChecked, setFixedPriceChecked] = useState(
-    selectedBudget !== "all",
+  const handleApplyCustomBudget = () => {
+    const minVal = minInput.trim() ? minInput.trim() : null;
+    const maxVal = maxInput.trim() ? maxInput.trim() : null;
+    onFilterChange("budget", null);
+    onFilterChange("budgetMin", minVal);
+    onFilterChange("budgetMax", maxVal);
+  };
+
+  const handleApplySkill = (e: React.FormEvent) => {
+    e.preventDefault();
+    const val = skillInput.trim();
+    onFilterChange("skill", val || null);
+  };
+
+  const hasActiveFilters = Boolean(
+    (selectedCategory && selectedCategory !== "all") ||
+      (selectedBudget && selectedBudget !== "all") ||
+      selectedBudgetMin ||
+      selectedBudgetMax ||
+      (selectedTime && selectedTime !== "all") ||
+      (selectedHiringType && selectedHiringType !== "all") ||
+      selectedSkill,
   );
 
-  const toggleExperience = (level: string) => {
-    setSelectedExperience((prev) => {
-      const next = prev.includes(level)
-        ? prev.filter((item) => item !== level)
-        : [...prev, level];
-      onFilterChange("experience", next.length > 0 ? next.join(",") : null);
-      return next;
-    });
-  };
-
-  const toggleProposals = (bucket: string) => {
-    setSelectedProposals((prev) => {
-      const next = prev.includes(bucket)
-        ? prev.filter((item) => item !== bucket)
-        : [...prev, bucket];
-      onFilterChange("proposals", next.length > 0 ? next.join(",") : null);
-      return next;
-    });
-  };
-
-  const handleBudgetSelect = (budgetKey: string) => {
-    const nextValue = selectedBudget === budgetKey ? null : budgetKey;
-    onFilterChange("budget", nextValue);
-  };
-
   return (
-    <aside className="w-full lg:w-72 shrink-0 space-y-6 font-sans text-sm">
-      {/* 1. Category */}
+    <aside className="w-full lg:w-72 shrink-0 space-y-5 font-sans text-sm">
+      {/* Header with Clear Action */}
+      <div className="flex items-center justify-between pb-1 border-b border-border">
+        <h2 className="font-bold text-base text-foreground">
+          {t("sidebar.title")}
+        </h2>
+        {hasActiveFilters && (
+          <button
+            type="button"
+            onClick={onClearFilters}
+            className="inline-flex items-center gap-1 text-xs font-semibold text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 cursor-pointer"
+          >
+            <RotateCcw className="size-3" />
+            <span>{t("sidebar.clearFilters")}</span>
+          </button>
+        )}
+      </div>
+
+      {/* 1. Category Filter */}
       <div className="border-b border-border/80 pb-5">
         <button
           type="button"
           onClick={() => toggleSection("category")}
           className="flex w-full items-center justify-between font-semibold text-foreground hover:text-emerald-600 transition-colors cursor-pointer"
         >
-          <span>Category</span>
+          <span>{t("sidebar.category")}</span>
           {openSections.category ? (
             <ChevronUp className="size-4 text-muted-foreground" />
           ) : (
@@ -89,15 +148,20 @@ export function SearchFiltersSidebar({
         {openSections.category && (
           <div className="mt-3">
             <Select
-              value={selectedCategory}
-              onValueChange={(val) => onFilterChange("category", val)}
+              value={selectedCategory || "all"}
+              onValueChange={(val) =>
+                onFilterChange("category", val === "all" ? null : val)
+              }
             >
               <SelectTrigger className="w-full rounded-xl border border-border bg-card text-xs sm:text-sm font-medium">
-                <SelectValue placeholder="Select Categories" />
+                <SelectValue placeholder={t("sidebar.allCategories")} />
               </SelectTrigger>
               <SelectContent className="max-h-72 rounded-xl border border-border bg-card p-1 shadow-xl">
-                <SelectItem value="all" className="rounded-lg text-xs cursor-pointer">
-                  All Categories
+                <SelectItem
+                  value="all"
+                  className="rounded-lg text-xs cursor-pointer"
+                >
+                  {t("sidebar.allCategories")}
                 </SelectItem>
                 {categories.map((cat) => (
                   <SelectItem
@@ -114,198 +178,219 @@ export function SearchFiltersSidebar({
         )}
       </div>
 
-      {/* 2. Experience Level */}
+      {/* 2. Budget Filter (Fixed-Price) */}
       <div className="border-b border-border/80 pb-5">
         <button
           type="button"
-          onClick={() => toggleSection("experience")}
+          onClick={() => toggleSection("budget")}
           className="flex w-full items-center justify-between font-semibold text-foreground hover:text-emerald-600 transition-colors cursor-pointer"
         >
-          <span>Experience level</span>
-          {openSections.experience ? (
+          <span>{t("sidebar.budget")}</span>
+          {openSections.budget ? (
             <ChevronUp className="size-4 text-muted-foreground" />
           ) : (
             <ChevronDown className="size-4 text-muted-foreground" />
           )}
         </button>
 
-        {openSections.experience && (
-          <div className="mt-3 space-y-2.5 text-xs text-foreground/90">
-            <label className="flex items-center gap-2 cursor-pointer">
-              <Checkbox
-                checked={selectedExperience.includes("entry")}
-                onCheckedChange={() => toggleExperience("entry")}
-              />
-              <span>Entry Level (385)</span>
-            </label>
-            <label className="flex items-center gap-2 cursor-pointer">
-              <Checkbox
-                checked={selectedExperience.includes("intermediate")}
-                onCheckedChange={() => toggleExperience("intermediate")}
-              />
-              <span>Intermediate (5,335)</span>
-            </label>
-            <label className="flex items-center gap-2 cursor-pointer">
-              <Checkbox
-                checked={selectedExperience.includes("expert")}
-                onCheckedChange={() => toggleExperience("expert")}
-              />
-              <span>Expert (4,131)</span>
-            </label>
-          </div>
-        )}
-      </div>
-
-      {/* 3. Job Type (Hourly & Fixed-Price) */}
-      <div className="border-b border-border/80 pb-5">
-        <button
-          type="button"
-          onClick={() => toggleSection("jobType")}
-          className="flex w-full items-center justify-between font-semibold text-foreground hover:text-emerald-600 transition-colors cursor-pointer"
-        >
-          <span>Job type</span>
-          {openSections.jobType ? (
-            <ChevronUp className="size-4 text-muted-foreground" />
-          ) : (
-            <ChevronDown className="size-4 text-muted-foreground" />
-          )}
-        </button>
-
-        {openSections.jobType && (
-          <div className="mt-3 space-y-4 text-xs">
-            {/* Hourly */}
+        {openSections.budget && (
+          <div className="mt-3 space-y-2.5 text-xs">
             <div className="space-y-2">
-              <label className="flex items-center gap-2 cursor-pointer">
-                <Checkbox
-                  checked={hourlyChecked}
-                  onCheckedChange={(checked) => setHourlyChecked(Boolean(checked))}
-                />
-                <span className="font-medium text-foreground">
-                  Hourly (6,281)
-                </span>
-              </label>
-
-              {hourlyChecked && (
-                <div className="flex items-center gap-2 pl-6 pt-1">
-                  <div className="flex items-center rounded-lg border border-border bg-card px-2 py-1 text-xs">
-                    <span className="text-muted-foreground mr-1">$</span>
-                    <input
-                      type="number"
-                      placeholder="Min"
-                      className="w-12 bg-transparent outline-none"
-                    />
-                    <span className="text-muted-foreground ml-1">/hr</span>
-                  </div>
-                  <div className="flex items-center rounded-lg border border-border bg-card px-2 py-1 text-xs">
-                    <span className="text-muted-foreground mr-1">$</span>
-                    <input
-                      type="number"
-                      placeholder="Max"
-                      className="w-12 bg-transparent outline-none"
-                    />
-                    <span className="text-muted-foreground ml-1">/hr</span>
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* Fixed-Price */}
-            <div className="space-y-2">
-              <label className="flex items-center gap-2 cursor-pointer">
-                <Checkbox
-                  checked={fixedPriceChecked}
-                  onCheckedChange={(checked) =>
-                    setFixedPriceChecked(Boolean(checked))
-                  }
-                />
-                <span className="font-medium text-foreground">
-                  Fixed-Price (3,570)
-                </span>
-              </label>
-
-              <div className="space-y-2 pl-6 pt-1">
-                {[
-                  { key: "under-500", label: "Less than $100 (950)" },
-                  { key: "500-1000", label: "$100 to $500 (1,172)" },
-                  { key: "1000-5000", label: "$500 - $1K (482)" },
-                  { key: "5000-plus", label: "$1K - $5K (761)" },
-                  { key: "5k-plus-tier", label: "$5K+ (205)" },
-                ].map((tier) => (
+              {BUDGET_PRESETS.map((preset) => {
+                const isSelected = selectedBudget === preset.key;
+                return (
                   <label
-                    key={tier.key}
-                    className="flex items-center gap-2 cursor-pointer text-muted-foreground hover:text-foreground"
+                    key={preset.key}
+                    className="flex items-center gap-2 cursor-pointer text-foreground hover:text-emerald-600 transition-colors"
                   >
                     <Checkbox
-                      checked={selectedBudget === tier.key}
-                      onCheckedChange={() => handleBudgetSelect(tier.key)}
+                      checked={isSelected}
+                      onCheckedChange={() => {
+                        if (isSelected) {
+                          onFilterChange("budget", null);
+                        } else {
+                          onFilterChange("budget", preset.key);
+                          onFilterChange("budgetMin", null);
+                          onFilterChange("budgetMax", null);
+                          setMinInput("");
+                          setMaxInput("");
+                        }
+                      }}
                     />
-                    <span>{tier.label}</span>
+                    <span>{preset.label}</span>
                   </label>
-                ))}
+                );
+              })}
+            </div>
 
-                <div className="flex items-center gap-2 pt-2">
-                  <div className="flex items-center rounded-lg border border-border bg-card px-2 py-1 text-xs">
-                    <span className="text-muted-foreground mr-1">$</span>
-                    <input
-                      type="number"
-                      placeholder="Min"
-                      className="w-12 bg-transparent outline-none"
-                    />
-                  </div>
-                  <div className="flex items-center rounded-lg border border-border bg-card px-2 py-1 text-xs">
-                    <span className="text-muted-foreground mr-1">$</span>
-                    <input
-                      type="number"
-                      placeholder="Max"
-                      className="w-12 bg-transparent outline-none"
-                    />
-                  </div>
+            {/* Custom Range Inputs */}
+            <div className="pt-2 border-t border-border/60">
+              <span className="text-[11px] font-medium text-muted-foreground block mb-1.5">
+                {t("sidebar.customBudget")}
+              </span>
+              <div className="flex items-center gap-2">
+                <div className="flex items-center rounded-xl border border-border bg-card px-2.5 py-1.5 text-xs flex-1">
+                  <span className="text-muted-foreground mr-1">$</span>
+                  <input
+                    type="number"
+                    min="0"
+                    placeholder={t("sidebar.min")}
+                    value={minInput}
+                    onChange={(e) => setMinInput(e.target.value)}
+                    className="w-full bg-transparent outline-none text-foreground placeholder:text-muted-foreground"
+                  />
                 </div>
+                <span className="text-muted-foreground text-xs">–</span>
+                <div className="flex items-center rounded-xl border border-border bg-card px-2.5 py-1.5 text-xs flex-1">
+                  <span className="text-muted-foreground mr-1">$</span>
+                  <input
+                    type="number"
+                    min="0"
+                    placeholder={t("sidebar.max")}
+                    value={maxInput}
+                    onChange={(e) => setMaxInput(e.target.value)}
+                    className="w-full bg-transparent outline-none text-foreground placeholder:text-muted-foreground"
+                  />
+                </div>
+                <button
+                  type="button"
+                  onClick={handleApplyCustomBudget}
+                  className="rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 text-xs font-semibold transition-colors cursor-pointer"
+                >
+                  {t("sidebar.apply")}
+                </button>
               </div>
             </div>
           </div>
         )}
       </div>
 
-      {/* 4. Number of Proposals */}
+      {/* 3. Hiring Type Filter */}
       <div className="border-b border-border/80 pb-5">
         <button
           type="button"
-          onClick={() => toggleSection("proposals")}
+          onClick={() => toggleSection("hiringType")}
           className="flex w-full items-center justify-between font-semibold text-foreground hover:text-emerald-600 transition-colors cursor-pointer"
         >
-          <span>Number of proposals</span>
-          {openSections.proposals ? (
+          <span>{t("sidebar.hiringType")}</span>
+          {openSections.hiringType ? (
             <ChevronUp className="size-4 text-muted-foreground" />
           ) : (
             <ChevronDown className="size-4 text-muted-foreground" />
           )}
         </button>
 
-        {openSections.proposals && (
-          <div className="mt-3 space-y-2.5 text-xs text-foreground/90">
-            {[
-              { id: "fewer-than-5", label: "Fewer than 5 (813)" },
-              { id: "5-to-10", label: "5 to 10" },
-              { id: "10-to-15", label: "10 to 15" },
-              { id: "15-to-20", label: "15 to 20" },
-              { id: "20-to-50", label: "20 to 50" },
-            ].map((prop) => (
-              <label
-                key={prop.id}
-                className="flex items-center gap-2 cursor-pointer"
-              >
-                <Checkbox
-                  checked={selectedProposals.includes(prop.id)}
-                  onCheckedChange={() => toggleProposals(prop.id)}
-                />
-                <span>{prop.label}</span>
-              </label>
-            ))}
+        {openSections.hiringType && (
+          <div className="mt-3 space-y-2 text-xs">
+            {HIRING_TYPES.map((type) => {
+              const isSelected = (selectedHiringType || "all") === type.key;
+              return (
+                <label
+                  key={type.key}
+                  className="flex items-center gap-2 cursor-pointer text-foreground hover:text-emerald-600 transition-colors"
+                >
+                  <Checkbox
+                    checked={isSelected}
+                    onCheckedChange={() => {
+                      onFilterChange(
+                        "hiringType",
+                        type.key === "all" ? null : type.key,
+                      );
+                    }}
+                  />
+                  <span>{type.label}</span>
+                </label>
+              );
+            })}
           </div>
+        )}
+      </div>
+
+      {/* 4. Date Posted (Time Range) */}
+      <div className="border-b border-border/80 pb-5">
+        <button
+          type="button"
+          onClick={() => toggleSection("time")}
+          className="flex w-full items-center justify-between font-semibold text-foreground hover:text-emerald-600 transition-colors cursor-pointer"
+        >
+          <span>{t("sidebar.datePosted")}</span>
+          {openSections.time ? (
+            <ChevronUp className="size-4 text-muted-foreground" />
+          ) : (
+            <ChevronDown className="size-4 text-muted-foreground" />
+          )}
+        </button>
+
+        {openSections.time && (
+          <div className="mt-3 space-y-2 text-xs">
+            {TIME_OPTIONS.map((opt) => {
+              const isSelected = (selectedTime || "all") === opt.key;
+              return (
+                <label
+                  key={opt.key}
+                  className="flex items-center gap-2 cursor-pointer text-foreground hover:text-emerald-600 transition-colors"
+                >
+                  <Checkbox
+                    checked={isSelected}
+                    onCheckedChange={() => {
+                      onFilterChange(
+                        "time",
+                        opt.key === "all" ? null : opt.key,
+                      );
+                    }}
+                  />
+                  <span>{opt.label}</span>
+                </label>
+              );
+            })}
+          </div>
+        )}
+      </div>
+
+      {/* 5. Skill Filter */}
+      <div className="pb-2">
+        <button
+          type="button"
+          onClick={() => toggleSection("skill")}
+          className="flex w-full items-center justify-between font-semibold text-foreground hover:text-emerald-600 transition-colors cursor-pointer"
+        >
+          <span>{t("sidebar.skills")}</span>
+          {openSections.skill ? (
+            <ChevronUp className="size-4 text-muted-foreground" />
+          ) : (
+            <ChevronDown className="size-4 text-muted-foreground" />
+          )}
+        </button>
+
+        {openSections.skill && (
+          <form onSubmit={handleApplySkill} className="mt-3 space-y-2">
+            <input
+              type="text"
+              placeholder={t("sidebar.skillPlaceholder")}
+              value={skillInput}
+              onChange={(e) => setSkillInput(e.target.value)}
+              className="w-full rounded-xl border border-border bg-card px-3 py-2 text-xs text-foreground placeholder:text-muted-foreground outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
+            />
+            {selectedSkill && (
+              <div className="flex items-center justify-between text-xs text-muted-foreground">
+                <span>
+                  {t("chip.search", { value: selectedSkill })}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSkillInput("");
+                    onFilterChange("skill", null);
+                  }}
+                  className="text-muted-foreground hover:text-destructive cursor-pointer text-[11px]"
+                >
+                  {t("clearSearch")}
+                </button>
+              </div>
+            )}
+          </form>
         )}
       </div>
     </aside>
   );
 }
-

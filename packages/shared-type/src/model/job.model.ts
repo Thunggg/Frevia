@@ -221,6 +221,8 @@ export const ViewListJobFilterSchema = z
 
     budgetType: JobBudgetTypeSchema.optional(),
 
+    hiringType: JobHiringTypeSchema.optional(),
+
     budgetMin: z.coerce.number().min(0).optional(),
 
     budgetMax: z.coerce.number().min(0).optional(),

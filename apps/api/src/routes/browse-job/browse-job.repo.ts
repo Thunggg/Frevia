@@ -22,6 +22,7 @@ export class BrowseJobRepository {
       limit,
       search,
       budgetType,
+      hiringType,
       budgetMin,
       budgetMax,
       createdAfter,
@@ -73,6 +74,7 @@ export class BrowseJobRepository {
       }),
 
       ...(budgetType && { budgetType }),
+      ...(hiringType && { hiringType }),
 
       // Include jobs whose offered budget range overlaps the selected range.
       ...(budgetMin !== undefined && { budgetMax: { gte: budgetMin } }),

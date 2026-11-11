@@ -70,7 +70,6 @@ import { JobCard } from "../../_components/job-card";
 import { RecommendationExplanationDialog } from "../../_components/recommendation-explanation-dialog";
 import { HomeProfileSidebar } from "../../_components/home-profile-sidebar";
 import { ProjectHeroBanner } from "../../_components/project-hero-banner";
-import { SearchFiltersSidebar } from "../../_components/search-filters-sidebar";
 import { JobPagination } from "../../_components/job-pagination";
 import { HomeFiltersModal } from "../../_components/home-filters-modal";
 
@@ -168,9 +167,7 @@ export function FindWorkContent({
   const tCommon = useTranslations("common");
   const [isPending, startTransition] = useTransition();
 
-  const [filtersOpen, setFiltersOpen] = useState(false);
   const [searchInput, setSearchInput] = useState(initialKeyword);
-  const [forceSearchMode, setForceSearchMode] = useState(false);
   const [isFiltersModalOpen, setIsFiltersModalOpen] = useState(false);
 
   const [bookmarkedSlugs, setBookmarkedSlugs] = useState(
@@ -258,17 +255,14 @@ export function FindWorkContent({
   const effectiveBasePath = basePath ?? "/freelancer/find-work/best-matches";
   const jobBaseUrl = "/freelancer/jobs";
 
-  // Check whether Search Mode should be active (Image 2)
-  // Chỉ khi người dùng thực hiện tìm kiếm qua ô search mới kích hoạt layout tìm kiếm
-  const hasKeyword = Boolean(searchParams.get("keyword") || initialKeyword);
-  const isSearchMode = hasKeyword || forceSearchMode;
-
   const activeFiltersCount = [
     Boolean(searchParams.get("category")),
     Boolean(searchParams.get("budget")),
     Boolean(searchParams.get("budgetType")),
     Boolean(searchParams.get("proposals")),
     Boolean(searchParams.get("verified")),
+    Boolean(searchParams.get("hiringType")),
+    Boolean(searchParams.get("time")),
   ].filter(Boolean).length;
 
   useEffect(() => {
@@ -412,11 +406,11 @@ export function FindWorkContent({
 
   const handleSearchSubmit = (e: FormEvent) => {
     e.preventDefault();
-    const keyword = searchInput.trim();
-    if (keyword) {
-      updateParams({ keyword, tab: null });
+    const query = searchInput.trim();
+    if (query) {
+      router.push(`/freelancer/search/jobs?q=${encodeURIComponent(query)}`);
     } else {
-      updateParams({ keyword: null });
+      router.push("/freelancer/search/jobs");
     }
   };
 
@@ -425,12 +419,10 @@ export function FindWorkContent({
     value: string,
   ) => {
     updateParams({ [name]: value, tab: null });
-    setFiltersOpen(false);
   };
 
   const clearAllFilters = () => {
     setSearchInput("");
-    setForceSearchMode(false);
     startTransition(() => {
       router.push(effectiveBasePath);
     });
@@ -438,7 +430,6 @@ export function FindWorkContent({
 
   const handleTabSelect = (tab: HomeTab) => {
     setActiveTab(tab);
-    setForceSearchMode(false);
     const params = new URLSearchParams(searchParams.toString());
     params.delete("tab");
     params.delete("keyword");
@@ -460,7 +451,6 @@ export function FindWorkContent({
     if (sp.sort) nextParams.set("sort", String(sp.sort));
 
     setSearchInput(sp.keyword ? String(sp.keyword) : "");
-    setFiltersOpen(false);
 
     const query = nextParams.toString();
     startTransition(() => {
@@ -541,58 +531,6 @@ export function FindWorkContent({
     }
   };
 
-  const translateOption = (keys: Record<string, string>, value: string) =>
-    translateFilterOption(t, keys, value);
-
-  const selectedCategory = initialCategories.find(
-    (category) => category.slug === initialCategory,
-  );
-
-  const activeChips = [
-    initialKeyword
-      ? {
-          key: "keyword",
-          label: `Search: "${initialKeyword}"`,
-          onClear: () => {
-            setSearchInput("");
-            updateParams({ keyword: null });
-          },
-        }
-      : null,
-    selectedCategory
-      ? {
-          key: "category",
-          label: `Category: ${selectedCategory.name}`,
-          onClear: () => updateParams({ category: null }),
-        }
-      : null,
-    initialBudget !== "all"
-      ? {
-          key: "budget",
-          label: `Budget: ${translateOption(BUDGET_KEYS, initialBudget)}`,
-          onClear: () => updateParams({ budget: null }),
-        }
-      : null,
-    initialTime !== "all"
-      ? {
-          key: "time",
-          label: `Posted: ${translateOption(TIME_KEYS, initialTime)}`,
-          onClear: () => updateParams({ time: null }),
-        }
-      : null,
-    initialSort !== "newest"
-      ? {
-          key: "sort",
-          label: `Sort: ${translateOption(SORT_KEYS, initialSort)}`,
-          onClear: () => updateParams({ sort: null }),
-        }
-      : null,
-  ].filter(Boolean) as Array<{
-    key: string;
-    label: string;
-    onClear: () => void;
-  }>;
-
   return (
     <div
       className={`flex flex-col bg-background font-sans ${
@@ -603,261 +541,9 @@ export function FindWorkContent({
 
       <main className="flex-1">
         <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8 space-y-4">
-          {/* ========================================================= */}
-          {/* VIEW MODE 1: SEARCH MODE (IMAGE 2)                        */}
-          {/* ========================================================= */}
-          {isSearchMode ? (
-            <div className="space-y-6">
-              {/* Top Search Bar with Clear Button & Advanced Search link */}
-              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                <form
-                  onSubmit={handleSearchSubmit}
-                  className="relative flex-1 max-w-2xl"
-                >
-                  <div className="relative flex items-center">
-                    <Search className="pointer-events-none absolute left-4 size-4 text-muted-foreground" />
-                    <input
-                      type="text"
-                      value={searchInput}
-                      onChange={(e) => setSearchInput(e.target.value)}
-                      placeholder="Search for jobs"
-                      className="h-11 w-full rounded-full border border-border bg-card pl-11 pr-10 text-sm font-medium text-foreground placeholder:text-muted-foreground outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 shadow-xs transition-all"
-                    />
-                    {searchInput ? (
-                      <button
-                        type="button"
-                        onClick={clearAllFilters}
-                        className="absolute right-3.5 flex size-5 items-center justify-center rounded-full bg-muted text-muted-foreground hover:text-foreground cursor-pointer"
-                        title="Clear search"
-                      >
-                        <X className="size-3" />
-                      </button>
-                    ) : null}
-                  </div>
-                </form>
-
-                <div className="flex items-center gap-3">
-                  <button
-                    type="button"
-                    onClick={() => setForceSearchMode(true)}
-                    className="text-xs font-semibold text-emerald-600 dark:text-emerald-400 hover:underline cursor-pointer"
-                  >
-                    Advanced search
-                  </button>
-                  <button
-                    type="button"
-                    onClick={clearAllFilters}
-                    className="text-xs text-muted-foreground hover:text-foreground cursor-pointer"
-                  >
-                    Back to Home
-                  </button>
-                </div>
-              </div>
-
-              {/* Two-Column Search Layout */}
-              <div className="flex flex-col lg:flex-row gap-8 items-start">
-                {/* Left Column: Filter Sidebar */}
-                <div className="hidden lg:block">
-                  <SearchFiltersSidebar
-                    categories={initialCategories}
-                    selectedCategory={initialCategory}
-                    selectedBudget={initialBudget}
-                    onFilterChange={(key, val) => {
-                      if (key === "category") updateFilter("category", val || "all");
-                      if (key === "budget") updateFilter("budget", val || "all");
-                    }}
-                  />
-                </div>
-
-                {/* Mobile Filter Sheet Trigger */}
-                <div className="lg:hidden w-full">
-                  <Sheet open={filtersOpen} onOpenChange={setFiltersOpen}>
-                    <SheetTrigger asChild>
-                      <Button
-                        variant="outline"
-                        className="w-full h-10 rounded-full gap-2 text-xs font-medium justify-center"
-                      >
-                        <SlidersHorizontal className="size-3.5" />
-                        <span>Filter jobs</span>
-                        {activeChips.length > 0 && (
-                          <span className="rounded-full bg-emerald-600 px-2 py-0.5 text-[10px] font-bold text-white">
-                            {activeChips.length}
-                          </span>
-                        )}
-                      </Button>
-                    </SheetTrigger>
-                    <SheetContent
-                      side="left"
-                      className="w-80 overflow-y-auto p-6 font-sans"
-                    >
-                      <SheetHeader>
-                        <SheetTitle className="text-base font-bold text-foreground">
-                          Filters
-                        </SheetTitle>
-                      </SheetHeader>
-                      <div className="mt-4">
-                        <SearchFiltersSidebar
-                          categories={initialCategories}
-                          selectedCategory={initialCategory}
-                          selectedBudget={initialBudget}
-                          onFilterChange={(key, val) => {
-                            if (key === "category")
-                              updateFilter("category", val || "all");
-                            if (key === "budget")
-                              updateFilter("budget", val || "all");
-                          }}
-                        />
-                      </div>
-                    </SheetContent>
-                  </Sheet>
-                </div>
-
-                {/* Right Column: Search Results */}
-                <div className="flex-1 min-w-0 space-y-4 w-full">
-                  {/* Top Action Row (Save search, Saved searches count, Sort by) */}
-                  <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border/80 pb-3">
-                    <div className="flex items-center gap-3">
-                      {canBookmark && (
-                        <>
-                          <SaveSearchDialog
-                            searchParams={currentSearchParams}
-                            savedSearches={savedSearches}
-                            onApply={applySavedSearch}
-                            onChanged={() => router.refresh()}
-                          />
-                          <button
-                            type="button"
-                            onClick={() => handleTabSelect("saved-searches")}
-                            className="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-600 dark:text-emerald-400 hover:underline cursor-pointer"
-                          >
-                            <Bookmark className="size-3.5" />
-                            <span>Saved searches ({savedSearches.length})</span>
-                          </button>
-                        </>
-                      )}
-                    </div>
-
-                    <div className="flex items-center gap-2">
-                      {/* Sort dropdown */}
-                      <Select
-                        value={initialSort}
-                        onValueChange={(val) => val && updateFilter("sort", val)}
-                      >
-                        <SelectTrigger className="h-9 rounded-full bg-card border border-border px-3 text-xs font-medium w-auto min-w-[150px]">
-                          <span className="text-muted-foreground mr-1">Sort:</span>
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent className="rounded-xl border border-border bg-card p-1 shadow-xl">
-                          {Object.entries(SORT_KEYS).map(([val, key]) => (
-                            <SelectItem
-                              key={val}
-                              value={val}
-                              className="rounded-lg text-xs cursor-pointer"
-                            >
-                              {t(key)}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </div>
-
-                  {/* Active Filter Chips */}
-                  {activeChips.length > 0 && (
-                    <div className="flex flex-wrap items-center gap-2 pt-1">
-                      {activeChips.map((chip) => (
-                        <button
-                          key={chip.key}
-                          type="button"
-                          onClick={chip.onClear}
-                          className="inline-flex items-center gap-1.5 rounded-full bg-muted/70 px-3 py-1 text-xs font-medium text-foreground hover:bg-muted transition-colors cursor-pointer"
-                        >
-                          <span>{chip.label}</span>
-                          <X className="size-3 text-muted-foreground hover:text-foreground" />
-                        </button>
-                      ))}
-                      <button
-                        type="button"
-                        onClick={clearAllFilters}
-                        className="text-xs font-medium text-emerald-600 hover:underline ml-1 cursor-pointer"
-                      >
-                        Clear all
-                      </button>
-                    </div>
-                  )}
-
-                  {/* Job Results List */}
-                  {jobs.length === 0 ? (
-                    isPending ? (
-                      <JobListSkeleton />
-                    ) : (
-                      <motion.div
-                        initial={{ opacity: 0, y: 12 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-border bg-card/40 px-6 py-16 text-center font-sans"
-                      >
-                        <SearchX className="size-10 text-muted-foreground mb-3" />
-                        <p className="text-base font-semibold text-foreground">
-                          {t("emptyTitle")}
-                        </p>
-                        <p className="mx-auto mt-1 max-w-sm text-xs text-muted-foreground">
-                          {t("emptyDescription")}
-                        </p>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="mt-4 rounded-full text-xs cursor-pointer"
-                          onClick={clearAllFilters}
-                        >
-                          Clear all filters
-                        </Button>
-                      </motion.div>
-                    )
-                  ) : (
-                    <div
-                      className={`space-y-3 relative transition-opacity duration-200 ${
-                        isPending
-                          ? "opacity-50 pointer-events-none"
-                          : "opacity-100"
-                      }`}
-                    >
-                      {jobs.map((job, index) => (
-                        <JobCard
-                          key={job.id}
-                          job={job}
-                          index={index}
-                          jobBaseUrl={jobBaseUrl}
-                          filterBasePath={effectiveBasePath}
-                          canBookmark={canBookmark}
-                          isBookmarked={bookmarkedSlugs.has(job.slug)}
-                          isBookmarkPending={pendingBookmarkSlug === job.slug}
-                          onToggleBookmark={toggleBookmark}
-                          showApplyButton={true}
-                        />
-                      ))}
-                    </div>
-                  )}
-
-                  {/* Phân trang chi tiết */}
-                  <JobPagination
-                    currentPage={pagination.page}
-                    totalPages={pagination.totalPages}
-                    totalResults={pagination.total}
-                    pageSize={pagination.limit}
-                    onPageChange={goToPage}
-                    onPageSizeChange={handlePageSizeChange}
-                    isLoading={isPending}
-                  />
-                </div>
-              </div>
-            </div>
-          ) : (
-            /* ========================================================= */
-            /* VIEW MODE 2: HOME MODE (IMAGE 1)                          */
-            /* ========================================================= */
-            <div className="space-y-4">
-              {/* 1. Project Hero Banner (from Schema / Project Assets) */}
-              <ProjectHeroBanner />
+          <div className="space-y-4">
+            {/* 1. Project Hero Banner (from Schema / Project Assets) */}
+            <ProjectHeroBanner />
 
               {/* 3. Search Bar Input */}
               <form onSubmit={handleSearchSubmit} className="relative pt-1">
@@ -866,14 +552,14 @@ export function FindWorkContent({
                   type="text"
                   value={searchInput}
                   onChange={(e) => setSearchInput(e.target.value)}
-                  placeholder="Search for jobs"
+                  placeholder={t("searchPlaceholder")}
                   className="h-11 w-full rounded-full border border-border bg-card pl-11 pr-24 text-sm font-medium text-foreground placeholder:text-muted-foreground shadow-xs outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all"
                 />
                 <button
                   type="submit"
                   className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-1.5 text-xs font-semibold shadow-xs transition-colors cursor-pointer"
                 >
-                  Search
+                  {t("searchPage.search")}
                 </button>
               </form>
 
@@ -890,7 +576,7 @@ export function FindWorkContent({
                         : "border-transparent text-muted-foreground hover:text-foreground"
                     }`}
                   >
-                    <span>Best matches</span>
+                    <span>{t("bestMatches")}</span>
                     {recommendedJobs.length > 0 && (
                       <span className="ml-1.5 rounded-full bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300 px-2 py-0.5 text-xs font-semibold">
                         {recommendedJobs.length}
@@ -908,7 +594,7 @@ export function FindWorkContent({
                         : "border-transparent text-muted-foreground hover:text-foreground"
                     }`}
                   >
-                    <span>Most recent</span>
+                    <span>{t("mostRecent")}</span>
                     <span className="ml-1.5 rounded-full bg-muted text-muted-foreground px-2 py-0.5 text-xs font-normal">
                       {pagination.total}
                     </span>
@@ -924,7 +610,7 @@ export function FindWorkContent({
                         : "border-transparent text-muted-foreground hover:text-foreground"
                     }`}
                   >
-                    <span>Saved searches</span>
+                    <span>{t("savedSearches")}</span>
                     {savedSearches.length > 0 && (
                       <span className="ml-1.5 rounded-full bg-muted text-muted-foreground px-2 py-0.5 text-xs font-normal">
                         {savedSearches.length}
@@ -942,7 +628,7 @@ export function FindWorkContent({
                         : "border-transparent text-muted-foreground hover:text-foreground"
                     }`}
                   >
-                    <span>Saved jobs</span>
+                    <span>{t("savedJobs")}</span>
                     {bookmarkedSlugs.size > 0 && (
                       <span className="ml-1.5 rounded-full bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300 px-2 py-0.5 text-xs font-semibold">
                         {bookmarkedSlugs.size}
@@ -960,7 +646,7 @@ export function FindWorkContent({
                         : "border-transparent text-muted-foreground hover:text-foreground"
                     }`}
                   >
-                    <span>Invites</span>
+                    <span>{t("invites")}</span>
                     {jobAlerts.length > 0 && (
                       <span className="ml-1.5 rounded-full bg-muted text-muted-foreground px-2 py-0.5 text-xs font-normal">
                         {jobAlerts.length}
@@ -978,7 +664,7 @@ export function FindWorkContent({
                       ? "border-emerald-600 bg-emerald-50 text-emerald-600 dark:bg-emerald-950/40 dark:border-emerald-500 dark:text-emerald-300 ring-2 ring-emerald-500/20"
                       : "border-border bg-card text-muted-foreground hover:text-foreground hover:bg-muted"
                   }`}
-                  title="Bộ lọc cho Best matches và Most recent"
+                  title={t("modal.filterTooltip")}
                 >
                   <SlidersHorizontal className="size-4" />
                 </button>
@@ -993,7 +679,7 @@ export function FindWorkContent({
                     <div>
                       <div className="flex items-center justify-between pb-2">
                         <span className="text-xs text-muted-foreground">
-                          Jobs that match your experience and skills
+                          {t("recsSubtitle")}
                         </span>
                         <button
                           type="button"
@@ -1006,7 +692,7 @@ export function FindWorkContent({
                               isLoadingRecs ? "animate-spin" : ""
                             }`}
                           />
-                          <span>Refresh</span>
+                          <span>{t("refresh")}</span>
                         </button>
                       </div>
 
@@ -1134,11 +820,10 @@ export function FindWorkContent({
                         <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-border bg-card/40 px-6 py-14 text-center font-sans">
                           <Bookmark className="size-10 text-muted-foreground mb-3" />
                           <p className="text-base font-semibold text-foreground">
-                            No saved searches yet
+                            {t("noSavedSearches")}
                           </p>
                           <p className="mx-auto mt-1 max-w-sm text-xs text-muted-foreground">
-                            Save your search criteria to quickly run them
-                            whenever you come back.
+                            {t("noSavedSearchesDesc")}
                           </p>
                         </div>
                       ) : (
@@ -1180,7 +865,7 @@ export function FindWorkContent({
                                   onClick={() => applySavedSearch(item)}
                                   className="rounded-full bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold h-8 px-4"
                                 >
-                                  Search
+                                  {t("searchPage.search")}
                                 </Button>
                                 <Button
                                   variant="ghost"
@@ -1208,11 +893,10 @@ export function FindWorkContent({
                         <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-border bg-card/40 px-6 py-14 text-center font-sans">
                           <Bookmark className="size-10 text-muted-foreground mb-3" />
                           <p className="text-base font-semibold text-foreground">
-                            No saved jobs yet
+                            {t("noSavedJobs")}
                           </p>
                           <p className="mx-auto mt-1 max-w-sm text-xs text-muted-foreground">
-                            Keep track of interesting projects by clicking the
-                            heart icon on any job card.
+                            {t("noSavedJobsDesc")}
                           </p>
                         </div>
                       ) : (
@@ -1240,11 +924,10 @@ export function FindWorkContent({
                         <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-border bg-card/40 px-6 py-14 text-center font-sans">
                           <InfoIcon className="size-10 text-muted-foreground mb-3" />
                           <p className="text-base font-semibold text-foreground">
-                            No job invitations or alerts yet
+                            {t("noInvites")}
                           </p>
                           <p className="mx-auto mt-1 max-w-sm text-xs text-muted-foreground">
-                            When clients invite you or matching jobs appear,
-                            they will show up right here.
+                            {t("noInvitesDesc")}
                           </p>
                         </div>
                       ) : (
@@ -1283,7 +966,6 @@ export function FindWorkContent({
                 <HomeProfileSidebar user={user ?? null} />
               </div>
             </div>
-          )}
         </div>
       </main>
 
@@ -1317,6 +999,12 @@ export function FindWorkContent({
             ? searchParams.get("proposals")!.split(",")
             : null,
           verified: searchParams.get("verified") === "true",
+          hiringType:
+            searchParams.get("hiringType") === "SINGLE" ||
+            searchParams.get("hiringType") === "MULTIPLE"
+              ? (searchParams.get("hiringType") as "SINGLE" | "MULTIPLE")
+              : null,
+          time: searchParams.get("time"),
         }}
         onApply={(newFilters) => {
           updateParams({
@@ -1325,6 +1013,8 @@ export function FindWorkContent({
             budgetType: newFilters.budgetType ?? null,
             proposals: newFilters.proposals?.join(",") ?? null,
             verified: newFilters.verified ? "true" : null,
+            hiringType: newFilters.hiringType ?? null,
+            time: newFilters.time ?? null,
             page: "1",
           });
         }}

@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Check, ChevronDown, ChevronUp, X } from "@/components/icons";
+import { useTranslations } from "next-intl";
+import { Check, ChevronDown, ChevronUp } from "@/components/icons";
 import {
   Dialog,
   DialogContent,
@@ -17,6 +18,8 @@ export interface HomeFiltersState {
   budgetType?: "FIXED_PRICE" | null;
   proposals?: string[] | null;
   verified?: boolean | null;
+  hiringType?: "SINGLE" | "MULTIPLE" | null;
+  time?: string | null;
 }
 
 interface HomeFiltersModalProps {
@@ -27,20 +30,27 @@ interface HomeFiltersModalProps {
   onApply: (filters: HomeFiltersState) => void;
 }
 
-const PROPOSAL_OPTIONS = [
-  { id: "fewer-than-5", label: "Fewer than 5" },
-  { id: "5-to-10", label: "5 to 10 Proposals" },
-  { id: "10-to-15", label: "10 to 15 Proposals" },
-  { id: "15-to-20", label: "15 to 20 Proposals" },
-  { id: "20-to-50", label: "20 to 50 Proposals" },
-];
+const PROPOSAL_DEFS = [
+  { id: "fewer-than-5", key: "modal.proposalsFewerThan5" },
+  { id: "5-to-10", key: "modal.proposals5To10" },
+  { id: "10-to-15", key: "modal.proposals10To15" },
+  { id: "15-to-20", key: "modal.proposals15To20" },
+  { id: "20-to-50", key: "modal.proposals20To50" },
+] as const;
 
-const BUDGET_OPTIONS = [
-  { id: "under-500", label: "Less than $500" },
-  { id: "500-1000", label: "$500 to $1,000" },
-  { id: "1000-5000", label: "$1,000 to $5,000" },
-  { id: "5000-plus", label: "$5,000+" },
-];
+const BUDGET_DEFS = [
+  { id: "under-500", key: "modal.under500" },
+  { id: "500-1000", key: "modal.500to1000" },
+  { id: "1000-5000", key: "modal.1000to5000" },
+  { id: "5000-plus", key: "modal.over5000" },
+] as const;
+
+const TIME_DEFS = [
+  { id: "today", key: "modal.today" },
+  { id: "last-3-days", key: "modal.last3Days" },
+  { id: "last-7-days", key: "modal.last7Days" },
+  { id: "last-30-days", key: "modal.last30Days" },
+] as const;
 
 export function HomeFiltersModal({
   open,
@@ -49,6 +59,8 @@ export function HomeFiltersModal({
   currentFilters,
   onApply,
 }: HomeFiltersModalProps) {
+  const t = useTranslations("findWork");
+
   // Local temporary states for modal before applying
   const [selectedCategory, setSelectedCategory] = useState<string | null>(
     currentFilters.category ?? null,
@@ -65,12 +77,20 @@ export function HomeFiltersModal({
   const [verifiedClient, setVerifiedClient] = useState<boolean>(
     Boolean(currentFilters.verified),
   );
+  const [selectedHiringType, setSelectedHiringType] = useState<"SINGLE" | "MULTIPLE" | null>(
+    currentFilters.hiringType ?? null,
+  );
+  const [selectedTime, setSelectedTime] = useState<string | null>(
+    currentFilters.time ?? null,
+  );
 
   // Accordion sections
   const [openSections, setOpenSections] = useState({
     clientInfo: true,
-    jobType: true,
+    hiringType: true,
     proposals: true,
+    jobType: true,
+    datePosted: true,
     category: true,
   });
 
@@ -86,6 +106,8 @@ export function HomeFiltersModal({
       setSelectedBudgetType(currentFilters.budgetType ?? null);
       setSelectedProposals(currentFilters.proposals ?? []);
       setVerifiedClient(Boolean(currentFilters.verified));
+      setSelectedHiringType(currentFilters.hiringType ?? null);
+      setSelectedTime(currentFilters.time ?? null);
     }
   }, [open, currentFilters]);
 
@@ -101,42 +123,64 @@ export function HomeFiltersModal({
     setSelectedBudgetType(null);
     setSelectedProposals([]);
     setVerifiedClient(false);
+    setSelectedHiringType(null);
+    setSelectedTime(null);
   };
 
-  // Build active chips
+  // Build active chips (shown at the top, matching the screenshot with text and checkmark)
   const chips: Array<{ id: string; label: string; onRemove: () => void }> = [];
+
+  for (const propId of selectedProposals) {
+    const found = PROPOSAL_DEFS.find((p) => p.id === propId);
+    chips.push({
+      id: `prop-${propId}`,
+      label: found ? t(found.key) : propId,
+      onRemove: () => toggleProposal(propId),
+    });
+  }
 
   if (verifiedClient) {
     chips.push({
       id: "verified",
-      label: "Payment verified",
+      label: t("modal.paymentVerified"),
       onRemove: () => setVerifiedClient(false),
+    });
+  }
+
+  if (selectedHiringType) {
+    chips.push({
+      id: `hiring-${selectedHiringType}`,
+      label:
+        selectedHiringType === "SINGLE"
+          ? t("modal.hiringTypeSingle")
+          : t("modal.hiringTypeMultiple"),
+      onRemove: () => setSelectedHiringType(null),
     });
   }
 
   if (selectedBudgetType) {
     chips.push({
       id: `budgetType-${selectedBudgetType}`,
-      label: "Fixed-Price",
+      label: t("modal.fixedPrice"),
       onRemove: () => setSelectedBudgetType(null),
     });
   }
 
   if (selectedBudget) {
-    const found = BUDGET_OPTIONS.find((b) => b.id === selectedBudget);
+    const found = BUDGET_DEFS.find((b) => b.id === selectedBudget);
     chips.push({
       id: `budget-${selectedBudget}`,
-      label: found ? found.label : selectedBudget,
+      label: found ? t(found.key) : selectedBudget,
       onRemove: () => setSelectedBudget(null),
     });
   }
 
-  for (const propId of selectedProposals) {
-    const found = PROPOSAL_OPTIONS.find((p) => p.id === propId);
+  if (selectedTime) {
+    const found = TIME_DEFS.find((t) => t.id === selectedTime);
     chips.push({
-      id: `prop-${propId}`,
-      label: found ? found.label : propId,
-      onRemove: () => toggleProposal(propId),
+      id: `time-${selectedTime}`,
+      label: found ? t(found.key) : selectedTime,
+      onRemove: () => setSelectedTime(null),
     });
   }
 
@@ -158,6 +202,8 @@ export function HomeFiltersModal({
       budgetType: selectedBudgetType,
       proposals: selectedProposals.length > 0 ? selectedProposals : null,
       verified: verifiedClient ? true : null,
+      hiringType: selectedHiringType,
+      time: selectedTime,
     });
     onOpenChange(false);
   };
@@ -170,10 +216,10 @@ export function HomeFiltersModal({
           <div className="flex items-start justify-between">
             <div className="space-y-1 text-left">
               <DialogTitle className="text-xl font-bold tracking-tight text-foreground">
-                Filters
+                {t("modal.title")}
               </DialogTitle>
               <p className="text-xs text-muted-foreground">
-                Filters will only apply to &quot;Best match&quot; and &quot;Most recent&quot; searches.
+                {t("modal.subtitle")}
               </p>
             </div>
           </div>
@@ -186,10 +232,11 @@ export function HomeFiltersModal({
                   key={chip.id}
                   type="button"
                   onClick={chip.onRemove}
-                  className="inline-flex items-center gap-1.5 rounded-full bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 px-3.5 py-1 text-xs font-semibold text-foreground transition-colors cursor-pointer"
+                  className="inline-flex items-center gap-1.5 rounded-full bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 border border-zinc-200 dark:border-zinc-700 px-3.5 py-1 text-xs font-semibold text-foreground transition-colors cursor-pointer"
+                  title={t("modal.clickToRemove")}
                 >
                   <span>{chip.label}</span>
-                  <Check className="size-3 text-emerald-600" />
+                  <Check className="size-3.5 text-zinc-600 dark:text-zinc-300" />
                 </button>
               ))}
             </div>
@@ -205,7 +252,7 @@ export function HomeFiltersModal({
               onClick={() => toggleSection("clientInfo")}
               className="flex w-full items-center justify-between font-semibold text-sm text-foreground hover:text-emerald-600 transition-colors cursor-pointer"
             >
-              <span>Client info</span>
+              <span>{t("modal.clientInfo")}</span>
               {openSections.clientInfo ? (
                 <ChevronUp className="size-4 text-muted-foreground" />
               ) : (
@@ -222,20 +269,59 @@ export function HomeFiltersModal({
                       setVerifiedClient(Boolean(checked))
                     }
                   />
-                  <span>Payment verified</span>
+                  <span>{t("modal.paymentVerified")}</span>
                 </label>
               </div>
             )}
           </div>
 
-          {/* Section 2: Number of proposals */}
+          {/* Section 2: Hiring Type (Real schema field) */}
+          <div className="border-b border-border/60 pb-5">
+            <button
+              type="button"
+              onClick={() => toggleSection("hiringType")}
+              className="flex w-full items-center justify-between font-semibold text-sm text-foreground hover:text-emerald-600 transition-colors cursor-pointer"
+            >
+              <span>{t("modal.hiringType")}</span>
+              {openSections.hiringType ? (
+                <ChevronUp className="size-4 text-muted-foreground" />
+              ) : (
+                <ChevronDown className="size-4 text-muted-foreground" />
+              )}
+            </button>
+
+            {openSections.hiringType && (
+              <div className="mt-3.5 space-y-2.5">
+                <label className="flex items-center gap-3 text-xs text-foreground/80 hover:text-foreground cursor-pointer">
+                  <Checkbox
+                    checked={selectedHiringType === "SINGLE"}
+                    onCheckedChange={(checked) =>
+                      setSelectedHiringType(checked ? "SINGLE" : null)
+                    }
+                  />
+                  <span>{t("modal.hiringTypeSingle")}</span>
+                </label>
+                <label className="flex items-center gap-3 text-xs text-foreground/80 hover:text-foreground cursor-pointer">
+                  <Checkbox
+                    checked={selectedHiringType === "MULTIPLE"}
+                    onCheckedChange={(checked) =>
+                      setSelectedHiringType(checked ? "MULTIPLE" : null)
+                    }
+                  />
+                  <span>{t("modal.hiringTypeMultiple")}</span>
+                </label>
+              </div>
+            )}
+          </div>
+
+          {/* Section 3: Number of proposals */}
           <div className="border-b border-border/60 pb-5">
             <button
               type="button"
               onClick={() => toggleSection("proposals")}
               className="flex w-full items-center justify-between font-semibold text-sm text-foreground hover:text-emerald-600 transition-colors cursor-pointer"
             >
-              <span>Number of proposals</span>
+              <span>{t("modal.proposals")}</span>
               {openSections.proposals ? (
                 <ChevronUp className="size-4 text-muted-foreground" />
               ) : (
@@ -245,7 +331,7 @@ export function HomeFiltersModal({
 
             {openSections.proposals && (
               <div className="mt-3.5 space-y-2.5">
-                {PROPOSAL_OPTIONS.map((item) => {
+                {PROPOSAL_DEFS.map((item) => {
                   const isChecked = selectedProposals.includes(item.id);
                   return (
                     <label
@@ -256,7 +342,7 @@ export function HomeFiltersModal({
                         checked={isChecked}
                         onCheckedChange={() => toggleProposal(item.id)}
                       />
-                      <span>{item.label}</span>
+                      <span>{t(item.key)}</span>
                     </label>
                   );
                 })}
@@ -264,14 +350,14 @@ export function HomeFiltersModal({
             )}
           </div>
 
-          {/* Section 3: Job type & Budget */}
+          {/* Section 4: Job type & Budget */}
           <div className="border-b border-border/60 pb-5">
             <button
               type="button"
               onClick={() => toggleSection("jobType")}
               className="flex w-full items-center justify-between font-semibold text-sm text-foreground hover:text-emerald-600 transition-colors cursor-pointer"
             >
-              <span>Job type & Budget</span>
+              <span>{t("modal.jobTypeAndBudget")}</span>
               {openSections.jobType ? (
                 <ChevronUp className="size-4 text-muted-foreground" />
               ) : (
@@ -282,8 +368,10 @@ export function HomeFiltersModal({
             {openSections.jobType && (
               <div className="mt-3.5 space-y-4">
                 {/* Budget Type */}
-                <div className="space-y-2.5">
-                  <span className="text-xs font-medium text-muted-foreground">Loại công việc:</span>
+                <div className="space-y-2">
+                  <span className="text-xs font-semibold text-muted-foreground">
+                    {t("modal.jobType")}:
+                  </span>
                   <div className="flex gap-4">
                     <label className="flex items-center gap-2 text-xs text-foreground/80 hover:text-foreground cursor-pointer">
                       <Checkbox
@@ -292,16 +380,18 @@ export function HomeFiltersModal({
                           setSelectedBudgetType(checked ? "FIXED_PRICE" : null)
                         }
                       />
-                      <span>Fixed-Price</span>
+                      <span>{t("modal.fixedPrice")}</span>
                     </label>
                   </div>
                 </div>
 
                 {/* Budget Range */}
-                <div className="space-y-2.5 pt-1">
-                  <span className="text-xs font-medium text-muted-foreground">Mức ngân sách:</span>
+                <div className="space-y-2 pt-1">
+                  <span className="text-xs font-semibold text-muted-foreground">
+                    {t("modal.budgetRange")}:
+                  </span>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                    {BUDGET_OPTIONS.map((item) => {
+                    {BUDGET_DEFS.map((item) => {
                       const isChecked = selectedBudget === item.id;
                       return (
                         <label
@@ -314,7 +404,7 @@ export function HomeFiltersModal({
                               setSelectedBudget(checked ? item.id : null)
                             }
                           />
-                          <span>{item.label}</span>
+                          <span>{t(item.key)}</span>
                         </label>
                       );
                     })}
@@ -324,7 +414,45 @@ export function HomeFiltersModal({
             )}
           </div>
 
-          {/* Section 4: Category */}
+          {/* Section 5: Date Posted */}
+          <div className="border-b border-border/60 pb-5">
+            <button
+              type="button"
+              onClick={() => toggleSection("datePosted")}
+              className="flex w-full items-center justify-between font-semibold text-sm text-foreground hover:text-emerald-600 transition-colors cursor-pointer"
+            >
+              <span>{t("modal.datePosted")}</span>
+              {openSections.datePosted ? (
+                <ChevronUp className="size-4 text-muted-foreground" />
+              ) : (
+                <ChevronDown className="size-4 text-muted-foreground" />
+              )}
+            </button>
+
+            {openSections.datePosted && (
+              <div className="mt-3.5 grid grid-cols-2 gap-2">
+                {TIME_DEFS.map((item) => {
+                  const isChecked = selectedTime === item.id;
+                  return (
+                    <label
+                      key={item.id}
+                      className="flex items-center gap-2.5 text-xs text-foreground/80 hover:text-foreground cursor-pointer"
+                    >
+                      <Checkbox
+                        checked={isChecked}
+                        onCheckedChange={(checked) =>
+                          setSelectedTime(checked ? item.id : null)
+                        }
+                      />
+                      <span>{t(item.key)}</span>
+                    </label>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+
+          {/* Section 6: Category (Real categories from DB) */}
           {categories.length > 0 && (
             <div>
               <button
@@ -332,7 +460,7 @@ export function HomeFiltersModal({
                 onClick={() => toggleSection("category")}
                 className="flex w-full items-center justify-between font-semibold text-sm text-foreground hover:text-emerald-600 transition-colors cursor-pointer"
               >
-                <span>Category</span>
+                <span>{t("modal.category", { count: categories.length })}</span>
                 {openSections.category ? (
                   <ChevronUp className="size-4 text-muted-foreground" />
                 ) : (
@@ -372,15 +500,17 @@ export function HomeFiltersModal({
             onClick={handleClearAll}
             className="text-xs font-semibold text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
           >
-            Clear
+            {t("modal.clear")}
           </button>
 
           <button
             type="button"
             onClick={handleApply}
-            className="rounded-full bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2 text-xs font-semibold shadow-xs transition-colors cursor-pointer"
+            className="rounded-full bg-[#108a00] hover:bg-[#14a800] text-white px-6 py-2 text-xs font-semibold shadow-xs transition-colors cursor-pointer"
           >
-            {activeCount > 0 ? `Apply (${activeCount})` : "Apply"}
+            {activeCount > 0
+              ? t("modal.applyWithCount", { count: activeCount })
+              : t("modal.apply")}
           </button>
         </div>
       </DialogContent>

@@ -22,6 +22,7 @@ export type FindWorkSearchParams = Promise<{
   budgetType?: "FIXED_PRICE";
   proposals?: string;
   verified?: string;
+  hiringType?: "SINGLE" | "MULTIPLE";
   time?: string;
   sort?: string;
   tab?: string;
@@ -92,6 +93,10 @@ export async function renderFindWorkPage({
 
   const budgetType =
     params.budgetType === "FIXED_PRICE" ? "FIXED_PRICE" : undefined;
+  const hiringType =
+    params.hiringType === "SINGLE" || params.hiringType === "MULTIPLE"
+      ? params.hiringType
+      : undefined;
 
   const result = await jobServerRequest.getJobs({
     page,
@@ -99,12 +104,27 @@ export async function renderFindWorkPage({
     search: keyword,
     category,
     budgetType,
+    hiringType,
     ...budgetRanges[budget],
     createdAfter,
     ...selectedSort,
   });
 
-  const jobs = result?.data ?? [];
+  let jobs = result?.data ?? [];
+  if (params.proposals) {
+    const proposalFilters = params.proposals.split(",");
+    jobs = jobs.filter((job) => {
+      const count = job.proposalsCount ?? 0;
+      return proposalFilters.some((filterId) => {
+        if (filterId === "fewer-than-5") return count < 5;
+        if (filterId === "5-to-10") return count >= 5 && count <= 10;
+        if (filterId === "10-to-15") return count >= 10 && count <= 15;
+        if (filterId === "15-to-20") return count >= 15 && count <= 20;
+        if (filterId === "20-to-50") return count >= 20 && count <= 50;
+        return false;
+      });
+    });
+  }
   const pagination = result
     ? result.pagination
     : { page: 1, limit, total: 0, totalPages: 0 };
