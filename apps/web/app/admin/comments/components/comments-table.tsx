@@ -63,6 +63,7 @@ export function CommentsTable({ comments, pagination }: CommentsTableProps) {
   const locale = useLocale();
   const t = useTranslations("adminComments");
   const tCommon = useTranslations("adminCommon");
+  const tGlobal = useTranslations("common");
   const router = useRouter();
   const [deletingId, setDeletingId] = useState<number | null>(null);
   const [viewingComment, setViewingComment] =
@@ -129,7 +130,7 @@ export function CommentsTable({ comments, pagination }: CommentsTableProps) {
                       </Avatar>
                       <span className="text-muted-foreground text-sm">
                         {comment.user.profile?.displayName ??
-                          `User #${comment.user.id}`}
+                          tGlobal("userFallback", { id: comment.user.id })}
                       </span>
                     </div>
                   </TableCell>
@@ -224,7 +225,7 @@ export function CommentsTable({ comments, pagination }: CommentsTableProps) {
                 <div>
                   <p className="text-sm font-medium">
                     {viewingComment.user.profile?.displayName ??
-                      `User #${viewingComment.user.id}`}
+                      tGlobal("userFallback", { id: viewingComment.user.id })}
                   </p>
                   <div className="flex items-center gap-1 text-xs text-muted-foreground">
                     <Calendar className="h-3 w-3" />

@@ -64,6 +64,7 @@ export function PostsTable({ posts, pagination }: PostsTableProps) {
   const locale = useLocale();
   const t = useTranslations("adminPosts");
   const tCommon = useTranslations("adminCommon");
+  const tGlobal = useTranslations("common");
   const router = useRouter();
   const [deletingId, setDeletingId] = useState<number | null>(null);
   const [viewingPost, setViewingPost] = useState<ForumPostWithUserType | null>(
@@ -128,7 +129,7 @@ export function PostsTable({ posts, pagination }: PostsTableProps) {
                       </Avatar>
                       <span className="text-muted-foreground text-sm">
                         {post.user.profile?.displayName ??
-                          `User #${post.user.id}`}
+                          tGlobal("userFallback", { id: post.user.id })}
                       </span>
                     </div>
                   </TableCell>
@@ -217,7 +218,7 @@ export function PostsTable({ posts, pagination }: PostsTableProps) {
                   </Avatar>
                   <span>
                     {viewingPost.user.profile?.displayName ??
-                      `User #${viewingPost.user.id}`}
+                      tGlobal("userFallback", { id: viewingPost.user.id })}
                   </span>
                 </div>
                 <div className="flex items-center gap-1.5">
