@@ -59,20 +59,42 @@ export class StripeService {
     amountInCents,
     currency = 'usd',
     customerId,
+    paymentMethodId,
+    offSessionConfirm = false,
     metadata,
     captureMethod = 'automatic',
   }: {
     amountInCents: number;
     currency?: string;
     customerId?: string;
+    paymentMethodId?: string;
+    offSessionConfirm?: boolean;
     metadata?: Record<string, string>;
     captureMethod?: 'automatic' | 'manual';
   }): Promise<Stripe.PaymentIntent> {
     if (captureMethod === 'manual') {
+      if (paymentMethodId && customerId && offSessionConfirm) {
+        return this.stripe.paymentIntents.create({
+          amount: Math.round(amountInCents),
+          currency: currency.toLowerCase(),
+          customer: customerId,
+          payment_method: paymentMethodId,
+          metadata,
+          capture_method: 'manual',
+          payment_method_types: ['card'],
+          off_session: true,
+          confirm: true,
+        });
+      }
+
       return this.stripe.paymentIntents.create({
         amount: Math.round(amountInCents),
         currency: currency.toLowerCase(),
         customer: customerId,
+        ...(paymentMethodId ? { payment_method: paymentMethodId } : {}),
+        ...(customerId && !paymentMethodId
+          ? { setup_future_usage: 'off_session' }
+          : {}),
         metadata,
         capture_method: 'manual',
         payment_method_types: ['card'],
@@ -83,6 +105,7 @@ export class StripeService {
       amount: Math.round(amountInCents),
       currency: currency.toLowerCase(),
       customer: customerId,
+      ...(customerId ? { setup_future_usage: 'off_session' } : {}),
       metadata,
       automatic_payment_methods: {
         enabled: true,

@@ -1,6 +1,8 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   Sheet,
   SheetContent,
@@ -11,7 +13,7 @@ import {
 } from "@repo/ui/components/shadcn/sheet";
 import { Button } from "@repo/ui/components/shadcn/button";
 import { Checkbox } from "@repo/ui/components/shadcn/checkbox";
-import { toastError } from "@repo/ui/components/shadcn/toast";
+import { toastError, toastSuccess } from "@repo/ui/components/shadcn/toast";
 import { CheckCircle2, CreditCard, Loader2, ShieldCheck } from "@/components/icons";
 import { paymentApiRequest } from "@/apiRequests/payment";
 import { ApiFail } from "@/lib/http";
@@ -41,7 +43,9 @@ export function FundContractHoldSheet({
     [contract.milestones],
   );
 
+  const queryClient = useQueryClient();
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
+  const [selectedPmId, setSelectedPmId] = useState<string | null>(null);
   const [isCreatingIntent, setIsCreatingIntent] = useState(false);
   const [stripeModal, setStripeModal] = useState<{
     open: boolean;
@@ -49,8 +53,28 @@ export function FundContractHoldSheet({
     amount: number;
   }>({ open: false, clientSecret: "", amount: 0 });
 
+  const { data: savedCardsData, isLoading: cardsLoading } = useQuery({
+    queryKey: ["saved-payment-methods"],
+    queryFn: async () => {
+      const res = await paymentApiRequest.getSavedPaymentMethods();
+      return res.data;
+    },
+    enabled: open,
+  });
+
+  const savedCards = savedCardsData?.paymentMethods ?? [];
+  const defaultCard =
+    savedCards.find((card) => card.isDefault) ?? savedCards[0];
+  const useNewCard = selectedPmId === "__NEW__" || savedCards.length === 0;
+  const activePaymentMethodId = useNewCard
+    ? undefined
+    : selectedPmId && savedCards.some((card) => card.id === selectedPmId)
+      ? selectedPmId
+      : defaultCard?.id;
+
   useEffect(() => {
     if (!open) return;
+    setSelectedPmId(null);
     if (
       initialMilestoneId &&
       pendingMilestones.some((m) => m.id === initialMilestoneId)
@@ -120,8 +144,31 @@ export function FundContractHoldSheet({
       const response = await paymentApiRequest.createContractHoldIntent(
         contract.id,
         selectedIds,
+        activePaymentMethodId,
       );
       const data = response.data;
+      if (data?.authorized) {
+        await Promise.all([
+          queryClient.invalidateQueries({
+            queryKey: ["client-contract-detail", contract.id],
+          }),
+          queryClient.invalidateQueries({
+            queryKey: ["client-contract-milestones", contract.id],
+          }),
+          queryClient.invalidateQueries({ queryKey: ["client-transactions"] }),
+          queryClient.invalidateQueries({
+            queryKey: ["saved-payment-methods"],
+          }),
+        ]);
+        toastSuccess({
+          message:
+            "Card hold authorized with your saved card! You can now sign the contract.",
+        });
+        onOpenChange(false);
+        onSuccess();
+        return;
+      }
+
       if (!data?.clientSecret) {
         toastError({
           message: "Stripe did not return a payment secret. Please try again.",
@@ -276,6 +323,91 @@ export function FundContractHoldSheet({
                   {formatMoney(totalHoldAmount)}
                 </span>
               </div>
+            </div>
+
+            {/* Payment Method (Synced with Billing & Payments) */}
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-semibold text-foreground">
+                  Payment Method
+                </span>
+                <Link
+                  href="/client/payments"
+                  className="text-[11px] font-medium text-[#0069D3] hover:underline"
+                >
+                  Manage in Billing &amp; Payments
+                </Link>
+              </div>
+
+              {cardsLoading ? (
+                <div className="rounded-xl border border-border p-3 flex items-center gap-2 text-xs text-muted-foreground">
+                  <Loader2 className="size-3.5 animate-spin" />
+                  <span>Loading saved cards...</span>
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  {savedCards.map((card) => {
+                    const selected =
+                      !useNewCard && activePaymentMethodId === card.id;
+                    return (
+                      <button
+                        key={card.id}
+                        type="button"
+                        onClick={() => setSelectedPmId(card.id)}
+                        className={`w-full flex items-center justify-between rounded-xl border p-3 text-left text-xs transition-colors cursor-pointer ${
+                          selected
+                            ? "border-[#0069D3] bg-[#0069D3]/5"
+                            : "border-border bg-card hover:bg-muted/30"
+                        }`}
+                      >
+                        <div className="flex items-center gap-2.5 min-w-0">
+                          <CreditCard className="size-4 text-[#0069D3] shrink-0" />
+                          <span className="font-semibold text-foreground uppercase truncate">
+                            {card.brand} •••• {card.last4}
+                          </span>
+                          <span className="text-[11px] text-muted-foreground font-mono">
+                            {String(card.expMonth).padStart(2, "0")}/
+                            {card.expYear}
+                          </span>
+                          {card.isDefault && (
+                            <span className="rounded-full bg-[#0069D3]/10 px-2 py-0.5 text-[10px] font-semibold text-[#0069D3]">
+                              Default
+                            </span>
+                          )}
+                        </div>
+                        <span className="text-[11px] font-semibold text-[#0069D3] shrink-0">
+                          {selected ? "Selected" : "Use"}
+                        </span>
+                      </button>
+                    );
+                  })}
+
+                  <button
+                    type="button"
+                    onClick={() => setSelectedPmId("__NEW__")}
+                    className={`w-full flex items-center justify-between rounded-xl border p-3 text-left text-xs transition-colors cursor-pointer ${
+                      useNewCard
+                        ? "border-[#0069D3] bg-[#0069D3]/5"
+                        : "border-border bg-card hover:bg-muted/30"
+                    }`}
+                  >
+                    <div className="min-w-0">
+                      <p className="font-semibold text-foreground">
+                        {savedCards.length > 0
+                          ? "Use a different / new card"
+                          : "Pay with card via Stripe"}
+                      </p>
+                      <p className="text-[11px] text-muted-foreground">
+                        New cards are saved automatically to Billing &amp;
+                        Payments
+                      </p>
+                    </div>
+                    <span className="text-[11px] font-semibold text-[#0069D3] shrink-0">
+                      {useNewCard ? "Selected" : "Select"}
+                    </span>
+                  </button>
+                </div>
+              )}
             </div>
 
             {/* Authorization Explanation */}

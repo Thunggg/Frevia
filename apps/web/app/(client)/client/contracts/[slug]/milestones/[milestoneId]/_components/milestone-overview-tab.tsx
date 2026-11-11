@@ -92,8 +92,8 @@ export function MilestoneOverviewTab({
               <strong className="text-zinc-950 dark:text-zinc-100 font-mono">
                 ${amountNumber.toLocaleString("en-US", { minimumFractionDigits: 2 })} USD
               </strong>{" "}
-              (5% Freelancer platform fee deducted; 95% net credited to
-              freelancer wallet).
+              (5% Freelancer platform fee deducted; 95% net transferred to
+              freelancer via Stripe).
             </p>
           </div>
         </div>
