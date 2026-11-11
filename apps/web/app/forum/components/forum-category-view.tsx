@@ -86,10 +86,10 @@ export function ForumCategoryView({
   return (
     <>
       {/* Hero */}
-      <section className="border-b border-[#4fae2e]/15 bg-[#eaf8df] dark:border-white/10 dark:bg-zinc-950">
-        <div className="w-full px-4 py-10 sm:px-6 lg:px-8 lg:py-14">
+      <section className="border-b border-border/40 bg-background">
+        <div className="w-full px-4 py-8 sm:px-6 lg:px-8 lg:py-10">
           <div className="flex items-center justify-between gap-4">
-            <nav className="text-sm text-foreground/60">
+            <nav className="text-sm text-muted-foreground/60">
               <span className="font-medium text-foreground">
                 {tCommon("forum")}
               </span>
@@ -97,11 +97,11 @@ export function ForumCategoryView({
             <LanguageSwitcher />
           </div>
 
-          <div className="mt-6 max-w-2xl">
+          <div className="mt-5 max-w-2xl">
             <h1 className="text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
               {t("title")}
             </h1>
-            <p className="mt-2.5 text-sm leading-relaxed text-foreground/65">
+            <p className="mt-2.5 text-[15px] leading-relaxed text-foreground/50 dark:text-foreground/60">
               {t("description")}
             </p>
           </div>
@@ -116,7 +116,7 @@ export function ForumCategoryView({
 
           {categories.length === 0 ? (
             <div className="rounded-xl border border-dashed border-border px-6 py-16 text-center">
-              <div className="mx-auto mb-4 flex size-14 items-center justify-center rounded-full bg-[#eaf8df] text-[#4fae2e] dark:bg-[#4fae2e]/15">
+              <div className="mx-auto mb-4 flex size-14 items-center justify-center rounded-full bg-[#0069D3]/10 text-[#0069D3]">
                 <MessageSquare className="size-7" />
               </div>
               <p className="text-lg font-medium text-foreground">
@@ -130,7 +130,7 @@ export function ForumCategoryView({
               {search ? (
                 <Button
                   asChild
-                  className="mt-6 h-9 bg-[#4fae2e] text-sm text-white hover:bg-[#459928]"
+                  className="mt-6 h-9 bg-[#0069D3] text-white hover:bg-blue-600"
                 >
                   <Link href="/forum">{t("clearSearch")}</Link>
                 </Button>
@@ -142,14 +142,14 @@ export function ForumCategoryView({
                 <Link
                   key={category.id}
                   href={`/forum/${category.slug}-${category.id}`}
-                  className="group flex items-start gap-4 px-1 py-5 transition-colors hover:bg-[#eaf8df]/30 sm:items-center sm:py-6 dark:hover:bg-white/[0.02]"
+                  className="group flex items-start gap-4 px-1 py-5 transition-colors hover:bg-[#0069D3]/5 sm:items-center sm:py-6 dark:hover:bg-white/[0.02]"
                 >
-                  <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-[#eaf8df] text-[#4fae2e] dark:bg-[#4fae2e]/15 dark:text-green-200">
+                  <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-[#0069D3]/10 text-[#0069D3]">
                     <MessageSquare className="size-5" />
                   </div>
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2">
-                      <h3 className="text-base font-semibold text-foreground transition-colors group-hover:text-[#4fae2e]">
+                      <h3 className="text-base font-semibold text-foreground transition-colors group-hover:text-[#0069D3]">
                         {category.name}
                       </h3>
                     </div>
@@ -248,9 +248,9 @@ export function ForumCategoryView({
                   <li key={category.id}>
                     <Link
                       href={`/forum/${category.slug}-${category.id}`}
-                      className="group flex items-center justify-between py-3 transition-colors hover:text-[#4fae2e]"
+                      className="group flex items-center justify-between py-3 transition-colors hover:text-[#0069D3]"
                     >
-                      <p className="truncate text-sm font-medium text-foreground transition-colors group-hover:text-[#4fae2e]">
+                      <p className="truncate text-sm font-medium text-foreground transition-colors group-hover:text-[#0069D3]">
                         {category.name}
                       </p>
                       <span className="ml-4 shrink-0 text-xs tabular-nums text-muted-foreground">

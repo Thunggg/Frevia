@@ -2789,6 +2789,7 @@
     "checkingProposal": "Đang kiểm tra đề xuất...",
     "cannotProposeOwn": "Bạn không thể gửi đề xuất cho công việc do chính bạn đăng.",
     "notAccepting": "Công việc này không còn nhận đề xuất.",
+    "verifyIdentityWarning": "Bạn chưa xác minh danh tính (CCCD). Vول lòng xác minh trước khi nộp hồ sơ nhận việc.",
     "switchToFreelancer": "Hãy chuyển sang tài khoản freelancer để tiếp tục.",
     "applyNow": "Ứng tuyển ngay",
     "viewProposal": "Xem đề xuất",
@@ -2839,6 +2840,12 @@
       "cancel": "Huỷ",
       "removing": "Đang xoá…",
       "confirm": "Xoá"
+    },
+    "kycDialog": {
+      "title": "Yêu cầu xác minh danh tính",
+      "description": "Bạn cần hoàn tất xác minh danh tính (CCCD) để có thể nộp đề xuất cho công việc này.",
+      "cancel": "Để sau",
+      "confirm": "Xác minh ngay"
     },
     "notFound": {
       "title": "Công việc này không còn khả dụng",
