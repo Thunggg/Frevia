@@ -3,8 +3,13 @@ import { envConfig } from '../config/validate-env';
 
 import { aiInternalAuthHeaders } from './ai-internal-auth';
 
-const AI_SERVICE_URL = envConfig.AI_MODERATION_URL.replace(/\/+$/, '');
-const REQUEST_TIMEOUT_MS = envConfig.AI_MODERATION_TIMEOUT_MS;
+const AI_SERVICE_URL = (
+  process.env.FREVIA_AI_URL ??
+  process.env.AI_SERVICE_URL ??
+  envConfig.AI_SERVICE_URL ??
+  'http://127.0.0.1:8000'
+).replace(/\/+$/, '');
+const REQUEST_TIMEOUT_MS = envConfig.AI_SERVICE_TIMEOUT_MS ?? 60000;
 
 export type AiVector = number[];
 
@@ -236,7 +241,13 @@ export class AiRecommendationService {
     }
 
     if (!response.ok) {
-      throw new AiServiceError(`AI service failed (${response.status}).`);
+      const errorText = await response.text().catch(() => '');
+      this.logger.error(
+        `AI service failed at ${path} (${response.status}): ${errorText}`,
+      );
+      throw new AiServiceError(
+        `AI service failed (${response.status}): ${errorText}`,
+      );
     }
 
     try {
