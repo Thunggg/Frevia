@@ -68,10 +68,12 @@ export default async function proxy(request: NextRequest) {
 
   // Session = còn refreshToken (access có thể hết hạn / hỏng)
   let hasSession = Boolean(refreshToken);
-  const response = NextResponse.next();
 
   // Cho layout server biết pathname hiện tại (vd: layout chặn dashboard
   // của freelancer chưa xác minh danh tính nhưng phải bỏ qua /freelancer/profile)
+  const requestHeaders = new Headers(request.headers);
+  requestHeaders.set("x-pathname", pathname);
+  const response = NextResponse.next({ request: { headers: requestHeaders } });
   response.headers.set("x-pathname", pathname);
 
   // Nếu có refresh token và access token cần refresh thì exchange refresh token
