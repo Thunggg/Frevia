@@ -19,8 +19,9 @@ import { toastError, toastSuccess } from "@repo/ui/components/shadcn/toast";
 import { HttpMethod, type PermissionListItemType } from "@shared/types";
 import { Loader2, Search, X } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { useEffect, useMemo, useState } from "react";
+import { getPermissionDisplayName } from "@/lib/permission-utils";
 
 const METHOD_VARIANT: Record<
   string,
@@ -37,6 +38,7 @@ const HTTP_METHODS = Object.values(HttpMethod);
 
 export function AssignRoleContent() {
   const t = useTranslations("adminAssignRole");
+  const locale = useLocale();
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -98,7 +100,12 @@ export function AssignRoleContent() {
       }
       if (!q) return true;
 
+      const viName = getPermissionDisplayName(permission, "vi").toLowerCase();
+      const enName = getPermissionDisplayName(permission, "en").toLowerCase();
+
       return (
+        viName.includes(q) ||
+        enName.includes(q) ||
         permission.name.toLowerCase().includes(q) ||
         permission.path.toLowerCase().includes(q) ||
         (permission.module?.toLowerCase().includes(q) ?? false) ||
@@ -342,37 +349,45 @@ export function AssignRoleContent() {
                   </div>
 
                   <div className="space-y-1 pl-1">
-                    {items.map((permission) => (
-                      <label
-                        key={permission.id}
-                        className="flex items-start gap-3 rounded-md px-2 py-2 hover:bg-muted/50 cursor-pointer"
-                      >
-                        <Checkbox
-                          checked={selectedIds.has(permission.id)}
-                          onCheckedChange={(checked) =>
-                            togglePermission(permission.id, checked === true)
-                          }
-                          className="mt-0.5"
-                        />
-                        <div className="min-w-0 flex-1 space-y-1">
-                          <div className="flex items-center gap-2 flex-wrap">
-                            <Badge
-                              variant={
-                                METHOD_VARIANT[permission.method] ?? "outline"
-                              }
-                            >
-                              {permission.method}
-                            </Badge>
-                            <span className="font-mono text-sm truncate">
-                              {permission.path}
-                            </span>
+                    {items.map((permission) => {
+                      const displayName = getPermissionDisplayName(
+                        permission,
+                        locale,
+                      );
+
+                      return (
+                        <label
+                          key={permission.id}
+                          className="flex items-start gap-3 rounded-md px-2.5 py-2 hover:bg-muted/50 cursor-pointer border border-transparent hover:border-border transition-colors"
+                        >
+                          <Checkbox
+                            checked={selectedIds.has(permission.id)}
+                            onCheckedChange={(checked) =>
+                              togglePermission(permission.id, checked === true)
+                            }
+                            className="mt-0.5"
+                          />
+                          <div className="min-w-0 flex-1 space-y-0.5">
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <span className="text-sm font-medium text-foreground">
+                                {displayName}
+                              </span>
+                              <Badge
+                                variant={
+                                  METHOD_VARIANT[permission.method] ?? "outline"
+                                }
+                                className="text-[10px] px-1.5 py-0 h-4 font-mono uppercase"
+                              >
+                                {permission.method}
+                              </Badge>
+                            </div>
+                            <p className="text-xs text-muted-foreground font-mono truncate">
+                              #{permission.id} · {permission.path}
+                            </p>
                           </div>
-                          <p className="text-xs text-muted-foreground font-mono truncate">
-                            #{permission.id} · {permission.name}
-                          </p>
-                        </div>
-                      </label>
-                    ))}
+                        </label>
+                      );
+                    })}
                   </div>
                 </div>
               );

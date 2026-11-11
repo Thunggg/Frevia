@@ -228,7 +228,9 @@
     "noPermissions": "No permissions found.",
     "detailTitle": "Permission detail",
     "detailLoadFailed": "Failed to load permission detail. The permission may not exist.",
-    "backToPermissions": "Back to permissions"
+    "backToPermissions": "Back to permissions",
+    "permissionName": "Function Name",
+    "systemName": "System Identifier"
   },
   "adminBanners": {
     "metaTitle": "Banners | Admin Dashboard | Frevia",

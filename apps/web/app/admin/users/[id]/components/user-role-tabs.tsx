@@ -31,7 +31,8 @@ import {
   TableRow,
 } from "@repo/ui/components/shadcn/table";
 import type { AdminUserDetailResponseType } from "@shared/types";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
+import { getPermissionDisplayName } from "@/lib/permission-utils";
 import { EditClientProfileButton } from "./edit-client-profile-button";
 import { EditFreelancerProfileButton } from "./edit-freelancer-profile-button";
 import { ManageFreelancerSkillsButton } from "./manage-freelancer-skills-button";
@@ -45,6 +46,7 @@ interface UserRoleTabsProps {
 export function UserRoleTabs({ user }: UserRoleTabsProps) {
   const t = useTranslations("adminUserDetail");
   const tCommon = useTranslations("adminCommon");
+  const locale = useLocale();
 
   const hasClientProfile =
     Boolean(user.clientProfile) ||
@@ -601,8 +603,8 @@ export function UserRoleTabs({ user }: UserRoleTabsProps) {
                             <TableHead className="w-[80px]">
                               {tCommon("method")}
                             </TableHead>
-                            <TableHead>{t("colApiPath")}</TableHead>
                             <TableHead>{t("colPermissionName")}</TableHead>
+                            <TableHead>{t("colApiPath")}</TableHead>
                             <TableHead className="w-[120px]">
                               {tCommon("module")}
                             </TableHead>
@@ -614,11 +616,11 @@ export function UserRoleTabs({ user }: UserRoleTabsProps) {
                               <TableCell>
                                 {renderMethodBadge(perm.method)}
                               </TableCell>
-                              <TableCell className="font-mono text-xs text-foreground">
-                                {perm.path}
+                              <TableCell className="text-xs font-medium text-foreground">
+                                {getPermissionDisplayName(perm, locale)}
                               </TableCell>
-                              <TableCell className="text-xs text-muted-foreground">
-                                {perm.name}
+                              <TableCell className="font-mono text-xs text-muted-foreground">
+                                {perm.path}
                               </TableCell>
                               <TableCell>
                                 <Badge
