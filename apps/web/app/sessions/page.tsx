@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import { redirect } from "next/navigation";
 import authServerRequest from "@/apiRequests/auth.server";
 import type { UserRole } from "@/components/header";
 import { RoleName } from "@shared/types";
@@ -16,6 +17,11 @@ function resolveHeaderRole(
 
 export default async function SessionsPage() {
   const user = await authServerRequest.getMe();
+  const isAdmin = user?.roles.some((role) => role.name === RoleName.ADMIN);
+  if (isAdmin) {
+    redirect("/admin/sessions");
+  }
+
   const role = resolveHeaderRole(user?.roles);
 
   return (

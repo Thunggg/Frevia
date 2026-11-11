@@ -115,7 +115,42 @@
     "search": "Tìm kiếm",
     "searchPlaceholder": "Tìm kiếm...",
     "allCategories": "Tất cả danh mục",
-    "toggleSidebar": "Mở/đóng thanh bên"
+    "toggleSidebar": "Mở/đóng thanh bên",
+    "profileSettings": "Cài đặt tài khoản",
+    "sessions": "Phiên đăng nhập"
+  },
+  "adminProfile": {
+    "title": "Cài đặt tài khoản",
+    "subtitle": "Quản lý thông tin cá nhân, ảnh đại diện và mật khẩu tài khoản quản trị.",
+    "avatarTitle": "Ảnh đại diện",
+    "avatarDescription": "JPG, PNG hoặc WebP. Tối đa 5 MB.",
+    "choosePhoto": "Chọn ảnh mới",
+    "uploadPhoto": "Tải ảnh lên",
+    "uploadingPhoto": "Đang tải ảnh...",
+    "avatarUpdated": "Ảnh đại diện đã được cập nhật thành công.",
+    "generalTitle": "Thông tin cá nhân",
+    "generalDescription": "Cập nhật tên hiển thị và tiểu sử tài khoản của bạn.",
+    "displayName": "Tên hiển thị",
+    "displayNamePlaceholder": "Nhập tên hiển thị...",
+    "bio": "Tiểu sử",
+    "bioPlaceholder": "Viết đôi dòng giới thiệu bản thân...",
+    "saveChanges": "Lưu thay đổi",
+    "saving": "Đang lưu...",
+    "profileUpdated": "Thông tin tài khoản đã được cập nhật thành công.",
+    "securityTitle": "Bảo mật & Mật khẩu",
+    "securityDescription": "Đổi mật khẩu tài khoản để tăng cường bảo mật.",
+    "currentPassword": "Mật khẩu hiện tại",
+    "newPassword": "Mật khẩu mới",
+    "confirmPassword": "Xác nhận mật khẩu mới",
+    "changePassword": "Đổi mật khẩu",
+    "changingPassword": "Đang đổi mật khẩu...",
+    "passwordChanged": "Mật khẩu đã được thay đổi thành công.",
+    "sessionsTitle": "Phiên đăng nhập",
+    "sessionsDescription": "Xem và quản lý các thiết bị, trình duyệt đang đăng nhập tài khoản của bạn.",
+    "manageSessions": "Quản lý thiết bị",
+    "loadFailed": "Không thể tải thông tin hồ sơ. Vui lòng thử lại.",
+    "retry": "Thử lại",
+    "roleAdmin": "Quản trị viên"
   },
   "adminCommon": {
     "id": "ID",
@@ -153,6 +188,8 @@
     "notAvailable": "Không có"
   },
   "adminRoles": {
+    "metaTitle": "Vai trò | Trang quản trị | Frevia",
+    "metaDescription": "Quản lý vai trò và các tập quyền tương ứng.",
     "title": "Quản lý vai trò",
     "subtitle": "Xem tất cả vai trò trong hệ thống",
     "loadFailed": "Không thể tải danh sách vai trò. Vui lòng thử lại.",
@@ -179,6 +216,8 @@
     "backToRoles": "Quay lại danh sách vai trò"
   },
   "adminPermissions": {
+    "metaTitle": "Quyền hạn | Trang quản trị | Frevia",
+    "metaDescription": "Duyệt danh sách các quyền API trong hệ thống.",
     "title": "Quản lý quyền",
     "subtitle": "Xem tất cả quyền API trong hệ thống",
     "loadFailed": "Không thể tải danh sách quyền. Vui lòng thử lại.",
@@ -693,6 +732,8 @@
     "EXPERT": "Chuyên gia"
   },
   "adminUsers": {
+    "metaTitle": "Người dùng | Trang quản trị | Frevia",
+    "metaDescription": "Xem, tìm kiếm và quản lý tất cả người dùng trong hệ thống.",
     "title": "Quản lý người dùng",
     "subtitle": "Xem, tìm kiếm, lọc và quản lý toàn bộ người dùng trong hệ thống",
     "subtitleTotal": "(tổng {count} người dùng)",
@@ -744,6 +785,8 @@
     "updatedBannedToast": "Đã cập nhật người dùng \"{email}\" · tài khoản đã bị khoá"
   },
   "adminUserDetail": {
+    "metaTitle": "Chi tiết người dùng | Trang quản trị | Frevia",
+    "metaDescription": "Xem xét tài khoản, vai trò và dữ liệu hồ sơ của người dùng.",
     "invalidIdTitle": "ID người dùng không hợp lệ",
     "invalidIdDescription": "ID người dùng \"{id}\" không hợp lệ.",
     "notFoundTitle": "Không tìm thấy người dùng",

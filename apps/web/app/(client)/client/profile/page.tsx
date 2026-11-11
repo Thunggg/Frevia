@@ -11,6 +11,10 @@ export default async function ClientProfilePage() {
     redirect("/login?redirect=/client/profile");
   }
 
+  if (primaryRole === RoleName.ADMIN) {
+    redirect("/admin/profile");
+  }
+
   if (primaryRole !== RoleName.CLIENT) {
     redirect("/freelancer/profile");
   }
