@@ -228,7 +228,9 @@
     "noPermissions": "Không tìm thấy quyền nào.",
     "detailTitle": "Chi tiết quyền",
     "detailLoadFailed": "Không thể tải chi tiết quyền. Có thể quyền không tồn tại.",
-    "backToPermissions": "Quay lại danh sách quyền"
+    "backToPermissions": "Quay lại danh sách quyền",
+    "permissionName": "Tên chức năng",
+    "systemName": "Mã định danh hệ thống"
   },
   "adminBanners": {
     "metaTitle": "Banner | Bảng điều khiển quản trị | Frevia",

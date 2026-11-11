@@ -1,7 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { HttpMethod, PrismaClient } from '@prisma/client';
-import { RoleName } from '@shared/types';
+import { RoleName, getPermissionName } from '@shared/types';
 import 'dotenv/config';
 import { AppModule } from '../app.module';
 
@@ -164,7 +164,7 @@ async function bootstrap() {
       return {
         path,
         method,
-        name: `${method} ${path}`,
+        name: getPermissionName(method, path, 'en'),
         module: resolveModule(path),
       };
     })
@@ -278,7 +278,10 @@ async function bootstrap() {
         freelancerModules.includes(item.module ?? '') &&
         !(item.path ?? '').startsWith('/api/admin/') &&
         !(item.path ?? '').startsWith('/api/forums/admin') &&
-        !['/api/recommendations/reindex', '/api/recommendations/outbox/process'].includes(item.path) &&
+        ![
+          '/api/recommendations/reindex',
+          '/api/recommendations/outbox/process',
+        ].includes(item.path) &&
         !(item.module === 'MANAGE-JOBS' && !item.path.includes('/bookmark')),
     )
     .map((item) => item.id);
@@ -289,7 +292,10 @@ async function bootstrap() {
         clientModules.includes(item.module ?? '') &&
         !(item.path ?? '').startsWith('/api/admin/') &&
         !(item.path ?? '').startsWith('/api/forums/admin') &&
-        !['/api/recommendations/reindex', '/api/recommendations/outbox/process'].includes(item.path) &&
+        ![
+          '/api/recommendations/reindex',
+          '/api/recommendations/outbox/process',
+        ].includes(item.path) &&
         !(item.module === 'MANAGE-JOBS' && item.path.includes('/bookmark')),
     )
     .map((item) => item.id);
