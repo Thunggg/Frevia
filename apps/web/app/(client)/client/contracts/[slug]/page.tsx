@@ -25,10 +25,12 @@ export default async function ClientContractDetailPage({
   const { slug } = await params;
   if (!slug) notFound();
 
-  // Try fetching by slug first, fallback to numeric ID if applicable
-  let contract = await contractServerRequest.getContractBySlug(slug);
+  const decodedSlug = decodeURIComponent(slug).trim();
+  let contract = await contractServerRequest.getContractBySlug(decodedSlug);
   if (!contract) {
-    const parsedId = Number(slug);
+    const clean = decodedSlug.replace(/^#/, "").trim();
+    const stripped = clean.replace(/^(CON|CTR|contract)-/i, "");
+    const parsedId = Number(stripped) || Number(clean);
     if (Number.isInteger(parsedId) && parsedId > 0) {
       contract = await contractServerRequest.getContractDetail(parsedId);
     }

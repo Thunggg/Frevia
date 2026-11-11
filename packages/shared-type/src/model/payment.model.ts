@@ -2,6 +2,8 @@ import { z } from 'zod';
 import {
   TransactionStatusEnum,
   TransactionTypeEnum,
+  WithdrawalMethodEnum,
+  WithdrawalStatusEnum,
 } from '../constants/payment.constant';
 
 export const TransactionSchema = z.object({
@@ -176,7 +178,10 @@ export type RefundMilestoneBodyType = z.infer<
 export const ReleaseMilestoneResponseSchema = z.object({
   success: z.boolean(),
   message: z.string(),
-  transferId: z.string(),
+  transferId: z.string().nullable().optional(),
+  payoutDestination: z.enum(['WALLET', 'STRIPE']).optional(),
+  releasedAmount: z.number().optional(),
+  newWalletBalance: z.number().optional(),
 });
 export type ReleaseMilestoneResponseType = z.infer<
   typeof ReleaseMilestoneResponseSchema
@@ -199,4 +204,161 @@ export type SyncPaymentIntentResponseType = z.infer<
   typeof SyncPaymentIntentResponseSchema
 >;
 
+export const CreateContractHoldBodySchema = z.object({
+  milestoneIds: z.array(z.coerce.number().int().positive()).min(1),
+});
+export type CreateContractHoldBodyType = z.infer<
+  typeof CreateContractHoldBodySchema
+>;
+
+export const CreateContractHoldResponseSchema = z.object({
+  clientSecret: z.string(),
+  paymentIntentId: z.string(),
+  amount: z.number(),
+  milestonesAmount: z.number(),
+  platformFeeAmount: z.number(),
+  currency: z.string(),
+  milestoneIds: z.array(z.number()),
+});
+export type CreateContractHoldResponseType = z.infer<
+  typeof CreateContractHoldResponseSchema
+>;
+
+export const ContractHoldActionResponseSchema = z.object({
+  success: z.boolean(),
+  paymentIntentId: z.string(),
+  status: z.string(),
+  message: z.string(),
+});
+export type ContractHoldActionResponseType = z.infer<
+  typeof ContractHoldActionResponseSchema
+>;
+
+export const CreateSetupIntentResponseSchema = z.object({
+  clientSecret: z.string(),
+  setupIntentId: z.string(),
+});
+export type CreateSetupIntentResponseType = z.infer<
+  typeof CreateSetupIntentResponseSchema
+>;
+
+export const SetDefaultPaymentMethodBodySchema = z.object({
+  paymentMethodId: z.string().min(1),
+});
+export type SetDefaultPaymentMethodBodyType = z.infer<
+  typeof SetDefaultPaymentMethodBodySchema
+>;
+
+export const PaymentMethodActionResponseSchema = z.object({
+  success: z.boolean(),
+  message: z.string(),
+});
+export type PaymentMethodActionResponseType = z.infer<
+  typeof PaymentMethodActionResponseSchema
+>;
+
+export const WalletSummaryResponseSchema = z.object({
+  balance: z.number(),
+  currency: z.string(),
+  totalEarned: z.number(),
+  totalWithdrawn: z.number(),
+  pendingWithdrawalAmount: z.number(),
+});
+export type WalletSummaryResponseType = z.infer<
+  typeof WalletSummaryResponseSchema
+>;
+
+export const WithdrawalRequestSchema = z.object({
+  id: z.number(),
+  userId: z.number(),
+  amount: z.coerce.number(),
+  currency: z.string(),
+  method: WithdrawalMethodEnum,
+  status: WithdrawalStatusEnum,
+  bankName: z.string().nullable().optional(),
+  bankAccountNumber: z.string().nullable().optional(),
+  bankAccountHolder: z.string().nullable().optional(),
+  note: z.string().nullable().optional(),
+  stripeTransferId: z.string().nullable().optional(),
+  processedAt: z.coerce.date().nullable().optional(),
+  rejectionReason: z.string().nullable().optional(),
+  createdAt: z.coerce.date(),
+  updatedAt: z.coerce.date(),
+});
+export type WithdrawalRequestType = z.infer<typeof WithdrawalRequestSchema>;
+
+export const CreateWithdrawalBodySchema = z
+  .object({
+    amount: z.coerce.number().positive(),
+    method: WithdrawalMethodEnum.default('BANK_TRANSFER'),
+    bankName: z.string().trim().max(150).optional(),
+    bankAccountNumber: z.string().trim().max(100).optional(),
+    bankAccountHolder: z.string().trim().max(150).optional(),
+    note: z.string().trim().max(500).optional(),
+  })
+  .superRefine((data, ctx) => {
+    if (data.method === 'BANK_TRANSFER') {
+      if (!data.bankName) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'Error.BankDetailsRequired',
+          path: ['bankName'],
+        });
+      }
+      if (!data.bankAccountNumber) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'Error.BankDetailsRequired',
+          path: ['bankAccountNumber'],
+        });
+      }
+      if (!data.bankAccountHolder) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'Error.BankDetailsRequired',
+          path: ['bankAccountHolder'],
+        });
+      }
+    }
+  });
+export type CreateWithdrawalBodyType = z.infer<
+  typeof CreateWithdrawalBodySchema
+>;
+
+export const CreateWithdrawalResponseSchema = z.object({
+  withdrawal: WithdrawalRequestSchema,
+  newBalance: z.number(),
+  message: z.string(),
+});
+export type CreateWithdrawalResponseType = z.infer<
+  typeof CreateWithdrawalResponseSchema
+>;
+
+export const GetWithdrawalListQuerySchema = z.object({
+  page: z.coerce.number().int().positive().default(1),
+  limit: z.coerce.number().int().positive().max(50).default(10),
+  status: WithdrawalStatusEnum.optional(),
+});
+export type GetWithdrawalListQueryType = z.infer<
+  typeof GetWithdrawalListQuerySchema
+>;
+
+export const GetWithdrawalListResponseSchema = z.object({
+  data: z.array(WithdrawalRequestSchema),
+  totalItems: z.number(),
+  totalPages: z.number(),
+  page: z.number(),
+  limit: z.number(),
+});
+export type GetWithdrawalListResponseType = z.infer<
+  typeof GetWithdrawalListResponseSchema
+>;
+
+export const ProcessWithdrawalBodySchema = z.object({
+  status: z.enum(['COMPLETED', 'REJECTED']),
+  rejectionReason: z.string().trim().max(500).optional(),
+});
+export type ProcessWithdrawalBodyType = z.infer<
+  typeof ProcessWithdrawalBodySchema
+>;
 

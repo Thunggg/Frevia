@@ -143,7 +143,14 @@ export function ContractLifecyclePanel({
 
   const hasSigned =
     role === "CLIENT" ? contract.signedByClient : contract.signedByFreelancer;
-  const canSign = contract.status === "PENDING_SIGN" && !hasSigned;
+  const canSign =
+    contract.status === "PENDING_SIGN" &&
+    !hasSigned &&
+    (role === "CLIENT" || contract.signedByClient);
+  const waitingForClientSignature =
+    contract.status === "PENDING_SIGN" &&
+    role === "FREELANCER" &&
+    !contract.signedByClient;
   const canComplete = role === "CLIENT" && contract.status === "ACTIVE";
   const isCompleted = contract.status === "COMPLETED";
   const statusText = (CONTRACT_STATUSES as readonly string[]).includes(
@@ -207,6 +214,11 @@ export function ContractLifecyclePanel({
           {contract.status === "PENDING_SIGN" && hasSigned ? (
             <p className="self-center text-sm text-muted-foreground">
               {t("signatureComplete")}
+            </p>
+          ) : null}
+          {waitingForClientSignature ? (
+            <p className="self-center text-sm text-muted-foreground">
+              Waiting for the Client to sign first before you can countersign.
             </p>
           ) : null}
           {canComplete ? (

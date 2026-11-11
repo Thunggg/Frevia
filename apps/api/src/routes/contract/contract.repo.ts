@@ -40,6 +40,8 @@ const contractDetailSelect = {
   freelancerSignedAt: true,
   rejectedAt: true,
   rejectReason: true,
+  holdPaymentIntentId: true,
+  holdMilestoneIds: true,
   createdAt: true,
   signedAt: true,
   completedAt: true,
@@ -84,7 +86,7 @@ const contractDetailSelect = {
 
 @Injectable()
 export class ContractRepository {
-  constructor(private readonly prisma: PrismaService) { }
+  constructor(private readonly prisma: PrismaService) {}
 
   async findProposalWithJob(proposalId: number) {
     return this.prisma.proposal.findUnique({
@@ -141,13 +143,35 @@ export class ContractRepository {
         expiresAt: true,
         rejectedAt: true,
         rejectReason: true,
+        holdPaymentIntentId: true,
+        holdMilestoneIds: true,
       },
     });
   }
 
+  async findContractMilestoneDueDates(contractId: number) {
+    return this.prisma.milestone.findMany({
+      where: { contractId, deletedAt: null },
+      select: { id: true, title: true, dueDate: true },
+    });
+  }
+
   async findContractBySlug(slug: string) {
-    const contract = await this.prisma.contract.findUnique({
-      where: { slug, deletedAt: null },
+    const cleanSlug = slug.replace(/^#/, '').trim();
+    const strippedId = cleanSlug.replace(/^(CON|CTR|contract)-/i, '');
+    const parsedId = Number(strippedId) || Number(cleanSlug);
+
+    const contract = await this.prisma.contract.findFirst({
+      where: {
+        OR: [
+          { slug },
+          { slug: cleanSlug },
+          ...(Number.isInteger(parsedId) && parsedId > 0
+            ? [{ id: parsedId }]
+            : []),
+        ],
+        deletedAt: null,
+      },
       select: contractDetailSelect,
     });
 
@@ -206,23 +230,23 @@ export class ContractRepository {
       const milestonesData =
         data.milestones && data.milestones.length > 0
           ? data.milestones.map((m) => ({
-            contractId: contract.id,
-            title: m.title,
-            description: m.description ?? null,
-            amount: m.amount,
-            dueDate: m.dueDate ? new Date(m.dueDate) : null,
-            status: MilestoneStatus.PENDING,
-          }))
-          : [
-            {
               contractId: contract.id,
-              title: `${job?.title ?? 'Contract'} - Milestone 1`,
-              description: 'Initial milestone for contract',
-              amount: data.totalAmount,
-              dueDate: data.expiresAt ? new Date(data.expiresAt) : null,
+              title: m.title,
+              description: m.description ?? null,
+              amount: m.amount,
+              dueDate: m.dueDate ? new Date(m.dueDate) : null,
               status: MilestoneStatus.PENDING,
-            },
-          ];
+            }))
+          : [
+              {
+                contractId: contract.id,
+                title: `${job?.title ?? 'Contract'} - Milestone 1`,
+                description: 'Initial milestone for contract',
+                amount: data.totalAmount,
+                dueDate: data.expiresAt ? new Date(data.expiresAt) : null,
+                status: MilestoneStatus.PENDING,
+              },
+            ];
 
       await tx.milestone.createMany({
         data: milestonesData,
@@ -280,20 +304,24 @@ export class ContractRepository {
       data: {
         ...(data.totalAmount !== undefined && {
           totalAmount: data.totalAmount,
-          platformFee: Math.round(Number(data.totalAmount) * 0.01 * 100) / 100,
+          clientPlatformFee:
+            Math.round(Number(data.totalAmount) * 0.03 * 100) / 100,
+          platformFee: Math.round(Number(data.totalAmount) * 0.03 * 100) / 100,
         }),
         ...(data.terms !== undefined && { terms: data.terms }),
         ...(data.expiresAt !== undefined && {
           expiresAt: new Date(data.expiresAt),
         }),
-        signedByClient: false,
-        signedByFreelancer: false,
       },
     });
 
     return {
       ...contract,
       totalAmount: Number(contract.totalAmount),
+      clientPlatformFee:
+        contract.clientPlatformFee != null
+          ? Number(contract.clientPlatformFee)
+          : 0,
       platformFee:
         contract.platformFee != null ? Number(contract.platformFee) : 0,
     };
@@ -348,6 +376,8 @@ export class ContractRepository {
           status: ContractStatus.REJECTED,
           rejectedAt: now,
           rejectReason: reason ?? null,
+          holdPaymentIntentId: null,
+          holdMilestoneIds: [],
         },
       });
 
@@ -370,7 +400,7 @@ export class ContractRepository {
           userId: rejectedContract.clientId,
           type: NotificationType.JOB_ALERT,
           title: 'Contract offer declined',
-          message: `The freelancer declined the contract offer for contract #${rejectedContract.id}.${reason ? ` Reason: ${reason}` : ''} Any escrow deposit will be refunded automatically.`,
+          message: `The freelancer declined the contract offer for contract #${rejectedContract.id}.${reason ? ` Reason: ${reason}` : ''} Any payment authorization hold on your card has been released automatically.`,
           data: {
             href: `/client/contracts/${rejectedContract.slug}`,
             contractId: rejectedContract.id,
@@ -423,6 +453,8 @@ export class ContractRepository {
       where: { id: contractId },
       data: {
         status: ContractStatus.CANCELLED,
+        holdPaymentIntentId: null,
+        holdMilestoneIds: [],
         deletedAt: new Date(),
       },
     });
@@ -430,8 +462,119 @@ export class ContractRepository {
     return {
       ...contract,
       totalAmount: Number(contract.totalAmount),
+      clientPlatformFee:
+        contract.clientPlatformFee != null
+          ? Number(contract.clientPlatformFee)
+          : 0,
       platformFee:
         contract.platformFee != null ? Number(contract.platformFee) : 0,
+    };
+  }
+
+  async findExpiredPendingContracts(now = new Date()) {
+    return this.prisma.contract.findMany({
+      where: {
+        deletedAt: null,
+        status: {
+          in: [ContractStatus.AWAITING_PAYMENT, ContractStatus.PENDING_SIGN],
+        },
+        expiresAt: {
+          not: null,
+          lt: now,
+        },
+      },
+      select: {
+        id: true,
+        slug: true,
+        clientId: true,
+        freelancerId: true,
+        jobId: true,
+        proposalId: true,
+        status: true,
+        holdPaymentIntentId: true,
+      },
+    });
+  }
+
+  async expireContract(contractId: number) {
+    const expired = await this.prisma.$transaction(async (tx) => {
+      const existing = await tx.contract.findUnique({
+        where: { id: contractId },
+        select: {
+          id: true,
+          slug: true,
+          clientId: true,
+          freelancerId: true,
+          jobId: true,
+          proposalId: true,
+          status: true,
+        },
+      });
+      if (
+        !existing ||
+        (existing.status !== ContractStatus.AWAITING_PAYMENT &&
+          existing.status !== ContractStatus.PENDING_SIGN)
+      ) {
+        return null;
+      }
+
+      const updatedContract = await tx.contract.update({
+        where: { id: contractId },
+        data: {
+          status: ContractStatus.EXPIRED,
+          holdPaymentIntentId: null,
+          holdMilestoneIds: [],
+        },
+      });
+
+      await tx.proposal.update({
+        where: { id: existing.proposalId },
+        data: {
+          status: ProposalStatus.EXPIRED,
+        },
+      });
+
+      const job = await tx.job.findUnique({
+        where: { id: existing.jobId },
+        select: { positionsFilled: true },
+      });
+      if (job && job.positionsFilled > 0) {
+        await tx.job.update({
+          where: { id: existing.jobId },
+          data: {
+            positionsFilled: { decrement: 1 },
+          },
+        });
+      }
+
+      await tx.notification.create({
+        data: {
+          userId: existing.clientId,
+          type: NotificationType.JOB_ALERT,
+          title: 'Contract expired',
+          message: `Contract #${existing.id} expired before signing was completed. Any payment hold on your card has been released without charge.`,
+          data: {
+            href: `/client/contracts/${existing.slug}`,
+            contractId: existing.id,
+            contractSlug: existing.slug,
+          },
+        },
+      });
+
+      return updatedContract;
+    });
+
+    if (!expired) return null;
+
+    return {
+      ...expired,
+      totalAmount: Number(expired.totalAmount),
+      clientPlatformFee:
+        expired.clientPlatformFee != null
+          ? Number(expired.clientPlatformFee)
+          : 0,
+      platformFee:
+        expired.platformFee != null ? Number(expired.platformFee) : 0,
     };
   }
 
@@ -485,7 +628,7 @@ export class ContractRepository {
   }
 
   async getContractDetail(contractId: number) {
-    const contract = await this.prisma.contract.findUnique({
+    const contract = await this.prisma.contract.findFirst({
       where: { id: contractId, deletedAt: null },
       select: contractDetailSelect,
     });

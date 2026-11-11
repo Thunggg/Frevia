@@ -1,0 +1,763 @@
+% =================================================================
+% Sprint 3 - Proposal Management (ptai)
+% Following the detailed form of the report template:
+% Function Trigger, Function Description, Screen Layout and Function Details.
+% =================================================================
+
+\subsection{Proposal Management}
+
+% -----------------------------------------------------------------
+% UC-32.01: View My Proposal List
+% -----------------------------------------------------------------
+\subsubsection{Function: View My Proposal List}
+
+\fnhead{Function Trigger}
+A freelancer clicks ``Proposals'' in the workspace navigation menu.\newline
+\textbf{Navigation path:} Freelancer Dashboard $\rightarrow$ Proposals (\texttt{/freelancer/proposals}).
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item \textbf{Primary Actor:} Freelancer.
+    \item \textbf{Supporting Systems:} Frevia Web application, Frevia REST API, and PostgreSQL database.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent Allows freelancers to review and monitor all proposals they have submitted across different lifecycle stages (\texttt{SUBMITTED}, \texttt{INTERVIEWING}, \texttt{HIRED}, \texttt{REJECTED}, \texttt{WITHDRAWN}, \texttt{EXPIRED}).
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Proposals dashboard at \texttt{/freelancer/proposals}.
+    \item Tab filters: All, Active, Offers/Hired, Archived.
+    \item Proposal cards displaying target job title, client name, proposed bid amount, delivery timeline, and status badge.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Client dispatches \texttt{GET /api/freelancer/proposals}.
+    \item Backend extracts freelancer user ID from JWT session.
+    \item Queries \texttt{Proposal} table joined with \texttt{Job} and client profiles.
+    \item Returns sorted results by submission date with pagination.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint3/ptai/ViewMyProposalList.png}{Submitted proposals list interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Filter tabs separating active submissions from historical decisions.
+    \item Proposal cards displaying job title, proposed bid, net earnings after fee, and status tag.
+    \item Action menu for inspecting details, editing pending bids, or withdrawing applications.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+JWT Token & Authenticated freelancer token.\\ \hline
+\texttt{status} & Optional proposal status filter.\\ \hline
+\texttt{page} / \texttt{limit} & Pagination integers.\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Caller must have \texttt{FREELANCER} role.
+\end{itemize}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+    \item BR-PR-01: Freelancers may only view proposals submitted from their own account.
+    \item BR-PR-02: Statuses reflect exact state machine: \texttt{SUBMITTED}, \texttt{INTERVIEWING}, \texttt{HIRED}, \texttt{REJECTED}, \texttt{WITHDRAWN}, \texttt{EXPIRED}.
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item Freelancer visits \texttt{/freelancer/proposals}.
+    \item Frontend requests proposals from backend.
+    \item Backend retrieves user's proposals and associated job summaries.
+    \item UI renders cards with active status tags.
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Case}{Description}
+A1 & No proposals submitted yet. UI displays empty state with a ``Find Work'' shortcut button.\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Data Name}{Description}
+\texttt{proposals} & Array of proposal objects (\texttt{id}, \texttt{jobTitle}, \texttt{bidAmount}, \texttt{deliveryDays}, \texttt{status}, \texttt{submittedAt}).\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Freelancer views list and status of submitted bids.
+\end{itemize}
+
+% -----------------------------------------------------------------
+% UC-32.02: View My Proposal Detail
+% -----------------------------------------------------------------
+\subsubsection{Function: View My Proposal Detail}
+
+\fnhead{Function Trigger}
+A freelancer clicks on a proposal card from their proposals list.\newline
+\textbf{Navigation path:} Proposals List $\rightarrow$ Click Proposal (\texttt{/freelancer/proposals/:id}).
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item \textbf{Primary Actor:} Freelancer.
+    \item \textbf{Supporting Systems:} Frevia Web application, Frevia REST API, and PostgreSQL database.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent Displays full details of the freelancer's proposal, including cover letter, bid amount, fee deduction breakdown, milestone plans, and client response status.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Proposal detail screen with two-column layout.
+    \item Left panel displaying cover letter, answers to screening questions, and attachments.
+    \item Right sidebar displaying fee breakdown, timeline estimate, and proposal management actions.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Client dispatches \texttt{GET /api/freelancer/proposals/:id}.
+    \item Backend confirms that the proposal was created by the calling user.
+    \item Returns full proposal object with linked job and client information.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint3/ptai/ViewMyProposalDetail.png}{My proposal detail interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Detailed view showing cover letter text, milestone breakdown, and uploaded portfolio files.
+    \item Financial calculation sidebar: Gross Bid, Platform Service Fee (10\%), and Net Receivable.
+    \item Action buttons: ``Edit Proposal'' and ``Withdraw Proposal'' (active when status is SUBMITTED).
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+\texttt{id} & UUID of the proposal.\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Proposal must belong to authenticated freelancer.
+\end{itemize}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+    \item BR-PR-03: Non-owners cannot view private proposal details (HTTP 403 / 404).
+    \item BR-PR-04: Displays full 10\% Frevia service fee deduction calculation.
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item Freelancer opens proposal detail.
+    \item Backend validates ownership and returns proposal entity.
+    \item UI renders proposal text, fee summary, and status timeline.
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Case}{Description}
+A1 & Proposal not found or belongs to another user. Returns HTTP 404.\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Data Name}{Description}
+Proposal Object & Detailed entity (\texttt{id}, \texttt{coverLetter}, \texttt{bidAmount}, \texttt{deliveryDays}, \texttt{attachments}, \texttt{status}, \texttt{job}).\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Complete proposal terms and current decision state are displayed.
+\end{itemize}
+
+% -----------------------------------------------------------------
+% UC-32.03: Submit Proposal
+% -----------------------------------------------------------------
+\subsubsection{Function: Submit Proposal}
+
+\fnhead{Function Trigger}
+A freelancer clicks ``Submit a Proposal'' on a job detail page.\newline
+\textbf{Navigation path:} Job Detail (\texttt{/jobs/:slug}) $\rightarrow$ Click ``Submit a Proposal'' (\texttt{/jobs/:slug/apply}).
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item \textbf{Primary Actor:} Freelancer.
+    \item \textbf{Supporting Systems:} Frevia Web application, Frevia REST API, and PostgreSQL database.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent Allows a freelancer to apply for an open job by providing a bid price, delivery timeframe, comprehensive cover letter, and optional supporting work samples.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Proposal submission page at \texttt{/jobs/:slug/apply}.
+    \item Bid terms calculator: inputs for gross bid with automatic calculation of the 10\% platform fee and net earnings.
+    \item Rich text cover letter area and file uploader (up to 3 files, 10MB each).
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Client submits payload to \texttt{POST /api/freelancer/proposals}.
+    \item Backend verifies that: (1) user has \texttt{FREELANCER} role, (2) target job is \texttt{OPEN}, (3) user is not the job's client, (4) user has not already submitted an active proposal for this job.
+    \item Creates \texttt{Proposal} record in \texttt{SUBMITTED} status and increments job's proposal count.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint3/ptai/SubmitProposal.png}{Submit proposal form interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Job summary header with client budget reference.
+    \item Interactive bid calculator displaying gross amount, platform service fee, and net earnings.
+    \item Textarea for cover letter and attachment uploader.
+    \item Primary ``Submit Proposal Now'' button.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+\texttt{jobId} & UUID of the target job posting.\\ \hline
+\texttt{bidAmount} & Number, gross proposed compensation in USD.\\ \hline
+\texttt{deliveryDays} & Integer $\ge 1$, estimated completion days.\\ \hline
+\texttt{coverLetter} & String (50--3000 chars), proposal text.\\ \hline
+\texttt{attachments} & Optional array of uploaded file URLs.\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item \texttt{bidAmount} must be $> 0$.
+    \item \texttt{deliveryDays} must be an integer between 1 and 365.
+    \item \texttt{coverLetter} must contain at least 50 characters.
+\end{itemize}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+    \item BR-PR-05: Proposals may only be submitted to jobs with status \texttt{OPEN}.
+    \item BR-PR-06: Clients cannot submit proposals to their own posted jobs.
+    \item BR-PR-07: Freelancers may submit only 1 active proposal per job.
+    \item BR-PR-08: Automatic fee calculation deducts standard 10\% marketplace fee.
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item Freelancer completes application terms and cover letter.
+    \item Clicks ``Submit Proposal Now''.
+    \item Backend validates eligibility and persists proposal as \texttt{SUBMITTED}.
+    \item UI redirects to proposal detail view with a success confirmation toast.
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Case}{Description}
+A1 & Freelancer already submitted a proposal for this job. Backend returns HTTP 400 Bad Request with message ``You have already applied for this job.''\\ \hline
+A2 & Target job has closed while application was being drafted. Returns HTTP 400 with ``Job is no longer open for proposals.''\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Data Name}{Description}
+Created Proposal & New entity with \texttt{id}, \texttt{status = SUBMITTED}, and submission timestamp.\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Proposal is submitted and visible in client's job proposals list.
+\end{itemize}
+
+% -----------------------------------------------------------------
+% UC-32.04: Update Proposal
+% -----------------------------------------------------------------
+\subsubsection{Function: Update Proposal}
+
+\fnhead{Function Trigger}
+A freelancer clicks ``Edit Proposal'' on a pending application.\newline
+\textbf{Navigation path:} Proposal Detail (\texttt{/freelancer/proposals/:id}) $\rightarrow$ Click ``Edit Proposal''.
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item \textbf{Primary Actor:} Freelancer.
+    \item \textbf{Supporting Systems:} Frevia Web application, Frevia REST API, and PostgreSQL database.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent Allows a freelancer to revise their proposed bid, delivery timeframe, or cover letter while the proposal is still in \texttt{SUBMITTED} status and has not yet been accepted or rejected.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Pre-filled proposal editing form.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Client submits \texttt{PATCH /api/freelancer/proposals/:id}.
+    \item Backend validates ownership and confirms that \texttt{status = 'SUBMITTED'}.
+    \item Updates bid values and cover letter.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint3/ptai/UpdateProposal.png}{Edit proposal interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Form modal with editable bid amount, timeline, and cover letter text.
+    \item Primary ``Save \& Update Proposal'' action button.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+\texttt{id} & UUID of the proposal.\\ \hline
+Payload & Modified fields (\texttt{bidAmount}, \texttt{deliveryDays}, \texttt{coverLetter}).\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Proposal status must be \texttt{SUBMITTED}.
+    \item Inputs must satisfy standard proposal validation constraints.
+\end{itemize}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+    \item BR-PR-09: Proposals can only be edited while in \texttt{SUBMITTED} status.
+    \item BR-PR-10: Proposals in \texttt{HIRED}, \texttt{REJECTED}, or \texttt{WITHDRAWN} states cannot be edited.
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item Freelancer opens edit dialog.
+    \item Modifies bid parameters or text.
+    \item Clicks ``Save \& Update Proposal''.
+    \item Backend updates record and confirms.
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Case}{Description}
+A1 & Proposal has already been accepted or rejected by client. Backend returns HTTP 409 Conflict with message ``Proposal cannot be edited once reviewed.''\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Data Name}{Description}
+Updated Proposal & Proposal entity reflecting modified values.\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Revisions are committed and visible to the hiring client.
+\end{itemize}
+
+% -----------------------------------------------------------------
+% UC-32.05: Withdraw Proposal
+% -----------------------------------------------------------------
+\subsubsection{Function: Withdraw Proposal}
+
+\fnhead{Function Trigger}
+A freelancer clicks ``Withdraw Proposal'' on a submitted bid.\newline
+\textbf{Navigation path:} Proposal Detail (\texttt{/freelancer/proposals/:id}) $\rightarrow$ Click ``Withdraw Proposal''.
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item \textbf{Primary Actor:} Freelancer.
+    \item \textbf{Supporting Systems:} Frevia Web application, Frevia REST API, and PostgreSQL database.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent Allows a freelancer to retract their application from consideration before the client hires or rejects them.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Withdraw action button triggering confirmation dialog.
+    \item Optional withdrawal reason selector.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Client invokes \texttt{POST /api/freelancer/proposals/:id/withdraw}.
+    \item Backend verifies that proposal status is \texttt{SUBMITTED} or \texttt{INTERVIEWING}.
+    \item Sets \texttt{status = 'WITHDRAWN'} and notifies client.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint3/ptai/WithdrawProposal.png}{Withdraw proposal dialog interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Confirmation modal explaining consequences of withdrawal.
+    \item Reason dropdown and optional remarks field.
+    \item ``Confirm Withdrawal'' action button.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+\texttt{id} & UUID of the proposal to withdraw.\\ \hline
+\texttt{reason} & Optional string explaining withdrawal reason.\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Target proposal must be in \texttt{SUBMITTED} or \texttt{INTERVIEWING} state.
+\end{itemize}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+    \item BR-PR-11: A proposal cannot be withdrawn once accepted (\texttt{HIRED}).
+    \item BR-PR-12: Withdrawing transitions state to \texttt{WITHDRAWN}; freelancer cannot re-submit without invitation.
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item Freelancer clicks ``Withdraw Proposal''.
+    \item Selects reason and confirms in modal.
+    \item Backend sets status to \texttt{WITHDRAWN}.
+    \item UI updates status and notifies client.
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Case}{Description}
+A1 & Proposal already accepted. Backend returns HTTP 400 Bad Request.\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Data Name}{Description}
+Result & Status confirmation confirming proposal withdrawal.\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Proposal status is \texttt{WITHDRAWN} and excluded from active candidate list.
+\end{itemize}
+
+% -----------------------------------------------------------------
+% UC-32.06: Accept Proposal
+% -----------------------------------------------------------------
+\subsubsection{Function: Accept Proposal}
+
+\fnhead{Function Trigger}
+A client clicks ``Accept Proposal'' or ``Hire'' on an applicant's bid.\newline
+\textbf{Navigation path:} Client Dashboard $\rightarrow$ Job Proposals $\rightarrow$ Proposal Detail $\rightarrow$ Click ``Accept Proposal''.
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item \textbf{Primary Actor:} Client.
+    \item \textbf{Secondary Actor:} Payment/Escrow Gateway.
+    \item \textbf{Supporting Systems:} Frevia Web application, Frevia REST API, and PostgreSQL database.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent Allows a client to accept a freelancer's proposal, automatically initialize and activate a binding contract (\texttt{Contract}), increment the filled positions quota, and transition the job status if fully hired.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Hiring confirmation and contract initialization screen.
+    \item Terms summary card detailing payment value, escrow deposit requirement, and project milestones.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Client submits \texttt{POST /api/client/proposals/:id/accept}.
+    \item Backend verifies in a database transaction: (1) client owns the job, (2) proposal is \texttt{SUBMITTED} or \texttt{INTERVIEWING}, (3) job still has open hiring slots (\texttt{positionsFilled < positionsRequired}).
+    \item Updates proposal to \texttt{status = 'HIRED'}, creates a new \texttt{Contract} entity with terms matching the bid, and increments \texttt{positionsFilled}.
+    \item If \texttt{positionsFilled === positionsRequired}, transitions job from \texttt{OPEN} to \texttt{IN\_PROGRESS}.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint3/ptai/AcceptProposal.png}{Accept proposal and hire confirmation}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Overview card detailing freelancer credentials, bid price, and delivery duration.
+    \item Contract terms preview and escrow funding notice.
+    \item Primary ``Confirm Hire \& Fund Escrow'' action button.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+\texttt{id} & UUID of the proposal being accepted.\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Calling client must be the creator of the job posting.
+    \item Job must have at least one open hiring position available.
+\end{itemize}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+    \item BR-PR-13: Accepting a proposal transitions its status to \texttt{HIRED} (Accepted).
+    \item BR-PR-14: Automatically generates a formal binding contract with terms matching the proposal.
+    \item BR-PR-15: Increments \texttt{positionsFilled}; when quota is full, transitions job to \texttt{IN\_PROGRESS}.
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item Client clicks ``Accept Proposal''.
+    \item Reviews terms and escrow details.
+    \item Confirms hiring decision.
+    \item Backend executes atomic transaction: updates proposal, initializes contract, and adjusts job status.
+    \item UI redirects to active contract view.
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Case}{Description}
+A1 & Job hiring quota already filled. Backend aborts transaction and returns HTTP 409 Conflict.\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Data Name}{Description}
+Created Contract & Contract entity linked to client, freelancer, and originating job.\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Proposal status is HIRED and active contract is initialized.
+\end{itemize}
+
+% -----------------------------------------------------------------
+% UC-32.07: Reject Proposal
+% -----------------------------------------------------------------
+\subsubsection{Function: Reject Proposal}
+
+\fnhead{Function Trigger}
+A client clicks ``Reject'' or ``Decline'' on an applicant's proposal.\newline
+\textbf{Navigation path:} Job Proposals $\rightarrow$ Proposal Actions $\rightarrow$ Click ``Reject Proposal''.
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item \textbf{Primary Actor:} Client.
+    \item \textbf{Supporting Systems:} Frevia Web application, Frevia REST API, and PostgreSQL database.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent Allows a client to decline an unsuitable proposal and respectfully inform the applicant.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Reject proposal modal with optional decline reason field.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Client submits \texttt{POST /api/client/proposals/:id/reject}.
+    \item Backend confirms job ownership.
+    \item Updates proposal to \texttt{status = 'REJECTED'} and notifies freelancer.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint3/ptai/RejectProposal.png}{Reject proposal modal interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Modal dialog with reason dropdown (e.g. Budget mismatch, Timeline, Skill mismatch).
+    \item Rejection confirmation button.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+\texttt{id} & UUID of the proposal.\\ \hline
+\texttt{reason} & Optional string explaining rejection.\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Proposal must not already be in \texttt{HIRED} state.
+\end{itemize}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+    \item BR-PR-16: Rejection is irreversible; proposal status becomes \texttt{REJECTED}.
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item Client selects ``Reject''.
+    \item Chooses optional reason and confirms.
+    \item Backend updates status to \texttt{REJECTED}.
+    \item UI updates proposal card to archived state.
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Case}{Description}
+A1 & Proposal already accepted. Returns HTTP 400 Bad Request.\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Data Name}{Description}
+Result & Status confirmation confirming rejection.\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Proposal is marked REJECTED and applicant is notified.
+\end{itemize}
+
+% -----------------------------------------------------------------
+% UC-32.08: View Job Proposal List
+% -----------------------------------------------------------------
+\subsubsection{Function: View Job Proposal List}
+
+\fnhead{Function Trigger}
+A client clicks ``View Proposals'' on one of their posted jobs.\newline
+\textbf{Navigation path:} Client Dashboard $\rightarrow$ My Jobs $\rightarrow$ Job Row $\rightarrow$ Click ``Proposals'' (\texttt{/client/jobs/:id/proposals}).
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item \textbf{Primary Actor:} Client.
+    \item \textbf{Supporting Systems:} Frevia Web application, Frevia REST API, and PostgreSQL database.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent Displays all bids received for a specific job posting, including applicant profiles, ratings, proposed prices, and timeline estimates.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Candidate pipeline review table at \texttt{/client/jobs/:id/proposals}.
+    \item Sorting options: Bid Amount, Delivery Time, Freelancer Rating.
+    \item Quick action buttons: Chat, Review Proposal, Accept, Reject.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Client issues \texttt{GET /api/client/jobs/:id/proposals}.
+    \item Backend verifies client owns the job.
+    \item Retrieves all proposals submitted for this job with candidate statistics.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint3/ptai/ViewJobProposalList.png}{Client job proposals pipeline interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Job header showing total proposals count and current hiring status.
+    \item Candidate cards displaying avatar, name, rating, bid value, and cover letter excerpt.
+    \item Action toolbar to start conversation or initiate hiring.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+\texttt{id} & UUID of the job posting.\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Calling user must own the job posting.
+\end{itemize}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+    \item BR-PR-17: Only the job owner (or Admin) can inspect incoming proposals.
+    \item BR-PR-18: Excludes proposals withdrawn by freelancers.
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item Client opens proposals view for a job.
+    \item Backend verifies ownership and returns candidate bids.
+    \item UI renders candidate pipeline with action triggers.
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Case}{Description}
+A1 & Non-owner accesses proposals. Backend returns HTTP 403 Forbidden.\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Data Name}{Description}
+\texttt{proposals} & Array of proposal entities with populated freelancer profiles.\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Client inspects all candidate bids for the specified job.
+\end{itemize}
+
+% -----------------------------------------------------------------
+% UC-32.09: View Proposal Detail
+% -----------------------------------------------------------------
+\subsubsection{Function: View Proposal Detail}
+
+\fnhead{Function Trigger}
+A client clicks on an applicant's proposal card.\newline
+\textbf{Navigation path:} Job Proposals $\rightarrow$ Click Candidate Row (\texttt{/client/proposals/:id}).
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item \textbf{Primary Actor:} Client.
+    \item \textbf{Supporting Systems:} Frevia Web application, Frevia REST API, and PostgreSQL database.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent Gives clients an in-depth view of a specific candidate's application, including full cover letter, qualifications match percentage, portfolio attachments, and direct hiring controls.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item In-depth application review drawer or screen at \texttt{/client/proposals/:id}.
+    \item Action toolbar with ``Message Freelancer'', ``Accept Proposal'', and ``Reject''.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Client requests \texttt{GET /api/client/proposals/:id}.
+    \item Backend confirms that client is the author of the linked job.
+    \item Returns full proposal payload, candidate profile data, and attachment links.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint3/ptai/ViewProposalDetail.png}{Client candidate proposal review interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Candidate overview with rating, earnings, and skills match badge.
+    \item Full text of the applicant's cover letter and downloadable attachments.
+    \item Prominent ``Hire Freelancer'' and ``Decline'' decision buttons.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+\texttt{id} & UUID of the proposal.\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Client must be the author of the job associated with this proposal.
+\end{itemize}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+    \item BR-PR-19: Protects candidate proposal privacy against third-party unauthorized viewers.
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item Client selects a candidate proposal.
+    \item Backend returns comprehensive application data.
+    \item UI renders full application and decision action buttons.
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Case}{Description}
+A1 & Unauthorized access attempt. Returns HTTP 403 Forbidden.\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Data Name}{Description}
+Proposal Details & Complete proposal entity with applicant profile and work samples.\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Client reviews candidate proposal and chooses to hire, chat, or decline.
+\end{itemize}
+

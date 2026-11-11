@@ -1,14 +1,33 @@
 % ========================================================
 % FILE: table_of_contents.tex
+% Front matter: Table of Contents, Table of Figures, Table of Tables
+% Matching Auticare template structure
 % ========================================================
 
 \newpage
 
+% 1. Table of Contents
 \renewcommand{\contentsname}{%
   \normalfont\fontsize{16}{19}\selectfont\color{fptTocBlue}Table of Contents}
 
-\setcounter{tocdepth}{5} % show sections down to subparagraphs
+\setcounter{tocdepth}{2} % Down to subsections (3.x) only, matching Auticare
 
 \tableofcontents
+
+\newpage
+
+% 2. Table of Figures
+\renewcommand{\listfigurename}{%
+  \normalfont\fontsize{16}{19}\selectfont\color{fptTocBlue}Table of Figures}
+
+\listoffigures
+
+\newpage
+
+% 3. Table of Tables
+\renewcommand{\listtablename}{%
+  \normalfont\fontsize{16}{19}\selectfont\color{fptTocBlue}Table of Tables}
+
+\listoftables
 
 \newpage

@@ -1,0 +1,84 @@
+\contentsline {section}{I. Record of Changes}{3}{Doc-Start}%
+\contentsline {section}{II. Release Package \& User Guides}{4}{table.1}%
+\contentsline {section}{\numberline {1}Deliverable Package}{4}{section.1}%
+\contentsline {section}{\numberline {2}Installation Guides}{6}{section.2}%
+\contentsline {subsection}{\numberline {2.1}System Requirements}{6}{subsection.2.1}%
+\contentsline {subsubsection}{\numberline {2.1.1}Hardware Requirements}{6}{subsubsection.2.1.1}%
+\contentsline {subsubsection}{\numberline {2.1.2}Software Prerequisites}{6}{subsubsection.2.1.2}%
+\contentsline {subsection}{\numberline {2.2}Software Prerequisites \& Download Instructions}{7}{subsection.2.2}%
+\contentsline {subsubsection}{\numberline {2.2.1}Step 1: Download and Install Git SCM}{7}{subsubsection.2.2.1}%
+\contentsline {subsubsection}{\numberline {2.2.2}Step 2: Download and Install Node.js LTS and pnpm}{8}{subsubsection.2.2.2}%
+\contentsline {subsubsection}{\numberline {2.2.3}Step 3: Download and Install Docker Desktop}{9}{subsubsection.2.2.3}%
+\contentsline {subsubsection}{\numberline {2.2.4}Step 4: Verify Installed Runtime Environments}{10}{subsubsection.2.2.4}%
+\contentsline {subsection}{\numberline {2.3}Third-Party Services Configuration \& Environment Variables}{10}{subsection.2.3}%
+\contentsline {subsection}{\numberline {2.4}Monorepo Setup, Dependencies \& Database Initialization}{11}{subsection.2.4}%
+\contentsline {subsubsection}{\numberline {2.4.1}Step 1: Clone Repository and Install Dependencies}{11}{subsubsection.2.4.1}%
+\contentsline {subsubsection}{\numberline {2.4.2}Step 2: Configure Environment Files}{12}{subsubsection.2.4.2}%
+\contentsline {subsubsection}{\numberline {2.4.3}Step 3: Database Schema Migration and Initial Seeding}{13}{subsubsection.2.4.3}%
+\contentsline {subsection}{\numberline {2.5}Service Port Mapping}{13}{subsection.2.5}%
+\contentsline {subsection}{\numberline {2.6}System Startup Options}{14}{subsection.2.6}%
+\contentsline {subsubsection}{\numberline {2.6.1}Option 1: Automated Deployment via Docker Compose (Recommended)}{14}{subsubsection.2.6.1}%
+\contentsline {subsubsection}{\numberline {2.6.2}Option 2: Local Development Workflow}{15}{subsubsection.2.6.2}%
+\contentsline {subsection}{\numberline {2.7}Post-Installation System Verification}{16}{subsection.2.7}%
+\contentsline {subsubsection}{\numberline {2.7.1}1. Frontend Web Application Verification}{16}{subsubsection.2.7.1}%
+\contentsline {subsubsection}{\numberline {2.7.2}2. Backend RESTful API \& Health Check Verification}{17}{subsubsection.2.7.2}%
+\contentsline {subsubsection}{\numberline {2.7.3}3. Pre-Configured Test Accounts}{17}{subsubsection.2.7.3}%
+\contentsline {section}{\numberline {3}User Manual}{18}{section.3}%
+\contentsline {subsection}{\numberline {3.1}Overview of the Application \& System Actors}{18}{subsection.3.1}%
+\contentsline {subsection}{\numberline {3.2}Module 2: Authentication \& Session Management}{19}{subsection.3.2}%
+\contentsline {subsubsection}{\numberline {3.2.1}M2.01 -- New User Registration \& Email OTP Verification (UC-01)}{19}{subsubsection.3.2.1}%
+\contentsline {paragraph}{Step-by-Step User Instructions:}{19}{paragraph*.1}%
+\contentsline {paragraph}{Expected Output \& Exception Handling:}{20}{paragraph*.2}%
+\contentsline {subsubsection}{\numberline {3.2.2}M2.02 -- User Authentication via Email \& Password (UC-02)}{21}{subsubsection.3.2.2}%
+\contentsline {paragraph}{Step-by-Step User Instructions:}{21}{paragraph*.3}%
+\contentsline {paragraph}{Expected Output \& Exception Handling:}{21}{paragraph*.4}%
+\contentsline {subsubsection}{\numberline {3.2.3}M2.03 -- Single Sign-On via Google OAuth 2.0 (UC-03)}{23}{subsubsection.3.2.3}%
+\contentsline {paragraph}{Step-by-Step User Instructions:}{23}{paragraph*.5}%
+\contentsline {paragraph}{Expected Output \& Exception Handling:}{23}{paragraph*.6}%
+\contentsline {subsubsection}{\numberline {3.2.4}M2.04 -- Password Recovery \& Reset via Email OTP (UC-04)}{24}{subsubsection.3.2.4}%
+\contentsline {paragraph}{Step-by-Step User Instructions:}{24}{paragraph*.7}%
+\contentsline {paragraph}{Expected Output \& Exception Handling:}{25}{paragraph*.8}%
+\contentsline {subsubsection}{\numberline {3.2.5}M2.05 -- Active Login Session Monitoring \& Device Audit (UC-05.01)}{26}{subsubsection.3.2.5}%
+\contentsline {paragraph}{Step-by-Step User Instructions:}{26}{paragraph*.9}%
+\contentsline {paragraph}{Expected Output \& Exception Handling:}{26}{paragraph*.10}%
+\contentsline {subsubsection}{\numberline {3.2.6}M2.06 -- Remote Session Revocation \& Security Enforcement (UC-05.02)}{27}{subsubsection.3.2.6}%
+\contentsline {paragraph}{Step-by-Step User Instructions:}{27}{paragraph*.11}%
+\contentsline {paragraph}{Expected Output \& Exception Handling:}{27}{paragraph*.12}%
+\contentsline {subsubsection}{\numberline {3.2.7}M2.07 -- Secure User Sign-Out \& Session Invalidation (UC-05.03)}{28}{subsubsection.3.2.7}%
+\contentsline {paragraph}{Step-by-Step User Instructions:}{28}{paragraph*.13}%
+\contentsline {paragraph}{Expected Output \& Exception Handling:}{28}{paragraph*.14}%
+\contentsline {subsection}{\numberline {3.3}Module 14: Administrator System, RBAC \& User Management}{29}{subsection.3.3}%
+\contentsline {subsubsection}{\numberline {3.3.1}M14.01 -- Administrator Central Operations Dashboard (\texttt {/admin})}{29}{subsubsection.3.3.1}%
+\contentsline {paragraph}{Step-by-Step User Instructions:}{29}{paragraph*.15}%
+\contentsline {paragraph}{Expected Output \& Exception Handling:}{30}{paragraph*.16}%
+\contentsline {subsubsection}{\numberline {3.3.2}M14.02 -- Administrator Profile, Identity \& System Privileges (\texttt {/admin/users/1})}{31}{subsubsection.3.3.2}%
+\contentsline {paragraph}{Step-by-Step User Instructions:}{31}{paragraph*.17}%
+\contentsline {paragraph}{Expected Output \& Exception Handling:}{31}{paragraph*.18}%
+\contentsline {subsubsection}{\numberline {3.3.3}M14.03 -- System Roles \& Custom Roles Management (UC-06.01 to UC-06.05)}{32}{subsubsection.3.3.3}%
+\contentsline {paragraph}{Step-by-Step User Instructions:}{32}{paragraph*.19}%
+\contentsline {paragraph}{Expected Output \& Exception Handling:}{33}{paragraph*.20}%
+\contentsline {subsubsection}{\numberline {3.3.4}M14.04 -- Dynamic Role-Permission Assignment Matrix (UC-06.06)}{34}{subsubsection.3.3.4}%
+\contentsline {paragraph}{Step-by-Step User Instructions:}{34}{paragraph*.21}%
+\contentsline {paragraph}{Expected Output \& Exception Handling:}{34}{paragraph*.22}%
+\contentsline {subsubsection}{\numberline {3.3.5}M14.05 -- System API Permission Catalog \& Multi-Criteria Filtering (UC-15.01 to UC-15.04)}{35}{subsubsection.3.3.5}%
+\contentsline {paragraph}{Step-by-Step User Instructions:}{35}{paragraph*.23}%
+\contentsline {paragraph}{Expected Output \& Exception Handling:}{36}{paragraph*.24}%
+\contentsline {subsubsection}{\numberline {3.3.6}M14.06 -- User Directory Administration \& Direct Account Provisioning (UC-07.01 to UC-07.03)}{37}{subsubsection.3.3.6}%
+\contentsline {paragraph}{Step-by-Step User Instructions:}{37}{paragraph*.25}%
+\contentsline {paragraph}{Expected Output \& Exception Handling:}{38}{paragraph*.26}%
+\contentsline {subsubsection}{\numberline {3.3.7}M14.07 -- User Account Status Management \& Suspension/Reactivation (UC-07.04 to UC-07.05)}{39}{subsubsection.3.3.7}%
+\contentsline {paragraph}{Step-by-Step User Instructions:}{39}{paragraph*.27}%
+\contentsline {paragraph}{Expected Output \& Exception Handling:}{39}{paragraph*.28}%
+\contentsline {subsubsection}{\numberline {3.3.8}M14.08 -- Comprehensive User Multi-Profile Management (UC-07.06 to UC-07.07)}{41}{subsubsection.3.3.8}%
+\contentsline {paragraph}{Step-by-Step User Instructions:}{41}{paragraph*.29}%
+\contentsline {paragraph}{Expected Output \& Exception Handling:}{41}{paragraph*.30}%
+\contentsline {subsection}{\numberline {3.4}Module 15: Administrator Master Data Catalog Management}{42}{subsection.3.4}%
+\contentsline {subsubsection}{\numberline {3.4.1}M15.01 -- Skills Catalog Management with Soft Delete \& Restore (UC-11.01 to UC-11.06)}{42}{subsubsection.3.4.1}%
+\contentsline {paragraph}{Step-by-Step User Instructions:}{42}{paragraph*.31}%
+\contentsline {paragraph}{Expected Output \& Exception Handling:}{43}{paragraph*.32}%
+\contentsline {subsubsection}{\numberline {3.4.2}M15.02 -- Job Categories \& Industry Classification Management (UC-12.01 to UC-12.06)}{44}{subsubsection.3.4.2}%
+\contentsline {paragraph}{Step-by-Step User Instructions:}{44}{paragraph*.33}%
+\contentsline {paragraph}{Expected Output \& Exception Handling:}{44}{paragraph*.34}%
+\contentsline {subsubsection}{\numberline {3.4.3}M15.03 -- Forum Discussion Categories Management (UC-13.01 to UC-13.06)}{46}{subsubsection.3.4.3}%
+\contentsline {paragraph}{Step-by-Step User Instructions:}{46}{paragraph*.35}%
+\contentsline {paragraph}{Expected Output \& Exception Handling:}{46}{paragraph*.36}%

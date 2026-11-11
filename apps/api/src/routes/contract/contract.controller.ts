@@ -7,7 +7,10 @@ import {
   Patch,
   Post,
   Query,
+  Res,
+  StreamableFile,
 } from '@nestjs/common';
+import type { Response } from 'express';
 import { ZodSerializerDto } from 'nestjs-zod';
 import { UserActive } from '../../shared/decorators/user-active.decorators';
 import {
@@ -67,6 +70,26 @@ export class ContractController {
     @Param('id', ParseIntPipe) contractId: number,
   ) {
     return this.contractService.getContractDetail(userId, roleName, contractId);
+  }
+
+  @Get(':id/pdf')
+  async getContractPdf(
+    @UserActive('userId') userId: number,
+    @UserActive('roleName') roleName: string,
+    @Param('id', ParseIntPipe) contractId: number,
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<StreamableFile> {
+    const { buffer, fileName } = await this.contractService.getContractPdf(
+      userId,
+      roleName,
+      contractId,
+    );
+    res.set({
+      'Content-Type': 'application/pdf',
+      'Content-Disposition': `inline; filename="${fileName}"`,
+      'Content-Length': buffer.length.toString(),
+    });
+    return new StreamableFile(buffer);
   }
 
   @Post()
