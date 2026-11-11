@@ -18,8 +18,12 @@ export const conversationKeys = {
   // Key cho danh sách hội thoại của user hiện tại
   list: () => ["conversations", "list"] as const,
 
+  // Key cho thông tin chi tiết của 1 hội thoại
+  detail: (idOrSlug: number | string) =>
+    ["conversations", "detail", idOrSlug] as const,
+
   // Key cho danh sách tin nhắn của 1 hội thoại
-  messages: (conversationId: number) =>
+  messages: (conversationId: number | string) =>
     ["conversations", "messages", conversationId] as const,
 };
 
@@ -54,9 +58,34 @@ export function useConversations() {
 }
 
 /**
+ * Lấy chi tiết 1 hội thoại theo id hoặc slug.
+ */
+export function useConversationDetail(
+  conversationIdOrSlug: number | string | null | undefined,
+) {
+  const extractData = useApiDataExtractor("chat");
+
+  return useQuery({
+    queryKey: conversationIdOrSlug
+      ? conversationKeys.detail(conversationIdOrSlug)
+      : (["conversations", "detail", "empty"] as const),
+    queryFn: () =>
+      conversationIdOrSlug
+        ? conversationApiRequest
+            .getConversation(conversationIdOrSlug)
+            .then(extractData)
+        : null,
+    enabled: Boolean(conversationIdOrSlug),
+    staleTime: 30 * 1000,
+  });
+}
+
+/**
  * Lấy danh sách tin nhắn của 1 hội thoại.
  */
-export function useConversationMessages(conversationId: number) {
+export function useConversationMessages(
+  conversationId: number | string,
+) {
   const extractData = useApiDataExtractor("chat");
 
   return useQuery({
@@ -65,7 +94,10 @@ export function useConversationMessages(conversationId: number) {
       conversationApiRequest
         .getMessages(conversationId)
         .then(extractData),
-    enabled: conversationId > 0,
+    enabled:
+      typeof conversationId === "number"
+        ? conversationId > 0
+        : Boolean(conversationId && conversationId.trim()),
     staleTime: 15 * 1000,
   });
 }
@@ -83,7 +115,7 @@ export function useSendConversationMessage() {
       message,
       attachment,
     }: {
-      conversationId: number;
+      conversationId: number | string;
       message: string;
       attachment?: MessageAttachmentType;
     }) =>
@@ -117,7 +149,7 @@ export function useUploadConversationFile() {
       conversationId,
       file,
     }: {
-      conversationId: number;
+      conversationId: number | string;
       file: File;
     }) =>
       conversationApiRequest
@@ -134,7 +166,7 @@ export function useMarkConversationRead() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (conversationId: number) =>
+    mutationFn: (conversationId: number | string) =>
       conversationApiRequest.markAsRead(conversationId).then(extractData),
     onSuccess: (_data, conversationId) => {
       queryClient.invalidateQueries({ queryKey: conversationKeys.list() });
@@ -171,7 +203,7 @@ export function useHideConversation() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (conversationId: number) =>
+    mutationFn: (conversationId: number | string) =>
       conversationApiRequest.hideConversation(conversationId).then(extractData),
     onSuccess: (_data, conversationId) => {
       // Xóa conversation khỏi cache danh sách ngay lập tức
@@ -179,7 +211,11 @@ export function useHideConversation() {
         conversationKeys.list(),
         (old) => {
           if (!old) return old;
-          return old.filter((c) => c.id !== conversationId);
+          return old.filter(
+            (c) =>
+              c.id !== Number(conversationId) &&
+              c.slug !== String(conversationId),
+          );
         },
       );
       queryClient.invalidateQueries({ queryKey: conversationKeys.list() });
@@ -199,7 +235,7 @@ export function useDeleteConversationMessage() {
       conversationId,
       messageId,
     }: {
-      conversationId: number;
+      conversationId: number | string;
       messageId: number;
     }) =>
       conversationApiRequest
@@ -231,7 +267,7 @@ export function usePinConversation() {
       conversationId,
       pinned,
     }: {
-      conversationId: number;
+      conversationId: number | string;
       pinned: boolean;
     }) =>
       conversationApiRequest

@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../../shared/services/prisma.service';
-import { DirectMessage, Conversation } from '@prisma/client';
+import { Conversation, DirectMessage } from '@prisma/client';
 import { MessageAttachmentType } from '@shared/types';
+import { createConversationSlug } from '../../shared/helper/conversation.slug';
+import { PrismaService } from '../../shared/services/prisma.service';
 
 @Injectable()
 export class ConversationRepository {
@@ -104,6 +105,35 @@ export class ConversationRepository {
     });
   }
 
+  // Lấy conversation theo slug, chỉ khi user là participant
+  async findConversationBySlugForUser(
+    slug: string,
+    userId: number,
+  ): Promise<Conversation | null> {
+    return this.prisma.conversation.findFirst({
+      where: {
+        slug,
+        deletedAt: null,
+        OR: [{ participant1: userId }, { participant2: userId }],
+      },
+    });
+  }
+
+  // Lấy conversation theo id hoặc slug, chỉ khi user là participant
+  async findConversationByIdOrSlugForUser(
+    idOrSlug: number | string,
+    userId: number,
+  ): Promise<Conversation | null> {
+    const isNumeric =
+      typeof idOrSlug === 'number' ||
+      (/^\d+$/.test(idOrSlug) && Number.isSafeInteger(Number(idOrSlug)));
+
+    if (isNumeric) {
+      return this.findConversationByIdForUser(Number(idOrSlug), userId);
+    }
+    return this.findConversationBySlugForUser(String(idOrSlug), userId);
+  }
+
   // Lấy conversation theo id (không kiểm tra quyền)
   async findConversationById(
     conversationId: number,
@@ -197,9 +227,14 @@ export class ConversationRepository {
   async createConversation(
     participant1: number,
     participant2: number,
+    slug?: string,
   ): Promise<Conversation> {
     return this.prisma.conversation.create({
-      data: { participant1, participant2 },
+      data: {
+        participant1,
+        participant2,
+        slug: slug ?? createConversationSlug(),
+      },
     });
   }
 

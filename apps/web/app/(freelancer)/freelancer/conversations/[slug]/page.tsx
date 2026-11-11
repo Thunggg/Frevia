@@ -3,16 +3,15 @@ import authServerRequest from "@/apiRequests/auth.server";
 import { ChatView } from "@/app/conversations/components/chat-view";
 
 type FreelancerConversationDetailPageProps = {
-  params: Promise<{ conversationId: string }>;
+  params: Promise<{ slug: string }>;
 };
 
 const FreelancerConversationDetailPage = async ({
   params,
 }: FreelancerConversationDetailPageProps) => {
-  const { conversationId } = await params;
-  const conversationIdNum = Number(conversationId);
+  const { slug } = await params;
 
-  if (isNaN(conversationIdNum) || conversationIdNum <= 0) {
+  if (!slug || !slug.trim()) {
     notFound();
   }
 
@@ -21,7 +20,7 @@ const FreelancerConversationDetailPage = async ({
 
   return (
     <ChatView
-      conversationId={conversationIdNum}
+      conversationSlug={slug}
       currentUserId={currentUserId}
     />
   );
