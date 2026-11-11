@@ -42,8 +42,6 @@ export function getTransactionTypeLabel(type: TransactionType["type"]): string {
       return "Dispute Fee";
     case "REFUND":
       return "Refund";
-    case "WITHDRAWAL":
-      return "Wallet Withdrawal";
     case "ARBITRATOR_PAYOUT":
       return "Arbitrator Payout";
     default:

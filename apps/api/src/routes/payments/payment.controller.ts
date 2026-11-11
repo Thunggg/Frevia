@@ -24,33 +24,23 @@ import {
   CreateOnboardingLinkBodyDTO,
   CreatePaymentIntentResponseDTO,
   CreateSetupIntentResponseDTO,
-  CreateWithdrawalBodyDTO,
-  CreateWithdrawalResponseDTO,
   DisputeSettlementBodyDTO,
   DisputeSettlementResponseDTO,
   GetSavedPaymentMethodsResponseDTO,
   GetTransactionListQueryDTO,
   GetTransactionListResponseDTO,
-  GetWithdrawalListQueryDTO,
-  GetWithdrawalListResponseDTO,
   PaymentMethodActionResponseDTO,
-  ProcessWithdrawalBodyDTO,
   RefundMilestoneResponseDTO,
   ReleaseMilestoneResponseDTO,
   SetDefaultPaymentMethodBodyDTO,
   StripeConnectStatusResponseDTO,
   StripeOnboardingLinkResponseDTO,
   SyncCheckoutSessionResponseDTO,
-  WalletSummaryResponseDTO,
-  WithdrawalRequestDTO,
 } from './payment.dto';
 import { PaymentService } from './payment.service';
 import type {
-  CreateWithdrawalBodyType,
   DisputeSettlementBodyType,
   GetTransactionListQueryType,
-  GetWithdrawalListQueryType,
-  ProcessWithdrawalBodyType,
 } from '@shared/types';
 
 /**
@@ -183,6 +173,7 @@ export class PaymentController {
       userId,
       contractId,
       body.milestoneIds,
+      body.paymentMethodId,
     );
   }
 
@@ -313,67 +304,6 @@ export class PaymentController {
   // =========================================================================
   // 5. LỊCH SỬ GIAO DỊCH, ĐỒNG BỘ TRẠNG THÁI & STRIPE WEBHOOK
   // =========================================================================
-
-  /**
-   * Lấy số dư ví nội bộ và thống kê thu nhập/rút tiền của người dùng hiện tại.
-   */
-  @Get('wallet')
-  @ZodSerializerDto(WalletSummaryResponseDTO)
-  getWalletSummary(@UserActive('userId') userId: number) {
-    return this.paymentService.getWalletSummary(userId);
-  }
-
-  /**
-   * Lấy danh sách yêu cầu rút tiền có phân trang (Admin xem tất cả, Freelancer xem của mình).
-   */
-  @Get('withdrawals')
-  @ZodSerializerDto(GetWithdrawalListResponseDTO)
-  getWithdrawals(
-    @UserActive('userId') userId: number,
-    @UserActive('roleName') roleName: string,
-    @Query() query: GetWithdrawalListQueryDTO,
-  ) {
-    return this.paymentService.getWithdrawals(
-      userId,
-      roleName,
-      query as GetWithdrawalListQueryType,
-    );
-  }
-
-  /**
-   * Tạo yêu cầu rút tiền từ ví nội bộ về tài khoản ngân hàng (không cần onboarding Stripe)
-   * hoặc chuyển nhanh sang Stripe Express nếu đã liên kết.
-   */
-  @Post('withdrawals')
-  @ZodSerializerDto(CreateWithdrawalResponseDTO)
-  requestWithdrawal(
-    @UserActive('userId') userId: number,
-    @Body() body: CreateWithdrawalBodyDTO,
-  ) {
-    return this.paymentService.requestWithdrawal(
-      userId,
-      body as CreateWithdrawalBodyType,
-    );
-  }
-
-  /**
-   * [Admin] Xử lý duyệt hoàn tất hoặc từ chối (hoàn tiền lại ví) yêu cầu rút tiền qua ngân hàng.
-   */
-  @Post('withdrawals/:withdrawalId/process')
-  @ZodSerializerDto(WithdrawalRequestDTO)
-  processWithdrawal(
-    @UserActive('userId') userId: number,
-    @UserActive('roleName') roleName: string,
-    @Param('withdrawalId', ParseIntPipe) withdrawalId: number,
-    @Body() body: ProcessWithdrawalBodyDTO,
-  ) {
-    return this.paymentService.processWithdrawal(
-      roleName,
-      userId,
-      withdrawalId,
-      body as ProcessWithdrawalBodyType,
-    );
-  }
 
   /**
    * Lấy danh sách lịch sử giao dịch có phân trang/lọc theo `GetTransactionListQueryDTO`.

@@ -150,35 +150,3 @@ export const PaymentForbiddenException = (message?: string) =>
       path: 'permission',
     },
   ]);
-
-export const InsufficientWalletBalanceException = () =>
-  new UnprocessableEntityException([
-    {
-      message: ManagePaymentMessage.INSUFFICIENT_WALLET_BALANCE,
-      path: 'amount',
-    },
-  ]);
-
-export const InvalidWithdrawalAmountException = () =>
-  new BadRequestException([
-    {
-      message: ManagePaymentMessage.INVALID_WITHDRAWAL_AMOUNT,
-      path: 'amount',
-    },
-  ]);
-
-export const WithdrawalNotFoundException = () =>
-  new NotFoundException([
-    {
-      message: ManagePaymentMessage.WITHDRAWAL_NOT_FOUND,
-      path: 'withdrawalId',
-    },
-  ]);
-
-export const WithdrawalAlreadyProcessedException = () =>
-  new UnprocessableEntityException([
-    {
-      message: ManagePaymentMessage.WITHDRAWAL_ALREADY_PROCESSED,
-      path: 'status',
-    },
-  ]);

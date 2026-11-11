@@ -142,11 +142,8 @@ export function MilestoneDetailContent({
       await queryClient.invalidateQueries({
         queryKey: ["client-transactions"],
       });
-      await queryClient.invalidateQueries({
-        queryKey: ["wallet-summary"],
-      });
       toastSuccess({
-        message: `Payout credited to freelancer's wallet for "${milestone.title}" (5% freelancer fee deducted).`,
+        message: `Payout transferred via Stripe for "${milestone.title}" (5% freelancer fee deducted).`,
       });
     } catch (error) {
       toastError({

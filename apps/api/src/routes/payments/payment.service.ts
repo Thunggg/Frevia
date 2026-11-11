@@ -4,19 +4,16 @@ import {
   ContractStatus,
   DisputeStatus,
   MilestonePaymentStatus,
+  MilestoneStatus,
   Prisma,
   TransactionStatus,
   TransactionType,
-  WithdrawalMethod,
 } from '@prisma/client';
 import {
   ContractHoldActionResponseType,
   CreateContractHoldResponseType,
-  CreateWithdrawalBodyType,
   DisputeSettlementBodyType,
   GetTransactionListQueryType,
-  GetWithdrawalListQueryType,
-  ProcessWithdrawalBodyType,
   RoleName,
 } from '@shared/types';
 import { envConfig } from '../../shared/config/validate-env';
@@ -28,7 +25,6 @@ import {
   HoldIntentCancelFailedException,
   HoldIntentCaptureFailedException,
   HoldMilestoneRequiredException,
-  InvalidWithdrawalAmountException,
   MilestoneAlreadyReleasedException,
   MilestoneNotEligibleForFundingException,
   MilestoneNotFundedException,
@@ -380,6 +376,7 @@ export class PaymentService {
     userId: number,
     contractId: number,
     milestoneIds: number[],
+    paymentMethodId?: string,
   ): Promise<CreateContractHoldResponseType> {
     const contract = await this.paymentRepo.findContractById(contractId);
     if (!contract) {
@@ -447,20 +444,53 @@ export class PaymentService {
       contract.client.stripeCustomerId,
     );
 
-    const paymentIntent = await this.stripeService.createPaymentIntent({
-      amountInCents: Math.round(totalAmount * 100),
-      currency: 'usd',
-      customerId,
-      captureMethod: 'manual',
-      metadata: {
-        type: 'CONTRACT_HOLD',
-        contractId: String(contractId),
-        userId: String(userId),
-        milestoneIds: uniqueIds.join(','),
-        milestonesAmount: String(milestonesAmount),
-        clientFeeAmount: String(clientFeeAmount),
-      },
-    });
+    if (paymentMethodId) {
+      const pm =
+        await this.stripeService.retrievePaymentMethod(paymentMethodId);
+      const pmCustomer =
+        typeof pm.customer === 'string' ? pm.customer : pm.customer?.id;
+      if (pmCustomer && pmCustomer !== customerId) {
+        throw PaymentForbiddenException(
+          'Payment method belongs to another account',
+        );
+      }
+    }
+
+    const metadata = {
+      type: 'CONTRACT_HOLD',
+      contractId: String(contractId),
+      userId: String(userId),
+      milestoneIds: uniqueIds.join(','),
+      milestonesAmount: String(milestonesAmount),
+      clientFeeAmount: String(clientFeeAmount),
+    };
+
+    let paymentIntent: Stripe.PaymentIntent;
+    try {
+      paymentIntent = await this.stripeService.createPaymentIntent({
+        amountInCents: Math.round(totalAmount * 100),
+        currency: 'usd',
+        customerId,
+        ...(paymentMethodId
+          ? { paymentMethodId, offSessionConfirm: true }
+          : {}),
+        captureMethod: 'manual',
+        metadata,
+      });
+    } catch (err: unknown) {
+      const stripeErr = err as {
+        raw?: { payment_intent?: Stripe.PaymentIntent };
+        message?: string;
+      };
+      if (stripeErr?.raw?.payment_intent?.client_secret) {
+        paymentIntent = stripeErr.raw.payment_intent;
+      } else {
+        const msg =
+          err instanceof Error ? err.message : 'Failed to authorize card hold';
+        this.logger.error(`createContractHoldIntent failed: ${msg}`);
+        throw new HttpException(msg, HttpStatus.PAYMENT_REQUIRED);
+      }
+    }
 
     await this.paymentRepo.setContractHoldIntent({
       contractId,
@@ -468,6 +498,8 @@ export class PaymentService {
       milestoneIds: uniqueIds,
       clientPlatformFee: clientFeeAmount,
     });
+
+    const isAuthorized = paymentIntent.status === 'requires_capture';
 
     await this.paymentRepo.createTransaction({
       userId,
@@ -480,13 +512,21 @@ export class PaymentService {
       stripePaymentIntentId: paymentIntent.id,
       metadata: {
         type: 'CONTRACT_HOLD',
-        holdStatus: 'REQUIRES_CONFIRMATION',
+        holdStatus: isAuthorized ? 'REQUIRES_CAPTURE' : 'REQUIRES_CONFIRMATION',
         contractId,
         milestoneIds: uniqueIds,
         milestonesAmount,
         clientFeeAmount,
       } as Prisma.InputJsonValue,
     });
+
+    if (isAuthorized) {
+      await this.paymentRepo.markContractHoldAuthorized({
+        contractId,
+        paymentIntentId: paymentIntent.id,
+        milestoneIds: uniqueIds,
+      });
+    }
 
     return {
       clientSecret: paymentIntent.client_secret ?? '',
@@ -496,6 +536,8 @@ export class PaymentService {
       platformFeeAmount: clientFeeAmount,
       currency: 'usd',
       milestoneIds: uniqueIds,
+      status: paymentIntent.status,
+      authorized: isAuthorized,
     };
   }
 
@@ -891,31 +933,75 @@ export class PaymentService {
       throw MilestoneNotFundedException();
     }
 
+    const freelancer = milestone.contract.freelancer;
+    if (!freelancer.stripeAccountId) {
+      throw StripeAccountNotConnectedException();
+    }
+    if (!freelancer.stripeOnboardingCompleted) {
+      throw StripeOnboardingIncompleteException();
+    }
+
     const milestoneAmount = Number(milestone.amount);
     const freelancerFee = Math.round(milestoneAmount * 0.05 * 100) / 100;
     const freelancerPayout =
       Math.round((milestoneAmount - freelancerFee) * 100) / 100;
+    const amountInCents = Math.round(freelancerPayout * 100);
 
-    const { newWalletBalance } =
-      await this.paymentRepo.creditMilestoneToWalletAtomic({
-        freelancerId: milestone.contract.freelancerId,
+    const transfer = await this.stripeService.createTransfer({
+      amountInCents,
+      currency: 'usd',
+      destination: freelancer.stripeAccountId,
+      transferGroup: `contract_${contractId}`,
+      metadata: {
+        type: TransactionType.MILESTONE_PAYOUT,
+        contractId: String(contractId),
+        milestoneId: String(milestoneId),
+        freelancerId: String(freelancer.id),
+        freelancerFee: String(freelancerFee),
+      },
+    });
+
+    await this.paymentRepo.updateMilestonePaymentStatus(
+      milestoneId,
+      MilestonePaymentStatus.RELEASED,
+      MilestoneStatus.COMPLETED,
+    );
+
+    await this.paymentRepo.createTransaction({
+      userId: freelancer.id,
+      contractId,
+      milestoneId,
+      amount: freelancerPayout,
+      currency: 'usd',
+      type: TransactionType.MILESTONE_PAYOUT,
+      status: TransactionStatus.SUCCEEDED,
+      stripeTransferId: transfer.id,
+    });
+
+    if (freelancerFee > 0) {
+      await this.paymentRepo.createTransaction({
+        userId: freelancer.id,
         contractId,
         milestoneId,
-        milestoneTitle: milestone.title,
-        milestoneAmount,
-        freelancerPayout,
-        freelancerFee,
+        amount: freelancerFee,
+        currency: 'usd',
+        type: TransactionType.PLATFORM_FEE,
+        status: TransactionStatus.SUCCEEDED,
+        metadata: {
+          type: 'FREELANCER_RELEASE_FEE',
+          feeRole: 'FREELANCER',
+          feePercent: 5,
+          transferId: transfer.id,
+        } as Prisma.InputJsonValue,
       });
+    }
 
     await this.paymentRepo.checkAndCompleteFreelancerFee(contractId);
 
     return {
       success: true,
-      message: 'Milestone payment credited to freelancer wallet successfully',
-      transferId: null,
-      payoutDestination: 'WALLET' as const,
-      releasedAmount: freelancerPayout,
-      newWalletBalance,
+      message: 'Milestone payment released to freelancer successfully',
+      transferId: transfer.id,
     };
   }
 
@@ -1112,14 +1198,26 @@ export class PaymentService {
       });
     }
 
-    // 2. Freelancer payout portion (credited directly to platform wallet)
-    if (body.freelancerAmount > 0) {
-      await this.paymentRepo.creditDisputePayoutToWalletAtomic({
-        freelancerId: contract.freelancerId,
+    // 2. Freelancer payout portion
+    if (body.freelancerAmount > 0 && contract.freelancer.stripeAccountId) {
+      const freelancerPayoutCents = Math.round(body.freelancerAmount * 100);
+      const transfer = await this.stripeService.createTransfer({
+        amountInCents: freelancerPayoutCents,
+        destination: contract.freelancer.stripeAccountId,
+        transferGroup: `dispute_${disputeId}`,
+        metadata: { disputeId: String(disputeId), target: 'freelancer' },
+      });
+
+      await this.paymentRepo.createTransaction({
+        userId: contract.freelancerId,
         contractId: contract.id,
         milestoneId: dispute.milestoneId,
         disputeId,
         amount: body.freelancerAmount,
+        currency: 'usd',
+        type: TransactionType.MILESTONE_PAYOUT,
+        status: TransactionStatus.SUCCEEDED,
+        stripeTransferId: transfer.id,
       });
     }
 
@@ -1132,7 +1230,7 @@ export class PaymentService {
     await this.paymentRepo.updateMilestonePaymentStatus(
       dispute.milestoneId,
       MilestonePaymentStatus.RELEASED,
-      undefined,
+      MilestoneStatus.COMPLETED,
     );
 
     await this.paymentRepo.checkAndCompleteFreelancerFee(contract.id);
@@ -1230,122 +1328,6 @@ export class PaymentService {
     const isAdmin = roleName === RoleName.ADMIN;
     const filter = isAdmin ? {} : { userId };
     return this.paymentRepo.getTransactions(query, filter);
-  }
-
-  async getWalletSummary(userId: number) {
-    return this.paymentRepo.getWalletSummary(userId);
-  }
-
-  async getWithdrawals(
-    userId: number,
-    roleName: string,
-    query: GetWithdrawalListQueryType,
-  ) {
-    const isAdmin = roleName === RoleName.ADMIN;
-    return this.paymentRepo.getWithdrawals(query, isAdmin ? {} : { userId });
-  }
-
-  async requestWithdrawal(userId: number, body: CreateWithdrawalBodyType) {
-    const amount = Math.round(Number(body.amount) * 100) / 100;
-    if (!Number.isFinite(amount) || amount <= 0) {
-      throw InvalidWithdrawalAmountException();
-    }
-
-    const user = await this.paymentRepo.findUserById(userId);
-    if (!user) {
-      throw PaymentForbiddenException();
-    }
-
-    if (body.method === 'STRIPE_EXPRESS') {
-      if (!user.stripeAccountId) {
-        throw StripeAccountNotConnectedException();
-      }
-      if (!user.stripeOnboardingCompleted) {
-        throw StripeOnboardingIncompleteException();
-      }
-
-      const reserved = await this.paymentRepo.createWithdrawalReserveAtomic({
-        userId,
-        amount,
-        method: WithdrawalMethod.STRIPE_EXPRESS,
-        note: body.note?.trim(),
-      });
-
-      try {
-        const transfer = await this.stripeService.createTransfer({
-          amountInCents: Math.round(amount * 100),
-          currency: 'usd',
-          destination: user.stripeAccountId,
-          transferGroup: `withdrawal_${reserved.withdrawal.id}`,
-          metadata: {
-            type: TransactionType.WITHDRAWAL,
-            withdrawalId: String(reserved.withdrawal.id),
-            userId: String(userId),
-          },
-        });
-
-        const completed = await this.paymentRepo.completeStripeWithdrawalAtomic(
-          {
-            withdrawalId: reserved.withdrawal.id,
-            transactionId: reserved.transactionId,
-            stripeTransferId: transfer.id,
-          },
-        );
-
-        return {
-          withdrawal: completed,
-          newBalance: reserved.newBalance,
-          message: 'Withdrawal transferred to your Stripe Express account',
-        };
-      } catch (err: unknown) {
-        const reason =
-          err instanceof Error ? err.message : 'Stripe Express transfer failed';
-        await this.paymentRepo.rollbackFailedStripeWithdrawalAtomic({
-          userId,
-          withdrawalId: reserved.withdrawal.id,
-          transactionId: reserved.transactionId,
-          amount,
-          reason,
-        });
-        throw new HttpException(reason, HttpStatus.BAD_REQUEST);
-      }
-    }
-
-    const reserved = await this.paymentRepo.createWithdrawalReserveAtomic({
-      userId,
-      amount,
-      method: WithdrawalMethod.BANK_TRANSFER,
-      bankName: body.bankName?.trim(),
-      bankAccountNumber: body.bankAccountNumber?.trim(),
-      bankAccountHolder: body.bankAccountHolder?.trim(),
-      note: body.note?.trim(),
-    });
-
-    return {
-      withdrawal: reserved.withdrawal,
-      newBalance: reserved.newBalance,
-      message: 'Bank withdrawal request submitted successfully',
-    };
-  }
-
-  async processWithdrawal(
-    callerRoleName: string,
-    adminId: number,
-    withdrawalId: number,
-    body: ProcessWithdrawalBodyType,
-  ) {
-    if (callerRoleName !== RoleName.ADMIN) {
-      throw PaymentForbiddenException(
-        'Only administrators can process withdrawal requests',
-      );
-    }
-
-    return this.paymentRepo.processWithdrawalByAdminAtomic({
-      withdrawalId,
-      adminId,
-      status: body.status,
-      rejectionReason: body.rejectionReason,
-    });
   }
 
   async processPaymentIntentAuthorized(pi: Stripe.PaymentIntent) {
