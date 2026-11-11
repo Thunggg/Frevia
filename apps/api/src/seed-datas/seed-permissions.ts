@@ -4,6 +4,7 @@ import { HttpMethod, PrismaClient } from '@prisma/client';
 import { RoleName } from '@shared/types';
 import 'dotenv/config';
 import { AppModule } from '../app.module';
+import { expertHasPermission } from '../shared/helper/expert-permission';
 
 if (!process.env.DIRECT_URL) {
   console.log('Cannot find DB URL');
@@ -77,15 +78,6 @@ const clientModules = [
   'PROFILE-REVISIONS',
   'PAYMENTS',
   'RECOMMENDATIONS',
-];
-
-const expertModules = [
-  'AUTH',
-  'SESSIONS',
-  'EXPERT-PROFILE',
-  'PROFILE-REVISIONS',
-  'NOTIFICATIONS',
-  'PAYMENTS',
 ];
 
 type AvailableRoute = {
@@ -295,12 +287,8 @@ async function bootstrap() {
     .map((item) => item.id);
 
   const expertPermissionIds = updatedPermissionInDb
-    .filter(
-      (item) =>
-        expertModules.includes(item.module ?? '') &&
-        !(item.path ?? '').startsWith('/api/admin/') &&
-        !item.path.startsWith('/api/users/') &&
-        !['/api/auth/join-role', '/api/auth/switch-role'].includes(item.path),
+    .filter((item) =>
+      expertHasPermission(item.method, item.path.replace(':id', '1')),
     )
     .map((item) => item.id);
 

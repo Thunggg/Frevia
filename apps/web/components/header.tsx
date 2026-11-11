@@ -50,13 +50,13 @@ import { authApiRequest } from "@/apiRequests/auth";
 import { RoleName } from "@shared/types";
 import { toastError, toastSuccess } from "@repo/ui/components/shadcn/toast";
 
-export type UserRole = "GUEST" | "CLIENT" | "FREELANCER";
+export type UserRole = "GUEST" | "CLIENT" | "FREELANCER" | "EXPERT";
 
 export type HeaderProps = {
   role: UserRole;
 };
 
-type NavRoleKey = "guest" | "client" | "freelancer";
+type NavRoleKey = "guest" | "client" | "freelancer" | "expert";
 
 type NavLinkKey =
   | "findWork"
@@ -79,6 +79,10 @@ type NavLink = {
 };
 
 const roleConfig: Record<UserRole, { nameKey: NavRoleKey; links: NavLink[] }> = {
+  EXPERT: {
+    nameKey: "expert",
+    links: [{ href: "/expert/disputes", labelKey: "disputes" }],
+  },
   GUEST: {
     nameKey: "guest",
     links: [
@@ -114,6 +118,7 @@ const roleConfig: Record<UserRole, { nameKey: NavRoleKey; links: NavLink[] }> = 
     ],
   },
 };
+
 
 function isNavLinkActive(link: NavLink, pathname: string) {
   if (link.exact) return pathname === link.href;
@@ -257,6 +262,7 @@ function useRoleContextAction(role: Exclude<UserRole, "GUEST">) {
     targetRole === RoleName.CLIENT ? t("roles.client") : t("roles.freelancer");
 
   const updateRoleContext = async () => {
+    if (role === "EXPERT") return false;
     if (isMeLoading || !me || isRoleActionPending) return false;
 
     setIsRoleActionPending(true);
@@ -322,14 +328,14 @@ function ProfileDropdown({ role }: { role: Exclude<UserRole, "GUEST"> }) {
     roleActionLabel,
     updateRoleContext,
   } = useRoleContextAction(role);
-  const displayName =
-    me?.profile?.displayName || t(`roles.${profile.nameKey}`);
+  const displayName = me?.profile?.displayName || t(`roles.${profile.nameKey}`);
   const initial = displayName?.charAt(0)?.toUpperCase() ?? "?";
-  const publicProfileHref = me?.profile?.id
-    ? role === "FREELANCER"
-      ? `/profiles/${me.profile.id}`
-      : `/clients/${me.id}`
-    : null;
+  const publicProfileHref =
+    role !== "EXPERT" && me?.profile?.id
+      ? role === "FREELANCER"
+        ? `/profiles/${me.profile.id}`
+        : `/clients/${me.id}`
+      : null;
 
   const logout = async () => {
     await fetch("/api/auth/logout", { method: "POST" });
@@ -392,7 +398,13 @@ function ProfileDropdown({ role }: { role: Exclude<UserRole, "GUEST"> }) {
         <DropdownMenuItem asChild>
           <Link
             href={
-              role === "FREELANCER" ? "/freelancer/profile" : "/account-profile"
+              role === "EXPERT"
+                ? "/expert/profile?edit=1"
+                : role === "FREELANCER"
+                  ? "/freelancer/profile"
+                  : role === "CLIENT"
+                    ? "/client/profile"
+                  : "/account-profile"
             }
             className="cursor-pointer"
           >
@@ -480,34 +492,45 @@ function ProfileDropdown({ role }: { role: Exclude<UserRole, "GUEST"> }) {
             </DropdownMenuItem>
           </>
         )}
-        <DropdownMenuItem asChild>
-          <Link href="/account-profile" className="cursor-pointer">
-            <Link2 className="size-4 text-muted-foreground" />
-            {t("socialLinks")}
-          </Link>
-        </DropdownMenuItem>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem
-          className="cursor-pointer"
-          disabled={isMeLoading || isRoleActionPending}
-          onSelect={(event) => {
-            event.preventDefault();
-            void updateRoleContext();
-          }}
-        >
-          {hasTargetRole ? (
-            <SwitchCamera className="size-4 text-muted-foreground" />
-          ) : (
-            <UserPlus className="size-4 text-muted-foreground" />
-          )}
-          {roleActionLabel}
-        </DropdownMenuItem>
-        <DropdownMenuItem asChild>
-          <Link href="/sessions" className="cursor-pointer">
-            <MonitorSmartphone className="size-4 text-muted-foreground" />
-            {t("sessions")}
-          </Link>
-        </DropdownMenuItem>
+        {role === "EXPERT" ? (
+          <DropdownMenuItem asChild>
+            <Link href="/expert/disputes" className="cursor-pointer">
+              <ShieldCheck className="size-4 text-muted-foreground" />
+              {t("links.disputes")}
+            </Link>
+          </DropdownMenuItem>
+        ) : (
+          <>
+            <DropdownMenuItem asChild>
+              <Link href="/account-profile" className="cursor-pointer">
+                <Link2 className="size-4 text-muted-foreground" />
+                {t("socialLinks")}
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem
+              className="cursor-pointer"
+              disabled={isMeLoading || isRoleActionPending}
+              onSelect={(event) => {
+                event.preventDefault();
+                void updateRoleContext();
+              }}
+            >
+              {hasTargetRole ? (
+                <SwitchCamera className="size-4 text-muted-foreground" />
+              ) : (
+                <UserPlus className="size-4 text-muted-foreground" />
+              )}
+              {roleActionLabel}
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <Link href="/sessions" className="cursor-pointer">
+                <MonitorSmartphone className="size-4 text-muted-foreground" />
+                {t("sessions")}
+              </Link>
+            </DropdownMenuItem>
+          </>
+        )}
         <DropdownMenuSeparator />
         <DropdownMenuItem
           variant="destructive"
@@ -550,9 +573,13 @@ function HeaderActions({ role }: HeaderProps) {
 
   return (
     <div className="ml-auto flex items-center gap-0.5 sm:gap-1">
-      <ContactDialog />
-      <MessageBell />
-      <NotificationsBell />
+      {role !== "EXPERT" && (
+        <>
+          <ContactDialog />
+          <MessageBell />
+          <NotificationsBell />
+        </>
+      )}
       <LanguageSwitcher />
       <ThemeToggle />
       <ProfileDropdown role={role} />
@@ -568,6 +595,7 @@ function MobileProfileNavigation({
   onNavigate: () => void;
 }) {
   const t = useTranslations("nav");
+  const router = useRouter();
   const {
     hasTargetRole,
     isMeLoading,
@@ -576,6 +604,33 @@ function MobileProfileNavigation({
     roleActionLabel,
     updateRoleContext,
   } = useRoleContextAction(role);
+  if (role === "EXPERT") {
+    return (
+      <div className="space-y-1">
+        <Link
+          href="/expert/profile?edit=1"
+          onClick={onNavigate}
+          className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm hover:bg-muted"
+        >
+          <UserRound className="size-4" />
+          {t("profileSettings")}
+        </Link>
+        <button
+          type="button"
+          className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-destructive hover:bg-destructive/10"
+          onClick={async () => {
+            await fetch("/api/auth/logout", { method: "POST" });
+            onNavigate();
+            router.push("/login");
+            router.refresh();
+          }}
+        >
+          <LogOut className="size-4" />
+          {t("logout")}
+        </button>
+      </div>
+    );
+  }
   const publicProfileHref = me?.profile?.id
     ? role === "FREELANCER"
       ? `/profiles/${me.profile.id}`
@@ -629,7 +684,11 @@ function MobileProfileNavigation({
   );
 }
 
-export function Header({ role }: HeaderProps) {
+export function Header({ role: suppliedRole }: HeaderProps) {
+  const { data: me } = useMe();
+  const activeRole = (me?.roles.find((item) => item.isPrimary) ?? me?.roles[0])
+    ?.name;
+  const role = activeRole === RoleName.EXPERT ? "EXPERT" : suppliedRole;
   const t = useTranslations("nav");
   const tCommon = useTranslations("common");
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -702,20 +761,22 @@ export function Header({ role }: HeaderProps) {
             </div>
           ) : (
             <div className="space-y-1 border-t border-border/50 pt-3 dark:border-white/[0.08]">
-              <Link
-                href={
-                  role === "FREELANCER"
-                    ? "/freelancer/conversations"
-                    : role === "CLIENT"
-                      ? "/client/conversations"
-                      : "/conversations"
-                }
-                onClick={closeMenu}
-                className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-[13px] font-medium text-foreground/60 transition-colors hover:bg-black/[0.04] hover:text-foreground dark:text-foreground/65 dark:hover:bg-white/[0.06]"
-              >
-                <MessageSquare className="size-4 text-muted-foreground" />
-                {t("conversations")}
-              </Link>
+              {role !== "EXPERT" && (
+                <Link
+                  href={
+                    role === "FREELANCER"
+                      ? "/freelancer/conversations"
+                      : role === "CLIENT"
+                        ? "/client/conversations"
+                        : "/conversations"
+                  }
+                  onClick={closeMenu}
+                  className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-[13px] font-medium text-foreground/60 transition-colors hover:bg-black/[0.04] hover:text-foreground dark:text-foreground/65 dark:hover:bg-white/[0.06]"
+                >
+                  <MessageSquare className="size-4 text-muted-foreground" />
+                  {t("conversations")}
+                </Link>
+              )}
               <MobileProfileNavigation role={role} onNavigate={closeMenu} />
               <div className="px-3 pt-1 text-[11px] font-medium uppercase tracking-wider text-muted-foreground/60">
                 {t(`roles.${roleConfig[role].nameKey}`)}

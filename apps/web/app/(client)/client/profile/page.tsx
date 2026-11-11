@@ -5,7 +5,8 @@ import { ClientProfileSettings } from "./client-profile-settings";
 
 export default async function ClientProfilePage() {
   const user = await authServerRequest.getMe();
-  const primaryRole = user?.roles.find((role) => role.isPrimary)?.name;
+  const primaryRole =
+    user?.roles.find((role) => role.isPrimary)?.name ?? user?.roles[0]?.name;
 
   if (!user) {
     redirect("/login?redirect=/client/profile");

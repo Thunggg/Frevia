@@ -46,9 +46,8 @@ export function LoginForm({ oauthError }: { oauthError?: string }) {
   }, [oauthError, t]);
 
   const form = useForm<z.infer<typeof LoginBodySchema>>({
-    resolver: useTranslatedResolver<z.infer<typeof LoginBodySchema>>(
-      LoginBodySchema,
-    ),
+    resolver:
+      useTranslatedResolver<z.infer<typeof LoginBodySchema>>(LoginBodySchema),
     defaultValues: {
       email: "",
       password: "",
@@ -72,7 +71,7 @@ export function LoginForm({ oauthError }: { oauthError?: string }) {
             } else if (primaryRole === RoleName.FREELANCER) {
               router.push("/freelancer");
             } else if (primaryRole === RoleName.EXPERT) {
-              router.push("/expert/profile");
+              router.push("/expert/disputes");
             } else {
               router.push("/");
             }

@@ -1705,6 +1705,8 @@
     "navJobCategories": "Danh mục công việc",
     "navMyProposals": "Đề xuất của tôi",
     "navContracts": "Hợp đồng",
+    "navReviews": "Đánh giá",
+    "navBillingPayments": "Thanh toán",
     "navSavedJobs": "Việc đã lưu",
     "navSavedSearches": "Tìm kiếm đã lưu",
     "navMessages": "Tin nhắn",
@@ -2134,8 +2136,51 @@
     "errInvalidValue": "Giá trị này không hợp lệ."
   },
   "expertShell": {
+    "disputes": "Xử lý tranh chấp",
     "profile": "Hồ sơ",
     "logout": "Đăng xuất"
+  },
+  "expertDisputes": {
+    "title": "Xử lý tranh chấp",
+    "subtitle": "Xem xét bằng chứng và đưa ra quyết định giải quyết tranh chấp.",
+    "loading": "Đang tải…",
+    "loadFailed": "Không thể tải khu vực xử lý tranh chấp. Vui lòng thử lại.",
+    "retry": "Thử lại",
+    "back": "Quay lại danh sách",
+    "filter": "Trạng thái",
+    "all": "Tất cả trạng thái",
+    "empty": "Không có tranh chấp phù hợp.",
+    "previous": "Trang trước",
+    "next": "Trang sau",
+    "page": "Trang {page} / {total}",
+    "milestone": "Mốc công việc / số tiền tranh chấp",
+    "parties": "Các bên tranh chấp",
+    "evidence": "Bằng chứng và phản hồi",
+    "submittedBy": "Người dùng #{id}",
+    "openFile": "Mở tệp bằng chứng",
+    "noEvidence": "Chưa có bằng chứng bổ sung.",
+    "currentDecision": "Quyết định hiện tại",
+    "decision": "Đưa ra quyết định",
+    "finalDecision": "Đưa ra quyết định cuối cùng",
+    "splitHint": "Phân chia số tiền tranh chấp cho Freelancer và Client theo đơn vị tiền tệ của mốc công việc. Tổng hai khoản phải bằng số tiền của mốc công việc.",
+    "freelancerAmount": "Số tiền cho Freelancer",
+    "clientAmount": "Số tiền cho Client",
+    "reason": "Lý do quyết định",
+    "invalidDecision": "Nhập số tiền hợp lệ có tổng bằng giá trị mốc công việc và lý do ít nhất 5 ký tự.",
+    "saved": "Đã ghi nhận quyết định.",
+    "confirmDecision": "Gửi quyết định này để hai bên xem xét?",
+    "confirmFinal": "Quyết định cuối cùng sẽ kết thúc tranh chấp và phân chia tiền của mốc công việc. Hãy kiểm tra số tiền và lý do trước khi tiếp tục.",
+    "confirm": "Xác nhận quyết định",
+    "cancel": "Hủy",
+    "statuses": {
+      "OPEN": "Đang mở",
+      "WAITING_RESPONSE": "Chờ phản hồi",
+      "UNDER_REVIEW": "Đang xem xét",
+      "DECISION_MADE": "Đã ra quyết định",
+      "REVIEW_REQUESTED": "Yêu cầu xem xét lại",
+      "FINALIZED": "Đã giải quyết",
+      "CANCELLED": "Đã hủy"
+    }
   },
   "clientProfilePublic": {
     "breadcrumb": "Hồ sơ khách hàng",
@@ -2627,7 +2672,8 @@
     "roles": {
       "guest": "Khách",
       "client": "Khách hàng",
-      "freelancer": "Freelancer"
+      "freelancer": "Freelancer",
+      "expert": "Chuyên gia"
     },
     "links": {
       "findWork": "Tìm việc",

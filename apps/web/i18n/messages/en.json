@@ -1713,6 +1713,8 @@
     "navJobCategories": "Job Categories",
     "navMyProposals": "My Proposals",
     "navContracts": "Contracts",
+    "navReviews": "Reviews",
+    "navBillingPayments": "Billing & Payments",
     "navSavedJobs": "Saved Jobs",
     "navSavedSearches": "Saved Searches",
     "navMessages": "Messages",
@@ -2142,8 +2144,51 @@
     "errInvalidValue": "This value is not valid."
   },
   "expertShell": {
+    "disputes": "Dispute resolution",
     "profile": "Profile",
     "logout": "Log out"
+  },
+  "expertDisputes": {
+    "title": "Dispute resolution",
+    "subtitle": "Review dispute evidence and issue arbitration decisions.",
+    "loading": "Loading…",
+    "loadFailed": "Unable to load the dispute workspace. Please try again.",
+    "retry": "Try again",
+    "back": "Back to disputes",
+    "filter": "Status",
+    "all": "All statuses",
+    "empty": "No disputes match this status.",
+    "previous": "Previous",
+    "next": "Next",
+    "page": "Page {page} of {total}",
+    "milestone": "Milestone / disputed amount",
+    "parties": "Dispute participants",
+    "evidence": "Evidence and responses",
+    "submittedBy": "User #{id}",
+    "openFile": "Open evidence file",
+    "noEvidence": "No additional evidence submitted.",
+    "currentDecision": "Current decision",
+    "decision": "Issue decision",
+    "finalDecision": "Issue final decision",
+    "splitHint": "Allocate the disputed amount between the freelancer and client, using the milestone currency. The amounts must add up to the milestone total.",
+    "freelancerAmount": "Amount for freelancer",
+    "clientAmount": "Amount for client",
+    "reason": "Decision reasoning",
+    "invalidDecision": "Enter valid amounts totaling the milestone amount and a reason of at least 5 characters.",
+    "saved": "Decision recorded.",
+    "confirmDecision": "Submit this decision for both participants to review?",
+    "confirmFinal": "This final decision settles the dispute and distributes the milestone funds. Confirm the amounts and reasoning before continuing.",
+    "confirm": "Confirm decision",
+    "cancel": "Cancel",
+    "statuses": {
+      "OPEN": "Open",
+      "WAITING_RESPONSE": "Awaiting response",
+      "UNDER_REVIEW": "Under review",
+      "DECISION_MADE": "Decision issued",
+      "REVIEW_REQUESTED": "Review requested",
+      "FINALIZED": "Resolved",
+      "CANCELLED": "Cancelled"
+    }
   },
   "clientProfilePublic": {
     "breadcrumb": "Client profile",
@@ -2635,7 +2680,8 @@
     "roles": {
       "guest": "Guest",
       "client": "Client",
-      "freelancer": "Freelancer"
+      "freelancer": "Freelancer",
+      "expert": "Expert"
     },
     "links": {
       "findWork": "Find Work",

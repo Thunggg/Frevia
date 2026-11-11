@@ -10,7 +10,7 @@ export class PrismaService extends PrismaClient {
       connectionString: process.env.DIRECT_URL!,
       // Giới hạn backend của Supabase pooler (session mode) = 15;
       // pool app phải thấp hơn để không bị EMAXCONNSESSION.
-      max: 10,
+      max: 5,
       idleTimeoutMillis: 5_000,
       connectionTimeoutMillis: 10_000,
     });

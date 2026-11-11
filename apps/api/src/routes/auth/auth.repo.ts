@@ -197,7 +197,10 @@ export class AuthRepository {
   async findUserForLogin(email: string) {
     return await this.prisma.user.findUnique({
       where: { email, deletedAt: null },
-      include: {
+      select: {
+        id: true,
+        password: true,
+        isBanned: true,
         userRoles: {
           include: { role: true },
           orderBy: {
@@ -305,7 +308,11 @@ export class AuthRepository {
         id: userId,
         deletedAt: null,
       },
-      include: {
+      select: {
+        id: true,
+        email: true,
+        isBanned: true,
+        deletedAt: true,
         profile: {
           select: {
             id: true,

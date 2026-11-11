@@ -45,6 +45,20 @@ export class DisputeService {
 
   constructor(private readonly disputeRepo: DisputeRepository) {}
 
+  async requireActiveExpert(userId: number) {
+    if (!(await this.disputeRepo.findActiveExpert(userId))) {
+      throw DisputeForbiddenException();
+    }
+  }
+
+  private async requireArbitrator(roleName: string, userId?: number) {
+    if (roleName === RoleName.ADMIN) return;
+    if (roleName === RoleName.EXPERT && userId !== undefined) {
+      return this.requireActiveExpert(userId);
+    }
+    throw DisputeForbiddenException();
+  }
+
   /**
    * Tạo Dispute mới cho Milestone (chỉ Client hoặc Freelancer của hợp đồng).
    */
@@ -195,6 +209,7 @@ export class DisputeService {
    */
   async getDisputeDetail(userId: number, roleName: string, disputeId: number) {
     try {
+      if (roleName === RoleName.EXPERT) await this.requireActiveExpert(userId);
       const dispute = await this.disputeRepo.findDisputeById(disputeId);
       if (!dispute) {
         throw DisputeNotFoundException();
@@ -203,7 +218,8 @@ export class DisputeService {
       const isParticipant =
         dispute.openedById === userId ||
         dispute.respondentId === userId ||
-        roleName === RoleName.ADMIN;
+        roleName === RoleName.ADMIN ||
+        roleName === RoleName.EXPERT;
       if (!isParticipant) {
         throw DisputeForbiddenException();
       }
@@ -263,11 +279,13 @@ export class DisputeService {
   /**
    * Danh sách Dispute cho Admin (phân trang + lọc theo trạng thái).
    */
-  async adminListDisputes(roleName: string, query: GetDisputeListQueryType) {
+  async adminListDisputes(
+    roleName: string,
+    query: GetDisputeListQueryType,
+    userId?: number,
+  ) {
     try {
-      if (roleName !== RoleName.ADMIN) {
-        throw DisputeForbiddenException();
-      }
+      await this.requireArbitrator(roleName, userId);
 
       return await this.disputeRepo.listDisputes(query);
     } catch (error) {
@@ -287,9 +305,7 @@ export class DisputeService {
     body: AdminDisputeDecisionBodyType,
   ) {
     try {
-      if (roleName !== RoleName.ADMIN) {
-        throw DisputeForbiddenException();
-      }
+      await this.requireArbitrator(roleName, adminId);
 
       const dispute = await this.disputeRepo.findDisputeById(disputeId);
       if (!dispute) {
@@ -424,9 +440,7 @@ export class DisputeService {
     body: AdminDisputeFinalDecisionBodyType,
   ) {
     try {
-      if (roleName !== RoleName.ADMIN) {
-        throw DisputeForbiddenException();
-      }
+      await this.requireArbitrator(roleName, adminId);
 
       const dispute = await this.disputeRepo.findDisputeById(disputeId);
       if (!dispute) {

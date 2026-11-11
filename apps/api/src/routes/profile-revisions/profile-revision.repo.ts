@@ -389,6 +389,7 @@ export class ProfileRevisionRepository {
           await transaction.expert.upsert({
             where: { profileId: revision.profileId },
             update: {
+              isActive: true,
               title: data.title,
               expertise: data.expertise ?? [],
               yearsOfExperience: data.yearsOfExperience ?? 0,
@@ -397,6 +398,7 @@ export class ProfileRevisionRepository {
               website: data.website || null,
             },
             create: {
+              isActive: true,
               profileId: revision.profileId,
               title: data.title,
               expertise: data.expertise ?? [],

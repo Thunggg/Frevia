@@ -25,6 +25,7 @@ import {
   PanelLeftClose,
   PanelLeftOpen,
   Sun,
+  Star,
   SwitchCamera,
   UserRound,
 } from "@/components/icons";
@@ -150,6 +151,12 @@ export function ClientSidebar() {
       matchPrefix: true,
     },
     {
+      href: "/client/reviews",
+      labelKey: "navReviews",
+      icon: Star,
+      matchPrefix: true,
+    },
+    {
       href: "/client/conversations",
       labelKey: "navMessages",
       icon: MessageSquare,
@@ -171,9 +178,7 @@ export function ClientSidebar() {
 
   const displayName = me?.profile?.displayName ?? tRole("CLIENT");
   const initial = displayName.charAt(0).toUpperCase();
-  const canSwitchRole = me?.roles.some(
-    (r) => r.name === RoleName.FREELANCER,
-  );
+  const canSwitchRole = me?.roles.some((r) => r.name === RoleName.FREELANCER);
 
   const logout = async () => {
     await fetch("/api/auth/logout", { method: "POST" });

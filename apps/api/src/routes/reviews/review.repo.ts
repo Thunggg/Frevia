@@ -77,7 +77,7 @@ export class ReviewRepository {
   findByContractAndReviewer(contractId: number, reviewerId: number) {
     return this.prisma.review.findUnique({
       where: { contractId_reviewerId: { contractId, reviewerId } },
-      select: { id: true },
+      select: { id: true, deletedAt: true },
     });
   }
 
@@ -95,19 +95,30 @@ export class ReviewRepository {
     revieweeId: number,
     reviewerName: string,
     input: CreateReviewType,
+    deletedReviewId?: number,
   ) {
     return this.prisma.$transaction(async (transaction) => {
-      const review = await transaction.review.create({
-        data: {
-          contractId,
-          reviewerId,
-          revieweeId,
-          overallRating: input.overallRating,
-          breakdown: input.breakdown ?? Prisma.JsonNull,
-          comment: input.comment ?? null,
-        },
-        select: reviewSelect,
-      });
+      const data = {
+        contractId,
+        reviewerId,
+        revieweeId,
+        overallRating: input.overallRating,
+        breakdown: input.breakdown ?? Prisma.JsonNull,
+        comment: input.comment ?? null,
+      };
+      if (deletedReviewId) {
+        await transaction.reviewResponse.updateMany({
+          where: { reviewId: deletedReviewId, deletedAt: null },
+          data: { deletedAt: new Date() },
+        });
+      }
+      const review = deletedReviewId
+        ? await transaction.review.update({
+            where: { id: deletedReviewId, deletedAt: { not: null } },
+            data: { ...data, deletedAt: null, createdAt: new Date() },
+            select: reviewSelect,
+          })
+        : await transaction.review.create({ data, select: reviewSelect });
 
       await transaction.notification.create({
         data: {

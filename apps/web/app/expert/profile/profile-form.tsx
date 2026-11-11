@@ -1,6 +1,8 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
 import { expertProfileApi } from "@/apiRequests/expert-profile";
 import { profileRevisionApiRequest } from "@/apiRequests/profile-revision";
 import { ProfileReviewStatus } from "@/components/profile-review-status";
@@ -23,27 +25,65 @@ const lines = (value: string) =>
 
 export function ExpertProfileForm() {
   const t = useTranslations("expertProfileForm");
+  const tShell = useTranslations("expertShell");
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const editing = searchParams.get("edit") === "1";
   const [profile, setProfile] = useState<ExpertProfileType | null>(null);
   const [revision, setRevision] = useState<ProfileRevisionType | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
-    void Promise.all([
-      expertProfileApi.getMine(),
-      profileRevisionApiRequest.getMine("EXPERT"),
-    ])
-      .then(([profileResponse, revisionResponse]) => {
+    let cancelled = false;
+    let waitingForApproval = false;
+    let inFlight = false;
+    const load = async (initial = false) => {
+      if (inFlight) return;
+      inFlight = true;
+      try {
+        const [profileResponse, revisionResponse] = await Promise.all([
+          expertProfileApi.getMine(),
+          profileRevisionApiRequest.getMine("EXPERT"),
+        ]);
+        if (cancelled) return;
+        const approvedNow =
+          waitingForApproval &&
+          revisionResponse.data.revision?.status === "APPROVED";
+        waitingForApproval =
+          revisionResponse.data.revision?.status === "PENDING" ||
+          (revisionResponse.data.revision?.status === "APPROVED" &&
+            !profileResponse.data.isActive);
         setProfile(profileResponse.data);
         setRevision(revisionResponse.data.revision);
-      })
-      .catch((error) =>
-        toastError({
-          message: error instanceof ApiFail ? error.message : t("loadFailed"),
-        }),
-      )
-      .finally(() => setLoading(false));
-  }, [t]);
+        if (profileResponse.data.isActive && (!editing || approvedNow)) {
+          router.replace("/expert/disputes");
+        }
+      } catch (error) {
+        if (initial && !cancelled)
+          toastError({
+            message: error instanceof ApiFail ? error.message : t("loadFailed"),
+          });
+      } finally {
+        inFlight = false;
+        if (!cancelled) setLoading(false);
+      }
+    };
+    void load(true);
+    const timer = window.setInterval(() => {
+      if (waitingForApproval && document.visibilityState === "visible")
+        void load();
+    }, 5000);
+    const refreshOnFocus = () => {
+      if (waitingForApproval) void load();
+    };
+    window.addEventListener("focus", refreshOnFocus);
+    return () => {
+      cancelled = true;
+      window.clearInterval(timer);
+      window.removeEventListener("focus", refreshOnFocus);
+    };
+  }, [t, router, editing, revision?.status]);
 
   if (loading) {
     return (
@@ -112,6 +152,11 @@ export function ExpertProfileForm() {
       </div>
 
       <ProfileReviewStatus revision={revision} />
+      {profile.isActive && (
+        <Button asChild>
+          <Link href="/expert/disputes">{tShell("disputes")}</Link>
+        </Button>
+      )}
 
       <div className="rounded-xl border bg-card p-5 shadow-sm">
         <div className="flex items-center justify-between text-sm">
@@ -145,81 +190,81 @@ export function ExpertProfileForm() {
       >
         <fieldset disabled={isPending || saving} className="space-y-6">
           <div className="grid gap-5 md:grid-cols-2">
+            <div className="space-y-2">
+              <Label htmlFor="displayName">{t("displayName")}</Label>
+              <Input
+                id="displayName"
+                name="displayName"
+                defaultValue={profile.displayName ?? ""}
+                required
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="title">{t("professionalTitle")}</Label>
+              <Input
+                id="title"
+                name="title"
+                defaultValue={profile.title ?? ""}
+                placeholder={t("titlePlaceholder")}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="yearsOfExperience">
+                {t("yearsOfExperience")}
+              </Label>
+              <Input
+                id="yearsOfExperience"
+                name="yearsOfExperience"
+                type="number"
+                min={0}
+                max={80}
+                defaultValue={profile.yearsOfExperience ?? ""}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="website">{t("website")}</Label>
+              <Input
+                id="website"
+                name="website"
+                type="url"
+                defaultValue={profile.website ?? ""}
+                placeholder={t("websitePlaceholder")}
+              />
+            </div>
+          </div>
           <div className="space-y-2">
-            <Label htmlFor="displayName">{t("displayName")}</Label>
-            <Input
-              id="displayName"
-              name="displayName"
-              defaultValue={profile.displayName ?? ""}
-              required
+            <Label htmlFor="bio">{t("bio")}</Label>
+            <Textarea
+              id="bio"
+              name="bio"
+              rows={5}
+              defaultValue={profile.bio ?? ""}
             />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="title">{t("professionalTitle")}</Label>
-            <Input
-              id="title"
-              name="title"
-              defaultValue={profile.title ?? ""}
-              placeholder={t("titlePlaceholder")}
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="yearsOfExperience">
-              {t("yearsOfExperience")}
-            </Label>
-            <Input
-              id="yearsOfExperience"
-              name="yearsOfExperience"
-              type="number"
-              min={0}
-              max={80}
-              defaultValue={profile.yearsOfExperience ?? ""}
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="website">{t("website")}</Label>
-            <Input
-              id="website"
-              name="website"
-              type="url"
-              defaultValue={profile.website ?? ""}
-              placeholder={t("websitePlaceholder")}
-            />
-          </div>
-          </div>
-          <div className="space-y-2">
-          <Label htmlFor="bio">{t("bio")}</Label>
-          <Textarea
-            id="bio"
-            name="bio"
-            rows={5}
-            defaultValue={profile.bio ?? ""}
-          />
           </div>
           <div className="grid gap-5 md:grid-cols-3">
-          <ListField
-            id="expertise"
-            label={t("expertise")}
-            values={profile.expertise}
-          />
-          <ListField
-            id="education"
-            label={t("education")}
-            values={profile.education}
-          />
-          <ListField
-            id="certifications"
-            label={t("certifications")}
-            values={profile.certifications}
-          />
+            <ListField
+              id="expertise"
+              label={t("expertise")}
+              values={profile.expertise}
+            />
+            <ListField
+              id="education"
+              label={t("education")}
+              values={profile.education}
+            />
+            <ListField
+              id="certifications"
+              label={t("certifications")}
+              values={profile.certifications}
+            />
           </div>
           <div className="flex justify-end border-t pt-5">
             <Button type="submit" disabled={isPending || saving}>
-            {saving ? (
-              <Loader2 className="size-4 animate-spin" />
-            ) : (
-              <Save className="size-4" />
-            )}
+              {saving ? (
+                <Loader2 className="size-4 animate-spin" />
+              ) : (
+                <Save className="size-4" />
+              )}
               {isPending ? t("awaitingReview") : t("submit")}
             </Button>
           </div>
