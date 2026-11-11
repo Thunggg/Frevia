@@ -9,14 +9,12 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useTheme } from "next-themes";
 import {
   Bell,
-  Bookmark,
   ChevronDown,
   ChevronRight,
   CreditCard,
   Eye,
   FileCheck,
   FileText,
-  HelpCircle,
   Languages,
   LogOut,
   MessageSquare,
@@ -25,11 +23,11 @@ import {
   PanelLeftClose,
   PanelLeftOpen,
   Search,
-  SlidersHorizontal,
   Sun,
   SwitchCamera,
   Tag,
   UserRound,
+  Users,
 } from "@/components/icons";
 import { setLocaleCookie } from "@/i18n/actions";
 import { isLocale, type Locale } from "@/i18n/config";
@@ -186,6 +184,12 @@ export function FreelancerSidebar() {
       href: "/freelancer/conversations",
       labelKey: "navMessages",
       icon: MessageSquare,
+      matchPrefix: true,
+    },
+    {
+      href: "/forum",
+      labelKey: "navForum",
+      icon: Users,
       matchPrefix: true,
     },
     {
@@ -485,18 +489,6 @@ export function FreelancerSidebar() {
         </div>
       </nav>
 
-      {/* Bottom: Help */}
-      <div className="border-t border-border px-2.5 py-3">
-        {!collapsed && (
-          <Link
-            href="/forum"
-            className="flex items-center gap-2.5 rounded-xl px-3 py-2 text-xs text-muted-foreground/60 transition-colors hover:text-[#0069D3] dark:hover:text-blue-300"
-          >
-            <HelpCircle className="size-3.5" />
-            {t("helpForum")}
-          </Link>
-        )}
-      </div>
     </aside>
   );
 }
