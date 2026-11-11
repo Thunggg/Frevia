@@ -4,16 +4,15 @@ import { RoleName } from "@shared/types";
 import { ChatView } from "../components/chat-view";
 
 type ConversationDetailPageProps = {
-  params: Promise<{ conversationId: string }>;
+  params: Promise<{ slug: string }>;
 };
 
 const ConversationDetailPage = async ({
   params,
 }: ConversationDetailPageProps) => {
-  const { conversationId } = await params;
-  const conversationIdNum = Number(conversationId);
+  const { slug } = await params;
 
-  if (isNaN(conversationIdNum) || conversationIdNum <= 0) {
+  if (!slug || !slug.trim()) {
     notFound();
   }
 
@@ -22,18 +21,18 @@ const ConversationDetailPage = async ({
     user?.roles.find((role) => role.isPrimary)?.name ?? user?.roles[0]?.name;
 
   if (primaryRole === RoleName.CLIENT) {
-    redirect(`/client/conversations/${conversationId}`);
+    redirect(`/client/conversations/${slug}`);
   }
 
   if (primaryRole === RoleName.FREELANCER) {
-    redirect(`/freelancer/conversations/${conversationId}`);
+    redirect(`/freelancer/conversations/${slug}`);
   }
 
   const currentUserId = user?.id ?? null;
 
   return (
     <ChatView
-      conversationId={conversationIdNum}
+      conversationSlug={slug}
       currentUserId={currentUserId}
     />
   );

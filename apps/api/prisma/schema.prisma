@@ -1490,6 +1490,7 @@ model SharedFile {
 // ============================
 model Conversation {
   id                   Int       @id @default(autoincrement())
+  slug                 String    @unique @default(cuid()) @db.VarChar(100)
   participant1         Int
   participant2         Int
   createdAt            DateTime  @default(now())
@@ -1507,6 +1508,7 @@ model Conversation {
   @@unique([participant1, participant2])
   @@index([participant1])
   @@index([participant2])
+  @@index([slug])
 }
 
 model DirectMessage {

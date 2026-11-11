@@ -15,9 +15,14 @@ import { TokenService } from '../../shared/services/token.service';
 import { ConversationService } from './conversations.service';
 import { MessageAttachmentSchema } from '@shared/types';
 
+const IdOrSlugSchema = z.union([
+  z.number().int().positive(),
+  z.string().min(1),
+]);
+
 const SendMessagePayloadSchema = z
   .object({
-    conversationId: z.number().int().positive(),
+    conversationId: IdOrSlugSchema,
     message: z.string().max(2000).default(''),
     attachment: MessageAttachmentSchema.optional(),
   })
@@ -26,20 +31,20 @@ const SendMessagePayloadSchema = z
   });
 
 const MarkAsReadPayloadSchema = z.object({
-  conversationId: z.number().int().positive(),
+  conversationId: IdOrSlugSchema,
 });
 
 const HideConversationPayloadSchema = z.object({
-  conversationId: z.number().int().positive(),
+  conversationId: IdOrSlugSchema,
 });
 
 const DeleteMessagePayloadSchema = z.object({
-  conversationId: z.number().int().positive(),
+  conversationId: IdOrSlugSchema,
   messageId: z.number().int().positive(),
 });
 
 const TypingPayloadSchema = z.object({
-  conversationId: z.number().int().positive(),
+  conversationId: IdOrSlugSchema,
   isTyping: z.boolean(),
 });
 
@@ -147,13 +152,13 @@ export class ConversationsGateway
         .to(`user:${senderId}`)
         .to(`user:${receiverId}`)
         .emit('message:new', {
-          conversationId,
+          conversationId: conversation.id,
           message: savedMessage,
         });
 
       // Cập nhật danh sách hội thoại realtime (reorder + unread count)
-      await this.emitConversationUpdated(conversationId, senderId);
-      await this.emitConversationUpdated(conversationId, receiverId);
+      await this.emitConversationUpdated(conversation.id, senderId);
+      await this.emitConversationUpdated(conversation.id, receiverId);
 
       return { success: true, message: savedMessage };
     } catch (error) {
@@ -201,8 +206,8 @@ export class ConversationsGateway
           : conversation.participant1;
 
       // Báo cho cả 2 phía để cập nhật trạng thái đã đọc + unread count
-      await this.emitConversationUpdated(conversationId, userId);
-      await this.emitConversationUpdated(conversationId, otherUserId);
+      await this.emitConversationUpdated(conversation.id, userId);
+      await this.emitConversationUpdated(conversation.id, otherUserId);
 
       return { success: true };
     } catch (error) {
@@ -239,7 +244,7 @@ export class ConversationsGateway
 
       await this.conversationService.deleteMessage(
         userId,
-        conversationId,
+        conversation.id,
         messageId,
       );
 
@@ -253,13 +258,13 @@ export class ConversationsGateway
         .to(`user:${userId}`)
         .to(`user:${otherUserId}`)
         .emit('message:deleted', {
-          conversationId,
+          conversationId: conversation.id,
           messageId,
         });
 
       // Cập nhật danh sách hội thoại realtime (last message preview)
-      await this.emitConversationUpdated(conversationId, userId);
-      await this.emitConversationUpdated(conversationId, otherUserId);
+      await this.emitConversationUpdated(conversation.id, userId);
+      await this.emitConversationUpdated(conversation.id, otherUserId);
 
       return { success: true };
     } catch (error) {
@@ -294,13 +299,16 @@ export class ConversationsGateway
     const { conversationId } = parsed.data;
 
     try {
-      await this.conversationService.ensureParticipant(conversationId, userId);
+      const conversation = await this.conversationService.ensureParticipant(
+        conversationId,
+        userId,
+      );
 
-      await this.conversationService.hideConversation(userId, conversationId);
+      await this.conversationService.hideConversation(userId, conversation.id);
 
       // Báo cho chính user để xóa conversation khỏi danh sách ngay lập tức
       this.server.to(`user:${userId}`).emit('conversation:hidden', {
-        conversationId,
+        conversationId: conversation.id,
       });
 
       return { success: true };
@@ -345,7 +353,7 @@ export class ConversationsGateway
 
       // Chỉ gửi tới người còn lại, không gửi lại chính người đang gõ
       this.server.to(`user:${receiverId}`).emit('typing', {
-        conversationId,
+        conversationId: conversation.id,
         isTyping,
       });
 

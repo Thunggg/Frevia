@@ -125,7 +125,7 @@ export function MessageBell() {
                   className="cursor-pointer px-4 py-3 focus:bg-black/[0.03] dark:focus:bg-white/[0.04]"
                 >
                   <Link
-                    href={`${conversationBasePath}/${conversation.id}`}
+                    href={`${conversationBasePath}/${conversation.slug}`}
                     onClick={() => setOpen(false)}
                     className="flex items-start gap-3"
                   >

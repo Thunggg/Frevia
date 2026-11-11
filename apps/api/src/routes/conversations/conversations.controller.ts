@@ -15,6 +15,7 @@ import { ZodSerializerDto, ZodValidationPipe } from 'nestjs-zod';
 import { UserActive } from '../../shared/decorators/user-active.decorators';
 import { ConversationService } from './conversations.service';
 import {
+  ConversationDetailResponseDto,
   CreateConversationBodyDto,
   CreateConversationResponseDto,
   DeleteMessageResponseDto,
@@ -65,13 +66,20 @@ export class ConversationController {
     );
   }
 
+  // Lấy thông tin chi tiết 1 hội thoại theo id hoặc slug
+  @Get(':id')
+  @ZodSerializerDto(ConversationDetailResponseDto)
+  getConversationDetail(
+    @UserActive('userId') userId: number,
+    @Param('id') id: string,
+  ) {
+    return this.conversationService.getConversationDetail(userId, id);
+  }
+
   // Lấy danh sách tin nhắn của 1 hội thoại
   @Get(':id/messages')
   @ZodSerializerDto(GetMessagesResponseDto)
-  getMessages(
-    @UserActive('userId') userId: number,
-    @Param('id', ParseIntPipe) id: number,
-  ) {
+  getMessages(@UserActive('userId') userId: number, @Param('id') id: string) {
     return this.conversationService.getMessages(userId, id);
   }
 
@@ -80,7 +88,7 @@ export class ConversationController {
   @ZodSerializerDto(SendMessageResponseDto)
   sendMessage(
     @UserActive('userId') userId: number,
-    @Param('id', ParseIntPipe) id: number,
+    @Param('id') id: string,
     @Body(new ZodValidationPipe(SendMessageBodyDto))
     body: SendMessageBodyType,
   ) {
@@ -104,7 +112,7 @@ export class ConversationController {
   )
   uploadFile(
     @UserActive('userId') userId: number,
-    @Param('id', ParseIntPipe) id: number,
+    @Param('id') id: string,
     @UploadedFile() file?: Express.Multer.File,
   ): Promise<MessageAttachmentType> {
     return this.conversationService.uploadFile(userId, id, file);
@@ -115,7 +123,7 @@ export class ConversationController {
   @ZodSerializerDto(DeleteMessageResponseDto)
   deleteMessage(
     @UserActive('userId') userId: number,
-    @Param('id', ParseIntPipe) id: number,
+    @Param('id') id: string,
     @Param('messageId', ParseIntPipe) messageId: number,
   ) {
     return this.conversationService.deleteMessage(userId, id, messageId);
@@ -123,10 +131,7 @@ export class ConversationController {
 
   // Đánh dấu tất cả tin nhắn của hội thoại là đã đọc
   @Patch(':id/read')
-  markAsRead(
-    @UserActive('userId') userId: number,
-    @Param('id', ParseIntPipe) id: number,
-  ) {
+  markAsRead(@UserActive('userId') userId: number, @Param('id') id: string) {
     return this.conversationService.markAsRead(userId, id);
   }
 
@@ -135,7 +140,7 @@ export class ConversationController {
   @ZodSerializerDto(HideConversationResponseDto)
   hideConversation(
     @UserActive('userId') userId: number,
-    @Param('id', ParseIntPipe) id: number,
+    @Param('id') id: string,
   ) {
     return this.conversationService.hideConversation(userId, id);
   }
@@ -145,7 +150,7 @@ export class ConversationController {
   @ZodSerializerDto(PinConversationResponseDto)
   pinConversation(
     @UserActive('userId') userId: number,
-    @Param('id', ParseIntPipe) id: number,
+    @Param('id') id: string,
     @Body(new ZodValidationPipe(PinConversationBodyDto))
     body: PinConversationBodyType,
   ) {

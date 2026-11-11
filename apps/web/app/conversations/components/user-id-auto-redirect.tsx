@@ -25,7 +25,7 @@ export function UserIdAutoRedirect({ targetUserId }: { targetUserId: number }) {
 
     createConversation.mutate(targetUserId, {
       onSuccess: (conv) => {
-        router.replace(`${basePath}/${conv.id}`);
+        router.replace(`${basePath}/${conv.slug}`);
       },
       onError: () => {
         router.replace(basePath);

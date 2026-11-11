@@ -169,7 +169,7 @@ export function ProposalDetailSheet({
     try {
       const conv = await createConversation.mutateAsync(freelancerUserId);
       onOpenChange(false);
-      router.push(`/client/conversations/${conv.id}`);
+      router.push(`/client/conversations/${conv.slug ?? conv.id}`);
     } catch {
       onOpenChange(false);
       router.push(`/client/conversations?userId=${freelancerUserId}`);
