@@ -56,8 +56,29 @@ export function NotificationProvider({
       auth: { token },
     });
 
+    const authSocket = io(`${socketUrl}/auth`, {
+      transports: ["websocket"],
+      auth: { token },
+    });
+
     socket.on("connect", () => setConnected(true));
     socket.on("disconnect", () => setConnected(false));
+
+    authSocket.on(
+      "AUTH_FORCE_LOGOUT",
+      async (payload: { reason?: string; type?: string }) => {
+        try {
+          await fetch("/api/auth/logout", { method: "POST" });
+        } catch {
+          // Bỏ qua lỗi mạng nếu có
+        } finally {
+          const reasonMsg =
+            payload?.reason || "Phiên đăng nhập đã kết thúc.";
+          alert(reasonMsg);
+          window.location.href = `/login?reason=${encodeURIComponent(reasonMsg)}`;
+        }
+      },
+    );
 
     socket.on(
       "conversation:updated",
@@ -91,6 +112,7 @@ export function NotificationProvider({
 
     return () => {
       socket.disconnect();
+      authSocket.disconnect();
       setConnected(false);
     };
   }, [socketUrl, token, currentUserId, queryClient]);
