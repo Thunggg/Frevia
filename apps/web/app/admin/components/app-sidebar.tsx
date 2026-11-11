@@ -23,7 +23,6 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
-import { LogoutButton } from "./logout-button";
 import { NavMain, type NavItem } from "./nav-main";
 
 // Cấu hình menu sidebar Admin:
@@ -133,9 +132,6 @@ export function AppSidebar() {
                 <span>{t("sessions")}</span>
               </Link>
             </SidebarMenuButton>
-          </SidebarMenuItem>
-          <SidebarMenuItem>
-            <LogoutButton />
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarFooter>
