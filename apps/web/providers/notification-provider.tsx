@@ -3,7 +3,18 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { io } from "socket.io-client";
+import { useTranslations } from "next-intl";
 import { conversationKeys } from "@/hooks/use-conversation";
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@repo/ui/components/shadcn/alert-dialog";
+import { Button } from "@repo/ui/components/shadcn/button";
+import { Lock, ShieldAlert, LogOut, Loader2 } from "lucide-react";
 import type {
   ConversationListItemType,
   GetConversationsResponseType,
@@ -45,8 +56,18 @@ export function NotificationProvider({
   currentUserId: number | null;
   children: React.ReactNode;
 }) {
+  const t = useTranslations("auth.forceLogout");
   const queryClient = useQueryClient();
   const [connected, setConnected] = useState(false);
+  const [modalState, setModalState] = useState<{
+    isOpen: boolean;
+    type: "BANNED" | "SESSION_REVOKED" | "DEFAULT";
+    customReason?: string;
+  }>({
+    isOpen: false,
+    type: "DEFAULT",
+  });
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   useEffect(() => {
     if (!socketUrl || !token || !currentUserId) return;
@@ -66,17 +87,22 @@ export function NotificationProvider({
 
     authSocket.on(
       "AUTH_FORCE_LOGOUT",
-      async (payload: { reason?: string; type?: string }) => {
-        try {
-          await fetch("/api/auth/logout", { method: "POST" });
-        } catch {
-          // Bỏ qua lỗi mạng nếu có
-        } finally {
-          const reasonMsg =
-            payload?.reason || "Phiên đăng nhập đã kết thúc.";
-          alert(reasonMsg);
-          window.location.href = `/login?reason=${encodeURIComponent(reasonMsg)}`;
-        }
+      (payload: { reason?: string; type?: string }) => {
+        const isBanned =
+          payload?.type === "BANNED" ||
+          payload?.reason?.toLowerCase().includes("khóa") ||
+          payload?.reason?.toLowerCase().includes("banned");
+
+        const isRevoked =
+          payload?.type === "SESSION_REVOKED" ||
+          payload?.reason?.toLowerCase().includes("thu hồi") ||
+          payload?.reason?.toLowerCase().includes("revoked");
+
+        setModalState({
+          isOpen: true,
+          type: isBanned ? "BANNED" : isRevoked ? "SESSION_REVOKED" : "DEFAULT",
+          customReason: payload?.reason,
+        });
       },
     );
 
@@ -117,9 +143,84 @@ export function NotificationProvider({
     };
   }, [socketUrl, token, currentUserId, queryClient]);
 
+  const handleConfirmLogout = async () => {
+    setIsLoggingOut(true);
+    try {
+      await fetch("/api/auth/logout", { method: "POST" });
+    } catch {
+      // Bỏ qua lỗi mạng nếu có
+    } finally {
+      window.location.href = "/login";
+    }
+  };
+
+  const modalTitle =
+    modalState.type === "BANNED"
+      ? t("bannedTitle")
+      : modalState.type === "SESSION_REVOKED"
+        ? t("revokedTitle")
+        : t("defaultTitle");
+
+  const modalDescription =
+    modalState.type === "BANNED"
+      ? t("bannedDescription")
+      : modalState.type === "SESSION_REVOKED"
+        ? t("revokedDescription")
+        : modalState.customReason || t("defaultDescription");
+
   return (
     <NotificationContext.Provider value={{ connected }}>
       {children}
+
+      <AlertDialog open={modalState.isOpen}>
+        <AlertDialogContent
+          className="max-w-md border-border/80 p-6 shadow-2xl sm:max-w-md"
+          onEscapeKeyDown={(e) => e.preventDefault()}
+        >
+          <AlertDialogHeader className="flex flex-col items-center gap-3 text-center sm:items-center sm:text-center">
+            <div
+              className={`flex size-14 items-center justify-center rounded-full ${
+                modalState.type === "BANNED"
+                  ? "bg-destructive/15 text-destructive"
+                  : "bg-amber-500/15 text-amber-600 dark:text-amber-400"
+              }`}
+            >
+              {modalState.type === "BANNED" ? (
+                <Lock className="size-7 stroke-[2.2]" />
+              ) : (
+                <ShieldAlert className="size-7 stroke-[2.2]" />
+              )}
+            </div>
+            <AlertDialogTitle className="cursor-pointer text-xl font-bold tracking-tight text-foreground">
+              {modalTitle}
+            </AlertDialogTitle>
+            <AlertDialogDescription className="cursor-pointer text-sm leading-relaxed text-muted-foreground">
+              {modalDescription}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+
+          <AlertDialogFooter className="mt-4 sm:justify-center">
+            <Button
+              variant={modalState.type === "BANNED" ? "destructive" : "default"}
+              className="w-full sm:w-auto min-w-36 font-medium gap-2"
+              onClick={handleConfirmLogout}
+              disabled={isLoggingOut}
+            >
+              {isLoggingOut ? (
+                <>
+                  <Loader2 className="size-4 animate-spin" />
+                  {t("processing")}
+                </>
+              ) : (
+                <>
+                  <LogOut className="size-4" />
+                  {t("logoutButton")}
+                </>
+              )}
+            </Button>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </NotificationContext.Provider>
   );
 }
