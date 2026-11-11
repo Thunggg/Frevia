@@ -1,7 +1,26 @@
 import { z } from "zod";
 import { ManageContractMessage } from "../message/manage-contract.message";
+import { ManageMilestoneMessage } from "../message/manage-milestone.message";
 import { ContractStatusEnum } from "../constants/contract.constand";
 import { PlatformFeeStatusEnum } from "../constants/payment.constant";
+
+/**
+ * Returns the upper bound timestamp (ms) for a contract's expiration date.
+ * Date-only legacy values saved at 00:00:00.000Z are treated as extending through
+ * the end of that UTC calendar day so same-day milestone deadlines stay valid.
+ */
+export function getEffectiveContractDeadlineMs(expiresAt: Date | string): number {
+  const date = new Date(expiresAt);
+  if (
+    date.getUTCHours() === 0 &&
+    date.getUTCMinutes() === 0 &&
+    date.getUTCSeconds() === 0 &&
+    date.getUTCMilliseconds() === 0
+  ) {
+    return date.getTime() + 86_399_999;
+  }
+  return date.getTime();
+}
 
 export const ContractSchema = z.object({
   id: z.number(),
@@ -21,6 +40,8 @@ export const ContractSchema = z.object({
   clientFeePaidAt: z.coerce.date().nullable().optional(),
   freelancerFeeStatus: PlatformFeeStatusEnum.optional().default("UNPAID"),
   freelancerFeePaidAt: z.coerce.date().nullable().optional(),
+  holdPaymentIntentId: z.string().nullable().optional(),
+  holdMilestoneIds: z.array(z.number()).optional().default([]),
   signedByClient: z.boolean(),
   signedByFreelancer: z.boolean(),
   clientSignedAt: z.coerce.date().nullable().optional(),
@@ -38,32 +59,50 @@ export const CreateContractMilestoneSchema = z.object({
   title: z.string().min(1),
   description: z.string().optional(),
   amount: z.number().positive(),
-  dueDate: z.string().datetime().optional(),
+  dueDate: z
+    .string({ message: ManageMilestoneMessage.DUE_DATE_REQUIRED })
+    .datetime({ message: ManageMilestoneMessage.DUE_DATE_FUTURE })
+    .refine((val) => new Date(val) > new Date(), {
+      message: ManageMilestoneMessage.DUE_DATE_FUTURE,
+    }),
 });
 export type CreateContractMilestoneType = z.infer<typeof CreateContractMilestoneSchema>;
 
-export const CreateContractBodySchema = z.object({
-  proposalId: z
-    .number({ message: ManageContractMessage.PROPOSAL_ID_REQUIRED })
-    .int()
-    .positive(),
+export const CreateContractBodySchema = z
+  .object({
+    proposalId: z
+      .number({ message: ManageContractMessage.PROPOSAL_ID_REQUIRED })
+      .int()
+      .positive(),
 
-  totalAmount: z
-    .number({ message: ManageContractMessage.TOTAL_AMOUNT_REQUIRED })
-    .positive({ message: ManageContractMessage.TOTAL_AMOUNT_POSITIVE }),
+    totalAmount: z
+      .number({ message: ManageContractMessage.TOTAL_AMOUNT_REQUIRED })
+      .positive({ message: ManageContractMessage.TOTAL_AMOUNT_POSITIVE }),
 
-  terms: z.string().optional(),
+    terms: z.string().optional(),
 
-  expiresAt: z
-    .string()
-    .datetime({ message: ManageContractMessage.EXPIRES_AT_FUTURE })
-    .refine((val) => new Date(val) > new Date(), {
-      message: ManageContractMessage.EXPIRES_AT_FUTURE,
-    })
-    .optional(),
+    expiresAt: z
+      .string({ message: ManageContractMessage.EXPIRES_AT_REQUIRED })
+      .datetime({ message: ManageContractMessage.EXPIRES_AT_FUTURE })
+      .refine((val) => new Date(val) > new Date(), {
+        message: ManageContractMessage.EXPIRES_AT_FUTURE,
+      }),
 
-  milestones: z.array(CreateContractMilestoneSchema).optional(),
-});
+    milestones: z.array(CreateContractMilestoneSchema).optional(),
+  })
+  .superRefine((data, ctx) => {
+    if (!data.milestones || data.milestones.length === 0) return;
+    const contractEndMs = getEffectiveContractDeadlineMs(data.expiresAt);
+    data.milestones.forEach((m, index) => {
+      if (new Date(m.dueDate).getTime() > contractEndMs) {
+        ctx.addIssue({
+          code: "custom",
+          message: ManageContractMessage.MILESTONE_DUE_DATE_EXCEEDS_CONTRACT,
+          path: ["milestones", index, "dueDate"],
+        });
+      }
+    });
+  });
 
 export const UpdateContractBodySchema = z.object({
   totalAmount: z

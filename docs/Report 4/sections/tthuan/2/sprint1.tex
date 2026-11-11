@@ -4,6 +4,7 @@
 % =================================================================
 
 % ================= Verify JWT =================
+
 \subsection{Verify JWT}
 
 Verify JWT is the shared security guard protecting API endpoints across all modules.
@@ -11,63 +12,109 @@ Every incoming HTTP request with a Bearer token is intercepted, validated for cr
 signature and expiration time, and verified against the database to guarantee the associated
 session remains active and has not been revoked.
 
-\paragraph{Class Diagram}
+\subsubsection{UC-0 -- Verify JWT}
 
-\kfig{0.92\textwidth}{images/sprint1/tthuan/classDiagram/VerifyJwt}{Class diagram of Verify JWT}{fig:tthuan-cls-verify-jwt}
+\paragraph*{a. Class diagram}
+\kfig{0.92\textwidth}{images/sprint1/tthuan/classDiagram/VerifyJwt}{Class diagram of UC-0 Verify JWT}{fig:tthuan-cls-verify-jwt}
 
-\paragraph{UC-00 -- Verify JWT}
-\kfig{0.78\textwidth}{images/sprint1/tthuan/sequences/VerifyJwt}{Sequence diagram of UC-00 Verify JWT}{fig:tthuan-seq-verify-jwt}
+\paragraph*{b. Sequence diagram}
+\kfig{0.78\textwidth}{images/sprint1/tthuan/sequences/VerifyJwt}{Sequence diagram of UC-0 Verify JWT}{fig:tthuan-seq-verify-jwt}
 
-% ================= Authentication =================
 \subsection{Authentication}
 
 The authentication module covers account registration, email/password and
 Google OAuth login, logout, password recovery, and the JWT/session flow shared
 by all protected endpoints.
 
-\paragraph{Class Diagram}
+\subsubsection{UC-01 -- Login with Google}
 
-\kfig{0.92\textwidth}{images/sprint1/tthuan/classDiagram/AuthClasses}{Class diagram of Authentication}{fig:tthuan-cls-auth}
+\paragraph*{a. Class diagram}
+\kfig{0.92\textwidth}{images/sprint1/tthuan/classDiagram/AuthClasses}{Class diagram of UC-01 Login with Google}{fig:tthuan-cls-login-google}
 
-\paragraph{UC-01 -- Login with Google}
+\paragraph*{b. Sequence diagram}
 \kfig{0.78\textwidth}{images/sprint1/tthuan/sequences/LoginWithGoogle}{Sequence diagram of UC-01 Login with Google}{fig:tthuan-seq-login-google}
 
-\paragraph{UC-02 -- Login}
+\subsubsection{UC-02 -- Login}
+
+\paragraph*{a. Class diagram}
+\kfig{0.92\textwidth}{images/sprint1/tthuan/classDiagram/AuthClasses}{Class diagram of UC-02 Login}{fig:tthuan-cls-login}
+
+\paragraph*{b. Sequence diagram}
 \kfig{0.78\textwidth}{images/sprint1/tthuan/sequences/Login}{Sequence diagram of UC-02 Login}{fig:tthuan-seq-login}
 
-\paragraph{UC-03 -- Logout}
+\subsubsection{UC-03 -- Logout}
+
+\paragraph*{a. Class diagram}
+\kfig{0.92\textwidth}{images/sprint1/tthuan/classDiagram/AuthClasses}{Class diagram of UC-03 Logout}{fig:tthuan-cls-logout}
+
+\paragraph*{b. Sequence diagram}
 \kfig{0.78\textwidth}{images/sprint1/tthuan/sequences/Logout}{Sequence diagram of UC-03 Logout}{fig:tthuan-seq-logout}
 
-\paragraph{UC-04 -- Register}
+\subsubsection{UC-04 -- Register}
+
+\paragraph*{a. Class diagram}
+\kfig{0.92\textwidth}{images/sprint1/tthuan/classDiagram/AuthClasses}{Class diagram of UC-04 Register}{fig:tthuan-cls-register}
+
+\paragraph*{b. Sequence diagram}
 \kfig{0.78\textwidth}{images/sprint1/tthuan/sequences/Register}{Sequence diagram of UC-04 Register}{fig:tthuan-seq-register}
 
-\paragraph{UC-05 -- Forgot Password}
+\subsubsection{UC-05 -- Forgot Password}
+
+\paragraph*{a. Class diagram}
+\kfig{0.92\textwidth}{images/sprint1/tthuan/classDiagram/AuthClasses}{Class diagram of UC-05 Forgot Password}{fig:tthuan-cls-forgot-password}
+
+\paragraph*{b. Sequence diagram}
 \kfig{0.78\textwidth}{images/sprint1/tthuan/sequences/ForgotPassword}{Sequence diagram of UC-05 Forgot Password}{fig:tthuan-seq-forgot-password}
 
-% ================= Role Management =================
 \subsection{Role Management}
 
 Role Management lets an administrator inspect the role catalogue, maintain
 role metadata, and replace the permission set assigned to a role.
 
-\paragraph{Class Diagram}
+\subsubsection{UC-06.01 -- View Role List}
 
-\kfig{0.92\textwidth}{images/sprint1/tthuan/classDiagram/RoleManagement}{Class diagram of Role Management}{fig:tthuan-cls-role-management}
+\paragraph*{a. Class diagram}
+\kfig{0.92\textwidth}{images/sprint1/tthuan/classDiagram/RoleManagement}{Class diagram of UC-06.01 View Role List}{fig:tthuan-cls-view-role-list}
 
-\paragraph{UC-06.01 -- View Role List}
+\paragraph*{b. Sequence diagram}
 \kfig{0.78\textwidth}{images/sprint1/tthuan/sequences/ViewRoleList}{Sequence diagram of UC-06.01 View Role List}{fig:tthuan-seq-view-role-list}
 
-\paragraph{UC-06.02 -- View Role Detail}
+\subsubsection{UC-06.02 -- View Role Detail}
+
+\paragraph*{a. Class diagram}
+\kfig{0.92\textwidth}{images/sprint1/tthuan/classDiagram/RoleManagement}{Class diagram of UC-06.02 View Role Detail}{fig:tthuan-cls-view-role-detail}
+
+\paragraph*{b. Sequence diagram}
 \kfig{0.78\textwidth}{images/sprint1/tthuan/sequences/ViewRoleDetail}{Sequence diagram of UC-06.02 View Role Detail}{fig:tthuan-seq-view-role-detail}
 
-\paragraph{UC-06.03 -- Create Role}
+\subsubsection{UC-06.03 -- Create Role}
+
+\paragraph*{a. Class diagram}
+\kfig{0.92\textwidth}{images/sprint1/tthuan/classDiagram/RoleManagement}{Class diagram of UC-06.03 Create Role}{fig:tthuan-cls-create-role}
+
+\paragraph*{b. Sequence diagram}
 \kfig{0.78\textwidth}{images/sprint1/tthuan/sequences/CreateRole}{Sequence diagram of UC-06.03 Create Role}{fig:tthuan-seq-create-role}
 
-\paragraph{UC-06.04 -- Update Role}
+\subsubsection{UC-06.04 -- Update Role}
+
+\paragraph*{a. Class diagram}
+\kfig{0.92\textwidth}{images/sprint1/tthuan/classDiagram/RoleManagement}{Class diagram of UC-06.04 Update Role}{fig:tthuan-cls-update-role}
+
+\paragraph*{b. Sequence diagram}
 \kfig{0.78\textwidth}{images/sprint1/tthuan/sequences/UpdateRole}{Sequence diagram of UC-06.04 Update Role}{fig:tthuan-seq-update-role}
 
-\paragraph{UC-06.05 -- Delete Role}
+\subsubsection{UC-06.05 -- Delete Role}
+
+\paragraph*{a. Class diagram}
+\kfig{0.92\textwidth}{images/sprint1/tthuan/classDiagram/RoleManagement}{Class diagram of UC-06.05 Delete Role}{fig:tthuan-cls-delete-role}
+
+\paragraph*{b. Sequence diagram}
 \kfig{0.78\textwidth}{images/sprint1/tthuan/sequences/DeleteRole}{Sequence diagram of UC-06.05 Delete Role}{fig:tthuan-seq-delete-role}
 
-\paragraph{UC-06.06 -- Update Role Permissions}
+\subsubsection{UC-06.06 -- Update Role Permissions}
+
+\paragraph*{a. Class diagram}
+\kfig{0.92\textwidth}{images/sprint1/tthuan/classDiagram/RoleManagement}{Class diagram of UC-06.06 Update Role Permissions}{fig:tthuan-cls-update-role-permissions}
+
+\paragraph*{b. Sequence diagram}
 \kfig{0.78\textwidth}{images/sprint1/tthuan/sequences/UpdateRolePermissions}{Sequence diagram of UC-06.06 Update Role Permissions}{fig:tthuan-seq-update-role-permissions}

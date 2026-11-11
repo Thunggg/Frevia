@@ -68,7 +68,8 @@ function PaymentForm({
         });
       } else if (
         result.paymentIntent &&
-        (result.paymentIntent.status === "succeeded" ||
+        (result.paymentIntent.status === "requires_capture" ||
+          result.paymentIntent.status === "succeeded" ||
           result.paymentIntent.status === "processing")
       ) {
         try {
@@ -76,7 +77,12 @@ function PaymentForm({
         } catch {
           // Non-blocking sync fallback
         }
-        toastSuccess({ message: "Payment processed successfully!" });
+        toastSuccess({
+          message:
+            result.paymentIntent.status === "requires_capture"
+              ? "Payment authorization hold confirmed! You can now sign the contract."
+              : "Payment processed successfully!",
+        });
         onSuccess();
         onClose();
       }

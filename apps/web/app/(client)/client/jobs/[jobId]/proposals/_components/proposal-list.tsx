@@ -94,7 +94,7 @@ function toClientProposal(
     submittedAt: String(proposal.submittedAt),
     freelancer: {
       id: proposal.freelancer.id,
-      profileId: proposal.freelancer.id,
+      profileId: profile?.id ?? proposal.freelancer.id,
       displayName: profile?.displayName ?? proposal.freelancer.email,
       avatarUrl: profile?.avatarUrl ?? null,
       title: profile?.freelancerProfile?.title ?? null,
@@ -108,19 +108,20 @@ function ProposalStatusBadge({ status }: { status: ProposalStatus }) {
 
   const colorClass =
     status === "HIRED"
-      ? "bg-[#4fae2e]/15 text-[#3f9225] dark:bg-[#4fae2e]/20 dark:text-[#7ad75d]"
+      ? "text-emerald-600 dark:text-emerald-400"
       : status === "SUBMITTED"
-        ? "bg-amber-50 text-amber-600 dark:bg-amber-950/50 dark:text-amber-300"
+        ? "text-amber-600 dark:text-amber-400"
         : status === "INTERVIEWING"
-          ? "bg-[#D0E1F8] text-[#0069D3] dark:bg-blue-950/60 dark:text-blue-300"
+          ? "text-[#0069D3] dark:text-blue-400"
           : status === "REJECTED"
-            ? "bg-red-50 text-red-600 dark:bg-red-950/50 dark:text-red-300"
-            : "bg-[#F1F0F5] text-muted-foreground dark:bg-zinc-800";
+            ? "text-rose-600 dark:text-rose-400"
+            : "text-muted-foreground";
 
   return (
     <span
-      className={`inline-flex items-center rounded-full px-3.5 py-1 text-xs font-semibold font-sans ${colorClass}`}
+      className={`inline-flex items-center gap-1.5 text-xs font-semibold font-sans ${colorClass}`}
     >
+      <span className="size-1.5 rounded-full bg-current" />
       {tStatus(status)}
     </span>
   );

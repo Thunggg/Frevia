@@ -175,7 +175,7 @@ A method to initialize the repository with the shared Prisma client.
 \newline -- \textit{Returns:} \code{void} -- constructor, no return value. \\ \hline
 
 02 & \code{findAllByUserId(userId, filter, currentSessionId?)} &
-A method to query the user's sessions and mark the current one.
+A method to query the user's active (unexpired) sessions and mark the current one.
 \newline -- \code{userId}: \code{number} -- owner identifier.
 \newline -- \code{filter}: \code{SessionFilterType} -- page, limit, search, and sort options.
 \newline -- \code{currentSessionId}: \code{number | undefined} -- session to mark as current.

@@ -36,13 +36,12 @@ export const CreateMilestoneBodySchema = z.object({
         .positive({ message: ManageMilestoneMessage.AMOUNT_POSITIVE }),
 
     dueDate: z
-        .string()
+        .string({ message: ManageMilestoneMessage.DUE_DATE_REQUIRED })
         .datetime({ message: ManageMilestoneMessage.DUE_DATE_FUTURE })
         .refine(
             (val) => new Date(val) > new Date(),
             { message: ManageMilestoneMessage.DUE_DATE_FUTURE },
-        )
-        .optional(),
+        ),
 });
 
 export const UpdateMilestoneBodySchema = z.object({
@@ -59,7 +58,7 @@ export const UpdateMilestoneBodySchema = z.object({
         .optional(),
 
     dueDate: z
-        .string()
+        .string({ message: ManageMilestoneMessage.DUE_DATE_REQUIRED })
         .datetime({ message: ManageMilestoneMessage.DUE_DATE_FUTURE })
         .refine(
             (val) => new Date(val) > new Date(),

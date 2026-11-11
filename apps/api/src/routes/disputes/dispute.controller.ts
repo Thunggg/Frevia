@@ -14,7 +14,6 @@ import {
   DisputeDetailResponseDTO,
   DisputeListResponseDTO,
   GetDisputeListQueryDTO,
-  PayDisputeFeeBodyDTO,
   ReviewDisputeDecisionBodyDTO,
   SubmitDisputeResponseBodyDTO,
 } from './dispute.dto';
@@ -22,7 +21,6 @@ import { DisputeService } from './dispute.service';
 import type {
   CreateDisputeBodyType,
   GetDisputeListQueryType,
-  PayDisputeFeeBodyType,
   ReviewDisputeDecisionBodyType,
   SubmitDisputeResponseBodyType,
 } from '@shared/types';
@@ -52,19 +50,6 @@ export class DisputeController {
     return this.disputeService.createDispute(
       userId,
       body as CreateDisputeBodyType,
-    );
-  }
-
-  @Post(':id/fee')
-  payFee(
-    @UserActive('userId') userId: number,
-    @Param('id', ParseIntPipe) disputeId: number,
-    @Body() body: PayDisputeFeeBodyDTO,
-  ) {
-    return this.disputeService.payFee(
-      userId,
-      disputeId,
-      body as PayDisputeFeeBodyType,
     );
   }
 

@@ -6,7 +6,6 @@ import {
 } from '@nestjs/common';
 import {
   DisputeDecisionResponse,
-  DisputeFeeStatus,
   DisputeStatus,
   MilestonePaymentStatus,
   MilestoneStatus,
@@ -90,32 +89,7 @@ describe('DisputeService', () => {
     openedBy: { id: 1, email: 'client@example.com' },
     respondent: { id: 2, email: 'freelancer@example.com' },
     decisionBy: null,
-    fees: [
-      {
-        id: 1,
-        disputeId: 5,
-        userId: 1,
-        amount: new Prisma.Decimal(50.0),
-        status: DisputeFeeStatus.PENDING,
-        paymentIntentId: null,
-        paidAt: null,
-        deadline: new Date(),
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      },
-      {
-        id: 2,
-        disputeId: 5,
-        userId: 2,
-        amount: new Prisma.Decimal(50.0),
-        status: DisputeFeeStatus.PENDING,
-        paymentIntentId: null,
-        paidAt: null,
-        deadline: new Date(),
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      },
-    ],
+    fees: [],
     evidences: [],
     decisionReviews: [],
   };
@@ -126,9 +100,6 @@ describe('DisputeService', () => {
       findDisputeById: jest.fn(),
       findSharedFilesByIds: jest.fn(),
       createDisputeTransaction: jest.fn(),
-      findFeeByDisputeAndUser: jest.fn(),
-      updateFeeStatus: jest.fn(),
-      markFeeOverdue: jest.fn(),
       hasUserSubmittedEvidence: jest.fn(),
       submitResponseTransaction: jest.fn(),
       listDisputes: jest.fn(),
@@ -161,7 +132,7 @@ describe('DisputeService', () => {
           openedById: 1,
           respondentId: 2,
           reason: 'Work incomplete',
-          arbitrationFee: 50.0,
+          arbitrationFee: 0,
         }),
       );
       expect(result).toEqual(mockDispute);
@@ -234,48 +205,6 @@ describe('DisputeService', () => {
           evidenceFiles: tooManyFiles,
         }),
       ).rejects.toThrow(BadRequestException);
-    });
-  });
-
-  describe('payFee', () => {
-    it('pays fee and updates fee status to PAID', async () => {
-      repo.findDisputeById.mockResolvedValue(mockDispute as any);
-      repo.findFeeByDisputeAndUser.mockResolvedValue({
-        id: 1,
-        disputeId: 5,
-        userId: 1,
-        amount: new Prisma.Decimal(50.0),
-        status: DisputeFeeStatus.PENDING,
-      } as any);
-      repo.updateFeeStatus.mockResolvedValue({
-        id: 1,
-        status: DisputeFeeStatus.PAID,
-      } as any);
-
-      const result = await service.payFee(1, 5, {});
-
-      expect(repo.updateFeeStatus).toHaveBeenCalledWith(
-        1,
-        DisputeFeeStatus.PAID,
-        expect.any(String),
-        expect.any(Date),
-      );
-      expect(result.success).toBe(true);
-    });
-
-    it('rejects if fee has already been paid', async () => {
-      repo.findDisputeById.mockResolvedValue(mockDispute as any);
-      repo.findFeeByDisputeAndUser.mockResolvedValue({
-        id: 1,
-        disputeId: 5,
-        userId: 1,
-        amount: new Prisma.Decimal(50.0),
-        status: DisputeFeeStatus.PAID,
-      } as any);
-
-      await expect(service.payFee(1, 5, {})).rejects.toThrow(
-        UnprocessableEntityException,
-      );
     });
   });
 

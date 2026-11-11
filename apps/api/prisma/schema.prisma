@@ -79,10 +79,11 @@ model User {
   updatedAt DateTime  @updatedAt
   deletedAt DateTime?
 
-  // --- Stripe Payments ---
+  // --- Stripe Payments & Platform Wallet ---
   stripeCustomerId          String?   @db.VarChar(255)
   stripeAccountId           String?   @db.VarChar(255)
   stripeOnboardingCompleted Boolean   @default(false)
+  walletBalance             Decimal   @default(0.00) @db.Decimal(12, 2)
 
   // --- Auth / core ---
   userRoles     UserRole[]
@@ -161,8 +162,10 @@ model User {
   conversationsAsParticipant2 Conversation[]  @relation("ConversationParticipant2")
   directMessages              DirectMessage[]
 
-  // --- Transactions ---
-  transactions                Transaction[]
+  // --- Transactions & Withdrawals ---
+  transactions         Transaction[]
+  withdrawalRequests   WithdrawalRequest[] @relation("WithdrawalUser")
+  processedWithdrawals WithdrawalRequest[] @relation("WithdrawalProcessor")
 
   // --- AI Recommendation (Job-CV matching) ---
   recommendations Recommendation[] @relation("RecommendationRequester")
@@ -838,6 +841,8 @@ model Contract {
   clientFeePaidAt     DateTime?
   freelancerFeeStatus PlatformFeeStatus @default(UNPAID)
   freelancerFeePaidAt DateTime?
+  holdPaymentIntentId String?           @unique
+  holdMilestoneIds    Int[]             @default([])
   rejectedAt          DateTime?
   rejectReason        String?
   createdAt          DateTime       @default(now())
@@ -1154,6 +1159,31 @@ model Transaction {
   @@index([milestoneId])
   @@index([disputeId])
   @@index([type])
+  @@index([status])
+}
+
+model WithdrawalRequest {
+  id                Int              @id @default(autoincrement())
+  userId            Int
+  amount            Decimal          @db.Decimal(12, 2)
+  currency          String           @default("usd") @db.VarChar(10)
+  method            WithdrawalMethod @default(BANK_TRANSFER)
+  status            WithdrawalStatus @default(PENDING)
+  bankName          String?          @db.VarChar(150)
+  bankAccountNumber String?          @db.VarChar(100)
+  bankAccountHolder String?          @db.VarChar(150)
+  note              String?
+  stripeTransferId  String?          @unique
+  processedAt       DateTime?
+  processedById     Int?
+  rejectionReason   String?
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
+
+  user        User  @relation("WithdrawalUser", fields: [userId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+  processedBy User? @relation("WithdrawalProcessor", fields: [processedById], references: [id], onDelete: SetNull, onUpdate: NoAction)
+
+  @@index([userId, createdAt])
   @@index([status])
 }
 
@@ -1755,6 +1785,18 @@ enum TransactionType {
   DISPUTE_FEE
   ARBITRATOR_PAYOUT
   REFUND
+  WITHDRAWAL
+}
+
+enum WithdrawalMethod {
+  BANK_TRANSFER
+  STRIPE_EXPRESS
+}
+
+enum WithdrawalStatus {
+  PENDING
+  COMPLETED
+  REJECTED
 }
 
 enum TransactionStatus {

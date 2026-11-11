@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import {
   DisputeDecisionResponse,
   DisputeEvidenceType,
-  DisputeFeeStatus,
   DisputeStatus,
   MilestonePaymentStatus,
   MilestoneStatus,
@@ -127,25 +126,7 @@ export class DisputeRepository {
         },
       });
 
-      // 2. Tạo 2 DisputeFee records cho Creator và Respondent
-      await tx.disputeFee.createMany({
-        data: [
-          {
-            disputeId: dispute.id,
-            userId: data.openedById,
-            amount: new Prisma.Decimal(data.arbitrationFee),
-            status: DisputeFeeStatus.PENDING,
-            deadline: data.feeDeadline,
-          },
-          {
-            disputeId: dispute.id,
-            userId: data.respondentId,
-            amount: new Prisma.Decimal(data.arbitrationFee),
-            status: DisputeFeeStatus.PENDING,
-            deadline: data.feeDeadline,
-          },
-        ],
-      });
+      // Không thu phí trọng tài tranh chấp (DisputeFee đã được bỏ)
 
       // 3. Tạo DisputeEvidence records cho Creator (CLAIM)
       if (data.evidenceFiles && data.evidenceFiles.length > 0) {
@@ -184,42 +165,6 @@ export class DisputeRepository {
           decisionReviews: true,
         },
       });
-    });
-  }
-
-  async findFeeByDisputeAndUser(disputeId: number, userId: number) {
-    return this.prisma.disputeFee.findUnique({
-      where: {
-        disputeId_userId: {
-          disputeId,
-          userId,
-        },
-      },
-    });
-  }
-
-  async updateFeeStatus(
-    feeId: number,
-    status: DisputeFeeStatus,
-    paymentIntentId: string,
-    paidAt: Date,
-  ) {
-    return this.prisma.disputeFee.update({
-      where: { id: feeId },
-      data: {
-        status,
-        paymentIntentId,
-        paidAt,
-      },
-    });
-  }
-
-  async markFeeOverdue(feeId: number) {
-    return this.prisma.disputeFee.update({
-      where: { id: feeId },
-      data: {
-        status: DisputeFeeStatus.OVERDUE,
-      },
     });
   }
 

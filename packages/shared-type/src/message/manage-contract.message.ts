@@ -2,7 +2,10 @@ export const ManageContractMessage = {
     PROPOSAL_ID_REQUIRED: 'Error.ContractProposalIdRequired',
     TOTAL_AMOUNT_REQUIRED: 'Error.ContractTotalAmountRequired',
     TOTAL_AMOUNT_POSITIVE: 'Error.ContractTotalAmountMustBePositive',
+    EXPIRES_AT_REQUIRED: 'Error.ContractExpiresAtRequired',
     EXPIRES_AT_FUTURE: 'Error.ContractExpiresAtMustBeFuture',
+    MILESTONE_DUE_DATE_EXCEEDS_CONTRACT: 'Error.MilestoneDueDateExceedsContractExpiresAt',
+    EXPIRES_AT_BEFORE_MILESTONES: 'Error.ContractExpiresAtBeforeMilestoneDueDates',
 
     PROPOSAL_NOT_FOUND: 'Error.ContractProposalNotFound',
     PROPOSAL_ALREADY_CONTRACTED: 'Error.ContractProposalAlreadyContracted',
@@ -15,6 +18,8 @@ export const ManageContractMessage = {
 
     CONTRACT_NOT_PENDING_SIGN: 'Error.ContractNotPendingSign',
     CONTRACT_NOT_ACTIVE: 'Error.ContractNotActive',
+    CONTRACT_EXPIRED: 'Error.ContractExpired',
+    CLIENT_MUST_SIGN_FIRST: 'Error.ClientMustSignFirst',
     CONTRACT_ALREADY_CANCELLED: 'Error.ContractAlreadyCancelled',
     CONTRACT_ALREADY_COMPLETED: 'Error.ContractAlreadyCompleted',
     CONTRACT_DISPUTED: 'Error.ContractDisputed',

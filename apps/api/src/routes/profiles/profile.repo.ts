@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { RoleName } from '@shared/types';
 import {
   AvailabilityStatus,
   CvAnalysisStatus,
@@ -56,30 +57,18 @@ export class ProfileRepository {
   constructor(private readonly prisma: PrismaService) {}
 
   async findFreelancerProfileById(profileId: number) {
-    const byId = await this.prisma.profile.findFirst({
-      where: {
-        id: profileId,
-        user: {
-          deletedAt: null,
-        },
-      },
-      include: {
-        freelancerProfile: true,
-        user: {
-          include: {
-            userRoles: {
-              include: { role: true },
-            },
-          },
-        },
-      },
-    });
-    if (byId) return byId;
     return this.prisma.profile.findFirst({
       where: {
-        userId: profileId,
+        OR: [{ id: profileId }, { userId: profileId }],
         user: {
           deletedAt: null,
+          userRoles: {
+            some: {
+              role: {
+                name: RoleName.FREELANCER,
+              },
+            },
+          },
         },
       },
       include: {

@@ -2,7 +2,6 @@ import { http } from "@/lib/http";
 import type {
   CreateDisputeBodyType,
   DisputeDetailType,
-  PayDisputeFeeBodyType,
   ReviewDisputeDecisionBodyType,
   SubmitDisputeResponseBodyType,
 } from "@shared/types";
@@ -42,16 +41,6 @@ export const disputeApiRequest = {
    */
   getByMilestoneId(milestoneId: number) {
     return http.get<DisputeDetailType>(`/disputes/milestone/${milestoneId}`);
-  },
-
-  /**
-   * Thanh toán phí tranh chấp / phí trọng tài
-   */
-  payFee(disputeId: number, body: PayDisputeFeeBodyType = {}) {
-    return http.post<{ success: boolean; fee: unknown }>(
-      `/disputes/${disputeId}/fee`,
-      body,
-    );
   },
 
   /**
