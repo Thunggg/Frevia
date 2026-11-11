@@ -31,7 +31,7 @@ export default async function DashboardRedirectPage() {
   }
 
   if (primaryRole === RoleName.FREELANCER) {
-    redirect("/freelancer/find-work");
+    redirect("/freelancer");
   }
 
   if (primaryRole === RoleName.EXPERT) {

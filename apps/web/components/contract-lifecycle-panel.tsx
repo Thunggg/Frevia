@@ -241,7 +241,11 @@ export function ContractLifecyclePanel({
               className="bg-[#4fae2e] text-white hover:bg-[#459928]"
             >
               <Link
-                href={`/account-profile?tab=reviews&contractId=${contract.id}`}
+                href={
+                  role === "CLIENT"
+                    ? `/client/profile?tab=reviews&contractId=${contract.id}`
+                    : `/freelancer/profile?tab=reviews&contractId=${contract.id}`
+                }
               >
                 {t("writeReview")}
               </Link>

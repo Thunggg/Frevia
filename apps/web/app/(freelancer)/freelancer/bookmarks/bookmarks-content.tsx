@@ -41,6 +41,7 @@ import {
 import { Button } from "@repo/ui/components/shadcn/button";
 import { Badge } from "@repo/ui/components/shadcn/badge";
 import { toastError, toastSuccess } from "@repo/ui/components/shadcn/toast";
+import { getBookmarkErrorMessage } from "@/lib/utils";
 import type { ViewBookmarkedJobResponseType } from "@shared/types";
 
 type BookmarksContentProps = {
@@ -103,6 +104,7 @@ export function BookmarksContent({
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const t = useTranslations("bookmarks");
+  const tBookmark = useTranslations("bookmark");
   const tStatus = useTranslations("jobStatus");
   const tBudgetType = useTranslations("jobBudgetType");
   const tCommon = useTranslations("common");
@@ -297,8 +299,8 @@ export function BookmarksContent({
         );
       }
       router.refresh();
-    } catch {
-      toastError({ message: t("removeFailed") });
+    } catch (error) {
+      toastError({ message: getBookmarkErrorMessage(error, tBookmark, true) });
     } finally {
       setIsRemoving(false);
     }

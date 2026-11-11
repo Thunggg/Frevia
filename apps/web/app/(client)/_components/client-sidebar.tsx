@@ -102,6 +102,7 @@ export function ClientSidebar() {
   const router = useRouter();
   const queryClient = useQueryClient();
   const t = useTranslations("sidebar");
+  const tCommon = useTranslations("common");
   const tRole = useTranslations("roleName");
   const activeLocale = useLocale();
   const [isLocalePending, startLocaleTransition] = useTransition();
@@ -186,7 +187,7 @@ export function ClientSidebar() {
     try {
       await authApiRequest.switchRole({ role: RoleName.FREELANCER });
       await queryClient.invalidateQueries({ queryKey: ["me"] });
-      router.push("/freelancer/find-work");
+      router.push("/freelancer");
       router.refresh();
     } catch {
       toastError({ message: t("roleSwitchFailed") });
@@ -382,10 +383,11 @@ export function ClientSidebar() {
                     type="button"
                     onClick={() => selectLocale("en")}
                     disabled={isLocalePending}
-                    className={`flex h-6 px-2 items-center justify-center rounded-full text-[11px] font-semibold transition-all cursor-pointer ${activeLocale === "en"
-                      ? "bg-white text-[#0069D3] shadow-xs dark:bg-zinc-700 dark:text-blue-200"
-                      : "text-muted-foreground hover:text-foreground"
-                      }`}
+                    className={`flex h-6 px-2 items-center justify-center rounded-full text-[11px] font-semibold transition-all cursor-pointer ${
+                      activeLocale === "en"
+                        ? "bg-white text-[#0069D3] shadow-xs dark:bg-zinc-700 dark:text-blue-200"
+                        : "text-muted-foreground hover:text-foreground"
+                    }`}
                     title="English"
                   >
                     EN
@@ -394,10 +396,11 @@ export function ClientSidebar() {
                     type="button"
                     onClick={() => selectLocale("vi")}
                     disabled={isLocalePending}
-                    className={`flex h-6 px-2 items-center justify-center rounded-full text-[11px] font-semibold transition-all cursor-pointer ${activeLocale === "vi"
-                      ? "bg-white text-[#0069D3] shadow-xs dark:bg-zinc-700 dark:text-blue-200"
-                      : "text-muted-foreground hover:text-foreground"
-                      }`}
+                    className={`flex h-6 px-2 items-center justify-center rounded-full text-[11px] font-semibold transition-all cursor-pointer ${
+                      activeLocale === "vi"
+                        ? "bg-white text-[#0069D3] shadow-xs dark:bg-zinc-700 dark:text-blue-200"
+                        : "text-muted-foreground hover:text-foreground"
+                    }`}
                     title="Tiếng Việt"
                   >
                     VI

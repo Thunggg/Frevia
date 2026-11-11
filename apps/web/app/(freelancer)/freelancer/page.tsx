@@ -1,5 +1,15 @@
 import { redirect } from "next/navigation";
 
-export default function FreelancerPage() {
-  redirect("/freelancer/find-work");
+export default async function FreelancerHomePage({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string>>;
+}) {
+  const params = await searchParams;
+  const qs = new URLSearchParams(params).toString();
+  redirect(
+    qs
+      ? `/freelancer/find-work/best-matches?${qs}`
+      : "/freelancer/find-work/best-matches",
+  );
 }

@@ -83,7 +83,7 @@ export function AccessDeniedContent({
       } else if (targetRole === RoleName.CLIENT) {
         router.push("/client/jobs");
       } else {
-        router.push("/freelancer/find-work");
+        router.push("/freelancer");
       }
       router.refresh();
     } catch {
@@ -109,7 +109,7 @@ export function AccessDeniedContent({
     primaryRole === RoleName.CLIENT
       ? "/client/jobs"
       : primaryRole === RoleName.FREELANCER
-        ? "/freelancer/find-work"
+        ? "/freelancer"
         : primaryRole === RoleName.ADMIN
           ? "/admin"
           : "/";

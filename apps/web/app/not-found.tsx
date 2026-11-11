@@ -21,7 +21,7 @@ export default async function NotFound() {
     role === "CLIENT"
       ? "/client/jobs"
       : role === "FREELANCER"
-        ? "/freelancer/find-work"
+        ? "/freelancer"
         : "/";
 
   const t = await getTranslations("notFound");

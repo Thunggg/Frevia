@@ -22,7 +22,7 @@ type CategoryDetailContentProps = {
 };
 
 const JOB_BASE_URL = "/freelancer/jobs";
-const FIND_WORK_PATH = "/freelancer/find-work";
+const FIND_WORK_PATH = "/freelancer";
 const CATEGORY_BASE_PATH = "/freelancer/categories";
 
 /** UC-46.07 — chi tiết danh mục kèm danh sách công việc đang mở thuộc danh mục. */

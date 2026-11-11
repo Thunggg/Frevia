@@ -450,7 +450,8 @@ async function ensureSkills(
   skillNames: string[],
 ): Promise<Map<string, number>> {
   const wanted = [...new Set(skillNames)];
-  const slugs = wanted.map(slugify);
+  const pairs = wanted.map((name) => ({ name, slug: slugify(name) }));
+  const slugs = pairs.map((p) => p.slug);
 
   const existing = await prisma.skill.findMany({
     where: { slug: { in: slugs } },
@@ -458,15 +459,15 @@ async function ensureSkills(
   });
 
   const skillMap = new Map(existing.map((skill) => [skill.slug, skill.id]));
-  const missing = wanted.filter((_, index) => !skillMap.has(slugs[index]));
+  const missingPairs = pairs.filter((p) => !skillMap.has(p.slug));
 
-  if (missing.length > 0) {
+  if (missingPairs.length > 0) {
     await prisma.skill.createMany({
-      data: missing.map((name, index) => ({ name, slug: slugs[index] })),
+      data: missingPairs,
       skipDuplicates: true,
     });
     const created = await prisma.skill.findMany({
-      where: { slug: { in: missing.map((_, index) => slugs[index]) } },
+      where: { slug: { in: missingPairs.map((p) => p.slug) } },
       select: { id: true, slug: true },
     });
     for (const skill of created) {
