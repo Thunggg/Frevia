@@ -13,8 +13,6 @@ import {
   Search,
   Trash2,
 } from "@/components/icons";
-import { LanguageSwitcher } from "@/components/language-switcher";
-import { ThemeToggle } from "@/components/theme-toggle";
 import { PaymentSettings } from "./payment-settings";
 import { ApiFail } from "@/lib/http";
 import {
@@ -487,10 +485,6 @@ export function AccountProfileClient({
                 </p>
               </div>
               <div className="flex flex-wrap items-center gap-2.5">
-                <div className="flex items-center gap-1 rounded-lg border border-border/70 bg-card/70 px-1 py-0.5 shadow-2xs backdrop-blur-xs">
-                  <LanguageSwitcher />
-                  <ThemeToggle />
-                </div>
                 {publicProfileHref ? (
                   <Button
                     variant="outline"
