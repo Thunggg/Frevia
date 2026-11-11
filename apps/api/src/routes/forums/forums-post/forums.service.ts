@@ -265,8 +265,11 @@ export class ForumService {
         throw ForumPostNotFoundException();
       }
 
-      // Kiểm tra quyền sở hữu, chỉ owner và ADMIN mới có quyền xóa post
-      if (existingPost.userId !== userId && roleName !== RoleName.ADMIN) {
+      // Kiểm tra quyền sở hữu, chỉ owner và ADMIN / staff mới có quyền xóa post
+      const isStaff =
+        roleName === RoleName.ADMIN ||
+        (roleName !== RoleName.CLIENT && roleName !== RoleName.FREELANCER);
+      if (existingPost.userId !== userId && !isStaff) {
         throw ForumPostNotOwnedException();
       }
 

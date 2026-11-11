@@ -31,6 +31,7 @@ const ALL_NAV_ITEMS: NavItem[] = [
     titleKey: "dashboard",
     href: "/admin",
     icon: LayoutDashboard,
+    requiredPermissions: ["/api/forums/admin/stats", "FORUMS-ADMIN", "FORUMS"],
   },
   {
     titleKey: "disputes",

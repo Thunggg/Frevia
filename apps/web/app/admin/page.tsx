@@ -10,8 +10,11 @@ import {
   TrendingUp,
 } from "lucide-react";
 import adminServerRequest from "@/apiRequests/admin.server";
+import authServerRequest from "@/apiRequests/auth.server";
+import { hasMenuPermission } from "@/lib/admin-access";
 import { Badge } from "@repo/ui/components/shadcn/badge";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import type { LucideIcon } from "lucide-react";
 
 const statCards: {
@@ -49,6 +52,76 @@ export default async function AdminDashboardPage() {
   const format = await getFormatter();
 
   if (!stats) {
+    const user = await authServerRequest.getMe();
+    const userPerms = user?.permissions ?? [];
+    const userMods = user?.permissionModules ?? [];
+
+    if (
+      hasMenuPermission(userPerms, userMods, [
+        "/api/admin/disputes",
+        "/api/disputes",
+        "DISPUTES",
+      ])
+    ) {
+      redirect("/admin/disputes");
+    }
+    if (
+      hasMenuPermission(userPerms, userMods, [
+        "/api/admin/identity-verifications",
+        "IDENTITY-VERIFICATIONS",
+      ])
+    ) {
+      redirect("/admin/identity-verifications");
+    }
+    if (
+      hasMenuPermission(userPerms, userMods, [
+        "/api/admin/profile-revisions",
+        "PROFILE-REVISIONS",
+      ])
+    ) {
+      redirect("/admin/profile-revisions");
+    }
+    if (
+      hasMenuPermission(userPerms, userMods, [
+        "/api/admin/skills",
+        "SKILLS",
+      ])
+    ) {
+      redirect("/admin/skills");
+    }
+    if (
+      hasMenuPermission(userPerms, userMods, [
+        "/api/admin/job-categories",
+        "JOB-CATEGORIES",
+      ])
+    ) {
+      redirect("/admin/job-categories");
+    }
+    if (
+      hasMenuPermission(userPerms, userMods, [
+        "/api/admin/banners",
+        "BANNERS",
+      ])
+    ) {
+      redirect("/admin/banners");
+    }
+    if (
+      hasMenuPermission(userPerms, userMods, [
+        "/api/users",
+        "USERS",
+      ])
+    ) {
+      redirect("/admin/users");
+    }
+    if (
+      hasMenuPermission(userPerms, userMods, [
+        "/api/roles",
+        "ROLES",
+      ])
+    ) {
+      redirect("/admin/roles");
+    }
+
     return (
       <div className="space-y-6">
         <div>

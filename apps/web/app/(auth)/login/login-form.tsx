@@ -17,6 +17,7 @@ import { Input } from "@repo/ui/components/shadcn/input";
 import { Label } from "@repo/ui/components/shadcn/label";
 import { Separator } from "@repo/ui/components/shadcn/separator";
 import { toastError, toastSuccess } from "@repo/ui/components/shadcn/toast";
+import { canAccessAdminPortal } from "@/lib/admin-access";
 import { LoginBodySchema, RoleName } from "@shared/types";
 import { Eye, EyeOff, Loader2 } from "@/components/icons";
 import { useTranslations } from "next-intl";
@@ -65,7 +66,13 @@ export function LoginForm({ oauthError }: { oauthError?: string }) {
             const primaryRole = meRes.success
               ? meRes.data?.roles?.find((r) => r.isPrimary)?.name
               : null;
-            if (primaryRole === RoleName.ADMIN) {
+            if (
+              primaryRole === RoleName.ADMIN ||
+              (primaryRole !== RoleName.CLIENT &&
+                primaryRole !== RoleName.FREELANCER &&
+                primaryRole !== RoleName.EXPERT &&
+                canAccessAdminPortal(meRes.data))
+            ) {
               router.push("/admin");
             } else if (primaryRole === RoleName.CLIENT) {
               router.push("/client/jobs");

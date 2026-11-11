@@ -120,7 +120,7 @@ export class ForumReportService {
     search?: string,
   ): Promise<ForumReportListResponseType> {
     try {
-      if (roleName !== RoleName.ADMIN) {
+      if (roleName === RoleName.CLIENT || roleName === RoleName.FREELANCER) {
         throw ForumReportForbiddenException();
       }
 
@@ -157,7 +157,7 @@ export class ForumReportService {
   ): Promise<UpdateReportStatusResponseType> {
     try {
       // Chỉ admin mới có quyền update report status
-      if (roleName !== RoleName.ADMIN) {
+      if (roleName === RoleName.CLIENT || roleName === RoleName.FREELANCER) {
         throw ForumReportForbiddenException();
       }
 

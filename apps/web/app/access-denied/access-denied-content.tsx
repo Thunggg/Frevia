@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { RoleName, type GetMeResType } from "@shared/types";
+import { canAccessAdminPortal } from "@/lib/admin-access";
 import { authApiRequest } from "@/apiRequests/auth";
 import { Header, type UserRole } from "@/components/header";
 import { Footer } from "@/components/footer";
@@ -110,9 +111,11 @@ export function AccessDeniedContent({
       ? "/client/jobs"
       : primaryRole === RoleName.FREELANCER
         ? "/freelancer"
-        : primaryRole === RoleName.ADMIN
-          ? "/admin"
-          : "/";
+        : primaryRole === RoleName.EXPERT
+          ? "/expert/profile"
+          : primaryRole === RoleName.ADMIN || canAccessAdminPortal(user)
+            ? "/admin"
+            : "/";
 
   const primaryRoleLabel =
     primaryRole === RoleName.CLIENT

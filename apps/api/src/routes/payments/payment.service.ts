@@ -1154,7 +1154,10 @@ export class PaymentService {
       throw PaymentForbiddenException('Dispute not found');
     }
 
-    const isAdmin = callerRoleName === RoleName.ADMIN;
+    const isAdmin =
+      callerRoleName === RoleName.ADMIN ||
+      (callerRoleName !== RoleName.CLIENT &&
+        callerRoleName !== RoleName.FREELANCER);
     const isAssignedArbitrator = dispute.decisionById === callerUserId;
 
     if (!isAdmin && !isAssignedArbitrator) {
@@ -1325,7 +1328,9 @@ export class PaymentService {
     roleName: string,
     query: GetTransactionListQueryType,
   ) {
-    const isAdmin = roleName === RoleName.ADMIN;
+    const isAdmin =
+      roleName === RoleName.ADMIN ||
+      (roleName !== RoleName.CLIENT && roleName !== RoleName.FREELANCER);
     const filter = isAdmin ? {} : { userId };
     return this.paymentRepo.getTransactions(query, filter);
   }

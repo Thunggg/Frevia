@@ -47,6 +47,7 @@ import { NotificationsBell } from "@/components/notifications-bell";
 import { ContactDialog } from "@/components/contact-dialog";
 import { useMe } from "@/hooks/use-auth";
 import { authApiRequest } from "@/apiRequests/auth";
+import { canAccessAdminPortal } from "@/lib/admin-access";
 import { RoleName } from "@shared/types";
 import { toastError, toastSuccess } from "@repo/ui/components/shadcn/toast";
 
@@ -391,7 +392,11 @@ function ProfileDropdown({ role }: { role: Exclude<UserRole, "GUEST"> }) {
         <DropdownMenuItem asChild>
           <Link
             href={
-              role === "FREELANCER" ? "/freelancer/profile" : "/client/profile"
+              canAccessAdminPortal(me)
+                ? "/admin/profile"
+                : role === "FREELANCER"
+                  ? "/freelancer/profile"
+                  : "/client/profile"
             }
             className="cursor-pointer"
           >
@@ -514,6 +519,17 @@ function ProfileDropdown({ role }: { role: Exclude<UserRole, "GUEST"> }) {
             {t("sessions")}
           </Link>
         </DropdownMenuItem>
+        {canAccessAdminPortal(me) && (
+          <DropdownMenuItem asChild>
+            <Link
+              href="/admin"
+              className="cursor-pointer font-medium text-[#4fae2e]"
+            >
+              <ShieldCheck className="size-4 text-[#4fae2e]" />
+              Admin Portal
+            </Link>
+          </DropdownMenuItem>
+        )}
         <DropdownMenuSeparator />
         <DropdownMenuItem
           variant="destructive"
