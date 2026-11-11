@@ -7,6 +7,7 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useTheme } from "next-themes";
+import { LanguageSwitcher } from "@/components/language-switcher";
 import {
   Bell,
   Bookmark,
@@ -16,6 +17,7 @@ import {
   FileCheck,
   FileText,
   HelpCircle,
+  Languages,
   LogOut,
   MessageSquare,
   MonitorSmartphone,
@@ -120,6 +122,7 @@ export function FreelancerSidebar() {
   const router = useRouter();
   const queryClient = useQueryClient();
   const t = useTranslations("sidebar");
+  const tCommon = useTranslations("common");
   const tRole = useTranslations("roleName");
   const { data: me } = useMe();
   const { data: notifications = [] } = useNotifications();
@@ -369,6 +372,15 @@ export function FreelancerSidebar() {
                     <Moon className="size-3.5" />
                   </button>
                 </div>
+              </div>
+
+              {/* Language switcher */}
+              <div className="flex items-center justify-between rounded-lg px-3 py-1.5 text-xs text-muted-foreground">
+                <span className="flex items-center gap-2.5 font-medium">
+                  <Languages className="size-3.5 text-emerald-500" />
+                  <span>{tCommon("language")}</span>
+                </span>
+                <LanguageSwitcher />
               </div>
 
               <div className="my-1 h-px bg-border" />

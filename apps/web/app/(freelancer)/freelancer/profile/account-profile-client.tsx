@@ -13,6 +13,8 @@ import {
   Search,
   Trash2,
 } from "@/components/icons";
+import { LanguageSwitcher } from "@/components/language-switcher";
+import { ThemeToggle } from "@/components/theme-toggle";
 import { PaymentSettings } from "./payment-settings";
 import { ApiFail } from "@/lib/http";
 import {
@@ -60,6 +62,7 @@ import {
   type SocialPlatformType,
 } from "@shared/types";
 import {
+  BriefcaseBusiness,
   Building2,
   Heart,
   ShieldCheck,
@@ -73,6 +76,7 @@ import { useFormatter, useTranslations } from "next-intl";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useState, type FormEvent } from "react";
+import { FreelancerProfessionalSettings } from "./freelancer-professional-settings";
 import { GeneralSettings } from "./general-settings";
 import { IdentityVerificationForm } from "./identity-verification-form";
 import { ReviewManager } from "./review-manager";
@@ -404,12 +408,29 @@ export function AccountProfileClient({
     : visibleFreelancers;
   const allowedTabs =
     headerRole === "CLIENT"
-      ? ["general", "company", "social", "reviews", "following", "favorites"]
-      : ["general", "identity", "social", "reviews"];
+      ? [
+          "general",
+          "company",
+          "social",
+          "reviews",
+          "following",
+          "favorites",
+          "payments",
+        ]
+      : [
+          ...(profileId ? ["professional"] : []),
+          "general",
+          "identity",
+          "social",
+          "reviews",
+          "payments",
+        ];
   const defaultTab =
     requestedTab && allowedTabs.includes(requestedTab)
       ? requestedTab
-      : "general";
+      : headerRole === "FREELANCER" && profileId
+        ? "professional"
+        : "general";
   const publicProfileHref =
     headerRole === "FREELANCER"
       ? profileId
@@ -465,21 +486,27 @@ export function AccountProfileClient({
                     : t("pageSubtitleClient")}
                 </p>
               </div>
-              {publicProfileHref ? (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="w-full shrink-0 border-border bg-background/80 text-foreground hover:bg-accent sm:w-auto text-xs"
-                  asChild
-                >
-                  <Link href={publicProfileHref}>
-                    <Eye className="mr-2 size-4" />
-                    {headerRole === "FREELANCER"
-                      ? t("viewEditFreelancerProfile")
-                      : tSidebar("viewPublicProfile")}
-                  </Link>
-                </Button>
-              ) : null}
+              <div className="flex flex-wrap items-center gap-2.5">
+                <div className="flex items-center gap-1 rounded-lg border border-border/70 bg-card/70 px-1 py-0.5 shadow-2xs backdrop-blur-xs">
+                  <LanguageSwitcher />
+                  <ThemeToggle />
+                </div>
+                {publicProfileHref ? (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="w-full shrink-0 border-border bg-background/80 text-foreground hover:bg-accent sm:w-auto text-xs"
+                    asChild
+                  >
+                    <Link href={publicProfileHref}>
+                      <Eye className="mr-2 size-4" />
+                      {headerRole === "FREELANCER"
+                        ? t("viewEditFreelancerProfile")
+                        : tSidebar("viewPublicProfile")}
+                    </Link>
+                  </Button>
+                ) : null}
+              </div>
             </div>
           </div>
         </section>
@@ -495,6 +522,11 @@ export function AccountProfileClient({
                 variant="line"
                 className="mb-8 w-full justify-start overflow-x-auto overflow-y-hidden"
               >
+                {headerRole === "FREELANCER" && profileId ? (
+                  <TabsTrigger value="professional">
+                    <BriefcaseBusiness /> {t("navProfessional")}
+                  </TabsTrigger>
+                ) : null}
                 <TabsTrigger value="general">
                   <UserRound /> {t("navGeneral")}
                 </TabsTrigger>
@@ -528,6 +560,15 @@ export function AccountProfileClient({
                   <CreditCard /> Payments
                 </TabsTrigger>
               </TabsList>
+
+              {headerRole === "FREELANCER" && profileId ? (
+                <TabsContent value="professional">
+                  <FreelancerProfessionalSettings
+                    profileId={profileId}
+                    userId={userId}
+                  />
+                </TabsContent>
+              ) : null}
 
               <TabsContent value="general">
                 <GeneralSettings />

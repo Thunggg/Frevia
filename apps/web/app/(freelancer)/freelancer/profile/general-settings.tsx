@@ -29,11 +29,15 @@ import {
   ChangePasswordSchema,
   RoleName,
   UpdateGeneralProfileSchema,
+  type CvAnalysisDraftType,
   type GeneralProfileType,
 } from "@shared/types";
+import { LanguageSwitcher } from "@/components/language-switcher";
+import { ThemeToggle } from "@/components/theme-toggle";
+import { CvAnalysisDialog } from "./cv-analysis-dialog";
 import { useBackendMessage } from "@/hooks/use-backend-message";
 import { useQueryClient } from "@tanstack/react-query";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import {
   AlertCircle,
   Camera,
@@ -47,6 +51,8 @@ import {
   RefreshCw,
   Save,
   ShieldCheck,
+  Sparkles,
+  Sun,
   Trash2,
   Upload,
   UserRound,
@@ -161,6 +167,8 @@ export function GeneralSettings() {
   const t = useTranslations("generalSettings");
   const tSettings = useTranslations("clientProfileSettings");
   const tRole = useTranslations("roleName");
+  const tCommon = useTranslations("common");
+  const activeLocale = useLocale();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const cvInputRef = useRef<HTMLInputElement>(null);
   const [profile, setProfile] = useState<GeneralProfileType | null>(null);
@@ -169,6 +177,9 @@ export function GeneralSettings() {
   const [avatar, setAvatar] = useState<File | null>(null);
   const [cvFileName, setCvFileName] = useState<string | null>(null);
   const [cvError, setCvError] = useState<string | null>(null);
+  const [cvAnalysisDraft, setCvAnalysisDraft] =
+    useState<CvAnalysisDraftType | null>(null);
+  const [cvAnalysisDialogOpen, setCvAnalysisDialogOpen] = useState(false);
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -256,6 +267,28 @@ export function GeneralSettings() {
     void uploadCv(file);
   };
 
+  const handleAnalyzeCv = async () => {
+    if (!profile) return;
+    setPending("cv-analyze");
+    try {
+      const res = await profileApiRequest.analyzeCv(profile.id);
+      if (res.data?.analysis) {
+        setCvAnalysisDraft(res.data.analysis);
+        setCvAnalysisDialogOpen(true);
+      } else {
+        toastError({
+          message: "Không thể phân tích CV bằng AI. Vui lòng kiểm tra lại dịch vụ AI.",
+        });
+      }
+    } catch (err) {
+      toastError({
+        message: toMessage(err),
+      });
+    } finally {
+      setPending(null);
+    }
+  };
+
   const uploadCv = async (file: File) => {
     if (!profile) return;
     setPending("cv");
@@ -264,6 +297,7 @@ export function GeneralSettings() {
       setCvFileName(response.data.cvFileName);
       if (cvInputRef.current) cvInputRef.current.value = "";
       toastSuccess({ message: "CV uploaded successfully." });
+      void handleAnalyzeCv();
     } catch (error) {
       setCvError(toMessage(error));
       toastError({ message: toMessage(error) });
@@ -279,6 +313,8 @@ export function GeneralSettings() {
       await profileApiRequest.deleteCv(profile.id);
       setCvFileName(null);
       setCvError(null);
+      setCvAnalysisDraft(null);
+      setCvAnalysisDialogOpen(false);
       toastSuccess({ message: "CV deleted successfully." });
     } catch (error) {
       toastError({ message: toMessage(error) });
@@ -639,6 +675,23 @@ export function GeneralSettings() {
               {cvFileName ? "Replace CV" : "Upload CV"}
             </Button>
             {cvFileName ? (
+              <Button
+                type="button"
+                className="mt-4 ml-2 bg-[#4fae2e] text-white hover:bg-[#439c28]"
+                disabled={busy}
+                onClick={() => void handleAnalyzeCv()}
+              >
+                {pending === "cv-analyze" ? (
+                  <Loader2 className="mr-1.5 size-4 animate-spin" />
+                ) : (
+                  <Sparkles className="mr-1.5 size-4" />
+                )}
+                {pending === "cv-analyze"
+                  ? "Đang phân tích..."
+                  : "✨ Phân tích CV bằng AI"}
+              </Button>
+            ) : null}
+            {cvFileName ? (
               <AlertDialog>
                 <AlertDialogTrigger asChild>
                   <Button
@@ -696,6 +749,34 @@ export function GeneralSettings() {
       </div>
 
       <div className="space-y-5">
+        <section className="rounded-xl border border-border bg-card/30 p-5 sm:p-6">
+          <div className="flex items-center gap-2">
+            <Sun className="size-5 text-[#4fae2e]" />
+            <h2 className="text-lg font-semibold text-foreground">
+              {tCommon("theme")} & {tCommon("language")}
+            </h2>
+          </div>
+          <p className="mt-2 text-sm text-muted-foreground">
+            {activeLocale === "vi"
+              ? "Tùy chỉnh giao diện hiển thị và ngôn ngữ hệ thống."
+              : "Customize display theme and system language."}
+          </p>
+          <div className="mt-4 flex flex-wrap items-center gap-3">
+            <div className="flex items-center gap-2.5 rounded-lg border border-border bg-card px-3.5 py-2 shadow-2xs">
+              <span className="text-xs font-medium text-muted-foreground">
+                {tCommon("theme")}:
+              </span>
+              <ThemeToggle />
+            </div>
+            <div className="flex items-center gap-2.5 rounded-lg border border-border bg-card px-3.5 py-2 shadow-2xs">
+              <span className="text-xs font-medium text-muted-foreground">
+                {tCommon("language")}:
+              </span>
+              <LanguageSwitcher />
+            </div>
+          </div>
+        </section>
+
         <section className="rounded-xl border border-border bg-card/30 p-5 sm:p-6">
           <div className="flex items-center gap-2">
             <LockKeyhole className="size-5 text-[#4fae2e]" />
@@ -789,6 +870,18 @@ export function GeneralSettings() {
           </div>
         )}
       </div>
+
+      {cvAnalysisDraft && profile && (
+        <CvAnalysisDialog
+          profileId={profile.id}
+          draft={cvAnalysisDraft}
+          open={cvAnalysisDialogOpen}
+          onOpenChange={setCvAnalysisDialogOpen}
+          onConfirmed={() => {
+            void load();
+          }}
+        />
+      )}
     </div>
   );
 }
