@@ -232,7 +232,7 @@ export function JobAlertsContent({
     if (alert.keywords?.trim()) params.set("keyword", alert.keywords.trim());
     if (alert.skills?.length) params.set("skills", alert.skills.join(","));
     const query = params.toString();
-    return query ? `/freelancer/find-work?${query}` : "/freelancer/find-work";
+    return query ? `/freelancer?${query}` : "/freelancer";
   };
 
   return (

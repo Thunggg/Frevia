@@ -58,7 +58,10 @@ export default async function RootLayout({
   return (
     <html lang={locale} suppressHydrationWarning>
       <head />
-      <body className={`${geistSans.variable} ${geistMono.variable} ${aquire.variable} ${materialSymbols.variable} font-sans antialiased`}>
+      <body
+        suppressHydrationWarning
+        className={`${geistSans.variable} ${geistMono.variable} ${aquire.variable} ${materialSymbols.variable} font-sans antialiased`}
+      >
         <ThemeProvider
           attribute="class"
           defaultTheme="light"

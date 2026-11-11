@@ -756,7 +756,7 @@ export function ProfilePageClient({
                 {isOwner ? (
                   <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row">
                     <Button variant="outline" asChild>
-                      <Link href="/account-profile">
+                      <Link href="/freelancer/profile">
                         <UserRound /> {t("profileSettings")}
                       </Link>
                     </Button>

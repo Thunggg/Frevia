@@ -9,9 +9,12 @@ import type {
   ContractDetailType,
   GetContractListQueryType,
   GetContractListResponseType,
+  GetMilestoneFilesResponseType,
   GetMilestoneListQueryType,
   GetMilestoneListResponseType,
   GetSharedFilesResponseType,
+  GetSubmissionsResponseType,
+  MilestoneType,
 } from "@shared/types";
 
 type ServerFetchOptions = {
@@ -167,6 +170,24 @@ const contractServerRequest = {
   getSharedFiles(contractId: number) {
     return contractServerFetch<GetSharedFilesResponseType>(
       `/api/contracts/${encodeURIComponent(String(contractId))}/files`,
+    );
+  },
+
+  getMilestoneDetail(contractId: number, milestoneId: number) {
+    return contractServerFetch<MilestoneType>(
+      `/api/contracts/${encodeURIComponent(String(contractId))}/milestones/${encodeURIComponent(String(milestoneId))}`,
+    );
+  },
+
+  getSubmissions(contractId: number, milestoneId: number) {
+    return contractServerFetch<GetSubmissionsResponseType>(
+      `/api/contracts/${encodeURIComponent(String(contractId))}/milestones/${encodeURIComponent(String(milestoneId))}/submissions`,
+    );
+  },
+
+  getMilestoneFiles(contractId: number, milestoneId: number) {
+    return contractServerFetch<GetMilestoneFilesResponseType>(
+      `/api/contracts/${encodeURIComponent(String(contractId))}/milestones/${encodeURIComponent(String(milestoneId))}/files`,
     );
   },
 };

@@ -44,6 +44,39 @@ export const MilestoneAmountMismatchException = () =>
     },
   ]);
 
+export const ContractExpiresAtRequiredException = () =>
+  new UnprocessableEntityException([
+    {
+      message: 'Contract end date is required',
+      path: 'expiresAt',
+    },
+  ]);
+
+export const MilestoneDueDateRequiredException = () =>
+  new UnprocessableEntityException([
+    {
+      message: 'Every milestone must have a due date',
+      path: 'milestones',
+    },
+  ]);
+
+export const MilestoneDueDateExceedsContractException = () =>
+  new UnprocessableEntityException([
+    {
+      message: 'Milestone due date cannot exceed the contract end date',
+      path: 'milestones',
+    },
+  ]);
+
+export const ContractExpiresAtBeforeMilestonesException = () =>
+  new UnprocessableEntityException([
+    {
+      message:
+        'Contract end date cannot be earlier than existing milestone due dates',
+      path: 'expiresAt',
+    },
+  ]);
+
 export const ContractAlreadyExistsException = () =>
   new ConflictException([
     {
@@ -76,9 +109,19 @@ export const ContractAwaitingPaymentException = () =>
   new UnprocessableEntityException([
     {
       message:
-        'Contract is awaiting initial payment. Client must fund Milestone 1 and 3% platform fee before signing.',
+        'Contract is awaiting initial payment hold. Client must authorize at least one milestone and the 3% contract fee before signing.',
       path: 'id',
     },
+  ]);
+
+export const ContractExpiredException = () =>
+  new UnprocessableEntityException([
+    { message: ManageContractMessage.CONTRACT_EXPIRED, path: 'expiresAt' },
+  ]);
+
+export const ClientMustSignFirstException = () =>
+  new UnprocessableEntityException([
+    { message: ManageContractMessage.CLIENT_MUST_SIGN_FIRST, path: 'status' },
   ]);
 
 export const ContractNotActionableForRejectionException = () =>

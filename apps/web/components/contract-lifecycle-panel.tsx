@@ -143,7 +143,14 @@ export function ContractLifecyclePanel({
 
   const hasSigned =
     role === "CLIENT" ? contract.signedByClient : contract.signedByFreelancer;
-  const canSign = contract.status === "PENDING_SIGN" && !hasSigned;
+  const canSign =
+    contract.status === "PENDING_SIGN" &&
+    !hasSigned &&
+    (role === "CLIENT" || contract.signedByClient);
+  const waitingForClientSignature =
+    contract.status === "PENDING_SIGN" &&
+    role === "FREELANCER" &&
+    !contract.signedByClient;
   const canComplete = role === "CLIENT" && contract.status === "ACTIVE";
   const isCompleted = contract.status === "COMPLETED";
   const statusText = (CONTRACT_STATUSES as readonly string[]).includes(
@@ -209,6 +216,11 @@ export function ContractLifecyclePanel({
               {t("signatureComplete")}
             </p>
           ) : null}
+          {waitingForClientSignature ? (
+            <p className="self-center text-sm text-muted-foreground">
+              Waiting for the Client to sign first before you can countersign.
+            </p>
+          ) : null}
           {canComplete ? (
             <Button
               className="bg-[#4fae2e] text-white hover:bg-[#459928] active:translate-y-px"
@@ -229,7 +241,11 @@ export function ContractLifecyclePanel({
               className="bg-[#4fae2e] text-white hover:bg-[#459928]"
             >
               <Link
-                href={`/account-profile?tab=reviews&contractId=${contract.id}`}
+                href={
+                  role === "CLIENT"
+                    ? `/client/profile?tab=reviews&contractId=${contract.id}`
+                    : `/freelancer/profile?tab=reviews&contractId=${contract.id}`
+                }
               >
                 {t("writeReview")}
               </Link>

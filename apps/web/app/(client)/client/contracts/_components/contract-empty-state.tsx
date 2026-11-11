@@ -51,7 +51,7 @@ export function ContractEmptyState({
 
       <div className="mt-5">
         <Link
-          href={isFreelancer ? "/freelancer/find-work" : "/client/jobs"}
+          href={isFreelancer ? "/freelancer" : "/client/jobs"}
           className="
             inline-flex h-8
             items-center justify-center

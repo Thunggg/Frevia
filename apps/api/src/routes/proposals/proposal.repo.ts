@@ -81,7 +81,7 @@ const proposalDetailSelect = {
 
 @Injectable()
 export class ProposalRepository {
-  constructor(private readonly prisma: PrismaService) { }
+  constructor(private readonly prisma: PrismaService) {}
 
   async findJobForProposal(jobId: number) {
     return this.prisma.job.findUnique({
@@ -164,10 +164,11 @@ export class ProposalRepository {
             email: true,
             profile: {
               select: {
+                id: true,
                 displayName: true,
                 avatarUrl: true,
                 freelancerProfile: {
-                  select: { title: true, idVerified: true },
+                  select: { id: true, title: true, idVerified: true },
                 },
               },
             },
@@ -365,10 +366,11 @@ export class ProposalRepository {
             email: true,
             profile: {
               select: {
+                id: true,
                 displayName: true,
                 avatarUrl: true,
                 freelancerProfile: {
-                  select: { title: true, idVerified: true },
+                  select: { id: true, title: true, idVerified: true },
                 },
               },
             },

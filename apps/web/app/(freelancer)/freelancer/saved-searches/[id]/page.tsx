@@ -35,7 +35,9 @@ function toFindWorkHref(searchParams: SavedSearchType["searchParams"]) {
     }
   }
   const query = params.toString();
-  return query ? `/freelancer/find-work?${query}` : "/freelancer/find-work";
+  return query
+    ? `/freelancer/find-work/best-matches?${query}`
+    : "/freelancer/find-work/best-matches";
 }
 
 export default async function FreelancerSavedSearchDetailPage({

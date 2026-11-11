@@ -159,7 +159,9 @@ export function ProposalDetailSheet({
     false;
   const freelancerUserId = freelancer?.id ?? initialProposal?.freelancer.id;
   const freelancerProfileId =
-    initialProposal?.freelancer.profileId ?? freelancerUserId;
+    detail?.freelancer?.profile?.id ??
+    initialProposal?.freelancer.profileId ??
+    freelancerUserId;
 
   const handleMessageFreelancer = async () => {
     if (!freelancerUserId) return;

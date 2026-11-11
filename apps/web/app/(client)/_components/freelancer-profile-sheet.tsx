@@ -78,39 +78,62 @@ export function FreelancerProfileSheet({
 
 
 
-  const loadData = useCallback(async (id: number) => {
-    setLoading(true);
-    setError(null);
-    try {
-      const [profileRes, skillsRes, portfoliosRes] = await Promise.allSettled([
-        profileApiRequest.getProfileDetail(id),
-        profileApiRequest.getSkills(id),
-        profileApiRequest.getPortfoliosList(id),
-      ]);
+  const targetId = profileId ?? initialData?.freelancerId ?? null;
+  const hasInitialName = Boolean(initialData?.displayName);
+  const fallbackUserId = initialData?.freelancerId;
 
-      if (profileRes.status === "fulfilled") {
-        setProfile(profileRes.value.data);
-      } else {
-        setError(t("loadFailed"));
-      }
+  const loadData = useCallback(
+    async (id: number) => {
+      setLoading(true);
+      setError(null);
+      try {
+        let activeId = id;
+        let profileRes = await profileApiRequest
+          .getProfileDetail(activeId)
+          .then((res) => ({ ok: true as const, data: res.data }))
+          .catch(() => ({ ok: false as const, data: null }));
 
-      if (skillsRes.status === "fulfilled") {
-        setSkills(skillsRes.value.data);
-      }
+        if (!profileRes.ok && fallbackUserId && fallbackUserId !== activeId) {
+          activeId = fallbackUserId;
+          profileRes = await profileApiRequest
+            .getProfileDetail(activeId)
+            .then((res) => ({ ok: true as const, data: res.data }))
+            .catch(() => ({ ok: false as const, data: null }));
+        }
 
-      if (portfoliosRes.status === "fulfilled") {
-        setPortfolios(portfoliosRes.value.data);
+        if (profileRes.ok && profileRes.data) {
+          setProfile(profileRes.data);
+          activeId = profileRes.data.id;
+        } else if (!hasInitialName) {
+          setError(t("loadFailed"));
+        }
+
+        const [skillsRes, portfoliosRes] = await Promise.allSettled([
+          profileApiRequest.getSkills(activeId),
+          profileApiRequest.getPortfoliosList(activeId),
+        ]);
+
+        if (skillsRes.status === "fulfilled") {
+          setSkills(skillsRes.value.data);
+        }
+
+        if (portfoliosRes.status === "fulfilled") {
+          setPortfolios(portfoliosRes.value.data);
+        }
+      } catch {
+        if (!hasInitialName) {
+          setError(t("loadUnexpected"));
+        }
+      } finally {
+        setLoading(false);
       }
-    } catch {
-      setError(t("loadUnexpected"));
-    } finally {
-      setLoading(false);
-    }
-  }, [t]);
+    },
+    [t, hasInitialName, fallbackUserId],
+  );
 
   useEffect(() => {
-    if (open && profileId) {
-      void loadData(profileId);
+    if (open && targetId) {
+      void loadData(targetId);
       setActiveTab("overview");
     } else if (!open) {
       setProfile(null);
@@ -118,7 +141,7 @@ export function FreelancerProfileSheet({
       setPortfolios([]);
       setError(null);
     }
-  }, [open, profileId, loadData]);
+  }, [open, targetId, loadData]);
 
   const displayName =
     profile?.displayName || initialData?.displayName || tRole("FREELANCER");
@@ -209,14 +232,14 @@ export function FreelancerProfileSheet({
                   </Button>
                 ) : null}
 
-                {profileId ? (
+                {profile?.id || targetId ? (
                   <Button
                     variant="outline"
                     size="sm"
                     asChild
                     className="rounded-full border-border hover:bg-muted text-foreground text-xs font-medium px-3 h-8 gap-1 cursor-pointer"
                   >
-                    <Link href={`/profiles/${profileId}`} target="_blank">
+                    <Link href={`/profiles/${profile?.id ?? targetId}`} target="_blank">
                       <ExternalLink className="size-3.5 text-muted-foreground" />
                       <span className="hidden sm:inline">
                         {t("openFull")}
@@ -325,7 +348,7 @@ export function FreelancerProfileSheet({
                 <Button
                   size="sm"
                   variant="outline"
-                  onClick={() => profileId && void loadData(profileId)}
+                  onClick={() => targetId && void loadData(targetId)}
                   className="mt-3 rounded-full text-xs"
                 >
                   {t("tryAgain")}

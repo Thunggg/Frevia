@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { AddPortfolioType, UpdatePortfolioType } from '@shared/types';
+import { AddPortfolioType, RoleName, UpdatePortfolioType } from '@shared/types';
 import { PrismaService } from '../../shared/services/prisma.service';
 import { refreshFreelancerStrength } from '../../shared/utils/refresh-freelancer-strength';
 
@@ -13,6 +13,13 @@ export class PortfolioRepository {
         id: profileId,
         user: {
           deletedAt: null,
+          userRoles: {
+            some: {
+              role: {
+                name: RoleName.FREELANCER,
+              },
+            },
+          },
         },
       },
       include: {

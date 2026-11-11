@@ -189,9 +189,13 @@ export function ContractPartiesOverview({
                   <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-600 bg-emerald-50 dark:bg-emerald-950/40 px-1.5 py-0.5 rounded">
                     <CheckCircle2 className="size-3" /> Paid
                   </span>
+                ) : contract.holdPaymentIntentId ? (
+                  <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-[#0069D3] bg-[#0069D3]/10 px-1.5 py-0.5 rounded">
+                    Held (Pending Capture)
+                  </span>
                 ) : (
                   <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-amber-600 bg-amber-50 dark:bg-amber-950/40 px-1.5 py-0.5 rounded">
-                    Unpaid
+                    Awaiting Hold
                   </span>
                 )}
               </div>

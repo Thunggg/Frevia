@@ -1,0 +1,233 @@
+% =============================================================================
+% PART A: DELIVERABLE PACKAGE & INSTALLATION GUIDES (A1, A2.1 - A2.4)
+% Project: Frevia - AI-Powered Freelance Marketplace & Community Platform
+% In Charge: Nguyen Tien Thuan (CE181024)
+% =============================================================================
+
+\section{Deliverable Package}
+
+The official release package (\textit{Release Package v1.0}) of the \textbf{Frevia -- AI-Powered Freelance Marketplace \& Community Platform} project encompasses the complete monorepo source codebase, database migration schemas, automated seed scripts, containerization specifications, and the comprehensive suite of engineering reports from Report 1 through Report 7. Table~\ref{tab:deliverable_package} outlines the deliverable inventory:
+
+\begin{center}
+\renewcommand{\arraystretch}{1.45}
+\begin{longtable}{|C{1.0cm}|L{4.2cm}|L{6.8cm}|C{2.6cm}|}
+\hline
+\rowcolor{hdrfill}\hd{No.} & \hd{Deliverable Item} & \hd{Description \& Storage Path} & \hd{Version / Format} \\ \hline
+\endhead
+1 & Project Schedule \& Tracking & Comprehensive project roadmap, milestone tracking, resource allocations, and sprint burndown schedules. & \texttt{v1.0 (.xlsx)} \\ \hline
+2 & Product Backlog & Prioritized list of User Stories, Use Cases, acceptance criteria, and story point estimations across all modules. & \texttt{v1.0 (.xlsx)} \\ \hline
+3 & Source Codes (Monorepo) & Full application source code managed via \textbf{Turborepo} and \textbf{pnpm workspaces}: Backend REST/WebSocket API (\texttt{apps/api} -- NestJS 11, Prisma 7), Frontend Web App (\texttt{apps/web} -- Next.js 16, React 19, Tailwind CSS v4), and shared packages (\texttt{packages/shared-types}, \texttt{packages/ui}). & \texttt{v1.0.0 (Git)} \\ \hline
+4 & Database Scripts \& Seed Data & PostgreSQL relational schema containing 39 entity models (\texttt{apps/api/prisma/schema.prisma}), 14 sequential migration scripts, and automated database seeders (\texttt{apps/api/src/seed-datas/}). & \texttt{v1.0 (.prisma/.ts)} \\ \hline
+5 & Technical Reports (R1--R7) & Complete formal documentation suite complying with FPT University Capstone Project standards: Report 1 (Introduction), Report 2 (Project Management Plan), Report 3 (SRS), Report 4 (SDS), Report 5 (Testing Document), Report 6 (User Guides), and Report 7 (Final Report). & \texttt{v1.0 (.pdf/.tex)} \\ \hline
+6 & Unit \& Integration Test Cases & Comprehensive unit test specification covering 121 API and service functions (\texttt{Report5\_Unit Test.xls}) and automated Jest test suites (\texttt{apps/api/src/**/*.spec.ts}). & \texttt{v1.0 (.xls/.ts)} \\ \hline
+7 & Defects \& Issues Log & Defect tracking ledger logging bug discoveries, severity categorizations, reproduction steps, root cause analyses, and resolution statuses. & \texttt{v1.0 (.xlsx)} \\ \hline
+8 & Docker \& Orchestration Configs & Multi-service container orchestration scripts: \texttt{docker-compose.yml}, multi-stage container build specifications (\texttt{apps/api/Dockerfile}, \texttt{apps/web/Dockerfile}), and environment templates (\texttt{.env.example}). & \texttt{v1.0 (.yml)} \\ \hline
+9 & Presentation Slides \& Demo & Formal thesis defense slide deck and live demonstration script showcasing key system workflows. & \texttt{v1.0 (.pptx)} \\ \hline
+\end{longtable}
+\label{tab:deliverable_package}
+\end{center}
+
+\subsection*{Monorepo Directory Structure}
+
+The system is architected as an enterprise-grade \textbf{Turborepo Monorepo}, guaranteeing strict type-safety and shared Zod validation schemas across both client-side and server-side runtimes:
+
+\begin{lstlisting}[frame=single,basicstyle=\footnotesize\ttfamily,backgroundcolor=\color{codebg}]
+frevia-clone/
+|-- apps/
+|   |-- api/                  # Backend RESTful API & WebSocket (NestJS 11 + Prisma 7)
+|   |   |-- prisma/           # schema.prisma (39 entity models) & SQL migrations
+|   |   |-- src/modules/      # 25+ business domain modules (auth, users, roles, jobs...)
+|   |   |-- src/seed-datas/   # Seeders for RBAC permissions, roles, and test users
+|   |   `-- Dockerfile        # Multi-stage production container build for NestJS API
+|   `-- web/                  # Frontend Web App (Next.js 16 App Router + Tailwind v4)
+|       |-- app/              # Application routing: (auth), (main), admin, sessions...
+|       |-- apiRequests/      # Typed HTTP client layer & Next.js Server Actions
+|       `-- Dockerfile        # Multi-stage production container build for Next.js Web
+|-- packages/
+|   |-- shared-types/         # Shared Zod schemas, DTOs, Enums across API & Web
+|   |-- ui/                   # Shared UI component library (Radix UI / Shadcn UI)
+|   |-- eslint-config/        # Standardized code quality and linting configurations
+|   `-- typescript-config/    # Monorepo-wide TypeScript compilation settings
+|-- docs/                     # Capstone documentation suite (Reports 1 to 7)
+|-- docker-compose.yml        # Orchestration for 5 containers: postgres, redis, pgadmin, api, web
+|-- package.json              # Monorepo script coordinator & workspace definitions
+`-- turbo.json                # Turborepo build, lint, and test caching pipeline
+\end{lstlisting}
+
+% =============================================================================
+\section{Installation Guides}
+
+\subsection{System Requirements}
+
+\subsubsection{Hardware Requirements}
+
+To ensure optimal execution and simultaneous operation of the database, memory cache, RESTful API server, and server-rendered web application, the host system must meet or exceed the following hardware specifications:
+
+\begin{center}
+\renewcommand{\arraystretch}{1.4}
+\begin{tabular}{|L{3.2cm}|L{5.4cm}|L{5.6cm}|}
+\hline
+\rowcolor{hdrfill}\hd{Component} & \hd{Minimum Specification} & \hd{Recommended Specification} \\ \hline
+\textbf{CPU} & 4 cores (Intel Core i5 Gen 8 / AMD Ryzen 5 / Apple M1) & 8 cores or higher (Intel Core i7 / AMD Ryzen 7 / Apple M2 Pro) \\ \hline
+\textbf{RAM} & 8 GB (minimum 3.5 GB free for Docker \& Node.js) & 16 GB or higher \\ \hline
+\textbf{Storage} & 10 GB available SSD storage & 20 GB or higher available NVMe SSD storage \\ \hline
+\textbf{Network} & Broadband internet connection ($\ge 10$ Mbps) & High-speed internet connection ($\ge 50$ Mbps) \\ \hline
+\end{tabular}
+\end{center}
+
+\subsubsection{Software Prerequisites}
+
+The following software environments, compilers, and container engines must be installed on the deployment machine:
+
+\begin{center}
+\renewcommand{\arraystretch}{1.4}
+\begin{tabular}{|L{3.2cm}|L{4.0cm}|L{7.0cm}|}
+\hline
+\rowcolor{hdrfill}\hd{Software Environment} & \hd{Required Version} & \hd{Role \& Functional Scope} \\ \hline
+\textbf{Operating System} & Windows 10/11 (64-bit), macOS 13+, or Ubuntu 22.04 LTS & Host OS supporting Docker virtualization with WSL2 or native Linux containers. \\ \hline
+\textbf{Docker Desktop} & Version 4.30.0 or higher & Container engine providing virtualization for PostgreSQL, Redis, pgAdmin, API, and Web. \\ \hline
+\textbf{Node.js Runtime} & Version 20.x or 22.x (LTS) & JavaScript/TypeScript V8 runtime environment powering both NestJS and Next.js. \\ \hline
+\textbf{pnpm Package Manager} & Version 9.x or higher & High-performance, disk-efficient package manager coordinating the monorepo workspace. \\ \hline
+\textbf{Git SCM} & Version 2.40.0 or higher & Distributed version control system used to clone repositories and manage revisions. \\ \hline
+\end{tabular}
+\end{center}
+
+\subsection{Software Prerequisites \& Download Instructions}
+
+Deploying the \textbf{Frevia} platform requires three core development runtimes and orchestration utilities:
+
+\subsubsection{Step 1: Download and Install Git SCM}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.90\textwidth]{images/install/a01_git_download.png}
+  \caption{Downloading the Git SCM installer for 64-bit Windows from the official website}
+\end{figure}
+
+\begin{itemize}[leftmargin=1.5em,itemsep=3pt]
+  \item \rbadge{1} Navigate to the official Git download portal at \url{https://git-scm.com/downloads/win}.
+  \item \rbadge{2} Click \textbf{Click here to download} to retrieve the latest 64-bit standalone installer for Windows (\texttt{Git-2.xx.x-64-bit.exe}).
+  \item Execute the installer, ensuring \textbf{Git Bash} and \textbf{Git Credential Manager} options are enabled during setup.
+\end{itemize}
+
+\subsubsection{Step 2: Download and Install Node.js LTS and pnpm}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.90\textwidth]{images/install/a02_nodejs_download.png}
+  \caption{Downloading the Node.js Long Term Support (LTS) installer from the official website}
+\end{figure}
+
+\begin{itemize}[leftmargin=1.5em,itemsep=3pt]
+  \item \rbadge{1} Navigate to the official Node.js download portal at \url{https://nodejs.org/en/download}.
+  \item \rbadge{2} Select the stable \textbf{Node.js LTS (v22.x or v20.x)} distribution and download the 64-bit Windows Installer (\texttt{.msi}).
+  \item After completing the Node.js installation, open a terminal with administrator privileges and run:
+\begin{lstlisting}[frame=single,basicstyle=\footnotesize\ttfamily,backgroundcolor=\color{codebg}]
+# Enable Corepack and install the latest pnpm package manager
+corepack enable
+corepack prepare pnpm@latest --activate
+\end{lstlisting}
+\end{itemize}
+
+\subsubsection{Step 3: Download and Install Docker Desktop}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.90\textwidth]{images/install/a03_docker_download.png}
+  \caption{Downloading the Docker Desktop installer for Windows with WSL2 support}
+\end{figure}
+
+\begin{itemize}[leftmargin=1.5em,itemsep=3pt]
+  \item \rbadge{1} Navigate to the official Docker Desktop download portal at \url{https://www.docker.com/products/docker-desktop/}.
+  \item \rbadge{2} Click \textbf{Download for Windows} to retrieve \texttt{Docker Desktop Installer.exe}.
+  \item Run the installer and ensure the option \textbf{Use WSL 2 instead of Hyper-V (recommended)} is checked. Restart the computer if prompted.
+\end{itemize}
+
+\subsubsection{Step 4: Verify Installed Runtime Environments}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.90\textwidth]{images/install/a04_env_check_versions.png}
+  \caption{Verifying installed version signatures of Git, Node.js, pnpm, and Docker via PowerShell}
+\end{figure}
+
+Open Windows PowerShell or a Unix terminal and execute the verification commands shown above:
+\begin{itemize}[leftmargin=1.5em,itemsep=3pt]
+  \item \rbadge{1} Execute \texttt{git --version} $\rightarrow$ confirms Git version (e.g., \texttt{git version 2.47.1.windows.1}).
+  \item \rbadge{2} Execute \texttt{node -v} $\rightarrow$ confirms Node.js LTS version (e.g., \texttt{v22.12.0}).
+  \item \rbadge{3} Execute \texttt{pnpm -v} $\rightarrow$ confirms pnpm version (e.g., \texttt{9.15.0}).
+  \item \rbadge{4} Execute \texttt{docker -v} and \texttt{docker compose version} $\rightarrow$ confirms Docker Desktop engine (e.g., \texttt{Docker version 27.4.0, build bde2b89}) and Docker Compose plugin (e.g., \texttt{Docker Compose version v2.31.0}).
+\end{itemize}
+
+\subsection{Third-Party Services Configuration \& Environment Variables}
+
+The \textbf{Frevia} platform integrates several external cloud APIs to support authentication, asset storage, real-time communications, secure escrow payments, and AI capabilities:
+
+\begin{center}
+\renewcommand{\arraystretch}{1.45}
+\begin{longtable}{|L{3.2cm}|L{4.2cm}|L{6.8cm}|}
+\hline
+\rowcolor{hdrfill}\hd{Service Provider} & \hd{Environment Variables} & \hd{Role \& Functional Scope} \\ \hline
+\endhead
+\textbf{Google Identity} & \texttt{GOOGLE\_CLIENT\_ID} \newline \texttt{GOOGLE\_CLIENT\_SECRET} & Google OAuth 2.0 Single Sign-On (SSO) integration. \\ \hline
+\textbf{Gmail SMTP} & \texttt{MAIL\_HOST}, \texttt{MAIL\_PORT} \newline \texttt{MAIL\_USER}, \texttt{MAIL\_PASS} & Transmission of 6-digit email OTPs for registration, password recovery, and notifications. \\ \hline
+\textbf{Cloudinary CDN} & \texttt{CLOUDINARY\_CLOUD\_NAME} \newline \texttt{CLOUDINARY\_API\_KEY} \newline \texttt{CLOUDINARY\_API\_SECRET} & High-performance cloud hosting and image optimization for avatars, portfolios, and job attachments. \\ \hline
+\textbf{Stripe Connect} & \texttt{STRIPE\_SECRET\_KEY} \newline \texttt{STRIPE\_WEBHOOK\_SECRET} & Milestone escrow payment processing, customer checkouts, and automated freelancer payouts. \\ \hline
+\textbf{Google Gemini AI} & \texttt{GEMINI\_API\_KEY} & Generative AI engine powering CV extraction, automated skill matching, and smart job analysis. \\ \hline
+\end{longtable}
+\end{center}
+
+\subsection{Monorepo Setup, Dependencies \& Database Initialization}
+
+\subsubsection{Step 1: Clone Repository and Install Dependencies}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.90\textwidth]{images/install/a05_clone_and_install.png}
+  \caption{Cloning repository and executing pnpm install across all monorepo packages}
+\end{figure}
+
+\begin{itemize}[leftmargin=1.5em,itemsep=3pt]
+  \item \rbadge{1} Run \texttt{git clone <repository\_url>} to clone the project to the local workspace.
+  \item \rbadge{2} Run \texttt{pnpm install} at the workspace root directory. The monorepo resolver links all shared packages (\texttt{packages/shared-types}, \texttt{packages/ui}) and resolves third-party dependencies efficiently.
+\end{itemize}
+
+\subsubsection{Step 2: Configure Environment Files}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.90\textwidth]{images/install/a06_env_configuration.png}
+  \caption{Verifying environment configuration files for API (\texttt{apps/api/.env}) and Web (\texttt{apps/web/.env})}
+\end{figure}
+
+\begin{itemize}[leftmargin=1.5em,itemsep=3pt]
+  \item \rbadge{1} Navigate to \texttt{apps/api} and duplicate \texttt{.env.example} to create \texttt{.env}. Verify database credentials, Redis configuration, JWT secrets, and external API keys:
+\begin{lstlisting}[frame=single,basicstyle=\footnotesize\ttfamily,backgroundcolor=\color{codebg}]
+DATABASE_URL="postgresql://frevia_user:frevia_password@localhost:5432/frevia?schema=public"
+REDIS_HOST="localhost"
+REDIS_PORT=6379
+JWT_SECRET="frevia_jwt_secret_production_key"
+PORT=3000
+\end{lstlisting}
+  \item \rbadge{2} Navigate to \texttt{apps/web} and create \texttt{.env}. Configure public and server-side endpoints:
+\begin{lstlisting}[frame=single,basicstyle=\footnotesize\ttfamily,backgroundcolor=\color{codebg}]
+NEXT_PUBLIC_API_ENDPOINT="http://localhost:3000"
+NEXT_PUBLIC_URL="http://localhost:3001"
+API_ENDPOINT="http://localhost:3000"
+\end{lstlisting}
+\end{itemize}
+
+\subsubsection{Step 3: Database Schema Migration and Initial Seeding}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.90\textwidth]{images/install/a07_prisma_migrate_seed.png}
+  \caption{Generating Prisma Client, executing database migrations, and executing seed scripts}
+\end{figure}
+
+Open the terminal in \texttt{apps/api} (or pass filter flags from the monorepo root) and execute the database lifecycle commands:
+\begin{itemize}[leftmargin=1.5em,itemsep=3pt]
+  \item \rbadge{1} Execute \texttt{pnpm --filter @frevia/api prisma generate} to compile the Prisma TypeScript Client.
+  \item \rbadge{2} Execute \texttt{pnpm --filter @frevia/api prisma migrate deploy} to apply all 14 database migrations to the PostgreSQL instance.
+  \item \rbadge{3} Execute \texttt{pnpm --filter @frevia/api seed} to populate default RBAC roles, all 275 granular system permissions, pre-configured system admin accounts, master skill catalogs, and sample category dictionaries.
+\end{itemize}

@@ -41,6 +41,8 @@ export const contractApi = {
     http.get<ContractDetailType>(`/contracts/slug/${encodeURIComponent(slug)}`),
   sign: (contractId: number) =>
     http.patch<ContractType>(`/contracts/${contractId}/sign`, {}),
+  reject: (contractId: number, reason?: string) =>
+    http.patch<ContractType>(`/contracts/${contractId}/reject`, { reason }),
   complete: (contractId: number) =>
     http.patch<ContractType>(`/contracts/${contractId}/complete`, {}),
 };
@@ -76,6 +78,12 @@ export const contractApiRequest = {
 
   sign(contractId: number) {
     return http.patch<ContractType>(`/api/contracts/${contractId}/sign`, {});
+  },
+
+  reject(contractId: number, reason?: string) {
+    return http.patch<ContractType>(`/api/contracts/${contractId}/reject`, {
+      reason,
+    });
   },
 
   complete(contractId: number) {

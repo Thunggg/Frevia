@@ -1,7 +1,10 @@
 export * from "./contract-detail";
+export * from "./contract-document-paper";
+export * from "./contract-actions-sidebar";
+export * from "./contract-shared-files-sidebar";
+export * from "./manage-milestone-dialog";
 export * from "./contract-detail-header";
 export * from "./contract-parties-overview";
 export * from "./contract-action-dialogs";
 export * from "./paper-contract-card";
 export * from "./edit-contract-sheet";
-
