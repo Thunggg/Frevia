@@ -12,13 +12,17 @@ import {
   FailedToLoadSessionsException,
   FailedToRevokeSessionException,
 } from './sessions.error';
+import { AuthGateway } from '../../shared/gateways/auth.gateway';
 import { SessionsRepository } from './sessions.repo';
 
 @Injectable()
 export class SessionsService {
   private readonly logger = new Logger(SessionsService.name);
 
-  constructor(private readonly sessionsRepository: SessionsRepository) {}
+  constructor(
+    private readonly sessionsRepository: SessionsRepository,
+    private readonly authGateway: AuthGateway,
+  ) {}
 
   async getMySessions(
     userId: number,
@@ -80,6 +84,12 @@ export class SessionsService {
       // BR-02: chỉ xóa khi còn active (chưa hết hạn)
       // BR-03: xóa row → refresh token mất ngay
       await this.sessionsRepository.deleteActiveByIdForUser(id, userId);
+
+      // Realtime: phát event ngắt kết nối session trên thiết bị đó
+      this.authGateway.emitForceLogoutSession(
+        id,
+        'Phiên đăng nhập này đã bị thu hồi từ một thiết bị khác.',
+      );
 
       // BR-04: nếu revoke đúng session đang dùng → client sẽ logout
       const loggedOut = currentSessionId != null && currentSessionId === id;

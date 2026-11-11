@@ -3144,6 +3144,16 @@
       "logIn": "Log in",
       "failed": "Reset password failed",
       "sendOtpFailed": "Send OTP failed"
+    },
+    "forceLogout": {
+      "bannedTitle": "Account Suspended",
+      "bannedDescription": "Your account has been suspended by an Administrator.",
+      "revokedTitle": "Session Revoked",
+      "revokedDescription": "This session has been revoked from another device.",
+      "defaultTitle": "Session Terminated",
+      "defaultDescription": "Your session has ended. Please log in again.",
+      "logoutButton": "Log Out",
+      "processing": "Processing..."
     }
   },
   "recommendation": {

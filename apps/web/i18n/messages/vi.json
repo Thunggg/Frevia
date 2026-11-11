@@ -3136,6 +3136,16 @@
       "logIn": "Đăng nhập",
       "failed": "Đặt lại mật khẩu thất bại",
       "sendOtpFailed": "Gửi mã OTP thất bại"
+    },
+    "forceLogout": {
+      "bannedTitle": "Tài khoản đã bị khóa",
+      "bannedDescription": "Tài khoản của bạn đã bị khóa bởi Quản trị viên.",
+      "revokedTitle": "Phiên đăng nhập đã bị thu hồi",
+      "revokedDescription": "Phiên đăng nhập này đã bị thu hồi từ một thiết bị khác.",
+      "defaultTitle": "Phiên đăng nhập kết thúc",
+      "defaultDescription": "Phiên đăng nhập của bạn đã kết thúc. Vui lòng đăng nhập lại.",
+      "logoutButton": "Đăng xuất",
+      "processing": "Đang xử lý..."
     }
   },
   "recommendation": {
