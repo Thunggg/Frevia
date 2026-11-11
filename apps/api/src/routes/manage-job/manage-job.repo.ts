@@ -267,39 +267,42 @@ export class ManageJobRepository {
   }
 
   async createJob(clientId: number, data: CreateJobBodyType): Promise<JobType> {
-    const job = await this.prisma.$transaction(async (tx) => {
-      await this.assertJobCategoriesUsable(tx, data.jobCategories);
+    const job = await this.prisma.$transaction(
+      async (tx) => {
+        await this.assertJobCategoriesUsable(tx, data.jobCategories);
 
-      const createdJob = await tx.job.create({
-        data: {
-          clientId,
-          title: data.title,
-          slug: this.createJobSlug(data.title),
-          description: data.description,
-          budgetMin: data.budgetMin,
-          budgetMax: data.budgetMax,
-          budgetType: data.budgetType,
-          deadline: data.deadline,
-          expiryDate: data.expiryDate,
-          hiringType: data.hiringType,
-          positionsRequired: data.positionsRequired,
-        },
+        const createdJob = await tx.job.create({
+          data: {
+            clientId,
+            title: data.title,
+            slug: this.createJobSlug(data.title),
+            description: data.description,
+            budgetMin: data.budgetMin,
+            budgetMax: data.budgetMax,
+            budgetType: data.budgetType,
+            deadline: data.deadline,
+            expiryDate: data.expiryDate,
+            hiringType: data.hiringType,
+            positionsRequired: data.positionsRequired,
+          },
 
-        select: { id: true },
-      });
+          select: { id: true },
+        });
 
-      await this.replaceJobSkills(tx, createdJob.id, data.skills);
-      await this.replaceJobCategories(tx, createdJob.id, data.jobCategories);
+        await this.replaceJobSkills(tx, createdJob.id, data.skills);
+        await this.replaceJobCategories(tx, createdJob.id, data.jobCategories);
 
-      // Đọc lại sau khi gắn kỹ năng/danh mục để response phản ánh đúng dữ liệu vừa lưu.
-      return tx.job.findUniqueOrThrow({
-        where: { id: createdJob.id },
-        select: jobSelect,
-      });
-    }, {
-      maxWait: 10000,
-      timeout: 20000,
-    });
+        // Đọc lại sau khi gắn kỹ năng/danh mục để response phản ánh đúng dữ liệu vừa lưu.
+        return tx.job.findUniqueOrThrow({
+          where: { id: createdJob.id },
+          select: jobSelect,
+        });
+      },
+      {
+        maxWait: 10000,
+        timeout: 20000,
+      },
+    );
 
     return this.normalizeJob(job);
   }
@@ -311,70 +314,73 @@ export class ManageJobRepository {
   ): Promise<JobType> {
     await this.checkJobOwner(userId, jobId);
 
-    const updatedJob = await this.prisma.$transaction(async (tx) => {
-      await this.assertJobCategoriesUsable(tx, data.jobCategories);
+    const updatedJob = await this.prisma.$transaction(
+      async (tx) => {
+        await this.assertJobCategoriesUsable(tx, data.jobCategories);
 
-      // Không cho giảm số vị trí cần tuyển xuống dưới số vị trí đã tuyển.
-      const current = await tx.job.findUniqueOrThrow({
-        where: { id: jobId },
-        select: { positionsFilled: true, status: true, slug: true },
-      });
+        // Không cho giảm số vị trí cần tuyển xuống dưới số vị trí đã tuyển.
+        const current = await tx.job.findUniqueOrThrow({
+          where: { id: jobId },
+          select: { positionsFilled: true, status: true, slug: true },
+        });
 
-      if (data.positionsRequired < current.positionsFilled) {
-        throw PositionsRequiredBelowFilledException();
-      }
+        if (data.positionsRequired < current.positionsFilled) {
+          throw PositionsRequiredBelowFilledException();
+        }
 
-      // BR-J42: Tính bất biến của URL Slug sau khi Job đã Publish (chỉ cập nhật slug khi DRAFT)
-      const slug =
-        current.status === JobStatus.DRAFT
-          ? this.createJobSlug(data.title)
-          : current.slug;
+        // BR-J42: Tính bất biến của URL Slug sau khi Job đã Publish (chỉ cập nhật slug khi DRAFT)
+        const slug =
+          current.status === JobStatus.DRAFT
+            ? this.createJobSlug(data.title)
+            : current.slug;
 
-      const job = await tx.job.update({
-        where: {
-          id: jobId,
-        },
+        const job = await tx.job.update({
+          where: {
+            id: jobId,
+          },
 
-        data: {
-          title: data.title,
-          slug,
-          description: data.description,
-          budgetMin: data.budgetMin,
-          budgetMax: data.budgetMax,
-          budgetType: data.budgetType,
-          deadline: data.deadline,
-          expiryDate: data.expiryDate,
-          hiringType: data.hiringType,
-          positionsRequired: data.positionsRequired,
-        },
+          data: {
+            title: data.title,
+            slug,
+            description: data.description,
+            budgetMin: data.budgetMin,
+            budgetMax: data.budgetMax,
+            budgetType: data.budgetType,
+            deadline: data.deadline,
+            expiryDate: data.expiryDate,
+            hiringType: data.hiringType,
+            positionsRequired: data.positionsRequired,
+          },
 
-        select: { id: true },
-      });
+          select: { id: true },
+        });
 
-      await tx.jobSkill.deleteMany({
-        where: {
-          jobId,
-        },
-      });
+        await tx.jobSkill.deleteMany({
+          where: {
+            jobId,
+          },
+        });
 
-      await tx.jobJobCategory.deleteMany({
-        where: {
-          jobId,
-        },
-      });
+        await tx.jobJobCategory.deleteMany({
+          where: {
+            jobId,
+          },
+        });
 
-      await this.replaceJobSkills(tx, jobId, data.skills);
-      await this.replaceJobCategories(tx, jobId, data.jobCategories);
+        await this.replaceJobSkills(tx, jobId, data.skills);
+        await this.replaceJobCategories(tx, jobId, data.jobCategories);
 
-      // Đọc lại sau khi gắn kỹ năng/danh mục để response phản ánh đúng dữ liệu vừa lưu.
-      return tx.job.findUniqueOrThrow({
-        where: { id: job.id },
-        select: jobSelect,
-      });
-    }, {
-      maxWait: 10000,
-      timeout: 20000,
-    });
+        // Đọc lại sau khi gắn kỹ năng/danh mục để response phản ánh đúng dữ liệu vừa lưu.
+        return tx.job.findUniqueOrThrow({
+          where: { id: job.id },
+          select: jobSelect,
+        });
+      },
+      {
+        maxWait: 10000,
+        timeout: 20000,
+      },
+    );
 
     return this.normalizeJob(updatedJob);
   }
@@ -406,34 +412,37 @@ export class ManageJobRepository {
     }
 
     // BR-J39: Tự động hủy/hết hạn Proposal khi Job OPEN bị xóa trong cùng transaction
-    await this.prisma.$transaction(async (tx) => {
-      await tx.job.update({
-        where: {
-          id: jobId,
-        },
-
-        data: {
-          deletedAt: new Date(),
-        },
-      });
-
-      if (job.status === JobStatus.OPEN) {
-        await tx.proposal.updateMany({
+    await this.prisma.$transaction(
+      async (tx) => {
+        await tx.job.update({
           where: {
-            jobId,
-            status: {
-              in: [ProposalStatus.SUBMITTED, ProposalStatus.INTERVIEWING],
-            },
+            id: jobId,
           },
+
           data: {
-            status: ProposalStatus.EXPIRED,
+            deletedAt: new Date(),
           },
         });
-      }
-    }, {
-      maxWait: 10000,
-      timeout: 20000,
-    });
+
+        if (job.status === JobStatus.OPEN) {
+          await tx.proposal.updateMany({
+            where: {
+              jobId,
+              status: {
+                in: [ProposalStatus.SUBMITTED, ProposalStatus.INTERVIEWING],
+              },
+            },
+            data: {
+              status: ProposalStatus.EXPIRED,
+            },
+          });
+        }
+      },
+      {
+        maxWait: 10000,
+        timeout: 20000,
+      },
+    );
   }
 
   async publishJob(userId: number, jobId: number): Promise<JobType> {

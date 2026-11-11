@@ -170,9 +170,8 @@ async function bootstrap() {
 
         // Bỏ qua các route public (có decorator @IsPublic())
         // vì các route này bypass PermissionGuard và không thuộc phạm vi RBAC.
-        const isPublic = layer.route.stack.some(
-          (s) =>
-            Boolean(s?.handle && Reflect.getMetadata(IS_PUBLIC_KEY, s.handle)),
+        const isPublic = layer.route.stack.some((s) =>
+          Boolean(s?.handle && Reflect.getMetadata(IS_PUBLIC_KEY, s.handle)),
         );
         if (isPublic) return undefined;
 
