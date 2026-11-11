@@ -11,18 +11,11 @@ import {
   Edit2,
   FileCheck,
   Lock,
-  MoreHorizontal,
   Play,
   RotateCcw,
   Trash2,
   Upload,
 } from "lucide-react";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@repo/ui/components/shadcn/dropdown-menu";
 import { Button } from "@repo/ui/components/shadcn/button";
 import type { MilestoneType } from "@shared/types";
 import { MilestoneMiniStepper } from "./milestone-mini-stepper";
@@ -31,6 +24,7 @@ export interface MilestoneCardProps {
   contractId: number;
   contractSlug?: string;
   contractStatus?: string;
+  isHeldInContract?: boolean;
   milestone: MilestoneType;
   index: number;
   isFreelancer?: boolean;
@@ -40,6 +34,7 @@ export interface MilestoneCardProps {
   onEdit?: (milestone: MilestoneType) => void;
   onDelete?: (milestone: MilestoneType) => void;
   onFund?: (milestone: MilestoneType) => void;
+  onRelease?: (milestone: MilestoneType) => void;
   onReview?: (milestone: MilestoneType) => void;
   onSubmitWork?: (milestone: MilestoneType) => void;
   onStartWork?: (milestone: MilestoneType) => void;
@@ -49,6 +44,7 @@ export function MilestoneCard({
   contractId,
   contractSlug,
   contractStatus,
+  isHeldInContract = false,
   milestone,
   index,
   isFreelancer = false,
@@ -58,6 +54,7 @@ export function MilestoneCard({
   onEdit,
   onDelete,
   onFund,
+  onRelease,
   onReview,
   onSubmitWork,
   onStartWork,
@@ -163,8 +160,18 @@ export function MilestoneCard({
   const isClient = !isFreelancer;
   const canEdit =
     isClient &&
-    (contractStatus === "PENDING_SIGN" ||
-      contractStatus === "AWAITING_PAYMENT");
+    (contractStatus === "AWAITING_PAYMENT" ||
+      (contractStatus === "PENDING_SIGN" && !isHeldInContract));
+  const canFundMilestone =
+    isClient &&
+    contractStatus === "ACTIVE" &&
+    milestone.paymentStatus === "PENDING" &&
+    Boolean(onFund);
+  const canReleaseMilestone =
+    isClient &&
+    milestone.status === "COMPLETED" &&
+    milestone.paymentStatus === "FUNDED" &&
+    Boolean(onRelease);
 
   if (variant === "card") {
     return (
@@ -244,13 +251,23 @@ export function MilestoneCard({
           </div>
 
           <div className="flex items-center gap-1.5">
-            {isClient && milestone.paymentStatus === "PENDING" && onFund && (
+            {canFundMilestone && onFund && (
               <Button
                 size="sm"
                 onClick={() => onFund(milestone)}
                 className="h-8 rounded-lg bg-[#0069D3] hover:bg-[#0055b3] text-white text-xs font-semibold px-3"
               >
                 Fund Escrow
+              </Button>
+            )}
+
+            {canReleaseMilestone && onRelease && (
+              <Button
+                size="sm"
+                onClick={() => onRelease(milestone)}
+                className="h-8 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold px-3"
+              >
+                Release Payment
               </Button>
             )}
 
@@ -332,18 +349,26 @@ export function MilestoneCard({
       <td className="py-4 px-4 text-xs text-right whitespace-nowrap">
         <div className="inline-flex items-center justify-end gap-2">
           {/* Quick Action Button if pending action */}
-          {isClient &&
-            milestone.paymentStatus === "PENDING" &&
-            onFund && (
-              <Button
-                size="sm"
-                onClick={() => onFund(milestone)}
-                className="h-8 rounded-lg bg-[#0069D3] hover:bg-[#0055b3] text-white text-xs font-semibold px-3 shadow-xs cursor-pointer"
-              >
-                <CreditCard className="mr-1 size-3" />
-                Fund
-              </Button>
-            )}
+          {canFundMilestone && onFund && (
+            <Button
+              size="sm"
+              onClick={() => onFund(milestone)}
+              className="h-8 rounded-lg bg-[#0069D3] hover:bg-[#0055b3] text-white text-xs font-semibold px-3 shadow-xs cursor-pointer"
+            >
+              <CreditCard className="mr-1 size-3" />
+              Fund
+            </Button>
+          )}
+
+          {canReleaseMilestone && onRelease && (
+            <Button
+              size="sm"
+              onClick={() => onRelease(milestone)}
+              className="h-8 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold px-3 shadow-xs cursor-pointer"
+            >
+              Release Payment
+            </Button>
+          )}
 
           {isClient &&
             milestone.status === "SUBMITTED" &&

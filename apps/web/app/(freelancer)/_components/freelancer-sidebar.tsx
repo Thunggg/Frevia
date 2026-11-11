@@ -12,6 +12,7 @@ import {
   Bookmark,
   ChevronDown,
   ChevronRight,
+  CreditCard,
   Eye,
   FileCheck,
   FileText,
@@ -153,6 +154,12 @@ export function FreelancerSidebar() {
       href: "/freelancer/contracts",
       labelKey: "navContracts",
       icon: FileCheck,
+      matchPrefix: true,
+    },
+    {
+      href: "/freelancer/payments",
+      labelKey: "navBillingPayments",
+      icon: CreditCard,
       matchPrefix: true,
     },
     {
@@ -328,6 +335,14 @@ export function FreelancerSidebar() {
               >
                 <UserRound className="size-3.5" />
                 {t("profileSettings")}
+              </Link>
+              <Link
+                href="/freelancer/payments"
+                onClick={() => setProfileOpen(false)}
+                className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-xs text-muted-foreground hover:bg-[#D0E1F8]/40 dark:hover:bg-zinc-800 hover:text-[#0069D3] dark:hover:text-blue-300 transition-colors"
+              >
+                <CreditCard className="size-3.5" />
+                {t("navBillingPayments")}
               </Link>
               <Link
                 href="/sessions"

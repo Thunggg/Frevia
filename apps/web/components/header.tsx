@@ -108,6 +108,7 @@ const roleConfig: Record<UserRole, { nameKey: NavRoleKey; links: NavLink[] }> = 
       { href: "/freelancer/bookmarks", labelKey: "bookmarks" },
       { href: "/freelancer/proposals", labelKey: "myProposals" },
       { href: "/freelancer/contracts", labelKey: "contracts" },
+      { href: "/freelancer/payments", labelKey: "payments" },
       { href: "/freelancer/saved-searches", labelKey: "savedSearches" },
       { href: "/forum", labelKey: "forum" },
     ],
@@ -437,11 +438,11 @@ function ProfileDropdown({ role }: { role: Exclude<UserRole, "GUEST"> }) {
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
               <Link
-                href="/account-profile?tab=payments"
+                href="/freelancer/payments"
                 className="cursor-pointer"
               >
                 <CreditCard className="size-4 text-muted-foreground" />
-                Billing & Payouts
+                Billing & Payments
               </Link>
             </DropdownMenuItem>
           </>

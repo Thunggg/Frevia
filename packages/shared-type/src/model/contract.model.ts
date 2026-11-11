@@ -40,6 +40,8 @@ export const ContractSchema = z.object({
   clientFeePaidAt: z.coerce.date().nullable().optional(),
   freelancerFeeStatus: PlatformFeeStatusEnum.optional().default("UNPAID"),
   freelancerFeePaidAt: z.coerce.date().nullable().optional(),
+  holdPaymentIntentId: z.string().nullable().optional(),
+  holdMilestoneIds: z.array(z.number()).optional().default([]),
   signedByClient: z.boolean(),
   signedByFreelancer: z.boolean(),
   clientSignedAt: z.coerce.date().nullable().optional(),

@@ -21,6 +21,7 @@ import { ContractDocumentPaper } from "./contract-document-paper";
 import { ContractActionsSidebar } from "./contract-actions-sidebar";
 import { ContractSharedFilesSidebar } from "./contract-shared-files-sidebar";
 import { ContractActionDialogs } from "./contract-action-dialogs";
+import { FundContractHoldSheet } from "./fund-contract-hold-sheet";
 import {
   ManageMilestoneDialog,
   type MilestoneItemData,
@@ -63,46 +64,20 @@ export function ContractDetail({
   const [milestoneToEdit, setMilestoneToEdit] =
     useState<MilestoneItemData | null>(null);
 
-  // Confirmation dialogs
+  // Confirmation dialogs & Hold sheet
   const [confirmSign, setConfirmSign] = useState(false);
   const [confirmComplete, setConfirmComplete] = useState(false);
   const [confirmCancel, setConfirmCancel] = useState(false);
-
-  // Stripe Payment dialog state
-  const [paymentModalOpen, setPaymentModalOpen] = useState(false);
-  const [paymentModalConfig] = useState<{
-    clientSecret: string;
-    amount: number;
-    title: string;
-    description: string;
-  } | null>(null);
-  const [isInitiatingPayment, setIsInitiatingPayment] = useState(false);
-
-  // 1-Click Saved Card Modal State
-  const [oneClickModal, setOneClickModal] = useState<{
-    open: boolean;
-    type: "PLATFORM_FEE";
-    amount: number;
-    title: string;
-  } | null>(null);
-  const [isProcessingOneClick, setIsProcessingOneClick] = useState(false);
-  const [selectedPmId, setSelectedPmId] = useState<string>("");
+  const [confirmReject, setConfirmReject] = useState(false);
+  const [rejectReason, setRejectReason] = useState("");
+  const [fundHoldOpen, setFundHoldOpen] = useState(false);
 
   // Loading states
   const [isSigning, setIsSigning] = useState(false);
   const [isCompleting, setIsCompleting] = useState(false);
   const [isCancelling, setIsCancelling] = useState(false);
+  const [isRejecting, setIsRejecting] = useState(false);
   const [isStartingChat, setIsStartingChat] = useState(false);
-
-  // Query Saved Payment Methods
-  const { data: savedCardsData, refetch: refetchSavedCards } = useQuery({
-    queryKey: ["client-saved-cards"],
-    queryFn: async () => {
-      const res = await paymentApiRequest.getSavedPaymentMethods();
-      return res.data;
-    },
-    enabled: !isFreelancer,
-  });
 
   // Sync Checkout Session on URL return
   const searchParams = useSearchParams();
@@ -321,111 +296,34 @@ export function ContractDetail({
     }
   };
 
-  // Platform Fee Trigger
-  const handleStartPayPlatformFee = () => {
-    const feeAmount = Number(
-      contract.clientPlatformFee || contract.platformFee,
-    );
-    const savedCards = savedCardsData?.paymentMethods || [];
-
-    if (savedCards.length > 0) {
-      setSelectedPmId(savedCards[0]?.id || "");
-      setOneClickModal({
-        open: true,
-        type: "PLATFORM_FEE",
-        amount: feeAmount,
-        title: "Pay Platform Fee (1-Click)",
-      });
-    } else {
-      void (async () => {
-        try {
-          const res =
-            await paymentApiRequest.createPlatformFeeCheckoutSession(
-              contract.id,
-            );
-          if (res.data.checkoutUrl) {
-            window.location.href = res.data.checkoutUrl;
-          }
-        } catch {
-          toastError({ message: "Failed to initiate Stripe Checkout." });
-        }
-      })();
-    }
-  };
-
-  // 1-Click Payment Confirmation
-  const handleConfirmOneClickPay = async () => {
-    if (!oneClickModal) return;
-    setIsProcessingOneClick(true);
+  // Reject Offer Action (Freelancer)
+  const handleReject = async () => {
+    setIsRejecting(true);
     try {
-      if (oneClickModal.type === "PLATFORM_FEE") {
-        await paymentApiRequest.payPlatformFeeWithSavedCard(
-          contract.id,
-          selectedPmId || undefined,
-        );
-        toastSuccess({ message: "Platform fee paid successfully!" });
-      }
-      setOneClickModal(null);
+      await contractApiRequest.reject(
+        contract.id,
+        rejectReason.trim() || undefined,
+      );
       await queryClient.invalidateQueries({
         queryKey: ["client-contract-detail", contract.id],
       });
       await queryClient.invalidateQueries({
         queryKey: ["client-contracts"],
       });
-      void refetchSavedCards();
+      toastSuccess({
+        message: "Contract declined. Any payment hold has been released.",
+      });
+      setConfirmReject(false);
+      setRejectReason("");
     } catch (error) {
       toastError({
         message:
           error instanceof ApiFail
             ? error.response.error.message
-            : "Payment with saved card failed. Redirecting to Stripe Checkout...",
+            : "Failed to decline contract.",
       });
-      if (oneClickModal.type === "PLATFORM_FEE") {
-        const res =
-          await paymentApiRequest.createPlatformFeeCheckoutSession(
-            contract.id,
-          );
-        if (res.data.checkoutUrl) window.location.href = res.data.checkoutUrl;
-      }
     } finally {
-      setIsProcessingOneClick(false);
-    }
-  };
-
-  // Stripe Checkout Fallback
-  const handlePayViaStripeCheckoutFromModal = async () => {
-    if (!oneClickModal) return;
-    setIsInitiatingPayment(true);
-    try {
-      if (oneClickModal.type === "PLATFORM_FEE") {
-        const res =
-          await paymentApiRequest.createPlatformFeeCheckoutSession(
-            contract.id,
-          );
-        if (res.data.checkoutUrl) window.location.href = res.data.checkoutUrl;
-      }
-    } catch (error) {
-      toastError({
-        message:
-          error instanceof ApiFail
-            ? error.response.error.message
-            : "Failed to open Stripe Checkout.",
-      });
-      setIsInitiatingPayment(false);
-    }
-  };
-
-  // Customer Portal
-  const handleOpenStripeCustomerPortal = async () => {
-    try {
-      const res = await paymentApiRequest.getCustomerPortalLink(
-        window.location.href,
-      );
-      if (res.data?.portalUrl) {
-        window.location.href = res.data.portalUrl;
-      }
-    } catch {
-      toastError({ message: "Could not open Stripe Billing Portal." });
+      setIsRejecting(false);
     }
   };
 
@@ -496,7 +394,8 @@ export function ContractDetail({
             }}
             onOpenConfirmComplete={() => setConfirmComplete(true)}
             onOpenConfirmCancel={() => setConfirmCancel(true)}
-            onPayPlatformFee={handleStartPayPlatformFee}
+            onOpenFundHold={() => setFundHoldOpen(true)}
+            onOpenConfirmReject={() => setConfirmReject(true)}
           />
 
           {/* Shared Files & Documents (Displayed under actions) */}
@@ -528,10 +427,32 @@ export function ContractDetail({
           currentAllocatedAmount={currentAllocatedAmount}
           contractExpiresAt={contract.expiresAt}
           milestoneToEdit={milestoneToEdit}
+          isAmountLocked={Boolean(
+            milestoneToEdit &&
+              contract.status === "PENDING_SIGN" &&
+              contract.holdMilestoneIds?.includes(milestoneToEdit.id),
+          )}
         />
       )}
 
-      {/* All Action and Payment Dialogs */}
+      {/* Sheet: Authorize Contract Escrow Hold (Step 1) */}
+      {!isFreelancer && (
+        <FundContractHoldSheet
+          open={fundHoldOpen}
+          onOpenChange={setFundHoldOpen}
+          contract={contract}
+          onSuccess={async () => {
+            await queryClient.invalidateQueries({
+              queryKey: ["client-contract-detail", contract.id],
+            });
+            await queryClient.invalidateQueries({
+              queryKey: ["client-contracts"],
+            });
+          }}
+        />
+      )}
+
+      {/* All Action and Confirmation Dialogs */}
       <ContractActionDialogs
         contract={contract}
         isFreelancer={isFreelancer}
@@ -557,29 +478,12 @@ export function ContractDetail({
         onConfirmCancelChange={setConfirmCancel}
         isCancelling={isCancelling}
         onCancel={() => void handleCancel()}
-        paymentModalOpen={paymentModalOpen}
-        onPaymentModalOpenChange={setPaymentModalOpen}
-        paymentModalConfig={paymentModalConfig}
-        onPaymentSuccess={async () => {
-          await queryClient.invalidateQueries({
-            queryKey: ["client-contract-detail", contract.id],
-          });
-          await queryClient.invalidateQueries({
-            queryKey: ["client-contracts"],
-          });
-        }}
-        oneClickModal={oneClickModal}
-        onCloseOneClickModal={() => setOneClickModal(null)}
-        savedCards={savedCardsData?.paymentMethods || []}
-        selectedPmId={selectedPmId}
-        onSelectPmId={setSelectedPmId}
-        isProcessingOneClick={isProcessingOneClick}
-        isInitiatingPayment={isInitiatingPayment}
-        onConfirmOneClickPay={() => void handleConfirmOneClickPay()}
-        onPayViaStripeCheckout={() =>
-          void handlePayViaStripeCheckoutFromModal()
-        }
-        onOpenCustomerPortal={() => void handleOpenStripeCustomerPortal()}
+        confirmReject={confirmReject}
+        onConfirmRejectChange={setConfirmReject}
+        rejectReason={rejectReason}
+        onRejectReasonChange={setRejectReason}
+        isRejecting={isRejecting}
+        onReject={() => void handleReject()}
       />
     </div>
   );
@@ -594,3 +498,4 @@ export { ContractPartiesOverview } from "./contract-parties-overview";
 export { ContractActionDialogs } from "./contract-action-dialogs";
 export { PaperContractCard } from "./paper-contract-card";
 export { EditContractSheet } from "./edit-contract-sheet";
+export { FundContractHoldSheet } from "./fund-contract-hold-sheet";

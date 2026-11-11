@@ -2,7 +2,6 @@
 
 import { useFormatter } from "next-intl";
 import {
-  Calendar,
   CheckCircle2,
   Clock,
   Download,
@@ -26,10 +25,8 @@ interface MilestoneOverviewTabProps {
 }
 
 export function MilestoneOverviewTab({
-  contract,
   milestone,
   submissions,
-  isFreelancer = false,
 }: MilestoneOverviewTabProps) {
   const format = useFormatter();
   const latestSubmission = submissions.length > 0 ? submissions[0] : null;
@@ -91,11 +88,12 @@ export function MilestoneOverviewTab({
               Milestone completed and payment released
             </h4>
             <p className="text-xs text-zinc-500 leading-relaxed">
-              All deliverables were approved. The payment of{" "}
+              All deliverables were approved. Gross value{" "}
               <strong className="text-zinc-950 dark:text-zinc-100 font-mono">
                 ${amountNumber.toLocaleString("en-US", { minimumFractionDigits: 2 })} USD
               </strong>{" "}
-              has been transferred from escrow to the freelancer.
+              (5% Freelancer platform fee deducted; 95% net credited to
+              freelancer wallet).
             </p>
           </div>
         </div>

@@ -109,9 +109,19 @@ export const ContractAwaitingPaymentException = () =>
   new UnprocessableEntityException([
     {
       message:
-        'Contract is awaiting initial payment. Client must fund Milestone 1 and 3% platform fee before signing.',
+        'Contract is awaiting initial payment hold. Client must authorize at least one milestone and the 3% contract fee before signing.',
       path: 'id',
     },
+  ]);
+
+export const ContractExpiredException = () =>
+  new UnprocessableEntityException([
+    { message: ManageContractMessage.CONTRACT_EXPIRED, path: 'expiresAt' },
+  ]);
+
+export const ClientMustSignFirstException = () =>
+  new UnprocessableEntityException([
+    { message: ManageContractMessage.CLIENT_MUST_SIGN_FIRST, path: 'status' },
   ]);
 
 export const ContractNotActionableForRejectionException = () =>

@@ -1,4 +1,10 @@
-import { HttpException, Injectable, Logger } from '@nestjs/common';
+import {
+  HttpException,
+  Injectable,
+  Logger,
+  OnModuleDestroy,
+  OnModuleInit,
+} from '@nestjs/common';
 import {
   CreateContractBodyType,
   GetContractListQueryType,
@@ -9,11 +15,13 @@ import {
 import { ContractRepository } from './contract.repo';
 import {
   AlreadySignedException,
+  ClientMustSignFirstException,
   ContractAlreadyCancelledException,
   ContractAlreadyCompletedException,
   ContractAlreadyExistsException,
   ContractAwaitingPaymentException,
   ContractDisputedException,
+  ContractExpiredException,
   ContractExpiresAtBeforeMilestonesException,
   ContractExpiresAtRequiredException,
   ContractForbiddenException,
@@ -38,14 +46,63 @@ import { PaymentService } from '../payments/payment.service';
 const ALLOWED_PROPOSAL_STATUSES = ['SUBMITTED', 'INTERVIEWING', 'HIRED'];
 
 @Injectable()
-export class ContractService {
+export class ContractService implements OnModuleInit, OnModuleDestroy {
   private readonly logger = new Logger(ContractService.name);
+  private expiryTimer: ReturnType<typeof setInterval> | null = null;
 
   constructor(
     private readonly contractRepository: ContractRepository,
     private readonly contractPdfService: ContractPdfService,
     private readonly paymentService: PaymentService,
   ) {}
+
+  onModuleInit() {
+    this.expiryTimer = setInterval(
+      () => {
+        void this.expireOverdueContracts();
+      },
+      5 * 60 * 1000,
+    );
+    this.expiryTimer.unref?.();
+  }
+
+  onModuleDestroy() {
+    if (this.expiryTimer) {
+      clearInterval(this.expiryTimer);
+      this.expiryTimer = null;
+    }
+  }
+
+  private async handleContractExpiry(contract: {
+    id: number;
+    holdPaymentIntentId?: string | null;
+  }) {
+    if (contract.holdPaymentIntentId) {
+      try {
+        await this.paymentService.cancelContractHold(
+          contract.holdPaymentIntentId,
+          'Contract expired before both parties signed',
+        );
+      } catch (err) {
+        this.logger.warn(
+          `Failed to cancel hold ${contract.holdPaymentIntentId} on contract #${contract.id} expiry: ${err instanceof Error ? err.message : String(err)}`,
+        );
+      }
+    }
+    return this.contractRepository.expireContract(contract.id);
+  }
+
+  async expireOverdueContracts() {
+    try {
+      const overdueContracts =
+        await this.contractRepository.findExpiredPendingContracts(new Date());
+      for (const item of overdueContracts) {
+        await this.handleContractExpiry(item);
+      }
+    } catch (err) {
+      this.logger.error('Failed to expire overdue contracts:', err);
+    }
+  }
 
   async createContract(clientId: number, body: CreateContractBodyType) {
     try {
@@ -135,6 +192,14 @@ export class ContractService {
       )
         throw ContractNotPendingSignException();
 
+      if (
+        contract.holdPaymentIntentId &&
+        body.totalAmount !== undefined &&
+        Number(body.totalAmount) !== Number(contract.totalAmount)
+      ) {
+        throw ContractNotPendingSignException();
+      }
+
       if (body.expiresAt !== undefined) {
         const nextEndMs = getEffectiveContractDeadlineMs(body.expiresAt);
         const milestoneDueDates =
@@ -169,6 +234,10 @@ export class ContractService {
       if (!isClient && !isFreelancer) throw ContractForbiddenException();
 
       if (contract.status === ContractStatus.AWAITING_PAYMENT) {
+        if (contract.expiresAt && new Date(contract.expiresAt) < new Date()) {
+          await this.handleContractExpiry(contract);
+          throw ContractExpiredException();
+        }
         throw ContractAwaitingPaymentException();
       }
 
@@ -176,9 +245,27 @@ export class ContractService {
         throw ContractNotPendingSignException();
       }
 
+      if (contract.expiresAt && new Date(contract.expiresAt) < new Date()) {
+        await this.handleContractExpiry(contract);
+        throw ContractExpiredException();
+      }
+
       if (isClient && contract.signedByClient) throw AlreadySignedException();
       if (isFreelancer && contract.signedByFreelancer)
         throw AlreadySignedException();
+
+      if (isFreelancer && !contract.signedByClient) {
+        throw ClientMustSignFirstException();
+      }
+
+      if (isFreelancer) {
+        if (!contract.holdPaymentIntentId) {
+          throw ContractAwaitingPaymentException();
+        }
+        await this.paymentService.captureContractHold(
+          contract.holdPaymentIntentId,
+        );
+      }
 
       const role = isClient ? 'client' : 'freelancer';
       const signed = await this.contractRepository.signContract(
@@ -225,12 +312,26 @@ export class ContractService {
         throw ContractNotActionableForRejectionException();
       }
 
+      if (contract.holdPaymentIntentId) {
+        try {
+          await this.paymentService.cancelContractHold(
+            contract.holdPaymentIntentId,
+            reason || 'Freelancer declined contract offer',
+          );
+        } catch (cancelErr) {
+          this.logger.error(
+            `Failed to cancel hold intent ${contract.holdPaymentIntentId} on reject for contract #${contractId}:`,
+            cancelErr,
+          );
+        }
+      }
+
       const rejected = await this.contractRepository.rejectContract(
         contractId,
         reason,
       );
 
-      // Auto refund escrow deposit if any
+      // Fallback hoàn tiền nếu có khoản escrow đã từng được capture trước đó
       try {
         await this.paymentService.refundContractEscrow(contractId);
       } catch (refundErr) {
@@ -287,6 +388,31 @@ export class ContractService {
         throw ContractDisputedException();
       }
 
+      if (contract.holdPaymentIntentId) {
+        try {
+          await this.paymentService.cancelContractHold(
+            contract.holdPaymentIntentId,
+            'Contract cancelled prior to capture',
+          );
+        } catch (cancelErr) {
+          this.logger.error(
+            `Failed to cancel hold intent ${contract.holdPaymentIntentId} on cancel for contract #${contractId}:`,
+            cancelErr,
+          );
+        }
+      }
+
+      if (contract.status === ContractStatus.ACTIVE) {
+        try {
+          await this.paymentService.refundContractEscrow(contractId);
+        } catch (refundErr) {
+          this.logger.error(
+            `Failed to refund escrow on cancel for contract #${contractId}:`,
+            refundErr,
+          );
+        }
+      }
+
       return await this.contractRepository.cancelContract(contractId);
     } catch (error) {
       this.logger.error(`Failed to cancel contract #${contractId}:`, error);
@@ -321,13 +447,28 @@ export class ContractService {
     }
   }
 
+  private isExpiredPendingContract(contract: {
+    status: ContractStatus;
+    expiresAt: Date | string | null;
+  }): boolean {
+    if (
+      contract.status !== ContractStatus.AWAITING_PAYMENT &&
+      contract.status !== ContractStatus.PENDING_SIGN
+    ) {
+      return false;
+    }
+    return Boolean(
+      contract.expiresAt && new Date(contract.expiresAt) < new Date(),
+    );
+  }
+
   async getContractDetail(
     userId: number,
     roleName: string,
     contractId: number,
   ) {
     try {
-      const contract =
+      let contract =
         await this.contractRepository.getContractDetail(contractId);
 
       if (!contract) throw ContractNotFoundException();
@@ -337,6 +478,13 @@ export class ContractService {
         contract.clientId === userId || contract.freelancerId === userId;
 
       if (!isAdmin && !isOwner) throw ContractForbiddenException();
+
+      if (this.isExpiredPendingContract(contract)) {
+        await this.handleContractExpiry(contract);
+        contract =
+          (await this.contractRepository.getContractDetail(contractId)) ??
+          contract;
+      }
 
       return contract;
     } catch (error) {
@@ -373,7 +521,7 @@ export class ContractService {
 
   async getContractBySlug(userId: number, roleName: string, slug: string) {
     try {
-      const contract = await this.contractRepository.findContractBySlug(slug);
+      let contract = await this.contractRepository.findContractBySlug(slug);
 
       if (!contract) throw ContractNotFoundException();
 
@@ -382,6 +530,12 @@ export class ContractService {
         contract.clientId === userId || contract.freelancerId === userId;
 
       if (!isAdmin && !isOwner) throw ContractForbiddenException();
+
+      if (this.isExpiredPendingContract(contract)) {
+        await this.handleContractExpiry(contract);
+        contract =
+          (await this.contractRepository.findContractBySlug(slug)) ?? contract;
+      }
 
       return contract;
     } catch (error) {

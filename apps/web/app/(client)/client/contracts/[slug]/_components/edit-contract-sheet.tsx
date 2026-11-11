@@ -101,16 +101,22 @@ export function EditContractSheet({
       return;
     }
 
+    const isBudgetLocked =
+      Boolean(contract.holdPaymentIntentId) ||
+      contract.status !== "AWAITING_PAYMENT";
     setIsSubmitting(true);
     try {
       const payload: {
-        totalAmount: number;
+        totalAmount?: number;
         terms?: string;
         expiresAt?: string;
       } = {
-        totalAmount: Number(totalAmount),
         expiresAt: toEndOfDayIso(expiresAt),
       };
+
+      if (!isBudgetLocked) {
+        payload.totalAmount = Number(totalAmount);
+      }
 
       if (terms.trim()) {
         payload.terms = terms.trim();
@@ -205,12 +211,22 @@ export function EditContractSheet({
                   min={minAllowedAmount > 0 ? minAllowedAmount : 1}
                   step="any"
                   required
+                  disabled={
+                    Boolean(contract.holdPaymentIntentId) ||
+                    contract.status !== "AWAITING_PAYMENT"
+                  }
                   value={totalAmount || ""}
                   onChange={(e) => setTotalAmount(Number(e.target.value))}
                   placeholder={t("amountPlaceholder")}
-                  className="w-full rounded-xl border border-border bg-background py-2 pl-9 pr-3 text-sm text-foreground focus:border-[#0069D3] focus:outline-none focus:ring-1 focus:ring-[#0069D3]"
+                  className="w-full rounded-xl border border-border bg-background py-2 pl-9 pr-3 text-sm text-foreground focus:border-[#0069D3] focus:outline-none focus:ring-1 focus:ring-[#0069D3] disabled:opacity-60 disabled:cursor-not-allowed"
                 />
               </div>
+              {(Boolean(contract.holdPaymentIntentId) ||
+                contract.status !== "AWAITING_PAYMENT") && (
+                <p className="mt-1 text-[11px] text-amber-600">
+                  Total budget cannot be edited after the escrow hold is authorized.
+                </p>
+              )}
             </div>
 
             {/* Expiration Date */}

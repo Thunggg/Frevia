@@ -18,6 +18,8 @@ export const ManageContractMessage = {
 
     CONTRACT_NOT_PENDING_SIGN: 'Error.ContractNotPendingSign',
     CONTRACT_NOT_ACTIVE: 'Error.ContractNotActive',
+    CONTRACT_EXPIRED: 'Error.ContractExpired',
+    CLIENT_MUST_SIGN_FIRST: 'Error.ClientMustSignFirst',
     CONTRACT_ALREADY_CANCELLED: 'Error.ContractAlreadyCancelled',
     CONTRACT_ALREADY_COMPLETED: 'Error.ContractAlreadyCompleted',
     CONTRACT_DISPUTED: 'Error.ContractDisputed',

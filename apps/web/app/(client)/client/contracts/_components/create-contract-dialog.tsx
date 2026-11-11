@@ -354,7 +354,7 @@ export function CreateContractDialog({
                     />
                   </div>
                   <p className="mt-1.5 text-[11px] text-muted-foreground">
-                    Client fee (3%) applies when funding Milestone 1 deposit.
+                    Client authorizes at least 1 milestone (or all) + 3% contract fee hold before signing; Freelancer is charged 5% per released milestone.
                   </p>
                 </div>
 

@@ -389,7 +389,7 @@ export function PaymentSettings({ userRole }: PaymentSettingsProps) {
             <div className="rounded-xl border border-dashed border-border/80 bg-zinc-50/50 dark:bg-zinc-900/20 p-5 text-center space-y-2">
               <CreditCard className="size-6 text-muted-foreground mx-auto stroke-1" />
               <p className="text-xs text-muted-foreground max-w-sm mx-auto">
-                No cards saved yet. When you fund a contract or pay a platform fee via Stripe Checkout, your card will be securely remembered for 1-click payments.
+                No cards saved yet. When you fund a contract or milestone via Stripe, your card can be securely saved for faster payments.
               </p>
               <Button
                 type="button"
@@ -425,10 +425,10 @@ export function PaymentSettings({ userRole }: PaymentSettingsProps) {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4 text-xs text-muted-foreground">
             <div className="rounded-xl border border-border/60 bg-zinc-50 dark:bg-zinc-900/40 p-4 space-y-1">
               <span className="font-semibold text-foreground block">
-                1. Fund Contract
+                1. Authorize Hold &amp; Sign
               </span>
               <p>
-                Deposit contract funds into Escrow using Stripe. Funds are securely locked until you are satisfied.
+                Client authorizes at least 1 milestone + 3% contract fee hold. Stripe captures the funds when Freelancer countersigns, and cancels with $0 fee if declined or expired.
               </p>
             </div>
             <div className="rounded-xl border border-border/60 bg-zinc-50 dark:bg-zinc-900/40 p-4 space-y-1">
@@ -441,10 +441,10 @@ export function PaymentSettings({ userRole }: PaymentSettingsProps) {
             </div>
             <div className="rounded-xl border border-border/60 bg-zinc-50 dark:bg-zinc-900/40 p-4 space-y-1">
               <span className="font-semibold text-foreground block">
-                3. Release or Refund
+                3. Release (5% Fee) or Refund
               </span>
               <p>
-                Approve deliverables to release payouts directly to freelancer, or refund if mutually agreed.
+                Approve deliverables to release 95% payout to the freelancer (5% platform fee deducted), or refund if mutually agreed.
               </p>
             </div>
           </div>
