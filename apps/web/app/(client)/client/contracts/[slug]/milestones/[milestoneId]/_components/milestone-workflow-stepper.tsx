@@ -1,7 +1,7 @@
 "use client";
 
 import { useFormatter } from "next-intl";
-import { Check, Clock, Loader2, RotateCcw } from "lucide-react";
+import { Check, Loader2, RotateCcw } from "lucide-react";
 import type { GetSubmissionResponseType, MilestoneType } from "@shared/types";
 
 interface MilestoneWorkflowStepperProps {
@@ -44,6 +44,7 @@ export function MilestoneWorkflowStepper({
   const hasSubmissions = submissions.length > 0;
   const latestSubmission = hasSubmissions ? submissions[0] : null;
   const isChangesRequested = milestone.status === "CHANGES_REQUESTED";
+  const isLate = milestone.status === "LATE";
   const isCompleted = milestone.status === "COMPLETED";
 
   const steps: StepItem[] = [
@@ -80,19 +81,28 @@ export function MilestoneWorkflowStepper({
     },
     {
       id: "submitted",
-      label: isChangesRequested ? "Correction Requested" : "Submitted for Review",
-      sublabel: latestSubmission
-        ? isChangesRequested
-          ? "Revisions needed"
-          : formatDate(latestSubmission.submittedAt)
-        : "Awaiting deliverables",
-      status: isChangesRequested
-        ? "warning"
-        : milestone.status === "SUBMITTED"
-          ? "current"
-          : isCompleted
-            ? "completed"
-            : "upcoming",
+      label: isLate
+        ? "Overdue (Late)"
+        : isChangesRequested
+          ? "Correction Requested"
+          : "Submitted for Review",
+      sublabel: isLate
+        ? milestone.paymentStatus === "REFUNDED"
+          ? "Refunded to client"
+          : "Deadline missed"
+        : latestSubmission
+          ? isChangesRequested
+            ? "Revisions needed"
+            : formatDate(latestSubmission.submittedAt)
+          : "Awaiting deliverables",
+      status:
+        isLate || isChangesRequested
+          ? "warning"
+          : milestone.status === "SUBMITTED"
+            ? "current"
+            : isCompleted
+              ? "completed"
+              : "upcoming",
     },
     {
       id: "released",

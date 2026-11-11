@@ -30,6 +30,7 @@ interface MilestoneSubmissionsTabProps {
   onSubmitWork?: () => void;
   onReviewSubmission?: (submission?: GetSubmissionResponseType) => void;
   onRelease?: () => void;
+  onRefund?: () => void;
 }
 
 export function MilestoneSubmissionsTab({
@@ -42,6 +43,7 @@ export function MilestoneSubmissionsTab({
   onSubmitWork,
   onReviewSubmission,
   onRelease,
+  onRefund,
 }: MilestoneSubmissionsTabProps) {
   const format = useFormatter();
   const isClient = !isFreelancer;
@@ -89,6 +91,25 @@ export function MilestoneSubmissionsTab({
         >
           <CreditCard className="mr-1.5 size-3.5" />
           Release Payment
+        </Button>
+      );
+    }
+
+    if (
+      isClient &&
+      contractStatus === "ACTIVE" &&
+      milestone.paymentStatus === "FUNDED" &&
+      (milestone.status === "LATE" || milestone.status === "PENDING") &&
+      onRefund
+    ) {
+      return (
+        <Button
+          variant="outline"
+          onClick={onRefund}
+          className="rounded-lg border-rose-200 dark:border-rose-800 text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/30 text-xs font-semibold h-9 px-4 shadow-xs cursor-pointer self-start sm:self-auto"
+        >
+          <RotateCcw className="mr-1.5 size-3.5" />
+          Request &amp; Auto-Refund
         </Button>
       );
     }

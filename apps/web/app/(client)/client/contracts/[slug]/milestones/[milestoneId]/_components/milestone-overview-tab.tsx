@@ -2,6 +2,7 @@
 
 import { useFormatter } from "next-intl";
 import {
+  AlertTriangle,
   CheckCircle2,
   Clock,
   Download,
@@ -109,7 +110,27 @@ export function MilestoneOverviewTab({
             <p className="text-xs text-zinc-500 leading-relaxed">
               Freelancer submitted deliverables on{" "}
               {formatDateTime(latestSubmission?.submittedAt)}. Client can review the files,
-              links, and approve to release escrow.
+              links, and approve to release escrow. If the client does not respond within 7 days,
+              escrow funds are automatically released to the freelancer.
+            </p>
+          </div>
+        </div>
+      )}
+
+      {milestone.status === "LATE" && (
+        <div className="rounded-sm border border-rose-200 dark:border-rose-900/60 bg-rose-50/40 dark:bg-rose-950/20 p-4 flex items-start gap-3">
+          <AlertTriangle className="size-4 shrink-0 text-rose-600 mt-0.5" />
+          <div className="space-y-0.5">
+            <h4 className="text-xs font-bold text-rose-600">
+              Milestone overdue (Late)
+            </h4>
+            <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              The deadline passed without a deliverable submission from the freelancer.
+              {milestone.paymentStatus === "REFUNDED"
+                ? " Escrowed funds have been automatically refunded to the client."
+                : milestone.paymentStatus === "FUNDED"
+                  ? " Funded escrow is eligible for automatic refund to the client."
+                  : ""}
             </p>
           </div>
         </div>
