@@ -87,10 +87,14 @@ function isExpired(expiresAt: Date | string) {
 }
 
 type MySessionsContentProps = {
-  role: HeaderProps["role"];
+  role?: HeaderProps["role"];
+  embedded?: boolean;
 };
 
-export function MySessionsContent({ role }: MySessionsContentProps) {
+export function MySessionsContent({
+  role,
+  embedded = false,
+}: MySessionsContentProps) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -215,9 +219,328 @@ export function MySessionsContent({ role }: MySessionsContentProps) {
     });
   };
 
+  const searchForm = (
+    <form
+      className="mb-6 flex max-w-md gap-2"
+      onSubmit={(event) => {
+        event.preventDefault();
+        applySearch();
+      }}
+    >
+      <div className="relative flex-1">
+        <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+        <Input
+          value={searchInput}
+          onChange={(event) => setSearchInput(event.target.value)}
+          placeholder={t("searchPlaceholder")}
+          className={embedded ? "h-10 pl-9" : "h-11 pl-9"}
+        />
+      </div>
+      {searchParam ? (
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon"
+          className={embedded ? "h-10 w-10" : "h-11 w-11"}
+          onClick={() => {
+            setSearchInput("");
+            updateParams({ search: null, page: "1" });
+          }}
+          aria-label={t("clearSearch")}
+        >
+          <X className="size-4" />
+        </Button>
+      ) : null}
+      <Button
+        type="submit"
+        className={
+          embedded
+            ? "h-10 bg-[#4fae2e] text-white hover:bg-[#459928]"
+            : "h-11 bg-[#4fae2e] text-white hover:bg-[#459928]"
+        }
+      >
+        {t("search")}
+      </Button>
+    </form>
+  );
+
+  const sessionListContent = (
+    <>
+      {isError ? (
+        <p className="py-12 text-center text-sm text-muted-foreground">
+          {t("loadFailed")}
+        </p>
+      ) : isLoading ? (
+        <div className="overflow-hidden rounded-xl border border-border">
+          <Table>
+            <TableHeader>
+              <TableRow className="hover:bg-transparent">
+                <TableHead>{t("colDevice")}</TableHead>
+                <TableHead>{t("colIp")}</TableHead>
+                <TableHead>{t("colStatus")}</TableHead>
+                <TableHead>{t("colCreated")}</TableHead>
+                <TableHead>{t("colExpires")}</TableHead>
+                <TableHead className="w-28 text-right">
+                  {t("colActions")}
+                </TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {Array.from({ length: 5 }).map((_, index) => (
+                <TableRow key={index}>
+                  <TableCell>
+                    <Skeleton className="h-4 w-40" />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton className="h-4 w-24" />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton className="h-5 w-16" />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton className="h-4 w-32" />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton className="h-4 w-32" />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton className="ml-auto h-8 w-20" />
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
+      ) : (
+        <div
+          className={
+            isFetching ? "opacity-60 transition-opacity" : undefined
+          }
+        >
+          {sessions.length === 0 ? (
+            <div className="rounded-xl border border-dashed border-border px-6 py-16 text-center">
+              <div className="mx-auto mb-4 flex size-14 items-center justify-center rounded-full bg-[#eaf8df] text-[#4fae2e] dark:bg-[#4fae2e]/15">
+                <MonitorSmartphone className="size-7" />
+              </div>
+              <p className="text-lg font-medium text-foreground">
+                {searchParam ? t("noMatchTitle") : t("emptyTitle")}
+              </p>
+              <p className="mx-auto mt-2 max-w-sm text-sm text-muted-foreground">
+                {searchParam
+                  ? t("noMatchDescription")
+                  : t("emptyDescription")}
+              </p>
+              {searchParam ? (
+                <Button
+                  className="mt-6 bg-[#4fae2e] text-white hover:bg-[#459928]"
+                  onClick={() => updateParams({ search: null, page: "1" })}
+                >
+                  {t("clearSearch")}
+                </Button>
+              ) : null}
+            </div>
+          ) : (
+            <div className="overflow-x-auto rounded-xl border border-border">
+              <Table>
+                <TableHeader>
+                  <TableRow className="bg-[#eaf8df]/40 hover:bg-[#eaf8df]/40 dark:bg-muted/40 dark:hover:bg-muted/40">
+                    <SortableHead column="id">
+                      {t("colDevice")}
+                    </SortableHead>
+                    <TableHead>{t("colIpAddress")}</TableHead>
+                    <TableHead>{t("colStatus")}</TableHead>
+                    <SortableHead column="createdAt">
+                      {t("colCreated")}
+                    </SortableHead>
+                    <SortableHead column="expiresAt">
+                      {t("colExpires")}
+                    </SortableHead>
+                    <TableHead className="w-28 text-right">
+                      {t("colActions")}
+                    </TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {sessions.map((session) => {
+                    const expired = isExpired(session.expiresAt);
+                    return (
+                      <TableRow
+                        key={session.id}
+                        className="hover:bg-[#eaf8df]/35 dark:hover:bg-white/4"
+                      >
+                        <TableCell className="min-w-48">
+                          <div className="flex flex-col gap-1.5">
+                            <span className="font-medium text-foreground">
+                              {session.deviceInfo || t("unknownDevice")}
+                            </span>
+                            {session.isCurrent ? (
+                              <Badge className="w-fit border-transparent bg-[#4fae2e] text-white hover:bg-[#4fae2e]">
+                                {t("current")}
+                              </Badge>
+                            ) : null}
+                          </div>
+                        </TableCell>
+                        <TableCell className="font-mono text-xs text-muted-foreground whitespace-nowrap">
+                          {session.ipAddress || "—"}
+                        </TableCell>
+                        <TableCell>
+                          <Badge
+                            variant={
+                              expired ? "destructive" : "secondary"
+                            }
+                            className={
+                              expired
+                                ? ""
+                                : "bg-[#eaf8df] text-[#4fae2e] dark:bg-[#4fae2e]/15"
+                            }
+                          >
+                            {expired ? t("expired") : t("active")}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="text-sm text-muted-foreground whitespace-nowrap">
+                          {formatDate(session.createdAt)}
+                        </TableCell>
+                        <TableCell className="text-sm text-muted-foreground whitespace-nowrap">
+                          {formatDate(session.expiresAt)}
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <div className="inline-flex items-center justify-end gap-1">
+                            <ViewSessionButton
+                              sessionId={session.id}
+                              onView={setDetailSessionId}
+                            />
+                            <RevokeSessionDialog
+                              sessionId={session.id}
+                              deviceInfo={session.deviceInfo}
+                              isCurrent={session.isCurrent}
+                              isExpired={expired}
+                              onRevoked={() => {
+                                if (detailSessionId === session.id) {
+                                  setDetailSessionId(null);
+                                }
+                              }}
+                            />
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
+                </TableBody>
+              </Table>
+            </div>
+          )}
+
+          <SessionDetailDialog
+            sessionId={detailSessionId}
+            open={detailOpen}
+            onOpenChange={(open) => {
+              if (!open) setDetailSessionId(null);
+            }}
+          />
+
+          {pagination.totalPages > 1 ? (
+            <div className="mt-8 flex flex-col items-center justify-between gap-4 sm:flex-row">
+              <p className="text-sm text-muted-foreground">
+                {tCommon("pageOfTotal", {
+                  page: pagination.page,
+                  totalPages: pagination.totalPages,
+                  total: pagination.total,
+                })}
+              </p>
+              <Pagination>
+                <PaginationContent>
+                  <PaginationItem>
+                    <PaginationPrevious
+                      href="#"
+                      label={tCommon("previous")}
+                      ariaLabel={tCommon("previous")}
+                      onClick={(event) => {
+                        event.preventDefault();
+                        if (page > 1) {
+                          updateParams({ page: String(page - 1) });
+                        }
+                      }}
+                      aria-disabled={page <= 1}
+                      className={
+                        page <= 1
+                          ? "pointer-events-none opacity-50"
+                          : undefined
+                      }
+                    />
+                  </PaginationItem>
+                  {getPageNumbers(page, pagination.totalPages).map(
+                    (item, index) =>
+                      item === "..." ? (
+                        <PaginationItem key={`ellipsis-${index}`}>
+                          <PaginationEllipsis
+                            label={tCommon("morePages")}
+                          />
+                        </PaginationItem>
+                      ) : (
+                        <PaginationItem key={item}>
+                          <PaginationLink
+                            href="#"
+                            isActive={item === page}
+                            onClick={(event) => {
+                              event.preventDefault();
+                              updateParams({ page: String(item) });
+                            }}
+                          >
+                            {item}
+                          </PaginationLink>
+                        </PaginationItem>
+                      ),
+                  )}
+                  <PaginationItem>
+                    <PaginationNext
+                      href="#"
+                      label={tCommon("next")}
+                      ariaLabel={tCommon("next")}
+                      onClick={(event) => {
+                        event.preventDefault();
+                        if (page < pagination.totalPages) {
+                          updateParams({ page: String(page + 1) });
+                        }
+                      }}
+                      aria-disabled={page >= pagination.totalPages}
+                      className={
+                        page >= pagination.totalPages
+                          ? "pointer-events-none opacity-50"
+                          : undefined
+                      }
+                    />
+                  </PaginationItem>
+                </PaginationContent>
+              </Pagination>
+            </div>
+          ) : null}
+        </div>
+      )}
+    </>
+  );
+
+  if (embedded) {
+    return (
+      <div className="space-y-6">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight flex items-center gap-2">
+            <MonitorSmartphone className="h-8 w-8 text-[#4fae2e]" />
+            {t("title")}
+          </h1>
+          <p className="mt-1 text-sm text-muted-foreground">
+            {t("description")}
+          </p>
+        </div>
+
+        {searchForm}
+        {sessionListContent}
+      </div>
+    );
+  }
+
   return (
     <div className="flex min-h-dvh flex-col bg-background font-sans">
-      <Header role={role} />
+      <Header role={role ?? "GUEST"} />
 
       <main className="flex-1">
         <section className="border-b border-[#4fae2e]/15 bg-[#eaf8df] dark:border-white/10 dark:bg-[#1a1c1a]">
@@ -241,295 +564,8 @@ export function MySessionsContent({ role }: MySessionsContentProps) {
         </section>
 
         <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 lg:py-10">
-          <form
-            className="mb-6 flex max-w-md gap-2"
-            onSubmit={(event) => {
-              event.preventDefault();
-              applySearch();
-            }}
-          >
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
-              <Input
-                value={searchInput}
-                onChange={(event) => setSearchInput(event.target.value)}
-                placeholder={t("searchPlaceholder")}
-                className="h-11 pl-9"
-              />
-            </div>
-            {searchParam ? (
-              <Button
-                type="button"
-                variant="ghost"
-                size="icon"
-                className="h-11 w-11"
-                onClick={() => {
-                  setSearchInput("");
-                  updateParams({ search: null, page: "1" });
-                }}
-                aria-label={t("clearSearch")}
-              >
-                <X className="size-4" />
-              </Button>
-            ) : null}
-            <Button
-              type="submit"
-              className="h-11 bg-[#4fae2e] text-white hover:bg-[#459928]"
-            >
-              {t("search")}
-            </Button>
-          </form>
-
-          {isError ? (
-            <p className="py-12 text-center text-sm text-muted-foreground">
-              {t("loadFailed")}
-            </p>
-          ) : isLoading ? (
-            <div className="overflow-hidden rounded-xl border border-border">
-              <Table>
-                <TableHeader>
-                  <TableRow className="hover:bg-transparent">
-                    <TableHead>{t("colDevice")}</TableHead>
-                    <TableHead>{t("colIp")}</TableHead>
-                    <TableHead>{t("colStatus")}</TableHead>
-                    <TableHead>{t("colCreated")}</TableHead>
-                    <TableHead>{t("colExpires")}</TableHead>
-                    <TableHead className="w-28 text-right">
-                      {t("colActions")}
-                    </TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {Array.from({ length: 5 }).map((_, index) => (
-                    <TableRow key={index}>
-                      <TableCell>
-                        <Skeleton className="h-4 w-40" />
-                      </TableCell>
-                      <TableCell>
-                        <Skeleton className="h-4 w-24" />
-                      </TableCell>
-                      <TableCell>
-                        <Skeleton className="h-5 w-16" />
-                      </TableCell>
-                      <TableCell>
-                        <Skeleton className="h-4 w-32" />
-                      </TableCell>
-                      <TableCell>
-                        <Skeleton className="h-4 w-32" />
-                      </TableCell>
-                      <TableCell>
-                        <Skeleton className="ml-auto h-8 w-20" />
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
-          ) : (
-            <div
-              className={
-                isFetching ? "opacity-60 transition-opacity" : undefined
-              }
-            >
-              {sessions.length === 0 ? (
-                <div className="rounded-xl border border-dashed border-border px-6 py-16 text-center">
-                  <div className="mx-auto mb-4 flex size-14 items-center justify-center rounded-full bg-[#eaf8df] text-[#4fae2e] dark:bg-[#4fae2e]/15">
-                    <MonitorSmartphone className="size-7" />
-                  </div>
-                  <p className="text-lg font-medium text-foreground">
-                    {searchParam ? t("noMatchTitle") : t("emptyTitle")}
-                  </p>
-                  <p className="mx-auto mt-2 max-w-sm text-sm text-muted-foreground">
-                    {searchParam
-                      ? t("noMatchDescription")
-                      : t("emptyDescription")}
-                  </p>
-                  {searchParam ? (
-                    <Button
-                      className="mt-6 bg-[#4fae2e] text-white hover:bg-[#459928]"
-                      onClick={() => updateParams({ search: null, page: "1" })}
-                    >
-                      {t("clearSearch")}
-                    </Button>
-                  ) : null}
-                </div>
-              ) : (
-                <div className="overflow-x-auto rounded-xl border border-border">
-                  <Table>
-                    <TableHeader>
-                      <TableRow className="bg-[#eaf8df]/40 hover:bg-[#eaf8df]/40 dark:bg-muted/40 dark:hover:bg-muted/40">
-                        <SortableHead column="id">
-                          {t("colDevice")}
-                        </SortableHead>
-                        <TableHead>{t("colIpAddress")}</TableHead>
-                        <TableHead>{t("colStatus")}</TableHead>
-                        <SortableHead column="createdAt">
-                          {t("colCreated")}
-                        </SortableHead>
-                        <SortableHead column="expiresAt">
-                          {t("colExpires")}
-                        </SortableHead>
-                        <TableHead className="w-28 text-right">
-                          {t("colActions")}
-                        </TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {sessions.map((session) => {
-                        const expired = isExpired(session.expiresAt);
-                        return (
-                          <TableRow
-                            key={session.id}
-                            className="hover:bg-[#eaf8df]/35 dark:hover:bg-white/4"
-                          >
-                            <TableCell className="min-w-48">
-                              <div className="flex flex-col gap-1.5">
-                                <span className="font-medium text-foreground">
-                                  {session.deviceInfo || t("unknownDevice")}
-                                </span>
-                                {session.isCurrent ? (
-                                  <Badge className="w-fit border-transparent bg-[#4fae2e] text-white hover:bg-[#4fae2e]">
-                                    {t("current")}
-                                  </Badge>
-                                ) : null}
-                              </div>
-                            </TableCell>
-                            <TableCell className="font-mono text-xs text-muted-foreground whitespace-nowrap">
-                              {session.ipAddress || "—"}
-                            </TableCell>
-                            <TableCell>
-                              <Badge
-                                variant={
-                                  expired ? "destructive" : "secondary"
-                                }
-                                className={
-                                  expired
-                                    ? ""
-                                    : "bg-[#eaf8df] text-[#4fae2e] dark:bg-[#4fae2e]/15"
-                                }
-                              >
-                                {expired ? t("expired") : t("active")}
-                              </Badge>
-                            </TableCell>
-                            <TableCell className="text-sm text-muted-foreground whitespace-nowrap">
-                              {formatDate(session.createdAt)}
-                            </TableCell>
-                            <TableCell className="text-sm text-muted-foreground whitespace-nowrap">
-                              {formatDate(session.expiresAt)}
-                            </TableCell>
-                            <TableCell className="text-right">
-                              <div className="inline-flex items-center justify-end gap-1">
-                                <ViewSessionButton
-                                  sessionId={session.id}
-                                  onView={setDetailSessionId}
-                                />
-                                <RevokeSessionDialog
-                                  sessionId={session.id}
-                                  deviceInfo={session.deviceInfo}
-                                  isCurrent={session.isCurrent}
-                                  isExpired={expired}
-                                  onRevoked={() => {
-                                    if (detailSessionId === session.id) {
-                                      setDetailSessionId(null);
-                                    }
-                                  }}
-                                />
-                              </div>
-                            </TableCell>
-                          </TableRow>
-                        );
-                      })}
-                    </TableBody>
-                  </Table>
-                </div>
-              )}
-
-              <SessionDetailDialog
-                sessionId={detailSessionId}
-                open={detailOpen}
-                onOpenChange={(open) => {
-                  if (!open) setDetailSessionId(null);
-                }}
-              />
-
-              {pagination.totalPages > 1 ? (
-                <div className="mt-8 flex flex-col items-center justify-between gap-4 sm:flex-row">
-                  <p className="text-sm text-muted-foreground">
-                    {tCommon("pageOfTotal", {
-                      page: pagination.page,
-                      totalPages: pagination.totalPages,
-                      total: pagination.total,
-                    })}
-                  </p>
-                  <Pagination>
-                    <PaginationContent>
-                      <PaginationItem>
-                        <PaginationPrevious
-                          href="#"
-                          label={tCommon("previous")}
-                          ariaLabel={tCommon("previous")}
-                          onClick={(event) => {
-                            event.preventDefault();
-                            if (page > 1) {
-                              updateParams({ page: String(page - 1) });
-                            }
-                          }}
-                          aria-disabled={page <= 1}
-                          className={
-                            page <= 1
-                              ? "pointer-events-none opacity-50"
-                              : undefined
-                          }
-                        />
-                      </PaginationItem>
-                      {getPageNumbers(page, pagination.totalPages).map(
-                        (item, index) =>
-                          item === "..." ? (
-                            <PaginationItem key={`ellipsis-${index}`}>
-                              <PaginationEllipsis
-                                label={tCommon("morePages")}
-                              />
-                            </PaginationItem>
-                          ) : (
-                            <PaginationItem key={item}>
-                              <PaginationLink
-                                href="#"
-                                isActive={item === page}
-                                onClick={(event) => {
-                                  event.preventDefault();
-                                  updateParams({ page: String(item) });
-                                }}
-                              >
-                                {item}
-                              </PaginationLink>
-                            </PaginationItem>
-                          ),
-                      )}
-                      <PaginationItem>
-                        <PaginationNext
-                          href="#"
-                          label={tCommon("next")}
-                          ariaLabel={tCommon("next")}
-                          onClick={(event) => {
-                            event.preventDefault();
-                            if (page < pagination.totalPages) {
-                              updateParams({ page: String(page + 1) });
-                            }
-                          }}
-                          aria-disabled={page >= pagination.totalPages}
-                          className={
-                            page >= pagination.totalPages
-                              ? "pointer-events-none opacity-50"
-                              : undefined
-                          }
-                        />
-                      </PaginationItem>
-                    </PaginationContent>
-                  </Pagination>
-                </div>
-              ) : null}
-            </div>
-          )}
+          {searchForm}
+          {sessionListContent}
         </div>
       </main>
       <Footer />
