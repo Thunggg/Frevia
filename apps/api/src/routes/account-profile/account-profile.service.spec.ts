@@ -34,6 +34,8 @@ describe('AccountProfileService', () => {
     updateGeneralProfile: jest.fn(),
     updatePassword: jest.fn(),
     updateAvatar: jest.fn(),
+    findClientProfile: jest.fn(),
+    createClientProfile: jest.fn(),
   };
   const cloudinary = {
     isConfigured: jest.fn(),
@@ -275,5 +277,57 @@ describe('AccountProfileService', () => {
       status: 400,
     });
     expect(repository.updateAvatar).not.toHaveBeenCalled();
+  });
+
+  describe('getClientProfile', () => {
+    it('throws ClientProfileNotFoundException if profile not found or user is not a client', async () => {
+      repository.findClientProfile.mockResolvedValue(null);
+      await expect(service.getClientProfile(1)).rejects.toMatchObject({
+        status: 404,
+      });
+
+      repository.findClientProfile.mockResolvedValue({
+        id: 10,
+        user: { userRoles: [{ role: { name: RoleName.FREELANCER } }] },
+        clientProfile: null,
+      });
+      await expect(service.getClientProfile(1)).rejects.toMatchObject({
+        status: 404,
+      });
+    });
+
+    it('returns client profile directly when clientProfile row exists', async () => {
+      const mockProfile = {
+        id: 10,
+        user: { userRoles: [{ role: { name: RoleName.CLIENT } }] },
+        clientProfile: { id: 1, profileId: 10, companyName: 'Acme Corp' },
+      };
+      repository.findClientProfile.mockResolvedValue(mockProfile);
+
+      const result = await service.getClientProfile(1);
+      expect(result).toEqual(mockProfile);
+      expect(repository.createClientProfile).not.toHaveBeenCalled();
+    });
+
+    it('auto-creates empty clientProfile when client has no clientProfile row yet', async () => {
+      const mockProfile = {
+        id: 10,
+        user: { userRoles: [{ role: { name: RoleName.CLIENT } }] },
+        clientProfile: null,
+      };
+      const createdClientProfile = {
+        id: 2,
+        profileId: 10,
+        companyName: null,
+        companyDescription: null,
+        website: null,
+      };
+      repository.findClientProfile.mockResolvedValue(mockProfile);
+      repository.createClientProfile.mockResolvedValue(createdClientProfile);
+
+      const result = await service.getClientProfile(1);
+      expect(repository.createClientProfile).toHaveBeenCalledWith(10);
+      expect(result.clientProfile).toEqual(createdClientProfile);
+    });
   });
 });

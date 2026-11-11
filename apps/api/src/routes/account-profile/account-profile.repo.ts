@@ -127,6 +127,12 @@ export class AccountProfileRepository {
     });
   }
 
+  createClientProfile(profileId: number) {
+    return this.prisma.clientProfile.create({
+      data: { profileId },
+    });
+  }
+
   async updateClientProfile(userId: number, input: UpdateClientProfileType) {
     return this.prisma.$transaction(async (transaction) => {
       const profile = await transaction.profile.findUniqueOrThrow({

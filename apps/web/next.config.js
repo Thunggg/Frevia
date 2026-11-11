@@ -13,11 +13,6 @@ const nextConfig = {
   async redirects() {
     return [
       {
-        source: "/account-profile",
-        destination: "/freelancer/profile",
-        permanent: false,
-      },
-      {
         source: "/search/jobs",
         destination: "/freelancer/search/jobs",
         permanent: false,

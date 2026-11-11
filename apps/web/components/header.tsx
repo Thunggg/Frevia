@@ -182,7 +182,6 @@ function HeaderNavigation({
 
 function HeaderSearch({
   className = "hidden max-w-xs flex-1 md:block lg:max-w-sm",
-  role,
 }: {
   className?: string;
   role?: UserRole;
@@ -392,7 +391,7 @@ function ProfileDropdown({ role }: { role: Exclude<UserRole, "GUEST"> }) {
         <DropdownMenuItem asChild>
           <Link
             href={
-              role === "FREELANCER" ? "/freelancer/profile" : "/account-profile"
+              role === "FREELANCER" ? "/freelancer/profile" : "/client/profile"
             }
             className="cursor-pointer"
           >
@@ -456,7 +455,7 @@ function ProfileDropdown({ role }: { role: Exclude<UserRole, "GUEST"> }) {
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
               <Link
-                href="/account-profile?tab=favorites"
+                href="/client/profile?tab=favorites"
                 className="cursor-pointer"
               >
                 <Heart className="size-4 text-muted-foreground" />
@@ -465,7 +464,7 @@ function ProfileDropdown({ role }: { role: Exclude<UserRole, "GUEST"> }) {
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
               <Link
-                href="/account-profile?tab=following"
+                href="/client/profile?tab=following"
                 className="cursor-pointer"
               >
                 <UserCheck className="size-4 text-muted-foreground" />
@@ -481,7 +480,14 @@ function ProfileDropdown({ role }: { role: Exclude<UserRole, "GUEST"> }) {
           </>
         )}
         <DropdownMenuItem asChild>
-          <Link href="/account-profile" className="cursor-pointer">
+          <Link
+            href={
+              role === "FREELANCER"
+                ? "/freelancer/profile?tab=social"
+                : "/client/profile?tab=social"
+            }
+            className="cursor-pointer"
+          >
             <Link2 className="size-4 text-muted-foreground" />
             {t("socialLinks")}
           </Link>
