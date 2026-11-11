@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import {
   Elements,
   PaymentElement,
@@ -40,6 +41,7 @@ function PaymentForm({
   onSuccess,
   onClose,
 }: PaymentFormProps) {
+  const queryClient = useQueryClient();
   const stripe = useStripe();
   const elements = useElements();
   const [submitting, setSubmitting] = useState(false);
@@ -77,6 +79,9 @@ function PaymentForm({
         } catch {
           // Non-blocking sync fallback
         }
+        await queryClient.invalidateQueries({
+          queryKey: ["saved-payment-methods"],
+        });
         toastSuccess({
           message:
             result.paymentIntent.status === "requires_capture"

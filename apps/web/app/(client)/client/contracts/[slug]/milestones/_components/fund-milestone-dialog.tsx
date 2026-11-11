@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
@@ -43,7 +44,7 @@ export function FundMilestoneDialog({
   const [selectedPmId, setSelectedPmId] = useState<string>("");
 
   const { data: savedCardsData } = useQuery({
-    queryKey: ["client-saved-cards"],
+    queryKey: ["saved-payment-methods"],
     queryFn: async () => {
       const res = await paymentApiRequest.getSavedPaymentMethods();
       return res.data;
@@ -52,6 +53,7 @@ export function FundMilestoneDialog({
   });
 
   const savedCards = savedCardsData?.paymentMethods || [];
+  const defaultCard = savedCards.find((card) => card.isDefault) || savedCards[0];
 
   if (!milestone) return null;
 
@@ -63,21 +65,29 @@ export function FundMilestoneDialog({
       await paymentApiRequest.fundMilestoneWithSavedCard(
         contractId,
         milestone.id,
-        pmId || selectedPmId || savedCards[0]?.id,
+        pmId || selectedPmId || defaultCard?.id,
       );
       toastSuccess({
         message: `Escrow funded $${milestoneAmount.toLocaleString("en-US", { minimumFractionDigits: 2 })} for "${milestone.title}"!`,
       });
 
-      await queryClient.invalidateQueries({
-        queryKey: ["client-contract-milestones", contractId],
-      });
-      await queryClient.invalidateQueries({
-        queryKey: ["client-contract-detail", contractId],
-      });
-      await queryClient.invalidateQueries({
-        queryKey: ["milestone-detail", contractId, milestone.id],
-      });
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: ["client-contract-milestones", contractId],
+        }),
+        queryClient.invalidateQueries({
+          queryKey: ["client-contract-detail", contractId],
+        }),
+        queryClient.invalidateQueries({
+          queryKey: ["milestone-detail", contractId, milestone.id],
+        }),
+        queryClient.invalidateQueries({
+          queryKey: ["saved-payment-methods"],
+        }),
+        queryClient.invalidateQueries({
+          queryKey: ["client-transactions"],
+        }),
+      ]);
 
       onSuccess?.();
       onOpenChange(false);
@@ -169,13 +179,21 @@ export function FundMilestoneDialog({
             {/* 1-Click Saved Card Option if available */}
             {savedCards.length > 0 && (
               <div className="space-y-2">
-                <span className="text-[11px] font-bold uppercase tracking-wider text-zinc-400 block">
-                  Quick Pay with Saved Card
-                </span>
+                <div className="flex items-center justify-between">
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-zinc-400">
+                    Quick Pay with Saved Card
+                  </span>
+                  <Link
+                    href="/client/payments"
+                    className="text-[11px] font-medium text-[#0069D3] hover:underline"
+                  >
+                    Manage cards
+                  </Link>
+                </div>
                 <div className="space-y-2">
                   {savedCards.map((card) => {
                     const isSelected =
-                      (selectedPmId || savedCards[0]?.id) === card.id;
+                      (selectedPmId || defaultCard?.id) === card.id;
                     return (
                       <div
                         key={card.id}
@@ -192,8 +210,14 @@ export function FundMilestoneDialog({
                             {card.brand} •••• {card.last4}
                           </span>
                           <span className="text-[11px] text-zinc-400 font-mono">
-                            {card.expMonth}/{card.expYear}
+                            {String(card.expMonth).padStart(2, "0")}/
+                            {card.expYear}
                           </span>
+                          {card.isDefault && (
+                            <span className="rounded-full bg-[#0069D3]/10 px-2 py-0.5 text-[10px] font-semibold text-[#0069D3]">
+                              Default
+                            </span>
+                          )}
                         </div>
                         <span className="text-[11px] font-semibold text-[#0069D3]">
                           {isSelected ? "Selected" : "Choose"}
