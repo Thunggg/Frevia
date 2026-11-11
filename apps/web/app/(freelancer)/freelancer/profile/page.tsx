@@ -21,6 +21,10 @@ export default async function FreelancerProfilePage() {
     redirect("/login?redirect=/freelancer/profile");
   }
 
+  if (role === RoleName.ADMIN) {
+    redirect("/admin/profile");
+  }
+
   if (role !== RoleName.FREELANCER) {
     redirect("/client/profile");
   }

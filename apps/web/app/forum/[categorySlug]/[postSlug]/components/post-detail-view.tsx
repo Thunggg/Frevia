@@ -37,6 +37,7 @@ import {
   useTogglePostLike,
 } from "@/hooks/use-forum";
 import { buildSlugId } from "@/lib/slug-utils";
+import { LanguageSwitcher } from "@/components/language-switcher";
 
 import { CommentSection } from "./comment-section";
 import { EditPostDialog } from "./edit-post-dialog";
@@ -116,25 +117,28 @@ export function PostDetailView({
     <div>
       <section className="border-b border-border/40 bg-background">
         <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8 lg:py-10">
-          <nav className="text-[13px] text-muted-foreground/60">
-            <Link
-              href="/forum"
-              className="transition-colors hover:text-[#4fae2e]"
-            >
-              {tCommon("forum")}
-            </Link>
-            <span className="mx-2 text-foreground/25">/</span>
-            <Link
-              href={`/forum/${buildSlugId(categorySlug, resolvedCategoryId)}`}
-              className="transition-colors hover:text-[#4fae2e]"
-            >
-              {categoryName}
-            </Link>
-            <span className="mx-2 text-foreground/25">/</span>
-            <span className="max-w-[180px] truncate font-medium text-foreground/80 sm:max-w-[280px]">
-              {displayTitle}
-            </span>
-          </nav>
+          <div className="flex items-center justify-between gap-4">
+            <nav className="text-[13px] text-muted-foreground/60">
+              <Link
+                href="/forum"
+                className="transition-colors hover:text-[#4fae2e]"
+              >
+                {tCommon("forum")}
+              </Link>
+              <span className="mx-2 text-foreground/25">/</span>
+              <Link
+                href={`/forum/${buildSlugId(categorySlug, resolvedCategoryId)}`}
+                className="transition-colors hover:text-[#4fae2e]"
+              >
+                {categoryName}
+              </Link>
+              <span className="mx-2 text-foreground/25">/</span>
+              <span className="max-w-[180px] truncate font-medium text-foreground/80 sm:max-w-[280px]">
+                {displayTitle}
+              </span>
+            </nav>
+            <LanguageSwitcher />
+          </div>
 
           <p className="mt-4 text-[13px] text-foreground/50">
             {t("discussionIn")}{" "}

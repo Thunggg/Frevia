@@ -40,6 +40,7 @@ import {
   PortfolioItemNotFoundException,
   UserNotFoundException,
 } from './users.error';
+import { AuthGateway } from '../../shared/gateways/auth.gateway';
 import { UsersRepository } from './users.repo';
 
 @Injectable()
@@ -47,6 +48,7 @@ export class UsersService {
   constructor(
     private readonly repository: UsersRepository,
     private readonly hashingService: HashingService,
+    private readonly authGateway: AuthGateway,
   ) {}
 
   // ====== Admin tạo tài khoản mới ======
@@ -172,6 +174,14 @@ export class UsersService {
 
       if (!updated) {
         throw UserNotFoundException();
+      }
+
+      // Realtime: phát sự kiện khóa tài khoản xuống toàn bộ thiết bị đang đăng nhập
+      if (body.isBanned === true) {
+        this.authGateway.emitForceLogoutUser(
+          id,
+          'Tài khoản của bạn đã bị khóa bởi Quản trị viên.',
+        );
       }
 
       return {

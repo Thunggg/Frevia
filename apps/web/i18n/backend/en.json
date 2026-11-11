@@ -362,5 +362,7 @@
   "You can only update your own profile.": "You can only update your own profile",
   "Error.SavedSearchLimitExceeded": "You have reached the maximum limit of 30 saved searches. Please delete some before creating a new one.",
   "Error.JobAlertLimitExceeded": "You have reached the maximum limit of 10 job alerts. Please delete some before creating a new one.",
-  "Error.JobAlertDuplicateCriteria": "You already have a job alert with these search criteria."
+  "Error.JobAlertDuplicateCriteria": "You already have a job alert with these search criteria.",
+  "Tài khoản của bạn đã bị khóa bởi Quản trị viên.": "Your account has been suspended by an Administrator.",
+  "Phiên đăng nhập này đã bị thu hồi từ một thiết bị khác.": "This session has been revoked from another device."
 }

@@ -10,6 +10,8 @@
     "switchToDarkMode": "Switch to dark mode",
     "loading": "Loading...",
     "home": "Home",
+    "back": "Back",
+    "messages": "Messages",
     "forum": "Forum",
     "posts": "{count, plural, one {post} other {posts}}",
     "comments": "{count, plural, one {comment} other {comments}}",
@@ -25,6 +27,7 @@
     "daysAgo": "{days}d ago",
     "yesterday": "Yesterday",
     "userFallback": "User #{id}",
+  "postFallback": "Post #{id}",
     "close": "Close",
     "cancel": "Cancel",
     "attachment": "Attachment",
@@ -112,7 +115,42 @@
     "search": "Search",
     "searchPlaceholder": "Search...",
     "allCategories": "All categories",
-    "toggleSidebar": "Toggle sidebar"
+    "toggleSidebar": "Toggle sidebar",
+    "profileSettings": "Account Settings",
+    "sessions": "Active Sessions"
+  },
+  "adminProfile": {
+    "title": "Account Settings",
+    "subtitle": "Manage personal details, avatar, and administrator password.",
+    "avatarTitle": "Profile Photo",
+    "avatarDescription": "JPG, PNG or WebP. Up to 5 MB.",
+    "choosePhoto": "Choose new photo",
+    "uploadPhoto": "Upload photo",
+    "uploadingPhoto": "Uploading...",
+    "avatarUpdated": "Profile photo updated successfully.",
+    "generalTitle": "Personal Information",
+    "generalDescription": "Update your display name and bio.",
+    "displayName": "Display Name",
+    "displayNamePlaceholder": "Enter display name...",
+    "bio": "Bio",
+    "bioPlaceholder": "Write a short bio...",
+    "saveChanges": "Save Changes",
+    "saving": "Saving...",
+    "profileUpdated": "Account details updated successfully.",
+    "securityTitle": "Security & Password",
+    "securityDescription": "Change your account password for enhanced security.",
+    "currentPassword": "Current Password",
+    "newPassword": "New Password",
+    "confirmPassword": "Confirm New Password",
+    "changePassword": "Change Password",
+    "changingPassword": "Changing password...",
+    "passwordChanged": "Password changed successfully.",
+    "sessionsTitle": "Active Sessions",
+    "sessionsDescription": "View and manage devices or browsers logged into your account.",
+    "manageSessions": "Manage Devices",
+    "loadFailed": "Failed to load profile details. Please try again.",
+    "retry": "Try again",
+    "roleAdmin": "Administrator"
   },
   "adminCommon": {
     "id": "ID",
@@ -1719,7 +1757,8 @@
     "navNotifications": "Notifications",
     "navMyJobs": "My Jobs",
     "navFavoriteFreelancers": "Favorite freelancers",
-    "navBillingPayments": "Billing & Payments"
+    "navBillingPayments": "Billing & Payments",
+    "navForum": "Forum"
   },
   "disputes": {
     "metaTitle": "My Disputes & Arbitration | Freelancer Dashboard | Frevia",
@@ -3144,6 +3183,16 @@
       "logIn": "Log in",
       "failed": "Reset password failed",
       "sendOtpFailed": "Send OTP failed"
+    },
+    "forceLogout": {
+      "bannedTitle": "Account Suspended",
+      "bannedDescription": "Your account has been suspended by an Administrator.",
+      "revokedTitle": "Session Revoked",
+      "revokedDescription": "This session has been revoked from another device.",
+      "defaultTitle": "Session Terminated",
+      "defaultDescription": "Your session has ended. Please log in again.",
+      "logoutButton": "Log Out",
+      "processing": "Processing..."
     }
   },
   "recommendation": {

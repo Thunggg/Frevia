@@ -15,7 +15,6 @@ import {
   CreditCard,
   Eye,
   FileText,
-  HelpCircle,
   Heart,
   Languages,
   LogOut,
@@ -27,6 +26,7 @@ import {
   Sun,
   SwitchCamera,
   UserRound,
+  Users,
 } from "@/components/icons";
 import { setLocaleCookie } from "@/i18n/actions";
 import { isLocale, type Locale } from "@/i18n/config";
@@ -102,7 +102,6 @@ export function ClientSidebar() {
   const router = useRouter();
   const queryClient = useQueryClient();
   const t = useTranslations("sidebar");
-  const tCommon = useTranslations("common");
   const tRole = useTranslations("roleName");
   const activeLocale = useLocale();
   const [isLocalePending, startLocaleTransition] = useTransition();
@@ -153,6 +152,12 @@ export function ClientSidebar() {
       href: "/client/conversations",
       labelKey: "navMessages",
       icon: MessageSquare,
+      matchPrefix: true,
+    },
+    {
+      href: "/forum",
+      labelKey: "navForum",
+      icon: Users,
       matchPrefix: true,
     },
     {
@@ -452,18 +457,6 @@ export function ClientSidebar() {
         </div>
       </nav>
 
-      {/* ── Bottom: Help ── */}
-      <div className="border-t border-border px-2.5 py-3">
-        {!collapsed && (
-          <Link
-            href="/forum"
-            className="flex items-center gap-2.5 rounded-xl px-3 py-2 text-xs text-muted-foreground/60 transition-colors hover:text-[#0069D3] dark:hover:text-blue-300"
-          >
-            <HelpCircle className="size-3.5" />
-            {t("helpForum")}
-          </Link>
-        )}
-      </div>
     </aside>
   );
 }

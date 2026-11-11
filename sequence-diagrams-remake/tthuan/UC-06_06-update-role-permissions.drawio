@@ -1,6 +1,6 @@
 <mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/29.0.3 Chrome/140.0.7339.249 Electron/38.7.0 Safari/537.36" version="29.0.3">
   <diagram id="UC-06_06-update-role-permissions" name="UC-06.06 Update Role Permissions">
-    <mxGraphModel dx="3391" dy="1043" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1654" pageHeight="3250" math="0" shadow="0">
+    <mxGraphModel dx="2522" dy="522" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1654" pageHeight="3250" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -156,7 +156,7 @@
             <mxPoint x="105" y="755" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="div_jwt" value="" style="endArrow=none;dashed=1;html=1;rounded=0;labelBackgroundColor=none;" parent="1" edge="1">
+        <mxCell id="div_jwt" value="" style="endArrow=none;dashed=1;html=1;rounded=0;labelBackgroundColor=none;exitX=-0.001;exitY=0.528;exitDx=0;exitDy=0;exitPerimeter=0;" parent="1" edge="1" source="fr_jwt_alt">
           <mxGeometry relative="1" as="geometry">
             <mxPoint x="40" y="775" as="sourcePoint" />
             <mxPoint x="580" y="775" as="targetPoint" />
