@@ -599,7 +599,16 @@
     "roleLoadFailed": "Failed to load the selected role.",
     "permissionsLoadFailed": "Failed to load permissions.",
     "noMatches": "No permissions match your filters.",
-    "selectAllModule": "Select all {module}"
+    "selectAllModule": "Select all {module}",
+    "allScopes": "All Scopes",
+    "scopeAdmin": "Admin Dashboard",
+    "scopeClient": "Client Portal",
+    "scopeFreelancer": "Freelancer",
+    "scopeContracts": "Contracts & Payments",
+    "scopeCommon": "Homepage & Platform",
+    "scopeHint": "Filter by operational scope for easier permission management",
+    "selectAllInScope": "Select all",
+    "deselectAllInScope": "Deselect all"
   },
   "adminTrash": {
     "metaTitle": "Trash | Admin Dashboard | Frevia",

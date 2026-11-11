@@ -1,6 +1,10 @@
 "use client";
 
 import { usePermissions } from "@/hooks/use-permission";
+import {
+  getPermissionScope,
+  SCOPE_DEFINITIONS,
+} from "@/lib/permission-scopes";
 import { getPermissionDisplayName } from "@/lib/permission-utils";
 import { Badge } from "@repo/ui/components/shadcn/badge";
 import { Button } from "@repo/ui/components/shadcn/button";
@@ -316,7 +320,25 @@ export function PermissionsTable() {
                       </TableCell>
                       <TableCell>
                         {permission.module ? (
-                          <Badge variant="outline">{permission.module}</Badge>
+                          <div className="flex items-center gap-1.5 flex-wrap">
+                            <Badge variant="outline" className="font-mono text-xs">
+                              {permission.module}
+                            </Badge>
+                            {(() => {
+                              const scope = getPermissionScope(permission);
+                              const scopeDef = SCOPE_DEFINITIONS[scope];
+                              return (
+                                <Badge
+                                  variant="outline"
+                                  className={`text-[9px] px-1.5 py-0 h-4 border ${scopeDef.badgeClass}`}
+                                >
+                                  {locale === "vi"
+                                    ? scopeDef.labelVi
+                                    : scopeDef.labelEn}
+                                </Badge>
+                              );
+                            })()}
+                          </div>
                         ) : (
                           <span className="text-muted-foreground">—</span>
                         )}

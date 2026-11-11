@@ -599,7 +599,16 @@
     "roleLoadFailed": "Không thể tải vai trò đã chọn.",
     "permissionsLoadFailed": "Không thể tải danh sách quyền.",
     "noMatches": "Không có quyền nào khớp với bộ lọc.",
-    "selectAllModule": "Chọn tất cả trong {module}"
+    "selectAllModule": "Chọn tất cả trong {module}",
+    "allScopes": "Tất cả phạm vi",
+    "scopeAdmin": "Dashboard Quản trị",
+    "scopeClient": "Khách hàng (Client)",
+    "scopeFreelancer": "Freelancer",
+    "scopeContracts": "Hợp đồng & Thanh toán",
+    "scopeCommon": "Trang chủ & Dùng chung",
+    "scopeHint": "Lọc theo khu vực sử dụng để dễ phân quyền hơn",
+    "selectAllInScope": "Chọn tất cả",
+    "deselectAllInScope": "Bỏ chọn tất cả"
   },
   "adminTrash": {
     "metaTitle": "Thùng rác | Quản trị | Frevia",

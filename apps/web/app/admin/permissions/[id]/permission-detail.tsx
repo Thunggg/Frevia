@@ -8,6 +8,10 @@ import { Separator } from "@repo/ui/components/shadcn/separator";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { useFormatter, useLocale, useTranslations } from "next-intl";
+import {
+  getPermissionScope,
+  SCOPE_DEFINITIONS,
+} from "@/lib/permission-scopes";
 import { getPermissionDisplayName } from "@/lib/permission-utils";
 import { HttpMethodBadge } from "../../components/http-method-badge";
 
@@ -92,12 +96,25 @@ export function PermissionDetail({ permissionId }: { permissionId: number }) {
 
         <div>
           <p className="text-xs text-muted-foreground">{tCommon("module")}</p>
-          <div className="mt-1">
+          <div className="mt-1 flex items-center gap-2 flex-wrap">
             {permission.module ? (
-              <Badge variant="outline">{permission.module}</Badge>
+              <Badge variant="outline" className="font-mono">{permission.module}</Badge>
             ) : (
               <span className="text-sm text-muted-foreground">—</span>
             )}
+            {(() => {
+              const scope = getPermissionScope(permission);
+              const scopeDef = SCOPE_DEFINITIONS[scope];
+              return (
+                <Badge
+                  variant="outline"
+                  className={`text-[11px] px-2 py-0.5 border ${scopeDef.badgeClass}`}
+                >
+                  <span className={`size-1.5 rounded-full mr-1.5 ${scopeDef.dotColor}`} />
+                  {locale === "vi" ? scopeDef.labelVi : scopeDef.labelEn}
+                </Badge>
+              );
+            })()}
           </div>
         </div>
       </div>
