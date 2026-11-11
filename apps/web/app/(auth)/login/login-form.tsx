@@ -70,7 +70,7 @@ export function LoginForm({ oauthError }: { oauthError?: string }) {
             } else if (primaryRole === RoleName.CLIENT) {
               router.push("/client/jobs");
             } else if (primaryRole === RoleName.FREELANCER) {
-              router.push("/freelancer/find-work");
+              router.push("/freelancer");
             } else if (primaryRole === RoleName.EXPERT) {
               router.push("/expert/profile");
             } else {

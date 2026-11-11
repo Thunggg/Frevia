@@ -154,7 +154,9 @@ export function MySessionsContent({ role }: MySessionsContentProps) {
     order,
   });
 
-  const sessions = data?.sessions ?? [];
+  const sessions = (data?.sessions ?? []).filter(
+    (session) => !isExpired(session.expiresAt),
+  );
   const pagination = data?.pagination ?? {
     page: 1,
     limit: PAGE_SIZE,

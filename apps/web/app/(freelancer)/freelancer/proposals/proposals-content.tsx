@@ -224,7 +224,7 @@ export function MyProposalsContent({
                 asChild
                 className="mt-6 bg-[#4fae2e] text-white hover:bg-[#459928]"
               >
-                <Link href={embedded ? "/freelancer/find-work" : "/find-work"}>
+                <Link href="/freelancer">
                   {t("findWork")}
                 </Link>
               </Button>

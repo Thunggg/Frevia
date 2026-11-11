@@ -62,6 +62,8 @@ export const JobSchema = z.object({
 
   // Danh mục công việc gắn với job (quan hệ N-N qua JobJobCategory).
   jobCategories: z.array(JobCategoryRefSchema).optional(),
+
+  proposalsCount: z.number().int().optional(),
 });
 
 export const CreateJobBodySchema = z
@@ -218,6 +220,8 @@ export const ViewListJobFilterSchema = z
     status: JobStatusSchema.optional(),
 
     budgetType: JobBudgetTypeSchema.optional(),
+
+    hiringType: JobHiringTypeSchema.optional(),
 
     budgetMin: z.coerce.number().min(0).optional(),
 

@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { useLocale, useTranslations } from "next-intl";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState, useTransition } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useTheme } from "next-themes";
@@ -55,10 +55,29 @@ type NavItem = {
 
 function NavLink({ item, collapsed }: { item: NavItem; collapsed: boolean }) {
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   const t = useTranslations("sidebar");
-  const isActive = item.matchPrefix
-    ? pathname === item.href || pathname.startsWith(`${item.href}/`)
-    : pathname === item.href;
+
+  const [targetPath, targetQuery] = item.href.split("?");
+  const targetTab = targetQuery
+    ? new URLSearchParams(targetQuery).get("tab")
+    : null;
+  const currentTab = searchParams.get("tab");
+
+  let isActive = false;
+  if (targetTab) {
+    isActive = pathname === targetPath && currentTab === targetTab;
+  } else if (item.matchPrefix) {
+    isActive =
+      pathname === item.href ||
+      (item.href !== "/freelancer" && pathname.startsWith(`${item.href}/`)) ||
+      (item.href.includes("find-work") &&
+        (pathname === "/freelancer" ||
+          pathname.startsWith("/freelancer/find-work") ||
+          pathname.startsWith("/find-work")));
+  } else {
+    isActive = pathname === targetPath && !currentTab;
+  }
 
   const Icon = item.icon;
 
@@ -104,6 +123,7 @@ export function FreelancerSidebar() {
   const router = useRouter();
   const queryClient = useQueryClient();
   const t = useTranslations("sidebar");
+  const tCommon = useTranslations("common");
   const tRole = useTranslations("roleName");
   const activeLocale = useLocale();
   const [isLocalePending, startLocaleTransition] = useTransition();
@@ -133,7 +153,7 @@ export function FreelancerSidebar() {
 
   const freelancerNav: NavItem[] = [
     {
-      href: "/freelancer/find-work",
+      href: "/freelancer/find-work/best-matches",
       labelKey: "navFindWork",
       icon: Search,
       matchPrefix: true,
@@ -160,18 +180,6 @@ export function FreelancerSidebar() {
       href: "/freelancer/payments",
       labelKey: "navBillingPayments",
       icon: CreditCard,
-      matchPrefix: true,
-    },
-    {
-      href: "/freelancer/bookmarks",
-      labelKey: "navSavedJobs",
-      icon: Bookmark,
-      matchPrefix: true,
-    },
-    {
-      href: "/freelancer/saved-searches",
-      labelKey: "navSavedSearches",
-      icon: SlidersHorizontal,
       matchPrefix: true,
     },
     {
@@ -398,8 +406,8 @@ export function FreelancerSidebar() {
               {/* Language switcher */}
               <div className="flex items-center justify-between rounded-lg px-3 py-1.5 text-xs text-muted-foreground">
                 <span className="flex items-center gap-2.5 font-medium">
-                  <Languages className="size-3.5 text-[#0069D3]" />
-                  <span>{t("language")}</span>
+                  <Languages className="size-3.5 text-emerald-500" />
+                  <span>{tCommon("language")}</span>
                 </span>
                 <div className="flex items-center gap-0.5 rounded-full bg-[#F1F0F5] dark:bg-zinc-800 p-0.5 border border-black/5 dark:border-white/10">
                   <button
@@ -408,7 +416,7 @@ export function FreelancerSidebar() {
                     disabled={isLocalePending}
                     className={`flex h-6 px-2 items-center justify-center rounded-full text-[11px] font-semibold transition-all cursor-pointer ${
                       activeLocale === "en"
-                        ? "bg-white text-[#0069D3] shadow-xs dark:bg-zinc-700 dark:text-blue-200"
+                        ? "bg-white text-emerald-600 shadow-xs dark:bg-zinc-700 dark:text-emerald-300"
                         : "text-muted-foreground hover:text-foreground"
                     }`}
                     title="English"
@@ -421,7 +429,7 @@ export function FreelancerSidebar() {
                     disabled={isLocalePending}
                     className={`flex h-6 px-2 items-center justify-center rounded-full text-[11px] font-semibold transition-all cursor-pointer ${
                       activeLocale === "vi"
-                        ? "bg-white text-[#0069D3] shadow-xs dark:bg-zinc-700 dark:text-blue-200"
+                        ? "bg-white text-emerald-600 shadow-xs dark:bg-zinc-700 dark:text-emerald-300"
                         : "text-muted-foreground hover:text-foreground"
                     }`}
                     title="Tiếng Việt"

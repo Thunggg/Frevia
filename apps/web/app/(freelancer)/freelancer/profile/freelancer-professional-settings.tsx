@@ -26,10 +26,12 @@ import { Save } from "lucide-react";
 import { profileApiRequest } from "@/apiRequests/profile";
 import { profileRevisionApiRequest } from "@/apiRequests/profile-revision";
 import { ProfileReviewStatus } from "@/components/profile-review-status";
+import { CvAnalysisDialog } from "./cv-analysis-dialog";
 import { ApiFail } from "@/lib/http";
 import {
   AvailabilityStatus,
   type AvailabilityStatusType,
+  type CvAnalysisDraftType,
   type FreelancerProfileDetailType,
   type FreelancerSkillType,
   type PortfolioItemType,
@@ -159,6 +161,8 @@ export function FreelancerProfessionalSettings({ profileId, userId }: Props) {
   // CV management
   const cvInputRef = useRef<HTMLInputElement>(null);
   const [cvToDelete, setCvToDelete] = useState(false);
+  const [cvAnalysisDraft, setCvAnalysisDraft] = useState<CvAnalysisDraftType | null>(null);
+  const [cvAnalysisDialogOpen, setCvAnalysisDialogOpen] = useState(false);
 
   const getProficiencyLabel = (level: number) => {
     if (level >= 8) return t("proficiencyExpert");
@@ -429,6 +433,30 @@ export function FreelancerProfessionalSettings({ profileId, userId }: Props) {
   };
 
   // CV Actions
+  const handleAnalyzeCv = async () => {
+    setPendingAction("cv-analyze");
+    try {
+      const res = await profileApiRequest.analyzeCv(profileId);
+      if (res.data?.analysis) {
+        setCvAnalysisDraft(res.data.analysis);
+        setCvAnalysisDialogOpen(true);
+      } else {
+        toastError({
+          message: "Không nhận được dữ liệu phân tích từ dịch vụ AI.",
+        });
+      }
+    } catch (err) {
+      toastError({
+        message: getErrorMessage(
+          err,
+          "Không thể phân tích CV bằng AI. Vui lòng đảm bảo dịch vụ AI (port 8000 & Ollama) đang hoạt động.",
+        ),
+      });
+    } finally {
+      setPendingAction(null);
+    }
+  };
+
   const handleUploadCv = async (file: File) => {
     if (file.type !== "application/pdf" || file.size > MAX_CV_SIZE) {
       toastError({ message: "Vui lòng chọn tệp PDF có dung lượng không quá 10 MB." });
@@ -449,6 +477,9 @@ export function FreelancerProfessionalSettings({ profileId, userId }: Props) {
       );
       if (cvInputRef.current) cvInputRef.current.value = "";
       toastSuccess({ message: t("cvUploadSuccess") });
+
+      // Tự động kích hoạt phân tích CV bằng AI
+      void handleAnalyzeCv();
     } catch (err) {
       toastError({ message: getErrorMessage(err, "Không thể tải lên CV.") });
     } finally {
@@ -471,6 +502,8 @@ export function FreelancerProfessionalSettings({ profileId, userId }: Props) {
           : prev,
       );
       setCvToDelete(false);
+      setCvAnalysisDraft(null);
+      setCvAnalysisDialogOpen(false);
       toastSuccess({ message: t("cvDeleteSuccess") });
     } catch (err) {
       toastError({ message: getErrorMessage(err, "Không thể xoá CV.") });
@@ -827,27 +860,46 @@ export function FreelancerProfessionalSettings({ profileId, userId }: Props) {
                     </div>
                   </div>
 
-                  <div className="mt-3 flex items-center gap-2 border-t border-border/60 pt-3">
-                    <Button variant="outline" size="sm" asChild className="flex-1 text-xs">
-                      <a
-                        href={`/api/backend/profiles/${profileId}/cv/file`}
-                        target="_blank"
-                        rel="noreferrer"
-                        download
-                      >
-                        <Download className="mr-1 size-3.5" />
-                        {t("downloadCv")}
-                      </a>
-                    </Button>
+                  <div className="mt-3 flex flex-col gap-2 border-t border-border/60 pt-3">
                     <Button
-                      variant="outline"
+                      type="button"
                       size="sm"
-                      className="text-xs text-destructive hover:bg-destructive/10"
-                      onClick={() => setCvToDelete(true)}
-                      disabled={pendingAction === "cv-delete"}
+                      className="w-full bg-[#4fae2e] text-xs font-semibold text-white shadow-xs hover:bg-[#439c28]"
+                      onClick={() => void handleAnalyzeCv()}
+                      disabled={pendingAction === "cv-analyze" || pendingAction === "cv-upload"}
                     >
-                      <Trash2 className="size-3.5" />
+                      {pendingAction === "cv-analyze" ? (
+                        <Loader2 className="mr-1.5 size-3.5 animate-spin" />
+                      ) : (
+                        <Sparkles className="mr-1.5 size-3.5" />
+                      )}
+                      {pendingAction === "cv-analyze"
+                        ? t("analyzingCv")
+                        : t("analyzeCv")}
                     </Button>
+
+                    <div className="flex items-center gap-2">
+                      <Button variant="outline" size="sm" asChild className="flex-1 text-xs">
+                        <a
+                          href={`/api/backend/profiles/${profileId}/cv/file`}
+                          target="_blank"
+                          rel="noreferrer"
+                          download
+                        >
+                          <Download className="mr-1 size-3.5" />
+                          {t("downloadCv")}
+                        </a>
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="text-xs text-destructive hover:bg-destructive/10"
+                        onClick={() => setCvToDelete(true)}
+                        disabled={pendingAction === "cv-delete" || pendingAction === "cv-analyze"}
+                      >
+                        <Trash2 className="size-3.5" />
+                      </Button>
+                    </div>
                   </div>
                 </div>
               ) : (
@@ -1188,6 +1240,19 @@ export function FreelancerProfessionalSettings({ profileId, userId }: Props) {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Dialog: AI CV Analysis & Review */}
+      {cvAnalysisDraft && (
+        <CvAnalysisDialog
+          profileId={profileId}
+          draft={cvAnalysisDraft}
+          open={cvAnalysisDialogOpen}
+          onOpenChange={setCvAnalysisDialogOpen}
+          onConfirmed={() => {
+            void loadAll();
+          }}
+        />
+      )}
     </div>
   );
 }

@@ -5,7 +5,7 @@ import jobServerRequest from "@/apiRequests/job.server";
 import proposalServerRequest from "@/apiRequests/proposal.server";
 import { type JobType, type ProposalType } from "@shared/types";
 
-import { JobDetailContent } from "@/app/(freelancer)/job/[slug]/job-detail-content";
+import { JobDetailContent } from "./job-detail-content";
 
 type FreelancerJobDetailPageProps = {
   params: Promise<{ slug: string }>;
@@ -65,7 +65,7 @@ export default async function FreelancerJobDetailPage({
       relatedSkill={relatedSearch}
       existingProposal={existingProposal}
       embedded={true}
-      basePath="/freelancer/find-work"
+      basePath="/freelancer"
       currentUserId={user?.id}
     />
   );
