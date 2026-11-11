@@ -1,5 +1,6 @@
 "use client";
 
+import type { GetMeResType } from "@shared/types";
 import { Separator } from "@repo/ui/components/shadcn/separator";
 import {
   SidebarInset,
@@ -10,10 +11,16 @@ import { ThemeToggle } from "@/components/theme-toggle";
 import { AdminProfileDropdown } from "./admin-profile-dropdown";
 import { AppSidebar } from "./app-sidebar";
 
-export function AdminShell({ children }: { children: React.ReactNode }) {
+export function AdminShell({
+  children,
+  user,
+}: {
+  children: React.ReactNode;
+  user?: GetMeResType | null;
+}) {
   return (
     <SidebarProvider>
-      <AppSidebar />
+      <AppSidebar initialUser={user} />
       <SidebarInset>
         <header className="flex h-14 shrink-0 items-center gap-2 border-b px-4">
           <div className="ml-auto flex items-center gap-2">

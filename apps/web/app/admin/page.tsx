@@ -50,8 +50,25 @@ export default async function AdminDashboardPage() {
 
   if (!stats) {
     return (
-      <div className="py-12 text-center text-sm text-muted-foreground">
-        {t("loadFailed")}
+      <div className="space-y-6">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight text-foreground">
+            {t("title")}
+          </h1>
+          <p className="mt-1 text-muted-foreground">{t("subtitle")}</p>
+        </div>
+
+        <div className="rounded-2xl border border-border bg-card p-8 text-center sm:p-12">
+          <div className="mx-auto flex size-14 items-center justify-center rounded-2xl bg-[#eaf8df] text-[#4fae2e] dark:bg-[#4fae2e]/20">
+            <TrendingUp className="size-7" />
+          </div>
+          <h2 className="mt-4 text-xl font-bold text-foreground">
+            Chào mừng bạn đến với Cổng Quản trị Frevia
+          </h2>
+          <p className="mx-auto mt-2 max-w-md text-sm text-muted-foreground">
+            Bạn đã đăng nhập thành công vào hệ thống quản trị. Hãy chọn chức năng từ menu bên trái để bắt đầu thực hiện các tác vụ được phân quyền.
+          </p>
+        </div>
       </div>
     );
   }

@@ -492,7 +492,7 @@ export class AuthService {
     return verifycationOTP;
   }
 
-  async getMe(userId: number): Promise<GetMeResType> {
+  async getMe(userId: number, roleId?: number): Promise<GetMeResType> {
     const user = await this.authRepository.findUserById(userId);
 
     if (!user) {
@@ -503,6 +503,54 @@ export class AuthService {
 
     if (user.isBanned || user.deletedAt) {
       throw UserBannedException();
+    }
+
+    const activeUserRole =
+      (roleId ? user.userRoles.find((ur) => ur.roleId === roleId) : null) ??
+      user.userRoles.find((ur) => ur.isPrimary) ??
+      user.userRoles[0];
+
+    const permissionsSet = new Set<string>();
+    const modulesSet = new Set<string>();
+
+    const isAdmin =
+      activeUserRole?.role.name === RoleName.ADMIN ||
+      user.userRoles.some(
+        (ur) => ur.role.name === RoleName.ADMIN && ur.isPrimary,
+      );
+
+    if (isAdmin) {
+      permissionsSet.add('*');
+    }
+
+    if (activeUserRole?.role && 'rolePermissions' in activeUserRole.role) {
+      const rps =
+        (
+          activeUserRole.role as {
+            rolePermissions?: Array<{
+              permission?: {
+                method?: string;
+                path?: string;
+                module?: string | null;
+                deletedAt?: Date | null;
+              } | null;
+            }>;
+          }
+        ).rolePermissions ?? [];
+
+      for (const rp of rps) {
+        if (rp.permission && !rp.permission.deletedAt) {
+          if (rp.permission.method && rp.permission.path) {
+            permissionsSet.add(`${rp.permission.method} ${rp.permission.path}`);
+          }
+          if (rp.permission.path) {
+            permissionsSet.add(rp.permission.path);
+          }
+          if (rp.permission.module) {
+            modulesSet.add(rp.permission.module.toUpperCase());
+          }
+        }
+      }
     }
 
     return {
@@ -517,9 +565,13 @@ export class AuthService {
           }
         : null,
       roles: user.userRoles.map((userRole) => ({
-        name: userRole.role.name as GetMeResType['roles'][number]['name'],
+        id: userRole.role.id,
+        name: userRole.role.name,
+        description: userRole.role.description,
         isPrimary: userRole.isPrimary,
       })),
+      permissions: Array.from(permissionsSet),
+      permissionModules: Array.from(modulesSet),
     };
   }
 

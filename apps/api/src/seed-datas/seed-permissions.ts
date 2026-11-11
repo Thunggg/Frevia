@@ -87,6 +87,7 @@ const expertModules = [
   'PROFILE-REVISIONS',
   'NOTIFICATIONS',
   'PAYMENTS',
+  'DISPUTES',
 ];
 
 type AvailableRoute = {
@@ -318,8 +319,11 @@ async function bootstrap() {
   const expertPermissionIds = updatedPermissionInDb
     .filter(
       (item) =>
-        expertModules.includes(item.module ?? '') &&
-        !(item.path ?? '').startsWith('/api/admin/') &&
+        (expertModules.includes(item.module ?? '') ||
+          (item.path ?? '').startsWith('/api/admin/disputes') ||
+          (item.path ?? '').startsWith('/api/disputes')) &&
+        ((item.path ?? '').startsWith('/api/admin/disputes') ||
+          !(item.path ?? '').startsWith('/api/admin/')) &&
         !item.path.startsWith('/api/users/') &&
         !['/api/auth/join-role', '/api/auth/switch-role'].includes(item.path),
     )

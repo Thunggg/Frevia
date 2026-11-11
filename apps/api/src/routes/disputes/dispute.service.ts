@@ -265,7 +265,7 @@ export class DisputeService {
    */
   async adminListDisputes(roleName: string, query: GetDisputeListQueryType) {
     try {
-      if (roleName !== RoleName.ADMIN) {
+      if (roleName !== RoleName.ADMIN && roleName !== RoleName.EXPERT) {
         throw DisputeForbiddenException();
       }
 
@@ -287,7 +287,7 @@ export class DisputeService {
     body: AdminDisputeDecisionBodyType,
   ) {
     try {
-      if (roleName !== RoleName.ADMIN) {
+      if (roleName !== RoleName.ADMIN && roleName !== RoleName.EXPERT) {
         throw DisputeForbiddenException();
       }
 
@@ -424,7 +424,7 @@ export class DisputeService {
     body: AdminDisputeFinalDecisionBodyType,
   ) {
     try {
-      if (roleName !== RoleName.ADMIN) {
+      if (roleName !== RoleName.ADMIN && roleName !== RoleName.EXPERT) {
         throw DisputeForbiddenException();
       }
 
