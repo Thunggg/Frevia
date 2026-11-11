@@ -10,6 +10,8 @@
     "switchToDarkMode": "Switch to dark mode",
     "loading": "Loading...",
     "home": "Home",
+    "back": "Back",
+    "messages": "Messages",
     "forum": "Forum",
     "posts": "{count, plural, one {post} other {posts}}",
     "comments": "{count, plural, one {comment} other {comments}}",
@@ -25,6 +27,7 @@
     "daysAgo": "{days}d ago",
     "yesterday": "Yesterday",
     "userFallback": "User #{id}",
+  "postFallback": "Post #{id}",
     "close": "Close",
     "cancel": "Cancel",
     "attachment": "Attachment",
@@ -1719,7 +1722,8 @@
     "navNotifications": "Notifications",
     "navMyJobs": "My Jobs",
     "navFavoriteFreelancers": "Favorite freelancers",
-    "navBillingPayments": "Billing & Payments"
+    "navBillingPayments": "Billing & Payments",
+    "navForum": "Forum"
   },
   "disputes": {
     "metaTitle": "My Disputes & Arbitration | Freelancer Dashboard | Frevia",

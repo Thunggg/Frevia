@@ -7,6 +7,7 @@ import forumServerRequest from "@/apiRequests/forum.server";
 import { extractIdFromSlug } from "@/lib/slug-utils";
 
 import { ForumPostListWrapper } from "./components/forum-post-list-wrapper";
+import { LanguageSwitcher } from "@/components/language-switcher";
 
 type ForumCategoryDetailPageProps = {
   params: Promise<{ categorySlug: string }>;
@@ -48,18 +49,21 @@ export default async function ForumCategoryDetailPage({
     <>
       <section className="border-b border-border/40 bg-background">
         <div className="w-full px-4 py-8 sm:px-6 lg:px-8 lg:py-10">
-          <nav className="text-[13px] text-muted-foreground/60">
-            <Link
-              href="/forum"
-              className="transition-colors hover:text-[#4fae2e]"
-            >
-              {tCommon("forum")}
-            </Link>
-            <span className="mx-2 text-foreground/25">/</span>
-            <span className="max-w-[220px] truncate font-medium text-foreground/80">
-              {category.name}
-            </span>
-          </nav>
+          <div className="flex items-center justify-between gap-4">
+            <nav className="text-[13px] text-muted-foreground/60">
+              <Link
+                href="/forum"
+                className="transition-colors hover:text-[#4fae2e]"
+              >
+                {tCommon("forum")}
+              </Link>
+              <span className="mx-2 text-foreground/25">/</span>
+              <span className="max-w-[220px] truncate font-medium text-foreground/80">
+                {category.name}
+              </span>
+            </nav>
+            <LanguageSwitcher />
+          </div>
 
           <h1 className="mt-5 text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
             {category.name}
