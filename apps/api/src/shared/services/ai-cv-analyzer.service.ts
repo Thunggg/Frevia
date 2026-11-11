@@ -2,7 +2,10 @@ import { Injectable } from '@nestjs/common';
 
 import { aiInternalAuthHeaders } from './ai-internal-auth';
 
-const FREVIA_AI_URL = process.env.FREVIA_AI_URL ?? 'http://localhost:8000';
+const FREVIA_AI_URL =
+  process.env.FREVIA_AI_URL ??
+  process.env.AI_SERVICE_URL ??
+  'http://127.0.0.1:8000';
 const ANALYZE_TIMEOUT_MS = 300_000;
 
 export type AiCvSkill = {
@@ -229,12 +232,17 @@ export class AiCvAnalyzerService {
         body: form,
         signal: AbortSignal.timeout(ANALYZE_TIMEOUT_MS),
       });
-    } catch {
-      throw new Error('AI CV analysis service is unreachable.');
+    } catch (err) {
+      throw new Error(
+        `AI CV analysis service is unreachable: ${err instanceof Error ? err.message : String(err)}`,
+      );
     }
 
     if (!response.ok) {
-      throw new Error(`AI CV analysis service failed (${response.status}).`);
+      const errBody = await response.text().catch(() => '');
+      throw new Error(
+        `AI CV analysis service failed (${response.status}): ${errBody}`,
+      );
     }
 
     let payload: unknown;
