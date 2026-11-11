@@ -10,3 +10,4 @@ WHERE "slug" IS NULL;
 ALTER TABLE "Conversation" ALTER COLUMN "slug" SET NOT NULL;
 CREATE UNIQUE INDEX "Conversation_slug_key" ON "Conversation"("slug");
 CREATE INDEX "Conversation_slug_idx" ON "Conversation"("slug");
+
