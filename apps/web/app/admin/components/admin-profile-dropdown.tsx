@@ -15,7 +15,12 @@ import {
   DropdownMenuTrigger,
 } from "@repo/ui/components/shadcn/dropdown-menu";
 import { useQueryClient } from "@tanstack/react-query";
-import { ChevronDown, LogOut, MonitorSmartphone, UserRound } from "lucide-react";
+import {
+  ChevronDown,
+  LogOut,
+  MonitorSmartphone,
+  UserRound,
+} from "lucide-react";
 import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
