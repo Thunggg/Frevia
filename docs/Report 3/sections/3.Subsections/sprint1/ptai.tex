@@ -1,0 +1,1081 @@
+% =================================================================
+% Sprint 1 - Job Browsing, Job Management & Bookmarked Jobs (ptai)
+% Following the detailed form of the report template:
+% Function Trigger, Function Description, Screen Layout and Function Details.
+% =================================================================
+
+\subsection{Job Browsing}
+
+% -----------------------------------------------------------------
+% UC-10.01: View Job List
+% -----------------------------------------------------------------
+\subsubsection{Function: View Job List}
+
+\fnhead{Function Trigger}
+A guest, freelancer, or client accesses the marketplace job catalog from the navigation menu or search input.\newline
+\textbf{Navigation path:} Home $\rightarrow$ Find Work / Browse Jobs (\texttt{/jobs}).
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item \textbf{Primary Actor:} Guest, Freelancer, and Client.
+    \item \textbf{Supporting Systems:} Frevia Web application (Next.js), Frevia BFF proxy (\texttt{/api/backend}), Frevia REST API (NestJS), and PostgreSQL database.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent Allows any visitor or registered user to browse, search, and filter open freelance job opportunities with pagination, budget constraints, required skills, and keyword matching.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Job browsing page at \texttt{/jobs}.
+    \item Search bar and filter sidebar for category, budget range, skill badges, and experience level.
+    \item Listing grid of job cards displaying title, description excerpt, client badge, budget, skills, and publication timestamp.
+    \item Bottom pagination bar.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item The client issues an HTTP request: \texttt{GET /api/jobs} with query parameters (\texttt{search}, \texttt{categoryId}, \texttt{skills}, \texttt{budgetMin}, \texttt{budgetMax}, \texttt{page}, \texttt{limit}, \texttt{sortBy}).
+    \item The backend validates parameters and constructs a Prisma query.
+    \item Applies strict constraints: \texttt{status = 'OPEN'}, \texttt{deletedAt = null}, client account is active, and submission deadline is valid.
+    \item Returns items alongside pagination metadata (\texttt{totalItems}, \texttt{totalPages}, \texttt{currentPage}).
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint1/ptai/ViewJobList.png}{Job browsing list interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Search bar with keyword input and instant filter execution.
+    \item Left sidebar containing filter options (Category, Experience Level, Job Type, Budget Range).
+    \item Main area displaying job cards with verified client badges, required skills, and budget values.
+    \item Pagination bar showing total results and page navigation.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+\texttt{search} & Optional keyword string to match in job title and description.\\ \hline
+\texttt{categoryId} & Optional ID of the job category filter.\\ \hline
+\texttt{skills} & Optional list of skill IDs or names to filter.\\ \hline
+\texttt{budgetMin} / \texttt{budgetMax} & Optional numeric budget boundaries.\\ \hline
+\texttt{page} & Page number, integer $\ge 1$, default 1.\\ \hline
+\texttt{limit} & Items per page, integer between 5 and 50, default 10.\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item \texttt{page} must be an integer $\ge 1$.
+    \item \texttt{limit} must be between 1 and 50.
+    \item \texttt{budgetMin} must be non-negative and $\le$ \texttt{budgetMax} when both are supplied.
+\end{itemize}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+    \item BR-J04: Draft jobs (\texttt{status = DRAFT}) shall never appear in public search and browsing results.
+    \item BR-J25: Closed jobs (\texttt{status = CLOSED}) shall be excluded from the open job listing.
+    \item BR-J31: Completed and cancelled jobs shall be omitted from active browsing listings.
+    \item BR-J33: Soft-deleted jobs (\texttt{deletedAt !== null}) shall be strictly excluded.
+    \item BR-J45: Jobs belonging to suspended or banned clients shall be hidden immediately.
+    \item BR-J50: Jobs flagged or suspended by administrative moderation shall be excluded from results.
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item The user navigates to \texttt{/jobs}.
+    \item Frontend requests \texttt{GET /api/jobs} with query filters.
+    \item Backend executes validated Prisma query filtering active \texttt{OPEN} jobs.
+    \item Backend returns matching jobs with pagination metadata.
+    \item Frontend renders job summary cards and pagination controls.
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Case}{Description}
+A1 & Invalid query parameters (e.g., negative page number). Backend returns HTTP 400 Bad Request; frontend resets filters to default.\\ \hline
+A2 & No jobs match the specified criteria. System returns empty list; frontend displays Empty State with a ``Reset Filters'' button.\\ \hline
+A3 & Database connection timeout. Backend returns HTTP 500; frontend displays error message with a ``Retry'' button.\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Data Name}{Description}
+\texttt{data} & Array of job summary objects (\texttt{id}, \texttt{title}, \texttt{slug}, \texttt{budgetMin}, \texttt{budgetMax}, \texttt{category}, \texttt{skills}, \texttt{client}).\\ \hline
+\texttt{meta} & Pagination metadata (\texttt{totalItems}, \texttt{totalPages}, \texttt{currentPage}).\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item The matching job list is rendered for the user.
+    \item Search state is reflected in URL search parameters.
+\end{itemize}
+
+% -----------------------------------------------------------------
+% UC-10.02: View Job Detail
+% -----------------------------------------------------------------
+\subsubsection{Function: View Job Detail}
+
+\fnhead{Function Trigger}
+A user clicks on a job card or navigates directly via a job slug URL.\newline
+\textbf{Navigation path:} Browse Jobs (\texttt{/jobs}) $\rightarrow$ Click Job Card $\rightarrow$ Job Detail (\texttt{/jobs/:slug}).
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item \textbf{Primary Actor:} Guest, Freelancer, and Client.
+    \item \textbf{Supporting Systems:} Frevia Web application, Frevia REST API, and PostgreSQL database.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent Displays complete specifications of a job posting, including comprehensive description, budget type, required skills, attachments, hiring quota, and client hiring history.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Job detail screen at \texttt{/jobs/:slug}.
+    \item Action bar with ``Submit Proposal'' button (for Freelancers) or ``Manage Job'' (for Job Owner).
+    \item Two-column layout: left column contains full job description and requirements; right column displays client profile, budget summary, and hiring status.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Frontend requests \texttt{GET /api/jobs/:slug}.
+    \item Backend checks job visibility: if \texttt{status = 'DRAFT'}, access is restricted to the owning client or administrator.
+    \item Increments view counter if viewer is not the owning client.
+    \item Returns full job object including client details, category, required skills, and attachments.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint1/ptai/ViewJobDetail.png}{Job detail interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Header displaying job title, category badge, and posting age.
+    \item Left content area with detailed project scope, qualifications, and downloadable attachments.
+    \item Right sidebar displaying budget, hiring type, deadline, client review rating, and action buttons.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+\texttt{slug} & String identifier in URL representing the job title slug.\\ \hline
+Session Token & Optional JWT identifying viewer identity and role.\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item \texttt{slug} must be non-empty and formatted as a URL-friendly slug.
+\end{itemize}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+    \item BR-J04: Non-owners accessing draft jobs shall receive HTTP 404 Not Found.
+    \item BR-J07: The ``Submit Proposal'' button is active only when \texttt{status = 'OPEN'} and hiring quota is not filled.
+    \item BR-J37: Displays hiring quota (\texttt{SINGLE} or \texttt{MULTIPLE}) and filled positions.
+    \item BR-J42: Job detail is permanently accessible via invariant URL slug.
+    \item BR-J49: Explicitly distinguishes between proposal closing date (\texttt{expiryDate}) and project deadline.
+    \item BR-J51: Views are incremented only when the viewer is not the job's author.
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item User opens \texttt{/jobs/:slug}.
+    \item Frontend dispatches \texttt{GET /api/jobs/:slug}.
+    \item Backend queries job record with relations (skills, client, attachments).
+    \item Backend returns detailed job object.
+    \item Frontend renders full view and enables actions according to user role and job state.
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Case}{Description}
+A1 & Slug does not exist or job is soft-deleted. Backend returns HTTP 404; frontend redirects to 404 page.\\ \hline
+A2 & Job is in DRAFT and viewer is not the client owner. Backend returns HTTP 403 Forbidden; frontend shows access denied notice.\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Data Name}{Description}
+Job Object & Complete entity containing \texttt{id}, \texttt{title}, \texttt{description}, \texttt{budgetType}, \texttt{budgetMin}, \texttt{budgetMax}, \texttt{hiringType}, \texttt{positionsRequired}, \texttt{positionsFilled}, \texttt{skills}, \texttt{attachments}, and \texttt{client}.\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Full job specifications are displayed.
+    \item Proposal action is enabled if user is an eligible freelancer.
+\end{itemize}
+
+\subsection{Job Management}
+
+% -----------------------------------------------------------------
+% UC-11.01: View My Jobs
+% -----------------------------------------------------------------
+\subsubsection{Function: View My Jobs}
+
+\fnhead{Function Trigger}
+A client clicks on ``My Jobs'' in the main navigation.\newline
+\textbf{Navigation path:} Home $\rightarrow$ Client Dashboard $\rightarrow$ My Jobs (\texttt{/client/jobs}).
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item \textbf{Primary Actor:} Client.
+    \item \textbf{Supporting Systems:} Frevia Web application, Frevia REST API, and PostgreSQL database.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent Provides clients with an overview of all jobs they have created across all lifecycle stages (\texttt{DRAFT}, \texttt{OPEN}, \texttt{IN\_PROGRESS}, \texttt{CLOSED}, \texttt{COMPLETED}), showing proposal counts and management shortcuts.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Client jobs management table at \texttt{/client/jobs}.
+    \item Status tab bar: All, Open, Drafts, In Progress, Closed.
+    \item Row action dropdowns (Edit, Close, Reopen, Delete, Review Proposals).
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Client requests \texttt{GET /api/client/jobs}.
+    \item Backend extracts client ID from JWT token to prevent unauthorized access (IDOR guard).
+    \item Filters by \texttt{clientId} and excludes soft-deleted items.
+    \item Returns list sorted by creation date descending with aggregate proposal counts.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint1/ptai/ViewMyJobs.png}{Client My Jobs interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Tab bar filtering jobs by operational status.
+    \item Table listing jobs with title, budget, proposal counter badge, and date posted.
+    \item Action menu on each row for editing, closing, or viewing submitted proposals.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+JWT Token & Authenticated client token containing user ID and active Client role.\\ \hline
+\texttt{status} & Optional query string filter (\texttt{ALL}, \texttt{DRAFT}, \texttt{OPEN}, \texttt{CLOSED}).\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item User must possess the \texttt{CLIENT} role.
+\end{itemize}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+    \item BR-J01: Only accounts with \texttt{CLIENT} role may access this screen.
+    \item BR-J14: Query is strictly scoped to \texttt{job.clientId === currentUserId}.
+    \item BR-J33: Soft-deleted jobs are excluded from the default view.
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item Client visits \texttt{/client/jobs}.
+    \item Client application requests \texttt{GET /api/client/jobs}.
+    \item Backend validates client session and fetches own job listings.
+    \item UI renders table with status tags and management actions.
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Case}{Description}
+A1 & Unauthenticated or non-client role. Backend returns HTTP 403; redirected to login/onboarding.\\ \hline
+A2 & No jobs created yet. UI shows empty state with ``Post a Job'' call to action.\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Data Name}{Description}
+\texttt{jobs} & Array of jobs with fields \texttt{id}, \texttt{title}, \texttt{status}, \texttt{budgetMin}, \texttt{budgetMax}, \texttt{proposalCount}, and \texttt{createdAt}.\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Client views complete job portfolio and proposal counts.
+\end{itemize}
+
+% -----------------------------------------------------------------
+% UC-11.02: Create Job
+% -----------------------------------------------------------------
+\subsubsection{Function: Create Job}
+
+\fnhead{Function Trigger}
+A client clicks ``Post a Job'' from the client workspace.\newline
+\textbf{Navigation path:} Client Dashboard $\rightarrow$ Click ``Post a Job'' (\texttt{/client/jobs/new}).
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item \textbf{Primary Actor:} Client.
+    \item \textbf{Supporting Systems:} Frevia Web application, Frevia REST API, and PostgreSQL database.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent Allows a client to create a new job posting in \texttt{DRAFT} status with specifications including title, category, skills, budget range, hiring type, and file attachments.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Multi-step job posting form at \texttt{/client/jobs/new}.
+    \item Title and description inputs with rich text support.
+    \item Category selector, skill tag autocomplete, and budget input fields.
+    \item Attachment uploader supporting up to 5 files.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Client submits form payload via \texttt{POST /api/client/jobs}.
+    \item Backend validates required fields, budget values, and category status.
+    \item Generates a unique invariant slug from title.
+    \item Persists job record with initial state \texttt{status = 'DRAFT'}.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint1/ptai/CreateJob.png}{Post a new job form}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Step indicator showing form progression.
+    \item Form fields for title, category dropdown, skill tagging, budget bounds, and description.
+    \item Action buttons for ``Save as Draft'' and ``Continue to Review''.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+\texttt{title} & String (10--100 characters), job headline.\\ \hline
+\texttt{categoryId} & UUID of the selected job category.\\ \hline
+\texttt{skillIds} & Array of skill UUIDs (1 to 10 skills).\\ \hline
+\texttt{budgetType} & Enum: \texttt{FIXED\_PRICE} or \texttt{HOURLY}.\\ \hline
+\texttt{budgetMin} / \texttt{budgetMax} & Numeric values representing compensation bounds.\\ \hline
+\texttt{hiringType} & Enum: \texttt{SINGLE} or \texttt{MULTIPLE}.\\ \hline
+\texttt{description} & Detailed job description text.\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Title must be between 10 and 100 characters.
+    \item Category must be active and valid.
+    \item Must specify between 1 and 10 skills.
+    \item Budget minimum must be $\ge 10$ USD and $\le$ budget maximum.
+\end{itemize}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+    \item BR-J01: Only clients may create jobs.
+    \item BR-J02: Newly created jobs are always initialized with \texttt{status = DRAFT}.
+    \item BR-J37: Defaults to \texttt{SINGLE} hiring type with \texttt{positions\_required = 1}.
+    \item BR-J41: Enforces minimum budget of \$10 for fixed-price contracts.
+    \item BR-J42: Automatically generates invariant slug upon creation.
+    \item BR-J50: Scans for prohibited direct contact information (phone, external URLs).
+    \item BR-J52: Exactly one category must be selected.
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item Client fills out the job creation form.
+    \item Client clicks ``Save as Draft''.
+    \item Frontend sends payload to \texttt{POST /api/client/jobs}.
+    \item Backend validates inputs, generates slug, and saves record as \texttt{DRAFT}.
+    \item Backend returns created job entity; client is redirected to draft review page.
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Case}{Description}
+A1 & Validation error (e.g., title too short or invalid budget). Returns HTTP 400 with field errors; highlights invalid inputs.\\ \hline
+A2 & Client account restricted from posting. Returns HTTP 403; displays account verification requirement.\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Data Name}{Description}
+Job Record & Created entity with \texttt{id}, \texttt{slug}, \texttt{status = DRAFT}, and timestamps.\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item A new job record is created in \texttt{DRAFT} state.
+\end{itemize}
+
+% -----------------------------------------------------------------
+% UC-11.03: Publish Job
+% -----------------------------------------------------------------
+\subsubsection{Function: Publish Job}
+
+\fnhead{Function Trigger}
+A client clicks ``Publish Job'' on a draft job posting.\newline
+\textbf{Navigation path:} Client Dashboard $\rightarrow$ My Jobs $\rightarrow$ Draft Job $\rightarrow$ Click ``Publish Job''.
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item \textbf{Primary Actor:} Client.
+    \item \textbf{Supporting Systems:} Frevia Web application, Frevia REST API, and PostgreSQL database.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent Validates completeness of a draft job, transitions its status to \texttt{OPEN}, indexes it in search, and activates public proposal submission.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Draft job review screen with a prominent ``Publish Job'' button.
+    \item Confirmation modal explaining that key terms become permanent upon publishing.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Client submits \texttt{POST /api/client/jobs/:id/publish}.
+    \item Backend verifies that all mandatory fields are present and valid.
+    \item Verifies ownership (\texttt{job.clientId === currentUserId}).
+    \item Updates \texttt{status = 'OPEN'}, sets \texttt{publishedAt = now()}, and triggers job alert events.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint1/ptai/PublishJob.png}{Publish job confirmation screen}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Summary card detailing the final parameters of the job.
+    \item Checklist showing that title, category, skills, and budget are fully configured.
+    \item Primary ``Confirm \& Publish Now'' action button.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+\texttt{id} & UUID of the draft job to publish.\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Target job must currently be in \texttt{DRAFT} status.
+    \item All required fields (title, category, $\ge 1$ skill, budget, description) must be populated.
+\end{itemize}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+    \item BR-J05: Only jobs with complete, valid specifications can be published.
+    \item BR-J06: Publishing transitions state from \texttt{DRAFT} to \texttt{OPEN} and sets \texttt{publishedAt}.
+    \item BR-J14: Client must own the job posting.
+    \item BR-J41: Currency and budget type become immutable upon publishing.
+    \item BR-J42: URL slug is permanently frozen after publishing.
+    \item BR-J51: Triggers matching job alerts (UC-23) to notify relevant freelancers.
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item Client reviews draft job and clicks ``Publish Job''.
+    \item System verifies completeness and ownership.
+    \item System updates job status to \texttt{OPEN}.
+    \item System indexes job in search and queues job alert notifications.
+    \item UI redirects to active job page with a success toast notification.
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Case}{Description}
+A1 & Missing required fields. Backend returns HTTP 422 Unprocessable Entity with list of incomplete fields.\\ \hline
+A2 & Job is not in DRAFT status. Backend returns HTTP 400 Bad Request.\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Data Name}{Description}
+Updated Job & Job object with \texttt{status = OPEN} and populated \texttt{publishedAt}.\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Job is public and accepting proposals.
+\end{itemize}
+
+% -----------------------------------------------------------------
+% UC-11.04: Update Job
+% -----------------------------------------------------------------
+\subsubsection{Function: Update Job}
+
+\fnhead{Function Trigger}
+A client clicks ``Edit'' on an active or draft job.\newline
+\textbf{Navigation path:} Client Dashboard $\rightarrow$ My Jobs $\rightarrow$ Click ``Edit'' (\texttt{/client/jobs/:id/edit}).
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item \textbf{Primary Actor:} Client.
+    \item \textbf{Supporting Systems:} Frevia Web application, Frevia REST API, and PostgreSQL database.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent Allows clients to revise job parameters, requirements, and descriptions according to lifecycle editing rules.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Job editing form pre-filled with existing data.
+    \item Locked fields indicator for published jobs (budget type, category, and slug).
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Client submits \texttt{PATCH /api/client/jobs/:id}.
+    \item Backend checks ownership and checks whether proposals have already been submitted.
+    \item If proposals exist, locks structural fields but allows description and skill refinements.
+    \item Updates database record and returns modified job.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint1/ptai/UpdateJob.png}{Edit job form interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Editable fields for title, skills, budget amount, and description.
+    \item Read-only badges on locked fields (Category, Slug).
+    \item ``Update Job'' submission button.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+\texttt{id} & UUID of the job being updated.\\ \hline
+Payload & Modified fields (\texttt{title}, \texttt{description}, \texttt{budgetMax}, \texttt{skills}).\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Updates must satisfy standard field validations.
+    \item Locked fields cannot be modified on published jobs.
+\end{itemize}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+    \item BR-J03: Draft jobs permit editing of all fields without restriction.
+    \item BR-J10: When a job is \texttt{OPEN} without proposals, client may modify description and budget.
+    \item BR-J11: Modifying an open job with active proposals does not alter existing proposal terms.
+    \item BR-J14: Client must own the job posting.
+    \item BR-J42: The URL slug cannot be altered after initial publishing.
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item Client edits desired fields on \texttt{/client/jobs/:id/edit}.
+    \item Client clicks ``Update Job''.
+    \item Backend processes \texttt{PATCH} request and validates permissions.
+    \item Changes are committed to PostgreSQL.
+    \item Client is returned to the job overview with success notification.
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Case}{Description}
+A1 & Attempt to modify locked fields on a published job. Backend rejects with HTTP 400; displays field restriction message.\\ \hline
+A2 & Job has active contract in progress. Backend returns HTTP 409 Conflict.\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Data Name}{Description}
+Job Object & Updated job entity reflecting modifications.\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Job updates are saved and reflected across all search and detail views.
+\end{itemize}
+
+% -----------------------------------------------------------------
+% UC-11.05: Delete Job
+% -----------------------------------------------------------------
+\subsubsection{Function: Delete Job}
+
+\fnhead{Function Trigger}
+A client clicks ``Delete'' on a draft or inactive job.\newline
+\textbf{Navigation path:} Client Dashboard $\rightarrow$ My Jobs $\rightarrow$ Select Job $\rightarrow$ Click ``Delete''.
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item \textbf{Primary Actor:} Client.
+    \item \textbf{Supporting Systems:} Frevia Web application, Frevia REST API, and PostgreSQL database.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent Allows clients to remove unwanted draft jobs or jobs without active contracts via a soft-delete mechanism.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Delete action button triggering an alert confirmation dialog.
+    \item Warning detailing the consequences of deletion.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Client invokes \texttt{DELETE /api/client/jobs/:id}.
+    \item Backend confirms ownership and checks for active contracts.
+    \item Sets \texttt{deletedAt = now()} and \texttt{status = 'CANCELLED'}.
+    \item Removes job from public search indexes.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint1/ptai/DeleteJob.png}{Delete job confirmation dialog}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Modal dialog asking for confirmation.
+    \item Summary of the targeted job and cancellation notice.
+    \item Destructive ``Confirm Delete'' button.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+\texttt{id} & UUID of the job to delete.\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Job must belong to the calling client.
+    \item Job must not have contracts in \texttt{ACTIVE} or \texttt{IN\_PROGRESS} status.
+\end{itemize}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+    \item BR-J14: Client must own the job posting.
+    \item BR-J33: Employs soft-delete by populating \texttt{deletedAt}.
+    \item BR-J38: Deleting a job with active contracts is strictly prohibited.
+    \item BR-J39: Submitted proposals for deleted jobs are automatically transitioned to \texttt{EXPIRED}.
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item Client clicks ``Delete Job''.
+    \item Confirmation dialog appears; client confirms.
+    \item Backend executes soft delete and cancels pending proposals.
+    \item UI removes job from listing and displays confirmation.
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Case}{Description}
+A1 & Active contract exists. Backend returns HTTP 409 Conflict with message ``Cannot delete a job with active contracts.''\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Data Name}{Description}
+Result & Status confirmation confirming job deletion.\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Job is soft-deleted and omitted from all public and client views.
+\end{itemize}
+
+% -----------------------------------------------------------------
+% UC-11.06: Close Job
+% -----------------------------------------------------------------
+\subsubsection{Function: Close Job}
+
+\fnhead{Function Trigger}
+A client closes an open job before the expiration deadline.\newline
+\textbf{Navigation path:} Client Dashboard $\rightarrow$ My Jobs $\rightarrow$ Job Menu $\rightarrow$ Click ``Close Job''.
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item \textbf{Primary Actor:} Client.
+    \item \textbf{Supporting Systems:} Frevia Web application, Frevia REST API, and PostgreSQL database.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent Stops accepting new proposals on an open job posting and marks it as \texttt{CLOSED}.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Close job confirmation dialog.
+    \item Dropdown to specify a closure reason (e.g., filled elsewhere, requirements changed).
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Client invokes \texttt{POST /api/client/jobs/:id/close}.
+    \item Backend transitions status to \texttt{CLOSED} and records closure timestamp.
+    \item Suspends all pending proposals for this job.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint1/ptai/CloseJob.png}{Close job dialog interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Dialog explaining the closure effect.
+    \item Reason selection dropdown and notes field.
+    \item ``Close Job'' action button.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+\texttt{id} & UUID of the job to close.\\ \hline
+\texttt{reason} & Optional string detailing reason for closure.\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Target job must currently be in \texttt{OPEN} status.
+\end{itemize}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+    \item BR-J22: Clients may close an open job at any time prior to contract engagement.
+    \item BR-J25: Closed jobs immediately disappear from the public browse jobs feed.
+    \item BR-J28: Pending proposals are notified that the job has been closed.
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item Client selects ``Close Job'' from job actions.
+    \item Client chooses closure reason and submits.
+    \item Backend sets status to \texttt{CLOSED}.
+    \item UI updates job status tag to CLOSED.
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Case}{Description}
+A1 & Job is not in OPEN status. Backend returns HTTP 400 Bad Request.\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Data Name}{Description}
+Updated Job & Job entity with \texttt{status = CLOSED}.\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Job ceases accepting proposals and status is marked CLOSED.
+\end{itemize}
+
+% -----------------------------------------------------------------
+% UC-11.07: Reopen Job
+% -----------------------------------------------------------------
+\subsubsection{Function: Reopen Job}
+
+\fnhead{Function Trigger}
+A client re-activates a previously closed job.\newline
+\textbf{Navigation path:} Client Dashboard $\rightarrow$ My Jobs $\rightarrow$ Closed Jobs $\rightarrow$ Click ``Reopen Job''.
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item \textbf{Primary Actor:} Client.
+    \item \textbf{Supporting Systems:} Frevia Web application, Frevia REST API, and PostgreSQL database.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent Allows clients to reactivate a closed job by setting a new deadline and transitioning its status back to \texttt{OPEN}.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Reopen job dialog requesting a new expiration date.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Client submits \texttt{POST /api/client/jobs/:id/reopen} with new \texttt{expiryDate}.
+    \item Backend verifies ownership and confirms previous status was \texttt{CLOSED}.
+    \item Sets \texttt{status = 'OPEN'} and restores job to search listings.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint1/ptai/ReopenJob.png}{Reopen job interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Modal dialog displaying closed job title and prompt for new expiry date.
+    \item Date picker for selecting future expiration date.
+    \item Primary ``Reopen to OPEN'' action button.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+\texttt{id} & UUID of the closed job.\\ \hline
+\texttt{expiryDate} & Date timestamp in the future indicating new deadline.\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Job status must be \texttt{CLOSED}.
+    \item \texttt{expiryDate} must be strictly in the future.
+\end{itemize}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+    \item BR-J26: Only jobs with status \texttt{CLOSED} can be reopened.
+    \item BR-J27: Reopening a job does not revive old withdrawn or rejected proposals.
+    \item BR-J46: New expiration date must be established upon reopening.
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item Client clicks ``Reopen Job'' on a closed posting.
+    \item Client picks a new valid deadline and confirms.
+    \item Backend sets status to \texttt{OPEN} with updated expiration.
+    \item UI returns job to the active listings feed.
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Case}{Description}
+A1 & Provided expiration date is in the past. Backend returns HTTP 400 Bad Request.\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Data Name}{Description}
+Reopened Job & Job entity with \texttt{status = OPEN} and updated \texttt{expiryDate}.\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Job is restored to \texttt{OPEN} status and visible in search.
+\end{itemize}
+
+\subsection{Bookmarked Jobs Management}
+
+% -----------------------------------------------------------------
+% UC-12.01: View Bookmarked Job List
+% -----------------------------------------------------------------
+\subsubsection{Function: View Bookmarked Job List}
+
+\fnhead{Function Trigger}
+A freelancer clicks ``Saved Jobs'' from the workspace menu.\newline
+\textbf{Navigation path:} Freelancer Dashboard $\rightarrow$ Saved Jobs (\texttt{/freelancer/bookmarks}).
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item \textbf{Primary Actor:} Freelancer.
+    \item \textbf{Supporting Systems:} Frevia Web application, Frevia REST API, and PostgreSQL database.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent Displays the list of job postings bookmarked by the freelancer, showing real-time job availability status, urgency indicators, and shortcuts to apply or remove bookmarks.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Saved jobs catalog page at \texttt{/freelancer/bookmarks}.
+    \item Filter tabs (All, Available, Expiring Soon, Closed).
+    \item Job cards with bookmark timestamp, client rating, and action buttons.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Frontend dispatches \texttt{GET /api/freelancer/bookmarks}.
+    \item Backend fetches \texttt{JobBookmark} records where \texttt{userId === currentUserId}.
+    \item Joins active job data, checks if jobs are expiring within 24 hours, and sorts by bookmark date.
+    \item Excludes soft-deleted jobs or jobs belonging to banned clients.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint1/ptai/ViewBookmarkedJobList.png}{Saved jobs list interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Search and filter toolbar for bookmarked items.
+    \item Cards displaying job title, current status badge (AVAILABLE, EXPIRING SOON, CLOSED), and client info.
+    \item Action buttons on each card to ``Apply Now'' or ``Remove Bookmark''.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+JWT Token & Authenticated freelancer token.\\ \hline
+\texttt{page} / \texttt{limit} & Standard pagination integers.\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item User must possess the \texttt{FREELANCER} role.
+\end{itemize}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+    \item BR-J54-01: Only authenticated freelancers may view their own bookmarked jobs list.
+    \item BR-J54-02: Bookmarks are preserved even if the underlying job transitions to closed or completed.
+    \item BR-J54-03: The Apply button is disabled for jobs that are no longer in \texttt{OPEN} status.
+    \item BR-J54-04: Excludes soft-deleted jobs or jobs posted by banned clients.
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item Freelancer opens Saved Jobs page.
+    \item Frontend requests bookmark records from backend.
+    \item Backend returns populated bookmarks with current job statuses.
+    \item UI renders list with status badges and appropriate action controls.
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Case}{Description}
+A1 & No jobs bookmarked yet. UI renders friendly empty state with a ``Browse Jobs'' shortcut.\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Data Name}{Description}
+\texttt{bookmarks} & Array of objects containing bookmark ID, \texttt{savedAt}, and embedded job details.\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Freelancer views saved jobs portfolio.
+\end{itemize}
+
+% -----------------------------------------------------------------
+% UC-12.02: Bookmark Job
+% -----------------------------------------------------------------
+\subsubsection{Function: Bookmark Job}
+
+\fnhead{Function Trigger}
+A freelancer clicks the bookmark / heart icon on a job card or detail screen.\newline
+\textbf{Navigation path:} Browse Jobs $\rightarrow$ Job Card $\rightarrow$ Click Bookmark Icon.
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item \textbf{Primary Actor:} Freelancer.
+    \item \textbf{Supporting Systems:} Frevia Web application, Frevia REST API, and PostgreSQL database.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent Saves a job posting to the freelancer's personal bookmark list for easy retrieval and tracking.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Interactive bookmark toggle button on job cards and detail headers.
+    \item Toast notification confirming bookmark creation.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Client sends \texttt{POST /api/freelancer/bookmarks/:jobId}.
+    \item Backend validates role, checks job exists, and ensures viewer is not the job's author.
+    \item Creates \texttt{JobBookmark} record with unique pair \texttt{(userId, jobId)}.
+    \item Returns success response.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint1/ptai/BookmarkJob.png}{Bookmark job confirmation interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Bookmark icon transitioning from outline to solid fill state.
+    \item Toast notification popup stating ``Job saved to bookmarks''.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+\texttt{jobId} & UUID of the job to bookmark.\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item User must be a verified Freelancer.
+    \item Target job must be currently \texttt{OPEN}.
+\end{itemize}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+    \item BR-J54-05: Only freelancers can bookmark jobs; guests are prompted to log in.
+    \item BR-J54-06: Clients cannot bookmark jobs they posted themselves.
+    \item BR-J54-07: Duplicate bookmark requests are safely ignored via unique constraint.
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item Freelancer clicks bookmark icon on a job card.
+    \item Frontend optimistically updates icon and sends \texttt{POST} request.
+    \item Backend stores bookmark record in PostgreSQL.
+    \item Toast notification confirms that the job has been bookmarked.
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Case}{Description}
+A1 & Freelancer tries to bookmark their own job. Backend returns HTTP 400 Bad Request.\\ \hline
+A2 & Job is already closed or deleted. Backend returns HTTP 400 with ``Job is no longer available.''\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Data Name}{Description}
+Bookmark Object & Created record with \texttt{id}, \texttt{userId}, \texttt{jobId}, and \texttt{createdAt}.\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Job is saved in freelancer's bookmarks list.
+\end{itemize}
+
+% -----------------------------------------------------------------
+% UC-12.03: Remove Bookmark
+% -----------------------------------------------------------------
+\subsubsection{Function: Remove Bookmark}
+
+\fnhead{Function Trigger}
+A freelancer clicks the active bookmark icon or ``Remove'' button on a saved job.\newline
+\textbf{Navigation path:} Saved Jobs (\texttt{/freelancer/bookmarks}) $\rightarrow$ Click ``Remove Bookmark''.
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item \textbf{Primary Actor:} Freelancer.
+    \item \textbf{Supporting Systems:} Frevia Web application, Frevia REST API, and PostgreSQL database.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent Removes a previously saved job from the freelancer's bookmarks collection.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Toggle bookmark icon or ``Remove'' button on saved job cards.
+    \item Instant optimistic UI removal and feedback toast.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Client issues \texttt{DELETE /api/freelancer/bookmarks/:jobId}.
+    \item Backend verifies that the bookmark exists and belongs to the authenticated freelancer.
+    \item Hard-deletes the record from \texttt{JobBookmark} table.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint1/ptai/RemoveBookmark.png}{Remove bookmark confirmation interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Card showing item to be removed.
+    \item Toast confirmation indicating ``Job removed from saved list''.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+\texttt{jobId} & UUID of the job to unbookmark.\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Bookmark must exist for current user and target job.
+\end{itemize}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+    \item BR-J54-08: Freelancers can remove any bookmark they previously created at any time.
+    \item BR-J54-09: Removal is unconditional, regardless of the job's current status.
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item Freelancer clicks ``Remove Bookmark''.
+    \item UI immediately removes card from display.
+    \item Backend deletes bookmark row from PostgreSQL.
+    \item Toast notification confirms removal.
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Case}{Description}
+A1 & Bookmark record not found. Backend returns HTTP 404; UI refreshes list.\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Data Name}{Description}
+Result & Status confirmation confirming bookmark deletion.\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Bookmark is removed and item no longer appears in saved jobs.
+\end{itemize}
+

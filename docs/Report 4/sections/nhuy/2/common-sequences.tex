@@ -1,0 +1,29 @@
+\subsection{Shared Request Processing Sequences}
+
+The interaction-use frames in Nhuy's use-case diagrams refer to the shared
+sequences below. Their editable Draw.io files also contain these sequences as
+named tabs. A Verify JWT frame is shown at Route as the entry to the shared
+interaction; the token and session checks execute in the backend AuthGuard.
+Solid arrows denote calls and dashed open arrows denote returns.
+
+\subsubsection{Verify JWT}
+\kfig{0.95\textwidth}{images/common/nhuy/verify-jwt}{Shared sequence: Verify JWT for protected endpoints}{fig:nhuy-common-verify-jwt}
+
+\subsubsection{Optional JWT for Public Endpoints}
+UC-07.01 and the other public profile/list endpoints accept Guest access.
+JWT verification is optional: missing or invalid optional credentials do not
+cause the protected-endpoint 401/403 branches.
+\kfig{0.95\textwidth}{images/common/nhuy/optional-jwt}{Shared sequence: Optional JWT for public endpoints}{fig:nhuy-common-optional-jwt}
+
+\subsubsection{Check Permission}
+\kfig{0.95\textwidth}{images/common/nhuy/check-permission}{Shared sequence: Check Permission}{fig:nhuy-common-check-permission}
+
+\subsubsection{Refresh Token}
+The BFF attempts refresh only after an initial backend 401 response and retries
+the original request at most once when replacement tokens are returned.
+\kfig{0.95\textwidth}{images/common/nhuy/refresh-token}{Shared sequence: Refresh Token and one retry}{fig:nhuy-common-refresh-token}
+
+\subsubsection{Validate Input}
+Only the pipes declared by the actual handler apply. In particular, Add Social
+Link has a body DTO but no numeric route parameter.
+\kfig{0.95\textwidth}{images/common/nhuy/validate-input}{Shared sequence: Validate Input}{fig:nhuy-common-validate-input}

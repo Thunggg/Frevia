@@ -1,0 +1,96 @@
+% =================================================================
+% Sprint 4 - AI Recommendation & Matching (ptai, tthuan)
+% Following the detailed form of the report template:
+% Function Trigger, Function Description, Screen Layout and Function Details.
+% =================================================================
+
+\subsection{Job and Talent Recommendation}
+
+% -----------------------------------------------------------------
+% UC-42.01: Recommend Jobs / Freelancers
+% -----------------------------------------------------------------
+\subsubsection{Function: Recommend Jobs and Freelancers}
+
+\fnhead{Function Trigger}
+Triggered automatically when a freelancer visits their dashboard, uploads/updates their CV, or when a client creates a new job posting.\newline
+\textbf{Navigation path:} Freelancer Dashboard $\rightarrow$ Recommended For You (\texttt{/freelancer/recommendations}) OR Client Job Overview $\rightarrow$ Recommended Candidates (\texttt{/client/jobs/:id/recommendations}).
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item \textbf{Primary Actor:} AI Recommendation Engine / System.
+    \item \textbf{Secondary Actor:} Freelancer (receiving job matches) and Client (receiving candidate matches).
+    \item \textbf{Supporting Systems:} Frevia Web application, Frevia REST API, SensitiveAI Vector Proxy, PostgreSQL with pgvector, and OpenAI text-embedding-3-small service.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent Automatically delivers highly relevant, semantic job recommendations to freelancers based on their profile and uploaded CV embeddings, and simultaneously recommends qualified freelancers to clients for their posted job requirements.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item ``Recommended For You'' widget on the Freelancer home workspace.
+    \item ``Recommended Candidates'' tab on the Client Job Details management dashboard.
+    \item Match percentage indicator badge (e.g., ``98\% Match'') on each recommended card.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item When a freelancer uploads a CV or updates their profile skills, the backend generates a dense vector embedding via the embedding model and stores it in the database.
+    \item When generating recommendations for a freelancer, the system computes cosine similarity between the freelancer's embedding and active \texttt{OPEN} job embeddings.
+    \item When generating candidates for a client's job, the system computes cosine similarity between the job description embedding and active freelancer profiles.
+    \item Matches with a similarity score above threshold ($\ge 0.75$) are ranked in descending order and cached with a 6-hour TTL.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint4/ptai/JobFreelancerRecommend.png}{AI matching and recommendation engine view}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Top section summarizing AI vector matching status and model specifications.
+    \item Two-column display: left column shows top matched jobs for freelancers, right column shows top candidate matches for clients.
+    \item Match percentage badges (e.g. 96\%, 94\%, 89\%) and one-click apply or invite actions.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+User ID / Job ID & Target freelancer or job posting identifier.\\ \hline
+\texttt{limit} & Number of recommendations to retrieve, default 10.\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Only active users and non-deleted jobs are included in vector indexing.
+\end{itemize}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+    \item BR-REC-01: Vector embedding matching requires minimum cosine similarity threshold of 0.75.
+    \item BR-REC-02: Only jobs with status \texttt{OPEN} are recommended to freelancers.
+    \item BR-REC-03: Banned or suspended users are excluded from all recommendation pipelines.
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item User opens dashboard or recommendation tab.
+    \item Frontend requests recommendations via \texttt{GET /api/recommendations}.
+    \item Backend executes vector similarity query against indexed embeddings.
+    \item Returns top ranked matches with match scores.
+    \item UI renders recommendations with match percentage badges.
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Case}{Description}
+A1 & Vector service unreachable or user profile has no skills/CV yet. System falls back to recent popularity-based category recommendations.\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Data Name}{Description}
+\texttt{recommendations} & Array of items containing entity data, match score (0.00--1.00), and top matched skill tags.\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Personalized recommendations are presented with match score transparency.
+\end{itemize}
+

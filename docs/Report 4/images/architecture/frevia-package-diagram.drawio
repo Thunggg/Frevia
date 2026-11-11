@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net" agent="Claude" version="24.0.0" type="device">
+  <diagram id="frevia-pkg" name="Package Diagram">
+    <mxGraphModel dx="1600" dy="1000" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+
+        <!-- TITLE -->
+        <mxCell id="title" value="&lt;b&gt;frevia monorepo&lt;/b&gt; — pnpm workspaces + Turborepo" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=16;" vertex="1" parent="1">
+          <mxGeometry x="20" y="10" width="1520" height="30" as="geometry"/>
+        </mxCell>
+
+        <!-- ================= GROUP: apps ================= -->
+        <mxCell id="appsGrp" value="apps" style="shape=folder;tabWidth=120;tabHeight=24;tabPosition=left;whiteSpace=wrap;html=1;fillColor=#f9f7ed;strokeColor=#36393d;dashed=1;verticalAlign=top;align=left;spacingLeft=14;spacingTop=30;fontSize=14;fontStyle=1;container=1;collapsible=0;recursiveResize=0;" vertex="1" parent="1">
+          <mxGeometry x="20" y="50" width="1520" height="500" as="geometry"/>
+        </mxCell>
+
+        <!-- apps/web -->
+        <mxCell id="web" value="&lt;b&gt;apps/web&lt;/b&gt;&lt;br&gt;&lt;font style='font-size:10px'&gt;Next.js 16 presentation layer&lt;/font&gt;" style="shape=folder;tabWidth=90;tabHeight=16;tabPosition=left;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;verticalAlign=top;spacingTop=22;fontSize=13;container=1;collapsible=0;recursiveResize=0;" vertex="1" parent="appsGrp">
+          <mxGeometry x="20" y="50" width="720" height="420" as="geometry"/>
+        </mxCell>
+        <mxCell id="wApp" value="&lt;b&gt;app/&lt;/b&gt;&lt;br&gt;&lt;font style='font-size:10px'&gt;App Router · route groups per actor · BFF route handlers&lt;/font&gt;" style="shape=folder;tabWidth=60;tabHeight=12;tabPosition=left;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;verticalAlign=top;spacingTop=18;fontSize=12;container=1;collapsible=0;recursiveResize=0;" vertex="1" parent="web">
+          <mxGeometry x="20" y="60" width="680" height="170" as="geometry"/>
+        </mxCell>
+        <mxCell id="rgGuest" value="&lt;b&gt;(public) / guest&lt;/b&gt;&lt;br&gt;&lt;font style='font-size:9px'&gt;jobs · forum · experts&lt;/font&gt;" style="shape=folder;tabWidth=30;tabHeight=8;tabPosition=left;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;verticalAlign=middle;spacingTop=6;fontSize=11;" vertex="1" parent="wApp">
+          <mxGeometry x="20" y="80" width="140" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="rgClient" value="&lt;b&gt;(client)&lt;/b&gt;&lt;br&gt;&lt;font style='font-size:9px'&gt;client dashboard&lt;/font&gt;" style="shape=folder;tabWidth=30;tabHeight=8;tabPosition=left;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;verticalAlign=middle;spacingTop=6;fontSize=11;" vertex="1" parent="wApp">
+          <mxGeometry x="187" y="80" width="140" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="rgFreelancer" value="&lt;b&gt;(freelancer)&lt;/b&gt;&lt;br&gt;&lt;font style='font-size:9px'&gt;freelancer dashboard&lt;/font&gt;" style="shape=folder;tabWidth=30;tabHeight=8;tabPosition=left;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;verticalAlign=middle;spacingTop=6;fontSize=11;" vertex="1" parent="wApp">
+          <mxGeometry x="353" y="80" width="140" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="rgAdmin" value="&lt;b&gt;admin&lt;/b&gt;&lt;br&gt;&lt;font style='font-size:9px'&gt;admin dashboard&lt;/font&gt;" style="shape=folder;tabWidth=30;tabHeight=8;tabPosition=left;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;verticalAlign=middle;spacingTop=6;fontSize=11;" vertex="1" parent="wApp">
+          <mxGeometry x="520" y="80" width="140" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="wComponents" value="&lt;b&gt;components/&lt;/b&gt;&lt;br&gt;&lt;font style='font-size:10px'&gt;React UI components of the screens&lt;/font&gt;" style="shape=folder;tabWidth=50;tabHeight=12;tabPosition=left;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;verticalAlign=middle;spacingTop=10;fontSize=12;" vertex="1" parent="web">
+          <mxGeometry x="20" y="270" width="150" height="120" as="geometry"/>
+        </mxCell>
+        <mxCell id="wApiRequests" value="&lt;b&gt;apiRequests/&lt;/b&gt;&lt;br&gt;&lt;font style='font-size:10px'&gt;typed API caller modules (auth, jobs, contracts, ...)&lt;/font&gt;" style="shape=folder;tabWidth=50;tabHeight=12;tabPosition=left;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;verticalAlign=middle;spacingTop=10;fontSize=12;" vertex="1" parent="web">
+          <mxGeometry x="190" y="270" width="160" height="120" as="geometry"/>
+        </mxCell>
+        <mxCell id="wLib" value="&lt;b&gt;lib/&lt;/b&gt;&lt;br&gt;&lt;font style='font-size:10px'&gt;http client (JWT attach &amp;amp; refresh), auth session, utils&lt;/font&gt;" style="shape=folder;tabWidth=50;tabHeight=12;tabPosition=left;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;verticalAlign=middle;spacingTop=10;fontSize=12;" vertex="1" parent="web">
+          <mxGeometry x="370" y="270" width="150" height="120" as="geometry"/>
+        </mxCell>
+        <mxCell id="wI18n" value="&lt;b&gt;i18n/&lt;/b&gt;&lt;br&gt;&lt;font style='font-size:10px'&gt;messages/ en &amp;amp; vi translation catalogues&lt;/font&gt;" style="shape=folder;tabWidth=50;tabHeight=12;tabPosition=left;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;verticalAlign=middle;spacingTop=10;fontSize=12;" vertex="1" parent="web">
+          <mxGeometry x="540" y="270" width="160" height="120" as="geometry"/>
+        </mxCell>
+
+        <!-- apps/api -->
+        <mxCell id="api" value="&lt;b&gt;apps/api&lt;/b&gt;&lt;br&gt;&lt;font style='font-size:10px'&gt;NestJS 11 application tier (REST + Socket.io)&lt;/font&gt;" style="shape=folder;tabWidth=90;tabHeight=16;tabPosition=left;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;verticalAlign=top;spacingTop=22;fontSize=13;container=1;collapsible=0;recursiveResize=0;" vertex="1" parent="appsGrp">
+          <mxGeometry x="780" y="50" width="720" height="420" as="geometry"/>
+        </mxCell>
+        <mxCell id="aRoutes" value="&lt;b&gt;src/routes/&lt;/b&gt;&lt;br&gt;&lt;font style='font-size:10px'&gt;33 domain modules · Controller → Service → Repository (+ DTO) · modules never import each other&lt;/font&gt;" style="shape=folder;tabWidth=70;tabHeight=12;tabPosition=left;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;verticalAlign=top;spacingTop=18;fontSize=12;container=1;collapsible=0;recursiveResize=0;" vertex="1" parent="api">
+          <mxGeometry x="20" y="60" width="680" height="170" as="geometry"/>
+        </mxCell>
+        <mxCell id="mAuth" value="&lt;b&gt;auth&lt;/b&gt;" style="shape=folder;tabWidth=30;tabHeight=8;tabPosition=left;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;verticalAlign=middle;spacingTop=6;fontSize=11;" vertex="1" parent="aRoutes">
+          <mxGeometry x="20" y="66" width="140" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="mProposals" value="&lt;b&gt;proposals&lt;/b&gt;" style="shape=folder;tabWidth=30;tabHeight=8;tabPosition=left;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;verticalAlign=middle;spacingTop=6;fontSize=11;" vertex="1" parent="aRoutes">
+          <mxGeometry x="187" y="66" width="140" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="mContract" value="&lt;b&gt;contract&lt;/b&gt;" style="shape=folder;tabWidth=30;tabHeight=8;tabPosition=left;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;verticalAlign=middle;spacingTop=6;fontSize=11;" vertex="1" parent="aRoutes">
+          <mxGeometry x="353" y="66" width="140" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="mPayments" value="&lt;b&gt;payments&lt;/b&gt;" style="shape=folder;tabWidth=30;tabHeight=8;tabPosition=left;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;verticalAlign=middle;spacingTop=6;fontSize=11;" vertex="1" parent="aRoutes">
+          <mxGeometry x="520" y="66" width="140" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="mForums" value="&lt;b&gt;forums&lt;/b&gt;" style="shape=folder;tabWidth=30;tabHeight=8;tabPosition=left;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;verticalAlign=middle;spacingTop=6;fontSize=11;" vertex="1" parent="aRoutes">
+          <mxGeometry x="20" y="116" width="140" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="mConv" value="&lt;b&gt;conversations&lt;/b&gt;" style="shape=folder;tabWidth=30;tabHeight=8;tabPosition=left;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;verticalAlign=middle;spacingTop=6;fontSize=11;" vertex="1" parent="aRoutes">
+          <mxGeometry x="187" y="116" width="140" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="mDisputes" value="&lt;b&gt;disputes&lt;/b&gt;" style="shape=folder;tabWidth=30;tabHeight=8;tabPosition=left;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;verticalAlign=middle;spacingTop=6;fontSize=11;" vertex="1" parent="aRoutes">
+          <mxGeometry x="353" y="116" width="140" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="mMore" value="&lt;i&gt;… +26 more modules&lt;/i&gt;" style="shape=folder;tabWidth=30;tabHeight=8;tabPosition=left;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;dashed=1;verticalAlign=middle;spacingTop=6;fontSize=11;" vertex="1" parent="aRoutes">
+          <mxGeometry x="520" y="116" width="140" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="aShared" value="&lt;b&gt;src/shared/&lt;/b&gt;&lt;br&gt;&lt;font style='font-size:10px'&gt;cross-cutting infrastructure&lt;/font&gt;" style="shape=folder;tabWidth=70;tabHeight=12;tabPosition=left;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;verticalAlign=top;spacingTop=18;fontSize=12;container=1;collapsible=0;recursiveResize=0;" vertex="1" parent="api">
+          <mxGeometry x="20" y="270" width="420" height="120" as="geometry"/>
+        </mxCell>
+        <mxCell id="sGuards" value="guards" style="shape=folder;tabWidth=24;tabHeight=7;tabPosition=left;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;verticalAlign=middle;spacingTop=5;fontSize=10;" vertex="1" parent="aShared">
+          <mxGeometry x="14" y="66" width="72" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="sFilters" value="filters" style="shape=folder;tabWidth=24;tabHeight=7;tabPosition=left;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;verticalAlign=middle;spacingTop=5;fontSize=10;" vertex="1" parent="aShared">
+          <mxGeometry x="94" y="66" width="72" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="sInterceptors" value="interceptors" style="shape=folder;tabWidth=24;tabHeight=7;tabPosition=left;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;verticalAlign=middle;spacingTop=5;fontSize=10;" vertex="1" parent="aShared">
+          <mxGeometry x="174" y="66" width="72" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="sServices" value="services" style="shape=folder;tabWidth=24;tabHeight=7;tabPosition=left;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;verticalAlign=middle;spacingTop=5;fontSize=10;" vertex="1" parent="aShared">
+          <mxGeometry x="254" y="66" width="72" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="sDb" value="prisma client" style="shape=folder;tabWidth=24;tabHeight=7;tabPosition=left;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;verticalAlign=middle;spacingTop=5;fontSize=10;" vertex="1" parent="aShared">
+          <mxGeometry x="334" y="66" width="72" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="aPrisma" value="&lt;b&gt;prisma/&lt;/b&gt;&lt;br&gt;&lt;font style='font-size:10px'&gt;schema.prisma (72 models)&lt;br&gt;migrations · seed&lt;/font&gt;" style="shape=folder;tabWidth=50;tabHeight=12;tabPosition=left;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;verticalAlign=middle;spacingTop=10;fontSize=12;" vertex="1" parent="api">
+          <mxGeometry x="500" y="270" width="200" height="120" as="geometry"/>
+        </mxCell>
+
+        <!-- ================= GROUP: packages ================= -->
+        <mxCell id="pkgsGrp" value="packages" style="shape=folder;tabWidth=120;tabHeight=24;tabPosition=left;whiteSpace=wrap;html=1;fillColor=#f9f7ed;strokeColor=#36393d;dashed=1;verticalAlign=top;align=left;spacingLeft=14;spacingTop=30;fontSize=14;fontStyle=1;container=1;collapsible=0;recursiveResize=0;" vertex="1" parent="1">
+          <mxGeometry x="20" y="620" width="1520" height="240" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="ui" value="&lt;b&gt;packages/ui&lt;/b&gt;&lt;br&gt;&lt;font style='font-size:10px'&gt;@repo/ui · shared React components · imported by apps/web only&lt;/font&gt;" style="shape=folder;tabWidth=90;tabHeight=16;tabPosition=left;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;verticalAlign=top;spacingTop=22;fontSize=13;container=1;collapsible=0;recursiveResize=0;" vertex="1" parent="pkgsGrp">
+          <mxGeometry x="20" y="50" width="440" height="170" as="geometry"/>
+        </mxCell>
+        <mxCell id="uiButtons" value="buttons" style="shape=folder;tabWidth=30;tabHeight=8;tabPosition=left;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;verticalAlign=middle;spacingTop=6;fontSize=11;" vertex="1" parent="ui">
+          <mxGeometry x="20" y="72" width="190" height="34" as="geometry"/>
+        </mxCell>
+        <mxCell id="uiDialogs" value="dialogs" style="shape=folder;tabWidth=30;tabHeight=8;tabPosition=left;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;verticalAlign=middle;spacingTop=6;fontSize=11;" vertex="1" parent="ui">
+          <mxGeometry x="230" y="72" width="190" height="34" as="geometry"/>
+        </mxCell>
+        <mxCell id="uiTables" value="tables" style="shape=folder;tabWidth=30;tabHeight=8;tabPosition=left;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;verticalAlign=middle;spacingTop=6;fontSize=11;" vertex="1" parent="ui">
+          <mxGeometry x="20" y="116" width="190" height="34" as="geometry"/>
+        </mxCell>
+        <mxCell id="uiForms" value="form controls" style="shape=folder;tabWidth=30;tabHeight=8;tabPosition=left;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;verticalAlign=middle;spacingTop=6;fontSize=11;" vertex="1" parent="ui">
+          <mxGeometry x="230" y="116" width="190" height="34" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="st" value="&lt;b&gt;packages/shared-type&lt;/b&gt;&lt;br&gt;&lt;font style='font-size:10px'&gt;@shared/types · single source of truth for the API contract&lt;/font&gt;" style="shape=folder;tabWidth=90;tabHeight=16;tabPosition=left;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;verticalAlign=top;spacingTop=22;fontSize=13;container=1;collapsible=0;recursiveResize=0;" vertex="1" parent="pkgsGrp">
+          <mxGeometry x="520" y="50" width="420" height="170" as="geometry"/>
+        </mxCell>
+        <mxCell id="stModel" value="model/* (Zod request / response)" style="shape=folder;tabWidth=30;tabHeight=8;tabPosition=left;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;verticalAlign=middle;spacingTop=6;fontSize=10;" vertex="1" parent="st">
+          <mxGeometry x="20" y="72" width="190" height="34" as="geometry"/>
+        </mxCell>
+        <mxCell id="stEnums" value="enumerations · constants" style="shape=folder;tabWidth=30;tabHeight=8;tabPosition=left;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;verticalAlign=middle;spacingTop=6;fontSize=10;" vertex="1" parent="st">
+          <mxGeometry x="210" y="72" width="190" height="34" as="geometry"/>
+        </mxCell>
+        <mxCell id="stPerm" value="permission names" style="shape=folder;tabWidth=30;tabHeight=8;tabPosition=left;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;verticalAlign=middle;spacingTop=6;fontSize=10;" vertex="1" parent="st">
+          <mxGeometry x="20" y="116" width="190" height="34" as="geometry"/>
+        </mxCell>
+        <mxCell id="stErr" value="error codes" style="shape=folder;tabWidth=30;tabHeight=8;tabPosition=left;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;verticalAlign=middle;spacingTop=6;fontSize=10;" vertex="1" parent="st">
+          <mxGeometry x="210" y="116" width="190" height="34" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="tsCfg" value="&lt;b&gt;packages/typescript-config&lt;/b&gt;&lt;br&gt;&lt;font style='font-size:10px'&gt;@repo/typescript-config&lt;br&gt;strict TypeScript baselines extended by the applications&lt;/font&gt;" style="shape=folder;tabWidth=90;tabHeight=16;tabPosition=left;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;verticalAlign=middle;spacingTop=14;fontSize=12;" vertex="1" parent="pkgsGrp">
+          <mxGeometry x="1000" y="50" width="235" height="170" as="geometry"/>
+        </mxCell>
+        <mxCell id="esCfg" value="&lt;b&gt;packages/eslint-config&lt;/b&gt;&lt;br&gt;&lt;font style='font-size:10px'&gt;@repo/eslint-config&lt;br&gt;one lint ruleset for every workspace of the monorepo&lt;/font&gt;" style="shape=folder;tabWidth=90;tabHeight=16;tabPosition=left;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;verticalAlign=middle;spacingTop=14;fontSize=12;" vertex="1" parent="pkgsGrp">
+          <mxGeometry x="1265" y="50" width="235" height="170" as="geometry"/>
+        </mxCell>
+
+        <!-- ================= NOTES ================= -->
+        <mxCell id="legend" value="Legend" style="shape=note;size=16;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;verticalAlign=top;fontStyle=1;fillColor=#ffffff;strokeColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="20" y="900" width="420" height="130" as="geometry"/>
+        </mxCell>
+        <mxCell id="lgUseLine" style="edgeStyle=none;html=1;rounded=0;dashed=1;endArrow=open;endFill=0;endSize=8;strokeColor=#000000;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="45" y="950" as="sourcePoint"/>
+            <mxPoint x="125" y="950" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="lgUseText" value="«use» — the source imports / depends on the target" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="140" y="938" width="290" height="24" as="geometry"/>
+        </mxCell>
+        <mxCell id="lgExtLine" style="edgeStyle=none;html=1;rounded=0;dashed=1;endArrow=block;endFill=0;endSize=8;strokeColor=#000000;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="45" y="990" as="sourcePoint"/>
+            <mxPoint x="125" y="990" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="lgExtText" value="«extends» — the source extends the configuration of the target" style="text;html=1;strokeColor=none;fillColor=#ffffff;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="140" y="978" width="290" height="24" as="geometry"/>
+        </mxCell>
+        <mxCell id="rules" value="&lt;b&gt;Rules&lt;/b&gt;&lt;br&gt;1. Dependencies point downwards: the two applications depend on the packages, and a package never imports from an application.&lt;br&gt;2. No route module of apps/api imports another route module; cross-module data flows through the Prisma schema.&lt;br&gt;3. Arrows drawn from the apps group apply to both apps/web and apps/api. eslint-config is applied to every workspace (the arrows from packages/ui and packages/shared-type are omitted for readability).&lt;br&gt;4. Python AI microservices (id-verification, cv-matching, ai-moderation backed by Ollama) reside in ai-services/ and communicate with apps/api via HTTP REST, independent of the TypeScript pnpm workspaces." style="shape=note;size=16;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;align=left;verticalAlign=top;spacingLeft=12;spacingTop=4;spacingRight=12;fontSize=11;fillColor=#ffffff;strokeColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="460" y="900" width="1080" height="140" as="geometry"/>
+        </mxCell>
+
+        <!-- ================= EDGES: inside apps/web ================= -->
+        <mxCell id="w1" value="«use»" style="edgeStyle=none;html=1;rounded=0;dashed=1;endArrow=open;endFill=0;endSize=8;strokeColor=#000000;fontSize=10;labelBackgroundColor=#FFFFFF;exitX=0.0956;exitY=1;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="wApp" target="wComponents">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="w2" value="«use»" style="edgeStyle=none;html=1;rounded=0;dashed=1;endArrow=open;endFill=0;endSize=8;strokeColor=#000000;fontSize=10;labelBackgroundColor=#FFFFFF;exitX=0.3647;exitY=1;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="wApp" target="wApiRequests">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="w3" value="«use»" style="edgeStyle=none;html=1;rounded=0;dashed=1;endArrow=open;endFill=0;endSize=8;strokeColor=#000000;fontSize=10;labelBackgroundColor=#FFFFFF;exitX=0.6338;exitY=1;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="wApp" target="wLib">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="w4" value="«use»" style="edgeStyle=none;html=1;rounded=0;dashed=1;endArrow=open;endFill=0;endSize=8;strokeColor=#000000;fontSize=10;labelBackgroundColor=#FFFFFF;exitX=0.9029;exitY=1;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="wApp" target="wI18n">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="w5" value="«use»" style="edgeStyle=none;html=1;rounded=0;dashed=1;endArrow=open;endFill=0;endSize=8;strokeColor=#000000;fontSize=10;labelBackgroundColor=#FFFFFF;exitX=1;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="wApiRequests" target="wLib">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- ================= EDGES: inside apps/api ================= -->
+        <mxCell id="a1" value="«use»" style="edgeStyle=none;html=1;rounded=0;dashed=1;endArrow=open;endFill=0;endSize=8;strokeColor=#000000;fontSize=10;labelBackgroundColor=#FFFFFF;exitX=0.3088;exitY=1;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="aRoutes" target="aShared">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="a2" value="«use»" style="edgeStyle=none;html=1;rounded=0;dashed=1;endArrow=open;endFill=0;endSize=8;strokeColor=#000000;fontSize=10;labelBackgroundColor=#FFFFFF;exitX=1;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="aShared" target="aPrisma">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- ================= EDGES: apps -> packages ================= -->
+        <mxCell id="x1" value="«use»" style="edgeStyle=none;html=1;rounded=0;dashed=1;endArrow=open;endFill=0;endSize=8;strokeColor=#000000;fontSize=10;labelBackgroundColor=#FFFFFF;exitX=0.30556;exitY=1;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="web" target="ui">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="x2" value="«use»" style="edgeStyle=none;html=1;rounded=0;dashed=1;endArrow=open;endFill=0;endSize=8;strokeColor=#000000;fontSize=10;labelBackgroundColor=#FFFFFF;exitX=0.8333;exitY=1;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.238;entryY=0;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="web" target="st">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="x3" value="«use»" style="edgeStyle=none;html=1;rounded=0;dashed=1;endArrow=open;endFill=0;endSize=8;strokeColor=#000000;fontSize=10;labelBackgroundColor=#FFFFFF;exitX=0.08333;exitY=1;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.7619;entryY=0;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="api" target="st">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="x4" value="«extends»" style="edgeStyle=none;html=1;rounded=0;dashed=1;endArrow=block;endFill=0;endSize=8;strokeColor=#000000;fontSize=10;labelBackgroundColor=#FFFFFF;exitX=0.7352;exitY=1;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="appsGrp" target="tsCfg">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="x5" value="«use»" style="edgeStyle=none;html=1;rounded=0;dashed=1;endArrow=open;endFill=0;endSize=8;strokeColor=#000000;fontSize=10;labelBackgroundColor=#FFFFFF;exitX=0.90954;exitY=1;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="appsGrp" target="esCfg">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
