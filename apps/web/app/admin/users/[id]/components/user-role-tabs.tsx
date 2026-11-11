@@ -33,6 +33,7 @@ import {
 import type { AdminUserDetailResponseType } from "@shared/types";
 import { useLocale, useTranslations } from "next-intl";
 import { getPermissionDisplayName } from "@/lib/permission-utils";
+import { HttpMethodBadge } from "../../../components/http-method-badge";
 import { EditClientProfileButton } from "./edit-client-profile-button";
 import { EditFreelancerProfileButton } from "./edit-freelancer-profile-button";
 import { ManageFreelancerSkillsButton } from "./manage-freelancer-skills-button";
@@ -88,48 +89,6 @@ export function UserRoleTabs({ user }: UserRoleTabsProps) {
   }
 
   const [activeTab, setActiveTab] = useState(defaultTab);
-
-  const renderMethodBadge = (method: string) => {
-    const m = method.toUpperCase();
-    if (m === "GET") {
-      return (
-        <Badge
-          variant="outline"
-          className="bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/50 dark:text-emerald-300 font-mono text-xs"
-        >
-          GET
-        </Badge>
-      );
-    }
-    if (m === "POST") {
-      return (
-        <Badge
-          variant="outline"
-          className="bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950/50 dark:text-blue-300 font-mono text-xs"
-        >
-          POST
-        </Badge>
-      );
-    }
-    if (m === "PUT" || m === "PATCH") {
-      return (
-        <Badge
-          variant="outline"
-          className="bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950/50 dark:text-amber-300 font-mono text-xs"
-        >
-          {m}
-        </Badge>
-      );
-    }
-    return (
-      <Badge
-        variant="outline"
-        className="bg-rose-50 text-rose-700 border-rose-200 dark:bg-rose-950/50 dark:text-rose-300 font-mono text-xs"
-      >
-        {m}
-      </Badge>
-    );
-  };
 
   const renderJsonList = (data: unknown) => {
     if (!data) return null;
@@ -614,7 +573,7 @@ export function UserRoleTabs({ user }: UserRoleTabsProps) {
                           {cr.permissions.map((perm) => (
                             <TableRow key={perm.id}>
                               <TableCell>
-                                {renderMethodBadge(perm.method)}
+                                <HttpMethodBadge method={perm.method} />
                               </TableCell>
                               <TableCell className="text-xs font-medium text-foreground">
                                 {getPermissionDisplayName(perm, locale)}

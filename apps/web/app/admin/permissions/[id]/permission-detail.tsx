@@ -5,22 +5,11 @@ import { usePermission } from "@/hooks/use-permission";
 import { Badge } from "@repo/ui/components/shadcn/badge";
 import { Button } from "@repo/ui/components/shadcn/button";
 import { Separator } from "@repo/ui/components/shadcn/separator";
-import { HttpMethod } from "@shared/types";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { useFormatter, useLocale, useTranslations } from "next-intl";
 import { getPermissionDisplayName } from "@/lib/permission-utils";
-
-const METHOD_VARIANT: Record<
-  string,
-  "default" | "secondary" | "outline" | "destructive"
-> = {
-  [HttpMethod.GET]: "secondary",
-  [HttpMethod.POST]: "default",
-  [HttpMethod.PUT]: "outline",
-  [HttpMethod.PATCH]: "outline",
-  [HttpMethod.DELETE]: "destructive",
-};
+import { HttpMethodBadge } from "../../components/http-method-badge";
 
 export function PermissionDetail({ permissionId }: { permissionId: number }) {
   const t = useTranslations("adminPermissions");
@@ -59,9 +48,7 @@ export function PermissionDetail({ permissionId }: { permissionId: number }) {
             {permission.method} {permission.path}
           </p>
         </div>
-        <Badge variant={METHOD_VARIANT[permission.method] ?? "outline"}>
-          {permission.method}
-        </Badge>
+        <HttpMethodBadge method={permission.method} />
       </div>
 
       <div className="rounded-lg border bg-card p-6 space-y-4">
@@ -94,9 +81,7 @@ export function PermissionDetail({ permissionId }: { permissionId: number }) {
         <div>
           <p className="text-xs text-muted-foreground">{tCommon("method")}</p>
           <div className="mt-1">
-            <Badge variant={METHOD_VARIANT[permission.method] ?? "outline"}>
-              {permission.method}
-            </Badge>
+            <HttpMethodBadge method={permission.method} />
           </div>
         </div>
 

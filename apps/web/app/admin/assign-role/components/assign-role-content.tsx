@@ -3,6 +3,7 @@
 import { useAllPermissions } from "@/hooks/use-permission";
 import { useRole, useRoles, useSetRolePermissions } from "@/hooks/use-role";
 import { ApiFail } from "@/lib/http";
+import { getPermissionDisplayName } from "@/lib/permission-utils";
 import { Badge } from "@repo/ui/components/shadcn/badge";
 import { Button } from "@repo/ui/components/shadcn/button";
 import { Checkbox } from "@repo/ui/components/shadcn/checkbox";
@@ -18,21 +19,13 @@ import { Skeleton } from "@repo/ui/components/shadcn/skeleton";
 import { toastError, toastSuccess } from "@repo/ui/components/shadcn/toast";
 import { HttpMethod, type PermissionListItemType } from "@shared/types";
 import { Loader2, Search, X } from "lucide-react";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
-import { getPermissionDisplayName } from "@/lib/permission-utils";
-
-const METHOD_VARIANT: Record<
-  string,
-  "default" | "secondary" | "outline" | "destructive"
-> = {
-  [HttpMethod.GET]: "secondary",
-  [HttpMethod.POST]: "default",
-  [HttpMethod.PUT]: "outline",
-  [HttpMethod.PATCH]: "outline",
-  [HttpMethod.DELETE]: "destructive",
-};
+import {
+  HttpMethodBadge,
+  getMethodDotColor,
+} from "../../components/http-method-badge";
 
 const HTTP_METHODS = Object.values(HttpMethod);
 
@@ -85,7 +78,10 @@ export function AssignRoleContent() {
     }
   }, [role, selectedRoleId]);
 
-  const permissions = useMemo(() => data?.permissions ?? [], [data?.permissions]);
+  const permissions = useMemo(
+    () => data?.permissions ?? [],
+    [data?.permissions],
+  );
   const modules = data?.modules ?? [];
 
   const filtered = useMemo(() => {
@@ -266,7 +262,12 @@ export function AssignRoleContent() {
                 <SelectItem value="all">{t("allMethods")}</SelectItem>
                 {HTTP_METHODS.map((method) => (
                   <SelectItem key={method} value={method}>
-                    {method}
+                    <div className="flex items-center gap-2">
+                      <span
+                        className={`size-2 rounded-full ${getMethodDotColor(method)}`}
+                      />
+                      <span>{method}</span>
+                    </div>
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -372,14 +373,10 @@ export function AssignRoleContent() {
                               <span className="text-sm font-medium text-foreground">
                                 {displayName}
                               </span>
-                              <Badge
-                                variant={
-                                  METHOD_VARIANT[permission.method] ?? "outline"
-                                }
-                                className="text-[10px] px-1.5 py-0 h-4 font-mono uppercase"
-                              >
-                                {permission.method}
-                              </Badge>
+                              <HttpMethodBadge
+                                method={permission.method}
+                                className="text-[10px] px-1.5 py-0 h-4"
+                              />
                             </div>
                             <p className="text-xs text-muted-foreground font-mono truncate">
                               #{permission.id} · {permission.path}
