@@ -8,6 +8,8 @@
 const DEFAULT_DEV_AI_TOKEN = 'JYqXytzmLfuGCTnESHSsgE26pP6VJzZT5XLAAczg';
 
 export function aiInternalAuthHeaders(): Record<string, string> {
-  const token = process.env.FREVIA_AI_TOKEN?.trim() || DEFAULT_DEV_AI_TOKEN;
+  const token =
+    process.env.FREVIA_AI_TOKEN?.trim() ||
+    (process.env.NODE_ENV !== 'test' ? DEFAULT_DEV_AI_TOKEN : undefined);
   return token ? { 'X-Internal-Token': token } : {};
 }

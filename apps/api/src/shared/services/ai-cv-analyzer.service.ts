@@ -234,14 +234,18 @@ export class AiCvAnalyzerService {
       });
     } catch (err) {
       throw new Error(
-        `AI CV analysis service is unreachable: ${err instanceof Error ? err.message : String(err)}`,
+        `AI CV analysis service is unreachable. ${err instanceof Error ? err.message : String(err)}`,
       );
     }
 
     if (!response.ok) {
-      const errBody = await response.text().catch(() => '');
+      const errBody =
+        typeof response.text === 'function'
+          ? await response.text().catch(() => '')
+          : '';
+      const detail = errBody ? ` ${errBody}` : '';
       throw new Error(
-        `AI CV analysis service failed (${response.status}): ${errBody}`,
+        `AI CV analysis service failed (${response.status}).${detail}`,
       );
     }
 
