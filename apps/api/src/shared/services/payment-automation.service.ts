@@ -6,8 +6,8 @@ import {
 } from '@nestjs/common';
 import { MilestonePaymentStatus, MilestoneStatus } from '@prisma/client';
 import { getEffectiveContractDeadlineMs } from '@shared/types';
-import { PaymentRepository } from './payment.repo';
 import { StripeService } from './stripe.service';
+import { PaymentRepository } from '../../routes/payments/payment.repo';
 
 export const CLIENT_REVIEW_TIMEOUT_MS = 7 * 24 * 60 * 60 * 1000;
 const AUTOMATION_SWEEP_INTERVAL_MS = 5 * 60 * 1000;
@@ -24,7 +24,7 @@ export class PaymentAutomationService implements OnModuleInit, OnModuleDestroy {
   constructor(
     private readonly paymentRepo: PaymentRepository,
     private readonly stripeService: StripeService,
-  ) {}
+  ) { }
 
   onModuleInit() {
     if (process.env.NODE_ENV === 'test') {
