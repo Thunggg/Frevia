@@ -45,46 +45,50 @@ export function AccessDeniedContent({
   const primaryRole =
     user?.roles.find((r) => r.isPrimary)?.name ?? user?.roles[0]?.name;
 
-  const targetRequiredRole:
-    | typeof RoleName.CLIENT
-    | typeof RoleName.FREELANCER
-    | null =
-    requiredRole?.toLowerCase() === "client"
-      ? RoleName.CLIENT
-      : requiredRole?.toLowerCase() === "freelancer"
-        ? RoleName.FREELANCER
-        : null;
+  const matchingRole = user?.roles.find(
+    (r) =>
+      r.name.toLowerCase() === requiredRole?.toLowerCase() ||
+      (requiredRole?.toLowerCase() === "admin" && r.name === RoleName.ADMIN),
+  );
 
   // Check if current user has the required role and can switch to it
   const canSwitchToRequired = Boolean(
     user &&
-      targetRequiredRole &&
-      user.roles.some((r) => r.name === targetRequiredRole) &&
-      primaryRole !== targetRequiredRole,
+      matchingRole &&
+      primaryRole?.toLowerCase() !== matchingRole.name.toLowerCase(),
   );
 
-  const handleSwitchRole = async (
-    targetRole: typeof RoleName.CLIENT | typeof RoleName.FREELANCER,
-  ) => {
+  const handleSwitchRole = async (targetRoleName: string) => {
     if (isSwitchingRole) return;
     setIsSwitchingRole(true);
     try {
-      await authApiRequest.switchRole({ role: targetRole });
+      await authApiRequest.switchRole({ role: targetRoleName });
       await queryClient.invalidateQueries({ queryKey: ["me"] });
+      const targetLabel =
+        targetRoleName === RoleName.CLIENT
+          ? tRole("CLIENT")
+          : targetRoleName === RoleName.FREELANCER
+            ? tRole("FREELANCER")
+            : targetRoleName === RoleName.ADMIN
+              ? tRole("ADMIN")
+              : targetRoleName === RoleName.EXPERT
+                ? tRole("EXPERT")
+                : targetRoleName;
       toastSuccess({
         message: t("switchedRole", {
-          role:
-            targetRole === RoleName.CLIENT
-              ? tRole("CLIENT")
-              : tRole("FREELANCER"),
+          role: targetLabel,
         }),
       });
       if (from && from.startsWith("/") && !from.startsWith("//")) {
         router.push(from);
-      } else if (targetRole === RoleName.CLIENT) {
+      } else if (targetRoleName === RoleName.CLIENT) {
         router.push("/client/jobs");
-      } else {
+      } else if (targetRoleName === RoleName.FREELANCER) {
         router.push("/freelancer");
+      } else if (targetRoleName === RoleName.EXPERT) {
+        router.push("/expert/profile");
+      } else {
+        router.push("/admin");
       }
       router.refresh();
     } catch {
@@ -124,23 +128,30 @@ export function AccessDeniedContent({
         ? tRole("FREELANCER")
         : primaryRole === RoleName.ADMIN
           ? tRole("ADMIN")
-          : t("userFallback");
+          : primaryRole === RoleName.EXPERT
+            ? tRole("EXPERT")
+            : primaryRole ?? t("userFallback");
 
+  const requiredRoleLower = requiredRole?.toLowerCase();
   const requiredRoleLabel =
-    targetRequiredRole === RoleName.CLIENT
+    requiredRoleLower === "client"
       ? tRole("CLIENT")
-      : targetRequiredRole === RoleName.FREELANCER
+      : requiredRoleLower === "freelancer"
         ? tRole("FREELANCER")
-        : requiredRole?.toLowerCase() === "admin"
+        : requiredRoleLower === "admin"
           ? tRole("ADMIN")
-          : t("requiredRoleFallback");
+          : requiredRoleLower === "expert"
+            ? tRole("EXPERT")
+            : requiredRole ?? t("requiredRoleFallback");
 
   const headerRole: UserRole =
     primaryRole === RoleName.CLIENT
       ? "CLIENT"
       : primaryRole === RoleName.FREELANCER
         ? "FREELANCER"
-        : "GUEST";
+        : user
+          ? "FREELANCER"
+          : "GUEST";
 
   return (
     <div className="flex min-h-dvh flex-col bg-background font-sans">
@@ -236,11 +247,11 @@ export function AccessDeniedContent({
                 </Button>
 
                 {/* 2. Switch role if user has target role */}
-                {canSwitchToRequired && targetRequiredRole && (
+                {canSwitchToRequired && matchingRole && (
                   <Button
                     variant="outline"
                     className="w-full border-primary/40 hover:bg-primary/5 text-primary font-medium"
-                    onClick={() => handleSwitchRole(targetRequiredRole)}
+                    onClick={() => handleSwitchRole(matchingRole.name)}
                     disabled={isSwitchingRole}
                   >
                     {isSwitchingRole ? (

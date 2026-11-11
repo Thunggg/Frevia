@@ -21,6 +21,7 @@ import {
   MonitorSmartphone,
   UserRound,
 } from "lucide-react";
+import { RoleName } from "@shared/types";
 import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -35,6 +36,19 @@ export function AdminProfileDropdown() {
   const displayName =
     me?.profile?.displayName || me?.email?.split("@")[0] || "Admin";
   const initial = displayName.charAt(0).toUpperCase();
+
+  const primaryRole =
+    me?.roles?.find((r) => r.isPrimary)?.name ?? me?.roles?.[0]?.name ?? "ADMIN";
+  const roleLabel =
+    primaryRole === RoleName.ADMIN
+      ? tRole("ADMIN")
+      : primaryRole === RoleName.EXPERT
+        ? tRole("EXPERT")
+        : primaryRole === RoleName.CLIENT
+          ? tRole("CLIENT")
+          : primaryRole === RoleName.FREELANCER
+            ? tRole("FREELANCER")
+            : primaryRole;
 
   const handleLogout = async () => {
     try {
@@ -86,7 +100,7 @@ export function AdminProfileDropdown() {
               {me?.email ?? ""}
             </p>
             <span className="mt-1 inline-flex items-center rounded-full bg-[#4fae2e]/10 px-2 py-0.5 text-[10px] font-medium text-[#4fae2e]">
-              {tRole("ADMIN")}
+              {roleLabel}
             </span>
           </div>
         </DropdownMenuLabel>

@@ -616,13 +616,25 @@ function MobileProfileNavigation({
           {t("viewPublicProfile")}
         </Link>
       ) : null}
+      {canAccessAdminPortal(me) && (
+        <Link
+          href="/admin"
+          onClick={onNavigate}
+          className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-[13px] font-medium text-[#4fae2e] transition-colors hover:bg-[#4fae2e]/10"
+        >
+          <ShieldCheck className="size-4 text-[#4fae2e]" />
+          Admin Portal
+        </Link>
+      )}
       <Link
         href={
-          role === "FREELANCER"
-            ? "/freelancer/profile"
-            : role === "CLIENT"
-              ? "/client/profile"
-              : "/login"
+          canAccessAdminPortal(me)
+            ? "/admin/profile"
+            : role === "FREELANCER"
+              ? "/freelancer/profile"
+              : role === "CLIENT"
+                ? "/client/profile"
+                : "/login"
         }
         onClick={onNavigate}
         className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-[13px] font-medium text-foreground/70 transition-colors hover:bg-black/[0.04] hover:text-foreground dark:hover:bg-white/[0.06]"

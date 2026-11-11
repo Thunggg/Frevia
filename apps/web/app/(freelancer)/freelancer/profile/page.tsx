@@ -22,11 +22,14 @@ export default async function FreelancerProfilePage() {
     redirect("/login?redirect=/freelancer/profile");
   }
 
+  if (role === RoleName.EXPERT) {
+    redirect("/expert/profile");
+  }
+
   if (
     role === RoleName.ADMIN ||
     (role !== RoleName.CLIENT &&
       role !== RoleName.FREELANCER &&
-      role !== RoleName.EXPERT &&
       canAccessAdminPortal(user))
   ) {
     redirect("/admin/profile");
