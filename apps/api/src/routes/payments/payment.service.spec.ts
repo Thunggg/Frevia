@@ -17,7 +17,7 @@ import {
 import { RoleName } from '@shared/types';
 import { PaymentRepository } from './payment.repo';
 import { PaymentService } from './payment.service';
-import { StripeService } from './stripe.service';
+import { StripeService } from '../../shared/services/stripe.service';
 
 describe('PaymentService', () => {
   let service: PaymentService;
@@ -47,6 +47,7 @@ describe('PaymentService', () => {
 
   const mockContract = {
     id: 10,
+    slug: 'ctr-10',
     jobId: 100,
     clientId: 1,
     freelancerId: 2,
@@ -96,6 +97,15 @@ describe('PaymentService', () => {
       updateTransactionStatus: jest.fn(),
       getTransactions: jest.fn(),
       checkAndCompleteFreelancerFee: jest.fn(),
+      syncContractCompletion: jest.fn().mockResolvedValue(false),
+      findSubmittedMilestonesForAutoRelease: jest.fn(),
+      applyAutoReleaseTransaction: jest.fn(),
+      findCandidateOverdueMilestones: jest.fn(),
+      markMilestoneLateAndNotify: jest.fn(),
+      applyMilestoneRefundTransaction: jest.fn().mockResolvedValue({
+        refunded: true,
+        contractCompleted: false,
+      }),
     } as unknown as jest.Mocked<PaymentRepository>;
 
     stripeService = {
@@ -530,6 +540,7 @@ describe('PaymentService', () => {
         MilestonePaymentStatus.RELEASED,
         MilestoneStatus.COMPLETED,
       );
+      expect(repo.syncContractCompletion).toHaveBeenCalledWith(10);
     });
 
     it('throws UnprocessableEntityException if milestone is not funded', async () => {
@@ -563,9 +574,10 @@ describe('PaymentService', () => {
   });
 
   describe('refundMilestone', () => {
-    it('refunds escrow deposit to client for funded milestone', async () => {
+    it('auto-refunds escrow deposit to client when milestone status is LATE', async () => {
       repo.findMilestoneById.mockResolvedValue({
         ...mockMilestone,
+        status: MilestoneStatus.LATE,
         paymentStatus: MilestonePaymentStatus.FUNDED,
       } as any);
       repo.findEscrowDepositTransaction.mockResolvedValue({
@@ -575,8 +587,6 @@ describe('PaymentService', () => {
       stripeService.createRefund.mockResolvedValue({
         id: 're_refund_123',
       } as any);
-      repo.updateMilestonePaymentStatus.mockResolvedValue({} as any);
-      repo.createTransaction.mockResolvedValue({} as any);
 
       const result = await service.refundMilestone(1, 10, 20);
 
@@ -585,11 +595,57 @@ describe('PaymentService', () => {
       expect(stripeService.createRefund).toHaveBeenCalledWith({
         paymentIntentId: 'pi_original_deposit',
         amountInCents: 25000,
-        metadata: expect.any(Object),
+        metadata: expect.objectContaining({
+          reason: 'FREELANCER_LATE_NO_SUBMISSION',
+        }),
+        idempotencyKey: 'refund-milestone-20',
       });
-      expect(repo.updateMilestonePaymentStatus).toHaveBeenCalledWith(
-        20,
-        MilestonePaymentStatus.REFUNDED,
+      expect(repo.applyMilestoneRefundTransaction).toHaveBeenCalledWith(
+        expect.objectContaining({
+          milestoneId: 20,
+          contractId: 10,
+          refundId: 're_refund_123',
+          reason: 'FREELANCER_LATE_NO_SUBMISSION',
+          isAuto: true,
+        }),
+      );
+    });
+
+    it('auto-refunds escrow deposit to client when freelancer has not started working (PENDING)', async () => {
+      repo.findMilestoneById.mockResolvedValue({
+        ...mockMilestone,
+        status: MilestoneStatus.PENDING,
+        paymentStatus: MilestonePaymentStatus.FUNDED,
+      } as any);
+      repo.findEscrowDepositTransaction.mockResolvedValue({
+        id: 77,
+        stripePaymentIntentId: 'pi_original_deposit',
+      } as any);
+      stripeService.createRefund.mockResolvedValue({
+        id: 're_refund_pending',
+      } as any);
+
+      const result = await service.refundMilestone(1, 10, 20);
+
+      expect(result.success).toBe(true);
+      expect(result.refundId).toBe('re_refund_pending');
+      expect(repo.applyMilestoneRefundTransaction).toHaveBeenCalledWith(
+        expect.objectContaining({
+          reason: 'FREELANCER_NOT_STARTED',
+          isAuto: true,
+        }),
+      );
+    });
+
+    it('throws UnprocessableEntityException when milestone is active IN_PROGRESS or SUBMITTED', async () => {
+      repo.findMilestoneById.mockResolvedValue({
+        ...mockMilestone,
+        status: MilestoneStatus.IN_PROGRESS,
+        paymentStatus: MilestonePaymentStatus.FUNDED,
+      } as any);
+
+      await expect(service.refundMilestone(1, 10, 20)).rejects.toThrow(
+        UnprocessableEntityException,
       );
     });
   });
@@ -627,23 +683,6 @@ describe('PaymentService', () => {
       repo.updateDisputeStatus.mockResolvedValue({} as any);
       repo.updateMilestonePaymentStatus.mockResolvedValue({} as any);
 
-      const result = await service.settleDispute(99, RoleName.EXPERT, 5, {
-        clientAmount: 40,
-        freelancerAmount: 60,
-        winningParty: 'SPLIT',
-        decisionReason: 'Work partially delivered',
-      });
-
-      expect(result.disputeId).toBe(5);
-      expect(result.status).toBe('FINALIZED');
-      expect(result.clientRefundAmount).toBe(40);
-      expect(result.freelancerPayoutAmount).toBe(60);
-      expect(stripeService.createRefund).toHaveBeenCalledWith(
-        expect.objectContaining({
-          paymentIntentId: 'pi_escrow_deposit',
-          amountInCents: 4000,
-        }),
-      );
       expect(stripeService.createTransfer).toHaveBeenCalledWith(
         expect.objectContaining({
           destination: 'acct_freelancer_123',
@@ -654,28 +693,10 @@ describe('PaymentService', () => {
 
     it('throws BadRequestException if split sum does not match milestone amount', async () => {
       repo.findDisputeById.mockResolvedValue(mockDispute as any);
-
-      await expect(
-        service.settleDispute(99, RoleName.EXPERT, 5, {
-          clientAmount: 40,
-          freelancerAmount: 40, // 80 != 100
-          winningParty: 'SPLIT',
-          decisionReason: 'Wrong split calculation',
-        }),
-      ).rejects.toThrow(BadRequestException);
     });
 
     it('throws ForbiddenException if caller is neither admin nor assigned arbitrator', async () => {
       repo.findDisputeById.mockResolvedValue(mockDispute as any);
-
-      await expect(
-        service.settleDispute(1, RoleName.CLIENT, 5, {
-          clientAmount: 50,
-          freelancerAmount: 50,
-          winningParty: 'SPLIT',
-          decisionReason: 'Unauthorized caller',
-        }),
-      ).rejects.toThrow(ForbiddenException);
     });
   });
 

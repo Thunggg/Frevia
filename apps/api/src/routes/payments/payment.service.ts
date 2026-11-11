@@ -27,6 +27,7 @@ import {
   HoldMilestoneRequiredException,
   MilestoneAlreadyReleasedException,
   MilestoneNotEligibleForFundingException,
+  MilestoneNotEligibleForRefundException,
   MilestoneNotFundedException,
   PaymentForbiddenException,
   StripeAccountNotConnectedException,
@@ -34,8 +35,8 @@ import {
   WebhookSignatureInvalidException,
 } from './payment.error';
 import { PaymentRepository } from './payment.repo';
-import { StripeService } from './stripe.service';
 import { ContractPdfService } from '../../shared/services/contract-pdf.service';
+import { StripeService } from '../../shared/services/stripe.service';
 
 @Injectable()
 export class PaymentService {
@@ -45,7 +46,7 @@ export class PaymentService {
     private readonly paymentRepo: PaymentRepository,
     private readonly stripeService: StripeService,
     private readonly contractPdfService: ContractPdfService,
-  ) {}
+  ) { }
 
   async getOnboardingLink(userId: number, returnUrl?: string) {
     const user = await this.paymentRepo.findUserById(userId);
@@ -578,9 +579,9 @@ export class PaymentService {
           await this.paymentRepo.findContractById(resolvedContractId);
         const milestoneIds = meta.milestoneIds
           ? meta.milestoneIds
-              .split(',')
-              .map((v) => Number(v.trim()))
-              .filter((v) => Number.isFinite(v) && v > 0)
+            .split(',')
+            .map((v) => Number(v.trim()))
+            .filter((v) => Number.isFinite(v) && v > 0)
           : Array.isArray(contract?.holdMilestoneIds)
             ? contract.holdMilestoneIds
             : [];
@@ -997,6 +998,7 @@ export class PaymentService {
     }
 
     await this.paymentRepo.checkAndCompleteFreelancerFee(contractId);
+    await this.paymentRepo.syncContractCompletion(contractId);
 
     return {
       success: true,
@@ -1101,6 +1103,13 @@ export class PaymentService {
       throw MilestoneNotFundedException();
     }
 
+    if (
+      milestone.status !== MilestoneStatus.LATE &&
+      milestone.status !== MilestoneStatus.PENDING
+    ) {
+      throw MilestoneNotEligibleForRefundException();
+    }
+
     const escrowTx = await this.paymentRepo.findEscrowDepositTransaction(
       milestoneId,
       contractId,
@@ -1108,6 +1117,11 @@ export class PaymentService {
     if (!escrowTx || !escrowTx.stripePaymentIntentId) {
       throw new Error('Original escrow payment record not found');
     }
+
+    const reason =
+      milestone.status === MilestoneStatus.LATE
+        ? 'FREELANCER_LATE_NO_SUBMISSION'
+        : 'FREELANCER_NOT_STARTED';
 
     const milestoneAmount = Number(milestone.amount);
     const refund = await this.stripeService.createRefund({
@@ -1117,130 +1131,28 @@ export class PaymentService {
         type: TransactionType.REFUND,
         contractId: String(contractId),
         milestoneId: String(milestoneId),
+        reason,
       },
+      idempotencyKey: `refund-milestone-${milestoneId}`,
     });
 
-    await this.paymentRepo.updateMilestonePaymentStatus(
+    await this.paymentRepo.applyMilestoneRefundTransaction({
       milestoneId,
-      MilestonePaymentStatus.REFUNDED,
-    );
-
-    await this.paymentRepo.createTransaction({
-      userId,
       contractId,
-      milestoneId,
+      contractSlug: milestone.contract.slug,
+      clientId: userId,
+      freelancerId: milestone.contract.freelancerId,
+      milestoneTitle: milestone.title,
       amount: milestoneAmount,
-      currency: 'usd',
-      type: TransactionType.REFUND,
-      status: TransactionStatus.SUCCEEDED,
-      stripeRefundId: refund.id,
+      refundId: refund.id,
+      reason,
+      isAuto: true,
     });
 
     return {
       success: true,
       message: 'Milestone funds refunded to client successfully',
       refundId: refund.id,
-    };
-  }
-
-  async settleDispute(
-    callerUserId: number,
-    callerRoleName: string,
-    disputeId: number,
-    body: DisputeSettlementBodyType,
-  ) {
-    const dispute = await this.paymentRepo.findDisputeById(disputeId);
-    if (!dispute) {
-      throw PaymentForbiddenException('Dispute not found');
-    }
-
-    const isAdmin = callerRoleName === RoleName.ADMIN;
-    const isAssignedArbitrator = dispute.decisionById === callerUserId;
-
-    if (!isAdmin && !isAssignedArbitrator) {
-      throw PaymentForbiddenException(
-        'Only admin or assigned dispute arbitrator can settle dispute payout',
-      );
-    }
-
-    const totalMilestoneAmount = Number(dispute.milestone.amount);
-    const splitSum = Number(body.clientAmount) + Number(body.freelancerAmount);
-
-    if (Math.abs(splitSum - totalMilestoneAmount) > 0.01) {
-      throw DisputeSettlementInvalidAmountException();
-    }
-
-    const contract = dispute.milestone.contract;
-    const escrowTx = await this.paymentRepo.findEscrowDepositTransaction(
-      dispute.milestoneId,
-      contract.id,
-    );
-
-    // 1. Client refund portion
-    if (body.clientAmount > 0 && escrowTx?.stripePaymentIntentId) {
-      const clientRefundCents = Math.round(body.clientAmount * 100);
-      const refund = await this.stripeService.createRefund({
-        paymentIntentId: escrowTx.stripePaymentIntentId,
-        amountInCents: clientRefundCents,
-        metadata: { disputeId: String(disputeId), target: 'client' },
-      });
-
-      await this.paymentRepo.createTransaction({
-        userId: contract.clientId,
-        contractId: contract.id,
-        milestoneId: dispute.milestoneId,
-        disputeId,
-        amount: body.clientAmount,
-        currency: 'usd',
-        type: TransactionType.REFUND,
-        status: TransactionStatus.SUCCEEDED,
-        stripeRefundId: refund.id,
-      });
-    }
-
-    // 2. Freelancer payout portion
-    if (body.freelancerAmount > 0 && contract.freelancer.stripeAccountId) {
-      const freelancerPayoutCents = Math.round(body.freelancerAmount * 100);
-      const transfer = await this.stripeService.createTransfer({
-        amountInCents: freelancerPayoutCents,
-        destination: contract.freelancer.stripeAccountId,
-        transferGroup: `dispute_${disputeId}`,
-        metadata: { disputeId: String(disputeId), target: 'freelancer' },
-      });
-
-      await this.paymentRepo.createTransaction({
-        userId: contract.freelancerId,
-        contractId: contract.id,
-        milestoneId: dispute.milestoneId,
-        disputeId,
-        amount: body.freelancerAmount,
-        currency: 'usd',
-        type: TransactionType.MILESTONE_PAYOUT,
-        status: TransactionStatus.SUCCEEDED,
-        stripeTransferId: transfer.id,
-      });
-    }
-
-    await this.paymentRepo.updateDisputeStatus(
-      disputeId,
-      DisputeStatus.FINALIZED,
-      new Date(),
-    );
-
-    await this.paymentRepo.updateMilestonePaymentStatus(
-      dispute.milestoneId,
-      MilestonePaymentStatus.RELEASED,
-      MilestoneStatus.COMPLETED,
-    );
-
-    await this.paymentRepo.checkAndCompleteFreelancerFee(contract.id);
-
-    return {
-      disputeId,
-      status: 'FINALIZED',
-      clientRefundAmount: body.clientAmount,
-      freelancerPayoutAmount: body.freelancerAmount,
-      arbitratorPayoutAmount: 0,
     };
   }
 

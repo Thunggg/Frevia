@@ -111,6 +111,14 @@ export const MilestoneAlreadyReleasedException = () =>
     },
   ]);
 
+export const MilestoneNotEligibleForRefundException = () =>
+  new UnprocessableEntityException([
+    {
+      message: ManagePaymentMessage.MILESTONE_NOT_ELIGIBLE_FOR_REFUND,
+      path: 'status',
+    },
+  ]);
+
 export const DisputeFeeAlreadyPaidException = () =>
   new UnprocessableEntityException([
     {
