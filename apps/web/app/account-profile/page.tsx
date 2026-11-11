@@ -16,11 +16,14 @@ export default async function AccountProfileRedirectPage() {
     redirect("/client/profile");
   }
 
+  if (primaryRole === RoleName.EXPERT) {
+    redirect("/expert/profile");
+  }
+
   if (
     primaryRole === RoleName.ADMIN ||
     (primaryRole !== RoleName.CLIENT &&
       primaryRole !== RoleName.FREELANCER &&
-      primaryRole !== RoleName.EXPERT &&
       canAccessAdminPortal(user))
   ) {
     redirect("/admin/profile");

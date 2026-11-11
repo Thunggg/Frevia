@@ -170,7 +170,7 @@ export const GetMeResSchema = z.object({
 
 export const SwitchRoleBodySchema = z
   .object({
-    role: z.enum([RoleName.FREELANCER, RoleName.CLIENT]),
+    role: z.string().min(1),
   })
   .strict();
 
