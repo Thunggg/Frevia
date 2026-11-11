@@ -160,6 +160,42 @@ describe('User Authentication (UF-37 to UF-41)', () => {
       });
     });
 
+    it('provisions a new freelancer account and returns tokens when a new Google profile signs in with FREELANCER role', async () => {
+      mockGetToken.mockResolvedValue({ tokens: { access_token: 'g-token' } });
+      mockOAuthRequest.mockResolvedValue({
+        data: { id: 'g-freelancer', email: 'freelancer@frevia.com', name: 'New Freelancer User' },
+      });
+      authRepository.findUserByEmailIncludeRoles.mockResolvedValue(null);
+      sharedRoleRepository.getFreelancerRoleId.mockResolvedValue(3);
+      authRepository.createUserAndRegisterGoogle.mockResolvedValue({
+        id: 16,
+        email: 'freelancer@frevia.com',
+        isBanned: false,
+        userRoles: [{ role: { id: 3, name: RoleName.FREELANCER } }],
+      });
+      authRepository.createOauthAccount.mockResolvedValue({ id: 2 });
+
+      const freelancerState = Buffer.from(
+        JSON.stringify({ userAgent: 'Jest/Test', ip: '127.0.0.1', role: RoleName.FREELANCER }),
+      ).toString('base64url');
+
+      const result = await service.googleCallback({
+        code: 'freelancer-code',
+        state: freelancerState,
+      });
+
+      expect(sharedRoleRepository.getFreelancerRoleId).toHaveBeenCalled();
+      expect(authRepository.createUserAndRegisterGoogle).toHaveBeenCalledWith({
+        email: 'freelancer@frevia.com',
+        fullName: 'New Freelancer User',
+        roleId: 3,
+      });
+      expect(result).toEqual({
+        accessToken: 'access-token-jwt',
+        refreshToken: 'refresh-token-jwt',
+      });
+    });
+
     // Từ chối xác thực khi mã ủy quyền Google không hợp lệ hoặc đã hết hạn.
     it('throws UnauthorizedException when the Google authorization code is invalid or expired', async () => {
       mockGetToken.mockRejectedValue(

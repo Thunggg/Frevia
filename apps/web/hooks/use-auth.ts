@@ -15,7 +15,7 @@ const useLogin = () => {
 
 function useGoogleLink() {
   return useMutation({
-    mutationFn: () => authApiRequest.getGoogleLink(),
+    mutationFn: (role?: string) => authApiRequest.getGoogleLink(role),
   });
 }
 

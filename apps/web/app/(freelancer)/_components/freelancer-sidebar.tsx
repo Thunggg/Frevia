@@ -5,7 +5,6 @@ import { useLocale, useTranslations } from "next-intl";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState, useTransition } from "react";
-import { useQueryClient } from "@tanstack/react-query";
 import { useTheme } from "next-themes";
 import {
   Bell,
@@ -25,7 +24,6 @@ import {
   Search,
   Shield,
   Sun,
-  SwitchCamera,
   Tag,
   UserRound,
   Users,
@@ -38,11 +36,8 @@ import {
   AvatarFallback,
   AvatarImage,
 } from "@repo/ui/components/shadcn/avatar";
-import { toastError } from "@repo/ui/components/shadcn/toast";
-import { authApiRequest } from "@/apiRequests/auth";
 import { useMe } from "@/hooks/use-auth";
 import { canAccessAdminPortal } from "@/lib/admin-access";
-import { RoleName } from "@shared/types";
 import { useNotifications } from "@/hooks/use-notifications";
 
 type NavItem = {
@@ -119,20 +114,11 @@ function NavLink({ item, collapsed }: { item: NavItem; collapsed: boolean }) {
   );
 }
 
-const KNOWN_ROLES = new Set<string>([
-  RoleName.ADMIN,
-  RoleName.CLIENT,
-  RoleName.FREELANCER,
-  RoleName.EXPERT,
-]);
-
 export function FreelancerSidebar() {
   const router = useRouter();
-  const queryClient = useQueryClient();
   const t = useTranslations("sidebar");
   const tCommon = useTranslations("common");
   const tRole = useTranslations("roleName");
-  const tNav = useTranslations("nav");
   const activeLocale = useLocale();
   const [isLocalePending, startLocaleTransition] = useTransition();
   const { data: me } = useMe();
@@ -141,7 +127,6 @@ export function FreelancerSidebar() {
   const [mounted, setMounted] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
-  const [isSwitchingRole, setIsSwitchingRole] = useState(false);
   const profileRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -247,27 +232,12 @@ export function FreelancerSidebar() {
 
   const displayName = me?.profile?.displayName ?? tRole("FREELANCER");
   const initial = displayName.charAt(0).toUpperCase();
-  const otherRoles = (me?.roles ?? []).filter((r) => !r.isPrimary);
   const profileId = me?.profile?.id ?? me?.id;
 
   const logout = async () => {
     await fetch("/api/auth/logout", { method: "POST" });
     router.push("/login");
     router.refresh();
-  };
-
-  const switchRole = async (targetRoleName: string, destination: string) => {
-    if (isSwitchingRole) return;
-    setIsSwitchingRole(true);
-    try {
-      await authApiRequest.switchRole({ role: targetRoleName });
-      await queryClient.invalidateQueries({ queryKey: ["me"] });
-      router.push(destination);
-      router.refresh();
-    } catch {
-      toastError({ message: t("roleSwitchFailed") });
-      setIsSwitchingRole(false);
-    }
   };
 
   return (
@@ -494,46 +464,6 @@ export function FreelancerSidebar() {
 
               <div className="my-1 h-px bg-border" />
 
-              {otherRoles.map((role) => {
-                const isFreelancer = role.name === RoleName.FREELANCER;
-                const isExpert = role.name === RoleName.EXPERT;
-                const isClient = role.name === RoleName.CLIENT;
-                const destination = isFreelancer
-                  ? "/freelancer"
-                  : isExpert
-                    ? "/admin/disputes"
-                    : isClient
-                      ? "/client/jobs"
-                      : "/admin";
-                const label = isFreelancer
-                  ? t("switchToFreelancer")
-                  : isClient
-                    ? t("switchToClient")
-                    : tNav("switchToRole", {
-                        role:
-                          role.name === RoleName.ADMIN
-                            ? tRole("ADMIN")
-                            : role.name === RoleName.EXPERT
-                              ? tRole("EXPERT")
-                              : role.name,
-                      });
-
-                return (
-                  <button
-                    key={role.id}
-                    type="button"
-                    onClick={() => {
-                      setProfileOpen(false);
-                      void switchRole(role.name, destination);
-                    }}
-                    disabled={isSwitchingRole}
-                    className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-xs text-muted-foreground hover:bg-[#D0E1F8]/40 dark:hover:bg-zinc-800 hover:text-[#0069D3] dark:hover:text-blue-300 transition-colors disabled:opacity-50 cursor-pointer"
-                  >
-                    <SwitchCamera className="size-3.5" />
-                    {isSwitchingRole ? t("switching") : label}
-                  </button>
-                );
-              })}
               <button
                 type="button"
                 onClick={() => {

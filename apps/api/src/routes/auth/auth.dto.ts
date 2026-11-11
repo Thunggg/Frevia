@@ -2,8 +2,6 @@ import {
   ForgotPasswordBodySchema,
   GetAuthorizationUrlResSchema,
   GetMeResSchema,
-  JoinRoleBodySchema,
-  JoinRoleResponseSchema,
   LoginBodySchema,
   LoginResSchema,
   LogoutBodySchema,
@@ -12,8 +10,6 @@ import {
   RegisterBodySchema,
   RegisterResSchema,
   SendOTPSchema,
-  SwitchRoleBodySchema,
-  SwitchRoleResponseSchema,
 } from '@shared/types';
 import { createZodDto } from 'nestjs-zod';
 
@@ -39,10 +35,3 @@ export class GetAuthorizationUrlResponseDTO extends createZodDto(
 ) {}
 
 export class GetMeResponseDto extends createZodDto(GetMeResSchema) {}
-export class SwitchRoleBodyDto extends createZodDto(SwitchRoleBodySchema) {}
-export class SwitchRoleResponseDto extends createZodDto(
-  SwitchRoleResponseSchema,
-) {}
-
-export class JoinRoleBodyDto extends createZodDto(JoinRoleBodySchema) {}
-export class JoinRoleResponseDto extends createZodDto(JoinRoleResponseSchema) {}

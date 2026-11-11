@@ -4,7 +4,6 @@ import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useEffect, useRef, useState } from "react";
-import { useQueryClient } from "@tanstack/react-query";
 import {
   Bookmark,
   ChevronDown,
@@ -19,8 +18,6 @@ import {
   MonitorSmartphone,
   Search,
   ShieldCheck,
-  SwitchCamera,
-  UserPlus,
   UserRound,
   UserCheck,
   X,
@@ -46,10 +43,7 @@ import { MessageBell } from "@/components/notification-bell";
 import { NotificationsBell } from "@/components/notifications-bell";
 import { ContactDialog } from "@/components/contact-dialog";
 import { useMe } from "@/hooks/use-auth";
-import { authApiRequest } from "@/apiRequests/auth";
 import { canAccessAdminPortal } from "@/lib/admin-access";
-import { RoleName } from "@shared/types";
-import { toastError, toastSuccess } from "@repo/ui/components/shadcn/toast";
 
 export type UserRole = "GUEST" | "CLIENT" | "FREELANCER";
 
@@ -243,85 +237,11 @@ function HeaderSearch({
   );
 }
 
-function useRoleContextAction(role: Exclude<UserRole, "GUEST">) {
-  const router = useRouter();
-  const queryClient = useQueryClient();
-  const t = useTranslations("nav");
-  const { data: me, isLoading: isMeLoading } = useMe();
-  const [isRoleActionPending, setIsRoleActionPending] = useState(false);
-  const targetRole =
-    role === "FREELANCER" ? RoleName.CLIENT : RoleName.FREELANCER;
-  const hasTargetRole =
-    me?.roles.some((item) => item.name === targetRole) === true;
-  const targetRoleLabel =
-    targetRole === RoleName.CLIENT ? t("roles.client") : t("roles.freelancer");
-
-  const updateRoleContext = async () => {
-    if (isMeLoading || !me || isRoleActionPending) return false;
-
-    setIsRoleActionPending(true);
-    try {
-      if (hasTargetRole) {
-        await authApiRequest.switchRole({ role: targetRole });
-      } else {
-        await authApiRequest.joinRole({ role: targetRole });
-      }
-
-      await queryClient.invalidateQueries({ queryKey: ["me"] });
-      toastSuccess({
-        message: hasTargetRole
-          ? t("switchedToRole", { role: targetRoleLabel })
-          : t("roleAdded", { role: targetRoleLabel }),
-      });
-      router.push(
-        targetRole === RoleName.CLIENT
-          ? "/client/jobs"
-          : "/freelancer",
-      );
-      router.refresh();
-      return true;
-    } catch {
-      toastError({
-        message: hasTargetRole ? t("switchRoleFailed") : t("addRoleFailed"),
-      });
-      return false;
-    } finally {
-      setIsRoleActionPending(false);
-    }
-  };
-
-  const roleActionLabel = isMeLoading
-    ? t("loadingRoles")
-    : isRoleActionPending
-      ? hasTargetRole
-        ? t("switchingRole")
-        : t("addingRole")
-      : hasTargetRole
-        ? t("switchToRole", { role: targetRoleLabel })
-        : t("addRole", { role: targetRoleLabel });
-
-  return {
-    hasTargetRole,
-    isMeLoading,
-    isRoleActionPending,
-    me,
-    roleActionLabel,
-    updateRoleContext,
-  };
-}
-
 function ProfileDropdown({ role }: { role: Exclude<UserRole, "GUEST"> }) {
   const router = useRouter();
   const t = useTranslations("nav");
   const profile = roleConfig[role];
-  const {
-    hasTargetRole,
-    isMeLoading,
-    isRoleActionPending,
-    me,
-    roleActionLabel,
-    updateRoleContext,
-  } = useRoleContextAction(role);
+  const { data: me } = useMe();
   const displayName =
     me?.profile?.displayName || t(`roles.${profile.nameKey}`);
   const initial = displayName?.charAt(0)?.toUpperCase() ?? "?";
@@ -498,21 +418,6 @@ function ProfileDropdown({ role }: { role: Exclude<UserRole, "GUEST"> }) {
           </Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem
-          className="cursor-pointer"
-          disabled={isMeLoading || isRoleActionPending}
-          onSelect={(event) => {
-            event.preventDefault();
-            void updateRoleContext();
-          }}
-        >
-          {hasTargetRole ? (
-            <SwitchCamera className="size-4 text-muted-foreground" />
-          ) : (
-            <UserPlus className="size-4 text-muted-foreground" />
-          )}
-          {roleActionLabel}
-        </DropdownMenuItem>
         <DropdownMenuItem asChild>
           <Link href="/sessions" className="cursor-pointer">
             <MonitorSmartphone className="size-4 text-muted-foreground" />
@@ -590,14 +495,7 @@ function MobileProfileNavigation({
   onNavigate: () => void;
 }) {
   const t = useTranslations("nav");
-  const {
-    hasTargetRole,
-    isMeLoading,
-    isRoleActionPending,
-    me,
-    roleActionLabel,
-    updateRoleContext,
-  } = useRoleContextAction(role);
+  const { data: me } = useMe();
   const publicProfileHref = me?.profile?.id
     ? role === "FREELANCER"
       ? `/profiles/${me.profile.id}`
@@ -642,23 +540,6 @@ function MobileProfileNavigation({
         <UserRound className="size-4 text-muted-foreground" />
         {t("profileSettings")}
       </Link>
-      <button
-        type="button"
-        disabled={isMeLoading || isRoleActionPending}
-        onClick={() => {
-          void updateRoleContext().then((didUpdate) => {
-            if (didUpdate) onNavigate();
-          });
-        }}
-        className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-left text-[13px] font-medium text-foreground/70 transition-colors hover:bg-black/[0.04] hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#4fae2e]/30 active:translate-y-px disabled:cursor-not-allowed disabled:opacity-50 dark:hover:bg-white/[0.06]"
-      >
-        {hasTargetRole ? (
-          <SwitchCamera className="size-4 text-muted-foreground" />
-        ) : (
-          <UserPlus className="size-4 text-muted-foreground" />
-        )}
-        {roleActionLabel}
-      </button>
     </div>
   );
 }

@@ -10,7 +10,6 @@ import {
   GetAuthorizationUrlResType,
   GoogleUserInfo,
   GetMeResType,
-  JoinRoleBodyType,
   LoginBodyType,
   MessageResType,
   OauthProvider,
@@ -18,7 +17,6 @@ import {
   RegisterBodyType,
   RoleName,
   SendOTPBodyType,
-  SwitchRoleBodyType,
   TypeOfVerificationCode,
   UserType,
   AuthMessage,
@@ -40,7 +38,6 @@ import {
   InvalidVerificationCodeException,
   OTPExpiredException,
   RefreshTokenRevokedException,
-  RoleAlreadyAssignedException,
   RoleNotFoundException,
   TooManyAttemptsException,
   UniqueViolationException,
@@ -575,65 +572,21 @@ export class AuthService {
     };
   }
 
-  async switchRole(
-    userId: number,
-    sessionId: number,
-    body: SwitchRoleBodyType,
-  ) {
-    const role = await this.authRepository.switchPrimaryRole(userId, body.role);
-    if (!role) throw RoleNotFoundException();
-
-    const accessToken = await this.tokenService.signAccessToken({
-      userId,
-      roleId: role.id,
-      roleName: role.name,
-      sessionId,
-    });
-
-    return { accessToken };
-  }
-
-  async joinRole(userId: number, sessionId: number, body: JoinRoleBodyType) {
-    try {
-      const result = await this.authRepository.joinRole(userId, body.role);
-      if (!result) throw RoleNotFoundException();
-      if (result.status === 'already-assigned') {
-        throw RoleAlreadyAssignedException();
-      }
-
-      const accessToken = await this.tokenService.signAccessToken({
-        userId,
-        roleId: result.role.id,
-        roleName: result.role.name,
-        sessionId,
-      });
-
-      return { accessToken };
-    } catch (error) {
-      if (
-        error instanceof PrismaClientKnownRequestError &&
-        error.code === 'P2002'
-      ) {
-        throw RoleAlreadyAssignedException();
-      }
-      throw error;
-    }
-  }
-
   getAuthorizationUrl(payload: {
     userAgent: string;
     ip: string;
+    role?: string;
   }): GetAuthorizationUrlResType {
-    const { userAgent, ip } = payload;
+    const { userAgent, ip, role } = payload;
 
     const scopes = [
       'https://www.googleapis.com/auth/userinfo.profile',
       'https://www.googleapis.com/auth/userinfo.email',
     ];
 
-    const state = Buffer.from(JSON.stringify({ userAgent, ip })).toString(
-      'base64url',
-    );
+    const state = Buffer.from(
+      JSON.stringify({ userAgent, ip, ...(role ? { role } : {}) }),
+    ).toString('base64url');
 
     const authorizationUrl = this.oauth2Client.generateAuthUrl({
       // 'online' (default) or 'offline' (gets refresh_token)
@@ -658,14 +611,21 @@ export class AuthService {
 
     let userAgent = 'Unknown';
     let ip = 'Unknown';
+    let selectedRole: (typeof RoleName)[keyof typeof RoleName] = RoleName.CLIENT;
 
     try {
       const clientInfor = JSON.parse(
         Buffer.from(payload.state, 'base64url').toString(),
       );
 
-      userAgent = clientInfor.userAgent;
-      ip = clientInfor.ip;
+      userAgent = clientInfor.userAgent ?? 'Unknown';
+      ip = clientInfor.ip ?? 'Unknown';
+      if (
+        clientInfor.role === RoleName.FREELANCER ||
+        clientInfor.role === RoleName.CLIENT
+      ) {
+        selectedRole = clientInfor.role;
+      }
     } catch (error) {
       this.logger.error('Error parsing client information', error);
     }
@@ -689,11 +649,16 @@ export class AuthService {
 
     // Nếu user không tồn tại thì tạo mới user
     if (!user) {
+      const roleId =
+        selectedRole === RoleName.FREELANCER
+          ? await this.sharedRoleRepository.getFreelancerRoleId()
+          : await this.sharedRoleRepository.getClientRoleId();
+
       // Tạo user mới
       user = await this.authRepository.createUserAndRegisterGoogle({
         email: data.email as string,
         fullName: data.name as string,
-        roleId: await this.sharedRoleRepository.getClientRoleId(),
+        roleId,
       });
 
       // Tạo oauth account

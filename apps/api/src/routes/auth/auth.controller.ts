@@ -10,13 +10,11 @@ import {
 } from '@nestjs/common';
 import type {
   ForgotPasswordBodyType,
-  JoinRoleBodyType,
   LoginBodyType,
   LogoutBodySchemaType,
   RefreshTokenBodySchemaType,
   RegisterBodyType,
   SendOTPBodyType,
-  SwitchRoleBodyType,
 } from '@shared/types';
 import type { Response } from 'express';
 import { ZodSerializerDto } from 'nestjs-zod';
@@ -29,8 +27,6 @@ import {
   ForgotPasswordBodyDTO,
   GetAuthorizationUrlResponseDTO,
   GetMeResponseDto,
-  JoinRoleBodyDto,
-  JoinRoleResponseDto,
   LoginBodyDTO,
   LoginResponseDto,
   LogoutBodyDTO,
@@ -39,8 +35,6 @@ import {
   RegisterResponseDto,
   SendOTPBodyDTO,
   SendOTPResponseDTO,
-  SwitchRoleBodyDto,
-  SwitchRoleResponseDto,
 } from './auth.dto';
 import { AuthService } from './auth.service';
 
@@ -115,8 +109,12 @@ export class AuthController {
   @Get('google-link')
   @IsPublic()
   @ZodSerializerDto(GetAuthorizationUrlResponseDTO)
-  getGoogleLink(@UserAgent() userAgent: string, @Ip() ip: string) {
-    return this.authService.getAuthorizationUrl({ userAgent, ip });
+  getGoogleLink(
+    @UserAgent() userAgent: string,
+    @Ip() ip: string,
+    @Query('role') role?: string,
+  ) {
+    return this.authService.getAuthorizationUrl({ userAgent, ip, role });
   }
 
   @Get('google/callback')
@@ -149,33 +147,5 @@ export class AuthController {
     @UserActive('roleId') roleId?: number,
   ) {
     return this.authService.getMe(userId, roleId);
-  }
-
-  @Post('switch-role')
-  @ZodSerializerDto(SwitchRoleResponseDto)
-  switchRole(
-    @UserActive('userId') userId: number,
-    @UserActive('sessionId') sessionId: number,
-    @Body() body: SwitchRoleBodyDto,
-  ) {
-    return this.authService.switchRole(
-      userId,
-      sessionId,
-      body as SwitchRoleBodyType,
-    );
-  }
-
-  @Post('join-role')
-  @ZodSerializerDto(JoinRoleResponseDto)
-  joinRole(
-    @UserActive('userId') userId: number,
-    @UserActive('sessionId') sessionId: number,
-    @Body() body: JoinRoleBodyDto,
-  ) {
-    return this.authService.joinRole(
-      userId,
-      sessionId,
-      body as JoinRoleBodyType,
-    );
   }
 }

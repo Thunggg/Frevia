@@ -2,9 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { VerificationCodeType } from '@prisma/client';
 import {
   EmailVerificationType,
-  JoinRoleBodyType,
   OauthProvider,
-  RoleName,
   RoleType,
   TypeOfVerificationCode,
   UserType,
@@ -350,79 +348,6 @@ export class AuthRepository {
           },
         },
       },
-    });
-  }
-
-  async switchPrimaryRole(userId: number, roleName: string) {
-    const assignment = await this.prisma.userRole.findFirst({
-      where: {
-        userId,
-        role: { name: roleName, deletedAt: null },
-      },
-      include: { role: true },
-    });
-    if (!assignment) return null;
-
-    await this.prisma.$transaction([
-      this.prisma.userRole.updateMany({
-        where: { userId, isPrimary: true },
-        data: { isPrimary: false },
-      }),
-      this.prisma.userRole.update({
-        where: {
-          userId_roleId: { userId, roleId: assignment.roleId },
-        },
-        data: { isPrimary: true },
-      }),
-    ]);
-
-    return assignment.role;
-  }
-
-  async joinRole(userId: number, roleName: JoinRoleBodyType['role']) {
-    return this.prisma.$transaction(async (transaction) => {
-      const role = await transaction.role.findFirst({
-        where: { name: roleName, deletedAt: null },
-      });
-      if (!role) return null;
-
-      const existingAssignment = await transaction.userRole.findUnique({
-        where: { userId_roleId: { userId, roleId: role.id } },
-      });
-      if (existingAssignment) {
-        return { status: 'already-assigned' as const, role };
-      }
-
-      const profile = await transaction.profile.upsert({
-        where: { userId },
-        create: { userId },
-        update: {},
-        select: { id: true },
-      });
-
-      if (roleName === RoleName.FREELANCER) {
-        await transaction.freelancerProfile.upsert({
-          where: { profileId: profile.id },
-          create: { profileId: profile.id },
-          update: {},
-        });
-      } else {
-        await transaction.clientProfile.upsert({
-          where: { profileId: profile.id },
-          create: { profileId: profile.id },
-          update: {},
-        });
-      }
-
-      await transaction.userRole.updateMany({
-        where: { userId, isPrimary: true },
-        data: { isPrimary: false },
-      });
-      await transaction.userRole.create({
-        data: { userId, roleId: role.id, isPrimary: true },
-      });
-
-      return { status: 'joined' as const, role };
     });
   }
 
