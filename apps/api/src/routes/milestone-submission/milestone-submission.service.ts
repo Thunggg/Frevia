@@ -43,7 +43,9 @@ export class MilestoneSubmissionService {
 
     const isClient = contract.clientId === userId;
     const isFreelancer = contract.freelancerId === userId;
-    const isAdmin = roleName === RoleName.ADMIN;
+    const isAdmin =
+      roleName === RoleName.ADMIN ||
+      (roleName !== RoleName.CLIENT && roleName !== RoleName.FREELANCER);
 
     if (role === 'freelancer' && !isFreelancer)
       throw SubmissionForbiddenException();

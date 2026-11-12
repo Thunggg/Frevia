@@ -36,6 +36,12 @@ export function StripeConnectCard({ returnPath }: StripeConnectCardProps) {
       const res = await paymentApiRequest.getConnectStatus();
       return res.data;
     },
+    refetchOnMount: "always",
+    refetchOnWindowFocus: true,
+    refetchInterval: (query) => {
+      const data = query.state.data;
+      return data?.isConnected && !data?.payoutsEnabled ? 3000 : false;
+    },
   });
 
   const handleStartOnboarding = async () => {
@@ -86,7 +92,7 @@ export function StripeConnectCard({ returnPath }: StripeConnectCardProps) {
                 ? "Verified"
                 : isPartiallyConnected
                   ? "Incomplete"
-                  : "Optional"}
+                  : "Not Connected"}
             </span>
           )}
         </div>
@@ -131,12 +137,14 @@ export function StripeConnectCard({ returnPath }: StripeConnectCardProps) {
                   ? "Stripe Express Active"
                   : isPartiallyConnected
                     ? "Finish Stripe Verification"
-                    : "Optional: Stripe Express Payouts"}
+                    : "Connect Bank / Debit via Stripe"}
               </p>
               <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">
                 {isVerified && connectStatus?.stripeAccountId
-                  ? `Account ${connectStatus.stripeAccountId} is enabled for Stripe withdrawals.`
-                  : "Not required to receive client payments. Connect only if you want direct Stripe withdrawals."}
+                  ? `Account ${connectStatus.stripeAccountId} is enabled for milestone payouts.`
+                  : isPartiallyConnected
+                    ? "Stripe is reviewing your details (usually a few seconds) or requires another step. Click Refresh status or continue onboarding."
+                    : "Required to receive milestone releases directly via Stripe (5% freelancer fee applies)."}
               </p>
             </div>
           </div>

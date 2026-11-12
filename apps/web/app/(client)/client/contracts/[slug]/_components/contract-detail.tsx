@@ -175,10 +175,11 @@ export function ContractDetail({
     try {
       const conv = await createConversation.mutateAsync(targetUserId);
       if (conv?.id) {
+        const dest = conv.slug ?? conv.id;
         router.push(
           isFreelancer
-            ? `/freelancer/conversations/${conv.id}`
-            : `/client/conversations/${conv.id}`,
+            ? `/freelancer/conversations/${dest}`
+            : `/client/conversations/${dest}`,
         );
       }
     } catch {

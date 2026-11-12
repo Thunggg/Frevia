@@ -69,6 +69,7 @@ export function TrashCommentsTable({
   const locale = useLocale();
   const t = useTranslations("adminTrash");
   const tCommon = useTranslations("adminCommon");
+  const tGlobal = useTranslations("common");
   const router = useRouter();
   const [restoringId, setRestoringId] = useState<number | null>(null);
   const [viewingComment, setViewingComment] =
@@ -124,7 +125,7 @@ export function TrashCommentsTable({
                     {comment.content}
                   </TableCell>
                   <TableCell className="max-w-xs truncate text-sm font-medium">
-                    {comment.post.title || `Post #${comment.postId}`}
+                    {comment.post.title || tGlobal("postFallback", { id: comment.postId })}
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center gap-2">
@@ -136,7 +137,7 @@ export function TrashCommentsTable({
                       </Avatar>
                       <span className="text-muted-foreground text-sm">
                         {comment.user.profile?.displayName ??
-                          `User #${comment.user.id}`}
+                          tGlobal("userFallback", { id: comment.user.id })}
                       </span>
                     </div>
                   </TableCell>
@@ -235,7 +236,7 @@ export function TrashCommentsTable({
                   <User className="h-3.5 w-3.5" />
                   <span>
                     {viewingComment.user.profile?.displayName ??
-                      `User #${viewingComment.user.id}`}
+                      tGlobal("userFallback", { id: viewingComment.user.id })}
                   </span>
                 </div>
               </div>

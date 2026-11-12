@@ -8,6 +8,7 @@ import {
   FailedToLoadBannerListException,
 } from '../banners-admin/banners-admin.error';
 import { BannersRepository } from './banners.repo';
+import { CacheService } from '../../shared/services/cache.service';
 
 const BANNER_EXTENSION_TO_MIME: Record<string, string> = {
   '.jpg': 'image/jpeg',
@@ -20,13 +21,25 @@ const BANNER_EXTENSION_TO_MIME: Record<string, string> = {
 
 @Injectable()
 export class BannersService {
-  constructor(private readonly repository: BannersRepository) {}
+  constructor(
+    private readonly repository: BannersRepository,
+    private readonly cacheService?: CacheService,
+  ) {}
 
   // Lấy banner hiển thị theo vị trí (public, không cần đăng nhập)
   async getBannersByPosition(
     position: BannerPosition,
   ): Promise<BannerPublicListResponseType> {
     try {
+      if (this.cacheService) {
+        const cacheKey = `banners_pos_${position}`;
+        const banners = await this.cacheService.wrap(
+          cacheKey,
+          () => this.repository.findActiveByPosition(position),
+          300,
+        );
+        return { banners };
+      }
       const banners = await this.repository.findActiveByPosition(position);
       return { banners };
     } catch (error) {

@@ -15,7 +15,6 @@ import {
   AvatarImage,
   AvatarFallback,
 } from "@repo/ui/components/shadcn/avatar";
-import { Button } from "@repo/ui/components/shadcn/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -39,13 +38,11 @@ import {
   Paperclip,
   Pin,
   PinOff,
-  Plus,
   Search,
   Trash2,
   X,
 } from "@/components/icons";
 import { Skeleton } from "@repo/ui/components/shadcn/skeleton";
-import { NewConversationDialog } from "./new-conversation-dialog";
 
 type ConversationListProps = {
   currentUserId: number | null;
@@ -62,9 +59,10 @@ export function ConversationList({ currentUserId }: ConversationListProps) {
   const markRead = useMarkConversationRead();
   const pinConversation = usePinConversation();
   const [searchQuery, setSearchQuery] = useState("");
-  const [conversationToDelete, setConversationToDelete] = useState<
-    number | null
-  >(null);
+  const [conversationToDelete, setConversationToDelete] = useState<{
+    id: number;
+    slug: string;
+  } | null>(null);
   const basePath = pathname.startsWith("/client/conversations")
     ? "/client/conversations"
     : pathname.startsWith("/freelancer/conversations")
@@ -94,10 +92,13 @@ export function ConversationList({ currentUserId }: ConversationListProps) {
   const handleDelete = () => {
     if (conversationToDelete == null) return;
 
-    hideConversation.mutate(conversationToDelete, {
+    hideConversation.mutate(conversationToDelete.id, {
       onSuccess: () => {
         toastSuccess({ message: t("deleted") });
-        if (pathname === `${basePath}/${conversationToDelete}`) {
+        if (
+          pathname === `${basePath}/${conversationToDelete.slug}` ||
+          pathname === `${basePath}/${conversationToDelete.id}`
+        ) {
           router.push(basePath);
         }
       },
@@ -150,17 +151,6 @@ export function ConversationList({ currentUserId }: ConversationListProps) {
           <h2 className="text-xl font-bold tracking-tight text-foreground font-sans">
             {t("messages")}
           </h2>
-          <NewConversationDialog
-            trigger={
-              <button
-                type="button"
-                className="flex size-8 items-center justify-center rounded-full bg-[#0069D3] text-white hover:bg-[#0058b3] shadow-xs cursor-pointer transition-colors outline-none"
-                title={t("newConversation")}
-              >
-                <Plus className="size-4" />
-              </button>
-            }
-          />
         </div>
 
         {/* Search inside conversation list */}
@@ -213,16 +203,6 @@ export function ConversationList({ currentUserId }: ConversationListProps) {
             <p className="mx-auto mt-1 max-w-xs text-xs text-muted-foreground">
               {t("noConversationsHint")}
             </p>
-            <div className="mt-4 flex justify-center">
-              <NewConversationDialog
-                trigger={
-                  <Button className="rounded-full bg-[#0069D3] text-white hover:bg-[#0058b3] text-xs font-semibold px-4 py-2 cursor-pointer shadow-xs gap-1.5">
-                    <Plus className="size-3.5" />
-                    {t("startChat")}
-                  </Button>
-                }
-              />
-            </div>
           </div>
         ) : filteredConversations.length === 0 ? (
           <div className="px-4 py-10 text-center text-xs text-muted-foreground">
@@ -236,7 +216,9 @@ export function ConversationList({ currentUserId }: ConversationListProps) {
                 tCommon("userFallback", { id: conversation.otherUser.id });
               const avatarUrl =
                 conversation.otherUser.profile?.avatarUrl ?? undefined;
-              const isActive = pathname === `${basePath}/${conversation.id}`;
+              const isActive =
+                pathname === `${basePath}/${conversation.slug}` ||
+                pathname === `${basePath}/${conversation.id}`;
 
               return (
                 <li
@@ -244,7 +226,7 @@ export function ConversationList({ currentUserId }: ConversationListProps) {
                   className="group relative px-2"
                 >
                   <Link
-                    href={`${basePath}/${conversation.id}`}
+                    href={`${basePath}/${conversation.slug}`}
                     className={`flex items-center gap-3 rounded-2xl px-3 py-2.5 transition-all duration-150 ${
                       isActive
                         ? "bg-[#D0E1F8] dark:bg-[#0069D3]/25 text-[#0069D3] dark:text-blue-100 shadow-xs font-medium"
@@ -362,7 +344,10 @@ export function ConversationList({ currentUserId }: ConversationListProps) {
                         disabled={deleting}
                         className="rounded-full px-3 py-1.5 text-xs font-medium cursor-pointer text-red-600 dark:text-red-400 focus:bg-red-50 dark:focus:bg-red-950/40 focus:text-red-600"
                         onSelect={() =>
-                          setConversationToDelete(conversation.id)
+                          setConversationToDelete({
+                            id: conversation.id,
+                            slug: conversation.slug,
+                          })
                         }
                       >
                         <Trash2 className="size-3.5 mr-2" />

@@ -1,3 +1,10 @@
+-- CreateEnum: PlatformFeeStatus
+DO $$ BEGIN
+  CREATE TYPE "PlatformFeeStatus" AS ENUM ('UNPAID', 'PAID', 'WAIVED');
+EXCEPTION
+  WHEN duplicate_object THEN null;
+END $$;
+
 -- AlterTable: Contract
 ALTER TABLE "Contract" ADD COLUMN "slug" VARCHAR(255);
 ALTER TABLE "Contract" ADD COLUMN "clientFeeStatus" "PlatformFeeStatus" NOT NULL DEFAULT 'UNPAID';

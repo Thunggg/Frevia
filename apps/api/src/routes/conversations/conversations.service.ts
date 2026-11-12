@@ -8,7 +8,6 @@ import {
 } from '@shared/types';
 import {
   CannotStartConversationWithSelfException,
-  ConversationAccessDeniedException,
   ConversationNotFoundException,
   FailedToCreateConversationException,
   FailedToDeleteMessageException,
@@ -25,6 +24,7 @@ import { uploadConversationFile } from './conversation-file.storage';
 // Kiểu dữ liệu thô trả về từ repo (kèm participant + last message + unread count)
 type RawConversationItem = {
   id: number;
+  slug: string;
   participant1: number;
   participant2: number;
   createdAt: Date;
@@ -74,6 +74,7 @@ export class ConversationService {
 
     return {
       id: conversation.id,
+      slug: conversation.slug,
       participant1: conversation.participant1,
       participant2: conversation.participant2,
       createdAt: conversation.createdAt,
@@ -133,36 +134,47 @@ export class ConversationService {
     }
   }
 
-  // Lấy 1 conversation item chuẩn (dùng cho realtime update qua socket)
+  // Lấy 1 conversation item chuẩn (dùng cho realtime update qua socket hoặc query theo id/slug)
   async getConversationItem(
-    conversationId: number,
+    conversationIdOrSlug: number | string,
     userId: number,
   ): Promise<ConversationListItemType | null> {
     const all =
       await this.conversationRepository.getConversationsByUserId(userId);
-    const conversation = all.find((item) => item.id === conversationId);
+    const conversation = all.find(
+      (item) =>
+        item.id === Number(conversationIdOrSlug) ||
+        item.slug === String(conversationIdOrSlug),
+    );
     return conversation
       ? this.buildConversationItem(conversation, userId)
       : null;
   }
 
+  // Lấy chi tiết 1 conversation theo id hoặc slug
+  async getConversationDetail(
+    userId: number,
+    conversationIdOrSlug: number | string,
+  ): Promise<ConversationListItemType> {
+    const item = await this.getConversationItem(conversationIdOrSlug, userId);
+    if (!item) {
+      throw ConversationNotFoundException();
+    }
+    return item;
+  }
+
   // Lấy danh sách tin nhắn của 1 conversation (chỉ participant được xem)
   async getMessages(
     userId: number,
-    conversationId: number,
+    conversationIdOrSlug: number | string,
   ): Promise<DirectMessageType[]> {
     try {
-      const conversation =
-        await this.conversationRepository.findConversationByIdForUser(
-          conversationId,
-          userId,
-        );
+      const conversation = await this.ensureParticipant(
+        conversationIdOrSlug,
+        userId,
+      );
 
-      if (!conversation) {
-        throw ConversationNotFoundException();
-      }
-
-      return await this.conversationRepository.getMessages(conversationId);
+      return await this.conversationRepository.getMessages(conversation.id);
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;
@@ -177,6 +189,7 @@ export class ConversationService {
     participantId: number,
   ): Promise<{
     id: number;
+    slug: string;
     participant1: number;
     participant2: number;
     createdAt: Date;
@@ -198,16 +211,25 @@ export class ConversationService {
 
         return {
           id: existing.id,
+          slug: existing.slug,
           participant1: existing.participant1,
           participant2: existing.participant2,
           createdAt: existing.createdAt,
         };
       }
 
-      return await this.conversationRepository.createConversation(
+      const created = await this.conversationRepository.createConversation(
         userId,
         participantId,
       );
+
+      return {
+        id: created.id,
+        slug: created.slug,
+        participant1: created.participant1,
+        participant2: created.participant2,
+        createdAt: created.createdAt,
+      };
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;
@@ -219,30 +241,25 @@ export class ConversationService {
   // Gửi tin nhắn (dùng cho REST; realtime dùng gateway)
   async sendMessage(
     userId: number,
-    conversationId: number,
+    conversationIdOrSlug: number | string,
     message: string,
     attachment?: MessageAttachmentType | null,
   ): Promise<DirectMessageType> {
     try {
-      const conversation =
-        await this.conversationRepository.findConversationByIdForUser(
-          conversationId,
-          userId,
-        );
-
-      if (!conversation) {
-        throw ConversationNotFoundException();
-      }
+      const conversation = await this.ensureParticipant(
+        conversationIdOrSlug,
+        userId,
+      );
 
       const savedMessage = await this.conversationRepository.createMessage(
-        conversationId,
+        conversation.id,
         userId,
         message,
         attachment ?? undefined,
       );
 
       // Có tin nhắn mới => bỏ ẩn conversation cho cả 2 phía
-      await this.conversationRepository.unhideConversation(conversationId);
+      await this.conversationRepository.unhideConversation(conversation.id);
 
       return savedMessage;
     } catch (error) {
@@ -256,7 +273,7 @@ export class ConversationService {
   // Upload file để đính kèm vào tin nhắn (chỉ participant của hội thoại mới được upload)
   async uploadFile(
     userId: number,
-    conversationId: number,
+    conversationIdOrSlug: number | string,
     file?: Express.Multer.File,
   ): Promise<MessageAttachmentType> {
     try {
@@ -264,15 +281,7 @@ export class ConversationService {
         throw FailedToUploadFileException();
       }
 
-      const conversation =
-        await this.conversationRepository.findConversationByIdForUser(
-          conversationId,
-          userId,
-        );
-
-      if (!conversation) {
-        throw ConversationNotFoundException();
-      }
+      await this.ensureParticipant(conversationIdOrSlug, userId);
 
       // Upload lên Cloudinary -> fileUrl là URL https trực tiếp
       const { secureUrl, bytes } = await uploadConversationFile(file);
@@ -288,7 +297,7 @@ export class ConversationService {
         throw error;
       }
       this.logger.error(
-        `Failed to upload file (conversation ${conversationId}): ${(error as Error).message}`,
+        `Failed to upload file (conversation ${conversationIdOrSlug}): ${(error as Error).message}`,
       );
       throw FailedToUploadFileException();
     }
@@ -297,22 +306,17 @@ export class ConversationService {
   // Xóa mềm tin nhắn của bản thân (chỉ sender được xóa tin của mình)
   async deleteMessage(
     userId: number,
-    conversationId: number,
+    conversationIdOrSlug: number | string,
     messageId: number,
   ): Promise<{ id: number }> {
     try {
-      const conversation =
-        await this.conversationRepository.findConversationByIdForUser(
-          conversationId,
-          userId,
-        );
-
-      if (!conversation) {
-        throw ConversationNotFoundException();
-      }
+      const conversation = await this.ensureParticipant(
+        conversationIdOrSlug,
+        userId,
+      );
 
       const deleted = await this.conversationRepository.softDeleteMessage(
-        conversationId,
+        conversation.id,
         messageId,
         userId,
       );
@@ -333,21 +337,16 @@ export class ConversationService {
   // Đánh dấu tin nhắn đã đọc
   async markAsRead(
     userId: number,
-    conversationId: number,
+    conversationIdOrSlug: number | string,
   ): Promise<{ count: number }> {
     try {
-      const conversation =
-        await this.conversationRepository.findConversationByIdForUser(
-          conversationId,
-          userId,
-        );
-
-      if (!conversation) {
-        throw ConversationNotFoundException();
-      }
+      const conversation = await this.ensureParticipant(
+        conversationIdOrSlug,
+        userId,
+      );
 
       const result = await this.conversationRepository.markMessagesAsRead(
-        conversationId,
+        conversation.id,
         userId,
       );
 
@@ -363,25 +362,20 @@ export class ConversationService {
   // Ẩn/xóa conversation về phía user hiện tại (soft delete)
   async hideConversation(
     userId: number,
-    conversationId: number,
+    conversationIdOrSlug: number | string,
   ): Promise<{ id: number; hidden: boolean }> {
     try {
-      const conversation =
-        await this.conversationRepository.findConversationByIdForUser(
-          conversationId,
-          userId,
-        );
-
-      if (!conversation) {
-        throw ConversationNotFoundException();
-      }
-
-      const hidden = await this.conversationRepository.hideConversationForUser(
-        conversationId,
+      const conversation = await this.ensureParticipant(
+        conversationIdOrSlug,
         userId,
       );
 
-      return { id: conversationId, hidden };
+      const hidden = await this.conversationRepository.hideConversationForUser(
+        conversation.id,
+        userId,
+      );
+
+      return { id: conversation.id, hidden };
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;
@@ -393,27 +387,22 @@ export class ConversationService {
   // Ghim/bỏ ghim hội thoại về phía user hiện tại
   async pinConversation(
     userId: number,
-    conversationId: number,
+    conversationIdOrSlug: number | string,
     pinned: boolean,
   ): Promise<{ id: number; pinnedAt: Date | null }> {
     try {
-      const conversation =
-        await this.conversationRepository.findConversationByIdForUser(
-          conversationId,
-          userId,
-        );
-
-      if (!conversation) {
-        throw ConversationNotFoundException();
-      }
+      const conversation = await this.ensureParticipant(
+        conversationIdOrSlug,
+        userId,
+      );
 
       const pinnedAt = await this.conversationRepository.setPinnedForUser(
-        conversationId,
+        conversation.id,
         userId,
         pinned,
       );
 
-      return { id: conversationId, pinnedAt };
+      return { id: conversation.id, pinnedAt };
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;
@@ -423,15 +412,27 @@ export class ConversationService {
   }
 
   // Kiểm tra user có phải participant của conversation không
-  async ensureParticipant(conversationId: number, userId: number) {
-    const conversation =
-      await this.conversationRepository.findConversationByIdForUser(
-        conversationId,
-        userId,
-      );
+  async ensureParticipant(
+    conversationIdOrSlug: number | string,
+    userId: number,
+  ) {
+    const isNumeric =
+      typeof conversationIdOrSlug === 'number' ||
+      (/^\d+$/.test(conversationIdOrSlug) &&
+        Number.isSafeInteger(Number(conversationIdOrSlug)));
+
+    const conversation = isNumeric
+      ? await this.conversationRepository.findConversationByIdForUser(
+          Number(conversationIdOrSlug),
+          userId,
+        )
+      : await this.conversationRepository.findConversationBySlugForUser(
+          String(conversationIdOrSlug),
+          userId,
+        );
 
     if (!conversation) {
-      throw ConversationAccessDeniedException();
+      throw ConversationNotFoundException();
     }
 
     return conversation;

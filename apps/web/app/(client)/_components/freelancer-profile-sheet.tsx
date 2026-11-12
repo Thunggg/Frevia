@@ -160,7 +160,7 @@ export function FreelancerProfileSheet({
     try {
       const conv = await createConversation.mutateAsync(userId);
       onOpenChange(false);
-      router.push(`/client/conversations/${conv.id}`);
+      router.push(`/client/conversations/${conv.slug ?? conv.id}`);
     } catch {
       onOpenChange(false);
       router.push(`/client/conversations?userId=${userId}`);

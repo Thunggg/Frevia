@@ -41,7 +41,7 @@ export function PostDetailWrapper({
         </p>
         <Link
           href={`/forum/${buildSlugId(categorySlug, categoryId)}`}
-          className="mt-6 text-sm font-medium text-[#4fae2e] transition-colors hover:text-[#459928]"
+          className="mt-6 text-sm font-medium text-[#0069D3] transition-colors hover:text-[#0069D3]/90"
         >
           {t("backToCategory")}
         </Link>

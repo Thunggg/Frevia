@@ -33,10 +33,11 @@ import {
 } from "@repo/ui/components/shadcn/alert-dialog";
 import { toastError, toastSuccess } from "@repo/ui/components/shadcn/toast";
 import { getBookmarkErrorMessage } from "@/lib/utils";
-import type {
-  JobType,
-  ProposalType,
-  ViewJobDetailResType,
+import {
+  VerificationStatus,
+  type JobType,
+  type ProposalType,
+  type ViewJobDetailResType,
 } from "@shared/types";
 import { ProposalDialog } from "./proposal-dialog";
 
@@ -134,6 +135,7 @@ export function JobDetailContent({
   const [isBookmarked, setIsBookmarked] = useState(initialIsBookmarked);
   const [isBookmarkLoading, setIsBookmarkLoading] = useState(false);
   const [isRemoveDialogOpen, setIsRemoveDialogOpen] = useState(false);
+  const [isKYCDialogOpen, setIsKYCDialogOpen] = useState(false);
   const [isProposalDialogOpen, setIsProposalDialogOpen] = useState(false);
   const [clientName, setClientName] = useState<string | null>(null);
   const [clientAvatar, setClientAvatar] = useState<string | null>(null);
@@ -328,8 +330,25 @@ export function JobDetailContent({
     }
   };
 
+  const ensureIdentityVerified = async () => {
+    try {
+      const status = await accountProfileApi.getIdentityStatus();
+      if (status.data?.status !== VerificationStatus.APPROVED) {
+        setIsKYCDialogOpen(true);
+        return false;
+      }
+      return true;
+    } catch {
+      // Fail-open nếu backend lỗi.
+      return true;
+    }
+  };
+
   const openProposalAction = () => {
-    requireFreelancer(() => {
+    requireFreelancer(async () => {
+      const verified = await ensureIdentityVerified();
+      if (!verified) return;
+
       if (activeProposal) {
         router.push(`/proposals/${activeProposal.id}`);
         return;
@@ -777,6 +796,34 @@ export function JobDetailContent({
               {isBookmarkLoading
                 ? t("removeDialog.removing")
                 : t("removeDialog.confirm")}
+            </Button>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <AlertDialog
+        open={isKYCDialogOpen}
+        onOpenChange={setIsKYCDialogOpen}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{t("kycDialog.title")}</AlertDialogTitle>
+            <AlertDialogDescription>
+              {t("kycDialog.description")}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>
+              {t("kycDialog.cancel")}
+            </AlertDialogCancel>
+            <Button
+              className="bg-[#4fae2e] text-white hover:bg-[#459928]"
+              onClick={() => {
+                setIsKYCDialogOpen(false);
+                router.push("/freelancer/profile?tab=identity");
+              }}
+            >
+              {t("kycDialog.confirm")}
             </Button>
           </AlertDialogFooter>
         </AlertDialogContent>

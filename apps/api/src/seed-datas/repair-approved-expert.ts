@@ -31,9 +31,7 @@ async function main() {
             ...(userId ? { id: userId } : {}),
             deletedAt: null,
             isBanned: false,
-            userRoles: {
-              some: { role: { name: RoleName.EXPERT, deletedAt: null } },
-            },
+            role: { name: RoleName.EXPERT, deletedAt: null },
           },
         },
       },

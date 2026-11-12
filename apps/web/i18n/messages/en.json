@@ -10,6 +10,8 @@
     "switchToDarkMode": "Switch to dark mode",
     "loading": "Loading...",
     "home": "Home",
+    "back": "Back",
+    "messages": "Messages",
     "forum": "Forum",
     "posts": "{count, plural, one {post} other {posts}}",
     "comments": "{count, plural, one {comment} other {comments}}",
@@ -25,6 +27,7 @@
     "daysAgo": "{days}d ago",
     "yesterday": "Yesterday",
     "userFallback": "User #{id}",
+  "postFallback": "Post #{id}",
     "close": "Close",
     "cancel": "Cancel",
     "attachment": "Attachment",
@@ -112,7 +115,42 @@
     "search": "Search",
     "searchPlaceholder": "Search...",
     "allCategories": "All categories",
-    "toggleSidebar": "Toggle sidebar"
+    "toggleSidebar": "Toggle sidebar",
+    "profileSettings": "Account Settings",
+    "sessions": "Active Sessions"
+  },
+  "adminProfile": {
+    "title": "Account Settings",
+    "subtitle": "Manage personal details, avatar, and administrator password.",
+    "avatarTitle": "Profile Photo",
+    "avatarDescription": "JPG, PNG or WebP. Up to 5 MB.",
+    "choosePhoto": "Choose new photo",
+    "uploadPhoto": "Upload photo",
+    "uploadingPhoto": "Uploading...",
+    "avatarUpdated": "Profile photo updated successfully.",
+    "generalTitle": "Personal Information",
+    "generalDescription": "Update your display name and bio.",
+    "displayName": "Display Name",
+    "displayNamePlaceholder": "Enter display name...",
+    "bio": "Bio",
+    "bioPlaceholder": "Write a short bio...",
+    "saveChanges": "Save Changes",
+    "saving": "Saving...",
+    "profileUpdated": "Account details updated successfully.",
+    "securityTitle": "Security & Password",
+    "securityDescription": "Change your account password for enhanced security.",
+    "currentPassword": "Current Password",
+    "newPassword": "New Password",
+    "confirmPassword": "Confirm New Password",
+    "changePassword": "Change Password",
+    "changingPassword": "Changing password...",
+    "passwordChanged": "Password changed successfully.",
+    "sessionsTitle": "Active Sessions",
+    "sessionsDescription": "View and manage devices or browsers logged into your account.",
+    "manageSessions": "Manage Devices",
+    "loadFailed": "Failed to load profile details. Please try again.",
+    "retry": "Try again",
+    "roleAdmin": "Administrator"
   },
   "adminCommon": {
     "id": "ID",
@@ -190,7 +228,9 @@
     "noPermissions": "No permissions found.",
     "detailTitle": "Permission detail",
     "detailLoadFailed": "Failed to load permission detail. The permission may not exist.",
-    "backToPermissions": "Back to permissions"
+    "backToPermissions": "Back to permissions",
+    "permissionName": "Function Name",
+    "systemName": "System Identifier"
   },
   "adminBanners": {
     "metaTitle": "Banners | Admin Dashboard | Frevia",
@@ -559,7 +599,16 @@
     "roleLoadFailed": "Failed to load the selected role.",
     "permissionsLoadFailed": "Failed to load permissions.",
     "noMatches": "No permissions match your filters.",
-    "selectAllModule": "Select all {module}"
+    "selectAllModule": "Select all {module}",
+    "allScopes": "All Scopes",
+    "scopeAdmin": "Admin Dashboard",
+    "scopeClient": "Client Portal",
+    "scopeFreelancer": "Freelancer",
+    "scopeContracts": "Contracts & Payments",
+    "scopeCommon": "Homepage & Platform",
+    "scopeHint": "Filter by operational scope for easier permission management",
+    "selectAllInScope": "Select all",
+    "deselectAllInScope": "Deselect all"
   },
   "adminTrash": {
     "metaTitle": "Trash | Admin Dashboard | Frevia",
@@ -902,7 +951,7 @@
     "expertEntryAdd": "Add entry",
     "expertSectionVisibility": "Directory visibility",
     "expertFieldListed": "Listed in the public directory",
-    "expertListedActiveHint": "This expert is discoverable at /experts and can receive consultations.",
+    "expertListedActiveHint": "This expert profile is active and can participate in dispute resolutions.",
     "expertListedInactiveHint": "This expert is hidden from the public directory but keeps all profile data.",
     "expertStatusActive": "Active",
     "expertStatusInactive": "Inactive",
@@ -1311,6 +1360,7 @@
   },
   "milestoneStatus": {
     "DISPUTED": "Disputed",
+    "LATE": "Late",
     "COMPLETED": "Completed",
     "SUBMITTED": "Ready for Review",
     "IN_PROGRESS": "In Progress",
@@ -1721,7 +1771,8 @@
     "navNotifications": "Notifications",
     "navMyJobs": "My Jobs",
     "navFavoriteFreelancers": "Favorite freelancers",
-    "navBillingPayments": "Billing & Payments"
+    "navBillingPayments": "Billing & Payments",
+    "navForum": "Forum"
   },
   "disputes": {
     "metaTitle": "My Disputes & Arbitration | Freelancer Dashboard | Frevia",
@@ -2146,6 +2197,7 @@
   "expertShell": {
     "disputes": "Dispute resolution",
     "profile": "Profile",
+    "disputes": "Disputes",
     "logout": "Log out"
   },
   "expertDisputes": {
@@ -2686,7 +2738,6 @@
     "links": {
       "findWork": "Find Work",
       "hireTalent": "Hire Talent",
-      "findExperts": "Find Experts",
       "forum": "Forum",
       "myJobs": "My Jobs",
       "contracts": "Contracts",
@@ -2716,6 +2767,7 @@
     "following": "Following",
     "socialLinks": "Social links",
     "sessions": "Sessions",
+    "switchRole": "Switch role",
     "loadingRoles": "Loading roles...",
     "switchingRole": "Switching role...",
     "addingRole": "Adding role...",
@@ -2794,6 +2846,7 @@
     "checkingProposal": "Checking proposal...",
     "cannotProposeOwn": "You cannot submit a proposal for your own job.",
     "notAccepting": "This job is no longer accepting proposals.",
+    "verifyIdentityWarning": "Your identity (CCCD) is not verified. Please verify it before applying for this job.",
     "switchToFreelancer": "Switch to a freelancer account to continue.",
     "applyNow": "Apply now",
     "viewProposal": "View proposal",
@@ -2845,6 +2898,12 @@
       "removing": "Removing…",
       "confirm": "Remove"
     },
+    "kycDialog": {
+      "title": "Identity Verification Required",
+      "description": "You need to complete identity verification (CCCD) before you can apply for this job.",
+      "cancel": "Later",
+      "confirm": "Verify Now"
+    },
     "notFound": {
       "title": "This job is no longer available",
       "description": "It may have been closed, removed, or the posting is no longer active.",
@@ -2865,38 +2924,6 @@
     "alreadyExists": "You already have a proposal for this job. Opening it now.",
     "saveFailed": "Unable to save your proposal. Please try again.",
     "submitFailed": "Unable to submit your proposal. Please try again."
-  },
-  "experts": {
-    "metaTitle": "Verified Experts | Frevia",
-    "metaDescription": "Meet Frevia's active professional review experts.",
-    "networkBadge": "Frevia verified network",
-    "heroTitle": "Trusted expertise, visible by design.",
-    "heroDescription": "Explore active experts appointed by Frevia to strengthen professional review quality and marketplace trust.",
-    "searchPlaceholder": "Search by name, title, or bio",
-    "expertisePlaceholder": "Expertise, e.g. Product strategy",
-    "searchAction": "Find experts",
-    "activeCount": "{count, plural, =0 {No active experts} one {# active expert} other {# active experts}}",
-    "networkTitle": "Meet the network",
-    "clearFilters": "Clear filters",
-    "emptyTitle": "No experts found",
-    "emptyDescription": "Try a broader name or expertise filter.",
-    "verified": "Verified",
-    "verifiedExpert": "Frevia verified expert",
-    "fallbackName": "Frevia Expert",
-    "fallbackTitle": "Professional Expert",
-    "fallbackBio": "This expert is building their professional profile.",
-    "viewProfile": "View profile",
-    "backToExperts": "Back to experts",
-    "overviewTitle": "Professional overview",
-    "noOverview": "No professional overview has been added yet.",
-    "expertiseTitle": "Areas of expertise",
-    "notProvided": "Not provided.",
-    "credentialsTitle": "Expert credentials",
-    "experience": "Experience",
-    "yearsOfExperience": "{years, plural, one {# year} other {# years}}",
-    "education": "Education",
-    "certifications": "Certifications",
-    "visitWebsite": "Visit professional website"
   },
   "findWork": {
     "title": "Find Work",
@@ -3169,7 +3196,7 @@
       "findWorkDescription": "Join as a freelancer and apply to projects.",
       "hireTalentTitle": "Hire talent",
       "hireTalentDescription": "Join as an employer and post jobs.",
-      "acceptTerms": "I accept the terms and conditions",
+      "acceptTerms": "I agree to the <userAgreementLink>Freelancer User Agreement</userAgreementLink> and <privacyPolicyLink>Privacy Policy</privacyPolicyLink>.",
       "submit": "Create account",
       "submitting": "Creating...",
       "haveAccount": "Already have an account?",
@@ -3190,6 +3217,16 @@
       "logIn": "Log in",
       "failed": "Reset password failed",
       "sendOtpFailed": "Send OTP failed"
+    },
+    "forceLogout": {
+      "bannedTitle": "Account Suspended",
+      "bannedDescription": "Your account has been suspended by an Administrator.",
+      "revokedTitle": "Session Revoked",
+      "revokedDescription": "This session has been revoked from another device.",
+      "defaultTitle": "Session Terminated",
+      "defaultDescription": "Your session has ended. Please log in again.",
+      "logoutButton": "Log Out",
+      "processing": "Processing..."
     }
   },
   "recommendation": {

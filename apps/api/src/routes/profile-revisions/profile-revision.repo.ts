@@ -152,15 +152,10 @@ export class ProfileRevisionRepository {
         user: {
           deletedAt: null,
           isBanned: false,
-          userRoles: {
-            some: {
-              isPrimary: true,
-              role: {
-                deletedAt: null,
-                name: {
-                  in: [RoleName.CLIENT, RoleName.FREELANCER, RoleName.EXPERT],
-                },
-              },
+          role: {
+            deletedAt: null,
+            name: {
+              in: [RoleName.CLIENT, RoleName.FREELANCER, RoleName.EXPERT],
             },
           },
         },
@@ -171,11 +166,7 @@ export class ProfileRevisionRepository {
         expertProfile: true,
         user: {
           select: {
-            userRoles: {
-              where: { isPrimary: true },
-              select: { role: { select: { name: true } } },
-              take: 1,
-            },
+            role: { select: { name: true } },
           },
         },
       },
@@ -183,7 +174,7 @@ export class ProfileRevisionRepository {
 
     await this.prisma.$transaction(async (transaction) => {
       for (const profile of candidates) {
-        const primaryRole = profile.user.userRoles[0]?.role.name;
+        const primaryRole = profile.user.role?.name;
         const profileType =
           primaryRole === RoleName.CLIENT
             ? ProfileRevisionType.CLIENT

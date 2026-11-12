@@ -1,5 +1,6 @@
 import {
   GetConversationsResponseSchema,
+  ConversationListItemSchema,
   GetMessagesResponseSchema,
   SendMessageBodySchema,
   SendMessageResponseSchema,
@@ -15,6 +16,10 @@ import { createZodDto } from 'nestjs-zod';
 
 export class GetConversationsResponseDto extends createZodDto(
   GetConversationsResponseSchema,
+) {}
+
+export class ConversationDetailResponseDto extends createZodDto(
+  ConversationListItemSchema,
 ) {}
 
 export class CreateConversationBodyDto extends createZodDto(

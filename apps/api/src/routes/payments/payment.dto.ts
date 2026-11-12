@@ -9,17 +9,12 @@ import {
   CreateOnboardingLinkBodySchema,
   CreatePaymentIntentResponseSchema,
   CreateSetupIntentResponseSchema,
-  CreateWithdrawalBodySchema,
-  CreateWithdrawalResponseSchema,
   DisputeSettlementBodySchema,
   DisputeSettlementResponseSchema,
   GetSavedPaymentMethodsResponseSchema,
   GetTransactionListQuerySchema,
   GetTransactionListResponseSchema,
-  GetWithdrawalListQuerySchema,
-  GetWithdrawalListResponseSchema,
   PaymentMethodActionResponseSchema,
-  ProcessWithdrawalBodySchema,
   RefundMilestoneBodySchema,
   RefundMilestoneResponseSchema,
   ReleaseMilestoneResponseSchema,
@@ -28,8 +23,6 @@ import {
   StripeOnboardingLinkResponseSchema,
   SyncCheckoutSessionResponseSchema,
   TransactionSchema,
-  WalletSummaryResponseSchema,
-  WithdrawalRequestSchema,
 } from '@shared/types';
 import { createZodDto } from 'nestjs-zod';
 
@@ -125,32 +118,4 @@ export class ReleaseMilestoneResponseDTO extends createZodDto(
 
 export class RefundMilestoneResponseDTO extends createZodDto(
   RefundMilestoneResponseSchema,
-) {}
-
-export class WalletSummaryResponseDTO extends createZodDto(
-  WalletSummaryResponseSchema,
-) {}
-
-export class WithdrawalRequestDTO extends createZodDto(
-  WithdrawalRequestSchema,
-) {}
-
-export class CreateWithdrawalBodyDTO extends createZodDto(
-  CreateWithdrawalBodySchema,
-) {}
-
-export class CreateWithdrawalResponseDTO extends createZodDto(
-  CreateWithdrawalResponseSchema,
-) {}
-
-export class GetWithdrawalListQueryDTO extends createZodDto(
-  GetWithdrawalListQuerySchema,
-) {}
-
-export class GetWithdrawalListResponseDTO extends createZodDto(
-  GetWithdrawalListResponseSchema,
-) {}
-
-export class ProcessWithdrawalBodyDTO extends createZodDto(
-  ProcessWithdrawalBodySchema,
 ) {}

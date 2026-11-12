@@ -5,7 +5,11 @@
  * bằng shared secret `INTERNAL_API_KEY` (header `X-Internal-Token`). Token phía
  * NestJS đọc từ env `FREVIA_AI_TOKEN`; bỏ trống -> không gửi header (dev).
  */
+const DEFAULT_DEV_AI_TOKEN = 'JYqXytzmLfuGCTnESHSsgE26pP6VJzZT5XLAAczg';
+
 export function aiInternalAuthHeaders(): Record<string, string> {
-  const token = process.env.FREVIA_AI_TOKEN?.trim();
+  const token =
+    process.env.FREVIA_AI_TOKEN?.trim() ||
+    (process.env.NODE_ENV !== 'test' ? DEFAULT_DEV_AI_TOKEN : undefined);
   return token ? { 'X-Internal-Token': token } : {};
 }

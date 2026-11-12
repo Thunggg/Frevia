@@ -4,19 +4,16 @@ import Image from "next/image";
 import { useLocale, useTranslations } from "next-intl";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState, useTransition } from "react";
-import { useQueryClient } from "@tanstack/react-query";
+import { useEffect, useRef, useState, useTransition } from "react";
 import { useTheme } from "next-themes";
 import {
   Bell,
-  Bookmark,
   ChevronDown,
   ChevronRight,
   CreditCard,
   Eye,
   FileCheck,
   FileText,
-  HelpCircle,
   Languages,
   LogOut,
   MessageSquare,
@@ -25,11 +22,11 @@ import {
   PanelLeftClose,
   PanelLeftOpen,
   Search,
-  SlidersHorizontal,
+  Shield,
   Sun,
-  SwitchCamera,
   Tag,
   UserRound,
+  Users,
 } from "@/components/icons";
 import { setLocaleCookie } from "@/i18n/actions";
 import { isLocale, type Locale } from "@/i18n/config";
@@ -39,10 +36,8 @@ import {
   AvatarFallback,
   AvatarImage,
 } from "@repo/ui/components/shadcn/avatar";
-import { toastError } from "@repo/ui/components/shadcn/toast";
-import { authApiRequest } from "@/apiRequests/auth";
 import { useMe } from "@/hooks/use-auth";
-import { RoleName } from "@shared/types";
+import { canAccessAdminPortal } from "@/lib/admin-access";
 import { useNotifications } from "@/hooks/use-notifications";
 
 type NavItem = {
@@ -121,7 +116,6 @@ function NavLink({ item, collapsed }: { item: NavItem; collapsed: boolean }) {
 
 export function FreelancerSidebar() {
   const router = useRouter();
-  const queryClient = useQueryClient();
   const t = useTranslations("sidebar");
   const tCommon = useTranslations("common");
   const tRole = useTranslations("roleName");
@@ -133,7 +127,35 @@ export function FreelancerSidebar() {
   const [mounted, setMounted] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
-  const [isSwitchingRole, setIsSwitchingRole] = useState(false);
+  const profileRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!profileOpen) return;
+
+    const handleOutsideClick = (event: MouseEvent | TouchEvent) => {
+      if (
+        profileRef.current &&
+        !profileRef.current.contains(event.target as Node)
+      ) {
+        setProfileOpen(false);
+      }
+    };
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setProfileOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleOutsideClick);
+    document.addEventListener("touchstart", handleOutsideClick);
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("mousedown", handleOutsideClick);
+      document.removeEventListener("touchstart", handleOutsideClick);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [profileOpen]);
 
   useEffect(() => {
     setMounted(true);
@@ -189,6 +211,12 @@ export function FreelancerSidebar() {
       matchPrefix: true,
     },
     {
+      href: "/forum",
+      labelKey: "navForum",
+      icon: Users,
+      matchPrefix: true,
+    },
+    {
       href: "/freelancer/notifications",
       labelKey: "navNotifications",
       icon: Bell,
@@ -204,27 +232,12 @@ export function FreelancerSidebar() {
 
   const displayName = me?.profile?.displayName ?? tRole("FREELANCER");
   const initial = displayName.charAt(0).toUpperCase();
-  const canSwitchRole = me?.roles.some((r) => r.name === RoleName.CLIENT);
   const profileId = me?.profile?.id ?? me?.id;
 
   const logout = async () => {
     await fetch("/api/auth/logout", { method: "POST" });
     router.push("/login");
     router.refresh();
-  };
-
-  const switchRole = async () => {
-    if (!canSwitchRole || isSwitchingRole) return;
-    setIsSwitchingRole(true);
-    try {
-      await authApiRequest.switchRole({ role: RoleName.CLIENT });
-      await queryClient.invalidateQueries({ queryKey: ["me"] });
-      router.push("/client/jobs");
-      router.refresh();
-    } catch {
-      toastError({ message: t("roleSwitchFailed") });
-      setIsSwitchingRole(false);
-    }
   };
 
   return (
@@ -282,7 +295,7 @@ export function FreelancerSidebar() {
 
       {/* Profile block (top) */}
       <div className="border-b border-border px-2.5 py-3">
-        <div className="relative">
+        <div ref={profileRef} className="relative">
           <button
             type="button"
             suppressHydrationWarning
@@ -360,6 +373,16 @@ export function FreelancerSidebar() {
                 <MonitorSmartphone className="size-3.5" />
                 {t("sessions")}
               </Link>
+              {canAccessAdminPortal(me) && (
+                <Link
+                  href="/admin"
+                  onClick={() => setProfileOpen(false)}
+                  className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-xs font-medium text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-950/40 transition-colors"
+                >
+                  <Shield className="size-3.5" />
+                  Admin Portal
+                </Link>
+              )}
 
               <div className="my-1 h-px bg-border" />
 
@@ -441,20 +464,6 @@ export function FreelancerSidebar() {
 
               <div className="my-1 h-px bg-border" />
 
-              {canSwitchRole && (
-                <button
-                  type="button"
-                  onClick={() => {
-                    setProfileOpen(false);
-                    void switchRole();
-                  }}
-                  disabled={isSwitchingRole}
-                  className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-xs text-muted-foreground hover:bg-[#D0E1F8]/40 dark:hover:bg-zinc-800 hover:text-[#0069D3] dark:hover:text-blue-300 transition-colors disabled:opacity-50 cursor-pointer"
-                >
-                  <SwitchCamera className="size-3.5" />
-                  {isSwitchingRole ? t("switching") : t("switchToClient")}
-                </button>
-              )}
               <button
                 type="button"
                 onClick={() => {
@@ -485,18 +494,6 @@ export function FreelancerSidebar() {
         </div>
       </nav>
 
-      {/* Bottom: Help */}
-      <div className="border-t border-border px-2.5 py-3">
-        {!collapsed && (
-          <Link
-            href="/forum"
-            className="flex items-center gap-2.5 rounded-xl px-3 py-2 text-xs text-muted-foreground/60 transition-colors hover:text-[#0069D3] dark:hover:text-blue-300"
-          >
-            <HelpCircle className="size-3.5" />
-            {t("helpForum")}
-          </Link>
-        )}
-      </div>
     </aside>
   );
 }

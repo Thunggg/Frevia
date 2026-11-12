@@ -1,5 +1,7 @@
 import { Suspense } from "react";
+import { redirect } from "next/navigation";
 import authServerRequest from "@/apiRequests/auth.server";
+import { canAccessAdminPortal } from "@/lib/admin-access";
 import type { UserRole } from "@/components/header";
 import { RoleName } from "@shared/types";
 import { MySessionsContent } from "./components/my-sessions-content";
@@ -16,6 +18,13 @@ function resolveHeaderRole(
 
 export default async function SessionsPage() {
   const user = await authServerRequest.getMe();
+  const isAdminOrStaff =
+    user?.roles.some((role) => role.name === RoleName.ADMIN) ||
+    canAccessAdminPortal(user);
+  if (isAdminOrStaff) {
+    redirect("/admin/sessions");
+  }
+
   const role = resolveHeaderRole(user?.roles);
 
   return (

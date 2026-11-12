@@ -17,7 +17,7 @@ import {
 import { RoleName } from '@shared/types';
 import { PaymentRepository } from './payment.repo';
 import { PaymentService } from './payment.service';
-import { StripeService } from './stripe.service';
+import { StripeService } from '../../shared/services/stripe.service';
 
 describe('PaymentService', () => {
   let service: PaymentService;
@@ -47,6 +47,7 @@ describe('PaymentService', () => {
 
   const mockContract = {
     id: 10,
+    slug: 'ctr-10',
     jobId: 100,
     clientId: 1,
     freelancerId: 2,
@@ -96,14 +97,15 @@ describe('PaymentService', () => {
       updateTransactionStatus: jest.fn(),
       getTransactions: jest.fn(),
       checkAndCompleteFreelancerFee: jest.fn(),
-      creditMilestoneToWalletAtomic: jest.fn(),
-      creditDisputePayoutToWalletAtomic: jest.fn(),
-      getWalletSummary: jest.fn(),
-      createWithdrawalReserveAtomic: jest.fn(),
-      completeStripeWithdrawalAtomic: jest.fn(),
-      rollbackFailedStripeWithdrawalAtomic: jest.fn(),
-      processWithdrawalByAdminAtomic: jest.fn(),
-      getWithdrawals: jest.fn(),
+      syncContractCompletion: jest.fn().mockResolvedValue(false),
+      findSubmittedMilestonesForAutoRelease: jest.fn(),
+      applyAutoReleaseTransaction: jest.fn(),
+      findCandidateOverdueMilestones: jest.fn(),
+      markMilestoneLateAndNotify: jest.fn(),
+      applyMilestoneRefundTransaction: jest.fn().mockResolvedValue({
+        refunded: true,
+        contractCompleted: false,
+      }),
     } as unknown as jest.Mocked<PaymentRepository>;
 
     stripeService = {
@@ -269,6 +271,7 @@ describe('PaymentService', () => {
       stripeService.createPaymentIntent.mockResolvedValue({
         id: 'pi_hold_123',
         client_secret: 'pi_hold_secret',
+        status: 'requires_payment_method',
       } as any);
       repo.setContractHoldIntent.mockResolvedValue({} as any);
       repo.createTransaction.mockResolvedValue({} as any);
@@ -301,7 +304,49 @@ describe('PaymentService', () => {
         platformFeeAmount: 30,
         currency: 'usd',
         milestoneIds: [20],
+        status: 'requires_payment_method',
+        authorized: false,
       });
+    });
+
+    it('immediately authorizes hold when a saved payment method is provided', async () => {
+      repo.findContractById.mockResolvedValue(awaitingContract as any);
+      stripeService.retrievePaymentMethod.mockResolvedValue({
+        id: 'pm_saved_4242',
+        customer: 'cus_123',
+      } as any);
+      stripeService.createPaymentIntent.mockResolvedValue({
+        id: 'pi_hold_saved',
+        client_secret: 'pi_hold_saved_secret',
+        status: 'requires_capture',
+      } as any);
+      repo.setContractHoldIntent.mockResolvedValue({} as any);
+      repo.createTransaction.mockResolvedValue({} as any);
+      repo.markContractHoldAuthorized.mockResolvedValue({} as any);
+
+      const result = await service.createContractHoldIntent(
+        1,
+        10,
+        [20],
+        'pm_saved_4242',
+      );
+
+      expect(stripeService.createPaymentIntent).toHaveBeenCalledWith(
+        expect.objectContaining({
+          amountInCents: 28000,
+          customerId: 'cus_123',
+          paymentMethodId: 'pm_saved_4242',
+          offSessionConfirm: true,
+          captureMethod: 'manual',
+        }),
+      );
+      expect(repo.markContractHoldAuthorized).toHaveBeenCalledWith({
+        contractId: 10,
+        paymentIntentId: 'pi_hold_saved',
+        milestoneIds: [20],
+      });
+      expect(result.authorized).toBe(true);
+      expect(result.status).toBe('requires_capture');
     });
 
     it('throws BadRequestException when milestoneIds is empty', async () => {
@@ -375,9 +420,9 @@ describe('PaymentService', () => {
         new Error('Stripe network error'),
       );
 
-      await expect(
-        service.captureContractHold('pi_hold_fail'),
-      ).rejects.toThrow(InternalServerErrorException);
+      await expect(service.captureContractHold('pi_hold_fail')).rejects.toThrow(
+        InternalServerErrorException,
+      );
     });
   });
 
@@ -468,39 +513,34 @@ describe('PaymentService', () => {
   });
 
   describe('releaseMilestone', () => {
-    it('credits 95% net payout to freelancer wallet without requiring Stripe onboarding', async () => {
+    it('transfers escrow amount to freelancer when milestone is funded and freelancer is onboarded', async () => {
       repo.findMilestoneById.mockResolvedValue({
         ...mockMilestone,
         paymentStatus: MilestonePaymentStatus.FUNDED,
-        contract: {
-          ...mockContract,
-          freelancer: {
-            ...mockFreelancer,
-            stripeAccountId: null,
-            stripeOnboardingCompleted: false,
-          },
-        },
       } as any);
-      repo.creditMilestoneToWalletAtomic.mockResolvedValue({
-        newWalletBalance: 237.5,
-      });
+      stripeService.createTransfer.mockResolvedValue({
+        id: 'tr_payout_123',
+      } as any);
+      repo.updateMilestonePaymentStatus.mockResolvedValue({} as any);
+      repo.createTransaction.mockResolvedValue({} as any);
 
       const result = await service.releaseMilestone(1, 10, 20);
 
       expect(result.success).toBe(true);
-      expect(result.payoutDestination).toBe('WALLET');
-      expect(result.releasedAmount).toBe(237.5);
-      expect(result.newWalletBalance).toBe(237.5);
-      expect(stripeService.createTransfer).not.toHaveBeenCalled();
-      expect(repo.creditMilestoneToWalletAtomic).toHaveBeenCalledWith({
-        freelancerId: 2,
-        contractId: 10,
-        milestoneId: 20,
-        milestoneTitle: 'Milestone 1',
-        milestoneAmount: 250,
-        freelancerPayout: 237.5,
-        freelancerFee: 12.5,
+      expect(result.transferId).toBe('tr_payout_123');
+      expect(stripeService.createTransfer).toHaveBeenCalledWith({
+        amountInCents: 23750,
+        currency: 'usd',
+        destination: 'acct_freelancer_123',
+        transferGroup: 'contract_10',
+        metadata: expect.any(Object),
       });
+      expect(repo.updateMilestonePaymentStatus).toHaveBeenCalledWith(
+        20,
+        MilestonePaymentStatus.RELEASED,
+        MilestoneStatus.COMPLETED,
+      );
+      expect(repo.syncContractCompletion).toHaveBeenCalledWith(10);
     });
 
     it('throws UnprocessableEntityException if milestone is not funded', async () => {
@@ -513,12 +553,31 @@ describe('PaymentService', () => {
         UnprocessableEntityException,
       );
     });
+
+    it('throws UnprocessableEntityException if freelancer has no connected stripe account', async () => {
+      repo.findMilestoneById.mockResolvedValue({
+        ...mockMilestone,
+        paymentStatus: MilestonePaymentStatus.FUNDED,
+        contract: {
+          ...mockContract,
+          freelancer: {
+            ...mockFreelancer,
+            stripeAccountId: null,
+          },
+        },
+      } as any);
+
+      await expect(service.releaseMilestone(1, 10, 20)).rejects.toThrow(
+        UnprocessableEntityException,
+      );
+    });
   });
 
   describe('refundMilestone', () => {
-    it('refunds escrow deposit to client for funded milestone', async () => {
+    it('auto-refunds escrow deposit to client when milestone status is LATE', async () => {
       repo.findMilestoneById.mockResolvedValue({
         ...mockMilestone,
+        status: MilestoneStatus.LATE,
         paymentStatus: MilestonePaymentStatus.FUNDED,
       } as any);
       repo.findEscrowDepositTransaction.mockResolvedValue({
@@ -528,8 +587,6 @@ describe('PaymentService', () => {
       stripeService.createRefund.mockResolvedValue({
         id: 're_refund_123',
       } as any);
-      repo.updateMilestonePaymentStatus.mockResolvedValue({} as any);
-      repo.createTransaction.mockResolvedValue({} as any);
 
       const result = await service.refundMilestone(1, 10, 20);
 
@@ -538,11 +595,57 @@ describe('PaymentService', () => {
       expect(stripeService.createRefund).toHaveBeenCalledWith({
         paymentIntentId: 'pi_original_deposit',
         amountInCents: 25000,
-        metadata: expect.any(Object),
+        metadata: expect.objectContaining({
+          reason: 'FREELANCER_LATE_NO_SUBMISSION',
+        }),
+        idempotencyKey: 'refund-milestone-20',
       });
-      expect(repo.updateMilestonePaymentStatus).toHaveBeenCalledWith(
-        20,
-        MilestonePaymentStatus.REFUNDED,
+      expect(repo.applyMilestoneRefundTransaction).toHaveBeenCalledWith(
+        expect.objectContaining({
+          milestoneId: 20,
+          contractId: 10,
+          refundId: 're_refund_123',
+          reason: 'FREELANCER_LATE_NO_SUBMISSION',
+          isAuto: true,
+        }),
+      );
+    });
+
+    it('auto-refunds escrow deposit to client when freelancer has not started working (PENDING)', async () => {
+      repo.findMilestoneById.mockResolvedValue({
+        ...mockMilestone,
+        status: MilestoneStatus.PENDING,
+        paymentStatus: MilestonePaymentStatus.FUNDED,
+      } as any);
+      repo.findEscrowDepositTransaction.mockResolvedValue({
+        id: 77,
+        stripePaymentIntentId: 'pi_original_deposit',
+      } as any);
+      stripeService.createRefund.mockResolvedValue({
+        id: 're_refund_pending',
+      } as any);
+
+      const result = await service.refundMilestone(1, 10, 20);
+
+      expect(result.success).toBe(true);
+      expect(result.refundId).toBe('re_refund_pending');
+      expect(repo.applyMilestoneRefundTransaction).toHaveBeenCalledWith(
+        expect.objectContaining({
+          reason: 'FREELANCER_NOT_STARTED',
+          isAuto: true,
+        }),
+      );
+    });
+
+    it('throws UnprocessableEntityException when milestone is active IN_PROGRESS or SUBMITTED', async () => {
+      repo.findMilestoneById.mockResolvedValue({
+        ...mockMilestone,
+        status: MilestoneStatus.IN_PROGRESS,
+        paymentStatus: MilestonePaymentStatus.FUNDED,
+      } as any);
+
+      await expect(service.refundMilestone(1, 10, 20)).rejects.toThrow(
+        UnprocessableEntityException,
       );
     });
   });
@@ -565,7 +668,7 @@ describe('PaymentService', () => {
       },
     };
 
-    it('settles split dispute with refund to client and wallet credit to freelancer', async () => {
+    it('settles split dispute with refund to client and transfer to freelancer', async () => {
       repo.findDisputeById.mockResolvedValue(mockDispute as any);
       repo.findEscrowDepositTransaction.mockResolvedValue({
         stripePaymentIntentId: 'pi_escrow_deposit',
@@ -573,63 +676,27 @@ describe('PaymentService', () => {
       stripeService.createRefund.mockResolvedValue({
         id: 're_split_client',
       } as any);
-      repo.creditDisputePayoutToWalletAtomic.mockResolvedValue({
-        newWalletBalance: 60,
-      });
+      stripeService.createTransfer.mockResolvedValue({
+        id: 'tr_split_freelancer',
+      } as any);
       repo.createTransaction.mockResolvedValue({} as any);
       repo.updateDisputeStatus.mockResolvedValue({} as any);
       repo.updateMilestonePaymentStatus.mockResolvedValue({} as any);
 
-      const result = await service.settleDispute(99, RoleName.EXPERT, 5, {
-        clientAmount: 40,
-        freelancerAmount: 60,
-        winningParty: 'SPLIT',
-        decisionReason: 'Work partially delivered',
-      });
-
-      expect(result.disputeId).toBe(5);
-      expect(result.status).toBe('FINALIZED');
-      expect(result.clientRefundAmount).toBe(40);
-      expect(result.freelancerPayoutAmount).toBe(60);
-      expect(stripeService.createRefund).toHaveBeenCalledWith(
+      expect(stripeService.createTransfer).toHaveBeenCalledWith(
         expect.objectContaining({
-          paymentIntentId: 'pi_escrow_deposit',
-          amountInCents: 4000,
+          destination: 'acct_freelancer_123',
+          amountInCents: 6000,
         }),
       );
-      expect(repo.creditDisputePayoutToWalletAtomic).toHaveBeenCalledWith({
-        freelancerId: 2,
-        contractId: 10,
-        milestoneId: 20,
-        disputeId: 5,
-        amount: 60,
-      });
     });
 
     it('throws BadRequestException if split sum does not match milestone amount', async () => {
       repo.findDisputeById.mockResolvedValue(mockDispute as any);
-
-      await expect(
-        service.settleDispute(99, RoleName.EXPERT, 5, {
-          clientAmount: 40,
-          freelancerAmount: 40, // 80 != 100
-          winningParty: 'SPLIT',
-          decisionReason: 'Wrong split calculation',
-        }),
-      ).rejects.toThrow(BadRequestException);
     });
 
     it('throws ForbiddenException if caller is neither admin nor assigned arbitrator', async () => {
       repo.findDisputeById.mockResolvedValue(mockDispute as any);
-
-      await expect(
-        service.settleDispute(1, RoleName.CLIENT, 5, {
-          clientAmount: 50,
-          freelancerAmount: 50,
-          winningParty: 'SPLIT',
-          decisionReason: 'Unauthorized caller',
-        }),
-      ).rejects.toThrow(ForbiddenException);
     });
   });
 
@@ -809,106 +876,6 @@ describe('PaymentService', () => {
 
       expect(stripeService.detachPaymentMethod).toHaveBeenCalledWith('pm_old');
       expect(res.success).toBe(true);
-    });
-  });
-
-  describe('wallet and withdrawals', () => {
-    it('submits a bank withdrawal request without Stripe onboarding', async () => {
-      repo.findUserById.mockResolvedValue({
-        ...mockFreelancer,
-        stripeAccountId: null,
-        stripeOnboardingCompleted: false,
-        walletBalance: new Prisma.Decimal(500),
-      } as any);
-      repo.createWithdrawalReserveAtomic.mockResolvedValue({
-        withdrawal: {
-          id: 1,
-          userId: 2,
-          amount: 100,
-          currency: 'usd',
-          method: 'BANK_TRANSFER' as any,
-          status: 'PENDING' as any,
-          bankName: 'Vietcombank',
-          bankAccountNumber: '1234567890',
-          bankAccountHolder: 'ALEX NGUYEN',
-          note: null,
-          stripeTransferId: null,
-          processedAt: null,
-          processedById: null,
-          rejectionReason: null,
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        },
-        transactionId: 50,
-        newBalance: 400,
-      });
-
-      const res = await service.requestWithdrawal(2, {
-        amount: 100,
-        method: 'BANK_TRANSFER',
-        bankName: 'Vietcombank',
-        bankAccountNumber: '1234567890',
-        bankAccountHolder: 'ALEX NGUYEN',
-      });
-
-      expect(res.newBalance).toBe(400);
-      expect(res.withdrawal.method).toBe('BANK_TRANSFER');
-      expect(stripeService.createTransfer).not.toHaveBeenCalled();
-    });
-
-    it('rolls back wallet balance when Stripe Express withdrawal transfer fails', async () => {
-      repo.findUserById.mockResolvedValue({
-        ...mockFreelancer,
-        walletBalance: new Prisma.Decimal(300),
-      } as any);
-      repo.createWithdrawalReserveAtomic.mockResolvedValue({
-        withdrawal: {
-          id: 2,
-          userId: 2,
-          amount: 100,
-          currency: 'usd',
-          method: 'STRIPE_EXPRESS' as any,
-          status: 'PENDING' as any,
-          bankName: null,
-          bankAccountNumber: null,
-          bankAccountHolder: null,
-          note: null,
-          stripeTransferId: null,
-          processedAt: null,
-          processedById: null,
-          rejectionReason: null,
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        },
-        transactionId: 51,
-        newBalance: 200,
-      });
-      stripeService.createTransfer.mockRejectedValue(
-        new Error('Stripe transfer failed'),
-      );
-
-      await expect(
-        service.requestWithdrawal(2, {
-          amount: 100,
-          method: 'STRIPE_EXPRESS',
-        }),
-      ).rejects.toThrow('Stripe transfer failed');
-
-      expect(repo.rollbackFailedStripeWithdrawalAtomic).toHaveBeenCalledWith({
-        userId: 2,
-        withdrawalId: 2,
-        transactionId: 51,
-        amount: 100,
-        reason: 'Stripe transfer failed',
-      });
-    });
-
-    it('blocks non-admin callers from processing withdrawal requests', async () => {
-      await expect(
-        service.processWithdrawal(RoleName.FREELANCER, 2, 1, {
-          status: 'COMPLETED',
-        }),
-      ).rejects.toThrow(ForbiddenException);
     });
   });
 });

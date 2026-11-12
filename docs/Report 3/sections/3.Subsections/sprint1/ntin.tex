@@ -1,0 +1,1045 @@
+% =================================================================
+% Sprint 1 - Contract Management (ntin)
+% The functions below follow the detailed form of the report template:
+% Function Trigger, Function Description, Screen Layout and Function Details.
+% They are written against the current implementation in
+%   apps/api/src/routes/contract, apps/api/src/routes/shared-file,
+%   and apps/web/app/(client)/client/contracts,
+%   apps/web/app/(freelancer)/freelancer/contracts.
+% =================================================================
+
+\subsection{Contract Management}
+
+% -----------------------------------------------------------------
+% UC-13.01: Create Contract
+% -----------------------------------------------------------------
+\subsubsection{ Create Contract}
+
+\fnhead{Function Trigger}
+A Client initiates contract creation from an accepted proposal page or clicks the ``Hire'' / ``Create Contract'' action button on a submitted job proposal.\newline
+\textbf{Navigation path:} Client Dashboard $\rightarrow$ My Jobs $\rightarrow$ Proposals (\texttt{/client/jobs/:id/proposals}) $\rightarrow$ Click ``Hire'' $\rightarrow$ Create Contract.
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item \textbf{Primary Actor:} Client (\texttt{CLIENT} role).
+      \item \textbf{Secondary Actor:} Freelancer (\texttt{FREELANCER} role).
+      \item \textbf{Supporting Systems:} Frevia Web application (Next.js), Frevia BFF proxy (\texttt{/api/backend}), Frevia REST API (NestJS), Prisma ORM layer, and PostgreSQL relational database.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent Allows a Client to establish a formal legally binding freelance agreement with a selected Freelancer following proposal acceptance. The client configures project scope, contractual clauses, payment milestones, budget allocation, platform service fees, and target delivery deadlines before dispatching the contract for review.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item Contract creation view at \texttt{/client/contracts/create} or modal accessed from proposal hiring flow.
+      \item Proposal summary card displaying job title, freelancer profile snapshot, bid amount, and estimated duration.
+      \item Contract terms editor with pre-fill template selector, custom clause textarea, and intellectual property provisions.
+      \item Milestone dynamic builder supporting addition, reordering, and removal of deliverable milestones (title, description, amount, due date).
+      \item Financial breakdown summary card calculating total milestone budget, platform fee percentage (10\%), client service fee, and aggregate contract value.
+      \item Action buttons: ``Save as Draft'' and ``Send Contract for Review''.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item The client submits an HTTP request: \texttt{POST /api/contracts} with payload containing \texttt{proposalId}, \texttt{title}, \texttt{terms}, and an array of \texttt{milestones}.
+      \item The backend \texttt{AuthGuard} validates the Client's JWT token, and \texttt{RoleGuard} verifies \texttt{CLIENT} authorization.
+      \item \texttt{ContractService.createContract()} queries the proposal: verifies that the proposal exists, belongs to an active job owned by the calling client, and has status \texttt{ACCEPTED} or \texttt{SUBMITTED}.
+      \item The service validates that the sum of all milestone amounts equals \texttt{totalAmount} exactly, and calculates client and freelancer platform fee amounts.
+      \item A URL-friendly unique \texttt{slug} is generated from the contract title and random entropy.
+      \item Inside a database transaction, \texttt{ContractRepository} persists the \texttt{Contract} entity with initial status \texttt{PENDING} (or \texttt{DRAFT}), creates associated \texttt{Milestone} records with status \texttt{PENDING} and \texttt{paymentStatus = UNPAID}, and updates proposal status to \texttt{HIRED}.
+      \item An in-app real-time notification and email dispatch are sent to the Freelancer inviting them to review and sign the agreement.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint1/ntin/CreateContract.png}{Create Contract screen}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item The page header displays the breadcrumb ``Contracts / Create New'' alongside a prominent title ``Create Project Contract''.
+      \item The left pane contains the contract scope form: title input, terms and conditions rich-text area, and milestone configuration list with ``+ Add Milestone'' button.
+      \item Each milestone block renders inputs for milestone name, deliverable description, monetary amount in USD, and date picker for completion deadline.
+      \item The right sticky sidebar displays the financial summary card: subtotal, platform processing fee (10\%), total contract commitment, and clear milestone progress indicator.
+      \item The bottom action footer provides ``Back'', ``Save Draft'', and ``Create \& Send Contract'' action triggers.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+      \texttt{proposalId} & Unique numeric identifier of the accepted job proposal (integer).\\ \hline
+      \texttt{title} & Contract agreement title (string, 5--255 characters).\\ \hline
+      \texttt{terms} & Detailed contract scope, deliverables, and legal clauses (text, optional).\\ \hline
+      \texttt{milestones} & Array of milestone objects containing \texttt{title}, \texttt{description}, \texttt{amount}, and \texttt{dueDate}.\\ \hline
+      \texttt{milestone.amount} & Positive monetary value in USD (decimal, minimum 5.00).\\ \hline
+      \texttt{milestone.dueDate} & Target delivery deadline formatted as ISO 8601 date, must be a future date.\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item The calling user must be the verified owner (Client) of the associated job posting.
+      \item The proposal must not already be linked to an existing active or pending contract.
+      \item Total contract amount must be greater than zero and must equal the arithmetic sum of all milestone amounts.
+      \item Every milestone due date must be set strictly in the future relative to the submission timestamp.
+      \item The Freelancer account must have \texttt{status = ACTIVE} and verified identity.
+\end{itemize}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+      \item BR-CT-01: Only users authenticated with the \texttt{CLIENT} role shall create new contracts.
+      \item BR-CT-02: Total contract budget shall strictly match the aggregate sum of all defined milestone amounts.
+      \item BR-CT-03: Creating a contract locks the linked proposal, preventing duplicate contracts on the same proposal.
+      \item BR-CT-04: The contract shall be initialized in \texttt{PENDING} status until signed by both contract parties.
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
+      \item The Client navigates to the accepted proposal and clicks ``Hire / Create Contract''.
+      \item The web application loads the contract creation form with pre-populated proposal data.
+      \item The Client reviews project scope, customizes terms, and defines deliverable milestones.
+      \item The Client clicks ``Create \& Send Contract''.
+      \item The system validates input fields, financial budget allocations, and future milestone deadlines.
+      \item The backend persists the contract and milestone records inside a database transaction.
+      \item The linked proposal is transitioned to \texttt{HIRED} state.
+      \item The system dispatches an alert notification to the Freelancer and redirects the Client to the Contract Detail page.
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Case}{Description}
+      A1 & The sum of milestone amounts does not match the total budget. The API returns HTTP 422 Unprocessable Entity with error \texttt{ContractMilestonesAmountMismatchException}; form highlights discrepancy.\\ \hline
+      A2 & The specified proposal is already contracted or not accepted. The API returns HTTP 400 Bad Request with error \texttt{ProposalAlreadyContractedException}.\\ \hline
+      A3 & Milestone due date is in the past. The form validation rejects submission and displays ``Milestone deadline must be a future date.''\\ \hline
+      A4 & The calling user is not the owner of the job. The backend rejects the request with HTTP 403 Forbidden; access denied.\\ \hline
+      A5 & Freelancer profile is suspended or banned. The system rejects contract creation with HTTP 422; displays notice to select an active freelancer.\\ \hline
+      A6 & Database connection failure during transaction persistence. The transaction rolls back and returns HTTP 500: ``Unable to create contract. Please try again.''\\ \hline
+      A7 & Client network connection drops during submission. The client displays retry banner without duplicating contract records.\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Data Name}{Description}
+      \texttt{id} & Unique auto-incrementing integer identifier of the created contract.\\ \hline
+      \texttt{slug} & Unique URL-friendly slug identifier for bookmarking and routing.\\ \hline
+      \texttt{status} & Initial operational contract state (\texttt{PENDING} or \texttt{DRAFT}).\\ \hline
+      \texttt{totalAmount} & Final aggregated contractual budget committed by the client.\\ \hline
+      \texttt{milestones[]} & Array of created milestone entities with generated sequence IDs and due dates.\\ \hline
+      \texttt{createdAt} & ISO 8601 creation timestamp.\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item A new \texttt{Contract} entity is persisted with status \texttt{PENDING}.
+      \item Milestone records are linked to the contract with \texttt{paymentStatus = UNPAID}.
+      \item An audit log record is created in the contract activity history.
+      \item An invitation notification is queued for the Freelancer.
+\end{itemize}
+
+% -----------------------------------------------------------------
+% UC-13.02: Update Contract
+% -----------------------------------------------------------------
+\subsubsection{ Update Contract}
+
+\fnhead{Function Trigger}
+A Client clicks the ``Edit Terms'' button on a pending contract detail workspace to revise agreement specifications before signature.\newline
+\textbf{Navigation path:} Client Dashboard $\rightarrow$ Contracts $\rightarrow$ Contract Detail (\texttt{/client/contracts/:slug}) $\rightarrow$ Click ``Edit Terms''.
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item \textbf{Primary Actor:} Client (\texttt{CLIENT} role).
+      \item \textbf{Secondary Actor:} Freelancer (\texttt{FREELANCER} role).
+      \item \textbf{Supporting Systems:} Frevia Web application (Next.js), Frevia REST API (NestJS), Prisma ORM layer, and PostgreSQL relational database.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent Allows a Client to modify contract clauses, milestone budgets, scopes, and target completion dates while the contract remains in pending negotiation. Updating terms ensures flexibility to adapt to mutual renegotiations before formal signature activation.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item Contract terms editor modal or dedicated edit view pre-populated with existing terms.
+      \item Milestone list editor allowing inline title, amount, description, and deadline modifications.
+      \item Interactive budget calculator displaying adjusted totals and fee implications.
+      \item Prominent warning notice: ``Updating contract terms will reset any existing signatures and require re-signing.''.
+      \item Action buttons: ``Save Changes'' and ``Cancel''.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item The client submits an HTTP request: \texttt{PATCH /api/contracts/:id} with updated \texttt{title}, \texttt{terms}, and modified \texttt{milestones}.
+      \item \texttt{ContractService.updateContract()} verifies caller identity against \texttt{contract.clientId}.
+      \item The service validates that contract status is strictly \texttt{PENDING} or \texttt{DRAFT}; active or completed contracts are rejected.
+      \item If the freelancer has already digitally signed, the update automatically invalidates the signature by resetting \texttt{signedByFreelancer = false} and \texttt{freelancerSignedAt = null}.
+      \item The database updates the contract terms and synchronizes modified milestones inside a transaction.
+      \item The system records a contract revision event in the activity timeline and alerts the Freelancer of the revisions.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint1/ntin/UpdateContract.png}{Update Contract Terms screen}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item The modal header displays the contract title, identifier, and current status badge.
+      \item An alert box at the top highlights that saving modifications invalidates previous signatures.
+      \item Form fields display editable contract scope, clause paragraphs, and milestone blocks with trash and add buttons.
+      \item Live calculation widget dynamically updates milestone total versus overall contract amount.
+      \item Footer contains ``Discard Changes'' secondary button and ``Save \& Notify Freelancer'' primary button.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+      \texttt{contractId} & Unique numeric contract identifier passed as path parameter (integer).\\ \hline
+      \texttt{terms} & Revised contract terms and scope text (string, optional).\\ \hline
+      \texttt{milestones} & Updated array of milestone specifications (title, amount, dueDate, description).\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item Only the Client who created the contract is permitted to update its terms.
+      \item The contract must currently reside in \texttt{PENDING} or \texttt{DRAFT} status.
+      \item Total modified milestone amounts must equal the updated total budget.
+      \item Future date requirements apply to all modified milestone deadlines.
+\end{itemize}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+      \item BR-CT-05: Modifying contract terms shall automatically invalidate any existing signatures, setting \texttt{signedByFreelancer = false} and \texttt{signedByClient = false}.
+      \item BR-CT-06: Active, completed, or cancelled contracts cannot be modified directly.
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
+      \item The Client navigates to the pending contract workspace and clicks ``Edit Terms''.
+      \item The system opens the edit view with current agreement data loaded.
+      \item The Client modifies terms, deliverables, or milestone amounts.
+      \item The Client clicks ``Save Changes''.
+      \item The system validates fields and updates records in the database.
+      \item Prior signatures are invalidated, and a revision log is recorded.
+      \item The Freelancer receives an update notification, and the updated contract is rendered.
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Case}{Description}
+      A1 & The contract has already transitioned to \texttt{ACTIVE} or \texttt{AWAITING\_PAYMENT}. The API returns HTTP 422 with error \texttt{ContractAlreadyActiveException}; editing is locked.\\ \hline
+      A2 & Caller is not the contract owner. The API returns HTTP 403 Forbidden; access denied.\\ \hline
+      A3 & Total revised milestone amounts do not sum up to total budget. Returns HTTP 422 with validation error.\\ \hline
+      A4 & Milestone due dates are set in the past. System highlights invalid date fields.\\ \hline
+      A5 & Database concurrency conflict occurs during record update. System prompts to refresh and re-apply edits.\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Data Name}{Description}
+      \texttt{contract} & Updated contract entity with recalculated totals and reset signature flags.\\ \hline
+      \texttt{updatedAt} & ISO 8601 timestamp reflecting the last modification time.\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item Contract terms and milestone records are updated in the database.
+      \item \texttt{signedByFreelancer} and \texttt{signedByClient} are reset to \texttt{false}.
+      \item Notification dispatched to the Freelancer alerting them of updated contract terms.
+\end{itemize}
+
+% -----------------------------------------------------------------
+% UC-13.03: Complete Contract
+% -----------------------------------------------------------------
+\subsubsection{ Complete Contract}
+
+\fnhead{Function Trigger}
+The Client clicks the ``Complete Contract'' button on an active contract detail workspace once all milestones have been finished and approved.\newline
+\textbf{Navigation path:} Client Dashboard $\rightarrow$ Contracts $\rightarrow$ Active Contract (\texttt{/client/contracts/:slug}) $\rightarrow$ Click ``Complete Contract''.
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item \textbf{Primary Actor:} Client (\texttt{CLIENT} role).
+      \item \textbf{Secondary Actor:} Freelancer (\texttt{FREELANCER} role).
+      \item \textbf{Supporting Systems:} Frevia Web application (Next.js), Frevia REST API (NestJS), Prisma ORM layer, PostgreSQL database, and Reviews module.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent Concludes the contractual project engagement following complete delivery of all milestone deliverables and settlement of escrow funds. Completing the contract archives project state, unlocks review and rating submissions for both parties, and generates a completion certificate.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item ``Complete Contract'' primary action button displayed in the active contract header banner.
+      \item Confirmation dialog summarizing delivered milestones, total disbursed earnings, and completion effects.
+      \item Feedback prompt inviting the user to provide star ratings, skill endorsements, and written reviews.
+      \item Action buttons: ``Confirm Completion'' and ``Cancel''.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item Client submits an HTTP request: \texttt{PATCH /api/contracts/:id/complete}.
+      \item \texttt{ContractService.completeContract()} validates that the caller is the contract's Client.
+      \item The service verifies that contract status is currently \texttt{ACTIVE}.
+      \item Queries all associated milestones: verifies that every milestone has \texttt{status = COMPLETED} and \texttt{paymentStatus = RELEASED}.
+      \item Checks that no active disputes exist on any contract milestone.
+      \item Updates contract status to \texttt{COMPLETED} and sets \texttt{completedAt = new Date()}.
+      \item Issues mutual review tokens, notifies the Freelancer, and generates digital completion credentials.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint1/ntin/CompleteContract.png}{Complete Contract confirmation screen}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item A celebratory modal dialog features a project completion icon and clear heading ``Complete Contract Agreement''.
+      \item Summary section lists approved deliverables, total budget paid out (\$USD), and zero outstanding balances.
+      \item Notice informs the user that once completed, the contract cannot be reopened and both parties will be prompted for feedback.
+      \item Footer buttons: ``Cancel'' and ``Confirm \& Close Contract''.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+      \texttt{contractId} & Numeric identifier of the contract to complete (integer path parameter).\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item The calling user must be the authenticated Client of the contract.
+      \item The contract must currently reside in \texttt{ACTIVE} status.
+      \item All milestones must be in \texttt{COMPLETED} status and \texttt{RELEASED} payment status.
+      \item There must be no ongoing open disputes on the contract or its milestones.
+\end{itemize}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+      \item BR-CT-07: A contract can only transition to \texttt{COMPLETED} when 100\% of its milestones have been released and no dispute is open.
+      \item BR-CT-08: Completed contracts are permanently closed from further deliverable submissions or financial adjustments.
+      \item BR-CT-09: Contract completion triggers automatic opening of the reciprocal 14-day review window.
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
+      \item The Client navigates to the active contract workspace where all milestones are finished.
+      \item The Client clicks ``Complete Contract''.
+      \item The system displays the completion confirmation dialog.
+      \item The Client clicks ``Confirm Completion''.
+      \item The system verifies all milestones are released and updates contract status to \texttt{COMPLETED}.
+      \item The system records the completion event in the activity log.
+      \item A success notification is displayed, the page transitions to completed state, and reciprocal review forms are unlocked.
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Case}{Description}
+      A1 & Unapproved or unpaid milestones remain. The API returns HTTP 422 with error \texttt{ContractHasUnreleasedMilestonesException}; displays message indicating pending milestones.\\ \hline
+      A2 & An active dispute is currently unresolved. The API returns HTTP 422 with error \texttt{ContractHasActiveDisputeException}; completion blocked.\\ \hline
+      A3 & Caller is not the Client owner. The API returns HTTP 403 Forbidden; access denied.\\ \hline
+      A4 & Contract is already completed or cancelled. The API returns HTTP 400 Bad Request.\\ \hline
+      A5 & Database update failure occurs. System displays: ``Failed to complete contract. Please try again.''\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Data Name}{Description}
+      \texttt{status} & Updated contract status (\texttt{COMPLETED}).\\ \hline
+      \texttt{completedAt} & ISO 8601 completion timestamp.\\ \hline
+      \texttt{reviewWindowExpiresAt} & Timestamp marking review window expiration deadline.\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item Contract status is updated to \texttt{COMPLETED} in the database.
+      \item Completion notification sent to both Client and Freelancer.
+      \item Feedback and review submission prompts are rendered.
+\end{itemize}
+
+% -----------------------------------------------------------------
+% UC-13.04: View Contract List
+% -----------------------------------------------------------------
+\subsubsection{ View Contract List}
+
+\fnhead{Function Trigger}
+An authenticated user (Client, Freelancer, or Admin) clicks ``Contracts'' in the dashboard main sidebar navigation.\newline
+\textbf{Navigation path:} User Dashboard $\rightarrow$ Navigation Menu $\rightarrow$ Contracts (\texttt{/client/contracts} or \texttt{/freelancer/contracts}).
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item \textbf{Primary Actor:} Client, Freelancer, Administrator.
+      \item \textbf{Supporting Systems:} Frevia Web application (Next.js), Frevia REST API (NestJS), Prisma ORM layer, and PostgreSQL database.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent Provides a centralized contract management dashboard for users to browse, monitor, filter, and track all their freelance contracts across lifecycle states (Pending, Awaiting Payment, Active, Completed, Cancelled).
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item Contracts dashboard page at \texttt{/client/contracts} or \texttt{/freelancer/contracts}.
+      \item Status tab navigation bar: All, Pending Signature, Awaiting Payment, Active, Completed, Cancelled.
+      \item Search input field supporting keyword matching on contract title and counterpart name.
+      \item Contract card list rendering title, counterpart avatar and name, total budget, progress bar, milestone ratio, status badge, and ``View Contract'' button.
+      \item Pagination controls footer with page numbers, page size selector, and item summary count.
+      \item Empty-state placeholder with helpful guidance when no matching contracts exist.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item The web client submits an HTTP request: \texttt{GET /api/contracts} with query parameters (\texttt{page}, \texttt{limit}, \texttt{status}, \texttt{search}).
+      \item The API validates the JWT access token and extracts \texttt{userId} and \texttt{roleName}.
+      \item If \texttt{roleName === 'CLIENT'}, queries contracts where \texttt{clientId = userId}; if \texttt{roleName === 'FREELANCER'}, queries contracts where \texttt{freelancerId = userId}; Administrators can query across all contracts.
+      \item Applies status filters and case-insensitive substring search on \texttt{title}.
+      \item Computes pagination count in parallel via \texttt{prisma.contract.count()}.
+      \item Returns HTTP 200 with contract summaries and pagination metadata.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint1/ntin/ViewContractList.png}{Contracts list dashboard}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item The page title ``Contracts'' sits alongside a metric row showing total active contracts and total committed budget.
+      \item The filter bar features tabs for status categories and a search box with quick-clear button.
+      \item Each contract card displays counterpart information on the left, progress meter and milestone badge in the center, and total amount with ``View Contract'' link on the right.
+      \item The pagination component displays current page index, total contracts count, and next/prev controls.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+      \texttt{page} & Page number for paginated retrieval (integer, default 1).\\ \hline
+      \texttt{limit} & Number of contracts per page (integer, default 10, max 50).\\ \hline
+      \texttt{status} & Optional contract status filter (\texttt{PENDING}, \texttt{AWAITING\_PAYMENT}, \texttt{ACTIVE}, \texttt{COMPLETED}, \texttt{CANCELLED}).\\ \hline
+      \texttt{search} & Keyword search query matching contract titles or counterpart names.\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item User must be authenticated with active session credentials.
+      \item \texttt{page} must be a positive integer $\ge$ 1.
+      \item \texttt{limit} must be clamped between 1 and 50.
+      \item Status parameter must match valid \texttt{ContractStatus} enum values.
+\end{itemize}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+      \item BR-CT-10: Clients and Freelancers shall only see contracts in which they are a verified participant.
+      \item BR-CT-11: Administrators shall have platform-wide access to view and inspect all contracts.
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
+      \item The user navigates to the Contracts section from the sidebar navigation.
+      \item The web application requests \texttt{GET /api/contracts} with default pagination parameters.
+      \item The API queries the database, filtering by caller role and ID.
+      \item The API returns the list of matching contract summaries and pagination metadata.
+      \item The client renders the contract cards and metric summaries.
+      \item The user can click any contract card to open the Contract Detail workspace.
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Case}{Description}
+      A1 & Unauthenticated access attempt. The API returns HTTP 401 Unauthorized; browser redirects to \texttt{/login}.\\ \hline
+      A2 & No contracts match the filter criteria. The client renders an empty-state card with ``No contracts found.''\\ \hline
+      A3 & Database query timeout or server failure. The API returns HTTP 500; client displays a retry prompt.\\ \hline
+      A4 & Invalid status filter provided. API falls back to querying all statuses without breaking.\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Data Name}{Description}
+      \texttt{contracts[]} & Array of contract summary records including ID, slug, title, counterpart info, total amount, status, and progress metrics.\\ \hline
+      \texttt{pagination} & Object containing \texttt{page}, \texttt{limit}, \texttt{totalItems}, and \texttt{totalPages}.\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item Contract list is displayed with accurate status indicators and progress bars.
+\end{itemize}
+
+% -----------------------------------------------------------------
+% UC-13.05: View Contract Detail
+% -----------------------------------------------------------------
+\subsubsection{ View Contract Detail}
+
+\fnhead{Function Trigger}
+A user clicks a contract item in the contract list or navigates directly to a contract URL.\newline
+\textbf{Navigation path:} Contracts List $\rightarrow$ Click Contract Card $\rightarrow$ Contract Workspace (\texttt{/client/contracts/:slug} or \texttt{/freelancer/contracts/:slug}).
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item \textbf{Primary Actor:} Client, Freelancer, Administrator.
+      \item \textbf{Supporting Systems:} Frevia Web application (Next.js), Frevia REST API (NestJS), Prisma ORM layer, PostgreSQL database, and Cloudinary storage.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent Serves as the complete collaborative project workspace for a contract. Displays legal terms, digital signature records, financial escrow balances, interactive milestone roadmap, shared files tab, and contextual lifecycle actions.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item Contract workspace screen at \texttt{/client/contracts/:slug} or \texttt{/freelancer/contracts/:slug}.
+      \item Header banner: contract title, slug identifier, current status badge, counterpart summary, and contextual actions (Sign, Pay Fee, Complete, Cancel).
+      \item Financial summary widget: total project budget, escrow funded balance, paid out earnings, and remaining balance.
+      \item Workspace tab navigation: ``Milestones'', ``Contract Agreement (PDF)'', ``Shared Files'', and ``Activity History''.
+      \item Milestones roadmap rendering each milestone's deliverables, deadlines, payment state, submission history, and action triggers.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item The client issues an HTTP request: \texttt{GET /api/contracts/slug/:slug} or \texttt{GET /api/contracts/:id}.
+      \item \texttt{ContractService.getContractBySlug()} validates authorization: verifies that \texttt{userId === contract.clientId || userId === contract.freelancerId} or the user possesses \texttt{ADMIN} role.
+      \item The repository executes a nested Prisma query retrieving the contract, client profile, freelancer profile, milestones, shared files count, and transaction logs.
+      \item Calculates financial progress indicators (percentage funded, percentage released).
+      \item Returns HTTP 200 with the full contract workspace composite entity.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint1/ntin/ViewContractDetail.png}{Contract detail workspace screen}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item The top card displays project title, counterpart info, start date, and status badge.
+      \item Below the header, three metric cards show Total Value (\$USD), Escrow In Deposit, and Funds Released.
+      \item The main container is tabbed: the default ``Milestones'' tab presents vertical timeline cards for each milestone deliverable.
+      \item Right sidebar displays digital signature verification box (showing Client and Freelancer signature status and timestamps) and action buttons.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+      \texttt{slug} or \texttt{id} & Unique URL-friendly slug string or numeric contract ID.\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item Contract slug or ID must exist in the database and not be hard-deleted.
+      \item The calling user must be an authorized participant (Client or Freelancer) or an Administrator.
+\end{itemize}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+      \item BR-CT-12: Strict data isolation ensures only authorized parties (Client, Freelancer, Admin) can view contract details.
+      \item BR-CT-13: Contract financial figures must dynamically reflect verified ledger transactions.
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
+      \item The user clicks a contract card from the contract list.
+      \item The browser navigates to \texttt{/contracts/:slug} and requests contract data.
+      \item The API validates participant authorization and loads the full relational contract graph.
+      \item The client renders the workspace with header, metrics, milestone roadmap, and tabs.
+      \item The user interacts with milestone cards or switches tabs to inspect shared files.
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Case}{Description}
+      A1 & User is not a participant in the contract. The API returns HTTP 403 Forbidden with error \texttt{ContractForbiddenException}; client displays ``Access denied.''\\ \hline
+      A2 & The specified contract slug does not exist. The API returns HTTP 404 Not Found with error \texttt{ContractNotFoundException}; renders 404 page.\\ \hline
+      A3 & Unauthenticated request. Returns HTTP 401; redirects to sign-in page.\\ \hline
+      A4 & Network connection error. Client displays an error banner with a retry button.\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Data Name}{Description}
+      \texttt{contract} & Comprehensive contract entity with client, freelancer, milestones, signatures, and platform fees.\\ \hline
+      \texttt{milestones[]} & Array of milestones with progress status, escrow funding status, and deliverable submissions.\\ \hline
+      \texttt{signatures} & Digital signature audit status (\texttt{signedByClient}, \texttt{signedByFreelancer}, timestamps).\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item Full contract workspace is loaded and accessible.
+\end{itemize}
+
+% -----------------------------------------------------------------
+% UC-13.06: Sign Contract
+% -----------------------------------------------------------------
+\subsubsection{ Sign Contract}
+
+\fnhead{Function Trigger}
+A Client or Freelancer clicks the ``Sign Contract'' action button on a pending contract detail workspace.\newline
+\textbf{Navigation path:} Contract Detail (\texttt{/contracts/:slug}) $\rightarrow$ Click ``Sign Contract''.
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item \textbf{Primary Actor:} Client, Freelancer.
+      \item \textbf{Supporting Systems:} Frevia Web application (Next.js), Frevia REST API (NestJS), Prisma ORM layer, PostgreSQL database, and Contract PDF Generation Service.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent Captures the digital signature of a contract participant to manifest legal consent to project terms. When both counterparties have signed, the contract advances to platform fee settlement or active state, enabling escrow funding and milestone execution.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item ``Sign Contract'' prominent action button in the contract banner.
+      \item Digital signature modal displaying full legal agreement text and milestone schedule.
+      \item Mandatory agreement checkbox: ``I have read, understood, and agree to the Frevia Contract Agreement and Terms of Service.''.
+      \item Action buttons: ``Confirm \& Digitally Sign'' and ``Review Later''.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item The user submits an HTTP request: \texttt{PATCH /api/contracts/:id/sign}.
+      \item \texttt{ContractService.signContract()} verifies that the caller is either \texttt{contract.clientId} or \texttt{contract.freelancerId}.
+      \item Checks that contract status is \texttt{PENDING} or \texttt{AWAITING\_PAYMENT}.
+      \item Sets corresponding flag: if caller is Client, updates \texttt{signedByClient = true} and \texttt{clientSignedAt = now()}; if Freelancer, updates \texttt{signedByFreelancer = true} and \texttt{freelancerSignedAt = now()}.
+      \item If both parties have now signed:
+            \begin{itemize}[leftmargin=1.6em,topsep=2pt,itemsep=2pt,parsep=0pt]
+                  \item If platform fee is unpaid, sets \texttt{status = AWAITING\_PAYMENT}.
+                  \item If platform fee is already paid, transitions \texttt{status = ACTIVE} and sets \texttt{signedAt = now()}.
+                  \item Invokes \texttt{ContractPdfService.generateAndSaveContractPdf()} to generate and store immutable legal PDF.
+            \end{itemize}
+      \item Dispatches notification alerting the counterpart party.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint1/ntin/SignContract.png}{Sign Contract dialog}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item Modal dialog opens with legal paper motif and title ``Sign Contract Agreement''.
+      \item Scrollable document window renders full agreement clauses, project milestones, and total budget.
+      \item Signature section displays signer full name, authenticated email, and IP timestamp notice.
+      \item Acceptance checkbox must be checked to enable the primary ``Confirm \& Sign'' button.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+      \texttt{contractId} & Numeric identifier of the contract to sign (integer path parameter).\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item Caller must be a recognized participant in the contract (Client or Freelancer).
+      \item The contract must currently reside in \texttt{PENDING} or \texttt{AWAITING\_PAYMENT} status.
+      \item The user must not have already signed the current version of the contract.
+\end{itemize}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+      \item BR-CT-14: A contract transitions to \texttt{ACTIVE} only when both parties have signed and platform fee is settled.
+      \item BR-CT-15: Digital signing generates an immutable contract PDF audit document with cryptographic integrity.
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
+      \item The user opens the pending contract workspace and reviews project terms.
+      \item The user clicks ``Sign Contract''.
+      \item The system opens the signature modal dialog.
+      \item The user reviews the clauses and checks the agreement consent box.
+      \item The user clicks ``Confirm \& Digitally Sign''.
+      \item The system records the signature timestamp in the database.
+      \item If counterpart signature is already recorded, contract transitions to active/awaiting payment and generates PDF.
+      \item The system notifies the other party and updates the workspace view.
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Case}{Description}
+      A1 & User has already signed this contract. The API returns HTTP 422 with error \texttt{ContractAlreadySignedException}; button disabled.\\ \hline
+      A2 & Contract is in invalid status (e.g. \texttt{CANCELLED} or \texttt{COMPLETED}). The API returns HTTP 422; displays error message.\\ \hline
+      A3 & Caller is not a contract participant. The API returns HTTP 403 Forbidden; access denied.\\ \hline
+      A4 & PDF generation service fails temporarily. The signature is recorded and PDF generation is retried via background queue.\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Data Name}{Description}
+      \texttt{signedByClient} & Boolean flag indicating whether the Client has signed.\\ \hline
+      \texttt{signedByFreelancer} & Boolean flag indicating whether the Freelancer has signed.\\ \hline
+      \texttt{status} & Updated contract status (\texttt{PENDING}, \texttt{AWAITING\_PAYMENT}, or \texttt{ACTIVE}).\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item Signature timestamp and boolean recorded in database.
+      \item Contract status updated if both parties signed.
+      \item Notification dispatched to counterpart.
+\end{itemize}
+
+% -----------------------------------------------------------------
+% UC-13.07: Cancel Contract
+% -----------------------------------------------------------------
+\subsubsection{ Cancel Contract}
+
+\fnhead{Function Trigger}
+A Client or Freelancer clicks the ``Cancel Contract'' option from the contract action menu.\newline
+\textbf{Navigation path:} Contract Detail (\texttt{/contracts/:slug}) $\rightarrow$ Action Menu $\rightarrow$ Click ``Cancel Contract''.
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item \textbf{Primary Actor:} Client, Freelancer.
+      \item \textbf{Supporting Systems:} Frevia Web application (Next.js), Frevia REST API (NestJS), Prisma ORM layer, PostgreSQL database, and Stripe payment refund service.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent Allows a contract participant to terminate a pending or active agreement before project completion. Requires specifying a cancellation reason and automatically manages escrow refunds for unreleased milestone deposits according to platform rules.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item ``Cancel Contract'' menu item in the contract header action dropdown.
+      \item Cancellation confirmation modal detailing cancellation terms and financial consequences.
+      \item Reason dropdown selector (e.g., Unresponsive counterpart, Scope change, Mutual agreement, Technical impediment).
+      \item Optional detailed explanation textarea.
+      \item Action buttons: ``Confirm Cancellation'' and ``Keep Contract''.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item The user submits an HTTP request: \texttt{PATCH /api/contracts/:id/cancel}.
+      \item \texttt{ContractService.cancelContract()} validates caller authorization against participant IDs.
+      \item Checks that contract status is not already \texttt{COMPLETED} or \texttt{CANCELLED}.
+      \item Verifies that no active milestone disputes exist that require formal arbitration.
+      \item Inside a database transaction, updates contract \texttt{status = CANCELLED} and records cancellation reason.
+      \item For any milestones with \texttt{paymentStatus = FUNDED} that have not been released, marks them for escrow refund back to the Client.
+      \item Dispatches urgent alert notification to the counterpart party.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint1/ntin/CancelContract.png}{Cancel Contract modal}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item Modal displays warning banner: ``Canceling a contract is irreversible and immediately halts all project work.''.
+      \item Financial summary indicates any escrow funds that will be refunded to the client.
+      \item Required dropdown to select cancellation category and textarea for explanation.
+      \item Red destructive button ``Cancel This Contract'' and neutral ``Go Back''.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+      \texttt{contractId} & Numeric contract identifier (integer path parameter).\\ \hline
+      \texttt{reason} & Category and textual explanation for cancellation (string, optional).\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item Caller must be a recognized participant of the contract.
+      \item Contract must reside in \texttt{PENDING}, \texttt{AWAITING\_PAYMENT}, or \texttt{ACTIVE} status.
+      \item Completed contracts cannot be cancelled.
+      \item Contracts with unresolved disputes cannot be cancelled until dispute settlement.
+\end{itemize}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+      \item BR-CT-16: Cancelled contracts cannot be reopened or reactivated under any circumstance.
+      \item BR-CT-17: Unreleased escrow funds on cancelled contracts shall be refunded to the client unless contested via dispute.
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
+      \item The user navigates to the contract workspace and selects ``Cancel Contract''.
+      \item The system opens the cancellation confirmation modal.
+      \item The user selects a reason and provides an explanation.
+      \item The user clicks ``Confirm Cancellation''.
+      \item The system validates contract state and updates status to \texttt{CANCELLED}.
+      \item Unreleased escrow funds are refunded to the client.
+      \item Both parties receive cancellation notifications, and the workspace reflects cancelled state.
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Case}{Description}
+      A1 & Contract is already completed. The API returns HTTP 422 with error \texttt{ContractAlreadyCompletedException}; cancellation blocked.\\ \hline
+      A2 & An active dispute is in progress. The API returns HTTP 422 with error \texttt{ContractHasActiveDisputeException}; prompts to resolve dispute first.\\ \hline
+      A3 & Caller is not a contract participant. The API returns HTTP 403 Forbidden; access denied.\\ \hline
+      A4 & Stripe refund processing fails. Refund is queued for automatic reconciliation, and contract is marked cancelled.\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Data Name}{Description}
+      \texttt{status} & Updated contract status (\texttt{CANCELLED}).\\ \hline
+      \texttt{cancelledAt} & ISO 8601 cancellation timestamp.\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item Contract status is updated to \texttt{CANCELLED}.
+      \item Escrow refunds are initiated for funded unreleased milestones.
+      \item Notifications sent to both parties.
+\end{itemize}
+
+% -----------------------------------------------------------------
+% UC-13.08: View Contract Files
+% -----------------------------------------------------------------
+\subsubsection{ View Contract Files}
+
+\fnhead{Function Trigger}
+A participant clicks the ``Files'' tab inside the contract detail workspace.\newline
+\textbf{Navigation path:} Contract Detail (\texttt{/contracts/:slug}) $\rightarrow$ Click ``Files'' tab.
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item \textbf{Primary Actor:} Client, Freelancer, Administrator.
+      \item \textbf{Supporting Systems:} Frevia Web application (Next.js), Frevia REST API (NestJS), Prisma ORM layer, PostgreSQL database, and Cloudinary storage.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent Provides a secure shared document repository for participants to inspect, download, and manage project specifications, deliverables, assets, and design files exchanged throughout the contract lifecycle.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item ``Files'' tab view inside the Contract Detail workspace.
+      \item Summary bar displaying total files count and ``Upload File'' action button.
+      \item File items table/grid displaying file name, format icon (PDF, ZIP, image, doc), uploader avatar and name, upload date, file size, and action buttons.
+      \item Download action button (direct cloud download link).
+      \item Delete action icon (visible only to the original uploader and Admin).
+      \item Empty-state card shown when no files have been uploaded yet.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item The client issues an HTTP request: \texttt{GET /api/contracts/:contractId/files}.
+      \item \texttt{SharedFileService.getSharedFiles()} validates that caller is a participant in the contract or possesses \texttt{ADMIN} role.
+      \item Queries \texttt{prisma.sharedFile.findMany} where \texttt{contractId === contractId} and \texttt{deletedAt = null}.
+      \item Includes uploader information (id, fullName, avatarUrl) and orders by \texttt{createdAt desc}.
+      \item Returns HTTP 200 with the array of shared file objects.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint1/ntin/ViewContractFiles.png}{Contract shared files tab}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item The tab header shows total uploaded files count and a blue ``Upload File'' button.
+      \item Table columns: File Name, Type, Uploaded By, Date, File Size, and Actions.
+      \item Each row features an appropriate file type icon, file name, download icon, and trash icon (if authorized).
+      \item An empty state features an upload illustration with ``No files uploaded yet. Drag and drop to upload.''.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+      \texttt{contractId} & Unique numeric contract identifier (integer path parameter).\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item Caller must be an authorized contract participant (Client or Freelancer) or an Administrator.
+      \item Target contract must exist in the database.
+\end{itemize}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+      \item BR-CT-18: Only non-deleted files (\texttt{deletedAt = null}) belonging to the contract shall be returned.
+      \item BR-CT-19: Contract file access is strictly restricted to contract participants and system administrators.
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
+      \item The user navigates to the contract workspace and selects the ``Files'' tab.
+      \item The web client requests \texttt{GET /api/contracts/:contractId/files}.
+      \item The API validates participant authorization and queries non-deleted shared files.
+      \item The API returns the list of file entities with uploader details.
+      \item The client renders the file items table.
+      \item The user clicks the download link to retrieve any file.
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Case}{Description}
+      A1 & User is not a participant in the contract. The API returns HTTP 403 Forbidden; access denied.\\ \hline
+      A2 & Contract does not exist. The API returns HTTP 404 Not Found.\\ \hline
+      A3 & Storage service is temporarily unreachable. File download triggers a retry banner.\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Data Name}{Description}
+      \texttt{files[]} & Array of shared file records containing \texttt{id}, \texttt{fileName}, \texttt{fileUrl}, \texttt{publicId}, \texttt{uploader}, and \texttt{createdAt}.\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item File repository is rendered for download and inspection.
+\end{itemize}
+
+% -----------------------------------------------------------------
+% UC-13.09: Upload Contract File
+% -----------------------------------------------------------------
+\subsubsection{ Upload Contract File}
+
+\fnhead{Function Trigger}
+A participant clicks the ``Upload File'' button or drops files into the file dropzone in the Files tab.\newline
+\textbf{Navigation path:} Contract Detail $\rightarrow$ Files Tab $\rightarrow$ Click ``Upload File''.
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item \textbf{Primary Actor:} Client, Freelancer.
+      \item \textbf{Supporting Systems:} Frevia Web application (Next.js), Frevia REST API (NestJS), Multer middleware, Cloudinary cloud object storage, Prisma ORM, and PostgreSQL database.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent Enables contract participants to securely upload project assets, deliverables, reference manuals, source files, and documents to the shared contract workspace.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item Upload file modal or drag-and-drop zone in the Files tab.
+      \item Native file picker dialog supporting multi-format selection.
+      \item Progress bar rendering upload percentage and transmission status.
+      \item Supported format notice: images (PNG, JPG), documents (PDF, DOCX, XLSX), archives (ZIP, RAR) up to 25MB.
+      \item Action buttons: ``Upload'' and ``Cancel''.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item Client submits an HTTP \texttt{multipart/form-data} request: \texttt{POST /api/contracts/:contractId/files} with attached file payload.
+      \item \texttt{buildUploadFilePipe()} validates file size ($\le$ 25MB) and restricts malicious executable MIME types.
+      \item \texttt{SharedFileService.uploadSharedFile()} checks participant authorization.
+      \item Streams the file buffer to Cloudinary cloud storage under folder \texttt{frevia/contracts/:contractId}.
+      \item Persists \texttt{SharedFile} record in database with \texttt{contractId}, \texttt{uploaderId = userId}, \texttt{fileUrl}, \texttt{publicId}, and \texttt{fileName}.
+      \item Returns HTTP 201 Created with the saved file record.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint1/ntin/UploadContractFile.png}{Upload Contract File modal}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item Modal displays dashed drag-and-drop area with cloud upload graphic.
+      \item Text instructions state ``Drag and drop your file here, or click to browse''.
+      \item File size constraint (max 25MB) and allowed extensions are prominently listed.
+      \item Selected file displays file name, size badge, upload progress bar, and ``Upload File'' action trigger.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+      \texttt{contractId} & Numeric contract identifier (integer path parameter).\\ \hline
+      \texttt{file} & Binary file stream submitted via \texttt{multipart/form-data} form field.\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item Caller must be an authorized contract participant.
+      \item File size must not exceed 25MB.
+      \item Executable file types (\texttt{.exe}, \texttt{.bat}, \texttt{.sh}, \texttt{.cmd}, \texttt{.vbs}) are strictly prohibited.
+      \item Contract must not be in \texttt{CANCELLED} status.
+\end{itemize}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+      \item BR-CT-20: Maximum individual file upload size shall be 25MB.
+      \item BR-CT-21: Uploaded contract files shall be associated with the uploader's user ID for audit ownership.
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
+      \item The user clicks ``Upload File'' in the contract Files tab.
+      \item The system opens the upload modal.
+      \item The user selects or drags a valid file.
+      \item The user clicks ``Upload''.
+      \item The client streams the multipart form data to the server.
+      \item The server validates file size and MIME security, then uploads to cloud storage.
+      \item The database creates a new \texttt{SharedFile} entity.
+      \item The modal closes, a success toast appears, and the new file card is added to the list.
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Case}{Description}
+      A1 & File exceeds 25MB. Server rejects with HTTP 400 Bad Request; client displays ``File size exceeds 25MB limit.''\\ \hline
+      A2 & Disallowed file extension. Server rejects with HTTP 400; displays ``File format not permitted for security reasons.''\\ \hline
+      A3 & Caller is not a participant. Server returns HTTP 403 Forbidden; access denied.\\ \hline
+      A4 & Cloud storage upload timeout. Server returns HTTP 502 Bad Gateway; client prompts to retry.\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Data Name}{Description}
+      \texttt{id} & Unique identifier of the uploaded shared file record.\\ \hline
+      \texttt{fileName} & Original file name.\\ \hline
+      \texttt{fileUrl} & Secure HTTPS download URL on cloud object storage.\\ \hline
+      \texttt{createdAt} & ISO 8601 upload timestamp.\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item File is stored on cloud storage and indexed in database.
+      \item File is immediately visible to all contract participants.
+\end{itemize}
+
+% -----------------------------------------------------------------
+% UC-13.10: Delete Contract File
+% -----------------------------------------------------------------
+\subsubsection{ Delete Contract File}
+
+\fnhead{Function Trigger}
+The file uploader or an Administrator clicks the delete trash icon next to a shared file in the Files tab.\newline
+\textbf{Navigation path:} Contract Detail $\rightarrow$ Files Tab $\rightarrow$ File Row $\rightarrow$ Click ``Delete File''.
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item \textbf{Primary Actor:} File Uploader (Client or Freelancer), Administrator.
+      \item \textbf{Supporting Systems:} Frevia Web application (Next.js), Frevia REST API (NestJS), Cloudinary cloud storage, Prisma ORM, and PostgreSQL database.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent Allows users to remove obsolete, duplicate, or incorrect files from the contract repository while preserving audit integrity and preventing unauthorized deletion.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item Delete trash icon on the file row (conditionally rendered for uploader or Admin).
+      \item Confirmation modal: ``Are you sure you want to delete [fileName]? This action cannot be undone.''.
+      \item Action buttons: ``Delete'' (destructive red) and ``Cancel''.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item Client submits an HTTP request: \texttt{DELETE /api/contracts/:contractId/files/:fileId}.
+      \item \texttt{SharedFileService.deleteSharedFile()} verifies that the caller is either the file's original \texttt{uploaderId} or possesses \texttt{ADMIN} role.
+      \item Checks that the file is not currently attached as active evidence in an open dispute.
+      \item Soft-deletes the database record by setting \texttt{deletedAt = new Date()}.
+      \item Initiates asynchronous asset deletion from Cloudinary cloud storage using \texttt{publicId}.
+      \item Returns HTTP 200 with deletion confirmation.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint1/ntin/DeleteContractFile.png}{Delete Contract File confirmation dialog}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item Modal displays red trash icon and warning heading ``Delete Shared File''.
+      \item Confirmation message states the exact file name and asks for user confirmation.
+      \item Footer renders secondary ``Cancel'' button and primary red ``Delete File'' button.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+      \texttt{contractId} & Numeric contract identifier (integer path parameter).\\ \hline
+      \texttt{fileId} & Unique numeric identifier of the file to delete (integer path parameter).\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item The file must exist and not already be marked as deleted.
+      \item Caller must be the original uploader of the file or an Administrator.
+      \item The file must not be locked as legal evidence in an active dispute case.
+\end{itemize}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+      \item BR-CT-22: Only the original file uploader or an Administrator shall delete a shared file.
+      \item BR-CT-23: Files cited in active arbitration disputes are locked from deletion until dispute resolution.
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
+      \item The user navigates to the contract Files tab.
+      \item The user clicks the trash icon next to a file they uploaded.
+      \item The system opens the delete confirmation dialog.
+      \item The user clicks ``Delete''.
+      \item The system validates ownership and marks \texttt{deletedAt = now()}.
+      \item The file asset is purged from cloud storage.
+      \item The dialog closes, the file is removed from the view, and a confirmation toast appears.
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Case}{Description}
+      A1 & Caller is not the file uploader and not an Admin. The API returns HTTP 403 Forbidden with error \texttt{SharedFileForbiddenException}; access denied.\\ \hline
+      A2 & File is cited as evidence in an active dispute. The API returns HTTP 422 with error \texttt{FileLockedInDisputeException}; deletion rejected.\\ \hline
+      A3 & File not found or already deleted. The API returns HTTP 404 Not Found.\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Data Name}{Description}
+      \texttt{success} & Boolean confirmation of successful deletion (\texttt{true}).\\ \hline
+      \texttt{deletedFileId} & Identifier of the soft-deleted file record.\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item File is soft-deleted in the database (\texttt{deletedAt} populated).
+      \item File is purged from the shared files view.
+\end{itemize}
+

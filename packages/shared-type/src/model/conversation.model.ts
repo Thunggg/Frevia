@@ -37,6 +37,7 @@ export type UploadConversationFileResponseType = z.infer<
 // Schema cho Conversation model
 export const ConversationSchema = z.object({
   id: z.number(),
+  slug: z.string(),
   participant1: z.number(),
   participant2: z.number(),
   createdAt: z.date(),
@@ -52,6 +53,7 @@ export type ConversationType = z.infer<typeof ConversationSchema>;
 // - pinnedAt: thời điểm user hiện tại ghim hội thoại (null nếu chưa ghim)
 export const ConversationListItemSchema = z.object({
   id: z.number(),
+  slug: z.string(),
   participant1: z.number(),
   participant2: z.number(),
   createdAt: z.date(),
@@ -128,6 +130,7 @@ export type CreateConversationBodyType = z.infer<
 // Response cho POST /conversations
 export const CreateConversationResponseSchema = ConversationSchema.pick({
   id: true,
+  slug: true,
   participant1: true,
   participant2: true,
   createdAt: true,

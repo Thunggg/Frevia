@@ -2,14 +2,12 @@ import {
   ForgotPasswordBodyType,
   GetAuthorizationUrlResType,
   GetMeResType,
-  JoinRoleBodyType,
   LoginBodyType,
   LoginResType,
   MessageResType,
   RegisterBodyType,
   RegisterResType,
   SendOTPBodyType,
-  SwitchRoleBodyType,
 } from "@shared/types";
 import { http } from "@/lib/http";
 
@@ -26,22 +24,12 @@ export const authApiRequest = {
   forgotPassword: (body: ForgotPasswordBodyType) =>
     http.post<MessageResType>("/api/auth/forgot-password", body),
 
-  getGoogleLink: () =>
-    http.get<GetAuthorizationUrlResType>("/api/auth/google-link"),
+  getGoogleLink: (role?: string) =>
+    http.get<GetAuthorizationUrlResType>(
+      role
+        ? `/api/auth/google-link?role=${encodeURIComponent(role)}`
+        : "/api/auth/google-link",
+    ),
 
   me: () => http.get<GetMeResType>("/api/auth/me"),
-
-  switchRole: (body: SwitchRoleBodyType) =>
-    http.post<{ roleName: SwitchRoleBodyType["role"] }>(
-      "/api/auth/switch-role",
-      body,
-      false,
-    ),
-
-  joinRole: (body: JoinRoleBodyType) =>
-    http.post<{ roleName: JoinRoleBodyType["role"] }>(
-      "/api/auth/join-role",
-      body,
-      false,
-    ),
 };

@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import authServerRequest from "@/apiRequests/auth.server";
+import { canAccessAdminPortal } from "@/lib/admin-access";
 import { RoleName } from "@shared/types";
 import { ClientProfileSettings } from "./client-profile-settings";
 
@@ -10,6 +11,19 @@ export default async function ClientProfilePage() {
 
   if (!user) {
     redirect("/login?redirect=/client/profile");
+  }
+
+  if (primaryRole === RoleName.EXPERT) {
+    redirect("/expert/profile");
+  }
+
+  if (
+    primaryRole === RoleName.ADMIN ||
+    (primaryRole !== RoleName.CLIENT &&
+      primaryRole !== RoleName.FREELANCER &&
+      canAccessAdminPortal(user))
+  ) {
+    redirect("/admin/profile");
   }
 
   if (primaryRole !== RoleName.CLIENT) {

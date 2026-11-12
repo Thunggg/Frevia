@@ -6,24 +6,17 @@ import type {
   CreateCustomerPortalSessionResponseType,
   CreatePaymentIntentResponseType,
   CreateSetupIntentResponseType,
-  CreateWithdrawalBodyType,
-  CreateWithdrawalResponseType,
   DisputeSettlementBodyType,
   DisputeSettlementResponseType,
   GetSavedPaymentMethodsResponseType,
   GetTransactionListQueryType,
   GetTransactionListResponseType,
-  GetWithdrawalListQueryType,
-  GetWithdrawalListResponseType,
   PaymentMethodActionResponseType,
-  ProcessWithdrawalBodyType,
   RefundMilestoneResponseType,
   ReleaseMilestoneResponseType,
   StripeConnectStatusResponseType,
   StripeOnboardingLinkResponseType,
   SyncCheckoutSessionResponseType,
-  WalletSummaryResponseType,
-  WithdrawalRequestType,
 } from "@shared/types";
 
 export const paymentApiRequest = {
@@ -50,10 +43,14 @@ export const paymentApiRequest = {
    * Bước 1 (Authorize / Hold): Tạo PaymentIntent giữ tiền (capture_method: manual)
    * cho ít nhất 1 milestone (hoặc toàn bộ) + 3% phí trên tổng giá trị hợp đồng.
    */
-  createContractHoldIntent(contractId: number, milestoneIds: number[]) {
+  createContractHoldIntent(
+    contractId: number,
+    milestoneIds: number[],
+    paymentMethodId?: string,
+  ) {
     return http.post<CreateContractHoldResponseType>(
       `/payments/contracts/${contractId}/fund-hold/intent`,
-      { milestoneIds },
+      { milestoneIds, ...(paymentMethodId ? { paymentMethodId } : {}) },
     );
   },
 
@@ -202,47 +199,6 @@ export const paymentApiRequest = {
     return http.post<ChargeSavedCardResponseType>(
       `/payments/contracts/${contractId}/milestones/${milestoneId}/fund/saved-card`,
       { paymentMethodId },
-    );
-  },
-
-  /**
-   * Lấy số dư ví nội bộ và thống kê thu nhập/rút tiền
-   */
-  getWalletSummary() {
-    return http.get<WalletSummaryResponseType>("/payments/wallet");
-  },
-
-  /**
-   * Lấy danh sách yêu cầu rút tiền có phân trang
-   */
-  getWithdrawals(query: Partial<GetWithdrawalListQueryType> = {}) {
-    const params = new URLSearchParams();
-    if (query.page) params.append("page", query.page.toString());
-    if (query.limit) params.append("limit", query.limit.toString());
-    if (query.status) params.append("status", query.status);
-    const qs = params.toString();
-    return http.get<GetWithdrawalListResponseType>(
-      `/payments/withdrawals${qs ? `?${qs}` : ""}`,
-    );
-  },
-
-  /**
-   * Tạo yêu cầu rút tiền từ ví nội bộ (Bank Transfer hoặc Stripe Express)
-   */
-  requestWithdrawal(body: CreateWithdrawalBodyType) {
-    return http.post<CreateWithdrawalResponseType>(
-      "/payments/withdrawals",
-      body,
-    );
-  },
-
-  /**
-   * [Admin] Xử lý duyệt hoặc từ chối yêu cầu rút tiền ngân hàng
-   */
-  processWithdrawal(withdrawalId: number, body: ProcessWithdrawalBodyType) {
-    return http.post<WithdrawalRequestType>(
-      `/payments/withdrawals/${withdrawalId}/process`,
-      body,
     );
   },
 };

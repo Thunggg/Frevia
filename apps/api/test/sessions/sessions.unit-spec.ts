@@ -10,6 +10,7 @@ import {
   SessionAlreadyExpiredException,
   SessionNotFoundException,
 } from '../../src/routes/sessions/sessions.error';
+import { AuthGateway } from '../../src/shared/gateways/auth.gateway';
 import { PrismaService } from '../../src/shared/services/prisma.service';
 import { SessionsRepository } from '../../src/routes/sessions/sessions.repo';
 import { SessionsService } from '../../src/routes/sessions/sessions.service';
@@ -21,8 +22,14 @@ describe('Session Management (UF-50 to UF-52)', () => {
     deleteActiveByIdForUser: jest.fn(),
   };
 
+  const authGateway = {
+    emitForceLogoutSession: jest.fn(),
+    emitForceLogoutUser: jest.fn(),
+  };
+
   const service = new SessionsService(
     repository as unknown as SessionsRepository,
+    authGateway as unknown as AuthGateway,
   );
 
   const createdAt = new Date('2026-01-01T00:00:00.000Z');
@@ -208,6 +215,10 @@ describe('Session Management (UF-50 to UF-52)', () => {
       const result = await service.revokeMySession(102, 10, 101);
 
       expect(repository.deleteActiveByIdForUser).toHaveBeenCalledWith(102, 10);
+      expect(authGateway.emitForceLogoutSession).toHaveBeenCalledWith(
+        102,
+        expect.any(String),
+      );
       expect(result).toEqual({
         message: ManageSessionMessage.SESSION_REVOKED,
         loggedOut: false,

@@ -119,6 +119,8 @@ export function MilestonesPageContent({
         );
       } else if (statusFilter === "PENDING_ESCROW") {
         list = list.filter((m) => m.paymentStatus === "PENDING");
+      } else if (statusFilter === "LATE") {
+        list = list.filter((m) => m.status === "LATE");
       } else if (statusFilter === "COMPLETED") {
         list = list.filter((m) => m.status === "COMPLETED");
       }
@@ -170,11 +172,8 @@ export function MilestonesPageContent({
       await queryClient.invalidateQueries({
         queryKey: ["client-transactions"],
       });
-      await queryClient.invalidateQueries({
-        queryKey: ["wallet-summary"],
-      });
       toastSuccess({
-        message: `Payout credited to freelancer's wallet for milestone "${milestone.title}" (5% freelancer fee deducted).`,
+        message: `Payout transferred via Stripe for milestone "${milestone.title}" (5% freelancer fee deducted).`,
       });
     } catch (error) {
       toastError({
@@ -182,6 +181,38 @@ export function MilestonesPageContent({
           error instanceof ApiFail
             ? error.response.error.message
             : "Failed to release milestone payout.",
+      });
+    }
+  };
+
+  const handleRefundMilestone = async (milestone: MilestoneType) => {
+    if (
+      !window.confirm(
+        `Request automatic refund of $${Number(milestone.amount).toLocaleString("en-US", { minimumFractionDigits: 2 })} for "${milestone.title}" to your original payment card?`,
+      )
+    ) {
+      return;
+    }
+    try {
+      await paymentApiRequest.refundMilestone(contract.id, milestone.id);
+      await queryClient.invalidateQueries({
+        queryKey: ["client-contract-detail", contract.id],
+      });
+      await queryClient.invalidateQueries({
+        queryKey: ["client-contract-milestones", contract.id],
+      });
+      await queryClient.invalidateQueries({
+        queryKey: ["client-transactions"],
+      });
+      toastSuccess({
+        message: `Escrow funds refunded to your card for milestone "${milestone.title}".`,
+      });
+    } catch (error) {
+      toastError({
+        message:
+          error instanceof ApiFail
+            ? error.response.error.message
+            : "Failed to refund milestone escrow.",
       });
     }
   };
@@ -222,6 +253,7 @@ export function MilestonesPageContent({
     { key: "ALL", label: "All Milestone Status" },
     { key: "IN_PROGRESS", label: "In Progress" },
     { key: "SUBMITTED", label: "Ready for Review" },
+    { key: "LATE", label: "Late / Overdue" },
     { key: "PENDING_ESCROW", label: "Pending Escrow" },
     { key: "COMPLETED", label: "Completed" },
   ];
@@ -379,6 +411,7 @@ export function MilestonesPageContent({
                       setFundModalOpen(true);
                     }}
                     onRelease={(target) => void handleReleaseMilestone(target)}
+                    onRefund={(target) => void handleRefundMilestone(target)}
                     onReview={async (target) => {
                       try {
                         const res = await contractApiRequest.getSubmissions(
@@ -450,6 +483,7 @@ export function MilestonesPageContent({
                   setFundModalOpen(true);
                 }}
                 onRelease={(target) => void handleReleaseMilestone(target)}
+                onRefund={(target) => void handleRefundMilestone(target)}
                 onReview={async (target) => {
                   try {
                     const res = await contractApiRequest.getSubmissions(

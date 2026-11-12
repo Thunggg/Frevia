@@ -1,10 +1,11 @@
 import { NestFactory } from '@nestjs/core';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { HttpMethod, PrismaClient } from '@prisma/client';
-import { RoleName } from '@shared/types';
+import { RoleName, getPermissionName } from '@shared/types';
 import 'dotenv/config';
 import { AppModule } from '../app.module';
 import { expertHasPermission } from '../shared/helper/expert-permission';
+import { IS_PUBLIC_KEY } from '../shared/decorators/auth.decorator';
 
 if (!process.env.DIRECT_URL) {
   console.log('Cannot find DB URL');
@@ -80,6 +81,16 @@ const clientModules = [
   'RECOMMENDATIONS',
 ];
 
+const expertModules = [
+  'AUTH',
+  'SESSIONS',
+  'EXPERT-PROFILE',
+  'PROFILE-REVISIONS',
+  'NOTIFICATIONS',
+  'PAYMENTS',
+  'DISPUTES',
+];
+
 type AvailableRoute = {
   path: string;
   method: HttpMethod;
@@ -143,23 +154,37 @@ async function bootstrap() {
   });
 
   const availableRoutes: AvailableRoute[] = router.stack
-    .map((layer: { route?: { path: string; stack: { method: string }[] } }) => {
-      if (!layer.route) return undefined;
+    .map(
+      (layer: {
+        route?: {
+          path: string;
+          stack: { method: string; handle?: any }[];
+        };
+      }) => {
+        if (!layer.route) return undefined;
 
-      const path = layer.route.path as string;
-      const method = String(
-        layer.route.stack[0]?.method ?? '',
-      ).toUpperCase() as HttpMethod;
+        const path = layer.route.path as string;
+        const method = String(
+          layer.route.stack[0]?.method ?? '',
+        ).toUpperCase() as HttpMethod;
 
-      if (!Object.values(HttpMethod).includes(method)) return undefined;
+        if (!Object.values(HttpMethod).includes(method)) return undefined;
 
-      return {
-        path,
-        method,
-        name: `${method} ${path}`,
-        module: resolveModule(path),
-      };
-    })
+        // Bỏ qua các route public (có decorator @IsPublic())
+        // vì các route này bypass PermissionGuard và không thuộc phạm vi RBAC.
+        const isPublic = layer.route.stack.some((s) =>
+          Boolean(s?.handle && Reflect.getMetadata(IS_PUBLIC_KEY, s.handle)),
+        );
+        if (isPublic) return undefined;
+
+        return {
+          path,
+          method,
+          name: getPermissionName(method, path, 'en'),
+          module: resolveModule(path),
+        };
+      },
+    )
     .filter((item: AvailableRoute | undefined): item is AvailableRoute =>
       Boolean(item),
     );
@@ -270,7 +295,10 @@ async function bootstrap() {
         freelancerModules.includes(item.module ?? '') &&
         !(item.path ?? '').startsWith('/api/admin/') &&
         !(item.path ?? '').startsWith('/api/forums/admin') &&
-        !['/api/recommendations/reindex', '/api/recommendations/outbox/process'].includes(item.path) &&
+        ![
+          '/api/recommendations/reindex',
+          '/api/recommendations/outbox/process',
+        ].includes(item.path) &&
         !(item.module === 'MANAGE-JOBS' && !item.path.includes('/bookmark')),
     )
     .map((item) => item.id);
@@ -281,7 +309,10 @@ async function bootstrap() {
         clientModules.includes(item.module ?? '') &&
         !(item.path ?? '').startsWith('/api/admin/') &&
         !(item.path ?? '').startsWith('/api/forums/admin') &&
-        !['/api/recommendations/reindex', '/api/recommendations/outbox/process'].includes(item.path) &&
+        ![
+          '/api/recommendations/reindex',
+          '/api/recommendations/outbox/process',
+        ].includes(item.path) &&
         !(item.module === 'MANAGE-JOBS' && item.path.includes('/bookmark')),
     )
     .map((item) => item.id);

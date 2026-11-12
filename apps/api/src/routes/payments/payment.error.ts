@@ -111,6 +111,14 @@ export const MilestoneAlreadyReleasedException = () =>
     },
   ]);
 
+export const MilestoneNotEligibleForRefundException = () =>
+  new UnprocessableEntityException([
+    {
+      message: ManagePaymentMessage.MILESTONE_NOT_ELIGIBLE_FOR_REFUND,
+      path: 'status',
+    },
+  ]);
+
 export const DisputeFeeAlreadyPaidException = () =>
   new UnprocessableEntityException([
     {
@@ -148,37 +156,5 @@ export const PaymentForbiddenException = (message?: string) =>
     {
       message: message ?? ManagePaymentMessage.FORBIDDEN,
       path: 'permission',
-    },
-  ]);
-
-export const InsufficientWalletBalanceException = () =>
-  new UnprocessableEntityException([
-    {
-      message: ManagePaymentMessage.INSUFFICIENT_WALLET_BALANCE,
-      path: 'amount',
-    },
-  ]);
-
-export const InvalidWithdrawalAmountException = () =>
-  new BadRequestException([
-    {
-      message: ManagePaymentMessage.INVALID_WITHDRAWAL_AMOUNT,
-      path: 'amount',
-    },
-  ]);
-
-export const WithdrawalNotFoundException = () =>
-  new NotFoundException([
-    {
-      message: ManagePaymentMessage.WITHDRAWAL_NOT_FOUND,
-      path: 'withdrawalId',
-    },
-  ]);
-
-export const WithdrawalAlreadyProcessedException = () =>
-  new UnprocessableEntityException([
-    {
-      message: ManagePaymentMessage.WITHDRAWAL_ALREADY_PROCESSED,
-      path: 'status',
     },
   ]);

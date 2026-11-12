@@ -119,7 +119,7 @@ export function CvAnalysisDialog({
 
     setSkills(
       draft.payload.skills.map((s) => ({
-        selected: s.confidence !== null && s.confidence >= 0.5,
+        selected: s.confidence === null || s.confidence >= 0.5,
         name: s.name,
         proficiencyLevel: s.proficiencyLevel ?? 5,
         confidence: s.confidence,
@@ -128,7 +128,7 @@ export function CvAnalysisDialog({
     );
     setExperience(
       draft.payload.experience.map((e) => ({
-        selected: e.confidence !== null && e.confidence >= 0.5,
+        selected: e.confidence === null || e.confidence >= 0.5,
         title: e.title ?? "",
         company: e.company ?? "",
         startDate: e.startDate ?? "",
@@ -140,7 +140,7 @@ export function CvAnalysisDialog({
     );
     setEducation(
       draft.payload.education.map((ed) => ({
-        selected: ed.confidence !== null && ed.confidence >= 0.5,
+        selected: ed.confidence === null || ed.confidence >= 0.5,
         degree: ed.degree ?? "",
         school: ed.school ?? "",
         startYear: ed.startYear?.toString() ?? "",
@@ -151,9 +151,9 @@ export function CvAnalysisDialog({
     );
     setProjects(
       draft.payload.projects.map((p) => ({
-        selected: p.confidence !== null && p.confidence >= 0.5,
+        selected: p.confidence === null || p.confidence >= 0.5,
         name: p.name ?? "",
-        technologies: p.technologies.join(", "),
+        technologies: (p.technologies || []).join(", "),
         description: p.description ?? "",
         confidence: p.confidence,
       })),

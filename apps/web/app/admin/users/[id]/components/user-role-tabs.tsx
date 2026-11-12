@@ -31,7 +31,9 @@ import {
   TableRow,
 } from "@repo/ui/components/shadcn/table";
 import type { AdminUserDetailResponseType } from "@shared/types";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
+import { getPermissionDisplayName } from "@/lib/permission-utils";
+import { HttpMethodBadge } from "../../../components/http-method-badge";
 import { EditClientProfileButton } from "./edit-client-profile-button";
 import { EditFreelancerProfileButton } from "./edit-freelancer-profile-button";
 import { ManageFreelancerSkillsButton } from "./manage-freelancer-skills-button";
@@ -45,89 +47,29 @@ interface UserRoleTabsProps {
 export function UserRoleTabs({ user }: UserRoleTabsProps) {
   const t = useTranslations("adminUserDetail");
   const tCommon = useTranslations("adminCommon");
+  const locale = useLocale();
 
-  const hasClientProfile =
-    Boolean(user.clientProfile) ||
-    user.roles.some((r) => r.name.toLowerCase() === "client");
-
-  const hasFreelancerProfile =
-    Boolean(user.freelancerProfile) ||
-    user.roles.some((r) => r.name.toLowerCase() === "freelancer");
-
-  const hasExpertProfile =
-    Boolean(user.expertProfile) ||
-    user.roles.some((r) => r.name.toLowerCase() === "expert");
-
+  const userRole = (user.roles[0]?.name ?? "").toLowerCase();
+  const hasClientProfile = userRole === "client";
+  const hasFreelancerProfile = userRole === "freelancer";
+  const hasExpertProfile = userRole === "expert";
   const customRoles = user.customRoleProfiles;
   const hasAdminOrCustomRoles =
-    customRoles.length > 0 ||
-    user.roles.some(
-      (r) =>
-        r.name.toLowerCase() !== "client" &&
-        r.name.toLowerCase() !== "freelancer" &&
-        r.name.toLowerCase() !== "expert",
-    );
+    Boolean(userRole) &&
+    !hasClientProfile &&
+    !hasFreelancerProfile &&
+    !hasExpertProfile;
 
   // Determine initial tab
-  const primaryRole = user.roles.find((r) => r.isPrimary)?.name.toLowerCase();
-  let defaultTab = "overview";
-  if (primaryRole === "expert" && hasExpertProfile) {
-    defaultTab = "expert";
-  } else if (primaryRole === "freelancer" && hasFreelancerProfile) {
-    defaultTab = "freelancer";
-  } else if (primaryRole === "client" && hasClientProfile) {
-    defaultTab = "client";
-  } else if (hasFreelancerProfile) {
-    defaultTab = "freelancer";
-  } else if (hasClientProfile) {
-    defaultTab = "client";
-  } else if (hasAdminOrCustomRoles) {
-    defaultTab = "roles";
-  }
+  const defaultTab = hasClientProfile
+    ? "client"
+    : hasFreelancerProfile
+      ? "freelancer"
+      : hasExpertProfile
+        ? "expert"
+        : "roles";
 
   const [activeTab, setActiveTab] = useState(defaultTab);
-
-  const renderMethodBadge = (method: string) => {
-    const m = method.toUpperCase();
-    if (m === "GET") {
-      return (
-        <Badge
-          variant="outline"
-          className="bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/50 dark:text-emerald-300 font-mono text-xs"
-        >
-          GET
-        </Badge>
-      );
-    }
-    if (m === "POST") {
-      return (
-        <Badge
-          variant="outline"
-          className="bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950/50 dark:text-blue-300 font-mono text-xs"
-        >
-          POST
-        </Badge>
-      );
-    }
-    if (m === "PUT" || m === "PATCH") {
-      return (
-        <Badge
-          variant="outline"
-          className="bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950/50 dark:text-amber-300 font-mono text-xs"
-        >
-          {m}
-        </Badge>
-      );
-    }
-    return (
-      <Badge
-        variant="outline"
-        className="bg-rose-50 text-rose-700 border-rose-200 dark:bg-rose-950/50 dark:text-rose-300 font-mono text-xs"
-      >
-        {m}
-      </Badge>
-    );
-  };
 
   const renderJsonList = (data: unknown) => {
     if (!data) return null;
@@ -569,14 +511,6 @@ export function UserRoleTabs({ user }: UserRoleTabsProps) {
                         <h3 className="text-base font-bold text-foreground">
                           {t("roleLabel", { name: cr.roleName })}
                         </h3>
-                        {cr.isPrimary && (
-                          <Badge
-                            variant="outline"
-                            className="text-[10px] text-amber-700 border-amber-300"
-                          >
-                            {t("primaryRole")}
-                          </Badge>
-                        )}
                       </div>
                       <p className="text-xs text-muted-foreground">
                         {cr.description || t("noRoleDescription")}
@@ -601,8 +535,8 @@ export function UserRoleTabs({ user }: UserRoleTabsProps) {
                             <TableHead className="w-[80px]">
                               {tCommon("method")}
                             </TableHead>
-                            <TableHead>{t("colApiPath")}</TableHead>
                             <TableHead>{t("colPermissionName")}</TableHead>
+                            <TableHead>{t("colApiPath")}</TableHead>
                             <TableHead className="w-[120px]">
                               {tCommon("module")}
                             </TableHead>
@@ -612,13 +546,13 @@ export function UserRoleTabs({ user }: UserRoleTabsProps) {
                           {cr.permissions.map((perm) => (
                             <TableRow key={perm.id}>
                               <TableCell>
-                                {renderMethodBadge(perm.method)}
+                                <HttpMethodBadge method={perm.method} />
                               </TableCell>
-                              <TableCell className="font-mono text-xs text-foreground">
+                              <TableCell className="text-xs font-medium text-foreground">
+                                {getPermissionDisplayName(perm, locale)}
+                              </TableCell>
+                              <TableCell className="font-mono text-xs text-muted-foreground">
                                 {perm.path}
-                              </TableCell>
-                              <TableCell className="text-xs text-muted-foreground">
-                                {perm.name}
                               </TableCell>
                               <TableCell>
                                 <Badge

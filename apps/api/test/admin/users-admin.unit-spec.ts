@@ -16,6 +16,7 @@ import { ExpertProfileService } from '../../src/routes/expert-profile/expert-pro
 import { ProfileRevisionService } from '../../src/routes/profile-revisions/profile-revision.service';
 import { UsersRepository } from '../../src/routes/users/users.repo';
 import { UsersService } from '../../src/routes/users/users.service';
+import { AuthGateway } from '../../src/shared/gateways/auth.gateway';
 import { HashingService } from '../../src/shared/services/hashing.service';
 
 describe('User Management (UF-59 to UF-67)', () => {
@@ -39,10 +40,15 @@ describe('User Management (UF-59 to UF-67)', () => {
   };
 
   const hashingService = { hash: jest.fn() };
+  const authGateway = {
+    emitForceLogoutSession: jest.fn(),
+    emitForceLogoutUser: jest.fn(),
+  };
 
   const service = new UsersService(
     repository as unknown as UsersRepository,
     hashingService as unknown as HashingService,
+    authGateway as unknown as AuthGateway,
   );
 
   const expertRepository = {
@@ -85,7 +91,7 @@ describe('User Management (UF-59 to UF-67)', () => {
     email: 'new@frevia.com',
     isBanned: false,
     profile: { displayName: 'New User' },
-    userRoles: [{ isPrimary: true, role: { id: roleId, name: roleName } }],
+    role: { id: roleId, name: roleName },
   });
 
   const freelancerContext = {
@@ -371,7 +377,7 @@ describe('User Management (UF-59 to UF-67)', () => {
       email: 'updated@frevia.com',
       isBanned: false,
       profile: { displayName: 'Updated Name' },
-      userRoles: [{ isPrimary: true, role: { id: 2, name: 'Client' } }],
+      role: { id: 2, name: 'Client' },
     };
 
     // UF-62: Admin cập nhật email và họ tên của người dùng.
@@ -911,7 +917,7 @@ describe('User Management (UF-59 to UF-67)', () => {
     const expertUser = {
       id: 30,
       profile: { id: 4 },
-      userRoles: [{ role: { name: RoleName.EXPERT } }],
+      role: { name: RoleName.EXPERT },
     };
 
     const expertBody = {
@@ -983,7 +989,7 @@ describe('User Management (UF-59 to UF-67)', () => {
     it('throws ForbiddenException when the user does not have the Expert role', async () => {
       expertRepository.findByUserId.mockResolvedValue({
         ...expertUser,
-        userRoles: [{ role: { name: RoleName.CLIENT } }],
+        role: { name: RoleName.CLIENT },
       });
 
       await expect(

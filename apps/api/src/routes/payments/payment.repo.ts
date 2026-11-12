@@ -4,24 +4,16 @@ import {
   DisputeStatus,
   MilestonePaymentStatus,
   MilestoneStatus,
+  NotificationType,
   PlatformFeeStatus,
   Prisma,
+  SubmissionStatus,
   TransactionStatus,
   TransactionType,
-  WithdrawalMethod,
-  WithdrawalStatus,
 } from '@prisma/client';
-import {
-  GetTransactionListQueryType,
-  GetWithdrawalListQueryType,
-} from '@shared/types';
+import { GetTransactionListQueryType } from '@shared/types';
+import { syncContractAndJobCompletion } from '../../shared/helper/contract-activation.helper';
 import { PrismaService } from '../../shared/services/prisma.service';
-import {
-  InsufficientWalletBalanceException,
-  MilestoneAlreadyReleasedException,
-  WithdrawalAlreadyProcessedException,
-  WithdrawalNotFoundException,
-} from './payment.error';
 
 @Injectable()
 export class PaymentRepository {
@@ -36,7 +28,6 @@ export class PaymentRepository {
         stripeCustomerId: true,
         stripeAccountId: true,
         stripeOnboardingCompleted: true,
-        walletBalance: true,
         profile: { select: { displayName: true } },
       },
     });
@@ -569,6 +560,375 @@ export class PaymentRepository {
     }
   }
 
+  async syncContractCompletion(contractId: number): Promise<boolean> {
+    return this.prisma.$transaction((tx) =>
+      syncContractAndJobCompletion(tx, contractId),
+    );
+  }
+
+  async findSubmittedMilestonesForAutoRelease(submittedBefore: Date) {
+    const milestones = await this.prisma.milestone.findMany({
+      where: {
+        deletedAt: null,
+        status: MilestoneStatus.SUBMITTED,
+        paymentStatus: MilestonePaymentStatus.FUNDED,
+        contract: {
+          deletedAt: null,
+          status: ContractStatus.ACTIVE,
+        },
+        OR: [
+          { dispute: null },
+          { dispute: { status: DisputeStatus.CANCELLED } },
+        ],
+      },
+      include: {
+        submissions: {
+          orderBy: { submittedAt: 'desc' },
+          take: 1,
+        },
+        contract: {
+          select: {
+            id: true,
+            slug: true,
+            jobId: true,
+            clientId: true,
+            freelancerId: true,
+            job: { select: { title: true } },
+            freelancer: {
+              select: {
+                id: true,
+                stripeAccountId: true,
+                stripeOnboardingCompleted: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    return milestones.filter((milestone) => {
+      const latestSubmission = milestone.submissions[0];
+      return (
+        latestSubmission &&
+        latestSubmission.status === SubmissionStatus.PENDING_REVIEW &&
+        latestSubmission.submittedAt <= submittedBefore
+      );
+    });
+  }
+
+  async applyAutoReleaseTransaction(params: {
+    milestoneId: number;
+    contractId: number;
+    submissionId: number;
+    clientId: number;
+    freelancerId: number;
+    contractSlug: string;
+    milestoneTitle: string;
+    transferId: string;
+    payoutAmount: number;
+    feeAmount: number;
+    now: Date;
+  }) {
+    return this.prisma.$transaction(async (tx) => {
+      const claimed = await tx.milestone.updateMany({
+        where: {
+          id: params.milestoneId,
+          status: MilestoneStatus.SUBMITTED,
+          paymentStatus: MilestonePaymentStatus.FUNDED,
+          deletedAt: null,
+        },
+        data: {
+          paymentStatus: MilestonePaymentStatus.RELEASED,
+          status: MilestoneStatus.COMPLETED,
+          completedAt: params.now,
+        },
+      });
+
+      if (claimed.count === 0) {
+        return { released: false, contractCompleted: false };
+      }
+
+      await tx.milestoneSubmission.updateMany({
+        where: {
+          id: params.submissionId,
+          status: SubmissionStatus.PENDING_REVIEW,
+        },
+        data: {
+          status: SubmissionStatus.APPROVED,
+          reviewedAt: params.now,
+        },
+      });
+
+      await tx.transaction.create({
+        data: {
+          userId: params.freelancerId,
+          contractId: params.contractId,
+          milestoneId: params.milestoneId,
+          amount: params.payoutAmount,
+          currency: 'usd',
+          type: TransactionType.MILESTONE_PAYOUT,
+          status: TransactionStatus.SUCCEEDED,
+          stripeTransferId: params.transferId,
+          metadata: {
+            autoReleased: true,
+            reason: 'CLIENT_REVIEW_TIMEOUT_7_DAYS',
+            submissionId: params.submissionId,
+          } as Prisma.InputJsonValue,
+        },
+      });
+
+      if (params.feeAmount > 0) {
+        await tx.transaction.create({
+          data: {
+            userId: params.freelancerId,
+            contractId: params.contractId,
+            milestoneId: params.milestoneId,
+            amount: params.feeAmount,
+            currency: 'usd',
+            type: TransactionType.PLATFORM_FEE,
+            status: TransactionStatus.SUCCEEDED,
+            metadata: {
+              type: 'FREELANCER_RELEASE_FEE',
+              feeRole: 'FREELANCER',
+              feePercent: 5,
+              transferId: params.transferId,
+              autoReleased: true,
+            } as Prisma.InputJsonValue,
+          },
+        });
+      }
+
+      await tx.notification.createMany({
+        data: [
+          {
+            userId: params.freelancerId,
+            type: NotificationType.PAYMENT_RELEASED,
+            title: 'Milestone payment auto-released',
+            message: `Client did not respond within 7 days of your submission for "${params.milestoneTitle}". Escrow payment ($${params.payoutAmount.toFixed(2)} net) has been automatically released to your Stripe account.`,
+            data: {
+              href: `/freelancer/contracts/${params.contractSlug}/milestones/${params.milestoneId}`,
+              contractId: params.contractId,
+              milestoneId: params.milestoneId,
+            },
+          },
+          {
+            userId: params.clientId,
+            type: NotificationType.MILESTONE_COMPLETED,
+            title: 'Milestone auto-approved & released',
+            message: `No review was submitted within 7 days for "${params.milestoneTitle}". The milestone was marked Completed and escrowed funds were released to the freelancer.`,
+            data: {
+              href: `/client/contracts/${params.contractSlug}/milestones/${params.milestoneId}`,
+              contractId: params.contractId,
+              milestoneId: params.milestoneId,
+            },
+          },
+        ],
+      });
+
+      const contractCompleted = await syncContractAndJobCompletion(
+        tx,
+        params.contractId,
+      );
+
+      return { released: true, contractCompleted };
+    });
+  }
+
+  async findCandidateOverdueMilestones() {
+    return this.prisma.milestone.findMany({
+      where: {
+        deletedAt: null,
+        contract: {
+          deletedAt: null,
+          status: ContractStatus.ACTIVE,
+        },
+        OR: [
+          {
+            status: {
+              in: [
+                MilestoneStatus.PENDING,
+                MilestoneStatus.IN_PROGRESS,
+                MilestoneStatus.CHANGES_REQUESTED,
+              ],
+            },
+          },
+          {
+            status: MilestoneStatus.LATE,
+            paymentStatus: MilestonePaymentStatus.FUNDED,
+          },
+        ],
+        AND: [
+          {
+            OR: [
+              { dispute: null },
+              { dispute: { status: DisputeStatus.CANCELLED } },
+            ],
+          },
+        ],
+      },
+      include: {
+        submissions: {
+          orderBy: { submittedAt: 'desc' },
+          take: 1,
+        },
+        contract: {
+          select: {
+            id: true,
+            slug: true,
+            jobId: true,
+            clientId: true,
+            freelancerId: true,
+            job: { select: { title: true } },
+          },
+        },
+      },
+    });
+  }
+
+  async markMilestoneLateAndNotify(params: {
+    milestoneId: number;
+    previousStatus: MilestoneStatus;
+    contractId: number;
+    contractSlug: string;
+    clientId: number;
+    freelancerId: number;
+    milestoneTitle: string;
+    isFunded: boolean;
+  }) {
+    return this.prisma.$transaction(async (tx) => {
+      const updated = await tx.milestone.updateMany({
+        where: {
+          id: params.milestoneId,
+          status: params.previousStatus,
+          deletedAt: null,
+        },
+        data: {
+          status: MilestoneStatus.LATE,
+        },
+      });
+
+      if (updated.count === 0) return false;
+
+      await tx.notification.createMany({
+        data: [
+          {
+            userId: params.clientId,
+            type: NotificationType.TASK_OVERDUE,
+            title: 'Milestone overdue — refund requested',
+            message: params.isFunded
+              ? `Freelancer missed the deadline for "${params.milestoneTitle}" without submitting work. Milestone status is now Late and an automatic escrow refund request has been triggered.`
+              : `Freelancer missed the deadline for "${params.milestoneTitle}" without submitting work. Milestone status has been changed to Late.`,
+            data: {
+              href: `/client/contracts/${params.contractSlug}/milestones/${params.milestoneId}`,
+              contractId: params.contractId,
+              milestoneId: params.milestoneId,
+              refundRequested: params.isFunded,
+            },
+          },
+          {
+            userId: params.freelancerId,
+            type: NotificationType.TASK_OVERDUE,
+            title: 'Milestone marked as Late',
+            message: params.isFunded
+              ? `You did not submit deliverables before the deadline for "${params.milestoneTitle}". The milestone was marked Late and the funded escrow is subject to automatic refund.`
+              : `You did not submit deliverables before the deadline for "${params.milestoneTitle}". The milestone status was changed to Late.`,
+            data: {
+              href: `/freelancer/contracts/${params.contractSlug}/milestones/${params.milestoneId}`,
+              contractId: params.contractId,
+              milestoneId: params.milestoneId,
+              refundRequested: params.isFunded,
+            },
+          },
+        ],
+      });
+
+      return true;
+    });
+  }
+
+  async applyMilestoneRefundTransaction(params: {
+    milestoneId: number;
+    contractId: number;
+    contractSlug?: string;
+    clientId: number;
+    freelancerId: number;
+    milestoneTitle: string;
+    amount: number;
+    refundId: string;
+    reason: string;
+    isAuto: boolean;
+  }) {
+    return this.prisma.$transaction(async (tx) => {
+      const claimed = await tx.milestone.updateMany({
+        where: {
+          id: params.milestoneId,
+          paymentStatus: MilestonePaymentStatus.FUNDED,
+          deletedAt: null,
+        },
+        data: {
+          paymentStatus: MilestonePaymentStatus.REFUNDED,
+        },
+      });
+
+      if (claimed.count === 0) {
+        return { refunded: false, contractCompleted: false };
+      }
+
+      await tx.transaction.create({
+        data: {
+          userId: params.clientId,
+          contractId: params.contractId,
+          milestoneId: params.milestoneId,
+          amount: params.amount,
+          currency: 'usd',
+          type: TransactionType.REFUND,
+          status: TransactionStatus.SUCCEEDED,
+          stripeRefundId: params.refundId,
+          metadata: {
+            autoRefund: params.isAuto,
+            reason: params.reason,
+          } as Prisma.InputJsonValue,
+        },
+      });
+
+      const slugSegment = params.contractSlug ?? String(params.contractId);
+      await tx.notification.createMany({
+        data: [
+          {
+            userId: params.clientId,
+            type: NotificationType.PAYMENT_RELEASED,
+            title: 'Milestone escrow refunded',
+            message: `$${params.amount.toFixed(2)} for milestone "${params.milestoneTitle}" has been automatically refunded to your payment card.`,
+            data: {
+              href: `/client/contracts/${slugSegment}/milestones/${params.milestoneId}`,
+              contractId: params.contractId,
+              milestoneId: params.milestoneId,
+              refundId: params.refundId,
+            },
+          },
+          {
+            userId: params.freelancerId,
+            type: NotificationType.TASK_OVERDUE,
+            title: 'Milestone escrow refunded to client',
+            message: `Escrowed funds ($${params.amount.toFixed(2)}) for milestone "${params.milestoneTitle}" were refunded to the client (${params.reason === 'FREELANCER_LATE_NO_SUBMISSION' ? 'deadline passed without submission' : 'work not started / overdue'}).`,
+            data: {
+              href: `/freelancer/contracts/${slugSegment}/milestones/${params.milestoneId}`,
+              contractId: params.contractId,
+              milestoneId: params.milestoneId,
+            },
+          },
+        ],
+      });
+
+      const contractCompleted = await syncContractAndJobCompletion(
+        tx,
+        params.contractId,
+      );
+
+      return { refunded: true, contractCompleted };
+    });
+  }
+
   async getTransactions(
     query: GetTransactionListQueryType,
     filter: { userId?: number },
@@ -614,414 +974,6 @@ export class PaymentRepository {
       data: transactions.map((t) => ({
         ...t,
         amount: Number(t.amount),
-      })),
-      totalItems,
-      totalPages: Math.ceil(totalItems / limit),
-      page,
-      limit,
-    };
-  }
-
-  async creditMilestoneToWalletAtomic(params: {
-    freelancerId: number;
-    contractId: number;
-    milestoneId: number;
-    milestoneTitle: string;
-    milestoneAmount: number;
-    freelancerPayout: number;
-    freelancerFee: number;
-  }) {
-    return this.prisma.$transaction(async (tx) => {
-      const milestoneUpdate = await tx.milestone.updateMany({
-        where: {
-          id: params.milestoneId,
-          paymentStatus: MilestonePaymentStatus.FUNDED,
-        },
-        data: {
-          paymentStatus: MilestonePaymentStatus.RELEASED,
-          status: MilestoneStatus.COMPLETED,
-        },
-      });
-
-      if (milestoneUpdate.count === 0) {
-        throw MilestoneAlreadyReleasedException();
-      }
-
-      const updatedUser = await tx.user.update({
-        where: { id: params.freelancerId },
-        data: {
-          walletBalance: { increment: params.freelancerPayout },
-        },
-        select: { walletBalance: true },
-      });
-
-      await tx.transaction.create({
-        data: {
-          userId: params.freelancerId,
-          contractId: params.contractId,
-          milestoneId: params.milestoneId,
-          amount: params.freelancerPayout,
-          currency: 'usd',
-          type: TransactionType.MILESTONE_PAYOUT,
-          status: TransactionStatus.SUCCEEDED,
-          metadata: {
-            payoutDestination: 'WALLET',
-            milestoneTitle: params.milestoneTitle,
-            grossAmount: params.milestoneAmount,
-            feeAmount: params.freelancerFee,
-            feeRate: '5%',
-            netAmount: params.freelancerPayout,
-          } as Prisma.InputJsonValue,
-        },
-      });
-
-      if (params.freelancerFee > 0) {
-        await tx.transaction.create({
-          data: {
-            userId: params.freelancerId,
-            contractId: params.contractId,
-            milestoneId: params.milestoneId,
-            amount: params.freelancerFee,
-            currency: 'usd',
-            type: TransactionType.PLATFORM_FEE,
-            status: TransactionStatus.SUCCEEDED,
-            metadata: {
-              type: 'FREELANCER_RELEASE_FEE',
-              feeRole: 'FREELANCER',
-              feePercent: 5,
-              payoutDestination: 'WALLET',
-            } as Prisma.InputJsonValue,
-          },
-        });
-      }
-
-      return {
-        newWalletBalance: Number(updatedUser.walletBalance),
-      };
-    });
-  }
-
-  async creditDisputePayoutToWalletAtomic(params: {
-    freelancerId: number;
-    contractId: number;
-    milestoneId: number;
-    disputeId: number;
-    amount: number;
-  }) {
-    return this.prisma.$transaction(async (tx) => {
-      const updatedUser = await tx.user.update({
-        where: { id: params.freelancerId },
-        data: {
-          walletBalance: { increment: params.amount },
-        },
-        select: { walletBalance: true },
-      });
-
-      await tx.transaction.create({
-        data: {
-          userId: params.freelancerId,
-          contractId: params.contractId,
-          milestoneId: params.milestoneId,
-          disputeId: params.disputeId,
-          amount: params.amount,
-          currency: 'usd',
-          type: TransactionType.MILESTONE_PAYOUT,
-          status: TransactionStatus.SUCCEEDED,
-          metadata: {
-            payoutDestination: 'WALLET',
-            disputeSettlement: true,
-          } as Prisma.InputJsonValue,
-        },
-      });
-
-      return {
-        newWalletBalance: Number(updatedUser.walletBalance),
-      };
-    });
-  }
-
-  async getWalletSummary(userId: number) {
-    const [user, earnedAgg, completedWithdrawnAgg, pendingWithdrawnAgg] =
-      await this.prisma.$transaction([
-        this.prisma.user.findUnique({
-          where: { id: userId, deletedAt: null },
-          select: { walletBalance: true },
-        }),
-        this.prisma.transaction.aggregate({
-          where: {
-            userId,
-            type: TransactionType.MILESTONE_PAYOUT,
-            status: TransactionStatus.SUCCEEDED,
-          },
-          _sum: { amount: true },
-        }),
-        this.prisma.withdrawalRequest.aggregate({
-          where: {
-            userId,
-            status: WithdrawalStatus.COMPLETED,
-          },
-          _sum: { amount: true },
-        }),
-        this.prisma.withdrawalRequest.aggregate({
-          where: {
-            userId,
-            status: WithdrawalStatus.PENDING,
-          },
-          _sum: { amount: true },
-        }),
-      ]);
-
-    return {
-      balance: Number(user?.walletBalance ?? 0),
-      currency: 'usd',
-      totalEarned: Number(earnedAgg._sum.amount ?? 0),
-      totalWithdrawn: Number(completedWithdrawnAgg._sum.amount ?? 0),
-      pendingWithdrawalAmount: Number(pendingWithdrawnAgg._sum.amount ?? 0),
-    };
-  }
-
-  async createWithdrawalReserveAtomic(params: {
-    userId: number;
-    amount: number;
-    method: WithdrawalMethod;
-    bankName?: string;
-    bankAccountNumber?: string;
-    bankAccountHolder?: string;
-    note?: string;
-  }) {
-    return this.prisma.$transaction(async (tx) => {
-      const deducted = await tx.user.updateMany({
-        where: {
-          id: params.userId,
-          deletedAt: null,
-          walletBalance: { gte: params.amount },
-        },
-        data: {
-          walletBalance: { decrement: params.amount },
-        },
-      });
-
-      if (deducted.count === 0) {
-        throw InsufficientWalletBalanceException();
-      }
-
-      const updatedUser = await tx.user.findUniqueOrThrow({
-        where: { id: params.userId },
-        select: { walletBalance: true },
-      });
-
-      const withdrawal = await tx.withdrawalRequest.create({
-        data: {
-          userId: params.userId,
-          amount: params.amount,
-          currency: 'usd',
-          method: params.method,
-          status: WithdrawalStatus.PENDING,
-          bankName: params.bankName,
-          bankAccountNumber: params.bankAccountNumber,
-          bankAccountHolder: params.bankAccountHolder,
-          note: params.note,
-        },
-      });
-
-      const maskedAccount =
-        params.bankAccountNumber && params.bankAccountNumber.length > 4
-          ? `****${params.bankAccountNumber.slice(-4)}`
-          : params.bankAccountNumber;
-
-      const transaction = await tx.transaction.create({
-        data: {
-          userId: params.userId,
-          amount: params.amount,
-          currency: 'usd',
-          type: TransactionType.WITHDRAWAL,
-          status: TransactionStatus.PENDING,
-          metadata: {
-            withdrawalId: withdrawal.id,
-            method: params.method,
-            ...(params.bankName && { bankName: params.bankName }),
-            ...(params.bankAccountHolder && {
-              bankAccountHolder: params.bankAccountHolder,
-            }),
-            ...(maskedAccount && { maskedAccount }),
-          } as Prisma.InputJsonValue,
-        },
-      });
-
-      return {
-        withdrawal: {
-          ...withdrawal,
-          amount: Number(withdrawal.amount),
-        },
-        transactionId: transaction.id,
-        newBalance: Number(updatedUser.walletBalance),
-      };
-    });
-  }
-
-  async completeStripeWithdrawalAtomic(params: {
-    withdrawalId: number;
-    transactionId: number;
-    stripeTransferId: string;
-  }) {
-    return this.prisma.$transaction(async (tx) => {
-      const now = new Date();
-      const withdrawal = await tx.withdrawalRequest.update({
-        where: { id: params.withdrawalId },
-        data: {
-          status: WithdrawalStatus.COMPLETED,
-          stripeTransferId: params.stripeTransferId,
-          processedAt: now,
-        },
-      });
-
-      await tx.transaction.update({
-        where: { id: params.transactionId },
-        data: {
-          status: TransactionStatus.SUCCEEDED,
-          stripeTransferId: params.stripeTransferId,
-        },
-      });
-
-      return {
-        ...withdrawal,
-        amount: Number(withdrawal.amount),
-      };
-    });
-  }
-
-  async rollbackFailedStripeWithdrawalAtomic(params: {
-    userId: number;
-    withdrawalId: number;
-    transactionId: number;
-    amount: number;
-    reason: string;
-  }) {
-    return this.prisma.$transaction(async (tx) => {
-      await tx.user.update({
-        where: { id: params.userId },
-        data: {
-          walletBalance: { increment: params.amount },
-        },
-      });
-
-      await tx.withdrawalRequest.update({
-        where: { id: params.withdrawalId },
-        data: {
-          status: WithdrawalStatus.REJECTED,
-          rejectionReason: params.reason,
-          processedAt: new Date(),
-        },
-      });
-
-      await tx.transaction.update({
-        where: { id: params.transactionId },
-        data: {
-          status: TransactionStatus.FAILED,
-        },
-      });
-    });
-  }
-
-  async processWithdrawalByAdminAtomic(params: {
-    withdrawalId: number;
-    adminId: number;
-    status: 'COMPLETED' | 'REJECTED';
-    rejectionReason?: string;
-  }) {
-    return this.prisma.$transaction(async (tx) => {
-      const existing = await tx.withdrawalRequest.findUnique({
-        where: { id: params.withdrawalId },
-      });
-      if (!existing) {
-        throw WithdrawalNotFoundException();
-      }
-      if (existing.status !== WithdrawalStatus.PENDING) {
-        throw WithdrawalAlreadyProcessedException();
-      }
-
-      const now = new Date();
-      const updated = await tx.withdrawalRequest.update({
-        where: { id: params.withdrawalId },
-        data: {
-          status:
-            params.status === 'COMPLETED'
-              ? WithdrawalStatus.COMPLETED
-              : WithdrawalStatus.REJECTED,
-          processedAt: now,
-          processedById: params.adminId,
-          ...(params.status === 'REJECTED' &&
-            params.rejectionReason && {
-              rejectionReason: params.rejectionReason,
-            }),
-        },
-      });
-
-      if (params.status === 'REJECTED') {
-        await tx.user.update({
-          where: { id: existing.userId },
-          data: {
-            walletBalance: { increment: Number(existing.amount) },
-          },
-        });
-      }
-
-      const matchingTx = await tx.transaction.findFirst({
-        where: {
-          userId: existing.userId,
-          type: TransactionType.WITHDRAWAL,
-          metadata: {
-            path: ['withdrawalId'],
-            equals: params.withdrawalId,
-          },
-        },
-      });
-
-      if (matchingTx) {
-        await tx.transaction.update({
-          where: { id: matchingTx.id },
-          data: {
-            status:
-              params.status === 'COMPLETED'
-                ? TransactionStatus.SUCCEEDED
-                : TransactionStatus.FAILED,
-          },
-        });
-      }
-
-      return {
-        ...updated,
-        amount: Number(updated.amount),
-      };
-    });
-  }
-
-  async getWithdrawals(
-    query: GetWithdrawalListQueryType,
-    filter: { userId?: number },
-  ) {
-    const { page, limit, status } = query;
-    const skip = (page - 1) * limit;
-
-    const where: Prisma.WithdrawalRequestWhereInput = {
-      ...(filter.userId && { userId: filter.userId }),
-      ...(status && { status: status as WithdrawalStatus }),
-    };
-
-    const [rows, totalItems] = await this.prisma.$transaction([
-      this.prisma.withdrawalRequest.findMany({
-        where,
-        orderBy: { createdAt: 'desc' },
-        skip,
-        take: limit,
-      }),
-      this.prisma.withdrawalRequest.count({ where }),
-    ]);
-
-    return {
-      data: rows.map((row) => ({
-        ...row,
-        amount: Number(row.amount),
       })),
       totalItems,
       totalPages: Math.ceil(totalItems / limit),

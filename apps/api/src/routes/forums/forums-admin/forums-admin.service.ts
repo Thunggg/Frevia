@@ -27,15 +27,23 @@ import {
   FailedToDeleteForumCategoryException,
   ForumReportForbiddenException,
 } from './forums-admin.error';
+import { CacheService } from '../../../shared/services/cache.service';
 
 @Injectable()
 export class ForumAdminService {
-  constructor(private readonly adminRepository: ForumAdminRepository) {}
+  constructor(
+    private readonly adminRepository: ForumAdminRepository,
+    private readonly cacheService?: CacheService,
+  ) {}
 
-  async getAdminStats(roleName: string): Promise<ForumAdminStatsType> {
-    if (roleName !== RoleName.ADMIN) {
+  private ensureStaffAccess(roleName: string) {
+    if (roleName === RoleName.CLIENT || roleName === RoleName.FREELANCER) {
       throw ForumReportForbiddenException();
     }
+  }
+
+  async getAdminStats(roleName: string): Promise<ForumAdminStatsType> {
+    this.ensureStaffAccess(roleName);
     try {
       return await this.adminRepository.getAdminStats();
     } catch (error) {
@@ -52,9 +60,7 @@ export class ForumAdminService {
     limit: number,
     search?: string,
   ): Promise<ForumAdminCommentListResponseType> {
-    if (roleName !== RoleName.ADMIN) {
-      throw ForumReportForbiddenException();
-    }
+    this.ensureStaffAccess(roleName);
     try {
       const { comments, total } =
         await this.adminRepository.getAdminCommentLists(page, limit, search);
@@ -85,9 +91,7 @@ export class ForumAdminService {
     sortOrder?: 'asc' | 'desc',
     deleted?: string,
   ): Promise<ForumAdminCategoryListResponseType> {
-    if (roleName !== RoleName.ADMIN) {
-      throw ForumReportForbiddenException();
-    }
+    this.ensureStaffAccess(roleName);
     try {
       const { categories, total } =
         await this.adminRepository.getAdminCategoryLists(
@@ -120,9 +124,7 @@ export class ForumAdminService {
     roleName: string,
     categoryId: number,
   ): Promise<ForumCategoryDetailResponseType> {
-    if (roleName !== RoleName.ADMIN) {
-      throw ForumReportForbiddenException();
-    }
+    this.ensureStaffAccess(roleName);
     try {
       const category =
         await this.adminRepository.getAdminCategoryById(categoryId);
@@ -142,11 +144,11 @@ export class ForumAdminService {
     roleName: string,
     body: CreateForumCategoryBodyType,
   ): Promise<ForumCategoryType> {
-    if (roleName !== RoleName.ADMIN) {
-      throw ForumReportForbiddenException();
-    }
+    this.ensureStaffAccess(roleName);
     try {
-      return await this.adminRepository.createAdminCategory(body);
+      const result = await this.adminRepository.createAdminCategory(body);
+      this.cacheService?.delByPrefix('forum_categor');
+      return result;
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;
@@ -160,11 +162,11 @@ export class ForumAdminService {
     categoryId: number,
     body: UpdateForumCategoryBodyType,
   ): Promise<ForumCategoryType> {
-    if (roleName !== RoleName.ADMIN) {
-      throw ForumReportForbiddenException();
-    }
+    this.ensureStaffAccess(roleName);
     try {
-      return await this.adminRepository.updateAdminCategory(categoryId, body);
+      const result = await this.adminRepository.updateAdminCategory(categoryId, body);
+      this.cacheService?.delByPrefix('forum_categor');
+      return result;
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;
@@ -177,11 +179,11 @@ export class ForumAdminService {
     roleName: string,
     categoryId: number,
   ): Promise<{ message: string }> {
-    if (roleName !== RoleName.ADMIN) {
-      throw ForumReportForbiddenException();
-    }
+    this.ensureStaffAccess(roleName);
     try {
-      return await this.adminRepository.deleteAdminCategory(categoryId);
+      const result = await this.adminRepository.deleteAdminCategory(categoryId);
+      this.cacheService?.delByPrefix('forum_categor');
+      return result;
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;
@@ -194,11 +196,11 @@ export class ForumAdminService {
     roleName: string,
     categoryId: number,
   ): Promise<ForumCategoryType> {
-    if (roleName !== RoleName.ADMIN) {
-      throw ForumReportForbiddenException();
-    }
+    this.ensureStaffAccess(roleName);
     try {
-      return await this.adminRepository.restoreAdminCategory(categoryId);
+      const result = await this.adminRepository.restoreAdminCategory(categoryId);
+      this.cacheService?.delByPrefix('forum_categor');
+      return result;
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;
@@ -212,9 +214,7 @@ export class ForumAdminService {
     page: number,
     limit: number,
   ): Promise<PendingForumPostListResponseType> {
-    if (roleName !== RoleName.ADMIN) {
-      throw ForumReportForbiddenException();
-    }
+    this.ensureStaffAccess(roleName);
     try {
       const { posts, total } = await this.adminRepository.getPendingPosts(
         page,
@@ -244,9 +244,7 @@ export class ForumAdminService {
     status: 'APPROVED' | 'REJECTED',
     adminId: number,
   ): Promise<ForumPostType> {
-    if (roleName !== RoleName.ADMIN) {
-      throw ForumReportForbiddenException();
-    }
+    this.ensureStaffAccess(roleName);
     try {
       return await this.adminRepository.reviewForumPost(
         postId,
@@ -272,9 +270,7 @@ export class ForumAdminService {
     page: number,
     limit: number,
   ): Promise<ForumTrashPostListResponseType> {
-    if (roleName !== RoleName.ADMIN) {
-      throw ForumReportForbiddenException();
-    }
+    this.ensureStaffAccess(roleName);
     try {
       const { posts, total } = await this.adminRepository.getTrashPosts(
         page,
@@ -303,9 +299,7 @@ export class ForumAdminService {
     page: number,
     limit: number,
   ): Promise<ForumTrashCommentListResponseType> {
-    if (roleName !== RoleName.ADMIN) {
-      throw ForumReportForbiddenException();
-    }
+    this.ensureStaffAccess(roleName);
     try {
       const { comments, total } = await this.adminRepository.getTrashComments(
         page,
@@ -333,9 +327,7 @@ export class ForumAdminService {
     roleName: string,
     postId: number,
   ): Promise<ForumPostType> {
-    if (roleName !== RoleName.ADMIN) {
-      throw ForumReportForbiddenException();
-    }
+    this.ensureStaffAccess(roleName);
     try {
       return await this.adminRepository.restoreTrashPost(postId);
     } catch (error) {
@@ -350,9 +342,7 @@ export class ForumAdminService {
     roleName: string,
     commentId: number,
   ): Promise<ForumAdminCommentType> {
-    if (roleName !== RoleName.ADMIN) {
-      throw ForumReportForbiddenException();
-    }
+    this.ensureStaffAccess(roleName);
     try {
       return await this.adminRepository.restoreTrashComment(commentId);
     } catch (error) {

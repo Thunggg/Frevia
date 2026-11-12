@@ -1,6 +1,6 @@
 <mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/29.0.3 Chrome/140.0.7339.249 Electron/38.7.0 Safari/537.36" version="29.0.3">
   <diagram id="UC-06_02-view-role-detail" name="UC-06.02 View role detail">
-    <mxGraphModel dx="1042" dy="626" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+    <mxGraphModel dx="496" dy="298" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -43,8 +43,8 @@
             <mxPoint x="1280" y="1424" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="15" value="opt" style="shape=umlFrame;whiteSpace=wrap;html=1;pointerEvents=0;width=40;height=30;fontSize=13;fillColor=none;" parent="1" vertex="1">
-          <mxGeometry x="70" y="480" width="470" height="170" as="geometry" />
+        <mxCell id="15" value="alt" style="shape=umlFrame;whiteSpace=wrap;html=1;pointerEvents=0;width=40;height=30;fontSize=13;fillColor=none;" parent="1" vertex="1">
+          <mxGeometry x="70" y="480" width="460" height="170" as="geometry" />
         </mxCell>
         <mxCell id="16" value="alt" style="shape=umlFrame;whiteSpace=wrap;html=1;pointerEvents=0;width=40;height=30;fontSize=13;fillColor=none;" parent="1" vertex="1">
           <mxGeometry x="70" y="978" width="820" height="366" as="geometry" />
@@ -74,10 +74,10 @@
           <mxGeometry x="505" y="400" width="10" height="890" as="geometry" />
         </mxCell>
         <mxCell id="25" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};" parent="1" vertex="1">
-          <mxGeometry x="650" y="690" width="10" height="560" as="geometry" />
+          <mxGeometry x="650" y="680" width="10" height="570" as="geometry" />
         </mxCell>
         <mxCell id="26" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};" parent="1" vertex="1">
-          <mxGeometry x="805" y="710" width="10" height="510" as="geometry" />
+          <mxGeometry x="805" y="700" width="10" height="520" as="geometry" />
         </mxCell>
         <mxCell id="27" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};" parent="1" vertex="1">
           <mxGeometry x="1275" y="788" width="10" height="52" as="geometry" />
@@ -112,7 +112,7 @@
             <mxPoint x="165" y="565" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="jwt_div_02" value="" style="endArrow=none;dashed=1;html=1;rounded=0;" parent="1" edge="1">
+        <mxCell id="jwt_div_02" value="" style="endArrow=none;dashed=1;html=1;rounded=0;entryX=0.999;entryY=0.563;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" edge="1" target="15">
           <mxGeometry relative="1" as="geometry">
             <mxPoint x="70" y="576" as="sourcePoint" />
             <mxPoint x="540" y="576" as="targetPoint" />
@@ -135,14 +135,14 @@
         </mxCell>
         <mxCell id="34" value="3. Send request by&lt;br&gt;get method" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=12;" parent="1" edge="1">
           <mxGeometry relative="1" as="geometry">
-            <mxPoint x="515" y="690" as="sourcePoint" />
-            <mxPoint x="650" y="690" as="targetPoint" />
+            <mxPoint x="515" y="679" as="sourcePoint" />
+            <mxPoint x="650" y="679" as="targetPoint" />
           </mxGeometry>
         </mxCell>
         <mxCell id="35" value="4. getRoleById(id)" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=12;" parent="1" edge="1">
           <mxGeometry relative="1" as="geometry">
-            <mxPoint x="660" y="710" as="sourcePoint" />
-            <mxPoint x="805" y="710" as="targetPoint" />
+            <mxPoint x="660" y="700" as="sourcePoint" />
+            <mxPoint x="805" y="700" as="targetPoint" />
           </mxGeometry>
         </mxCell>
         <mxCell id="36" value="5. findById(id)" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=12;" parent="1" edge="1">

@@ -46,11 +46,6 @@
   "Error.HoldIntentCancelFailed": "Không thể hủy lệnh giữ tiền Stripe",
   "Error.HoldIntentCaptureFailed": "Không thể khớp lệnh trừ tiền giữ chỗ Stripe",
   "Error.HoldMilestoneRequired": "Vui lòng chọn ít nhất một milestone để giữ tiền",
-  "Error.InsufficientWalletBalance": "Số dư ví không đủ để thực hiện yêu cầu rút tiền này",
-  "Error.InvalidWithdrawalAmount": "Số tiền rút phải lớn hơn 0",
-  "Error.BankDetailsRequired": "Vui lòng nhập đầy đủ tên ngân hàng, số tài khoản và tên chủ tài khoản",
-  "Error.WithdrawalNotFound": "Không tìm thấy yêu cầu rút tiền",
-  "Error.WithdrawalAlreadyProcessed": "Yêu cầu rút tiền này đã được xử lý trước đó",
   "Error.ConversationAccessDenied": "Bạn không có quyền truy cập cuộc trò chuyện này",
   "Error.ConversationNotFound": "Không tìm thấy cuộc trò chuyện",
   "Error.CreateUserRoleNotFound": "Không tìm thấy vai trò",
@@ -212,6 +207,7 @@
   "Error.JobStatusInvalid": "Trạng thái công việc không hợp lệ",
   "Error.MessageAccessDenied": "Bạn không có quyền truy cập tin nhắn này",
   "Error.MessageNotFound": "Không tìm thấy tin nhắn",
+  "Error.MilestoneNotEligibleForRefund": "Chỉ có thể tự động hoàn tiền khi cột mốc đã trễ hạn (Late) hoặc freelancer chưa bắt đầu làm việc.",
   "Error.MissingRoleInToken": "Phiên đăng nhập không có vai trò. Vui lòng đăng nhập lại",
   "Error.NotAnExpertAccount": "Tài khoản này không phải tài khoản chuyên gia",
   "Error.NothingToUpdate": "Không có thông tin nào để cập nhật",
@@ -362,5 +358,7 @@
   "You can only update your own profile.": "Bạn chỉ có thể cập nhật hồ sơ của chính mình",
   "Error.SavedSearchLimitExceeded": "Bạn đã đạt giới hạn tối đa 30 tìm kiếm đã lưu. Vui lòng xóa bớt trước khi tạo mới.",
   "Error.JobAlertLimitExceeded": "Bạn đã đạt giới hạn tối đa 10 thông báo việc làm. Vui lòng xóa bớt trước khi tạo mới.",
-  "Error.JobAlertDuplicateCriteria": "Bạn đã có một thông báo việc làm với tiêu chí tìm kiếm này."
+  "Error.JobAlertDuplicateCriteria": "Bạn đã có một thông báo việc làm với tiêu chí tìm kiếm này.",
+  "Tài khoản của bạn đã bị khóa bởi Quản trị viên.": "Tài khoản của bạn đã bị khóa bởi Quản trị viên.",
+  "Phiên đăng nhập này đã bị thu hồi từ một thiết bị khác.": "Phiên đăng nhập này đã bị thu hồi từ một thiết bị khác."
 }

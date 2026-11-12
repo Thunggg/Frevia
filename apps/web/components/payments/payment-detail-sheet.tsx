@@ -60,7 +60,6 @@ const METADATA_LABELS: Record<string, string> = {
   role: "Payer / Party Role",
   milestoneCount: "Milestones Covered",
   milestoneIds: "Milestone IDs",
-  milestoneTitle: "Milestone",
   milestonesAmount: "Milestones Subtotal",
   platformFeeAmount: "Platform Fee",
   contractTotal: "Contract Value",
@@ -68,12 +67,6 @@ const METADATA_LABELS: Record<string, string> = {
   netAmount: "Net Payout (95%)",
   feeAmount: "Fee Deducted",
   feeRate: "Fee Rate",
-  payoutDestination: "Payout Destination",
-  withdrawalId: "Withdrawal Request ID",
-  method: "Withdrawal Method",
-  bankName: "Bank Name",
-  bankAccountHolder: "Account Holder",
-  maskedAccount: "Bank Account",
   holdMode: "Settlement Mode",
   reason: "Reason",
   note: "Note",
@@ -125,17 +118,11 @@ function getTransactionSummaryNote(tx: TransactionType): string {
         ? "Authorization hold placed on card. Funds capture automatically when the contract is signed by both parties."
         : "Escrow funds secured in Stripe for contract milestone delivery.";
     case "MILESTONE_PAYOUT":
-      return "Milestone release credited to freelancer's platform wallet.";
+      return "Milestone release transferred to the freelancer's Stripe payout account.";
     case "PLATFORM_FEE":
       return "Frevia platform service fee recorded for contract processing.";
     case "REFUND":
       return "Escrow funds returned to the client's original payment method.";
-    case "WITHDRAWAL":
-      return tx.status === "PENDING"
-        ? "Withdrawal request submitted and awaiting bank transfer completion."
-        : tx.status === "FAILED"
-          ? "Withdrawal request was rejected or failed and funds returned to wallet."
-          : "Withdrawal transferred out of your platform wallet.";
     case "DISPUTE_FEE":
       return "Dispute settlement charge recorded on this contract.";
     default:

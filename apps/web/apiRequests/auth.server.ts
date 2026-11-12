@@ -1,5 +1,6 @@
 import "server-only";
 
+import { cache } from "react";
 import { cookies } from "next/headers";
 import {
   accessTokenNeedsRefresh,
@@ -9,8 +10,7 @@ import {
 import { envConfig } from "@/configs/validate-env";
 import type { ApiResponse, GetMeResType } from "@shared/types";
 
-const authServerRequest = {
-  async getMe(): Promise<GetMeResType | null> {
+const getMeInternal = cache(async (): Promise<GetMeResType | null> => {
     const cookieStore = await cookies();
     let accessToken = cookieStore.get("accessToken")?.value;
     const refreshToken = cookieStore.get("refreshToken")?.value;
@@ -72,7 +72,7 @@ const authServerRequest = {
       }
       throw error;
     }
-  },
-};
+});
 
+const authServerRequest = { getMe: getMeInternal };
 export default authServerRequest;

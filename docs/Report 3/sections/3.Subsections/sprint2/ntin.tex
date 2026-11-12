@@ -1,0 +1,1431 @@
+% =================================================================
+% Sprint 2 - Milestone Management (ntin)
+% The functions below follow the detailed form of the report template:
+% Function Trigger, Function Description, Screen Layout and Function Details.
+% They are written against the current implementation in
+%   apps/api/src/routes/milestone, apps/api/src/routes/milestone-file,
+%   apps/api/src/routes/milestone-submission, and the web workspace in
+%   apps/web/app/(client)/client/contracts/[slug] and
+%   apps/web/app/(freelancer)/freelancer/contracts/[slug].
+% =================================================================
+
+\subsection{Milestone Management}
+
+% -----------------------------------------------------------------
+% UC-24.01: View Milestone List
+% -----------------------------------------------------------------
+\subsubsection{ View Milestone List}
+
+\fnhead{Function Trigger}
+An authenticated contract participant (Client or Freelancer) accesses the Contract Detail workspace and views the default Milestones timeline tab.\newline
+\textbf{Navigation path:} Dashboard $\rightarrow$ Contracts $\rightarrow$ Contract Detail (\texttt{/contracts/:slug}) $\rightarrow$ Milestones Tab.
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item \textbf{Primary Actor:} Client, Freelancer.
+      \item \textbf{Secondary Actor:} Administrator (\texttt{ADMIN} role).
+      \item \textbf{Supporting Systems:} Frevia Web application (Next.js), Frevia REST API (NestJS), Prisma ORM layer, and PostgreSQL relational database.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent Displays the sequential deliverable roadmap of a contract. Allows participants to view all milestone stages, monitor work progress status (\texttt{PENDING}, \texttt{IN\_PROGRESS}, \texttt{SUBMITTED}, \texttt{CHANGES\_REQUESTED}, \texttt{COMPLETED}), observe escrow funding state (\texttt{UNPAID}, \texttt{FUNDED}, \texttt{RELEASED}), and track upcoming deadlines.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item Contract Detail workspace at \texttt{/contracts/:slug} with active ``Milestones'' tab.
+      \item Financial progress banner rendering aggregate budget metrics: Total Budget (\$USD), Escrow Funded Balance, Released Earnings, and Remaining Balance.
+      \item Vertical chronological roadmap rendering milestone cards with sequence numbers, titles, delivery due dates, amounts, status badges, and action triggers.
+      \item Role-specific contextual action buttons (e.g. ``Fund Milestone'' for Client, ``Start Work'' or ``Submit Work'' for Freelancer).
+      \item Filter and status filter pills for quickly locating pending, active, or submitted milestone stages.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item The client application requests \texttt{GET /api/contracts/:contractId/milestones}.
+      \item \texttt{MilestoneService.getMilestoneList()} validates caller identity: verifies that the user is the contract's Client, assigned Freelancer, or an Admin.
+      \item Queries \texttt{prisma.milestone.findMany} filtering by \texttt{contractId} where \texttt{deletedAt = null}.
+      \item Orders milestones chronologically by creation sequence and target due date.
+      \item Aggregates financial totals: sums funded balances, counts total submissions per milestone, and checks for open dispute flags.
+      \item Returns HTTP 200 with the milestone collection and summary metrics.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint2/ntin/ViewMilestoneList.png}{Milestones timeline roadmap screen}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item Top progress section displays a visual progress bar indicating percentage of project milestones approved and funded.
+      \item Each milestone card presents a sequence step badge (e.g., Step 1, Step 2), milestone title, deliverable description summary, and dollar amount.
+      \item Color-coded badges indicate operational status (\texttt{IN\_PROGRESS} in blue, \texttt{SUBMITTED} in amber, \texttt{COMPLETED} in green).
+      \item Expandable accordion toggle allows viewing deliverable details, attached files count, and submission history inline.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+      \texttt{contractId} & Numeric contract identifier (integer path parameter).\\ \hline
+      \texttt{status} & Optional milestone status filter (enum: \texttt{PENDING}, \texttt{IN\_PROGRESS}, \texttt{SUBMITTED}, \texttt{COMPLETED}).\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item The calling user must be an authorized contract participant or an Administrator.
+      \item The contract must exist in the database and not be deleted.
+\end{itemize}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+      \item BR-MS-01: Only active milestones where \texttt{deletedAt = null} shall be returned.
+      \item BR-MS-02: Milestones shall be ordered sequentially according to milestone sequence and creation order.
+      \item BR-MS-03: Milestones in \texttt{SUBMITTED} or \texttt{CHANGES\_REQUESTED} state shall be automatically highlighted for action.
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
+      \item The user navigates to the Contract Detail workspace and selects the Milestones tab.
+      \item The web client submits \texttt{GET /api/contracts/:contractId/milestones}.
+      \item The API validates participant access and retrieves active milestones.
+      \item The system computes financial totals and deliverable progress percentages.
+      \item The client renders the sequential milestone roadmap and role-specific action buttons.
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Case}{Description}
+      A1 & User is not a participant in the contract. API returns HTTP 403 Forbidden; client displays ``Access denied.''\\ \hline
+      A2 & Contract not found. API returns HTTP 404 Not Found; client redirects to error page.\\ \hline
+      A3 & Database query fails. API returns HTTP 500; client displays retry banner.\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Data Name}{Description}
+      \texttt{milestones[]} & Array of milestone records with title, amount, status, paymentStatus, dueDate, and submission count.\\ \hline
+      \texttt{financials} & Object summarizing total budget, escrow balance, and released earnings.\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item Milestone timeline is rendered with current progress and payment statuses.
+\end{itemize}
+
+% -----------------------------------------------------------------
+% UC-24.02: View Milestone Detail
+% -----------------------------------------------------------------
+\subsubsection{ View Milestone Detail}
+
+\fnhead{Function Trigger}
+A user clicks on a milestone card header, title link, or expansion toggle in the milestone roadmap.\newline
+\textbf{Navigation path:} Contract Detail $\rightarrow$ Milestones Tab $\rightarrow$ Click Milestone Card (\texttt{/contracts/:slug/milestones/:id}).
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item \textbf{Primary Actor:} Client, Freelancer, Administrator.
+      \item \textbf{Supporting Systems:} Frevia Web application (Next.js), Frevia REST API (NestJS), Prisma ORM layer, and PostgreSQL database.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent Expands a milestone to inspect detailed deliverable requirements, acceptance criteria, attached reference files, deliverable submission history, client review feedback, and change request revision notes.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item Expanded milestone detail panel or modal view.
+      \item Milestone header: sequence number, title, amount, escrow payment badge, and due date countdown timer.
+      \item Deliverable specifications section rendering formatted Markdown description of expected work deliverables.
+      \item Submissions history accordion displaying all past submission cycles with submission notes and links.
+      \item Attached files tray with download links and file size badges.
+      \item Review actions bar: ``Approve Milestone'', ``Request Changes'', ``Open Dispute'', or ``Submit Deliverables''.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item The client issues an HTTP request: \texttt{GET /api/contracts/:contractId/milestones/:id}.
+      \item \texttt{MilestoneService.getMilestoneDetail()} verifies authorization for the target contract.
+      \item Queries \texttt{prisma.milestone.findUnique} including relation arrays: \texttt{submissions}, \texttt{files}, and dispute links.
+      \item Validates that the requested milestone belongs to the designated \texttt{contractId} and has \texttt{deletedAt = null}.
+      \item Returns HTTP 200 with the composite milestone entity.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint2/ntin/ViewMilestoneDetail.png}{Milestone detail view screen}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item The panel header renders the milestone title, sequence tag, due date badge, and USD budget badge.
+      \item Scope section displays detailed criteria and deliverables required for approval.
+      \item Latest submission box displays freelancer submission notes, external preview URL, and deliverable attachments.
+      \item If revisions were requested, a feedback callout renders the client's revision instructions.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+      \texttt{contractId} & Numeric contract identifier (integer path parameter).\\ \hline
+      \texttt{id} & Numeric milestone identifier (integer path parameter).\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item Milestone ID must exist and be a valid child of the specified contract.
+      \item Caller must be an authorized contract participant or an Administrator.
+\end{itemize}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+      \item BR-MS-04: Deliverable specifications and acceptance criteria are legally binding once the milestone is funded.
+      \item BR-MS-05: Milestone submissions history must preserve all revision cycles for audit traceability.
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
+      \item The user clicks a milestone card in the timeline.
+      \item The client requests \texttt{GET /api/contracts/:contractId/milestones/:id}.
+      \item The API validates access and loads milestone details with nested submissions and files.
+      \item The client expands the milestone panel and renders full deliverable criteria and history.
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Case}{Description}
+      A1 & Milestone not found or deleted. API returns HTTP 404 Not Found; client displays ``Milestone not found.''\\ \hline
+      A2 & Caller is not authorized. API returns HTTP 403 Forbidden; access denied.\\ \hline
+      A3 & Network connection failure. Client displays error message with retry button.\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Data Name}{Description}
+      \texttt{milestone} & Full milestone entity including title, description, amount, status, paymentStatus, submissions[], and files[].\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item Detailed milestone criteria, files, and submission cycles are displayed.
+\end{itemize}
+
+% -----------------------------------------------------------------
+% UC-24.03: Create Milestone
+% -----------------------------------------------------------------
+\subsubsection{ Create Milestone}
+
+\fnhead{Function Trigger}
+A Client clicks the ``+ Add Milestone'' button in the contract workspace to define a new project milestone.\newline
+\textbf{Navigation path:} Contract Workspace $\rightarrow$ Milestones Tab $\rightarrow$ Click ``+ Add Milestone''.
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item \textbf{Primary Actor:} Client (\texttt{CLIENT} role).
+      \item \textbf{Supporting Systems:} Frevia Web application (Next.js), Frevia REST API (NestJS), Prisma ORM layer, and PostgreSQL database.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent Allows a Client to append a new deliverable milestone stage to an existing contract, defining milestone title, deliverables scope, monetary value, and target completion deadline.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item ``Add Milestone'' modal dialog or inline form builder.
+      \item Milestone title text field (5--100 characters).
+      \item Deliverable description textarea detailing expected tasks and acceptance criteria.
+      \item Amount input field formatted in USD with live currency validation.
+      \item Due date picker requiring selection of a future completion date.
+      \item Action buttons: ``Create Milestone'' and ``Cancel''.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item Client submits an HTTP request: \texttt{POST /api/contracts/:contractId/milestones} with \texttt{title}, \texttt{description}, \texttt{amount}, and \texttt{dueDate}.
+      \item \texttt{MilestoneService.createMilestone()} verifies that caller is the contract's Client.
+      \item Checks that contract status is \texttt{PENDING}, \texttt{DRAFT}, or \texttt{ACTIVE}.
+      \item Computes next sequential order index.
+      \item Persists new \texttt{Milestone} entity with initial status \texttt{PENDING} and \texttt{paymentStatus = UNPAID}.
+      \item Inside a transaction, recalculates contract \texttt{totalAmount} to include the new milestone budget.
+      \item Dispatches an alert notification to the Freelancer.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint2/ntin/CreateMilestone.png}{Create Milestone dialog}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item Dialog features title ``Add New Milestone'' and contract reference header.
+      \item Input fields: Milestone Name, Detailed Description, Amount (\$USD), and Due Date picker.
+      \item Informational notice notes that adding a milestone increases total contract value.
+      \item Footer buttons: ``Cancel'' and ``Add Milestone''.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+      \texttt{contractId} & Numeric contract identifier (integer path parameter).\\ \hline
+      \texttt{title} & Milestone title (string, 5--100 characters).\\ \hline
+      \texttt{description} & Detailed deliverables and acceptance requirements (string, 10--2000 characters).\\ \hline
+      \texttt{amount} & Monetary milestone value in USD (decimal, minimum 5.00).\\ \hline
+      \texttt{dueDate} & Target delivery deadline formatted as ISO 8601 future date.\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item Only the Client owner of the contract can create milestones.
+      \item Contract must not be in \texttt{COMPLETED} or \texttt{CANCELLED} status.
+      \item Milestone amount must be positive and at least \$5.00.
+      \item Due date must be strictly in the future.
+\end{itemize}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+      \item BR-MS-06: Adding a milestone dynamically updates total contract budget commitments.
+      \item BR-MS-07: Newly created milestones are initialized with status \texttt{PENDING} and payment status \texttt{UNPAID}.
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
+      \item The Client clicks ``+ Add Milestone'' in the contract roadmap.
+      \item The system opens the Create Milestone dialog.
+      \item The Client enters title, description, amount, and due date.
+      \item The Client clicks ``Create Milestone''.
+      \item The system validates fields, computes sequential index, and persists the milestone.
+      \item Contract total budget is updated to reflect the new amount.
+      \item The dialog closes, the milestone card is added to the roadmap, and the Freelancer is notified.
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Case}{Description}
+      A1 & Amount is less than 5.00 USD. API returns HTTP 422 with validation error.\\ \hline
+      A2 & Due date is in the past. API returns HTTP 422; displays ``Due date must be in the future.''\\ \hline
+      A3 & Caller is not the Client owner. API returns HTTP 403 Forbidden; access denied.\\ \hline
+      A4 & Contract is completed or cancelled. API returns HTTP 422; creation rejected.\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Data Name}{Description}
+      \texttt{milestone} & Created milestone entity with generated ID, status, and timestamps.\\ \hline
+      \texttt{contractTotal} & Updated aggregated contract budget commitment.\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item New milestone record created with status \texttt{PENDING}.
+      \item Contract total budget updated.
+      \item Freelancer notified of the new milestone.
+\end{itemize}
+
+% -----------------------------------------------------------------
+% UC-24.04: Update Milestone
+% -----------------------------------------------------------------
+\subsubsection{ Update Milestone}
+
+\fnhead{Function Trigger}
+A Client clicks the ``Edit'' action on an unfunded or pending milestone card.\newline
+\textbf{Navigation path:} Contract Detail $\rightarrow$ Milestones Tab $\rightarrow$ Milestone Card Menu $\rightarrow$ Click ``Edit Milestone''.
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item \textbf{Primary Actor:} Client (\texttt{CLIENT} role).
+      \item \textbf{Supporting Systems:} Frevia Web application (Next.js), Frevia REST API (NestJS), Prisma ORM layer, and PostgreSQL database.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent Allows a Client to adjust deliverable descriptions, milestone titles, budget allocations, or deadline dates on milestones that have not yet been funded or locked into active escrow execution.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item Edit Milestone modal pre-populated with current milestone properties.
+      \item Title input, Markdown deliverables textarea, amount input, and due date picker.
+      \item Action buttons: ``Save Changes'' and ``Cancel''.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item Client submits an HTTP request: \texttt{PATCH /api/contracts/:contractId/milestones/:id} with updated attributes.
+      \item \texttt{MilestoneService.updateMilestone()} verifies that caller is the contract's Client.
+      \item Checks that milestone payment status is \texttt{UNPAID}; funded milestones cannot have their amounts altered without refund.
+      \item Updates milestone attributes in the database and recalculates contract total budget.
+      \item Records update activity and notifies the Freelancer.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint2/ntin/UpdateMilestone.png}{Edit Milestone modal}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item Modal displays header ``Edit Milestone \#Step''.
+      \item Form fields display existing milestone data with edit focus.
+      \item Footer renders secondary ``Discard'' and primary ``Save Changes'' buttons.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+      \texttt{contractId} & Numeric contract identifier (integer path parameter).\\ \hline
+      \texttt{id} & Numeric milestone identifier (integer path parameter).\\ \hline
+      \texttt{title} & Updated milestone title (string, optional).\\ \hline
+      \texttt{description} & Updated deliverable description (string, optional).\\ \hline
+      \texttt{amount} & Updated monetary value (decimal, optional).\\ \hline
+      \texttt{dueDate} & Updated deadline date (ISO 8601 future date, optional).\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item Caller must be the contract's Client.
+      \item Milestone must reside in \texttt{UNPAID} payment status.
+      \item Due date must be set in the future.
+\end{itemize}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+      \item BR-MS-08: Milestones that have already been funded in escrow cannot be modified without formal cancellation or refund.
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
+      \item Client selects ``Edit Milestone'' on an unfunded milestone card.
+      \item The system displays the edit modal with current attributes.
+      \item Client modifies fields and clicks ``Save Changes''.
+      \item System validates inputs and updates database records.
+      \item Updated milestone is rendered and Freelancer is notified.
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Case}{Description}
+      A1 & Milestone is already funded. API returns HTTP 422 with error \texttt{MilestoneAlreadyFundedException}; editing locked.\\ \hline
+      A2 & Caller is not the Client. API returns HTTP 403 Forbidden; access denied.\\ \hline
+      A3 & Invalid due date provided. System highlights date error.\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Data Name}{Description}
+      \texttt{milestone} & Updated milestone record with revised attributes.\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item Milestone attributes updated in database.
+      \item Freelancer notified of changes.
+\end{itemize}
+
+% -----------------------------------------------------------------
+% UC-24.05: Delete Milestone
+% -----------------------------------------------------------------
+\subsubsection{ Delete Milestone}
+
+\fnhead{Function Trigger}
+A Client clicks the ``Delete Milestone'' action on an unfunded milestone card.\newline
+\textbf{Navigation path:} Contract Detail $\rightarrow$ Milestones Tab $\rightarrow$ Milestone Menu $\rightarrow$ Click ``Delete Milestone''.
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item \textbf{Primary Actor:} Client (\texttt{CLIENT} role).
+      \item \textbf{Supporting Systems:} Frevia Web application (Next.js), Frevia REST API (NestJS), Prisma ORM layer, and PostgreSQL database.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent Allows a Client to remove an unnecessary or cancelled milestone stage from a contract before it has been funded in escrow.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item Delete action option in milestone card contextual menu.
+      \item Confirmation dialog: ``Are you sure you want to delete this milestone? Total contract value will be reduced.''.
+      \item Action buttons: ``Delete Milestone'' (destructive red) and ``Cancel''.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item Client submits an HTTP request: \texttt{DELETE /api/contracts/:contractId/milestones/:id}.
+      \item \texttt{MilestoneService.deleteMilestone()} validates caller is the contract's Client.
+      \item Checks that milestone payment status is strictly \texttt{UNPAID}; funded milestones cannot be deleted.
+      \item Soft-deletes milestone by setting \texttt{deletedAt = new Date()}.
+      \item Adjusts contract \texttt{totalAmount} downwards to exclude the deleted milestone value.
+      \item Returns HTTP 200 with deletion confirmation.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint2/ntin/DeleteMilestone.png}{Delete Milestone confirmation dialog}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item Modal displays red trash icon and heading ``Delete Milestone''.
+      \item Message warns that deleting removes the deliverable stage and deducts its amount from total budget.
+      \item Footer buttons: ``Cancel'' and ``Confirm Delete''.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+      \texttt{contractId} & Numeric contract identifier (integer path parameter).\\ \hline
+      \texttt{id} & Numeric milestone identifier (integer path parameter).\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item Caller must be the Client owner of the contract.
+      \item Milestone must reside in \texttt{UNPAID} payment status.
+      \item At least one milestone must remain on the contract.
+\end{itemize}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+      \item BR-MS-09: Funded milestones cannot be deleted; they must be refunded or completed.
+      \item BR-MS-10: Deleting a milestone reduces the aggregate contract budget commitment.
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
+      \item Client clicks ``Delete Milestone'' on an unfunded milestone card.
+      \item The system opens the confirmation dialog.
+      \item Client clicks ``Confirm Delete''.
+      \item System marks milestone with \texttt{deletedAt = now()} and recalculates contract total.
+      \item Dialog closes, card is removed from roadmap, and success notification appears.
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Case}{Description}
+      A1 & Milestone is funded in escrow. API returns HTTP 422 with error \texttt{CannotDeleteFundedMilestoneException}; deletion blocked.\\ \hline
+      A2 & Attempt to delete the only remaining milestone. API returns HTTP 422; contracts must have at least one milestone.\\ \hline
+      A3 & Caller is not the Client. API returns HTTP 403 Forbidden; access denied.\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Data Name}{Description}
+      \texttt{success} & Boolean confirmation of successful deletion (\texttt{true}).\\ \hline
+      \texttt{updatedContractTotal} & Recalculated contract budget value.\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item Milestone is soft-deleted in the database.
+      \item Contract budget updated and card removed from UI.
+\end{itemize}
+
+% -----------------------------------------------------------------
+% UC-24.06: Request Milestone Changes
+% -----------------------------------------------------------------
+\subsubsection{ Request Milestone Changes}
+
+\fnhead{Function Trigger}
+The Client clicks the ``Request Changes'' button on a submitted milestone review panel after inspecting deliverables.\newline
+\textbf{Navigation path:} Contract Detail $\rightarrow$ Milestones Tab $\rightarrow$ Submitted Milestone $\rightarrow$ Click ``Request Changes''.
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item \textbf{Primary Actor:} Client (\texttt{CLIENT} role).
+      \item \textbf{Secondary Actor:} Freelancer (\texttt{FREELANCER} role).
+      \item \textbf{Supporting Systems:} Frevia Web application (Next.js), Frevia REST API (NestJS), Prisma ORM layer, and PostgreSQL database.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent Allows a Client to reject a submitted deliverable cycle and request revisions from the Freelancer, providing detailed written feedback, bug reports, and specific adjustment requirements.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item ``Request Changes'' button in the review toolbar of a submitted milestone.
+      \item Request Changes modal dialog with feedback textarea supporting rich formatting.
+      \item Revision guideline notes: prompts client to provide actionable, concrete feedback.
+      \item Action buttons: ``Send Revision Request'' and ``Cancel''.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item Client submits an HTTP request: \texttt{PATCH /api/contracts/:contractId/milestones/:milestoneId/submissions/:id/request-changes} with \texttt{comment}.
+      \item \texttt{MilestoneSubmissionService.requestChanges()} verifies caller is the contract's Client.
+      \item Checks that milestone status is currently \texttt{SUBMITTED}.
+      \item Updates submission record with client review comment, review status \texttt{CHANGES\_REQUESTED}, and review timestamp.
+      \item Transitions milestone status to \texttt{CHANGES\_REQUESTED}.
+      \item Dispatches revision alert notification to the Freelancer.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint2/ntin/RequestMilestoneChanges.png}{Request Milestone Changes dialog}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item Modal displays title ``Request Deliverable Changes''.
+      \item Textarea for revision feedback with placeholder ``Explain what changes are required before approval\ldots''.
+      \item Character count indicator (minimum 10 characters).
+      \item Footer renders secondary ``Cancel'' and primary orange ``Send Change Request'' buttons.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+      \texttt{contractId} & Numeric contract identifier (integer path parameter).\\ \hline
+      \texttt{milestoneId} & Numeric milestone identifier (integer path parameter).\\ \hline
+      \texttt{id} & Numeric submission identifier (integer path parameter).\\ \hline
+      \texttt{comment} & Detailed client feedback explaining required adjustments (string, 10--2000 characters).\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item Caller must be the Client owner of the contract.
+      \item Target milestone must reside in \texttt{SUBMITTED} status.
+      \item Feedback comment must contain at least 10 non-whitespace characters.
+\end{itemize}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+      \item BR-MS-11: Requesting changes transitions milestone status to \texttt{CHANGES\_REQUESTED} and resets the approval timer.
+      \item BR-MS-12: The milestone remains funded in escrow while changes are being performed by the freelancer.
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
+      \item Client inspects submitted deliverables and clicks ``Request Changes''.
+      \item System opens the Request Changes dialog.
+      \item Client types detailed feedback and clicks ``Send Revision Request''.
+      \item System updates submission and sets milestone status to \texttt{CHANGES\_REQUESTED}.
+      \item Modal closes, UI displays revision status, and Freelancer receives revision alert.
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Case}{Description}
+      A1 & Milestone is not in \texttt{SUBMITTED} status. API returns HTTP 422 with error \texttt{MilestoneNotSubmittedException}.\\ \hline
+      A2 & Feedback comment is shorter than 10 characters. Form validation rejects submission.\\ \hline
+      A3 & Caller is not the Client. API returns HTTP 403 Forbidden; access denied.\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Data Name}{Description}
+      \texttt{submission} & Updated submission entity with revision comment and review status.\\ \hline
+      \texttt{milestoneStatus} & Updated milestone status (\texttt{CHANGES\_REQUESTED}).\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item Milestone status updated to \texttt{CHANGES\_REQUESTED}.
+      \item Feedback recorded in submission history.
+      \item Freelancer notified to re-work deliverables.
+\end{itemize}
+
+% -----------------------------------------------------------------
+% UC-24.07: Approve Milestone
+% -----------------------------------------------------------------
+\subsubsection{ Approve Milestone}
+
+\fnhead{Function Trigger}
+The Client clicks the ``Approve Milestone'' button on a submitted milestone after verifying all deliverables meet quality criteria.\newline
+\textbf{Navigation path:} Contract Detail $\rightarrow$ Milestones Tab $\rightarrow$ Submitted Milestone $\rightarrow$ Click ``Approve Milestone''.
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item \textbf{Primary Actor:} Client (\texttt{CLIENT} role).
+      \item \textbf{Secondary Actor:} Freelancer (\texttt{FREELANCER} role).
+      \item \textbf{Supporting Systems:} Frevia Web application (Next.js), Frevia REST API (NestJS), Stripe Connect payment release service, Prisma ORM, and PostgreSQL database.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent Formally accepts submitted milestone deliverables as complete and satisfactory. Automatically triggers escrow fund release via Stripe Connect, transferring milestone earnings to the Freelancer's account minus platform service fees, and marks the milestone as \texttt{COMPLETED}.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item Prominent green ``Approve Milestone'' action button on submitted milestone card.
+      \item Approval confirmation modal displaying milestone deliverable summary, escrow release amount, and platform fee breakdown.
+      \item Action buttons: ``Confirm Approval \& Release Funds'' and ``Cancel''.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item Client submits an HTTP request: \texttt{PATCH /api/contracts/:contractId/milestones/:milestoneId/submissions/:id/approve}.
+      \item \texttt{MilestoneSubmissionService.approveMilestone()} verifies caller is the contract's Client.
+      \item Verifies milestone is in \texttt{SUBMITTED} or \texttt{CHANGES\_REQUESTED} status, and escrow \texttt{paymentStatus = FUNDED}.
+      \item Checks that Freelancer has completed Stripe Connect onboarding.
+      \item Inside a database transaction:
+            \begin{itemize}[leftmargin=1.6em,topsep=2pt,itemsep=2pt,parsep=0pt]
+                  \item Transitions submission status to \texttt{APPROVED}.
+                  \item Transitions milestone status to \texttt{COMPLETED} and sets \texttt{paymentStatus = RELEASED}.
+                  \item Invokes Stripe Transfer to release net earnings to freelancer's connected account.
+                  \item Records ledger transaction records (\texttt{ESCROW\_RELEASE}).
+            \end{itemize}
+      \item Dispatches immediate payment receipt notification to Freelancer.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint2/ntin/ApproveMilestone.png}{Approve Milestone confirmation dialog}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item Modal displays green checkmark icon and heading ``Approve Milestone Deliverables''.
+      \item Financial summary card renders milestone gross amount, platform commission deduction, and net payout.
+      \item Confirmation message states that approving releases funds immediately to the freelancer.
+      \item Footer buttons: ``Cancel'' and ``Approve \& Release Funds''.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+      \texttt{contractId} & Numeric contract identifier (integer path parameter).\\ \hline
+      \texttt{milestoneId} & Numeric milestone identifier (integer path parameter).\\ \hline
+      \texttt{id} & Numeric submission identifier (integer path parameter).\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item Caller must be the Client owner of the contract.
+      \item Milestone must reside in \texttt{SUBMITTED} or \texttt{CHANGES\_REQUESTED} status.
+      \item Escrow funds must be in \texttt{FUNDED} status.
+      \item Freelancer must have verified Stripe Connect payout capability.
+\end{itemize}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+      \item BR-MS-13: Approving a milestone automatically initiates immediate escrow payout release to the freelancer.
+      \item BR-MS-14: Approved milestones are permanently locked from further revision or refund requests.
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
+      \item Client inspects deliverables and clicks ``Approve Milestone''.
+      \item System opens the approval confirmation modal with financial breakdown.
+      \item Client clicks ``Confirm Approval \& Release Funds''.
+      \item System marks submission \texttt{APPROVED}, sets milestone \texttt{COMPLETED}, and releases escrow.
+      \item Modal closes, milestone card turns green, and Freelancer receives payment notification.
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Case}{Description}
+      A1 & Milestone is not funded in escrow. API returns HTTP 422 with error \texttt{MilestoneNotFundedException}; release blocked.\\ \hline
+      A2 & Freelancer Stripe account is incomplete. API returns HTTP 422 with error \texttt{StripeOnboardingIncompleteException}; prompts freelancer to connect.\\ \hline
+      A3 & Caller is not the Client. API returns HTTP 403 Forbidden; access denied.\\ \hline
+      A4 & Stripe transfer failure occurs. Escrow release is queued for automated retry; milestone marked approved.\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Data Name}{Description}
+      \texttt{milestone} & Updated milestone entity with status \texttt{COMPLETED} and paymentStatus \texttt{RELEASED}.\\ \hline
+      \texttt{transaction} & Ledger transaction entity documenting released escrow amount and Stripe Transfer ID.\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item Milestone status updated to \texttt{COMPLETED} and \texttt{paymentStatus = RELEASED}.
+      \item Escrow payout transferred to freelancer's Stripe account.
+      \item Both parties notified.
+\end{itemize}
+
+% -----------------------------------------------------------------
+% UC-24.08: Update Milestone Progress
+% -----------------------------------------------------------------
+\subsubsection{ Update Milestone Progress}
+
+\fnhead{Function Trigger}
+The Freelancer clicks the ``Start Work'' button on an assigned, funded milestone card.\newline
+\textbf{Navigation path:} Contract Detail $\rightarrow$ Milestones Tab $\rightarrow$ Milestone Card $\rightarrow$ Click ``Start Work''.
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item \textbf{Primary Actor:} Freelancer (\texttt{FREELANCER} role).
+      \item \textbf{Supporting Systems:} Frevia Web application (Next.js), Frevia REST API (NestJS), Prisma ORM layer, and PostgreSQL database.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent Allows a Freelancer to acknowledge milestone assignment and transition milestone status from \texttt{PENDING} to \texttt{IN\_PROGRESS}, signaling active engagement on deliverables to the Client.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item ``Start Work'' action button on funded milestone cards.
+      \item Status pill badge dynamically shifting to blue ``In Progress''.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item Freelancer submits an HTTP request: \texttt{PATCH /api/contracts/:contractId/milestones/:id/progress}.
+      \item \texttt{MilestoneService.progressMilestone()} verifies caller is the contract's Freelancer.
+      \item Checks that milestone status is \texttt{PENDING} and escrow \texttt{paymentStatus = FUNDED}.
+      \item Updates milestone status to \texttt{IN\_PROGRESS}.
+      \item Dispatches an update notification to the Client.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint2/ntin/UpdateMilestoneProgress.png}{Milestone progress update interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item Milestone card displays ``Start Work'' button for funded pending milestones.
+      \item Upon click, status pill updates to ``In Progress'' and the ``Submit Work'' button becomes enabled.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+      \texttt{contractId} & Numeric contract identifier (integer path parameter).\\ \hline
+      \texttt{id} & Numeric milestone identifier (integer path parameter).\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item Caller must be the assigned Freelancer of the contract.
+      \item Milestone must reside in \texttt{PENDING} status.
+      \item Milestone escrow must be \texttt{FUNDED}.
+\end{itemize}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+      \item BR-MS-15: Freelancers can only transition milestones to \texttt{IN\_PROGRESS} after the client has funded escrow.
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
+      \item Freelancer views funded milestone card and clicks ``Start Work''.
+      \item System validates authorization and updates milestone status to \texttt{IN\_PROGRESS}.
+      \item UI updates status badge and notifies Client that work has begun.
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Case}{Description}
+      A1 & Milestone is not funded in escrow. API returns HTTP 422 with error \texttt{MilestoneNotFundedException}; progress blocked.\\ \hline
+      A2 & Caller is not the Freelancer. API returns HTTP 403 Forbidden; access denied.\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Data Name}{Description}
+      \texttt{status} & Updated milestone status (\texttt{IN\_PROGRESS}).\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item Milestone status transitioned to \texttt{IN\_PROGRESS}.
+      \item Client notified of work initiation.
+\end{itemize}
+
+% -----------------------------------------------------------------
+% UC-25.01: View Milestone Files
+% -----------------------------------------------------------------
+\subsubsection{ View Milestone Files}
+
+\fnhead{Function Trigger}
+A user clicks the ``Attachments'' accordion or tab inside a milestone detail panel.\newline
+\textbf{Navigation path:} Contract Detail $\rightarrow$ Milestone Detail $\rightarrow$ Click ``Attachments''.
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item \textbf{Primary Actor:} Client, Freelancer, Administrator.
+      \item \textbf{Supporting Systems:} Frevia Web application (Next.js), Frevia REST API (NestJS), Prisma ORM layer, and PostgreSQL database.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent Displays all files, reference documents, and deliverable attachments associated with a specific milestone stage.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item Milestone files list within the milestone card.
+      \item File cards rendering format icon, file name, uploader name, upload date, size, and download link.
+      \item Delete icon visible to file uploader and Admin.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item Client requests \texttt{GET /api/contracts/:contractId/milestones/:milestoneId/files}.
+      \item \texttt{MilestoneFileService.getMilestoneFiles()} validates participant authorization.
+      \item Queries \texttt{prisma.milestoneFile.findMany} where \texttt{milestoneId = id} and \texttt{deletedAt = null}.
+      \item Returns HTTP 200 with the file attachments array.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint2/ntin/ViewMilestoneFiles.png}{Milestone files attachment tray}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item Attachment section lists uploaded files with file type icons, name, file size badge, and download action.
+      \item An upload dropzone or button is available when editing or preparing submissions.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+      \texttt{contractId} & Numeric contract identifier (integer path parameter).\\ \hline
+      \texttt{milestoneId} & Numeric milestone identifier (integer path parameter).\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item Caller must be an authorized contract participant or an Administrator.
+      \item Milestone must exist and belong to the contract.
+\end{itemize}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+      \item BR-MSF-01: Only non-deleted files associated with the milestone shall be displayed.
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
+      \item User expands milestone attachments.
+      \item Client requests \texttt{GET /api/contracts/:contractId/milestones/:milestoneId/files}.
+      \item API returns files array, and client renders attachment cards.
+      \item User clicks download link to retrieve any file.
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Case}{Description}
+      A1 & User is not a participant. API returns HTTP 403 Forbidden; access denied.\\ \hline
+      A2 & Milestone does not exist. API returns HTTP 404 Not Found.\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Data Name}{Description}
+      \texttt{files[]} & Array of milestone file records with id, fileName, fileUrl, and uploader.\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item Milestone attachments rendered for download.
+\end{itemize}
+
+% -----------------------------------------------------------------
+% UC-25.02: Upload Milestone File
+% -----------------------------------------------------------------
+\subsubsection{ Upload Milestone File}
+
+\fnhead{Function Trigger}
+A Freelancer uploads deliverable attachments during work progress or before final submission.\newline
+\textbf{Navigation path:} Contract Detail $\rightarrow$ Milestone Detail $\rightarrow$ Click ``Upload Deliverable File''.
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item \textbf{Primary Actor:} Freelancer, Client.
+      \item \textbf{Supporting Systems:} Frevia Web application (Next.js), Frevia REST API (NestJS), Multer middleware, Cloudinary storage, Prisma ORM, and PostgreSQL database.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent Allows users to upload work attachments, source code packages, documentation, and design assets to a specific milestone.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item Drag-and-drop file upload zone in milestone deliverable section.
+      \item File upload modal with progress meter and file size verification ($\le$ 25MB).
+      \item Action buttons: ``Upload'' and ``Cancel''.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item Client submits an HTTP \texttt{multipart/form-data} request: \texttt{POST /api/contracts/:contractId/milestones/:milestoneId/files}.
+      \item \texttt{buildUploadFilePipe()} validates file size ($\le$ 25MB) and prohibits malicious executable extensions.
+      \item \texttt{MilestoneFileService.uploadMilestoneFile()} streams file buffer to Cloudinary cloud storage.
+      \item Persists \texttt{MilestoneFile} record in database linked to milestone and uploader.
+      \item Returns HTTP 201 Created with the saved file record.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint2/ntin/UploadMilestoneFile.png}{Upload Milestone File modal}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item Dropzone area with upload cloud icon and drag-and-drop prompt.
+      \item Selected file displays file name, size badge, and progress bar during transmission.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+      \texttt{contractId} & Numeric contract identifier (integer path parameter).\\ \hline
+      \texttt{milestoneId} & Numeric milestone identifier (integer path parameter).\\ \hline
+      \texttt{file} & Binary file stream via \texttt{multipart/form-data}.\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item File size must not exceed 25MB.
+      \item Executable extensions prohibited.
+      \item Caller must be a participant in the contract.
+\end{itemize}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+      \item BR-MSF-02: Maximum milestone file attachment size is 25MB.
+      \item BR-MSF-03: Uploaded files are tagged with uploader ID for ownership tracking.
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
+      \item User selects file to upload on milestone card.
+      \item Client sends multipart form data to server.
+      \item Server validates format and size, then uploads to Cloudinary.
+      \item Database records new \texttt{MilestoneFile} entity.
+      \item File appears in milestone attachment tray with success confirmation.
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Case}{Description}
+      A1 & File exceeds 25MB. API returns HTTP 400 Bad Request; displays size limit error.\\ \hline
+      A2 & Disallowed file extension. API returns HTTP 400; displays format error.\\ \hline
+      A3 & Upload timeout. API returns HTTP 502; displays retry banner.\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Data Name}{Description}
+      \texttt{file} & Created milestone file record with id, fileName, fileUrl, and createdAt.\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item File asset stored in cloud storage and linked in database.
+\end{itemize}
+
+% -----------------------------------------------------------------
+% UC-25.03: Delete Milestone File
+% -----------------------------------------------------------------
+\subsubsection{ Delete Milestone File}
+
+\fnhead{Function Trigger}
+The uploader or Admin clicks the trash icon next to a milestone file attachment.\newline
+\textbf{Navigation path:} Milestone Attachments $\rightarrow$ File Row $\rightarrow$ Click ``Delete''.
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item \textbf{Primary Actor:} File Uploader, Administrator.
+      \item \textbf{Supporting Systems:} Frevia Web application (Next.js), Frevia REST API (NestJS), Cloudinary, Prisma ORM, and PostgreSQL database.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent Enables users to remove obsolete, incorrect, or superseded deliverable files from a milestone prior to final review.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item Trash icon button next to file items in the milestone attachment list.
+      \item Delete confirmation dialog: ``Are you sure you want to delete [fileName]?''.
+      \item Action buttons: ``Delete'' and ``Cancel''.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item Client submits an HTTP request: \texttt{DELETE /api/contracts/:contractId/milestones/:milestoneId/files/:fileId}.
+      \item \texttt{MilestoneFileService.deleteMilestoneFile()} validates caller is original uploader or Admin.
+      \item Checks that milestone is not already in \texttt{COMPLETED} status.
+      \item Marks database record with \texttt{deletedAt = new Date()} and purges cloud asset.
+      \item Returns HTTP 200 with deletion confirmation.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint2/ntin/DeleteMilestoneFile.png}{Delete Milestone File dialog}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item Confirmation dialog displays file name and delete prompt.
+      \item Footer buttons: ``Cancel'' and red ``Delete File''.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+      \texttt{contractId} & Numeric contract identifier (integer path parameter).\\ \hline
+      \texttt{milestoneId} & Numeric milestone identifier (integer path parameter).\\ \hline
+      \texttt{fileId} & Numeric file identifier (integer path parameter).\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item Caller must be the original file uploader or an Administrator.
+      \item File must exist and not already be deleted.
+\end{itemize}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+      \item BR-MSF-04: Deliverable files attached to already completed milestones cannot be deleted.
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
+      \item User clicks trash icon next to an uploaded file.
+      \item Confirmation dialog appears.
+      \item User clicks ``Delete''.
+      \item System marks record as deleted and purges cloud storage asset.
+      \item File card is removed from view with confirmation toast.
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Case}{Description}
+      A1 & Caller is not the file uploader and not an Admin. API returns HTTP 403 Forbidden; access denied.\\ \hline
+      A2 & File already deleted or not found. API returns HTTP 404 Not Found.\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Data Name}{Description}
+      \texttt{success} & Boolean confirmation of successful deletion (\texttt{true}).\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item File soft-deleted in database and removed from milestone card.
+\end{itemize}
+
+% -----------------------------------------------------------------
+% UC-26.01: Submit Milestone
+% -----------------------------------------------------------------
+\subsubsection{ Submit Milestone}
+
+\fnhead{Function Trigger}
+The Freelancer clicks the ``Submit Work'' button on an in-progress milestone card to deliver finished work for Client review.\newline
+\textbf{Navigation path:} Contract Detail $\rightarrow$ Milestones Tab $\rightarrow$ Milestone Card $\rightarrow$ Click ``Submit Work''.
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item \textbf{Primary Actor:} Freelancer (\texttt{FREELANCER} role).
+      \item \textbf{Secondary Actor:} Client (\texttt{CLIENT} role).
+      \item \textbf{Supporting Systems:} Frevia Web application (Next.js), Frevia REST API (NestJS), Prisma ORM layer, and PostgreSQL database.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent Formally delivers completed milestone work to the Client for inspection. The Freelancer includes submission notes, external demo/staging URLs, and deliverable attachments, transitioning milestone status to \texttt{SUBMITTED}.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item Submit Work modal dialog.
+      \item Submission notes textarea (Markdown supported, 10--2000 characters).
+      \item Optional external preview URL text input (e.g. staging server, Figma link, GitHub PR).
+      \item Deliverable file attachments selector.
+      \item Action buttons: ``Submit for Approval'' and ``Cancel''.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item Freelancer submits an HTTP request: \texttt{POST /api/contracts/:contractId/milestones/:milestoneId/submissions} with \texttt{notes}, \texttt{externalLink}, and \texttt{fileIds}.
+      \item \texttt{MilestoneSubmissionService.submitMilestone()} validates caller is the contract's Freelancer.
+      \item Checks milestone status: must be \texttt{IN\_PROGRESS} or \texttt{CHANGES\_REQUESTED}, and escrow must be \texttt{FUNDED}.
+      \item Persists new \texttt{MilestoneSubmission} record with status \texttt{PENDING\_REVIEW}.
+      \item Transitions milestone status to \texttt{SUBMITTED}.
+      \item Dispatches an urgent review notification to the Client with deliverable summary.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint2/ntin/SubmitMilestone.png}{Submit Milestone modal}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item Modal displays title ``Submit Milestone Deliverables''.
+      \item Detailed textarea for submission notes and work explanation.
+      \item Optional external link input with URL format placeholder.
+      \item Attachment picker displaying attached deliverable files.
+      \item Footer buttons: ``Cancel'' and primary blue ``Submit Work for Approval''.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+      \texttt{contractId} & Numeric contract identifier (integer path parameter).\\ \hline
+      \texttt{milestoneId} & Numeric milestone identifier (integer path parameter).\\ \hline
+      \texttt{notes} & Detailed description of deliverables and instructions for review (string, 10--2000 characters).\\ \hline
+      \texttt{externalLink} & Optional external URL to live demo, repository, or prototype (string, valid URL format).\\ \hline
+      \texttt{fileIds} & Optional array of integer IDs representing uploaded milestone files.\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item Caller must be the assigned Freelancer of the contract.
+      \item Milestone status must be \texttt{IN\_PROGRESS} or \texttt{CHANGES\_REQUESTED}.
+      \item Milestone escrow must be in \texttt{FUNDED} status.
+      \item Submission notes must be at least 10 characters in length.
+\end{itemize}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+      \item BR-MSS-01: Submitting deliverables transitions milestone status to \texttt{SUBMITTED} and activates the client review countdown.
+      \item BR-MSS-02: Submissions create an immutable audit record preserving files and notes for dispute protection.
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
+      \item Freelancer clicks ``Submit Work'' on an in-progress milestone card.
+      \item System displays Submit Milestone modal.
+      \item Freelancer types submission notes, attaches files, and inputs optional demo link.
+      \item Freelancer clicks ``Submit for Approval''.
+      \item System validates fields, creates submission entity, and sets milestone status to \texttt{SUBMITTED}.
+      \item Modal closes, card displays amber ``Submitted'' badge, and Client receives review alert.
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Case}{Description}
+      A1 & Milestone is not in progress. API returns HTTP 422 with error \texttt{MilestoneNotEligibleForSubmissionException}.\\ \hline
+      A2 & Milestone escrow is unfunded. API returns HTTP 422; submission rejected.\\ \hline
+      A3 & Caller is not the Freelancer. API returns HTTP 403 Forbidden; access denied.\\ \hline
+      A4 & Submission notes empty. Form validation highlights missing notes.\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Data Name}{Description}
+      \texttt{submission} & Created submission entity with id, notes, externalLink, status, and createdAt.\\ \hline
+      \texttt{milestoneStatus} & Updated milestone status (\texttt{SUBMITTED}).\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item Submission entity created with status \texttt{PENDING\_REVIEW}.
+      \item Milestone status updated to \texttt{SUBMITTED}.
+      \item Client notified to review deliverables.
+\end{itemize}
+
+% -----------------------------------------------------------------
+% UC-26.02: Delete Milestone Submission
+% -----------------------------------------------------------------
+\subsubsection{ Delete Milestone Submission}
+
+\fnhead{Function Trigger}
+The Freelancer clicks ``Recall / Delete Submission'' on a pending submission before the Client has completed review.\newline
+\textbf{Navigation path:} Contract Detail $\rightarrow$ Milestones Tab $\rightarrow$ Submitted Milestone $\rightarrow$ Click ``Recall Submission''.
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item \textbf{Primary Actor:} Freelancer (\texttt{FREELANCER} role).
+      \item \textbf{Supporting Systems:} Frevia Web application (Next.js), Frevia REST API (NestJS), Prisma ORM layer, and PostgreSQL database.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent Allows a Freelancer to recall and delete a pending submission if they discovered an omission or error before the Client reviews it, returning the milestone to \texttt{IN\_PROGRESS}.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item ``Recall Submission'' button on pending submission review card.
+      \item Confirmation dialog: ``Recall this submission? The milestone will return to In Progress.''.
+      \item Action buttons: ``Confirm Recall'' and ``Cancel''.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item Freelancer submits an HTTP request: \texttt{DELETE /api/contracts/:contractId/milestones/:milestoneId/submissions/:id}.
+      \item Verifies caller is the contract's Freelancer.
+      \item Checks that submission status is strictly \texttt{PENDING\_REVIEW}; approved or changes-requested submissions cannot be deleted.
+      \item Soft-deletes submission record by setting \texttt{deletedAt = new Date()}.
+      \item Reverts milestone status back to \texttt{IN\_PROGRESS}.
+      \item Returns HTTP 200 with confirmation.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint2/ntin/DeleteMilestoneSubmission.png}{Recall Milestone Submission dialog}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item Modal displays warning that recalling withdraws the deliverables from the client queue.
+      \item Buttons: ``Cancel'' and ``Recall Submission''.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+      \texttt{contractId} & Numeric contract identifier (integer path parameter).\\ \hline
+      \texttt{milestoneId} & Numeric milestone identifier (integer path parameter).\\ \hline
+      \texttt{id} & Numeric submission identifier (integer path parameter).\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item Caller must be the assigned Freelancer.
+      \item Submission status must be \texttt{PENDING\_REVIEW}.
+\end{itemize}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+      \item BR-MSS-03: Submissions that have already been reviewed or approved cannot be recalled.
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
+      \item Freelancer clicks ``Recall Submission'' on pending submission.
+      \item Confirmation dialog appears.
+      \item Freelancer clicks ``Confirm Recall''.
+      \item System marks submission deleted and reverts milestone to \texttt{IN\_PROGRESS}.
+      \item Milestone card returns to In Progress state, enabling re-submission.
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Case}{Description}
+      A1 & Submission already approved or reviewed. API returns HTTP 422; recall blocked.\\ \hline
+      A2 & Caller is not the Freelancer. API returns HTTP 403 Forbidden; access denied.\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Data Name}{Description}
+      \texttt{success} & Boolean confirmation of deletion (\texttt{true}).\\ \hline
+      \texttt{milestoneStatus} & Reverted milestone status (\texttt{IN\_PROGRESS}).\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item Submission soft-deleted.
+      \item Milestone reverted to \texttt{IN\_PROGRESS}.
+\end{itemize}
+
+% -----------------------------------------------------------------
+% UC-26.03: View Milestone Submission List
+% -----------------------------------------------------------------
+\subsubsection{ View Milestone Submission List}
+
+\fnhead{Function Trigger}
+A contract participant opens the ``Submission History'' tab or accordion within a milestone detail panel.\newline
+\textbf{Navigation path:} Contract Detail $\rightarrow$ Milestone Detail $\rightarrow$ Click ``Submission History''.
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item \textbf{Primary Actor:} Client, Freelancer, Administrator.
+      \item \textbf{Supporting Systems:} Frevia Web application (Next.js), Frevia REST API (NestJS), Prisma ORM layer, and PostgreSQL database.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent Renders the historical timeline of all deliverable submission and review cycles for a milestone, allowing participants to compare revisions and review comments.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item Submissions history list within the milestone card.
+      \item Cycle cards numbered chronologically (Cycle 1, Cycle 2, etc.).
+      \item Review status pills: ``Pending Review'', ``Changes Requested'', ``Approved''.
+      \item Submission timestamp, notes summary, external link, and attached files count.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item Client requests \texttt{GET /api/contracts/:contractId/milestones/:milestoneId/submissions}.
+      \item \texttt{MilestoneSubmissionService.getSubmission()} validates participant access.
+      \item Queries \texttt{prisma.milestoneSubmission.findMany} where \texttt{milestoneId = id} and \texttt{deletedAt = null}.
+      \item Orders submissions chronologically by \texttt{createdAt asc}.
+      \item Returns HTTP 200 with the submissions collection.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint2/ntin/ViewMilestoneSubmissionList.png}{Milestone submission history timeline}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item Vertical timeline tracks each submission round with cycle number and date.
+      \item Each entry shows freelancer submission notes and client revision comments.
+      \item Status tag indicates whether cycle was approved or requested for revisions.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+      \texttt{contractId} & Numeric contract identifier (integer path parameter).\\ \hline
+      \texttt{milestoneId} & Numeric milestone identifier (integer path parameter).\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item Caller must be an authorized contract participant or Admin.
+      \item Milestone must exist.
+\end{itemize}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+      \item BR-MSS-04: Submission history records shall remain accessible throughout the contract lifecycle.
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
+      \item User expands submission history in milestone card.
+      \item Client requests \texttt{GET /api/contracts/:contractId/milestones/:milestoneId/submissions}.
+      \item API queries non-deleted submissions.
+      \item Client renders submission timeline cards.
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Case}{Description}
+      A1 & User is not a participant. API returns HTTP 403 Forbidden; access denied.\\ \hline
+      A2 & Milestone does not exist. API returns HTTP 404 Not Found.\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Data Name}{Description}
+      \texttt{submissions[]} & Array of submission records with cycle index, notes, status, and comments.\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item Submission timeline rendered for review.
+\end{itemize}
+
+% -----------------------------------------------------------------
+% UC-26.04: View Milestone Submission Detail
+% -----------------------------------------------------------------
+\subsubsection{ View Milestone Submission Detail}
+
+\fnhead{Function Trigger}
+A user clicks on a specific submission entry in the submission history timeline to inspect full deliverable details.\newline
+\textbf{Navigation path:} Milestone Detail $\rightarrow$ Submission History $\rightarrow$ Click Submission Item (\texttt{.../submissions/:id}).
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item \textbf{Primary Actor:} Client, Freelancer, Administrator.
+      \item \textbf{Supporting Systems:} Frevia Web application (Next.js), Frevia REST API (NestJS), Prisma ORM layer, and PostgreSQL database.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent Renders granular details for a specific submission cycle, including full deliverable notes, external links, attached deliverable files, review feedback, and exact timestamps.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item Submission detail modal or dedicated expanded view.
+      \item Submission header: cycle number, submitter profile, and submission timestamp.
+      \item Full deliverable notes rendered in Markdown.
+      \item External demo hyperlink with external icon.
+      \item Attached deliverable files grid with download buttons.
+      \item Client review section with review status badge and comments (if reviewed).
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item Client requests \texttt{GET /api/contracts/:contractId/milestones/:milestoneId/submissions/:id}.
+      \item \texttt{MilestoneSubmissionService.getSubmissionDetail()} validates participant authorization.
+      \item Queries \texttt{prisma.milestoneSubmission.findUnique} including attached files and reviewer info.
+      \item Returns HTTP 200 with the submission detail entity.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint2/ntin/ViewMilestoneSubmissionDetail.png}{Milestone submission detail screen}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item Modal renders header with submission cycle number and review status pill.
+      \item Main area renders deliverable notes and external demo link.
+      \item Attachment tray displays all files included in this submission cycle with download links.
+      \item Review block displays client review comment and approval/changes-requested date.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+      \texttt{contractId} & Numeric contract identifier (integer path parameter).\\ \hline
+      \texttt{milestoneId} & Numeric milestone identifier (integer path parameter).\\ \hline
+      \texttt{id} & Numeric submission identifier (integer path parameter).\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item Submission ID must exist and belong to the specified milestone.
+      \item Caller must be an authorized contract participant or Admin.
+\end{itemize}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+      \item BR-MSS-05: Submission details provide an immutable record of work deliverables submitted at that specific timestamp.
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
+      \item User clicks a submission entry in the history timeline.
+      \item Client requests \texttt{GET /api/contracts/:contractId/milestones/:milestoneId/submissions/:id}.
+      \item API validates access and loads submission details with files.
+      \item System opens submission modal displaying deliverable notes, links, and review status.
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Case}{Description}
+      A1 & Submission not found. API returns HTTP 404 Not Found.\\ \hline
+      A2 & Caller not authorized. API returns HTTP 403 Forbidden; access denied.\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Data Name}{Description}
+      \texttt{submission} & Complete submission entity with notes, externalLink, files[], reviewStatus, reviewComment, and timestamps.\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item Submission details displayed with full deliverable assets and review history.
+\end{itemize}
+

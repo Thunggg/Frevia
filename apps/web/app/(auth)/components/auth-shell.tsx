@@ -1,6 +1,5 @@
 import Image from "next/image";
 import Link from "next/link";
-import { useTranslations } from "next-intl";
 import type { ReactNode } from "react";
 
 import { LanguageSwitcher } from "@/components/language-switcher";
@@ -25,8 +24,6 @@ export function AuthShell({
   panelDescription,
   children,
 }: AuthShellProps) {
-  const t = useTranslations("auth.shell");
-
   return (
     <div className="flex min-h-dvh font-sans">
       <aside className="sticky top-0 hidden h-dvh w-[42%] overflow-hidden lg:block">
@@ -46,7 +43,7 @@ export function AuthShell({
         <div className="relative z-10 p-10 xl:p-12">
           <Link
             href="/"
-            className={`flex items-center gap-3 ${styles.reveal} ${styles.delay1}`}
+            className={`inline-flex items-center gap-3 ${styles.reveal} ${styles.delay1}`}
           >
             <Image
               src="/frevia-mark.png"
@@ -62,39 +59,19 @@ export function AuthShell({
           </Link>
 
           {(panelTitle || panelDescription) && (
-            <div className={`mt-10 max-w-sm ${styles.reveal} ${styles.delay2}`}>
+            <div className={`mt-8 max-w-sm ${styles.reveal} ${styles.delay2}`}>
               {panelTitle ? (
                 <p className="text-2xl font-bold leading-snug tracking-tight text-foreground xl:text-3xl">
                   {panelTitle}
                 </p>
               ) : null}
               {panelDescription ? (
-                <p className="mt-3 text-sm leading-relaxed text-foreground/60 dark:text-foreground/65">
+                <p className="mt-3 text-sm leading-relaxed text-foreground/75 dark:text-foreground/70">
                   {panelDescription}
                 </p>
               ) : null}
             </div>
           )}
-        </div>
-
-        <div
-          aria-hidden
-          className={`absolute bottom-10 left-10 right-10 ${styles.reveal} ${styles.delay3}`}
-        >
-          <p className="text-xs leading-relaxed text-foreground/50 dark:text-foreground/40">
-            {t("tagline")}
-          </p>
-          <div className="mt-3 flex items-center gap-3 text-[11px] text-foreground/35 dark:text-foreground/30">
-            <span>&copy; {new Date().getFullYear()} Frevia</span>
-            <span className="text-foreground/15">·</span>
-            <Link href="/forum" className="transition-colors hover:text-[#4fae2e]/70">
-              {t("helpCenter")}
-            </Link>
-            <span className="text-foreground/15">·</span>
-            <Link href="/forum" className="transition-colors hover:text-[#4fae2e]/70">
-              {t("guidelines")}
-            </Link>
-          </div>
         </div>
       </aside>
 

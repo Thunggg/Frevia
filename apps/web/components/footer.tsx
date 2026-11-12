@@ -245,7 +245,7 @@ export function Footer() {
         {/* Middle Legal Row */}
         <div className="mt-16 flex flex-col items-center justify-between gap-4 text-xs font-medium text-gray-600 sm:flex-row dark:text-gray-400">
           <Link
-            href="/forum"
+            href="/user-agreement"
             className="underline underline-offset-4 transition-colors hover:text-gray-900 dark:hover:text-white"
           >
             {t("termsAndConditions")}
@@ -254,7 +254,7 @@ export function Footer() {
           <p className="text-center">{t("rights", { year })}</p>
 
           <Link
-            href="/forum"
+            href="/privacy-policy"
             className="transition-colors hover:text-gray-900 dark:hover:text-white"
           >
             {t("privacyPolicy")}

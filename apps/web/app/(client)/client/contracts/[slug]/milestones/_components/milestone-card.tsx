@@ -35,6 +35,7 @@ export interface MilestoneCardProps {
   onDelete?: (milestone: MilestoneType) => void;
   onFund?: (milestone: MilestoneType) => void;
   onRelease?: (milestone: MilestoneType) => void;
+  onRefund?: (milestone: MilestoneType) => void;
   onReview?: (milestone: MilestoneType) => void;
   onSubmitWork?: (milestone: MilestoneType) => void;
   onStartWork?: (milestone: MilestoneType) => void;
@@ -55,6 +56,7 @@ export function MilestoneCard({
   onDelete,
   onFund,
   onRelease,
+  onRefund,
   onReview,
   onSubmitWork,
   onStartWork,
@@ -78,6 +80,7 @@ export function MilestoneCard({
   const isOverdue =
     milestone.dueDate &&
     milestone.status !== "COMPLETED" &&
+    milestone.status !== "LATE" &&
     new Date(milestone.dueDate).getTime() < new Date().getTime();
 
   // Status without border and without background color
@@ -88,6 +91,13 @@ export function MilestoneCard({
           <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-600 dark:text-emerald-400">
             <CheckCircle2 className="size-3.5" />
             <span>Completed</span>
+          </span>
+        );
+      case "LATE":
+        return (
+          <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-rose-600 dark:text-rose-400">
+            <AlertTriangle className="size-3.5" />
+            <span>Late</span>
           </span>
         );
       case "SUBMITTED":
@@ -172,6 +182,12 @@ export function MilestoneCard({
     milestone.status === "COMPLETED" &&
     milestone.paymentStatus === "FUNDED" &&
     Boolean(onRelease);
+  const canRefundMilestone =
+    isClient &&
+    contractStatus === "ACTIVE" &&
+    milestone.paymentStatus === "FUNDED" &&
+    (milestone.status === "LATE" || milestone.status === "PENDING") &&
+    Boolean(onRefund);
 
   if (variant === "card") {
     return (
@@ -271,6 +287,17 @@ export function MilestoneCard({
               </Button>
             )}
 
+            {canRefundMilestone && onRefund && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => onRefund(milestone)}
+                className="h-8 rounded-lg border-rose-200 dark:border-rose-800 bg-white dark:bg-zinc-900 text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/30 text-xs font-semibold px-3 cursor-pointer"
+              >
+                Refund
+              </Button>
+            )}
+
             {isFreelancer &&
               milestone.status === "IN_PROGRESS" &&
               onSubmitWork && (
@@ -367,6 +394,17 @@ export function MilestoneCard({
               className="h-8 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold px-3 shadow-xs cursor-pointer"
             >
               Release Payment
+            </Button>
+          )}
+
+          {canRefundMilestone && onRefund && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => onRefund(milestone)}
+              className="h-8 rounded-lg border-rose-200 dark:border-rose-800 bg-white dark:bg-zinc-900 text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/30 text-xs font-semibold px-3 cursor-pointer"
+            >
+              Refund
             </Button>
           )}
 

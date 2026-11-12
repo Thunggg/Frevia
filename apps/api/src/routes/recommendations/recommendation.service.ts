@@ -62,64 +62,105 @@ export class RecommendationService {
       return { data: [] };
     }
 
-    const result = await this.rank({
-      direction: 'cv2jd',
-      queryPayload: buildCvPayload(cv),
-      queryText: buildCvText(cv),
-      candidates: jobs.map((job) => ({
-        key: `jd_${job.id}`,
-        doc: job,
-        payload: buildJobPayload(job),
-        text: buildJobText(job),
-      })),
-      topK: query.limit,
-    });
+    try {
+      const result = await this.rank({
+        direction: 'cv2jd',
+        queryPayload: buildCvPayload(cv),
+        queryText: buildCvText(cv),
+        candidates: jobs.map((job) => ({
+          key: `jd_${job.id}`,
+          doc: job,
+          payload: buildJobPayload(job),
+          text: buildJobText(job),
+        })),
+        topK: query.limit,
+      });
 
-    if (result.items.length === 0) {
-      return { data: [] };
+      if (result.items.length === 0) {
+        return { data: [] };
+      }
+
+      const saved: Array<{ id: number; targetDocumentId: number }> =
+        await this.repository
+          .saveRecommendations(
+            result.items.map(({ item, doc }) => ({
+              requesterId: userId,
+              sourceType: 'CV',
+              sourceDocumentId: cv.profileId,
+              targetType: 'JOB',
+              targetDocumentId: doc.id,
+              semanticScore: safe(item.components.semantic),
+              skillScore: safe(item.components.skills),
+              experienceScore: safe(item.components.experience),
+              budgetScore: safe(item.components.budget),
+              preferenceScore: safe(item.components.preferences),
+              finalScore: safe(item.score),
+              rankingVersion: RANKING_VERSION,
+              embeddingModel: result.embeddingModel,
+            })),
+          )
+          .catch((err) => {
+            this.logger.error('Failed to save recommendations', err);
+            return [];
+          });
+
+      const savedByTarget = new Map<number, number>(
+        saved.map((row) => [row.targetDocumentId, row.id] as const),
+      );
+
+      return {
+        data: result.items.map(({ doc, item }) => ({
+          recommendationId: savedByTarget.get(doc.id) ?? null,
+          score: safe(item.score),
+          components: normalizeComponents(item),
+          job: {
+            id: doc.id,
+            slug: doc.slug,
+            title: doc.title,
+            description: doc.description,
+            budgetMin: doc.budgetMin,
+            budgetMax: doc.budgetMax,
+            budgetType: doc.budgetType,
+            status: doc.status,
+            skills: doc.skills,
+            createdAt: doc.createdAt,
+          },
+        })),
+      };
+    } catch (error) {
+      this.logger.warn(
+        `Failed to rank jobs via AI service for user ${userId}, falling back to unranked jobs: ${
+          error instanceof Error ? error.message : error
+        }`,
+      );
+
+      return {
+        data: jobs.slice(0, query.limit).map((job) => ({
+          recommendationId: null,
+          score: 0,
+          components: {
+            semantic: 0,
+            skills: 0,
+            experience: 0,
+            budget: 0,
+            preferences: 0,
+            keyword: null,
+          },
+          job: {
+            id: job.id,
+            slug: job.slug,
+            title: job.title,
+            description: job.description,
+            budgetMin: job.budgetMin,
+            budgetMax: job.budgetMax,
+            budgetType: job.budgetType,
+            status: job.status,
+            skills: job.skills,
+            createdAt: job.createdAt,
+          },
+        })),
+      };
     }
-
-    const saved = await this.repository.saveRecommendations(
-      result.items.map(({ item, doc }) => ({
-        requesterId: userId,
-        sourceType: 'CV',
-        sourceDocumentId: cv.profileId,
-        targetType: 'JOB',
-        targetDocumentId: doc.id,
-        semanticScore: safe(item.components.semantic),
-        skillScore: safe(item.components.skills),
-        experienceScore: safe(item.components.experience),
-        budgetScore: safe(item.components.budget),
-        preferenceScore: safe(item.components.preferences),
-        finalScore: safe(item.score),
-        rankingVersion: RANKING_VERSION,
-        embeddingModel: result.embeddingModel,
-      })),
-    );
-
-    const savedByTarget = new Map(
-      saved.map((row) => [row.targetDocumentId, row.id]),
-    );
-
-    return {
-      data: result.items.map(({ doc, item }) => ({
-        recommendationId: savedByTarget.get(doc.id) ?? null,
-        score: safe(item.score),
-        components: normalizeComponents(item),
-        job: {
-          id: doc.id,
-          slug: doc.slug,
-          title: doc.title,
-          description: doc.description,
-          budgetMin: doc.budgetMin,
-          budgetMax: doc.budgetMax,
-          budgetType: doc.budgetType,
-          status: doc.status,
-          skills: doc.skills,
-          createdAt: doc.createdAt,
-        },
-      })),
-    };
   }
 
   async getRecommendedFreelancers(
@@ -149,61 +190,99 @@ export class RecommendationService {
       return { data: [] };
     }
 
-    const result = await this.rank({
-      direction: 'jd2cv',
-      queryPayload: buildJobPayload(job),
-      queryText: buildJobText(job),
-      candidates: freelancers.map((cv) => ({
-        key: `cv_${cv.profileId}`,
-        doc: cv,
-        payload: buildCvPayload(cv),
-        text: buildCvText(cv),
-      })),
-      topK: query.limit,
-    });
-
-    if (result.items.length === 0) {
-      return { data: [] };
-    }
-
-    const saved = await this.repository.saveRecommendations(
-      result.items.map(({ item, doc }) => ({
-        requesterId: userId,
-        sourceType: 'JOB',
-        sourceDocumentId: job.id,
-        targetType: 'CV',
-        targetDocumentId: doc.profileId,
-        semanticScore: safe(item.components.semantic),
-        skillScore: safe(item.components.skills),
-        experienceScore: safe(item.components.experience),
-        budgetScore: safe(item.components.budget),
-        preferenceScore: safe(item.components.preferences),
-        finalScore: safe(item.score),
-        rankingVersion: RANKING_VERSION,
-        embeddingModel: result.embeddingModel,
-      })),
-    );
-
-    const savedByTarget = new Map(
-      saved.map((row) => [row.targetDocumentId, row.id]),
-    );
-
-    return {
-      data: result.items.map(({ doc, item }) => ({
-        recommendationId: savedByTarget.get(doc.profileId) ?? null,
-        score: safe(item.score),
-        components: normalizeComponents(item),
-        profileId: doc.profileId,
-        userId: doc.userId,
-        displayName: doc.displayName,
-        avatarUrl: doc.avatarUrl,
-        title: doc.title,
-        skills: doc.skills.map((skill) => ({
-          name: skill.name,
-          proficiencyLevel: skill.proficiencyLevel,
+    try {
+      const result = await this.rank({
+        direction: 'jd2cv',
+        queryPayload: buildJobPayload(job),
+        queryText: buildJobText(job),
+        candidates: freelancers.map((cv) => ({
+          key: `cv_${cv.profileId}`,
+          doc: cv,
+          payload: buildCvPayload(cv),
+          text: buildCvText(cv),
         })),
-      })),
-    };
+        topK: query.limit,
+      });
+
+      if (result.items.length === 0) {
+        return { data: [] };
+      }
+
+      const saved: Array<{ id: number; targetDocumentId: number }> =
+        await this.repository
+          .saveRecommendations(
+            result.items.map(({ item, doc }) => ({
+              requesterId: userId,
+              sourceType: 'JOB',
+              sourceDocumentId: job.id,
+              targetType: 'CV',
+              targetDocumentId: doc.profileId,
+              semanticScore: safe(item.components.semantic),
+              skillScore: safe(item.components.skills),
+              experienceScore: safe(item.components.experience),
+              budgetScore: safe(item.components.budget),
+              preferenceScore: safe(item.components.preferences),
+              finalScore: safe(item.score),
+              rankingVersion: RANKING_VERSION,
+              embeddingModel: result.embeddingModel,
+            })),
+          )
+          .catch((err) => {
+            this.logger.error('Failed to save recommendations', err);
+            return [];
+          });
+
+      const savedByTarget = new Map<number, number>(
+        saved.map((row) => [row.targetDocumentId, row.id] as const),
+      );
+
+      return {
+        data: result.items.map(({ doc, item }) => ({
+          recommendationId: savedByTarget.get(doc.profileId) ?? null,
+          score: safe(item.score),
+          components: normalizeComponents(item),
+          profileId: doc.profileId,
+          userId: doc.userId,
+          displayName: doc.displayName,
+          avatarUrl: doc.avatarUrl,
+          title: doc.title,
+          skills: doc.skills.map((skill) => ({
+            name: skill.name,
+            proficiencyLevel: skill.proficiencyLevel,
+          })),
+        })),
+      };
+    } catch (error) {
+      this.logger.warn(
+        `Failed to rank freelancers via AI service for user ${userId}, falling back to unranked freelancers: ${
+          error instanceof Error ? error.message : error
+        }`,
+      );
+
+      return {
+        data: freelancers.slice(0, query.limit).map((doc) => ({
+          recommendationId: null,
+          score: 0,
+          components: {
+            semantic: 0,
+            skills: 0,
+            experience: 0,
+            budget: 0,
+            preferences: 0,
+            keyword: null,
+          },
+          profileId: doc.profileId,
+          userId: doc.userId,
+          displayName: doc.displayName,
+          avatarUrl: doc.avatarUrl,
+          title: doc.title,
+          skills: doc.skills.map((skill) => ({
+            name: skill.name,
+            proficiencyLevel: skill.proficiencyLevel,
+          })),
+        })),
+      };
+    }
   }
 
   async getExplanation(userId: number, recommendationId: number) {
@@ -236,10 +315,8 @@ export class RecommendationService {
       throw RecommendationNotFoundException();
     }
 
-    const explanation = await this.ai.explain(
-      buildJobPayload(job),
-      buildCvPayload(cv),
-      {
+    const explanation = await this.ai
+      .explain(buildJobPayload(job), buildCvPayload(cv), {
         score: safe(recommendation.finalScore) * 100,
         components: {
           semantic: safe(recommendation.semanticScore),
@@ -248,8 +325,20 @@ export class RecommendationService {
           budget: safe(recommendation.budgetScore),
           preferences: safe(recommendation.preferenceScore),
         },
-      },
-    );
+      })
+      .catch((err) => {
+        this.logger.warn(
+          `AI explain failed: ${err instanceof Error ? err.message : err}`,
+        );
+        return {
+          ready: false,
+          summary: null,
+          claims: [],
+          fallbackReason: 'AI service explanation unavailable',
+          model: '',
+          durationMs: 0,
+        };
+      });
 
     return {
       ready: explanation.ready,

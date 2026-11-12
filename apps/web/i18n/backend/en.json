@@ -46,11 +46,6 @@
   "Error.HoldIntentCancelFailed": "Failed to release the Stripe authorization hold",
   "Error.HoldIntentCaptureFailed": "Failed to capture the Stripe authorization hold",
   "Error.HoldMilestoneRequired": "Please select at least one milestone to hold",
-  "Error.InsufficientWalletBalance": "Insufficient wallet balance for this withdrawal",
-  "Error.InvalidWithdrawalAmount": "Withdrawal amount must be greater than zero",
-  "Error.BankDetailsRequired": "Please fill in your bank name, account number, and account holder name",
-  "Error.WithdrawalNotFound": "Withdrawal request not found",
-  "Error.WithdrawalAlreadyProcessed": "This withdrawal request has already been processed",
   "Error.ConversationAccessDenied": "You do not have access to this conversation",
   "Error.ConversationNotFound": "Conversation not found",
   "Error.CreateUserRoleNotFound": "Role not found",
@@ -212,6 +207,7 @@
   "Error.JobStatusInvalid": "Job status is invalid",
   "Error.MessageAccessDenied": "You do not have access to this message",
   "Error.MessageNotFound": "Message not found",
+  "Error.MilestoneNotEligibleForRefund": "Refund can only be automatically processed when the milestone is Late or when the freelancer has not started working yet.",
   "Error.MissingRoleInToken": "Your session is missing a role. Please sign in again",
   "Error.NotAnExpertAccount": "This account is not an expert account",
   "Error.NothingToUpdate": "There is nothing to update",
@@ -362,5 +358,7 @@
   "You can only update your own profile.": "You can only update your own profile",
   "Error.SavedSearchLimitExceeded": "You have reached the maximum limit of 30 saved searches. Please delete some before creating a new one.",
   "Error.JobAlertLimitExceeded": "You have reached the maximum limit of 10 job alerts. Please delete some before creating a new one.",
-  "Error.JobAlertDuplicateCriteria": "You already have a job alert with these search criteria."
+  "Error.JobAlertDuplicateCriteria": "You already have a job alert with these search criteria.",
+  "Tài khoản của bạn đã bị khóa bởi Quản trị viên.": "Your account has been suspended by an Administrator.",
+  "Phiên đăng nhập này đã bị thu hồi từ một thiết bị khác.": "This session has been revoked from another device."
 }

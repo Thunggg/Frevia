@@ -85,9 +85,9 @@ export function NewConversationView({
             conversationId: conversation.id,
             message: trimmed,
           });
-          router.push(`${basePath}/conversations/${conversation.id}`);
+          router.push(`${basePath}/conversations/${conversation.slug}`);
         } catch {
-          router.push(`${basePath}/conversations/${conversation.id}`);
+          router.push(`${basePath}/conversations/${conversation.slug}`);
         }
       },
       onError: (error) => {

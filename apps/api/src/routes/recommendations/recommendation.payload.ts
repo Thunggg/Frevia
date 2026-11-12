@@ -9,13 +9,13 @@ export function buildCvPayload(
   cv: FreelancerDocument,
 ): Record<string, unknown> {
   return {
-    title: cv.title,
-    summary: cv.bio,
-    skills: cv.skills.map((skill) => ({
+    title: cv.title ?? undefined,
+    summary: cv.bio ?? undefined,
+    skills: (cv.skills ?? []).map((skill) => ({
       name: skill.name,
       proficiency_level: skill.proficiencyLevel,
     })),
-    experience: cv.experiences.map((experience) => ({
+    experience: (cv.experiences ?? []).map((experience) => ({
       title: experience.title,
       company: experience.company,
       description: experience.description,
@@ -23,7 +23,7 @@ export function buildCvPayload(
       end_date: experience.endDate,
       is_current: experience.isCurrent,
     })),
-    education: cv.educations.map((education) => ({
+    education: (cv.educations ?? []).map((education) => ({
       degree: education.degree,
       school: education.school,
     })),
@@ -34,7 +34,7 @@ export function buildJobPayload(job: JobDocument): Record<string, unknown> {
   return {
     title: job.title,
     summary: job.description,
-    required_skills: job.skills.map((name) => ({ name })),
+    required_skills: (job.skills ?? []).map((name) => ({ name })),
     budget:
       job.budgetMin === null && job.budgetMax === null
         ? undefined
@@ -46,15 +46,15 @@ export function buildCvText(cv: FreelancerDocument): string {
   const parts = [
     cv.title,
     cv.bio,
-    cv.skills.map((skill) => skill.name).join(', '),
-    cv.experiences
+    (cv.skills ?? []).map((skill) => skill.name).join(', '),
+    (cv.experiences ?? [])
       .map((experience) =>
         [experience.title, experience.company, experience.description]
           .filter(Boolean)
           .join(' '),
       )
       .join('\n'),
-    cv.legacyExperience.join('\n'),
+    (cv.legacyExperience ?? []).join('\n'),
   ];
 
   return (
@@ -63,7 +63,7 @@ export function buildCvText(cv: FreelancerDocument): string {
 }
 
 export function buildJobText(job: JobDocument): string {
-  return [job.title, job.description, job.skills.join(', ')]
+  return [job.title, job.description, (job.skills ?? []).join(', ')]
     .filter((part) => Boolean(part && part.trim()))
     .join('\n');
 }

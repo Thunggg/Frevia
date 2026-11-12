@@ -21,20 +21,8 @@ model Role {
   createdAt   DateTime  @default(now())
   deletedAt   DateTime?
 
-  userRoles       UserRole[]
+  users           User[]
   rolePermissions RolePermission[]
-}
-
-model UserRole {
-  userId    Int
-  roleId    Int
-  isPrimary Boolean  @default(false)
-  createdAt DateTime @default(now())
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  role Role @relation(fields: [roleId], references: [id], onDelete: Cascade, onUpdate: NoAction)
-
-  @@id([userId, roleId])
 }
 
 model Permission {
@@ -79,14 +67,14 @@ model User {
   updatedAt DateTime  @updatedAt
   deletedAt DateTime?
 
-  // --- Stripe Payments & Platform Wallet ---
+  // --- Stripe Payments ---
   stripeCustomerId          String?   @db.VarChar(255)
   stripeAccountId           String?   @db.VarChar(255)
   stripeOnboardingCompleted Boolean   @default(false)
-  walletBalance             Decimal   @default(0.00) @db.Decimal(12, 2)
 
   // --- Auth / core ---
-  userRoles     UserRole[]
+  roleId        Int
+  role          Role          @relation(fields: [roleId], references: [id], onDelete: Restrict, onUpdate: NoAction)
   sessions      Session[]
   oauthAccounts OauthAccount[]
   twoFactorAuth TwoFactorAuth?
@@ -162,14 +150,13 @@ model User {
   conversationsAsParticipant2 Conversation[]  @relation("ConversationParticipant2")
   directMessages              DirectMessage[]
 
-  // --- Transactions & Withdrawals ---
-  transactions         Transaction[]
-  withdrawalRequests   WithdrawalRequest[] @relation("WithdrawalUser")
-  processedWithdrawals WithdrawalRequest[] @relation("WithdrawalProcessor")
+  // --- Transactions ---
+  transactions                Transaction[]
 
   // --- AI Recommendation (Job-CV matching) ---
   recommendations Recommendation[] @relation("RecommendationRequester")
 
+  @@index([roleId])
   @@index([deletedAt])
 }
 
@@ -1162,31 +1149,6 @@ model Transaction {
   @@index([status])
 }
 
-model WithdrawalRequest {
-  id                Int              @id @default(autoincrement())
-  userId            Int
-  amount            Decimal          @db.Decimal(12, 2)
-  currency          String           @default("usd") @db.VarChar(10)
-  method            WithdrawalMethod @default(BANK_TRANSFER)
-  status            WithdrawalStatus @default(PENDING)
-  bankName          String?          @db.VarChar(150)
-  bankAccountNumber String?          @db.VarChar(100)
-  bankAccountHolder String?          @db.VarChar(150)
-  note              String?
-  stripeTransferId  String?          @unique
-  processedAt       DateTime?
-  processedById     Int?
-  rejectionReason   String?
-  createdAt         DateTime         @default(now())
-  updatedAt         DateTime         @updatedAt
-
-  user        User  @relation("WithdrawalUser", fields: [userId], references: [id], onDelete: Restrict, onUpdate: NoAction)
-  processedBy User? @relation("WithdrawalProcessor", fields: [processedById], references: [id], onDelete: SetNull, onUpdate: NoAction)
-
-  @@index([userId, createdAt])
-  @@index([status])
-}
-
 // ============================
 // 16. Reviews & Ratings
 // ============================
@@ -1518,6 +1480,7 @@ model SharedFile {
 // ============================
 model Conversation {
   id                   Int       @id @default(autoincrement())
+  slug                 String    @unique @default(cuid()) @db.VarChar(100)
   participant1         Int
   participant2         Int
   createdAt            DateTime  @default(now())
@@ -1535,6 +1498,7 @@ model Conversation {
   @@unique([participant1, participant2])
   @@index([participant1])
   @@index([participant2])
+  @@index([slug])
 }
 
 model DirectMessage {
@@ -1607,6 +1571,7 @@ enum MilestoneStatus {
   IN_PROGRESS
   SUBMITTED
   CHANGES_REQUESTED
+  LATE
   COMPLETED
   DISPUTED
 }
@@ -1785,18 +1750,6 @@ enum TransactionType {
   DISPUTE_FEE
   ARBITRATOR_PAYOUT
   REFUND
-  WITHDRAWAL
-}
-
-enum WithdrawalMethod {
-  BANK_TRANSFER
-  STRIPE_EXPRESS
-}
-
-enum WithdrawalStatus {
-  PENDING
-  COMPLETED
-  REJECTED
 }
 
 enum TransactionStatus {

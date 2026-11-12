@@ -88,6 +88,7 @@ export function ReportsTable({
   const locale = useLocale();
   const t = useTranslations("adminReports");
   const tCommon = useTranslations("adminCommon");
+  const tGlobal = useTranslations("common");
   const router = useRouter();
   const searchParams = useSearchParams();
   const [viewingReport, setViewingReport] = useState<ReportItem | null>(null);
@@ -183,7 +184,7 @@ export function ReportsTable({
                     <TableCell>
                       <span className="text-muted-foreground text-sm">
                         {report.reporter.profile?.displayName ??
-                          `User #${report.reporterId}`}
+                          tGlobal("userFallback", { id: report.reporterId })}
                       </span>
                     </TableCell>
                     <TableCell className="max-w-xs truncate text-muted-foreground">
@@ -280,7 +281,7 @@ export function ReportsTable({
                     {t("reportedBy", {
                       name:
                         viewingReport.reporter.profile?.displayName ??
-                        `User #${viewingReport.reporterId}`,
+                        tGlobal("userFallback", { id: viewingReport.reporterId }),
                     })}
                   </span>
                   <span>·</span>

@@ -37,6 +37,7 @@ import {
   useTogglePostLike,
 } from "@/hooks/use-forum";
 import { buildSlugId } from "@/lib/slug-utils";
+import { LanguageSwitcher } from "@/components/language-switcher";
 
 import { CommentSection } from "./comment-section";
 import { EditPostDialog } from "./edit-post-dialog";
@@ -116,31 +117,34 @@ export function PostDetailView({
     <div>
       <section className="border-b border-border/40 bg-background">
         <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8 lg:py-10">
-          <nav className="text-[13px] text-muted-foreground/60">
-            <Link
-              href="/forum"
-              className="transition-colors hover:text-[#4fae2e]"
-            >
-              {tCommon("forum")}
-            </Link>
-            <span className="mx-2 text-foreground/25">/</span>
-            <Link
-              href={`/forum/${buildSlugId(categorySlug, resolvedCategoryId)}`}
-              className="transition-colors hover:text-[#4fae2e]"
-            >
-              {categoryName}
-            </Link>
-            <span className="mx-2 text-foreground/25">/</span>
-            <span className="max-w-[180px] truncate font-medium text-foreground/80 sm:max-w-[280px]">
-              {displayTitle}
-            </span>
-          </nav>
+          <div className="flex items-center justify-between gap-4">
+            <nav className="text-[13px] text-muted-foreground/60">
+              <Link
+                href="/forum"
+                className="transition-colors hover:text-[#0069D3]"
+              >
+                {tCommon("forum")}
+              </Link>
+              <span className="mx-2 text-foreground/25">/</span>
+              <Link
+                href={`/forum/${buildSlugId(categorySlug, resolvedCategoryId)}`}
+                className="transition-colors hover:text-[#0069D3]"
+              >
+                {categoryName}
+              </Link>
+              <span className="mx-2 text-foreground/25">/</span>
+              <span className="max-w-[180px] truncate font-medium text-foreground/80 sm:max-w-[280px]">
+                {displayTitle}
+              </span>
+            </nav>
+            <LanguageSwitcher />
+          </div>
 
           <p className="mt-4 text-[13px] text-foreground/50">
             {t("discussionIn")}{" "}
             <Link
               href={`/forum/${buildSlugId(categorySlug, resolvedCategoryId)}`}
-              className="font-medium text-[#4fae2e] transition-colors hover:text-[#459928]"
+              className="font-medium text-[#0069D3] transition-colors hover:text-[#0069D3]/90"
             >
               {categoryName}
             </Link>
@@ -216,7 +220,7 @@ export function PostDetailView({
               </p>
               <div className="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-[12px] text-muted-foreground/50">
                 <span className="inline-flex items-center gap-1">
-                  <Calendar className="size-3 text-[#4fae2e]/60" />
+                  <Calendar className="size-3 text-[#0069D3]/60" />
                   {formatPostDate(post.createdAt)}
                 </span>
                 {wasEdited ? (
@@ -234,7 +238,7 @@ export function PostDetailView({
           </div>
 
           <div
-            className="post-content mt-8 max-w-prose text-[15px] leading-8 text-foreground/90 [&_a]:text-[#4fae2e] [&_a]:underline-offset-2 hover:[&_a]:underline [&_h1]:mb-3 [&_h1]:text-xl [&_h1]:font-semibold [&_h1]:text-foreground [&_h2]:mb-3 [&_h2]:text-lg [&_h2]:font-semibold [&_h2]:text-foreground [&_h3]:mb-2 [&_h3]:font-semibold [&_h3]:text-foreground [&_li]:my-1 [&_ol]:my-4 [&_ol]:list-decimal [&_ol]:pl-5 [&_p]:mb-4 [&_p:last-child]:mb-0 [&_ul]:my-4 [&_ul]:list-disc [&_ul]:pl-5"
+            className="post-content mt-8 max-w-prose text-[15px] leading-8 text-foreground/90 [&_a]:text-[#0069D3] [&_a]:underline-offset-2 hover:[&_a]:underline [&_h1]:mb-3 [&_h1]:text-xl [&_h1]:font-semibold [&_h1]:text-foreground [&_h2]:mb-3 [&_h2]:text-lg [&_h2]:font-semibold [&_h2]:text-foreground [&_h3]:mb-2 [&_h3]:font-semibold [&_h3]:text-foreground [&_li]:my-1 [&_ol]:my-4 [&_ol]:list-decimal [&_ol]:pl-5 [&_p]:mb-4 [&_p:last-child]:mb-0 [&_ul]:my-4 [&_ul]:list-disc [&_ul]:pl-5"
             dangerouslySetInnerHTML={{ __html: displayContent }}
           />
 
@@ -247,7 +251,7 @@ export function PostDetailView({
               className={
                 liked
                   ? "gap-1.5 px-3 text-red-500 hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-950/20"
-                  : "gap-1.5 px-3 text-muted-foreground/60 hover:bg-[#4fae2e]/5 hover:text-[#4fae2e] dark:hover:bg-[#4fae2e]/10"
+                  : "gap-1.5 px-3 text-muted-foreground/60 hover:bg-[#0069D3]/5 hover:text-[#0069D3] dark:hover:bg-blue-500/10"
               }
             >
               <Heart

@@ -1,29 +1,33 @@
-import { redirect } from "next/navigation";
 import authServerRequest from "@/apiRequests/auth.server";
+import { canAccessAdminPortal } from "@/lib/admin-access";
 import { RoleName } from "@shared/types";
+import { redirect } from "next/navigation";
 
-export default async function AccountProfilePage({
-  searchParams,
-}: {
-  searchParams: Promise<{ tab?: string }>;
-}) {
-  const [user, { tab }] = await Promise.all([
-    authServerRequest.getMe(),
-    searchParams,
-  ]);
-  const role = (user?.roles.find((item) => item.isPrimary) ?? user?.roles[0])
-    ?.name;
-  if (role === RoleName.EXPERT) redirect("/expert/profile?edit=1");
-
-  if (role === RoleName.CLIENT) {
-    const query = tab ? `?tab=${tab}` : "";
-    redirect(`/client/profile${query}`);
+export default async function AccountProfileRedirectPage() {
+  const user = await authServerRequest.getMe();
+  if (!user) {
+    redirect("/login?redirect=/account-profile");
   }
 
-  if (role === RoleName.FREELANCER) {
-    const query = tab ? `?tab=${tab}` : "";
-    redirect(`/freelancer/profile${query}`);
+  const primaryRole =
+    user.roles?.find((role) => role.isPrimary)?.name ?? user.roles?.[0]?.name;
+
+  if (primaryRole === RoleName.CLIENT) {
+    redirect("/client/profile");
   }
 
-  redirect("/login?redirect=/account-profile");
+  if (primaryRole === RoleName.EXPERT) {
+    redirect("/expert/profile");
+  }
+
+  if (
+    primaryRole === RoleName.ADMIN ||
+    (primaryRole !== RoleName.FREELANCER &&
+      canAccessAdminPortal(user))
+  ) {
+    redirect("/admin/profile");
+  }
+
+  redirect("/freelancer/profile");
 }
+

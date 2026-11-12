@@ -215,11 +215,13 @@ export class DisputeService {
         throw DisputeNotFoundException();
       }
 
+      const isStaff =
+        roleName === RoleName.ADMIN ||
+        (roleName !== RoleName.CLIENT && roleName !== RoleName.FREELANCER);
       const isParticipant =
         dispute.openedById === userId ||
         dispute.respondentId === userId ||
-        roleName === RoleName.ADMIN ||
-        roleName === RoleName.EXPERT;
+        isStaff;
       if (!isParticipant) {
         throw DisputeForbiddenException();
       }
@@ -247,10 +249,13 @@ export class DisputeService {
         throw DisputeNotFoundException();
       }
 
+      const isStaff =
+        roleName === RoleName.ADMIN ||
+        (roleName !== RoleName.CLIENT && roleName !== RoleName.FREELANCER);
       const isParticipant =
         dispute.openedById === userId ||
         dispute.respondentId === userId ||
-        roleName === RoleName.ADMIN;
+        isStaff;
       if (!isParticipant) {
         throw DisputeForbiddenException();
       }

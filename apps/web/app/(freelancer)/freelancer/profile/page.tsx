@@ -1,6 +1,7 @@
 import { getTranslations } from "next-intl/server";
 import { redirect } from "next/navigation";
 import authServerRequest from "@/apiRequests/auth.server";
+import { canAccessAdminPortal } from "@/lib/admin-access";
 import { RoleName } from "@shared/types";
 import { AccountProfileClient } from "./account-profile-client";
 
@@ -21,6 +22,19 @@ export default async function FreelancerProfilePage() {
     redirect("/login?redirect=/freelancer/profile");
   }
 
+  if (role === RoleName.EXPERT) {
+    redirect("/expert/profile");
+  }
+
+  if (
+    role === RoleName.ADMIN ||
+    (role !== RoleName.CLIENT &&
+      role !== RoleName.FREELANCER &&
+      canAccessAdminPortal(user))
+  ) {
+    redirect("/admin/profile");
+  }
+
   if (role !== RoleName.FREELANCER) {
     redirect("/client/profile");
   }
@@ -34,3 +48,4 @@ export default async function FreelancerProfilePage() {
     />
   );
 }
+  

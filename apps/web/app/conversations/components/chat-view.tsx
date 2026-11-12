@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
+  useConversationDetail,
   useConversationMessages,
   useConversations,
   useDeleteConversationMessage,
@@ -62,17 +63,44 @@ function isEmojiOnly(text: string): boolean {
 }
 
 type ChatViewProps = {
-  conversationId: number;
+  conversationId?: number;
+  conversationSlug?: string;
   currentUserId: number | null;
 };
 
-export function ChatView({ conversationId, currentUserId }: ChatViewProps) {
+export function ChatView({
+  conversationId: propConversationId,
+  conversationSlug,
+  currentUserId,
+}: ChatViewProps) {
   const t = useTranslations("chat");
   const tCommon = useTranslations("common");
   const format = useFormatter();
   const { socket, connected } = useConversationSocketContext();
-  const { data: messages, isLoading } = useConversationMessages(conversationId);
   const { data: conversations } = useConversations();
+
+  // Find conversation from list by slug or id
+  const conversationFromList = conversations?.find((c) =>
+    conversationSlug
+      ? c.slug === conversationSlug || String(c.id) === conversationSlug
+      : c.id === propConversationId,
+  );
+
+  const targetIdOrSlug = conversationSlug ?? propConversationId;
+  const { data: conversationDetail } = useConversationDetail(
+    !conversationFromList && targetIdOrSlug ? targetIdOrSlug : null,
+  );
+
+  const conversation = conversationFromList ?? conversationDetail;
+  const conversationId =
+    conversation?.id ??
+    (typeof targetIdOrSlug === "number"
+      ? targetIdOrSlug
+      : Number(targetIdOrSlug) || 0);
+
+  const { data: messages, isLoading } = useConversationMessages(
+    targetIdOrSlug ?? 0,
+  );
   const restSend = useSendConversationMessage();
   const restMarkRead = useMarkConversationRead();
   const restDelete = useDeleteConversationMessage();
@@ -91,7 +119,6 @@ export function ChatView({ conversationId, currentUserId }: ChatViewProps) {
     null,
   );
 
-  const conversation = conversations?.find((c) => c.id === conversationId);
   const otherUser = conversation?.otherUser;
 
   const formatMessageTime = (createdAt: string | Date): string =>

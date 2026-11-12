@@ -91,7 +91,7 @@ export function ReviewSubmissionDialog({
 
       toastSuccess({
         message: releaseCompleted
-          ? `Milestone approved and $${freelancerNetPayout.toLocaleString("en-US", { minimumFractionDigits: 2 })} credited to freelancer wallet (5% platform fee deducted)!`
+          ? `Milestone approved and $${freelancerNetPayout.toLocaleString("en-US", { minimumFractionDigits: 2 })} transferred to freelancer via Stripe (5% platform fee deducted)!`
           : "Deliverables approved! Please release the milestone payout from the deliverables tab.",
       });
 
@@ -106,9 +106,6 @@ export function ReviewSubmissionDialog({
       });
       await queryClient.invalidateQueries({
         queryKey: ["client-transactions"],
-      });
-      await queryClient.invalidateQueries({
-        queryKey: ["wallet-summary"],
       });
 
       onSuccess?.();

@@ -44,6 +44,7 @@ export * from "./constants/oauth.constant";
 export * from "./model/role.model";
 export * from "./message/manage-role.message";
 export * from "./constants/http-method.constant";
+export * from "./constants/permission.constant";
 export * from "./model/permission.model";
 export * from "./model/skill.model";
 export * from "./message/manage-permission.message";

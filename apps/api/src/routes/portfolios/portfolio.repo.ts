@@ -13,12 +13,8 @@ export class PortfolioRepository {
         id: profileId,
         user: {
           deletedAt: null,
-          userRoles: {
-            some: {
-              role: {
-                name: RoleName.FREELANCER,
-              },
-            },
+          role: {
+            name: RoleName.FREELANCER,
           },
         },
       },
@@ -26,11 +22,7 @@ export class PortfolioRepository {
         freelancerProfile: true,
         user: {
           include: {
-            userRoles: {
-              include: {
-                role: true,
-              },
-            },
+            role: true,
           },
         },
       },

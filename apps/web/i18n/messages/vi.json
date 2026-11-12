@@ -10,6 +10,8 @@
     "switchToDarkMode": "Chuyển sang chế độ tối",
     "loading": "Đang tải...",
     "home": "Trang chủ",
+    "back": "Quay lại",
+    "messages": "Tin nhắn",
     "forum": "Diễn đàn",
     "posts": "{count, plural, other {bài viết}}",
     "comments": "{count, plural, other {bình luận}}",
@@ -25,6 +27,7 @@
     "daysAgo": "{days} ngày trước",
     "yesterday": "Hôm qua",
     "userFallback": "Người dùng #{id}",
+    "postFallback": "Bài đăng #{id}",
     "close": "Đóng",
     "cancel": "Huỷ",
     "attachment": "Tệp đính kèm",
@@ -112,7 +115,42 @@
     "search": "Tìm kiếm",
     "searchPlaceholder": "Tìm kiếm...",
     "allCategories": "Tất cả danh mục",
-    "toggleSidebar": "Mở/đóng thanh bên"
+    "toggleSidebar": "Mở/đóng thanh bên",
+    "profileSettings": "Cài đặt tài khoản",
+    "sessions": "Phiên đăng nhập"
+  },
+  "adminProfile": {
+    "title": "Cài đặt tài khoản",
+    "subtitle": "Quản lý thông tin cá nhân, ảnh đại diện và mật khẩu tài khoản quản trị.",
+    "avatarTitle": "Ảnh đại diện",
+    "avatarDescription": "JPG, PNG hoặc WebP. Tối đa 5 MB.",
+    "choosePhoto": "Chọn ảnh mới",
+    "uploadPhoto": "Tải ảnh lên",
+    "uploadingPhoto": "Đang tải ảnh...",
+    "avatarUpdated": "Ảnh đại diện đã được cập nhật thành công.",
+    "generalTitle": "Thông tin cá nhân",
+    "generalDescription": "Cập nhật tên hiển thị và tiểu sử tài khoản của bạn.",
+    "displayName": "Tên hiển thị",
+    "displayNamePlaceholder": "Nhập tên hiển thị...",
+    "bio": "Tiểu sử",
+    "bioPlaceholder": "Viết đôi dòng giới thiệu bản thân...",
+    "saveChanges": "Lưu thay đổi",
+    "saving": "Đang lưu...",
+    "profileUpdated": "Thông tin tài khoản đã được cập nhật thành công.",
+    "securityTitle": "Bảo mật & Mật khẩu",
+    "securityDescription": "Đổi mật khẩu tài khoản để tăng cường bảo mật.",
+    "currentPassword": "Mật khẩu hiện tại",
+    "newPassword": "Mật khẩu mới",
+    "confirmPassword": "Xác nhận mật khẩu mới",
+    "changePassword": "Đổi mật khẩu",
+    "changingPassword": "Đang đổi mật khẩu...",
+    "passwordChanged": "Mật khẩu đã được thay đổi thành công.",
+    "sessionsTitle": "Phiên đăng nhập",
+    "sessionsDescription": "Xem và quản lý các thiết bị, trình duyệt đang đăng nhập tài khoản của bạn.",
+    "manageSessions": "Quản lý thiết bị",
+    "loadFailed": "Không thể tải thông tin hồ sơ. Vui lòng thử lại.",
+    "retry": "Thử lại",
+    "roleAdmin": "Quản trị viên"
   },
   "adminCommon": {
     "id": "ID",
@@ -150,6 +188,8 @@
     "notAvailable": "Không có"
   },
   "adminRoles": {
+    "metaTitle": "Vai trò | Trang quản trị | Frevia",
+    "metaDescription": "Quản lý vai trò và các tập quyền tương ứng.",
     "title": "Quản lý vai trò",
     "subtitle": "Xem tất cả vai trò trong hệ thống",
     "loadFailed": "Không thể tải danh sách vai trò. Vui lòng thử lại.",
@@ -176,6 +216,8 @@
     "backToRoles": "Quay lại danh sách vai trò"
   },
   "adminPermissions": {
+    "metaTitle": "Quyền hạn | Trang quản trị | Frevia",
+    "metaDescription": "Duyệt danh sách các quyền API trong hệ thống.",
     "title": "Quản lý quyền",
     "subtitle": "Xem tất cả quyền API trong hệ thống",
     "loadFailed": "Không thể tải danh sách quyền. Vui lòng thử lại.",
@@ -186,7 +228,9 @@
     "noPermissions": "Không tìm thấy quyền nào.",
     "detailTitle": "Chi tiết quyền",
     "detailLoadFailed": "Không thể tải chi tiết quyền. Có thể quyền không tồn tại.",
-    "backToPermissions": "Quay lại danh sách quyền"
+    "backToPermissions": "Quay lại danh sách quyền",
+    "permissionName": "Tên chức năng",
+    "systemName": "Mã định danh hệ thống"
   },
   "adminBanners": {
     "metaTitle": "Banner | Bảng điều khiển quản trị | Frevia",
@@ -555,7 +599,16 @@
     "roleLoadFailed": "Không thể tải vai trò đã chọn.",
     "permissionsLoadFailed": "Không thể tải danh sách quyền.",
     "noMatches": "Không có quyền nào khớp với bộ lọc.",
-    "selectAllModule": "Chọn tất cả trong {module}"
+    "selectAllModule": "Chọn tất cả trong {module}",
+    "allScopes": "Tất cả phạm vi",
+    "scopeAdmin": "Dashboard Quản trị",
+    "scopeClient": "Khách hàng (Client)",
+    "scopeFreelancer": "Freelancer",
+    "scopeContracts": "Hợp đồng & Thanh toán",
+    "scopeCommon": "Trang chủ & Dùng chung",
+    "scopeHint": "Lọc theo khu vực sử dụng để dễ phân quyền hơn",
+    "selectAllInScope": "Chọn tất cả",
+    "deselectAllInScope": "Bỏ chọn tất cả"
   },
   "adminTrash": {
     "metaTitle": "Thùng rác | Quản trị | Frevia",
@@ -690,6 +743,8 @@
     "EXPERT": "Chuyên gia"
   },
   "adminUsers": {
+    "metaTitle": "Người dùng | Trang quản trị | Frevia",
+    "metaDescription": "Xem, tìm kiếm và quản lý tất cả người dùng trong hệ thống.",
     "title": "Quản lý người dùng",
     "subtitle": "Xem, tìm kiếm, lọc và quản lý toàn bộ người dùng trong hệ thống",
     "subtitleTotal": "(tổng {count} người dùng)",
@@ -741,6 +796,8 @@
     "updatedBannedToast": "Đã cập nhật người dùng \"{email}\" · tài khoản đã bị khoá"
   },
   "adminUserDetail": {
+    "metaTitle": "Chi tiết người dùng | Trang quản trị | Frevia",
+    "metaDescription": "Xem xét tài khoản, vai trò và dữ liệu hồ sơ của người dùng.",
     "invalidIdTitle": "ID người dùng không hợp lệ",
     "invalidIdDescription": "ID người dùng \"{id}\" không hợp lệ.",
     "notFoundTitle": "Không tìm thấy người dùng",
@@ -894,7 +951,7 @@
     "expertEntryAdd": "Thêm mục",
     "expertSectionVisibility": "Hiển thị trong danh bạ",
     "expertFieldListed": "Hiển thị trong danh bạ công khai",
-    "expertListedActiveHint": "Chuyên gia này có thể tìm thấy tại /experts và có thể nhận tư vấn.",
+    "expertListedActiveHint": "Hồ sơ chuyên gia này đang hoạt động và có thể tham gia xử lý tranh chấp.",
     "expertListedInactiveHint": "Chuyên gia này bị ẩn khỏi danh bạ công khai nhưng vẫn giữ nguyên toàn bộ dữ liệu hồ sơ.",
     "expertStatusActive": "Đang hoạt động",
     "expertStatusInactive": "Không hoạt động",
@@ -1303,6 +1360,7 @@
   },
   "milestoneStatus": {
     "DISPUTED": "Tranh chấp",
+    "LATE": "Trễ hạn",
     "COMPLETED": "Đã hoàn thành",
     "SUBMITTED": "Chờ duyệt",
     "IN_PROGRESS": "Đang thực hiện",
@@ -1700,6 +1758,7 @@
     "switchToFreelancer": "Chuyển sang Freelancer",
     "logout": "Đăng xuất",
     "helpForum": "Trợ giúp & Diễn đàn",
+    "navForum": "Diễn đàn",
     "roleSwitchFailed": "Không thể chuyển vai trò. Vui lòng thử lại.",
     "navFindWork": "Tìm việc",
     "navJobCategories": "Danh mục công việc",
@@ -2138,6 +2197,7 @@
   "expertShell": {
     "disputes": "Xử lý tranh chấp",
     "profile": "Hồ sơ",
+    "disputes": "Tranh chấp",
     "logout": "Đăng xuất"
   },
   "expertDisputes": {
@@ -2678,7 +2738,6 @@
     "links": {
       "findWork": "Tìm việc",
       "hireTalent": "Thuê chuyên gia",
-      "findExperts": "Tìm chuyên gia",
       "forum": "Diễn đàn",
       "myJobs": "Công việc của tôi",
       "contracts": "Hợp đồng",
@@ -2708,6 +2767,7 @@
     "following": "Đang theo dõi",
     "socialLinks": "Liên kết mạng xã hội",
     "sessions": "Phiên đăng nhập",
+    "switchRole": "Chuyển vai trò",
     "loadingRoles": "Đang tải vai trò...",
     "switchingRole": "Đang chuyển vai trò...",
     "addingRole": "Đang thêm vai trò...",
@@ -2786,6 +2846,7 @@
     "checkingProposal": "Đang kiểm tra đề xuất...",
     "cannotProposeOwn": "Bạn không thể gửi đề xuất cho công việc do chính bạn đăng.",
     "notAccepting": "Công việc này không còn nhận đề xuất.",
+    "verifyIdentityWarning": "Bạn chưa xác minh danh tính (CCCD). Vول lòng xác minh trước khi nộp hồ sơ nhận việc.",
     "switchToFreelancer": "Hãy chuyển sang tài khoản freelancer để tiếp tục.",
     "applyNow": "Ứng tuyển ngay",
     "viewProposal": "Xem đề xuất",
@@ -2837,6 +2898,12 @@
       "removing": "Đang xoá…",
       "confirm": "Xoá"
     },
+    "kycDialog": {
+      "title": "Yêu cầu xác minh danh tính",
+      "description": "Bạn cần hoàn tất xác minh danh tính (CCCD) để có thể nộp đề xuất cho công việc này.",
+      "cancel": "Để sau",
+      "confirm": "Xác minh ngay"
+    },
     "notFound": {
       "title": "Công việc này không còn khả dụng",
       "description": "Có thể tin đăng đã bị đóng, bị xoá hoặc không còn hoạt động.",
@@ -2857,38 +2924,6 @@
     "alreadyExists": "Bạn đã có đề xuất cho công việc này. Đang mở đề xuất đó.",
     "saveFailed": "Không thể lưu đề xuất. Vui lòng thử lại.",
     "submitFailed": "Không thể gửi đề xuất. Vui lòng thử lại."
-  },
-  "experts": {
-    "metaTitle": "Chuyên gia đã xác minh | Frevia",
-    "metaDescription": "Gặp gỡ các chuyên gia đánh giá chuyên môn đang hoạt động của Frevia.",
-    "networkBadge": "Mạng lưới đã xác minh của Frevia",
-    "heroTitle": "Chuyên môn đáng tin cậy, minh bạch ngay từ thiết kế.",
-    "heroDescription": "Khám phá các chuyên gia đang hoạt động được Frevia bổ nhiệm nhằm nâng cao chất lượng đánh giá chuyên môn và độ tin cậy của sàn.",
-    "searchPlaceholder": "Tìm theo tên, chức danh hoặc giới thiệu",
-    "expertisePlaceholder": "Lĩnh vực, ví dụ: Chiến lược sản phẩm",
-    "searchAction": "Tìm chuyên gia",
-    "activeCount": "{count, plural, =0 {Chưa có chuyên gia nào} other {# chuyên gia đang hoạt động}}",
-    "networkTitle": "Gặp gỡ mạng lưới",
-    "clearFilters": "Xoá bộ lọc",
-    "emptyTitle": "Không tìm thấy chuyên gia nào",
-    "emptyDescription": "Hãy thử tìm với tên hoặc lĩnh vực rộng hơn.",
-    "verified": "Đã xác minh",
-    "verifiedExpert": "Chuyên gia đã được Frevia xác minh",
-    "fallbackName": "Chuyên gia Frevia",
-    "fallbackTitle": "Chuyên gia chuyên môn",
-    "fallbackBio": "Chuyên gia này đang hoàn thiện hồ sơ chuyên môn của mình.",
-    "viewProfile": "Xem hồ sơ",
-    "backToExperts": "Quay lại danh sách chuyên gia",
-    "overviewTitle": "Tổng quan chuyên môn",
-    "noOverview": "Chưa có thông tin tổng quan chuyên môn.",
-    "expertiseTitle": "Lĩnh vực chuyên môn",
-    "notProvided": "Chưa cung cấp.",
-    "credentialsTitle": "Chứng nhận chuyên môn",
-    "experience": "Kinh nghiệm",
-    "yearsOfExperience": "{years, plural, other {# năm}}",
-    "education": "Học vấn",
-    "certifications": "Chứng chỉ",
-    "visitWebsite": "Truy cập website chuyên môn"
   },
   "findWork": {
     "title": "Tìm việc",
@@ -3161,7 +3196,7 @@
       "findWorkDescription": "Tham gia với vai trò freelancer và ứng tuyển vào các dự án.",
       "hireTalentTitle": "Thuê nhân tài",
       "hireTalentDescription": "Tham gia với vai trò nhà tuyển dụng và đăng tin tuyển dụng.",
-      "acceptTerms": "Tôi đồng ý với các điều khoản và điều kiện",
+      "acceptTerms": "Tôi đồng ý với <userAgreementLink>Thỏa thuận Người dùng Freelancer</userAgreementLink> và <privacyPolicyLink>Chính sách Quyền riêng tư</privacyPolicyLink>.",
       "submit": "Tạo tài khoản",
       "submitting": "Đang tạo...",
       "haveAccount": "Đã có tài khoản?",
@@ -3182,6 +3217,16 @@
       "logIn": "Đăng nhập",
       "failed": "Đặt lại mật khẩu thất bại",
       "sendOtpFailed": "Gửi mã OTP thất bại"
+    },
+    "forceLogout": {
+      "bannedTitle": "Tài khoản đã bị khóa",
+      "bannedDescription": "Tài khoản của bạn đã bị khóa bởi Quản trị viên.",
+      "revokedTitle": "Phiên đăng nhập đã bị thu hồi",
+      "revokedDescription": "Phiên đăng nhập này đã bị thu hồi từ một thiết bị khác.",
+      "defaultTitle": "Phiên đăng nhập kết thúc",
+      "defaultDescription": "Phiên đăng nhập của bạn đã kết thúc. Vui lòng đăng nhập lại.",
+      "logoutButton": "Đăng xuất",
+      "processing": "Đang xử lý..."
     }
   },
   "recommendation": {

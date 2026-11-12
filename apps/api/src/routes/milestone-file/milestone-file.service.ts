@@ -31,10 +31,13 @@ export class MilestoneFileService {
         await this.milestoneFileRepository.findContractById(contractId);
       if (!contract) throw MilestoneFileContractNotFoundException();
 
+      const isStaff =
+        roleName === RoleName.ADMIN ||
+        (roleName !== RoleName.CLIENT && roleName !== RoleName.FREELANCER);
       const isParticipant =
         contract.clientId === userId ||
         contract.freelancerId === userId ||
-        roleName === RoleName.ADMIN;
+        isStaff;
 
       if (!isParticipant) throw MilestoneFileForbiddenException();
 

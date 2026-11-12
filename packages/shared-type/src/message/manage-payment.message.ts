@@ -17,6 +17,7 @@ export const ManagePaymentMessage = {
   MILESTONE_NOT_ELIGIBLE_FOR_FUNDING: 'Error.MilestoneNotEligibleForFunding',
   MILESTONE_NOT_FUNDED: 'Error.MilestoneNotFunded',
   MILESTONE_ALREADY_RELEASED: 'Error.MilestoneAlreadyReleased',
+  MILESTONE_NOT_ELIGIBLE_FOR_REFUND: 'Error.MilestoneNotEligibleForRefund',
 
   DISPUTE_FEE_ALREADY_PAID: 'Error.DisputeFeeAlreadyPaid',
   DISPUTE_NOT_FOUND: 'Error.DisputeNotFound',
@@ -25,10 +26,4 @@ export const ManagePaymentMessage = {
   TRANSACTION_NOT_FOUND: 'Error.TransactionNotFound',
   WEBHOOK_SIGNATURE_INVALID: 'Error.WebhookSignatureInvalid',
   FORBIDDEN: 'Error.PaymentForbidden',
-
-  INSUFFICIENT_WALLET_BALANCE: 'Error.InsufficientWalletBalance',
-  INVALID_WITHDRAWAL_AMOUNT: 'Error.InvalidWithdrawalAmount',
-  BANK_DETAILS_REQUIRED: 'Error.BankDetailsRequired',
-  WITHDRAWAL_NOT_FOUND: 'Error.WithdrawalNotFound',
-  WITHDRAWAL_ALREADY_PROCESSED: 'Error.WithdrawalAlreadyProcessed',
 } as const;

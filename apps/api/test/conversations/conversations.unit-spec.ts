@@ -74,6 +74,7 @@ describe('Conversations (UF-18 to UF-25)', () => {
     overrides: Partial<Record<string, unknown>> = {},
   ): Record<string, unknown> => ({
     id: 1,
+    slug: 'conv-test-1',
     participant1: 10,
     participant2: 20,
     createdAt,

@@ -40,6 +40,7 @@ import {
   PortfolioItemNotFoundException,
   UserNotFoundException,
 } from './users.error';
+import { AuthGateway } from '../../shared/gateways/auth.gateway';
 import { UsersRepository } from './users.repo';
 
 @Injectable()
@@ -47,6 +48,7 @@ export class UsersService {
   constructor(
     private readonly repository: UsersRepository,
     private readonly hashingService: HashingService,
+    private readonly authGateway: AuthGateway,
   ) {}
 
   // ====== Admin tạo tài khoản mới ======
@@ -85,11 +87,15 @@ export class UsersService {
         id: created.id,
         email: created.email,
         displayName: created.profile?.displayName ?? null,
-        roles: created.userRoles.map((ur) => ({
-          id: ur.role.id,
-          name: ur.role.name,
-          isPrimary: ur.isPrimary,
-        })),
+        roles: created.role
+          ? [
+              {
+                id: created.role.id,
+                name: created.role.name,
+                isPrimary: true,
+              },
+            ]
+          : [],
       };
     } catch (error) {
       if (
@@ -174,16 +180,28 @@ export class UsersService {
         throw UserNotFoundException();
       }
 
+      // Realtime: phát sự kiện khóa tài khoản xuống toàn bộ thiết bị đang đăng nhập
+      if (body.isBanned === true) {
+        this.authGateway.emitForceLogoutUser(
+          id,
+          'Tài khoản của bạn đã bị khóa bởi Quản trị viên.',
+        );
+      }
+
       return {
         id: updated.id,
         email: updated.email,
         displayName: updated.profile?.displayName ?? null,
         isBanned: updated.isBanned,
-        roles: updated.userRoles.map((ur) => ({
-          id: ur.role.id,
-          name: ur.role.name,
-          isPrimary: ur.isPrimary,
-        })),
+        roles: updated.role
+          ? [
+              {
+                id: updated.role.id,
+                name: updated.role.name,
+                isPrimary: true,
+              },
+            ]
+          : [],
       };
     } catch (error) {
       if (

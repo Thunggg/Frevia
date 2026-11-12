@@ -5,26 +5,21 @@ import { usePermission } from "@/hooks/use-permission";
 import { Badge } from "@repo/ui/components/shadcn/badge";
 import { Button } from "@repo/ui/components/shadcn/button";
 import { Separator } from "@repo/ui/components/shadcn/separator";
-import { HttpMethod } from "@shared/types";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
-import { useFormatter, useTranslations } from "next-intl";
-
-const METHOD_VARIANT: Record<
-  string,
-  "default" | "secondary" | "outline" | "destructive"
-> = {
-  [HttpMethod.GET]: "secondary",
-  [HttpMethod.POST]: "default",
-  [HttpMethod.PUT]: "outline",
-  [HttpMethod.PATCH]: "outline",
-  [HttpMethod.DELETE]: "destructive",
-};
+import { useFormatter, useLocale, useTranslations } from "next-intl";
+import {
+  getPermissionScope,
+  SCOPE_DEFINITIONS,
+} from "@/lib/permission-scopes";
+import { getPermissionDisplayName } from "@/lib/permission-utils";
+import { HttpMethodBadge } from "../../components/http-method-badge";
 
 export function PermissionDetail({ permissionId }: { permissionId: number }) {
   const t = useTranslations("adminPermissions");
   const tCommon = useTranslations("adminCommon");
   const format = useFormatter();
+  const locale = useLocale();
   const { data: permission, isLoading, isError } = usePermission(permissionId);
 
   if (isLoading) {
@@ -42,20 +37,22 @@ export function PermissionDetail({ permissionId }: { permissionId: number }) {
     );
   }
 
+  const displayName = getPermissionDisplayName(permission, locale);
+
   return (
     <div className="space-y-6">
       <BackToPermissions />
 
       <div className="flex items-start justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight font-mono">
-            {permission.name}
+          <h1 className="text-3xl font-bold tracking-tight">
+            {displayName}
           </h1>
-          <p className="text-muted-foreground mt-1">{t("detailTitle")}</p>
+          <p className="text-muted-foreground mt-1 font-mono text-sm">
+            {permission.method} {permission.path}
+          </p>
         </div>
-        <Badge variant={METHOD_VARIANT[permission.method] ?? "outline"}>
-          {permission.method}
-        </Badge>
+        <HttpMethodBadge method={permission.method} />
       </div>
 
       <div className="rounded-lg border bg-card p-6 space-y-4">
@@ -81,16 +78,14 @@ export function PermissionDetail({ permissionId }: { permissionId: number }) {
         <Separator />
 
         <div>
-          <p className="text-xs text-muted-foreground">{tCommon("name")}</p>
-          <p className="text-sm font-medium font-mono mt-1">{permission.name}</p>
+          <p className="text-xs text-muted-foreground">{t("permissionName")}</p>
+          <p className="text-sm font-medium mt-1">{displayName}</p>
         </div>
 
         <div>
           <p className="text-xs text-muted-foreground">{tCommon("method")}</p>
           <div className="mt-1">
-            <Badge variant={METHOD_VARIANT[permission.method] ?? "outline"}>
-              {permission.method}
-            </Badge>
+            <HttpMethodBadge method={permission.method} />
           </div>
         </div>
 
@@ -101,12 +96,25 @@ export function PermissionDetail({ permissionId }: { permissionId: number }) {
 
         <div>
           <p className="text-xs text-muted-foreground">{tCommon("module")}</p>
-          <div className="mt-1">
+          <div className="mt-1 flex items-center gap-2 flex-wrap">
             {permission.module ? (
-              <Badge variant="outline">{permission.module}</Badge>
+              <Badge variant="outline" className="font-mono">{permission.module}</Badge>
             ) : (
               <span className="text-sm text-muted-foreground">—</span>
             )}
+            {(() => {
+              const scope = getPermissionScope(permission);
+              const scopeDef = SCOPE_DEFINITIONS[scope];
+              return (
+                <Badge
+                  variant="outline"
+                  className={`text-[11px] px-2 py-0.5 border ${scopeDef.badgeClass}`}
+                >
+                  <span className={`size-1.5 rounded-full mr-1.5 ${scopeDef.dotColor}`} />
+                  {locale === "vi" ? scopeDef.labelVi : scopeDef.labelEn}
+                </Badge>
+              );
+            })()}
           </div>
         </div>
       </div>

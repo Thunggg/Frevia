@@ -1,7 +1,5 @@
 import { getTranslations } from "next-intl/server";
-import { MessageSquare, Plus } from "@/components/icons";
-import { Button } from "@repo/ui/components/shadcn/button";
-import { NewConversationDialog } from "./new-conversation-dialog";
+import { MessageSquare } from "@/components/icons";
 import { UserIdAutoRedirect } from "./user-id-auto-redirect";
 
 type ConversationsEmptyViewProps = {
@@ -31,14 +29,6 @@ export const ConversationsEmptyView = async ({
           {t("selectConversation")}
         </p>
       </div>
-      <NewConversationDialog
-        trigger={
-          <Button className="mt-2 rounded-full bg-[#0069D3] text-white hover:bg-[#0058b3] px-5 py-2 text-xs font-semibold shadow-xs gap-1.5 cursor-pointer">
-            <Plus className="size-3.5" />
-            <span>{t("newMessage")}</span>
-          </Button>
-        }
-      />
     </div>
   );
 };
