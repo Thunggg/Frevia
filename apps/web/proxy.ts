@@ -24,6 +24,8 @@ const PUBLIC_ROUTES = [
   "/profiles",
   "/clients",
   "/experts",
+  "/user-agreement",
+  "/privacy-policy",
 ];
 
 const isAuthRoute = (pathname: string) =>
