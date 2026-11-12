@@ -1,6 +1,7 @@
 "use client";
 
 import { useDeleteRole } from "@/hooks/use-role";
+import { useActionPermission } from "@/hooks/use-action-permission";
 import { ApiFail } from "@/lib/http";
 import {
   AlertDialog,
@@ -39,6 +40,8 @@ export function DeleteRoleDialog({
   trigger,
   onDeleted,
 }: DeleteRoleDialogProps) {
+  const { can } = useActionPermission();
+  const canDelete = can("DELETE", "/api/roles/:id");
   const t = useTranslations("adminRoles");
   const tCommon = useTranslations("adminCommon");
   const deleteRole = useDeleteRole();
@@ -65,7 +68,7 @@ export function DeleteRoleDialog({
     });
   }
 
-  if (isSystemRole(role.name)) {
+  if (isSystemRole(role.name) || !canDelete) {
     return null;
   }
 

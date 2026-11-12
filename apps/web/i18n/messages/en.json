@@ -117,7 +117,8 @@
     "allCategories": "All categories",
     "toggleSidebar": "Toggle sidebar",
     "profileSettings": "Account Settings",
-    "sessions": "Active Sessions"
+    "sessions": "Active Sessions",
+    "aiOps": "AI Ops & Indexing"
   },
   "adminProfile": {
     "title": "Account Settings",
@@ -213,7 +214,9 @@
     "deletedToast": "Role \"{name}\" deleted",
     "detailTitle": "Role detail",
     "detailLoadFailed": "Failed to load role detail. The role may not exist.",
-    "backToRoles": "Back to roles"
+    "backToRoles": "Back to roles",
+    "accessDenied": "You do not have permission to view the role list.",
+    "detailAccessDenied": "You do not have permission to view this role's details."
   },
   "adminPermissions": {
     "metaTitle": "Permissions | Admin Dashboard | Frevia",
@@ -230,7 +233,9 @@
     "detailLoadFailed": "Failed to load permission detail. The permission may not exist.",
     "backToPermissions": "Back to permissions",
     "permissionName": "Function Name",
-    "systemName": "System Identifier"
+    "systemName": "System Identifier",
+    "accessDenied": "You do not have permission to view the system permission list.",
+    "detailAccessDenied": "You do not have permission to view this permission's details."
   },
   "adminBanners": {
     "metaTitle": "Banners | Admin Dashboard | Frevia",
@@ -621,7 +626,8 @@
     "scopeCommon": "Homepage & Platform",
     "scopeHint": "Filter by operational scope for easier permission management",
     "selectAllInScope": "Select all",
-    "deselectAllInScope": "Deselect all"
+    "deselectAllInScope": "Deselect all",
+    "noPermissionToAssign": "You do not have permission to assign permissions to roles."
   },
   "adminTrash": {
     "accessDenied": "You do not have permission to view forum trash.",
@@ -3328,5 +3334,22 @@
     "discardDescription": "Are you sure you want to discard this analysis? Unconfirmed data will be removed.",
     "discardedToast": "Discarded CV analysis",
     "discardFailed": "Failed to discard analysis"
+  },
+  "adminAiOps": {
+    "metaTitle": "AI Ops & Indexing | Frevia Admin",
+    "title": "AI Ops & Indexing",
+    "subtitle": "Reindex search vector stores and process AI recommendation outbox queue",
+    "accessDenied": "You do not have permission to access AI operations.",
+    "reindexTitle": "Reindex AI Recommendations",
+    "reindexDesc": "Rebuild vector embeddings for all job and freelancer data in the system.",
+    "reindexBtn": "Reindex Now",
+    "reindexSuccess": "AI recommendation reindexing completed successfully.",
+    "reindexFailed": "Failed to reindex.",
+    "outboxTitle": "Process AI Outbox Queue",
+    "outboxDesc": "Scan and sync latest changes from the outbox queue into the vector database.",
+    "outboxBtn": "Process Outbox Now",
+    "outboxSuccess": "Successfully processed outbox queue.",
+    "outboxFailed": "Failed to process outbox.",
+    "noPermissionAction": "You do not have permission to perform this action."
   }
 }

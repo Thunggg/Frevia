@@ -4,6 +4,8 @@ import type {
   RecommendationFeedbackType,
   RecommendedJobResponseType,
   RecommendedFreelancerResponseType,
+  RecommendationReindexResponseType,
+  RecommendationOutboxProcessResponseType,
 } from "@shared/types";
 
 export const recommendationApiRequest = {
@@ -24,6 +26,15 @@ export const recommendationApiRequest = {
     http.post<{ id: number; recommendationId: number; type: string }>(
       `/recommendations/${recommendationId}/feedback`,
       { type },
+    ),
+
+  reindex: () =>
+    http.post<RecommendationReindexResponseType>("/recommendations/reindex", {}),
+
+  processOutbox: () =>
+    http.post<RecommendationOutboxProcessResponseType>(
+      "/recommendations/outbox/process",
+      {},
     ),
 };
 

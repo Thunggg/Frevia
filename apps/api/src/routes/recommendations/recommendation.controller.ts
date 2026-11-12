@@ -8,7 +8,6 @@ import {
   Query,
 } from '@nestjs/common';
 import { ZodSerializerDto } from 'nestjs-zod';
-import { RoleName } from '@shared/types';
 
 import { UserActive } from '../../shared/decorators/user-active.decorators';
 import { EmbeddingOutboxService } from './embedding-outbox.service';
@@ -27,8 +26,6 @@ import { RecommendationIndexService } from './recommendation-index.service';
 import {
   FailedToProcessOutboxException,
   FailedToReindexException,
-  RecommendationOutboxForbiddenException,
-  RecommendationReindexForbiddenException,
 } from './recommendation.error';
 import { RecommendationService } from './recommendation.service';
 
@@ -89,11 +86,7 @@ export class RecommendationController {
 
   @Post('reindex')
   @ZodSerializerDto(RecommendationReindexResponseDto)
-  async reindex(@UserActive('roleName') roleName: string) {
-    if (roleName === RoleName.CLIENT || roleName === RoleName.FREELANCER) {
-      throw RecommendationReindexForbiddenException();
-    }
-
+  async reindex() {
     try {
       return await this.recommendationIndexService.rebuild();
     } catch {
@@ -103,11 +96,7 @@ export class RecommendationController {
 
   @Post('outbox/process')
   @ZodSerializerDto(RecommendationOutboxProcessResponseDto)
-  async processOutbox(@UserActive('roleName') roleName: string) {
-    if (roleName === RoleName.CLIENT || roleName === RoleName.FREELANCER) {
-      throw RecommendationOutboxForbiddenException();
-    }
-
+  async processOutbox() {
     try {
       return await this.embeddingOutboxService.processPending();
     } catch {

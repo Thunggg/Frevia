@@ -1,6 +1,7 @@
 "use client";
 
 import { useCreateRole } from "@/hooks/use-role";
+import { useActionPermission } from "@/hooks/use-action-permission";
 import { ApiFail } from "@/lib/http";
 import { handleErrorApi } from "@/lib/utils";
 import { useTranslatedResolver } from "@/lib/form-resolver";
@@ -33,6 +34,8 @@ import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 
 export function CreateRoleDialog() {
+  const { can } = useActionPermission();
+  const canCreate = can("POST", "/api/roles");
   const t = useTranslations("adminRoles");
   const tCommon = useTranslations("adminCommon");
   const [open, setOpen] = useState(false);
@@ -82,6 +85,10 @@ export function CreateRoleDialog() {
         },
       },
     );
+  }
+
+  if (!canCreate) {
+    return null;
   }
 
   return (

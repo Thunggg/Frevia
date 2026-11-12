@@ -1,6 +1,7 @@
 "use client";
 
 import { usePermissions } from "@/hooks/use-permission";
+import { useActionPermission } from "@/hooks/use-action-permission";
 import {
   getPermissionFeatureGroup,
   SCOPE_DEFINITIONS,
@@ -53,6 +54,9 @@ export function PermissionsTable() {
   const tCommon = useTranslations("adminCommon");
   const format = useFormatter();
   const locale = useLocale();
+  const { can } = useActionPermission();
+  const canViewList = can("GET", "/api/permissions");
+  const canViewDetail = can("GET", "/api/permissions/:id");
 
   const page = Math.max(1, Number(searchParams.get("page")) || 1);
   const methodParam = searchParams.get("method") ?? "";
@@ -144,6 +148,19 @@ export function PermissionsTable() {
       <ArrowDown className="h-3.5 w-3.5" />
     );
   };
+
+  if (!canViewList) {
+    return (
+      <div className="space-y-6">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">{t("title")}</h1>
+        </div>
+        <div className="rounded-lg border bg-card p-12 text-center text-muted-foreground">
+          {t("accessDenied")}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -358,16 +375,18 @@ export function PermissionsTable() {
                       </TableCell>
                       <TableCell>
                         <div className="flex items-center justify-end">
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-8 w-8"
-                            asChild
-                          >
-                            <Link href={`/admin/permissions/${permission.id}`}>
-                              <Eye className="h-4 w-4" />
-                            </Link>
-                          </Button>
+                          {canViewDetail && (
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-8 w-8"
+                              asChild
+                            >
+                              <Link href={`/admin/permissions/${permission.id}`}>
+                                <Eye className="h-4 w-4" />
+                              </Link>
+                            </Button>
+                          )}
                         </div>
                       </TableCell>
                     </TableRow>

@@ -15,6 +15,7 @@ import {
   MessageSquare,
   Scale,
   ShieldCheck,
+  Sparkles,
   Tags,
   Users,
 } from "lucide-react";
@@ -137,6 +138,15 @@ const ALL_NAV_ITEMS: NavItem[] = [
         href: "/admin/trash",
         requiredPermissions: ["/api/forums/admin/trash/posts"],
       },
+    ],
+  },
+  {
+    titleKey: "aiOps",
+    href: "/admin/ai-ops",
+    icon: Sparkles,
+    requiredPermissions: [
+      "/api/recommendations/reindex",
+      "/api/recommendations/outbox/process",
     ],
   },
 ];

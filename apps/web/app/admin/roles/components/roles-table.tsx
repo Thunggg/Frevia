@@ -19,6 +19,7 @@ import { RoleName } from "@shared/types";
 import { Eye } from "lucide-react";
 import { useFormatter, useTranslations } from "next-intl";
 import Link from "next/link";
+import { useActionPermission } from "@/hooks/use-action-permission";
 
 const SYSTEM_ROLE_NAMES = new Set<string>(Object.values(RoleName));
 
@@ -26,7 +27,27 @@ export function RolesTable() {
   const t = useTranslations("adminRoles");
   const tCommon = useTranslations("adminCommon");
   const format = useFormatter();
+  const { can } = useActionPermission();
+  const canViewList = can("GET", "/api/roles");
+  const canCreate = can("POST", "/api/roles");
+  const canViewDetail = can("GET", "/api/roles/:id");
+  const canUpdate = can("PATCH", "/api/roles/:id");
+  const canDelete = can("DELETE", "/api/roles/:id");
+
   const { data: roles = [], isLoading, isError } = useRoles();
+
+  if (!canViewList) {
+    return (
+      <div className="space-y-6">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">{t("title")}</h1>
+        </div>
+        <div className="rounded-lg border bg-card p-12 text-center text-muted-foreground">
+          {t("accessDenied")}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -40,7 +61,7 @@ export function RolesTable() {
               : ""}
           </p>
         </div>
-        <CreateRoleDialog />
+        {canCreate && <CreateRoleDialog />}
       </div>
 
       {isLoading ? (
@@ -113,18 +134,20 @@ export function RolesTable() {
                       </TableCell>
                       <TableCell>
                         <div className="flex items-center justify-end gap-1">
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-8 w-8"
-                            asChild
-                          >
-                            <Link href={`/admin/roles/${role.id}`}>
-                              <Eye className="h-4 w-4" />
-                            </Link>
-                          </Button>
-                          <UpdateRoleDialog role={role} />
-                          <DeleteRoleDialog role={role} />
+                          {canViewDetail && (
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-8 w-8"
+                              asChild
+                            >
+                              <Link href={`/admin/roles/${role.id}`}>
+                                <Eye className="h-4 w-4" />
+                              </Link>
+                            </Button>
+                          )}
+                          {canUpdate && <UpdateRoleDialog role={role} />}
+                          {canDelete && <DeleteRoleDialog role={role} />}
                         </div>
                       </TableCell>
                     </TableRow>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useUpdateRole } from "@/hooks/use-role";
+import { useActionPermission } from "@/hooks/use-action-permission";
 import { ApiFail } from "@/lib/http";
 import { handleErrorApi } from "@/lib/utils";
 import { useTranslatedResolver } from "@/lib/form-resolver";
@@ -48,6 +49,8 @@ type UpdateRoleDialogProps = {
 };
 
 export function UpdateRoleDialog({ role, trigger }: UpdateRoleDialogProps) {
+  const { can } = useActionPermission();
+  const canUpdate = can("PATCH", "/api/roles/:id");
   const t = useTranslations("adminRoles");
   const tCommon = useTranslations("adminCommon");
   const [open, setOpen] = useState(false);
@@ -114,7 +117,7 @@ export function UpdateRoleDialog({ role, trigger }: UpdateRoleDialogProps) {
     );
   }
 
-  if (isSystemRole(role.name)) {
+  if (isSystemRole(role.name) || !canUpdate) {
     return null;
   }
 

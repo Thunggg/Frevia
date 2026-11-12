@@ -2,6 +2,7 @@
 
 import { useAllPermissions } from "@/hooks/use-permission";
 import { useRole, useRoles, useSetRolePermissions } from "@/hooks/use-role";
+import { useActionPermission } from "@/hooks/use-action-permission";
 import { ApiFail } from "@/lib/http";
 import {
   getAllFeatureGroups,
@@ -55,6 +56,8 @@ export function AssignRoleContent() {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const { can } = useActionPermission();
+  const canAssign = can("PUT", "/api/roles/:id/permissions");
 
   const roleIdParam = Number(searchParams.get("roleId"));
   const selectedRoleId =
@@ -240,6 +243,10 @@ export function AssignRoleContent() {
 
   const handleSave = () => {
     if (!selectedRoleId) return;
+    if (!canAssign) {
+      toastError({ message: t("noPermissionToAssign") });
+      return;
+    }
 
     setRolePermissions.mutate(
       {
@@ -324,7 +331,7 @@ export function AssignRoleContent() {
             {role ? t("selectedCount", { count: selectedIds.size }) : null}
           </p>
         </div>
-        {selectedRoleId && role && (
+        {selectedRoleId && role && canAssign && (
           <Button
             type="button"
             onClick={handleSave}

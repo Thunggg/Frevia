@@ -117,7 +117,8 @@
     "allCategories": "Tất cả danh mục",
     "toggleSidebar": "Mở/đóng thanh bên",
     "profileSettings": "Cài đặt tài khoản",
-    "sessions": "Phiên đăng nhập"
+    "sessions": "Phiên đăng nhập",
+    "aiOps": "Vận hành gợi ý AI"
   },
   "adminProfile": {
     "title": "Cài đặt tài khoản",
@@ -213,7 +214,9 @@
     "deletedToast": "Đã xoá vai trò \"{name}\"",
     "detailTitle": "Chi tiết vai trò",
     "detailLoadFailed": "Không thể tải chi tiết vai trò. Có thể vai trò không tồn tại.",
-    "backToRoles": "Quay lại danh sách vai trò"
+    "backToRoles": "Quay lại danh sách vai trò",
+    "accessDenied": "Bạn không có quyền xem danh sách vai trò.",
+    "detailAccessDenied": "Bạn không có quyền xem thông tin chi tiết vai trò này."
   },
   "adminPermissions": {
     "metaTitle": "Quyền hạn | Trang quản trị | Frevia",
@@ -230,7 +233,9 @@
     "detailLoadFailed": "Không thể tải chi tiết quyền. Có thể quyền không tồn tại.",
     "backToPermissions": "Quay lại danh sách quyền",
     "permissionName": "Tên chức năng",
-    "systemName": "Mã định danh hệ thống"
+    "systemName": "Mã định danh hệ thống",
+    "accessDenied": "Bạn không có quyền xem danh sách quyền hệ thống.",
+    "detailAccessDenied": "Bạn không có quyền xem thông tin chi tiết quyền này."
   },
   "adminBanners": {
     "metaTitle": "Banner | Bảng điều khiển quản trị | Frevia",
@@ -621,7 +626,8 @@
     "scopeCommon": "Trang chủ & Dùng chung",
     "scopeHint": "Lọc theo khu vực sử dụng để dễ phân quyền hơn",
     "selectAllInScope": "Chọn tất cả",
-    "deselectAllInScope": "Bỏ chọn tất cả"
+    "deselectAllInScope": "Bỏ chọn tất cả",
+    "noPermissionToAssign": "Bạn không có quyền gán quyền cho vai trò."
   },
   "adminTrash": {
     "accessDenied": "Bạn không có quyền xem thùng rác diễn đàn.",
@@ -3328,5 +3334,22 @@
     "discardDescription": "Bạn có chắc chắn muốn hủy bản phân tích này? Dữ liệu chưa xác nhận sẽ bị xóa.",
     "discardedToast": "Đã hủy bản phân tích CV",
     "discardFailed": "Không thể hủy bản phân tích"
+  },
+  "adminAiOps": {
+    "metaTitle": "Vận hành gợi ý AI | Frevia Admin",
+    "title": "Vận hành gợi ý AI",
+    "subtitle": "Đánh lại chỉ mục tìm kiếm và xử lý hàng đợi sự kiện gợi ý AI",
+    "accessDenied": "Bạn không có quyền vận hành gợi ý AI.",
+    "reindexTitle": "Đánh chỉ mục gợi ý AI",
+    "reindexDesc": "Xây dựng lại toàn bộ vector embeddings cho dữ liệu việc làm và freelancer trong hệ thống.",
+    "reindexBtn": "Đánh chỉ mục lại ngay",
+    "reindexSuccess": "Đánh lại chỉ mục gợi ý AI thành công.",
+    "reindexFailed": "Đánh chỉ mục thất bại.",
+    "outboxTitle": "Xử lý hàng đợi sự kiện AI",
+    "outboxDesc": "Quét và đồng bộ các thay đổi mới nhất từ bảng hàng đợi Outbox vào vector database.",
+    "outboxBtn": "Xử lý hàng đợi ngay",
+    "outboxSuccess": "Đã xử lý hàng đợi sự kiện thành công.",
+    "outboxFailed": "Xử lý hàng đợi thất bại.",
+    "noPermissionAction": "Bạn không có quyền thực hiện thao tác này."
   }
 }

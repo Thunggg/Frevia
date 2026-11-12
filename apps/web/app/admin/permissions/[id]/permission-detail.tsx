@@ -14,13 +14,27 @@ import {
 } from "@/lib/permission-scopes";
 import { getPermissionDisplayName } from "@/lib/permission-utils";
 import { HttpMethodBadge } from "../../components/http-method-badge";
+import { useActionPermission } from "@/hooks/use-action-permission";
 
 export function PermissionDetail({ permissionId }: { permissionId: number }) {
   const t = useTranslations("adminPermissions");
   const tCommon = useTranslations("adminCommon");
   const format = useFormatter();
   const locale = useLocale();
+  const { can } = useActionPermission();
+  const canViewDetail = can("GET", "/api/permissions/:id");
   const { data: permission, isLoading, isError } = usePermission(permissionId);
+
+  if (!canViewDetail) {
+    return (
+      <div className="space-y-4">
+        <BackToPermissions />
+        <div className="rounded-lg border bg-card p-12 text-center text-muted-foreground">
+          {t("detailAccessDenied")}
+        </div>
+      </div>
+    );
+  }
 
   if (isLoading) {
     return <AdminDetailSkeleton />;
