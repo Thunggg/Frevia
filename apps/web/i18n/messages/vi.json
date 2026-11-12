@@ -413,7 +413,9 @@
     "detailDescriptionHeading": "Mô tả",
     "detailNoDescription": "Chưa có mô tả cho kỹ năng này.",
     "detailJobsUsing": "Việc làm đang dùng kỹ năng này",
-    "detailLastUpdated": "Cập nhật lần cuối"
+    "detailLastUpdated": "Cập nhật lần cuối",
+    "accessDenied": "Bạn không có quyền xem danh sách kỹ năng.",
+    "detailAccessDenied": "Bạn không có quyền xem chi tiết kỹ năng."
   },
   "adminJobCategories": {
     "metaTitle": "Danh mục công việc | Bảng điều khiển quản trị | Frevia",

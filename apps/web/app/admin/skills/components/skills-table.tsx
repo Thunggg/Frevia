@@ -17,6 +17,7 @@ import { ArrowDown, ArrowUp, ArrowUpDown, Eye, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { useLocale, useTranslations } from "next-intl";
 import { formatDate } from "@/lib/format";
+import { useActionPermission } from "@/hooks/use-action-permission";
 import { NumberedPagination } from "../../components/numbered-pagination";
 import { UpdateSkillDialog } from "./update-skill-dialog";
 import { DeleteSkillDialog } from "./delete-skill-dialog";
@@ -40,6 +41,7 @@ export function SkillsTable({ skills, pagination }: SkillsTableProps) {
   const locale = useLocale();
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { can } = useActionPermission();
   const [deletingSkill, setDeletingSkill] = useState<SkillAdminItemType | null>(
     null,
   );
@@ -115,81 +117,124 @@ export function SkillsTable({ skills, pagination }: SkillsTableProps) {
                 </TableCell>
               </TableRow>
             ) : (
-              skills.map((skill) => (
-                <TableRow key={skill.id} className="group">
-                  <TableCell>
-                    <Badge variant="outline" className="font-mono">
-                      {skill.id}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-2">
-                      <span className="font-medium text-sm text-foreground">
-                        {skill.name}
-                      </span>
-                    </div>
-                  </TableCell>
-                  <TableCell className="font-mono text-xs text-muted-foreground">
-                    {skill.slug}
-                  </TableCell>
-                  <TableCell>
-                    {skill.deletedAt === null ? (
-                      <Badge
-                        variant="secondary"
-                        className="bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/50 dark:text-emerald-300 border"
-                      >
-                        {tCommon("active")}
+              skills.map((skill) => {
+                const canViewDetail = can(
+                  "GET",
+                  `/api/admin/skills/${skill.id}`,
+                );
+                const canUpdate = can(
+                  "PATCH",
+                  `/api/admin/skills/${skill.id}`,
+                );
+                const canDelete = can(
+                  "DELETE",
+                  `/api/admin/skills/${skill.id}`,
+                );
+                const canRestore = can(
+                  "PATCH",
+                  `/api/admin/skills/${skill.id}/restore`,
+                );
+
+                const hasAnyAction =
+                  canViewDetail ||
+                  (skill.deletedAt === null
+                    ? canUpdate || canDelete
+                    : canRestore);
+
+                return (
+                  <TableRow key={skill.id} className="group">
+                    <TableCell>
+                      <Badge variant="outline" className="font-mono">
+                        {skill.id}
                       </Badge>
-                    ) : (
-                      <Badge variant="destructive">{t("statusDeleted")}</Badge>
-                    )}
-                  </TableCell>
-                  <TableCell className="text-right text-sm text-muted-foreground">
-                    {skill.jobCount ?? 0}
-                  </TableCell>
-                  <TableCell className="text-right whitespace-nowrap text-sm text-muted-foreground">
-                    {formatDate(skill.createdAt, locale)}
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <div className="flex items-center justify-end gap-1">
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-2">
+                        <span className="font-medium text-sm text-foreground">
+                          {skill.name}
+                        </span>
+                      </div>
+                    </TableCell>
+                    <TableCell className="font-mono text-xs text-muted-foreground">
+                      {skill.slug}
+                    </TableCell>
+                    <TableCell>
                       {skill.deletedAt === null ? (
-                        <>
-                          <UpdateSkillDialog
-                            skill={skill}
-                            triggerClassName="h-8 w-8 text-muted-foreground hover:bg-[#4fae2e]/10 hover:text-[#4fae2e] transition-colors"
-                          />
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-8 w-8 text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-colors"
-                            title={t("deleteSkillAction")}
-                            aria-label={t("deleteSkillOf", { name: skill.name })}
-                            onClick={() => setDeletingSkill(skill)}
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </>
-                      ) : (
-                        <RestoreSkillDialog skill={skill} />
-                      )}
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        asChild
-                        className="h-8 w-8 text-muted-foreground hover:bg-[#4fae2e]/10 hover:text-[#4fae2e] transition-colors"
-                        title={t("viewDetailsAction")}
-                      >
-                        <Link
-                          href={`/admin/skills/${skill.id}`}
-                          aria-label={t("viewDetailsOf", { name: skill.name })}
+                        <Badge
+                          variant="secondary"
+                          className="bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/50 dark:text-emerald-300 border"
                         >
-                          <Eye className="h-4 w-4" />
-                        </Link>
-                      </Button>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))
+                          {tCommon("active")}
+                        </Badge>
+                      ) : (
+                        <Badge variant="destructive">{t("statusDeleted")}</Badge>
+                      )}
+                    </TableCell>
+                    <TableCell className="text-right text-sm text-muted-foreground">
+                      {skill.jobCount ?? 0}
+                    </TableCell>
+                    <TableCell className="text-right whitespace-nowrap text-sm text-muted-foreground">
+                      {formatDate(skill.createdAt, locale)}
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <div className="flex items-center justify-end gap-1">
+                        {!hasAnyAction ? (
+                          <span className="text-muted-foreground text-xs">
+                            —
+                          </span>
+                        ) : (
+                          <>
+                            {skill.deletedAt === null ? (
+                              <>
+                                {canUpdate && (
+                                  <UpdateSkillDialog
+                                    skill={skill}
+                                    triggerClassName="h-8 w-8 text-muted-foreground hover:bg-[#4fae2e]/10 hover:text-[#4fae2e] transition-colors"
+                                  />
+                                )}
+                                {canDelete && (
+                                  <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    className="h-8 w-8 text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-colors"
+                                    title={t("deleteSkillAction")}
+                                    aria-label={t("deleteSkillOf", {
+                                      name: skill.name,
+                                    })}
+                                    onClick={() => setDeletingSkill(skill)}
+                                  >
+                                    <Trash2 className="h-4 w-4" />
+                                  </Button>
+                                )}
+                              </>
+                            ) : (
+                              canRestore && <RestoreSkillDialog skill={skill} />
+                            )}
+                            {canViewDetail && (
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                asChild
+                                className="h-8 w-8 text-muted-foreground hover:bg-[#4fae2e]/10 hover:text-[#4fae2e] transition-colors"
+                                title={t("viewDetailsAction")}
+                              >
+                                <Link
+                                  href={`/admin/skills/${skill.id}`}
+                                  aria-label={t("viewDetailsOf", {
+                                    name: skill.name,
+                                  })}
+                                >
+                                  <Eye className="h-4 w-4" />
+                                </Link>
+                              </Button>
+                            )}
+                          </>
+                        )}
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                );
+              })
             )}
           </TableBody>
         </Table>

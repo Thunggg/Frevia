@@ -413,7 +413,9 @@
     "detailDescriptionHeading": "Description",
     "detailNoDescription": "No description provided for this skill.",
     "detailJobsUsing": "Jobs using this skill",
-    "detailLastUpdated": "Last updated"
+    "detailLastUpdated": "Last updated",
+    "accessDenied": "You do not have permission to view skills.",
+    "detailAccessDenied": "You do not have permission to view skill details."
   },
   "adminJobCategories": {
     "metaTitle": "Job Categories | Admin Dashboard | Frevia",

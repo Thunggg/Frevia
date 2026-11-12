@@ -18,6 +18,7 @@ import { AlertTriangle, Loader2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { useActionPermission } from "@/hooks/use-action-permission";
 
 interface DeleteSkillDialogProps {
   skill: Pick<SkillAdminItemType, "id" | "name" | "jobCount"> | null;
@@ -33,9 +34,10 @@ export function DeleteSkillDialog({
   const t = useTranslations("adminSkills");
   const tCommon = useTranslations("adminCommon");
   const router = useRouter();
+  const { can } = useActionPermission();
   const [loading, setLoading] = useState(false);
 
-  if (!skill) return null;
+  if (!skill || !can("DELETE", `/api/admin/skills/${skill.id}`)) return null;
 
   const hasJobs = (skill.jobCount ?? 0) > 0;
 

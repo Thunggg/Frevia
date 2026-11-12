@@ -19,6 +19,7 @@ import { Loader2, RotateCcw } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { useActionPermission } from "@/hooks/use-action-permission";
 
 interface RestoreSkillDialogProps {
   skill: Pick<SkillAdminItemType, "id" | "name">;
@@ -32,8 +33,13 @@ export function RestoreSkillDialog({
   const t = useTranslations("adminSkills");
   const tCommon = useTranslations("adminCommon");
   const router = useRouter();
+  const { can } = useActionPermission();
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  if (!can("PATCH", `/api/admin/skills/${skill.id}/restore`)) {
+    return null;
+  }
 
   const handleRestore = async () => {
     setLoading(true);

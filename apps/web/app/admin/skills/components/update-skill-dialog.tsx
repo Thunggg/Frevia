@@ -21,6 +21,7 @@ import { Loader2, Pencil } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { useActionPermission } from "@/hooks/use-action-permission";
 
 interface UpdateSkillDialogProps {
   skill: Pick<
@@ -37,6 +38,7 @@ export function UpdateSkillDialog({
   const t = useTranslations("adminSkills");
   const tCommon = useTranslations("adminCommon");
   const router = useRouter();
+  const { can } = useActionPermission();
   const [open, setOpen] = useState(false);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
@@ -48,6 +50,10 @@ export function UpdateSkillDialog({
       setDescription(skill.description ?? "");
     }
   }, [open, skill]);
+
+  if (!can("PATCH", `/api/admin/skills/${skill.id}`)) {
+    return null;
+  }
 
   const handleOpenChange = (nextOpen: boolean) => {
     setOpen(nextOpen);
