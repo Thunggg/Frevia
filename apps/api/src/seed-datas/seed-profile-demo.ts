@@ -71,7 +71,7 @@ async function seedDemoProfile() {
     where: { email: DEMO_EMAIL },
     include: {
       profile: { include: { freelancerProfile: true } },
-      userRoles: { include: { role: true } },
+      role: true,
     },
   });
 
@@ -81,9 +81,7 @@ async function seedDemoProfile() {
     );
   }
 
-  const hasFreelancerRole = user.userRoles.some(
-    (userRole) => userRole.role.name === RoleName.FREELANCER,
-  );
+  const hasFreelancerRole = user.role.name === RoleName.FREELANCER;
   if (!hasFreelancerRole) {
     throw new Error(`Demo account ${DEMO_EMAIL} is not a freelancer.`);
   }

@@ -22,8 +22,6 @@ export const PERMISSION_MAP: Record<string, PermissionDescriptor> = {
   "GET /api/auth/google-link": { en: "Get Google OAuth URL", vi: "Lấy liên kết đăng nhập Google" },
   "GET /api/auth/google/callback": { en: "Google OAuth Callback", vi: "Xử lý callback đăng nhập Google" },
   "GET /api/auth/me": { en: "Get Current User Profile", vi: "Xem thông tin tài khoản hiện tại" },
-  "POST /api/auth/switch-role": { en: "Switch Active Role", vi: "Chuyển đổi vai trò làm việc" },
-  "POST /api/auth/join-role": { en: "Register Additional Role", vi: "Đăng ký thêm vai trò" },
 
   // ACCOUNT PROFILE
   "GET /api/account-profile": { en: "View Account Profile", vi: "Xem hồ sơ tài khoản" },

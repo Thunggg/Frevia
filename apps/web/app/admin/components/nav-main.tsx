@@ -20,12 +20,19 @@ import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
+export type NavChildItem = {
+  titleKey: string;
+  href: string;
+  requiredPermissions?: string[];
+};
+
 export type NavItem = {
   /** Khoá dịch trong namespace "adminNav" */
   titleKey: string;
   href?: string;
   icon?: LucideIcon;
-  children?: { titleKey: string; href: string }[];
+  requiredPermissions?: string[];
+  children?: NavChildItem[];
 };
 
 export function NavMain({

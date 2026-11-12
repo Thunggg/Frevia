@@ -87,11 +87,15 @@ export class UsersService {
         id: created.id,
         email: created.email,
         displayName: created.profile?.displayName ?? null,
-        roles: created.userRoles.map((ur) => ({
-          id: ur.role.id,
-          name: ur.role.name,
-          isPrimary: ur.isPrimary,
-        })),
+        roles: created.role
+          ? [
+              {
+                id: created.role.id,
+                name: created.role.name,
+                isPrimary: true,
+              },
+            ]
+          : [],
       };
     } catch (error) {
       if (
@@ -189,11 +193,15 @@ export class UsersService {
         email: updated.email,
         displayName: updated.profile?.displayName ?? null,
         isBanned: updated.isBanned,
-        roles: updated.userRoles.map((ur) => ({
-          id: ur.role.id,
-          name: ur.role.name,
-          isPrimary: ur.isPrimary,
-        })),
+        roles: updated.role
+          ? [
+              {
+                id: updated.role.id,
+                name: updated.role.name,
+                isPrimary: true,
+              },
+            ]
+          : [],
       };
     } catch (error) {
       if (

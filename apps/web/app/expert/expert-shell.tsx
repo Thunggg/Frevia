@@ -4,7 +4,7 @@ import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { Button } from "@repo/ui/components/shadcn/button";
-import { LogOut, UserRound } from "lucide-react";
+import { LogOut, Scale, UserRound } from "lucide-react";
 
 export function ExpertShell({ children }: { children: React.ReactNode }) {
   const t = useTranslations("expertShell");
@@ -38,6 +38,17 @@ export function ExpertShell({ children }: { children: React.ReactNode }) {
             >
               <UserRound className="size-4" />
               {t("profile")}
+            </Link>
+            <Link
+              href="/admin/disputes"
+              className={`flex items-center gap-2 text-sm font-medium ${
+                pathname.startsWith("/admin/disputes")
+                  ? "text-[#4fae2e]"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              <Scale className="size-4" />
+              {t("disputes")}
             </Link>
           </div>
           <Button variant="ghost" size="sm" onClick={() => void logout()}>

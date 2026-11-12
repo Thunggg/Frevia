@@ -43,14 +43,14 @@ export function RelatedPostsSidebar({
   if (isLoading) {
     return (
       <div className="rounded-xl border border-border/40 bg-background p-4">
-        <div className="mb-4 h-4 w-32 animate-pulse rounded bg-muted" />
+        <div className="mb-4 h-4 w-32 animate-pulse rounded bg-[#0069D3]/5" />
         <div className="space-y-3">
           {Array.from({ length: 3 }).map((_, i) => (
             <div key={i} className="flex gap-3">
-              <div className="size-8 shrink-0 animate-pulse rounded-full bg-muted" />
+              <div className="size-8 shrink-0 animate-pulse rounded-full bg-[#0069D3]/5" />
               <div className="flex-1 space-y-1.5">
-                <div className="h-3.5 w-3/4 animate-pulse rounded bg-muted" />
-                <div className="h-2.5 w-1/2 animate-pulse rounded bg-muted" />
+                <div className="h-3.5 w-3/4 animate-pulse rounded bg-[#0069D3]/5" />
+                <div className="h-2.5 w-1/2 animate-pulse rounded bg-[#0069D3]/5" />
               </div>
             </div>
           ))}
@@ -71,7 +71,7 @@ export function RelatedPostsSidebar({
           <Link
             key={post.id}
             href={`/forum/${buildSlugId(categorySlug, categoryId)}/${buildSlugId(post.slug, post.id)}`}
-            className="flex gap-3 rounded-lg p-2 transition-colors hover:bg-[#4fae2e]/5"
+            className="flex gap-3 rounded-lg p-2 transition-colors hover:bg-[#0069D3]/5"
           >
             <Avatar size="sm" className="mt-0.5">
               <AvatarImage
@@ -103,7 +103,7 @@ export function RelatedPostsSidebar({
       </div>
       <Link
         href={`/forum/${buildSlugId(categorySlug, categoryId)}`}
-        className="mt-3 block rounded-lg py-2 text-center text-[12px] font-medium text-[#4fae2e] transition-colors hover:bg-[#4fae2e]/5 hover:text-[#459928]"
+        className="mt-3 block rounded-lg py-2 text-center text-[12px] font-medium text-[#0069D3] transition-colors hover:bg-[#0069D3]/5 hover:text-[#0069D3]/90"
       >
         {t("viewAllPosts")} →
       </Link>

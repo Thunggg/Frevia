@@ -152,12 +152,9 @@ export const GetMeProfileSchema = z.object({
 });
 
 export const GetMeRoleSchema = z.object({
-  name: z.enum([
-    RoleName.FREELANCER,
-    RoleName.CLIENT,
-    RoleName.ADMIN,
-    RoleName.EXPERT,
-  ]),
+  id: z.number().optional(),
+  name: z.string(),
+  description: z.string().nullable().optional(),
   isPrimary: z.boolean(),
 });
 
@@ -167,26 +164,8 @@ export const GetMeResSchema = z.object({
   isBanned: z.boolean(),
   profile: GetMeProfileSchema.nullable(),
   roles: z.array(GetMeRoleSchema),
-});
-
-export const SwitchRoleBodySchema = z
-  .object({
-    role: z.enum([RoleName.FREELANCER, RoleName.CLIENT]),
-  })
-  .strict();
-
-export const SwitchRoleResponseSchema = z.object({
-  accessToken: z.string(),
-});
-
-export const JoinRoleBodySchema = z
-  .object({
-    role: z.enum([RoleName.FREELANCER, RoleName.CLIENT]),
-  })
-  .strict();
-
-export const JoinRoleResponseSchema = z.object({
-  accessToken: z.string(),
+  permissions: z.array(z.string()).default([]),
+  permissionModules: z.array(z.string()).default([]),
 });
 
 export type UserType = z.infer<typeof UserSchema>;
@@ -211,10 +190,6 @@ export type GetAuthorizationUrlResType = z.infer<
 >;
 
 export type GetMeResType = z.infer<typeof GetMeResSchema>;
-export type SwitchRoleBodyType = z.infer<typeof SwitchRoleBodySchema>;
-export type SwitchRoleResponseType = z.infer<typeof SwitchRoleResponseSchema>;
-export type JoinRoleBodyType = z.infer<typeof JoinRoleBodySchema>;
-export type JoinRoleResponseType = z.infer<typeof JoinRoleResponseSchema>;
 
 // --- Admin User Management ---
 

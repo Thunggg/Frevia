@@ -4,9 +4,8 @@ import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { useQueryClient } from "@tanstack/react-query";
 import { RoleName, type GetMeResType } from "@shared/types";
-import { authApiRequest } from "@/apiRequests/auth";
+import { canAccessAdminPortal } from "@/lib/admin-access";
 import { Header, type UserRole } from "@/components/header";
 import { Footer } from "@/components/footer";
 import {
@@ -16,12 +15,10 @@ import {
   ArrowRight,
   Loader2,
   LogOut,
-  RefreshCw,
 } from "@/components/icons";
 import { Button } from "@repo/ui/components/shadcn/button";
 import { Badge } from "@repo/ui/components/shadcn/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@repo/ui/components/shadcn/avatar";
-import { toastError, toastSuccess } from "@repo/ui/components/shadcn/toast";
 
 type AccessDeniedContentProps = {
   user: GetMeResType | null;
@@ -37,67 +34,16 @@ export function AccessDeniedContent({
   const router = useRouter();
   const t = useTranslations("accessDenied");
   const tRole = useTranslations("roleName");
-  const queryClient = useQueryClient();
-  const [isSwitchingRole, setIsSwitchingRole] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   const primaryRole =
     user?.roles.find((r) => r.isPrimary)?.name ?? user?.roles[0]?.name;
-
-  const targetRequiredRole:
-    | typeof RoleName.CLIENT
-    | typeof RoleName.FREELANCER
-    | null =
-    requiredRole?.toLowerCase() === "client"
-      ? RoleName.CLIENT
-      : requiredRole?.toLowerCase() === "freelancer"
-        ? RoleName.FREELANCER
-        : null;
-
-  // Check if current user has the required role and can switch to it
-  const canSwitchToRequired = Boolean(
-    user &&
-      targetRequiredRole &&
-      user.roles.some((r) => r.name === targetRequiredRole) &&
-      primaryRole !== targetRequiredRole,
-  );
-
-  const handleSwitchRole = async (
-    targetRole: typeof RoleName.CLIENT | typeof RoleName.FREELANCER,
-  ) => {
-    if (isSwitchingRole) return;
-    setIsSwitchingRole(true);
-    try {
-      await authApiRequest.switchRole({ role: targetRole });
-      await queryClient.invalidateQueries({ queryKey: ["me"] });
-      toastSuccess({
-        message: t("switchedRole", {
-          role:
-            targetRole === RoleName.CLIENT
-              ? tRole("CLIENT")
-              : tRole("FREELANCER"),
-        }),
-      });
-      if (from && from.startsWith("/") && !from.startsWith("//")) {
-        router.push(from);
-      } else if (targetRole === RoleName.CLIENT) {
-        router.push("/client/jobs");
-      } else {
-        router.push("/freelancer");
-      }
-      router.refresh();
-    } catch {
-      toastError({ message: t("roleSwitchFailed") });
-      setIsSwitchingRole(false);
-    }
-  };
 
   const handleLogout = async () => {
     if (isLoggingOut) return;
     setIsLoggingOut(true);
     try {
       await fetch("/api/auth/logout", { method: "POST" });
-      await queryClient.clear();
       router.push("/login");
       router.refresh();
     } catch {
@@ -110,9 +56,11 @@ export function AccessDeniedContent({
       ? "/client/jobs"
       : primaryRole === RoleName.FREELANCER
         ? "/freelancer"
-        : primaryRole === RoleName.ADMIN
-          ? "/admin"
-          : "/";
+        : primaryRole === RoleName.EXPERT
+          ? "/expert/profile"
+          : primaryRole === RoleName.ADMIN || canAccessAdminPortal(user)
+            ? "/admin"
+            : "/";
 
   const primaryRoleLabel =
     primaryRole === RoleName.CLIENT
@@ -121,23 +69,30 @@ export function AccessDeniedContent({
         ? tRole("FREELANCER")
         : primaryRole === RoleName.ADMIN
           ? tRole("ADMIN")
-          : t("userFallback");
+          : primaryRole === RoleName.EXPERT
+            ? tRole("EXPERT")
+            : primaryRole ?? t("userFallback");
 
+  const requiredRoleLower = requiredRole?.toLowerCase();
   const requiredRoleLabel =
-    targetRequiredRole === RoleName.CLIENT
+    requiredRoleLower === "client"
       ? tRole("CLIENT")
-      : targetRequiredRole === RoleName.FREELANCER
+      : requiredRoleLower === "freelancer"
         ? tRole("FREELANCER")
-        : requiredRole?.toLowerCase() === "admin"
+        : requiredRoleLower === "admin"
           ? tRole("ADMIN")
-          : t("requiredRoleFallback");
+          : requiredRoleLower === "expert"
+            ? tRole("EXPERT")
+            : requiredRole ?? t("requiredRoleFallback");
 
   const headerRole: UserRole =
     primaryRole === RoleName.CLIENT
       ? "CLIENT"
       : primaryRole === RoleName.FREELANCER
         ? "FREELANCER"
-        : "GUEST";
+        : user
+          ? "FREELANCER"
+          : "GUEST";
 
   return (
     <div className="flex min-h-dvh flex-col bg-background font-sans">
@@ -232,24 +187,7 @@ export function AccessDeniedContent({
                   </Link>
                 </Button>
 
-                {/* 2. Switch role if user has target role */}
-                {canSwitchToRequired && targetRequiredRole && (
-                  <Button
-                    variant="outline"
-                    className="w-full border-primary/40 hover:bg-primary/5 text-primary font-medium"
-                    onClick={() => handleSwitchRole(targetRequiredRole)}
-                    disabled={isSwitchingRole}
-                  >
-                    {isSwitchingRole ? (
-                      <Loader2 className="mr-2 size-4 animate-spin" />
-                    ) : (
-                      <RefreshCw className="mr-2 size-4" />
-                    )}
-                    {t("switchToRole", { role: requiredRoleLabel })}
-                  </Button>
-                )}
-
-                {/* 3. Secondary Actions */}
+                {/* 2. Secondary Actions */}
                 <div className="flex items-center gap-2 pt-1">
                   <Button
                     variant="ghost"

@@ -90,7 +90,7 @@ export class RecommendationController {
   @Post('reindex')
   @ZodSerializerDto(RecommendationReindexResponseDto)
   async reindex(@UserActive('roleName') roleName: string) {
-    if (roleName !== RoleName.ADMIN) {
+    if (roleName === RoleName.CLIENT || roleName === RoleName.FREELANCER) {
       throw RecommendationReindexForbiddenException();
     }
 
@@ -104,7 +104,7 @@ export class RecommendationController {
   @Post('outbox/process')
   @ZodSerializerDto(RecommendationOutboxProcessResponseDto)
   async processOutbox(@UserActive('roleName') roleName: string) {
-    if (roleName !== RoleName.ADMIN) {
+    if (roleName === RoleName.CLIENT || roleName === RoleName.FREELANCER) {
       throw RecommendationOutboxForbiddenException();
     }
 

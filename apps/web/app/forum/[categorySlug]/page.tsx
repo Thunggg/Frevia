@@ -53,7 +53,7 @@ export default async function ForumCategoryDetailPage({
             <nav className="text-[13px] text-muted-foreground/60">
               <Link
                 href="/forum"
-                className="transition-colors hover:text-[#4fae2e]"
+                className="transition-colors hover:text-[#0069D3]"
               >
                 {tCommon("forum")}
               </Link>

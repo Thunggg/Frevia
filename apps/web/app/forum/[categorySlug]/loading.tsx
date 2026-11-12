@@ -3,12 +3,12 @@ import { Skeleton } from "@repo/ui/components/shadcn/skeleton";
 export default function ForumCategoryLoading() {
   return (
     <div className="min-h-dvh bg-background font-sans">
-      <section className="border-b border-[#4fae2e]/15 bg-[#eaf8df] dark:border-white/10 dark:bg-zinc-950">
+      <section className="border-b border-border/40 bg-background">
         <div className="w-full px-4 py-8 sm:px-6 lg:px-8 lg:py-10">
-          <Skeleton className="mb-5 h-4 w-56 bg-[#4fae2e]/15" />
-          <Skeleton className="h-10 w-72 max-w-full bg-[#4fae2e]/15" />
-          <Skeleton className="mt-3 h-4 w-96 max-w-full bg-[#4fae2e]/10" />
-          <Skeleton className="mt-3 h-4 w-24 bg-[#4fae2e]/10" />
+          <Skeleton className="mb-5 h-4 w-56 bg-[#0069D3]/5" />
+          <Skeleton className="h-10 w-72 max-w-full bg-[#0069D3]/5" />
+          <Skeleton className="mt-3 h-4 w-96 max-w-full bg-[#0069D3]/5" />
+          <Skeleton className="mt-3 h-4 w-24 bg-[#0069D3]/5" />
         </div>
       </section>
 

@@ -102,4 +102,3 @@ export class AuthGateway implements OnGatewayConnection, OnGatewayDisconnect {
     this.logger.log(`Emitted FORCE_LOGOUT to session:${sessionId} (REVOKED)`);
   }
 }
-

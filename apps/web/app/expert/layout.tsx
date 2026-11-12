@@ -8,7 +8,9 @@ export default async function ExpertLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   const user = await authServerRequest.getMe();
   const primaryRole = user?.roles.find((role) => role.isPrimary)?.name;
-  if (!user || user.isBanned) redirect("/login");
-  if (primaryRole !== RoleName.EXPERT) redirect("/access-denied");
+  if (!user || user.isBanned) redirect("/login?redirect=/expert/profile");
+  if (primaryRole !== RoleName.EXPERT) {
+    redirect("/access-denied?requiredRole=expert");
+  }
   return <ExpertShell>{children}</ExpertShell>;
 }

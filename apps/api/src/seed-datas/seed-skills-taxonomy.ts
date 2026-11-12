@@ -156,4 +156,3 @@ seedSkillsTaxonomy()
   .finally(async () => {
     await prisma.$disconnect();
   });
-

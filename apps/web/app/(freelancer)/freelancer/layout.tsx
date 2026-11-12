@@ -25,12 +25,22 @@ export default async function FreelancerDashboardLayout({
   }
 
   // ====== Trạm kiểm soát KYC ======
-  // Freelancer chỉ được vào dashboard khi đã xác minh danh tính bằng AI
-  // (IDVerification pipeline) VÀ được admin duyệt (APPROVED).
-  // Trang /freelancer/profile được miễn chặn để user hoàn tất xác minh.
+  // Freelancer chỉ được vào các khu vực cần thao tác (đề xuất, hợp đồng, ...)
+  // khi đã xác minh danh tính bằng AI VÀ được admin duyệt (APPROVED).
+  // Các trang duyệt việc / chi tiết việc / hồ sơ được miễn chặn để user có thể
+  // xem việc trước, xác minh danh tính chỉ xử lý khi thực sự cần thao tác.
   const headerStore = await headers();
   const pathname = headerStore.get("x-pathname") ?? "";
-  if (!pathname.startsWith("/freelancer/profile")) {
+  const isIdentityExempt =
+    pathname === "/freelancer" ||
+    pathname.startsWith("/freelancer/profile") ||
+    pathname.startsWith("/freelancer/find-work") ||
+    pathname.startsWith("/freelancer/jobs") ||
+    pathname.startsWith("/freelancer/categories") ||
+    pathname.startsWith("/freelancer/search") ||
+    pathname.startsWith("/freelancer/conversations") ||
+    pathname === ""; // Fail-open nếu không biết pathname (tránh redirect loop)
+  if (!isIdentityExempt) {
     let identityStatus: VerificationStatusType | null | undefined;
     try {
       identityStatus = (await accountProfileServerRequest.getIdentityStatus())

@@ -135,6 +135,8 @@ export async function renderFindWorkPage({
   let initialRecommendedJobs: RecommendedJobType[] = [];
   let initialJobAlerts: JobAlertType[] = [];
 
+  const shouldFetchRecommendations = !tab || tab === "best-matches";
+
   const [
     bookmarkedJobsRes,
     savedSearchesRes,
@@ -143,7 +145,9 @@ export async function renderFindWorkPage({
   ] = await Promise.allSettled([
     jobServerRequest.getBookmarkedJobs({ limit: 20 }),
     savedSearchServerRequest.getSavedSearches(),
-    recommendationServerRequest.getRecommendedJobs(15),
+    shouldFetchRecommendations
+      ? recommendationServerRequest.getRecommendedJobs(15)
+      : Promise.resolve(null),
     jobAlertServerRequest.getJobAlerts(),
   ]);
 

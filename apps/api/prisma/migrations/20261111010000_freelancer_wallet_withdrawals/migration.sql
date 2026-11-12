@@ -1,3 +1,10 @@
+-- Ensure TransactionType exists before altering it
+DO $$ BEGIN
+  CREATE TYPE "TransactionType" AS ENUM ('PLATFORM_FEE', 'ESCROW_DEPOSIT', 'MILESTONE_PAYOUT', 'DISPUTE_FEE', 'ARBITRATOR_PAYOUT');
+EXCEPTION
+  WHEN duplicate_object THEN null;
+END $$;
+
 -- AlterEnum
 ALTER TYPE "TransactionType" ADD VALUE IF NOT EXISTS 'WITHDRAWAL';
 

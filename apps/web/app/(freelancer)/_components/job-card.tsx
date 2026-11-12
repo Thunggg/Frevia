@@ -275,6 +275,7 @@ export function JobCard({
       <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
         <Link
           href={`${jobBaseUrl}/${job.slug}`}
+          prefetch={false}
           className="text-base sm:text-lg font-bold text-foreground hover:text-emerald-700 dark:hover:text-emerald-400 transition-colors leading-snug line-clamp-2 hover:underline"
         >
           {job.title}
@@ -283,6 +284,7 @@ export function JobCard({
         {showApplyButton && job.status === "OPEN" && !isExpired && (
           <Link
             href={`${jobBaseUrl}/${job.slug}`}
+            prefetch={false}
             className="rounded-full bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-1.5 text-xs font-semibold shadow-xs transition-colors shrink-0 self-start sm:self-auto"
           >
             Ứng tuyển
@@ -366,6 +368,7 @@ export function JobCard({
           <Link
             key={`${job.id}-${skill.id}`}
             href={`${filterBasePath}?keyword=${encodeURIComponent(skill.name)}`}
+            prefetch={false}
             className="rounded-full bg-[#F3F3F7] dark:bg-zinc-800 hover:bg-[#EAE9F0] dark:hover:bg-zinc-700 px-3 py-1 text-xs font-medium text-foreground transition-colors cursor-pointer"
           >
             {skill.name}
@@ -382,6 +385,7 @@ export function JobCard({
           <Link
             key={`${job.id}-cat-${cat.id}`}
             href={`${filterBasePath}?category=${encodeURIComponent(cat.slug)}`}
+            prefetch={false}
             className="inline-flex items-center gap-1 rounded-full border border-emerald-500/20 bg-emerald-50 dark:bg-emerald-950/30 px-3 py-1 text-xs font-medium text-emerald-700 dark:text-emerald-300 transition-colors hover:bg-emerald-100"
           >
             <Tag className="size-3" />

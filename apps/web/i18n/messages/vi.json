@@ -599,7 +599,16 @@
     "roleLoadFailed": "Không thể tải vai trò đã chọn.",
     "permissionsLoadFailed": "Không thể tải danh sách quyền.",
     "noMatches": "Không có quyền nào khớp với bộ lọc.",
-    "selectAllModule": "Chọn tất cả trong {module}"
+    "selectAllModule": "Chọn tất cả trong {module}",
+    "allScopes": "Tất cả phạm vi",
+    "scopeAdmin": "Dashboard Quản trị",
+    "scopeClient": "Khách hàng (Client)",
+    "scopeFreelancer": "Freelancer",
+    "scopeContracts": "Hợp đồng & Thanh toán",
+    "scopeCommon": "Trang chủ & Dùng chung",
+    "scopeHint": "Lọc theo khu vực sử dụng để dễ phân quyền hơn",
+    "selectAllInScope": "Chọn tất cả",
+    "deselectAllInScope": "Bỏ chọn tất cả"
   },
   "adminTrash": {
     "metaTitle": "Thùng rác | Quản trị | Frevia",
@@ -2185,6 +2194,7 @@
   },
   "expertShell": {
     "profile": "Hồ sơ",
+    "disputes": "Tranh chấp",
     "logout": "Đăng xuất"
   },
   "clientProfilePublic": {
@@ -2712,6 +2722,7 @@
     "following": "Đang theo dõi",
     "socialLinks": "Liên kết mạng xã hội",
     "sessions": "Phiên đăng nhập",
+    "switchRole": "Chuyển vai trò",
     "loadingRoles": "Đang tải vai trò...",
     "switchingRole": "Đang chuyển vai trò...",
     "addingRole": "Đang thêm vai trò...",
@@ -2790,6 +2801,7 @@
     "checkingProposal": "Đang kiểm tra đề xuất...",
     "cannotProposeOwn": "Bạn không thể gửi đề xuất cho công việc do chính bạn đăng.",
     "notAccepting": "Công việc này không còn nhận đề xuất.",
+    "verifyIdentityWarning": "Bạn chưa xác minh danh tính (CCCD). Vول lòng xác minh trước khi nộp hồ sơ nhận việc.",
     "switchToFreelancer": "Hãy chuyển sang tài khoản freelancer để tiếp tục.",
     "applyNow": "Ứng tuyển ngay",
     "viewProposal": "Xem đề xuất",
@@ -2840,6 +2852,12 @@
       "cancel": "Huỷ",
       "removing": "Đang xoá…",
       "confirm": "Xoá"
+    },
+    "kycDialog": {
+      "title": "Yêu cầu xác minh danh tính",
+      "description": "Bạn cần hoàn tất xác minh danh tính (CCCD) để có thể nộp đề xuất cho công việc này.",
+      "cancel": "Để sau",
+      "confirm": "Xác minh ngay"
     },
     "notFound": {
       "title": "Công việc này không còn khả dụng",

@@ -15,8 +15,17 @@ import { Button } from "@repo/ui/components/shadcn/button";
 import { Input } from "@repo/ui/components/shadcn/input";
 import { Label } from "@repo/ui/components/shadcn/label";
 import { Loader2, Pencil } from "@/components/icons";
+import dynamic from "next/dynamic";
+import { Skeleton } from "@repo/ui/components/shadcn/skeleton";
 import { useUpdatePost } from "@/hooks/use-forum";
-import { RichTextEditor } from "@/components/rich-text-editor";
+
+const RichTextEditor = dynamic(
+  () => import("@/components/rich-text-editor").then((mod) => mod.RichTextEditor),
+  {
+    ssr: false,
+    loading: () => <Skeleton className="h-48 w-full rounded-md" />,
+  },
+);
 
 type EditPostDialogProps = {
   postId: number;
@@ -117,7 +126,7 @@ export function EditPostDialog({
             {t("cancel")}
           </Button>
           <Button
-            className="bg-[#4fae2e] text-white hover:bg-[#459928] dark:bg-[#4fae2e] dark:text-white dark:hover:bg-[#4fae2e]"
+            className="bg-[#0069D3] text-white hover:bg-blue-600 dark:bg-[#0069D3] dark:text-white dark:hover:bg-blue-500"
             onClick={handleSubmit}
             disabled={!title.trim() || !content.trim() || isSubmitting}
           >
