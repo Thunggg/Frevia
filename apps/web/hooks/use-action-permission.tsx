@@ -18,39 +18,43 @@ export function useActionPermission() {
     [user?.permissions],
   );
 
-  // Xác định người dùng có toàn quyền thông qua ADMIN role hoặc wildcard (*).
+  // Xác định người dùng có role ADMIN hay không.
   const isAdmin = useMemo(
-    () =>
-      permissions.includes("*") ||
-      (user?.roles?.some((r) => r.name === RoleName.ADMIN) ?? false),
-    [permissions, user?.roles],
+    () => user?.roles?.some((r) => r.name === RoleName.ADMIN) ?? false,
+    [user?.roles],
+  );
+
+  // Xác định người dùng có quyền wildcard (*) hay không.
+  const hasWildcard = useMemo(
+    () => permissions.includes("*"),
+    [permissions],
   );
 
   // Kiểm tra người dùng có quyền thực hiện một action cụ thể hay không.
   const can = useCallback(
     (method: string, path: string): boolean => {
-      if (isAdmin) return true;
+      if (hasWildcard) return true;
       return hasActionPermission(permissions, method, path);
     },
-    [isAdmin, permissions],
+    [hasWildcard, permissions],
   );
 
   // Kiểm tra người dùng có ít nhất một quyền trong danh sách action.
   const canAny = useCallback(
     (actions: Array<{ method: string; path: string }>): boolean => {
-      if (isAdmin) return true;
+      if (hasWildcard) return true;
       return actions.some((action) => can(action.method, action.path));
     },
-    [can, isAdmin],
+    [can, hasWildcard],
   );
 
   // Kiểm tra người dùng có đầy đủ quyền trên tất cả action trong danh sách.
   const canAll = useCallback(
     (actions: Array<{ method: string; path: string }>): boolean => {
-      if (isAdmin) return true;
+      if (hasWildcard) return true;
       return actions.every((action) => can(action.method, action.path));
     },
-    [can, isAdmin],
+    [can, hasWildcard],
   );
 
   return {

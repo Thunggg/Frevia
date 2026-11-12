@@ -192,13 +192,6 @@ export function hasActionPermission(
     // Nếu đầu vào là mảng, sử dụng trực tiếp danh sách permissions được cung cấp.
     permissions = userOrPermissions;
   } else {
-    // Nếu đầu vào là đối tượng người dùng, kiểm tra role trước tiên.
-
-    // ADMIN được mặc định có toàn quyền, không cần kiểm tra permissions.
-    if (userOrPermissions.roles?.some((r) => r.name === RoleName.ADMIN)) {
-      return true;
-    }
-
     // Lấy danh sách permissions của người dùng.
     // Nếu permissions không tồn tại hoặc null thì sử dụng mảng rỗng.
     permissions = userOrPermissions.permissions ?? [];
@@ -253,40 +246,18 @@ export function hasActionPermission(
     // "POST /api/admin/skills"
     // -> match[1] = "POST"
     // -> match[2] = "/api/admin/skills"
-    //
-    // Trường hợp permission chỉ chứa path:
-    // "/api/admin/skills"
-    // -> Không có HTTP method được khai báo.
     const match = perm.match(/^([A-Z]+)\s+(.+)$/i);
-
-    // Khởi tạo method của permission là null.
-    // null có nghĩa là permission không giới hạn HTTP method.
-    let permMethod: string | null = null;
-
-    // Mặc định toàn bộ permission được xem là API path.
-    let permPath = perm;
-
-    // Nếu permission có định dạng "METHOD /path",
-    // tách riêng method và path để kiểm tra.
-    if (match && match[1] && match[2]) {
-      // Chuẩn hóa method của permission thành chữ in hoa.
-      permMethod = match[1].toUpperCase();
-
-      // Lấy phần API path sau HTTP method.
-      permPath = match[2];
+    // Action permission bắt buộc phải có HTTP method cụ thể (POST, GET, PATCH, DELETE)
+    // Các chuỗi không có method (ví dụ: "/api/admin/skills") chỉ dùng cho route menu, không cấp quyền action.
+    if (!match || !match[1] || !match[2]) {
+      return false;
     }
 
-    // Nếu permission có khai báo HTTP method,
-    // method đó bắt buộc phải trùng với method của action đang kiểm tra.
-    //
-    // Ví dụ:
-    // Permission: "POST /api/admin/skills"
-    // Target:     "GET /api/admin/skills"
-    // -> Không có quyền.
-    //
-    // Nếu permission chỉ khai báo path mà không có method,
-    // có thể áp dụng cho mọi HTTP method.
-    if (permMethod && permMethod !== targetMethod) {
+    const permMethod = match[1].toUpperCase();
+    const permPath = match[2];
+
+    // Method của permission bắt buộc phải trùng với method của action đang kiểm tra.
+    if (permMethod !== targetMethod) {
       return false;
     }
 

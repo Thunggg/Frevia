@@ -489,7 +489,7 @@ export class AuthService {
     return verifycationOTP;
   }
 
-  async getMe(userId: number, roleId?: number): Promise<GetMeResType> {
+  async getMe(userId: number): Promise<GetMeResType> {
     const user = await this.authRepository.findUserById(userId);
 
     if (!user) {
@@ -506,12 +506,6 @@ export class AuthService {
 
     const permissionsSet = new Set<string>();
     const modulesSet = new Set<string>();
-
-    const isAdmin = userRole?.name === RoleName.ADMIN;
-
-    if (isAdmin) {
-      permissionsSet.add('*');
-    }
 
     if (userRole && 'rolePermissions' in userRole) {
       const rps =
@@ -608,7 +602,8 @@ export class AuthService {
 
     let userAgent = 'Unknown';
     let ip = 'Unknown';
-    let selectedRole: (typeof RoleName)[keyof typeof RoleName] = RoleName.CLIENT;
+    let selectedRole: (typeof RoleName)[keyof typeof RoleName] =
+      RoleName.CLIENT;
 
     try {
       const clientInfor = JSON.parse(
