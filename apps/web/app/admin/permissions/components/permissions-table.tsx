@@ -2,7 +2,7 @@
 
 import { usePermissions } from "@/hooks/use-permission";
 import {
-  getPermissionScope,
+  getPermissionFeatureGroup,
   SCOPE_DEFINITIONS,
 } from "@/lib/permission-scopes";
 import { getPermissionDisplayName } from "@/lib/permission-utils";
@@ -319,15 +319,18 @@ export function PermissionsTable() {
                         {permission.path}
                       </TableCell>
                       <TableCell>
-                        {permission.module ? (
-                          <div className="flex items-center gap-1.5 flex-wrap">
-                            <Badge variant="outline" className="font-mono text-xs">
-                              {permission.module}
-                            </Badge>
-                            {(() => {
-                              const scope = getPermissionScope(permission);
-                              const scopeDef = SCOPE_DEFINITIONS[scope];
-                              return (
+                        {(() => {
+                          const group = getPermissionFeatureGroup(permission);
+                          const scopeDef = SCOPE_DEFINITIONS[group.scope];
+                          return (
+                            <div className="flex flex-col gap-1 items-start">
+                              <div className="flex items-center gap-1.5 flex-wrap">
+                                <Badge
+                                  variant="secondary"
+                                  className="font-mono text-[11px] font-semibold px-1.5 py-0"
+                                >
+                                  {group.code}
+                                </Badge>
                                 <Badge
                                   variant="outline"
                                   className={`text-[9px] px-1.5 py-0 h-4 border ${scopeDef.badgeClass}`}
@@ -336,12 +339,15 @@ export function PermissionsTable() {
                                     ? scopeDef.labelVi
                                     : scopeDef.labelEn}
                                 </Badge>
-                              );
-                            })()}
-                          </div>
-                        ) : (
-                          <span className="text-muted-foreground">—</span>
-                        )}
+                              </div>
+                              <span className="text-xs text-muted-foreground font-medium">
+                                {locale === "vi"
+                                  ? group.titleVi
+                                  : group.titleEn}
+                              </span>
+                            </div>
+                          );
+                        })()}
                       </TableCell>
                       <TableCell className="text-muted-foreground text-sm whitespace-nowrap">
                         {format.dateTime(new Date(permission.createdAt), {

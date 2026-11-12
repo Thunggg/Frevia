@@ -4,9 +4,11 @@ import { useAllPermissions } from "@/hooks/use-permission";
 import { useRole, useRoles, useSetRolePermissions } from "@/hooks/use-role";
 import { ApiFail } from "@/lib/http";
 import {
-  getModuleDisplayInfo,
+  getAllFeatureGroups,
+  getPermissionFeatureGroup,
   getPermissionScope,
   SCOPE_DEFINITIONS,
+  type FeatureGroupDefinition,
   type PermissionScope,
 } from "@/lib/permission-scopes";
 import { getPermissionDisplayName } from "@/lib/permission-utils";
@@ -85,7 +87,7 @@ export function AssignRoleContent() {
   const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
   const [search, setSearch] = useState("");
   const [methodFilter, setMethodFilter] = useState("all");
-  const [moduleFilter, setModuleFilter] = useState("all");
+  const [featureGroupFilter, setFeatureGroupFilter] = useState("all");
   const [scopeFilter, setScopeFilter] = useState<PermissionScope>("ALL");
 
   useEffect(() => {
@@ -93,7 +95,7 @@ export function AssignRoleContent() {
       setSelectedIds(new Set(role.permissions.map((p) => p.id)));
       setSearch("");
       setMethodFilter("all");
-      setModuleFilter("all");
+      setFeatureGroupFilter("all");
       setScopeFilter("ALL");
     }
   }, [role, selectedRoleId]);
@@ -102,7 +104,6 @@ export function AssignRoleContent() {
     () => data?.permissions ?? [],
     [data?.permissions],
   );
-  const modules = data?.modules ?? [];
 
   // Thống kê số lượng quyền theo từng Scope
   const scopeCounts = useMemo(() => {
@@ -121,18 +122,29 @@ export function AssignRoleContent() {
     return counts;
   }, [permissions]);
 
+  // Danh sách các Cụm chức năng hiển thị trong dropdown theo Scope đang chọn
+  const availableGroups = useMemo(() => {
+    return getAllFeatureGroups(scopeFilter);
+  }, [scopeFilter]);
+
+  const handleScopeChange = (scope: PermissionScope) => {
+    setScopeFilter(scope);
+    setFeatureGroupFilter("all");
+  };
+
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
 
     return permissions.filter((permission) => {
-      if (scopeFilter !== "ALL") {
-        const scope = getPermissionScope(permission);
-        if (scope !== scopeFilter) return false;
+      const group = getPermissionFeatureGroup(permission);
+
+      if (scopeFilter !== "ALL" && group.scope !== scopeFilter) {
+        return false;
       }
       if (methodFilter !== "all" && permission.method !== methodFilter) {
         return false;
       }
-      if (moduleFilter !== "all" && permission.module !== moduleFilter) {
+      if (featureGroupFilter !== "all" && group.key !== featureGroupFilter) {
         return false;
       }
       if (!q) return true;
@@ -145,23 +157,31 @@ export function AssignRoleContent() {
         enName.includes(q) ||
         permission.name.toLowerCase().includes(q) ||
         permission.path.toLowerCase().includes(q) ||
+        group.titleVi.toLowerCase().includes(q) ||
+        group.titleEn.toLowerCase().includes(q) ||
+        group.code.toLowerCase().includes(q) ||
         (permission.module?.toLowerCase().includes(q) ?? false) ||
         String(permission.id).includes(q)
       );
     });
-  }, [permissions, search, methodFilter, moduleFilter, scopeFilter]);
+  }, [permissions, search, methodFilter, featureGroupFilter, scopeFilter]);
 
   const grouped = useMemo(() => {
-    const map = new Map<string, PermissionListItemType[]>();
+    const map = new Map<
+      string,
+      { group: FeatureGroupDefinition; items: PermissionListItemType[] }
+    >();
 
     for (const permission of filtered) {
-      const key = permission.module || "OTHER";
-      const list = map.get(key) ?? [];
-      list.push(permission);
-      map.set(key, list);
+      const group = getPermissionFeatureGroup(permission);
+      const entry = map.get(group.key) ?? { group, items: [] };
+      entry.items.push(permission);
+      map.set(group.key, entry);
     }
 
-    return Array.from(map.entries()).sort(([a], [b]) => a.localeCompare(b));
+    return Array.from(map.values()).sort(
+      (a, b) => a.group.order - b.group.order,
+    );
   }, [filtered]);
 
   const selectRole = (value: string) => {
@@ -184,7 +204,10 @@ export function AssignRoleContent() {
     });
   };
 
-  const toggleModule = (items: PermissionListItemType[], checked: boolean) => {
+  const toggleGroup = (
+    items: PermissionListItemType[],
+    checked: boolean,
+  ) => {
     setSelectedIds((prev) => {
       const next = new Set(prev);
       for (const item of items) {
@@ -383,7 +406,7 @@ export function AssignRoleContent() {
                 <button
                   key={tab.key}
                   type="button"
-                  onClick={() => setScopeFilter(tab.key)}
+                  onClick={() => handleScopeChange(tab.key)}
                   className={`flex items-center gap-2 px-3 py-1.5 text-xs font-medium rounded-lg transition-all ${
                     isActive
                       ? "bg-background text-foreground shadow-xs font-semibold"
@@ -447,15 +470,18 @@ export function AssignRoleContent() {
               </SelectContent>
             </Select>
 
-            <Select value={moduleFilter} onValueChange={setModuleFilter}>
-              <SelectTrigger className="w-full sm:w-[190px] h-9">
+            <Select
+              value={featureGroupFilter}
+              onValueChange={setFeatureGroupFilter}
+            >
+              <SelectTrigger className="w-full sm:w-[220px] h-9">
                 <SelectValue placeholder={t("allModules")} />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">{t("allModules")}</SelectItem>
-                {modules.map((mod) => (
-                  <SelectItem key={mod} value={mod}>
-                    {mod}
+                {availableGroups.map((group) => (
+                  <SelectItem key={group.key} value={group.key}>
+                    {locale === "vi" ? group.titleVi : group.titleEn}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -494,7 +520,7 @@ export function AssignRoleContent() {
               {t("noMatches")}
             </p>
           ) : (
-            grouped.map(([moduleName, items]) => {
+            grouped.map(({ group, items }) => {
               const selectedCount = items.filter((item) =>
                 selectedIds.has(item.id),
               ).length;
@@ -502,15 +528,18 @@ export function AssignRoleContent() {
               const someSelected =
                 selectedCount > 0 && selectedCount < items.length;
 
-              const moduleDisplay = getModuleDisplayInfo(moduleName, locale);
-              const scopeDef = SCOPE_DEFINITIONS[moduleDisplay.scope];
+              const scopeDef = SCOPE_DEFINITIONS[group.scope];
+              const groupTitle =
+                locale === "vi" ? group.titleVi : group.titleEn;
+              const groupDesc =
+                locale === "vi" ? group.descriptionVi : group.descriptionEn;
 
               return (
                 <div
-                  key={moduleName}
+                  key={group.key}
                   className="rounded-xl border bg-card p-4 space-y-3 shadow-xs hover:border-border transition-colors"
                 >
-                  {/* Module Header */}
+                  {/* Group Header */}
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 pb-2.5 border-b border-border/50">
                     <div className="flex items-center gap-3">
                       <Checkbox
@@ -522,19 +551,21 @@ export function AssignRoleContent() {
                               : false
                         }
                         onCheckedChange={(checked) =>
-                          toggleModule(items, checked === true)
+                          toggleGroup(items, checked === true)
                         }
-                        aria-label={t("selectAllModule", { module: moduleName })}
+                        aria-label={t("selectAllModule", {
+                          module: groupTitle,
+                        })}
                       />
                       <div className="flex items-center gap-2 flex-wrap">
                         <Badge
                           variant="secondary"
                           className="font-mono text-xs font-semibold px-2 py-0.5"
                         >
-                          {moduleName}
+                          {group.code}
                         </Badge>
                         <span className="text-sm font-semibold text-foreground">
-                          {moduleDisplay.title}
+                          {groupTitle}
                         </span>
                         <Badge
                           variant="outline"
@@ -560,9 +591,9 @@ export function AssignRoleContent() {
                     </div>
                   </div>
 
-                  {moduleDisplay.description && (
+                  {groupDesc && (
                     <p className="text-xs text-muted-foreground pl-7 -mt-1">
-                      {moduleDisplay.description}
+                      {groupDesc}
                     </p>
                   )}
 
