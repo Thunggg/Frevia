@@ -1,51 +1,51 @@
 import { Injectable } from '@nestjs/common';
+import { Prisma, VerificationStatus } from '@prisma/client';
 import {
   AddSocialLinkType,
+  ChangePasswordType,
   DocumentTypeType,
   RoleName,
   UpdateClientProfileType,
-  ChangePasswordType,
   UpdateGeneralProfileType,
 } from '@shared/types';
-import { Prisma, VerificationStatus } from '@prisma/client';
-import { CloudinaryService } from '../../shared/services/cloudinary.service';
-import {
-  IdentityAiService,
-  type IdentityAiVerifyResult,
-} from '../../shared/services/identity-ai.service';
 import { randomUUID } from 'crypto';
 import { existsSync } from 'fs';
 import { mkdir, writeFile } from 'fs/promises';
 import { dirname, extname, isAbsolute, join, relative, resolve } from 'path';
+import { CloudinaryService } from '../../shared/services/cloudinary.service';
 import { HashingService } from '../../shared/services/hashing.service';
 import {
+  IdentityAiService,
+  type IdentityAiVerifyResult,
+} from '../../shared/services/identity-ai.service';
+import { ProfileRevisionService } from '../profile-revisions/profile-revision.service';
+import {
   AccountProfileForbiddenException,
+  AvatarFileInvalidException,
+  AvatarFileRequiredException,
+  AvatarNotFoundException,
   ClientProfileNotFoundException,
+  CurrentPasswordIncorrectException,
   FavoriteDuplicateException,
   FavoriteNotFoundException,
   FollowDuplicateException,
   FollowNotFoundException,
   FreelancerNotFoundException,
+  IdentityAiFramesInvalidException,
+  IdentityAiFrontRequiredException,
+  IdentityAiImageInvalidException,
+  IdentityAiLivenessRequiredException,
+  IdentityAiSelfieRequiredException,
+  IdentityAlreadyVerifiedException,
+  IdentityDocumentNotFoundException,
   IdentityFileInvalidException,
   IdentityFileRequiredException,
-  IdentityDocumentNotFoundException,
-  IdentityAiFrontRequiredException,
-  IdentityAiSelfieRequiredException,
-  IdentityAiLivenessRequiredException,
-  IdentityAiImageInvalidException,
-  IdentityAiFramesInvalidException,
-  IdentityAlreadyVerifiedException,
+  PasswordUnavailableException,
   ProfileNotFoundException,
   SocialLinkDuplicateException,
   SocialLinkNotFoundException,
-  AvatarFileInvalidException,
-  AvatarFileRequiredException,
-  AvatarNotFoundException,
-  CurrentPasswordIncorrectException,
-  PasswordUnavailableException,
 } from './account-profile.error';
 import { AccountProfileRepository } from './account-profile.repo';
-import { ProfileRevisionService } from '../profile-revisions/profile-revision.service';
 
 @Injectable()
 export class AccountProfileService {
@@ -250,7 +250,7 @@ export class AccountProfileService {
   private async requireRole(userId: number, roleName: string) {
     const user = await this.repository.findUserWithRoles(userId);
     if (!user?.profile) throw ProfileNotFoundException();
-    if (user.role.name !== roleName) {
+    if (user.role?.name !== roleName) {
       throw AccountProfileForbiddenException();
     }
     return user;
@@ -553,11 +553,12 @@ export class AccountProfileService {
 
   async getClientProfile(userId: number) {
     const profile = await this.repository.findClientProfile(userId);
-    const isClient = profile?.user.role.name === RoleName.CLIENT;
-    if (!profile || !isClient)
-      throw ClientProfileNotFoundException();
+    const isClient = profile?.user?.role?.name === RoleName.CLIENT;
+    if (!profile || !isClient) throw ClientProfileNotFoundException();
     if (!profile.clientProfile) {
-      const clientProfile = await this.repository.createClientProfile(profile.id);
+      const clientProfile = await this.repository.createClientProfile(
+        profile.id,
+      );
       return { ...profile, clientProfile };
     }
     return profile;
@@ -622,7 +623,7 @@ export class AccountProfileService {
     await this.requireRole(clientId, RoleName.CLIENT);
     if (clientId === freelancerId) throw FreelancerNotFoundException();
     const freelancer = await this.repository.findUserWithRoles(freelancerId);
-    const isFreelancer = freelancer?.role.name === RoleName.FREELANCER;
+    const isFreelancer = freelancer?.role?.name === RoleName.FREELANCER;
     if (!freelancer?.profile || !isFreelancer)
       throw FreelancerNotFoundException();
     if (await this.repository.findFavorite(clientId, freelancerId)) {

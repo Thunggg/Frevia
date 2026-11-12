@@ -293,7 +293,7 @@ export class UsersRepository {
       id: user.id,
       profileId: user.profile?.id ?? null,
       clientProfileId: user.profile?.clientProfile?.id ?? null,
-      hasClientRole: user.role?.name.toLowerCase() === 'client',
+      hasClientRole: user.role?.name?.toLowerCase() === 'client',
     };
   }
 
@@ -376,7 +376,7 @@ export class UsersRepository {
       id: user.id,
       profileId: user.profile?.id ?? null,
       freelancerProfileId: user.profile?.freelancerProfile?.id ?? null,
-      hasFreelancerRole: user.role?.name.toLowerCase() === 'freelancer',
+      hasFreelancerRole: user.role?.name?.toLowerCase() === 'freelancer',
     };
   }
 

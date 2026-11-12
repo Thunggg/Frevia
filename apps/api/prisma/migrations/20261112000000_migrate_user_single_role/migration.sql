@@ -19,3 +19,4 @@ CREATE INDEX "User_roleId_idx" ON "User"("roleId");
 
 -- 5. Xóa bỏ bảng UserRole
 DROP TABLE "UserRole";
+

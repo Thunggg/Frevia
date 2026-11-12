@@ -64,7 +64,7 @@ export class ProfileService {
   private async getOwnedFreelancerProfile(profileId: number, userId: number) {
     const profile =
       await this.profileRepository.findFreelancerProfileById(profileId);
-    if (!profile || profile.user.role.name !== RoleName.FREELANCER) {
+    if (!profile || profile.user?.role?.name !== RoleName.FREELANCER) {
       throw FreelancerProfileNotFoundException();
     }
     if (profile.userId !== userId) throw ProfileForbiddenException();
@@ -506,7 +506,7 @@ export class ProfileService {
   async viewProfile(profileId: number) {
     const profile =
       await this.profileRepository.findFreelancerProfileById(profileId);
-    if (!profile || profile.user.role.name !== RoleName.FREELANCER) {
+    if (!profile || profile.user?.role?.name !== RoleName.FREELANCER) {
       throw FreelancerProfileNotFoundException();
     }
     return profile;
@@ -519,7 +519,7 @@ export class ProfileService {
   ) {
     const profile =
       await this.profileRepository.findFreelancerProfileById(profileId);
-    if (!profile || profile.user.role.name !== RoleName.FREELANCER) {
+    if (!profile || profile.user?.role?.name !== RoleName.FREELANCER) {
       throw FreelancerProfileNotFoundException();
     }
 
@@ -568,7 +568,7 @@ export class ProfileService {
   async getSkills(profileId: number) {
     const profile =
       await this.profileRepository.findFreelancerProfileById(profileId);
-    if (!profile || profile.user.role.name !== RoleName.FREELANCER) {
+    if (!profile || profile.user?.role?.name !== RoleName.FREELANCER) {
       throw FreelancerProfileNotFoundException();
     }
 
@@ -586,7 +586,7 @@ export class ProfileService {
   ) {
     const profile =
       await this.profileRepository.findFreelancerProfileById(profileId);
-    if (!profile || profile.user.role.name !== RoleName.FREELANCER) {
+    if (!profile || profile.user?.role?.name !== RoleName.FREELANCER) {
       throw FreelancerProfileNotFoundException();
     }
 
