@@ -1,4 +1,6 @@
 import adminServerRequest from "@/apiRequests/admin.server";
+import authServerRequest from "@/apiRequests/auth.server";
+import { hasActionPermission } from "@/lib/admin-access";
 import { NumberedPagination } from "@/app/admin/components/numbered-pagination";
 import { Badge } from "@repo/ui/components/shadcn/badge";
 import { Scale } from "lucide-react";
@@ -27,6 +29,35 @@ export default async function AdminDisputesPage({
   const status = params.status || undefined;
 
   const t = await getTranslations("adminDisputes");
+  const currentUser = await authServerRequest.getMe();
+  const canViewList = hasActionPermission(
+    currentUser,
+    "GET",
+    "/api/admin/disputes",
+  );
+
+  if (!canViewList) {
+    return (
+      <div className="space-y-6">
+        <div>
+          <div className="flex items-center gap-3">
+            <div className="flex size-10 items-center justify-center rounded-xl bg-[#4fae2e]/10 text-[#4fae2e]">
+              <Scale className="size-5" />
+            </div>
+            <div>
+              <h1 className="text-2xl font-bold tracking-tight text-foreground">
+                {t("pageTitle")}
+              </h1>
+            </div>
+          </div>
+        </div>
+        <div className="rounded-lg border bg-card p-12 text-center text-muted-foreground">
+          {t("accessDenied")}
+        </div>
+      </div>
+    );
+  }
+
   const response = await adminServerRequest.getDisputes(page, 10, status);
 
   const disputes = response?.data ?? [];

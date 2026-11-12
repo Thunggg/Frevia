@@ -16,6 +16,7 @@ import { DisputeStatusEnum } from "@shared/types";
 import { Eye, Gavel, Scale } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { useState } from "react";
+import { useActionPermission } from "@/hooks/use-action-permission";
 import { DisputeDetailDialog } from "./dispute-detail-dialog";
 
 export function DisputesTable({
@@ -25,6 +26,7 @@ export function DisputesTable({
 }) {
   const t = useTranslations("adminDisputes");
   const locale = useLocale();
+  const { can } = useActionPermission();
   const [selectedDispute, setSelectedDispute] =
     useState<DisputeDetailType | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -125,10 +127,33 @@ export function DisputesTable({
               const milestoneAmount = dispute.milestone?.amount
                 ? `$${Number(dispute.milestone.amount)}`
                 : "-";
-              const canArbitrate =
-                dispute.status === DisputeStatusEnum.enum.UNDER_REVIEW ||
-                dispute.status === DisputeStatusEnum.enum.REVIEW_REQUESTED ||
-                dispute.status === DisputeStatusEnum.enum.OPEN;
+              const canViewDetail = can(
+                "GET",
+                `/api/admin/disputes/${dispute.id}`,
+              );
+              const canDecision = can(
+                "POST",
+                `/api/admin/disputes/${dispute.id}/decision`,
+              );
+              const canFinalDecision = can(
+                "POST",
+                `/api/admin/disputes/${dispute.id}/final-decision`,
+              );
+
+              const canArbitrateThis =
+                (canDecision &&
+                  (dispute.status === DisputeStatusEnum.enum.OPEN ||
+                    dispute.status ===
+                      DisputeStatusEnum.enum.WAITING_RESPONSE ||
+                    dispute.status ===
+                      DisputeStatusEnum.enum.UNDER_REVIEW)) ||
+                (canFinalDecision &&
+                  (dispute.status ===
+                    DisputeStatusEnum.enum.REVIEW_REQUESTED ||
+                    dispute.status === DisputeStatusEnum.enum.DECISION_MADE));
+
+              const hasAnyAction =
+                canViewDetail || canDecision || canFinalDecision;
 
               return (
                 <TableRow key={dispute.id} className="hover:bg-muted/40">
@@ -169,28 +194,32 @@ export function DisputesTable({
                       : "-"}
                   </TableCell>
                   <TableCell className="text-right">
-                    <Button
-                      size="sm"
-                      variant={canArbitrate ? "default" : "outline"}
-                      onClick={() => handleOpenDetail(dispute)}
-                      className={
-                        canArbitrate
-                          ? "bg-[#4fae2e] text-white hover:bg-[#439626]"
-                          : ""
-                      }
-                    >
-                      {canArbitrate ? (
-                        <>
-                          <Gavel className="mr-1.5 size-3.5" />
-                          {t("actionArbitrate")}
-                        </>
-                      ) : (
-                        <>
-                          <Eye className="mr-1.5 size-3.5" />
-                          {t("actionView")}
-                        </>
-                      )}
-                    </Button>
+                    {!hasAnyAction ? (
+                      <span className="text-muted-foreground text-xs">—</span>
+                    ) : (
+                      <Button
+                        size="sm"
+                        variant={canArbitrateThis ? "default" : "outline"}
+                        onClick={() => handleOpenDetail(dispute)}
+                        className={
+                          canArbitrateThis
+                            ? "bg-[#4fae2e] text-white hover:bg-[#439626]"
+                            : ""
+                        }
+                      >
+                        {canArbitrateThis ? (
+                          <>
+                            <Gavel className="mr-1.5 size-3.5" />
+                            {t("actionArbitrate")}
+                          </>
+                        ) : (
+                          <>
+                            <Eye className="mr-1.5 size-3.5" />
+                            {t("actionView")}
+                          </>
+                        )}
+                      </Button>
+                    )}
                   </TableCell>
                 </TableRow>
               );

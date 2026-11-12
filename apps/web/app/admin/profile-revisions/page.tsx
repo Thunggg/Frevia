@@ -1,6 +1,8 @@
 import { Suspense } from "react";
 import { getTranslations } from "next-intl/server";
 import adminServerRequest from "@/apiRequests/admin.server";
+import authServerRequest from "@/apiRequests/auth.server";
+import { hasActionPermission } from "@/lib/admin-access";
 import { SearchBar } from "../components/search-bar";
 import { ProfileRevisionsTable } from "./profile-revisions-table";
 
@@ -24,6 +26,28 @@ export default async function AdminProfileRevisionsPage({
 }) {
   const params = await searchParams;
   const t = await getTranslations("adminProfileRevisions");
+  const currentUser = await authServerRequest.getMe();
+  const canViewList = hasActionPermission(
+    currentUser,
+    "GET",
+    "/api/admin/profile-revisions",
+  );
+
+  if (!canViewList) {
+    return (
+      <div className="space-y-6">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">
+            {t("pageTitle")}
+          </h1>
+        </div>
+        <div className="rounded-lg border bg-card p-12 text-center text-muted-foreground">
+          {t("accessDenied")}
+        </div>
+      </div>
+    );
+  }
+
   const page = Math.max(1, Number(params.page) || 1);
   const selectedStatus = params.status ?? "PENDING";
   const data = await adminServerRequest.getProfileRevisions({

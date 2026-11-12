@@ -30,6 +30,7 @@ import {
   TableRow,
 } from "@repo/ui/components/shadcn/table";
 import { Check, Eye, Loader2, X } from "lucide-react";
+import { useActionPermission } from "@/hooks/use-action-permission";
 import { NumberedPagination } from "../components/numbered-pagination";
 
 const fieldKeys = [
@@ -92,9 +93,22 @@ export function ProfileRevisionsTable({
   const tRoleName = useTranslations("roleName");
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { can } = useActionPermission();
   const [selected, setSelected] = useState<ProfileRevisionType | null>(null);
   const [reviewNotes, setReviewNotes] = useState("");
   const [action, setAction] = useState<"approve" | "reject" | null>(null);
+
+  const canViewSelected = selected
+    ? can("GET", `/api/admin/profile-revisions/${selected.id}`)
+    : false;
+  const canApproveSelected = selected
+    ? can("PATCH", `/api/admin/profile-revisions/${selected.id}/approve`)
+    : false;
+  const canRejectSelected = selected
+    ? can("PATCH", `/api/admin/profile-revisions/${selected.id}/reject`)
+    : false;
+  const canInteractSelected =
+    canViewSelected || canApproveSelected || canRejectSelected;
 
   const valueLabels = {
     none: t("valueNone"),
@@ -134,12 +148,27 @@ export function ProfileRevisionsTable({
   };
 
   const openDetail = (revision: ProfileRevisionType) => {
+    const canViewDetail = can(
+      "GET",
+      `/api/admin/profile-revisions/${revision.id}`,
+    );
+    const canApprove = can(
+      "PATCH",
+      `/api/admin/profile-revisions/${revision.id}/approve`,
+    );
+    const canReject = can(
+      "PATCH",
+      `/api/admin/profile-revisions/${revision.id}/reject`,
+    );
+    if (!canViewDetail && !canApprove && !canReject) return;
     setSelected(revision);
     setReviewNotes(revision.reviewNotes ?? "");
   };
 
   const review = async (nextAction: "approve" | "reject") => {
     if (!selected) return;
+    if (nextAction === "approve" && !canApproveSelected) return;
+    if (nextAction === "reject" && !canRejectSelected) return;
     if (nextAction === "reject" && !reviewNotes.trim()) {
       toastError({ message: t("reviewNotesRequired") });
       return;
@@ -230,52 +259,75 @@ export function ProfileRevisionsTable({
                 </TableCell>
               </TableRow>
             ) : (
-              revisions.map((revision) => (
-                <TableRow key={revision.id}>
-                  <TableCell>
-                    <p className="font-medium">
-                      {revision.user?.profile?.displayName ||
-                        `User #${revision.userId}`}
-                    </p>
-                    <p className="text-xs text-muted-foreground">
-                      {revision.user?.email}
-                    </p>
-                  </TableCell>
-                  <TableCell className="capitalize">
-                    {tRoleName(revision.profileType)}
-                  </TableCell>
-                  <TableCell className="font-medium tabular-nums">
-                    {formatNumber(revision.profileStrength, locale)}%
-                  </TableCell>
-                  <TableCell>
-                    <Badge
-                      variant="outline"
-                      className={statusClass(revision.status)}
-                    >
-                      {revision.status === "PENDING"
-                        ? tCommon("pending")
-                        : revision.status === "APPROVED"
-                          ? tCommon("approved")
-                          : tCommon("rejected")}
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="whitespace-nowrap text-sm text-muted-foreground">
-                    {formatDateTime(revision.updatedAt, locale)}
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => openDetail(revision)}
-                    >
-                      <Eye className="size-4" />
-                      {revision.status === "PENDING"
-                        ? t("actionReview")
-                        : t("actionView")}
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              ))
+              revisions.map((revision) => {
+                const canViewDetail = can(
+                  "GET",
+                  `/api/admin/profile-revisions/${revision.id}`,
+                );
+                const canApprove = can(
+                  "PATCH",
+                  `/api/admin/profile-revisions/${revision.id}/approve`,
+                );
+                const canReject = can(
+                  "PATCH",
+                  `/api/admin/profile-revisions/${revision.id}/reject`,
+                );
+                const hasAnyAction =
+                  canViewDetail || canApprove || canReject;
+                const canReviewThis =
+                  (canApprove || canReject) && revision.status === "PENDING";
+
+                return (
+                  <TableRow key={revision.id}>
+                    <TableCell>
+                      <p className="font-medium">
+                        {revision.user?.profile?.displayName ||
+                          `User #${revision.userId}`}
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        {revision.user?.email}
+                      </p>
+                    </TableCell>
+                    <TableCell className="capitalize">
+                      {tRoleName(revision.profileType)}
+                    </TableCell>
+                    <TableCell className="font-medium tabular-nums">
+                      {formatNumber(revision.profileStrength, locale)}%
+                    </TableCell>
+                    <TableCell>
+                      <Badge
+                        variant="outline"
+                        className={statusClass(revision.status)}
+                      >
+                        {revision.status === "PENDING"
+                          ? tCommon("pending")
+                          : revision.status === "APPROVED"
+                            ? tCommon("approved")
+                            : tCommon("rejected")}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="whitespace-nowrap text-sm text-muted-foreground">
+                      {formatDateTime(revision.updatedAt, locale)}
+                    </TableCell>
+                    <TableCell className="text-right">
+                      {!hasAnyAction ? (
+                        <span className="text-muted-foreground text-xs">—</span>
+                      ) : (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => openDetail(revision)}
+                        >
+                          <Eye className="size-4" />
+                          {canReviewThis
+                            ? t("actionReview")
+                            : t("actionView")}
+                        </Button>
+                      )}
+                    </TableCell>
+                  </TableRow>
+                );
+              })
             )}
           </TableBody>
         </Table>
@@ -290,7 +342,7 @@ export function ProfileRevisionsTable({
       ) : null}
 
       <Dialog
-        open={Boolean(selected)}
+        open={Boolean(selected && canInteractSelected)}
         onOpenChange={(open) => !open && setSelected(null)}
       >
         <DialogContent className="max-h-[90dvh] max-w-4xl overflow-y-auto">
@@ -360,7 +412,11 @@ export function ProfileRevisionsTable({
                   id="profile-review-notes"
                   value={reviewNotes}
                   onChange={(event) => setReviewNotes(event.target.value)}
-                  disabled={selected.status !== "PENDING" || action !== null}
+                  disabled={
+                    selected.status !== "PENDING" ||
+                    action !== null ||
+                    (!canApproveSelected && !canRejectSelected)
+                  }
                   placeholder={t("notesPlaceholder")}
                   rows={3}
                 />
@@ -378,29 +434,33 @@ export function ProfileRevisionsTable({
             ) : null}
             {selected?.status === "PENDING" ? (
               <>
-                <Button
-                  variant="destructive"
-                  disabled={action !== null}
-                  onClick={() => void review("reject")}
-                >
-                  {action === "reject" ? (
-                    <Loader2 className="size-4 animate-spin" />
-                  ) : (
-                    <X className="size-4" />
-                  )}
-                  {t("rejectAction")}
-                </Button>
-                <Button
-                  disabled={action !== null}
-                  onClick={() => void review("approve")}
-                >
-                  {action === "approve" ? (
-                    <Loader2 className="size-4 animate-spin" />
-                  ) : (
-                    <Check className="size-4" />
-                  )}
-                  {t("approveAction")}
-                </Button>
+                {canRejectSelected && (
+                  <Button
+                    variant="destructive"
+                    disabled={action !== null}
+                    onClick={() => void review("reject")}
+                  >
+                    {action === "reject" ? (
+                      <Loader2 className="size-4 animate-spin" />
+                    ) : (
+                      <X className="size-4" />
+                    )}
+                    {t("rejectAction")}
+                  </Button>
+                )}
+                {canApproveSelected && (
+                  <Button
+                    disabled={action !== null}
+                    onClick={() => void review("approve")}
+                  >
+                    {action === "approve" ? (
+                      <Loader2 className="size-4 animate-spin" />
+                    ) : (
+                      <Check className="size-4" />
+                    )}
+                    {t("approveAction")}
+                  </Button>
+                )}
               </>
             ) : null}
           </DialogFooter>

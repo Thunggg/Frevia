@@ -103,6 +103,23 @@ Cung cấp bộ công cụ trực quan cho lập trình viên phía Client:
   * `POST /api/admin/banners/upload-image`: Vô hiệu hóa input tải ảnh và chặn tải ảnh mới trong form tạo/sửa nếu thiếu quyền.
   * `GET /api/admin/banners/:id`: Ẩn/hiện nút icon **Xem chi tiết** trong từng dòng và chặn SSR trang chi tiết nếu thiếu quyền.
 
+### 3.5. Quản lý Phán quyết Tranh chấp (Disputes)
+* **Route**: `/admin/disputes`
+* **Các quyền áp dụng**:
+  * `GET /api/admin/disputes`: Chặn SSR và hiển thị thông báo từ chối truy cập nếu thiếu quyền xem danh sách tranh chấp.
+  * `GET /api/admin/disputes/:id`: Kiểm soát quyền mở dialog xem chi tiết và hiển thị nút **Xem** trong bảng.
+  * `POST /api/admin/disputes/:id/decision`: Ẩn/hiện form và nút **"Đưa ra phán quyết đề xuất"** trong dialog; điều khiển nhãn nút thành **"Phân xử"** trên bảng.
+  * `POST /api/admin/disputes/:id/final-decision`: Ẩn/hiện form và nút **"Đưa ra phán quyết cuối cùng"** trong dialog; điều khiển nhãn nút thành **"Phân xử"** trên bảng.
+
+### 3.6. Duyệt Hồ sơ Chuyên gia & Cập nhật (Profile Revisions)
+* **Route**: `/admin/profile-revisions`
+* **Các quyền áp dụng**:
+  * `GET /api/admin/profile-revisions`: Chặn SSR và hiển thị thông báo từ chối truy cập nếu thiếu quyền xem danh sách.
+  * `GET /api/admin/profile-revisions/:id`: Kiểm soát quyền mở dialog xem chi tiết hồ sơ thay đổi.
+  * `PATCH /api/admin/profile-revisions/:id/approve`: Ẩn/hiện nút **"Phê duyệt"** trong dialog xem xét.
+  * `PATCH /api/admin/profile-revisions/:id/reject`: Ẩn/hiện nút **"Từ chối"** trong dialog xem xét.
+  * Vô hiệu hóa ghi chú đánh giá nếu không có quyền phê duyệt lẫn từ chối.
+
 ---
 
 ## 4. Hướng dẫn mở rộng cho các phân hệ khác
@@ -175,6 +192,11 @@ export function RowActions({ item }: { item: { id: number } }) {
 | `apps/web/app/admin/banners/components/create-banner-dialog.tsx` | Chỉnh sửa | Ẩn dialog tạo nếu thiếu quyền `POST /api/admin/banners`. |
 | `apps/web/app/admin/banners/components/delete-banner-dialog.tsx` | Chỉnh sửa | Ẩn dialog xóa nếu thiếu quyền `DELETE /api/admin/banners/:id`. |
 | `apps/web/app/admin/banners/components/banner-form-dialog.tsx` | Chỉnh sửa | Kiểm tra quyền mở dialog và vô hiệu hóa chức năng tải ảnh nếu thiếu `POST /api/admin/banners/upload-image`. |
+| `apps/web/app/admin/disputes/page.tsx` | Chỉnh sửa | Kiểm tra quyền SSR `GET /api/admin/disputes` trước khi hiển thị danh sách. |
+| `apps/web/app/admin/disputes/components/disputes-table.tsx` | Chỉnh sửa | Ẩn/hiện nút Xem / Phân xử theo quyền thực tế trên từng dòng tranh chấp. |
+| `apps/web/app/admin/disputes/components/dispute-detail-dialog.tsx` | Chỉnh sửa | Kiểm soát quyền xem chi tiết và ẩn các nút ra phán quyết / phán quyết cuối cùng nếu thiếu quyền. |
+| `apps/web/app/admin/profile-revisions/page.tsx` | Chỉnh sửa | Kiểm tra quyền SSR `GET /api/admin/profile-revisions` trước khi hiển thị danh sách. |
+| `apps/web/app/admin/profile-revisions/profile-revisions-table.tsx` | Chỉnh sửa | Ẩn/hiện thao tác Xem / Xem xét và các nút Phê duyệt / Từ chối theo quyền. |
 
 ---
 
