@@ -15,8 +15,17 @@ import { Button } from "@repo/ui/components/shadcn/button";
 import { Input } from "@repo/ui/components/shadcn/input";
 import { Label } from "@repo/ui/components/shadcn/label";
 import { Loader2, Pencil } from "@/components/icons";
+import dynamic from "next/dynamic";
+import { Skeleton } from "@repo/ui/components/shadcn/skeleton";
 import { useUpdatePost } from "@/hooks/use-forum";
-import { RichTextEditor } from "@/components/rich-text-editor";
+
+const RichTextEditor = dynamic(
+  () => import("@/components/rich-text-editor").then((mod) => mod.RichTextEditor),
+  {
+    ssr: false,
+    loading: () => <Skeleton className="h-48 w-full rounded-md" />,
+  },
+);
 
 type EditPostDialogProps = {
   postId: number;

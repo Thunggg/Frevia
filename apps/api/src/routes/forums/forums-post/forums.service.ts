@@ -27,22 +27,27 @@ import {
 import { RoleName } from '@shared/types';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/client';
 import { AIModerationService } from '../../../shared/services/ai-moderation.service';
+import { CacheService } from '../../../shared/services/cache.service';
 
 @Injectable()
 export class ForumService {
   constructor(
     private readonly forumRepository: ForumRepository,
     private readonly aiModerationService: AIModerationService,
-  ) {}
+    private readonly cacheService?: CacheService,
+  ) { }
 
   // Lấy danh sách tất cả forum categories
   async getForumCategories(): Promise<ForumCategoryListResponseType> {
     try {
-      // Gọi Repository để truy vấn dữ liệu từ database
-      const categories = await this.forumRepository.getForumCategories();
-
-      // Trả dữ liệu về theo đúng format của API
-      return categories;
+      if (this.cacheService) {
+        return await this.cacheService.wrap(
+          'forum_categories_all',
+          () => this.forumRepository.getForumCategories(),
+          120,
+        );
+      }
+      return await this.forumRepository.getForumCategories();
     } catch {
       // Nếu có lỗi khi truy vấn database thì trả về exception
       throw FailedToLoadForumCategoriesException();
@@ -54,9 +59,14 @@ export class ForumService {
     limit: number = 3,
   ): Promise<ForumCategoryTopListResponseType> {
     try {
-      const categories =
-        await this.forumRepository.getTopForumCategories(limit);
-      return categories;
+      if (this.cacheService) {
+        return await this.cacheService.wrap(
+          `forum_top_categories_${limit}`,
+          () => this.forumRepository.getTopForumCategories(limit),
+          120,
+        );
+      }
+      return await this.forumRepository.getTopForumCategories(limit);
     } catch {
       throw FailedToLoadForumCategoriesException();
     }
@@ -67,8 +77,14 @@ export class ForumService {
     limit: number = 5,
   ): Promise<ForumTopActiveUserListResponseType> {
     try {
-      const users = await this.forumRepository.getTopActiveUsers(limit);
-      return users;
+      if (this.cacheService) {
+        return await this.cacheService.wrap(
+          `forum_top_users_${limit}`,
+          () => this.forumRepository.getTopActiveUsers(limit),
+          120,
+        );
+      }
+      return await this.forumRepository.getTopActiveUsers(limit);
     } catch {
       throw FailedToLoadForumCategoriesException();
     }
@@ -78,8 +94,14 @@ export class ForumService {
     id: number,
   ): Promise<ForumCategoryDetailResponseType> {
     try {
-      const category = await this.forumRepository.getForumCategoryById(id);
-      return category;
+      if (this.cacheService) {
+        return await this.cacheService.wrap(
+          `forum_category_detail_${id}`,
+          () => this.forumRepository.getForumCategoryById(id),
+          120,
+        );
+      }
+      return await this.forumRepository.getForumCategoryById(id);
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError) {
         throw FailedToLoadForumCategoriesException();

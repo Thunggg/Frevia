@@ -27,10 +27,14 @@ import {
   FailedToDeleteForumCategoryException,
   ForumReportForbiddenException,
 } from './forums-admin.error';
+import { CacheService } from '../../../shared/services/cache.service';
 
 @Injectable()
 export class ForumAdminService {
-  constructor(private readonly adminRepository: ForumAdminRepository) {}
+  constructor(
+    private readonly adminRepository: ForumAdminRepository,
+    private readonly cacheService?: CacheService,
+  ) {}
 
   private ensureStaffAccess(roleName: string) {
     if (roleName === RoleName.CLIENT || roleName === RoleName.FREELANCER) {
@@ -142,7 +146,9 @@ export class ForumAdminService {
   ): Promise<ForumCategoryType> {
     this.ensureStaffAccess(roleName);
     try {
-      return await this.adminRepository.createAdminCategory(body);
+      const result = await this.adminRepository.createAdminCategory(body);
+      this.cacheService?.delByPrefix('forum_categor');
+      return result;
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;
@@ -158,7 +164,9 @@ export class ForumAdminService {
   ): Promise<ForumCategoryType> {
     this.ensureStaffAccess(roleName);
     try {
-      return await this.adminRepository.updateAdminCategory(categoryId, body);
+      const result = await this.adminRepository.updateAdminCategory(categoryId, body);
+      this.cacheService?.delByPrefix('forum_categor');
+      return result;
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;
@@ -173,7 +181,9 @@ export class ForumAdminService {
   ): Promise<{ message: string }> {
     this.ensureStaffAccess(roleName);
     try {
-      return await this.adminRepository.deleteAdminCategory(categoryId);
+      const result = await this.adminRepository.deleteAdminCategory(categoryId);
+      this.cacheService?.delByPrefix('forum_categor');
+      return result;
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;
@@ -188,7 +198,9 @@ export class ForumAdminService {
   ): Promise<ForumCategoryType> {
     this.ensureStaffAccess(roleName);
     try {
-      return await this.adminRepository.restoreAdminCategory(categoryId);
+      const result = await this.adminRepository.restoreAdminCategory(categoryId);
+      this.cacheService?.delByPrefix('forum_categor');
+      return result;
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;

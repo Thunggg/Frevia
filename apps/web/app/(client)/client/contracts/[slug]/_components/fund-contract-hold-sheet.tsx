@@ -16,8 +16,16 @@ import { Checkbox } from "@repo/ui/components/shadcn/checkbox";
 import { toastError, toastSuccess } from "@repo/ui/components/shadcn/toast";
 import { CheckCircle2, CreditCard, Loader2, ShieldCheck } from "@/components/icons";
 import { paymentApiRequest } from "@/apiRequests/payment";
+import dynamic from "next/dynamic";
 import { ApiFail } from "@/lib/http";
-import { StripePaymentDialog } from "@/components/payments/stripe-payment-dialog";
+
+const StripePaymentDialog = dynamic(
+  () =>
+    import("@/components/payments/stripe-payment-dialog").then(
+      (m) => m.StripePaymentDialog,
+    ),
+  { ssr: false },
+);
 import type { ContractDetailType } from "@shared/types";
 
 interface FundContractHoldSheetProps {
