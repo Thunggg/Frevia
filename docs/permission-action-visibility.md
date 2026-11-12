@@ -93,6 +93,16 @@ Cung cấp bộ công cụ trực quan cho lập trình viên phía Client:
   * `DELETE /api/forums/admin/categories/:id`: Ẩn/hiện nút icon **Xóa** trên bảng và nút `DeleteCategoryButton` trên trang chi tiết.
   * `PATCH /api/forums/admin/categories/:id/restore`: Ẩn/hiện nút **Khôi phục**.
 
+### 3.4. Quản lý Banner & Quảng cáo (Banners)
+* **Route**: `/admin/banners` & `/admin/banners/[id]`
+* **Các quyền áp dụng**:
+  * `GET /api/admin/banners`: Chặn SSR và hiển thị thông báo từ chối truy cập nếu thiếu quyền xem danh sách.
+  * `POST /api/admin/banners`: Ẩn/hiện nút **"Tạo banner"** trên thanh tiêu đề và dialog tạo mới.
+  * `PATCH /api/admin/banners/:id`: Ẩn/hiện nút **Sửa** trong từng dòng và trên trang chi tiết.
+  * `DELETE /api/admin/banners/:id`: Ẩn/hiện nút **Xóa** trong từng dòng và dialog xác nhận xóa.
+  * `POST /api/admin/banners/upload-image`: Vô hiệu hóa input tải ảnh và chặn tải ảnh mới trong form tạo/sửa nếu thiếu quyền.
+  * `GET /api/admin/banners/:id`: Ẩn/hiện nút icon **Xem chi tiết** trong từng dòng và chặn SSR trang chi tiết nếu thiếu quyền.
+
 ---
 
 ## 4. Hướng dẫn mở rộng cho các phân hệ khác
@@ -159,6 +169,12 @@ export function RowActions({ item }: { item: { id: number } }) {
 | `apps/web/app/admin/categories/components/categories-table.tsx` | Chỉnh sửa | Ẩn các nút Xem chi tiết, Sửa, Xóa, Khôi phục theo quyền trong bảng diễn đàn. |
 | `apps/web/app/admin/categories/[id]/components/edit-category-button.tsx` | Chỉnh sửa | Ẩn nút Sửa trên trang chi tiết danh mục diễn đàn. |
 | `apps/web/app/admin/categories/[id]/components/delete-category-button.tsx` | Chỉnh sửa | Ẩn nút Xóa trên trang chi tiết danh mục diễn đàn. |
+| `apps/web/app/admin/banners/page.tsx` | Chỉnh sửa | Kiểm tra quyền SSR `GET /api/admin/banners` và ẩn nút "Tạo banner" nếu thiếu `POST /api/admin/banners`. |
+| `apps/web/app/admin/banners/[id]/page.tsx` | Chỉnh sửa | Kiểm tra quyền SSR `GET /api/admin/banners/:id` và ẩn nút Sửa nếu thiếu `PATCH /api/admin/banners/:id`. |
+| `apps/web/app/admin/banners/components/banners-table.tsx` | Chỉnh sửa | Ẩn các nút Xem chi tiết, Sửa, Xóa theo quyền thực tế trên từng dòng banner. |
+| `apps/web/app/admin/banners/components/create-banner-dialog.tsx` | Chỉnh sửa | Ẩn dialog tạo nếu thiếu quyền `POST /api/admin/banners`. |
+| `apps/web/app/admin/banners/components/delete-banner-dialog.tsx` | Chỉnh sửa | Ẩn dialog xóa nếu thiếu quyền `DELETE /api/admin/banners/:id`. |
+| `apps/web/app/admin/banners/components/banner-form-dialog.tsx` | Chỉnh sửa | Kiểm tra quyền mở dialog và vô hiệu hóa chức năng tải ảnh nếu thiếu `POST /api/admin/banners/upload-image`. |
 
 ---
 

@@ -35,6 +35,7 @@ import { ImageIcon, Loader2, Pencil, Plus } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import { useActionPermission } from "@/hooks/use-action-permission";
 import { BANNER_POSITIONS } from "../constants";
 
 interface BannerFormDialogProps {
@@ -58,7 +59,13 @@ export function BannerFormDialog({
   const t = useTranslations("adminBanners");
   const tCommon = useTranslations("adminCommon");
   const router = useRouter();
+  const { can } = useActionPermission();
   const isEdit = !!banner;
+  const canPerformAction = isEdit
+    ? can("PATCH", `/api/admin/banners/${banner.id}`)
+    : can("POST", "/api/admin/banners");
+  const canUploadImage = can("POST", "/api/admin/banners/upload-image");
+
   const [open, setOpen] = useState(false);
 
   const [title, setTitle] = useState("");
@@ -131,6 +138,7 @@ export function BannerFormDialog({
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!canUploadImage) return;
     const file = e.target.files?.[0];
     if (!file) return;
     setSelectedFile(file);
@@ -164,6 +172,10 @@ export function BannerFormDialog({
     try {
       let finalImageUrl = imageUrl.trim() || null;
       if (selectedFile) {
+        if (!canUploadImage) {
+          toastError({ message: t("noUploadPermission") });
+          return;
+        }
         setUploading(true);
         try {
           const result = await adminApiRequest.uploadBannerImage(selectedFile);
@@ -216,6 +228,10 @@ export function BannerFormDialog({
       setLoading(false);
     }
   };
+
+  if (!canPerformAction) {
+    return null;
+  }
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
@@ -297,10 +313,15 @@ export function BannerFormDialog({
                   ref={fileInputRef}
                   type="file"
                   accept="image/jpeg,image/png,image/gif,image/webp,image/bmp,image/tiff"
-                  disabled={uploading || loading}
+                  disabled={uploading || loading || !canUploadImage}
                   onChange={handleFileChange}
-                  className="block w-full text-sm text-muted-foreground file:mr-4 file:rounded-md file:border-0 file:bg-[#4fae2e]/10 file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-[#4fae2e] hover:file:bg-[#4fae2e]/20"
+                  className="block w-full text-sm text-muted-foreground file:mr-4 file:rounded-md file:border-0 file:bg-[#4fae2e]/10 file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-[#4fae2e] hover:file:bg-[#4fae2e]/20 disabled:opacity-50 disabled:cursor-not-allowed"
                 />
+                {!canUploadImage && (
+                  <p className="text-xs text-muted-foreground">
+                    {t("noUploadPermission")}
+                  </p>
+                )}
                 {previewUrl && (
                   <div className="flex items-center gap-3 rounded-md border bg-muted/40 p-2">
                     {/* eslint-disable-next-line @next/next/no-img-element -- banner preview */}

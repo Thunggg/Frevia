@@ -237,6 +237,9 @@
     "metaDescription": "Quản lý banner quảng cáo theo vị trí hiển thị.",
     "pageTitle": "Quản lý banner",
     "pageSubtitle": "Quản lý banner quảng cáo theo vị trí hiển thị (tổng {total} banner)",
+    "accessDenied": "Bạn không có quyền xem danh sách banner quảng cáo.",
+    "detailAccessDenied": "Bạn không có quyền xem chi tiết banner quảng cáo này.",
+    "noUploadPermission": "Bạn không có quyền tải ảnh lên.",
     "positions": {
       "globalHeader": "Dải đầu trang toàn cục",
       "homeHero": "Hero trang chủ",

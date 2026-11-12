@@ -237,6 +237,9 @@
     "metaDescription": "Manage advertisement banners by display position.",
     "pageTitle": "Banner Management",
     "pageSubtitle": "Manage advertisement banners by display position ({total} total banners)",
+    "accessDenied": "You do not have permission to view the banners list.",
+    "detailAccessDenied": "You do not have permission to view this banner.",
+    "noUploadPermission": "You do not have permission to upload images.",
     "positions": {
       "globalHeader": "Global Header Strip",
       "homeHero": "Homepage Hero",

@@ -2,6 +2,8 @@ import Link from "next/link";
 import { getLocale, getTranslations } from "next-intl/server";
 import { ArrowLeft, CalendarClock, ExternalLink, Link2, Megaphone } from "lucide-react";
 import adminServerRequest from "@/apiRequests/admin.server";
+import authServerRequest from "@/apiRequests/auth.server";
+import { hasActionPermission } from "@/lib/admin-access";
 import { Badge } from "@repo/ui/components/shadcn/badge";
 import { Button } from "@repo/ui/components/shadcn/button";
 import { formatDateTime } from "@/lib/format";
@@ -32,6 +34,30 @@ export default async function AdminBannerDetailPage({
   const t = await getTranslations("adminBanners");
   const tCommon = await getTranslations("adminCommon");
   const locale = await getLocale();
+
+  const currentUser = await authServerRequest.getMe();
+  const canViewDetail = hasActionPermission(
+    currentUser,
+    "GET",
+    `/api/admin/banners/${id}`,
+  );
+
+  if (!canViewDetail) {
+    return (
+      <div className="flex flex-col items-center justify-center py-20 text-center">
+        <Megaphone className="h-12 w-12 text-muted-foreground mb-4" />
+        <h2 className="text-xl font-bold text-foreground">
+          {t("detailAccessDenied")}
+        </h2>
+        <Button asChild variant="outline" className="mt-6">
+          <Link href="/admin/banners">
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            {t("backToBanners")}
+          </Link>
+        </Button>
+      </div>
+    );
+  }
 
   const notFound = (message: string) => (
     <div className="flex flex-col items-center justify-center py-20 text-center">
@@ -75,6 +101,12 @@ export default async function AdminBannerDetailPage({
     );
   }
 
+  const canUpdate = hasActionPermission(
+    currentUser,
+    "PATCH",
+    `/api/admin/banners/${banner.id}`,
+  );
+
   return (
     <div className="space-y-6 pb-12">
       <Button asChild variant="outline" size="sm">
@@ -108,7 +140,7 @@ export default async function AdminBannerDetailPage({
             ) : (
               <Badge variant="outline">{tCommon("inactive")}</Badge>
             )}
-            <BannerFormDialog banner={banner} />
+            {canUpdate && <BannerFormDialog banner={banner} />}
           </div>
         </div>
       </div>
