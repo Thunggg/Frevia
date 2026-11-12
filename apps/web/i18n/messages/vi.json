@@ -306,6 +306,8 @@
     "lastUpdated": "Cập nhật lần cuối"
   },
   "adminCategories": {
+    "accessDenied": "Bạn không có quyền xem danh sách danh mục diễn đàn.",
+    "detailAccessDenied": "Bạn không có quyền xem chi tiết danh mục diễn đàn.",
     "metaTitle": "Danh mục | Bảng điều khiển quản trị | Frevia",
     "metaDescription": "Quản lý toàn bộ danh mục diễn đàn.",
     "pageTitle": "Quản lý danh mục",
@@ -622,6 +624,9 @@
     "deselectAllInScope": "Bỏ chọn tất cả"
   },
   "adminTrash": {
+    "accessDenied": "Bạn không có quyền xem thùng rác diễn đàn.",
+    "postsAccessDenied": "Bạn không có quyền xem bài viết đã xóa.",
+    "commentsAccessDenied": "Bạn không có quyền xem bình luận đã xóa.",
     "metaTitle": "Thùng rác | Quản trị | Frevia",
     "metaDescription": "Xem xét và khôi phục bài viết, bình luận đã xoá trên diễn đàn.",
     "pageTitle": "Thùng rác",
@@ -659,6 +664,7 @@
     "deletedCommentTitle": "Bình luận đã xoá"
   },
   "adminModeration": {
+    "accessDenied": "Bạn không có quyền xem bài viết chờ duyệt.",
     "metaTitle": "Kiểm duyệt | Quản trị | Frevia",
     "metaDescription": "Xem xét các bài viết diễn đàn đang chờ kiểm duyệt.",
     "pageTitle": "Kiểm duyệt",
@@ -701,6 +707,7 @@
     "deletePostLabel": "Xoá bài viết {title}"
   },
   "adminComments": {
+    "accessDenied": "Bạn không có quyền xem bình luận diễn đàn.",
     "metaTitle": "Quản lý bình luận | Quản trị | Frevia",
     "metaDescription": "Tìm kiếm và xoá bình luận diễn đàn.",
     "pageTitle": "Quản lý bình luận",

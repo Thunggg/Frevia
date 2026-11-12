@@ -19,7 +19,10 @@ export function DeleteCategoryButton({
   const [open, setOpen] = useState(false);
   const { can } = useActionPermission();
 
-  if (!can("DELETE", `/api/forums/admin/categories/${category.id}`)) {
+  if (
+    !can("DELETE", "/api/forums/admin/categories/:id") &&
+    !can("DELETE", `/api/forums/admin/categories/${category.id}`)
+  ) {
     return null;
   }
 

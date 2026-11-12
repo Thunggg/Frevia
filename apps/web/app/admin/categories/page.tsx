@@ -28,6 +28,29 @@ export default async function AdminCategoriesPage({
   }>;
 }) {
   const params = await searchParams;
+  const t = await getTranslations("adminCategories");
+  const currentUser = await authServerRequest.getMe();
+  const canViewList = hasActionPermission(
+    currentUser,
+    "GET",
+    "/api/forums/admin/categories",
+  );
+
+  if (!canViewList) {
+    return (
+      <div className="space-y-6">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">
+            {t("pageTitle")}
+          </h1>
+        </div>
+        <div className="rounded-lg border bg-card p-12 text-center text-muted-foreground">
+          {t("accessDenied")}
+        </div>
+      </div>
+    );
+  }
+
   const page = Number(params.page) || 1;
   const limit = 10;
   const search = params.search || undefined;
@@ -44,14 +67,11 @@ export default async function AdminCategoriesPage({
     deleted,
   );
 
-  const currentUser = await authServerRequest.getMe();
   const canCreate = hasActionPermission(
     currentUser,
     "POST",
     "/api/forums/admin/categories",
   );
-
-  const t = await getTranslations("adminCategories");
 
   return (
     <div className="space-y-6">

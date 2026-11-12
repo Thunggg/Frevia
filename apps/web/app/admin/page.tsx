@@ -11,7 +11,7 @@ import {
 } from "lucide-react";
 import adminServerRequest from "@/apiRequests/admin.server";
 import authServerRequest from "@/apiRequests/auth.server";
-import { hasMenuPermission } from "@/lib/admin-access";
+import { hasActionPermission, hasMenuPermission } from "@/lib/admin-access";
 import { Badge } from "@repo/ui/components/shadcn/badge";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -47,12 +47,18 @@ const statCards: {
 ];
 
 export default async function AdminDashboardPage() {
-  const stats = await adminServerRequest.getStats();
   const t = await getTranslations("adminDashboard");
   const format = await getFormatter();
+  const user = await authServerRequest.getMe();
+  const canViewStats = hasActionPermission(
+    user,
+    "GET",
+    "/api/forums/admin/stats",
+  );
+
+  const stats = canViewStats ? await adminServerRequest.getStats() : null;
 
   if (!stats) {
-    const user = await authServerRequest.getMe();
     const userPerms = user?.permissions ?? [];
     const userMods = user?.permissionModules ?? [];
 

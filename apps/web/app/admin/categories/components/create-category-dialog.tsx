@@ -20,15 +20,21 @@ import { Loader2, Plus } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { useActionPermission } from "@/hooks/use-action-permission";
 
 export function CreateCategoryDialog() {
   const t = useTranslations("adminCategories");
   const tCommon = useTranslations("adminCommon");
   const router = useRouter();
+  const { can } = useActionPermission();
   const [open, setOpen] = useState(false);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [loading, setLoading] = useState(false);
+
+  if (!can("POST", "/api/forums/admin/categories")) {
+    return null;
+  }
 
   const handleOpenChange = (nextOpen: boolean) => {
     if (!nextOpen) {

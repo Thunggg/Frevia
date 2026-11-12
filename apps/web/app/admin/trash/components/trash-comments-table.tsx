@@ -49,6 +49,7 @@ import {
   User,
 } from "lucide-react";
 import { adminApiRequest } from "@/apiRequests/admin";
+import { useActionPermission } from "@/hooks/use-action-permission";
 import { NumberedPagination } from "../../components/numbered-pagination";
 import type { ForumTrashCommentType } from "@shared/types";
 
@@ -71,6 +72,7 @@ export function TrashCommentsTable({
   const tCommon = useTranslations("adminCommon");
   const tGlobal = useTranslations("common");
   const router = useRouter();
+  const { can } = useActionPermission();
   const [restoringId, setRestoringId] = useState<number | null>(null);
   const [viewingComment, setViewingComment] =
     useState<ForumTrashCommentType | null>(null);
@@ -114,93 +116,101 @@ export function TrashCommentsTable({
                 </TableCell>
               </TableRow>
             ) : (
-              comments.map((comment) => (
-                <TableRow key={comment.id} className="group">
-                  <TableCell>
-                    <Badge variant="outline" className="font-mono">
-                      {comment.id}
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="max-w-sm text-sm text-muted-foreground truncate">
-                    {comment.content}
-                  </TableCell>
-                  <TableCell className="max-w-xs truncate text-sm font-medium">
-                    {comment.post.title || tGlobal("postFallback", { id: comment.postId })}
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-2">
-                      <Avatar className="h-5 w-5">
-                        <AvatarImage src={comment.user.profile?.avatarUrl ?? undefined} />
-                        <AvatarFallback className="text-[10px]">
-                          <User className="h-3 w-3" />
-                        </AvatarFallback>
-                      </Avatar>
-                      <span className="text-muted-foreground text-sm">
-                        {comment.user.profile?.displayName ??
-                          tGlobal("userFallback", { id: comment.user.id })}
-                      </span>
-                    </div>
-                  </TableCell>
-                  <TableCell className="text-muted-foreground text-sm whitespace-nowrap">
-                    {comment.deletedAt
-                      ? formatDate(comment.deletedAt, locale)
-                      : tCommon("empty")}
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center justify-end gap-1">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-8 w-8"
-                        onClick={() => setViewingComment(comment)}
-                        aria-label={t("viewCommentLabel")}
-                      >
-                        <Eye className="h-4 w-4" />
-                      </Button>
-                      <AlertDialog>
-                        <AlertDialogTrigger asChild>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-8 w-8 text-emerald-600 hover:text-emerald-600"
-                            disabled={restoringId === comment.id}
-                            aria-label={t("restoreCommentLabel", {
-                              title: comment.post.title,
-                            })}
-                          >
-                            <RotateCcw className="h-4 w-4" />
-                          </Button>
-                        </AlertDialogTrigger>
-                        <AlertDialogContent>
-                          <AlertDialogHeader>
-                            <AlertDialogTitle>
-                              {t("restoreCommentTitle")}
-                            </AlertDialogTitle>
-                            <AlertDialogDescription>
-                              {t("restoreCommentConfirm", {
-                                title: comment.post.title,
-                              })}
-                            </AlertDialogDescription>
-                          </AlertDialogHeader>
-                          <AlertDialogFooter>
-                            <AlertDialogCancel>
-                              {tCommon("cancel")}
-                            </AlertDialogCancel>
-                            <AlertDialogAction
-                              onClick={() => handleRestore(comment.id)}
-                              className="bg-emerald-600 text-white hover:bg-emerald-600/90"
-                            >
-                              {restoringId === comment.id
-                                ? t("restoringAction")
-                                : t("restoreAction")}
-                            </AlertDialogAction>
-                          </AlertDialogFooter>
-                        </AlertDialogContent>
-                      </AlertDialog>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))
+              comments.map((comment) => {
+                const canRestore =
+                  can("PATCH", "/api/forums/admin/trash/comments/:id/restore") ||
+                  can("PATCH", `/api/forums/admin/trash/comments/${comment.id}/restore`);
+
+                return (
+                  <TableRow key={comment.id} className="group">
+                    <TableCell>
+                      <Badge variant="outline" className="font-mono">
+                        {comment.id}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="max-w-sm text-sm text-muted-foreground truncate">
+                      {comment.content}
+                    </TableCell>
+                    <TableCell className="max-w-xs truncate text-sm font-medium">
+                      {comment.post.title || tGlobal("postFallback", { id: comment.postId })}
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-2">
+                        <Avatar className="h-5 w-5">
+                          <AvatarImage src={comment.user.profile?.avatarUrl ?? undefined} />
+                          <AvatarFallback className="text-[10px]">
+                            <User className="h-3 w-3" />
+                          </AvatarFallback>
+                        </Avatar>
+                        <span className="text-muted-foreground text-sm">
+                          {comment.user.profile?.displayName ??
+                            tGlobal("userFallback", { id: comment.user.id })}
+                        </span>
+                      </div>
+                    </TableCell>
+                    <TableCell className="text-muted-foreground text-sm whitespace-nowrap">
+                      {comment.deletedAt
+                        ? formatDate(comment.deletedAt, locale)
+                        : tCommon("empty")}
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center justify-end gap-1">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8"
+                          onClick={() => setViewingComment(comment)}
+                          aria-label={t("viewCommentLabel")}
+                        >
+                          <Eye className="h-4 w-4" />
+                        </Button>
+                        {canRestore && (
+                          <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-8 w-8 text-emerald-600 hover:text-emerald-600"
+                                disabled={restoringId === comment.id}
+                                aria-label={t("restoreCommentLabel", {
+                                  title: comment.post.title,
+                                })}
+                              >
+                                <RotateCcw className="h-4 w-4" />
+                              </Button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                              <AlertDialogHeader>
+                                <AlertDialogTitle>
+                                  {t("restoreCommentTitle")}
+                                </AlertDialogTitle>
+                                <AlertDialogDescription>
+                                  {t("restoreCommentConfirm", {
+                                    title: comment.post.title,
+                                  })}
+                                </AlertDialogDescription>
+                              </AlertDialogHeader>
+                              <AlertDialogFooter>
+                                <AlertDialogCancel>
+                                  {tCommon("cancel")}
+                                </AlertDialogCancel>
+                                <AlertDialogAction
+                                  onClick={() => handleRestore(comment.id)}
+                                  className="bg-emerald-600 text-white hover:bg-emerald-600/90"
+                                >
+                                  {restoringId === comment.id
+                                    ? t("restoringAction")
+                                    : t("restoreAction")}
+                                </AlertDialogAction>
+                              </AlertDialogFooter>
+                            </AlertDialogContent>
+                          </AlertDialog>
+                        )}
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                );
+              })
             )}
           </TableBody>
         </Table>

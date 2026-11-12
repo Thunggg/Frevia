@@ -1,4 +1,6 @@
 import adminServerRequest from "@/apiRequests/admin.server";
+import authServerRequest from "@/apiRequests/auth.server";
+import { hasActionPermission } from "@/lib/admin-access";
 import { Badge } from "@repo/ui/components/shadcn/badge";
 import { Button } from "@repo/ui/components/shadcn/button";
 import { Separator } from "@repo/ui/components/shadcn/separator";
@@ -41,6 +43,35 @@ export default async function AdminCategoryDetailPage({
 
   const t = await getTranslations("adminCategories");
   const locale = await getLocale();
+  const currentUser = await authServerRequest.getMe();
+  const canViewDetail = hasActionPermission(
+    currentUser,
+    "GET",
+    `/api/forums/admin/categories/${id}`,
+  );
+
+  if (!canViewDetail) {
+    return (
+      <div className="space-y-6">
+        <div className="flex items-center gap-2">
+          <Button
+            variant="ghost"
+            size="sm"
+            asChild
+            className="gap-1 pl-0 text-muted-foreground hover:text-foreground"
+          >
+            <Link href="/admin/categories">
+              <ArrowLeft className="h-4 w-4" />
+              {t("detailBackToCategories")}
+            </Link>
+          </Button>
+        </div>
+        <div className="rounded-lg border bg-card p-12 text-center text-muted-foreground">
+          {t("detailAccessDenied")}
+        </div>
+      </div>
+    );
+  }
 
   const category = await adminServerRequest.getAdminCategoryById(categoryId);
 

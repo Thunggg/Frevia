@@ -136,10 +136,22 @@ export function CategoriesTable({
               </TableRow>
             ) : (
               categories.map((category) => {
-                const canView = can("GET", `/api/forums/admin/categories/${category.id}`);
-                const canUpdate = can("PATCH", `/api/forums/admin/categories/${category.id}`);
-                const canDelete = can("DELETE", `/api/forums/admin/categories/${category.id}`);
-                const canRestore = can("PATCH", `/api/forums/admin/categories/${category.id}/restore`);
+                const canView =
+                  can("GET", "/api/forums/admin/categories/:id") ||
+                  can("GET", `/api/forums/admin/categories/${category.id}`);
+                const canUpdate =
+                  can("PATCH", "/api/forums/admin/categories/:id") ||
+                  can("PATCH", `/api/forums/admin/categories/${category.id}`);
+                const canDelete =
+                  can("DELETE", "/api/forums/admin/categories/:id") ||
+                  can("DELETE", `/api/forums/admin/categories/${category.id}`);
+                const canRestore =
+                  can("PATCH", "/api/forums/admin/categories/:id/restore") ||
+                  can("PATCH", `/api/forums/admin/categories/${category.id}/restore`);
+                const hasAnyAction =
+                  category.deletedAt !== null
+                    ? canRestore
+                    : canView || canUpdate || canDelete;
 
                 return (
                   <TableRow key={category.id} className="group">
@@ -187,7 +199,9 @@ export function CategoriesTable({
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center justify-end gap-1">
-                        {category.deletedAt !== null ? (
+                        {!hasAnyAction ? (
+                          <span className="text-muted-foreground">—</span>
+                        ) : category.deletedAt !== null ? (
                           canRestore && <RestoreCategoryDialog category={category} />
                         ) : (
                           <>

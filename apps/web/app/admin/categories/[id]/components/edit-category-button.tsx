@@ -17,7 +17,10 @@ export function EditCategoryButton({
   const [open, setOpen] = useState(false);
   const { can } = useActionPermission();
 
-  if (!can("PATCH", `/api/forums/admin/categories/${category.id}`)) {
+  if (
+    !can("PATCH", "/api/forums/admin/categories/:id") &&
+    !can("PATCH", `/api/forums/admin/categories/${category.id}`)
+  ) {
     return null;
   }
 

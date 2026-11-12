@@ -120,6 +120,25 @@ Cung cấp bộ công cụ trực quan cho lập trình viên phía Client:
   * `PATCH /api/admin/profile-revisions/:id/reject`: Ẩn/hiện nút **"Từ chối"** trong dialog xem xét.
   * Vô hiệu hóa ghi chú đánh giá nếu không có quyền phê duyệt lẫn từ chối.
 
+### 3.7. Kiểm duyệt diễn đàn (Forum Moderation - 15 quyền)
+* **Route**: `/admin`, `/admin/comments`, `/admin/moderation`, `/admin/trash`, `/admin/categories`, `/admin/categories/[id]`
+* **Các quyền áp dụng**:
+  * `#121 · GET /api/forums/admin/stats`: Kiểm tra SSR trên Dashboard chính `/admin`. Nếu thiếu quyền, không gọi API thống kê và tự động chuyển hướng hoặc hiển thị giao diện chào mừng.
+  * `#122 · GET /api/forums/admin/comments`: Kiểm tra SSR trên `/admin/comments`. Nếu thiếu quyền, chặn tải dữ liệu và hiển thị thông báo từ chối truy cập.
+  * `#242 · GET /api/forums/admin/pending-posts`: Kiểm tra SSR trên `/admin/moderation`. Nếu thiếu quyền, chặn tải dữ liệu và hiển thị thông báo từ chối truy cập.
+  * `#243 · GET /api/forums/admin/trash/posts`: Kiểm tra SSR trên `/admin/trash`. Chặn gọi API bài viết đã xóa nếu thiếu quyền; tự động chuyển tab hoặc ẩn tab Bài viết nếu không có quyền.
+  * `#244 · GET /api/forums/admin/trash/comments`: Kiểm tra SSR trên `/admin/trash`. Chặn gọi API bình luận đã xóa nếu thiếu quyền; tự động chuyển tab hoặc ẩn tab Bình luận nếu không có quyền.
+  * `#245 · PATCH /api/forums/admin/trash/posts/:id/restore`: Ẩn/hiện nút icon **Khôi phục** trong bảng bài viết đã xóa `/admin/trash?type=posts`.
+  * `#246 · PATCH /api/forums/admin/trash/comments/:id/restore`: Ẩn/hiện nút icon **Khôi phục** trong bảng bình luận đã xóa `/admin/trash?type=comments`.
+  * `#247 · PATCH /api/forums/admin/posts/:id/approve`: Ẩn/hiện nút **Duyệt** bài viết (`ShieldCheck`) trên bảng và trong Dialog xem nội dung tại `/admin/moderation`.
+  * `#248 · PATCH /api/forums/admin/posts/:id/reject`: Ẩn/hiện nút **Từ chối** bài viết (`ShieldAlert`) trên bảng và trong Dialog xem nội dung tại `/admin/moderation`.
+  * `#300 · GET /api/forums/admin/categories`: Kiểm tra SSR trên `/admin/categories`. Nếu thiếu quyền, chặn tải danh mục và hiển thị thông báo từ chối truy cập.
+  * `#301 · GET /api/forums/admin/categories/:id`: Ẩn/hiện nút icon **Xem chi tiết** trong bảng và chặn SSR trang chi tiết `/admin/categories/[id]`.
+  * `#302 · POST /api/forums/admin/categories`: Ẩn/hiện nút **"Tạo danh mục"** trên tiêu đề và chặn dialog tạo danh mục.
+  * `#303 · PATCH /api/forums/admin/categories/:id`: Ẩn/hiện nút icon **Sửa** trong bảng và nút `EditCategoryButton` trên trang chi tiết.
+  * `#304 · DELETE /api/forums/admin/categories/:id`: Ẩn/hiện nút icon **Xóa** trong bảng và nút `DeleteCategoryButton` trên trang chi tiết.
+  * `#416 · PATCH /api/forums/admin/categories/:id/restore`: Ẩn/hiện nút icon **Khôi phục** trong bảng danh mục diễn đàn.
+
 ---
 
 ## 4. Hướng dẫn mở rộng cho các phân hệ khác
@@ -197,6 +216,17 @@ export function RowActions({ item }: { item: { id: number } }) {
 | `apps/web/app/admin/disputes/components/dispute-detail-dialog.tsx` | Chỉnh sửa | Kiểm soát quyền xem chi tiết và ẩn các nút ra phán quyết / phán quyết cuối cùng nếu thiếu quyền. |
 | `apps/web/app/admin/profile-revisions/page.tsx` | Chỉnh sửa | Kiểm tra quyền SSR `GET /api/admin/profile-revisions` trước khi hiển thị danh sách. |
 | `apps/web/app/admin/profile-revisions/profile-revisions-table.tsx` | Chỉnh sửa | Ẩn/hiện thao tác Xem / Xem xét và các nút Phê duyệt / Từ chối theo quyền. |
+| `apps/web/app/admin/page.tsx` | Chỉnh sửa | Kiểm tra quyền SSR `GET /api/forums/admin/stats` trước khi tải số liệu thống kê diễn đàn. |
+| `apps/web/app/admin/comments/page.tsx` | Chỉnh sửa | Kiểm tra quyền SSR `GET /api/forums/admin/comments` trước khi hiển thị danh sách bình luận. |
+| `apps/web/app/admin/moderation/page.tsx` | Chỉnh sửa | Kiểm tra quyền SSR `GET /api/forums/admin/pending-posts` trước khi hiển thị bài viết chờ duyệt. |
+| `apps/web/app/admin/moderation/components/moderation-table.tsx` | Chỉnh sửa | Ẩn/hiện nút Duyệt (`ShieldCheck`) và Từ chối (`ShieldAlert`) trên bảng và trong Dialog xem nội dung. |
+| `apps/web/app/admin/trash/page.tsx` | Chỉnh sửa | Kiểm tra SSR `GET /api/forums/admin/trash/posts` và `GET /api/forums/admin/trash/comments`, chỉ nạp dữ liệu tab có quyền và ẩn tab không có quyền. |
+| `apps/web/app/admin/trash/components/trash-posts-table.tsx` | Chỉnh sửa | Ẩn/hiện nút Khôi phục bài viết (`RotateCcw`) theo quyền `PATCH /api/forums/admin/trash/posts/:id/restore`. |
+| `apps/web/app/admin/trash/components/trash-comments-table.tsx` | Chỉnh sửa | Ẩn/hiện nút Khôi phục bình luận (`RotateCcw`) theo quyền `PATCH /api/forums/admin/trash/comments/:id/restore`. |
+| `apps/web/app/admin/categories/page.tsx` | Chỉnh sửa | Kiểm tra quyền SSR `GET /api/forums/admin/categories` trước khi hiển thị danh sách danh mục. |
+| `apps/web/app/admin/categories/[id]/page.tsx` | Chỉnh sửa | Kiểm tra quyền SSR `GET /api/forums/admin/categories/:id` trước khi tải chi tiết danh mục. |
+| `apps/web/app/admin/categories/components/create-category-dialog.tsx` | Chỉnh sửa | Ẩn dialog tạo danh mục ở client nếu thiếu `POST /api/forums/admin/categories`. |
+| `apps/web/i18n/messages/vi.json` & `en.json` | Chỉnh sửa | Bổ sung các thông báo truy cập từ chối `accessDenied`, `postsAccessDenied`, `commentsAccessDenied`, `detailAccessDenied`. |
 
 ---
 

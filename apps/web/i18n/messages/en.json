@@ -306,6 +306,8 @@
     "lastUpdated": "Last updated"
   },
   "adminCategories": {
+    "accessDenied": "You do not have permission to view forum categories.",
+    "detailAccessDenied": "You do not have permission to view forum category details.",
     "metaTitle": "Categories | Admin Dashboard | Frevia",
     "metaDescription": "Manage all forum categories.",
     "pageTitle": "Categories Management",
@@ -622,6 +624,9 @@
     "deselectAllInScope": "Deselect all"
   },
   "adminTrash": {
+    "accessDenied": "You do not have permission to view forum trash.",
+    "postsAccessDenied": "You do not have permission to view deleted posts.",
+    "commentsAccessDenied": "You do not have permission to view deleted comments.",
     "metaTitle": "Trash | Admin Dashboard | Frevia",
     "metaDescription": "Review and restore deleted forum posts and comments.",
     "pageTitle": "Trash",
@@ -659,6 +664,7 @@
     "deletedCommentTitle": "Deleted Comment"
   },
   "adminModeration": {
+    "accessDenied": "You do not have permission to view pending posts.",
     "metaTitle": "Moderation | Admin Dashboard | Frevia",
     "metaDescription": "Review forum posts pending moderation.",
     "pageTitle": "Moderation",
@@ -701,6 +707,7 @@
     "deletePostLabel": "Delete post {title}"
   },
   "adminComments": {
+    "accessDenied": "You do not have permission to view forum comments.",
     "metaTitle": "Comments Management | Admin Dashboard | Frevia",
     "metaDescription": "Search and delete forum comments.",
     "pageTitle": "Comments Management",

@@ -48,6 +48,7 @@ import {
   User,
 } from "lucide-react";
 import { adminApiRequest } from "@/apiRequests/admin";
+import { useActionPermission } from "@/hooks/use-action-permission";
 import { NumberedPagination } from "../../components/numbered-pagination";
 import type { ForumTrashPostType } from "@shared/types";
 
@@ -67,6 +68,7 @@ export function TrashPostsTable({ posts, pagination }: TrashPostsTableProps) {
   const tCommon = useTranslations("adminCommon");
   const tGlobal = useTranslations("common");
   const router = useRouter();
+  const { can } = useActionPermission();
   const [restoringId, setRestoringId] = useState<number | null>(null);
   const [viewingPost, setViewingPost] = useState<ForumTrashPostType | null>(
     null,
@@ -121,89 +123,97 @@ export function TrashPostsTable({ posts, pagination }: TrashPostsTableProps) {
                 </TableCell>
               </TableRow>
             ) : (
-              posts.map((post) => (
-                <TableRow key={post.id} className="group">
-                  <TableCell>
-                    <Badge variant="outline" className="font-mono">
-                      {post.id}
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="font-medium max-w-xs truncate">
-                    {post.title}
-                  </TableCell>
-                  <TableCell>{statusBadge(post.moderationStatus)}</TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-2">
-                      <Avatar className="h-5 w-5">
-                        <AvatarImage src={post.user.profile?.avatarUrl ?? undefined} />
-                        <AvatarFallback className="text-[10px]">
-                          <User className="h-3 w-3" />
-                        </AvatarFallback>
-                      </Avatar>
-                      <span className="text-muted-foreground text-sm">
-                        {post.user.profile?.displayName ?? tGlobal("userFallback", { id: post.user.id })}
-                      </span>
-                    </div>
-                  </TableCell>
-                  <TableCell className="text-muted-foreground text-sm whitespace-nowrap">
-                    {post.deletedAt
-                      ? formatDate(post.deletedAt, locale)
-                      : tCommon("empty")}
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center justify-end gap-1">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-8 w-8"
-                        onClick={() => setViewingPost(post)}
-                        aria-label={t("viewPostLabel", { title: post.title })}
-                      >
-                        <Eye className="h-4 w-4" />
-                      </Button>
-                      <AlertDialog>
-                        <AlertDialogTrigger asChild>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-8 w-8 text-emerald-600 hover:text-emerald-600"
-                            disabled={restoringId === post.id}
-                            aria-label={t("restorePostLabel", { title: post.title })}
-                          >
-                            <RotateCcw className="h-4 w-4" />
-                          </Button>
-                        </AlertDialogTrigger>
-                        <AlertDialogContent>
-                          <AlertDialogHeader>
-                            <AlertDialogTitle>
-                              {t("restorePostTitle")}
-                            </AlertDialogTitle>
-                            <AlertDialogDescription>
-                              {t("restorePostConfirm", { title: post.title })}
-                              {post.moderationStatus === "REJECTED"
-                                ? ` ${t("restorePostRequeued")}`
-                                : ` ${t("restorePostPublic")}`}
-                            </AlertDialogDescription>
-                          </AlertDialogHeader>
-                          <AlertDialogFooter>
-                            <AlertDialogCancel>
-                              {tCommon("cancel")}
-                            </AlertDialogCancel>
-                            <AlertDialogAction
-                              onClick={() => handleRestore(post.id)}
-                              className="bg-emerald-600 text-white hover:bg-emerald-600/90"
-                            >
-                              {restoringId === post.id
-                                ? t("restoringAction")
-                                : t("restoreAction")}
-                            </AlertDialogAction>
-                          </AlertDialogFooter>
-                        </AlertDialogContent>
-                      </AlertDialog>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))
+              posts.map((post) => {
+                const canRestore =
+                  can("PATCH", "/api/forums/admin/trash/posts/:id/restore") ||
+                  can("PATCH", `/api/forums/admin/trash/posts/${post.id}/restore`);
+
+                return (
+                  <TableRow key={post.id} className="group">
+                    <TableCell>
+                      <Badge variant="outline" className="font-mono">
+                        {post.id}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="font-medium max-w-xs truncate">
+                      {post.title}
+                    </TableCell>
+                    <TableCell>{statusBadge(post.moderationStatus)}</TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-2">
+                        <Avatar className="h-5 w-5">
+                          <AvatarImage src={post.user.profile?.avatarUrl ?? undefined} />
+                          <AvatarFallback className="text-[10px]">
+                            <User className="h-3 w-3" />
+                          </AvatarFallback>
+                        </Avatar>
+                        <span className="text-muted-foreground text-sm">
+                          {post.user.profile?.displayName ?? tGlobal("userFallback", { id: post.user.id })}
+                        </span>
+                      </div>
+                    </TableCell>
+                    <TableCell className="text-muted-foreground text-sm whitespace-nowrap">
+                      {post.deletedAt
+                        ? formatDate(post.deletedAt, locale)
+                        : tCommon("empty")}
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center justify-end gap-1">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8"
+                          onClick={() => setViewingPost(post)}
+                          aria-label={t("viewPostLabel", { title: post.title })}
+                        >
+                          <Eye className="h-4 w-4" />
+                        </Button>
+                        {canRestore && (
+                          <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-8 w-8 text-emerald-600 hover:text-emerald-600"
+                                disabled={restoringId === post.id}
+                                aria-label={t("restorePostLabel", { title: post.title })}
+                              >
+                                <RotateCcw className="h-4 w-4" />
+                              </Button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                              <AlertDialogHeader>
+                                <AlertDialogTitle>
+                                  {t("restorePostTitle")}
+                                </AlertDialogTitle>
+                                <AlertDialogDescription>
+                                  {t("restorePostConfirm", { title: post.title })}
+                                  {post.moderationStatus === "REJECTED"
+                                    ? ` ${t("restorePostRequeued")}`
+                                    : ` ${t("restorePostPublic")}`}
+                                </AlertDialogDescription>
+                              </AlertDialogHeader>
+                              <AlertDialogFooter>
+                                <AlertDialogCancel>
+                                  {tCommon("cancel")}
+                                </AlertDialogCancel>
+                                <AlertDialogAction
+                                  onClick={() => handleRestore(post.id)}
+                                  className="bg-emerald-600 text-white hover:bg-emerald-600/90"
+                                >
+                                  {restoringId === post.id
+                                    ? t("restoringAction")
+                                    : t("restoreAction")}
+                                </AlertDialogAction>
+                              </AlertDialogFooter>
+                            </AlertDialogContent>
+                          </AlertDialog>
+                        )}
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                );
+              })
             )}
           </TableBody>
         </Table>
