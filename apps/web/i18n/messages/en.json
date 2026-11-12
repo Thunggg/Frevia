@@ -1850,7 +1850,9 @@
     "send": "Send message"
   },
   "postJob": {
-    "breadcrumb": "Post a Job"
+    "breadcrumb": "Post a Job",
+    "accessDenied": "You do not have permission to post a new job.",
+    "backToJobs": "Back to jobs"
   },
   "jobDetailClient": {
     "notSet": "Not set",
@@ -1867,7 +1869,9 @@
     "positionsFilled": "{filled}/{required} hired",
     "proposals": "Proposals",
     "checkProposals": "Check proposals",
-    "requiredSkills": "Required Skills"
+    "requiredSkills": "Required Skills",
+    "accessDenied": "You do not have permission to view this job detail.",
+    "backToJobs": "Back to jobs"
   },
   "jobsList": {
     "allJobs": "All Jobs",
@@ -1897,7 +1901,9 @@
     "closeFailed": "Failed to close job",
     "reopen": "Reopen Job",
     "reopened": "Job reopened successfully",
-    "reopenFailed": "Failed to reopen job"
+    "reopenFailed": "Failed to reopen job",
+    "accessDenied": "You do not have permission to view the list of posted jobs.",
+    "noPermissionAction": "You do not have permission to perform this action."
   },
   "postJobForm": {
     "titleLabel": "Job title",
@@ -2780,6 +2786,8 @@
     "removeTitle": "Remove from bookmarks",
     "removeFailed": "Couldn't remove bookmark. Try again.",
     "updateFailed": "Couldn't update bookmark. Try again.",
+    "noPermission": "You do not have permission to bookmark or remove bookmarks for this job.",
+    "viewListAccessDenied": "You do not have permission to view the saved jobs list.",
     "errorCannotBookmarkOwnJob": "You cannot bookmark your own job.",
     "errorCannotBookmarkUnavailableJob": "This job is closed or has expired.",
     "errorJobAlreadyBookmarked": "This job is already bookmarked.",

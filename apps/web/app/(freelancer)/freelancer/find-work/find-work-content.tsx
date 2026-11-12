@@ -4,25 +4,22 @@ import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import {
+  useCallback,
   useEffect,
   useState,
   useTransition,
   type FormEvent,
   type MouseEvent,
 } from "react";
-import { motion, AnimatePresence } from "motion/react";
+import { motion } from "motion/react";
 import {
   Bookmark,
-  ChevronLeft,
-  ChevronRight,
-  FolderOpen,
   InfoIcon,
   RefreshCw,
   Search,
   SearchX,
   SlidersHorizontal,
   Trash2,
-  X,
 } from "@/components/icons";
 
 import jobApiRequest from "@/apiRequests/job";
@@ -30,28 +27,7 @@ import recommendationApiRequest from "@/apiRequests/recommendation";
 import savedSearchApiRequest from "@/apiRequests/saved-search";
 import { Footer } from "@/components/footer";
 import { Header, type UserRole } from "@/components/header";
-import { BannerSlot } from "@/components/banner-slot";
-import {
-  BUDGET_KEYS,
-  SORT_KEYS,
-  TIME_KEYS,
-  translateFilterOption,
-} from "@/lib/search-filter-labels";
 import { Button } from "@repo/ui/components/shadcn/button";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@repo/ui/components/shadcn/select";
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@repo/ui/components/shadcn/sheet";
 import { Skeleton } from "@repo/ui/components/shadcn/skeleton";
 import { toastError, toastSuccess } from "@repo/ui/components/shadcn/toast";
 import type {
@@ -64,8 +40,8 @@ import type {
   ViewJobDetailResType,
   ViewListJobResponseType,
 } from "@shared/types";
-import { SaveSearchDialog } from "../saved-searches/save-search-dialog";
 import { getBookmarkErrorMessage } from "@/lib/utils";
+import { useActionPermission } from "@/hooks/use-action-permission";
 import { JobCard } from "../../_components/job-card";
 import { RecommendationExplanationDialog } from "../../_components/recommendation-explanation-dialog";
 import { HomeProfileSidebar } from "../../_components/home-profile-sidebar";
@@ -144,10 +120,6 @@ export function FindWorkContent({
   initialJobs,
   initialPagination,
   initialKeyword = "",
-  initialCategory = "all",
-  initialBudget = "all",
-  initialTime = "all",
-  initialSort = "newest",
   initialBookmarkedSlugs = [],
   initialBookmarkedJobs = [],
   initialSavedSearches = [],
@@ -164,7 +136,6 @@ export function FindWorkContent({
   const t = useTranslations("findWork");
   const tRec = useTranslations("recommendation");
   const tBookmark = useTranslations("bookmark");
-  const tCommon = useTranslations("common");
   const [isPending, startTransition] = useTransition();
 
   const [searchInput, setSearchInput] = useState(initialKeyword);
@@ -186,10 +157,16 @@ export function FindWorkContent({
     () => initialJobAlerts ?? [],
   );
 
-  const canBookmark = role === "FREELANCER";
+  const { can } = useActionPermission();
+  const canViewBookmarks = can("GET", "/api/manage-jobs/bookmarks");
+  const canAddBookmark = can("POST", "/api/manage-jobs/jobs/:slug/bookmark");
+  const canRemoveBookmark = can("DELETE", "/api/manage-jobs/bookmarks/:slug");
+
+  const canBookmark =
+    role === "FREELANCER" && (canAddBookmark || canRemoveBookmark);
 
   // Tab State for Home View - Ưu tiên route path (e.g. /find-work/most-recent)
-  const getTabFromContext = (): HomeTab => {
+  const getTabFromContext = useCallback((): HomeTab => {
     const currentPath =
       typeof window !== "undefined" ? window.location.pathname : pathname;
     if (currentPath.includes("/most-recent")) return "most-recent";
@@ -212,13 +189,13 @@ export function FindWorkContent({
       return requestedTab;
     }
     return "best-matches";
-  };
+  }, [pathname, searchParams, initialTab]);
 
   const [activeTab, setActiveTab] = useState<HomeTab>(getTabFromContext);
 
   useEffect(() => {
     setActiveTab(getTabFromContext());
-  }, [pathname, searchParams, initialTab]);
+  }, [getTabFromContext]);
 
   useEffect(() => {
     const handlePopState = () => {
@@ -228,7 +205,7 @@ export function FindWorkContent({
     return () => {
       window.removeEventListener("popstate", handlePopState);
     };
-  }, []);
+  }, [getTabFromContext]);
 
   // State management for AI recommendations
   const [recommendedJobs, setRecommendedJobs] = useState<RecommendedJobType[]>(
@@ -374,9 +351,6 @@ export function FindWorkContent({
     total: 0,
     totalPages: 0,
   };
-  const currentSearchParams = Object.fromEntries(
-    Array.from(searchParams.entries()).filter(([, value]) => value !== ""),
-  );
 
   const updateParams = (updates: Record<string, string | null>) => {
     const params = new URLSearchParams(searchParams.toString());
@@ -412,20 +386,6 @@ export function FindWorkContent({
     } else {
       router.push("/freelancer/search/jobs");
     }
-  };
-
-  const updateFilter = (
-    name: "category" | "budget" | "time" | "sort",
-    value: string,
-  ) => {
-    updateParams({ [name]: value, tab: null });
-  };
-
-  const clearAllFilters = () => {
-    setSearchInput("");
-    startTransition(() => {
-      router.push(effectiveBasePath);
-    });
   };
 
   const handleTabSelect = (tab: HomeTab) => {
@@ -482,6 +442,15 @@ export function FindWorkContent({
     if (!canBookmark || pendingBookmarkSlug) return;
 
     const isBookmarked = bookmarkedSlugs.has(slug);
+    if (isBookmarked && !canRemoveBookmark) {
+      toastError({ message: tBookmark("noPermission") });
+      return;
+    }
+    if (!isBookmarked && !canAddBookmark) {
+      toastError({ message: tBookmark("noPermission") });
+      return;
+    }
+
     setPendingBookmarkSlug(slug);
 
     try {
@@ -889,7 +858,14 @@ export function FindWorkContent({
                   {/* TAB 4: SAVED JOBS */}
                   {activeTab === "saved-jobs" && (
                     <div className="space-y-3">
-                      {bookmarkedJobs.length === 0 ? (
+                      {!canViewBookmarks ? (
+                        <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-border bg-card/40 px-6 py-14 text-center font-sans">
+                          <Bookmark className="size-10 text-muted-foreground mb-3" />
+                          <p className="text-base font-semibold text-foreground">
+                            {tBookmark("viewListAccessDenied")}
+                          </p>
+                        </div>
+                      ) : bookmarkedJobs.length === 0 ? (
                         <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-border bg-card/40 px-6 py-14 text-center font-sans">
                           <Bookmark className="size-10 text-muted-foreground mb-3" />
                           <p className="text-base font-semibold text-foreground">
@@ -907,7 +883,7 @@ export function FindWorkContent({
                             index={index}
                             jobBaseUrl={jobBaseUrl}
                             filterBasePath={effectiveBasePath}
-                            canBookmark={true}
+                            canBookmark={canRemoveBookmark}
                             isBookmarked={true}
                             isBookmarkPending={pendingBookmarkSlug === job.slug}
                             onToggleBookmark={toggleBookmark}

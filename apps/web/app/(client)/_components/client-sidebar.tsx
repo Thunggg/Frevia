@@ -31,6 +31,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef, useState, useTransition } from "react";
 
 import { useMe } from "@/hooks/use-auth";
+import { useActionPermission } from "@/hooks/use-action-permission";
 import { canAccessAdminPortal } from "@/lib/admin-access";
 import {
   Avatar,
@@ -104,6 +105,8 @@ export function ClientSidebar() {
   const activeLocale = useLocale();
   const [isLocalePending, startLocaleTransition] = useTransition();
   const { data: me } = useMe();
+  const { can } = useActionPermission();
+  const canViewJobs = can("GET", "/api/manage-jobs");
   const { data: notifications = [] } = useNotifications();
   const { resolvedTheme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
@@ -156,12 +159,16 @@ export function ClientSidebar() {
   };
 
   const clientNav: NavItem[] = [
-    {
-      href: "/client/jobs",
-      labelKey: "navMyJobs",
-      icon: Briefcase,
-      matchPrefix: true,
-    },
+    ...(canViewJobs
+      ? [
+          {
+            href: "/client/jobs",
+            labelKey: "navMyJobs",
+            icon: Briefcase,
+            matchPrefix: true,
+          },
+        ]
+      : []),
     {
       href: "/client/contracts",
       labelKey: "navContracts",

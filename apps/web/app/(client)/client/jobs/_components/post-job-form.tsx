@@ -13,6 +13,7 @@ import {
 
 import jobApiRequest from "@/apiRequests/job";
 import jobCategoryApiRequest from "@/apiRequests/job-category";
+import { useActionPermission } from "@/hooks/use-action-permission";
 import { ApiFail } from "@/lib/http";
 import { handleErrorApi } from "@/lib/utils";
 import { Button } from "@repo/ui/components/shadcn/button";
@@ -108,6 +109,11 @@ export function PostJobForm({
   const [isCategoryMenuOpen, setIsCategoryMenuOpen] = useState(false);
   const [categoriesLoading, setCategoriesLoading] = useState(false);
   const categoryPickerRef = useRef<HTMLDivElement>(null);
+  const { can } = useActionPermission();
+  const canSearchSkills = can("GET", "/api/manage-jobs/skills");
+  const canCreate = can("POST", "/api/manage-jobs");
+  const canUpdate = can("PATCH", "/api/manage-jobs/:id");
+
   const form = useForm<CreateJobBodyType>({
     resolver: useTranslatedResolver<CreateJobBodyType>(CreateJobBodySchema),
     defaultValues: emptyJobForm,
@@ -151,7 +157,7 @@ export function PostJobForm({
   }, []);
 
   useEffect(() => {
-    if (!isActive || !isSkillMenuOpen) return;
+    if (!isActive || !isSkillMenuOpen || !canSearchSkills) return;
 
     const search = skillInput.trim();
     const timeoutId = window.setTimeout(async () => {
@@ -164,7 +170,7 @@ export function PostJobForm({
     }, search ? 250 : 0);
 
     return () => window.clearTimeout(timeoutId);
-  }, [isActive, skillInput, isSkillMenuOpen]);
+  }, [isActive, skillInput, isSkillMenuOpen, canSearchSkills]);
 
   // UC-46.06: tìm danh mục công việc đang hoạt động (giống bộ chọn kỹ năng —
   // gõ để tìm, cuộn danh sách để chọn nhiều danh mục).
@@ -206,6 +212,15 @@ export function PostJobForm({
   };
 
   const submit = async (data: CreateJobBodyType) => {
+    if (job && !canUpdate) {
+      toastError({ message: t("saveFailed") });
+      return;
+    }
+    if (!job && !canCreate) {
+      toastError({ message: t("saveFailed") });
+      return;
+    }
+
     try {
       const response = job
         ? await jobApiRequest.updateJob(job.id, data)

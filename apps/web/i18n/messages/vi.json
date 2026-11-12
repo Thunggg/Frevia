@@ -1850,7 +1850,9 @@
     "send": "Gửi tin nhắn"
   },
   "postJob": {
-    "breadcrumb": "Đăng tin tuyển dụng"
+    "breadcrumb": "Đăng tin tuyển dụng",
+    "accessDenied": "Bạn không có quyền đăng tin tuyển dụng mới.",
+    "backToJobs": "Quay lại danh sách việc làm"
   },
   "jobDetailClient": {
     "notSet": "Chưa đặt",
@@ -1867,7 +1869,9 @@
     "positionsFilled": "Đã tuyển {filled}/{required}",
     "proposals": "Đề xuất",
     "checkProposals": "Xem đề xuất",
-    "requiredSkills": "Kỹ năng yêu cầu"
+    "requiredSkills": "Kỹ năng yêu cầu",
+    "accessDenied": "Bạn không có quyền xem thông tin chi tiết việc làm này.",
+    "backToJobs": "Quay lại danh sách việc làm"
   },
   "jobsList": {
     "allJobs": "Tất cả việc làm",
@@ -1897,7 +1901,9 @@
     "closeFailed": "Không thể đóng tin",
     "reopen": "Mở lại",
     "reopened": "Đã mở lại tin tuyển dụng",
-    "reopenFailed": "Không thể mở lại tin"
+    "reopenFailed": "Không thể mở lại tin",
+    "accessDenied": "Bạn không có quyền xem danh sách việc làm đã đăng.",
+    "noPermissionAction": "Bạn không có quyền thực hiện thao tác này."
   },
   "postJobForm": {
     "titleLabel": "Tên công việc",
@@ -2780,6 +2786,8 @@
     "removeTitle": "Bỏ khỏi mục đã lưu",
     "removeFailed": "Không thể bỏ lưu. Vui lòng thử lại.",
     "updateFailed": "Không thể cập nhật mục đã lưu. Vui lòng thử lại.",
+    "noPermission": "Bạn không có quyền lưu hoặc bỏ lưu việc làm này.",
+    "viewListAccessDenied": "Bạn không có quyền xem danh sách công việc đã lưu.",
     "errorCannotBookmarkOwnJob": "Bạn không thể lưu công việc do chính mình đăng.",
     "errorCannotBookmarkUnavailableJob": "Công việc này đã đóng hoặc đã hết hạn.",
     "errorJobAlreadyBookmarked": "Công việc này đã được lưu trước đó.",
