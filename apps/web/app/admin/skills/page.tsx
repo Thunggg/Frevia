@@ -1,6 +1,8 @@
 import { Suspense } from "react";
 import { getTranslations } from "next-intl/server";
 import adminServerRequest from "@/apiRequests/admin.server";
+import authServerRequest from "@/apiRequests/auth.server";
+import { hasActionPermission } from "@/lib/admin-access";
 import { Skeleton } from "@repo/ui/components/shadcn/skeleton";
 import { Tags } from "lucide-react";
 import { CreateSkillDialog } from "./components/create-skill-dialog";
@@ -52,6 +54,13 @@ export default async function AdminSkillsPage({
     sortOrder,
   });
 
+  const currentUser = await authServerRequest.getMe();
+  const canCreate = hasActionPermission(
+    currentUser,
+    "POST",
+    "/api/admin/skills",
+  );
+
   const skills = data?.skills ?? [];
   const pagination = data?.pagination ?? {
     page: 1,
@@ -74,7 +83,7 @@ export default async function AdminSkillsPage({
             {t("pageSubtitle", { total: pagination.total })}
           </p>
         </div>
-        <CreateSkillDialog />
+        {canCreate && <CreateSkillDialog />}
       </div>
 
       <Suspense fallback={<Skeleton className="h-10 w-full" />}>

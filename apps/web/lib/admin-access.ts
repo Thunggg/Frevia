@@ -34,10 +34,9 @@ export function isAdministrativePermission(permission: string): boolean {
   if (permission === "*") return true;
 
   // Tách method nếu có: "GET /api/users" -> "/api/users"
-  const cleanPath = permission.replace(
-    /^(GET|POST|PUT|PATCH|DELETE)\s+/i,
-    "",
-  ).trim();
+  const cleanPath = permission
+    .replace(/^(GET|POST|PUT|PATCH|DELETE)\s+/i, "")
+    .trim();
 
   return (
     cleanPath.startsWith("/api/admin") ||
@@ -118,9 +117,7 @@ export function hasMenuPermission(
     return true;
   }
 
-  const normalizedModules = new Set(
-    userModules.map((m) => m.toUpperCase()),
-  );
+  const normalizedModules = new Set(userModules.map((m) => m.toUpperCase()));
 
   return requiredPermissions.some((req) => {
     const reqUpper = req.toUpperCase();
@@ -139,14 +136,22 @@ export function hasMenuPermission(
         .trim();
 
       // Khớp chính xác hoặc khớp tiền tố route
-      if (userPath === req || userPath.startsWith(`${req}/`) || req.startsWith(`${userPath}/`)) {
+      if (
+        userPath === req ||
+        userPath.startsWith(`${req}/`) ||
+        req.startsWith(`${userPath}/`)
+      ) {
         return true;
       }
 
       // Khớp route có tham số dạng :id
       const baseReq = req.split("/:")[0];
       const basePath = userPath.split("/:")[0];
-      if (baseReq && basePath && (baseReq === basePath || baseReq.startsWith(basePath))) {
+      if (
+        baseReq &&
+        basePath &&
+        (baseReq === basePath || baseReq.startsWith(basePath))
+      ) {
         return true;
       }
 
@@ -155,3 +160,200 @@ export function hasMenuPermission(
   });
 }
 
+/**
+ * Kiểm tra xem người dùng có quyền thực hiện một action (API endpoint) hay không.
+ *
+ * Hàm hỗ trợ hai kiểu dữ liệu đầu vào:
+ * - GetMeResType: Đối tượng thông tin người dùng, bao gồm roles và permissions.
+ * - string[]: Danh sách permissions trực tiếp.
+ *
+ * Quy tắc kiểm tra quyền:
+ * 1. Người dùng không tồn tại thì từ chối quyền truy cập.
+ * 2. Người dùng có role ADMIN thì được phép thực hiện mọi action.
+ * 3. Người dùng có permission "*" thì được phép thực hiện mọi action.
+ * 4. Permission phải khớp với HTTP method (nếu permission có khai báo method).
+ * 5. API path phải khớp với permission path.
+ * 6. Các tham số động trên URL (ví dụ :id, :userId) được xem là khớp với mọi giá trị tương ứng.
+ *
+ * @param userOrPermissions - Thông tin người dùng hoặc danh sách permissions.
+ * @param method - HTTP method của API cần kiểm tra (GET, POST, PUT, PATCH, DELETE...).
+ * @param path - Đường dẫn API cần kiểm tra.
+ *
+ * @returns true nếu người dùng có quyền thực hiện action, ngược lại trả về false.
+ *
+ * @example
+ * hasActionPermission(user, "POST", "/admin/skills");
+ * hasActionPermission(["POST /api/admin/skills"], "POST", "/admin/skills");
+ * hasActionPermission(["*"], "DELETE", "/users/123");
+ */
+export function hasActionPermission(
+  userOrPermissions: GetMeResType | string[] | null | undefined,
+  method: string,
+  path: string,
+): boolean {
+  // Không có thông tin người dùng hoặc danh sách quyền thì mặc định từ chối truy cập.
+  if (!userOrPermissions) return false;
+
+  // Khởi tạo danh sách quyền của người dùng.
+  let permissions: string[] = [];
+
+  // Kiểm tra đầu vào có phải là danh sách permissions trực tiếp hay không.
+  if (Array.isArray(userOrPermissions)) {
+    // Nếu đầu vào là mảng, sử dụng trực tiếp danh sách permissions được cung cấp.
+    permissions = userOrPermissions;
+  } else {
+    // Nếu đầu vào là đối tượng người dùng, kiểm tra role trước tiên.
+
+    // ADMIN được mặc định có toàn quyền, không cần kiểm tra permissions.
+    if (userOrPermissions.roles?.some((r) => r.name === RoleName.ADMIN)) {
+      return true;
+    }
+
+    // Lấy danh sách permissions của người dùng.
+    // Nếu permissions không tồn tại hoặc null thì sử dụng mảng rỗng.
+    permissions = userOrPermissions.permissions ?? [];
+  }
+
+  // Kiểm tra quyền wildcard (*).
+  // Nếu người dùng có permission "*" thì được phép thực hiện mọi action.
+  if (permissions.includes("*")) return true;
+
+  // Chuẩn hóa HTTP method:
+  // - Loại bỏ khoảng trắng ở đầu và cuối.
+  // - Chuyển toàn bộ ký tự thành chữ in hoa.
+  // Ví dụ: " post " -> "POST".
+  const targetMethod = method.trim().toUpperCase();
+
+  // Làm sạch API path cần kiểm tra:
+  // - Loại bỏ khoảng trắng ở đầu và cuối.
+  // - Loại bỏ query string bắt đầu từ dấu "?".
+  // Ví dụ: "/admin/skills?page=1" -> "/admin/skills".
+  const cleanTargetPath = path.trim().split("?")[0] || "";
+
+  // Chuẩn hóa đường dẫn API:
+  // - Nếu đã bắt đầu bằng "/api" thì giữ nguyên.
+  // - Nếu bắt đầu bằng "/" thì thêm tiền tố "/api".
+  // - Nếu không bắt đầu bằng "/" thì thêm "/api/".
+  //
+  // Ví dụ:
+  // "/api/admin/skills" -> "/api/admin/skills"
+  // "/admin/skills"     -> "/api/admin/skills"
+  // "admin/skills"      -> "/api/admin/skills".
+  const normalizedTargetPath = cleanTargetPath.startsWith("/api")
+    ? cleanTargetPath
+    : cleanTargetPath.startsWith("/")
+      ? `/api${cleanTargetPath}`
+      : `/api/${cleanTargetPath}`;
+
+  // Tách đường dẫn thành từng phần để so sánh.
+  // filter(Boolean) giúp loại bỏ các phần tử rỗng do dấu "/" tạo ra.
+  //
+  // Ví dụ:
+  // "/api/admin/skills" -> ["api", "admin", "skills"].
+  const targetParts = normalizedTargetPath.split("/").filter(Boolean);
+
+  // Duyệt qua từng permission để tìm quyền phù hợp với action cần kiểm tra.
+  return permissions.some((perm) => {
+    // Nếu permission hiện tại là "*" thì cho phép thực hiện action.
+    if (perm === "*") return true;
+
+    // Phân tách HTTP method và API path từ permission.
+    //
+    // Ví dụ:
+    // "POST /api/admin/skills"
+    // -> match[1] = "POST"
+    // -> match[2] = "/api/admin/skills"
+    //
+    // Trường hợp permission chỉ chứa path:
+    // "/api/admin/skills"
+    // -> Không có HTTP method được khai báo.
+    const match = perm.match(/^([A-Z]+)\s+(.+)$/i);
+
+    // Khởi tạo method của permission là null.
+    // null có nghĩa là permission không giới hạn HTTP method.
+    let permMethod: string | null = null;
+
+    // Mặc định toàn bộ permission được xem là API path.
+    let permPath = perm;
+
+    // Nếu permission có định dạng "METHOD /path",
+    // tách riêng method và path để kiểm tra.
+    if (match && match[1] && match[2]) {
+      // Chuẩn hóa method của permission thành chữ in hoa.
+      permMethod = match[1].toUpperCase();
+
+      // Lấy phần API path sau HTTP method.
+      permPath = match[2];
+    }
+
+    // Nếu permission có khai báo HTTP method,
+    // method đó bắt buộc phải trùng với method của action đang kiểm tra.
+    //
+    // Ví dụ:
+    // Permission: "POST /api/admin/skills"
+    // Target:     "GET /api/admin/skills"
+    // -> Không có quyền.
+    //
+    // Nếu permission chỉ khai báo path mà không có method,
+    // có thể áp dụng cho mọi HTTP method.
+    if (permMethod && permMethod !== targetMethod) {
+      return false;
+    }
+
+    // Làm sạch permission path:
+    // - Loại bỏ khoảng trắng ở đầu và cuối.
+    // - Loại bỏ query string nếu có.
+    const cleanPermPath = permPath.trim().split("?")[0] || "";
+
+    // Chuẩn hóa permission path theo cùng quy tắc với target path.
+    // Mục đích là đảm bảo hai đường dẫn có cùng tiền tố "/api"
+    // trước khi tiến hành so sánh.
+    const normalizedPermPath = cleanPermPath.startsWith("/api")
+      ? cleanPermPath
+      : cleanPermPath.startsWith("/")
+        ? `/api${cleanPermPath}`
+        : `/api/${cleanPermPath}`;
+
+    // Tách permission path thành từng phần để so sánh với target path.
+    //
+    // Ví dụ:
+    // "/api/admin/skills/:id"
+    // -> ["api", "admin", "skills", ":id"].
+    const permParts = normalizedPermPath.split("/").filter(Boolean);
+
+    // Hai đường dẫn phải có cùng số lượng thành phần.
+    // Nếu số lượng khác nhau thì không thể xem là cùng một endpoint.
+    //
+    // Ví dụ:
+    // "/api/admin/skills"    -> 3 phần
+    // "/api/admin/skills/1"  -> 4 phần
+    // -> Không khớp.
+    if (permParts.length !== targetParts.length) {
+      return false;
+    }
+
+    // So sánh từng thành phần tương ứng giữa permission path
+    // và target path.
+    return permParts.every((part, idx) => {
+      // Nếu một trong hai thành phần là tham số động (bắt đầu bằng ":")
+      // thì xem như khớp.
+      //
+      // Ví dụ:
+      // Permission: "/api/users/:id"
+      // Target:     "/api/users/123"
+      // -> Khớp.
+      //
+      // Hoặc:
+      // Permission: "/api/users/123"
+      // Target:     "/api/users/:id"
+      // -> Cũng được xem là khớp theo logic hiện tại.
+      if (part.startsWith(":") || targetParts[idx]?.startsWith(":")) {
+        return true;
+      }
+
+      // Nếu không phải tham số động thì hai thành phần
+      // phải giống nhau hoàn toàn.
+      return part === targetParts[idx];
+    });
+  });
+}

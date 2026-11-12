@@ -6,6 +6,7 @@ import { Pencil } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { UpdateCategoryDialog } from "../../components/update-category-dialog";
 import type { ForumCategoryType } from "@shared/types";
+import { useActionPermission } from "@/hooks/use-action-permission";
 
 export function EditCategoryButton({
   category,
@@ -14,6 +15,11 @@ export function EditCategoryButton({
 }) {
   const t = useTranslations("adminCategories");
   const [open, setOpen] = useState(false);
+  const { can } = useActionPermission();
+
+  if (!can("PATCH", `/api/forums/admin/categories/${category.id}`)) {
+    return null;
+  }
 
   return (
     <>

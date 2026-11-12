@@ -7,6 +7,7 @@ import { Button } from "@repo/ui/components/shadcn/button";
 import { Trash2 } from "lucide-react";
 import { DeleteCategoryDialog } from "../../components/delete-category-dialog";
 import type { ForumCategoryType } from "@shared/types";
+import { useActionPermission } from "@/hooks/use-action-permission";
 
 export function DeleteCategoryButton({
   category,
@@ -16,6 +17,11 @@ export function DeleteCategoryButton({
   const t = useTranslations("adminCategories");
   const router = useRouter();
   const [open, setOpen] = useState(false);
+  const { can } = useActionPermission();
+
+  if (!can("DELETE", `/api/forums/admin/categories/${category.id}`)) {
+    return null;
+  }
 
   return (
     <>

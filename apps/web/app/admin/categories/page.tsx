@@ -1,6 +1,8 @@
 import { Suspense } from "react";
 import { getTranslations } from "next-intl/server";
 import adminServerRequest from "@/apiRequests/admin.server";
+import authServerRequest from "@/apiRequests/auth.server";
+import { hasActionPermission } from "@/lib/admin-access";
 import { CategoriesTable } from "./components/categories-table";
 import { CreateCategoryDialog } from "./components/create-category-dialog";
 import { CategoriesFilterBar } from "./components/categories-filter-bar";
@@ -42,6 +44,13 @@ export default async function AdminCategoriesPage({
     deleted,
   );
 
+  const currentUser = await authServerRequest.getMe();
+  const canCreate = hasActionPermission(
+    currentUser,
+    "POST",
+    "/api/forums/admin/categories",
+  );
+
   const t = await getTranslations("adminCategories");
 
   return (
@@ -55,7 +64,7 @@ export default async function AdminCategoriesPage({
             {t("pageSubtitle", { count: data.pagination.total })}
           </p>
         </div>
-        <CreateCategoryDialog />
+        {canCreate && <CreateCategoryDialog />}
       </div>
 
       <Suspense>
