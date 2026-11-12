@@ -578,7 +578,10 @@
     "rejectingAction": "Rejecting...",
     "rejectAction": "Reject",
     "approvingAction": "Approving...",
-    "approveAction": "Approve"
+    "approveAction": "Approve",
+    "noFilePermissionTitle": "Document Preview Restricted",
+    "noFilePermissionDesc": "You do not have permission to view verification document files.",
+    "accessDenied": "You do not have permission to view identity verification requests."
   },
   "adminAssignRole": {
     "metaTitle": "Assign Role | Admin Dashboard | Frevia",

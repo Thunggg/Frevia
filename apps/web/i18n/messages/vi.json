@@ -578,7 +578,10 @@
     "rejectingAction": "Đang từ chối...",
     "rejectAction": "Từ chối",
     "approvingAction": "Đang phê duyệt...",
-    "approveAction": "Phê duyệt"
+    "approveAction": "Phê duyệt",
+    "noFilePermissionTitle": "Giới hạn xem tài liệu",
+    "noFilePermissionDesc": "Bạn không có quyền xem file tài liệu xác thực.",
+    "accessDenied": "Bạn không có quyền xem danh sách yêu cầu xác thực danh tính."
   },
   "adminAssignRole": {
     "metaTitle": "Gán vai trò | Quản trị | Frevia",
