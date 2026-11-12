@@ -23,7 +23,6 @@ const PUBLIC_ROUTES = [
   "/forum",
   "/profiles",
   "/clients",
-  "/experts",
   "/user-agreement",
   "/privacy-policy",
 ];
