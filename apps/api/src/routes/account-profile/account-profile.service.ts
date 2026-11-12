@@ -553,8 +553,12 @@ export class AccountProfileService {
     const isClient = profile?.user.userRoles.some(
       (item) => item.role.name === RoleName.CLIENT,
     );
-    if (!profile?.clientProfile || !isClient)
+    if (!profile || !isClient)
       throw ClientProfileNotFoundException();
+    if (!profile.clientProfile) {
+      const clientProfile = await this.repository.createClientProfile(profile.id);
+      return { ...profile, clientProfile };
+    }
     return profile;
   }
 

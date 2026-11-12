@@ -1,12 +1,5 @@
 "use client";
 
-import Image from "next/image";
-import { useLocale, useTranslations } from "next-intl";
-import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
-import { useEffect, useRef, useState, useTransition } from "react";
-import { useQueryClient } from "@tanstack/react-query";
-import { useTheme } from "next-themes";
 import {
   Bell,
   Briefcase,
@@ -23,6 +16,7 @@ import {
   Moon,
   PanelLeftClose,
   PanelLeftOpen,
+  Shield,
   Sun,
   SwitchCamera,
   UserRound,
@@ -30,15 +24,23 @@ import {
 } from "@/components/icons";
 import { setLocaleCookie } from "@/i18n/actions";
 import { isLocale, type Locale } from "@/i18n/config";
+import { useQueryClient } from "@tanstack/react-query";
+import { useLocale, useTranslations } from "next-intl";
+import { useTheme } from "next-themes";
+import Image from "next/image";
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
+import { useEffect, useRef, useState, useTransition } from "react";
 
+import { authApiRequest } from "@/apiRequests/auth";
+import { useMe } from "@/hooks/use-auth";
+import { canAccessAdminPortal } from "@/lib/admin-access";
 import {
   Avatar,
   AvatarFallback,
   AvatarImage,
 } from "@repo/ui/components/shadcn/avatar";
 import { toastError } from "@repo/ui/components/shadcn/toast";
-import { authApiRequest } from "@/apiRequests/auth";
-import { useMe } from "@/hooks/use-auth";
 import { RoleName } from "@shared/types";
 
 import { useNotifications } from "@/hooks/use-notifications";
@@ -66,17 +68,19 @@ function NavLink({ item, collapsed }: { item: NavItem; collapsed: boolean }) {
     <Link
       href={item.href}
       title={collapsed ? labelText : undefined}
-      className={`group relative flex items-center gap-3 rounded-2xl px-3 py-2 text-sm transition-all duration-150 ${isActive
-        ? "bg-white text-zinc-950 font-semibold shadow-xs dark:bg-zinc-900 dark:text-zinc-50"
-        : "text-zinc-600 hover:bg-zinc-200/50 hover:text-zinc-950 dark:text-zinc-400 dark:hover:bg-zinc-800/50 dark:hover:text-zinc-100"
-        } ${collapsed ? "justify-center px-2" : ""}`}
+      className={`group relative flex items-center gap-3 rounded-2xl px-3 py-2 text-sm transition-all duration-150 ${
+        isActive
+          ? "bg-white text-zinc-950 font-semibold shadow-xs dark:bg-zinc-900 dark:text-zinc-50"
+          : "text-zinc-600 hover:bg-zinc-200/50 hover:text-zinc-950 dark:text-zinc-400 dark:hover:bg-zinc-800/50 dark:hover:text-zinc-100"
+      } ${collapsed ? "justify-center px-2" : ""}`}
     >
       <div className="relative shrink-0">
         <Icon
-          className={`transition-colors ${isActive
-            ? "text-zinc-950 dark:text-zinc-100"
-            : "text-zinc-500 group-hover:text-zinc-950 dark:text-zinc-400 dark:group-hover:text-zinc-100"
-            } ${collapsed ? "size-5" : "size-4"}`}
+          className={`transition-colors ${
+            isActive
+              ? "text-zinc-950 dark:text-zinc-100"
+              : "text-zinc-500 group-hover:text-zinc-950 dark:text-zinc-400 dark:group-hover:text-zinc-100"
+          } ${collapsed ? "size-5" : "size-4"}`}
         />
         {collapsed && item.badge ? (
           <span className="absolute -top-1 -right-1 flex size-2 rounded-full bg-[#0069D3] ring-2 ring-[#F6F5F9] dark:ring-zinc-950" />
@@ -98,11 +102,19 @@ function NavLink({ item, collapsed }: { item: NavItem; collapsed: boolean }) {
   );
 }
 
+const KNOWN_ROLES = new Set<string>([
+  RoleName.ADMIN,
+  RoleName.CLIENT,
+  RoleName.FREELANCER,
+  RoleName.EXPERT,
+]);
+
 export function ClientSidebar() {
   const router = useRouter();
   const queryClient = useQueryClient();
   const t = useTranslations("sidebar");
   const tRole = useTranslations("roleName");
+  const tNav = useTranslations("nav");
   const activeLocale = useLocale();
   const [isLocalePending, startLocaleTransition] = useTransition();
   const { data: me } = useMe();
@@ -205,9 +217,7 @@ export function ClientSidebar() {
 
   const displayName = me?.profile?.displayName ?? tRole("CLIENT");
   const initial = displayName.charAt(0).toUpperCase();
-  const canSwitchRole = me?.roles.some(
-    (r) => r.name === RoleName.FREELANCER,
-  );
+  const otherRoles = (me?.roles ?? []).filter((r) => !r.isPrimary);
 
   const logout = async () => {
     await fetch("/api/auth/logout", { method: "POST" });
@@ -215,13 +225,13 @@ export function ClientSidebar() {
     router.refresh();
   };
 
-  const switchRole = async () => {
-    if (!canSwitchRole || isSwitchingRole) return;
+  const switchRole = async (targetRoleName: string, destination: string) => {
+    if (isSwitchingRole) return;
     setIsSwitchingRole(true);
     try {
-      await authApiRequest.switchRole({ role: RoleName.FREELANCER });
+      await authApiRequest.switchRole({ role: targetRoleName });
       await queryClient.invalidateQueries({ queryKey: ["me"] });
-      router.push("/freelancer");
+      router.push(destination);
       router.refresh();
     } catch {
       toastError({ message: t("roleSwitchFailed") });
@@ -231,13 +241,15 @@ export function ClientSidebar() {
 
   return (
     <aside
-      className={`sticky top-0 flex h-dvh shrink-0 flex-col border-r border-border bg-[#F6F5F9] dark:bg-zinc-950 transition-all duration-300 ${collapsed ? "w-[60px]" : "w-[230px]"
-        }`}
+      className={`sticky top-0 flex h-dvh shrink-0 flex-col border-r border-border bg-[#F6F5F9] dark:bg-zinc-950 transition-all duration-300 ${
+        collapsed ? "w-[60px]" : "w-[230px]"
+      }`}
     >
       {/* Logo & Collapse toggle */}
       <div
-        className={`relative flex h-14 shrink-0 items-center border-b border-border ${collapsed ? "justify-center px-0" : "justify-between px-5"
-          }`}
+        className={`relative flex h-14 shrink-0 items-center border-b border-border ${
+          collapsed ? "justify-center px-0" : "justify-between px-5"
+        }`}
       >
         <Link href="/" className="flex shrink-0 items-center gap-2.5">
           {collapsed && (
@@ -287,8 +299,9 @@ export function ClientSidebar() {
             type="button"
             suppressHydrationWarning
             onClick={() => setProfileOpen((v) => !v)}
-            className={`flex w-full items-center gap-3 rounded-xl p-2.5 text-left transition-colors hover:bg-[#D0E1F8]/30 dark:hover:bg-zinc-800/60 ${collapsed ? "justify-center" : ""
-              }`}
+            className={`flex w-full items-center gap-3 rounded-xl p-2.5 text-left transition-colors hover:bg-[#D0E1F8]/30 dark:hover:bg-zinc-800/60 ${
+              collapsed ? "justify-center" : ""
+            }`}
             aria-label={t("profileMenu")}
           >
             <Avatar className="size-8 shrink-0">
@@ -310,8 +323,9 @@ export function ClientSidebar() {
                   </p>
                 </div>
                 <ChevronDown
-                  className={`size-3.5 shrink-0 text-muted-foreground transition-transform ${profileOpen ? "rotate-180" : ""
-                    }`}
+                  className={`size-3.5 shrink-0 text-muted-foreground transition-transform ${
+                    profileOpen ? "rotate-180" : ""
+                  }`}
                 />
               </>
             )}
@@ -320,8 +334,9 @@ export function ClientSidebar() {
           {/* Profile popover */}
           {profileOpen && (
             <div
-              className={`absolute top-full mt-1 z-50 min-w-[200px] rounded-2xl border border-border bg-popover p-1.5 shadow-xl ${collapsed ? "left-full ml-2 top-0" : "left-0 right-0"
-                }`}
+              className={`absolute top-full mt-1 z-50 min-w-[200px] rounded-2xl border border-border bg-popover p-1.5 shadow-xl ${
+                collapsed ? "left-full ml-2 top-0" : "left-0 right-0"
+              }`}
             >
               {me?.id && (
                 <Link
@@ -365,6 +380,16 @@ export function ClientSidebar() {
                 <MonitorSmartphone className="size-3.5" />
                 {t("sessions")}
               </Link>
+              {canAccessAdminPortal(me) && (
+                <Link
+                  href="/admin"
+                  onClick={() => setProfileOpen(false)}
+                  className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-xs font-medium text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-950/40 transition-colors"
+                >
+                  <Shield className="size-3.5" />
+                  Admin Portal
+                </Link>
+              )}
 
               <div className="my-1 h-px bg-border" />
 
@@ -382,10 +407,11 @@ export function ClientSidebar() {
                   <button
                     type="button"
                     onClick={() => setTheme("light")}
-                    className={`flex size-6 items-center justify-center rounded-full transition-all cursor-pointer ${!isDark
-                      ? "bg-white text-[#0069D3] shadow-xs"
-                      : "text-muted-foreground hover:text-foreground"
-                      }`}
+                    className={`flex size-6 items-center justify-center rounded-full transition-all cursor-pointer ${
+                      !isDark
+                        ? "bg-white text-[#0069D3] shadow-xs"
+                        : "text-muted-foreground hover:text-foreground"
+                    }`}
                     title={t("lightMode")}
                     aria-label={t("switchToLight")}
                   >
@@ -394,10 +420,11 @@ export function ClientSidebar() {
                   <button
                     type="button"
                     onClick={() => setTheme("dark")}
-                    className={`flex size-6 items-center justify-center rounded-full transition-all cursor-pointer ${isDark
-                      ? "bg-zinc-700 text-amber-300 shadow-xs"
-                      : "text-muted-foreground hover:text-foreground"
-                      }`}
+                    className={`flex size-6 items-center justify-center rounded-full transition-all cursor-pointer ${
+                      isDark
+                        ? "bg-zinc-700 text-amber-300 shadow-xs"
+                        : "text-muted-foreground hover:text-foreground"
+                    }`}
                     title={t("darkMode")}
                     aria-label={t("switchToDark")}
                   >
@@ -444,19 +471,46 @@ export function ClientSidebar() {
 
               <div className="my-1 h-px bg-border" />
 
-              {canSwitchRole && (
-                <button
-                  onClick={() => {
-                    setProfileOpen(false);
-                    void switchRole();
-                  }}
-                  disabled={isSwitchingRole}
-                  className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-xs text-muted-foreground hover:bg-[#D0E1F8]/40 dark:hover:bg-zinc-800 hover:text-[#0069D3] dark:hover:text-blue-300 transition-colors disabled:opacity-50 cursor-pointer"
-                >
-                  <SwitchCamera className="size-3.5" />
-                  {isSwitchingRole ? t("switching") : t("switchToFreelancer")}
-                </button>
-              )}
+              {otherRoles.map((role) => {
+                const isFreelancer = role.name === RoleName.FREELANCER;
+                const isExpert = role.name === RoleName.EXPERT;
+                const isClient = role.name === RoleName.CLIENT;
+                const destination = isFreelancer
+                  ? "/freelancer"
+                  : isExpert
+                    ? "/admin/disputes"
+                    : isClient
+                      ? "/client/jobs"
+                      : "/admin";
+                const label = isFreelancer
+                  ? t("switchToFreelancer")
+                  : isClient
+                    ? t("switchToClient")
+                    : tNav("switchToRole", {
+                        role:
+                          role.name === RoleName.ADMIN
+                            ? tRole("ADMIN")
+                            : role.name === RoleName.EXPERT
+                              ? tRole("EXPERT")
+                              : role.name,
+                      });
+
+                return (
+                  <button
+                    key={role.id}
+                    type="button"
+                    onClick={() => {
+                      setProfileOpen(false);
+                      void switchRole(role.name, destination);
+                    }}
+                    disabled={isSwitchingRole}
+                    className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-xs text-muted-foreground hover:bg-[#D0E1F8]/40 dark:hover:bg-zinc-800 hover:text-[#0069D3] dark:hover:text-blue-300 transition-colors disabled:opacity-50 cursor-pointer"
+                  >
+                    <SwitchCamera className="size-3.5" />
+                    {isSwitchingRole ? t("switching") : label}
+                  </button>
+                );
+              })}
               <button
                 onClick={() => {
                   setProfileOpen(false);
@@ -485,7 +539,6 @@ export function ClientSidebar() {
           ))}
         </div>
       </nav>
-
     </aside>
   );
 }

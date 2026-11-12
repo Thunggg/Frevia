@@ -45,6 +45,7 @@ describe('User Authentication (UF-37 to UF-41)', () => {
   };
 
   const authRepository = {
+    findUserById: jest.fn(),
     findUserByEmail: jest.fn(),
     findUserForLogin: jest.fn(),
     findUserByEmailIncludeRoles: jest.fn(),
@@ -821,6 +822,112 @@ describe('User Authentication (UF-37 to UF-41)', () => {
       await expect(
         service.forgotPassword(forgotPayload),
       ).rejects.toBeInstanceOf(InternalServerErrorException);
+    });
+  });
+
+  describe('getMe', () => {
+    const mockUserWithPermissions = {
+      id: 10,
+      email: 'cskh@frevia.com',
+      isBanned: false,
+      deletedAt: null,
+      profile: {
+        id: 1,
+        displayName: 'CSKH Officer',
+        avatarUrl: null,
+      },
+      userRoles: [
+        {
+          userId: 10,
+          roleId: 5,
+          isPrimary: true,
+          role: {
+            id: 5,
+            name: 'CSKH',
+            description: 'Customer Support Staff',
+            rolePermissions: [
+              {
+                permission: {
+                  id: 101,
+                  method: 'GET',
+                  path: '/api/users',
+                  module: 'USERS',
+                  deletedAt: null,
+                },
+              },
+              {
+                permission: {
+                  id: 102,
+                  method: 'GET',
+                  path: '/api/forums/reports',
+                  module: 'FORUMS',
+                  deletedAt: null,
+                },
+              },
+            ],
+          },
+        },
+      ],
+    };
+
+    it('returns user info with dynamic role, permissions and permissionModules', async () => {
+      authRepository.findUserById.mockResolvedValue(mockUserWithPermissions);
+
+      const result = await service.getMe(10, 5);
+
+      expect(result.id).toBe(10);
+      expect(result.email).toBe('cskh@frevia.com');
+      expect(result.roles[0].name).toBe('CSKH');
+      expect(result.permissions).toContain('GET /api/users');
+      expect(result.permissions).toContain('/api/users');
+      expect(result.permissions).toContain('GET /api/forums/reports');
+      expect(result.permissionModules).toContain('USERS');
+      expect(result.permissionModules).toContain('FORUMS');
+    });
+
+    it('returns wildcard permission for ADMIN role', async () => {
+      const mockAdminUser = {
+        id: 1,
+        email: 'admin@frevia.com',
+        isBanned: false,
+        deletedAt: null,
+        profile: null,
+        userRoles: [
+          {
+            userId: 1,
+            roleId: 1,
+            isPrimary: true,
+            role: {
+              id: 1,
+              name: RoleName.ADMIN,
+              description: 'Super Administrator',
+              rolePermissions: [],
+            },
+          },
+        ],
+      };
+      authRepository.findUserById.mockResolvedValue(mockAdminUser);
+
+      const result = await service.getMe(1, 1);
+
+      expect(result.permissions).toContain('*');
+    });
+
+    it('throws NotFoundException when user does not exist', async () => {
+      authRepository.findUserById.mockResolvedValue(null);
+
+      await expect(service.getMe(999)).rejects.toThrow();
+    });
+
+    it('throws ForbiddenException when user is banned', async () => {
+      authRepository.findUserById.mockResolvedValue({
+        id: 2,
+        email: 'banned@frevia.com',
+        isBanned: true,
+        deletedAt: null,
+      });
+
+      await expect(service.getMe(2)).rejects.toBeInstanceOf(ForbiddenException);
     });
   });
 });

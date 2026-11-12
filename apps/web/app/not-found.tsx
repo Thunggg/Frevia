@@ -5,6 +5,7 @@ import Link from "next/link";
 import authServerRequest from "@/apiRequests/auth.server";
 import { Footer } from "@/components/footer";
 import { Header, type UserRole } from "@/components/header";
+import { canAccessAdminPortal } from "@/lib/admin-access";
 import { Button } from "@repo/ui/components/shadcn/button";
 import { RoleName } from "@shared/types";
 
@@ -16,13 +17,16 @@ export default async function NotFound() {
   let role: UserRole = "GUEST";
   if (primaryRole === RoleName.CLIENT) role = "CLIENT";
   else if (primaryRole === RoleName.FREELANCER) role = "FREELANCER";
+  else if (user) role = "FREELANCER";
 
   const homeHref =
     role === "CLIENT"
       ? "/client/jobs"
-      : role === "FREELANCER"
-        ? "/freelancer"
-        : "/";
+      : canAccessAdminPortal(user)
+        ? "/admin"
+        : role === "FREELANCER"
+          ? "/freelancer"
+          : "/";
 
   const t = await getTranslations("notFound");
 

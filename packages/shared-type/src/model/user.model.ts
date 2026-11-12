@@ -152,12 +152,9 @@ export const GetMeProfileSchema = z.object({
 });
 
 export const GetMeRoleSchema = z.object({
-  name: z.enum([
-    RoleName.FREELANCER,
-    RoleName.CLIENT,
-    RoleName.ADMIN,
-    RoleName.EXPERT,
-  ]),
+  id: z.number().optional(),
+  name: z.string(),
+  description: z.string().nullable().optional(),
   isPrimary: z.boolean(),
 });
 
@@ -167,11 +164,13 @@ export const GetMeResSchema = z.object({
   isBanned: z.boolean(),
   profile: GetMeProfileSchema.nullable(),
   roles: z.array(GetMeRoleSchema),
+  permissions: z.array(z.string()).default([]),
+  permissionModules: z.array(z.string()).default([]),
 });
 
 export const SwitchRoleBodySchema = z
   .object({
-    role: z.enum([RoleName.FREELANCER, RoleName.CLIENT]),
+    role: z.string().min(1),
   })
   .strict();
 

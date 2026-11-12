@@ -1237,7 +1237,9 @@ export class PaymentService {
     roleName: string,
     query: GetTransactionListQueryType,
   ) {
-    const isAdmin = roleName === RoleName.ADMIN;
+    const isAdmin =
+      roleName === RoleName.ADMIN ||
+      (roleName !== RoleName.CLIENT && roleName !== RoleName.FREELANCER);
     const filter = isAdmin ? {} : { userId };
     return this.paymentRepo.getTransactions(query, filter);
   }

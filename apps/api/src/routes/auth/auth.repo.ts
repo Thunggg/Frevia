@@ -199,7 +199,22 @@ export class AuthRepository {
       where: { email, deletedAt: null },
       include: {
         userRoles: {
-          include: { role: true },
+          include: {
+            role: {
+              include: {
+                rolePermissions: {
+                  where: {
+                    permission: {
+                      deletedAt: null,
+                    },
+                  },
+                  include: {
+                    permission: true,
+                  },
+                },
+              },
+            },
+          },
           orderBy: {
             isPrimary: 'desc',
           },
@@ -314,7 +329,22 @@ export class AuthRepository {
           },
         },
         userRoles: {
-          include: { role: true },
+          include: {
+            role: {
+              include: {
+                rolePermissions: {
+                  where: {
+                    permission: {
+                      deletedAt: null,
+                    },
+                  },
+                  include: {
+                    permission: true,
+                  },
+                },
+              },
+            },
+          },
           orderBy: {
             isPrimary: 'desc',
           },

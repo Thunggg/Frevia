@@ -144,8 +144,11 @@ export class AuthController {
 
   @Get('me')
   @ZodSerializerDto(GetMeResponseDto)
-  getMe(@UserActive('userId') userId: number) {
-    return this.authService.getMe(userId);
+  getMe(
+    @UserActive('userId') userId: number,
+    @UserActive('roleId') roleId?: number,
+  ) {
+    return this.authService.getMe(userId, roleId);
   }
 
   @Post('switch-role')

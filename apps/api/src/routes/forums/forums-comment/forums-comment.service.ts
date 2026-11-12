@@ -130,8 +130,11 @@ export class ForumCommentService {
         throw ForumCommentNotFoundException();
       }
 
-      // kiểm tra người dùng có quyền xóa comment không (chủ comment hoặc admin)
-      if (existingComment.user.id !== userId && roleName !== RoleName.ADMIN) {
+      // kiểm tra người dùng có quyền xóa comment không (chủ comment hoặc admin / staff)
+      const isStaff =
+        roleName === RoleName.ADMIN ||
+        (roleName !== RoleName.CLIENT && roleName !== RoleName.FREELANCER);
+      if (existingComment.user.id !== userId && !isStaff) {
         throw ForumCommentNotOwnedException();
       }
 

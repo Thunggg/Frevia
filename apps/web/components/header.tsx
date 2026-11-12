@@ -47,6 +47,7 @@ import { NotificationsBell } from "@/components/notifications-bell";
 import { ContactDialog } from "@/components/contact-dialog";
 import { useMe } from "@/hooks/use-auth";
 import { authApiRequest } from "@/apiRequests/auth";
+import { canAccessAdminPortal } from "@/lib/admin-access";
 import { RoleName } from "@shared/types";
 import { toastError, toastSuccess } from "@repo/ui/components/shadcn/toast";
 
@@ -182,7 +183,6 @@ function HeaderNavigation({
 
 function HeaderSearch({
   className = "hidden max-w-xs flex-1 md:block lg:max-w-sm",
-  role,
 }: {
   className?: string;
   role?: UserRole;
@@ -392,7 +392,11 @@ function ProfileDropdown({ role }: { role: Exclude<UserRole, "GUEST"> }) {
         <DropdownMenuItem asChild>
           <Link
             href={
-              role === "FREELANCER" ? "/freelancer/profile" : "/account-profile"
+              canAccessAdminPortal(me)
+                ? "/admin/profile"
+                : role === "FREELANCER"
+                  ? "/freelancer/profile"
+                  : "/client/profile"
             }
             className="cursor-pointer"
           >
@@ -456,7 +460,7 @@ function ProfileDropdown({ role }: { role: Exclude<UserRole, "GUEST"> }) {
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
               <Link
-                href="/account-profile?tab=favorites"
+                href="/client/profile?tab=favorites"
                 className="cursor-pointer"
               >
                 <Heart className="size-4 text-muted-foreground" />
@@ -465,7 +469,7 @@ function ProfileDropdown({ role }: { role: Exclude<UserRole, "GUEST"> }) {
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
               <Link
-                href="/account-profile?tab=following"
+                href="/client/profile?tab=following"
                 className="cursor-pointer"
               >
                 <UserCheck className="size-4 text-muted-foreground" />
@@ -481,7 +485,14 @@ function ProfileDropdown({ role }: { role: Exclude<UserRole, "GUEST"> }) {
           </>
         )}
         <DropdownMenuItem asChild>
-          <Link href="/account-profile" className="cursor-pointer">
+          <Link
+            href={
+              role === "FREELANCER"
+                ? "/freelancer/profile?tab=social"
+                : "/client/profile?tab=social"
+            }
+            className="cursor-pointer"
+          >
             <Link2 className="size-4 text-muted-foreground" />
             {t("socialLinks")}
           </Link>
@@ -508,6 +519,17 @@ function ProfileDropdown({ role }: { role: Exclude<UserRole, "GUEST"> }) {
             {t("sessions")}
           </Link>
         </DropdownMenuItem>
+        {canAccessAdminPortal(me) && (
+          <DropdownMenuItem asChild>
+            <Link
+              href="/admin"
+              className="cursor-pointer font-medium text-[#4fae2e]"
+            >
+              <ShieldCheck className="size-4 text-[#4fae2e]" />
+              Admin Portal
+            </Link>
+          </DropdownMenuItem>
+        )}
         <DropdownMenuSeparator />
         <DropdownMenuItem
           variant="destructive"
@@ -594,13 +616,25 @@ function MobileProfileNavigation({
           {t("viewPublicProfile")}
         </Link>
       ) : null}
+      {canAccessAdminPortal(me) && (
+        <Link
+          href="/admin"
+          onClick={onNavigate}
+          className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-[13px] font-medium text-[#4fae2e] transition-colors hover:bg-[#4fae2e]/10"
+        >
+          <ShieldCheck className="size-4 text-[#4fae2e]" />
+          Admin Portal
+        </Link>
+      )}
       <Link
         href={
-          role === "FREELANCER"
-            ? "/freelancer/profile"
-            : role === "CLIENT"
-              ? "/client/profile"
-              : "/login"
+          canAccessAdminPortal(me)
+            ? "/admin/profile"
+            : role === "FREELANCER"
+              ? "/freelancer/profile"
+              : role === "CLIENT"
+                ? "/client/profile"
+                : "/login"
         }
         onClick={onNavigate}
         className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-[13px] font-medium text-foreground/70 transition-colors hover:bg-black/[0.04] hover:text-foreground dark:hover:bg-white/[0.06]"

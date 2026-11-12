@@ -30,10 +30,11 @@ type SearchParams = Promise<{
 function resolveHeaderRole(
   user: Awaited<ReturnType<typeof authServerRequest.getMe>>,
 ): UserRole {
-  const role = user?.roles.find((item) => item.isPrimary)?.name;
+  if (!user) return "GUEST";
+  const role = user.roles.find((item) => item.isPrimary)?.name;
   if (role === RoleName.CLIENT) return "CLIENT";
   if (role === RoleName.FREELANCER) return "FREELANCER";
-  return "GUEST";
+  return "FREELANCER";
 }
 
 function initials(name: string | null) {

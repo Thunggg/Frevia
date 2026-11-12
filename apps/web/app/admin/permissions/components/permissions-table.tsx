@@ -1,8 +1,11 @@
 "use client";
 
-import { AdminTableSkeleton } from "../../components/table-skeleton";
-import { NumberedPagination } from "../../components/numbered-pagination";
 import { usePermissions } from "@/hooks/use-permission";
+import {
+  getPermissionScope,
+  SCOPE_DEFINITIONS,
+} from "@/lib/permission-scopes";
+import { getPermissionDisplayName } from "@/lib/permission-utils";
 import { Badge } from "@repo/ui/components/shadcn/badge";
 import { Button } from "@repo/ui/components/shadcn/button";
 import { Input } from "@repo/ui/components/shadcn/input";
@@ -24,27 +27,21 @@ import {
 } from "@repo/ui/components/shadcn/table";
 import { HttpMethod, type HttpMethodType } from "@shared/types";
 import { ArrowDown, ArrowUp, ArrowUpDown, Eye, Search, X } from "lucide-react";
-import Link from "next/link";
 import { useFormatter, useLocale, useTranslations } from "next-intl";
+import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
-import { getPermissionDisplayName } from "@/lib/permission-utils";
+import {
+  HttpMethodBadge,
+  getMethodDotColor,
+} from "../../components/http-method-badge";
+import { NumberedPagination } from "../../components/numbered-pagination";
+import { AdminTableSkeleton } from "../../components/table-skeleton";
 
 const PAGE_SIZE = 10;
 
 type SortBy = "id" | "createdAt";
 type SortOrder = "asc" | "desc";
-
-const METHOD_VARIANT: Record<
-  string,
-  "default" | "secondary" | "outline" | "destructive"
-> = {
-  [HttpMethod.GET]: "outline",
-  [HttpMethod.POST]: "secondary",
-  [HttpMethod.PUT]: "outline",
-  [HttpMethod.PATCH]: "outline",
-  [HttpMethod.DELETE]: "destructive",
-};
 
 const HTTP_METHODS = Object.values(HttpMethod);
 
@@ -132,8 +129,7 @@ export function PermissionsTable() {
 
     updateParams({
       sortBy: column === "id" ? undefined : column,
-      order:
-        column === "id" && nextOrder === "asc" ? undefined : nextOrder,
+      order: column === "id" && nextOrder === "asc" ? undefined : nextOrder,
       page: undefined,
     });
   };
@@ -201,7 +197,12 @@ export function PermissionsTable() {
               <SelectItem value="all">{t("allMethods")}</SelectItem>
               {HTTP_METHODS.map((m) => (
                 <SelectItem key={m} value={m}>
-                  {m}
+                  <div className="flex items-center gap-2">
+                    <span
+                      className={`size-2 rounded-full ${getMethodDotColor(m)}`}
+                    />
+                    <span>{m}</span>
+                  </div>
                 </SelectItem>
               ))}
             </SelectContent>
@@ -267,7 +268,9 @@ export function PermissionsTable() {
                       <SortIcon column="id" />
                     </button>
                   </TableHead>
-                  <TableHead className="min-w-[180px]">{t("permissionName")}</TableHead>
+                  <TableHead className="min-w-[180px]">
+                    {t("permissionName")}
+                  </TableHead>
                   <TableHead className="w-24">{tCommon("method")}</TableHead>
                   <TableHead>{tCommon("path")}</TableHead>
                   <TableHead>{tCommon("module")}</TableHead>
@@ -310,20 +313,32 @@ export function PermissionsTable() {
                         {getPermissionDisplayName(permission, locale)}
                       </TableCell>
                       <TableCell>
-                        <Badge
-                          variant={
-                            METHOD_VARIANT[permission.method] ?? "outline"
-                          }
-                        >
-                          {permission.method}
-                        </Badge>
+                        <HttpMethodBadge method={permission.method} />
                       </TableCell>
                       <TableCell className="font-mono text-xs text-muted-foreground max-w-xs truncate">
                         {permission.path}
                       </TableCell>
                       <TableCell>
                         {permission.module ? (
-                          <Badge variant="outline">{permission.module}</Badge>
+                          <div className="flex items-center gap-1.5 flex-wrap">
+                            <Badge variant="outline" className="font-mono text-xs">
+                              {permission.module}
+                            </Badge>
+                            {(() => {
+                              const scope = getPermissionScope(permission);
+                              const scopeDef = SCOPE_DEFINITIONS[scope];
+                              return (
+                                <Badge
+                                  variant="outline"
+                                  className={`text-[9px] px-1.5 py-0 h-4 border ${scopeDef.badgeClass}`}
+                                >
+                                  {locale === "vi"
+                                    ? scopeDef.labelVi
+                                    : scopeDef.labelEn}
+                                </Badge>
+                              );
+                            })()}
+                          </div>
                         ) : (
                           <span className="text-muted-foreground">—</span>
                         )}
