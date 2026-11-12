@@ -31,7 +31,7 @@ async function seedRelationshipsDemo() {
       where: { email: clientEmail },
       include: {
         profile: true,
-        userRoles: { include: { role: true } },
+        role: true,
       },
     }),
     prisma.user.findUnique({
@@ -109,9 +109,7 @@ async function seedRelationshipsDemo() {
     ],
   });
 
-  const hasFreelancerRole = client.userRoles.some(
-    ({ role }) => role.name === 'FREELANCER',
-  );
+  const hasFreelancerRole = client.role.name === 'FREELANCER';
 
   console.log(
     JSON.stringify(

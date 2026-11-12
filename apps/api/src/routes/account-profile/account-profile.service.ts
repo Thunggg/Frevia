@@ -108,10 +108,14 @@ export class AccountProfileService {
         user.profile.avatarUrl,
         user.profile.updatedAt,
       ),
-      roles: user.userRoles.map((item) => ({
-        name: item.role.name,
-        isPrimary: item.isPrimary,
-      })),
+      roles: user.role
+        ? [
+            {
+              name: user.role.name,
+              isPrimary: true,
+            },
+          ]
+        : [],
     };
   }
 
@@ -124,8 +128,7 @@ export class AccountProfileService {
   async updateGeneralProfile(userId: number, input: UpdateGeneralProfileType) {
     const user = await this.repository.findGeneralProfile(userId);
     if (!user?.profile) throw ProfileNotFoundException();
-    const primaryRole = user.userRoles.find((item) => item.isPrimary)?.role
-      .name;
+    const primaryRole = user.role?.name;
     if (
       primaryRole === RoleName.CLIENT ||
       primaryRole === RoleName.FREELANCER
@@ -247,7 +250,7 @@ export class AccountProfileService {
   private async requireRole(userId: number, roleName: string) {
     const user = await this.repository.findUserWithRoles(userId);
     if (!user?.profile) throw ProfileNotFoundException();
-    if (!user.userRoles.some((item) => item.role.name === roleName)) {
+    if (user.role.name !== roleName) {
       throw AccountProfileForbiddenException();
     }
     return user;
@@ -550,9 +553,7 @@ export class AccountProfileService {
 
   async getClientProfile(userId: number) {
     const profile = await this.repository.findClientProfile(userId);
-    const isClient = profile?.user.userRoles.some(
-      (item) => item.role.name === RoleName.CLIENT,
-    );
+    const isClient = profile?.user.role.name === RoleName.CLIENT;
     if (!profile || !isClient)
       throw ClientProfileNotFoundException();
     if (!profile.clientProfile) {
@@ -621,9 +622,7 @@ export class AccountProfileService {
     await this.requireRole(clientId, RoleName.CLIENT);
     if (clientId === freelancerId) throw FreelancerNotFoundException();
     const freelancer = await this.repository.findUserWithRoles(freelancerId);
-    const isFreelancer = freelancer?.userRoles.some(
-      (item) => item.role.name === RoleName.FREELANCER,
-    );
+    const isFreelancer = freelancer?.role.name === RoleName.FREELANCER;
     if (!freelancer?.profile || !isFreelancer)
       throw FreelancerNotFoundException();
     if (await this.repository.findFavorite(clientId, freelancerId)) {

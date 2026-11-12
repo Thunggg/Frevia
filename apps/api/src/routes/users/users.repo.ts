@@ -46,56 +46,39 @@ export class UsersRepository {
     // ?role=CUSTOM thì lấy các role khác 3 role đó.
     if (role && role !== 'all' && role !== 'ALL') {
       if (role === 'CLIENT' || role.toLowerCase() === 'client') {
-        where.userRoles = {
-          some: {
-            role: { name: { equals: RoleName.CLIENT, mode: 'insensitive' } },
-          },
+        where.role = {
+          name: { equals: RoleName.CLIENT, mode: 'insensitive' },
         };
       } else if (role === 'FREELANCER' || role.toLowerCase() === 'freelancer') {
-        where.userRoles = {
-          some: {
-            role: {
-              name: { equals: RoleName.FREELANCER, mode: 'insensitive' },
-            },
+        where.role = {
+          name: {
+            equals: RoleName.FREELANCER,
+            mode: 'insensitive',
           },
         };
       } else if (role === 'ADMIN' || role.toLowerCase() === 'admin') {
-        where.userRoles = {
-          some: {
-            role: {
-              name: { equals: RoleName.ADMIN, mode: 'insensitive' },
-            },
-          },
+        where.role = {
+          name: { equals: RoleName.ADMIN, mode: 'insensitive' },
         };
       } else if (role === 'EXPERT' || role.toLowerCase() === 'expert') {
-        where.userRoles = {
-          some: {
-            role: {
-              name: { equals: RoleName.EXPERT, mode: 'insensitive' },
-            },
-          },
+        where.role = {
+          name: { equals: RoleName.EXPERT, mode: 'insensitive' },
         };
       } else if (role === 'CUSTOM' || role.toLowerCase() === 'custom') {
-        where.userRoles = {
-          some: {
-            role: {
-              name: {
-                notIn: [
-                  RoleName.CLIENT,
-                  RoleName.FREELANCER,
-                  RoleName.ADMIN,
-                  RoleName.EXPERT,
-                ],
-                mode: 'insensitive',
-              },
-            },
+        where.role = {
+          name: {
+            notIn: [
+              RoleName.CLIENT,
+              RoleName.FREELANCER,
+              RoleName.ADMIN,
+              RoleName.EXPERT,
+            ],
+            mode: 'insensitive',
           },
         };
       } else {
-        where.userRoles = {
-          some: {
-            role: { name: { equals: role, mode: 'insensitive' } },
-          },
+        where.role = {
+          name: { equals: role, mode: 'insensitive' },
         };
       }
     }
@@ -127,16 +110,11 @@ export class UsersRepository {
               avatarUrl: true,
             },
           },
-          userRoles: {
+          role: {
             select: {
-              isPrimary: true,
-              role: {
-                select: {
-                  id: true,
-                  name: true,
-                  description: true,
-                },
-              },
+              id: true,
+              name: true,
+              description: true,
             },
           },
         },
@@ -155,12 +133,16 @@ export class UsersRepository {
       updatedAt: user.updatedAt,
       displayName: user.profile?.displayName ?? null,
       avatarUrl: user.profile?.avatarUrl ?? null,
-      roles: user.userRoles.map((ur) => ({
-        id: ur.role.id,
-        name: ur.role.name,
-        description: ur.role.description,
-        isPrimary: ur.isPrimary,
-      })),
+      roles: user.role
+        ? [
+            {
+              id: user.role.id,
+              name: user.role.name,
+              description: user.role.description,
+              isPrimary: true,
+            },
+          ]
+        : [],
     }));
 
     return {
@@ -174,7 +156,7 @@ export class UsersRepository {
     };
   }
 
-  // Admin tạo user: tạo User + Profile (displayName) + UserRole primary trong 1 lệnh
+  // Admin tạo user: tạo User + Profile (displayName) + roleId trong 1 lệnh
   async createUserByAdmin(data: {
     email: string;
     password: string;
@@ -186,6 +168,7 @@ export class UsersRepository {
       data: {
         email: data.email,
         password: data.password,
+        roleId: data.roleId,
         profile: {
           create: {
             displayName: data.fullName,
@@ -195,12 +178,6 @@ export class UsersRepository {
                 : undefined,
           },
         },
-        userRoles: {
-          create: {
-            roleId: data.roleId,
-            isPrimary: true,
-          },
-        },
       },
       include: {
         profile: {
@@ -208,15 +185,10 @@ export class UsersRepository {
             displayName: true,
           },
         },
-        userRoles: {
+        role: {
           select: {
-            isPrimary: true,
-            role: {
-              select: {
-                id: true,
-                name: true,
-              },
-            },
+            id: true,
+            name: true,
           },
         },
       },
@@ -284,15 +256,10 @@ export class UsersRepository {
               displayName: true,
             },
           },
-          userRoles: {
+          role: {
             select: {
-              isPrimary: true,
-              role: {
-                select: {
-                  id: true,
-                  name: true,
-                },
-              },
+              id: true,
+              name: true,
             },
           },
         },
@@ -312,8 +279,8 @@ export class UsersRepository {
             clientProfile: { select: { id: true } },
           },
         },
-        userRoles: {
-          select: { role: { select: { name: true } } },
+        role: {
+          select: { name: true },
         },
       },
     });
@@ -326,9 +293,7 @@ export class UsersRepository {
       id: user.id,
       profileId: user.profile?.id ?? null,
       clientProfileId: user.profile?.clientProfile?.id ?? null,
-      hasClientRole: user.userRoles.some(
-        (ur) => ur.role.name.toLowerCase() === 'client',
-      ),
+      hasClientRole: user.role?.name.toLowerCase() === 'client',
     };
   }
 
@@ -397,8 +362,8 @@ export class UsersRepository {
             freelancerProfile: { select: { id: true } },
           },
         },
-        userRoles: {
-          select: { role: { select: { name: true } } },
+        role: {
+          select: { name: true },
         },
       },
     });
@@ -411,9 +376,7 @@ export class UsersRepository {
       id: user.id,
       profileId: user.profile?.id ?? null,
       freelancerProfileId: user.profile?.freelancerProfile?.id ?? null,
-      hasFreelancerRole: user.userRoles.some(
-        (ur) => ur.role.name.toLowerCase() === 'freelancer',
-      ),
+      hasFreelancerRole: user.role?.name.toLowerCase() === 'freelancer',
     };
   }
 
@@ -694,15 +657,11 @@ export class UsersRepository {
             expertProfile: true,
           },
         },
-        userRoles: {
+        role: {
           include: {
-            role: {
+            rolePermissions: {
               include: {
-                rolePermissions: {
-                  include: {
-                    permission: true,
-                  },
-                },
+                permission: true,
               },
             },
           },
@@ -724,26 +683,31 @@ export class UsersRepository {
       return null;
     }
 
-    const customRoleProfiles = user.userRoles
-      .filter((ur) => {
-        const name = ur.role.name.toLowerCase();
-        return name !== 'client' && name !== 'freelancer' && name !== 'expert';
-      })
-      .map((ur) => ({
-        roleId: ur.role.id,
-        roleName: ur.role.name,
-        description: ur.role.description,
-        isPrimary: ur.isPrimary,
-        permissions: ur.role.rolePermissions
-          .filter((rp) => rp.permission && !rp.permission.deletedAt)
-          .map((rp) => ({
-            id: rp.permission.id,
-            name: rp.permission.name,
-            path: rp.permission.path,
-            method: rp.permission.method,
-            module: rp.permission.module,
-          })),
-      }));
+    const isCustomRole =
+      user.role &&
+      !['client', 'freelancer', 'expert'].includes(
+        user.role.name.toLowerCase(),
+      );
+
+    const customRoleProfiles = isCustomRole
+      ? [
+          {
+            roleId: user.role.id,
+            roleName: user.role.name,
+            description: user.role.description,
+            isPrimary: true,
+            permissions: user.role.rolePermissions
+              .filter((rp) => rp.permission && !rp.permission.deletedAt)
+              .map((rp) => ({
+                id: rp.permission.id,
+                name: rp.permission.name,
+                path: rp.permission.path,
+                method: rp.permission.method,
+                module: rp.permission.module,
+              })),
+          },
+        ]
+      : [];
 
     const clientProfile = user.profile?.clientProfile
       ? {
@@ -813,12 +777,16 @@ export class UsersRepository {
       onlineStatus: user.profile?.onlineStatus ?? false,
       availabilityStatus: user.profile?.availabilityStatus ?? 'OFFLINE',
       profileCompletionPercent: user.profile?.profileCompletionPercent ?? 0,
-      roles: user.userRoles.map((ur) => ({
-        id: ur.role.id,
-        name: ur.role.name,
-        description: ur.role.description,
-        isPrimary: ur.isPrimary,
-      })),
+      roles: user.role
+        ? [
+            {
+              id: user.role.id,
+              name: user.role.name,
+              description: user.role.description,
+              isPrimary: true,
+            },
+          ]
+        : [],
       socialLinks: (user.profile?.socialLinks ?? []).map((s) => ({
         id: s.id,
         platform: s.platform,

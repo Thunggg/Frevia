@@ -48,7 +48,7 @@ describe('User Authentication (UF-37 to UF-41)', () => {
     findUserById: jest.fn(),
     findUserByEmail: jest.fn(),
     findUserForLogin: jest.fn(),
-    findUserByEmailIncludeRoles: jest.fn(),
+    findUserByEmailIncludeRole: jest.fn(),
     createUserAndRegister: jest.fn(),
     createUserAndRegisterGoogle: jest.fn(),
     createOauthAccount: jest.fn(),
@@ -108,11 +108,11 @@ describe('User Authentication (UF-37 to UF-41)', () => {
       mockOAuthRequest.mockResolvedValue({
         data: { id: 'g-1', email: 'user@frevia.com', name: 'Existing User' },
       });
-      authRepository.findUserByEmailIncludeRoles.mockResolvedValue({
+      authRepository.findUserByEmailIncludeRole.mockResolvedValue({
         id: 1,
         email: 'user@frevia.com',
         isBanned: false,
-        userRoles: [{ role: { id: 2, name: RoleName.CLIENT } }],
+        role: { id: 2, name: RoleName.CLIENT },
       });
 
       const result = await service.googleCallback({
@@ -133,13 +133,13 @@ describe('User Authentication (UF-37 to UF-41)', () => {
       mockOAuthRequest.mockResolvedValue({
         data: { id: 'g-new', email: 'new@frevia.com', name: 'New Google User' },
       });
-      authRepository.findUserByEmailIncludeRoles.mockResolvedValue(null);
+      authRepository.findUserByEmailIncludeRole.mockResolvedValue(null);
       sharedRoleRepository.getClientRoleId.mockResolvedValue(2);
       authRepository.createUserAndRegisterGoogle.mockResolvedValue({
         id: 15,
         email: 'new@frevia.com',
         isBanned: false,
-        userRoles: [{ role: { id: 2, name: RoleName.CLIENT } }],
+        role: { id: 2, name: RoleName.CLIENT },
       });
       authRepository.createOauthAccount.mockResolvedValue({ id: 1 });
 
@@ -165,13 +165,13 @@ describe('User Authentication (UF-37 to UF-41)', () => {
       mockOAuthRequest.mockResolvedValue({
         data: { id: 'g-freelancer', email: 'freelancer@frevia.com', name: 'New Freelancer User' },
       });
-      authRepository.findUserByEmailIncludeRoles.mockResolvedValue(null);
+      authRepository.findUserByEmailIncludeRole.mockResolvedValue(null);
       sharedRoleRepository.getFreelancerRoleId.mockResolvedValue(3);
       authRepository.createUserAndRegisterGoogle.mockResolvedValue({
         id: 16,
         email: 'freelancer@frevia.com',
         isBanned: false,
-        userRoles: [{ role: { id: 3, name: RoleName.FREELANCER } }],
+        role: { id: 3, name: RoleName.FREELANCER },
       });
       authRepository.createOauthAccount.mockResolvedValue({ id: 2 });
 
@@ -213,11 +213,11 @@ describe('User Authentication (UF-37 to UF-41)', () => {
       mockOAuthRequest.mockResolvedValue({
         data: { id: 'g-ban', email: 'banned@frevia.com', name: 'Banned User' },
       });
-      authRepository.findUserByEmailIncludeRoles.mockResolvedValue({
+      authRepository.findUserByEmailIncludeRole.mockResolvedValue({
         id: 9,
         email: 'banned@frevia.com',
         isBanned: true,
-        userRoles: [{ role: { id: 2, name: RoleName.CLIENT } }],
+        role: { id: 2, name: RoleName.CLIENT },
       });
 
       await expect(
@@ -231,7 +231,7 @@ describe('User Authentication (UF-37 to UF-41)', () => {
       mockOAuthRequest.mockResolvedValue({
         data: { id: 'g-1', email: 'user@frevia.com', name: 'User' },
       });
-      authRepository.findUserByEmailIncludeRoles.mockRejectedValue(
+      authRepository.findUserByEmailIncludeRole.mockRejectedValue(
         new InternalServerErrorException('Database connection timeout'),
       );
 
@@ -256,7 +256,7 @@ describe('User Authentication (UF-37 to UF-41)', () => {
         email: 'client@frevia.com',
         password: 'hashed-password',
         isBanned: false,
-        userRoles: [{ role: { id: 2, name: RoleName.CLIENT } }],
+        role: { id: 2, name: RoleName.CLIENT },
       });
       hashingService.verify.mockResolvedValue(true);
 
@@ -285,7 +285,7 @@ describe('User Authentication (UF-37 to UF-41)', () => {
         email: 'client@frevia.com',
         password: 'hashed-password',
         isBanned: false,
-        userRoles: [{ role: { id: 2, name: RoleName.CLIENT } }],
+        role: { id: 2, name: RoleName.CLIENT },
       });
       hashingService.verify.mockResolvedValue(false);
 
@@ -301,7 +301,7 @@ describe('User Authentication (UF-37 to UF-41)', () => {
         email: 'banned@frevia.com',
         password: 'hashed-password',
         isBanned: true,
-        userRoles: [{ role: { id: 2, name: RoleName.CLIENT } }],
+        role: { id: 2, name: RoleName.CLIENT },
       });
       hashingService.verify.mockResolvedValue(true);
 
@@ -317,7 +317,7 @@ describe('User Authentication (UF-37 to UF-41)', () => {
         email: 'oauth-only@frevia.com',
         password: null,
         isBanned: false,
-        userRoles: [{ role: { id: 2, name: RoleName.CLIENT } }],
+        role: { id: 2, name: RoleName.CLIENT },
       });
 
       await expect(service.login(baseLoginPayload)).rejects.toBeInstanceOf(
@@ -332,7 +332,7 @@ describe('User Authentication (UF-37 to UF-41)', () => {
         email: 'norole@frevia.com',
         password: 'hashed-password',
         isBanned: false,
-        userRoles: [],
+        role: null,
       });
       hashingService.verify.mockResolvedValue(true);
 
@@ -348,7 +348,7 @@ describe('User Authentication (UF-37 to UF-41)', () => {
         email: 'client@frevia.com',
         password: 'hashed-password',
         isBanned: false,
-        userRoles: [{ role: { id: 2, name: RoleName.CLIENT } }],
+        role: { id: 2, name: RoleName.CLIENT },
       });
       hashingService.verify.mockResolvedValue(true);
 
@@ -370,7 +370,7 @@ describe('User Authentication (UF-37 to UF-41)', () => {
         email: 'freelancer@frevia.com',
         password: 'hashed-password',
         isBanned: false,
-        userRoles: [{ role: { id: 3, name: RoleName.FREELANCER } }],
+        role: { id: 3, name: RoleName.FREELANCER },
       });
       hashingService.verify.mockResolvedValue(true);
 
@@ -395,7 +395,7 @@ describe('User Authentication (UF-37 to UF-41)', () => {
         email: 'admin@frevia.com',
         password: 'hashed-password',
         isBanned: false,
-        userRoles: [{ role: { id: 1, name: RoleName.ADMIN } }],
+        role: { id: 1, name: RoleName.ADMIN },
       });
       hashingService.verify.mockResolvedValue(true);
 
@@ -872,38 +872,31 @@ describe('User Authentication (UF-37 to UF-41)', () => {
         displayName: 'CSKH Officer',
         avatarUrl: null,
       },
-      userRoles: [
-        {
-          userId: 10,
-          roleId: 5,
-          isPrimary: true,
-          role: {
-            id: 5,
-            name: 'CSKH',
-            description: 'Customer Support Staff',
-            rolePermissions: [
-              {
-                permission: {
-                  id: 101,
-                  method: 'GET',
-                  path: '/api/users',
-                  module: 'USERS',
-                  deletedAt: null,
-                },
-              },
-              {
-                permission: {
-                  id: 102,
-                  method: 'GET',
-                  path: '/api/forums/reports',
-                  module: 'FORUMS',
-                  deletedAt: null,
-                },
-              },
-            ],
+      role: {
+        id: 5,
+        name: 'CSKH',
+        description: 'Customer Support Staff',
+        rolePermissions: [
+          {
+            permission: {
+              id: 101,
+              method: 'GET',
+              path: '/api/users',
+              module: 'USERS',
+              deletedAt: null,
+            },
           },
-        },
-      ],
+          {
+            permission: {
+              id: 102,
+              method: 'GET',
+              path: '/api/forums/reports',
+              module: 'FORUMS',
+              deletedAt: null,
+            },
+          },
+        ],
+      },
     };
 
     it('returns user info with dynamic role, permissions and permissionModules', async () => {
@@ -928,19 +921,12 @@ describe('User Authentication (UF-37 to UF-41)', () => {
         isBanned: false,
         deletedAt: null,
         profile: null,
-        userRoles: [
-          {
-            userId: 1,
-            roleId: 1,
-            isPrimary: true,
-            role: {
-              id: 1,
-              name: RoleName.ADMIN,
-              description: 'Super Administrator',
-              rolePermissions: [],
-            },
-          },
-        ],
+        role: {
+          id: 1,
+          name: RoleName.ADMIN,
+          description: 'Super Administrator',
+          rolePermissions: [],
+        },
       };
       authRepository.findUserById.mockResolvedValue(mockAdminUser);
 

@@ -27,17 +27,12 @@ export class AuthRepository {
     });
   }
 
-  async findUserByEmailIncludeRoles(
+  async findUserByEmailIncludeRole(
     email: string,
-  ): Promise<(UserType & { userRoles: { role: RoleType }[] }) | null> {
+  ): Promise<(UserType & { role: RoleType }) | null> {
     return this.prisma.user.findUnique({
       where: { email, deletedAt: null },
-      include: {
-        userRoles: {
-          include: { role: true },
-          orderBy: { isPrimary: 'desc' },
-        },
-      },
+      include: { role: true },
     });
   }
 
@@ -100,16 +95,11 @@ export class AuthRepository {
         data: {
           email: user.email,
           password: user.password,
+          roleId: user.roleId,
           isBanned: user.isBanned ?? false,
           profile: {
             create: {
               displayName: user.fullName,
-            },
-          },
-          userRoles: {
-            create: {
-              roleId: user.roleId,
-              isPrimary: true,
             },
           },
         },
@@ -122,22 +112,11 @@ export class AuthRepository {
     email: string;
     fullName: string;
     roleId: number;
-  }): Promise<
-    UserType & {
-      userRoles: {
-        role: RoleType;
-      }[];
-    }
-  > {
+  }): Promise<UserType & { role: RoleType }> {
     return await this.prisma.user.create({
       data: {
         email: user.email,
-        userRoles: {
-          create: {
-            roleId: user.roleId,
-            isPrimary: true,
-          },
-        },
+        roleId: user.roleId,
         profile: {
           create: {
             displayName: user.fullName,
@@ -149,14 +128,7 @@ export class AuthRepository {
         deletedAt: null,
       },
       include: {
-        userRoles: {
-          include: {
-            role: true,
-          },
-          orderBy: {
-            isPrimary: 'desc',
-          },
-        },
+        role: true,
       },
     });
   }
@@ -196,25 +168,18 @@ export class AuthRepository {
     return await this.prisma.user.findUnique({
       where: { email, deletedAt: null },
       include: {
-        userRoles: {
+        role: {
           include: {
-            role: {
-              include: {
-                rolePermissions: {
-                  where: {
-                    permission: {
-                      deletedAt: null,
-                    },
-                  },
-                  include: {
-                    permission: true,
-                  },
+            rolePermissions: {
+              where: {
+                permission: {
+                  deletedAt: null,
                 },
               },
+              include: {
+                permission: true,
+              },
             },
-          },
-          orderBy: {
-            isPrimary: 'desc',
           },
         },
       },
@@ -274,14 +239,7 @@ export class AuthRepository {
       include: {
         user: {
           include: {
-            userRoles: {
-              include: {
-                role: true,
-              },
-              orderBy: {
-                isPrimary: 'desc',
-              },
-            },
+            role: true,
           },
         },
       },
@@ -326,25 +284,18 @@ export class AuthRepository {
             avatarUrl: true,
           },
         },
-        userRoles: {
+        role: {
           include: {
-            role: {
-              include: {
-                rolePermissions: {
-                  where: {
-                    permission: {
-                      deletedAt: null,
-                    },
-                  },
-                  include: {
-                    permission: true,
-                  },
+            rolePermissions: {
+              where: {
+                permission: {
+                  deletedAt: null,
                 },
               },
+              include: {
+                permission: true,
+              },
             },
-          },
-          orderBy: {
-            isPrimary: 'desc',
           },
         },
       },

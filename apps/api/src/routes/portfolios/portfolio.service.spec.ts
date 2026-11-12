@@ -10,7 +10,7 @@ const freelancerProfile = (
   id: 5,
   userId,
   user: {
-    userRoles: [{ role: { name: RoleName.FREELANCER } }],
+    role: { name: RoleName.FREELANCER },
   },
   freelancerProfile: nestedProfileId === null ? null : { id: nestedProfileId },
 });

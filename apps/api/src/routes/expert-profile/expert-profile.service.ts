@@ -44,7 +44,7 @@ export class ExpertProfileService {
   private async context(userId: number) {
     const user = await this.repository.findByUserId(userId);
     if (!user?.profile) throw ExpertProfileNotFoundException();
-    if (!user.userRoles.some((item) => item.role.name === RoleName.EXPERT)) {
+    if (user.role.name !== RoleName.EXPERT) {
       throw NotAnExpertAccountException();
     }
     return user;

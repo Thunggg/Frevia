@@ -10,7 +10,7 @@ import { AccountProfileService } from './account-profile.service';
 const userWithRole = (roleName: string, userId = 1) => ({
   id: userId,
   profile: { id: 10, userId },
-  userRoles: [{ role: { name: roleName } }],
+  role: { name: roleName },
 });
 
 describe('AccountProfileService', () => {
@@ -288,7 +288,7 @@ describe('AccountProfileService', () => {
 
       repository.findClientProfile.mockResolvedValue({
         id: 10,
-        user: { userRoles: [{ role: { name: RoleName.FREELANCER } }] },
+        user: { role: { name: RoleName.FREELANCER } },
         clientProfile: null,
       });
       await expect(service.getClientProfile(1)).rejects.toMatchObject({
@@ -299,7 +299,7 @@ describe('AccountProfileService', () => {
     it('returns client profile directly when clientProfile row exists', async () => {
       const mockProfile = {
         id: 10,
-        user: { userRoles: [{ role: { name: RoleName.CLIENT } }] },
+        user: { role: { name: RoleName.CLIENT } },
         clientProfile: { id: 1, profileId: 10, companyName: 'Acme Corp' },
       };
       repository.findClientProfile.mockResolvedValue(mockProfile);
@@ -312,7 +312,7 @@ describe('AccountProfileService', () => {
     it('auto-creates empty clientProfile when client has no clientProfile row yet', async () => {
       const mockProfile = {
         id: 10,
-        user: { userRoles: [{ role: { name: RoleName.CLIENT } }] },
+        user: { role: { name: RoleName.CLIENT } },
         clientProfile: null,
       };
       const createdClientProfile = {

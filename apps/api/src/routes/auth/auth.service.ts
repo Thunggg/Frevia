@@ -244,8 +244,8 @@ export class AuthService {
         throw UserBannedException();
       }
 
-      // Lấy ra role đầu tiên của user đã chọn hoặc lần switch role gần nhất
-      const primaryRole = user.userRoles[0]?.role;
+      // Lấy ra role của user
+      const primaryRole = user.role;
       if (!primaryRole) {
         throw RoleNotFoundException();
       }
@@ -360,8 +360,8 @@ export class AuthService {
 
       const tokens = await this.generateAccessAndRefreshTokens({
         userId,
-        roleId: refreshTokenIsInDB.user.userRoles[0].role.id,
-        roleName: refreshTokenIsInDB.user.userRoles[0].role.name,
+        roleId: refreshTokenIsInDB.user.role.id,
+        roleName: refreshTokenIsInDB.user.role.name,
         userAgent: payload.userAgent,
         ipAddress: payload.ipAddress,
       });
@@ -502,28 +502,21 @@ export class AuthService {
       throw UserBannedException();
     }
 
-    const activeUserRole =
-      (roleId ? user.userRoles.find((ur) => ur.roleId === roleId) : null) ??
-      user.userRoles.find((ur) => ur.isPrimary) ??
-      user.userRoles[0];
+    const userRole = user.role;
 
     const permissionsSet = new Set<string>();
     const modulesSet = new Set<string>();
 
-    const isAdmin =
-      activeUserRole?.role.name === RoleName.ADMIN ||
-      user.userRoles.some(
-        (ur) => ur.role.name === RoleName.ADMIN && ur.isPrimary,
-      );
+    const isAdmin = userRole?.name === RoleName.ADMIN;
 
     if (isAdmin) {
       permissionsSet.add('*');
     }
 
-    if (activeUserRole?.role && 'rolePermissions' in activeUserRole.role) {
+    if (userRole && 'rolePermissions' in userRole) {
       const rps =
         (
-          activeUserRole.role as {
+          userRole as {
             rolePermissions?: Array<{
               permission?: {
                 method?: string;
@@ -561,12 +554,16 @@ export class AuthService {
             avatarUrl: user.profile.avatarUrl,
           }
         : null,
-      roles: user.userRoles.map((userRole) => ({
-        id: userRole.role.id,
-        name: userRole.role.name,
-        description: userRole.role.description,
-        isPrimary: userRole.isPrimary,
-      })),
+      roles: userRole
+        ? [
+            {
+              id: userRole.id,
+              name: userRole.name,
+              description: userRole.description,
+              isPrimary: true,
+            },
+          ]
+        : [],
       permissions: Array.from(permissionsSet),
       permissionModules: Array.from(modulesSet),
     };
@@ -643,7 +640,7 @@ export class AuthService {
       throw EmailNotFoundException();
     }
 
-    let user = await this.authRepository.findUserByEmailIncludeRoles(
+    let user = await this.authRepository.findUserByEmailIncludeRole(
       data.email as string,
     );
 
@@ -676,7 +673,7 @@ export class AuthService {
       throw UserBannedException();
     }
 
-    const primaryRole = user.userRoles[0]?.role;
+    const primaryRole = user.role;
     if (!primaryRole) {
       throw RoleNotFoundException();
     }
