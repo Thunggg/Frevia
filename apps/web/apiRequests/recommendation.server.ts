@@ -24,6 +24,7 @@ export const recommendationServerRequest = {
           Authorization: `Bearer ${accessToken}`,
         },
         cache: "no-store",
+        signal: AbortSignal.timeout(3000),
       });
 
       if (!response.ok) return null;
