@@ -1,5 +1,6 @@
 import "server-only";
 
+import { cache } from "react";
 import { cookies } from "next/headers";
 
 import { envConfig } from "@/configs/validate-env";
@@ -48,7 +49,7 @@ async function jobCategoryServerFetch<T>(
         // Danh mục công việc là dữ liệu công khai: token chỉ gửi kèm khi có.
         ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
       },
-      cache: "no-store",
+      next: { revalidate: 300 },
     });
 
     const contentType = response.headers.get("content-type");
@@ -74,13 +75,13 @@ async function jobCategoryServerFetch<T>(
  * UC-46.06 / UC-46.07 — đọc danh mục công việc từ Server Component.
  */
 const jobCategoryServerRequest = {
-  async getJobCategories(params: JobCategoryBrowseQueryType = {}) {
+  getJobCategories: cache(async (params: JobCategoryBrowseQueryType = {}) => {
     const { data } = await jobCategoryServerFetch<JobCategoryBrowseListResponseType>(
       `/api/job-categories${buildQueryString(params)}`,
     );
 
     return data;
-  },
+  }),
 
   /**
    * Chi tiết danh mục kèm danh sách công việc đang mở.
