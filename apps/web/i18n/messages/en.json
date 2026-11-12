@@ -27,7 +27,7 @@
     "daysAgo": "{days}d ago",
     "yesterday": "Yesterday",
     "userFallback": "User #{id}",
-  "postFallback": "Post #{id}",
+    "postFallback": "Post #{id}",
     "close": "Close",
     "cancel": "Cancel",
     "attachment": "Attachment",
@@ -811,7 +811,8 @@
     "saveChanges": "Save changes",
     "updateFailed": "Failed to update user",
     "updatedToast": "User \"{email}\" updated",
-    "updatedBannedToast": "User \"{email}\" updated · account banned"
+    "updatedBannedToast": "User \"{email}\" updated · account banned",
+    "accessDenied": "You do not have permission to view the system user list."
   },
   "adminUserDetail": {
     "metaTitle": "User Detail | Admin Dashboard | Frevia",
@@ -897,7 +898,8 @@
     "noPermissionsForRole": "No specific permissions mapped directly to this role.",
     "colApiPath": "API Endpoint / Path",
     "colPermissionName": "Permission Name",
-    "generalModule": "GENERAL"
+    "generalModule": "GENERAL",
+    "detailAccessDenied": "You do not have permission to view this user's details."
   },
   "adminUserProfileEdit": {
     "triggerEdit": "Edit profile",

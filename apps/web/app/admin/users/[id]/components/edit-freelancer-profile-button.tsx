@@ -1,5 +1,6 @@
 "use client";
 
+import { useActionPermission } from "@/hooks/use-action-permission";
 import { useUpdateFreelancerProfile } from "@/hooks/use-admin-user";
 import { ApiFail } from "@/lib/http";
 import { Button } from "@repo/ui/components/shadcn/button";
@@ -73,6 +74,8 @@ function toList(text: string): string[] {
 export function EditFreelancerProfileButton({
   user,
 }: EditFreelancerProfileButtonProps) {
+  const { can } = useActionPermission();
+  const canUpdate = can("PATCH", "/api/users/:id/freelancer-profile");
   const router = useRouter();
   const t = useTranslations("adminUserProfileEdit");
   const [open, setOpen] = useState(false);
@@ -193,6 +196,10 @@ export function EditFreelancerProfileButton({
   ) => {
     setFormState((prev) => ({ ...prev, [field]: value }));
   };
+
+  if (!canUpdate) {
+    return null;
+  }
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>

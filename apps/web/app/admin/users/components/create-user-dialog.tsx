@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { useActionPermission } from "@/hooks/use-action-permission";
 import { useCreateUser } from "@/hooks/use-admin-user";
 import { useRoles } from "@/hooks/use-role";
 import { ApiFail } from "@/lib/http";
@@ -53,6 +54,8 @@ const ROLE_FIELD_PATHS = new Set([
 // Tạo tài khoản mới: họ tên / email / password (kèm confirm) + chọn 1 role khởi tạo
 // (Client | Freelancer | custom role — không cho chọn Admin).
 export function CreateUserDialog() {
+  const { can } = useActionPermission();
+  const canCreate = can("POST", "/api/users");
   const router = useRouter();
   const t = useTranslations("adminUsers");
   const tCommon = useTranslations("adminCommon");
@@ -157,6 +160,10 @@ export function CreateUserDialog() {
         },
       },
     );
+  }
+
+  if (!canCreate) {
+    return null;
   }
 
   return (

@@ -811,7 +811,8 @@
     "saveChanges": "Lưu thay đổi",
     "updateFailed": "Cập nhật người dùng thất bại",
     "updatedToast": "Đã cập nhật người dùng \"{email}\"",
-    "updatedBannedToast": "Đã cập nhật người dùng \"{email}\" · tài khoản đã bị khoá"
+    "updatedBannedToast": "Đã cập nhật người dùng \"{email}\" · tài khoản đã bị khoá",
+    "accessDenied": "Bạn không có quyền xem danh sách người dùng hệ thống."
   },
   "adminUserDetail": {
     "metaTitle": "Chi tiết người dùng | Trang quản trị | Frevia",
@@ -897,7 +898,8 @@
     "noPermissionsForRole": "Không có quyền cụ thể nào được gán trực tiếp cho vai trò này.",
     "colApiPath": "API / Đường dẫn",
     "colPermissionName": "Tên quyền",
-    "generalModule": "CHUNG"
+    "generalModule": "CHUNG",
+    "detailAccessDenied": "Bạn không có quyền xem thông tin chi tiết người dùng này."
   },
   "adminUserProfileEdit": {
     "triggerEdit": "Sửa hồ sơ",

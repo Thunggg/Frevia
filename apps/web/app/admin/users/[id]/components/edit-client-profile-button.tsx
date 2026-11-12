@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { useActionPermission } from "@/hooks/use-action-permission";
 import { useUpdateClientProfile } from "@/hooks/use-admin-user";
 import { ApiFail } from "@/lib/http";
 import { useTranslatedResolver } from "@/lib/form-resolver";
@@ -64,6 +65,8 @@ interface EditClientProfileButtonProps {
 export function EditClientProfileButton({
   user,
 }: EditClientProfileButtonProps) {
+  const { can } = useActionPermission();
+  const canUpdate = can("PATCH", "/api/users/:id/client-profile");
   const router = useRouter();
   const t = useTranslations("adminUserProfileEdit");
   const [open, setOpen] = useState(false);
@@ -186,6 +189,10 @@ export function EditClientProfileButton({
         },
       },
     );
+  }
+
+  if (!canUpdate) {
+    return null;
   }
 
   return (
