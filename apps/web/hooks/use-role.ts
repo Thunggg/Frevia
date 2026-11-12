@@ -58,6 +58,7 @@ export function useUpdateRole() {
     onSuccess: (role) => {
       queryClient.invalidateQueries({ queryKey: roleKeys.lists() });
       queryClient.invalidateQueries({ queryKey: roleKeys.detail(role.id) });
+      queryClient.invalidateQueries({ queryKey: ["me"] });
     },
   });
 }
@@ -76,6 +77,7 @@ export function useSetRolePermissions() {
     onSuccess: (role) => {
       queryClient.setQueryData(roleKeys.detail(role.id), role);
       queryClient.invalidateQueries({ queryKey: roleKeys.lists() });
+      queryClient.invalidateQueries({ queryKey: ["me"] });
     },
   });
 }

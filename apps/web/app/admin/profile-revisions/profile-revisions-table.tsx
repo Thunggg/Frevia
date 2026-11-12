@@ -107,8 +107,6 @@ export function ProfileRevisionsTable({
   const canRejectSelected = selected
     ? can("PATCH", `/api/admin/profile-revisions/${selected.id}/reject`)
     : false;
-  const canInteractSelected =
-    canViewSelected || canApproveSelected || canRejectSelected;
 
   const valueLabels = {
     none: t("valueNone"),
@@ -152,15 +150,7 @@ export function ProfileRevisionsTable({
       "GET",
       `/api/admin/profile-revisions/${revision.id}`,
     );
-    const canApprove = can(
-      "PATCH",
-      `/api/admin/profile-revisions/${revision.id}/approve`,
-    );
-    const canReject = can(
-      "PATCH",
-      `/api/admin/profile-revisions/${revision.id}/reject`,
-    );
-    if (!canViewDetail && !canApprove && !canReject) return;
+    if (!canViewDetail) return;
     setSelected(revision);
     setReviewNotes(revision.reviewNotes ?? "");
   };
@@ -272,8 +262,6 @@ export function ProfileRevisionsTable({
                   "PATCH",
                   `/api/admin/profile-revisions/${revision.id}/reject`,
                 );
-                const hasAnyAction =
-                  canViewDetail || canApprove || canReject;
                 const canReviewThis =
                   (canApprove || canReject) && revision.status === "PENDING";
 
@@ -310,7 +298,7 @@ export function ProfileRevisionsTable({
                       {formatDateTime(revision.updatedAt, locale)}
                     </TableCell>
                     <TableCell className="text-right">
-                      {!hasAnyAction ? (
+                      {!canViewDetail ? (
                         <span className="text-muted-foreground text-xs">—</span>
                       ) : (
                         <Button
@@ -342,7 +330,7 @@ export function ProfileRevisionsTable({
       ) : null}
 
       <Dialog
-        open={Boolean(selected && canInteractSelected)}
+        open={Boolean(selected && canViewSelected)}
         onOpenChange={(open) => !open && setSelected(null)}
       >
         <DialogContent className="max-h-[90dvh] max-w-4xl overflow-y-auto">

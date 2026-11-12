@@ -152,8 +152,7 @@ export function DisputesTable({
                     DisputeStatusEnum.enum.REVIEW_REQUESTED ||
                     dispute.status === DisputeStatusEnum.enum.DECISION_MADE));
 
-              const hasAnyAction =
-                canViewDetail || canDecision || canFinalDecision;
+              const hasAnyAction = canViewDetail;
 
               return (
                 <TableRow key={dispute.id} className="hover:bg-muted/40">
