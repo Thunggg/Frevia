@@ -32,7 +32,7 @@ export default async function FreelancerJobDetailPage({
   const role = user ? "FREELANCER" : "GUEST";
   const relatedSearch = job.skills[0]?.skill.name;
 
-  const [bookmarkStatus, relatedResult] = await Promise.all([
+  const [bookmarkStatus, relatedResult, existingProposal] = await Promise.all([
     role === "FREELANCER"
       ? jobServerRequest.getBookmarkStatus(slug)
       : Promise.resolve(null),
@@ -45,16 +45,14 @@ export default async function FreelancerJobDetailPage({
           order: "desc",
         })
       : Promise.resolve(null),
+    role === "FREELANCER"
+      ? proposalServerRequest.getMyProposalForJob(job.id)
+      : Promise.resolve(null),
   ]);
 
   const relatedJobs: JobType[] = (relatedResult?.data ?? [])
     .filter((item) => item.slug !== job.slug)
     .slice(0, 3);
-
-  const existingProposal: ProposalType | null =
-    role === "FREELANCER"
-      ? await proposalServerRequest.getMyProposalForJob(job.id)
-      : null;
 
   return (
     <JobDetailContent
