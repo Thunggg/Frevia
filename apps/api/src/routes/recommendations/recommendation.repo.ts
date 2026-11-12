@@ -173,19 +173,70 @@ export class RecommendationRepository {
   /** Job OPEN còn nhận ứng viên, loại job của chính người yêu cầu. */
   async listOpenJobs(options: {
     excludeClientId?: number;
+    skillNames?: string[];
     limit: number;
   }): Promise<JobDocument[]> {
+    const whereBase: Prisma.JobWhereInput = {
+      status: 'OPEN',
+      deletedAt: null,
+      client: { isBanned: false, deletedAt: null },
+      positionsFilled: { lt: this.prisma.job.fields.positionsRequired },
+      OR: [{ expiryDate: null }, { expiryDate: { gt: new Date() } }],
+      ...(options.excludeClientId !== undefined && {
+        clientId: { not: options.excludeClientId },
+      }),
+    };
+
+    if (options.skillNames && options.skillNames.length > 0) {
+      const matchingJobs = await this.prisma.job.findMany({
+        where: {
+          ...whereBase,
+          skills: {
+            some: {
+              skill: {
+                name: { in: options.skillNames, mode: 'insensitive' },
+              },
+            },
+          },
+        },
+        select: jobSelect,
+      });
+
+      const skillSet = new Set(
+        options.skillNames.map((s) => s.trim().toLowerCase()),
+      );
+      matchingJobs.sort((a, b) => {
+        const matchA = a.skills.filter((s) =>
+          skillSet.has(s.skill.name.toLowerCase()),
+        ).length;
+        const matchB = b.skills.filter((s) =>
+          skillSet.has(s.skill.name.toLowerCase()),
+        ).length;
+        if (matchB !== matchA) return matchB - matchA;
+        return b.createdAt.getTime() - a.createdAt.getTime();
+      });
+
+      const selected = matchingJobs.slice(0, options.limit);
+      if (selected.length < options.limit) {
+        const remainingLimit = options.limit - selected.length;
+        const excludeIds = selected.map((j) => j.id);
+        const supplementJobs = await this.prisma.job.findMany({
+          where: {
+            ...whereBase,
+            id: { notIn: excludeIds },
+          },
+          orderBy: { createdAt: Prisma.SortOrder.desc },
+          take: remainingLimit,
+          select: jobSelect,
+        });
+        selected.push(...supplementJobs);
+      }
+
+      return selected.map(mapJob);
+    }
+
     const jobs = await this.prisma.job.findMany({
-      where: {
-        status: 'OPEN',
-        deletedAt: null,
-        client: { isBanned: false, deletedAt: null },
-        positionsFilled: { lt: this.prisma.job.fields.positionsRequired },
-        OR: [{ expiryDate: null }, { expiryDate: { gt: new Date() } }],
-        ...(options.excludeClientId !== undefined && {
-          clientId: { not: options.excludeClientId },
-        }),
-      },
+      where: whereBase,
       orderBy: { createdAt: Prisma.SortOrder.desc },
       take: options.limit,
       select: jobSelect,
@@ -197,18 +248,69 @@ export class RecommendationRepository {
   /** Hồ sơ freelancer có kỹ năng, loại chính người yêu cầu. */
   async listFreelancers(options: {
     excludeUserId?: number;
+    skillNames?: string[];
     limit: number;
   }): Promise<FreelancerDocument[]> {
-    const profiles = await this.prisma.freelancerProfile.findMany({
-      where: {
-        skills: { some: {} },
-        profile: {
-          ...(options.excludeUserId !== undefined && {
-            userId: { not: options.excludeUserId },
-          }),
-          user: { isBanned: false, deletedAt: null },
-        },
+    const whereBase: Prisma.FreelancerProfileWhereInput = {
+      skills: { some: {} },
+      profile: {
+        ...(options.excludeUserId !== undefined && {
+          userId: { not: options.excludeUserId },
+        }),
+        user: { isBanned: false, deletedAt: null },
       },
+    };
+
+    if (options.skillNames && options.skillNames.length > 0) {
+      const matchingProfiles = await this.prisma.freelancerProfile.findMany({
+        where: {
+          ...whereBase,
+          skills: {
+            some: {
+              skill: {
+                name: { in: options.skillNames, mode: 'insensitive' },
+              },
+            },
+          },
+        },
+        select: freelancerSelect,
+      });
+
+      const skillSet = new Set(
+        options.skillNames.map((s) => s.trim().toLowerCase()),
+      );
+      matchingProfiles.sort((a, b) => {
+        const matchA = a.skills.filter((s) =>
+          skillSet.has(s.skill.name.toLowerCase()),
+        ).length;
+        const matchB = b.skills.filter((s) =>
+          skillSet.has(s.skill.name.toLowerCase()),
+        ).length;
+        if (matchB !== matchA) return matchB - matchA;
+        return b.id - a.id;
+      });
+
+      const selected = matchingProfiles.slice(0, options.limit);
+      if (selected.length < options.limit) {
+        const remainingLimit = options.limit - selected.length;
+        const excludeIds = selected.map((p) => p.id);
+        const supplement = await this.prisma.freelancerProfile.findMany({
+          where: {
+            ...whereBase,
+            id: { notIn: excludeIds },
+          },
+          orderBy: { updatedAt: Prisma.SortOrder.desc },
+          take: remainingLimit,
+          select: freelancerSelect,
+        });
+        selected.push(...supplement);
+      }
+
+      return selected.map(mapFreelancer);
+    }
+
+    const profiles = await this.prisma.freelancerProfile.findMany({
+      where: whereBase,
       orderBy: { updatedAt: Prisma.SortOrder.desc },
       take: options.limit,
       select: freelancerSelect,
