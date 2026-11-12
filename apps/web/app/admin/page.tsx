@@ -57,67 +57,44 @@ export default async function AdminDashboardPage() {
     const userMods = user?.permissionModules ?? [];
 
     if (
-      hasMenuPermission(userPerms, userMods, [
-        "/api/admin/disputes",
-        "/api/disputes",
-        "DISPUTES",
-      ])
+      hasMenuPermission(userPerms, userMods, ["/api/admin/disputes"])
     ) {
       redirect("/admin/disputes");
     }
     if (
       hasMenuPermission(userPerms, userMods, [
         "/api/admin/identity-verifications",
-        "IDENTITY-VERIFICATIONS",
       ])
     ) {
       redirect("/admin/identity-verifications");
     }
     if (
-      hasMenuPermission(userPerms, userMods, [
-        "/api/admin/profile-revisions",
-        "PROFILE-REVISIONS",
-      ])
+      hasMenuPermission(userPerms, userMods, ["/api/admin/profile-revisions"])
     ) {
       redirect("/admin/profile-revisions");
     }
     if (
-      hasMenuPermission(userPerms, userMods, [
-        "/api/admin/skills",
-        "SKILLS",
-      ])
+      hasMenuPermission(userPerms, userMods, ["/api/admin/skills"])
     ) {
       redirect("/admin/skills");
     }
     if (
-      hasMenuPermission(userPerms, userMods, [
-        "/api/admin/job-categories",
-        "JOB-CATEGORIES",
-      ])
+      hasMenuPermission(userPerms, userMods, ["/api/admin/job-categories"])
     ) {
       redirect("/admin/job-categories");
     }
     if (
-      hasMenuPermission(userPerms, userMods, [
-        "/api/admin/banners",
-        "BANNERS",
-      ])
+      hasMenuPermission(userPerms, userMods, ["/api/admin/banners"])
     ) {
       redirect("/admin/banners");
     }
     if (
-      hasMenuPermission(userPerms, userMods, [
-        "/api/users",
-        "USERS",
-      ])
+      hasMenuPermission(userPerms, userMods, ["/api/users", "USERS"])
     ) {
       redirect("/admin/users");
     }
     if (
-      hasMenuPermission(userPerms, userMods, [
-        "/api/roles",
-        "ROLES",
-      ])
+      hasMenuPermission(userPerms, userMods, ["/api/roles", "ROLES"])
     ) {
       redirect("/admin/roles");
     }

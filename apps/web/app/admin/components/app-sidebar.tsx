@@ -31,31 +31,31 @@ const ALL_NAV_ITEMS: NavItem[] = [
     titleKey: "dashboard",
     href: "/admin",
     icon: LayoutDashboard,
-    requiredPermissions: ["/api/forums/admin/stats", "FORUMS-ADMIN", "FORUMS"],
+    requiredPermissions: ["/api/forums/admin/stats", "FORUMS-ADMIN"],
   },
   {
     titleKey: "disputes",
     href: "/admin/disputes",
     icon: Scale,
-    requiredPermissions: ["/api/admin/disputes", "/api/disputes", "DISPUTES"],
+    requiredPermissions: ["/api/admin/disputes"],
   },
   {
     titleKey: "skills",
     href: "/admin/skills",
     icon: Tags,
-    requiredPermissions: ["/api/admin/skills", "SKILLS"],
+    requiredPermissions: ["/api/admin/skills"],
   },
   {
     titleKey: "jobCategories",
     href: "/admin/job-categories",
     icon: FolderTree,
-    requiredPermissions: ["/api/admin/job-categories", "JOB-CATEGORIES"],
+    requiredPermissions: ["/api/admin/job-categories"],
   },
   {
     titleKey: "banners",
     href: "/admin/banners",
     icon: Megaphone,
-    requiredPermissions: ["/api/admin/banners", "BANNERS"],
+    requiredPermissions: ["/api/admin/banners"],
   },
   {
     titleKey: "users",
@@ -69,18 +69,12 @@ const ALL_NAV_ITEMS: NavItem[] = [
       {
         titleKey: "identityVerification",
         href: "/admin/identity-verifications",
-        requiredPermissions: [
-          "/api/admin/identity-verifications",
-          "IDENTITY-VERIFICATIONS",
-        ],
+        requiredPermissions: ["/api/admin/identity-verifications"],
       },
       {
         titleKey: "profileReviews",
         href: "/admin/profile-revisions",
-        requiredPermissions: [
-          "/api/admin/profile-revisions",
-          "PROFILE-REVISIONS",
-        ],
+        requiredPermissions: ["/api/admin/profile-revisions"],
       },
     ],
   },
@@ -116,39 +110,32 @@ const ALL_NAV_ITEMS: NavItem[] = [
       {
         titleKey: "categories",
         href: "/admin/categories",
-        requiredPermissions: [
-          "/api/forums/admin/categories",
-          "/api/forums/categories",
-          "CATEGORIES",
-        ],
+        requiredPermissions: ["/api/forums/admin/categories"],
       },
       {
         titleKey: "comments",
         href: "/admin/comments",
-        requiredPermissions: ["/api/forums/admin/comments", "COMMENTS"],
+        requiredPermissions: ["/api/forums/admin/comments"],
       },
       {
         titleKey: "moderation",
         href: "/admin/moderation",
-        requiredPermissions: [
-          "/api/forums/admin/pending-posts",
-          "MODERATION",
-        ],
+        requiredPermissions: ["/api/forums/admin/pending-posts"],
       },
       {
         titleKey: "reports",
         href: "/admin/reports",
-        requiredPermissions: ["/api/forums/reports", "REPORTS"],
+        requiredPermissions: ["GET /api/forums/reports"],
       },
       {
         titleKey: "posts",
         href: "/admin/posts",
-        requiredPermissions: ["/api/forums/admin/posts", "POSTS"],
+        requiredPermissions: ["/api/forums/admin/posts"],
       },
       {
         titleKey: "trash",
         href: "/admin/trash",
-        requiredPermissions: ["/api/forums/admin/trash/posts", "TRASH"],
+        requiredPermissions: ["/api/forums/admin/trash/posts"],
       },
     ],
   },

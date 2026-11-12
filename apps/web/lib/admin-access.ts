@@ -8,20 +8,6 @@ export const ADMIN_MODULES = new Set([
   "USERS",
   "ROLES",
   "PERMISSIONS",
-  "CATEGORIES",
-  "COMMENTS",
-  "MODERATION",
-  "REPORTS",
-  "POSTS",
-  "TRASH",
-  "DISPUTES",
-  "PROFILE-REVISIONS",
-  "SKILLS",
-  "JOB-CATEGORIES",
-  "JOB_CATEGORIES",
-  "BANNERS",
-  "IDENTITY-VERIFICATIONS",
-  "IDENTITY_VERIFICATIONS",
   "FORUMS-ADMIN",
   "FORUMS_ADMIN",
 ]);
@@ -44,7 +30,6 @@ export function isAdministrativePermission(permission: string): boolean {
     cleanPath.startsWith("/api/users") ||
     cleanPath.startsWith("/api/roles") ||
     cleanPath.startsWith("/api/permissions") ||
-    cleanPath.startsWith("/api/disputes") ||
     cleanPath.includes("/reindex") ||
     cleanPath.includes("/outbox")
   );
@@ -120,14 +105,22 @@ export function hasMenuPermission(
   const normalizedModules = new Set(userModules.map((m) => m.toUpperCase()));
 
   return requiredPermissions.some((req) => {
+    // 1. Nếu req có chỉ định method (vd: "GET /api/forums/reports")
+    const methodMatch = req.match(/^(GET|POST|PUT|PATCH|DELETE)\s+(.+)$/i);
+    if (methodMatch && methodMatch[1] && methodMatch[2]) {
+      const method = methodMatch[1].toUpperCase();
+      const path = methodMatch[2].trim();
+      return hasActionPermission(userPermissions, method, path);
+    }
+
     const reqUpper = req.toUpperCase();
 
-    // 1. Khớp theo Module name (vd: 'USERS', 'DISPUTES', 'ROLES')
+    // 2. Khớp theo Module name (vd: 'USERS', 'ROLES')
     if (normalizedModules.has(reqUpper)) {
       return true;
     }
 
-    // 2. Khớp theo Path / Route pattern
+    // 3. Khớp theo Path / Route pattern
     return userPermissions.some((userPerm) => {
       if (userPerm === "*") return true;
 
@@ -135,12 +128,8 @@ export function hasMenuPermission(
         .replace(/^(GET|POST|PUT|PATCH|DELETE)\s+/i, "")
         .trim();
 
-      // Khớp chính xác hoặc khớp tiền tố route
-      if (
-        userPath === req ||
-        userPath.startsWith(`${req}/`) ||
-        req.startsWith(`${userPath}/`)
-      ) {
+      // Khớp chính xác hoặc khớp tiền tố route con
+      if (userPath === req || userPath.startsWith(`${req}/`)) {
         return true;
       }
 
@@ -150,7 +139,8 @@ export function hasMenuPermission(
       if (
         baseReq &&
         basePath &&
-        (baseReq === basePath || baseReq.startsWith(basePath))
+        baseReq.length > 5 &&
+        (baseReq === basePath || basePath.startsWith(baseReq))
       ) {
         return true;
       }
