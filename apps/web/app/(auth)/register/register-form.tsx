@@ -382,12 +382,36 @@ export function RegisterForm() {
               }
               className="mt-0.5"
             />
-            <FieldLabel
-              htmlFor="terms-checkbox"
-              className="cursor-pointer text-[13px] font-normal leading-snug text-muted-foreground/70"
+            <div
+              className="cursor-pointer select-none text-[13px] font-normal leading-snug text-muted-foreground/80 dark:text-muted-foreground/75"
+              onClick={(e) => {
+                if ((e.target as HTMLElement).closest("a")) return;
+                setIsTermsAccepted((prev) => !prev);
+              }}
             >
-              {t("acceptTerms")}
-            </FieldLabel>
+              {t.rich("acceptTerms", {
+                userAgreementLink: (chunks) => (
+                  <Link
+                    href="/user-agreement"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="font-medium text-[#4fae2e] underline underline-offset-2 hover:text-[#3f9225] dark:text-[#4fae2e] dark:hover:text-[#5bc03a]"
+                  >
+                    {chunks}
+                  </Link>
+                ),
+                privacyPolicyLink: (chunks) => (
+                  <Link
+                    href="/privacy-policy"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="font-medium text-[#4fae2e] underline underline-offset-2 hover:text-[#3f9225] dark:text-[#4fae2e] dark:hover:text-[#5bc03a]"
+                  >
+                    {chunks}
+                  </Link>
+                ),
+              })}
+            </div>
           </Field>
         </FieldGroup>
       </form>
