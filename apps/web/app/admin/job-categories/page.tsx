@@ -1,6 +1,8 @@
 import { Suspense } from "react";
 import { getTranslations } from "next-intl/server";
 import adminServerRequest from "@/apiRequests/admin.server";
+import authServerRequest from "@/apiRequests/auth.server";
+import { hasActionPermission } from "@/lib/admin-access";
 import { Skeleton } from "@repo/ui/components/shadcn/skeleton";
 import { FolderTree } from "lucide-react";
 import { CreateJobCategoryDialog } from "./components/create-job-category-dialog";
@@ -60,6 +62,13 @@ export default async function AdminJobCategoriesPage({
     sortOrder,
   });
 
+  const currentUser = await authServerRequest.getMe();
+  const canCreate = hasActionPermission(
+    currentUser,
+    "POST",
+    "/api/admin/job-categories",
+  );
+
   const jobCategories = data?.jobCategories ?? [];
   const pagination = data?.pagination ?? {
     page: 1,
@@ -82,7 +91,7 @@ export default async function AdminJobCategoriesPage({
             {t("pageSubtitle", { total: pagination.total })}
           </p>
         </div>
-        <CreateJobCategoryDialog />
+        {canCreate && <CreateJobCategoryDialog />}
       </div>
 
       <Suspense fallback={<Skeleton className="h-10 w-full" />}>

@@ -29,6 +29,7 @@ import { DeleteCategoryDialog } from "./delete-category-dialog";
 import { RestoreCategoryDialog } from "./restore-category-dialog";
 import type { ForumAdminCategoryType } from "@shared/types";
 import { formatDate } from "@/lib/format";
+import { useActionPermission } from "@/hooks/use-action-permission";
 
 interface CategoriesTableProps {
   categories: ForumAdminCategoryType[];
@@ -49,6 +50,7 @@ export function CategoriesTable({
   const locale = useLocale();
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { can } = useActionPermission();
   const [editingCategory, setEditingCategory] =
     useState<ForumAdminCategoryType | null>(null);
   const [deletingCategory, setDeletingCategory] =
@@ -133,94 +135,107 @@ export function CategoriesTable({
                 </TableCell>
               </TableRow>
             ) : (
-              categories.map((category) => (
-                <TableRow key={category.id} className="group">
-                  <TableCell>
-                    <Badge variant="outline" className="font-mono">
-                      {category.id}
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="font-medium">
-                    {category.name}
-                    {category.description && (
-                      <p className="mt-0.5 max-w-xs truncate text-xs text-muted-foreground">
-                        {category.description}
-                      </p>
-                    )}
-                  </TableCell>
-                  <TableCell>
-                    <code className="rounded bg-muted px-1.5 py-0.5 text-xs text-muted-foreground">
-                      {category.slug}
-                    </code>
-                  </TableCell>
-                  <TableCell>
-                    {category.deletedAt !== null ? (
-                      <Badge variant="destructive">{t("statusDeleted")}</Badge>
-                    ) : (
+              categories.map((category) => {
+                const canView = can("GET", `/api/forums/admin/categories/${category.id}`);
+                const canUpdate = can("PATCH", `/api/forums/admin/categories/${category.id}`);
+                const canDelete = can("DELETE", `/api/forums/admin/categories/${category.id}`);
+                const canRestore = can("PATCH", `/api/forums/admin/categories/${category.id}/restore`);
+
+                return (
+                  <TableRow key={category.id} className="group">
+                    <TableCell>
+                      <Badge variant="outline" className="font-mono">
+                        {category.id}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="font-medium">
+                      {category.name}
+                      {category.description && (
+                        <p className="mt-0.5 max-w-xs truncate text-xs text-muted-foreground">
+                          {category.description}
+                        </p>
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      <code className="rounded bg-muted px-1.5 py-0.5 text-xs text-muted-foreground">
+                        {category.slug}
+                      </code>
+                    </TableCell>
+                    <TableCell>
+                      {category.deletedAt !== null ? (
+                        <Badge variant="destructive">{t("statusDeleted")}</Badge>
+                      ) : (
+                        <Badge
+                          variant="secondary"
+                          className="bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/50 dark:text-emerald-300 border"
+                        >
+                          {tCommon("active")}
+                        </Badge>
+                      )}
+                    </TableCell>
+                    <TableCell>
                       <Badge
                         variant="secondary"
-                        className="bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/50 dark:text-emerald-300 border"
+                        className="border border-[#4fae2e]/20 bg-[#eaf8df] text-xs text-[#4fae2e] dark:bg-[#4fae2e]/15"
                       >
-                        {tCommon("active")}
+                        <FileText className="mr-1 h-3 w-3" />
+                        {category.postCount}
                       </Badge>
-                    )}
-                  </TableCell>
-                  <TableCell>
-                    <Badge
-                      variant="secondary"
-                      className="border border-[#4fae2e]/20 bg-[#eaf8df] text-xs text-[#4fae2e] dark:bg-[#4fae2e]/15"
-                    >
-                      <FileText className="mr-1 h-3 w-3" />
-                      {category.postCount}
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="whitespace-nowrap text-sm text-muted-foreground">
-                    {formatDate(category.createdAt, locale)}
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center justify-end gap-1">
-                      {category.deletedAt !== null ? (
-                        <RestoreCategoryDialog category={category} />
-                      ) : (
-                        <>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-8 w-8"
-                            title={t("viewDetailsAction")}
-                            aria-label={t("viewDetailsAction")}
-                            asChild
-                          >
-                            <Link href={`/admin/categories/${category.id}`}>
-                              <Eye className="h-4 w-4" />
-                            </Link>
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-8 w-8 text-muted-foreground hover:text-foreground"
-                            title={t("editAction")}
-                            aria-label={t("editAction")}
-                            onClick={() => setEditingCategory(category)}
-                          >
-                            <Pencil className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-8 w-8 text-muted-foreground hover:text-destructive"
-                            title={t("deleteActionLabel")}
-                            aria-label={t("deleteActionLabel")}
-                            onClick={() => setDeletingCategory(category)}
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </>
-                      )}
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))
+                    </TableCell>
+                    <TableCell className="whitespace-nowrap text-sm text-muted-foreground">
+                      {formatDate(category.createdAt, locale)}
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center justify-end gap-1">
+                        {category.deletedAt !== null ? (
+                          canRestore && <RestoreCategoryDialog category={category} />
+                        ) : (
+                          <>
+                            {canView && (
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-8 w-8"
+                                title={t("viewDetailsAction")}
+                                aria-label={t("viewDetailsAction")}
+                                asChild
+                              >
+                                <Link href={`/admin/categories/${category.id}`}>
+                                  <Eye className="h-4 w-4" />
+                                </Link>
+                              </Button>
+                            )}
+                            {canUpdate && (
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-8 w-8 text-muted-foreground hover:text-foreground"
+                                title={t("editAction")}
+                                aria-label={t("editAction")}
+                                onClick={() => setEditingCategory(category)}
+                              >
+                                <Pencil className="h-4 w-4" />
+                              </Button>
+                            )}
+                            {canDelete && (
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-8 w-8 text-muted-foreground hover:text-destructive"
+                                title={t("deleteActionLabel")}
+                                aria-label={t("deleteActionLabel")}
+                                onClick={() => setDeletingCategory(category)}
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            )}
+                          </>
+                        )}
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                );
+              })
             )}
           </TableBody>
         </Table>
