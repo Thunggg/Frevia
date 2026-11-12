@@ -1360,6 +1360,7 @@
   },
   "milestoneStatus": {
     "DISPUTED": "Disputed",
+    "LATE": "Late",
     "COMPLETED": "Completed",
     "SUBMITTED": "Ready for Review",
     "IN_PROGRESS": "In Progress",
@@ -2800,6 +2801,7 @@
     "checkingProposal": "Checking proposal...",
     "cannotProposeOwn": "You cannot submit a proposal for your own job.",
     "notAccepting": "This job is no longer accepting proposals.",
+    "verifyIdentityWarning": "Your identity (CCCD) is not verified. Please verify it before applying for this job.",
     "switchToFreelancer": "Switch to a freelancer account to continue.",
     "applyNow": "Apply now",
     "viewProposal": "View proposal",
@@ -2850,6 +2852,12 @@
       "cancel": "Cancel",
       "removing": "Removing…",
       "confirm": "Remove"
+    },
+    "kycDialog": {
+      "title": "Identity Verification Required",
+      "description": "You need to complete identity verification (CCCD) before you can apply for this job.",
+      "cancel": "Later",
+      "confirm": "Verify Now"
     },
     "notFound": {
       "title": "This job is no longer available",

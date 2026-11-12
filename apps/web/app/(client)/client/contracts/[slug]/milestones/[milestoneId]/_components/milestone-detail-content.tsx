@@ -155,6 +155,43 @@ export function MilestoneDetailContent({
     }
   };
 
+  const handleRefundMilestone = async () => {
+    if (
+      !window.confirm(
+        `Request automatic refund of $${Number(milestone.amount).toLocaleString("en-US", { minimumFractionDigits: 2 })} for "${milestone.title}" to your original payment card?`,
+      )
+    ) {
+      return;
+    }
+    try {
+      await paymentApiRequest.refundMilestone(contract.id, milestone.id);
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: ["milestone-detail", contract.id, milestone.id],
+        }),
+        queryClient.invalidateQueries({
+          queryKey: ["client-contract-detail", contract.id],
+        }),
+        queryClient.invalidateQueries({
+          queryKey: ["client-contract-milestones", contract.id],
+        }),
+        queryClient.invalidateQueries({
+          queryKey: ["client-transactions"],
+        }),
+      ]);
+      toastSuccess({
+        message: `Escrow funds refunded to your card for "${milestone.title}".`,
+      });
+    } catch (error) {
+      toastError({
+        message:
+          error instanceof ApiFail
+            ? error.response.error.message
+            : "Failed to refund milestone escrow.",
+      });
+    }
+  };
+
   return (
     <div className="space-y-6 max-w-7xl mx-auto font-sans">
       {/* ── 1. Top Milestone Breadcrumb Header ── */}
@@ -201,6 +238,7 @@ export function MilestoneDetailContent({
               onSubmitWork={() => setSubmitModalOpen(true)}
               onReviewSubmission={handleReview}
               onRelease={() => void handleReleaseMilestone()}
+              onRefund={() => void handleRefundMilestone()}
             />
           )}
 

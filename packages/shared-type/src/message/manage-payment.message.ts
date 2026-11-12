@@ -17,6 +17,7 @@ export const ManagePaymentMessage = {
   MILESTONE_NOT_ELIGIBLE_FOR_FUNDING: 'Error.MilestoneNotEligibleForFunding',
   MILESTONE_NOT_FUNDED: 'Error.MilestoneNotFunded',
   MILESTONE_ALREADY_RELEASED: 'Error.MilestoneAlreadyReleased',
+  MILESTONE_NOT_ELIGIBLE_FOR_REFUND: 'Error.MilestoneNotEligibleForRefund',
 
   DISPUTE_FEE_ALREADY_PAID: 'Error.DisputeFeeAlreadyPaid',
   DISPUTE_NOT_FOUND: 'Error.DisputeNotFound',

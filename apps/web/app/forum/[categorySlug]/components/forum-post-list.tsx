@@ -172,7 +172,7 @@ export function ForumPostList({
               placeholder={t("searchPlaceholder")}
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
-              className="h-11 rounded-lg border-border bg-transparent pl-9 pr-9 text-sm focus:border-[#4fae2e]/50 focus:ring-1 focus:ring-[#4fae2e]/20"
+              className="h-11 rounded-lg border-border bg-transparent pl-9 pr-9 text-sm focus:border-[#0069D3]/50 focus:ring-1 focus:ring-[#0069D3]/20"
             />
             {searchInput ? (
               <button
@@ -194,8 +194,8 @@ export function ForumPostList({
               size="sm"
               className={`h-11 w-28 gap-1.5 text-sm ${
                 isMyPosts
-                  ? "bg-[#4fae2e] text-white hover:bg-[#459928] dark:hover:bg-[#4fae2e]"
-                  : "border-border text-foreground/60 hover:border-[#4fae2e]/40 hover:text-foreground"
+                  ? "bg-[#0069D3] text-white hover:bg-blue-600"
+                  : "border-border text-foreground/60 hover:border-[#0069D3]/40 hover:text-foreground"
               }`}
               onClick={toggleMyPosts}
               aria-pressed={isMyPosts}
@@ -234,7 +234,7 @@ export function ForumPostList({
             <button
               type="button"
               onClick={clearSearch}
-              className="inline-flex items-center gap-1.5 rounded-full border border-[#4fae2e]/20 bg-[#4fae2e]/5 px-2.5 py-0.5 text-[12px] font-medium text-[#4fae2e] transition-colors hover:border-[#4fae2e]/40"
+              className="inline-flex items-center gap-1.5 rounded-full border border-[#0069D3]/20 bg-[#0069D3]/5 px-2.5 py-0.5 text-[12px] font-medium text-[#0069D3] transition-colors hover:border-[#0069D3]/40"
             >
               &quot;{currentSearch}&quot;
               <X className="size-3" />
@@ -244,7 +244,7 @@ export function ForumPostList({
             <button
               type="button"
               onClick={() => navigateToPage(1, searchInput, undefined, false)}
-              className="inline-flex items-center gap-1.5 rounded-full border border-[#4fae2e]/20 bg-[#4fae2e]/5 px-2.5 py-0.5 text-[12px] font-medium text-[#4fae2e] transition-colors hover:border-[#4fae2e]/40"
+              className="inline-flex items-center gap-1.5 rounded-full border border-[#0069D3]/20 bg-[#0069D3]/5 px-2.5 py-0.5 text-[12px] font-medium text-[#0069D3] transition-colors hover:border-[#0069D3]/40"
             >
               {t("myPosts")}
               <X className="size-3" />
@@ -253,7 +253,7 @@ export function ForumPostList({
           <button
             type="button"
             onClick={clearAllFilters}
-            className="text-[12px] font-medium text-muted-foreground/50 transition-colors hover:text-[#4fae2e]"
+            className="text-[12px] font-medium text-muted-foreground/50 transition-colors hover:text-[#0069D3]"
           >
             {t("clearAll")}
           </button>
@@ -278,18 +278,18 @@ export function ForumPostList({
                   <li key={post.id}>
                     <Link
                       href={`/forum/${buildSlugId(categorySlug, post.categoryId ?? categoryId)}/${buildSlugId(post.slug, post.id)}`}
-                      className="group flex items-start gap-3 rounded-lg px-1 py-2 transition-colors hover:bg-[#eaf8df]/30 dark:hover:bg-white/[0.02]"
+                      className="group flex items-start gap-3 rounded-lg px-1 py-2 transition-colors hover:bg-[#0069D3]/5 dark:hover:bg-white/[0.02]"
                     >
-                      <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-[#4fae2e]/10 text-[11px] font-semibold text-[#4fae2e]">
+                      <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-[#0069D3]/10 text-[11px] font-semibold text-[#0069D3]">
                         {index + 1}
                       </span>
                       <div className="min-w-0 flex-1 space-y-1.5">
-                        <p className="line-clamp-2 text-sm font-medium leading-snug text-foreground/80 transition-colors group-hover:text-[#4fae2e]">
+                        <p className="line-clamp-2 text-sm font-medium leading-snug text-foreground/80 transition-colors group-hover:text-[#0069D3]">
                           {post.title}
                         </p>
                         <div className="flex flex-wrap gap-x-3 gap-y-1 text-xs text-muted-foreground/50">
                           <span className="inline-flex items-center gap-1">
-                            <Heart className="size-3 text-[#4fae2e]/60" />
+                            <Heart className="size-3 text-[#0069D3]/60" />
                             {post.likeCount}
                           </span>
                           <span className="inline-flex items-center gap-1">
@@ -331,7 +331,7 @@ export function ForumPostList({
           >
             {posts.length === 0 ? (
               <div className="rounded-xl border border-dashed border-border/60 px-6 py-16 text-center">
-                <div className="mx-auto mb-4 flex size-14 items-center justify-center rounded-full bg-[#4fae2e]/8 text-[#4fae2e]">
+                <div className="mx-auto mb-4 flex size-14 items-center justify-center rounded-full bg-[#0069D3]/10 text-[#0069D3]">
                   <Inbox className="size-7" strokeWidth={1.5} />
                 </div>
                 <p className="text-lg font-medium text-foreground">
@@ -351,7 +351,7 @@ export function ForumPostList({
                 {hasActiveFilters ? (
                   <Button
                     size="sm"
-                    className="mt-6 h-9 bg-[#4fae2e] text-sm text-white hover:bg-[#459928] dark:hover:bg-[#4fae2e]"
+                    className="mt-6 h-9 bg-[#0069D3] text-sm text-white hover:bg-blue-600 dark:hover:bg-blue-500"
                     onClick={clearAllFilters}
                   >
                     {t("clearFilters")}
@@ -364,9 +364,9 @@ export function ForumPostList({
                   <Link
                     key={post.id}
                     href={`/forum/${buildSlugId(categorySlug, categoryId)}/${buildSlugId(post.slug, post.id)}`}
-                    className="group block space-y-3 px-3 py-6 transition-colors hover:bg-[#eaf8df]/30 sm:px-5 sm:py-7 dark:hover:bg-white/[0.02]"
+                    className="group block space-y-3 px-3 py-6 transition-colors hover:bg-[#0069D3]/5 sm:px-5 sm:py-7 dark:hover:bg-white/[0.02]"
                   >
-                    <h3 className="text-base font-semibold tracking-tight text-foreground transition-colors group-hover:text-[#4fae2e]">
+                    <h3 className="text-base font-semibold tracking-tight text-foreground transition-colors group-hover:text-[#0069D3]">
                       {post.title}
                     </h3>
                     <p className="line-clamp-2 text-sm leading-relaxed text-muted-foreground/60">
@@ -396,7 +396,7 @@ export function ForumPostList({
                         </span>
                       </span>
                       <span className="inline-flex items-center gap-1">
-                        <Calendar className="size-3 text-[#4fae2e]/60" />
+                        <Calendar className="size-3 text-[#0069D3]/60" />
                         {format.dateTime(new Date(post.createdAt), {
                           month: "short",
                           day: "numeric",
@@ -404,7 +404,7 @@ export function ForumPostList({
                         })}
                       </span>
                       <span className="inline-flex items-center gap-1">
-                        <Heart className="size-3 text-[#4fae2e]/60" />
+                        <Heart className="size-3 text-[#0069D3]/60" />
                         {post.likeCount}
                       </span>
                       <span className="inline-flex items-center gap-1">

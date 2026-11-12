@@ -1,5 +1,6 @@
 import "server-only";
 
+import { cache } from "react";
 import { cookies } from "next/headers";
 import {
   accessTokenNeedsRefresh,
@@ -12,13 +13,8 @@ import type {
   IdentityVerificationStatusType,
 } from "@shared/types";
 
-const accountProfileServerRequest = {
-  /**
-   * GET /api/identity-verifications/status (server-side).
-   * Dùng trong layout dashboard để chặn freelancer chưa xác minh danh tính.
-   * Throw khi backend lỗi/thất bại (fail-open ở caller); trả null khi hết session.
-   */
-  async getIdentityStatus(): Promise<IdentityVerificationStatusType | null> {
+const getIdentityStatusInternal = cache(
+  async (): Promise<IdentityVerificationStatusType | null> => {
     const cookieStore = await cookies();
     let accessToken = cookieStore.get("accessToken")?.value;
     const refreshToken = cookieStore.get("refreshToken")?.value;
@@ -67,6 +63,15 @@ const accountProfileServerRequest = {
 
     return data.data;
   },
+);
+
+const accountProfileServerRequest = {
+  /**
+   * GET /api/identity-verifications/status (server-side).
+   * Dùng trong layout dashboard để chặn freelancer chưa xác minh danh tính.
+   * Throw khi backend lỗi/thất bại (fail-open ở caller); trả null khi hết session.
+   */
+  getIdentityStatus: getIdentityStatusInternal,
 };
 
 export default accountProfileServerRequest;

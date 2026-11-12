@@ -5,6 +5,7 @@ export const MilestoneStatusEnum = z.enum([
     'IN_PROGRESS',
     'SUBMITTED',
     'CHANGES_REQUESTED',
+    'LATE',
     'COMPLETED',
     'DISPUTED',
 ]);
