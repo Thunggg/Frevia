@@ -496,7 +496,9 @@
     "jobsColSlug": "Slug",
     "jobsColStatus": "Status",
     "jobsColCreated": "Created",
-    "jobStatusUnknown": "Unknown"
+    "jobStatusUnknown": "Unknown",
+    "accessDenied": "You do not have permission to view job categories.",
+    "detailAccessDenied": "You do not have permission to view job category details."
   },
   "adminProfileRevisions": {
     "metaTitle": "Profile Review Requests | Admin Dashboard | Frevia",

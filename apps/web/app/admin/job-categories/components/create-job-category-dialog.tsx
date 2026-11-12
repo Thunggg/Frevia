@@ -28,16 +28,22 @@ import { Loader2, Plus } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { useActionPermission } from "@/hooks/use-action-permission";
 
 export function CreateJobCategoryDialog() {
   const t = useTranslations("adminJobCategories");
   const tCommon = useTranslations("adminCommon");
   const router = useRouter();
+  const { can } = useActionPermission();
   const [open, setOpen] = useState(false);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [status, setStatus] = useState<JobCategoryStatusType>("ACTIVE");
   const [loading, setLoading] = useState(false);
+
+  if (!can("POST", "/api/admin/job-categories")) {
+    return null;
+  }
 
   const handleOpenChange = (nextOpen: boolean) => {
     if (!nextOpen) {

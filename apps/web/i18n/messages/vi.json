@@ -496,7 +496,9 @@
     "jobsColSlug": "Slug",
     "jobsColStatus": "Trạng thái",
     "jobsColCreated": "Ngày tạo",
-    "jobStatusUnknown": "Không xác định"
+    "jobStatusUnknown": "Không xác định",
+    "accessDenied": "Bạn không có quyền xem danh sách danh mục công việc.",
+    "detailAccessDenied": "Bạn không có quyền xem chi tiết danh mục công việc."
   },
   "adminProfileRevisions": {
     "metaTitle": "Yêu cầu duyệt hồ sơ | Quản trị | Frevia",
