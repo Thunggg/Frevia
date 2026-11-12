@@ -20,7 +20,7 @@ export class AccountProfileRepository {
   findUserWithRoles(userId: number) {
     return this.prisma.user.findFirst({
       where: { id: userId, deletedAt: null },
-      include: { userRoles: { include: { role: true } }, profile: true },
+      include: { role: true, profile: true },
     });
   }
 
@@ -31,11 +31,7 @@ export class AccountProfileRepository {
         id: true,
         email: true,
         profile: true,
-
-        userRoles: {
-          select: { isPrimary: true, role: { select: { name: true } } },
-          orderBy: { createdAt: 'asc' },
-        },
+        role: { select: { name: true } },
       },
     });
   }
@@ -122,7 +118,7 @@ export class AccountProfileRepository {
       include: {
         clientProfile: true,
         socialLinks: { orderBy: { platform: 'asc' } },
-        user: { include: { userRoles: { include: { role: true } } } },
+        user: { include: { role: true } },
       },
     });
   }
@@ -396,11 +392,7 @@ export class AccountProfileRepository {
         id: { not: clientId },
         isBanned: false,
         deletedAt: null,
-        userRoles: {
-          some: {
-            role: { name: RoleName.FREELANCER, deletedAt: null },
-          },
-        },
+        role: { name: RoleName.FREELANCER, deletedAt: null },
         profile: {
           is: { freelancerProfile: { isNot: null } },
         },

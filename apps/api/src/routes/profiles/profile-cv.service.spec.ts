@@ -48,7 +48,7 @@ const freelancerProfile = ({
   userId,
   freelancerProfile: { id: 5, cvUrl, cvPublicId, cvFileName, cvUploadedAt },
   user: {
-    userRoles: [{ role: { name: RoleName.FREELANCER } }],
+    role: { name: RoleName.FREELANCER },
   },
 });
 

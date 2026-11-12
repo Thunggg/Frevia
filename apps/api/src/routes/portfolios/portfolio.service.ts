@@ -27,9 +27,7 @@ export class PortfolioService {
         throw FreelancerProfileNotFoundException();
       }
 
-      const isFreelancer = profile.user.userRoles.some(
-        (ur) => ur.role.name === RoleName.FREELANCER,
-      );
+      const isFreelancer = profile.user.role.name === RoleName.FREELANCER;
       if (!isFreelancer) {
         throw FreelancerProfileNotFoundException();
       }
@@ -63,9 +61,7 @@ export class PortfolioService {
         throw FreelancerProfileNotFoundException();
       }
 
-      const isFreelancer = profile.user.userRoles.some(
-        (ur) => ur.role.name === RoleName.FREELANCER,
-      );
+      const isFreelancer = profile.user.role.name === RoleName.FREELANCER;
       if (!isFreelancer) {
         throw FreelancerProfileNotFoundException();
       }

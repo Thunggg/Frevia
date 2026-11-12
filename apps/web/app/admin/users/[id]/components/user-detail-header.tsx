@@ -23,17 +23,11 @@ export function UserDetailHeader({ user }: UserDetailHeaderProps) {
   const tRole = useTranslations("roleName");
   const format = useFormatter();
 
-  const renderRoleBadge = (roleName: string, isPrimary?: boolean) => {
+  const renderRoleBadge = (roleName: string) => {
     const nameLower = roleName.toLowerCase();
     const label = KNOWN_ROLES.has(roleName.toUpperCase())
       ? tRole(roleName.toUpperCase())
       : roleName;
-    const withPrimarySuffix = `${label}${
-      isPrimary ? ` ${t("primarySuffix")}` : ""
-    }`;
-    const withPrimaryMark = `${label}${
-      isPrimary ? ` ${t("primaryMark")}` : ""
-    }`;
 
     if (nameLower === "client") {
       return (
@@ -42,7 +36,7 @@ export function UserDetailHeader({ user }: UserDetailHeaderProps) {
           variant="outline"
           className="bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950/50 dark:text-blue-300 dark:border-blue-800"
         >
-          {withPrimarySuffix}
+          {label}
         </Badge>
       );
     }
@@ -53,7 +47,7 @@ export function UserDetailHeader({ user }: UserDetailHeaderProps) {
           variant="outline"
           className="bg-purple-50 text-purple-700 border-purple-200 dark:bg-purple-950/50 dark:text-purple-300 dark:border-purple-800"
         >
-          {withPrimarySuffix}
+          {label}
         </Badge>
       );
     }
@@ -64,7 +58,7 @@ export function UserDetailHeader({ user }: UserDetailHeaderProps) {
           variant="outline"
           className="bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950/50 dark:text-amber-300 dark:border-amber-800"
         >
-          <Shield className="mr-1 h-3 w-3" /> {withPrimaryMark}
+          <Shield className="mr-1 h-3 w-3" /> {label}
         </Badge>
       );
     }
@@ -85,7 +79,7 @@ export function UserDetailHeader({ user }: UserDetailHeaderProps) {
         variant="outline"
         className="bg-zinc-100 text-zinc-800 border-zinc-200 dark:bg-zinc-800 dark:text-zinc-200 dark:border-zinc-700"
       >
-        {withPrimaryMark}
+        {label}
       </Badge>
     );
   };
@@ -161,7 +155,7 @@ export function UserDetailHeader({ user }: UserDetailHeaderProps) {
                     {t("noRolesAssigned")}
                   </span>
                 ) : (
-                  user.roles.map((r) => renderRoleBadge(r.name, r.isPrimary))
+                  user.roles.map((r) => renderRoleBadge(r.name))
                 )}
               </div>
             </div>

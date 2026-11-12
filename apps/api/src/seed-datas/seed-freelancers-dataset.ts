@@ -727,8 +727,8 @@ async function ensureSeedUser(input: {
     data: {
       email: input.email,
       password: input.passwordHash,
+      roleId: input.roleId,
       isBanned: false,
-      userRoles: { create: { roleId: input.roleId, isPrimary: true } },
     },
     select: { id: true },
   });
@@ -910,14 +910,6 @@ async function main() {
       legacyEmail,
       passwordHash,
       roleId: freelancerRole.id,
-    });
-
-    await prisma.userRole.upsert({
-      where: {
-        userId_roleId: { userId: user.id, roleId: freelancerRole.id },
-      },
-      create: { userId: user.id, roleId: freelancerRole.id, isPrimary: true },
-      update: {},
     });
 
     const profile = await prisma.profile.upsert({

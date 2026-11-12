@@ -49,44 +49,25 @@ export function UserRoleTabs({ user }: UserRoleTabsProps) {
   const tCommon = useTranslations("adminCommon");
   const locale = useLocale();
 
-  const hasClientProfile =
-    Boolean(user.clientProfile) ||
-    user.roles.some((r) => r.name.toLowerCase() === "client");
-
-  const hasFreelancerProfile =
-    Boolean(user.freelancerProfile) ||
-    user.roles.some((r) => r.name.toLowerCase() === "freelancer");
-
-  const hasExpertProfile =
-    Boolean(user.expertProfile) ||
-    user.roles.some((r) => r.name.toLowerCase() === "expert");
-
+  const userRole = (user.roles[0]?.name ?? "").toLowerCase();
+  const hasClientProfile = userRole === "client";
+  const hasFreelancerProfile = userRole === "freelancer";
+  const hasExpertProfile = userRole === "expert";
   const customRoles = user.customRoleProfiles;
   const hasAdminOrCustomRoles =
-    customRoles.length > 0 ||
-    user.roles.some(
-      (r) =>
-        r.name.toLowerCase() !== "client" &&
-        r.name.toLowerCase() !== "freelancer" &&
-        r.name.toLowerCase() !== "expert",
-    );
+    Boolean(userRole) &&
+    !hasClientProfile &&
+    !hasFreelancerProfile &&
+    !hasExpertProfile;
 
   // Determine initial tab
-  const primaryRole = user.roles.find((r) => r.isPrimary)?.name.toLowerCase();
-  let defaultTab = "overview";
-  if (primaryRole === "expert" && hasExpertProfile) {
-    defaultTab = "expert";
-  } else if (primaryRole === "freelancer" && hasFreelancerProfile) {
-    defaultTab = "freelancer";
-  } else if (primaryRole === "client" && hasClientProfile) {
-    defaultTab = "client";
-  } else if (hasFreelancerProfile) {
-    defaultTab = "freelancer";
-  } else if (hasClientProfile) {
-    defaultTab = "client";
-  } else if (hasAdminOrCustomRoles) {
-    defaultTab = "roles";
-  }
+  const defaultTab = hasClientProfile
+    ? "client"
+    : hasFreelancerProfile
+      ? "freelancer"
+      : hasExpertProfile
+        ? "expert"
+        : "roles";
 
   const [activeTab, setActiveTab] = useState(defaultTab);
 
@@ -530,14 +511,6 @@ export function UserRoleTabs({ user }: UserRoleTabsProps) {
                         <h3 className="text-base font-bold text-foreground">
                           {t("roleLabel", { name: cr.roleName })}
                         </h3>
-                        {cr.isPrimary && (
-                          <Badge
-                            variant="outline"
-                            className="text-[10px] text-amber-700 border-amber-300"
-                          >
-                            {t("primaryRole")}
-                          </Badge>
-                        )}
                       </div>
                       <p className="text-xs text-muted-foreground">
                         {cr.description || t("noRoleDescription")}

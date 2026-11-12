@@ -12,7 +12,7 @@ const freelancerProfile = (userId = 10) => ({
   id: 5,
   userId,
   user: {
-    userRoles: [{ role: { name: RoleName.FREELANCER } }],
+    role: { name: RoleName.FREELANCER },
   },
 });
 

@@ -168,26 +168,6 @@ export const GetMeResSchema = z.object({
   permissionModules: z.array(z.string()).default([]),
 });
 
-export const SwitchRoleBodySchema = z
-  .object({
-    role: z.string().min(1),
-  })
-  .strict();
-
-export const SwitchRoleResponseSchema = z.object({
-  accessToken: z.string(),
-});
-
-export const JoinRoleBodySchema = z
-  .object({
-    role: z.enum([RoleName.FREELANCER, RoleName.CLIENT]),
-  })
-  .strict();
-
-export const JoinRoleResponseSchema = z.object({
-  accessToken: z.string(),
-});
-
 export type UserType = z.infer<typeof UserSchema>;
 export type EmailVerificationType = z.infer<typeof EmailVerificationSchema>;
 
@@ -210,10 +190,6 @@ export type GetAuthorizationUrlResType = z.infer<
 >;
 
 export type GetMeResType = z.infer<typeof GetMeResSchema>;
-export type SwitchRoleBodyType = z.infer<typeof SwitchRoleBodySchema>;
-export type SwitchRoleResponseType = z.infer<typeof SwitchRoleResponseSchema>;
-export type JoinRoleBodyType = z.infer<typeof JoinRoleBodySchema>;
-export type JoinRoleResponseType = z.infer<typeof JoinRoleResponseSchema>;
 
 // --- Admin User Management ---
 

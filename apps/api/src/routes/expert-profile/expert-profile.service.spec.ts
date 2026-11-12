@@ -16,7 +16,7 @@ describe('ExpertProfileService', () => {
   const user = {
     id: 7,
     profile: { id: 17, expertProfile: null },
-    userRoles: [{ role: { name: RoleName.EXPERT } }],
+    role: { name: RoleName.EXPERT },
   };
   const input = {
     displayName: 'Ada Expert',
