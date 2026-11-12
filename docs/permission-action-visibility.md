@@ -1,0 +1,171 @@
+# Tài liệu kỹ thuật: Phân quyền ẩn/hiện nút hành động trên giao diện Admin (Action-Level RBAC)
+
+> **Nhánh Use Case**: `uc-06.08-permission-action-visibility`  
+> **Dự án**: Frevia (frevia-clone)  
+> **Phạm vi**: Ứng dụng Web (`apps/web`), Cổng quản trị Admin (`/admin/*`)
+
+---
+
+## 1. Đặt vấn đề & Mục tiêu
+
+### 1.1. Vấn đề
+Trước đây trên các giao diện quản trị Admin (ví dụ: Danh mục Kỹ năng, Danh mục Công việc, Danh mục Diễn đàn), các nút hành động như **Thêm mới (Create)**, **Chỉnh sửa (Edit)**, **Xóa (Delete)**, **Khôi phục (Restore)** luôn hiển thị mặc định cho mọi người dùng có quyền truy cập vào trang.
+
+Nếu một vai trò (Role) chỉ được cấp quyền xem (`GET`) và sửa (`PATCH`), nhưng **không** được cấp quyền tạo mới (`POST`), thì:
+* Nút Tạo mới vẫn hiển thị trên màn hình.
+* Khi người dùng nhấp vào nút Tạo và gửi form, Backend sẽ trả về lỗi `403 Forbidden`.
+* Trải nghiệm người dùng (UX) bị giảm sút và giao diện gây hiểu lầm về quyền hạn thực tế của tài khoản.
+
+### 1.2. Giải pháp (Best Practice từ các hệ thống lớn)
+Áp dụng giải pháp **Ẩn hoàn toàn (Remove from DOM)** đối với các nút và hành động mà tài khoản không có quyền:
+* **Server-side (SSR)**: Không sinh HTML của các nút hành động bị cấm ngay từ lúc render trên Server.
+* **Client-side (SPA / React)**: Tự động ẩn các nút trong bảng dữ liệu hoặc dialog khi kiểm tra danh sách quyền của người dùng.
+* **Nguyên tắc bảo vệ kép (Defense in Depth)**: Frontend ẩn nút để tối ưu UX, Backend tiếp tục giữ các Guard (`AuthGuard`, `PermissionGuard`) để bảo đảm an toàn dữ liệu tuyệt đối.
+
+---
+
+## 2. Kiến trúc giải pháp (Architecture & Design)
+
+```mermaid
+flowchart TD
+    User["Người dùng đăng nhập"] --> JWT["JWT / getMe: roles, permissions"]
+    
+    subgraph ServerSide ["1. Server Component (page.tsx)"]
+        SC["authServerRequest.getMe()"] --> CheckServer["hasActionPermission(user, METHOD, PATH)"]
+        CheckServer -- "Có quyền" --> RenderBtn["Render nút Create vào HTML"]
+        CheckServer -- "Không có quyền" --> HideBtn["Không render ra DOM (null)"]
+    end
+
+    subgraph ClientSide ["2. Client Component (Table / Dialog)"]
+        CC["useActionPermission()"] --> HookCan["can(METHOD, PATH)"]
+        HookCan -- "Có quyền" --> ShowRowAction["Hiển thị nút Edit / Delete / Restore"]
+        HookCan -- "Không có quyền" --> HideRowAction["Ẩn nút khỏi bảng"]
+    end
+```
+
+### 2.1. Hàm kiểm tra quyền dùng chung (`apps/web/lib/admin-access.ts`)
+Hàm `hasActionPermission(userOrPermissions, method, path)` nhận vào đối tượng người dùng hoặc mảng permissions, cùng cặp `(METHOD, PATH)`.
+
+**Đặc điểm nổi bật**:
+1. **Wildcard & Admin bypass**: Tự động trả về `true` nếu người dùng có role `ADMIN` hoặc sở hữu quyền wildcard `*`.
+2. **Chuẩn hóa đường dẫn**: Tự động xử lý tiền tố `/api`, xóa query params.
+3. **So khớp tham số URL động (Route Parameters)**:
+   * Pattern trong database: `PATCH /api/admin/skills/:id`
+   * Đường dẫn thực tế gọi: `PATCH /api/admin/skills/15`
+   * Hàm tự động khớp các segment bắt đầu bằng `:` với giá trị ID thực tế.
+
+### 2.2. Hook & Component Client-side (`apps/web/hooks/use-action-permission.tsx`)
+Cung cấp bộ công cụ trực quan cho lập trình viên phía Client:
+* `can(method, path)`: Kiểm tra 1 hành động cụ thể.
+* `canAny([{ method, path }, ...])`: Kiểm tra xem có ít nhất 1 quyền trong danh sách hay không.
+* `canAll([{ method, path }, ...])`: Kiểm tra xem có đủ toàn bộ quyền hay không.
+* `<Can method="..." path="...">...</Can>`: Component bọc JSX để ẩn/hiện điều kiện mà không cần viết lệnh rẽ nhánh phức tạp.
+* Sử dụng `useMemo` và `useCallback` tránh re-render thừa.
+
+---
+
+## 3. Danh sách các màn hình đã triển khai
+
+### 3.1. Quản lý Kỹ năng (Skills)
+* **Route**: `/admin/skills` & `/admin/skills/[id]`
+* **Các quyền áp dụng**:
+  * `POST /api/admin/skills`: Ẩn/hiện nút **"Thêm kỹ năng"** trên thanh tiêu đề trang chính.
+  * `PATCH /api/admin/skills/:id`: Ẩn/hiện nút **Sửa** trong từng dòng và trên trang chi tiết.
+  * `DELETE /api/admin/skills/:id`: Ẩn/hiện nút **Xóa** trong từng dòng và trên trang chi tiết.
+  * `PATCH /api/admin/skills/:id/restore`: Ẩn/hiện nút **Khôi phục** đối với các kỹ năng đã xóa mềm.
+  * Nếu một kỹ năng không có quyền Sửa lẫn Xóa, ô Actions ở cuối dòng sẽ tự động ẩn sạch sẽ.
+
+### 3.2. Quản lý Danh mục Công việc (Job Categories)
+* **Route**: `/admin/job-categories` & `/admin/job-categories/[id]`
+* **Các quyền áp dụng**:
+  * `POST /api/admin/job-categories`: Ẩn/hiện nút **"Thêm danh mục"** trên thanh tiêu đề trang chính.
+  * `PATCH /api/admin/job-categories/:id`: Ẩn/hiện nút **Sửa** (Dialog chỉnh sửa).
+  * `DELETE /api/admin/job-categories/:id`: Ẩn/hiện nút **Xóa**.
+  * `PATCH /api/admin/job-categories/:id/restore`: Ẩn/hiện nút **Khôi phục**.
+  * Đồng bộ tự động trên trang chi tiết `/admin/job-categories/[id]`.
+
+### 3.3. Quản lý Danh mục Diễn đàn (Forum Categories)
+* **Route**: `/admin/categories` & `/admin/categories/[id]`
+* **Các quyền áp dụng**:
+  * `POST /api/forums/admin/categories`: Ẩn/hiện nút **"Tạo danh mục"** trên trang chính.
+  * `GET /api/forums/admin/categories/:id`: Ẩn/hiện nút icon **Xem chi tiết**.
+  * `PATCH /api/forums/admin/categories/:id`: Ẩn/hiện nút icon **Sửa** trên bảng và nút `EditCategoryButton` trên trang chi tiết.
+  * `DELETE /api/forums/admin/categories/:id`: Ẩn/hiện nút icon **Xóa** trên bảng và nút `DeleteCategoryButton` trên trang chi tiết.
+  * `PATCH /api/forums/admin/categories/:id/restore`: Ẩn/hiện nút **Khôi phục**.
+
+---
+
+## 4. Hướng dẫn mở rộng cho các phân hệ khác
+
+Hệ thống được thiết kế dạng **Generic**, có thể tái sử dụng ngay cho bất kỳ module nào khác trong dự án:
+
+### 4.1. Sử dụng trong Server Component (`page.tsx`)
+```tsx
+import { hasActionPermission } from "@/lib/admin-access";
+import authServerRequest from "@/apiRequests/auth.server";
+
+export default async function AnyPage() {
+  const currentUser = await authServerRequest.getMe();
+
+  // Kiểm tra quyền
+  const canCreate = hasActionPermission(currentUser, "POST", "/api/banners");
+
+  return (
+    <div>
+      {canCreate && <CreateBannerButton />}
+    </div>
+  );
+}
+```
+
+### 4.2. Sử dụng trong Client Component (`use client`)
+```tsx
+"use client";
+
+import { useActionPermission, Can } from "@/hooks/use-action-permission";
+
+export function RowActions({ item }: { item: { id: number } }) {
+  const { can } = useActionPermission();
+
+  return (
+    <div className="flex gap-2">
+      {/* Cách 1: Dùng hook can() */}
+      {can("PATCH", `/api/users/${item.id}/ban`) && (
+        <Button variant="destructive">Khóa tài khoản</Button>
+      )}
+
+      {/* Cách 2: Dùng component <Can> */}
+      <Can method="DELETE" path={`/api/banners/${item.id}`}>
+        <Button variant="ghost">Xóa banner</Button>
+      </Can>
+    </div>
+  );
+}
+```
+
+---
+
+## 5. Tổng hợp các tệp thay đổi
+
+| Đường dẫn tệp | Loại thay đổi | Mô tả |
+| :--- | :--- | :--- |
+| `apps/web/lib/admin-access.ts` | Chỉnh sửa | Bổ sung hàm `hasActionPermission()` hỗ trợ kiểm tra quyền linh hoạt và khớp tham số URL. |
+| `apps/web/hooks/use-action-permission.tsx` | Tạo mới | Cung cấp Hook `useActionPermission()` và Component `<Can>` cho Client Components. |
+| `apps/web/app/admin/skills/page.tsx` | Chỉnh sửa | Ẩn nút "Thêm kỹ năng" nếu thiếu quyền `POST /api/admin/skills`. |
+| `apps/web/app/admin/skills/components/skill-actions.tsx` | Chỉnh sửa | Ẩn nút Sửa, Xóa, Khôi phục kỹ năng theo quyền thực tế. |
+| `apps/web/app/admin/job-categories/page.tsx` | Chỉnh sửa | Ẩn nút "Thêm danh mục" nếu thiếu quyền `POST /api/admin/job-categories`. |
+| `apps/web/app/admin/job-categories/components/job-category-actions.tsx` | Chỉnh sửa | Ẩn nút Sửa, Xóa, Khôi phục danh mục công việc theo quyền. |
+| `apps/web/app/admin/categories/page.tsx` | Chỉnh sửa | Ẩn nút "Tạo danh mục" nếu thiếu quyền `POST /api/forums/admin/categories`. |
+| `apps/web/app/admin/categories/components/categories-table.tsx` | Chỉnh sửa | Ẩn các nút Xem chi tiết, Sửa, Xóa, Khôi phục theo quyền trong bảng diễn đàn. |
+| `apps/web/app/admin/categories/[id]/components/edit-category-button.tsx` | Chỉnh sửa | Ẩn nút Sửa trên trang chi tiết danh mục diễn đàn. |
+| `apps/web/app/admin/categories/[id]/components/delete-category-button.tsx` | Chỉnh sửa | Ẩn nút Xóa trên trang chi tiết danh mục diễn đàn. |
+
+---
+
+## 6. Kết quả kiểm thử & Tuân thủ Definition of Done (DoD)
+
+* **TypeScript Compilation**: Chạy `pnpm check-types` đạt 100% không có lỗi (3/3 packages passed).
+* **ESLint**: 0 errors, 0 warnings trên toàn bộ các tệp được thêm mới và sửa đổi.
+* **Next.js Production Build**: `pnpm --filter web build` biên dịch thành công toàn bộ 60 routes với Turbopack.
+* **NestJS API Build**: `pnpm --filter api build` biên dịch thành công không lỗi.
+
