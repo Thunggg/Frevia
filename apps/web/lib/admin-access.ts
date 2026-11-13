@@ -332,6 +332,7 @@ export function hasActionPermission(
           "ai-check",
           "liveness-pose",
           "matching-jobs",
+          "slug",
         ]);
         if (
           param &&

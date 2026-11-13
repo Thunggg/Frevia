@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { motion } from "motion/react";
 import { Calendar, FileText } from "@/components/icons";
+import { useActionPermission } from "@/hooks/use-action-permission";
 import type { ContractDetailType } from "@shared/types";
 import {
   CONTRACT_STATUSES,
@@ -26,6 +27,11 @@ export function ContractCard({
   tStatus,
   index,
 }: ContractCardProps) {
+  const { can } = useActionPermission();
+  const canViewDetailById = can("GET", "/api/contracts/:id");
+  const canViewDetailBySlug = can("GET", "/api/contracts/slug/:slug");
+  const canViewDetail = canViewDetailById || canViewDetailBySlug;
+
   const badgeClass = getStatusBadgeConfig(contract.status);
 
   const statusLabel = (
@@ -36,24 +42,9 @@ export function ContractCard({
 
   const contractHref = `${basePath}/contracts/${contract.slug || contract.id}`;
 
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 12 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{
-        duration: 0.3,
-        delay: Math.min(index * 0.04, 0.25),
-      }}
-      className="
-        group overflow-hidden rounded-md
-        border border-border/70 bg-card
-        shadow-xs transition-all duration-200
-        hover:-translate-y-0.5
-        hover:shadow-md
-      "
-    >
-      <Link href={contractHref} className="block focus:outline-none">
-        {/* Document Preview */}
+  const cardContent = (
+    <>
+      {/* Document Preview */}
         <div className="
           flex h-[190px] items-center justify-center
           overflow-hidden bg-[#F0F1F3] p-4
@@ -180,7 +171,34 @@ export function ContractCard({
             </span>
           </div>
         </div>
-      </Link>
+    </>
+  );
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{
+        duration: 0.3,
+        delay: Math.min(index * 0.04, 0.25),
+      }}
+      className="
+        group overflow-hidden rounded-md
+        border border-border/70 bg-card
+        shadow-xs transition-all duration-200
+        hover:-translate-y-0.5
+        hover:shadow-md
+      "
+    >
+      {canViewDetail ? (
+        <Link href={contractHref} className="block focus:outline-none">
+          {cardContent}
+        </Link>
+      ) : (
+        <div className="block focus:outline-none opacity-80 cursor-default">
+          {cardContent}
+        </div>
+      )}
     </motion.div>
   );
 }

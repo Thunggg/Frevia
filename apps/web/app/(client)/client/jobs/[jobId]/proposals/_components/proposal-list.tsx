@@ -231,6 +231,7 @@ export function ProposalList({
   const canInterview = can("PATCH", "/api/proposals/:id/interview");
   const canAccept = can("PATCH", "/api/proposals/:id/accept");
   const canReject = can("PATCH", "/api/proposals/:id/reject");
+  const canCreateContract = can("POST", "/api/contracts");
 
   const handleOpenFreelancerProfile = (
     profileId: number,
@@ -630,7 +631,7 @@ export function ProposalList({
                             </Button>
                           ) : null}
 
-                          {canAccept ? (
+                          {canAccept && canCreateContract ? (
                             <Button
                               type="button"
                               size="sm"
@@ -764,6 +765,7 @@ export function ProposalList({
         onOpenChange={setProposalSheetOpen}
         initialProposal={selectedProposalData}
         onAccept={(id) => {
+          if (!canCreateContract) return;
           const p =
             rawProposals.find((item) => item.id === id) ??
             selectedProposalData;

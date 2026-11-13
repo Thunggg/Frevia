@@ -107,6 +107,7 @@ export function ClientSidebar() {
   const { data: me } = useMe();
   const { can } = useActionPermission();
   const canViewJobs = can("GET", "/api/manage-jobs");
+  const canViewContracts = can("GET", "/api/contracts");
   const { data: notifications = [] } = useNotifications();
   const { resolvedTheme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
@@ -169,12 +170,16 @@ export function ClientSidebar() {
           },
         ]
       : []),
-    {
-      href: "/client/contracts",
-      labelKey: "navContracts",
-      icon: FileText,
-      matchPrefix: true,
-    },
+    ...(canViewContracts
+      ? [
+          {
+            href: "/client/contracts",
+            labelKey: "navContracts",
+            icon: FileText,
+            matchPrefix: true,
+          },
+        ]
+      : []),
     {
       href: "/client/payments",
       labelKey: "navBillingPayments",

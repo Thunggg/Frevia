@@ -14,6 +14,7 @@ import {
   Trash2,
   FileEdit,
 } from "lucide-react";
+import { useActionPermission } from "@/hooks/use-action-permission";
 import type { ContractDetailType, SharedFileType } from "@shared/types";
 import type { MilestoneItemData } from "./manage-milestone-dialog";
 
@@ -115,6 +116,9 @@ export function ContractDocumentPaper({
       ? new Date(latestMilestoneDueMs)
       : contract.expiresAt || new Date(Date.now() + 14 * 86400000);
 
+  const { can } = useActionPermission();
+  const canUpdateContract = can("PATCH", "/api/contracts/:id");
+
   const canEditMilestones =
     !isFreelancer &&
     (contract.status === "PENDING_SIGN" ||
@@ -123,7 +127,8 @@ export function ContractDocumentPaper({
   const canEditContract =
     !isFreelancer &&
     (contract.status === "PENDING_SIGN" ||
-      contract.status === "AWAITING_PAYMENT");
+      contract.status === "AWAITING_PAYMENT") &&
+    canUpdateContract;
 
   return (
     <article className="relative bg-white text-zinc-900 border border-zinc-200/90 p-6 sm:p-12 md:p-14 font-sans max-w-4xl mx-auto selection:bg-zinc-200">

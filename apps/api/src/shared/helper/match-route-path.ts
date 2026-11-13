@@ -39,6 +39,7 @@ const STATIC_RESERVED_SEGMENTS = new Set([
   'ai-check',
   'liveness-pose',
   'matching-jobs',
+  'slug',
 ]);
 
 /**

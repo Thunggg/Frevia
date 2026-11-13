@@ -145,12 +145,18 @@ function HeaderNavigation({
   const canViewJobs = can("GET", "/api/manage-jobs");
   const canViewBookmarks = can("GET", "/api/manage-jobs/bookmarks");
   const canViewSavedSearches = can("GET", "/api/saved-searches");
+  const canViewContracts = can("GET", "/api/contracts");
 
   const links = (roleConfig[role]?.links ?? []).filter((link) => {
     if (link.href === "/freelancer/proposals" && !canViewProposals) return false;
     if (link.href === "/client/jobs" && !canViewJobs) return false;
     if (link.href === "/freelancer?tab=saved-jobs" && !canViewBookmarks) return false;
     if (link.href === "/freelancer?tab=saved-searches" && !canViewSavedSearches) return false;
+    if (
+      (link.href === "/client/contracts" || link.href === "/freelancer/contracts") &&
+      !canViewContracts
+    )
+      return false;
     return true;
   });
 
@@ -256,6 +262,7 @@ function ProfileDropdown({ role }: { role: Exclude<UserRole, "GUEST"> }) {
   const { can } = useActionPermission();
   const canViewProposals = can("GET", "/api/proposals/my");
   const canViewSavedSearches = can("GET", "/api/saved-searches");
+  const canViewContracts = can("GET", "/api/contracts");
   const displayName =
     me?.profile?.displayName || t(`roles.${profile.nameKey}`);
   const initial = displayName?.charAt(0)?.toUpperCase() ?? "?";
@@ -360,12 +367,14 @@ function ProfileDropdown({ role }: { role: Exclude<UserRole, "GUEST"> }) {
                 </Link>
               </DropdownMenuItem>
             ) : null}
-            <DropdownMenuItem asChild>
-              <Link href="/freelancer/contracts" className="cursor-pointer">
-                <FileText className="size-4 text-muted-foreground" />
-                {t("contracts")}
-              </Link>
-            </DropdownMenuItem>
+            {canViewContracts && (
+              <DropdownMenuItem asChild>
+                <Link href="/freelancer/contracts" className="cursor-pointer">
+                  <FileText className="size-4 text-muted-foreground" />
+                  {t("contracts")}
+                </Link>
+              </DropdownMenuItem>
+            )}
             {canViewSavedSearches && (
               <DropdownMenuItem asChild>
                 <Link

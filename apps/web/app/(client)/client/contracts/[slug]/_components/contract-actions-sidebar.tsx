@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { Button } from "@repo/ui/components/shadcn/button";
 import { Badge } from "@repo/ui/components/shadcn/badge";
+import { useActionPermission } from "@/hooks/use-action-permission";
 import type { ContractDetailType, SharedFileType } from "@shared/types";
 
 interface ContractActionsSidebarProps {
@@ -49,12 +50,20 @@ export function ContractActionsSidebar({
   const t = useTranslations("contractDetail");
   const tStatus = useTranslations("contractStatus");
   const tRole = useTranslations("roleName");
+  const { can } = useActionPermission();
+  const canSignContract = can("PATCH", "/api/contracts/:id/sign");
+  const canCompleteContract = can("PATCH", "/api/contracts/:id/complete");
+  const canCancelContract = can("PATCH", "/api/contracts/:id/cancel");
+  const canRejectContract = can("PATCH", "/api/contracts/:id/reject");
+  const canExportPdf = can("GET", "/api/contracts/:id/pdf");
 
-  const canSign = isFreelancer
-    ? contract.status === "PENDING_SIGN" &&
-      contract.signedByClient &&
-      !contract.signedByFreelancer
-    : contract.status === "PENDING_SIGN" && !contract.signedByClient;
+  const canSign =
+    (isFreelancer
+      ? contract.status === "PENDING_SIGN" &&
+        contract.signedByClient &&
+        !contract.signedByFreelancer
+      : contract.status === "PENDING_SIGN" && !contract.signedByClient) &&
+    canSignContract;
 
   const waitingForClientSignature =
     isFreelancer &&
@@ -67,17 +76,20 @@ export function ContractActionsSidebar({
     Boolean(onOpenFundHold);
 
   const canComplete =
-    !isFreelancer && contract.status === "ACTIVE";
+    !isFreelancer && contract.status === "ACTIVE" && canCompleteContract;
 
   const canReject =
     isFreelancer &&
     (contract.status === "PENDING_SIGN" ||
       contract.status === "AWAITING_PAYMENT") &&
-    Boolean(onOpenConfirmReject);
+    Boolean(onOpenConfirmReject) &&
+    canRejectContract;
 
   const canCancel =
     !isFreelancer &&
-    (contract.status === "PENDING_SIGN" || contract.status === "AWAITING_PAYMENT");
+    (contract.status === "PENDING_SIGN" ||
+      contract.status === "AWAITING_PAYMENT") &&
+    canCancelContract;
 
   const targetRoleName = isFreelancer ? tRole("CLIENT") : tRole("FREELANCER");
 
@@ -212,9 +224,9 @@ export function ContractActionsSidebar({
         )}
 
         {/* 5. Download PDF Agreement */}
-        {pdfFile?.fileUrl && (
+        {canExportPdf && (pdfFile?.fileUrl || contract.id) && (
           <a
-            href={pdfFile.fileUrl}
+            href={pdfFile?.fileUrl || `/api/contracts/${contract.id}/pdf`}
             target="_blank"
             rel="noopener noreferrer"
             download

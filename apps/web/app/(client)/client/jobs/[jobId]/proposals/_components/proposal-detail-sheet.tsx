@@ -124,7 +124,10 @@ export function ProposalDetailSheet({
   const { can } = useActionPermission();
   const canViewDetail = can("GET", "/api/proposals/:id/client");
   const canInterview = can("PATCH", "/api/proposals/:id/interview");
-  const canAccept = can("PATCH", "/api/proposals/:id/accept");
+  const canCreateContract = can("POST", "/api/contracts");
+  const canAccept =
+    can("PATCH", "/api/proposals/:id/accept") &&
+    (onAccept ? canCreateContract : true);
   const canReject = can("PATCH", "/api/proposals/:id/reject");
 
   const proposalQuery = useQuery<ClientProposalDetailType>({
