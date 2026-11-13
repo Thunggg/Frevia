@@ -46,6 +46,7 @@ export function ContractDetail({
   const tRole = useTranslations("roleName");
   const format = useFormatter();
   const { can } = useActionPermission();
+  const canViewMilestones = can("GET", "/api/contracts/:contractId/milestones");
   const canUpdateContract = can("PATCH", "/api/contracts/:id");
   const canSignContract = can("PATCH", "/api/contracts/:id/sign");
   const canCompleteContract = can("PATCH", "/api/contracts/:id/complete");
@@ -356,13 +357,17 @@ export function ContractDetail({
         <span className="font-semibold text-foreground">
           {contract.slug || `#CON-${contract.id}`}
         </span>
-        <span className="text-muted-foreground/60">/</span>
-        <Link
-          href={`${basePath}/contracts/${encodeURIComponent(contract.slug || String(contract.id))}/milestones`}
-          className="font-medium text-muted-foreground hover:text-[#0069D3] transition-colors"
-        >
-          Milestone
-        </Link>
+        {canViewMilestones && (
+          <>
+            <span className="text-muted-foreground/60">/</span>
+            <Link
+              href={`${basePath}/contracts/${encodeURIComponent(contract.slug || String(contract.id))}/milestones`}
+              className="font-medium text-muted-foreground hover:text-[#0069D3] transition-colors"
+            >
+              Milestone
+            </Link>
+          </>
+        )}
       </div>
 
       {/* ── Main 2-Column Grid ── */}
