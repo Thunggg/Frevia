@@ -162,6 +162,7 @@ export function FindWorkContent({
   const canAddBookmark = can("POST", "/api/manage-jobs/jobs/:slug/bookmark");
   const canRemoveBookmark = can("DELETE", "/api/manage-jobs/bookmarks/:slug");
   const canViewJobAlerts = can("GET", "/api/job-alerts");
+  const canViewSavedSearches = can("GET", "/api/saved-searches");
 
   const canBookmark =
     role === "FREELANCER" && (canAddBookmark || canRemoveBookmark);
@@ -571,22 +572,24 @@ export function FindWorkContent({
                   </button>
 
                   {/* Saved searches */}
-                  <button
-                    type="button"
-                    onClick={() => handleTabSelect("saved-searches")}
-                    className={`pb-3 text-sm font-semibold border-b-2 transition-all cursor-pointer whitespace-nowrap ${
-                      activeTab === "saved-searches"
-                        ? "border-emerald-600 text-emerald-600 dark:text-emerald-400"
-                        : "border-transparent text-muted-foreground hover:text-foreground"
-                    }`}
-                  >
-                    <span>{t("savedSearches")}</span>
-                    {savedSearches.length > 0 && (
-                      <span className="ml-1.5 rounded-full bg-muted text-muted-foreground px-2 py-0.5 text-xs font-normal">
-                        {savedSearches.length}
-                      </span>
-                    )}
-                  </button>
+                  {canViewSavedSearches && (
+                    <button
+                      type="button"
+                      onClick={() => handleTabSelect("saved-searches")}
+                      className={`pb-3 text-sm font-semibold border-b-2 transition-all cursor-pointer whitespace-nowrap ${
+                        activeTab === "saved-searches"
+                          ? "border-emerald-600 text-emerald-600 dark:text-emerald-400"
+                          : "border-transparent text-muted-foreground hover:text-foreground"
+                      }`}
+                    >
+                      <span>{t("savedSearches")}</span>
+                      {savedSearches.length > 0 && (
+                        <span className="ml-1.5 rounded-full bg-muted text-muted-foreground px-2 py-0.5 text-xs font-normal">
+                          {savedSearches.length}
+                        </span>
+                      )}
+                    </button>
+                  )}
 
                   {/* Saved jobs */}
                   <button
@@ -784,7 +787,7 @@ export function FindWorkContent({
                   )}
 
                   {/* TAB 3: SAVED SEARCHES */}
-                  {activeTab === "saved-searches" && (
+                  {activeTab === "saved-searches" && canViewSavedSearches && (
                     <div className="space-y-3">
                       {savedSearches.length === 0 ? (
                         <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-border bg-card/40 px-6 py-14 text-center font-sans">

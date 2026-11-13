@@ -144,11 +144,13 @@ function HeaderNavigation({
   const canViewProposals = can("GET", "/api/proposals/my");
   const canViewJobs = can("GET", "/api/manage-jobs");
   const canViewBookmarks = can("GET", "/api/manage-jobs/bookmarks");
+  const canViewSavedSearches = can("GET", "/api/saved-searches");
 
   const links = (roleConfig[role]?.links ?? []).filter((link) => {
     if (link.href === "/freelancer/proposals" && !canViewProposals) return false;
     if (link.href === "/client/jobs" && !canViewJobs) return false;
     if (link.href === "/freelancer?tab=saved-jobs" && !canViewBookmarks) return false;
+    if (link.href === "/freelancer?tab=saved-searches" && !canViewSavedSearches) return false;
     return true;
   });
 
@@ -253,6 +255,7 @@ function ProfileDropdown({ role }: { role: Exclude<UserRole, "GUEST"> }) {
   const { data: me } = useMe();
   const { can } = useActionPermission();
   const canViewProposals = can("GET", "/api/proposals/my");
+  const canViewSavedSearches = can("GET", "/api/saved-searches");
   const displayName =
     me?.profile?.displayName || t(`roles.${profile.nameKey}`);
   const initial = displayName?.charAt(0)?.toUpperCase() ?? "?";
@@ -363,15 +366,17 @@ function ProfileDropdown({ role }: { role: Exclude<UserRole, "GUEST"> }) {
                 {t("contracts")}
               </Link>
             </DropdownMenuItem>
-            <DropdownMenuItem asChild>
-              <Link
-                href="/freelancer/saved-searches"
-                className="cursor-pointer"
-              >
-                <Search className="size-4 text-muted-foreground" />
-                {t("savedSearches")}
-              </Link>
-            </DropdownMenuItem>
+            {canViewSavedSearches && (
+              <DropdownMenuItem asChild>
+                <Link
+                  href="/freelancer/saved-searches"
+                  className="cursor-pointer"
+                >
+                  <Search className="size-4 text-muted-foreground" />
+                  {t("savedSearches")}
+                </Link>
+              </DropdownMenuItem>
+            )}
             <DropdownMenuItem asChild>
               <Link
                 href="/freelancer/payments"

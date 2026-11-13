@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { BookmarkPlus, Pencil, SlidersHorizontal, Trash2 } from "@/components/icons";
 
 import savedSearchApiRequest from "@/apiRequests/saved-search";
+import { useActionPermission } from "@/hooks/use-action-permission";
 import {
   BUDGET_KEYS,
   SORT_KEYS,
@@ -61,6 +62,11 @@ export function SaveSearchDialog({
 }: SaveSearchDialogProps) {
   const t = useTranslations("savedSearches");
   const tFindWork = useTranslations("findWork");
+  const { can } = useActionPermission();
+  const canViewSavedSearches = can("GET", "/api/saved-searches");
+  const canCreateSavedSearch = can("POST", "/api/saved-searches");
+  const canUpdateSavedSearch = can("PATCH", "/api/saved-searches/:id");
+  const canDeleteSavedSearch = can("DELETE", "/api/saved-searches/:id");
   const [open, setOpen] = useState(false);
 
   const searchSummary = (searchParams: SavedSearchType["searchParams"]) => {
@@ -91,6 +97,7 @@ export function SaveSearchDialog({
   }, [open]);
 
   const handleCreate = async () => {
+    if (!canCreateSavedSearch) return;
     const keyword = searchParams.keyword?.trim();
     const defaultName = keyword || t("allOpenProjects");
     setIsSubmitting(true);
@@ -108,7 +115,7 @@ export function SaveSearchDialog({
 
   const handleRename = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (!editing || !name.trim()) return;
+    if (!editing || !name.trim() || !canUpdateSavedSearch) return;
     setIsSubmitting(true);
     try {
       await savedSearchApiRequest.update(editing.id, { name: name.trim() });
@@ -124,6 +131,7 @@ export function SaveSearchDialog({
   };
 
   const handleUpdateCriteria = async (savedSearch: SavedSearchType) => {
+    if (!canUpdateSavedSearch) return;
     setIsSubmitting(true);
     try {
       await savedSearchApiRequest.update(savedSearch.id, { searchParams });
@@ -137,7 +145,7 @@ export function SaveSearchDialog({
   };
 
   const handleDelete = async () => {
-    if (!deleting) return;
+    if (!deleting || !canDeleteSavedSearch) return;
     setIsSubmitting(true);
     try {
       await savedSearchApiRequest.delete(deleting.id);
@@ -191,6 +199,10 @@ export function SaveSearchDialog({
       : []),
   ];
 
+  if (!canCreateSavedSearch && !canViewSavedSearches) {
+    return null;
+  }
+
   return (
     <>
       <Dialog open={open} onOpenChange={setOpen}>
@@ -201,9 +213,11 @@ export function SaveSearchDialog({
           >
             <BookmarkPlus className="size-4 text-[#4fae2e]" />
             <span>{t("triggerLabel")}</span>
-            <span className="flex h-5 items-center justify-center rounded-full bg-black/5 dark:bg-white/10 px-2 text-[11px] font-bold text-foreground">
-              {savedSearches.length}/30
-            </span>
+            {canViewSavedSearches && (
+              <span className="flex h-5 items-center justify-center rounded-full bg-black/5 dark:bg-white/10 px-2 text-[11px] font-bold text-foreground">
+                {savedSearches.length}/30
+              </span>
+            )}
           </button>
         </DialogTrigger>
         <DialogContent className="max-h-[min(42rem,calc(100dvh-2rem))] overflow-y-auto sm:max-w-xl rounded-[26px] border border-black/5 dark:border-white/10 bg-white dark:bg-zinc-900 p-6 shadow-2xl font-sans">
@@ -216,7 +230,7 @@ export function SaveSearchDialog({
             </DialogDescription>
           </DialogHeader>
 
-          {editing ? (
+          {editing && canUpdateSavedSearch ? (
             <form
               className="rounded-2xl border border-border bg-muted/30 p-4 font-sans"
               onSubmit={handleRename}
@@ -257,7 +271,7 @@ export function SaveSearchDialog({
                 </Button>
               </DialogFooter>
             </form>
-          ) : (
+          ) : canCreateSavedSearch ? (
             <Button
               className="w-full rounded-full bg-[#4fae2e] text-white hover:bg-[#459928] text-xs font-semibold h-10 cursor-pointer disabled:cursor-not-allowed"
               onClick={() => setSaveConfirmationOpen(true)}
@@ -270,88 +284,97 @@ export function SaveSearchDialog({
                   ? t("currentSaved")
                   : t("saveCurrent")}
             </Button>
+          ) : null}
+
+          {canViewSavedSearches && (
+            <div className="divide-y divide-border rounded-2xl border border-border overflow-hidden">
+              {savedSearches.length ? (
+                savedSearches.map((savedSearch) => (
+                  <div
+                    key={savedSearch.id}
+                    className="flex items-center gap-3 px-4 py-3.5"
+                  >
+                    <button
+                      type="button"
+                      className="min-w-0 flex-1 text-left"
+                      onClick={() => {
+                        onApply(savedSearch);
+                        setOpen(false);
+                      }}
+                    >
+                      <span className="block truncate text-sm font-semibold text-foreground hover:text-[#3f9225]">
+                        {savedSearch.name}
+                      </span>
+                      <span className="mt-0.5 block truncate text-xs text-muted-foreground">
+                        {searchSummary(savedSearch.searchParams)}
+                      </span>
+                    </button>
+                    {canUpdateSavedSearch &&
+                      !matchesSearch(searchParams, savedSearch) && (
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="icon"
+                          className="size-9 text-[#4fae2e] hover:bg-[#eaf8df] dark:hover:bg-[#4fae2e]/15"
+                          aria-label={t("editCriteria")}
+                          title={t("editCriteria")}
+                          disabled={isSubmitting}
+                          onClick={() => handleUpdateCriteria(savedSearch)}
+                        >
+                          <SlidersHorizontal className="size-4" />
+                        </Button>
+                      )}
+                    {canUpdateSavedSearch && (
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        className="size-9"
+                        aria-label={t("renameAria", { name: savedSearch.name })}
+                        onClick={() => {
+                          setEditing(savedSearch);
+                          setName(savedSearch.name);
+                        }}
+                      >
+                        <Pencil className="size-4" />
+                      </Button>
+                    )}
+                    {canDeleteSavedSearch && (
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        className="size-9 text-destructive hover:bg-destructive/10 hover:text-destructive"
+                        aria-label={t("deleteAria", { name: savedSearch.name })}
+                        onClick={() => setDeleting(savedSearch)}
+                      >
+                        <Trash2 className="size-4" />
+                      </Button>
+                    )}
+                  </div>
+                ))
+              ) : (
+                <p className="px-4 py-8 text-center text-sm text-muted-foreground">
+                  {t("emptyList")}
+                </p>
+              )}
+            </div>
           )}
 
-          <div className="divide-y divide-border rounded-2xl border border-border overflow-hidden">
-            {savedSearches.length ? (
-              savedSearches.map((savedSearch) => (
-                <div
-                  key={savedSearch.id}
-                  className="flex items-center gap-3 px-4 py-3.5"
-                >
-                  <button
-                    type="button"
-                    className="min-w-0 flex-1 text-left"
-                    onClick={() => {
-                      onApply(savedSearch);
-                      setOpen(false);
-                    }}
-                  >
-                    <span className="block truncate text-sm font-semibold text-foreground hover:text-[#3f9225]">
-                      {savedSearch.name}
-                    </span>
-                    <span className="mt-0.5 block truncate text-xs text-muted-foreground">
-                      {searchSummary(savedSearch.searchParams)}
-                    </span>
-                  </button>
-                  {!matchesSearch(searchParams, savedSearch) && (
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="icon"
-                      className="size-9 text-[#4fae2e] hover:bg-[#eaf8df] dark:hover:bg-[#4fae2e]/15"
-                      aria-label={t("editCriteria")}
-                      title={t("editCriteria")}
-                      disabled={isSubmitting}
-                      onClick={() => handleUpdateCriteria(savedSearch)}
-                    >
-                      <SlidersHorizontal className="size-4" />
-                    </Button>
-                  )}
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon"
-                    className="size-9"
-                    aria-label={t("renameAria", { name: savedSearch.name })}
-                    onClick={() => {
-                      setEditing(savedSearch);
-                      setName(savedSearch.name);
-                    }}
-                  >
-                    <Pencil className="size-4" />
-                  </Button>
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon"
-                    className="size-9 text-destructive hover:bg-destructive/10 hover:text-destructive"
-                    aria-label={t("deleteAria", { name: savedSearch.name })}
-                    onClick={() => setDeleting(savedSearch)}
-                  >
-                    <Trash2 className="size-4" />
-                  </Button>
-                </div>
-              ))
-            ) : (
-              <p className="px-4 py-8 text-center text-sm text-muted-foreground">
-                {t("emptyList")}
-              </p>
-            )}
-          </div>
-
-          <div className="pt-2 text-center">
-            <Button
-              asChild
-              variant="ghost"
-              className="w-full rounded-full text-xs text-muted-foreground hover:text-foreground"
-              onClick={() => setOpen(false)}
-            >
-              <Link href="/freelancer/saved-searches">
-                {t("manageTitle")} →
-              </Link>
-            </Button>
-          </div>
+          {canViewSavedSearches && (
+            <div className="pt-2 text-center">
+              <Button
+                asChild
+                variant="ghost"
+                className="w-full rounded-full text-xs text-muted-foreground hover:text-foreground"
+                onClick={() => setOpen(false)}
+              >
+                <Link href="/freelancer/saved-searches">
+                  {t("manageTitle")} →
+                </Link>
+              </Button>
+            </div>
+          )}
         </DialogContent>
       </Dialog>
 
