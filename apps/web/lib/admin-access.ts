@@ -323,6 +323,10 @@ export function hasActionPermission(
           "outbox",
           "skills-catalog",
           "discover",
+          "suggestions",
+          "portfolios",
+          "cv",
+          "analysis",
         ]);
         if (
           param &&

@@ -30,6 +30,10 @@ const STATIC_RESERVED_SEGMENTS = new Set([
   'outbox',
   'skills-catalog',
   'discover',
+  'suggestions',
+  'portfolios',
+  'cv',
+  'analysis',
 ]);
 
 /**

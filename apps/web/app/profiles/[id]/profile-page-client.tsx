@@ -213,6 +213,13 @@ export function ProfilePageClient({
     "DELETE",
     "/api/following/freelancers/:freelancerId",
   );
+  const canUpdateProfile = can("PUT", "/api/profiles/:id");
+  const canAddSkill = can("POST", "/api/profiles/:id/skills");
+  const canDeleteSkill = can("DELETE", "/api/profiles/skills/:id");
+  const canGetSkillSuggestions = can("GET", "/api/profiles/skills/suggestions");
+  const canAddPortfolio = can("POST", "/api/profiles/:id/portfolios");
+  const canUpdatePortfolio = can("PUT", "/api/profiles/portfolios/:id");
+  const canDeletePortfolio = can("DELETE", "/api/profiles/portfolios/:id");
   const [profile, setProfile] = useState<FreelancerProfileDetailType | null>(
     null,
   );
@@ -389,7 +396,7 @@ export function ProfilePageClient({
   }, [loadProfile]);
 
   useEffect(() => {
-    if (!skillEditorOpen || !isSkillMenuOpen) return;
+    if (!skillEditorOpen || !isSkillMenuOpen || !canGetSkillSuggestions) return;
 
     let ignore = false;
     const timeoutId = window.setTimeout(
@@ -417,7 +424,7 @@ export function ProfilePageClient({
       ignore = true;
       window.clearTimeout(timeoutId);
     };
-  }, [isSkillMenuOpen, skillEditorOpen, skillName]);
+  }, [isSkillMenuOpen, skillEditorOpen, skillName, canGetSkillSuggestions]);
 
   useEffect(() => {
     const closeSkillMenu = (event: MouseEvent) => {
@@ -444,7 +451,7 @@ export function ProfilePageClient({
   );
 
   const openProfileEditor = () => {
-    if (!profile) return;
+    if (!profile || !canUpdateProfile) return;
     setProfileForm({
       displayName: profile.displayName ?? "",
       title: profile.freelancerProfile?.title ?? "",
@@ -459,6 +466,7 @@ export function ProfilePageClient({
 
   const updateProfile = async (event: FormEvent) => {
     event.preventDefault();
+    if (!canUpdateProfile) return;
     if (!profileForm.displayName.trim() || !profileForm.title.trim()) {
       toastError({
         message: t("toast.requiredFields"),
@@ -517,6 +525,7 @@ export function ProfilePageClient({
 
   const addSkill = async (event: FormEvent) => {
     event.preventDefault();
+    if (!canAddSkill) return;
     const normalizedName = skillName.trim();
     const proficiencyLevel = Number(skillLevel);
     if (!normalizedName || !Number.isInteger(proficiencyLevel)) {
@@ -580,7 +589,7 @@ export function ProfilePageClient({
   };
 
   const deleteSkill = async () => {
-    if (!skillToDelete) return;
+    if (!skillToDelete || !canDeleteSkill) return;
     setPendingAction("skill-delete");
     try {
       await profileApiRequest.deleteSkill(skillToDelete.id);
@@ -602,6 +611,8 @@ export function ProfilePageClient({
   };
 
   const openPortfolioEditor = (portfolio: PortfolioItemType | "new") => {
+    if (portfolio === "new" && !canAddPortfolio) return;
+    if (portfolio !== "new" && !canUpdatePortfolio) return;
     setPortfolioEditor(portfolio);
     setPortfolioForm(
       portfolio === "new"
@@ -617,6 +628,8 @@ export function ProfilePageClient({
 
   const savePortfolio = async (event: FormEvent) => {
     event.preventDefault();
+    if (portfolioEditor === "new" && !canAddPortfolio) return;
+    if (portfolioEditor !== "new" && !canUpdatePortfolio) return;
     if (!portfolioEditor || !portfolioForm.title.trim()) {
       toastError({ message: t("toast.portfolioTitleRequired") });
       return;
@@ -684,7 +697,7 @@ export function ProfilePageClient({
   };
 
   const deletePortfolio = async () => {
-    if (!portfolioToDelete) return;
+    if (!portfolioToDelete || !canDeletePortfolio) return;
     setPendingAction("portfolio-delete");
     try {
       await profileApiRequest.deletePortfolio(portfolioToDelete.id);
@@ -894,12 +907,14 @@ export function ProfilePageClient({
                         <UserRound /> {t("profileSettings")}
                       </Link>
                     </Button>
-                    <Button
-                      className="bg-[#4fae2e] text-white hover:bg-[#459928]"
-                      onClick={openProfileEditor}
-                    >
-                      <Pencil /> {t("editProfile")}
-                    </Button>
+                    {canUpdateProfile && (
+                      <Button
+                        className="bg-[#4fae2e] text-white hover:bg-[#459928]"
+                        onClick={openProfileEditor}
+                      >
+                        <Pencil /> {t("editProfile")}
+                      </Button>
+                    )}
                   </div>
                 ) : headerRole === "CLIENT" ? (
                   <div className="flex flex-wrap gap-2">
@@ -1073,7 +1088,7 @@ export function ProfilePageClient({
                       {t("skillsDescription")}
                     </p>
                   </div>
-                  {isOwner ? (
+                  {isOwner && canAddSkill ? (
                     <Button
                       size="sm"
                       className="bg-[#4fae2e] text-white hover:bg-[#459928]"
@@ -1110,7 +1125,7 @@ export function ProfilePageClient({
                                 {skill.proficiencyLevel}/10
                               </p>
                             </div>
-                            {isOwner ? (
+                            {isOwner && canDeleteSkill ? (
                               <Button
                                 variant="ghost"
                                 size="icon-sm"
@@ -1148,7 +1163,7 @@ export function ProfilePageClient({
                       {t("portfolioDescription")}
                     </p>
                   </div>
-                  {isOwner ? (
+                  {isOwner && canAddPortfolio ? (
                     <Button
                       size="sm"
                       className="bg-[#4fae2e] text-white hover:bg-[#459928]"
@@ -1202,21 +1217,25 @@ export function ProfilePageClient({
                         </button>
                         {isOwner ? (
                           <div className="mt-3 flex justify-end gap-2">
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => openPortfolioEditor(portfolio)}
-                            >
-                              <Pencil /> {t("edit")}
-                            </Button>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              className="text-destructive"
-                              onClick={() => setPortfolioToDelete(portfolio)}
-                            >
-                              <Trash2 /> {t("delete")}
-                            </Button>
+                            {canUpdatePortfolio && (
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => openPortfolioEditor(portfolio)}
+                              >
+                                <Pencil /> {t("edit")}
+                              </Button>
+                            )}
+                            {canDeletePortfolio && (
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                className="text-destructive"
+                                onClick={() => setPortfolioToDelete(portfolio)}
+                              >
+                                <Trash2 /> {t("delete")}
+                              </Button>
+                            )}
                           </div>
                         ) : null}
                       </li>

@@ -35,6 +35,7 @@ import {
 import { LanguageSwitcher } from "@/components/language-switcher";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { CvAnalysisDialog } from "./cv-analysis-dialog";
+import { useActionPermission } from "@/hooks/use-action-permission";
 import { useBackendMessage } from "@/hooks/use-backend-message";
 import { useQueryClient } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
@@ -169,6 +170,13 @@ export function GeneralSettings() {
   const tRole = useTranslations("roleName");
   const tCommon = useTranslations("common");
   const activeLocale = useLocale();
+  const { can } = useActionPermission();
+  const canUploadCv = can("POST", "/api/profiles/:id/cv");
+  const canDownloadCv = can("GET", "/api/profiles/:id/cv/file");
+  const canAnalyzeCv = can("POST", "/api/profiles/:id/cv/analyze");
+  const canDeleteCv = can("DELETE", "/api/profiles/:id/cv");
+  const canViewCvAnalysis = can("GET", "/api/profiles/:id/cv/analysis");
+
   const fileInputRef = useRef<HTMLInputElement>(null);
   const cvInputRef = useRef<HTMLInputElement>(null);
   const [profile, setProfile] = useState<GeneralProfileType | null>(null);
@@ -254,6 +262,7 @@ export function GeneralSettings() {
     bio !== (profile?.bio ?? "");
 
   const chooseCvFile = (file: File | null) => {
+    if (!canUploadCv) return;
     setCvError(null);
     if (!file) {
       if (cvInputRef.current) cvInputRef.current.value = "";
@@ -268,7 +277,7 @@ export function GeneralSettings() {
   };
 
   const handleAnalyzeCv = async () => {
-    if (!profile) return;
+    if (!profile || !canAnalyzeCv) return;
     setPending("cv-analyze");
     try {
       const res = await profileApiRequest.analyzeCv(profile.id);
@@ -290,7 +299,7 @@ export function GeneralSettings() {
   };
 
   const uploadCv = async (file: File) => {
-    if (!profile) return;
+    if (!profile || !canUploadCv) return;
     setPending("cv");
     try {
       const response = await profileApiRequest.uploadCv(profile.id, file);
@@ -307,7 +316,7 @@ export function GeneralSettings() {
   };
 
   const deleteCv = async () => {
-    if (!profile) return;
+    if (!profile || !canDeleteCv) return;
     setPending("cv-delete");
     try {
       await profileApiRequest.deleteCv(profile.id);
@@ -638,13 +647,20 @@ export function GeneralSettings() {
               PDF only, up to 10 MB.
             </p>
             {cvFileName ? (
-              <a
-                className="mt-4 flex max-w-full min-w-0 items-center gap-2 text-sm font-medium text-[#438f2b] hover:underline"
-                href={`/api/backend/profiles/${profile.id}/cv/file`}
-              >
-                <FileText className="size-4 shrink-0" />
-                <span className="min-w-0 truncate">{cvFileName}</span>
-              </a>
+              canDownloadCv ? (
+                <a
+                  className="mt-4 flex max-w-full min-w-0 items-center gap-2 text-sm font-medium text-[#438f2b] hover:underline"
+                  href={`/api/backend/profiles/${profile.id}/cv/file`}
+                >
+                  <FileText className="size-4 shrink-0" />
+                  <span className="min-w-0 truncate">{cvFileName}</span>
+                </a>
+              ) : (
+                <div className="mt-4 flex max-w-full min-w-0 items-center gap-2 text-sm font-medium text-muted-foreground">
+                  <FileText className="size-4 shrink-0" />
+                  <span className="min-w-0 truncate">{cvFileName}</span>
+                </div>
+              )
             ) : (
               <p className="mt-4 text-sm text-muted-foreground">
                 Upload a CV so it is ready when you need it.
@@ -656,25 +672,27 @@ export function GeneralSettings() {
               className="sr-only"
               type="file"
               accept="application/pdf,.pdf"
-              disabled={busy}
+              disabled={busy || !canUploadCv}
               onChange={(event) =>
                 chooseCvFile(event.target.files?.[0] ?? null)
               }
             />
-            <Button
-              type="button"
-              className="mt-4 bg-[#4fae2e] text-white hover:bg-[#459928]"
-              disabled={busy}
-              onClick={() => cvInputRef.current?.click()}
-            >
-              {pending === "cv" ? (
-                <Loader2 className="animate-spin" />
-              ) : (
-                <Upload />
-              )}
-              {cvFileName ? "Replace CV" : "Upload CV"}
-            </Button>
-            {cvFileName ? (
+            {canUploadCv && (
+              <Button
+                type="button"
+                className="mt-4 bg-[#4fae2e] text-white hover:bg-[#459928]"
+                disabled={busy}
+                onClick={() => cvInputRef.current?.click()}
+              >
+                {pending === "cv" ? (
+                  <Loader2 className="animate-spin" />
+                ) : (
+                  <Upload />
+                )}
+                {cvFileName ? "Replace CV" : "Upload CV"}
+              </Button>
+            )}
+            {canAnalyzeCv && cvFileName ? (
               <Button
                 type="button"
                 className="mt-4 ml-2 bg-[#4fae2e] text-white hover:bg-[#439c28]"
@@ -691,7 +709,7 @@ export function GeneralSettings() {
                   : "✨ Phân tích CV bằng AI"}
               </Button>
             ) : null}
-            {cvFileName ? (
+            {canDeleteCv && cvFileName ? (
               <AlertDialog>
                 <AlertDialogTrigger asChild>
                   <Button
@@ -871,7 +889,7 @@ export function GeneralSettings() {
         )}
       </div>
 
-      {cvAnalysisDraft && profile && (
+      {cvAnalysisDraft && profile && canViewCvAnalysis && (
         <CvAnalysisDialog
           profileId={profile.id}
           draft={cvAnalysisDraft}
