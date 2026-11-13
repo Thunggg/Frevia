@@ -34,6 +34,7 @@ import {
 import { accountProfileApi } from "@/apiRequests/account-profile";
 import { profileApiRequest } from "@/apiRequests/profile";
 import { profileRevisionApiRequest } from "@/apiRequests/profile-revision";
+import { useActionPermission } from "@/hooks/use-action-permission";
 
 import { Header, type UserRole } from "@/components/header";
 import { ClientSidebar } from "@/app/(client)/_components/client-sidebar";
@@ -192,6 +193,26 @@ export function ProfilePageClient({
   const t = useTranslations("freelancerProfile");
   const tCommon = useTranslations("common");
   const router = useRouter();
+
+  const { can } = useActionPermission();
+  const canViewFavorites = can("GET", "/api/favorites/freelancers");
+  const canAddFavorite = can(
+    "POST",
+    "/api/favorites/freelancers/:freelancerId",
+  );
+  const canRemoveFavorite = can(
+    "DELETE",
+    "/api/favorites/freelancers/:freelancerId",
+  );
+  const canGetFollowing = can("GET", "/api/following/freelancers");
+  const canFollowFreelancer = can(
+    "POST",
+    "/api/following/freelancers/:freelancerId",
+  );
+  const canUnfollowFreelancer = can(
+    "DELETE",
+    "/api/following/freelancers/:freelancerId",
+  );
   const [profile, setProfile] = useState<FreelancerProfileDetailType | null>(
     null,
   );
@@ -258,10 +279,10 @@ export function ProfilePageClient({
         profileApiRequest.getProfileDetail(profileId),
         profileApiRequest.getSkills(profileId),
         profileApiRequest.getPortfoliosList(profileId),
-        headerRole === "CLIENT"
+        headerRole === "CLIENT" && canViewFavorites
           ? accountProfileApi.getFavorites()
           : Promise.resolve(null),
-        headerRole === "CLIENT"
+        headerRole === "CLIENT" && canGetFollowing
           ? accountProfileApi.getFollowing()
           : Promise.resolve(null),
       ]);
@@ -301,10 +322,19 @@ export function ProfilePageClient({
     } finally {
       setIsLoading(false);
     }
-  }, [currentUserId, headerRole, profileId, t]);
+  }, [
+    currentUserId,
+    headerRole,
+    profileId,
+    t,
+    canViewFavorites,
+    canGetFollowing,
+  ]);
 
   const toggleFavorite = async () => {
     if (!profile) return;
+    if (isFavorite && !canRemoveFavorite) return;
+    if (!isFavorite && !canAddFavorite) return;
     setPendingAction("favorite");
     try {
       if (isFavorite) {
@@ -329,6 +359,8 @@ export function ProfilePageClient({
 
   const toggleFollowing = async () => {
     if (!profile) return;
+    if (isFollowing && !canUnfollowFreelancer) return;
+    if (!isFollowing && !canFollowFreelancer) return;
     setPendingAction("follow");
     try {
       if (isFollowing) {
@@ -871,88 +903,114 @@ export function ProfilePageClient({
                   </div>
                 ) : headerRole === "CLIENT" ? (
                   <div className="flex flex-wrap gap-2">
-                    <Button
-                      variant={isFollowing ? "outline" : "default"}
-                      className={
-                        isFollowing
-                          ? "border-[#4fae2e]/35 text-[#438f2b] hover:bg-[#eaf8df] dark:text-[#78c85d] dark:hover:bg-[#4fae2e]/10"
-                          : "bg-[#4fae2e] text-white hover:bg-[#459928]"
-                      }
-                      onClick={() => {
-                        if (isFollowing) {
-                          setUnfollowDialogOpen(true);
-                        } else {
-                          void toggleFollowing();
-                        }
-                      }}
-                      disabled={pendingAction === "follow"}
-                    >
-                      {pendingAction === "follow" ? (
-                        <Loader2 className="animate-spin" />
-                      ) : isFollowing ? (
-                        <UserCheck />
-                      ) : (
-                        <UserPlus />
-                      )}
-                      {isFollowing ? t("following") : t("follow")}
-                    </Button>
-                    <AlertDialog
-                      open={unfollowDialogOpen}
-                      onOpenChange={setUnfollowDialogOpen}
-                    >
-                      <AlertDialogContent>
-                        <AlertDialogHeader>
-                          <AlertDialogTitle>
-                            {t("unfollowTitle", {
-                              name:
-                                profile.displayName ?? t("noNameFallback"),
-                            })}
-                          </AlertDialogTitle>
-                          <AlertDialogDescription>
-                            {t("unfollowDescription")}
-                          </AlertDialogDescription>
-                        </AlertDialogHeader>
-                        <AlertDialogFooter>
-                          <AlertDialogCancel
-                            disabled={pendingAction === "follow"}
-                          >
-                            {t("keepFollowing")}
-                          </AlertDialogCancel>
-                          <AlertDialogAction
-                            className="bg-destructive text-white hover:bg-destructive/90"
-                            disabled={pendingAction === "follow"}
-                            onClick={(event) => {
-                              event.preventDefault();
-                              void toggleFollowing();
+                    {isFollowing ? (
+                      canUnfollowFreelancer ? (
+                        <>
+                          <Button
+                            variant="outline"
+                            className="border-[#4fae2e]/35 text-[#438f2b] hover:bg-[#eaf8df] dark:text-[#78c85d] dark:hover:bg-[#4fae2e]/10"
+                            onClick={() => {
+                              setUnfollowDialogOpen(true);
                             }}
+                            disabled={pendingAction === "follow"}
                           >
                             {pendingAction === "follow" ? (
                               <Loader2 className="animate-spin" />
                             ) : (
-                              <UserMinus />
+                              <UserCheck />
                             )}
-                            {t("unfollow")}
-                          </AlertDialogAction>
-                        </AlertDialogFooter>
-                      </AlertDialogContent>
-                    </AlertDialog>
-                    <Button
-                      variant={isFavorite ? "default" : "outline"}
-                      className={
-                        isFavorite
-                          ? "bg-[#4fae2e] text-white hover:bg-[#459928]"
-                          : ""
-                      }
-                      onClick={() => void toggleFavorite()}
-                      disabled={pendingAction === "favorite"}
-                    >
-                      {pendingAction === "favorite" ? (
-                        <Loader2 className="animate-spin" />
-                      ) : (
-                        <Heart className={isFavorite ? "fill-current" : ""} />
-                      )}
-                      {isFavorite ? t("favorited") : t("addToFavorites")}
-                    </Button>
+                            {t("following")}
+                          </Button>
+                          <AlertDialog
+                            open={unfollowDialogOpen}
+                            onOpenChange={setUnfollowDialogOpen}
+                          >
+                            <AlertDialogContent>
+                              <AlertDialogHeader>
+                                <AlertDialogTitle>
+                                  {t("unfollowTitle", {
+                                    name:
+                                      profile.displayName ?? t("noNameFallback"),
+                                  })}
+                                </AlertDialogTitle>
+                                <AlertDialogDescription>
+                                  {t("unfollowDescription")}
+                                </AlertDialogDescription>
+                              </AlertDialogHeader>
+                              <AlertDialogFooter>
+                                <AlertDialogCancel
+                                  disabled={pendingAction === "follow"}
+                                >
+                                  {t("keepFollowing")}
+                                </AlertDialogCancel>
+                                <AlertDialogAction
+                                  className="bg-destructive text-white hover:bg-destructive/90"
+                                  disabled={pendingAction === "follow"}
+                                  onClick={(event) => {
+                                    event.preventDefault();
+                                    void toggleFollowing();
+                                  }}
+                                >
+                                  {pendingAction === "follow" ? (
+                                    <Loader2 className="animate-spin" />
+                                  ) : (
+                                    <UserMinus />
+                                  )}
+                                  {t("unfollow")}
+                                </AlertDialogAction>
+                              </AlertDialogFooter>
+                            </AlertDialogContent>
+                          </AlertDialog>
+                        </>
+                      ) : null
+                    ) : canFollowFreelancer ? (
+                      <Button
+                        variant="default"
+                        className="bg-[#4fae2e] text-white hover:bg-[#459928]"
+                        onClick={() => {
+                          void toggleFollowing();
+                        }}
+                        disabled={pendingAction === "follow"}
+                      >
+                        {pendingAction === "follow" ? (
+                          <Loader2 className="animate-spin" />
+                        ) : (
+                          <UserPlus />
+                        )}
+                        {t("follow")}
+                      </Button>
+                    ) : null}
+
+                    {isFavorite ? (
+                      canRemoveFavorite ? (
+                        <Button
+                          variant="default"
+                          className="bg-[#4fae2e] text-white hover:bg-[#459928]"
+                          onClick={() => void toggleFavorite()}
+                          disabled={pendingAction === "favorite"}
+                        >
+                          {pendingAction === "favorite" ? (
+                            <Loader2 className="animate-spin" />
+                          ) : (
+                            <Heart className="fill-current" />
+                          )}
+                          {t("favorited")}
+                        </Button>
+                      ) : null
+                    ) : canAddFavorite ? (
+                      <Button
+                        variant="outline"
+                        onClick={() => void toggleFavorite()}
+                        disabled={pendingAction === "favorite"}
+                      >
+                        {pendingAction === "favorite" ? (
+                          <Loader2 className="animate-spin" />
+                        ) : (
+                          <Heart />
+                        )}
+                        {t("addToFavorites")}
+                      </Button>
+                    ) : null}
                   </div>
                 ) : null}
               </div>

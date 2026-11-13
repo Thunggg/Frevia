@@ -333,14 +333,16 @@ export function ClientSidebar() {
                 <UserRound className="size-3.5" />
                 {t("profileSettings")}
               </Link>
-              <Link
-                href="/client/profile?tab=favorites"
-                onClick={() => setProfileOpen(false)}
-                className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-xs text-muted-foreground hover:bg-[#D0E1F8]/40 dark:hover:bg-zinc-800 hover:text-[#0069D3] dark:hover:text-blue-300 transition-colors"
-              >
-                <Heart className="size-3.5" />
-                {t("navFavoriteFreelancers")}
-              </Link>
+              {can("GET", "/api/favorites/freelancers") && (
+                <Link
+                  href="/client/profile?tab=favorites"
+                  onClick={() => setProfileOpen(false)}
+                  className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-xs text-muted-foreground hover:bg-[#D0E1F8]/40 dark:hover:bg-zinc-800 hover:text-[#0069D3] dark:hover:text-blue-300 transition-colors"
+                >
+                  <Heart className="size-3.5" />
+                  {t("navFavoriteFreelancers")}
+                </Link>
+              )}
               <Link
                 href="/client/payments"
                 onClick={() => setProfileOpen(false)}

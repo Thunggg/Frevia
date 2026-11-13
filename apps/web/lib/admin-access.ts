@@ -322,11 +322,12 @@ export function hasActionPermission(
           "reindex",
           "outbox",
           "skills-catalog",
+          "discover",
         ]);
         if (
           param &&
           actual &&
-          [":id", ":jobId", ":proposalId", ":userId"].includes(param) &&
+          param.startsWith(":") &&
           reservedSegments.has(actual.toLowerCase())
         ) {
           return false;

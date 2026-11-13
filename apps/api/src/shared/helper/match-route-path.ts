@@ -29,6 +29,7 @@ const STATIC_RESERVED_SEGMENTS = new Set([
   'reindex',
   'outbox',
   'skills-catalog',
+  'discover',
 ]);
 
 /**
