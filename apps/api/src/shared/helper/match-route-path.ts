@@ -15,6 +15,23 @@ export function normalizeApiPath(path: string): string {
 }
 
 /**
+ * Danh sách các static keywords thường dùng làm sub-route độc lập,
+ * không được xem là dynamic parameter identifier (:id, :jobId, :userId, v.v.).
+ */
+const STATIC_RESERVED_SEGMENTS = new Set([
+  'my',
+  'me',
+  'stats',
+  'trash',
+  'skills',
+  'bookmarks',
+  'upload-image',
+  'reindex',
+  'outbox',
+  'skills-catalog',
+]);
+
+/**
  * So khớp path thực tế với pattern permission (vd `/api/roles/:id`).
  */
 export function matchRoutePath(pattern: string, actualPath: string): boolean {
@@ -26,7 +43,15 @@ export function matchRoutePath(pattern: string, actualPath: string): boolean {
   }
 
   return patternParts.every((part, index) => {
-    if (part.startsWith(':')) return true;
+    if (part.startsWith(':')) {
+      const actual = actualParts[index];
+      // Nếu pattern là :id/:jobId/:proposalId nhưng actualPath là static keyword riêng (như 'my', 'me'),
+      // thì không được match.
+      if (actual && STATIC_RESERVED_SEGMENTS.has(actual.toLowerCase())) {
+        return false;
+      }
+      return true;
+    }
     return part === actualParts[index];
   });
 }

@@ -1148,7 +1148,9 @@
     "deliveryDays": "{count, plural, other {# ngày}}",
     "empty": "Chưa có đề xuất nào",
     "emptyHint": "Tìm dự án phù hợp với kỹ năng của bạn và gửi đề xuất đầu tiên.",
-    "findWork": "Tìm việc"
+    "findWork": "Tìm việc",
+    "accessDenied": "Bạn không có quyền xem danh sách đề xuất của mình.",
+    "viewDetailAccessDenied": "Bạn không có quyền xem chi tiết đề xuất này."
   },
   "createContract": {
     "defaultJobTitle": "công việc này",
@@ -1382,7 +1384,12 @@
     "withdrawTitle": "Rút đề xuất này?",
     "withdrawHint": "Khách hàng sẽ không thể chấp nhận đề xuất này nữa.",
     "withdrawing": "Đang rút...",
-    "withdraw": "Rút đề xuất"
+    "withdraw": "Rút đề xuất",
+    "accessDenied": "Bạn không có quyền xem chi tiết đề xuất này.",
+    "noPermissionAction": "Bạn không có quyền thực hiện thao tác này.",
+    "noPermissionEditDraft": "Bạn không có quyền chỉnh sửa bản nháp đề xuất.",
+    "noPermissionSubmitDraft": "Bạn không có quyền nộp chính thức bản nháp đề xuất.",
+    "noPermissionWithdraw": "Bạn không có quyền rút lại đề xuất."
   },
   "milestoneStatus": {
     "DISPUTED": "Tranh chấp",
@@ -1491,7 +1498,11 @@
     "appliedFor": "Ứng tuyển cho",
     "coverLetterHeading": "Thư giới thiệu",
     "hire": "Tuyển freelancer",
-    "notSelectedHint": "Freelancer sẽ được thông báo rằng đề xuất này không được chọn cho công việc này."
+    "notSelectedHint": "Freelancer sẽ được thông báo rằng đề xuất này không được chọn cho công việc này.",
+    "accessDenied": "Bạn không có quyền truy cập danh sách ứng viên của công việc này.",
+    "viewDetailAccessDenied": "Bạn không có quyền xem chi tiết đề xuất này.",
+    "noPermissionAction": "Bạn không có quyền thực hiện thao tác này.",
+    "backToJob": "Quay lại chi tiết công việc"
   },
   "contractDetail": {
     "startedWork": "Đã bắt đầu thực hiện cột mốc \"{title}\"!",

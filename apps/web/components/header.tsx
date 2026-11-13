@@ -43,6 +43,7 @@ import { MessageBell } from "@/components/notification-bell";
 import { NotificationsBell } from "@/components/notifications-bell";
 import { ContactDialog } from "@/components/contact-dialog";
 import { useMe } from "@/hooks/use-auth";
+import { useActionPermission } from "@/hooks/use-action-permission";
 import { canAccessAdminPortal } from "@/lib/admin-access";
 
 export type UserRole = "GUEST" | "CLIENT" | "FREELANCER";
@@ -139,7 +140,17 @@ function HeaderNavigation({
 }: HeaderProps & { mobile?: boolean; onNavigate?: () => void }) {
   const pathname = usePathname();
   const t = useTranslations("nav");
-  const links = roleConfig[role]?.links ?? [];
+  const { can } = useActionPermission();
+  const canViewProposals = can("GET", "/api/proposals/my");
+  const canViewJobs = can("GET", "/api/manage-jobs");
+  const canViewBookmarks = can("GET", "/api/manage-jobs/bookmarks");
+
+  const links = (roleConfig[role]?.links ?? []).filter((link) => {
+    if (link.href === "/freelancer/proposals" && !canViewProposals) return false;
+    if (link.href === "/client/jobs" && !canViewJobs) return false;
+    if (link.href === "/freelancer?tab=saved-jobs" && !canViewBookmarks) return false;
+    return true;
+  });
 
   return (
     <div className={mobile ? "space-y-1" : "hidden items-center gap-1 md:flex"}>
@@ -240,6 +251,8 @@ function ProfileDropdown({ role }: { role: Exclude<UserRole, "GUEST"> }) {
   const t = useTranslations("nav");
   const profile = roleConfig[role];
   const { data: me } = useMe();
+  const { can } = useActionPermission();
+  const canViewProposals = can("GET", "/api/proposals/my");
   const displayName =
     me?.profile?.displayName || t(`roles.${profile.nameKey}`);
   const initial = displayName?.charAt(0)?.toUpperCase() ?? "?";
@@ -336,12 +349,14 @@ function ProfileDropdown({ role }: { role: Exclude<UserRole, "GUEST"> }) {
                 {t("myBookmarks")}
               </Link>
             </DropdownMenuItem>
-            <DropdownMenuItem asChild>
-              <Link href="/freelancer/proposals" className="cursor-pointer">
-                <FileText className="size-4 text-muted-foreground" />
-                {t("myProposals")}
-              </Link>
-            </DropdownMenuItem>
+            {canViewProposals ? (
+              <DropdownMenuItem asChild>
+                <Link href="/freelancer/proposals" className="cursor-pointer">
+                  <FileText className="size-4 text-muted-foreground" />
+                  {t("myProposals")}
+                </Link>
+              </DropdownMenuItem>
+            ) : null}
             <DropdownMenuItem asChild>
               <Link href="/freelancer/contracts" className="cursor-pointer">
                 <FileText className="size-4 text-muted-foreground" />

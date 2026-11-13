@@ -1148,7 +1148,9 @@
     "deliveryDays": "{count, plural, one {# day} other {# days}}",
     "empty": "No proposals yet",
     "emptyHint": "Find a project that matches your skills and send your first proposal.",
-    "findWork": "Find work"
+    "findWork": "Find work",
+    "accessDenied": "You do not have permission to view your proposals.",
+    "viewDetailAccessDenied": "You do not have permission to view this proposal details."
   },
   "createContract": {
     "defaultJobTitle": "this job",
@@ -1382,7 +1384,12 @@
     "withdrawTitle": "Withdraw this proposal?",
     "withdrawHint": "The client will no longer be able to accept this proposal.",
     "withdrawing": "Withdrawing...",
-    "withdraw": "Withdraw"
+    "withdraw": "Withdraw",
+    "accessDenied": "You do not have permission to view this proposal details.",
+    "noPermissionAction": "You do not have permission to perform this action.",
+    "noPermissionEditDraft": "You do not have permission to edit proposal draft.",
+    "noPermissionSubmitDraft": "You do not have permission to submit proposal draft.",
+    "noPermissionWithdraw": "You do not have permission to withdraw this proposal."
   },
   "milestoneStatus": {
     "DISPUTED": "Disputed",
@@ -1491,7 +1498,11 @@
     "appliedFor": "Applied For",
     "coverLetterHeading": "Cover Letter",
     "hire": "Hire freelancer",
-    "notSelectedHint": "The freelancer will be notified that this proposal was not selected for this job."
+    "notSelectedHint": "The freelancer will be notified that this proposal was not selected for this job.",
+    "accessDenied": "You do not have permission to view proposals for this job.",
+    "viewDetailAccessDenied": "You do not have permission to view this proposal details.",
+    "noPermissionAction": "You do not have permission to perform this action.",
+    "backToJob": "Back to job details"
   },
   "contractDetail": {
     "startedWork": "Started work on milestone \"{title}\"!",

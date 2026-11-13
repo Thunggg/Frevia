@@ -145,6 +145,13 @@ export function JobDetailContent({
   const { can } = useActionPermission();
   const canAddBookmark = can("POST", "/api/manage-jobs/jobs/:slug/bookmark");
   const canRemoveBookmark = can("DELETE", "/api/manage-jobs/bookmarks/:slug");
+  const canViewMyProposal =
+    role === "FREELANCER" &&
+    (can("GET", "/api/proposals/jobs/:jobId/mine") ||
+      can("GET", "/api/proposals/my"));
+  const canCreateProposal = can("POST", "/api/proposals/jobs/:jobId");
+  const canSaveDraft = can("POST", "/api/proposals/jobs/:jobId/drafts");
+  const canViewDetail = can("GET", "/api/proposals/:id");
 
   const isOwnJob = currentUserId != null && job.clientId === currentUserId;
   const canBookmark =
@@ -178,7 +185,7 @@ export function JobDetailContent({
   const activeProposalQuery = useQuery({
     queryKey: ["proposals", "job", job.id, "mine"],
     queryFn: () => proposalApiRequest.getMyProposalForJob(job.id),
-    enabled: canBookmark,
+    enabled: canViewMyProposal,
     initialData: existingProposal ?? undefined,
     retry: false,
   });
@@ -369,12 +376,21 @@ export function JobDetailContent({
       if (!verified) return;
 
       if (activeProposal) {
+        if (!canViewDetail) {
+          toastError({ message: tBookmark("viewListAccessDenied") });
+          return;
+        }
         router.push(`/proposals/${activeProposal.id}`);
         return;
       }
 
       if (!canReceiveProposals) {
         toastError({ message: t("notAccepting") });
+        return;
+      }
+
+      if (!canCreateProposal && !canSaveDraft) {
+        toastError({ message: t("cannotApplyOwnJob") });
         return;
       }
 
@@ -432,10 +448,12 @@ export function JobDetailContent({
   ];
 
   const proposalActionLabel = activeProposal
-    ? activeProposal.status === "DRAFT" && canReceiveProposals
-      ? t("continueProposal")
-      : t("viewProposal")
-    : canReceiveProposals
+    ? canViewDetail
+      ? activeProposal.status === "DRAFT" && canReceiveProposals
+        ? t("continueProposal")
+        : t("viewProposal")
+      : null
+    : canReceiveProposals && (role !== "FREELANCER" || canCreateProposal || canSaveDraft)
       ? t("applyNow")
       : null;
 

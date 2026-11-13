@@ -309,6 +309,28 @@ export function hasActionPermission(
       // Target:     "/api/users/:id"
       // -> Cũng được xem là khớp theo logic hiện tại.
       if (part.startsWith(":") || targetParts[idx]?.startsWith(":")) {
+        const param = part.startsWith(":") ? part : targetParts[idx];
+        const actual = part.startsWith(":") ? targetParts[idx] : part;
+        const reservedSegments = new Set([
+          "my",
+          "me",
+          "stats",
+          "trash",
+          "skills",
+          "bookmarks",
+          "upload-image",
+          "reindex",
+          "outbox",
+          "skills-catalog",
+        ]);
+        if (
+          param &&
+          actual &&
+          [":id", ":jobId", ":proposalId", ":userId"].includes(param) &&
+          reservedSegments.has(actual.toLowerCase())
+        ) {
+          return false;
+        }
         return true;
       }
 

@@ -37,6 +37,9 @@ export default async function FreelancerJobDetailPage({
     "GET",
     "/api/manage-jobs/jobs/:slug/bookmark",
   );
+  const canViewMyProposal =
+    hasActionPermission(user, "GET", "/api/proposals/jobs/:jobId/mine") ||
+    hasActionPermission(user, "GET", "/api/proposals/my");
 
   const [bookmarkStatus, relatedResult, existingProposal] = await Promise.all([
     role === "FREELANCER" && canCheckBookmark
@@ -51,7 +54,7 @@ export default async function FreelancerJobDetailPage({
           order: "desc",
         })
       : Promise.resolve(null),
-    role === "FREELANCER"
+    role === "FREELANCER" && canViewMyProposal
       ? proposalServerRequest.getMyProposalForJob(job.id)
       : Promise.resolve(null),
   ]);

@@ -37,6 +37,7 @@ import {
   AvatarImage,
 } from "@repo/ui/components/shadcn/avatar";
 import { useMe } from "@/hooks/use-auth";
+import { useActionPermission } from "@/hooks/use-action-permission";
 import { canAccessAdminPortal } from "@/lib/admin-access";
 import { useNotifications } from "@/hooks/use-notifications";
 
@@ -229,6 +230,14 @@ export function FreelancerSidebar() {
           : undefined,
     },
   ];
+
+  const { can } = useActionPermission();
+  const canViewProposals = can("GET", "/api/proposals/my");
+
+  const visibleNav = freelancerNav.filter((item) => {
+    if (item.href === "/freelancer/proposals" && !canViewProposals) return false;
+    return true;
+  });
 
   const displayName = me?.profile?.displayName ?? tRole("FREELANCER");
   const initial = displayName.charAt(0).toUpperCase();
@@ -488,7 +497,7 @@ export function FreelancerSidebar() {
           </p>
         )}
         <div className="space-y-1">
-          {freelancerNav.map((item) => (
+          {visibleNav.map((item) => (
             <NavLink key={item.href} item={item} collapsed={collapsed} />
           ))}
         </div>
