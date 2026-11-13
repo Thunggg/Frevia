@@ -38,10 +38,7 @@ import {
   SyncCheckoutSessionResponseDTO,
 } from './payment.dto';
 import { PaymentService } from './payment.service';
-import type {
-  DisputeSettlementBodyType,
-  GetTransactionListQueryType,
-} from '@shared/types';
+import type { GetTransactionListQueryType } from '@shared/types';
 
 /**
  * Controller quản lý toàn bộ luồng thanh toán qua Stripe (`/api/payments`).
@@ -56,7 +53,7 @@ import type {
  */
 @Controller('payments')
 export class PaymentController {
-  constructor(private readonly paymentService: PaymentService) { }
+  constructor(private readonly paymentService: PaymentService) {}
 
   // =========================================================================
   // 1. STRIPE CONNECT & QUẢN LÝ PHƯƠNG THỨC THANH TOÁN (THẺ ĐÃ LƯU)
@@ -271,6 +268,23 @@ export class PaymentController {
     @Param('milestoneId', ParseIntPipe) milestoneId: number,
   ) {
     return this.paymentService.refundMilestone(userId, contractId, milestoneId);
+  }
+
+  // =========================================================================
+  // 4. GIẢI QUYẾT TRANH CHẤP & PHÂN CHIA TIỀN KÝ QUỸ
+  // =========================================================================
+
+  /**
+   * Thanh toán và phân chia tiền ký quỹ giải quyết tranh chấp.
+   */
+  @Post('disputes/:disputeId/settle')
+  @ZodSerializerDto(DisputeSettlementResponseDTO)
+  settleDispute(
+    @UserActive('userId') userId: number,
+    @Param('disputeId', ParseIntPipe) disputeId: number,
+    @Body() body: DisputeSettlementBodyDTO,
+  ) {
+    return this.paymentService.settleDispute(userId, disputeId, body);
   }
   // =========================================================================
   // 5. LỊCH SỬ GIAO DỊCH, ĐỒNG BỘ TRẠNG THÁI & STRIPE WEBHOOK

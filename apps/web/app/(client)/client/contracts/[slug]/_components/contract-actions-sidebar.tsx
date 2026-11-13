@@ -56,6 +56,10 @@ export function ContractActionsSidebar({
   const canCancelContract = can("PATCH", "/api/contracts/:id/cancel");
   const canRejectContract = can("PATCH", "/api/contracts/:id/reject");
   const canExportPdf = can("GET", "/api/contracts/:id/pdf");
+  const canFundContractHold = can(
+    "POST",
+    "/api/payments/contracts/:contractId/fund-hold/intent",
+  );
 
   const canSign =
     (isFreelancer
@@ -73,7 +77,8 @@ export function ContractActionsSidebar({
   const canFundHold =
     !isFreelancer &&
     contract.status === "AWAITING_PAYMENT" &&
-    Boolean(onOpenFundHold);
+    Boolean(onOpenFundHold) &&
+    canFundContractHold;
 
   const canComplete =
     !isFreelancer && contract.status === "ACTIVE" && canCompleteContract;

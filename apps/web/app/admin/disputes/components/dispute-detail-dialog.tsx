@@ -1,6 +1,7 @@
 "use client";
 
 import { disputeApiRequest } from "@/apiRequests/dispute";
+import { paymentApiRequest } from "@/apiRequests/payment";
 import { Button } from "@repo/ui/components/shadcn/button";
 import {
   Dialog,
@@ -55,6 +56,9 @@ export function DisputeDetailDialog({
     : false;
   const canFinalDecision = dispute
     ? can("POST", `/api/admin/disputes/${dispute.id}/final-decision`)
+    : false;
+  const canSettleDispute = dispute
+    ? can("POST", `/api/payments/disputes/${dispute.id}/settle`)
     : false;
 
   const milestoneAmount = dispute?.milestone?.amount
@@ -148,6 +152,35 @@ export function DisputeDetailDialog({
       router.refresh();
     } catch {
       toastError({ message: t("submitFailed") });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleSettleDispute = async () => {
+    if (!dispute || !canSettleDispute) return;
+    setIsSubmitting(true);
+    try {
+      const winningParty =
+        clientAmount > freelancerAmount
+          ? "CLIENT"
+          : freelancerAmount > clientAmount
+            ? "FREELANCER"
+            : "SPLIT";
+      await paymentApiRequest.settleDispute(dispute.id, {
+        clientAmount,
+        freelancerAmount,
+        winningParty,
+        decisionReason:
+          decisionReason || dispute.decisionReason || "Dispute settlement executed",
+      });
+      toastSuccess({
+        message: "Dispute payment settlement executed successfully!",
+      });
+      onOpenChange(false);
+      router.refresh();
+    } catch {
+      toastError({ message: "Failed to settle dispute payment." });
     } finally {
       setIsSubmitting(false);
     }
@@ -439,6 +472,19 @@ export function DisputeDetailDialog({
                       <Loader2 className="mr-2 size-4 animate-spin" />
                     )}
                     {t("issueFinalRulingAction")}
+                  </Button>
+                )}
+                {canSettleDispute && (
+                  <Button
+                    type="button"
+                    disabled={isSubmitting || !isSplitValid}
+                    onClick={() => void handleSettleDispute()}
+                    className="bg-blue-600 text-white hover:bg-blue-700"
+                  >
+                    {isSubmitting && (
+                      <Loader2 className="mr-2 size-4 animate-spin" />
+                    )}
+                    Thanh toán giải quyết tranh chấp
                   </Button>
                 )}
               </div>
