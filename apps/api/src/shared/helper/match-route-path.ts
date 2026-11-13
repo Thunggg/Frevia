@@ -34,6 +34,11 @@ const STATIC_RESERVED_SEGMENTS = new Set([
   'portfolios',
   'cv',
   'analysis',
+  'documents',
+  'status',
+  'ai-check',
+  'liveness-pose',
+  'matching-jobs',
 ]);
 
 /**

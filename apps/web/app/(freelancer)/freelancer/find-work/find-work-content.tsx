@@ -161,6 +161,7 @@ export function FindWorkContent({
   const canViewBookmarks = can("GET", "/api/manage-jobs/bookmarks");
   const canAddBookmark = can("POST", "/api/manage-jobs/jobs/:slug/bookmark");
   const canRemoveBookmark = can("DELETE", "/api/manage-jobs/bookmarks/:slug");
+  const canViewJobAlerts = can("GET", "/api/job-alerts");
 
   const canBookmark =
     role === "FREELANCER" && (canAddBookmark || canRemoveBookmark);
@@ -616,7 +617,7 @@ export function FindWorkContent({
                     }`}
                   >
                     <span>{t("invites")}</span>
-                    {jobAlerts.length > 0 && (
+                    {canViewJobAlerts && jobAlerts.length > 0 && (
                       <span className="ml-1.5 rounded-full bg-muted text-muted-foreground px-2 py-0.5 text-xs font-normal">
                         {jobAlerts.length}
                       </span>
@@ -896,7 +897,7 @@ export function FindWorkContent({
                   {/* TAB 5: INVITES & JOB ALERTS */}
                   {activeTab === "invites" && (
                     <div className="space-y-3">
-                      {jobAlerts.length === 0 ? (
+                      {!canViewJobAlerts || jobAlerts.length === 0 ? (
                         <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-border bg-card/40 px-6 py-14 text-center font-sans">
                           <InfoIcon className="size-10 text-muted-foreground mb-3" />
                           <p className="text-base font-semibold text-foreground">

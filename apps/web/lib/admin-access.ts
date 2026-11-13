@@ -327,6 +327,11 @@ export function hasActionPermission(
           "portfolios",
           "cv",
           "analysis",
+          "documents",
+          "status",
+          "ai-check",
+          "liveness-pose",
+          "matching-jobs",
         ]);
         if (
           param &&

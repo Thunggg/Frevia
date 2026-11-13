@@ -200,6 +200,28 @@ export function AccountProfileClient({
     "/api/following/freelancers/:freelancerId",
   );
   const canViewFollowingTab = canGetFollowing || canDiscoverFreelancers;
+  const canUploadIdentityDoc = can(
+    "POST",
+    "/api/identity-verifications/documents",
+  );
+  const canViewIdentityStatus = can(
+    "GET",
+    "/api/identity-verifications/status",
+  );
+  const canDownloadIdentityDoc = can(
+    "GET",
+    "/api/identity-verifications/documents/:id/file",
+  );
+  const canAiCheck = can("POST", "/api/identity-verifications/ai-check");
+  const canLivenessPose = can(
+    "POST",
+    "/api/identity-verifications/liveness-pose",
+  );
+  const canViewIdentityTab =
+    canViewIdentityStatus ||
+    canUploadIdentityDoc ||
+    canAiCheck ||
+    canLivenessPose;
 
   const toMessage = useCallback(
     (error: unknown) => errorMessage(error, tSettings("somethingWentWrong")),
@@ -254,10 +276,12 @@ export function AccountProfileClient({
       const common = accountProfileApi.getSocialLinks();
       if (headerRole === "FREELANCER") {
         const [identityResponse, linksResponse] = await Promise.all([
-          accountProfileApi.getIdentityStatus(),
+          canViewIdentityStatus
+            ? accountProfileApi.getIdentityStatus()
+            : Promise.resolve(null),
           common,
         ]);
-        setIdentity(identityResponse.data);
+        setIdentity(identityResponse?.data ?? null);
         setSocialLinks(linksResponse.data);
       } else {
         const [profileResponse, linksResponse, favoritesResponse] =
@@ -280,7 +304,7 @@ export function AccountProfileClient({
     } finally {
       setLoading(false);
     }
-  }, [headerRole, userId, toMessage, canViewFavorites]);
+  }, [headerRole, userId, toMessage, canViewFavorites, canViewIdentityStatus]);
 
   const loadFreelancers = useCallback(async () => {
     if (!canDiscoverFreelancers) {
@@ -557,7 +581,7 @@ export function AccountProfileClient({
                 <TabsTrigger value="general">
                   <UserRound /> {t("navGeneral")}
                 </TabsTrigger>
-                {headerRole === "FREELANCER" ? (
+                {headerRole === "FREELANCER" && canViewIdentityTab ? (
                   <TabsTrigger value="identity">
                     <ShieldCheck /> {t("navIdentity")}
                   </TabsTrigger>
@@ -669,96 +693,110 @@ export function AccountProfileClient({
                 </div>
               </TabsContent>
 
-              <TabsContent value="identity">
-                <div className="grid gap-8 lg:grid-cols-[1fr_360px]">
-                  <div className="rounded-xl border border-border p-5 sm:p-6">
-                    <h2 className="text-base font-semibold tracking-tight text-foreground">
-                      {t("aiCheckTitle")}
-                    </h2>
-                    <p className="mt-1 text-sm text-muted-foreground">
-                      {t("aiCheckHint")}
-                    </p>
-                    <IdentityVerificationForm onSubmitted={() => void load()} />
-                  </div>
+              {canViewIdentityTab && (
+                <TabsContent value="identity">
+                  <div className={`grid gap-8 ${canAiCheck || canUploadIdentityDoc ? "lg:grid-cols-[1fr_360px]" : "max-w-xl"}`}>
+                    {(canAiCheck || canUploadIdentityDoc) && (
+                      <div className="rounded-xl border border-border p-5 sm:p-6">
+                        <h2 className="text-base font-semibold tracking-tight text-foreground">
+                          {t("aiCheckTitle")}
+                        </h2>
+                        <p className="mt-1 text-sm text-muted-foreground">
+                          {t("aiCheckHint")}
+                        </p>
+                        <IdentityVerificationForm onSubmitted={() => void load()} />
+                      </div>
+                    )}
 
-                  <div className="rounded-xl border border-border p-5 sm:p-6">
-                    <h2 className="text-base font-semibold tracking-tight text-foreground">
-                      {t("verificationStatusTitle")}
-                    </h2>
-                    <div className="mt-5 space-y-4">
-                      <Badge
-                        className={
-                          identity?.status === VerificationStatus.APPROVED
-                            ? "border-transparent bg-[#4fae2e] text-white hover:bg-[#4fae2e]"
-                            : ""
-                        }
-                        variant={
-                          identity?.status === VerificationStatus.APPROVED
-                            ? "default"
-                            : "secondary"
-                        }
-                      >
-                        {verificationStatusLabel(identity?.status)}
-                      </Badge>
-                      {identity?.status !== VerificationStatus.APPROVED ? (
-                        <p className="rounded-md border border-border bg-muted/40 p-3 text-xs text-muted-foreground">
-                          {t("dashboardLockedHint")}
-                        </p>
-                      ) : null}
-                      {identity?.documents.length ? (
-                        <ul className="divide-y divide-border border-y border-border">
-                          {identity.documents.map((document) => (
-                            <li
-                              key={document.id}
-                              className="flex items-center justify-between gap-3 py-3"
-                            >
-                              <div>
-                                <p className="font-medium text-foreground">
-                                  {documentTypeLabel(document.documentType)}
-                                </p>
-                                <p className="text-xs text-muted-foreground">
-                                  {format.dateTime(
-                                    new Date(document.createdAt),
-                                    {
-                                      dateStyle: "medium",
-                                      timeStyle: "short",
-                                    },
-                                  )}
-                                </p>
-                                {document.reviewNotes ? (
-                                  <p className="mt-1 text-sm text-destructive">
-                                    {document.reviewNotes}
-                                  </p>
-                                ) : null}
-                              </div>
-                              <div className="flex shrink-0 items-start gap-2">
-                                {/* eslint-disable-next-line @next/next/no-img-element */}
-                                <img
-                                  src={document.fileUrl}
-                                  alt={`${documentTypeLabel(document.documentType)} — ${t("frontImageLabel")}`}
-                                  className="h-16 w-24 rounded-md border border-border object-cover"
-                                />
-                                {document.backFileUrl ? (
-                                  /* eslint-disable-next-line @next/next/no-img-element */
-                                  <img
-                                    src={document.backFileUrl}
-                                    alt={`${documentTypeLabel(document.documentType)} — ${t("backImageLabel")}`}
-                                    className="h-16 w-24 rounded-md border border-border object-cover"
-                                  />
-                                ) : null}
-                              </div>
-                            </li>
-                          ))}
-                        </ul>
-                      ) : (
-                        <p className="text-sm text-muted-foreground">
-                          {t("noDocumentsYet")}
-                        </p>
-                      )}
-                    </div>
+                    {canViewIdentityStatus && (
+                      <div className="rounded-xl border border-border p-5 sm:p-6">
+                        <h2 className="text-base font-semibold tracking-tight text-foreground">
+                          {t("verificationStatusTitle")}
+                        </h2>
+                        <div className="mt-5 space-y-4">
+                          <Badge
+                            className={
+                              identity?.status === VerificationStatus.APPROVED
+                                ? "border-transparent bg-[#4fae2e] text-white hover:bg-[#4fae2e]"
+                                : ""
+                            }
+                            variant={
+                              identity?.status === VerificationStatus.APPROVED
+                                ? "default"
+                                : "secondary"
+                            }
+                          >
+                            {verificationStatusLabel(identity?.status)}
+                          </Badge>
+                          {identity?.status !== VerificationStatus.APPROVED ? (
+                            <p className="rounded-md border border-border bg-muted/40 p-3 text-xs text-muted-foreground">
+                              {t("dashboardLockedHint")}
+                            </p>
+                          ) : null}
+                          {identity?.documents.length ? (
+                            <ul className="divide-y divide-border border-y border-border">
+                              {identity.documents.map((document) => (
+                                <li
+                                  key={document.id}
+                                  className="flex items-center justify-between gap-3 py-3"
+                                >
+                                  <div>
+                                    <p className="font-medium text-foreground">
+                                      {documentTypeLabel(document.documentType)}
+                                    </p>
+                                    <p className="text-xs text-muted-foreground">
+                                      {format.dateTime(
+                                        new Date(document.createdAt),
+                                        {
+                                          dateStyle: "medium",
+                                          timeStyle: "short",
+                                        },
+                                      )}
+                                    </p>
+                                    {document.reviewNotes ? (
+                                      <p className="mt-1 text-sm text-destructive">
+                                        {document.reviewNotes}
+                                      </p>
+                                    ) : null}
+                                  </div>
+                                  <div className="flex shrink-0 items-start gap-2">
+                                    {canDownloadIdentityDoc ? (
+                                      <>
+                                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                                        <img
+                                          src={document.fileUrl}
+                                          alt={`${documentTypeLabel(document.documentType)} — ${t("frontImageLabel")}`}
+                                          className="h-16 w-24 rounded-md border border-border object-cover"
+                                        />
+                                        {document.backFileUrl ? (
+                                          /* eslint-disable-next-line @next/next/no-img-element */
+                                          <img
+                                            src={document.backFileUrl}
+                                            alt={`${documentTypeLabel(document.documentType)} — ${t("backImageLabel")}`}
+                                            className="h-16 w-24 rounded-md border border-border object-cover"
+                                          />
+                                        ) : null}
+                                      </>
+                                    ) : (
+                                      <div className="flex h-16 w-24 items-center justify-center rounded-md border border-border bg-muted/40 text-xs text-muted-foreground">
+                                        {documentTypeLabel(document.documentType)}
+                                      </div>
+                                    )}
+                                  </div>
+                                </li>
+                              ))}
+                            </ul>
+                          ) : (
+                            <p className="text-sm text-muted-foreground">
+                              {t("noDocumentsYet")}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                    )}
                   </div>
-                </div>
-              </TabsContent>
+                </TabsContent>
+              )}
 
               <TabsContent value="social">
                 <div className="grid gap-8 lg:grid-cols-[360px_1fr]">
