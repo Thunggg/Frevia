@@ -222,6 +222,7 @@ export function AccountProfileClient({
     canUploadIdentityDoc ||
     canAiCheck ||
     canLivenessPose;
+  const canViewReviews = can("GET", "/api/reviews/contracts/:contractId");
 
   const toMessage = useCallback(
     (error: unknown) => errorMessage(error, tSettings("somethingWentWrong")),
@@ -467,7 +468,7 @@ export function AccountProfileClient({
           "general",
           "company",
           "social",
-          "reviews",
+          ...(canViewReviews ? ["reviews"] : []),
           "following",
           "favorites",
           "payments",
@@ -477,7 +478,7 @@ export function AccountProfileClient({
           "general",
           "identity",
           "social",
-          "reviews",
+          ...(canViewReviews ? ["reviews"] : []),
           "payments",
         ];
   const defaultTab =
@@ -594,9 +595,11 @@ export function AccountProfileClient({
                 <TabsTrigger value="social">
                   <Link2 /> {t("navSocial")}
                 </TabsTrigger>
-                <TabsTrigger value="reviews">
-                  <Star /> {t("navReviews")}
-                </TabsTrigger>
+                {canViewReviews ? (
+                  <TabsTrigger value="reviews">
+                    <Star /> {t("navReviews")}
+                  </TabsTrigger>
+                ) : null}
                 {headerRole === "CLIENT" && canViewFollowingTab ? (
                   <TabsTrigger value="following">
                     <UserCheck /> {t("navFollowing")}
@@ -882,7 +885,18 @@ export function AccountProfileClient({
               </TabsContent>
 
               <TabsContent value="reviews">
-                {userId ? <ReviewManager userId={userId} /> : null}
+                {!canViewReviews ? (
+                  <div className="rounded-xl border border-dashed border-border p-8 text-center text-muted-foreground">
+                    <p className="font-semibold text-foreground">
+                      Không có quyền truy cập
+                    </p>
+                    <p className="mt-1 text-sm">
+                      Bạn không có quyền xem đánh giá của hợp đồng.
+                    </p>
+                  </div>
+                ) : userId ? (
+                  <ReviewManager userId={userId} />
+                ) : null}
               </TabsContent>
 
               <TabsContent value="following">

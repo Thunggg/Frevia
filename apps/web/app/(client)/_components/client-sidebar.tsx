@@ -108,7 +108,8 @@ export function ClientSidebar() {
   const { can } = useActionPermission();
   const canViewJobs = can("GET", "/api/manage-jobs");
   const canViewContracts = can("GET", "/api/contracts");
-  const { data: notifications = [] } = useNotifications();
+  const canViewNotifications = can("GET", "/api/notifications");
+  const { data: notifications = [] } = useNotifications(canViewNotifications);
   const { resolvedTheme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
@@ -198,18 +199,22 @@ export function ClientSidebar() {
       icon: Users,
       matchPrefix: true,
     },
-    {
-      href: "/client/notifications",
-      labelKey: "navNotifications",
-      icon: Bell,
-      matchPrefix: true,
-      badge:
-        unreadNotifications > 0
-          ? unreadNotifications > 99
-            ? "99+"
-            : unreadNotifications
-          : undefined,
-    },
+    ...(canViewNotifications
+      ? [
+          {
+            href: "/client/notifications",
+            labelKey: "navNotifications" as const,
+            icon: Bell,
+            matchPrefix: true,
+            badge:
+              unreadNotifications > 0
+                ? unreadNotifications > 99
+                  ? "99+"
+                  : unreadNotifications
+                : undefined,
+          },
+        ]
+      : []),
   ];
 
   const displayName = me?.profile?.displayName ?? tRole("CLIENT");

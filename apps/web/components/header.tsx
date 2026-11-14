@@ -491,6 +491,7 @@ function HeaderActions({ role }: HeaderProps) {
   const t = useTranslations("nav");
   const { can } = useActionPermission();
   const canViewConversations = can("GET", "/api/conversations");
+  const canViewNotifications = can("GET", "/api/notifications");
 
   if (role === "GUEST") {
     return (
@@ -519,7 +520,7 @@ function HeaderActions({ role }: HeaderProps) {
     <div className="ml-auto flex items-center gap-0.5 sm:gap-1">
       <ContactDialog />
       {canViewConversations && <MessageBell />}
-      <NotificationsBell />
+      {canViewNotifications && <NotificationsBell />}
       <LanguageSwitcher />
       <ThemeToggle />
       <ProfileDropdown role={role} />

@@ -123,7 +123,11 @@ export function FreelancerSidebar() {
   const activeLocale = useLocale();
   const [isLocalePending, startLocaleTransition] = useTransition();
   const { data: me } = useMe();
-  const { data: notifications = [] } = useNotifications();
+  const { can } = useActionPermission();
+  const canViewProposals = can("GET", "/api/proposals/my");
+  const canViewContracts = can("GET", "/api/contracts");
+  const canViewNotifications = can("GET", "/api/notifications");
+  const { data: notifications = [] } = useNotifications(canViewNotifications);
   const { resolvedTheme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
@@ -231,13 +235,10 @@ export function FreelancerSidebar() {
     },
   ];
 
-  const { can } = useActionPermission();
-  const canViewProposals = can("GET", "/api/proposals/my");
-  const canViewContracts = can("GET", "/api/contracts");
-
   const visibleNav = freelancerNav.filter((item) => {
     if (item.href === "/freelancer/proposals" && !canViewProposals) return false;
     if (item.href === "/freelancer/contracts" && !canViewContracts) return false;
+    if (item.href === "/freelancer/notifications" && !canViewNotifications) return false;
     return true;
   });
 
