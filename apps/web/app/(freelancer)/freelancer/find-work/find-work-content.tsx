@@ -163,6 +163,11 @@ export function FindWorkContent({
   const canRemoveBookmark = can("DELETE", "/api/manage-jobs/bookmarks/:slug");
   const canViewJobAlerts = can("GET", "/api/job-alerts");
   const canViewSavedSearches = can("GET", "/api/saved-searches");
+  const canViewRecommendedJobs = can("GET", "/api/recommendations/jobs");
+  const canViewRecommendationExplanation = can(
+    "GET",
+    "/api/recommendations/:id/explanation",
+  );
 
   const canBookmark =
     role === "FREELANCER" && (canAddBookmark || canRemoveBookmark);
@@ -188,12 +193,21 @@ export function FindWorkContent({
         "invites",
       ].includes(requestedTab)
     ) {
+      if (requestedTab === "best-matches" && !canViewRecommendedJobs) {
+        return "most-recent";
+      }
       return requestedTab;
     }
-    return "best-matches";
-  }, [pathname, searchParams, initialTab]);
+    return canViewRecommendedJobs ? "best-matches" : "most-recent";
+  }, [pathname, searchParams, initialTab, canViewRecommendedJobs]);
 
   const [activeTab, setActiveTab] = useState<HomeTab>(getTabFromContext);
+
+  useEffect(() => {
+    if (activeTab === "best-matches" && !canViewRecommendedJobs) {
+      setActiveTab("most-recent");
+    }
+  }, [activeTab, canViewRecommendedJobs]);
 
   useEffect(() => {
     setActiveTab(getTabFromContext());
@@ -297,6 +311,7 @@ export function FindWorkContent({
   useEffect(() => {
     if (
       activeTab === "best-matches" &&
+      canViewRecommendedJobs &&
       !hasFetchedRecs &&
       role === "FREELANCER"
     ) {
@@ -315,7 +330,7 @@ export function FindWorkContent({
           setIsLoadingRecs(false);
         });
     }
-  }, [activeTab, hasFetchedRecs, role]);
+  }, [activeTab, canViewRecommendedJobs, hasFetchedRecs, role]);
 
   const refreshRecommendations = async () => {
     setIsLoadingRecs(true);
@@ -538,22 +553,24 @@ export function FindWorkContent({
               <div className="flex items-center justify-between border-b border-border pt-2 pb-px">
                 <div className="flex items-center gap-6 overflow-x-auto no-scrollbar">
                   {/* Best matches */}
-                  <button
-                    type="button"
-                    onClick={() => handleTabSelect("best-matches")}
-                    className={`pb-3 text-sm font-semibold border-b-2 transition-all cursor-pointer whitespace-nowrap ${
-                      activeTab === "best-matches"
-                        ? "border-emerald-600 text-emerald-600 dark:text-emerald-400"
-                        : "border-transparent text-muted-foreground hover:text-foreground"
-                    }`}
-                  >
-                    <span>{t("bestMatches")}</span>
-                    {recommendedJobs.length > 0 && (
-                      <span className="ml-1.5 rounded-full bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300 px-2 py-0.5 text-xs font-semibold">
-                        {recommendedJobs.length}
-                      </span>
-                    )}
-                  </button>
+                  {canViewRecommendedJobs && (
+                    <button
+                      type="button"
+                      onClick={() => handleTabSelect("best-matches")}
+                      className={`pb-3 text-sm font-semibold border-b-2 transition-all cursor-pointer whitespace-nowrap ${
+                        activeTab === "best-matches"
+                          ? "border-emerald-600 text-emerald-600 dark:text-emerald-400"
+                          : "border-transparent text-muted-foreground hover:text-foreground"
+                      }`}
+                    >
+                      <span>{t("bestMatches")}</span>
+                      {recommendedJobs.length > 0 && (
+                        <span className="ml-1.5 rounded-full bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300 px-2 py-0.5 text-xs font-semibold">
+                          {recommendedJobs.length}
+                        </span>
+                      )}
+                    </button>
+                  )}
 
                   {/* Most recent */}
                   <button
@@ -648,7 +665,7 @@ export function FindWorkContent({
                 {/* Left / Main Column: Tab content */}
                 <div className="flex-1 min-w-0 w-full space-y-3">
                   {/* TAB 1: BEST MATCHES */}
-                  {activeTab === "best-matches" && (
+                  {activeTab === "best-matches" && canViewRecommendedJobs && (
                     <div>
                       <div className="flex items-center justify-between pb-2">
                         <span className="text-xs text-muted-foreground">
@@ -717,13 +734,16 @@ export function FindWorkContent({
                               matchScore={rec.score}
                               components={rec.components}
                               recommendationId={rec.recommendationId}
-                              onViewExplanation={(id, jobTitle) =>
-                                handleViewExplanation(
-                                  id,
-                                  jobTitle,
-                                  rec.components,
-                                  rec.score,
-                                )
+                              onViewExplanation={
+                                canViewRecommendationExplanation
+                                  ? (id, jobTitle) =>
+                                      handleViewExplanation(
+                                        id,
+                                        jobTitle,
+                                        rec.components,
+                                        rec.score,
+                                      )
+                                  : undefined
                               }
                             />
                           ))}

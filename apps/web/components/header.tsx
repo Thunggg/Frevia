@@ -272,6 +272,7 @@ function ProfileDropdown({ role }: { role: Exclude<UserRole, "GUEST"> }) {
   const canViewSavedSearches = can("GET", "/api/saved-searches");
   const canViewContracts = can("GET", "/api/contracts");
   const canViewSessions = can("GET", "/api/sessions");
+  const canViewSocialLinks = can("GET", "/api/social-links");
   const displayName =
     me?.profile?.displayName || t(`roles.${profile.nameKey}`);
   const initial = displayName?.charAt(0)?.toUpperCase() ?? "?";
@@ -440,19 +441,21 @@ function ProfileDropdown({ role }: { role: Exclude<UserRole, "GUEST"> }) {
             </DropdownMenuItem>
           </>
         )}
-        <DropdownMenuItem asChild>
-          <Link
-            href={
-              role === "FREELANCER"
-                ? "/freelancer/profile?tab=social"
-                : "/client/profile?tab=social"
-            }
-            className="cursor-pointer"
-          >
-            <Link2 className="size-4 text-muted-foreground" />
-            {t("socialLinks")}
-          </Link>
-        </DropdownMenuItem>
+        {canViewSocialLinks && (
+          <DropdownMenuItem asChild>
+            <Link
+              href={
+                role === "FREELANCER"
+                  ? "/freelancer/profile?tab=social"
+                  : "/client/profile?tab=social"
+              }
+              className="cursor-pointer"
+            >
+              <Link2 className="size-4 text-muted-foreground" />
+              {t("socialLinks")}
+            </Link>
+          </DropdownMenuItem>
+        )}
         <DropdownMenuSeparator />
         {canViewSessions && (
           <DropdownMenuItem asChild>

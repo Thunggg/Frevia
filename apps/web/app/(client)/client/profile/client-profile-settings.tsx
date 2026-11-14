@@ -119,22 +119,27 @@ export function ClientProfileSettings({ userId }: ClientProfileSettingsProps) {
     "/api/following/freelancers/:freelancerId",
   );
   const canViewFollowingTab = canGetFollowing || canDiscoverFreelancers;
+  const canViewSocialLinks = can("GET", "/api/social-links");
+  const canAddSocialLink = can("POST", "/api/social-links");
+  const canDeleteSocialLink = can("DELETE", "/api/social-links/:id");
 
   const [activeTab, setActiveTab] = useState<TabKey>(() => {
     const tabParam = searchParams.get("tab");
-    if (tabParam === "social") return "social";
+    if (tabParam === "social" && canViewSocialLinks) return "social";
     if (tabParam === "favorites" && canViewFavorites) return "favorites";
     if (tabParam === "following" && canViewFollowingTab) return "following";
     return "company";
   });
 
   useEffect(() => {
-    if (activeTab === "favorites" && !canViewFavorites) {
+    if (activeTab === "social" && !canViewSocialLinks) {
+      setActiveTab("company");
+    } else if (activeTab === "favorites" && !canViewFavorites) {
       setActiveTab("company");
     } else if (activeTab === "following" && !canViewFollowingTab) {
       setActiveTab("company");
     }
-  }, [activeTab, canViewFavorites, canViewFollowingTab]);
+  }, [activeTab, canViewSocialLinks, canViewFavorites, canViewFollowingTab]);
 
   const [socialLinks, setSocialLinks] = useState<SocialLinkType[]>([]);
   const [favorites, setFavorites] = useState<FavoriteFreelancerType[]>([]);
@@ -208,7 +213,9 @@ export function ClientProfileSettings({ userId }: ClientProfileSettingsProps) {
         revisionResult,
       ] = await Promise.allSettled([
         accountProfileApi.getClientProfile(userId),
-        accountProfileApi.getSocialLinks(),
+        canViewSocialLinks
+          ? accountProfileApi.getSocialLinks()
+          : Promise.resolve({ success: true, data: [] as SocialLinkType[] }),
         canViewFavorites
           ? accountProfileApi.getFavorites()
           : Promise.resolve({ success: true, data: [] as FavoriteFreelancerType[] }),
@@ -428,12 +435,16 @@ export function ClientProfileSettings({ userId }: ClientProfileSettingsProps) {
 
   const tabs = [
     { id: "company" as const, label: t("tabCompany"), icon: Building2 },
-    {
-      id: "social" as const,
-      label: t("tabSocial"),
-      icon: Link2,
-      count: socialLinks.length,
-    },
+    ...(canViewSocialLinks
+      ? [
+          {
+            id: "social" as const,
+            label: t("tabSocial"),
+            icon: Link2,
+            count: socialLinks.length,
+          },
+        ]
+      : []),
     ...(canViewFavorites
       ? [
           {
@@ -634,7 +645,7 @@ export function ClientProfileSettings({ userId }: ClientProfileSettingsProps) {
               )}
 
               {/* 2. Social Links Tab */}
-              {activeTab === "social" && (
+              {activeTab === "social" && canViewSocialLinks && (
                 <motion.div
                   key="social"
                   initial={{ opacity: 0, y: 6 }}
@@ -644,88 +655,90 @@ export function ClientProfileSettings({ userId }: ClientProfileSettingsProps) {
                   className="grid gap-6 lg:grid-cols-[380px_1fr]"
                 >
                   {/* Add link card */}
-                  <div className="rounded-[26px] border border-black/5 dark:border-white/10 bg-card p-6 sm:p-7 shadow-xs">
-                    <div className="flex items-center gap-2.5 border-b border-border pb-4">
-                      <div className="flex size-8 items-center justify-center rounded-full bg-[#D0E1F8] dark:bg-[#0069D3]/20 text-[#0069D3]">
-                        <Plus className="size-4" />
-                      </div>
-                      <h3 className="text-sm font-bold text-foreground font-sans">
-                        {t("addSocialLink")}
-                      </h3>
-                    </div>
-
-                    <form
-                      className="mt-5 space-y-4"
-                      onSubmit={handleAddSocialLink}
-                    >
-                      <div className="space-y-1.5">
-                        <Label className="text-xs font-semibold">
-                          {t("platform")}
-                        </Label>
-                        <Select
-                          value={platform}
-                          onValueChange={(value) =>
-                            setPlatform(value as SocialPlatformType)
-                          }
-                        >
-                          <SelectTrigger className="h-10 rounded-full px-4 text-xs sm:text-sm border border-black/5 dark:border-white/10">
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent className="rounded-2xl">
-                            {Object.values(SocialPlatform).map((val) => {
-                              const alreadyAdded = socialLinks.some(
-                                (item) => item.platform === val,
-                              );
-                              return (
-                                <SelectItem
-                                  key={val}
-                                  value={val}
-                                  disabled={alreadyAdded}
-                                >
-                                  <span>{platformLabel(val)}</span>
-                                  {alreadyAdded ? (
-                                    <span className="ml-1 text-muted-foreground">
-                                      {t("alreadyAdded")}
-                                    </span>
-                                  ) : null}
-                                </SelectItem>
-                              );
-                            })}
-                          </SelectContent>
-                        </Select>
+                  {canAddSocialLink && (
+                    <div className="rounded-[26px] border border-black/5 dark:border-white/10 bg-card p-6 sm:p-7 shadow-xs">
+                      <div className="flex items-center gap-2.5 border-b border-border pb-4">
+                        <div className="flex size-8 items-center justify-center rounded-full bg-[#D0E1F8] dark:bg-[#0069D3]/20 text-[#0069D3]">
+                          <Plus className="size-4" />
+                        </div>
+                        <h3 className="text-sm font-bold text-foreground font-sans">
+                          {t("addSocialLink")}
+                        </h3>
                       </div>
 
-                      <div className="space-y-1.5">
-                        <Label className="text-xs font-semibold">
-                          {t("profileUrl")}
-                        </Label>
-                        <Input
-                          type="url"
-                          required
-                          placeholder="https://..."
-                          value={socialUrl}
-                          onChange={(e) => setSocialUrl(e.target.value)}
-                          className="h-10 rounded-full px-4 text-xs sm:text-sm border border-black/5 dark:border-white/10 focus-visible:ring-2 focus-visible:ring-[#0069D3]/30"
-                        />
-                      </div>
-
-                      <Button
-                        type="submit"
-                        disabled={pending === "social" || !socialUrl.trim()}
-                        className="w-full gap-1.5 rounded-full bg-[#0069D3] text-white hover:bg-[#0058b3] text-xs font-semibold py-2.5 cursor-pointer shadow-xs"
+                      <form
+                        className="mt-5 space-y-4"
+                        onSubmit={handleAddSocialLink}
                       >
-                        {pending === "social" ? (
-                          <Loader2 className="size-3.5 animate-spin mr-1" />
-                        ) : (
-                          <Plus className="size-3.5 mr-1" />
-                        )}
-                        {t("addLink")}
-                      </Button>
-                    </form>
-                  </div>
+                        <div className="space-y-1.5">
+                          <Label className="text-xs font-semibold">
+                            {t("platform")}
+                          </Label>
+                          <Select
+                            value={platform}
+                            onValueChange={(value) =>
+                              setPlatform(value as SocialPlatformType)
+                            }
+                          >
+                            <SelectTrigger className="h-10 rounded-full px-4 text-xs sm:text-sm border border-black/5 dark:border-white/10">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent className="rounded-2xl">
+                              {Object.values(SocialPlatform).map((val) => {
+                                const alreadyAdded = socialLinks.some(
+                                  (item) => item.platform === val,
+                                );
+                                return (
+                                  <SelectItem
+                                    key={val}
+                                    value={val}
+                                    disabled={alreadyAdded}
+                                  >
+                                    <span>{platformLabel(val)}</span>
+                                    {alreadyAdded ? (
+                                      <span className="ml-1 text-muted-foreground">
+                                        {t("alreadyAdded")}
+                                      </span>
+                                    ) : null}
+                                  </SelectItem>
+                                );
+                              })}
+                            </SelectContent>
+                          </Select>
+                        </div>
+
+                        <div className="space-y-1.5">
+                          <Label className="text-xs font-semibold">
+                            {t("profileUrl")}
+                          </Label>
+                          <Input
+                            type="url"
+                            required
+                            placeholder="https://..."
+                            value={socialUrl}
+                            onChange={(e) => setSocialUrl(e.target.value)}
+                            className="h-10 rounded-full px-4 text-xs sm:text-sm border border-black/5 dark:border-white/10 focus-visible:ring-2 focus-visible:ring-[#0069D3]/30"
+                          />
+                        </div>
+
+                        <Button
+                          type="submit"
+                          disabled={pending === "social" || !socialUrl.trim()}
+                          className="w-full gap-1.5 rounded-full bg-[#0069D3] text-white hover:bg-[#0058b3] text-xs font-semibold py-2.5 cursor-pointer shadow-xs"
+                        >
+                          {pending === "social" ? (
+                            <Loader2 className="size-3.5 animate-spin mr-1" />
+                          ) : (
+                            <Plus className="size-3.5 mr-1" />
+                          )}
+                          {t("addLink")}
+                        </Button>
+                      </form>
+                    </div>
+                  )}
 
                   {/* Existing links list */}
-                  <div className="rounded-[26px] border border-black/5 dark:border-white/10 bg-card p-6 sm:p-7 shadow-xs">
+                  <div className={`rounded-[26px] border border-black/5 dark:border-white/10 bg-card p-6 sm:p-7 shadow-xs ${canAddSocialLink ? "" : "lg:col-span-2"}`}>
                     <div className="flex items-center justify-between border-b border-border pb-4">
                       <h3 className="text-sm font-bold text-foreground font-sans">
                         {t("connectedLinks", { count: socialLinks.length })}
@@ -767,16 +780,18 @@ export function ClientProfileSettings({ userId }: ClientProfileSettingsProps) {
                                 </a>
                               </div>
                             </div>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              disabled={pending === `social-${link.id}`}
-                              onClick={() => handleDeleteSocialLink(link.id)}
-                              className="size-8 rounded-full text-muted-foreground hover:bg-destructive/10 hover:text-destructive cursor-pointer"
-                              title={t("deleteLink")}
-                            >
-                              <Trash2 className="size-4" />
-                            </Button>
+                            {canDeleteSocialLink && (
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                disabled={pending === `social-${link.id}`}
+                                onClick={() => handleDeleteSocialLink(link.id)}
+                                className="size-8 rounded-full text-muted-foreground hover:bg-destructive/10 hover:text-destructive cursor-pointer"
+                                title={t("deleteLink")}
+                              >
+                                <Trash2 className="size-4" />
+                              </Button>
+                            )}
                           </li>
                         ))}
                       </ul>

@@ -223,6 +223,9 @@ export function AccountProfileClient({
     canAiCheck ||
     canLivenessPose;
   const canViewReviews = can("GET", "/api/reviews/contracts/:contractId");
+  const canViewSocialLinks = can("GET", "/api/social-links");
+  const canAddSocialLink = can("POST", "/api/social-links");
+  const canDeleteSocialLink = can("DELETE", "/api/social-links/:id");
 
   const toMessage = useCallback(
     (error: unknown) => errorMessage(error, tSettings("somethingWentWrong")),
@@ -274,7 +277,9 @@ export function AccountProfileClient({
     if (!userId || headerRole === "GUEST") return;
     setLoading(true);
     try {
-      const common = accountProfileApi.getSocialLinks();
+      const common = canViewSocialLinks
+        ? accountProfileApi.getSocialLinks()
+        : Promise.resolve({ success: true, data: [] as SocialLinkType[] });
       if (headerRole === "FREELANCER") {
         const [identityResponse, linksResponse] = await Promise.all([
           canViewIdentityStatus
@@ -305,7 +310,7 @@ export function AccountProfileClient({
     } finally {
       setLoading(false);
     }
-  }, [headerRole, userId, toMessage, canViewFavorites, canViewIdentityStatus]);
+  }, [headerRole, userId, toMessage, canViewFavorites, canViewIdentityStatus, canViewSocialLinks]);
 
   const loadFreelancers = useCallback(async () => {
     if (!canDiscoverFreelancers) {
@@ -592,9 +597,11 @@ export function AccountProfileClient({
                     <Building2 /> {t("navCompany")}
                   </TabsTrigger>
                 ) : null}
-                <TabsTrigger value="social">
-                  <Link2 /> {t("navSocial")}
-                </TabsTrigger>
+                {canViewSocialLinks ? (
+                  <TabsTrigger value="social">
+                    <Link2 /> {t("navSocial")}
+                  </TabsTrigger>
+                ) : null}
                 {canViewReviews ? (
                   <TabsTrigger value="reviews">
                     <Star /> {t("navReviews")}
@@ -801,88 +808,94 @@ export function AccountProfileClient({
                 </TabsContent>
               )}
 
-              <TabsContent value="social">
-                <div className="grid gap-8 lg:grid-cols-[360px_1fr]">
-                  <div className="rounded-xl border border-border p-5 sm:p-6">
-                    <h2 className="text-base font-semibold tracking-tight text-foreground">
-                      {tSettings("addSocialLink")}
-                    </h2>
-                    <form className="mt-5 space-y-4" onSubmit={addSocialLink}>
-                      <Select
-                        value={platform}
-                        onValueChange={(value) =>
-                          setPlatform(value as SocialPlatformType)
-                        }
-                      >
-                        <SelectTrigger>
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {Object.values(SocialPlatform).map((value) => (
-                            <SelectItem key={value} value={value}>
-                              {platformLabel(value)}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <Input
-                        type="url"
-                        required
-                        placeholder="https://..."
-                        value={socialUrl}
-                        onChange={(event) => setSocialUrl(event.target.value)}
-                      />
-                      <Button
-                        className="bg-[#4fae2e] text-white hover:bg-[#459928]"
-                        disabled={pending === "social"}
-                      >
-                        <Plus /> {tSettings("addLink")}
-                      </Button>
-                    </form>
-                  </div>
-
-                  <div>
-                    <h2 className="text-base font-semibold tracking-tight text-foreground">
-                      {t("yourLinksTitle")}
-                    </h2>
-                    {socialLinks.length ? (
-                      <ul className="mt-4 divide-y divide-border border-y border-border">
-                        {socialLinks.map((link) => (
-                          <li
-                            key={link.id}
-                            className="flex items-center gap-3 px-1 py-4"
+              {canViewSocialLinks && (
+                <TabsContent value="social">
+                  <div className="grid gap-8 lg:grid-cols-[360px_1fr]">
+                    {canAddSocialLink && (
+                      <div className="rounded-xl border border-border p-5 sm:p-6">
+                        <h2 className="text-base font-semibold tracking-tight text-foreground">
+                          {tSettings("addSocialLink")}
+                        </h2>
+                        <form className="mt-5 space-y-4" onSubmit={addSocialLink}>
+                          <Select
+                            value={platform}
+                            onValueChange={(value) =>
+                              setPlatform(value as SocialPlatformType)
+                            }
                           >
-                            <Link2 className="size-4 shrink-0 text-[#4fae2e]" />
-                            <a
-                              className="min-w-0 flex-1 truncate text-sm text-[#4fae2e] transition-colors hover:text-[#3f9225]"
-                              href={link.url}
-                              target="_blank"
-                              rel="noreferrer"
-                            >
-                              <span className="mr-2 font-medium text-foreground">
-                                {platformLabel(link.platform)}
-                              </span>
-                              {link.url}
-                            </a>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              onClick={() => void deleteSocialLink(link)}
-                              disabled={pending === `social-${link.id}`}
-                            >
-                              <Trash2 />
-                            </Button>
-                          </li>
-                        ))}
-                      </ul>
-                    ) : (
-                      <p className="mt-4 text-sm text-muted-foreground">
-                        {tSettings("noSocialLinks")}
-                      </p>
+                            <SelectTrigger>
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {Object.values(SocialPlatform).map((value) => (
+                                <SelectItem key={value} value={value}>
+                                  {platformLabel(value)}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                          <Input
+                            type="url"
+                            required
+                            placeholder="https://..."
+                            value={socialUrl}
+                            onChange={(event) => setSocialUrl(event.target.value)}
+                          />
+                          <Button
+                            className="bg-[#4fae2e] text-white hover:bg-[#459928]"
+                            disabled={pending === "social"}
+                          >
+                            <Plus /> {tSettings("addLink")}
+                          </Button>
+                        </form>
+                      </div>
                     )}
+
+                    <div className={canAddSocialLink ? "" : "lg:col-span-2"}>
+                      <h2 className="text-base font-semibold tracking-tight text-foreground">
+                        {t("yourLinksTitle")}
+                      </h2>
+                      {socialLinks.length ? (
+                        <ul className="mt-4 divide-y divide-border border-y border-border">
+                          {socialLinks.map((link) => (
+                            <li
+                              key={link.id}
+                              className="flex items-center gap-3 px-1 py-4"
+                            >
+                              <Link2 className="size-4 shrink-0 text-[#4fae2e]" />
+                              <a
+                                className="min-w-0 flex-1 truncate text-sm text-[#4fae2e] transition-colors hover:text-[#3f9225]"
+                                href={link.url}
+                                target="_blank"
+                                rel="noreferrer"
+                              >
+                                <span className="mr-2 font-medium text-foreground">
+                                  {platformLabel(link.platform)}
+                                </span>
+                                {link.url}
+                              </a>
+                              {canDeleteSocialLink && (
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  onClick={() => void deleteSocialLink(link)}
+                                  disabled={pending === `social-${link.id}`}
+                                >
+                                  <Trash2 />
+                                </Button>
+                              )}
+                            </li>
+                          ))}
+                        </ul>
+                      ) : (
+                        <p className="mt-4 text-sm text-muted-foreground">
+                          {tSettings("noSocialLinks")}
+                        </p>
+                      )}
+                    </div>
                   </div>
-                </div>
-              </TabsContent>
+                </TabsContent>
+              )}
 
               <TabsContent value="reviews">
                 {!canViewReviews ? (
