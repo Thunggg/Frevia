@@ -33,6 +33,7 @@ import {
   UserRound,
 } from "@/components/icons";
 import { profileApiRequest } from "@/apiRequests/profile";
+import { useActionPermission } from "@/hooks/use-action-permission";
 import { useCreateConversation } from "@/hooks/use-conversation";
 import type {
   FreelancerProfileDetailType,
@@ -73,6 +74,8 @@ export function FreelancerProfileSheet({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const { can } = useActionPermission();
+  const canCreateConversation = can("POST", "/api/conversations");
   const createConversation = useCreateConversation();
   const [isStartingChat, setIsStartingChat] = useState(false);
 
@@ -214,7 +217,7 @@ export function FreelancerProfileSheet({
 
               {/* Top Quick Actions */}
               <div className="flex items-center gap-2 pb-1">
-                {userId ? (
+                {userId && canCreateConversation ? (
                   <Button
                     size="sm"
                     className="rounded-full bg-[#0069D3] hover:bg-[#005bb8] text-white text-xs font-semibold px-4 h-8 gap-1.5 shadow-xs cursor-pointer"

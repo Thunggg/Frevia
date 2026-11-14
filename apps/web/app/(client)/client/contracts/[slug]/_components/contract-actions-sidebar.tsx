@@ -56,6 +56,7 @@ export function ContractActionsSidebar({
   const canCancelContract = can("PATCH", "/api/contracts/:id/cancel");
   const canRejectContract = can("PATCH", "/api/contracts/:id/reject");
   const canExportPdf = can("GET", "/api/contracts/:id/pdf");
+  const canCreateConversation = can("POST", "/api/conversations");
   const canFundContractHold = can(
     "POST",
     "/api/payments/contracts/:contractId/fund-hold/intent",
@@ -243,19 +244,21 @@ export function ContractActionsSidebar({
         )}
 
         {/* 6. Message Counterparty */}
-        <Button
-          variant="secondary"
-          onClick={onMessageCounterparty}
-          disabled={isStartingChat}
-          className="w-full h-9 rounded-xl text-xs font-medium cursor-pointer"
-        >
-          {isStartingChat ? (
-            <Loader2 className="mr-2 size-3.5 animate-spin" />
-          ) : (
-            <MessageSquare className="mr-2 size-3.5 text-zinc-600 dark:text-zinc-300" />
-          )}
-          {t("messageRole", { role: targetRoleName })}
-        </Button>
+        {canCreateConversation && (
+          <Button
+            variant="secondary"
+            onClick={onMessageCounterparty}
+            disabled={isStartingChat}
+            className="w-full h-9 rounded-xl text-xs font-medium cursor-pointer"
+          >
+            {isStartingChat ? (
+              <Loader2 className="mr-2 size-3.5 animate-spin" />
+            ) : (
+              <MessageSquare className="mr-2 size-3.5 text-zinc-600 dark:text-zinc-300" />
+            )}
+            {t("messageRole", { role: targetRoleName })}
+          </Button>
+        )}
       </div>
 
       {/* ── Secondary / Lifecycle Actions ── */}

@@ -129,6 +129,7 @@ export function ProposalDetailSheet({
     can("PATCH", "/api/proposals/:id/accept") &&
     (onAccept ? canCreateContract : true);
   const canReject = can("PATCH", "/api/proposals/:id/reject");
+  const canCreateConversation = can("POST", "/api/conversations");
 
   const proposalQuery = useQuery<ClientProposalDetailType>({
     queryKey: ["client-proposal-detail", proposalId],
@@ -361,7 +362,7 @@ export function ProposalDetailSheet({
               </div>
 
               <div className="flex items-center gap-2 shrink-0">
-                {freelancerUserId && (
+                {freelancerUserId && canCreateConversation && (
                   <Button
                     variant="outline"
                     size="sm"

@@ -271,6 +271,7 @@ function ProfileDropdown({ role }: { role: Exclude<UserRole, "GUEST"> }) {
   const canViewProposals = can("GET", "/api/proposals/my");
   const canViewSavedSearches = can("GET", "/api/saved-searches");
   const canViewContracts = can("GET", "/api/contracts");
+  const canViewSessions = can("GET", "/api/sessions");
   const displayName =
     me?.profile?.displayName || t(`roles.${profile.nameKey}`);
   const initial = displayName?.charAt(0)?.toUpperCase() ?? "?";
@@ -453,12 +454,14 @@ function ProfileDropdown({ role }: { role: Exclude<UserRole, "GUEST"> }) {
           </Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem asChild>
-          <Link href="/sessions" className="cursor-pointer">
-            <MonitorSmartphone className="size-4 text-muted-foreground" />
-            {t("sessions")}
-          </Link>
-        </DropdownMenuItem>
+        {canViewSessions && (
+          <DropdownMenuItem asChild>
+            <Link href="/sessions" className="cursor-pointer">
+              <MonitorSmartphone className="size-4 text-muted-foreground" />
+              {t("sessions")}
+            </Link>
+          </DropdownMenuItem>
+        )}
         {canAccessAdminPortal(me) && (
           <DropdownMenuItem asChild>
             <Link
@@ -486,6 +489,8 @@ function ProfileDropdown({ role }: { role: Exclude<UserRole, "GUEST"> }) {
 
 function HeaderActions({ role }: HeaderProps) {
   const t = useTranslations("nav");
+  const { can } = useActionPermission();
+  const canViewConversations = can("GET", "/api/conversations");
 
   if (role === "GUEST") {
     return (
@@ -513,7 +518,7 @@ function HeaderActions({ role }: HeaderProps) {
   return (
     <div className="ml-auto flex items-center gap-0.5 sm:gap-1">
       <ContactDialog />
-      <MessageBell />
+      {canViewConversations && <MessageBell />}
       <NotificationsBell />
       <LanguageSwitcher />
       <ThemeToggle />

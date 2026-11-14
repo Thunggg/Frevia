@@ -4,6 +4,7 @@ import { useFormatter, useTranslations } from "next-intl";
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import { useActionPermission } from "@/hooks/use-action-permission";
 import {
   useConversations,
   useHideConversation,
@@ -52,7 +53,14 @@ export function ConversationList({ currentUserId }: ConversationListProps) {
   const t = useTranslations("chat");
   const tCommon = useTranslations("common");
   const format = useFormatter();
-  const { data: conversations, isLoading } = useConversations();
+  const { can } = useActionPermission();
+
+  const canViewConversations = can("GET", "/api/conversations");
+  const canPinConversation = can("PATCH", "/api/conversations/:id/pin");
+  const canMarkRead = can("PATCH", "/api/conversations/:id/read");
+  const canHideConversation = can("PATCH", "/api/conversations/:id/hide");
+
+  const { data: conversations, isLoading } = useConversations(canViewConversations);
   const pathname = usePathname();
   const router = useRouter();
   const hideConversation = useHideConversation();
@@ -177,7 +185,19 @@ export function ConversationList({ currentUserId }: ConversationListProps) {
 
       {/* List */}
       <div className="flex-1 overflow-y-auto py-2">
-        {isLoading ? (
+        {!canViewConversations ? (
+          <div className="px-6 py-14 text-center">
+            <div className="mx-auto mb-3 flex size-12 items-center justify-center rounded-full bg-[#F1F0F5] dark:bg-zinc-800 text-muted-foreground">
+              <MessageSquare className="size-5" />
+            </div>
+            <p className="text-sm font-semibold text-foreground">
+              Không có quyền truy cập
+            </p>
+            <p className="mx-auto mt-1 max-w-xs text-xs text-muted-foreground">
+              Bạn không có quyền xem danh sách cuộc hội thoại (#131).
+            </p>
+          </div>
+        ) : isLoading ? (
           <div className="space-y-1 px-2">
             {Array.from({ length: 6 }).map((_, i) => (
               <div key={i} className="flex items-center gap-3 rounded-2xl p-3">
@@ -294,67 +314,75 @@ export function ConversationList({ currentUserId }: ConversationListProps) {
                   </Link>
 
                   {/* Menu "..." actions */}
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <button
-                        type="button"
-                        className="absolute right-3.5 top-1/2 -translate-y-1/2 flex size-7 items-center justify-center rounded-full bg-background/80 hover:bg-[#F1F0F5] dark:hover:bg-zinc-700 text-muted-foreground hover:text-foreground opacity-0 transition-opacity group-hover:opacity-100 focus:opacity-100 cursor-pointer shadow-xs"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          e.stopPropagation();
-                        }}
+                  {(canPinConversation || canMarkRead || canHideConversation) && (
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <button
+                          type="button"
+                          className="absolute right-3.5 top-1/2 -translate-y-1/2 flex size-7 items-center justify-center rounded-full bg-background/80 hover:bg-[#F1F0F5] dark:hover:bg-zinc-700 text-muted-foreground hover:text-foreground opacity-0 transition-opacity group-hover:opacity-100 focus:opacity-100 cursor-pointer shadow-xs"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                          }}
+                        >
+                          <Ellipsis className="size-3.5" />
+                          <span className="sr-only">{t("moreActions")}</span>
+                        </button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent
+                        align="end"
+                        sideOffset={4}
+                        className="w-44 rounded-[22px] border border-black/5 dark:border-white/10 bg-white dark:bg-zinc-900 p-1.5 shadow-2xl flex flex-col gap-1 font-sans"
                       >
-                        <Ellipsis className="size-3.5" />
-                        <span className="sr-only">{t("moreActions")}</span>
-                      </button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent
-                      align="end"
-                      sideOffset={4}
-                      className="w-44 rounded-[22px] border border-black/5 dark:border-white/10 bg-white dark:bg-zinc-900 p-1.5 shadow-2xl flex flex-col gap-1 font-sans"
-                    >
-                      <DropdownMenuItem
-                        disabled={pinConversation.isPending}
-                        className="rounded-full px-3 py-1.5 text-xs font-medium cursor-pointer"
-                        onSelect={() =>
-                          handleTogglePin(
-                            conversation.id,
-                            Boolean(conversation.pinnedAt),
-                          )
-                        }
-                      >
-                        {conversation.pinnedAt ? (
-                          <PinOff className="size-3.5 mr-2" />
-                        ) : (
-                          <Pin className="size-3.5 mr-2" />
+                        {canPinConversation && (
+                          <DropdownMenuItem
+                            disabled={pinConversation.isPending}
+                            className="rounded-full px-3 py-1.5 text-xs font-medium cursor-pointer"
+                            onSelect={() =>
+                              handleTogglePin(
+                                conversation.id,
+                                Boolean(conversation.pinnedAt),
+                              )
+                            }
+                          >
+                            {conversation.pinnedAt ? (
+                              <PinOff className="size-3.5 mr-2" />
+                            ) : (
+                              <Pin className="size-3.5 mr-2" />
+                            )}
+                            {conversation.pinnedAt ? t("unpinChat") : t("pinChat")}
+                          </DropdownMenuItem>
                         )}
-                        {conversation.pinnedAt ? t("unpinChat") : t("pinChat")}
-                      </DropdownMenuItem>
-                      <DropdownMenuItem
-                        disabled={
-                          conversation.unreadCount === 0 || markRead.isPending
-                        }
-                        className="rounded-full px-3 py-1.5 text-xs font-medium cursor-pointer"
-                        onSelect={() => handleMarkAsRead(conversation.id)}
-                      >
-                        <CheckCheck className="size-3.5 mr-2" />
-                        {t("markAsRead")}
-                      </DropdownMenuItem>
-                      <DropdownMenuItem
-                        disabled={deleting}
-                        className="rounded-full px-3 py-1.5 text-xs font-medium cursor-pointer text-red-600 dark:text-red-400 focus:bg-red-50 dark:focus:bg-red-950/40 focus:text-red-600"
-                        onSelect={() =>
-                          setConversationToDelete({
-                            id: conversation.id,
-                            slug: conversation.slug,
-                          })
-                        }
-                      >
-                        <Trash2 className="size-3.5 mr-2" />
-                        {t("deleteChat")}
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
+                        {canMarkRead && (
+                          <DropdownMenuItem
+                            disabled={
+                              conversation.unreadCount === 0 || markRead.isPending
+                            }
+                            className="rounded-full px-3 py-1.5 text-xs font-medium cursor-pointer"
+                            onSelect={() => handleMarkAsRead(conversation.id)}
+                          >
+                            <CheckCheck className="size-3.5 mr-2" />
+                            {t("markAsRead")}
+                          </DropdownMenuItem>
+                        )}
+                        {canHideConversation && (
+                          <DropdownMenuItem
+                            disabled={deleting}
+                            className="rounded-full px-3 py-1.5 text-xs font-medium cursor-pointer text-red-600 dark:text-red-400 focus:bg-red-50 dark:focus:bg-red-950/40 focus:text-red-600"
+                            onSelect={() =>
+                              setConversationToDelete({
+                                id: conversation.id,
+                                slug: conversation.slug,
+                              })
+                            }
+                          >
+                            <Trash2 className="size-3.5 mr-2" />
+                            {t("deleteChat")}
+                          </DropdownMenuItem>
+                        )}
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  )}
                 </li>
               );
             })}
