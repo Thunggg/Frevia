@@ -146,6 +146,7 @@ function HeaderNavigation({
   const canViewBookmarks = can("GET", "/api/manage-jobs/bookmarks");
   const canViewSavedSearches = can("GET", "/api/saved-searches");
   const canViewContracts = can("GET", "/api/contracts");
+  const canViewDisputes = can("GET", "/api/disputes");
 
   const links = (roleConfig[role]?.links ?? []).filter((link) => {
     if (link.href === "/freelancer/proposals" && !canViewProposals) return false;
@@ -155,6 +156,13 @@ function HeaderNavigation({
     if (
       (link.href === "/client/contracts" || link.href === "/freelancer/contracts") &&
       !canViewContracts
+    )
+      return false;
+    if (
+      (link.href === "/disputes" ||
+        link.href === "/client/disputes" ||
+        link.href === "/freelancer/disputes") &&
+      !canViewDisputes
     )
       return false;
     return true;

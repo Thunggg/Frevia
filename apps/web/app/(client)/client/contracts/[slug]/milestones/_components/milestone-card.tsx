@@ -40,6 +40,8 @@ export interface MilestoneCardProps {
   onReview?: (milestone: MilestoneType) => void;
   onSubmitWork?: (milestone: MilestoneType) => void;
   onStartWork?: (milestone: MilestoneType) => void;
+  onOpenDispute?: (milestone: MilestoneType) => void;
+  onViewDispute?: (milestone: MilestoneType) => void;
 }
 
 export function MilestoneCard({
@@ -61,6 +63,8 @@ export function MilestoneCard({
   onReview,
   onSubmitWork,
   onStartWork,
+  onOpenDispute,
+  onViewDispute,
 }: MilestoneCardProps) {
   const format = useFormatter();
   const { can, canAny } = useActionPermission();
@@ -73,6 +77,12 @@ export function MilestoneCard({
   const canApprovePermission = can("PATCH", "/api/contracts/:contractId/milestones/:milestoneId/submissions/:id/approve");
   const canRequestChangesPermission = can("PATCH", "/api/contracts/:contractId/milestones/:milestoneId/submissions/:id/request-changes");
   const canReviewPermission = canApprovePermission || canRequestChangesPermission;
+
+  const canCreateDisputePermission = can("POST", "/api/disputes");
+  const canViewDisputePermission = can(
+    "GET",
+    "/api/disputes/milestone/:milestoneId",
+  );
 
   const canFundPermission = canAny([
     { method: "POST", path: "/api/payments/contracts/:contractId/milestones/:milestoneId/fund/intent" },
@@ -367,6 +377,34 @@ export function MilestoneCard({
                   Resubmit
                 </Button>
               )}
+
+            {milestone.status === "DISPUTED" &&
+              canViewDisputePermission &&
+              onViewDispute && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => onViewDispute(milestone)}
+                  className="h-8 rounded-lg border-rose-200 dark:border-rose-800 bg-white dark:bg-zinc-900 text-rose-600 hover:bg-rose-50 text-xs font-semibold px-3 cursor-pointer"
+                >
+                  View Dispute
+                </Button>
+              )}
+
+            {milestone.status !== "COMPLETED" &&
+              milestone.status !== "DISPUTED" &&
+              milestone.paymentStatus === "FUNDED" &&
+              canCreateDisputePermission &&
+              onOpenDispute && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => onOpenDispute(milestone)}
+                  className="h-8 rounded-lg border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-600 hover:text-rose-600 text-xs font-semibold px-3 cursor-pointer"
+                >
+                  Dispute
+                </Button>
+              )}
           </div>
         </div>
       </div>
@@ -533,6 +571,36 @@ export function MilestoneCard({
               >
                 <RotateCcw className="mr-1 size-3" />
                 Resubmit
+              </Button>
+            )}
+
+          {milestone.status === "DISPUTED" &&
+            canViewDisputePermission &&
+            onViewDispute && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => onViewDispute(milestone)}
+                className="h-8 rounded-lg border-rose-200 dark:border-rose-800 bg-white dark:bg-zinc-900 text-xs text-rose-600 hover:bg-rose-50 px-2.5 cursor-pointer"
+                title="View Dispute"
+              >
+                <span>View Dispute</span>
+              </Button>
+            )}
+
+          {milestone.status !== "COMPLETED" &&
+            milestone.status !== "DISPUTED" &&
+            milestone.paymentStatus === "FUNDED" &&
+            canCreateDisputePermission &&
+            onOpenDispute && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => onOpenDispute(milestone)}
+                className="h-8 rounded-lg border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-xs text-zinc-600 hover:text-rose-600 px-2.5 cursor-pointer"
+                title="Dispute Milestone"
+              >
+                <span>Dispute</span>
               </Button>
             )}
 
