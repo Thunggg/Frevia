@@ -42,6 +42,10 @@ export async function renderFindWorkPage({
     redirect(`/login?redirect=${encodeURIComponent("/freelancer/find-work/best-matches")}`);
   }
 
+  if (tab === "find-clients") {
+    return <FindWorkContent role="FREELANCER" user={user} initialJobs={[]} embedded basePath={basePath} initialTab={tab} />;
+  }
+
   const params = await searchParams;
   const parsedPage = Number(params.page);
   const page = Number.isInteger(parsedPage) && parsedPage > 0 ? parsedPage : 1;

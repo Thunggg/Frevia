@@ -28,6 +28,8 @@ import { UserActive } from '../../shared/decorators/user-active.decorators';
 import {
   AddSocialLinkDto,
   ClientProfileDetailDto,
+  ClientDirectoryDto,
+  ClientDirectoryQueryDto,
   FavoriteFreelancerListDto,
   FollowingFreelancerListDto,
   DiscoverFreelancerListDto,
@@ -193,6 +195,13 @@ export class IdentityVerificationController {
 @Controller('clients')
 export class ClientProfileController {
   constructor(private readonly service: AccountProfileService) {}
+
+  @Get()
+  @IsPublic()
+  @ZodSerializerDto(ClientDirectoryDto)
+  list(@Query() query: ClientDirectoryQueryDto) {
+    return this.service.findClients(query);
+  }
 
   @Get(':userId')
   @IsPublic()

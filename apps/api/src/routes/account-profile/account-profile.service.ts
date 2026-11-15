@@ -3,6 +3,7 @@ import { Prisma, VerificationStatus } from '@prisma/client';
 import {
   AddSocialLinkType,
   ChangePasswordType,
+  ClientDirectoryQueryType,
   DocumentTypeType,
   RoleName,
   UpdateClientProfileType,
@@ -551,17 +552,44 @@ export class AccountProfileService {
     };
   }
 
+  async findClients(query: ClientDirectoryQueryType) {
+    const { profiles, total } = await this.repository.findClients(query);
+    return {
+      data: profiles.map((profile) => ({
+        userId: profile.userId,
+        displayName: profile.displayName,
+        avatarUrl: this.presentAvatarUrl(
+          profile.userId,
+          profile.avatarUrl,
+          profile.updatedAt,
+        ),
+        bio: profile.bio,
+        companyName: profile.clientProfile?.companyName ?? null,
+        companyDescription: profile.clientProfile?.companyDescription ?? null,
+      })),
+      page: query.page,
+      limit: query.limit,
+      total,
+      totalPages: Math.ceil(total / query.limit),
+    };
+  }
+
   async getClientProfile(userId: number) {
     const profile = await this.repository.findClientProfile(userId);
     const isClient = profile?.user?.role?.name === RoleName.CLIENT;
     if (!profile || !isClient) throw ClientProfileNotFoundException();
+    const avatarUrl = this.presentAvatarUrl(
+      profile.userId,
+      profile.avatarUrl,
+      profile.updatedAt,
+    );
     if (!profile.clientProfile) {
       const clientProfile = await this.repository.createClientProfile(
         profile.id,
       );
-      return { ...profile, clientProfile };
+      return { ...profile, avatarUrl, clientProfile };
     }
-    return profile;
+    return { ...profile, avatarUrl };
   }
 
   async updateClientProfile(userId: number, input: UpdateClientProfileType) {
