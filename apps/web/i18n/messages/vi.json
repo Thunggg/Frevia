@@ -1356,7 +1356,12 @@
     "withdrawTitle": "Rút đề xuất này?",
     "withdrawHint": "Khách hàng sẽ không thể chấp nhận đề xuất này nữa.",
     "withdrawing": "Đang rút...",
-    "withdraw": "Rút đề xuất"
+    "withdraw": "Rút đề xuất",
+    "bidBelowMin": "Giá chào thầu đang thấp hơn ngân sách tối thiểu của công việc ({min})",
+    "bidAboveMax": "Giá chào thầu đang cao hơn ngân sách tối đa của công việc ({max})",
+    "deliveryExceedsDeadline": "Thời gian hoàn thành vượt quá hạn chót của công việc (còn tối đa {days} ngày)",
+    "deadlineHint": "Hạn chót công việc: {deadline} (còn tối đa {days} ngày)",
+    "budgetHint": "Ngân sách công việc: {range}"
   },
   "milestoneStatus": {
     "DISPUTED": "Tranh chấp",
@@ -2877,7 +2882,12 @@
     "submitted": "Đã gửi đề xuất",
     "alreadyExists": "Bạn đã có đề xuất cho công việc này. Đang mở đề xuất đó.",
     "saveFailed": "Không thể lưu đề xuất. Vui lòng thử lại.",
-    "submitFailed": "Không thể gửi đề xuất. Vui lòng thử lại."
+    "submitFailed": "Không thể gửi đề xuất. Vui lòng thử lại.",
+    "bidBelowMin": "Giá chào thầu đang thấp hơn ngân sách tối thiểu của công việc ({min})",
+    "bidAboveMax": "Giá chào thầu đang cao hơn ngân sách tối đa của công việc ({max})",
+    "deliveryExceedsDeadline": "Thời gian hoàn thành vượt quá hạn chót của công việc (còn tối đa {days} ngày)",
+    "deadlineHint": "Hạn chót công việc: {deadline} (còn tối đa {days} ngày)",
+    "budgetHint": "Ngân sách công việc: {range}"
   },
   "findWork": {
     "title": "Tìm việc",

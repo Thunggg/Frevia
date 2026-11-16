@@ -1356,7 +1356,12 @@
     "withdrawTitle": "Withdraw this proposal?",
     "withdrawHint": "The client will no longer be able to accept this proposal.",
     "withdrawing": "Withdrawing...",
-    "withdraw": "Withdraw"
+    "withdraw": "Withdraw",
+    "bidBelowMin": "Your bid is below the job's minimum budget ({min})",
+    "bidAboveMax": "Your bid is above the job's maximum budget ({max})",
+    "deliveryExceedsDeadline": "Delivery time exceeds the job deadline (max {days} days remaining)",
+    "deadlineHint": "Job deadline: {deadline} (up to {days} days remaining)",
+    "budgetHint": "Client budget: {range}"
   },
   "milestoneStatus": {
     "DISPUTED": "Disputed",
@@ -2877,7 +2882,12 @@
     "submitted": "Proposal submitted",
     "alreadyExists": "You already have a proposal for this job. Opening it now.",
     "saveFailed": "Unable to save your proposal. Please try again.",
-    "submitFailed": "Unable to submit your proposal. Please try again."
+    "submitFailed": "Unable to submit your proposal. Please try again.",
+    "bidBelowMin": "Your bid is below the job's minimum budget ({min})",
+    "bidAboveMax": "Your bid is above the job's maximum budget ({max})",
+    "deliveryExceedsDeadline": "Delivery time exceeds the job deadline (max {days} days remaining)",
+    "deadlineHint": "Job deadline: {deadline} (up to {days} days remaining)",
+    "budgetHint": "Client budget: {range}"
   },
   "findWork": {
     "title": "Find Work",

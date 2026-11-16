@@ -832,6 +832,9 @@ export function JobDetailContent({
       <ProposalDialog
         jobId={job.id}
         jobTitle={job.title}
+        budgetMin={job.budgetMin !== null ? Number(job.budgetMin) : null}
+        budgetMax={job.budgetMax !== null ? Number(job.budgetMax) : null}
+        deadline={job.deadline}
         open={isProposalDialogOpen}
         onOpenChange={setIsProposalDialogOpen}
       />

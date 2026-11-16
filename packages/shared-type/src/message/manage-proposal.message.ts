@@ -3,8 +3,13 @@ export const ManageProposalMessage = {
   COVER_LETTER_TOO_LONG: "Error.ProposalCoverLetterTooLong",
   BID_AMOUNT_REQUIRED: "Error.ProposalBidAmountRequired",
   BID_AMOUNT_POSITIVE: "Error.ProposalBidAmountMustBePositive",
+  BID_AMOUNT_TOO_LOW: "Error.ProposalBidAmountTooLow",
+  BID_AMOUNT_TOO_LARGE: "Error.ProposalBidAmountTooLarge",
+  EXTREME_BID_AMOUNT: "Error.ProposalExtremeBidAmount",
   DELIVERY_DAYS_REQUIRED: "Error.ProposalDeliveryDaysRequired",
   DELIVERY_DAYS_POSITIVE: "Error.ProposalDeliveryDaysMustBePositive",
+  DELIVERY_DAYS_TOO_LARGE: "Error.ProposalDeliveryDaysTooLarge",
+  DELIVERY_EXCEEDS_DEADLINE: "Error.ProposalDeliveryExceedsDeadline",
   DRAFT_CONTENT_REQUIRED: "Error.ProposalDraftContentRequired",
   PROPOSAL_NOT_FOUND: "Error.ProposalNotFound",
   PROPOSAL_NOT_DRAFT: "Error.ProposalNotDraft",
@@ -27,9 +32,12 @@ export const ManageProposalMessage = {
   FAILED_TO_LOAD: "Error.FailedToLoadProposal",
   FREELANCER_BANNED: "Error.FreelancerBanned",
   MAX_SUBMISSIONS_EXCEEDED: "Error.MaxProposalSubmissionsExceeded",
-  BID_AMOUNT_TOO_LOW: "Error.ProposalBidAmountTooLow",
-  EXTREME_BID_AMOUNT: "Error.ProposalExtremeBidAmount",
 } as const;
 
-export const MIN_PROPOSAL_BID_AMOUNT = 5;
-export const MAX_PROPOSALS_PER_JOB_PER_FREELANCER = 3;
+export {
+  MIN_PROPOSAL_BID_AMOUNT,
+  MAX_PROPOSAL_BID_AMOUNT,
+  MIN_PROPOSAL_DELIVERY_DAYS,
+  MAX_PROPOSAL_DELIVERY_DAYS,
+  MAX_PROPOSALS_PER_JOB_PER_FREELANCER,
+} from "../constants/proposal.constant";
