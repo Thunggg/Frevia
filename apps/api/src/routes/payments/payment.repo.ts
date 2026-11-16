@@ -4,12 +4,15 @@ import {
   DisputeStatus,
   MilestonePaymentStatus,
   MilestoneStatus,
+  NotificationType,
   PlatformFeeStatus,
   Prisma,
+  SubmissionStatus,
   TransactionStatus,
   TransactionType,
 } from '@prisma/client';
 import { GetTransactionListQueryType } from '@shared/types';
+import { syncContractAndJobCompletion } from '../../shared/helper/contract-activation.helper';
 import { PrismaService } from '../../shared/services/prisma.service';
 
 @Injectable()
@@ -555,6 +558,375 @@ export class PaymentRepository {
         },
       });
     }
+  }
+
+  async syncContractCompletion(contractId: number): Promise<boolean> {
+    return this.prisma.$transaction((tx) =>
+      syncContractAndJobCompletion(tx, contractId),
+    );
+  }
+
+  async findSubmittedMilestonesForAutoRelease(submittedBefore: Date) {
+    const milestones = await this.prisma.milestone.findMany({
+      where: {
+        deletedAt: null,
+        status: MilestoneStatus.SUBMITTED,
+        paymentStatus: MilestonePaymentStatus.FUNDED,
+        contract: {
+          deletedAt: null,
+          status: ContractStatus.ACTIVE,
+        },
+        OR: [
+          { dispute: null },
+          { dispute: { status: DisputeStatus.CANCELLED } },
+        ],
+      },
+      include: {
+        submissions: {
+          orderBy: { submittedAt: 'desc' },
+          take: 1,
+        },
+        contract: {
+          select: {
+            id: true,
+            slug: true,
+            jobId: true,
+            clientId: true,
+            freelancerId: true,
+            job: { select: { title: true } },
+            freelancer: {
+              select: {
+                id: true,
+                stripeAccountId: true,
+                stripeOnboardingCompleted: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    return milestones.filter((milestone) => {
+      const latestSubmission = milestone.submissions[0];
+      return (
+        latestSubmission &&
+        latestSubmission.status === SubmissionStatus.PENDING_REVIEW &&
+        latestSubmission.submittedAt <= submittedBefore
+      );
+    });
+  }
+
+  async applyAutoReleaseTransaction(params: {
+    milestoneId: number;
+    contractId: number;
+    submissionId: number;
+    clientId: number;
+    freelancerId: number;
+    contractSlug: string;
+    milestoneTitle: string;
+    transferId: string;
+    payoutAmount: number;
+    feeAmount: number;
+    now: Date;
+  }) {
+    return this.prisma.$transaction(async (tx) => {
+      const claimed = await tx.milestone.updateMany({
+        where: {
+          id: params.milestoneId,
+          status: MilestoneStatus.SUBMITTED,
+          paymentStatus: MilestonePaymentStatus.FUNDED,
+          deletedAt: null,
+        },
+        data: {
+          paymentStatus: MilestonePaymentStatus.RELEASED,
+          status: MilestoneStatus.COMPLETED,
+          completedAt: params.now,
+        },
+      });
+
+      if (claimed.count === 0) {
+        return { released: false, contractCompleted: false };
+      }
+
+      await tx.milestoneSubmission.updateMany({
+        where: {
+          id: params.submissionId,
+          status: SubmissionStatus.PENDING_REVIEW,
+        },
+        data: {
+          status: SubmissionStatus.APPROVED,
+          reviewedAt: params.now,
+        },
+      });
+
+      await tx.transaction.create({
+        data: {
+          userId: params.freelancerId,
+          contractId: params.contractId,
+          milestoneId: params.milestoneId,
+          amount: params.payoutAmount,
+          currency: 'usd',
+          type: TransactionType.MILESTONE_PAYOUT,
+          status: TransactionStatus.SUCCEEDED,
+          stripeTransferId: params.transferId,
+          metadata: {
+            autoReleased: true,
+            reason: 'CLIENT_REVIEW_TIMEOUT_7_DAYS',
+            submissionId: params.submissionId,
+          } as Prisma.InputJsonValue,
+        },
+      });
+
+      if (params.feeAmount > 0) {
+        await tx.transaction.create({
+          data: {
+            userId: params.freelancerId,
+            contractId: params.contractId,
+            milestoneId: params.milestoneId,
+            amount: params.feeAmount,
+            currency: 'usd',
+            type: TransactionType.PLATFORM_FEE,
+            status: TransactionStatus.SUCCEEDED,
+            metadata: {
+              type: 'FREELANCER_RELEASE_FEE',
+              feeRole: 'FREELANCER',
+              feePercent: 5,
+              transferId: params.transferId,
+              autoReleased: true,
+            } as Prisma.InputJsonValue,
+          },
+        });
+      }
+
+      await tx.notification.createMany({
+        data: [
+          {
+            userId: params.freelancerId,
+            type: NotificationType.PAYMENT_RELEASED,
+            title: 'Milestone payment auto-released',
+            message: `Client did not respond within 7 days of your submission for "${params.milestoneTitle}". Escrow payment ($${params.payoutAmount.toFixed(2)} net) has been automatically released to your Stripe account.`,
+            data: {
+              href: `/freelancer/contracts/${params.contractSlug}/milestones/${params.milestoneId}`,
+              contractId: params.contractId,
+              milestoneId: params.milestoneId,
+            },
+          },
+          {
+            userId: params.clientId,
+            type: NotificationType.MILESTONE_COMPLETED,
+            title: 'Milestone auto-approved & released',
+            message: `No review was submitted within 7 days for "${params.milestoneTitle}". The milestone was marked Completed and escrowed funds were released to the freelancer.`,
+            data: {
+              href: `/client/contracts/${params.contractSlug}/milestones/${params.milestoneId}`,
+              contractId: params.contractId,
+              milestoneId: params.milestoneId,
+            },
+          },
+        ],
+      });
+
+      const contractCompleted = await syncContractAndJobCompletion(
+        tx,
+        params.contractId,
+      );
+
+      return { released: true, contractCompleted };
+    });
+  }
+
+  async findCandidateOverdueMilestones() {
+    return this.prisma.milestone.findMany({
+      where: {
+        deletedAt: null,
+        contract: {
+          deletedAt: null,
+          status: ContractStatus.ACTIVE,
+        },
+        OR: [
+          {
+            status: {
+              in: [
+                MilestoneStatus.PENDING,
+                MilestoneStatus.IN_PROGRESS,
+                MilestoneStatus.CHANGES_REQUESTED,
+              ],
+            },
+          },
+          {
+            status: MilestoneStatus.LATE,
+            paymentStatus: MilestonePaymentStatus.FUNDED,
+          },
+        ],
+        AND: [
+          {
+            OR: [
+              { dispute: null },
+              { dispute: { status: DisputeStatus.CANCELLED } },
+            ],
+          },
+        ],
+      },
+      include: {
+        submissions: {
+          orderBy: { submittedAt: 'desc' },
+          take: 1,
+        },
+        contract: {
+          select: {
+            id: true,
+            slug: true,
+            jobId: true,
+            clientId: true,
+            freelancerId: true,
+            job: { select: { title: true } },
+          },
+        },
+      },
+    });
+  }
+
+  async markMilestoneLateAndNotify(params: {
+    milestoneId: number;
+    previousStatus: MilestoneStatus;
+    contractId: number;
+    contractSlug: string;
+    clientId: number;
+    freelancerId: number;
+    milestoneTitle: string;
+    isFunded: boolean;
+  }) {
+    return this.prisma.$transaction(async (tx) => {
+      const updated = await tx.milestone.updateMany({
+        where: {
+          id: params.milestoneId,
+          status: params.previousStatus,
+          deletedAt: null,
+        },
+        data: {
+          status: MilestoneStatus.LATE,
+        },
+      });
+
+      if (updated.count === 0) return false;
+
+      await tx.notification.createMany({
+        data: [
+          {
+            userId: params.clientId,
+            type: NotificationType.TASK_OVERDUE,
+            title: 'Milestone overdue — refund requested',
+            message: params.isFunded
+              ? `Freelancer missed the deadline for "${params.milestoneTitle}" without submitting work. Milestone status is now Late and an automatic escrow refund request has been triggered.`
+              : `Freelancer missed the deadline for "${params.milestoneTitle}" without submitting work. Milestone status has been changed to Late.`,
+            data: {
+              href: `/client/contracts/${params.contractSlug}/milestones/${params.milestoneId}`,
+              contractId: params.contractId,
+              milestoneId: params.milestoneId,
+              refundRequested: params.isFunded,
+            },
+          },
+          {
+            userId: params.freelancerId,
+            type: NotificationType.TASK_OVERDUE,
+            title: 'Milestone marked as Late',
+            message: params.isFunded
+              ? `You did not submit deliverables before the deadline for "${params.milestoneTitle}". The milestone was marked Late and the funded escrow is subject to automatic refund.`
+              : `You did not submit deliverables before the deadline for "${params.milestoneTitle}". The milestone status was changed to Late.`,
+            data: {
+              href: `/freelancer/contracts/${params.contractSlug}/milestones/${params.milestoneId}`,
+              contractId: params.contractId,
+              milestoneId: params.milestoneId,
+              refundRequested: params.isFunded,
+            },
+          },
+        ],
+      });
+
+      return true;
+    });
+  }
+
+  async applyMilestoneRefundTransaction(params: {
+    milestoneId: number;
+    contractId: number;
+    contractSlug?: string;
+    clientId: number;
+    freelancerId: number;
+    milestoneTitle: string;
+    amount: number;
+    refundId: string;
+    reason: string;
+    isAuto: boolean;
+  }) {
+    return this.prisma.$transaction(async (tx) => {
+      const claimed = await tx.milestone.updateMany({
+        where: {
+          id: params.milestoneId,
+          paymentStatus: MilestonePaymentStatus.FUNDED,
+          deletedAt: null,
+        },
+        data: {
+          paymentStatus: MilestonePaymentStatus.REFUNDED,
+        },
+      });
+
+      if (claimed.count === 0) {
+        return { refunded: false, contractCompleted: false };
+      }
+
+      await tx.transaction.create({
+        data: {
+          userId: params.clientId,
+          contractId: params.contractId,
+          milestoneId: params.milestoneId,
+          amount: params.amount,
+          currency: 'usd',
+          type: TransactionType.REFUND,
+          status: TransactionStatus.SUCCEEDED,
+          stripeRefundId: params.refundId,
+          metadata: {
+            autoRefund: params.isAuto,
+            reason: params.reason,
+          } as Prisma.InputJsonValue,
+        },
+      });
+
+      const slugSegment = params.contractSlug ?? String(params.contractId);
+      await tx.notification.createMany({
+        data: [
+          {
+            userId: params.clientId,
+            type: NotificationType.PAYMENT_RELEASED,
+            title: 'Milestone escrow refunded',
+            message: `$${params.amount.toFixed(2)} for milestone "${params.milestoneTitle}" has been automatically refunded to your payment card.`,
+            data: {
+              href: `/client/contracts/${slugSegment}/milestones/${params.milestoneId}`,
+              contractId: params.contractId,
+              milestoneId: params.milestoneId,
+              refundId: params.refundId,
+            },
+          },
+          {
+            userId: params.freelancerId,
+            type: NotificationType.TASK_OVERDUE,
+            title: 'Milestone escrow refunded to client',
+            message: `Escrowed funds ($${params.amount.toFixed(2)}) for milestone "${params.milestoneTitle}" were refunded to the client (${params.reason === 'FREELANCER_LATE_NO_SUBMISSION' ? 'deadline passed without submission' : 'work not started / overdue'}).`,
+            data: {
+              href: `/freelancer/contracts/${slugSegment}/milestones/${params.milestoneId}`,
+              contractId: params.contractId,
+              milestoneId: params.milestoneId,
+            },
+          },
+        ],
+      });
+
+      const contractCompleted = await syncContractAndJobCompletion(
+        tx,
+        params.contractId,
+      );
+
+      return { refunded: true, contractCompleted };
+    });
   }
 
   async getTransactions(

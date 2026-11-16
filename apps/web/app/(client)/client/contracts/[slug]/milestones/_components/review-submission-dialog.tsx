@@ -24,6 +24,7 @@ import { Button } from "@repo/ui/components/shadcn/button";
 import { toastError, toastSuccess } from "@repo/ui/components/shadcn/toast";
 import { contractApiRequest } from "@/apiRequests/contract";
 import { paymentApiRequest } from "@/apiRequests/payment";
+import { useActionPermission } from "@/hooks/use-action-permission";
 import { ApiFail } from "@/lib/http";
 import type { GetSubmissionResponseType } from "@shared/types";
 
@@ -60,11 +61,16 @@ export function ReviewSubmissionDialog({
   onSuccess,
 }: ReviewSubmissionDialogProps) {
   const queryClient = useQueryClient();
+  const { can } = useActionPermission();
   const [showChangesForm, setShowChangesForm] = useState(false);
   const [changeRequestMessage, setChangeRequestMessage] = useState("");
   const [changeRequestDueDate, setChangeRequestDueDate] = useState("");
   const [isApproving, setIsApproving] = useState(false);
   const [isRequestingChanges, setIsRequestingChanges] = useState(false);
+
+  const canApprove = can("PATCH", "/api/contracts/:contractId/milestones/:milestoneId/submissions/:id/approve");
+  const canRequestChanges = can("PATCH", "/api/contracts/:contractId/milestones/:milestoneId/submissions/:id/request-changes");
+  const canRelease = can("POST", "/api/payments/contracts/:contractId/milestones/:milestoneId/release");
 
   if (!submission) return null;
 
@@ -82,11 +88,13 @@ export function ReviewSubmissionDialog({
       );
 
       let releaseCompleted = false;
-      try {
-        await paymentApiRequest.releaseMilestone(contractId, milestoneId);
-        releaseCompleted = true;
-      } catch {
-        // Approval succeeded even if automatic release encounters a transient error
+      if (canRelease) {
+        try {
+          await paymentApiRequest.releaseMilestone(contractId, milestoneId);
+          releaseCompleted = true;
+        } catch {
+          // Approval succeeded even if automatic release encounters a transient error
+        }
       }
 
       toastSuccess({
@@ -359,29 +367,33 @@ export function ReviewSubmissionDialog({
             </div>
 
             <SheetFooter className="pt-4 border-t border-border flex flex-col sm:flex-row items-center justify-end gap-2">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => setShowChangesForm(true)}
-                className="w-full sm:w-auto rounded-xl text-xs border-amber-300 text-amber-700 hover:bg-amber-50 dark:border-amber-800 dark:text-amber-400 dark:hover:bg-amber-950/30 cursor-pointer"
-              >
-                <RotateCcw className="mr-1.5 size-3.5" />
-                Request Changes
-              </Button>
+              {canRequestChanges && (
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setShowChangesForm(true)}
+                  className="w-full sm:w-auto rounded-xl text-xs border-amber-300 text-amber-700 hover:bg-amber-50 dark:border-amber-800 dark:text-amber-400 dark:hover:bg-amber-950/30 cursor-pointer"
+                >
+                  <RotateCcw className="mr-1.5 size-3.5" />
+                  Request Changes
+                </Button>
+              )}
 
-              <Button
-                type="button"
-                disabled={isApproving}
-                onClick={() => void handleApprove()}
-                className="w-full sm:w-auto rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold cursor-pointer"
-              >
-                {isApproving ? (
-                  <Loader2 className="mr-1.5 size-3.5 animate-spin" />
-                ) : (
-                  <CheckCircle2 className="mr-1.5 size-3.5" />
-                )}
-                Approve & Release ${freelancerNetPayout.toLocaleString("en-US", { minimumFractionDigits: 2 })}
-              </Button>
+              {canApprove && (
+                <Button
+                  type="button"
+                  disabled={isApproving}
+                  onClick={() => void handleApprove()}
+                  className="w-full sm:w-auto rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold cursor-pointer"
+                >
+                  {isApproving ? (
+                    <Loader2 className="mr-1.5 size-3.5 animate-spin" />
+                  ) : (
+                    <CheckCircle2 className="mr-1.5 size-3.5" />
+                  )}
+                  Approve & Release ${freelancerNetPayout.toLocaleString("en-US", { minimumFractionDigits: 2 })}
+                </Button>
+              )}
             </SheetFooter>
           </div>
         )}

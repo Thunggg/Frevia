@@ -3,7 +3,8 @@ import { notFound } from "next/navigation";
 import authServerRequest from "@/apiRequests/auth.server";
 import jobServerRequest from "@/apiRequests/job.server";
 import proposalServerRequest from "@/apiRequests/proposal.server";
-import { type JobType, type ProposalType } from "@shared/types";
+import { hasActionPermission } from "@/lib/admin-access";
+import { type JobType } from "@shared/types";
 
 import { JobDetailContent } from "./job-detail-content";
 
@@ -31,9 +32,17 @@ export default async function FreelancerJobDetailPage({
 
   const role = user ? "FREELANCER" : "GUEST";
   const relatedSearch = job.skills[0]?.skill.name;
+  const canCheckBookmark = hasActionPermission(
+    user,
+    "GET",
+    "/api/manage-jobs/jobs/:slug/bookmark",
+  );
+  const canViewMyProposal =
+    hasActionPermission(user, "GET", "/api/proposals/jobs/:jobId/mine") ||
+    hasActionPermission(user, "GET", "/api/proposals/my");
 
-  const [bookmarkStatus, relatedResult] = await Promise.all([
-    role === "FREELANCER"
+  const [bookmarkStatus, relatedResult, existingProposal] = await Promise.all([
+    role === "FREELANCER" && canCheckBookmark
       ? jobServerRequest.getBookmarkStatus(slug)
       : Promise.resolve(null),
     relatedSearch
@@ -45,16 +54,14 @@ export default async function FreelancerJobDetailPage({
           order: "desc",
         })
       : Promise.resolve(null),
+    role === "FREELANCER" && canViewMyProposal
+      ? proposalServerRequest.getMyProposalForJob(job.id)
+      : Promise.resolve(null),
   ]);
 
   const relatedJobs: JobType[] = (relatedResult?.data ?? [])
     .filter((item) => item.slug !== job.slug)
     .slice(0, 3);
-
-  const existingProposal: ProposalType | null =
-    role === "FREELANCER"
-      ? await proposalServerRequest.getMyProposalForJob(job.id)
-      : null;
 
   return (
     <JobDetailContent

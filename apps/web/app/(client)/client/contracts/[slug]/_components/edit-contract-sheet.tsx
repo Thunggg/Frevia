@@ -15,6 +15,7 @@ import { Button } from "@repo/ui/components/shadcn/button";
 import { toastError, toastSuccess } from "@repo/ui/components/shadcn/toast";
 import { DollarSign, FileText, Loader2 } from "@/components/icons";
 import { contractApiRequest } from "@/apiRequests/contract";
+import { useActionPermission } from "@/hooks/use-action-permission";
 import { ApiFail } from "@/lib/http";
 import {
   getTodayDateInputValue,
@@ -42,6 +43,8 @@ export function EditContractSheet({
   const t = useTranslations("editContract");
   const tCommon = useTranslations("common");
   const format = useFormatter();
+  const { can } = useActionPermission();
+  const canUpdateContract = can("PATCH", "/api/contracts/:id");
   const [totalAmount, setTotalAmount] = useState<number>(
     Number(contract.totalAmount) || 0,
   );
@@ -69,6 +72,7 @@ export function EditContractSheet({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!canUpdateContract) return;
 
     if (!totalAmount || totalAmount <= 0) {
       toastError({ message: t("amountRequired") });
@@ -165,6 +169,8 @@ export function EditContractSheet({
       setIsSubmitting(false);
     }
   };
+
+  if (!canUpdateContract) return null;
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>

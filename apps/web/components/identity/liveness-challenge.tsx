@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { accountProfileApi } from "@/apiRequests/account-profile";
+import { useActionPermission } from "@/hooks/use-action-permission";
 import { Button } from "@repo/ui/components/shadcn/button";
 import { Loader2 } from "lucide-react";
 
@@ -33,6 +34,11 @@ export function LivenessChallenge({
   onComplete: (frames: File[]) => void;
 }) {
   const t = useTranslations("accountProfile");
+  const { can } = useActionPermission();
+  const canLivenessPose = can(
+    "POST",
+    "/api/identity-verifications/liveness-pose",
+  );
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const timerRef = useRef<number | null>(null);
@@ -97,7 +103,7 @@ export function LivenessChallenge({
   );
 
   const tick = useCallback(async () => {
-    if (busyRef.current || doneRef.current) return;
+    if (busyRef.current || doneRef.current || !canLivenessPose) return;
     busyRef.current = true;
     try {
       const frame = await grabFrame();
@@ -151,9 +157,10 @@ export function LivenessChallenge({
     } finally {
       busyRef.current = false;
     }
-  }, [collect, grabFrame, onComplete, stop]);
+  }, [collect, grabFrame, onComplete, stop, canLivenessPose]);
 
   const start = useCallback(async () => {
+    if (!canLivenessPose) return;
     setError(null);
     framesRef.current = [];
     phaseRef.current = 0;
@@ -183,14 +190,14 @@ export function LivenessChallenge({
         "unknown";
       setError(tRef.current("liveness.cameraError", { message }));
     }
-  }, [tick]);
+  }, [tick, canLivenessPose]);
 
   const done = phaseIdx >= PHASE_KEYS.length;
 
   return (
     <div className="space-y-3">
       <div className="flex flex-wrap items-center gap-2">
-        {!running && !done ? (
+        {!running && !done && canLivenessPose ? (
           <Button
             type="button"
             variant="outline"
@@ -205,7 +212,7 @@ export function LivenessChallenge({
             {t("liveness.stop")}
           </Button>
         ) : null}
-        {done ? (
+        {done && canLivenessPose ? (
           <Button type="button" variant="outline" size="sm" onClick={() => void start()}>
             {t("liveness.retake")}
           </Button>

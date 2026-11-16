@@ -10,8 +10,11 @@ import {
   TrendingUp,
 } from "lucide-react";
 import adminServerRequest from "@/apiRequests/admin.server";
+import authServerRequest from "@/apiRequests/auth.server";
+import { hasActionPermission, hasMenuPermission } from "@/lib/admin-access";
 import { Badge } from "@repo/ui/components/shadcn/badge";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import type { LucideIcon } from "lucide-react";
 
 const statCards: {
@@ -44,14 +47,84 @@ const statCards: {
 ];
 
 export default async function AdminDashboardPage() {
-  const stats = await adminServerRequest.getStats();
   const t = await getTranslations("adminDashboard");
   const format = await getFormatter();
+  const user = await authServerRequest.getMe();
+  const canViewStats = hasActionPermission(
+    user,
+    "GET",
+    "/api/forums/admin/stats",
+  );
+
+  const stats = canViewStats ? await adminServerRequest.getStats() : null;
 
   if (!stats) {
+    const userPerms = user?.permissions ?? [];
+    const userMods = user?.permissionModules ?? [];
+
+    if (
+      hasMenuPermission(userPerms, userMods, ["/api/admin/disputes"])
+    ) {
+      redirect("/admin/disputes");
+    }
+    if (
+      hasMenuPermission(userPerms, userMods, [
+        "/api/admin/identity-verifications",
+      ])
+    ) {
+      redirect("/admin/identity-verifications");
+    }
+    if (
+      hasMenuPermission(userPerms, userMods, ["/api/admin/profile-revisions"])
+    ) {
+      redirect("/admin/profile-revisions");
+    }
+    if (
+      hasMenuPermission(userPerms, userMods, ["/api/admin/skills"])
+    ) {
+      redirect("/admin/skills");
+    }
+    if (
+      hasMenuPermission(userPerms, userMods, ["/api/admin/job-categories"])
+    ) {
+      redirect("/admin/job-categories");
+    }
+    if (
+      hasMenuPermission(userPerms, userMods, ["/api/admin/banners"])
+    ) {
+      redirect("/admin/banners");
+    }
+    if (
+      hasMenuPermission(userPerms, userMods, ["/api/users", "USERS"])
+    ) {
+      redirect("/admin/users");
+    }
+    if (
+      hasMenuPermission(userPerms, userMods, ["/api/roles", "ROLES"])
+    ) {
+      redirect("/admin/roles");
+    }
+
     return (
-      <div className="py-12 text-center text-sm text-muted-foreground">
-        {t("loadFailed")}
+      <div className="space-y-6">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight text-foreground">
+            {t("title")}
+          </h1>
+          <p className="mt-1 text-muted-foreground">{t("subtitle")}</p>
+        </div>
+
+        <div className="rounded-2xl border border-border bg-card p-8 text-center sm:p-12">
+          <div className="mx-auto flex size-14 items-center justify-center rounded-2xl bg-[#eaf8df] text-[#4fae2e] dark:bg-[#4fae2e]/20">
+            <TrendingUp className="size-7" />
+          </div>
+          <h2 className="mt-4 text-xl font-bold text-foreground">
+            Chào mừng bạn đến với Cổng Quản trị Frevia
+          </h2>
+          <p className="mx-auto mt-2 max-w-md text-sm text-muted-foreground">
+            Bạn đã đăng nhập thành công vào hệ thống quản trị. Hãy chọn chức năng từ menu bên trái để bắt đầu thực hiện các tác vụ được phân quyền.
+          </p>
+        </div>
       </div>
     );
   }

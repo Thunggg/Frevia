@@ -12,6 +12,7 @@ import { ArrowLeft, Pencil, Trash2 } from "lucide-react";
 import { useFormatter, useTranslations } from "next-intl";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useActionPermission } from "@/hooks/use-action-permission";
 
 const SYSTEM_ROLE_NAMES = new Set<string>(Object.values(RoleName));
 
@@ -20,7 +21,23 @@ export function RoleDetail({ roleId }: { roleId: number }) {
   const t = useTranslations("adminRoles");
   const tCommon = useTranslations("adminCommon");
   const format = useFormatter();
+  const { can } = useActionPermission();
+  const canViewDetail = can("GET", "/api/roles/:id");
+  const canUpdate = can("PATCH", "/api/roles/:id");
+  const canDelete = can("DELETE", "/api/roles/:id");
+
   const { data: role, isLoading, isError } = useRole(roleId);
+
+  if (!canViewDetail) {
+    return (
+      <div className="space-y-4">
+        <BackToRoles />
+        <div className="rounded-lg border bg-card p-12 text-center text-muted-foreground">
+          {t("detailAccessDenied")}
+        </div>
+      </div>
+    );
+  }
 
   if (isLoading) {
     return <AdminDetailSkeleton />;
@@ -49,25 +66,29 @@ export function RoleDetail({ roleId }: { roleId: number }) {
           <p className="text-muted-foreground mt-1">{t("detailTitle")}</p>
         </div>
         <div className="flex items-center gap-2 flex-wrap justify-end">
-          <UpdateRoleDialog
-            role={role}
-            trigger={
-              <Button size="sm" className="gap-1.5">
-                <Pencil className="h-4 w-4" />
-                {tCommon("edit")}
-              </Button>
-            }
-          />
-          <DeleteRoleDialog
-            role={role}
-            onDeleted={() => router.push("/admin/roles")}
-            trigger={
-              <Button size="sm" variant="destructive" className="gap-1.5">
-                <Trash2 className="h-4 w-4" />
-                {tCommon("delete")}
-              </Button>
-            }
-          />
+          {canUpdate && (
+            <UpdateRoleDialog
+              role={role}
+              trigger={
+                <Button size="sm" className="gap-1.5">
+                  <Pencil className="h-4 w-4" />
+                  {tCommon("edit")}
+                </Button>
+              }
+            />
+          )}
+          {canDelete && (
+            <DeleteRoleDialog
+              role={role}
+              onDeleted={() => router.push("/admin/roles")}
+              trigger={
+                <Button size="sm" variant="destructive" className="gap-1.5">
+                  <Trash2 className="h-4 w-4" />
+                  {tCommon("delete")}
+                </Button>
+              }
+            />
+          )}
           <Badge variant={isSystem ? "secondary" : "outline"}>
             {isSystem ? tCommon("system") : tCommon("custom")}
           </Badge>

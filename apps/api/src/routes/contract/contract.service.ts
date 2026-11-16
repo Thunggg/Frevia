@@ -427,7 +427,9 @@ export class ContractService implements OnModuleInit, OnModuleDestroy {
     query: GetContractListQueryType,
   ) {
     try {
-      const isAdmin = roleName === RoleName.ADMIN;
+      const isAdmin =
+        roleName === RoleName.ADMIN ||
+        (roleName !== RoleName.CLIENT && roleName !== RoleName.FREELANCER);
       const isClient = roleName === RoleName.CLIENT;
       const isFreelancer = roleName === RoleName.FREELANCER;
 
@@ -473,7 +475,9 @@ export class ContractService implements OnModuleInit, OnModuleDestroy {
 
       if (!contract) throw ContractNotFoundException();
 
-      const isAdmin = roleName === RoleName.ADMIN;
+      const isAdmin =
+        roleName === RoleName.ADMIN ||
+        (roleName !== RoleName.CLIENT && roleName !== RoleName.FREELANCER);
       const isOwner =
         contract.clientId === userId || contract.freelancerId === userId;
 
@@ -501,7 +505,9 @@ export class ContractService implements OnModuleInit, OnModuleDestroy {
 
       if (!contract) throw ContractNotFoundException();
 
-      const isAdmin = roleName === RoleName.ADMIN;
+      const isAdmin =
+        roleName === RoleName.ADMIN ||
+        (roleName !== RoleName.CLIENT && roleName !== RoleName.FREELANCER);
       const isOwner =
         contract.clientId === userId || contract.freelancerId === userId;
 
@@ -525,7 +531,9 @@ export class ContractService implements OnModuleInit, OnModuleDestroy {
 
       if (!contract) throw ContractNotFoundException();
 
-      const isAdmin = roleName === RoleName.ADMIN;
+      const isAdmin =
+        roleName === RoleName.ADMIN ||
+        (roleName !== RoleName.CLIENT && roleName !== RoleName.FREELANCER);
       const isOwner =
         contract.clientId === userId || contract.freelancerId === userId;
 

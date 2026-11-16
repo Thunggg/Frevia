@@ -42,10 +42,7 @@ export class ExpertProfileRepository {
       select: {
         id: true,
         profile: { include: { expertProfile: true } },
-        userRoles: {
-          where: { role: { deletedAt: null } },
-          select: { role: { select: { name: true } } },
-        },
+        role: { select: { name: true } },
       },
     });
   }
@@ -141,11 +138,7 @@ export class ExpertProfileRepository {
         user: {
           deletedAt: null,
           isBanned: false,
-          userRoles: {
-            some: {
-              role: { name: RoleName.EXPERT, deletedAt: null },
-            },
-          },
+          role: { name: RoleName.EXPERT, deletedAt: null },
         },
       },
       ...(query.search
@@ -196,9 +189,7 @@ export class ExpertProfileRepository {
           user: {
             deletedAt: null,
             isBanned: false,
-            userRoles: {
-              some: { role: { name: RoleName.EXPERT, deletedAt: null } },
-            },
+            role: { name: RoleName.EXPERT, deletedAt: null },
           },
         },
       },

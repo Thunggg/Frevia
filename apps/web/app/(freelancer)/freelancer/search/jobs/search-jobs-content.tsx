@@ -32,6 +32,7 @@ import type {
   ViewListJobResponseType,
 } from "@shared/types";
 import { getBookmarkErrorMessage } from "@/lib/utils";
+import { useActionPermission } from "@/hooks/use-action-permission";
 import { JobCard } from "../../../_components/job-card";
 import { JobPagination } from "../../../_components/job-pagination";
 import { SearchFiltersSidebar } from "../../../_components/search-filters-sidebar";
@@ -78,6 +79,9 @@ export function SearchJobsContent({
   const searchParams = useSearchParams();
   const t = useTranslations("findWork");
   const tBookmark = useTranslations("bookmark");
+  const { can } = useActionPermission();
+  const canViewSavedSearches = can("GET", "/api/saved-searches");
+  const canCreateSavedSearch = can("POST", "/api/saved-searches");
   const [isPending, startTransition] = useTransition();
 
   const SORT_OPTIONS = [
@@ -293,25 +297,30 @@ export function SearchJobsContent({
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-2 pb-3 border-b border-border">
         {/* Left: Save search and saved searches */}
         <div className="flex items-center gap-2">
-          <SaveSearchDialog
-            searchParams={Object.fromEntries(searchParams.entries())}
-            savedSearches={savedSearches}
-            onApply={handleApplySavedSearch}
-            onChanged={() => {
-              void savedSearchApiRequest
-                .getSavedSearches()
-                .then((res: { data?: SavedSearchType[] }) => setSavedSearches(res.data ?? []));
-            }}
-          />
-          <Link
-            href="/freelancer/find-work/saved-searches"
-            className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1.5 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
-          >
-            <Bookmark className="size-3.5 text-emerald-600 dark:text-emerald-400" />
-            <span>
-              {t("searchPage.savedSearches", { count: savedSearches.length })}
-            </span>
-          </Link>
+          {(canCreateSavedSearch || canViewSavedSearches) && (
+            <SaveSearchDialog
+              searchParams={Object.fromEntries(searchParams.entries())}
+              savedSearches={savedSearches}
+              onApply={handleApplySavedSearch}
+              onChanged={() => {
+                if (!canViewSavedSearches) return;
+                void savedSearchApiRequest
+                  .getSavedSearches()
+                  .then((res: { data?: SavedSearchType[] }) => setSavedSearches(res.data ?? []));
+              }}
+            />
+          )}
+          {canViewSavedSearches && (
+            <Link
+              href="/freelancer/find-work/saved-searches"
+              className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1.5 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+            >
+              <Bookmark className="size-3.5 text-emerald-600 dark:text-emerald-400" />
+              <span>
+                {t("searchPage.savedSearches", { count: savedSearches.length })}
+              </span>
+            </Link>
+          )}
         </div>
 
         {/* Right: Results count & Sort by */}

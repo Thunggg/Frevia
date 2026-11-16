@@ -36,6 +36,7 @@ import {
   useForumPostLikes,
   useTogglePostLike,
 } from "@/hooks/use-forum";
+import { useActionPermission } from "@/hooks/use-action-permission";
 import { buildSlugId } from "@/lib/slug-utils";
 import { LanguageSwitcher } from "@/components/language-switcher";
 
@@ -62,7 +63,12 @@ export function PostDetailView({
   const t = useTranslations("forum");
   const tCommon = useTranslations("common");
   const format = useFormatter();
+  const { can } = useActionPermission();
   const isAuthor = currentUserId === post.userId;
+  const canEditPost = can("PATCH", "/api/forums/posts/:id");
+  const canDeletePost = can("DELETE", "/api/forums/posts/:id");
+  const canLikePost = can("POST", "/api/forums/posts/:id/like");
+  const canReportPost = can("POST", "/api/forums/posts/:postId/reports");
   const resolvedCategoryId = post.category?.id ?? categoryId;
   const categoryName = post.category?.name ?? t("categoryFallback");
 
@@ -121,14 +127,14 @@ export function PostDetailView({
             <nav className="text-[13px] text-muted-foreground/60">
               <Link
                 href="/forum"
-                className="transition-colors hover:text-[#4fae2e]"
+                className="transition-colors hover:text-[#0069D3]"
               >
                 {tCommon("forum")}
               </Link>
               <span className="mx-2 text-foreground/25">/</span>
               <Link
                 href={`/forum/${buildSlugId(categorySlug, resolvedCategoryId)}`}
-                className="transition-colors hover:text-[#4fae2e]"
+                className="transition-colors hover:text-[#0069D3]"
               >
                 {categoryName}
               </Link>
@@ -144,7 +150,7 @@ export function PostDetailView({
             {t("discussionIn")}{" "}
             <Link
               href={`/forum/${buildSlugId(categorySlug, resolvedCategoryId)}`}
-              className="font-medium text-[#4fae2e] transition-colors hover:text-[#459928]"
+              className="font-medium text-[#0069D3] transition-colors hover:text-[#0069D3]/90"
             >
               {categoryName}
             </Link>
@@ -159,45 +165,49 @@ export function PostDetailView({
               <h1 className="text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
                 {displayTitle}
               </h1>
-            {isAuthor ? (
+            {isAuthor && (canEditPost || canDeletePost) ? (
               <div className="flex shrink-0 items-center gap-1">
-                <EditPostDialog
-                  postId={post.id}
-                  initialTitle={displayTitle}
-                  initialContent={displayContent}
-                  onUpdated={handlePostUpdated}
-                />
-                <AlertDialog>
-                  <AlertDialogTrigger asChild>
-                    <Button
-                      variant="ghost"
-                      size="xs"
-                      className="gap-1 text-muted-foreground hover:text-red-500"
-                    >
-                      <Trash2 className="h-3.5 w-3.5" />
-                      {t("delete")}
-                    </Button>
-                  </AlertDialogTrigger>
-                  <AlertDialogContent>
-                    <AlertDialogHeader>
-                      <AlertDialogTitle>
-                        {t("deletePostTitle")}
-                      </AlertDialogTitle>
-                      <AlertDialogDescription>
-                        {t("deletePostDescription")}
-                      </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                      <AlertDialogCancel>{t("cancel")}</AlertDialogCancel>
-                      <AlertDialogAction
-                        onClick={handleDeletePost}
-                        className="bg-destructive text-white hover:bg-destructive/90"
+                {canEditPost ? (
+                  <EditPostDialog
+                    postId={post.id}
+                    initialTitle={displayTitle}
+                    initialContent={displayContent}
+                    onUpdated={handlePostUpdated}
+                  />
+                ) : null}
+                {canDeletePost ? (
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="xs"
+                        className="gap-1 text-muted-foreground hover:text-red-500"
                       >
+                        <Trash2 className="h-3.5 w-3.5" />
                         {t("delete")}
-                      </AlertDialogAction>
-                    </AlertDialogFooter>
-                  </AlertDialogContent>
-                </AlertDialog>
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>
+                          {t("deletePostTitle")}
+                        </AlertDialogTitle>
+                        <AlertDialogDescription>
+                          {t("deletePostDescription")}
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>{t("cancel")}</AlertDialogCancel>
+                        <AlertDialogAction
+                          onClick={handleDeletePost}
+                          className="bg-destructive text-white hover:bg-destructive/90"
+                        >
+                          {t("delete")}
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                ) : null}
               </div>
             ) : null}
           </div>
@@ -220,7 +230,7 @@ export function PostDetailView({
               </p>
               <div className="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-[12px] text-muted-foreground/50">
                 <span className="inline-flex items-center gap-1">
-                  <Calendar className="size-3 text-[#4fae2e]/60" />
+                  <Calendar className="size-3 text-[#0069D3]/60" />
                   {formatPostDate(post.createdAt)}
                 </span>
                 {wasEdited ? (
@@ -238,38 +248,40 @@ export function PostDetailView({
           </div>
 
           <div
-            className="post-content mt-8 max-w-prose text-[15px] leading-8 text-foreground/90 [&_a]:text-[#4fae2e] [&_a]:underline-offset-2 hover:[&_a]:underline [&_h1]:mb-3 [&_h1]:text-xl [&_h1]:font-semibold [&_h1]:text-foreground [&_h2]:mb-3 [&_h2]:text-lg [&_h2]:font-semibold [&_h2]:text-foreground [&_h3]:mb-2 [&_h3]:font-semibold [&_h3]:text-foreground [&_li]:my-1 [&_ol]:my-4 [&_ol]:list-decimal [&_ol]:pl-5 [&_p]:mb-4 [&_p:last-child]:mb-0 [&_ul]:my-4 [&_ul]:list-disc [&_ul]:pl-5"
+            className="post-content mt-8 max-w-prose text-[15px] leading-8 text-foreground/90 [&_a]:text-[#0069D3] [&_a]:underline-offset-2 hover:[&_a]:underline [&_h1]:mb-3 [&_h1]:text-xl [&_h1]:font-semibold [&_h1]:text-foreground [&_h2]:mb-3 [&_h2]:text-lg [&_h2]:font-semibold [&_h2]:text-foreground [&_h3]:mb-2 [&_h3]:font-semibold [&_h3]:text-foreground [&_li]:my-1 [&_ol]:my-4 [&_ol]:list-decimal [&_ol]:pl-5 [&_p]:mb-4 [&_p:last-child]:mb-0 [&_ul]:my-4 [&_ul]:list-disc [&_ul]:pl-5"
             dangerouslySetInnerHTML={{ __html: displayContent }}
           />
 
           <div className="mt-8 flex flex-wrap items-center gap-1 border-y border-border/40 py-3">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={handleToggleLike}
-              disabled={toggleLike.isPending}
-              className={
-                liked
-                  ? "gap-1.5 px-3 text-red-500 hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-950/20"
-                  : "gap-1.5 px-3 text-muted-foreground/60 hover:bg-[#4fae2e]/5 hover:text-[#4fae2e] dark:hover:bg-[#4fae2e]/10"
-              }
-            >
-              <Heart
-                className={`size-[18px] transition-transform ${
-                  liked ? "scale-110 fill-current" : ""
-                }`}
-              />
-              <span className="text-sm font-medium tabular-nums">
-                {likeCount}
-              </span>
-            </Button>
+            {canLikePost ? (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleToggleLike}
+                disabled={toggleLike.isPending}
+                className={
+                  liked
+                    ? "gap-1.5 px-3 text-red-500 hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-950/20"
+                    : "gap-1.5 px-3 text-muted-foreground/60 hover:bg-[#0069D3]/5 hover:text-[#0069D3] dark:hover:bg-blue-500/10"
+                }
+              >
+                <Heart
+                  className={`size-[18px] transition-transform ${
+                    liked ? "scale-110 fill-current" : ""
+                  }`}
+                />
+                <span className="text-sm font-medium tabular-nums">
+                  {likeCount}
+                </span>
+              </Button>
+            ) : null}
 
             <div className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-muted-foreground">
               <MessageSquare className="size-[18px]" />
               <span className="font-medium tabular-nums">{commentTotal}</span>
             </div>
 
-            {!isAuthor && currentUserId ? (
+            {!isAuthor && currentUserId && canReportPost ? (
               <ReportDialog postId={post.id} />
             ) : null}
           </div>

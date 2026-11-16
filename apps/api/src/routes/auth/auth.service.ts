@@ -10,7 +10,6 @@ import {
   GetAuthorizationUrlResType,
   GoogleUserInfo,
   GetMeResType,
-  JoinRoleBodyType,
   LoginBodyType,
   MessageResType,
   OauthProvider,
@@ -18,7 +17,6 @@ import {
   RegisterBodyType,
   RoleName,
   SendOTPBodyType,
-  SwitchRoleBodyType,
   TypeOfVerificationCode,
   UserType,
   AuthMessage,
@@ -40,7 +38,6 @@ import {
   InvalidVerificationCodeException,
   OTPExpiredException,
   RefreshTokenRevokedException,
-  RoleAlreadyAssignedException,
   RoleNotFoundException,
   TooManyAttemptsException,
   UniqueViolationException,
@@ -247,8 +244,8 @@ export class AuthService {
         throw UserBannedException();
       }
 
-      // Lấy ra role đầu tiên của user đã chọn hoặc lần switch role gần nhất
-      const primaryRole = user.userRoles[0]?.role;
+      // Lấy ra role của user
+      const primaryRole = user.role;
       if (!primaryRole) {
         throw RoleNotFoundException();
       }
@@ -363,8 +360,8 @@ export class AuthService {
 
       const tokens = await this.generateAccessAndRefreshTokens({
         userId,
-        roleId: refreshTokenIsInDB.user.userRoles[0].role.id,
-        roleName: refreshTokenIsInDB.user.userRoles[0].role.name,
+        roleId: refreshTokenIsInDB.user.role.id,
+        roleName: refreshTokenIsInDB.user.role.name,
         userAgent: payload.userAgent,
         ipAddress: payload.ipAddress,
       });
@@ -505,6 +502,41 @@ export class AuthService {
       throw UserBannedException();
     }
 
+    const userRole = user.role;
+
+    const permissionsSet = new Set<string>();
+    const modulesSet = new Set<string>();
+
+    if (userRole && 'rolePermissions' in userRole) {
+      const rps =
+        (
+          userRole as {
+            rolePermissions?: Array<{
+              permission?: {
+                method?: string;
+                path?: string;
+                module?: string | null;
+                deletedAt?: Date | null;
+              } | null;
+            }>;
+          }
+        ).rolePermissions ?? [];
+
+      for (const rp of rps) {
+        if (rp.permission && !rp.permission.deletedAt) {
+          if (rp.permission.method && rp.permission.path) {
+            permissionsSet.add(`${rp.permission.method} ${rp.permission.path}`);
+          }
+          if (rp.permission.path) {
+            permissionsSet.add(rp.permission.path);
+          }
+          if (rp.permission.module) {
+            modulesSet.add(rp.permission.module.toUpperCase());
+          }
+        }
+      }
+    }
+
     return {
       id: user.id,
       email: user.email,
@@ -516,72 +548,36 @@ export class AuthService {
             avatarUrl: user.profile.avatarUrl,
           }
         : null,
-      roles: user.userRoles.map((userRole) => ({
-        name: userRole.role.name as GetMeResType['roles'][number]['name'],
-        isPrimary: userRole.isPrimary,
-      })),
+      roles: userRole
+        ? [
+            {
+              id: userRole.id,
+              name: userRole.name,
+              description: userRole.description,
+              isPrimary: true,
+            },
+          ]
+        : [],
+      permissions: Array.from(permissionsSet),
+      permissionModules: Array.from(modulesSet),
     };
-  }
-
-  async switchRole(
-    userId: number,
-    sessionId: number,
-    body: SwitchRoleBodyType,
-  ) {
-    const role = await this.authRepository.switchPrimaryRole(userId, body.role);
-    if (!role) throw RoleNotFoundException();
-
-    const accessToken = await this.tokenService.signAccessToken({
-      userId,
-      roleId: role.id,
-      roleName: role.name,
-      sessionId,
-    });
-
-    return { accessToken };
-  }
-
-  async joinRole(userId: number, sessionId: number, body: JoinRoleBodyType) {
-    try {
-      const result = await this.authRepository.joinRole(userId, body.role);
-      if (!result) throw RoleNotFoundException();
-      if (result.status === 'already-assigned') {
-        throw RoleAlreadyAssignedException();
-      }
-
-      const accessToken = await this.tokenService.signAccessToken({
-        userId,
-        roleId: result.role.id,
-        roleName: result.role.name,
-        sessionId,
-      });
-
-      return { accessToken };
-    } catch (error) {
-      if (
-        error instanceof PrismaClientKnownRequestError &&
-        error.code === 'P2002'
-      ) {
-        throw RoleAlreadyAssignedException();
-      }
-      throw error;
-    }
   }
 
   getAuthorizationUrl(payload: {
     userAgent: string;
     ip: string;
+    role?: string;
   }): GetAuthorizationUrlResType {
-    const { userAgent, ip } = payload;
+    const { userAgent, ip, role } = payload;
 
     const scopes = [
       'https://www.googleapis.com/auth/userinfo.profile',
       'https://www.googleapis.com/auth/userinfo.email',
     ];
 
-    const state = Buffer.from(JSON.stringify({ userAgent, ip })).toString(
-      'base64url',
-    );
+    const state = Buffer.from(
+      JSON.stringify({ userAgent, ip, ...(role ? { role } : {}) }),
+    ).toString('base64url');
 
     const authorizationUrl = this.oauth2Client.generateAuthUrl({
       // 'online' (default) or 'offline' (gets refresh_token)
@@ -606,14 +602,22 @@ export class AuthService {
 
     let userAgent = 'Unknown';
     let ip = 'Unknown';
+    let selectedRole: (typeof RoleName)[keyof typeof RoleName] =
+      RoleName.CLIENT;
 
     try {
       const clientInfor = JSON.parse(
         Buffer.from(payload.state, 'base64url').toString(),
       );
 
-      userAgent = clientInfor.userAgent;
-      ip = clientInfor.ip;
+      userAgent = clientInfor.userAgent ?? 'Unknown';
+      ip = clientInfor.ip ?? 'Unknown';
+      if (
+        clientInfor.role === RoleName.FREELANCER ||
+        clientInfor.role === RoleName.CLIENT
+      ) {
+        selectedRole = clientInfor.role;
+      }
     } catch (error) {
       this.logger.error('Error parsing client information', error);
     }
@@ -631,17 +635,22 @@ export class AuthService {
       throw EmailNotFoundException();
     }
 
-    let user = await this.authRepository.findUserByEmailIncludeRoles(
+    let user = await this.authRepository.findUserByEmailIncludeRole(
       data.email as string,
     );
 
     // Nếu user không tồn tại thì tạo mới user
     if (!user) {
+      const roleId =
+        selectedRole === RoleName.FREELANCER
+          ? await this.sharedRoleRepository.getFreelancerRoleId()
+          : await this.sharedRoleRepository.getClientRoleId();
+
       // Tạo user mới
       user = await this.authRepository.createUserAndRegisterGoogle({
         email: data.email as string,
         fullName: data.name as string,
-        roleId: await this.sharedRoleRepository.getClientRoleId(),
+        roleId,
       });
 
       // Tạo oauth account
@@ -659,7 +668,7 @@ export class AuthService {
       throw UserBannedException();
     }
 
-    const primaryRole = user.userRoles[0]?.role;
+    const primaryRole = user.role;
     if (!primaryRole) {
       throw RoleNotFoundException();
     }

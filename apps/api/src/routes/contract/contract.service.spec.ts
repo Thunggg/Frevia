@@ -202,7 +202,9 @@ describe('ContractService date validation', () => {
       status: 'canceled',
       message: 'Canceled',
     });
-    const refundContractEscrow = jest.fn().mockResolvedValue({ refundCount: 0 });
+    const refundContractEscrow = jest
+      .fn()
+      .mockResolvedValue({ refundCount: 0 });
     const rejectContract = jest.fn().mockResolvedValue({
       id: 99,
       status: ContractStatus.REJECTED,

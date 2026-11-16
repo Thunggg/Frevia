@@ -18,6 +18,7 @@ import { SkillResolverService } from './services/skill-resolver.service';
 import { TokenService } from './services/token.service';
 import { ContractPdfService } from './services/contract-pdf.service';
 import { AIModerationService } from './services/ai-moderation.service';
+import { CacheService } from './services/cache.service';
 
 @Module({
   imports: [
@@ -50,6 +51,7 @@ import { AIModerationService } from './services/ai-moderation.service';
     SharedPermissionRepository,
     ContractPdfService,
     AuthGateway,
+    CacheService,
   ],
   exports: [
     PrismaService,
@@ -66,6 +68,7 @@ import { AIModerationService } from './services/ai-moderation.service';
     TokenService,
     ContractPdfService,
     AuthGateway,
+    CacheService,
   ],
 })
 export class SharedModule {}

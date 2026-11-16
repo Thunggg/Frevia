@@ -55,7 +55,9 @@ export default function QueryProvider({
   return (
     <QueryClientProvider client={queryClient}>
       {children}
-      <ReactQueryDevtools buttonPosition="bottom-left" />
+      {process.env.NODE_ENV === "development" && (
+        <ReactQueryDevtools buttonPosition="bottom-left" />
+      )}
     </QueryClientProvider>
   );
 }

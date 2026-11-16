@@ -1,10 +1,12 @@
 import { getFormatter, getTranslations } from "next-intl/server";
 import Link from "next/link";
+import authServerRequest from "@/apiRequests/auth.server";
 import {
   ArrowLeft,
   CalendarDays,
   ChevronRight,
 } from "@/components/icons";
+import { hasActionPermission } from "@/lib/admin-access";
 import type { ViewJobDetailResType } from "@shared/types";
 
 const JOB_STATUS_KEYS = [
@@ -70,6 +72,11 @@ function JobStatusBadge({ status, label }: { status: string; label: string }) {
 }
 
 export async function JobDetail({ job }: { job: ViewJobDetailResType }) {
+  const user = await authServerRequest.getMe();
+  const canViewProposals =
+    hasActionPermission(user, "GET", "/api/jobs/:jobId/proposals") ||
+    hasActionPermission(user, "GET", "/api/proposals/jobs/:jobId/submitted");
+
   const t = await getTranslations("jobDetailClient");
   const tStatus = await getTranslations("jobStatus");
   const tBudgetType = await getTranslations("jobBudgetType");
@@ -216,13 +223,19 @@ export async function JobDetail({ job }: { job: ViewJobDetailResType }) {
               {t("proposals")}
             </p>
             <div className="mt-1">
-              <Link
-                href={`/client/jobs/${job.id}/proposals`}
-                className="inline-flex items-center gap-1 text-xs font-semibold text-[#0069D3] hover:underline"
-              >
-                <span>{t("checkProposals")}</span>
-                <ChevronRight className="size-3" />
-              </Link>
+              {canViewProposals ? (
+                <Link
+                  href={`/client/jobs/${job.id}/proposals`}
+                  className="inline-flex items-center gap-1 text-xs font-semibold text-[#0069D3] hover:underline"
+                >
+                  <span>{t("checkProposals")}</span>
+                  <ChevronRight className="size-3" />
+                </Link>
+              ) : (
+                <span className="text-xs text-muted-foreground">
+                  {t("checkProposals")}
+                </span>
+              )}
             </div>
           </div>
         </div>

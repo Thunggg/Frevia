@@ -15,6 +15,7 @@ import { Header } from "@/components/header";
 import { ContractLifecyclePanel } from "@/components/contract-lifecycle-panel";
 import { ApiFail } from "@/lib/http";
 import { handleErrorApi } from "@/lib/utils";
+import { useActionPermission } from "@/hooks/use-action-permission";
 import { Badge } from "@repo/ui/components/shadcn/badge";
 import { Button } from "@repo/ui/components/shadcn/button";
 import {
@@ -72,6 +73,13 @@ export function ProposalDetailContent({
     null,
   );
   const [withdrawOpen, setWithdrawOpen] = useState(false);
+
+  const { can } = useActionPermission();
+  const canUpdateDraft = can("PATCH", "/api/proposals/:id/draft");
+  const canSubmitDraft = can("PATCH", "/api/proposals/:id/submit");
+  const canWithdraw = can("PATCH", "/api/proposals/:id/withdraw");
+  const canUpdate = can("PATCH", "/api/proposals/:id");
+
   const isDraft = proposal.status === "DRAFT";
   // Freelancer chỉ rút được đề xuất đang chờ khách hàng xử lý.
   const isActionable =
@@ -80,7 +88,8 @@ export function ProposalDetailContent({
     isDraft &&
     proposal.job.status === "OPEN" &&
     !isPast(proposal.job.expiryDate) &&
-    !isPast(proposal.job.deadline);
+    !isPast(proposal.job.deadline) &&
+    (canUpdateDraft || canUpdate);
   const form = useForm<CreateProposalBodyType>({
     resolver: useTranslatedResolver<CreateProposalBodyType>(
       CreateProposalBodySchema,
@@ -136,6 +145,10 @@ export function ProposalDetailContent({
   };
 
   const saveDraft = async () => {
+    if (!canUpdateDraft && !canUpdate) {
+      toastError({ message: t("noPermissionEditDraft") });
+      return;
+    }
     const body = validateDraft();
     if (!body) return;
     setAction("save");
@@ -150,6 +163,10 @@ export function ProposalDetailContent({
     }
   };
   const submit = form.handleSubmit(async (body) => {
+    if (!canSubmitDraft) {
+      toastError({ message: t("noPermissionSubmitDraft") });
+      return;
+    }
     setAction("submit");
     try {
       await proposalApiRequest.updateDraft(proposal.id, body);
@@ -163,6 +180,10 @@ export function ProposalDetailContent({
     }
   });
   const withdraw = async () => {
+    if (!canWithdraw) {
+      toastError({ message: t("noPermissionWithdraw") });
+      return;
+    }
     setAction("withdraw");
     try {
       await proposalApiRequest.withdraw(proposal.id);
@@ -315,27 +336,31 @@ export function ProposalDetailContent({
               </FieldGroup>
               {canEditDraft ? (
                 <div className="mt-5 flex flex-wrap gap-3">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    disabled={action !== null}
-                    onClick={() => void saveDraft()}
-                  >
-                    {action === "save" ? (
-                      <Loader2 className="size-4 animate-spin" />
-                    ) : null}
-                    {t("saveDraft")}
-                  </Button>
-                  <Button
-                    type="submit"
-                    className="bg-[#4fae2e] text-white hover:bg-[#459928]"
-                    disabled={action !== null}
-                  >
-                    {action === "submit" ? (
-                      <Loader2 className="size-4 animate-spin" />
-                    ) : null}
-                    {t("submitProposal")}
-                  </Button>
+                  {canUpdateDraft || canUpdate ? (
+                    <Button
+                      type="button"
+                      variant="outline"
+                      disabled={action !== null}
+                      onClick={() => void saveDraft()}
+                    >
+                      {action === "save" ? (
+                        <Loader2 className="size-4 animate-spin" />
+                      ) : null}
+                      {t("saveDraft")}
+                    </Button>
+                  ) : null}
+                  {canSubmitDraft ? (
+                    <Button
+                      type="submit"
+                      className="bg-[#4fae2e] text-white hover:bg-[#459928]"
+                      disabled={action !== null}
+                    >
+                      {action === "submit" ? (
+                        <Loader2 className="size-4 animate-spin" />
+                      ) : null}
+                      {t("submitProposal")}
+                    </Button>
+                  ) : null}
                 </div>
               ) : null}
               {isDraft && !canEditDraft ? (
@@ -381,7 +406,7 @@ export function ProposalDetailContent({
                 </dd>
               </div>
             </dl>
-            {isActionable ? (
+            {isActionable && canWithdraw ? (
               <Button
                 variant="outline"
                 className="mt-6 w-full text-destructive hover:text-destructive"

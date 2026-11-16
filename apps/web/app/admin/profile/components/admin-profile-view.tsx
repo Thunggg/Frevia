@@ -1,6 +1,7 @@
 "use client";
 
 import { accountProfileApi } from "@/apiRequests/account-profile";
+import { useMe } from "@/hooks/use-auth";
 import { useBackendMessage } from "@/hooks/use-backend-message";
 import { ApiFail } from "@/lib/http";
 import {
@@ -16,6 +17,7 @@ import { Textarea } from "@repo/ui/components/shadcn/textarea";
 import { toastError, toastSuccess } from "@repo/ui/components/shadcn/toast";
 import {
   ChangePasswordSchema,
+  RoleName,
   UpdateGeneralProfileSchema,
   type GeneralProfileType,
 } from "@shared/types";
@@ -126,6 +128,7 @@ function PasswordInput({
 export function AdminProfileView() {
   const router = useRouter();
   const queryClient = useQueryClient();
+  const { data: me } = useMe();
   const t = useTranslations("adminProfile");
   const tGeneral = useTranslations("generalSettings");
   const tRole = useTranslations("roleName");
@@ -367,10 +370,24 @@ export function AdminProfileView() {
                   {profile.email}
                 </p>
                 <div className="mt-2 flex flex-wrap gap-2">
-                  <Badge variant="default" className="bg-[#4fae2e] text-white">
-                    <ShieldCheck className="mr-1 size-3" />
-                    {tRole("ADMIN")}
-                  </Badge>
+                  {(me?.roles?.map((r) => r.name) ?? ["ADMIN"]).map((roleName) => (
+                    <Badge
+                      key={roleName}
+                      variant="default"
+                      className="bg-[#4fae2e] text-white"
+                    >
+                      <ShieldCheck className="mr-1 size-3" />
+                      {roleName === RoleName.ADMIN
+                        ? tRole("ADMIN")
+                        : roleName === RoleName.EXPERT
+                          ? tRole("EXPERT")
+                          : roleName === RoleName.CLIENT
+                            ? tRole("CLIENT")
+                            : roleName === RoleName.FREELANCER
+                              ? tRole("FREELANCER")
+                              : roleName}
+                    </Badge>
+                  ))}
                 </div>
               </div>
             </div>

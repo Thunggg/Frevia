@@ -18,6 +18,7 @@ import {
 import { accountProfileApi } from "@/apiRequests/account-profile";
 import jobApiRequest from "@/apiRequests/job";
 import { proposalApiRequest } from "@/apiRequests/proposal";
+import { useActionPermission } from "@/hooks/use-action-permission";
 import { Footer } from "@/components/footer";
 import { Header, type UserRole } from "@/components/header";
 import { Badge } from "@repo/ui/components/shadcn/badge";
@@ -33,10 +34,11 @@ import {
 } from "@repo/ui/components/shadcn/alert-dialog";
 import { toastError, toastSuccess } from "@repo/ui/components/shadcn/toast";
 import { getBookmarkErrorMessage } from "@/lib/utils";
-import type {
-  JobType,
-  ProposalType,
-  ViewJobDetailResType,
+import {
+  VerificationStatus,
+  type JobType,
+  type ProposalType,
+  type ViewJobDetailResType,
 } from "@shared/types";
 import { ProposalDialog } from "./proposal-dialog";
 
@@ -134,13 +136,26 @@ export function JobDetailContent({
   const [isBookmarked, setIsBookmarked] = useState(initialIsBookmarked);
   const [isBookmarkLoading, setIsBookmarkLoading] = useState(false);
   const [isRemoveDialogOpen, setIsRemoveDialogOpen] = useState(false);
+  const [isKYCDialogOpen, setIsKYCDialogOpen] = useState(false);
   const [isProposalDialogOpen, setIsProposalDialogOpen] = useState(false);
   const [clientName, setClientName] = useState<string | null>(null);
   const [clientAvatar, setClientAvatar] = useState<string | null>(null);
   const [clientLoading, setClientLoading] = useState(true);
 
+  const { can } = useActionPermission();
+  const canAddBookmark = can("POST", "/api/manage-jobs/jobs/:slug/bookmark");
+  const canRemoveBookmark = can("DELETE", "/api/manage-jobs/bookmarks/:slug");
+  const canViewMyProposal =
+    role === "FREELANCER" &&
+    (can("GET", "/api/proposals/jobs/:jobId/mine") ||
+      can("GET", "/api/proposals/my"));
+  const canCreateProposal = can("POST", "/api/proposals/jobs/:jobId");
+  const canSaveDraft = can("POST", "/api/proposals/jobs/:jobId/drafts");
+  const canViewDetail = can("GET", "/api/proposals/:id");
+
   const isOwnJob = currentUserId != null && job.clientId === currentUserId;
-  const canBookmark = role === "FREELANCER" && !isOwnJob;
+  const canBookmark =
+    role === "FREELANCER" && !isOwnJob && (canAddBookmark || canRemoveBookmark);
 
   useEffect(() => {
     setIsBookmarked(initialIsBookmarked);
@@ -170,7 +185,7 @@ export function JobDetailContent({
   const activeProposalQuery = useQuery({
     queryKey: ["proposals", "job", job.id, "mine"],
     queryFn: () => proposalApiRequest.getMyProposalForJob(job.id),
-    enabled: canBookmark,
+    enabled: canViewMyProposal,
     initialData: existingProposal ?? undefined,
     retry: false,
   });
@@ -272,7 +287,16 @@ export function JobDetailContent({
       }
 
       if (isBookmarked) {
+        if (!canRemoveBookmark) {
+          toastError({ message: tBookmark("noPermission") });
+          return;
+        }
         setIsRemoveDialogOpen(true);
+        return;
+      }
+
+      if (!canAddBookmark) {
+        toastError({ message: tBookmark("noPermission") });
         return;
       }
 
@@ -306,6 +330,10 @@ export function JobDetailContent({
   };
 
   const removeBookmark = async () => {
+    if (!canRemoveBookmark) {
+      toastError({ message: tBookmark("noPermission") });
+      return;
+    }
     setIsBookmarkLoading(true);
     try {
       await jobApiRequest.removeBookmark(job.slug);
@@ -328,15 +356,41 @@ export function JobDetailContent({
     }
   };
 
+  const ensureIdentityVerified = async () => {
+    try {
+      const status = await accountProfileApi.getIdentityStatus();
+      if (status.data?.status !== VerificationStatus.APPROVED) {
+        setIsKYCDialogOpen(true);
+        return false;
+      }
+      return true;
+    } catch {
+      // Fail-open nếu backend lỗi.
+      return true;
+    }
+  };
+
   const openProposalAction = () => {
-    requireFreelancer(() => {
+    requireFreelancer(async () => {
+      const verified = await ensureIdentityVerified();
+      if (!verified) return;
+
       if (activeProposal) {
+        if (!canViewDetail) {
+          toastError({ message: tBookmark("viewListAccessDenied") });
+          return;
+        }
         router.push(`/proposals/${activeProposal.id}`);
         return;
       }
 
       if (!canReceiveProposals) {
         toastError({ message: t("notAccepting") });
+        return;
+      }
+
+      if (!canCreateProposal && !canSaveDraft) {
+        toastError({ message: t("cannotApplyOwnJob") });
         return;
       }
 
@@ -394,10 +448,12 @@ export function JobDetailContent({
   ];
 
   const proposalActionLabel = activeProposal
-    ? activeProposal.status === "DRAFT" && canReceiveProposals
-      ? t("continueProposal")
-      : t("viewProposal")
-    : canReceiveProposals
+    ? canViewDetail
+      ? activeProposal.status === "DRAFT" && canReceiveProposals
+        ? t("continueProposal")
+        : t("viewProposal")
+      : null
+    : canReceiveProposals && (role !== "FREELANCER" || canCreateProposal || canSaveDraft)
       ? t("applyNow")
       : null;
 
@@ -777,6 +833,34 @@ export function JobDetailContent({
               {isBookmarkLoading
                 ? t("removeDialog.removing")
                 : t("removeDialog.confirm")}
+            </Button>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <AlertDialog
+        open={isKYCDialogOpen}
+        onOpenChange={setIsKYCDialogOpen}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{t("kycDialog.title")}</AlertDialogTitle>
+            <AlertDialogDescription>
+              {t("kycDialog.description")}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>
+              {t("kycDialog.cancel")}
+            </AlertDialogCancel>
+            <Button
+              className="bg-[#4fae2e] text-white hover:bg-[#459928]"
+              onClick={() => {
+                setIsKYCDialogOpen(false);
+                router.push("/freelancer/profile?tab=identity");
+              }}
+            >
+              {t("kycDialog.confirm")}
             </Button>
           </AlertDialogFooter>
         </AlertDialogContent>

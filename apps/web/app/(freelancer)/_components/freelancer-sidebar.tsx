@@ -5,7 +5,6 @@ import { useLocale, useTranslations } from "next-intl";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState, useTransition } from "react";
-import { useQueryClient } from "@tanstack/react-query";
 import { useTheme } from "next-themes";
 import {
   Bell,
@@ -23,8 +22,8 @@ import {
   PanelLeftClose,
   PanelLeftOpen,
   Search,
+  Shield,
   Sun,
-  SwitchCamera,
   Tag,
   UserRound,
   Users,
@@ -37,10 +36,9 @@ import {
   AvatarFallback,
   AvatarImage,
 } from "@repo/ui/components/shadcn/avatar";
-import { toastError } from "@repo/ui/components/shadcn/toast";
-import { authApiRequest } from "@/apiRequests/auth";
 import { useMe } from "@/hooks/use-auth";
-import { RoleName } from "@shared/types";
+import { useActionPermission } from "@/hooks/use-action-permission";
+import { canAccessAdminPortal } from "@/lib/admin-access";
 import { useNotifications } from "@/hooks/use-notifications";
 
 type NavItem = {
@@ -119,19 +117,21 @@ function NavLink({ item, collapsed }: { item: NavItem; collapsed: boolean }) {
 
 export function FreelancerSidebar() {
   const router = useRouter();
-  const queryClient = useQueryClient();
   const t = useTranslations("sidebar");
   const tCommon = useTranslations("common");
   const tRole = useTranslations("roleName");
   const activeLocale = useLocale();
   const [isLocalePending, startLocaleTransition] = useTransition();
   const { data: me } = useMe();
-  const { data: notifications = [] } = useNotifications();
+  const { can } = useActionPermission();
+  const canViewProposals = can("GET", "/api/proposals/my");
+  const canViewContracts = can("GET", "/api/contracts");
+  const canViewNotifications = can("GET", "/api/notifications");
+  const { data: notifications = [] } = useNotifications(canViewNotifications);
   const { resolvedTheme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
-  const [isSwitchingRole, setIsSwitchingRole] = useState(false);
   const profileRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -235,29 +235,21 @@ export function FreelancerSidebar() {
     },
   ];
 
+  const visibleNav = freelancerNav.filter((item) => {
+    if (item.href === "/freelancer/proposals" && !canViewProposals) return false;
+    if (item.href === "/freelancer/contracts" && !canViewContracts) return false;
+    if (item.href === "/freelancer/notifications" && !canViewNotifications) return false;
+    return true;
+  });
+
   const displayName = me?.profile?.displayName ?? tRole("FREELANCER");
   const initial = displayName.charAt(0).toUpperCase();
-  const canSwitchRole = me?.roles.some((r) => r.name === RoleName.CLIENT);
   const profileId = me?.profile?.id ?? me?.id;
 
   const logout = async () => {
     await fetch("/api/auth/logout", { method: "POST" });
     router.push("/login");
     router.refresh();
-  };
-
-  const switchRole = async () => {
-    if (!canSwitchRole || isSwitchingRole) return;
-    setIsSwitchingRole(true);
-    try {
-      await authApiRequest.switchRole({ role: RoleName.CLIENT });
-      await queryClient.invalidateQueries({ queryKey: ["me"] });
-      router.push("/client/jobs");
-      router.refresh();
-    } catch {
-      toastError({ message: t("roleSwitchFailed") });
-      setIsSwitchingRole(false);
-    }
   };
 
   return (
@@ -393,6 +385,16 @@ export function FreelancerSidebar() {
                 <MonitorSmartphone className="size-3.5" />
                 {t("sessions")}
               </Link>
+              {canAccessAdminPortal(me) && (
+                <Link
+                  href="/admin"
+                  onClick={() => setProfileOpen(false)}
+                  className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-xs font-medium text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-950/40 transition-colors"
+                >
+                  <Shield className="size-3.5" />
+                  Admin Portal
+                </Link>
+              )}
 
               <div className="my-1 h-px bg-border" />
 
@@ -474,20 +476,6 @@ export function FreelancerSidebar() {
 
               <div className="my-1 h-px bg-border" />
 
-              {canSwitchRole && (
-                <button
-                  type="button"
-                  onClick={() => {
-                    setProfileOpen(false);
-                    void switchRole();
-                  }}
-                  disabled={isSwitchingRole}
-                  className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-xs text-muted-foreground hover:bg-[#D0E1F8]/40 dark:hover:bg-zinc-800 hover:text-[#0069D3] dark:hover:text-blue-300 transition-colors disabled:opacity-50 cursor-pointer"
-                >
-                  <SwitchCamera className="size-3.5" />
-                  {isSwitchingRole ? t("switching") : t("switchToClient")}
-                </button>
-              )}
               <button
                 type="button"
                 onClick={() => {
@@ -512,7 +500,7 @@ export function FreelancerSidebar() {
           </p>
         )}
         <div className="space-y-1">
-          {freelancerNav.map((item) => (
+          {visibleNav.map((item) => (
             <NavLink key={item.href} item={item} collapsed={collapsed} />
           ))}
         </div>

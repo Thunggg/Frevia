@@ -38,10 +38,7 @@ import {
   SyncCheckoutSessionResponseDTO,
 } from './payment.dto';
 import { PaymentService } from './payment.service';
-import type {
-  DisputeSettlementBodyType,
-  GetTransactionListQueryType,
-} from '@shared/types';
+import type { GetTransactionListQueryType } from '@shared/types';
 
 /**
  * Controller quản lý toàn bộ luồng thanh toán qua Stripe (`/api/payments`).
@@ -274,33 +271,21 @@ export class PaymentController {
   }
 
   // =========================================================================
-  // 4. PHÍ TRANH CHẤP & PHÂN CHIA THANH TOÁN KHI GIẢI QUYẾT DISPUTE
+  // 4. GIẢI QUYẾT TRANH CHẤP & PHÂN CHIA TIỀN KÝ QUỸ
   // =========================================================================
 
   /**
-   * [Admin / Arbitrator được phân công] Chốt phân bổ tiền sau phán quyết tranh chấp (`settleDispute`).
-   * Cách hoạt động:
-   * 1. Xác thực tổng `clientAmount + freelancerAmount` khớp giá trị milestone đang ký quỹ.
-   * 2. Hoàn tiền phần `clientAmount` cho Client (Stripe Refund từ escrow gốc).
-   * 3. Chuyển phần `freelancerAmount` cho Freelancer (Stripe Transfer).
-   * 4. Chuyển dispute sang `FINALIZED` và milestone sang `RELEASED` / `COMPLETED`.
+   * Thanh toán và phân chia tiền ký quỹ giải quyết tranh chấp.
    */
   @Post('disputes/:disputeId/settle')
   @ZodSerializerDto(DisputeSettlementResponseDTO)
   settleDispute(
     @UserActive('userId') userId: number,
-    @UserActive('roleName') roleName: string,
     @Param('disputeId', ParseIntPipe) disputeId: number,
     @Body() body: DisputeSettlementBodyDTO,
   ) {
-    return this.paymentService.settleDispute(
-      userId,
-      roleName,
-      disputeId,
-      body as DisputeSettlementBodyType,
-    );
+    return this.paymentService.settleDispute(userId, disputeId, body);
   }
-
   // =========================================================================
   // 5. LỊCH SỬ GIAO DỊCH, ĐỒNG BỘ TRẠNG THÁI & STRIPE WEBHOOK
   // =========================================================================

@@ -5,7 +5,7 @@ export const notificationKeys = {
   all: ["notifications"] as const,
 };
 
-export function useNotifications() {
+export function useNotifications(enabled = true) {
   return useQuery({
     queryKey: notificationKeys.all,
     queryFn: () =>
@@ -13,6 +13,7 @@ export function useNotifications() {
         .getAll()
         .then((response) => (response.success ? response.data : [])),
     staleTime: 30_000,
+    enabled,
   });
 }
 

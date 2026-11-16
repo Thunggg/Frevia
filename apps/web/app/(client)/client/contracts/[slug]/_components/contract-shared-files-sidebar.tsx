@@ -16,6 +16,7 @@ import {
 import { Button } from "@repo/ui/components/shadcn/button";
 import { toastError, toastSuccess } from "@repo/ui/components/shadcn/toast";
 import { contractApiRequest } from "@/apiRequests/contract";
+import { useActionPermission } from "@/hooks/use-action-permission";
 import type { SharedFileType } from "@shared/types";
 
 interface ContractSharedFilesSidebarProps {
@@ -32,6 +33,10 @@ export function ContractSharedFilesSidebar({
   const queryClient = useQueryClient();
   const format = useFormatter();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const { can } = useActionPermission();
+  const canViewSharedFiles = can("GET", "/api/contracts/:contractId/files");
+  const canUploadSharedFile = can("POST", "/api/contracts/:contractId/files");
+  const canDeleteSharedFile = can("DELETE", "/api/contracts/:contractId/files/:fileId");
 
   const [isUploading, setIsUploading] = useState(false);
   const [deletingId, setDeletingId] = useState<number | null>(null);
@@ -60,7 +65,7 @@ export function ContractSharedFilesSidebar({
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (!file) return;
+    if (!file || !canUploadSharedFile) return;
 
     if (file.size > 25 * 1024 * 1024) {
       toastError({ message: "File size exceeds the 25MB limit." });
@@ -85,6 +90,7 @@ export function ContractSharedFilesSidebar({
   };
 
   const handleDeleteFile = async (fileId: number, fileName: string) => {
+    if (!canDeleteSharedFile) return;
     setDeletingId(fileId);
     try {
       await contractApiRequest.deleteSharedFile(contractId, fileId);
@@ -98,6 +104,10 @@ export function ContractSharedFilesSidebar({
       setDeletingId(null);
     }
   };
+
+  if (!canViewSharedFiles) {
+    return null;
+  }
 
   return (
     <div className="border border-border bg-card p-5 shadow-xs space-y-4 font-sans">
@@ -113,28 +123,30 @@ export function ContractSharedFilesSidebar({
           </span>
         </div>
 
-        <div>
-          <input
-            ref={fileInputRef}
-            type="file"
-            className="hidden"
-            onChange={handleFileChange}
-          />
-          <Button
-            size="sm"
-            variant="ghost"
-            disabled={isUploading}
-            onClick={() => fileInputRef.current?.click()}
-            className="h-7 px-2.5 rounded-lg text-xs font-medium text-[#0069D3] hover:bg-[#0069D3]/10 cursor-pointer"
-          >
-            {isUploading ? (
-              <Loader2 className="mr-1.5 size-3 animate-spin" />
-            ) : (
-              <UploadCloud className="mr-1.5 size-3.5" />
-            )}
-            Upload
-          </Button>
-        </div>
+        {canUploadSharedFile && (
+          <div>
+            <input
+              ref={fileInputRef}
+              type="file"
+              className="hidden"
+              onChange={handleFileChange}
+            />
+            <Button
+              size="sm"
+              variant="ghost"
+              disabled={isUploading}
+              onClick={() => fileInputRef.current?.click()}
+              className="h-7 px-2.5 rounded-lg text-xs font-medium text-[#0069D3] hover:bg-[#0069D3]/10 cursor-pointer"
+            >
+              {isUploading ? (
+                <Loader2 className="mr-1.5 size-3 animate-spin" />
+              ) : (
+                <UploadCloud className="mr-1.5 size-3.5" />
+              )}
+              Upload
+            </Button>
+          </div>
+        )}
       </div>
 
       {/* ── Files List ── */}
@@ -180,7 +192,7 @@ export function ContractSharedFilesSidebar({
                   </a>
 
                   {/* Delete button (client or uploader) */}
-                  {!isFreelancer && (
+                  {!isFreelancer && canDeleteSharedFile && (
                     <button
                       onClick={() => handleDeleteFile(file.id, fileName)}
                       disabled={deletingId === file.id}

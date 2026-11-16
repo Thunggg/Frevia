@@ -91,7 +91,7 @@ describe('User Management (UF-59 to UF-67)', () => {
     email: 'new@frevia.com',
     isBanned: false,
     profile: { displayName: 'New User' },
-    userRoles: [{ isPrimary: true, role: { id: roleId, name: roleName } }],
+    role: { id: roleId, name: roleName },
   });
 
   const freelancerContext = {
@@ -377,7 +377,7 @@ describe('User Management (UF-59 to UF-67)', () => {
       email: 'updated@frevia.com',
       isBanned: false,
       profile: { displayName: 'Updated Name' },
-      userRoles: [{ isPrimary: true, role: { id: 2, name: 'Client' } }],
+      role: { id: 2, name: 'Client' },
     };
 
     // UF-62: Admin cập nhật email và họ tên của người dùng.
@@ -917,7 +917,7 @@ describe('User Management (UF-59 to UF-67)', () => {
     const expertUser = {
       id: 30,
       profile: { id: 4 },
-      userRoles: [{ role: { name: RoleName.EXPERT } }],
+      role: { name: RoleName.EXPERT },
     };
 
     const expertBody = {
@@ -989,7 +989,7 @@ describe('User Management (UF-59 to UF-67)', () => {
     it('throws ForbiddenException when the user does not have the Expert role', async () => {
       expertRepository.findByUserId.mockResolvedValue({
         ...expertUser,
-        userRoles: [{ role: { name: RoleName.CLIENT } }],
+        role: { name: RoleName.CLIENT },
       });
 
       await expect(

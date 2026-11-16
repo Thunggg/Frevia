@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useFormatter, useTranslations } from "next-intl";
 import { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
+import { useActionPermission } from "@/hooks/use-action-permission";
 import {
   AlertTriangle,
   Bell,
@@ -89,7 +90,14 @@ export function NotificationsClient({
   const tCommon = useTranslations("common");
   const format = useFormatter();
   const notificationText = useNotificationText();
-  const { data: notifications = [], isLoading, isError } = useNotifications();
+  const { can } = useActionPermission();
+  const canViewNotifications = can("GET", "/api/notifications");
+  const canMarkAllRead = can("PATCH", "/api/notifications/read-all");
+  const canMarkRead = can("PATCH", "/api/notifications/:id/read");
+  const canDeleteNotification = can("DELETE", "/api/notifications/:id");
+
+  const { data: notifications = [], isLoading, isError } =
+    useNotifications(canViewNotifications);
 
   const formatRelativeTime = (dateString: string): string => {
     try {
@@ -128,6 +136,46 @@ export function NotificationsClient({
     return true;
   });
 
+  if (!canViewNotifications) {
+    const deniedContent = (
+      <div
+        className={`w-full ${
+          embedded
+            ? "px-6 pt-8 pb-10 lg:px-8 max-w-5xl"
+            : "mx-auto max-w-5xl flex-1 px-4 py-8 sm:px-6 lg:px-8 lg:py-10"
+        }`}
+      >
+        <div className="rounded-[24px] border border-border bg-card p-8 sm:p-12 text-center text-muted-foreground shadow-xs">
+          <div className="mx-auto flex size-12 items-center justify-center rounded-full bg-muted text-foreground mb-3">
+            <Bell className="size-6 text-muted-foreground" />
+          </div>
+          <h2 className="text-base font-semibold text-foreground">
+            Không có quyền truy cập
+          </h2>
+          <p className="mt-1 text-xs text-muted-foreground max-w-md mx-auto">
+            Bạn không có quyền xem thông báo hệ thống.
+          </p>
+        </div>
+      </div>
+    );
+
+    if (embedded) {
+      return (
+        <div className="min-h-full bg-background font-sans">
+          {deniedContent}
+        </div>
+      );
+    }
+
+    return (
+      <div className="flex min-h-dvh flex-col bg-background font-sans">
+        <Header role={headerRole} />
+        <main className="flex-1 flex flex-col">{deniedContent}</main>
+        <Footer />
+      </div>
+    );
+  }
+
   const content = (
     <div className={`w-full ${embedded ? "px-6 pt-8 pb-10 lg:px-8 max-w-5xl" : "mx-auto max-w-5xl flex-1 px-4 py-8 sm:px-6 lg:px-8 lg:py-10"}`}>
       {/* ── Page Header ── */}
@@ -149,7 +197,7 @@ export function NotificationsClient({
           </p>
         </div>
 
-        {unreadCount > 0 && (
+        {unreadCount > 0 && canMarkAllRead && (
           <Button
             variant="outline"
             disabled={markAllRead.isPending}
@@ -330,7 +378,7 @@ export function NotificationsClient({
                         <Link
                           href={href}
                           onClick={() => {
-                            if (isUnread) {
+                            if (isUnread && canMarkRead) {
                               markRead.mutate(notification.id);
                             }
                           }}
@@ -345,7 +393,7 @@ export function NotificationsClient({
 
                   {/* Actions */}
                   <div className="flex shrink-0 items-center gap-1">
-                    {isUnread && (
+                    {isUnread && canMarkRead && (
                       <Button
                         variant="ghost"
                         size="icon"
@@ -353,31 +401,33 @@ export function NotificationsClient({
                         aria-label={t("markReadAria")}
                         disabled={markRead.isPending}
                         onClick={() => markRead.mutate(notification.id)}
-                        className="size-8 rounded-full text-muted-foreground hover:bg-black/5 hover:text-foreground dark:hover:bg-zinc-800"
+                        className="size-8 rounded-full text-muted-foreground hover:bg-black/5 hover:text-foreground dark:hover:bg-zinc-800 cursor-pointer"
                       >
                         <Check className="size-4" />
                       </Button>
                     )}
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      title={t("delete")}
-                      aria-label={t("deleteAria")}
-                      disabled={deleteNotification.isPending}
-                      onClick={() =>
-                        deleteNotification.mutate(notification.id, {
-                          onSuccess: () =>
-                            toastSuccess({ message: t("deleted") }),
-                          onError: () =>
-                            toastError({
-                              message: t("deleteFailed"),
-                            }),
-                        })
-                      }
-                      className="size-8 rounded-full text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
-                    >
-                      <Trash2 className="size-4" />
-                    </Button>
+                    {canDeleteNotification && (
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        title={t("delete")}
+                        aria-label={t("deleteAria")}
+                        disabled={deleteNotification.isPending}
+                        onClick={() =>
+                          deleteNotification.mutate(notification.id, {
+                            onSuccess: () =>
+                              toastSuccess({ message: t("deleted") }),
+                            onError: () =>
+                              toastError({
+                                message: t("deleteFailed"),
+                              }),
+                          })
+                        }
+                        className="size-8 rounded-full text-muted-foreground hover:bg-destructive/10 hover:text-destructive cursor-pointer"
+                      >
+                        <Trash2 className="size-4" />
+                      </Button>
+                    )}
                   </div>
                 </motion.div>
               );

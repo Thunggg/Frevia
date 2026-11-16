@@ -40,6 +40,8 @@ import {
   useUpdateComment,
 } from "@/hooks/use-forum";
 
+import { useMe } from "@/hooks/use-auth";
+import { useActionPermission } from "@/hooks/use-action-permission";
 import { ReportDialog } from "./report-dialog";
 
 type CommentSectionProps = {
@@ -49,7 +51,16 @@ type CommentSectionProps = {
 
 export function CommentSection({ postId, currentUserId }: CommentSectionProps) {
   const t = useTranslations("forum");
-  const { data: commentsData, isLoading } = useForumComments(postId, 1, 50);
+  const { data: me } = useMe();
+  const { can } = useActionPermission();
+  const canViewComments = can("GET", "/api/forums/posts/:postId/comments");
+  const canCreateComment = can("POST", "/api/forums/posts/:postId/comments");
+  const { data: commentsData, isLoading } = useForumComments(
+    postId,
+    1,
+    50,
+    canViewComments,
+  );
   const createComment = useCreateComment();
   const [newComment, setNewComment] = useState("");
   const isSubmitting = createComment.isPending;
@@ -101,69 +112,77 @@ export function CommentSection({ postId, currentUserId }: CommentSectionProps) {
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-2.5">
-        <MessageSquare className="size-4 text-[#4fae2e]/70" />
+        <MessageSquare className="size-4 text-[#0069D3]/70" />
         <h2 className="text-base font-semibold tracking-tight text-foreground/80">
           {t("commentsTitle")}
         </h2>
         {pagination ? (
-          <span className="rounded-full bg-[#4fae2e]/8 px-2 py-0.5 text-[11px] font-medium text-[#4fae2e]/70">
+          <span className="rounded-full bg-[#0069D3]/8 px-2 py-0.5 text-[11px] font-medium text-[#0069D3]/70">
             {pagination.total}
           </span>
         ) : null}
       </div>
 
       {currentUserId ? (
-        <div className="rounded-xl border border-border/40 bg-background p-4 sm:p-5">
-          <div className="flex gap-3">
-            <Avatar size="sm" className="mt-0.5">
-              <AvatarFallback className="text-[10px]">Y</AvatarFallback>
-            </Avatar>
-            <div className="flex-1 space-y-3">
-              <textarea
-                placeholder={t("commentPlaceholder")}
-                value={newComment}
-                onChange={(e) => setNewComment(e.target.value)}
-                rows={3}
-                className="w-full resize-none rounded-lg border border-border/60 bg-white/60 px-3 py-2.5 text-[13px] text-foreground placeholder:text-muted-foreground/50 focus:border-[#4fae2e]/50 focus:outline-none focus:ring-1 focus:ring-[#4fae2e]/20 disabled:opacity-50 dark:bg-white/[0.03]"
-                disabled={isSubmitting}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) {
-                    e.preventDefault();
-                    handleSubmitComment();
-                  }
-                }}
-              />
-              <div className="flex items-center justify-between gap-3">
-                <p className="text-[11px] text-muted-foreground/40">
-                  {t("pressToSubmit")}{" "}
-                  <kbd className="rounded border border-border/60 bg-muted/50 px-1 py-0.5 text-[10px] font-medium">
-                    Ctrl+Enter
-                  </kbd>{" "}
-                  {t("keyToSubmit")}
-                </p>
-                <Button
-                  size="sm"
-                  onClick={handleSubmitComment}
-                  disabled={!newComment.trim() || isSubmitting}
-                  className="h-8 gap-1.5 bg-[#4fae2e] text-[13px] text-white hover:bg-[#459928] dark:hover:bg-[#4fae2e]"
-                >
-                  {isSubmitting ? (
-                    <Loader2 className="size-3.5 animate-spin" />
-                  ) : (
-                    <Send className="size-3.5" />
-                  )}
-                  {t("commentAction")}
-                </Button>
+        canCreateComment ? (
+          <div className="rounded-xl border border-border/40 bg-background p-4 sm:p-5">
+            <div className="flex gap-3">
+              <Avatar size="sm" className="mt-0.5">
+                <AvatarImage
+                  src={me?.profile?.avatarUrl ?? undefined}
+                  alt={me?.profile?.displayName ?? t("member")}
+                />
+                <AvatarFallback className="text-[10px]">
+                  {me?.profile?.displayName?.charAt(0)?.toUpperCase() ?? "?"}
+                </AvatarFallback>
+              </Avatar>
+              <div className="flex-1 space-y-3">
+                <textarea
+                  placeholder={t("commentPlaceholder")}
+                  value={newComment}
+                  onChange={(e) => setNewComment(e.target.value)}
+                  rows={3}
+                  className="w-full resize-none rounded-lg border border-border/60 bg-white/60 px-3 py-2.5 text-[13px] text-foreground placeholder:text-muted-foreground/50 focus:border-[#0069D3]/50 focus:outline-none focus:ring-1 focus:ring-[#0069D3]/20 disabled:opacity-50 dark:bg-white/[0.03]"
+                  disabled={isSubmitting}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) {
+                      e.preventDefault();
+                      handleSubmitComment();
+                    }
+                  }}
+                />
+                <div className="flex items-center justify-between gap-3">
+                  <p className="text-[11px] text-muted-foreground/40">
+                    {t("pressToSubmit")}{" "}
+                    <kbd className="rounded border border-border/60 bg-[#0069D3]/5/50 px-1 py-0.5 text-[10px] font-medium">
+                      Ctrl+Enter
+                    </kbd>{" "}
+                    {t("keyToSubmit")}
+                  </p>
+                  <Button
+                    size="sm"
+                    onClick={handleSubmitComment}
+                    disabled={!newComment.trim() || isSubmitting}
+                    className="h-8 gap-1.5 bg-[#0069D3] text-[13px] text-white hover:bg-blue-600 dark:hover:bg-blue-500"
+                  >
+                    {isSubmitting ? (
+                      <Loader2 className="size-3.5 animate-spin" />
+                    ) : (
+                      <Send className="size-3.5" />
+                    )}
+                    {t("commentAction")}
+                  </Button>
+                </div>
               </div>
             </div>
           </div>
-        </div>
+        ) : null
       ) : (
         <div className="rounded-xl border border-dashed border-border/60 px-4 py-6 text-center sm:px-6">
           <p className="text-[13px] text-muted-foreground/60">
             <Link
               href="/login"
-              className="font-medium text-[#4fae2e] transition-colors hover:text-[#459928]"
+              className="font-medium text-[#0069D3] transition-colors hover:text-[#0069D3]/90"
             >
               {t("logIn")}
             </Link>{" "}
@@ -172,24 +191,24 @@ export function CommentSection({ postId, currentUserId }: CommentSectionProps) {
         </div>
       )}
 
-      {isLoading ? (
+      {canViewComments && isLoading ? (
         <div className="space-y-2">
           {Array.from({ length: 3 }).map((_, i) => (
             <div key={i} className="flex gap-3 rounded-xl border border-border/30 px-4 py-4">
-              <div className="size-8 shrink-0 animate-pulse rounded-full bg-muted" />
+              <div className="size-8 shrink-0 animate-pulse rounded-full bg-[#0069D3]/5" />
               <div className="flex-1 space-y-2">
-                <div className="h-3.5 w-1/4 animate-pulse rounded bg-muted" />
-                <div className="h-3 w-full animate-pulse rounded bg-muted" />
-                <div className="h-3 w-3/4 animate-pulse rounded bg-muted" />
+                <div className="h-3.5 w-1/4 animate-pulse rounded bg-[#0069D3]/5" />
+                <div className="h-3 w-full animate-pulse rounded bg-[#0069D3]/5" />
+                <div className="h-3 w-3/4 animate-pulse rounded bg-[#0069D3]/5" />
               </div>
             </div>
           ))}
         </div>
       ) : null}
 
-      {!isLoading && comments.length === 0 ? (
+      {canViewComments && !isLoading && comments.length === 0 ? (
         <div className="rounded-xl border border-dashed border-border/60 px-6 py-14 text-center">
-          <div className="mx-auto mb-4 flex size-12 items-center justify-center rounded-full bg-[#4fae2e]/8 text-[#4fae2e]">
+          <div className="mx-auto mb-4 flex size-12 items-center justify-center rounded-full bg-[#0069D3]/8 text-[#0069D3]">
             <MessageSquare className="size-6" strokeWidth={1.5} />
           </div>
           <p className="text-[15px] font-medium text-foreground/80">
@@ -201,7 +220,7 @@ export function CommentSection({ postId, currentUserId }: CommentSectionProps) {
         </div>
       ) : null}
 
-      {!isLoading && comments.length > 0 ? (
+      {canViewComments && !isLoading && comments.length > 0 ? (
         <div className="space-y-2">
           {comments.map((comment) => (
             <div key={comment.id} className="rounded-xl border border-border/30 bg-background">
@@ -229,6 +248,23 @@ function CommentItem({
 }) {
   const t = useTranslations("forum");
   const format = useFormatter();
+  const { can } = useActionPermission();
+  const canLikeComment = can(
+    "POST",
+    "/api/forums/posts/:postId/comments/:commentId/like",
+  );
+  const canEditComment = can(
+    "PATCH",
+    "/api/forums/posts/:postId/comments/:id",
+  );
+  const canDeleteComment = can(
+    "DELETE",
+    "/api/forums/posts/:postId/comments/:id",
+  );
+  const canReportComment = can(
+    "POST",
+    "/api/forums/posts/:postId/comments/:commentId/reports",
+  );
   const toggleLike = useToggleCommentLike(postId);
   const updateComment = useUpdateComment();
   const deleteComment = useDeleteComment();
@@ -339,7 +375,7 @@ function CommentItem({
                 value={editContent}
                 onChange={(e) => setEditContent(e.target.value)}
                 rows={3}
-                className="w-full resize-none rounded-lg border border-border/60 bg-white/60 px-3 py-2 text-[13px] text-foreground placeholder:text-muted-foreground/50 focus:border-[#4fae2e]/50 focus:outline-none focus:ring-1 focus:ring-[#4fae2e]/20 dark:bg-white/[0.03]"
+                className="w-full resize-none rounded-lg border border-border/60 bg-white/60 px-3 py-2 text-[13px] text-foreground placeholder:text-muted-foreground/50 focus:border-[#0069D3]/50 focus:outline-none focus:ring-1 focus:ring-[#0069D3]/20 dark:bg-white/[0.03]"
                 disabled={updateComment.isPending}
                 autoFocus
               />
@@ -348,7 +384,7 @@ function CommentItem({
                   size="xs"
                   onClick={handleSaveEdit}
                   disabled={!editContent.trim() || updateComment.isPending}
-                  className="gap-1.5 bg-[#4fae2e] text-white hover:bg-[#459928] dark:hover:bg-[#4fae2e]"
+                  className="gap-1.5 bg-[#0069D3] text-white hover:bg-blue-600 dark:hover:bg-blue-500"
                 >
                   {updateComment.isPending ? (
                     <Loader2 className="size-3 animate-spin" />
@@ -376,14 +412,14 @@ function CommentItem({
           )}
 
           <div className="mt-2.5 flex flex-wrap items-center gap-0.5">
-            {currentUserId ? (
+            {currentUserId && canLikeComment ? (
               <Button
                 variant="ghost"
                 size="xs"
                 className={
                   liked
                     ? "gap-1 text-red-500 hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-950/20"
-                    : "gap-1 text-muted-foreground/50 hover:bg-[#4fae2e]/5 hover:text-[#4fae2e] dark:hover:bg-[#4fae2e]/10"
+                    : "gap-1 text-muted-foreground/50 hover:bg-[#0069D3]/5 hover:text-[#0069D3] dark:hover:bg-blue-500/10"
                 }
                 onClick={handleToggleLike}
                 disabled={toggleLike.isPending}
@@ -402,50 +438,54 @@ function CommentItem({
 
             {isAuthor && !isEditing ? (
               <>
-                <Button
-                  variant="ghost"
-                  size="xs"
-                  className="gap-1 text-muted-foreground hover:text-foreground"
-                  onClick={() => setIsEditing(true)}
-                >
-                  <Pencil className="size-3.5" />
-                  {t("edit")}
-                </Button>
-                <AlertDialog>
-                  <AlertDialogTrigger asChild>
-                    <Button
-                      variant="ghost"
-                      size="xs"
-                      className="gap-1 text-muted-foreground hover:text-red-500"
-                    >
-                      <Trash2 className="size-3.5" />
-                      {t("delete")}
-                    </Button>
-                  </AlertDialogTrigger>
-                  <AlertDialogContent>
-                    <AlertDialogHeader>
-                      <AlertDialogTitle>
-                        {t("deleteCommentTitle")}
-                      </AlertDialogTitle>
-                      <AlertDialogDescription>
-                        {t("deleteCommentDescription")}
-                      </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                      <AlertDialogCancel>{t("cancel")}</AlertDialogCancel>
-                      <AlertDialogAction
-                        onClick={handleDelete}
-                        className="bg-destructive text-white hover:bg-destructive/90"
+                {canEditComment ? (
+                  <Button
+                    variant="ghost"
+                    size="xs"
+                    className="gap-1 text-muted-foreground hover:text-foreground"
+                    onClick={() => setIsEditing(true)}
+                  >
+                    <Pencil className="size-3.5" />
+                    {t("edit")}
+                  </Button>
+                ) : null}
+                {canDeleteComment ? (
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="xs"
+                        className="gap-1 text-muted-foreground hover:text-red-500"
                       >
+                        <Trash2 className="size-3.5" />
                         {t("delete")}
-                      </AlertDialogAction>
-                    </AlertDialogFooter>
-                  </AlertDialogContent>
-                </AlertDialog>
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>
+                          {t("deleteCommentTitle")}
+                        </AlertDialogTitle>
+                        <AlertDialogDescription>
+                          {t("deleteCommentDescription")}
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>{t("cancel")}</AlertDialogCancel>
+                        <AlertDialogAction
+                          onClick={handleDelete}
+                          className="bg-destructive text-white hover:bg-destructive/90"
+                        >
+                          {t("delete")}
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                ) : null}
               </>
             ) : null}
 
-            {!isAuthor && currentUserId && !isEditing ? (
+            {!isAuthor && currentUserId && !isEditing && canReportComment ? (
               <ReportDialog postId={postId} commentId={comment.id} />
             ) : null}
           </div>

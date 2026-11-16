@@ -4,13 +4,17 @@ import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { Button } from "@repo/ui/components/shadcn/button";
-import { LogOut, UserRound } from "lucide-react";
+import { useActionPermission } from "@/hooks/use-action-permission";
+import { LogOut, Scale, UserRound } from "lucide-react";
 
 export function ExpertShell({ children }: { children: React.ReactNode }) {
   const t = useTranslations("expertShell");
   const tRole = useTranslations("roleName");
   const pathname = usePathname();
   const router = useRouter();
+  const { can } = useActionPermission();
+  const canViewProfile = can("GET", "/api/expert-profile/me");
+
   const logout = async () => {
     await fetch("/api/auth/logout", { method: "POST" });
     router.push("/login");
@@ -28,16 +32,29 @@ export function ExpertShell({ children }: { children: React.ReactNode }) {
             >
               Frevia <span className="text-[#4fae2e]">{tRole("EXPERT")}</span>
             </Link>
+            {canViewProfile && (
+              <Link
+                href="/expert/profile"
+                className={`flex items-center gap-2 text-sm font-medium ${
+                  pathname.startsWith("/expert/profile")
+                    ? "text-[#4fae2e]"
+                    : "text-muted-foreground"
+                }`}
+              >
+                <UserRound className="size-4" />
+                {t("profile")}
+              </Link>
+            )}
             <Link
-              href="/expert/profile"
+              href="/admin/disputes"
               className={`flex items-center gap-2 text-sm font-medium ${
-                pathname.startsWith("/expert/profile")
+                pathname.startsWith("/admin/disputes")
                   ? "text-[#4fae2e]"
-                  : "text-muted-foreground"
+                  : "text-muted-foreground hover:text-foreground"
               }`}
             >
-              <UserRound className="size-4" />
-              {t("profile")}
+              <Scale className="size-4" />
+              {t("disputes")}
             </Link>
           </div>
           <Button variant="ghost" size="sm" onClick={() => void logout()}>

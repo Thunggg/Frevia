@@ -1,6 +1,7 @@
 import type {
   ApiResponse,
   ClientJobProposalsPageType,
+  ClientJobProposalsResponseType,
   ClientProposalDetailType,
   CreateProposalBodyType,
   MyProposalsQueryType,
@@ -31,6 +32,12 @@ export const proposalApiRequest = {
     const suffix = params.toString();
     return http.get<ClientJobProposalsPageType>(
       `/api/jobs/${jobId}/proposals${suffix ? `?${suffix}` : ""}`,
+    );
+  },
+
+  getSubmittedForJob(jobId: number) {
+    return http.get<ClientJobProposalsResponseType>(
+      `/api/proposals/jobs/${jobId}/submitted`,
     );
   },
 

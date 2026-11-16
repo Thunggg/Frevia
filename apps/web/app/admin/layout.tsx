@@ -1,5 +1,5 @@
 import authServerRequest from "@/apiRequests/auth.server";
-import { RoleName } from "@shared/types";
+import { canAccessAdminPortal } from "@/lib/admin-access";
 import { redirect } from "next/navigation";
 import { AdminShell } from "./components/admin-shell";
 
@@ -14,11 +14,9 @@ export default async function AdminLayout({
     redirect("/login?redirect=/admin");
   }
 
-  const hasAdminRole = user.roles.some((r) => r.name === RoleName.ADMIN);
-
-  if (!hasAdminRole) {
+  if (!canAccessAdminPortal(user)) {
     redirect("/access-denied?requiredRole=admin");
   }
 
-  return <AdminShell>{children}</AdminShell>;
+  return <AdminShell user={user}>{children}</AdminShell>;
 }

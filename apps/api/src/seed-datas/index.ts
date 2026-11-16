@@ -90,12 +90,7 @@ async function createAccountRole({
           DEFAULT_EMAIL_AND_PASSWORD[role].password,
         )) as string,
         isBanned: false,
-        userRoles: {
-          create: {
-            roleId: accountRole.id,
-            isPrimary: true,
-          },
-        },
+        roleId: accountRole.id,
         profile: {
           create: {
             displayName: email.split('@')[0],

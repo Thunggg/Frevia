@@ -4,6 +4,7 @@ import jobCategoryServerRequest from "@/apiRequests/job-category.server";
 import recommendationServerRequest from "@/apiRequests/recommendation.server";
 import savedSearchServerRequest from "@/apiRequests/saved-search.server";
 import jobAlertServerRequest from "@/apiRequests/job-alert.server";
+import { hasActionPermission } from "@/lib/admin-access";
 import type {
   JobAlertType,
   RecommendedJobType,
@@ -135,15 +136,27 @@ export async function renderFindWorkPage({
   let initialRecommendedJobs: RecommendedJobType[] = [];
   let initialJobAlerts: JobAlertType[] = [];
 
+  const shouldFetchRecommendations = !tab || tab === "best-matches";
+
+  const canViewBookmarks = hasActionPermission(
+    user,
+    "GET",
+    "/api/manage-jobs/bookmarks",
+  );
+
   const [
     bookmarkedJobsRes,
     savedSearchesRes,
     recommendationsRes,
     jobAlertsRes,
   ] = await Promise.allSettled([
-    jobServerRequest.getBookmarkedJobs({ limit: 20 }),
+    canViewBookmarks
+      ? jobServerRequest.getBookmarkedJobs({ limit: 20 })
+      : Promise.resolve(null),
     savedSearchServerRequest.getSavedSearches(),
-    recommendationServerRequest.getRecommendedJobs(15),
+    shouldFetchRecommendations
+      ? recommendationServerRequest.getRecommendedJobs(15)
+      : Promise.resolve(null),
     jobAlertServerRequest.getJobAlerts(),
   ]);
 

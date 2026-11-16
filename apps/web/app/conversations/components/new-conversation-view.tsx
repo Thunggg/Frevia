@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, Loader2, Send } from "@/components/icons";
 import Link from "next/link";
+import { useActionPermission } from "@/hooks/use-action-permission";
 import { useCreateConversation, useSendConversationMessage } from "@/hooks/use-conversation";
 import { accountProfileApi } from "@/apiRequests/account-profile";
 import {
@@ -41,6 +42,8 @@ export function NewConversationView({
   const [participantName, setParticipantName] = useState<string | null>(null);
   const [participantAvatar, setParticipantAvatar] = useState<string | null>(null);
   const [loadingParticipant, setLoadingParticipant] = useState(true);
+  const { can } = useActionPermission();
+  const canStartConversation = can("POST", "/api/conversations");
   const createConversation = useCreateConversation();
   const sendConversationMessage = useSendConversationMessage();
 
@@ -146,32 +149,38 @@ export function NewConversationView({
 
       {/* Modern Capsule Input */}
       <div className="border-t border-border bg-background/95 backdrop-blur p-3 sm:p-4">
-        <form
-          className="flex items-center gap-2 rounded-full border border-black/5 dark:border-white/10 bg-[#F3F3F7] dark:bg-zinc-800/80 px-3 py-1.5 focus-within:ring-2 focus-within:ring-[#0069D3]/30 transition-all"
-          onSubmit={(e) => {
-            e.preventDefault();
-            handleSend();
-          }}
-        >
-          <input
-            placeholder={t("typeFirstMessage")}
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            className="flex-1 bg-transparent border-0 outline-none text-xs sm:text-sm font-sans text-foreground placeholder:text-muted-foreground px-2 py-1"
-            autoFocus
-          />
-          <button
-            type="submit"
-            disabled={!input.trim() || createConversation.isPending}
-            className="flex size-8 shrink-0 items-center justify-center rounded-full bg-[#0069D3] text-white hover:bg-[#0058b3] disabled:opacity-30 disabled:hover:bg-[#0069D3] transition-all cursor-pointer shadow-xs outline-none"
+        {!canStartConversation ? (
+          <div className="flex items-center justify-center rounded-xl bg-muted/40 p-3 text-xs text-muted-foreground">
+            Bạn không có quyền bắt đầu cuộc trò chuyện mới.
+          </div>
+        ) : (
+          <form
+            className="flex items-center gap-2 rounded-full border border-black/5 dark:border-white/10 bg-[#F3F3F7] dark:bg-zinc-800/80 px-3 py-1.5 focus-within:ring-2 focus-within:ring-[#0069D3]/30 transition-all"
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleSend();
+            }}
           >
-            {createConversation.isPending ? (
-              <Loader2 className="size-3.5 animate-spin" />
-            ) : (
-              <Send className="size-3.5" />
-            )}
-          </button>
-        </form>
+            <input
+              placeholder={t("typeFirstMessage")}
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              className="flex-1 bg-transparent border-0 outline-none text-xs sm:text-sm font-sans text-foreground placeholder:text-muted-foreground px-2 py-1"
+              autoFocus
+            />
+            <button
+              type="submit"
+              disabled={!input.trim() || createConversation.isPending}
+              className="flex size-8 shrink-0 items-center justify-center rounded-full bg-[#0069D3] text-white hover:bg-[#0058b3] disabled:opacity-30 disabled:hover:bg-[#0069D3] transition-all cursor-pointer shadow-xs outline-none"
+            >
+              {createConversation.isPending ? (
+                <Loader2 className="size-3.5 animate-spin" />
+              ) : (
+                <Send className="size-3.5" />
+              )}
+            </button>
+          </form>
+        )}
       </div>
     </div>
   );

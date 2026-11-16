@@ -21,6 +21,7 @@ import {
 import { Button } from "@repo/ui/components/shadcn/button";
 import { toastError, toastSuccess } from "@repo/ui/components/shadcn/toast";
 import { paymentApiRequest } from "@/apiRequests/payment";
+import { useActionPermission } from "@/hooks/use-action-permission";
 import { ApiFail } from "@/lib/http";
 import type { MilestoneType } from "@shared/types";
 
@@ -40,8 +41,14 @@ export function FundMilestoneDialog({
   onSuccess,
 }: FundMilestoneDialogProps) {
   const queryClient = useQueryClient();
+  const { can } = useActionPermission();
   const [isProcessing, setIsProcessing] = useState(false);
   const [selectedPmId, setSelectedPmId] = useState<string>("");
+
+  const canFundSavedCard = can("POST", "/api/payments/contracts/:contractId/milestones/:milestoneId/fund/saved-card");
+  const canFundCheckout = can("POST", "/api/payments/contracts/:contractId/milestones/:milestoneId/fund/checkout-session");
+  const canFundIntent = can("POST", "/api/payments/contracts/:contractId/milestones/:milestoneId/fund/intent");
+  const hasAnyFundPermission = canFundSavedCard || canFundCheckout || canFundIntent;
 
   const { data: savedCardsData } = useQuery({
     queryKey: ["saved-payment-methods"],
@@ -176,8 +183,20 @@ export function FundMilestoneDialog({
               </div>
             </div>
 
+            {/* Permission Warning if not allowed to fund */}
+            {!hasAnyFundPermission && (
+              <div className="rounded-lg border border-amber-200 dark:border-amber-900/40 bg-amber-50/50 dark:bg-amber-950/20 p-4 text-center space-y-1 text-xs">
+                <span className="font-semibold text-amber-800 dark:text-amber-300 block">
+                  Không có quyền ký quỹ milestone
+                </span>
+                <span className="text-zinc-500 dark:text-zinc-400 block">
+                  Bạn không có quyền thực hiện giao dịch nạp tiền hoặc ký quỹ cho milestone này.
+                </span>
+              </div>
+            )}
+
             {/* 1-Click Saved Card Option if available */}
-            {savedCards.length > 0 && (
+            {savedCards.length > 0 && canFundSavedCard && (
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <span className="text-[11px] font-bold uppercase tracking-wider text-zinc-400">
@@ -248,24 +267,26 @@ export function FundMilestoneDialog({
             )}
 
             {/* Fallback Stripe Checkout */}
-            <div className="pt-1">
-              <Button
-                type="button"
-                variant="outline"
-                disabled={isProcessing}
-                onClick={() => void handleStripeCheckout()}
-                className="w-full h-9 rounded-lg border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 hover:bg-zinc-100 text-xs font-medium cursor-pointer"
-              >
-                {isProcessing && savedCards.length === 0 ? (
-                  <Loader2 className="mr-2 size-4 animate-spin" />
-                ) : (
-                  <Lock className="mr-2 size-3.5 text-zinc-400" />
-                )}
-                {savedCards.length > 0
-                  ? "Pay with Another Card (Stripe Checkout)"
-                  : `Deposit $${milestoneAmount.toLocaleString("en-US", { minimumFractionDigits: 2 })} via Stripe`}
-              </Button>
-            </div>
+            {canFundCheckout && (
+              <div className="pt-1">
+                <Button
+                  type="button"
+                  variant="outline"
+                  disabled={isProcessing}
+                  onClick={() => void handleStripeCheckout()}
+                  className="w-full h-9 rounded-lg border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 hover:bg-zinc-100 text-xs font-medium cursor-pointer"
+                >
+                  {isProcessing && savedCards.length === 0 ? (
+                    <Loader2 className="mr-2 size-4 animate-spin" />
+                  ) : (
+                    <Lock className="mr-2 size-3.5 text-zinc-400" />
+                  )}
+                  {savedCards.length > 0
+                    ? "Pay with Another Card (Stripe Checkout)"
+                    : `Deposit $${milestoneAmount.toLocaleString("en-US", { minimumFractionDigits: 2 })} via Stripe`}
+                </Button>
+              </div>
+            )}
           </div>
         </div>
 

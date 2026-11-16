@@ -5,6 +5,10 @@ import { NotificationsClient } from "./notifications-client";
 
 export default async function NotificationsPage() {
   const user = await authServerRequest.getMe();
+  if (!user || user.isBanned) {
+    redirect("/login?redirect=/notifications");
+  }
+
   const activeRole = user?.roles.find((role) => role.isPrimary)?.name;
 
   if (activeRole === RoleName.CLIENT) {

@@ -207,6 +207,7 @@
   "Error.JobStatusInvalid": "Job status is invalid",
   "Error.MessageAccessDenied": "You do not have access to this message",
   "Error.MessageNotFound": "Message not found",
+  "Error.MilestoneNotEligibleForRefund": "Refund can only be automatically processed when the milestone is Late or when the freelancer has not started working yet.",
   "Error.MissingRoleInToken": "Your session is missing a role. Please sign in again",
   "Error.NotAnExpertAccount": "This account is not an expert account",
   "Error.NothingToUpdate": "There is nothing to update",

@@ -5,29 +5,36 @@ import { usePermission } from "@/hooks/use-permission";
 import { Badge } from "@repo/ui/components/shadcn/badge";
 import { Button } from "@repo/ui/components/shadcn/button";
 import { Separator } from "@repo/ui/components/shadcn/separator";
-import { HttpMethod } from "@shared/types";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { useFormatter, useLocale, useTranslations } from "next-intl";
+import {
+  getPermissionFeatureGroup,
+  SCOPE_DEFINITIONS,
+} from "@/lib/permission-scopes";
 import { getPermissionDisplayName } from "@/lib/permission-utils";
-
-const METHOD_VARIANT: Record<
-  string,
-  "default" | "secondary" | "outline" | "destructive"
-> = {
-  [HttpMethod.GET]: "secondary",
-  [HttpMethod.POST]: "default",
-  [HttpMethod.PUT]: "outline",
-  [HttpMethod.PATCH]: "outline",
-  [HttpMethod.DELETE]: "destructive",
-};
+import { HttpMethodBadge } from "../../components/http-method-badge";
+import { useActionPermission } from "@/hooks/use-action-permission";
 
 export function PermissionDetail({ permissionId }: { permissionId: number }) {
   const t = useTranslations("adminPermissions");
   const tCommon = useTranslations("adminCommon");
   const format = useFormatter();
   const locale = useLocale();
+  const { can } = useActionPermission();
+  const canViewDetail = can("GET", "/api/permissions/:id");
   const { data: permission, isLoading, isError } = usePermission(permissionId);
+
+  if (!canViewDetail) {
+    return (
+      <div className="space-y-4">
+        <BackToPermissions />
+        <div className="rounded-lg border bg-card p-12 text-center text-muted-foreground">
+          {t("detailAccessDenied")}
+        </div>
+      </div>
+    );
+  }
 
   if (isLoading) {
     return <AdminDetailSkeleton />;
@@ -59,9 +66,7 @@ export function PermissionDetail({ permissionId }: { permissionId: number }) {
             {permission.method} {permission.path}
           </p>
         </div>
-        <Badge variant={METHOD_VARIANT[permission.method] ?? "outline"}>
-          {permission.method}
-        </Badge>
+        <HttpMethodBadge method={permission.method} />
       </div>
 
       <div className="rounded-lg border bg-card p-6 space-y-4">
@@ -94,9 +99,7 @@ export function PermissionDetail({ permissionId }: { permissionId: number }) {
         <div>
           <p className="text-xs text-muted-foreground">{tCommon("method")}</p>
           <div className="mt-1">
-            <Badge variant={METHOD_VARIANT[permission.method] ?? "outline"}>
-              {permission.method}
-            </Badge>
+            <HttpMethodBadge method={permission.method} />
           </div>
         </div>
 
@@ -107,12 +110,28 @@ export function PermissionDetail({ permissionId }: { permissionId: number }) {
 
         <div>
           <p className="text-xs text-muted-foreground">{tCommon("module")}</p>
-          <div className="mt-1">
-            {permission.module ? (
-              <Badge variant="outline">{permission.module}</Badge>
-            ) : (
-              <span className="text-sm text-muted-foreground">—</span>
-            )}
+          <div className="mt-1 flex items-center gap-2 flex-wrap">
+            {(() => {
+              const group = getPermissionFeatureGroup(permission);
+              const scopeDef = SCOPE_DEFINITIONS[group.scope];
+              return (
+                <>
+                  <Badge variant="secondary" className="font-mono text-xs font-semibold">
+                    {group.code}
+                  </Badge>
+                  <span className="text-sm font-medium text-foreground">
+                    {locale === "vi" ? group.titleVi : group.titleEn}
+                  </span>
+                  <Badge
+                    variant="outline"
+                    className={`text-[11px] px-2 py-0.5 border ${scopeDef.badgeClass}`}
+                  >
+                    <span className={`size-1.5 rounded-full mr-1.5 ${scopeDef.dotColor}`} />
+                    {locale === "vi" ? scopeDef.labelVi : scopeDef.labelEn}
+                  </Badge>
+                </>
+              );
+            })()}
           </div>
         </div>
       </div>

@@ -80,14 +80,14 @@ export function ForumCategorySearch({
           placeholder={t("searchCategoriesPlaceholder")}
           autoComplete="off"
           enterKeyHint="search"
-          className="h-11 rounded-lg border-border bg-transparent pl-9 pr-9 text-sm focus:border-[#4fae2e]/50 focus:ring-1 focus:ring-[#4fae2e]/20"
+          className="h-11 rounded-full border-border bg-background pl-10 pr-10 text-sm focus:border-[#0069D3] focus:ring-2 focus:ring-[#0069D3]/20"
         />
         {value ? (
           <button
             type="button"
             onClick={clearSearch}
             aria-label={t("clearSearch")}
-            className="absolute right-3 top-1/2 -translate-y-1/2 rounded-sm text-[#4fae2e] transition-colors hover:text-[#3f9225] dark:text-[#5bc03a] dark:hover:text-[#6ecf4c]"
+            className="absolute right-3 top-1/2 -translate-y-1/2 rounded-sm text-[#0069D3] transition-colors hover:text-[#0069D3]/80"
           >
             <X className="size-3.5" />
           </button>
@@ -95,7 +95,7 @@ export function ForumCategorySearch({
       </div>
       <Button
         type="submit"
-        className="h-11 gap-1.5 bg-[#4fae2e] text-white hover:bg-[#459928]"
+        className="h-11 gap-2 rounded-full bg-[#0069D3] px-5 text-white shadow-sm hover:bg-blue-600 dark:bg-[#0069D3] dark:hover:bg-blue-500"
       >
         <Search className="size-4" />
         {t("search")}

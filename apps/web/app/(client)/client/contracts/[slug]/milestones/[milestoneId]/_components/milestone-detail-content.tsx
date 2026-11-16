@@ -5,6 +5,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toastError, toastSuccess } from "@repo/ui/components/shadcn/toast";
 import { contractApiRequest, extractContractData } from "@/apiRequests/contract";
 import { paymentApiRequest } from "@/apiRequests/payment";
+import { useActionPermission } from "@/hooks/use-action-permission";
 import { ApiFail } from "@/lib/http";
 import type {
   ContractDetailType,
@@ -39,8 +40,13 @@ export function MilestoneDetailContent({
   basePath = "/client",
 }: MilestoneDetailContentProps) {
   const queryClient = useQueryClient();
+  const { can } = useActionPermission();
   const isFreelancer = basePath === "/freelancer";
   const isClient = !isFreelancer;
+
+  const canViewDetail = can("GET", "/api/contracts/:contractId/milestones/:id");
+  const canViewSubmissions = can("GET", "/api/contracts/:contractId/milestones/:milestoneId/submissions");
+  const canViewFiles = can("GET", "/api/contracts/:contractId/milestones/:milestoneId/files");
 
   const [activeTab, setActiveTab] = useState<MilestoneTabKey>("overview");
 
@@ -68,6 +74,7 @@ export function MilestoneDetailContent({
         .getMilestoneDetail(contract.id, initialMilestone.id)
         .then(extractContractData),
     initialData: initialMilestone,
+    enabled: canViewDetail,
   });
 
   const { data: submissions = [] } = useQuery<GetSubmissionResponseType[]>({
@@ -80,6 +87,7 @@ export function MilestoneDetailContent({
           return Array.isArray(data) ? data : [];
         }),
     initialData: initialSubmissions,
+    enabled: canViewSubmissions,
   });
 
   const { data: files = [] } = useQuery<MilestoneFileType[]>({
@@ -92,6 +100,7 @@ export function MilestoneDetailContent({
           return Array.isArray(data) ? data : [];
         }),
     initialData: initialFiles,
+    enabled: canViewFiles,
   });
 
   const latestSubmission = submissions.length > 0 ? submissions[0] : null;
@@ -155,6 +164,63 @@ export function MilestoneDetailContent({
     }
   };
 
+  const handleRefundMilestone = async () => {
+    if (
+      !window.confirm(
+        `Request automatic refund of $${Number(milestone.amount).toLocaleString("en-US", { minimumFractionDigits: 2 })} for "${milestone.title}" to your original payment card?`,
+      )
+    ) {
+      return;
+    }
+    try {
+      await paymentApiRequest.refundMilestone(contract.id, milestone.id);
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: ["milestone-detail", contract.id, milestone.id],
+        }),
+        queryClient.invalidateQueries({
+          queryKey: ["client-contract-detail", contract.id],
+        }),
+        queryClient.invalidateQueries({
+          queryKey: ["client-contract-milestones", contract.id],
+        }),
+        queryClient.invalidateQueries({
+          queryKey: ["client-transactions"],
+        }),
+      ]);
+      toastSuccess({
+        message: `Escrow funds refunded to your card for "${milestone.title}".`,
+      });
+    } catch (error) {
+      toastError({
+        message:
+          error instanceof ApiFail
+            ? error.response.error.message
+            : "Failed to refund milestone escrow.",
+      });
+    }
+  };
+
+  if (!canViewDetail) {
+    return (
+      <div className="space-y-6 max-w-7xl mx-auto font-sans">
+        <MilestoneDetailHeader
+          contract={contract}
+          milestone={milestone}
+          basePath={basePath}
+        />
+        <div className="rounded-xl border border-amber-200/80 dark:border-amber-900/40 bg-amber-50/40 dark:bg-amber-950/20 p-8 text-center space-y-2">
+          <h3 className="text-sm font-semibold text-zinc-950 dark:text-zinc-100">
+            Không có quyền xem chi tiết milestone
+          </h3>
+          <p className="text-xs text-zinc-500 dark:text-zinc-400 max-w-md mx-auto">
+            Tài khoản của bạn chưa được cấp quyền xem thông tin chi tiết milestone này.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6 max-w-7xl mx-auto font-sans">
       {/* ── 1. Top Milestone Breadcrumb Header ── */}
@@ -179,6 +245,8 @@ export function MilestoneDetailContent({
             onTabChange={setActiveTab}
             submissionCount={submissions.length}
             fileCount={files.length}
+            canViewSubmissions={canViewSubmissions}
+            canViewFiles={canViewFiles}
           />
 
           {activeTab === "overview" && (
@@ -190,7 +258,7 @@ export function MilestoneDetailContent({
             />
           )}
 
-          {activeTab === "submissions" && (
+          {activeTab === "submissions" && canViewSubmissions && (
             <MilestoneSubmissionsTab
               contractStatus={contract.status}
               milestone={milestone}
@@ -201,10 +269,11 @@ export function MilestoneDetailContent({
               onSubmitWork={() => setSubmitModalOpen(true)}
               onReviewSubmission={handleReview}
               onRelease={() => void handleReleaseMilestone()}
+              onRefund={() => void handleRefundMilestone()}
             />
           )}
 
-          {activeTab === "files" && (
+          {activeTab === "files" && canViewFiles && (
             <MilestoneFilesTab
               contractId={contract.id}
               milestoneId={milestone.id}
