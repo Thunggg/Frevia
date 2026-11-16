@@ -56,7 +56,6 @@ type NavRoleKey = "guest" | "client" | "freelancer";
 type NavLinkKey =
   | "findWork"
   | "hireTalent"
-  | "findExperts"
   | "forum"
   | "myJobs"
   | "contracts"
@@ -78,7 +77,7 @@ const roleConfig: Record<UserRole, { nameKey: NavRoleKey; links: NavLink[] }> = 
     nameKey: "guest",
     links: [
       { href: "/freelancer", labelKey: "findWork" },
-      { href: "/experts", labelKey: "hireTalent" },
+      { href: "/client/jobs/new", labelKey: "hireTalent" },
       { href: "/forum", labelKey: "forum" },
     ],
   },
@@ -92,7 +91,6 @@ const roleConfig: Record<UserRole, { nameKey: NavRoleKey; links: NavLink[] }> = 
       },
       { href: "/client/contracts", labelKey: "contracts" },
       { href: "/client/payments", labelKey: "payments" },
-      { href: "/experts", labelKey: "findExperts" },
       { href: "/forum", labelKey: "forum" },
     ],
   },
