@@ -20,17 +20,22 @@ import {
 } from "@repo/ui/components/shadcn/dropdown-menu";
 import { MessageSquare, Paperclip } from "@/components/icons";
 
+import { useActionPermission } from "@/hooks/use-action-permission";
 import { useMe } from "@/hooks/use-auth";
 import { RoleName } from "@shared/types";
 
 export function MessageBell() {
+  const { can } = useActionPermission();
+  const canViewConversations = can("GET", "/api/conversations");
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
   const t = useTranslations("notifications");
   const tCommon = useTranslations("common");
   const format = useFormatter();
   const { data: me } = useMe();
-  const { data: conversations } = useConversations();
+  const { data: conversations } = useConversations(canViewConversations);
+
+  if (!canViewConversations) return null;
 
   const formatTime = (createdAt?: string | Date | null): string => {
     if (!createdAt) return "";

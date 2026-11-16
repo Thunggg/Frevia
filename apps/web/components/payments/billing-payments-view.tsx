@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { Button } from "@repo/ui/components/shadcn/button";
 import { toastSuccess } from "@repo/ui/components/shadcn/toast";
+import { useActionPermission } from "@/hooks/use-action-permission";
 import { paymentApiRequest } from "@/apiRequests/payment";
 import type {
   GetTransactionListQueryType,
@@ -44,6 +45,9 @@ export function BillingPaymentsView({ mode }: BillingPaymentsViewProps) {
   const basePath = isClient ? "/client" : "/freelancer";
   const returnPath = `${basePath}/payments`;
 
+  const { can } = useActionPermission();
+  const canGetTransactions = can("GET", "/api/payments/transactions");
+
   const [page, setPage] = useState(1);
   const [selectedType, setSelectedType] = useState<string>("ALL");
   const [selectedStatus, setSelectedStatus] = useState<string>("ALL");
@@ -64,6 +68,7 @@ export function BillingPaymentsView({ mode }: BillingPaymentsViewProps) {
       });
       return res.data;
     },
+    enabled: canGetTransactions,
   });
 
   const {
@@ -97,6 +102,7 @@ export function BillingPaymentsView({ mode }: BillingPaymentsViewProps) {
       const res = await paymentApiRequest.getTransactions(query);
       return res.data;
     },
+    enabled: canGetTransactions,
   });
 
   const transactions = transactionsData?.data ?? [];
@@ -248,8 +254,9 @@ export function BillingPaymentsView({ mode }: BillingPaymentsViewProps) {
       </div>
 
       {/* ── Bottom Full-Width Section: Invoice & Payment History Table ── */}
-      <div>
-        <div className="rounded-sm border border-zinc-200/80 dark:border-zinc-800 bg-white dark:bg-zinc-950 p-5 sm:p-6 shadow-[0_1px_2px_rgba(0,0,0,0.03)] space-y-5">
+      {canGetTransactions && (
+        <div>
+          <div className="rounded-sm border border-zinc-200/80 dark:border-zinc-800 bg-white dark:bg-zinc-950 p-5 sm:p-6 shadow-[0_1px_2px_rgba(0,0,0,0.03)] space-y-5">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div className="flex flex-wrap items-center gap-2.5">
               <h2 className="text-[15px] font-semibold tracking-tight text-foreground">
@@ -489,6 +496,7 @@ export function BillingPaymentsView({ mode }: BillingPaymentsViewProps) {
           )}
         </div>
       </div>
+      )}
 
       {/* Right Slide-Over Payment Detail Popup */}
       <PaymentDetailSheet

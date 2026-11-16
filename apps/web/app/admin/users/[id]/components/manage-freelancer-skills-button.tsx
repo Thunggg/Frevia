@@ -4,6 +4,7 @@ import {
   useReplaceFreelancerSkills,
   useSkillCatalog,
 } from "@/hooks/use-admin-user";
+import { useActionPermission } from "@/hooks/use-action-permission";
 import { ApiFail } from "@/lib/http";
 import { Button } from "@repo/ui/components/shadcn/button";
 import {
@@ -49,6 +50,15 @@ interface ManageFreelancerSkillsButtonProps {
 export function ManageFreelancerSkillsButton({
   user,
 }: ManageFreelancerSkillsButtonProps) {
+  const { can } = useActionPermission();
+  const canReplaceSkills = can(
+    "PUT",
+    "/api/users/:id/freelancer-profile/skills",
+  );
+  const canViewCatalog = can(
+    "GET",
+    "/api/users/skills-catalog",
+  );
   const router = useRouter();
   const t = useTranslations("adminUserProfileEdit");
   const [open, setOpen] = useState(false);
@@ -56,7 +66,7 @@ export function ManageFreelancerSkillsButton({
   const [nextKey, setNextKey] = useState(0); // Dùng để tạo key riêng cho mỗi row mới.
   const replaceSkills = useReplaceFreelancerSkills(); // Hook gọi API để thay thế toàn bộ danh sách skills.
   const { data: catalog = [], isLoading: catalogLoading } =
-    useSkillCatalog(open); // Hook để lấy danh sách kỹ năng từ catalog.
+    useSkillCatalog(open && canViewCatalog); // Hook để lấy danh sách kỹ năng từ catalog.
 
   useEffect(() => {
     if (open) {
@@ -206,6 +216,10 @@ export function ManageFreelancerSkillsButton({
         },
       },
     );
+  }
+
+  if (!canReplaceSkills) {
+    return null;
   }
 
   return (

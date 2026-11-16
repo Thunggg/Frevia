@@ -11,7 +11,7 @@ import {
 } from "lucide-react";
 import adminServerRequest from "@/apiRequests/admin.server";
 import authServerRequest from "@/apiRequests/auth.server";
-import { hasMenuPermission } from "@/lib/admin-access";
+import { hasActionPermission, hasMenuPermission } from "@/lib/admin-access";
 import { Badge } from "@repo/ui/components/shadcn/badge";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -47,77 +47,60 @@ const statCards: {
 ];
 
 export default async function AdminDashboardPage() {
-  const stats = await adminServerRequest.getStats();
   const t = await getTranslations("adminDashboard");
   const format = await getFormatter();
+  const user = await authServerRequest.getMe();
+  const canViewStats = hasActionPermission(
+    user,
+    "GET",
+    "/api/forums/admin/stats",
+  );
+
+  const stats = canViewStats ? await adminServerRequest.getStats() : null;
 
   if (!stats) {
-    const user = await authServerRequest.getMe();
     const userPerms = user?.permissions ?? [];
     const userMods = user?.permissionModules ?? [];
 
     if (
-      hasMenuPermission(userPerms, userMods, [
-        "/api/admin/disputes",
-        "/api/disputes",
-        "DISPUTES",
-      ])
+      hasMenuPermission(userPerms, userMods, ["/api/admin/disputes"])
     ) {
       redirect("/admin/disputes");
     }
     if (
       hasMenuPermission(userPerms, userMods, [
         "/api/admin/identity-verifications",
-        "IDENTITY-VERIFICATIONS",
       ])
     ) {
       redirect("/admin/identity-verifications");
     }
     if (
-      hasMenuPermission(userPerms, userMods, [
-        "/api/admin/profile-revisions",
-        "PROFILE-REVISIONS",
-      ])
+      hasMenuPermission(userPerms, userMods, ["/api/admin/profile-revisions"])
     ) {
       redirect("/admin/profile-revisions");
     }
     if (
-      hasMenuPermission(userPerms, userMods, [
-        "/api/admin/skills",
-        "SKILLS",
-      ])
+      hasMenuPermission(userPerms, userMods, ["/api/admin/skills"])
     ) {
       redirect("/admin/skills");
     }
     if (
-      hasMenuPermission(userPerms, userMods, [
-        "/api/admin/job-categories",
-        "JOB-CATEGORIES",
-      ])
+      hasMenuPermission(userPerms, userMods, ["/api/admin/job-categories"])
     ) {
       redirect("/admin/job-categories");
     }
     if (
-      hasMenuPermission(userPerms, userMods, [
-        "/api/admin/banners",
-        "BANNERS",
-      ])
+      hasMenuPermission(userPerms, userMods, ["/api/admin/banners"])
     ) {
       redirect("/admin/banners");
     }
     if (
-      hasMenuPermission(userPerms, userMods, [
-        "/api/users",
-        "USERS",
-      ])
+      hasMenuPermission(userPerms, userMods, ["/api/users", "USERS"])
     ) {
       redirect("/admin/users");
     }
     if (
-      hasMenuPermission(userPerms, userMods, [
-        "/api/roles",
-        "ROLES",
-      ])
+      hasMenuPermission(userPerms, userMods, ["/api/roles", "ROLES"])
     ) {
       redirect("/admin/roles");
     }

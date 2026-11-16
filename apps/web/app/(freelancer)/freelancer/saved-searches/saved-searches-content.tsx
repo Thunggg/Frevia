@@ -16,6 +16,7 @@ import {
 } from "@/components/icons";
 
 import savedSearchApiRequest from "@/apiRequests/saved-search";
+import { useActionPermission } from "@/hooks/use-action-permission";
 import { Footer } from "@/components/footer";
 import { Header } from "@/components/header";
 import {
@@ -75,6 +76,12 @@ export function SavedSearchesContent({
   const tFindWork = useTranslations("findWork");
   const tCommon = useTranslations("common");
   const format = useFormatter();
+
+  const { can } = useActionPermission();
+  const canViewSavedSearches = can("GET", "/api/saved-searches");
+  const canViewSavedSearchDetail = can("GET", "/api/saved-searches/:id");
+  const canUpdateSavedSearch = can("PATCH", "/api/saved-searches/:id");
+  const canDeleteSavedSearch = can("DELETE", "/api/saved-searches/:id");
 
   const [items, setItems] = useState<SavedSearchType[]>(initialSavedSearches);
   const [searchQuery, setSearchQuery] = useState("");
@@ -143,13 +150,14 @@ export function SavedSearchesContent({
 
   // Rename Handler
   const handleStartRename = (item: SavedSearchType) => {
+    if (!canUpdateSavedSearch) return;
     setEditingItem(item);
     setEditName(item.name);
   };
 
   const handleSaveRename = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!editingItem || !editName.trim()) return;
+    if (!editingItem || !editName.trim() || !canUpdateSavedSearch) return;
 
     const trimmed = editName.trim();
     setIsSubmitting(true);
@@ -170,7 +178,7 @@ export function SavedSearchesContent({
 
   // Delete Handler
   const handleDeleteConfirm = async () => {
-    if (!deletingItem) return;
+    if (!deletingItem || !canDeleteSavedSearch) return;
     const targetId = deletingItem.id;
     const previousItems = [...items];
 
@@ -237,14 +245,16 @@ export function SavedSearchesContent({
                   {t("subtitle")}
                 </p>
               </div>
-              <div className="flex items-center gap-2">
-                <span className="rounded-full bg-black/5 dark:bg-white/10 px-2.5 py-1 text-xs font-semibold text-foreground">
-                  {items.length}/30
-                </span>
-                <p className="text-xs text-muted-foreground">
-                  {t("count", { count: items.length })}
-                </p>
-              </div>
+              {canViewSavedSearches && (
+                <div className="flex items-center gap-2">
+                  <span className="rounded-full bg-black/5 dark:bg-white/10 px-2.5 py-1 text-xs font-semibold text-foreground">
+                    {items.length}/30
+                  </span>
+                  <p className="text-xs text-muted-foreground">
+                    {t("count", { count: items.length })}
+                  </p>
+                </div>
+              )}
             </div>
           </div>
         </section>
@@ -321,7 +331,19 @@ export function SavedSearchesContent({
             </div>
           )}
 
-          {items.length === 0 ? (
+          {!canViewSavedSearches ? (
+            <div className="rounded-xl border border-dashed border-border px-6 py-16 text-center">
+              <div className="mx-auto mb-4 flex size-14 items-center justify-center rounded-full bg-muted text-muted-foreground">
+                <BookmarkCheck className="size-7" />
+              </div>
+              <h2 className="text-lg font-medium text-foreground">
+                {t("emptyTitle")}
+              </h2>
+              <p className="mx-auto mt-2 max-w-sm text-sm text-muted-foreground">
+                {t("emptyHint")}
+              </p>
+            </div>
+          ) : items.length === 0 ? (
             /* Empty State: No saved searches */
             <div className="rounded-xl border border-dashed border-border px-6 py-16 text-center">
               <div className="mx-auto mb-4 flex size-14 items-center justify-center rounded-full bg-[#eaf8df] text-[#4fae2e] dark:bg-[#4fae2e]/15">
@@ -384,26 +406,30 @@ export function SavedSearchesContent({
                               date: formatDate(savedSearch.createdAt),
                             })}
                           </span>
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            size="icon"
-                            className="size-8 text-muted-foreground hover:text-foreground"
-                            aria-label={t("renameAria", { name: savedSearch.name })}
-                            onClick={() => handleStartRename(savedSearch)}
-                          >
-                            <Pencil className="size-3.5" />
-                          </Button>
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            size="icon"
-                            className="size-8 text-destructive/70 hover:bg-destructive/10 hover:text-destructive"
-                            aria-label={t("deleteAria", { name: savedSearch.name })}
-                            onClick={() => setDeletingItem(savedSearch)}
-                          >
-                            <Trash2 className="size-3.5" />
-                          </Button>
+                          {canUpdateSavedSearch && (
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="icon"
+                              className="size-8 text-muted-foreground hover:text-foreground"
+                              aria-label={t("renameAria", { name: savedSearch.name })}
+                              onClick={() => handleStartRename(savedSearch)}
+                            >
+                              <Pencil className="size-3.5" />
+                            </Button>
+                          )}
+                          {canDeleteSavedSearch && (
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="icon"
+                              className="size-8 text-destructive/70 hover:bg-destructive/10 hover:text-destructive"
+                              aria-label={t("deleteAria", { name: savedSearch.name })}
+                              onClick={() => setDeletingItem(savedSearch)}
+                            >
+                              <Trash2 className="size-3.5" />
+                            </Button>
+                          )}
                         </div>
                       </div>
 
@@ -438,15 +464,17 @@ export function SavedSearchesContent({
                             {t("viewMatchingJobs")}
                           </Link>
                         </Button>
-                        <Button
-                          asChild
-                          variant="ghost"
-                          className="w-full rounded-lg text-foreground/70 hover:text-foreground text-xs h-8"
-                        >
-                          <Link href={`${effectiveBasePath}/${savedSearch.id}`}>
-                            {t("viewDetails")}
-                          </Link>
-                        </Button>
+                        {canViewSavedSearchDetail && (
+                          <Button
+                            asChild
+                            variant="ghost"
+                            className="w-full rounded-lg text-foreground/70 hover:text-foreground text-xs h-8"
+                          >
+                            <Link href={`${effectiveBasePath}/${savedSearch.id}`}>
+                              {t("viewDetails")}
+                            </Link>
+                          </Button>
+                        )}
                       </div>
                     </article>
                   );

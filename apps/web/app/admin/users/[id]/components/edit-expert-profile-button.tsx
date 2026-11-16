@@ -1,5 +1,6 @@
 "use client";
 
+import { useActionPermission } from "@/hooks/use-action-permission";
 import { useUpdateExpertProfile } from "@/hooks/use-admin-user";
 import { ApiFail } from "@/lib/http";
 import { handleErrorApi } from "@/lib/utils";
@@ -153,6 +154,11 @@ function toNullableText(value: string): string | null {
 export function EditExpertProfileButton({
   user,
 }: EditExpertProfileButtonProps) {
+  const { can } = useActionPermission();
+  const canUpdateExpertProfile = can(
+    "PATCH",
+    "/api/users/:id/expert-profile",
+  );
   const router = useRouter();
   const t = useTranslations("adminUserProfileEdit");
   const [open, setOpen] = useState(false);
@@ -270,6 +276,10 @@ export function EditExpertProfileButton({
         },
       },
     );
+  }
+
+  if (!canUpdateExpertProfile) {
+    return null;
   }
 
   return (

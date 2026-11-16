@@ -1,6 +1,8 @@
 import { Suspense } from "react";
 import { getTranslations } from "next-intl/server";
 import adminServerRequest from "@/apiRequests/admin.server";
+import authServerRequest from "@/apiRequests/auth.server";
+import { hasActionPermission } from "@/lib/admin-access";
 import { Skeleton } from "@repo/ui/components/shadcn/skeleton";
 import { Tags } from "lucide-react";
 import { CreateSkillDialog } from "./components/create-skill-dialog";
@@ -43,6 +45,30 @@ export default async function AdminSkillsPage({
       ? params.sortOrder
       : undefined;
 
+  const t = await getTranslations("adminSkills");
+  const currentUser = await authServerRequest.getMe();
+  const canViewList = hasActionPermission(
+    currentUser,
+    "GET",
+    "/api/admin/skills",
+  );
+
+  if (!canViewList) {
+    return (
+      <div className="space-y-6">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight flex items-center gap-2">
+            <Tags className="h-8 w-8 text-[#4fae2e]" />
+            {t("pageTitle")}
+          </h1>
+        </div>
+        <div className="rounded-lg border bg-card p-12 text-center text-muted-foreground">
+          {t("accessDenied")}
+        </div>
+      </div>
+    );
+  }
+
   const data = await adminServerRequest.getSkills({
     page,
     limit,
@@ -52,6 +78,12 @@ export default async function AdminSkillsPage({
     sortOrder,
   });
 
+  const canCreate = hasActionPermission(
+    currentUser,
+    "POST",
+    "/api/admin/skills",
+  );
+
   const skills = data?.skills ?? [];
   const pagination = data?.pagination ?? {
     page: 1,
@@ -59,8 +91,6 @@ export default async function AdminSkillsPage({
     total: 0,
     totalPages: 0,
   };
-
-  const t = await getTranslations("adminSkills");
 
   return (
     <div className="space-y-6">
@@ -74,7 +104,7 @@ export default async function AdminSkillsPage({
             {t("pageSubtitle", { total: pagination.total })}
           </p>
         </div>
-        <CreateSkillDialog />
+        {canCreate && <CreateSkillDialog />}
       </div>
 
       <Suspense fallback={<Skeleton className="h-10 w-full" />}>

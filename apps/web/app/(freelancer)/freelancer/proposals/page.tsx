@@ -1,5 +1,7 @@
 import { getTranslations } from "next-intl/server";
+import authServerRequest from "@/apiRequests/auth.server";
 import proposalServerRequest from "@/apiRequests/proposal.server";
+import { hasActionPermission } from "@/lib/admin-access";
 import type { ProposalStatusType } from "@shared/types";
 import { MyProposalsContent } from "./proposals-content";
 
@@ -19,16 +21,25 @@ export async function generateMetadata() {
 export default async function FreelancerProposalsPage({
   searchParams,
 }: ProposalsPageProps) {
+  const user = await authServerRequest.getMe();
+  const canViewMyProposals = hasActionPermission(
+    user,
+    "GET",
+    "/api/proposals/my",
+  );
+
   const params = await searchParams;
   const candidatePage = Number(params.page);
   const page =
     Number.isInteger(candidatePage) && candidatePage > 0 ? candidatePage : 1;
   const status = params.status as ProposalStatusType | undefined;
-  const proposals = await proposalServerRequest.getMyProposals({
-    page,
-    limit: 10,
-    status,
-  });
+  const proposals = canViewMyProposals
+    ? await proposalServerRequest.getMyProposals({
+        page,
+        limit: 10,
+        status,
+      })
+    : null;
 
   return (
     <MyProposalsContent

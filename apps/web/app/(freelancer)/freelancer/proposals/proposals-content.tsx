@@ -25,6 +25,7 @@ import type {
   MyProposalsResponseType,
   ProposalStatusType,
 } from "@shared/types";
+import { useActionPermission } from "@/hooks/use-action-permission";
 
 const PROPOSAL_STATUSES = [
   "DRAFT",
@@ -69,8 +70,14 @@ export function MyProposalsContent({
     "status",
   ) as ProposalStatusType | null;
   const selectedPage = Number(searchParams.get("page")) || 1;
+
+  const { can } = useActionPermission();
+  const canViewMyProposals = can("GET", "/api/proposals/my");
+  const canViewDetail = can("GET", "/api/proposals/:id");
+
   const proposalsQuery = useQuery({
     queryKey: ["proposals", "my", selectedPage, selectedStatus],
+    enabled: canViewMyProposals,
     queryFn: () =>
       proposalApiRequest
         .getMyProposals({
@@ -143,7 +150,14 @@ export function MyProposalsContent({
               </SelectContent>
             </Select>
           </div>
-          {proposalsQuery.isError ? (
+          {!canViewMyProposals ? (
+            <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-border bg-card/40 px-6 py-14 text-center font-sans">
+              <FileText className="size-10 text-muted-foreground mb-3" />
+              <p className="text-base font-semibold text-foreground">
+                {t("accessDenied")}
+              </p>
+            </div>
+          ) : proposalsQuery.isError ? (
             <div className="rounded-xl border border-destructive/30 bg-destructive/5 px-5 py-4 text-sm text-destructive">
               {t("loadFailed")}
             </div>
@@ -172,12 +186,18 @@ export function MyProposalsContent({
                           {date(proposal.submittedAt)}
                         </span>
                       </div>
-                      <Link
-                        href={`${effectiveBasePath}/${proposal.id}`}
-                        className="mt-2 block text-lg font-semibold tracking-tight hover:text-[#4fae2e]"
-                      >
-                        {proposal.job.title}
-                      </Link>
+                      {canViewDetail ? (
+                        <Link
+                          href={`${effectiveBasePath}/${proposal.id}`}
+                          className="mt-2 block text-lg font-semibold tracking-tight hover:text-[#4fae2e]"
+                        >
+                          {proposal.job.title}
+                        </Link>
+                      ) : (
+                        <span className="mt-2 block text-lg font-semibold tracking-tight text-foreground">
+                          {proposal.job.title}
+                        </span>
+                      )}
                       <p className="mt-1 text-sm text-muted-foreground">
                         {proposal.client.profile?.displayName ??
                           proposal.client.email}
@@ -203,12 +223,14 @@ export function MyProposalsContent({
                         </span>
                       </div>
                     </div>
-                    <Button asChild variant="outline" className="shrink-0">
-                      <Link href={`${effectiveBasePath}/${proposal.id}`}>
-                        {tCommon("view")}{" "}
-                        <ArrowRight className="size-4" />
-                      </Link>
-                    </Button>
+                    {canViewDetail ? (
+                      <Button asChild variant="outline" className="shrink-0">
+                        <Link href={`${effectiveBasePath}/${proposal.id}`}>
+                          {tCommon("view")}{" "}
+                          <ArrowRight className="size-4" />
+                        </Link>
+                      </Button>
+                    ) : null}
                   </div>
                 </article>
               ))}

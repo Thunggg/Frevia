@@ -45,6 +45,7 @@ import {
   User,
 } from "lucide-react";
 import { adminApiRequest } from "@/apiRequests/admin";
+import { useActionPermission } from "@/hooks/use-action-permission";
 import { NumberedPagination } from "../../components/numbered-pagination";
 import type { PendingForumPostType } from "@shared/types";
 
@@ -64,6 +65,7 @@ export function ModerationTable({ posts, pagination }: ModerationTableProps) {
   const tCommon = useTranslations("adminCommon");
   const tGlobal = useTranslations("common");
   const router = useRouter();
+  const { can } = useActionPermission();
   const [pendingId, setPendingId] = useState<number | null>(null);
   const [viewingPost, setViewingPost] = useState<PendingForumPostType | null>(
     null,
@@ -136,94 +138,107 @@ export function ModerationTable({ posts, pagination }: ModerationTableProps) {
                 </TableCell>
               </TableRow>
             ) : (
-              posts.map((post) => (
-                <TableRow key={post.id} className="group">
-                  <TableCell>
-                    <Badge variant="outline" className="font-mono">
-                      {post.id}
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="font-medium max-w-xs truncate">
-                    {post.title}
-                  </TableCell>
-                  <TableCell>{scoreBadge(post.moderationScore)}</TableCell>
-                  <TableCell>
-                    {post.moderationCategories?.length ? (
-                      <div className="flex flex-wrap gap-1">
-                        {post.moderationCategories.map((c) => (
-                          <Badge key={c} variant="secondary">
-                            {c}
-                          </Badge>
-                        ))}
+              posts.map((post) => {
+                const canApprove =
+                  can("PATCH", "/api/forums/admin/posts/:id/approve") ||
+                  can("PATCH", `/api/forums/admin/posts/${post.id}/approve`);
+                const canReject =
+                  can("PATCH", "/api/forums/admin/posts/:id/reject") ||
+                  can("PATCH", `/api/forums/admin/posts/${post.id}/reject`);
+
+                return (
+                  <TableRow key={post.id} className="group">
+                    <TableCell>
+                      <Badge variant="outline" className="font-mono">
+                        {post.id}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="font-medium max-w-xs truncate">
+                      {post.title}
+                    </TableCell>
+                    <TableCell>{scoreBadge(post.moderationScore)}</TableCell>
+                    <TableCell>
+                      {post.moderationCategories?.length ? (
+                        <div className="flex flex-wrap gap-1">
+                          {post.moderationCategories.map((c) => (
+                            <Badge key={c} variant="secondary">
+                              {c}
+                            </Badge>
+                          ))}
+                        </div>
+                      ) : (
+                        <span className="text-muted-foreground text-sm">{tCommon("empty")}</span>
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-2">
+                        <span className="text-muted-foreground text-sm">
+                          {post.user.profile?.displayName ?? tGlobal("userFallback", { id: post.user.id })}
+                        </span>
                       </div>
-                    ) : (
-                      <span className="text-muted-foreground text-sm">{tCommon("empty")}</span>
-                    )}
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-2">
-                      <span className="text-muted-foreground text-sm">
-                        {post.user.profile?.displayName ?? tGlobal("userFallback", { id: post.user.id })}
-                      </span>
-                    </div>
-                  </TableCell>
-                  <TableCell className="text-muted-foreground text-sm whitespace-nowrap">
-                    {formatDate(post.createdAt, locale)}
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center justify-end gap-1">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-8 w-8"
-                        onClick={() => setViewingPost(post)}
-                        aria-label={t("viewPostLabel", { title: post.title })}
-                      >
-                        <Eye className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-8 w-8 text-emerald-600 hover:text-emerald-600"
-                        disabled={pendingId === post.id}
-                        onClick={() => handleApprove(post.id)}
-                        aria-label={t("approvePostLabel", { title: post.title })}
-                      >
-                        <ShieldCheck className="h-4 w-4" />
-                      </Button>
-                      <AlertDialog>
-                        <AlertDialogTrigger asChild>
+                    </TableCell>
+                    <TableCell className="text-muted-foreground text-sm whitespace-nowrap">
+                      {formatDate(post.createdAt, locale)}
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center justify-end gap-1">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8"
+                          onClick={() => setViewingPost(post)}
+                          aria-label={t("viewPostLabel", { title: post.title })}
+                        >
+                          <Eye className="h-4 w-4" />
+                        </Button>
+                        {canApprove && (
                           <Button
                             variant="ghost"
                             size="icon"
-                            className="h-8 w-8 text-destructive hover:text-destructive"
-                            aria-label={t("rejectPostLabel", { title: post.title })}
+                            className="h-8 w-8 text-emerald-600 hover:text-emerald-600"
+                            disabled={pendingId === post.id}
+                            onClick={() => handleApprove(post.id)}
+                            aria-label={t("approvePostLabel", { title: post.title })}
                           >
-                            <ShieldAlert className="h-4 w-4" />
+                            <ShieldCheck className="h-4 w-4" />
                           </Button>
-                        </AlertDialogTrigger>
-                        <AlertDialogContent>
-                          <AlertDialogHeader>
-                            <AlertDialogTitle>{t("rejectTitle")}</AlertDialogTitle>
-                            <AlertDialogDescription>
-                              {t("rejectConfirm", { title: post.title })}
-                            </AlertDialogDescription>
-                          </AlertDialogHeader>
-                          <AlertDialogFooter>
-                            <AlertDialogCancel>{tCommon("cancel")}</AlertDialogCancel>
-                            <AlertDialogAction
-                              onClick={() => handleReject(post.id)}
-                              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                            >
-                              {t("rejectAction")}
-                            </AlertDialogAction>
-                          </AlertDialogFooter>
-                        </AlertDialogContent>
-                      </AlertDialog>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))
+                        )}
+                        {canReject && (
+                          <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-8 w-8 text-destructive hover:text-destructive"
+                                aria-label={t("rejectPostLabel", { title: post.title })}
+                              >
+                                <ShieldAlert className="h-4 w-4" />
+                              </Button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                              <AlertDialogHeader>
+                                <AlertDialogTitle>{t("rejectTitle")}</AlertDialogTitle>
+                                <AlertDialogDescription>
+                                  {t("rejectConfirm", { title: post.title })}
+                                </AlertDialogDescription>
+                              </AlertDialogHeader>
+                              <AlertDialogFooter>
+                                <AlertDialogCancel>{tCommon("cancel")}</AlertDialogCancel>
+                                <AlertDialogAction
+                                  onClick={() => handleReject(post.id)}
+                                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                                >
+                                  {t("rejectAction")}
+                                </AlertDialogAction>
+                              </AlertDialogFooter>
+                            </AlertDialogContent>
+                          </AlertDialog>
+                        )}
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                );
+              })
             )}
           </TableBody>
         </Table>
@@ -275,27 +290,46 @@ export function ModerationTable({ posts, pagination }: ModerationTableProps) {
                 className="post-content text-sm leading-relaxed"
                 dangerouslySetInnerHTML={{ __html: viewingPost.content }}
               />
-              <Separator />
-              <div className="flex items-center justify-end gap-2">
-                <Button
-                  size="sm"
-                  className="bg-emerald-600 text-white hover:bg-emerald-600/90"
-                  disabled={pendingId === viewingPost.id}
-                  onClick={() => handleApprove(viewingPost.id)}
-                >
-                  <Check className="h-4 w-4 mr-1.5" />
-                  {t("approveAction")}
-                </Button>
-                <Button
-                  size="sm"
-                  variant="destructive"
-                  disabled={pendingId === viewingPost.id}
-                  onClick={() => handleReject(viewingPost.id)}
-                >
-                  <X className="h-4 w-4 mr-1.5" />
-                  {t("rejectAction")}
-                </Button>
-              </div>
+              {(() => {
+                const canApproveViewing =
+                  can("PATCH", "/api/forums/admin/posts/:id/approve") ||
+                  can("PATCH", `/api/forums/admin/posts/${viewingPost.id}/approve`);
+                const canRejectViewing =
+                  can("PATCH", "/api/forums/admin/posts/:id/reject") ||
+                  can("PATCH", `/api/forums/admin/posts/${viewingPost.id}/reject`);
+
+                if (!canApproveViewing && !canRejectViewing) return null;
+
+                return (
+                  <>
+                    <Separator />
+                    <div className="flex items-center justify-end gap-2">
+                      {canApproveViewing && (
+                        <Button
+                          size="sm"
+                          className="bg-emerald-600 text-white hover:bg-emerald-600/90"
+                          disabled={pendingId === viewingPost.id}
+                          onClick={() => handleApprove(viewingPost.id)}
+                        >
+                          <Check className="h-4 w-4 mr-1.5" />
+                          {t("approveAction")}
+                        </Button>
+                      )}
+                      {canRejectViewing && (
+                        <Button
+                          size="sm"
+                          variant="destructive"
+                          disabled={pendingId === viewingPost.id}
+                          onClick={() => handleReject(viewingPost.id)}
+                        >
+                          <X className="h-4 w-4 mr-1.5" />
+                          {t("rejectAction")}
+                        </Button>
+                      )}
+                    </div>
+                  </>
+                );
+              })()}
             </div>
           )}
         </DialogContent>

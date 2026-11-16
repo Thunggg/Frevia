@@ -5,6 +5,7 @@ import {
   useDeletePortfolioItem,
   useUpdatePortfolioItem,
 } from "@/hooks/use-admin-user";
+import { useActionPermission } from "@/hooks/use-action-permission";
 import { ApiFail } from "@/lib/http";
 import { Badge } from "@repo/ui/components/shadcn/badge";
 import { Button } from "@repo/ui/components/shadcn/button";
@@ -77,6 +78,19 @@ interface ManageFreelancerPortfolioButtonProps {
 export function ManageFreelancerPortfolioButton({
   user,
 }: ManageFreelancerPortfolioButtonProps) {
+  const { can } = useActionPermission();
+  const canCreateItem = can(
+    "POST",
+    "/api/users/:id/freelancer-profile/portfolio-items",
+  );
+  const canUpdateItem = can(
+    "PATCH",
+    "/api/users/:id/freelancer-profile/portfolio-items/:itemId",
+  );
+  const canDeleteItem = can(
+    "DELETE",
+    "/api/users/:id/freelancer-profile/portfolio-items/:itemId",
+  );
   const router = useRouter();
   const t = useTranslations("adminUserProfileEdit");
   const [open, setOpen] = useState(false);
@@ -238,6 +252,10 @@ export function ManageFreelancerPortfolioButton({
     );
   }
 
+  if (!canCreateItem && !canUpdateItem && !canDeleteItem) {
+    return null;
+  }
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
@@ -320,15 +338,17 @@ export function ManageFreelancerPortfolioButton({
               <p className="text-xs text-muted-foreground">
                 {t("portfolioItemsShown", { count: items.length })}
               </p>
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={startAdd}
-              >
-                <Plus className="mr-1.5 h-3.5 w-3.5" />
-                {t("portfolioAddAction")}
-              </Button>
+              {canCreateItem && (
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={startAdd}
+                >
+                  <Plus className="mr-1.5 h-3.5 w-3.5" />
+                  {t("portfolioAddAction")}
+                </Button>
+              )}
             </div>
 
             {items.length === 0 ? (
@@ -365,30 +385,34 @@ export function ManageFreelancerPortfolioButton({
                             <ExternalLink className="h-3.5 w-3.5" />
                           </a>
                         )}
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="icon"
-                          className="h-7 w-7 text-muted-foreground hover:text-foreground"
-                          onClick={() => startEdit(item)}
-                          aria-label={t("portfolioEditAria", {
-                            title: item.title,
-                          })}
-                        >
-                          <Pencil className="h-3.5 w-3.5" />
-                        </Button>
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="icon"
-                          className="h-7 w-7 text-muted-foreground hover:text-destructive"
-                          onClick={() => onRequestDelete(item)}
-                          aria-label={t("portfolioDeleteAria", {
-                            title: item.title,
-                          })}
-                        >
-                          <Trash2 className="h-3.5 w-3.5" />
-                        </Button>
+                        {canUpdateItem && (
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="icon"
+                            className="h-7 w-7 text-muted-foreground hover:text-foreground"
+                            onClick={() => startEdit(item)}
+                            aria-label={t("portfolioEditAria", {
+                              title: item.title,
+                            })}
+                          >
+                            <Pencil className="h-3.5 w-3.5" />
+                          </Button>
+                        )}
+                        {canDeleteItem && (
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="icon"
+                            className="h-7 w-7 text-muted-foreground hover:text-destructive"
+                            onClick={() => onRequestDelete(item)}
+                            aria-label={t("portfolioDeleteAria", {
+                              title: item.title,
+                            })}
+                          >
+                            <Trash2 className="h-3.5 w-3.5" />
+                          </Button>
+                        )}
                       </div>
                     </div>
                     {item.technologies && item.technologies.length > 0 && (

@@ -43,6 +43,7 @@ import { MessageBell } from "@/components/notification-bell";
 import { NotificationsBell } from "@/components/notifications-bell";
 import { ContactDialog } from "@/components/contact-dialog";
 import { useMe } from "@/hooks/use-auth";
+import { useActionPermission } from "@/hooks/use-action-permission";
 import { canAccessAdminPortal } from "@/lib/admin-access";
 
 export type UserRole = "GUEST" | "CLIENT" | "FREELANCER";
@@ -139,7 +140,33 @@ function HeaderNavigation({
 }: HeaderProps & { mobile?: boolean; onNavigate?: () => void }) {
   const pathname = usePathname();
   const t = useTranslations("nav");
-  const links = roleConfig[role]?.links ?? [];
+  const { can } = useActionPermission();
+  const canViewProposals = can("GET", "/api/proposals/my");
+  const canViewJobs = can("GET", "/api/manage-jobs");
+  const canViewBookmarks = can("GET", "/api/manage-jobs/bookmarks");
+  const canViewSavedSearches = can("GET", "/api/saved-searches");
+  const canViewContracts = can("GET", "/api/contracts");
+  const canViewDisputes = can("GET", "/api/disputes");
+
+  const links = (roleConfig[role]?.links ?? []).filter((link) => {
+    if (link.href === "/freelancer/proposals" && !canViewProposals) return false;
+    if (link.href === "/client/jobs" && !canViewJobs) return false;
+    if (link.href === "/freelancer?tab=saved-jobs" && !canViewBookmarks) return false;
+    if (link.href === "/freelancer?tab=saved-searches" && !canViewSavedSearches) return false;
+    if (
+      (link.href === "/client/contracts" || link.href === "/freelancer/contracts") &&
+      !canViewContracts
+    )
+      return false;
+    if (
+      (link.href === "/disputes" ||
+        link.href === "/client/disputes" ||
+        link.href === "/freelancer/disputes") &&
+      !canViewDisputes
+    )
+      return false;
+    return true;
+  });
 
   return (
     <div className={mobile ? "space-y-1" : "hidden items-center gap-1 md:flex"}>
@@ -240,6 +267,12 @@ function ProfileDropdown({ role }: { role: Exclude<UserRole, "GUEST"> }) {
   const t = useTranslations("nav");
   const profile = roleConfig[role];
   const { data: me } = useMe();
+  const { can } = useActionPermission();
+  const canViewProposals = can("GET", "/api/proposals/my");
+  const canViewSavedSearches = can("GET", "/api/saved-searches");
+  const canViewContracts = can("GET", "/api/contracts");
+  const canViewSessions = can("GET", "/api/sessions");
+  const canViewSocialLinks = can("GET", "/api/social-links");
   const displayName =
     me?.profile?.displayName || t(`roles.${profile.nameKey}`);
   const initial = displayName?.charAt(0)?.toUpperCase() ?? "?";
@@ -336,27 +369,33 @@ function ProfileDropdown({ role }: { role: Exclude<UserRole, "GUEST"> }) {
                 {t("myBookmarks")}
               </Link>
             </DropdownMenuItem>
-            <DropdownMenuItem asChild>
-              <Link href="/freelancer/proposals" className="cursor-pointer">
-                <FileText className="size-4 text-muted-foreground" />
-                {t("myProposals")}
-              </Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem asChild>
-              <Link href="/freelancer/contracts" className="cursor-pointer">
-                <FileText className="size-4 text-muted-foreground" />
-                {t("contracts")}
-              </Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem asChild>
-              <Link
-                href="/freelancer/saved-searches"
-                className="cursor-pointer"
-              >
-                <Search className="size-4 text-muted-foreground" />
-                {t("savedSearches")}
-              </Link>
-            </DropdownMenuItem>
+            {canViewProposals ? (
+              <DropdownMenuItem asChild>
+                <Link href="/freelancer/proposals" className="cursor-pointer">
+                  <FileText className="size-4 text-muted-foreground" />
+                  {t("myProposals")}
+                </Link>
+              </DropdownMenuItem>
+            ) : null}
+            {canViewContracts && (
+              <DropdownMenuItem asChild>
+                <Link href="/freelancer/contracts" className="cursor-pointer">
+                  <FileText className="size-4 text-muted-foreground" />
+                  {t("contracts")}
+                </Link>
+              </DropdownMenuItem>
+            )}
+            {canViewSavedSearches && (
+              <DropdownMenuItem asChild>
+                <Link
+                  href="/freelancer/saved-searches"
+                  className="cursor-pointer"
+                >
+                  <Search className="size-4 text-muted-foreground" />
+                  {t("savedSearches")}
+                </Link>
+              </DropdownMenuItem>
+            )}
             <DropdownMenuItem asChild>
               <Link
                 href="/freelancer/payments"
@@ -402,26 +441,30 @@ function ProfileDropdown({ role }: { role: Exclude<UserRole, "GUEST"> }) {
             </DropdownMenuItem>
           </>
         )}
-        <DropdownMenuItem asChild>
-          <Link
-            href={
-              role === "FREELANCER"
-                ? "/freelancer/profile?tab=social"
-                : "/client/profile?tab=social"
-            }
-            className="cursor-pointer"
-          >
-            <Link2 className="size-4 text-muted-foreground" />
-            {t("socialLinks")}
-          </Link>
-        </DropdownMenuItem>
+        {canViewSocialLinks && (
+          <DropdownMenuItem asChild>
+            <Link
+              href={
+                role === "FREELANCER"
+                  ? "/freelancer/profile?tab=social"
+                  : "/client/profile?tab=social"
+              }
+              className="cursor-pointer"
+            >
+              <Link2 className="size-4 text-muted-foreground" />
+              {t("socialLinks")}
+            </Link>
+          </DropdownMenuItem>
+        )}
         <DropdownMenuSeparator />
-        <DropdownMenuItem asChild>
-          <Link href="/sessions" className="cursor-pointer">
-            <MonitorSmartphone className="size-4 text-muted-foreground" />
-            {t("sessions")}
-          </Link>
-        </DropdownMenuItem>
+        {canViewSessions && (
+          <DropdownMenuItem asChild>
+            <Link href="/sessions" className="cursor-pointer">
+              <MonitorSmartphone className="size-4 text-muted-foreground" />
+              {t("sessions")}
+            </Link>
+          </DropdownMenuItem>
+        )}
         {canAccessAdminPortal(me) && (
           <DropdownMenuItem asChild>
             <Link
@@ -449,6 +492,9 @@ function ProfileDropdown({ role }: { role: Exclude<UserRole, "GUEST"> }) {
 
 function HeaderActions({ role }: HeaderProps) {
   const t = useTranslations("nav");
+  const { can } = useActionPermission();
+  const canViewConversations = can("GET", "/api/conversations");
+  const canViewNotifications = can("GET", "/api/notifications");
 
   if (role === "GUEST") {
     return (
@@ -476,8 +522,8 @@ function HeaderActions({ role }: HeaderProps) {
   return (
     <div className="ml-auto flex items-center gap-0.5 sm:gap-1">
       <ContactDialog />
-      <MessageBell />
-      <NotificationsBell />
+      {canViewConversations && <MessageBell />}
+      {canViewNotifications && <NotificationsBell />}
       <LanguageSwitcher />
       <ThemeToggle />
       <ProfileDropdown role={role} />

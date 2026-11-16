@@ -14,6 +14,7 @@ import {
   Trash2,
   FileEdit,
 } from "lucide-react";
+import { useActionPermission } from "@/hooks/use-action-permission";
 import type { ContractDetailType, SharedFileType } from "@shared/types";
 import type { MilestoneItemData } from "./manage-milestone-dialog";
 
@@ -115,6 +116,13 @@ export function ContractDocumentPaper({
       ? new Date(latestMilestoneDueMs)
       : contract.expiresAt || new Date(Date.now() + 14 * 86400000);
 
+  const { can } = useActionPermission();
+  const canUpdateContract = can("PATCH", "/api/contracts/:id");
+  const canCreateMilestone = can("POST", "/api/contracts/:contractId/milestones");
+  const canUpdateMilestone = can("PATCH", "/api/contracts/:contractId/milestones/:id");
+  const canDeleteMilestone = can("DELETE", "/api/contracts/:contractId/milestones/:id");
+  const canViewMilestoneDetail = can("GET", "/api/contracts/:contractId/milestones/:id");
+
   const canEditMilestones =
     !isFreelancer &&
     (contract.status === "PENDING_SIGN" ||
@@ -123,7 +131,8 @@ export function ContractDocumentPaper({
   const canEditContract =
     !isFreelancer &&
     (contract.status === "PENDING_SIGN" ||
-      contract.status === "AWAITING_PAYMENT");
+      contract.status === "AWAITING_PAYMENT") &&
+    canUpdateContract;
 
   return (
     <article className="relative bg-white text-zinc-900 border border-zinc-200/90 p-6 sm:p-12 md:p-14 font-sans max-w-4xl mx-auto selection:bg-zinc-200">
@@ -297,7 +306,7 @@ export function ContractDocumentPaper({
               3. PRICE AND PAYMENT SCHEDULE
             </h2>
             <div className="flex items-center gap-2 self-start sm:self-auto">
-              {canEditMilestones && onAddMilestone && (
+              {canEditMilestones && canCreateMilestone && onAddMilestone && (
                 <button
                   type="button"
                   onClick={onAddMilestone}
@@ -359,7 +368,7 @@ export function ContractDocumentPaper({
                         {idx + 1}
                       </td>
                       <td className="py-2.5 px-3 border-r border-zinc-200 text-zinc-800">
-                        {isRealMilestone ? (
+                        {isRealMilestone && canViewMilestoneDetail ? (
                           <Link
                             href={`${basePath}/contracts/${encodeURIComponent(contract.slug || String(contract.id))}/milestones/${m.id}`}
                             className="font-medium text-zinc-950 hover:text-[#0069D3] hover:underline transition-colors"
@@ -390,7 +399,7 @@ export function ContractDocumentPaper({
                         <td className="py-2.5 px-3 text-center">
                           {isEditable ? (
                             <div className="flex items-center justify-center gap-1.5">
-                              {onEditMilestone && (
+                              {canUpdateMilestone && onEditMilestone && (
                                 <button
                                   type="button"
                                   onClick={() => onEditMilestone(m)}
@@ -400,7 +409,8 @@ export function ContractDocumentPaper({
                                   <Pencil className="size-3.5" />
                                 </button>
                               )}
-                              {onDeleteMilestone &&
+                              {canDeleteMilestone &&
+                                onDeleteMilestone &&
                                 !(
                                   contract.status === "PENDING_SIGN" &&
                                   contract.holdMilestoneIds?.includes(m.id)

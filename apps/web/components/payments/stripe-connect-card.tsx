@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { Button } from "@repo/ui/components/shadcn/button";
 import { toastError } from "@repo/ui/components/shadcn/toast";
+import { useActionPermission } from "@/hooks/use-action-permission";
 import { paymentApiRequest } from "@/apiRequests/payment";
 import { ApiFail } from "@/lib/http";
 import type { StripeConnectStatusResponseType } from "@shared/types";
@@ -23,6 +24,13 @@ interface StripeConnectCardProps {
  * Stripe Express Connect status and onboarding card for Freelancer payouts.
  */
 export function StripeConnectCard({ returnPath }: StripeConnectCardProps) {
+  const { can } = useActionPermission();
+  const canGetConnectStatus = can("GET", "/api/payments/connect/status");
+  const canCreateOnboardingLink = can(
+    "POST",
+    "/api/payments/connect/onboarding-link",
+  );
+
   const [onboardingLoading, setOnboardingLoading] = useState(false);
 
   const {
@@ -36,6 +44,7 @@ export function StripeConnectCard({ returnPath }: StripeConnectCardProps) {
       const res = await paymentApiRequest.getConnectStatus();
       return res.data;
     },
+    enabled: canGetConnectStatus,
     refetchOnMount: "always",
     refetchOnWindowFocus: true,
     refetchInterval: (query) => {
@@ -70,6 +79,10 @@ export function StripeConnectCard({ returnPath }: StripeConnectCardProps) {
   const isPartiallyConnected = Boolean(
     connectStatus?.isConnected && !connectStatus?.payoutsEnabled,
   );
+
+  if (!canGetConnectStatus) {
+    return null;
+  }
 
   return (
     <div className="h-full flex flex-col gap-3.5 rounded-2xl border border-zinc-200/80 dark:border-zinc-800 bg-white dark:bg-zinc-950 p-5 shadow-[0_1px_2px_rgba(0,0,0,0.03)]">
@@ -149,40 +162,42 @@ export function StripeConnectCard({ returnPath }: StripeConnectCardProps) {
             </div>
           </div>
 
-          <Button
-            type="button"
-            size="sm"
-            variant={isVerified ? "outline" : "default"}
-            onClick={() => void handleStartOnboarding()}
-            disabled={onboardingLoading}
-            className={`w-full rounded-lg text-xs font-semibold h-8.5 cursor-pointer ${
-              isVerified
-                ? "border-zinc-200/90 dark:border-zinc-700 bg-white dark:bg-zinc-900"
-                : "bg-[#0069D3] hover:bg-[#005bb8] text-white"
-            }`}
-          >
-            {onboardingLoading ? (
-              <>
-                <Loader2 className="mr-1.5 size-3.5 animate-spin" />
-                Redirecting to Stripe...
-              </>
-            ) : isVerified ? (
-              <>
-                <ExternalLink className="mr-1.5 size-3.5" />
-                Update Stripe Express Details
-              </>
-            ) : isPartiallyConnected ? (
-              <>
-                <ExternalLink className="mr-1.5 size-3.5" />
-                Continue Stripe Onboarding
-              </>
-            ) : (
-              <>
-                <Landmark className="mr-1.5 size-3.5" />
-                Connect Stripe Account
-              </>
-            )}
-          </Button>
+          {canCreateOnboardingLink && (
+            <Button
+              type="button"
+              size="sm"
+              variant={isVerified ? "outline" : "default"}
+              onClick={() => void handleStartOnboarding()}
+              disabled={onboardingLoading}
+              className={`w-full rounded-lg text-xs font-semibold h-8.5 cursor-pointer ${
+                isVerified
+                  ? "border-zinc-200/90 dark:border-zinc-700 bg-white dark:bg-zinc-900"
+                  : "bg-[#0069D3] hover:bg-[#005bb8] text-white"
+              }`}
+            >
+              {onboardingLoading ? (
+                <>
+                  <Loader2 className="mr-1.5 size-3.5 animate-spin" />
+                  Redirecting to Stripe...
+                </>
+              ) : isVerified ? (
+                <>
+                  <ExternalLink className="mr-1.5 size-3.5" />
+                  Update Stripe Express Details
+                </>
+              ) : isPartiallyConnected ? (
+                <>
+                  <ExternalLink className="mr-1.5 size-3.5" />
+                  Continue Stripe Onboarding
+                </>
+              ) : (
+                <>
+                  <Landmark className="mr-1.5 size-3.5" />
+                  Connect Stripe Account
+                </>
+              )}
+            </Button>
+          )}
         </div>
       )}
     </div>

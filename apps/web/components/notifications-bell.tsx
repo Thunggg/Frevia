@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useTranslations } from "next-intl";
+import { useActionPermission } from "@/hooks/use-action-permission";
 import { Bell, CheckCheck } from "@/components/icons";
 import { useNotificationText } from "@/hooks/use-notification-text";
 import {
@@ -27,9 +28,20 @@ function notificationHref(data: unknown): string | null {
 export function NotificationsBell() {
   const t = useTranslations("notifications");
   const notificationText = useNotificationText();
-  const { data: notifications = [], isLoading } = useNotifications();
+  const { can } = useActionPermission();
+  const canViewNotifications = can("GET", "/api/notifications");
+  const canMarkAllRead = can("PATCH", "/api/notifications/read-all");
+  const canMarkRead = can("PATCH", "/api/notifications/:id/read");
+
+  const { data: notifications = [], isLoading } =
+    useNotifications(canViewNotifications);
   const markRead = useMarkNotificationRead();
   const markAllRead = useMarkAllNotificationsRead();
+
+  if (!canViewNotifications) {
+    return null;
+  }
+
   const unread = notifications.filter((notification) => !notification.isRead);
   const recent = notifications.slice(0, 5);
 
@@ -58,10 +70,10 @@ export function NotificationsBell() {
               {t("unreadCount", { count: unread.length })}
             </p>
           </div>
-          {unread.length ? (
+          {unread.length && canMarkAllRead ? (
             <button
               type="button"
-              className="flex items-center gap-1 text-xs font-medium text-[#4fae2e] hover:text-[#3f9225] disabled:opacity-50"
+              className="flex items-center gap-1 text-xs font-medium text-[#4fae2e] hover:text-[#3f9225] disabled:opacity-50 cursor-pointer"
               disabled={markAllRead.isPending}
               onClick={() => markAllRead.mutate()}
             >
@@ -108,7 +120,9 @@ export function NotificationsBell() {
                   asChild
                   className="cursor-pointer gap-3 px-4 py-3"
                   onSelect={() => {
-                    if (!notification.isRead) markRead.mutate(notification.id);
+                    if (!notification.isRead && canMarkRead) {
+                      markRead.mutate(notification.id);
+                    }
                   }}
                 >
                   {href ? (

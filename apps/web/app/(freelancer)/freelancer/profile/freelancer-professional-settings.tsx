@@ -6,13 +6,10 @@ import { useCallback, useEffect, useMemo, useRef, useState, type FormEvent } fro
 import {
   Award,
   BriefcaseBusiness,
-  CheckCircle2,
   Download,
   ExternalLink,
   Eye,
   FileText,
-  GraduationCap,
-  Languages,
   Loader2,
   Pencil,
   Plus,
@@ -25,6 +22,7 @@ import { Save } from "lucide-react";
 
 import { profileApiRequest } from "@/apiRequests/profile";
 import { profileRevisionApiRequest } from "@/apiRequests/profile-revision";
+import { useActionPermission } from "@/hooks/use-action-permission";
 import { ProfileReviewStatus } from "@/components/profile-review-status";
 import { CvAnalysisDialog } from "./cv-analysis-dialog";
 import { ApiFail } from "@/lib/http";
@@ -116,9 +114,22 @@ function getErrorMessage(error: unknown, fallback: string) {
   return error instanceof Error ? error.message : fallback;
 }
 
-export function FreelancerProfessionalSettings({ profileId, userId }: Props) {
+export function FreelancerProfessionalSettings({ profileId }: Props) {
   const t = useTranslations("freelancerProfile");
-  const tCommon = useTranslations("common");
+
+  const { can } = useActionPermission();
+  const canUpdateProfile = can("PUT", "/api/profiles/:id");
+  const canAddSkill = can("POST", "/api/profiles/:id/skills");
+  const canDeleteSkill = can("DELETE", "/api/profiles/skills/:id");
+  const canGetSkillSuggestions = can("GET", "/api/profiles/skills/suggestions");
+  const canAddPortfolio = can("POST", "/api/profiles/:id/portfolios");
+  const canUpdatePortfolio = can("PUT", "/api/profiles/portfolios/:id");
+  const canDeletePortfolio = can("DELETE", "/api/profiles/portfolios/:id");
+  const canUploadCv = can("POST", "/api/profiles/:id/cv");
+  const canDownloadCv = can("GET", "/api/profiles/:id/cv/file");
+  const canAnalyzeCv = can("POST", "/api/profiles/:id/cv/analyze");
+  const canDeleteCv = can("DELETE", "/api/profiles/:id/cv");
+  const canViewCvAnalysis = can("GET", "/api/profiles/:id/cv/analysis");
 
   const [profile, setProfile] = useState<FreelancerProfileDetailType | null>(null);
   const [skills, setSkills] = useState<FreelancerSkillType[]>([]);
@@ -218,7 +229,7 @@ export function FreelancerProfessionalSettings({ profileId, userId }: Props) {
 
   // Skill autocomplete suggestions
   useEffect(() => {
-    if (!skillDialogOpen || !isSkillMenuOpen) return;
+    if (!skillDialogOpen || !isSkillMenuOpen || !canGetSkillSuggestions) return;
     let ignore = false;
     const timeout = setTimeout(async () => {
       try {
@@ -235,7 +246,7 @@ export function FreelancerProfessionalSettings({ profileId, userId }: Props) {
       ignore = true;
       clearTimeout(timeout);
     };
-  }, [isSkillMenuOpen, skillDialogOpen, skillName]);
+  }, [isSkillMenuOpen, skillDialogOpen, skillName, canGetSkillSuggestions]);
 
   // Close skill menu on click outside
   useEffect(() => {
@@ -259,7 +270,7 @@ export function FreelancerProfessionalSettings({ profileId, userId }: Props) {
   // Save professional info
   const handleSaveInfo = async (e: FormEvent) => {
     e.preventDefault();
-    if (!profile) return;
+    if (!profile || !canUpdateProfile) return;
     if (!form.title.trim()) {
       toastError({ message: t("toast.requiredFields") });
       return;
@@ -313,6 +324,7 @@ export function FreelancerProfessionalSettings({ profileId, userId }: Props) {
   // Skill Add & Delete
   const handleAddSkill = async (e: FormEvent) => {
     e.preventDefault();
+    if (!canAddSkill) return;
     const name = skillName.trim();
     const level = Number(skillLevel);
     if (!name) {
@@ -346,7 +358,7 @@ export function FreelancerProfessionalSettings({ profileId, userId }: Props) {
   };
 
   const handleDeleteSkill = async () => {
-    if (!skillToDelete) return;
+    if (!skillToDelete || !canDeleteSkill) return;
     setPendingAction("skill-delete");
     try {
       await profileApiRequest.deleteSkill(skillToDelete.id);
@@ -362,6 +374,8 @@ export function FreelancerProfessionalSettings({ profileId, userId }: Props) {
 
   // Portfolio Add/Edit/Delete
   const openPortfolioModal = (item: PortfolioItemType | "new") => {
+    if (item === "new" && !canAddPortfolio) return;
+    if (item !== "new" && !canUpdatePortfolio) return;
     setPortfolioEditor(item);
     if (item === "new") {
       setPortfolioForm({
@@ -386,6 +400,8 @@ export function FreelancerProfessionalSettings({ profileId, userId }: Props) {
       toastError({ message: t("toast.portfolioTitleRequired") });
       return;
     }
+    if (portfolioEditor === "new" && !canAddPortfolio) return;
+    if (portfolioEditor !== "new" && !canUpdatePortfolio) return;
 
     const payload: UpdatePortfolioType = {
       title: portfolioForm.title.trim(),
@@ -418,7 +434,7 @@ export function FreelancerProfessionalSettings({ profileId, userId }: Props) {
   };
 
   const handleDeletePortfolio = async () => {
-    if (!portfolioToDelete) return;
+    if (!portfolioToDelete || !canDeletePortfolio) return;
     setPendingAction("portfolio-delete");
     try {
       await profileApiRequest.deletePortfolio(portfolioToDelete.id);
@@ -434,6 +450,7 @@ export function FreelancerProfessionalSettings({ profileId, userId }: Props) {
 
   // CV Actions
   const handleAnalyzeCv = async () => {
+    if (!canAnalyzeCv) return;
     setPendingAction("cv-analyze");
     try {
       const res = await profileApiRequest.analyzeCv(profileId);
@@ -458,6 +475,7 @@ export function FreelancerProfessionalSettings({ profileId, userId }: Props) {
   };
 
   const handleUploadCv = async (file: File) => {
+    if (!canUploadCv) return;
     if (file.type !== "application/pdf" || file.size > MAX_CV_SIZE) {
       toastError({ message: "Vui lòng chọn tệp PDF có dung lượng không quá 10 MB." });
       return;
@@ -478,8 +496,10 @@ export function FreelancerProfessionalSettings({ profileId, userId }: Props) {
       if (cvInputRef.current) cvInputRef.current.value = "";
       toastSuccess({ message: t("cvUploadSuccess") });
 
-      // Tự động kích hoạt phân tích CV bằng AI
-      void handleAnalyzeCv();
+      // Tự động kích hoạt phân tích CV bằng AI nếu có quyền
+      if (canAnalyzeCv) {
+        void handleAnalyzeCv();
+      }
     } catch (err) {
       toastError({ message: getErrorMessage(err, "Không thể tải lên CV.") });
     } finally {
@@ -488,6 +508,7 @@ export function FreelancerProfessionalSettings({ profileId, userId }: Props) {
   };
 
   const handleDeleteCv = async () => {
+    if (!canDeleteCv) return;
     setPendingAction("cv-delete");
     try {
       await profileApiRequest.deleteCv(profileId);
@@ -623,6 +644,7 @@ export function FreelancerProfessionalSettings({ profileId, userId }: Props) {
                     placeholder="e.g. Senior Fullstack Developer, UI/UX Designer"
                     value={form.title}
                     onChange={(e) => setForm((prev) => ({ ...prev, title: e.target.value }))}
+                    disabled={!canUpdateProfile}
                     required
                   />
                 </div>
@@ -631,6 +653,7 @@ export function FreelancerProfessionalSettings({ profileId, userId }: Props) {
                   <Label htmlFor="pro-availability">{t("fieldAvailability")}</Label>
                   <Select
                     value={form.availabilityStatus}
+                    disabled={!canUpdateProfile}
                     onValueChange={(val) =>
                       val && setForm((prev) => ({ ...prev, availabilityStatus: val as AvailabilityStatusType }))
                     }
@@ -657,6 +680,7 @@ export function FreelancerProfessionalSettings({ profileId, userId }: Props) {
                   placeholder="Giới thiệu bản thân, chuyên môn thế mạnh và mục tiêu nghề nghiệp..."
                   value={form.bio}
                   onChange={(e) => setForm((prev) => ({ ...prev, bio: e.target.value }))}
+                  disabled={!canUpdateProfile}
                 />
               </div>
 
@@ -672,6 +696,7 @@ export function FreelancerProfessionalSettings({ profileId, userId }: Props) {
                   placeholder="Senior Frontend Developer - ABC Corp (2022 - Nay)&#10;Fullstack Developer - Freelance (2020 - 2022)"
                   value={form.experience}
                   onChange={(e) => setForm((prev) => ({ ...prev, experience: e.target.value }))}
+                  disabled={!canUpdateProfile}
                 />
               </div>
 
@@ -687,6 +712,7 @@ export function FreelancerProfessionalSettings({ profileId, userId }: Props) {
                     placeholder="Đại học Bách Khoa&#10;Kỹ thuật phần mềm (2018 - 2022)"
                     value={form.education}
                     onChange={(e) => setForm((prev) => ({ ...prev, education: e.target.value }))}
+                    disabled={!canUpdateProfile}
                   />
                 </div>
 
@@ -700,6 +726,7 @@ export function FreelancerProfessionalSettings({ profileId, userId }: Props) {
                     placeholder="AWS Solutions Architect&#10;IELTS 7.5"
                     value={form.certifications}
                     onChange={(e) => setForm((prev) => ({ ...prev, certifications: e.target.value }))}
+                    disabled={!canUpdateProfile}
                   />
                 </div>
 
@@ -713,24 +740,27 @@ export function FreelancerProfessionalSettings({ profileId, userId }: Props) {
                     placeholder="Tiếng Việt (Bản xứ)&#10;Tiếng Anh (Thành thạo)"
                     value={form.languages}
                     onChange={(e) => setForm((prev) => ({ ...prev, languages: e.target.value }))}
+                    disabled={!canUpdateProfile}
                   />
                 </div>
               </div>
 
-              <div className="pt-2 flex justify-end">
-                <Button
-                  type="submit"
-                  disabled={pendingAction === "save-info"}
-                  className="bg-[#0069D3] text-white hover:bg-[#0058b3]"
-                >
-                  {pendingAction === "save-info" ? (
-                    <Loader2 className="mr-1.5 size-4 animate-spin" />
-                  ) : (
-                    <Save className="mr-1.5 size-4" />
-                  )}
-                  {t("saveProfessionalInfo")}
-                </Button>
-              </div>
+              {canUpdateProfile && (
+                <div className="pt-2 flex justify-end">
+                  <Button
+                    type="submit"
+                    disabled={pendingAction === "save-info"}
+                    className="bg-[#0069D3] text-white hover:bg-[#0058b3]"
+                  >
+                    {pendingAction === "save-info" ? (
+                      <Loader2 className="mr-1.5 size-4 animate-spin" />
+                    ) : (
+                      <Save className="mr-1.5 size-4" />
+                    )}
+                    {t("saveProfessionalInfo")}
+                  </Button>
+                </div>
+              )}
             </form>
           </section>
 
@@ -746,15 +776,17 @@ export function FreelancerProfessionalSettings({ profileId, userId }: Props) {
                   <p className="text-xs text-muted-foreground">{t("portfolioDescription")}</p>
                 </div>
               </div>
-              <Button
-                size="sm"
-                variant="outline"
-                onClick={() => openPortfolioModal("new")}
-                className="gap-1 border-[#0069D3]/30 text-[#0069D3] hover:bg-[#0069D3]/10"
-              >
-                <Plus className="size-3.5" />
-                {t("addPortfolio")}
-              </Button>
+              {canAddPortfolio && (
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => openPortfolioModal("new")}
+                  className="gap-1 border-[#0069D3]/30 text-[#0069D3] hover:bg-[#0069D3]/10"
+                >
+                  <Plus className="size-3.5" />
+                  {t("addPortfolio")}
+                </Button>
+              )}
             </div>
 
             {portfolios.length === 0 ? (
@@ -805,25 +837,31 @@ export function FreelancerProfessionalSettings({ profileId, userId }: Props) {
                       )}
                     </div>
 
-                    <div className="mt-3 flex items-center justify-end gap-1.5 border-t border-border/60 pt-2">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="h-7 px-2 text-xs"
-                        onClick={() => openPortfolioModal(item)}
-                      >
-                        <Pencil className="mr-1 size-3" />
-                        {t("edit")}
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="h-7 px-2 text-xs text-destructive hover:text-destructive"
-                        onClick={() => setPortfolioToDelete(item)}
-                      >
-                        <Trash2 className="size-3" />
-                      </Button>
-                    </div>
+                    {(canUpdatePortfolio || canDeletePortfolio) && (
+                      <div className="mt-3 flex items-center justify-end gap-1.5 border-t border-border/60 pt-2">
+                        {canUpdatePortfolio && (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-7 px-2 text-xs"
+                            onClick={() => openPortfolioModal(item)}
+                          >
+                            <Pencil className="mr-1 size-3" />
+                            {t("edit")}
+                          </Button>
+                        )}
+                        {canDeletePortfolio && (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-7 px-2 text-xs text-destructive hover:text-destructive"
+                            onClick={() => setPortfolioToDelete(item)}
+                          >
+                            <Trash2 className="size-3" />
+                          </Button>
+                        )}
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>
@@ -861,44 +899,50 @@ export function FreelancerProfessionalSettings({ profileId, userId }: Props) {
                   </div>
 
                   <div className="mt-3 flex flex-col gap-2 border-t border-border/60 pt-3">
-                    <Button
-                      type="button"
-                      size="sm"
-                      className="w-full bg-[#4fae2e] text-xs font-semibold text-white shadow-xs hover:bg-[#439c28]"
-                      onClick={() => void handleAnalyzeCv()}
-                      disabled={pendingAction === "cv-analyze" || pendingAction === "cv-upload"}
-                    >
-                      {pendingAction === "cv-analyze" ? (
-                        <Loader2 className="mr-1.5 size-3.5 animate-spin" />
-                      ) : (
-                        <Sparkles className="mr-1.5 size-3.5" />
-                      )}
-                      {pendingAction === "cv-analyze"
-                        ? t("analyzingCv")
-                        : t("analyzeCv")}
-                    </Button>
+                    {canAnalyzeCv && (
+                      <Button
+                        type="button"
+                        size="sm"
+                        className="w-full bg-[#4fae2e] text-xs font-semibold text-white shadow-xs hover:bg-[#439c28]"
+                        onClick={() => void handleAnalyzeCv()}
+                        disabled={pendingAction === "cv-analyze" || pendingAction === "cv-upload"}
+                      >
+                        {pendingAction === "cv-analyze" ? (
+                          <Loader2 className="mr-1.5 size-3.5 animate-spin" />
+                        ) : (
+                          <Sparkles className="mr-1.5 size-3.5" />
+                        )}
+                        {pendingAction === "cv-analyze"
+                          ? t("analyzingCv")
+                          : t("analyzeCv")}
+                      </Button>
+                    )}
 
                     <div className="flex items-center gap-2">
-                      <Button variant="outline" size="sm" asChild className="flex-1 text-xs">
-                        <a
-                          href={`/api/backend/profiles/${profileId}/cv/file`}
-                          target="_blank"
-                          rel="noreferrer"
-                          download
+                      {canDownloadCv && (
+                        <Button variant="outline" size="sm" asChild className="flex-1 text-xs">
+                          <a
+                            href={`/api/backend/profiles/${profileId}/cv/file`}
+                            target="_blank"
+                            rel="noreferrer"
+                            download
+                          >
+                            <Download className="mr-1 size-3.5" />
+                            {t("downloadCv")}
+                          </a>
+                        </Button>
+                      )}
+                      {canDeleteCv && (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="text-xs text-destructive hover:bg-destructive/10"
+                          onClick={() => setCvToDelete(true)}
+                          disabled={pendingAction === "cv-delete" || pendingAction === "cv-analyze"}
                         >
-                          <Download className="mr-1 size-3.5" />
-                          {t("downloadCv")}
-                        </a>
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="text-xs text-destructive hover:bg-destructive/10"
-                        onClick={() => setCvToDelete(true)}
-                        disabled={pendingAction === "cv-delete" || pendingAction === "cv-analyze"}
-                      >
-                        <Trash2 className="size-3.5" />
-                      </Button>
+                          <Trash2 className="size-3.5" />
+                        </Button>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -906,20 +950,22 @@ export function FreelancerProfessionalSettings({ profileId, userId }: Props) {
                 <div className="rounded-xl border border-dashed border-border p-5 text-center">
                   <FileText className="mx-auto size-7 text-muted-foreground/40" />
                   <p className="mt-1.5 text-xs text-muted-foreground">{t("noCvUploaded")}</p>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="mt-3 text-xs"
-                    onClick={() => cvInputRef.current?.click()}
-                    disabled={pendingAction === "cv-upload"}
-                  >
-                    {pendingAction === "cv-upload" ? (
-                      <Loader2 className="mr-1.5 size-3.5 animate-spin" />
-                    ) : (
-                      <Upload className="mr-1.5 size-3.5" />
-                    )}
-                    {t("uploadCv")}
-                  </Button>
+                  {canUploadCv && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="mt-3 text-xs"
+                      onClick={() => cvInputRef.current?.click()}
+                      disabled={pendingAction === "cv-upload"}
+                    >
+                      {pendingAction === "cv-upload" ? (
+                        <Loader2 className="mr-1.5 size-3.5 animate-spin" />
+                      ) : (
+                        <Upload className="mr-1.5 size-3.5" />
+                      )}
+                      {t("uploadCv")}
+                    </Button>
+                  )}
                 </div>
               )}
 
@@ -935,7 +981,7 @@ export function FreelancerProfessionalSettings({ profileId, userId }: Props) {
                 }}
               />
 
-              {freelancer?.cvFileName && (
+              {canUploadCv && freelancer?.cvFileName && (
                 <div className="mt-2 text-center">
                   <button
                     type="button"
@@ -958,15 +1004,17 @@ export function FreelancerProfessionalSettings({ profileId, userId }: Props) {
                 </h3>
                 <p className="text-[11px] text-muted-foreground">{t("skillsDescription")}</p>
               </div>
-              <Button
-                size="sm"
-                variant="outline"
-                onClick={() => setSkillDialogOpen(true)}
-                className="h-8 gap-1 text-xs border-[#0069D3]/30 text-[#0069D3] hover:bg-[#0069D3]/10"
-              >
-                <Plus className="size-3.5" />
-                {t("addSkill")}
-              </Button>
+              {canAddSkill && (
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => setSkillDialogOpen(true)}
+                  className="h-8 gap-1 text-xs border-[#0069D3]/30 text-[#0069D3] hover:bg-[#0069D3]/10"
+                >
+                  <Plus className="size-3.5" />
+                  {t("addSkill")}
+                </Button>
+              )}
             </div>
 
             {skills.length === 0 ? (
@@ -994,14 +1042,16 @@ export function FreelancerProfessionalSettings({ profileId, userId }: Props) {
                           />
                         </div>
                       </div>
-                      <Button
-                        variant="ghost"
-                        size="icon-sm"
-                        className="text-muted-foreground hover:text-destructive shrink-0"
-                        onClick={() => setSkillToDelete(s)}
-                      >
-                        <Trash2 className="size-3.5" />
-                      </Button>
+                      {canDeleteSkill && (
+                        <Button
+                          variant="ghost"
+                          size="icon-sm"
+                          className="text-muted-foreground hover:text-destructive shrink-0"
+                          onClick={() => setSkillToDelete(s)}
+                        >
+                          <Trash2 className="size-3.5" />
+                        </Button>
+                      )}
                     </div>
                   </li>
                 ))}
@@ -1242,7 +1292,7 @@ export function FreelancerProfessionalSettings({ profileId, userId }: Props) {
       </AlertDialog>
 
       {/* Dialog: AI CV Analysis & Review */}
-      {cvAnalysisDraft && (
+      {cvAnalysisDraft && canViewCvAnalysis && (
         <CvAnalysisDialog
           profileId={profileId}
           draft={cvAnalysisDraft}
