@@ -2,6 +2,7 @@
 
 import { useFormatter } from "next-intl";
 import {
+  AlertTriangle,
   CheckCircle2,
   Clock,
   Download,
@@ -9,8 +10,11 @@ import {
   FileText,
   Lock,
   RotateCcw,
+  Scale,
   ShieldCheck,
 } from "lucide-react";
+import { Button } from "@repo/ui/components/shadcn/button";
+import { useActionPermission } from "@/hooks/use-action-permission";
 import type {
   ContractDetailType,
   GetSubmissionResponseType,
@@ -22,13 +26,20 @@ interface MilestoneOverviewTabProps {
   milestone: MilestoneType;
   submissions: GetSubmissionResponseType[];
   isFreelancer?: boolean;
+  onOpenDispute?: () => void;
+  onViewDispute?: () => void;
 }
 
 export function MilestoneOverviewTab({
   milestone,
   submissions,
+  onOpenDispute,
+  onViewDispute,
 }: MilestoneOverviewTabProps) {
   const format = useFormatter();
+  const { can } = useActionPermission();
+  const canViewDispute = can("GET", "/api/disputes/milestone/:milestoneId");
+  const canCreateDispute = can("POST", "/api/disputes");
   const latestSubmission = submissions.length > 0 ? submissions[0] : null;
 
   const formatDate = (date: string | Date | null | undefined): string => {
@@ -80,6 +91,32 @@ export function MilestoneOverviewTab({
   return (
     <div className="space-y-5">
       {/* ── 1. Top Status Banner (Minimalist, subtle left border, no heavy bg) ── */}
+      {milestone.status === "DISPUTED" && (
+        <div className="rounded-sm border border-rose-200 dark:border-rose-900/60 bg-rose-50/40 dark:bg-rose-950/20 p-4 flex items-start justify-between gap-3">
+          <div className="flex items-start gap-3">
+            <Scale className="size-4 shrink-0 text-rose-600 mt-0.5" />
+            <div className="space-y-0.5">
+              <h4 className="text-xs font-bold text-rose-600">
+                Milestone is under formal dispute
+              </h4>
+              <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">
+                A formal dispute claim has been filed for this milestone. Escrow funds remain frozen while Frevia dispute arbiters review evidence.
+              </p>
+            </div>
+          </div>
+          {canViewDispute && onViewDispute && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={onViewDispute}
+              className="h-8 rounded-lg border-rose-200 dark:border-rose-800 bg-white dark:bg-zinc-900 text-xs text-rose-600 hover:bg-rose-50 shrink-0 cursor-pointer"
+            >
+              View Dispute Details
+            </Button>
+          )}
+        </div>
+      )}
+
       {milestone.status === "COMPLETED" && (
         <div className="rounded-sm border border-zinc-200/80 dark:border-zinc-800 bg-white dark:bg-zinc-950 p-4 flex items-start gap-3">
           <CheckCircle2 className="size-4 shrink-0 text-emerald-600 mt-0.5" />
@@ -109,7 +146,27 @@ export function MilestoneOverviewTab({
             <p className="text-xs text-zinc-500 leading-relaxed">
               Freelancer submitted deliverables on{" "}
               {formatDateTime(latestSubmission?.submittedAt)}. Client can review the files,
-              links, and approve to release escrow.
+              links, and approve to release escrow. If the client does not respond within 7 days,
+              escrow funds are automatically released to the freelancer.
+            </p>
+          </div>
+        </div>
+      )}
+
+      {milestone.status === "LATE" && (
+        <div className="rounded-sm border border-rose-200 dark:border-rose-900/60 bg-rose-50/40 dark:bg-rose-950/20 p-4 flex items-start gap-3">
+          <AlertTriangle className="size-4 shrink-0 text-rose-600 mt-0.5" />
+          <div className="space-y-0.5">
+            <h4 className="text-xs font-bold text-rose-600">
+              Milestone overdue (Late)
+            </h4>
+            <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              The deadline passed without a deliverable submission from the freelancer.
+              {milestone.paymentStatus === "REFUNDED"
+                ? " Escrowed funds have been automatically refunded to the client."
+                : milestone.paymentStatus === "FUNDED"
+                  ? " Funded escrow is eligible for automatic refund to the client."
+                  : ""}
             </p>
           </div>
         </div>
@@ -182,9 +239,26 @@ export function MilestoneOverviewTab({
           <span className="text-xs text-zinc-400">
             Scope & Deliverables Requirements
           </span>
-          <span className="font-mono text-xs font-semibold text-zinc-500">
-            Budget: ${amountNumber.toLocaleString("en-US", { minimumFractionDigits: 2 })}
-          </span>
+          <div className="flex items-center gap-2">
+            {milestone.status !== "COMPLETED" &&
+              milestone.status !== "DISPUTED" &&
+              milestone.paymentStatus === "FUNDED" &&
+              canCreateDispute &&
+              onOpenDispute && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={onOpenDispute}
+                  className="h-7 text-xs border-zinc-200 dark:border-zinc-800 text-zinc-600 hover:text-rose-600 cursor-pointer"
+                >
+                  <Scale className="mr-1 size-3" />
+                  Dispute Milestone
+                </Button>
+              )}
+            <span className="font-mono text-xs font-semibold text-zinc-500">
+              Budget: ${amountNumber.toLocaleString("en-US", { minimumFractionDigits: 2 })}
+            </span>
+          </div>
         </div>
 
         <div className="text-xs sm:text-sm text-zinc-800 dark:text-zinc-200 leading-relaxed whitespace-pre-wrap">

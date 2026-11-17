@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { useActionPermission } from "@/hooks/use-action-permission";
 import { useUpdateUser } from "@/hooks/use-admin-user";
 import { ApiFail } from "@/lib/http";
 import { handleErrorApi } from "@/lib/utils";
@@ -58,6 +59,8 @@ interface EditUserDialogProps {
 // - Dialog được điều khiển từ bảng danh sách (mở khi chọn 1 user, đóng qua onClose).
 // - Khi submit chỉ gửi những trường THAY ĐỔI so với dữ liệu gốc.
 export function EditUserDialog({ user, onClose }: EditUserDialogProps) {
+  const { can } = useActionPermission();
+  const canUpdate = can("PATCH", "/api/users/:id");
   const router = useRouter();
   const t = useTranslations("adminUsers");
   const tCommon = useTranslations("adminCommon");
@@ -162,6 +165,10 @@ export function EditUserDialog({ user, onClose }: EditUserDialogProps) {
         },
       },
     );
+  }
+
+  if (!canUpdate) {
+    return null;
   }
 
   return (

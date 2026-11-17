@@ -200,10 +200,13 @@ export class DisputeService {
         throw DisputeNotFoundException();
       }
 
+      const isStaff =
+        roleName === RoleName.ADMIN ||
+        (roleName !== RoleName.CLIENT && roleName !== RoleName.FREELANCER);
       const isParticipant =
         dispute.openedById === userId ||
         dispute.respondentId === userId ||
-        roleName === RoleName.ADMIN;
+        isStaff;
       if (!isParticipant) {
         throw DisputeForbiddenException();
       }
@@ -231,10 +234,13 @@ export class DisputeService {
         throw DisputeNotFoundException();
       }
 
+      const isStaff =
+        roleName === RoleName.ADMIN ||
+        (roleName !== RoleName.CLIENT && roleName !== RoleName.FREELANCER);
       const isParticipant =
         dispute.openedById === userId ||
         dispute.respondentId === userId ||
-        roleName === RoleName.ADMIN;
+        isStaff;
       if (!isParticipant) {
         throw DisputeForbiddenException();
       }
@@ -265,7 +271,7 @@ export class DisputeService {
    */
   async adminListDisputes(roleName: string, query: GetDisputeListQueryType) {
     try {
-      if (roleName !== RoleName.ADMIN) {
+      if (roleName === RoleName.CLIENT || roleName === RoleName.FREELANCER) {
         throw DisputeForbiddenException();
       }
 
@@ -287,7 +293,7 @@ export class DisputeService {
     body: AdminDisputeDecisionBodyType,
   ) {
     try {
-      if (roleName !== RoleName.ADMIN) {
+      if (roleName === RoleName.CLIENT || roleName === RoleName.FREELANCER) {
         throw DisputeForbiddenException();
       }
 
@@ -424,7 +430,7 @@ export class DisputeService {
     body: AdminDisputeFinalDecisionBodyType,
   ) {
     try {
-      if (roleName !== RoleName.ADMIN) {
+      if (roleName === RoleName.CLIENT || roleName === RoleName.FREELANCER) {
         throw DisputeForbiddenException();
       }
 

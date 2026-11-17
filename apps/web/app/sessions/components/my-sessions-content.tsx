@@ -16,6 +16,7 @@ import {
 import { Footer } from "@/components/footer";
 import type { HeaderProps } from "@/components/header";
 import { Header } from "@/components/header";
+import { useActionPermission } from "@/hooks/use-action-permission";
 import { useSessions } from "@/hooks/use-session";
 import { Badge } from "@repo/ui/components/shadcn/badge";
 import { Button } from "@repo/ui/components/shadcn/button";
@@ -101,6 +102,11 @@ export function MySessionsContent({
   const t = useTranslations("sessions");
   const tCommon = useTranslations("common");
   const format = useFormatter();
+  const { can } = useActionPermission();
+
+  const canViewSessions = can("GET", "/api/sessions");
+  const canViewSessionDetail = can("GET", "/api/sessions/:id");
+  const canRevokeSession = can("DELETE", "/api/sessions/:id");
 
   const formatDate = (value: Date | string) =>
     format.dateTime(new Date(value), {
@@ -150,13 +156,16 @@ export function MySessionsContent({
     [pathname, router, searchParams],
   );
 
-  const { data, isLoading, isFetching, isError } = useSessions({
-    page,
-    limit: PAGE_SIZE,
-    search: searchParam || undefined,
-    sortBy,
-    order,
-  });
+  const { data, isLoading, isFetching, isError } = useSessions(
+    {
+      page,
+      limit: PAGE_SIZE,
+      search: searchParam || undefined,
+      sortBy,
+      order,
+    },
+    canViewSessions,
+  );
 
   const sessions = (data?.sessions ?? []).filter(
     (session) => !isExpired(session.expiresAt),
@@ -264,7 +273,17 @@ export function MySessionsContent({
     </form>
   );
 
-  const sessionListContent = (
+  const sessionListContent = !canViewSessions ? (
+    <div className="rounded-xl border border-border bg-card p-12 text-center text-muted-foreground shadow-sm">
+      <MonitorSmartphone className="mx-auto size-10 text-muted-foreground/60 mb-3" />
+      <p className="font-medium text-base text-foreground">
+        Không có quyền truy cập
+      </p>
+      <p className="text-sm mt-1 text-muted-foreground">
+        Bạn không có quyền xem danh sách phiên đăng nhập (#175).
+      </p>
+    </div>
+  ) : (
     <>
       {isError ? (
         <p className="py-12 text-center text-sm text-muted-foreground">
@@ -405,21 +424,25 @@ export function MySessionsContent({
                         </TableCell>
                         <TableCell className="text-right">
                           <div className="inline-flex items-center justify-end gap-1">
-                            <ViewSessionButton
-                              sessionId={session.id}
-                              onView={setDetailSessionId}
-                            />
-                            <RevokeSessionDialog
-                              sessionId={session.id}
-                              deviceInfo={session.deviceInfo}
-                              isCurrent={session.isCurrent}
-                              isExpired={expired}
-                              onRevoked={() => {
-                                if (detailSessionId === session.id) {
-                                  setDetailSessionId(null);
-                                }
-                              }}
-                            />
+                            {canViewSessionDetail && (
+                              <ViewSessionButton
+                                sessionId={session.id}
+                                onView={setDetailSessionId}
+                              />
+                            )}
+                            {canRevokeSession && (
+                              <RevokeSessionDialog
+                                sessionId={session.id}
+                                deviceInfo={session.deviceInfo}
+                                isCurrent={session.isCurrent}
+                                isExpired={expired}
+                                onRevoked={() => {
+                                  if (detailSessionId === session.id) {
+                                    setDetailSessionId(null);
+                                  }
+                                }}
+                              />
+                            )}
                           </div>
                         </TableCell>
                       </TableRow>
@@ -532,7 +555,7 @@ export function MySessionsContent({
           </p>
         </div>
 
-        {searchForm}
+        {canViewSessions && searchForm}
         {sessionListContent}
       </div>
     );
@@ -564,7 +587,7 @@ export function MySessionsContent({
         </section>
 
         <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 lg:py-10">
-          {searchForm}
+          {canViewSessions && searchForm}
           {sessionListContent}
         </div>
       </main>

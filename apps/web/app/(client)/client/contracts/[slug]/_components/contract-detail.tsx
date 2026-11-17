@@ -22,6 +22,7 @@ import { ConversationSocketContext } from "@/app/conversations/components/conver
 import { ChatView } from "@/app/conversations/components/chat-view";
 import { contractApiRequest, extractContractData } from "@/apiRequests/contract";
 import { paymentApiRequest } from "@/apiRequests/payment";
+import { useActionPermission } from "@/hooks/use-action-permission";
 import { ApiFail } from "@/lib/http";
 import type {
   ContractDetailType,
@@ -63,6 +64,14 @@ export function ContractDetail({
   const tStatus = useTranslations("contractStatus");
   const tRole = useTranslations("roleName");
   const format = useFormatter();
+  const { can } = useActionPermission();
+  const canViewMilestones = can("GET", "/api/contracts/:contractId/milestones");
+  const canUpdateContract = can("PATCH", "/api/contracts/:id");
+  const canSignContract = can("PATCH", "/api/contracts/:id/sign");
+  const canCompleteContract = can("PATCH", "/api/contracts/:id/complete");
+  const canCancelContract = can("PATCH", "/api/contracts/:id/cancel");
+  const canRejectContract = can("PATCH", "/api/contracts/:id/reject");
+  const canViewSharedFiles = can("GET", "/api/contracts/:contractId/files");
 
   const isFreelancer = basePath === "/freelancer";
 
@@ -150,9 +159,10 @@ export function ContractDetail({
   // Shared Files / PDF Query
   const { data: sharedFilesList = [] } = useQuery<GetSharedFilesResponseType>({
     queryKey: ["contract-shared-files", contract.id],
+    enabled: canViewSharedFiles,
     queryFn: () =>
       contractApiRequest.getSharedFiles(contract.id).then(extractContractData),
-    initialData: initialSharedFiles ?? undefined,
+    initialData: canViewSharedFiles ? (initialSharedFiles ?? undefined) : [],
   });
 
   const contractPdfFile = useMemo(() => {
@@ -264,6 +274,7 @@ export function ContractDetail({
 
   // Sign Action
   const handleSign = async () => {
+    if (!canSignContract) return;
     setIsSigning(true);
     try {
       await contractApiRequest.sign(contract.id);
@@ -321,6 +332,7 @@ export function ContractDetail({
 
   // Complete Action
   const handleComplete = async () => {
+    if (!canCompleteContract) return;
     setIsCompleting(true);
     try {
       await contractApiRequest.complete(contract.id);
@@ -346,6 +358,7 @@ export function ContractDetail({
 
   // Cancel Action
   const handleCancel = async () => {
+    if (!canCancelContract) return;
     setIsCancelling(true);
     try {
       await contractApiRequest.cancel(contract.id);
@@ -372,6 +385,7 @@ export function ContractDetail({
 
   // Reject Offer Action (Freelancer)
   const handleReject = async () => {
+    if (!canRejectContract) return;
     setIsRejecting(true);
     try {
       await contractApiRequest.reject(
@@ -416,13 +430,17 @@ export function ContractDetail({
         <span className="font-semibold text-foreground">
           {contract.slug || `#CON-${contract.id}`}
         </span>
-        <span className="text-muted-foreground/60">/</span>
-        <Link
-          href={`${basePath}/contracts/${encodeURIComponent(contract.slug || String(contract.id))}/milestones`}
-          className="font-medium text-muted-foreground hover:text-[#0069D3] transition-colors"
-        >
-          Milestone
-        </Link>
+        {canViewMilestones && (
+          <>
+            <span className="text-muted-foreground/60">/</span>
+            <Link
+              href={`${basePath}/contracts/${encodeURIComponent(contract.slug || String(contract.id))}/milestones`}
+              className="font-medium text-muted-foreground hover:text-[#0069D3] transition-colors"
+            >
+              Milestone
+            </Link>
+          </>
+        )}
       </div>
 
       {/* ── Main 2-Column Grid ── */}
@@ -473,16 +491,18 @@ export function ContractDetail({
           />
 
           {/* Shared Files & Documents (Displayed under actions) */}
-          <ContractSharedFilesSidebar
-            contractId={contract.id}
-            sharedFiles={sharedFilesList}
-            isFreelancer={isFreelancer}
-          />
+          {canViewSharedFiles && (
+            <ContractSharedFilesSidebar
+              contractId={contract.id}
+              sharedFiles={sharedFilesList}
+              isFreelancer={isFreelancer}
+            />
+          )}
         </div>
       </div>
 
       {/* Sheet: Edit Contract Agreement Terms (Scope & Total budget) */}
-      {!isFreelancer && (
+      {!isFreelancer && canUpdateContract && (
         <EditContractSheet
           open={editContractOpen}
           onOpenChange={setEditContractOpen}

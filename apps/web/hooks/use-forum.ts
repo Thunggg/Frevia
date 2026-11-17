@@ -69,6 +69,7 @@ export function useForumComments(
   postId: number,
   page: number = 1,
   limit: number = 5,
+  enabled: boolean = true,
 ) {
   const extractData = useApiDataExtractor("forum");
 
@@ -76,7 +77,7 @@ export function useForumComments(
     queryKey: forumKeys.comments(postId),
     queryFn: () =>
       forumApiRequest.getComments(postId, page, limit).then(extractData),
-    enabled: postId > 0,
+    enabled: postId > 0 && enabled,
     staleTime: 45 * 1000, // 45 giây
   });
 }

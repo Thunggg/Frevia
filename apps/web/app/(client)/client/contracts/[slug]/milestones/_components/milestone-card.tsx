@@ -17,6 +17,7 @@ import {
   Upload,
 } from "lucide-react";
 import { Button } from "@repo/ui/components/shadcn/button";
+import { useActionPermission } from "@/hooks/use-action-permission";
 import type { MilestoneType } from "@shared/types";
 import { MilestoneMiniStepper } from "./milestone-mini-stepper";
 
@@ -35,9 +36,12 @@ export interface MilestoneCardProps {
   onDelete?: (milestone: MilestoneType) => void;
   onFund?: (milestone: MilestoneType) => void;
   onRelease?: (milestone: MilestoneType) => void;
+  onRefund?: (milestone: MilestoneType) => void;
   onReview?: (milestone: MilestoneType) => void;
   onSubmitWork?: (milestone: MilestoneType) => void;
   onStartWork?: (milestone: MilestoneType) => void;
+  onOpenDispute?: (milestone: MilestoneType) => void;
+  onViewDispute?: (milestone: MilestoneType) => void;
 }
 
 export function MilestoneCard({
@@ -55,11 +59,38 @@ export function MilestoneCard({
   onDelete,
   onFund,
   onRelease,
+  onRefund,
   onReview,
   onSubmitWork,
   onStartWork,
+  onOpenDispute,
+  onViewDispute,
 }: MilestoneCardProps) {
   const format = useFormatter();
+  const { can, canAny } = useActionPermission();
+
+  const canViewDetail = can("GET", "/api/contracts/:contractId/milestones/:id");
+  const canEditPermission = can("PATCH", "/api/contracts/:contractId/milestones/:id");
+  const canDeletePermission = can("DELETE", "/api/contracts/:contractId/milestones/:id");
+  const canProgressPermission = can("PATCH", "/api/contracts/:contractId/milestones/:id/progress");
+  const canSubmitPermission = can("POST", "/api/contracts/:contractId/milestones/:milestoneId/submissions");
+  const canApprovePermission = can("PATCH", "/api/contracts/:contractId/milestones/:milestoneId/submissions/:id/approve");
+  const canRequestChangesPermission = can("PATCH", "/api/contracts/:contractId/milestones/:milestoneId/submissions/:id/request-changes");
+  const canReviewPermission = canApprovePermission || canRequestChangesPermission;
+
+  const canCreateDisputePermission = can("POST", "/api/disputes");
+  const canViewDisputePermission = can(
+    "GET",
+    "/api/disputes/milestone/:milestoneId",
+  );
+
+  const canFundPermission = canAny([
+    { method: "POST", path: "/api/payments/contracts/:contractId/milestones/:milestoneId/fund/intent" },
+    { method: "POST", path: "/api/payments/contracts/:contractId/milestones/:milestoneId/fund/checkout-session" },
+    { method: "POST", path: "/api/payments/contracts/:contractId/milestones/:milestoneId/fund/saved-card" },
+  ]);
+  const canReleasePermission = can("POST", "/api/payments/contracts/:contractId/milestones/:milestoneId/release");
+  const canRefundPermission = can("POST", "/api/payments/contracts/:contractId/milestones/:milestoneId/refund");
 
   const slugParam = contractSlug || String(contractId);
   const detailUrl = `${basePath}/contracts/${slugParam}/milestones/${milestone.id}`;
@@ -78,6 +109,7 @@ export function MilestoneCard({
   const isOverdue =
     milestone.dueDate &&
     milestone.status !== "COMPLETED" &&
+    milestone.status !== "LATE" &&
     new Date(milestone.dueDate).getTime() < new Date().getTime();
 
   // Status without border and without background color
@@ -88,6 +120,13 @@ export function MilestoneCard({
           <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-600 dark:text-emerald-400">
             <CheckCircle2 className="size-3.5" />
             <span>Completed</span>
+          </span>
+        );
+      case "LATE":
+        return (
+          <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-rose-600 dark:text-rose-400">
+            <AlertTriangle className="size-3.5" />
+            <span>Late</span>
           </span>
         );
       case "SUBMITTED":
@@ -172,6 +211,12 @@ export function MilestoneCard({
     milestone.status === "COMPLETED" &&
     milestone.paymentStatus === "FUNDED" &&
     Boolean(onRelease);
+  const canRefundMilestone =
+    isClient &&
+    contractStatus === "ACTIVE" &&
+    milestone.paymentStatus === "FUNDED" &&
+    (milestone.status === "LATE" || milestone.status === "PENDING") &&
+    Boolean(onRefund);
 
   if (variant === "card") {
     return (
@@ -181,12 +226,18 @@ export function MilestoneCard({
             <span className="font-mono text-xs font-bold text-zinc-950 dark:text-zinc-100 block">
               {milestoneCode}
             </span>
-            <Link
-              href={detailUrl}
-              className="font-bold text-sm text-zinc-900 dark:text-zinc-100 hover:text-[#0069D3] transition-colors line-clamp-1 mt-0.5"
-            >
-              {milestone.title}
-            </Link>
+            {canViewDetail ? (
+              <Link
+                href={detailUrl}
+                className="font-bold text-sm text-zinc-900 dark:text-zinc-100 hover:text-[#0069D3] transition-colors line-clamp-1 mt-0.5"
+              >
+                {milestone.title}
+              </Link>
+            ) : (
+              <span className="font-bold text-sm text-zinc-900 dark:text-zinc-100 line-clamp-1 mt-0.5">
+                {milestone.title}
+              </span>
+            )}
           </div>
           <span className="font-mono text-sm font-bold text-zinc-950 dark:text-zinc-50 shrink-0">
             ${Number(milestone.amount).toLocaleString("en-US", {
@@ -214,19 +265,21 @@ export function MilestoneCard({
         {/* Action Row */}
         <div className="flex flex-wrap items-center justify-between gap-2 pt-1">
           <div className="flex items-center gap-1.5">
-            <Button
-              asChild
-              variant="outline"
-              size="sm"
-              className="h-8 rounded-lg border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-xs font-medium"
-            >
-              <Link href={detailUrl} className="inline-flex items-center gap-1">
-                <span>View Details</span>
-                <ArrowRight className="size-3" />
-              </Link>
-            </Button>
+            {canViewDetail && (
+              <Button
+                asChild
+                variant="outline"
+                size="sm"
+                className="h-8 rounded-lg border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-xs font-medium"
+              >
+                <Link href={detailUrl} className="inline-flex items-center gap-1">
+                  <span>View Details</span>
+                  <ArrowRight className="size-3" />
+                </Link>
+              </Button>
+            )}
 
-            {canEdit && onEdit && (
+            {canEdit && canEditPermission && onEdit && (
               <Button
                 variant="outline"
                 size="sm"
@@ -238,7 +291,7 @@ export function MilestoneCard({
               </Button>
             )}
 
-            {canEdit && onDelete && (
+            {canEdit && canDeletePermission && onDelete && (
               <Button
                 variant="outline"
                 size="sm"
@@ -251,7 +304,7 @@ export function MilestoneCard({
           </div>
 
           <div className="flex items-center gap-1.5">
-            {canFundMilestone && onFund && (
+            {canFundMilestone && canFundPermission && onFund && (
               <Button
                 size="sm"
                 onClick={() => onFund(milestone)}
@@ -261,7 +314,7 @@ export function MilestoneCard({
               </Button>
             )}
 
-            {canReleaseMilestone && onRelease && (
+            {canReleaseMilestone && canReleasePermission && onRelease && (
               <Button
                 size="sm"
                 onClick={() => onRelease(milestone)}
@@ -271,8 +324,36 @@ export function MilestoneCard({
               </Button>
             )}
 
+            {canRefundMilestone && canRefundPermission && onRefund && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => onRefund(milestone)}
+                className="h-8 rounded-lg border-rose-200 dark:border-rose-800 bg-white dark:bg-zinc-900 text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/30 text-xs font-semibold px-3 cursor-pointer"
+              >
+                Refund
+              </Button>
+            )}
+
+            {isFreelancer &&
+              milestone.status === "PENDING" &&
+              milestone.paymentStatus === "FUNDED" &&
+              canProgressPermission &&
+              onStartWork && (
+                <Button
+                  size="sm"
+                  disabled={hasOtherInProgressMilestone}
+                  onClick={() => onStartWork(milestone)}
+                  className="h-8 rounded-lg bg-[#0069D3] hover:bg-[#0055b3] text-white text-xs font-semibold px-3"
+                >
+                  <Play className="mr-1 size-3" />
+                  Start
+                </Button>
+              )}
+
             {isFreelancer &&
               milestone.status === "IN_PROGRESS" &&
+              canSubmitPermission &&
               onSubmitWork && (
                 <Button
                   size="sm"
@@ -280,6 +361,48 @@ export function MilestoneCard({
                   className="h-8 rounded-lg bg-[#0069D3] hover:bg-[#0055b3] text-white text-xs font-semibold px-3"
                 >
                   Submit Work
+                </Button>
+              )}
+
+            {isFreelancer &&
+              milestone.status === "CHANGES_REQUESTED" &&
+              canSubmitPermission &&
+              onSubmitWork && (
+                <Button
+                  size="sm"
+                  onClick={() => onSubmitWork(milestone)}
+                  className="h-8 rounded-lg bg-amber-600 hover:bg-amber-700 text-white text-xs font-semibold px-3"
+                >
+                  <RotateCcw className="mr-1 size-3" />
+                  Resubmit
+                </Button>
+              )}
+
+            {milestone.status === "DISPUTED" &&
+              canViewDisputePermission &&
+              onViewDispute && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => onViewDispute(milestone)}
+                  className="h-8 rounded-lg border-rose-200 dark:border-rose-800 bg-white dark:bg-zinc-900 text-rose-600 hover:bg-rose-50 text-xs font-semibold px-3 cursor-pointer"
+                >
+                  View Dispute
+                </Button>
+              )}
+
+            {milestone.status !== "COMPLETED" &&
+              milestone.status !== "DISPUTED" &&
+              milestone.paymentStatus === "FUNDED" &&
+              canCreateDisputePermission &&
+              onOpenDispute && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => onOpenDispute(milestone)}
+                  className="h-8 rounded-lg border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-600 hover:text-rose-600 text-xs font-semibold px-3 cursor-pointer"
+                >
+                  Dispute
                 </Button>
               )}
           </div>
@@ -292,12 +415,18 @@ export function MilestoneCard({
     <tr className="border-b border-zinc-100 dark:border-zinc-800/80 hover:bg-zinc-50/60 dark:hover:bg-zinc-900/40 transition-colors">
       {/* Milestone ID & Code */}
       <td className="py-4 px-4 text-xs">
-        <Link
-          href={detailUrl}
-          className="font-mono font-bold text-zinc-950 dark:text-zinc-100 hover:text-[#0069D3] transition-colors block"
-        >
-          {milestoneCode}
-        </Link>
+        {canViewDetail ? (
+          <Link
+            href={detailUrl}
+            className="font-mono font-bold text-zinc-950 dark:text-zinc-100 hover:text-[#0069D3] transition-colors block"
+          >
+            {milestoneCode}
+          </Link>
+        ) : (
+          <span className="font-mono font-bold text-zinc-950 dark:text-zinc-100 block">
+            {milestoneCode}
+          </span>
+        )}
         <span className="text-[11px] text-zinc-400 dark:text-zinc-500 block truncate max-w-[120px]">
           Step {index + 1}
         </span>
@@ -305,12 +434,18 @@ export function MilestoneCard({
 
       {/* Milestone Title & Scope */}
       <td className="py-4 px-4 text-xs max-w-xs">
-        <Link
-          href={detailUrl}
-          className="font-semibold text-zinc-900 dark:text-zinc-100 hover:text-[#0069D3] transition-colors line-clamp-1"
-        >
-          {milestone.title}
-        </Link>
+        {canViewDetail ? (
+          <Link
+            href={detailUrl}
+            className="font-semibold text-zinc-900 dark:text-zinc-100 hover:text-[#0069D3] transition-colors line-clamp-1"
+          >
+            {milestone.title}
+          </Link>
+        ) : (
+          <span className="font-semibold text-zinc-900 dark:text-zinc-100 line-clamp-1">
+            {milestone.title}
+          </span>
+        )}
         {milestone.description && (
           <p className="text-[11px] text-zinc-500 dark:text-zinc-400 line-clamp-1 mt-0.5">
             {milestone.description}
@@ -349,7 +484,7 @@ export function MilestoneCard({
       <td className="py-4 px-4 text-xs text-right whitespace-nowrap">
         <div className="inline-flex items-center justify-end gap-2">
           {/* Quick Action Button if pending action */}
-          {canFundMilestone && onFund && (
+          {canFundMilestone && canFundPermission && onFund && (
             <Button
               size="sm"
               onClick={() => onFund(milestone)}
@@ -360,7 +495,7 @@ export function MilestoneCard({
             </Button>
           )}
 
-          {canReleaseMilestone && onRelease && (
+          {canReleaseMilestone && canReleasePermission && onRelease && (
             <Button
               size="sm"
               onClick={() => onRelease(milestone)}
@@ -370,8 +505,20 @@ export function MilestoneCard({
             </Button>
           )}
 
+          {canRefundMilestone && canRefundPermission && onRefund && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => onRefund(milestone)}
+              className="h-8 rounded-lg border-rose-200 dark:border-rose-800 bg-white dark:bg-zinc-900 text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/30 text-xs font-semibold px-3 cursor-pointer"
+            >
+              Refund
+            </Button>
+          )}
+
           {isClient &&
             milestone.status === "SUBMITTED" &&
+            canReviewPermission &&
             onReview && (
               <Button
                 size="sm"
@@ -386,6 +533,7 @@ export function MilestoneCard({
           {isFreelancer &&
             milestone.status === "PENDING" &&
             milestone.paymentStatus === "FUNDED" &&
+            canProgressPermission &&
             onStartWork && (
               <Button
                 size="sm"
@@ -400,6 +548,7 @@ export function MilestoneCard({
 
           {isFreelancer &&
             milestone.status === "IN_PROGRESS" &&
+            canSubmitPermission &&
             onSubmitWork && (
               <Button
                 size="sm"
@@ -413,6 +562,7 @@ export function MilestoneCard({
 
           {isFreelancer &&
             milestone.status === "CHANGES_REQUESTED" &&
+            canSubmitPermission &&
             onSubmitWork && (
               <Button
                 size="sm"
@@ -424,21 +574,53 @@ export function MilestoneCard({
               </Button>
             )}
 
+          {milestone.status === "DISPUTED" &&
+            canViewDisputePermission &&
+            onViewDispute && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => onViewDispute(milestone)}
+                className="h-8 rounded-lg border-rose-200 dark:border-rose-800 bg-white dark:bg-zinc-900 text-xs text-rose-600 hover:bg-rose-50 px-2.5 cursor-pointer"
+                title="View Dispute"
+              >
+                <span>View Dispute</span>
+              </Button>
+            )}
+
+          {milestone.status !== "COMPLETED" &&
+            milestone.status !== "DISPUTED" &&
+            milestone.paymentStatus === "FUNDED" &&
+            canCreateDisputePermission &&
+            onOpenDispute && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => onOpenDispute(milestone)}
+                className="h-8 rounded-lg border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-xs text-zinc-600 hover:text-rose-600 px-2.5 cursor-pointer"
+                title="Dispute Milestone"
+              >
+                <span>Dispute</span>
+              </Button>
+            )}
+
           {/* View Details link */}
-          <Button
-            asChild
-            variant="outline"
-            size="sm"
-            className="h-8 rounded-lg border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-800 dark:text-zinc-200 hover:bg-zinc-100 text-xs font-medium px-2.5"
-          >
-            <Link href={detailUrl} className="inline-flex items-center gap-1">
-              <span>View</span>
-              <ArrowRight className="size-3" />
-            </Link>
-          </Button>
+          {canViewDetail && (
+            <Button
+              asChild
+              variant="outline"
+              size="sm"
+              className="h-8 rounded-lg border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-800 dark:text-zinc-200 hover:bg-zinc-100 text-xs font-medium px-2.5"
+            >
+              <Link href={detailUrl} className="inline-flex items-center gap-1">
+                <span>View</span>
+                <ArrowRight className="size-3" />
+              </Link>
+            </Button>
+          )}
 
           {/* Edit / Delete direct buttons for Client when milestone is pending & unpaid */}
-          {canEdit && onEdit && (
+          {canEdit && canEditPermission && onEdit && (
             <Button
               variant="outline"
               size="sm"
@@ -451,7 +633,7 @@ export function MilestoneCard({
             </Button>
           )}
 
-          {canEdit && onDelete && (
+          {canEdit && canDeletePermission && onDelete && (
             <Button
               variant="outline"
               size="sm"

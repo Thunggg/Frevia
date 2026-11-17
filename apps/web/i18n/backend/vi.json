@@ -207,6 +207,7 @@
   "Error.JobStatusInvalid": "Trạng thái công việc không hợp lệ",
   "Error.MessageAccessDenied": "Bạn không có quyền truy cập tin nhắn này",
   "Error.MessageNotFound": "Không tìm thấy tin nhắn",
+  "Error.MilestoneNotEligibleForRefund": "Chỉ có thể tự động hoàn tiền khi cột mốc đã trễ hạn (Late) hoặc freelancer chưa bắt đầu làm việc.",
   "Error.MissingRoleInToken": "Phiên đăng nhập không có vai trò. Vui lòng đăng nhập lại",
   "Error.NotAnExpertAccount": "Tài khoản này không phải tài khoản chuyên gia",
   "Error.NothingToUpdate": "Không có thông tin nào để cập nhật",

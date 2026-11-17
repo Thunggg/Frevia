@@ -19,10 +19,14 @@ import {
   JobCategoryNameAlreadyExistsException,
 } from './job-categories-admin.error';
 import { JobCategoriesAdminRepository } from './job-categories-admin.repo';
+import { CacheService } from '../../shared/services/cache.service';
 
 @Injectable()
 export class JobCategoriesAdminService {
-  constructor(private readonly repository: JobCategoriesAdminRepository) {}
+  constructor(
+    private readonly repository: JobCategoriesAdminRepository,
+    private readonly cacheService?: CacheService,
+  ) {}
 
   // Danh sách danh mục công việc (UC-46.01)
   async listJobCategories(
@@ -61,7 +65,9 @@ export class JobCategoriesAdminService {
     body: AdminCreateJobCategoryBodyType,
   ): Promise<JobCategoryAdminDetailResponseType> {
     try {
-      return await this.repository.createJobCategory(body);
+      const result = await this.repository.createJobCategory(body);
+      this.cacheService?.delByPrefix('job_categor');
+      return result;
     } catch (error) {
       // Chống race condition khi 2 request tạo cùng lúc (vi phạm partial unique index)
       if (
@@ -83,7 +89,9 @@ export class JobCategoriesAdminService {
     body: AdminUpdateJobCategoryBodyType,
   ): Promise<JobCategoryAdminDetailResponseType> {
     try {
-      return await this.repository.updateJobCategory(id, body);
+      const result = await this.repository.updateJobCategory(id, body);
+      this.cacheService?.delByPrefix('job_categor');
+      return result;
     } catch (error) {
       if (
         error instanceof PrismaClientKnownRequestError &&
@@ -103,7 +111,9 @@ export class JobCategoriesAdminService {
     id: number,
   ): Promise<JobCategoryAdminDeleteResponseType> {
     try {
-      return await this.repository.deleteJobCategory(id);
+      const result = await this.repository.deleteJobCategory(id);
+      this.cacheService?.delByPrefix('job_categor');
+      return result;
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;
@@ -117,7 +127,9 @@ export class JobCategoriesAdminService {
     id: number,
   ): Promise<JobCategoryAdminDetailResponseType> {
     try {
-      return await this.repository.restoreJobCategory(id);
+      const result = await this.repository.restoreJobCategory(id);
+      this.cacheService?.delByPrefix('job_categor');
+      return result;
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;

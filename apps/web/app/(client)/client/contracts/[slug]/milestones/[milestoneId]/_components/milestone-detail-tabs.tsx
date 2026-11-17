@@ -9,6 +9,8 @@ interface MilestoneDetailTabsProps {
   onTabChange: (tab: MilestoneTabKey) => void;
   submissionCount?: number;
   fileCount?: number;
+  canViewSubmissions?: boolean;
+  canViewFiles?: boolean;
 }
 
 export function MilestoneDetailTabs({
@@ -16,31 +18,39 @@ export function MilestoneDetailTabs({
   onTabChange,
   submissionCount = 0,
   fileCount = 0,
+  canViewSubmissions = true,
+  canViewFiles = true,
 }: MilestoneDetailTabsProps) {
-  const tabs = [
+  const allTabs = [
     {
       key: "overview" as const,
       label: "Overview",
       icon: Layers,
+      visible: true,
     },
     {
       key: "submissions" as const,
       label: "Deliverables & Submissions",
       icon: FolderGit2,
       count: submissionCount,
+      visible: canViewSubmissions,
     },
     {
       key: "files" as const,
       label: "Milestone Files",
       icon: FileText,
       count: fileCount,
+      visible: canViewFiles,
     },
     {
       key: "activity" as const,
       label: "Activity & History",
       icon: Activity,
+      visible: true,
     },
   ];
+
+  const tabs = allTabs.filter((t) => t.visible);
 
   return (
     <div className="border-b border-zinc-200/80 dark:border-zinc-800">

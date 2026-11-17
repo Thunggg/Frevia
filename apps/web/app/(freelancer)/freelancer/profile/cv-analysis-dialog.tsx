@@ -1,6 +1,7 @@
 "use client";
 
 import { profileApiRequest } from "@/apiRequests/profile";
+import { useActionPermission } from "@/hooks/use-action-permission";
 import { ApiFail } from "@/lib/http";
 import {
   AlertDialog,
@@ -102,6 +103,16 @@ export function CvAnalysisDialog({
   const t = useTranslations("cvAnalysis");
   const tCommon = useTranslations("common");
 
+  const { can } = useActionPermission();
+  const canConfirm = can(
+    "POST",
+    "/api/profiles/:id/cv/analysis/:analysisId/confirm",
+  );
+  const canDiscard = can(
+    "POST",
+    "/api/profiles/:id/cv/analysis/:analysisId/discard",
+  );
+
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [discardOpen, setDiscardOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -169,6 +180,7 @@ export function CvAnalysisDialog({
     );
 
   const handleConfirm = async () => {
+    if (!canConfirm) return;
     setSubmitting(true);
     setPendingAction("confirm");
     try {
@@ -257,6 +269,7 @@ export function CvAnalysisDialog({
   };
 
   const handleDiscard = async () => {
+    if (!canDiscard) return;
     setSubmitting(true);
     setPendingAction("discard");
     try {
@@ -771,19 +784,21 @@ export function CvAnalysisDialog({
           </div>
 
           <DialogFooter className="gap-2 sm:justify-between">
-            <Button
-              type="button"
-              variant="destructive"
-              onClick={() => setDiscardOpen(true)}
-              disabled={submitting}
-            >
-              {pendingAction === "discard" && submitting ? (
-                <Loader2 className="animate-spin" />
-              ) : (
-                <Trash2 className="size-4" />
-              )}
-              {t("discardAction")}
-            </Button>
+            {canDiscard && (
+              <Button
+                type="button"
+                variant="destructive"
+                onClick={() => setDiscardOpen(true)}
+                disabled={submitting}
+              >
+                {pendingAction === "discard" && submitting ? (
+                  <Loader2 className="animate-spin" />
+                ) : (
+                  <Trash2 className="size-4" />
+                )}
+                {t("discardAction")}
+              </Button>
+            )}
             <div className="flex gap-2">
               <Button
                 type="button"
@@ -794,18 +809,20 @@ export function CvAnalysisDialog({
                 <X className="size-4" />
                 {t("cancel")}
               </Button>
-              <Button
-                type="button"
-                onClick={() => setConfirmOpen(true)}
-                disabled={submitting || selectedCount === 0}
-              >
-                {pendingAction === "confirm" && submitting ? (
-                  <Loader2 className="animate-spin" />
-                ) : (
-                  <Check className="size-4" />
-                )}
-                {t("confirmAction")}
-              </Button>
+              {canConfirm && (
+                <Button
+                  type="button"
+                  onClick={() => setConfirmOpen(true)}
+                  disabled={submitting || selectedCount === 0}
+                >
+                  {pendingAction === "confirm" && submitting ? (
+                    <Loader2 className="animate-spin" />
+                  ) : (
+                    <Check className="size-4" />
+                  )}
+                  {t("confirmAction")}
+                </Button>
+              )}
             </div>
           </DialogFooter>
         </DialogContent>

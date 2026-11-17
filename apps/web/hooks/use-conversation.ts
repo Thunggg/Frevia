@@ -46,7 +46,7 @@ function sortByLastMessage(items: GetConversationsResponseType) {
  * Lấy danh sách hội thoại của user hiện tại.
  * Mỗi hội thoại kèm tin nhắn cuối (preview) và số tin nhắn chưa đọc.
  */
-export function useConversations() {
+export function useConversations(enabled = true) {
   const extractData = useApiDataExtractor("chat");
 
   return useQuery({
@@ -54,6 +54,7 @@ export function useConversations() {
     queryFn: () =>
       conversationApiRequest.getConversations().then(extractData),
     staleTime: 30 * 1000,
+    enabled,
   });
 }
 
@@ -62,6 +63,7 @@ export function useConversations() {
  */
 export function useConversationDetail(
   conversationIdOrSlug: number | string | null | undefined,
+  enabled = true,
 ) {
   const extractData = useApiDataExtractor("chat");
 
@@ -75,7 +77,7 @@ export function useConversationDetail(
             .getConversation(conversationIdOrSlug)
             .then(extractData)
         : null,
-    enabled: Boolean(conversationIdOrSlug),
+    enabled: Boolean(conversationIdOrSlug) && enabled,
     staleTime: 30 * 1000,
   });
 }
@@ -85,6 +87,7 @@ export function useConversationDetail(
  */
 export function useConversationMessages(
   conversationId: number | string,
+  enabled = true,
 ) {
   const extractData = useApiDataExtractor("chat");
 
@@ -95,9 +98,9 @@ export function useConversationMessages(
         .getMessages(conversationId)
         .then(extractData),
     enabled:
-      typeof conversationId === "number"
+      (typeof conversationId === "number"
         ? conversationId > 0
-        : Boolean(conversationId && conversationId.trim()),
+        : Boolean(conversationId && conversationId.trim())) && enabled,
     staleTime: 15 * 1000,
   });
 }

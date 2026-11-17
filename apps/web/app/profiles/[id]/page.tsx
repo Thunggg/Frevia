@@ -18,7 +18,9 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
       ? "FREELANCER"
       : primaryRole === RoleName.CLIENT
         ? "CLIENT"
-        : "GUEST";
+        : currentUser
+          ? "FREELANCER"
+          : "GUEST";
 
   return (
     <ProfilePageClient

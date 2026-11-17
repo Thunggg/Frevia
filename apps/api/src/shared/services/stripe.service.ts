@@ -137,36 +137,46 @@ export class StripeService {
     destination,
     transferGroup,
     metadata,
+    idempotencyKey,
   }: {
     amountInCents: number;
     currency?: string;
     destination: string;
     transferGroup?: string;
     metadata?: Record<string, string>;
+    idempotencyKey?: string;
   }): Promise<Stripe.Transfer> {
-    return this.stripe.transfers.create({
-      amount: Math.round(amountInCents),
-      currency: currency.toLowerCase(),
-      destination,
-      transfer_group: transferGroup,
-      metadata,
-    });
+    return this.stripe.transfers.create(
+      {
+        amount: Math.round(amountInCents),
+        currency: currency.toLowerCase(),
+        destination,
+        transfer_group: transferGroup,
+        metadata,
+      },
+      idempotencyKey ? { idempotencyKey } : undefined,
+    );
   }
 
   async createRefund({
     paymentIntentId,
     amountInCents,
     metadata,
+    idempotencyKey,
   }: {
     paymentIntentId: string;
     amountInCents?: number;
     metadata?: Record<string, string>;
+    idempotencyKey?: string;
   }): Promise<Stripe.Refund> {
-    return this.stripe.refunds.create({
-      payment_intent: paymentIntentId,
-      amount: amountInCents ? Math.round(amountInCents) : undefined,
-      metadata,
-    });
+    return this.stripe.refunds.create(
+      {
+        payment_intent: paymentIntentId,
+        amount: amountInCents ? Math.round(amountInCents) : undefined,
+        metadata,
+      },
+      idempotencyKey ? { idempotencyKey } : undefined,
+    );
   }
 
   async retrievePaymentIntent(

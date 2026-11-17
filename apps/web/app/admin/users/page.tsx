@@ -1,5 +1,7 @@
 import { Suspense } from "react";
 import adminServerRequest from "@/apiRequests/admin.server";
+import authServerRequest from "@/apiRequests/auth.server";
+import { hasActionPermission } from "@/lib/admin-access";
 import { UsersFilterBar } from "./components/users-filter-bar";
 import { UsersTable } from "./components/users-table";
 import { CreateUserDialog } from "./components/create-user-dialog";
@@ -28,6 +30,27 @@ export default async function AdminUsersPage({
   const role = params.role || undefined;
   const sortBy = params.sortBy || undefined;
   const sortOrder = params.sortOrder || undefined;
+
+  const currentUser = await authServerRequest.getMe();
+  const canViewList = hasActionPermission(currentUser, "GET", "/api/users");
+
+  if (!canViewList) {
+    return (
+      <div className="space-y-6">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight flex items-center gap-2">
+            <Users className="h-8 w-8 text-[#4fae2e]" />
+            {t("title")}
+          </h1>
+        </div>
+        <div className="rounded-lg border bg-card p-12 text-center text-muted-foreground">
+          {t("accessDenied")}
+        </div>
+      </div>
+    );
+  }
+
+  const canCreate = hasActionPermission(currentUser, "POST", "/api/users");
 
   const data = await adminServerRequest.getUsers({
     page,
@@ -58,7 +81,7 @@ export default async function AdminUsersPage({
             {t("subtitle")} {t("subtitleTotal", { count: pagination.total })}
           </p>
         </div>
-        <CreateUserDialog />
+        {canCreate && <CreateUserDialog />}
       </div>
 
       <Suspense fallback={<Skeleton className="h-10 w-full" />}>

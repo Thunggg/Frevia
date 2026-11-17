@@ -27,10 +27,13 @@ export class SharedFileService {
         throw ContractNotFoundException();
       }
 
+      const isStaff =
+        roleName === RoleName.ADMIN ||
+        (roleName !== RoleName.CLIENT && roleName !== RoleName.FREELANCER);
       const isParticipant =
         contract.clientId === userId ||
         contract.freelancerId === userId ||
-        roleName === RoleName.ADMIN;
+        isStaff;
 
       if (!isParticipant) {
         throw SharedFileForbiddenException();
@@ -59,10 +62,13 @@ export class SharedFileService {
         throw ContractNotFoundException();
       }
 
+      const isStaff =
+        roleName === RoleName.ADMIN ||
+        (roleName !== RoleName.CLIENT && roleName !== RoleName.FREELANCER);
       const isParticipant =
         contract.clientId === userId ||
         contract.freelancerId === userId ||
-        roleName === RoleName.ADMIN;
+        isStaff;
 
       if (!isParticipant) {
         throw SharedFileForbiddenException();
@@ -108,7 +114,9 @@ export class SharedFileService {
       }
 
       const isUploader = file.uploaderId === userId;
-      const isAdmin = roleName === RoleName.ADMIN;
+      const isAdmin =
+        roleName === RoleName.ADMIN ||
+        (roleName !== RoleName.CLIENT && roleName !== RoleName.FREELANCER);
 
       if (!isUploader && !isAdmin) {
         throw SharedFileForbiddenException();

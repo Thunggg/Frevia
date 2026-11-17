@@ -15,9 +15,18 @@ import { Button } from "@repo/ui/components/shadcn/button";
 import { Checkbox } from "@repo/ui/components/shadcn/checkbox";
 import { toastError, toastSuccess } from "@repo/ui/components/shadcn/toast";
 import { CheckCircle2, CreditCard, Loader2, ShieldCheck } from "@/components/icons";
+import { useActionPermission } from "@/hooks/use-action-permission";
 import { paymentApiRequest } from "@/apiRequests/payment";
+import dynamic from "next/dynamic";
 import { ApiFail } from "@/lib/http";
-import { StripePaymentDialog } from "@/components/payments/stripe-payment-dialog";
+
+const StripePaymentDialog = dynamic(
+  () =>
+    import("@/components/payments/stripe-payment-dialog").then(
+      (m) => m.StripePaymentDialog,
+    ),
+  { ssr: false },
+);
 import type { ContractDetailType } from "@shared/types";
 
 interface FundContractHoldSheetProps {
@@ -44,6 +53,13 @@ export function FundContractHoldSheet({
   );
 
   const queryClient = useQueryClient();
+  const { can } = useActionPermission();
+  const canGetPaymentMethods = can("GET", "/api/payments/payment-methods");
+  const canCreateHoldIntent = can(
+    "POST",
+    "/api/payments/contracts/:contractId/fund-hold/intent",
+  );
+
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
   const [selectedPmId, setSelectedPmId] = useState<string | null>(null);
   const [isCreatingIntent, setIsCreatingIntent] = useState(false);
@@ -59,7 +75,7 @@ export function FundContractHoldSheet({
       const res = await paymentApiRequest.getSavedPaymentMethods();
       return res.data;
     },
-    enabled: open,
+    enabled: open && canGetPaymentMethods,
   });
 
   const savedCards = savedCardsData?.paymentMethods ?? [];
@@ -437,19 +453,21 @@ export function FundContractHoldSheet({
             >
               Cancel
             </Button>
-            <Button
-              type="button"
-              onClick={handleAuthorizeHold}
-              disabled={isCreatingIntent || selectedIds.length === 0}
-              className="rounded-full bg-[#0069D3] hover:bg-[#0055b3] text-white text-xs px-5 gap-1.5 cursor-pointer"
-            >
-              {isCreatingIntent ? (
-                <Loader2 className="size-3.5 animate-spin" />
-              ) : (
-                <CreditCard className="size-3.5" />
-              )}
-              Authorize Hold ({formatMoney(totalHoldAmount)})
-            </Button>
+            {canCreateHoldIntent && (
+              <Button
+                type="button"
+                onClick={handleAuthorizeHold}
+                disabled={isCreatingIntent || selectedIds.length === 0}
+                className="rounded-full bg-[#0069D3] hover:bg-[#0055b3] text-white text-xs px-5 gap-1.5 cursor-pointer"
+              >
+                {isCreatingIntent ? (
+                  <Loader2 className="size-3.5 animate-spin" />
+                ) : (
+                  <CreditCard className="size-3.5" />
+                )}
+                Authorize Hold ({formatMoney(totalHoldAmount)})
+              </Button>
+            )}
           </SheetFooter>
         </SheetContent>
       </Sheet>

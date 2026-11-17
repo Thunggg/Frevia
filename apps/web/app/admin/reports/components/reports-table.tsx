@@ -5,6 +5,7 @@ import { useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { adminApiRequest } from "@/apiRequests/admin";
 import { formatDate } from "@/lib/format";
+import { useActionPermission } from "@/hooks/use-action-permission";
 import {
   Table,
   TableBody,
@@ -91,6 +92,8 @@ export function ReportsTable({
   const tGlobal = useTranslations("common");
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { can } = useActionPermission();
+  const canUpdateStatus = can("PATCH", "/api/forums/reports/:reportId/status");
   const [viewingReport, setViewingReport] = useState<ReportItem | null>(null);
   const [updatingId, setUpdatingId] = useState<number | null>(null);
 
@@ -219,31 +222,33 @@ export function ReportsTable({
                         >
                           <Eye className="h-4 w-4" />
                         </Button>
-                        <Select
-                          value={report.status}
-                          onValueChange={(val) =>
-                            handleStatusChange(report.id, val)
-                          }
-                          disabled={updatingId === report.id}
-                        >
-                          <SelectTrigger className="w-[110px] h-8 text-xs">
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value={ReportStatus.PENDING}>
-                              {t("statusPending")}
-                            </SelectItem>
-                            <SelectItem value={ReportStatus.REVIEWED}>
-                              {t("statusReviewed")}
-                            </SelectItem>
-                            <SelectItem value={ReportStatus.RESOLVED}>
-                              {t("statusResolved")}
-                            </SelectItem>
-                            <SelectItem value={ReportStatus.DISMISSED}>
-                              {t("statusDismissed")}
-                            </SelectItem>
-                          </SelectContent>
-                        </Select>
+                        {canUpdateStatus ? (
+                          <Select
+                            value={report.status}
+                            onValueChange={(val) =>
+                              handleStatusChange(report.id, val)
+                            }
+                            disabled={updatingId === report.id}
+                          >
+                            <SelectTrigger className="w-[110px] h-8 text-xs">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value={ReportStatus.PENDING}>
+                                {t("statusPending")}
+                              </SelectItem>
+                              <SelectItem value={ReportStatus.REVIEWED}>
+                                {t("statusReviewed")}
+                              </SelectItem>
+                              <SelectItem value={ReportStatus.RESOLVED}>
+                                {t("statusResolved")}
+                              </SelectItem>
+                              <SelectItem value={ReportStatus.DISMISSED}>
+                                {t("statusDismissed")}
+                              </SelectItem>
+                            </SelectContent>
+                          </Select>
+                        ) : null}
                       </div>
                     </TableCell>
                   </TableRow>

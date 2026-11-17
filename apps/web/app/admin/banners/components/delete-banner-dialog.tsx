@@ -18,6 +18,7 @@ import { Loader2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { useActionPermission } from "@/hooks/use-action-permission";
 
 interface DeleteBannerDialogProps {
   banner: Pick<BannerAdminItemType, "id" | "title"> | null;
@@ -33,9 +34,10 @@ export function DeleteBannerDialog({
   const t = useTranslations("adminBanners");
   const tCommon = useTranslations("adminCommon");
   const router = useRouter();
+  const { can } = useActionPermission();
   const [loading, setLoading] = useState(false);
 
-  if (!banner) return null;
+  if (!banner || !can("DELETE", `/api/admin/banners/${banner.id}`)) return null;
 
   const handleDelete = async () => {
     setLoading(true);

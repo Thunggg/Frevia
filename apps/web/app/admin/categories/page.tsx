@@ -1,6 +1,8 @@
 import { Suspense } from "react";
 import { getTranslations } from "next-intl/server";
 import adminServerRequest from "@/apiRequests/admin.server";
+import authServerRequest from "@/apiRequests/auth.server";
+import { hasActionPermission } from "@/lib/admin-access";
 import { CategoriesTable } from "./components/categories-table";
 import { CreateCategoryDialog } from "./components/create-category-dialog";
 import { CategoriesFilterBar } from "./components/categories-filter-bar";
@@ -26,6 +28,29 @@ export default async function AdminCategoriesPage({
   }>;
 }) {
   const params = await searchParams;
+  const t = await getTranslations("adminCategories");
+  const currentUser = await authServerRequest.getMe();
+  const canViewList = hasActionPermission(
+    currentUser,
+    "GET",
+    "/api/forums/admin/categories",
+  );
+
+  if (!canViewList) {
+    return (
+      <div className="space-y-6">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">
+            {t("pageTitle")}
+          </h1>
+        </div>
+        <div className="rounded-lg border bg-card p-12 text-center text-muted-foreground">
+          {t("accessDenied")}
+        </div>
+      </div>
+    );
+  }
+
   const page = Number(params.page) || 1;
   const limit = 10;
   const search = params.search || undefined;
@@ -42,7 +67,11 @@ export default async function AdminCategoriesPage({
     deleted,
   );
 
-  const t = await getTranslations("adminCategories");
+  const canCreate = hasActionPermission(
+    currentUser,
+    "POST",
+    "/api/forums/admin/categories",
+  );
 
   return (
     <div className="space-y-6">
@@ -55,7 +84,7 @@ export default async function AdminCategoriesPage({
             {t("pageSubtitle", { count: data.pagination.total })}
           </p>
         </div>
-        <CreateCategoryDialog />
+        {canCreate && <CreateCategoryDialog />}
       </div>
 
       <Suspense>

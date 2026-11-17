@@ -29,6 +29,7 @@ import {
   DropdownMenuTrigger,
 } from "@repo/ui/components/shadcn/dropdown-menu";
 import { toastError, toastSuccess } from "@repo/ui/components/shadcn/toast";
+import { useActionPermission } from "@/hooks/use-action-permission";
 import { paymentApiRequest } from "@/apiRequests/payment";
 import { ApiFail } from "@/lib/http";
 import { getStripe } from "@/lib/stripe";
@@ -195,6 +196,23 @@ function AddCardSetupForm({ onSuccess, onCancel }: AddCardFormProps) {
  */
 export function PaymentMethodCard({ returnPath }: PaymentMethodCardProps) {
   const queryClient = useQueryClient();
+  const { can } = useActionPermission();
+
+  const canGetPaymentMethods = can("GET", "/api/payments/payment-methods");
+  const canCreateSetupIntent = can(
+    "POST",
+    "/api/payments/payment-methods/setup-intent",
+  );
+  const canSetDefaultPaymentMethod = can(
+    "POST",
+    "/api/payments/payment-methods/default",
+  );
+  const canRemovePaymentMethod = can(
+    "DELETE",
+    "/api/payments/payment-methods/:paymentMethodId",
+  );
+  const canOpenCustomerPortal = can("POST", "/api/payments/customer-portal");
+
   const [manageOpen, setManageOpen] = useState(false);
   const [modalView, setModalView] = useState<"list" | "add">("list");
   const [setupClientSecret, setSetupClientSecret] = useState<string | null>(
@@ -209,6 +227,7 @@ export function PaymentMethodCard({ returnPath }: PaymentMethodCardProps) {
       const res = await paymentApiRequest.getSavedPaymentMethods();
       return res.data;
     },
+    enabled: canGetPaymentMethods,
   });
 
   const paymentMethods: SavedPaymentMethodType[] =
@@ -300,6 +319,10 @@ export function PaymentMethodCard({ returnPath }: PaymentMethodCardProps) {
     setManageOpen(true);
   };
 
+  if (!canGetPaymentMethods) {
+    return null;
+  }
+
   return (
     <>
       <div className="h-full flex flex-col gap-3.5 rounded-sm border border-zinc-200/80 dark:border-zinc-800 bg-white dark:bg-zinc-950 p-5 shadow-[0_1px_2px_rgba(0,0,0,0.03)]">
@@ -307,13 +330,15 @@ export function PaymentMethodCard({ returnPath }: PaymentMethodCardProps) {
           <h3 className="text-[15px] tracking-tight text-foreground">
             Payment Method
           </h3>
-          <button
-            type="button"
-            onClick={defaultCard ? openManageList : () => void startAddCardFlow()}
-            className="text-xs font-medium text-[#0069D3] hover:text-[#0055b3] transition-colors cursor-pointer"
-          >
-            {defaultCard ? "Change" : "+ Add card"}
-          </button>
+          {canCreateSetupIntent && (
+            <button
+              type="button"
+              onClick={defaultCard ? openManageList : () => void startAddCardFlow()}
+              className="text-xs font-medium text-[#0069D3] hover:text-[#0055b3] transition-colors cursor-pointer"
+            >
+              {defaultCard ? "Change" : "+ Add card"}
+            </button>
+          )}
         </div>
 
         {isLoading ? (
@@ -354,22 +379,28 @@ export function PaymentMethodCard({ returnPath }: PaymentMethodCardProps) {
                   <CreditCard className="mr-2 size-3.5 text-muted-foreground" />
                   Switch / Manage Cards
                 </DropdownMenuItem>
-                <DropdownMenuItem
-                  onClick={() => void startAddCardFlow()}
-                  className="rounded-lg text-xs cursor-pointer"
-                >
-                  <Plus className="mr-2 size-3.5 text-muted-foreground" />
-                  Add New Card
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem
-                  onClick={() => void handleOpenCustomerPortal()}
-                  disabled={portalLoading}
-                  className="rounded-lg text-xs cursor-pointer"
-                >
-                  <ExternalLink className="mr-2 size-3.5 text-muted-foreground" />
-                  {portalLoading ? "Opening Stripe..." : "Stripe Billing Portal"}
-                </DropdownMenuItem>
+                {canCreateSetupIntent && (
+                  <DropdownMenuItem
+                    onClick={() => void startAddCardFlow()}
+                    className="rounded-lg text-xs cursor-pointer"
+                  >
+                    <Plus className="mr-2 size-3.5 text-muted-foreground" />
+                    Add New Card
+                  </DropdownMenuItem>
+                )}
+                {canOpenCustomerPortal && (
+                  <>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem
+                      onClick={() => void handleOpenCustomerPortal()}
+                      disabled={portalLoading}
+                      className="rounded-lg text-xs cursor-pointer"
+                    >
+                      <ExternalLink className="mr-2 size-3.5 text-muted-foreground" />
+                      {portalLoading ? "Opening Stripe..." : "Stripe Billing Portal"}
+                    </DropdownMenuItem>
+                  </>
+                )}
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
@@ -388,15 +419,17 @@ export function PaymentMethodCard({ returnPath }: PaymentMethodCardProps) {
                 </p>
               </div>
             </div>
-            <Button
-              type="button"
-              size="sm"
-              variant="outline"
-              onClick={() => void startAddCardFlow()}
-              className="rounded-lg text-xs h-8 px-3 shrink-0 cursor-pointer"
-            >
-              Add Card
-            </Button>
+            {canCreateSetupIntent && (
+              <Button
+                type="button"
+                size="sm"
+                variant="outline"
+                onClick={() => void startAddCardFlow()}
+                className="rounded-lg text-xs h-8 px-3 shrink-0 cursor-pointer"
+              >
+                Add Card
+              </Button>
+            )}
           </div>
         )}
       </div>
@@ -465,7 +498,7 @@ export function PaymentMethodCard({ returnPath }: PaymentMethodCardProps) {
                         </div>
 
                         <div className="flex items-center gap-1.5 shrink-0">
-                          {!pm.isDefault && (
+                          {!pm.isDefault && canSetDefaultPaymentMethod && (
                             <Button
                               type="button"
                               size="sm"
@@ -477,15 +510,17 @@ export function PaymentMethodCard({ returnPath }: PaymentMethodCardProps) {
                               Set Default
                             </Button>
                           )}
-                          <button
-                            type="button"
-                            disabled={isBusy}
-                            aria-label="Remove saved card"
-                            onClick={() => removeCardMutation.mutate(pm.id)}
-                            className="inline-flex size-7 items-center justify-center rounded-lg text-muted-foreground hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-colors cursor-pointer disabled:opacity-50"
-                          >
-                            <Trash2 className="size-3.5" />
-                          </button>
+                          {canRemovePaymentMethod && (
+                            <button
+                              type="button"
+                              disabled={isBusy}
+                              aria-label="Remove saved card"
+                              onClick={() => removeCardMutation.mutate(pm.id)}
+                              className="inline-flex size-7 items-center justify-center rounded-lg text-muted-foreground hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-colors cursor-pointer disabled:opacity-50"
+                            >
+                              <Trash2 className="size-3.5" />
+                            </button>
+                          )}
                         </div>
                       </div>
                     );
@@ -498,24 +533,30 @@ export function PaymentMethodCard({ returnPath }: PaymentMethodCardProps) {
               )}
 
               <div className="flex flex-wrap items-center justify-between gap-2 pt-3 border-t border-zinc-100 dark:border-zinc-800">
-                <button
-                  type="button"
-                  onClick={() => void handleOpenCustomerPortal()}
-                  disabled={portalLoading}
-                  className="inline-flex items-center gap-1 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
-                >
-                  <ExternalLink className="size-3.5" />
-                  {portalLoading ? "Opening..." : "Stripe Portal"}
-                </button>
-                <Button
-                  type="button"
-                  size="sm"
-                  onClick={() => void startAddCardFlow()}
-                  className="rounded-lg bg-[#0069D3] hover:bg-[#005bb8] text-white text-xs h-8 px-3.5 cursor-pointer"
-                >
-                  <Plus className="mr-1.5 size-3.5" />
-                  Add New Card
-                </Button>
+                {canOpenCustomerPortal ? (
+                  <button
+                    type="button"
+                    onClick={() => void handleOpenCustomerPortal()}
+                    disabled={portalLoading}
+                    className="inline-flex items-center gap-1 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+                  >
+                    <ExternalLink className="size-3.5" />
+                    {portalLoading ? "Opening..." : "Stripe Portal"}
+                  </button>
+                ) : (
+                  <div />
+                )}
+                {canCreateSetupIntent && (
+                  <Button
+                    type="button"
+                    size="sm"
+                    onClick={() => void startAddCardFlow()}
+                    className="rounded-lg bg-[#0069D3] hover:bg-[#005bb8] text-white text-xs h-8 px-3.5 cursor-pointer"
+                  >
+                    <Plus className="mr-1.5 size-3.5" />
+                    Add New Card
+                  </Button>
+                )}
               </div>
             </div>
           ) : setupLoading ? (

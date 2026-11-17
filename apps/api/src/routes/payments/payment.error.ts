@@ -111,6 +111,14 @@ export const MilestoneAlreadyReleasedException = () =>
     },
   ]);
 
+export const MilestoneNotEligibleForRefundException = () =>
+  new UnprocessableEntityException([
+    {
+      message: ManagePaymentMessage.MILESTONE_NOT_ELIGIBLE_FOR_REFUND,
+      path: 'status',
+    },
+  ]);
+
 export const DisputeFeeAlreadyPaidException = () =>
   new UnprocessableEntityException([
     {
@@ -124,6 +132,14 @@ export const DisputeSettlementInvalidAmountException = () =>
     {
       message: ManagePaymentMessage.DISPUTE_SETTLEMENT_INVALID_AMOUNT,
       path: 'amounts',
+    },
+  ]);
+
+export const DisputeNotFoundException = () =>
+  new NotFoundException([
+    {
+      message: 'Dispute not found',
+      path: 'id',
     },
   ]);
 

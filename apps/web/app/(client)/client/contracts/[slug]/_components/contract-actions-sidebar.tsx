@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { Button } from "@repo/ui/components/shadcn/button";
 import { Badge } from "@repo/ui/components/shadcn/badge";
+import { useActionPermission } from "@/hooks/use-action-permission";
 import type { ContractDetailType, SharedFileType } from "@shared/types";
 
 interface ContractActionsSidebarProps {
@@ -49,12 +50,25 @@ export function ContractActionsSidebar({
   const t = useTranslations("contractDetail");
   const tStatus = useTranslations("contractStatus");
   const tRole = useTranslations("roleName");
+  const { can } = useActionPermission();
+  const canSignContract = can("PATCH", "/api/contracts/:id/sign");
+  const canCompleteContract = can("PATCH", "/api/contracts/:id/complete");
+  const canCancelContract = can("PATCH", "/api/contracts/:id/cancel");
+  const canRejectContract = can("PATCH", "/api/contracts/:id/reject");
+  const canExportPdf = can("GET", "/api/contracts/:id/pdf");
+  const canCreateConversation = can("POST", "/api/conversations");
+  const canFundContractHold = can(
+    "POST",
+    "/api/payments/contracts/:contractId/fund-hold/intent",
+  );
 
-  const canSign = isFreelancer
-    ? contract.status === "PENDING_SIGN" &&
-      contract.signedByClient &&
-      !contract.signedByFreelancer
-    : contract.status === "PENDING_SIGN" && !contract.signedByClient;
+  const canSign =
+    (isFreelancer
+      ? contract.status === "PENDING_SIGN" &&
+        contract.signedByClient &&
+        !contract.signedByFreelancer
+      : contract.status === "PENDING_SIGN" && !contract.signedByClient) &&
+    canSignContract;
 
   const waitingForClientSignature =
     isFreelancer &&
@@ -64,20 +78,24 @@ export function ContractActionsSidebar({
   const canFundHold =
     !isFreelancer &&
     contract.status === "AWAITING_PAYMENT" &&
-    Boolean(onOpenFundHold);
+    Boolean(onOpenFundHold) &&
+    canFundContractHold;
 
   const canComplete =
-    !isFreelancer && contract.status === "ACTIVE";
+    !isFreelancer && contract.status === "ACTIVE" && canCompleteContract;
 
   const canReject =
     isFreelancer &&
     (contract.status === "PENDING_SIGN" ||
       contract.status === "AWAITING_PAYMENT") &&
-    Boolean(onOpenConfirmReject);
+    Boolean(onOpenConfirmReject) &&
+    canRejectContract;
 
   const canCancel =
     !isFreelancer &&
-    (contract.status === "PENDING_SIGN" || contract.status === "AWAITING_PAYMENT");
+    (contract.status === "PENDING_SIGN" ||
+      contract.status === "AWAITING_PAYMENT") &&
+    canCancelContract;
 
   const targetRoleName = isFreelancer ? tRole("CLIENT") : tRole("FREELANCER");
 
@@ -212,9 +230,9 @@ export function ContractActionsSidebar({
         )}
 
         {/* 5. Download PDF Agreement */}
-        {pdfFile?.fileUrl && (
+        {canExportPdf && (pdfFile?.fileUrl || contract.id) && (
           <a
-            href={pdfFile.fileUrl}
+            href={pdfFile?.fileUrl || `/api/contracts/${contract.id}/pdf`}
             target="_blank"
             rel="noopener noreferrer"
             download
@@ -226,19 +244,21 @@ export function ContractActionsSidebar({
         )}
 
         {/* 6. Message Counterparty */}
-        <Button
-          variant="secondary"
-          onClick={onMessageCounterparty}
-          disabled={isStartingChat}
-          className="w-full h-9 rounded-xl text-xs font-medium cursor-pointer"
-        >
-          {isStartingChat ? (
-            <Loader2 className="mr-2 size-3.5 animate-spin" />
-          ) : (
-            <MessageSquare className="mr-2 size-3.5 text-zinc-600 dark:text-zinc-300" />
-          )}
-          {t("messageRole", { role: targetRoleName })}
-        </Button>
+        {canCreateConversation && (
+          <Button
+            variant="secondary"
+            onClick={onMessageCounterparty}
+            disabled={isStartingChat}
+            className="w-full h-9 rounded-xl text-xs font-medium cursor-pointer"
+          >
+            {isStartingChat ? (
+              <Loader2 className="mr-2 size-3.5 animate-spin" />
+            ) : (
+              <MessageSquare className="mr-2 size-3.5 text-zinc-600 dark:text-zinc-300" />
+            )}
+            {t("messageRole", { role: targetRoleName })}
+          </Button>
+        )}
       </div>
 
       {/* ── Secondary / Lifecycle Actions ── */}

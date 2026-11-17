@@ -2,6 +2,8 @@ import Link from "next/link";
 import { ArrowLeft, UserX } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import adminServerRequest from "@/apiRequests/admin.server";
+import authServerRequest from "@/apiRequests/auth.server";
+import { hasActionPermission } from "@/lib/admin-access";
 import { Button } from "@repo/ui/components/shadcn/button";
 import { UserDetailHeader } from "./components/user-detail-header";
 import { UserGeneralInfo } from "./components/user-general-info";
@@ -17,6 +19,30 @@ export default async function AdminUserDetailPage({ params }: UserDetailPageProp
   const { id } = await params;
   const t = await getTranslations("adminUserDetail");
   const userId = Number(id);
+
+  const currentUser = await authServerRequest.getMe();
+  const canViewDetail = hasActionPermission(
+    currentUser,
+    "GET",
+    `/api/users/${id}`,
+  );
+
+  if (!canViewDetail) {
+    return (
+      <div className="flex flex-col items-center justify-center py-20 text-center">
+        <UserX className="h-12 w-12 text-muted-foreground mb-4" />
+        <h2 className="text-xl font-bold text-foreground">
+          {t("detailAccessDenied")}
+        </h2>
+        <Button asChild variant="outline" className="mt-6">
+          <Link href="/admin/users">
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            {t("backToUsers")}
+          </Link>
+        </Button>
+      </div>
+    );
+  }
 
   if (isNaN(userId)) {
     return (

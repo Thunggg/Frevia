@@ -24,6 +24,7 @@ import {
   FailedToUploadBannerImageException,
 } from './banners-admin.error';
 import { BannersAdminRepository } from './banners-admin.repo';
+import { CacheService } from '../../shared/services/cache.service';
 
 export const MAX_BANNER_IMAGE_SIZE = 10 * 1024 * 1024;
 
@@ -41,6 +42,7 @@ export class BannersAdminService {
   constructor(
     private readonly repository: BannersAdminRepository,
     private readonly cloudinaryService: CloudinaryService,
+    private readonly cacheService?: CacheService,
   ) {}
 
   // Upload ảnh banner: lên Cloudinary nếu đã cấu hình, ngược lại lưu local
@@ -123,7 +125,9 @@ export class BannersAdminService {
     body: BannerCreateBodyType,
   ): Promise<BannerAdminDetailResponseType> {
     try {
-      return await this.repository.createBanner(body);
+      const result = await this.repository.createBanner(body);
+      this.cacheService?.delByPrefix('banners_');
+      return result;
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;
@@ -138,7 +142,9 @@ export class BannersAdminService {
     body: BannerUpdateBodyType,
   ): Promise<BannerAdminDetailResponseType> {
     try {
-      return await this.repository.updateBanner(id, body);
+      const result = await this.repository.updateBanner(id, body);
+      this.cacheService?.delByPrefix('banners_');
+      return result;
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;
@@ -150,7 +156,9 @@ export class BannersAdminService {
   // Xóa banner cứng (hard delete)
   async deleteBanner(id: number): Promise<BannerAdminDeleteResponseType> {
     try {
-      return await this.repository.deleteBanner(id);
+      const result = await this.repository.deleteBanner(id);
+      this.cacheService?.delByPrefix('banners_');
+      return result;
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRoles } from "@/hooks/use-role";
 import { useTranslations } from "next-intl";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Search, X } from "lucide-react";
@@ -21,6 +22,14 @@ export function UsersFilterBar() {
 
   const [search, setSearch] = useState(searchParams.get("search") || "");
   const currentRole = searchParams.get("role") || "all";
+  const { data: roles } = useRoles();
+  const customRoles =
+    roles?.filter(
+      (r) =>
+        !["ADMIN", "CLIENT", "FREELANCER", "EXPERT"].includes(
+          r.name.toUpperCase(),
+        ),
+    ) ?? [];
 
   useEffect(() => {
     setSearch(searchParams.get("search") || "");
@@ -92,6 +101,11 @@ export function UsersFilterBar() {
             <SelectItem value="FREELANCER">{tRole("FREELANCER")}</SelectItem>
             <SelectItem value="EXPERT">{tRole("EXPERT")}</SelectItem>
             <SelectItem value="CUSTOM">{t("customRolesFilter")}</SelectItem>
+            {customRoles.map((r) => (
+              <SelectItem key={r.id} value={r.name}>
+                {r.name}
+              </SelectItem>
+            ))}
           </SelectContent>
         </Select>
       </div>

@@ -21,6 +21,7 @@ import type {
   RecommendationExplanationType,
 } from "@shared/types";
 import recommendationApiRequest from "@/apiRequests/recommendation";
+import { useActionPermission } from "@/hooks/use-action-permission";
 
 type RecommendationExplanationDialogProps = {
   recommendationId: number | null;
@@ -40,6 +41,10 @@ export function RecommendationExplanationDialog({
   matchScore,
 }: RecommendationExplanationDialogProps) {
   const t = useTranslations("recommendation");
+  const { can } = useActionPermission();
+  const canViewExplanation = can("GET", "/api/recommendations/:id/explanation");
+  const canSubmitFeedback = can("POST", "/api/recommendations/:id/feedback");
+
   const [loading, setLoading] = useState(false);
   const [explanation, setExplanation] =
     useState<RecommendationExplanationType | null>(null);
@@ -47,7 +52,7 @@ export function RecommendationExplanationDialog({
   const [feedbackLoading, setFeedbackLoading] = useState(false);
 
   useEffect(() => {
-    if (!open || !recommendationId) {
+    if (!open || !recommendationId || !canViewExplanation) {
       setExplanation(null);
       setFeedbackSent(false);
       return;
@@ -77,7 +82,7 @@ export function RecommendationExplanationDialog({
     return () => {
       isMounted = false;
     };
-  }, [open, recommendationId]);
+  }, [open, recommendationId, canViewExplanation]);
 
   const handleFeedback = async (type: "SHORTLIST" | "DISMISS") => {
     if (!recommendationId || feedbackSent || feedbackLoading) return;
@@ -234,7 +239,7 @@ export function RecommendationExplanationDialog({
         </div>
 
         {/* User Feedback Row */}
-        {recommendationId && (
+        {recommendationId && canSubmitFeedback && (
           <div className="mt-6 flex items-center justify-between border-t border-border pt-4">
             <span className="text-xs text-muted-foreground font-medium">
               {feedbackSent ? t("feedbackThanks") : t("feedbackHelpful")}

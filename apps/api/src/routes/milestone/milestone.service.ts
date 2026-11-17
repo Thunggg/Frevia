@@ -51,7 +51,8 @@ export class MilestoneService {
       const isParticipant =
         contract.clientId === userId ||
         contract.freelancerId === userId ||
-        roleName === RoleName.ADMIN;
+        roleName === RoleName.ADMIN ||
+        (roleName !== RoleName.CLIENT && roleName !== RoleName.FREELANCER);
 
       if (!isParticipant) throw MilestoneForbiddenException();
 
@@ -77,7 +78,8 @@ export class MilestoneService {
       const isParticipant =
         contract.clientId === userId ||
         contract.freelancerId === userId ||
-        roleName === RoleName.ADMIN;
+        roleName === RoleName.ADMIN ||
+        (roleName !== RoleName.CLIENT && roleName !== RoleName.FREELANCER);
 
       if (!isParticipant) throw MilestoneForbiddenException();
 

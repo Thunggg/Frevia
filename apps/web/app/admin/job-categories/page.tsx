@@ -1,6 +1,8 @@
 import { Suspense } from "react";
 import { getTranslations } from "next-intl/server";
 import adminServerRequest from "@/apiRequests/admin.server";
+import authServerRequest from "@/apiRequests/auth.server";
+import { hasActionPermission } from "@/lib/admin-access";
 import { Skeleton } from "@repo/ui/components/shadcn/skeleton";
 import { FolderTree } from "lucide-react";
 import { CreateJobCategoryDialog } from "./components/create-job-category-dialog";
@@ -50,6 +52,30 @@ export default async function AdminJobCategoriesPage({
       ? params.sortOrder
       : undefined;
 
+  const t = await getTranslations("adminJobCategories");
+  const currentUser = await authServerRequest.getMe();
+  const canViewList = hasActionPermission(
+    currentUser,
+    "GET",
+    "/api/admin/job-categories",
+  );
+
+  if (!canViewList) {
+    return (
+      <div className="space-y-6">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight flex items-center gap-2">
+            <FolderTree className="h-8 w-8 text-[#4fae2e]" />
+            {t("pageTitle")}
+          </h1>
+        </div>
+        <div className="rounded-lg border bg-card p-12 text-center text-muted-foreground">
+          {t("accessDenied")}
+        </div>
+      </div>
+    );
+  }
+
   const data = await adminServerRequest.getJobCategories({
     page,
     limit,
@@ -60,6 +86,12 @@ export default async function AdminJobCategoriesPage({
     sortOrder,
   });
 
+  const canCreate = hasActionPermission(
+    currentUser,
+    "POST",
+    "/api/admin/job-categories",
+  );
+
   const jobCategories = data?.jobCategories ?? [];
   const pagination = data?.pagination ?? {
     page: 1,
@@ -67,8 +99,6 @@ export default async function AdminJobCategoriesPage({
     total: 0,
     totalPages: 0,
   };
-
-  const t = await getTranslations("adminJobCategories");
 
   return (
     <div className="space-y-6">
@@ -82,7 +112,7 @@ export default async function AdminJobCategoriesPage({
             {t("pageSubtitle", { total: pagination.total })}
           </p>
         </div>
-        <CreateJobCategoryDialog />
+        {canCreate && <CreateJobCategoryDialog />}
       </div>
 
       <Suspense fallback={<Skeleton className="h-10 w-full" />}>

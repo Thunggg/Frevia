@@ -17,6 +17,7 @@ import { ArrowDown, ArrowUp, ArrowUpDown, Eye, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { useLocale, useTranslations } from "next-intl";
 import { formatDate } from "@/lib/format";
+import { useActionPermission } from "@/hooks/use-action-permission";
 import { NumberedPagination } from "../../components/numbered-pagination";
 import { BannerFormDialog } from "./banner-form-dialog";
 import { DeleteBannerDialog } from "./delete-banner-dialog";
@@ -40,6 +41,7 @@ export function BannersTable({ banners, pagination }: BannersTableProps) {
   const locale = useLocale();
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { can } = useActionPermission();
   const [deletingBanner, setDeletingBanner] =
     useState<BannerAdminItemType | null>(null);
 
@@ -114,89 +116,108 @@ export function BannersTable({ banners, pagination }: BannersTableProps) {
                 </TableCell>
               </TableRow>
             ) : (
-              banners.map((banner) => (
-                <TableRow key={banner.id} className="group">
-                  <TableCell>
-                    <Badge variant="outline" className="font-mono">
-                      {banner.id}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-2">
-                      {banner.imageUrl ? (
-                        /* eslint-disable-next-line @next/next/no-img-element -- thumbnail */
-                        <img
-                          src={banner.imageUrl}
-                          alt={banner.title}
-                          className="h-8 w-12 rounded border object-cover bg-muted"
-                        />
-                      ) : null}
-                      <span className="font-medium text-sm text-foreground">
-                        {banner.title}
-                      </span>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <Badge variant="secondary">
-                      {bannerPositionLabel(banner.position, t)}
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="text-xs text-muted-foreground whitespace-nowrap">
-                    {formatDate(banner.startDate, locale)} →{" "}
-                    {formatDate(banner.endDate, locale)}
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-1">
-                      {banner.isActive ? (
-                        <Badge
-                          variant="secondary"
-                          className="bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/50 dark:text-emerald-300 border"
-                        >
-                          {tCommon("active")}
-                        </Badge>
-                      ) : (
-                        <Badge variant="outline">{tCommon("inactive")}</Badge>
-                      )}
-                    </div>
-                  </TableCell>
-                  <TableCell className="text-right whitespace-nowrap text-sm text-muted-foreground">
-                    {formatDate(banner.createdAt, locale)}
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <div className="flex items-center justify-end gap-1">
-                      <BannerFormDialog banner={banner} />
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-8 w-8 text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-colors"
-                        title={t("deleteBannerAction")}
-                        aria-label={t("deleteBannerOf", {
-                          title: banner.title,
-                        })}
-                        onClick={() => setDeletingBanner(banner)}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        asChild
-                        className="h-8 w-8 text-muted-foreground hover:bg-[#4fae2e]/10 hover:text-[#4fae2e] transition-colors"
-                        title={t("viewDetailsAction")}
-                      >
-                        <Link
-                          href={`/admin/banners/${banner.id}`}
-                          aria-label={t("viewDetailsOf", {
-                            title: banner.title,
-                          })}
-                        >
-                          <Eye className="h-4 w-4" />
-                        </Link>
-                      </Button>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))
+              banners.map((banner) => {
+                const canUpdate = can("PATCH", `/api/admin/banners/${banner.id}`);
+                const canDelete = can("DELETE", `/api/admin/banners/${banner.id}`);
+                const canViewDetail = can("GET", `/api/admin/banners/${banner.id}`);
+                const hasAnyAction = canUpdate || canDelete || canViewDetail;
+
+                return (
+                  <TableRow key={banner.id} className="group">
+                    <TableCell>
+                      <Badge variant="outline" className="font-mono">
+                        {banner.id}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-2">
+                        {banner.imageUrl ? (
+                          /* eslint-disable-next-line @next/next/no-img-element -- thumbnail */
+                          <img
+                            src={banner.imageUrl}
+                            alt={banner.title}
+                            className="h-8 w-12 rounded border object-cover bg-muted"
+                          />
+                        ) : null}
+                        <span className="font-medium text-sm text-foreground">
+                          {banner.title}
+                        </span>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant="secondary">
+                        {bannerPositionLabel(banner.position, t)}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="text-xs text-muted-foreground whitespace-nowrap">
+                      {formatDate(banner.startDate, locale)} →{" "}
+                      {formatDate(banner.endDate, locale)}
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-1">
+                        {banner.isActive ? (
+                          <Badge
+                            variant="secondary"
+                            className="bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/50 dark:text-emerald-300 border"
+                          >
+                            {tCommon("active")}
+                          </Badge>
+                        ) : (
+                          <Badge variant="outline">{tCommon("inactive")}</Badge>
+                        )}
+                      </div>
+                    </TableCell>
+                    <TableCell className="text-right whitespace-nowrap text-sm text-muted-foreground">
+                      {formatDate(banner.createdAt, locale)}
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <div className="flex items-center justify-end gap-1">
+                        {!hasAnyAction ? (
+                          <span className="text-muted-foreground text-xs">
+                            —
+                          </span>
+                        ) : (
+                          <>
+                            {canUpdate && <BannerFormDialog banner={banner} />}
+                            {canDelete && (
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-8 w-8 text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-colors"
+                                title={t("deleteBannerAction")}
+                                aria-label={t("deleteBannerOf", {
+                                  title: banner.title,
+                                })}
+                                onClick={() => setDeletingBanner(banner)}
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            )}
+                            {canViewDetail && (
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                asChild
+                                className="h-8 w-8 text-muted-foreground hover:bg-[#4fae2e]/10 hover:text-[#4fae2e] transition-colors"
+                                title={t("viewDetailsAction")}
+                              >
+                                <Link
+                                  href={`/admin/banners/${banner.id}`}
+                                  aria-label={t("viewDetailsOf", {
+                                    title: banner.title,
+                                  })}
+                                >
+                                  <Eye className="h-4 w-4" />
+                                </Link>
+                              </Button>
+                            )}
+                          </>
+                        )}
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                );
+              })
             )}
           </TableBody>
         </Table>

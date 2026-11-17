@@ -8,15 +8,11 @@ const withNextIntl = createNextIntlPlugin("./i18n/request.ts");
 const nextConfig = {
   output: "standalone",
   experimental: {
-    turbopackFileSystemCacheForDev: false,
+    turbopackFileSystemCacheForDev: true,
+    optimizePackageImports: ["lucide-react", "@repo/ui", "motion", "next-intl"],
   },
   async redirects() {
     return [
-      {
-        source: "/account-profile",
-        destination: "/freelancer/profile",
-        permanent: false,
-      },
       {
         source: "/search/jobs",
         destination: "/freelancer/search/jobs",

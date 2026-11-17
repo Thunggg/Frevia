@@ -76,7 +76,9 @@ async function healSkills() {
   console.log(`Analyzing ${allSkills.length} skills in database...`);
 
   // Step 1: Assign safe unique temporary slugs to all skills to break any collision cycles
-  console.log('Step 1: Setting temporary slugs to avoid unique index collisions...');
+  console.log(
+    'Step 1: Setting temporary slugs to avoid unique index collisions...',
+  );
   for (const s of allSkills) {
     await prisma.skill.update({
       where: { id: s.id },
@@ -265,4 +267,3 @@ healSkills()
   .finally(async () => {
     await prisma.$disconnect();
   });
-

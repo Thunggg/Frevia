@@ -1,0 +1,2 @@
+ALTER TYPE "MilestoneStatus" ADD VALUE IF NOT EXISTS 'LATE';
+

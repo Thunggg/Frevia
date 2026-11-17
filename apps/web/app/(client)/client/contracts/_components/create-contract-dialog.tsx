@@ -32,6 +32,7 @@ import {
   Trash2,
 } from "@/components/icons";
 import { contractApiRequest } from "@/apiRequests/contract";
+import { useActionPermission } from "@/hooks/use-action-permission";
 import { ApiFail } from "@/lib/http";
 import { getTodayDateInputValue, toEndOfDayIso } from "@/lib/format";
 import type { SubmittedProposalStatusType } from "@shared/types";
@@ -76,6 +77,8 @@ export function CreateContractDialog({
   const router = useRouter();
   const queryClient = useQueryClient();
   const format = useFormatter();
+  const { can } = useActionPermission();
+  const canCreateContract = can("POST", "/api/contracts");
 
   const [totalAmount, setTotalAmount] = useState<number | "">(0);
   const [expiresAt, setExpiresAt] = useState<string>("");
@@ -167,7 +170,7 @@ export function CreateContractDialog({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!proposal) return;
+    if (!proposal || !canCreateContract) return;
 
     if (!isBudgetValid) {
       toastError({ message: "Total contract budget must be greater than 0" });
@@ -272,6 +275,8 @@ export function CreateContractDialog({
       setIsSubmitting(false);
     }
   };
+
+  if (!canCreateContract) return null;
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
