@@ -34,7 +34,6 @@ export interface MilestoneCardProps {
   isFreelancer?: boolean;
   basePath?: string;
   hasOtherInProgressMilestone?: boolean;
-  variant?: "table-row" | "card" | "list-item";
   onEdit?: (milestone: MilestoneType) => void;
   onDelete?: (milestone: MilestoneType) => void;
   onFund?: (milestone: MilestoneType) => void;
@@ -113,9 +112,7 @@ export function MilestoneCard({
     new Date(milestone.dueDate).getTime() < new Date().getTime();
 
   const getDueCountdown = () => {
-    if (milestone.status === "COMPLETED") {
-      return "Completed";
-    }
+    if (milestone.status === "COMPLETED") return "Completed";
     if (!milestone.dueDate) return null;
     const now = new Date().getTime();
     const target = new Date(milestone.dueDate).getTime();
@@ -151,157 +148,132 @@ export function MilestoneCard({
     (milestone.status === "LATE" || milestone.status === "PENDING") &&
     Boolean(onRefund);
 
-  // Accurate Fiverr-style status badges
-  const renderWorkStatusBadge = () => {
+  // Status indicator: clean text & icon without colored background
+  const renderWorkStatusText = () => {
     switch (milestone.status) {
       case "COMPLETED":
         return (
-          <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/10 dark:bg-emerald-500/20 px-2.5 py-0.5 text-xs font-semibold text-emerald-600 dark:text-emerald-400">
+          <span className="inline-flex items-center gap-1.5 text-xs font-medium text-emerald-600 dark:text-emerald-400">
             <CheckCircle2 className="size-3.5" />
             <span>Completed</span>
           </span>
         );
       case "SUBMITTED":
         return (
-          <span className="inline-flex items-center gap-1 rounded-full bg-blue-500/10 dark:bg-blue-500/20 px-2.5 py-0.5 text-xs font-semibold text-[#0069D3] dark:text-blue-400">
+          <span className="inline-flex items-center gap-1.5 text-xs font-medium text-[#0069D3] dark:text-blue-400">
             <FileCheck className="size-3.5" />
             <span>Delivered • In Review</span>
           </span>
         );
       case "IN_PROGRESS":
         return (
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-sky-500/10 dark:bg-sky-500/20 px-2.5 py-0.5 text-xs font-semibold text-sky-600 dark:text-sky-400">
-            <span className="size-2 rounded-full bg-sky-500 animate-pulse" />
+          <span className="inline-flex items-center gap-1.5 text-xs font-medium text-sky-600 dark:text-sky-400">
+            <span className="size-1.5 rounded-full bg-sky-500 animate-pulse" />
             <span>In Progress</span>
           </span>
         );
       case "CHANGES_REQUESTED":
         return (
-          <span className="inline-flex items-center gap-1 rounded-full bg-amber-500/10 dark:bg-amber-500/20 px-2.5 py-0.5 text-xs font-semibold text-amber-600 dark:text-amber-400">
+          <span className="inline-flex items-center gap-1.5 text-xs font-medium text-amber-600 dark:text-amber-400">
             <RotateCcw className="size-3.5" />
             <span>Revision Requested</span>
           </span>
         );
       case "LATE":
         return (
-          <span className="inline-flex items-center gap-1 rounded-full bg-rose-500/10 dark:bg-rose-500/20 px-2.5 py-0.5 text-xs font-semibold text-rose-600 dark:text-rose-400">
+          <span className="inline-flex items-center gap-1.5 text-xs font-medium text-rose-600 dark:text-rose-400">
             <AlertTriangle className="size-3.5" />
             <span>Overdue (Late)</span>
           </span>
         );
       case "DISPUTED":
         return (
-          <span className="inline-flex items-center gap-1 rounded-full bg-rose-500/10 dark:bg-rose-500/20 px-2.5 py-0.5 text-xs font-semibold text-rose-600 dark:text-rose-400">
+          <span className="inline-flex items-center gap-1.5 text-xs font-medium text-rose-600 dark:text-rose-400">
             <Scale className="size-3.5" />
             <span>Disputed</span>
           </span>
         );
       default:
         return (
-          <span className="inline-flex items-center gap-1 rounded-full bg-zinc-100 dark:bg-zinc-800 px-2.5 py-0.5 text-xs font-medium text-zinc-600 dark:text-zinc-400">
+          <span className="inline-flex items-center gap-1.5 text-xs text-muted-foreground">
             <Clock className="size-3.5" />
-            <span>Draft / Pending</span>
+            <span>Pending</span>
           </span>
         );
     }
   };
 
-  // Accurate Escrow status badge
-  const renderEscrowBadge = () => {
+  // Escrow status: clean text & icon without colored background
+  const renderEscrowStatusText = () => {
     switch (milestone.paymentStatus) {
       case "FUNDED":
         return (
-          <span className="inline-flex items-center gap-1 text-[11px] font-medium text-emerald-600 dark:text-emerald-400">
-            <ShieldCheck className="size-3.5" />
+          <span className="inline-flex items-center gap-1 text-[11px] text-emerald-600 dark:text-emerald-400">
+            <ShieldCheck className="size-3" />
             <span>Escrow Funded</span>
           </span>
         );
       case "RELEASED":
         return (
-          <span className="inline-flex items-center gap-1 text-[11px] font-medium text-blue-600 dark:text-blue-400">
-            <Check className="size-3.5" />
-            <span>Payment Released</span>
+          <span className="inline-flex items-center gap-1 text-[11px] text-blue-600 dark:text-blue-400">
+            <Check className="size-3" />
+            <span>Paid</span>
           </span>
         );
       case "REFUNDED":
         return (
-          <span className="inline-flex items-center gap-1 text-[11px] font-medium text-zinc-500">
-            <RotateCcw className="size-3.5" />
+          <span className="inline-flex items-center gap-1 text-[11px] text-muted-foreground">
+            <RotateCcw className="size-3" />
             <span>Refunded</span>
           </span>
         );
       default:
         return (
-          <span className="inline-flex items-center gap-1 text-[11px] font-medium text-zinc-400 dark:text-zinc-500">
-            <Lock className="size-3.5" />
+          <span className="inline-flex items-center gap-1 text-[11px] text-muted-foreground">
+            <Lock className="size-3" />
             <span>Awaiting Deposit</span>
           </span>
         );
     }
   };
 
-  // Step indicator icon & styling
   const isCompleted = milestone.status === "COMPLETED";
-  const isInProgress = milestone.status === "IN_PROGRESS";
-  const isSubmitted = milestone.status === "SUBMITTED";
-  const isWarning = milestone.status === "LATE" || milestone.status === "CHANGES_REQUESTED";
-
   const stepNumber = String(index + 1).padStart(2, "0");
   const countdownText = getDueCountdown();
   const isLastMilestone = index === totalMilestones - 1;
 
   return (
-    <div className="relative group py-5 sm:py-6 transition-colors hover:bg-zinc-50/50 dark:hover:bg-zinc-900/30 px-2 sm:px-4 rounded-xl">
+    <div className="relative py-4 sm:py-5">
       {/* Connecting vertical timeline line */}
       {!isLastMilestone && (
-        <div
-          className={`absolute left-6 sm:left-8 top-14 bottom-0 w-[2px] -z-0 ${
-            isCompleted
-              ? "bg-emerald-500/40"
-              : isInProgress || isSubmitted
-                ? "bg-[#0069D3]/40"
-                : "bg-zinc-200 dark:bg-zinc-800"
-          }`}
-        />
+        <div className="absolute left-[13px] sm:left-[15px] top-11 bottom-0 w-[1px] bg-border/50 -z-0" />
       )}
 
-      <div className="relative z-10 flex flex-col md:flex-row md:items-start justify-between gap-4">
-        {/* Left Side: Step Circle + Title & Scope + Badges */}
-        <div className="flex items-start gap-3 sm:gap-4 flex-1 min-w-0">
-          {/* Step Number Badge */}
-          <div
-            className={`flex size-8 sm:size-9 shrink-0 items-center justify-center rounded-full text-xs font-bold transition-all shadow-2xs ${
-              isCompleted
-                ? "bg-emerald-600 text-white"
-                : isSubmitted
-                  ? "bg-[#0069D3] text-white"
-                  : isInProgress
-                    ? "bg-[#0069D3] text-white ring-4 ring-blue-500/20"
-                    : isWarning
-                      ? "bg-amber-600 text-white"
-                      : "bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400"
-            }`}
-          >
-            {isCompleted ? <Check className="size-4 stroke-[3]" /> : stepNumber}
+      <div className="relative z-10 flex flex-col md:flex-row md:items-start justify-between gap-3">
+        {/* Left Side: Subtle step indicator + Title & Description + Badges */}
+        <div className="flex items-start gap-3 flex-1 min-w-0">
+          {/* Minimal Step Indicator (No heavy colored bg) */}
+          <div className="flex size-7 sm:size-8 shrink-0 items-center justify-center rounded-full border border-border text-[11px] font-mono text-muted-foreground bg-background">
+            {isCompleted ? <Check className="size-3.5 text-emerald-600" /> : stepNumber}
           </div>
 
           {/* Details */}
-          <div className="space-y-1.5 flex-1 min-w-0">
+          <div className="space-y-1 flex-1 min-w-0">
             {/* Title & Code */}
             <div className="flex flex-wrap items-center gap-2">
-              <span className="font-mono text-[11px] font-semibold text-zinc-400 dark:text-zinc-500">
+              <span className="font-mono text-[11px] text-muted-foreground">
                 {milestoneCode}
               </span>
-              <span className="text-zinc-300 dark:text-zinc-700">•</span>
+              <span className="text-border">•</span>
               {canViewDetail ? (
                 <Link
                   href={detailUrl}
-                  className="font-bold text-sm sm:text-base text-zinc-900 dark:text-zinc-100 hover:text-[#0069D3] transition-colors line-clamp-1"
+                  className="font-medium text-sm sm:text-base text-foreground hover:text-[#0069D3] transition-colors line-clamp-1"
                 >
                   {milestone.title}
                 </Link>
               ) : (
-                <span className="font-bold text-sm sm:text-base text-zinc-900 dark:text-zinc-100 line-clamp-1">
+                <span className="font-medium text-sm sm:text-base text-foreground line-clamp-1">
                   {milestone.title}
                 </span>
               )}
@@ -309,30 +281,30 @@ export function MilestoneCard({
 
             {/* Scope / Description */}
             {milestone.description && (
-              <p className="text-xs text-zinc-600 dark:text-zinc-400 line-clamp-2 leading-relaxed max-w-2xl">
+              <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed max-w-2xl">
                 {milestone.description}
               </p>
             )}
 
-            {/* Badges & Due Date Row */}
-            <div className="flex flex-wrap items-center gap-3 pt-1 text-xs">
-              {renderWorkStatusBadge()}
-              <span className="text-zinc-300 dark:text-zinc-700">•</span>
-              {renderEscrowBadge()}
+            {/* Badges & Due Date Row (Text only, no colored bg) */}
+            <div className="flex flex-wrap items-center gap-2.5 pt-0.5 text-xs">
+              {renderWorkStatusText()}
+              <span className="text-border">•</span>
+              {renderEscrowStatusText()}
               {milestone.dueDate && (
                 <>
-                  <span className="text-zinc-300 dark:text-zinc-700">•</span>
+                  <span className="text-border">•</span>
                   <span
                     className={`inline-flex items-center gap-1 font-mono text-[11px] ${
                       isOverdue || milestone.status === "LATE"
-                        ? "text-rose-600 dark:text-rose-400 font-semibold"
-                        : "text-zinc-500 dark:text-zinc-400"
+                        ? "text-rose-600 dark:text-rose-400 font-medium"
+                        : "text-muted-foreground"
                     }`}
                   >
                     <Clock className="size-3" />
                     <span>Due: {formatDate(milestone.dueDate)}</span>
                     {countdownText && (
-                      <span className="text-[10px] font-medium opacity-80">
+                      <span className="font-sans opacity-75">
                         ({countdownText})
                       </span>
                     )}
@@ -343,30 +315,27 @@ export function MilestoneCard({
           </div>
         </div>
 
-        {/* Right Side: Price & Contextual Actions */}
-        <div className="flex sm:flex-col items-center sm:items-end justify-between sm:justify-start gap-3 shrink-0 pt-2 md:pt-0 pl-11 md:pl-0 border-t sm:border-t-0 border-zinc-100 dark:border-zinc-800/60">
+        {/* Right Side: Price & Actions */}
+        <div className="flex sm:flex-col items-center sm:items-end justify-between sm:justify-start gap-2 shrink-0 pt-2 md:pt-0 pl-10 md:pl-0 border-t sm:border-t-0 border-border/30">
           {/* Price */}
           <div className="text-left sm:text-right">
-            <span className="font-mono text-base sm:text-lg font-extrabold text-zinc-950 dark:text-zinc-50 block leading-tight">
+            <span className="font-mono text-sm sm:text-base font-semibold text-foreground block leading-tight">
               ${Number(milestone.amount).toLocaleString("en-US", {
                 minimumFractionDigits: 2,
               })}
             </span>
-            <span className="text-[10px] font-medium text-zinc-400 uppercase tracking-wider block">
-              Budget
-            </span>
           </div>
 
           {/* Action Buttons Row */}
-          <div className="flex items-center gap-2 flex-wrap justify-end">
+          <div className="flex items-center gap-1.5 flex-wrap justify-end">
             {/* Client: Fund Escrow */}
             {canFundMilestone && canFundPermission && onFund && (
               <Button
                 size="sm"
                 onClick={() => onFund(milestone)}
-                className="h-8 rounded-full bg-[#0069D3] hover:bg-[#0055b3] text-white text-xs font-semibold px-3.5 shadow-2xs cursor-pointer"
+                className="h-7 rounded-full bg-[#0069D3] hover:bg-[#0055b3] text-white text-xs font-normal px-3 cursor-pointer"
               >
-                <CreditCard className="mr-1.5 size-3.5" />
+                <CreditCard className="mr-1 size-3" />
                 Fund Escrow
               </Button>
             )}
@@ -379,9 +348,9 @@ export function MilestoneCard({
                 <Button
                   size="sm"
                   onClick={() => onReview(milestone)}
-                  className="h-8 rounded-full bg-[#0069D3] hover:bg-[#0055b3] text-white text-xs font-semibold px-3.5 shadow-2xs cursor-pointer animate-pulse"
+                  className="h-7 rounded-full bg-[#0069D3] hover:bg-[#0055b3] text-white text-xs font-normal px-3 cursor-pointer"
                 >
-                  <FileCheck className="mr-1.5 size-3.5" />
+                  <FileCheck className="mr-1 size-3" />
                   Review Delivery
                 </Button>
               )}
@@ -391,9 +360,9 @@ export function MilestoneCard({
               <Button
                 size="sm"
                 onClick={() => onRelease(milestone)}
-                className="h-8 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold px-3.5 shadow-2xs cursor-pointer"
+                className="h-7 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-normal px-3 cursor-pointer"
               >
-                <Check className="mr-1.5 size-3.5" />
+                <Check className="mr-1 size-3" />
                 Release Payment
               </Button>
             )}
@@ -404,7 +373,7 @@ export function MilestoneCard({
                 variant="outline"
                 size="sm"
                 onClick={() => onRefund(milestone)}
-                className="h-8 rounded-full border-rose-200 dark:border-rose-800 bg-white dark:bg-zinc-900 text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/30 text-xs font-semibold px-3 cursor-pointer"
+                className="h-7 rounded-full border-rose-200 dark:border-rose-800 text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/30 text-xs font-normal px-2.5 cursor-pointer"
               >
                 <RotateCcw className="mr-1 size-3" />
                 Refund Escrow
@@ -421,9 +390,9 @@ export function MilestoneCard({
                   size="sm"
                   disabled={hasOtherInProgressMilestone}
                   onClick={() => onStartWork(milestone)}
-                  className="h-8 rounded-full bg-[#0069D3] hover:bg-[#0055b3] text-white text-xs font-semibold px-3.5 shadow-2xs cursor-pointer"
+                  className="h-7 rounded-full bg-[#0069D3] hover:bg-[#0055b3] text-white text-xs font-normal px-3 cursor-pointer"
                 >
-                  <Play className="mr-1.5 size-3.5" />
+                  <Play className="mr-1 size-3" />
                   Start Work
                 </Button>
               )}
@@ -436,9 +405,9 @@ export function MilestoneCard({
                 <Button
                   size="sm"
                   onClick={() => onSubmitWork(milestone)}
-                  className="h-8 rounded-full bg-[#0069D3] hover:bg-[#0055b3] text-white text-xs font-semibold px-3.5 shadow-2xs cursor-pointer"
+                  className="h-7 rounded-full bg-[#0069D3] hover:bg-[#0055b3] text-white text-xs font-normal px-3 cursor-pointer"
                 >
-                  <Upload className="mr-1.5 size-3.5" />
+                  <Upload className="mr-1 size-3" />
                   {milestone.status === "LATE" ? "Deliver Work (Late)" : "Deliver Work"}
                 </Button>
               )}
@@ -451,9 +420,9 @@ export function MilestoneCard({
                 <Button
                   size="sm"
                   onClick={() => onSubmitWork(milestone)}
-                  className="h-8 rounded-full bg-amber-600 hover:bg-amber-700 text-white text-xs font-semibold px-3.5 shadow-2xs cursor-pointer"
+                  className="h-7 rounded-full bg-amber-600 hover:bg-amber-700 text-white text-xs font-normal px-3 cursor-pointer"
                 >
-                  <RotateCcw className="mr-1.5 size-3.5" />
+                  <RotateCcw className="mr-1 size-3" />
                   Resubmit Work
                 </Button>
               )}
@@ -466,7 +435,7 @@ export function MilestoneCard({
                   variant="outline"
                   size="sm"
                   onClick={() => onViewDispute(milestone)}
-                  className="h-8 rounded-full border-rose-200 dark:border-rose-800 bg-white dark:bg-zinc-900 text-rose-600 hover:bg-rose-50 text-xs font-semibold px-3 cursor-pointer"
+                  className="h-7 rounded-full border-rose-200 dark:border-rose-800 text-rose-600 hover:bg-rose-50 text-xs font-normal px-2.5 cursor-pointer"
                 >
                   <Scale className="mr-1 size-3" />
                   Dispute
@@ -483,7 +452,7 @@ export function MilestoneCard({
                   variant="ghost"
                   size="sm"
                   onClick={() => onOpenDispute(milestone)}
-                  className="h-8 text-xs text-zinc-500 hover:text-rose-600 px-2 cursor-pointer"
+                  className="h-7 text-xs text-muted-foreground hover:text-rose-600 px-1.5 cursor-pointer"
                   title="Dispute Milestone"
                 >
                   <Scale className="size-3.5" />
@@ -496,7 +465,7 @@ export function MilestoneCard({
                 variant="ghost"
                 size="sm"
                 onClick={() => onEdit(milestone)}
-                className="h-8 text-xs text-zinc-500 hover:text-[#0069D3] px-2 cursor-pointer"
+                className="h-7 text-xs text-muted-foreground hover:text-[#0069D3] px-1.5 cursor-pointer"
                 title="Edit Milestone"
               >
                 <Edit2 className="size-3.5" />
@@ -509,7 +478,7 @@ export function MilestoneCard({
                 variant="ghost"
                 size="sm"
                 onClick={() => onDelete(milestone)}
-                className="h-8 text-xs text-zinc-500 hover:text-rose-600 px-2 cursor-pointer"
+                className="h-7 text-xs text-muted-foreground hover:text-rose-600 px-1.5 cursor-pointer"
                 title="Delete Milestone"
               >
                 <Trash2 className="size-3.5" />
@@ -520,9 +489,9 @@ export function MilestoneCard({
             {canViewDetail && (
               <Button
                 asChild
-                variant="outline"
+                variant="ghost"
                 size="sm"
-                className="h-8 rounded-full border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 hover:text-[#0069D3] hover:border-[#0069D3] text-xs font-medium px-3 cursor-pointer"
+                className="h-7 text-xs font-normal text-muted-foreground hover:text-[#0069D3] px-2 cursor-pointer"
               >
                 <Link href={detailUrl} className="inline-flex items-center gap-1">
                   <span>Details</span>

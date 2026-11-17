@@ -161,64 +161,65 @@ export function MilestoneActivityTimeline({
     actor: clientName,
   });
 
+  // Icons: Clean transparent circles with colored stroke, NO solid background colors
   const getEventIcon = (type: ActivityEvent["type"]) => {
     switch (type) {
       case "approved":
         return (
-          <div className="flex size-6 items-center justify-center rounded-full bg-emerald-600 text-white">
-            <CheckCircle2 className="size-3.5 stroke-[2.5]" />
+          <div className="flex size-5 items-center justify-center rounded-full border border-border bg-background text-emerald-600">
+            <CheckCircle2 className="size-3" />
           </div>
         );
       case "submitted":
         return (
-          <div className="flex size-6 items-center justify-center rounded-full bg-[#0069D3] text-white">
-            <FileText className="size-3.5" />
+          <div className="flex size-5 items-center justify-center rounded-full border border-border bg-background text-[#0069D3]">
+            <FileText className="size-3" />
           </div>
         );
       case "changes_requested":
         return (
-          <div className="flex size-6 items-center justify-center rounded-full bg-amber-600 text-white">
-            <RotateCcw className="size-3" />
+          <div className="flex size-5 items-center justify-center rounded-full border border-border bg-background text-amber-600">
+            <RotateCcw className="size-2.5" />
           </div>
         );
       case "started":
         return (
-          <div className="flex size-6 items-center justify-center rounded-full bg-zinc-800 text-white dark:bg-zinc-200 dark:text-zinc-900">
-            <Play className="size-3" />
+          <div className="flex size-5 items-center justify-center rounded-full border border-border bg-background text-foreground">
+            <Play className="size-2.5" />
           </div>
         );
       case "funded":
         return (
-          <div className="flex size-6 items-center justify-center rounded-full bg-emerald-600 text-white">
-            <Lock className="size-3" />
+          <div className="flex size-5 items-center justify-center rounded-full border border-border bg-background text-emerald-600">
+            <Lock className="size-2.5" />
           </div>
         );
       default:
         return (
-          <div className="flex size-6 items-center justify-center rounded-full bg-zinc-100 text-zinc-500 dark:bg-zinc-800 dark:text-zinc-400">
-            <Clock className="size-3" />
+          <div className="flex size-5 items-center justify-center rounded-full border border-border bg-background text-muted-foreground">
+            <Clock className="size-2.5" />
           </div>
         );
     }
   };
 
   return (
-    <div className="space-y-4 font-sans pt-2">
-      <div className="border-b border-border/50 pb-2">
-        <h3 className="text-sm font-bold text-foreground">
+    <div className="space-y-3 font-sans pt-1">
+      <div className="border-b border-border/40 pb-2">
+        <h3 className="text-xs font-semibold text-foreground">
           Activity History
         </h3>
-        <p className="text-xs text-muted-foreground mt-0.5">
-          Audited lifecycle and milestone timeline
+        <p className="text-[11px] text-muted-foreground">
+          Lifecycle and milestone event log
         </p>
       </div>
 
-      <div className="relative pl-1 space-y-4 pt-1">
+      <div className="relative pl-1 space-y-3.5 pt-1">
         {/* Continuous vertical timeline connector line */}
-        <div className="absolute left-[15px] top-2 bottom-3 w-[1.5px] bg-border/60" />
+        <div className="absolute left-[13px] top-2 bottom-2 w-[1px] bg-border/40" />
 
         {events.map((event) => (
-          <div key={event.id} className="relative flex items-start gap-3 text-xs">
+          <div key={event.id} className="relative flex items-start gap-2.5 text-xs">
             {/* Event Icon badge */}
             <div className="relative z-10 shrink-0 bg-background">
               {getEventIcon(event.type)}
@@ -227,11 +228,11 @@ export function MilestoneActivityTimeline({
             {/* Event Content */}
             <div className="space-y-0.5 min-w-0 flex-1 pt-0.5">
               <div className="flex items-baseline justify-between gap-2">
-                <span className="font-bold text-foreground truncate">
+                <span className="font-medium text-foreground truncate">
                   {event.title}
                 </span>
                 {event.timestamp && (
-                  <span className="text-[10px] text-muted-foreground shrink-0 font-medium font-mono">
+                  <span className="text-[10px] text-muted-foreground shrink-0 font-mono">
                     {formatDate(event.timestamp)}
                   </span>
                 )}
@@ -244,7 +245,7 @@ export function MilestoneActivityTimeline({
               )}
 
               {event.actor && (
-                <p className="text-[10px] text-muted-foreground/80">
+                <p className="text-[10px] text-muted-foreground/75">
                   By {event.actor}
                 </p>
               )}

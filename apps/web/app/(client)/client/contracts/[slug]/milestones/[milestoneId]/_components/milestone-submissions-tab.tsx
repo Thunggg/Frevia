@@ -78,9 +78,9 @@ export function MilestoneSubmissionsTab({
       return (
         <Button
           onClick={onFund}
-          className="rounded-full bg-[#0069D3] hover:bg-[#0055b3] text-white text-xs font-semibold h-8 px-4 shadow-2xs cursor-pointer self-start sm:self-auto"
+          className="rounded-full bg-[#0069D3] hover:bg-[#0055b3] text-white text-xs font-normal h-7 px-3.5 cursor-pointer self-start sm:self-auto"
         >
-          <CreditCard className="mr-1.5 size-3.5" />
+          <CreditCard className="mr-1.5 size-3" />
           Fund Escrow
         </Button>
       );
@@ -90,9 +90,9 @@ export function MilestoneSubmissionsTab({
       return (
         <Button
           onClick={() => onReviewSubmission()}
-          className="rounded-full bg-[#0069D3] hover:bg-[#0055b3] text-white text-xs font-semibold h-8 px-4 shadow-2xs cursor-pointer self-start sm:self-auto"
+          className="rounded-full bg-[#0069D3] hover:bg-[#0055b3] text-white text-xs font-normal h-7 px-3.5 cursor-pointer self-start sm:self-auto"
         >
-          <FileCheck className="mr-1.5 size-3.5" />
+          <FileCheck className="mr-1.5 size-3" />
           Review Delivery
         </Button>
       );
@@ -108,9 +108,9 @@ export function MilestoneSubmissionsTab({
       return (
         <Button
           onClick={onRelease}
-          className="rounded-full bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold h-8 px-4 shadow-2xs cursor-pointer self-start sm:self-auto"
+          className="rounded-full bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-normal h-7 px-3.5 cursor-pointer self-start sm:self-auto"
         >
-          <Check className="mr-1.5 size-3.5" />
+          <Check className="mr-1.5 size-3" />
           Release Payment
         </Button>
       );
@@ -128,9 +128,9 @@ export function MilestoneSubmissionsTab({
         <Button
           variant="outline"
           onClick={onRefund}
-          className="rounded-full border-rose-200 dark:border-rose-800 text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/30 text-xs font-semibold h-8 px-4 cursor-pointer self-start sm:self-auto"
+          className="rounded-full border-rose-200 dark:border-rose-800 text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/20 text-xs font-normal h-7 px-3.5 cursor-pointer self-start sm:self-auto"
         >
-          <RotateCcw className="mr-1.5 size-3.5" />
+          <RotateCcw className="mr-1.5 size-3" />
           Refund Escrow
         </Button>
       );
@@ -146,9 +146,9 @@ export function MilestoneSubmissionsTab({
       return (
         <Button
           onClick={onStartWork}
-          className="rounded-full bg-[#0069D3] hover:bg-[#0055b3] text-white text-xs font-semibold h-8 px-4 shadow-2xs cursor-pointer self-start sm:self-auto"
+          className="rounded-full bg-[#0069D3] hover:bg-[#0055b3] text-white text-xs font-normal h-7 px-3.5 cursor-pointer self-start sm:self-auto"
         >
-          <Play className="mr-1.5 size-3.5" />
+          <Play className="mr-1.5 size-3" />
           Start Milestone
         </Button>
       );
@@ -163,29 +163,23 @@ export function MilestoneSubmissionsTab({
       onSubmitWork
     ) {
       const isResubmit = milestone.status === "CHANGES_REQUESTED";
-      const isLate = milestone.status === "LATE";
       return (
         <Button
           onClick={onSubmitWork}
           className={
             isResubmit
-              ? "rounded-full bg-amber-600 hover:bg-amber-700 text-white text-xs font-semibold h-8 px-4 shadow-2xs cursor-pointer self-start sm:self-auto"
-              : "rounded-full bg-[#0069D3] hover:bg-[#0055b3] text-white text-xs font-semibold h-8 px-4 shadow-2xs cursor-pointer self-start sm:self-auto"
+              ? "rounded-full bg-amber-600 hover:bg-amber-700 text-white text-xs font-normal h-7 px-3.5 cursor-pointer self-start sm:self-auto"
+              : "rounded-full bg-[#0069D3] hover:bg-[#0055b3] text-white text-xs font-normal h-7 px-3.5 cursor-pointer self-start sm:self-auto"
           }
         >
           {isResubmit ? (
             <>
-              <RotateCcw className="mr-1.5 size-3.5" />
-              Resubmit Deliverables
-            </>
-          ) : isLate ? (
-            <>
-              <Upload className="mr-1.5 size-3.5" />
-              Deliver Work (Late)
+              <RotateCcw className="mr-1.5 size-3" />
+              Resubmit
             </>
           ) : (
             <>
-              <Upload className="mr-1.5 size-3.5" />
+              <Upload className="mr-1.5 size-3" />
               Deliver Work
             </>
           )}
@@ -208,24 +202,24 @@ export function MilestoneSubmissionsTab({
     });
   };
 
-  const getSubmissionStatus = (status: string) => {
+  const getSubmissionStatusText = (status: string) => {
     switch (status) {
       case "APPROVED":
         return (
-          <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/10 px-2.5 py-0.5 text-xs font-semibold text-emerald-600 dark:text-emerald-400">
+          <span className="inline-flex items-center gap-1 text-xs text-emerald-600 dark:text-emerald-400 font-medium">
             <CheckCircle2 className="size-3.5" /> Approved
           </span>
         );
       case "CHANGES_REQUESTED":
         return (
-          <span className="inline-flex items-center gap-1 rounded-full bg-amber-500/10 px-2.5 py-0.5 text-xs font-semibold text-amber-600 dark:text-amber-400">
+          <span className="inline-flex items-center gap-1 text-xs text-amber-600 dark:text-amber-400 font-medium">
             <RotateCcw className="size-3.5" /> Revisions Requested
           </span>
         );
       case "SUBMITTED":
       default:
         return (
-          <span className="inline-flex items-center gap-1 rounded-full bg-blue-500/10 px-2.5 py-0.5 text-xs font-semibold text-[#0069D3] dark:text-blue-400">
+          <span className="inline-flex items-center gap-1 text-xs text-[#0069D3] dark:text-blue-400 font-medium">
             <FileCheck className="size-3.5" /> In Review
           </span>
         );
@@ -235,7 +229,7 @@ export function MilestoneSubmissionsTab({
   if (!canViewSubmissions) {
     return (
       <div className="py-8 text-center space-y-2">
-        <h3 className="text-sm font-semibold text-foreground">
+        <h3 className="text-xs font-medium text-foreground">
           Không có quyền xem danh sách bài nộp
         </h3>
         <p className="text-xs text-muted-foreground max-w-md mx-auto">
@@ -246,15 +240,15 @@ export function MilestoneSubmissionsTab({
   }
 
   return (
-    <div className="space-y-6 pt-2">
+    <div className="space-y-4 pt-1">
       {/* Top action bar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-border/50 pb-3">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-border/40 pb-2.5">
         <div>
-          <h3 className="text-sm font-bold text-foreground">
+          <h3 className="text-xs font-semibold text-foreground">
             Deliverables & Submissions History
           </h3>
-          <p className="text-xs text-muted-foreground mt-0.5">
-            Full history of submitted files, project links, and review decisions
+          <p className="text-[11px] text-muted-foreground">
+            History of submitted deliverables and review decisions
           </p>
         </div>
 
@@ -262,22 +256,22 @@ export function MilestoneSubmissionsTab({
       </div>
 
       {submissions.length > 0 ? (
-        <div className="divide-y divide-border/40">
+        <div className="divide-y divide-border/30">
           {submissions.map((sub, idx) => {
             const attemptNumber = submissions.length - idx;
             const isLatest = idx === 0;
 
             return (
-              <div key={sub.id} className="py-5 space-y-3">
+              <div key={sub.id} className="py-4 space-y-2.5">
                 {/* Header: Attempt, Timestamp & Status */}
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                   <div className="flex items-center gap-2">
-                    <span className="font-mono text-xs font-bold text-foreground">
+                    <span className="font-mono text-xs font-medium text-foreground">
                       Delivery #{attemptNumber}
                     </span>
                     {isLatest && (
-                      <span className="rounded-full bg-blue-500/10 text-[#0069D3] text-[10px] font-bold px-2 py-0.5">
-                        Latest
+                      <span className="text-[10px] text-[#0069D3] font-medium">
+                        (Latest)
                       </span>
                     )}
                     <span className="text-muted-foreground">•</span>
@@ -286,19 +280,19 @@ export function MilestoneSubmissionsTab({
                     </span>
                   </div>
 
-                  <div>{getSubmissionStatus(sub.status)}</div>
+                  <div>{getSubmissionStatusText(sub.status)}</div>
                 </div>
 
                 {/* Freelancer Notes, Links & Files */}
                 {canViewSubmissionDetail && (
-                  <div className="space-y-3">
+                  <div className="space-y-2">
                     {/* Freelancer Notes */}
                     {sub.message && (
-                      <div className="space-y-1">
-                        <span className="text-xs font-semibold text-muted-foreground">
+                      <div className="space-y-0.5">
+                        <span className="text-xs text-muted-foreground">
                           Notes:
                         </span>
-                        <p className="p-3 rounded-xl border border-border/40 bg-muted/20 text-xs sm:text-sm text-foreground leading-relaxed whitespace-pre-wrap">
+                        <p className="pl-3 border-l-2 border-border/60 py-0.5 text-xs text-foreground leading-relaxed whitespace-pre-wrap">
                           {sub.message}
                         </p>
                       </div>
@@ -306,9 +300,9 @@ export function MilestoneSubmissionsTab({
 
                     {/* Preview / External Links */}
                     {sub.links && sub.links.length > 0 && (
-                      <div className="space-y-1.5">
-                        <span className="text-xs font-semibold text-muted-foreground">
-                          Project Links:
+                      <div className="space-y-1">
+                        <span className="text-xs text-muted-foreground">
+                          Links:
                         </span>
                         <div className="flex flex-wrap gap-2">
                           {sub.links.map((link, lIdx) => (
@@ -317,7 +311,7 @@ export function MilestoneSubmissionsTab({
                               href={link}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="inline-flex items-center gap-1.5 rounded-full border border-border/60 bg-muted/20 px-3 py-1 text-xs text-[#0069D3] hover:underline"
+                              className="inline-flex items-center gap-1.5 rounded-md border border-border/50 px-2 py-0.5 text-xs text-[#0069D3] hover:underline"
                             >
                               <ExternalLink className="size-3" />
                               <span className="truncate max-w-[280px]">{link}</span>
@@ -329,18 +323,18 @@ export function MilestoneSubmissionsTab({
 
                     {/* Attached Files */}
                     {sub.files && sub.files.length > 0 && (
-                      <div className="space-y-1.5">
-                        <span className="text-xs font-semibold text-muted-foreground">
-                          Attached Deliverable Files:
+                      <div className="space-y-1">
+                        <span className="text-xs text-muted-foreground">
+                          Files:
                         </span>
                         <div className="flex flex-wrap gap-2">
                           {sub.files.map((item) => (
                             <div
                               key={item.fileId}
-                              className="inline-flex items-center gap-2 rounded-lg border border-border/60 bg-background px-3 py-1.5 text-xs text-foreground"
+                              className="inline-flex items-center gap-2 rounded-md border border-border/50 px-2.5 py-1 text-xs text-foreground"
                             >
                               <FileText className="size-3.5 text-[#0069D3]" />
-                              <span className="truncate max-w-[220px] font-medium">
+                              <span className="truncate max-w-[220px]">
                                 {item.file?.fileName || `File #${item.fileId}`}
                               </span>
                               {item.file?.fileUrl && (
@@ -365,7 +359,7 @@ export function MilestoneSubmissionsTab({
 
                 {/* Review Feedback: Approved or Revisions requested */}
                 {sub.status === "APPROVED" && sub.reviewedAt && (
-                  <div className="text-xs flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400 pt-1">
+                  <div className="text-xs flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400">
                     <CheckCircle2 className="size-3.5 shrink-0" />
                     <span>
                       Approved on {formatDate(sub.reviewedAt)}. Payment released.
@@ -374,15 +368,15 @@ export function MilestoneSubmissionsTab({
                 )}
 
                 {sub.changeRequestMessage && (
-                  <div className="rounded-xl border border-amber-200 dark:border-amber-900/60 p-3.5 text-xs space-y-1 bg-amber-50/40 dark:bg-amber-950/20">
-                    <span className="font-bold text-amber-700 dark:text-amber-400 block">
+                  <div className="border-l-2 border-amber-500 pl-3 py-1 text-xs space-y-0.5">
+                    <span className="font-medium text-amber-600 block">
                       Client Revision Feedback:
                     </span>
                     <p className="text-foreground leading-relaxed whitespace-pre-wrap">
                       {sub.changeRequestMessage}
                     </p>
                     {sub.changeRequestDueDate && (
-                      <span className="block pt-0.5 text-[11px] text-amber-600 dark:text-amber-400">
+                      <span className="block text-[11px] text-muted-foreground">
                         Target revision deadline: {formatDate(sub.changeRequestDueDate)}
                       </span>
                     )}
@@ -391,13 +385,13 @@ export function MilestoneSubmissionsTab({
 
                 {/* Client Review Action for latest unapproved submission */}
                 {isClient && isLatest && milestone.status === "SUBMITTED" && canReview && onReviewSubmission && (
-                  <div className="pt-2 flex justify-end">
+                  <div className="pt-1.5 flex justify-end">
                     <Button
                       size="sm"
                       onClick={() => onReviewSubmission(sub)}
-                      className="rounded-full bg-[#0069D3] hover:bg-[#0055b3] text-white text-xs font-semibold px-4 cursor-pointer"
+                      className="rounded-full bg-[#0069D3] hover:bg-[#0055b3] text-white text-xs font-normal h-7 px-3.5 cursor-pointer"
                     >
-                      <Check className="mr-1.5 size-3.5" />
+                      <Check className="mr-1.5 size-3" />
                       Review & Approve Delivery
                     </Button>
                   </div>
@@ -407,15 +401,13 @@ export function MilestoneSubmissionsTab({
           })}
         </div>
       ) : (
-        <div className="py-12 text-center space-y-2">
-          <Clock className="size-6 mx-auto text-muted-foreground/60" />
-          <h4 className="text-xs font-semibold text-foreground">
+        <div className="py-10 text-center space-y-1.5">
+          <Clock className="size-5 mx-auto text-muted-foreground/60" />
+          <h4 className="text-xs font-medium text-foreground">
             No submissions yet
           </h4>
           <p className="text-xs text-muted-foreground max-w-sm mx-auto">
-            {isFreelancer
-              ? "When your work is ready, use the Deliver Work button above to submit your deliverable files."
-              : "Submissions will appear here once the freelancer delivers work for this milestone."}
+            Submissions will appear here once the freelancer delivers work for this milestone.
           </p>
         </div>
       )}

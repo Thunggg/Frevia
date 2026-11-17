@@ -17,7 +17,6 @@ import { FundMilestoneDialog } from "../../_components/fund-milestone-dialog";
 import { SubmitMilestoneDialog } from "../../_components/submit-milestone-dialog";
 import { ReviewSubmissionDialog } from "../../_components/review-submission-dialog";
 import { MilestoneDetailHeader } from "./milestone-detail-header";
-import { MilestoneWorkflowStepper } from "./milestone-workflow-stepper";
 import { MilestoneDetailTabs, type MilestoneTabKey } from "./milestone-detail-tabs";
 import { MilestoneOverviewTab } from "./milestone-overview-tab";
 import { MilestoneSubmissionsTab } from "./milestone-submissions-tab";
@@ -203,14 +202,14 @@ export function MilestoneDetailContent({
 
   if (!canViewDetail) {
     return (
-      <div className="space-y-6 max-w-6xl mx-auto font-sans pb-16">
+      <div className="space-y-4 max-w-5xl mx-auto font-sans pb-16">
         <MilestoneDetailHeader
           contract={contract}
           milestone={milestone}
           basePath={basePath}
         />
         <div className="py-12 text-center space-y-2">
-          <h3 className="text-sm font-semibold text-foreground">
+          <h3 className="text-xs font-medium text-foreground">
             Không có quyền xem chi tiết milestone
           </h3>
           <p className="text-xs text-muted-foreground max-w-md mx-auto">
@@ -222,22 +221,16 @@ export function MilestoneDetailContent({
   }
 
   return (
-    <div className="space-y-6 sm:space-y-8 max-w-6xl mx-auto font-sans pb-16">
-      {/* ── 1. Top Milestone Breadcrumb & Title Header ── */}
+    <div className="space-y-4 max-w-5xl mx-auto font-sans pb-16">
+      {/* ── 1. Top Milestone Header (Clean, minimal, no bold/bg clutter) ── */}
       <MilestoneDetailHeader
         contract={contract}
         milestone={milestone}
         basePath={basePath}
       />
 
-      {/* ── 2. Horizontal Workflow Stepper ── */}
-      <MilestoneWorkflowStepper
-        milestone={milestone}
-        submissions={submissions}
-      />
-
-      {/* ── 3. Tabs Navigation ── */}
-      <div className="space-y-6">
+      {/* ── 2. Tabs Navigation ── */}
+      <div className="space-y-4">
         <MilestoneDetailTabs
           activeTab={activeTab}
           onTabChange={setActiveTab}
@@ -302,8 +295,6 @@ export function MilestoneDetailContent({
       </div>
 
       {/* ── Modals / Dialogs ── */}
-
-      {/* 1. Fund Escrow Dialog (Client) */}
       {isClient && (
         <FundMilestoneDialog
           open={fundModalOpen}
@@ -313,7 +304,6 @@ export function MilestoneDetailContent({
         />
       )}
 
-      {/* 2. Submit Work Dialog (Freelancer) */}
       {isFreelancer && (
         <SubmitMilestoneDialog
           open={submitModalOpen}
@@ -323,7 +313,6 @@ export function MilestoneDetailContent({
         />
       )}
 
-      {/* 3. Review Submission Dialog (Client) */}
       {isClient && selectedSubmissionToReview && (
         <ReviewSubmissionDialog
           open={reviewModalOpen}

@@ -24,13 +24,13 @@ export function MilestoneDetailTabs({
   const allTabs = [
     {
       key: "overview" as const,
-      label: "Overview & Deliverables",
+      label: "Overview",
       icon: Layers,
       visible: true,
     },
     {
       key: "submissions" as const,
-      label: "Submissions History",
+      label: "Submissions",
       icon: FolderGit2,
       count: submissionCount,
       visible: canViewSubmissions,
@@ -44,7 +44,7 @@ export function MilestoneDetailTabs({
     },
     {
       key: "activity" as const,
-      label: "Activity Log",
+      label: "Activity",
       icon: Activity,
       visible: true,
     },
@@ -53,8 +53,8 @@ export function MilestoneDetailTabs({
   const tabs = allTabs.filter((t) => t.visible);
 
   return (
-    <div className="border-b border-border/50">
-      <nav className="flex space-x-2 sm:space-x-4 overflow-x-auto scrollbar-none" aria-label="Tabs">
+    <div className="border-b border-border/40">
+      <nav className="flex space-x-4 overflow-x-auto scrollbar-none" aria-label="Tabs">
         {tabs.map((tab) => {
           const Icon = tab.icon;
           const isActive = activeTab === tab.key;
@@ -64,23 +64,17 @@ export function MilestoneDetailTabs({
               key={tab.key}
               type="button"
               onClick={() => onTabChange(tab.key)}
-              className={`inline-flex items-center gap-2 border-b-2 py-2.5 px-2 text-xs sm:text-sm font-semibold transition-colors cursor-pointer shrink-0 ${
+              className={`inline-flex items-center gap-1.5 border-b-2 py-2 px-1 text-xs transition-colors cursor-pointer shrink-0 ${
                 isActive
-                  ? "border-[#0069D3] text-[#0069D3]"
-                  : "border-transparent text-muted-foreground hover:text-foreground hover:border-border"
+                  ? "border-[#0069D3] text-[#0069D3] font-medium"
+                  : "border-transparent text-muted-foreground hover:text-foreground"
               }`}
             >
-              <Icon className="size-4" />
+              <Icon className="size-3.5" />
               <span>{tab.label}</span>
               {typeof tab.count === "number" && tab.count > 0 && (
-                <span
-                  className={`rounded-full px-1.5 py-0.2 text-[10px] font-bold ${
-                    isActive
-                      ? "bg-[#0069D3]/15 text-[#0069D3]"
-                      : "bg-muted text-muted-foreground"
-                  }`}
-                >
-                  {tab.count}
+                <span className="text-[10px] text-muted-foreground">
+                  ({tab.count})
                 </span>
               )}
             </button>

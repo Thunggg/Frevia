@@ -5,14 +5,10 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
-  CheckCircle2,
   ChevronLeft,
   Clock,
-  Layers,
   Plus,
   Search,
-  ShieldCheck,
-  User,
 } from "lucide-react";
 import { Button } from "@repo/ui/components/shadcn/button";
 import { toastError, toastSuccess } from "@repo/ui/components/shadcn/toast";
@@ -96,31 +92,11 @@ export function MilestonesPageContent({
     return (contract.milestones || []) as MilestoneType[];
   }, [contract.milestones]);
 
-  // Financial metrics
   const totalAmount = Number(contract.totalAmount) || 0;
 
   const currentAllocatedAmount = useMemo(() => {
     return milestones.reduce((sum, m) => sum + (Number(m.amount) || 0), 0);
   }, [milestones]);
-
-  const completedMilestones = useMemo(() => {
-    return milestones.filter((m) => m.status === "COMPLETED");
-  }, [milestones]);
-
-  const completedAmount = useMemo(() => {
-    return completedMilestones.reduce((sum, m) => sum + (Number(m.amount) || 0), 0);
-  }, [completedMilestones]);
-
-  const fundedAmount = useMemo(() => {
-    return milestones
-      .filter((m) => m.paymentStatus === "FUNDED" || m.paymentStatus === "RELEASED")
-      .reduce((sum, m) => sum + (Number(m.amount) || 0), 0);
-  }, [milestones]);
-
-  const progressPercent = useMemo(() => {
-    if (milestones.length === 0) return 0;
-    return Math.round((completedMilestones.length / milestones.length) * 100);
-  }, [completedMilestones.length, milestones.length]);
 
   const hasInProgressMilestone = useMemo(() => {
     return milestones.some((m) => m.status === "IN_PROGRESS");
@@ -268,14 +244,7 @@ export function MilestonesPageContent({
       ? `#${contract.slug}`
       : `#CON-${contract.id}`;
 
-  const counterparty = isFreelancer ? contract.client : contract.freelancer;
-  const counterpartyName =
-    counterparty?.profile?.displayName ||
-    counterparty?.email?.split("@")[0] ||
-    (isFreelancer ? "Client" : "Freelancer");
-  const counterpartyRole = isFreelancer ? "Client" : "Freelancer";
-
-  // Filter tabs for Fiverr-style pill bar
+  // Filter tabs (No loud backgrounds, subtle text tabs)
   const filterTabs = [
     { key: "ALL", label: "All", count: milestones.length },
     {
@@ -285,7 +254,7 @@ export function MilestonesPageContent({
     },
     {
       key: "SUBMITTED",
-      label: "Delivered / Review",
+      label: "Delivered",
       count: milestones.filter(
         (m) => m.status === "SUBMITTED" || m.status === "CHANGES_REQUESTED",
       ).length,
@@ -293,7 +262,7 @@ export function MilestonesPageContent({
     {
       key: "COMPLETED",
       label: "Completed",
-      count: completedMilestones.length,
+      count: milestones.filter((m) => m.status === "COMPLETED").length,
     },
     {
       key: "PENDING_ESCROW",
@@ -308,124 +277,48 @@ export function MilestonesPageContent({
   ];
 
   return (
-    <div className="space-y-6 sm:space-y-8 font-sans max-w-6xl mx-auto pb-16">
-      {/* ── 1. Top Breadcrumb ── */}
-      <div className="flex items-center gap-2 text-xs text-muted-foreground">
-        <Link
-          href={`${basePath}/contracts`}
-          className="inline-flex items-center gap-1 font-medium hover:text-foreground transition-colors"
-        >
-          <ChevronLeft className="size-4" />
-          <span>Contracts</span>
-        </Link>
-        <span>/</span>
-        <Link
-          href={`${basePath}/contracts/${encodeURIComponent(contract.slug || String(contract.id))}`}
-          className="font-medium hover:text-foreground transition-colors"
-        >
-          {contract.slug || contractCode}
-        </Link>
-        <span>/</span>
-        <span className="font-semibold text-foreground">Milestones</span>
-      </div>
-
-      {/* ── 2. Fiverr-Style Contract Header & Journey Summary (Borderless & Minimalist) ── */}
-      <div className="space-y-4">
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-          <div className="space-y-1">
-            <h1 className="text-xl sm:text-2xl font-extrabold text-foreground tracking-tight">
-              {contract.job?.title || "Contract Milestones & Deliverables"}
-            </h1>
-            <div className="flex flex-wrap items-center gap-2.5 text-xs text-muted-foreground">
-              <span className="font-mono font-medium">{contractCode}</span>
-              <span>•</span>
-              <div className="inline-flex items-center gap-1.5">
-                <div className="flex size-4 items-center justify-center rounded-full bg-muted text-muted-foreground">
-                  <User className="size-2.5" />
-                </div>
-                <span>
-                  {counterpartyRole}: <strong>{counterpartyName}</strong>
-                </span>
-              </div>
-            </div>
-          </div>
-
-          {/* Action button if client can add milestone */}
-          {canManageMilestones && canCreateMilestone && (
-            <Button
-              onClick={() => {
-                setMilestoneToEdit(null);
-                setMilestoneModalOpen(true);
-              }}
-              className="rounded-full bg-[#0069D3] hover:bg-[#0055b3] text-white text-xs font-semibold h-9 px-4 shadow-2xs cursor-pointer self-start lg:self-auto"
-            >
-              <Plus className="mr-1.5 size-4" />
-              Add New Milestone
-            </Button>
-          )}
+    <div className="space-y-4 font-sans max-w-5xl mx-auto pb-16">
+      {/* ── Top Bar: Breadcrumb + Add Milestone (No big title, no progress bar) ── */}
+      <div className="flex items-center justify-between gap-4 pb-1">
+        <div className="flex items-center gap-2 text-xs text-muted-foreground">
+          <Link
+            href={`${basePath}/contracts`}
+            className="inline-flex items-center gap-1 hover:text-foreground transition-colors"
+          >
+            <ChevronLeft className="size-4" />
+            <span>Contracts</span>
+          </Link>
+          <span>/</span>
+          <Link
+            href={`${basePath}/contracts/${encodeURIComponent(contract.slug || String(contract.id))}`}
+            className="hover:text-foreground transition-colors"
+          >
+            {contract.slug || contractCode}
+          </Link>
+          <span>/</span>
+          <span className="text-foreground font-medium">Milestones</span>
         </div>
 
-        {/* Minimalist Progress & Financial Summary Bar */}
-        <div className="pt-2 pb-1 space-y-3">
-          {/* Progress bar */}
-          <div className="space-y-1.5">
-            <div className="flex items-center justify-between text-xs">
-              <span className="font-medium text-muted-foreground">
-                Progress:{" "}
-                <strong className="text-foreground">
-                  {completedMilestones.length} of {milestones.length} completed ({progressPercent}%)
-                </strong>
-              </span>
-              <span className="font-mono font-semibold text-foreground">
-                ${completedAmount.toLocaleString("en-US", { minimumFractionDigits: 2 })} / $
-                {totalAmount.toLocaleString("en-US", { minimumFractionDigits: 2 })} USD
-              </span>
-            </div>
-            <div className="h-2 w-full rounded-full bg-zinc-100 dark:bg-zinc-800 overflow-hidden">
-              <div
-                className="h-full rounded-full bg-emerald-500 transition-all duration-500"
-                style={{ width: `${progressPercent}%` }}
-              />
-            </div>
-          </div>
-
-          {/* Quick metric highlights (No heavy boxes, just clean horizontal badges) */}
-          <div className="flex flex-wrap items-center gap-4 sm:gap-8 pt-1 text-xs">
-            <div className="flex items-center gap-2">
-              <ShieldCheck className="size-4 text-emerald-600" />
-              <span className="text-muted-foreground">
-                Secured in Escrow:{" "}
-                <strong className="font-mono text-foreground font-semibold">
-                  ${fundedAmount.toLocaleString("en-US", { minimumFractionDigits: 2 })}
-                </strong>
-              </span>
-            </div>
-            <div className="flex items-center gap-2">
-              <CheckCircle2 className="size-4 text-blue-600" />
-              <span className="text-muted-foreground">
-                Paid Out:{" "}
-                <strong className="font-mono text-foreground font-semibold">
-                  ${completedAmount.toLocaleString("en-US", { minimumFractionDigits: 2 })}
-                </strong>
-              </span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Layers className="size-4 text-zinc-400" />
-              <span className="text-muted-foreground">
-                Total Contract Budget:{" "}
-                <strong className="font-mono text-foreground font-semibold">
-                  ${totalAmount.toLocaleString("en-US", { minimumFractionDigits: 2 })}
-                </strong>
-              </span>
-            </div>
-          </div>
-        </div>
+        {/* Action button if client can add milestone */}
+        {canManageMilestones && canCreateMilestone && (
+          <Button
+            size="sm"
+            onClick={() => {
+              setMilestoneToEdit(null);
+              setMilestoneModalOpen(true);
+            }}
+            className="rounded-full bg-[#0069D3] hover:bg-[#0055b3] text-white text-xs font-normal h-8 px-3.5 cursor-pointer"
+          >
+            <Plus className="mr-1 size-3.5" />
+            Add Milestone
+          </Button>
+        )}
       </div>
 
-      {/* ── 3. Fiverr-Style Filter Tabs & Search Bar ── */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-4 border-t border-border/50">
-        {/* Filter Pills */}
-        <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-none pb-1 sm:pb-0">
+      {/* ── Filter Tabs & Search Bar (Clean, no bold, no background colors) ── */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-2 border-b border-border/50 pb-2">
+        {/* Filter Tabs (Clean text line, no colored bg pills) */}
+        <div className="flex items-center gap-4 overflow-x-auto scrollbar-none">
           {filterTabs.map((tab) => {
             const isActive = statusFilter === tab.key;
             return (
@@ -433,22 +326,16 @@ export function MilestonesPageContent({
                 key={tab.key}
                 type="button"
                 onClick={() => setStatusFilter(tab.key)}
-                className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold transition-colors cursor-pointer shrink-0 ${
+                className={`inline-flex items-center gap-1.5 text-xs py-1 transition-colors cursor-pointer shrink-0 ${
                   isActive
-                    ? "bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900"
-                    : "bg-zinc-100 dark:bg-zinc-800/80 text-muted-foreground hover:bg-zinc-200 dark:hover:bg-zinc-700 hover:text-foreground"
+                    ? "text-[#0069D3] font-medium border-b-2 border-[#0069D3] -mb-[9px]"
+                    : "text-muted-foreground hover:text-foreground"
                 }`}
               >
                 <span>{tab.label}</span>
                 {tab.count > 0 && (
-                  <span
-                    className={`rounded-full px-1.5 text-[10px] font-bold ${
-                      isActive
-                        ? "bg-white/20 text-white dark:bg-black/20 dark:text-black"
-                        : "bg-zinc-200/60 dark:bg-zinc-700/60 text-muted-foreground"
-                    }`}
-                  >
-                    {tab.count}
+                  <span className="text-[10px] text-muted-foreground/80">
+                    ({tab.count})
                   </span>
                 )}
               </button>
@@ -457,31 +344,31 @@ export function MilestonesPageContent({
         </div>
 
         {/* Minimal Search Input */}
-        <div className="relative w-full sm:w-56 shrink-0">
-          <Search className="size-3.5 text-muted-foreground absolute left-3 top-1/2 -translate-y-1/2" />
+        <div className="relative w-full sm:w-52 shrink-0">
+          <Search className="size-3 text-muted-foreground absolute left-2.5 top-1/2 -translate-y-1/2" />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search milestones..."
-            className="w-full h-8 rounded-full border border-border/60 bg-muted/20 pl-8 pr-3 text-xs text-foreground placeholder:text-muted-foreground/70 focus:outline-hidden focus:border-[#0069D3] focus:bg-background transition-all"
+            className="w-full h-7 rounded-md border border-border/60 bg-transparent pl-7 pr-2.5 text-xs text-foreground placeholder:text-muted-foreground/60 focus:outline-hidden focus:border-[#0069D3] transition-all"
           />
         </div>
       </div>
 
-      {/* ── 4. Milestones Journey List (No nested boxed cards!) ── */}
+      {/* ── Milestones List (Clean, borderless list) ── */}
       {!canViewMilestones ? (
-        <div className="py-12 text-center space-y-2">
-          <Clock className="size-8 mx-auto text-amber-600" />
-          <h3 className="text-sm font-semibold text-foreground">
+        <div className="py-12 text-center space-y-1.5">
+          <Clock className="size-6 mx-auto text-muted-foreground" />
+          <h3 className="text-xs font-medium text-foreground">
             Không có quyền xem danh sách milestone
           </h3>
           <p className="text-xs text-muted-foreground max-w-md mx-auto">
-            Tài khoản của bạn chưa được cấp quyền xem danh sách các mốc công việc (milestones) của hợp đồng này.
+            Tài khoản của bạn chưa được cấp quyền xem danh sách các mốc công việc của hợp đồng này.
           </p>
         </div>
       ) : filteredMilestones.length > 0 ? (
-        <div className="divide-y divide-border/40 border-t border-border/40">
+        <div className="divide-y divide-border/40">
           {filteredMilestones.map((m, idx) => (
             <MilestoneCard
               key={m.id}
@@ -550,34 +437,33 @@ export function MilestonesPageContent({
           ))}
         </div>
       ) : (
-        <div className="py-16 text-center space-y-3">
-          <Clock className="size-8 mx-auto text-muted-foreground/60" />
-          <h3 className="text-sm font-bold text-foreground">
+        <div className="py-16 text-center space-y-2">
+          <Clock className="size-6 mx-auto text-muted-foreground/60" />
+          <h3 className="text-xs font-medium text-foreground">
             No milestones found
           </h3>
           <p className="text-xs text-muted-foreground max-w-sm mx-auto">
             {isClient
-              ? "You can add milestones to break down the project deliverables and securely release payments."
+              ? "You can add milestones to break down project deliverables and securely release payments."
               : "No milestones matching this filter."}
           </p>
           {canManageMilestones && (
             <Button
+              size="sm"
               onClick={() => {
                 setMilestoneToEdit(null);
                 setMilestoneModalOpen(true);
               }}
-              className="rounded-full bg-[#0069D3] hover:bg-[#0055b3] text-white text-xs font-semibold cursor-pointer"
+              className="rounded-full bg-[#0069D3] hover:bg-[#0055b3] text-white text-xs font-normal cursor-pointer mt-2"
             >
-              <Plus className="mr-1.5 size-4" />
+              <Plus className="mr-1 size-3.5" />
               Add First Milestone
             </Button>
           )}
         </div>
       )}
 
-      {/* ── 5. Dialogs & Modals ── */}
-
-      {/* 1. Manage / Add / Edit Milestone Dialog (Client) */}
+      {/* ── Dialogs & Modals ── */}
       {isClient && (
         <ManageMilestoneDialog
           open={milestoneModalOpen}
@@ -595,7 +481,6 @@ export function MilestonesPageContent({
         />
       )}
 
-      {/* 2. Submit Milestone Dialog (Freelancer) */}
       {isFreelancer && (
         <SubmitMilestoneDialog
           open={submitModalOpen}
@@ -605,7 +490,6 @@ export function MilestonesPageContent({
         />
       )}
 
-      {/* 3. Review Submission Dialog (Client) */}
       {isClient && reviewContext && (
         <ReviewSubmissionDialog
           open={reviewModalOpen}
@@ -618,7 +502,6 @@ export function MilestonesPageContent({
         />
       )}
 
-      {/* 4. Fund Milestone Escrow Dialog (Client) */}
       {isClient && (
         <FundMilestoneDialog
           open={fundModalOpen}
