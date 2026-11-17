@@ -1,19 +1,19 @@
-\begin{longtable}{|>{\raggedright\arraybackslash}p{2.2cm}|>{\raggedright\arraybackslash}p{3cm}|>{\raggedright\arraybackslash}p{3cm}|>{\raggedright\arraybackslash}p{7.5cm}|}
+\begin{longtable}{|>{\raggedright\arraybackslash}p{1.8cm}|>{\raggedright\arraybackslash}p{2.7cm}|>{\raggedright\arraybackslash}p{2.7cm}|>{\raggedright\arraybackslash}p{6.7cm}|}
 \hline
 \rowcolor{headerbg}
-\multicolumn{1}{|>{\raggedright\arraybackslash}p{2.2cm}|}{\textbf{ID}} &
-\multicolumn{1}{>{\raggedright\arraybackslash}p{3cm}|}{\textbf{Use Case}} &
-\multicolumn{1}{>{\raggedright\arraybackslash}p{3cm}|}{\textbf{Actors}} &
-\multicolumn{1}{>{\raggedright\arraybackslash}p{7.5cm}|}{\textbf{Description}} \\
+\multicolumn{1}{|>{\raggedright\arraybackslash}p{1.8cm}|}{\textbf{ID}} &
+\multicolumn{1}{>{\raggedright\arraybackslash}p{2.7cm}|}{\textbf{Use Case}} &
+\multicolumn{1}{>{\raggedright\arraybackslash}p{2.7cm}|}{\textbf{Actors}} &
+\multicolumn{1}{>{\raggedright\arraybackslash}p{6.7cm}|}{\textbf{Description}} \\
 \hline
 \endfirsthead
 
 \hline
 \rowcolor{headerbg}
-\multicolumn{1}{|>{\raggedright\arraybackslash}p{2.2cm}|}{\textbf{ID}} &
-\multicolumn{1}{>{\raggedright\arraybackslash}p{3cm}|}{\textbf{Use Case}} &
-\multicolumn{1}{>{\raggedright\arraybackslash}p{3cm}|}{\textbf{Actors}} &
-\multicolumn{1}{>{\raggedright\arraybackslash}p{7.5cm}|}{\textbf{Description}} \\
+\multicolumn{1}{|>{\raggedright\arraybackslash}p{1.8cm}|}{\textbf{ID}} &
+\multicolumn{1}{>{\raggedright\arraybackslash}p{2.7cm}|}{\textbf{Use Case}} &
+\multicolumn{1}{>{\raggedright\arraybackslash}p{2.7cm}|}{\textbf{Actors}} &
+\multicolumn{1}{>{\raggedright\arraybackslash}p{6.7cm}|}{\textbf{Description}} \\
 \hline
 \endhead
 
@@ -152,145 +152,88 @@ UC-13.10 & Delete Contract File & Client, Freelancer, Admin & Allows the uploade
 \hline
 UC-10 & Manage Profile & Freelancer & Manages freelancer profile information and settings. \\
 \hline
-UC-10.1 & View Detailed Freelancer Profile & Freelancer & Displays full freelancer profile including skills, portfolio, experience, and ratings. \\
 \hline
-UC-10.2 & Update Your Detailed Freelancer Profile & Freelancer & Allows freelancers to edit and update their profile information. \\
 \hline
 UC-11 & Manage Skills & Freelancer & Manages freelancer skill set and proficiency levels. \\
 \hline
-UC-11.1 & View List Freelancer Skill & Freelancer & Retrieve the list of skills added by the freelancer. \\
 \hline
-UC-11.2 & Add Freelancer Skill & Freelancer & Allows freelancers to add new skills to their profile. \\
 \hline
-UC-11.3 & Delete Freelancer Skill & Freelancer & Allows freelancers to remove skills from their profile. \\
 \hline
 UC-12 & Manage Portfolio & Freelancer & Manages freelancer portfolio projects and work samples. \\
 \hline
-UC-12.1 & View Portfolio List & Freelancer & Retrieve the list of portfolios created by the freelancer. \\
 \hline
-UC-12.2 & Add New Portfolio & Freelancer & Allows freelancers to add new portfolio items with images and descriptions. \\
 \hline
-UC-12.3 & View Portfolio Detail & Freelancer & Displays full details of a portfolio item including media, description, and technologies used. \\
 \hline
-UC-12.4 & Update Portfolio & Freelancer & Allows freelancers to edit and update their portfolio items. \\
 \hline
-UC-12.5 & Delete Portfolio & Freelancer & Allows freelancers to remove portfolio items. \\
 \hline
 UC-15 & Identity Verification & Freelancer & Manages freelancer identity verification document submission and review. \\
 \hline
-UC-15.1 & Upload Identity Documents & Freelancer & Allows freelancers to upload ID card, passport, or license documents. \\
 \hline
-UC-15.2 & View Verification Status & Freelancer & Displays current identity verification status (Pending, Approved, Rejected). \\
 \hline
-UC-16 & View Client Profile & Guest, Client, Freelancer & Manages client company profile details and public showcase. \\
 \hline
-UC-16.1 & View Client Profile Detail & Guest, Client, Freelancer & Displays client company details, bio, website, and job history. \\
 \hline
-UC-16.2 & Update Company Information & Client & Allows clients to update company name, bio, website URL, and industry sector. \\
 \hline
 UC-17 & Social Links & Guest, Client, Freelancer & Manages external social and portfolio links on user profiles. \\
 \hline
-UC-17.1 & View Social Links & Guest, Client, Freelancer & Retrieves social links associated with a user profile. \\
 \hline
-UC-17.2 & Add Social Link & Client, Freelancer & Allows users to add external social links to their profile. \\
 \hline
-UC-17.3 & Delete Social Link & Client, Freelancer & Allows users to remove social links from their profile. \\
 \hline
 UC-18 & Favorites & Client & Manages saved favorite freelancer profiles for clients. \\
 \hline
-UC-18.1 & View Favorite Freelancers & Client & Retrieves paginated list of client's favorite freelancers. \\
 \hline
-UC-18.2 & Add to Favorites & Client & Allows clients to save a freelancer profile to their favorites. \\
 \hline
-UC-18.3 & Remove from Favorites & Client & Allows clients to remove a freelancer from their favorites list. \\
 \hline
 UC-19 & Following & Client, Freelancer & Manages followed freelancer network connections. \\
 \hline
-UC-19.1 & View Following List & Client, Freelancer & Retrieves list of freelancers currently followed by the user. \\
 \hline
-UC-19.2 & Follow Freelancer & Client, Freelancer & Allows users to follow a freelancer for activity updates. \\
 \hline
-UC-19.3 & Unfollow Freelancer & Client, Freelancer & Allows users to stop following a freelancer. \\
 \hline
 UC-20 & Manage Notifications & Client, Freelancer, Admin & Manages user in-app notification center and read states. \\
 \hline
-UC-20.1 & View Notification List & Client, Freelancer, Admin & Retrieves user notifications list with unread counter. \\
 \hline
-UC-20.2 & Mark Notification as Read & Client, Freelancer, Admin & Sets read status of a specific notification to true. \\
 \hline
-UC-20.3 & Mark All Notifications as Read & Client, Freelancer, Admin & Bulk marks all user notifications as read. \\
 \hline
-UC-20.4 & Delete Notification & Client, Freelancer, Admin & Soft-deletes a notification from user's notification list. \\
 \hline
 UC-21 & Account Management & Client, Freelancer & Manages user role switching and complementary role activation. \\
 \hline
-UC-21.1 & Switch Role & Client, Freelancer & Allows dual-role users to switch working context between Client and Freelancer. \\
 \hline
-UC-21.2 & Join New Role & Client, Freelancer & Allows single-role users to activate complementary secondary role. \\
 \hline
 UC-22 & Reviews & Guest, Client, Freelancer, Admin & Manages post-contract ratings and detailed feedback reviews. \\
 \hline
-UC-22.1 & View Reviews List & Guest, Client, Freelancer & Retrieves reviews list for a user profile or contract. \\
 \hline
-UC-22.2 & View Review Detail & Guest, Client, Freelancer & Displays rating breakdown scores and detailed comment text. \\
 \hline
-UC-22.3 & Write Review & Client, Freelancer & Allows contract participants to review each other upon project completion. \\
 \hline
-UC-22.4 & Edit Review & Client, Freelancer & Allows review authors to update ratings or feedback text. \\
 \hline
-UC-22.5 & Delete Review & Client, Freelancer, Admin & Soft-deletes a review record. \\
 \hline
 UC-23 & Manage Response Review & Client, Freelancer, Admin & Manages recipient responses to reviews. \\
 \hline
-UC-23.1 & Respond to Review & Client, Freelancer & Allows review recipients to post a public response. \\
 \hline
-UC-23.2 & Edit Response & Client, Freelancer & Allows response authors to modify response text. \\
 \hline
-UC-23.3 & Delete Response & Client, Freelancer, Admin & Soft-deletes a review response. \\
 \hline
 UC-24 & Manage Profile & Client, Freelancer, Admin & Manages account credentials, profile details, and avatar. \\
 \hline
-UC-24.1 & Get Profile & Client, Freelancer, Admin & Retrieves general account profile information. \\
 \hline
-UC-24.2 & Update Profile & Client, Freelancer, Admin & Updates general profile details (name, phone, bio, location). \\
 \hline
-UC-24.3 & Change Password & Client, Freelancer, Admin & Allows authenticated users to change password securely. \\
 \hline
-UC-24.4 & Upload Avatar & Client, Freelancer, Admin & Allows users to upload and crop profile avatar image. \\
 \hline
 UC-25 & Profile Update Review & Admin & Manages manual admin review of profile modification requests. \\
 \hline
 UC-25.1 & View Pending Profile Update Requests & Admin & Retrieves list of profile update requests awaiting review. \\
 \hline
-UC-25.2 & View Profile Update Request Detail & Admin & Displays side-by-side diff comparison for profile changes. \\
 \hline
-UC-25.3 & Approve Profile Update Request & Admin & Approves profile modification request and updates live profile. \\
 \hline
-UC-25.4 & Reject Profile Update Request & Admin & Rejects profile request with mandatory reason note. \\
 \hline
-UC-25.5 & View Profile Update Request History & Admin & Views history of processed profile update requests. \\
 \hline
-UC-25.6 & Update Profile Expert & Expert, Admin & Updates expert consultant profile and homepage showcase. \\
 \hline
-UC-47.01 & View Pending Profile Update Request List & Admin & Retrieves profile update requests awaiting manual review. \\
 \hline
-UC-47.02 & View Profile Update Request Detail & Admin & Displays a request and compares current profile data with proposed changes. \\
 \hline
-UC-47.03 & Approve Profile Update Request & Admin & Approves a request and applies its proposed changes to the live profile. \\
 \hline
-UC-47.04 & Reject Profile Update Request & Admin & Rejects a request with a reason while preserving the current profile data. \\
 \hline
-UC-47.05 & View Profile Update Request History & Admin & Displays previously approved and rejected profile update requests. \\
 \hline
-UC-47.06 & Update Profile Expert & Expert & Allows an Expert to edit the profile used in the public expert experience. \\
 \hline
-UC-07.03 & Upload CV & Freelancer & Uploads a supported CV file and associates it with the Freelancer profile. \\
 \hline
-UC-07.04 & View CV & Freelancer & Views or downloads the CV currently associated with the Freelancer profile. \\
 \hline
-UC-07.05 & Replace CV & Freelancer & Replaces the existing CV with a newly uploaded supported file. \\
 \hline
-UC-07.06 & Delete CV & Freelancer & Removes the CV associated with the Freelancer profile. \\
 \hline
 UC-33 & Manage Dispute & Client, Freelancer, Admin & Manages formal dispute arbitration on funded contract milestones. \\
 \hline
@@ -355,5 +298,472 @@ UC-46.08 & View Job Category Detail & Freelancer & Allows freelancers to view ca
 
 
 
+% Nhuy -- canonical Sprint 1--5 use cases
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+% Nhuy -- canonical Sprint 1--5 use cases
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+% Nhuy -- canonical Sprint 1--5 use cases
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+% Nhuy -- canonical Sprint 1--5 use cases
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+% Nhuy -- canonical Sprint 1--5 use cases
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+% Nhuy -- canonical Sprint 1--5 use cases
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+% Nhuy -- canonical Sprint 1--5 use cases
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+\hline
+% Nhuy -- canonical Sprint 1--5 use cases
+UC-07.01 & View Freelancer Profile & Guest, Client, Freelancer & Retrieve approved Profile and FreelancerProfile fields in one response. \\
+\hline
+UC-07.02 & Update Freelancer Profile & Freelancer & Persist basic and professional fields together or create a pending revision under the review policy. \\
+\hline
+UC-08.01 & View Freelancer Skill List & Guest, Client, Freelancer & Join FreelancerSkill with active Skill catalog entries and show proficiency levels. \\
+\hline
+UC-08.02 & Add Freelancer Skill & Freelancer & Resolve or create the canonical catalog skill and insert one owned FreelancerSkill mapping. \\
+\hline
+UC-08.03 & Delete Freelancer Skill & Freelancer & Hard-delete the owned mapping while retaining its Skill catalog entry. \\
+\hline
+UC-09.01 & View Portfolio List & Guest, Client, Freelancer & List only non-deleted PortfolioItem records of the selected freelancer. \\
+\hline
+UC-09.02 & Add Portfolio & Freelancer & Create an owned portfolio item with title, description, technologies and project link. \\
+\hline
+UC-09.03 & View Portfolio Detail & Guest, Client, Freelancer & Display a single non-deleted portfolio item and its external project link. \\
+\hline
+UC-09.04 & Update Portfolio & Freelancer & Save validated edits on an owned, non-deleted portfolio item. \\
+\hline
+UC-09.05 & Delete Portfolio & Freelancer & Set deletedAt and remove the item from active list and detail results. \\
+\hline
+UC-18.01 & Upload Identity Documents & Freelancer & Validate the active-request constraint, securely store the submitted evidence, and record the verification outcome for review. \\
+\hline
+UC-18.02 & View Verification Status & Freelancer & Return the latest verification state and submission history with rejection notes where present. \\
+\hline
+UC-19.01 & View Client Profile & Guest, Client, Freelancer & Combine approved public Profile, ClientProfile and SocialLink fields without private user information. \\
+\hline
+UC-19.02 & Update Company Information & Client & Save or submit the authenticated Client company information according to the revision policy. \\
+\hline
+UC-20.01 & View Social Link List & Client, Freelancer & Retrieve links for the current account settings or the public client response; public freelancer rendering is a tracked gap. \\
+\hline
+UC-20.02 & Add Social Link & Client, Freelancer & Validate the platform and external URL, then insert one link on the authenticated user profile. \\
+\hline
+UC-20.03 & Delete Social Link & Client, Freelancer & Hard-delete the selected owned social link after confirmation. \\
+\hline
+UC-21.01 & View Favorite Freelancer List & Client & Load the current Client favorites and join public freelancer details. \\
+\hline
+UC-21.02 & Add Freelancer to Favorites & Client & Insert a unique relationship from the current Client to an active freelancer. \\
+\hline
+UC-21.03 & Remove Freelancer from Favorites & Client & Hard-delete the current Client relationship and update the favorite toggle and list. \\
+\hline
+UC-29.01 & View Following List & Client & Load freelancer relationships owned by the current Client and show the following state. \\
+\hline
+UC-29.02 & Follow Freelancer & Client & Create a unique follow mapping and notify the target freelancer. \\
+\hline
+UC-29.03 & Unfollow Freelancer & Client & Remove only the current Client follow relationship. \\
+\hline
+UC-30.01 & View Notification List & Client, Freelancer, Expert, Admin & Load the recipient active notifications in reverse chronological order. \\
+\hline
+UC-30.02 & Mark Notification as Read & Client, Freelancer, Expert, Admin & Set isRead to true on one owned notification. \\
+\hline
+UC-30.03 & Mark All Notifications as Read & Client, Freelancer, Expert, Admin & Update the current recipient unread, non-deleted notifications together. \\
+\hline
+UC-30.04 & Delete Notification & Client, Freelancer, Expert, Admin & Set deletedAt on the owned notification and hide it from the list. \\
+\hline
+UC-31.01 & Switch Role & Client, Freelancer & Change the primary role to an already assigned role and issue updated authentication tokens. \\
+\hline
+UC-31.02 & Join New Role & Client, Freelancer & Enroll in an allowed new role without duplicating the account or granting administrator privileges. \\
+\hline
+UC-39.01 & View Review List & Client, Freelancer & Retrieve reviews and active responses for a contract after verifying participant access. \\
+\hline
+UC-39.02 & View Review Detail & Client, Freelancer & Retrieve one review and response after checking contract participation. \\
+\hline
+UC-39.03 & Write Review & Client, Freelancer & Create one review of the other participant in a completed contract and notify that participant. \\
+\hline
+UC-39.04 & Update Review & Client, Freelancer & Update accepted fields of an existing review authored by the current user. \\
+\hline
+UC-39.05 & Delete Review & Client, Freelancer & Soft-delete the owned review so it no longer appears as active feedback. \\
+\hline
+UC-40.01 & Respond to Review & Client, Freelancer & Create an active response from the reviewee and notify the review author. \\
+\hline
+UC-40.02 & Update Review Response & Client, Freelancer & Save validated text in the current user response. \\
+\hline
+UC-40.03 & Delete Review Response & Client, Freelancer & Soft-delete the response authored by the current user. \\
+\hline
+UC-41.01 & View Profile & Client, Freelancer, Expert, Admin & Read the authenticated account profile, email and assigned roles. \\
+\hline
+UC-41.02 & Update Profile & Client, Freelancer, Expert, Admin & Save or submit general display name and biography according to profile strength. \\
+\hline
+UC-41.03 & Change Password & Client, Freelancer, Expert, Admin & Verify the current credential, hash the confirmed replacement and update the password. \\
+\hline
+UC-41.04 & Upload Avatar & Client, Freelancer, Expert, Admin & Validate image content and size, store it, and update the owned avatar URL. \\
+\hline
+UC-47.01 & View Pending Profile Update Request List & Admin & Filter and paginate revisions, defaulting the review workflow to pending requests. \\
+\hline
+UC-47.02 & View Profile Update Request Detail & Admin & Display the current and proposed snapshots, requester, profile type and prior review notes. \\
+\hline
+UC-47.03 & Approve Profile Update Request & Admin & Apply validated proposed changes and record an APPROVED decision atomically. \\
+\hline
+UC-47.04 & Reject Profile Update Request & Admin & Keep approved profile data unchanged and record REJECTED with an explanatory note. \\
+\hline
+UC-47.05 & View Profile Update Request History & Admin & Allow Admin to filter historical decisions; a requester can read only their latest revision for a profile type. \\
+\hline
+UC-47.06 & Update Profile Expert & Expert & Submit the owned Expert profile as a pending revision for administrator review. \\
+\hline
+UC-07.03 & Upload CV & Freelancer & Validate a PDF up to 10 MB and attach it to the owned FreelancerProfile. \\
+\hline
+UC-07.04 & View CV & Freelancer & Authorize the owner and serve or redirect to the current CV; return 404 when its stored file is unavailable. \\
+\hline
+UC-07.05 & Replace CV & Freelancer & Store a valid replacement PDF, update CV metadata and clean up the previous file after a successful update. \\
+\hline
+UC-07.06 & Delete CV & Freelancer & Clear CV URL, public ID, file name and upload time, and update the related search index. \\
+\hline
 \end{longtable}
 \label{tab:use_cases}
