@@ -4,7 +4,7 @@ import { useTranslations } from "next-intl";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Controller, useForm, type FieldErrors } from "react-hook-form";
 import { useTranslatedResolver } from "@/lib/form-resolver";
-import { AlertTriangle, X } from "@/components/icons";
+import { AlertTriangle, ChevronRight, X } from "@/components/icons";
 import {
   CreateJobBodySchema,
   type CreateJobBodyType,
@@ -13,8 +13,15 @@ import {
 
 import jobApiRequest from "@/apiRequests/job";
 import jobCategoryApiRequest from "@/apiRequests/job-category";
+import { proposalApiRequest } from "@/apiRequests/proposal";
 import { ApiFail } from "@/lib/http";
 import { handleErrorApi } from "@/lib/utils";
+import {
+  AlertDialog,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogTitle,
+} from "@repo/ui/components/shadcn/alert-dialog";
 import { Button } from "@repo/ui/components/shadcn/button";
 import {
   Sheet,
@@ -157,6 +164,40 @@ export function PostJobForm({
     Array<{ id: number; title: string }>
   >([]);
   const [isDuplicateTitle, setIsDuplicateTitle] = useState(false);
+  const [proposalsCount, setProposalsCount] = useState<number>(
+    job?.proposalsCount ?? 0,
+  );
+  const [pendingUpdateData, setPendingUpdateData] =
+    useState<CreateJobBodyType | null>(null);
+  const [isConfirmUpdateOpen, setIsConfirmUpdateOpen] = useState(false);
+
+  const isJobEditable =
+    !job ||
+    job.status === "DRAFT" ||
+    job.status === "OPEN" ||
+    job.status === "CLOSED";
+
+  useEffect(() => {
+    if (!job?.id || !isActive) return;
+    let cancelled = false;
+    proposalApiRequest
+      .getClientJobProposals(job.id, { limit: 1 })
+      .then((res) => {
+        if (
+          !cancelled &&
+          res.success &&
+          res.data?.totalItems !== undefined
+        ) {
+          setProposalsCount(res.data.totalItems);
+        }
+      })
+      .catch(() => {
+        // Fallback to job.proposalsCount
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [job?.id, isActive]);
 
   useEffect(() => {
     if (!isActive) return;
@@ -209,6 +250,9 @@ export function PostJobForm({
   useEffect(() => {
     if (!isActive) return;
     form.reset(getJobFormValues(job));
+    setProposalsCount(job?.proposalsCount ?? 0);
+    setIsConfirmUpdateOpen(false);
+    setPendingUpdateData(null);
     setSelectedSkills(
       job?.skills?.map((skill) => ({
         id: skill.skillId,
@@ -352,7 +396,48 @@ export function PostJobForm({
     }
   };
 
+  const executeSave = async (data: CreateJobBodyType) => {
+    try {
+      const response = job
+        ? await jobApiRequest.updateJob(job.id, data)
+        : await jobApiRequest.createJob(data);
+      if (!response.success) throw new Error(t("saveFailed"));
+      onSaved({
+        ...response.data,
+        skills: selectedSkills.map((skill) => ({
+          jobId: response.data.id,
+          skillId: skill.id,
+          skill: { name: skill.name },
+        })),
+      });
+      toastSuccess({ message: job ? t("updated") : t("created") });
+      setIsConfirmUpdateOpen(false);
+      setPendingUpdateData(null);
+      if (isDialog) {
+        onOpenChange?.(false);
+        form.reset();
+      }
+    } catch (error) {
+      if (error instanceof ApiFail) {
+        handleErrorApi({ error: error.response, setError: form.setError });
+        const firstDetail = error.response?.error?.details?.[0]?.message;
+        if (firstDetail) {
+          toastError({ message: firstDetail });
+        }
+      } else {
+        toastError({ message: t("saveFailed") });
+      }
+    }
+  };
+
   const submit = async (data: CreateJobBodyType) => {
+    if (!isJobEditable) {
+      toastError({
+        message: t("cannotEditStatus", { status: job?.status ?? "" }),
+      });
+      return;
+    }
+
     try {
       const langCheck = await jobApiRequest.checkLanguage({
         title: data.title,
@@ -390,23 +475,14 @@ export function PostJobForm({
         toastWarning({ message: t("duplicateTitleToast") });
       }
 
-      const response = job
-        ? await jobApiRequest.updateJob(job.id, data)
-        : await jobApiRequest.createJob(data);
-      if (!response.success) throw new Error(t("saveFailed"));
-      onSaved({
-        ...response.data,
-        skills: selectedSkills.map((skill) => ({
-          jobId: response.data.id,
-          skillId: skill.id,
-          skill: { name: skill.name },
-        })),
-      });
-      toastSuccess({ message: job ? t("updated") : t("created") });
-      if (isDialog) {
-        onOpenChange?.(false);
-        form.reset();
+      // Khi Client nhấn Save Changes, nếu Job đã có Proposal, hiển thị xác nhận
+      if (Boolean(job) && proposalsCount > 0) {
+        setPendingUpdateData(data);
+        setIsConfirmUpdateOpen(true);
+        return;
       }
+
+      await executeSave(data);
     } catch (error) {
       if (error instanceof ApiFail) {
         handleErrorApi({ error: error.response, setError: form.setError });
@@ -427,6 +503,14 @@ export function PostJobForm({
 
   const fields = (
     <FieldGroup className="space-y-4 font-sans">
+      {!isJobEditable && (
+        <div className="flex items-center gap-2.5 rounded-2xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800/50 p-4 text-xs text-rose-800 dark:text-rose-300 font-sans">
+          <AlertTriangle className="size-4 shrink-0 text-rose-600 dark:text-rose-400" />
+          <p className="font-medium">
+            {t("cannotEditStatus", { status: job?.status ?? "" })}
+          </p>
+        </div>
+      )}
       <Controller
         name="title"
         control={form.control}
@@ -923,6 +1007,7 @@ export function PostJobForm({
         className="h-10 rounded-full px-6 text-xs font-semibold font-sans bg-[#0069D3] text-white hover:bg-blue-600 dark:bg-[#0069D3] dark:hover:bg-blue-500 shadow-xs cursor-pointer transition-colors"
         disabled={
           form.formState.isSubmitting ||
+          !isJobEditable ||
           (Boolean(job) && !form.formState.isDirty)
         }
       >
@@ -931,37 +1016,123 @@ export function PostJobForm({
     </div>
   );
 
-  const formEl = (
-    <form
-      onSubmit={form.handleSubmit(submit, onInvalid)}
-      className="space-y-5 font-sans"
+  const confirmUpdateModal = (
+    <AlertDialog
+      open={isConfirmUpdateOpen}
+      onOpenChange={(open) => {
+        if (!open && !form.formState.isSubmitting) {
+          setIsConfirmUpdateOpen(false);
+        }
+      }}
     >
-      {fields}
-      {isDialog ? (
-        <SheetFooter className="mt-8 flex flex-row items-center justify-end gap-3 border-t border-border/60 pt-5 font-sans">
-          <Button
-            type="button"
-            variant="ghost"
-            className="h-10 rounded-full px-5 text-xs font-medium font-sans bg-[#F1F0F5] dark:bg-zinc-800 hover:bg-[#EAE9F0] dark:hover:bg-zinc-700 text-foreground cursor-pointer transition-colors"
-            onClick={close}
-          >
-            {t("cancel")}
-          </Button>
-          <Button
-            type="submit"
-            className="h-10 rounded-full px-6 text-xs font-semibold font-sans bg-[#0069D3] text-white hover:bg-blue-600 dark:bg-[#0069D3] dark:hover:bg-blue-500 shadow-xs cursor-pointer transition-colors"
-            disabled={
-              form.formState.isSubmitting ||
-              (Boolean(job) && !form.formState.isDirty)
-            }
-          >
-            {form.formState.isSubmitting ? t("saving") : t("save")}
-          </Button>
-        </SheetFooter>
-      ) : (
-        actions
-      )}
-    </form>
+      <AlertDialogContent className="max-w-md rounded-[26px] border border-black/5 dark:border-white/10 bg-white dark:bg-zinc-900 p-6 shadow-2xl font-sans">
+        <div className="flex flex-col gap-4">
+          <div className="flex items-start gap-3">
+            <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900/50 text-[#0069D3] dark:text-blue-300 mt-0.5">
+              <AlertTriangle className="size-4.5" />
+            </div>
+            <div className="space-y-1">
+              <AlertDialogTitle className="text-base font-bold text-foreground font-sans">
+                {t("confirmUpdateTitle")}
+              </AlertDialogTitle>
+              <p className="text-xs text-muted-foreground font-sans leading-relaxed">
+                {t("confirmUpdateDesc", { count: proposalsCount })}
+              </p>
+            </div>
+          </div>
+
+          <div className="rounded-2xl border border-blue-200/60 dark:border-blue-900/40 bg-blue-50/60 dark:bg-blue-950/20 p-4 space-y-2.5">
+            <div className="flex items-center gap-2">
+              <span className="inline-flex items-center rounded-full bg-[#0069D3] text-white text-[11px] font-semibold px-2.5 py-0.5">
+                {t("existingProposalsCount", { count: proposalsCount })}
+              </span>
+            </div>
+            <ul className="space-y-1.5 text-xs text-foreground/80 leading-relaxed font-sans">
+              <li className="flex items-start gap-2">
+                <span className="text-[#0069D3] font-bold">•</span>
+                <span>{t("confirmUpdatePoint1")}</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-[#0069D3] font-bold">•</span>
+                <span>{t("confirmUpdatePoint2")}</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-[#0069D3] font-bold">•</span>
+                <span>{t("confirmUpdatePoint3")}</span>
+              </li>
+            </ul>
+          </div>
+
+          <div className="mt-2 flex flex-col gap-2">
+            <button
+              type="button"
+              disabled={form.formState.isSubmitting}
+              onClick={() => {
+                if (pendingUpdateData) {
+                  void executeSave(pendingUpdateData);
+                }
+              }}
+              className="group flex w-full items-center justify-between rounded-full px-4 py-2.5 bg-[#0069D3] hover:bg-blue-600 disabled:opacity-50 text-white cursor-pointer transition-all duration-200 outline-none shadow-xs font-sans"
+            >
+              <span className="text-xs font-semibold">
+                {form.formState.isSubmitting
+                  ? t("saving")
+                  : t("confirmUpdateAction")}
+              </span>
+              <ChevronRight className="size-3.5 text-white/70 group-hover:text-white group-hover:translate-x-0.5 transition-all" />
+            </button>
+
+            <AlertDialogCancel
+              disabled={form.formState.isSubmitting}
+              className="group flex w-full items-center justify-between rounded-full px-4 py-2.5 bg-[#F1F0F5] hover:bg-[#EAE9F0] dark:bg-zinc-800/80 dark:hover:bg-zinc-800 text-foreground cursor-pointer transition-all duration-200 outline-none border-0 m-0 h-auto font-sans"
+            >
+              <div className="flex items-center gap-2">
+                <X className="size-3.5 text-muted-foreground" />
+                <span className="text-xs font-medium">{t("cancel")}</span>
+              </div>
+              <ChevronRight className="size-3.5 text-muted-foreground/50 group-hover:text-foreground group-hover:translate-x-0.5 transition-all" />
+            </AlertDialogCancel>
+          </div>
+        </div>
+      </AlertDialogContent>
+    </AlertDialog>
+  );
+
+  const formEl = (
+    <>
+      <form
+        onSubmit={form.handleSubmit(submit, onInvalid)}
+        className="space-y-5 font-sans"
+      >
+        {fields}
+        {isDialog ? (
+          <SheetFooter className="mt-8 flex flex-row items-center justify-end gap-3 border-t border-border/60 pt-5 font-sans">
+            <Button
+              type="button"
+              variant="ghost"
+              className="h-10 rounded-full px-5 text-xs font-medium font-sans bg-[#F1F0F5] dark:bg-zinc-800 hover:bg-[#EAE9F0] dark:hover:bg-zinc-700 text-foreground cursor-pointer transition-colors"
+              onClick={close}
+            >
+              {t("cancel")}
+            </Button>
+            <Button
+              type="submit"
+              className="h-10 rounded-full px-6 text-xs font-semibold font-sans bg-[#0069D3] text-white hover:bg-blue-600 dark:bg-[#0069D3] dark:hover:bg-blue-500 shadow-xs cursor-pointer transition-colors"
+              disabled={
+                form.formState.isSubmitting ||
+                !isJobEditable ||
+                (Boolean(job) && !form.formState.isDirty)
+              }
+            >
+              {form.formState.isSubmitting ? t("saving") : t("save")}
+            </Button>
+          </SheetFooter>
+        ) : (
+          actions
+        )}
+      </form>
+      {confirmUpdateModal}
+    </>
   );
 
   if (!isDialog) {

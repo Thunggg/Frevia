@@ -1856,6 +1856,7 @@
   "jobsList": {
     "allJobs": "Tất cả việc làm",
     "moreOptions": "Thêm tuỳ chọn",
+    "viewDetail": "Xem chi tiết",
     "edit": "Sửa",
     "delete": "Xoá",
     "budgetLine": "{min} – {max} ({type})",
@@ -1939,7 +1940,15 @@
     "editTitle": "Sửa công việc",
     "newTitle": "Đăng tin tuyển dụng mới",
     "editDescription": "Cập nhật thông tin công việc, ngân sách, thời gian và kỹ năng yêu cầu.",
-    "newDescription": "Điền thông tin để đăng tin tuyển dụng mới."
+    "newDescription": "Điền thông tin để đăng tin tuyển dụng mới.",
+    "confirmUpdateTitle": "Xác nhận cập nhật công việc",
+    "confirmUpdateDesc": "Bạn sắp cập nhật một công việc đã nhận được {count} đề xuất ứng tuyển.",
+    "existingProposalsCount": "{count} đề xuất hiện có",
+    "confirmUpdatePoint1": "Các đề xuất hiện có sẽ được giữ nguyên.",
+    "confirmUpdatePoint2": "Tất cả ứng viên sẽ được thông báo về cập nhật này.",
+    "confirmUpdatePoint3": "Freelancer có thể xem lại thông tin công việc đã được cập nhật.",
+    "confirmUpdateAction": "Xác nhận cập nhật",
+    "cannotEditStatus": "Công việc ở trạng thái {status} không thể chỉnh sửa."
   },
   "freelancerSheet": {
     "loadFailed": "Không thể tải đầy đủ thông tin freelancer.",

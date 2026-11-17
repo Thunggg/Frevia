@@ -20,6 +20,7 @@ import {
 import { PrismaService } from '../../shared/services/prisma.service';
 import {
   JobCannotBeClosedException,
+  JobCannotBeEditedException,
   JobCannotBePublishedException,
   JobCannotBePublishedMissingFieldsException,
   JobCannotBeReopenedException,
@@ -343,6 +344,16 @@ export class ManageJobRepository {
           where: { id: jobId },
           select: { positionsFilled: true, status: true, slug: true },
         });
+
+        // Chỉ cho phép chỉnh sửa khi công việc ở trạng thái DRAFT, OPEN hoặc CLOSED
+        const editableStatuses: JobStatus[] = [
+          JobStatus.DRAFT,
+          JobStatus.OPEN,
+          JobStatus.CLOSED,
+        ];
+        if (!editableStatuses.includes(current.status)) {
+          throw JobCannotBeEditedException();
+        }
 
         if (data.positionsRequired < current.positionsFilled) {
           throw PositionsRequiredBelowFilledException();

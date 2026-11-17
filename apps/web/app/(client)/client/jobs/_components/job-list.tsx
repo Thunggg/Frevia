@@ -9,6 +9,7 @@ import {
   Briefcase,
   Edit2,
   Ellipsis,
+  Eye,
   FileText,
   Plus,
   Trash2,
@@ -253,6 +254,7 @@ function JobRowCard({
   const isOpen = job.status === "OPEN";
   const isClosed = job.status === "CLOSED";
   const isInProgress = job.status === "IN_PROGRESS";
+  const isEditable = isDraft || isOpen || isClosed;
 
   return (
     <motion.div
@@ -345,6 +347,24 @@ function JobRowCard({
             sideOffset={6}
             className="w-52 rounded-[24px] border border-black/5 dark:border-white/10 bg-white dark:bg-zinc-900 p-2 shadow-2xl shadow-black/10 flex flex-col gap-1.5"
           >
+            {/* View Job Detail */}
+            <DropdownMenuItem
+              asChild
+              className="group flex items-center justify-between rounded-full px-3 py-2 bg-[#F3F3F7] hover:bg-[#EAE9F0] focus:bg-[#EAE9F0] dark:bg-zinc-800/60 dark:hover:bg-zinc-800 dark:focus:bg-zinc-800 cursor-pointer transition-all duration-200 outline-none"
+            >
+              <Link href={`/client/jobs/${job.id}`}>
+                <div className="flex items-center gap-2.5">
+                  <div className="flex size-7 shrink-0 items-center justify-center rounded-full bg-white dark:bg-zinc-700 text-foreground shadow-xs transition-transform group-hover:scale-105">
+                    <Eye className="size-3.5" />
+                  </div>
+                  <span className="text-xs font-medium text-foreground">
+                    {t("viewDetail")}
+                  </span>
+                </div>
+                <ChevronRight className="size-3.5 text-muted-foreground/50 group-hover:text-foreground group-hover:translate-x-0.5 transition-all shrink-0 ml-2" />
+              </Link>
+            </DropdownMenuItem>
+
             {/* UC-11.03 Publish Job */}
             {isDraft && (
               <DropdownMenuItem
@@ -394,20 +414,22 @@ function JobRowCard({
             )}
 
             {/* UC-11.04 Update Job */}
-            <DropdownMenuItem
-              onClick={() => onEdit(job)}
-              className="group flex items-center justify-between rounded-full px-3 py-2 bg-[#F3F3F7] hover:bg-[#EAE9F0] focus:bg-[#EAE9F0] dark:bg-zinc-800/60 dark:hover:bg-zinc-800 dark:focus:bg-zinc-800 cursor-pointer transition-all duration-200 outline-none"
-            >
-              <div className="flex items-center gap-2.5">
-                <div className="flex size-7 shrink-0 items-center justify-center rounded-full bg-white dark:bg-zinc-700 text-foreground shadow-xs transition-transform group-hover:scale-105">
-                  <Edit2 className="size-3.5" />
+            {isEditable && (
+              <DropdownMenuItem
+                onClick={() => onEdit(job)}
+                className="group flex items-center justify-between rounded-full px-3 py-2 bg-[#F3F3F7] hover:bg-[#EAE9F0] focus:bg-[#EAE9F0] dark:bg-zinc-800/60 dark:hover:bg-zinc-800 dark:focus:bg-zinc-800 cursor-pointer transition-all duration-200 outline-none"
+              >
+                <div className="flex items-center gap-2.5">
+                  <div className="flex size-7 shrink-0 items-center justify-center rounded-full bg-white dark:bg-zinc-700 text-foreground shadow-xs transition-transform group-hover:scale-105">
+                    <Edit2 className="size-3.5" />
+                  </div>
+                  <span className="text-xs font-medium text-foreground">
+                    {t("edit")}
+                  </span>
                 </div>
-                <span className="text-xs font-medium text-foreground">
-                  {t("edit")}
-                </span>
-              </div>
-              <ChevronRight className="size-3.5 text-muted-foreground/50 group-hover:text-foreground group-hover:translate-x-0.5 transition-all shrink-0 ml-2" />
-            </DropdownMenuItem>
+                <ChevronRight className="size-3.5 text-muted-foreground/50 group-hover:text-foreground group-hover:translate-x-0.5 transition-all shrink-0 ml-2" />
+              </DropdownMenuItem>
+            )}
 
             {/* UC-11.05 Delete Job */}
             {!isInProgress && (

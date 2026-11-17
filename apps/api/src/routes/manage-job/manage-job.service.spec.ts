@@ -18,6 +18,7 @@ import {
   JobAlreadyBookmarkedException,
   JobCannotBeClosedException,
   JobCannotBeDeletedWithActiveContractException,
+  JobCannotBeEditedException,
   JobCannotBePublishedException,
   JobCannotBePublishedMissingFieldsException,
   JobCannotBeReopenedException,
@@ -42,6 +43,8 @@ describe('ManageJobService', () => {
     findBookmark: jest.Mock;
     bookmarkJob: jest.Mock;
     removeBookmark: jest.Mock;
+    getClientJobDetail: jest.Mock;
+    hasDuplicateTitle: jest.Mock;
   };
   let embeddingOutbox: {
     enqueueAndProcess: jest.Mock;
@@ -67,6 +70,7 @@ describe('ManageJobService', () => {
           'We need a senior NestJS engineer with at least 5 years experience',
       }),
       getBookmarkedJobLists: jest.fn(),
+      hasDuplicateTitle: jest.fn().mockResolvedValue(false),
       findJobBySlug: jest.fn(),
       findBookmark: jest.fn(),
       bookmarkJob: jest.fn(),
@@ -143,6 +147,13 @@ describe('ManageJobService', () => {
         documentType: 'JOB',
         documentId: 5,
       });
+    });
+    it('throws JobCannotBeEditedException when job status is not editable', async () => {
+      repository.updateJob.mockRejectedValueOnce(JobCannotBeEditedException());
+
+      await expect(
+        service.updateJob(1, RoleName.CLIENT, 5, {} as never),
+      ).rejects.toThrow(JobCannotBeEditedException());
     });
   });
 
@@ -291,6 +302,26 @@ describe('ManageJobService', () => {
       expect(res.isEnglish).toBe(false);
       expect(res.title.isEnglish).toBe(false);
       expect(res.description.isEnglish).toBe(true);
+    });
+
+    it('detects duplicate title for client', async () => {
+      fastTextService.isEnglish.mockResolvedValue(true);
+      repository.hasDuplicateTitle.mockResolvedValueOnce(true);
+
+      const res = await service.checkLanguage(
+        'Backend Developer Position',
+        'We need a senior NestJS engineer',
+        1,
+        RoleName.CLIENT,
+      );
+      expect(res.isEnglish).toBe(true);
+      expect(res.isDuplicate).toBe(true);
+      expect(res.title.isDuplicate).toBe(true);
+      expect(repository.hasDuplicateTitle).toHaveBeenCalledWith(
+        1,
+        'Backend Developer Position',
+        undefined,
+      );
     });
   });
   describe('CreateJobBodySchema single category validation (BR-J53)', () => {

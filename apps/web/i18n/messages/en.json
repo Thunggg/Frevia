@@ -1856,6 +1856,7 @@
   "jobsList": {
     "allJobs": "All Jobs",
     "moreOptions": "More options",
+    "viewDetail": "View detail",
     "edit": "Edit",
     "delete": "Delete",
     "budgetLine": "{min} – {max} ({type})",
@@ -1939,7 +1940,15 @@
     "editTitle": "Edit job",
     "newTitle": "Post a new job",
     "editDescription": "Update your job details, budget, timeline, and required skills.",
-    "newDescription": "Fill in the details to publish a new job posting."
+    "newDescription": "Fill in the details to publish a new job posting.",
+    "confirmUpdateTitle": "Confirm Job Update",
+    "confirmUpdateDesc": "You are about to update a job that has received {count} proposals.",
+    "existingProposalsCount": "{count} existing proposals",
+    "confirmUpdatePoint1": "Existing proposals will remain unchanged.",
+    "confirmUpdatePoint2": "All applicants will be notified about this update.",
+    "confirmUpdatePoint3": "Freelancers can review the updated job information.",
+    "confirmUpdateAction": "Confirm Update",
+    "cannotEditStatus": "Jobs in {status} status cannot be edited."
   },
   "freelancerSheet": {
     "loadFailed": "Could not load full freelancer details.",

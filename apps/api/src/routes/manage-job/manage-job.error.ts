@@ -55,6 +55,10 @@ export const PositionsRequiredBelowFilledException = () =>
     },
   ]);
 
+// Chỉ được phép chỉnh sửa khi trạng thái là DRAFT, OPEN hoặc CLOSED.
+export const JobCannotBeEditedException = () =>
+  new BadRequestException(ManageJobMessage.JOB_CANNOT_BE_EDITED);
+
 export const FailedToLoadBookmarkedJobsException = () =>
   new InternalServerErrorException(
     ManageJobMessage.FAILED_TO_LOAD_BOOKMARKED_JOBS,

@@ -196,6 +196,7 @@
   "Error.JobAlreadyBookmarked": "This job is already saved",
   "Error.JobCannotBeClosed": "Job can only be closed when it is open",
   "Error.JobCannotBeDeletedWithActiveContract": "Cannot delete job with active contracts or ongoing disputes",
+  "Error.JobCannotBeEdited": "Jobs can only be edited when in draft, open, or closed status",
   "Error.JobCannotBePublished": "Job can only be published when in draft status",
   "Error.JobCannotBePublishedMissingFields": "Cannot publish job because required fields are missing or requirements are not met",
   "Error.JobCannotBeReopened": "Job can only be reopened when it is closed",

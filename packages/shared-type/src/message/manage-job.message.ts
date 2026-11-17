@@ -75,6 +75,7 @@ export const ManageJobMessage = {
   // Edit Job
   // =========================
   FAILED_TO_UPDATE_JOB: "Error.FailedToUpdateJob",
+  JOB_CANNOT_BE_EDITED: "Error.JobCannotBeEdited",
 
   // =========================
   // Delete Job
