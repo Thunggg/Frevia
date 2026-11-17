@@ -38,12 +38,16 @@ import {
   MilestoneCannotBeDisputedException,
 } from './dispute.error';
 import { DisputeRepository } from './dispute.repo';
+import { PaymentService } from '../payments/payment.service';
 
 @Injectable()
 export class DisputeService {
   private readonly logger = new Logger(DisputeService.name);
 
-  constructor(private readonly disputeRepo: DisputeRepository) {}
+  constructor(
+    private readonly disputeRepo: DisputeRepository,
+    private readonly paymentService: PaymentService,
+  ) {}
 
   /**
    * Tạo Dispute mới cho Milestone (chỉ Client hoặc Freelancer của hợp đồng).
@@ -486,14 +490,25 @@ export class DisputeService {
   ) {
     const milestoneAmount = Number(dispute.milestone.amount);
 
-    // 1. Xác định trạng thái Milestone sau khi hòa giải
+    // 1. Phân phối tiền giải quyết tranh chấp qua Stripe Connect / Refund
+    await this.paymentService.executeDisputeSettlementPayout({
+      disputeId: dispute.id,
+      contractId: dispute.milestone.contractId,
+      milestoneId: dispute.milestoneId,
+      freelancerId: dispute.milestone.contract.freelancerId,
+      clientId: dispute.milestone.contract.clientId,
+      freelancerAmount,
+      clientAmount,
+    });
+
+    // 2. Xác định trạng thái Milestone sau khi hòa giải
     let milestonePaymentStatus: MilestonePaymentStatus =
       MilestonePaymentStatus.RELEASED;
     if (clientAmount === milestoneAmount) {
       milestonePaymentStatus = MilestonePaymentStatus.REFUNDED;
     }
 
-    // 2. Cập nhật Dispute và Milestone trong Transaction
+    // 3. Cập nhật Dispute và Milestone trong Transaction
     return await this.disputeRepo.finalizeDisputeTransaction({
       disputeId: dispute.id,
       milestoneId: dispute.milestoneId,

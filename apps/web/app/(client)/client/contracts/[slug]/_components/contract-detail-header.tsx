@@ -43,6 +43,12 @@ export function ContractDetailHeader({
   onOpenConfirmComplete,
   onOpenConfirmCancel,
 }: ContractDetailHeaderProps) {
+  const hasUnsettledMilestones =
+    Array.isArray(contract.milestones) &&
+    contract.milestones.some(
+      (m) => m.paymentStatus !== "RELEASED" && m.paymentStatus !== "REFUNDED"
+    );
+
   const getTopStatusBadge = () => {
     switch (contract.status) {
       case "ACTIVE":
@@ -149,15 +155,17 @@ export function ContractDetailHeader({
                 {t("viewFullAgreement")}
               </DropdownMenuItem>
 
-              {!isFreelancer && contract.status === "ACTIVE" && (
-                <DropdownMenuItem
-                  onClick={onOpenConfirmComplete}
-                  className="cursor-pointer text-xs font-medium text-emerald-600"
-                >
-                  <CheckCircle2 className="mr-2 size-3.5" />
-                  {t("completeContract")}
-                </DropdownMenuItem>
-              )}
+              {!isFreelancer &&
+                contract.status === "ACTIVE" &&
+                !hasUnsettledMilestones && (
+                  <DropdownMenuItem
+                    onClick={onOpenConfirmComplete}
+                    className="cursor-pointer text-xs font-medium text-emerald-600"
+                  >
+                    <CheckCircle2 className="mr-2 size-3.5" />
+                    {t("completeContract")}
+                  </DropdownMenuItem>
+                )}
 
               {contract.status !== "COMPLETED" &&
                 contract.status !== "CANCELLED" &&

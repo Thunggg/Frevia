@@ -13,6 +13,7 @@ import {
   FailedToUpdateMilestoneException,
   MilestoneAmountExceedsContractException,
   MilestoneCannotBeDeletedException,
+  MilestoneCannotDeleteLastException,
   MilestoneCannotBeEditedException,
   MilestoneContractExpiresAtRequiredException,
   MilestoneContractNotFoundException,
@@ -236,6 +237,12 @@ export class MilestoneService {
           contract.holdMilestoneIds?.includes(milestoneId))
       ) {
         throw MilestoneCannotBeDeletedException();
+      }
+
+      const activeCount =
+        await this.milestoneRepository.countActiveMilestones(contractId);
+      if (activeCount <= 1) {
+        throw MilestoneCannotDeleteLastException();
       }
 
       return await this.milestoneRepository.deleteMilestone(milestoneId);

@@ -21,6 +21,7 @@ import {
   MilestoneAlreadyInProgressException,
   MilestoneAmountExceedsContractException,
   MilestoneCannotBeDeletedException,
+  MilestoneCannotDeleteLastException,
   MilestoneCannotBeEditedException,
   MilestoneContractNotActiveException,
   MilestoneContractNotFoundException,
@@ -65,6 +66,7 @@ describe('Milestone Management (UF-132 to UF-146)', () => {
     progressMilestone: jest.fn(),
     getTotalMilestoneAmount: jest.fn(),
     findInProgressMilestone: jest.fn(),
+    countActiveMilestones: jest.fn().mockResolvedValue(2),
   };
 
   const milestoneFileRepository = {
@@ -499,6 +501,22 @@ describe('Milestone Management (UF-132 to UF-146)', () => {
 
       expect(result).toEqual(mockMilestone);
       expect(milestoneRepository.deleteMilestone).toHaveBeenCalledWith(100);
+    });
+
+    // Ném ngoại lệ MilestoneCannotDeleteLastException khi cố tình xóa milestone duy nhất còn lại của hợp đồng.
+    it('throws MilestoneCannotDeleteLastException when attempting to delete the only milestone', async () => {
+      milestoneRepository.findContractById.mockResolvedValueOnce(
+        mockPendingContract,
+      );
+      milestoneRepository.findMilestoneById.mockResolvedValueOnce(
+        mockMilestone,
+      );
+      milestoneRepository.countActiveMilestones.mockResolvedValueOnce(1);
+
+      await expect(
+        milestoneService.deleteMilestone(1, 10, 100),
+      ).rejects.toThrow(MilestoneCannotDeleteLastException());
+      expect(milestoneRepository.deleteMilestone).not.toHaveBeenCalled();
     });
 
     // Ném ngoại lệ MilestoneCannotBeDeletedException khi milestone đã bắt đầu thực hiện hoặc đã thanh toán.

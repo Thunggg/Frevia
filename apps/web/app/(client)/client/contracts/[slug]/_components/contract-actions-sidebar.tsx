@@ -81,8 +81,17 @@ export function ContractActionsSidebar({
     Boolean(onOpenFundHold) &&
     canFundContractHold;
 
+  const hasUnsettledMilestones =
+    Array.isArray(contract.milestones) &&
+    contract.milestones.some(
+      (m) => m.paymentStatus !== "RELEASED" && m.paymentStatus !== "REFUNDED"
+    );
+
   const canComplete =
-    !isFreelancer && contract.status === "ACTIVE" && canCompleteContract;
+    !isFreelancer &&
+    contract.status === "ACTIVE" &&
+    canCompleteContract &&
+    !hasUnsettledMilestones;
 
   const canReject =
     isFreelancer &&

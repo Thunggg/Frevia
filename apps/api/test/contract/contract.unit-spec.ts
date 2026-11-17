@@ -52,14 +52,17 @@ describe('Contract Management (UF-122 to UF-131)', () => {
     cancelContract: jest.fn(),
     getContractList: jest.fn(),
     getContractDetail: jest.fn(),
+    findContractMilestonesWithStatus: jest.fn().mockResolvedValue([]),
   };
 
   const contractPdfService = {
-    generateAndSaveContractPdf: jest.fn(),
+    generateAndSaveContractPdf: jest.fn().mockResolvedValue({ id: 1 }),
   };
 
   const paymentService = {
     refundContractEscrow: jest.fn(),
+    captureContractHold: jest.fn().mockResolvedValue({ success: true }),
+    cancelContractHold: jest.fn().mockResolvedValue({ success: true }),
   };
 
   const sharedFileRepository = {
@@ -110,6 +113,7 @@ describe('Contract Management (UF-122 to UF-131)', () => {
     terms: 'Initial agreement terms',
     totalAmount: new Prisma.Decimal(500.0),
     status: ContractStatus.PENDING_SIGN,
+    holdPaymentIntentId: 'pi_test_hold_123',
     signedByClient: false,
     signedByFreelancer: false,
     clientSignedAt: null,
@@ -584,7 +588,7 @@ describe('Contract Management (UF-122 to UF-131)', () => {
       expect(contractRepository.signContract).toHaveBeenCalledWith(5, 'client');
       expect(
         contractPdfService.generateAndSaveContractPdf,
-      ).not.toHaveBeenCalled();
+      ).toHaveBeenCalledWith(5);
     });
 
     // Freelancer ký số hợp đồng thành công và tự động tạo PDF nếu hợp đồng chuyển sang ACTIVE.

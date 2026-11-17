@@ -150,6 +150,24 @@ export const ContractNotActiveException = () =>
   new UnprocessableEntityException([
     { message: ManageContractMessage.CONTRACT_NOT_ACTIVE, path: 'id' },
   ]);
+
+export const ContractHasUnsettledMilestonesException = () =>
+  new UnprocessableEntityException([
+    {
+      message: ManageContractMessage.CONTRACT_HAS_UNSETTLED_MILESTONES,
+      path: 'id',
+    },
+  ]);
+
+export const ContractCannotCancelWithActiveSubmissionException = () =>
+  new UnprocessableEntityException([
+    {
+      message:
+        ManageContractMessage.CONTRACT_CANNOT_CANCEL_WITH_ACTIVE_SUBMISSION,
+      path: 'id',
+    },
+  ]);
+
 export const AlreadySignedException = () =>
   new ConflictException([
     { message: ManageContractMessage.ALREADY_SIGNED, path: 'id' },

@@ -873,6 +873,128 @@ export class PaymentService {
     };
   }
 
+  async executeDisputeSettlementPayout(params: {
+    disputeId: number;
+    contractId: number;
+    milestoneId: number;
+    freelancerId: number;
+    clientId: number;
+    freelancerAmount: number;
+    clientAmount: number;
+  }) {
+    const {
+      disputeId,
+      contractId,
+      milestoneId,
+      freelancerId,
+      clientId,
+      freelancerAmount,
+      clientAmount,
+    } = params;
+
+    if (freelancerAmount > 0) {
+      const freelancer = await this.paymentRepo.findUserById(freelancerId);
+      if (!freelancer?.stripeAccountId) {
+        throw StripeAccountNotConnectedException();
+      }
+      if (!freelancer.stripeOnboardingCompleted) {
+        throw StripeOnboardingIncompleteException();
+      }
+
+      const freelancerFee = Math.round(freelancerAmount * 0.05 * 100) / 100;
+      const freelancerPayout =
+        Math.round((freelancerAmount - freelancerFee) * 100) / 100;
+      const amountInCents = Math.round(freelancerPayout * 100);
+
+      const transfer = await this.stripeService.createTransfer({
+        amountInCents,
+        currency: 'usd',
+        destination: freelancer.stripeAccountId,
+        transferGroup: `contract_${contractId}`,
+        metadata: {
+          type: TransactionType.MILESTONE_PAYOUT,
+          contractId: String(contractId),
+          milestoneId: String(milestoneId),
+          disputeId: String(disputeId),
+          freelancerId: String(freelancerId),
+          freelancerFee: String(freelancerFee),
+        },
+      });
+
+      await this.paymentRepo.createTransaction({
+        userId: freelancerId,
+        contractId,
+        milestoneId,
+        disputeId,
+        amount: freelancerPayout,
+        currency: 'usd',
+        type: TransactionType.MILESTONE_PAYOUT,
+        status: TransactionStatus.SUCCEEDED,
+        stripeTransferId: transfer.id,
+      });
+
+      if (freelancerFee > 0) {
+        await this.paymentRepo.createTransaction({
+          userId: freelancerId,
+          contractId,
+          milestoneId,
+          disputeId,
+          amount: freelancerFee,
+          currency: 'usd',
+          type: TransactionType.PLATFORM_FEE,
+          status: TransactionStatus.SUCCEEDED,
+          metadata: {
+            type: 'FREELANCER_DISPUTE_FEE',
+            feeRole: 'FREELANCER',
+            feePercent: 5,
+            transferId: transfer.id,
+            disputeId,
+          } as Prisma.InputJsonValue,
+        });
+      }
+    }
+
+    if (clientAmount > 0) {
+      const deposits =
+        await this.paymentRepo.findContractEscrowDeposits(contractId);
+      const targetDeposit =
+        deposits.find((d) => {
+          if (!d.stripePaymentIntentId) return false;
+          const meta = (d.metadata as { milestoneIds?: unknown } | null) ?? {};
+          if (Array.isArray(meta.milestoneIds)) {
+            return meta.milestoneIds.map(Number).includes(milestoneId);
+          }
+          return d.milestoneId === milestoneId;
+        }) ?? deposits[0];
+
+      if (targetDeposit?.stripePaymentIntentId) {
+        const refund = await this.stripeService.createRefund({
+          paymentIntentId: targetDeposit.stripePaymentIntentId,
+          amountInCents: Math.round(clientAmount * 100),
+          metadata: {
+            type: TransactionType.REFUND,
+            contractId: String(contractId),
+            disputeId: String(disputeId),
+            milestoneId: String(milestoneId),
+            reason: 'dispute_settlement',
+          },
+        });
+
+        await this.paymentRepo.createTransaction({
+          userId: clientId,
+          contractId,
+          milestoneId,
+          disputeId,
+          amount: clientAmount,
+          currency: 'usd',
+          type: TransactionType.REFUND,
+          status: TransactionStatus.SUCCEEDED,
+          stripeRefundId: refund.id,
+        });
+      }
+    }
+  }
+
   async refundContractEscrow(contractId: number) {
     const [contract, deposits] = await Promise.all([
       this.paymentRepo.findContractById(contractId),

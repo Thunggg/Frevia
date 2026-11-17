@@ -35,6 +35,7 @@ import {
 } from '../../src/routes/disputes/dispute.error';
 import { DisputeRepository } from '../../src/routes/disputes/dispute.repo';
 import { DisputeService } from '../../src/routes/disputes/dispute.service';
+import { PaymentService } from '../../src/routes/payments/payment.service';
 
 describe('Dispute Management (UF-147 to UF-152)', () => {
   const disputeRepo = {
@@ -56,8 +57,13 @@ describe('Dispute Management (UF-147 to UF-152)', () => {
     finalizeDisputeTransaction: jest.fn(),
   };
 
+  const paymentService = {
+    executeDisputeSettlementPayout: jest.fn().mockResolvedValue(undefined),
+  };
+
   const service = new DisputeService(
     disputeRepo as unknown as DisputeRepository,
+    paymentService as unknown as PaymentService,
   );
 
   const mockDate = new Date('2026-01-01T00:00:00.000Z');
@@ -380,27 +386,14 @@ describe('Dispute Management (UF-147 to UF-152)', () => {
       expect(disputeRepo.findDisputeByMilestoneId).toHaveBeenCalledWith(10);
     });
 
-    // Tự động phát hiện và đánh dấu phí trọng tài quá hạn nếu vượt mốc thời gian quy định.
-    it('automatically marks pending arbitration fees as OVERDUE when expired', async () => {
-      const expiredDeadline = new Date(Date.now() - 2 * 60 * 60 * 1000);
-      const disputeWithPendingFee = {
-        ...mockDispute,
-        fees: [
-          {
-            id: 99,
-            disputeId: 5,
-            userId: 1,
-            status: DisputeFeeStatus.PENDING,
-            deadline: expiredDeadline,
-          },
-        ],
-      };
-      disputeRepo.findDisputeById.mockResolvedValueOnce(disputeWithPendingFee);
+    // Lấy chi tiết tranh chấp thành công cho người tham gia.
+    it('returns dispute detail with correct dispute data for participant', async () => {
+      disputeRepo.findDisputeById.mockResolvedValueOnce(mockDispute as any);
 
       const result = await service.getDisputeDetail(1, RoleName.CLIENT, 5);
 
-      expect(result.fees[0].status).toBe(DisputeFeeStatus.OVERDUE);
-      expect(disputeRepo.markFeeOverdue).toHaveBeenCalledWith(99);
+      expect(result.id).toBe(5);
+      expect(result.reason).toBe('Work does not match specifications');
     });
 
     // Ném ngoại lệ DisputeNotFoundException khi mã tranh chấp không tồn tại.

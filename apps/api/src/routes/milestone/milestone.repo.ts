@@ -155,6 +155,12 @@ export class MilestoneRepository {
     return { ...milestone, amount: Number(milestone.amount) };
   }
 
+  async countActiveMilestones(contractId: number) {
+    return this.prisma.milestone.count({
+      where: { contractId, deletedAt: null },
+    });
+  }
+
   async deleteMilestone(milestoneId: number) {
     const milestone = await this.prisma.milestone.update({
       where: { id: milestoneId },
