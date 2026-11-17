@@ -103,12 +103,20 @@ export function ContractDetail({
         } catch {
           // If already processed via webhook
         } finally {
-          await queryClient.invalidateQueries({
-            queryKey: ["client-contract-detail", initialContract.id],
-          });
-          await queryClient.invalidateQueries({
-            queryKey: ["client-contracts"],
-          });
+          await Promise.all([
+            queryClient.invalidateQueries({
+              queryKey: ["client-contract-detail", initialContract.id],
+            }),
+            queryClient.invalidateQueries({
+              queryKey: ["client-contracts"],
+            }),
+            queryClient.invalidateQueries({
+              queryKey: ["client-contract-milestones", initialContract.id],
+            }),
+            queryClient.invalidateQueries({
+              queryKey: ["client-transactions"],
+            }),
+          ]);
           const newUrl = window.location.pathname;
           window.history.replaceState({}, "", newUrl);
         }

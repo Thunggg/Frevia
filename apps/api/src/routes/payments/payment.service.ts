@@ -716,6 +716,7 @@ export class PaymentService {
     userId: number,
     contractId: number,
     milestoneId: number,
+    returnUrl?: string,
   ) {
     const milestone = await this.paymentRepo.findMilestoneById(milestoneId);
     if (
@@ -743,14 +744,21 @@ export class PaymentService {
     const milestoneAmount = Number(milestone.amount);
     const amountInCents = Math.round(milestoneAmount * 100);
 
+    const targetReturn =
+      returnUrl && returnUrl.startsWith('http')
+        ? returnUrl
+        : `${envConfig.NEXT_URL}/client/contracts/${milestone.contract.slug || contractId}`;
+
+    const separator = targetReturn.includes('?') ? '&' : '?';
+
     const session = await this.stripeService.createCheckoutSession({
       amountInCents,
       currency: 'usd',
       customerId,
       title: `Fund Milestone: ${milestone.title}`,
       description: `Escrow deposit for milestone #${milestoneId} on contract #${contractId}`,
-      successUrl: `${envConfig.NEXT_URL}/client/contracts/${milestone.contract.slug || contractId}?payment=success&session_id={CHECKOUT_SESSION_ID}`,
-      cancelUrl: `${envConfig.NEXT_URL}/client/contracts/${milestone.contract.slug || contractId}?payment=cancelled`,
+      successUrl: `${targetReturn}${separator}payment=success&session_id={CHECKOUT_SESSION_ID}`,
+      cancelUrl: `${targetReturn}${separator}payment=cancelled`,
       metadata: {
         type: TransactionType.ESCROW_DEPOSIT,
         contractId: String(contractId),
@@ -1342,13 +1350,20 @@ export class PaymentService {
         MilestonePaymentStatus.FUNDED,
       );
     }
+
+    if (type === 'CONTRACT_HOLD' && paymentIntentId) {
+      const pi = await this.stripeService.retrievePaymentIntent(paymentIntentId);
+      if (pi.status === 'requires_capture') {
+        await this.processPaymentIntentAuthorized(pi);
+      }
+    }
   }
 
   async syncCheckoutSession(userId: number, sessionId: string) {
     const session = await this.stripeService.retrieveCheckoutSession(sessionId);
-    if (session.payment_status === 'paid') {
+    if (session.payment_status === 'paid' || session.status === 'complete') {
       await this.processCheckoutSessionCompleted(session);
-      return { success: true, status: 'paid' };
+      return { success: true, status: session.payment_status || session.status };
     }
     return { success: false, status: session.payment_status };
   }

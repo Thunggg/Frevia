@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toastError, toastSuccess } from "@repo/ui/components/shadcn/toast";
 import { contractApiRequest, extractContractData } from "@/apiRequests/contract";
@@ -13,7 +14,6 @@ import type {
   MilestoneFileType,
   MilestoneType,
 } from "@shared/types";
-import { FundMilestoneDialog } from "../../_components/fund-milestone-dialog";
 import { SubmitMilestoneDialog } from "../../_components/submit-milestone-dialog";
 import { ReviewSubmissionDialog } from "../../_components/review-submission-dialog";
 import { MilestoneDetailHeader } from "./milestone-detail-header";
@@ -50,11 +50,12 @@ export function MilestoneDetailContent({
   const [activeTab, setActiveTab] = useState<MilestoneTabKey>("overview");
 
   // Modals state
-  const [fundModalOpen, setFundModalOpen] = useState(false);
   const [submitModalOpen, setSubmitModalOpen] = useState(false);
   const [reviewModalOpen, setReviewModalOpen] = useState(false);
   const [selectedSubmissionToReview, setSelectedSubmissionToReview] =
     useState<GetSubmissionResponseType | null>(null);
+
+  const searchParams = useSearchParams();
 
   // Queries
   const { data: contract } = useQuery<ContractDetailType>({
@@ -101,6 +102,45 @@ export function MilestoneDetailContent({
     initialData: initialFiles,
     enabled: canViewFiles,
   });
+
+  // Sync Stripe Checkout session on return
+  useEffect(() => {
+    const paymentStatus = searchParams.get("payment");
+    const sessionId = searchParams.get("session_id");
+
+    if (paymentStatus === "success" && sessionId) {
+      const sync = async () => {
+        try {
+          await paymentApiRequest.syncCheckoutSession(sessionId);
+          toastSuccess({
+            message: `Escrow payment funded successfully via Stripe!`,
+          });
+        } catch {
+          // Handled or processed via webhook
+        } finally {
+          await Promise.all([
+            queryClient.invalidateQueries({
+              queryKey: ["milestone-detail", contract.id, milestone.id],
+            }),
+            queryClient.invalidateQueries({
+              queryKey: ["client-contract-detail", contract.id],
+            }),
+            queryClient.invalidateQueries({
+              queryKey: ["client-contract-milestones", contract.id],
+            }),
+            queryClient.invalidateQueries({ queryKey: ["client-transactions"] }),
+          ]);
+          window.history.replaceState({}, "", window.location.pathname);
+        }
+      };
+      void sync();
+    } else if (paymentStatus === "cancelled") {
+      toastError({
+        message: "Stripe checkout was cancelled. You can retry at any time.",
+      });
+      window.history.replaceState({}, "", window.location.pathname);
+    }
+  }, [searchParams, contract.id, milestone.id, queryClient]);
 
   const latestSubmission = submissions.length > 0 ? submissions[0] : null;
 
@@ -159,6 +199,27 @@ export function MilestoneDetailContent({
           error instanceof ApiFail
             ? error.response.error.message
             : "Failed to release milestone payout.",
+      });
+    }
+  };
+
+  const handleFundMilestone = async () => {
+    try {
+      const returnUrl = window.location.href.split("?")[0];
+      const res = await paymentApiRequest.createMilestoneFundCheckoutSession(
+        contract.id,
+        milestone.id,
+        { returnUrl },
+      );
+      if (res.data?.checkoutUrl) {
+        window.location.href = res.data.checkoutUrl;
+      }
+    } catch (error) {
+      toastError({
+        message:
+          error instanceof ApiFail
+            ? error.response.error.message
+            : "Failed to initiate Stripe Checkout session.",
       });
     }
   };
@@ -246,7 +307,7 @@ export function MilestoneDetailContent({
             milestone={milestone}
             submissions={submissions}
             isFreelancer={isFreelancer}
-            onFund={() => setFundModalOpen(true)}
+            onFund={() => void handleFundMilestone()}
             onStartWork={() => void handleStartWork()}
             onSubmitWork={() => setSubmitModalOpen(true)}
             onReviewSubmission={handleReview}
@@ -261,7 +322,7 @@ export function MilestoneDetailContent({
             milestone={milestone}
             submissions={submissions}
             isFreelancer={isFreelancer}
-            onFund={() => setFundModalOpen(true)}
+            onFund={() => void handleFundMilestone()}
             onStartWork={() => void handleStartWork()}
             onSubmitWork={() => setSubmitModalOpen(true)}
             onReviewSubmission={handleReview}
@@ -295,15 +356,6 @@ export function MilestoneDetailContent({
       </div>
 
       {/* ── Modals / Dialogs ── */}
-      {isClient && (
-        <FundMilestoneDialog
-          open={fundModalOpen}
-          onOpenChange={setFundModalOpen}
-          contractId={contract.id}
-          milestone={milestone}
-        />
-      )}
-
       {isFreelancer && (
         <SubmitMilestoneDialog
           open={submitModalOpen}

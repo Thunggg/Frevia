@@ -222,6 +222,13 @@ export type CreateContractHoldResponseType = z.infer<
   typeof CreateContractHoldResponseSchema
 >;
 
+export const CreateMilestoneFundCheckoutSessionBodySchema = z.object({
+  returnUrl: z.string().url().optional(),
+});
+export type CreateMilestoneFundCheckoutSessionBodyType = z.infer<
+  typeof CreateMilestoneFundCheckoutSessionBodySchema
+>;
+
 export const ContractHoldActionResponseSchema = z.object({
   success: z.boolean(),
   paymentIntentId: z.string(),

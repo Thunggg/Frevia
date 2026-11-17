@@ -47,7 +47,10 @@ export const paymentApiRequest = {
   ) {
     return http.post<CreateContractHoldResponseType>(
       `/payments/contracts/${contractId}/fund-hold/intent`,
-      { milestoneIds, ...(paymentMethodId ? { paymentMethodId } : {}) },
+      {
+        milestoneIds,
+        ...(paymentMethodId ? { paymentMethodId } : {}),
+      },
     );
   },
 
@@ -100,10 +103,14 @@ export const paymentApiRequest = {
   /**
    * Tạo Stripe Checkout Session nạp tiền ký quỹ (Escrow deposit) cho Milestone
    */
-  createMilestoneFundCheckoutSession(contractId: number, milestoneId: number) {
+  createMilestoneFundCheckoutSession(
+    contractId: number,
+    milestoneId: number,
+    body?: { returnUrl?: string },
+  ) {
     return http.post<CreateCheckoutSessionResponseType>(
       `/payments/contracts/${contractId}/milestones/${milestoneId}/fund/checkout-session`,
-      {},
+      body ?? {},
     );
   },
 

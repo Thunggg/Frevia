@@ -1,8 +1,8 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   ChevronLeft,
@@ -29,7 +29,6 @@ import {
 import { MilestoneCard } from "./milestone-card";
 import { SubmitMilestoneDialog } from "./submit-milestone-dialog";
 import { ReviewSubmissionDialog } from "./review-submission-dialog";
-import { FundMilestoneDialog } from "./fund-milestone-dialog";
 
 export interface MilestonesPageContentProps {
   initialContract: ContractDetailType;
@@ -69,9 +68,7 @@ export function MilestonesPageContent({
     submission: GetSubmissionResponseType;
   } | null>(null);
 
-  const [fundModalOpen, setFundModalOpen] = useState(false);
-  const [milestoneToFund, setMilestoneToFund] =
-    useState<MilestoneType | null>(null);
+  const searchParams = useSearchParams();
 
   // Contract Query
   const { data: contract } = useQuery<ContractDetailType>({
@@ -82,6 +79,42 @@ export function MilestonesPageContent({
         .then(extractContractData),
     initialData: initialContract,
   });
+
+  // Sync Stripe Checkout session on return
+  useEffect(() => {
+    const paymentStatus = searchParams.get("payment");
+    const sessionId = searchParams.get("session_id");
+
+    if (paymentStatus === "success" && sessionId) {
+      const sync = async () => {
+        try {
+          await paymentApiRequest.syncCheckoutSession(sessionId);
+          toastSuccess({
+            message: "Escrow payment funded successfully via Stripe!",
+          });
+        } catch {
+          // Handled or processed via webhook
+        } finally {
+          await Promise.all([
+            queryClient.invalidateQueries({
+              queryKey: ["client-contract-milestones", contract.id],
+            }),
+            queryClient.invalidateQueries({
+              queryKey: ["client-contract-detail", contract.id],
+            }),
+            queryClient.invalidateQueries({ queryKey: ["client-transactions"] }),
+          ]);
+          window.history.replaceState({}, "", window.location.pathname);
+        }
+      };
+      void sync();
+    } else if (paymentStatus === "cancelled") {
+      toastError({
+        message: "Stripe checkout was cancelled. You can retry at any time.",
+      });
+      window.history.replaceState({}, "", window.location.pathname);
+    }
+  }, [searchParams, contract.id, queryClient]);
 
   const canManageMilestones =
     isClient &&
@@ -176,6 +209,27 @@ export function MilestonesPageContent({
           error instanceof ApiFail
             ? error.response.error.message
             : "Failed to release milestone payout.",
+      });
+    }
+  };
+
+  const handleFundMilestone = async (target: MilestoneType) => {
+    try {
+      const returnUrl = window.location.href.split("?")[0];
+      const res = await paymentApiRequest.createMilestoneFundCheckoutSession(
+        contract.id,
+        target.id,
+        { returnUrl },
+      );
+      if (res.data?.checkoutUrl) {
+        window.location.href = res.data.checkoutUrl;
+      }
+    } catch (error) {
+      toastError({
+        message:
+          error instanceof ApiFail
+            ? error.response.error.message
+            : "Failed to initiate Stripe Checkout session.",
       });
     }
   };
@@ -423,10 +477,7 @@ export function MilestonesPageContent({
                 setMilestoneModalOpen(true);
               }}
               onDelete={(target) => void handleDeleteMilestone(target)}
-              onFund={(target) => {
-                setMilestoneToFund(target);
-                setFundModalOpen(true);
-              }}
+              onFund={(target) => void handleFundMilestone(target)}
               onRelease={(target) => void handleReleaseMilestone(target)}
               onRefund={(target) => void handleRefundMilestone(target)}
               onReview={async (target) => {
@@ -524,15 +575,6 @@ export function MilestonesPageContent({
           milestoneTitle={reviewContext.milestone.title}
           milestoneAmount={Number(reviewContext.milestone.amount)}
           submission={reviewContext.submission}
-        />
-      )}
-
-      {isClient && (
-        <FundMilestoneDialog
-          open={fundModalOpen}
-          onOpenChange={setFundModalOpen}
-          contractId={contract.id}
-          milestone={milestoneToFund}
         />
       )}
     </div>

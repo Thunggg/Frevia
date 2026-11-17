@@ -20,6 +20,7 @@ import {
   CreateCheckoutSessionResponseDTO,
   CreateContractHoldBodyDTO,
   CreateContractHoldResponseDTO,
+  CreateMilestoneFundCheckoutSessionBodyDTO,
   CreateOnboardingLinkBodyDTO,
   GetSavedPaymentMethodsResponseDTO,
   GetTransactionListQueryDTO,
@@ -161,11 +162,13 @@ export class PaymentController {
     @UserActive('userId') userId: number,
     @Param('contractId', ParseIntPipe) contractId: number,
     @Param('milestoneId', ParseIntPipe) milestoneId: number,
+    @Body() body?: CreateMilestoneFundCheckoutSessionBodyDTO,
   ) {
     return this.paymentService.createMilestoneFundCheckoutSession(
       userId,
       contractId,
       milestoneId,
+      body?.returnUrl,
     );
   }
 

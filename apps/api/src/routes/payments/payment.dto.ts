@@ -5,6 +5,7 @@ import {
   CreateCheckoutSessionResponseSchema,
   CreateContractHoldBodySchema,
   CreateContractHoldResponseSchema,
+  CreateMilestoneFundCheckoutSessionBodySchema,
   CreateOnboardingLinkBodySchema,
   DisputeSettlementBodySchema,
   DisputeSettlementResponseSchema,
@@ -67,6 +68,10 @@ export class ContractHoldActionResponseDTO extends createZodDto(
 
 export class CreateCheckoutSessionResponseDTO extends createZodDto(
   CreateCheckoutSessionResponseSchema,
+) {}
+
+export class CreateMilestoneFundCheckoutSessionBodyDTO extends createZodDto(
+  CreateMilestoneFundCheckoutSessionBodySchema,
 ) {}
 
 export class SyncCheckoutSessionResponseDTO extends createZodDto(
