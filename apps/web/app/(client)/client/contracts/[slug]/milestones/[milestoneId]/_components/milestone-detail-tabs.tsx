@@ -53,34 +53,46 @@ export function MilestoneDetailTabs({
   const tabs = allTabs.filter((t) => t.visible);
 
   return (
-    <div className="border-b border-border/40">
-      <nav className="flex space-x-4 overflow-x-auto scrollbar-none" aria-label="Tabs">
-        {tabs.map((tab) => {
-          const Icon = tab.icon;
-          const isActive = activeTab === tab.key;
+    <div className="flex h-9 items-center gap-1 overflow-x-auto rounded-full bg-[#F1F0F5] p-1 text-xs dark:bg-muted w-fit scrollbar-none">
+      {tabs.map((tab) => {
+        const Icon = tab.icon;
+        const isActive = activeTab === tab.key;
 
-          return (
-            <button
-              key={tab.key}
-              type="button"
-              onClick={() => onTabChange(tab.key)}
-              className={`inline-flex items-center gap-1.5 border-b-2 py-2 px-1 text-xs transition-colors cursor-pointer shrink-0 ${
+        return (
+          <button
+            key={tab.key}
+            type="button"
+            onClick={() => onTabChange(tab.key)}
+            className={`
+              inline-flex h-7 cursor-pointer items-center gap-1.5
+              whitespace-nowrap rounded-full px-3.5
+              font-medium transition-all
+              ${
                 isActive
-                  ? "border-[#0069D3] text-[#0069D3] font-medium"
-                  : "border-transparent text-muted-foreground hover:text-foreground"
-              }`}
-            >
-              <Icon className="size-3.5" />
-              <span>{tab.label}</span>
-              {typeof tab.count === "number" && tab.count > 0 && (
-                <span className="text-[10px] text-muted-foreground">
-                  ({tab.count})
-                </span>
-              )}
-            </button>
-          );
-        })}
-      </nav>
+                  ? "bg-background font-semibold text-foreground shadow-xs"
+                  : "text-muted-foreground hover:text-foreground"
+              }
+            `}
+          >
+            <Icon className="size-3.5" />
+            <span>{tab.label}</span>
+            {typeof tab.count === "number" && tab.count > 0 && (
+              <span
+                className={`
+                  rounded-full px-1.5 py-0.5 text-[10px] font-semibold
+                  ${
+                    isActive
+                      ? "bg-[#0069D3]/10 text-[#0069D3]"
+                      : "bg-muted-foreground/15 text-muted-foreground"
+                  }
+                `}
+              >
+                {tab.count}
+              </span>
+            )}
+          </button>
+        );
+      })}
     </div>
   );
 }

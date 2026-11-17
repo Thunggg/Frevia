@@ -277,7 +277,7 @@ export function MilestonesPageContent({
   ];
 
   return (
-    <div className="space-y-4 font-sans max-w-5xl mx-auto pb-16">
+    <div className="space-y-4 font-sans mx-auto pb-16">
       {/* ── Top Bar: Breadcrumb + Add Milestone (No big title, no progress bar) ── */}
       <div className="flex items-center justify-between gap-4 pb-1">
         <div className="flex items-center gap-2 text-xs text-muted-foreground">
@@ -315,10 +315,10 @@ export function MilestonesPageContent({
         )}
       </div>
 
-      {/* ── Filter Tabs & Search Bar (Clean, no bold, no background colors) ── */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-2 border-b border-border/50 pb-2">
-        {/* Filter Tabs (Clean text line, no colored bg pills) */}
-        <div className="flex items-center gap-4 overflow-x-auto scrollbar-none">
+      {/* ── Control Bar: Status Tabs & Search (Matching Contract List Reference Image) ── */}
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between pt-1">
+        {/* Status Tabs Pill Bar */}
+        <div className="flex h-9 items-center gap-1 overflow-x-auto rounded-full bg-[#F1F0F5] p-1 text-xs dark:bg-muted scrollbar-none">
           {filterTabs.map((tab) => {
             const isActive = statusFilter === tab.key;
             return (
@@ -326,16 +326,30 @@ export function MilestonesPageContent({
                 key={tab.key}
                 type="button"
                 onClick={() => setStatusFilter(tab.key)}
-                className={`inline-flex items-center gap-1.5 text-xs py-1 transition-colors cursor-pointer shrink-0 ${
-                  isActive
-                    ? "text-[#0069D3] font-medium border-b-2 border-[#0069D3] -mb-[9px]"
-                    : "text-muted-foreground hover:text-foreground"
-                }`}
+                className={`
+                  inline-flex h-7 cursor-pointer items-center gap-1.5
+                  whitespace-nowrap rounded-full px-3.5
+                  font-medium transition-all
+                  ${
+                    isActive
+                      ? "bg-background font-semibold text-foreground shadow-xs"
+                      : "text-muted-foreground hover:text-foreground"
+                  }
+                `}
               >
                 <span>{tab.label}</span>
                 {tab.count > 0 && (
-                  <span className="text-[10px] text-muted-foreground/80">
-                    ({tab.count})
+                  <span
+                    className={`
+                      rounded-full px-1.5 py-0.5 text-[10px] font-semibold
+                      ${
+                        isActive
+                          ? "bg-[#0069D3]/10 text-[#0069D3]"
+                          : "bg-muted-foreground/15 text-muted-foreground"
+                      }
+                    `}
+                  >
+                    {tab.count}
                   </span>
                 )}
               </button>
@@ -343,15 +357,26 @@ export function MilestonesPageContent({
           })}
         </div>
 
-        {/* Minimal Search Input */}
-        <div className="relative w-full sm:w-52 shrink-0">
-          <Search className="size-3 text-muted-foreground absolute left-2.5 top-1/2 -translate-y-1/2" />
+        {/* Search Input (Matching Screenshot Height & Style) */}
+        <div className="relative w-full sm:w-64 shrink-0">
+          <Search className="absolute left-3 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground" />
           <input
             type="text"
+            placeholder="Search milestones..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search milestones..."
-            className="w-full h-7 rounded-md border border-border/60 bg-transparent pl-7 pr-2.5 text-xs text-foreground placeholder:text-muted-foreground/60 focus:outline-hidden focus:border-[#0069D3] transition-all"
+            className="
+              h-9 w-full rounded-full
+              border border-border
+              bg-background py-1.5
+              pr-3 pl-8 text-xs
+              text-foreground
+              placeholder:text-muted-foreground/60
+              focus:border-[#0069D3]
+              focus:ring-1
+              focus:ring-[#0069D3]
+              focus:outline-none
+            "
           />
         </div>
       </div>
@@ -475,8 +500,8 @@ export function MilestonesPageContent({
           milestoneToEdit={milestoneToEdit}
           isAmountLocked={Boolean(
             milestoneToEdit &&
-              contract.status === "PENDING_SIGN" &&
-              contract.holdMilestoneIds?.includes(milestoneToEdit.id),
+            contract.status === "PENDING_SIGN" &&
+            contract.holdMilestoneIds?.includes(milestoneToEdit.id),
           )}
         />
       )}

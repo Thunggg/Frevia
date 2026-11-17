@@ -22,7 +22,7 @@ export function ContractStatusTabs({
 }: ContractStatusTabsProps) {
   return (
     <div className="
-      flex items-center gap-1
+      flex h-9 items-center gap-1
       overflow-x-auto rounded-full
       bg-[#F1F0F5] p-1 text-xs
       dark:bg-muted
@@ -37,10 +37,10 @@ export function ContractStatusTabs({
             type="button"
             onClick={() => onSelectTab(tab.value)}
             className={`
-              inline-flex cursor-pointer
+              inline-flex h-7 cursor-pointer
               items-center gap-1.5
               whitespace-nowrap rounded-full
-              px-3.5 py-1.5
+              px-3.5
               font-medium transition-all
               ${
                 isActive

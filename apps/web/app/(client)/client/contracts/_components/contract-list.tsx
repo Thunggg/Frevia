@@ -150,7 +150,7 @@ export function ContractList({
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="
-                w-full rounded-full
+                h-9 w-full rounded-full
                 border border-border
                 bg-background py-1.5
                 pr-3 pl-8 text-xs

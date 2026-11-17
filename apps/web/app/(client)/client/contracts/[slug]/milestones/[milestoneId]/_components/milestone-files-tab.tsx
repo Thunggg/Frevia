@@ -129,10 +129,10 @@ export function MilestoneFilesTab({
       {/* Top action bar */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-border/50 pb-3">
         <div>
-          <h3 className="text-sm font-bold text-foreground">
+          <h3 className="text-xs font-medium text-foreground">
             Milestone Shared Files
           </h3>
-          <p className="text-xs text-muted-foreground mt-0.5">
+          <p className="text-[11px] text-muted-foreground mt-0.5">
             Documents, assets, and project files attached to this milestone
           </p>
         </div>
