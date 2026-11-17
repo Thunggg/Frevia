@@ -28,7 +28,7 @@ import {
 import { RecommendationRepository } from './recommendation.repo';
 
 const RANKING_VERSION = 'hybrid-1.0.0';
-const MAX_CANDIDATES = 100;
+const MAX_CANDIDATES = 35;
 
 @Injectable()
 export class RecommendationService {
@@ -56,6 +56,7 @@ export class RecommendationService {
     const jobs = await this.repository.listOpenJobs({
       excludeClientId: userId,
       limit: MAX_CANDIDATES,
+      skillNames: cv.skills.map((s) => s.name),
     });
 
     if (jobs.length === 0) {
@@ -184,6 +185,7 @@ export class RecommendationService {
     const freelancers = await this.repository.listFreelancers({
       excludeUserId: userId,
       limit: MAX_CANDIDATES,
+      skillNames: job.skills,
     });
 
     if (freelancers.length === 0) {

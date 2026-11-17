@@ -55,6 +55,10 @@ export const PositionsRequiredBelowFilledException = () =>
     },
   ]);
 
+// Chỉ được phép chỉnh sửa khi trạng thái là DRAFT, OPEN hoặc CLOSED.
+export const JobCannotBeEditedException = () =>
+  new BadRequestException(ManageJobMessage.JOB_CANNOT_BE_EDITED);
+
 export const FailedToLoadBookmarkedJobsException = () =>
   new InternalServerErrorException(
     ManageJobMessage.FAILED_TO_LOAD_BOOKMARKED_JOBS,
@@ -65,6 +69,22 @@ export const FailedToBookmarkJobException = () =>
 
 export const FailedToRemoveBookmarkException = () =>
   new InternalServerErrorException(ManageJobMessage.FAILED_TO_REMOVE_BOOKMARK);
+
+export const JobTitleMustBeEnglishException = () =>
+  new BadRequestException([
+    {
+      message: ManageJobMessage.JOB_TITLE_MUST_BE_ENGLISH,
+      path: 'title',
+    },
+  ]);
+
+export const JobDescriptionMustBeEnglishException = () =>
+  new BadRequestException([
+    {
+      message: ManageJobMessage.JOB_DESCRIPTION_MUST_BE_ENGLISH,
+      path: 'description',
+    },
+  ]);
 
 export const FailedToCreateJobException = () =>
   new InternalServerErrorException(ManageJobMessage.FAILED_TO_CREATE_JOB);
@@ -79,6 +99,11 @@ export const FailedToDeleteJobException = () =>
 
 export const JobCannotBePublishedException = () =>
   new BadRequestException(ManageJobMessage.JOB_CANNOT_BE_PUBLISHED);
+
+export const JobCannotBePublishedMissingFieldsException = () =>
+  new BadRequestException(
+    ManageJobMessage.JOB_CANNOT_BE_PUBLISHED_MISSING_FIELDS,
+  );
 
 export const JobCannotBeDeletedWithActiveContractException = () =>
   new BadRequestException(

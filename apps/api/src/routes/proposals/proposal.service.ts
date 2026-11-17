@@ -16,11 +16,15 @@ import {
   UpdateProposalBodyType,
   MAX_PROPOSALS_PER_JOB_PER_FREELANCER,
   MIN_PROPOSAL_BID_AMOUNT,
+  MAX_PROPOSAL_BID_AMOUNT,
+  MIN_PROPOSAL_DELIVERY_DAYS,
+  MAX_PROPOSAL_DELIVERY_DAYS,
 } from '@shared/types';
 
 import {
   ActiveProposalExistsException,
   BidAmountTooLowException,
+  BidAmountTooLargeException,
   CannotProposeOwnJobException,
   ExtremeBidAmountException,
   FreelancerBannedException,
@@ -39,6 +43,8 @@ import {
   ProposalNotDraftException,
   ProposalNotFoundException,
   ProposalNotSubmittedException,
+  ProposalDeliveryDaysTooLargeException,
+  ProposalDeliveryExceedsDeadlineException,
 } from './proposal.error';
 import { ProposalRepository } from './proposal.repo';
 
@@ -62,6 +68,7 @@ export class ProposalService {
       job?.budgetMin ? Number(job.budgetMin) : null,
       job?.budgetMax ? Number(job.budgetMax) : null,
     );
+    this.assertDeliveryDaysSafeguard(body.deliveryDays, job?.deadline);
     try {
       return await this.proposalRepository.createSubmitted(jobId, userId, body);
     } catch (error) {
@@ -79,6 +86,17 @@ export class ProposalService {
     body: SaveProposalDraftBodyType,
   ): Promise<ProposalType> {
     await this.assertCanPropose(userId, roleName, jobId);
+    const job = await this.proposalRepository.findJobForProposal(jobId);
+    if (body.bidAmount !== undefined && body.bidAmount !== null) {
+      this.assertBidSafeguard(
+        body.bidAmount,
+        job?.budgetMin ? Number(job.budgetMin) : null,
+        job?.budgetMax ? Number(job.budgetMax) : null,
+      );
+    }
+    if (body.deliveryDays !== undefined && body.deliveryDays !== null) {
+      this.assertDeliveryDaysSafeguard(body.deliveryDays, job?.deadline);
+    }
     try {
       return await this.proposalRepository.createDraft(jobId, userId, body);
     } catch (error) {
@@ -98,6 +116,19 @@ export class ProposalService {
     this.assertFreelancer(roleName);
     const proposal = await this.getOwnedDraft(userId, proposalId);
     await this.assertCanPropose(userId, roleName, proposal.jobId, proposal.id);
+    const job = await this.proposalRepository.findJobForProposal(
+      proposal.jobId,
+    );
+    if (body.bidAmount !== undefined && body.bidAmount !== null) {
+      this.assertBidSafeguard(
+        body.bidAmount,
+        job?.budgetMin ? Number(job.budgetMin) : null,
+        job?.budgetMax ? Number(job.budgetMax) : null,
+      );
+    }
+    if (body.deliveryDays !== undefined && body.deliveryDays !== null) {
+      this.assertDeliveryDaysSafeguard(body.deliveryDays, job?.deadline);
+    }
     try {
       return await this.proposalRepository.updateDraft(proposal.id, body);
     } catch (error) {
@@ -128,15 +159,18 @@ export class ProposalService {
 
     await this.assertCanPropose(userId, roleName, proposal.jobId, proposal.id);
 
+    const job = await this.proposalRepository.findJobForProposal(
+      proposal.jobId,
+    );
     if (body.bidAmount !== undefined && body.bidAmount !== null) {
-      const job = await this.proposalRepository.findJobForProposal(
-        proposal.jobId,
-      );
       this.assertBidSafeguard(
         body.bidAmount,
         job?.budgetMin ? Number(job.budgetMin) : null,
         job?.budgetMax ? Number(job.budgetMax) : null,
       );
+    }
+    if (body.deliveryDays !== undefined && body.deliveryDays !== null) {
+      this.assertDeliveryDaysSafeguard(body.deliveryDays, job?.deadline);
     }
 
     try {
@@ -179,6 +213,7 @@ export class ProposalService {
       job?.budgetMin ? Number(job.budgetMin) : null,
       job?.budgetMax ? Number(job.budgetMax) : null,
     );
+    this.assertDeliveryDaysSafeguard(proposal.deliveryDays, job?.deadline);
 
     try {
       return await this.proposalRepository.submitDraft(proposal.id);
@@ -530,6 +565,9 @@ export class ProposalService {
     if (bid < MIN_PROPOSAL_BID_AMOUNT) {
       throw BidAmountTooLowException();
     }
+    if (bid > MAX_PROPOSAL_BID_AMOUNT) {
+      throw BidAmountTooLargeException();
+    }
     if (
       budgetMin !== null &&
       budgetMin !== undefined &&
@@ -546,6 +584,30 @@ export class ProposalService {
     ) {
       if (bid > Number(budgetMax) * 10) {
         throw ExtremeBidAmountException();
+      }
+    }
+  }
+
+  private assertDeliveryDaysSafeguard(
+    deliveryDays?: number | null,
+    deadline?: Date | string | null,
+  ): void {
+    if (deliveryDays === undefined || deliveryDays === null) return;
+    const days = Number(deliveryDays);
+    if (
+      days < MIN_PROPOSAL_DELIVERY_DAYS ||
+      days > MAX_PROPOSAL_DELIVERY_DAYS
+    ) {
+      throw ProposalDeliveryDaysTooLargeException();
+    }
+    if (deadline) {
+      const deadlineDate = new Date(deadline);
+      const now = new Date();
+      const expectedFinishDate = new Date(
+        now.getTime() + days * 24 * 60 * 60 * 1000,
+      );
+      if (expectedFinishDate.getTime() > deadlineDate.getTime()) {
+        throw ProposalDeliveryExceedsDeadlineException();
       }
     }
   }

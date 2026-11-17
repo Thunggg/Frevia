@@ -9,7 +9,10 @@ const AI_SERVICE_URL = (
   envConfig.AI_SERVICE_URL ??
   'http://127.0.0.1:8000'
 ).replace(/\/+$/, '');
-const REQUEST_TIMEOUT_MS = envConfig.AI_SERVICE_TIMEOUT_MS ?? 60000;
+const REQUEST_TIMEOUT_MS = Math.max(
+  envConfig.AI_SERVICE_TIMEOUT_MS ?? 60000,
+  180000,
+);
 
 export type AiVector = number[];
 
@@ -84,21 +87,54 @@ export class AiRecommendationService {
       return { model: '', vectors: [] };
     }
 
-    const payload = await this.post('/internal/embeddings', { texts });
-    const data = payload as { model?: unknown; vectors?: unknown };
-    const vectors = data.vectors;
+    const BATCH_SIZE = 100;
+    if (texts.length <= BATCH_SIZE) {
+      const payload = await this.post('/internal/embeddings', { texts });
+      const data = payload as { model?: unknown; vectors?: unknown };
+      const vectors = data.vectors;
 
-    if (!Array.isArray(vectors) || vectors.length !== texts.length) {
-      throw new AiServiceError(
-        'AI service returned an invalid embedding payload.',
-      );
+      if (!Array.isArray(vectors) || vectors.length !== texts.length) {
+        throw new AiServiceError(
+          'AI service returned an invalid embedding payload.',
+        );
+      }
+
+      return {
+        model: typeof data.model === 'string' ? data.model : '',
+        vectors: vectors.map((vector) =>
+          Array.isArray(vector) ? vector.map((value) => Number(value)) : [],
+        ),
+      };
+    }
+
+    const allVectors: AiVector[] = [];
+    let modelName = '';
+    for (let i = 0; i < texts.length; i += BATCH_SIZE) {
+      const batch = texts.slice(i, i + BATCH_SIZE);
+      const payload = await this.post('/internal/embeddings', { texts: batch });
+      const data = payload as { model?: unknown; vectors?: unknown };
+      const vectors = data.vectors;
+
+      if (!Array.isArray(vectors) || vectors.length !== batch.length) {
+        throw new AiServiceError(
+          'AI service returned an invalid embedding payload.',
+        );
+      }
+
+      if (typeof data.model === 'string') {
+        modelName = data.model;
+      }
+
+      for (const vector of vectors) {
+        allVectors.push(
+          Array.isArray(vector) ? vector.map((value) => Number(value)) : [],
+        );
+      }
     }
 
     return {
-      model: typeof data.model === 'string' ? data.model : '',
-      vectors: vectors.map((vector) =>
-        Array.isArray(vector) ? vector.map((value) => Number(value)) : [],
-      ),
+      model: modelName,
+      vectors: allVectors,
     };
   }
 
