@@ -14,14 +14,14 @@
 
 \fnhead{Function Trigger}
 The actor selects Upload Identity Documents.\newline
-\textbf{Navigation path:} Home $\rightarrow$ \texttt{/account-profile (Identity Verification tab).}
+\textbf{Navigation path:} Home $\rightarrow$ \texttt{/\allowbreak{}account-\allowbreak{}profile (Identity Verification tab).}
 
 \fnhead{Function Description}
 
 \sublabel{Actors / Roles}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
     \item \textbf{Primary Actor:} Freelancer.
-    \item \textbf{Supporting Systems:} Frevia Web application (Next.js), Frevia BFF proxy (\texttt{/api/backend}), Frevia REST API (NestJS), Prisma ORM layer, and PostgreSQL relational database.
+    \item \textbf{Supporting Systems:} Frevia Web (Next.js), Frevia BFF proxy, Frevia REST API (NestJS), Prisma ORM, and PostgreSQL database.
 \end{itemize}
 
 \sublabel{Purpose}
@@ -37,7 +37,7 @@ The actor selects Upload Identity Documents.\newline
 
 \sublabel{Data Processing Overview}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-    \item The client web application issues an HTTP request to \texttt{POST /identity-verifications/ai-check; POST /identity-verifications/documents} via the Next.js BFF proxy.
+    \item The client issues an HTTP request to \texttt{POST /\allowbreak{}identity-\allowbreak{}verifications/\allowbreak{}ai-\allowbreak{}check; POST /\allowbreak{}identity-\allowbreak{}verifications/\allowbreak{}documents} via Next.js BFF proxy.
     \item NestJS guards verify JWT authentication and validate role-based access permissions.
     \item The backend service queries or updates entities in PostgreSQL using Prisma ORM.
     \item The API returns the structured JSON payload and handles domain invariants consistently.
@@ -77,7 +77,7 @@ document file & Manual-path JPEG, PNG, WebP or PDF; maximum 5 MB under the ident
 
 \sublabel{Normal Flow}
 \begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
-    \item The actor opens \texttt{/account-profile} (Identity Verification tab) and selects Upload Identity Documents.
+    \item The actor opens \texttt{/\allowbreak{}account-\allowbreak{}profile} (Identity Verification tab) and selects Upload Identity Documents.
     \item The application presents the current values or action confirmation; the actor supplies the required data and submits.
     \item The API checks authentication where required, authorization, resource existence and input validity.
     \item Validate the active-request constraint, securely store the submitted evidence, and record the verification outcome for review.
@@ -86,11 +86,11 @@ document file & Manual-path JPEG, PNG, WebP or PDF; maximum 5 MB under the ident
 
 \sublabel{Abnormal Flow / Exception Handling}
 \begin{flowtable}{Case}{Description}
-A1 & Missing or expired authentication token. The system returns HTTP 401 Unauthorized and prompts re-authentication.\\ \hline
-A2 & Insufficient permissions or role unauthorized. The request is rejected with HTTP 403 Forbidden.\\ \hline
-A3 & Target resource not found or soft-deleted. The system returns HTTP 404 Not Found.\\ \hline
-A4 & Validation error or malformed payload. The system returns HTTP 400 Bad Request with field validation details.\\ \hline
-A5 & Database connectivity failure or unexpected internal exception. The transaction rolls back and returns HTTP 500.\\ \hline
+A1 & Missing or expired authentication token. Returns HTTP 401 Unauthorized.\\ \hline
+A2 & Insufficient permissions or role unauthorized. Returns HTTP 403 Forbidden.\\ \hline
+A3 & Target resource not found or soft-deleted. Returns HTTP 404 Not Found.\\ \hline
+A4 & Validation error or malformed payload. Returns HTTP 400 Bad Request.\\ \hline
+A5 & Database connectivity failure or server error. Returns HTTP 500.\\ \hline
 \end{flowtable}
 
 \sublabel{Output Data}
@@ -113,14 +113,14 @@ Failure & Structured error without sensitive data; no successful UI state when t
 
 \fnhead{Function Trigger}
 The actor selects View Verification Status.\newline
-\textbf{Navigation path:} Home $\rightarrow$ \texttt{/account-profile (Identity Verification tab).}
+\textbf{Navigation path:} Home $\rightarrow$ \texttt{/\allowbreak{}account-\allowbreak{}profile (Identity Verification tab).}
 
 \fnhead{Function Description}
 
 \sublabel{Actors / Roles}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
     \item \textbf{Primary Actor:} Freelancer.
-    \item \textbf{Supporting Systems:} Frevia Web application (Next.js), Frevia BFF proxy (\texttt{/api/backend}), Frevia REST API (NestJS), Prisma ORM layer, and PostgreSQL relational database.
+    \item \textbf{Supporting Systems:} Frevia Web (Next.js), Frevia BFF proxy, Frevia REST API (NestJS), Prisma ORM, and PostgreSQL database.
 \end{itemize}
 
 \sublabel{Purpose}
@@ -136,7 +136,7 @@ The actor selects View Verification Status.\newline
 
 \sublabel{Data Processing Overview}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-    \item The client web application issues an HTTP request to \texttt{GET /identity-verifications/status} via the Next.js BFF proxy.
+    \item The client issues an HTTP request to \texttt{GET /\allowbreak{}identity-\allowbreak{}verifications/\allowbreak{}status} via Next.js BFF proxy.
     \item NestJS guards verify JWT authentication and validate role-based access permissions.
     \item The backend service queries or updates entities in PostgreSQL using Prisma ORM.
     \item The API returns the structured JSON payload and handles domain invariants consistently.
@@ -173,7 +173,7 @@ Identifier & Authenticated user context; no other user ID can replace it.\\ \hli
 
 \sublabel{Normal Flow}
 \begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
-    \item The actor opens \texttt{/account-profile} (Identity Verification tab) and selects View Verification Status.
+    \item The actor opens \texttt{/\allowbreak{}account-\allowbreak{}profile} (Identity Verification tab) and selects View Verification Status.
     \item The application submits the selected identifier or list filters.
     \item The API checks authentication where required, authorization, resource existence and input validity.
     \item Return the latest verification state and submission history with rejection notes where present.
@@ -182,11 +182,11 @@ Identifier & Authenticated user context; no other user ID can replace it.\\ \hli
 
 \sublabel{Abnormal Flow / Exception Handling}
 \begin{flowtable}{Case}{Description}
-A1 & Missing or expired authentication token. The system returns HTTP 401 Unauthorized and prompts re-authentication.\\ \hline
-A2 & Insufficient permissions or role unauthorized. The request is rejected with HTTP 403 Forbidden.\\ \hline
-A3 & Target resource not found or soft-deleted. The system returns HTTP 404 Not Found.\\ \hline
-A4 & Validation error or malformed payload. The system returns HTTP 400 Bad Request with field validation details.\\ \hline
-A5 & Database connectivity failure or unexpected internal exception. The transaction rolls back and returns HTTP 500.\\ \hline
+A1 & Missing or expired authentication token. Returns HTTP 401 Unauthorized.\\ \hline
+A2 & Insufficient permissions or role unauthorized. Returns HTTP 403 Forbidden.\\ \hline
+A3 & Target resource not found or soft-deleted. Returns HTTP 404 Not Found.\\ \hline
+A4 & Validation error or malformed payload. Returns HTTP 400 Bad Request.\\ \hline
+A5 & Database connectivity failure or server error. Returns HTTP 500.\\ \hline
 \end{flowtable}
 
 \sublabel{Output Data}
@@ -212,14 +212,14 @@ Failure & Structured error without sensitive data; no successful UI state when t
 
 \fnhead{Function Trigger}
 The actor selects View Client Profile.\newline
-\textbf{Navigation path:} Home $\rightarrow$ \texttt{/clients/[userId]} or \texttt{/client/profile.}
+\textbf{Navigation path:} Home $\rightarrow$ \texttt{/\allowbreak{}clients/\allowbreak{}[userId]} or \texttt{/\allowbreak{}client/\allowbreak{}profile.}
 
 \fnhead{Function Description}
 
 \sublabel{Actors / Roles}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
     \item \textbf{Primary Actor:} Guest, Client, Freelancer.
-    \item \textbf{Supporting Systems:} Frevia Web application (Next.js), Frevia BFF proxy (\texttt{/api/backend}), Frevia REST API (NestJS), Prisma ORM layer, and PostgreSQL relational database.
+    \item \textbf{Supporting Systems:} Frevia Web (Next.js), Frevia BFF proxy, Frevia REST API (NestJS), Prisma ORM, and PostgreSQL database.
 \end{itemize}
 
 \sublabel{Purpose}
@@ -234,7 +234,7 @@ The actor selects View Client Profile.\newline
 
 \sublabel{Data Processing Overview}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-    \item The client web application issues an HTTP request to \texttt{GET /clients/:userId} via the Next.js BFF proxy.
+    \item The client issues an HTTP request to \texttt{GET /\allowbreak{}clients/\allowbreak{}:\allowbreak{}userId} via Next.js BFF proxy.
     \item NestJS guards verify JWT authentication and validate role-based access permissions.
     \item The backend service queries or updates entities in PostgreSQL using Prisma ORM.
     \item The API returns the structured JSON payload and handles domain invariants consistently.
@@ -271,7 +271,7 @@ Identifier & Positive resource ID from the route; ownership is checked by the AP
 
 \sublabel{Normal Flow}
 \begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
-    \item The actor opens \texttt{/clients/[userId]}; \texttt{/client/profile} and selects View Client Profile.
+    \item The actor opens \texttt{/\allowbreak{}clients/\allowbreak{}[userId]}; \texttt{/\allowbreak{}client/\allowbreak{}profile} and selects View Client Profile.
     \item The application submits the selected identifier or list filters.
     \item The API checks authentication where required, authorization, resource existence and input validity.
     \item Combine approved public Profile, ClientProfile and SocialLink fields without private user information.
@@ -280,11 +280,11 @@ Identifier & Positive resource ID from the route; ownership is checked by the AP
 
 \sublabel{Abnormal Flow / Exception Handling}
 \begin{flowtable}{Case}{Description}
-A1 & Missing or expired authentication token. The system returns HTTP 401 Unauthorized and prompts re-authentication.\\ \hline
-A2 & Insufficient permissions or role unauthorized. The request is rejected with HTTP 403 Forbidden.\\ \hline
-A3 & Target resource not found or soft-deleted. The system returns HTTP 404 Not Found.\\ \hline
-A4 & Validation error or malformed payload. The system returns HTTP 400 Bad Request with field validation details.\\ \hline
-A5 & Database connectivity failure or unexpected internal exception. The transaction rolls back and returns HTTP 500.\\ \hline
+A1 & Missing or expired authentication token. Returns HTTP 401 Unauthorized.\\ \hline
+A2 & Insufficient permissions or role unauthorized. Returns HTTP 403 Forbidden.\\ \hline
+A3 & Target resource not found or soft-deleted. Returns HTTP 404 Not Found.\\ \hline
+A4 & Validation error or malformed payload. Returns HTTP 400 Bad Request.\\ \hline
+A5 & Database connectivity failure or server error. Returns HTTP 500.\\ \hline
 \end{flowtable}
 
 \sublabel{Output Data}
@@ -307,14 +307,14 @@ Failure & Structured error without sensitive data; no successful UI state when t
 
 \fnhead{Function Trigger}
 The actor selects Update Company Information.\newline
-\textbf{Navigation path:} Home $\rightarrow$ \texttt{/clients/[userId]} or \texttt{/client/profile.}
+\textbf{Navigation path:} Home $\rightarrow$ \texttt{/\allowbreak{}clients/\allowbreak{}[userId]} or \texttt{/\allowbreak{}client/\allowbreak{}profile.}
 
 \fnhead{Function Description}
 
 \sublabel{Actors / Roles}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
     \item \textbf{Primary Actor:} Client.
-    \item \textbf{Supporting Systems:} Frevia Web application (Next.js), Frevia BFF proxy (\texttt{/api/backend}), Frevia REST API (NestJS), Prisma ORM layer, and PostgreSQL relational database.
+    \item \textbf{Supporting Systems:} Frevia Web (Next.js), Frevia BFF proxy, Frevia REST API (NestJS), Prisma ORM, and PostgreSQL database.
 \end{itemize}
 
 \sublabel{Purpose}
@@ -329,7 +329,7 @@ The actor selects Update Company Information.\newline
 
 \sublabel{Data Processing Overview}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-    \item The client web application issues an HTTP request to \texttt{PUT /clients/me/profile} via the Next.js BFF proxy.
+    \item The client issues an HTTP request to \texttt{PUT /\allowbreak{}clients/\allowbreak{}me/\allowbreak{}profile} via Next.js BFF proxy.
     \item NestJS guards verify JWT authentication and validate role-based access permissions.
     \item The backend service queries or updates entities in PostgreSQL using Prisma ORM.
     \item The API returns the structured JSON payload and handles domain invariants consistently.
@@ -349,7 +349,7 @@ The actor selects Update Company Information.\newline
 \begin{specdatatable}{Data Name}{Description}
 companyName & Required trimmed company name, up to 255 characters.\\ \hline
 companyDescription & Optional company description up to 5,000 characters.\\ \hline
-website & Optional HTTP\texttt{/HTTPS} URL, at most 255 characters.\\ \hline
+website & Optional HTTP\texttt{/\allowbreak{}HTTPS} URL, at most 255 characters.\\ \hline
 \end{specdatatable}
 
 \sublabel{Validation Rules}
@@ -368,7 +368,7 @@ website & Optional HTTP\texttt{/HTTPS} URL, at most 255 characters.\\ \hline
 
 \sublabel{Normal Flow}
 \begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
-    \item The actor opens \texttt{/clients/[userId]}; \texttt{/client/profile} and selects Update Company Information.
+    \item The actor opens \texttt{/\allowbreak{}clients/\allowbreak{}[userId]}; \texttt{/\allowbreak{}client/\allowbreak{}profile} and selects Update Company Information.
     \item The application presents the current values or action confirmation; the actor supplies the required data and submits.
     \item The API checks authentication where required, authorization, resource existence and input validity.
     \item Save or submit the authenticated Client company information according to the revision policy.
@@ -377,11 +377,11 @@ website & Optional HTTP\texttt{/HTTPS} URL, at most 255 characters.\\ \hline
 
 \sublabel{Abnormal Flow / Exception Handling}
 \begin{flowtable}{Case}{Description}
-A1 & Missing or expired authentication token. The system returns HTTP 401 Unauthorized and prompts re-authentication.\\ \hline
-A2 & Insufficient permissions or role unauthorized. The request is rejected with HTTP 403 Forbidden.\\ \hline
-A3 & Target resource not found or soft-deleted. The system returns HTTP 404 Not Found.\\ \hline
-A4 & Validation error or malformed payload. The system returns HTTP 400 Bad Request with field validation details.\\ \hline
-A5 & Database connectivity failure or unexpected internal exception. The transaction rolls back and returns HTTP 500.\\ \hline
+A1 & Missing or expired authentication token. Returns HTTP 401 Unauthorized.\\ \hline
+A2 & Insufficient permissions or role unauthorized. Returns HTTP 403 Forbidden.\\ \hline
+A3 & Target resource not found or soft-deleted. Returns HTTP 404 Not Found.\\ \hline
+A4 & Validation error or malformed payload. Returns HTTP 400 Bad Request.\\ \hline
+A5 & Database connectivity failure or server error. Returns HTTP 500.\\ \hline
 \end{flowtable}
 
 \sublabel{Output Data}
@@ -407,14 +407,14 @@ Failure & Structured error without sensitive data; no successful UI state when t
 
 \fnhead{Function Trigger}
 The actor selects View Social Link List.\newline
-\textbf{Navigation path:} Home $\rightarrow$ \texttt{/account-profile (Social Links)} or \texttt{/client/profile} or \texttt{public profile.}
+\textbf{Navigation path:} Home $\rightarrow$ \texttt{/\allowbreak{}account-\allowbreak{}profile (Social Links)} or \texttt{/\allowbreak{}client/\allowbreak{}profile} or \texttt{public profile.}
 
 \fnhead{Function Description}
 
 \sublabel{Actors / Roles}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
     \item \textbf{Primary Actor:} Client, Freelancer.
-    \item \textbf{Supporting Systems:} Frevia Web application (Next.js), Frevia BFF proxy (\texttt{/api/backend}), Frevia REST API (NestJS), Prisma ORM layer, and PostgreSQL relational database.
+    \item \textbf{Supporting Systems:} Frevia Web (Next.js), Frevia BFF proxy, Frevia REST API (NestJS), Prisma ORM, and PostgreSQL database.
 \end{itemize}
 
 \sublabel{Purpose}
@@ -430,7 +430,7 @@ The actor selects View Social Link List.\newline
 
 \sublabel{Data Processing Overview}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-    \item The client web application issues an HTTP request to \texttt{GET /social-links; GET /clients/:userId} via the Next.js BFF proxy.
+    \item The client issues an HTTP request to \texttt{GET /\allowbreak{}social-\allowbreak{}links; GET /\allowbreak{}clients/\allowbreak{}:\allowbreak{}userId} via Next.js BFF proxy.
     \item NestJS guards verify JWT authentication and validate role-based access permissions.
     \item The backend service queries or updates entities in PostgreSQL using Prisma ORM.
     \item The API returns the structured JSON payload and handles domain invariants consistently.
@@ -449,7 +449,7 @@ The actor selects View Social Link List.\newline
 
 \sublabel{Input Data}
 \begin{specdatatable}{Data Name}{Description}
-Selection & Current account or selected profile\texttt{/contract}; no pagination is assumed unless exposed by the endpoint.\\ \hline
+Selection & Current account or selected profile\texttt{/\allowbreak{}contract}; no pagination is assumed unless exposed by the endpoint.\\ \hline
 \end{specdatatable}
 
 \sublabel{Validation Rules}
@@ -468,7 +468,7 @@ Selection & Current account or selected profile\texttt{/contract}; no pagination
 
 \sublabel{Normal Flow}
 \begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
-    \item The actor opens \texttt{/account-profile} (Social Links); \texttt{/client/profile}; public profile and selects View Social Link List.
+    \item The actor opens \texttt{/\allowbreak{}account-\allowbreak{}profile} (Social Links); \texttt{/\allowbreak{}client/\allowbreak{}profile}; public profile and selects View Social Link List.
     \item The application submits the selected identifier or list filters.
     \item The API checks authentication where required, authorization, resource existence and input validity.
     \item Retrieve links for the current account settings or the public client response; public freelancer rendering is a tracked gap.
@@ -477,11 +477,11 @@ Selection & Current account or selected profile\texttt{/contract}; no pagination
 
 \sublabel{Abnormal Flow / Exception Handling}
 \begin{flowtable}{Case}{Description}
-A1 & Missing or expired authentication token. The system returns HTTP 401 Unauthorized and prompts re-authentication.\\ \hline
-A2 & Insufficient permissions or role unauthorized. The request is rejected with HTTP 403 Forbidden.\\ \hline
-A3 & Target resource not found or soft-deleted. The system returns HTTP 404 Not Found.\\ \hline
-A4 & Validation error or malformed payload. The system returns HTTP 400 Bad Request with field validation details.\\ \hline
-A5 & Database connectivity failure or unexpected internal exception. The transaction rolls back and returns HTTP 500.\\ \hline
+A1 & Missing or expired authentication token. Returns HTTP 401 Unauthorized.\\ \hline
+A2 & Insufficient permissions or role unauthorized. Returns HTTP 403 Forbidden.\\ \hline
+A3 & Target resource not found or soft-deleted. Returns HTTP 404 Not Found.\\ \hline
+A4 & Validation error or malformed payload. Returns HTTP 400 Bad Request.\\ \hline
+A5 & Database connectivity failure or server error. Returns HTTP 500.\\ \hline
 \end{flowtable}
 
 \sublabel{Output Data}
@@ -504,14 +504,14 @@ Failure & Structured error without sensitive data; no successful UI state when t
 
 \fnhead{Function Trigger}
 The actor selects Add Social Link.\newline
-\textbf{Navigation path:} Home $\rightarrow$ \texttt{/account-profile (Social Links)} or \texttt{/client/profile} or \texttt{public profile.}
+\textbf{Navigation path:} Home $\rightarrow$ \texttt{/\allowbreak{}account-\allowbreak{}profile (Social Links)} or \texttt{/\allowbreak{}client/\allowbreak{}profile} or \texttt{public profile.}
 
 \fnhead{Function Description}
 
 \sublabel{Actors / Roles}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
     \item \textbf{Primary Actor:} Client, Freelancer.
-    \item \textbf{Supporting Systems:} Frevia Web application (Next.js), Frevia BFF proxy (\texttt{/api/backend}), Frevia REST API (NestJS), Prisma ORM layer, and PostgreSQL relational database.
+    \item \textbf{Supporting Systems:} Frevia Web (Next.js), Frevia BFF proxy, Frevia REST API (NestJS), Prisma ORM, and PostgreSQL database.
 \end{itemize}
 
 \sublabel{Purpose}
@@ -527,7 +527,7 @@ The actor selects Add Social Link.\newline
 
 \sublabel{Data Processing Overview}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-    \item The client web application issues an HTTP request to \texttt{POST /social-links} via the Next.js BFF proxy.
+    \item The client issues an HTTP request to \texttt{POST /\allowbreak{}social-\allowbreak{}links} via Next.js BFF proxy.
     \item NestJS guards verify JWT authentication and validate role-based access permissions.
     \item The backend service queries or updates entities in PostgreSQL using Prisma ORM.
     \item The API returns the structured JSON payload and handles domain invariants consistently.
@@ -547,7 +547,7 @@ The actor selects Add Social Link.\newline
 \sublabel{Input Data}
 \begin{specdatatable}{Data Name}{Description}
 platform & One supported social platform enum value.\\ \hline
-url & Required HTTP\texttt{/HTTPS} URL up to the SocialLink varchar(500) limit.\\ \hline
+url & Required HTTP\texttt{/\allowbreak{}HTTPS} URL up to the SocialLink varchar(500) limit.\\ \hline
 id & SocialLink.id of the link selected for deletion.\\ \hline
 \end{specdatatable}
 
@@ -567,7 +567,7 @@ id & SocialLink.id of the link selected for deletion.\\ \hline
 
 \sublabel{Normal Flow}
 \begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
-    \item The actor opens \texttt{/account-profile} (Social Links); \texttt{/client/profile}; public profile and selects Add Social Link.
+    \item The actor opens \texttt{/\allowbreak{}account-\allowbreak{}profile} (Social Links); \texttt{/\allowbreak{}client/\allowbreak{}profile}; public profile and selects Add Social Link.
     \item The application presents the current values or action confirmation; the actor supplies the required data and submits.
     \item The API checks authentication where required, authorization, resource existence and input validity.
     \item Validate the platform and external URL, then insert one link on the authenticated user profile.
@@ -576,11 +576,11 @@ id & SocialLink.id of the link selected for deletion.\\ \hline
 
 \sublabel{Abnormal Flow / Exception Handling}
 \begin{flowtable}{Case}{Description}
-A1 & Missing or expired authentication token. The system returns HTTP 401 Unauthorized and prompts re-authentication.\\ \hline
-A2 & Insufficient permissions or role unauthorized. The request is rejected with HTTP 403 Forbidden.\\ \hline
-A3 & Target resource not found or soft-deleted. The system returns HTTP 404 Not Found.\\ \hline
-A4 & Validation error or malformed payload. The system returns HTTP 400 Bad Request with field validation details.\\ \hline
-A5 & Database connectivity failure or unexpected internal exception. The transaction rolls back and returns HTTP 500.\\ \hline
+A1 & Missing or expired authentication token. Returns HTTP 401 Unauthorized.\\ \hline
+A2 & Insufficient permissions or role unauthorized. Returns HTTP 403 Forbidden.\\ \hline
+A3 & Target resource not found or soft-deleted. Returns HTTP 404 Not Found.\\ \hline
+A4 & Validation error or malformed payload. Returns HTTP 400 Bad Request.\\ \hline
+A5 & Database connectivity failure or server error. Returns HTTP 500.\\ \hline
 \end{flowtable}
 
 \sublabel{Output Data}
@@ -603,14 +603,14 @@ Failure & Structured error without sensitive data; no successful UI state when t
 
 \fnhead{Function Trigger}
 The actor selects Delete Social Link.\newline
-\textbf{Navigation path:} Home $\rightarrow$ \texttt{/account-profile (Social Links)} or \texttt{/client/profile} or \texttt{public profile.}
+\textbf{Navigation path:} Home $\rightarrow$ \texttt{/\allowbreak{}account-\allowbreak{}profile (Social Links)} or \texttt{/\allowbreak{}client/\allowbreak{}profile} or \texttt{public profile.}
 
 \fnhead{Function Description}
 
 \sublabel{Actors / Roles}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
     \item \textbf{Primary Actor:} Client, Freelancer.
-    \item \textbf{Supporting Systems:} Frevia Web application (Next.js), Frevia BFF proxy (\texttt{/api/backend}), Frevia REST API (NestJS), Prisma ORM layer, and PostgreSQL relational database.
+    \item \textbf{Supporting Systems:} Frevia Web (Next.js), Frevia BFF proxy, Frevia REST API (NestJS), Prisma ORM, and PostgreSQL database.
 \end{itemize}
 
 \sublabel{Purpose}
@@ -626,7 +626,7 @@ The actor selects Delete Social Link.\newline
 
 \sublabel{Data Processing Overview}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-    \item The client web application issues an HTTP request to \texttt{DELETE /social-links/:id} via the Next.js BFF proxy.
+    \item The client issues an HTTP request to \texttt{DELETE /\allowbreak{}social-\allowbreak{}links/\allowbreak{}:\allowbreak{}id} via Next.js BFF proxy.
     \item NestJS guards verify JWT authentication and validate role-based access permissions.
     \item The backend service queries or updates entities in PostgreSQL using Prisma ORM.
     \item The API returns the structured JSON payload and handles domain invariants consistently.
@@ -664,7 +664,7 @@ Identifier & Positive resource ID from the route; ownership is checked by the AP
 
 \sublabel{Normal Flow}
 \begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
-    \item The actor opens \texttt{/account-profile} (Social Links); \texttt{/client/profile}; public profile and selects Delete Social Link.
+    \item The actor opens \texttt{/\allowbreak{}account-\allowbreak{}profile} (Social Links); \texttt{/\allowbreak{}client/\allowbreak{}profile}; public profile and selects Delete Social Link.
     \item The application presents the current values or action confirmation; the actor supplies the required data and submits.
     \item The API checks authentication where required, authorization, resource existence and input validity.
     \item Hard-delete the selected owned social link after confirmation.
@@ -673,11 +673,11 @@ Identifier & Positive resource ID from the route; ownership is checked by the AP
 
 \sublabel{Abnormal Flow / Exception Handling}
 \begin{flowtable}{Case}{Description}
-A1 & Missing or expired authentication token. The system returns HTTP 401 Unauthorized and prompts re-authentication.\\ \hline
-A2 & Insufficient permissions or role unauthorized. The request is rejected with HTTP 403 Forbidden.\\ \hline
-A3 & Target resource not found or soft-deleted. The system returns HTTP 404 Not Found.\\ \hline
-A4 & Validation error or malformed payload. The system returns HTTP 400 Bad Request with field validation details.\\ \hline
-A5 & Database connectivity failure or unexpected internal exception. The transaction rolls back and returns HTTP 500.\\ \hline
+A1 & Missing or expired authentication token. Returns HTTP 401 Unauthorized.\\ \hline
+A2 & Insufficient permissions or role unauthorized. Returns HTTP 403 Forbidden.\\ \hline
+A3 & Target resource not found or soft-deleted. Returns HTTP 404 Not Found.\\ \hline
+A4 & Validation error or malformed payload. Returns HTTP 400 Bad Request.\\ \hline
+A5 & Database connectivity failure or server error. Returns HTTP 500.\\ \hline
 \end{flowtable}
 
 \sublabel{Output Data}
@@ -703,14 +703,14 @@ Failure & Structured error without sensitive data; no successful UI state when t
 
 \fnhead{Function Trigger}
 The actor selects View Favorite Freelancer List.\newline
-\textbf{Navigation path:} Home $\rightarrow$ \texttt{/client/profile (Favorites)} or \texttt{/profiles/[id].}
+\textbf{Navigation path:} Home $\rightarrow$ \texttt{/\allowbreak{}client/\allowbreak{}profile (Favorites)} or \texttt{/\allowbreak{}profiles/\allowbreak{}[id].}
 
 \fnhead{Function Description}
 
 \sublabel{Actors / Roles}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
     \item \textbf{Primary Actor:} Client.
-    \item \textbf{Supporting Systems:} Frevia Web application (Next.js), Frevia BFF proxy (\texttt{/api/backend}), Frevia REST API (NestJS), Prisma ORM layer, and PostgreSQL relational database.
+    \item \textbf{Supporting Systems:} Frevia Web (Next.js), Frevia BFF proxy, Frevia REST API (NestJS), Prisma ORM, and PostgreSQL database.
 \end{itemize}
 
 \sublabel{Purpose}
@@ -725,7 +725,7 @@ The actor selects View Favorite Freelancer List.\newline
 
 \sublabel{Data Processing Overview}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-    \item The client web application issues an HTTP request to \texttt{GET /favorites/freelancers} via the Next.js BFF proxy.
+    \item The client issues an HTTP request to \texttt{GET /\allowbreak{}favorites/\allowbreak{}freelancers} via Next.js BFF proxy.
     \item NestJS guards verify JWT authentication and validate role-based access permissions.
     \item The backend service queries or updates entities in PostgreSQL using Prisma ORM.
     \item The API returns the structured JSON payload and handles domain invariants consistently.
@@ -743,7 +743,7 @@ The actor selects View Favorite Freelancer List.\newline
 
 \sublabel{Input Data}
 \begin{specdatatable}{Data Name}{Description}
-Selection & Current account or selected profile\texttt{/contract}; no pagination is assumed unless exposed by the endpoint.\\ \hline
+Selection & Current account or selected profile\texttt{/\allowbreak{}contract}; no pagination is assumed unless exposed by the endpoint.\\ \hline
 \end{specdatatable}
 
 \sublabel{Validation Rules}
@@ -761,7 +761,7 @@ Selection & Current account or selected profile\texttt{/contract}; no pagination
 
 \sublabel{Normal Flow}
 \begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
-    \item The actor opens \texttt{/client/profile} (Favorites); \texttt{/profiles/[id]} and selects View Favorite Freelancer List.
+    \item The actor opens \texttt{/\allowbreak{}client/\allowbreak{}profile} (Favorites); \texttt{/\allowbreak{}profiles/\allowbreak{}[id]} and selects View Favorite Freelancer List.
     \item The application submits the selected identifier or list filters.
     \item The API checks authentication where required, authorization, resource existence and input validity.
     \item Load the current Client favorites and join public freelancer details.
@@ -770,11 +770,11 @@ Selection & Current account or selected profile\texttt{/contract}; no pagination
 
 \sublabel{Abnormal Flow / Exception Handling}
 \begin{flowtable}{Case}{Description}
-A1 & Missing or expired authentication token. The system returns HTTP 401 Unauthorized and prompts re-authentication.\\ \hline
-A2 & Insufficient permissions or role unauthorized. The request is rejected with HTTP 403 Forbidden.\\ \hline
-A3 & Target resource not found or soft-deleted. The system returns HTTP 404 Not Found.\\ \hline
-A4 & Validation error or malformed payload. The system returns HTTP 400 Bad Request with field validation details.\\ \hline
-A5 & Database connectivity failure or unexpected internal exception. The transaction rolls back and returns HTTP 500.\\ \hline
+A1 & Missing or expired authentication token. Returns HTTP 401 Unauthorized.\\ \hline
+A2 & Insufficient permissions or role unauthorized. Returns HTTP 403 Forbidden.\\ \hline
+A3 & Target resource not found or soft-deleted. Returns HTTP 404 Not Found.\\ \hline
+A4 & Validation error or malformed payload. Returns HTTP 400 Bad Request.\\ \hline
+A5 & Database connectivity failure or server error. Returns HTTP 500.\\ \hline
 \end{flowtable}
 
 \sublabel{Output Data}
@@ -797,14 +797,14 @@ Failure & Structured error without sensitive data; no successful UI state when t
 
 \fnhead{Function Trigger}
 The actor selects Add Freelancer to Favorites.\newline
-\textbf{Navigation path:} Home $\rightarrow$ \texttt{/client/profile (Favorites)} or \texttt{/profiles/[id].}
+\textbf{Navigation path:} Home $\rightarrow$ \texttt{/\allowbreak{}client/\allowbreak{}profile (Favorites)} or \texttt{/\allowbreak{}profiles/\allowbreak{}[id].}
 
 \fnhead{Function Description}
 
 \sublabel{Actors / Roles}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
     \item \textbf{Primary Actor:} Client.
-    \item \textbf{Supporting Systems:} Frevia Web application (Next.js), Frevia BFF proxy (\texttt{/api/backend}), Frevia REST API (NestJS), Prisma ORM layer, and PostgreSQL relational database.
+    \item \textbf{Supporting Systems:} Frevia Web (Next.js), Frevia BFF proxy, Frevia REST API (NestJS), Prisma ORM, and PostgreSQL database.
 \end{itemize}
 
 \sublabel{Purpose}
@@ -819,7 +819,7 @@ The actor selects Add Freelancer to Favorites.\newline
 
 \sublabel{Data Processing Overview}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-    \item The client web application issues an HTTP request to \texttt{POST /favorites/freelancers/:freelancerId} via the Next.js BFF proxy.
+    \item The client issues an HTTP request to \texttt{POST /\allowbreak{}favorites/\allowbreak{}freelancers/\allowbreak{}:\allowbreak{}freelancerId} via Next.js BFF proxy.
     \item NestJS guards verify JWT authentication and validate role-based access permissions.
     \item The backend service queries or updates entities in PostgreSQL using Prisma ORM.
     \item The API returns the structured JSON payload and handles domain invariants consistently.
@@ -855,7 +855,7 @@ freelancerId & Target freelancer User.id, not Profile.id.\\ \hline
 
 \sublabel{Normal Flow}
 \begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
-    \item The actor opens \texttt{/client/profile} (Favorites); \texttt{/profiles/[id]} and selects Add Freelancer to Favorites.
+    \item The actor opens \texttt{/\allowbreak{}client/\allowbreak{}profile} (Favorites); \texttt{/\allowbreak{}profiles/\allowbreak{}[id]} and selects Add Freelancer to Favorites.
     \item The application presents the current values or action confirmation; the actor supplies the required data and submits.
     \item The API checks authentication where required, authorization, resource existence and input validity.
     \item Insert a unique relationship from the current Client to an active freelancer.
@@ -864,11 +864,11 @@ freelancerId & Target freelancer User.id, not Profile.id.\\ \hline
 
 \sublabel{Abnormal Flow / Exception Handling}
 \begin{flowtable}{Case}{Description}
-A1 & Missing or expired authentication token. The system returns HTTP 401 Unauthorized and prompts re-authentication.\\ \hline
-A2 & Insufficient permissions or role unauthorized. The request is rejected with HTTP 403 Forbidden.\\ \hline
-A3 & Target resource not found or soft-deleted. The system returns HTTP 404 Not Found.\\ \hline
-A4 & Validation error or malformed payload. The system returns HTTP 400 Bad Request with field validation details.\\ \hline
-A5 & Database connectivity failure or unexpected internal exception. The transaction rolls back and returns HTTP 500.\\ \hline
+A1 & Missing or expired authentication token. Returns HTTP 401 Unauthorized.\\ \hline
+A2 & Insufficient permissions or role unauthorized. Returns HTTP 403 Forbidden.\\ \hline
+A3 & Target resource not found or soft-deleted. Returns HTTP 404 Not Found.\\ \hline
+A4 & Validation error or malformed payload. Returns HTTP 400 Bad Request.\\ \hline
+A5 & Database connectivity failure or server error. Returns HTTP 500.\\ \hline
 \end{flowtable}
 
 \sublabel{Output Data}
@@ -891,14 +891,14 @@ Failure & Structured error without sensitive data; no successful UI state when t
 
 \fnhead{Function Trigger}
 The actor selects Remove Freelancer from Favorites.\newline
-\textbf{Navigation path:} Home $\rightarrow$ \texttt{/client/profile (Favorites)} or \texttt{/profiles/[id].}
+\textbf{Navigation path:} Home $\rightarrow$ \texttt{/\allowbreak{}client/\allowbreak{}profile (Favorites)} or \texttt{/\allowbreak{}profiles/\allowbreak{}[id].}
 
 \fnhead{Function Description}
 
 \sublabel{Actors / Roles}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
     \item \textbf{Primary Actor:} Client.
-    \item \textbf{Supporting Systems:} Frevia Web application (Next.js), Frevia BFF proxy (\texttt{/api/backend}), Frevia REST API (NestJS), Prisma ORM layer, and PostgreSQL relational database.
+    \item \textbf{Supporting Systems:} Frevia Web (Next.js), Frevia BFF proxy, Frevia REST API (NestJS), Prisma ORM, and PostgreSQL database.
 \end{itemize}
 
 \sublabel{Purpose}
@@ -913,7 +913,7 @@ The actor selects Remove Freelancer from Favorites.\newline
 
 \sublabel{Data Processing Overview}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-    \item The client web application issues an HTTP request to \texttt{DELETE /favorites/freelancers/:freelancerId} via the Next.js BFF proxy.
+    \item The client issues an HTTP request to \texttt{DELETE /\allowbreak{}favorites/\allowbreak{}freelancers/\allowbreak{}:\allowbreak{}freelancerId} via Next.js BFF proxy.
     \item NestJS guards verify JWT authentication and validate role-based access permissions.
     \item The backend service queries or updates entities in PostgreSQL using Prisma ORM.
     \item The API returns the structured JSON payload and handles domain invariants consistently.
@@ -949,7 +949,7 @@ Identifier & Positive resource ID from the route; ownership is checked by the AP
 
 \sublabel{Normal Flow}
 \begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
-    \item The actor opens \texttt{/client/profile} (Favorites); \texttt{/profiles/[id]} and selects Remove Freelancer from Favorites.
+    \item The actor opens \texttt{/\allowbreak{}client/\allowbreak{}profile} (Favorites); \texttt{/\allowbreak{}profiles/\allowbreak{}[id]} and selects Remove Freelancer from Favorites.
     \item The application presents the current values or action confirmation; the actor supplies the required data and submits.
     \item The API checks authentication where required, authorization, resource existence and input validity.
     \item Hard-delete the current Client relationship and update the favorite toggle and list.
@@ -958,11 +958,11 @@ Identifier & Positive resource ID from the route; ownership is checked by the AP
 
 \sublabel{Abnormal Flow / Exception Handling}
 \begin{flowtable}{Case}{Description}
-A1 & Missing or expired authentication token. The system returns HTTP 401 Unauthorized and prompts re-authentication.\\ \hline
-A2 & Insufficient permissions or role unauthorized. The request is rejected with HTTP 403 Forbidden.\\ \hline
-A3 & Target resource not found or soft-deleted. The system returns HTTP 404 Not Found.\\ \hline
-A4 & Validation error or malformed payload. The system returns HTTP 400 Bad Request with field validation details.\\ \hline
-A5 & Database connectivity failure or unexpected internal exception. The transaction rolls back and returns HTTP 500.\\ \hline
+A1 & Missing or expired authentication token. Returns HTTP 401 Unauthorized.\\ \hline
+A2 & Insufficient permissions or role unauthorized. Returns HTTP 403 Forbidden.\\ \hline
+A3 & Target resource not found or soft-deleted. Returns HTTP 404 Not Found.\\ \hline
+A4 & Validation error or malformed payload. Returns HTTP 400 Bad Request.\\ \hline
+A5 & Database connectivity failure or server error. Returns HTTP 500.\\ \hline
 \end{flowtable}
 
 \sublabel{Output Data}
