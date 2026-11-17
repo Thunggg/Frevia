@@ -27,51 +27,53 @@ export function AuthShell({
   return (
     <div className="flex min-h-dvh font-sans">
       <aside className="sticky top-0 hidden h-dvh w-[42%] overflow-hidden lg:block">
-        <Image
-          src={imageSrc}
-          alt=""
-          fill
-          priority
-          sizes="42vw"
-          className={`object-cover object-center ${styles.media}`}
-        />
-        <div
-          aria-hidden
-          className="absolute inset-0 bg-[linear-gradient(168deg,rgba(234,248,223,0.97)_0%,rgba(180,225,155,0.82)_30%,rgba(79,174,46,0.35)_60%,rgba(18,51,31,0.65)_100%)] dark:bg-[linear-gradient(168deg,rgba(22,23,22,0.98)_0%,rgba(26,28,26,0.95)_40%,rgba(18,18,18,0.92)_100%)]"
-        />
-        <div className="absolute left-0 top-0 h-1 w-20 bg-[#4fae2e] lg:block" />
-        <div className="relative z-10 p-10 xl:p-12">
-          <Link
-            href="/"
-            className={`inline-flex items-center gap-3 ${styles.reveal} ${styles.delay1}`}
-          >
-            <Image
-              src="/frevia-mark.png"
-              alt=""
-              width={40}
-              height={40}
-              className="size-10 object-contain"
-              priority
-            />
-            <span className="text-3xl font-bold tracking-tight text-[#4fae2e]">
-              Frevia
-            </span>
-          </Link>
+        <div className="relative h-full w-full">
+          <Image
+            src={imageSrc}
+            alt=""
+            fill
+            priority
+            sizes="42vw"
+            className={`object-cover object-center ${styles.media}`}
+          />
+          <div
+            aria-hidden
+            className="absolute inset-0 bg-[linear-gradient(168deg,rgba(234,248,223,0.97)_0%,rgba(180,225,155,0.82)_30%,rgba(79,174,46,0.35)_60%,rgba(18,51,31,0.65)_100%)] dark:bg-[linear-gradient(168deg,rgba(22,23,22,0.98)_0%,rgba(26,28,26,0.95)_40%,rgba(18,18,18,0.92)_100%)]"
+          />
+          <div className="absolute left-0 top-0 h-1 w-20 bg-[#4fae2e] lg:block" />
+          <div className="relative z-10 p-10 xl:p-12">
+            <Link
+              href="/"
+              className={`inline-flex items-center gap-3 ${styles.reveal} ${styles.delay1}`}
+            >
+              <Image
+                src="/frevia-mark.png"
+                alt=""
+                width={40}
+                height={40}
+                className="size-10 object-contain"
+                priority
+              />
+              <span className="text-3xl font-bold tracking-tight text-[#4fae2e]">
+                Frevia
+              </span>
+            </Link>
 
-          {(panelTitle || panelDescription) && (
-            <div className={`mt-8 max-w-sm ${styles.reveal} ${styles.delay2}`}>
-              {panelTitle ? (
-                <p className="text-2xl font-bold leading-snug tracking-tight text-foreground xl:text-3xl">
-                  {panelTitle}
-                </p>
-              ) : null}
-              {panelDescription ? (
-                <p className="mt-3 text-sm leading-relaxed text-foreground/75 dark:text-foreground/70">
-                  {panelDescription}
-                </p>
-              ) : null}
-            </div>
-          )}
+            {(panelTitle || panelDescription) && (
+              <div className={`mt-8 max-w-sm ${styles.reveal} ${styles.delay2}`}>
+                {panelTitle ? (
+                  <p className="text-2xl font-bold leading-snug tracking-tight text-foreground xl:text-3xl">
+                    {panelTitle}
+                  </p>
+                ) : null}
+                {panelDescription ? (
+                  <p className="mt-3 text-sm leading-relaxed text-foreground/75 dark:text-foreground/70">
+                    {panelDescription}
+                  </p>
+                ) : null}
+              </div>
+            )}
+          </div>
         </div>
       </aside>
 
