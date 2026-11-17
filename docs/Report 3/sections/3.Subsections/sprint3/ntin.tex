@@ -1,0 +1,620 @@
+% =================================================================
+% Sprint 3 - Dispute Management (ntin)
+% The functions below follow the detailed form of the report template:
+% Function Trigger, Function Description, Screen Layout and Function Details.
+% They are written against the current implementation in
+%   apps/api/src/routes/disputes, apps/api/src/routes/payments,
+%   and apps/web/app/(client)/client/disputes,
+%   apps/web/app/(freelancer)/freelancer/disputes,
+%   apps/web/app/(admin)/admin/disputes.
+% =================================================================
+
+\subsection{Dispute Management}
+
+% -----------------------------------------------------------------
+% UC-33.01: Open Dispute
+% -----------------------------------------------------------------
+\subsubsection{ Open Dispute}
+
+\fnhead{Function Trigger}
+A Client or Freelancer clicks the ``Open Dispute'' action button on a funded or submitted milestone in the contract workspace.\newline
+\textbf{Navigation path:} Contract Workspace $\rightarrow$ Milestones Tab $\rightarrow$ Disputed Milestone $\rightarrow$ Click ``Open Dispute''.
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item \textbf{Primary Actor:} Client, Freelancer.
+      \item \textbf{Secondary Actor:} Administrator (\texttt{ADMIN} role).
+      \item \textbf{Supporting Systems:} Frevia Web application (Next.js), Frevia REST API (NestJS), Prisma ORM layer, and PostgreSQL relational database.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent Initiates a formal dispute arbitration case when project counterparties cannot reach mutual consensus regarding milestone deliverables, non-responsive communication, or scope divergence. Filing a dispute immediately freezes the milestone's escrow balance from unilateral release, cancellation, or refund, ensuring financial security while evidence is gathered.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item ``Open Dispute'' action button rendered on active, funded milestone cards.
+      \item File Dispute modal dialog with arbitration fee policy explanation.
+      \item Dispute reason dropdown selector (e.g., Deliverables Unsatisfactory, Scope Discrepancy, Counterpart Unresponsive, Payment Disagreement).
+      \item Detailed explanation textarea supporting rich Markdown formatting (50--2000 characters).
+      \item Evidence files uploader supporting up to 5 attachments (images, PDFs, documents, communication screenshots).
+      \item Mandatory terms acceptance checkbox: ``I acknowledge the dispute arbitration fee and agree to adhere to the dispute resolution process.''.
+      \item Action buttons: ``Submit Dispute'' (red destructive) and ``Cancel''.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item The user submits an HTTP request: \texttt{POST /api/disputes} with \texttt{milestoneId}, \texttt{reason}, and \texttt{evidenceFiles}.
+      \item \texttt{DisputeService.createDispute()} validates caller authorization: verifies that \texttt{userId === contract.clientId || userId === contract.freelancerId}.
+      \item Validates milestone eligibility: checks that milestone payment status is \texttt{FUNDED} and status is not \texttt{COMPLETED}.
+      \item Checks that no existing active dispute is currently open on this milestone.
+      \item Inside a database transaction:
+            \begin{itemize}[leftmargin=1.6em,topsep=2pt,itemsep=2pt,parsep=0pt]
+                  \item Creates a new \texttt{Dispute} entity with status \texttt{OPENED} and records the initiator ID.
+                  \item Links uploaded evidence files to the dispute record.
+                  \item Freezes the target milestone by flagging it with active dispute association.
+                  \item Generates arbitration fee payment obligations for both parties.
+            \end{itemize}
+      \item Sets a 48-hour response countdown deadline for the respondent party.
+      \item Dispatches an urgent dispute alert notification and email to the respondent counterpart.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint3/ntin/OpenDispute.png}{Open Dispute modal dialog}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item The modal header displays an amber arbitration gavel icon and prominent heading ``Open Formal Dispute''.
+      \item A notice banner explains that filing a dispute freezes the milestone escrow funds (\$USD amount shown) and gives the respondent 48 hours to reply.
+      \item Form fields: Reason category dropdown, comprehensive explanation textarea, and file attachment dropzone (max 5 files).
+      \item Bottom bar features policy consent checkbox, ``Cancel'' button, and red primary button ``Submit Formal Dispute''.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+      \texttt{milestoneId} & Numeric identifier of the funded milestone being disputed (integer).\\ \hline
+      \texttt{reason} & Detailed claim narrative explaining the issue and requested outcome (string, 50--2000 characters).\\ \hline
+      \texttt{evidenceFiles} & Array of file URLs or IDs representing uploaded proof documents (max 5 items).\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item Caller must be a verified contract participant (Client or Freelancer).
+      \item Milestone escrow payment status must be \texttt{FUNDED}.
+      \item Milestone operational status must not be \texttt{COMPLETED}.
+      \item No active dispute must currently exist on the target milestone.
+      \item Explanation text must contain at least 50 non-whitespace characters.
+      \item Evidence files must not exceed 5 items.
+\end{itemize}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+      \item BR-DIS-01: Only contract participants (Client or Freelancer) can open a dispute on a milestone.
+      \item BR-DIS-02: Filing a dispute immediately freezes milestone escrow funds from unilateral release or refund.
+      \item BR-DIS-03: The respondent party shall be granted a 48-hour response window to present counter-arguments.
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
+      \item The user expands the disputed milestone in the contract workspace and clicks ``Open Dispute''.
+      \item The system opens the Open Dispute modal.
+      \item The user selects a reason, enters a detailed explanation, and uploads evidence files.
+      \item The user checks the policy consent box and clicks ``Submit Formal Dispute''.
+      \item The system validates fields, freezes milestone escrow funds, and creates the dispute record.
+      \item The 48-hour respondent deadline is initialized.
+      \item The modal closes, a confirmation toast appears, and the respondent is alerted.
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Case}{Description}
+      A1 & Milestone is not funded in escrow. The API returns HTTP 422 with error \texttt{MilestoneCannotBeDisputedException}; dispute blocked.\\ \hline
+      A2 & Milestone already has an active dispute. The API returns HTTP 422 with error \texttt{MilestoneAlreadyDisputedException}.\\ \hline
+      A3 & User is not a participant in the contract. The API returns HTTP 403 Forbidden; access denied.\\ \hline
+      A4 & Evidence files exceed 5 items. The form rejects submission and highlights the limit.\\ \hline
+      A5 & Explanation text shorter than 50 characters. Form highlights character count requirement.\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Data Name}{Description}
+      \texttt{dispute} & Created dispute record with id, status (\texttt{OPENED}), initiatorId, and responseDeadline.\\ \hline
+      \texttt{milestoneStatus} & Frozen milestone indicator.\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item Dispute record created with status \texttt{OPENED}.
+      \item Milestone escrow funds frozen.
+      \item 48-hour response timer activated and notification sent to respondent.
+\end{itemize}
+
+% -----------------------------------------------------------------
+% UC-33.02: View Dispute List
+% -----------------------------------------------------------------
+\subsubsection{ View Dispute List}
+
+\fnhead{Function Trigger}
+A user (Client, Freelancer, or Admin) clicks ``Disputes'' in the main dashboard navigation sidebar.\newline
+\textbf{Navigation path:} User Dashboard $\rightarrow$ Navigation Menu $\rightarrow$ Disputes (\texttt{/client/disputes}, \texttt{/freelancer/disputes}, or \texttt{/admin/disputes}).
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item \textbf{Primary Actor:} Client, Freelancer, Administrator.
+      \item \textbf{Supporting Systems:} Frevia Web application (Next.js), Frevia REST API (NestJS), Prisma ORM layer, and PostgreSQL database.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent Provides a central overview of all active and resolved arbitration cases. Allows participants to track case progress, monitor response countdown deadlines, review settlement statuses, and access granular dispute workspaces.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item Disputes dashboard page at \texttt{/client/disputes}, \texttt{/freelancer/disputes}, or \texttt{/admin/disputes}.
+      \item Filter tabs for operational statuses: All, Open / Awaiting Response, Evidence Submitted, Under Review, Resolved, Cancelled.
+      \item Dispute cards rendering case ID, milestone title, contract title, counterpart avatar and name, disputed escrow amount (\$USD), response deadline countdown badge, and status pill.
+      \item Admin view provides search by user, contract ID, and sorting by urgent deadline.
+      \item Standard pagination footer.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item The client issues an HTTP request: \texttt{GET /api/disputes} (for user) or \texttt{GET /api/admin/disputes} (for Admin).
+      \item \texttt{DisputeService.listMyDisputes()} filters disputes where caller is contract client or freelancer; \texttt{adminListDisputes()} queries system-wide cases.
+      \item Applies status filters (\texttt{OPENED}, \texttt{EVIDENCE\_SUBMITTED}, \texttt{UNDER\_REVIEW}, \texttt{RESOLVED}).
+      \item Computes countdown timers relative to current server time.
+      \item Returns HTTP 200 with dispute collection and pagination metadata.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint3/ntin/ViewDisputeList.png}{Disputes list dashboard screen}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item Page header features title ``Arbitration Disputes'' with metric counters for active cases and frozen funds.
+      \item Status filter tab bar allows toggling between Open, Under Review, and Resolved cases.
+      \item Case cards display dispute ID badge, contract and milestone breadcrumb, opponent profile, frozen amount in red, countdown clock, and ``View Case'' button.
+      \item Pagination controls display at the bottom.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+      \texttt{page} & Page number for paginated retrieval (integer, default 1).\\ \hline
+      \texttt{limit} & Number of disputes per page (integer, default 10, max 50).\\ \hline
+      \texttt{status} & Optional status filter (\texttt{OPENED}, \texttt{EVIDENCE\_SUBMITTED}, \texttt{UNDER\_REVIEW}, \texttt{RESOLVED}).\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item User must be authenticated with active credentials.
+      \item \texttt{page} and \texttt{limit} must be positive integers.
+\end{itemize}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+      \item BR-DIS-04: Clients and Freelancers can only view disputes linked to contracts they participate in.
+      \item BR-DIS-05: Administrators have unrestricted visibility across all platform disputes.
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
+      \item User navigates to Disputes from the sidebar navigation.
+      \item Client requests dispute list from the API.
+      \item API filters cases by user participation and returns records with deadlines.
+      \item Client renders dispute cards and active status badges.
+      \item User clicks ``View Case'' to open detailed arbitration workspace.
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Case}{Description}
+      A1 & Unauthenticated request. API returns HTTP 401 Unauthorized; redirects to login.\\ \hline
+      A2 & No disputes exist. Client displays empty state: ``No active disputes found.''\\ \hline
+      A3 & Database query error. Client displays retry prompt.\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Data Name}{Description}
+      \texttt{disputes[]} & Array of dispute summary records with case metadata, frozen amounts, and deadlines.\\ \hline
+      \texttt{pagination} & Object containing pagination parameters and total items count.\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item Disputes list rendered with accurate case statuses and timers.
+\end{itemize}
+
+% -----------------------------------------------------------------
+% UC-33.03: View Dispute Detail
+% -----------------------------------------------------------------
+\subsubsection{ View Dispute Detail}
+
+\fnhead{Function Trigger}
+A user clicks on a dispute item from the dispute list or navigates to \texttt{/disputes/:id}.\newline
+\textbf{Navigation path:} Disputes List $\rightarrow$ Click Dispute Card $\rightarrow$ Dispute Workspace (\texttt{/disputes/:id}).
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item \textbf{Primary Actor:} Client, Freelancer, Administrator.
+      \item \textbf{Supporting Systems:} Frevia Web application (Next.js), Frevia REST API (NestJS), Prisma ORM layer, and PostgreSQL database.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent Renders the complete arbitration workspace for a dispute. Displays initiator claim arguments, attached evidence files, respondent counter-arguments, arbitration fee payment status, Admin resolution split proposals, voting history, and final binding execution results.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item Dispute workspace screen at \texttt{/disputes/:id}.
+      \item Header case banner: Dispute ID, milestone reference, contract title, frozen escrow amount, status badge, and deadline clock.
+      \item Two-column case view: Initiator Claim panel (left) versus Respondent Counter-Response panel (right).
+      \item Evidence gallery with preview thumbnails and download links.
+      \item Arbitration Fee settlement widget tracking fee deposit status for both parties.
+      \item Resolution Proposal section displaying Admin's proposed fund split (Client refund vs Freelancer payout) with ``Accept'' and ``Reject'' voting triggers.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item The client issues an HTTP request: \texttt{GET /api/disputes/:id}.
+      \item \texttt{DisputeService.getDisputeDetail()} validates caller access: verifies that user is contract client, freelancer, or possesses \texttt{ADMIN} role.
+      \item Queries \texttt{prisma.dispute.findUnique} with nested milestone, contract, evidence attachments, initiator profile, respondent profile, and resolution review records.
+      \item Checks deadline expiration: if response deadline passed without response, updates status flag accordingly.
+      \item Returns HTTP 200 with the composite dispute entity.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint3/ntin/ViewDisputeDetail.png}{Dispute workspace detail screen}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item Top banner features red gavel badge, case title, frozen amount, and urgent countdown deadline.
+      \item Left column renders the Initiator's statement, filing date, and uploaded evidence documents.
+      \item Right column renders the Respondent's statement and counter-evidence (or countdown placeholder if pending).
+      \item Lower section displays the Admin Arbitration split proposal slider and party consensus voting status cards.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+      \texttt{id} & Unique numeric dispute identifier (integer path parameter).\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item Dispute ID must exist in database.
+      \item Caller must be an authorized dispute party (Client or Freelancer) or an Administrator.
+\end{itemize}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+      \item BR-DIS-06: Strict party data isolation ensures only authorized parties can inspect dispute claims and evidence.
+      \item BR-DIS-07: All dispute claims, counter-claims, and evidence files form an immutable permanent audit record.
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
+      \item User clicks a dispute card in the dispute list.
+      \item Client requests \texttt{GET /api/disputes/:id}.
+      \item API validates access and loads full dispute case entity with evidence.
+      \item Client renders two-column case comparison and resolution proposal panels.
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Case}{Description}
+      A1 & Caller is not a participant in the dispute and not an Admin. API returns HTTP 403 Forbidden with error \texttt{DisputeNotContractParticipantException}.\\ \hline
+      A2 & Dispute does not exist. API returns HTTP 404 Not Found with error \texttt{DisputeNotFoundException}.\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Data Name}{Description}
+      \texttt{dispute} & Full dispute record including claims, evidence files, counter-responses, proposal split, and reviews.\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item Full dispute arbitration workspace rendered.
+\end{itemize}
+
+% -----------------------------------------------------------------
+% UC-33.04: Respond to Dispute
+% -----------------------------------------------------------------
+\subsubsection{ Respond to Dispute}
+
+\fnhead{Function Trigger}
+The respondent party (Client or Freelancer) clicks ``Submit Response'' on an opened dispute detail workspace within the 48-hour response window.\newline
+\textbf{Navigation path:} Dispute Workspace (\texttt{/disputes/:id}) $\rightarrow$ Respondent Panel $\rightarrow$ Click ``Submit Response''.
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item \textbf{Primary Actor:} Respondent Party (Client or Freelancer).
+      \item \textbf{Secondary Actor:} Administrator (\texttt{ADMIN} role).
+      \item \textbf{Supporting Systems:} Frevia Web application (Next.js), Frevia REST API (NestJS), Prisma ORM layer, and PostgreSQL database.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent Allows the defending respondent party to submit their official counter-argument, rebuttal, and supporting counter-evidence files to contest the dispute claim before administrative arbitration review begins.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item ``Submit Response'' prominent action button in the respondent column.
+      \item Dispute rebuttal modal dialog.
+      \item Response statement textarea supporting Markdown (50--2000 characters).
+      \item Counter-evidence file uploader (up to 5 documents, screenshots, or chat archives).
+      \item Action buttons: ``Submit Official Response'' and ``Cancel''.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item Respondent submits an HTTP request: \texttt{POST /api/disputes/:id/response} with \texttt{response} text and \texttt{evidenceFiles}.
+      \item \texttt{DisputeService.submitResponse()} verifies caller is the designated respondent party (not the initiator).
+      \item Verifies that dispute status is currently \texttt{OPENED} and response deadline has not expired.
+      \item Persists counter-arguments and links uploaded counter-evidence records.
+      \item Transitions dispute status to \texttt{EVIDENCE\_SUBMITTED} or \texttt{UNDER\_REVIEW}.
+      \item Alerts both the initiator and platform administrators that evidence submission is complete.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint3/ntin/RespondToDispute.png}{Respond to Dispute rebuttal screen}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item Modal displays heading ``Submit Counter-Response''.
+      \item Narrative box for respondent's rebuttal explanation.
+      \item Evidence attachment dropzone (max 5 files) with format guides.
+      \item Footer buttons: ``Cancel'' and primary blue ``Submit Response''.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+      \texttt{id} & Numeric dispute identifier (integer path parameter).\\ \hline
+      \texttt{response} & Textual counter-argument and rebuttal narrative (string, 50--2000 characters).\\ \hline
+      \texttt{evidenceFiles} & Array of file URLs or IDs representing uploaded counter-evidence (max 5 items).\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item Caller must be the designated respondent party of the dispute.
+      \item Dispute status must be \texttt{OPENED}.
+      \item Response deadline must not have expired.
+      \item Rebuttal text must contain at least 50 non-whitespace characters.
+\end{itemize}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+      \item BR-DIS-08: Submitting the response transitions the dispute to \texttt{UNDER\_REVIEW} for administrative arbitration.
+      \item BR-DIS-09: If the respondent fails to reply within 48 hours, the dispute is subject to default ruling in favor of the initiator.
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
+      \item Respondent navigates to the dispute workspace and clicks ``Submit Response''.
+      \item System opens the rebuttal modal.
+      \item Respondent types counter-arguments and uploads counter-evidence files.
+      \item Respondent clicks ``Submit Official Response''.
+      \item System validates fields, stores counter-evidence, and updates dispute status to \texttt{UNDER\_REVIEW}.
+      \item Modal closes, UI displays respondent arguments, and Admin is notified to arbitrate.
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Case}{Description}
+      A1 & Caller is the dispute initiator, not the respondent. API returns HTTP 422 with error \texttt{DisputeInitiatorCannotRespondException}; access denied.\\ \hline
+      A2 & Dispute is not in \texttt{OPENED} status. API returns HTTP 422 with error \texttt{DisputeNotAwaitingResponseException}.\\ \hline
+      A3 & Response deadline has expired. API returns HTTP 422 with error \texttt{DisputeDeadlineExpiredException}; default ruling triggered.\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Data Name}{Description}
+      \texttt{dispute} & Updated dispute record with status \texttt{UNDER\_REVIEW} and respondent statement.\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item Counter-arguments persisted in database.
+      \item Dispute status transitioned to \texttt{UNDER\_REVIEW}.
+      \item Admin queued to examine evidence and propose resolution.
+\end{itemize}
+
+% -----------------------------------------------------------------
+% UC-33.05: Respond to Dispute Resolution
+% -----------------------------------------------------------------
+\subsubsection{ Respond to Dispute Resolution}
+
+\fnhead{Function Trigger}
+A Client or Freelancer clicks ``Accept Proposal'' or ``Reject Proposal'' on an Admin resolution proposal in the dispute workspace.\newline
+\textbf{Navigation path:} Dispute Workspace (\texttt{/disputes/:id}) $\rightarrow$ Resolution Section $\rightarrow$ Click ``Accept'' or ``Reject''.
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item \textbf{Primary Actor:} Client, Freelancer.
+      \item \textbf{Supporting Systems:} Frevia Web application (Next.js), Frevia REST API (NestJS), Prisma ORM layer, and PostgreSQL database.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent Allows both parties to review an Admin's proposed fund distribution split (Client refund vs Freelancer payout) and cast their vote within a 48-hour consensus window. If both parties accept, the settlement executes automatically; if either rejects, the case escalates to final binding determination.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item Resolution proposal card displaying Admin's rationale, proposed refund to Client (\$USD), and proposed payout to Freelancer (\$USD).
+      \item Mutual consensus voting widget rendering Client and Freelancer vote status pills (Pending, Accepted, Rejected).
+      \item Voting buttons: Green ``Accept Resolution'' and Red ``Reject Proposal''.
+      \item Optional feedback textarea for explaining rejection reasons.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item User submits an HTTP request: \texttt{POST /api/disputes/:id/review} with \texttt{decision: 'ACCEPT' | 'REJECT'} and optional \texttt{feedback}.
+      \item \texttt{DisputeService.submitDecisionReview()} verifies caller is a dispute party.
+      \item Checks that an Admin proposal exists and dispute is in review stage.
+      \item Records the party's vote: updates \texttt{clientReviewStatus} or \texttt{freelancerReviewStatus}.
+      \item Evaluates consensus state:
+            \begin{itemize}[leftmargin=1.6em,topsep=2pt,itemsep=2pt,parsep=0pt]
+                  \item If both parties vote \texttt{ACCEPT}: automatically triggers settlement execution (UC-43.11), disburses escrow funds according to proposal, and sets dispute \texttt{status = RESOLVED}.
+                  \item If either party votes \texttt{REJECT}: escalates dispute to final binding determination by Admin.
+            \end{itemize}
+      \item Dispatches notifications to counterpart and Admin.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint3/ntin/RespondToDisputeResolution.png}{Review Dispute Resolution proposal screen}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item Card displays heading ``Admin Proposed Settlement''.
+      \item Two big split cards show ``Refund to Client: \$X.00'' and ``Payout to Freelancer: \$Y.00''.
+      \item Admin written rationale paragraph explaining the evidence analysis.
+      \item Voting action buttons: ``Accept Proposed Split'' and ``Reject Proposal''.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+      \texttt{id} & Numeric dispute identifier (integer path parameter).\\ \hline
+      \texttt{decision} & Party review vote (enum: \texttt{ACCEPT} or \texttt{REJECT}).\\ \hline
+      \texttt{feedback} & Optional explanation supporting the voting decision (string, optional).\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item Caller must be a recognized participant in the dispute.
+      \item An active Admin proposal must be awaiting party review.
+      \item The party must not have already submitted a vote on this proposal.
+\end{itemize}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+      \item BR-DIS-10: Mutual acceptance by both parties executes immediate automated settlement payout.
+      \item BR-DIS-11: A single rejection triggers escalation to final binding administrative adjudication.
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
+      \item User reviews Admin proposal split and rationale in dispute workspace.
+      \item User clicks ``Accept Proposed Split'' (or ``Reject'').
+      \item Confirmation dialog prompts user to confirm binding vote.
+      \item System records vote in database and evaluates mutual consensus.
+      \item If consensus achieved, funds are disbursed automatically and dispute marked \texttt{RESOLVED}.
+      \item UI updates voting status and displays confirmation notification.
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Case}{Description}
+      A1 & User has already voted on this proposal. API returns HTTP 422 with error \texttt{DisputeAlreadyReviewedException}.\\ \hline
+      A2 & No proposal currently active for review. API returns HTTP 422 with error \texttt{DisputeNoProposalAwaitingReviewException}.\\ \hline
+      A3 & Caller is not a participant. API returns HTTP 403 Forbidden; access denied.\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Data Name}{Description}
+      \texttt{dispute} & Updated dispute record with party vote flags and resulting status (\texttt{RESOLVED} or escalated).\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item Vote persisted in database.
+      \item If mutually accepted, escrow settlement executed automatically.
+\end{itemize}
+
+% -----------------------------------------------------------------
+% UC-33.06: Propose Dispute Resolution
+% -----------------------------------------------------------------
+\subsubsection{ Propose Dispute Resolution}
+
+\fnhead{Function Trigger}
+A System Administrator clicks ``Propose Resolution'' or ``Issue Final Decision'' in the Admin Dispute Arbitration Console.\newline
+\textbf{Navigation path:} Admin Dashboard $\rightarrow$ Arbitration $\rightarrow$ Dispute Case (\texttt{/admin/disputes/:id}) $\rightarrow$ Click ``Propose Resolution''.
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item \textbf{Primary Actor:} System Administrator (\texttt{ADMIN} role).
+      \item \textbf{Supporting Systems:} Frevia Web management console (Next.js), Frevia REST API (NestJS), Prisma ORM layer, and PostgreSQL database.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent Allows an Administrator to adjudicate evidence, determine a fair fund distribution split (Client refund vs Freelancer transfer) matching the milestone escrow balance, write legal arbitration findings, and present the proposal for party consensus (or issue a final binding ruling).
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item Admin dispute arbitration workspace at \texttt{/admin/disputes/:id}.
+      \item Case review dossier: comparative view of claim statements, chat archives, deliverable files, and activity logs.
+      \item Resolution builder form: Client refund amount input (\$USD), Freelancer payout amount input (\$USD), and automatic escrow total parity validator.
+      \item Arbitration findings and legal rationale rich-text area.
+      \item Action buttons: ``Propose Resolution to Parties'' and ``Issue Final Binding Ruling''.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item Administrator submits an HTTP request: \texttt{POST /api/admin/disputes/:id/decision} with \texttt{clientRefundAmount}, \texttt{freelancerTransferAmount}, and \texttt{rationale}.
+      \item \texttt{DisputeService.adminMakeDecision()} verifies caller possesses \texttt{ADMIN} role.
+      \item Validates arithmetic parity: verifies that \texttt{clientRefundAmount + freelancerTransferAmount === milestone.amount}.
+      \item Inside a database transaction, persists the proposed split amounts, sets \texttt{status = UNDER\_REVIEW}, resets party vote flags to \texttt{PENDING}, and stores the findings rationale.
+      \item Initializes a 48-hour party review timer.
+      \item Dispatches alert notifications to both Client and Freelancer inviting them to review the proposed resolution.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint3/ntin/ProposeDisputeResolution.png}{Admin propose dispute resolution console}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item Header displays dispute case reference, total escrow balance in dispute, and parties' identity cards.
+      \item Fund allocation interactive slider and numeric inputs for Client Refund (\$USD) and Freelancer Payout (\$USD) with green parity checkmark.
+      \item Rationale editor box for entering administrative findings.
+      \item Action buttons: ``Send Proposal for Consensus Review'' and ``Execute Final Determination''.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+      \texttt{id} & Numeric dispute identifier (integer path parameter).\\ \hline
+      \texttt{clientRefundAmount} & Monetary amount in USD to refund to Client (decimal, $\ge$ 0).\\ \hline
+      \texttt{freelancerTransferAmount} & Monetary amount in USD to transfer to Freelancer (decimal, $\ge$ 0).\\ \hline
+      \texttt{rationale} & Administrative arbitration findings explaining the decision (string, 20--3000 characters).\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item Caller must possess verified \texttt{ADMIN} role.
+      \item Dispute must be in active arbitration status (\texttt{EVIDENCE\_SUBMITTED} or \texttt{UNDER\_REVIEW}).
+      \item The sum of \texttt{clientRefundAmount} and \texttt{freelancerTransferAmount} must exactly match the total milestone escrow balance.
+      \item Rationale must be at least 20 characters in length.
+\end{itemize}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+      \item BR-DIS-12: Only verified Administrators are authorized to propose or execute dispute resolutions.
+      \item BR-DIS-13: The sum of proposed resolution splits shall strictly equal 100\% of the disputed milestone escrow amount.
+      \item BR-DIS-14: Admin resolution proposals initiate a 48-hour consensus window before final binding determination.
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
+      \item Administrator accesses dispute case in Admin Arbitration Console.
+      \item Admin examines claim statements, evidence files, and deliverable submissions.
+      \item Admin inputs fund split amounts and types arbitration findings rationale.
+      \item Admin clicks ``Send Proposal for Consensus Review''.
+      \item System validates amount parity and records proposal split in database.
+      \item 48-hour consensus timer begins, and notifications are sent to Client and Freelancer.
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Case}{Description}
+      A1 & Split amounts do not sum to escrow balance. API returns HTTP 400 Bad Request with error \texttt{DisputeSettlementInvalidAmountException}; form indicates mismatch.\\ \hline
+      A2 & Caller does not possess Admin role. API returns HTTP 403 Forbidden; access denied.\\ \hline
+      A3 & Dispute is already resolved. API returns HTTP 422; adjudication blocked.\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Data Name}{Description}
+      \texttt{dispute} & Updated dispute entity with proposed split amounts, findings rationale, and consensus timers.\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item Resolution proposal persisted in database.
+      \item Review voting opened for both parties.
+      \item Notifications dispatched to Client and Freelancer.
+\end{itemize}
+
