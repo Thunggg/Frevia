@@ -41,16 +41,19 @@ function translateErrorMessages(node: unknown, locale: Locale): unknown {
  * đã bản địa hoá. Nhận schema dạng `unknown` để không phụ thuộc việc
  * apps/web và @shared/types có dùng chung một bản zod hay không.
  */
-export function useTranslatedResolver<TFieldValues extends FieldValues>(
+export function useTranslatedResolver<
+  TFieldValues extends FieldValues,
+  TTransformedValues extends FieldValues = TFieldValues,
+>(
   schema: unknown,
-): Resolver<TFieldValues> {
+): Resolver<TFieldValues, unknown, TTransformedValues> {
   const activeLocale = useLocale();
   const locale: Locale = isLocale(activeLocale) ? activeLocale : defaultLocale;
 
   return useMemo(() => {
     const baseResolver = zodResolver(
       schema as never,
-    ) as unknown as Resolver<TFieldValues>;
+    ) as unknown as Resolver<TFieldValues, unknown, TTransformedValues>;
 
     const translatedResolver = async (
       values: TFieldValues,
@@ -68,6 +71,10 @@ export function useTranslatedResolver<TFieldValues extends FieldValues>(
       };
     };
 
-    return translatedResolver as unknown as Resolver<TFieldValues>;
+    return translatedResolver as unknown as Resolver<
+      TFieldValues,
+      unknown,
+      TTransformedValues
+    >;
   }, [schema, locale]);
 }

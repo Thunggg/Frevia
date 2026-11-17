@@ -298,7 +298,11 @@ async function bootstrap() {
           '/api/recommendations/reindex',
           '/api/recommendations/outbox/process',
         ].includes(item.path) &&
-        !(item.module === 'MANAGE-JOBS' && !item.path.includes('/bookmark')),
+        !(
+          item.module === 'MANAGE-JOBS' &&
+          !item.path.includes('/bookmark') &&
+          !item.path.includes('/check-language')
+        ),
     )
     .map((item) => item.id);
 

@@ -15,5 +15,14 @@ export default async function ClientJobProposalsPage({
   const job = await jobServerRequest.getClientJobDetail(jobId);
   if (!job) notFound();
 
-  return <ProposalList jobId={parsedJobId} jobTitle={job.title} />;
+  return (
+    <ProposalList
+      jobId={parsedJobId}
+      jobTitle={job.title}
+      hiringType={job.hiringType}
+      positionsRequired={job.positionsRequired}
+      positionsFilled={job.positionsFilled}
+      jobStatus={job.status}
+    />
+  );
 }

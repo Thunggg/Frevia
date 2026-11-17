@@ -6,6 +6,7 @@ import type {
   ReopenJobResponseType,
   UpdateJobBodyType,
   UpdateJobResponseType,
+  ViewListJobResponseType,
 } from "@shared/types";
 
 import { http } from "@/lib/http";
@@ -57,9 +58,28 @@ const jobApiRequest = {
     );
   },
 
+  checkLanguage(body: { title?: string; description?: string }) {
+    return http.post<{
+      title: { isEnglish: boolean };
+      description: { isEnglish: boolean };
+      isEnglish: boolean;
+    }>("/api/manage-jobs/check-language", body);
+  },
+
   getBookmarkStatus(slug: string) {
     return http.get<{ isBookmarked: boolean }>(
       `/api/manage-jobs/jobs/${encodeURIComponent(slug)}/bookmark`,
+    );
+  },
+
+  getClientJobs(params: Record<string, string | number | undefined> = {}) {
+    const query = new URLSearchParams();
+    Object.entries(params).forEach(([key, value]) => {
+      if (value !== undefined) query.set(key, String(value));
+    });
+    const qs = query.toString();
+    return http.get<ViewListJobResponseType>(
+      `/api/manage-jobs${qs ? `?${qs}` : ""}`,
     );
   },
 

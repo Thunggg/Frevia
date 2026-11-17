@@ -56,6 +56,7 @@ export interface ProposalDetailSheetProps {
   jobId: number;
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  cannotHireMore?: boolean;
   initialProposal?: {
     id: number;
     jobId?: number;
@@ -83,6 +84,7 @@ export function ProposalDetailSheet({
   jobId,
   open,
   onOpenChange,
+  cannotHireMore,
   initialProposal,
   onAccept,
   onReject,
@@ -181,6 +183,10 @@ export function ProposalDetailSheet({
   const status = detail?.status || initialProposal?.status || "SUBMITTED";
   // Khách hàng còn có thể phỏng vấn / từ chối / tuyển trên hai trạng thái này.
   const isActionable = status === "SUBMITTED" || status === "INTERVIEWING";
+  const isJobFilled =
+    cannotHireMore ||
+    (detail?.job != null &&
+      detail.job.positionsFilled >= detail.job.positionsRequired);
   const bidAmount = detail?.bidAmount ?? initialProposal?.bidAmount ?? 0;
   const deliveryDays =
     detail?.deliveryDays ?? initialProposal?.deliveryDays ?? 0;
@@ -438,11 +444,23 @@ export function ProposalDetailSheet({
                   </Button>
                 ) : null}
 
+                {isJobFilled ? (
+                  <span className="text-xs text-amber-600 dark:text-amber-400 font-medium">
+                    {t("jobFilledDisabled")}
+                  </span>
+                ) : null}
+
                 <Button
                   size="sm"
-                  className="rounded-full bg-[#0069D3] hover:bg-[#005bb8] text-white px-5 h-9 text-xs font-semibold shadow-xs cursor-pointer"
+                  className="rounded-full bg-[#0069D3] hover:bg-[#005bb8] text-white px-5 h-9 text-xs font-semibold shadow-xs cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                   onClick={() => void handleAccept()}
-                  disabled={isAccepting || isRejecting || isInterviewing}
+                  disabled={
+                    isAccepting ||
+                    isRejecting ||
+                    isInterviewing ||
+                    isJobFilled
+                  }
+                  title={isJobFilled ? t("jobFilledDisabled") : undefined}
                 >
                   {isAccepting ? (
                     <Loader2 className="mr-1.5 size-3.5 animate-spin" />

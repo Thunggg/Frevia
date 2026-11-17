@@ -1,10 +1,10 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { useEffect, useRef, useState } from "react";
-import { Controller, useForm } from "react-hook-form";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { Controller, useForm, type FieldErrors } from "react-hook-form";
 import { useTranslatedResolver } from "@/lib/form-resolver";
-import { X } from "@/components/icons";
+import { AlertTriangle, X } from "@/components/icons";
 import {
   CreateJobBodySchema,
   type CreateJobBodyType,
@@ -44,7 +44,21 @@ type PostJobFormProps = {
   job?: JobType;
 };
 
-const emptyJobForm: CreateJobBodyType = {
+type JobFormValues = {
+  title: string;
+  description: string;
+  budgetMin: number | null;
+  budgetMax: number | null;
+  budgetType: "FIXED_PRICE";
+  deadline: Date | null;
+  expiryDate: Date | null;
+  skills: number[];
+  jobCategories: number[];
+  hiringType: "SINGLE" | "MULTIPLE";
+  positionsRequired: number;
+};
+
+const emptyJobForm: JobFormValues = {
   title: "",
   description: "",
   budgetMin: null,
@@ -58,22 +72,41 @@ const emptyJobForm: CreateJobBodyType = {
   positionsRequired: 1,
 };
 
-function getJobFormValues(job?: JobType): CreateJobBodyType {
+function getJobFormValues(job?: JobType): JobFormValues {
   if (!job) return emptyJobForm;
 
   return {
     title: job.title,
-    description: job.description,
+    description: job.description ?? "",
     budgetMin: job.budgetMin,
     budgetMax: job.budgetMax,
     budgetType: job.budgetType,
-    deadline: job.deadline,
-    expiryDate: job.expiryDate,
+    deadline: job.deadline ? new Date(job.deadline) : null,
+    expiryDate: job.expiryDate ? new Date(job.expiryDate) : null,
     skills: job.skills?.map((skill) => skill.skillId) ?? [],
     jobCategories: job.jobCategories?.map((jobCategory) => jobCategory.id) ?? [],
     hiringType: job.hiringType,
     positionsRequired: job.positionsRequired,
   };
+}
+
+function getFirstErrorMessage(errorTree: unknown): string | null {
+  if (!errorTree || typeof errorTree !== "object") return null;
+
+  if (
+    "message" in errorTree &&
+    typeof errorTree.message === "string" &&
+    errorTree.message.trim()
+  ) {
+    return errorTree.message;
+  }
+
+  for (const value of Object.values(errorTree)) {
+    const found = getFirstErrorMessage(value);
+    if (found) return found;
+  }
+
+  return null;
 }
 
 export function PostJobForm({
@@ -86,7 +119,6 @@ export function PostJobForm({
 }: PostJobFormProps) {
   const t = useTranslations("postJobForm");
   const tCommon = useTranslations("common");
-  const tHiringType = useTranslations("jobHiringType");
   const isDialog = mode === "dialog";
   const isActive = isDialog ? open : true;
   const [skillInput, setSkillInput] = useState("");
@@ -108,10 +140,50 @@ export function PostJobForm({
   const [isCategoryMenuOpen, setIsCategoryMenuOpen] = useState(false);
   const [categoriesLoading, setCategoriesLoading] = useState(false);
   const categoryPickerRef = useRef<HTMLDivElement>(null);
-  const form = useForm<CreateJobBodyType>({
-    resolver: useTranslatedResolver<CreateJobBodyType>(CreateJobBodySchema),
+  const form = useForm<JobFormValues, unknown, CreateJobBodyType>({
+    resolver: useTranslatedResolver<JobFormValues, CreateJobBodyType>(
+      CreateJobBodySchema,
+    ),
     defaultValues: emptyJobForm,
   });
+
+  const [existingJobs, setExistingJobs] = useState<
+    Array<{ id: number; title: string }>
+  >([]);
+
+  useEffect(() => {
+    if (!isActive) return;
+    let cancelled = false;
+
+    jobApiRequest
+      .getClientJobs({ limit: 100 })
+      .then((res) => {
+        if (!cancelled && res.success && res.data?.data) {
+          setExistingJobs(
+            res.data.data.map((j) => ({
+              id: j.id,
+              title: j.title.trim().toLowerCase(),
+            })),
+          );
+        }
+      })
+      .catch(() => {
+        // Silently ignore if fails to load client jobs
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [isActive]);
+
+  const currentTitle = form.watch("title");
+  const hasDuplicateTitle = useMemo(() => {
+    const trimmed = (currentTitle ?? "").trim().toLowerCase();
+    if (!trimmed) return false;
+    return existingJobs.some(
+      (existing) => existing.id !== job?.id && existing.title === trimmed,
+    );
+  }, [currentTitle, existingJobs, job?.id]);
 
   useEffect(() => {
     if (!isActive) return;
@@ -205,8 +277,74 @@ export function PostJobForm({
     else onCancel?.();
   };
 
+  const validateTitleLanguage = async (value: string) => {
+    const trimmed = value.trim();
+    if (trimmed.length < 5) return;
+    try {
+      const res = await jobApiRequest.checkLanguage({ title: trimmed });
+      if (res.data && !res.data.title.isEnglish) {
+        form.setError("title", {
+          type: "custom",
+          message: t("titleMustBeEnglish"),
+        });
+      } else if (
+        form.formState.errors.title?.message === t("titleMustBeEnglish")
+      ) {
+        form.clearErrors("title");
+      }
+    } catch {
+      // ignore network errors
+    }
+  };
+
+  const validateDescriptionLanguage = async (value: string) => {
+    const trimmed = value.trim();
+    if (trimmed.length < 10) return;
+    try {
+      const res = await jobApiRequest.checkLanguage({ description: trimmed });
+      if (res.data && !res.data.description.isEnglish) {
+        form.setError("description", {
+          type: "custom",
+          message: t("descriptionMustBeEnglish"),
+        });
+      } else if (
+        form.formState.errors.description?.message ===
+        t("descriptionMustBeEnglish")
+      ) {
+        form.clearErrors("description");
+      }
+    } catch {
+      // ignore network errors
+    }
+  };
+
   const submit = async (data: CreateJobBodyType) => {
     try {
+      const langCheck = await jobApiRequest.checkLanguage({
+        title: data.title,
+        description: data.description,
+      });
+
+      if (langCheck.data && !langCheck.data.isEnglish) {
+        if (!langCheck.data.title.isEnglish) {
+          form.setError("title", {
+            type: "custom",
+            message: t("titleMustBeEnglish"),
+          });
+        }
+        if (!langCheck.data.description.isEnglish) {
+          form.setError("description", {
+            type: "custom",
+            message: t("descriptionMustBeEnglish"),
+          });
+        }
+        const firstMessage = !langCheck.data.title.isEnglish
+          ? t("titleMustBeEnglish")
+          : t("descriptionMustBeEnglish");
+        toastError({ message: firstMessage });
+        return;
+      }
+
       const response = job
         ? await jobApiRequest.updateJob(job.id, data)
         : await jobApiRequest.createJob(data);
@@ -225,10 +363,21 @@ export function PostJobForm({
         form.reset();
       }
     } catch (error) {
-      if (error instanceof ApiFail)
+      if (error instanceof ApiFail) {
         handleErrorApi({ error: error.response, setError: form.setError });
-      else toastError({ message: t("saveFailed") });
+        const firstDetail = error.response?.error?.details?.[0]?.message;
+        if (firstDetail) {
+          toastError({ message: firstDetail });
+        }
+      } else {
+        toastError({ message: t("saveFailed") });
+      }
     }
+  };
+
+  const onInvalid = (errors: FieldErrors<JobFormValues>) => {
+    const message = getFirstErrorMessage(errors) ?? t("formInvalid");
+    toastError({ message });
   };
 
   const fields = (
@@ -238,13 +387,37 @@ export function PostJobForm({
         control={form.control}
         render={({ field, fieldState }) => (
           <Field data-invalid={fieldState.invalid}>
-            <FieldLabel className="text-xs font-semibold text-foreground font-sans">{t("titleLabel")}</FieldLabel>
+            <div className="flex items-center justify-between">
+              <FieldLabel className="text-xs font-semibold text-foreground font-sans">
+                {t("titleLabel")}
+              </FieldLabel>
+              <span className="text-[10px] text-muted-foreground bg-muted px-2 py-0.5 rounded-full font-medium font-sans">
+                {t("englishOnlyBadge")}
+              </span>
+            </div>
             <Input
               {...field}
               aria-invalid={fieldState.invalid}
               placeholder={t("titlePlaceholder")}
               className="h-10 rounded-full border-0 bg-[#F1F0F5] px-4 text-xs font-normal font-sans dark:bg-zinc-800/90 outline-none"
+              onBlur={(e) => {
+                field.onBlur();
+                validateTitleLanguage(e.target.value);
+              }}
             />
+            {hasDuplicateTitle && (
+              <div className="flex items-start gap-2 rounded-2xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/50 p-3 text-xs text-amber-800 dark:text-amber-300 font-sans">
+                <AlertTriangle className="size-4 shrink-0 mt-0.5 text-amber-600 dark:text-amber-400" />
+                <div className="space-y-0.5">
+                  <p className="font-semibold text-amber-900 dark:text-amber-200">
+                    {t("duplicateTitleWarningTitle")}
+                  </p>
+                  <p className="leading-relaxed">
+                    {t("duplicateTitleWarningDesc")}
+                  </p>
+                </div>
+              </div>
+            )}
             {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
           </Field>
         )}
@@ -254,13 +427,24 @@ export function PostJobForm({
         control={form.control}
         render={({ field, fieldState }) => (
           <Field data-invalid={fieldState.invalid}>
-            <FieldLabel className="text-xs font-semibold text-foreground font-sans">{t("descriptionLabel")}</FieldLabel>
+            <div className="flex items-center justify-between">
+              <FieldLabel className="text-xs font-semibold text-foreground font-sans">
+                {t("descriptionLabel")}
+              </FieldLabel>
+              <span className="text-[10px] text-muted-foreground bg-muted px-2 py-0.5 rounded-full font-medium font-sans">
+                {t("englishOnlyBadge")}
+              </span>
+            </div>
             <Textarea
               {...field}
               value={field.value ?? ""}
               aria-invalid={fieldState.invalid}
               className="min-h-32 rounded-2xl border-0 bg-[#F1F0F5] p-4 text-xs font-normal font-sans dark:bg-zinc-800/90 outline-none"
               placeholder={t("descriptionPlaceholder")}
+              onBlur={(e) => {
+                field.onBlur();
+                validateDescriptionLanguage(e.target.value);
+              }}
             />
             {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
           </Field>
@@ -323,36 +507,61 @@ export function PostJobForm({
           control={form.control}
           render={({ field, fieldState }) => (
             <Field data-invalid={fieldState.invalid}>
-              <FieldLabel className="text-xs font-semibold text-foreground font-sans">{t("hiringTypeLabel")}</FieldLabel>
+              <FieldLabel className="text-xs font-semibold text-foreground font-sans">
+                {t("hiringTypeLabel")}
+              </FieldLabel>
               <div className="flex flex-wrap gap-2">
                 {(["SINGLE", "MULTIPLE"] as const).map((option) => {
                   const isSelected = field.value === option;
+                  const isOptionDisabled =
+                    option === "SINGLE" &&
+                    Boolean(job?.positionsFilled && job.positionsFilled > 1);
 
                   return (
                     <button
                       key={option}
                       type="button"
+                      disabled={isOptionDisabled}
+                      title={
+                        isOptionDisabled
+                          ? t("cannotSwitchToSingleHint", {
+                              filled: job?.positionsFilled ?? 0,
+                            })
+                          : undefined
+                      }
                       aria-pressed={isSelected}
                       onClick={() => {
+                        if (isOptionDisabled) return;
                         field.onChange(option);
-                        // Job tuyển một người chỉ có đúng 1 vị trí.
                         if (option === "SINGLE") {
                           form.setValue("positionsRequired", 1);
+                        } else if (
+                          option === "MULTIPLE" &&
+                          (form.getValues("positionsRequired") ?? 1) <= 1
+                        ) {
+                          form.setValue(
+                            "positionsRequired",
+                            Math.max(2, job?.positionsFilled ?? 2),
+                          );
                         }
                       }}
-                      className={`rounded-full px-3 py-1 text-xs font-medium font-sans transition-colors cursor-pointer ${
+                      className={`rounded-full px-3 py-1 text-xs font-medium font-sans transition-colors cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed ${
                         isSelected
                           ? "bg-[#0069D3] text-white hover:bg-[#0058b3]"
                           : "bg-[#F1F0F5] text-foreground hover:bg-[#EAE9F0] dark:bg-zinc-800 dark:hover:bg-zinc-700"
                       }`}
                     >
-                      {tHiringType(option)}
+                      {option === "SINGLE"
+                        ? t("hiringTypeSingleTitle")
+                        : t("hiringTypeMultipleTitle")}
                     </button>
                   );
                 })}
               </div>
               <p className="text-xs text-muted-foreground font-sans">
-                {t("hiringTypeHint")}
+                {field.value === "SINGLE"
+                  ? t("hiringTypeSingleDesc")
+                  : t("hiringTypeMultipleDesc")}
               </p>
               {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
             </Field>
@@ -364,20 +573,36 @@ export function PostJobForm({
           render={({ field, fieldState }) => {
             const hiringType = form.watch("hiringType");
             const isSingle = hiringType === "SINGLE";
+            const minPositions = isSingle
+              ? 1
+              : Math.max(2, job?.positionsFilled ?? 2);
 
             return (
               <Field data-invalid={fieldState.invalid}>
-                <FieldLabel className="text-xs font-semibold text-foreground font-sans">{t("positionsLabel")}</FieldLabel>
+                <div className="flex items-center justify-between">
+                  <FieldLabel className="text-xs font-semibold text-foreground font-sans">
+                    {t("positionsLabel")}
+                  </FieldLabel>
+                  {job?.positionsFilled && job.positionsFilled > 0 ? (
+                    <span className="text-[11px] font-medium text-emerald-600 dark:text-emerald-400 font-sans">
+                      {t("positionsFilledNote", {
+                        filled: job.positionsFilled,
+                      })}
+                    </span>
+                  ) : null}
+                </div>
                 <Input
                   type="number"
-                  min="1"
+                  min={String(minPositions)}
                   max="100"
                   step="1"
                   disabled={isSingle}
-                  value={field.value ?? 1}
+                  value={isSingle ? 1 : (field.value ?? minPositions)}
                   onChange={(event) =>
                     field.onChange(
-                      event.target.value === "" ? 1 : Number(event.target.value),
+                      event.target.value === ""
+                        ? minPositions
+                        : Number(event.target.value),
                     )
                   }
                   aria-invalid={fieldState.invalid}
@@ -385,7 +610,9 @@ export function PostJobForm({
                   className="h-10 rounded-full border-0 bg-[#F1F0F5] px-4 text-xs font-normal font-sans dark:bg-zinc-800/90 outline-none disabled:opacity-60"
                 />
                 <p className="text-xs text-muted-foreground font-sans">
-                  {t("positionsHint")}
+                  {isSingle
+                    ? t("positionsSingleHint")
+                    : t("positionsMultipleHint")}
                 </p>
                 {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
               </Field>
@@ -399,7 +626,9 @@ export function PostJobForm({
           control={form.control}
           render={({ field, fieldState }) => (
             <Field data-invalid={fieldState.invalid}>
-              <FieldLabel className="text-xs font-semibold text-foreground font-sans">{t("deadlineLabel")}</FieldLabel>
+              <FieldLabel className="text-xs font-semibold text-foreground font-sans">
+                {t("deadlineLabel")}
+              </FieldLabel>
               <Input
                 type="date"
                 value={
@@ -415,6 +644,9 @@ export function PostJobForm({
                 aria-invalid={fieldState.invalid}
                 className="h-10 rounded-full border-0 bg-[#F1F0F5] px-4 text-xs font-normal font-sans dark:bg-zinc-800/90 outline-none"
               />
+              <p className="text-xs text-muted-foreground font-sans">
+                {t("deadlineHint")}
+              </p>
               {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
             </Field>
           )}
@@ -424,7 +656,9 @@ export function PostJobForm({
           control={form.control}
           render={({ field, fieldState }) => (
             <Field data-invalid={fieldState.invalid}>
-              <FieldLabel className="text-xs font-semibold text-foreground font-sans">{t("expiryLabel")}</FieldLabel>
+              <FieldLabel className="text-xs font-semibold text-foreground font-sans">
+                {t("expiryLabel")}
+              </FieldLabel>
               <Input
                 type="date"
                 value={
@@ -440,6 +674,9 @@ export function PostJobForm({
                 aria-invalid={fieldState.invalid}
                 className="h-10 rounded-full border-0 bg-[#F1F0F5] px-4 text-xs font-normal font-sans dark:bg-zinc-800/90 outline-none"
               />
+              <p className="text-xs text-muted-foreground font-sans">
+                {t("expiryHint")}
+              </p>
               {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
             </Field>
           )}
@@ -640,7 +877,10 @@ export function PostJobForm({
   );
 
   const formEl = (
-    <form onSubmit={form.handleSubmit(submit)} className="space-y-5 font-sans">
+    <form
+      onSubmit={form.handleSubmit(submit, onInvalid)}
+      className="space-y-5 font-sans"
+    >
       {fields}
       {isDialog ? (
         <SheetFooter className="mt-8 flex flex-row items-center justify-end gap-3 border-t border-border/60 pt-5 font-sans">

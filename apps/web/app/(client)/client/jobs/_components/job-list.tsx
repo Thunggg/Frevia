@@ -22,6 +22,7 @@ import {
 } from "@/components/icons";
 
 import jobApiRequest from "@/apiRequests/job";
+import { ApiFail } from "@/lib/http";
 
 import {
   AlertDialog,
@@ -496,8 +497,12 @@ export function JobList({
         ),
       );
       toastSuccess({ message: t("published") });
-    } catch {
-      toastError({ message: t("publishFailed") });
+    } catch (error) {
+      const message =
+        error instanceof ApiFail
+          ? (error.response?.error?.message ?? error.message)
+          : t("publishFailed");
+      toastError({ message: message || t("publishFailed") });
     }
   };
 

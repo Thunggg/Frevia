@@ -174,15 +174,29 @@ function ProposalEmptyState({ filtered }: { filtered: boolean }) {
 export function ProposalList({
   jobId,
   jobTitle,
+  hiringType,
+  positionsRequired,
+  positionsFilled,
+  jobStatus,
 }: {
   jobId: number;
   jobTitle: string;
+  hiringType?: "SINGLE" | "MULTIPLE";
+  positionsRequired?: number;
+  positionsFilled?: number;
+  jobStatus?: string;
 }) {
   const queryClient = useQueryClient();
   const t = useTranslations("clientProposals");
   const tStatus = useTranslations("proposalStatus");
   const tCommon = useTranslations("common");
   const format = useFormatter();
+
+  const required = positionsRequired ?? 1;
+  const filled = positionsFilled ?? 0;
+  const isFilled = filled >= required;
+  const cannotHireMore =
+    isFilled || (jobStatus !== undefined && jobStatus !== "OPEN");
 
   const money = (value: number) =>
     format.number(value, {
@@ -375,10 +389,33 @@ export function ProposalList({
               </span>
             </nav>
 
-            <div className="mt-4">
-              <h1 className="text-2xl font-bold tracking-tight text-foreground font-sans sm:text-3xl">
-                {jobTitle}
-              </h1>
+            <div className="mt-4 flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
+              <div>
+                <h1 className="text-2xl font-bold tracking-tight text-foreground font-sans sm:text-3xl">
+                  {jobTitle}
+                </h1>
+                <div className="mt-2.5 flex flex-wrap items-center gap-2">
+                  {hiringType === "SINGLE" ? (
+                    <span className="inline-flex items-center gap-1.5 rounded-full border border-border bg-muted/50 px-3 py-1 text-xs font-medium text-foreground">
+                      {t("hiringTypeSingleBadge")}
+                    </span>
+                  ) : hiringType === "MULTIPLE" ? (
+                    <span className="inline-flex items-center gap-1.5 rounded-full border border-border bg-muted/50 px-3 py-1 text-xs font-medium text-foreground">
+                      {t("hiringTypeMultipleBadge", { filled, required })}
+                    </span>
+                  ) : null}
+                  {isFilled ? (
+                    <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/50 px-3 py-1 text-xs font-medium text-emerald-700 dark:text-emerald-300">
+                      <Check className="size-3" />
+                      {t("jobFilledBadge", { filled, required })}
+                    </span>
+                  ) : jobStatus && jobStatus !== "OPEN" ? (
+                    <span className="inline-flex items-center rounded-full bg-zinc-100 dark:bg-zinc-800 px-3 py-1 text-xs font-medium text-muted-foreground">
+                      {t("jobClosedBadge")}
+                    </span>
+                  ) : null}
+                </div>
+              </div>
             </div>
           </div>
         </section>
@@ -601,8 +638,10 @@ export function ProposalList({
                           <Button
                             type="button"
                             size="sm"
-                            className="rounded-full bg-emerald-600 hover:bg-emerald-700 text-white px-3.5 h-8 text-xs font-semibold shadow-xs cursor-pointer transition-colors"
+                            className="rounded-full bg-emerald-600 hover:bg-emerald-700 text-white px-3.5 h-8 text-xs font-semibold shadow-xs cursor-pointer transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                             onClick={() => setContractingProposal(proposal)}
+                            disabled={cannotHireMore}
+                            title={cannotHireMore ? t("jobFilledDisabled") : undefined}
                           >
                             <Check className="mr-1 size-3" />
                             {t("hire")}
@@ -726,6 +765,7 @@ export function ProposalList({
         jobId={jobId}
         open={proposalSheetOpen}
         onOpenChange={setProposalSheetOpen}
+        cannotHireMore={cannotHireMore}
         initialProposal={selectedProposalData}
         onAccept={(id) => {
           const p =

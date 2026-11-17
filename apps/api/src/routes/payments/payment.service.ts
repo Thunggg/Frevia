@@ -2,7 +2,6 @@ import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
 import Stripe from 'stripe';
 import {
   ContractStatus,
-  DisputeStatus,
   MilestonePaymentStatus,
   MilestoneStatus,
   Prisma,
@@ -12,7 +11,6 @@ import {
 import {
   ContractHoldActionResponseType,
   CreateContractHoldResponseType,
-  DisputeSettlementBodyType,
   GetTransactionListQueryType,
   RoleName,
 } from '@shared/types';
@@ -21,7 +19,6 @@ import {
   ContractExpiredException,
   ContractNotActiveException,
   ContractNotAwaitingPaymentException,
-  DisputeSettlementInvalidAmountException,
   HoldIntentCancelFailedException,
   HoldIntentCaptureFailedException,
   HoldMilestoneRequiredException,
@@ -46,7 +43,7 @@ export class PaymentService {
     private readonly paymentRepo: PaymentRepository,
     private readonly stripeService: StripeService,
     private readonly contractPdfService: ContractPdfService,
-  ) { }
+  ) {}
 
   async getOnboardingLink(userId: number, returnUrl?: string) {
     const user = await this.paymentRepo.findUserById(userId);
@@ -579,9 +576,9 @@ export class PaymentService {
           await this.paymentRepo.findContractById(resolvedContractId);
         const milestoneIds = meta.milestoneIds
           ? meta.milestoneIds
-            .split(',')
-            .map((v) => Number(v.trim()))
-            .filter((v) => Number.isFinite(v) && v > 0)
+              .split(',')
+              .map((v) => Number(v.trim()))
+              .filter((v) => Number.isFinite(v) && v > 0)
           : Array.isArray(contract?.holdMilestoneIds)
             ? contract.holdMilestoneIds
             : [];

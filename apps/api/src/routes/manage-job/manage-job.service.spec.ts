@@ -7,6 +7,7 @@ import {
   type JobType,
 } from '@shared/types';
 import type { EmbeddingOutboxService } from '../recommendations/embedding-outbox.service';
+import type { FastTextService } from '../../shared/services/fasttext.service';
 import type { ManageJobRepository } from './manage-job.repo';
 import { ManageJobService } from './manage-job.service';
 import {
@@ -18,6 +19,7 @@ import {
   JobCannotBeClosedException,
   JobCannotBeDeletedWithActiveContractException,
   JobCannotBePublishedException,
+  JobCannotBePublishedMissingFieldsException,
   JobCannotBeReopenedException,
   JobNotFoundException,
   JobOnlyForClientException,
@@ -44,6 +46,10 @@ describe('ManageJobService', () => {
   let embeddingOutbox: {
     enqueueAndProcess: jest.Mock;
   };
+  let fastTextService: {
+    isEnglish: jest.Mock;
+    detect: jest.Mock;
+  };
   let service: ManageJobService;
 
   beforeEach(() => {
@@ -54,6 +60,12 @@ describe('ManageJobService', () => {
       publishJob: jest.fn().mockResolvedValue({ ...mockJob, status: 'OPEN' }),
       closeJob: jest.fn().mockResolvedValue({ ...mockJob, status: 'CLOSED' }),
       reopenJob: jest.fn().mockResolvedValue({ ...mockJob, status: 'OPEN' }),
+      getClientJobDetail: jest.fn().mockResolvedValue({
+        id: 5,
+        title: 'Backend Developer Position',
+        description:
+          'We need a senior NestJS engineer with at least 5 years experience',
+      }),
       getBookmarkedJobLists: jest.fn(),
       findJobBySlug: jest.fn(),
       findBookmark: jest.fn(),
@@ -63,9 +75,14 @@ describe('ManageJobService', () => {
     embeddingOutbox = {
       enqueueAndProcess: jest.fn().mockResolvedValue(undefined),
     };
+    fastTextService = {
+      isEnglish: jest.fn().mockResolvedValue(true),
+      detect: jest.fn().mockResolvedValue('en'),
+    };
     service = new ManageJobService(
       repository as unknown as ManageJobRepository,
       embeddingOutbox as unknown as EmbeddingOutboxService,
+      fastTextService as unknown as FastTextService,
     );
   });
 
@@ -74,6 +91,32 @@ describe('ManageJobService', () => {
       await expect(
         service.createJob(1, RoleName.FREELANCER, {} as never),
       ).rejects.toThrow(JobOnlyForClientException());
+    });
+    it('throws BadRequestException if title is not in English', async () => {
+      fastTextService.isEnglish.mockImplementation((text: string) => {
+        if (text === 'Tuyển lập trình viên') return Promise.resolve(false);
+        return Promise.resolve(true);
+      });
+
+      await expect(
+        service.createJob(1, RoleName.CLIENT, {
+          title: 'Tuyển lập trình viên',
+          description: 'We need an experienced developer in NestJS',
+        } as never),
+      ).rejects.toThrow();
+    });
+    it('throws BadRequestException if description is not in English', async () => {
+      fastTextService.isEnglish.mockImplementation((text: string) => {
+        if (text.includes('Cần tìm')) return Promise.resolve(false);
+        return Promise.resolve(true);
+      });
+
+      await expect(
+        service.createJob(1, RoleName.CLIENT, {
+          title: 'Senior Backend Developer',
+          description: 'Cần tìm lập trình viên có 3 năm kinh nghiệm',
+        } as never),
+      ).rejects.toThrow();
     });
     it('queues an upsert after creating a job', async () => {
       await service.createJob(1, RoleName.CLIENT, {} as never);
@@ -224,14 +267,46 @@ describe('ManageJobService', () => {
       );
     });
   });
+
+  describe('checkLanguage', () => {
+    it('returns true when both title and description are English', async () => {
+      fastTextService.isEnglish.mockResolvedValue(true);
+      const res = await service.checkLanguage(
+        'Backend Developer Position',
+        'We need a senior NestJS engineer',
+      );
+      expect(res.isEnglish).toBe(true);
+      expect(res.title.isEnglish).toBe(true);
+      expect(res.description.isEnglish).toBe(true);
+    });
+
+    it('returns false when title is not English', async () => {
+      fastTextService.isEnglish.mockImplementation((text: string) => {
+        return Promise.resolve(text !== 'Tuyển lập trình viên');
+      });
+      const res = await service.checkLanguage(
+        'Tuyển lập trình viên',
+        'We need a senior NestJS engineer',
+      );
+      expect(res.isEnglish).toBe(false);
+      expect(res.title.isEnglish).toBe(false);
+      expect(res.description.isEnglish).toBe(true);
+    });
+  });
   describe('CreateJobBodySchema single category validation (BR-J53)', () => {
+    const futureExpiryDate = new Date(Date.now() + 5 * 24 * 60 * 60 * 1000);
+    const futureDeadline = new Date(Date.now() + 10 * 24 * 60 * 60 * 1000);
+
     it('fails when more than 1 category is selected', () => {
       const result = CreateJobBodySchema.safeParse({
         title: 'Backend Developer Position',
-        description: 'We need a senior NestJS engineer',
+        description:
+          'We need a senior NestJS engineer with at least 5 years experience',
         budgetMin: 500,
         budgetMax: 1000,
         budgetType: 'FIXED_PRICE',
+        deadline: futureDeadline,
+        expiryDate: futureExpiryDate,
         skills: [1, 2],
         jobCategories: [1, 2],
         hiringType: 'SINGLE',
@@ -248,13 +323,16 @@ describe('ManageJobService', () => {
       }
     });
 
-    it('succeeds when at most 1 category is selected', () => {
+    it('succeeds when at most 1 category is selected and all required fields are provided', () => {
       const result = CreateJobBodySchema.safeParse({
         title: 'Backend Developer Position',
-        description: 'We need a senior NestJS engineer',
+        description:
+          'We need a senior NestJS engineer with at least 5 years experience',
         budgetMin: 500,
         budgetMax: 1000,
         budgetType: 'FIXED_PRICE',
+        deadline: futureDeadline,
+        expiryDate: futureExpiryDate,
         skills: [1, 2],
         jobCategories: [1],
         hiringType: 'SINGLE',
@@ -264,9 +342,83 @@ describe('ManageJobService', () => {
       expect(result.success).toBe(true);
     });
 
+    it('fails when hiringType is MULTIPLE and positionsRequired is 1', () => {
+      const result = CreateJobBodySchema.safeParse({
+        title: 'Backend Developer Position',
+        description:
+          'We need a senior NestJS engineer with at least 5 years experience',
+        budgetMin: 500,
+        budgetMax: 1000,
+        budgetType: 'FIXED_PRICE',
+        deadline: futureDeadline,
+        expiryDate: futureExpiryDate,
+        skills: [1, 2],
+        jobCategories: [1],
+        hiringType: 'MULTIPLE',
+        positionsRequired: 1,
+      });
+
+      expect(result.success).toBe(false);
+      if (!result.success) {
+        expect(
+          result.error.issues.some(
+            (issue) =>
+              issue.message ===
+              ManageJobMessage.POSITIONS_REQUIRED_MUST_BE_GREATER_THAN_ONE_FOR_MULTIPLE,
+          ),
+        ).toBe(true);
+      }
+    });
+
+    it('succeeds when hiringType is MULTIPLE and positionsRequired is 2 or more', () => {
+      const result = CreateJobBodySchema.safeParse({
+        title: 'Backend Developer Position',
+        description:
+          'We need a senior NestJS engineer with at least 5 years experience',
+        budgetMin: 500,
+        budgetMax: 1000,
+        budgetType: 'FIXED_PRICE',
+        deadline: futureDeadline,
+        expiryDate: futureExpiryDate,
+        skills: [1, 2],
+        jobCategories: [1],
+        hiringType: 'MULTIPLE',
+        positionsRequired: 2,
+      });
+
+      expect(result.success).toBe(true);
+    });
+
+    it('fails when required fields are missing', () => {
+      const result = CreateJobBodySchema.safeParse({
+        title: 'Backend Developer Position',
+        // missing description, budgetMin, budgetMax, deadline, expiryDate, jobCategories
+        budgetType: 'FIXED_PRICE',
+        skills: [1],
+      });
+
+      expect(result.success).toBe(false);
+      if (!result.success) {
+        const messages = result.error.issues.map((i) => i.message);
+        expect(messages).toContain(ManageJobMessage.DESCRIPTION_REQUIRED);
+        expect(messages).toContain(ManageJobMessage.BUDGET_MIN_REQUIRED);
+        expect(messages).toContain(ManageJobMessage.BUDGET_MAX_REQUIRED);
+        expect(messages).toContain(ManageJobMessage.DEADLINE_REQUIRED);
+        expect(messages).toContain(ManageJobMessage.EXPIRY_DATE_REQUIRED);
+        expect(messages).toContain(ManageJobMessage.JOB_CATEGORY_REQUIRED);
+      }
+    });
+
     it('JobCategoryOnlyOneException returns proper message', () => {
       const exception = JobCategoryOnlyOneException();
       expect(exception.message).toBe(ManageJobMessage.JOB_CATEGORY_ONLY_ONE);
+    });
+
+    it('JobCannotBePublishedMissingFieldsException returns proper message', () => {
+      const exception = JobCannotBePublishedMissingFieldsException();
+      expect(exception.message).toBe(
+        ManageJobMessage.JOB_CANNOT_BE_PUBLISHED_MISSING_FIELDS,
+      );
     });
   });
 

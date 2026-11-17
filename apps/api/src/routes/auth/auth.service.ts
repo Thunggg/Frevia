@@ -608,7 +608,8 @@ export class AuthService {
 
     let userAgent = 'Unknown';
     let ip = 'Unknown';
-    let selectedRole: (typeof RoleName)[keyof typeof RoleName] = RoleName.CLIENT;
+    let selectedRole: (typeof RoleName)[keyof typeof RoleName] =
+      RoleName.CLIENT;
 
     try {
       const clientInfor = JSON.parse(

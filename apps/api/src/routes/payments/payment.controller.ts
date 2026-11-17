@@ -24,8 +24,6 @@ import {
   CreateOnboardingLinkBodyDTO,
   CreatePaymentIntentResponseDTO,
   CreateSetupIntentResponseDTO,
-  DisputeSettlementBodyDTO,
-  DisputeSettlementResponseDTO,
   GetSavedPaymentMethodsResponseDTO,
   GetTransactionListQueryDTO,
   GetTransactionListResponseDTO,
@@ -39,7 +37,6 @@ import {
 } from './payment.dto';
 import { PaymentService } from './payment.service';
 import type {
-  DisputeSettlementBodyType,
   GetTransactionListQueryType,
 } from '@shared/types';
 
@@ -56,7 +53,7 @@ import type {
  */
 @Controller('payments')
 export class PaymentController {
-  constructor(private readonly paymentService: PaymentService) { }
+  constructor(private readonly paymentService: PaymentService) {}
 
   // =========================================================================
   // 1. STRIPE CONNECT & QUẢN LÝ PHƯƠNG THỨC THANH TOÁN (THẺ ĐÃ LƯU)

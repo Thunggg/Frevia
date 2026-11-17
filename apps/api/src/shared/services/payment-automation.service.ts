@@ -24,7 +24,7 @@ export class PaymentAutomationService implements OnModuleInit, OnModuleDestroy {
   constructor(
     private readonly paymentRepo: PaymentRepository,
     private readonly stripeService: StripeService,
-  ) { }
+  ) {}
 
   onModuleInit() {
     if (process.env.NODE_ENV === 'test') {
