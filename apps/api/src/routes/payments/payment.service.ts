@@ -2,7 +2,6 @@ import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
 import Stripe from 'stripe';
 import {
   ContractStatus,
-  DisputeStatus,
   MilestonePaymentStatus,
   MilestoneStatus,
   Prisma,
@@ -12,7 +11,6 @@ import {
 import {
   ContractHoldActionResponseType,
   CreateContractHoldResponseType,
-  DisputeSettlementBodyType,
   GetTransactionListQueryType,
   RoleName,
 } from '@shared/types';

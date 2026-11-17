@@ -20,6 +20,7 @@ import { ContractPdfService } from './services/contract-pdf.service';
 import { AIModerationService } from './services/ai-moderation.service';
 import { CacheService } from './services/cache.service';
 import { NotificationRealtimeService } from './services/notification-realtime.service';
+import { FastTextService } from './services/fasttext.service';
 
 @Module({
   imports: [
@@ -54,6 +55,7 @@ import { NotificationRealtimeService } from './services/notification-realtime.se
     AuthGateway,
     CacheService,
     NotificationRealtimeService,
+    FastTextService,
   ],
   exports: [
     PrismaService,
@@ -72,6 +74,7 @@ import { NotificationRealtimeService } from './services/notification-realtime.se
     AuthGateway,
     CacheService,
     NotificationRealtimeService,
+    FastTextService,
   ],
 })
 export class SharedModule {}

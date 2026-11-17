@@ -1,0 +1,13 @@
+{
+  "capturedOn": "2026-11-09",
+  "source": "Chrome, local Frevia application; screenshots captured through computer-use",
+  "functions": {
+    "UC-31.01": {
+      "image": "image/screenshot/nhuy/client-role-menu.png",
+      "caption": "Client profile menu with the Switch to Freelancer action",
+      "description": "The expanded profile menu shows the current Client identity, links to public profile and settings, favorites, and the Switch to Freelancer action. This capture documents the available role-switch control before submission; it does not assert that a switch was executed.",
+      "url": "http://localhost:3001/client/jobs",
+      "state": "menu-open; no mutation submitted"
+    }
+  }
+}

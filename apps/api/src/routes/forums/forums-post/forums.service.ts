@@ -35,7 +35,7 @@ export class ForumService {
     private readonly forumRepository: ForumRepository,
     private readonly aiModerationService: AIModerationService,
     private readonly cacheService?: CacheService,
-  ) { }
+  ) {}
 
   // Lấy danh sách tất cả forum categories
   async getForumCategories(): Promise<ForumCategoryListResponseType> {

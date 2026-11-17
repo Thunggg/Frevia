@@ -27,18 +27,26 @@ export const ManageJobMessage = {
   TITLE_REQUIRED: "Error.TitleRequired",
   TITLE_TOO_SHORT: "Error.TitleTooShort",
   TITLE_TOO_LONG: "Error.TitleTooLong",
+  JOB_TITLE_MUST_BE_ENGLISH: "Error.JobTitleMustBeEnglish",
 
+  DESCRIPTION_REQUIRED: "Error.DescriptionRequired",
+  DESCRIPTION_TOO_SHORT: "Error.DescriptionTooShort",
   DESCRIPTION_TOO_LONG: "Error.DescriptionTooLong",
+  JOB_DESCRIPTION_MUST_BE_ENGLISH: "Error.JobDescriptionMustBeEnglish",
 
   BUDGET_TYPE_INVALID: "Error.BudgetTypeInvalid",
+  BUDGET_MIN_REQUIRED: "Error.BudgetMinRequired",
   BUDGET_MIN_INVALID: "Error.BudgetMinInvalid",
+  BUDGET_MAX_REQUIRED: "Error.BudgetMaxRequired",
   BUDGET_MAX_INVALID: "Error.BudgetMaxInvalid",
   BUDGET_MAX_MUST_BE_GREATER_THAN_BUDGET_MIN:
     "Error.BudgetMaxMustBeGreaterThanBudgetMin",
 
+  DEADLINE_REQUIRED: "Error.DeadlineRequired",
   DEADLINE_INVALID: "Error.DeadlineInvalid",
   DEADLINE_MUST_BE_IN_FUTURE: "Error.DeadlineMustBeInFuture",
 
+  EXPIRY_DATE_REQUIRED: "Error.ExpiryDateRequired",
   EXPIRY_DATE_INVALID: "Error.ExpiryDateInvalid",
   EXPIRY_DATE_MUST_BE_IN_FUTURE: "Error.ExpiryDateMustBeInFuture",
   EXPIRY_DATE_MUST_BE_BEFORE_DEADLINE: "Error.ExpiryDateMustBeBeforeDeadline",
@@ -51,6 +59,7 @@ export const ManageJobMessage = {
   BUDGET_MIN_TOO_LOW: "Error.BudgetMinTooLow",
   BUDGET_MAX_TOO_LOW: "Error.BudgetMaxTooLow",
 
+  JOB_CATEGORY_REQUIRED: "Error.JobCategoryRequired",
   JOB_CATEGORY_INVALID: "Error.JobCategoryInvalid",
   JOB_CATEGORIES_NOT_FOUND: "Error.JobCategoriesNotFound",
   JOB_CATEGORY_ONLY_ONE: "Error.JobCategoryOnlyOne",
@@ -58,12 +67,15 @@ export const ManageJobMessage = {
   POSITIONS_REQUIRED_INVALID: "Error.PositionsRequiredInvalid",
   POSITIONS_REQUIRED_MUST_BE_ONE_FOR_SINGLE:
     "Error.PositionsRequiredMustBeOneForSingle",
+  POSITIONS_REQUIRED_MUST_BE_GREATER_THAN_ONE_FOR_MULTIPLE:
+    "Error.PositionsRequiredMustBeGreaterThanOneForMultiple",
   POSITIONS_REQUIRED_BELOW_FILLED: "Error.PositionsRequiredBelowFilled",
 
   // =========================
   // Edit Job
   // =========================
   FAILED_TO_UPDATE_JOB: "Error.FailedToUpdateJob",
+  JOB_CANNOT_BE_EDITED: "Error.JobCannotBeEdited",
 
   // =========================
   // Delete Job
@@ -76,6 +88,8 @@ export const ManageJobMessage = {
   // Publish Job
   // =========================
   JOB_CANNOT_BE_PUBLISHED: "Error.JobCannotBePublished",
+  JOB_CANNOT_BE_PUBLISHED_MISSING_FIELDS:
+    "Error.JobCannotBePublishedMissingFields",
   FAILED_TO_PUBLISH_JOB: "Error.FailedToPublishJob",
 
   // =========================

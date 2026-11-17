@@ -39,6 +39,26 @@ export class ManageJobController {
     return this.manageJobService.searchSkills(roleName, search);
   }
 
+  @Post('check-language')
+  checkLanguage(
+    @UserActive('userId') userId: number,
+    @UserActive('roleName') roleName: string,
+    @Body()
+    body: {
+      title?: string;
+      description?: string;
+      excludeJobId?: number;
+    },
+  ) {
+    return this.manageJobService.checkLanguage(
+      body.title,
+      body.description,
+      userId,
+      roleName,
+      body.excludeJobId,
+    );
+  }
+
   @Get()
   @ZodSerializerDto(ViewClientJobResponseDto)
   viewClientJobs(

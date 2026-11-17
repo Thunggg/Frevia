@@ -75,44 +75,50 @@ export const CreateJobBodySchema = z
       .min(10, ManageJobMessage.TITLE_TOO_SHORT)
       .max(255, ManageJobMessage.TITLE_TOO_LONG),
 
-    description: z
-      .string()
-      .trim()
-      .max(5000, ManageJobMessage.DESCRIPTION_TOO_LONG)
-      .nullable()
-      .optional(),
+    description: z.preprocess(
+      (val) => (val === null || val === "" ? undefined : val),
+      z
+        .string({
+          error: ManageJobMessage.DESCRIPTION_REQUIRED,
+        })
+        .trim()
+        .min(20, ManageJobMessage.DESCRIPTION_TOO_SHORT)
+        .max(5000, ManageJobMessage.DESCRIPTION_TOO_LONG),
+    ),
 
-    budgetMin: z.coerce
-      .number({
-        error: ManageJobMessage.BUDGET_MIN_INVALID,
-      })
-      .min(10, ManageJobMessage.BUDGET_MIN_TOO_LOW)
-      .nullable()
-      .optional(),
+    budgetMin: z.preprocess(
+      (val) => (val === null || val === "" ? undefined : val),
+      z.coerce
+        .number({
+          error: ManageJobMessage.BUDGET_MIN_REQUIRED,
+        })
+        .min(10, ManageJobMessage.BUDGET_MIN_TOO_LOW),
+    ),
 
-    budgetMax: z.coerce
-      .number({
-        error: ManageJobMessage.BUDGET_MAX_INVALID,
-      })
-      .min(10, ManageJobMessage.BUDGET_MAX_TOO_LOW)
-      .nullable()
-      .optional(),
+    budgetMax: z.preprocess(
+      (val) => (val === null || val === "" ? undefined : val),
+      z.coerce
+        .number({
+          error: ManageJobMessage.BUDGET_MAX_REQUIRED,
+        })
+        .min(10, ManageJobMessage.BUDGET_MAX_TOO_LOW),
+    ),
 
     budgetType: JobBudgetTypeSchema,
 
-    deadline: z.coerce
-      .date({
-        error: ManageJobMessage.DEADLINE_INVALID,
-      })
-      .nullable()
-      .optional(),
+    deadline: z.preprocess(
+      (val) => (val === null || val === "" ? undefined : val),
+      z.coerce.date({
+        error: ManageJobMessage.DEADLINE_REQUIRED,
+      }),
+    ),
 
-    expiryDate: z.coerce
-      .date({
-        error: ManageJobMessage.EXPIRY_DATE_INVALID,
-      })
-      .nullable()
-      .optional(),
+    expiryDate: z.preprocess(
+      (val) => (val === null || val === "" ? undefined : val),
+      z.coerce.date({
+        error: ManageJobMessage.EXPIRY_DATE_REQUIRED,
+      }),
+    ),
 
     skills: z
       .array(z.number().int().positive(ManageJobMessage.SKILL_NAME_REQUIRED))
@@ -120,11 +126,15 @@ export const CreateJobBodySchema = z
       .max(10, ManageJobMessage.SKILLS_MAX_EXCEEDED),
 
     // Danh mục công việc gắn vào job (BR-CAT-03, BR-J53): mỗi job chỉ thuộc duy nhất 1 danh mục.
-    jobCategories: z
-      .array(z.number().int().positive(ManageJobMessage.JOB_CATEGORY_INVALID))
-      .max(1, ManageJobMessage.JOB_CATEGORY_ONLY_ONE)
-      .optional()
-      .default([]),
+    jobCategories: z.preprocess(
+      (val) => (val === null || val === "" ? undefined : val),
+      z
+        .array(z.number().int().positive(ManageJobMessage.JOB_CATEGORY_INVALID), {
+          error: ManageJobMessage.JOB_CATEGORY_REQUIRED,
+        })
+        .min(1, ManageJobMessage.JOB_CATEGORY_REQUIRED)
+        .max(1, ManageJobMessage.JOB_CATEGORY_ONLY_ONE),
+    ),
 
     // Kiểu tuyển dụng + số lượng cần tuyển (positionsFilled do hệ thống quản lý).
     hiringType: JobHiringTypeSchema.optional().default("SINGLE"),
@@ -147,6 +157,20 @@ export const CreateJobBodySchema = z
         code: "custom",
         path: ["positionsRequired"],
         message: ManageJobMessage.POSITIONS_REQUIRED_MUST_BE_ONE_FOR_SINGLE,
+      });
+    }
+
+    // MULTIPLE tuyển từ 2 người trở lên.
+    if (
+      data.hiringType === "MULTIPLE" &&
+      data.positionsRequired != null &&
+      data.positionsRequired < 2
+    ) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["positionsRequired"],
+        message:
+          ManageJobMessage.POSITIONS_REQUIRED_MUST_BE_GREATER_THAN_ONE_FOR_MULTIPLE,
       });
     }
 
@@ -232,7 +256,7 @@ export const ViewListJobFilterSchema = z
     skill: z
       .string()
       .trim()
-      .max(100)
+      .max(1000)
       .optional()
       .transform((value) => value || undefined),
 
@@ -240,7 +264,7 @@ export const ViewListJobFilterSchema = z
     category: z
       .string()
       .trim()
-      .max(120)
+      .max(1000)
       .optional()
       .transform((value) => value || undefined),
 
