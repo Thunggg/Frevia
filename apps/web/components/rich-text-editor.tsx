@@ -49,11 +49,11 @@ function ToolbarButton({
       disabled={disabled}
       title={title}
       className={cn(
-        "inline-flex h-8 w-8 items-center justify-center rounded-md transition-colors",
-        "hover:bg-muted hover:text-foreground",
+        "inline-flex size-8 shrink-0 items-center justify-center rounded-md transition-colors",
+        "hover:bg-[#0069D3]/10 hover:text-[#0069D3]",
         "disabled:pointer-events-none disabled:opacity-40",
         isActive
-          ? "bg-muted text-foreground shadow-sm"
+          ? "bg-[#0069D3]/12 text-[#0069D3]"
           : "text-muted-foreground",
       )}
     >
@@ -70,145 +70,145 @@ function EditorToolbar({ editor }: { editor: Editor }) {
   const t = useTranslations("richText");
 
   return (
-    <div className="flex flex-wrap items-center gap-0.5 rounded-t-lg border border-b-0 bg-background px-2 py-1.5 shadow-[0_1px_2px_0_rgba(0,0,0,0.05)]">
+    <div className="flex shrink-0 flex-wrap items-center gap-0.5 border-b border-border bg-[#0069D3]/[0.02] px-2 py-1.5">
       {/* Text formatting */}
       <ToolbarButton
-        onClick={() => editor.chain().focus().toggleBold().run()}
+        onClick={() => editor.chain().focus(undefined, { scrollIntoView: false }).toggleBold().run()}
         isActive={editor.isActive("bold")}
         title={t("bold")}
       >
-        <Bold className="h-4 w-4" />
+        <Bold className="size-4" />
       </ToolbarButton>
       <ToolbarButton
-        onClick={() => editor.chain().focus().toggleItalic().run()}
+        onClick={() => editor.chain().focus(undefined, { scrollIntoView: false }).toggleItalic().run()}
         isActive={editor.isActive("italic")}
         title={t("italic")}
       >
-        <Italic className="h-4 w-4" />
+        <Italic className="size-4" />
       </ToolbarButton>
       <ToolbarButton
-        onClick={() => editor.chain().focus().toggleUnderline().run()}
+        onClick={() => editor.chain().focus(undefined, { scrollIntoView: false }).toggleUnderline().run()}
         isActive={editor.isActive("underline")}
         title={t("underline")}
       >
-        <UnderlineIcon className="h-4 w-4" />
+        <UnderlineIcon className="size-4" />
       </ToolbarButton>
       <ToolbarButton
-        onClick={() => editor.chain().focus().toggleStrike().run()}
+        onClick={() => editor.chain().focus(undefined, { scrollIntoView: false }).toggleStrike().run()}
         isActive={editor.isActive("strike")}
         title={t("strikethrough")}
       >
-        <Strikethrough className="h-4 w-4" />
+        <Strikethrough className="size-4" />
       </ToolbarButton>
 
       <ToolbarDivider />
 
       {/* Headings */}
       <ToolbarButton
-        onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
+        onClick={() => editor.chain().focus(undefined, { scrollIntoView: false }).toggleHeading({ level: 1 }).run()}
         isActive={editor.isActive("heading", { level: 1 })}
         title={t("heading1")}
       >
-        <Heading1 className="h-4 w-4" />
+        <Heading1 className="size-4" />
       </ToolbarButton>
       <ToolbarButton
-        onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
+        onClick={() => editor.chain().focus(undefined, { scrollIntoView: false }).toggleHeading({ level: 2 }).run()}
         isActive={editor.isActive("heading", { level: 2 })}
         title={t("heading2")}
       >
-        <Heading2 className="h-4 w-4" />
+        <Heading2 className="size-4" />
       </ToolbarButton>
       <ToolbarButton
-        onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
+        onClick={() => editor.chain().focus(undefined, { scrollIntoView: false }).toggleHeading({ level: 3 }).run()}
         isActive={editor.isActive("heading", { level: 3 })}
         title={t("heading3")}
       >
-        <Heading3 className="h-4 w-4" />
+        <Heading3 className="size-4" />
       </ToolbarButton>
 
       <ToolbarDivider />
 
       {/* Lists */}
       <ToolbarButton
-        onClick={() => editor.chain().focus().toggleBulletList().run()}
+        onClick={() => editor.chain().focus(undefined, { scrollIntoView: false }).toggleBulletList().run()}
         isActive={editor.isActive("bulletList")}
         title={t("bulletList")}
       >
-        <List className="h-4 w-4" />
+        <List className="size-4" />
       </ToolbarButton>
       <ToolbarButton
-        onClick={() => editor.chain().focus().toggleOrderedList().run()}
+        onClick={() => editor.chain().focus(undefined, { scrollIntoView: false }).toggleOrderedList().run()}
         isActive={editor.isActive("orderedList")}
         title={t("orderedList")}
       >
-        <ListOrdered className="h-4 w-4" />
+        <ListOrdered className="size-4" />
       </ToolbarButton>
 
       <ToolbarDivider />
 
       {/* Alignment */}
       <ToolbarButton
-        onClick={() => editor.chain().focus().setTextAlign("left").run()}
+        onClick={() => editor.chain().focus(undefined, { scrollIntoView: false }).setTextAlign("left").run()}
         isActive={editor.isActive({ textAlign: "left" })}
         title={t("alignLeft")}
       >
-        <AlignLeft className="h-4 w-4" />
+        <AlignLeft className="size-4" />
       </ToolbarButton>
       <ToolbarButton
-        onClick={() => editor.chain().focus().setTextAlign("center").run()}
+        onClick={() => editor.chain().focus(undefined, { scrollIntoView: false }).setTextAlign("center").run()}
         isActive={editor.isActive({ textAlign: "center" })}
         title={t("alignCenter")}
       >
-        <AlignCenter className="h-4 w-4" />
+        <AlignCenter className="size-4" />
       </ToolbarButton>
       <ToolbarButton
-        onClick={() => editor.chain().focus().setTextAlign("right").run()}
+        onClick={() => editor.chain().focus(undefined, { scrollIntoView: false }).setTextAlign("right").run()}
         isActive={editor.isActive({ textAlign: "right" })}
         title={t("alignRight")}
       >
-        <AlignRight className="h-4 w-4" />
+        <AlignRight className="size-4" />
       </ToolbarButton>
 
       <ToolbarDivider />
 
       {/* Block elements */}
       <ToolbarButton
-        onClick={() => editor.chain().focus().toggleBlockquote().run()}
+        onClick={() => editor.chain().focus(undefined, { scrollIntoView: false }).toggleBlockquote().run()}
         isActive={editor.isActive("blockquote")}
         title={t("blockquote")}
       >
-        <Quote className="h-4 w-4" />
+        <Quote className="size-4" />
       </ToolbarButton>
       <ToolbarButton
-        onClick={() => editor.chain().focus().toggleCodeBlock().run()}
+        onClick={() => editor.chain().focus(undefined, { scrollIntoView: false }).toggleCodeBlock().run()}
         isActive={editor.isActive("codeBlock")}
         title={t("codeBlock")}
       >
-        <Code className="h-4 w-4" />
+        <Code className="size-4" />
       </ToolbarButton>
       <ToolbarButton
-        onClick={() => editor.chain().focus().setHorizontalRule().run()}
+        onClick={() => editor.chain().focus(undefined, { scrollIntoView: false }).setHorizontalRule().run()}
         title={t("horizontalRule")}
       >
-        <Minus className="h-4 w-4" />
+        <Minus className="size-4" />
       </ToolbarButton>
 
       <ToolbarDivider />
 
       {/* Undo / Redo */}
       <ToolbarButton
-        onClick={() => editor.chain().focus().undo().run()}
+        onClick={() => editor.chain().focus(undefined, { scrollIntoView: false }).undo().run()}
         disabled={!editor.can().undo()}
         title={t("undo")}
       >
-        <Undo className="h-4 w-4" />
+        <Undo className="size-4" />
       </ToolbarButton>
       <ToolbarButton
-        onClick={() => editor.chain().focus().redo().run()}
+        onClick={() => editor.chain().focus(undefined, { scrollIntoView: false }).redo().run()}
         disabled={!editor.can().redo()}
         title={t("redo")}
       >
-        <Redo className="h-4 w-4" />
+        <Redo className="size-4" />
       </ToolbarButton>
     </div>
   );
@@ -258,7 +258,7 @@ export function RichTextEditor({
         class: cn(
           "max-w-none",
           "focus:outline-none",
-          "min-h-[200px] px-4 py-3",
+          "px-4 py-3",
           "text-sm leading-relaxed",
           "[&.ProseMirror_p.is-editor-empty:first-child::before]:text-muted-foreground [&.ProseMirror_p.is-editor-empty:first-child::before]:pointer-events-none [&.ProseMirror_p.is-editor-empty:first-child::before]:h-0",
           minHeight,
@@ -272,15 +272,14 @@ export function RichTextEditor({
   return (
     <div
       className={cn(
-        "rounded-lg border bg-background",
+        "flex flex-col overflow-hidden rounded-lg border bg-background",
+        "focus-within:border-[#0069D3] focus-within:ring-2 focus-within:ring-[#0069D3]/20",
         disabled && "opacity-50",
         className,
       )}
     >
-      <div className="max-h-[400px] overflow-y-auto">
-        <div className="sticky top-0 z-10">
-          <EditorToolbar editor={editor} />
-        </div>
+      <EditorToolbar editor={editor} />
+      <div className="max-h-[400px] overflow-y-auto overscroll-contain [scrollbar-gutter:stable]">
         <EditorContent editor={editor} />
       </div>
     </div>

@@ -1,6 +1,9 @@
 import { notFound } from "next/navigation";
+import { cookies } from "next/headers";
 import contractServerRequest from "@/apiRequests/contract.server";
+import authServerRequest from "@/apiRequests/auth.server";
 import { MilestoneDetailContent } from "@/app/(client)/client/contracts/[slug]/milestones/[milestoneId]/_components";
+import { envConfig } from "@/configs/validate-env";
 
 export async function generateMetadata({
   params,
@@ -49,6 +52,10 @@ export default async function FreelancerMilestoneDetailPage({
 
   if (!milestone) notFound();
 
+  const cookieStore = await cookies();
+  const token = cookieStore.get("accessToken")?.value ?? null;
+  const user = await authServerRequest.getMe();
+
   return (
     <div className="min-h-full bg-background font-sans">
       <div className="px-6 py-8 lg:px-8 max-w-7xl mx-auto">
@@ -58,6 +65,9 @@ export default async function FreelancerMilestoneDetailPage({
           initialSubmissions={submissions || []}
           initialFiles={files || []}
           basePath="/freelancer"
+          currentUserId={user?.id ?? null}
+          accessToken={token}
+          socketUrl={envConfig?.NESTJS_API_URL ?? ""}
         />
       </div>
     </div>

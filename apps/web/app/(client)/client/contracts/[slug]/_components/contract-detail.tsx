@@ -5,21 +5,10 @@ import { useFormatter, useTranslations } from "next-intl";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { ChevronLeft, Loader2, X } from "lucide-react";
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "@repo/ui/components/shadcn/avatar";
+import { ChevronLeft } from "lucide-react";
 import { toastError, toastSuccess } from "@repo/ui/components/shadcn/toast";
 import { toast } from "@repo/ui/components/shadcn/sonner";
-import {
-  conversationKeys,
-  useConversationSocket,
-  useConversations,
-} from "@/hooks/use-conversation";
-import { ConversationSocketContext } from "@/app/conversations/components/conversation-socket-context";
-import { ChatView } from "@/app/conversations/components/chat-view";
+import { conversationKeys, useConversationSocket } from "@/hooks/use-conversation";
 import { contractApiRequest, extractContractData } from "@/apiRequests/contract";
 import { paymentApiRequest } from "@/apiRequests/payment";
 import { useActionPermission } from "@/hooks/use-action-permission";
@@ -33,6 +22,7 @@ import { CONTRACT_STATUSES } from "../../_components";
 import { EditContractSheet } from "./edit-contract-sheet";
 import { ContractDocumentPaper } from "./contract-document-paper";
 import { ContractActionsSidebar } from "./contract-actions-sidebar";
+import { ContractChatPopup } from "./contract-chat-popup";
 import { ContractSharedFilesSidebar } from "./contract-shared-files-sidebar";
 import { ContractActionDialogs } from "./contract-action-dialogs";
 import { FundContractHoldSheet } from "./fund-contract-hold-sheet";
@@ -209,11 +199,6 @@ export function ContractDetail({
     socketUrl,
     accessToken ?? null,
     currentUserId ?? null,
-  );
-  const { data: conversations = [] } = useConversations();
-  const unreadMessages = (conversations ?? []).reduce(
-    (sum, c) => sum + (c.unreadCount || 0),
-    0,
   );
 
   const openChatWith = async (targetUserId: number | null | undefined) => {
@@ -547,56 +532,19 @@ export function ContractDetail({
       )}
 
       {/* Floating Messenger-style chat popup (bottom-right) */}
-      <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-3">
-        {chatOpen && chatConversationId ? (
-          <div className="relative w-[360px] max-w-[calc(100vw-3rem)] h-[520px] rounded-2xl border border-border bg-background shadow-2xl overflow-hidden">
-            <button
-              type="button"
-              onClick={() => setChatOpen(false)}
-              className="absolute top-2 right-2 z-10 flex size-7 items-center justify-center rounded-full bg-background/80 text-muted-foreground hover:text-foreground cursor-pointer"
-              aria-label="Close chat"
-            >
-              <X className="size-4" />
-            </button>
-            <ConversationSocketContext.Provider value={socketValue}>
-              <ChatView
-                conversationId={chatConversationId}
-                currentUserId={currentUserId}
-              />
-            </ConversationSocketContext.Provider>
-          </div>
-        ) : null}
-
-        <div className="relative">
-          {unreadMessages > 0 ? (
-            <span className="absolute -top-1 -right-1 z-10 flex min-w-[18px] items-center justify-center rounded-full bg-red-500 px-1 py-0.5 text-[10px] font-bold text-white shadow">
-              {unreadMessages > 99 ? "99+" : unreadMessages}
-            </span>
-          ) : null}
-          <button
-            type="button"
-            onClick={() =>
-              chatOpen
-                ? setChatOpen(false)
-                : void openChatWith(counterpartyId)
-            }
-            disabled={isStartingChat}
-            className="flex size-14 items-center justify-center rounded-full border border-border bg-card shadow-lg transition-transform hover:scale-105 cursor-pointer"
-            aria-label="Toggle chat"
-          >
-            {isStartingChat ? (
-              <Loader2 className="size-5 animate-spin text-[#0069D3]" />
-            ) : (
-              <Avatar className="size-12">
-                <AvatarImage src={counterpartyAvatarUrl || undefined} />
-                <AvatarFallback className="text-xs font-bold">
-                  {counterpartyName.charAt(0).toUpperCase()}
-                </AvatarFallback>
-              </Avatar>
-            )}
-          </button>
-        </div>
-      </div>
+      <ContractChatPopup
+        open={chatOpen}
+        onOpenChange={setChatOpen}
+        conversationId={chatConversationId}
+        counterpartyId={counterpartyId}
+        counterpartyName={counterpartyName}
+        counterpartyAvatarUrl={counterpartyAvatarUrl}
+        currentUserId={currentUserId}
+        accessToken={accessToken}
+        socketUrl={socketUrl}
+        isStartingChat={isStartingChat}
+        onOpenChat={(targetUserId) => openChatWith(targetUserId)}
+      />
 
       {/* All Action and Confirmation Dialogs */}
       <ContractActionDialogs

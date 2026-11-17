@@ -4,7 +4,9 @@ import { useFormatter, useTranslations } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useQueryClient } from "@tanstack/react-query";
 import { useActionPermission } from "@/hooks/use-action-permission";
+import { notificationKeys } from "@/hooks/use-notifications";
 import {
   useConversationDetail,
   useConversationMessages,
@@ -73,6 +75,7 @@ export function ChatView({
   const t = useTranslations("chat");
   const tCommon = useTranslations("common");
   const format = useFormatter();
+  const queryClient = useQueryClient();
   const { can } = useActionPermission();
   const canViewConversation = can("GET", "/api/conversations/:id");
   const canViewMessages = can("GET", "/api/conversations/:id/messages");
@@ -109,7 +112,6 @@ export function ChatView({
 
   const { data: messages, isLoading } = useConversationMessages(
     conversation?.id ?? targetIdOrSlug ?? 0,
-    targetIdOrSlug ?? 0,
     canViewMessages,
   );
   const restSend = useSendConversationMessage();
@@ -142,10 +144,19 @@ export function ChatView({
     if (!conversationId || !canMarkRead) return;
     if (socket && connected) {
       socket.emit("message:read", { conversationId });
+      // Đọc hội thoại -> thông báo tin nhắn mới của hội thoại này hết chưa đọc
+      void queryClient.invalidateQueries({ queryKey: notificationKeys.all });
     } else {
       restMarkRead.mutate(conversationId);
     }
-  }, [socket, connected, conversationId, restMarkRead, canMarkRead]);
+  }, [
+    socket,
+    connected,
+    conversationId,
+    restMarkRead,
+    canMarkRead,
+    queryClient,
+  ]);
 
   useEffect(() => {
     if (!socket || !canMarkRead) return;

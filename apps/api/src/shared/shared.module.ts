@@ -19,6 +19,7 @@ import { TokenService } from './services/token.service';
 import { ContractPdfService } from './services/contract-pdf.service';
 import { AIModerationService } from './services/ai-moderation.service';
 import { CacheService } from './services/cache.service';
+import { NotificationRealtimeService } from './services/notification-realtime.service';
 
 @Module({
   imports: [
@@ -52,6 +53,7 @@ import { CacheService } from './services/cache.service';
     ContractPdfService,
     AuthGateway,
     CacheService,
+    NotificationRealtimeService,
   ],
   exports: [
     PrismaService,
@@ -69,6 +71,7 @@ import { CacheService } from './services/cache.service';
     ContractPdfService,
     AuthGateway,
     CacheService,
+    NotificationRealtimeService,
   ],
 })
 export class SharedModule {}

@@ -176,6 +176,7 @@ export function useMarkConversationRead() {
       queryClient.invalidateQueries({
         queryKey: conversationKeys.messages(conversationId),
       });
+      queryClient.invalidateQueries({ queryKey: ["notifications"] });
     },
   });
 }
