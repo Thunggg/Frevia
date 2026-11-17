@@ -2,16 +2,12 @@
 
 import { useFormatter } from "next-intl";
 import {
-  AlertCircle,
   CheckCircle2,
   Clock,
-  CreditCard,
-  FileCheck,
   FileText,
   Lock,
   Play,
   RotateCcw,
-  Sparkles,
 } from "lucide-react";
 import type {
   ContractDetailType,
@@ -29,13 +25,13 @@ interface MilestoneActivityTimelineProps {
 interface ActivityEvent {
   id: string;
   type:
-  | "created"
-  | "funded"
-  | "started"
-  | "submitted"
-  | "changes_requested"
-  | "approved"
-  | "disputed";
+    | "created"
+    | "funded"
+    | "started"
+    | "submitted"
+    | "changes_requested"
+    | "approved"
+    | "disputed";
   title: string;
   description?: string;
   timestamp?: string | Date | null;
@@ -46,7 +42,6 @@ export function MilestoneActivityTimeline({
   contract,
   milestone,
   submissions,
-  isFreelancer = false,
 }: MilestoneActivityTimelineProps) {
   const format = useFormatter();
 
@@ -170,8 +165,8 @@ export function MilestoneActivityTimeline({
     switch (type) {
       case "approved":
         return (
-          <div className="flex size-6 items-center justify-center rounded-full bg-zinc-950 text-white dark:bg-zinc-100 dark:text-zinc-950">
-            <CheckCircle2 className="size-3.5" />
+          <div className="flex size-6 items-center justify-center rounded-full bg-emerald-600 text-white">
+            <CheckCircle2 className="size-3.5 stroke-[2.5]" />
           </div>
         );
       case "submitted":
@@ -208,48 +203,48 @@ export function MilestoneActivityTimeline({
   };
 
   return (
-    <div className="rounded-sm border border-zinc-200/80 dark:border-zinc-800/80 bg-white dark:bg-zinc-950 p-6 shadow-2xs space-y-4 font-sans">
-      <div className="border-b border-zinc-100 dark:border-zinc-800/80 pb-2.5">
-        <h3 className="text-xs font-bold uppercase tracking-wider text-zinc-950 dark:text-zinc-50">
-          Activity
+    <div className="space-y-4 font-sans pt-2">
+      <div className="border-b border-border/50 pb-2">
+        <h3 className="text-sm font-bold text-foreground">
+          Activity History
         </h3>
-        <p className="text-[11px] text-zinc-400 mt-0.5">
-          Audited lifecycle and decision trail
+        <p className="text-xs text-muted-foreground mt-0.5">
+          Audited lifecycle and milestone timeline
         </p>
       </div>
 
-      <div className="relative pl-1 space-y-4">
+      <div className="relative pl-1 space-y-4 pt-1">
         {/* Continuous vertical timeline connector line */}
-        <div className="absolute left-[15px] top-2 bottom-3 w-[1.5px] bg-zinc-200 dark:bg-zinc-800" />
+        <div className="absolute left-[15px] top-2 bottom-3 w-[1.5px] bg-border/60" />
 
         {events.map((event) => (
-          <div key={event.id} className="relative flex items-start gap-2.5 text-xs">
+          <div key={event.id} className="relative flex items-start gap-3 text-xs">
             {/* Event Icon badge */}
-            <div className="relative z-10 shrink-0 bg-white dark:bg-zinc-950">
+            <div className="relative z-10 shrink-0 bg-background">
               {getEventIcon(event.type)}
             </div>
 
             {/* Event Content */}
             <div className="space-y-0.5 min-w-0 flex-1 pt-0.5">
               <div className="flex items-baseline justify-between gap-2">
-                <span className="font-bold text-zinc-900 dark:text-zinc-100 truncate">
+                <span className="font-bold text-foreground truncate">
                   {event.title}
                 </span>
                 {event.timestamp && (
-                  <span className="text-[10px] text-zinc-400 shrink-0 font-medium font-mono">
+                  <span className="text-[10px] text-muted-foreground shrink-0 font-medium font-mono">
                     {formatDate(event.timestamp)}
                   </span>
                 )}
               </div>
 
               {event.description && (
-                <p className="text-[11px] text-zinc-500 dark:text-zinc-400 leading-relaxed line-clamp-3">
+                <p className="text-xs text-muted-foreground leading-relaxed line-clamp-3">
                   {event.description}
                 </p>
               )}
 
               {event.actor && (
-                <p className="text-[10px] text-zinc-400">
+                <p className="text-[10px] text-muted-foreground/80">
                   By {event.actor}
                 </p>
               )}
@@ -260,4 +255,3 @@ export function MilestoneActivityTimeline({
     </div>
   );
 }
-

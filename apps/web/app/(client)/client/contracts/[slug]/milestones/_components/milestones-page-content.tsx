@@ -5,21 +5,16 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
-  Check,
-  ChevronDown,
+  CheckCircle2,
   ChevronLeft,
   Clock,
-  Filter,
+  Layers,
   Plus,
   Search,
+  ShieldCheck,
+  User,
 } from "lucide-react";
 import { Button } from "@repo/ui/components/shadcn/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@repo/ui/components/shadcn/dropdown-menu";
 import { toastError, toastSuccess } from "@repo/ui/components/shadcn/toast";
 import { contractApiRequest, extractContractData } from "@/apiRequests/contract";
 import { paymentApiRequest } from "@/apiRequests/payment";
@@ -101,12 +96,31 @@ export function MilestonesPageContent({
     return (contract.milestones || []) as MilestoneType[];
   }, [contract.milestones]);
 
-  // Financial metrics (clean numbers)
+  // Financial metrics
   const totalAmount = Number(contract.totalAmount) || 0;
 
   const currentAllocatedAmount = useMemo(() => {
     return milestones.reduce((sum, m) => sum + (Number(m.amount) || 0), 0);
   }, [milestones]);
+
+  const completedMilestones = useMemo(() => {
+    return milestones.filter((m) => m.status === "COMPLETED");
+  }, [milestones]);
+
+  const completedAmount = useMemo(() => {
+    return completedMilestones.reduce((sum, m) => sum + (Number(m.amount) || 0), 0);
+  }, [completedMilestones]);
+
+  const fundedAmount = useMemo(() => {
+    return milestones
+      .filter((m) => m.paymentStatus === "FUNDED" || m.paymentStatus === "RELEASED")
+      .reduce((sum, m) => sum + (Number(m.amount) || 0), 0);
+  }, [milestones]);
+
+  const progressPercent = useMemo(() => {
+    if (milestones.length === 0) return 0;
+    return Math.round((completedMilestones.length / milestones.length) * 100);
+  }, [completedMilestones.length, milestones.length]);
 
   const hasInProgressMilestone = useMemo(() => {
     return milestones.some((m) => m.status === "IN_PROGRESS");
@@ -254,291 +268,294 @@ export function MilestonesPageContent({
       ? `#${contract.slug}`
       : `#CON-${contract.id}`;
 
-  const filterOptions = [
-    { key: "ALL", label: "All Milestone Status" },
-    { key: "IN_PROGRESS", label: "In Progress" },
-    { key: "SUBMITTED", label: "Ready for Review" },
-    { key: "LATE", label: "Late / Overdue" },
-    { key: "PENDING_ESCROW", label: "Pending Escrow" },
-    { key: "COMPLETED", label: "Completed" },
+  const counterparty = isFreelancer ? contract.client : contract.freelancer;
+  const counterpartyName =
+    counterparty?.profile?.displayName ||
+    counterparty?.email?.split("@")[0] ||
+    (isFreelancer ? "Client" : "Freelancer");
+  const counterpartyRole = isFreelancer ? "Client" : "Freelancer";
+
+  // Filter tabs for Fiverr-style pill bar
+  const filterTabs = [
+    { key: "ALL", label: "All", count: milestones.length },
+    {
+      key: "IN_PROGRESS",
+      label: "In Progress",
+      count: milestones.filter((m) => m.status === "IN_PROGRESS").length,
+    },
+    {
+      key: "SUBMITTED",
+      label: "Delivered / Review",
+      count: milestones.filter(
+        (m) => m.status === "SUBMITTED" || m.status === "CHANGES_REQUESTED",
+      ).length,
+    },
+    {
+      key: "COMPLETED",
+      label: "Completed",
+      count: completedMilestones.length,
+    },
+    {
+      key: "PENDING_ESCROW",
+      label: "Awaiting Escrow",
+      count: milestones.filter((m) => m.paymentStatus === "PENDING").length,
+    },
+    {
+      key: "LATE",
+      label: "Overdue",
+      count: milestones.filter((m) => m.status === "LATE").length,
+    },
   ];
 
-  const currentFilterLabel =
-    filterOptions.find((f) => f.key === statusFilter)?.label || "All Status";
-
   return (
-    <div className="space-y-6 font-sans max-w-7xl mx-auto">
-      {/* ── Breadcrumb & Top Bar ── */}
-      <div className="flex items-center gap-2 border-b border-border/60 pb-3 text-xs">
+    <div className="space-y-6 sm:space-y-8 font-sans max-w-6xl mx-auto pb-16">
+      {/* ── 1. Top Breadcrumb ── */}
+      <div className="flex items-center gap-2 text-xs text-muted-foreground">
         <Link
           href={`${basePath}/contracts`}
-          className="inline-flex items-center gap-1 font-medium text-muted-foreground hover:text-foreground transition-colors"
+          className="inline-flex items-center gap-1 font-medium hover:text-foreground transition-colors"
         >
           <ChevronLeft className="size-4" />
           <span>Contracts</span>
         </Link>
-        <span className="text-muted-foreground/60">/</span>
+        <span>/</span>
         <Link
           href={`${basePath}/contracts/${encodeURIComponent(contract.slug || String(contract.id))}`}
-          className="font-medium text-muted-foreground hover:text-foreground transition-colors"
+          className="font-medium hover:text-foreground transition-colors"
         >
           {contract.slug || contractCode}
         </Link>
-        <span className="text-muted-foreground/60">/</span>
-        <span className="font-semibold text-foreground">Milestone</span>
+        <span>/</span>
+        <span className="font-semibold text-foreground">Milestones</span>
       </div>
 
-      {/* ── Main Header ── */}
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-        {/* ── Table Toolbar (Search & Status Dropdown matching reference image) ── */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-2">
-          <div className="flex flex-wrap items-center gap-2.5">
-            {/* Search Input */}
-            <div className="relative w-full sm:w-64">
-              <Search className="size-4 text-zinc-400 absolute left-3 top-1/2 -translate-y-1/2" />
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search milestones..."
-                className="w-full h-9 rounded-sm border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 pl-9 pr-3 text-xs text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 focus:outline-hidden focus:border-[#0069D3]"
-              />
+      {/* ── 2. Fiverr-Style Contract Header & Journey Summary (Borderless & Minimalist) ── */}
+      <div className="space-y-4">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+          <div className="space-y-1">
+            <h1 className="text-xl sm:text-2xl font-extrabold text-foreground tracking-tight">
+              {contract.job?.title || "Contract Milestones & Deliverables"}
+            </h1>
+            <div className="flex flex-wrap items-center gap-2.5 text-xs text-muted-foreground">
+              <span className="font-mono font-medium">{contractCode}</span>
+              <span>•</span>
+              <div className="inline-flex items-center gap-1.5">
+                <div className="flex size-4 items-center justify-center rounded-full bg-muted text-muted-foreground">
+                  <User className="size-2.5" />
+                </div>
+                <span>
+                  {counterpartyRole}: <strong>{counterpartyName}</strong>
+                </span>
+              </div>
             </div>
-
-            {/* Status Dropdown (Matching "All Shipment Status" dropdown in reference image) */}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="h-9 rounded-sm border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 text-xs font-medium text-zinc-700 dark:text-zinc-300 gap-1.5"
-                >
-                  <Filter className="size-3.5 text-zinc-400" />
-                  <span>{currentFilterLabel}</span>
-                  <ChevronDown className="size-3.5 text-zinc-400 ml-1" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="start" className="w-52 text-xs">
-                {filterOptions.map((opt) => (
-                  <DropdownMenuItem
-                    key={opt.key}
-                    onClick={() => setStatusFilter(opt.key)}
-                    className="flex items-center justify-between cursor-pointer py-2"
-                  >
-                    <span
-                      className={
-                        statusFilter === opt.key
-                          ? "font-semibold text-zinc-950 dark:text-zinc-100"
-                          : "text-zinc-600 dark:text-zinc-400"
-                      }
-                    >
-                      {opt.label}
-                    </span>
-                    {statusFilter === opt.key && (
-                      <Check className="size-3.5 text-[#0069D3]" />
-                    )}
-                  </DropdownMenuItem>
-                ))}
-              </DropdownMenuContent>
-            </DropdownMenu>
           </div>
 
-          {/* Milestone counter */}
-          <div className="text-xs text-zinc-500 font-medium">
-            Showing <strong>{filteredMilestones.length}</strong> of{" "}
-            <strong>{milestones.length}</strong> milestones
-          </div>
+          {/* Action button if client can add milestone */}
+          {canManageMilestones && canCreateMilestone && (
+            <Button
+              onClick={() => {
+                setMilestoneToEdit(null);
+                setMilestoneModalOpen(true);
+              }}
+              className="rounded-full bg-[#0069D3] hover:bg-[#0055b3] text-white text-xs font-semibold h-9 px-4 shadow-2xs cursor-pointer self-start lg:self-auto"
+            >
+              <Plus className="mr-1.5 size-4" />
+              Add New Milestone
+            </Button>
+          )}
         </div>
 
-        {/* Client Add Milestone Button (Only when contract is PENDING_SIGN or AWAITING_PAYMENT) */}
-        {canManageMilestones && canCreateMilestone && (
-          <Button
-            onClick={() => {
-              setMilestoneToEdit(null);
-              setMilestoneModalOpen(true);
-            }}
-            className="rounded-lg bg-[#0069D3] hover:bg-[#0055b3] text-white text-xs font-semibold h-9 px-4 shadow-xs cursor-pointer self-start lg:self-auto"
-          >
-            <Plus className="mr-1.5 size-4" />
-            Add New Milestone
-          </Button>
-        )}
+        {/* Minimalist Progress & Financial Summary Bar */}
+        <div className="pt-2 pb-1 space-y-3">
+          {/* Progress bar */}
+          <div className="space-y-1.5">
+            <div className="flex items-center justify-between text-xs">
+              <span className="font-medium text-muted-foreground">
+                Progress:{" "}
+                <strong className="text-foreground">
+                  {completedMilestones.length} of {milestones.length} completed ({progressPercent}%)
+                </strong>
+              </span>
+              <span className="font-mono font-semibold text-foreground">
+                ${completedAmount.toLocaleString("en-US", { minimumFractionDigits: 2 })} / $
+                {totalAmount.toLocaleString("en-US", { minimumFractionDigits: 2 })} USD
+              </span>
+            </div>
+            <div className="h-2 w-full rounded-full bg-zinc-100 dark:bg-zinc-800 overflow-hidden">
+              <div
+                className="h-full rounded-full bg-emerald-500 transition-all duration-500"
+                style={{ width: `${progressPercent}%` }}
+              />
+            </div>
+          </div>
+
+          {/* Quick metric highlights (No heavy boxes, just clean horizontal badges) */}
+          <div className="flex flex-wrap items-center gap-4 sm:gap-8 pt-1 text-xs">
+            <div className="flex items-center gap-2">
+              <ShieldCheck className="size-4 text-emerald-600" />
+              <span className="text-muted-foreground">
+                Secured in Escrow:{" "}
+                <strong className="font-mono text-foreground font-semibold">
+                  ${fundedAmount.toLocaleString("en-US", { minimumFractionDigits: 2 })}
+                </strong>
+              </span>
+            </div>
+            <div className="flex items-center gap-2">
+              <CheckCircle2 className="size-4 text-blue-600" />
+              <span className="text-muted-foreground">
+                Paid Out:{" "}
+                <strong className="font-mono text-foreground font-semibold">
+                  ${completedAmount.toLocaleString("en-US", { minimumFractionDigits: 2 })}
+                </strong>
+              </span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Layers className="size-4 text-zinc-400" />
+              <span className="text-muted-foreground">
+                Total Contract Budget:{" "}
+                <strong className="font-mono text-foreground font-semibold">
+                  ${totalAmount.toLocaleString("en-US", { minimumFractionDigits: 2 })}
+                </strong>
+              </span>
+            </div>
+          </div>
+        </div>
       </div>
 
-      {/* ── Milestones Content or Permission Warning ── */}
+      {/* ── 3. Fiverr-Style Filter Tabs & Search Bar ── */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-4 border-t border-border/50">
+        {/* Filter Pills */}
+        <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-none pb-1 sm:pb-0">
+          {filterTabs.map((tab) => {
+            const isActive = statusFilter === tab.key;
+            return (
+              <button
+                key={tab.key}
+                type="button"
+                onClick={() => setStatusFilter(tab.key)}
+                className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold transition-colors cursor-pointer shrink-0 ${
+                  isActive
+                    ? "bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900"
+                    : "bg-zinc-100 dark:bg-zinc-800/80 text-muted-foreground hover:bg-zinc-200 dark:hover:bg-zinc-700 hover:text-foreground"
+                }`}
+              >
+                <span>{tab.label}</span>
+                {tab.count > 0 && (
+                  <span
+                    className={`rounded-full px-1.5 text-[10px] font-bold ${
+                      isActive
+                        ? "bg-white/20 text-white dark:bg-black/20 dark:text-black"
+                        : "bg-zinc-200/60 dark:bg-zinc-700/60 text-muted-foreground"
+                    }`}
+                  >
+                    {tab.count}
+                  </span>
+                )}
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Minimal Search Input */}
+        <div className="relative w-full sm:w-56 shrink-0">
+          <Search className="size-3.5 text-muted-foreground absolute left-3 top-1/2 -translate-y-1/2" />
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Search milestones..."
+            className="w-full h-8 rounded-full border border-border/60 bg-muted/20 pl-8 pr-3 text-xs text-foreground placeholder:text-muted-foreground/70 focus:outline-hidden focus:border-[#0069D3] focus:bg-background transition-all"
+          />
+        </div>
+      </div>
+
+      {/* ── 4. Milestones Journey List (No nested boxed cards!) ── */}
       {!canViewMilestones ? (
-        <div className="rounded-xl border border-amber-200/80 dark:border-amber-900/40 bg-amber-50/40 dark:bg-amber-950/20 p-8 text-center space-y-2">
+        <div className="py-12 text-center space-y-2">
           <Clock className="size-8 mx-auto text-amber-600" />
-          <h3 className="text-sm font-semibold text-zinc-950 dark:text-zinc-100">
+          <h3 className="text-sm font-semibold text-foreground">
             Không có quyền xem danh sách milestone
           </h3>
-          <p className="text-xs text-zinc-500 dark:text-zinc-400 max-w-md mx-auto">
+          <p className="text-xs text-muted-foreground max-w-md mx-auto">
             Tài khoản của bạn chưa được cấp quyền xem danh sách các mốc công việc (milestones) của hợp đồng này.
           </p>
         </div>
       ) : filteredMilestones.length > 0 ? (
-        <div className="rounded-sm border border-zinc-200/80 dark:border-zinc-800/80 bg-white dark:bg-zinc-950 overflow-hidden shadow-2xs">
-          {/* Desktop Table View */}
-          <div className="hidden md:block overflow-x-auto">
-            <table className="w-full text-left border-collapse">
-              <thead>
-                <tr className="border-b border-zinc-200/80 dark:border-zinc-800 text-[11px] font-bold uppercase tracking-wider text-zinc-400 dark:text-zinc-500 bg-zinc-50/50 dark:bg-zinc-900/40">
-                  <th className="py-3 px-4">Milestone ID</th>
-                  <th className="py-3 px-4">Title & Scope</th>
-                  <th className="py-3 px-4">Status</th>
-                  <th className="py-3 px-4">Expected Due</th>
-                  <th className="py-3 px-4 text-right">Amount (USD)</th>
-                  <th className="py-3 px-4 text-right">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-zinc-100 dark:divide-zinc-800/60">
-                {filteredMilestones.map((m, idx) => (
-                  <MilestoneCard
-                    key={m.id}
-                    variant="table-row"
-                    contractId={contract.id}
-                    contractSlug={encodeURIComponent(
-                      contract.slug || String(contract.id),
-                    )}
-                    contractStatus={contract.status}
-                    isHeldInContract={Boolean(
-                      contract.holdMilestoneIds?.includes(m.id),
-                    )}
-                    basePath={basePath}
-                    milestone={m}
-                    index={idx}
-                    isFreelancer={isFreelancer}
-                    hasOtherInProgressMilestone={hasInProgressMilestone}
-                    onEdit={(target) => {
-                      setMilestoneToEdit({
-                        id: target.id,
-                        title: target.title,
-                        description: target.description,
-                        amount: Number(target.amount),
-                        dueDate: target.dueDate,
-                        status: target.status,
-                      });
-                      setMilestoneModalOpen(true);
-                    }}
-                    onDelete={(target) => void handleDeleteMilestone(target)}
-                    onFund={(target) => {
-                      setMilestoneToFund(target);
-                      setFundModalOpen(true);
-                    }}
-                    onRelease={(target) => void handleReleaseMilestone(target)}
-                    onRefund={(target) => void handleRefundMilestone(target)}
-                    onReview={async (target) => {
-                      try {
-                        const res = await contractApiRequest.getSubmissions(
-                          contract.id,
-                          target.id,
-                        );
-                        const data = extractContractData(res);
-                        if (data && data.length > 0 && data[0]) {
-                          setReviewContext({
-                            milestone: target,
-                            submission: data[0],
-                          });
-                          setReviewModalOpen(true);
-                        } else {
-                          router.push(
-                            `${basePath}/contracts/${encodeURIComponent(contract.slug || String(contract.id))}/milestones/${target.id}`,
-                          );
-                        }
-                      } catch {
-                        router.push(
-                          `${basePath}/contracts/${encodeURIComponent(contract.slug || String(contract.id))}/milestones/${target.id}`,
-                        );
-                      }
-                    }}
-                    onSubmitWork={(target) => {
-                      setMilestoneToSubmit(target);
-                      setSubmitModalOpen(true);
-                    }}
-                    onStartWork={(target) => void handleStartWork(target)}
-                  />
-                ))}
-              </tbody>
-            </table>
-          </div>
-
-          {/* Mobile Card Layout */}
-          <div className="md:hidden divide-y divide-zinc-100 dark:divide-zinc-800/80 px-4">
-            {filteredMilestones.map((m, idx) => (
-              <MilestoneCard
-                key={m.id}
-                variant="card"
-                contractId={contract.id}
-                contractSlug={encodeURIComponent(
-                  contract.slug || String(contract.id),
-                )}
-                contractStatus={contract.status}
-                isHeldInContract={Boolean(
-                  contract.holdMilestoneIds?.includes(m.id),
-                )}
-                basePath={basePath}
-                milestone={m}
-                index={idx}
-                isFreelancer={isFreelancer}
-                hasOtherInProgressMilestone={hasInProgressMilestone}
-                onEdit={(target) => {
-                  setMilestoneToEdit({
-                    id: target.id,
-                    title: target.title,
-                    description: target.description,
-                    amount: Number(target.amount),
-                    dueDate: target.dueDate,
-                    status: target.status,
-                  });
-                  setMilestoneModalOpen(true);
-                }}
-                onDelete={(target) => void handleDeleteMilestone(target)}
-                onFund={(target) => {
-                  setMilestoneToFund(target);
-                  setFundModalOpen(true);
-                }}
-                onRelease={(target) => void handleReleaseMilestone(target)}
-                onRefund={(target) => void handleRefundMilestone(target)}
-                onReview={async (target) => {
-                  try {
-                    const res = await contractApiRequest.getSubmissions(
-                      contract.id,
-                      target.id,
-                    );
-                    const data = extractContractData(res);
-                    if (data && data.length > 0 && data[0]) {
-                      setReviewContext({
-                        milestone: target,
-                        submission: data[0],
-                      });
-                      setReviewModalOpen(true);
-                    } else {
-                      router.push(
-                        `${basePath}/contracts/${encodeURIComponent(contract.slug || String(contract.id))}/milestones/${target.id}`,
-                      );
-                    }
-                  } catch {
+        <div className="divide-y divide-border/40 border-t border-border/40">
+          {filteredMilestones.map((m, idx) => (
+            <MilestoneCard
+              key={m.id}
+              contractId={contract.id}
+              contractSlug={encodeURIComponent(
+                contract.slug || String(contract.id),
+              )}
+              contractStatus={contract.status}
+              isHeldInContract={Boolean(
+                contract.holdMilestoneIds?.includes(m.id),
+              )}
+              basePath={basePath}
+              milestone={m}
+              index={idx}
+              totalMilestones={filteredMilestones.length}
+              isFreelancer={isFreelancer}
+              hasOtherInProgressMilestone={hasInProgressMilestone}
+              onEdit={(target) => {
+                setMilestoneToEdit({
+                  id: target.id,
+                  title: target.title,
+                  description: target.description,
+                  amount: Number(target.amount),
+                  dueDate: target.dueDate,
+                  status: target.status,
+                });
+                setMilestoneModalOpen(true);
+              }}
+              onDelete={(target) => void handleDeleteMilestone(target)}
+              onFund={(target) => {
+                setMilestoneToFund(target);
+                setFundModalOpen(true);
+              }}
+              onRelease={(target) => void handleReleaseMilestone(target)}
+              onRefund={(target) => void handleRefundMilestone(target)}
+              onReview={async (target) => {
+                try {
+                  const res = await contractApiRequest.getSubmissions(
+                    contract.id,
+                    target.id,
+                  );
+                  const data = extractContractData(res);
+                  if (data && data.length > 0 && data[0]) {
+                    setReviewContext({
+                      milestone: target,
+                      submission: data[0],
+                    });
+                    setReviewModalOpen(true);
+                  } else {
                     router.push(
-                      `${basePath}/contracts/${contract.slug || contract.id}/milestones/${target.id}`,
+                      `${basePath}/contracts/${encodeURIComponent(contract.slug || String(contract.id))}/milestones/${target.id}`,
                     );
                   }
-                }}
-                onSubmitWork={(target) => {
-                  setMilestoneToSubmit(target);
-                  setSubmitModalOpen(true);
-                }}
-                onStartWork={(target) => void handleStartWork(target)}
-              />
-            ))}
-          </div>
+                } catch {
+                  router.push(
+                    `${basePath}/contracts/${encodeURIComponent(contract.slug || String(contract.id))}/milestones/${target.id}`,
+                  );
+                }
+              }}
+              onSubmitWork={(target) => {
+                setMilestoneToSubmit(target);
+                setSubmitModalOpen(true);
+              }}
+              onStartWork={(target) => void handleStartWork(target)}
+            />
+          ))}
         </div>
       ) : (
-        <div className="rounded-xl border border-dashed border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 p-12 text-center space-y-3">
-          <Clock className="size-8 mx-auto text-zinc-400" />
-          <h3 className="text-sm font-bold text-zinc-950 dark:text-zinc-50">
+        <div className="py-16 text-center space-y-3">
+          <Clock className="size-8 mx-auto text-muted-foreground/60" />
+          <h3 className="text-sm font-bold text-foreground">
             No milestones found
           </h3>
-          <p className="text-xs text-zinc-500 max-w-sm mx-auto">
+          <p className="text-xs text-muted-foreground max-w-sm mx-auto">
             {isClient
               ? "You can add milestones to break down the project deliverables and securely release payments."
               : "No milestones matching this filter."}
@@ -549,7 +566,7 @@ export function MilestonesPageContent({
                 setMilestoneToEdit(null);
                 setMilestoneModalOpen(true);
               }}
-              className="rounded-lg bg-[#0069D3] hover:bg-[#0055b3] text-white text-xs font-semibold cursor-pointer"
+              className="rounded-full bg-[#0069D3] hover:bg-[#0055b3] text-white text-xs font-semibold cursor-pointer"
             >
               <Plus className="mr-1.5 size-4" />
               Add First Milestone
@@ -558,7 +575,7 @@ export function MilestonesPageContent({
         </div>
       )}
 
-      {/* ── Dialogs ── */}
+      {/* ── 5. Dialogs & Modals ── */}
 
       {/* 1. Manage / Add / Edit Milestone Dialog (Client) */}
       {isClient && (

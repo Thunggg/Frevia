@@ -203,17 +203,17 @@ export function MilestoneDetailContent({
 
   if (!canViewDetail) {
     return (
-      <div className="space-y-6 max-w-7xl mx-auto font-sans">
+      <div className="space-y-6 max-w-6xl mx-auto font-sans pb-16">
         <MilestoneDetailHeader
           contract={contract}
           milestone={milestone}
           basePath={basePath}
         />
-        <div className="rounded-xl border border-amber-200/80 dark:border-amber-900/40 bg-amber-50/40 dark:bg-amber-950/20 p-8 text-center space-y-2">
-          <h3 className="text-sm font-semibold text-zinc-950 dark:text-zinc-100">
+        <div className="py-12 text-center space-y-2">
+          <h3 className="text-sm font-semibold text-foreground">
             Không có quyền xem chi tiết milestone
           </h3>
-          <p className="text-xs text-zinc-500 dark:text-zinc-400 max-w-md mx-auto">
+          <p className="text-xs text-muted-foreground max-w-md mx-auto">
             Tài khoản của bạn chưa được cấp quyền xem thông tin chi tiết milestone này.
           </p>
         </div>
@@ -222,8 +222,8 @@ export function MilestoneDetailContent({
   }
 
   return (
-    <div className="space-y-6 max-w-7xl mx-auto font-sans">
-      {/* ── 1. Top Milestone Breadcrumb Header ── */}
+    <div className="space-y-6 sm:space-y-8 max-w-6xl mx-auto font-sans pb-16">
+      {/* ── 1. Top Milestone Breadcrumb & Title Header ── */}
       <MilestoneDetailHeader
         contract={contract}
         milestone={milestone}
@@ -236,66 +236,69 @@ export function MilestoneDetailContent({
         submissions={submissions}
       />
 
-      {/* ── 3. Main Two-Column Layout (Image 1: Left 4 Tabs & Content, Right Activity) ── */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-        {/* Left Column: 4 Tabs + Selected Tab Content (8 Cols) */}
-        <div className="lg:col-span-12 space-y-6">
-          <MilestoneDetailTabs
-            activeTab={activeTab}
-            onTabChange={setActiveTab}
-            submissionCount={submissions.length}
-            fileCount={files.length}
-            canViewSubmissions={canViewSubmissions}
-            canViewFiles={canViewFiles}
+      {/* ── 3. Tabs Navigation ── */}
+      <div className="space-y-6">
+        <MilestoneDetailTabs
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
+          submissionCount={submissions.length}
+          fileCount={files.length}
+          canViewSubmissions={canViewSubmissions}
+          canViewFiles={canViewFiles}
+        />
+
+        {activeTab === "overview" && (
+          <MilestoneOverviewTab
+            contract={contract}
+            milestone={milestone}
+            submissions={submissions}
+            isFreelancer={isFreelancer}
+            onFund={() => setFundModalOpen(true)}
+            onStartWork={() => void handleStartWork()}
+            onSubmitWork={() => setSubmitModalOpen(true)}
+            onReviewSubmission={handleReview}
+            onRelease={() => void handleReleaseMilestone()}
+            onRefund={() => void handleRefundMilestone()}
           />
+        )}
 
-          {activeTab === "overview" && (
-            <MilestoneOverviewTab
-              contract={contract}
-              milestone={milestone}
-              submissions={submissions}
-              isFreelancer={isFreelancer}
-            />
-          )}
+        {activeTab === "submissions" && canViewSubmissions && (
+          <MilestoneSubmissionsTab
+            contractStatus={contract.status}
+            milestone={milestone}
+            submissions={submissions}
+            isFreelancer={isFreelancer}
+            onFund={() => setFundModalOpen(true)}
+            onStartWork={() => void handleStartWork()}
+            onSubmitWork={() => setSubmitModalOpen(true)}
+            onReviewSubmission={handleReview}
+            onRelease={() => void handleReleaseMilestone()}
+            onRefund={() => void handleRefundMilestone()}
+          />
+        )}
 
-          {activeTab === "submissions" && canViewSubmissions && (
-            <MilestoneSubmissionsTab
-              contractStatus={contract.status}
-              milestone={milestone}
-              submissions={submissions}
-              isFreelancer={isFreelancer}
-              onFund={() => setFundModalOpen(true)}
-              onStartWork={() => void handleStartWork()}
-              onSubmitWork={() => setSubmitModalOpen(true)}
-              onReviewSubmission={handleReview}
-              onRelease={() => void handleReleaseMilestone()}
-              onRefund={() => void handleRefundMilestone()}
-            />
-          )}
+        {activeTab === "files" && canViewFiles && (
+          <MilestoneFilesTab
+            contractId={contract.id}
+            milestoneId={milestone.id}
+            files={files}
+            onFilesChanged={() => {
+              void queryClient.invalidateQueries({
+                queryKey: ["milestone-files", contract.id, milestone.id],
+              });
+            }}
+            isFreelancer={isFreelancer}
+          />
+        )}
 
-          {activeTab === "files" && canViewFiles && (
-            <MilestoneFilesTab
-              contractId={contract.id}
-              milestoneId={milestone.id}
-              files={files}
-              onFilesChanged={() => {
-                void queryClient.invalidateQueries({
-                  queryKey: ["milestone-files", contract.id, milestone.id],
-                });
-              }}
-              isFreelancer={isFreelancer}
-            />
-          )}
-
-          {activeTab === "activity" && (
-            <MilestoneActivityTimeline
-              contract={contract}
-              milestone={milestone}
-              submissions={submissions}
-              isFreelancer={isFreelancer}
-            />
-          )}
-        </div>
+        {activeTab === "activity" && (
+          <MilestoneActivityTimeline
+            contract={contract}
+            milestone={milestone}
+            submissions={submissions}
+            isFreelancer={isFreelancer}
+          />
+        )}
       </div>
 
       {/* ── Modals / Dialogs ── */}
