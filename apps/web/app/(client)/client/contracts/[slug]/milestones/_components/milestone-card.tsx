@@ -352,7 +352,7 @@ export function MilestoneCard({
               )}
 
             {isFreelancer &&
-              milestone.status === "IN_PROGRESS" &&
+              (milestone.status === "IN_PROGRESS" || milestone.status === "LATE") &&
               canSubmitPermission &&
               onSubmitWork && (
                 <Button
@@ -360,7 +360,7 @@ export function MilestoneCard({
                   onClick={() => onSubmitWork(milestone)}
                   className="h-8 rounded-lg bg-[#0069D3] hover:bg-[#0055b3] text-white text-xs font-semibold px-3"
                 >
-                  Submit Work
+                  {milestone.status === "LATE" ? "Submit Work (Late)" : "Submit Work"}
                 </Button>
               )}
 
@@ -547,7 +547,7 @@ export function MilestoneCard({
             )}
 
           {isFreelancer &&
-            milestone.status === "IN_PROGRESS" &&
+            (milestone.status === "IN_PROGRESS" || milestone.status === "LATE") &&
             canSubmitPermission &&
             onSubmitWork && (
               <Button
@@ -556,7 +556,7 @@ export function MilestoneCard({
                 className="h-8 rounded-lg bg-[#0069D3] hover:bg-[#0055b3] text-white text-xs font-semibold px-3 cursor-pointer"
               >
                 <Upload className="mr-1 size-3" />
-                Submit
+                {milestone.status === "LATE" ? "Submit (Late)" : "Submit"}
               </Button>
             )}
 

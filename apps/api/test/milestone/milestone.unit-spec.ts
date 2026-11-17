@@ -50,6 +50,7 @@ import {
 } from '../../src/routes/milestone-submission/milestone-submission.error';
 import { MilestoneSubmissionRepository } from '../../src/routes/milestone-submission/milestone-submission.repo';
 import { MilestoneSubmissionService } from '../../src/routes/milestone-submission/milestone-submission.service';
+import { PaymentService } from '../../src/routes/payments/payment.service';
 import { CloudinaryService } from '../../src/shared/services/cloudinary.service';
 
 describe('Milestone Management (UF-132 to UF-146)', () => {
@@ -100,8 +101,13 @@ describe('Milestone Management (UF-132 to UF-146)', () => {
     cloudinaryService as unknown as CloudinaryService,
   );
 
+  const paymentService = {
+    releaseMilestone: jest.fn().mockResolvedValue({ success: true }),
+  };
+
   const submissionService = new MilestoneSubmissionService(
     submissionRepository as unknown as MilestoneSubmissionRepository,
+    paymentService as unknown as PaymentService,
   );
 
   const mockDate = new Date('2026-01-01T00:00:00.000Z');
@@ -112,6 +118,13 @@ describe('Milestone Management (UF-132 to UF-146)', () => {
     freelancerId: 2,
     totalAmount: new Prisma.Decimal(1000.0),
     status: ContractStatus.ACTIVE,
+    expiresAt: new Date(Date.now() + 86400000 * 30),
+  };
+
+  const mockPendingContract = {
+    ...mockContract,
+    status: ContractStatus.PENDING_SIGN,
+    expiresAt: new Date(Date.now() + 86400000 * 30),
   };
 
   const mockMilestone = {
@@ -304,9 +317,11 @@ describe('Milestone Management (UF-132 to UF-146)', () => {
   // UF-134: createMilestone
   // =========================================================================
   describe('UF-134 createMilestone', () => {
-    // UF-134: Khách hàng tạo mới milestone thành công khi hợp đồng đang ở trạng thái ACTIVE.
-    it('creates milestone successfully on active contract within budget', async () => {
-      milestoneRepository.findContractById.mockResolvedValueOnce(mockContract);
+    // UF-134: Khách hàng tạo mới milestone thành công khi hợp đồng đang ở trạng thái PENDING_SIGN.
+    it('creates milestone successfully on pending contract within budget', async () => {
+      milestoneRepository.findContractById.mockResolvedValueOnce(
+        mockPendingContract,
+      );
       milestoneRepository.getTotalMilestoneAmount.mockResolvedValueOnce(400);
       milestoneRepository.createMilestone.mockResolvedValueOnce(mockMilestone);
 
@@ -314,6 +329,7 @@ describe('Milestone Management (UF-132 to UF-146)', () => {
         title: 'New Milestone',
         amount: 300,
         description: 'Frontend features',
+        dueDate: new Date(Date.now() + 86400000 * 7).toISOString(),
       };
 
       const result = await milestoneService.createMilestone(1, 10, body);
@@ -327,11 +343,14 @@ describe('Milestone Management (UF-132 to UF-146)', () => {
 
     // Ném ngoại lệ MilestoneForbiddenException khi Freelancer cố tạo milestone cho hợp đồng.
     it('throws MilestoneForbiddenException when non-client attempts creation', async () => {
-      milestoneRepository.findContractById.mockResolvedValueOnce(mockContract);
+      milestoneRepository.findContractById.mockResolvedValueOnce(
+        mockPendingContract,
+      );
 
       const body: CreateMilestoneBodyType = {
         title: 'Unauthorized',
         amount: 100,
+        dueDate: new Date(Date.now() + 86400000 * 7).toISOString(),
       };
 
       await expect(
@@ -343,13 +362,14 @@ describe('Milestone Management (UF-132 to UF-146)', () => {
     // Ném ngoại lệ MilestoneContractNotActiveException khi hợp đồng ở trạng thái COMPLETED hoặc CANCELLED.
     it('throws MilestoneContractNotActiveException when contract is completed or cancelled', async () => {
       milestoneRepository.findContractById.mockResolvedValueOnce({
-        ...mockContract,
+        ...mockPendingContract,
         status: ContractStatus.COMPLETED,
       });
 
       const body: CreateMilestoneBodyType = {
         title: 'Late Milestone',
         amount: 100,
+        dueDate: new Date(Date.now() + 86400000 * 7).toISOString(),
       };
 
       await expect(
@@ -360,12 +380,15 @@ describe('Milestone Management (UF-132 to UF-146)', () => {
 
     // Ném ngoại lệ MilestoneAmountExceedsContractException khi tổng tiền milestone vượt quá ngân sách hợp đồng.
     it('throws MilestoneAmountExceedsContractException when total exceeds contract budget', async () => {
-      milestoneRepository.findContractById.mockResolvedValueOnce(mockContract);
+      milestoneRepository.findContractById.mockResolvedValueOnce(
+        mockPendingContract,
+      );
       milestoneRepository.getTotalMilestoneAmount.mockResolvedValueOnce(900);
 
       const body: CreateMilestoneBodyType = {
         title: 'Over Budget',
         amount: 200,
+        dueDate: new Date(Date.now() + 86400000 * 7).toISOString(),
       };
 
       await expect(
@@ -396,7 +419,9 @@ describe('Milestone Management (UF-132 to UF-146)', () => {
   describe('UF-135 updateMilestone', () => {
     // UF-135: Khách hàng cập nhật thành công tiêu đề và ngân sách của milestone đang ở trạng thái PENDING.
     it('updates milestone successfully while in PENDING status', async () => {
-      milestoneRepository.findContractById.mockResolvedValueOnce(mockContract);
+      milestoneRepository.findContractById.mockResolvedValueOnce(
+        mockPendingContract,
+      );
       milestoneRepository.findMilestoneById.mockResolvedValueOnce(
         mockMilestone,
       );
@@ -423,7 +448,9 @@ describe('Milestone Management (UF-132 to UF-146)', () => {
 
     // Ném ngoại lệ MilestoneCannotBeEditedException khi milestone không còn ở trạng thái PENDING.
     it('throws MilestoneCannotBeEditedException when milestone is already in progress', async () => {
-      milestoneRepository.findContractById.mockResolvedValueOnce(mockContract);
+      milestoneRepository.findContractById.mockResolvedValueOnce(
+        mockPendingContract,
+      );
       milestoneRepository.findMilestoneById.mockResolvedValueOnce({
         ...mockMilestone,
         status: MilestoneStatus.IN_PROGRESS,
@@ -437,7 +464,9 @@ describe('Milestone Management (UF-132 to UF-146)', () => {
 
     // Ném ngoại lệ MilestoneAmountExceedsContractException khi cập nhật số tiền vượt quá tổng giá trị hợp đồng.
     it('throws MilestoneAmountExceedsContractException when updated amount exceeds remaining budget', async () => {
-      milestoneRepository.findContractById.mockResolvedValueOnce(mockContract);
+      milestoneRepository.findContractById.mockResolvedValueOnce(
+        mockPendingContract,
+      );
       milestoneRepository.findMilestoneById.mockResolvedValueOnce(
         mockMilestone,
       );
@@ -458,7 +487,9 @@ describe('Milestone Management (UF-132 to UF-146)', () => {
   describe('UF-136 deleteMilestone', () => {
     // UF-136: Khách hàng xóa thành công milestone ở trạng thái PENDING.
     it('deletes milestone successfully while in PENDING status', async () => {
-      milestoneRepository.findContractById.mockResolvedValueOnce(mockContract);
+      milestoneRepository.findContractById.mockResolvedValueOnce(
+        mockPendingContract,
+      );
       milestoneRepository.findMilestoneById.mockResolvedValueOnce(
         mockMilestone,
       );
@@ -472,7 +503,9 @@ describe('Milestone Management (UF-132 to UF-146)', () => {
 
     // Ném ngoại lệ MilestoneCannotBeDeletedException khi milestone đã bắt đầu thực hiện hoặc đã thanh toán.
     it('throws MilestoneCannotBeDeletedException when milestone is not in PENDING status', async () => {
-      milestoneRepository.findContractById.mockResolvedValueOnce(mockContract);
+      milestoneRepository.findContractById.mockResolvedValueOnce(
+        mockPendingContract,
+      );
       milestoneRepository.findMilestoneById.mockResolvedValueOnce({
         ...mockMilestone,
         status: MilestoneStatus.COMPLETED,
@@ -486,7 +519,9 @@ describe('Milestone Management (UF-132 to UF-146)', () => {
 
     // Ném ngoại lệ MilestoneForbiddenException khi Freelancer cố gắng xóa milestone.
     it('throws MilestoneForbiddenException when non-client attempts milestone deletion', async () => {
-      milestoneRepository.findContractById.mockResolvedValueOnce(mockContract);
+      milestoneRepository.findContractById.mockResolvedValueOnce(
+        mockPendingContract,
+      );
 
       await expect(
         milestoneService.deleteMilestone(2, 10, 100),
@@ -591,12 +626,13 @@ describe('Milestone Management (UF-132 to UF-146)', () => {
   // UF-138: approveMilestone
   // =========================================================================
   describe('UF-138 approveMilestone', () => {
-    // UF-138: Khách hàng nghiệm thu bài nộp milestone thành công.
-    it('approves milestone submission successfully by client', async () => {
+    // UF-138: Khách hàng nghiệm thu bài nộp milestone thành công và tự động giải ngân khi đã ký quỹ.
+    it('approves milestone submission successfully by client and releases payment when funded', async () => {
       submissionRepository.findContractById.mockResolvedValueOnce(mockContract);
-      submissionRepository.findMilestoneById.mockResolvedValueOnce(
-        mockMilestone,
-      );
+      submissionRepository.findMilestoneById.mockResolvedValueOnce({
+        ...mockMilestone,
+        paymentStatus: MilestonePaymentStatus.FUNDED,
+      });
       submissionRepository.findSubmissionById.mockResolvedValueOnce(
         mockSubmission,
       );
@@ -612,6 +648,7 @@ describe('Milestone Management (UF-132 to UF-146)', () => {
       );
 
       expect(result.status).toBe(SubmissionStatus.APPROVED);
+      expect(paymentService.releaseMilestone).toHaveBeenCalledWith(1, 10, 100);
       expect(submissionRepository.approveSubmission).toHaveBeenCalledWith(
         50,
         100,
@@ -1011,6 +1048,43 @@ describe('Milestone Management (UF-132 to UF-146)', () => {
       );
 
       expect(result).toEqual(mockSubmission);
+    });
+
+    // Freelancer nộp bài thành công khi milestone ở trạng thái LATE.
+    it('submits milestone deliverables successfully when milestone status is LATE', async () => {
+      submissionRepository.findContractById.mockResolvedValueOnce(mockContract);
+      const lateMilestone = {
+        ...mockMilestone,
+        status: MilestoneStatus.LATE,
+        paymentStatus: MilestonePaymentStatus.FUNDED,
+      };
+      submissionRepository.findMilestoneById.mockResolvedValueOnce(
+        lateMilestone,
+      );
+      submissionRepository.createSubmission.mockResolvedValueOnce(
+        mockSubmission,
+      );
+
+      const body: SubmitMilestoneBodyType = {
+        message: 'Completed late deliverable',
+        links: [],
+        fileIds: [],
+      };
+
+      const result = await submissionService.submitMilestone(
+        2,
+        RoleName.FREELANCER,
+        10,
+        100,
+        body,
+      );
+
+      expect(result).toEqual(mockSubmission);
+      expect(submissionRepository.createSubmission).toHaveBeenCalledWith(
+        100,
+        2,
+        body,
+      );
     });
 
     // Ném ngoại lệ MilestoneNotInProgressException khi milestone ở trạng thái PENDING.

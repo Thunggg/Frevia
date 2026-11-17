@@ -5,10 +5,7 @@ import {
   CreateCheckoutSessionResponseSchema,
   CreateContractHoldBodySchema,
   CreateContractHoldResponseSchema,
-  CreateCustomerPortalSessionResponseSchema,
   CreateOnboardingLinkBodySchema,
-  CreatePaymentIntentResponseSchema,
-  CreateSetupIntentResponseSchema,
   DisputeSettlementBodySchema,
   DisputeSettlementResponseSchema,
   GetSavedPaymentMethodsResponseSchema,
@@ -28,14 +25,6 @@ import { createZodDto } from 'nestjs-zod';
 
 export class GetSavedPaymentMethodsResponseDTO extends createZodDto(
   GetSavedPaymentMethodsResponseSchema,
-) {}
-
-export class CreateCustomerPortalSessionResponseDTO extends createZodDto(
-  CreateCustomerPortalSessionResponseSchema,
-) {}
-
-export class CreateSetupIntentResponseDTO extends createZodDto(
-  CreateSetupIntentResponseSchema,
 ) {}
 
 export class SetDefaultPaymentMethodBodyDTO extends createZodDto(
@@ -62,10 +51,6 @@ export class GetTransactionListQueryDTO extends createZodDto(
 
 export class GetTransactionListResponseDTO extends createZodDto(
   GetTransactionListResponseSchema,
-) {}
-
-export class CreatePaymentIntentResponseDTO extends createZodDto(
-  CreatePaymentIntentResponseSchema,
 ) {}
 
 export class CreateContractHoldBodyDTO extends createZodDto(

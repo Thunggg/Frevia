@@ -51,7 +51,6 @@ interface PaymentSettingsProps {
 export function PaymentSettings({ userRole }: PaymentSettingsProps) {
   const { can } = useActionPermission();
   const canGetPaymentMethods = can("GET", "/api/payments/payment-methods");
-  const canOpenCustomerPortal = can("POST", "/api/payments/customer-portal");
   const canGetConnectStatus = can("GET", "/api/payments/connect/status");
   const canCreateOnboardingLink = can(
     "POST",
@@ -60,7 +59,6 @@ export function PaymentSettings({ userRole }: PaymentSettingsProps) {
   const canGetTransactions = can("GET", "/api/payments/transactions");
 
   const [onboardingLoading, setOnboardingLoading] = useState(false);
-  const [portalLoading, setPortalLoading] = useState(false);
   const [page, setPage] = useState(1);
   const [selectedType, setSelectedType] = useState<string>("ALL");
 
@@ -79,21 +77,6 @@ export function PaymentSettings({ userRole }: PaymentSettingsProps) {
     },
     enabled: !isFreelancerOrExpert && canGetPaymentMethods,
   });
-
-  const handleOpenCustomerPortal = async () => {
-    setPortalLoading(true);
-    try {
-      const res = await paymentApiRequest.getCustomerPortalLink();
-      if (res.data?.portalUrl) {
-        toastSuccess({ message: "Opening Stripe Customer Portal..." });
-        window.location.href = res.data.portalUrl;
-      }
-    } catch {
-      toastError({ message: "Failed to open Stripe Customer Portal." });
-    } finally {
-      setPortalLoading(false);
-    }
-  };
 
   // Query Connect Status (only relevant for recipients)
   const {
@@ -349,23 +332,6 @@ export function PaymentSettings({ userRole }: PaymentSettingsProps) {
                 </p>
               </div>
             </div>
-            {canOpenCustomerPortal && (
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={handleOpenCustomerPortal}
-                disabled={portalLoading}
-                className="rounded-full text-xs font-semibold h-9 px-4 shrink-0 border-border/80 hover:bg-zinc-100 dark:hover:bg-zinc-900"
-              >
-                {portalLoading ? (
-                  <Loader2 className="mr-1.5 size-3.5 animate-spin" />
-                ) : (
-                  <ExternalLink className="mr-1.5 size-3.5 text-muted-foreground" />
-                )}
-                Manage in Stripe Portal
-              </Button>
-            )}
           </div>
 
           {paymentMethodsLoading ? (
@@ -409,18 +375,6 @@ export function PaymentSettings({ userRole }: PaymentSettingsProps) {
               <p className="text-xs text-muted-foreground max-w-sm mx-auto">
                 No cards saved yet. When you fund a contract or milestone via Stripe, your card can be securely saved for faster payments.
               </p>
-              {canOpenCustomerPortal && (
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  onClick={handleOpenCustomerPortal}
-                  disabled={portalLoading}
-                  className="text-xs text-[#0069D3] hover:text-[#005bb8] h-8"
-                >
-                  Add Card via Stripe Portal
-                </Button>
-              )}
             </div>
           )}
         </div>

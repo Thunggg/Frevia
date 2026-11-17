@@ -3,9 +3,6 @@ import type {
   ChargeSavedCardResponseType,
   CreateCheckoutSessionResponseType,
   CreateContractHoldResponseType,
-  CreateCustomerPortalSessionResponseType,
-  CreatePaymentIntentResponseType,
-  CreateSetupIntentResponseType,
   DisputeSettlementBodyType,
   DisputeSettlementResponseType,
   GetSavedPaymentMethodsResponseType,
@@ -51,16 +48,6 @@ export const paymentApiRequest = {
     return http.post<CreateContractHoldResponseType>(
       `/payments/contracts/${contractId}/fund-hold/intent`,
       { milestoneIds, ...(paymentMethodId ? { paymentMethodId } : {}) },
-    );
-  },
-
-  /**
-   * Tạo PaymentIntent nạp tiền ký quỹ (Escrow deposit) cho Milestone
-   */
-  createMilestoneFundIntent(contractId: number, milestoneId: number) {
-    return http.post<CreatePaymentIntentResponseType>(
-      `/payments/contracts/${contractId}/milestones/${milestoneId}/fund/intent`,
-      {},
     );
   },
 
@@ -150,16 +137,6 @@ export const paymentApiRequest = {
   },
 
   /**
-   * Tạo SetupIntent để thêm thẻ mới qua Stripe Elements
-   */
-  createSetupIntent() {
-    return http.post<CreateSetupIntentResponseType>(
-      "/payments/payment-methods/setup-intent",
-      {},
-    );
-  },
-
-  /**
    * Đặt một thẻ đã lưu làm phương thức thanh toán mặc định
    */
   setDefaultPaymentMethod(paymentMethodId: string) {
@@ -175,16 +152,6 @@ export const paymentApiRequest = {
   removePaymentMethod(paymentMethodId: string) {
     return http.delete<PaymentMethodActionResponseType>(
       `/payments/payment-methods/${encodeURIComponent(paymentMethodId)}`,
-    );
-  },
-
-  /**
-   * Tạo session chuyển hướng sang Stripe Customer Portal (đổi thẻ, quản lý thẻ)
-   */
-  getCustomerPortalLink(returnUrl?: string) {
-    return http.post<CreateCustomerPortalSessionResponseType>(
-      "/payments/customer-portal",
-      { returnUrl },
     );
   },
 

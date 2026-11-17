@@ -331,6 +331,19 @@ export class PaymentRepository {
     });
   }
 
+  async approvePendingSubmissionsForMilestone(milestoneId: number) {
+    return this.prisma.milestoneSubmission.updateMany({
+      where: {
+        milestoneId,
+        status: SubmissionStatus.PENDING_REVIEW,
+      },
+      data: {
+        status: SubmissionStatus.APPROVED,
+        reviewedAt: new Date(),
+      },
+    });
+  }
+
   async findDisputeById(disputeId: number) {
     return this.prisma.dispute.findUnique({
       where: { id: disputeId },
@@ -814,15 +827,15 @@ export class PaymentRepository {
           {
             userId: params.clientId,
             type: NotificationType.TASK_OVERDUE,
-            title: 'Milestone overdue — refund requested',
+            title: 'Milestone overdue',
             message: params.isFunded
-              ? `Freelancer missed the deadline for "${params.milestoneTitle}" without submitting work. Milestone status is now Late and an automatic escrow refund request has been triggered.`
-              : `Freelancer missed the deadline for "${params.milestoneTitle}" without submitting work. Milestone status has been changed to Late.`,
+              ? `Freelancer missed the deadline for "${params.milestoneTitle}". Milestone status is now Late. You can request a refund or allow the freelancer to submit late deliverables.`
+              : `Freelancer missed the deadline for "${params.milestoneTitle}". Milestone status has been changed to Late.`,
             data: {
               href: `/client/contracts/${params.contractSlug}/milestones/${params.milestoneId}`,
               contractId: params.contractId,
               milestoneId: params.milestoneId,
-              refundRequested: params.isFunded,
+              refundRequested: false,
             },
           },
           {
@@ -830,13 +843,13 @@ export class PaymentRepository {
             type: NotificationType.TASK_OVERDUE,
             title: 'Milestone marked as Late',
             message: params.isFunded
-              ? `You did not submit deliverables before the deadline for "${params.milestoneTitle}". The milestone was marked Late and the funded escrow is subject to automatic refund.`
-              : `You did not submit deliverables before the deadline for "${params.milestoneTitle}". The milestone status was changed to Late.`,
+              ? `You missed the deadline for "${params.milestoneTitle}". The milestone was marked Late. Please submit your deliverables as soon as possible.`
+              : `You missed the deadline for "${params.milestoneTitle}". The milestone status was changed to Late.`,
             data: {
               href: `/freelancer/contracts/${params.contractSlug}/milestones/${params.milestoneId}`,
               contractId: params.contractId,
               milestoneId: params.milestoneId,
-              refundRequested: params.isFunded,
+              refundRequested: false,
             },
           },
         ],

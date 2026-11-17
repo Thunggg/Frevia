@@ -23,7 +23,6 @@ import {
 import { Button } from "@repo/ui/components/shadcn/button";
 import { toastError, toastSuccess } from "@repo/ui/components/shadcn/toast";
 import { contractApiRequest } from "@/apiRequests/contract";
-import { paymentApiRequest } from "@/apiRequests/payment";
 import { useActionPermission } from "@/hooks/use-action-permission";
 import { ApiFail } from "@/lib/http";
 import type { GetSubmissionResponseType } from "@shared/types";
@@ -70,7 +69,6 @@ export function ReviewSubmissionDialog({
 
   const canApprove = can("PATCH", "/api/contracts/:contractId/milestones/:milestoneId/submissions/:id/approve");
   const canRequestChanges = can("PATCH", "/api/contracts/:contractId/milestones/:milestoneId/submissions/:id/request-changes");
-  const canRelease = can("POST", "/api/payments/contracts/:contractId/milestones/:milestoneId/release");
 
   if (!submission) return null;
 
@@ -87,20 +85,8 @@ export function ReviewSubmissionDialog({
         submission.id,
       );
 
-      let releaseCompleted = false;
-      if (canRelease) {
-        try {
-          await paymentApiRequest.releaseMilestone(contractId, milestoneId);
-          releaseCompleted = true;
-        } catch {
-          // Approval succeeded even if automatic release encounters a transient error
-        }
-      }
-
       toastSuccess({
-        message: releaseCompleted
-          ? `Milestone approved and $${freelancerNetPayout.toLocaleString("en-US", { minimumFractionDigits: 2 })} transferred to freelancer via Stripe (5% platform fee deducted)!`
-          : "Deliverables approved! Please release the milestone payout from the deliverables tab.",
+        message: `Milestone approved and $${freelancerNetPayout.toLocaleString("en-US", { minimumFractionDigits: 2 })} transferred to freelancer via Stripe (5% platform fee deducted)!`,
       });
 
       await queryClient.invalidateQueries({

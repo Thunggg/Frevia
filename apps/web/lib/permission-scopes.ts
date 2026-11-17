@@ -524,7 +524,6 @@ export function getPermissionFeatureGroup(permission: {
   if (
     path.startsWith("/api/payments/connect") ||
     path.startsWith("/api/payments/payment-methods") ||
-    path.startsWith("/api/payments/customer-portal") ||
     path.startsWith("/api/payments/checkout-sessions")
   ) {
     return FEATURE_GROUPS.PAYMENTS_STRIPE;

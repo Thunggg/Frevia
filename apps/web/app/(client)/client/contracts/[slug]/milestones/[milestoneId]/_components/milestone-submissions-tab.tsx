@@ -155,11 +155,14 @@ export function MilestoneSubmissionsTab({
 
     if (
       isFreelancer &&
-      (milestone.status === "IN_PROGRESS" || milestone.status === "CHANGES_REQUESTED") &&
+      (milestone.status === "IN_PROGRESS" ||
+        milestone.status === "CHANGES_REQUESTED" ||
+        milestone.status === "LATE") &&
       canSubmitWork &&
       onSubmitWork
     ) {
       const isResubmit = milestone.status === "CHANGES_REQUESTED";
+      const isLate = milestone.status === "LATE";
       return (
         <Button
           onClick={onSubmitWork}
@@ -173,6 +176,11 @@ export function MilestoneSubmissionsTab({
             <>
               <RotateCcw className="mr-1.5 size-3.5" />
               Resubmit Deliverables
+            </>
+          ) : isLate ? (
+            <>
+              <Upload className="mr-1.5 size-3.5" />
+              Submit Deliverables (Late)
             </>
           ) : (
             <>

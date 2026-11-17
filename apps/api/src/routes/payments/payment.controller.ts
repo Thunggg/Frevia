@@ -20,12 +20,7 @@ import {
   CreateCheckoutSessionResponseDTO,
   CreateContractHoldBodyDTO,
   CreateContractHoldResponseDTO,
-  CreateCustomerPortalSessionResponseDTO,
   CreateOnboardingLinkBodyDTO,
-  CreatePaymentIntentResponseDTO,
-  CreateSetupIntentResponseDTO,
-  DisputeSettlementBodyDTO,
-  DisputeSettlementResponseDTO,
   GetSavedPaymentMethodsResponseDTO,
   GetTransactionListQueryDTO,
   GetTransactionListResponseDTO,
@@ -95,15 +90,6 @@ export class PaymentController {
   }
 
   /**
-   * Tạo SetupIntent để người dùng thêm thẻ mới trực tiếp bằng Stripe Elements ngay trong trang Billing & Payments.
-   */
-  @Post('payment-methods/setup-intent')
-  @ZodSerializerDto(CreateSetupIntentResponseDTO)
-  createSetupIntent(@UserActive('userId') userId: number) {
-    return this.paymentService.createSetupIntent(userId);
-  }
-
-  /**
    * Đặt thẻ đã lưu làm phương thức thanh toán mặc định cho khách hàng trên Stripe.
    */
   @Post('payment-methods/default')
@@ -128,19 +114,6 @@ export class PaymentController {
     @Param('paymentMethodId') paymentMethodId: string,
   ) {
     return this.paymentService.removePaymentMethod(userId, paymentMethodId);
-  }
-
-  /**
-   * Tạo phiên Stripe Billing Customer Portal để user tự thêm, đặt mặc định hoặc xóa thẻ đã lưu.
-   * Tự động tạo `stripeCustomerId` nếu user chưa từng phát sinh Customer trên Stripe.
-   */
-  @Post('customer-portal')
-  @ZodSerializerDto(CreateCustomerPortalSessionResponseDTO)
-  createCustomerPortalSession(
-    @UserActive('userId') userId: number,
-    @Body('returnUrl') returnUrl?: string,
-  ) {
-    return this.paymentService.getCustomerPortalLink(userId, returnUrl);
   }
 
   // =========================================================================
@@ -177,24 +150,6 @@ export class PaymentController {
   // =========================================================================
   // 3. KÝ QUỸ (ESCROW), GIẢI NGÂN & HOÀN TIỀN MILESTONE
   // =========================================================================
-
-  /**
-   * [Client] Tạo PaymentIntent để nạp tiền ký quỹ (Escrow) cho milestone ở trạng thái `PENDING`.
-   * Tổng tiền thu = giá trị milestone + phí nền tảng phía Client (3% tổng hợp đồng nếu Client chưa thanh toán trước đó).
-   */
-  @Post('contracts/:contractId/milestones/:milestoneId/fund/intent')
-  @ZodSerializerDto(CreatePaymentIntentResponseDTO)
-  createMilestoneFundIntent(
-    @UserActive('userId') userId: number,
-    @Param('contractId', ParseIntPipe) contractId: number,
-    @Param('milestoneId', ParseIntPipe) milestoneId: number,
-  ) {
-    return this.paymentService.createMilestoneFundIntent(
-      userId,
-      contractId,
-      milestoneId,
-    );
-  }
 
   /**
    * [Client] Tạo Checkout Session trên Stripe để nạp tiền ký quỹ milestone (+ 3% phí Client nếu chưa đóng).
@@ -274,18 +229,6 @@ export class PaymentController {
   // 4. GIẢI QUYẾT TRANH CHẤP & PHÂN CHIA TIỀN KÝ QUỸ
   // =========================================================================
 
-  /**
-   * Thanh toán và phân chia tiền ký quỹ giải quyết tranh chấp.
-   */
-  @Post('disputes/:disputeId/settle')
-  @ZodSerializerDto(DisputeSettlementResponseDTO)
-  settleDispute(
-    @UserActive('userId') userId: number,
-    @Param('disputeId', ParseIntPipe) disputeId: number,
-    @Body() body: DisputeSettlementBodyDTO,
-  ) {
-    return this.paymentService.settleDispute(userId, disputeId, body);
-  }
   // =========================================================================
   // 5. LỊCH SỬ GIAO DỊCH, ĐỒNG BỘ TRẠNG THÁI & STRIPE WEBHOOK
   // =========================================================================

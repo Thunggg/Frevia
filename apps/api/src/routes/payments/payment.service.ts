@@ -2,7 +2,6 @@ import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
 import Stripe from 'stripe';
 import {
   ContractStatus,
-  DisputeStatus,
   MilestonePaymentStatus,
   MilestoneStatus,
   Prisma,
@@ -12,7 +11,6 @@ import {
 import {
   ContractHoldActionResponseType,
   CreateContractHoldResponseType,
-  DisputeSettlementBodyType,
   GetTransactionListQueryType,
   RoleName,
 } from '@shared/types';
@@ -21,8 +19,6 @@ import {
   ContractExpiredException,
   ContractNotActiveException,
   ContractNotAwaitingPaymentException,
-  DisputeNotFoundException,
-  DisputeSettlementInvalidAmountException,
   HoldIntentCancelFailedException,
   HoldIntentCaptureFailedException,
   HoldMilestoneRequiredException,
@@ -168,40 +164,6 @@ export class PaymentService {
     }
   }
 
-  async getCustomerPortalLink(userId: number, returnUrl?: string) {
-    const user = await this.paymentRepo.findUserById(userId);
-    if (!user) {
-      throw PaymentForbiddenException();
-    }
-
-    let customerId = user.stripeCustomerId;
-    if (!customerId) {
-      const customer = await this.stripeService.createCustomer(user.email);
-      customerId = customer.id;
-      await this.paymentRepo.updateUserStripe(userId, {
-        stripeCustomerId: customerId,
-      });
-    }
-
-    const defaultReturnUrl = `${envConfig.NEXT_URL}/account-profile?tab=payments`;
-    const finalReturnUrl = returnUrl || defaultReturnUrl;
-
-    try {
-      const portal = await this.stripeService.createBillingPortalSession(
-        customerId,
-        finalReturnUrl,
-      );
-      return { portalUrl: portal.url };
-    } catch (err: unknown) {
-      const msg =
-        err instanceof Error
-          ? err.message
-          : 'Failed to create Billing Portal session';
-      this.logger.error(`Customer Portal error for user ${userId}: ${msg}`);
-      throw new HttpException(msg, HttpStatus.BAD_REQUEST);
-    }
-  }
-
   async getSavedPaymentMethods(userId: number) {
     const user = await this.paymentRepo.findUserById(userId);
     if (!user || !user.stripeCustomerId) {
@@ -242,42 +204,6 @@ export class PaymentService {
         err,
       );
       return { paymentMethods: [] };
-    }
-  }
-
-  async createSetupIntent(userId: number) {
-    const user = await this.paymentRepo.findUserById(userId);
-    if (!user) {
-      throw PaymentForbiddenException();
-    }
-
-    const customerId = await this.ensureCustomerId(
-      userId,
-      user.email,
-      user.stripeCustomerId,
-    );
-
-    try {
-      const setupIntent =
-        await this.stripeService.createSetupIntent(customerId);
-      if (!setupIntent.client_secret) {
-        throw new HttpException(
-          'Failed to initialize payment method setup',
-          HttpStatus.BAD_REQUEST,
-        );
-      }
-      return {
-        clientSecret: setupIntent.client_secret,
-        setupIntentId: setupIntent.id,
-      };
-    } catch (err: unknown) {
-      if (err instanceof HttpException) throw err;
-      const msg =
-        err instanceof Error
-          ? err.message
-          : 'Failed to create payment method setup intent';
-      this.logger.error(`SetupIntent error for user ${userId}: ${msg}`);
-      throw new HttpException(msg, HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -786,69 +712,6 @@ export class PaymentService {
     }
   }
 
-  async createMilestoneFundIntent(
-    userId: number,
-    contractId: number,
-    milestoneId: number,
-  ) {
-    const milestone = await this.paymentRepo.findMilestoneById(milestoneId);
-    if (
-      !milestone ||
-      milestone.contractId !== contractId ||
-      milestone.contract.clientId !== userId
-    ) {
-      throw PaymentForbiddenException();
-    }
-
-    if (milestone.contract.status !== ContractStatus.ACTIVE) {
-      throw ContractNotActiveException();
-    }
-
-    if (milestone.paymentStatus !== MilestonePaymentStatus.PENDING) {
-      throw MilestoneNotEligibleForFundingException();
-    }
-
-    const customerId = await this.ensureCustomerId(
-      userId,
-      milestone.contract.client.email,
-      milestone.contract.client.stripeCustomerId,
-    );
-
-    const milestoneAmount = Number(milestone.amount);
-    const amountInCents = Math.round(milestoneAmount * 100);
-
-    const paymentIntent = await this.stripeService.createPaymentIntent({
-      amountInCents,
-      currency: 'usd',
-      customerId,
-      metadata: {
-        type: TransactionType.ESCROW_DEPOSIT,
-        contractId: String(contractId),
-        milestoneId: String(milestoneId),
-        userId: String(userId),
-      },
-    });
-
-    await this.paymentRepo.createTransaction({
-      userId,
-      contractId,
-      milestoneId,
-      amount: milestoneAmount,
-      currency: 'usd',
-      type: TransactionType.ESCROW_DEPOSIT,
-      status: TransactionStatus.PENDING,
-      stripePaymentIntentId: paymentIntent.id,
-      metadata: { clientSecret: paymentIntent.client_secret },
-    });
-
-    return {
-      clientSecret: paymentIntent.client_secret ?? '',
-      paymentIntentId: paymentIntent.id,
-      amount: milestoneAmount,
-      currency: 'usd',
-    };
-  }
-
   async createMilestoneFundCheckoutSession(
     userId: number,
     contractId: number,
@@ -968,6 +831,8 @@ export class PaymentService {
       MilestonePaymentStatus.RELEASED,
       MilestoneStatus.COMPLETED,
     );
+
+    await this.paymentRepo.approvePendingSubmissionsForMilestone(milestoneId);
 
     await this.paymentRepo.createTransaction({
       userId: freelancer.id,
@@ -1362,117 +1227,5 @@ export class PaymentService {
       return { success: true, status: 'paid' };
     }
     return { success: false, status: session.payment_status };
-  }
-
-  async settleDispute(
-    userId: number,
-    disputeId: number,
-    body: DisputeSettlementBodyType,
-  ) {
-    const dispute = await this.paymentRepo.findDisputeById(disputeId);
-    if (!dispute) {
-      throw DisputeNotFoundException();
-    }
-
-    const milestone = dispute.milestone;
-    const contract = milestone?.contract;
-    const milestoneAmount = Number(milestone?.amount || 0);
-
-    const clientAmount = Math.round(Number(body.clientAmount) * 100) / 100;
-    const freelancerAmount =
-      Math.round(Number(body.freelancerAmount) * 100) / 100;
-
-    if (clientAmount + freelancerAmount > milestoneAmount) {
-      throw DisputeSettlementInvalidAmountException();
-    }
-
-    let clientRefundAmount = 0;
-    let freelancerPayoutAmount = 0;
-    const arbitratorPayoutAmount = 0;
-
-    if (clientAmount > 0 && contract) {
-      const deposits = await this.paymentRepo.findContractEscrowDeposits(
-        contract.id,
-      );
-      const targetDeposit =
-        deposits.find(
-          (d) => d.milestoneId === milestone.id && d.stripePaymentIntentId,
-        ) || deposits.find((d) => d.stripePaymentIntentId);
-
-      if (targetDeposit?.stripePaymentIntentId) {
-        try {
-          const refund = await this.stripeService.createRefund({
-            paymentIntentId: targetDeposit.stripePaymentIntentId,
-            amountInCents: Math.round(clientAmount * 100),
-            metadata: {
-              type: TransactionType.REFUND,
-              disputeId: String(disputeId),
-              contractId: String(contract.id),
-              milestoneId: String(milestone.id),
-              reason: 'dispute_settlement',
-            },
-          });
-
-          await this.paymentRepo.createTransaction({
-            userId: dispute.milestone.contract.client.id,
-            contractId: contract.id,
-            milestoneId: milestone.id,
-            disputeId,
-            amount: clientAmount,
-            currency: 'USD',
-            type: TransactionType.REFUND,
-            status: TransactionStatus.SUCCEEDED,
-            stripeRefundId: refund.id,
-          });
-          clientRefundAmount = clientAmount;
-        } catch (err) {
-          this.logger.error(`Failed to process dispute refund: ${err}`);
-        }
-      }
-    }
-
-    if (freelancerAmount > 0 && contract?.freelancer?.stripeAccountId) {
-      try {
-        const transfer = await this.stripeService.createTransfer({
-          amountInCents: Math.round(freelancerAmount * 100),
-          destination: contract.freelancer.stripeAccountId,
-          metadata: {
-            type: TransactionType.MILESTONE_PAYOUT,
-            disputeId: String(disputeId),
-            contractId: String(contract.id),
-            milestoneId: String(milestone.id),
-          },
-        });
-
-        await this.paymentRepo.createTransaction({
-          userId: contract.freelancer.id,
-          contractId: contract.id,
-          milestoneId: milestone.id,
-          disputeId,
-          amount: freelancerAmount,
-          currency: 'USD',
-          type: TransactionType.MILESTONE_PAYOUT,
-          status: TransactionStatus.SUCCEEDED,
-          stripeTransferId: transfer.id,
-        });
-        freelancerPayoutAmount = freelancerAmount;
-      } catch (err) {
-        this.logger.error(`Failed to process dispute transfer: ${err}`);
-      }
-    }
-
-    await this.paymentRepo.updateDisputeStatus(
-      disputeId,
-      DisputeStatus.FINALIZED,
-      new Date(),
-    );
-
-    return {
-      disputeId,
-      status: DisputeStatus.FINALIZED,
-      clientRefundAmount,
-      freelancerPayoutAmount,
-      arbitratorPayoutAmount,
-    };
   }
 }

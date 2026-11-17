@@ -24,7 +24,7 @@ export class PaymentAutomationService implements OnModuleInit, OnModuleDestroy {
   constructor(
     private readonly paymentRepo: PaymentRepository,
     private readonly stripeService: StripeService,
-  ) { }
+  ) {}
 
   onModuleInit() {
     if (process.env.NODE_ENV === 'test') {
@@ -56,7 +56,7 @@ export class PaymentAutomationService implements OnModuleInit, OnModuleDestroy {
   /**
    * Chạy đồng bộ hai luồng tự động hóa milestone (có khóa tránh chạy chồng chéo):
    * 1. Client không phản hồi submission sau 7 ngày -> tự động approve, release cho freelancer, cập nhật contract/job nếu hết tiền.
-   * 2. Freelancer không nộp bài quá hạn -> đổi trạng thái milestone thành LATE, gửi thông báo yêu cầu refund và tự động refund nếu đã fund.
+   * 2. Freelancer không nộp bài quá hạn -> đổi trạng thái milestone thành LATE và gửi thông báo cho hai bên.
    */
   async runScheduledChecks(now = new Date()) {
     if (this.isProcessing) {
@@ -206,51 +206,9 @@ export class PaymentAutomationService implements OnModuleInit, OnModuleDestroy {
             isFunded: milestone.paymentStatus === MilestonePaymentStatus.FUNDED,
           });
         }
-
-        if (milestone.paymentStatus !== MilestonePaymentStatus.FUNDED) {
-          continue;
-        }
-
-        const escrowTx = await this.paymentRepo.findEscrowDepositTransaction(
-          milestone.id,
-          milestone.contractId,
-        );
-        if (!escrowTx?.stripePaymentIntentId) {
-          this.logger.warn(
-            `Cannot auto-refund overdue milestone #${milestone.id}: original escrow deposit transaction not found.`,
-          );
-          continue;
-        }
-
-        const milestoneAmount = Number(milestone.amount);
-        const refund = await this.stripeService.createRefund({
-          paymentIntentId: escrowTx.stripePaymentIntentId,
-          amountInCents: Math.round(milestoneAmount * 100),
-          metadata: {
-            type: 'REFUND',
-            autoRefund: 'true',
-            reason: 'FREELANCER_LATE_NO_SUBMISSION',
-            contractId: String(milestone.contractId),
-            milestoneId: String(milestone.id),
-          },
-          idempotencyKey: `auto-refund-milestone-${milestone.id}`,
-        });
-
-        await this.paymentRepo.applyMilestoneRefundTransaction({
-          milestoneId: milestone.id,
-          contractId: milestone.contractId,
-          contractSlug: milestone.contract.slug,
-          clientId: milestone.contract.clientId,
-          freelancerId: milestone.contract.freelancerId,
-          milestoneTitle: milestone.title,
-          amount: milestoneAmount,
-          refundId: refund.id,
-          reason: 'FREELANCER_LATE_NO_SUBMISSION',
-          isAuto: true,
-        });
       } catch (error) {
         this.logger.error(
-          `Overdue LATE/auto-refund processing failed for milestone #${milestone.id}:`,
+          `Overdue LATE processing failed for milestone #${milestone.id}:`,
           error,
         );
       }

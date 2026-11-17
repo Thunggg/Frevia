@@ -1,16 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { Elements, PaymentElement, useElements, useStripe } from "@stripe/react-stripe-js";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   Check,
   CreditCard,
-  ExternalLink,
   Loader2,
-  Lock,
   MoreVertical,
-  Plus,
   Trash2,
 } from "lucide-react";
 import { Button } from "@repo/ui/components/shadcn/button";
@@ -25,19 +21,13 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@repo/ui/components/shadcn/dropdown-menu";
 import { toastError, toastSuccess } from "@repo/ui/components/shadcn/toast";
 import { useActionPermission } from "@/hooks/use-action-permission";
 import { paymentApiRequest } from "@/apiRequests/payment";
 import { ApiFail } from "@/lib/http";
-import { getStripe } from "@/lib/stripe";
 import type { SavedPaymentMethodType } from "@shared/types";
-
-interface PaymentMethodCardProps {
-  returnPath: string;
-}
 
 function formatBrandName(brand: string): string {
   const normalized = brand.trim().toLowerCase();
@@ -84,125 +74,14 @@ function CardBrandBadge({ brand }: { brand: string }) {
   );
 }
 
-interface AddCardFormProps {
-  onSuccess: () => void;
-  onCancel: () => void;
-}
-
-function AddCardSetupForm({ onSuccess, onCancel }: AddCardFormProps) {
-  const stripe = useStripe();
-  const elements = useElements();
-  const [submitting, setSubmitting] = useState(false);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!stripe || !elements) return;
-
-    setSubmitting(true);
-    setErrorMessage(null);
-
-    try {
-      const result = await stripe.confirmSetup({
-        elements,
-        redirect: "if_required",
-      });
-
-      if (result.error) {
-        const msg = result.error.message || "Could not verify card details.";
-        setErrorMessage(msg);
-        toastError({ message: msg });
-        return;
-      }
-
-      const rawPm = result.setupIntent?.payment_method;
-      const paymentMethodId =
-        typeof rawPm === "string" ? rawPm : rawPm?.id;
-
-      if (paymentMethodId) {
-        await paymentApiRequest.setDefaultPaymentMethod(paymentMethodId);
-      }
-
-      toastSuccess({
-        message: "Payment method saved and set as default.",
-      });
-      onSuccess();
-    } catch (err: unknown) {
-      const msg =
-        err instanceof ApiFail
-          ? err.response.error.message
-          : err instanceof Error
-            ? err.message
-            : "Failed to save payment method.";
-      setErrorMessage(msg);
-      toastError({ message: msg });
-    } finally {
-      setSubmitting(false);
-    }
-  };
-
-  return (
-    <form onSubmit={handleSubmit} className="space-y-4 pt-2">
-      <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 p-3.5 bg-zinc-50/40 dark:bg-zinc-900/40">
-        <PaymentElement />
-      </div>
-
-      {errorMessage && (
-        <div className="rounded-lg border border-rose-200 bg-rose-50 dark:bg-rose-950/30 dark:border-rose-900 px-3 py-2 text-xs text-rose-700 dark:text-rose-300">
-          {errorMessage}
-        </div>
-      )}
-
-      <div className="flex items-center justify-between gap-2 pt-2 border-t border-zinc-100 dark:border-zinc-800">
-        <span className="inline-flex items-center gap-1.5 text-[11px] text-muted-foreground">
-          <Lock className="size-3" />
-          Secured by Stripe
-        </span>
-        <div className="flex items-center gap-2">
-          <Button
-            type="button"
-            variant="ghost"
-            size="sm"
-            onClick={onCancel}
-            disabled={submitting}
-            className="rounded-lg text-xs h-8 px-3"
-          >
-            Back
-          </Button>
-          <Button
-            type="submit"
-            size="sm"
-            disabled={!stripe || !elements || submitting}
-            className="rounded-lg bg-[#0069D3] hover:bg-[#005bb8] text-white text-xs h-8 px-4 cursor-pointer"
-          >
-            {submitting ? (
-              <>
-                <Loader2 className="mr-1.5 size-3.5 animate-spin" />
-                Saving...
-              </>
-            ) : (
-              "Save & Use Card"
-            )}
-          </Button>
-        </div>
-      </div>
-    </form>
-  );
-}
-
 /**
- * Displays the user's active payment method with in-app card switching, adding, removing,
- * and Stripe Billing Portal fallback.
+ * Displays the user's saved payment methods with card switching, setting default, and removing.
  */
-export function PaymentMethodCard({ returnPath }: PaymentMethodCardProps) {
+export function PaymentMethodCard() {
   const queryClient = useQueryClient();
   const { can } = useActionPermission();
 
   const canGetPaymentMethods = can("GET", "/api/payments/payment-methods");
-  const canCreateSetupIntent = can(
-    "POST",
-    "/api/payments/payment-methods/setup-intent",
-  );
   const canSetDefaultPaymentMethod = can(
     "POST",
     "/api/payments/payment-methods/default",
@@ -211,15 +90,8 @@ export function PaymentMethodCard({ returnPath }: PaymentMethodCardProps) {
     "DELETE",
     "/api/payments/payment-methods/:paymentMethodId",
   );
-  const canOpenCustomerPortal = can("POST", "/api/payments/customer-portal");
 
   const [manageOpen, setManageOpen] = useState(false);
-  const [modalView, setModalView] = useState<"list" | "add">("list");
-  const [setupClientSecret, setSetupClientSecret] = useState<string | null>(
-    null,
-  );
-  const [setupLoading, setSetupLoading] = useState(false);
-  const [portalLoading, setPortalLoading] = useState(false);
 
   const { data: savedMethodsData, isLoading } = useQuery({
     queryKey: ["saved-payment-methods"],
@@ -233,23 +105,23 @@ export function PaymentMethodCard({ returnPath }: PaymentMethodCardProps) {
   const paymentMethods: SavedPaymentMethodType[] =
     savedMethodsData?.paymentMethods ?? [];
   const defaultCard =
-    paymentMethods.find((pm) => pm.isDefault) ?? paymentMethods[0] ?? null;
+    paymentMethods.find((pm) => pm.isDefault) ?? paymentMethods[0];
 
   const setDefaultMutation = useMutation({
     mutationFn: (paymentMethodId: string) =>
       paymentApiRequest.setDefaultPaymentMethod(paymentMethodId),
     onSuccess: async () => {
+      toastSuccess({ message: "Default payment method updated." });
       await queryClient.invalidateQueries({
         queryKey: ["saved-payment-methods"],
       });
-      toastSuccess({ message: "Default payment method updated." });
     },
     onError: (err: unknown) => {
       toastError({
         message:
           err instanceof ApiFail
             ? err.response.error.message
-            : "Failed to change default payment method.",
+            : "Failed to update default card.",
       });
     },
   });
@@ -258,10 +130,10 @@ export function PaymentMethodCard({ returnPath }: PaymentMethodCardProps) {
     mutationFn: (paymentMethodId: string) =>
       paymentApiRequest.removePaymentMethod(paymentMethodId),
     onSuccess: async () => {
+      toastSuccess({ message: "Payment method removed." });
       await queryClient.invalidateQueries({
         queryKey: ["saved-payment-methods"],
       });
-      toastSuccess({ message: "Payment method removed." });
     },
     onError: (err: unknown) => {
       toastError({
@@ -272,52 +144,6 @@ export function PaymentMethodCard({ returnPath }: PaymentMethodCardProps) {
       });
     },
   });
-
-  const startAddCardFlow = async () => {
-    setModalView("add");
-    setManageOpen(true);
-    setSetupLoading(true);
-    setSetupClientSecret(null);
-    try {
-      const res = await paymentApiRequest.createSetupIntent();
-      setSetupClientSecret(res.data.clientSecret);
-    } catch (err: unknown) {
-      toastError({
-        message:
-          err instanceof ApiFail
-            ? err.response.error.message
-            : "Failed to initialize Stripe card form.",
-      });
-      setModalView("list");
-    } finally {
-      setSetupLoading(false);
-    }
-  };
-
-  const handleOpenCustomerPortal = async () => {
-    setPortalLoading(true);
-    try {
-      const returnUrl = `${window.location.origin}${returnPath}`;
-      const res = await paymentApiRequest.getCustomerPortalLink(returnUrl);
-      if (res.data?.portalUrl) {
-        window.location.href = res.data.portalUrl;
-      }
-    } catch (err: unknown) {
-      toastError({
-        message:
-          err instanceof ApiFail
-            ? err.response.error.message
-            : "Failed to open Stripe Billing Portal. You can switch or add cards right here.",
-      });
-    } finally {
-      setPortalLoading(false);
-    }
-  };
-
-  const openManageList = () => {
-    setModalView("list");
-    setManageOpen(true);
-  };
 
   if (!canGetPaymentMethods) {
     return null;
@@ -330,13 +156,13 @@ export function PaymentMethodCard({ returnPath }: PaymentMethodCardProps) {
           <h3 className="text-[15px] tracking-tight text-foreground">
             Payment Method
           </h3>
-          {canCreateSetupIntent && (
+          {paymentMethods.length > 0 && (
             <button
               type="button"
-              onClick={defaultCard ? openManageList : () => void startAddCardFlow()}
+              onClick={() => setManageOpen(true)}
               className="text-xs font-medium text-[#0069D3] hover:text-[#0055b3] transition-colors cursor-pointer"
             >
-              {defaultCard ? "Change" : "+ Add card"}
+              Manage
             </button>
           )}
         </div>
@@ -373,34 +199,12 @@ export function PaymentMethodCard({ returnPath }: PaymentMethodCardProps) {
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-48 rounded-xl p-1.5">
                 <DropdownMenuItem
-                  onClick={openManageList}
+                  onClick={() => setManageOpen(true)}
                   className="rounded-lg text-xs cursor-pointer"
                 >
                   <CreditCard className="mr-2 size-3.5 text-muted-foreground" />
-                  Switch / Manage Cards
+                  Manage Saved Cards
                 </DropdownMenuItem>
-                {canCreateSetupIntent && (
-                  <DropdownMenuItem
-                    onClick={() => void startAddCardFlow()}
-                    className="rounded-lg text-xs cursor-pointer"
-                  >
-                    <Plus className="mr-2 size-3.5 text-muted-foreground" />
-                    Add New Card
-                  </DropdownMenuItem>
-                )}
-                {canOpenCustomerPortal && (
-                  <>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem
-                      onClick={() => void handleOpenCustomerPortal()}
-                      disabled={portalLoading}
-                      className="rounded-lg text-xs cursor-pointer"
-                    >
-                      <ExternalLink className="mr-2 size-3.5 text-muted-foreground" />
-                      {portalLoading ? "Opening Stripe..." : "Stripe Billing Portal"}
-                    </DropdownMenuItem>
-                  </>
-                )}
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
@@ -415,190 +219,103 @@ export function PaymentMethodCard({ returnPath }: PaymentMethodCardProps) {
                   No card saved yet
                 </p>
                 <p className="text-[11px] text-muted-foreground truncate">
-                  Add a default card for faster checkout
+                  Cards are automatically saved when you checkout with Stripe
                 </p>
               </div>
             </div>
-            {canCreateSetupIntent && (
-              <Button
-                type="button"
-                size="sm"
-                variant="outline"
-                onClick={() => void startAddCardFlow()}
-                className="rounded-lg text-xs h-8 px-3 shrink-0 cursor-pointer"
-              >
-                Add Card
-              </Button>
-            )}
           </div>
         )}
       </div>
 
-      {/* Manage / Switch / Add Card Modal */}
+      {/* Manage Saved Cards Modal */}
       <Dialog
         open={manageOpen}
-        onOpenChange={(open) => {
-          setManageOpen(open);
-          if (!open) {
-            setSetupClientSecret(null);
-            setModalView("list");
-          }
-        }}
+        onOpenChange={setManageOpen}
       >
         <DialogContent className="sm:max-w-md rounded-2xl p-6 border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 font-sans">
           <DialogHeader className="text-left space-y-1">
             <DialogTitle className="text-base tracking-tight">
-              {modalView === "add"
-                ? "Add New Payment Method"
-                : "Change Payment Method"}
+              Manage Saved Cards
             </DialogTitle>
             <DialogDescription className="text-xs text-muted-foreground">
-              {modalView === "add"
-                ? "Add a debit or credit card via Stripe. It will become your default payment method."
-                : "Select your default saved card or add a new card."}
+              Select your default card or remove cards saved on your account.
             </DialogDescription>
           </DialogHeader>
 
-          {modalView === "list" ? (
-            <div className="space-y-3 pt-2">
-              {paymentMethods.length > 0 ? (
-                <div className="space-y-2 max-h-72 overflow-y-auto pr-0.5">
-                  {paymentMethods.map((pm) => {
-                    const isBusy =
-                      setDefaultMutation.isPending ||
-                      removeCardMutation.isPending;
+          <div className="space-y-3 pt-2">
+            {paymentMethods.length > 0 ? (
+              <div className="space-y-2 max-h-72 overflow-y-auto pr-0.5">
+                {paymentMethods.map((pm) => {
+                  const isBusy =
+                    setDefaultMutation.isPending ||
+                    removeCardMutation.isPending;
 
-                    return (
-                      <div
-                        key={pm.id}
-                        className={`rounded-xl border px-3.5 py-3 flex items-center justify-between gap-3 transition-colors ${pm.isDefault
-                          ? "border-[#0069D3]/40 bg-blue-50/40 dark:bg-blue-950/20"
-                          : "border-zinc-200/80 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/30"
-                          }`}
-                      >
-                        <div className="flex items-center gap-3 min-w-0">
-                          <CardBrandBadge brand={pm.brand} />
-                          <div className="min-w-0">
-                            <div className="flex items-center gap-2">
-                              <p className="text-xs text-foreground truncate">
-                                {formatBrandName(pm.brand)} ending in {pm.last4}
-                              </p>
-                              {pm.isDefault && (
-                                <span className="inline-flex items-center gap-0.5 rounded-md bg-emerald-50 dark:bg-emerald-950/60 px-1.5 py-0.5 text-[10px] text-emerald-700 dark:text-emerald-300">
-                                  <Check className="size-2.5" />
-                                  Default
-                                </span>
-                              )}
-                            </div>
-                            <p className="text-[11px] text-muted-foreground mt-0.5">
-                              Expires {String(pm.expMonth).padStart(2, "0")}/
-                              {pm.expYear}
+                  return (
+                    <div
+                      key={pm.id}
+                      className={`rounded-xl border px-3.5 py-3 flex items-center justify-between gap-3 transition-colors ${pm.isDefault
+                        ? "border-[#0069D3]/40 bg-blue-50/40 dark:bg-blue-950/20"
+                        : "border-zinc-200/80 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/30"
+                        }`}
+                    >
+                      <div className="flex items-center gap-3 min-w-0">
+                        <CardBrandBadge brand={pm.brand} />
+                        <div className="min-w-0">
+                          <div className="flex items-center gap-2">
+                            <p className="text-xs text-foreground truncate">
+                              {formatBrandName(pm.brand)} ending in {pm.last4}
                             </p>
+                            {pm.isDefault && (
+                              <span className="inline-flex items-center gap-0.5 rounded-md bg-emerald-50 dark:bg-emerald-950/60 px-1.5 py-0.5 text-[10px] text-emerald-700 dark:text-emerald-300">
+                                <Check className="size-2.5" />
+                                Default
+                              </span>
+                            )}
                           </div>
-                        </div>
-
-                        <div className="flex items-center gap-1.5 shrink-0">
-                          {!pm.isDefault && canSetDefaultPaymentMethod && (
-                            <Button
-                              type="button"
-                              size="sm"
-                              variant="outline"
-                              disabled={isBusy}
-                              onClick={() => setDefaultMutation.mutate(pm.id)}
-                              className="h-7 rounded-lg px-2.5 text-[11px] font-medium cursor-pointer"
-                            >
-                              Set Default
-                            </Button>
-                          )}
-                          {canRemovePaymentMethod && (
-                            <button
-                              type="button"
-                              disabled={isBusy}
-                              aria-label="Remove saved card"
-                              onClick={() => removeCardMutation.mutate(pm.id)}
-                              className="inline-flex size-7 items-center justify-center rounded-lg text-muted-foreground hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-colors cursor-pointer disabled:opacity-50"
-                            >
-                              <Trash2 className="size-3.5" />
-                            </button>
-                          )}
+                          <p className="text-[11px] text-muted-foreground mt-0.5">
+                            Expires {String(pm.expMonth).padStart(2, "0")}/
+                            {pm.expYear}
+                          </p>
                         </div>
                       </div>
-                    );
-                  })}
-                </div>
-              ) : (
-                <div className="rounded-xl border border-dashed border-zinc-200 dark:border-zinc-800 py-8 text-center text-xs text-muted-foreground">
-                  No saved cards found on your account yet.
-                </div>
-              )}
 
-              <div className="flex flex-wrap items-center justify-between gap-2 pt-3 border-t border-zinc-100 dark:border-zinc-800">
-                {canOpenCustomerPortal ? (
-                  <button
-                    type="button"
-                    onClick={() => void handleOpenCustomerPortal()}
-                    disabled={portalLoading}
-                    className="inline-flex items-center gap-1 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
-                  >
-                    <ExternalLink className="size-3.5" />
-                    {portalLoading ? "Opening..." : "Stripe Portal"}
-                  </button>
-                ) : (
-                  <div />
-                )}
-                {canCreateSetupIntent && (
-                  <Button
-                    type="button"
-                    size="sm"
-                    onClick={() => void startAddCardFlow()}
-                    className="rounded-lg bg-[#0069D3] hover:bg-[#005bb8] text-white text-xs h-8 px-3.5 cursor-pointer"
-                  >
-                    <Plus className="mr-1.5 size-3.5" />
-                    Add New Card
-                  </Button>
-                )}
+                      <div className="flex items-center gap-1.5 shrink-0">
+                        {!pm.isDefault && canSetDefaultPaymentMethod && (
+                          <Button
+                            type="button"
+                            size="sm"
+                            variant="outline"
+                            disabled={isBusy}
+                            onClick={() => setDefaultMutation.mutate(pm.id)}
+                            className="h-7 rounded-lg px-2.5 text-[11px] font-medium cursor-pointer"
+                          >
+                            Set Default
+                          </Button>
+                        )}
+                        {canRemovePaymentMethod && (
+                          <button
+                            type="button"
+                            disabled={isBusy}
+                            aria-label="Remove saved card"
+                            onClick={() => removeCardMutation.mutate(pm.id)}
+                            className="inline-flex size-7 items-center justify-center rounded-lg text-muted-foreground hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-colors cursor-pointer disabled:opacity-50"
+                          >
+                            <Trash2 className="size-3.5" />
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
-            </div>
-          ) : setupLoading ? (
-            <div className="py-10 flex flex-col items-center justify-center gap-2 text-xs text-muted-foreground">
-              <Loader2 className="size-5 animate-spin text-[#0069D3]" />
-              <span>Initializing secure Stripe card setup...</span>
-            </div>
-          ) : setupClientSecret ? (
-            <Elements
-              stripe={getStripe()}
-              options={{
-                clientSecret: setupClientSecret,
-                appearance: {
-                  theme: "stripe",
-                  variables: {
-                    colorPrimary: "#0069D3",
-                    borderRadius: "8px",
-                    fontSizeBase: "14px",
-                  },
-                },
-              }}
-            >
-              <AddCardSetupForm
-                onSuccess={async () => {
-                  await queryClient.invalidateQueries({
-                    queryKey: ["saved-payment-methods"],
-                  });
-                  setManageOpen(false);
-                }}
-                onCancel={() => {
-                  if (paymentMethods.length === 0) {
-                    setManageOpen(false);
-                  } else {
-                    setModalView("list");
-                  }
-                }}
-              />
-            </Elements>
-          ) : null}
+            ) : (
+              <div className="rounded-xl border border-dashed border-zinc-200 dark:border-zinc-800 py-8 text-center text-xs text-muted-foreground">
+                No saved cards found on your account. Cards will be saved when checking out via Stripe.
+              </div>
+            )}
+          </div>
         </DialogContent>
       </Dialog>
     </>
   );
 }
-
