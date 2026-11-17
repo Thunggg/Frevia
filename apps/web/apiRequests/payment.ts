@@ -44,12 +44,14 @@ export const paymentApiRequest = {
     contractId: number,
     milestoneIds: number[],
     paymentMethodId?: string,
+    returnUrl?: string,
   ) {
     return http.post<CreateContractHoldResponseType>(
       `/payments/contracts/${contractId}/fund-hold/intent`,
       {
         milestoneIds,
         ...(paymentMethodId ? { paymentMethodId } : {}),
+        ...(returnUrl ? { returnUrl } : {}),
       },
     );
   },

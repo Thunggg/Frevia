@@ -305,6 +305,7 @@ export class PaymentService {
     contractId: number,
     milestoneIds: number[],
     paymentMethodId?: string,
+    returnUrl?: string,
   ): Promise<CreateContractHoldResponseType> {
     const contract = await this.paymentRepo.findContractById(contractId);
     if (!contract) {
@@ -372,6 +373,68 @@ export class PaymentService {
       contract.client.stripeCustomerId,
     );
 
+    const metadata = {
+      type: 'CONTRACT_HOLD',
+      contractId: String(contractId),
+      userId: String(userId),
+      milestoneIds: uniqueIds.join(','),
+      milestonesAmount: String(milestonesAmount),
+      clientFeeAmount: String(clientFeeAmount),
+    };
+
+    if (returnUrl) {
+      const successUrl = returnUrl.includes('?')
+        ? `${returnUrl}&hold=success&session_id={CHECKOUT_SESSION_ID}`
+        : `${returnUrl}?hold=success&session_id={CHECKOUT_SESSION_ID}`;
+      const cancelUrl = returnUrl.includes('?')
+        ? `${returnUrl}&hold=cancelled`
+        : `${returnUrl}?hold=cancelled`;
+
+      const session = await this.stripeService.createCheckoutSession({
+        amountInCents: Math.round(totalAmount * 100),
+        currency: 'usd',
+        customerId,
+        title: `Contract Escrow Hold - ${contract.slug || contractId}`,
+        description: `Authorization hold for initial milestone(s) and 3% platform fee before contract signing.`,
+        successUrl,
+        cancelUrl,
+        captureMethod: 'manual',
+        metadata,
+      });
+
+      await this.paymentRepo.createTransaction({
+        userId,
+        contractId,
+        milestoneId: uniqueIds.length === 1 ? uniqueIds[0] : undefined,
+        amount: totalAmount,
+        currency: 'usd',
+        type: TransactionType.ESCROW_DEPOSIT,
+        status: TransactionStatus.PENDING,
+        metadata: {
+          ...metadata,
+          contractId,
+          milestoneIds: uniqueIds,
+          milestonesAmount,
+          clientFeeAmount,
+          sessionId: session.id,
+        } as Prisma.InputJsonValue,
+      });
+
+      return {
+        clientSecret: '',
+        paymentIntentId: '',
+        amount: totalAmount,
+        milestonesAmount,
+        platformFeeAmount: clientFeeAmount,
+        currency: 'usd',
+        milestoneIds: uniqueIds,
+        checkoutUrl: session.url ?? undefined,
+        sessionId: session.id,
+        status: 'open',
+        authorized: false,
+      };
+    }
+
     if (paymentMethodId) {
       const pm =
         await this.stripeService.retrievePaymentMethod(paymentMethodId);
@@ -383,15 +446,6 @@ export class PaymentService {
         );
       }
     }
-
-    const metadata = {
-      type: 'CONTRACT_HOLD',
-      contractId: String(contractId),
-      userId: String(userId),
-      milestoneIds: uniqueIds.join(','),
-      milestonesAmount: String(milestonesAmount),
-      clientFeeAmount: String(clientFeeAmount),
-    };
 
     let paymentIntent: Stripe.PaymentIntent;
     try {
@@ -1083,6 +1137,208 @@ export class PaymentService {
     };
   }
 
+  /**
+   * Giải quyết quỹ Escrow khi hủy hợp đồng:
+   * 1. Nếu Freelancer hủy: Hoàn tiền (refund) 100% tất cả milestone đã FUNDED cho Client.
+   * 2. Nếu Client hủy:
+   *    - Các milestone Freelancer đang làm hoặc đang yêu cầu sửa/đã nộp (IN_PROGRESS, CHANGES_REQUESTED, SUBMITTED):
+   *      Release thanh toán cho Freelancer (khấu trừ 5% phí sàn).
+   *    - Các milestone chưa bắt đầu (PENDING / khác):
+   *      Refund hoàn tiền lại cho Client.
+   */
+  async settleContractEscrowOnCancel(
+    contractId: number,
+    cancelledByRole: 'client' | 'freelancer',
+  ) {
+    const contract = await this.paymentRepo.findContractById(contractId);
+    if (!contract) return { success: false, message: 'Contract not found' };
+
+    const fundedMilestones = (contract.milestones ?? []).filter(
+      (m) => m.paymentStatus === MilestonePaymentStatus.FUNDED,
+    );
+
+    const releasedMilestoneIds: number[] = [];
+    const refundedMilestoneIds: number[] = [];
+
+    for (const m of fundedMilestones) {
+      const milestoneAmount = Number(m.amount);
+      if (cancelledByRole === 'freelancer') {
+        // Freelancer cancels -> 100% refund of all funded milestones to Client
+        try {
+          const escrowTx = await this.paymentRepo.findEscrowDepositTransaction(
+            m.id,
+            contractId,
+          );
+          if (escrowTx?.stripePaymentIntentId) {
+            const refund = await this.stripeService.createRefund({
+              paymentIntentId: escrowTx.stripePaymentIntentId,
+              amountInCents: Math.round(milestoneAmount * 100),
+              metadata: {
+                type: TransactionType.REFUND,
+                contractId: String(contractId),
+                milestoneId: String(m.id),
+                reason: 'FREELANCER_CANCELLED_CONTRACT',
+              },
+              idempotencyKey: `refund-cancel-contract-${contractId}-m-${m.id}`,
+            });
+
+            await this.paymentRepo.applyMilestoneRefundTransaction({
+              milestoneId: m.id,
+              contractId,
+              contractSlug: contract.slug,
+              clientId: contract.clientId,
+              freelancerId: contract.freelancerId,
+              milestoneTitle: m.title,
+              amount: milestoneAmount,
+              refundId: refund.id,
+              reason: 'FREELANCER_CANCELLED_CONTRACT',
+              isAuto: true,
+            });
+            refundedMilestoneIds.push(m.id);
+          }
+        } catch (err) {
+          this.logger.error(
+            `Failed to refund milestone #${m.id} on contract #${contractId} freelancer cancel: ${err instanceof Error ? err.message : String(err)}`,
+          );
+        }
+      } else {
+        // Client cancels:
+        const isWorkInProgressOrSubmitted =
+          m.status === MilestoneStatus.IN_PROGRESS ||
+          m.status === MilestoneStatus.CHANGES_REQUESTED ||
+          m.status === MilestoneStatus.SUBMITTED;
+
+        if (isWorkInProgressOrSubmitted) {
+          // Release to freelancer!
+          try {
+            const freelancer = contract.freelancer;
+            const freelancerFee =
+              Math.round(milestoneAmount * 0.05 * 100) / 100;
+            const freelancerPayout =
+              Math.round((milestoneAmount - freelancerFee) * 100) / 100;
+            const amountInCents = Math.round(freelancerPayout * 100);
+
+            let transferId: string | undefined;
+            if (
+              freelancer?.stripeAccountId &&
+              freelancer?.stripeOnboardingCompleted
+            ) {
+              try {
+                const transfer = await this.stripeService.createTransfer({
+                  amountInCents,
+                  currency: 'usd',
+                  destination: freelancer.stripeAccountId,
+                  transferGroup: `contract_${contractId}`,
+                  metadata: {
+                    type: TransactionType.MILESTONE_PAYOUT,
+                    contractId: String(contractId),
+                    milestoneId: String(m.id),
+                    freelancerId: String(freelancer.id),
+                    freelancerFee: String(freelancerFee),
+                  },
+                });
+                transferId = transfer.id;
+              } catch (transferErr) {
+                this.logger.warn(
+                  `Could not transfer funds to Stripe account of freelancer #${freelancer.id}: ${transferErr instanceof Error ? transferErr.message : String(transferErr)}`,
+                );
+              }
+            }
+
+            await this.paymentRepo.updateMilestonePaymentStatus(
+              m.id,
+              MilestonePaymentStatus.RELEASED,
+              MilestoneStatus.COMPLETED,
+            );
+
+            await this.paymentRepo.approvePendingSubmissionsForMilestone(m.id);
+
+            await this.paymentRepo.createTransaction({
+              userId: contract.freelancerId,
+              contractId,
+              milestoneId: m.id,
+              amount: freelancerPayout,
+              currency: 'usd',
+              type: TransactionType.MILESTONE_PAYOUT,
+              status: TransactionStatus.SUCCEEDED,
+              stripeTransferId: transferId,
+            });
+
+            if (freelancerFee > 0) {
+              await this.paymentRepo.createTransaction({
+                userId: contract.freelancerId,
+                contractId,
+                milestoneId: m.id,
+                amount: freelancerFee,
+                currency: 'usd',
+                type: TransactionType.PLATFORM_FEE,
+                status: TransactionStatus.SUCCEEDED,
+                metadata: {
+                  type: 'FREELANCER_RELEASE_FEE',
+                  feeRole: 'FREELANCER',
+                  feePercent: 5,
+                  transferId,
+                } as Prisma.InputJsonValue,
+              });
+            }
+
+            await this.paymentRepo.checkAndCompleteFreelancerFee(contractId);
+            releasedMilestoneIds.push(m.id);
+          } catch (err) {
+            this.logger.error(
+              `Failed to release milestone #${m.id} on client cancel: ${err instanceof Error ? err.message : String(err)}`,
+            );
+          }
+        } else {
+          // Unstarted milestone -> Refund to client!
+          try {
+            const escrowTx = await this.paymentRepo.findEscrowDepositTransaction(
+              m.id,
+              contractId,
+            );
+            if (escrowTx?.stripePaymentIntentId) {
+              const refund = await this.stripeService.createRefund({
+                paymentIntentId: escrowTx.stripePaymentIntentId,
+                amountInCents: Math.round(milestoneAmount * 100),
+                metadata: {
+                  type: TransactionType.REFUND,
+                  contractId: String(contractId),
+                  milestoneId: String(m.id),
+                  reason: 'CLIENT_CANCELLED_UNSTARTED_MILESTONE',
+                },
+                idempotencyKey: `refund-cancel-contract-${contractId}-m-${m.id}`,
+              });
+
+              await this.paymentRepo.applyMilestoneRefundTransaction({
+                milestoneId: m.id,
+                contractId,
+                contractSlug: contract.slug,
+                clientId: contract.clientId,
+                freelancerId: contract.freelancerId,
+                milestoneTitle: m.title,
+                amount: milestoneAmount,
+                refundId: refund.id,
+                reason: 'CLIENT_CANCELLED_UNSTARTED_MILESTONE',
+                isAuto: true,
+              });
+              refundedMilestoneIds.push(m.id);
+            }
+          } catch (err) {
+            this.logger.error(
+              `Failed to refund milestone #${m.id} on client cancel: ${err instanceof Error ? err.message : String(err)}`,
+            );
+          }
+        }
+      }
+    }
+
+    return {
+      success: true,
+      releasedMilestoneIds,
+      refundedMilestoneIds,
+    };
+  }
+
   async refundMilestone(
     userId: number,
     contractId: number,
@@ -1359,12 +1615,21 @@ export class PaymentService {
     }
   }
 
-  async syncCheckoutSession(userId: number, sessionId: string) {
+  async syncCheckoutSession(
+    userId: number,
+    sessionId: string,
+  ): Promise<{ success: boolean; status?: string }> {
     const session = await this.stripeService.retrieveCheckoutSession(sessionId);
     if (session.payment_status === 'paid' || session.status === 'complete') {
       await this.processCheckoutSessionCompleted(session);
-      return { success: true, status: session.payment_status || session.status };
+      return {
+        success: true,
+        status: String(session.payment_status || session.status || ''),
+      };
     }
-    return { success: false, status: session.payment_status };
+    return {
+      success: false,
+      status: session.payment_status ? String(session.payment_status) : undefined,
+    };
   }
 }

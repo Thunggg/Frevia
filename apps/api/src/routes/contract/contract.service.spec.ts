@@ -1,5 +1,5 @@
 import { UnprocessableEntityException } from '@nestjs/common';
-import { ContractStatus } from '@prisma/client';
+import { ContractStatus, MilestoneStatus } from '@prisma/client';
 import type { CreateContractBodyType } from '@shared/types';
 import { ContractPdfService } from '../../shared/services/contract-pdf.service';
 import { PaymentService } from '../payments/payment.service';
@@ -274,5 +274,81 @@ describe('ContractService date validation', () => {
       'Contract expired before both parties signed',
     );
     expect(expireContract).toHaveBeenCalledWith(99);
+  });
+
+  it('settles escrow appropriately when client cancels an active contract', async () => {
+    const settleContractEscrowOnCancel = jest.fn().mockResolvedValue({
+      success: true,
+      releasedMilestoneIds: [1],
+      refundedMilestoneIds: [2],
+    });
+    const cancelContract = jest.fn().mockResolvedValue({
+      id: 99,
+      status: ContractStatus.CANCELLED,
+    });
+    const repository = {
+      findContractById: jest.fn().mockResolvedValue({
+        id: 99,
+        clientId: 10,
+        freelancerId: 20,
+        status: ContractStatus.ACTIVE,
+      }),
+      findContractMilestonesWithStatus: jest.fn().mockResolvedValue([
+        { id: 1, status: MilestoneStatus.IN_PROGRESS, paymentStatus: 'FUNDED' },
+        { id: 2, status: MilestoneStatus.PENDING, paymentStatus: 'FUNDED' },
+      ]),
+      cancelContract,
+    } as unknown as ContractRepository;
+    const service = new ContractService(
+      repository,
+      {} as ContractPdfService,
+      {
+        settleContractEscrowOnCancel,
+      } as unknown as PaymentService,
+    );
+
+    const result = await service.cancelContract(10, 99);
+
+    expect(settleContractEscrowOnCancel).toHaveBeenCalledWith(99, 'client');
+    expect(cancelContract).toHaveBeenCalledWith(99);
+    expect(result.status).toBe(ContractStatus.CANCELLED);
+  });
+
+  it('settles escrow appropriately when freelancer cancels an active contract', async () => {
+    const settleContractEscrowOnCancel = jest.fn().mockResolvedValue({
+      success: true,
+      releasedMilestoneIds: [],
+      refundedMilestoneIds: [1, 2],
+    });
+    const cancelContract = jest.fn().mockResolvedValue({
+      id: 99,
+      status: ContractStatus.CANCELLED,
+    });
+    const repository = {
+      findContractById: jest.fn().mockResolvedValue({
+        id: 99,
+        clientId: 10,
+        freelancerId: 20,
+        status: ContractStatus.ACTIVE,
+      }),
+      findContractMilestonesWithStatus: jest.fn().mockResolvedValue([
+        { id: 1, status: MilestoneStatus.IN_PROGRESS, paymentStatus: 'FUNDED' },
+        { id: 2, status: MilestoneStatus.PENDING, paymentStatus: 'FUNDED' },
+      ]),
+      cancelContract,
+    } as unknown as ContractRepository;
+    const service = new ContractService(
+      repository,
+      {} as ContractPdfService,
+      {
+        settleContractEscrowOnCancel,
+      } as unknown as PaymentService,
+    );
+
+    const result = await service.cancelContract(20, 99);
+
+    expect(settleContractEscrowOnCancel).toHaveBeenCalledWith(99, 'freelancer');
+    expect(cancelContract).toHaveBeenCalledWith(99);
+    expect(result.status).toBe(ContractStatus.CANCELLED);
   });
 });

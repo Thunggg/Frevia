@@ -145,6 +145,7 @@ export class PaymentController {
       contractId,
       body.milestoneIds,
       body.paymentMethodId,
+      body.returnUrl,
     );
   }
 
@@ -275,7 +276,7 @@ export class PaymentController {
   syncCheckoutSession(
     @UserActive('userId') userId: number,
     @Param('sessionId') sessionId: string,
-  ) {
+  ): Promise<{ success: boolean; status?: string }> {
     return this.paymentService.syncCheckoutSession(userId, sessionId);
   }
 

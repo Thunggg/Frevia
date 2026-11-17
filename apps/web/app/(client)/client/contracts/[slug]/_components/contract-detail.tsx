@@ -93,13 +93,19 @@ export function ContractDetail({
 
   useEffect(() => {
     const paymentStatus = searchParams.get("payment");
+    const holdStatus = searchParams.get("hold");
     const sessionId = searchParams.get("session_id");
 
-    if (paymentStatus === "success" && sessionId) {
+    if ((paymentStatus === "success" || holdStatus === "success") && sessionId) {
       const syncSession = async () => {
         try {
           await paymentApiRequest.syncCheckoutSession(sessionId);
-          toastSuccess({ message: "Payment completed successfully!" });
+          toastSuccess({
+            message:
+              holdStatus === "success"
+                ? "Contract escrow hold authorized! You can now sign the contract."
+                : "Payment completed successfully!",
+          });
         } catch {
           // If already processed via webhook
         } finally {
@@ -116,15 +122,21 @@ export function ContractDetail({
             queryClient.invalidateQueries({
               queryKey: ["client-transactions"],
             }),
+            queryClient.invalidateQueries({
+              queryKey: ["saved-payment-methods"],
+            }),
           ]);
           const newUrl = window.location.pathname;
           window.history.replaceState({}, "", newUrl);
         }
       };
       void syncSession();
-    } else if (paymentStatus === "cancelled") {
+    } else if (paymentStatus === "cancelled" || holdStatus === "cancelled") {
       toastError({
-        message: "Payment was cancelled. You can retry at any time.",
+        message:
+          holdStatus === "cancelled"
+            ? "Escrow authorization was cancelled. You can retry at any time."
+            : "Payment was cancelled. You can retry at any time.",
       });
       const newUrl = window.location.pathname;
       window.history.replaceState({}, "", newUrl);

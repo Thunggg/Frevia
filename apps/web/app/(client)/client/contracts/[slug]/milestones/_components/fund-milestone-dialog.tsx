@@ -205,7 +205,7 @@ export function FundMilestoneDialog({
                     href="/client/payments"
                     className="text-[11px] font-medium text-[#0069D3] hover:underline"
                   >
-                    Manage cards
+                    Billing &amp; Payments
                   </Link>
                 </div>
                 <div className="space-y-2">

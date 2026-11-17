@@ -431,13 +431,6 @@ export class ContractService implements OnModuleInit, OnModuleDestroy {
             contractId,
           );
 
-        const hasActiveSubmission = milestones.some(
-          (m) => m.status === MilestoneStatus.SUBMITTED,
-        );
-        if (hasActiveSubmission) {
-          throw ContractCannotCancelWithActiveSubmissionException();
-        }
-
         const hasDisputedMilestone = milestones.some(
           (m) => m.status === MilestoneStatus.DISPUTED,
         );
@@ -445,11 +438,19 @@ export class ContractService implements OnModuleInit, OnModuleDestroy {
           throw ContractDisputedException();
         }
 
+        const isClient = contract.clientId === userId;
+        const cancelledByRole: 'client' | 'freelancer' = isClient
+          ? 'client'
+          : 'freelancer';
+
         try {
-          await this.paymentService.refundContractEscrow(contractId);
+          await this.paymentService.settleContractEscrowOnCancel(
+            contractId,
+            cancelledByRole,
+          );
         } catch (refundErr) {
           this.logger.error(
-            `Failed to refund escrow on cancel for contract #${contractId}:`,
+            `Failed to settle escrow on cancel for contract #${contractId}:`,
             refundErr,
           );
         }

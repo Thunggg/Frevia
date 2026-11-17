@@ -110,6 +110,9 @@ export class PaymentRepository {
       });
       if (!contract) return null;
 
+      const fee =
+        Number(contract.clientPlatformFee) ||
+        Math.round(Number(contract.totalAmount) * 0.03 * 100) / 100;
       const updatedContract =
         contract.status === ContractStatus.AWAITING_PAYMENT
           ? await tx.contract.update({
@@ -118,13 +121,20 @@ export class PaymentRepository {
                 status: ContractStatus.PENDING_SIGN,
                 holdPaymentIntentId: paymentIntentId,
                 holdMilestoneIds: milestoneIds,
+                clientPlatformFee: fee,
+                platformFee: fee,
               },
             })
           : contract;
 
-      const existingTx = await tx.transaction.findUnique({
-        where: { stripePaymentIntentId: paymentIntentId },
-      });
+      const existingTx =
+        (await tx.transaction.findUnique({
+          where: { stripePaymentIntentId: paymentIntentId },
+        })) ||
+        (await tx.transaction.findFirst({
+          where: { contractId, type: TransactionType.ESCROW_DEPOSIT },
+          orderBy: { createdAt: 'desc' },
+        }));
       if (existingTx) {
         const prevMeta =
           (existingTx.metadata as Record<string, unknown> | null) ?? {};

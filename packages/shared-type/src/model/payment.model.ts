@@ -202,6 +202,7 @@ export type SyncPaymentIntentResponseType = z.infer<
 export const CreateContractHoldBodySchema = z.object({
   milestoneIds: z.array(z.coerce.number().int().positive()).min(1),
   paymentMethodId: z.string().min(1).optional(),
+  returnUrl: z.string().url().optional(),
 });
 export type CreateContractHoldBodyType = z.infer<
   typeof CreateContractHoldBodySchema
@@ -217,6 +218,8 @@ export const CreateContractHoldResponseSchema = z.object({
   milestoneIds: z.array(z.number()),
   status: z.string().optional(),
   authorized: z.boolean().optional(),
+  checkoutUrl: z.string().url().optional(),
+  sessionId: z.string().optional(),
 });
 export type CreateContractHoldResponseType = z.infer<
   typeof CreateContractHoldResponseSchema

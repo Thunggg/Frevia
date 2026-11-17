@@ -1,5 +1,6 @@
 "use client";
 
+import { useMemo } from "react";
 import { useTranslations } from "next-intl";
 import {
   CheckCircle2,
@@ -112,6 +113,63 @@ export function ContractActionDialogs({
   const t = useTranslations("contractDetail");
   const tCommon = useTranslations("common");
   const totalContractAmount = contract.totalAmount;
+
+  const fundedMilestones = useMemo(
+    () =>
+      (contract.milestones ?? []).filter(
+        (m) => (m.paymentStatus || "PENDING") === "FUNDED",
+      ),
+    [contract.milestones],
+  );
+
+  const inProgressFundedMilestones = useMemo(
+    () =>
+      fundedMilestones.filter(
+        (m) =>
+          m.status === "IN_PROGRESS" ||
+          m.status === "CHANGES_REQUESTED" ||
+          m.status === "SUBMITTED",
+      ),
+    [fundedMilestones],
+  );
+
+  const unstartedFundedMilestones = useMemo(
+    () =>
+      fundedMilestones.filter(
+        (m) =>
+          m.status !== "IN_PROGRESS" &&
+          m.status !== "CHANGES_REQUESTED" &&
+          m.status !== "SUBMITTED",
+      ),
+    [fundedMilestones],
+  );
+
+  const inProgressTotal = useMemo(
+    () =>
+      inProgressFundedMilestones.reduce(
+        (sum, m) => sum + Number(m.amount || 0),
+        0,
+      ),
+    [inProgressFundedMilestones],
+  );
+
+  const unstartedTotal = useMemo(
+    () =>
+      unstartedFundedMilestones.reduce(
+        (sum, m) => sum + Number(m.amount || 0),
+        0,
+      ),
+    [unstartedFundedMilestones],
+  );
+
+  const allFundedTotal = useMemo(
+    () =>
+      fundedMilestones.reduce(
+        (sum, m) => sum + Number(m.amount || 0),
+        0,
+      ),
+    [fundedMilestones],
+  );
 
   return (
     <>
@@ -249,14 +307,61 @@ export function ContractActionDialogs({
 
       {/* Dialog: Confirm Cancel Contract */}
       <AlertDialog open={confirmCancel} onOpenChange={onConfirmCancelChange}>
-        <AlertDialogContent className="max-w-sm rounded-[24px] border border-border bg-background p-5 shadow-2xl font-sans">
+        <AlertDialogContent className="max-w-md rounded-[24px] border border-border bg-background p-5 shadow-2xl font-sans">
           <div className="flex flex-col gap-3">
             <AlertDialogTitle className="text-base font-bold text-foreground">
               {t("cancelContract")}
             </AlertDialogTitle>
-            <AlertDialogDescription className="text-xs text-muted-foreground leading-relaxed">
-              {t("cancelHint")}
-            </AlertDialogDescription>
+
+            {isFreelancer ? (
+              <div className="text-xs text-muted-foreground leading-relaxed space-y-2">
+                <p>Are you sure you want to cancel this contract?</p>
+                {fundedMilestones.length > 0 && (
+                  <div className="rounded-xl border border-amber-500/20 bg-amber-500/5 p-3 text-amber-700 dark:text-amber-400">
+                    <p className="font-semibold mb-0.5">Escrow Refund Notice:</p>
+                    <p>
+                      All funded escrow balance ({money(allFundedTotal)}) will be 100% refunded to the client, including any milestone you are currently working on.
+                    </p>
+                  </div>
+                )}
+              </div>
+            ) : contract.status === "ACTIVE" && fundedMilestones.length > 0 ? (
+              <div className="text-xs text-muted-foreground leading-relaxed space-y-2.5">
+                <p>
+                  Review how funded escrow amounts will be settled upon cancellation:
+                </p>
+                <div className="rounded-xl border border-border bg-muted/30 p-3 space-y-2">
+                  {inProgressFundedMilestones.length > 0 && (
+                    <div className="flex justify-between items-center text-xs">
+                      <span className="text-foreground">
+                        Work in progress (released to {freelancerName}):
+                      </span>
+                      <span className="font-semibold text-emerald-600 dark:text-emerald-400 font-mono">
+                        {money(inProgressTotal)}
+                      </span>
+                    </div>
+                  )}
+                  {unstartedFundedMilestones.length > 0 && (
+                    <div className="flex justify-between items-center text-xs">
+                      <span className="text-foreground">
+                        Unstarted milestones (refunded to you):
+                      </span>
+                      <span className="font-semibold text-[#0069D3] font-mono">
+                        {money(unstartedTotal)}
+                      </span>
+                    </div>
+                  )}
+                </div>
+                <p className="text-[11px] text-muted-foreground">
+                  If you are unsatisfied with the submitted work, please open a Dispute instead of cancelling.
+                </p>
+              </div>
+            ) : (
+              <AlertDialogDescription className="text-xs text-muted-foreground leading-relaxed">
+                {t("cancelHint")}
+              </AlertDialogDescription>
+            )}
+
             <div className="mt-2 flex flex-col gap-2">
               <Button
                 disabled={isCancelling}
