@@ -1,0 +1,363 @@
+% Nhuy -- canonical use-case identifiers, 08/11/2026
+\paragraph{Contract Review Management}
+\Needspace{8\baselineskip}
+\subparagraph{UC-39.01 View Review List}
+
+{\singlespacing
+\setlength{\extrarowheight}{3pt}
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+\endfirsthead
+\hline
+\endhead
+\hline\endfoot
+\endlastfoot
+UC ID and Name & \multicolumn{3}{L{11.1cm}|}{UC-39.01 View Review List} \\ \hline
+Created By: & \multicolumn{3}{L{11.1cm}|}{Nguyen Lu Nhat Huy; updated 08/11/2026} \\ \hline
+Primary Actor: & \multicolumn{3}{L{11.1cm}|}{Client, Freelancer} \\ \hline
+Trigger: & \multicolumn{3}{L{11.1cm}|}{The actor selects View Review List from /client/contracts/[slug]; /freelancer/contracts/[slug].} \\ \hline
+Description: & \multicolumn{3}{L{11.1cm}|}{Retrieve reviews and active responses for a contract after verifying participant access.} \\ \hline
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{The actor is authenticated and has the required role and resource permission. The authenticated user is an authorized participant in the referenced contract.} \\ \hline
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{Authorized data is displayed without modifying the underlying records.} \\ \hline
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{1. The actor opens /client/contracts/[slug]; /freelancer/contracts/[slug] and selects View Review List. \newline 2. The application submits the selected identifier or list filters. \newline 3. The API checks authentication where required, authorization, resource existence and input validity. \newline 4. Retrieve reviews and active responses for a contract after verifying participant access. \newline 5. The screen renders the response, or an explicit empty state for a valid empty collection.} \\ \hline
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{No matching records: display an empty state. A failed request offers Retry.} \\ \hline
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{\textbf{E1:} Missing or expired authentication, or insufficient role/ownership: deny the operation and do not change data. \newline \textbf{E2:} Missing, deleted or inaccessible resource: show a not-found result. \newline \textbf{A1:} A valid empty collection displays an empty state; it must not be treated as a missing account. \newline \textbf{E4:} Database, network or storage failure: report a retryable error; do not report success or terminate the API process.} \\ \hline
+Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{As required by the actor workflow.} \\ \hline
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{\textbf{BR-NH-39-01:} Only contract participants can list or view contract reviews. \newline \textbf{BR-NH-39-02:} A review can be created only after the contract is COMPLETED, for the other party. \newline \textbf{BR-NH-39-03:} The pair (contractId, reviewerId) is unique. \newline \textbf{BR-NH-39-04:} Only the review author edits or soft-deletes their review. \newline \textbf{BR-NH-39-05:} An update must contain at least one accepted field. The current schema does not require a non-empty comment or an integer overall rating.} \\ \hline
+Other Information: & \multicolumn{3}{L{11.1cm}|}{{\small\texttt{GET /\allowbreak{}reviews/\allowbreak{}contracts/\allowbreak{}:contractId}}. Persistent entities: Contract, Review, Notification.} \\ \hline
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{This specification defines the required behavior; implementation gaps are recorded separately and do not imply that every requirement has passed acceptance.} \\ \hline
+\end{longtable}
+}
+
+\Needspace{8\baselineskip}
+\subparagraph{UC-39.02 View Review Detail}
+
+{\singlespacing
+\setlength{\extrarowheight}{3pt}
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+\endfirsthead
+\hline
+\endhead
+\hline\endfoot
+\endlastfoot
+UC ID and Name & \multicolumn{3}{L{11.1cm}|}{UC-39.02 View Review Detail} \\ \hline
+Created By: & \multicolumn{3}{L{11.1cm}|}{Nguyen Lu Nhat Huy; updated 08/11/2026} \\ \hline
+Primary Actor: & \multicolumn{3}{L{11.1cm}|}{Client, Freelancer} \\ \hline
+Trigger: & \multicolumn{3}{L{11.1cm}|}{The actor selects View Review Detail from /client/contracts/[slug]; /freelancer/contracts/[slug].} \\ \hline
+Description: & \multicolumn{3}{L{11.1cm}|}{Retrieve one review and response after checking contract participation.} \\ \hline
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{The actor is authenticated and has the required role and resource permission. The authenticated user is an authorized participant in the referenced contract.} \\ \hline
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{Authorized data is displayed without modifying the underlying records.} \\ \hline
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{1. The actor opens /client/contracts/[slug]; /freelancer/contracts/[slug] and selects View Review Detail. \newline 2. The application submits the selected identifier or list filters. \newline 3. The API checks authentication where required, authorization, resource existence and input validity. \newline 4. Retrieve one review and response after checking contract participation. \newline 5. The screen renders the response, or an explicit empty state for a valid empty collection.} \\ \hline
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{No matching records: display an empty state. A failed request offers Retry.} \\ \hline
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{\textbf{E1:} Missing or expired authentication, or insufficient role/ownership: deny the operation and do not change data. \newline \textbf{E2:} Missing, deleted or inaccessible resource: show a not-found result. \newline \textbf{A1:} A valid empty collection displays an empty state; it must not be treated as a missing account. \newline \textbf{E4:} Database, network or storage failure: report a retryable error; do not report success or terminate the API process.} \\ \hline
+Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{As required by the actor workflow.} \\ \hline
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{\textbf{BR-NH-39-01:} Only contract participants can list or view contract reviews. \newline \textbf{BR-NH-39-02:} A review can be created only after the contract is COMPLETED, for the other party. \newline \textbf{BR-NH-39-03:} The pair (contractId, reviewerId) is unique. \newline \textbf{BR-NH-39-04:} Only the review author edits or soft-deletes their review. \newline \textbf{BR-NH-39-05:} An update must contain at least one accepted field. The current schema does not require a non-empty comment or an integer overall rating.} \\ \hline
+Other Information: & \multicolumn{3}{L{11.1cm}|}{{\small\texttt{GET /\allowbreak{}reviews/\allowbreak{}:reviewId}}. Persistent entities: Contract, Review, Notification.} \\ \hline
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{This specification defines the required behavior; implementation gaps are recorded separately and do not imply that every requirement has passed acceptance.} \\ \hline
+\end{longtable}
+}
+
+\Needspace{8\baselineskip}
+\subparagraph{UC-39.03 Write Review}
+
+{\singlespacing
+\setlength{\extrarowheight}{3pt}
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+\endfirsthead
+\hline
+\endhead
+\hline\endfoot
+\endlastfoot
+UC ID and Name & \multicolumn{3}{L{11.1cm}|}{UC-39.03 Write Review} \\ \hline
+Created By: & \multicolumn{3}{L{11.1cm}|}{Nguyen Lu Nhat Huy; updated 08/11/2026} \\ \hline
+Primary Actor: & \multicolumn{3}{L{11.1cm}|}{Client, Freelancer} \\ \hline
+Trigger: & \multicolumn{3}{L{11.1cm}|}{The actor selects Write Review from /client/contracts/[slug]; /freelancer/contracts/[slug].} \\ \hline
+Description: & \multicolumn{3}{L{11.1cm}|}{Create one review of the other participant in a completed contract and notify that participant.} \\ \hline
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{The actor is authenticated and has the required role and resource permission. The authenticated user is an authorized participant in the referenced contract.} \\ \hline
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{Create one review of the other participant in a completed contract and notify that participant.} \\ \hline
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{1. The actor opens /client/contracts/[slug]; /freelancer/contracts/[slug] and selects Write Review. \newline 2. The application presents the current values or action confirmation; the actor supplies the required data and submits. \newline 3. The API checks authentication where required, authorization, resource existence and input validity. \newline 4. Create one review of the other participant in a completed contract and notify that participant. \newline 5. After the transaction succeeds, the screen displays the result and reloads affected data; a pending revision is labeled as awaiting review.} \\ \hline
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{Cancel before submission: discard unsaved input or close the confirmation without changing stored data.} \\ \hline
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{\textbf{E1:} Missing or expired authentication, or insufficient role/ownership: deny the operation and do not change data. \newline \textbf{E2:} Missing, deleted or inaccessible resource: show a not-found result. \newline \textbf{E3:} Invalid input, duplicate relationship, or invalid workflow state: explain the problem and retain the entered values. \newline \textbf{E4:} Database, network or storage failure: report a retryable error; do not report success or terminate the API process.} \\ \hline
+Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{As required by the actor workflow.} \\ \hline
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{\textbf{BR-NH-39-01:} Only contract participants can list or view contract reviews. \newline \textbf{BR-NH-39-02:} A review can be created only after the contract is COMPLETED, for the other party. \newline \textbf{BR-NH-39-03:} The pair (contractId, reviewerId) is unique. \newline \textbf{BR-NH-39-04:} Only the review author edits or soft-deletes their review. \newline \textbf{BR-NH-39-05:} An update must contain at least one accepted field. The current schema does not require a non-empty comment or an integer overall rating.} \\ \hline
+Other Information: & \multicolumn{3}{L{11.1cm}|}{{\small\texttt{POST /\allowbreak{}reviews/\allowbreak{}contracts/\allowbreak{}:contractId}}. Persistent entities: Contract, Review, Notification.} \\ \hline
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{This specification defines the required behavior; implementation gaps are recorded separately and do not imply that every requirement has passed acceptance.} \\ \hline
+\end{longtable}
+}
+
+\Needspace{8\baselineskip}
+\subparagraph{UC-39.04 Update Review}
+
+{\singlespacing
+\setlength{\extrarowheight}{3pt}
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+\endfirsthead
+\hline
+\endhead
+\hline\endfoot
+\endlastfoot
+UC ID and Name & \multicolumn{3}{L{11.1cm}|}{UC-39.04 Update Review} \\ \hline
+Created By: & \multicolumn{3}{L{11.1cm}|}{Nguyen Lu Nhat Huy; updated 08/11/2026} \\ \hline
+Primary Actor: & \multicolumn{3}{L{11.1cm}|}{Client, Freelancer} \\ \hline
+Trigger: & \multicolumn{3}{L{11.1cm}|}{The actor selects Update Review from /client/contracts/[slug]; /freelancer/contracts/[slug].} \\ \hline
+Description: & \multicolumn{3}{L{11.1cm}|}{Update accepted fields of an existing review authored by the current user.} \\ \hline
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{The actor is authenticated and has the required role and resource permission. The authenticated user is an authorized participant in the referenced contract.} \\ \hline
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{Update accepted fields of an existing review authored by the current user.} \\ \hline
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{1. The actor opens /client/contracts/[slug]; /freelancer/contracts/[slug] and selects Update Review. \newline 2. The application presents the current values or action confirmation; the actor supplies the required data and submits. \newline 3. The API checks authentication where required, authorization, resource existence and input validity. \newline 4. Update accepted fields of an existing review authored by the current user. \newline 5. After the transaction succeeds, the screen displays the result and reloads affected data; a pending revision is labeled as awaiting review.} \\ \hline
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{Cancel before submission: discard unsaved input or close the confirmation without changing stored data.} \\ \hline
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{\textbf{E1:} Missing or expired authentication, or insufficient role/ownership: deny the operation and do not change data. \newline \textbf{E2:} Missing, deleted or inaccessible resource: show a not-found result. \newline \textbf{E3:} Invalid input, duplicate relationship, or invalid workflow state: explain the problem and retain the entered values. \newline \textbf{E4:} Database, network or storage failure: report a retryable error; do not report success or terminate the API process.} \\ \hline
+Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{As required by the actor workflow.} \\ \hline
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{\textbf{BR-NH-39-01:} Only contract participants can list or view contract reviews. \newline \textbf{BR-NH-39-02:} A review can be created only after the contract is COMPLETED, for the other party. \newline \textbf{BR-NH-39-03:} The pair (contractId, reviewerId) is unique. \newline \textbf{BR-NH-39-04:} Only the review author edits or soft-deletes their review. \newline \textbf{BR-NH-39-05:} An update must contain at least one accepted field. The current schema does not require a non-empty comment or an integer overall rating.} \\ \hline
+Other Information: & \multicolumn{3}{L{11.1cm}|}{{\small\texttt{PATCH /\allowbreak{}reviews/\allowbreak{}:reviewId}}. Persistent entities: Contract, Review, Notification.} \\ \hline
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{This specification defines the required behavior; implementation gaps are recorded separately and do not imply that every requirement has passed acceptance.} \\ \hline
+\end{longtable}
+}
+
+\Needspace{8\baselineskip}
+\subparagraph{UC-39.05 Delete Review}
+
+{\singlespacing
+\setlength{\extrarowheight}{3pt}
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+\endfirsthead
+\hline
+\endhead
+\hline\endfoot
+\endlastfoot
+UC ID and Name & \multicolumn{3}{L{11.1cm}|}{UC-39.05 Delete Review} \\ \hline
+Created By: & \multicolumn{3}{L{11.1cm}|}{Nguyen Lu Nhat Huy; updated 08/11/2026} \\ \hline
+Primary Actor: & \multicolumn{3}{L{11.1cm}|}{Client, Freelancer} \\ \hline
+Trigger: & \multicolumn{3}{L{11.1cm}|}{The actor selects Delete Review from /client/contracts/[slug]; /freelancer/contracts/[slug].} \\ \hline
+Description: & \multicolumn{3}{L{11.1cm}|}{Soft-delete the owned review so it no longer appears as active feedback.} \\ \hline
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{The actor is authenticated and has the required role and resource permission. The authenticated user is an authorized participant in the referenced contract.} \\ \hline
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{Soft-delete the owned review so it no longer appears as active feedback.} \\ \hline
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{1. The actor opens /client/contracts/[slug]; /freelancer/contracts/[slug] and selects Delete Review. \newline 2. The application presents the current values or action confirmation; the actor supplies the required data and submits. \newline 3. The API checks authentication where required, authorization, resource existence and input validity. \newline 4. Soft-delete the owned review so it no longer appears as active feedback. \newline 5. After the transaction succeeds, the screen displays the result and reloads affected data; a pending revision is labeled as awaiting review.} \\ \hline
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{Cancel before submission: discard unsaved input or close the confirmation without changing stored data.} \\ \hline
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{\textbf{E1:} Missing or expired authentication, or insufficient role/ownership: deny the operation and do not change data. \newline \textbf{E2:} Missing, deleted or inaccessible resource: show a not-found result. \newline \textbf{E3:} Invalid input, duplicate relationship, or invalid workflow state: explain the problem and retain the entered values. \newline \textbf{E4:} Database, network or storage failure: report a retryable error; do not report success or terminate the API process.} \\ \hline
+Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{As required by the actor workflow.} \\ \hline
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{\textbf{BR-NH-39-01:} Only contract participants can list or view contract reviews. \newline \textbf{BR-NH-39-02:} A review can be created only after the contract is COMPLETED, for the other party. \newline \textbf{BR-NH-39-03:} The pair (contractId, reviewerId) is unique. \newline \textbf{BR-NH-39-04:} Only the review author edits or soft-deletes their review. \newline \textbf{BR-NH-39-05:} An update must contain at least one accepted field. The current schema does not require a non-empty comment or an integer overall rating.} \\ \hline
+Other Information: & \multicolumn{3}{L{11.1cm}|}{{\small\texttt{DELETE /\allowbreak{}reviews/\allowbreak{}:reviewId}}. Persistent entities: Contract, Review, Notification.} \\ \hline
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{This specification defines the required behavior; implementation gaps are recorded separately and do not imply that every requirement has passed acceptance.} \\ \hline
+\end{longtable}
+}
+
+\paragraph{Review Response Management}
+\Needspace{8\baselineskip}
+\subparagraph{UC-40.01 Respond to Review}
+
+{\singlespacing
+\setlength{\extrarowheight}{3pt}
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+\endfirsthead
+\hline
+\endhead
+\hline\endfoot
+\endlastfoot
+UC ID and Name & \multicolumn{3}{L{11.1cm}|}{UC-40.01 Respond to Review} \\ \hline
+Created By: & \multicolumn{3}{L{11.1cm}|}{Nguyen Lu Nhat Huy; updated 08/11/2026} \\ \hline
+Primary Actor: & \multicolumn{3}{L{11.1cm}|}{Client, Freelancer} \\ \hline
+Trigger: & \multicolumn{3}{L{11.1cm}|}{The actor selects Respond to Review from Contract Reviews section.} \\ \hline
+Description: & \multicolumn{3}{L{11.1cm}|}{Create an active response from the reviewee and notify the review author.} \\ \hline
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{The actor is authenticated and has the required role and resource permission. The authenticated user is an authorized participant in the referenced contract.} \\ \hline
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{Create an active response from the reviewee and notify the review author.} \\ \hline
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{1. The actor opens Contract Reviews section and selects Respond to Review. \newline 2. The application presents the current values or action confirmation; the actor supplies the required data and submits. \newline 3. The API checks authentication where required, authorization, resource existence and input validity. \newline 4. Create an active response from the reviewee and notify the review author. \newline 5. After the transaction succeeds, the screen displays the result and reloads affected data; a pending revision is labeled as awaiting review.} \\ \hline
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{Cancel before submission: discard unsaved input or close the confirmation without changing stored data.} \\ \hline
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{\textbf{E1:} Missing or expired authentication, or insufficient role/ownership: deny the operation and do not change data. \newline \textbf{E2:} Missing, deleted or inaccessible resource: show a not-found result. \newline \textbf{E3:} Invalid input, duplicate relationship, or invalid workflow state: explain the problem and retain the entered values. \newline \textbf{E4:} Database, network or storage failure: report a retryable error; do not report success or terminate the API process.} \\ \hline
+Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{As required by the actor workflow.} \\ \hline
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{\textbf{BR-NH-40-01:} Only the user being reviewed may respond. \newline \textbf{BR-NH-40-02:} There is at most one active response per review. \newline \textbf{BR-NH-40-03:} Only the response author edits or soft-deletes it. \newline \textbf{BR-NH-40-04:} Soft-deleted responses must not be rendered as active feedback.} \\ \hline
+Other Information: & \multicolumn{3}{L{11.1cm}|}{{\small\texttt{POST /\allowbreak{}reviews/\allowbreak{}:reviewId/\allowbreak{}response}}. Persistent entities: Review, ReviewResponse, Notification.} \\ \hline
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{This specification defines the required behavior; implementation gaps are recorded separately and do not imply that every requirement has passed acceptance.} \\ \hline
+\end{longtable}
+}
+
+\Needspace{8\baselineskip}
+\subparagraph{UC-40.02 Update Review Response}
+
+{\singlespacing
+\setlength{\extrarowheight}{3pt}
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+\endfirsthead
+\hline
+\endhead
+\hline\endfoot
+\endlastfoot
+UC ID and Name & \multicolumn{3}{L{11.1cm}|}{UC-40.02 Update Review Response} \\ \hline
+Created By: & \multicolumn{3}{L{11.1cm}|}{Nguyen Lu Nhat Huy; updated 08/11/2026} \\ \hline
+Primary Actor: & \multicolumn{3}{L{11.1cm}|}{Client, Freelancer} \\ \hline
+Trigger: & \multicolumn{3}{L{11.1cm}|}{The actor selects Update Review Response from Contract Reviews section.} \\ \hline
+Description: & \multicolumn{3}{L{11.1cm}|}{Save validated text in the current user response.} \\ \hline
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{The actor is authenticated and has the required role and resource permission. The authenticated user is an authorized participant in the referenced contract.} \\ \hline
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{Save validated text in the current user response.} \\ \hline
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{1. The actor opens Contract Reviews section and selects Update Review Response. \newline 2. The application presents the current values or action confirmation; the actor supplies the required data and submits. \newline 3. The API checks authentication where required, authorization, resource existence and input validity. \newline 4. Save validated text in the current user response. \newline 5. After the transaction succeeds, the screen displays the result and reloads affected data; a pending revision is labeled as awaiting review.} \\ \hline
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{Cancel before submission: discard unsaved input or close the confirmation without changing stored data.} \\ \hline
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{\textbf{E1:} Missing or expired authentication, or insufficient role/ownership: deny the operation and do not change data. \newline \textbf{E2:} Missing, deleted or inaccessible resource: show a not-found result. \newline \textbf{E3:} Invalid input, duplicate relationship, or invalid workflow state: explain the problem and retain the entered values. \newline \textbf{E4:} Database, network or storage failure: report a retryable error; do not report success or terminate the API process.} \\ \hline
+Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{As required by the actor workflow.} \\ \hline
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{\textbf{BR-NH-40-01:} Only the user being reviewed may respond. \newline \textbf{BR-NH-40-02:} There is at most one active response per review. \newline \textbf{BR-NH-40-03:} Only the response author edits or soft-deletes it. \newline \textbf{BR-NH-40-04:} Soft-deleted responses must not be rendered as active feedback.} \\ \hline
+Other Information: & \multicolumn{3}{L{11.1cm}|}{{\small\texttt{PATCH /\allowbreak{}reviews/\allowbreak{}responses/\allowbreak{}:responseId}}. Persistent entities: Review, ReviewResponse, Notification.} \\ \hline
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{This specification defines the required behavior; implementation gaps are recorded separately and do not imply that every requirement has passed acceptance.} \\ \hline
+\end{longtable}
+}
+
+\Needspace{8\baselineskip}
+\subparagraph{UC-40.03 Delete Review Response}
+
+{\singlespacing
+\setlength{\extrarowheight}{3pt}
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+\endfirsthead
+\hline
+\endhead
+\hline\endfoot
+\endlastfoot
+UC ID and Name & \multicolumn{3}{L{11.1cm}|}{UC-40.03 Delete Review Response} \\ \hline
+Created By: & \multicolumn{3}{L{11.1cm}|}{Nguyen Lu Nhat Huy; updated 08/11/2026} \\ \hline
+Primary Actor: & \multicolumn{3}{L{11.1cm}|}{Client, Freelancer} \\ \hline
+Trigger: & \multicolumn{3}{L{11.1cm}|}{The actor selects Delete Review Response from Contract Reviews section.} \\ \hline
+Description: & \multicolumn{3}{L{11.1cm}|}{Soft-delete the response authored by the current user.} \\ \hline
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{The actor is authenticated and has the required role and resource permission. The authenticated user is an authorized participant in the referenced contract.} \\ \hline
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{Soft-delete the response authored by the current user.} \\ \hline
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{1. The actor opens Contract Reviews section and selects Delete Review Response. \newline 2. The application presents the current values or action confirmation; the actor supplies the required data and submits. \newline 3. The API checks authentication where required, authorization, resource existence and input validity. \newline 4. Soft-delete the response authored by the current user. \newline 5. After the transaction succeeds, the screen displays the result and reloads affected data; a pending revision is labeled as awaiting review.} \\ \hline
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{Cancel before submission: discard unsaved input or close the confirmation without changing stored data.} \\ \hline
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{\textbf{E1:} Missing or expired authentication, or insufficient role/ownership: deny the operation and do not change data. \newline \textbf{E2:} Missing, deleted or inaccessible resource: show a not-found result. \newline \textbf{E3:} Invalid input, duplicate relationship, or invalid workflow state: explain the problem and retain the entered values. \newline \textbf{E4:} Database, network or storage failure: report a retryable error; do not report success or terminate the API process.} \\ \hline
+Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{As required by the actor workflow.} \\ \hline
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{\textbf{BR-NH-40-01:} Only the user being reviewed may respond. \newline \textbf{BR-NH-40-02:} There is at most one active response per review. \newline \textbf{BR-NH-40-03:} Only the response author edits or soft-deletes it. \newline \textbf{BR-NH-40-04:} Soft-deleted responses must not be rendered as active feedback.} \\ \hline
+Other Information: & \multicolumn{3}{L{11.1cm}|}{{\small\texttt{DELETE /\allowbreak{}reviews/\allowbreak{}responses/\allowbreak{}:responseId}}. Persistent entities: Review, ReviewResponse, Notification.} \\ \hline
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{This specification defines the required behavior; implementation gaps are recorded separately and do not imply that every requirement has passed acceptance.} \\ \hline
+\end{longtable}
+}
+
+\paragraph{General Account Profile}
+\Needspace{8\baselineskip}
+\subparagraph{UC-41.01 View Profile}
+
+{\singlespacing
+\setlength{\extrarowheight}{3pt}
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+\endfirsthead
+\hline
+\endhead
+\hline\endfoot
+\endlastfoot
+UC ID and Name & \multicolumn{3}{L{11.1cm}|}{UC-41.01 View Profile} \\ \hline
+Created By: & \multicolumn{3}{L{11.1cm}|}{Nguyen Lu Nhat Huy; updated 08/11/2026} \\ \hline
+Primary Actor: & \multicolumn{3}{L{11.1cm}|}{Client, Freelancer, Expert, Admin} \\ \hline
+Trigger: & \multicolumn{3}{L{11.1cm}|}{The actor selects View Profile from /account-profile (General Settings).} \\ \hline
+Description: & \multicolumn{3}{L{11.1cm}|}{Read the authenticated account profile, email and assigned roles.} \\ \hline
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{The actor is authenticated and has the required role and resource permission. The relevant database and dependent services are available.} \\ \hline
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{Authorized data is displayed without modifying the underlying records.} \\ \hline
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{1. The actor opens /account-profile (General Settings) and selects View Profile. \newline 2. The application submits the selected identifier or list filters. \newline 3. The API checks authentication where required, authorization, resource existence and input validity. \newline 4. Read the authenticated account profile, email and assigned roles. \newline 5. The screen renders the response, or an explicit empty state for a valid empty collection.} \\ \hline
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{No matching records: display an empty state. A failed request offers Retry.} \\ \hline
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{\textbf{E1:} Missing or expired authentication, or insufficient role/ownership: deny the operation and do not change data. \newline \textbf{E2:} Missing, deleted or inaccessible resource: show a not-found result. \newline \textbf{A1:} A valid empty collection displays an empty state; it must not be treated as a missing account. \newline \textbf{E4:} Database, network or storage failure: report a retryable error; do not report success or terminate the API process.} \\ \hline
+Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{As required by the actor workflow.} \\ \hline
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{\textbf{BR-NH-41-01:} The server resolves the account from the session; users cannot edit another account via body IDs. \newline \textbf{BR-NH-41-02:} Verify the current password before hashing and storing a replacement; do not log credentials. \newline \textbf{BR-NH-41-03:} Apply the profile revision policy to general profile changes. \newline \textbf{BR-NH-41-04:} Avatar files must be validated; missing stored files return 404 without terminating the API process.} \\ \hline
+Other Information: & \multicolumn{3}{L{11.1cm}|}{{\small\texttt{GET /\allowbreak{}account-profile}}. Persistent entities: User, Profile, ProfileRevision.} \\ \hline
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{This specification defines the required behavior; implementation gaps are recorded separately and do not imply that every requirement has passed acceptance.} \\ \hline
+\end{longtable}
+}
+
+\Needspace{8\baselineskip}
+\subparagraph{UC-41.02 Update Profile}
+
+{\singlespacing
+\setlength{\extrarowheight}{3pt}
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+\endfirsthead
+\hline
+\endhead
+\hline\endfoot
+\endlastfoot
+UC ID and Name & \multicolumn{3}{L{11.1cm}|}{UC-41.02 Update Profile} \\ \hline
+Created By: & \multicolumn{3}{L{11.1cm}|}{Nguyen Lu Nhat Huy; updated 08/11/2026} \\ \hline
+Primary Actor: & \multicolumn{3}{L{11.1cm}|}{Client, Freelancer, Expert, Admin} \\ \hline
+Trigger: & \multicolumn{3}{L{11.1cm}|}{The actor selects Update Profile from /account-profile (General Settings).} \\ \hline
+Description: & \multicolumn{3}{L{11.1cm}|}{Save or submit general display name and biography according to profile strength.} \\ \hline
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{The actor is authenticated and has the required role and resource permission. The relevant database and dependent services are available.} \\ \hline
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{Save or submit general display name and biography according to profile strength.} \\ \hline
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{1. The actor opens /account-profile (General Settings) and selects Update Profile. \newline 2. The application presents the current values or action confirmation; the actor supplies the required data and submits. \newline 3. The API checks authentication where required, authorization, resource existence and input validity. \newline 4. Save or submit general display name and biography according to profile strength. \newline 5. After the transaction succeeds, the screen displays the result and reloads affected data; a pending revision is labeled as awaiting review.} \\ \hline
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{Cancel before submission: discard unsaved input or close the confirmation without changing stored data.} \\ \hline
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{\textbf{E1:} Missing or expired authentication, or insufficient role/ownership: deny the operation and do not change data. \newline \textbf{E2:} Missing, deleted or inaccessible resource: show a not-found result. \newline \textbf{E3:} Invalid input, duplicate relationship, or invalid workflow state: explain the problem and retain the entered values. \newline \textbf{E4:} Database, network or storage failure: report a retryable error; do not report success or terminate the API process.} \\ \hline
+Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{As required by the actor workflow.} \\ \hline
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{\textbf{BR-NH-41-01:} The server resolves the account from the session; users cannot edit another account via body IDs. \newline \textbf{BR-NH-41-02:} Verify the current password before hashing and storing a replacement; do not log credentials. \newline \textbf{BR-NH-41-03:} Apply the profile revision policy to general profile changes. \newline \textbf{BR-NH-41-04:} Avatar files must be validated; missing stored files return 404 without terminating the API process.} \\ \hline
+Other Information: & \multicolumn{3}{L{11.1cm}|}{{\small\texttt{PUT /\allowbreak{}account-profile}}. Persistent entities: User, Profile, ProfileRevision.} \\ \hline
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{This specification defines the required behavior; implementation gaps are recorded separately and do not imply that every requirement has passed acceptance.} \\ \hline
+\end{longtable}
+}
+
+\Needspace{8\baselineskip}
+\subparagraph{UC-41.03 Change Password}
+
+{\singlespacing
+\setlength{\extrarowheight}{3pt}
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+\endfirsthead
+\hline
+\endhead
+\hline\endfoot
+\endlastfoot
+UC ID and Name & \multicolumn{3}{L{11.1cm}|}{UC-41.03 Change Password} \\ \hline
+Created By: & \multicolumn{3}{L{11.1cm}|}{Nguyen Lu Nhat Huy; updated 08/11/2026} \\ \hline
+Primary Actor: & \multicolumn{3}{L{11.1cm}|}{Client, Freelancer, Expert, Admin} \\ \hline
+Trigger: & \multicolumn{3}{L{11.1cm}|}{The actor selects Change Password from /account-profile (General Settings).} \\ \hline
+Description: & \multicolumn{3}{L{11.1cm}|}{Verify the current credential, hash the confirmed replacement and update the password.} \\ \hline
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{The actor is authenticated and has the required role and resource permission. The relevant database and dependent services are available.} \\ \hline
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{Verify the current credential, hash the confirmed replacement and update the password.} \\ \hline
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{1. The actor opens /account-profile (General Settings) and selects Change Password. \newline 2. The application presents the current values or action confirmation; the actor supplies the required data and submits. \newline 3. The API checks authentication where required, authorization, resource existence and input validity. \newline 4. Verify the current credential, hash the confirmed replacement and update the password. \newline 5. After the transaction succeeds, the screen displays the result and reloads affected data; a pending revision is labeled as awaiting review.} \\ \hline
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{Cancel before submission: discard unsaved input or close the confirmation without changing stored data.} \\ \hline
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{\textbf{E1:} Missing or expired authentication, or insufficient role/ownership: deny the operation and do not change data. \newline \textbf{E2:} Missing, deleted or inaccessible resource: show a not-found result. \newline \textbf{E3:} Invalid input, duplicate relationship, or invalid workflow state: explain the problem and retain the entered values. \newline \textbf{E4:} Database, network or storage failure: report a retryable error; do not report success or terminate the API process.} \\ \hline
+Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{As required by the actor workflow.} \\ \hline
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{\textbf{BR-NH-41-01:} The server resolves the account from the session; users cannot edit another account via body IDs. \newline \textbf{BR-NH-41-02:} Verify the current password before hashing and storing a replacement; do not log credentials. \newline \textbf{BR-NH-41-03:} Apply the profile revision policy to general profile changes. \newline \textbf{BR-NH-41-04:} Avatar files must be validated; missing stored files return 404 without terminating the API process.} \\ \hline
+Other Information: & \multicolumn{3}{L{11.1cm}|}{{\small\texttt{PUT /\allowbreak{}account-profile/\allowbreak{}password}}. Persistent entities: User, Profile, ProfileRevision.} \\ \hline
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{This specification defines the required behavior; implementation gaps are recorded separately and do not imply that every requirement has passed acceptance.} \\ \hline
+\end{longtable}
+}
+
+\Needspace{8\baselineskip}
+\subparagraph{UC-41.04 Upload Avatar}
+
+{\singlespacing
+\setlength{\extrarowheight}{3pt}
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+\endfirsthead
+\hline
+\endhead
+\hline\endfoot
+\endlastfoot
+UC ID and Name & \multicolumn{3}{L{11.1cm}|}{UC-41.04 Upload Avatar} \\ \hline
+Created By: & \multicolumn{3}{L{11.1cm}|}{Nguyen Lu Nhat Huy; updated 08/11/2026} \\ \hline
+Primary Actor: & \multicolumn{3}{L{11.1cm}|}{Client, Freelancer, Expert, Admin} \\ \hline
+Trigger: & \multicolumn{3}{L{11.1cm}|}{The actor selects Upload Avatar from /account-profile (General Settings).} \\ \hline
+Description: & \multicolumn{3}{L{11.1cm}|}{Validate image content and size, store it, and update the owned avatar URL.} \\ \hline
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{The actor is authenticated and has the required role and resource permission. The relevant database and dependent services are available.} \\ \hline
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{Validate image content and size, store it, and update the owned avatar URL.} \\ \hline
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{1. The actor opens /account-profile (General Settings) and selects Upload Avatar. \newline 2. The application presents the current values or action confirmation; the actor supplies the required data and submits. \newline 3. The API checks authentication where required, authorization, resource existence and input validity. \newline 4. Validate image content and size, store it, and update the owned avatar URL. \newline 5. After the transaction succeeds, the screen displays the result and reloads affected data; a pending revision is labeled as awaiting review.} \\ \hline
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{Cancel before submission: discard unsaved input or close the confirmation without changing stored data.} \\ \hline
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{\textbf{E1:} Missing or expired authentication, or insufficient role/ownership: deny the operation and do not change data. \newline \textbf{E2:} Missing, deleted or inaccessible resource: show a not-found result. \newline \textbf{E3:} Invalid input, duplicate relationship, or invalid workflow state: explain the problem and retain the entered values. \newline \textbf{E4:} Database, network or storage failure: report a retryable error; do not report success or terminate the API process.} \\ \hline
+Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{As required by the actor workflow.} \\ \hline
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{\textbf{BR-NH-41-01:} The server resolves the account from the session; users cannot edit another account via body IDs. \newline \textbf{BR-NH-41-02:} Verify the current password before hashing and storing a replacement; do not log credentials. \newline \textbf{BR-NH-41-03:} Apply the profile revision policy to general profile changes. \newline \textbf{BR-NH-41-04:} Avatar files must be validated; missing stored files return 404 without terminating the API process.} \\ \hline
+Other Information: & \multicolumn{3}{L{11.1cm}|}{{\small\texttt{POST /\allowbreak{}account-profile/\allowbreak{}avatar}}. Persistent entities: User, Profile, ProfileRevision.} \\ \hline
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{This specification defines the required behavior; implementation gaps are recorded separately and do not imply that every requirement has passed acceptance.} \\ \hline
+\end{longtable}
+}
