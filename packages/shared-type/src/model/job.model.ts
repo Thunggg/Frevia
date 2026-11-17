@@ -256,7 +256,7 @@ export const ViewListJobFilterSchema = z
     skill: z
       .string()
       .trim()
-      .max(100)
+      .max(1000)
       .optional()
       .transform((value) => value || undefined),
 
@@ -264,7 +264,7 @@ export const ViewListJobFilterSchema = z
     category: z
       .string()
       .trim()
-      .max(120)
+      .max(1000)
       .optional()
       .transform((value) => value || undefined),
 

@@ -210,11 +210,7 @@ export class ManageJobService {
     };
   }
 
-  async searchSkills(roleName: string, search?: string) {
-    if (roleName !== RoleName.CLIENT) {
-      throw BookmarkJobOnlyForFreelancerException();
-    }
-
+  async searchSkills(_roleName: string, search?: string) {
     return this.manageJobRepository.searchSkills(search);
   }
 

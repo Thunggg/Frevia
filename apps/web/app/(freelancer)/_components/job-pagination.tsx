@@ -109,9 +109,6 @@ export function JobPagination({
                 <SelectItem value="20" className="rounded-md text-xs cursor-pointer">
                   20
                 </SelectItem>
-                <SelectItem value="50" className="rounded-md text-xs cursor-pointer">
-                  50
-                </SelectItem>
               </SelectContent>
             </Select>
           </div>
