@@ -143,16 +143,16 @@ export function ContractList({
 
         <div className="flex items-center gap-2">
           <div className="relative w-full sm:w-64">
-            <Search className="absolute left-3 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground" />
+            <Search className="absolute left-2.5 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground" />
             <input
               type="text"
               placeholder={t("searchPlaceholder")}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="
-                h-9 w-full rounded-full
+                h-8 w-full rounded-full
                 border border-border
-                bg-background py-1.5
+                bg-background py-1
                 pr-3 pl-8 text-xs
                 text-foreground
                 placeholder:text-muted-foreground/60

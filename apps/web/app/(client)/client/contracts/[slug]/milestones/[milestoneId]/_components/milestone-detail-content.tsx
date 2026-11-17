@@ -202,7 +202,7 @@ export function MilestoneDetailContent({
 
   if (!canViewDetail) {
     return (
-      <div className="space-y-4 max-w-5xl mx-auto font-sans pb-16">
+      <div className="space-y-4 mx-auto font-sans pb-16">
         <MilestoneDetailHeader
           contract={contract}
           milestone={milestone}
@@ -221,7 +221,7 @@ export function MilestoneDetailContent({
   }
 
   return (
-    <div className="space-y-4 max-w-5xl mx-auto font-sans pb-16">
+    <div className="space-y-4 mx-auto font-sans pb-16">
       {/* ── 1. Top Milestone Header (Clean, minimal, no bold/bg clutter) ── */}
       <MilestoneDetailHeader
         contract={contract}
