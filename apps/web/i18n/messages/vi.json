@@ -117,7 +117,8 @@
     "allCategories": "Tất cả danh mục",
     "toggleSidebar": "Mở/đóng thanh bên",
     "profileSettings": "Cài đặt tài khoản",
-    "sessions": "Phiên đăng nhập"
+    "sessions": "Phiên đăng nhập",
+    "aiOps": "Vận hành gợi ý AI"
   },
   "adminProfile": {
     "title": "Cài đặt tài khoản",
@@ -213,7 +214,9 @@
     "deletedToast": "Đã xoá vai trò \"{name}\"",
     "detailTitle": "Chi tiết vai trò",
     "detailLoadFailed": "Không thể tải chi tiết vai trò. Có thể vai trò không tồn tại.",
-    "backToRoles": "Quay lại danh sách vai trò"
+    "backToRoles": "Quay lại danh sách vai trò",
+    "accessDenied": "Bạn không có quyền xem danh sách vai trò.",
+    "detailAccessDenied": "Bạn không có quyền xem thông tin chi tiết vai trò này."
   },
   "adminPermissions": {
     "metaTitle": "Quyền hạn | Trang quản trị | Frevia",
@@ -230,13 +233,18 @@
     "detailLoadFailed": "Không thể tải chi tiết quyền. Có thể quyền không tồn tại.",
     "backToPermissions": "Quay lại danh sách quyền",
     "permissionName": "Tên chức năng",
-    "systemName": "Mã định danh hệ thống"
+    "systemName": "Mã định danh hệ thống",
+    "accessDenied": "Bạn không có quyền xem danh sách quyền hệ thống.",
+    "detailAccessDenied": "Bạn không có quyền xem thông tin chi tiết quyền này."
   },
   "adminBanners": {
     "metaTitle": "Banner | Bảng điều khiển quản trị | Frevia",
     "metaDescription": "Quản lý banner quảng cáo theo vị trí hiển thị.",
     "pageTitle": "Quản lý banner",
     "pageSubtitle": "Quản lý banner quảng cáo theo vị trí hiển thị (tổng {total} banner)",
+    "accessDenied": "Bạn không có quyền xem danh sách banner quảng cáo.",
+    "detailAccessDenied": "Bạn không có quyền xem chi tiết banner quảng cáo này.",
+    "noUploadPermission": "Bạn không có quyền tải ảnh lên.",
     "positions": {
       "globalHeader": "Dải đầu trang toàn cục",
       "homeHero": "Hero trang chủ",
@@ -303,6 +311,8 @@
     "lastUpdated": "Cập nhật lần cuối"
   },
   "adminCategories": {
+    "accessDenied": "Bạn không có quyền xem danh sách danh mục diễn đàn.",
+    "detailAccessDenied": "Bạn không có quyền xem chi tiết danh mục diễn đàn.",
     "metaTitle": "Danh mục | Bảng điều khiển quản trị | Frevia",
     "metaDescription": "Quản lý toàn bộ danh mục diễn đàn.",
     "pageTitle": "Quản lý danh mục",
@@ -413,7 +423,9 @@
     "detailDescriptionHeading": "Mô tả",
     "detailNoDescription": "Chưa có mô tả cho kỹ năng này.",
     "detailJobsUsing": "Việc làm đang dùng kỹ năng này",
-    "detailLastUpdated": "Cập nhật lần cuối"
+    "detailLastUpdated": "Cập nhật lần cuối",
+    "accessDenied": "Bạn không có quyền xem danh sách kỹ năng.",
+    "detailAccessDenied": "Bạn không có quyền xem chi tiết kỹ năng."
   },
   "adminJobCategories": {
     "metaTitle": "Danh mục công việc | Bảng điều khiển quản trị | Frevia",
@@ -494,13 +506,16 @@
     "jobsColSlug": "Slug",
     "jobsColStatus": "Trạng thái",
     "jobsColCreated": "Ngày tạo",
-    "jobStatusUnknown": "Không xác định"
+    "jobStatusUnknown": "Không xác định",
+    "accessDenied": "Bạn không có quyền xem danh sách danh mục công việc.",
+    "detailAccessDenied": "Bạn không có quyền xem chi tiết danh mục công việc."
   },
   "adminProfileRevisions": {
     "metaTitle": "Yêu cầu duyệt hồ sơ | Quản trị | Frevia",
     "metaDescription": "Duyệt các thay đổi hồ sơ đã gửi trước khi công khai.",
     "pageTitle": "Yêu cầu duyệt hồ sơ",
     "pageSubtitle": "Xem xét các tài khoản hiện có và thay đổi đã gửi khi độ mạnh hồ sơ dưới 20%.",
+    "accessDenied": "Bạn không có quyền xem danh sách hồ sơ chờ duyệt.",
     "searchPlaceholder": "Tìm theo email hoặc tên hiển thị...",
     "filterStatusLabel": "Trạng thái",
     "filterProfileTypeLabel": "Loại hồ sơ",
@@ -578,7 +593,10 @@
     "rejectingAction": "Đang từ chối...",
     "rejectAction": "Từ chối",
     "approvingAction": "Đang phê duyệt...",
-    "approveAction": "Phê duyệt"
+    "approveAction": "Phê duyệt",
+    "noFilePermissionTitle": "Giới hạn xem tài liệu",
+    "noFilePermissionDesc": "Bạn không có quyền xem file tài liệu xác thực.",
+    "accessDenied": "Bạn không có quyền xem danh sách yêu cầu xác thực danh tính."
   },
   "adminAssignRole": {
     "metaTitle": "Gán vai trò | Quản trị | Frevia",
@@ -608,9 +626,13 @@
     "scopeCommon": "Trang chủ & Dùng chung",
     "scopeHint": "Lọc theo khu vực sử dụng để dễ phân quyền hơn",
     "selectAllInScope": "Chọn tất cả",
-    "deselectAllInScope": "Bỏ chọn tất cả"
+    "deselectAllInScope": "Bỏ chọn tất cả",
+    "noPermissionToAssign": "Bạn không có quyền gán quyền cho vai trò."
   },
   "adminTrash": {
+    "accessDenied": "Bạn không có quyền xem thùng rác diễn đàn.",
+    "postsAccessDenied": "Bạn không có quyền xem bài viết đã xóa.",
+    "commentsAccessDenied": "Bạn không có quyền xem bình luận đã xóa.",
     "metaTitle": "Thùng rác | Quản trị | Frevia",
     "metaDescription": "Xem xét và khôi phục bài viết, bình luận đã xoá trên diễn đàn.",
     "pageTitle": "Thùng rác",
@@ -648,6 +670,7 @@
     "deletedCommentTitle": "Bình luận đã xoá"
   },
   "adminModeration": {
+    "accessDenied": "Bạn không có quyền xem bài viết chờ duyệt.",
     "metaTitle": "Kiểm duyệt | Quản trị | Frevia",
     "metaDescription": "Xem xét các bài viết diễn đàn đang chờ kiểm duyệt.",
     "pageTitle": "Kiểm duyệt",
@@ -690,6 +713,7 @@
     "deletePostLabel": "Xoá bài viết {title}"
   },
   "adminComments": {
+    "accessDenied": "Bạn không có quyền xem bình luận diễn đàn.",
     "metaTitle": "Quản lý bình luận | Quản trị | Frevia",
     "metaDescription": "Tìm kiếm và xoá bình luận diễn đàn.",
     "pageTitle": "Quản lý bình luận",
@@ -793,7 +817,8 @@
     "saveChanges": "Lưu thay đổi",
     "updateFailed": "Cập nhật người dùng thất bại",
     "updatedToast": "Đã cập nhật người dùng \"{email}\"",
-    "updatedBannedToast": "Đã cập nhật người dùng \"{email}\" · tài khoản đã bị khoá"
+    "updatedBannedToast": "Đã cập nhật người dùng \"{email}\" · tài khoản đã bị khoá",
+    "accessDenied": "Bạn không có quyền xem danh sách người dùng hệ thống."
   },
   "adminUserDetail": {
     "metaTitle": "Chi tiết người dùng | Trang quản trị | Frevia",
@@ -879,7 +904,8 @@
     "noPermissionsForRole": "Không có quyền cụ thể nào được gán trực tiếp cho vai trò này.",
     "colApiPath": "API / Đường dẫn",
     "colPermissionName": "Tên quyền",
-    "generalModule": "CHUNG"
+    "generalModule": "CHUNG",
+    "detailAccessDenied": "Bạn không có quyền xem thông tin chi tiết người dùng này."
   },
   "adminUserProfileEdit": {
     "triggerEdit": "Sửa hồ sơ",
@@ -1122,7 +1148,9 @@
     "deliveryDays": "{count, plural, other {# ngày}}",
     "empty": "Chưa có đề xuất nào",
     "emptyHint": "Tìm dự án phù hợp với kỹ năng của bạn và gửi đề xuất đầu tiên.",
-    "findWork": "Tìm việc"
+    "findWork": "Tìm việc",
+    "accessDenied": "Bạn không có quyền xem danh sách đề xuất của mình.",
+    "viewDetailAccessDenied": "Bạn không có quyền xem chi tiết đề xuất này."
   },
   "createContract": {
     "defaultJobTitle": "công việc này",
@@ -1356,7 +1384,17 @@
     "withdrawTitle": "Rút đề xuất này?",
     "withdrawHint": "Khách hàng sẽ không thể chấp nhận đề xuất này nữa.",
     "withdrawing": "Đang rút...",
-    "withdraw": "Rút đề xuất"
+    "withdraw": "Rút đề xuất",
+    "bidBelowMin": "Giá chào thầu đang thấp hơn ngân sách tối thiểu của công việc ({min})",
+    "bidAboveMax": "Giá chào thầu đang cao hơn ngân sách tối đa của công việc ({max})",
+    "deliveryExceedsDeadline": "Thời gian hoàn thành vượt quá hạn chót của công việc (còn tối đa {days} ngày)",
+    "deadlineHint": "Hạn chót công việc: {deadline} (còn tối đa {days} ngày)",
+    "budgetHint": "Ngân sách công việc: {range}",
+    "accessDenied": "Bạn không có quyền xem chi tiết đề xuất này.",
+    "noPermissionAction": "Bạn không có quyền thực hiện thao tác này.",
+    "noPermissionEditDraft": "Bạn không có quyền chỉnh sửa bản nháp đề xuất.",
+    "noPermissionSubmitDraft": "Bạn không có quyền nộp chính thức bản nháp đề xuất.",
+    "noPermissionWithdraw": "Bạn không có quyền rút lại đề xuất."
   },
   "milestoneStatus": {
     "DISPUTED": "Tranh chấp",
@@ -1416,6 +1454,11 @@
     "resubmit": "Gửi lại sản phẩm bàn giao"
   },
   "clientProposals": {
+    "hiringTypeSingleBadge": "Tuyển 1 người (Hire One)",
+    "hiringTypeMultipleBadge": "Tuyển nhiều người ({filled}/{required} vị trí)",
+    "jobFilledBadge": "Đã tuyển đủ ({filled}/{required})",
+    "jobClosedBadge": "Công việc đã đóng",
+    "jobFilledDisabled": "Đã tuyển đủ số lượng ứng viên",
     "noCoverLetter": "Chưa có thư giới thiệu.",
     "emptyFilteredTitle": "Không có đề xuất nào khớp",
     "emptyTitle": "Chưa có đề xuất nào được gửi",
@@ -1465,7 +1508,11 @@
     "appliedFor": "Ứng tuyển cho",
     "coverLetterHeading": "Thư giới thiệu",
     "hire": "Tuyển freelancer",
-    "notSelectedHint": "Freelancer sẽ được thông báo rằng đề xuất này không được chọn cho công việc này."
+    "notSelectedHint": "Freelancer sẽ được thông báo rằng đề xuất này không được chọn cho công việc này.",
+    "accessDenied": "Bạn không có quyền truy cập danh sách ứng viên của công việc này.",
+    "viewDetailAccessDenied": "Bạn không có quyền xem chi tiết đề xuất này.",
+    "noPermissionAction": "Bạn không có quyền thực hiện thao tác này.",
+    "backToJob": "Quay lại chi tiết công việc"
   },
   "contractDetail": {
     "startedWork": "Đã bắt đầu thực hiện cột mốc \"{title}\"!",
@@ -1826,7 +1873,9 @@
     "send": "Gửi tin nhắn"
   },
   "postJob": {
-    "breadcrumb": "Đăng tin tuyển dụng"
+    "breadcrumb": "Đăng tin tuyển dụng",
+    "accessDenied": "Bạn không có quyền đăng tin tuyển dụng mới.",
+    "backToJobs": "Quay lại danh sách việc làm"
   },
   "jobDetailClient": {
     "notSet": "Chưa đặt",
@@ -1843,11 +1892,14 @@
     "positionsFilled": "Đã tuyển {filled}/{required}",
     "proposals": "Đề xuất",
     "checkProposals": "Xem đề xuất",
-    "requiredSkills": "Kỹ năng yêu cầu"
+    "requiredSkills": "Kỹ năng yêu cầu",
+    "accessDenied": "Bạn không có quyền xem thông tin chi tiết việc làm này.",
+    "backToJobs": "Quay lại danh sách việc làm"
   },
   "jobsList": {
     "allJobs": "Tất cả việc làm",
     "moreOptions": "Thêm tuỳ chọn",
+    "viewDetail": "Xem chi tiết",
     "edit": "Sửa",
     "delete": "Xoá",
     "budgetLine": "{min} – {max} ({type})",
@@ -1866,6 +1918,10 @@
     "deleteJob": "Xoá việc làm",
     "cancel": "Huỷ",
     "publish": "Đăng tin",
+    "publishConfirmTitle": "Xác nhận đăng tin tuyển dụng",
+    "publishConfirmDesc": "Bạn có chắc chắn muốn đăng tin tuyển dụng này? Sau khi đăng, công việc sẽ chuyển sang trạng thái Đang mở (OPEN) và các freelancer có thể tìm thấy để nộp đề xuất.",
+    "confirmPublish": "Đăng tin ngay",
+    "publishing": "Đang đăng tin...",
     "published": "Đăng tin tuyển dụng thành công",
     "publishFailed": "Không thể đăng tin",
     "close": "Đóng tin",
@@ -1873,7 +1929,9 @@
     "closeFailed": "Không thể đóng tin",
     "reopen": "Mở lại",
     "reopened": "Đã mở lại tin tuyển dụng",
-    "reopenFailed": "Không thể mở lại tin"
+    "reopenFailed": "Không thể mở lại tin",
+    "accessDenied": "Bạn không có quyền xem danh sách việc làm đã đăng.",
+    "noPermissionAction": "Bạn không có quyền thực hiện thao tác này."
   },
   "postJobForm": {
     "titleLabel": "Tên công việc",
@@ -1885,7 +1943,9 @@
     "maxBudgetLabel": "Ngân sách tối đa ($)",
     "maxBudgetPlaceholder": "ví dụ: 2.000",
     "deadlineLabel": "Hạn chót",
-    "expiryLabel": "Ngày hết hạn",
+    "deadlineHint": "Hạn chót hoàn thành công việc của Freelancer (phải sau ngày hết hạn nhận đề xuất).",
+    "expiryLabel": "Ngày hết hạn nhận đề xuất",
+    "expiryHint": "Hạn chót nhận đề xuất mới (sau ngày này Freelancer không thể nộp thêm đề xuất).",
     "skillsLabel": "Kỹ năng yêu cầu",
     "skillsPlaceholder": "Tìm hoặc cuộn để chọn kỹ năng...",
     "skillsHint": "Tìm theo tên hoặc cuộn danh sách kỹ năng có sẵn để chọn nhiều mục.",
@@ -1896,21 +1956,44 @@
     "categoriesLoading": "Đang tải danh mục...",
     "categoriesEmpty": "Chưa có danh mục công việc nào. Quản trị viên cần tạo danh mục trước.",
     "categoriesNoMatch": "Không có danh mục nào khớp. Hãy thử từ khoá khác.",
-    "hiringTypeLabel": "Hình thức tuyển",
+    "hiringTypeLabel": "Hình thức tuyển dụng",
     "hiringTypeHint": "Một freelancer: các đề xuất còn lại sẽ bị từ chối ngay khi bạn tuyển. Nhiều freelancer: các đề xuất giữ nguyên cho tới khi tuyển đủ số vị trí.",
+    "hiringTypeSingleTitle": "Tuyển một người (Hire One)",
+    "hiringTypeMultipleTitle": "Tuyển nhiều người (Hire Multiple)",
+    "hiringTypeSingleDesc": "Chỉ chấp nhận 1 Proposal. Khi chọn Freelancer, công việc ngừng nhận Proposal và tạo 1 hợp đồng duy nhất.",
+    "hiringTypeMultipleDesc": "Có thể chấp nhận nhiều Proposal (mỗi Freelancer 1 hợp đồng riêng). Công việc chỉ ngừng nhận Proposal khi tuyển đủ số lượng hoặc hết hạn.",
     "positionsLabel": "Số lượng cần tuyển",
     "positionsPlaceholder": "ví dụ: 3",
     "positionsHint": "Công việc tự động đóng khi tuyển đủ số vị trí.",
+    "positionsSingleHint": "Cố định 1 vị trí duy nhất cho hình thức Tuyển một người.",
+    "positionsMultipleHint": "Số lượng Freelancer cần tuyển (tối thiểu 2). Công việc tự động ngừng nhận Proposal khi tuyển đủ.",
     "cancel": "Huỷ",
     "saving": "Đang lưu...",
     "save": "Lưu công việc",
     "updated": "Đã cập nhật công việc",
     "created": "Đã tạo công việc",
     "saveFailed": "Không thể lưu công việc",
+    "formInvalid": "Vui lòng kiểm tra lại thông tin trên biểu mẫu",
+    "duplicateTitleWarningTitle": "Trùng tiêu đề công việc",
+    "duplicateTitleWarningDesc": "Bạn đã có một công việc khác với tiêu đề này. Hai công việc có thể trùng tên nếu khác mô tả, ngân sách, kỹ năng hoặc phạm vi công việc.",
+    "duplicateTitleToast": "Cảnh báo: Tiêu đề này trùng với một công việc đã có của bạn.",
+    "cannotSwitchToSingleHint": "Không thể chuyển sang Tuyển một người vì công việc đã tuyển {filled} vị trí.",
+    "positionsFilledNote": "Đã tuyển: {filled} vị trí",
+    "titleMustBeEnglish": "Tiêu đề công việc bắt buộc phải viết bằng tiếng Anh",
+    "descriptionMustBeEnglish": "Mô tả công việc bắt buộc phải viết bằng tiếng Anh",
+    "englishOnlyBadge": "Chỉ nhập tiếng Anh",
     "editTitle": "Sửa công việc",
     "newTitle": "Đăng tin tuyển dụng mới",
     "editDescription": "Cập nhật thông tin công việc, ngân sách, thời gian và kỹ năng yêu cầu.",
-    "newDescription": "Điền thông tin để đăng tin tuyển dụng mới."
+    "newDescription": "Điền thông tin để đăng tin tuyển dụng mới.",
+    "confirmUpdateTitle": "Xác nhận cập nhật công việc",
+    "confirmUpdateDesc": "Bạn sắp cập nhật một công việc đã nhận được {count} đề xuất ứng tuyển.",
+    "existingProposalsCount": "{count} đề xuất hiện có",
+    "confirmUpdatePoint1": "Các đề xuất hiện có sẽ được giữ nguyên.",
+    "confirmUpdatePoint2": "Tất cả ứng viên sẽ được thông báo về cập nhật này.",
+    "confirmUpdatePoint3": "Freelancer có thể xem lại thông tin công việc đã được cập nhật.",
+    "confirmUpdateAction": "Xác nhận cập nhật",
+    "cannotEditStatus": "Công việc ở trạng thái {status} không thể chỉnh sửa."
   },
   "freelancerSheet": {
     "loadFailed": "Không thể tải đầy đủ thông tin freelancer.",
@@ -2359,6 +2442,7 @@
     "metaDescription": "Xem xét và phân xử các vụ tranh chấp cột mốc.",
     "pageTitle": "Vụ tranh chấp & Phân xử",
     "pageSubtitle": "Xem xét bằng chứng, lắng nghe các bên và ra phán quyết cột mốc có tính ràng buộc (tổng {total})",
+    "accessDenied": "Bạn không có quyền xem danh sách tranh chấp.",
     "empty": "Không tìm thấy vụ tranh chấp nào.",
     "colMilestoneValue": "Cột mốc & Giá trị",
     "colParties": "Các bên",
@@ -2799,6 +2883,8 @@
     "removeTitle": "Bỏ khỏi mục đã lưu",
     "removeFailed": "Không thể bỏ lưu. Vui lòng thử lại.",
     "updateFailed": "Không thể cập nhật mục đã lưu. Vui lòng thử lại.",
+    "noPermission": "Bạn không có quyền lưu hoặc bỏ lưu việc làm này.",
+    "viewListAccessDenied": "Bạn không có quyền xem danh sách công việc đã lưu.",
     "errorCannotBookmarkOwnJob": "Bạn không thể lưu công việc do chính mình đăng.",
     "errorCannotBookmarkUnavailableJob": "Công việc này đã đóng hoặc đã hết hạn.",
     "errorJobAlreadyBookmarked": "Công việc này đã được lưu trước đó.",
@@ -2846,7 +2932,12 @@
     "checkingProposal": "Đang kiểm tra đề xuất...",
     "cannotProposeOwn": "Bạn không thể gửi đề xuất cho công việc do chính bạn đăng.",
     "notAccepting": "Công việc này không còn nhận đề xuất.",
-    "verifyIdentityWarning": "Bạn chưa xác minh danh tính (CCCD). Vول lòng xác minh trước khi nộp hồ sơ nhận việc.",
+    "positionsFilledClosed": "Công việc đã tuyển đủ số vị trí ({filled}/{required})",
+    "expiredClosed": "Đã hết hạn nhận đề xuất",
+    "deadlinePassedClosed": "Công việc đã quá hạn chót hoàn thành",
+    "hiringTypeSingle": "Tuyển một người (Hire One)",
+    "hiringTypeMultiple": "Tuyển nhiều người ({filled}/{required} vị trí)",
+    "verifyIdentityWarning": "Bạn chưa xác minh danh tính (CCCD). Vui lòng xác minh trước khi nộp hồ sơ nhận việc.",
     "switchToFreelancer": "Hãy chuyển sang tài khoản freelancer để tiếp tục.",
     "applyNow": "Ứng tuyển ngay",
     "viewProposal": "Xem đề xuất",
@@ -2923,7 +3014,12 @@
     "submitted": "Đã gửi đề xuất",
     "alreadyExists": "Bạn đã có đề xuất cho công việc này. Đang mở đề xuất đó.",
     "saveFailed": "Không thể lưu đề xuất. Vui lòng thử lại.",
-    "submitFailed": "Không thể gửi đề xuất. Vui lòng thử lại."
+    "submitFailed": "Không thể gửi đề xuất. Vui lòng thử lại.",
+    "bidBelowMin": "Giá chào thầu đang thấp hơn ngân sách tối thiểu của công việc ({min})",
+    "bidAboveMax": "Giá chào thầu đang cao hơn ngân sách tối đa của công việc ({max})",
+    "deliveryExceedsDeadline": "Thời gian hoàn thành vượt quá hạn chót của công việc (còn tối đa {days} ngày)",
+    "deadlineHint": "Hạn chót công việc: {deadline} (còn tối đa {days} ngày)",
+    "budgetHint": "Ngân sách công việc: {range}"
   },
   "findWork": {
     "title": "Tìm việc",
@@ -3035,6 +3131,9 @@
       "title": "Lọc công việc",
       "category": "Danh mục",
       "allCategories": "Tất cả danh mục",
+      "searchCategory": "Tìm kiếm danh mục...",
+      "noCategoriesFound": "Không tìm thấy danh mục",
+      "categoriesSelected": "{count} danh mục đã chọn",
       "budget": "Mức ngân sách",
       "allBudgets": "Tất cả mức ngân sách",
       "hiringType": "Loại tuyển dụng",
@@ -3043,6 +3142,10 @@
       "allDates": "Mọi thời gian",
       "skills": "Kỹ năng yêu cầu",
       "skillPlaceholder": "Ví dụ: React, Python...",
+      "searchSkill": "Tìm kiếm kỹ năng...",
+      "noSkillsFound": "Không tìm thấy kỹ năng",
+      "skillsSelected": "{count} kỹ năng đã chọn",
+      "addCustomSkill": "Thêm \"{name}\"",
       "customBudget": "Khoảng tùy chỉnh ($)",
       "min": "Tối thiểu",
       "max": "Tối đa",
@@ -3353,5 +3456,22 @@
     "discardDescription": "Bạn có chắc chắn muốn hủy bản phân tích này? Dữ liệu chưa xác nhận sẽ bị xóa.",
     "discardedToast": "Đã hủy bản phân tích CV",
     "discardFailed": "Không thể hủy bản phân tích"
+  },
+  "adminAiOps": {
+    "metaTitle": "Vận hành gợi ý AI | Frevia Admin",
+    "title": "Vận hành gợi ý AI",
+    "subtitle": "Đánh lại chỉ mục tìm kiếm và xử lý hàng đợi sự kiện gợi ý AI",
+    "accessDenied": "Bạn không có quyền vận hành gợi ý AI.",
+    "reindexTitle": "Đánh chỉ mục gợi ý AI",
+    "reindexDesc": "Xây dựng lại toàn bộ vector embeddings cho dữ liệu việc làm và freelancer trong hệ thống.",
+    "reindexBtn": "Đánh chỉ mục lại ngay",
+    "reindexSuccess": "Đánh lại chỉ mục gợi ý AI thành công.",
+    "reindexFailed": "Đánh chỉ mục thất bại.",
+    "outboxTitle": "Xử lý hàng đợi sự kiện AI",
+    "outboxDesc": "Quét và đồng bộ các thay đổi mới nhất từ bảng hàng đợi Outbox vào vector database.",
+    "outboxBtn": "Xử lý hàng đợi ngay",
+    "outboxSuccess": "Đã xử lý hàng đợi sự kiện thành công.",
+    "outboxFailed": "Xử lý hàng đợi thất bại.",
+    "noPermissionAction": "Bạn không có quyền thực hiện thao tác này."
   }
 }

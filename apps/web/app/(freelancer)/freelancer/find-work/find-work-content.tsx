@@ -4,25 +4,22 @@ import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import {
+  useCallback,
   useEffect,
   useState,
   useTransition,
   type FormEvent,
   type MouseEvent,
 } from "react";
-import { motion, AnimatePresence } from "motion/react";
+import { motion } from "motion/react";
 import {
   Bookmark,
-  ChevronLeft,
-  ChevronRight,
-  FolderOpen,
   InfoIcon,
   RefreshCw,
   Search,
   SearchX,
   SlidersHorizontal,
   Trash2,
-  X,
 } from "@/components/icons";
 
 import jobApiRequest from "@/apiRequests/job";
@@ -30,28 +27,7 @@ import recommendationApiRequest from "@/apiRequests/recommendation";
 import savedSearchApiRequest from "@/apiRequests/saved-search";
 import { Footer } from "@/components/footer";
 import { Header, type UserRole } from "@/components/header";
-import { BannerSlot } from "@/components/banner-slot";
-import {
-  BUDGET_KEYS,
-  SORT_KEYS,
-  TIME_KEYS,
-  translateFilterOption,
-} from "@/lib/search-filter-labels";
 import { Button } from "@repo/ui/components/shadcn/button";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@repo/ui/components/shadcn/select";
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@repo/ui/components/shadcn/sheet";
 import { Skeleton } from "@repo/ui/components/shadcn/skeleton";
 import { toastError, toastSuccess } from "@repo/ui/components/shadcn/toast";
 import type {
@@ -64,8 +40,8 @@ import type {
   ViewJobDetailResType,
   ViewListJobResponseType,
 } from "@shared/types";
-import { SaveSearchDialog } from "../saved-searches/save-search-dialog";
 import { getBookmarkErrorMessage } from "@/lib/utils";
+import { useActionPermission } from "@/hooks/use-action-permission";
 import { JobCard } from "../../_components/job-card";
 import { RecommendationExplanationDialog } from "../../_components/recommendation-explanation-dialog";
 import { HomeProfileSidebar } from "../../_components/home-profile-sidebar";
@@ -144,10 +120,6 @@ export function FindWorkContent({
   initialJobs,
   initialPagination,
   initialKeyword = "",
-  initialCategory = "all",
-  initialBudget = "all",
-  initialTime = "all",
-  initialSort = "newest",
   initialBookmarkedSlugs = [],
   initialBookmarkedJobs = [],
   initialSavedSearches = [],
@@ -164,7 +136,6 @@ export function FindWorkContent({
   const t = useTranslations("findWork");
   const tRec = useTranslations("recommendation");
   const tBookmark = useTranslations("bookmark");
-  const tCommon = useTranslations("common");
   const [isPending, startTransition] = useTransition();
 
   const [searchInput, setSearchInput] = useState(initialKeyword);
@@ -186,10 +157,23 @@ export function FindWorkContent({
     () => initialJobAlerts ?? [],
   );
 
-  const canBookmark = role === "FREELANCER";
+  const { can } = useActionPermission();
+  const canViewBookmarks = can("GET", "/api/manage-jobs/bookmarks");
+  const canAddBookmark = can("POST", "/api/manage-jobs/jobs/:slug/bookmark");
+  const canRemoveBookmark = can("DELETE", "/api/manage-jobs/bookmarks/:slug");
+  const canViewJobAlerts = can("GET", "/api/job-alerts");
+  const canViewSavedSearches = can("GET", "/api/saved-searches");
+  const canViewRecommendedJobs = can("GET", "/api/recommendations/jobs");
+  const canViewRecommendationExplanation = can(
+    "GET",
+    "/api/recommendations/:id/explanation",
+  );
+
+  const canBookmark =
+    role === "FREELANCER" && (canAddBookmark || canRemoveBookmark);
 
   // Tab State for Home View - Ưu tiên route path (e.g. /find-work/most-recent)
-  const getTabFromContext = (): HomeTab => {
+  const getTabFromContext = useCallback((): HomeTab => {
     const currentPath =
       typeof window !== "undefined" ? window.location.pathname : pathname;
     if (currentPath.includes("/most-recent")) return "most-recent";
@@ -209,16 +193,25 @@ export function FindWorkContent({
         "invites",
       ].includes(requestedTab)
     ) {
+      if (requestedTab === "best-matches" && !canViewRecommendedJobs) {
+        return "most-recent";
+      }
       return requestedTab;
     }
-    return "best-matches";
-  };
+    return canViewRecommendedJobs ? "best-matches" : "most-recent";
+  }, [pathname, searchParams, initialTab, canViewRecommendedJobs]);
 
   const [activeTab, setActiveTab] = useState<HomeTab>(getTabFromContext);
 
   useEffect(() => {
+    if (activeTab === "best-matches" && !canViewRecommendedJobs) {
+      setActiveTab("most-recent");
+    }
+  }, [activeTab, canViewRecommendedJobs]);
+
+  useEffect(() => {
     setActiveTab(getTabFromContext());
-  }, [pathname, searchParams, initialTab]);
+  }, [getTabFromContext]);
 
   useEffect(() => {
     const handlePopState = () => {
@@ -228,7 +221,7 @@ export function FindWorkContent({
     return () => {
       window.removeEventListener("popstate", handlePopState);
     };
-  }, []);
+  }, [getTabFromContext]);
 
   // State management for AI recommendations
   const [recommendedJobs, setRecommendedJobs] = useState<RecommendedJobType[]>(
@@ -318,6 +311,7 @@ export function FindWorkContent({
   useEffect(() => {
     if (
       activeTab === "best-matches" &&
+      canViewRecommendedJobs &&
       !hasFetchedRecs &&
       role === "FREELANCER"
     ) {
@@ -336,7 +330,7 @@ export function FindWorkContent({
           setIsLoadingRecs(false);
         });
     }
-  }, [activeTab, hasFetchedRecs, role]);
+  }, [activeTab, canViewRecommendedJobs, hasFetchedRecs, role]);
 
   const refreshRecommendations = async () => {
     setIsLoadingRecs(true);
@@ -374,9 +368,6 @@ export function FindWorkContent({
     total: 0,
     totalPages: 0,
   };
-  const currentSearchParams = Object.fromEntries(
-    Array.from(searchParams.entries()).filter(([, value]) => value !== ""),
-  );
 
   const updateParams = (updates: Record<string, string | null>) => {
     const params = new URLSearchParams(searchParams.toString());
@@ -412,20 +403,6 @@ export function FindWorkContent({
     } else {
       router.push("/freelancer/search/jobs");
     }
-  };
-
-  const updateFilter = (
-    name: "category" | "budget" | "time" | "sort",
-    value: string,
-  ) => {
-    updateParams({ [name]: value, tab: null });
-  };
-
-  const clearAllFilters = () => {
-    setSearchInput("");
-    startTransition(() => {
-      router.push(effectiveBasePath);
-    });
   };
 
   const handleTabSelect = (tab: HomeTab) => {
@@ -482,6 +459,15 @@ export function FindWorkContent({
     if (!canBookmark || pendingBookmarkSlug) return;
 
     const isBookmarked = bookmarkedSlugs.has(slug);
+    if (isBookmarked && !canRemoveBookmark) {
+      toastError({ message: tBookmark("noPermission") });
+      return;
+    }
+    if (!isBookmarked && !canAddBookmark) {
+      toastError({ message: tBookmark("noPermission") });
+      return;
+    }
+
     setPendingBookmarkSlug(slug);
 
     try {
@@ -567,22 +553,24 @@ export function FindWorkContent({
               <div className="flex items-center justify-between border-b border-border pt-2 pb-px">
                 <div className="flex items-center gap-6 overflow-x-auto no-scrollbar">
                   {/* Best matches */}
-                  <button
-                    type="button"
-                    onClick={() => handleTabSelect("best-matches")}
-                    className={`pb-3 text-sm font-semibold border-b-2 transition-all cursor-pointer whitespace-nowrap ${
-                      activeTab === "best-matches"
-                        ? "border-emerald-600 text-emerald-600 dark:text-emerald-400"
-                        : "border-transparent text-muted-foreground hover:text-foreground"
-                    }`}
-                  >
-                    <span>{t("bestMatches")}</span>
-                    {recommendedJobs.length > 0 && (
-                      <span className="ml-1.5 rounded-full bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300 px-2 py-0.5 text-xs font-semibold">
-                        {recommendedJobs.length}
-                      </span>
-                    )}
-                  </button>
+                  {canViewRecommendedJobs && (
+                    <button
+                      type="button"
+                      onClick={() => handleTabSelect("best-matches")}
+                      className={`pb-3 text-sm font-semibold border-b-2 transition-all cursor-pointer whitespace-nowrap ${
+                        activeTab === "best-matches"
+                          ? "border-emerald-600 text-emerald-600 dark:text-emerald-400"
+                          : "border-transparent text-muted-foreground hover:text-foreground"
+                      }`}
+                    >
+                      <span>{t("bestMatches")}</span>
+                      {recommendedJobs.length > 0 && (
+                        <span className="ml-1.5 rounded-full bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300 px-2 py-0.5 text-xs font-semibold">
+                          {recommendedJobs.length}
+                        </span>
+                      )}
+                    </button>
+                  )}
 
                   {/* Most recent */}
                   <button
@@ -601,22 +589,24 @@ export function FindWorkContent({
                   </button>
 
                   {/* Saved searches */}
-                  <button
-                    type="button"
-                    onClick={() => handleTabSelect("saved-searches")}
-                    className={`pb-3 text-sm font-semibold border-b-2 transition-all cursor-pointer whitespace-nowrap ${
-                      activeTab === "saved-searches"
-                        ? "border-emerald-600 text-emerald-600 dark:text-emerald-400"
-                        : "border-transparent text-muted-foreground hover:text-foreground"
-                    }`}
-                  >
-                    <span>{t("savedSearches")}</span>
-                    {savedSearches.length > 0 && (
-                      <span className="ml-1.5 rounded-full bg-muted text-muted-foreground px-2 py-0.5 text-xs font-normal">
-                        {savedSearches.length}
-                      </span>
-                    )}
-                  </button>
+                  {canViewSavedSearches && (
+                    <button
+                      type="button"
+                      onClick={() => handleTabSelect("saved-searches")}
+                      className={`pb-3 text-sm font-semibold border-b-2 transition-all cursor-pointer whitespace-nowrap ${
+                        activeTab === "saved-searches"
+                          ? "border-emerald-600 text-emerald-600 dark:text-emerald-400"
+                          : "border-transparent text-muted-foreground hover:text-foreground"
+                      }`}
+                    >
+                      <span>{t("savedSearches")}</span>
+                      {savedSearches.length > 0 && (
+                        <span className="ml-1.5 rounded-full bg-muted text-muted-foreground px-2 py-0.5 text-xs font-normal">
+                          {savedSearches.length}
+                        </span>
+                      )}
+                    </button>
+                  )}
 
                   {/* Saved jobs */}
                   <button
@@ -647,7 +637,7 @@ export function FindWorkContent({
                     }`}
                   >
                     <span>{t("invites")}</span>
-                    {jobAlerts.length > 0 && (
+                    {canViewJobAlerts && jobAlerts.length > 0 && (
                       <span className="ml-1.5 rounded-full bg-muted text-muted-foreground px-2 py-0.5 text-xs font-normal">
                         {jobAlerts.length}
                       </span>
@@ -675,7 +665,7 @@ export function FindWorkContent({
                 {/* Left / Main Column: Tab content */}
                 <div className="flex-1 min-w-0 w-full space-y-3">
                   {/* TAB 1: BEST MATCHES */}
-                  {activeTab === "best-matches" && (
+                  {activeTab === "best-matches" && canViewRecommendedJobs && (
                     <div>
                       <div className="flex items-center justify-between pb-2">
                         <span className="text-xs text-muted-foreground">
@@ -744,13 +734,16 @@ export function FindWorkContent({
                               matchScore={rec.score}
                               components={rec.components}
                               recommendationId={rec.recommendationId}
-                              onViewExplanation={(id, jobTitle) =>
-                                handleViewExplanation(
-                                  id,
-                                  jobTitle,
-                                  rec.components,
-                                  rec.score,
-                                )
+                              onViewExplanation={
+                                canViewRecommendationExplanation
+                                  ? (id, jobTitle) =>
+                                      handleViewExplanation(
+                                        id,
+                                        jobTitle,
+                                        rec.components,
+                                        rec.score,
+                                      )
+                                  : undefined
                               }
                             />
                           ))}
@@ -814,7 +807,7 @@ export function FindWorkContent({
                   )}
 
                   {/* TAB 3: SAVED SEARCHES */}
-                  {activeTab === "saved-searches" && (
+                  {activeTab === "saved-searches" && canViewSavedSearches && (
                     <div className="space-y-3">
                       {savedSearches.length === 0 ? (
                         <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-border bg-card/40 px-6 py-14 text-center font-sans">
@@ -889,7 +882,14 @@ export function FindWorkContent({
                   {/* TAB 4: SAVED JOBS */}
                   {activeTab === "saved-jobs" && (
                     <div className="space-y-3">
-                      {bookmarkedJobs.length === 0 ? (
+                      {!canViewBookmarks ? (
+                        <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-border bg-card/40 px-6 py-14 text-center font-sans">
+                          <Bookmark className="size-10 text-muted-foreground mb-3" />
+                          <p className="text-base font-semibold text-foreground">
+                            {tBookmark("viewListAccessDenied")}
+                          </p>
+                        </div>
+                      ) : bookmarkedJobs.length === 0 ? (
                         <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-border bg-card/40 px-6 py-14 text-center font-sans">
                           <Bookmark className="size-10 text-muted-foreground mb-3" />
                           <p className="text-base font-semibold text-foreground">
@@ -907,7 +907,7 @@ export function FindWorkContent({
                             index={index}
                             jobBaseUrl={jobBaseUrl}
                             filterBasePath={effectiveBasePath}
-                            canBookmark={true}
+                            canBookmark={canRemoveBookmark}
                             isBookmarked={true}
                             isBookmarkPending={pendingBookmarkSlug === job.slug}
                             onToggleBookmark={toggleBookmark}
@@ -920,7 +920,7 @@ export function FindWorkContent({
                   {/* TAB 5: INVITES & JOB ALERTS */}
                   {activeTab === "invites" && (
                     <div className="space-y-3">
-                      {jobAlerts.length === 0 ? (
+                      {!canViewJobAlerts || jobAlerts.length === 0 ? (
                         <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-border bg-card/40 px-6 py-14 text-center font-sans">
                           <InfoIcon className="size-10 text-muted-foreground mb-3" />
                           <p className="text-base font-semibold text-foreground">

@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 
 import { contractApi } from "@/apiRequests/contract";
+import { useActionPermission } from "@/hooks/use-action-permission";
 import { ApiFail } from "@/lib/http";
 import {
   AlertDialog,
@@ -58,6 +59,10 @@ export function ContractLifecyclePanel({
   const tStatus = useTranslations("contractStatus");
   const tCommon = useTranslations("common");
   const format = useFormatter();
+  const { can } = useActionPermission();
+  const canViewContracts = can("GET", "/api/contracts");
+  const canSignContract = can("PATCH", "/api/contracts/:id/sign");
+  const canCompleteContract = can("PATCH", "/api/contracts/:id/complete");
   const [confirmAction, setConfirmAction] = useState<ContractAction | null>(
     null,
   );
@@ -66,6 +71,7 @@ export function ContractLifecyclePanel({
   );
   const contractsQuery = useQuery({
     queryKey: ["contracts", role, proposalId],
+    enabled: canViewContracts,
     queryFn: async () => (await contractApi.forProposal(proposalId)).data.data,
   });
   const contract = contractsQuery.data?.find(
@@ -74,6 +80,8 @@ export function ContractLifecyclePanel({
 
   const runAction = async (action: ContractAction) => {
     if (!contract) return;
+    if (action === "sign" && !canSignContract) return;
+    if (action === "complete" && !canCompleteContract) return;
     setPendingAction(action);
     try {
       if (action === "sign") {
@@ -91,6 +99,10 @@ export function ContractLifecyclePanel({
       setPendingAction(null);
     }
   };
+
+  if (!canViewContracts) {
+    return null;
+  }
 
   if (contractsQuery.isLoading) {
     return (
@@ -146,12 +158,14 @@ export function ContractLifecyclePanel({
   const canSign =
     contract.status === "PENDING_SIGN" &&
     !hasSigned &&
-    (role === "CLIENT" || contract.signedByClient);
+    (role === "CLIENT" || contract.signedByClient) &&
+    canSignContract;
   const waitingForClientSignature =
     contract.status === "PENDING_SIGN" &&
     role === "FREELANCER" &&
     !contract.signedByClient;
-  const canComplete = role === "CLIENT" && contract.status === "ACTIVE";
+  const canComplete =
+    role === "CLIENT" && contract.status === "ACTIVE" && canCompleteContract;
   const isCompleted = contract.status === "COMPLETED";
   const statusText = (CONTRACT_STATUSES as readonly string[]).includes(
     contract.status,

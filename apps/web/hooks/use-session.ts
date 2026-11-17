@@ -16,7 +16,7 @@ export const sessionKeys = {
   detail: (id: number) => [...sessionKeys.all, "detail", id] as const,
 };
 
-export function useSessions(filter: Partial<SessionFilterType> = {}) {
+export function useSessions(filter: Partial<SessionFilterType> = {}, enabled = true) {
   const normalized: Partial<SessionFilterType> = {
     page: filter.page ?? 1,
     limit: filter.limit ?? 10,
@@ -32,6 +32,7 @@ export function useSessions(filter: Partial<SessionFilterType> = {}) {
     queryFn: () => sessionApiRequest.getSessions(normalized).then(extractData),
     placeholderData: keepPreviousData,
     staleTime: 2 * 60 * 1000,
+    enabled,
   });
 }
 

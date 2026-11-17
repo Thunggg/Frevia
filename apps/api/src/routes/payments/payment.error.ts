@@ -135,6 +135,14 @@ export const DisputeSettlementInvalidAmountException = () =>
     },
   ]);
 
+export const DisputeNotFoundException = () =>
+  new NotFoundException([
+    {
+      message: 'Dispute not found',
+      path: 'id',
+    },
+  ]);
+
 export const TransactionNotFoundException = () =>
   new NotFoundException([
     {

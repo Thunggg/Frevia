@@ -14,6 +14,7 @@ import {
   Upload,
 } from "lucide-react";
 import { Button } from "@repo/ui/components/shadcn/button";
+import { useActionPermission } from "@/hooks/use-action-permission";
 import type {
   ContractDetailType,
   GetSubmissionResponseType,
@@ -46,13 +47,31 @@ export function MilestoneSubmissionsTab({
   onRefund,
 }: MilestoneSubmissionsTabProps) {
   const format = useFormatter();
+  const { can, canAny } = useActionPermission();
   const isClient = !isFreelancer;
+
+  const canViewSubmissions = can("GET", "/api/contracts/:contractId/milestones/:milestoneId/submissions");
+  const canViewSubmissionDetail = can("GET", "/api/contracts/:contractId/milestones/:milestoneId/submissions/:id");
+  const canApprove = can("PATCH", "/api/contracts/:contractId/milestones/:milestoneId/submissions/:id/approve");
+  const canRequestChanges = can("PATCH", "/api/contracts/:contractId/milestones/:milestoneId/submissions/:id/request-changes");
+  const canReview = canApprove || canRequestChanges;
+
+  const canFund = canAny([
+    { method: "POST", path: "/api/payments/contracts/:contractId/milestones/:milestoneId/fund/intent" },
+    { method: "POST", path: "/api/payments/contracts/:contractId/milestones/:milestoneId/fund/checkout-session" },
+    { method: "POST", path: "/api/payments/contracts/:contractId/milestones/:milestoneId/fund/saved-card" },
+  ]);
+  const canRelease = can("POST", "/api/payments/contracts/:contractId/milestones/:milestoneId/release");
+  const canRefund = can("POST", "/api/payments/contracts/:contractId/milestones/:milestoneId/refund");
+  const canStartWork = can("PATCH", "/api/contracts/:contractId/milestones/:id/progress");
+  const canSubmitWork = can("POST", "/api/contracts/:contractId/milestones/:milestoneId/submissions");
 
   const renderPrimaryAction = () => {
     if (
       isClient &&
       contractStatus === "ACTIVE" &&
       milestone.paymentStatus === "PENDING" &&
+      canFund &&
       onFund
     ) {
       return (
@@ -66,7 +85,7 @@ export function MilestoneSubmissionsTab({
       );
     }
 
-    if (isClient && milestone.status === "SUBMITTED" && onReviewSubmission) {
+    if (isClient && milestone.status === "SUBMITTED" && canReview && onReviewSubmission) {
       return (
         <Button
           onClick={() => onReviewSubmission()}
@@ -82,6 +101,7 @@ export function MilestoneSubmissionsTab({
       isClient &&
       milestone.status === "COMPLETED" &&
       milestone.paymentStatus === "FUNDED" &&
+      canRelease &&
       onRelease
     ) {
       return (
@@ -100,6 +120,7 @@ export function MilestoneSubmissionsTab({
       contractStatus === "ACTIVE" &&
       milestone.paymentStatus === "FUNDED" &&
       (milestone.status === "LATE" || milestone.status === "PENDING") &&
+      canRefund &&
       onRefund
     ) {
       return (
@@ -118,6 +139,7 @@ export function MilestoneSubmissionsTab({
       isFreelancer &&
       milestone.status === "PENDING" &&
       milestone.paymentStatus === "FUNDED" &&
+      canStartWork &&
       onStartWork
     ) {
       return (
@@ -134,6 +156,7 @@ export function MilestoneSubmissionsTab({
     if (
       isFreelancer &&
       (milestone.status === "IN_PROGRESS" || milestone.status === "CHANGES_REQUESTED") &&
+      canSubmitWork &&
       onSubmitWork
     ) {
       const isResubmit = milestone.status === "CHANGES_REQUESTED";
@@ -201,6 +224,19 @@ export function MilestoneSubmissionsTab({
     }
   };
 
+  if (!canViewSubmissions) {
+    return (
+      <div className="rounded-xl border border-amber-200/80 dark:border-amber-900/40 bg-amber-50/40 dark:bg-amber-950/20 p-8 text-center space-y-2">
+        <h3 className="text-sm font-semibold text-zinc-950 dark:text-zinc-100">
+          Không có quyền xem danh sách bài nộp
+        </h3>
+        <p className="text-xs text-zinc-500 dark:text-zinc-400 max-w-md mx-auto">
+          Tài khoản của bạn chưa được cấp quyền xem danh sách các bài nộp deliverable của milestone này.
+        </p>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-5">
       {/* Top action header for freelancer or client */}
@@ -251,73 +287,78 @@ export function MilestoneSubmissionsTab({
                   <div>{getSubmissionStatus(sub.status)}</div>
                 </div>
 
-                {/* Freelancer Notes */}
-                {sub.message && (
-                  <div className="space-y-1">
-                    <span className="text-[11px] font-bold uppercase tracking-wider text-zinc-400 block">
-                      Freelancer Notes:
-                    </span>
-                    <p className="p-3 rounded-sm border border-zinc-200/60 dark:border-zinc-800/60 bg-zinc-50/50 dark:bg-zinc-900/30 text-xs sm:text-sm text-zinc-900 dark:text-zinc-100 leading-relaxed whitespace-pre-wrap">
-                      {sub.message}
-                    </p>
-                  </div>
-                )}
+                {/* Freelancer Notes, Links & Files (Guarded by canViewSubmissionDetail) */}
+                {canViewSubmissionDetail && (
+                  <>
+                    {/* Freelancer Notes */}
+                    {sub.message && (
+                      <div className="space-y-1">
+                        <span className="text-[11px] font-bold uppercase tracking-wider text-zinc-400 block">
+                          Freelancer Notes:
+                        </span>
+                        <p className="p-3 rounded-sm border border-zinc-200/60 dark:border-zinc-800/60 bg-zinc-50/50 dark:bg-zinc-900/30 text-xs sm:text-sm text-zinc-900 dark:text-zinc-100 leading-relaxed whitespace-pre-wrap">
+                          {sub.message}
+                        </p>
+                      </div>
+                    )}
 
-                {/* Preview / External Links */}
-                {sub.links && sub.links.length > 0 && (
-                  <div className="space-y-1">
-                    <span className="text-[11px] font-bold uppercase tracking-wider text-zinc-400 block">
-                      Project Links:
-                    </span>
-                    <div className="flex flex-wrap gap-2">
-                      {sub.links.map((link, lIdx) => (
-                        <a
-                          key={lIdx}
-                          href={link}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1.5 rounded-sm border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-3 py-1 text-xs text-[#0069D3] hover:underline"
-                        >
-                          <ExternalLink className="size-3" />
-                          <span className="truncate max-w-[280px]">{link}</span>
-                        </a>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {/* Attached Files */}
-                {sub.files && sub.files.length > 0 && (
-                  <div className="space-y-1">
-                    <span className="text-[11px] font-bold uppercase tracking-wider text-zinc-400 block">
-                      Submitted Files:
-                    </span>
-                    <div className="flex flex-wrap gap-2">
-                      {sub.files.map((item) => (
-                        <div
-                          key={item.fileId}
-                          className="inline-flex items-center gap-2 rounded-sm border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-3 py-1.5 text-xs text-zinc-800 dark:text-zinc-200"
-                        >
-                          <FileText className="size-3.5 text-zinc-400" />
-                          <span className="truncate max-w-[220px] font-medium">
-                            {item.file?.fileName || `Deliverable File #${item.fileId}`}
-                          </span>
-                          {item.file?.fileUrl && (
+                    {/* Preview / External Links */}
+                    {sub.links && sub.links.length > 0 && (
+                      <div className="space-y-1">
+                        <span className="text-[11px] font-bold uppercase tracking-wider text-zinc-400 block">
+                          Project Links:
+                        </span>
+                        <div className="flex flex-wrap gap-2">
+                          {sub.links.map((link, lIdx) => (
                             <a
-                              href={item.file.fileUrl}
+                              key={lIdx}
+                              href={link}
                               target="_blank"
                               rel="noopener noreferrer"
-                              download
-                              className="text-[#0069D3] hover:underline ml-1"
-                              title="Download"
+                              className="inline-flex items-center gap-1.5 rounded-sm border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-3 py-1 text-xs text-[#0069D3] hover:underline"
                             >
-                              <Download className="size-3.5" />
+                              <ExternalLink className="size-3" />
+                              <span className="truncate max-w-[280px]">{link}</span>
                             </a>
-                          )}
+                          ))}
                         </div>
-                      ))}
-                    </div>
-                  </div>
+                      </div>
+                    )}
+
+                    {/* Attached Files */}
+                    {sub.files && sub.files.length > 0 && (
+                      <div className="space-y-1">
+                        <span className="text-[11px] font-bold uppercase tracking-wider text-zinc-400 block">
+                          Submitted Files:
+                        </span>
+                        <div className="flex flex-wrap gap-2">
+                          {sub.files.map((item) => (
+                            <div
+                              key={item.fileId}
+                              className="inline-flex items-center gap-2 rounded-sm border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-3 py-1.5 text-xs text-zinc-800 dark:text-zinc-200"
+                            >
+                              <FileText className="size-3.5 text-zinc-400" />
+                              <span className="truncate max-w-[220px] font-medium">
+                                {item.file?.fileName || `Deliverable File #${item.fileId}`}
+                              </span>
+                              {item.file?.fileUrl && (
+                                <a
+                                  href={item.file.fileUrl}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  download
+                                  className="text-[#0069D3] hover:underline ml-1"
+                                  title="Download"
+                                >
+                                  <Download className="size-3.5" />
+                                </a>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </>
                 )}
 
                 {/* Review Feedback: Approved or Revisions requested */}
@@ -347,7 +388,7 @@ export function MilestoneSubmissionsTab({
                 )}
 
                 {/* Client Review Action for latest unapproved submission */}
-                {isClient && isLatest && milestone.status === "SUBMITTED" && onReviewSubmission && (
+                {isClient && isLatest && milestone.status === "SUBMITTED" && canReview && onReviewSubmission && (
                   <div className="pt-2 border-t border-zinc-100 dark:border-zinc-800/80 flex justify-end">
                     <Button
                       onClick={() => onReviewSubmission(sub)}

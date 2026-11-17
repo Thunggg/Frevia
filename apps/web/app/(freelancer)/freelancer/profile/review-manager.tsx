@@ -2,6 +2,7 @@
 
 import { contractApi } from "@/apiRequests/contract";
 import { reviewApi } from "@/apiRequests/review";
+import { useActionPermission } from "@/hooks/use-action-permission";
 import { ApiFail } from "@/lib/http";
 import {
   AlertDialog,
@@ -109,6 +110,16 @@ export function ReviewManager({ userId }: { userId: number }) {
   const tCommon = useTranslations("common");
   const format = useFormatter();
 
+  const { can } = useActionPermission();
+  const canViewReviews = can("GET", "/api/reviews/contracts/:contractId");
+  const canCreateReview = can("POST", "/api/reviews/contracts/:contractId");
+  const canViewReviewDetail = can("GET", "/api/reviews/:reviewId");
+  const canUpdateReview = can("PATCH", "/api/reviews/:reviewId");
+  const canDeleteReview = can("DELETE", "/api/reviews/:reviewId");
+  const canRespondReview = can("POST", "/api/reviews/:reviewId/response");
+  const canUpdateResponse = can("PATCH", "/api/reviews/responses/:responseId");
+  const canDeleteResponse = can("DELETE", "/api/reviews/responses/:responseId");
+
   // Bọc trong useCallback để effect bên dưới có thể phụ thuộc mà không lặp vô hạn.
   const toMessage = useCallback(
     (error: unknown) => errorMessage(error, tSettings("somethingWentWrong")),
@@ -192,13 +203,15 @@ export function ReviewManager({ userId }: { userId: number }) {
           : null;
         if (requestedContract) {
           setContractId(requestedContract.id);
-          setPending("load");
-          try {
-            const reviewResponse = await reviewApi.list(requestedContract.id);
-            if (cancelled) return;
-            setReviews(reviewResponse.data);
-          } catch (error) {
-            if (!cancelled) setReviewsError(toMessage(error));
+          if (canViewReviews) {
+            setPending("load");
+            try {
+              const reviewResponse = await reviewApi.list(requestedContract.id);
+              if (cancelled) return;
+              setReviews(reviewResponse.data);
+            } catch (error) {
+              if (!cancelled) setReviewsError(toMessage(error));
+            }
           }
         }
       } catch (error) {
@@ -215,7 +228,7 @@ export function ReviewManager({ userId }: { userId: number }) {
     return () => {
       cancelled = true;
     };
-  }, [requestedContractId, toMessage]);
+  }, [requestedContractId, toMessage, canViewReviews]);
 
   const loadReviews = async (nextContractId: number) => {
     setContractId(nextContractId);
@@ -224,6 +237,7 @@ export function ReviewManager({ userId }: { userId: number }) {
     resetReviewForm();
     setExpandedId(null);
     setResponseReviewId(null);
+    if (!canViewReviews) return;
     setPending("load");
     try {
       const response = await reviewApi.list(nextContractId);
@@ -240,6 +254,7 @@ export function ReviewManager({ userId }: { userId: number }) {
   const submitReview = async (event: FormEvent) => {
     event.preventDefault();
     if (!contractId) return;
+    if (editingId ? !canUpdateReview : !canCreateReview) return;
 
     const body = {
       overallRating: Number(rating),
@@ -288,7 +303,7 @@ export function ReviewManager({ userId }: { userId: number }) {
   };
 
   const removeReview = async () => {
-    if (!deleteReviewId) return;
+    if (!deleteReviewId || !canDeleteReview) return;
     setPending(`delete-${deleteReviewId}`);
     try {
       await reviewApi.remove(deleteReviewId);
@@ -306,6 +321,7 @@ export function ReviewManager({ userId }: { userId: number }) {
   };
 
   const viewDetail = async (reviewId: number) => {
+    if (!canViewReviewDetail) return;
     if (expandedId === reviewId) {
       setExpandedId(null);
       return;
@@ -325,6 +341,8 @@ export function ReviewManager({ userId }: { userId: number }) {
   const submitResponse = async (event: FormEvent, review: ReviewType) => {
     event.preventDefault();
     const responseId = review.response?.id;
+    if (responseId && !canUpdateResponse) return;
+    if (!responseId && !canRespondReview) return;
     setPending(`response-${review.id}`);
     try {
       const response =
@@ -346,7 +364,7 @@ export function ReviewManager({ userId }: { userId: number }) {
   };
 
   const removeResponse = async (review: ReviewType) => {
-    if (!review.response) return;
+    if (!review.response || !canDeleteResponse) return;
     setPending(`response-delete-${review.id}`);
     try {
       await reviewApi.removeResponse(review.response.id);
@@ -444,7 +462,16 @@ export function ReviewManager({ userId }: { userId: number }) {
       </section>
 
       {contractId ? (
-        pending === "load" ? (
+        !canViewReviews ? (
+          <div className="rounded-xl border border-dashed border-border px-6 py-12 text-center text-muted-foreground">
+            <p className="font-semibold text-foreground">
+              Không có quyền truy cập
+            </p>
+            <p className="mt-1 text-sm">
+              Bạn không có quyền xem đánh giá của hợp đồng này.
+            </p>
+          </div>
+        ) : pending === "load" ? (
           <ReviewSkeleton label={t("loadingReviewsAria")} />
         ) : reviewsError ? (
           <div className="rounded-xl border border-destructive/30 bg-destructive/5 px-6 py-10 text-center">
@@ -462,42 +489,51 @@ export function ReviewManager({ userId }: { userId: number }) {
             </Button>
           </div>
         ) : (
-          <div className="grid gap-8 lg:grid-cols-[360px_minmax(0,1fr)]">
-            <section
-              id="review-editor"
-              className="h-fit scroll-mt-24 rounded-xl border border-border p-5 sm:p-6"
-            >
-              {ownReview && !editingId ? (
-                <div>
-                  <div className="flex items-center gap-2 text-[#3f9225] dark:text-[#7ad75d]">
-                    <CheckCircle2 className="size-5" aria-hidden="true" />
-                    <h2 className="font-semibold">{t("ownReviewTitle")}</h2>
+          <div
+            className={`grid gap-8 ${
+              ownReview || canCreateReview || (editingId && canUpdateReview)
+                ? "lg:grid-cols-[360px_minmax(0,1fr)]"
+                : ""
+            }`}
+          >
+            {ownReview || canCreateReview || (editingId && canUpdateReview) ? (
+              <section
+                id="review-editor"
+                className="h-fit scroll-mt-24 rounded-xl border border-border p-5 sm:p-6"
+              >
+                {ownReview && !editingId ? (
+                  <div>
+                    <div className="flex items-center gap-2 text-[#3f9225] dark:text-[#7ad75d]">
+                      <CheckCircle2 className="size-5" aria-hidden="true" />
+                      <h2 className="font-semibold">{t("ownReviewTitle")}</h2>
+                    </div>
+                    <p className="mt-2 text-sm leading-6 text-muted-foreground">
+                      {t("ownReviewHint")}
+                    </p>
+                    {canUpdateReview && (
+                      <Button
+                        type="button"
+                        variant="outline"
+                        className="mt-4"
+                        onClick={() => startEdit(ownReview)}
+                      >
+                        <Pencil aria-hidden="true" /> {t("editYourReview")}
+                      </Button>
+                    )}
                   </div>
-                  <p className="mt-2 text-sm leading-6 text-muted-foreground">
-                    {t("ownReviewHint")}
-                  </p>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    className="mt-4"
-                    onClick={() => startEdit(ownReview)}
-                  >
-                    <Pencil aria-hidden="true" /> {t("editYourReview")}
-                  </Button>
-                </div>
-              ) : (
-                <>
-                  <h2 className="text-lg font-semibold text-foreground">
-                    {editingId
-                      ? t("editYourReview")
-                      : t("reviewCounterpart", {
-                          name: counterpart ?? memberFallback,
-                        })}
-                  </h2>
-                  <p className="mt-1 text-sm leading-6 text-muted-foreground">
-                    {t("feedbackHint")}
-                  </p>
-                  <form className="mt-5 space-y-5" onSubmit={submitReview}>
+                ) : (editingId ? canUpdateReview : canCreateReview) ? (
+                  <>
+                    <h2 className="text-lg font-semibold text-foreground">
+                      {editingId
+                        ? t("editYourReview")
+                        : t("reviewCounterpart", {
+                            name: counterpart ?? memberFallback,
+                          })}
+                    </h2>
+                    <p className="mt-1 text-sm leading-6 text-muted-foreground">
+                      {t("feedbackHint")}
+                    </p>
+                    <form className="mt-5 space-y-5" onSubmit={submitReview}>
                     <fieldset className="space-y-2">
                       <legend className="text-sm font-medium">
                         {t("overallRating")}
@@ -598,8 +634,9 @@ export function ReviewManager({ userId }: { userId: number }) {
                     </div>
                   </form>
                 </>
-              )}
+              ) : null}
             </section>
+          ) : null}
 
             <section aria-labelledby="contract-review-list-heading">
               <div className="mb-4 flex items-center justify-between gap-3">
@@ -727,42 +764,49 @@ export function ReviewManager({ userId }: { userId: number }) {
                           ) : null}
                           {review.response.userId === userId ? (
                             <div className="mt-2 flex flex-wrap gap-2">
-                              <Button
-                                size="sm"
-                                variant="ghost"
-                                onClick={() => {
-                                  setResponseReviewId(review.id);
-                                  setEditingResponseId(
-                                    review.response?.id ?? null,
-                                  );
-                                  setResponseText(
-                                    review.response?.responseText ?? "",
-                                  );
-                                }}
-                              >
-                                <Pencil aria-hidden="true" />{" "}
-                                {t("editResponse")}
-                              </Button>
-                              <Button
-                                size="sm"
-                                variant="ghost"
-                                className="text-destructive hover:text-destructive"
-                                onClick={() =>
-                                  setDeleteResponseReviewId(review.id)
-                                }
-                                disabled={
-                                  pending === `response-delete-${review.id}`
-                                }
-                              >
-                                <Trash2 aria-hidden="true" />{" "}
-                                {t("deleteResponse")}
-                              </Button>
+                              {canUpdateResponse && (
+                                <Button
+                                  size="sm"
+                                  variant="ghost"
+                                  onClick={() => {
+                                    setResponseReviewId(review.id);
+                                    setEditingResponseId(
+                                      review.response?.id ?? null,
+                                    );
+                                    setResponseText(
+                                      review.response?.responseText ?? "",
+                                    );
+                                  }}
+                                >
+                                  <Pencil aria-hidden="true" />{" "}
+                                  {t("editResponse")}
+                                </Button>
+                              )}
+                              {canDeleteResponse && (
+                                <Button
+                                  size="sm"
+                                  variant="ghost"
+                                  className="text-destructive hover:text-destructive"
+                                  onClick={() =>
+                                    setDeleteResponseReviewId(review.id)
+                                  }
+                                  disabled={
+                                    pending === `response-delete-${review.id}`
+                                  }
+                                >
+                                  <Trash2 aria-hidden="true" />{" "}
+                                  {t("deleteResponse")}
+                                </Button>
+                              )}
                             </div>
                           ) : null}
                         </div>
                       ) : null}
 
-                      {responseReviewId === review.id ? (
+                      {responseReviewId === review.id &&
+                      (editingResponseId
+                        ? canUpdateResponse
+                        : canRespondReview) ? (
                         <form
                           className="mt-4 space-y-3"
                           onSubmit={(event) =>
@@ -809,44 +853,52 @@ export function ReviewManager({ userId }: { userId: number }) {
                       ) : null}
 
                       <div className="mt-5 flex flex-wrap gap-2 border-t border-border pt-4">
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => void viewDetail(review.id)}
-                          disabled={pending === `detail-${review.id}`}
-                        >
-                          {pending === `detail-${review.id}` ? (
-                            <Loader2
-                              className="animate-spin"
-                              aria-hidden="true"
-                            />
-                          ) : (
-                            <Eye aria-hidden="true" />
-                          )}
-                          {expandedId === review.id
-                            ? t("hideDetail")
-                            : t("viewDetail")}
-                        </Button>
+                        {canViewReviewDetail && (
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => void viewDetail(review.id)}
+                            disabled={pending === `detail-${review.id}`}
+                          >
+                            {pending === `detail-${review.id}` ? (
+                              <Loader2
+                                className="animate-spin"
+                                aria-hidden="true"
+                              />
+                            ) : (
+                              <Eye aria-hidden="true" />
+                            )}
+                            {expandedId === review.id
+                              ? t("hideDetail")
+                              : t("viewDetail")}
+                          </Button>
+                        )}
                         {review.reviewerId === userId ? (
                           <>
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() => startEdit(review)}
-                            >
-                              <Pencil aria-hidden="true" /> {t("edit")}
-                            </Button>
-                            <Button
-                              size="sm"
-                              variant="ghost"
-                              className="text-destructive hover:text-destructive"
-                              onClick={() => setDeleteReviewId(review.id)}
-                            >
-                              <Trash2 aria-hidden="true" /> {t("delete")}
-                            </Button>
+                            {canUpdateReview && (
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => startEdit(review)}
+                              >
+                                <Pencil aria-hidden="true" /> {t("edit")}
+                              </Button>
+                            )}
+                            {canDeleteReview && (
+                              <Button
+                                size="sm"
+                                variant="ghost"
+                                className="text-destructive hover:text-destructive"
+                                onClick={() => setDeleteReviewId(review.id)}
+                              >
+                                <Trash2 aria-hidden="true" /> {t("delete")}
+                              </Button>
+                            )}
                           </>
                         ) : null}
-                        {review.revieweeId === userId && !review.response ? (
+                        {review.revieweeId === userId &&
+                        !review.response &&
+                        canRespondReview ? (
                           <Button
                             size="sm"
                             variant="outline"

@@ -39,6 +39,7 @@ import {
 } from "@/components/icons";
 import { accountProfileApi } from "@/apiRequests/account-profile";
 import { profileRevisionApiRequest } from "@/apiRequests/profile-revision";
+import { useActionPermission } from "@/hooks/use-action-permission";
 import { ApiFail } from "@/lib/http";
 import { ProfileReviewStatus } from "@/components/profile-review-status";
 import { FreelancerProfileSheet } from "@/app/(client)/_components/freelancer-profile-sheet";
@@ -97,17 +98,48 @@ export function ClientProfileSettings({ userId }: ClientProfileSettingsProps) {
       ? tPlatform(value)
       : value;
 
+  const { can } = useActionPermission();
+  const canUpdateClientProfile = can("PUT", "/api/clients/me/profile");
+  const canViewFavorites = can("GET", "/api/favorites/freelancers");
+  const canRemoveFavorite = can(
+    "DELETE",
+    "/api/favorites/freelancers/:freelancerId",
+  );
+  const canGetFollowing = can("GET", "/api/following/freelancers");
+  const canDiscoverFreelancers = can(
+    "GET",
+    "/api/following/freelancers/discover",
+  );
+  const canFollowFreelancer = can(
+    "POST",
+    "/api/following/freelancers/:freelancerId",
+  );
+  const canUnfollowFreelancer = can(
+    "DELETE",
+    "/api/following/freelancers/:freelancerId",
+  );
+  const canViewFollowingTab = canGetFollowing || canDiscoverFreelancers;
+  const canViewSocialLinks = can("GET", "/api/social-links");
+  const canAddSocialLink = can("POST", "/api/social-links");
+  const canDeleteSocialLink = can("DELETE", "/api/social-links/:id");
+
   const [activeTab, setActiveTab] = useState<TabKey>(() => {
     const tabParam = searchParams.get("tab");
-    if (
-      tabParam === "social" ||
-      tabParam === "favorites" ||
-      tabParam === "following"
-    ) {
-      return tabParam;
-    }
+    if (tabParam === "social" && canViewSocialLinks) return "social";
+    if (tabParam === "favorites" && canViewFavorites) return "favorites";
+    if (tabParam === "following" && canViewFollowingTab) return "following";
     return "company";
   });
+
+  useEffect(() => {
+    if (activeTab === "social" && !canViewSocialLinks) {
+      setActiveTab("company");
+    } else if (activeTab === "favorites" && !canViewFavorites) {
+      setActiveTab("company");
+    } else if (activeTab === "following" && !canViewFollowingTab) {
+      setActiveTab("company");
+    }
+  }, [activeTab, canViewSocialLinks, canViewFavorites, canViewFollowingTab]);
 
   const [socialLinks, setSocialLinks] = useState<SocialLinkType[]>([]);
   const [favorites, setFavorites] = useState<FavoriteFreelancerType[]>([]);
@@ -116,7 +148,15 @@ export function ClientProfileSettings({ userId }: ClientProfileSettingsProps) {
   const [freelancerQuery, setFreelancerQuery] = useState("");
   const [freelancerView, setFreelancerView] = useState<
     "discover" | "following"
-  >("discover");
+  >(() => (canDiscoverFreelancers ? "discover" : "following"));
+
+  useEffect(() => {
+    if (freelancerView === "discover" && !canDiscoverFreelancers && canGetFollowing) {
+      setFreelancerView("following");
+    } else if (freelancerView === "following" && !canGetFollowing && canDiscoverFreelancers) {
+      setFreelancerView("discover");
+    }
+  }, [freelancerView, canDiscoverFreelancers, canGetFollowing]);
   const [loading, setLoading] = useState(true);
   const [pending, setPending] = useState<string | null>(null);
   const [profileRevision, setProfileRevision] =
@@ -173,9 +213,15 @@ export function ClientProfileSettings({ userId }: ClientProfileSettingsProps) {
         revisionResult,
       ] = await Promise.allSettled([
         accountProfileApi.getClientProfile(userId),
-        accountProfileApi.getSocialLinks(),
-        accountProfileApi.getFavorites(),
-        accountProfileApi.discoverFreelancers(),
+        canViewSocialLinks
+          ? accountProfileApi.getSocialLinks()
+          : Promise.resolve({ success: true, data: [] as SocialLinkType[] }),
+        canViewFavorites
+          ? accountProfileApi.getFavorites()
+          : Promise.resolve({ success: true, data: [] as FavoriteFreelancerType[] }),
+        canDiscoverFreelancers
+          ? accountProfileApi.discoverFreelancers()
+          : Promise.resolve({ success: true, data: [] as DiscoverFreelancerType[] }),
         profileRevisionApiRequest.getMine("CLIENT"),
       ]);
 
@@ -213,7 +259,7 @@ export function ClientProfileSettings({ userId }: ClientProfileSettingsProps) {
     } finally {
       setLoading(false);
     }
-  }, [userId, t]);
+  }, [userId, t, canViewFavorites, canDiscoverFreelancers]);
 
   useEffect(() => {
     void load();
@@ -234,6 +280,7 @@ export function ClientProfileSettings({ userId }: ClientProfileSettingsProps) {
 
   const handleSaveCompany = async (event: FormEvent) => {
     event.preventDefault();
+    if (!canUpdateClientProfile) return;
     setPending("company");
     try {
       const response = await accountProfileApi.updateClientProfile({
@@ -310,6 +357,7 @@ export function ClientProfileSettings({ userId }: ClientProfileSettingsProps) {
   };
 
   const handleRemoveFavorite = async (freelancerId: number) => {
+    if (!canRemoveFavorite) return;
     setPending(`favorite-${freelancerId}`);
     try {
       await accountProfileApi.removeFavorite(freelancerId);
@@ -325,6 +373,7 @@ export function ClientProfileSettings({ userId }: ClientProfileSettingsProps) {
   };
 
   const handleUnfollowFreelancer = async (freelancerId: number) => {
+    if (!canUnfollowFreelancer) return;
     setPending(`following-${freelancerId}`);
     try {
       await accountProfileApi.unfollowFreelancer(freelancerId);
@@ -344,6 +393,7 @@ export function ClientProfileSettings({ userId }: ClientProfileSettingsProps) {
   };
 
   const handleFollowFreelancer = async (freelancerId: number) => {
+    if (!canFollowFreelancer) return;
     setPending(`following-${freelancerId}`);
     try {
       await accountProfileApi.followFreelancer(freelancerId);
@@ -385,24 +435,36 @@ export function ClientProfileSettings({ userId }: ClientProfileSettingsProps) {
 
   const tabs = [
     { id: "company" as const, label: t("tabCompany"), icon: Building2 },
-    {
-      id: "social" as const,
-      label: t("tabSocial"),
-      icon: Link2,
-      count: socialLinks.length,
-    },
-    {
-      id: "favorites" as const,
-      label: t("tabFavorites"),
-      icon: Heart,
-      count: favorites.length,
-    },
-    {
-      id: "following" as const,
-      label: t("tabFollowing"),
-      icon: UserCheck,
-      count: following.length,
-    },
+    ...(canViewSocialLinks
+      ? [
+          {
+            id: "social" as const,
+            label: t("tabSocial"),
+            icon: Link2,
+            count: socialLinks.length,
+          },
+        ]
+      : []),
+    ...(canViewFavorites
+      ? [
+          {
+            id: "favorites" as const,
+            label: t("tabFavorites"),
+            icon: Heart,
+            count: favorites.length,
+          },
+        ]
+      : []),
+    ...(canViewFollowingTab
+      ? [
+          {
+            id: "following" as const,
+            label: t("tabFollowing"),
+            icon: UserCheck,
+            count: following.length,
+          },
+        ]
+      : []),
   ];
 
   return (
@@ -521,9 +583,10 @@ export function ClientProfileSettings({ userId }: ClientProfileSettingsProps) {
                         value={companyName}
                         onChange={(e) => setCompanyName(e.target.value)}
                         required
+                        disabled={!canUpdateClientProfile}
                         maxLength={255}
                         placeholder={t("companyNamePlaceholder")}
-                        className="h-10 rounded-full px-4 text-xs sm:text-sm border border-black/5 dark:border-white/10 focus-visible:ring-2 focus-visible:ring-[#0069D3]/30"
+                        className="h-10 rounded-full px-4 text-xs sm:text-sm border border-black/5 dark:border-white/10 focus-visible:ring-2 focus-visible:ring-[#0069D3]/30 disabled:opacity-60 disabled:cursor-not-allowed"
                       />
                     </div>
 
@@ -539,8 +602,9 @@ export function ClientProfileSettings({ userId }: ClientProfileSettingsProps) {
                         rows={5}
                         value={companyDescription}
                         onChange={(e) => setCompanyDescription(e.target.value)}
+                        disabled={!canUpdateClientProfile}
                         placeholder={t("companyDescriptionPlaceholder")}
-                        className="rounded-2xl p-4 text-xs sm:text-sm border border-black/5 dark:border-white/10 focus-visible:ring-2 focus-visible:ring-[#0069D3]/30 leading-relaxed resize-none"
+                        className="rounded-2xl p-4 text-xs sm:text-sm border border-black/5 dark:border-white/10 focus-visible:ring-2 focus-visible:ring-[#0069D3]/30 leading-relaxed resize-none disabled:opacity-60 disabled:cursor-not-allowed"
                       />
                     </div>
 
@@ -557,28 +621,31 @@ export function ClientProfileSettings({ userId }: ClientProfileSettingsProps) {
                         placeholder={t("websitePlaceholder")}
                         value={website}
                         onChange={(e) => setWebsite(e.target.value)}
-                        className="h-10 rounded-full px-4 text-xs sm:text-sm border border-black/5 dark:border-white/10 focus-visible:ring-2 focus-visible:ring-[#0069D3]/30"
+                        disabled={!canUpdateClientProfile}
+                        className="h-10 rounded-full px-4 text-xs sm:text-sm border border-black/5 dark:border-white/10 focus-visible:ring-2 focus-visible:ring-[#0069D3]/30 disabled:opacity-60 disabled:cursor-not-allowed"
                       />
                     </div>
 
-                    <div className="pt-2 flex items-center gap-3">
-                      <Button
-                        type="submit"
-                        disabled={pending === "company" || !companyName.trim()}
-                        className="gap-2 rounded-full bg-[#0069D3] text-white hover:bg-[#0058b3] px-6 py-2.5 text-xs sm:text-sm font-semibold shadow-xs cursor-pointer disabled:opacity-50"
-                      >
-                        {pending === "company" ? (
-                          <Loader2 className="size-4 animate-spin" />
-                        ) : null}
-                        {t("saveChanges")}
-                      </Button>
-                    </div>
+                    {canUpdateClientProfile ? (
+                      <div className="pt-2 flex items-center gap-3">
+                        <Button
+                          type="submit"
+                          disabled={pending === "company" || !companyName.trim()}
+                          className="gap-2 rounded-full bg-[#0069D3] text-white hover:bg-[#0058b3] px-6 py-2.5 text-xs sm:text-sm font-semibold shadow-xs cursor-pointer disabled:opacity-50"
+                        >
+                          {pending === "company" ? (
+                            <Loader2 className="size-4 animate-spin" />
+                          ) : null}
+                          {t("saveChanges")}
+                        </Button>
+                      </div>
+                    ) : null}
                   </form>
                 </motion.div>
               )}
 
               {/* 2. Social Links Tab */}
-              {activeTab === "social" && (
+              {activeTab === "social" && canViewSocialLinks && (
                 <motion.div
                   key="social"
                   initial={{ opacity: 0, y: 6 }}
@@ -588,88 +655,90 @@ export function ClientProfileSettings({ userId }: ClientProfileSettingsProps) {
                   className="grid gap-6 lg:grid-cols-[380px_1fr]"
                 >
                   {/* Add link card */}
-                  <div className="rounded-[26px] border border-black/5 dark:border-white/10 bg-card p-6 sm:p-7 shadow-xs">
-                    <div className="flex items-center gap-2.5 border-b border-border pb-4">
-                      <div className="flex size-8 items-center justify-center rounded-full bg-[#D0E1F8] dark:bg-[#0069D3]/20 text-[#0069D3]">
-                        <Plus className="size-4" />
-                      </div>
-                      <h3 className="text-sm font-bold text-foreground font-sans">
-                        {t("addSocialLink")}
-                      </h3>
-                    </div>
-
-                    <form
-                      className="mt-5 space-y-4"
-                      onSubmit={handleAddSocialLink}
-                    >
-                      <div className="space-y-1.5">
-                        <Label className="text-xs font-semibold">
-                          {t("platform")}
-                        </Label>
-                        <Select
-                          value={platform}
-                          onValueChange={(value) =>
-                            setPlatform(value as SocialPlatformType)
-                          }
-                        >
-                          <SelectTrigger className="h-10 rounded-full px-4 text-xs sm:text-sm border border-black/5 dark:border-white/10">
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent className="rounded-2xl">
-                            {Object.values(SocialPlatform).map((val) => {
-                              const alreadyAdded = socialLinks.some(
-                                (item) => item.platform === val,
-                              );
-                              return (
-                                <SelectItem
-                                  key={val}
-                                  value={val}
-                                  disabled={alreadyAdded}
-                                >
-                                  <span>{platformLabel(val)}</span>
-                                  {alreadyAdded ? (
-                                    <span className="ml-1 text-muted-foreground">
-                                      {t("alreadyAdded")}
-                                    </span>
-                                  ) : null}
-                                </SelectItem>
-                              );
-                            })}
-                          </SelectContent>
-                        </Select>
+                  {canAddSocialLink && (
+                    <div className="rounded-[26px] border border-black/5 dark:border-white/10 bg-card p-6 sm:p-7 shadow-xs">
+                      <div className="flex items-center gap-2.5 border-b border-border pb-4">
+                        <div className="flex size-8 items-center justify-center rounded-full bg-[#D0E1F8] dark:bg-[#0069D3]/20 text-[#0069D3]">
+                          <Plus className="size-4" />
+                        </div>
+                        <h3 className="text-sm font-bold text-foreground font-sans">
+                          {t("addSocialLink")}
+                        </h3>
                       </div>
 
-                      <div className="space-y-1.5">
-                        <Label className="text-xs font-semibold">
-                          {t("profileUrl")}
-                        </Label>
-                        <Input
-                          type="url"
-                          required
-                          placeholder="https://..."
-                          value={socialUrl}
-                          onChange={(e) => setSocialUrl(e.target.value)}
-                          className="h-10 rounded-full px-4 text-xs sm:text-sm border border-black/5 dark:border-white/10 focus-visible:ring-2 focus-visible:ring-[#0069D3]/30"
-                        />
-                      </div>
-
-                      <Button
-                        type="submit"
-                        disabled={pending === "social" || !socialUrl.trim()}
-                        className="w-full gap-1.5 rounded-full bg-[#0069D3] text-white hover:bg-[#0058b3] text-xs font-semibold py-2.5 cursor-pointer shadow-xs"
+                      <form
+                        className="mt-5 space-y-4"
+                        onSubmit={handleAddSocialLink}
                       >
-                        {pending === "social" ? (
-                          <Loader2 className="size-3.5 animate-spin mr-1" />
-                        ) : (
-                          <Plus className="size-3.5 mr-1" />
-                        )}
-                        {t("addLink")}
-                      </Button>
-                    </form>
-                  </div>
+                        <div className="space-y-1.5">
+                          <Label className="text-xs font-semibold">
+                            {t("platform")}
+                          </Label>
+                          <Select
+                            value={platform}
+                            onValueChange={(value) =>
+                              setPlatform(value as SocialPlatformType)
+                            }
+                          >
+                            <SelectTrigger className="h-10 rounded-full px-4 text-xs sm:text-sm border border-black/5 dark:border-white/10">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent className="rounded-2xl">
+                              {Object.values(SocialPlatform).map((val) => {
+                                const alreadyAdded = socialLinks.some(
+                                  (item) => item.platform === val,
+                                );
+                                return (
+                                  <SelectItem
+                                    key={val}
+                                    value={val}
+                                    disabled={alreadyAdded}
+                                  >
+                                    <span>{platformLabel(val)}</span>
+                                    {alreadyAdded ? (
+                                      <span className="ml-1 text-muted-foreground">
+                                        {t("alreadyAdded")}
+                                      </span>
+                                    ) : null}
+                                  </SelectItem>
+                                );
+                              })}
+                            </SelectContent>
+                          </Select>
+                        </div>
+
+                        <div className="space-y-1.5">
+                          <Label className="text-xs font-semibold">
+                            {t("profileUrl")}
+                          </Label>
+                          <Input
+                            type="url"
+                            required
+                            placeholder="https://..."
+                            value={socialUrl}
+                            onChange={(e) => setSocialUrl(e.target.value)}
+                            className="h-10 rounded-full px-4 text-xs sm:text-sm border border-black/5 dark:border-white/10 focus-visible:ring-2 focus-visible:ring-[#0069D3]/30"
+                          />
+                        </div>
+
+                        <Button
+                          type="submit"
+                          disabled={pending === "social" || !socialUrl.trim()}
+                          className="w-full gap-1.5 rounded-full bg-[#0069D3] text-white hover:bg-[#0058b3] text-xs font-semibold py-2.5 cursor-pointer shadow-xs"
+                        >
+                          {pending === "social" ? (
+                            <Loader2 className="size-3.5 animate-spin mr-1" />
+                          ) : (
+                            <Plus className="size-3.5 mr-1" />
+                          )}
+                          {t("addLink")}
+                        </Button>
+                      </form>
+                    </div>
+                  )}
 
                   {/* Existing links list */}
-                  <div className="rounded-[26px] border border-black/5 dark:border-white/10 bg-card p-6 sm:p-7 shadow-xs">
+                  <div className={`rounded-[26px] border border-black/5 dark:border-white/10 bg-card p-6 sm:p-7 shadow-xs ${canAddSocialLink ? "" : "lg:col-span-2"}`}>
                     <div className="flex items-center justify-between border-b border-border pb-4">
                       <h3 className="text-sm font-bold text-foreground font-sans">
                         {t("connectedLinks", { count: socialLinks.length })}
@@ -711,16 +780,18 @@ export function ClientProfileSettings({ userId }: ClientProfileSettingsProps) {
                                 </a>
                               </div>
                             </div>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              disabled={pending === `social-${link.id}`}
-                              onClick={() => handleDeleteSocialLink(link.id)}
-                              className="size-8 rounded-full text-muted-foreground hover:bg-destructive/10 hover:text-destructive cursor-pointer"
-                              title={t("deleteLink")}
-                            >
-                              <Trash2 className="size-4" />
-                            </Button>
+                            {canDeleteSocialLink && (
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                disabled={pending === `social-${link.id}`}
+                                onClick={() => handleDeleteSocialLink(link.id)}
+                                className="size-8 rounded-full text-muted-foreground hover:bg-destructive/10 hover:text-destructive cursor-pointer"
+                                title={t("deleteLink")}
+                              >
+                                <Trash2 className="size-4" />
+                              </Button>
+                            )}
                           </li>
                         ))}
                       </ul>
@@ -806,20 +877,22 @@ export function ClientProfileSettings({ userId }: ClientProfileSettingsProps) {
                               </div>
                             </div>
 
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              disabled={
-                                pending === `favorite-${favorite.freelancerId}`
-                              }
-                              onClick={() =>
-                                handleRemoveFavorite(favorite.freelancerId)
-                              }
-                              className="size-8 shrink-0 rounded-full text-muted-foreground hover:bg-destructive/10 hover:text-destructive cursor-pointer"
-                              title={t("removeFromFavorites")}
-                            >
-                              <Trash2 className="size-3.5" />
-                            </Button>
+                            {canRemoveFavorite ? (
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                disabled={
+                                  pending === `favorite-${favorite.freelancerId}`
+                                }
+                                onClick={() =>
+                                  handleRemoveFavorite(favorite.freelancerId)
+                                }
+                                className="size-8 shrink-0 rounded-full text-muted-foreground hover:bg-destructive/10 hover:text-destructive cursor-pointer"
+                                title={t("removeFromFavorites")}
+                              >
+                                <Trash2 className="size-3.5" />
+                              </Button>
+                            ) : null}
                           </div>
 
                           {/* Skills */}
@@ -883,36 +956,40 @@ export function ClientProfileSettings({ userId }: ClientProfileSettingsProps) {
                         className="inline-flex w-fit rounded-full bg-[#F3F3F7] p-1 dark:bg-zinc-900/90"
                         aria-label={t("filterRelationships")}
                       >
-                        <button
-                          type="button"
-                          aria-pressed={freelancerView === "discover"}
-                          onClick={() => setFreelancerView("discover")}
-                          className={`rounded-full px-3.5 py-1.5 text-xs font-semibold transition-colors sm:text-sm ${
-                            freelancerView === "discover"
-                              ? "bg-white text-[#0069D3] shadow-xs dark:bg-zinc-800 dark:text-blue-200"
-                              : "text-muted-foreground hover:text-foreground"
-                          }`}
-                        >
-                          {t("discoverCount", {
-                            count: freelancers.filter(
-                              (item) => !item.isFollowing,
-                            ).length,
-                          })}
-                        </button>
-                        <button
-                          type="button"
-                          aria-pressed={freelancerView === "following"}
-                          onClick={() => setFreelancerView("following")}
-                          className={`rounded-full px-3.5 py-1.5 text-xs font-semibold transition-colors sm:text-sm ${
-                            freelancerView === "following"
-                              ? "bg-white text-[#0069D3] shadow-xs dark:bg-zinc-800 dark:text-blue-200"
-                              : "text-muted-foreground hover:text-foreground"
-                          }`}
-                        >
-                          {t("followingTabCount", {
-                            count: following.length,
-                          })}
-                        </button>
+                        {canDiscoverFreelancers && (
+                          <button
+                            type="button"
+                            aria-pressed={freelancerView === "discover"}
+                            onClick={() => setFreelancerView("discover")}
+                            className={`rounded-full px-3.5 py-1.5 text-xs font-semibold transition-colors sm:text-sm ${
+                              freelancerView === "discover"
+                                ? "bg-white text-[#0069D3] shadow-xs dark:bg-zinc-800 dark:text-blue-200"
+                                : "text-muted-foreground hover:text-foreground"
+                            }`}
+                          >
+                            {t("discoverCount", {
+                              count: freelancers.filter(
+                                (item) => !item.isFollowing,
+                              ).length,
+                            })}
+                          </button>
+                        )}
+                        {canGetFollowing && (
+                          <button
+                            type="button"
+                            aria-pressed={freelancerView === "following"}
+                            onClick={() => setFreelancerView("following")}
+                            className={`rounded-full px-3.5 py-1.5 text-xs font-semibold transition-colors sm:text-sm ${
+                              freelancerView === "following"
+                                ? "bg-white text-[#0069D3] shadow-xs dark:bg-zinc-800 dark:text-blue-200"
+                                : "text-muted-foreground hover:text-foreground"
+                            }`}
+                          >
+                            {t("followingTabCount", {
+                              count: following.length,
+                            })}
+                          </button>
+                        )}
                       </div>
 
                       <div className="relative w-full sm:max-w-xs">
@@ -1091,39 +1168,51 @@ export function ClientProfileSettings({ userId }: ClientProfileSettingsProps) {
                               >
                                 {t("viewProfile")}
                               </Button>
-                              <Button
-                                type="button"
-                                variant={
-                                  freelancer.isFollowing ? "outline" : "default"
-                                }
-                                size="sm"
-                                disabled={isPending}
-                                onClick={() =>
-                                  freelancer.isFollowing
-                                    ? void handleUnfollowFreelancer(
+                              {freelancer.isFollowing ? (
+                                canUnfollowFreelancer ? (
+                                  <Button
+                                    type="button"
+                                    variant="outline"
+                                    size="sm"
+                                    disabled={isPending}
+                                    onClick={() =>
+                                      void handleUnfollowFreelancer(
                                         freelancer.freelancerId,
                                       )
-                                    : void handleFollowFreelancer(
+                                    }
+                                    className="rounded-full text-xs border-[#0069D3]/25 text-[#0069D3] hover:bg-destructive/10 hover:text-destructive dark:text-blue-200"
+                                  >
+                                    {isPending ? (
+                                      <Loader2 className="size-3.5 animate-spin" />
+                                    ) : (
+                                      <UserMinus className="size-3.5" />
+                                    )}
+                                    {t("unfollow")}
+                                  </Button>
+                                ) : null
+                              ) : (
+                                canFollowFreelancer ? (
+                                  <Button
+                                    type="button"
+                                    variant="default"
+                                    size="sm"
+                                    disabled={isPending}
+                                    onClick={() =>
+                                      void handleFollowFreelancer(
                                         freelancer.freelancerId,
                                       )
-                                }
-                                className={`rounded-full text-xs ${
-                                  freelancer.isFollowing
-                                    ? "border-[#0069D3]/25 text-[#0069D3] hover:bg-destructive/10 hover:text-destructive dark:text-blue-200"
-                                    : "bg-[#0069D3] text-white hover:bg-[#0059b3]"
-                                }`}
-                              >
-                                {isPending ? (
-                                  <Loader2 className="size-3.5 animate-spin" />
-                                ) : freelancer.isFollowing ? (
-                                  <UserMinus className="size-3.5" />
-                                ) : (
-                                  <UserPlus className="size-3.5" />
-                                )}
-                                {freelancer.isFollowing
-                                  ? t("unfollow")
-                                  : t("follow")}
-                              </Button>
+                                    }
+                                    className="rounded-full text-xs bg-[#0069D3] text-white hover:bg-[#0059b3]"
+                                  >
+                                    {isPending ? (
+                                      <Loader2 className="size-3.5 animate-spin" />
+                                    ) : (
+                                      <UserPlus className="size-3.5" />
+                                    )}
+                                    {t("follow")}
+                                  </Button>
+                                ) : null
+                              )}
                             </div>
                           </article>
                         );

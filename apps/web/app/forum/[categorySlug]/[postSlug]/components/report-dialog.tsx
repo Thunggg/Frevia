@@ -18,6 +18,7 @@ import { Label } from "@repo/ui/components/shadcn/label";
 import { Loader2, Flag, CheckCircle2 } from "@/components/icons";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { forumApiRequest } from "@/apiRequests/forum";
+import { useActionPermission } from "@/hooks/use-action-permission";
 import { toastError, toastSuccess } from "@repo/ui/components/shadcn/toast";
 import type { ApiResponse } from "@shared/types";
 
@@ -42,10 +43,19 @@ export function ReportDialog({
   const queryClient = useQueryClient();
   const t = useTranslations("forum");
   const translateMessage = useBackendMessage();
+  const { can } = useActionPermission();
   const [open, setOpen] = useState(false);
   const [reason, setReason] = useState("");
 
-  // Query: kiểm tra đã report chưa (chỉ fetch khi dialog mở)
+  const canCheckReported = commentId
+    ? can("GET", "/api/forums/posts/:postId/comments/:commentId/is-reported")
+    : can("GET", "/api/forums/posts/:postId/is-reported");
+
+  const canReport = commentId
+    ? can("POST", "/api/forums/posts/:postId/comments/:commentId/reports")
+    : can("POST", "/api/forums/posts/:postId/reports");
+
+  // Query: kiểm tra đã report chưa (chỉ fetch khi có quyền)
   const { data: reportStatus } = useQuery({
     queryKey: commentId
       ? ["forum", "report", "comment", postId, commentId]
@@ -57,7 +67,7 @@ export function ReportDialog({
             .then(extractData)
         : forumApiRequest.checkPostReported(postId).then(extractData),
     select: (data) => data.reported ?? false,
-    enabled: true,
+    enabled: canCheckReported,
     staleTime: Infinity, // Nếu đã report thì không cần check lại
   });
 
@@ -107,6 +117,11 @@ export function ReportDialog({
         {t("reported")}
       </span>
     );
+  }
+
+  // Nếu không có quyền report và chưa report -> ẩn nút report
+  if (!canReport && !reported) {
+    return null;
   }
 
   return (

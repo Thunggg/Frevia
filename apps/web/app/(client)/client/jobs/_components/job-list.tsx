@@ -9,6 +9,7 @@ import {
   Briefcase,
   Edit2,
   Ellipsis,
+  Eye,
   FileText,
   Plus,
   Trash2,
@@ -22,6 +23,8 @@ import {
 } from "@/components/icons";
 
 import jobApiRequest from "@/apiRequests/job";
+import { ApiFail } from "@/lib/http";
+import { useActionPermission } from "@/hooks/use-action-permission";
 
 import {
   AlertDialog,
@@ -220,6 +223,14 @@ function JobRowCard({
   const tStatus = useTranslations("jobStatus");
   const tBudgetType = useTranslations("jobBudgetType");
   const format = useFormatter();
+  const { can } = useActionPermission();
+
+  const canViewDetail = can("GET", "/api/manage-jobs/:id");
+  const canUpdate = can("PATCH", "/api/manage-jobs/:id");
+  const canDelete = can("DELETE", "/api/manage-jobs/:id");
+  const canPublish = can("PATCH", "/api/manage-jobs/:id/publish");
+  const canClose = can("PATCH", "/api/manage-jobs/:id/close");
+  const canReopen = can("PATCH", "/api/manage-jobs/:id/reopen");
 
   const formattedDate = job.createdAt
     ? format.dateTime(new Date(job.createdAt), {
@@ -252,6 +263,7 @@ function JobRowCard({
   const isOpen = job.status === "OPEN";
   const isClosed = job.status === "CLOSED";
   const isInProgress = job.status === "IN_PROGRESS";
+  const isEditable = isDraft || isOpen || isClosed;
 
   return (
     <motion.div
@@ -265,12 +277,18 @@ function JobRowCard({
     >
       {/* Tiêu đề in đậm, Số tiền & Ngày tạo */}
       <div className="flex-col min-w-0 flex-wrap items-center gap-x-3.5 gap-y-1">
-        <Link
-          href={`/client/jobs/${job.id}`}
-          className="text-base text-foreground transition-colors hover:text-foreground/80 line-clamp-1"
-        >
-          {job.title}
-        </Link>
+        {canViewDetail ? (
+          <Link
+            href={`/client/jobs/${job.id}`}
+            className="text-base text-foreground transition-colors hover:text-foreground/80 line-clamp-1"
+          >
+            {job.title}
+          </Link>
+        ) : (
+          <span className="text-base font-semibold text-foreground/80 line-clamp-1">
+            {job.title}
+          </span>
+        )}
         <span className="shrink-0 text-xs font-normal text-muted-foreground">
           {t("budgetLine", {
             min: money(job.budgetMin ?? 0),
@@ -306,7 +324,7 @@ function JobRowCard({
         </div>
 
         {/* Quick action button for primary transitions */}
-        {isDraft && (
+        {isDraft && canPublish && (
           <button
             type="button"
             onClick={() => onPublish(job.id)}
@@ -317,7 +335,7 @@ function JobRowCard({
           </button>
         )}
 
-        {isClosed && (
+        {isClosed && canReopen && (
           <button
             type="button"
             onClick={() => onReopen(job.id)}
@@ -328,7 +346,7 @@ function JobRowCard({
           </button>
         )}
 
-        {/* 3-dot Action Menu (Publish, Close, Reopen, Edit & Delete) */}
+        {/* 3-dot Action Menu (View, Publish, Close, Reopen, Edit & Delete) */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <button
@@ -344,8 +362,26 @@ function JobRowCard({
             sideOffset={6}
             className="w-52 rounded-[24px] border border-black/5 dark:border-white/10 bg-white dark:bg-zinc-900 p-2 shadow-2xl shadow-black/10 flex flex-col gap-1.5"
           >
+            {/* View Job Detail */}
+            <DropdownMenuItem
+              asChild
+              className="group flex items-center justify-between rounded-full px-3 py-2 bg-[#F3F3F7] hover:bg-[#EAE9F0] focus:bg-[#EAE9F0] dark:bg-zinc-800/60 dark:hover:bg-zinc-800 dark:focus:bg-zinc-800 cursor-pointer transition-all duration-200 outline-none"
+            >
+              <Link href={`/client/jobs/${job.id}`}>
+                <div className="flex items-center gap-2.5">
+                  <div className="flex size-7 shrink-0 items-center justify-center rounded-full bg-white dark:bg-zinc-700 text-foreground shadow-xs transition-transform group-hover:scale-105">
+                    <Eye className="size-3.5" />
+                  </div>
+                  <span className="text-xs font-medium text-foreground">
+                    {t("viewDetail")}
+                  </span>
+                </div>
+                <ChevronRight className="size-3.5 text-muted-foreground/50 group-hover:text-foreground group-hover:translate-x-0.5 transition-all shrink-0 ml-2" />
+              </Link>
+            </DropdownMenuItem>
+
             {/* UC-11.03 Publish Job */}
-            {isDraft && (
+            {isDraft && canPublish && (
               <DropdownMenuItem
                 onClick={() => onPublish(job.id)}
                 className="group flex items-center justify-between rounded-full px-3 py-2 bg-[#F3F3F7] hover:bg-emerald-50 focus:bg-emerald-50 dark:bg-zinc-800/60 dark:hover:bg-emerald-950/40 dark:focus:bg-emerald-950/40 cursor-pointer transition-all duration-200 outline-none text-emerald-700 dark:text-emerald-400"
@@ -361,7 +397,7 @@ function JobRowCard({
             )}
 
             {/* UC-11.06 Close Job */}
-            {isOpen && (
+            {isOpen && canClose && (
               <DropdownMenuItem
                 onClick={() => onClose(job.id)}
                 className="group flex items-center justify-between rounded-full px-3 py-2 bg-[#F3F3F7] hover:bg-stone-100 focus:bg-stone-100 dark:bg-zinc-800/60 dark:hover:bg-zinc-800 dark:focus:bg-zinc-800 cursor-pointer transition-all duration-200 outline-none text-stone-700 dark:text-stone-300"
@@ -377,7 +413,7 @@ function JobRowCard({
             )}
 
             {/* UC-11.07 Reopen Job */}
-            {isClosed && (
+            {isClosed && canReopen && (
               <DropdownMenuItem
                 onClick={() => onReopen(job.id)}
                 className="group flex items-center justify-between rounded-full px-3 py-2 bg-[#F3F3F7] hover:bg-[#EAE9F0] focus:bg-[#EAE9F0] dark:bg-zinc-800/60 dark:hover:bg-zinc-800 dark:focus:bg-zinc-800 cursor-pointer transition-all duration-200 outline-none text-[#0069D3] dark:text-blue-300"
@@ -393,37 +429,39 @@ function JobRowCard({
             )}
 
             {/* UC-11.04 Update Job */}
-            <DropdownMenuItem
-              onClick={() => onEdit(job)}
-              className="group flex items-center justify-between rounded-full px-3 py-2 bg-[#F3F3F7] hover:bg-[#EAE9F0] focus:bg-[#EAE9F0] dark:bg-zinc-800/60 dark:hover:bg-zinc-800 dark:focus:bg-zinc-800 cursor-pointer transition-all duration-200 outline-none"
-            >
-              <div className="flex items-center gap-2.5">
-                <div className="flex size-7 shrink-0 items-center justify-center rounded-full bg-white dark:bg-zinc-700 text-foreground shadow-xs transition-transform group-hover:scale-105">
-                  <Edit2 className="size-3.5" />
+            {isEditable && canUpdate && (
+              <DropdownMenuItem
+                onClick={() => onEdit(job)}
+                className="group flex items-center justify-between rounded-full px-3 py-2 bg-[#F3F3F7] hover:bg-[#EAE9F0] focus:bg-[#EAE9F0] dark:bg-zinc-800/60 dark:hover:bg-zinc-800 dark:focus:bg-zinc-800 cursor-pointer transition-all duration-200 outline-none"
+              >
+                <div className="flex items-center gap-2.5">
+                  <div className="flex size-7 shrink-0 items-center justify-center rounded-full bg-white dark:bg-zinc-700 text-foreground shadow-xs transition-transform group-hover:scale-105">
+                    <Edit2 className="size-3.5" />
+                  </div>
+                  <span className="text-xs font-medium text-foreground">
+                    {t("edit")}
+                  </span>
                 </div>
-                <span className="text-xs font-medium text-foreground">
-                  {t("edit")}
-                </span>
-              </div>
-              <ChevronRight className="size-3.5 text-muted-foreground/50 group-hover:text-foreground group-hover:translate-x-0.5 transition-all shrink-0 ml-2" />
-            </DropdownMenuItem>
+                <ChevronRight className="size-3.5 text-muted-foreground/50 group-hover:text-foreground group-hover:translate-x-0.5 transition-all shrink-0 ml-2" />
+              </DropdownMenuItem>
+            )}
 
             {/* UC-11.05 Delete Job */}
-            {!isInProgress && (
+            {!isInProgress && canDelete && (
               <DropdownMenuItem
                 onClick={() => onDelete(job.id)}
-              className="group flex items-center justify-between rounded-full px-3 py-2 bg-[#F3F3F7] hover:bg-red-50 focus:bg-red-50 dark:bg-zinc-800/60 dark:hover:bg-red-950/40 dark:focus:bg-red-950/40 cursor-pointer transition-all duration-200 outline-none text-red-600 dark:text-red-400"
-            >
-              <div className="flex items-center gap-2.5">
-                <div className="flex size-7 shrink-0 items-center justify-center rounded-full bg-red-100 dark:bg-red-900/50 text-red-600 dark:text-red-400 shadow-xs transition-transform group-hover:scale-105">
-                  <Trash2 className="size-3.5" />
+                className="group flex items-center justify-between rounded-full px-3 py-2 bg-[#F3F3F7] hover:bg-red-50 focus:bg-red-50 dark:bg-zinc-800/60 dark:hover:bg-red-950/40 dark:focus:bg-red-950/40 cursor-pointer transition-all duration-200 outline-none text-red-600 dark:text-red-400"
+              >
+                <div className="flex items-center gap-2.5">
+                  <div className="flex size-7 shrink-0 items-center justify-center rounded-full bg-red-100 dark:bg-red-900/50 text-red-600 dark:text-red-400 shadow-xs transition-transform group-hover:scale-105">
+                    <Trash2 className="size-3.5" />
+                  </div>
+                  <span className="text-xs font-medium text-red-600 dark:text-red-400">
+                    {t("delete")}
+                  </span>
                 </div>
-                <span className="text-xs font-medium text-red-600 dark:text-red-400">
-                  {t("delete")}
-                </span>
-              </div>
-              <ChevronRight className="size-3.5 text-red-400/50 group-hover:text-red-600 group-hover:translate-x-0.5 transition-all shrink-0 ml-2" />
-            </DropdownMenuItem>
+                <ChevronRight className="size-3.5 text-red-400/50 group-hover:text-red-600 group-hover:translate-x-0.5 transition-all shrink-0 ml-2" />
+              </DropdownMenuItem>
             )}
           </DropdownMenuContent>
         </DropdownMenu>
@@ -441,6 +479,14 @@ export function JobList({
   const tStatus = useTranslations("jobStatus");
   const tSidebar = useTranslations("sidebar");
   const tCommon = useTranslations("common");
+  const { can } = useActionPermission();
+
+  const canViewList = can("GET", "/api/manage-jobs");
+  const canCreate = can("POST", "/api/manage-jobs");
+  const canDelete = can("DELETE", "/api/manage-jobs/:id");
+  const canPublish = can("PATCH", "/api/manage-jobs/:id/publish");
+  const canClose = can("PATCH", "/api/manage-jobs/:id/close");
+  const canReopen = can("PATCH", "/api/manage-jobs/:id/reopen");
 
   const [jobs, setJobs] = useState<JobType[]>(initialJobs);
   const [statusFilter, setStatusFilter] = useState<StatusFilterType>("ALL");
@@ -449,6 +495,10 @@ export function JobList({
   const [pendingDeleteJobId, setPendingDeleteJobId] = useState<number | null>(
     null,
   );
+  const [pendingPublishJobId, setPendingPublishJobId] = useState<number | null>(
+    null,
+  );
+  const [isPublishing, setIsPublishing] = useState(false);
 
   const draftCount = jobs.filter((j) => j.status === "DRAFT").length;
   const openCount = jobs.filter((j) => j.status === "OPEN").length;
@@ -486,22 +536,39 @@ export function JobList({
     setEditingJob(null);
   };
 
-  const publishJob = async (id: number) => {
+  const confirmPublishJob = async () => {
+    if (!pendingPublishJobId) return;
+    if (!canPublish) {
+      toastError({ message: t("noPermissionAction") });
+      return;
+    }
+    setIsPublishing(true);
     try {
-      const response = await jobApiRequest.publishJob(id);
+      const response = await jobApiRequest.publishJob(pendingPublishJobId);
       if (!response.success) throw new Error();
       setJobs((current) =>
         current.map((job) =>
-          job.id === id ? { ...job, status: "OPEN" } : job,
+          job.id === pendingPublishJobId ? { ...job, status: "OPEN" } : job,
         ),
       );
       toastSuccess({ message: t("published") });
-    } catch {
-      toastError({ message: t("publishFailed") });
+      setPendingPublishJobId(null);
+    } catch (error) {
+      const message =
+        error instanceof ApiFail
+          ? (error.response?.error?.message ?? error.message)
+          : t("publishFailed");
+      toastError({ message: message || t("publishFailed") });
+    } finally {
+      setIsPublishing(false);
     }
   };
 
   const closeJob = async (id: number) => {
+    if (!canClose) {
+      toastError({ message: t("noPermissionAction") });
+      return;
+    }
     try {
       const response = await jobApiRequest.closeJob(id);
       if (!response.success) throw new Error();
@@ -517,6 +584,10 @@ export function JobList({
   };
 
   const reopenJob = async (id: number) => {
+    if (!canReopen) {
+      toastError({ message: t("noPermissionAction") });
+      return;
+    }
     try {
       const response = await jobApiRequest.reopenJob(id);
       if (!response.success) throw new Error();
@@ -535,6 +606,10 @@ export function JobList({
     if (pendingDeleteJobId === null) return;
     const id = pendingDeleteJobId;
     setPendingDeleteJobId(null);
+    if (!canDelete) {
+      toastError({ message: t("noPermissionAction") });
+      return;
+    }
     try {
       await jobApiRequest.deleteJob(id);
       setJobs((prev) => prev.filter((j) => j.id !== id));
@@ -543,6 +618,19 @@ export function JobList({
       toastError({ message: t("deleteFailed") });
     }
   };
+
+  if (!canViewList) {
+    return (
+      <div className="min-h-full bg-background font-sans p-6 sm:p-10">
+        <div className="rounded-2xl border border-border bg-card p-12 text-center text-muted-foreground">
+          <Briefcase className="size-12 mx-auto mb-4 text-muted-foreground/60" />
+          <h2 className="text-lg font-semibold text-foreground mb-1">
+            {t("accessDenied")}
+          </h2>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-full bg-background font-sans">
@@ -561,21 +649,23 @@ export function JobList({
               </motion.h1>
             </div>
 
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.35, delay: 0.15 }}
-            >
-              <Button
-                asChild
-                className="gap-2 rounded-full px-4 py-5 bg-[#F1F0F5] text-sm font-semibold text-gray-700 dark:bg-green-700 dark:text-blue-100 hover:bg-blue-400 dark:hover:bg-green-600"
+            {canCreate && (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.35, delay: 0.15 }}
               >
-                <Link href="/client/jobs/new">
-                  <Plus className="size-4" />
-                  {t("postJob")}
-                </Link>
-              </Button>
-            </motion.div>
+                <Button
+                  asChild
+                  className="gap-2 rounded-full px-4 py-5 bg-[#F1F0F5] text-sm font-semibold text-gray-700 dark:bg-green-700 dark:text-blue-100 hover:bg-blue-400 dark:hover:bg-green-600"
+                >
+                  <Link href="/client/jobs/new">
+                    <Plus className="size-4" />
+                    {t("postJob")}
+                  </Link>
+                </Button>
+              </motion.div>
+            )}
           </div>
 
           {/* Full-width Capsule Status Bar */}
@@ -609,7 +699,7 @@ export function JobList({
                     setIsFormOpen(true);
                   }}
                   onDelete={setPendingDeleteJobId}
-                  onPublish={publishJob}
+                  onPublish={setPendingPublishJobId}
                   onClose={closeJob}
                   onReopen={reopenJob}
                 />
@@ -697,15 +787,17 @@ export function JobList({
             <p className="mx-auto mt-1 max-w-xs text-xs text-muted-foreground">
               {t("noJobsHint")}
             </p>
-            <Button
-              asChild
-              className="mt-6 gap-2 rounded-xl bg-foreground text-xs font-medium text-background hover:bg-foreground/90"
-            >
-              <Link href="/client/jobs/new">
-                <Plus className="size-4" />
-                {t("postJob")}
-              </Link>
-            </Button>
+            {canCreate && (
+              <Button
+                asChild
+                className="mt-6 gap-2 rounded-xl bg-foreground text-xs font-medium text-background hover:bg-foreground/90"
+              >
+                <Link href="/client/jobs/new">
+                  <Plus className="size-4" />
+                  {t("postJob")}
+                </Link>
+              </Button>
+            )}
           </motion.div>
         )}
       </div>
@@ -715,7 +807,59 @@ export function JobList({
         onOpenChange={setIsFormOpen}
         onSaved={saveJob}
         job={editingJob ?? undefined}
+        existingJobs={jobs}
       />
+
+      {/* Confirmation Dialog for Publishing a Job */}
+      <AlertDialog
+        open={pendingPublishJobId !== null}
+        onOpenChange={(open) => !open && !isPublishing && setPendingPublishJobId(null)}
+      >
+        <AlertDialogContent className="max-w-sm rounded-[26px] border border-black/5 dark:border-white/10 bg-white dark:bg-zinc-900 p-5 shadow-2xl font-sans">
+          <div className="flex flex-col gap-3">
+            <div className="px-1">
+              <AlertDialogTitle className="text-base font-bold text-foreground font-sans">
+                {t("publishConfirmTitle")}
+              </AlertDialogTitle>
+              <AlertDialogDescription className="mt-1 text-xs text-muted-foreground leading-normal font-sans">
+                {t("publishConfirmDesc")}
+              </AlertDialogDescription>
+            </div>
+
+            <div className="mt-1 flex flex-col gap-2">
+              <button
+                type="button"
+                disabled={isPublishing}
+                onClick={() => void confirmPublishJob()}
+                className="group flex w-full items-center justify-between rounded-full px-3.5 py-2.5 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white cursor-pointer transition-all duration-200 outline-none shadow-xs"
+              >
+                <div className="flex items-center gap-2.5">
+                  <div className="flex size-7 shrink-0 items-center justify-center rounded-full bg-white/20 text-white shadow-xs transition-transform group-hover:scale-105">
+                    <TrendingUp className="size-3.5" />
+                  </div>
+                  <span className="text-xs font-semibold">
+                    {isPublishing ? t("publishing") : t("confirmPublish")}
+                  </span>
+                </div>
+                <ChevronRight className="size-3.5 text-white/70 group-hover:text-white group-hover:translate-x-0.5 transition-all" />
+              </button>
+
+              <AlertDialogCancel
+                disabled={isPublishing}
+                className="group flex w-full items-center justify-between rounded-full px-3.5 py-2.5 bg-[#F1F0F5] hover:bg-[#EAE9F0] dark:bg-zinc-800/80 dark:hover:bg-zinc-800 text-foreground cursor-pointer transition-all duration-200 outline-none border-0 m-0 h-auto"
+              >
+                <div className="flex items-center gap-2.5">
+                  <div className="flex size-7 shrink-0 items-center justify-center rounded-full bg-white dark:bg-zinc-700 text-muted-foreground shadow-xs transition-transform group-hover:scale-105">
+                    <X className="size-3.5" />
+                  </div>
+                  <span className="text-xs font-medium">{t("cancel")}</span>
+                </div>
+                <ChevronRight className="size-3.5 text-muted-foreground/50 group-hover:text-foreground group-hover:translate-x-0.5 transition-all" />
+              </AlertDialogCancel>
+            </div>
+          </div>
+        </AlertDialogContent>
+      </AlertDialog>
 
       <AlertDialog
         open={pendingDeleteJobId !== null}

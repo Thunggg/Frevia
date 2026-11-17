@@ -36,6 +36,7 @@ import {
   useForumPostLikes,
   useTogglePostLike,
 } from "@/hooks/use-forum";
+import { useActionPermission } from "@/hooks/use-action-permission";
 import { buildSlugId } from "@/lib/slug-utils";
 import { LanguageSwitcher } from "@/components/language-switcher";
 
@@ -62,7 +63,12 @@ export function PostDetailView({
   const t = useTranslations("forum");
   const tCommon = useTranslations("common");
   const format = useFormatter();
+  const { can } = useActionPermission();
   const isAuthor = currentUserId === post.userId;
+  const canEditPost = can("PATCH", "/api/forums/posts/:id");
+  const canDeletePost = can("DELETE", "/api/forums/posts/:id");
+  const canLikePost = can("POST", "/api/forums/posts/:id/like");
+  const canReportPost = can("POST", "/api/forums/posts/:postId/reports");
   const resolvedCategoryId = post.category?.id ?? categoryId;
   const categoryName = post.category?.name ?? t("categoryFallback");
 
@@ -159,45 +165,49 @@ export function PostDetailView({
               <h1 className="text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
                 {displayTitle}
               </h1>
-            {isAuthor ? (
+            {isAuthor && (canEditPost || canDeletePost) ? (
               <div className="flex shrink-0 items-center gap-1">
-                <EditPostDialog
-                  postId={post.id}
-                  initialTitle={displayTitle}
-                  initialContent={displayContent}
-                  onUpdated={handlePostUpdated}
-                />
-                <AlertDialog>
-                  <AlertDialogTrigger asChild>
-                    <Button
-                      variant="ghost"
-                      size="xs"
-                      className="gap-1 text-muted-foreground hover:text-red-500"
-                    >
-                      <Trash2 className="h-3.5 w-3.5" />
-                      {t("delete")}
-                    </Button>
-                  </AlertDialogTrigger>
-                  <AlertDialogContent>
-                    <AlertDialogHeader>
-                      <AlertDialogTitle>
-                        {t("deletePostTitle")}
-                      </AlertDialogTitle>
-                      <AlertDialogDescription>
-                        {t("deletePostDescription")}
-                      </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                      <AlertDialogCancel>{t("cancel")}</AlertDialogCancel>
-                      <AlertDialogAction
-                        onClick={handleDeletePost}
-                        className="bg-destructive text-white hover:bg-destructive/90"
+                {canEditPost ? (
+                  <EditPostDialog
+                    postId={post.id}
+                    initialTitle={displayTitle}
+                    initialContent={displayContent}
+                    onUpdated={handlePostUpdated}
+                  />
+                ) : null}
+                {canDeletePost ? (
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="xs"
+                        className="gap-1 text-muted-foreground hover:text-red-500"
                       >
+                        <Trash2 className="h-3.5 w-3.5" />
                         {t("delete")}
-                      </AlertDialogAction>
-                    </AlertDialogFooter>
-                  </AlertDialogContent>
-                </AlertDialog>
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>
+                          {t("deletePostTitle")}
+                        </AlertDialogTitle>
+                        <AlertDialogDescription>
+                          {t("deletePostDescription")}
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>{t("cancel")}</AlertDialogCancel>
+                        <AlertDialogAction
+                          onClick={handleDeletePost}
+                          className="bg-destructive text-white hover:bg-destructive/90"
+                        >
+                          {t("delete")}
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                ) : null}
               </div>
             ) : null}
           </div>
@@ -243,33 +253,35 @@ export function PostDetailView({
           />
 
           <div className="mt-8 flex flex-wrap items-center gap-1 border-y border-border/40 py-3">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={handleToggleLike}
-              disabled={toggleLike.isPending}
-              className={
-                liked
-                  ? "gap-1.5 px-3 text-red-500 hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-950/20"
-                  : "gap-1.5 px-3 text-muted-foreground/60 hover:bg-[#0069D3]/5 hover:text-[#0069D3] dark:hover:bg-blue-500/10"
-              }
-            >
-              <Heart
-                className={`size-[18px] transition-transform ${
-                  liked ? "scale-110 fill-current" : ""
-                }`}
-              />
-              <span className="text-sm font-medium tabular-nums">
-                {likeCount}
-              </span>
-            </Button>
+            {canLikePost ? (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleToggleLike}
+                disabled={toggleLike.isPending}
+                className={
+                  liked
+                    ? "gap-1.5 px-3 text-red-500 hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-950/20"
+                    : "gap-1.5 px-3 text-muted-foreground/60 hover:bg-[#0069D3]/5 hover:text-[#0069D3] dark:hover:bg-blue-500/10"
+                }
+              >
+                <Heart
+                  className={`size-[18px] transition-transform ${
+                    liked ? "scale-110 fill-current" : ""
+                  }`}
+                />
+                <span className="text-sm font-medium tabular-nums">
+                  {likeCount}
+                </span>
+              </Button>
+            ) : null}
 
             <div className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-muted-foreground">
               <MessageSquare className="size-[18px]" />
               <span className="font-medium tabular-nums">{commentTotal}</span>
             </div>
 
-            {!isAuthor && currentUserId ? (
+            {!isAuthor && currentUserId && canReportPost ? (
               <ReportDialog postId={post.id} />
             ) : null}
           </div>

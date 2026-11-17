@@ -44,6 +44,7 @@ import {
   ShieldCheck,
   Mail,
 } from "lucide-react";
+import { useActionPermission } from "@/hooks/use-action-permission";
 import { NumberedPagination } from "../../components/numbered-pagination";
 import type { IdentityVerificationAdminListResponseType } from "@shared/types";
 
@@ -100,6 +101,7 @@ export function IdentityVerificationsTable({
   const tCommon = useTranslations("adminCommon");
   const tDocumentType = useTranslations("documentType");
   const router = useRouter();
+  const { can } = useActionPermission();
   const [viewing, setViewing] = useState<DocumentItem | null>(null);
   const [reviewNotes, setReviewNotes] = useState("");
   const [acting, setActing] = useState<"approve" | "reject" | null>(null);
@@ -243,15 +245,26 @@ export function IdentityVerificationsTable({
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center justify-end">
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-8 w-8"
-                          onClick={() => openDetail(document)}
-                          aria-label={t("viewRequestLabel", { id: document.id })}
-                        >
-                          <Eye className="h-4 w-4" />
-                        </Button>
+                        {can(
+                          "GET",
+                          `/api/admin/identity-verifications/${document.id}`,
+                        ) ? (
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8"
+                            onClick={() => openDetail(document)}
+                            aria-label={t("viewRequestLabel", {
+                              id: document.id,
+                            })}
+                          >
+                            <Eye className="h-4 w-4" />
+                          </Button>
+                        ) : (
+                          <span className="text-muted-foreground text-xs">
+                            —
+                          </span>
+                        )}
                       </div>
                     </TableCell>
                   </TableRow>
@@ -281,165 +294,199 @@ export function IdentityVerificationsTable({
               {t("dialogTitle", { id: viewing?.id ?? "" })}
             </DialogTitle>
           </DialogHeader>
-          {viewing && (
-            <div className="space-y-5">
-              <div className="flex items-center justify-between gap-3">
-                <div className="flex items-center gap-3">
-                  <Avatar className="h-10 w-10">
-                    <AvatarImage
-                      src={viewing.user.profile?.avatarUrl ?? undefined}
-                    />
-                    <AvatarFallback>
-                      <User className="h-4 w-4" />
-                    </AvatarFallback>
-                  </Avatar>
-                  <div>
-                    <p className="text-sm font-medium">
-                      {viewing.user.profile?.displayName ??
-                        `User #${viewing.user.id}`}
-                    </p>
-                    <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                      <Mail className="h-3 w-3" />
-                      {viewing.user.email}
+          {viewing && (() => {
+            const canViewFile = can(
+              "GET",
+              `/api/admin/identity-verifications/${viewing.id}/file`,
+            );
+            const canApprove = can(
+              "PATCH",
+              `/api/admin/identity-verifications/${viewing.id}/approve`,
+            );
+            const canReject = can(
+              "PATCH",
+              `/api/admin/identity-verifications/${viewing.id}/reject`,
+            );
+
+            return (
+              <div className="space-y-5">
+                <div className="flex items-center justify-between gap-3">
+                  <div className="flex items-center gap-3">
+                    <Avatar className="h-10 w-10">
+                      <AvatarImage
+                        src={viewing.user.profile?.avatarUrl ?? undefined}
+                      />
+                      <AvatarFallback>
+                        <User className="h-4 w-4" />
+                      </AvatarFallback>
+                    </Avatar>
+                    <div>
+                      <p className="text-sm font-medium">
+                        {viewing.user.profile?.displayName ??
+                          `User #${viewing.user.id}`}
+                      </p>
+                      <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                        <Mail className="h-3 w-3" />
+                        {viewing.user.email}
+                      </div>
                     </div>
                   </div>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Badge variant="outline" className="border-border bg-muted">
-                    {documentTypeLabel(viewing.documentType)}
-                  </Badge>
-                  <Badge
-                    variant="outline"
-                    className={`${statusConfig[viewing.status]?.color} border`}
-                  >
-                    {statusLabel(viewing.status)}
-                  </Badge>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                <Calendar className="h-3 w-3" />
-                {t("submittedAt", {
-                  date: formatDateTime(viewing.createdAt, locale),
-                })}
-              </div>
-
-              <div>
-                <p className="text-xs font-medium text-muted-foreground mb-2 uppercase tracking-wide">
-                  {t("documentHeading")}
-                </p>
-                <div
-                  className={`grid gap-3 ${viewing.backFileUrl ? "grid-cols-2" : "grid-cols-1"}`}
-                >
-                  <figure className="space-y-1.5">
-                    <figcaption className="text-xs font-medium text-muted-foreground">
-                      {t("frontLabel")}
-                    </figcaption>
-                    <button
-                      type="button"
-                      className="block w-full overflow-hidden rounded-lg border bg-muted/40 transition hover:border-[#4fae2e]/60"
-                      onClick={() => setZoomSide("front")}
+                  <div className="flex items-center gap-2">
+                    <Badge variant="outline" className="border-border bg-muted">
+                      {documentTypeLabel(viewing.documentType)}
+                    </Badge>
+                    <Badge
+                      variant="outline"
+                      className={`${statusConfig[viewing.status]?.color} border`}
                     >
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src={viewing.fileUrl}
-                        alt={t("frontAlt")}
-                        className="max-h-[260px] w-full object-contain"
-                      />
-                    </button>
-                  </figure>
-                  {viewing.backFileUrl ? (
-                    <figure className="space-y-1.5">
-                      <figcaption className="text-xs font-medium text-muted-foreground">
-                        {t("backLabel")}
-                      </figcaption>
-                      <button
-                        type="button"
-                        className="block w-full overflow-hidden rounded-lg border bg-muted/40 transition hover:border-[#4fae2e]/60"
-                        onClick={() => setZoomSide("back")}
-                      >
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img
-                          src={viewing.backFileUrl}
-                          alt={t("backAlt")}
-                          className="max-h-[260px] w-full object-contain"
-                        />
-                      </button>
-                    </figure>
-                  ) : (
-                    <figure className="space-y-1.5">
-                      <figcaption className="text-xs font-medium text-muted-foreground">
-                        {t("backLabel")}
-                      </figcaption>
-                      <div className="flex h-full min-h-[120px] items-center justify-center rounded-lg border border-dashed bg-muted/20 p-4 text-center text-xs text-muted-foreground">
-                        {t("backMissing")}
-                      </div>
-                    </figure>
-                  )}
+                      {statusLabel(viewing.status)}
+                    </Badge>
+                  </div>
                 </div>
-                <p className="mt-1.5 text-[11px] text-muted-foreground">
-                  {t("zoomHint")}
-                </p>
-              </div>
 
-              {viewing.reviewNotes && (
-                <div>
-                  <p className="text-xs font-medium text-muted-foreground mb-2 uppercase tracking-wide">
-                    {t("reviewNotesHeading")}
-                  </p>
-                  <div className="rounded-lg bg-muted/50 p-4">
-                    <p className="text-sm leading-relaxed whitespace-pre-wrap">
-                      {viewing.reviewNotes}
+                <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                  <Calendar className="h-3 w-3" />
+                  {t("submittedAt", {
+                    date: formatDateTime(viewing.createdAt, locale),
+                  })}
+                </div>
+
+                {canViewFile ? (
+                  <div>
+                    <p className="text-xs font-medium text-muted-foreground mb-2 uppercase tracking-wide">
+                      {t("documentHeading")}
+                    </p>
+                    <div
+                      className={`grid gap-3 ${viewing.backFileUrl ? "grid-cols-2" : "grid-cols-1"}`}
+                    >
+                      <figure className="space-y-1.5">
+                        <figcaption className="text-xs font-medium text-muted-foreground">
+                          {t("frontLabel")}
+                        </figcaption>
+                        <button
+                          type="button"
+                          className="block w-full overflow-hidden rounded-lg border bg-muted/40 transition hover:border-[#4fae2e]/60"
+                          onClick={() => setZoomSide("front")}
+                        >
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img
+                            src={viewing.fileUrl}
+                            alt={t("frontAlt")}
+                            className="max-h-[260px] w-full object-contain"
+                          />
+                        </button>
+                      </figure>
+                      {viewing.backFileUrl ? (
+                        <figure className="space-y-1.5">
+                          <figcaption className="text-xs font-medium text-muted-foreground">
+                            {t("backLabel")}
+                          </figcaption>
+                          <button
+                            type="button"
+                            className="block w-full overflow-hidden rounded-lg border bg-muted/40 transition hover:border-[#4fae2e]/60"
+                            onClick={() => setZoomSide("back")}
+                          >
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img
+                              src={viewing.backFileUrl}
+                              alt={t("backAlt")}
+                              className="max-h-[260px] w-full object-contain"
+                            />
+                          </button>
+                        </figure>
+                      ) : (
+                        <figure className="space-y-1.5">
+                          <figcaption className="text-xs font-medium text-muted-foreground">
+                            {t("backLabel")}
+                          </figcaption>
+                          <div className="flex h-full min-h-[120px] items-center justify-center rounded-lg border border-dashed bg-muted/20 p-4 text-center text-xs text-muted-foreground">
+                            {t("backMissing")}
+                          </div>
+                        </figure>
+                      )}
+                    </div>
+                    <p className="mt-1.5 text-[11px] text-muted-foreground">
+                      {t("zoomHint")}
                     </p>
                   </div>
-                </div>
-              )}
-
-              <Separator />
-
-              {viewing.status === "PENDING" && (
-                <div className="space-y-3">
-                  <div className="space-y-1.5">
-                    <Label htmlFor="review-notes">
-                      {t("reviewNotesLabel")}
-                    </Label>
-                    <Textarea
-                      id="review-notes"
-                      value={reviewNotes}
-                      onChange={(e) => setReviewNotes(e.target.value)}
-                      placeholder={t("reviewNotesPlaceholder")}
-                      rows={3}
-                    />
+                ) : (
+                  <div className="rounded-lg border border-dashed bg-muted/20 p-6 text-center space-y-1.5">
+                    <ShieldCheck className="h-6 w-6 text-muted-foreground mx-auto" />
+                    <p className="text-xs font-medium text-foreground">
+                      {t("noFilePermissionTitle")}
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      {t("noFilePermissionDesc")}
+                    </p>
                   </div>
-                  <DialogFooter>
-                    <Button
-                      variant="destructive"
-                      disabled={acting === "reject"}
-                      onClick={() => handleAction(viewing, "reject")}
-                    >
-                      <FileX className="h-4 w-4 mr-1.5" />
-                      {acting === "reject"
-                        ? t("rejectingAction")
-                        : t("rejectAction")}
-                    </Button>
-                    <Button
-                      disabled={acting === "approve"}
-                      onClick={() => handleAction(viewing, "approve")}
-                    >
-                      <FileCheck className="h-4 w-4 mr-1.5" />
-                      {acting === "approve"
-                        ? t("approvingAction")
-                        : t("approveAction")}
-                    </Button>
-                  </DialogFooter>
-                </div>
-              )}
-            </div>
-          )}
+                )}
+
+                {viewing.reviewNotes && (
+                  <div>
+                    <p className="text-xs font-medium text-muted-foreground mb-2 uppercase tracking-wide">
+                      {t("reviewNotesHeading")}
+                    </p>
+                    <div className="rounded-lg bg-muted/50 p-4">
+                      <p className="text-sm leading-relaxed whitespace-pre-wrap">
+                        {viewing.reviewNotes}
+                      </p>
+                    </div>
+                  </div>
+                )}
+
+                <Separator />
+
+                {viewing.status === "PENDING" && (canApprove || canReject) && (
+                  <div className="space-y-3">
+                    <div className="space-y-1.5">
+                      <Label htmlFor="review-notes">
+                        {t("reviewNotesLabel")}
+                      </Label>
+                      <Textarea
+                        id="review-notes"
+                        value={reviewNotes}
+                        onChange={(e) => setReviewNotes(e.target.value)}
+                        placeholder={t("reviewNotesPlaceholder")}
+                        rows={3}
+                      />
+                    </div>
+                    <DialogFooter>
+                      {canReject && (
+                        <Button
+                          variant="destructive"
+                          disabled={acting === "reject"}
+                          onClick={() => handleAction(viewing, "reject")}
+                        >
+                          <FileX className="h-4 w-4 mr-1.5" />
+                          {acting === "reject"
+                            ? t("rejectingAction")
+                            : t("rejectAction")}
+                        </Button>
+                      )}
+                      {canApprove && (
+                        <Button
+                          disabled={acting === "approve"}
+                          onClick={() => handleAction(viewing, "approve")}
+                        >
+                          <FileCheck className="h-4 w-4 mr-1.5" />
+                          {acting === "approve"
+                            ? t("approvingAction")
+                            : t("approveAction")}
+                        </Button>
+                      )}
+                    </DialogFooter>
+                  </div>
+                )}
+              </div>
+            );
+          })()}
         </DialogContent>
       </Dialog>
 
-      <Dialog open={!!zoomSide} onOpenChange={(open) => !open && setZoomSide(null)}>
+      <Dialog
+        open={Boolean(zoomSide && viewing && can("GET", `/api/admin/identity-verifications/${viewing.id}/file`))}
+        onOpenChange={(open) => !open && setZoomSide(null)}
+      >
         <DialogContent className="max-w-4xl">
           <DialogHeader>
             <DialogTitle className="pr-8">

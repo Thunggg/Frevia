@@ -18,6 +18,7 @@ import { Loader2, Pencil } from "@/components/icons";
 import dynamic from "next/dynamic";
 import { Skeleton } from "@repo/ui/components/shadcn/skeleton";
 import { useUpdatePost } from "@/hooks/use-forum";
+import { useActionPermission } from "@/hooks/use-action-permission";
 
 const RichTextEditor = dynamic(
   () => import("@/components/rich-text-editor").then((mod) => mod.RichTextEditor),
@@ -42,12 +43,18 @@ export function EditPostDialog({
 }: EditPostDialogProps) {
   const t = useTranslations("forum");
   const updatePost = useUpdatePost();
+  const { can } = useActionPermission();
+  const canEditPost = can("PATCH", "/api/forums/posts/:id");
 
   const [open, setOpen] = useState(false);
   const [title, setTitle] = useState(initialTitle);
   const [content, setContent] = useState(initialContent);
 
   const isSubmitting = updatePost.isPending;
+
+  if (!canEditPost) {
+    return null;
+  }
 
   // Khi mở dialog, reset về giá trị ban đầu
   const handleOpen = useCallback(

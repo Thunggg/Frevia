@@ -4,6 +4,7 @@ import { useFormatter, useTranslations } from "next-intl";
 import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Search } from "@/components/icons";
+import { useActionPermission } from "@/hooks/use-action-permission";
 import {
   contractApiRequest,
   extractContractData,
@@ -29,6 +30,8 @@ export function ContractList({
   const t = useTranslations("contracts");
   const tStatus = useTranslations("contractStatus");
   const format = useFormatter();
+  const { can } = useActionPermission();
+  const canViewContracts = can("GET", "/api/contracts");
 
   const [selectedTab, setSelectedTab] = useState<ContractStatus | "ALL">("ALL");
   const [searchQuery, setSearchQuery] = useState("");
@@ -58,6 +61,7 @@ export function ContractList({
   // Fetch Contracts Query
   const { data: contractListRes } = useQuery<GetContractListResponseType>({
     queryKey: ["contracts-list", basePath, selectedTab],
+    enabled: canViewContracts,
     queryFn: () =>
       contractApiRequest
         .getContractList({
@@ -66,13 +70,18 @@ export function ContractList({
         })
         .then(extractContractData),
     initialData:
-      selectedTab === "ALL" && initialData ? initialData : undefined,
+      canViewContracts && selectedTab === "ALL" && initialData
+        ? initialData
+        : undefined,
   });
 
   // All Contracts
   const allContracts = useMemo(
-    () => contractListRes?.data ?? initialData?.data ?? [],
-    [contractListRes?.data, initialData?.data],
+    () =>
+      canViewContracts
+        ? (contractListRes?.data ?? initialData?.data ?? [])
+        : [],
+    [canViewContracts, contractListRes?.data, initialData?.data],
   );
 
   // Tab Badge Counts
@@ -110,6 +119,16 @@ export function ContractList({
         (c.slug && c.slug.toLowerCase().includes(q)),
     );
   }, [allContracts, selectedTab, searchQuery]);
+
+  if (!canViewContracts) {
+    return (
+      <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-border bg-card/40 px-6 py-14 text-center font-sans">
+        <p className="text-sm font-medium text-muted-foreground">
+          {t("emptyList") || "No contracts found."}
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-5 font-sans">

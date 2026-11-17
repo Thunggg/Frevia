@@ -18,6 +18,7 @@ import {
 import { accountProfileApi } from "@/apiRequests/account-profile";
 import jobApiRequest from "@/apiRequests/job";
 import { proposalApiRequest } from "@/apiRequests/proposal";
+import { useActionPermission } from "@/hooks/use-action-permission";
 import { Footer } from "@/components/footer";
 import { Header, type UserRole } from "@/components/header";
 import { Badge } from "@repo/ui/components/shadcn/badge";
@@ -129,6 +130,7 @@ export function JobDetailContent({
   const t = useTranslations("jobDetail");
   const tStatus = useTranslations("jobStatus");
   const tBudgetType = useTranslations("jobBudgetType");
+  const tHiringType = useTranslations("jobHiringType");
   const tBookmark = useTranslations("bookmark");
   const tCommon = useTranslations("common");
   const format = useFormatter();
@@ -141,8 +143,20 @@ export function JobDetailContent({
   const [clientAvatar, setClientAvatar] = useState<string | null>(null);
   const [clientLoading, setClientLoading] = useState(true);
 
+  const { can } = useActionPermission();
+  const canAddBookmark = can("POST", "/api/manage-jobs/jobs/:slug/bookmark");
+  const canRemoveBookmark = can("DELETE", "/api/manage-jobs/bookmarks/:slug");
+  const canViewMyProposal =
+    role === "FREELANCER" &&
+    (can("GET", "/api/proposals/jobs/:jobId/mine") ||
+      can("GET", "/api/proposals/my"));
+  const canCreateProposal = can("POST", "/api/proposals/jobs/:jobId");
+  const canSaveDraft = can("POST", "/api/proposals/jobs/:jobId/drafts");
+  const canViewDetail = can("GET", "/api/proposals/:id");
+
   const isOwnJob = currentUserId != null && job.clientId === currentUserId;
-  const canBookmark = role === "FREELANCER" && !isOwnJob;
+  const canBookmark =
+    role === "FREELANCER" && !isOwnJob && (canAddBookmark || canRemoveBookmark);
 
   useEffect(() => {
     setIsBookmarked(initialIsBookmarked);
@@ -172,7 +186,7 @@ export function JobDetailContent({
   const activeProposalQuery = useQuery({
     queryKey: ["proposals", "job", job.id, "mine"],
     queryFn: () => proposalApiRequest.getMyProposalForJob(job.id),
-    enabled: canBookmark,
+    enabled: canViewMyProposal,
     initialData: existingProposal ?? undefined,
     retry: false,
   });
@@ -209,8 +223,14 @@ export function JobDetailContent({
   };
 
   const activeProposal = activeProposalQuery.data ?? existingProposal;
+  const isPositionsFilled = job.positionsFilled >= job.positionsRequired;
+  const isExpired = isPast(job.expiryDate);
+  const isDeadlinePassed = isPast(job.deadline);
   const canReceiveProposals =
-    job.status === "OPEN" && !isPast(job.expiryDate) && !isPast(job.deadline);
+    job.status === "OPEN" &&
+    !isExpired &&
+    !isDeadlinePassed &&
+    !isPositionsFilled;
   const proposalPresentation = activeProposal
     ? {
         badgeClassName: proposalStatusStyles[activeProposal.status],
@@ -274,7 +294,16 @@ export function JobDetailContent({
       }
 
       if (isBookmarked) {
+        if (!canRemoveBookmark) {
+          toastError({ message: tBookmark("noPermission") });
+          return;
+        }
         setIsRemoveDialogOpen(true);
+        return;
+      }
+
+      if (!canAddBookmark) {
+        toastError({ message: tBookmark("noPermission") });
         return;
       }
 
@@ -308,6 +337,10 @@ export function JobDetailContent({
   };
 
   const removeBookmark = async () => {
+    if (!canRemoveBookmark) {
+      toastError({ message: tBookmark("noPermission") });
+      return;
+    }
     setIsBookmarkLoading(true);
     try {
       await jobApiRequest.removeBookmark(job.slug);
@@ -350,12 +383,21 @@ export function JobDetailContent({
       if (!verified) return;
 
       if (activeProposal) {
+        if (!canViewDetail) {
+          toastError({ message: tBookmark("viewListAccessDenied") });
+          return;
+        }
         router.push(`/proposals/${activeProposal.id}`);
         return;
       }
 
       if (!canReceiveProposals) {
         toastError({ message: t("notAccepting") });
+        return;
+      }
+
+      if (!canCreateProposal && !canSaveDraft) {
+        toastError({ message: t("cannotApplyOwnJob") });
         return;
       }
 
@@ -397,26 +439,26 @@ export function JobDetailContent({
     },
     { id: "expires", label: t("summary.expires"), value: formatDate(job.expiryDate) },
     { id: "status", label: t("summary.status"), value: tStatus(job.status) },
-    // Job tuyển nhiều người: hiển thị số vị trí đã tuyển / cần tuyển.
-    ...(job.hiringType === "MULTIPLE"
-      ? [
-          {
-            id: "positions",
-            label: t("summary.positions"),
-            value: t("positionsFilled", {
+    {
+      id: "hiringType",
+      label: tHiringType("label"),
+      value:
+        job.hiringType === "SINGLE"
+          ? t("hiringTypeSingle")
+          : t("hiringTypeMultiple", {
               filled: job.positionsFilled,
               required: job.positionsRequired,
             }),
-          },
-        ]
-      : []),
+    },
   ];
 
   const proposalActionLabel = activeProposal
-    ? activeProposal.status === "DRAFT" && canReceiveProposals
-      ? t("continueProposal")
-      : t("viewProposal")
-    : canReceiveProposals
+    ? canViewDetail
+      ? activeProposal.status === "DRAFT" && canReceiveProposals
+        ? t("continueProposal")
+        : t("viewProposal")
+      : null
+    : canReceiveProposals && (role !== "FREELANCER" || canCreateProposal || canSaveDraft)
       ? t("applyNow")
       : null;
 
@@ -441,6 +483,20 @@ export function JobDetailContent({
             />
           )}
         </Button>
+      ) : null}
+      {!canReceiveProposals && !activeProposal ? (
+        <span className="inline-flex items-center rounded-full border border-amber-500/20 bg-amber-50 px-3.5 py-2 text-xs font-semibold text-amber-700 dark:bg-amber-950/40 dark:text-amber-300">
+          {isPositionsFilled
+            ? t("positionsFilledClosed", {
+                filled: job.positionsFilled,
+                required: job.positionsRequired,
+              })
+            : isExpired
+              ? t("expiredClosed")
+              : isDeadlinePassed
+                ? t("deadlinePassedClosed")
+                : t("notAccepting")}
+        </span>
       ) : null}
       {proposalActionLabel ? (
         <Button
@@ -832,6 +888,9 @@ export function JobDetailContent({
       <ProposalDialog
         jobId={job.id}
         jobTitle={job.title}
+        budgetMin={job.budgetMin !== null ? Number(job.budgetMin) : null}
+        budgetMax={job.budgetMax !== null ? Number(job.budgetMax) : null}
+        deadline={job.deadline}
         open={isProposalDialogOpen}
         onOpenChange={setIsProposalDialogOpen}
       />

@@ -34,6 +34,7 @@ import {
 import { accountProfileApi } from "@/apiRequests/account-profile";
 import { profileApiRequest } from "@/apiRequests/profile";
 import { profileRevisionApiRequest } from "@/apiRequests/profile-revision";
+import { useActionPermission } from "@/hooks/use-action-permission";
 
 import { Header, type UserRole } from "@/components/header";
 import { ClientSidebar } from "@/app/(client)/_components/client-sidebar";
@@ -192,6 +193,33 @@ export function ProfilePageClient({
   const t = useTranslations("freelancerProfile");
   const tCommon = useTranslations("common");
   const router = useRouter();
+
+  const { can } = useActionPermission();
+  const canViewFavorites = can("GET", "/api/favorites/freelancers");
+  const canAddFavorite = can(
+    "POST",
+    "/api/favorites/freelancers/:freelancerId",
+  );
+  const canRemoveFavorite = can(
+    "DELETE",
+    "/api/favorites/freelancers/:freelancerId",
+  );
+  const canGetFollowing = can("GET", "/api/following/freelancers");
+  const canFollowFreelancer = can(
+    "POST",
+    "/api/following/freelancers/:freelancerId",
+  );
+  const canUnfollowFreelancer = can(
+    "DELETE",
+    "/api/following/freelancers/:freelancerId",
+  );
+  const canUpdateProfile = can("PUT", "/api/profiles/:id");
+  const canAddSkill = can("POST", "/api/profiles/:id/skills");
+  const canDeleteSkill = can("DELETE", "/api/profiles/skills/:id");
+  const canGetSkillSuggestions = can("GET", "/api/profiles/skills/suggestions");
+  const canAddPortfolio = can("POST", "/api/profiles/:id/portfolios");
+  const canUpdatePortfolio = can("PUT", "/api/profiles/portfolios/:id");
+  const canDeletePortfolio = can("DELETE", "/api/profiles/portfolios/:id");
   const [profile, setProfile] = useState<FreelancerProfileDetailType | null>(
     null,
   );
@@ -258,10 +286,10 @@ export function ProfilePageClient({
         profileApiRequest.getProfileDetail(profileId),
         profileApiRequest.getSkills(profileId),
         profileApiRequest.getPortfoliosList(profileId),
-        headerRole === "CLIENT"
+        headerRole === "CLIENT" && canViewFavorites
           ? accountProfileApi.getFavorites()
           : Promise.resolve(null),
-        headerRole === "CLIENT"
+        headerRole === "CLIENT" && canGetFollowing
           ? accountProfileApi.getFollowing()
           : Promise.resolve(null),
       ]);
@@ -301,10 +329,19 @@ export function ProfilePageClient({
     } finally {
       setIsLoading(false);
     }
-  }, [currentUserId, headerRole, profileId, t]);
+  }, [
+    currentUserId,
+    headerRole,
+    profileId,
+    t,
+    canViewFavorites,
+    canGetFollowing,
+  ]);
 
   const toggleFavorite = async () => {
     if (!profile) return;
+    if (isFavorite && !canRemoveFavorite) return;
+    if (!isFavorite && !canAddFavorite) return;
     setPendingAction("favorite");
     try {
       if (isFavorite) {
@@ -329,6 +366,8 @@ export function ProfilePageClient({
 
   const toggleFollowing = async () => {
     if (!profile) return;
+    if (isFollowing && !canUnfollowFreelancer) return;
+    if (!isFollowing && !canFollowFreelancer) return;
     setPendingAction("follow");
     try {
       if (isFollowing) {
@@ -339,7 +378,9 @@ export function ProfilePageClient({
       setIsFollowing((current) => !current);
       if (isFollowing) setUnfollowDialogOpen(false);
       toastSuccess({
-        message: isFollowing ? t("toast.unfollowed") : t("toast.followed"),
+        message: isFollowing
+          ? t("toast.unfollowed")
+          : t("toast.followed"),
       });
     } catch (error) {
       toastError({
@@ -355,7 +396,7 @@ export function ProfilePageClient({
   }, [loadProfile]);
 
   useEffect(() => {
-    if (!skillEditorOpen || !isSkillMenuOpen) return;
+    if (!skillEditorOpen || !isSkillMenuOpen || !canGetSkillSuggestions) return;
 
     let ignore = false;
     const timeoutId = window.setTimeout(
@@ -383,7 +424,7 @@ export function ProfilePageClient({
       ignore = true;
       window.clearTimeout(timeoutId);
     };
-  }, [isSkillMenuOpen, skillEditorOpen, skillName]);
+  }, [isSkillMenuOpen, skillEditorOpen, skillName, canGetSkillSuggestions]);
 
   useEffect(() => {
     const closeSkillMenu = (event: MouseEvent) => {
@@ -410,7 +451,7 @@ export function ProfilePageClient({
   );
 
   const openProfileEditor = () => {
-    if (!profile) return;
+    if (!profile || !canUpdateProfile) return;
     setProfileForm({
       displayName: profile.displayName ?? "",
       title: profile.freelancerProfile?.title ?? "",
@@ -425,6 +466,7 @@ export function ProfilePageClient({
 
   const updateProfile = async (event: FormEvent) => {
     event.preventDefault();
+    if (!canUpdateProfile) return;
     if (!profileForm.displayName.trim() || !profileForm.title.trim()) {
       toastError({
         message: t("toast.requiredFields"),
@@ -471,7 +513,10 @@ export function ProfilePageClient({
       toastSuccess({ message: response.data.message });
     } catch (error) {
       toastError({
-        message: getErrorMessage(error, t("toast.profileUpdateFailedRetry")),
+        message: getErrorMessage(
+          error,
+          t("toast.profileUpdateFailedRetry"),
+        ),
       });
     } finally {
       setPendingAction(null);
@@ -480,14 +525,10 @@ export function ProfilePageClient({
 
   const addSkill = async (event: FormEvent) => {
     event.preventDefault();
+    if (!canAddSkill) return;
     const normalizedName = skillName.trim();
     const proficiencyLevel = Number(skillLevel);
-    if (
-      !normalizedName ||
-      !Number.isInteger(proficiencyLevel) ||
-      proficiencyLevel < 1 ||
-      proficiencyLevel > 10
-    ) {
+    if (!normalizedName || !Number.isInteger(proficiencyLevel)) {
       toastError({ message: t("toast.selectSkill") });
       return;
     }
@@ -505,6 +546,20 @@ export function ProfilePageClient({
 
     setPendingAction("skill-add");
     try {
+      const catalogResponse =
+        await profileApiRequest.searchSkillSuggestions(normalizedName);
+      const inCatalog =
+        catalogResponse.success &&
+        catalogResponse.data.some(
+          (option) =>
+            option.name.toLowerCase() === normalizedName.toLowerCase(),
+        );
+      if (!inCatalog) {
+        toastError({
+          message: t("toast.selectFromCatalog"),
+        });
+        return;
+      }
       const response = await profileApiRequest.addSkill(profileId, {
         skillName: normalizedName,
         proficiencyLevel,
@@ -523,7 +578,10 @@ export function ProfilePageClient({
       toastSuccess({ message: t("toast.skillAdded") });
     } catch (error) {
       toastError({
-        message: getErrorMessage(error, t("toast.addSkillFailedRetry")),
+        message: getErrorMessage(
+          error,
+          t("toast.addSkillFailedRetry"),
+        ),
       });
     } finally {
       setPendingAction(null);
@@ -531,7 +589,7 @@ export function ProfilePageClient({
   };
 
   const deleteSkill = async () => {
-    if (!skillToDelete) return;
+    if (!skillToDelete || !canDeleteSkill) return;
     setPendingAction("skill-delete");
     try {
       await profileApiRequest.deleteSkill(skillToDelete.id);
@@ -542,7 +600,10 @@ export function ProfilePageClient({
       toastSuccess({ message: t("toast.skillRemoved") });
     } catch (error) {
       toastError({
-        message: getErrorMessage(error, t("toast.removeSkillFailed")),
+        message: getErrorMessage(
+          error,
+          t("toast.removeSkillFailed"),
+        ),
       });
     } finally {
       setPendingAction(null);
@@ -550,6 +611,8 @@ export function ProfilePageClient({
   };
 
   const openPortfolioEditor = (portfolio: PortfolioItemType | "new") => {
+    if (portfolio === "new" && !canAddPortfolio) return;
+    if (portfolio !== "new" && !canUpdatePortfolio) return;
     setPortfolioEditor(portfolio);
     setPortfolioForm(
       portfolio === "new"
@@ -565,6 +628,8 @@ export function ProfilePageClient({
 
   const savePortfolio = async (event: FormEvent) => {
     event.preventDefault();
+    if (portfolioEditor === "new" && !canAddPortfolio) return;
+    if (portfolioEditor !== "new" && !canUpdatePortfolio) return;
     if (!portfolioEditor || !portfolioForm.title.trim()) {
       toastError({ message: t("toast.portfolioTitleRequired") });
       return;
@@ -605,7 +670,10 @@ export function ProfilePageClient({
       setPortfolioEditor(null);
     } catch (error) {
       toastError({
-        message: getErrorMessage(error, t("toast.savePortfolioFailed")),
+        message: getErrorMessage(
+          error,
+          t("toast.savePortfolioFailed"),
+        ),
       });
     } finally {
       setPendingAction(null);
@@ -629,7 +697,7 @@ export function ProfilePageClient({
   };
 
   const deletePortfolio = async () => {
-    if (!portfolioToDelete) return;
+    if (!portfolioToDelete || !canDeletePortfolio) return;
     setPendingAction("portfolio-delete");
     try {
       await profileApiRequest.deletePortfolio(portfolioToDelete.id);
@@ -643,7 +711,10 @@ export function ProfilePageClient({
       toastSuccess({ message: t("toast.portfolioDeleted") });
     } catch (error) {
       toastError({
-        message: getErrorMessage(error, t("toast.deletePortfolioFailed")),
+        message: getErrorMessage(
+          error,
+          t("toast.deletePortfolioFailed"),
+        ),
       });
     } finally {
       setPendingAction(null);
@@ -699,7 +770,9 @@ export function ProfilePageClient({
         )}
         <main className="mx-auto flex w-full max-w-xl flex-1 flex-col items-center justify-center px-6 text-center">
           <UserRound className="size-12 text-muted-foreground" />
-          <h1 className="mt-4 text-2xl font-bold">{t("unavailableTitle")}</h1>
+          <h1 className="mt-4 text-2xl font-bold">
+            {t("unavailableTitle")}
+          </h1>
           <p className="mt-2 text-muted-foreground">{loadError}</p>
           <Button className="mt-6" onClick={() => void loadProfile()}>
             <RefreshCw /> {t("tryAgain")}
@@ -775,6 +848,7 @@ export function ProfilePageClient({
             </p>
           </div>
         </section>
+
         <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
           {isOwner ? (
             <div className="mb-5">
@@ -829,100 +903,129 @@ export function ProfilePageClient({
                 {isOwner ? (
                   <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row">
                     <Button variant="outline" asChild>
-                      <Link href="/account-profile">
+                      <Link href="/freelancer/profile">
                         <UserRound /> {t("profileSettings")}
                       </Link>
                     </Button>
-                    <Button
-                      className="bg-[#4fae2e] text-white hover:bg-[#459928]"
-                      onClick={openProfileEditor}
-                    >
-                      <Pencil /> {t("editProfile")}
-                    </Button>
+                    {canUpdateProfile && (
+                      <Button
+                        className="bg-[#4fae2e] text-white hover:bg-[#459928]"
+                        onClick={openProfileEditor}
+                      >
+                        <Pencil /> {t("editProfile")}
+                      </Button>
+                    )}
                   </div>
                 ) : headerRole === "CLIENT" ? (
                   <div className="flex flex-wrap gap-2">
-                    <Button
-                      variant={isFollowing ? "outline" : "default"}
-                      className={
-                        isFollowing
-                          ? "border-[#4fae2e]/35 text-[#438f2b] hover:bg-[#eaf8df] dark:text-[#78c85d] dark:hover:bg-[#4fae2e]/10"
-                          : "bg-[#4fae2e] text-white hover:bg-[#459928]"
-                      }
-                      onClick={() => {
-                        if (isFollowing) {
-                          setUnfollowDialogOpen(true);
-                        } else {
-                          void toggleFollowing();
-                        }
-                      }}
-                      disabled={pendingAction === "follow"}
-                    >
-                      {pendingAction === "follow" ? (
-                        <Loader2 className="animate-spin" />
-                      ) : isFollowing ? (
-                        <UserCheck />
-                      ) : (
-                        <UserPlus />
-                      )}
-                      {isFollowing ? t("following") : t("follow")}
-                    </Button>
-                    <AlertDialog
-                      open={unfollowDialogOpen}
-                      onOpenChange={setUnfollowDialogOpen}
-                    >
-                      <AlertDialogContent>
-                        <AlertDialogHeader>
-                          <AlertDialogTitle>
-                            {t("unfollowTitle", {
-                              name: profile.displayName ?? t("noNameFallback"),
-                            })}
-                          </AlertDialogTitle>
-                          <AlertDialogDescription>
-                            {t("unfollowDescription")}
-                          </AlertDialogDescription>
-                        </AlertDialogHeader>
-                        <AlertDialogFooter>
-                          <AlertDialogCancel
-                            disabled={pendingAction === "follow"}
-                          >
-                            {t("keepFollowing")}
-                          </AlertDialogCancel>
-                          <AlertDialogAction
-                            className="bg-destructive text-white hover:bg-destructive/90"
-                            disabled={pendingAction === "follow"}
-                            onClick={(event) => {
-                              event.preventDefault();
-                              void toggleFollowing();
+                    {isFollowing ? (
+                      canUnfollowFreelancer ? (
+                        <>
+                          <Button
+                            variant="outline"
+                            className="border-[#4fae2e]/35 text-[#438f2b] hover:bg-[#eaf8df] dark:text-[#78c85d] dark:hover:bg-[#4fae2e]/10"
+                            onClick={() => {
+                              setUnfollowDialogOpen(true);
                             }}
+                            disabled={pendingAction === "follow"}
                           >
                             {pendingAction === "follow" ? (
                               <Loader2 className="animate-spin" />
                             ) : (
-                              <UserMinus />
+                              <UserCheck />
                             )}
-                            {t("unfollow")}
-                          </AlertDialogAction>
-                        </AlertDialogFooter>
-                      </AlertDialogContent>
-                    </AlertDialog>
-                    <Button
-                      variant={isFavorite ? "default" : "outline"}
-                      className={
-                        isFavorite
-                          ? "bg-[#4fae2e] text-white hover:bg-[#459928]"
-                          : ""
-                      }
-                      onClick={() => void toggleFavorite()}
-                      disabled={pendingAction === "favorite"}
-                    >
-                      {pendingAction === "favorite" ? (
-                        <Loader2 className="animate-spin" />
-                      ) : (
-                        <Heart className={isFavorite ? "fill-current" : ""} />
-                      )}
-                      {isFavorite ? t("favorited") : t("addToFavorites")}
-                    </Button>
+                            {t("following")}
+                          </Button>
+                          <AlertDialog
+                            open={unfollowDialogOpen}
+                            onOpenChange={setUnfollowDialogOpen}
+                          >
+                            <AlertDialogContent>
+                              <AlertDialogHeader>
+                                <AlertDialogTitle>
+                                  {t("unfollowTitle", {
+                                    name:
+                                      profile.displayName ?? t("noNameFallback"),
+                                  })}
+                                </AlertDialogTitle>
+                                <AlertDialogDescription>
+                                  {t("unfollowDescription")}
+                                </AlertDialogDescription>
+                              </AlertDialogHeader>
+                              <AlertDialogFooter>
+                                <AlertDialogCancel
+                                  disabled={pendingAction === "follow"}
+                                >
+                                  {t("keepFollowing")}
+                                </AlertDialogCancel>
+                                <AlertDialogAction
+                                  className="bg-destructive text-white hover:bg-destructive/90"
+                                  disabled={pendingAction === "follow"}
+                                  onClick={(event) => {
+                                    event.preventDefault();
+                                    void toggleFollowing();
+                                  }}
+                                >
+                                  {pendingAction === "follow" ? (
+                                    <Loader2 className="animate-spin" />
+                                  ) : (
+                                    <UserMinus />
+                                  )}
+                                  {t("unfollow")}
+                                </AlertDialogAction>
+                              </AlertDialogFooter>
+                            </AlertDialogContent>
+                          </AlertDialog>
+                        </>
+                      ) : null
+                    ) : canFollowFreelancer ? (
+                      <Button
+                        variant="default"
+                        className="bg-[#4fae2e] text-white hover:bg-[#459928]"
+                        onClick={() => {
+                          void toggleFollowing();
+                        }}
+                        disabled={pendingAction === "follow"}
+                      >
+                        {pendingAction === "follow" ? (
+                          <Loader2 className="animate-spin" />
+                        ) : (
+                          <UserPlus />
+                        )}
+                        {t("follow")}
+                      </Button>
+                    ) : null}
+
+                    {isFavorite ? (
+                      canRemoveFavorite ? (
+                        <Button
+                          variant="default"
+                          className="bg-[#4fae2e] text-white hover:bg-[#459928]"
+                          onClick={() => void toggleFavorite()}
+                          disabled={pendingAction === "favorite"}
+                        >
+                          {pendingAction === "favorite" ? (
+                            <Loader2 className="animate-spin" />
+                          ) : (
+                            <Heart className="fill-current" />
+                          )}
+                          {t("favorited")}
+                        </Button>
+                      ) : null
+                    ) : canAddFavorite ? (
+                      <Button
+                        variant="outline"
+                        onClick={() => void toggleFavorite()}
+                        disabled={pendingAction === "favorite"}
+                      >
+                        {pendingAction === "favorite" ? (
+                          <Loader2 className="animate-spin" />
+                        ) : (
+                          <Heart />
+                        )}
+                        {t("addToFavorites")}
+                      </Button>
+                    ) : null}
                   </div>
                 ) : null}
               </div>
@@ -985,7 +1088,7 @@ export function ProfilePageClient({
                       {t("skillsDescription")}
                     </p>
                   </div>
-                  {isOwner ? (
+                  {isOwner && canAddSkill ? (
                     <Button
                       size="sm"
                       className="bg-[#4fae2e] text-white hover:bg-[#459928]"
@@ -1022,7 +1125,7 @@ export function ProfilePageClient({
                                 {skill.proficiencyLevel}/10
                               </p>
                             </div>
-                            {isOwner ? (
+                            {isOwner && canDeleteSkill ? (
                               <Button
                                 variant="ghost"
                                 size="icon-sm"
@@ -1060,7 +1163,7 @@ export function ProfilePageClient({
                       {t("portfolioDescription")}
                     </p>
                   </div>
-                  {isOwner ? (
+                  {isOwner && canAddPortfolio ? (
                     <Button
                       size="sm"
                       className="bg-[#4fae2e] text-white hover:bg-[#459928]"
@@ -1075,7 +1178,9 @@ export function ProfilePageClient({
                     <SectionEmpty
                       title={t("noPortfolioTitle")}
                       description={
-                        isOwner ? t("noPortfolioOwner") : t("noPortfolioOther")
+                        isOwner
+                          ? t("noPortfolioOwner")
+                          : t("noPortfolioOther")
                       }
                     />
                   </div>
@@ -1112,21 +1217,25 @@ export function ProfilePageClient({
                         </button>
                         {isOwner ? (
                           <div className="mt-3 flex justify-end gap-2">
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => openPortfolioEditor(portfolio)}
-                            >
-                              <Pencil /> {t("edit")}
-                            </Button>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              className="text-destructive"
-                              onClick={() => setPortfolioToDelete(portfolio)}
-                            >
-                              <Trash2 /> {t("delete")}
-                            </Button>
+                            {canUpdatePortfolio && (
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => openPortfolioEditor(portfolio)}
+                              >
+                                <Pencil /> {t("edit")}
+                              </Button>
+                            )}
+                            {canDeletePortfolio && (
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                className="text-destructive"
+                                onClick={() => setPortfolioToDelete(portfolio)}
+                              >
+                                <Trash2 /> {t("delete")}
+                              </Button>
+                            )}
                           </div>
                         ) : null}
                       </li>
@@ -1184,7 +1293,9 @@ export function ProfilePageClient({
         <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-2xl">
           <DialogHeader>
             <DialogTitle>{t("editProfileTitle")}</DialogTitle>
-            <DialogDescription>{t("editProfileDescription")}</DialogDescription>
+            <DialogDescription>
+              {t("editProfileDescription")}
+            </DialogDescription>
           </DialogHeader>
           <form onSubmit={updateProfile} className="space-y-5">
             <div className="grid gap-4 sm:grid-cols-2">
@@ -1340,7 +1451,9 @@ export function ProfilePageClient({
         <DialogContent>
           <DialogHeader>
             <DialogTitle>{t("addSkillTitle")}</DialogTitle>
-            <DialogDescription>{t("addSkillDescription")}</DialogDescription>
+            <DialogDescription>
+              {t("addSkillDescription")}
+            </DialogDescription>
           </DialogHeader>
           <form onSubmit={addSkill} className="space-y-5">
             <FormField label={t("fieldSkillName")} htmlFor="skill-name">
@@ -1478,10 +1591,7 @@ export function ProfilePageClient({
                 }
               />
             </FormField>
-            <FormField
-              label={t("fieldDescription")}
-              htmlFor="portfolio-description"
-            >
+            <FormField label={t("fieldDescription")} htmlFor="portfolio-description">
               <Textarea
                 id="portfolio-description"
                 rows={5}

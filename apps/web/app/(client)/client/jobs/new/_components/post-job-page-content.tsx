@@ -3,13 +3,41 @@
 import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { ArrowLeft } from "lucide-react";
 
 import { PostJobForm } from "@/app/(client)/client/jobs/_components/post-job-form";
+import { useActionPermission } from "@/hooks/use-action-permission";
+import { Button } from "@repo/ui/components/shadcn/button";
 
 export function PostJobPageContent() {
   const router = useRouter();
   const t = useTranslations("postJob");
   const tSidebar = useTranslations("sidebar");
+  const { can } = useActionPermission();
+
+  const canCreate = can("POST", "/api/manage-jobs");
+
+  if (!canCreate) {
+    return (
+      <div className="flex min-h-dvh flex-col bg-background font-sans">
+        <main className="flex-1">
+          <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+            <div className="rounded-2xl border border-border bg-card p-12 text-center text-muted-foreground shadow-xs">
+              <p className="text-base font-semibold text-foreground mb-4">
+                {t("accessDenied")}
+              </p>
+              <Button asChild variant="outline">
+                <Link href="/client/jobs">
+                  <ArrowLeft className="mr-2 size-4" />
+                  {t("backToJobs")}
+                </Link>
+              </Button>
+            </div>
+          </div>
+        </main>
+      </div>
+    );
+  }
 
   return (
     <div className="flex min-h-dvh flex-col bg-background font-sans">

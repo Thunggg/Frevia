@@ -33,6 +33,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef, useState, useTransition } from "react";
 
 import { useMe } from "@/hooks/use-auth";
+import { useActionPermission } from "@/hooks/use-action-permission";
 import { canAccessAdminPortal } from "@/lib/admin-access";
 import {
   Avatar,
@@ -106,7 +107,11 @@ export function ClientSidebar() {
   const activeLocale = useLocale();
   const [isLocalePending, startLocaleTransition] = useTransition();
   const { data: me } = useMe();
-  const { data: notifications = [] } = useNotifications();
+  const { can } = useActionPermission();
+  const canViewJobs = can("GET", "/api/manage-jobs");
+  const canViewContracts = can("GET", "/api/contracts");
+  const canViewNotifications = can("GET", "/api/notifications");
+  const { data: notifications = [] } = useNotifications(canViewNotifications);
   const { resolvedTheme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
@@ -158,18 +163,26 @@ export function ClientSidebar() {
   };
 
   const clientNav: NavItem[] = [
-    {
-      href: "/client/jobs",
-      labelKey: "navMyJobs",
-      icon: Briefcase,
-      matchPrefix: true,
-    },
-    {
-      href: "/client/contracts",
-      labelKey: "navContracts",
-      icon: FileText,
-      matchPrefix: true,
-    },
+    ...(canViewJobs
+      ? [
+          {
+            href: "/client/jobs",
+            labelKey: "navMyJobs",
+            icon: Briefcase,
+            matchPrefix: true,
+          },
+        ]
+      : []),
+    ...(canViewContracts
+      ? [
+          {
+            href: "/client/contracts",
+            labelKey: "navContracts",
+            icon: FileText,
+            matchPrefix: true,
+          },
+        ]
+      : []),
     {
       href: "/client/payments",
       labelKey: "navBillingPayments",
@@ -194,18 +207,22 @@ export function ClientSidebar() {
       icon: Users,
       matchPrefix: true,
     },
-    {
-      href: "/client/notifications",
-      labelKey: "navNotifications",
-      icon: Bell,
-      matchPrefix: true,
-      badge:
-        unreadNotifications > 0
-          ? unreadNotifications > 99
-            ? "99+"
-            : unreadNotifications
-          : undefined,
-    },
+    ...(canViewNotifications
+      ? [
+          {
+            href: "/client/notifications",
+            labelKey: "navNotifications" as const,
+            icon: Bell,
+            matchPrefix: true,
+            badge:
+              unreadNotifications > 0
+                ? unreadNotifications > 99
+                  ? "99+"
+                  : unreadNotifications
+                : undefined,
+          },
+        ]
+      : []),
   ];
 
   const displayName = me?.profile?.displayName ?? tRole("CLIENT");
@@ -334,14 +351,16 @@ export function ClientSidebar() {
                 <UserRound className="size-3.5" />
                 {t("profileSettings")}
               </Link>
-              <Link
-                href="/client/profile?tab=favorites"
-                onClick={() => setProfileOpen(false)}
-                className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-xs text-muted-foreground hover:bg-[#D0E1F8]/40 dark:hover:bg-zinc-800 hover:text-[#0069D3] dark:hover:text-blue-300 transition-colors"
-              >
-                <Heart className="size-3.5" />
-                {t("navFavoriteFreelancers")}
-              </Link>
+              {can("GET", "/api/favorites/freelancers") && (
+                <Link
+                  href="/client/profile?tab=favorites"
+                  onClick={() => setProfileOpen(false)}
+                  className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-xs text-muted-foreground hover:bg-[#D0E1F8]/40 dark:hover:bg-zinc-800 hover:text-[#0069D3] dark:hover:text-blue-300 transition-colors"
+                >
+                  <Heart className="size-3.5" />
+                  {t("navFavoriteFreelancers")}
+                </Link>
+              )}
               <Link
                 href="/client/payments"
                 onClick={() => setProfileOpen(false)}

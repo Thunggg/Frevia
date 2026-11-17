@@ -23,6 +23,7 @@ import {
 import { toastError, toastSuccess } from "@repo/ui/components/shadcn/toast";
 import { contractApiRequest, extractContractData } from "@/apiRequests/contract";
 import { paymentApiRequest } from "@/apiRequests/payment";
+import { useActionPermission } from "@/hooks/use-action-permission";
 import { ApiFail } from "@/lib/http";
 import type {
   ContractDetailType,
@@ -51,8 +52,12 @@ export function MilestonesPageContent({
 }: MilestonesPageContentProps) {
   const router = useRouter();
   const queryClient = useQueryClient();
+  const { can } = useActionPermission();
   const isFreelancer = basePath === "/freelancer";
   const isClient = !isFreelancer;
+
+  const canViewMilestones = can("GET", "/api/contracts/:contractId/milestones");
+  const canCreateMilestone = can("POST", "/api/contracts/:contractId/milestones");
 
   // Filter & Search states
   const [statusFilter, setStatusFilter] = useState<string>("ALL");
@@ -346,7 +351,7 @@ export function MilestonesPageContent({
         </div>
 
         {/* Client Add Milestone Button (Only when contract is PENDING_SIGN or AWAITING_PAYMENT) */}
-        {canManageMilestones && (
+        {canManageMilestones && canCreateMilestone && (
           <Button
             onClick={() => {
               setMilestoneToEdit(null);
@@ -360,8 +365,18 @@ export function MilestonesPageContent({
         )}
       </div>
 
-      {/* ── Milestones Data Table (Matching reference image structure) ── */}
-      {filteredMilestones.length > 0 ? (
+      {/* ── Milestones Content or Permission Warning ── */}
+      {!canViewMilestones ? (
+        <div className="rounded-xl border border-amber-200/80 dark:border-amber-900/40 bg-amber-50/40 dark:bg-amber-950/20 p-8 text-center space-y-2">
+          <Clock className="size-8 mx-auto text-amber-600" />
+          <h3 className="text-sm font-semibold text-zinc-950 dark:text-zinc-100">
+            Không có quyền xem danh sách milestone
+          </h3>
+          <p className="text-xs text-zinc-500 dark:text-zinc-400 max-w-md mx-auto">
+            Tài khoản của bạn chưa được cấp quyền xem danh sách các mốc công việc (milestones) của hợp đồng này.
+          </p>
+        </div>
+      ) : filteredMilestones.length > 0 ? (
         <div className="rounded-sm border border-zinc-200/80 dark:border-zinc-800/80 bg-white dark:bg-zinc-950 overflow-hidden shadow-2xs">
           {/* Desktop Table View */}
           <div className="hidden md:block overflow-x-auto">

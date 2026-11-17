@@ -54,6 +54,7 @@ import { FreelancerProfileSheet } from "@/app/(client)/_components/freelancer-pr
 import { ProposalDetailSheet } from "./proposal-detail-sheet";
 import { CreateContractDialog } from "../../../../contracts/_components/create-contract-dialog";
 import { VerifiedBadge } from "@/components/verified-badge";
+import { useActionPermission } from "@/hooks/use-action-permission";
 
 type ProposalStatus = SubmittedProposalStatusType;
 type StatusFilter = "ALL" | ProposalStatus;
@@ -174,15 +175,29 @@ function ProposalEmptyState({ filtered }: { filtered: boolean }) {
 export function ProposalList({
   jobId,
   jobTitle,
+  hiringType,
+  positionsRequired,
+  positionsFilled,
+  jobStatus,
 }: {
   jobId: number;
   jobTitle: string;
+  hiringType?: "SINGLE" | "MULTIPLE";
+  positionsRequired?: number;
+  positionsFilled?: number;
+  jobStatus?: string;
 }) {
   const queryClient = useQueryClient();
   const t = useTranslations("clientProposals");
   const tStatus = useTranslations("proposalStatus");
   const tCommon = useTranslations("common");
   const format = useFormatter();
+
+  const required = positionsRequired ?? 1;
+  const filled = positionsFilled ?? 0;
+  const isFilled = filled >= required;
+  const cannotHireMore =
+    isFilled || (jobStatus !== undefined && jobStatus !== "OPEN");
 
   const money = (value: number) =>
     format.number(value, {
@@ -222,6 +237,16 @@ export function ProposalList({
   const [selectedProposalId, setSelectedProposalId] = useState<number | null>(null);
   const [selectedProposalData, setSelectedProposalData] = useState<ClientProposal | null>(null);
 
+  const { can } = useActionPermission();
+  const canViewSubmitted =
+    can("GET", "/api/jobs/:jobId/proposals") ||
+    can("GET", "/api/proposals/jobs/:jobId/submitted");
+  const canViewDetail = can("GET", "/api/proposals/:id/client");
+  const canInterview = can("PATCH", "/api/proposals/:id/interview");
+  const canAccept = can("PATCH", "/api/proposals/:id/accept");
+  const canReject = can("PATCH", "/api/proposals/:id/reject");
+  const canCreateContract = can("POST", "/api/contracts");
+
   const handleOpenFreelancerProfile = (
     profileId: number,
     data?: {
@@ -237,6 +262,10 @@ export function ProposalList({
   };
 
   const handleOpenProposalDetail = (proposal: ClientProposal) => {
+    if (!canViewDetail) {
+      toastError({ message: t("viewDetailAccessDenied") });
+      return;
+    }
     setSelectedProposalId(proposal.id);
     setSelectedProposalData(proposal);
     setProposalSheetOpen(true);
@@ -244,6 +273,7 @@ export function ProposalList({
 
   const proposalsQuery = useQuery({
     queryKey: ["client-job-proposals", jobId, page, status],
+    enabled: canViewSubmitted,
     queryFn: () =>
       proposalApiRequest
         .getClientJobProposals(jobId, {
@@ -310,6 +340,10 @@ export function ProposalList({
 
   const rejectProposal = async () => {
     if (!rejecting) return;
+    if (!canReject) {
+      toastError({ message: t("noPermissionAction") });
+      return;
+    }
     setIsRejecting(true);
     try {
       await proposalApiRequest.reject(rejecting.id);
@@ -330,6 +364,10 @@ export function ProposalList({
   };
 
   const interviewProposal = async (proposalId: number) => {
+    if (!canInterview) {
+      toastError({ message: t("noPermissionAction") });
+      return;
+    }
     setInterviewingId(proposalId);
     try {
       await proposalApiRequest.interview(proposalId);
@@ -375,10 +413,33 @@ export function ProposalList({
               </span>
             </nav>
 
-            <div className="mt-4">
-              <h1 className="text-2xl font-bold tracking-tight text-foreground font-sans sm:text-3xl">
-                {jobTitle}
-              </h1>
+            <div className="mt-4 flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
+              <div>
+                <h1 className="text-2xl font-bold tracking-tight text-foreground font-sans sm:text-3xl">
+                  {jobTitle}
+                </h1>
+                <div className="mt-2.5 flex flex-wrap items-center gap-2">
+                  {hiringType === "SINGLE" ? (
+                    <span className="inline-flex items-center gap-1.5 rounded-full border border-border bg-muted/50 px-3 py-1 text-xs font-medium text-foreground">
+                      {t("hiringTypeSingleBadge")}
+                    </span>
+                  ) : hiringType === "MULTIPLE" ? (
+                    <span className="inline-flex items-center gap-1.5 rounded-full border border-border bg-muted/50 px-3 py-1 text-xs font-medium text-foreground">
+                      {t("hiringTypeMultipleBadge", { filled, required })}
+                    </span>
+                  ) : null}
+                  {isFilled ? (
+                    <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/50 px-3 py-1 text-xs font-medium text-emerald-700 dark:text-emerald-300">
+                      <Check className="size-3" />
+                      {t("jobFilledBadge", { filled, required })}
+                    </span>
+                  ) : jobStatus && jobStatus !== "OPEN" ? (
+                    <span className="inline-flex items-center rounded-full bg-zinc-100 dark:bg-zinc-800 px-3 py-1 text-xs font-medium text-muted-foreground">
+                      {t("jobClosedBadge")}
+                    </span>
+                  ) : null}
+                </div>
+              </div>
             </div>
           </div>
         </section>
@@ -449,7 +510,14 @@ export function ProposalList({
 
           {/* Proposals List */}
           <div className="mt-5 space-y-3">
-            {proposalsQuery.isLoading ? (
+            {!canViewSubmitted ? (
+              <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-border bg-card/40 px-6 py-14 text-center font-sans">
+                <FileText className="size-10 text-muted-foreground mb-3" />
+                <p className="text-base font-semibold text-foreground">
+                  {t("accessDenied")}
+                </p>
+              </div>
+            ) : proposalsQuery.isLoading ? (
               <ProposalListSkeleton />
             ) : proposalsQuery.isError ? (
               <div className="flex flex-col items-center justify-center rounded-2xl border border-border bg-card/40 px-6 py-16 text-center">
@@ -569,18 +637,20 @@ export function ProposalList({
 
                     {/* Action buttons */}
                     <div className="flex shrink-0 flex-wrap items-center gap-2">
-                      <Button
-                        type="button"
-                        size="sm"
-                        className="rounded-full bg-[#0069D3] hover:bg-[#005bb8] text-white px-4 h-8 text-xs font-semibold shadow-xs cursor-pointer transition-colors"
-                        onClick={() => handleOpenProposalDetail(proposal)}
-                      >
-                        {t("viewProposal")}
-                      </Button>
+                      {canViewDetail ? (
+                        <Button
+                          type="button"
+                          size="sm"
+                          className="rounded-full bg-[#0069D3] hover:bg-[#005bb8] text-white px-4 h-8 text-xs font-semibold shadow-xs cursor-pointer transition-colors"
+                          onClick={() => handleOpenProposalDetail(proposal)}
+                        >
+                          {t("viewProposal")}
+                        </Button>
+                      ) : null}
 
                       {ACTIONABLE_STATUSES.includes(proposal.status) ? (
                         <>
-                          {proposal.status === "SUBMITTED" ? (
+                          {proposal.status === "SUBMITTED" && canInterview ? (
                             <Button
                               type="button"
                               size="sm"
@@ -598,26 +668,32 @@ export function ProposalList({
                             </Button>
                           ) : null}
 
-                          <Button
-                            type="button"
-                            size="sm"
-                            className="rounded-full bg-emerald-600 hover:bg-emerald-700 text-white px-3.5 h-8 text-xs font-semibold shadow-xs cursor-pointer transition-colors"
-                            onClick={() => setContractingProposal(proposal)}
-                          >
-                            <Check className="mr-1 size-3" />
-                            {t("hire")}
-                          </Button>
+                          {canAccept && canCreateContract ? (
+                            <Button
+                              type="button"
+                              size="sm"
+                              className="rounded-full bg-emerald-600 hover:bg-emerald-700 text-white px-3.5 h-8 text-xs font-semibold shadow-xs cursor-pointer transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                              onClick={() => setContractingProposal(proposal)}
+                              disabled={cannotHireMore}
+                              title={cannotHireMore ? t("jobFilledDisabled") : undefined}
+                            >
+                              <Check className="mr-1 size-3" />
+                              {t("hire")}
+                            </Button>
+                          ) : null}
 
-                          <Button
-                            type="button"
-                            variant="outline"
-                            size="sm"
-                            className="rounded-full border-gray-700 dark:border-red-900/40 text-gray-700 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30 px-3 h-8 text-xs font-medium cursor-pointer transition-colors"
-                            onClick={() => setRejecting(proposal)}
-                          >
-                            <X className="mr-1 size-3" />
-                            {t("reject")}
-                          </Button>
+                          {canReject ? (
+                            <Button
+                              type="button"
+                              variant="outline"
+                              size="sm"
+                              className="rounded-full border-gray-700 dark:border-red-900/40 text-gray-700 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30 px-3 h-8 text-xs font-medium cursor-pointer transition-colors"
+                              onClick={() => setRejecting(proposal)}
+                            >
+                              <X className="mr-1 size-3" />
+                              {t("reject")}
+                            </Button>
+                          ) : null}
                         </>
                       ) : null}
                     </div>
@@ -726,8 +802,10 @@ export function ProposalList({
         jobId={jobId}
         open={proposalSheetOpen}
         onOpenChange={setProposalSheetOpen}
+        cannotHireMore={cannotHireMore}
         initialProposal={selectedProposalData}
         onAccept={(id) => {
+          if (!canCreateContract) return;
           const p =
             rawProposals.find((item) => item.id === id) ??
             selectedProposalData;

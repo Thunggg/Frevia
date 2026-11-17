@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { useActionPermission } from "@/hooks/use-action-permission";
 import { paymentApiRequest } from "@/apiRequests/payment";
 import { Button } from "@repo/ui/components/shadcn/button";
 import { Badge } from "@repo/ui/components/shadcn/badge";
@@ -48,6 +49,16 @@ interface PaymentSettingsProps {
 }
 
 export function PaymentSettings({ userRole }: PaymentSettingsProps) {
+  const { can } = useActionPermission();
+  const canGetPaymentMethods = can("GET", "/api/payments/payment-methods");
+  const canOpenCustomerPortal = can("POST", "/api/payments/customer-portal");
+  const canGetConnectStatus = can("GET", "/api/payments/connect/status");
+  const canCreateOnboardingLink = can(
+    "POST",
+    "/api/payments/connect/onboarding-link",
+  );
+  const canGetTransactions = can("GET", "/api/payments/transactions");
+
   const [onboardingLoading, setOnboardingLoading] = useState(false);
   const [portalLoading, setPortalLoading] = useState(false);
   const [page, setPage] = useState(1);
@@ -66,7 +77,7 @@ export function PaymentSettings({ userRole }: PaymentSettingsProps) {
       const res = await paymentApiRequest.getSavedPaymentMethods();
       return res.data;
     },
-    enabled: !isFreelancerOrExpert,
+    enabled: !isFreelancerOrExpert && canGetPaymentMethods,
   });
 
   const handleOpenCustomerPortal = async () => {
@@ -95,7 +106,7 @@ export function PaymentSettings({ userRole }: PaymentSettingsProps) {
       const res = await paymentApiRequest.getConnectStatus();
       return res.data;
     },
-    enabled: isFreelancerOrExpert,
+    enabled: isFreelancerOrExpert && canGetConnectStatus,
   });
 
   // Query Transaction History
@@ -116,6 +127,7 @@ export function PaymentSettings({ userRole }: PaymentSettingsProps) {
       const res = await paymentApiRequest.getTransactions(query);
       return res.data;
     },
+    enabled: canGetTransactions,
   });
 
   const handleStartOnboarding = async () => {
@@ -206,7 +218,7 @@ export function PaymentSettings({ userRole }: PaymentSettingsProps) {
   return (
     <div className="space-y-8 font-sans">
       {/* 1. Stripe Connect Card (For Freelancer & Expert) */}
-      {isFreelancerOrExpert && (
+      {isFreelancerOrExpert && canGetConnectStatus && (
         <div className="rounded-2xl border border-border bg-white dark:bg-zinc-950 p-6 shadow-sm">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border/60 pb-5">
             <div className="space-y-1">
@@ -265,20 +277,22 @@ export function PaymentSettings({ userRole }: PaymentSettingsProps) {
                   </div>
                 </div>
 
-                <Button
-                  type="button"
-                  size="sm"
-                  onClick={handleStartOnboarding}
-                  disabled={onboardingLoading}
-                  className="rounded-full bg-foreground hover:bg-foreground/90 text-background text-xs font-semibold h-8 px-4 shrink-0"
-                >
-                  {onboardingLoading ? (
-                    <Loader2 className="mr-1.5 size-3.5 animate-spin" />
-                  ) : (
-                    <ExternalLink className="mr-1.5 size-3.5" />
-                  )}
-                  Stripe Express Dashboard
-                </Button>
+                {canCreateOnboardingLink && (
+                  <Button
+                    type="button"
+                    size="sm"
+                    onClick={handleStartOnboarding}
+                    disabled={onboardingLoading}
+                    className="rounded-full bg-foreground hover:bg-foreground/90 text-background text-xs font-semibold h-8 px-4 shrink-0"
+                  >
+                    {onboardingLoading ? (
+                      <Loader2 className="mr-1.5 size-3.5 animate-spin" />
+                    ) : (
+                      <ExternalLink className="mr-1.5 size-3.5" />
+                    )}
+                    Stripe Express Dashboard
+                  </Button>
+                )}
               </div>
             ) : (
               <div className="rounded-xl border border-amber-500/30 bg-amber-500/5 p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
@@ -296,20 +310,22 @@ export function PaymentSettings({ userRole }: PaymentSettingsProps) {
                   </p>
                 </div>
 
-                <Button
-                  type="button"
-                  size="sm"
-                  onClick={handleStartOnboarding}
-                  disabled={onboardingLoading}
-                  className="rounded-full bg-[#0069D3] hover:bg-[#005bb8] text-white text-xs font-semibold h-9 px-5 shrink-0 shadow-sm"
-                >
-                  {onboardingLoading ? (
-                    <Loader2 className="mr-1.5 size-3.5 animate-spin" />
-                  ) : (
-                    <Building2 className="mr-1.5 size-3.5" />
-                  )}
-                  Connect Bank Account with Stripe
-                </Button>
+                {canCreateOnboardingLink && (
+                  <Button
+                    type="button"
+                    size="sm"
+                    onClick={handleStartOnboarding}
+                    disabled={onboardingLoading}
+                    className="rounded-full bg-[#0069D3] hover:bg-[#005bb8] text-white text-xs font-semibold h-9 px-5 shrink-0 shadow-sm"
+                  >
+                    {onboardingLoading ? (
+                      <Loader2 className="mr-1.5 size-3.5 animate-spin" />
+                    ) : (
+                      <Building2 className="mr-1.5 size-3.5" />
+                    )}
+                    Connect Bank Account with Stripe
+                  </Button>
+                )}
               </div>
             )}
           </div>
@@ -317,7 +333,7 @@ export function PaymentSettings({ userRole }: PaymentSettingsProps) {
       )}
 
       {/* 2. Client Saved Payment Methods Card */}
-      {!isFreelancerOrExpert && (
+      {!isFreelancerOrExpert && canGetPaymentMethods && (
         <div className="rounded-2xl border border-border bg-white dark:bg-zinc-950 p-6 shadow-sm space-y-5">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border/60 pb-4">
             <div className="flex items-center gap-3">
@@ -333,21 +349,23 @@ export function PaymentSettings({ userRole }: PaymentSettingsProps) {
                 </p>
               </div>
             </div>
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={handleOpenCustomerPortal}
-              disabled={portalLoading}
-              className="rounded-full text-xs font-semibold h-9 px-4 shrink-0 border-border/80 hover:bg-zinc-100 dark:hover:bg-zinc-900"
-            >
-              {portalLoading ? (
-                <Loader2 className="mr-1.5 size-3.5 animate-spin" />
-              ) : (
-                <ExternalLink className="mr-1.5 size-3.5 text-muted-foreground" />
-              )}
-              Manage in Stripe Portal
-            </Button>
+            {canOpenCustomerPortal && (
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={handleOpenCustomerPortal}
+                disabled={portalLoading}
+                className="rounded-full text-xs font-semibold h-9 px-4 shrink-0 border-border/80 hover:bg-zinc-100 dark:hover:bg-zinc-900"
+              >
+                {portalLoading ? (
+                  <Loader2 className="mr-1.5 size-3.5 animate-spin" />
+                ) : (
+                  <ExternalLink className="mr-1.5 size-3.5 text-muted-foreground" />
+                )}
+                Manage in Stripe Portal
+              </Button>
+            )}
           </div>
 
           {paymentMethodsLoading ? (
@@ -391,16 +409,18 @@ export function PaymentSettings({ userRole }: PaymentSettingsProps) {
               <p className="text-xs text-muted-foreground max-w-sm mx-auto">
                 No cards saved yet. When you fund a contract or milestone via Stripe, your card can be securely saved for faster payments.
               </p>
-              <Button
-                type="button"
-                variant="ghost"
-                size="sm"
-                onClick={handleOpenCustomerPortal}
-                disabled={portalLoading}
-                className="text-xs text-[#0069D3] hover:text-[#005bb8] h-8"
-              >
-                Add Card via Stripe Portal
-              </Button>
+              {canOpenCustomerPortal && (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleOpenCustomerPortal}
+                  disabled={portalLoading}
+                  className="text-xs text-[#0069D3] hover:text-[#005bb8] h-8"
+                >
+                  Add Card via Stripe Portal
+                </Button>
+              )}
             </div>
           )}
         </div>
@@ -451,8 +471,9 @@ export function PaymentSettings({ userRole }: PaymentSettingsProps) {
         </div>
       )}
 
-      {/* 3. Transaction History Table */}
-      <div className="rounded-2xl border border-border bg-white dark:bg-zinc-950 p-6 shadow-sm space-y-5">
+      {/* 4. Transaction History Table */}
+      {canGetTransactions && (
+        <div className="rounded-2xl border border-border bg-white dark:bg-zinc-950 p-6 shadow-sm space-y-5">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-center gap-2">
             <div className="flex size-8 items-center justify-center rounded-lg bg-zinc-100 dark:bg-zinc-900 text-foreground">
@@ -612,6 +633,7 @@ export function PaymentSettings({ userRole }: PaymentSettingsProps) {
           </div>
         )}
       </div>
+      )}
     </div>
   );
 }

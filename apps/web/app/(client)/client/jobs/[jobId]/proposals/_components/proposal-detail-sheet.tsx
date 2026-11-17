@@ -46,6 +46,7 @@ import {
 } from "@/apiRequests/proposal";
 import { useCreateConversation } from "@/hooks/use-conversation";
 import { ApiFail } from "@/lib/http";
+import { useActionPermission } from "@/hooks/use-action-permission";
 import type {
   ClientProposalDetailType,
   SubmittedProposalStatusType,
@@ -56,6 +57,7 @@ export interface ProposalDetailSheetProps {
   jobId: number;
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  cannotHireMore?: boolean;
   initialProposal?: {
     id: number;
     jobId?: number;
@@ -83,6 +85,7 @@ export function ProposalDetailSheet({
   jobId,
   open,
   onOpenChange,
+  cannotHireMore,
   initialProposal,
   onAccept,
   onReject,
@@ -120,11 +123,21 @@ export function ProposalDetailSheet({
   const createConversation = useCreateConversation();
   const [isStartingChat, setIsStartingChat] = useState(false);
 
+  const { can } = useActionPermission();
+  const canViewDetail = can("GET", "/api/proposals/:id/client");
+  const canInterview = can("PATCH", "/api/proposals/:id/interview");
+  const canCreateContract = can("POST", "/api/contracts");
+  const canAccept =
+    can("PATCH", "/api/proposals/:id/accept") &&
+    (onAccept ? canCreateContract : true);
+  const canReject = can("PATCH", "/api/proposals/:id/reject");
+  const canCreateConversation = can("POST", "/api/conversations");
+
   const proposalQuery = useQuery<ClientProposalDetailType>({
     queryKey: ["client-proposal-detail", proposalId],
     queryFn: () =>
       proposalApiRequest.getClientDetail(proposalId!).then(extractProposalData),
-    enabled: open && !!proposalId,
+    enabled: open && !!proposalId && canViewDetail,
   });
 
   const detail = proposalQuery.data;
@@ -181,6 +194,10 @@ export function ProposalDetailSheet({
   const status = detail?.status || initialProposal?.status || "SUBMITTED";
   // Khách hàng còn có thể phỏng vấn / từ chối / tuyển trên hai trạng thái này.
   const isActionable = status === "SUBMITTED" || status === "INTERVIEWING";
+  const isJobFilled =
+    cannotHireMore ||
+    (detail?.job != null &&
+      detail.job.positionsFilled >= detail.job.positionsRequired);
   const bidAmount = detail?.bidAmount ?? initialProposal?.bidAmount ?? 0;
   const deliveryDays =
     detail?.deliveryDays ?? initialProposal?.deliveryDays ?? 0;
@@ -192,6 +209,10 @@ export function ProposalDetailSheet({
 
   const handleReject = async () => {
     if (!proposalId) return;
+    if (!canReject) {
+      toastError({ message: t("noPermissionAction") });
+      return;
+    }
     setIsRejecting(true);
     try {
       if (onReject) {
@@ -221,6 +242,10 @@ export function ProposalDetailSheet({
 
   const handleAccept = async () => {
     if (!proposalId) return;
+    if (!canAccept) {
+      toastError({ message: t("noPermissionAction") });
+      return;
+    }
     setIsAccepting(true);
     try {
       if (onAccept) {
@@ -250,6 +275,10 @@ export function ProposalDetailSheet({
   // Khách hàng phản hồi và bắt đầu trao đổi/phỏng vấn.
   const handleInterview = async () => {
     if (!proposalId) return;
+    if (!canInterview) {
+      toastError({ message: t("noPermissionAction") });
+      return;
+    }
     setIsInterviewing(true);
     try {
       await proposalApiRequest.interview(proposalId);
@@ -301,8 +330,17 @@ export function ProposalDetailSheet({
             )}
           </div>
 
-          {/* Scrollable Content */}
-          <div className="flex-1 overflow-y-auto px-6 py-5 space-y-6">
+          {!canViewDetail ? (
+            <div className="flex-1 flex flex-col items-center justify-center p-8 text-center font-sans">
+              <FileText className="size-10 text-muted-foreground mb-3" />
+              <p className="text-sm font-semibold text-foreground">
+                {t("viewDetailAccessDenied")}
+              </p>
+            </div>
+          ) : (
+            <>
+              {/* Scrollable Content */}
+              <div className="flex-1 overflow-y-auto px-6 py-5 space-y-6">
             {/* Freelancer Header Row */}
             <div className="flex items-start justify-between gap-4 pb-5 border-b border-border/60">
               <div
@@ -330,7 +368,7 @@ export function ProposalDetailSheet({
               </div>
 
               <div className="flex items-center gap-2 shrink-0">
-                {freelancerUserId && (
+                {freelancerUserId && canCreateConversation && (
                   <Button
                     variant="outline"
                     size="sm"
@@ -406,73 +444,91 @@ export function ProposalDetailSheet({
             </div>
           </div>
 
-          {/* Action Footer Bar */}
-          {isActionable ? (
-            <div className="border-t border-border/80 bg-background px-6 py-3.5 flex items-center justify-between gap-3 flex-wrap">
-              <Button
-                variant="outline"
-                size="sm"
-                className="rounded-full border-red-200 dark:border-red-900/40 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30 px-4 h-9 text-xs font-semibold cursor-pointer"
-                onClick={() => setConfirmReject(true)}
-                disabled={isAccepting || isRejecting || isInterviewing}
-              >
-                <X className="mr-1.5 size-3.5" />
-                {t("reject")}
-              </Button>
+              {/* Action Footer Bar */}
+              {isActionable && (canReject || (status === "SUBMITTED" && canInterview) || canAccept) ? (
+                <div className="border-t border-border/80 bg-background px-6 py-3.5 flex items-center justify-between gap-3 flex-wrap">
+                  {canReject ? (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="rounded-full border-red-200 dark:border-red-900/40 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30 px-4 h-9 text-xs font-semibold cursor-pointer"
+                      onClick={() => setConfirmReject(true)}
+                      disabled={isAccepting || isRejecting || isInterviewing}
+                    >
+                      <X className="mr-1.5 size-3.5" />
+                      {t("reject")}
+                    </Button>
+                  ) : null}
 
-              <div className="flex items-center gap-2 ml-auto">
-                {status === "SUBMITTED" ? (
+                  <div className="flex items-center gap-2 ml-auto">
+                    {status === "SUBMITTED" && canInterview ? (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="rounded-full border-[#0069D3]/40 text-[#0069D3] hover:bg-[#D0E1F8]/40 px-4 h-9 text-xs font-semibold cursor-pointer"
+                        onClick={() => void handleInterview()}
+                        disabled={isAccepting || isRejecting || isInterviewing}
+                      >
+                        {isInterviewing ? (
+                          <Loader2 className="mr-1.5 size-3.5 animate-spin" />
+                        ) : (
+                          <MessageSquare className="mr-1.5 size-3.5" />
+                        )}
+                        {t("interview")}
+                      </Button>
+                    ) : null}
+
+                    {isJobFilled ? (
+                      <span className="text-xs text-amber-600 dark:text-amber-400 font-medium">
+                        {t("jobFilledDisabled")}
+                      </span>
+                    ) : null}
+
+                    {canAccept ? (
+                      <Button
+                        size="sm"
+                        className="rounded-full bg-[#0069D3] hover:bg-[#005bb8] text-white px-5 h-9 text-xs font-semibold shadow-xs cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                        onClick={() => void handleAccept()}
+                        disabled={
+                          isAccepting ||
+                          isRejecting ||
+                          isInterviewing ||
+                          isJobFilled
+                        }
+                        title={isJobFilled ? t("jobFilledDisabled") : undefined}
+                      >
+                        {isAccepting ? (
+                          <Loader2 className="mr-1.5 size-3.5 animate-spin" />
+                        ) : (
+                          <Check className="mr-1.5 size-3.5" />
+                        )}
+                        {t("hire")}
+                      </Button>
+                    ) : null}
+                  </div>
+                </div>
+              ) : null}
+
+              {/* Đề xuất đã được tuyển: hợp đồng được tạo tự động khi tuyển. */}
+              {status === "HIRED" ? (
+                <div className="border-t border-border/80 bg-background px-6 py-3.5 flex items-center justify-between gap-3">
+                  <p className="text-xs text-muted-foreground">
+                    {t("hiredHint")}
+                  </p>
                   <Button
-                    variant="outline"
+                    asChild
                     size="sm"
-                    className="rounded-full border-[#0069D3]/40 text-[#0069D3] hover:bg-[#D0E1F8]/40 px-4 h-9 text-xs font-semibold cursor-pointer"
-                    onClick={() => void handleInterview()}
-                    disabled={isAccepting || isRejecting || isInterviewing}
+                    className="rounded-full bg-[#0069D3] hover:bg-[#005bb8] text-white px-5 h-9 text-xs font-semibold shadow-xs cursor-pointer"
                   >
-                    {isInterviewing ? (
-                      <Loader2 className="mr-1.5 size-3.5 animate-spin" />
-                    ) : (
-                      <MessageSquare className="mr-1.5 size-3.5" />
-                    )}
-                    {t("interview")}
+                    <Link href="/client/contracts">
+                      <FileText className="mr-1.5 size-3.5" />
+                      {t("viewContract")}
+                    </Link>
                   </Button>
-                ) : null}
-
-                <Button
-                  size="sm"
-                  className="rounded-full bg-[#0069D3] hover:bg-[#005bb8] text-white px-5 h-9 text-xs font-semibold shadow-xs cursor-pointer"
-                  onClick={() => void handleAccept()}
-                  disabled={isAccepting || isRejecting || isInterviewing}
-                >
-                  {isAccepting ? (
-                    <Loader2 className="mr-1.5 size-3.5 animate-spin" />
-                  ) : (
-                    <Check className="mr-1.5 size-3.5" />
-                  )}
-                  {t("hire")}
-                </Button>
-              </div>
-            </div>
-          ) : null}
-
-          {/* Đề xuất đã được tuyển: hợp đồng được tạo tự động khi tuyển. */}
-          {status === "HIRED" ? (
-            <div className="border-t border-border/80 bg-background px-6 py-3.5 flex items-center justify-between gap-3">
-              <p className="text-xs text-muted-foreground">
-                {t("hiredHint")}
-              </p>
-              <Button
-                asChild
-                size="sm"
-                className="rounded-full bg-[#0069D3] hover:bg-[#005bb8] text-white px-5 h-9 text-xs font-semibold shadow-xs cursor-pointer"
-              >
-                <Link href="/client/contracts">
-                  <FileText className="mr-1.5 size-3.5" />
-                  {t("viewContract")}
-                </Link>
-              </Button>
-            </div>
-          ) : null}
+                </div>
+              ) : null}
+            </>
+          )}
         </SheetContent>
       </Sheet>
 
