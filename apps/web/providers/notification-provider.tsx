@@ -5,6 +5,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { io } from "socket.io-client";
 import { useTranslations } from "next-intl";
 import { conversationKeys } from "@/hooks/use-conversation";
+import { toast } from "@repo/ui/components/shadcn/sonner";
 import {
   AlertDialog,
   AlertDialogContent,
@@ -113,10 +114,26 @@ export function NotificationProvider({
           conversationKeys.list(),
           (old) => {
             if (!old) return old;
-            const exists = old.some((c) => c.id === item.id);
+            const previous = old.find((c) => c.id === item.id);
+            const exists = Boolean(previous);
             const next = exists
               ? old.map((c) => (c.id === item.id ? item : c))
               : [...old, item];
+
+            // Thông báo tin nhắn mới (recipient có unreadCount tăng)
+            if (
+              (item.unreadCount ?? 0) > (previous?.unreadCount ?? 0) &&
+              item.lastMessage?.senderId !== currentUserId
+            ) {
+              const senderName =
+                item.otherUser?.profile?.displayName || "New message";
+              toast(senderName, {
+                description: item.lastMessage?.message?.slice(0, 80) || "You have a new message",
+                position: "top-right",
+                duration: 4000,
+              });
+            }
+
             return sortByLastMessage(next);
           },
         );

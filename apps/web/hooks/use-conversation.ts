@@ -325,14 +325,22 @@ export function useConversationSocket(
       (payload: { conversationId: number; message: DirectMessageType }) => {
         const { conversationId, message } = payload;
 
-        queryClient.setQueryData<GetMessagesResponseType>(
-          conversationKeys.messages(conversationId),
-          (old) => {
+        const keysToUpdate = [conversationKeys.messages(conversationId)];
+        const conversations = queryClient.getQueryData<GetConversationsResponseType>(
+          conversationKeys.list(),
+        );
+        const conv = conversations?.find((c) => c.id === conversationId);
+        if (conv?.slug && conv.slug !== String(conversationId)) {
+          keysToUpdate.push(conversationKeys.messages(conv.slug));
+        }
+
+        keysToUpdate.forEach((key) => {
+          queryClient.setQueryData<GetMessagesResponseType>(key, (old) => {
             if (!old) return old;
             if (old.some((m) => m.id === message.id)) return old;
             return [...old, message];
-          },
-        );
+          });
+        });
       },
     );
 
@@ -353,8 +361,12 @@ export function useConversationSocket(
         );
 
         // Refetch messages để cập nhật trạng thái đã đọc
-        queryClient.invalidateQueries({
-          queryKey: conversationKeys.messages(item.id),
+        const keysToInvalidate = [conversationKeys.messages(item.id)];
+        if (item.slug && item.slug !== String(item.id)) {
+          keysToInvalidate.push(conversationKeys.messages(item.slug));
+        }
+        keysToInvalidate.forEach((key) => {
+          queryClient.invalidateQueries({ queryKey: key });
         });
       },
     );

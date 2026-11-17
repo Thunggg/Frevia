@@ -42,6 +42,7 @@ import { authApiRequest } from "@/apiRequests/auth";
 import { useMe } from "@/hooks/use-auth";
 import { RoleName } from "@shared/types";
 import { useNotifications } from "@/hooks/use-notifications";
+import { useConversations } from "@/hooks/use-conversation";
 
 type NavItem = {
   href: string;
@@ -127,6 +128,7 @@ export function FreelancerSidebar() {
   const [isLocalePending, startLocaleTransition] = useTransition();
   const { data: me } = useMe();
   const { data: notifications = [] } = useNotifications();
+  const { data: conversations = [] } = useConversations();
   const { resolvedTheme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
@@ -168,6 +170,10 @@ export function FreelancerSidebar() {
 
   const isDark = mounted && resolvedTheme === "dark";
   const unreadNotifications = notifications.filter((n) => !n.isRead).length;
+  const unreadMessages = (conversations ?? []).reduce(
+    (sum, c) => sum + (c.unreadCount || 0),
+    0,
+  );
 
   const selectLocale = (nextLocale: string) => {
     if (!isLocale(nextLocale) || nextLocale === activeLocale) return;
@@ -214,6 +220,12 @@ export function FreelancerSidebar() {
       labelKey: "navMessages",
       icon: MessageSquare,
       matchPrefix: true,
+      badge:
+        unreadMessages > 0
+          ? unreadMessages > 99
+            ? "99+"
+            : unreadMessages
+          : undefined,
     },
     {
       href: "/forum",

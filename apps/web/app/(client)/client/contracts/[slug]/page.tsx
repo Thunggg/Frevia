@@ -1,6 +1,9 @@
+import { cookies } from "next/headers";
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
+import authServerRequest from "@/apiRequests/auth.server";
 import contractServerRequest from "@/apiRequests/contract.server";
+import { envConfig } from "@/configs/validate-env";
 import { ContractDetail } from "./_components/contract-detail";
 
 export async function generateMetadata({
@@ -39,6 +42,9 @@ export default async function ClientContractDetailPage({
   if (!contract) notFound();
 
   const sharedFiles = await contractServerRequest.getSharedFiles(contract.id);
+  const cookieStore = await cookies();
+  const token = cookieStore.get("accessToken")?.value ?? null;
+  const user = await authServerRequest.getMe();
 
   return (
     <div className="min-h-full bg-background font-sans">
@@ -46,6 +52,9 @@ export default async function ClientContractDetailPage({
         <ContractDetail
           initialContract={contract}
           initialSharedFiles={sharedFiles}
+          currentUserId={user?.id ?? null}
+          accessToken={token}
+          socketUrl={envConfig?.NESTJS_API_URL ?? ""}
         />
       </div>
     </div>

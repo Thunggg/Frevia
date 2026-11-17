@@ -5,8 +5,21 @@ import { useFormatter, useTranslations } from "next-intl";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { ChevronLeft } from "lucide-react";
+import { ChevronLeft, Loader2, X } from "lucide-react";
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from "@repo/ui/components/shadcn/avatar";
 import { toastError, toastSuccess } from "@repo/ui/components/shadcn/toast";
+import { toast } from "@repo/ui/components/shadcn/sonner";
+import {
+  conversationKeys,
+  useConversationSocket,
+  useConversations,
+} from "@/hooks/use-conversation";
+import { ConversationSocketContext } from "@/app/conversations/components/conversation-socket-context";
+import { ChatView } from "@/app/conversations/components/chat-view";
 import { contractApiRequest, extractContractData } from "@/apiRequests/contract";
 import { paymentApiRequest } from "@/apiRequests/payment";
 import { ApiFail } from "@/lib/http";
@@ -31,12 +44,18 @@ export interface ContractDetailProps {
   initialContract: ContractDetailType;
   initialSharedFiles?: GetSharedFilesResponseType | null;
   basePath?: string;
+  currentUserId?: number | null;
+  accessToken?: string | null;
+  socketUrl?: string;
 }
 
 export function ContractDetail({
   initialContract,
   initialSharedFiles,
   basePath = "/client",
+  currentUserId = null,
+  accessToken = null,
+  socketUrl = "",
 }: ContractDetailProps) {
   const router = useRouter();
   const queryClient = useQueryClient();
@@ -78,6 +97,10 @@ export function ContractDetail({
   const [isCancelling, setIsCancelling] = useState(false);
   const [isRejecting, setIsRejecting] = useState(false);
   const [isStartingChat, setIsStartingChat] = useState(false);
+  const [chatOpen, setChatOpen] = useState(false);
+  const [chatConversationId, setChatConversationId] = useState<number | null>(
+    null,
+  );
 
   // Sync Checkout Session on URL return
   const searchParams = useSearchParams();
@@ -147,13 +170,22 @@ export function ContractDetail({
     );
   }, [contract.milestones]);
 
+  const client = contract.client;
+  const clientName = client?.profile?.displayName || tRole("CLIENT");
+  const clientAvatarUrl = client?.profile?.avatarUrl;
+
   const freelancer = contract.freelancer;
   const freelancerName =
     freelancer?.profile?.displayName || tRole("FREELANCER");
   const avatarUrl = freelancer?.profile?.avatarUrl;
 
-  const client = contract.client;
-  const clientName = client?.profile?.displayName || tRole("CLIENT");
+  const counterpartyName = isFreelancer ? clientName : freelancerName;
+  const counterpartyAvatarUrl = isFreelancer
+    ? clientAvatarUrl
+    : avatarUrl;
+  const counterpartyId = isFreelancer
+    ? contract.clientId
+    : contract.freelancerId;
 
   const contractStatusText = (
     CONTRACT_STATUSES as readonly string[]
@@ -163,24 +195,25 @@ export function ContractDetail({
 
   // Chat Actions
   const createConversation = useCreateConversation();
+  const socketValue = useConversationSocket(
+    socketUrl,
+    accessToken ?? null,
+    currentUserId ?? null,
+  );
+  const { data: conversations = [] } = useConversations();
+  const unreadMessages = (conversations ?? []).reduce(
+    (sum, c) => sum + (c.unreadCount || 0),
+    0,
+  );
 
-  const handleMessageCounterparty = async () => {
-    const targetUserId = isFreelancer
-      ? contract.clientId
-      : contract.freelancerId;
-
+  const openChatWith = async (targetUserId: number | null | undefined) => {
     if (!targetUserId) return;
-
     setIsStartingChat(true);
     try {
       const conv = await createConversation.mutateAsync(targetUserId);
       if (conv?.id) {
-        const dest = conv.slug ?? conv.id;
-        router.push(
-          isFreelancer
-            ? `/freelancer/conversations/${dest}`
-            : `/client/conversations/${dest}`,
-        );
+        setChatConversationId(conv.id);
+        setChatOpen(true);
       }
     } catch {
       toastError({ message: "Could not open conversation. Try again." });
@@ -188,6 +221,46 @@ export function ContractDetail({
       setIsStartingChat(false);
     }
   };
+
+  const handleMessageCounterparty = async () => {
+    const targetUserId = isFreelancer
+      ? contract.clientId
+      : contract.freelancerId;
+    await openChatWith(targetUserId);
+  };
+
+  // Real-time message notification while on contract page
+  useEffect(() => {
+    const socket = socketValue.socket;
+    if (!socket) return;
+
+    const handler = (payload: {
+      conversationId: number;
+      message: { senderId: number; message?: string };
+    }) => {
+      if (payload?.message?.senderId === currentUserId) return;
+      if (chatOpen) return;
+      const conversations = queryClient.getQueryData<
+        { id: number; otherUser?: { profile?: { displayName?: string | null } } }[]
+      >(conversationKeys.list());
+      const conv = conversations?.find(
+        (c) => c.id === payload.conversationId,
+      );
+      const senderName =
+        conv?.otherUser?.profile?.displayName || "New message";
+      toast(senderName, {
+        description:
+          payload?.message?.message?.slice(0, 80) || "You have a new message",
+        position: "top-right",
+        duration: 4000,
+      });
+    };
+
+    socket.on("message:new", handler);
+    return () => {
+      socket.off("message:new", handler);
+    };
+  }, [socketValue.socket, currentUserId, chatOpen]);
 
   // Sign Action
   const handleSign = async () => {
@@ -452,6 +525,58 @@ export function ContractDetail({
           }}
         />
       )}
+
+      {/* Floating Messenger-style chat popup (bottom-right) */}
+      <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-3">
+        {chatOpen && chatConversationId ? (
+          <div className="relative w-[360px] max-w-[calc(100vw-3rem)] h-[520px] rounded-2xl border border-border bg-background shadow-2xl overflow-hidden">
+            <button
+              type="button"
+              onClick={() => setChatOpen(false)}
+              className="absolute top-2 right-2 z-10 flex size-7 items-center justify-center rounded-full bg-background/80 text-muted-foreground hover:text-foreground cursor-pointer"
+              aria-label="Close chat"
+            >
+              <X className="size-4" />
+            </button>
+            <ConversationSocketContext.Provider value={socketValue}>
+              <ChatView
+                conversationId={chatConversationId}
+                currentUserId={currentUserId}
+              />
+            </ConversationSocketContext.Provider>
+          </div>
+        ) : null}
+
+        <div className="relative">
+          {unreadMessages > 0 ? (
+            <span className="absolute -top-1 -right-1 z-10 flex min-w-[18px] items-center justify-center rounded-full bg-red-500 px-1 py-0.5 text-[10px] font-bold text-white shadow">
+              {unreadMessages > 99 ? "99+" : unreadMessages}
+            </span>
+          ) : null}
+          <button
+            type="button"
+            onClick={() =>
+              chatOpen
+                ? setChatOpen(false)
+                : void openChatWith(counterpartyId)
+            }
+            disabled={isStartingChat}
+            className="flex size-14 items-center justify-center rounded-full border border-border bg-card shadow-lg transition-transform hover:scale-105 cursor-pointer"
+            aria-label="Toggle chat"
+          >
+            {isStartingChat ? (
+              <Loader2 className="size-5 animate-spin text-[#0069D3]" />
+            ) : (
+              <Avatar className="size-12">
+                <AvatarImage src={counterpartyAvatarUrl || undefined} />
+                <AvatarFallback className="text-xs font-bold">
+                  {counterpartyName.charAt(0).toUpperCase()}
+                </AvatarFallback>
+              </Avatar>
+            )}
+          </button>
+        </div>
+      </div>
 
       {/* All Action and Confirmation Dialogs */}
       <ContractActionDialogs

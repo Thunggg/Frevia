@@ -32,7 +32,6 @@ import {
   Paperclip,
   Send,
   Trash2,
-  UserRound,
 } from "@/components/icons";
 import type {
   DirectMessageType,
@@ -99,7 +98,7 @@ export function ChatView({
       : Number(targetIdOrSlug) || 0);
 
   const { data: messages, isLoading } = useConversationMessages(
-    targetIdOrSlug ?? 0,
+    conversation?.id ?? targetIdOrSlug ?? 0,
   );
   const restSend = useSendConversationMessage();
   const restMarkRead = useMarkConversationRead();
@@ -198,8 +197,26 @@ export function ChatView({
   }, [socket, conversationId]);
 
   useEffect(() => {
-    endRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+    const scrollToBottom = () => {
+      endRef.current?.scrollIntoView({ behavior: "auto", block: "end" });
+    };
+    scrollToBottom();
+    const timer = setTimeout(scrollToBottom, 120);
+    return () => clearTimeout(timer);
+  }, [messages, conversationId]);
+
+  useEffect(() => {
+    if (!socket) return;
+    const handler = (payload: { message?: string }) => {
+      toastError({
+        message: payload?.message || "Could not send message. Try again.",
+      });
+    };
+    socket.on("message:error", handler);
+    return () => {
+      socket.off("message:error", handler);
+    };
+  }, [socket]);
 
   const handleInputChange = (value: string) => {
     setInput(value);
@@ -223,7 +240,16 @@ export function ChatView({
       socket.emit("message:send", { conversationId, message: trimmed });
       socket.emit("typing", { conversationId, isTyping: false });
     } else {
-      restSend.mutate({ conversationId, message: trimmed });
+      restSend.mutate(
+        { conversationId, message: trimmed },
+        {
+          onError: (error) => {
+            toastError({
+              message: error.message || "Could not send message. Try again.",
+            });
+          },
+        },
+      );
     }
 
     if (typingStopTimeoutRef.current) {
@@ -310,25 +336,20 @@ export function ChatView({
             </AvatarFallback>
           </Avatar>
           <div className="min-w-0">
-            <h3 className="truncate text-sm font-bold text-foreground font-sans">
-              {displayName}
-            </h3>
-            <p className="text-[11px] text-muted-foreground flex items-center gap-1 font-normal">
-              <span className="inline-block size-1.5 rounded-full bg-[#0069D3]" />
-              {t("active")}
-            </p>
+            {otherUser?.id ? (
+              <Link
+                href={`/profiles/${otherUser.id}`}
+                className="truncate text-sm font-bold text-foreground font-sans hover:underline"
+              >
+                {displayName}
+              </Link>
+            ) : (
+              <h3 className="truncate text-sm font-bold text-foreground font-sans">
+                {displayName}
+              </h3>
+            )}
           </div>
         </div>
-
-        {otherUser?.id ? (
-          <Link
-            href={`/profiles/${otherUser.id}`}
-            className="rounded-full bg-[#F1F0F5] hover:bg-[#EAE9F0] dark:bg-zinc-800 dark:hover:bg-zinc-700 px-3.5 py-1.5 text-xs font-medium text-foreground transition-colors flex items-center gap-1.5 shrink-0"
-          >
-            <UserRound className="size-3.5 text-muted-foreground" />
-            <span>{t("profile")}</span>
-          </Link>
-        ) : null}
       </div>
 
       {/* Messages Stream */}
