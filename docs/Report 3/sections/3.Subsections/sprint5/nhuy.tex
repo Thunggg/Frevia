@@ -1,834 +1,971 @@
-% Functional requirements -- Nguyen Lu Nhat Huy -- Sprint 5
-\Needspace{12\baselineskip}
+% =================================================================
+% Sprint 5 - Profile Revision Review and Expert Profile, Freelancer CV Management (nhuy)
+% Following the detailed form of the report template:
+% Function Trigger, Function Description, Screen Layout and Function Details.
+% =================================================================
+
+
 \subsection{Profile Revision Review and Expert Profile}
-\Needspace{10\baselineskip}
-\subsubsection{Function: View Pending Profile Update Request List (UC-47.01)}
-\label{fn:nhuy-uc-47-01}
 
-\Needspace{7\baselineskip}
+% -----------------------------------------------------------------
+% UC-47.01: View Pending Profile Update Request List
+% -----------------------------------------------------------------
+\subsubsection{ View Pending Profile Update Request List}
+
 \fnhead{Function Trigger}
-The actor selects View Pending Profile Update Request List. Navigation: /admin/profile-revisions; /expert/profile.
+The actor selects View Pending Profile Update Request List.\newline
+\textbf{Navigation path:} Home $\rightarrow$ \texttt{/admin/profile-revisions} or \texttt{/expert/profile.}
 
-\Needspace{7\baselineskip}
 \fnhead{Function Description}
-\Needspace{5\baselineskip}
+
 \sublabel{Actors / Roles}
-Admin.
-\Needspace{5\baselineskip}
-\sublabel{Purpose}
-Filter and paginate revisions, defaulting the review workflow to pending requests.
-\Needspace{5\baselineskip}
-\sublabel{Interface and Data Processing}
-{\small\texttt{GET /\allowbreak{}admin/\allowbreak{}profile-revisions}}. The browser calls the Next.js BFF, which forwards authenticated requests to the NestJS API. The server derives the acting user from authentication and accesses ProfileRevision, Profile, FreelancerProfile, ClientProfile, Expert, Notification. Route IDs are validated independently from owner IDs.
-
-\Needspace{7\baselineskip}
-\fnhead{Screen Layout (Mock-up Description)}
-\begin{center}
-\fbox{\begin{minipage}{0.88\linewidth}
-\textbf{View Pending Profile Update Request List}\par\smallskip
-Admin filter bar and revision table; current/proposed comparison panel; Approve/Reject controls and note field; Expert form with submission status.\par\smallskip
-\textit{Schematic interface description, not an application screenshot.}
-\end{minipage}}
-\end{center}
-
-\Needspace{7\baselineskip}
-\Needspace{18\baselineskip}
-\fnhead{Function Details}
-\Needspace{5\baselineskip}
-\Needspace{14\baselineskip}
-\sublabel{Input Data}
-\begin{specdatatable}{Data}{Definition}
-Selection & Validated page, limit, search, status and profileType filters. \\ \hline
-\end{specdatatable}
-\Needspace{5\baselineskip}
-\sublabel{Validation and Business Rules}
-\begin{itemize}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
-\item Only an authorized administrator can inspect or decide profile revisions.
-\item Only PENDING revisions may be approved or rejected. Decision and profile writes are transactional.
-\item Approval applies validated proposed data to the correct subtype; rejection retains existing public data.
-\item Record reviewer, decision time and notes; preserve history and notify the requester.
-\item An Expert submits their own update as a pending revision. Administrative expert editing is a separate authorized operation.
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item \textbf{Primary Actor:} Admin.
+    \item \textbf{Supporting Systems:} Frevia Web application (Next.js), Frevia BFF proxy (\texttt{/api/backend}), Frevia REST API (NestJS), Prisma ORM layer, and PostgreSQL relational database.
 \end{itemize}
-\Needspace{5\baselineskip}
+
+\sublabel{Purpose}
+\noindent Filter and paginate revisions, defaulting the review workflow to pending requests.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Admin filter bar and revision table.
+    \item Current/proposed comparison panel.
+    \item Approve/Reject controls and note field.
+    \item Expert form with submission status.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item The client web application issues an HTTP request to \texttt{GET /admin/profile-revisions} via the Next.js BFF proxy.
+    \item NestJS guards verify JWT authentication and validate role-based access permissions.
+    \item The backend service queries or updates entities in PostgreSQL using Prisma ORM.
+    \item The API returns the structured JSON payload and handles domain invariants consistently.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint5/nhuy/View Pending Profile Update Request List.png}{View Pending Profile Update Request List interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Admin filter bar and revision table.
+    \item Current/proposed comparison panel.
+    \item Approve/Reject controls and note field.
+    \item Expert form with submission status.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+Selection & Validated page, limit, search, status and profileType filters.\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Approval applies validated proposed data to the correct subtype; rejection retains existing public data.
+\end{itemize}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+    \item BR-4701-01: Only an authorized administrator can inspect or decide profile revisions.
+    \item BR-4701-02: Only PENDING revisions may be approved or rejected. Decision and profile writes are transactional.
+    \item BR-4701-03: Record reviewer, decision time and notes; preserve history and notify the requester.
+    \item BR-4701-04: An Expert submits their own update as a pending revision. Administrative expert editing is a separate authorized operation.
+\end{itemize}
+
 \sublabel{Normal Flow}
-\begin{enumerate}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
-\item The actor opens /admin/profile-revisions; /expert/profile and selects View Pending Profile Update Request List.
-\item The application submits the selected identifier or list filters.
-\item The API checks authentication where required, authorization, resource existence and input validity.
-\item Filter and paginate revisions, defaulting the review workflow to pending requests.
-\item The screen renders the response, or an explicit empty state for a valid empty collection.
+\begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item The actor opens \texttt{/admin/profile-revisions}; \texttt{/expert/profile} and selects View Pending Profile Update Request List.
+    \item The application submits the selected identifier or list filters.
+    \item The API checks authentication where required, authorization, resource existence and input validity.
+    \item Filter and paginate revisions, defaulting the review workflow to pending requests.
+    \item The screen renders the response, or an explicit empty state for a valid empty collection.
 \end{enumerate}
-\Needspace{5\baselineskip}
-\sublabel{Alternative Flow}
-Show an informative empty state for a valid empty result and allow retry after a transport failure.
-\Needspace{5\baselineskip}
+
 \sublabel{Abnormal Flow / Exception Handling}
 \begin{flowtable}{Case}{Description}
-E1 & Missing or expired authentication, or insufficient role/ownership: deny the operation and do not change data. \\ \hline
-E2 & Missing, deleted or inaccessible resource: show a not-found result. \\ \hline
-A1 & A valid empty collection displays an empty state; it must not be treated as a missing account. \\ \hline
-E4 & Database, network or storage failure: report a retryable error; do not report success or terminate the API process. \\ \hline
+A1 & Missing or expired authentication token. The system returns HTTP 401 Unauthorized and prompts re-authentication.\\ \hline
+A2 & Insufficient permissions or role unauthorized. The request is rejected with HTTP 403 Forbidden.\\ \hline
+A3 & Target resource not found or soft-deleted. The system returns HTTP 404 Not Found.\\ \hline
+A4 & Validation error or malformed payload. The system returns HTTP 400 Bad Request with field validation details.\\ \hline
+A5 & Database connectivity failure or unexpected internal exception. The transaction rolls back and returns HTTP 500.\\ \hline
 \end{flowtable}
-\Needspace{5\baselineskip}
-\Needspace{14\baselineskip}
+
 \sublabel{Output Data}
-\begin{specdatatable}{Data}{Definition}
-Result & Filter and paginate revisions, defaulting the review workflow to pending requests. \\ \hline
-Failure & Structured error without sensitive data; no successful UI state when the operation failed. \\ \hline
+\begin{specdatatable}{Data Name}{Description}
+Result & Filter and paginate revisions, defaulting the review workflow to pending requests.\\ \hline
+Failure & Structured error without sensitive data; no successful UI state when the operation failed.\\ \hline
 \end{specdatatable}
-\Needspace{5\baselineskip}
-\sublabel{Acceptance Criteria}
-\begin{itemize}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
-\item Successful view pending profile update request list produces the documented response and survives a reload where data is persisted.
-\item An unauthorized actor cannot access or modify the resource.
-\item Invalid input and missing resources do not create a false success state or expose sensitive data.
+
+\sublabel{Post-Conditions}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Successful view pending profile update request list produces the documented response and survives a reload where data is persisted.
+    \item An unauthorized actor cannot access or modify the resource.
+    \item Invalid input and missing resources do not create a false success state or expose sensitive data.
 \end{itemize}
 
-\Needspace{10\baselineskip}
-\subsubsection{Function: View Profile Update Request Detail (UC-47.02)}
-\label{fn:nhuy-uc-47-02}
+% -----------------------------------------------------------------
+% UC-47.02: View Profile Update Request Detail
+% -----------------------------------------------------------------
+\subsubsection{ View Profile Update Request Detail}
 
-\Needspace{7\baselineskip}
 \fnhead{Function Trigger}
-The actor selects View Profile Update Request Detail. Navigation: /admin/profile-revisions; /expert/profile.
+The actor selects View Profile Update Request Detail.\newline
+\textbf{Navigation path:} Home $\rightarrow$ \texttt{/admin/profile-revisions} or \texttt{/expert/profile.}
 
-\Needspace{7\baselineskip}
 \fnhead{Function Description}
-\Needspace{5\baselineskip}
+
 \sublabel{Actors / Roles}
-Admin.
-\Needspace{5\baselineskip}
-\sublabel{Purpose}
-Display the current and proposed snapshots, requester, profile type and prior review notes.
-\Needspace{5\baselineskip}
-\sublabel{Interface and Data Processing}
-{\small\texttt{GET /\allowbreak{}admin/\allowbreak{}profile-revisions/\allowbreak{}:id}}. The browser calls the Next.js BFF, which forwards authenticated requests to the NestJS API. The server derives the acting user from authentication and accesses ProfileRevision, Profile, FreelancerProfile, ClientProfile, Expert, Notification. Route IDs are validated independently from owner IDs.
-
-\Needspace{7\baselineskip}
-\fnhead{Screen Layout (Mock-up Description)}
-\begin{center}
-\fbox{\begin{minipage}{0.88\linewidth}
-\textbf{View Profile Update Request Detail}\par\smallskip
-Admin filter bar and revision table; current/proposed comparison panel; Approve/Reject controls and note field; Expert form with submission status.\par\smallskip
-\textit{Schematic interface description, not an application screenshot.}
-\end{minipage}}
-\end{center}
-
-\Needspace{7\baselineskip}
-\Needspace{18\baselineskip}
-\fnhead{Function Details}
-\Needspace{5\baselineskip}
-\Needspace{14\baselineskip}
-\sublabel{Input Data}
-\begin{specdatatable}{Data}{Definition}
-Identifier & Positive resource ID from the route; ownership is checked by the API. \\ \hline
-\end{specdatatable}
-\Needspace{5\baselineskip}
-\sublabel{Validation and Business Rules}
-\begin{itemize}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
-\item Only an authorized administrator can inspect or decide profile revisions.
-\item Only PENDING revisions may be approved or rejected. Decision and profile writes are transactional.
-\item Approval applies validated proposed data to the correct subtype; rejection retains existing public data.
-\item Record reviewer, decision time and notes; preserve history and notify the requester.
-\item An Expert submits their own update as a pending revision. Administrative expert editing is a separate authorized operation.
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item \textbf{Primary Actor:} Admin.
+    \item \textbf{Supporting Systems:} Frevia Web application (Next.js), Frevia BFF proxy (\texttt{/api/backend}), Frevia REST API (NestJS), Prisma ORM layer, and PostgreSQL relational database.
 \end{itemize}
-\Needspace{5\baselineskip}
+
+\sublabel{Purpose}
+\noindent Display the current and proposed snapshots, requester, profile type and prior review notes.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Admin filter bar and revision table.
+    \item Current/proposed comparison panel.
+    \item Approve/Reject controls and note field.
+    \item Expert form with submission status.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item The client web application issues an HTTP request to \texttt{GET /admin/profile-revisions/:id} via the Next.js BFF proxy.
+    \item NestJS guards verify JWT authentication and validate role-based access permissions.
+    \item The backend service queries or updates entities in PostgreSQL using Prisma ORM.
+    \item The API returns the structured JSON payload and handles domain invariants consistently.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint5/nhuy/View Profile Update Request Detail.png}{View Profile Update Request Detail interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Admin filter bar and revision table.
+    \item Current/proposed comparison panel.
+    \item Approve/Reject controls and note field.
+    \item Expert form with submission status.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+Identifier & Positive resource ID from the route; ownership is checked by the API.\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Approval applies validated proposed data to the correct subtype; rejection retains existing public data.
+\end{itemize}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+    \item BR-4702-01: Only an authorized administrator can inspect or decide profile revisions.
+    \item BR-4702-02: Only PENDING revisions may be approved or rejected. Decision and profile writes are transactional.
+    \item BR-4702-03: Record reviewer, decision time and notes; preserve history and notify the requester.
+    \item BR-4702-04: An Expert submits their own update as a pending revision. Administrative expert editing is a separate authorized operation.
+\end{itemize}
+
 \sublabel{Normal Flow}
-\begin{enumerate}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
-\item The actor opens /admin/profile-revisions; /expert/profile and selects View Profile Update Request Detail.
-\item The application submits the selected identifier or list filters.
-\item The API checks authentication where required, authorization, resource existence and input validity.
-\item Display the current and proposed snapshots, requester, profile type and prior review notes.
-\item The screen renders the response, or an explicit empty state for a valid empty collection.
+\begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item The actor opens \texttt{/admin/profile-revisions}; \texttt{/expert/profile} and selects View Profile Update Request Detail.
+    \item The application submits the selected identifier or list filters.
+    \item The API checks authentication where required, authorization, resource existence and input validity.
+    \item Display the current and proposed snapshots, requester, profile type and prior review notes.
+    \item The screen renders the response, or an explicit empty state for a valid empty collection.
 \end{enumerate}
-\Needspace{5\baselineskip}
-\sublabel{Alternative Flow}
-Show an informative empty state for a valid empty result and allow retry after a transport failure.
-\Needspace{5\baselineskip}
+
 \sublabel{Abnormal Flow / Exception Handling}
 \begin{flowtable}{Case}{Description}
-E1 & Missing or expired authentication, or insufficient role/ownership: deny the operation and do not change data. \\ \hline
-E2 & Missing, deleted or inaccessible resource: show a not-found result. \\ \hline
-A1 & A valid empty collection displays an empty state; it must not be treated as a missing account. \\ \hline
-E4 & Database, network or storage failure: report a retryable error; do not report success or terminate the API process. \\ \hline
+A1 & Missing or expired authentication token. The system returns HTTP 401 Unauthorized and prompts re-authentication.\\ \hline
+A2 & Insufficient permissions or role unauthorized. The request is rejected with HTTP 403 Forbidden.\\ \hline
+A3 & Target resource not found or soft-deleted. The system returns HTTP 404 Not Found.\\ \hline
+A4 & Validation error or malformed payload. The system returns HTTP 400 Bad Request with field validation details.\\ \hline
+A5 & Database connectivity failure or unexpected internal exception. The transaction rolls back and returns HTTP 500.\\ \hline
 \end{flowtable}
-\Needspace{5\baselineskip}
-\Needspace{14\baselineskip}
+
 \sublabel{Output Data}
-\begin{specdatatable}{Data}{Definition}
-Result & Display the current and proposed snapshots, requester, profile type and prior review notes. \\ \hline
-Failure & Structured error without sensitive data; no successful UI state when the operation failed. \\ \hline
+\begin{specdatatable}{Data Name}{Description}
+Result & Display the current and proposed snapshots, requester, profile type and prior review notes.\\ \hline
+Failure & Structured error without sensitive data; no successful UI state when the operation failed.\\ \hline
 \end{specdatatable}
-\Needspace{5\baselineskip}
-\sublabel{Acceptance Criteria}
-\begin{itemize}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
-\item Successful view profile update request detail produces the documented response and survives a reload where data is persisted.
-\item An unauthorized actor cannot access or modify the resource.
-\item Invalid input and missing resources do not create a false success state or expose sensitive data.
+
+\sublabel{Post-Conditions}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Successful view profile update request detail produces the documented response and survives a reload where data is persisted.
+    \item An unauthorized actor cannot access or modify the resource.
+    \item Invalid input and missing resources do not create a false success state or expose sensitive data.
 \end{itemize}
 
-\Needspace{10\baselineskip}
-\subsubsection{Function: Approve Profile Update Request (UC-47.03)}
-\label{fn:nhuy-uc-47-03}
+% -----------------------------------------------------------------
+% UC-47.03: Approve Profile Update Request
+% -----------------------------------------------------------------
+\subsubsection{ Approve Profile Update Request}
 
-\Needspace{7\baselineskip}
 \fnhead{Function Trigger}
-The actor selects Approve Profile Update Request. Navigation: /admin/profile-revisions; /expert/profile.
+The actor selects Approve Profile Update Request.\newline
+\textbf{Navigation path:} Home $\rightarrow$ \texttt{/admin/profile-revisions} or \texttt{/expert/profile.}
 
-\Needspace{7\baselineskip}
 \fnhead{Function Description}
-\Needspace{5\baselineskip}
+
 \sublabel{Actors / Roles}
-Admin.
-\Needspace{5\baselineskip}
-\sublabel{Purpose}
-Apply validated proposed changes and record an APPROVED decision atomically.
-\Needspace{5\baselineskip}
-\sublabel{Interface and Data Processing}
-{\small\texttt{PATCH /\allowbreak{}admin/\allowbreak{}profile-revisions/\allowbreak{}:id/\allowbreak{}approve}}. The browser calls the Next.js BFF, which forwards authenticated requests to the NestJS API. The server derives the acting user from authentication and accesses ProfileRevision, Profile, FreelancerProfile, ClientProfile, Expert, Notification. Route IDs are validated independently from owner IDs.
-
-\Needspace{7\baselineskip}
-\fnhead{Screen Layout (Mock-up Description)}
-\begin{center}
-\fbox{\begin{minipage}{0.88\linewidth}
-\textbf{Approve Profile Update Request}\par\smallskip
-Admin filter bar and revision table; current/proposed comparison panel; Approve/Reject controls and note field; Expert form with submission status.\par\smallskip
-\textit{Schematic interface description, not an application screenshot.}
-\end{minipage}}
-\end{center}
-
-\Needspace{7\baselineskip}
-\Needspace{18\baselineskip}
-\fnhead{Function Details}
-\Needspace{5\baselineskip}
-\Needspace{14\baselineskip}
-\sublabel{Input Data}
-\begin{specdatatable}{Data}{Definition}
-Accepted input & revision id; optional reviewNotes \\ \hline
-\end{specdatatable}
-\Needspace{5\baselineskip}
-\sublabel{Validation and Business Rules}
-\begin{itemize}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
-\item Only an authorized administrator can inspect or decide profile revisions.
-\item Only PENDING revisions may be approved or rejected. Decision and profile writes are transactional.
-\item Approval applies validated proposed data to the correct subtype; rejection retains existing public data.
-\item Record reviewer, decision time and notes; preserve history and notify the requester.
-\item An Expert submits their own update as a pending revision. Administrative expert editing is a separate authorized operation.
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item \textbf{Primary Actor:} Admin.
+    \item \textbf{Supporting Systems:} Frevia Web application (Next.js), Frevia BFF proxy (\texttt{/api/backend}), Frevia REST API (NestJS), Prisma ORM layer, and PostgreSQL relational database.
 \end{itemize}
-\Needspace{5\baselineskip}
+
+\sublabel{Purpose}
+\noindent Apply validated proposed changes and record an APPROVED decision atomically.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Admin filter bar and revision table.
+    \item Current/proposed comparison panel.
+    \item Approve/Reject controls and note field.
+    \item Expert form with submission status.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item The client web application issues an HTTP request to \texttt{PATCH /admin/profile-revisions/:id/approve} via the Next.js BFF proxy.
+    \item NestJS guards verify JWT authentication and validate role-based access permissions.
+    \item The backend service queries or updates entities in PostgreSQL using Prisma ORM.
+    \item The API returns the structured JSON payload and handles domain invariants consistently.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint5/nhuy/Approve Profile Update Request.png}{Approve Profile Update Request interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Admin filter bar and revision table.
+    \item Current/proposed comparison panel.
+    \item Approve/Reject controls and note field.
+    \item Expert form with submission status.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+Accepted input & revision id; optional reviewNotes\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Approval applies validated proposed data to the correct subtype; rejection retains existing public data.
+\end{itemize}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+    \item BR-4703-01: Only an authorized administrator can inspect or decide profile revisions.
+    \item BR-4703-02: Only PENDING revisions may be approved or rejected. Decision and profile writes are transactional.
+    \item BR-4703-03: Record reviewer, decision time and notes; preserve history and notify the requester.
+    \item BR-4703-04: An Expert submits their own update as a pending revision. Administrative expert editing is a separate authorized operation.
+\end{itemize}
+
 \sublabel{Normal Flow}
-\begin{enumerate}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
-\item The actor opens /admin/profile-revisions; /expert/profile and selects Approve Profile Update Request.
-\item The application presents the current values or action confirmation; the actor supplies the required data and submits.
-\item The API checks authentication where required, authorization, resource existence and input validity.
-\item Apply validated proposed changes and record an APPROVED decision atomically.
-\item After the transaction succeeds, the screen displays the result and reloads affected data; a pending revision is labeled as awaiting review.
+\begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item The actor opens \texttt{/admin/profile-revisions}; \texttt{/expert/profile} and selects Approve Profile Update Request.
+    \item The application presents the current values or action confirmation; the actor supplies the required data and submits.
+    \item The API checks authentication where required, authorization, resource existence and input validity.
+    \item Apply validated proposed changes and record an APPROVED decision atomically.
+    \item After the transaction succeeds, the screen displays the result and reloads affected data; a pending revision is labeled as awaiting review.
 \end{enumerate}
-\Needspace{5\baselineskip}
-\sublabel{Alternative Flow}
-Cancel before submission closes the form or confirmation without persisting changes. On failure, preserve user input for correction and retry.
-\Needspace{5\baselineskip}
+
 \sublabel{Abnormal Flow / Exception Handling}
 \begin{flowtable}{Case}{Description}
-E1 & Missing or expired authentication, or insufficient role/ownership: deny the operation and do not change data. \\ \hline
-E2 & Missing, deleted or inaccessible resource: show a not-found result. \\ \hline
-E3 & Invalid input, duplicate relationship, or invalid workflow state: explain the problem and retain the entered values. \\ \hline
-E4 & Database, network or storage failure: report a retryable error; do not report success or terminate the API process. \\ \hline
+A1 & Missing or expired authentication token. The system returns HTTP 401 Unauthorized and prompts re-authentication.\\ \hline
+A2 & Insufficient permissions or role unauthorized. The request is rejected with HTTP 403 Forbidden.\\ \hline
+A3 & Target resource not found or soft-deleted. The system returns HTTP 404 Not Found.\\ \hline
+A4 & Validation error or malformed payload. The system returns HTTP 400 Bad Request with field validation details.\\ \hline
+A5 & Database connectivity failure or unexpected internal exception. The transaction rolls back and returns HTTP 500.\\ \hline
 \end{flowtable}
-\Needspace{5\baselineskip}
-\Needspace{14\baselineskip}
+
 \sublabel{Output Data}
-\begin{specdatatable}{Data}{Definition}
-Result & Apply validated proposed changes and record an APPROVED decision atomically. \\ \hline
-Failure & Structured error without sensitive data; no successful UI state when the operation failed. \\ \hline
+\begin{specdatatable}{Data Name}{Description}
+Result & Apply validated proposed changes and record an APPROVED decision atomically.\\ \hline
+Failure & Structured error without sensitive data; no successful UI state when the operation failed.\\ \hline
 \end{specdatatable}
-\Needspace{5\baselineskip}
-\sublabel{Acceptance Criteria}
-\begin{itemize}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
-\item Successful approve profile update request produces the documented response and survives a reload where data is persisted.
-\item An unauthorized actor cannot access or modify the resource.
-\item Invalid input and missing resources do not create a false success state or expose sensitive data.
+
+\sublabel{Post-Conditions}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Successful approve profile update request produces the documented response and survives a reload where data is persisted.
+    \item An unauthorized actor cannot access or modify the resource.
+    \item Invalid input and missing resources do not create a false success state or expose sensitive data.
 \end{itemize}
 
-\Needspace{10\baselineskip}
-\subsubsection{Function: Reject Profile Update Request (UC-47.04)}
-\label{fn:nhuy-uc-47-04}
+% -----------------------------------------------------------------
+% UC-47.04: Reject Profile Update Request
+% -----------------------------------------------------------------
+\subsubsection{ Reject Profile Update Request}
 
-\Needspace{7\baselineskip}
 \fnhead{Function Trigger}
-The actor selects Reject Profile Update Request. Navigation: /admin/profile-revisions; /expert/profile.
+The actor selects Reject Profile Update Request.\newline
+\textbf{Navigation path:} Home $\rightarrow$ \texttt{/admin/profile-revisions} or \texttt{/expert/profile.}
 
-\Needspace{7\baselineskip}
 \fnhead{Function Description}
-\Needspace{5\baselineskip}
+
 \sublabel{Actors / Roles}
-Admin.
-\Needspace{5\baselineskip}
-\sublabel{Purpose}
-Keep approved profile data unchanged and record REJECTED with an explanatory note.
-\Needspace{5\baselineskip}
-\sublabel{Interface and Data Processing}
-{\small\texttt{PATCH /\allowbreak{}admin/\allowbreak{}profile-revisions/\allowbreak{}:id/\allowbreak{}reject}}. The browser calls the Next.js BFF, which forwards authenticated requests to the NestJS API. The server derives the acting user from authentication and accesses ProfileRevision, Profile, FreelancerProfile, ClientProfile, Expert, Notification. Route IDs are validated independently from owner IDs.
-
-\Needspace{7\baselineskip}
-\fnhead{Screen Layout (Mock-up Description)}
-\begin{center}
-\fbox{\begin{minipage}{0.88\linewidth}
-\textbf{Reject Profile Update Request}\par\smallskip
-Admin filter bar and revision table; current/proposed comparison panel; Approve/Reject controls and note field; Expert form with submission status.\par\smallskip
-\textit{Schematic interface description, not an application screenshot.}
-\end{minipage}}
-\end{center}
-
-\Needspace{7\baselineskip}
-\Needspace{18\baselineskip}
-\fnhead{Function Details}
-\Needspace{5\baselineskip}
-\Needspace{14\baselineskip}
-\sublabel{Input Data}
-\begin{specdatatable}{Data}{Definition}
-Accepted input & revision id; required reviewNotes \\ \hline
-\end{specdatatable}
-\Needspace{5\baselineskip}
-\sublabel{Validation and Business Rules}
-\begin{itemize}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
-\item Only an authorized administrator can inspect or decide profile revisions.
-\item Only PENDING revisions may be approved or rejected. Decision and profile writes are transactional.
-\item Approval applies validated proposed data to the correct subtype; rejection retains existing public data.
-\item Record reviewer, decision time and notes; preserve history and notify the requester.
-\item An Expert submits their own update as a pending revision. Administrative expert editing is a separate authorized operation.
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item \textbf{Primary Actor:} Admin.
+    \item \textbf{Supporting Systems:} Frevia Web application (Next.js), Frevia BFF proxy (\texttt{/api/backend}), Frevia REST API (NestJS), Prisma ORM layer, and PostgreSQL relational database.
 \end{itemize}
-\Needspace{5\baselineskip}
+
+\sublabel{Purpose}
+\noindent Keep approved profile data unchanged and record REJECTED with an explanatory note.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Admin filter bar and revision table.
+    \item Current/proposed comparison panel.
+    \item Approve/Reject controls and note field.
+    \item Expert form with submission status.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item The client web application issues an HTTP request to \texttt{PATCH /admin/profile-revisions/:id/reject} via the Next.js BFF proxy.
+    \item NestJS guards verify JWT authentication and validate role-based access permissions.
+    \item The backend service queries or updates entities in PostgreSQL using Prisma ORM.
+    \item The API returns the structured JSON payload and handles domain invariants consistently.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint5/nhuy/Reject Profile Update Request.png}{Reject Profile Update Request interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Admin filter bar and revision table.
+    \item Current/proposed comparison panel.
+    \item Approve/Reject controls and note field.
+    \item Expert form with submission status.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+Accepted input & revision id; required reviewNotes\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Approval applies validated proposed data to the correct subtype; rejection retains existing public data.
+\end{itemize}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+    \item BR-4704-01: Only an authorized administrator can inspect or decide profile revisions.
+    \item BR-4704-02: Only PENDING revisions may be approved or rejected. Decision and profile writes are transactional.
+    \item BR-4704-03: Record reviewer, decision time and notes; preserve history and notify the requester.
+    \item BR-4704-04: An Expert submits their own update as a pending revision. Administrative expert editing is a separate authorized operation.
+\end{itemize}
+
 \sublabel{Normal Flow}
-\begin{enumerate}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
-\item The actor opens /admin/profile-revisions; /expert/profile and selects Reject Profile Update Request.
-\item The application presents the current values or action confirmation; the actor supplies the required data and submits.
-\item The API checks authentication where required, authorization, resource existence and input validity.
-\item Keep approved profile data unchanged and record REJECTED with an explanatory note.
-\item After the transaction succeeds, the screen displays the result and reloads affected data; a pending revision is labeled as awaiting review.
+\begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item The actor opens \texttt{/admin/profile-revisions}; \texttt{/expert/profile} and selects Reject Profile Update Request.
+    \item The application presents the current values or action confirmation; the actor supplies the required data and submits.
+    \item The API checks authentication where required, authorization, resource existence and input validity.
+    \item Keep approved profile data unchanged and record REJECTED with an explanatory note.
+    \item After the transaction succeeds, the screen displays the result and reloads affected data; a pending revision is labeled as awaiting review.
 \end{enumerate}
-\Needspace{5\baselineskip}
-\sublabel{Alternative Flow}
-Cancel before submission closes the form or confirmation without persisting changes. On failure, preserve user input for correction and retry.
-\Needspace{5\baselineskip}
+
 \sublabel{Abnormal Flow / Exception Handling}
 \begin{flowtable}{Case}{Description}
-E1 & Missing or expired authentication, or insufficient role/ownership: deny the operation and do not change data. \\ \hline
-E2 & Missing, deleted or inaccessible resource: show a not-found result. \\ \hline
-E3 & Invalid input, duplicate relationship, or invalid workflow state: explain the problem and retain the entered values. \\ \hline
-E4 & Database, network or storage failure: report a retryable error; do not report success or terminate the API process. \\ \hline
+A1 & Missing or expired authentication token. The system returns HTTP 401 Unauthorized and prompts re-authentication.\\ \hline
+A2 & Insufficient permissions or role unauthorized. The request is rejected with HTTP 403 Forbidden.\\ \hline
+A3 & Target resource not found or soft-deleted. The system returns HTTP 404 Not Found.\\ \hline
+A4 & Validation error or malformed payload. The system returns HTTP 400 Bad Request with field validation details.\\ \hline
+A5 & Database connectivity failure or unexpected internal exception. The transaction rolls back and returns HTTP 500.\\ \hline
 \end{flowtable}
-\Needspace{5\baselineskip}
-\Needspace{14\baselineskip}
+
 \sublabel{Output Data}
-\begin{specdatatable}{Data}{Definition}
-Result & Keep approved profile data unchanged and record REJECTED with an explanatory note. \\ \hline
-Failure & Structured error without sensitive data; no successful UI state when the operation failed. \\ \hline
+\begin{specdatatable}{Data Name}{Description}
+Result & Keep approved profile data unchanged and record REJECTED with an explanatory note.\\ \hline
+Failure & Structured error without sensitive data; no successful UI state when the operation failed.\\ \hline
 \end{specdatatable}
-\Needspace{5\baselineskip}
-\sublabel{Acceptance Criteria}
-\begin{itemize}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
-\item Successful reject profile update request produces the documented response and survives a reload where data is persisted.
-\item An unauthorized actor cannot access or modify the resource.
-\item Invalid input and missing resources do not create a false success state or expose sensitive data.
+
+\sublabel{Post-Conditions}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Successful reject profile update request produces the documented response and survives a reload where data is persisted.
+    \item An unauthorized actor cannot access or modify the resource.
+    \item Invalid input and missing resources do not create a false success state or expose sensitive data.
 \end{itemize}
 
-\Needspace{10\baselineskip}
-\subsubsection{Function: View Profile Update Request History (UC-47.05)}
-\label{fn:nhuy-uc-47-05}
+% -----------------------------------------------------------------
+% UC-47.05: View Profile Update Request History
+% -----------------------------------------------------------------
+\subsubsection{ View Profile Update Request History}
 
-\Needspace{7\baselineskip}
 \fnhead{Function Trigger}
-The actor selects View Profile Update Request History. Navigation: /admin/profile-revisions; /expert/profile.
+The actor selects View Profile Update Request History.\newline
+\textbf{Navigation path:} Home $\rightarrow$ \texttt{/admin/profile-revisions} or \texttt{/expert/profile.}
 
-\Needspace{7\baselineskip}
 \fnhead{Function Description}
-\Needspace{5\baselineskip}
+
 \sublabel{Actors / Roles}
-Admin.
-\Needspace{5\baselineskip}
-\sublabel{Purpose}
-Allow Admin to filter historical decisions; a requester can read only their latest revision for a profile type.
-\Needspace{5\baselineskip}
-\sublabel{Interface and Data Processing}
-{\small\texttt{GET /\allowbreak{}admin/\allowbreak{}profile-revisions;\allowbreak{} GET /\allowbreak{}profile-revisions/\allowbreak{}me?type=...}}. The browser calls the Next.js BFF, which forwards authenticated requests to the NestJS API. The server derives the acting user from authentication and accesses ProfileRevision, Profile, FreelancerProfile, ClientProfile, Expert, Notification. Route IDs are validated independently from owner IDs.
-
-\Needspace{7\baselineskip}
-\fnhead{Screen Layout (Mock-up Description)}
-\begin{center}
-\fbox{\begin{minipage}{0.88\linewidth}
-\textbf{View Profile Update Request History}\par\smallskip
-Admin filter bar and revision table; current/proposed comparison panel; Approve/Reject controls and note field; Expert form with submission status.\par\smallskip
-\textit{Schematic interface description, not an application screenshot.}
-\end{minipage}}
-\end{center}
-
-\Needspace{7\baselineskip}
-\Needspace{18\baselineskip}
-\fnhead{Function Details}
-\Needspace{5\baselineskip}
-\Needspace{14\baselineskip}
-\sublabel{Input Data}
-\begin{specdatatable}{Data}{Definition}
-Selection & Validated page, limit, search, status and profileType filters. \\ \hline
-\end{specdatatable}
-\Needspace{5\baselineskip}
-\sublabel{Validation and Business Rules}
-\begin{itemize}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
-\item Only an authorized administrator can inspect or decide profile revisions.
-\item Only PENDING revisions may be approved or rejected. Decision and profile writes are transactional.
-\item Approval applies validated proposed data to the correct subtype; rejection retains existing public data.
-\item Record reviewer, decision time and notes; preserve history and notify the requester.
-\item An Expert submits their own update as a pending revision. Administrative expert editing is a separate authorized operation.
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item \textbf{Primary Actor:} Admin.
+    \item \textbf{Supporting Systems:} Frevia Web application (Next.js), Frevia BFF proxy (\texttt{/api/backend}), Frevia REST API (NestJS), Prisma ORM layer, and PostgreSQL relational database.
 \end{itemize}
-\Needspace{5\baselineskip}
+
+\sublabel{Purpose}
+\noindent Allow Admin to filter historical decisions; a requester can read only their latest revision for a profile type.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Admin filter bar and revision table.
+    \item Current/proposed comparison panel.
+    \item Approve/Reject controls and note field.
+    \item Expert form with submission status.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item The client web application issues an HTTP request to \texttt{GET /admin/profile-revisions; GET /profile-revisions/me?type=...} via the Next.js BFF proxy.
+    \item NestJS guards verify JWT authentication and validate role-based access permissions.
+    \item The backend service queries or updates entities in PostgreSQL using Prisma ORM.
+    \item The API returns the structured JSON payload and handles domain invariants consistently.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint5/nhuy/View Profile Update Request History.png}{View Profile Update Request History interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Admin filter bar and revision table.
+    \item Current/proposed comparison panel.
+    \item Approve/Reject controls and note field.
+    \item Expert form with submission status.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+Selection & Validated page, limit, search, status and profileType filters.\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Approval applies validated proposed data to the correct subtype; rejection retains existing public data.
+\end{itemize}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+    \item BR-4705-01: Only an authorized administrator can inspect or decide profile revisions.
+    \item BR-4705-02: Only PENDING revisions may be approved or rejected. Decision and profile writes are transactional.
+    \item BR-4705-03: Record reviewer, decision time and notes; preserve history and notify the requester.
+    \item BR-4705-04: An Expert submits their own update as a pending revision. Administrative expert editing is a separate authorized operation.
+\end{itemize}
+
 \sublabel{Normal Flow}
-\begin{enumerate}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
-\item The actor opens /admin/profile-revisions; /expert/profile and selects View Profile Update Request History.
-\item The application submits the selected identifier or list filters.
-\item The API checks authentication where required, authorization, resource existence and input validity.
-\item Allow Admin to filter historical decisions; a requester can read only their latest revision for a profile type.
-\item The screen renders the response, or an explicit empty state for a valid empty collection.
+\begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item The actor opens \texttt{/admin/profile-revisions}; \texttt{/expert/profile} and selects View Profile Update Request History.
+    \item The application submits the selected identifier or list filters.
+    \item The API checks authentication where required, authorization, resource existence and input validity.
+    \item Allow Admin to filter historical decisions; a requester can read only their latest revision for a profile type.
+    \item The screen renders the response, or an explicit empty state for a valid empty collection.
 \end{enumerate}
-\Needspace{5\baselineskip}
-\sublabel{Alternative Flow}
-Show an informative empty state for a valid empty result and allow retry after a transport failure.
-\Needspace{5\baselineskip}
+
 \sublabel{Abnormal Flow / Exception Handling}
 \begin{flowtable}{Case}{Description}
-E1 & Missing or expired authentication, or insufficient role/ownership: deny the operation and do not change data. \\ \hline
-E2 & Missing, deleted or inaccessible resource: show a not-found result. \\ \hline
-A1 & A valid empty collection displays an empty state; it must not be treated as a missing account. \\ \hline
-E4 & Database, network or storage failure: report a retryable error; do not report success or terminate the API process. \\ \hline
+A1 & Missing or expired authentication token. The system returns HTTP 401 Unauthorized and prompts re-authentication.\\ \hline
+A2 & Insufficient permissions or role unauthorized. The request is rejected with HTTP 403 Forbidden.\\ \hline
+A3 & Target resource not found or soft-deleted. The system returns HTTP 404 Not Found.\\ \hline
+A4 & Validation error or malformed payload. The system returns HTTP 400 Bad Request with field validation details.\\ \hline
+A5 & Database connectivity failure or unexpected internal exception. The transaction rolls back and returns HTTP 500.\\ \hline
 \end{flowtable}
-\Needspace{5\baselineskip}
-\Needspace{14\baselineskip}
+
 \sublabel{Output Data}
-\begin{specdatatable}{Data}{Definition}
-Result & Allow Admin to filter historical decisions; a requester can read only their latest revision for a profile type. \\ \hline
-Failure & Structured error without sensitive data; no successful UI state when the operation failed. \\ \hline
+\begin{specdatatable}{Data Name}{Description}
+Result & Allow Admin to filter historical decisions; a requester can read only their latest revision for a profile type.\\ \hline
+Failure & Structured error without sensitive data; no successful UI state when the operation failed.\\ \hline
 \end{specdatatable}
-\Needspace{5\baselineskip}
-\sublabel{Acceptance Criteria}
-\begin{itemize}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
-\item Successful view profile update request history produces the documented response and survives a reload where data is persisted.
-\item An unauthorized actor cannot access or modify the resource.
-\item Invalid input and missing resources do not create a false success state or expose sensitive data.
+
+\sublabel{Post-Conditions}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Successful view profile update request history produces the documented response and survives a reload where data is persisted.
+    \item An unauthorized actor cannot access or modify the resource.
+    \item Invalid input and missing resources do not create a false success state or expose sensitive data.
 \end{itemize}
 
-\Needspace{10\baselineskip}
-\subsubsection{Function: Update Profile Expert (UC-47.06)}
-\label{fn:nhuy-uc-47-06}
+% -----------------------------------------------------------------
+% UC-47.06: Update Profile Expert
+% -----------------------------------------------------------------
+\subsubsection{ Update Profile Expert}
 
-\Needspace{7\baselineskip}
 \fnhead{Function Trigger}
-The actor selects Update Profile Expert. Navigation: /admin/profile-revisions; /expert/profile.
+The actor selects Update Profile Expert.\newline
+\textbf{Navigation path:} Home $\rightarrow$ \texttt{/admin/profile-revisions} or \texttt{/expert/profile.}
 
-\Needspace{7\baselineskip}
 \fnhead{Function Description}
-\Needspace{5\baselineskip}
+
 \sublabel{Actors / Roles}
-Expert.
-\Needspace{5\baselineskip}
-\sublabel{Purpose}
-Submit the owned Expert profile as a pending revision for administrator review.
-\Needspace{5\baselineskip}
-\sublabel{Interface and Data Processing}
-{\small\texttt{PUT /\allowbreak{}expert-profile/\allowbreak{}me}}. The browser calls the Next.js BFF, which forwards authenticated requests to the NestJS API. The server derives the acting user from authentication and accesses ProfileRevision, Profile, FreelancerProfile, ClientProfile, Expert, Notification. Route IDs are validated independently from owner IDs.
-
-\Needspace{7\baselineskip}
-\fnhead{Screen Layout (Mock-up Description)}
-\begin{center}
-\fbox{\begin{minipage}{0.88\linewidth}
-\textbf{Update Profile Expert}\par\smallskip
-Admin filter bar and revision table; current/proposed comparison panel; Approve/Reject controls and note field; Expert form with submission status.\par\smallskip
-\textit{Schematic interface description, not an application screenshot.}
-\end{minipage}}
-\end{center}
-
-\Needspace{7\baselineskip}
-\Needspace{18\baselineskip}
-\fnhead{Function Details}
-\Needspace{5\baselineskip}
-\Needspace{14\baselineskip}
-\sublabel{Input Data}
-\begin{specdatatable}{Data}{Definition}
-Accepted input & expert profile fields \\ \hline
-\end{specdatatable}
-\Needspace{5\baselineskip}
-\sublabel{Validation and Business Rules}
-\begin{itemize}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
-\item Only an authorized administrator can inspect or decide profile revisions.
-\item Only PENDING revisions may be approved or rejected. Decision and profile writes are transactional.
-\item Approval applies validated proposed data to the correct subtype; rejection retains existing public data.
-\item Record reviewer, decision time and notes; preserve history and notify the requester.
-\item An Expert submits their own update as a pending revision. Administrative expert editing is a separate authorized operation.
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item \textbf{Primary Actor:} Expert.
+    \item \textbf{Supporting Systems:} Frevia Web application (Next.js), Frevia BFF proxy (\texttt{/api/backend}), Frevia REST API (NestJS), Prisma ORM layer, and PostgreSQL relational database.
 \end{itemize}
-\Needspace{5\baselineskip}
+
+\sublabel{Purpose}
+\noindent Submit the owned Expert profile as a pending revision for administrator review.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Admin filter bar and revision table.
+    \item Current/proposed comparison panel.
+    \item Approve/Reject controls and note field.
+    \item Expert form with submission status.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item The client web application issues an HTTP request to \texttt{PUT /expert-profile/me} via the Next.js BFF proxy.
+    \item NestJS guards verify JWT authentication and validate role-based access permissions.
+    \item The backend service queries or updates entities in PostgreSQL using Prisma ORM.
+    \item The API returns the structured JSON payload and handles domain invariants consistently.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint5/nhuy/Update Profile Expert.png}{Update Profile Expert interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Admin filter bar and revision table.
+    \item Current/proposed comparison panel.
+    \item Approve/Reject controls and note field.
+    \item Expert form with submission status.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+Accepted input & expert profile fields\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Approval applies validated proposed data to the correct subtype; rejection retains existing public data.
+\end{itemize}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+    \item BR-4706-01: Only an authorized administrator can inspect or decide profile revisions.
+    \item BR-4706-02: Only PENDING revisions may be approved or rejected. Decision and profile writes are transactional.
+    \item BR-4706-03: Record reviewer, decision time and notes; preserve history and notify the requester.
+    \item BR-4706-04: An Expert submits their own update as a pending revision. Administrative expert editing is a separate authorized operation.
+\end{itemize}
+
 \sublabel{Normal Flow}
-\begin{enumerate}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
-\item The actor opens /admin/profile-revisions; /expert/profile and selects Update Profile Expert.
-\item The application presents the current values or action confirmation; the actor supplies the required data and submits.
-\item The API checks authentication where required, authorization, resource existence and input validity.
-\item Submit the owned Expert profile as a pending revision for administrator review.
-\item After the transaction succeeds, the screen displays the result and reloads affected data; a pending revision is labeled as awaiting review.
+\begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item The actor opens \texttt{/admin/profile-revisions}; \texttt{/expert/profile} and selects Update Profile Expert.
+    \item The application presents the current values or action confirmation; the actor supplies the required data and submits.
+    \item The API checks authentication where required, authorization, resource existence and input validity.
+    \item Submit the owned Expert profile as a pending revision for administrator review.
+    \item After the transaction succeeds, the screen displays the result and reloads affected data; a pending revision is labeled as awaiting review.
 \end{enumerate}
-\Needspace{5\baselineskip}
-\sublabel{Alternative Flow}
-Cancel before submission closes the form or confirmation without persisting changes. On failure, preserve user input for correction and retry.
-\Needspace{5\baselineskip}
+
 \sublabel{Abnormal Flow / Exception Handling}
 \begin{flowtable}{Case}{Description}
-E1 & Missing or expired authentication, or insufficient role/ownership: deny the operation and do not change data. \\ \hline
-E2 & Missing, deleted or inaccessible resource: show a not-found result. \\ \hline
-E3 & Invalid input, duplicate relationship, or invalid workflow state: explain the problem and retain the entered values. \\ \hline
-E4 & Database, network or storage failure: report a retryable error; do not report success or terminate the API process. \\ \hline
+A1 & Missing or expired authentication token. The system returns HTTP 401 Unauthorized and prompts re-authentication.\\ \hline
+A2 & Insufficient permissions or role unauthorized. The request is rejected with HTTP 403 Forbidden.\\ \hline
+A3 & Target resource not found or soft-deleted. The system returns HTTP 404 Not Found.\\ \hline
+A4 & Validation error or malformed payload. The system returns HTTP 400 Bad Request with field validation details.\\ \hline
+A5 & Database connectivity failure or unexpected internal exception. The transaction rolls back and returns HTTP 500.\\ \hline
 \end{flowtable}
-\Needspace{5\baselineskip}
-\Needspace{14\baselineskip}
+
 \sublabel{Output Data}
-\begin{specdatatable}{Data}{Definition}
-Result & Submit the owned Expert profile as a pending revision for administrator review. \\ \hline
-Failure & Structured error without sensitive data; no successful UI state when the operation failed. \\ \hline
+\begin{specdatatable}{Data Name}{Description}
+Result & Submit the owned Expert profile as a pending revision for administrator review.\\ \hline
+Failure & Structured error without sensitive data; no successful UI state when the operation failed.\\ \hline
 \end{specdatatable}
-\Needspace{5\baselineskip}
-\sublabel{Acceptance Criteria}
-\begin{itemize}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
-\item Successful update profile expert produces the documented response and survives a reload where data is persisted.
-\item An unauthorized actor cannot access or modify the resource.
-\item Invalid input and missing resources do not create a false success state or expose sensitive data.
+
+\sublabel{Post-Conditions}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Successful update profile expert produces the documented response and survives a reload where data is persisted.
+    \item An unauthorized actor cannot access or modify the resource.
+    \item Invalid input and missing resources do not create a false success state or expose sensitive data.
 \end{itemize}
 
-\Needspace{12\baselineskip}
+
 \subsection{Freelancer CV Management}
-\Needspace{10\baselineskip}
-\subsubsection{Function: Upload CV (UC-07.03)}
-\label{fn:nhuy-uc-07-03}
 
-\Needspace{7\baselineskip}
+% -----------------------------------------------------------------
+% UC-07.03: Upload CV
+% -----------------------------------------------------------------
+\subsubsection{ Upload CV}
+
 \fnhead{Function Trigger}
-The actor selects Upload CV. Navigation: /freelancer/profile; /profiles/[id].
+The actor selects Upload CV.\newline
+\textbf{Navigation path:} Home $\rightarrow$ \texttt{/freelancer/profile} or \texttt{/profiles/[id].}
 
-\Needspace{7\baselineskip}
 \fnhead{Function Description}
-\Needspace{5\baselineskip}
+
 \sublabel{Actors / Roles}
-Freelancer.
-\Needspace{5\baselineskip}
-\sublabel{Purpose}
-Validate a PDF up to 10 MB and attach it to the owned FreelancerProfile.
-\Needspace{5\baselineskip}
-\sublabel{Interface and Data Processing}
-{\small\texttt{POST /\allowbreak{}profiles/\allowbreak{}:id/\allowbreak{}cv}}. The browser calls the Next.js BFF, which forwards authenticated requests to the NestJS API. The server derives the acting user from authentication and accesses Profile, FreelancerProfile, ProfileRevision. Route IDs are validated independently from owner IDs.
-
-\Needspace{7\baselineskip}
-\fnhead{Screen Layout (Mock-up Description)}
-\begin{center}
-\fbox{\begin{minipage}{0.88\linewidth}
-\textbf{Upload CV}\par\smallskip
-Current CV file name; Upload or Replace PDF picker; View/Download and Delete confirmation; progress, validation and error feedback.\par\smallskip
-\textit{Schematic interface description, not an application screenshot.}
-\end{minipage}}
-\end{center}
-
-\Needspace{7\baselineskip}
-\Needspace{18\baselineskip}
-\fnhead{Function Details}
-\Needspace{5\baselineskip}
-\Needspace{14\baselineskip}
-\sublabel{Input Data}
-\begin{specdatatable}{Data}{Definition}
-Accepted input & CV upload: multipart PDF file, maximum 10 MB; Profile.id \\ \hline
-\end{specdatatable}
-\Needspace{5\baselineskip}
-\sublabel{Validation and Business Rules}
-\begin{itemize}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
-\item Only the owning freelancer can upload, view, replace or delete their CV.
-\item Uploads are PDF-only, at most 10 MB, and must have a valid PDF signature; reject missing, oversized or invalid files.
-\item Store CV URL, file name, public ID and upload time on FreelancerProfile. Do not expose private storage paths in public profile responses.
-\item A replacement updates metadata only after the new file is stored. A missing local file returns 404 without crashing the API.
-\item Deleting a CV clears its metadata and triggers a search-index update; it does not delete the profile or previously confirmed professional sections.
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item \textbf{Primary Actor:} Freelancer.
+    \item \textbf{Supporting Systems:} Frevia Web application (Next.js), Frevia BFF proxy (\texttt{/api/backend}), Frevia REST API (NestJS), Prisma ORM layer, and PostgreSQL relational database.
 \end{itemize}
-\Needspace{5\baselineskip}
+
+\sublabel{Purpose}
+\noindent Validate a PDF up to 10 MB and attach it to the owned FreelancerProfile.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Current CV file name.
+    \item Upload or Replace PDF picker.
+    \item View/Download and Delete confirmation.
+    \item Progress, validation and error feedback.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item The client web application issues an HTTP request to \texttt{POST /profiles/:id/cv} via the Next.js BFF proxy.
+    \item NestJS guards verify JWT authentication and validate role-based access permissions.
+    \item The backend service queries or updates entities in PostgreSQL using Prisma ORM.
+    \item The API returns the structured JSON payload and handles domain invariants consistently.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint5/nhuy/Upload CV.png}{Upload CV interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Current CV file name.
+    \item Upload or Replace PDF picker.
+    \item View/Download and Delete confirmation.
+    \item Progress, validation and error feedback.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+Accepted input & CV upload: multipart PDF file, maximum 10 MB; Profile.id\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Uploads are PDF-only, at most 10 MB, and must have a valid PDF signature; reject missing, oversized or invalid files.
+\end{itemize}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+    \item BR-0703-01: Only the owning freelancer can upload, view, replace or delete their CV.
+    \item BR-0703-02: Store CV URL, file name, public ID and upload time on FreelancerProfile. Do not expose private storage paths in public profile responses.
+    \item BR-0703-03: A replacement updates metadata only after the new file is stored. A missing local file returns 404 without crashing the API.
+    \item BR-0703-04: Deleting a CV clears its metadata and triggers a search-index update; it does not delete the profile or previously confirmed professional sections.
+\end{itemize}
+
 \sublabel{Normal Flow}
-\begin{enumerate}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
-\item The actor opens /freelancer/profile; /profiles/[id] and selects Upload CV.
-\item The application presents the current values or action confirmation; the actor supplies the required data and submits.
-\item The API checks authentication where required, authorization, resource existence and input validity.
-\item Validate a PDF up to 10 MB and attach it to the owned FreelancerProfile.
-\item After the transaction succeeds, the screen displays the result and reloads affected data; a pending revision is labeled as awaiting review.
+\begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item The actor opens \texttt{/freelancer/profile}; \texttt{/profiles/[id]} and selects Upload CV.
+    \item The application presents the current values or action confirmation; the actor supplies the required data and submits.
+    \item The API checks authentication where required, authorization, resource existence and input validity.
+    \item Validate a PDF up to 10 MB and attach it to the owned FreelancerProfile.
+    \item After the transaction succeeds, the screen displays the result and reloads affected data; a pending revision is labeled as awaiting review.
 \end{enumerate}
-\Needspace{5\baselineskip}
-\sublabel{Alternative Flow}
-Cancel before submission closes the form or confirmation without persisting changes. On failure, preserve user input for correction and retry.
-\Needspace{5\baselineskip}
+
 \sublabel{Abnormal Flow / Exception Handling}
 \begin{flowtable}{Case}{Description}
-E1 & Missing or expired authentication, or insufficient role/ownership: deny the operation and do not change data. \\ \hline
-E2 & Missing, deleted or inaccessible resource: show a not-found result. \\ \hline
-E3 & Invalid input, duplicate relationship, or invalid workflow state: explain the problem and retain the entered values. \\ \hline
-E4 & Database, network or storage failure: report a retryable error; do not report success or terminate the API process. \\ \hline
+A1 & Missing or expired authentication token. The system returns HTTP 401 Unauthorized and prompts re-authentication.\\ \hline
+A2 & Insufficient permissions or role unauthorized. The request is rejected with HTTP 403 Forbidden.\\ \hline
+A3 & Target resource not found or soft-deleted. The system returns HTTP 404 Not Found.\\ \hline
+A4 & Validation error or malformed payload. The system returns HTTP 400 Bad Request with field validation details.\\ \hline
+A5 & Database connectivity failure or unexpected internal exception. The transaction rolls back and returns HTTP 500.\\ \hline
 \end{flowtable}
-\Needspace{5\baselineskip}
-\Needspace{14\baselineskip}
+
 \sublabel{Output Data}
-\begin{specdatatable}{Data}{Definition}
-Result & Validate a PDF up to 10 MB and attach it to the owned FreelancerProfile. \\ \hline
-Failure & Structured error without sensitive data; no successful UI state when the operation failed. \\ \hline
+\begin{specdatatable}{Data Name}{Description}
+Result & Validate a PDF up to 10 MB and attach it to the owned FreelancerProfile.\\ \hline
+Failure & Structured error without sensitive data; no successful UI state when the operation failed.\\ \hline
 \end{specdatatable}
-\Needspace{5\baselineskip}
-\sublabel{Acceptance Criteria}
-\begin{itemize}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
-\item Successful upload cv produces the documented response and survives a reload where data is persisted.
-\item An unauthorized actor cannot access or modify the resource.
-\item Invalid input and missing resources do not create a false success state or expose sensitive data.
+
+\sublabel{Post-Conditions}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Successful upload cv produces the documented response and survives a reload where data is persisted.
+    \item An unauthorized actor cannot access or modify the resource.
+    \item Invalid input and missing resources do not create a false success state or expose sensitive data.
 \end{itemize}
 
-\Needspace{10\baselineskip}
-\subsubsection{Function: View CV (UC-07.04)}
-\label{fn:nhuy-uc-07-04}
+% -----------------------------------------------------------------
+% UC-07.04: View CV
+% -----------------------------------------------------------------
+\subsubsection{ View CV}
 
-\Needspace{7\baselineskip}
 \fnhead{Function Trigger}
-The actor selects View CV. Navigation: /freelancer/profile; /profiles/[id].
+The actor selects View CV.\newline
+\textbf{Navigation path:} Home $\rightarrow$ \texttt{/freelancer/profile} or \texttt{/profiles/[id].}
 
-\Needspace{7\baselineskip}
 \fnhead{Function Description}
-\Needspace{5\baselineskip}
+
 \sublabel{Actors / Roles}
-Freelancer.
-\Needspace{5\baselineskip}
-\sublabel{Purpose}
-Authorize the owner and serve or redirect to the current CV; return 404 when its stored file is unavailable.
-\Needspace{5\baselineskip}
-\sublabel{Interface and Data Processing}
-{\small\texttt{GET /\allowbreak{}profiles/\allowbreak{}:id/\allowbreak{}cv/\allowbreak{}file}}. The browser calls the Next.js BFF, which forwards authenticated requests to the NestJS API. The server derives the acting user from authentication and accesses Profile, FreelancerProfile, ProfileRevision. Route IDs are validated independently from owner IDs.
-
-\Needspace{7\baselineskip}
-\fnhead{Screen Layout (Mock-up Description)}
-\begin{center}
-\fbox{\begin{minipage}{0.88\linewidth}
-\textbf{View CV}\par\smallskip
-Current CV file name; Upload or Replace PDF picker; View/Download and Delete confirmation; progress, validation and error feedback.\par\smallskip
-\textit{Schematic interface description, not an application screenshot.}
-\end{minipage}}
-\end{center}
-
-\Needspace{7\baselineskip}
-\Needspace{18\baselineskip}
-\fnhead{Function Details}
-\Needspace{5\baselineskip}
-\Needspace{14\baselineskip}
-\sublabel{Input Data}
-\begin{specdatatable}{Data}{Definition}
-Accepted input & CV upload: multipart PDF file, maximum 10 MB; Profile.id \\ \hline
-\end{specdatatable}
-\Needspace{5\baselineskip}
-\sublabel{Validation and Business Rules}
-\begin{itemize}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
-\item Only the owning freelancer can upload, view, replace or delete their CV.
-\item Uploads are PDF-only, at most 10 MB, and must have a valid PDF signature; reject missing, oversized or invalid files.
-\item Store CV URL, file name, public ID and upload time on FreelancerProfile. Do not expose private storage paths in public profile responses.
-\item A replacement updates metadata only after the new file is stored. A missing local file returns 404 without crashing the API.
-\item Deleting a CV clears its metadata and triggers a search-index update; it does not delete the profile or previously confirmed professional sections.
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item \textbf{Primary Actor:} Freelancer.
+    \item \textbf{Supporting Systems:} Frevia Web application (Next.js), Frevia BFF proxy (\texttt{/api/backend}), Frevia REST API (NestJS), Prisma ORM layer, and PostgreSQL relational database.
 \end{itemize}
-\Needspace{5\baselineskip}
+
+\sublabel{Purpose}
+\noindent Authorize the owner and serve or redirect to the current CV; return 404 when its stored file is unavailable.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Current CV file name.
+    \item Upload or Replace PDF picker.
+    \item View/Download and Delete confirmation.
+    \item Progress, validation and error feedback.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item The client web application issues an HTTP request to \texttt{GET /profiles/:id/cv/file} via the Next.js BFF proxy.
+    \item NestJS guards verify JWT authentication and validate role-based access permissions.
+    \item The backend service queries or updates entities in PostgreSQL using Prisma ORM.
+    \item The API returns the structured JSON payload and handles domain invariants consistently.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint5/nhuy/View CV.png}{View CV interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Current CV file name.
+    \item Upload or Replace PDF picker.
+    \item View/Download and Delete confirmation.
+    \item Progress, validation and error feedback.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+Accepted input & CV upload: multipart PDF file, maximum 10 MB; Profile.id\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Uploads are PDF-only, at most 10 MB, and must have a valid PDF signature; reject missing, oversized or invalid files.
+\end{itemize}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+    \item BR-0704-01: Only the owning freelancer can upload, view, replace or delete their CV.
+    \item BR-0704-02: Store CV URL, file name, public ID and upload time on FreelancerProfile. Do not expose private storage paths in public profile responses.
+    \item BR-0704-03: A replacement updates metadata only after the new file is stored. A missing local file returns 404 without crashing the API.
+    \item BR-0704-04: Deleting a CV clears its metadata and triggers a search-index update; it does not delete the profile or previously confirmed professional sections.
+\end{itemize}
+
 \sublabel{Normal Flow}
-\begin{enumerate}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
-\item The actor opens /freelancer/profile; /profiles/[id] and selects View CV.
-\item The application submits the selected identifier or list filters.
-\item The API checks authentication where required, authorization, resource existence and input validity.
-\item Authorize the owner and serve or redirect to the current CV; return 404 when its stored file is unavailable.
-\item The screen renders the response, or an explicit empty state for a valid empty collection.
+\begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item The actor opens \texttt{/freelancer/profile}; \texttt{/profiles/[id]} and selects View CV.
+    \item The application submits the selected identifier or list filters.
+    \item The API checks authentication where required, authorization, resource existence and input validity.
+    \item Authorize the owner and serve or redirect to the current CV; return 404 when its stored file is unavailable.
+    \item The screen renders the response, or an explicit empty state for a valid empty collection.
 \end{enumerate}
-\Needspace{5\baselineskip}
-\sublabel{Alternative Flow}
-Show an informative empty state for a valid empty result and allow retry after a transport failure.
-\Needspace{5\baselineskip}
+
 \sublabel{Abnormal Flow / Exception Handling}
 \begin{flowtable}{Case}{Description}
-E1 & Missing or expired authentication, or insufficient role/ownership: deny the operation and do not change data. \\ \hline
-E2 & Missing, deleted or inaccessible resource: show a not-found result. \\ \hline
-A1 & A valid empty collection displays an empty state; it must not be treated as a missing account. \\ \hline
-E4 & Database, network or storage failure: report a retryable error; do not report success or terminate the API process. \\ \hline
+A1 & Missing or expired authentication token. The system returns HTTP 401 Unauthorized and prompts re-authentication.\\ \hline
+A2 & Insufficient permissions or role unauthorized. The request is rejected with HTTP 403 Forbidden.\\ \hline
+A3 & Target resource not found or soft-deleted. The system returns HTTP 404 Not Found.\\ \hline
+A4 & Validation error or malformed payload. The system returns HTTP 400 Bad Request with field validation details.\\ \hline
+A5 & Database connectivity failure or unexpected internal exception. The transaction rolls back and returns HTTP 500.\\ \hline
 \end{flowtable}
-\Needspace{5\baselineskip}
-\Needspace{14\baselineskip}
+
 \sublabel{Output Data}
-\begin{specdatatable}{Data}{Definition}
-Result & Authorize the owner and serve or redirect to the current CV; return 404 when its stored file is unavailable. \\ \hline
-Failure & Structured error without sensitive data; no successful UI state when the operation failed. \\ \hline
+\begin{specdatatable}{Data Name}{Description}
+Result & Authorize the owner and serve or redirect to the current CV; return 404 when its stored file is unavailable.\\ \hline
+Failure & Structured error without sensitive data; no successful UI state when the operation failed.\\ \hline
 \end{specdatatable}
-\Needspace{5\baselineskip}
-\sublabel{Acceptance Criteria}
-\begin{itemize}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
-\item Successful view cv produces the documented response and survives a reload where data is persisted.
-\item An unauthorized actor cannot access or modify the resource.
-\item Invalid input and missing resources do not create a false success state or expose sensitive data.
+
+\sublabel{Post-Conditions}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Successful view cv produces the documented response and survives a reload where data is persisted.
+    \item An unauthorized actor cannot access or modify the resource.
+    \item Invalid input and missing resources do not create a false success state or expose sensitive data.
 \end{itemize}
 
-\Needspace{10\baselineskip}
-\subsubsection{Function: Replace CV (UC-07.05)}
-\label{fn:nhuy-uc-07-05}
+% -----------------------------------------------------------------
+% UC-07.05: Replace CV
+% -----------------------------------------------------------------
+\subsubsection{ Replace CV}
 
-\Needspace{7\baselineskip}
 \fnhead{Function Trigger}
-The actor selects Replace CV. Navigation: /freelancer/profile; /profiles/[id].
+The actor selects Replace CV.\newline
+\textbf{Navigation path:} Home $\rightarrow$ \texttt{/freelancer/profile} or \texttt{/profiles/[id].}
 
-\Needspace{7\baselineskip}
 \fnhead{Function Description}
-\Needspace{5\baselineskip}
+
 \sublabel{Actors / Roles}
-Freelancer.
-\Needspace{5\baselineskip}
-\sublabel{Purpose}
-Store a valid replacement PDF, update CV metadata and clean up the previous file after a successful update.
-\Needspace{5\baselineskip}
-\sublabel{Interface and Data Processing}
-{\small\texttt{POST /\allowbreak{}profiles/\allowbreak{}:id/\allowbreak{}cv}}. The browser calls the Next.js BFF, which forwards authenticated requests to the NestJS API. The server derives the acting user from authentication and accesses Profile, FreelancerProfile, ProfileRevision. Route IDs are validated independently from owner IDs.
-
-\Needspace{7\baselineskip}
-\fnhead{Screen Layout (Mock-up Description)}
-\begin{center}
-\fbox{\begin{minipage}{0.88\linewidth}
-\textbf{Replace CV}\par\smallskip
-Current CV file name; Upload or Replace PDF picker; View/Download and Delete confirmation; progress, validation and error feedback.\par\smallskip
-\textit{Schematic interface description, not an application screenshot.}
-\end{minipage}}
-\end{center}
-
-\Needspace{7\baselineskip}
-\Needspace{18\baselineskip}
-\fnhead{Function Details}
-\Needspace{5\baselineskip}
-\Needspace{14\baselineskip}
-\sublabel{Input Data}
-\begin{specdatatable}{Data}{Definition}
-Accepted input & CV upload: multipart PDF file, maximum 10 MB; Profile.id \\ \hline
-\end{specdatatable}
-\Needspace{5\baselineskip}
-\sublabel{Validation and Business Rules}
-\begin{itemize}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
-\item Only the owning freelancer can upload, view, replace or delete their CV.
-\item Uploads are PDF-only, at most 10 MB, and must have a valid PDF signature; reject missing, oversized or invalid files.
-\item Store CV URL, file name, public ID and upload time on FreelancerProfile. Do not expose private storage paths in public profile responses.
-\item A replacement updates metadata only after the new file is stored. A missing local file returns 404 without crashing the API.
-\item Deleting a CV clears its metadata and triggers a search-index update; it does not delete the profile or previously confirmed professional sections.
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item \textbf{Primary Actor:} Freelancer.
+    \item \textbf{Supporting Systems:} Frevia Web application (Next.js), Frevia BFF proxy (\texttt{/api/backend}), Frevia REST API (NestJS), Prisma ORM layer, and PostgreSQL relational database.
 \end{itemize}
-\Needspace{5\baselineskip}
+
+\sublabel{Purpose}
+\noindent Store a valid replacement PDF, update CV metadata and clean up the previous file after a successful update.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Current CV file name.
+    \item Upload or Replace PDF picker.
+    \item View/Download and Delete confirmation.
+    \item Progress, validation and error feedback.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item The client web application issues an HTTP request to \texttt{POST /profiles/:id/cv} via the Next.js BFF proxy.
+    \item NestJS guards verify JWT authentication and validate role-based access permissions.
+    \item The backend service queries or updates entities in PostgreSQL using Prisma ORM.
+    \item The API returns the structured JSON payload and handles domain invariants consistently.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint5/nhuy/Replace CV.png}{Replace CV interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Current CV file name.
+    \item Upload or Replace PDF picker.
+    \item View/Download and Delete confirmation.
+    \item Progress, validation and error feedback.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+Accepted input & CV upload: multipart PDF file, maximum 10 MB; Profile.id\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Uploads are PDF-only, at most 10 MB, and must have a valid PDF signature; reject missing, oversized or invalid files.
+\end{itemize}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+    \item BR-0705-01: Only the owning freelancer can upload, view, replace or delete their CV.
+    \item BR-0705-02: Store CV URL, file name, public ID and upload time on FreelancerProfile. Do not expose private storage paths in public profile responses.
+    \item BR-0705-03: A replacement updates metadata only after the new file is stored. A missing local file returns 404 without crashing the API.
+    \item BR-0705-04: Deleting a CV clears its metadata and triggers a search-index update; it does not delete the profile or previously confirmed professional sections.
+\end{itemize}
+
 \sublabel{Normal Flow}
-\begin{enumerate}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
-\item The actor opens /freelancer/profile; /profiles/[id] and selects Replace CV.
-\item The application presents the current values or action confirmation; the actor supplies the required data and submits.
-\item The API checks authentication where required, authorization, resource existence and input validity.
-\item Store a valid replacement PDF, update CV metadata and clean up the previous file after a successful update.
-\item After the transaction succeeds, the screen displays the result and reloads affected data; a pending revision is labeled as awaiting review.
+\begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item The actor opens \texttt{/freelancer/profile}; \texttt{/profiles/[id]} and selects Replace CV.
+    \item The application presents the current values or action confirmation; the actor supplies the required data and submits.
+    \item The API checks authentication where required, authorization, resource existence and input validity.
+    \item Store a valid replacement PDF, update CV metadata and clean up the previous file after a successful update.
+    \item After the transaction succeeds, the screen displays the result and reloads affected data; a pending revision is labeled as awaiting review.
 \end{enumerate}
-\Needspace{5\baselineskip}
-\sublabel{Alternative Flow}
-Cancel before submission closes the form or confirmation without persisting changes. On failure, preserve user input for correction and retry.
-\Needspace{5\baselineskip}
+
 \sublabel{Abnormal Flow / Exception Handling}
 \begin{flowtable}{Case}{Description}
-E1 & Missing or expired authentication, or insufficient role/ownership: deny the operation and do not change data. \\ \hline
-E2 & Missing, deleted or inaccessible resource: show a not-found result. \\ \hline
-E3 & Invalid input, duplicate relationship, or invalid workflow state: explain the problem and retain the entered values. \\ \hline
-E4 & Database, network or storage failure: report a retryable error; do not report success or terminate the API process. \\ \hline
+A1 & Missing or expired authentication token. The system returns HTTP 401 Unauthorized and prompts re-authentication.\\ \hline
+A2 & Insufficient permissions or role unauthorized. The request is rejected with HTTP 403 Forbidden.\\ \hline
+A3 & Target resource not found or soft-deleted. The system returns HTTP 404 Not Found.\\ \hline
+A4 & Validation error or malformed payload. The system returns HTTP 400 Bad Request with field validation details.\\ \hline
+A5 & Database connectivity failure or unexpected internal exception. The transaction rolls back and returns HTTP 500.\\ \hline
 \end{flowtable}
-\Needspace{5\baselineskip}
-\Needspace{14\baselineskip}
+
 \sublabel{Output Data}
-\begin{specdatatable}{Data}{Definition}
-Result & Store a valid replacement PDF, update CV metadata and clean up the previous file after a successful update. \\ \hline
-Failure & Structured error without sensitive data; no successful UI state when the operation failed. \\ \hline
+\begin{specdatatable}{Data Name}{Description}
+Result & Store a valid replacement PDF, update CV metadata and clean up the previous file after a successful update.\\ \hline
+Failure & Structured error without sensitive data; no successful UI state when the operation failed.\\ \hline
 \end{specdatatable}
-\Needspace{5\baselineskip}
-\sublabel{Acceptance Criteria}
-\begin{itemize}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
-\item Successful replace cv produces the documented response and survives a reload where data is persisted.
-\item An unauthorized actor cannot access or modify the resource.
-\item Invalid input and missing resources do not create a false success state or expose sensitive data.
+
+\sublabel{Post-Conditions}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Successful replace cv produces the documented response and survives a reload where data is persisted.
+    \item An unauthorized actor cannot access or modify the resource.
+    \item Invalid input and missing resources do not create a false success state or expose sensitive data.
 \end{itemize}
 
-\Needspace{10\baselineskip}
-\subsubsection{Function: Delete CV (UC-07.06)}
-\label{fn:nhuy-uc-07-06}
+% -----------------------------------------------------------------
+% UC-07.06: Delete CV
+% -----------------------------------------------------------------
+\subsubsection{ Delete CV}
 
-\Needspace{7\baselineskip}
 \fnhead{Function Trigger}
-The actor selects Delete CV. Navigation: /freelancer/profile; /profiles/[id].
+The actor selects Delete CV.\newline
+\textbf{Navigation path:} Home $\rightarrow$ \texttt{/freelancer/profile} or \texttt{/profiles/[id].}
 
-\Needspace{7\baselineskip}
 \fnhead{Function Description}
-\Needspace{5\baselineskip}
+
 \sublabel{Actors / Roles}
-Freelancer.
-\Needspace{5\baselineskip}
-\sublabel{Purpose}
-Clear CV URL, public ID, file name and upload time, and update the related search index.
-\Needspace{5\baselineskip}
-\sublabel{Interface and Data Processing}
-{\small\texttt{DELETE /\allowbreak{}profiles/\allowbreak{}:id/\allowbreak{}cv}}. The browser calls the Next.js BFF, which forwards authenticated requests to the NestJS API. The server derives the acting user from authentication and accesses Profile, FreelancerProfile, ProfileRevision. Route IDs are validated independently from owner IDs.
-
-\Needspace{7\baselineskip}
-\fnhead{Screen Layout (Mock-up Description)}
-\begin{center}
-\fbox{\begin{minipage}{0.88\linewidth}
-\textbf{Delete CV}\par\smallskip
-Current CV file name; Upload or Replace PDF picker; View/Download and Delete confirmation; progress, validation and error feedback.\par\smallskip
-\textit{Schematic interface description, not an application screenshot.}
-\end{minipage}}
-\end{center}
-
-\Needspace{7\baselineskip}
-\Needspace{18\baselineskip}
-\fnhead{Function Details}
-\Needspace{5\baselineskip}
-\Needspace{14\baselineskip}
-\sublabel{Input Data}
-\begin{specdatatable}{Data}{Definition}
-Accepted input & CV upload: multipart PDF file, maximum 10 MB; Profile.id \\ \hline
-\end{specdatatable}
-\Needspace{5\baselineskip}
-\sublabel{Validation and Business Rules}
-\begin{itemize}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
-\item Only the owning freelancer can upload, view, replace or delete their CV.
-\item Uploads are PDF-only, at most 10 MB, and must have a valid PDF signature; reject missing, oversized or invalid files.
-\item Store CV URL, file name, public ID and upload time on FreelancerProfile. Do not expose private storage paths in public profile responses.
-\item A replacement updates metadata only after the new file is stored. A missing local file returns 404 without crashing the API.
-\item Deleting a CV clears its metadata and triggers a search-index update; it does not delete the profile or previously confirmed professional sections.
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item \textbf{Primary Actor:} Freelancer.
+    \item \textbf{Supporting Systems:} Frevia Web application (Next.js), Frevia BFF proxy (\texttt{/api/backend}), Frevia REST API (NestJS), Prisma ORM layer, and PostgreSQL relational database.
 \end{itemize}
-\Needspace{5\baselineskip}
+
+\sublabel{Purpose}
+\noindent Clear CV URL, public ID, file name and upload time, and update the related search index.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Current CV file name.
+    \item Upload or Replace PDF picker.
+    \item View/Download and Delete confirmation.
+    \item Progress, validation and error feedback.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item The client web application issues an HTTP request to \texttt{DELETE /profiles/:id/cv} via the Next.js BFF proxy.
+    \item NestJS guards verify JWT authentication and validate role-based access permissions.
+    \item The backend service queries or updates entities in PostgreSQL using Prisma ORM.
+    \item The API returns the structured JSON payload and handles domain invariants consistently.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint5/nhuy/Delete CV.png}{Delete CV interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Current CV file name.
+    \item Upload or Replace PDF picker.
+    \item View/Download and Delete confirmation.
+    \item Progress, validation and error feedback.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+Accepted input & CV upload: multipart PDF file, maximum 10 MB; Profile.id\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Uploads are PDF-only, at most 10 MB, and must have a valid PDF signature; reject missing, oversized or invalid files.
+\end{itemize}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+    \item BR-0706-01: Only the owning freelancer can upload, view, replace or delete their CV.
+    \item BR-0706-02: Store CV URL, file name, public ID and upload time on FreelancerProfile. Do not expose private storage paths in public profile responses.
+    \item BR-0706-03: A replacement updates metadata only after the new file is stored. A missing local file returns 404 without crashing the API.
+    \item BR-0706-04: Deleting a CV clears its metadata and triggers a search-index update; it does not delete the profile or previously confirmed professional sections.
+\end{itemize}
+
 \sublabel{Normal Flow}
-\begin{enumerate}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
-\item The actor opens /freelancer/profile; /profiles/[id] and selects Delete CV.
-\item The application presents the current values or action confirmation; the actor supplies the required data and submits.
-\item The API checks authentication where required, authorization, resource existence and input validity.
-\item Clear CV URL, public ID, file name and upload time, and update the related search index.
-\item After the transaction succeeds, the screen displays the result and reloads affected data; a pending revision is labeled as awaiting review.
+\begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item The actor opens \texttt{/freelancer/profile}; \texttt{/profiles/[id]} and selects Delete CV.
+    \item The application presents the current values or action confirmation; the actor supplies the required data and submits.
+    \item The API checks authentication where required, authorization, resource existence and input validity.
+    \item Clear CV URL, public ID, file name and upload time, and update the related search index.
+    \item After the transaction succeeds, the screen displays the result and reloads affected data; a pending revision is labeled as awaiting review.
 \end{enumerate}
-\Needspace{5\baselineskip}
-\sublabel{Alternative Flow}
-Cancel before submission closes the form or confirmation without persisting changes. On failure, preserve user input for correction and retry.
-\Needspace{5\baselineskip}
+
 \sublabel{Abnormal Flow / Exception Handling}
 \begin{flowtable}{Case}{Description}
-E1 & Missing or expired authentication, or insufficient role/ownership: deny the operation and do not change data. \\ \hline
-E2 & Missing, deleted or inaccessible resource: show a not-found result. \\ \hline
-E3 & Invalid input, duplicate relationship, or invalid workflow state: explain the problem and retain the entered values. \\ \hline
-E4 & Database, network or storage failure: report a retryable error; do not report success or terminate the API process. \\ \hline
+A1 & Missing or expired authentication token. The system returns HTTP 401 Unauthorized and prompts re-authentication.\\ \hline
+A2 & Insufficient permissions or role unauthorized. The request is rejected with HTTP 403 Forbidden.\\ \hline
+A3 & Target resource not found or soft-deleted. The system returns HTTP 404 Not Found.\\ \hline
+A4 & Validation error or malformed payload. The system returns HTTP 400 Bad Request with field validation details.\\ \hline
+A5 & Database connectivity failure or unexpected internal exception. The transaction rolls back and returns HTTP 500.\\ \hline
 \end{flowtable}
-\Needspace{5\baselineskip}
-\Needspace{14\baselineskip}
+
 \sublabel{Output Data}
-\begin{specdatatable}{Data}{Definition}
-Result & Clear CV URL, public ID, file name and upload time, and update the related search index. \\ \hline
-Failure & Structured error without sensitive data; no successful UI state when the operation failed. \\ \hline
+\begin{specdatatable}{Data Name}{Description}
+Result & Clear CV URL, public ID, file name and upload time, and update the related search index.\\ \hline
+Failure & Structured error without sensitive data; no successful UI state when the operation failed.\\ \hline
 \end{specdatatable}
-\Needspace{5\baselineskip}
-\sublabel{Acceptance Criteria}
-\begin{itemize}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
-\item Successful delete cv produces the documented response and survives a reload where data is persisted.
-\item An unauthorized actor cannot access or modify the resource.
-\item Invalid input and missing resources do not create a false success state or expose sensitive data.
+
+\sublabel{Post-Conditions}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Successful delete cv produces the documented response and survives a reload where data is persisted.
+    \item An unauthorized actor cannot access or modify the resource.
+    \item Invalid input and missing resources do not create a false success state or expose sensitive data.
 \end{itemize}
