@@ -160,6 +160,27 @@ Trang PDF có kích thước đúng bằng SVG (px × 0,75 = pt), nên hình ch�
 (crow's foot) ở phía nhiều và gạch đơn ở phía một; mỗi bảng là một khung không viền,
 cột khoá được đánh dấu `PK` / `FK`.
 
+## Phần nhuy — Sprint 1 đến Sprint 5
+
+Hướng dẫn thực hành: [Cách vẽ Class Diagram và Sequence Diagram](HUONG_DAN_VE_SO_DO_NHUY.md).
+
+Mỗi sprint có file `sections/nhuy/2/sprint<N>.tex` cho Detailed Design và
+`sections/nhuy/4/sprint<N>.tex` cho Class Specification; cả hai đều đã được đưa vào tài liệu chính.
+
+| Sprint | Nhóm chức năng | Class diagram | Sequence |
+|---|---|---:|---:|
+| 1 | Freelancer Profile, Freelancer Skill, Portfolio | 3 | 10 |
+| 2 | Identity Verification, Client Profile, Social Link, Favorite Freelancer | 4 | 10 |
+| 3 | Following, Notification, Role Switching | 3 | 9 |
+| 4 | Review, Review Response, Account Profile | 3 | 12 |
+| 5 | Profile Update Review, Expert Profile Update, CV | 3 | 10 |
+| **Tổng** | | **16** | **51** |
+
+Các hình nằm trong `images/sprint<N>/nhuy/{classDiagram,sequences}/`,
+mỗi hình có nguồn `.drawio` và bản xuất SVG/PDF. Nguồn sequence tập trung tại
+`sequence-diagrams-remake/nhuy/`. Khi sửa nguồn, cập nhật bản sao trong Report 4 và xuất lại hình.
+Các UC Profile, Skill và Portfolio của Sprint 1 đã áp dụng bố cục `opt`/`alt` gọn theo mẫu Role List.
+
 ## Thêm sprint của thành viên khác
 
 1. Tạo `sections/<member>/2/sprint<N>.tex`.
