@@ -124,7 +124,7 @@ export function ContractList({
     return (
       <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-border bg-card/40 px-6 py-14 text-center font-sans">
         <p className="text-sm font-medium text-muted-foreground">
-          {t("emptyList") || "No contracts found."}
+          {t("emptyList")}
         </p>
       </div>
     );

@@ -43,7 +43,7 @@ export class PaymentService {
     private readonly paymentRepo: PaymentRepository,
     private readonly stripeService: StripeService,
     private readonly contractPdfService: ContractPdfService,
-  ) {}
+  ) { }
 
   async getOnboardingLink(userId: number, returnUrl?: string) {
     const user = await this.paymentRepo.findUserById(userId);
@@ -506,9 +506,9 @@ export class PaymentService {
           await this.paymentRepo.findContractById(resolvedContractId);
         const milestoneIds = meta.milestoneIds
           ? meta.milestoneIds
-              .split(',')
-              .map((v) => Number(v.trim()))
-              .filter((v) => Number.isFinite(v) && v > 0)
+            .split(',')
+            .map((v) => Number(v.trim()))
+            .filter((v) => Number.isFinite(v) && v > 0)
           : Array.isArray(contract?.holdMilestoneIds)
             ? contract.holdMilestoneIds
             : [];
@@ -901,7 +901,8 @@ export class PaymentService {
         throw StripeOnboardingIncompleteException();
       }
 
-      const freelancerFee = Math.round(freelancerAmount * 0.05 * 100) / 100;
+      const freelancerFee =
+        Math.round(freelancerAmount * 0.05 * 100) / 100;
       const freelancerPayout =
         Math.round((freelancerAmount - freelancerFee) * 100) / 100;
       const amountInCents = Math.round(freelancerPayout * 100);
@@ -960,7 +961,8 @@ export class PaymentService {
       const targetDeposit =
         deposits.find((d) => {
           if (!d.stripePaymentIntentId) return false;
-          const meta = (d.metadata as { milestoneIds?: unknown } | null) ?? {};
+          const meta =
+            (d.metadata as { milestoneIds?: unknown } | null) ?? {};
           if (Array.isArray(meta.milestoneIds)) {
             return meta.milestoneIds.map(Number).includes(milestoneId);
           }
