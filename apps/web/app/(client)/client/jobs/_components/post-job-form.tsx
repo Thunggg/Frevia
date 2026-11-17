@@ -33,7 +33,11 @@ import {
 import { Input } from "@repo/ui/components/shadcn/input";
 import { Textarea } from "@repo/ui/components/shadcn/textarea";
 import { Badge } from "@repo/ui/components/shadcn/badge";
-import { toastError, toastSuccess } from "@repo/ui/components/shadcn/toast";
+import {
+  toastError,
+  toastSuccess,
+  toastWarning,
+} from "@repo/ui/components/shadcn/toast";
 
 type PostJobFormProps = {
   mode?: "dialog" | "page";
@@ -42,6 +46,7 @@ type PostJobFormProps = {
   onSaved: (job: JobType) => void;
   onCancel?: () => void;
   job?: JobType;
+  existingJobs?: Array<{ id: number; title: string }>;
 };
 
 type JobFormValues = {
@@ -116,6 +121,7 @@ export function PostJobForm({
   onSaved,
   onCancel,
   job,
+  existingJobs: existingJobsProp,
 }: PostJobFormProps) {
   const t = useTranslations("postJobForm");
   const tCommon = useTranslations("common");
@@ -147,20 +153,23 @@ export function PostJobForm({
     defaultValues: emptyJobForm,
   });
 
-  const [existingJobs, setExistingJobs] = useState<
+  const [loadedExistingJobs, setLoadedExistingJobs] = useState<
     Array<{ id: number; title: string }>
   >([]);
+  const [isDuplicateTitle, setIsDuplicateTitle] = useState(false);
 
   useEffect(() => {
     if (!isActive) return;
+    if (existingJobsProp && existingJobsProp.length > 0) return;
     let cancelled = false;
 
     jobApiRequest
-      .getClientJobs({ limit: 100 })
+      .getClientJobs({ limit: 20 })
       .then((res) => {
-        if (!cancelled && res.success && res.data?.data) {
-          setExistingJobs(
-            res.data.data.map((j) => ({
+        if (!cancelled && res.success && res.data) {
+          const list = Array.isArray(res.data?.data) ? res.data.data : [];
+          setLoadedExistingJobs(
+            list.map((j) => ({
               id: j.id,
               title: j.title.trim().toLowerCase(),
             })),
@@ -174,16 +183,28 @@ export function PostJobForm({
     return () => {
       cancelled = true;
     };
-  }, [isActive]);
+  }, [isActive, existingJobsProp]);
+
+  const allExistingJobs = useMemo(() => {
+    if (existingJobsProp && existingJobsProp.length > 0) {
+      return existingJobsProp.map((j) => ({
+        id: j.id,
+        title: j.title.trim().toLowerCase(),
+      }));
+    }
+    return loadedExistingJobs;
+  }, [existingJobsProp, loadedExistingJobs]);
 
   const currentTitle = form.watch("title");
-  const hasDuplicateTitle = useMemo(() => {
+  const hasClientMatch = useMemo(() => {
     const trimmed = (currentTitle ?? "").trim().toLowerCase();
     if (!trimmed) return false;
-    return existingJobs.some(
+    return allExistingJobs.some(
       (existing) => existing.id !== job?.id && existing.title === trimmed,
     );
-  }, [currentTitle, existingJobs, job?.id]);
+  }, [currentTitle, allExistingJobs, job?.id]);
+
+  const hasDuplicateTitle = isDuplicateTitle || hasClientMatch;
 
   useEffect(() => {
     if (!isActive) return;
@@ -279,9 +300,15 @@ export function PostJobForm({
 
   const validateTitleLanguage = async (value: string) => {
     const trimmed = value.trim();
-    if (trimmed.length < 5) return;
+    if (trimmed.length < 3) {
+      setIsDuplicateTitle(false);
+      return;
+    }
     try {
-      const res = await jobApiRequest.checkLanguage({ title: trimmed });
+      const res = await jobApiRequest.checkLanguage({
+        title: trimmed,
+        excludeJobId: job?.id,
+      });
       if (res.data && !res.data.title.isEnglish) {
         form.setError("title", {
           type: "custom",
@@ -291,6 +318,13 @@ export function PostJobForm({
         form.formState.errors.title?.message === t("titleMustBeEnglish")
       ) {
         form.clearErrors("title");
+      }
+
+      if (res.data?.title?.isDuplicate || res.data?.isDuplicate) {
+        setIsDuplicateTitle(true);
+        toastWarning({ message: t("duplicateTitleToast") });
+      } else {
+        setIsDuplicateTitle(false);
       }
     } catch {
       // ignore network errors
@@ -323,6 +357,7 @@ export function PostJobForm({
       const langCheck = await jobApiRequest.checkLanguage({
         title: data.title,
         description: data.description,
+        excludeJobId: job?.id,
       });
 
       if (langCheck.data && !langCheck.data.isEnglish) {
@@ -343,6 +378,16 @@ export function PostJobForm({
           : t("descriptionMustBeEnglish");
         toastError({ message: firstMessage });
         return;
+      }
+
+      const duplicate = Boolean(
+        langCheck.data?.isDuplicate ||
+          langCheck.data?.title?.isDuplicate ||
+          hasDuplicateTitle,
+      );
+      if (duplicate) {
+        setIsDuplicateTitle(true);
+        toastWarning({ message: t("duplicateTitleToast") });
       }
 
       const response = job
@@ -403,6 +448,16 @@ export function PostJobForm({
               onBlur={(e) => {
                 field.onBlur();
                 validateTitleLanguage(e.target.value);
+                const trimmed = e.target.value.trim().toLowerCase();
+                if (
+                  trimmed &&
+                  allExistingJobs.some(
+                    (item) => item.id !== job?.id && item.title === trimmed,
+                  )
+                ) {
+                  setIsDuplicateTitle(true);
+                  toastWarning({ message: t("duplicateTitleToast") });
+                }
               }}
             />
             {hasDuplicateTitle && (

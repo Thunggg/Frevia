@@ -58,11 +58,16 @@ const jobApiRequest = {
     );
   },
 
-  checkLanguage(body: { title?: string; description?: string }) {
+  checkLanguage(body: {
+    title?: string;
+    description?: string;
+    excludeJobId?: number;
+  }) {
     return http.post<{
-      title: { isEnglish: boolean };
+      title: { isEnglish: boolean; isDuplicate?: boolean };
       description: { isEnglish: boolean };
       isEnglish: boolean;
+      isDuplicate?: boolean;
     }>("/api/manage-jobs/check-language", body);
   },
 

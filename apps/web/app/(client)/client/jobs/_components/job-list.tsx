@@ -450,6 +450,10 @@ export function JobList({
   const [pendingDeleteJobId, setPendingDeleteJobId] = useState<number | null>(
     null,
   );
+  const [pendingPublishJobId, setPendingPublishJobId] = useState<number | null>(
+    null,
+  );
+  const [isPublishing, setIsPublishing] = useState(false);
 
   const draftCount = jobs.filter((j) => j.status === "DRAFT").length;
   const openCount = jobs.filter((j) => j.status === "OPEN").length;
@@ -487,22 +491,27 @@ export function JobList({
     setEditingJob(null);
   };
 
-  const publishJob = async (id: number) => {
+  const confirmPublishJob = async () => {
+    if (!pendingPublishJobId) return;
+    setIsPublishing(true);
     try {
-      const response = await jobApiRequest.publishJob(id);
+      const response = await jobApiRequest.publishJob(pendingPublishJobId);
       if (!response.success) throw new Error();
       setJobs((current) =>
         current.map((job) =>
-          job.id === id ? { ...job, status: "OPEN" } : job,
+          job.id === pendingPublishJobId ? { ...job, status: "OPEN" } : job,
         ),
       );
       toastSuccess({ message: t("published") });
+      setPendingPublishJobId(null);
     } catch (error) {
       const message =
         error instanceof ApiFail
           ? (error.response?.error?.message ?? error.message)
           : t("publishFailed");
       toastError({ message: message || t("publishFailed") });
+    } finally {
+      setIsPublishing(false);
     }
   };
 
@@ -614,7 +623,7 @@ export function JobList({
                     setIsFormOpen(true);
                   }}
                   onDelete={setPendingDeleteJobId}
-                  onPublish={publishJob}
+                  onPublish={setPendingPublishJobId}
                   onClose={closeJob}
                   onReopen={reopenJob}
                 />
@@ -720,7 +729,59 @@ export function JobList({
         onOpenChange={setIsFormOpen}
         onSaved={saveJob}
         job={editingJob ?? undefined}
+        existingJobs={jobs}
       />
+
+      {/* Confirmation Dialog for Publishing a Job */}
+      <AlertDialog
+        open={pendingPublishJobId !== null}
+        onOpenChange={(open) => !open && !isPublishing && setPendingPublishJobId(null)}
+      >
+        <AlertDialogContent className="max-w-sm rounded-[26px] border border-black/5 dark:border-white/10 bg-white dark:bg-zinc-900 p-5 shadow-2xl font-sans">
+          <div className="flex flex-col gap-3">
+            <div className="px-1">
+              <AlertDialogTitle className="text-base font-bold text-foreground font-sans">
+                {t("publishConfirmTitle")}
+              </AlertDialogTitle>
+              <AlertDialogDescription className="mt-1 text-xs text-muted-foreground leading-normal font-sans">
+                {t("publishConfirmDesc")}
+              </AlertDialogDescription>
+            </div>
+
+            <div className="mt-1 flex flex-col gap-2">
+              <button
+                type="button"
+                disabled={isPublishing}
+                onClick={() => void confirmPublishJob()}
+                className="group flex w-full items-center justify-between rounded-full px-3.5 py-2.5 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white cursor-pointer transition-all duration-200 outline-none shadow-xs"
+              >
+                <div className="flex items-center gap-2.5">
+                  <div className="flex size-7 shrink-0 items-center justify-center rounded-full bg-white/20 text-white shadow-xs transition-transform group-hover:scale-105">
+                    <TrendingUp className="size-3.5" />
+                  </div>
+                  <span className="text-xs font-semibold">
+                    {isPublishing ? t("publishing") : t("confirmPublish")}
+                  </span>
+                </div>
+                <ChevronRight className="size-3.5 text-white/70 group-hover:text-white group-hover:translate-x-0.5 transition-all" />
+              </button>
+
+              <AlertDialogCancel
+                disabled={isPublishing}
+                className="group flex w-full items-center justify-between rounded-full px-3.5 py-2.5 bg-[#F1F0F5] hover:bg-[#EAE9F0] dark:bg-zinc-800/80 dark:hover:bg-zinc-800 text-foreground cursor-pointer transition-all duration-200 outline-none border-0 m-0 h-auto"
+              >
+                <div className="flex items-center gap-2.5">
+                  <div className="flex size-7 shrink-0 items-center justify-center rounded-full bg-white dark:bg-zinc-700 text-muted-foreground shadow-xs transition-transform group-hover:scale-105">
+                    <X className="size-3.5" />
+                  </div>
+                  <span className="text-xs font-medium">{t("cancel")}</span>
+                </div>
+                <ChevronRight className="size-3.5 text-muted-foreground/50 group-hover:text-foreground group-hover:translate-x-0.5 transition-all" />
+              </AlertDialogCancel>
+            </div>
+          </div>
+        </AlertDialogContent>
+      </AlertDialog>
 
       <AlertDialog
         open={pendingDeleteJobId !== null}

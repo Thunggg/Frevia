@@ -205,6 +205,25 @@ export class ManageJobRepository {
     return { jobs: jobs.map((job) => this.normalizeJob(job)), total };
   }
 
+  async hasDuplicateTitle(
+    clientId: number,
+    title: string,
+    excludeJobId?: number,
+  ): Promise<boolean> {
+    const trimmed = title.trim();
+    if (!trimmed) return false;
+    const existing = await this.prisma.job.findFirst({
+      where: {
+        clientId,
+        deletedAt: null,
+        title: { equals: trimmed, mode: Prisma.QueryMode.insensitive },
+        ...(excludeJobId && { id: { not: excludeJobId } }),
+      },
+      select: { id: true },
+    });
+    return Boolean(existing);
+  }
+
   async findJobBySlug(
     slug: string,
   ): Promise<Pick<

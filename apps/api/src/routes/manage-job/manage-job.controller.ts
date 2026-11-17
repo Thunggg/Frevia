@@ -40,8 +40,23 @@ export class ManageJobController {
   }
 
   @Post('check-language')
-  checkLanguage(@Body() body: { title?: string; description?: string }) {
-    return this.manageJobService.checkLanguage(body.title, body.description);
+  checkLanguage(
+    @UserActive('userId') userId: number,
+    @UserActive('roleName') roleName: string,
+    @Body()
+    body: {
+      title?: string;
+      description?: string;
+      excludeJobId?: number;
+    },
+  ) {
+    return this.manageJobService.checkLanguage(
+      body.title,
+      body.description,
+      userId,
+      roleName,
+      body.excludeJobId,
+    );
   }
 
   @Get()

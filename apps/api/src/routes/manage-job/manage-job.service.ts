@@ -75,7 +75,13 @@ export class ManageJobService {
     }
   }
 
-  async checkLanguage(title?: string, description?: string) {
+  async checkLanguage(
+    title?: string,
+    description?: string,
+    userId?: number,
+    roleName?: string,
+    excludeJobId?: number,
+  ) {
     const titleIsEnglish = title
       ? await this.fastTextService.isEnglish(title)
       : true;
@@ -83,10 +89,20 @@ export class ManageJobService {
       ? await this.fastTextService.isEnglish(description)
       : true;
 
+    let isDuplicate = false;
+    if (userId && roleName === RoleName.CLIENT && title) {
+      isDuplicate = await this.manageJobRepository.hasDuplicateTitle(
+        userId,
+        title,
+        excludeJobId,
+      );
+    }
+
     return {
-      title: { isEnglish: titleIsEnglish },
+      title: { isEnglish: titleIsEnglish, isDuplicate },
       description: { isEnglish: descIsEnglish },
       isEnglish: titleIsEnglish && descIsEnglish,
+      isDuplicate,
     };
   }
 
