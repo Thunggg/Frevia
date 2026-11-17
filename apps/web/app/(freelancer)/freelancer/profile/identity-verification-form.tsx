@@ -3,6 +3,7 @@
 import { useState, type FormEvent } from "react";
 import { useTranslations } from "next-intl";
 import { accountProfileApi } from "@/apiRequests/account-profile";
+import { useActionPermission } from "@/hooks/use-action-permission";
 import { LivenessChallenge } from "@/components/identity/liveness-challenge";
 import { ApiFail } from "@/lib/http";
 import { Button } from "@repo/ui/components/shadcn/button";
@@ -46,6 +47,11 @@ export function IdentityVerificationForm({
 }) {
   const t = useTranslations("accountProfile");
   const tDocument = useTranslations("documentType");
+
+  const { can } = useActionPermission();
+  const canAiCheck = can("POST", "/api/identity-verifications/ai-check");
+  const canUploadDoc = can("POST", "/api/identity-verifications/documents");
+  const canSubmitVerification = canAiCheck || canUploadDoc;
   const [documentType, setDocumentType] = useState<DocumentTypeType>(
     DocumentType.ID_CARD,
   );
@@ -61,6 +67,7 @@ export function IdentityVerificationForm({
 
   const submit = async (event: FormEvent) => {
     event.preventDefault();
+    if (!canSubmitVerification) return;
     if (!front) {
       toastError({ message: t("selectFrontFirst") });
       return;
@@ -156,13 +163,15 @@ export function IdentityVerificationForm({
         <LivenessChallenge onComplete={setFrames} />
       </div>
 
-      <Button
-        className="bg-[#4fae2e] text-white hover:bg-[#459928]"
-        disabled={submitting}
-      >
-        {submitting ? <Loader2 className="animate-spin" /> : <Upload />}
-        {submitting ? t("verifying") : t("startVerification")}
-      </Button>
+      {canSubmitVerification && (
+        <Button
+          className="bg-[#4fae2e] text-white hover:bg-[#459928]"
+          disabled={submitting}
+        >
+          {submitting ? <Loader2 className="animate-spin" /> : <Upload />}
+          {submitting ? t("verifying") : t("startVerification")}
+        </Button>
+      )}
     </form>
   );
 }

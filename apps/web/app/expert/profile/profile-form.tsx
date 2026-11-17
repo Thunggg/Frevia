@@ -4,6 +4,7 @@ import { useTranslations } from "next-intl";
 import { expertProfileApi } from "@/apiRequests/expert-profile";
 import { profileRevisionApiRequest } from "@/apiRequests/profile-revision";
 import { ProfileReviewStatus } from "@/components/profile-review-status";
+import { useActionPermission } from "@/hooks/use-action-permission";
 import { ApiFail } from "@/lib/http";
 import { Button } from "@repo/ui/components/shadcn/button";
 import { Badge } from "@repo/ui/components/shadcn/badge";
@@ -12,7 +13,7 @@ import { Label } from "@repo/ui/components/shadcn/label";
 import { Textarea } from "@repo/ui/components/shadcn/textarea";
 import { toastError, toastSuccess } from "@repo/ui/components/shadcn/toast";
 import type { ExpertProfileType, ProfileRevisionType } from "@shared/types";
-import { Loader2, Save, ShieldCheck } from "lucide-react";
+import { Loader2, Save, ShieldAlert, ShieldCheck } from "lucide-react";
 import { useEffect, useState } from "react";
 
 const lines = (value: string) =>
@@ -23,19 +24,39 @@ const lines = (value: string) =>
 
 export function ExpertProfileForm() {
   const t = useTranslations("expertProfileForm");
+  const { can } = useActionPermission();
+
+  const canViewExpertProfile = can("GET", "/api/expert-profile/me");
+  const canViewRevisionHistory = can("GET", "/api/profile-revisions/me");
+  const canUpdateExpertProfile = can("PUT", "/api/expert-profile/me");
+
   const [profile, setProfile] = useState<ExpertProfileType | null>(null);
   const [revision, setRevision] = useState<ProfileRevisionType | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
-    void Promise.all([
+    if (!canViewExpertProfile) {
+      setLoading(false);
+      return;
+    }
+
+    const promises: [
+      Promise<{ data: ExpertProfileType }>,
+      Promise<{ data: { revision: ProfileRevisionType | null } } | null>,
+    ] = [
       expertProfileApi.getMine(),
-      profileRevisionApiRequest.getMine("EXPERT"),
-    ])
+      canViewRevisionHistory
+        ? profileRevisionApiRequest.getMine("EXPERT")
+        : Promise.resolve(null),
+    ];
+
+    void Promise.all(promises)
       .then(([profileResponse, revisionResponse]) => {
         setProfile(profileResponse.data);
-        setRevision(revisionResponse.data.revision);
+        if (revisionResponse) {
+          setRevision(revisionResponse.data.revision);
+        }
       })
       .catch((error) =>
         toastError({
@@ -43,7 +64,7 @@ export function ExpertProfileForm() {
         }),
       )
       .finally(() => setLoading(false));
-  }, [t]);
+  }, [canViewExpertProfile, canViewRevisionHistory, t]);
 
   if (loading) {
     return (
@@ -52,6 +73,21 @@ export function ExpertProfileForm() {
       </div>
     );
   }
+
+  if (!canViewExpertProfile) {
+    return (
+      <div className="rounded-xl border bg-card p-12 text-center text-muted-foreground shadow-sm">
+        <ShieldAlert className="mx-auto size-10 text-muted-foreground/60 mb-3" />
+        <p className="font-medium text-base text-foreground">
+          Không có quyền truy cập
+        </p>
+        <p className="text-sm mt-1 text-muted-foreground">
+          Bạn không có quyền xem thông tin hồ sơ chuyên gia (#459).
+        </p>
+      </div>
+    );
+  }
+
   if (!profile) return null;
 
   const isPending = revision?.status === "PENDING";
@@ -61,6 +97,7 @@ export function ExpertProfileForm() {
 
   const submit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    if (!canUpdateExpertProfile) return;
     const data = new FormData(event.currentTarget);
     setSaving(true);
     try {
@@ -111,7 +148,7 @@ export function ExpertProfileForm() {
         </Badge>
       </div>
 
-      <ProfileReviewStatus revision={revision} />
+      {canViewRevisionHistory && <ProfileReviewStatus revision={revision} />}
 
       <div className="rounded-xl border bg-card p-5 shadow-sm">
         <div className="flex items-center justify-between text-sm">
@@ -213,16 +250,18 @@ export function ExpertProfileForm() {
             values={profile.certifications}
           />
           </div>
-          <div className="flex justify-end border-t pt-5">
-            <Button type="submit" disabled={isPending || saving}>
-            {saving ? (
-              <Loader2 className="size-4 animate-spin" />
-            ) : (
-              <Save className="size-4" />
-            )}
-              {isPending ? t("awaitingReview") : t("submit")}
-            </Button>
-          </div>
+          {canUpdateExpertProfile && (
+            <div className="flex justify-end border-t pt-5">
+              <Button type="submit" disabled={isPending || saving}>
+                {saving ? (
+                  <Loader2 className="size-4 animate-spin" />
+                ) : (
+                  <Save className="size-4" />
+                )}
+                {isPending ? t("awaitingReview") : t("submit")}
+              </Button>
+            </div>
+          )}
         </fieldset>
       </form>
     </div>

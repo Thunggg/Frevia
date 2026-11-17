@@ -31,6 +31,7 @@ import { Loader2, Pencil } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { useActionPermission } from "@/hooks/use-action-permission";
 
 interface UpdateJobCategoryDialogProps {
   jobCategory: Pick<
@@ -47,6 +48,7 @@ export function UpdateJobCategoryDialog({
   const t = useTranslations("adminJobCategories");
   const tCommon = useTranslations("adminCommon");
   const router = useRouter();
+  const { can } = useActionPermission();
   const [open, setOpen] = useState(false);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
@@ -60,6 +62,10 @@ export function UpdateJobCategoryDialog({
       setStatus(jobCategory.status);
     }
   }, [open, jobCategory]);
+
+  if (!can("PATCH", `/api/admin/job-categories/${jobCategory.id}`)) {
+    return null;
+  }
 
   const handleOpenChange = (nextOpen: boolean) => {
     setOpen(nextOpen);

@@ -14,6 +14,7 @@ import {
 import { Button } from "@repo/ui/components/shadcn/button";
 import { toastError, toastSuccess } from "@repo/ui/components/shadcn/toast";
 import { contractApiRequest } from "@/apiRequests/contract";
+import { useActionPermission } from "@/hooks/use-action-permission";
 import { ApiFail } from "@/lib/http";
 import {
   getTodayDateInputValue,
@@ -54,6 +55,11 @@ export function ManageMilestoneDialog({
   onSuccess,
 }: ManageMilestoneDialogProps) {
   const queryClient = useQueryClient();
+  const { can } = useActionPermission();
+
+  const canCreateMilestone = can("POST", "/api/contracts/:contractId/milestones");
+  const canUpdateMilestone = can("PATCH", "/api/contracts/:contractId/milestones/:id");
+  const hasPermission = milestoneToEdit ? canUpdateMilestone : canCreateMilestone;
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -91,6 +97,11 @@ export function ManageMilestoneDialog({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!hasPermission) {
+      toastError({ message: "You do not have permission to perform this action." });
+      return;
+    }
 
     if (!title.trim()) {
       toastError({ message: "Milestone title is required." });
@@ -323,15 +334,17 @@ export function ManageMilestoneDialog({
           >
             Cancel
           </Button>
-          <Button
-            type="submit"
-            form="manage-milestone-form"
-            disabled={isSubmitting}
-            className="rounded-lg bg-[#0069D3] hover:bg-[#005bb8] text-white text-xs font-semibold h-8 px-4 cursor-pointer"
-          >
-            {isSubmitting && <Loader2 className="mr-1.5 size-3.5 animate-spin" />}
-            {milestoneToEdit ? "Update Milestone" : "Add Milestone"}
-          </Button>
+          {hasPermission && (
+            <Button
+              type="submit"
+              form="manage-milestone-form"
+              disabled={isSubmitting}
+              className="rounded-lg bg-[#0069D3] hover:bg-[#005bb8] text-white text-xs font-semibold h-8 px-4 cursor-pointer"
+            >
+              {isSubmitting && <Loader2 className="mr-1.5 size-3.5 animate-spin" />}
+              {milestoneToEdit ? "Update Milestone" : "Add Milestone"}
+            </Button>
+          )}
         </SheetFooter>
       </SheetContent>
     </Sheet>

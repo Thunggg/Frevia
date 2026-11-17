@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { ChevronLeft } from "lucide-react";
+import { useActionPermission } from "@/hooks/use-action-permission";
 import type { ContractDetailType, MilestoneType } from "@shared/types";
 
 interface MilestoneDetailHeaderProps {
@@ -15,6 +16,8 @@ export function MilestoneDetailHeader({
   milestone,
   basePath = "/client",
 }: MilestoneDetailHeaderProps) {
+  const { can } = useActionPermission();
+  const canViewMilestones = can("GET", "/api/contracts/:contractId/milestones");
   const rawSlug = contract.slug || String(contract.id);
   const contractSlug = encodeURIComponent(rawSlug);
   const contractCode =
@@ -38,13 +41,17 @@ export function MilestoneDetailHeader({
       >
         {contract.slug || contractCode}
       </Link>
-      <span className="text-muted-foreground/60">/</span>
-      <Link
-        href={`${basePath}/contracts/${contractSlug}/milestones`}
-        className="font-medium text-muted-foreground hover:text-foreground transition-colors"
-      >
-        Milestone
-      </Link>
+      {canViewMilestones && (
+        <>
+          <span className="text-muted-foreground/60">/</span>
+          <Link
+            href={`${basePath}/contracts/${contractSlug}/milestones`}
+            className="font-medium text-muted-foreground hover:text-foreground transition-colors"
+          >
+            Milestone
+          </Link>
+        </>
+      )}
       <span className="text-muted-foreground/60">/</span>
       <span className="font-semibold text-foreground truncate max-w-xs">
         MLS-{String(milestone.id).padStart(4, "0")}

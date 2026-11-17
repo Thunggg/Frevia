@@ -4,6 +4,7 @@ import { useFormatter, useTranslations } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useActionPermission } from "@/hooks/use-action-permission";
 import {
   useConversationDetail,
   useConversationMessages,
@@ -76,6 +77,17 @@ export function ChatView({
   const t = useTranslations("chat");
   const tCommon = useTranslations("common");
   const format = useFormatter();
+  const { can } = useActionPermission();
+  const canViewConversation = can("GET", "/api/conversations/:id");
+  const canViewMessages = can("GET", "/api/conversations/:id/messages");
+  const canSendMessage = can("POST", "/api/conversations/:id/messages");
+  const canUploadFile = can("POST", "/api/conversations/:id/files");
+  const canMarkRead = can("PATCH", "/api/conversations/:id/read");
+  const canDeleteMessage = can(
+    "DELETE",
+    "/api/conversations/:id/messages/:messageId",
+  );
+
   const { socket, connected } = useConversationSocketContext();
   const { data: conversations } = useConversations();
 
@@ -89,6 +101,7 @@ export function ChatView({
   const targetIdOrSlug = conversationSlug ?? propConversationId;
   const { data: conversationDetail } = useConversationDetail(
     !conversationFromList && targetIdOrSlug ? targetIdOrSlug : null,
+    canViewConversation,
   );
 
   const conversation = conversationFromList ?? conversationDetail;
@@ -100,6 +113,7 @@ export function ChatView({
 
   const { data: messages, isLoading } = useConversationMessages(
     targetIdOrSlug ?? 0,
+    canViewMessages,
   );
   const restSend = useSendConversationMessage();
   const restMarkRead = useMarkConversationRead();
@@ -128,16 +142,16 @@ export function ChatView({
     });
 
   useEffect(() => {
-    if (!conversationId) return;
+    if (!conversationId || !canMarkRead) return;
     if (socket && connected) {
       socket.emit("message:read", { conversationId });
     } else {
       restMarkRead.mutate(conversationId);
     }
-  }, [socket, connected, conversationId, restMarkRead]);
+  }, [socket, connected, conversationId, restMarkRead, canMarkRead]);
 
   useEffect(() => {
-    if (!socket) return;
+    if (!socket || !canMarkRead) return;
 
     const handler = (payload: {
       conversationId: number;
@@ -155,7 +169,7 @@ export function ChatView({
     return () => {
       socket.off("message:new", handler);
     };
-  }, [socket, conversationId, currentUserId]);
+  }, [socket, conversationId, currentUserId, canMarkRead]);
 
   useEffect(() => {
     if (!socket) return;
@@ -292,6 +306,15 @@ export function ChatView({
     tCommon("userFallback", { id: otherUser?.id ?? "" });
   const avatarUrl = otherUser?.profile?.avatarUrl ?? undefined;
 
+  if (!canViewConversation) {
+    return (
+      <div className="flex h-full flex-col items-center justify-center p-6 text-center text-muted-foreground font-sans">
+        <p className="text-sm font-semibold text-foreground">Không có quyền truy cập</p>
+        <p className="mt-1 text-xs">Bạn không có quyền xem chi tiết cuộc trò chuyện này.</p>
+      </div>
+    );
+  }
+
   return (
     <div className="flex h-full flex-col bg-background font-sans">
       {/* Header */}
@@ -333,7 +356,11 @@ export function ChatView({
 
       {/* Messages Stream */}
       <div className="flex-1 space-y-3 overflow-y-auto p-4 sm:p-6">
-        {isLoading ? (
+        {!canViewMessages ? (
+          <div className="flex h-full flex-col items-center justify-center text-center p-6 text-muted-foreground">
+            <p className="text-sm font-medium">Bạn không có quyền xem tin nhắn trong cuộc trò chuyện này.</p>
+          </div>
+        ) : isLoading ? (
           <div className="flex h-full items-center justify-center px-4 py-8">
             <div className="w-full max-w-md space-y-4">
               {Array.from({ length: 4 }).map((_, i) => (
@@ -495,7 +522,7 @@ export function ChatView({
                         )}
                       </span>
                     )}
-                    {isMine && (
+                    {isMine && canDeleteMessage && (
                       <button
                         type="button"
                         onClick={() => handleDeleteMessage(message.id)}
@@ -536,73 +563,83 @@ export function ChatView({
 
       {/* Modern Capsule Input Bar */}
       <div className="border-t border-border bg-background/95 backdrop-blur p-3 sm:p-4">
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            handleSend();
-          }}
-          className="flex items-center gap-2 rounded-full border border-black/5 dark:border-white/10 bg-[#F3F3F7] dark:bg-zinc-800/80 px-3 py-1.5 focus-within:ring-2 focus-within:ring-[#0069D3]/30 transition-all"
-        >
-          {/* File upload button */}
-          <button
-            type="button"
-            disabled={uploading}
-            onClick={() => fileInputRef.current?.click()}
-            className="flex size-8 shrink-0 items-center justify-center rounded-full text-muted-foreground hover:text-foreground hover:bg-black/5 dark:hover:bg-white/10 transition-colors cursor-pointer outline-none"
-            title={t("attachFile")}
+        {!canSendMessage ? (
+          <div className="flex items-center justify-center rounded-xl bg-muted/40 p-3 text-xs text-muted-foreground">
+            Bạn không có quyền gửi tin nhắn trong cuộc hội thoại này.
+          </div>
+        ) : (
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleSend();
+            }}
+            className="flex items-center gap-2 rounded-full border border-black/5 dark:border-white/10 bg-[#F3F3F7] dark:bg-zinc-800/80 px-3 py-1.5 focus-within:ring-2 focus-within:ring-[#0069D3]/30 transition-all"
           >
-            {uploading ? (
-              <Loader2 className="size-4 animate-spin" />
-            ) : (
-              <Paperclip className="size-4" />
+            {/* File upload button */}
+            {canUploadFile && (
+              <>
+                <button
+                  type="button"
+                  disabled={uploading}
+                  onClick={() => fileInputRef.current?.click()}
+                  className="flex size-8 shrink-0 items-center justify-center rounded-full text-muted-foreground hover:text-foreground hover:bg-black/5 dark:hover:bg-white/10 transition-colors cursor-pointer outline-none"
+                  title={t("attachFile")}
+                >
+                  {uploading ? (
+                    <Loader2 className="size-4 animate-spin" />
+                  ) : (
+                    <Paperclip className="size-4" />
+                  )}
+                  <span className="sr-only">{t("attachFile")}</span>
+                </button>
+
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  className="hidden"
+                  accept=".jpg,.jpeg,.png,.gif,.webp,.bmp,.ico,.tiff,.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.md,.csv,.js,.json,.xml,.zip,.gz,.7z,.rar,.tar"
+                  onChange={(e) => {
+                    handleFileSelect(e.target.files?.[0]);
+                    e.target.value = "";
+                  }}
+                />
+              </>
             )}
-            <span className="sr-only">{t("attachFile")}</span>
-          </button>
 
-          <input
-            ref={fileInputRef}
-            type="file"
-            className="hidden"
-            accept=".jpg,.jpeg,.png,.gif,.webp,.bmp,.ico,.tiff,.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.md,.csv,.js,.json,.xml,.zip,.gz,.7z,.rar,.tar"
-            onChange={(e) => {
-              handleFileSelect(e.target.files?.[0]);
-              e.target.value = "";
-            }}
-          />
+            {/* Emoji Picker */}
+            <EmojiPicker
+              open={emojiOpen}
+              onOpenChange={setEmojiOpen}
+              onSelect={(emoji) => setInput((val) => val + emoji)}
+            />
 
-          {/* Emoji Picker */}
-          <EmojiPicker
-            open={emojiOpen}
-            onOpenChange={setEmojiOpen}
-            onSelect={(emoji) => setInput((val) => val + emoji)}
-          />
+            {/* Text Input */}
+            <input
+              type="text"
+              placeholder={t("typeMessage")}
+              value={input}
+              onChange={(e) => handleInputChange(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && !e.shiftKey) {
+                  e.preventDefault();
+                  handleSend();
+                }
+              }}
+              className="flex-1 bg-transparent border-0 outline-none text-xs sm:text-sm font-sans text-foreground placeholder:text-muted-foreground px-2 py-1"
+            />
 
-          {/* Text Input */}
-          <input
-            type="text"
-            placeholder={t("typeMessage")}
-            value={input}
-            onChange={(e) => handleInputChange(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" && !e.shiftKey) {
-                e.preventDefault();
-                handleSend();
-              }
-            }}
-            className="flex-1 bg-transparent border-0 outline-none text-xs sm:text-sm font-sans text-foreground placeholder:text-muted-foreground px-2 py-1"
-          />
-
-          {/* Send button */}
-          <button
-            type="submit"
-            disabled={!input.trim()}
-            className="flex size-8 shrink-0 items-center justify-center rounded-full bg-[#0069D3] text-white hover:bg-[#0058b3] disabled:opacity-30 disabled:hover:bg-[#0069D3] transition-all cursor-pointer shadow-xs outline-none"
-            title={t("sendMessage")}
-          >
-            <Send className="size-3.5" />
-            <span className="sr-only">{t("send")}</span>
-          </button>
-        </form>
+            {/* Send button */}
+            <button
+              type="submit"
+              disabled={!input.trim()}
+              className="flex size-8 shrink-0 items-center justify-center rounded-full bg-[#0069D3] text-white hover:bg-[#0058b3] disabled:opacity-30 disabled:hover:bg-[#0069D3] transition-all cursor-pointer shadow-xs outline-none"
+              title={t("sendMessage")}
+            >
+              <Send className="size-3.5" />
+              <span className="sr-only">{t("send")}</span>
+            </button>
+          </form>
+        )}
       </div>
     </div>
   );

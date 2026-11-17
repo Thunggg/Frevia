@@ -19,6 +19,7 @@ import { AlertTriangle, Info, Loader2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { useActionPermission } from "@/hooks/use-action-permission";
 
 interface DeleteJobCategoryDialogProps {
   jobCategory: Pick<JobCategoryAdminItemType, "id" | "name" | "jobCount"> | null;
@@ -35,12 +36,13 @@ export function DeleteJobCategoryDialog({
   const tCommon = useTranslations("adminCommon");
   const toBackendMessage = useBackendMessage();
   const router = useRouter();
+  const { can } = useActionPermission();
   const [loading, setLoading] = useState(false);
   // Thông báo 409 (danh mục vẫn còn công việc đang hoạt động) hiển thị ngay
   // trong dialog để Admin đọc được gợi ý chuyển sang trạng thái "Tạm ngưng".
   const [conflictMessage, setConflictMessage] = useState<string | null>(null);
 
-  if (!jobCategory) return null;
+  if (!jobCategory || !can("DELETE", `/api/admin/job-categories/${jobCategory.id}`)) return null;
 
   const hasJobs = (jobCategory.jobCount ?? 0) > 0;
 

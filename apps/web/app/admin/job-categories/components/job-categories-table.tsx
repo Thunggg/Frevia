@@ -17,6 +17,7 @@ import { ArrowDown, ArrowUp, ArrowUpDown, Eye, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { useLocale, useTranslations } from "next-intl";
 import { formatDate } from "@/lib/format";
+import { useActionPermission } from "@/hooks/use-action-permission";
 import { NumberedPagination } from "../../components/numbered-pagination";
 import { DeleteJobCategoryDialog } from "./delete-job-category-dialog";
 import { RestoreJobCategoryDialog } from "./restore-job-category-dialog";
@@ -49,6 +50,7 @@ export function JobCategoriesTable({
   const locale = useLocale();
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { can } = useActionPermission();
   const [deletingCategory, setDeletingCategory] =
     useState<JobCategoryAdminItemType | null>(null);
 
@@ -130,92 +132,137 @@ export function JobCategoriesTable({
                 </TableCell>
               </TableRow>
             ) : (
-              jobCategories.map((category) => (
-                <TableRow key={category.id} className="group">
-                  <TableCell>
-                    <Badge variant="outline" className="font-mono">
-                      {category.id}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-2">
-                      <span className="font-medium text-sm text-foreground">
-                        {category.name}
-                      </span>
-                    </div>
-                  </TableCell>
-                  <TableCell className="font-mono text-xs text-muted-foreground">
-                    {category.slug}
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-1.5">
-                      {category.status === "ACTIVE" ? (
-                        <Badge
-                          variant="secondary"
-                          className="bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/50 dark:text-emerald-300 border"
-                        >
-                          {t("statusActive")}
-                        </Badge>
-                      ) : (
-                        <Badge variant="outline">{t("statusInactive")}</Badge>
-                      )}
-                      {category.deletedAt !== null && (
-                        <Badge variant="destructive">
-                          {t("statusDeleted")}
-                        </Badge>
-                      )}
-                    </div>
-                  </TableCell>
-                  <TableCell className="text-right text-sm text-muted-foreground">
-                    {category.jobCount ?? 0}
-                  </TableCell>
-                  <TableCell className="text-right whitespace-nowrap text-sm text-muted-foreground">
-                    {formatDate(category.createdAt, locale)}
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <div className="flex items-center justify-end gap-1">
-                      {category.deletedAt === null ? (
-                        <>
-                          <UpdateJobCategoryDialog
-                            jobCategory={category}
-                            triggerClassName="h-8 w-8 text-muted-foreground hover:bg-[#4fae2e]/10 hover:text-[#4fae2e] transition-colors"
-                          />
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-8 w-8 text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-colors"
-                            title={t("deleteTrigger")}
-                            aria-label={t("deleteTriggerOf", {
-                              name: category.name,
-                            })}
-                            onClick={() => setDeletingCategory(category)}
+              jobCategories.map((category) => {
+                const canViewDetail = can(
+                  "GET",
+                  `/api/admin/job-categories/${category.id}`,
+                );
+                const canUpdate = can(
+                  "PATCH",
+                  `/api/admin/job-categories/${category.id}`,
+                );
+                const canDelete = can(
+                  "DELETE",
+                  `/api/admin/job-categories/${category.id}`,
+                );
+                const canRestore = can(
+                  "PATCH",
+                  `/api/admin/job-categories/${category.id}/restore`,
+                );
+
+                const hasAnyAction =
+                  canViewDetail ||
+                  (category.deletedAt === null
+                    ? canUpdate || canDelete
+                    : canRestore);
+
+                return (
+                  <TableRow key={category.id} className="group">
+                    <TableCell>
+                      <Badge variant="outline" className="font-mono">
+                        {category.id}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-2">
+                        <span className="font-medium text-sm text-foreground">
+                          {category.name}
+                        </span>
+                      </div>
+                    </TableCell>
+                    <TableCell className="font-mono text-xs text-muted-foreground">
+                      {category.slug}
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-1.5">
+                        {category.status === "ACTIVE" ? (
+                          <Badge
+                            variant="secondary"
+                            className="bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/50 dark:text-emerald-300 border"
                           >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </>
-                      ) : (
-                        <RestoreJobCategoryDialog jobCategory={category} />
-                      )}
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        asChild
-                        className="h-8 w-8 text-muted-foreground hover:bg-[#4fae2e]/10 hover:text-[#4fae2e] transition-colors"
-                        title={t("viewDetailsAction")}
-                      >
-                        <Link
-                          href={`/admin/job-categories/${category.id}`}
-                          aria-label={t("viewDetailsOf", {
-                            name: category.name,
-                          })}
-                        >
-                          <Eye className="h-4 w-4" />
-                        </Link>
-                      </Button>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))
+                            {t("statusActive")}
+                          </Badge>
+                        ) : (
+                          <Badge variant="outline">{t("statusInactive")}</Badge>
+                        )}
+                        {category.deletedAt !== null && (
+                          <Badge variant="destructive">
+                            {t("statusDeleted")}
+                          </Badge>
+                        )}
+                      </div>
+                    </TableCell>
+                    <TableCell className="text-right text-sm text-muted-foreground">
+                      {category.jobCount ?? 0}
+                    </TableCell>
+                    <TableCell className="text-right whitespace-nowrap text-sm text-muted-foreground">
+                      {formatDate(category.createdAt, locale)}
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <div className="flex items-center justify-end gap-1">
+                        {!hasAnyAction ? (
+                          <span className="text-muted-foreground text-xs">
+                            —
+                          </span>
+                        ) : (
+                          <>
+                            {category.deletedAt === null ? (
+                              <>
+                                {canUpdate && (
+                                  <UpdateJobCategoryDialog
+                                    jobCategory={category}
+                                    triggerClassName="h-8 w-8 text-muted-foreground hover:bg-[#4fae2e]/10 hover:text-[#4fae2e] transition-colors"
+                                  />
+                                )}
+                                {canDelete && (
+                                  <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    className="h-8 w-8 text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-colors"
+                                    title={t("deleteTrigger")}
+                                    aria-label={t("deleteTriggerOf", {
+                                      name: category.name,
+                                    })}
+                                    onClick={() =>
+                                      setDeletingCategory(category)
+                                    }
+                                  >
+                                    <Trash2 className="h-4 w-4" />
+                                  </Button>
+                                )}
+                              </>
+                            ) : (
+                              canRestore && (
+                                <RestoreJobCategoryDialog
+                                  jobCategory={category}
+                                />
+                              )
+                            )}
+                            {canViewDetail && (
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                asChild
+                                className="h-8 w-8 text-muted-foreground hover:bg-[#4fae2e]/10 hover:text-[#4fae2e] transition-colors"
+                                title={t("viewDetailsAction")}
+                              >
+                                <Link
+                                  href={`/admin/job-categories/${category.id}`}
+                                  aria-label={t("viewDetailsOf", {
+                                    name: category.name,
+                                  })}
+                                >
+                                  <Eye className="h-4 w-4" />
+                                </Link>
+                              </Button>
+                            )}
+                          </>
+                        )}
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                );
+              })
             )}
           </TableBody>
         </Table>

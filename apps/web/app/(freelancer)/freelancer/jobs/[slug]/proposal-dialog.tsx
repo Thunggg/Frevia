@@ -29,6 +29,7 @@ import {
 import { Input } from "@repo/ui/components/shadcn/input";
 import { Textarea } from "@repo/ui/components/shadcn/textarea";
 import { toastError, toastSuccess } from "@repo/ui/components/shadcn/toast";
+import { useActionPermission } from "@/hooks/use-action-permission";
 import {
   CreateProposalBodySchema,
   SaveProposalDraftBodySchema,
@@ -61,6 +62,10 @@ export function ProposalDialog({
   const format = useFormatter();
   const translateMessage = useBackendMessage();
   const [action, setAction] = useState<"draft" | "submit" | null>(null);
+
+  const { can } = useActionPermission();
+  const canCreate = can("POST", "/api/proposals/jobs/:jobId");
+  const canSaveDraft = can("POST", "/api/proposals/jobs/:jobId/drafts");
 
   const maxDaysFromDeadline = deadline
     ? Math.max(
@@ -123,6 +128,10 @@ export function ProposalDialog({
   };
 
   const saveDraft = async () => {
+    if (!canSaveDraft) {
+      toastError({ message: t("saveFailed") });
+      return;
+    }
     const values = form.getValues();
     const body: SaveProposalDraftBodyType = {
       ...(values.coverLetter?.trim() && {
@@ -186,6 +195,11 @@ export function ProposalDialog({
   };
 
   const submit = form.handleSubmit(async (body) => {
+    if (!canCreate) {
+      toastError({ message: t("submitFailed") });
+      return;
+    }
+
     if (maxDaysFromDeadline && body.deliveryDays > maxDaysFromDeadline) {
       form.setError("deliveryDays", {
         type: "manual",
@@ -193,7 +207,6 @@ export function ProposalDialog({
       });
       return;
     }
-
     setAction("submit");
     try {
       const response = await proposalApiRequest.create(jobId, body);
@@ -349,27 +362,31 @@ export function ProposalDialog({
             </div>
           </FieldGroup>
           <DialogFooter className="mt-6 gap-2 sm:gap-3">
-            <Button
-              type="button"
-              variant="outline"
-              disabled={action !== null}
-              onClick={() => void saveDraft()}
-            >
-              {action === "draft" ? (
-                <Loader2 className="size-4 animate-spin" />
-              ) : null}
-              {t("saveDraft")}
-            </Button>
-            <Button
-              type="submit"
-              className="bg-[#4fae2e] text-white hover:bg-[#459928]"
-              disabled={action !== null}
-            >
-              {action === "submit" ? (
-                <Loader2 className="size-4 animate-spin" />
-              ) : null}
-              {t("submit")}
-            </Button>
+            {canSaveDraft ? (
+              <Button
+                type="button"
+                variant="outline"
+                disabled={action !== null}
+                onClick={() => void saveDraft()}
+              >
+                {action === "draft" ? (
+                  <Loader2 className="size-4 animate-spin" />
+                ) : null}
+                {t("saveDraft")}
+              </Button>
+            ) : null}
+            {canCreate ? (
+              <Button
+                type="submit"
+                className="bg-[#4fae2e] text-white hover:bg-[#459928]"
+                disabled={action !== null}
+              >
+                {action === "submit" ? (
+                  <Loader2 className="size-4 animate-spin" />
+                ) : null}
+                {t("submit")}
+              </Button>
+            ) : null}
           </DialogFooter>
         </form>
       </DialogContent>

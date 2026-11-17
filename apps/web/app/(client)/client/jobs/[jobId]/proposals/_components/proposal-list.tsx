@@ -54,6 +54,7 @@ import { FreelancerProfileSheet } from "@/app/(client)/_components/freelancer-pr
 import { ProposalDetailSheet } from "./proposal-detail-sheet";
 import { CreateContractDialog } from "../../../../contracts/_components/create-contract-dialog";
 import { VerifiedBadge } from "@/components/verified-badge";
+import { useActionPermission } from "@/hooks/use-action-permission";
 
 type ProposalStatus = SubmittedProposalStatusType;
 type StatusFilter = "ALL" | ProposalStatus;
@@ -236,6 +237,16 @@ export function ProposalList({
   const [selectedProposalId, setSelectedProposalId] = useState<number | null>(null);
   const [selectedProposalData, setSelectedProposalData] = useState<ClientProposal | null>(null);
 
+  const { can } = useActionPermission();
+  const canViewSubmitted =
+    can("GET", "/api/jobs/:jobId/proposals") ||
+    can("GET", "/api/proposals/jobs/:jobId/submitted");
+  const canViewDetail = can("GET", "/api/proposals/:id/client");
+  const canInterview = can("PATCH", "/api/proposals/:id/interview");
+  const canAccept = can("PATCH", "/api/proposals/:id/accept");
+  const canReject = can("PATCH", "/api/proposals/:id/reject");
+  const canCreateContract = can("POST", "/api/contracts");
+
   const handleOpenFreelancerProfile = (
     profileId: number,
     data?: {
@@ -251,6 +262,10 @@ export function ProposalList({
   };
 
   const handleOpenProposalDetail = (proposal: ClientProposal) => {
+    if (!canViewDetail) {
+      toastError({ message: t("viewDetailAccessDenied") });
+      return;
+    }
     setSelectedProposalId(proposal.id);
     setSelectedProposalData(proposal);
     setProposalSheetOpen(true);
@@ -258,6 +273,7 @@ export function ProposalList({
 
   const proposalsQuery = useQuery({
     queryKey: ["client-job-proposals", jobId, page, status],
+    enabled: canViewSubmitted,
     queryFn: () =>
       proposalApiRequest
         .getClientJobProposals(jobId, {
@@ -324,6 +340,10 @@ export function ProposalList({
 
   const rejectProposal = async () => {
     if (!rejecting) return;
+    if (!canReject) {
+      toastError({ message: t("noPermissionAction") });
+      return;
+    }
     setIsRejecting(true);
     try {
       await proposalApiRequest.reject(rejecting.id);
@@ -344,6 +364,10 @@ export function ProposalList({
   };
 
   const interviewProposal = async (proposalId: number) => {
+    if (!canInterview) {
+      toastError({ message: t("noPermissionAction") });
+      return;
+    }
     setInterviewingId(proposalId);
     try {
       await proposalApiRequest.interview(proposalId);
@@ -486,7 +510,14 @@ export function ProposalList({
 
           {/* Proposals List */}
           <div className="mt-5 space-y-3">
-            {proposalsQuery.isLoading ? (
+            {!canViewSubmitted ? (
+              <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-border bg-card/40 px-6 py-14 text-center font-sans">
+                <FileText className="size-10 text-muted-foreground mb-3" />
+                <p className="text-base font-semibold text-foreground">
+                  {t("accessDenied")}
+                </p>
+              </div>
+            ) : proposalsQuery.isLoading ? (
               <ProposalListSkeleton />
             ) : proposalsQuery.isError ? (
               <div className="flex flex-col items-center justify-center rounded-2xl border border-border bg-card/40 px-6 py-16 text-center">
@@ -606,18 +637,20 @@ export function ProposalList({
 
                     {/* Action buttons */}
                     <div className="flex shrink-0 flex-wrap items-center gap-2">
-                      <Button
-                        type="button"
-                        size="sm"
-                        className="rounded-full bg-[#0069D3] hover:bg-[#005bb8] text-white px-4 h-8 text-xs font-semibold shadow-xs cursor-pointer transition-colors"
-                        onClick={() => handleOpenProposalDetail(proposal)}
-                      >
-                        {t("viewProposal")}
-                      </Button>
+                      {canViewDetail ? (
+                        <Button
+                          type="button"
+                          size="sm"
+                          className="rounded-full bg-[#0069D3] hover:bg-[#005bb8] text-white px-4 h-8 text-xs font-semibold shadow-xs cursor-pointer transition-colors"
+                          onClick={() => handleOpenProposalDetail(proposal)}
+                        >
+                          {t("viewProposal")}
+                        </Button>
+                      ) : null}
 
                       {ACTIONABLE_STATUSES.includes(proposal.status) ? (
                         <>
-                          {proposal.status === "SUBMITTED" ? (
+                          {proposal.status === "SUBMITTED" && canInterview ? (
                             <Button
                               type="button"
                               size="sm"
@@ -635,28 +668,32 @@ export function ProposalList({
                             </Button>
                           ) : null}
 
-                          <Button
-                            type="button"
-                            size="sm"
-                            className="rounded-full bg-emerald-600 hover:bg-emerald-700 text-white px-3.5 h-8 text-xs font-semibold shadow-xs cursor-pointer transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                            onClick={() => setContractingProposal(proposal)}
-                            disabled={cannotHireMore}
-                            title={cannotHireMore ? t("jobFilledDisabled") : undefined}
-                          >
-                            <Check className="mr-1 size-3" />
-                            {t("hire")}
-                          </Button>
+                          {canAccept && canCreateContract ? (
+                            <Button
+                              type="button"
+                              size="sm"
+                              className="rounded-full bg-emerald-600 hover:bg-emerald-700 text-white px-3.5 h-8 text-xs font-semibold shadow-xs cursor-pointer transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                              onClick={() => setContractingProposal(proposal)}
+                              disabled={cannotHireMore}
+                              title={cannotHireMore ? t("jobFilledDisabled") : undefined}
+                            >
+                              <Check className="mr-1 size-3" />
+                              {t("hire")}
+                            </Button>
+                          ) : null}
 
-                          <Button
-                            type="button"
-                            variant="outline"
-                            size="sm"
-                            className="rounded-full border-gray-700 dark:border-red-900/40 text-gray-700 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30 px-3 h-8 text-xs font-medium cursor-pointer transition-colors"
-                            onClick={() => setRejecting(proposal)}
-                          >
-                            <X className="mr-1 size-3" />
-                            {t("reject")}
-                          </Button>
+                          {canReject ? (
+                            <Button
+                              type="button"
+                              variant="outline"
+                              size="sm"
+                              className="rounded-full border-gray-700 dark:border-red-900/40 text-gray-700 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30 px-3 h-8 text-xs font-medium cursor-pointer transition-colors"
+                              onClick={() => setRejecting(proposal)}
+                            >
+                              <X className="mr-1 size-3" />
+                              {t("reject")}
+                            </Button>
+                          ) : null}
                         </>
                       ) : null}
                     </div>
@@ -768,6 +805,7 @@ export function ProposalList({
         cannotHireMore={cannotHireMore}
         initialProposal={selectedProposalData}
         onAccept={(id) => {
+          if (!canCreateContract) return;
           const p =
             rawProposals.find((item) => item.id === id) ??
             selectedProposalData;

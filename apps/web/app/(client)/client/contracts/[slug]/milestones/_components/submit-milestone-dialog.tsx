@@ -23,6 +23,7 @@ import {
 } from "@repo/ui/components/shadcn/sheet";
 import { toastError, toastSuccess } from "@repo/ui/components/shadcn/toast";
 import { contractApiRequest, extractContractData } from "@/apiRequests/contract";
+import { useActionPermission } from "@/hooks/use-action-permission";
 import { ApiFail } from "@/lib/http";
 import type { MilestoneFileType, MilestoneType } from "@shared/types";
 
@@ -42,7 +43,12 @@ export function SubmitMilestoneDialog({
   onSuccess,
 }: SubmitMilestoneDialogProps) {
   const queryClient = useQueryClient();
+  const { can } = useActionPermission();
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const canUploadFile = can("POST", "/api/contracts/:contractId/milestones/:milestoneId/files");
+  const canDeleteFile = can("DELETE", "/api/contracts/:contractId/milestones/:milestoneId/files/:fileId");
+  const canSubmit = can("POST", "/api/contracts/:contractId/milestones/:milestoneId/submissions");
 
   const [message, setMessage] = useState("");
   const [linkInput, setLinkInput] = useState("");
@@ -292,28 +298,32 @@ export function SubmitMilestoneDialog({
                 Attach Deliverable Files (ZIP, Code, PDF, etc. max 25MB)
               </label>
 
-              <input
-                ref={fileInputRef}
-                type="file"
-                onChange={handleFileSelect}
-                className="hidden"
-              />
+              {canUploadFile && (
+                <>
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    onChange={handleFileSelect}
+                    className="hidden"
+                  />
 
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                disabled={isUploadingFile}
-                onClick={() => fileInputRef.current?.click()}
-                className="rounded-lg text-xs flex items-center gap-1.5 border-dashed border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 cursor-pointer h-8"
-              >
-                {isUploadingFile ? (
-                  <Loader2 className="size-3.5 animate-spin" />
-                ) : (
-                  <Upload className="size-3.5" />
-                )}
-                <span>Upload Deliverable File</span>
-              </Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    disabled={isUploadingFile}
+                    onClick={() => fileInputRef.current?.click()}
+                    className="rounded-lg text-xs flex items-center gap-1.5 border-dashed border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 cursor-pointer h-8"
+                  >
+                    {isUploadingFile ? (
+                      <Loader2 className="size-3.5 animate-spin" />
+                    ) : (
+                      <Upload className="size-3.5" />
+                    )}
+                    <span>Upload Deliverable File</span>
+                  </Button>
+                </>
+              )}
 
               {uploadedFiles.length > 0 && (
                 <div className="space-y-1.5 pt-1">
@@ -326,14 +336,16 @@ export function SubmitMilestoneDialog({
                         <FileText className="size-3.5 text-zinc-400 shrink-0" />
                         <span className="truncate font-medium">{f.fileName}</span>
                       </div>
-                      <button
-                        type="button"
-                        onClick={() => void handleRemoveFile(f)}
-                        className="text-zinc-400 hover:text-rose-500 cursor-pointer p-0.5"
-                        title="Remove file"
-                      >
-                        <Trash2 className="size-3.5" />
-                      </button>
+                      {canDeleteFile && (
+                        <button
+                          type="button"
+                          onClick={() => void handleRemoveFile(f)}
+                          className="text-zinc-400 hover:text-rose-500 cursor-pointer p-0.5"
+                          title="Remove file"
+                        >
+                          <Trash2 className="size-3.5" />
+                        </button>
+                      )}
                     </div>
                   ))}
                 </div>
@@ -353,20 +365,22 @@ export function SubmitMilestoneDialog({
           >
             Cancel
           </Button>
-          <Button
-            type="submit"
-            form="submit-milestone-form"
-            size="sm"
-            disabled={isSubmitting || isUploadingFile}
-            className="rounded-lg bg-[#0069D3] hover:bg-[#0055b3] text-white text-xs font-semibold h-8 px-4 cursor-pointer"
-          >
-            {isSubmitting ? (
-              <Loader2 className="mr-1.5 size-3.5 animate-spin" />
-            ) : (
-              <Send className="mr-1.5 size-3.5" />
-            )}
-            {isResubmission ? "Resubmit Work" : "Submit Work"}
-          </Button>
+          {canSubmit && (
+            <Button
+              type="submit"
+              form="submit-milestone-form"
+              size="sm"
+              disabled={isSubmitting || isUploadingFile}
+              className="rounded-lg bg-[#0069D3] hover:bg-[#0055b3] text-white text-xs font-semibold h-8 px-4 cursor-pointer"
+            >
+              {isSubmitting ? (
+                <Loader2 className="mr-1.5 size-3.5 animate-spin" />
+              ) : (
+                <Send className="mr-1.5 size-3.5" />
+              )}
+              {isResubmission ? "Resubmit Work" : "Submit Work"}
+            </Button>
+          )}
         </SheetFooter>
       </SheetContent>
     </Sheet>

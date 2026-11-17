@@ -19,6 +19,7 @@ import { Label } from "@repo/ui/components/shadcn/label";
 import { Loader2, Plus } from "@/components/icons";
 import { toast } from "@repo/ui/components/shadcn/sonner";
 import { useCreatePost } from "@/hooks/use-forum";
+import { useActionPermission } from "@/hooks/use-action-permission";
 import dynamic from "next/dynamic";
 import { Skeleton } from "@repo/ui/components/shadcn/skeleton";
 import { buildSlugId } from "@/lib/slug-utils";
@@ -50,6 +51,8 @@ export function CreatePostDialog({
   const router = useRouter();
   const t = useTranslations("forum");
   const createPost = useCreatePost();
+  const { can } = useActionPermission();
+  const canCreatePost = can("POST", "/api/forums/posts");
 
   const [open, setOpen] = useState(false);
   const [title, setTitle] = useState("");
@@ -131,6 +134,10 @@ export function CreatePostDialog({
         </Link>
       </Button>
     );
+  }
+
+  if (!canCreatePost) {
+    return null;
   }
 
   return (

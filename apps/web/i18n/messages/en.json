@@ -27,7 +27,7 @@
     "daysAgo": "{days}d ago",
     "yesterday": "Yesterday",
     "userFallback": "User #{id}",
-  "postFallback": "Post #{id}",
+    "postFallback": "Post #{id}",
     "close": "Close",
     "cancel": "Cancel",
     "attachment": "Attachment",
@@ -117,7 +117,8 @@
     "allCategories": "All categories",
     "toggleSidebar": "Toggle sidebar",
     "profileSettings": "Account Settings",
-    "sessions": "Active Sessions"
+    "sessions": "Active Sessions",
+    "aiOps": "AI Ops & Indexing"
   },
   "adminProfile": {
     "title": "Account Settings",
@@ -213,7 +214,9 @@
     "deletedToast": "Role \"{name}\" deleted",
     "detailTitle": "Role detail",
     "detailLoadFailed": "Failed to load role detail. The role may not exist.",
-    "backToRoles": "Back to roles"
+    "backToRoles": "Back to roles",
+    "accessDenied": "You do not have permission to view the role list.",
+    "detailAccessDenied": "You do not have permission to view this role's details."
   },
   "adminPermissions": {
     "metaTitle": "Permissions | Admin Dashboard | Frevia",
@@ -230,13 +233,18 @@
     "detailLoadFailed": "Failed to load permission detail. The permission may not exist.",
     "backToPermissions": "Back to permissions",
     "permissionName": "Function Name",
-    "systemName": "System Identifier"
+    "systemName": "System Identifier",
+    "accessDenied": "You do not have permission to view the system permission list.",
+    "detailAccessDenied": "You do not have permission to view this permission's details."
   },
   "adminBanners": {
     "metaTitle": "Banners | Admin Dashboard | Frevia",
     "metaDescription": "Manage advertisement banners by display position.",
     "pageTitle": "Banner Management",
     "pageSubtitle": "Manage advertisement banners by display position ({total} total banners)",
+    "accessDenied": "You do not have permission to view the banners list.",
+    "detailAccessDenied": "You do not have permission to view this banner.",
+    "noUploadPermission": "You do not have permission to upload images.",
     "positions": {
       "globalHeader": "Global Header Strip",
       "homeHero": "Homepage Hero",
@@ -303,6 +311,8 @@
     "lastUpdated": "Last updated"
   },
   "adminCategories": {
+    "accessDenied": "You do not have permission to view forum categories.",
+    "detailAccessDenied": "You do not have permission to view forum category details.",
     "metaTitle": "Categories | Admin Dashboard | Frevia",
     "metaDescription": "Manage all forum categories.",
     "pageTitle": "Categories Management",
@@ -413,7 +423,9 @@
     "detailDescriptionHeading": "Description",
     "detailNoDescription": "No description provided for this skill.",
     "detailJobsUsing": "Jobs using this skill",
-    "detailLastUpdated": "Last updated"
+    "detailLastUpdated": "Last updated",
+    "accessDenied": "You do not have permission to view skills.",
+    "detailAccessDenied": "You do not have permission to view skill details."
   },
   "adminJobCategories": {
     "metaTitle": "Job Categories | Admin Dashboard | Frevia",
@@ -494,13 +506,16 @@
     "jobsColSlug": "Slug",
     "jobsColStatus": "Status",
     "jobsColCreated": "Created",
-    "jobStatusUnknown": "Unknown"
+    "jobStatusUnknown": "Unknown",
+    "accessDenied": "You do not have permission to view job categories.",
+    "detailAccessDenied": "You do not have permission to view job category details."
   },
   "adminProfileRevisions": {
     "metaTitle": "Profile Review Requests | Admin Dashboard | Frevia",
     "metaDescription": "Review submitted profile changes before they go public.",
     "pageTitle": "Profile Review Requests",
     "pageSubtitle": "Review existing accounts and submitted changes when profile strength is below 20%.",
+    "accessDenied": "You do not have permission to view the profile review requests list.",
     "searchPlaceholder": "Search by email or display name...",
     "filterStatusLabel": "Status",
     "filterProfileTypeLabel": "Profile type",
@@ -578,7 +593,10 @@
     "rejectingAction": "Rejecting...",
     "rejectAction": "Reject",
     "approvingAction": "Approving...",
-    "approveAction": "Approve"
+    "approveAction": "Approve",
+    "noFilePermissionTitle": "Document Preview Restricted",
+    "noFilePermissionDesc": "You do not have permission to view verification document files.",
+    "accessDenied": "You do not have permission to view identity verification requests."
   },
   "adminAssignRole": {
     "metaTitle": "Assign Role | Admin Dashboard | Frevia",
@@ -608,9 +626,13 @@
     "scopeCommon": "Homepage & Platform",
     "scopeHint": "Filter by operational scope for easier permission management",
     "selectAllInScope": "Select all",
-    "deselectAllInScope": "Deselect all"
+    "deselectAllInScope": "Deselect all",
+    "noPermissionToAssign": "You do not have permission to assign permissions to roles."
   },
   "adminTrash": {
+    "accessDenied": "You do not have permission to view forum trash.",
+    "postsAccessDenied": "You do not have permission to view deleted posts.",
+    "commentsAccessDenied": "You do not have permission to view deleted comments.",
     "metaTitle": "Trash | Admin Dashboard | Frevia",
     "metaDescription": "Review and restore deleted forum posts and comments.",
     "pageTitle": "Trash",
@@ -648,6 +670,7 @@
     "deletedCommentTitle": "Deleted Comment"
   },
   "adminModeration": {
+    "accessDenied": "You do not have permission to view pending posts.",
     "metaTitle": "Moderation | Admin Dashboard | Frevia",
     "metaDescription": "Review forum posts pending moderation.",
     "pageTitle": "Moderation",
@@ -690,6 +713,7 @@
     "deletePostLabel": "Delete post {title}"
   },
   "adminComments": {
+    "accessDenied": "You do not have permission to view forum comments.",
     "metaTitle": "Comments Management | Admin Dashboard | Frevia",
     "metaDescription": "Search and delete forum comments.",
     "pageTitle": "Comments Management",
@@ -793,7 +817,8 @@
     "saveChanges": "Save changes",
     "updateFailed": "Failed to update user",
     "updatedToast": "User \"{email}\" updated",
-    "updatedBannedToast": "User \"{email}\" updated · account banned"
+    "updatedBannedToast": "User \"{email}\" updated · account banned",
+    "accessDenied": "You do not have permission to view the system user list."
   },
   "adminUserDetail": {
     "metaTitle": "User Detail | Admin Dashboard | Frevia",
@@ -879,7 +904,8 @@
     "noPermissionsForRole": "No specific permissions mapped directly to this role.",
     "colApiPath": "API Endpoint / Path",
     "colPermissionName": "Permission Name",
-    "generalModule": "GENERAL"
+    "generalModule": "GENERAL",
+    "detailAccessDenied": "You do not have permission to view this user's details."
   },
   "adminUserProfileEdit": {
     "triggerEdit": "Edit profile",
@@ -1122,7 +1148,9 @@
     "deliveryDays": "{count, plural, one {# day} other {# days}}",
     "empty": "No proposals yet",
     "emptyHint": "Find a project that matches your skills and send your first proposal.",
-    "findWork": "Find work"
+    "findWork": "Find work",
+    "accessDenied": "You do not have permission to view your proposals.",
+    "viewDetailAccessDenied": "You do not have permission to view this proposal details."
   },
   "createContract": {
     "defaultJobTitle": "this job",
@@ -1361,7 +1389,12 @@
     "bidAboveMax": "Your bid is above the job's maximum budget ({max})",
     "deliveryExceedsDeadline": "Delivery time exceeds the job deadline (max {days} days remaining)",
     "deadlineHint": "Job deadline: {deadline} (up to {days} days remaining)",
-    "budgetHint": "Client budget: {range}"
+    "budgetHint": "Client budget: {range}",
+    "accessDenied": "You do not have permission to view this proposal details.",
+    "noPermissionAction": "You do not have permission to perform this action.",
+    "noPermissionEditDraft": "You do not have permission to edit proposal draft.",
+    "noPermissionSubmitDraft": "You do not have permission to submit proposal draft.",
+    "noPermissionWithdraw": "You do not have permission to withdraw this proposal."
   },
   "milestoneStatus": {
     "DISPUTED": "Disputed",
@@ -1475,7 +1508,11 @@
     "appliedFor": "Applied For",
     "coverLetterHeading": "Cover Letter",
     "hire": "Hire freelancer",
-    "notSelectedHint": "The freelancer will be notified that this proposal was not selected for this job."
+    "notSelectedHint": "The freelancer will be notified that this proposal was not selected for this job.",
+    "accessDenied": "You do not have permission to view proposals for this job.",
+    "viewDetailAccessDenied": "You do not have permission to view this proposal details.",
+    "noPermissionAction": "You do not have permission to perform this action.",
+    "backToJob": "Back to job details"
   },
   "contractDetail": {
     "startedWork": "Started work on milestone \"{title}\"!",
@@ -1834,7 +1871,9 @@
     "send": "Send message"
   },
   "postJob": {
-    "breadcrumb": "Post a Job"
+    "breadcrumb": "Post a Job",
+    "accessDenied": "You do not have permission to post a new job.",
+    "backToJobs": "Back to jobs"
   },
   "jobDetailClient": {
     "notSet": "Not set",
@@ -1851,7 +1890,9 @@
     "positionsFilled": "{filled}/{required} hired",
     "proposals": "Proposals",
     "checkProposals": "Check proposals",
-    "requiredSkills": "Required Skills"
+    "requiredSkills": "Required Skills",
+    "accessDenied": "You do not have permission to view this job detail.",
+    "backToJobs": "Back to jobs"
   },
   "jobsList": {
     "allJobs": "All Jobs",
@@ -1886,7 +1927,9 @@
     "closeFailed": "Failed to close job",
     "reopen": "Reopen Job",
     "reopened": "Job reopened successfully",
-    "reopenFailed": "Failed to reopen job"
+    "reopenFailed": "Failed to reopen job",
+    "accessDenied": "You do not have permission to view the list of posted jobs.",
+    "noPermissionAction": "You do not have permission to perform this action."
   },
   "postJobForm": {
     "titleLabel": "Job title",
@@ -2354,6 +2397,7 @@
     "metaDescription": "Review and arbitrate milestone dispute cases.",
     "pageTitle": "Dispute & Arbitration Cases",
     "pageSubtitle": "Review evidence, hear claims, and issue binding milestone settlements ({total} total)",
+    "accessDenied": "You do not have permission to view the disputes list.",
     "empty": "No dispute cases found.",
     "colMilestoneValue": "Milestone & Value",
     "colParties": "Parties",
@@ -2793,6 +2837,8 @@
     "removeTitle": "Remove from bookmarks",
     "removeFailed": "Couldn't remove bookmark. Try again.",
     "updateFailed": "Couldn't update bookmark. Try again.",
+    "noPermission": "You do not have permission to bookmark or remove bookmarks for this job.",
+    "viewListAccessDenied": "You do not have permission to view the saved jobs list.",
     "errorCannotBookmarkOwnJob": "You cannot bookmark your own job.",
     "errorCannotBookmarkUnavailableJob": "This job is closed or has expired.",
     "errorJobAlreadyBookmarked": "This job is already bookmarked.",
@@ -3364,5 +3410,22 @@
     "discardDescription": "Are you sure you want to discard this analysis? Unconfirmed data will be removed.",
     "discardedToast": "Discarded CV analysis",
     "discardFailed": "Failed to discard analysis"
+  },
+  "adminAiOps": {
+    "metaTitle": "AI Ops & Indexing | Frevia Admin",
+    "title": "AI Ops & Indexing",
+    "subtitle": "Reindex search vector stores and process AI recommendation outbox queue",
+    "accessDenied": "You do not have permission to access AI operations.",
+    "reindexTitle": "Reindex AI Recommendations",
+    "reindexDesc": "Rebuild vector embeddings for all job and freelancer data in the system.",
+    "reindexBtn": "Reindex Now",
+    "reindexSuccess": "AI recommendation reindexing completed successfully.",
+    "reindexFailed": "Failed to reindex.",
+    "outboxTitle": "Process AI Outbox Queue",
+    "outboxDesc": "Scan and sync latest changes from the outbox queue into the vector database.",
+    "outboxBtn": "Process Outbox Now",
+    "outboxSuccess": "Successfully processed outbox queue.",
+    "outboxFailed": "Failed to process outbox.",
+    "noPermissionAction": "You do not have permission to perform this action."
   }
 }

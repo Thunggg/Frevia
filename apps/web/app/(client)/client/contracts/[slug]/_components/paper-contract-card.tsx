@@ -3,6 +3,7 @@
 import { useFormatter, useTranslations } from "next-intl";
 import { Download, FileText, CheckCircle2, Clock } from "@/components/icons";
 import { Button } from "@repo/ui/components/shadcn/button";
+import { useActionPermission } from "@/hooks/use-action-permission";
 import type { ContractDetailType, SharedFileType } from "@shared/types";
 
 interface PaperContractCardProps {
@@ -45,8 +46,13 @@ export function PaperContractCard({
     Number(contract.platformFee) ||
     Math.round(totalAmount * 0.03 * 100) / 100;
 
+  const { can } = useActionPermission();
+  const canExportPdf = can("GET", "/api/contracts/:id/pdf");
+
   // Real or simulated download link for PDF
-  const downloadUrl = pdfFile?.fileUrl || null;
+  const downloadUrl = canExportPdf
+    ? pdfFile?.fileUrl || `/api/contracts/${contract.id}/pdf`
+    : null;
 
   return (
     <div className="relative rounded-2xl border border-zinc-200 bg-white p-6 shadow-xs text-zinc-900 font-serif">

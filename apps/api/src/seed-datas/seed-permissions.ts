@@ -294,6 +294,7 @@ async function bootstrap() {
         freelancerModules.includes(item.module ?? '') &&
         !(item.path ?? '').startsWith('/api/admin/') &&
         !(item.path ?? '').startsWith('/api/forums/admin') &&
+        !(item.path ?? '').startsWith('/api/forums/reports') &&
         ![
           '/api/recommendations/reindex',
           '/api/recommendations/outbox/process',
@@ -312,6 +313,7 @@ async function bootstrap() {
         clientModules.includes(item.module ?? '') &&
         !(item.path ?? '').startsWith('/api/admin/') &&
         !(item.path ?? '').startsWith('/api/forums/admin') &&
+        !(item.path ?? '').startsWith('/api/forums/reports') &&
         ![
           '/api/recommendations/reindex',
           '/api/recommendations/outbox/process',

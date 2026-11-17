@@ -13,6 +13,7 @@ import {
 } from "@/components/icons";
 
 import jobAlertApiRequest from "@/apiRequests/job-alert";
+import { useActionPermission } from "@/hooks/use-action-permission";
 import { Badge } from "@repo/ui/components/shadcn/badge";
 import { Button } from "@repo/ui/components/shadcn/button";
 import { Checkbox } from "@repo/ui/components/shadcn/checkbox";
@@ -44,6 +45,13 @@ export function JobAlertsContent({
 }: JobAlertsContentProps) {
   const t = useTranslations("jobAlerts");
   const format = useFormatter();
+
+  const { can } = useActionPermission();
+  const canViewJobAlerts = can("GET", "/api/job-alerts");
+  const canViewMatchingJobs = can("GET", "/api/job-alerts/:id/matching-jobs");
+  const canCreateJobAlert = can("POST", "/api/job-alerts");
+  const canUpdateJobAlert = can("PATCH", "/api/job-alerts/:id");
+  const canDeleteJobAlert = can("DELETE", "/api/job-alerts/:id");
 
   const [alerts, setAlerts] = useState<JobAlertType[]>(initialJobAlerts);
   const [searchQuery, setSearchQuery] = useState("");
@@ -87,6 +95,7 @@ export function JobAlertsContent({
 
   // Open Create Dialog
   const handleOpenCreate = () => {
+    if (!canCreateJobAlert) return;
     setEditingAlert(null);
     setName("");
     setKeywords("");
@@ -99,6 +108,7 @@ export function JobAlertsContent({
 
   // Open Edit Dialog
   const handleOpenEdit = (alert: JobAlertType) => {
+    if (!canUpdateJobAlert) return;
     setEditingAlert(alert);
     setName(alert.name ?? "");
     setKeywords(alert.keywords ?? "");
@@ -127,6 +137,7 @@ export function JobAlertsContent({
 
   // Toggle active state
   const handleToggleActive = async (alert: JobAlertType) => {
+    if (!canUpdateJobAlert) return;
     const newActive = !alert.isActive;
     const prevAlerts = [...alerts];
 
@@ -149,6 +160,8 @@ export function JobAlertsContent({
   // Save (Create or Edit)
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (editingAlert && !canUpdateJobAlert) return;
+    if (!editingAlert && !canCreateJobAlert) return;
     if (!keywords.trim() && skills.length === 0) {
       toastError({ message: t("keywordsLabel") });
       return;
@@ -201,7 +214,7 @@ export function JobAlertsContent({
 
   // Delete Alert
   const handleDeleteConfirm = async () => {
-    if (!deletingAlert) return;
+    if (!deletingAlert || !canDeleteJobAlert) return;
     const targetId = deletingAlert.id;
     const prevAlerts = [...alerts];
 
@@ -251,17 +264,21 @@ export function JobAlertsContent({
               </p>
             </div>
             <div className="flex items-center gap-3">
-              <span className="rounded-full bg-black/5 dark:bg-white/10 px-3 py-1 text-xs font-semibold text-foreground">
-                {t("limitIndicator", { count: alerts.length })}
-              </span>
-              <Button
-                onClick={handleOpenCreate}
-                disabled={isLimitReached}
-                className="rounded-full bg-[#4fae2e] text-white hover:bg-[#459928] text-xs font-semibold h-10 px-4 gap-1.5"
-              >
-                <Plus className="size-4" />
-                {t("createAlert")}
-              </Button>
+              {canViewJobAlerts && (
+                <span className="rounded-full bg-black/5 dark:bg-white/10 px-3 py-1 text-xs font-semibold text-foreground">
+                  {t("limitIndicator", { count: alerts.length })}
+                </span>
+              )}
+              {canCreateJobAlert && (
+                <Button
+                  onClick={handleOpenCreate}
+                  disabled={isLimitReached}
+                  className="rounded-full bg-[#4fae2e] text-white hover:bg-[#459928] text-xs font-semibold h-10 px-4 gap-1.5"
+                >
+                  <Plus className="size-4" />
+                  {t("createAlert")}
+                </Button>
+              )}
             </div>
           </div>
         </div>
@@ -295,7 +312,19 @@ export function JobAlertsContent({
         )}
 
         {/* List Content */}
-        {alerts.length === 0 ? (
+        {!canViewJobAlerts ? (
+          <div className="rounded-xl border border-dashed border-border px-6 py-16 text-center">
+            <div className="mx-auto mb-4 flex size-14 items-center justify-center rounded-full bg-muted text-muted-foreground">
+              <Bell className="size-7" />
+            </div>
+            <h2 className="text-lg font-medium text-foreground">
+              {t("emptyTitle")}
+            </h2>
+            <p className="mx-auto mt-2 max-w-sm text-sm text-muted-foreground">
+              {t("emptyHint")}
+            </p>
+          </div>
+        ) : alerts.length === 0 ? (
           <div className="rounded-xl border border-dashed border-border px-6 py-16 text-center">
             <div className="mx-auto mb-4 flex size-14 items-center justify-center rounded-full bg-[#eaf8df] text-[#4fae2e] dark:bg-[#4fae2e]/15">
               <Bell className="size-7" />
@@ -306,13 +335,15 @@ export function JobAlertsContent({
             <p className="mx-auto mt-2 max-w-sm text-sm text-muted-foreground">
               {t("emptyHint")}
             </p>
-            <Button
-              onClick={handleOpenCreate}
-              className="mt-6 rounded-full bg-[#4fae2e] text-white hover:bg-[#459928] text-xs font-semibold"
-            >
-              <Plus className="size-4 mr-1.5" />
-              {t("createAlert")}
-            </Button>
+            {canCreateJobAlert && (
+              <Button
+                onClick={handleOpenCreate}
+                className="mt-6 rounded-full bg-[#4fae2e] text-white hover:bg-[#459928] text-xs font-semibold"
+              >
+                <Plus className="size-4 mr-1.5" />
+                {t("createAlert")}
+              </Button>
+            )}
           </div>
         ) : filteredAlerts.length === 0 ? (
           <div className="rounded-xl border border-dashed border-border px-6 py-12 text-center">
@@ -364,6 +395,7 @@ export function JobAlertsContent({
                   </div>
                   <Switch
                     checked={alert.isActive}
+                    disabled={!canUpdateJobAlert}
                     onCheckedChange={() => handleToggleActive(alert)}
                     aria-label={alert.isActive ? t("togglePaused") : t("toggleActive")}
                   />
@@ -419,36 +451,42 @@ export function JobAlertsContent({
 
                 {/* Action Buttons */}
                 <div className="mt-4 pt-2 flex items-center justify-between gap-2">
-                  <Button
-                    asChild
-                    variant="outline"
-                    className="flex-1 rounded-lg text-xs font-semibold h-8"
-                  >
-                    <Link href={toFindWorkHref(alert)}>
-                      <Search className="size-3.5 mr-1.5" />
-                      {t("viewMatchingJobs")}
-                    </Link>
-                  </Button>
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon"
-                    className="size-8 text-muted-foreground hover:text-foreground"
-                    aria-label={t("editAlert")}
-                    onClick={() => handleOpenEdit(alert)}
-                  >
-                    <Pencil className="size-3.5" />
-                  </Button>
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon"
-                    className="size-8 text-destructive/70 hover:bg-destructive/10 hover:text-destructive"
-                    aria-label={t("deleteAlert")}
-                    onClick={() => setDeletingAlert(alert)}
-                  >
-                    <Trash2 className="size-3.5" />
-                  </Button>
+                  {canViewMatchingJobs && (
+                    <Button
+                      asChild
+                      variant="outline"
+                      className="flex-1 rounded-lg text-xs font-semibold h-8"
+                    >
+                      <Link href={toFindWorkHref(alert)}>
+                        <Search className="size-3.5 mr-1.5" />
+                        {t("viewMatchingJobs")}
+                      </Link>
+                    </Button>
+                  )}
+                  {canUpdateJobAlert && (
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      className="size-8 text-muted-foreground hover:text-foreground"
+                      aria-label={t("editAlert")}
+                      onClick={() => handleOpenEdit(alert)}
+                    >
+                      <Pencil className="size-3.5" />
+                    </Button>
+                  )}
+                  {canDeleteJobAlert && (
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      className="size-8 text-destructive/70 hover:bg-destructive/10 hover:text-destructive"
+                      aria-label={t("deleteAlert")}
+                      onClick={() => setDeletingAlert(alert)}
+                    >
+                      <Trash2 className="size-3.5" />
+                    </Button>
+                  )}
                 </div>
               </article>
             ))}

@@ -42,6 +42,7 @@ import { Button } from "@repo/ui/components/shadcn/button";
 import { Badge } from "@repo/ui/components/shadcn/badge";
 import { toastError, toastSuccess } from "@repo/ui/components/shadcn/toast";
 import { getBookmarkErrorMessage } from "@/lib/utils";
+import { useActionPermission } from "@/hooks/use-action-permission";
 import type { ViewBookmarkedJobResponseType } from "@shared/types";
 
 type BookmarksContentProps = {
@@ -116,6 +117,9 @@ export function BookmarksContent({
   const [statusFilter, setStatusFilter] = useState(initialStatus);
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">(initialOrder);
   const [pageSize, setPageSize] = useState(initialLimit);
+  const { can } = useActionPermission();
+  const canViewBookmarks = can("GET", "/api/manage-jobs/bookmarks");
+  const canRemoveBookmark = can("DELETE", "/api/manage-jobs/bookmarks/:slug");
 
   // Quick View Modal
   const [quickViewJob, setQuickViewJob] = useState<
@@ -279,6 +283,10 @@ export function BookmarksContent({
   };
 
   const removeBookmark = async (slug: string) => {
+    if (!canRemoveBookmark) {
+      toastError({ message: tBookmark("noPermission") });
+      return;
+    }
     setIsRemoving(true);
     try {
       await jobApiRequest.removeBookmark(slug);
@@ -307,6 +315,29 @@ export function BookmarksContent({
   };
 
   const isFiltered = Boolean(searchQuery.trim() || statusFilter !== "all");
+
+  if (!canViewBookmarks) {
+    return (
+      <div
+        className={`flex flex-col bg-background font-sans ${
+          embedded ? "min-h-0 flex-1" : "min-h-dvh"
+        }`}
+      >
+        {!embedded && <Header role="FREELANCER" />}
+        <main className="flex-1 font-sans">
+          <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+            <div className="rounded-2xl border border-dashed border-border bg-card/40 p-12 text-center text-muted-foreground">
+              <Bookmark className="size-12 mx-auto mb-4 text-muted-foreground/60" />
+              <h2 className="text-lg font-semibold text-foreground mb-1">
+                {tBookmark("viewListAccessDenied")}
+              </h2>
+            </div>
+          </div>
+        </main>
+        {!embedded && <Footer />}
+      </div>
+    );
+  }
 
   return (
     <div

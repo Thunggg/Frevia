@@ -35,6 +35,7 @@ import {
 import { LanguageSwitcher } from "@/components/language-switcher";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { CvAnalysisDialog } from "./cv-analysis-dialog";
+import { useActionPermission } from "@/hooks/use-action-permission";
 import { useBackendMessage } from "@/hooks/use-backend-message";
 import { useQueryClient } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
@@ -169,6 +170,18 @@ export function GeneralSettings() {
   const tRole = useTranslations("roleName");
   const tCommon = useTranslations("common");
   const activeLocale = useLocale();
+  const { can } = useActionPermission();
+  const canViewAccountProfile = can("GET", "/api/account-profile");
+  const canUpdateAccountProfile = can("PUT", "/api/account-profile");
+  const canChangePassword = can("PUT", "/api/account-profile/password");
+  const canUploadAvatar = can("POST", "/api/account-profile/avatar");
+
+  const canUploadCv = can("POST", "/api/profiles/:id/cv");
+  const canDownloadCv = can("GET", "/api/profiles/:id/cv/file");
+  const canAnalyzeCv = can("POST", "/api/profiles/:id/cv/analyze");
+  const canDeleteCv = can("DELETE", "/api/profiles/:id/cv");
+  const canViewCvAnalysis = can("GET", "/api/profiles/:id/cv/analysis");
+
   const fileInputRef = useRef<HTMLInputElement>(null);
   const cvInputRef = useRef<HTMLInputElement>(null);
   const [profile, setProfile] = useState<GeneralProfileType | null>(null);
@@ -218,6 +231,10 @@ export function GeneralSettings() {
     (ROLE_KEYS as readonly string[]).includes(name) ? tRole(name) : name;
 
   const load = useCallback(async () => {
+    if (!canViewAccountProfile) {
+      setPending(null);
+      return;
+    }
     setPending("load");
     setLoadError(null);
     try {
@@ -243,7 +260,7 @@ export function GeneralSettings() {
     } finally {
       setPending(null);
     }
-  }, [toMessage]);
+  }, [canViewAccountProfile, toMessage]);
   useEffect(() => void load(), [load]);
 
   const busy = pending !== null;
@@ -254,6 +271,7 @@ export function GeneralSettings() {
     bio !== (profile?.bio ?? "");
 
   const chooseCvFile = (file: File | null) => {
+    if (!canUploadCv) return;
     setCvError(null);
     if (!file) {
       if (cvInputRef.current) cvInputRef.current.value = "";
@@ -268,7 +286,7 @@ export function GeneralSettings() {
   };
 
   const handleAnalyzeCv = async () => {
-    if (!profile) return;
+    if (!profile || !canAnalyzeCv) return;
     setPending("cv-analyze");
     try {
       const res = await profileApiRequest.analyzeCv(profile.id);
@@ -290,7 +308,7 @@ export function GeneralSettings() {
   };
 
   const uploadCv = async (file: File) => {
-    if (!profile) return;
+    if (!profile || !canUploadCv) return;
     setPending("cv");
     try {
       const response = await profileApiRequest.uploadCv(profile.id, file);
@@ -307,7 +325,7 @@ export function GeneralSettings() {
   };
 
   const deleteCv = async () => {
-    if (!profile) return;
+    if (!profile || !canDeleteCv) return;
     setPending("cv-delete");
     try {
       await profileApiRequest.deleteCv(profile.id);
@@ -325,6 +343,7 @@ export function GeneralSettings() {
 
   const saveProfile = async (event: FormEvent) => {
     event.preventDefault();
+    if (!canUpdateAccountProfile) return;
     const parsed = UpdateGeneralProfileSchema.safeParse({
       displayName,
       bio: bio.trim() || null,
@@ -377,6 +396,7 @@ export function GeneralSettings() {
 
   const uploadAvatar = async (event: FormEvent) => {
     event.preventDefault();
+    if (!canUploadAvatar) return;
     if (!avatar) {
       setAvatarError(t("avatarRequired"));
       return;
@@ -403,6 +423,7 @@ export function GeneralSettings() {
 
   const changePassword = async (event: FormEvent) => {
     event.preventDefault();
+    if (!canChangePassword) return;
     const parsed = ChangePasswordSchema.safeParse({
       currentPassword,
       newPassword,
@@ -436,6 +457,20 @@ export function GeneralSettings() {
       >
         <div className="h-80 animate-pulse rounded-xl border border-border bg-muted/30" />
         <div className="h-96 animate-pulse rounded-xl border border-border bg-muted/30" />
+      </div>
+    );
+  }
+
+  if (!canViewAccountProfile) {
+    return (
+      <div className="rounded-xl border border-border bg-card p-12 text-center text-muted-foreground shadow-sm">
+        <UserRound className="mx-auto size-10 text-muted-foreground/60 mb-3" />
+        <p className="font-medium text-base text-foreground">
+          Không có quyền truy cập
+        </p>
+        <p className="text-sm mt-1 text-muted-foreground">
+          Bạn không có quyền xem thông tin tài khoản cá nhân (#395).
+        </p>
       </div>
     );
   }
@@ -499,44 +534,46 @@ export function GeneralSettings() {
               </div>
             </div>
           </div>
-          <form className="mt-6" onSubmit={uploadAvatar}>
-            <Label htmlFor="profile-avatar">{t("chooseNewPhoto")}</Label>
-            <div className="mt-2 flex flex-col gap-3 sm:flex-row">
-              <Input
-                ref={fileInputRef}
-                id="profile-avatar"
-                type="file"
-                accept="image/jpeg,image/png,image/webp"
-                disabled={busy}
-                aria-invalid={Boolean(avatarError)}
-                aria-describedby="profile-avatar-help"
-                onChange={(event) =>
-                  chooseAvatar(event.target.files?.[0] ?? null)
-                }
-              />
-              <Button
-                type="submit"
-                variant="outline"
-                disabled={busy || !avatar}
+          {canUploadAvatar && (
+            <form className="mt-6" onSubmit={uploadAvatar}>
+              <Label htmlFor="profile-avatar">{t("chooseNewPhoto")}</Label>
+              <div className="mt-2 flex flex-col gap-3 sm:flex-row">
+                <Input
+                  ref={fileInputRef}
+                  id="profile-avatar"
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp"
+                  disabled={busy}
+                  aria-invalid={Boolean(avatarError)}
+                  aria-describedby="profile-avatar-help"
+                  onChange={(event) =>
+                    chooseAvatar(event.target.files?.[0] ?? null)
+                  }
+                />
+                <Button
+                  type="submit"
+                  variant="outline"
+                  disabled={busy || !avatar}
+                >
+                  {pending === "avatar" ? (
+                    <Loader2 className="animate-spin" />
+                  ) : (
+                    <Camera />
+                  )}
+                  {t("uploadPhoto")}
+                </Button>
+              </div>
+              <p
+                id="profile-avatar-help"
+                className={`mt-2 text-xs ${avatarError ? "text-destructive" : "text-muted-foreground"}`}
               >
-                {pending === "avatar" ? (
-                  <Loader2 className="animate-spin" />
-                ) : (
-                  <Camera />
-                )}
-                {t("uploadPhoto")}
-              </Button>
-            </div>
-            <p
-              id="profile-avatar-help"
-              className={`mt-2 text-xs ${avatarError ? "text-destructive" : "text-muted-foreground"}`}
-            >
-              {avatarError ??
-                (avatar
-                  ? t("avatarSelected", { name: avatar.name })
-                  : t("avatarHelp"))}
-            </p>
-          </form>
+                {avatarError ??
+                  (avatar
+                    ? t("avatarSelected", { name: avatar.name })
+                    : t("avatarHelp"))}
+              </p>
+            </form>
+          )}
         </section>
 
         <section className="rounded-xl border border-border bg-card/30 p-5 sm:p-6">
@@ -612,17 +649,19 @@ export function GeneralSettings() {
             {profileErrors.form && (
               <p className="text-sm text-destructive">{profileErrors.form}</p>
             )}
-            <Button
-              className="bg-[#4fae2e] text-white hover:bg-[#459928]"
-              disabled={busy || !profileChanged}
-            >
-              {pending === "profile" ? (
-                <Loader2 className="animate-spin" />
-              ) : (
-                <Save />
-              )}
-              {tSettings("saveChanges")}
-            </Button>
+            {canUpdateAccountProfile && (
+              <Button
+                className="bg-[#4fae2e] text-white hover:bg-[#459928]"
+                disabled={busy || !profileChanged}
+              >
+                {pending === "profile" ? (
+                  <Loader2 className="animate-spin" />
+                ) : (
+                  <Save />
+                )}
+                {tSettings("saveChanges")}
+              </Button>
+            )}
           </form>
         </section>
 
@@ -638,13 +677,20 @@ export function GeneralSettings() {
               PDF only, up to 10 MB.
             </p>
             {cvFileName ? (
-              <a
-                className="mt-4 flex max-w-full min-w-0 items-center gap-2 text-sm font-medium text-[#438f2b] hover:underline"
-                href={`/api/backend/profiles/${profile.id}/cv/file`}
-              >
-                <FileText className="size-4 shrink-0" />
-                <span className="min-w-0 truncate">{cvFileName}</span>
-              </a>
+              canDownloadCv ? (
+                <a
+                  className="mt-4 flex max-w-full min-w-0 items-center gap-2 text-sm font-medium text-[#438f2b] hover:underline"
+                  href={`/api/backend/profiles/${profile.id}/cv/file`}
+                >
+                  <FileText className="size-4 shrink-0" />
+                  <span className="min-w-0 truncate">{cvFileName}</span>
+                </a>
+              ) : (
+                <div className="mt-4 flex max-w-full min-w-0 items-center gap-2 text-sm font-medium text-muted-foreground">
+                  <FileText className="size-4 shrink-0" />
+                  <span className="min-w-0 truncate">{cvFileName}</span>
+                </div>
+              )
             ) : (
               <p className="mt-4 text-sm text-muted-foreground">
                 Upload a CV so it is ready when you need it.
@@ -656,25 +702,27 @@ export function GeneralSettings() {
               className="sr-only"
               type="file"
               accept="application/pdf,.pdf"
-              disabled={busy}
+              disabled={busy || !canUploadCv}
               onChange={(event) =>
                 chooseCvFile(event.target.files?.[0] ?? null)
               }
             />
-            <Button
-              type="button"
-              className="mt-4 bg-[#4fae2e] text-white hover:bg-[#459928]"
-              disabled={busy}
-              onClick={() => cvInputRef.current?.click()}
-            >
-              {pending === "cv" ? (
-                <Loader2 className="animate-spin" />
-              ) : (
-                <Upload />
-              )}
-              {cvFileName ? "Replace CV" : "Upload CV"}
-            </Button>
-            {cvFileName ? (
+            {canUploadCv && (
+              <Button
+                type="button"
+                className="mt-4 bg-[#4fae2e] text-white hover:bg-[#459928]"
+                disabled={busy}
+                onClick={() => cvInputRef.current?.click()}
+              >
+                {pending === "cv" ? (
+                  <Loader2 className="animate-spin" />
+                ) : (
+                  <Upload />
+                )}
+                {cvFileName ? "Replace CV" : "Upload CV"}
+              </Button>
+            )}
+            {canAnalyzeCv && cvFileName ? (
               <Button
                 type="button"
                 className="mt-4 ml-2 bg-[#4fae2e] text-white hover:bg-[#439c28]"
@@ -691,7 +739,7 @@ export function GeneralSettings() {
                   : "✨ Phân tích CV bằng AI"}
               </Button>
             ) : null}
-            {cvFileName ? (
+            {canDeleteCv && cvFileName ? (
               <AlertDialog>
                 <AlertDialogTrigger asChild>
                   <Button
@@ -777,83 +825,85 @@ export function GeneralSettings() {
           </div>
         </section>
 
-        <section className="rounded-xl border border-border bg-card/30 p-5 sm:p-6">
-          <div className="flex items-center gap-2">
-            <LockKeyhole className="size-5 text-[#4fae2e]" />
-            <h2 className="text-lg font-semibold text-foreground">
-              {t("changePasswordTitle")}
-            </h2>
-          </div>
-          <p className="mt-2 text-sm text-muted-foreground">
-            {t("passwordHint")}
-          </p>
-          <form className="mt-5 space-y-4" onSubmit={changePassword} noValidate>
-            <PasswordInput
-              id="current-password"
-              label={t("currentPasswordLabel")}
-              value={currentPassword}
-              error={passwordErrors.currentPassword}
-              autoComplete="current-password"
-              disabled={busy}
-              onChange={(value) => {
-                setCurrentPassword(value);
-                setPasswordErrors((errors) => ({
-                  ...errors,
-                  currentPassword: "",
-                  form: "",
-                }));
-              }}
-            />
-            <PasswordInput
-              id="new-password"
-              label={t("newPasswordLabel")}
-              value={newPassword}
-              error={passwordErrors.newPassword}
-              autoComplete="new-password"
-              disabled={busy}
-              onChange={(value) => {
-                setNewPassword(value);
-                setPasswordErrors((errors) => ({
-                  ...errors,
-                  newPassword: "",
-                  form: "",
-                }));
-              }}
-            />
-            <PasswordInput
-              id="confirm-password"
-              label={t("confirmPasswordLabel")}
-              value={confirmPassword}
-              error={passwordErrors.confirmPassword}
-              autoComplete="new-password"
-              disabled={busy}
-              onChange={(value) => {
-                setConfirmPassword(value);
-                setPasswordErrors((errors) => ({
-                  ...errors,
-                  confirmPassword: "",
-                  form: "",
-                }));
-              }}
-            />
-            {passwordErrors.form && (
-              <p className="text-sm text-destructive">{passwordErrors.form}</p>
-            )}
-            <Button
-              type="submit"
-              className="w-full"
-              variant="outline"
-              disabled={busy}
-            >
-              {pending === "password" ? (
-                <Loader2 className="animate-spin" />
-              ) : (
-                <ShieldCheck />
+        {canChangePassword && (
+          <section className="rounded-xl border border-border bg-card/30 p-5 sm:p-6">
+            <div className="flex items-center gap-2">
+              <LockKeyhole className="size-5 text-[#4fae2e]" />
+              <h2 className="text-lg font-semibold text-foreground">
+                {t("changePasswordTitle")}
+              </h2>
+            </div>
+            <p className="mt-2 text-sm text-muted-foreground">
+              {t("passwordHint")}
+            </p>
+            <form className="mt-5 space-y-4" onSubmit={changePassword} noValidate>
+              <PasswordInput
+                id="current-password"
+                label={t("currentPasswordLabel")}
+                value={currentPassword}
+                error={passwordErrors.currentPassword}
+                autoComplete="current-password"
+                disabled={busy}
+                onChange={(value) => {
+                  setCurrentPassword(value);
+                  setPasswordErrors((errors) => ({
+                    ...errors,
+                    currentPassword: "",
+                    form: "",
+                  }));
+                }}
+              />
+              <PasswordInput
+                id="new-password"
+                label={t("newPasswordLabel")}
+                value={newPassword}
+                error={passwordErrors.newPassword}
+                autoComplete="new-password"
+                disabled={busy}
+                onChange={(value) => {
+                  setNewPassword(value);
+                  setPasswordErrors((errors) => ({
+                    ...errors,
+                    newPassword: "",
+                    form: "",
+                  }));
+                }}
+              />
+              <PasswordInput
+                id="confirm-password"
+                label={t("confirmPasswordLabel")}
+                value={confirmPassword}
+                error={passwordErrors.confirmPassword}
+                autoComplete="new-password"
+                disabled={busy}
+                onChange={(value) => {
+                  setConfirmPassword(value);
+                  setPasswordErrors((errors) => ({
+                    ...errors,
+                    confirmPassword: "",
+                    form: "",
+                  }));
+                }}
+              />
+              {passwordErrors.form && (
+                <p className="text-sm text-destructive">{passwordErrors.form}</p>
               )}
-              {t("changePasswordAction")}
-            </Button>
-          </form>
-        </section>
+              <Button
+                type="submit"
+                className="w-full"
+                variant="outline"
+                disabled={busy}
+              >
+                {pending === "password" ? (
+                  <Loader2 className="animate-spin" />
+                ) : (
+                  <ShieldCheck />
+                )}
+                {t("changePasswordAction")}
+              </Button>
+            </form>
+          </section>
+        )}
         {profile.profileCompletionPercent < 20 ? (
           <div className="flex gap-3 rounded-xl border border-amber-300 bg-amber-50 p-4 text-sm text-amber-950 dark:border-amber-900 dark:bg-amber-950/30 dark:text-amber-100">
             <Clock3 className="mt-0.5 size-4 shrink-0" />
@@ -871,7 +921,7 @@ export function GeneralSettings() {
         )}
       </div>
 
-      {cvAnalysisDraft && profile && (
+      {cvAnalysisDraft && profile && canViewCvAnalysis && (
         <CvAnalysisDialog
           profileId={profile.id}
           draft={cvAnalysisDraft}

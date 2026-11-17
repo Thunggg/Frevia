@@ -13,6 +13,7 @@ import {
 import { Button } from "@repo/ui/components/shadcn/button";
 import { toastError, toastSuccess } from "@repo/ui/components/shadcn/toast";
 import { contractApiRequest } from "@/apiRequests/contract";
+import { useActionPermission } from "@/hooks/use-action-permission";
 import { ApiFail } from "@/lib/http";
 import type { MilestoneFileType } from "@shared/types";
 
@@ -32,9 +33,14 @@ export function MilestoneFilesTab({
   isFreelancer = false,
 }: MilestoneFilesTabProps) {
   const format = useFormatter();
+  const { can } = useActionPermission();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
   const [deletingId, setDeletingId] = useState<number | null>(null);
+
+  const canViewFiles = can("GET", "/api/contracts/:contractId/milestones/:milestoneId/files");
+  const canUploadFile = can("POST", "/api/contracts/:contractId/milestones/:milestoneId/files");
+  const canDeleteFile = can("DELETE", "/api/contracts/:contractId/milestones/:milestoneId/files/:fileId");
 
   const formatDate = (date: string | Date | null | undefined): string => {
     if (!date) return "";
@@ -107,15 +113,30 @@ export function MilestoneFilesTab({
     }
   };
 
+  if (!canViewFiles) {
+    return (
+      <div className="rounded-xl border border-amber-200/80 dark:border-amber-900/40 bg-amber-50/40 dark:bg-amber-950/20 p-8 text-center space-y-2">
+        <h3 className="text-sm font-semibold text-zinc-950 dark:text-zinc-100">
+          Không có quyền xem file milestone
+        </h3>
+        <p className="text-xs text-zinc-500 dark:text-zinc-400 max-w-md mx-auto">
+          Tài khoản của bạn chưa được cấp quyền xem danh sách tài liệu hoặc tệp tin của milestone này.
+        </p>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
       {/* Hidden file input */}
-      <input
-        ref={fileInputRef}
-        type="file"
-        className="hidden"
-        onChange={handleUploadFile}
-      />
+      {canUploadFile && (
+        <input
+          ref={fileInputRef}
+          type="file"
+          className="hidden"
+          onChange={handleUploadFile}
+        />
+      )}
 
       {/* Top Header & Upload Button */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-zinc-100 dark:border-zinc-800/80 pb-3">
@@ -128,23 +149,25 @@ export function MilestoneFilesTab({
           </p>
         </div>
 
-        <Button
-          onClick={() => fileInputRef.current?.click()}
-          disabled={uploading}
-          className="rounded-sm bg-[#0069D3] hover:bg-[#0055b3] text-white text-xs font-semibold h-8 px-3 cursor-pointer self-start sm:self-auto"
-        >
-          {uploading ? (
-            <>
-              <Loader2 className="mr-1.5 size-3.5 animate-spin" />
-              <span>Uploading...</span>
-            </>
-          ) : (
-            <>
-              <UploadCloud className="mr-1.5 size-3.5" />
-              <span>Upload New File</span>
-            </>
-          )}
-        </Button>
+        {canUploadFile && (
+          <Button
+            onClick={() => fileInputRef.current?.click()}
+            disabled={uploading}
+            className="rounded-sm bg-[#0069D3] hover:bg-[#0055b3] text-white text-xs font-semibold h-8 px-3 cursor-pointer self-start sm:self-auto"
+          >
+            {uploading ? (
+              <>
+                <Loader2 className="mr-1.5 size-3.5 animate-spin" />
+                <span>Uploading...</span>
+              </>
+            ) : (
+              <>
+                <UploadCloud className="mr-1.5 size-3.5" />
+                <span>Upload New File</span>
+              </>
+            )}
+          </Button>
+        )}
       </div>
 
       {files.length > 0 ? (
@@ -181,20 +204,22 @@ export function MilestoneFilesTab({
                   </a>
                 </Button>
 
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  disabled={deletingId === file.id}
-                  onClick={() => handleDeleteFile(file)}
-                  className="size-7 rounded-md text-zinc-400 hover:text-rose-600 hover:bg-rose-500/10 cursor-pointer"
-                  title="Delete file"
-                >
-                  {deletingId === file.id ? (
-                    <Loader2 className="size-3.5 animate-spin" />
-                  ) : (
-                    <Trash2 className="size-3.5" />
-                  )}
-                </Button>
+                {canDeleteFile && (
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    disabled={deletingId === file.id}
+                    onClick={() => handleDeleteFile(file)}
+                    className="size-7 rounded-md text-zinc-400 hover:text-rose-600 hover:bg-rose-500/10 cursor-pointer"
+                    title="Delete file"
+                  >
+                    {deletingId === file.id ? (
+                      <Loader2 className="size-3.5 animate-spin" />
+                    ) : (
+                      <Trash2 className="size-3.5" />
+                    )}
+                  </Button>
+                )}
               </div>
             </div>
           ))}
@@ -209,15 +234,17 @@ export function MilestoneFilesTab({
             Upload specifications, design files, or assets to share them between client
             and freelancer for this milestone.
           </p>
-          <Button
-            variant="outline"
-            onClick={() => fileInputRef.current?.click()}
-            disabled={uploading}
-            className="rounded-lg border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-xs font-semibold cursor-pointer"
-          >
-            <Plus className="mr-1.5 size-3.5" />
-            Upload File
-          </Button>
+          {canUploadFile && (
+            <Button
+              variant="outline"
+              onClick={() => fileInputRef.current?.click()}
+              disabled={uploading}
+              className="rounded-lg border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-xs font-semibold cursor-pointer"
+            >
+              <Plus className="mr-1.5 size-3.5" />
+              Upload File
+            </Button>
+          )}
         </div>
       )}
     </div>

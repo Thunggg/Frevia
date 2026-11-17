@@ -29,6 +29,7 @@ import Link from "next/link";
 import { useFormatter, useTranslations } from "next-intl";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
+import { useActionPermission } from "@/hooks/use-action-permission";
 import { NumberedPagination } from "../../components/numbered-pagination";
 import { EditUserDialog } from "./edit-user-dialog";
 
@@ -51,6 +52,9 @@ export function UsersTable({ users, pagination }: UsersTableProps) {
   const tRole = useTranslations("roleName");
   const tCommon = useTranslations("adminCommon");
   const format = useFormatter();
+  const { can } = useActionPermission();
+  const canViewDetail = can("GET", "/api/users/:id");
+  const canUpdate = can("PATCH", "/api/users/:id");
   // User đang được chọn để mở dialog Edit (null = dialog đóng)
   const [editingUser, setEditingUser] = useState<AdminUserItemType | null>(
     null,
@@ -271,34 +275,38 @@ export function UsersTable({ users, pagination }: UsersTableProps) {
                   <TableCell className="text-right">
                     {/* Cột hành động dạng icon-only: Eye = xem chi tiết, Pencil = sửa user */}
                     <div className="flex items-center justify-end gap-1">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        asChild
-                        className="h-8 w-8 text-muted-foreground hover:bg-[#4fae2e]/10 hover:text-[#4fae2e] transition-colors"
-                        title={t("viewDetails")}
-                      >
-                        <Link
-                          href={`/admin/users/${user.id}`}
-                          aria-label={t("viewDetailsAria", {
+                      {canViewDetail && (
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          asChild
+                          className="h-8 w-8 text-muted-foreground hover:bg-[#4fae2e]/10 hover:text-[#4fae2e] transition-colors"
+                          title={t("viewDetails")}
+                        >
+                          <Link
+                            href={`/admin/users/${user.id}`}
+                            aria-label={t("viewDetailsAria", {
+                              name: user.displayName || user.email,
+                            })}
+                          >
+                            <Eye className="h-4 w-4" />
+                          </Link>
+                        </Button>
+                      )}
+                      {canUpdate && (
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8 text-muted-foreground hover:bg-[#4fae2e]/10 hover:text-[#4fae2e] transition-colors"
+                          title={t("editUser")}
+                          aria-label={t("editUserAria", {
                             name: user.displayName || user.email,
                           })}
+                          onClick={() => setEditingUser(user)}
                         >
-                          <Eye className="h-4 w-4" />
-                        </Link>
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-8 w-8 text-muted-foreground hover:bg-[#4fae2e]/10 hover:text-[#4fae2e] transition-colors"
-                        title={t("editUser")}
-                        aria-label={t("editUserAria", {
-                          name: user.displayName || user.email,
-                        })}
-                        onClick={() => setEditingUser(user)}
-                      >
-                        <Pencil className="h-4 w-4" />
-                      </Button>
+                          <Pencil className="h-4 w-4" />
+                        </Button>
+                      )}
                     </div>
                   </TableCell>
                 </TableRow>
@@ -308,7 +316,9 @@ export function UsersTable({ users, pagination }: UsersTableProps) {
         </Table>
       </div>
 
-      <EditUserDialog user={editingUser} onClose={() => setEditingUser(null)} />
+      {canUpdate && (
+        <EditUserDialog user={editingUser} onClose={() => setEditingUser(null)} />
+      )}
 
       {pagination.totalPages > 1 && (
         <NumberedPagination

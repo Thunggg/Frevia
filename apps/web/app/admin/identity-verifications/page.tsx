@@ -1,6 +1,8 @@
 import { Suspense } from "react";
 import { getTranslations } from "next-intl/server";
 import adminServerRequest from "@/apiRequests/admin.server";
+import authServerRequest from "@/apiRequests/auth.server";
+import { hasActionPermission } from "@/lib/admin-access";
 import { IdentityVerificationsTable } from "./components/identity-verifications-table";
 import { SearchBar } from "../components/search-bar";
 
@@ -20,6 +22,28 @@ export default async function AdminIdentityVerificationsPage({
 }) {
   const params = await searchParams;
   const t = await getTranslations("adminIdentityVerifications");
+  const currentUser = await authServerRequest.getMe();
+  const canViewList = hasActionPermission(
+    currentUser,
+    "GET",
+    "/api/admin/identity-verifications",
+  );
+
+  if (!canViewList) {
+    return (
+      <div className="space-y-6">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">
+            {t("pageTitle")}
+          </h1>
+        </div>
+        <div className="rounded-lg border bg-card p-12 text-center text-muted-foreground">
+          {t("accessDenied")}
+        </div>
+      </div>
+    );
+  }
+
   const page = Number(params.page) || 1;
   const limit = 10;
   const search = params.search || undefined;

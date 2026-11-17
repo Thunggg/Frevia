@@ -1,6 +1,7 @@
 "use client";
 
 import { accountProfileApi } from "@/apiRequests/account-profile";
+import { useActionPermission } from "@/hooks/use-action-permission";
 import { Footer } from "@/components/footer";
 import { Header, type UserRole } from "@/components/header";
 import {
@@ -178,6 +179,54 @@ export function AccountProfileClient({
   const tRole = useTranslations("roleName");
   const format = useFormatter();
 
+  const { can } = useActionPermission();
+  const canUpdateClientProfile = can("PUT", "/api/clients/me/profile");
+  const canViewFavorites = can("GET", "/api/favorites/freelancers");
+  const canRemoveFavorite = can(
+    "DELETE",
+    "/api/favorites/freelancers/:freelancerId",
+  );
+  const canGetFollowing = can("GET", "/api/following/freelancers");
+  const canDiscoverFreelancers = can(
+    "GET",
+    "/api/following/freelancers/discover",
+  );
+  const canFollowFreelancer = can(
+    "POST",
+    "/api/following/freelancers/:freelancerId",
+  );
+  const canUnfollowFreelancer = can(
+    "DELETE",
+    "/api/following/freelancers/:freelancerId",
+  );
+  const canViewFollowingTab = canGetFollowing || canDiscoverFreelancers;
+  const canUploadIdentityDoc = can(
+    "POST",
+    "/api/identity-verifications/documents",
+  );
+  const canViewIdentityStatus = can(
+    "GET",
+    "/api/identity-verifications/status",
+  );
+  const canDownloadIdentityDoc = can(
+    "GET",
+    "/api/identity-verifications/documents/:id/file",
+  );
+  const canAiCheck = can("POST", "/api/identity-verifications/ai-check");
+  const canLivenessPose = can(
+    "POST",
+    "/api/identity-verifications/liveness-pose",
+  );
+  const canViewIdentityTab =
+    canViewIdentityStatus ||
+    canUploadIdentityDoc ||
+    canAiCheck ||
+    canLivenessPose;
+  const canViewReviews = can("GET", "/api/reviews/contracts/:contractId");
+  const canViewSocialLinks = can("GET", "/api/social-links");
+  const canAddSocialLink = can("POST", "/api/social-links");
+  const canDeleteSocialLink = can("DELETE", "/api/social-links/:id");
+
   const toMessage = useCallback(
     (error: unknown) => errorMessage(error, tSettings("somethingWentWrong")),
     [tSettings],
@@ -228,20 +277,26 @@ export function AccountProfileClient({
     if (!userId || headerRole === "GUEST") return;
     setLoading(true);
     try {
-      const common = accountProfileApi.getSocialLinks();
+      const common = canViewSocialLinks
+        ? accountProfileApi.getSocialLinks()
+        : Promise.resolve({ success: true, data: [] as SocialLinkType[] });
       if (headerRole === "FREELANCER") {
         const [identityResponse, linksResponse] = await Promise.all([
-          accountProfileApi.getIdentityStatus(),
+          canViewIdentityStatus
+            ? accountProfileApi.getIdentityStatus()
+            : Promise.resolve(null),
           common,
         ]);
-        setIdentity(identityResponse.data);
+        setIdentity(identityResponse?.data ?? null);
         setSocialLinks(linksResponse.data);
       } else {
         const [profileResponse, linksResponse, favoritesResponse] =
           await Promise.all([
             accountProfileApi.getClientProfile(userId),
             common,
-            accountProfileApi.getFavorites(),
+            canViewFavorites
+              ? accountProfileApi.getFavorites()
+              : Promise.resolve({ success: true, data: [] as FavoriteFreelancerType[] }),
           ]);
         const profile = profileResponse.data;
         setCompanyName(profile.clientProfile.companyName ?? "");
@@ -255,9 +310,13 @@ export function AccountProfileClient({
     } finally {
       setLoading(false);
     }
-  }, [headerRole, userId, toMessage]);
+  }, [headerRole, userId, toMessage, canViewFavorites, canViewIdentityStatus, canViewSocialLinks]);
 
   const loadFreelancers = useCallback(async () => {
+    if (!canDiscoverFreelancers) {
+      setFreelancers([]);
+      return;
+    }
     setFreelancersLoading(true);
     setFreelancersError(null);
     try {
@@ -268,7 +327,7 @@ export function AccountProfileClient({
     } finally {
       setFreelancersLoading(false);
     }
-  }, [toMessage]);
+  }, [toMessage, canDiscoverFreelancers]);
 
   useEffect(() => void load(), [load]);
 
@@ -312,6 +371,7 @@ export function AccountProfileClient({
   };
 
   const unfollowFreelancer = async (freelancerId: number) => {
+    if (!canUnfollowFreelancer) return;
     setPending(`following-${freelancerId}`);
     try {
       await accountProfileApi.unfollowFreelancer(freelancerId);
@@ -331,6 +391,7 @@ export function AccountProfileClient({
   };
 
   const removeFavorite = async (freelancerId: number) => {
+    if (!canRemoveFavorite) return;
     setPending(`favorite-${freelancerId}`);
     try {
       await accountProfileApi.removeFavorite(freelancerId);
@@ -346,6 +407,7 @@ export function AccountProfileClient({
   };
 
   const followFreelancer = async (freelancer: DiscoverFreelancerType) => {
+    if (!canFollowFreelancer) return;
     setPending(`following-${freelancer.freelancerId}`);
     try {
       await accountProfileApi.followFreelancer(freelancer.freelancerId);
@@ -366,6 +428,7 @@ export function AccountProfileClient({
 
   const saveCompanyProfile = async (event: FormEvent) => {
     event.preventDefault();
+    if (!canUpdateClientProfile) return;
     setPending("company");
     try {
       const response = await accountProfileApi.updateClientProfile({
@@ -410,7 +473,7 @@ export function AccountProfileClient({
           "general",
           "company",
           "social",
-          "reviews",
+          ...(canViewReviews ? ["reviews"] : []),
           "following",
           "favorites",
           "payments",
@@ -420,7 +483,7 @@ export function AccountProfileClient({
           "general",
           "identity",
           "social",
-          "reviews",
+          ...(canViewReviews ? ["reviews"] : []),
           "payments",
         ];
   const defaultTab =
@@ -524,7 +587,7 @@ export function AccountProfileClient({
                 <TabsTrigger value="general">
                   <UserRound /> {t("navGeneral")}
                 </TabsTrigger>
-                {headerRole === "FREELANCER" ? (
+                {headerRole === "FREELANCER" && canViewIdentityTab ? (
                   <TabsTrigger value="identity">
                     <ShieldCheck /> {t("navIdentity")}
                   </TabsTrigger>
@@ -534,18 +597,22 @@ export function AccountProfileClient({
                     <Building2 /> {t("navCompany")}
                   </TabsTrigger>
                 ) : null}
-                <TabsTrigger value="social">
-                  <Link2 /> {t("navSocial")}
-                </TabsTrigger>
-                <TabsTrigger value="reviews">
-                  <Star /> {t("navReviews")}
-                </TabsTrigger>
-                {headerRole === "CLIENT" ? (
+                {canViewSocialLinks ? (
+                  <TabsTrigger value="social">
+                    <Link2 /> {t("navSocial")}
+                  </TabsTrigger>
+                ) : null}
+                {canViewReviews ? (
+                  <TabsTrigger value="reviews">
+                    <Star /> {t("navReviews")}
+                  </TabsTrigger>
+                ) : null}
+                {headerRole === "CLIENT" && canViewFollowingTab ? (
                   <TabsTrigger value="following">
                     <UserCheck /> {t("navFollowing")}
                   </TabsTrigger>
                 ) : null}
-                {headerRole === "CLIENT" ? (
+                {headerRole === "CLIENT" && canViewFavorites ? (
                   <TabsTrigger value="favorites">
                     <Heart /> {t("navFavorites")}
                   </TabsTrigger>
@@ -588,6 +655,7 @@ export function AccountProfileClient({
                         id="companyName"
                         value={companyName}
                         onChange={(event) => setCompanyName(event.target.value)}
+                        disabled={!canUpdateClientProfile}
                         placeholder={tSettings("companyNamePlaceholder")}
                       />
                     </div>
@@ -601,9 +669,10 @@ export function AccountProfileClient({
                         onChange={(event) =>
                           setCompanyDescription(event.target.value)
                         }
+                        disabled={!canUpdateClientProfile}
                         rows={4}
                         placeholder={t("descriptionPlaceholder")}
-                        className="flex w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                        className="flex w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:opacity-60 disabled:cursor-not-allowed"
                       />
                     </div>
                     <div className="space-y-2">
@@ -615,198 +684,232 @@ export function AccountProfileClient({
                         type="url"
                         value={website}
                         onChange={(event) => setWebsite(event.target.value)}
+                        disabled={!canUpdateClientProfile}
                         placeholder={tSettings("websitePlaceholder")}
                       />
                     </div>
-                    <Button
-                      className="bg-[#4fae2e] text-white hover:bg-[#459928]"
-                      disabled={pending === "company"}
-                    >
-                      {pending === "company" ? (
-                        <Loader2 className="animate-spin" />
-                      ) : null}
-                      {tSettings("saveChanges")}
-                    </Button>
+                    {canUpdateClientProfile && (
+                      <Button
+                        className="bg-[#4fae2e] text-white hover:bg-[#459928]"
+                        disabled={pending === "company"}
+                      >
+                        {pending === "company" ? (
+                          <Loader2 className="animate-spin" />
+                        ) : null}
+                        {tSettings("saveChanges")}
+                      </Button>
+                    )}
                   </form>
                 </div>
               </TabsContent>
 
-              <TabsContent value="identity">
-                <div className="grid gap-8 lg:grid-cols-[1fr_360px]">
-                  <div className="rounded-xl border border-border p-5 sm:p-6">
-                    <h2 className="text-base font-semibold tracking-tight text-foreground">
-                      {t("aiCheckTitle")}
-                    </h2>
-                    <p className="mt-1 text-sm text-muted-foreground">
-                      {t("aiCheckHint")}
-                    </p>
-                    <IdentityVerificationForm onSubmitted={() => void load()} />
-                  </div>
-
-                  <div className="rounded-xl border border-border p-5 sm:p-6">
-                    <h2 className="text-base font-semibold tracking-tight text-foreground">
-                      {t("verificationStatusTitle")}
-                    </h2>
-                    <div className="mt-5 space-y-4">
-                      <Badge
-                        className={
-                          identity?.status === VerificationStatus.APPROVED
-                            ? "border-transparent bg-[#4fae2e] text-white hover:bg-[#4fae2e]"
-                            : ""
-                        }
-                        variant={
-                          identity?.status === VerificationStatus.APPROVED
-                            ? "default"
-                            : "secondary"
-                        }
-                      >
-                        {verificationStatusLabel(identity?.status)}
-                      </Badge>
-                      {identity?.status !== VerificationStatus.APPROVED ? (
-                        <p className="rounded-md border border-border bg-muted/40 p-3 text-xs text-muted-foreground">
-                          {t("dashboardLockedHint")}
+              {canViewIdentityTab && (
+                <TabsContent value="identity">
+                  <div className={`grid gap-8 ${canAiCheck || canUploadIdentityDoc ? "lg:grid-cols-[1fr_360px]" : "max-w-xl"}`}>
+                    {(canAiCheck || canUploadIdentityDoc) && (
+                      <div className="rounded-xl border border-border p-5 sm:p-6">
+                        <h2 className="text-base font-semibold tracking-tight text-foreground">
+                          {t("aiCheckTitle")}
+                        </h2>
+                        <p className="mt-1 text-sm text-muted-foreground">
+                          {t("aiCheckHint")}
                         </p>
-                      ) : null}
-                      {identity?.documents.length ? (
-                        <ul className="divide-y divide-border border-y border-border">
-                          {identity.documents.map((document) => (
+                        <IdentityVerificationForm onSubmitted={() => void load()} />
+                      </div>
+                    )}
+
+                    {canViewIdentityStatus && (
+                      <div className="rounded-xl border border-border p-5 sm:p-6">
+                        <h2 className="text-base font-semibold tracking-tight text-foreground">
+                          {t("verificationStatusTitle")}
+                        </h2>
+                        <div className="mt-5 space-y-4">
+                          <Badge
+                            className={
+                              identity?.status === VerificationStatus.APPROVED
+                                ? "border-transparent bg-[#4fae2e] text-white hover:bg-[#4fae2e]"
+                                : ""
+                            }
+                            variant={
+                              identity?.status === VerificationStatus.APPROVED
+                                ? "default"
+                                : "secondary"
+                            }
+                          >
+                            {verificationStatusLabel(identity?.status)}
+                          </Badge>
+                          {identity?.status !== VerificationStatus.APPROVED ? (
+                            <p className="rounded-md border border-border bg-muted/40 p-3 text-xs text-muted-foreground">
+                              {t("dashboardLockedHint")}
+                            </p>
+                          ) : null}
+                          {identity?.documents.length ? (
+                            <ul className="divide-y divide-border border-y border-border">
+                              {identity.documents.map((document) => (
+                                <li
+                                  key={document.id}
+                                  className="flex items-center justify-between gap-3 py-3"
+                                >
+                                  <div>
+                                    <p className="font-medium text-foreground">
+                                      {documentTypeLabel(document.documentType)}
+                                    </p>
+                                    <p className="text-xs text-muted-foreground">
+                                      {format.dateTime(
+                                        new Date(document.createdAt),
+                                        {
+                                          dateStyle: "medium",
+                                          timeStyle: "short",
+                                        },
+                                      )}
+                                    </p>
+                                    {document.reviewNotes ? (
+                                      <p className="mt-1 text-sm text-destructive">
+                                        {document.reviewNotes}
+                                      </p>
+                                    ) : null}
+                                  </div>
+                                  <div className="flex shrink-0 items-start gap-2">
+                                    {canDownloadIdentityDoc ? (
+                                      <>
+                                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                                        <img
+                                          src={document.fileUrl}
+                                          alt={`${documentTypeLabel(document.documentType)} — ${t("frontImageLabel")}`}
+                                          className="h-16 w-24 rounded-md border border-border object-cover"
+                                        />
+                                        {document.backFileUrl ? (
+                                          /* eslint-disable-next-line @next/next/no-img-element */
+                                          <img
+                                            src={document.backFileUrl}
+                                            alt={`${documentTypeLabel(document.documentType)} — ${t("backImageLabel")}`}
+                                            className="h-16 w-24 rounded-md border border-border object-cover"
+                                          />
+                                        ) : null}
+                                      </>
+                                    ) : (
+                                      <div className="flex h-16 w-24 items-center justify-center rounded-md border border-border bg-muted/40 text-xs text-muted-foreground">
+                                        {documentTypeLabel(document.documentType)}
+                                      </div>
+                                    )}
+                                  </div>
+                                </li>
+                              ))}
+                            </ul>
+                          ) : (
+                            <p className="text-sm text-muted-foreground">
+                              {t("noDocumentsYet")}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </TabsContent>
+              )}
+
+              {canViewSocialLinks && (
+                <TabsContent value="social">
+                  <div className="grid gap-8 lg:grid-cols-[360px_1fr]">
+                    {canAddSocialLink && (
+                      <div className="rounded-xl border border-border p-5 sm:p-6">
+                        <h2 className="text-base font-semibold tracking-tight text-foreground">
+                          {tSettings("addSocialLink")}
+                        </h2>
+                        <form className="mt-5 space-y-4" onSubmit={addSocialLink}>
+                          <Select
+                            value={platform}
+                            onValueChange={(value) =>
+                              setPlatform(value as SocialPlatformType)
+                            }
+                          >
+                            <SelectTrigger>
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {Object.values(SocialPlatform).map((value) => (
+                                <SelectItem key={value} value={value}>
+                                  {platformLabel(value)}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                          <Input
+                            type="url"
+                            required
+                            placeholder="https://..."
+                            value={socialUrl}
+                            onChange={(event) => setSocialUrl(event.target.value)}
+                          />
+                          <Button
+                            className="bg-[#4fae2e] text-white hover:bg-[#459928]"
+                            disabled={pending === "social"}
+                          >
+                            <Plus /> {tSettings("addLink")}
+                          </Button>
+                        </form>
+                      </div>
+                    )}
+
+                    <div className={canAddSocialLink ? "" : "lg:col-span-2"}>
+                      <h2 className="text-base font-semibold tracking-tight text-foreground">
+                        {t("yourLinksTitle")}
+                      </h2>
+                      {socialLinks.length ? (
+                        <ul className="mt-4 divide-y divide-border border-y border-border">
+                          {socialLinks.map((link) => (
                             <li
-                              key={document.id}
-                              className="flex items-center justify-between gap-3 py-3"
+                              key={link.id}
+                              className="flex items-center gap-3 px-1 py-4"
                             >
-                              <div>
-                                <p className="font-medium text-foreground">
-                                  {documentTypeLabel(document.documentType)}
-                                </p>
-                                <p className="text-xs text-muted-foreground">
-                                  {format.dateTime(
-                                    new Date(document.createdAt),
-                                    {
-                                      dateStyle: "medium",
-                                      timeStyle: "short",
-                                    },
-                                  )}
-                                </p>
-                                {document.reviewNotes ? (
-                                  <p className="mt-1 text-sm text-destructive">
-                                    {document.reviewNotes}
-                                  </p>
-                                ) : null}
-                              </div>
-                              <div className="flex shrink-0 items-start gap-2">
-                                {/* eslint-disable-next-line @next/next/no-img-element */}
-                                <img
-                                  src={document.fileUrl}
-                                  alt={`${documentTypeLabel(document.documentType)} — ${t("frontImageLabel")}`}
-                                  className="h-16 w-24 rounded-md border border-border object-cover"
-                                />
-                                {document.backFileUrl ? (
-                                  /* eslint-disable-next-line @next/next/no-img-element */
-                                  <img
-                                    src={document.backFileUrl}
-                                    alt={`${documentTypeLabel(document.documentType)} — ${t("backImageLabel")}`}
-                                    className="h-16 w-24 rounded-md border border-border object-cover"
-                                  />
-                                ) : null}
-                              </div>
+                              <Link2 className="size-4 shrink-0 text-[#4fae2e]" />
+                              <a
+                                className="min-w-0 flex-1 truncate text-sm text-[#4fae2e] transition-colors hover:text-[#3f9225]"
+                                href={link.url}
+                                target="_blank"
+                                rel="noreferrer"
+                              >
+                                <span className="mr-2 font-medium text-foreground">
+                                  {platformLabel(link.platform)}
+                                </span>
+                                {link.url}
+                              </a>
+                              {canDeleteSocialLink && (
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  onClick={() => void deleteSocialLink(link)}
+                                  disabled={pending === `social-${link.id}`}
+                                >
+                                  <Trash2 />
+                                </Button>
+                              )}
                             </li>
                           ))}
                         </ul>
                       ) : (
-                        <p className="text-sm text-muted-foreground">
-                          {t("noDocumentsYet")}
+                        <p className="mt-4 text-sm text-muted-foreground">
+                          {tSettings("noSocialLinks")}
                         </p>
                       )}
                     </div>
                   </div>
-                </div>
-              </TabsContent>
-
-              <TabsContent value="social">
-                <div className="grid gap-8 lg:grid-cols-[360px_1fr]">
-                  <div className="rounded-xl border border-border p-5 sm:p-6">
-                    <h2 className="text-base font-semibold tracking-tight text-foreground">
-                      {tSettings("addSocialLink")}
-                    </h2>
-                    <form className="mt-5 space-y-4" onSubmit={addSocialLink}>
-                      <Select
-                        value={platform}
-                        onValueChange={(value) =>
-                          setPlatform(value as SocialPlatformType)
-                        }
-                      >
-                        <SelectTrigger>
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {Object.values(SocialPlatform).map((value) => (
-                            <SelectItem key={value} value={value}>
-                              {platformLabel(value)}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <Input
-                        type="url"
-                        required
-                        placeholder="https://..."
-                        value={socialUrl}
-                        onChange={(event) => setSocialUrl(event.target.value)}
-                      />
-                      <Button
-                        className="bg-[#4fae2e] text-white hover:bg-[#459928]"
-                        disabled={pending === "social"}
-                      >
-                        <Plus /> {tSettings("addLink")}
-                      </Button>
-                    </form>
-                  </div>
-
-                  <div>
-                    <h2 className="text-base font-semibold tracking-tight text-foreground">
-                      {t("yourLinksTitle")}
-                    </h2>
-                    {socialLinks.length ? (
-                      <ul className="mt-4 divide-y divide-border border-y border-border">
-                        {socialLinks.map((link) => (
-                          <li
-                            key={link.id}
-                            className="flex items-center gap-3 px-1 py-4"
-                          >
-                            <Link2 className="size-4 shrink-0 text-[#4fae2e]" />
-                            <a
-                              className="min-w-0 flex-1 truncate text-sm text-[#4fae2e] transition-colors hover:text-[#3f9225]"
-                              href={link.url}
-                              target="_blank"
-                              rel="noreferrer"
-                            >
-                              <span className="mr-2 font-medium text-foreground">
-                                {platformLabel(link.platform)}
-                              </span>
-                              {link.url}
-                            </a>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              onClick={() => void deleteSocialLink(link)}
-                              disabled={pending === `social-${link.id}`}
-                            >
-                              <Trash2 />
-                            </Button>
-                          </li>
-                        ))}
-                      </ul>
-                    ) : (
-                      <p className="mt-4 text-sm text-muted-foreground">
-                        {tSettings("noSocialLinks")}
-                      </p>
-                    )}
-                  </div>
-                </div>
-              </TabsContent>
+                </TabsContent>
+              )}
 
               <TabsContent value="reviews">
-                {userId ? <ReviewManager userId={userId} /> : null}
+                {!canViewReviews ? (
+                  <div className="rounded-xl border border-dashed border-border p-8 text-center text-muted-foreground">
+                    <p className="font-semibold text-foreground">
+                      Không có quyền truy cập
+                    </p>
+                    <p className="mt-1 text-sm">
+                      Bạn không có quyền xem đánh giá của hợp đồng.
+                    </p>
+                  </div>
+                ) : userId ? (
+                  <ReviewManager userId={userId} />
+                ) : null}
               </TabsContent>
 
               <TabsContent value="following">
@@ -836,36 +939,40 @@ export function AccountProfileClient({
                         className="inline-flex w-fit rounded-lg bg-muted p-1"
                         aria-label={tSettings("filterRelationships")}
                       >
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="sm"
-                          className={
-                            freelancerView === "all"
-                              ? "bg-background shadow-xs hover:bg-background"
-                              : "text-muted-foreground"
-                          }
-                          aria-pressed={freelancerView === "all"}
-                          onClick={() => setFreelancerView("all")}
-                        >
-                          {t("allFreelancers")}
-                        </Button>
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="sm"
-                          className={
-                            freelancerView === "following"
-                              ? "bg-background shadow-xs hover:bg-background"
-                              : "text-muted-foreground"
-                          }
-                          aria-pressed={freelancerView === "following"}
-                          onClick={() => setFreelancerView("following")}
-                        >
-                          {tSettings("followingTabCount", {
-                            count: followingCount,
-                          })}
-                        </Button>
+                        {canDiscoverFreelancers && (
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            className={
+                              freelancerView === "all"
+                                ? "bg-background shadow-xs hover:bg-background"
+                                : "text-muted-foreground"
+                            }
+                            aria-pressed={freelancerView === "all"}
+                            onClick={() => setFreelancerView("all")}
+                          >
+                            {t("allFreelancers")}
+                          </Button>
+                        )}
+                        {canGetFollowing && (
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            className={
+                              freelancerView === "following"
+                                ? "bg-background shadow-xs hover:bg-background"
+                                : "text-muted-foreground"
+                            }
+                            aria-pressed={freelancerView === "following"}
+                            onClick={() => setFreelancerView("following")}
+                          >
+                            {tSettings("followingTabCount", {
+                              count: followingCount,
+                            })}
+                          </Button>
+                        )}
                       </div>
 
                       <div className="relative w-full sm:max-w-xs">
@@ -1048,51 +1155,53 @@ export function AccountProfileClient({
                               </Button>
 
                               {freelancer.isFollowing ? (
-                                <AlertDialog>
-                                  <AlertDialogTrigger asChild>
-                                    <Button
-                                      variant="outline"
-                                      size="sm"
-                                      className="border-[#4fae2e]/35 text-[#438f2b] hover:bg-destructive/10 hover:text-destructive dark:text-[#78c85d]"
-                                      disabled={isPending}
-                                    >
-                                      {isPending ? (
-                                        <Loader2 className="animate-spin" />
-                                      ) : (
-                                        <UserCheck />
-                                      )}
-                                      {t("followingState")}
-                                    </Button>
-                                  </AlertDialogTrigger>
-                                  <AlertDialogContent>
-                                    <AlertDialogHeader>
-                                      <AlertDialogTitle>
-                                        {t("unfollowTitle", {
-                                          name: displayName,
-                                        })}
-                                      </AlertDialogTitle>
-                                      <AlertDialogDescription>
-                                        {t("unfollowHint")}
-                                      </AlertDialogDescription>
-                                    </AlertDialogHeader>
-                                    <AlertDialogFooter>
-                                      <AlertDialogCancel>
-                                        {t("keepFollowing")}
-                                      </AlertDialogCancel>
-                                      <AlertDialogAction
-                                        className="bg-destructive text-white hover:bg-destructive/90"
-                                        onClick={() =>
-                                          void unfollowFreelancer(
-                                            freelancer.freelancerId,
-                                          )
-                                        }
+                                canUnfollowFreelancer ? (
+                                  <AlertDialog>
+                                    <AlertDialogTrigger asChild>
+                                      <Button
+                                        variant="outline"
+                                        size="sm"
+                                        className="border-[#4fae2e]/35 text-[#438f2b] hover:bg-destructive/10 hover:text-destructive dark:text-[#78c85d]"
+                                        disabled={isPending}
                                       >
-                                        <UserMinus /> {tSettings("unfollow")}
-                                      </AlertDialogAction>
-                                    </AlertDialogFooter>
-                                  </AlertDialogContent>
-                                </AlertDialog>
-                              ) : (
+                                        {isPending ? (
+                                          <Loader2 className="animate-spin" />
+                                        ) : (
+                                          <UserCheck />
+                                        )}
+                                        {t("followingState")}
+                                      </Button>
+                                    </AlertDialogTrigger>
+                                    <AlertDialogContent>
+                                      <AlertDialogHeader>
+                                        <AlertDialogTitle>
+                                          {t("unfollowTitle", {
+                                            name: displayName,
+                                          })}
+                                        </AlertDialogTitle>
+                                        <AlertDialogDescription>
+                                          {t("unfollowHint")}
+                                        </AlertDialogDescription>
+                                      </AlertDialogHeader>
+                                      <AlertDialogFooter>
+                                        <AlertDialogCancel>
+                                          {t("keepFollowing")}
+                                        </AlertDialogCancel>
+                                        <AlertDialogAction
+                                          className="bg-destructive text-white hover:bg-destructive/90"
+                                          onClick={() =>
+                                            void unfollowFreelancer(
+                                              freelancer.freelancerId,
+                                            )
+                                          }
+                                        >
+                                          <UserMinus /> {tSettings("unfollow")}
+                                        </AlertDialogAction>
+                                      </AlertDialogFooter>
+                                    </AlertDialogContent>
+                                  </AlertDialog>
+                                ) : null
+                              ) : canFollowFreelancer ? (
                                 <Button
                                   size="sm"
                                   className="bg-[#4fae2e] text-white hover:bg-[#459928] active:translate-y-px"
@@ -1108,7 +1217,7 @@ export function AccountProfileClient({
                                   )}
                                   {tSettings("follow")}
                                 </Button>
-                              )}
+                              ) : null}
                             </div>
                           </li>
                         );
@@ -1156,18 +1265,20 @@ export function AccountProfileClient({
                               </Link>
                             </Button>
                           </div>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() =>
-                              void removeFavorite(favorite.freelancerId)
-                            }
-                            disabled={
-                              pending === `favorite-${favorite.freelancerId}`
-                            }
-                          >
-                            <Trash2 />
-                          </Button>
+                          {canRemoveFavorite ? (
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() =>
+                                void removeFavorite(favorite.freelancerId)
+                              }
+                              disabled={
+                                pending === `favorite-${favorite.freelancerId}`
+                              }
+                            >
+                              <Trash2 />
+                            </Button>
+                          ) : null}
                         </div>
                       </li>
                     ))}
