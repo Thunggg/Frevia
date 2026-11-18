@@ -43,16 +43,6 @@ export const MilestoneCannotBeDisputedException = () =>
     },
   ]);
 
-export const DisputeFeeNotFoundException = () =>
-  new NotFoundException([
-    { message: ManageDisputeMessage.FEE_NOT_FOUND, path: 'disputeId' },
-  ]);
-
-export const DisputeFeeAlreadyPaidException = () =>
-  new UnprocessableEntityException([
-    { message: ManageDisputeMessage.FEE_ALREADY_PAID, path: 'disputeId' },
-  ]);
-
 export const DisputeResponseAlreadySubmittedException = () =>
   new UnprocessableEntityException([
     {
@@ -82,6 +72,43 @@ export const DisputeInvalidSplitAmountException = () =>
     },
   ]);
 
+export const DisputeInvalidDueDateException = (
+  message = 'A valid future due date is required for deadline extension.',
+) =>
+  new BadRequestException([
+    {
+      message,
+      path: 'proposedDueDate',
+    },
+  ]);
+
+export const DisputeDeclineReasonRequiredException = () =>
+  new BadRequestException([
+    {
+      message:
+        'Please provide a reason (at least 5 characters) when declining.',
+      path: 'reason',
+    },
+  ]);
+
+export const DisputeWithdrawNotAllowedException = () =>
+  new UnprocessableEntityException([
+    {
+      message:
+        'Only the requester can withdraw a resolution ticket before it is escalated or finalized.',
+      path: 'status',
+    },
+  ]);
+
+export const DisputeEscalateNotAllowedException = () =>
+  new UnprocessableEntityException([
+    {
+      message:
+        'You can only escalate to an Expert after the counterparty declines or the 48-hour response deadline has passed.',
+      path: 'status',
+    },
+  ]);
+
 export const DisputeDecisionNotPendingException = () =>
   new UnprocessableEntityException([
     { message: ManageDisputeMessage.DECISION_NOT_PENDING, path: 'status' },
@@ -100,19 +127,9 @@ export const DisputeReviewReasonRequiredException = () =>
     { message: ManageDisputeMessage.REVIEW_REASON_REQUIRED, path: 'reason' },
   ]);
 
-export const DisputeAlreadyFinalizedException = () =>
-  new UnprocessableEntityException([
-    { message: ManageDisputeMessage.ALREADY_FINALIZED, path: 'status' },
-  ]);
-
 export const FailedToCreateDisputeException = () =>
   new InternalServerErrorException([
     { message: ManageDisputeMessage.FAILED_TO_CREATE_DISPUTE, path: '' },
-  ]);
-
-export const FailedToPayDisputeFeeException = () =>
-  new InternalServerErrorException([
-    { message: ManageDisputeMessage.FAILED_TO_PAY_FEE, path: '' },
   ]);
 
 export const FailedToSubmitDisputeResponseException = () =>
@@ -120,22 +137,22 @@ export const FailedToSubmitDisputeResponseException = () =>
     { message: ManageDisputeMessage.FAILED_TO_SUBMIT_RESPONSE, path: '' },
   ]);
 
+export const FailedToWithdrawDisputeException = () =>
+  new InternalServerErrorException([
+    { message: 'Failed to withdraw resolution request.', path: '' },
+  ]);
+
+export const FailedToEscalateDisputeException = () =>
+  new InternalServerErrorException([
+    { message: 'Failed to escalate dispute to expert.', path: '' },
+  ]);
+
 export const FailedToLoadDisputeException = () =>
   new InternalServerErrorException([
     { message: ManageDisputeMessage.FAILED_TO_LOAD_DISPUTE, path: '' },
   ]);
 
-export const FailedToMakeDisputeDecisionException = () =>
-  new InternalServerErrorException([
-    { message: ManageDisputeMessage.FAILED_TO_MAKE_DECISION, path: '' },
-  ]);
-
 export const FailedToSubmitDisputeReviewException = () =>
   new InternalServerErrorException([
     { message: ManageDisputeMessage.FAILED_TO_SUBMIT_REVIEW, path: '' },
-  ]);
-
-export const FailedToFinalizeDisputeException = () =>
-  new InternalServerErrorException([
-    { message: ManageDisputeMessage.FAILED_TO_FINALIZE_DISPUTE, path: '' },
   ]);

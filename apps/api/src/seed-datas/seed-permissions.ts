@@ -4,7 +4,6 @@ import { HttpMethod, PrismaClient } from '@prisma/client';
 import { RoleName, getPermissionName } from '@shared/types';
 import 'dotenv/config';
 import { AppModule } from '../app.module';
-import { expertHasPermission } from '../shared/helper/expert-permission';
 import { IS_PUBLIC_KEY } from '../shared/decorators/auth.decorator';
 
 if (!process.env.DIRECT_URL) {
@@ -81,15 +80,16 @@ const clientModules = [
   'RECOMMENDATIONS',
 ];
 
-const expertModules = [
-  'AUTH',
-  'SESSIONS',
-  'EXPERT-PROFILE',
-  'PROFILE-REVISIONS',
-  'NOTIFICATIONS',
-  'PAYMENTS',
-  'DISPUTES',
-];
+const expertDefaultRoutes = new Set([
+  'GET /api/auth/me',
+  'GET /api/expert-profile/me',
+  'PUT /api/expert-profile/me',
+  'GET /api/profile-revisions/me',
+  'GET /api/expert/disputes',
+  'GET /api/expert/disputes/:id',
+  'POST /api/expert/disputes/:id/decision',
+  'POST /api/expert/disputes/:id/final-decision',
+]);
 
 type AvailableRoute = {
   path: string;
@@ -324,9 +324,7 @@ async function bootstrap() {
     .map((item) => item.id);
 
   const expertPermissionIds = updatedPermissionInDb
-    .filter((item) =>
-      expertHasPermission(item.method, item.path.replace(':id', '1')),
-    )
+    .filter((item) => expertDefaultRoutes.has(`${item.method} ${item.path}`))
     .map((item) => item.id);
 
   const freelancerProfileCount = updatedPermissionInDb.filter(

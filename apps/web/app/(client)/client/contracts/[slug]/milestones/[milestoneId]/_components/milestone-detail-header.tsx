@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { ChevronLeft } from "lucide-react";
 import { useActionPermission } from "@/hooks/use-action-permission";
 import type { ContractDetailType, MilestoneType } from "@shared/types";
@@ -16,6 +17,7 @@ export function MilestoneDetailHeader({
   milestone,
   basePath = "/client",
 }: MilestoneDetailHeaderProps) {
+  const t = useTranslations("milestoneWorkspace.breadcrumb");
   const { can } = useActionPermission();
   const canViewMilestones = can("GET", "/api/contracts/:contractId/milestones");
 
@@ -37,7 +39,7 @@ export function MilestoneDetailHeader({
           className="inline-flex items-center gap-1 hover:text-foreground transition-colors"
         >
           <ChevronLeft className="size-4" />
-          <span>Contracts</span>
+          <span>{t("contracts")}</span>
         </Link>
         <span>/</span>
         <Link
@@ -53,7 +55,7 @@ export function MilestoneDetailHeader({
               href={`${basePath}/contracts/${contractSlug}/milestones`}
               className="hover:text-foreground transition-colors"
             >
-              Milestones
+              {t("milestones")}
             </Link>
           </>
         )}

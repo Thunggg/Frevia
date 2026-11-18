@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { Activity, FileText, FolderGit2, Layers } from "lucide-react";
 
 export type MilestoneTabKey = "overview" | "submissions" | "files" | "activity";
@@ -21,30 +22,31 @@ export function MilestoneDetailTabs({
   canViewSubmissions = true,
   canViewFiles = true,
 }: MilestoneDetailTabsProps) {
+  const t = useTranslations("milestoneWorkspace.tabs");
   const allTabs = [
     {
       key: "overview" as const,
-      label: "Overview",
+      label: t("overview"),
       icon: Layers,
       visible: true,
     },
     {
       key: "submissions" as const,
-      label: "Submissions",
+      label: t("submissions"),
       icon: FolderGit2,
       count: submissionCount,
       visible: canViewSubmissions,
     },
     {
       key: "files" as const,
-      label: "Files",
+      label: t("files"),
       icon: FileText,
       count: fileCount,
       visible: canViewFiles,
     },
     {
       key: "activity" as const,
-      label: "Activity",
+      label: t("activity"),
       icon: Activity,
       visible: true,
     },

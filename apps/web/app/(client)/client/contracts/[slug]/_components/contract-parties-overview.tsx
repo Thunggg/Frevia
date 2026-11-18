@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { CheckCircle2, FileText } from "@/components/icons";
 import {
   Avatar,
@@ -39,6 +40,7 @@ export function ContractPartiesOverview({
   onOpenProfileSheet,
   onOpenFullAgreement,
 }: ContractPartiesOverviewProps) {
+  const tWorkspace = useTranslations("contractWorkspace");
   const clientFee =
     Number(contract.clientPlatformFee) ||
     Math.round(Number(contract.totalAmount) * 0.03 * 100) / 100;
@@ -161,7 +163,7 @@ export function ContractPartiesOverview({
                 {t("paymentMethod")}
               </span>
               <span className="text-xs font-semibold text-foreground mt-1 block">
-                Frevia Escrow Protection
+                {tWorkspace("escrowProtection")}
               </span>
             </div>
           </div>
@@ -170,50 +172,54 @@ export function ContractPartiesOverview({
           <div className="rounded-xl border border-border/60 p-3.5 bg-muted/20 space-y-2">
             <div className="flex items-center justify-between">
               <span className="text-xs font-bold text-foreground">
-                Platform Fees
+                {tWorkspace("platformFees")}
               </span>
               <span className="text-[11px] text-muted-foreground">
-                Client (3%) • Freelancer (5%)
+                {tWorkspace("platformFeesRatio")}
               </span>
             </div>
 
             <div className="grid grid-cols-2 gap-2 text-xs pt-1">
               <div className="flex items-center justify-between border rounded-lg p-2 bg-card">
                 <div>
-                  <span className="text-[11px] text-muted-foreground block">Client (3%):</span>
+                  <span className="text-[11px] text-muted-foreground block">
+                    {tWorkspace("clientFeeLabel")}
+                  </span>
                   <span className="text-xs font-bold font-mono text-foreground">
                     {money(clientFee)}
                   </span>
                 </div>
                 {contract.clientFeeStatus === "PAID" ? (
                   <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-600 bg-emerald-50 dark:bg-emerald-950/40 px-1.5 py-0.5 rounded">
-                    <CheckCircle2 className="size-3" /> Paid
+                    <CheckCircle2 className="size-3" /> {tWorkspace("feePaid")}
                   </span>
                 ) : contract.holdPaymentIntentId ? (
                   <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-[#0069D3] bg-[#0069D3]/10 px-1.5 py-0.5 rounded">
-                    Held (Pending Capture)
+                    {tWorkspace("feeHeld")}
                   </span>
                 ) : (
                   <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-amber-600 bg-amber-50 dark:bg-amber-950/40 px-1.5 py-0.5 rounded">
-                    Awaiting Hold
+                    {tWorkspace("feeAwaitingHold")}
                   </span>
                 )}
               </div>
 
               <div className="flex items-center justify-between border rounded-lg p-2 bg-card">
                 <div>
-                  <span className="text-[11px] text-muted-foreground block">Freelancer (5%):</span>
+                  <span className="text-[11px] text-muted-foreground block">
+                    {tWorkspace("freelancerFeeLabel")}
+                  </span>
                   <span className="text-xs font-bold font-mono text-foreground">
                     {money(freelancerFee)}
                   </span>
                 </div>
                 {contract.freelancerFeeStatus === "PAID" ? (
                   <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-600 bg-emerald-50 dark:bg-emerald-950/40 px-1.5 py-0.5 rounded">
-                    <CheckCircle2 className="size-3" /> Paid
+                    <CheckCircle2 className="size-3" /> {tWorkspace("feePaid")}
                   </span>
                 ) : (
                   <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-amber-600 bg-amber-50 dark:bg-amber-950/40 px-1.5 py-0.5 rounded">
-                    On Release
+                    {tWorkspace("feeOnRelease")}
                   </span>
                 )}
               </div>

@@ -51,6 +51,7 @@ export function ContractDetail({
   const router = useRouter();
   const queryClient = useQueryClient();
   const t = useTranslations("contractDetail");
+  const tWorkspace = useTranslations("contractWorkspace");
   const tStatus = useTranslations("contractStatus");
   const tRole = useTranslations("roleName");
   const format = useFormatter();
@@ -116,8 +117,8 @@ export function ContractDetail({
           toastSuccess({
             message:
               holdStatus === "success"
-                ? "Contract escrow hold authorized! You can now sign the contract."
-                : "Payment completed successfully!",
+                ? tWorkspace("holdAuthorizedToast")
+                : tWorkspace("paymentCompletedToast"),
           });
         } catch {
           // If already processed via webhook
@@ -148,13 +149,13 @@ export function ContractDetail({
       toastError({
         message:
           holdStatus === "cancelled"
-            ? "Escrow authorization was cancelled. You can retry at any time."
-            : "Payment was cancelled. You can retry at any time.",
+            ? tWorkspace("holdCancelledToast")
+            : tWorkspace("paymentCancelledToast"),
       });
       const newUrl = window.location.pathname;
       window.history.replaceState({}, "", newUrl);
     }
-  }, [searchParams, initialContract.id, queryClient]);
+  }, [searchParams, initialContract.id, queryClient, tWorkspace]);
 
   // Main Contract Query
   const { data: contract } = useQuery<ContractDetailType>({
@@ -231,7 +232,7 @@ export function ContractDetail({
         setChatOpen(true);
       }
     } catch {
-      toastError({ message: "Could not open conversation. Try again." });
+      toastError({ message: tWorkspace("openChatFailed") });
     } finally {
       setIsStartingChat(false);
     }
@@ -262,10 +263,11 @@ export function ContractDetail({
         (c) => c.id === payload.conversationId,
       );
       const senderName =
-        conv?.otherUser?.profile?.displayName || "New message";
+        conv?.otherUser?.profile?.displayName || tWorkspace("newMessage");
       toast(senderName, {
         description:
-          payload?.message?.message?.slice(0, 80) || "You have a new message",
+          payload?.message?.message?.slice(0, 80) ||
+          tWorkspace("newMessageFallback"),
         position: "top-right",
         duration: 4000,
       });
@@ -275,7 +277,7 @@ export function ContractDetail({
     return () => {
       socket.off("message:new", handler);
     };
-  }, [socketValue.socket, currentUserId, chatOpen]);
+  }, [socketValue.socket, currentUserId, chatOpen, queryClient, tWorkspace]);
 
   // Sign Action
   const handleSign = async () => {
@@ -312,7 +314,7 @@ export function ContractDetail({
     title: string,
   ) => {
     if (
-      !window.confirm(`Are you sure you want to delete milestone "${title}"?`)
+      !window.confirm(tWorkspace("confirmDeleteMilestone", { title }))
     ) {
       return;
     }
@@ -324,13 +326,13 @@ export function ContractDetail({
       await queryClient.invalidateQueries({
         queryKey: ["client-contract-milestones", contract.id],
       });
-      toastSuccess({ message: `Milestone "${title}" removed.` });
+      toastSuccess({ message: tWorkspace("milestoneRemoved", { title }) });
     } catch (error) {
       toastError({
         message:
           error instanceof ApiFail
             ? error.response.error.message
-            : "Failed to delete milestone.",
+            : tWorkspace("milestoneDeleteFailed"),
       });
     }
   };
@@ -404,7 +406,7 @@ export function ContractDetail({
         queryKey: ["client-contracts"],
       });
       toastSuccess({
-        message: "Contract declined. Any payment hold has been released.",
+        message: tWorkspace("declinedToast"),
       });
       setConfirmReject(false);
       setRejectReason("");
@@ -413,7 +415,7 @@ export function ContractDetail({
         message:
           error instanceof ApiFail
             ? error.response.error.message
-            : "Failed to decline contract.",
+            : tWorkspace("declineFailed"),
       });
     } finally {
       setIsRejecting(false);
@@ -429,7 +431,7 @@ export function ContractDetail({
           className="inline-flex items-center gap-1 font-medium text-muted-foreground hover:text-foreground transition-colors"
         >
           <ChevronLeft className="size-4" />
-          <span>Contracts</span>
+          <span>{tWorkspace("breadcrumbContracts")}</span>
         </Link>
         <span className="text-muted-foreground/60">/</span>
         <span className="font-semibold text-foreground">
@@ -442,7 +444,7 @@ export function ContractDetail({
               href={`${basePath}/contracts/${encodeURIComponent(contract.slug || String(contract.id))}/milestones`}
               className="font-medium text-muted-foreground hover:text-[#0069D3] transition-colors"
             >
-              Milestone
+              {tWorkspace("breadcrumbMilestone")}
             </Link>
           </>
         )}

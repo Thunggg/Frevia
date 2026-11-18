@@ -27,7 +27,6 @@ export default async function DashboardRedirectPage() {
     primaryRole === RoleName.ADMIN ||
     (primaryRole !== RoleName.CLIENT &&
       primaryRole !== RoleName.FREELANCER &&
-      primaryRole !== RoleName.EXPERT &&
       canAccessAdminPortal(user))
   ) {
     redirect("/admin");
@@ -39,10 +38,6 @@ export default async function DashboardRedirectPage() {
 
   if (primaryRole === RoleName.FREELANCER) {
     redirect("/freelancer");
-  }
-
-  if (primaryRole === RoleName.EXPERT) {
-    redirect("/expert/disputes");
   }
 
   redirect("/");

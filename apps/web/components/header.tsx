@@ -265,16 +265,30 @@ function HeaderSearch({
 function ProfileDropdown({ role }: { role: Exclude<UserRole, "GUEST"> }) {
   const router = useRouter();
   const t = useTranslations("nav");
-  const profile = roleConfig[role];
+  const tRole = useTranslations("roleName");
+  const profile = roleConfig[role] ?? roleConfig.FREELANCER;
   const { data: me } = useMe();
   const { can } = useActionPermission();
   const canViewProposals = can("GET", "/api/proposals/my");
   const canViewSavedSearches = can("GET", "/api/saved-searches");
   const canViewContracts = can("GET", "/api/contracts");
+  const canViewDisputes = can("GET", "/api/disputes");
   const canViewSessions = can("GET", "/api/sessions");
   const canViewSocialLinks = can("GET", "/api/social-links");
+  const primaryRoleName =
+    me?.roles?.find((r) => r.isPrimary)?.name ?? me?.roles?.[0]?.name;
+  const roleLabel =
+    primaryRoleName === "ADMIN"
+      ? tRole("ADMIN")
+      : primaryRoleName === "EXPERT"
+        ? tRole("EXPERT")
+        : primaryRoleName === "CLIENT"
+          ? tRole("CLIENT")
+          : primaryRoleName === "FREELANCER"
+            ? tRole("FREELANCER")
+            : primaryRoleName || t(`roles.${profile.nameKey}`);
   const displayName =
-    me?.profile?.displayName || t(`roles.${profile.nameKey}`);
+    me?.profile?.displayName || roleLabel;
   const initial = displayName?.charAt(0)?.toUpperCase() ?? "?";
   const publicProfileHref = me?.profile?.id
     ? role === "FREELANCER"
@@ -327,7 +341,7 @@ function ProfileDropdown({ role }: { role: Exclude<UserRole, "GUEST"> }) {
               {displayName}
             </p>
             <p className="text-xs text-muted-foreground">
-              {t(`roles.${profile.nameKey}`)}
+              {roleLabel}
             </p>
           </div>
         </DropdownMenuLabel>
@@ -402,9 +416,20 @@ function ProfileDropdown({ role }: { role: Exclude<UserRole, "GUEST"> }) {
                 className="cursor-pointer"
               >
                 <CreditCard className="size-4 text-muted-foreground" />
-                Billing & Payments
+                {t("billingPayments")}
               </Link>
             </DropdownMenuItem>
+            {canViewDisputes && (
+              <DropdownMenuItem asChild>
+                <Link
+                  href="/freelancer/disputes"
+                  className="cursor-pointer"
+                >
+                  <ShieldCheck className="size-4 text-muted-foreground" />
+                  {t("resolutionCenter")}
+                </Link>
+              </DropdownMenuItem>
+            )}
           </>
         )}
         {role === "CLIENT" && (
@@ -436,9 +461,17 @@ function ProfileDropdown({ role }: { role: Exclude<UserRole, "GUEST"> }) {
             <DropdownMenuItem asChild>
               <Link href="/client/payments" className="cursor-pointer">
                 <CreditCard className="size-4 text-muted-foreground" />
-                Billing & Payments
+                {t("billingPayments")}
               </Link>
             </DropdownMenuItem>
+            {canViewDisputes && (
+              <DropdownMenuItem asChild>
+                <Link href="/client/disputes" className="cursor-pointer">
+                  <ShieldCheck className="size-4 text-muted-foreground" />
+                  {t("resolutionCenter")}
+                </Link>
+              </DropdownMenuItem>
+            )}
           </>
         )}
         {canViewSocialLinks && (

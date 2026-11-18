@@ -69,7 +69,6 @@ export function LoginForm({ oauthError }: { oauthError?: string }) {
               primaryRole === RoleName.ADMIN ||
               (primaryRole !== RoleName.CLIENT &&
                 primaryRole !== RoleName.FREELANCER &&
-                primaryRole !== RoleName.EXPERT &&
                 canAccessAdminPortal(meRes.data))
             ) {
               router.push("/admin");
@@ -77,8 +76,6 @@ export function LoginForm({ oauthError }: { oauthError?: string }) {
               router.push("/client/jobs");
             } else if (primaryRole === RoleName.FREELANCER) {
               router.push("/freelancer");
-            } else if (primaryRole === RoleName.EXPERT) {
-              router.push("/expert/disputes");
             } else {
               router.push("/");
             }

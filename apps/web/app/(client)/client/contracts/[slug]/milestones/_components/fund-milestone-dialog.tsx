@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   CreditCard,
@@ -41,6 +42,8 @@ export function FundMilestoneDialog({
   onSuccess,
 }: FundMilestoneDialogProps) {
   const queryClient = useQueryClient();
+  const t = useTranslations("milestoneWorkspace.fundDialog");
+  const tCommon = useTranslations("common");
   const { can } = useActionPermission();
   const [isProcessing, setIsProcessing] = useState(false);
   const [selectedPmId, setSelectedPmId] = useState<string>("");
@@ -74,7 +77,10 @@ export function FundMilestoneDialog({
         pmId || selectedPmId || defaultCard?.id,
       );
       toastSuccess({
-        message: `Escrow funded $${milestoneAmount.toLocaleString("en-US", { minimumFractionDigits: 2 })} for "${milestone.title}"!`,
+        message: t("fundedToast", {
+          amount: `$${milestoneAmount.toLocaleString("en-US", { minimumFractionDigits: 2 })}`,
+          title: milestone.title,
+        }),
       });
 
       await Promise.all([
@@ -102,7 +108,7 @@ export function FundMilestoneDialog({
         message:
           error instanceof ApiFail
             ? error.response.error.message
-            : "Card payment failed. Redirecting to Stripe Checkout...",
+            : t("savedCardFailed"),
       });
       // Fallback to Stripe Checkout
       await handleStripeCheckout();
@@ -127,7 +133,7 @@ export function FundMilestoneDialog({
         message:
           error instanceof ApiFail
             ? error.response.error.message
-            : "Failed to create Stripe Checkout session.",
+            : t("checkoutFailed"),
       });
       setIsProcessing(false);
     }
@@ -137,6 +143,7 @@ export function FundMilestoneDialog({
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent
         side="right"
+        closeLabel={tCommon("close")}
         className="w-full sm:max-w-md overflow-y-auto p-6 flex flex-col justify-between font-sans border-l border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 shadow-2xl z-50"
       >
         <div>
@@ -147,10 +154,10 @@ export function FundMilestoneDialog({
               </div>
               <div>
                 <SheetTitle className="text-base font-bold text-zinc-950 dark:text-zinc-50">
-                  Fund Milestone Escrow
+                  {t("title")}
                 </SheetTitle>
                 <SheetDescription className="text-xs text-zinc-400 mt-0.5">
-                  Funds are held safely in escrow until you approve the work.
+                  {t("description")}
                 </SheetDescription>
               </div>
             </div>
@@ -160,13 +167,13 @@ export function FundMilestoneDialog({
             {/* Milestone Info Card */}
             <div className="rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/60 p-3.5 space-y-1.5 text-xs">
               <div className="flex items-center justify-between">
-                <span className="text-zinc-500">Milestone:</span>
+                <span className="text-zinc-500">{t("milestoneLabel")}</span>
                 <span className="font-semibold text-zinc-900 dark:text-zinc-100 truncate max-w-[220px]">
                   {milestone.title}
                 </span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-zinc-500">Deposit Amount:</span>
+                <span className="text-zinc-500">{t("depositAmount")}</span>
                 <span className="font-mono font-bold text-zinc-950 dark:text-zinc-50 text-sm">
                   $
                   {milestoneAmount.toLocaleString("en-US", {
@@ -175,9 +182,9 @@ export function FundMilestoneDialog({
                 </span>
               </div>
               <div className="flex items-center justify-between text-[11px] pt-1 border-t border-zinc-200/70 dark:border-zinc-800/70">
-                <span className="text-zinc-500">Client Fee:</span>
+                <span className="text-zinc-500">{t("clientFee")}</span>
                 <span className="font-medium text-emerald-600 dark:text-emerald-400">
-                  $0.00 (Covered in initial contract fee)
+                  {t("feeCovered")}
                 </span>
               </div>
             </div>
@@ -186,10 +193,10 @@ export function FundMilestoneDialog({
             {!hasAnyFundPermission && (
               <div className="rounded-lg border border-amber-200 dark:border-amber-900/40 bg-amber-50/50 dark:bg-amber-950/20 p-4 text-center space-y-1 text-xs">
                 <span className="font-semibold text-amber-800 dark:text-amber-300 block">
-                  Không có quyền ký quỹ milestone
+                  {t("noPermissionTitle")}
                 </span>
                 <span className="text-zinc-500 dark:text-zinc-400 block">
-                  Bạn không có quyền thực hiện giao dịch nạp tiền hoặc ký quỹ cho milestone này.
+                  {t("noPermissionDesc")}
                 </span>
               </div>
             )}
@@ -199,13 +206,13 @@ export function FundMilestoneDialog({
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <span className="text-[11px] font-bold uppercase tracking-wider text-zinc-400">
-                    Quick Pay with Saved Card
+                    {t("quickPay")}
                   </span>
                   <Link
                     href="/client/payments"
                     className="text-[11px] font-medium text-[#0069D3] hover:underline"
                   >
-                    Billing &amp; Payments
+                    {t("billingPayments")}
                   </Link>
                 </div>
                 <div className="space-y-2">
@@ -233,12 +240,12 @@ export function FundMilestoneDialog({
                           </span>
                           {card.isDefault && (
                             <span className="rounded-full bg-[#0069D3]/10 px-2 py-0.5 text-[10px] font-semibold text-[#0069D3]">
-                              Default
+                              {t("defaultBadge")}
                             </span>
                           )}
                         </div>
                         <span className="text-[11px] font-semibold text-[#0069D3]">
-                          {isSelected ? "Selected" : "Choose"}
+                          {isSelected ? t("selected") : t("choose")}
                         </span>
                       </div>
                     );
@@ -256,11 +263,11 @@ export function FundMilestoneDialog({
                   ) : (
                     <Zap className="mr-2 size-4 text-amber-300" />
                   )}
-                  Pay $
-                  {milestoneAmount.toLocaleString("en-US", {
-                    minimumFractionDigits: 2,
-                  })}{" "}
-                  (1-Click Escrow Deposit)
+                  {t("payOneClick", {
+                    amount: `$${milestoneAmount.toLocaleString("en-US", {
+                      minimumFractionDigits: 2,
+                    })}`,
+                  })}
                 </Button>
               </div>
             )}
@@ -281,8 +288,10 @@ export function FundMilestoneDialog({
                     <Lock className="mr-2 size-3.5 text-zinc-400" />
                   )}
                   {savedCards.length > 0
-                    ? "Pay with Another Card (Stripe Checkout)"
-                    : `Deposit $${milestoneAmount.toLocaleString("en-US", { minimumFractionDigits: 2 })} via Stripe`}
+                    ? t("payAnotherCard")
+                    : t("depositViaStripe", {
+                        amount: `$${milestoneAmount.toLocaleString("en-US", { minimumFractionDigits: 2 })}`,
+                      })}
                 </Button>
               </div>
             )}
@@ -298,7 +307,7 @@ export function FundMilestoneDialog({
             disabled={isProcessing}
             className="rounded-lg text-xs cursor-pointer h-8"
           >
-            Cancel
+            {tCommon("cancel")}
           </Button>
         </SheetFooter>
       </SheetContent>

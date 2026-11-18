@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useFormatter, useTranslations } from "next-intl";
 import { useQueryClient } from "@tanstack/react-query";
 import {
   Calendar,
@@ -38,17 +39,6 @@ interface ReviewSubmissionDialogProps {
   onSuccess?: () => void;
 }
 
-function formatDate(date: string | Date | null) {
-  if (!date) return "N/A";
-  return new Intl.DateTimeFormat("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  }).format(new Date(date));
-}
-
 export function ReviewSubmissionDialog({
   open,
   onOpenChange,
@@ -60,7 +50,21 @@ export function ReviewSubmissionDialog({
   onSuccess,
 }: ReviewSubmissionDialogProps) {
   const queryClient = useQueryClient();
+  const t = useTranslations("milestoneWorkspace.reviewDialog");
+  const tCommon = useTranslations("common");
+  const format = useFormatter();
   const { can } = useActionPermission();
+
+  const formatDate = (date: string | Date | null) => {
+    if (!date) return t("notAvailable");
+    return format.dateTime(new Date(date), {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  };
   const [showChangesForm, setShowChangesForm] = useState(false);
   const [changeRequestMessage, setChangeRequestMessage] = useState("");
   const [changeRequestDueDate, setChangeRequestDueDate] = useState("");
@@ -86,7 +90,9 @@ export function ReviewSubmissionDialog({
       );
 
       toastSuccess({
-        message: `Milestone approved and $${freelancerNetPayout.toLocaleString("en-US", { minimumFractionDigits: 2 })} transferred to freelancer via Stripe (5% platform fee deducted)!`,
+        message: t("approvedToast", {
+          amount: `$${freelancerNetPayout.toLocaleString("en-US", { minimumFractionDigits: 2 })}`,
+        }),
       });
 
       await queryClient.invalidateQueries({
@@ -109,7 +115,7 @@ export function ReviewSubmissionDialog({
         message:
           error instanceof ApiFail
             ? error.response.error.message
-            : "Failed to approve milestone. Please try again.",
+            : t("approveFailed"),
       });
     } finally {
       setIsApproving(false);
@@ -120,7 +126,7 @@ export function ReviewSubmissionDialog({
     e.preventDefault();
 
     if (!changeRequestMessage.trim()) {
-      toastError({ message: "Please provide notes on the revisions requested." });
+      toastError({ message: t("notesRequired") });
       return;
     }
 
@@ -129,7 +135,7 @@ export function ReviewSubmissionDialog({
       const d = new Date(changeRequestDueDate);
       d.setHours(23, 59, 59, 999);
       if (d <= new Date()) {
-        toastError({ message: "Revision due date must be in the future." });
+        toastError({ message: t("dueDateFuture") });
         return;
       }
       formattedDueDate = d.toISOString();
@@ -146,7 +152,7 @@ export function ReviewSubmissionDialog({
           changeRequestDueDate: formattedDueDate,
         },
       );
-      toastSuccess({ message: "Revisions requested from freelancer." });
+      toastSuccess({ message: t("changesRequested") });
 
       await queryClient.invalidateQueries({
         queryKey: ["client-contract-milestones", contractId],
@@ -159,7 +165,7 @@ export function ReviewSubmissionDialog({
         message:
           error instanceof ApiFail
             ? error.response.error.message
-            : "Failed to submit revision request. Please try again.",
+            : t("requestFailed"),
       });
     } finally {
       setIsRequestingChanges(false);
@@ -170,6 +176,7 @@ export function ReviewSubmissionDialog({
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent
         side="right"
+        closeLabel={tCommon("close")}
         className="w-full sm:max-w-lg md:max-w-xl overflow-y-auto p-6 flex flex-col justify-between font-sans border-l border-border bg-background shadow-2xl z-50"
       >
         <div>
@@ -179,14 +186,14 @@ export function ReviewSubmissionDialog({
                 <FileCheck className="size-5" />
               </div>
               <SheetTitle className="text-lg font-bold text-foreground">
-                Review Work Submission
+                {t("title")}
               </SheetTitle>
             </div>
             <SheetDescription className="text-xs text-muted-foreground mt-1">
-              Milestone: <strong className="text-foreground">{milestoneTitle}</strong> • Value:{" "}
-              <strong className="text-foreground">
-                ${milestoneAmount.toLocaleString("en-US", { minimumFractionDigits: 2 })}
-              </strong>
+              {t("milestoneSummary", {
+                title: milestoneTitle,
+                amount: `$${milestoneAmount.toLocaleString("en-US", { minimumFractionDigits: 2 })}`,
+              })}
             </SheetDescription>
           </SheetHeader>
 
@@ -195,17 +202,17 @@ export function ReviewSubmissionDialog({
             <div className="flex items-center gap-2 rounded-xl bg-muted/40 p-3 text-muted-foreground">
               <Calendar className="size-4 shrink-0 text-[#0069D3]" />
               <span>
-                Submitted on: <strong className="text-foreground">{formatDate(submission.submittedAt)}</strong>
+                {t("submittedOn", { date: formatDate(submission.submittedAt) })}
               </span>
             </div>
 
             {/* Freelancer Notes */}
             <div className="space-y-1.5">
               <h4 className="font-bold uppercase tracking-wider text-muted-foreground text-[11px]">
-                Deliverable Notes from Freelancer
+                {t("notesHeading")}
               </h4>
               <div className="rounded-xl border border-border/70 bg-card p-4 leading-relaxed whitespace-pre-wrap">
-                {submission.message || "No written notes provided."}
+                {submission.message || t("noNotes")}
               </div>
             </div>
 
@@ -213,7 +220,7 @@ export function ReviewSubmissionDialog({
             {submission.links && submission.links.length > 0 && (
               <div className="space-y-1.5">
                 <h4 className="font-bold uppercase tracking-wider text-muted-foreground text-[11px]">
-                  Project / Verification Links
+                  {t("linksHeading")}
                 </h4>
                 <div className="space-y-2">
                   {submission.links.map((link, idx) => (
@@ -236,7 +243,7 @@ export function ReviewSubmissionDialog({
             {submission.files && submission.files.length > 0 && (
               <div className="space-y-1.5">
                 <h4 className="font-bold uppercase tracking-wider text-muted-foreground text-[11px]">
-                  Attached Deliverable Files
+                  {t("filesHeading")}
                 </h4>
                 <div className="space-y-2">
                   {submission.files.map((item) => (
@@ -247,7 +254,8 @@ export function ReviewSubmissionDialog({
                       <div className="flex items-center gap-2 min-w-0 flex-1">
                         <FileText className="size-4 text-muted-foreground shrink-0" />
                         <span className="truncate font-medium">
-                          {item.file?.fileName || `File #${item.fileId}`}
+                          {item.file?.fileName ||
+                            t("fileFallback", { id: item.fileId })}
                         </span>
                       </div>
                       {item.file?.fileUrl && (
@@ -256,10 +264,10 @@ export function ReviewSubmissionDialog({
                           target="_blank"
                           rel="noreferrer"
                           className="text-[#0069D3] hover:underline p-1 ml-2 shrink-0 inline-flex items-center gap-1"
-                          title="Download file"
+                          title={t("downloadTitle")}
                         >
                           <Download className="size-3.5" />
-                          <span>Download</span>
+                          <span>{t("download")}</span>
                         </a>
                       )}
                     </div>
@@ -273,21 +281,21 @@ export function ReviewSubmissionDialog({
               <form onSubmit={handleRequestChanges} className="space-y-3 pt-3 border-t border-border">
                 <div>
                   <label className="text-xs font-semibold text-foreground block">
-                    Feedback & Required Changes <span className="text-rose-500">*</span>
+                    {t("changesLabel")} <span className="text-rose-500">*</span>
                   </label>
                   <textarea
                     rows={4}
                     required
                     value={changeRequestMessage}
                     onChange={(e) => setChangeRequestMessage(e.target.value)}
-                    placeholder="Explain clearly what changes or adjustments are required before approval..."
+                    placeholder={t("changesPlaceholder")}
                     className="mt-1.5 w-full rounded-xl border border-border bg-background p-3 text-xs text-foreground placeholder:text-muted-foreground/60 focus:border-[#0069D3] focus:outline-none focus:ring-1 focus:ring-[#0069D3] resize-none leading-relaxed"
                   />
                 </div>
 
                 <div>
                   <label className="text-xs font-semibold text-foreground block">
-                    Revision Target Due Date (Optional)
+                    {t("dueDateLabel")}
                   </label>
                   <input
                     type="date"
@@ -306,7 +314,7 @@ export function ReviewSubmissionDialog({
                     onClick={() => setShowChangesForm(false)}
                     className="rounded-xl text-xs cursor-pointer"
                   >
-                    Back
+                    {t("back")}
                   </Button>
                   <Button
                     type="submit"
@@ -319,7 +327,7 @@ export function ReviewSubmissionDialog({
                     ) : (
                       <RotateCcw className="mr-1.5 size-3.5" />
                     )}
-                    Submit Revision Request
+                    {t("submitRevision")}
                   </Button>
                 </div>
               </form>
@@ -331,21 +339,23 @@ export function ReviewSubmissionDialog({
           <div className="mt-6 space-y-4">
             <div className="rounded-xl border border-border/80 bg-muted/20 p-3.5 space-y-1.5 text-xs">
               <div className="flex items-center justify-between">
-                <span className="text-muted-foreground">Gross Milestone</span>
+                <span className="text-muted-foreground">
+                  {t("grossMilestone")}
+                </span>
                 <span className="font-mono font-semibold text-foreground">
                   ${milestoneAmount.toLocaleString("en-US", { minimumFractionDigits: 2 })}
                 </span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-muted-foreground">
-                  Freelancer Platform Fee (5%)
+                  {t("freelancerFee")}
                 </span>
                 <span className="font-mono text-muted-foreground">
                   -${freelancerFee.toLocaleString("en-US", { minimumFractionDigits: 2 })}
                 </span>
               </div>
               <div className="pt-1.5 border-t border-border/60 flex items-center justify-between font-bold">
-                <span>Net Release to Freelancer (95%)</span>
+                <span>{t("netRelease")}</span>
                 <span className="font-mono text-emerald-600 dark:text-emerald-400">
                   ${freelancerNetPayout.toLocaleString("en-US", { minimumFractionDigits: 2 })}
                 </span>
@@ -361,7 +371,7 @@ export function ReviewSubmissionDialog({
                   className="w-full sm:w-auto rounded-xl text-xs border-amber-300 text-amber-700 hover:bg-amber-50 dark:border-amber-800 dark:text-amber-400 dark:hover:bg-amber-950/30 cursor-pointer"
                 >
                   <RotateCcw className="mr-1.5 size-3.5" />
-                  Request Changes
+                  {t("requestChanges")}
                 </Button>
               )}
 
@@ -377,7 +387,9 @@ export function ReviewSubmissionDialog({
                   ) : (
                     <CheckCircle2 className="mr-1.5 size-3.5" />
                   )}
-                  Approve & Release ${freelancerNetPayout.toLocaleString("en-US", { minimumFractionDigits: 2 })}
+                  {t("approveRelease", {
+                    amount: `$${freelancerNetPayout.toLocaleString("en-US", { minimumFractionDigits: 2 })}`,
+                  })}
                 </Button>
               )}
             </SheetFooter>

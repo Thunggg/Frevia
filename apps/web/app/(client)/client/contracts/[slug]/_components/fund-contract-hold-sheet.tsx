@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { useTranslations } from "next-intl";
 import {
   Sheet,
   SheetContent,
@@ -32,6 +33,8 @@ export function FundContractHoldSheet({
   contract,
   initialMilestoneId,
 }: FundContractHoldSheetProps) {
+  const t = useTranslations("contractWorkspace.fundHold");
+  const tCommon = useTranslations("common");
   const pendingMilestones = useMemo(
     () =>
       (contract.milestones ?? []).filter(
@@ -110,7 +113,7 @@ export function FundContractHoldSheet({
   const handleAuthorizeHold = async () => {
     if (selectedIds.length === 0) {
       toastError({
-        message: "Please select at least one milestone to authorize.",
+        message: t("selectAtLeastOne"),
       });
       return;
     }
@@ -131,11 +134,11 @@ export function FundContractHoldSheet({
       }
 
       toastError({
-        message: "Could not initialize Stripe Checkout session. Please try again.",
+        message: t("checkoutInitFailed"),
       });
       setIsRedirecting(false);
     } catch (error) {
-      let errorMessage = "Failed to initialize payment hold.";
+      let errorMessage = t("initFailed");
       if (error instanceof ApiFail) {
         const resp = error.response as unknown as Record<string, unknown>;
         if (Array.isArray(resp?.message) && resp.message[0]?.message) {
@@ -155,6 +158,7 @@ export function FundContractHoldSheet({
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent
         side="right"
+        closeLabel={tCommon("close")}
         className="w-full sm:max-w-lg overflow-y-auto p-6 flex flex-col justify-between font-sans border-l border-border bg-background shadow-2xl z-50"
       >
         <div className="space-y-5">
@@ -164,20 +168,21 @@ export function FundContractHoldSheet({
                 <ShieldCheck className="size-5" />
               </div>
               <SheetTitle className="text-lg font-bold text-foreground">
-                Authorize Contract Escrow Hold
+                {t("title")}
               </SheetTitle>
             </div>
             <SheetDescription className="mt-1 text-xs text-muted-foreground">
-              Select at least 1 milestone (or all milestones) plus the 3%
-              contract fee to place an escrow card hold on Stripe Checkout before signing.
+              {t("description")}
             </SheetDescription>
           </SheetHeader>
 
           {/* Quick Selection Buttons */}
           <div className="flex items-center justify-between text-xs">
             <span className="font-semibold text-foreground">
-              Select Milestones to Fund ({selectedIds.length}/
-              {pendingMilestones.length})
+              {t("selectMilestones", {
+                selected: selectedIds.length,
+                total: pendingMilestones.length,
+              })}
             </span>
             <div className="flex gap-2">
               <button
@@ -185,7 +190,7 @@ export function FundContractHoldSheet({
                 onClick={selectFirstOnly}
                 className="text-[11px] font-medium text-[#0069D3] hover:underline cursor-pointer"
               >
-                First milestone only
+                {t("firstOnly")}
               </button>
               <span className="text-muted-foreground">•</span>
               <button
@@ -193,7 +198,7 @@ export function FundContractHoldSheet({
                 onClick={selectAllPending}
                 className="text-[11px] font-medium text-[#0069D3] hover:underline cursor-pointer"
               >
-                Select all
+                {t("selectAll")}
               </button>
             </div>
           </div>
@@ -222,7 +227,7 @@ export function FundContractHoldSheet({
                         {m.title}
                       </p>
                       <p className="text-[11px] text-muted-foreground">
-                        Milestone #{index + 1}
+                        {t("milestoneIndex", { index: index + 1 })}
                       </p>
                     </div>
                   </div>
@@ -237,21 +242,21 @@ export function FundContractHoldSheet({
           {/* Financial Breakdown */}
           <div className="rounded-2xl border border-border/70 bg-muted/20 p-4 space-y-2 text-xs">
             <div className="flex justify-between text-muted-foreground">
-              <span>Selected Milestones ({selectedIds.length})</span>
+              <span>{t("selectedMilestones", { count: selectedIds.length })}</span>
               <span className="font-mono text-foreground">
                 {formatMoney(milestonesSubtotal)}
               </span>
             </div>
             <div className="flex justify-between text-muted-foreground">
               <span className="flex items-center gap-1">
-                Client Platform Fee (3% of contract)
+                {t("clientPlatformFee")}
               </span>
               <span className="font-mono text-foreground">
                 {formatMoney(clientFeeAmount)}
               </span>
             </div>
             <div className="pt-2 border-t border-border/60 flex justify-between text-sm font-bold">
-              <span className="text-foreground">Total Authorization Hold</span>
+              <span className="text-foreground">{t("totalHold")}</span>
               <span className="font-mono text-[#0069D3]">
                 {formatMoney(totalHoldAmount)}
               </span>
@@ -263,13 +268,9 @@ export function FundContractHoldSheet({
             <CheckCircle2 className="size-4 text-[#0069D3] shrink-0 mt-0.5" />
             <div>
               <p className="font-semibold text-foreground mb-0.5">
-                Stripe Hosted Checkout &amp; Card Hold
+                {t("stripeExplainTitle")}
               </p>
-              <p>
-                You will be redirected to Stripe Checkout to authorize the hold and save your card.
-                Funds are not charged until the Freelancer signs the contract.
-                If declined or expired, the hold releases automatically with $0 refund fee.
-              </p>
+              <p>{t("stripeExplainBody")}</p>
             </div>
           </div>
         </div>
@@ -282,7 +283,7 @@ export function FundContractHoldSheet({
             disabled={isRedirecting}
             className="rounded-full text-xs cursor-pointer"
           >
-            Cancel
+            {tCommon("cancel")}
           </Button>
           {canCreateHoldIntent && (
             <Button
@@ -296,7 +297,7 @@ export function FundContractHoldSheet({
               ) : (
                 <ExternalLink className="size-3.5" />
               )}
-              Proceed to Stripe Checkout ({formatMoney(totalHoldAmount)})
+              {t("proceedCheckout", { amount: formatMoney(totalHoldAmount) })}
             </Button>
           )}
         </SheetFooter>

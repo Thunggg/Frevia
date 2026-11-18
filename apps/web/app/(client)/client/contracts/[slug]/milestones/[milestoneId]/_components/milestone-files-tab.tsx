@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { useFormatter } from "next-intl";
+import { useFormatter, useTranslations } from "next-intl";
 import {
   Download,
   FileText,
@@ -31,6 +31,7 @@ export function MilestoneFilesTab({
   onFilesChanged,
 }: MilestoneFilesTabProps) {
   const format = useFormatter();
+  const t = useTranslations("milestoneWorkspace.files");
   const { can } = useActionPermission();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
@@ -57,7 +58,7 @@ export function MilestoneFilesTab({
     if (!selectedFile) return;
 
     if (selectedFile.size > 25 * 1024 * 1024) {
-      toastError({ message: "File exceeds 25MB limit." });
+      toastError({ message: t("fileTooLarge") });
       return;
     }
 
@@ -68,14 +69,14 @@ export function MilestoneFilesTab({
         milestoneId,
         selectedFile,
       );
-      toastSuccess({ message: `File "${selectedFile.name}" uploaded successfully!` });
+      toastSuccess({ message: t("uploaded", { name: selectedFile.name }) });
       onFilesChanged();
     } catch (error) {
       toastError({
         message:
           error instanceof ApiFail
             ? error.response.error.message
-            : "Failed to upload file. Please try again.",
+            : t("uploadFailed"),
       });
     } finally {
       setUploading(false);
@@ -86,7 +87,11 @@ export function MilestoneFilesTab({
   };
 
   const handleDeleteFile = async (file: MilestoneFileType) => {
-    if (!window.confirm(`Are you sure you want to delete file "${file.fileName || "this file"}"?`)) {
+    if (
+      !window.confirm(
+        t("deleteConfirm", { name: file.fileName || t("thisFile") }),
+      )
+    ) {
       return;
     }
 
@@ -97,14 +102,16 @@ export function MilestoneFilesTab({
         milestoneId,
         file.id,
       );
-      toastSuccess({ message: `File "${file.fileName}" deleted.` });
+      toastSuccess({
+        message: t("deleted", { name: file.fileName || t("thisFile") }),
+      });
       onFilesChanged();
     } catch (error) {
       toastError({
         message:
           error instanceof ApiFail
             ? error.response.error.message
-            : "Failed to delete file.",
+            : t("deleteFailed"),
       });
     } finally {
       setDeletingId(null);
@@ -115,10 +122,10 @@ export function MilestoneFilesTab({
     return (
       <div className="py-8 text-center space-y-2">
         <h3 className="text-sm font-semibold text-foreground">
-          Không có quyền xem tệp đính kèm
+          {t("noPermissionTitle")}
         </h3>
         <p className="text-xs text-muted-foreground max-w-md mx-auto">
-          Tài khoản của bạn chưa được cấp quyền xem danh sách tệp của milestone này.
+          {t("noPermissionDesc")}
         </p>
       </div>
     );
@@ -130,10 +137,10 @@ export function MilestoneFilesTab({
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-border/50 pb-3">
         <div>
           <h3 className="text-xs font-medium text-foreground">
-            Milestone Shared Files
+            {t("heading")}
           </h3>
           <p className="text-[11px] text-muted-foreground mt-0.5">
-            Documents, assets, and project files attached to this milestone
+            {t("subheading")}
           </p>
         </div>
 
@@ -154,12 +161,12 @@ export function MilestoneFilesTab({
               {uploading ? (
                 <>
                   <Loader2 className="mr-1.5 size-3.5 animate-spin" />
-                  Uploading...
+                  {t("uploading")}
                 </>
               ) : (
                 <>
                   <UploadCloud className="mr-1.5 size-3.5" />
-                  Upload File
+                  {t("uploadFile")}
                 </>
               )}
             </Button>
@@ -180,11 +187,13 @@ export function MilestoneFilesTab({
                 </div>
                 <div className="min-w-0">
                   <span className="text-xs font-semibold text-foreground block truncate max-w-sm">
-                    {file.fileName || `File #${file.id}`}
+                    {file.fileName || t("fileFallback", { id: file.id })}
                   </span>
                   <div className="flex items-center gap-2 text-[11px] text-muted-foreground">
                     {file.createdAt && (
-                      <span>Uploaded {formatDate(file.createdAt)}</span>
+                      <span>
+                        {t("uploadedAt", { date: formatDate(file.createdAt) })}
+                      </span>
                     )}
                   </div>
                 </div>
@@ -205,7 +214,7 @@ export function MilestoneFilesTab({
                       download
                     >
                       <Download className="size-3.5 mr-1" />
-                      Download
+                      {t("download")}
                     </a>
                   </Button>
                 )}
@@ -233,10 +242,10 @@ export function MilestoneFilesTab({
         <div className="py-12 text-center space-y-2">
           <FileText className="size-6 mx-auto text-muted-foreground/60" />
           <h4 className="text-xs font-semibold text-foreground">
-            No files attached yet
+            {t("emptyTitle")}
           </h4>
           <p className="text-xs text-muted-foreground max-w-sm mx-auto">
-            Upload any briefs, assets, or specifications needed for this milestone.
+            {t("emptyDesc")}
           </p>
         </div>
       )}

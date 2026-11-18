@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { useFormatter } from "next-intl";
+import { useFormatter, useTranslations } from "next-intl";
 import { useQueryClient } from "@tanstack/react-query";
 import {
   FileText,
@@ -32,6 +32,7 @@ export function ContractSharedFilesSidebar({
 }: ContractSharedFilesSidebarProps) {
   const queryClient = useQueryClient();
   const format = useFormatter();
+  const t = useTranslations("contractWorkspace.sharedFilesSidebar");
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { can } = useActionPermission();
   const canViewSharedFiles = can("GET", "/api/contracts/:contractId/files");
@@ -68,7 +69,7 @@ export function ContractSharedFilesSidebar({
     if (!file || !canUploadSharedFile) return;
 
     if (file.size > 25 * 1024 * 1024) {
-      toastError({ message: "File size exceeds the 25MB limit." });
+      toastError({ message: t("fileTooLarge") });
       return;
     }
 
@@ -78,9 +79,9 @@ export function ContractSharedFilesSidebar({
       await queryClient.invalidateQueries({
         queryKey: ["contract-shared-files", contractId],
       });
-      toastSuccess({ message: `Uploaded "${file.name}" successfully!` });
+      toastSuccess({ message: t("uploaded", { name: file.name }) });
     } catch {
-      toastError({ message: "Failed to upload file. Please try again." });
+      toastError({ message: t("uploadFailed") });
     } finally {
       setIsUploading(false);
       if (fileInputRef.current) {
@@ -97,9 +98,9 @@ export function ContractSharedFilesSidebar({
       await queryClient.invalidateQueries({
         queryKey: ["contract-shared-files", contractId],
       });
-      toastSuccess({ message: `Deleted "${fileName}".` });
+      toastSuccess({ message: t("deleted", { name: fileName }) });
     } catch {
-      toastError({ message: "Failed to delete file. Please try again." });
+      toastError({ message: t("deleteFailed") });
     } finally {
       setDeletingId(null);
     }
@@ -116,7 +117,7 @@ export function ContractSharedFilesSidebar({
         <div className="flex items-center gap-2">
           <Paperclip className="size-4 text-[#0069D3]" />
           <h3 className="text-xs font-bold uppercase tracking-wider text-foreground">
-            Shared Files
+            {t("title")}
           </h3>
           <span className="rounded-full bg-muted px-2 py-0.5 text-[10px] font-semibold text-muted-foreground">
             {sharedFiles.length}
@@ -143,7 +144,7 @@ export function ContractSharedFilesSidebar({
               ) : (
                 <UploadCloud className="mr-1.5 size-3.5" />
               )}
-              Upload
+              {t("upload")}
             </Button>
           </div>
         )}
@@ -153,7 +154,7 @@ export function ContractSharedFilesSidebar({
       {sharedFiles.length > 0 ? (
         <div className="space-y-2 max-h-72 overflow-y-auto pr-1">
           {sharedFiles.map((file) => {
-            const fileName = file.fileName || "Attachment";
+            const fileName = file.fileName || t("attachmentFallback");
             const fileUrl = file.fileUrl || "#";
 
             return (
@@ -185,7 +186,7 @@ export function ContractSharedFilesSidebar({
                     target="_blank"
                     rel="noopener noreferrer"
                     download
-                    title="Download file"
+                    title={t("downloadTooltip")}
                     className="flex size-7 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
                   >
                     <Download className="size-3.5" />
@@ -196,7 +197,7 @@ export function ContractSharedFilesSidebar({
                     <button
                       onClick={() => handleDeleteFile(file.id, fileName)}
                       disabled={deletingId === file.id}
-                      title="Delete file"
+                      title={t("deleteTooltip")}
                       className="flex size-7 items-center justify-center rounded-lg text-muted-foreground hover:bg-rose-50 hover:text-rose-600 dark:hover:bg-rose-950/40 transition-colors cursor-pointer"
                     >
                       {deletingId === file.id ? (
@@ -215,10 +216,10 @@ export function ContractSharedFilesSidebar({
         <div className="rounded-xl border border-dashed border-border/70 p-6 text-center">
           <Paperclip className="mx-auto size-6 text-muted-foreground/60 mb-2" />
           <p className="text-xs font-medium text-muted-foreground">
-            No shared files yet
+            {t("emptyTitle")}
           </p>
           <p className="text-[11px] text-muted-foreground/80 mt-1">
-            Upload contract specifications, assets, or deliverables here.
+            {t("emptyHint")}
           </p>
         </div>
       )}

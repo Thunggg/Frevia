@@ -26,6 +26,7 @@ export function isAdministrativePermission(permission: string): boolean {
 
   return (
     cleanPath.startsWith("/api/admin") ||
+    cleanPath.startsWith("/api/expert/disputes") ||
     cleanPath.startsWith("/api/forums/admin") ||
     cleanPath.startsWith("/api/users") ||
     cleanPath.startsWith("/api/roles") ||

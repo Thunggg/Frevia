@@ -41,6 +41,7 @@ export function EditContractSheet({
 }: EditContractSheetProps) {
   const queryClient = useQueryClient();
   const t = useTranslations("editContract");
+  const tExtra = useTranslations("contractWorkspace.editExtra");
   const tCommon = useTranslations("common");
   const format = useFormatter();
   const { can } = useActionPermission();
@@ -89,18 +90,20 @@ export function EditContractSheet({
     }
 
     if (!expiresAt) {
-      toastError({ message: "Contract end date is required" });
+      toastError({ message: tExtra("endDateRequired") });
       return;
     }
 
     if (expiresAt < todayStr) {
-      toastError({ message: "Contract end date cannot be in the past" });
+      toastError({ message: tExtra("endDatePast") });
       return;
     }
 
     if (maxMilestoneDateStr && expiresAt < maxMilestoneDateStr) {
       toastError({
-        message: `Contract end date cannot be earlier than existing milestone due date (${maxMilestoneDateStr})`,
+        message: tExtra("endDateBeforeMilestone", {
+          date: maxMilestoneDateStr,
+        }),
       });
       return;
     }
@@ -230,7 +233,7 @@ export function EditContractSheet({
               {(Boolean(contract.holdPaymentIntentId) ||
                 contract.status !== "AWAITING_PAYMENT") && (
                 <p className="mt-1 text-[11px] text-amber-600">
-                  Total budget cannot be edited after the escrow hold is authorized.
+                  {tExtra("budgetLockedHint")}
                 </p>
               )}
             </div>
@@ -238,7 +241,7 @@ export function EditContractSheet({
             {/* Expiration Date */}
             <div>
               <label className="text-xs font-semibold text-foreground">
-                Contract End Date <span className="text-red-500">*</span>
+                {tExtra("endDateLabel")} <span className="text-red-500">*</span>
               </label>
               <input
                 type="date"
@@ -250,7 +253,7 @@ export function EditContractSheet({
               />
               {maxMilestoneDateStr && (
                 <p className="mt-1 text-[11px] text-muted-foreground">
-                  Must be on or after the latest milestone due date ({maxMilestoneDateStr}).
+                  {tExtra("endDateMinHint", { date: maxMilestoneDateStr })}
                 </p>
               )}
             </div>

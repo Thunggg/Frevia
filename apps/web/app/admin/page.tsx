@@ -63,11 +63,6 @@ export default async function AdminDashboardPage() {
     const userMods = user?.permissionModules ?? [];
 
     if (
-      hasMenuPermission(userPerms, userMods, ["/api/admin/disputes"])
-    ) {
-      redirect("/admin/disputes");
-    }
-    if (
       hasMenuPermission(userPerms, userMods, [
         "/api/admin/identity-verifications",
       ])

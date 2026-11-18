@@ -1,6 +1,6 @@
 "use client";
 
-import { useFormatter } from "next-intl";
+import { useFormatter, useTranslations } from "next-intl";
 import {
   Check,
   CheckCircle2,
@@ -51,11 +51,13 @@ export function MilestoneSubmissionsTab({
   onRefund,
 }: MilestoneSubmissionsTabProps) {
   const format = useFormatter();
+  const t = useTranslations("milestoneWorkspace.submissions");
+  const tCard = useTranslations("milestoneWorkspace.card");
+  const tOverview = useTranslations("milestoneWorkspace.overview");
   const { can, canAny } = useActionPermission();
   const isClient = !isFreelancer;
 
   const canViewSubmissions = can("GET", "/api/contracts/:contractId/milestones/:milestoneId/submissions");
-  const canViewSubmissionDetail = can("GET", "/api/contracts/:contractId/milestones/:milestoneId/submissions/:id");
   const canApprove = can("PATCH", "/api/contracts/:contractId/milestones/:milestoneId/submissions/:id/approve");
   const canRequestChanges = can("PATCH", "/api/contracts/:contractId/milestones/:milestoneId/submissions/:id/request-changes");
   const canReview = canApprove || canRequestChanges;
@@ -84,7 +86,7 @@ export function MilestoneSubmissionsTab({
           className="rounded-full bg-[#0069D3] hover:bg-[#0055b3] text-white text-xs font-normal h-7 px-3.5 cursor-pointer self-start sm:self-auto"
         >
           <CreditCard className="mr-1.5 size-3" />
-          Fund Escrow
+          {tCard("fundEscrow")}
         </Button>
       );
     }
@@ -96,7 +98,7 @@ export function MilestoneSubmissionsTab({
           className="rounded-full bg-[#0069D3] hover:bg-[#0055b3] text-white text-xs font-normal h-7 px-3.5 cursor-pointer self-start sm:self-auto"
         >
           <FileCheck className="mr-1.5 size-3" />
-          Review Delivery
+          {tCard("reviewDelivery")}
         </Button>
       );
     }
@@ -114,7 +116,7 @@ export function MilestoneSubmissionsTab({
           className="rounded-full bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-normal h-7 px-3.5 cursor-pointer self-start sm:self-auto"
         >
           <Check className="mr-1.5 size-3" />
-          Release Payment
+          {tCard("releasePayment")}
         </Button>
       );
     }
@@ -134,7 +136,7 @@ export function MilestoneSubmissionsTab({
           className="rounded-full border-rose-200 dark:border-rose-800 text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/20 text-xs font-normal h-7 px-3.5 cursor-pointer self-start sm:self-auto"
         >
           <RotateCcw className="mr-1.5 size-3" />
-          Refund Escrow
+          {tCard("refundEscrow")}
         </Button>
       );
     }
@@ -158,7 +160,7 @@ export function MilestoneSubmissionsTab({
           ) : (
             <Play className="mr-1.5 size-3" />
           )}
-          Start Milestone
+          {tCard("startMilestone")}
         </Button>
       );
     }
@@ -184,12 +186,12 @@ export function MilestoneSubmissionsTab({
           {isResubmit ? (
             <>
               <RotateCcw className="mr-1.5 size-3" />
-              Resubmit
+              {tCard("resubmit")}
             </>
           ) : (
             <>
               <Upload className="mr-1.5 size-3" />
-              Deliver Work
+              {tCard("deliverWork")}
             </>
           )}
         </Button>
@@ -216,20 +218,20 @@ export function MilestoneSubmissionsTab({
       case "APPROVED":
         return (
           <span className="inline-flex items-center gap-1 text-xs text-emerald-600 dark:text-emerald-400 font-medium">
-            <CheckCircle2 className="size-3.5" /> Approved
+            <CheckCircle2 className="size-3.5" /> {t("statusApproved")}
           </span>
         );
       case "CHANGES_REQUESTED":
         return (
           <span className="inline-flex items-center gap-1 text-xs text-amber-600 dark:text-amber-400 font-medium">
-            <RotateCcw className="size-3.5" /> Revisions Requested
+            <RotateCcw className="size-3.5" /> {t("statusChanges")}
           </span>
         );
       case "SUBMITTED":
       default:
         return (
           <span className="inline-flex items-center gap-1 text-xs text-[#0069D3] dark:text-blue-400 font-medium">
-            <FileCheck className="size-3.5" /> In Review
+            <FileCheck className="size-3.5" /> {t("statusInReview")}
           </span>
         );
     }
@@ -239,10 +241,10 @@ export function MilestoneSubmissionsTab({
     return (
       <div className="py-8 text-center space-y-2">
         <h3 className="text-xs font-medium text-foreground">
-          Không có quyền xem danh sách bài nộp
+          {t("noPermissionTitle")}
         </h3>
         <p className="text-xs text-muted-foreground max-w-md mx-auto">
-          Tài khoản của bạn chưa được cấp quyền xem danh sách các bài nộp deliverable của milestone này.
+          {t("noPermissionDesc")}
         </p>
       </div>
     );
@@ -254,10 +256,10 @@ export function MilestoneSubmissionsTab({
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-border/40 pb-2.5">
         <div>
           <h3 className="text-xs font-semibold text-foreground">
-            Deliverables & Submissions History
+            {t("heading")}
           </h3>
           <p className="text-[11px] text-muted-foreground">
-            History of submitted deliverables and review decisions
+            {t("subheading")}
           </p>
         </div>
 
@@ -276,11 +278,11 @@ export function MilestoneSubmissionsTab({
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                   <div className="flex items-center gap-2">
                     <span className="font-mono text-xs font-medium text-foreground">
-                      Delivery #{attemptNumber}
+                      {t("deliveryNumber", { number: attemptNumber })}
                     </span>
                     {isLatest && (
                       <span className="text-[10px] text-[#0069D3] font-medium">
-                        (Latest)
+                        {t("latestBadge")}
                       </span>
                     )}
                     <span className="text-muted-foreground">•</span>
@@ -293,13 +295,12 @@ export function MilestoneSubmissionsTab({
                 </div>
 
                 {/* Freelancer Notes, Links & Files */}
-                {canViewSubmissionDetail && (
-                  <div className="space-y-2">
+                <div className="space-y-2">
                     {/* Freelancer Notes */}
                     {sub.message && (
                       <div className="space-y-0.5">
                         <span className="text-xs text-muted-foreground">
-                          Notes:
+                          {t("notesLabel")}
                         </span>
                         <p className="pl-3 border-l-2 border-border/60 py-0.5 text-xs text-foreground leading-relaxed whitespace-pre-wrap">
                           {sub.message}
@@ -311,7 +312,7 @@ export function MilestoneSubmissionsTab({
                     {sub.links && sub.links.length > 0 && (
                       <div className="space-y-1">
                         <span className="text-xs text-muted-foreground">
-                          Links:
+                          {t("linksLabel")}
                         </span>
                         <div className="flex flex-wrap gap-2">
                           {sub.links.map((link, lIdx) => (
@@ -334,7 +335,7 @@ export function MilestoneSubmissionsTab({
                     {sub.files && sub.files.length > 0 && (
                       <div className="space-y-1">
                         <span className="text-xs text-muted-foreground">
-                          Files:
+                          {t("filesLabel")}
                         </span>
                         <div className="flex flex-wrap gap-2">
                           {sub.files.map((item) => (
@@ -344,7 +345,8 @@ export function MilestoneSubmissionsTab({
                             >
                               <FileText className="size-3.5 text-[#0069D3]" />
                               <span className="truncate max-w-[220px]">
-                                {item.file?.fileName || `File #${item.fileId}`}
+                                {item.file?.fileName ||
+                                  t("fileFallback", { id: item.fileId })}
                               </span>
                               {item.file?.fileUrl && (
                                 <a
@@ -353,7 +355,7 @@ export function MilestoneSubmissionsTab({
                                   rel="noopener noreferrer"
                                   download
                                   className="text-muted-foreground hover:text-foreground ml-1"
-                                  title="Download"
+                                  title={t("download")}
                                 >
                                   <Download className="size-3.5" />
                                 </a>
@@ -363,15 +365,14 @@ export function MilestoneSubmissionsTab({
                         </div>
                       </div>
                     )}
-                  </div>
-                )}
+                </div>
 
                 {/* Review Feedback: Approved or Revisions requested */}
                 {sub.status === "APPROVED" && sub.reviewedAt && (
                   <div className="text-xs flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400">
                     <CheckCircle2 className="size-3.5 shrink-0" />
                     <span>
-                      Approved on {formatDate(sub.reviewedAt)}. Payment released.
+                      {t("approvedOn", { date: formatDate(sub.reviewedAt) })}
                     </span>
                   </div>
                 )}
@@ -379,14 +380,16 @@ export function MilestoneSubmissionsTab({
                 {sub.changeRequestMessage && (
                   <div className="border-l-2 border-amber-500 pl-3 py-1 text-xs space-y-0.5">
                     <span className="font-medium text-amber-600 block">
-                      Client Revision Feedback:
+                      {t("clientFeedback")}
                     </span>
                     <p className="text-foreground leading-relaxed whitespace-pre-wrap">
                       {sub.changeRequestMessage}
                     </p>
                     {sub.changeRequestDueDate && (
                       <span className="block text-[11px] text-muted-foreground">
-                        Target revision deadline: {formatDate(sub.changeRequestDueDate)}
+                        {t("targetRevisionDeadline", {
+                          date: formatDate(sub.changeRequestDueDate),
+                        })}
                       </span>
                     )}
                   </div>
@@ -401,7 +404,7 @@ export function MilestoneSubmissionsTab({
                       className="rounded-full bg-[#0069D3] hover:bg-[#0055b3] text-white text-xs font-normal h-7 px-3.5 cursor-pointer"
                     >
                       <Check className="mr-1.5 size-3" />
-                      Review & Approve Delivery
+                      {tOverview("reviewApproveDelivery")}
                     </Button>
                   </div>
                 )}
@@ -413,10 +416,10 @@ export function MilestoneSubmissionsTab({
         <div className="py-10 text-center space-y-1.5">
           <Clock className="size-5 mx-auto text-muted-foreground/60" />
           <h4 className="text-xs font-medium text-foreground">
-            No submissions yet
+            {t("emptyTitle")}
           </h4>
           <p className="text-xs text-muted-foreground max-w-sm mx-auto">
-            Submissions will appear here once the freelancer delivers work for this milestone.
+            {t("emptyDesc")}
           </p>
         </div>
       )}
