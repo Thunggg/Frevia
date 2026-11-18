@@ -7,6 +7,8 @@ import { contractApiRequest, extractContractData } from "@/apiRequests/contract"
 import { paymentApiRequest } from "@/apiRequests/payment";
 import { useActionPermission } from "@/hooks/use-action-permission";
 import { ApiFail } from "@/lib/http";
+import { ContractChatPopup } from "../../../_components/contract-chat-popup";
+import { useCreateConversation } from "@/hooks/use-conversation";
 import type {
   ContractDetailType,
   GetSubmissionResponseType,
@@ -30,6 +32,61 @@ interface MilestoneDetailContentProps {
   initialSubmissions: GetSubmissionResponseType[];
   initialFiles: MilestoneFileType[];
   basePath?: string;
+  currentUserId?: number | null;
+  accessToken?: string | null;
+  socketUrl?: string;
+}
+
+function MilestoneChatPopup({
+  counterpartyId,
+  counterpartyName,
+  counterpartyAvatarUrl,
+  currentUserId,
+  accessToken,
+  socketUrl,
+}: {
+  counterpartyId: number;
+  counterpartyName: string;
+  counterpartyAvatarUrl?: string | null;
+  currentUserId?: number | null;
+  accessToken?: string | null;
+  socketUrl?: string;
+}) {
+  const [open, setOpen] = useState(false);
+  const [conversationId, setConversationId] = useState<number | null>(null);
+  const [isStartingChat, setIsStartingChat] = useState(false);
+  const createConversation = useCreateConversation();
+
+  const openChat = async (targetUserId: number) => {
+    setIsStartingChat(true);
+    try {
+      const conv = await createConversation.mutateAsync(targetUserId);
+      if (conv?.id) {
+        setConversationId(conv.id);
+        setOpen(true);
+      }
+    } catch {
+      toastError({ message: "Could not open conversation. Try again." });
+    } finally {
+      setIsStartingChat(false);
+    }
+  };
+
+  return (
+    <ContractChatPopup
+      open={open}
+      onOpenChange={setOpen}
+      conversationId={conversationId}
+      counterpartyId={counterpartyId}
+      counterpartyName={counterpartyName}
+      counterpartyAvatarUrl={counterpartyAvatarUrl}
+      currentUserId={currentUserId}
+      accessToken={accessToken}
+      socketUrl={socketUrl}
+      isStartingChat={isStartingChat}
+      onOpenChat={openChat}
+    />
+  );
 }
 
 export function MilestoneDetailContent({
@@ -38,6 +95,9 @@ export function MilestoneDetailContent({
   initialSubmissions,
   initialFiles,
   basePath = "/client",
+  currentUserId,
+  accessToken,
+  socketUrl,
 }: MilestoneDetailContentProps) {
   const queryClient = useQueryClient();
   const { can } = useActionPermission();
@@ -102,6 +162,13 @@ export function MilestoneDetailContent({
     initialData: initialFiles,
     enabled: canViewFiles,
   });
+
+  const counterparty = isFreelancer ? contract.client : contract.freelancer;
+  const counterpartyId = isFreelancer
+    ? contract.clientId
+    : contract.freelancerId;
+  const counterpartyName = counterparty?.profile?.displayName || "Counterpart";
+  const counterpartyAvatarUrl = counterparty?.profile?.avatarUrl;
 
   const latestSubmission = submissions.length > 0 ? submissions[0] : null;
 
@@ -332,6 +399,16 @@ export function MilestoneDetailContent({
           submission={selectedSubmissionToReview}
         />
       )}
+
+      {/* Floating Messenger-style chat popup (bottom-right) */}
+      <MilestoneChatPopup
+        counterpartyId={counterpartyId}
+        counterpartyName={counterpartyName}
+        counterpartyAvatarUrl={counterpartyAvatarUrl}
+        currentUserId={currentUserId}
+        accessToken={accessToken}
+        socketUrl={socketUrl}
+      />
     </div>
   );
 }

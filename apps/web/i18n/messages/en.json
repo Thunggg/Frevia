@@ -2491,6 +2491,18 @@
     "postsPerUser": "Posts per User"
   },
   "notificationText": {
+    "MESSAGE_NEW": {
+      "title": "New message",
+      "message": "{name}: {preview}"
+    },
+    "POST_COMMENT": {
+      "title": "New comment on your post",
+      "message": "{name} commented on your post."
+    },
+    "POST_LIKE": {
+      "title": "New like on your post",
+      "message": "{name} liked your post."
+    },
     "NEW_FOLLOWER": {
       "title": "You have a new follower",
       "message": "{name} started following you."

@@ -2491,6 +2491,18 @@
     "postsPerUser": "Bài viết mỗi người dùng"
   },
   "notificationText": {
+    "MESSAGE_NEW": {
+      "title": "Tin nhắn mới",
+      "message": "{name}: {preview}"
+    },
+    "POST_COMMENT": {
+      "title": "Bình luận mới trên bài viết của bạn",
+      "message": "{name} đã bình luận về bài viết của bạn."
+    },
+    "POST_LIKE": {
+      "title": "Lượt thích mới trên bài viết của bạn",
+      "message": "{name} đã thích bài viết của bạn."
+    },
     "NEW_FOLLOWER": {
       "title": "Bạn có người theo dõi mới",
       "message": "{name} đã bắt đầu theo dõi bạn."

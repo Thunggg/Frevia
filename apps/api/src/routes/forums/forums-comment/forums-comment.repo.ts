@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { NotificationType } from '@prisma/client';
 import {
   EditForumCommentType,
   ForumCommentFilterType,
@@ -19,7 +20,7 @@ function castJsonStringArray(value: unknown): string[] | null {
 export class ForumCommentRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  async findPostById(postId: number): Promise<{ id: number } | null> {
+  async findPostById(postId: number) {
     return this.prisma.forumPost.findFirst({
       where: {
         id: postId,
@@ -27,6 +28,64 @@ export class ForumCommentRepository {
       },
       select: {
         id: true,
+        userId: true,
+        slug: true,
+        categoryId: true,
+        category: {
+          select: {
+            id: true,
+            slug: true,
+          },
+        },
+      },
+    });
+  }
+
+  // Thông báo cho chủ bài viết khi có bình luận mới
+  async createPostCommentNotification(input: {
+    postAuthorId: number;
+    commenterId: number;
+    commenterName: string;
+    postId: number;
+    postSlug: string;
+    categoryId: number | null;
+    categorySlug: string | null;
+    commentId: number;
+  }) {
+    const {
+      postAuthorId,
+      commenterId,
+      commenterName,
+      postId,
+      postSlug,
+      categoryId,
+      categorySlug,
+      commentId,
+    } = input;
+
+    if (postAuthorId === commenterId) {
+      return null;
+    }
+
+    const categorySegment =
+      categorySlug && categoryId
+        ? `${categorySlug}-${categoryId}`
+        : `category-${categoryId ?? postId}`;
+    const href = `/forum/${categorySegment}/${postSlug}-${postId}`;
+
+    return this.prisma.notification.create({
+      data: {
+        userId: postAuthorId,
+        type: NotificationType.POST_COMMENT,
+        title: 'New comment on your post',
+        message: `${commenterName} commented on your post.`,
+        data: {
+          href,
+          postId,
+          commentId,
+          commenterId,
+          commenterName,
+        },
       },
     });
   }

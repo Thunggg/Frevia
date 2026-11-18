@@ -39,16 +39,24 @@ import { MilestoneCard } from "./milestone-card";
 import { SubmitMilestoneDialog } from "./submit-milestone-dialog";
 import { ReviewSubmissionDialog } from "./review-submission-dialog";
 import { FundMilestoneDialog } from "./fund-milestone-dialog";
+import { ContractChatPopup } from "../../_components/contract-chat-popup";
+import { useCreateConversation } from "@/hooks/use-conversation";
 
 export interface MilestonesPageContentProps {
   initialContract: ContractDetailType;
   initialSharedFiles?: SharedFileType[] | null;
   basePath?: string;
+  currentUserId?: number | null;
+  accessToken?: string | null;
+  socketUrl?: string;
 }
 
 export function MilestonesPageContent({
   initialContract,
   basePath = "/client",
+  currentUserId,
+  accessToken,
+  socketUrl,
 }: MilestonesPageContentProps) {
   const router = useRouter();
   const queryClient = useQueryClient();
@@ -141,6 +149,13 @@ export function MilestonesPageContent({
     }
     return list;
   }, [milestones, statusFilter, searchQuery]);
+
+  const counterparty = isFreelancer ? contract.client : contract.freelancer;
+  const counterpartyId = isFreelancer
+    ? contract.clientId
+    : contract.freelancerId;
+  const counterpartyName = counterparty?.profile?.displayName || "Counterpart";
+  const counterpartyAvatarUrl = counterparty?.profile?.avatarUrl;
 
   // Milestone Actions
   const handleStartWork = async (milestone: MilestoneType) => {
@@ -246,6 +261,29 @@ export function MilestonesPageContent({
             ? error.response.error.message
             : "Failed to delete milestone.",
       });
+    }
+  };
+
+  const [chatOpen, setChatOpen] = useState(false);
+  const [chatConversationId, setChatConversationId] = useState<number | null>(
+    null,
+  );
+  const [isStartingChat, setIsStartingChat] = useState(false);
+  const createConversation = useCreateConversation();
+
+  const openChatWith = async (targetUserId: number | null | undefined) => {
+    if (!targetUserId) return;
+    setIsStartingChat(true);
+    try {
+      const conv = await createConversation.mutateAsync(targetUserId);
+      if (conv?.id) {
+        setChatConversationId(conv.id);
+        setChatOpen(true);
+      }
+    } catch {
+      toastError({ message: "Could not open conversation. Try again." });
+    } finally {
+      setIsStartingChat(false);
     }
   };
 
@@ -610,6 +648,21 @@ export function MilestonesPageContent({
           milestone={milestoneToFund}
         />
       )}
+
+      {/* Floating Messenger-style chat popup (bottom-right) */}
+      <ContractChatPopup
+        open={chatOpen}
+        onOpenChange={setChatOpen}
+        conversationId={chatConversationId}
+        counterpartyId={counterpartyId}
+        counterpartyName={counterpartyName}
+        counterpartyAvatarUrl={counterpartyAvatarUrl}
+        currentUserId={currentUserId}
+        accessToken={accessToken}
+        socketUrl={socketUrl}
+        isStartingChat={isStartingChat}
+        onOpenChat={(targetUserId) => openChatWith(targetUserId)}
+      />
     </div>
   );
 }

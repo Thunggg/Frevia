@@ -7,6 +7,8 @@ import Link from "next/link";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { ChevronLeft } from "lucide-react";
 import { toastError, toastSuccess } from "@repo/ui/components/shadcn/toast";
+import { toast } from "@repo/ui/components/shadcn/sonner";
+import { conversationKeys, useConversationSocket } from "@/hooks/use-conversation";
 import { contractApiRequest, extractContractData } from "@/apiRequests/contract";
 import { paymentApiRequest } from "@/apiRequests/payment";
 import { useActionPermission } from "@/hooks/use-action-permission";
@@ -20,6 +22,7 @@ import { CONTRACT_STATUSES } from "../../_components";
 import { EditContractSheet } from "./edit-contract-sheet";
 import { ContractDocumentPaper } from "./contract-document-paper";
 import { ContractActionsSidebar } from "./contract-actions-sidebar";
+import { ContractChatPopup } from "./contract-chat-popup";
 import { ContractSharedFilesSidebar } from "./contract-shared-files-sidebar";
 import { ContractActionDialogs } from "./contract-action-dialogs";
 import { FundContractHoldSheet } from "./fund-contract-hold-sheet";
@@ -32,12 +35,18 @@ export interface ContractDetailProps {
   initialContract: ContractDetailType;
   initialSharedFiles?: GetSharedFilesResponseType | null;
   basePath?: string;
+  currentUserId?: number | null;
+  accessToken?: string | null;
+  socketUrl?: string;
 }
 
 export function ContractDetail({
   initialContract,
   initialSharedFiles,
   basePath = "/client",
+  currentUserId = null,
+  accessToken = null,
+  socketUrl = "",
 }: ContractDetailProps) {
   const router = useRouter();
   const queryClient = useQueryClient();
@@ -87,6 +96,10 @@ export function ContractDetail({
   const [isCancelling, setIsCancelling] = useState(false);
   const [isRejecting, setIsRejecting] = useState(false);
   const [isStartingChat, setIsStartingChat] = useState(false);
+  const [chatOpen, setChatOpen] = useState(false);
+  const [chatConversationId, setChatConversationId] = useState<number | null>(
+    null,
+  );
 
   // Sync Checkout Session on URL return
   const searchParams = useSearchParams();
@@ -157,13 +170,22 @@ export function ContractDetail({
     );
   }, [contract.milestones]);
 
+  const client = contract.client;
+  const clientName = client?.profile?.displayName || tRole("CLIENT");
+  const clientAvatarUrl = client?.profile?.avatarUrl;
+
   const freelancer = contract.freelancer;
   const freelancerName =
     freelancer?.profile?.displayName || tRole("FREELANCER");
   const avatarUrl = freelancer?.profile?.avatarUrl;
 
-  const client = contract.client;
-  const clientName = client?.profile?.displayName || tRole("CLIENT");
+  const counterpartyName = isFreelancer ? clientName : freelancerName;
+  const counterpartyAvatarUrl = isFreelancer
+    ? clientAvatarUrl
+    : avatarUrl;
+  const counterpartyId = isFreelancer
+    ? contract.clientId
+    : contract.freelancerId;
 
   const contractStatusText = (
     CONTRACT_STATUSES as readonly string[]
@@ -173,24 +195,20 @@ export function ContractDetail({
 
   // Chat Actions
   const createConversation = useCreateConversation();
+  const socketValue = useConversationSocket(
+    socketUrl,
+    accessToken ?? null,
+    currentUserId ?? null,
+  );
 
-  const handleMessageCounterparty = async () => {
-    const targetUserId = isFreelancer
-      ? contract.clientId
-      : contract.freelancerId;
-
+  const openChatWith = async (targetUserId: number | null | undefined) => {
     if (!targetUserId) return;
-
     setIsStartingChat(true);
     try {
       const conv = await createConversation.mutateAsync(targetUserId);
       if (conv?.id) {
-        const dest = conv.slug ?? conv.id;
-        router.push(
-          isFreelancer
-            ? `/freelancer/conversations/${dest}`
-            : `/client/conversations/${dest}`,
-        );
+        setChatConversationId(conv.id);
+        setChatOpen(true);
       }
     } catch {
       toastError({ message: "Could not open conversation. Try again." });
@@ -198,6 +216,46 @@ export function ContractDetail({
       setIsStartingChat(false);
     }
   };
+
+  const handleMessageCounterparty = async () => {
+    const targetUserId = isFreelancer
+      ? contract.clientId
+      : contract.freelancerId;
+    await openChatWith(targetUserId);
+  };
+
+  // Real-time message notification while on contract page
+  useEffect(() => {
+    const socket = socketValue.socket;
+    if (!socket) return;
+
+    const handler = (payload: {
+      conversationId: number;
+      message: { senderId: number; message?: string };
+    }) => {
+      if (payload?.message?.senderId === currentUserId) return;
+      if (chatOpen) return;
+      const conversations = queryClient.getQueryData<
+        { id: number; otherUser?: { profile?: { displayName?: string | null } } }[]
+      >(conversationKeys.list());
+      const conv = conversations?.find(
+        (c) => c.id === payload.conversationId,
+      );
+      const senderName =
+        conv?.otherUser?.profile?.displayName || "New message";
+      toast(senderName, {
+        description:
+          payload?.message?.message?.slice(0, 80) || "You have a new message",
+        position: "top-right",
+        duration: 4000,
+      });
+    };
+
+    socket.on("message:new", handler);
+    return () => {
+      socket.off("message:new", handler);
+    };
+  }, [socketValue.socket, currentUserId, chatOpen]);
 
   // Sign Action
   const handleSign = async () => {
@@ -472,6 +530,21 @@ export function ContractDetail({
           }}
         />
       )}
+
+      {/* Floating Messenger-style chat popup (bottom-right) */}
+      <ContractChatPopup
+        open={chatOpen}
+        onOpenChange={setChatOpen}
+        conversationId={chatConversationId}
+        counterpartyId={counterpartyId}
+        counterpartyName={counterpartyName}
+        counterpartyAvatarUrl={counterpartyAvatarUrl}
+        currentUserId={currentUserId}
+        accessToken={accessToken}
+        socketUrl={socketUrl}
+        isStartingChat={isStartingChat}
+        onOpenChat={(targetUserId) => openChatWith(targetUserId)}
+      />
 
       {/* All Action and Confirmation Dialogs */}
       <ContractActionDialogs

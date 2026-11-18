@@ -4,6 +4,7 @@ import { Header, type UserRole } from '@/components/header';
 import { Footer } from '@/components/footer';
 import { ClientSidebar } from '@/app/(client)/_components/client-sidebar';
 import { FreelancerSidebar } from '@/app/(freelancer)/_components/freelancer-sidebar';
+import { ForumTheme } from './forum-theme';
 
 async function resolveHeaderRole(
   user: Awaited<ReturnType<typeof authServerRequest.getMe>>,
@@ -27,6 +28,7 @@ export default async function ForumLayout({
   if (role === 'GUEST') {
     return (
       <div className="flex min-h-dvh flex-col bg-background font-sans">
+        <ForumTheme />
         <Header role={role} />
         <main className="flex-1">{children}</main>
         <Footer />
@@ -39,6 +41,7 @@ export default async function ForumLayout({
   return (
     <>
       <style>{`html, body { overflow: hidden; }`}</style>
+      <ForumTheme />
       <div className="flex h-dvh overflow-hidden bg-background font-sans">
         <Sidebar />
         <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
