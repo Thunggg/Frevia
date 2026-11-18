@@ -56,9 +56,11 @@ export class DisputeService {
   }
 
   private async requireArbitrator(roleName: string, userId?: number) {
-    if (roleName === RoleName.ADMIN) return;
     if (roleName === RoleName.EXPERT && userId !== undefined) {
       return this.requireActiveExpert(userId);
+    }
+    if (roleName !== RoleName.CLIENT && roleName !== RoleName.FREELANCER) {
+      return;
     }
     throw DisputeForbiddenException();
   }
