@@ -8,7 +8,6 @@ import {
   Bookmark,
   ChevronDown,
   CreditCard,
-  Eye,
   FileText,
   LogOut,
   Heart,
@@ -73,41 +72,42 @@ type NavLink = {
   excludePaths?: string[];
 };
 
-const roleConfig: Record<UserRole, { nameKey: NavRoleKey; links: NavLink[] }> = {
-  GUEST: {
-    nameKey: "guest",
-    links: [
-      { href: "/freelancer", labelKey: "findWork" },
-      { href: "/client/jobs/new", labelKey: "hireTalent" },
-      { href: "/forum", labelKey: "forum" },
-    ],
-  },
-  CLIENT: {
-    nameKey: "client",
-    links: [
-      {
-        href: "/client/jobs",
-        labelKey: "myJobs",
-        excludePaths: ["/client/jobs/new"],
-      },
-      { href: "/client/contracts", labelKey: "contracts" },
-      { href: "/client/payments", labelKey: "payments" },
-      { href: "/forum", labelKey: "forum" },
-    ],
-  },
-  FREELANCER: {
-    nameKey: "freelancer",
-    links: [
-      { href: "/freelancer", labelKey: "findWork" },
-      { href: "/freelancer?tab=saved-jobs", labelKey: "bookmarks" },
-      { href: "/freelancer/proposals", labelKey: "myProposals" },
-      { href: "/freelancer/contracts", labelKey: "contracts" },
-      { href: "/freelancer/payments", labelKey: "payments" },
-      { href: "/freelancer?tab=saved-searches", labelKey: "savedSearches" },
-      { href: "/forum", labelKey: "forum" },
-    ],
-  },
-};
+const roleConfig: Record<UserRole, { nameKey: NavRoleKey; links: NavLink[] }> =
+  {
+    GUEST: {
+      nameKey: "guest",
+      links: [
+        { href: "/freelancer", labelKey: "findWork" },
+        { href: "/client/jobs/new", labelKey: "hireTalent" },
+        { href: "/forum", labelKey: "forum" },
+      ],
+    },
+    CLIENT: {
+      nameKey: "client",
+      links: [
+        {
+          href: "/client/jobs",
+          labelKey: "myJobs",
+          excludePaths: ["/client/jobs/new"],
+        },
+        { href: "/client/contracts", labelKey: "contracts" },
+        { href: "/client/payments", labelKey: "payments" },
+        { href: "/forum", labelKey: "forum" },
+      ],
+    },
+    FREELANCER: {
+      nameKey: "freelancer",
+      links: [
+        { href: "/freelancer", labelKey: "findWork" },
+        { href: "/freelancer?tab=saved-jobs", labelKey: "bookmarks" },
+        { href: "/freelancer/proposals", labelKey: "myProposals" },
+        { href: "/freelancer/contracts", labelKey: "contracts" },
+        { href: "/freelancer/payments", labelKey: "payments" },
+        { href: "/freelancer?tab=saved-searches", labelKey: "savedSearches" },
+        { href: "/forum", labelKey: "forum" },
+      ],
+    },
+  };
 
 function isNavLinkActive(link: NavLink, pathname: string) {
   if (link.exact) return pathname === link.href;
@@ -149,12 +149,16 @@ function HeaderNavigation({
   const canViewDisputes = can("GET", "/api/disputes");
 
   const links = (roleConfig[role]?.links ?? []).filter((link) => {
-    if (link.href === "/freelancer/proposals" && !canViewProposals) return false;
+    if (link.href === "/freelancer/proposals" && !canViewProposals)
+      return false;
     if (link.href === "/client/jobs" && !canViewJobs) return false;
-    if (link.href === "/freelancer?tab=saved-jobs" && !canViewBookmarks) return false;
-    if (link.href === "/freelancer?tab=saved-searches" && !canViewSavedSearches) return false;
+    if (link.href === "/freelancer?tab=saved-jobs" && !canViewBookmarks)
+      return false;
+    if (link.href === "/freelancer?tab=saved-searches" && !canViewSavedSearches)
+      return false;
     if (
-      (link.href === "/client/contracts" || link.href === "/freelancer/contracts") &&
+      (link.href === "/client/contracts" ||
+        link.href === "/freelancer/contracts") &&
       !canViewContracts
     )
       return false;
@@ -273,14 +277,8 @@ function ProfileDropdown({ role }: { role: Exclude<UserRole, "GUEST"> }) {
   const canViewContracts = can("GET", "/api/contracts");
   const canViewSessions = can("GET", "/api/sessions");
   const canViewSocialLinks = can("GET", "/api/social-links");
-  const displayName =
-    me?.profile?.displayName || t(`roles.${profile.nameKey}`);
+  const displayName = me?.profile?.displayName || t(`roles.${profile.nameKey}`);
   const initial = displayName?.charAt(0)?.toUpperCase() ?? "?";
-  const publicProfileHref = me?.profile?.id
-    ? role === "FREELANCER"
-      ? `/profiles/${me.profile.id}`
-      : `/clients/${me.id}`
-    : null;
 
   const logout = async () => {
     await fetch("/api/auth/logout", { method: "POST" });
@@ -332,14 +330,6 @@ function ProfileDropdown({ role }: { role: Exclude<UserRole, "GUEST"> }) {
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        {publicProfileHref ? (
-          <DropdownMenuItem asChild>
-            <Link href={publicProfileHref} className="cursor-pointer">
-              <Eye className="size-4 text-muted-foreground" />
-              {t("viewPublicProfile")}
-            </Link>
-          </DropdownMenuItem>
-        ) : null}
         <DropdownMenuItem asChild>
           <Link
             href={
@@ -397,10 +387,7 @@ function ProfileDropdown({ role }: { role: Exclude<UserRole, "GUEST"> }) {
               </DropdownMenuItem>
             )}
             <DropdownMenuItem asChild>
-              <Link
-                href="/freelancer/payments"
-                className="cursor-pointer"
-              >
+              <Link href="/freelancer/payments" className="cursor-pointer">
                 <CreditCard className="size-4 text-muted-foreground" />
                 Billing & Payments
               </Link>
@@ -540,24 +527,9 @@ function MobileProfileNavigation({
 }) {
   const t = useTranslations("nav");
   const { data: me } = useMe();
-  const publicProfileHref = me?.profile?.id
-    ? role === "FREELANCER"
-      ? `/profiles/${me.profile.id}`
-      : `/clients/${me.id}`
-    : null;
 
   return (
     <div className="space-y-1">
-      {publicProfileHref ? (
-        <Link
-          href={publicProfileHref}
-          onClick={onNavigate}
-          className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-[13px] font-medium text-foreground/70 transition-colors hover:bg-black/[0.04] hover:text-foreground dark:hover:bg-white/[0.06]"
-        >
-          <Eye className="size-4 text-muted-foreground" />
-          {t("viewPublicProfile")}
-        </Link>
-      ) : null}
       {canAccessAdminPortal(me) && (
         <Link
           href="/admin"

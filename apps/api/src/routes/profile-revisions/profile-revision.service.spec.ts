@@ -61,6 +61,7 @@ describe('ProfileRevisionService', () => {
       }),
       expect.objectContaining({ displayName: 'New name', title: 'New title' }),
       14,
+      expect.arrayContaining(['displayName', 'title', 'bio']),
     );
     expect(result.reviewRequired).toBe(true);
     expect(result.profileStrength).toBe(14);
@@ -115,6 +116,7 @@ describe('ProfileRevisionService', () => {
       expect.objectContaining({ title: 'Advisor' }),
       expect.objectContaining({ title: 'Principal Advisor' }),
       75,
+      expect.arrayContaining(['displayName', 'title', 'expertise']),
     );
     expect(result.reviewRequired).toBe(true);
   });

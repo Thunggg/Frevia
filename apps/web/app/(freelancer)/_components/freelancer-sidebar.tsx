@@ -11,7 +11,6 @@ import {
   ChevronDown,
   ChevronRight,
   CreditCard,
-  Eye,
   FileCheck,
   FileText,
   Languages,
@@ -236,15 +235,17 @@ export function FreelancerSidebar() {
   ];
 
   const visibleNav = freelancerNav.filter((item) => {
-    if (item.href === "/freelancer/proposals" && !canViewProposals) return false;
-    if (item.href === "/freelancer/contracts" && !canViewContracts) return false;
-    if (item.href === "/freelancer/notifications" && !canViewNotifications) return false;
+    if (item.href === "/freelancer/proposals" && !canViewProposals)
+      return false;
+    if (item.href === "/freelancer/contracts" && !canViewContracts)
+      return false;
+    if (item.href === "/freelancer/notifications" && !canViewNotifications)
+      return false;
     return true;
   });
 
   const displayName = me?.profile?.displayName ?? tRole("FREELANCER");
   const initial = displayName.charAt(0).toUpperCase();
-  const profileId = me?.profile?.id ?? me?.id;
 
   const logout = async () => {
     await fetch("/api/auth/logout", { method: "POST" });
@@ -351,16 +352,6 @@ export function FreelancerSidebar() {
                 collapsed ? "left-full ml-2 top-0" : "left-0 right-0"
               }`}
             >
-              {profileId && (
-                <Link
-                  href={`/profiles/${profileId}`}
-                  onClick={() => setProfileOpen(false)}
-                  className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-xs text-muted-foreground hover:bg-[#D0E1F8]/40 dark:hover:bg-zinc-800 hover:text-[#0069D3] dark:hover:text-blue-300 transition-colors"
-                >
-                  <Eye className="size-3.5" />
-                  {t("viewPublicProfile")}
-                </Link>
-              )}
               <Link
                 href="/freelancer/profile"
                 onClick={() => setProfileOpen(false)}
@@ -505,7 +496,6 @@ export function FreelancerSidebar() {
           ))}
         </div>
       </nav>
-
     </aside>
   );
 }

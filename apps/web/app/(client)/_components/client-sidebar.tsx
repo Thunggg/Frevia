@@ -8,7 +8,6 @@ import {
   ChevronDown,
   ChevronRight,
   CreditCard,
-  Eye,
   FileText,
   Heart,
   Languages,
@@ -333,16 +332,6 @@ export function ClientSidebar() {
                 collapsed ? "left-full ml-2 top-0" : "left-0 right-0"
               }`}
             >
-              {me?.id && (
-                <Link
-                  href={`/clients/${me.id}`}
-                  onClick={() => setProfileOpen(false)}
-                  className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-xs text-muted-foreground hover:bg-[#D0E1F8]/40 dark:hover:bg-zinc-800 hover:text-[#0069D3] dark:hover:text-blue-300 transition-colors"
-                >
-                  <Eye className="size-3.5" />
-                  {t("viewPublicProfile")}
-                </Link>
-              )}
               <Link
                 href="/client/profile"
                 onClick={() => setProfileOpen(false)}

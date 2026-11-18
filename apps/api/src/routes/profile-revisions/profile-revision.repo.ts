@@ -95,6 +95,7 @@ export class ProfileRevisionRepository {
     currentData: Prisma.InputJsonValue,
     proposedData: Prisma.InputJsonValue,
     profileStrength: number,
+    changedFields?: string[],
   ) {
     return this.prisma.$transaction(async (transaction) => {
       const pending = await transaction.profileRevision.findFirst({
@@ -104,16 +105,25 @@ export class ProfileRevisionRepository {
           status: RevisionStatus.PENDING,
         },
         orderBy: { createdAt: 'desc' },
-        select: { id: true },
+        select: { id: true, proposedData: true },
       });
 
       if (pending) {
+        const incoming = proposedData as Record<string, Prisma.InputJsonValue>;
+        const previous = pending.proposedData as Record<
+          string,
+          Prisma.InputJsonValue
+        >;
+        const merged = { ...incoming, ...previous };
+        for (const field of changedFields ?? Object.keys(incoming)) {
+          merged[field] = incoming[field];
+        }
         return transaction.profileRevision.update({
           where: { id: pending.id },
           data: {
             profileId,
             currentData,
-            proposedData,
+            proposedData: merged,
             profileStrength,
             adminId: null,
             reviewNotes: null,

@@ -3,6 +3,8 @@
 import { useFormatter, useTranslations } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import { FreelancerProfileSheet } from "@/app/(client)/_components/freelancer-profile-sheet";
+import { ClientProfileSheet } from "@/app/(freelancer)/_components/client-profile-sheet";
 import { usePathname } from "next/navigation";
 import { useActionPermission } from "@/hooks/use-action-permission";
 import {
@@ -35,10 +37,7 @@ import {
   Trash2,
   UserRound,
 } from "@/components/icons";
-import type {
-  DirectMessageType,
-  MessageAttachmentType,
-} from "@shared/types";
+import type { DirectMessageType, MessageAttachmentType } from "@shared/types";
 
 const MAX_FILE_SIZE = 25 * 1024 * 1024;
 
@@ -74,6 +73,7 @@ export function ChatView({
   conversationSlug,
   currentUserId,
 }: ChatViewProps) {
+  const [profileOpen, setProfileOpen] = useState(false);
   const t = useTranslations("chat");
   const tCommon = useTranslations("common");
   const format = useFormatter();
@@ -134,6 +134,9 @@ export function ChatView({
   );
 
   const otherUser = conversation?.otherUser;
+  useEffect(() => {
+    setProfileOpen(false);
+  }, [otherUser?.id]);
 
   const formatMessageTime = (createdAt: string | Date): string =>
     format.dateTime(new Date(createdAt), {
@@ -179,7 +182,10 @@ export function ChatView({
       clearTimeout(otherTypingTimeoutRef.current);
     }
 
-    const handler = (payload: { conversationId: number; isTyping: boolean }) => {
+    const handler = (payload: {
+      conversationId: number;
+      isTyping: boolean;
+    }) => {
       if (payload.conversationId !== conversationId) return;
 
       if (payload.isTyping) {
@@ -309,8 +315,12 @@ export function ChatView({
   if (!canViewConversation) {
     return (
       <div className="flex h-full flex-col items-center justify-center p-6 text-center text-muted-foreground font-sans">
-        <p className="text-sm font-semibold text-foreground">Không có quyền truy cập</p>
-        <p className="mt-1 text-xs">Bạn không có quyền xem chi tiết cuộc trò chuyện này.</p>
+        <p className="text-sm font-semibold text-foreground">
+          Không có quyền truy cập
+        </p>
+        <p className="mt-1 text-xs">
+          Bạn không có quyền xem chi tiết cuộc trò chuyện này.
+        </p>
       </div>
     );
   }
@@ -343,22 +353,40 @@ export function ChatView({
           </div>
         </div>
 
-        {otherUser?.id ? (
-          <Link
-            href={`/profiles/${otherUser.id}`}
-            className="rounded-full bg-[#F1F0F5] hover:bg-[#EAE9F0] dark:bg-zinc-800 dark:hover:bg-zinc-700 px-3.5 py-1.5 text-xs font-medium text-foreground transition-colors flex items-center gap-1.5 shrink-0"
+        {otherUser?.id &&
+        (basePath === "/freelancer/conversations" ||
+          (basePath === "/client/conversations" && otherUser.profile?.id)) ? (
+          <button
+            type="button"
+            onClick={() => setProfileOpen(true)}
+            className="flex shrink-0 items-center gap-1.5 rounded-full bg-muted px-3.5 py-1.5 text-xs font-medium hover:bg-accent"
           >
-            <UserRound className="size-3.5 text-muted-foreground" />
-            <span>{t("profile")}</span>
-          </Link>
+            <UserRound className="size-3.5" />
+            {t("profile")}
+          </button>
         ) : null}
       </div>
 
+      {basePath === "/client/conversations" ? (
+        <FreelancerProfileSheet
+          profileId={otherUser?.profile?.id ?? null}
+          open={profileOpen}
+          onOpenChange={setProfileOpen}
+        />
+      ) : basePath === "/freelancer/conversations" ? (
+        <ClientProfileSheet
+          userId={otherUser?.id ?? null}
+          open={profileOpen}
+          onOpenChange={setProfileOpen}
+        />
+      ) : null}
       {/* Messages Stream */}
       <div className="flex-1 space-y-3 overflow-y-auto p-4 sm:p-6">
         {!canViewMessages ? (
           <div className="flex h-full flex-col items-center justify-center text-center p-6 text-muted-foreground">
-            <p className="text-sm font-medium">Bạn không có quyền xem tin nhắn trong cuộc trò chuyện này.</p>
+            <p className="text-sm font-medium">
+              Bạn không có quyền xem tin nhắn trong cuộc trò chuyện này.
+            </p>
           </div>
         ) : isLoading ? (
           <div className="flex h-full items-center justify-center px-4 py-8">

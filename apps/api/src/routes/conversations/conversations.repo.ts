@@ -41,6 +41,7 @@ export class ConversationRepository {
             id: true,
             profile: {
               select: {
+                id: true,
                 displayName: true,
                 avatarUrl: true,
               },
@@ -52,6 +53,7 @@ export class ConversationRepository {
             id: true,
             profile: {
               select: {
+                id: true,
                 displayName: true,
                 avatarUrl: true,
               },

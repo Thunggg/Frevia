@@ -162,6 +162,7 @@ export class ProfileRevisionService {
       currentData as Prisma.InputJsonValue,
       { ...currentData, ...proposedData } as Prisma.InputJsonValue,
       profileStrength,
+      Object.keys(proposedData),
     );
     return {
       message: ProfileMessage.PROFILE_REVISION_SUBMITTED,

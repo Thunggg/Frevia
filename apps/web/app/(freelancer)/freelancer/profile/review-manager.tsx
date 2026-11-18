@@ -382,7 +382,7 @@ export function ReviewManager({ userId }: { userId: number }) {
     <div className="space-y-8">
       <section className="rounded-xl border border-border p-5 sm:p-6">
         <div className="flex items-start gap-3">
-          <div className="mt-0.5 grid size-9 shrink-0 place-items-center rounded-lg bg-[#4fae2e]/10 text-[#3f9225] dark:text-[#7ad75d]">
+          <div className="mt-0.5 grid size-9 shrink-0 place-items-center rounded-lg bg-[#0069D3]/10 text-[#3f9225] dark:text-[#7ad75d]">
             <CheckCircle2 className="size-5" aria-hidden="true" />
           </div>
           <div>
@@ -396,9 +396,7 @@ export function ReviewManager({ userId }: { userId: number }) {
         </div>
 
         <div className="mt-5 space-y-2">
-          <Label htmlFor="review-contract">
-            {t("completedContractLabel")}
-          </Label>
+          <Label htmlFor="review-contract">{t("completedContractLabel")}</Label>
           {contractsLoading ? (
             <Skeleton className="h-10 w-full" />
           ) : contractsError ? (
@@ -534,109 +532,111 @@ export function ReviewManager({ userId }: { userId: number }) {
                       {t("feedbackHint")}
                     </p>
                     <form className="mt-5 space-y-5" onSubmit={submitReview}>
-                    <fieldset className="space-y-2">
-                      <legend className="text-sm font-medium">
-                        {t("overallRating")}
-                      </legend>
-                      <div className="flex gap-1" role="radiogroup">
-                        {[1, 2, 3, 4, 5].map((value) => {
-                          const selected = Number(rating) >= value;
-                          return (
-                            <button
-                              key={value}
-                              type="button"
-                              role="radio"
-                              aria-checked={Number(rating) === value}
-                              aria-label={t("starAria", { count: value })}
-                              className="rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-[#4fae2e]/10 hover:text-[#3f9225] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#4fae2e]/40 active:scale-95 dark:hover:text-[#7ad75d]"
-                              onClick={() => setRating(String(value))}
-                            >
-                              <Star
-                                className={`size-6 ${selected ? "fill-[#4fae2e] text-[#4fae2e]" : ""}`}
-                                aria-hidden="true"
-                              />
-                            </button>
-                          );
-                        })}
-                      </div>
-                    </fieldset>
+                      <fieldset className="space-y-2">
+                        <legend className="text-sm font-medium">
+                          {t("overallRating")}
+                        </legend>
+                        <div className="flex gap-1" role="radiogroup">
+                          {[1, 2, 3, 4, 5].map((value) => {
+                            const selected = Number(rating) >= value;
+                            return (
+                              <button
+                                key={value}
+                                type="button"
+                                role="radio"
+                                aria-checked={Number(rating) === value}
+                                aria-label={t("starAria", { count: value })}
+                                className="rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-[#0069D3]/10 hover:text-[#3f9225] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0069D3]/40 active:scale-95 dark:hover:text-[#7ad75d]"
+                                onClick={() => setRating(String(value))}
+                              >
+                                <Star
+                                  className={`size-6 ${selected ? "fill-[#0069D3] text-[#0069D3]" : ""}`}
+                                  aria-hidden="true"
+                                />
+                              </button>
+                            );
+                          })}
+                        </div>
+                      </fieldset>
 
-                    {Object.entries(breakdown).map(([key, value]) => (
-                      <div className="space-y-2" key={key}>
-                        <Label htmlFor={`rating-${key}`}>
-                          {breakdownLabel(key)}
-                        </Label>
-                        <Input
-                          id={`rating-${key}`}
-                          type="number"
-                          min="1"
-                          max="5"
-                          step="0.5"
-                          required
-                          value={value}
-                          onChange={(event) =>
-                            setBreakdown((current) => ({
-                              ...current,
-                              [key]: event.target.value,
-                            }))
-                          }
-                        />
-                      </div>
-                    ))}
-
-                    <div className="space-y-2">
-                      <Label htmlFor="review-comment">{t("commentLabel")}</Label>
-                      <Textarea
-                        id="review-comment"
-                        maxLength={3000}
-                        rows={5}
-                        placeholder={t("commentPlaceholder")}
-                        value={comment}
-                        onChange={(event) => setComment(event.target.value)}
-                      />
-                      <p className="text-xs text-muted-foreground">
-                        {t("characters", { count: comment.length })}
-                      </p>
-                    </div>
-
-                    <div className="flex flex-wrap gap-2">
-                      <Button
-                        className="bg-[#4fae2e] text-white hover:bg-[#459928] active:translate-y-px"
-                        disabled={
-                          pending === "create" ||
-                          pending === `review-${editingId}`
-                        }
-                      >
-                        {pending === "create" ||
-                        pending === `review-${editingId}` ? (
-                          <Loader2
-                            className="animate-spin"
-                            aria-hidden="true"
+                      {Object.entries(breakdown).map(([key, value]) => (
+                        <div className="space-y-2" key={key}>
+                          <Label htmlFor={`rating-${key}`}>
+                            {breakdownLabel(key)}
+                          </Label>
+                          <Input
+                            id={`rating-${key}`}
+                            type="number"
+                            min="1"
+                            max="5"
+                            step="0.5"
+                            required
+                            value={value}
+                            onChange={(event) =>
+                              setBreakdown((current) => ({
+                                ...current,
+                                [key]: event.target.value,
+                              }))
+                            }
                           />
-                        ) : editingId ? (
-                          <Pencil aria-hidden="true" />
-                        ) : (
-                          <Plus aria-hidden="true" />
-                        )}
-                        {editingId
-                          ? tSettings("saveChanges")
-                          : t("submitReview")}
-                      </Button>
-                      {editingId ? (
+                        </div>
+                      ))}
+
+                      <div className="space-y-2">
+                        <Label htmlFor="review-comment">
+                          {t("commentLabel")}
+                        </Label>
+                        <Textarea
+                          id="review-comment"
+                          maxLength={3000}
+                          rows={5}
+                          placeholder={t("commentPlaceholder")}
+                          value={comment}
+                          onChange={(event) => setComment(event.target.value)}
+                        />
+                        <p className="text-xs text-muted-foreground">
+                          {t("characters", { count: comment.length })}
+                        </p>
+                      </div>
+
+                      <div className="flex flex-wrap gap-2">
                         <Button
-                          type="button"
-                          variant="ghost"
-                          onClick={resetReviewForm}
+                          className="bg-[#0069D3] text-white hover:bg-[#0058b3] active:translate-y-px"
+                          disabled={
+                            pending === "create" ||
+                            pending === `review-${editingId}`
+                          }
                         >
-                          {tCommon("cancel")}
+                          {pending === "create" ||
+                          pending === `review-${editingId}` ? (
+                            <Loader2
+                              className="animate-spin"
+                              aria-hidden="true"
+                            />
+                          ) : editingId ? (
+                            <Pencil aria-hidden="true" />
+                          ) : (
+                            <Plus aria-hidden="true" />
+                          )}
+                          {editingId
+                            ? tSettings("saveChanges")
+                            : t("submitReview")}
                         </Button>
-                      ) : null}
-                    </div>
-                  </form>
-                </>
-              ) : null}
-            </section>
-          ) : null}
+                        {editingId ? (
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            onClick={resetReviewForm}
+                          >
+                            {tCommon("cancel")}
+                          </Button>
+                        ) : null}
+                      </div>
+                    </form>
+                  </>
+                ) : null}
+              </section>
+            ) : null}
 
             <section aria-labelledby="contract-review-list-heading">
               <div className="mb-4 flex items-center justify-between gap-3">
@@ -745,7 +745,7 @@ export function ReviewManager({ userId }: { userId: number }) {
                       ) : null}
 
                       {review.response ? (
-                        <div className="mt-5 border-l-2 border-[#4fae2e] pl-4">
+                        <div className="mt-5 border-l-2 border-[#0069D3] pl-4">
                           <p className="text-xs font-medium text-muted-foreground">
                             {t("responseFrom", {
                               name: responseUserName(review, memberFallback),
@@ -831,7 +831,7 @@ export function ReviewManager({ userId }: { userId: number }) {
                           <div className="flex gap-2">
                             <Button
                               size="sm"
-                              className="bg-[#4fae2e] text-white hover:bg-[#459928]"
+                              className="bg-[#0069D3] text-white hover:bg-[#0058b3]"
                               disabled={pending === `response-${review.id}`}
                             >
                               {t("saveResponse")}
@@ -919,7 +919,7 @@ export function ReviewManager({ userId }: { userId: number }) {
               ) : (
                 <div className="rounded-xl border border-dashed border-border px-6 py-14 text-center">
                   <Star
-                    className="mx-auto size-8 text-[#4fae2e]"
+                    className="mx-auto size-8 text-[#0069D3]"
                     aria-hidden="true"
                   />
                   <p className="mt-3 font-medium text-foreground">
@@ -938,7 +938,7 @@ export function ReviewManager({ userId }: { userId: number }) {
       ) : !contractsLoading && !contractsError && contracts.length ? (
         <div className="rounded-xl border border-dashed border-border px-6 py-16 text-center">
           <MessageSquareReply
-            className="mx-auto size-9 text-[#4fae2e]"
+            className="mx-auto size-9 text-[#0069D3]"
             aria-hidden="true"
           />
           <p className="mt-3 font-medium text-foreground">

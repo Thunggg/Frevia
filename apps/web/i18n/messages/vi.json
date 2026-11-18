@@ -2036,6 +2036,16 @@
     "OTHER": "Khác"
   },
   "clientProfileSettings": {
+    "tabPersonal": "Thông tin cá nhân",
+    "personalHint": "Tên, ảnh và giới thiệu cá nhân thuộc tài khoản client. Thông tin công ty được quản lý riêng trong tab Công ty.",
+    "companyPendingHint": "Bạn đang chỉnh sửa bản đã gửi duyệt. Hồ sơ công khai giữ nguyên cho đến khi được phê duyệt.",
+    "companyReviewHint": "Thay đổi cần được quản trị viên duyệt trước khi hiển thị công khai.",
+    "companySaveHint": "Thay đổi sẽ hiển thị trên hồ sơ công khai ngay sau khi lưu.",
+    "companyValidationError": "Kiểm tra tên công ty (tối đa 255 ký tự), mô tả (tối đa 5.000 ký tự) và website hợp lệ (https://...).",
+    "retryCompany": "Tải lại hồ sơ",
+    "savingCompany": "Đang lưu…",
+    "submitCompanyReview": "Gửi duyệt thay đổi",
+    "resetCompany": "Hoàn tác thay đổi",
     "somethingWentWrong": "Đã xảy ra lỗi.",
     "pageTitle": "Cài đặt hồ sơ",
     "tabCompany": "Hồ sơ công ty",
@@ -2093,6 +2103,11 @@
     "unfollow": "Bỏ theo dõi"
   },
   "accountProfile": {
+    "hideIdentityDetails": "Ẩn thông tin",
+    "showIdentityDetails": "Hiện thông tin",
+    "identityHiddenTitle": "Giấy tờ đang được che",
+    "identityHiddenHint": "Nhấn để xem thông tin và ảnh giấy tờ của bạn.",
+    "navPersonal": "Thông tin cá nhân",
     "breadcrumb": "Hồ sơ & cài đặt tin cậy",
     "pageTitle": "Hồ sơ & cài đặt tin cậy",
     "pageSubtitleFreelancer": "Quản lý hồ sơ freelancer, xác minh danh tính và các liên kết công khai.",
@@ -2326,6 +2341,8 @@
     }
   },
   "clientProfilePublic": {
+    "companyNameMissing": "Chưa có tên công ty",
+    "clientContact": "Người liên hệ",
     "breadcrumb": "Hồ sơ khách hàng",
     "memberSince": "Thành viên từ {year}",
     "companyDetails": "Thông tin công ty trên Frevia.",
@@ -3021,7 +3038,29 @@
     "deadlineHint": "Hạn chót công việc: {deadline} (còn tối đa {days} ngày)",
     "budgetHint": "Ngân sách công việc: {range}"
   },
+  "clientDirectory": {
+    "title": "T?m kh?ch h?ng",
+    "description": "T?m hi?u kh?ch h?ng v? c?ng ty c?a h? tr??c khi b?t ??u d? ?n.",
+    "searchLabel": "T?m ki?m kh?ch h?ng",
+    "searchPlaceholder": "T?m theo t?n kh?ch h?ng ho?c c?ng ty...",
+    "search": "T?m ki?m",
+    "loading": "?ang t?i kh?ch h?ng",
+    "loadError": "Kh?ng th? t?i danh s?ch kh?ch h?ng. Vui l?ng th? l?i.",
+    "retry": "Th? l?i",
+    "emptyTitle": "Kh?ng t?m th?y kh?ch h?ng",
+    "emptyDescription": "Th? t?m v?i t?n kh?ch h?ng ho?c t?n c?ng ty kh?c.",
+    "clearSearch": "Xem t?t c? kh?ch h?ng",
+    "results": "{count} kh?ch h?ng",
+    "unnamed": "Kh?ch h?ng",
+    "noDescription": "Kh?ch h?ng ch?a b? sung ph?n gi?i thi?u.",
+    "viewProfile": "Xem h? s?",
+    "pagination": "C?c trang kh?ch h?ng",
+    "previous": "Tr??c",
+    "next": "Ti?p",
+    "page": "Trang {page} / {total}"
+  },
   "findWork": {
+    "findClients": "Tìm khách hàng",
     "title": "Tìm việc",
     "bestMatches": "Phù hợp nhất",
     "mostRecent": "Mới nhất",

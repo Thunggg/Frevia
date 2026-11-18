@@ -48,13 +48,15 @@ import { HomeProfileSidebar } from "../../_components/home-profile-sidebar";
 import { ProjectHeroBanner } from "../../_components/project-hero-banner";
 import { JobPagination } from "../../_components/job-pagination";
 import { HomeFiltersModal } from "../../_components/home-filters-modal";
+import { ClientDirectory } from "./client-directory";
 
 export type HomeTab =
   | "best-matches"
   | "most-recent"
   | "saved-searches"
   | "saved-jobs"
-  | "invites";
+  | "invites"
+  | "find-clients";
 
 type FindWorkContentProps = {
   role: UserRole;
@@ -81,6 +83,15 @@ type FindWorkContentProps = {
   basePath?: string;
   initialTab?: HomeTab;
 };
+
+// Stable fallbacks: synchronization effects must not receive a fresh array
+// on every render when a tab does not load job-related data.
+const EMPTY_SLUGS: string[] = [];
+const EMPTY_JOBS: ViewJobDetailResType[] = [];
+const EMPTY_SEARCHES: SavedSearchType[] = [];
+const EMPTY_ALERTS: JobAlertType[] = [];
+const EMPTY_CATEGORIES: JobCategoryBrowseItemType[] = [];
+const EMPTY_RECOMMENDATIONS: RecommendedJobType[] = [];
 
 function JobListSkeleton() {
   return (
@@ -120,12 +131,16 @@ export function FindWorkContent({
   initialJobs,
   initialPagination,
   initialKeyword = "",
-  initialBookmarkedSlugs = [],
-  initialBookmarkedJobs = [],
-  initialSavedSearches = [],
-  initialJobAlerts = [],
-  initialCategories = [],
-  initialRecommendedJobs = [],
+  initialCategory = "all",
+  initialBudget = "all",
+  initialTime = "all",
+  initialSort = "newest",
+  initialBookmarkedSlugs = EMPTY_SLUGS,
+  initialBookmarkedJobs = EMPTY_JOBS,
+  initialSavedSearches = EMPTY_SEARCHES,
+  initialJobAlerts = EMPTY_ALERTS,
+  initialCategories = EMPTY_CATEGORIES,
+  initialRecommendedJobs = EMPTY_RECOMMENDATIONS,
   embedded = false,
   basePath,
   initialTab,
@@ -180,6 +195,7 @@ export function FindWorkContent({
     if (currentPath.includes("/saved-jobs")) return "saved-jobs";
     if (currentPath.includes("/saved-searches")) return "saved-searches";
     if (currentPath.includes("/invites")) return "invites";
+    if (currentPath.includes("/find-clients")) return "find-clients";
     if (currentPath.includes("/best-matches")) return "best-matches";
     if (initialTab) return initialTab;
     const requestedTab = searchParams.get("tab") as HomeTab | null;
@@ -191,6 +207,7 @@ export function FindWorkContent({
         "saved-searches",
         "saved-jobs",
         "invites",
+        "find-clients",
       ].includes(requestedTab)
     ) {
       if (requestedTab === "best-matches" && !canViewRecommendedJobs) {
@@ -412,6 +429,10 @@ export function FindWorkContent({
     params.delete("keyword");
     const query = params.toString();
     const targetUrl = `/freelancer/find-work/${tab}${query ? `?${query}` : ""}`;
+    if (tab === "find-clients" || activeTab === "find-clients") {
+      router.push(targetUrl, { scroll: false });
+      return;
+    }
     if (typeof window !== "undefined") {
       window.history.pushState(null, "", targetUrl);
     }
@@ -532,7 +553,7 @@ export function FindWorkContent({
             <ProjectHeroBanner />
 
               {/* 3. Search Bar Input */}
-              <form onSubmit={handleSearchSubmit} className="relative pt-1">
+              {activeTab !== "find-clients" && <form onSubmit={handleSearchSubmit} className="relative pt-1">
                 <Search className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
                 <input
                   type="text"
@@ -547,7 +568,7 @@ export function FindWorkContent({
                 >
                   {t("searchPage.search")}
                 </button>
-              </form>
+              </form>}
 
               {/* 4. Unified Tabs Row */}
               <div className="flex items-center justify-between border-b border-border pt-2 pb-px">
@@ -643,10 +664,17 @@ export function FindWorkContent({
                       </span>
                     )}
                   </button>
+                  <button
+                    type="button"
+                    onClick={() => handleTabSelect("find-clients")}
+                    className={`pb-3 text-sm font-semibold border-b-2 transition-all cursor-pointer whitespace-nowrap ${activeTab === "find-clients" ? "border-emerald-600 text-emerald-600 dark:text-emerald-400" : "border-transparent text-muted-foreground hover:text-foreground"}`}
+                  >
+                    {t("findClients")}
+                  </button>
                 </div>
 
                 {/* Right Filter Icon Button: Mở Filters Modal áp dụng cho Best matches và Most recent */}
-                <button
+                {activeTab !== "find-clients" && <button
                   type="button"
                   onClick={() => setIsFiltersModalOpen(true)}
                   className={`flex size-9 shrink-0 items-center justify-center rounded-full border transition-all cursor-pointer ${
@@ -657,7 +685,7 @@ export function FindWorkContent({
                   title={t("modal.filterTooltip")}
                 >
                   <SlidersHorizontal className="size-4" />
-                </button>
+                </button>}
               </div>
 
               {/* 5. Two-Column Home Content */}
@@ -665,6 +693,7 @@ export function FindWorkContent({
                 {/* Left / Main Column: Tab content */}
                 <div className="flex-1 min-w-0 w-full space-y-3">
                   {/* TAB 1: BEST MATCHES */}
+                  {activeTab === "find-clients" && <ClientDirectory />}
                   {activeTab === "best-matches" && canViewRecommendedJobs && (
                     <div>
                       <div className="flex items-center justify-between pb-2">

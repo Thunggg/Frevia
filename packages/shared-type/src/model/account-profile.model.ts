@@ -107,6 +107,34 @@ export const ClientProfileDetailSchema = z.object({
   socialLinks: z.array(SocialLinkSchema),
 });
 
+export const ClientDirectoryQuerySchema = z.object({
+  search: z.string().trim().max(100).optional(),
+  page: z.coerce.number().int().min(1).max(10000).default(1),
+  limit: z.coerce.number().int().min(1).max(20).default(12),
+});
+
+export const ClientDirectoryItemSchema = z.object({
+  userId: z.number(),
+  displayName: z.string().nullable(),
+  avatarUrl: z.string().nullable(),
+  bio: z.string().nullable(),
+  companyName: z.string().nullable(),
+  companyDescription: z.string().nullable(),
+});
+
+export const ClientDirectorySchema = z.object({
+  data: z.array(ClientDirectoryItemSchema),
+  page: z.number(),
+  limit: z.number(),
+  total: z.number(),
+  totalPages: z.number(),
+});
+
+export type ClientDirectoryQueryType = z.infer<
+  typeof ClientDirectoryQuerySchema
+>;
+export type ClientDirectoryType = z.infer<typeof ClientDirectorySchema>;
+
 export const UpdateClientProfileSchema = z
   .object({
     companyName: z
@@ -210,9 +238,7 @@ const PasswordSchema = z
 
 export const ChangePasswordSchema = z
   .object({
-    currentPassword: z
-      .string()
-      .min(1, AccountProfileMessage.PASSWORD_REQUIRED),
+    currentPassword: z.string().min(1, AccountProfileMessage.PASSWORD_REQUIRED),
     newPassword: PasswordSchema,
     confirmPassword: z.string(),
   })

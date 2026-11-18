@@ -2036,6 +2036,16 @@
     "OTHER": "Other"
   },
   "clientProfileSettings": {
+    "tabPersonal": "Personal information",
+    "personalHint": "Your name, photo and personal introduction belong to your client account. Company details are managed separately in the Company tab.",
+    "companyPendingHint": "You are editing the submitted version. Your public profile stays unchanged until approval.",
+    "companyReviewHint": "These changes require administrator approval before appearing publicly.",
+    "companySaveHint": "Changes will appear on your public profile as soon as you save.",
+    "companyValidationError": "Check the company name (up to 255 characters), description (up to 5,000 characters), and a valid website (https://...).",
+    "retryCompany": "Reload profile",
+    "savingCompany": "Saving?",
+    "submitCompanyReview": "Submit changes for review",
+    "resetCompany": "Reset changes",
     "somethingWentWrong": "Something went wrong.",
     "pageTitle": "Profile Settings",
     "tabCompany": "Company Profile",
@@ -2093,6 +2103,11 @@
     "unfollow": "Unfollow"
   },
   "accountProfile": {
+    "hideIdentityDetails": "Hide details",
+    "showIdentityDetails": "Show details",
+    "identityHiddenTitle": "Identity documents are hidden",
+    "identityHiddenHint": "Select to reveal your document information and photos.",
+    "navPersonal": "Personal information",
     "breadcrumb": "Profile & trust settings",
     "pageTitle": "Profile & trust settings",
     "pageSubtitleFreelancer": "Manage your freelancer profile, identity verification and public social connections.",
@@ -2326,6 +2341,8 @@
     }
   },
   "clientProfilePublic": {
+    "companyNameMissing": "Company name not provided",
+    "clientContact": "Client contact",
     "breadcrumb": "Client profile",
     "memberSince": "Member since {year}",
     "companyDetails": "Company details on Frevia.",
@@ -3021,7 +3038,29 @@
     "deadlineHint": "Job deadline: {deadline} (up to {days} days remaining)",
     "budgetHint": "Client budget: {range}"
   },
+  "clientDirectory": {
+    "title": "Find Clients",
+    "description": "Discover clients and learn about their companies before starting a project.",
+    "searchLabel": "Search clients",
+    "searchPlaceholder": "Search by client or company name...",
+    "search": "Search",
+    "loading": "Loading clients",
+    "loadError": "Unable to load clients. Please try again.",
+    "retry": "Try again",
+    "emptyTitle": "No clients found",
+    "emptyDescription": "Try a different client or company name.",
+    "clearSearch": "Show all clients",
+    "results": "{count, plural, one {# client} other {# clients}}",
+    "unnamed": "Client",
+    "noDescription": "This client has not added an introduction yet.",
+    "viewProfile": "View profile",
+    "pagination": "Client pages",
+    "previous": "Previous",
+    "next": "Next",
+    "page": "Page {page} of {total}"
+  },
   "findWork": {
+    "findClients": "Find Clients",
     "title": "Find Work",
     "bestMatches": "Best Matches",
     "mostRecent": "Most Recent",

@@ -68,17 +68,15 @@ export function PaymentSettings({ userRole }: PaymentSettingsProps) {
     userRole === "FREELANCER" || userRole === "EXPERT";
 
   // Query Saved Payment Methods (Cards) for Client
-  const {
-    data: paymentMethodsData,
-    isLoading: paymentMethodsLoading,
-  } = useQuery({
-    queryKey: ["saved-payment-methods"],
-    queryFn: async () => {
-      const res = await paymentApiRequest.getSavedPaymentMethods();
-      return res.data;
-    },
-    enabled: !isFreelancerOrExpert && canGetPaymentMethods,
-  });
+  const { data: paymentMethodsData, isLoading: paymentMethodsLoading } =
+    useQuery({
+      queryKey: ["saved-payment-methods"],
+      queryFn: async () => {
+        const res = await paymentApiRequest.getSavedPaymentMethods();
+        return res.data;
+      },
+      enabled: !isFreelancerOrExpert && canGetPaymentMethods,
+    });
 
   const handleOpenCustomerPortal = async () => {
     setPortalLoading(true);
@@ -159,22 +157,26 @@ export function PaymentSettings({ userRole }: PaymentSettingsProps) {
       case "ESCROW_DEPOSIT":
         return {
           label: "Escrow Deposit",
-          className: "bg-blue-50 text-[#0069D3] border-blue-200 dark:bg-blue-950/40 dark:text-blue-400",
+          className:
+            "bg-blue-50 text-[#0069D3] border-blue-200 dark:bg-blue-950/40 dark:text-blue-400",
         };
       case "MILESTONE_PAYOUT":
         return {
           label: "Payout",
-          className: "bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-400",
+          className:
+            "bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950/40 dark:text-blue-400",
         };
       case "PLATFORM_FEE":
         return {
           label: "Platform Fee",
-          className: "bg-purple-50 text-purple-700 border-purple-200 dark:bg-purple-950/40 dark:text-purple-400",
+          className:
+            "bg-purple-50 text-purple-700 border-purple-200 dark:bg-purple-950/40 dark:text-purple-400",
         };
       case "REFUND":
         return {
           label: "Refund",
-          className: "bg-rose-50 text-rose-700 border-rose-200 dark:bg-rose-950/40 dark:text-rose-400",
+          className:
+            "bg-rose-50 text-rose-700 border-rose-200 dark:bg-rose-950/40 dark:text-rose-400",
         };
       default:
         return {
@@ -188,7 +190,7 @@ export function PaymentSettings({ userRole }: PaymentSettingsProps) {
     switch (status) {
       case "SUCCEEDED":
         return (
-          <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-600 dark:text-emerald-400">
+          <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-blue-600 dark:text-blue-400">
             <CheckCircle2 className="size-3" /> Succeeded
           </span>
         );
@@ -211,7 +213,9 @@ export function PaymentSettings({ userRole }: PaymentSettingsProps) {
           </span>
         );
       default:
-        return <span className="text-[11px] text-muted-foreground">{status}</span>;
+        return (
+          <span className="text-[11px] text-muted-foreground">{status}</span>
+        );
     }
   };
 
@@ -231,7 +235,9 @@ export function PaymentSettings({ userRole }: PaymentSettingsProps) {
                 </h3>
               </div>
               <p className="text-xs text-muted-foreground leading-relaxed max-w-2xl pt-1">
-                Link your bank account or debit card using Stripe Express. When a client releases a payment, your earnings transfer directly to your bank account.
+                Link your bank account or debit card using Stripe Express. When
+                a client releases a payment, your earnings transfer directly to
+                your bank account.
               </p>
             </div>
 
@@ -257,9 +263,9 @@ export function PaymentSettings({ userRole }: PaymentSettingsProps) {
                 <span>Checking Stripe account verification...</span>
               </div>
             ) : connectStatus?.isConnected && connectStatus.payoutsEnabled ? (
-              <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/5 p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+              <div className="rounded-xl border border-blue-500/20 bg-blue-500/5 p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div className="flex items-center gap-3">
-                  <div className="flex size-9 items-center justify-center rounded-full bg-emerald-100 dark:bg-emerald-950/50 text-emerald-600">
+                  <div className="flex size-9 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-950/50 text-blue-600">
                     <CheckCircle2 className="size-5" />
                   </div>
                   <div>
@@ -267,7 +273,7 @@ export function PaymentSettings({ userRole }: PaymentSettingsProps) {
                       <span className="text-xs font-bold text-foreground">
                         Connected & Payouts Active
                       </span>
-                      <Badge className="bg-emerald-600/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 text-[10px] px-2 py-0.5">
+                      <Badge className="bg-blue-600/10 text-blue-600 dark:text-blue-400 border border-blue-500/20 text-[10px] px-2 py-0.5">
                         Verified
                       </Badge>
                     </div>
@@ -306,7 +312,8 @@ export function PaymentSettings({ userRole }: PaymentSettingsProps) {
                     </Badge>
                   </div>
                   <p className="text-xs text-muted-foreground leading-relaxed">
-                    You cannot receive released payments until you complete the simple Stripe Express bank onboarding.
+                    You cannot receive released payments until you complete the
+                    simple Stripe Express bank onboarding.
                   </p>
                 </div>
 
@@ -386,7 +393,7 @@ export function PaymentSettings({ userRole }: PaymentSettingsProps) {
                       {pm.brand}
                     </span>
                     {pm.isDefault && (
-                      <Badge className="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20 text-[10px] px-2 py-0.5">
+                      <Badge className="bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20 text-[10px] px-2 py-0.5">
                         Default
                       </Badge>
                     )}
@@ -407,7 +414,8 @@ export function PaymentSettings({ userRole }: PaymentSettingsProps) {
             <div className="rounded-xl border border-dashed border-border/80 bg-zinc-50/50 dark:bg-zinc-900/20 p-5 text-center space-y-2">
               <CreditCard className="size-6 text-muted-foreground mx-auto stroke-1" />
               <p className="text-xs text-muted-foreground max-w-sm mx-auto">
-                No cards saved yet. When you fund a contract or milestone via Stripe, your card can be securely saved for faster payments.
+                No cards saved yet. When you fund a contract or milestone via
+                Stripe, your card can be securely saved for faster payments.
               </p>
               {canOpenCustomerPortal && (
                 <Button
@@ -430,7 +438,7 @@ export function PaymentSettings({ userRole }: PaymentSettingsProps) {
       {!isFreelancerOrExpert && (
         <div className="rounded-2xl border border-border bg-white dark:bg-zinc-950 p-6 shadow-sm">
           <div className="flex items-center gap-3 border-b border-border/60 pb-4">
-            <div className="flex size-8 items-center justify-center rounded-lg bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600">
+            <div className="flex size-8 items-center justify-center rounded-lg bg-blue-50 dark:bg-blue-950/50 text-blue-600">
               <ShieldCheck className="size-4" />
             </div>
             <div>
@@ -448,7 +456,9 @@ export function PaymentSettings({ userRole }: PaymentSettingsProps) {
                 1. Authorize Hold &amp; Sign
               </span>
               <p>
-                Client authorizes at least 1 milestone + 3% contract fee hold. Stripe captures the funds when Freelancer countersigns, and cancels with $0 fee if declined or expired.
+                Client authorizes at least 1 milestone + 3% contract fee hold.
+                Stripe captures the funds when Freelancer countersigns, and
+                cancels with $0 fee if declined or expired.
               </p>
             </div>
             <div className="rounded-xl border border-border/60 bg-zinc-50 dark:bg-zinc-900/40 p-4 space-y-1">
@@ -456,7 +466,8 @@ export function PaymentSettings({ userRole }: PaymentSettingsProps) {
                 2. Review Work
               </span>
               <p>
-                Review submitted deliverables. Request revisions or ask for adjustments if needed.
+                Review submitted deliverables. Request revisions or ask for
+                adjustments if needed.
               </p>
             </div>
             <div className="rounded-xl border border-border/60 bg-zinc-50 dark:bg-zinc-900/40 p-4 space-y-1">
@@ -464,7 +475,8 @@ export function PaymentSettings({ userRole }: PaymentSettingsProps) {
                 3. Release (5% Fee) or Refund
               </span>
               <p>
-                Approve deliverables to release 95% payout to the freelancer (5% platform fee deducted), or refund if mutually agreed.
+                Approve deliverables to release 95% payout to the freelancer (5%
+                platform fee deducted), or refund if mutually agreed.
               </p>
             </div>
           </div>
@@ -474,165 +486,169 @@ export function PaymentSettings({ userRole }: PaymentSettingsProps) {
       {/* 4. Transaction History Table */}
       {canGetTransactions && (
         <div className="rounded-2xl border border-border bg-white dark:bg-zinc-950 p-6 shadow-sm space-y-5">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div className="flex items-center gap-2">
-            <div className="flex size-8 items-center justify-center rounded-lg bg-zinc-100 dark:bg-zinc-900 text-foreground">
-              <History className="size-4" />
-            </div>
-            <div>
-              <h3 className="text-base font-bold text-foreground">
-                Transaction History
-              </h3>
-              <p className="text-xs text-muted-foreground">
-                All platform fee, escrow deposit, release, and refund records
-              </p>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-2">
-            <select
-              value={selectedType}
-              onChange={(e) => {
-                setSelectedType(e.target.value);
-                setPage(1);
-              }}
-              className="h-8 rounded-full border border-border bg-transparent px-3 text-xs font-medium text-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#0069D3]"
-            >
-              <option value="ALL">All Transaction Types</option>
-              <option value="ESCROW_DEPOSIT">Escrow Deposit</option>
-              <option value="MILESTONE_PAYOUT">Payout</option>
-              <option value="PLATFORM_FEE">Platform Fee</option>
-              <option value="REFUND">Refund</option>
-            </select>
-
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={() => refetchTransactions()}
-              disabled={transactionsLoading}
-              className="rounded-full text-xs h-8 px-3"
-            >
-              <RefreshCw
-                className={`size-3.5 ${transactionsLoading ? "animate-spin" : ""}`}
-              />
-            </Button>
-          </div>
-        </div>
-
-        {/* Transactions Table */}
-        <div className="overflow-x-auto rounded-xl border border-border/80">
-          <table className="w-full text-left text-xs">
-            <thead className="bg-zinc-50 dark:bg-zinc-900/60 text-muted-foreground border-b border-border/80">
-              <tr>
-                <th className="px-4 py-3 font-semibold">Date</th>
-                <th className="px-4 py-3 font-semibold">Type</th>
-                <th className="px-4 py-3 font-semibold text-right">Amount</th>
-                <th className="px-4 py-3 font-semibold">Status</th>
-                <th className="px-4 py-3 font-semibold">Reference ID</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-border/60">
-              {transactionsLoading ? (
-                <tr>
-                  <td colSpan={5} className="py-8 text-center text-muted-foreground">
-                    <Loader2 className="size-5 animate-spin mx-auto mb-2 text-[#0069D3]" />
-                    <span>Loading transactions...</span>
-                  </td>
-                </tr>
-              ) : transactionsData?.data && transactionsData.data.length > 0 ? (
-                transactionsData.data.map((tx: TransactionType) => {
-                  const typeBadge = getTypeBadge(tx.type);
-                  const isDebit =
-                    tx.type === "MILESTONE_PAYOUT" ||
-                    tx.type === "ARBITRATOR_PAYOUT";
-
-                  return (
-                    <tr
-                      key={tx.id}
-                      className="hover:bg-zinc-50/50 dark:hover:bg-zinc-900/30 transition-colors"
-                    >
-                      <td className="px-4 py-3 text-muted-foreground whitespace-nowrap">
-                        {formatDate(tx.createdAt)}
-                      </td>
-                      <td className="px-4 py-3 whitespace-nowrap">
-                        <span
-                          className={`inline-block rounded-full px-2.5 py-0.5 text-[11px] font-medium border ${typeBadge.className}`}
-                        >
-                          {typeBadge.label}
-                        </span>
-                      </td>
-                      <td className="px-4 py-3 text-right font-bold whitespace-nowrap">
-                        <span
-                          className={
-                            isDebit
-                              ? "text-emerald-600 dark:text-emerald-400"
-                              : "text-foreground"
-                          }
-                        >
-                          {isDebit ? "+" : ""}
-                          {money(tx.amount, tx.currency)}
-                        </span>
-                      </td>
-                      <td className="px-4 py-3 whitespace-nowrap">
-                        {getStatusBadge(tx.status)}
-                      </td>
-                      <td className="px-4 py-3 font-mono text-[11px] text-muted-foreground whitespace-nowrap">
-                        {tx.stripePaymentIntentId ||
-                          tx.stripeTransferId ||
-                          tx.stripeRefundId ||
-                          `#${tx.id}`}
-                      </td>
-                    </tr>
-                  );
-                })
-              ) : (
-                <tr>
-                  <td
-                    colSpan={5}
-                    className="py-10 text-center text-muted-foreground"
-                  >
-                    <CreditCard className="size-6 mx-auto mb-2 text-muted-foreground/40" />
-                    <span>No transactions recorded yet.</span>
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-
-        {/* Pagination */}
-        {transactionsData && transactionsData.totalPages > 1 && (
-          <div className="flex items-center justify-between text-xs text-muted-foreground pt-2">
-            <span>
-              Page {transactionsData.page} of {transactionsData.totalPages} (
-              {transactionsData.totalItems} total)
-            </span>
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div className="flex items-center gap-2">
+              <div className="flex size-8 items-center justify-center rounded-lg bg-zinc-100 dark:bg-zinc-900 text-foreground">
+                <History className="size-4" />
+              </div>
+              <div>
+                <h3 className="text-base font-bold text-foreground">
+                  Transaction History
+                </h3>
+                <p className="text-xs text-muted-foreground">
+                  All platform fee, escrow deposit, release, and refund records
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <select
+                value={selectedType}
+                onChange={(e) => {
+                  setSelectedType(e.target.value);
+                  setPage(1);
+                }}
+                className="h-8 rounded-full border border-border bg-transparent px-3 text-xs font-medium text-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#0069D3]"
+              >
+                <option value="ALL">All Transaction Types</option>
+                <option value="ESCROW_DEPOSIT">Escrow Deposit</option>
+                <option value="MILESTONE_PAYOUT">Payout</option>
+                <option value="PLATFORM_FEE">Platform Fee</option>
+                <option value="REFUND">Refund</option>
+              </select>
+
               <Button
+                type="button"
                 variant="outline"
                 size="sm"
-                onClick={() => setPage((p) => Math.max(1, p - 1))}
-                disabled={page <= 1}
+                onClick={() => refetchTransactions()}
+                disabled={transactionsLoading}
                 className="rounded-full text-xs h-8 px-3"
               >
-                Previous
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() =>
-                  setPage((p) => Math.min(transactionsData.totalPages, p + 1))
-                }
-                disabled={page >= transactionsData.totalPages}
-                className="rounded-full text-xs h-8 px-3"
-              >
-                Next
+                <RefreshCw
+                  className={`size-3.5 ${transactionsLoading ? "animate-spin" : ""}`}
+                />
               </Button>
             </div>
           </div>
-        )}
-      </div>
+
+          {/* Transactions Table */}
+          <div className="overflow-x-auto rounded-xl border border-border/80">
+            <table className="w-full text-left text-xs">
+              <thead className="bg-zinc-50 dark:bg-zinc-900/60 text-muted-foreground border-b border-border/80">
+                <tr>
+                  <th className="px-4 py-3 font-semibold">Date</th>
+                  <th className="px-4 py-3 font-semibold">Type</th>
+                  <th className="px-4 py-3 font-semibold text-right">Amount</th>
+                  <th className="px-4 py-3 font-semibold">Status</th>
+                  <th className="px-4 py-3 font-semibold">Reference ID</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-border/60">
+                {transactionsLoading ? (
+                  <tr>
+                    <td
+                      colSpan={5}
+                      className="py-8 text-center text-muted-foreground"
+                    >
+                      <Loader2 className="size-5 animate-spin mx-auto mb-2 text-[#0069D3]" />
+                      <span>Loading transactions...</span>
+                    </td>
+                  </tr>
+                ) : transactionsData?.data &&
+                  transactionsData.data.length > 0 ? (
+                  transactionsData.data.map((tx: TransactionType) => {
+                    const typeBadge = getTypeBadge(tx.type);
+                    const isDebit =
+                      tx.type === "MILESTONE_PAYOUT" ||
+                      tx.type === "ARBITRATOR_PAYOUT";
+
+                    return (
+                      <tr
+                        key={tx.id}
+                        className="hover:bg-zinc-50/50 dark:hover:bg-zinc-900/30 transition-colors"
+                      >
+                        <td className="px-4 py-3 text-muted-foreground whitespace-nowrap">
+                          {formatDate(tx.createdAt)}
+                        </td>
+                        <td className="px-4 py-3 whitespace-nowrap">
+                          <span
+                            className={`inline-block rounded-full px-2.5 py-0.5 text-[11px] font-medium border ${typeBadge.className}`}
+                          >
+                            {typeBadge.label}
+                          </span>
+                        </td>
+                        <td className="px-4 py-3 text-right font-bold whitespace-nowrap">
+                          <span
+                            className={
+                              isDebit
+                                ? "text-blue-600 dark:text-blue-400"
+                                : "text-foreground"
+                            }
+                          >
+                            {isDebit ? "+" : ""}
+                            {money(tx.amount, tx.currency)}
+                          </span>
+                        </td>
+                        <td className="px-4 py-3 whitespace-nowrap">
+                          {getStatusBadge(tx.status)}
+                        </td>
+                        <td className="px-4 py-3 font-mono text-[11px] text-muted-foreground whitespace-nowrap">
+                          {tx.stripePaymentIntentId ||
+                            tx.stripeTransferId ||
+                            tx.stripeRefundId ||
+                            `#${tx.id}`}
+                        </td>
+                      </tr>
+                    );
+                  })
+                ) : (
+                  <tr>
+                    <td
+                      colSpan={5}
+                      className="py-10 text-center text-muted-foreground"
+                    >
+                      <CreditCard className="size-6 mx-auto mb-2 text-muted-foreground/40" />
+                      <span>No transactions recorded yet.</span>
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Pagination */}
+          {transactionsData && transactionsData.totalPages > 1 && (
+            <div className="flex items-center justify-between text-xs text-muted-foreground pt-2">
+              <span>
+                Page {transactionsData.page} of {transactionsData.totalPages} (
+                {transactionsData.totalItems} total)
+              </span>
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setPage((p) => Math.max(1, p - 1))}
+                  disabled={page <= 1}
+                  className="rounded-full text-xs h-8 px-3"
+                >
+                  Previous
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() =>
+                    setPage((p) => Math.min(transactionsData.totalPages, p + 1))
+                  }
+                  disabled={page >= transactionsData.totalPages}
+                  className="rounded-full text-xs h-8 px-3"
+                >
+                  Next
+                </Button>
+              </div>
+            </div>
+          )}
+        </div>
       )}
     </div>
   );

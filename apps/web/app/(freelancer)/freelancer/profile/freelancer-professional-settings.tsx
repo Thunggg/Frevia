@@ -1,14 +1,19 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import Link from "next/link";
-import { useCallback, useEffect, useMemo, useRef, useState, type FormEvent } from "react";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type FormEvent,
+} from "react";
 import {
   Award,
   BriefcaseBusiness,
   Download,
   ExternalLink,
-  Eye,
   FileText,
   Loader2,
   Pencil,
@@ -131,10 +136,13 @@ export function FreelancerProfessionalSettings({ profileId }: Props) {
   const canDeleteCv = can("DELETE", "/api/profiles/:id/cv");
   const canViewCvAnalysis = can("GET", "/api/profiles/:id/cv/analysis");
 
-  const [profile, setProfile] = useState<FreelancerProfileDetailType | null>(null);
+  const [profile, setProfile] = useState<FreelancerProfileDetailType | null>(
+    null,
+  );
   const [skills, setSkills] = useState<FreelancerSkillType[]>([]);
   const [portfolios, setPortfolios] = useState<PortfolioItemType[]>([]);
-  const [profileRevision, setProfileRevision] = useState<ProfileRevisionType | null>(null);
+  const [profileRevision, setProfileRevision] =
+    useState<ProfileRevisionType | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [pendingAction, setPendingAction] = useState<string | null>(null);
@@ -157,22 +165,27 @@ export function FreelancerProfessionalSettings({ profileId }: Props) {
   const [skillOptions, setSkillOptions] = useState<SkillOption[]>([]);
   const [isSkillMenuOpen, setIsSkillMenuOpen] = useState(false);
   const skillPickerRef = useRef<HTMLDivElement>(null);
-  const [skillToDelete, setSkillToDelete] = useState<FreelancerSkillType | null>(null);
+  const [skillToDelete, setSkillToDelete] =
+    useState<FreelancerSkillType | null>(null);
 
   // Portfolio management
-  const [portfolioEditor, setPortfolioEditor] = useState<PortfolioItemType | "new" | null>(null);
+  const [portfolioEditor, setPortfolioEditor] = useState<
+    PortfolioItemType | "new" | null
+  >(null);
   const [portfolioForm, setPortfolioForm] = useState<PortfolioForm>({
     title: "",
     description: "",
     technologies: "",
     projectUrl: "",
   });
-  const [portfolioToDelete, setPortfolioToDelete] = useState<PortfolioItemType | null>(null);
+  const [portfolioToDelete, setPortfolioToDelete] =
+    useState<PortfolioItemType | null>(null);
 
   // CV management
   const cvInputRef = useRef<HTMLInputElement>(null);
   const [cvToDelete, setCvToDelete] = useState(false);
-  const [cvAnalysisDraft, setCvAnalysisDraft] = useState<CvAnalysisDraftType | null>(null);
+  const [cvAnalysisDraft, setCvAnalysisDraft] =
+    useState<CvAnalysisDraftType | null>(null);
   const [cvAnalysisDialogOpen, setCvAnalysisDialogOpen] = useState(false);
 
   const getProficiencyLabel = (level: number) => {
@@ -231,16 +244,21 @@ export function FreelancerProfessionalSettings({ profileId }: Props) {
   useEffect(() => {
     if (!skillDialogOpen || !isSkillMenuOpen || !canGetSkillSuggestions) return;
     let ignore = false;
-    const timeout = setTimeout(async () => {
-      try {
-        const res = await profileApiRequest.searchSkillSuggestions(skillName.trim());
-        if (!ignore && res.success) {
-          setSkillOptions(res.data);
+    const timeout = setTimeout(
+      async () => {
+        try {
+          const res = await profileApiRequest.searchSkillSuggestions(
+            skillName.trim(),
+          );
+          if (!ignore && res.success) {
+            setSkillOptions(res.data);
+          }
+        } catch {
+          if (!ignore) setSkillOptions([]);
         }
-      } catch {
-        if (!ignore) setSkillOptions([]);
-      }
-    }, skillName.trim() ? 250 : 0);
+      },
+      skillName.trim() ? 250 : 0,
+    );
 
     return () => {
       ignore = true;
@@ -262,7 +280,10 @@ export function FreelancerProfessionalSettings({ profileId }: Props) {
   const availableSkillOptions = useMemo(
     () =>
       skillOptions.filter(
-        (opt) => !skills.some((s) => s.skill.name.toLowerCase() === opt.name.toLowerCase()),
+        (opt) =>
+          !skills.some(
+            (s) => s.skill.name.toLowerCase() === opt.name.toLowerCase(),
+          ),
       ),
     [skillOptions, skills],
   );
@@ -315,7 +336,9 @@ export function FreelancerProfessionalSettings({ profileId }: Props) {
 
       toastSuccess({ message: res.data.message || t("savedSuccess") });
     } catch (err) {
-      toastError({ message: getErrorMessage(err, t("toast.profileUpdateFailedRetry")) });
+      toastError({
+        message: getErrorMessage(err, t("toast.profileUpdateFailedRetry")),
+      });
     } finally {
       setPendingAction(null);
     }
@@ -344,14 +367,18 @@ export function FreelancerProfessionalSettings({ profileId }: Props) {
       });
       if (!res.success) throw new Error(t("toast.addSkillFailed"));
       setSkills((prev) =>
-        [...prev, res.data].sort((a, b) => a.skill.name.localeCompare(b.skill.name)),
+        [...prev, res.data].sort((a, b) =>
+          a.skill.name.localeCompare(b.skill.name),
+        ),
       );
       setSkillName("");
       setSkillLevel("5");
       setSkillDialogOpen(false);
       toastSuccess({ message: t("toast.skillAdded") });
     } catch (err) {
-      toastError({ message: getErrorMessage(err, t("toast.addSkillFailedRetry")) });
+      toastError({
+        message: getErrorMessage(err, t("toast.addSkillFailedRetry")),
+      });
     } finally {
       setPendingAction(null);
     }
@@ -366,7 +393,9 @@ export function FreelancerProfessionalSettings({ profileId }: Props) {
       setSkillToDelete(null);
       toastSuccess({ message: t("toast.skillRemoved") });
     } catch (err) {
-      toastError({ message: getErrorMessage(err, t("toast.removeSkillFailed")) });
+      toastError({
+        message: getErrorMessage(err, t("toast.removeSkillFailed")),
+      });
     } finally {
       setPendingAction(null);
     }
@@ -418,7 +447,10 @@ export function FreelancerProfessionalSettings({ profileId }: Props) {
         setPortfolios((prev) => [res.data, ...prev]);
         toastSuccess({ message: t("toast.portfolioCreated") });
       } else {
-        const res = await profileApiRequest.updatePortfolio(portfolioEditor.id, payload);
+        const res = await profileApiRequest.updatePortfolio(
+          portfolioEditor.id,
+          payload,
+        );
         if (!res.success) throw new Error(t("toast.updatePortfolioFailed"));
         setPortfolios((prev) =>
           prev.map((p) => (p.id === portfolioEditor.id ? res.data : p)),
@@ -427,7 +459,9 @@ export function FreelancerProfessionalSettings({ profileId }: Props) {
       }
       setPortfolioEditor(null);
     } catch (err) {
-      toastError({ message: getErrorMessage(err, t("toast.savePortfolioFailed")) });
+      toastError({
+        message: getErrorMessage(err, t("toast.savePortfolioFailed")),
+      });
     } finally {
       setPendingAction(null);
     }
@@ -438,11 +472,15 @@ export function FreelancerProfessionalSettings({ profileId }: Props) {
     setPendingAction("portfolio-delete");
     try {
       await profileApiRequest.deletePortfolio(portfolioToDelete.id);
-      setPortfolios((prev) => prev.filter((p) => p.id !== portfolioToDelete.id));
+      setPortfolios((prev) =>
+        prev.filter((p) => p.id !== portfolioToDelete.id),
+      );
       setPortfolioToDelete(null);
       toastSuccess({ message: t("toast.portfolioDeleted") });
     } catch (err) {
-      toastError({ message: getErrorMessage(err, t("toast.deletePortfolioFailed")) });
+      toastError({
+        message: getErrorMessage(err, t("toast.deletePortfolioFailed")),
+      });
     } finally {
       setPendingAction(null);
     }
@@ -477,7 +515,9 @@ export function FreelancerProfessionalSettings({ profileId }: Props) {
   const handleUploadCv = async (file: File) => {
     if (!canUploadCv) return;
     if (file.type !== "application/pdf" || file.size > MAX_CV_SIZE) {
-      toastError({ message: "Vui lòng chọn tệp PDF có dung lượng không quá 10 MB." });
+      toastError({
+        message: "Vui lòng chọn tệp PDF có dung lượng không quá 10 MB.",
+      });
       return;
     }
     setPendingAction("cv-upload");
@@ -546,7 +586,12 @@ export function FreelancerProfessionalSettings({ profileId }: Props) {
     return (
       <div className="rounded-xl border border-destructive/30 bg-destructive/5 p-8 text-center">
         <p className="text-sm font-medium text-destructive">{loadError}</p>
-        <Button variant="outline" size="sm" onClick={() => void loadAll()} className="mt-4">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => void loadAll()}
+          className="mt-4"
+        >
           <RefreshCw className="mr-2 size-4" /> {t("tryAgain")}
         </Button>
       </div>
@@ -559,7 +604,7 @@ export function FreelancerProfessionalSettings({ profileId }: Props) {
   return (
     <div className="space-y-8">
       {/* Top Banner Card: Profile Status & Strength */}
-      <div className="relative overflow-hidden rounded-2xl border border-border/80 bg-linear-to-r from-[#D0E1F8]/30 via-background to-background p-6 dark:from-[#0069D3]/10">
+      <div className="relative overflow-hidden rounded-[26px] border border-border bg-card p-6 shadow-xs dark:border-white/10 sm:p-8">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <div className="flex items-center gap-2">
@@ -577,21 +622,6 @@ export function FreelancerProfessionalSettings({ profileId }: Props) {
               {t("professionalInfoHint")}
             </p>
           </div>
-
-          <div className="flex flex-wrap items-center gap-2.5">
-            <Button
-              variant="default"
-              size="sm"
-              asChild
-              className="bg-[#0069D3] text-white hover:bg-[#0058b3]"
-            >
-              <Link href={`/profiles/${profileId}`} target="_blank">
-                <Eye className="mr-1.5 size-4" />
-                {t("viewPublicProfile")}
-                <ExternalLink className="ml-1 size-3.5 opacity-70" />
-              </Link>
-            </Button>
-          </div>
         </div>
 
         {/* Profile Strength Bar */}
@@ -601,7 +631,9 @@ export function FreelancerProfessionalSettings({ profileId }: Props) {
               <Sparkles className="size-3.5 text-[#0069D3]" />
               {t("profileStrength")}: {completion}%
             </span>
-            <span className="text-muted-foreground">{t("profileStrengthHint")}</span>
+            <span className="text-muted-foreground">
+              {t("profileStrengthHint")}
+            </span>
           </div>
           <div className="mt-2 h-2 overflow-hidden rounded-full bg-muted">
             <div
@@ -613,7 +645,10 @@ export function FreelancerProfessionalSettings({ profileId }: Props) {
 
         {profileRevision && (
           <div className="mt-4">
-            <ProfileReviewStatus revision={profileRevision} profileStrength={completion} />
+            <ProfileReviewStatus
+              revision={profileRevision}
+              profileStrength={completion}
+            />
           </div>
         )}
       </div>
@@ -622,7 +657,7 @@ export function FreelancerProfessionalSettings({ profileId }: Props) {
       <div className="grid gap-8 lg:grid-cols-[1fr_380px]">
         {/* Left Column: Professional Details Form */}
         <div className="space-y-6">
-          <section className="rounded-2xl border border-border bg-card p-6 shadow-xs">
+          <section className="rounded-[26px] border border-border bg-card p-6 shadow-xs dark:border-white/10 sm:p-8">
             <div className="flex items-center gap-2 border-b border-border pb-4">
               <BriefcaseBusiness className="size-5 text-[#0069D3]" />
               <div>
@@ -638,24 +673,34 @@ export function FreelancerProfessionalSettings({ profileId }: Props) {
             <form onSubmit={handleSaveInfo} className="mt-5 space-y-4">
               <div className="grid gap-4 sm:grid-cols-2">
                 <div className="space-y-1.5">
-                  <Label htmlFor="pro-title">{t("fieldProfessionalTitle")}</Label>
+                  <Label htmlFor="pro-title">
+                    {t("fieldProfessionalTitle")}
+                  </Label>
                   <Input
                     id="pro-title"
                     placeholder="e.g. Senior Fullstack Developer, UI/UX Designer"
                     value={form.title}
-                    onChange={(e) => setForm((prev) => ({ ...prev, title: e.target.value }))}
+                    onChange={(e) =>
+                      setForm((prev) => ({ ...prev, title: e.target.value }))
+                    }
                     disabled={!canUpdateProfile}
                     required
                   />
                 </div>
 
                 <div className="space-y-1.5">
-                  <Label htmlFor="pro-availability">{t("fieldAvailability")}</Label>
+                  <Label htmlFor="pro-availability">
+                    {t("fieldAvailability")}
+                  </Label>
                   <Select
                     value={form.availabilityStatus}
                     disabled={!canUpdateProfile}
                     onValueChange={(val) =>
-                      val && setForm((prev) => ({ ...prev, availabilityStatus: val as AvailabilityStatusType }))
+                      val &&
+                      setForm((prev) => ({
+                        ...prev,
+                        availabilityStatus: val as AvailabilityStatusType,
+                      }))
                     }
                   >
                     <SelectTrigger id="pro-availability">
@@ -679,7 +724,9 @@ export function FreelancerProfessionalSettings({ profileId }: Props) {
                   rows={4}
                   placeholder="Giới thiệu bản thân, chuyên môn thế mạnh và mục tiêu nghề nghiệp..."
                   value={form.bio}
-                  onChange={(e) => setForm((prev) => ({ ...prev, bio: e.target.value }))}
+                  onChange={(e) =>
+                    setForm((prev) => ({ ...prev, bio: e.target.value }))
+                  }
                   disabled={!canUpdateProfile}
                 />
               </div>
@@ -688,14 +735,18 @@ export function FreelancerProfessionalSettings({ profileId }: Props) {
               <div className="space-y-1.5">
                 <div className="flex items-center justify-between">
                   <Label htmlFor="pro-experience">{t("fieldExperience")}</Label>
-                  <span className="text-[11px] text-muted-foreground">{t("hintOnePerLine")}</span>
+                  <span className="text-[11px] text-muted-foreground">
+                    {t("hintOnePerLine")}
+                  </span>
                 </div>
                 <Textarea
                   id="pro-experience"
                   rows={3}
                   placeholder="Senior Frontend Developer - ABC Corp (2022 - Nay)&#10;Fullstack Developer - Freelance (2020 - 2022)"
                   value={form.experience}
-                  onChange={(e) => setForm((prev) => ({ ...prev, experience: e.target.value }))}
+                  onChange={(e) =>
+                    setForm((prev) => ({ ...prev, experience: e.target.value }))
+                  }
                   disabled={!canUpdateProfile}
                 />
               </div>
@@ -711,7 +762,12 @@ export function FreelancerProfessionalSettings({ profileId }: Props) {
                     rows={3}
                     placeholder="Đại học Bách Khoa&#10;Kỹ thuật phần mềm (2018 - 2022)"
                     value={form.education}
-                    onChange={(e) => setForm((prev) => ({ ...prev, education: e.target.value }))}
+                    onChange={(e) =>
+                      setForm((prev) => ({
+                        ...prev,
+                        education: e.target.value,
+                      }))
+                    }
                     disabled={!canUpdateProfile}
                   />
                 </div>
@@ -725,7 +781,12 @@ export function FreelancerProfessionalSettings({ profileId }: Props) {
                     rows={3}
                     placeholder="AWS Solutions Architect&#10;IELTS 7.5"
                     value={form.certifications}
-                    onChange={(e) => setForm((prev) => ({ ...prev, certifications: e.target.value }))}
+                    onChange={(e) =>
+                      setForm((prev) => ({
+                        ...prev,
+                        certifications: e.target.value,
+                      }))
+                    }
                     disabled={!canUpdateProfile}
                   />
                 </div>
@@ -739,7 +800,12 @@ export function FreelancerProfessionalSettings({ profileId }: Props) {
                     rows={3}
                     placeholder="Tiếng Việt (Bản xứ)&#10;Tiếng Anh (Thành thạo)"
                     value={form.languages}
-                    onChange={(e) => setForm((prev) => ({ ...prev, languages: e.target.value }))}
+                    onChange={(e) =>
+                      setForm((prev) => ({
+                        ...prev,
+                        languages: e.target.value,
+                      }))
+                    }
                     disabled={!canUpdateProfile}
                   />
                 </div>
@@ -765,7 +831,7 @@ export function FreelancerProfessionalSettings({ profileId }: Props) {
           </section>
 
           {/* Portfolio Management */}
-          <section className="rounded-2xl border border-border bg-card p-6 shadow-xs">
+          <section className="rounded-[26px] border border-border bg-card p-6 shadow-xs dark:border-white/10 sm:p-8">
             <div className="flex items-center justify-between border-b border-border pb-4">
               <div className="flex items-center gap-2">
                 <Award className="size-5 text-[#0069D3]" />
@@ -773,7 +839,9 @@ export function FreelancerProfessionalSettings({ profileId }: Props) {
                   <h3 className="text-base font-semibold text-foreground">
                     {t("portfolioTitle")} ({portfolios.length})
                   </h3>
-                  <p className="text-xs text-muted-foreground">{t("portfolioDescription")}</p>
+                  <p className="text-xs text-muted-foreground">
+                    {t("portfolioDescription")}
+                  </p>
                 </div>
               </div>
               {canAddPortfolio && (
@@ -792,8 +860,12 @@ export function FreelancerProfessionalSettings({ profileId }: Props) {
             {portfolios.length === 0 ? (
               <div className="py-10 text-center">
                 <BriefcaseBusiness className="mx-auto size-8 text-muted-foreground/40" />
-                <p className="mt-2 text-sm font-medium text-foreground">{t("noPortfolioTitle")}</p>
-                <p className="mt-1 text-xs text-muted-foreground">{t("noPortfolioOwner")}</p>
+                <p className="mt-2 text-sm font-medium text-foreground">
+                  {t("noPortfolioTitle")}
+                </p>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  {t("noPortfolioOwner")}
+                </p>
               </div>
             ) : (
               <div className="mt-4 grid gap-3 sm:grid-cols-2">
@@ -872,12 +944,16 @@ export function FreelancerProfessionalSettings({ profileId }: Props) {
         {/* Right Column: Skills & CV */}
         <div className="space-y-6">
           {/* CV Section */}
-          <section className="rounded-2xl border border-border bg-card p-5 shadow-xs">
+          <section className="rounded-[26px] border border-border bg-card p-6 shadow-xs dark:border-white/10 sm:p-7">
             <div className="flex items-center gap-2 border-b border-border pb-3">
               <FileText className="size-5 text-[#0069D3]" />
               <div>
-                <h3 className="text-sm font-semibold text-foreground">{t("cvSectionTitle")}</h3>
-                <p className="text-[11px] text-muted-foreground">{t("uploadCvHint")}</p>
+                <h3 className="text-sm font-semibold text-foreground">
+                  {t("cvSectionTitle")}
+                </h3>
+                <p className="text-[11px] text-muted-foreground">
+                  {t("uploadCvHint")}
+                </p>
               </div>
             </div>
 
@@ -903,9 +979,12 @@ export function FreelancerProfessionalSettings({ profileId }: Props) {
                       <Button
                         type="button"
                         size="sm"
-                        className="w-full bg-[#4fae2e] text-xs font-semibold text-white shadow-xs hover:bg-[#439c28]"
+                        className="w-full bg-[#0069D3] text-xs font-semibold text-white shadow-xs hover:bg-[#0058b3]"
                         onClick={() => void handleAnalyzeCv()}
-                        disabled={pendingAction === "cv-analyze" || pendingAction === "cv-upload"}
+                        disabled={
+                          pendingAction === "cv-analyze" ||
+                          pendingAction === "cv-upload"
+                        }
                       >
                         {pendingAction === "cv-analyze" ? (
                           <Loader2 className="mr-1.5 size-3.5 animate-spin" />
@@ -920,7 +999,12 @@ export function FreelancerProfessionalSettings({ profileId }: Props) {
 
                     <div className="flex items-center gap-2">
                       {canDownloadCv && (
-                        <Button variant="outline" size="sm" asChild className="flex-1 text-xs">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          asChild
+                          className="flex-1 text-xs"
+                        >
                           <a
                             href={`/api/backend/profiles/${profileId}/cv/file`}
                             target="_blank"
@@ -938,7 +1022,10 @@ export function FreelancerProfessionalSettings({ profileId }: Props) {
                           size="sm"
                           className="text-xs text-destructive hover:bg-destructive/10"
                           onClick={() => setCvToDelete(true)}
-                          disabled={pendingAction === "cv-delete" || pendingAction === "cv-analyze"}
+                          disabled={
+                            pendingAction === "cv-delete" ||
+                            pendingAction === "cv-analyze"
+                          }
                         >
                           <Trash2 className="size-3.5" />
                         </Button>
@@ -949,7 +1036,9 @@ export function FreelancerProfessionalSettings({ profileId }: Props) {
               ) : (
                 <div className="rounded-xl border border-dashed border-border p-5 text-center">
                   <FileText className="mx-auto size-7 text-muted-foreground/40" />
-                  <p className="mt-1.5 text-xs text-muted-foreground">{t("noCvUploaded")}</p>
+                  <p className="mt-1.5 text-xs text-muted-foreground">
+                    {t("noCvUploaded")}
+                  </p>
                   {canUploadCv && (
                     <Button
                       variant="outline"
@@ -996,13 +1085,15 @@ export function FreelancerProfessionalSettings({ profileId }: Props) {
           </section>
 
           {/* Skills Section */}
-          <section className="rounded-2xl border border-border bg-card p-5 shadow-xs">
+          <section className="rounded-[26px] border border-border bg-card p-6 shadow-xs dark:border-white/10 sm:p-7">
             <div className="flex items-center justify-between border-b border-border pb-3">
               <div>
                 <h3 className="text-sm font-semibold text-foreground">
                   {t("skillsTitle")} ({skills.length})
                 </h3>
-                <p className="text-[11px] text-muted-foreground">{t("skillsDescription")}</p>
+                <p className="text-[11px] text-muted-foreground">
+                  {t("skillsDescription")}
+                </p>
               </div>
               {canAddSkill && (
                 <Button
@@ -1032,7 +1123,8 @@ export function FreelancerProfessionalSettings({ profileId }: Props) {
                             {s.skill.name}
                           </span>
                           <span className="text-[11px] text-muted-foreground">
-                            {s.proficiencyLevel}/10 · {getProficiencyLabel(s.proficiencyLevel)}
+                            {s.proficiencyLevel}/10 ·{" "}
+                            {getProficiencyLabel(s.proficiencyLevel)}
                           </span>
                         </div>
                         <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-muted">
@@ -1113,7 +1205,10 @@ export function FreelancerProfessionalSettings({ profileId }: Props) {
 
             <div className="space-y-1.5">
               <Label htmlFor="skill-prof">{t("fieldProficiency")}</Label>
-              <Select value={skillLevel} onValueChange={(val) => val && setSkillLevel(val)}>
+              <Select
+                value={skillLevel}
+                onValueChange={(val) => val && setSkillLevel(val)}
+              >
                 <SelectTrigger id="skill-prof">
                   <SelectValue />
                 </SelectTrigger>
@@ -1128,7 +1223,11 @@ export function FreelancerProfessionalSettings({ profileId }: Props) {
             </div>
 
             <DialogFooter>
-              <Button type="button" variant="outline" onClick={() => setSkillDialogOpen(false)}>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setSkillDialogOpen(false)}
+              >
                 {t("cancel")}
               </Button>
               <Button
@@ -1157,7 +1256,9 @@ export function FreelancerProfessionalSettings({ profileId }: Props) {
           <AlertDialogHeader>
             <AlertDialogTitle>{t("deleteSkillTitle")}</AlertDialogTitle>
             <AlertDialogDescription>
-              {t("deleteSkillDescription", { name: skillToDelete?.skill.name ?? "" })}
+              {t("deleteSkillDescription", {
+                name: skillToDelete?.skill.name ?? "",
+              })}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -1180,9 +1281,13 @@ export function FreelancerProfessionalSettings({ profileId }: Props) {
         <DialogContent className="sm:max-w-lg">
           <DialogHeader>
             <DialogTitle>
-              {portfolioEditor === "new" ? t("addPortfolioTitle") : t("editPortfolioTitle")}
+              {portfolioEditor === "new"
+                ? t("addPortfolioTitle")
+                : t("editPortfolioTitle")}
             </DialogTitle>
-            <DialogDescription>{t("portfolioFormDescription")}</DialogDescription>
+            <DialogDescription>
+              {t("portfolioFormDescription")}
+            </DialogDescription>
           </DialogHeader>
 
           <form onSubmit={handleSavePortfolio} className="space-y-4">
@@ -1191,7 +1296,12 @@ export function FreelancerProfessionalSettings({ profileId }: Props) {
               <Input
                 id="pf-title"
                 value={portfolioForm.title}
-                onChange={(e) => setPortfolioForm((prev) => ({ ...prev, title: e.target.value }))}
+                onChange={(e) =>
+                  setPortfolioForm((prev) => ({
+                    ...prev,
+                    title: e.target.value,
+                  }))
+                }
                 required
               />
             </div>
@@ -1202,20 +1312,32 @@ export function FreelancerProfessionalSettings({ profileId }: Props) {
                 id="pf-desc"
                 rows={3}
                 value={portfolioForm.description}
-                onChange={(e) => setPortfolioForm((prev) => ({ ...prev, description: e.target.value }))}
+                onChange={(e) =>
+                  setPortfolioForm((prev) => ({
+                    ...prev,
+                    description: e.target.value,
+                  }))
+                }
               />
             </div>
 
             <div className="space-y-1.5">
               <div className="flex items-center justify-between">
                 <Label htmlFor="pf-tech">{t("fieldTechnologies")}</Label>
-                <span className="text-[11px] text-muted-foreground">{t("hintTechnologies")}</span>
+                <span className="text-[11px] text-muted-foreground">
+                  {t("hintTechnologies")}
+                </span>
               </div>
               <Input
                 id="pf-tech"
                 placeholder={t("technologiesPlaceholder")}
                 value={portfolioForm.technologies}
-                onChange={(e) => setPortfolioForm((prev) => ({ ...prev, technologies: e.target.value }))}
+                onChange={(e) =>
+                  setPortfolioForm((prev) => ({
+                    ...prev,
+                    technologies: e.target.value,
+                  }))
+                }
               />
             </div>
 
@@ -1225,12 +1347,21 @@ export function FreelancerProfessionalSettings({ profileId }: Props) {
                 id="pf-url"
                 placeholder={t("projectUrlPlaceholder")}
                 value={portfolioForm.projectUrl}
-                onChange={(e) => setPortfolioForm((prev) => ({ ...prev, projectUrl: e.target.value }))}
+                onChange={(e) =>
+                  setPortfolioForm((prev) => ({
+                    ...prev,
+                    projectUrl: e.target.value,
+                  }))
+                }
               />
             </div>
 
             <DialogFooter>
-              <Button type="button" variant="outline" onClick={() => setPortfolioEditor(null)}>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setPortfolioEditor(null)}
+              >
                 {t("cancel")}
               </Button>
               <Button
@@ -1257,7 +1388,9 @@ export function FreelancerProfessionalSettings({ profileId }: Props) {
           <AlertDialogHeader>
             <AlertDialogTitle>{t("deletePortfolioTitle")}</AlertDialogTitle>
             <AlertDialogDescription>
-              {t("deletePortfolioDescription", { title: portfolioToDelete?.title ?? "" })}
+              {t("deletePortfolioDescription", {
+                title: portfolioToDelete?.title ?? "",
+              })}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

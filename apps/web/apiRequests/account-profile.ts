@@ -3,6 +3,7 @@ import type {
   AddSocialLinkType,
   ApiError,
   ClientProfileDetailType,
+  ClientDirectoryType,
   FavoriteFreelancerType,
   FollowingFreelancerType,
   DiscoverFreelancerType,
@@ -108,6 +109,10 @@ export const accountProfileApi = {
     };
   },
 
+  findClients: (search: string, page: number) => {
+    const params = new URLSearchParams({ search, page: String(page), limit: "12" });
+    return http.get<ClientDirectoryType>(`/clients?${params}`);
+  },
   getClientProfile: (userId: number) =>
     http.get<ClientProfileDetailType>(`/clients/${userId}`),
   updateClientProfile: (body: UpdateClientProfileType) =>
