@@ -40,7 +40,8 @@ import { JobCategoriesModule } from './routes/job-categories/job-categories.modu
 import { ReviewModule } from './routes/reviews/review.module';
 import { BannersModule } from './routes/banners/banners.module';
 import { BannersAdminModule } from './routes/banners-admin/banners-admin.module';
-import { DisputeModule } from './routes/disputes/dispute.module';
+import { DisputeModule } from './routes/disputes/user/dispute.module';
+import { DisputesExpertModule } from './routes/disputes/expert/disputes-expert.module';
 import { ProfileRevisionModule } from './routes/profile-revisions/profile-revision.module';
 import { ExpertProfileModule } from './routes/expert-profile/expert-profile.module';
 import { PaymentModule } from './routes/payments/payment.module';
@@ -82,6 +83,7 @@ import { RecommendationModule } from './routes/recommendations/recommendation.mo
     BannersModule,
     BannersAdminModule,
     DisputeModule,
+    DisputesExpertModule,
     ProfileRevisionModule,
     ExpertProfileModule,
     PaymentModule,
@@ -108,4 +110,4 @@ import { RecommendationModule } from './routes/recommendations/recommendation.mo
     },
   ],
 })
-export class AppModule {}
+export class AppModule { }

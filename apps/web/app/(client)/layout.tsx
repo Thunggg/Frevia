@@ -14,12 +14,12 @@ export default async function ClientDashboardLayout({
     redirect("/login?redirect=/client/jobs");
   }
 
-  const primaryRole =
-    user.roles.find((role) => role.isPrimary)?.name ?? user.roles[0]?.name;
+  // const primaryRole =
+  //   user.roles.find((role) => role.isPrimary)?.name ?? user.roles[0]?.name;
 
-  if (primaryRole !== RoleName.CLIENT) {
-    redirect("/access-denied?requiredRole=client");
-  }
+  // if (primaryRole !== RoleName.CLIENT) {
+  //   redirect("/access-denied?requiredRole=client");
+  // }
 
   return (
     <>

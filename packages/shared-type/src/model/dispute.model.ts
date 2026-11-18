@@ -2,7 +2,8 @@ import { z } from 'zod';
 import {
   DisputeDecisionResponseEnum,
   DisputeEvidenceTypeEnum,
-  DisputeFeeStatusEnum,
+  DisputeResolutionTypeEnum,
+  DisputeRespondActionEnum,
   DisputeStatusEnum,
   MAX_DISPUTE_EVIDENCE_FILES,
 } from '../constants/dispute.constant';
@@ -15,10 +16,46 @@ export type DisputeEvidenceFileItemType = z.infer<
   typeof DisputeEvidenceFileItemSchema
 >;
 
+export const GetResolutionReasonsQuerySchema = z.object({
+  milestoneId: z.coerce.number().int().positive(),
+});
+export type GetResolutionReasonsQueryType = z.infer<
+  typeof GetResolutionReasonsQuerySchema
+>;
+
+export const ResolutionReasonItemSchema = z.object({
+  code: z.string(),
+  label: z.string(),
+  description: z.string(),
+  allowedResolutionTypes: z.array(DisputeResolutionTypeEnum),
+});
+export type ResolutionReasonItemType = z.infer<
+  typeof ResolutionReasonItemSchema
+>;
+
+export const GetResolutionReasonsResponseSchema = z.object({
+  role: z.enum(['CLIENT', 'FREELANCER']),
+  milestoneStatus: z.string(),
+  milestoneAmount: z.coerce.number(),
+  milestoneDueDate: z.coerce.date().nullable().optional(),
+  reasons: z.array(ResolutionReasonItemSchema),
+});
+export type GetResolutionReasonsResponseType = z.infer<
+  typeof GetResolutionReasonsResponseSchema
+>;
+
 export const CreateDisputeBodySchema = z.object({
   milestoneId: z.number().int().positive(),
   reason: z.string().min(3).max(255),
   description: z.string().min(10).max(5000),
+  resolutionType: DisputeResolutionTypeEnum.optional(),
+  proposedFreelancerAmount: z.coerce.number().min(0).optional(),
+  proposedClientAmount: z.coerce.number().min(0).optional(),
+  proposedDueDate: z
+    .string()
+    .datetime({ offset: true })
+    .or(z.string().min(8))
+    .optional(),
   evidenceFiles: z
     .array(DisputeEvidenceFileItemSchema)
     .max(MAX_DISPUTE_EVIDENCE_FILES)
@@ -26,21 +63,15 @@ export const CreateDisputeBodySchema = z.object({
 });
 export type CreateDisputeBodyType = z.infer<typeof CreateDisputeBodySchema>;
 
-export const PayDisputeFeeBodySchema = z.object({
-  paymentMethodId: z.string().optional(),
-});
-export type PayDisputeFeeBodyType = z.infer<typeof PayDisputeFeeBodySchema>;
-
-export const SubmitDisputeResponseBodySchema = z.object({
-  description: z.string().min(10).max(5000),
+export const RespondDisputeBodySchema = z.object({
+  action: DisputeRespondActionEnum,
+  reason: z.string().max(5000).optional(),
   evidenceFiles: z
     .array(DisputeEvidenceFileItemSchema)
     .max(MAX_DISPUTE_EVIDENCE_FILES)
     .optional(),
 });
-export type SubmitDisputeResponseBodyType = z.infer<
-  typeof SubmitDisputeResponseBodySchema
->;
+export type RespondDisputeBodyType = z.infer<typeof RespondDisputeBodySchema>;
 
 export const ReviewDisputeDecisionBodySchema = z.object({
   response: z.enum(['ACCEPTED', 'REJECTED']),
@@ -73,25 +104,11 @@ export const GetDisputeListQuerySchema = z.object({
   page: z.coerce.number().int().min(1).default(1),
   limit: z.coerce.number().int().min(1).max(50).default(10),
   sortBy: z
-    .enum(['createdAt', 'updatedAt', 'feeDeadline', 'responseDeadline'])
+    .enum(['createdAt', 'updatedAt', 'responseDeadline'])
     .default('createdAt'),
   order: z.enum(['asc', 'desc']).default('desc'),
 });
 export type GetDisputeListQueryType = z.infer<typeof GetDisputeListQuerySchema>;
-
-export const DisputeFeeSchema = z.object({
-  id: z.number(),
-  disputeId: z.number(),
-  userId: z.number(),
-  amount: z.coerce.number(),
-  status: DisputeFeeStatusEnum,
-  paymentIntentId: z.string().nullable().optional(),
-  paidAt: z.coerce.date().nullable().optional(),
-  deadline: z.coerce.date().nullable().optional(),
-  createdAt: z.coerce.date(),
-  updatedAt: z.coerce.date(),
-});
-export type DisputeFeeType = z.infer<typeof DisputeFeeSchema>;
 
 export const DisputeEvidenceSchema = z.object({
   id: z.number(),
@@ -131,9 +148,15 @@ export const DisputeDetailSchema = z.object({
   respondentId: z.number(),
   reason: z.string(),
   description: z.string(),
+  resolutionType: DisputeResolutionTypeEnum.optional(),
+  proposedFreelancerAmount: z.coerce.number().nullable().optional(),
+  proposedClientAmount: z.coerce.number().nullable().optional(),
+  proposedDueDate: z.coerce.date().nullable().optional(),
+  previousMilestoneStatus: z.string().nullable().optional(),
+  declineReason: z.string().nullable().optional(),
+  declinedAt: z.coerce.date().nullable().optional(),
+  escalatedAt: z.coerce.date().nullable().optional(),
   status: DisputeStatusEnum,
-  arbitrationFee: z.coerce.number(),
-  feeDeadline: z.coerce.date(),
   responseDeadline: z.coerce.date().nullable().optional(),
   freelancerAmount: z.coerce.number().nullable().optional(),
   clientAmount: z.coerce.number().nullable().optional(),
@@ -151,6 +174,7 @@ export const DisputeDetailSchema = z.object({
       amount: z.coerce.number(),
       status: z.string(),
       paymentStatus: z.string(),
+      dueDate: z.coerce.date().nullable().optional(),
     })
     .optional(),
   openedBy: z
@@ -172,7 +196,6 @@ export const DisputeDetailSchema = z.object({
     })
     .nullable()
     .optional(),
-  fees: z.array(DisputeFeeSchema).optional(),
   evidences: z.array(DisputeEvidenceSchema).optional(),
   decisionReviews: z.array(DisputeDecisionReviewSchema).optional(),
 });

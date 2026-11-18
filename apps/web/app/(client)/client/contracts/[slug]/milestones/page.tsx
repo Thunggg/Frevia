@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import { cookies } from "next/headers";
+import { getTranslations } from "next-intl/server";
 import contractServerRequest from "@/apiRequests/contract.server";
 import authServerRequest from "@/apiRequests/auth.server";
 import { MilestonesPageContent } from "./_components";
@@ -11,10 +12,11 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
+  const t = await getTranslations("milestoneWorkspace.meta");
 
   return {
-    title: `Milestones Management - #${slug}`,
-    description: "Manage contract milestones, deliverables, escrow deposits, and releases.",
+    title: t("listTitle", { slug }),
+    description: t("listClientDescription"),
   };
 }
 

@@ -1023,17 +1023,27 @@ model Certificate {
 // 15. Disputes
 // ============================
 model Dispute {
-  id               Int           @id @default(autoincrement())
-  milestoneId      Int           @unique
+  id               Int                   @id @default(autoincrement())
+  milestoneId      Int                   @unique
   openedById       Int
   respondentId     Int
 
   reason           String
   description      String
+  resolutionType   DisputeResolutionType @default(FULL_REFUND)
 
-  status           DisputeStatus @default(OPEN)
+  proposedFreelancerAmount Decimal?      @db.Decimal(10, 2)
+  proposedClientAmount     Decimal?      @db.Decimal(10, 2)
+  proposedDueDate          DateTime?
+  previousMilestoneStatus  MilestoneStatus?
 
-  arbitrationFee   Decimal       @db.Decimal(10, 2)
+  declineReason    String?
+  declinedAt       DateTime?
+  escalatedAt      DateTime?
+
+  status           DisputeStatus         @default(WAITING_RESPONSE)
+
+  arbitrationFee   Decimal               @db.Decimal(10, 2)
   feeDeadline      DateTime
   responseDeadline DateTime?
 
@@ -1598,6 +1608,13 @@ enum DisputeStatus {
   REVIEW_REQUESTED
   FINALIZED
   CANCELLED
+}
+
+enum DisputeResolutionType {
+  EXTEND_DEADLINE
+  PARTIAL_REFUND
+  FULL_REFUND
+  FULL_RELEASE
 }
 
 enum DisputeFeeStatus {

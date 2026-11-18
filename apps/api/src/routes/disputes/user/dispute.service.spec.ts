@@ -6,6 +6,7 @@ import {
 } from '@nestjs/common';
 import {
   DisputeDecisionResponse,
+  DisputeResolutionType,
   DisputeStatus,
   MilestonePaymentStatus,
   MilestoneStatus,
@@ -13,7 +14,7 @@ import {
 } from '@prisma/client';
 import { DisputeRepository } from './dispute.repo';
 import { DisputeService } from './dispute.service';
-import { PaymentService } from '../payments/payment.service';
+import { PaymentService } from '../../payments/payment.service';
 
 describe('DisputeService', () => {
   let service: DisputeService;
@@ -63,8 +64,6 @@ describe('DisputeService', () => {
     reason: 'Poor work quality',
     description: 'The deliverable does not match specifications.',
     status: DisputeStatus.OPEN,
-    arbitrationFee: new Prisma.Decimal(50.0),
-    feeDeadline: new Date(Date.now() + 24 * 60 * 60 * 1000),
     responseDeadline: new Date(Date.now() + 48 * 60 * 60 * 1000),
     freelancerAmount: null,
     clientAmount: null,
@@ -91,22 +90,22 @@ describe('DisputeService', () => {
     openedBy: { id: 1, email: 'client@example.com' },
     respondent: { id: 2, email: 'freelancer@example.com' },
     decisionBy: null,
-    fees: [],
     evidences: [],
     decisionReviews: [],
   };
 
   beforeEach(() => {
     repo = {
-      findActiveExpert: jest.fn(),
       findMilestoneWithContract: jest.fn(),
       findDisputeById: jest.fn(),
+      findDisputeByMilestoneId: jest.fn(),
       findSharedFilesByIds: jest.fn(),
       createDisputeTransaction: jest.fn(),
-      hasUserSubmittedEvidence: jest.fn(),
-      submitResponseTransaction: jest.fn(),
+      declineDisputeTransaction: jest.fn(),
+      acceptExtendDeadlineTransaction: jest.fn(),
+      withdrawDisputeTransaction: jest.fn(),
+      escalateDisputeTransaction: jest.fn(),
       listDisputes: jest.fn(),
-      makeDecisionTransaction: jest.fn(),
       upsertDecisionReview: jest.fn(),
       findDecisionReviews: jest.fn(),
       updateDisputeStatus: jest.fn(),
@@ -118,75 +117,6 @@ describe('DisputeService', () => {
     } as unknown as jest.Mocked<PaymentService>;
 
     service = new DisputeService(repo, paymentService);
-  });
-
-  describe('expert arbitration access', () => {
-    it('lets an active expert list disputes', async () => {
-      repo.findActiveExpert.mockResolvedValue({ id: 9 });
-      repo.listDisputes.mockResolvedValue({
-        data: [],
-        pagination: { page: 1, limit: 10, total: 0, totalPages: 0 },
-      });
-      const query = {
-        page: 1,
-        limit: 10,
-        sortBy: 'createdAt' as const,
-        order: 'desc' as const,
-      };
-      await service.adminListDisputes('Expert', query, 99);
-      expect(repo.findActiveExpert).toHaveBeenCalledWith(99);
-      expect(repo.listDisputes).toHaveBeenCalledWith(query);
-    });
-
-    it('blocks an inactive expert before reading disputes', async () => {
-      repo.findActiveExpert.mockResolvedValue(null);
-      await expect(
-        service.adminListDisputes(
-          'Expert',
-          { page: 1, limit: 10, sortBy: 'createdAt', order: 'desc' },
-          99,
-        ),
-      ).rejects.toBeInstanceOf(ForbiddenException);
-      expect(repo.listDisputes).not.toHaveBeenCalled();
-    });
-
-    it('lets an active expert read evidence and make a decision', async () => {
-      repo.findActiveExpert.mockResolvedValue({ id: 9 });
-      repo.findDisputeById.mockResolvedValue(mockDispute as any);
-      repo.makeDecisionTransaction.mockResolvedValue(mockDispute as any);
-      await service.getDisputeDetail(99, 'Expert', 5);
-      await service.adminMakeDecision(99, 'Expert', 5, {
-        freelancerAmount: 300,
-        clientAmount: 200,
-        decisionReason: 'Supported by evidence.',
-      });
-      expect(repo.makeDecisionTransaction).toHaveBeenCalledWith(
-        5,
-        99,
-        300,
-        200,
-        'Supported by evidence.',
-        1,
-        2,
-      );
-    });
-
-    it('blocks inactive experts from submitting either type of decision', async () => {
-      repo.findActiveExpert.mockResolvedValue(null);
-      const body = {
-        freelancerAmount: 300,
-        clientAmount: 200,
-        decisionReason: 'Supported by evidence.',
-      };
-      await expect(
-        service.adminMakeDecision(99, 'Expert', 5, body),
-      ).rejects.toBeInstanceOf(ForbiddenException);
-      await expect(
-        service.adminFinalDecision(99, 'Expert', 5, body),
-      ).rejects.toBeInstanceOf(ForbiddenException);
-      expect(repo.makeDecisionTransaction).not.toHaveBeenCalled();
-      expect(repo.finalizeDisputeTransaction).not.toHaveBeenCalled();
-    });
   });
 
   describe('createDispute', () => {
@@ -208,7 +138,6 @@ describe('DisputeService', () => {
           openedById: 1,
           respondentId: 2,
           reason: 'Work incomplete',
-          arbitrationFee: 0,
         }),
       );
       expect(result).toEqual(mockDispute);
@@ -241,6 +170,36 @@ describe('DisputeService', () => {
           description: 'Trying to open duplicate dispute on milestone.',
         }),
       ).rejects.toThrow(UnprocessableEntityException);
+    });
+
+    it('allows opening a new dispute when previous dispute was a finalized deadline extension', async () => {
+      repo.findMilestoneWithContract.mockResolvedValue({
+        ...mockMilestone,
+        dispute: {
+          id: 99,
+          status: DisputeStatus.FINALIZED,
+          resolutionType: DisputeResolutionType.EXTEND_DEADLINE,
+        },
+      } as any);
+      repo.createDisputeTransaction.mockResolvedValue(mockDispute as any);
+
+      const result = await service.createDispute(2, {
+        milestoneId: 10,
+        reason: 'Client requested work outside original scope',
+        description: 'Client asked for additional modules after extension.',
+        resolutionType: DisputeResolutionType.FULL_RELEASE,
+      });
+
+      expect(repo.createDisputeTransaction).toHaveBeenCalledWith(
+        expect.objectContaining({
+          milestoneId: 10,
+          openedById: 2,
+          respondentId: 1,
+          resolutionType: DisputeResolutionType.FULL_RELEASE,
+          replaceCancelledDisputeId: 99,
+        }),
+      );
+      expect(result).toEqual(mockDispute);
     });
 
     it('rejects dispute if milestone is already completed/released', async () => {
@@ -284,105 +243,29 @@ describe('DisputeService', () => {
     });
   });
 
-  describe('submitResponse', () => {
-    it('allows respondent to submit response once and updates status to UNDER_REVIEW', async () => {
+  describe('getDisputeDetail & getDisputeByMilestoneId', () => {
+    it('returns dispute detail for contract participant', async () => {
       repo.findDisputeById.mockResolvedValue(mockDispute as any);
-      repo.hasUserSubmittedEvidence.mockResolvedValue(false);
-      repo.submitResponseTransaction.mockResolvedValue({
-        ...mockDispute,
-        status: DisputeStatus.UNDER_REVIEW,
-      } as any);
 
-      const result = await service.submitResponse(2, 5, {
-        description: 'I delivered the required work according to the brief.',
-      });
+      const result = await service.getDisputeDetail(1, 5);
+      expect(result).toEqual(mockDispute);
+      expect(repo.findDisputeById).toHaveBeenCalledWith(5);
+    });
 
-      expect(repo.submitResponseTransaction).toHaveBeenCalledWith(
-        5,
-        2,
-        'I delivered the required work according to the brief.',
-        undefined,
+    it('blocks non-participant from viewing dispute detail', async () => {
+      repo.findDisputeById.mockResolvedValue(mockDispute as any);
+
+      await expect(service.getDisputeDetail(999, 5)).rejects.toThrow(
+        ForbiddenException,
       );
-      expect(result.status).toBe(DisputeStatus.UNDER_REVIEW);
     });
 
-    it('rejects if respondent attempts to submit response more than once', async () => {
-      repo.findDisputeById.mockResolvedValue(mockDispute as any);
-      repo.hasUserSubmittedEvidence.mockResolvedValue(true);
+    it('returns dispute detail by milestoneId for contract participant', async () => {
+      repo.findDisputeByMilestoneId.mockResolvedValue(mockDispute as any);
 
-      await expect(
-        service.submitResponse(2, 5, {
-          description: 'Second response attempt',
-        }),
-      ).rejects.toThrow(UnprocessableEntityException);
-    });
-
-    it('rejects if non-respondent attempts to submit response', async () => {
-      repo.findDisputeById.mockResolvedValue(mockDispute as any);
-
-      await expect(
-        service.submitResponse(1, 5, {
-          description: 'Creator trying to submit response endpoint',
-        }),
-      ).rejects.toThrow(ForbiddenException);
-    });
-  });
-
-  describe('adminMakeDecision', () => {
-    it('records first decision with status DECISION_MADE when split amounts equal milestone amount', async () => {
-      repo.findDisputeById.mockResolvedValue({
-        ...mockDispute,
-        status: DisputeStatus.UNDER_REVIEW,
-      } as any);
-      repo.makeDecisionTransaction.mockResolvedValue({
-        ...mockDispute,
-        status: DisputeStatus.DECISION_MADE,
-        freelancerAmount: new Prisma.Decimal(300.0),
-        clientAmount: new Prisma.Decimal(200.0),
-        decisionReason: 'Work 60% complete based on evidence.',
-      } as any);
-
-      const result = (await service.adminMakeDecision(99, 'Admin', 5, {
-        freelancerAmount: 300.0,
-        clientAmount: 200.0,
-        decisionReason: 'Work 60% complete based on evidence.',
-      }))!;
-
-      expect(repo.makeDecisionTransaction).toHaveBeenCalledWith(
-        5,
-        99,
-        300.0,
-        200.0,
-        'Work 60% complete based on evidence.',
-        1,
-        2,
-      );
-      expect(result.status).toBe(DisputeStatus.DECISION_MADE);
-    });
-
-    it('rejects decision if split amounts do not equal milestone amount', async () => {
-      repo.findDisputeById.mockResolvedValue({
-        ...mockDispute,
-        status: DisputeStatus.UNDER_REVIEW,
-      } as any);
-
-      await expect(
-        service.adminMakeDecision(99, 'Admin', 5, {
-          freelancerAmount: 300.0,
-          clientAmount: 100.0,
-          decisionReason: 'Invalid split amount test',
-        }),
-      ).rejects.toThrow(BadRequestException);
-    });
-
-    it('rejects decision if caller is not Admin', async () => {
-      await expect(
-        service.adminMakeDecision(1, 'Client', 5, {
-          freelancerAmount: 300.0,
-          clientAmount: 200.0,
-          decisionReason: 'Unauthorized',
-        }),
-      ).rejects.toThrow(ForbiddenException);
+      const result = await service.getDisputeByMilestoneId(2, 10);
+      expect(result).toEqual(mockDispute);
+      expect(repo.findDisputeByMilestoneId).toHaveBeenCalledWith(10);
     });
   });
 
@@ -500,53 +383,156 @@ describe('DisputeService', () => {
     });
   });
 
-  describe('adminFinalDecision', () => {
-    it('finalizes dispute and updates milestone status', async () => {
+  describe('Resolution Center (Fiverr-style)', () => {
+    it('returns role-specific resolution reasons for client and freelancer', async () => {
+      repo.findMilestoneWithContract.mockResolvedValue(mockMilestone as any);
+
+      const clientReasons = await service.getResolutionReasons(1, 10);
+      expect(clientReasons.role).toBe('CLIENT');
+      expect(clientReasons.reasons.length).toBeGreaterThan(0);
+
+      const freelancerReasons = await service.getResolutionReasons(2, 10);
+      expect(freelancerReasons.role).toBe('FREELANCER');
+      expect(
+        freelancerReasons.reasons.some((r) => r.code === 'NEED_MORE_TIME'),
+      ).toBe(true);
+    });
+
+    it('accepts FULL_REFUND resolution and triggers automatic Stripe settlement', async () => {
       repo.findDisputeById.mockResolvedValue({
         ...mockDispute,
-        status: DisputeStatus.REVIEW_REQUESTED,
+        status: DisputeStatus.WAITING_RESPONSE,
+        resolutionType: 'FULL_REFUND',
+        proposedFreelancerAmount: new Prisma.Decimal(0),
+        proposedClientAmount: new Prisma.Decimal(500),
+        declinedAt: null,
       } as any);
       repo.finalizeDisputeTransaction.mockResolvedValue({
         ...mockDispute,
         status: DisputeStatus.FINALIZED,
-        freelancerAmount: new Prisma.Decimal(250.0),
-        clientAmount: new Prisma.Decimal(250.0),
-        decisionReason: 'Final 50/50 split resolution',
       } as any);
 
-      const result = (await service.adminFinalDecision(99, 'Admin', 5, {
-        freelancerAmount: 250.0,
-        clientAmount: 250.0,
-        decisionReason: 'Final 50/50 split resolution',
+      const result = (await service.respondToDispute(2, 5, {
+        action: 'ACCEPT',
       }))!;
 
-      expect(repo.finalizeDisputeTransaction).toHaveBeenCalledWith(
+      expect(
+        paymentService.executeDisputeSettlementPayout,
+      ).toHaveBeenCalledWith(
         expect.objectContaining({
           disputeId: 5,
-          milestoneId: 10,
-          freelancerAmount: 250.0,
-          clientAmount: 250.0,
-          decisionReason: 'Final 50/50 split resolution',
-          milestoneStatus: MilestoneStatus.COMPLETED,
-          milestonePaymentStatus: MilestonePaymentStatus.RELEASED,
+          freelancerAmount: 0,
+          clientAmount: 500,
         }),
       );
       expect(result.status).toBe(DisputeStatus.FINALIZED);
     });
 
-    it('rejects final decision if already finalized', async () => {
+    it('accepts EXTEND_DEADLINE resolution and updates milestone dueDate without payout', async () => {
+      const nextWeek = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
       repo.findDisputeById.mockResolvedValue({
+        ...mockDispute,
+        status: DisputeStatus.WAITING_RESPONSE,
+        resolutionType: 'EXTEND_DEADLINE',
+        proposedDueDate: nextWeek,
+        previousMilestoneStatus: MilestoneStatus.LATE,
+        declinedAt: null,
+      } as any);
+      repo.acceptExtendDeadlineTransaction.mockResolvedValue({
         ...mockDispute,
         status: DisputeStatus.FINALIZED,
       } as any);
 
-      await expect(
-        service.adminFinalDecision(99, 'Admin', 5, {
-          freelancerAmount: 250.0,
-          clientAmount: 250.0,
-          decisionReason: 'Trying to re-finalize',
+      const result = (await service.respondToDispute(2, 5, {
+        action: 'ACCEPT',
+      }))!;
+
+      expect(
+        paymentService.executeDisputeSettlementPayout,
+      ).not.toHaveBeenCalled();
+      expect(repo.acceptExtendDeadlineTransaction).toHaveBeenCalledWith(
+        expect.objectContaining({
+          disputeId: 5,
+          milestoneId: 10,
+          proposedDueDate: nextWeek,
+          restoredStatus: MilestoneStatus.IN_PROGRESS,
         }),
-      ).rejects.toThrow(UnprocessableEntityException);
+      );
+      expect(result.status).toBe(DisputeStatus.FINALIZED);
+    });
+
+    it('records decline reason when respondent declines', async () => {
+      repo.findDisputeById.mockResolvedValue({
+        ...mockDispute,
+        status: DisputeStatus.WAITING_RESPONSE,
+        declinedAt: null,
+      } as any);
+      repo.declineDisputeTransaction.mockResolvedValue({
+        ...mockDispute,
+        status: DisputeStatus.WAITING_RESPONSE,
+        declineReason: 'Work was delivered per requirements',
+        declinedAt: new Date(),
+      } as any);
+
+      const result = (await service.respondToDispute(2, 5, {
+        action: 'DECLINE',
+        reason: 'Work was delivered per requirements',
+      }))!;
+
+      expect(repo.declineDisputeTransaction).toHaveBeenCalledWith(
+        5,
+        2,
+        'Work was delivered per requirements',
+        undefined,
+      );
+      expect(result.declineReason).toBe('Work was delivered per requirements');
+    });
+
+    it('allows opener to withdraw ticket and restores previous milestone status', async () => {
+      repo.findDisputeById.mockResolvedValue({
+        ...mockDispute,
+        status: DisputeStatus.WAITING_RESPONSE,
+        previousMilestoneStatus: MilestoneStatus.SUBMITTED,
+      } as any);
+      repo.withdrawDisputeTransaction.mockResolvedValue({
+        ...mockDispute,
+        status: DisputeStatus.CANCELLED,
+      } as any);
+
+      const result = (await service.withdrawDispute(1, 5))!;
+
+      expect(repo.withdrawDisputeTransaction).toHaveBeenCalledWith(
+        5,
+        10,
+        MilestoneStatus.SUBMITTED,
+      );
+      expect(result.status).toBe(DisputeStatus.CANCELLED);
+    });
+
+    it('blocks escalation before decline or 48h deadline, allows after decline', async () => {
+      repo.findDisputeById.mockResolvedValueOnce({
+        ...mockDispute,
+        status: DisputeStatus.WAITING_RESPONSE,
+        declinedAt: null,
+        responseDeadline: new Date(Date.now() + 24 * 60 * 60 * 1000),
+      } as any);
+
+      await expect(service.escalateDispute(1, 5)).rejects.toThrow(
+        UnprocessableEntityException,
+      );
+
+      repo.findDisputeById.mockResolvedValueOnce({
+        ...mockDispute,
+        status: DisputeStatus.WAITING_RESPONSE,
+        declinedAt: new Date(),
+      } as any);
+      repo.escalateDisputeTransaction.mockResolvedValueOnce({
+        ...mockDispute,
+        status: DisputeStatus.UNDER_REVIEW,
+      } as any);
+
+      const escalated = (await service.escalateDispute(1, 5))!;
+      expect(escalated.status).toBe(DisputeStatus.UNDER_REVIEW);
     });
   });
 });

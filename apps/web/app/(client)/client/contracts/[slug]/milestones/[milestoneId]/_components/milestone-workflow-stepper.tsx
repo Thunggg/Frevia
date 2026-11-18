@@ -1,6 +1,6 @@
 "use client";
 
-import { useFormatter } from "next-intl";
+import { useFormatter, useTranslations } from "next-intl";
 import { Check, Clock, Loader2, RotateCcw, ShieldCheck, Upload } from "lucide-react";
 import type { GetSubmissionResponseType, MilestoneType } from "@shared/types";
 
@@ -22,6 +22,8 @@ export function MilestoneWorkflowStepper({
   submissions,
 }: MilestoneWorkflowStepperProps) {
   const format = useFormatter();
+  const t = useTranslations("milestoneWorkspace.stepper");
+  const tCard = useTranslations("milestoneWorkspace.card");
 
   const formatDate = (date: string | Date | null | undefined): string => {
     if (!date) return "";
@@ -51,8 +53,8 @@ export function MilestoneWorkflowStepper({
   const steps: StepItem[] = [
     {
       id: "funded",
-      label: "Escrow Deposit",
-      sublabel: isFunded ? "Funds secured" : "Awaiting deposit",
+      label: t("escrowDeposit"),
+      sublabel: isFunded ? t("fundsSecured") : t("awaitingDeposit"),
       status: isFunded
         ? "completed"
         : milestone.paymentStatus === "PENDING"
@@ -62,12 +64,12 @@ export function MilestoneWorkflowStepper({
     },
     {
       id: "progress",
-      label: "In Progress",
+      label: t("inProgress"),
       sublabel: isStarted
         ? milestone.status === "IN_PROGRESS"
-          ? "Work underway"
-          : "Completed"
-        : "Not started",
+          ? t("workUnderway")
+          : tCard("completed")
+        : t("notStarted"),
       status:
         milestone.status === "IN_PROGRESS"
           ? "current"
@@ -79,19 +81,19 @@ export function MilestoneWorkflowStepper({
     {
       id: "submitted",
       label: isLate
-        ? "Overdue (Late)"
+        ? tCard("statusLate")
         : isChangesRequested
-          ? "Revisions Requested"
-          : "Work Delivered",
+          ? tCard("statusChangesRequested")
+          : t("workDelivered"),
       sublabel: isLate
         ? milestone.paymentStatus === "REFUNDED"
-          ? "Refunded to client"
-          : "Deadline passed"
+          ? t("refundedToClient")
+          : t("deadlinePassed")
         : latestSubmission
           ? isChangesRequested
-            ? "Action required"
+            ? t("actionRequired")
             : formatDate(latestSubmission.submittedAt)
-          : "Awaiting submission",
+          : t("awaitingSubmission"),
       status:
         isLate || isChangesRequested
           ? "warning"
@@ -104,10 +106,10 @@ export function MilestoneWorkflowStepper({
     },
     {
       id: "released",
-      label: "Approved & Paid",
+      label: t("approvedPaid"),
       sublabel: isCompleted
-        ? formatDate(milestone.completedAt) || "Funds released"
-        : "Final payout",
+        ? formatDate(milestone.completedAt) || t("fundsReleased")
+        : t("finalPayout"),
       status: isCompleted ? "completed" : "upcoming",
       icon: Check,
     },

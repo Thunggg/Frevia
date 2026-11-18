@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { motion } from "motion/react";
 import { Calendar, FileText } from "@/components/icons";
 import { useActionPermission } from "@/hooks/use-action-permission";
@@ -27,6 +28,7 @@ export function ContractCard({
   tStatus,
   index,
 }: ContractCardProps) {
+  const tWorkspace = useTranslations("contractWorkspace");
   const { can } = useActionPermission();
   const canViewDetailById = can("GET", "/api/contracts/:id");
   const canViewDetailBySlug = can("GET", "/api/contracts/slug/:slug");
@@ -74,7 +76,7 @@ export function ContractCard({
                 text-[4px] font-semibold
                 text-gray-600
               ">
-                CONTRACT AGREEMENT
+                {tWorkspace("cardAgreementHeader")}
               </span>
             </div>
 
@@ -84,7 +86,7 @@ export function ContractCard({
                 text-[7px] font-bold
                 text-gray-900
               ">
-                FREELANCE CONTRACT
+                {tWorkspace("cardTitle")}
               </p>
 
               <p className="
@@ -104,14 +106,14 @@ export function ContractCard({
             {/* Document Sections */}
             <div className="mt-3 space-y-2">
               {[
-                "PARTIES",
-                "SCOPE AND DELIVERABLES",
-                "PRICE AND PAYMENT",
-                "TIMELINE",
-                "OWNERSHIP",
-                "TERMS AND CONDITIONS",
+                tWorkspace("cardSectionParties"),
+                tWorkspace("cardSectionScope"),
+                tWorkspace("cardSectionPrice"),
+                tWorkspace("cardSectionTimeline"),
+                tWorkspace("cardSectionOwnership"),
+                tWorkspace("cardSectionTerms"),
               ].map((section, i) => (
-                <div key={section}>
+                <div key={i}>
                   <p className="
                     text-[5px] font-bold
                     text-gray-800

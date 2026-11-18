@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
 import { useSearchParams } from "next/navigation";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toastError, toastSuccess } from "@repo/ui/components/shadcn/toast";
@@ -24,6 +25,8 @@ import { MilestoneOverviewTab } from "./milestone-overview-tab";
 import { MilestoneSubmissionsTab } from "./milestone-submissions-tab";
 import { MilestoneFilesTab } from "./milestone-files-tab";
 import { MilestoneActivityTimeline } from "./milestone-activity-timeline";
+import { OpenResolutionDialog } from "@/components/disputes/open-resolution-dialog";
+import { ResolutionDetailSheet } from "@/components/disputes/resolution-detail-sheet";
 
 interface MilestoneDetailContentProps {
   initialContract: ContractDetailType;
@@ -54,6 +57,7 @@ function MilestoneChatPopup({
   const [open, setOpen] = useState(false);
   const [conversationId, setConversationId] = useState<number | null>(null);
   const [isStartingChat, setIsStartingChat] = useState(false);
+  const t = useTranslations("milestoneWorkspace");
   const createConversation = useCreateConversation();
 
   const openChat = async (targetUserId: number) => {
@@ -65,7 +69,7 @@ function MilestoneChatPopup({
         setOpen(true);
       }
     } catch {
-      toastError({ message: "Could not open conversation. Try again." });
+      toastError({ message: t("toasts.chatFailed") });
     } finally {
       setIsStartingChat(false);
     }
@@ -99,6 +103,8 @@ export function MilestoneDetailContent({
   socketUrl,
 }: MilestoneDetailContentProps) {
   const queryClient = useQueryClient();
+  const t = useTranslations("milestoneWorkspace");
+  const tContract = useTranslations("contractWorkspace");
   const { can } = useActionPermission();
   const isFreelancer = basePath === "/freelancer";
   const isClient = !isFreelancer;
@@ -114,6 +120,8 @@ export function MilestoneDetailContent({
   const [reviewModalOpen, setReviewModalOpen] = useState(false);
   const [selectedSubmissionToReview, setSelectedSubmissionToReview] =
     useState<GetSubmissionResponseType | null>(null);
+  const [openDisputeDialog, setOpenDisputeDialog] = useState(false);
+  const [viewDisputeSheet, setViewDisputeSheet] = useState(false);
 
   const searchParams = useSearchParams();
 
@@ -173,7 +181,7 @@ export function MilestoneDetailContent({
         try {
           await paymentApiRequest.syncCheckoutSession(sessionId);
           toastSuccess({
-            message: `Escrow payment funded successfully via Stripe!`,
+            message: t("toasts.escrowFunded"),
           });
         } catch {
           // Handled or processed via webhook
@@ -196,17 +204,18 @@ export function MilestoneDetailContent({
       void sync();
     } else if (paymentStatus === "cancelled") {
       toastError({
-        message: "Stripe checkout was cancelled. You can retry at any time.",
+        message: t("toasts.checkoutCancelled"),
       });
       window.history.replaceState({}, "", window.location.pathname);
     }
-  }, [searchParams, contract.id, milestone.id, queryClient]);
+  }, [searchParams, contract.id, milestone.id, queryClient, t]);
 
   const counterparty = isFreelancer ? contract.client : contract.freelancer;
   const counterpartyId = isFreelancer
     ? contract.clientId
     : contract.freelancerId;
-  const counterpartyName = counterparty?.profile?.displayName || "Counterpart";
+  const counterpartyName =
+    counterparty?.profile?.displayName || tContract("counterpart");
   const counterpartyAvatarUrl = counterparty?.profile?.avatarUrl;
 
   const latestSubmission = submissions.length > 0 ? submissions[0] : null;
@@ -225,9 +234,9 @@ export function MilestoneDetailContent({
         m.status === "DISPUTED"),
   );
   const startWorkBlockedReason = hasIncompletePreviousMilestone
-    ? "Complete previous milestone first"
+    ? t("list.blockedPrevious")
     : hasOtherActiveMilestone
-      ? "Finish the active milestone first"
+      ? t("list.blockedActive")
       : null;
 
   // Actions
@@ -241,14 +250,14 @@ export function MilestoneDetailContent({
         queryKey: ["client-contract-detail", contract.id],
       });
       toastSuccess({
-        message: `Milestone "${milestone.title}" started!`,
+        message: t("toasts.startedWork", { title: milestone.title }),
       });
     } catch (error) {
       toastError({
         message:
           error instanceof ApiFail
             ? error.response.error.message
-            : "Failed to start milestone.",
+            : t("toasts.startFailed"),
       });
     }
   };
@@ -277,14 +286,14 @@ export function MilestoneDetailContent({
         queryKey: ["client-transactions"],
       });
       toastSuccess({
-        message: `Payout transferred via Stripe for "${milestone.title}" (5% freelancer fee deducted).`,
+        message: t("toasts.releasedPayout", { title: milestone.title }),
       });
     } catch (error) {
       toastError({
         message:
           error instanceof ApiFail
             ? error.response.error.message
-            : "Failed to release milestone payout.",
+            : t("toasts.releaseFailed"),
       });
     }
   };
@@ -305,7 +314,7 @@ export function MilestoneDetailContent({
         message:
           error instanceof ApiFail
             ? error.response.error.message
-            : "Failed to initiate Stripe Checkout session.",
+            : t("toasts.checkoutInitFailed"),
       });
     }
   };
@@ -313,7 +322,10 @@ export function MilestoneDetailContent({
   const handleRefundMilestone = async () => {
     if (
       !window.confirm(
-        `Request automatic refund of $${Number(milestone.amount).toLocaleString("en-US", { minimumFractionDigits: 2 })} for "${milestone.title}" to your original payment card?`,
+        t("toasts.refundConfirm", {
+          amount: `$${Number(milestone.amount).toLocaleString("en-US", { minimumFractionDigits: 2 })}`,
+          title: milestone.title,
+        }),
       )
     ) {
       return;
@@ -335,14 +347,14 @@ export function MilestoneDetailContent({
         }),
       ]);
       toastSuccess({
-        message: `Escrow funds refunded to your card for "${milestone.title}".`,
+        message: t("toasts.refunded", { title: milestone.title }),
       });
     } catch (error) {
       toastError({
         message:
           error instanceof ApiFail
             ? error.response.error.message
-            : "Failed to refund milestone escrow.",
+            : t("toasts.refundFailed"),
       });
     }
   };
@@ -357,10 +369,10 @@ export function MilestoneDetailContent({
         />
         <div className="py-12 text-center space-y-2">
           <h3 className="text-xs font-medium text-foreground">
-            Không có quyền xem chi tiết milestone
+            {t("detail.noPermissionTitle")}
           </h3>
           <p className="text-xs text-muted-foreground max-w-md mx-auto">
-            Tài khoản của bạn chưa được cấp quyền xem thông tin chi tiết milestone này.
+            {t("detail.noPermissionDesc")}
           </p>
         </div>
       </div>
@@ -394,6 +406,8 @@ export function MilestoneDetailContent({
             submissions={submissions}
             isFreelancer={isFreelancer}
             startWorkBlockedReason={startWorkBlockedReason}
+            onOpenDispute={() => setOpenDisputeDialog(true)}
+            onViewDispute={() => setViewDisputeSheet(true)}
             onFund={() => void handleFundMilestone()}
             onStartWork={() => void handleStartWork()}
             onSubmitWork={() => setSubmitModalOpen(true)}
@@ -464,6 +478,25 @@ export function MilestoneDetailContent({
           submission={selectedSubmissionToReview}
         />
       )}
+
+      {/* Resolution Center Dialogs */}
+      <OpenResolutionDialog
+        open={openDisputeDialog}
+        onOpenChange={setOpenDisputeDialog}
+        contractId={contract.id}
+        contractExpiresAt={contract.expiresAt}
+        milestone={milestone}
+        onCreated={() => {
+          setViewDisputeSheet(true);
+        }}
+      />
+
+      <ResolutionDetailSheet
+        open={viewDisputeSheet}
+        onOpenChange={setViewDisputeSheet}
+        milestoneId={milestone.id}
+        contractId={contract.id}
+      />
 
       {/* Floating Messenger-style chat popup (bottom-right) */}
       <MilestoneChatPopup
