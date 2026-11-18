@@ -162,6 +162,15 @@ cột khoá được đánh dấu `PK` / `FK`.
 
 ## Phần nhuy — Sprint 1 đến Sprint 5
 
+Sequence update (2026-11-11): the 51 editable UC diagrams and their SVG/PDF
+exports are synchronized with `sequence-diagrams-remake/nhuy/`. Actors use
+explicit role names. `Verify JWT` is placed at Route with a continuous Route
+activation; public endpoints such as UC-07.01 use `Verify JWT (optional)`.
+Five real shared sequences are embedded as linked tabs in the UC Draw.io files,
+exported under `images/common/nhuy/`, and included in the Shared Request
+Processing Sequences section. Diagram titles and Sprint/Screen captions have
+been removed from the drawings.
+
 Hướng dẫn thực hành: [Cách vẽ Class Diagram và Sequence Diagram](HUONG_DAN_VE_SO_DO_NHUY.md).
 
 Mỗi sprint có file `sections/nhuy/2/sprint<N>.tex` cho Detailed Design và

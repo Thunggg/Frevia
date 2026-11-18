@@ -18,6 +18,7 @@
  */
 import { spawnSync } from 'node:child_process';
 import {
+  copyFileSync,
   existsSync,
   mkdirSync,
   readFileSync,
@@ -27,14 +28,7 @@ import {
   writeFileSync,
 } from 'node:fs';
 import { tmpdir } from 'node:os';
-import {
-  basename,
-  dirname,
-  join,
-  relative,
-  resolve,
-  sep,
-} from 'node:path';
+import { basename, dirname, join, relative, resolve, sep } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
 const testDir = dirname(fileURLToPath(import.meta.url));
@@ -59,7 +53,8 @@ function parseArgs(argv) {
     };
 
     if (name === '--out') options.out = resolve(process.cwd(), readValue());
-    else if (name === '--html') options.html = resolve(process.cwd(), readValue());
+    else if (name === '--html')
+      options.html = resolve(process.cwd(), readValue());
     else if (name === '--results') {
       options.results = resolve(process.cwd(), readValue());
       options.run = false;
@@ -257,8 +252,10 @@ function renderHtml(tests, summary) {
   }
 
   const today = new Date().toLocaleDateString('vi-VN');
-  const totalFail = summary?.failed ?? tests.filter((t) => t.status === 'failed').length;
-  const totalPass = summary?.passed ?? tests.filter((t) => t.status === 'passed').length;
+  const totalFail =
+    summary?.failed ?? tests.filter((t) => t.status === 'failed').length;
+  const totalPass =
+    summary?.passed ?? tests.filter((t) => t.status === 'passed').length;
 
   const summaryRows = [...groups.values()]
     .sort((a, b) => a.uf.localeCompare(b.uf, 'vi', { numeric: true }))
@@ -274,13 +271,14 @@ function renderHtml(tests, summary) {
     )
     .join('');
 
-  const detailRows = tests
-    .map((test) => {
+  const detailRows = [...tests]
+    .sort((a, b) => a.uf.localeCompare(b.uf, 'vi', { numeric: true }))
+    .map((test, index) => {
       const status = test.status ?? 'unknown';
       const label = STATUS_LABEL[status] ?? status;
       return `
         <tr>
-          <td class="center">${test.index}</td>
+          <td class="center">${index + 1}</td>
           <td class="center nowrap">${escapeHtml(test.uf)}</td>
           <td>${escapeHtml(test.describe || test.file)}<div class="file">${escapeHtml(test.file)}</div></td>
           <td class="test-title">${escapeHtml(test.title)}</td>
@@ -419,7 +417,12 @@ function exportPdf(htmlPath, pdfPath) {
     );
   }
 
-  const profileDir = join(tmpdir(), `frevia-test-report-${process.pid}`);
+  const reportTempRoot = resolve(tmpdir());
+  const profileDir = join(reportTempRoot, `frevia-test-report-${process.pid}`);
+  const generatedPdfPath = join(
+    dirname(pdfPath),
+    `.frevia-test-report-${process.pid}.pdf`,
+  );
   const args = [
     '--headless',
     '--disable-gpu',
@@ -427,7 +430,7 @@ function exportPdf(htmlPath, pdfPath) {
     '--no-default-browser-check',
     '--no-pdf-header-footer',
     `--user-data-dir=${profileDir}`,
-    `--print-to-pdf=${pdfPath}`,
+    `--print-to-pdf=${generatedPdfPath}`,
     pathToFileURL(htmlPath).href,
   ];
 
@@ -438,16 +441,25 @@ function exportPdf(htmlPath, pdfPath) {
     windowsHide: true,
   });
 
+  if (dirname(resolve(profileDir)) !== reportTempRoot) {
+    throw new Error('Invalid temporary browser profile path.');
+  }
   rmSync(profileDir, { recursive: true, force: true });
 
   if (result.error) {
     throw new Error(`Không in được PDF: ${result.error.message}`);
   }
-  if (!existsSync(pdfPath) || statSync(pdfPath).size === 0) {
+  if (
+    !existsSync(generatedPdfPath) ||
+    statSync(generatedPdfPath).size === 0 ||
+    readFileSync(generatedPdfPath).subarray(0, 5).toString() !== '%PDF-'
+  ) {
     throw new Error(
       `Trình duyệt không tạo được PDF.${result.stderr ? `\n${result.stderr}` : ''}`,
     );
   }
+  copyFileSync(generatedPdfPath, pdfPath);
+  rmSync(generatedPdfPath);
 }
 
 function main() {

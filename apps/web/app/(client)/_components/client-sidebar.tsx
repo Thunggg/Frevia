@@ -1,5 +1,7 @@
 "use client";
 
+import { Star } from "@/components/icons";
+
 import {
   Bell,
   Briefcase,
@@ -192,6 +194,12 @@ export function ClientSidebar() {
       href: "/client/payments",
       labelKey: "navBillingPayments",
       icon: CreditCard,
+      matchPrefix: true,
+    },
+    {
+      href: "/client/reviews",
+      labelKey: "navReviews",
+      icon: Star,
       matchPrefix: true,
     },
     {

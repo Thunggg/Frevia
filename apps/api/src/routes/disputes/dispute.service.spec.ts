@@ -96,6 +96,7 @@ describe('DisputeService', () => {
 
   beforeEach(() => {
     repo = {
+      findActiveExpert: jest.fn(),
       findMilestoneWithContract: jest.fn(),
       findDisputeById: jest.fn(),
       findSharedFilesByIds: jest.fn(),
@@ -111,6 +112,75 @@ describe('DisputeService', () => {
     } as unknown as jest.Mocked<DisputeRepository>;
 
     service = new DisputeService(repo);
+  });
+
+  describe('expert arbitration access', () => {
+    it('lets an active expert list disputes', async () => {
+      repo.findActiveExpert.mockResolvedValue({ id: 9 });
+      repo.listDisputes.mockResolvedValue({
+        data: [],
+        pagination: { page: 1, limit: 10, total: 0, totalPages: 0 },
+      });
+      const query = {
+        page: 1,
+        limit: 10,
+        sortBy: 'createdAt' as const,
+        order: 'desc' as const,
+      };
+      await service.adminListDisputes('Expert', query, 99);
+      expect(repo.findActiveExpert).toHaveBeenCalledWith(99);
+      expect(repo.listDisputes).toHaveBeenCalledWith(query);
+    });
+
+    it('blocks an inactive expert before reading disputes', async () => {
+      repo.findActiveExpert.mockResolvedValue(null);
+      await expect(
+        service.adminListDisputes(
+          'Expert',
+          { page: 1, limit: 10, sortBy: 'createdAt', order: 'desc' },
+          99,
+        ),
+      ).rejects.toBeInstanceOf(ForbiddenException);
+      expect(repo.listDisputes).not.toHaveBeenCalled();
+    });
+
+    it('lets an active expert read evidence and make a decision', async () => {
+      repo.findActiveExpert.mockResolvedValue({ id: 9 });
+      repo.findDisputeById.mockResolvedValue(mockDispute as any);
+      repo.makeDecisionTransaction.mockResolvedValue(mockDispute as any);
+      await service.getDisputeDetail(99, 'Expert', 5);
+      await service.adminMakeDecision(99, 'Expert', 5, {
+        freelancerAmount: 300,
+        clientAmount: 200,
+        decisionReason: 'Supported by evidence.',
+      });
+      expect(repo.makeDecisionTransaction).toHaveBeenCalledWith(
+        5,
+        99,
+        300,
+        200,
+        'Supported by evidence.',
+        1,
+        2,
+      );
+    });
+
+    it('blocks inactive experts from submitting either type of decision', async () => {
+      repo.findActiveExpert.mockResolvedValue(null);
+      const body = {
+        freelancerAmount: 300,
+        clientAmount: 200,
+        decisionReason: 'Supported by evidence.',
+      };
+      await expect(
+        service.adminMakeDecision(99, 'Expert', 5, body),
+      ).rejects.toBeInstanceOf(ForbiddenException);
+      await expect(
+        service.adminFinalDecision(99, 'Expert', 5, body),
+      ).rejects.toBeInstanceOf(ForbiddenException);
+      expect(repo.makeDecisionTransaction).not.toHaveBeenCalled();
+      expect(repo.finalizeDisputeTransaction).not.toHaveBeenCalled();
+    });
   });
 
   describe('createDispute', () => {

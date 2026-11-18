@@ -276,7 +276,11 @@ export class AuthRepository {
         id: userId,
         deletedAt: null,
       },
-      include: {
+      select: {
+        id: true,
+        email: true,
+        isBanned: true,
+        deletedAt: true,
         profile: {
           select: {
             id: true,

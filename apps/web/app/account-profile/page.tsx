@@ -22,8 +22,7 @@ export default async function AccountProfileRedirectPage() {
 
   if (
     primaryRole === RoleName.ADMIN ||
-    (primaryRole !== RoleName.CLIENT &&
-      primaryRole !== RoleName.FREELANCER &&
+    (primaryRole !== RoleName.FREELANCER &&
       canAccessAdminPortal(user))
   ) {
     redirect("/admin/profile");
