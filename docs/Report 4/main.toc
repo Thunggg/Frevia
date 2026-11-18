@@ -230,4 +230,10 @@
 \contentsline {subsubsection}{\numberline {3.39.4}UC-46.04 -- Update Job Category}{324}{subsubsection.548}%
 \contentsline {subsubsection}{\numberline {3.39.5}UC-46.05 -- Delete Job Category}{326}{subsubsection.551}%
 \contentsline {subsubsection}{\numberline {3.39.6}UC-46.06 -- Restore Job Category}{328}{subsubsection.554}%
-\contentsline {section}{\numberline {4.}Reference}{330}{section.557}%
+\contentsline {subsection}{\numberline {3.40}Shared Request Processing Sequences}{329}{subsection.557}%
+\contentsline {subsubsection}{\numberline {3.40.1}Verify JWT}{330}{subsubsection.558}%
+\contentsline {subsubsection}{\numberline {3.40.2}Optional JWT for Public Endpoints}{330}{subsubsection.560}%
+\contentsline {subsubsection}{\numberline {3.40.3}Check Permission}{331}{subsubsection.562}%
+\contentsline {subsubsection}{\numberline {3.40.4}Refresh Token}{331}{subsubsection.564}%
+\contentsline {subsubsection}{\numberline {3.40.5}Validate Input}{331}{subsubsection.566}%
+\contentsline {section}{\numberline {4.}Reference}{333}{section.568}%
