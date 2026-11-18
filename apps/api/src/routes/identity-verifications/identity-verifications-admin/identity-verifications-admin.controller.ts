@@ -7,11 +7,10 @@ import {
   Patch,
   Query,
   Res,
-  StreamableFile,
 } from '@nestjs/common';
 import { VerificationStatus } from '@prisma/client';
 import { ZodSerializerDto } from 'nestjs-zod';
-import { createReadStream } from 'fs';
+import { streamStoredFile } from '../../../shared/utils/stream-stored-file';
 import type { Response } from 'express';
 import {
   ApproveIdentityVerificationBodyType,
@@ -60,7 +59,7 @@ export class IdentityVerificationsAdminController {
       `inline; filename="${file.fileName.replace(/"/g, '')}"`,
     );
     response.setHeader('Content-Type', 'application/octet-stream');
-    return new StreamableFile(createReadStream(file.absolutePath));
+    return streamStoredFile(file.absolutePath);
   }
 
   @Patch(':id/approve')

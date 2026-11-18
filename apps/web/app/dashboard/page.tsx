@@ -42,7 +42,7 @@ export default async function DashboardRedirectPage() {
   }
 
   if (primaryRole === RoleName.EXPERT) {
-    redirect("/expert/profile");
+    redirect("/expert/disputes");
   }
 
   redirect("/");

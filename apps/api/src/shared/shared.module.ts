@@ -21,6 +21,7 @@ import { AIModerationService } from './services/ai-moderation.service';
 import { CacheService } from './services/cache.service';
 import { NotificationRealtimeService } from './services/notification-realtime.service';
 import { FastTextService } from './services/fasttext.service';
+
 @Module({
   imports: [
     JwtModule.register({

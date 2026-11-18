@@ -51,6 +51,7 @@ type FreelancerProposal = {
   education?: string[] | null;
   certifications?: string[] | null;
   languages?: string[] | null;
+  experience?: string[] | null;
 };
 
 type ClientProposal = {
@@ -330,6 +331,10 @@ export class ProfileRevisionRepository {
               education: data.education ?? [],
               certifications: data.certifications ?? [],
               languages: data.languages ?? [],
+              experience:
+                data.experience === undefined
+                  ? undefined
+                  : (data.experience ?? []),
             },
             create: {
               profileId: revision.profileId,
@@ -337,6 +342,7 @@ export class ProfileRevisionRepository {
               education: data.education ?? [],
               certifications: data.certifications ?? [],
               languages: data.languages ?? [],
+              experience: data.experience ?? [],
             },
           });
         } else if (profileType === ProfileRevisionType.CLIENT) {
@@ -374,6 +380,7 @@ export class ProfileRevisionRepository {
           await transaction.expert.upsert({
             where: { profileId: revision.profileId },
             update: {
+              isActive: true,
               title: data.title,
               expertise: data.expertise ?? [],
               yearsOfExperience: data.yearsOfExperience ?? 0,
@@ -382,6 +389,7 @@ export class ProfileRevisionRepository {
               website: data.website || null,
             },
             create: {
+              isActive: true,
               profileId: revision.profileId,
               title: data.title,
               expertise: data.expertise ?? [],

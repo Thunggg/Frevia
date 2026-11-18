@@ -54,6 +54,7 @@ describe('ReviewService', () => {
       2,
       'Jordan Tran',
       expect.objectContaining({ overallRating: 4.5 }),
+      undefined,
     );
   });
 
@@ -67,6 +68,33 @@ describe('ReviewService', () => {
       service.create(1, 9, { overallRating: 5 }),
     ).rejects.toMatchObject({ status: 400 });
     expect(repository.create).not.toHaveBeenCalled();
+  });
+
+  it('allows writing a new review after deleting the previous one', async () => {
+    repository.findContract.mockResolvedValue(contract);
+    repository.findById.mockResolvedValue(review);
+    repository.findByContractAndReviewer.mockResolvedValue({
+      id: 4,
+      deletedAt: new Date(),
+    });
+    repository.create.mockResolvedValue({ ...review, deletedAt: null });
+
+    await service.remove(1, 4);
+    await expect(
+      service.create(1, 9, { overallRating: 5 }),
+    ).resolves.toMatchObject({
+      id: 4,
+      deletedAt: null,
+    });
+    expect(repository.softDelete).toHaveBeenCalledWith(4);
+    expect(repository.create).toHaveBeenCalledWith(
+      9,
+      1,
+      2,
+      'Jordan Tran',
+      { overallRating: 5 },
+      4,
+    );
   });
 
   it('rejects a user who is not a contract participant', async () => {
