@@ -265,7 +265,8 @@ function HeaderSearch({
 function ProfileDropdown({ role }: { role: Exclude<UserRole, "GUEST"> }) {
   const router = useRouter();
   const t = useTranslations("nav");
-  const profile = roleConfig[role];
+  const tRole = useTranslations("roleName");
+  const profile = roleConfig[role] ?? roleConfig.FREELANCER;
   const { data: me } = useMe();
   const { can } = useActionPermission();
   const canViewProposals = can("GET", "/api/proposals/my");
@@ -274,8 +275,20 @@ function ProfileDropdown({ role }: { role: Exclude<UserRole, "GUEST"> }) {
   const canViewDisputes = can("GET", "/api/disputes");
   const canViewSessions = can("GET", "/api/sessions");
   const canViewSocialLinks = can("GET", "/api/social-links");
+  const primaryRoleName =
+    me?.roles?.find((r) => r.isPrimary)?.name ?? me?.roles?.[0]?.name;
+  const roleLabel =
+    primaryRoleName === "ADMIN"
+      ? tRole("ADMIN")
+      : primaryRoleName === "EXPERT"
+        ? tRole("EXPERT")
+        : primaryRoleName === "CLIENT"
+          ? tRole("CLIENT")
+          : primaryRoleName === "FREELANCER"
+            ? tRole("FREELANCER")
+            : primaryRoleName || t(`roles.${profile.nameKey}`);
   const displayName =
-    me?.profile?.displayName || t(`roles.${profile.nameKey}`);
+    me?.profile?.displayName || roleLabel;
   const initial = displayName?.charAt(0)?.toUpperCase() ?? "?";
   const publicProfileHref = me?.profile?.id
     ? role === "FREELANCER"
@@ -328,7 +341,7 @@ function ProfileDropdown({ role }: { role: Exclude<UserRole, "GUEST"> }) {
               {displayName}
             </p>
             <p className="text-xs text-muted-foreground">
-              {t(`roles.${profile.nameKey}`)}
+              {roleLabel}
             </p>
           </div>
         </DropdownMenuLabel>

@@ -61,7 +61,7 @@ export function ExpertDisputes() {
   const active = profile.data?.isActive === true;
   useEffect(() => {
     if (profile.data && !profile.data.isActive)
-      router.replace("/expert/profile");
+      router.replace("/admin/profile");
   }, [profile.data, router]);
   const list = useQuery({
     queryKey: ["expert-disputes", status, page],

@@ -56,11 +56,9 @@ export function AccessDeniedContent({
       ? "/client/jobs"
       : primaryRole === RoleName.FREELANCER
         ? "/freelancer"
-        : primaryRole === RoleName.EXPERT
-          ? "/expert/profile"
-          : primaryRole === RoleName.ADMIN || canAccessAdminPortal(user)
-            ? "/admin"
-            : "/";
+        : primaryRole === RoleName.ADMIN || canAccessAdminPortal(user)
+          ? "/admin"
+          : "/";
 
   const primaryRoleLabel =
     primaryRole === RoleName.CLIENT
