@@ -156,6 +156,18 @@ export class ContractRepository {
     });
   }
 
+  async findContractMilestonesWithStatus(contractId: number) {
+    return this.prisma.milestone.findMany({
+      where: { contractId, deletedAt: null },
+      select: {
+        id: true,
+        title: true,
+        status: true,
+        paymentStatus: true,
+      },
+    });
+  }
+
   async findContractBySlug(slug: string) {
     const cleanSlug = slug.replace(/^#/, '').trim();
     const strippedId = cleanSlug.replace(/^(CON|CTR|contract)-/i, '');

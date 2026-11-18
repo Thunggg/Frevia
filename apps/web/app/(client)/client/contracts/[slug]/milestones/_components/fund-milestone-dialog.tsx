@@ -47,8 +47,7 @@ export function FundMilestoneDialog({
 
   const canFundSavedCard = can("POST", "/api/payments/contracts/:contractId/milestones/:milestoneId/fund/saved-card");
   const canFundCheckout = can("POST", "/api/payments/contracts/:contractId/milestones/:milestoneId/fund/checkout-session");
-  const canFundIntent = can("POST", "/api/payments/contracts/:contractId/milestones/:milestoneId/fund/intent");
-  const hasAnyFundPermission = canFundSavedCard || canFundCheckout || canFundIntent;
+  const hasAnyFundPermission = canFundSavedCard || canFundCheckout;
 
   const { data: savedCardsData } = useQuery({
     queryKey: ["saved-payment-methods"],
@@ -206,7 +205,7 @@ export function FundMilestoneDialog({
                     href="/client/payments"
                     className="text-[11px] font-medium text-[#0069D3] hover:underline"
                   >
-                    Manage cards
+                    Billing &amp; Payments
                   </Link>
                 </div>
                 <div className="space-y-2">

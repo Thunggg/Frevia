@@ -5,6 +5,7 @@ import { useFormatter } from "next-intl";
 import {
   AlertTriangle,
   ArrowRight,
+  Check,
   CheckCircle2,
   Clock,
   CreditCard,
@@ -13,13 +14,14 @@ import {
   Lock,
   Play,
   RotateCcw,
+  Scale,
+  ShieldCheck,
   Trash2,
   Upload,
 } from "lucide-react";
 import { Button } from "@repo/ui/components/shadcn/button";
 import { useActionPermission } from "@/hooks/use-action-permission";
 import type { MilestoneType } from "@shared/types";
-import { MilestoneMiniStepper } from "./milestone-mini-stepper";
 
 export interface MilestoneCardProps {
   contractId: number;
@@ -28,10 +30,11 @@ export interface MilestoneCardProps {
   isHeldInContract?: boolean;
   milestone: MilestoneType;
   index: number;
+  totalMilestones?: number;
   isFreelancer?: boolean;
   basePath?: string;
   hasOtherInProgressMilestone?: boolean;
-  variant?: "table-row" | "card";
+  startWorkBlockedReason?: string | null;
   onEdit?: (milestone: MilestoneType) => void;
   onDelete?: (milestone: MilestoneType) => void;
   onFund?: (milestone: MilestoneType) => void;
@@ -51,10 +54,11 @@ export function MilestoneCard({
   isHeldInContract = false,
   milestone,
   index,
+  totalMilestones = 1,
   isFreelancer = false,
   basePath = "/client",
   hasOtherInProgressMilestone = false,
-  variant = "table-row",
+  startWorkBlockedReason = null,
   onEdit,
   onDelete,
   onFund,
@@ -79,10 +83,7 @@ export function MilestoneCard({
   const canReviewPermission = canApprovePermission || canRequestChangesPermission;
 
   const canCreateDisputePermission = can("POST", "/api/disputes");
-  const canViewDisputePermission = can(
-    "GET",
-    "/api/disputes/milestone/:milestoneId",
-  );
+  const canViewDisputePermission = can("GET", "/api/disputes/milestone/:milestoneId");
 
   const canFundPermission = canAny([
     { method: "POST", path: "/api/payments/contracts/:contractId/milestones/:milestoneId/fund/intent" },
@@ -97,7 +98,7 @@ export function MilestoneCard({
   const milestoneCode = `MLS-${String(milestone.id).padStart(4, "0")}`;
 
   const formatDate = (date: string | Date | null | undefined): string => {
-    if (!date) return "—";
+    if (!date) return "Not specified";
     const d = new Date(date);
     return format.dateTime(d, {
       year: "numeric",
@@ -112,88 +113,19 @@ export function MilestoneCard({
     milestone.status !== "LATE" &&
     new Date(milestone.dueDate).getTime() < new Date().getTime();
 
-  // Status without border and without background color
-  const renderWorkStatus = () => {
-    switch (milestone.status) {
-      case "COMPLETED":
-        return (
-          <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-600 dark:text-emerald-400">
-            <CheckCircle2 className="size-3.5" />
-            <span>Completed</span>
-          </span>
-        );
-      case "LATE":
-        return (
-          <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-rose-600 dark:text-rose-400">
-            <AlertTriangle className="size-3.5" />
-            <span>Late</span>
-          </span>
-        );
-      case "SUBMITTED":
-        return (
-          <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#0069D3] dark:text-blue-400">
-            <FileCheck className="size-3.5" />
-            <span>Ready for Review</span>
-          </span>
-        );
-      case "IN_PROGRESS":
-        return (
-          <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#0069D3] dark:text-blue-400">
-            <Clock className="size-3.5" />
-            <span>In Progress</span>
-          </span>
-        );
-      case "CHANGES_REQUESTED":
-        return (
-          <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-amber-600 dark:text-amber-400">
-            <RotateCcw className="size-3.5" />
-            <span>Revisions Requested</span>
-          </span>
-        );
-      case "DISPUTED":
-        return (
-          <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-rose-600 dark:text-rose-400">
-            ✕ Disputed
-          </span>
-        );
-      default:
-        return (
-          <span className="inline-flex items-center gap-1.5 text-xs font-medium text-zinc-500 dark:text-zinc-400">
-            <Clock className="size-3.5" />
-            <span>Draft</span>
-          </span>
-        );
-    }
-  };
+  const getDueCountdown = () => {
+    if (milestone.status === "COMPLETED") return "Completed";
+    if (!milestone.dueDate) return null;
+    const now = new Date().getTime();
+    const target = new Date(milestone.dueDate).getTime();
+    const diffDays = Math.ceil((target - now) / (1000 * 60 * 60 * 24));
 
-  const renderEscrowStatus = () => {
-    switch (milestone.paymentStatus) {
-      case "FUNDED":
-        return (
-          <span className="inline-flex items-center gap-1 text-[11px] font-medium text-emerald-600 dark:text-emerald-400">
-            <Lock className="size-3" />
-            <span>Funded in Escrow</span>
-          </span>
-        );
-      case "RELEASED":
-        return (
-          <span className="inline-flex items-center gap-1 text-[11px] font-medium text-[#0069D3] dark:text-blue-400">
-            ✓ Released
-          </span>
-        );
-      case "REFUNDED":
-        return (
-          <span className="inline-flex items-center gap-1 text-[11px] font-medium text-zinc-500">
-            Refunded
-          </span>
-        );
-      default:
-        return (
-          <span className="inline-flex items-center gap-1 text-[11px] font-medium text-zinc-400 dark:text-zinc-500">
-            Pending Escrow
-          </span>
-        );
+    if (diffDays < 0 || milestone.status === "LATE") {
+      const overdueDays = Math.abs(diffDays);
+      return `${overdueDays} ${overdueDays === 1 ? "day" : "days"} overdue`;
     }
+    if (diffDays === 0) return "Due today";
+    return `${diffDays} ${diffDays === 1 ? "day" : "days"} left`;
   };
 
   const isClient = !isFreelancer;
@@ -218,123 +150,239 @@ export function MilestoneCard({
     (milestone.status === "LATE" || milestone.status === "PENDING") &&
     Boolean(onRefund);
 
-  if (variant === "card") {
-    return (
-      <div className="border-b border-zinc-100 dark:border-zinc-800/80 py-4 space-y-3">
-        <div className="flex items-start justify-between gap-3">
-          <div>
-            <span className="font-mono text-xs font-bold text-zinc-950 dark:text-zinc-100 block">
-              {milestoneCode}
-            </span>
-            {canViewDetail ? (
-              <Link
-                href={detailUrl}
-                className="font-bold text-sm text-zinc-900 dark:text-zinc-100 hover:text-[#0069D3] transition-colors line-clamp-1 mt-0.5"
-              >
-                {milestone.title}
-              </Link>
-            ) : (
-              <span className="font-bold text-sm text-zinc-900 dark:text-zinc-100 line-clamp-1 mt-0.5">
-                {milestone.title}
+  // Status indicator: clean text & icon without colored background
+  const renderWorkStatusText = () => {
+    switch (milestone.status) {
+      case "COMPLETED":
+        return (
+          <span className="inline-flex items-center gap-1.5 text-xs font-medium text-emerald-600 dark:text-emerald-400">
+            <CheckCircle2 className="size-3.5" />
+            <span>Completed</span>
+          </span>
+        );
+      case "SUBMITTED":
+        return (
+          <span className="inline-flex items-center gap-1.5 text-xs font-medium text-[#0069D3] dark:text-blue-400">
+            <FileCheck className="size-3.5" />
+            <span>Delivered • In Review</span>
+          </span>
+        );
+      case "IN_PROGRESS":
+        return (
+          <span className="inline-flex items-center gap-1.5 text-xs font-medium text-sky-600 dark:text-sky-400">
+            <span className="size-1.5 rounded-full bg-sky-500 animate-pulse" />
+            <span>In Progress</span>
+          </span>
+        );
+      case "CHANGES_REQUESTED":
+        return (
+          <span className="inline-flex items-center gap-1.5 text-xs font-medium text-amber-600 dark:text-amber-400">
+            <RotateCcw className="size-3.5" />
+            <span>Revision Requested</span>
+          </span>
+        );
+      case "LATE":
+        return (
+          <span className="inline-flex items-center gap-1.5 text-xs font-medium text-rose-600 dark:text-rose-400">
+            <AlertTriangle className="size-3.5" />
+            <span>Overdue (Late)</span>
+          </span>
+        );
+      case "DISPUTED":
+        return (
+          <span className="inline-flex items-center gap-1.5 text-xs font-medium text-rose-600 dark:text-rose-400">
+            <Scale className="size-3.5" />
+            <span>Disputed</span>
+          </span>
+        );
+      default:
+        return (
+          <span className="inline-flex items-center gap-1.5 text-xs text-muted-foreground">
+            <Clock className="size-3.5" />
+            <span>Pending</span>
+          </span>
+        );
+    }
+  };
+
+  // Escrow status: clean text & icon without colored background
+  const renderEscrowStatusText = () => {
+    switch (milestone.paymentStatus) {
+      case "FUNDED":
+        return (
+          <span className="inline-flex items-center gap-1 text-[11px] text-emerald-600 dark:text-emerald-400">
+            <ShieldCheck className="size-3" />
+            <span>Escrow Funded</span>
+          </span>
+        );
+      case "RELEASED":
+        return (
+          <span className="inline-flex items-center gap-1 text-[11px] text-blue-600 dark:text-blue-400">
+            <Check className="size-3" />
+            <span>Paid</span>
+          </span>
+        );
+      case "REFUNDED":
+        return (
+          <span className="inline-flex items-center gap-1 text-[11px] text-muted-foreground">
+            <RotateCcw className="size-3" />
+            <span>Refunded</span>
+          </span>
+        );
+      default:
+        return (
+          <span className="inline-flex items-center gap-1 text-[11px] text-muted-foreground">
+            <Lock className="size-3" />
+            <span>Awaiting Deposit</span>
+          </span>
+        );
+    }
+  };
+
+  const isCompleted = milestone.status === "COMPLETED";
+  const stepNumber = String(index + 1).padStart(2, "0");
+  const countdownText = getDueCountdown();
+  const isLastMilestone = index === totalMilestones - 1;
+
+  return (
+    <div className="relative py-4 sm:py-5">
+      {/* Connecting vertical timeline line */}
+      {!isLastMilestone && (
+        <div className="absolute left-[13px] sm:left-[15px] top-11 bottom-0 w-[1px] bg-border/50 -z-0" />
+      )}
+
+      <div className="relative z-10 flex flex-col md:flex-row md:items-start justify-between gap-3">
+        {/* Left Side: Subtle step indicator + Title & Description + Badges */}
+        <div className="flex items-start gap-3 flex-1 min-w-0">
+          {/* Minimal Step Indicator (No heavy colored bg) */}
+          <div className="flex size-7 sm:size-8 shrink-0 items-center justify-center rounded-full border border-border text-[11px] font-mono text-muted-foreground bg-background">
+            {isCompleted ? <Check className="size-3.5 text-emerald-600" /> : stepNumber}
+          </div>
+
+          {/* Details */}
+          <div className="space-y-1 flex-1 min-w-0">
+            {/* Title & Code */}
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="font-mono text-[11px] text-muted-foreground">
+                {milestoneCode}
               </span>
-            )}
-          </div>
-          <span className="font-mono text-sm font-bold text-zinc-950 dark:text-zinc-50 shrink-0">
-            ${Number(milestone.amount).toLocaleString("en-US", {
-              minimumFractionDigits: 2,
-            })}
-          </span>
-        </div>
-
-        {/* Stepper */}
-        <div className="py-1 overflow-x-auto">
-          <MilestoneMiniStepper milestone={milestone} />
-        </div>
-
-        {/* Statuses (no border, no bg) */}
-        <div className="flex flex-wrap items-center gap-3 text-xs">
-          {renderWorkStatus()}
-          <span className="text-zinc-300 dark:text-zinc-700">•</span>
-          {renderEscrowStatus()}
-          <span className="text-zinc-300 dark:text-zinc-700">•</span>
-          <span className="text-zinc-500 font-mono text-[11px]">
-            Due: {formatDate(milestone.dueDate)}
-          </span>
-        </div>
-
-        {/* Action Row */}
-        <div className="flex flex-wrap items-center justify-between gap-2 pt-1">
-          <div className="flex items-center gap-1.5">
-            {canViewDetail && (
-              <Button
-                asChild
-                variant="outline"
-                size="sm"
-                className="h-8 rounded-lg border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-xs font-medium"
-              >
-                <Link href={detailUrl} className="inline-flex items-center gap-1">
-                  <span>View Details</span>
-                  <ArrowRight className="size-3" />
+              <span className="text-border">•</span>
+              {canViewDetail ? (
+                <Link
+                  href={detailUrl}
+                  className="font-medium text-sm sm:text-base text-foreground hover:text-[#0069D3] transition-colors line-clamp-1"
+                >
+                  {milestone.title}
                 </Link>
-              </Button>
+              ) : (
+                <span className="font-medium text-sm sm:text-base text-foreground line-clamp-1">
+                  {milestone.title}
+                </span>
+              )}
+            </div>
+
+            {/* Scope / Description */}
+            {milestone.description && (
+              <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed max-w-2xl">
+                {milestone.description}
+              </p>
             )}
 
-            {canEdit && canEditPermission && onEdit && (
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => onEdit(milestone)}
-                className="h-8 rounded-lg border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-xs text-zinc-700 dark:text-zinc-300 hover:text-[#0069D3]"
-              >
-                <Edit2 className="mr-1 size-3 text-[#0069D3]" />
-                <span>Edit</span>
-              </Button>
-            )}
+            {/* Badges & Due Date Row (Text only, no colored bg) */}
+            <div className="flex flex-wrap items-center gap-2.5 pt-0.5 text-xs">
+              {renderWorkStatusText()}
+              <span className="text-border">•</span>
+              {renderEscrowStatusText()}
+              {milestone.dueDate && (
+                <>
+                  <span className="text-border">•</span>
+                  <span
+                    className={`inline-flex items-center gap-1 font-mono text-[11px] ${
+                      isOverdue || milestone.status === "LATE"
+                        ? "text-rose-600 dark:text-rose-400 font-medium"
+                        : "text-muted-foreground"
+                    }`}
+                  >
+                    <Clock className="size-3" />
+                    <span>Due: {formatDate(milestone.dueDate)}</span>
+                    {countdownText && (
+                      <span className="font-sans opacity-75">
+                        ({countdownText})
+                      </span>
+                    )}
+                  </span>
+                </>
+              )}
+            </div>
+          </div>
+        </div>
 
-            {canEdit && canDeletePermission && onDelete && (
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => onDelete(milestone)}
-                className="h-8 rounded-lg border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-xs text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/30"
-              >
-                <Trash2 className="size-3" />
-              </Button>
-            )}
+        {/* Right Side: Price & Actions */}
+        <div className="flex sm:flex-col items-center sm:items-end justify-between sm:justify-start gap-2 shrink-0 pt-2 md:pt-0 pl-10 md:pl-0 border-t sm:border-t-0 border-border/30">
+          {/* Price */}
+          <div className="text-left sm:text-right">
+            <span className="font-mono text-sm sm:text-base font-semibold text-foreground block leading-tight">
+              ${Number(milestone.amount).toLocaleString("en-US", {
+                minimumFractionDigits: 2,
+              })}
+            </span>
           </div>
 
-          <div className="flex items-center gap-1.5">
+          {/* Action Buttons Row */}
+          <div className="flex items-center gap-1.5 flex-wrap justify-end">
+            {/* Client: Fund Escrow */}
             {canFundMilestone && canFundPermission && onFund && (
               <Button
                 size="sm"
                 onClick={() => onFund(milestone)}
-                className="h-8 rounded-lg bg-[#0069D3] hover:bg-[#0055b3] text-white text-xs font-semibold px-3"
+                className="h-7 rounded-full bg-[#0069D3] hover:bg-[#0055b3] text-white text-xs font-normal px-3 cursor-pointer"
               >
+                <CreditCard className="mr-1 size-3" />
                 Fund Escrow
               </Button>
             )}
 
+            {/* Client: Review Delivery */}
+            {isClient &&
+              milestone.status === "SUBMITTED" &&
+              canReviewPermission &&
+              onReview && (
+                <Button
+                  size="sm"
+                  onClick={() => onReview(milestone)}
+                  className="h-7 rounded-full bg-[#0069D3] hover:bg-[#0055b3] text-white text-xs font-normal px-3 cursor-pointer"
+                >
+                  <FileCheck className="mr-1 size-3" />
+                  Review Delivery
+                </Button>
+              )}
+
+            {/* Client: Release Payment */}
             {canReleaseMilestone && canReleasePermission && onRelease && (
               <Button
                 size="sm"
                 onClick={() => onRelease(milestone)}
-                className="h-8 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold px-3"
+                className="h-7 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-normal px-3 cursor-pointer"
               >
+                <Check className="mr-1 size-3" />
                 Release Payment
               </Button>
             )}
 
+            {/* Client: Refund Escrow */}
             {canRefundMilestone && canRefundPermission && onRefund && (
               <Button
                 variant="outline"
                 size="sm"
                 onClick={() => onRefund(milestone)}
-                className="h-8 rounded-lg border-rose-200 dark:border-rose-800 bg-white dark:bg-zinc-900 text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/30 text-xs font-semibold px-3 cursor-pointer"
+                className="h-7 rounded-full border-rose-200 dark:border-rose-800 text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/30 text-xs font-normal px-2.5 cursor-pointer"
               >
-                Refund
+                <RotateCcw className="mr-1 size-3" />
+                Refund Escrow
               </Button>
             )}
 
+            {/* Freelancer: Start Work */}
             {isFreelancer &&
               milestone.status === "PENDING" &&
               milestone.paymentStatus === "FUNDED" &&
@@ -342,28 +390,39 @@ export function MilestoneCard({
               onStartWork && (
                 <Button
                   size="sm"
-                  disabled={hasOtherInProgressMilestone}
+                  disabled={
+                    hasOtherInProgressMilestone ||
+                    Boolean(startWorkBlockedReason)
+                  }
+                  title={startWorkBlockedReason ?? undefined}
                   onClick={() => onStartWork(milestone)}
-                  className="h-8 rounded-lg bg-[#0069D3] hover:bg-[#0055b3] text-white text-xs font-semibold px-3"
+                  className="h-7 rounded-full bg-[#0069D3] hover:bg-[#0055b3] text-white text-xs font-normal px-3 cursor-pointer disabled:opacity-50"
                 >
-                  <Play className="mr-1 size-3" />
-                  Start
+                  {startWorkBlockedReason ? (
+                    <Lock className="mr-1 size-3" />
+                  ) : (
+                    <Play className="mr-1 size-3" />
+                  )}
+                  Start Work
                 </Button>
               )}
 
+            {/* Freelancer: Deliver Work */}
             {isFreelancer &&
-              milestone.status === "IN_PROGRESS" &&
+              (milestone.status === "IN_PROGRESS" || milestone.status === "LATE") &&
               canSubmitPermission &&
               onSubmitWork && (
                 <Button
                   size="sm"
                   onClick={() => onSubmitWork(milestone)}
-                  className="h-8 rounded-lg bg-[#0069D3] hover:bg-[#0055b3] text-white text-xs font-semibold px-3"
+                  className="h-7 rounded-full bg-[#0069D3] hover:bg-[#0055b3] text-white text-xs font-normal px-3 cursor-pointer"
                 >
-                  Submit Work
+                  <Upload className="mr-1 size-3" />
+                  {milestone.status === "LATE" ? "Deliver Work (Late)" : "Deliver Work"}
                 </Button>
               )}
 
+            {/* Freelancer: Resubmit Work */}
             {isFreelancer &&
               milestone.status === "CHANGES_REQUESTED" &&
               canSubmitPermission &&
@@ -371,13 +430,14 @@ export function MilestoneCard({
                 <Button
                   size="sm"
                   onClick={() => onSubmitWork(milestone)}
-                  className="h-8 rounded-lg bg-amber-600 hover:bg-amber-700 text-white text-xs font-semibold px-3"
+                  className="h-7 rounded-full bg-amber-600 hover:bg-amber-700 text-white text-xs font-normal px-3 cursor-pointer"
                 >
                   <RotateCcw className="mr-1 size-3" />
-                  Resubmit
+                  Resubmit Work
                 </Button>
               )}
 
+            {/* View Dispute */}
             {milestone.status === "DISPUTED" &&
               canViewDisputePermission &&
               onViewDispute && (
@@ -385,267 +445,73 @@ export function MilestoneCard({
                   variant="outline"
                   size="sm"
                   onClick={() => onViewDispute(milestone)}
-                  className="h-8 rounded-lg border-rose-200 dark:border-rose-800 bg-white dark:bg-zinc-900 text-rose-600 hover:bg-rose-50 text-xs font-semibold px-3 cursor-pointer"
+                  className="h-7 rounded-full border-rose-200 dark:border-rose-800 text-rose-600 hover:bg-rose-50 text-xs font-normal px-2.5 cursor-pointer"
                 >
-                  View Dispute
+                  <Scale className="mr-1 size-3" />
+                  Dispute
                 </Button>
               )}
 
+            {/* Open Dispute */}
             {milestone.status !== "COMPLETED" &&
               milestone.status !== "DISPUTED" &&
               milestone.paymentStatus === "FUNDED" &&
               canCreateDisputePermission &&
               onOpenDispute && (
                 <Button
-                  variant="outline"
+                  variant="ghost"
                   size="sm"
                   onClick={() => onOpenDispute(milestone)}
-                  className="h-8 rounded-lg border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-600 hover:text-rose-600 text-xs font-semibold px-3 cursor-pointer"
+                  className="h-7 text-xs text-muted-foreground hover:text-rose-600 px-1.5 cursor-pointer"
+                  title="Dispute Milestone"
                 >
-                  Dispute
+                  <Scale className="size-3.5" />
                 </Button>
               )}
+
+            {/* Client: Edit Milestone (when pending sign) */}
+            {canEdit && canEditPermission && onEdit && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => onEdit(milestone)}
+                className="h-7 text-xs text-muted-foreground hover:text-[#0069D3] px-1.5 cursor-pointer"
+                title="Edit Milestone"
+              >
+                <Edit2 className="size-3.5" />
+              </Button>
+            )}
+
+            {/* Client: Delete Milestone (when pending sign) */}
+            {canEdit && canDeletePermission && onDelete && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => onDelete(milestone)}
+                className="h-7 text-xs text-muted-foreground hover:text-rose-600 px-1.5 cursor-pointer"
+                title="Delete Milestone"
+              >
+                <Trash2 className="size-3.5" />
+              </Button>
+            )}
+
+            {/* View Details link */}
+            {canViewDetail && (
+              <Button
+                asChild
+                variant="ghost"
+                size="sm"
+                className="h-7 text-xs font-normal text-muted-foreground hover:text-[#0069D3] px-2 cursor-pointer"
+              >
+                <Link href={detailUrl} className="inline-flex items-center gap-1">
+                  <span>Details</span>
+                  <ArrowRight className="size-3" />
+                </Link>
+              </Button>
+            )}
           </div>
         </div>
       </div>
-    );
-  }
-
-  return (
-    <tr className="border-b border-zinc-100 dark:border-zinc-800/80 hover:bg-zinc-50/60 dark:hover:bg-zinc-900/40 transition-colors">
-      {/* Milestone ID & Code */}
-      <td className="py-4 px-4 text-xs">
-        {canViewDetail ? (
-          <Link
-            href={detailUrl}
-            className="font-mono font-bold text-zinc-950 dark:text-zinc-100 hover:text-[#0069D3] transition-colors block"
-          >
-            {milestoneCode}
-          </Link>
-        ) : (
-          <span className="font-mono font-bold text-zinc-950 dark:text-zinc-100 block">
-            {milestoneCode}
-          </span>
-        )}
-        <span className="text-[11px] text-zinc-400 dark:text-zinc-500 block truncate max-w-[120px]">
-          Step {index + 1}
-        </span>
-      </td>
-
-      {/* Milestone Title & Scope */}
-      <td className="py-4 px-4 text-xs max-w-xs">
-        {canViewDetail ? (
-          <Link
-            href={detailUrl}
-            className="font-semibold text-zinc-900 dark:text-zinc-100 hover:text-[#0069D3] transition-colors line-clamp-1"
-          >
-            {milestone.title}
-          </Link>
-        ) : (
-          <span className="font-semibold text-zinc-900 dark:text-zinc-100 line-clamp-1">
-            {milestone.title}
-          </span>
-        )}
-        {milestone.description && (
-          <p className="text-[11px] text-zinc-500 dark:text-zinc-400 line-clamp-1 mt-0.5">
-            {milestone.description}
-          </p>
-        )}
-      </td>
-
-      {/* Work Status (no border, no bg color) */}
-      <td className="py-4 px-4 text-xs">
-        <div className="space-y-0.5">
-          {renderWorkStatus()}
-          <div>{renderEscrowStatus()}</div>
-        </div>
-      </td>
-
-      {/* Expected Due Date */}
-      <td className="py-4 px-4 text-xs text-zinc-600 dark:text-zinc-400 font-mono whitespace-nowrap">
-        <div className="flex items-center gap-1.5">
-          <span>{formatDate(milestone.dueDate)}</span>
-          {isOverdue && (
-            <span className="text-[10px] font-semibold text-amber-600 dark:text-amber-400 flex items-center gap-0.5">
-              <AlertTriangle className="size-3" /> Delay
-            </span>
-          )}
-        </div>
-      </td>
-
-      {/* Amount */}
-      <td className="py-4 px-4 text-xs font-mono font-bold text-zinc-950 dark:text-zinc-50 text-right whitespace-nowrap">
-        ${Number(milestone.amount).toLocaleString("en-US", {
-          minimumFractionDigits: 2,
-        })}
-      </td>
-
-      {/* Actions */}
-      <td className="py-4 px-4 text-xs text-right whitespace-nowrap">
-        <div className="inline-flex items-center justify-end gap-2">
-          {/* Quick Action Button if pending action */}
-          {canFundMilestone && canFundPermission && onFund && (
-            <Button
-              size="sm"
-              onClick={() => onFund(milestone)}
-              className="h-8 rounded-lg bg-[#0069D3] hover:bg-[#0055b3] text-white text-xs font-semibold px-3 shadow-xs cursor-pointer"
-            >
-              <CreditCard className="mr-1 size-3" />
-              Fund
-            </Button>
-          )}
-
-          {canReleaseMilestone && canReleasePermission && onRelease && (
-            <Button
-              size="sm"
-              onClick={() => onRelease(milestone)}
-              className="h-8 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold px-3 shadow-xs cursor-pointer"
-            >
-              Release Payment
-            </Button>
-          )}
-
-          {canRefundMilestone && canRefundPermission && onRefund && (
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => onRefund(milestone)}
-              className="h-8 rounded-lg border-rose-200 dark:border-rose-800 bg-white dark:bg-zinc-900 text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/30 text-xs font-semibold px-3 cursor-pointer"
-            >
-              Refund
-            </Button>
-          )}
-
-          {isClient &&
-            milestone.status === "SUBMITTED" &&
-            canReviewPermission &&
-            onReview && (
-              <Button
-                size="sm"
-                onClick={() => onReview(milestone)}
-                className="h-8 rounded-lg bg-[#0069D3] hover:bg-[#0055b3] text-white text-xs font-semibold px-3 shadow-xs cursor-pointer"
-              >
-                <FileCheck className="mr-1 size-3" />
-                Review
-              </Button>
-            )}
-
-          {isFreelancer &&
-            milestone.status === "PENDING" &&
-            milestone.paymentStatus === "FUNDED" &&
-            canProgressPermission &&
-            onStartWork && (
-              <Button
-                size="sm"
-                disabled={hasOtherInProgressMilestone}
-                onClick={() => onStartWork(milestone)}
-                className="h-8 rounded-lg bg-[#0069D3] hover:bg-[#0055b3] text-white text-xs font-semibold px-3 cursor-pointer"
-              >
-                <Play className="mr-1 size-3" />
-                Start
-              </Button>
-            )}
-
-          {isFreelancer &&
-            milestone.status === "IN_PROGRESS" &&
-            canSubmitPermission &&
-            onSubmitWork && (
-              <Button
-                size="sm"
-                onClick={() => onSubmitWork(milestone)}
-                className="h-8 rounded-lg bg-[#0069D3] hover:bg-[#0055b3] text-white text-xs font-semibold px-3 cursor-pointer"
-              >
-                <Upload className="mr-1 size-3" />
-                Submit
-              </Button>
-            )}
-
-          {isFreelancer &&
-            milestone.status === "CHANGES_REQUESTED" &&
-            canSubmitPermission &&
-            onSubmitWork && (
-              <Button
-                size="sm"
-                onClick={() => onSubmitWork(milestone)}
-                className="h-8 rounded-lg bg-amber-600 hover:bg-amber-700 text-white text-xs font-semibold px-3 cursor-pointer"
-              >
-                <RotateCcw className="mr-1 size-3" />
-                Resubmit
-              </Button>
-            )}
-
-          {milestone.status === "DISPUTED" &&
-            canViewDisputePermission &&
-            onViewDispute && (
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => onViewDispute(milestone)}
-                className="h-8 rounded-lg border-rose-200 dark:border-rose-800 bg-white dark:bg-zinc-900 text-xs text-rose-600 hover:bg-rose-50 px-2.5 cursor-pointer"
-                title="View Dispute"
-              >
-                <span>View Dispute</span>
-              </Button>
-            )}
-
-          {milestone.status !== "COMPLETED" &&
-            milestone.status !== "DISPUTED" &&
-            milestone.paymentStatus === "FUNDED" &&
-            canCreateDisputePermission &&
-            onOpenDispute && (
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => onOpenDispute(milestone)}
-                className="h-8 rounded-lg border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-xs text-zinc-600 hover:text-rose-600 px-2.5 cursor-pointer"
-                title="Dispute Milestone"
-              >
-                <span>Dispute</span>
-              </Button>
-            )}
-
-          {/* View Details link */}
-          {canViewDetail && (
-            <Button
-              asChild
-              variant="outline"
-              size="sm"
-              className="h-8 rounded-lg border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-800 dark:text-zinc-200 hover:bg-zinc-100 text-xs font-medium px-2.5"
-            >
-              <Link href={detailUrl} className="inline-flex items-center gap-1">
-                <span>View</span>
-                <ArrowRight className="size-3" />
-              </Link>
-            </Button>
-          )}
-
-          {/* Edit / Delete direct buttons for Client when milestone is pending & unpaid */}
-          {canEdit && canEditPermission && onEdit && (
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => onEdit(milestone)}
-              className="h-8 rounded-lg border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-xs text-zinc-700 dark:text-zinc-300 hover:text-[#0069D3] px-2.5 cursor-pointer"
-              title="Edit Milestone"
-            >
-              <Edit2 className="mr-1 size-3 text-[#0069D3]" />
-              <span>Edit</span>
-            </Button>
-          )}
-
-          {canEdit && canDeletePermission && onDelete && (
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => onDelete(milestone)}
-              className="h-8 rounded-lg border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-xs text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/30 px-2 cursor-pointer"
-              title="Delete Milestone"
-            >
-              <Trash2 className="size-3" />
-            </Button>
-          )}
-        </div>
-      </td>
-    </tr>
+    </div>
   );
 }

@@ -124,7 +124,7 @@ export function ContractList({
     return (
       <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-border bg-card/40 px-6 py-14 text-center font-sans">
         <p className="text-sm font-medium text-muted-foreground">
-          {t("emptyList") || "No contracts found."}
+          {t("emptyList")}
         </p>
       </div>
     );
@@ -143,16 +143,16 @@ export function ContractList({
 
         <div className="flex items-center gap-2">
           <div className="relative w-full sm:w-64">
-            <Search className="absolute left-3 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground" />
+            <Search className="absolute left-2.5 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground" />
             <input
               type="text"
               placeholder={t("searchPlaceholder")}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="
-                w-full rounded-full
+                h-8 w-full rounded-full
                 border border-border
-                bg-background py-1.5
+                bg-background py-1
                 pr-3 pl-8 text-xs
                 text-foreground
                 placeholder:text-muted-foreground/60

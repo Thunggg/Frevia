@@ -30,21 +30,21 @@ export function MilestoneDetailTabs({
     },
     {
       key: "submissions" as const,
-      label: "Deliverables & Submissions",
+      label: "Submissions",
       icon: FolderGit2,
       count: submissionCount,
       visible: canViewSubmissions,
     },
     {
       key: "files" as const,
-      label: "Milestone Files",
+      label: "Files",
       icon: FileText,
       count: fileCount,
       visible: canViewFiles,
     },
     {
       key: "activity" as const,
-      label: "Activity & History",
+      label: "Activity",
       icon: Activity,
       visible: true,
     },
@@ -53,39 +53,46 @@ export function MilestoneDetailTabs({
   const tabs = allTabs.filter((t) => t.visible);
 
   return (
-    <div className="border-b border-zinc-200/80 dark:border-zinc-800">
-      <nav className="flex space-x-6 overflow-x-auto scrollbar-none" aria-label="Tabs">
-        {tabs.map((tab) => {
-          const Icon = tab.icon;
-          const isActive = activeTab === tab.key;
+    <div className="flex h-8 items-center gap-1 overflow-x-auto rounded-full bg-[#F1F0F5] p-1 text-xs dark:bg-muted w-fit scrollbar-none">
+      {tabs.map((tab) => {
+        const Icon = tab.icon;
+        const isActive = activeTab === tab.key;
 
-          return (
-            <button
-              key={tab.key}
-              type="button"
-              onClick={() => onTabChange(tab.key)}
-              className={`inline-flex items-center gap-2 border-b-2 py-3 px-1 text-xs sm:text-sm transition-colors cursor-pointer shrink-0 ${isActive
-                ? "border-[#0069D3] text-[#0069D3]"
-                : "border-transparent text-zinc-500 hover:border-zinc-300 dark:hover:border-zinc-700 hover:text-zinc-900 dark:hover:text-zinc-100"
-                }`}
-            >
-              <Icon className="size-4" />
-              <span>{tab.label}</span>
-              {typeof tab.count === "number" && tab.count > 0 && (
-                <span
-                  className={`rounded-full px-1.5 py-0.2 text-[10px] font-bold ${isActive
-                    ? "bg-[#0069D3]/10 text-[#0069D3]"
-                    : "bg-zinc-100 dark:bg-zinc-800 text-zinc-500"
-                    }`}
-                >
-                  {tab.count}
-                </span>
-              )}
-            </button>
-          );
-        })}
-      </nav>
+        return (
+          <button
+            key={tab.key}
+            type="button"
+            onClick={() => onTabChange(tab.key)}
+            className={`
+              inline-flex h-6 cursor-pointer items-center gap-1.5
+              whitespace-nowrap rounded-full px-3
+              font-medium transition-all text-xs
+              ${
+                isActive
+                  ? "bg-background font-semibold text-foreground shadow-xs"
+                  : "text-muted-foreground hover:text-foreground"
+              }
+            `}
+          >
+            <Icon className="size-3" />
+            <span>{tab.label}</span>
+            {typeof tab.count === "number" && tab.count > 0 && (
+              <span
+                className={`
+                  rounded-full px-1.5 py-0 text-[10px] font-semibold leading-tight
+                  ${
+                    isActive
+                      ? "bg-[#0069D3]/10 text-[#0069D3]"
+                      : "bg-muted-foreground/15 text-muted-foreground"
+                  }
+                `}
+              >
+                {tab.count}
+              </span>
+            )}
+          </button>
+        );
+      })}
     </div>
   );
 }
-

@@ -13,10 +13,12 @@ import {
 } from '@prisma/client';
 import { DisputeRepository } from './dispute.repo';
 import { DisputeService } from './dispute.service';
+import { PaymentService } from '../payments/payment.service';
 
 describe('DisputeService', () => {
   let service: DisputeService;
   let repo: jest.Mocked<DisputeRepository>;
+  let paymentService: jest.Mocked<PaymentService>;
 
   const mockMilestone = {
     id: 10,
@@ -111,7 +113,11 @@ describe('DisputeService', () => {
       finalizeDisputeTransaction: jest.fn(),
     } as unknown as jest.Mocked<DisputeRepository>;
 
-    service = new DisputeService(repo);
+    paymentService = {
+      executeDisputeSettlementPayout: jest.fn().mockResolvedValue(undefined),
+    } as unknown as jest.Mocked<PaymentService>;
+
+    service = new DisputeService(repo, paymentService);
   });
 
   describe('expert arbitration access', () => {
