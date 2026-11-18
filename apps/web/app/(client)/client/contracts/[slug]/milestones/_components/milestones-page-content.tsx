@@ -132,7 +132,14 @@ export function MilestonesPageContent({
   }, [milestones]);
 
   const hasInProgressMilestone = useMemo(() => {
-    return milestones.some((m) => m.status === "IN_PROGRESS");
+    return milestones.some(
+      (m) =>
+        m.status === "IN_PROGRESS" ||
+        m.status === "SUBMITTED" ||
+        m.status === "CHANGES_REQUESTED" ||
+        m.status === "LATE" ||
+        m.status === "DISPUTED",
+    );
   }, [milestones]);
 
   // Filtered Milestones with search & status
@@ -448,23 +455,43 @@ export function MilestonesPageContent({
         </div>
       ) : filteredMilestones.length > 0 ? (
         <div className="divide-y divide-border/40">
-          {filteredMilestones.map((m, idx) => (
-            <MilestoneCard
-              key={m.id}
-              contractId={contract.id}
-              contractSlug={encodeURIComponent(
-                contract.slug || String(contract.id),
-              )}
-              contractStatus={contract.status}
-              isHeldInContract={Boolean(
-                contract.holdMilestoneIds?.includes(m.id),
-              )}
-              basePath={basePath}
-              milestone={m}
-              index={idx}
-              totalMilestones={filteredMilestones.length}
-              isFreelancer={isFreelancer}
-              hasOtherInProgressMilestone={hasInProgressMilestone}
+          {filteredMilestones.map((m, idx) => {
+            const hasIncompletePrevious = milestones.some(
+              (prev) => prev.id < m.id && prev.status !== "COMPLETED",
+            );
+            const hasOtherActive = milestones.some(
+              (other) =>
+                other.id !== m.id &&
+                (other.status === "IN_PROGRESS" ||
+                  other.status === "SUBMITTED" ||
+                  other.status === "CHANGES_REQUESTED" ||
+                  other.status === "LATE" ||
+                  other.status === "DISPUTED"),
+            );
+            const startWorkBlockedReason = hasIncompletePrevious
+              ? "Complete previous milestone first"
+              : hasOtherActive
+                ? "Finish the active milestone first"
+                : null;
+
+            return (
+              <MilestoneCard
+                key={m.id}
+                contractId={contract.id}
+                contractSlug={encodeURIComponent(
+                  contract.slug || String(contract.id),
+                )}
+                contractStatus={contract.status}
+                isHeldInContract={Boolean(
+                  contract.holdMilestoneIds?.includes(m.id),
+                )}
+                basePath={basePath}
+                milestone={m}
+                index={idx}
+                totalMilestones={filteredMilestones.length}
+                isFreelancer={isFreelancer}
+                hasOtherInProgressMilestone={hasInProgressMilestone}
+                startWorkBlockedReason={startWorkBlockedReason}
               onEdit={(target) => {
                 setMilestoneToEdit({
                   id: target.id,
@@ -510,7 +537,8 @@ export function MilestonesPageContent({
               }}
               onStartWork={(target) => void handleStartWork(target)}
             />
-          ))}
+            );
+          })}
         </div>
       ) : (
         <div className="py-16 text-center space-y-2">

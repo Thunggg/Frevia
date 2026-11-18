@@ -155,7 +155,52 @@ describe('ContractService date validation', () => {
     );
   });
 
+  it('rejects freelancer signing when Stripe Connect onboarding is not completed', async () => {
+    const getConnectStatus = jest.fn().mockResolvedValue({
+      isConnected: true,
+      payoutsEnabled: false,
+      chargesEnabled: false,
+      stripeAccountId: 'acct_incomplete',
+    });
+    const captureContractHold = jest.fn();
+    const signContract = jest.fn();
+    const repository = {
+      findContractById: jest.fn().mockResolvedValue({
+        id: 99,
+        clientId: 10,
+        freelancerId: 20,
+        status: ContractStatus.PENDING_SIGN,
+        signedByClient: true,
+        signedByFreelancer: false,
+        holdPaymentIntentId: 'pi_hold_1',
+        expiresAt: new Date('2027-02-15T16:59:59.999Z'),
+      }),
+      signContract,
+    } as unknown as ContractRepository;
+    const service = new ContractService(
+      repository,
+      {} as ContractPdfService,
+      {
+        getConnectStatus,
+        captureContractHold,
+      } as unknown as PaymentService,
+    );
+
+    await expect(service.signContract(20, 99)).rejects.toThrow(
+      UnprocessableEntityException,
+    );
+    expect(getConnectStatus).toHaveBeenCalledWith(20);
+    expect(captureContractHold).not.toHaveBeenCalled();
+    expect(signContract).not.toHaveBeenCalled();
+  });
+
   it('captures held payment intent when freelancer signs after client', async () => {
+    const getConnectStatus = jest.fn().mockResolvedValue({
+      isConnected: true,
+      payoutsEnabled: true,
+      chargesEnabled: true,
+      stripeAccountId: 'acct_ready_20',
+    });
     const captureContractHold = jest.fn().mockResolvedValue({
       success: true,
       paymentIntentId: 'pi_hold_1',
@@ -185,11 +230,13 @@ describe('ContractService date validation', () => {
       generateAndSaveContractPdf: jest.fn().mockResolvedValue(null),
     } as unknown as ContractPdfService;
     const service = new ContractService(repository, pdfService, {
+      getConnectStatus,
       captureContractHold,
     } as unknown as PaymentService);
 
     const result = await service.signContract(20, 99);
 
+    expect(getConnectStatus).toHaveBeenCalledWith(20);
     expect(captureContractHold).toHaveBeenCalledWith('pi_hold_1');
     expect(signContract).toHaveBeenCalledWith(99, 'freelancer');
     expect(result.status).toBe(ContractStatus.ACTIVE);

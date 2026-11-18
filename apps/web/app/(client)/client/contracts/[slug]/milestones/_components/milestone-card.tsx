@@ -34,6 +34,7 @@ export interface MilestoneCardProps {
   isFreelancer?: boolean;
   basePath?: string;
   hasOtherInProgressMilestone?: boolean;
+  startWorkBlockedReason?: string | null;
   onEdit?: (milestone: MilestoneType) => void;
   onDelete?: (milestone: MilestoneType) => void;
   onFund?: (milestone: MilestoneType) => void;
@@ -57,6 +58,7 @@ export function MilestoneCard({
   isFreelancer = false,
   basePath = "/client",
   hasOtherInProgressMilestone = false,
+  startWorkBlockedReason = null,
   onEdit,
   onDelete,
   onFund,
@@ -388,11 +390,19 @@ export function MilestoneCard({
               onStartWork && (
                 <Button
                   size="sm"
-                  disabled={hasOtherInProgressMilestone}
+                  disabled={
+                    hasOtherInProgressMilestone ||
+                    Boolean(startWorkBlockedReason)
+                  }
+                  title={startWorkBlockedReason ?? undefined}
                   onClick={() => onStartWork(milestone)}
-                  className="h-7 rounded-full bg-[#0069D3] hover:bg-[#0055b3] text-white text-xs font-normal px-3 cursor-pointer"
+                  className="h-7 rounded-full bg-[#0069D3] hover:bg-[#0055b3] text-white text-xs font-normal px-3 cursor-pointer disabled:opacity-50"
                 >
-                  <Play className="mr-1 size-3" />
+                  {startWorkBlockedReason ? (
+                    <Lock className="mr-1 size-3" />
+                  ) : (
+                    <Play className="mr-1 size-3" />
+                  )}
                   Start Work
                 </Button>
               )}

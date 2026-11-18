@@ -124,6 +124,15 @@ export const ClientMustSignFirstException = () =>
     { message: ManageContractMessage.CLIENT_MUST_SIGN_FIRST, path: 'status' },
   ]);
 
+export const FreelancerStripeOnboardingRequiredException = () =>
+  new UnprocessableEntityException([
+    {
+      message:
+        'You must complete Stripe payout onboarding in Billing & Payments before signing a contract.',
+      path: 'stripeAccountId',
+    },
+  ]);
+
 export const ContractNotActionableForRejectionException = () =>
   new UnprocessableEntityException([
     {

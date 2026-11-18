@@ -10,6 +10,7 @@ import {
   ExternalLink,
   FileCheck,
   FileText,
+  Lock,
   Play,
   RotateCcw,
   Scale,
@@ -29,6 +30,7 @@ interface MilestoneOverviewTabProps {
   milestone: MilestoneType;
   submissions: GetSubmissionResponseType[];
   isFreelancer?: boolean;
+  startWorkBlockedReason?: string | null;
   onOpenDispute?: () => void;
   onViewDispute?: () => void;
   onFund?: () => void;
@@ -44,6 +46,7 @@ export function MilestoneOverviewTab({
   milestone,
   submissions,
   isFreelancer = false,
+  startWorkBlockedReason = null,
   onOpenDispute,
   onViewDispute,
   onFund,
@@ -260,19 +263,29 @@ export function MilestoneOverviewTab({
           <div className="flex items-start justify-between gap-3 border-l-2 border-emerald-500 pl-3 py-1 text-xs">
             <div className="space-y-0.5">
               <span className="font-medium text-emerald-600 block">
-                Escrow funded & ready to start
+                {isFreelancer && startWorkBlockedReason
+                  ? "Escrow funded · Locked until prior milestone completes"
+                  : "Escrow funded & ready to start"}
               </span>
               <p className="text-muted-foreground leading-relaxed">
-                Client deposited ${amountNumber.toFixed(2)} USD in escrow. Freelancer can begin working.
+                {isFreelancer && startWorkBlockedReason
+                  ? `${startWorkBlockedReason} before starting work on this milestone.`
+                  : `Client deposited $${amountNumber.toFixed(2)} USD in escrow. Freelancer can begin working.`}
               </p>
             </div>
             {isFreelancer && canStartWorkPermission && onStartWork && (
               <Button
                 size="sm"
+                disabled={Boolean(startWorkBlockedReason)}
+                title={startWorkBlockedReason ?? undefined}
                 onClick={onStartWork}
-                className="h-7 rounded-full bg-[#0069D3] hover:bg-[#0055b3] text-white text-xs font-normal px-3 shrink-0 cursor-pointer"
+                className="h-7 rounded-full bg-[#0069D3] hover:bg-[#0055b3] text-white text-xs font-normal px-3 shrink-0 cursor-pointer disabled:opacity-50"
               >
-                <Play className="mr-1 size-3" />
+                {startWorkBlockedReason ? (
+                  <Lock className="mr-1 size-3" />
+                ) : (
+                  <Play className="mr-1 size-3" />
+                )}
                 Start Work
               </Button>
             )}

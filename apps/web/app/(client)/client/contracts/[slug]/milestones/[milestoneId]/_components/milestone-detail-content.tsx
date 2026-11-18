@@ -144,6 +144,25 @@ export function MilestoneDetailContent({
 
   const latestSubmission = submissions.length > 0 ? submissions[0] : null;
 
+  const contractMilestones = contract.milestones ?? [];
+  const hasIncompletePreviousMilestone = contractMilestones.some(
+    (m) => m.id < milestone.id && m.status !== "COMPLETED",
+  );
+  const hasOtherActiveMilestone = contractMilestones.some(
+    (m) =>
+      m.id !== milestone.id &&
+      (m.status === "IN_PROGRESS" ||
+        m.status === "SUBMITTED" ||
+        m.status === "CHANGES_REQUESTED" ||
+        m.status === "LATE" ||
+        m.status === "DISPUTED"),
+  );
+  const startWorkBlockedReason = hasIncompletePreviousMilestone
+    ? "Complete previous milestone first"
+    : hasOtherActiveMilestone
+      ? "Finish the active milestone first"
+      : null;
+
   // Actions
   const handleStartWork = async () => {
     try {
@@ -307,6 +326,7 @@ export function MilestoneDetailContent({
             milestone={milestone}
             submissions={submissions}
             isFreelancer={isFreelancer}
+            startWorkBlockedReason={startWorkBlockedReason}
             onFund={() => void handleFundMilestone()}
             onStartWork={() => void handleStartWork()}
             onSubmitWork={() => setSubmitModalOpen(true)}
@@ -322,6 +342,7 @@ export function MilestoneDetailContent({
             milestone={milestone}
             submissions={submissions}
             isFreelancer={isFreelancer}
+            startWorkBlockedReason={startWorkBlockedReason}
             onFund={() => void handleFundMilestone()}
             onStartWork={() => void handleStartWork()}
             onSubmitWork={() => setSubmitModalOpen(true)}

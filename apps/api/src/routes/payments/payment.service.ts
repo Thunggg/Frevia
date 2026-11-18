@@ -195,6 +195,7 @@ export class PaymentService {
         expMonth: pm.card?.exp_month ?? 0,
         expYear: pm.card?.exp_year ?? 0,
         isDefault: defaultPmId ? pm.id === defaultPmId : idx === 0,
+        cardholderName: pm.billing_details?.name ?? null,
       }));
 
       return { paymentMethods };

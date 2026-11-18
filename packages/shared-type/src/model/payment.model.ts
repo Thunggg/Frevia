@@ -90,6 +90,7 @@ export const SavedPaymentMethodSchema = z.object({
   expMonth: z.number(),
   expYear: z.number(),
   isDefault: z.boolean(),
+  cardholderName: z.string().nullable().optional(),
 });
 export type SavedPaymentMethodType = z.infer<typeof SavedPaymentMethodSchema>;
 

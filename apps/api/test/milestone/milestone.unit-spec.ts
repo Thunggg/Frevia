@@ -28,6 +28,7 @@ import {
   MilestoneForbiddenException,
   MilestoneNotFoundException,
   MilestonePaymentStatusException,
+  MilestonePreviousNotCompletedException,
 } from '../../src/routes/milestone/milestone.error';
 import { MilestoneRepository } from '../../src/routes/milestone/milestone.repo';
 import { MilestoneService } from '../../src/routes/milestone/milestone.service';
@@ -66,6 +67,7 @@ describe('Milestone Management (UF-132 to UF-146)', () => {
     progressMilestone: jest.fn(),
     getTotalMilestoneAmount: jest.fn(),
     findInProgressMilestone: jest.fn(),
+    findIncompletePreviousMilestone: jest.fn().mockResolvedValue(null),
     countActiveMilestones: jest.fn().mockResolvedValue(2),
   };
 
@@ -767,6 +769,29 @@ describe('Milestone Management (UF-132 to UF-146)', () => {
       await expect(
         milestoneService.progressMilestone(2, 10, 100),
       ).rejects.toThrow(MilestoneAlreadyInProgressException());
+      expect(milestoneRepository.progressMilestone).not.toHaveBeenCalled();
+    });
+
+    it('throws MilestonePreviousNotCompletedException when an earlier milestone is not completed', async () => {
+      milestoneRepository.findContractById.mockResolvedValueOnce(mockContract);
+      milestoneRepository.findMilestoneById.mockResolvedValueOnce({
+        ...mockMilestone,
+        id: 102,
+        status: MilestoneStatus.PENDING,
+        paymentStatus: MilestonePaymentStatus.FUNDED,
+      });
+      milestoneRepository.findInProgressMilestone.mockResolvedValueOnce(null);
+      milestoneRepository.findIncompletePreviousMilestone.mockResolvedValueOnce(
+        {
+          id: 100,
+          title: 'Milestone 1',
+          status: MilestoneStatus.PENDING,
+        },
+      );
+
+      await expect(
+        milestoneService.progressMilestone(2, 10, 102),
+      ).rejects.toThrow(MilestonePreviousNotCompletedException());
       expect(milestoneRepository.progressMilestone).not.toHaveBeenCalled();
     });
   });

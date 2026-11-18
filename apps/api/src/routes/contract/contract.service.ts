@@ -20,7 +20,6 @@ import {
   ContractAlreadyCompletedException,
   ContractAlreadyExistsException,
   ContractAwaitingPaymentException,
-  ContractCannotCancelWithActiveSubmissionException,
   ContractDisputedException,
   ContractExpiredException,
   ContractExpiresAtBeforeMilestonesException,
@@ -34,6 +33,7 @@ import {
   FailedToCreateContractException,
   FailedToLoadContractException,
   FailedToUpdateContractException,
+  FreelancerStripeOnboardingRequiredException,
   MilestoneAmountMismatchException,
   MilestoneDueDateExceedsContractException,
   MilestoneDueDateRequiredException,
@@ -266,6 +266,16 @@ export class ContractService implements OnModuleInit, OnModuleDestroy {
       }
 
       if (isFreelancer) {
+        const connectStatus =
+          await this.paymentService.getConnectStatus(userId);
+        if (
+          !connectStatus.isConnected ||
+          !connectStatus.stripeAccountId ||
+          !connectStatus.payoutsEnabled
+        ) {
+          throw FreelancerStripeOnboardingRequiredException();
+        }
+
         if (!contract.holdPaymentIntentId) {
           throw ContractAwaitingPaymentException();
         }

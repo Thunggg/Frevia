@@ -60,6 +60,12 @@ describe('Contract Management (UF-122 to UF-131)', () => {
   };
 
   const paymentService = {
+    getConnectStatus: jest.fn().mockResolvedValue({
+      isConnected: true,
+      payoutsEnabled: true,
+      chargesEnabled: true,
+      stripeAccountId: 'acct_test_freelancer',
+    }),
     refundContractEscrow: jest.fn(),
     captureContractHold: jest.fn().mockResolvedValue({ success: true }),
     cancelContractHold: jest.fn().mockResolvedValue({ success: true }),

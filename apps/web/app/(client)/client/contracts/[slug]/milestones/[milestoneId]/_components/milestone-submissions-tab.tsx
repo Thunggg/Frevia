@@ -10,6 +10,7 @@ import {
   ExternalLink,
   FileCheck,
   FileText,
+  Lock,
   Play,
   RotateCcw,
   Upload,
@@ -27,6 +28,7 @@ interface MilestoneSubmissionsTabProps {
   milestone: MilestoneType;
   submissions: GetSubmissionResponseType[];
   isFreelancer?: boolean;
+  startWorkBlockedReason?: string | null;
   onFund?: () => void;
   onStartWork?: () => void;
   onSubmitWork?: () => void;
@@ -40,6 +42,7 @@ export function MilestoneSubmissionsTab({
   milestone,
   submissions,
   isFreelancer = false,
+  startWorkBlockedReason = null,
   onFund,
   onStartWork,
   onSubmitWork,
@@ -145,10 +148,16 @@ export function MilestoneSubmissionsTab({
     ) {
       return (
         <Button
+          disabled={Boolean(startWorkBlockedReason)}
+          title={startWorkBlockedReason ?? undefined}
           onClick={onStartWork}
-          className="rounded-full bg-[#0069D3] hover:bg-[#0055b3] text-white text-xs font-normal h-7 px-3.5 cursor-pointer self-start sm:self-auto"
+          className="rounded-full bg-[#0069D3] hover:bg-[#0055b3] text-white text-xs font-normal h-7 px-3.5 cursor-pointer self-start sm:self-auto disabled:opacity-50"
         >
-          <Play className="mr-1.5 size-3" />
+          {startWorkBlockedReason ? (
+            <Lock className="mr-1.5 size-3" />
+          ) : (
+            <Play className="mr-1.5 size-3" />
+          )}
           Start Milestone
         </Button>
       );

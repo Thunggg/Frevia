@@ -25,6 +25,7 @@ import {
   FailedToProgressMilestoneException,
   MilestonePaymentStatusException,
   MilestoneAlreadyInProgressException,
+  MilestonePreviousNotCompletedException,
 } from './milestone.error';
 import { RoleName } from '@shared/types';
 import {
@@ -292,6 +293,16 @@ export class MilestoneService {
 
       if (inProgressMilestone && inProgressMilestone.id !== milestoneId) {
         throw MilestoneAlreadyInProgressException();
+      }
+
+      const incompletePreviousMilestone =
+        await this.milestoneRepository.findIncompletePreviousMilestone(
+          contractId,
+          milestoneId,
+        );
+
+      if (incompletePreviousMilestone) {
+        throw MilestonePreviousNotCompletedException();
       }
 
       return await this.milestoneRepository.progressMilestone(milestoneId);

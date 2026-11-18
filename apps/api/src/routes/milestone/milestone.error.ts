@@ -114,3 +114,12 @@ export const MilestoneAlreadyInProgressException = () =>
       path: 'id',
     },
   ]);
+
+export const MilestonePreviousNotCompletedException = () =>
+  new UnprocessableEntityException([
+    {
+      message:
+        'Previous milestones must be completed before starting this milestone.',
+      path: 'id',
+    },
+  ]);
