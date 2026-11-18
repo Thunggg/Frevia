@@ -73,7 +73,7 @@ export function NotificationsBell() {
           {unread.length && canMarkAllRead ? (
             <button
               type="button"
-              className="flex items-center gap-1 text-xs font-medium text-[#4fae2e] hover:text-[#3f9225] disabled:opacity-50 cursor-pointer"
+              className="flex items-center gap-1 text-xs font-medium text-[#0069D3] hover:text-[#0055b3] dark:text-blue-400 dark:hover:text-blue-300 disabled:opacity-50 cursor-pointer"
               disabled={markAllRead.isPending}
               onClick={() => markAllRead.mutate()}
             >
@@ -103,22 +103,41 @@ export function NotificationsBell() {
                 t("fallbackTitle"),
               );
               const content = (
-                <div className="min-w-0 flex-1">
-                  <p className="truncate text-sm font-medium text-foreground">
-                    {text.title}
-                  </p>
-                  {text.message ? (
-                    <p className="mt-0.5 line-clamp-2 text-xs text-muted-foreground">
-                      {text.message}
+                <div className="flex min-w-0 flex-1 items-start gap-2.5">
+                  <span
+                    className={`mt-1.5 size-2 shrink-0 rounded-full ${
+                      notification.isRead
+                        ? "bg-transparent"
+                        : "bg-[#0069D3]"
+                    }`}
+                  />
+                  <div className="min-w-0 flex-1">
+                    <p
+                      className={`truncate text-sm ${
+                        notification.isRead
+                          ? "font-medium text-foreground/90"
+                          : "font-semibold text-foreground"
+                      }`}
+                    >
+                      {text.title}
                     </p>
-                  ) : null}
+                    {text.message ? (
+                      <p className="mt-0.5 line-clamp-2 text-xs text-muted-foreground">
+                        {text.message}
+                      </p>
+                    ) : null}
+                  </div>
                 </div>
               );
               return (
                 <DropdownMenuItem
                   key={notification.id}
                   asChild
-                  className="cursor-pointer gap-3 px-4 py-3"
+                  className={`cursor-pointer gap-3 px-4 py-3 ${
+                    notification.isRead
+                      ? ""
+                      : "bg-[#0069D3]/[0.04] dark:bg-[#0069D3]/10"
+                  }`}
                   onSelect={() => {
                     if (!notification.isRead && canMarkRead) {
                       markRead.mutate(notification.id);
@@ -141,7 +160,7 @@ export function NotificationsBell() {
         <div className="p-2">
           <Link
             href="/notifications"
-            className="block rounded-md px-3 py-2 text-center text-sm font-medium text-[#4fae2e] hover:bg-[#eaf8df] dark:hover:bg-[#4fae2e]/10"
+            className="block rounded-xl px-3 py-2 text-center text-sm font-medium text-[#0069D3] transition-colors hover:bg-[#0069D3]/10 dark:text-blue-400 dark:hover:bg-[#0069D3]/15"
           >
             {t("viewAllNotifications")}
           </Link>
