@@ -3,17 +3,17 @@ import { Skeleton } from "@repo/ui/components/shadcn/skeleton";
 export default function ProjectsLoading() {
   return (
     <div className="min-h-dvh bg-background font-sans">
-      <div className="h-14 border-b border-border bg-[#eaf8df] dark:bg-[#161716]" />
+      <div className="h-14 border-b border-border bg-[#D0E1F8]/20 dark:bg-[#161716]" />
 
-      <section className="border-b border-[#4fae2e]/15 bg-[#eaf8df] dark:border-white/10 dark:bg-[#1a1c1a]">
+      <section className="border-b border-[#0069D3]/15 bg-[#D0E1F8]/25 dark:border-white/10 dark:bg-blue-950/20">
         <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8 lg:py-12">
-          <Skeleton className="mb-4 h-4 w-28 bg-[#4fae2e]/15" />
+          <Skeleton className="mb-4 h-4 w-28 bg-[#0069D3]/15" />
           <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
             <div className="space-y-3">
-              <Skeleton className="h-10 w-40 bg-[#4fae2e]/15" />
-              <Skeleton className="h-4 w-80 max-w-full bg-[#4fae2e]/10" />
+              <Skeleton className="h-10 w-40 bg-[#0069D3]/15" />
+              <Skeleton className="h-4 w-80 max-w-full bg-[#0069D3]/10" />
             </div>
-            <Skeleton className="h-11 w-32 bg-[#4fae2e]/20" />
+            <Skeleton className="h-11 w-32 bg-[#0069D3]/20" />
           </div>
         </div>
       </section>

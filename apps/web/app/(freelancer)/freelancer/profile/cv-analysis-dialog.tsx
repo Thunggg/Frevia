@@ -299,7 +299,7 @@ export function CvAnalysisDialog({
         <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-3xl">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <Sparkles className="size-5 text-[#4fae2e]" />
+              <Sparkles className="size-5 text-[#0069D3]" />
               {t("dialogTitle")}
             </DialogTitle>
             <DialogDescription>{t("dialogDescription")}</DialogDescription>
@@ -365,7 +365,7 @@ export function CvAnalysisDialog({
                   {skills.map((s, idx) => (
                     <div
                       key={idx}
-                      className={`rounded-lg border p-3 ${s.selected ? "border-[#4fae2e]/40 bg-[#4fae2e]/5" : "border-border bg-card/30"}`}
+                      className={`rounded-lg border p-3 ${s.selected ? "border-[#0069D3]/40 bg-[#0069D3]/5" : "border-border bg-card/30"}`}
                     >
                       <div className="flex items-start gap-3">
                         <Checkbox
@@ -451,7 +451,7 @@ export function CvAnalysisDialog({
                   {experience.map((e, idx) => (
                     <div
                       key={idx}
-                      className={`rounded-lg border p-3 ${e.selected ? "border-[#4fae2e]/40 bg-[#4fae2e]/5" : "border-border bg-card/30"}`}
+                      className={`rounded-lg border p-3 ${e.selected ? "border-[#0069D3]/40 bg-[#0069D3]/5" : "border-border bg-card/30"}`}
                     >
                       <div className="flex items-start gap-3">
                         <Checkbox
@@ -589,7 +589,7 @@ export function CvAnalysisDialog({
                   {education.map((ed, idx) => (
                     <div
                       key={idx}
-                      className={`rounded-lg border p-3 ${ed.selected ? "border-[#4fae2e]/40 bg-[#4fae2e]/5" : "border-border bg-card/30"}`}
+                      className={`rounded-lg border p-3 ${ed.selected ? "border-[#0069D3]/40 bg-[#0069D3]/5" : "border-border bg-card/30"}`}
                     >
                       <div className="flex items-start gap-3">
                         <Checkbox
@@ -705,7 +705,7 @@ export function CvAnalysisDialog({
                   {projects.map((p, idx) => (
                     <div
                       key={idx}
-                      className={`rounded-lg border p-3 ${p.selected ? "border-[#4fae2e]/40 bg-[#4fae2e]/5" : "border-border bg-card/30"}`}
+                      className={`rounded-lg border p-3 ${p.selected ? "border-[#0069D3]/40 bg-[#0069D3]/5" : "border-border bg-card/30"}`}
                     >
                       <div className="flex items-start gap-3">
                         <Checkbox

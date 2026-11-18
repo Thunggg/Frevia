@@ -514,7 +514,7 @@ export function AccountProfileClient({
           className={
             embedded
               ? "border-b border-border bg-background"
-              : "border-b border-[#4fae2e]/15 bg-[#eaf8df] dark:border-white/10 dark:bg-[#1a1c1a]"
+              : "border-b border-[#0069D3]/15 bg-[#D0E1F8]/30 dark:border-white/10 dark:bg-[#111c2e]"
           }
         >
           <div className="mx-auto max-w-6xl px-4 py-6 sm:px-6 lg:px-8">
@@ -522,7 +522,7 @@ export function AccountProfileClient({
               <nav className="text-sm text-foreground/60">
                 <Link
                   href="/"
-                  className="transition-colors hover:text-[#4fae2e]"
+                  className="transition-colors hover:text-[#0069D3]"
                 >
                   {tCommon("home")}
                 </Link>
@@ -571,7 +571,7 @@ export function AccountProfileClient({
         <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
           {loading ? (
             <div className="flex justify-center py-20">
-              <Loader2 className="size-8 animate-spin text-[#4fae2e]" />
+              <Loader2 className="size-8 animate-spin text-[#0069D3]" />
             </div>
           ) : (
             <Tabs key={defaultTab} defaultValue={defaultTab}>
@@ -690,7 +690,7 @@ export function AccountProfileClient({
                     </div>
                     {canUpdateClientProfile && (
                       <Button
-                        className="bg-[#4fae2e] text-white hover:bg-[#459928]"
+                        className="bg-[#0069D3] text-white hover:bg-[#005bb8]"
                         disabled={pending === "company"}
                       >
                         {pending === "company" ? (
@@ -727,7 +727,7 @@ export function AccountProfileClient({
                           <Badge
                             className={
                               identity?.status === VerificationStatus.APPROVED
-                                ? "border-transparent bg-[#4fae2e] text-white hover:bg-[#4fae2e]"
+                                ? "border-transparent bg-emerald-600 text-white hover:bg-emerald-600"
                                 : ""
                             }
                             variant={
@@ -842,7 +842,7 @@ export function AccountProfileClient({
                             onChange={(event) => setSocialUrl(event.target.value)}
                           />
                           <Button
-                            className="bg-[#4fae2e] text-white hover:bg-[#459928]"
+                            className="bg-[#0069D3] text-white hover:bg-[#005bb8]"
                             disabled={pending === "social"}
                           >
                             <Plus /> {tSettings("addLink")}
@@ -862,9 +862,9 @@ export function AccountProfileClient({
                               key={link.id}
                               className="flex items-center gap-3 px-1 py-4"
                             >
-                              <Link2 className="size-4 shrink-0 text-[#4fae2e]" />
+                              <Link2 className="size-4 shrink-0 text-[#0069D3]" />
                               <a
-                                className="min-w-0 flex-1 truncate text-sm text-[#4fae2e] transition-colors hover:text-[#3f9225]"
+                                className="min-w-0 flex-1 truncate text-sm text-[#0069D3] transition-colors hover:text-[#005bb8]"
                                 href={link.url}
                                 target="_blank"
                                 rel="noreferrer"
@@ -1016,7 +1016,7 @@ export function AccountProfileClient({
                     </div>
                   ) : !freelancers.length ? (
                     <div className="mt-6 rounded-xl border border-dashed border-border px-6 py-14 text-center">
-                      <div className="mx-auto mb-4 flex size-14 items-center justify-center rounded-full bg-[#eaf8df] text-[#4fae2e] dark:bg-[#4fae2e]/15">
+                      <div className="mx-auto mb-4 flex size-14 items-center justify-center rounded-full bg-[#D0E1F8] text-[#0069D3] dark:bg-blue-950/60 dark:text-blue-300">
                         <UserPlus className="size-7" />
                       </div>
                       <p className="text-lg font-medium text-foreground">
@@ -1045,7 +1045,7 @@ export function AccountProfileClient({
                       </p>
                       <Button
                         variant="link"
-                        className="mt-2 text-[#438f2b] dark:text-[#78c85d]"
+                        className="mt-2 text-[#0069D3] dark:text-blue-400"
                         onClick={() => {
                           setFreelancerQuery("");
                           if (freelancerView === "following") {
@@ -1071,7 +1071,7 @@ export function AccountProfileClient({
                         return (
                           <li
                             key={freelancer.freelancerId}
-                            className="flex min-w-0 flex-col rounded-xl border border-border bg-background p-5 transition-colors hover:border-[#4fae2e]/35 dark:hover:border-[#4fae2e]/40"
+                            className="flex min-w-0 flex-col rounded-xl border border-border bg-background p-5 transition-colors hover:border-[#0069D3]/35 dark:hover:border-[#0069D3]/40"
                           >
                             <div className="flex min-w-0 items-start gap-3.5">
                               <Avatar className="size-14 border border-border sm:size-16">
@@ -1082,7 +1082,7 @@ export function AccountProfileClient({
                                   alt={displayName}
                                   className="object-cover"
                                 />
-                                <AvatarFallback className="bg-[#eaf8df] text-lg font-semibold text-[#438f2b] dark:bg-[#4fae2e]/15 dark:text-[#78c85d]">
+                                <AvatarFallback className="bg-[#D0E1F8] text-lg font-semibold text-[#0069D3] dark:bg-blue-950/60 dark:text-blue-300">
                                   {displayName.charAt(0).toUpperCase()}
                                 </AvatarFallback>
                               </Avatar>
@@ -1090,7 +1090,7 @@ export function AccountProfileClient({
                               <div className="min-w-0 flex-1">
                                 <Link
                                   href={`/profiles/${freelancer.profile.id}`}
-                                  className="block truncate text-base font-semibold tracking-tight text-foreground hover:text-[#438f2b] hover:underline hover:underline-offset-4 dark:hover:text-[#78c85d]"
+                                  className="block truncate text-base font-semibold tracking-tight text-foreground hover:text-[#0069D3] hover:underline hover:underline-offset-4 dark:hover:text-blue-400"
                                 >
                                   {displayName}
                                 </Link>
@@ -1108,7 +1108,7 @@ export function AccountProfileClient({
                                     .idVerified ? (
                                     <Badge
                                       variant="outline"
-                                      className="border-[#4fae2e]/25 text-[#438f2b] dark:text-[#78c85d]"
+                                      className="border-[#0069D3]/25 text-[#0069D3] dark:text-blue-400"
                                     >
                                       <ShieldCheck /> {tCommon("verified")}
                                     </Badge>
@@ -1123,7 +1123,7 @@ export function AccountProfileClient({
                                   <Badge
                                     key={skill.id}
                                     variant="secondary"
-                                    className="border border-[#4fae2e]/20 bg-[#eaf8df] dark:border-[#4fae2e]/30 dark:bg-[#4fae2e]/10"
+                                    className="border border-[#0069D3]/20 bg-[#D0E1F8]/40 text-[#0069D3] dark:border-[#0069D3]/30 dark:bg-blue-950/40 dark:text-blue-300"
                                   >
                                     {skill.skill.name}
                                   </Badge>
@@ -1161,7 +1161,7 @@ export function AccountProfileClient({
                                       <Button
                                         variant="outline"
                                         size="sm"
-                                        className="border-[#4fae2e]/35 text-[#438f2b] hover:bg-destructive/10 hover:text-destructive dark:text-[#78c85d]"
+                                        className="border-[#0069D3]/35 text-[#0069D3] hover:bg-destructive/10 hover:text-destructive dark:text-blue-400"
                                         disabled={isPending}
                                       >
                                         {isPending ? (
@@ -1204,7 +1204,7 @@ export function AccountProfileClient({
                               ) : canFollowFreelancer ? (
                                 <Button
                                   size="sm"
-                                  className="bg-[#4fae2e] text-white hover:bg-[#459928] active:translate-y-px"
+                                  className="bg-[#0069D3] text-white hover:bg-[#005bb8] active:translate-y-px"
                                   disabled={isPending}
                                   onClick={() =>
                                     void followFreelancer(freelancer)
@@ -1232,7 +1232,7 @@ export function AccountProfileClient({
                   <ul className="divide-y divide-border border-y border-border">
                     {favorites.map((favorite) => (
                       <li key={favorite.freelancerId}>
-                        <div className="flex items-start gap-4 px-3 py-5 transition-colors hover:bg-[#eaf8df]/35 sm:px-5 dark:hover:bg-white/4">
+                        <div className="flex items-start gap-4 px-3 py-5 transition-colors hover:bg-[#D0E1F8]/30 sm:px-5 dark:hover:bg-white/4">
                           <div className="min-w-0 flex-1">
                             <p className="text-lg font-semibold tracking-tight text-foreground">
                               {favorite.profile.displayName ?? tRole("FREELANCER")}
@@ -1248,7 +1248,7 @@ export function AccountProfileClient({
                                   <Badge
                                     key={skill.id}
                                     variant="secondary"
-                                    className="border border-[#4fae2e]/20 bg-[#eaf8df] dark:border-[#4fae2e]/30 dark:bg-[#4fae2e]/10"
+                                    className="border border-[#0069D3]/20 bg-[#D0E1F8]/40 text-[#0069D3] dark:border-[#0069D3]/30 dark:bg-blue-950/40 dark:text-blue-300"
                                   >
                                     {skill.skill.name}
                                   </Badge>
@@ -1285,7 +1285,7 @@ export function AccountProfileClient({
                   </ul>
                 ) : (
                   <div className="rounded-xl border border-dashed border-border px-6 py-16 text-center">
-                    <div className="mx-auto mb-4 flex size-14 items-center justify-center rounded-full bg-[#eaf8df] text-[#4fae2e] dark:bg-[#4fae2e]/15">
+                    <div className="mx-auto mb-4 flex size-14 items-center justify-center rounded-full bg-[#D0E1F8] text-[#0069D3] dark:bg-blue-950/60 dark:text-blue-300">
                       <Heart className="size-7" />
                     </div>
                     <p className="text-lg font-medium text-foreground">
@@ -1295,7 +1295,7 @@ export function AccountProfileClient({
                       {tSettings("noFavoritesHint")}
                     </p>
                     <Button
-                      className="mt-6 bg-[#4fae2e] text-white hover:bg-[#459928]"
+                      className="mt-6 bg-[#0069D3] text-white hover:bg-[#005bb8]"
                       asChild
                     >
                       <Link href="/forum">{t("visitForum")}</Link>

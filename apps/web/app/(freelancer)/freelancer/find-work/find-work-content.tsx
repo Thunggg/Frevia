@@ -539,11 +539,11 @@ export function FindWorkContent({
                   value={searchInput}
                   onChange={(e) => setSearchInput(e.target.value)}
                   placeholder={t("searchPlaceholder")}
-                  className="h-11 w-full rounded-full border border-border bg-card pl-11 pr-24 text-sm font-medium text-foreground placeholder:text-muted-foreground shadow-xs outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all"
+                  className="h-11 w-full rounded-full border border-border bg-card pl-11 pr-24 text-sm font-medium text-foreground placeholder:text-muted-foreground shadow-xs outline-none focus:border-[#0069D3] focus:ring-2 focus:ring-[#0069D3]/20 transition-all"
                 />
                 <button
                   type="submit"
-                  className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-1.5 text-xs font-semibold shadow-xs transition-colors cursor-pointer"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-[#0069D3] hover:bg-[#005bb8] text-white px-4 py-1.5 text-xs font-semibold shadow-xs transition-colors cursor-pointer"
                 >
                   {t("searchPage.search")}
                 </button>
@@ -559,13 +559,13 @@ export function FindWorkContent({
                       onClick={() => handleTabSelect("best-matches")}
                       className={`pb-3 text-sm font-semibold border-b-2 transition-all cursor-pointer whitespace-nowrap ${
                         activeTab === "best-matches"
-                          ? "border-emerald-600 text-emerald-600 dark:text-emerald-400"
+                          ? "border-[#0069D3] text-[#0069D3] dark:text-blue-400"
                           : "border-transparent text-muted-foreground hover:text-foreground"
                       }`}
                     >
                       <span>{t("bestMatches")}</span>
                       {recommendedJobs.length > 0 && (
-                        <span className="ml-1.5 rounded-full bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300 px-2 py-0.5 text-xs font-semibold">
+                        <span className="ml-1.5 rounded-full bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300 px-2 py-0.5 text-xs font-semibold">
                           {recommendedJobs.length}
                         </span>
                       )}
@@ -578,7 +578,7 @@ export function FindWorkContent({
                     onClick={() => handleTabSelect("most-recent")}
                     className={`pb-3 text-sm font-semibold border-b-2 transition-all cursor-pointer whitespace-nowrap ${
                       activeTab === "most-recent"
-                        ? "border-emerald-600 text-emerald-600 dark:text-emerald-400"
+                        ? "border-[#0069D3] text-[#0069D3] dark:text-blue-400"
                         : "border-transparent text-muted-foreground hover:text-foreground"
                     }`}
                   >
@@ -595,7 +595,7 @@ export function FindWorkContent({
                       onClick={() => handleTabSelect("saved-searches")}
                       className={`pb-3 text-sm font-semibold border-b-2 transition-all cursor-pointer whitespace-nowrap ${
                         activeTab === "saved-searches"
-                          ? "border-emerald-600 text-emerald-600 dark:text-emerald-400"
+                          ? "border-[#0069D3] text-[#0069D3] dark:text-blue-400"
                           : "border-transparent text-muted-foreground hover:text-foreground"
                       }`}
                     >
@@ -614,13 +614,13 @@ export function FindWorkContent({
                     onClick={() => handleTabSelect("saved-jobs")}
                     className={`pb-3 text-sm font-semibold border-b-2 transition-all cursor-pointer whitespace-nowrap ${
                       activeTab === "saved-jobs"
-                        ? "border-emerald-600 text-emerald-600 dark:text-emerald-400"
+                        ? "border-[#0069D3] text-[#0069D3] dark:text-blue-400"
                         : "border-transparent text-muted-foreground hover:text-foreground"
                     }`}
                   >
                     <span>{t("savedJobs")}</span>
                     {bookmarkedSlugs.size > 0 && (
-                      <span className="ml-1.5 rounded-full bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300 px-2 py-0.5 text-xs font-semibold">
+                      <span className="ml-1.5 rounded-full bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300 px-2 py-0.5 text-xs font-semibold">
                         {bookmarkedSlugs.size}
                       </span>
                     )}
@@ -632,7 +632,7 @@ export function FindWorkContent({
                     onClick={() => handleTabSelect("invites")}
                     className={`pb-3 text-sm font-semibold border-b-2 transition-all cursor-pointer whitespace-nowrap ${
                       activeTab === "invites"
-                        ? "border-emerald-600 text-emerald-600 dark:text-emerald-400"
+                        ? "border-[#0069D3] text-[#0069D3] dark:text-blue-400"
                         : "border-transparent text-muted-foreground hover:text-foreground"
                     }`}
                   >
@@ -651,7 +651,7 @@ export function FindWorkContent({
                   onClick={() => setIsFiltersModalOpen(true)}
                   className={`flex size-9 shrink-0 items-center justify-center rounded-full border transition-all cursor-pointer ${
                     activeFiltersCount > 0
-                      ? "border-emerald-600 bg-emerald-50 text-emerald-600 dark:bg-emerald-950/40 dark:border-emerald-500 dark:text-emerald-300 ring-2 ring-emerald-500/20"
+                      ? "border-[#0069D3] bg-blue-50 text-[#0069D3] dark:bg-blue-950/40 dark:border-blue-500 dark:text-blue-300 ring-2 ring-blue-500/20"
                       : "border-border bg-card text-muted-foreground hover:text-foreground hover:bg-muted"
                   }`}
                   title={t("modal.filterTooltip")}
@@ -703,7 +703,7 @@ export function FindWorkContent({
                           <div className="mt-5 flex items-center gap-2.5">
                             <Link
                               href="/freelancer/profile"
-                              className="inline-flex items-center rounded-full bg-emerald-600 text-white hover:bg-emerald-700 px-4 py-2 text-xs font-semibold shadow-xs transition-colors"
+                              className="inline-flex items-center rounded-full bg-[#0069D3] text-white hover:bg-[#005bb8] px-4 py-2 text-xs font-semibold shadow-xs transition-colors"
                             >
                               Update profile
                             </Link>
@@ -856,7 +856,7 @@ export function FindWorkContent({
                                 <Button
                                   size="sm"
                                   onClick={() => applySavedSearch(item)}
-                                  className="rounded-full bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold h-8 px-4"
+                                  className="rounded-full bg-[#0069D3] hover:bg-[#005bb8] text-white text-xs font-semibold h-8 px-4"
                                 >
                                   {t("searchPage.search")}
                                 </Button>
@@ -941,7 +941,7 @@ export function FindWorkContent({
                                 <h3 className="text-sm font-bold text-foreground truncate">
                                   {alert.name}
                                 </h3>
-                                <span className="rounded-full bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 text-[11px] font-semibold px-2 py-0.5">
+                                <span className="rounded-full bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 text-[11px] font-semibold px-2 py-0.5">
                                   {alert.frequency}
                                 </span>
                               </div>

@@ -101,7 +101,7 @@ function StatusCapsuleBar({
       count: counts.all,
       icon: Briefcase,
       circleClass:
-        "bg-[#F1F0F5] shadow-green-500/20 dark:bg-green-700 dark:shadow-green-700/20",
+        "bg-[#F1F0F5] shadow-blue-500/20 dark:bg-blue-700 dark:shadow-blue-700/20",
     },
     {
       id: "DRAFT" as const,
@@ -117,7 +117,7 @@ function StatusCapsuleBar({
       count: counts.open,
       icon: TrendingUp,
       circleClass:
-        "bg-[#F1F0F5] shadow-green-500/20 dark:bg-green-700 dark:shadow-green-700/20",
+        "bg-[#F1F0F5] shadow-blue-500/20 dark:bg-blue-700 dark:shadow-blue-700/20",
     },
     {
       id: "IN_PROGRESS" as const,
@@ -309,7 +309,7 @@ function JobRowCard({
         <div
           className={`inline-flex h-9 items-center gap-1.5 rounded-full px-3.5 text-xs font-semibold select-none ${
             isOpen
-              ? "bg-emerald-50 text-emerald-700 border border-emerald-200/60 dark:bg-emerald-950/40 dark:text-emerald-400 dark:border-emerald-800/40"
+              ? "bg-blue-50 text-[#0069D3] border border-blue-200/60 dark:bg-blue-950/40 dark:text-blue-300 dark:border-blue-800/40"
               : isDraft
                 ? "bg-amber-50 text-amber-700 border border-amber-200/60 dark:bg-amber-950/40 dark:text-amber-400 dark:border-amber-800/40"
                 : isInProgress
@@ -328,7 +328,7 @@ function JobRowCard({
           <button
             type="button"
             onClick={() => onPublish(job.id)}
-            className="inline-flex h-9 items-center gap-1.5 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white px-3.5 text-xs font-semibold transition-colors cursor-pointer shadow-xs"
+            className="inline-flex h-9 items-center gap-1.5 rounded-full bg-[#0069D3] hover:bg-[#005bb8] text-white px-3.5 text-xs font-semibold transition-colors cursor-pointer shadow-xs"
           >
             <TrendingUp className="size-3.5" />
             <span>{t("publish")}</span>
@@ -384,15 +384,15 @@ function JobRowCard({
             {isDraft && canPublish && (
               <DropdownMenuItem
                 onClick={() => onPublish(job.id)}
-                className="group flex items-center justify-between rounded-full px-3 py-2 bg-[#F3F3F7] hover:bg-emerald-50 focus:bg-emerald-50 dark:bg-zinc-800/60 dark:hover:bg-emerald-950/40 dark:focus:bg-emerald-950/40 cursor-pointer transition-all duration-200 outline-none text-emerald-700 dark:text-emerald-400"
+                className="group flex items-center justify-between rounded-full px-3 py-2 bg-[#F3F3F7] hover:bg-[#EAE9F0] focus:bg-[#EAE9F0] dark:bg-zinc-800/60 dark:hover:bg-zinc-800 dark:focus:bg-zinc-800 cursor-pointer transition-all duration-200 outline-none text-[#0069D3] dark:text-blue-300"
               >
                 <div className="flex items-center gap-2.5">
-                  <div className="flex size-7 shrink-0 items-center justify-center rounded-full bg-emerald-100 dark:bg-emerald-900/50 text-emerald-700 dark:text-emerald-400 shadow-xs transition-transform group-hover:scale-105">
+                  <div className="flex size-7 shrink-0 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900/50 text-[#0069D3] dark:text-blue-300 shadow-xs transition-transform group-hover:scale-105">
                     <TrendingUp className="size-3.5" />
                   </div>
                   <span className="text-xs font-medium">{t("publish")}</span>
                 </div>
-                <ChevronRight className="size-3.5 text-emerald-400/50 group-hover:text-emerald-600 group-hover:translate-x-0.5 transition-all shrink-0 ml-2" />
+                <ChevronRight className="size-3.5 text-blue-400/50 group-hover:text-[#0069D3] group-hover:translate-x-0.5 transition-all shrink-0 ml-2" />
               </DropdownMenuItem>
             )}
 
@@ -657,7 +657,7 @@ export function JobList({
               >
                 <Button
                   asChild
-                  className="gap-2 rounded-full px-4 py-5 bg-[#F1F0F5] text-sm font-semibold text-gray-700 dark:bg-green-700 dark:text-blue-100 hover:bg-blue-400 dark:hover:bg-green-600"
+                  className="gap-2 rounded-full px-5 py-2.5 bg-[#0069D3] hover:bg-[#005bb8] text-white text-sm font-semibold shadow-xs cursor-pointer transition-colors"
                 >
                   <Link href="/client/jobs/new">
                     <Plus className="size-4" />
@@ -831,7 +831,7 @@ export function JobList({
                 type="button"
                 disabled={isPublishing}
                 onClick={() => void confirmPublishJob()}
-                className="group flex w-full items-center justify-between rounded-full px-3.5 py-2.5 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white cursor-pointer transition-all duration-200 outline-none shadow-xs"
+                className="group flex w-full items-center justify-between rounded-full px-3.5 py-2.5 bg-[#0069D3] hover:bg-[#005bb8] disabled:opacity-50 text-white cursor-pointer transition-all duration-200 outline-none shadow-xs"
               >
                 <div className="flex items-center gap-2.5">
                   <div className="flex size-7 shrink-0 items-center justify-center rounded-full bg-white/20 text-white shadow-xs transition-transform group-hover:scale-105">

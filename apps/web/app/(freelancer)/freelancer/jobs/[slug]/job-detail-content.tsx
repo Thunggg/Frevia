@@ -82,7 +82,7 @@ const proposalStatusStyles = {
   SUBMITTED: "bg-amber-500/15 text-amber-800 dark:text-amber-200",
   INTERVIEWING:
     "bg-[#D0E1F8] text-[#0069D3] dark:bg-blue-950/60 dark:text-blue-300",
-  HIRED: "bg-[#4fae2e]/15 text-[#3f9225] dark:text-[#7ad75d]",
+  HIRED: "bg-blue-50 text-[#0069D3] dark:bg-blue-950/60 dark:text-blue-300",
   REJECTED: "bg-destructive/10 text-destructive",
   WITHDRAWN: "",
   EXPIRED: "bg-slate-500/10 text-slate-500 dark:text-slate-400",
@@ -102,7 +102,7 @@ function JobDescription({ description }: { description: string | null }) {
   if (looksLikeHtml(description)) {
     return (
       <div
-        className="job-description mt-4 max-w-prose text-[15px] leading-8 text-muted-foreground [&_a]:text-[#4fae2e] [&_a]:underline-offset-2 hover:[&_a]:underline [&_h1]:mb-3 [&_h1]:text-xl [&_h1]:font-semibold [&_h1]:text-foreground [&_h2]:mb-3 [&_h2]:text-lg [&_h2]:font-semibold [&_h2]:text-foreground [&_h3]:mb-2 [&_h3]:font-semibold [&_h3]:text-foreground [&_li]:my-1 [&_ol]:my-4 [&_ol]:list-decimal [&_ol]:pl-5 [&_p]:mb-4 [&_p:last-child]:mb-0 [&_ul]:my-4 [&_ul]:list-disc [&_ul]:pl-5"
+        className="job-description mt-4 max-w-prose text-[15px] leading-8 text-muted-foreground [&_a]:text-[#0069D3] [&_a]:underline-offset-2 hover:[&_a]:underline [&_h1]:mb-3 [&_h1]:text-xl [&_h1]:font-semibold [&_h1]:text-foreground [&_h2]:mb-3 [&_h2]:text-lg [&_h2]:font-semibold [&_h2]:text-foreground [&_h3]:mb-2 [&_h3]:font-semibold [&_h3]:text-foreground [&_li]:my-1 [&_ol]:my-4 [&_ol]:list-decimal [&_ol]:pl-5 [&_p]:mb-4 [&_p:last-child]:mb-0 [&_ul]:my-4 [&_ul]:list-disc [&_ul]:pl-5"
         dangerouslySetInnerHTML={{ __html: description }}
       />
     );
@@ -468,7 +468,7 @@ export function JobDetailContent({
         <Button
           size="icon"
           variant="outline"
-          className="size-11 shrink-0 border-[#4fae2e]/35 bg-background"
+          className="size-11 shrink-0 border-[#0069D3]/35 bg-background"
           aria-label={isBookmarked ? tBookmark("remove") : tBookmark("save")}
           disabled={isBookmarkLoading}
           onClick={toggleBookmark}
@@ -478,7 +478,7 @@ export function JobDetailContent({
           ) : (
             <Bookmark
               className={`size-4 ${
-                isBookmarked ? "fill-[#4fae2e] text-[#4fae2e]" : ""
+                isBookmarked ? "fill-[#0069D3] text-[#0069D3]" : ""
               }`}
             />
           )}
@@ -500,7 +500,7 @@ export function JobDetailContent({
       ) : null}
       {proposalActionLabel ? (
         <Button
-          className="h-11 flex-1 bg-[#4fae2e] px-6 font-semibold text-white hover:bg-[#459928] active:scale-[0.99] dark:bg-[#4fae2e] dark:text-white dark:hover:bg-[#5bc03a] sm:flex-none"
+          className="h-11 flex-1 bg-[#0069D3] px-6 font-semibold text-white hover:bg-[#005bb8] active:scale-[0.99] dark:bg-[#0069D3] dark:text-white dark:hover:bg-[#005bb8] sm:flex-none cursor-pointer"
           disabled={canBookmark && activeProposalQuery.isFetching}
           onClick={openProposalAction}
         >
@@ -517,20 +517,20 @@ export function JobDetailContent({
       {!embedded ? <Header role={role} /> : null}
 
       <main className="flex-1 pb-24 lg:pb-0">
-        <section className="border-b border-[#4fae2e]/15 bg-[#eaf8df] dark:border-white/10 dark:bg-[#1a1c1a]">
+        <section className="border-b border-[#0069D3]/15 bg-[#D0E1F8]/25 dark:border-white/10 dark:bg-blue-950/20">
           <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 lg:py-10">
             <div className="flex flex-wrap items-center justify-between gap-3 text-sm text-foreground/60">
               <nav className="flex min-w-0 items-center gap-2">
                 <Link
                   href="/"
-                  className="transition-colors hover:text-[#4fae2e]"
+                  className="transition-colors hover:text-[#0069D3]"
                 >
                   {tCommon("home")}
                 </Link>
                 <span className="text-foreground/35">/</span>
                 <Link
                   href={basePath}
-                  className="transition-colors hover:text-[#4fae2e]"
+                  className="transition-colors hover:text-[#0069D3]"
                 >
                   {t("findWork")}
                 </Link>
@@ -541,7 +541,7 @@ export function JobDetailContent({
               </nav>
               <Link
                 href={basePath}
-                className="inline-flex items-center gap-1.5 font-medium text-[#4fae2e] transition-colors hover:text-[#3f9225]"
+                className="inline-flex items-center gap-1.5 font-medium text-[#0069D3] transition-colors hover:text-[#005bb8]"
               >
                 <ArrowLeft className="size-4" />
                 {t("backToJobs")}
@@ -554,7 +554,7 @@ export function JobDetailContent({
                   {job.hiringType === "MULTIPLE" ? (
                     <Badge
                       variant="outline"
-                      className="border-[#4fae2e]/40 bg-[#eaf8df] text-[#3f9225] dark:bg-[#4fae2e]/15 dark:text-[#7ad75d]"
+                      className="border-[#0069D3]/40 bg-[#D0E1F8]/40 text-[#0069D3] dark:bg-[#0069D3]/20 dark:text-blue-300"
                     >
                       {t("positionsBadge", {
                         filled: job.positionsFilled,
@@ -576,7 +576,7 @@ export function JobDetailContent({
                   {job.title}
                 </h1>
 
-                <p className="mt-5 text-3xl font-semibold tracking-tight text-[#4fae2e] sm:text-4xl">
+                <p className="mt-5 text-3xl font-semibold tracking-tight text-[#0069D3] sm:text-4xl">
                   {formatBudget(job)}
                 </p>
                 <p className="mt-1 text-sm text-foreground/65 dark:text-foreground/70">
@@ -587,11 +587,11 @@ export function JobDetailContent({
 
                 <div className="mt-5 flex flex-wrap gap-x-5 gap-y-2 text-sm text-foreground/70 dark:text-foreground/75">
                   <span className="inline-flex items-center gap-1.5">
-                    <Clock className="size-4 text-[#4fae2e]" />
+                    <Clock className="size-4 text-[#0069D3]" />
                     {t("postedAt", { time: formatPostedTime(job.createdAt) })}
                   </span>
                   <span className="inline-flex items-center gap-1.5">
-                    <CalendarDays className="size-4 text-[#4fae2e]" />
+                    <CalendarDays className="size-4 text-[#0069D3]" />
                     {t("deadlineAt", { date: formatDate(job.deadline) })}
                   </span>
                 </div>
@@ -642,7 +642,7 @@ export function JobDetailContent({
                       <Link
                         key={skill.skillId}
                         href={`${basePath}?keyword=${encodeURIComponent(skill.skill.name)}`}
-                        className="rounded-full border border-border bg-background px-3 py-1.5 text-sm font-medium text-foreground transition-colors hover:border-[#4fae2e]/50 hover:bg-[#eaf8df] hover:text-[#3f9225] dark:hover:bg-white/5"
+                        className="rounded-full border border-border bg-background px-3 py-1.5 text-sm font-medium text-foreground transition-colors hover:border-[#0069D3]/50 hover:bg-[#D0E1F8]/40 hover:text-[#0069D3] dark:hover:bg-white/5"
                       >
                         {skill.skill.name}
                       </Link>
@@ -666,7 +666,7 @@ export function JobDetailContent({
                       <Link
                         key={jobCategory.id}
                         href={`${basePath}?category=${encodeURIComponent(jobCategory.slug)}`}
-                        className="rounded-full border border-[#4fae2e]/30 bg-[#eaf8df] px-3 py-1.5 text-sm font-medium text-[#3f9225] transition-colors hover:border-[#4fae2e]/60 hover:bg-[#ddf2cd] dark:bg-[#4fae2e]/15 dark:text-[#7ad75d] dark:hover:bg-[#4fae2e]/25"
+                        className="rounded-full border border-[#0069D3]/30 bg-[#EBF3FE] px-3 py-1.5 text-sm font-medium text-[#0069D3] transition-colors hover:border-[#0069D3]/60 hover:bg-[#D0E1F8]/60 dark:bg-[#0069D3]/15 dark:text-blue-200 dark:hover:bg-[#0069D3]/25"
                       >
                         {jobCategory.name}
                       </Link>
@@ -696,7 +696,7 @@ export function JobDetailContent({
                   {relatedSkill ? (
                     <Link
                       href={`${basePath}?keyword=${encodeURIComponent(relatedSkill)}`}
-                      className="inline-flex items-center gap-1 text-sm font-medium text-[#4fae2e] transition-colors hover:text-[#3f9225]"
+                      className="inline-flex items-center gap-1 text-sm font-medium text-[#0069D3] transition-colors hover:text-[#005bb8]"
                     >
                       {t("viewMore")}
                       <ArrowRight className="size-4" />
@@ -711,7 +711,7 @@ export function JobDetailContent({
                         href={`${embedded ? "/freelancer/jobs" : "/job"}/${item.slug}`}
                         className="group flex flex-col gap-1 py-4 transition-colors sm:flex-row sm:items-center sm:justify-between"
                       >
-                        <span className="font-medium text-foreground transition-colors group-hover:text-[#4fae2e]">
+                        <span className="font-medium text-foreground transition-colors group-hover:text-[#0069D3]">
                           {item.title}
                         </span>
                         <span className="text-sm text-muted-foreground">
@@ -731,7 +731,7 @@ export function JobDetailContent({
                 <p className="text-sm text-muted-foreground">
                   {t("summary.budget")}
                 </p>
-                <p className="mt-1 text-2xl font-semibold tracking-tight text-[#4fae2e]">
+                <p className="mt-1 text-2xl font-semibold tracking-tight text-[#0069D3]">
                   {formatBudget(job)}
                 </p>
               </div>
@@ -765,7 +765,7 @@ export function JobDetailContent({
                       className="size-11 rounded-full object-cover"
                     />
                   ) : (
-                    <div className="flex size-11 items-center justify-center rounded-full bg-[#eaf8df] text-sm font-semibold text-[#4fae2e] dark:bg-[#4fae2e]/15">
+                    <div className="flex size-11 items-center justify-center rounded-full bg-[#D0E1F8] text-sm font-semibold text-[#0069D3] dark:bg-[#0069D3]/30 dark:text-blue-200">
                       {clientLoading ? "…" : clientInitial}
                     </div>
                   )}
@@ -786,7 +786,7 @@ export function JobDetailContent({
                 {canBookmark || role === "GUEST" ? (
                   <Button
                     variant="outline"
-                    className="mt-2 h-11 w-full gap-2 border-[#4fae2e]/35 text-[#4fae2e] hover:bg-[#eaf8df] hover:text-[#3f9225] dark:hover:bg-white/5"
+                    className="mt-2 h-11 w-full gap-2 border-[#0069D3]/35 text-[#0069D3] hover:bg-[#D0E1F8]/40 hover:text-[#005bb8] dark:hover:bg-white/5"
                     onClick={() => {
                       requireFreelancer(() => {
                         router.push(
@@ -873,7 +873,7 @@ export function JobDetailContent({
               {t("kycDialog.cancel")}
             </AlertDialogCancel>
             <Button
-              className="bg-[#4fae2e] text-white hover:bg-[#459928]"
+              className="bg-[#0069D3] text-white hover:bg-[#005bb8]"
               onClick={() => {
                 setIsKYCDialogOpen(false);
                 router.push("/freelancer/profile?tab=identity");

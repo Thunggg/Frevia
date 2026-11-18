@@ -153,7 +153,7 @@ export function JobPagination({
                     onClick={() => onPageChange(item)}
                     className={`size-8 rounded-lg text-xs font-semibold cursor-pointer transition-colors ${
                       isCurrent
-                        ? "bg-emerald-600 hover:bg-emerald-700 text-white shadow-xs pointer-events-none"
+                        ? "bg-[#0069D3] hover:bg-[#005bb8] text-white shadow-xs pointer-events-none"
                         : "border border-border text-foreground hover:bg-muted font-normal"
                     }`}
                   >

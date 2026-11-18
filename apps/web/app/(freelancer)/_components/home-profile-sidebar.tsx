@@ -41,14 +41,14 @@ export function HomeProfileSidebar({
             {avatarUrl ? (
               <AvatarImage src={avatarUrl} alt={displayName} />
             ) : null}
-            <AvatarFallback className="bg-emerald-100 text-emerald-800 font-bold text-lg dark:bg-emerald-950 dark:text-emerald-200">
+            <AvatarFallback className="bg-[#D0E1F8] text-[#0069D3] font-bold text-lg dark:bg-[#0069D3]/30 dark:text-blue-200">
               {initial}
             </AvatarFallback>
           </Avatar>
           <div className="min-w-0 flex-1">
             <Link
               href="/freelancer/profile"
-              className="text-base font-bold text-foreground hover:text-emerald-600 transition-colors truncate block"
+              className="text-base font-bold text-foreground hover:text-[#0069D3] transition-colors truncate block"
             >
               {displayName}
             </Link>
@@ -107,7 +107,7 @@ export function HomeProfileSidebar({
         </p>
         <Link
           href="/freelancer/profile?tab=identity"
-          className="inline-block text-xs font-semibold text-emerald-600 dark:text-emerald-400 hover:underline pt-1"
+          className="inline-block text-xs font-semibold text-[#0069D3] dark:text-blue-400 hover:underline pt-1"
         >
           Get an IDV Badge
         </Link>

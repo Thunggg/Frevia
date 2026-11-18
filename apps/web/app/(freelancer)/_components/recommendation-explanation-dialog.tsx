@@ -120,7 +120,7 @@ export function RecommendationExplanationDialog({
                 {t("matchDetailsDesc")}
               </span>
               {scorePercent !== null && (
-                <span className="inline-flex items-center rounded-full bg-[#eaf8df] dark:bg-[#4fae2e]/15 border border-[#4fae2e]/30 px-3 py-1 text-xs font-bold text-[#2d6e1a] dark:text-[#7ad75d]">
+                <span className="inline-flex items-center rounded-full bg-[#D0E1F8]/40 dark:bg-[#0069D3]/20 border border-[#0069D3]/30 px-3 py-1 text-xs font-bold text-[#0069D3] dark:text-blue-300">
                   {t("matchScore", { score: scorePercent })}
                 </span>
               )}
@@ -170,7 +170,7 @@ export function RecommendationExplanationDialog({
         <div className="mt-4 space-y-4">
           {loading ? (
             <div className="flex flex-col items-center justify-center py-10 gap-3 text-muted-foreground">
-              <Loader2 className="size-6 animate-spin text-[#4fae2e]" />
+              <Loader2 className="size-6 animate-spin text-[#0069D3]" />
               <p className="text-xs">{t("loadingRecommendations")}</p>
             </div>
           ) : explanation ? (
@@ -197,7 +197,7 @@ export function RecommendationExplanationDialog({
                         key={idx}
                         className={`rounded-xl border p-3 text-xs leading-relaxed transition-all ${
                           claim.verdict === "hit"
-                            ? "border-[#4fae2e]/25 bg-[#eaf8df]/40 dark:bg-[#4fae2e]/10"
+                            ? "border-[#0069D3]/25 bg-[#D0E1F8]/20 dark:bg-[#0069D3]/10"
                             : claim.verdict === "missing"
                               ? "border-amber-500/20 bg-amber-500/5 dark:bg-amber-950/20"
                               : "border-border bg-card"
@@ -205,7 +205,7 @@ export function RecommendationExplanationDialog({
                       >
                         <div className="flex items-start gap-2">
                           {claim.verdict === "hit" ? (
-                            <CheckCircle2 className="size-4 shrink-0 text-[#3f9225] dark:text-[#7ad75d] mt-0.5" />
+                            <CheckCircle2 className="size-4 shrink-0 text-[#0069D3] dark:text-blue-300 mt-0.5" />
                           ) : claim.verdict === "missing" ? (
                             <AlertTriangle className="size-4 shrink-0 text-amber-600 dark:text-amber-400 mt-0.5" />
                           ) : (
@@ -220,7 +220,7 @@ export function RecommendationExplanationDialog({
                                 <span className="font-semibold not-italic">
                                   {t("evidence")}{" "}
                                 </span>
-                                "{claim.evidence}"
+                                &ldquo;{claim.evidence}&rdquo;
                               </p>
                             )}
                           </div>
@@ -251,7 +251,7 @@ export function RecommendationExplanationDialog({
                   size="sm"
                   disabled={feedbackLoading}
                   onClick={() => handleFeedback("SHORTLIST")}
-                  className="rounded-full text-xs h-8 px-3 text-[#2d6e1a] hover:bg-[#eaf8df] dark:text-[#7ad75d] dark:hover:bg-[#4fae2e]/15 cursor-pointer"
+                  className="rounded-full text-xs h-8 px-3 text-[#0069D3] hover:bg-[#D0E1F8]/40 dark:text-blue-300 dark:hover:bg-[#0069D3]/20 cursor-pointer"
                 >
                   {t("helpful")}
                 </Button>

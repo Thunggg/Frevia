@@ -441,7 +441,7 @@ export function FreelancerSidebar() {
               {/* Language switcher */}
               <div className="flex items-center justify-between rounded-lg px-3 py-1.5 text-xs text-muted-foreground">
                 <span className="flex items-center gap-2.5 font-medium">
-                  <Languages className="size-3.5 text-emerald-500" />
+                  <Languages className="size-3.5 text-[#0069D3]" />
                   <span>{tCommon("language")}</span>
                 </span>
                 <div className="flex items-center gap-0.5 rounded-full bg-[#F1F0F5] dark:bg-zinc-800 p-0.5 border border-black/5 dark:border-white/10">
@@ -451,7 +451,7 @@ export function FreelancerSidebar() {
                     disabled={isLocalePending}
                     className={`flex h-6 px-2 items-center justify-center rounded-full text-[11px] font-semibold transition-all cursor-pointer ${
                       activeLocale === "en"
-                        ? "bg-white text-emerald-600 shadow-xs dark:bg-zinc-700 dark:text-emerald-300"
+                        ? "bg-white text-[#0069D3] shadow-xs dark:bg-zinc-700 dark:text-blue-200"
                         : "text-muted-foreground hover:text-foreground"
                     }`}
                     title="English"
@@ -464,7 +464,7 @@ export function FreelancerSidebar() {
                     disabled={isLocalePending}
                     className={`flex h-6 px-2 items-center justify-center rounded-full text-[11px] font-semibold transition-all cursor-pointer ${
                       activeLocale === "vi"
-                        ? "bg-white text-emerald-600 shadow-xs dark:bg-zinc-700 dark:text-emerald-300"
+                        ? "bg-white text-[#0069D3] shadow-xs dark:bg-zinc-700 dark:text-blue-200"
                         : "text-muted-foreground hover:text-foreground"
                     }`}
                     title="Tiếng Việt"

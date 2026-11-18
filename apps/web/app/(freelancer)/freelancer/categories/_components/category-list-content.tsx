@@ -102,7 +102,7 @@ export function CategoryListContent({
                 value={searchInput}
                 onChange={(event) => setSearchInput(event.target.value)}
                 placeholder={t("searchPlaceholder")}
-                className="h-10 w-full rounded-full bg-[#F3F3F7] dark:bg-zinc-800/90 pl-10 pr-9 text-xs sm:text-sm font-medium text-foreground placeholder:text-muted-foreground border border-black/5 dark:border-white/10 outline-none focus:ring-2 focus:ring-[#4fae2e]/30 transition-all"
+                className="h-10 w-full rounded-full bg-[#F3F3F7] dark:bg-zinc-800/90 pl-10 pr-9 text-xs sm:text-sm font-medium text-foreground placeholder:text-muted-foreground border border-black/5 dark:border-white/10 outline-none focus:ring-2 focus:ring-[#0069D3]/30 transition-all"
               />
               {searchInput ? (
                 <button
@@ -155,11 +155,11 @@ export function CategoryListContent({
               >
                 <Link
                   href={`${basePath}/${jobCategory.slug}`}
-                  className="group flex h-full flex-col justify-between rounded-[28px] border border-border bg-card p-5 transition-all hover:border-[#4fae2e]/40 hover:bg-accent/10 shadow-xs sm:p-6"
+                  className="group flex h-full flex-col justify-between rounded-[28px] border border-border bg-card p-5 transition-all hover:border-[#0069D3]/40 hover:bg-accent/10 shadow-xs sm:p-6"
                 >
                   <div>
                     <div className="flex items-center justify-between gap-3">
-                      <span className="flex size-10 items-center justify-center rounded-full bg-[#eaf8df] text-[#3f9225] dark:bg-[#4fae2e]/15 dark:text-[#7ad75d]">
+                      <span className="flex size-10 items-center justify-center rounded-full bg-[#D0E1F8] text-[#0069D3] dark:bg-blue-950/60 dark:text-blue-300">
                         <Tag className="size-4" />
                       </span>
                       <span className="rounded-full bg-[#F1F0F5] dark:bg-zinc-800 px-3 py-1 text-xs font-medium text-muted-foreground">
@@ -167,7 +167,7 @@ export function CategoryListContent({
                       </span>
                     </div>
 
-                    <h2 className="mt-4 text-base font-bold text-foreground transition-colors line-clamp-1 group-hover:text-[#4fae2e]">
+                    <h2 className="mt-4 text-base font-bold text-foreground transition-colors line-clamp-1 group-hover:text-[#0069D3]">
                       {jobCategory.name}
                     </h2>
                     <p className="mt-2 text-xs leading-relaxed text-muted-foreground line-clamp-3">
@@ -175,7 +175,7 @@ export function CategoryListContent({
                     </p>
                   </div>
 
-                  <span className="mt-5 inline-flex items-center gap-1.5 text-xs font-semibold text-[#4fae2e]">
+                  <span className="mt-5 inline-flex items-center gap-1.5 text-xs font-semibold text-[#0069D3]">
                     {t("viewCategory")}
                     <ArrowRight className="size-3.5 transition-transform group-hover:translate-x-0.5" />
                   </span>

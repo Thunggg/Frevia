@@ -211,7 +211,7 @@ export function SaveSearchDialog({
             type="button"
             className="inline-flex h-10 items-center gap-2 rounded-full bg-[#F3F3F7] dark:bg-zinc-800/90 border border-black/5 dark:border-white/10 px-4 py-2 text-xs sm:text-sm font-medium text-foreground hover:bg-[#EAE9F0] dark:hover:bg-zinc-700 transition-colors cursor-pointer outline-none shrink-0"
           >
-            <BookmarkPlus className="size-4 text-[#4fae2e]" />
+            <BookmarkPlus className="size-4 text-[#0069D3]" />
             <span>{t("triggerLabel")}</span>
             {canViewSavedSearches && (
               <span className="flex h-5 items-center justify-center rounded-full bg-black/5 dark:bg-white/10 px-2 text-[11px] font-bold text-foreground">
@@ -264,7 +264,7 @@ export function SaveSearchDialog({
                 </Button>
                 <Button
                   type="submit"
-                  className="rounded-full bg-[#4fae2e] text-white hover:bg-[#459928]"
+                  className="rounded-full bg-[#0069D3] text-white hover:bg-[#005bb8]"
                   disabled={isSubmitting || !name.trim()}
                 >
                   {isSubmitting ? t("saving") : t("saveChanges")}
@@ -273,7 +273,7 @@ export function SaveSearchDialog({
             </form>
           ) : canCreateSavedSearch ? (
             <Button
-              className="w-full rounded-full bg-[#4fae2e] text-white hover:bg-[#459928] text-xs font-semibold h-10 cursor-pointer disabled:cursor-not-allowed"
+              className="w-full rounded-full bg-[#0069D3] text-white hover:bg-[#005bb8] text-xs font-semibold h-10 cursor-pointer disabled:cursor-not-allowed"
               onClick={() => setSaveConfirmationOpen(true)}
               disabled={isSubmitting || isCurrentSearchSaved || isLimitReached}
             >
@@ -302,7 +302,7 @@ export function SaveSearchDialog({
                         setOpen(false);
                       }}
                     >
-                      <span className="block truncate text-sm font-semibold text-foreground hover:text-[#3f9225]">
+                      <span className="block truncate text-sm font-semibold text-foreground hover:text-[#0069D3]">
                         {savedSearch.name}
                       </span>
                       <span className="mt-0.5 block truncate text-xs text-muted-foreground">
@@ -315,7 +315,7 @@ export function SaveSearchDialog({
                           type="button"
                           variant="ghost"
                           size="icon"
-                          className="size-9 text-[#4fae2e] hover:bg-[#eaf8df] dark:hover:bg-[#4fae2e]/15"
+                          className="size-9 text-[#0069D3] hover:bg-[#D0E1F8]/30 dark:hover:bg-blue-950/40"
                           aria-label={t("editCriteria")}
                           title={t("editCriteria")}
                           disabled={isSubmitting}
@@ -414,7 +414,7 @@ export function SaveSearchDialog({
               {t("cancel")}
             </Button>
             <Button
-              className="rounded-full bg-[#4fae2e] text-white hover:bg-[#459928] text-xs font-semibold"
+              className="rounded-full bg-[#0069D3] text-white hover:bg-[#005bb8] text-xs font-semibold"
               disabled={isSubmitting}
               onClick={handleCreate}
             >

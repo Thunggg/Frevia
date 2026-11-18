@@ -378,7 +378,7 @@ export function ProposalDialog({
             {canCreate ? (
               <Button
                 type="submit"
-                className="bg-[#4fae2e] text-white hover:bg-[#459928]"
+                className="bg-[#0069D3] text-white hover:bg-[#005bb8]"
                 disabled={action !== null}
               >
                 {action === "submit" ? (

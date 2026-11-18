@@ -285,7 +285,7 @@ export function SearchJobsContent({
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
               placeholder={t("searchPage.searchPlaceholder")}
-              className="h-12 w-full rounded-full border border-border bg-card pl-12 pr-32 text-sm sm:text-base font-medium text-foreground placeholder:text-muted-foreground shadow-xs outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all"
+              className="h-12 w-full rounded-full border border-border bg-card pl-12 pr-32 text-sm sm:text-base font-medium text-foreground placeholder:text-muted-foreground shadow-xs outline-none focus:border-[#0069D3] focus:ring-2 focus:ring-[#0069D3]/20 transition-all"
             />
             {searchInput && (
               <button
@@ -299,7 +299,7 @@ export function SearchJobsContent({
             )}
             <button
               type="submit"
-              className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2 text-xs sm:text-sm font-semibold shadow-xs transition-colors cursor-pointer"
+              className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-[#0069D3] hover:bg-[#005bb8] text-white px-5 py-2 text-xs sm:text-sm font-semibold shadow-xs transition-colors cursor-pointer"
             >
               {t("searchPage.search")}
             </button>
@@ -329,7 +329,7 @@ export function SearchJobsContent({
               href="/freelancer/find-work/saved-searches"
               className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1.5 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
             >
-              <Bookmark className="size-3.5 text-emerald-600 dark:text-emerald-400" />
+              <Bookmark className="size-3.5 text-[#0069D3] dark:text-blue-400" />
               <span>
                 {t("searchPage.savedSearches", { count: savedSearches.length })}
               </span>
@@ -400,7 +400,7 @@ export function SearchJobsContent({
                 {t("filters")}:
               </span>
               {initialQ && (
-                <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-200 border border-emerald-200 dark:border-emerald-800 px-2.5 py-0.5 text-xs font-medium">
+                <span className="inline-flex items-center gap-1 rounded-full bg-blue-50 text-blue-800 dark:bg-blue-950 dark:text-blue-200 border border-blue-200 dark:border-blue-800 px-2.5 py-0.5 text-xs font-medium">
                   {t("chip.search", { value: initialQ })}
                   <button
                     type="button"
@@ -507,7 +507,7 @@ export function SearchJobsContent({
               {selectedSkills.map((sk) => (
                 <span
                   key={sk}
-                  className="inline-flex items-center gap-1 rounded-full bg-emerald-50 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-200 border border-emerald-200 dark:border-emerald-800 px-2.5 py-0.5 text-xs font-medium"
+                  className="inline-flex items-center gap-1 rounded-full bg-blue-50 text-blue-800 dark:bg-blue-950 dark:text-blue-200 border border-blue-200 dark:border-blue-800 px-2.5 py-0.5 text-xs font-medium"
                 >
                   {t("chip.search", { value: sk })}
                   <button

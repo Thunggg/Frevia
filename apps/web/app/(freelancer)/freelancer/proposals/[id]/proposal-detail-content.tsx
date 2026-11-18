@@ -259,7 +259,7 @@ export function ProposalDetailContent({
           className={
             embedded
               ? "border-b border-border bg-background"
-              : "border-b border-[#4fae2e]/15 bg-[#eaf8df] dark:border-white/10 dark:bg-[#1a1c1a]"
+              : "border-b border-[#0069D3]/15 bg-[#D0E1F8]/30 dark:border-white/10 dark:bg-[#111c2e]"
           }
         >
           <div className="mx-auto max-w-5xl px-4 py-6 sm:px-6 lg:px-8">
@@ -459,7 +459,7 @@ export function ProposalDetailContent({
                   {canSubmitDraft ? (
                     <Button
                       type="submit"
-                      className="bg-[#4fae2e] text-white hover:bg-[#459928]"
+                      className="bg-[#0069D3] text-white hover:bg-[#005bb8]"
                       disabled={action !== null}
                     >
                       {action === "submit" ? (

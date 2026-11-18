@@ -250,7 +250,7 @@ export function HomeFiltersModal({
             <button
               type="button"
               onClick={() => toggleSection("clientInfo")}
-              className="flex w-full items-center justify-between font-semibold text-sm text-foreground hover:text-emerald-600 transition-colors cursor-pointer"
+              className="flex w-full items-center justify-between font-semibold text-sm text-foreground hover:text-[#0069D3] transition-colors cursor-pointer"
             >
               <span>{t("modal.clientInfo")}</span>
               {openSections.clientInfo ? (
@@ -280,7 +280,7 @@ export function HomeFiltersModal({
             <button
               type="button"
               onClick={() => toggleSection("hiringType")}
-              className="flex w-full items-center justify-between font-semibold text-sm text-foreground hover:text-emerald-600 transition-colors cursor-pointer"
+              className="flex w-full items-center justify-between font-semibold text-sm text-foreground hover:text-[#0069D3] transition-colors cursor-pointer"
             >
               <span>{t("modal.hiringType")}</span>
               {openSections.hiringType ? (
@@ -319,7 +319,7 @@ export function HomeFiltersModal({
             <button
               type="button"
               onClick={() => toggleSection("proposals")}
-              className="flex w-full items-center justify-between font-semibold text-sm text-foreground hover:text-emerald-600 transition-colors cursor-pointer"
+              className="flex w-full items-center justify-between font-semibold text-sm text-foreground hover:text-[#0069D3] transition-colors cursor-pointer"
             >
               <span>{t("modal.proposals")}</span>
               {openSections.proposals ? (
@@ -355,7 +355,7 @@ export function HomeFiltersModal({
             <button
               type="button"
               onClick={() => toggleSection("jobType")}
-              className="flex w-full items-center justify-between font-semibold text-sm text-foreground hover:text-emerald-600 transition-colors cursor-pointer"
+              className="flex w-full items-center justify-between font-semibold text-sm text-foreground hover:text-[#0069D3] transition-colors cursor-pointer"
             >
               <span>{t("modal.jobTypeAndBudget")}</span>
               {openSections.jobType ? (
@@ -419,7 +419,7 @@ export function HomeFiltersModal({
             <button
               type="button"
               onClick={() => toggleSection("datePosted")}
-              className="flex w-full items-center justify-between font-semibold text-sm text-foreground hover:text-emerald-600 transition-colors cursor-pointer"
+              className="flex w-full items-center justify-between font-semibold text-sm text-foreground hover:text-[#0069D3] transition-colors cursor-pointer"
             >
               <span>{t("modal.datePosted")}</span>
               {openSections.datePosted ? (
@@ -458,7 +458,7 @@ export function HomeFiltersModal({
               <button
                 type="button"
                 onClick={() => toggleSection("category")}
-                className="flex w-full items-center justify-between font-semibold text-sm text-foreground hover:text-emerald-600 transition-colors cursor-pointer"
+                className="flex w-full items-center justify-between font-semibold text-sm text-foreground hover:text-[#0069D3] transition-colors cursor-pointer"
               >
                 <span>{t("modal.category", { count: categories.length })}</span>
                 {openSections.category ? (
@@ -506,7 +506,7 @@ export function HomeFiltersModal({
           <button
             type="button"
             onClick={handleApply}
-            className="rounded-full bg-[#108a00] hover:bg-[#14a800] text-white px-6 py-2 text-xs font-semibold shadow-xs transition-colors cursor-pointer"
+            className="rounded-full bg-[#0069D3] hover:bg-[#005bb8] text-white px-6 py-2 text-xs font-semibold shadow-xs transition-colors cursor-pointer"
           >
             {activeCount > 0
               ? t("modal.applyWithCount", { count: activeCount })
