@@ -7,10 +7,10 @@
 
 \subsection{Verify JWT}
 
-Verify JWT is the shared security guard protecting API endpoints across all modules.
-Every incoming HTTP request with a Bearer token is intercepted, validated for cryptographic
+Verify JWT represents the shared global guard pipeline (\texttt{AuthGuard} followed by \texttt{PermissionGuard}) protecting API endpoints across all modules.
+Every incoming HTTP request on a non-public route has its Bearer token extracted, validated for cryptographic
 signature and expiration time, and verified against the database to guarantee the associated
-session remains active and has not been revoked.
+session remains active and the user is neither banned nor deleted; afterwards, \texttt{PermissionGuard} verifies route-level authorization against the caller's assigned role permissions (\texttt{SharedPermissionRepository}) before allowing the controller to execute.
 
 \subsubsection{UC-0 -- Verify JWT}
 

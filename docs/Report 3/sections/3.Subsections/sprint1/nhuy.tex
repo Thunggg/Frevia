@@ -1,0 +1,976 @@
+% =================================================================
+% Sprint 1 - Freelancer Profile Management, Freelancer Skills Management, Portfolio Management (nhuy)
+% Following the detailed form of the report template:
+% Function Trigger, Function Description, Screen Layout and Function Details.
+% =================================================================
+
+
+\Needspace{12\baselineskip}
+\subsection{Freelancer Profile Management}
+
+% -----------------------------------------------------------------
+% UC-07.01: View Freelancer Profile
+% -----------------------------------------------------------------
+\Needspace{12\baselineskip}
+\subsubsection{ View Freelancer Profile}
+
+\fnhead{Function Trigger}
+The actor selects View Freelancer Profile.\newline
+\textbf{Navigation path:} Home $\rightarrow$ \texttt{/\allowbreak{}freelancer/\allowbreak{}profile} or \texttt{/\allowbreak{}profiles/\allowbreak{}[id].}
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item \textbf{Primary Actor:} Guest, Client, Freelancer.
+    \item \textbf{Supporting Systems:} Frevia Web (Next.js), Frevia BFF proxy, Frevia REST API (NestJS), Prisma ORM, and PostgreSQL database.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent Retrieve approved Profile and FreelancerProfile fields in one response.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Profile header with name and availability.
+    \item Professional sections.
+    \item Skills and Portfolio panels.
+    \item Owner-only Edit and CV controls.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item The client issues an HTTP request to \texttt{GET /\allowbreak{}profiles/\allowbreak{}:\allowbreak{}id} via Next.js BFF proxy.
+    \item NestJS guards verify JWT authentication and validate role-based access permissions.
+    \item The backend service queries or updates entities in PostgreSQL using Prisma ORM.
+    \item The API returns the structured JSON payload and handles domain invariants consistently.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint1/nhuy/View Freelancer Profile.png}{View Freelancer Profile interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Profile header with name and availability.
+    \item Professional sections.
+    \item Skills and Portfolio panels.
+    \item Owner-only Edit and CV controls.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+Identifier & Positive resource ID from the route; ownership is checked by the API.\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Omitted optional fields are preserved. An explicit null or empty list clears the corresponding value.
+\end{itemize}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+    \item BR-0701-01: Use Profile.id for profile routes; User.id identifies the owner and must not be substituted for the profile ID.
+    \item BR-0701-02: Only the owner changes professional data. Public output excludes credentials and private CV locations.
+    \item BR-0701-03: Freelancer and Client updates below 20 percent profile strength require a pending revision; other updates apply directly. Pending changes are not shown as approved public data.
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item The actor opens \texttt{/\allowbreak{}freelancer/\allowbreak{}profile}; \texttt{/\allowbreak{}profiles/\allowbreak{}[id]} and selects View Freelancer Profile.
+    \item The application submits the selected identifier or list filters.
+    \item The API checks authentication where required, authorization, resource existence and input validity.
+    \item Retrieve approved Profile and FreelancerProfile fields in one response.
+    \item The screen renders the response, or an explicit empty state for a valid empty collection.
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Case}{Description}
+A1 & Missing or expired authentication token. Returns HTTP 401 Unauthorized.\\ \hline
+A2 & Insufficient permissions or role unauthorized. Returns HTTP 403 Forbidden.\\ \hline
+A3 & Target resource not found or soft-deleted. Returns HTTP 404 Not Found.\\ \hline
+A4 & Validation error or malformed payload. Returns HTTP 400 Bad Request.\\ \hline
+A5 & Database connectivity failure or server error. Returns HTTP 500.\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Data Name}{Description}
+Result & Retrieve approved Profile and FreelancerProfile fields in one response.\\ \hline
+Failure & Structured error without sensitive data; no successful UI state when the operation failed.\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Successful view freelancer profile produces the documented response and survives a reload where data is persisted.
+    \item An unauthorized actor cannot access or modify the resource.
+    \item Invalid input and missing resources do not create a false success state or expose sensitive data.
+\end{itemize}
+
+% -----------------------------------------------------------------
+% UC-07.02: Update Freelancer Profile
+% -----------------------------------------------------------------
+\Needspace{12\baselineskip}
+\subsubsection{ Update Freelancer Profile}
+
+\fnhead{Function Trigger}
+The actor selects Update Freelancer Profile.\newline
+\textbf{Navigation path:} Home $\rightarrow$ \texttt{/\allowbreak{}freelancer/\allowbreak{}profile} or \texttt{/\allowbreak{}profiles/\allowbreak{}[id].}
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item \textbf{Primary Actor:} Freelancer.
+    \item \textbf{Supporting Systems:} Frevia Web (Next.js), Frevia BFF proxy, Frevia REST API (NestJS), Prisma ORM, and PostgreSQL database.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent Persist basic and professional fields together or create a pending revision under the review policy.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Profile header with name and availability.
+    \item Professional sections.
+    \item Skills and Portfolio panels.
+    \item Owner-only Edit and CV controls.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item The client issues an HTTP request to \texttt{PUT /\allowbreak{}profiles/\allowbreak{}:\allowbreak{}id} via Next.js BFF proxy.
+    \item NestJS guards verify JWT authentication and validate role-based access permissions.
+    \item The backend service queries or updates entities in PostgreSQL using Prisma ORM.
+    \item The API returns the structured JSON payload and handles domain invariants consistently.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint1/nhuy/Update Freelancer Profile.png}{Update Freelancer Profile interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Profile header with name and availability.
+    \item Professional sections.
+    \item Skills and Portfolio panels.
+    \item Owner-only Edit and CV controls.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+displayName / title & Required trimmed text, 1--255 characters each.\\ \hline
+bio & Optional text up to 5,000 characters; null clears it.\\ \hline
+education / certifications / languages / experience & Each list has at most 20 non-empty entries, each up to 255 characters.\\ \hline
+availabilityStatus & A supported availability enum value.\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Omitted optional fields are preserved. An explicit null or empty list clears the corresponding value.
+\end{itemize}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+    \item BR-0702-01: Use Profile.id for profile routes; User.id identifies the owner and must not be substituted for the profile ID.
+    \item BR-0702-02: Only the owner changes professional data. Public output excludes credentials and private CV locations.
+    \item BR-0702-03: Freelancer and Client updates below 20 percent profile strength require a pending revision; other updates apply directly. Pending changes are not shown as approved public data.
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item The actor opens \texttt{/\allowbreak{}freelancer/\allowbreak{}profile}; \texttt{/\allowbreak{}profiles/\allowbreak{}[id]} and selects Update Freelancer Profile.
+    \item The application presents the current values or action confirmation; the actor supplies the required data and submits.
+    \item The API checks authentication where required, authorization, resource existence and input validity.
+    \item Persist basic and professional fields together or create a pending revision under the review policy.
+    \item After the transaction succeeds, the screen displays the result and reloads affected data; a pending revision is labeled as awaiting review.
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Case}{Description}
+A1 & Missing or expired authentication token. Returns HTTP 401 Unauthorized.\\ \hline
+A2 & Insufficient permissions or role unauthorized. Returns HTTP 403 Forbidden.\\ \hline
+A3 & Target resource not found or soft-deleted. Returns HTTP 404 Not Found.\\ \hline
+A4 & Validation error or malformed payload. Returns HTTP 400 Bad Request.\\ \hline
+A5 & Database connectivity failure or server error. Returns HTTP 500.\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Data Name}{Description}
+Result & Persist basic and professional fields together or create a pending revision under the review policy.\\ \hline
+Failure & Structured error without sensitive data; no successful UI state when the operation failed.\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Successful update freelancer profile produces the documented response and survives a reload where data is persisted.
+    \item An unauthorized actor cannot access or modify the resource.
+    \item Invalid input and missing resources do not create a false success state or expose sensitive data.
+\end{itemize}
+
+
+\Needspace{12\baselineskip}
+\subsection{Freelancer Skills Management}
+
+% -----------------------------------------------------------------
+% UC-08.01: View Freelancer Skill List
+% -----------------------------------------------------------------
+\Needspace{12\baselineskip}
+\subsubsection{ View Freelancer Skill List}
+
+\fnhead{Function Trigger}
+The actor selects View Freelancer Skill List.\newline
+\textbf{Navigation path:} Home $\rightarrow$ \texttt{/\allowbreak{}profiles/\allowbreak{}[id]} or \texttt{/\allowbreak{}freelancer/\allowbreak{}profile.}
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item \textbf{Primary Actor:} Guest, Client, Freelancer.
+    \item \textbf{Supporting Systems:} Frevia Web (Next.js), Frevia BFF proxy, Frevia REST API (NestJS), Prisma ORM, and PostgreSQL database.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent Join FreelancerSkill with active Skill catalog entries and show proficiency levels.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Skill list with catalog name, proficiency /10 and owner-only remove action.
+    \item Add Skill dialog with suggestions and level selector.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item The client issues an HTTP request to \texttt{GET /\allowbreak{}profiles/\allowbreak{}:\allowbreak{}id/\allowbreak{}skills} via Next.js BFF proxy.
+    \item NestJS guards verify JWT authentication and validate role-based access permissions.
+    \item The backend service queries or updates entities in PostgreSQL using Prisma ORM.
+    \item The API returns the structured JSON payload and handles domain invariants consistently.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint1/nhuy/View Freelancer Skill List.png}{View Freelancer Skill List interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Skill list with catalog name, proficiency /10 and owner-only remove action.
+    \item Add Skill dialog with suggestions and level selector.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+Selection & Current account or selected profile\texttt{/\allowbreak{}contract}; no pagination is assumed unless exposed by the endpoint.\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item The pair (freelancerProfileId, skillId) must be unique, including concurrent requests.
+\end{itemize}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+    \item BR-0801-01: A freelancer can add and delete mappings only on their own profile.
+    \item BR-0801-02: Deleting a skill permanently removes FreelancerSkill but retains the shared Skill definition.
+    \item BR-0801-03: Show an empty state when there are no active skills.
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item The actor opens \texttt{/\allowbreak{}profiles/\allowbreak{}[id]}; \texttt{/\allowbreak{}freelancer/\allowbreak{}profile} and selects View Freelancer Skill List.
+    \item The application submits the selected identifier or list filters.
+    \item The API checks authentication where required, authorization, resource existence and input validity.
+    \item Join FreelancerSkill with active Skill catalog entries and show proficiency levels.
+    \item The screen renders the response, or an explicit empty state for a valid empty collection.
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Case}{Description}
+A1 & Missing or expired authentication token. Returns HTTP 401 Unauthorized.\\ \hline
+A2 & Insufficient permissions or role unauthorized. Returns HTTP 403 Forbidden.\\ \hline
+A3 & Target resource not found or soft-deleted. Returns HTTP 404 Not Found.\\ \hline
+A4 & Validation error or malformed payload. Returns HTTP 400 Bad Request.\\ \hline
+A5 & Database connectivity failure or server error. Returns HTTP 500.\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Data Name}{Description}
+Result & Join FreelancerSkill with active Skill catalog entries and show proficiency levels.\\ \hline
+Failure & Structured error without sensitive data; no successful UI state when the operation failed.\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Successful view freelancer skill list produces the documented response and survives a reload where data is persisted.
+    \item An unauthorized actor cannot access or modify the resource.
+    \item Invalid input and missing resources do not create a false success state or expose sensitive data.
+\end{itemize}
+
+% -----------------------------------------------------------------
+% UC-08.02: Add Freelancer Skill
+% -----------------------------------------------------------------
+\Needspace{12\baselineskip}
+\subsubsection{ Add Freelancer Skill}
+
+\fnhead{Function Trigger}
+The actor selects Add Freelancer Skill.\newline
+\textbf{Navigation path:} Home $\rightarrow$ \texttt{/\allowbreak{}profiles/\allowbreak{}[id]} or \texttt{/\allowbreak{}freelancer/\allowbreak{}profile.}
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item \textbf{Primary Actor:} Freelancer.
+    \item \textbf{Supporting Systems:} Frevia Web (Next.js), Frevia BFF proxy, Frevia REST API (NestJS), Prisma ORM, and PostgreSQL database.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent Resolve or create the canonical catalog skill and insert one owned FreelancerSkill mapping.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Skill list with catalog name, proficiency /10 and owner-only remove action.
+    \item Add Skill dialog with suggestions and level selector.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item The client issues an HTTP request to \texttt{POST /\allowbreak{}profiles/\allowbreak{}:\allowbreak{}id/\allowbreak{}skills} via Next.js BFF proxy.
+    \item NestJS guards verify JWT authentication and validate role-based access permissions.
+    \item The backend service queries or updates entities in PostgreSQL using Prisma ORM.
+    \item The API returns the structured JSON payload and handles domain invariants consistently.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint1/nhuy/Add Freelancer Skill.png}{Add Freelancer Skill interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Skill list with catalog name, proficiency /10 and owner-only remove action.
+    \item Add Skill dialog with suggestions and level selector.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+skillName & Required trimmed name up to 100 characters, entered or selected from suggestions.\\ \hline
+proficiencyLevel & Required integer from 1 to 10.\\ \hline
+id & Skill deletion uses FreelancerSkill.id, not Skill.id.\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item The pair (freelancerProfileId, skillId) must be unique, including concurrent requests.
+\end{itemize}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+    \item BR-0802-01: A freelancer can add and delete mappings only on their own profile.
+    \item BR-0802-02: Deleting a skill permanently removes FreelancerSkill but retains the shared Skill definition.
+    \item BR-0802-03: Show an empty state when there are no active skills.
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item The actor opens \texttt{/\allowbreak{}profiles/\allowbreak{}[id]}; \texttt{/\allowbreak{}freelancer/\allowbreak{}profile} and selects Add Freelancer Skill.
+    \item The application presents the current values or action confirmation; the actor supplies the required data and submits.
+    \item The API checks authentication where required, authorization, resource existence and input validity.
+    \item Resolve or create the canonical catalog skill and insert one owned FreelancerSkill mapping.
+    \item After the transaction succeeds, the screen displays the result and reloads affected data; a pending revision is labeled as awaiting review.
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Case}{Description}
+A1 & Missing or expired authentication token. Returns HTTP 401 Unauthorized.\\ \hline
+A2 & Insufficient permissions or role unauthorized. Returns HTTP 403 Forbidden.\\ \hline
+A3 & Target resource not found or soft-deleted. Returns HTTP 404 Not Found.\\ \hline
+A4 & Validation error or malformed payload. Returns HTTP 400 Bad Request.\\ \hline
+A5 & Database connectivity failure or server error. Returns HTTP 500.\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Data Name}{Description}
+Result & Resolve or create the canonical catalog skill and insert one owned FreelancerSkill mapping.\\ \hline
+Failure & Structured error without sensitive data; no successful UI state when the operation failed.\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Successful add freelancer skill produces the documented response and survives a reload where data is persisted.
+    \item An unauthorized actor cannot access or modify the resource.
+    \item Invalid input and missing resources do not create a false success state or expose sensitive data.
+\end{itemize}
+
+% -----------------------------------------------------------------
+% UC-08.03: Delete Freelancer Skill
+% -----------------------------------------------------------------
+\Needspace{12\baselineskip}
+\subsubsection{ Delete Freelancer Skill}
+
+\fnhead{Function Trigger}
+The actor selects Delete Freelancer Skill.\newline
+\textbf{Navigation path:} Home $\rightarrow$ \texttt{/\allowbreak{}profiles/\allowbreak{}[id]} or \texttt{/\allowbreak{}freelancer/\allowbreak{}profile.}
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item \textbf{Primary Actor:} Freelancer.
+    \item \textbf{Supporting Systems:} Frevia Web (Next.js), Frevia BFF proxy, Frevia REST API (NestJS), Prisma ORM, and PostgreSQL database.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent Hard-delete the owned mapping while retaining its Skill catalog entry.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Skill list with catalog name, proficiency /10 and owner-only remove action.
+    \item Add Skill dialog with suggestions and level selector.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item The client issues an HTTP request to \texttt{DELETE /\allowbreak{}profiles/\allowbreak{}skills/\allowbreak{}:\allowbreak{}id} via Next.js BFF proxy.
+    \item NestJS guards verify JWT authentication and validate role-based access permissions.
+    \item The backend service queries or updates entities in PostgreSQL using Prisma ORM.
+    \item The API returns the structured JSON payload and handles domain invariants consistently.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint1/nhuy/Delete Freelancer Skill.png}{Delete Freelancer Skill interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Skill list with catalog name, proficiency /10 and owner-only remove action.
+    \item Add Skill dialog with suggestions and level selector.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+Identifier & Positive resource ID from the route; ownership is checked by the API.\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item The pair (freelancerProfileId, skillId) must be unique, including concurrent requests.
+\end{itemize}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+    \item BR-0803-01: A freelancer can add and delete mappings only on their own profile.
+    \item BR-0803-02: Deleting a skill permanently removes FreelancerSkill but retains the shared Skill definition.
+    \item BR-0803-03: Show an empty state when there are no active skills.
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item The actor opens \texttt{/\allowbreak{}profiles/\allowbreak{}[id]}; \texttt{/\allowbreak{}freelancer/\allowbreak{}profile} and selects Delete Freelancer Skill.
+    \item The application presents the current values or action confirmation; the actor supplies the required data and submits.
+    \item The API checks authentication where required, authorization, resource existence and input validity.
+    \item Hard-delete the owned mapping while retaining its Skill catalog entry.
+    \item After the transaction succeeds, the screen displays the result and reloads affected data; a pending revision is labeled as awaiting review.
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Case}{Description}
+A1 & Missing or expired authentication token. Returns HTTP 401 Unauthorized.\\ \hline
+A2 & Insufficient permissions or role unauthorized. Returns HTTP 403 Forbidden.\\ \hline
+A3 & Target resource not found or soft-deleted. Returns HTTP 404 Not Found.\\ \hline
+A4 & Validation error or malformed payload. Returns HTTP 400 Bad Request.\\ \hline
+A5 & Database connectivity failure or server error. Returns HTTP 500.\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Data Name}{Description}
+Result & Hard-delete the owned mapping while retaining its Skill catalog entry.\\ \hline
+Failure & Structured error without sensitive data; no successful UI state when the operation failed.\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Successful delete freelancer skill produces the documented response and survives a reload where data is persisted.
+    \item An unauthorized actor cannot access or modify the resource.
+    \item Invalid input and missing resources do not create a false success state or expose sensitive data.
+\end{itemize}
+
+
+\Needspace{12\baselineskip}
+\subsection{Portfolio Management}
+
+% -----------------------------------------------------------------
+% UC-09.01: View Portfolio List
+% -----------------------------------------------------------------
+\Needspace{12\baselineskip}
+\subsubsection{ View Portfolio List}
+
+\fnhead{Function Trigger}
+The actor selects View Portfolio List.\newline
+\textbf{Navigation path:} Home $\rightarrow$ \texttt{/\allowbreak{}profiles/\allowbreak{}[id]} or \texttt{/\allowbreak{}freelancer/\allowbreak{}profile.}
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item \textbf{Primary Actor:} Guest, Client, Freelancer.
+    \item \textbf{Supporting Systems:} Frevia Web (Next.js), Frevia BFF proxy, Frevia REST API (NestJS), Prisma ORM, and PostgreSQL database.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent List only non-deleted PortfolioItem records of the selected freelancer.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Portfolio card grid with title, description and technologies.
+    \item Detail dialog.
+    \item Owner-only Add, Edit and Delete controls.
+    \item Confirmation before deletion.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item The client issues an HTTP request to \texttt{GET /\allowbreak{}profiles/\allowbreak{}:\allowbreak{}id/\allowbreak{}portfolios} via Next.js BFF proxy.
+    \item NestJS guards verify JWT authentication and validate role-based access permissions.
+    \item The backend service queries or updates entities in PostgreSQL using Prisma ORM.
+    \item The API returns the structured JSON payload and handles domain invariants consistently.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint1/nhuy/View Portfolio List.png}{View Portfolio List interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Portfolio card grid with title, description and technologies.
+    \item Detail dialog.
+    \item Owner-only Add, Edit and Delete controls.
+    \item Confirmation before deletion.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+Selection & Current account or selected profile\texttt{/\allowbreak{}contract}; no pagination is assumed unless exposed by the endpoint.\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Only items whose deletedAt is null are listed, opened or edited.
+\end{itemize}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+    \item BR-0901-01: Only the owning freelancer creates, updates or deletes a portfolio item.
+    \item BR-0901-02: Deletion sets deletedAt; it does not hard-delete the item.
+    \item BR-0901-03: The agreed database scope is title, description, technologies and project URL; media gallery, uploads and project role are excluded.
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item The actor opens \texttt{/\allowbreak{}profiles/\allowbreak{}[id]}; \texttt{/\allowbreak{}freelancer/\allowbreak{}profile} and selects View Portfolio List.
+    \item The application submits the selected identifier or list filters.
+    \item The API checks authentication where required, authorization, resource existence and input validity.
+    \item List only non-deleted PortfolioItem records of the selected freelancer.
+    \item The screen renders the response, or an explicit empty state for a valid empty collection.
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Case}{Description}
+A1 & Missing or expired authentication token. Returns HTTP 401 Unauthorized.\\ \hline
+A2 & Insufficient permissions or role unauthorized. Returns HTTP 403 Forbidden.\\ \hline
+A3 & Target resource not found or soft-deleted. Returns HTTP 404 Not Found.\\ \hline
+A4 & Validation error or malformed payload. Returns HTTP 400 Bad Request.\\ \hline
+A5 & Database connectivity failure or server error. Returns HTTP 500.\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Data Name}{Description}
+Result & List only non-deleted PortfolioItem records of the selected freelancer.\\ \hline
+Failure & Structured error without sensitive data; no successful UI state when the operation failed.\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Successful view portfolio list produces the documented response and survives a reload where data is persisted.
+    \item An unauthorized actor cannot access or modify the resource.
+    \item Invalid input and missing resources do not create a false success state or expose sensitive data.
+\end{itemize}
+
+% -----------------------------------------------------------------
+% UC-09.02: Add Portfolio
+% -----------------------------------------------------------------
+\Needspace{12\baselineskip}
+\subsubsection{ Add Portfolio}
+
+\fnhead{Function Trigger}
+The actor selects Add Portfolio.\newline
+\textbf{Navigation path:} Home $\rightarrow$ \texttt{/\allowbreak{}profiles/\allowbreak{}[id]} or \texttt{/\allowbreak{}freelancer/\allowbreak{}profile.}
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item \textbf{Primary Actor:} Freelancer.
+    \item \textbf{Supporting Systems:} Frevia Web (Next.js), Frevia BFF proxy, Frevia REST API (NestJS), Prisma ORM, and PostgreSQL database.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent Create an owned portfolio item with title, description, technologies and project link.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Portfolio card grid with title, description and technologies.
+    \item Detail dialog.
+    \item Owner-only Add, Edit and Delete controls.
+    \item Confirmation before deletion.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item The client issues an HTTP request to \texttt{POST /\allowbreak{}profiles/\allowbreak{}:\allowbreak{}id/\allowbreak{}portfolios} via Next.js BFF proxy.
+    \item NestJS guards verify JWT authentication and validate role-based access permissions.
+    \item The backend service queries or updates entities in PostgreSQL using Prisma ORM.
+    \item The API returns the structured JSON payload and handles domain invariants consistently.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint1/nhuy/Add Portfolio.png}{Add Portfolio interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Portfolio card grid with title, description and technologies.
+    \item Detail dialog.
+    \item Owner-only Add, Edit and Delete controls.
+    \item Confirmation before deletion.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+title & Required trimmed title, 1--255 characters.\\ \hline
+description & Optional text, up to 5,000 characters.\\ \hline
+technologies & At most 20 non-empty names, each up to 100 characters.\\ \hline
+projectUrl & Optional HTTP\texttt{/\allowbreak{}HTTPS} project link up to 500 characters.\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Only items whose deletedAt is null are listed, opened or edited.
+\end{itemize}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+    \item BR-0902-01: Only the owning freelancer creates, updates or deletes a portfolio item.
+    \item BR-0902-02: Deletion sets deletedAt; it does not hard-delete the item.
+    \item BR-0902-03: The agreed database scope is title, description, technologies and project URL; media gallery, uploads and project role are excluded.
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item The actor opens \texttt{/\allowbreak{}profiles/\allowbreak{}[id]}; \texttt{/\allowbreak{}freelancer/\allowbreak{}profile} and selects Add Portfolio.
+    \item The application presents the current values or action confirmation; the actor supplies the required data and submits.
+    \item The API checks authentication where required, authorization, resource existence and input validity.
+    \item Create an owned portfolio item with title, description, technologies and project link.
+    \item After the transaction succeeds, the screen displays the result and reloads affected data; a pending revision is labeled as awaiting review.
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Case}{Description}
+A1 & Missing or expired authentication token. Returns HTTP 401 Unauthorized.\\ \hline
+A2 & Insufficient permissions or role unauthorized. Returns HTTP 403 Forbidden.\\ \hline
+A3 & Target resource not found or soft-deleted. Returns HTTP 404 Not Found.\\ \hline
+A4 & Validation error or malformed payload. Returns HTTP 400 Bad Request.\\ \hline
+A5 & Database connectivity failure or server error. Returns HTTP 500.\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Data Name}{Description}
+Result & Create an owned portfolio item with title, description, technologies and project link.\\ \hline
+Failure & Structured error without sensitive data; no successful UI state when the operation failed.\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Successful add portfolio produces the documented response and survives a reload where data is persisted.
+    \item An unauthorized actor cannot access or modify the resource.
+    \item Invalid input and missing resources do not create a false success state or expose sensitive data.
+\end{itemize}
+
+% -----------------------------------------------------------------
+% UC-09.03: View Portfolio Detail
+% -----------------------------------------------------------------
+\Needspace{12\baselineskip}
+\subsubsection{ View Portfolio Detail}
+
+\fnhead{Function Trigger}
+The actor selects View Portfolio Detail.\newline
+\textbf{Navigation path:} Home $\rightarrow$ \texttt{/\allowbreak{}profiles/\allowbreak{}[id]} or \texttt{/\allowbreak{}freelancer/\allowbreak{}profile.}
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item \textbf{Primary Actor:} Guest, Client, Freelancer.
+    \item \textbf{Supporting Systems:} Frevia Web (Next.js), Frevia BFF proxy, Frevia REST API (NestJS), Prisma ORM, and PostgreSQL database.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent Display a single non-deleted portfolio item and its external project link.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Portfolio card grid with title, description and technologies.
+    \item Detail dialog.
+    \item Owner-only Add, Edit and Delete controls.
+    \item Confirmation before deletion.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item The client issues an HTTP request to \texttt{GET /\allowbreak{}profiles/\allowbreak{}portfolios/\allowbreak{}:\allowbreak{}id} via Next.js BFF proxy.
+    \item NestJS guards verify JWT authentication and validate role-based access permissions.
+    \item The backend service queries or updates entities in PostgreSQL using Prisma ORM.
+    \item The API returns the structured JSON payload and handles domain invariants consistently.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint1/nhuy/View Portfolio Detail.png}{View Portfolio Detail interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Portfolio card grid with title, description and technologies.
+    \item Detail dialog.
+    \item Owner-only Add, Edit and Delete controls.
+    \item Confirmation before deletion.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+Identifier & Positive resource ID from the route; ownership is checked by the API.\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Only items whose deletedAt is null are listed, opened or edited.
+\end{itemize}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+    \item BR-0903-01: Only the owning freelancer creates, updates or deletes a portfolio item.
+    \item BR-0903-02: Deletion sets deletedAt; it does not hard-delete the item.
+    \item BR-0903-03: The agreed database scope is title, description, technologies and project URL; media gallery, uploads and project role are excluded.
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item The actor opens \texttt{/\allowbreak{}profiles/\allowbreak{}[id]}; \texttt{/\allowbreak{}freelancer/\allowbreak{}profile} and selects View Portfolio Detail.
+    \item The application submits the selected identifier or list filters.
+    \item The API checks authentication where required, authorization, resource existence and input validity.
+    \item Display a single non-deleted portfolio item and its external project link.
+    \item The screen renders the response, or an explicit empty state for a valid empty collection.
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Case}{Description}
+A1 & Missing or expired authentication token. Returns HTTP 401 Unauthorized.\\ \hline
+A2 & Insufficient permissions or role unauthorized. Returns HTTP 403 Forbidden.\\ \hline
+A3 & Target resource not found or soft-deleted. Returns HTTP 404 Not Found.\\ \hline
+A4 & Validation error or malformed payload. Returns HTTP 400 Bad Request.\\ \hline
+A5 & Database connectivity failure or server error. Returns HTTP 500.\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Data Name}{Description}
+Result & Display a single non-deleted portfolio item and its external project link.\\ \hline
+Failure & Structured error without sensitive data; no successful UI state when the operation failed.\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Successful view portfolio detail produces the documented response and survives a reload where data is persisted.
+    \item An unauthorized actor cannot access or modify the resource.
+    \item Invalid input and missing resources do not create a false success state or expose sensitive data.
+\end{itemize}
+
+% -----------------------------------------------------------------
+% UC-09.04: Update Portfolio
+% -----------------------------------------------------------------
+\Needspace{12\baselineskip}
+\subsubsection{ Update Portfolio}
+
+\fnhead{Function Trigger}
+The actor selects Update Portfolio.\newline
+\textbf{Navigation path:} Home $\rightarrow$ \texttt{/\allowbreak{}profiles/\allowbreak{}[id]} or \texttt{/\allowbreak{}freelancer/\allowbreak{}profile.}
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item \textbf{Primary Actor:} Freelancer.
+    \item \textbf{Supporting Systems:} Frevia Web (Next.js), Frevia BFF proxy, Frevia REST API (NestJS), Prisma ORM, and PostgreSQL database.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent Save validated edits on an owned, non-deleted portfolio item.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Portfolio card grid with title, description and technologies.
+    \item Detail dialog.
+    \item Owner-only Add, Edit and Delete controls.
+    \item Confirmation before deletion.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item The client issues an HTTP request to \texttt{PUT /\allowbreak{}profiles/\allowbreak{}portfolios/\allowbreak{}:\allowbreak{}id} via Next.js BFF proxy.
+    \item NestJS guards verify JWT authentication and validate role-based access permissions.
+    \item The backend service queries or updates entities in PostgreSQL using Prisma ORM.
+    \item The API returns the structured JSON payload and handles domain invariants consistently.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint1/nhuy/Update Portfolio.png}{Update Portfolio interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Portfolio card grid with title, description and technologies.
+    \item Detail dialog.
+    \item Owner-only Add, Edit and Delete controls.
+    \item Confirmation before deletion.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+title & Required trimmed title, 1--255 characters.\\ \hline
+description & Optional text, up to 5,000 characters.\\ \hline
+technologies & At most 20 non-empty names, each up to 100 characters.\\ \hline
+projectUrl & Optional HTTP\texttt{/\allowbreak{}HTTPS} project link up to 500 characters.\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Only items whose deletedAt is null are listed, opened or edited.
+\end{itemize}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+    \item BR-0904-01: Only the owning freelancer creates, updates or deletes a portfolio item.
+    \item BR-0904-02: Deletion sets deletedAt; it does not hard-delete the item.
+    \item BR-0904-03: The agreed database scope is title, description, technologies and project URL; media gallery, uploads and project role are excluded.
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item The actor opens \texttt{/\allowbreak{}profiles/\allowbreak{}[id]}; \texttt{/\allowbreak{}freelancer/\allowbreak{}profile} and selects Update Portfolio.
+    \item The application presents the current values or action confirmation; the actor supplies the required data and submits.
+    \item The API checks authentication where required, authorization, resource existence and input validity.
+    \item Save validated edits on an owned, non-deleted portfolio item.
+    \item After the transaction succeeds, the screen displays the result and reloads affected data; a pending revision is labeled as awaiting review.
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Case}{Description}
+A1 & Missing or expired authentication token. Returns HTTP 401 Unauthorized.\\ \hline
+A2 & Insufficient permissions or role unauthorized. Returns HTTP 403 Forbidden.\\ \hline
+A3 & Target resource not found or soft-deleted. Returns HTTP 404 Not Found.\\ \hline
+A4 & Validation error or malformed payload. Returns HTTP 400 Bad Request.\\ \hline
+A5 & Database connectivity failure or server error. Returns HTTP 500.\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Data Name}{Description}
+Result & Save validated edits on an owned, non-deleted portfolio item.\\ \hline
+Failure & Structured error without sensitive data; no successful UI state when the operation failed.\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Successful update portfolio produces the documented response and survives a reload where data is persisted.
+    \item An unauthorized actor cannot access or modify the resource.
+    \item Invalid input and missing resources do not create a false success state or expose sensitive data.
+\end{itemize}
+
+% -----------------------------------------------------------------
+% UC-09.05: Delete Portfolio
+% -----------------------------------------------------------------
+\Needspace{12\baselineskip}
+\subsubsection{ Delete Portfolio}
+
+\fnhead{Function Trigger}
+The actor selects Delete Portfolio.\newline
+\textbf{Navigation path:} Home $\rightarrow$ \texttt{/\allowbreak{}profiles/\allowbreak{}[id]} or \texttt{/\allowbreak{}freelancer/\allowbreak{}profile.}
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item \textbf{Primary Actor:} Freelancer.
+    \item \textbf{Supporting Systems:} Frevia Web (Next.js), Frevia BFF proxy, Frevia REST API (NestJS), Prisma ORM, and PostgreSQL database.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent Set deletedAt and remove the item from active list and detail results.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Portfolio card grid with title, description and technologies.
+    \item Detail dialog.
+    \item Owner-only Add, Edit and Delete controls.
+    \item Confirmation before deletion.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item The client issues an HTTP request to \texttt{DELETE /\allowbreak{}profiles/\allowbreak{}portfolios/\allowbreak{}:\allowbreak{}id} via Next.js BFF proxy.
+    \item NestJS guards verify JWT authentication and validate role-based access permissions.
+    \item The backend service queries or updates entities in PostgreSQL using Prisma ORM.
+    \item The API returns the structured JSON payload and handles domain invariants consistently.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint1/nhuy/Delete Portfolio.png}{Delete Portfolio interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Portfolio card grid with title, description and technologies.
+    \item Detail dialog.
+    \item Owner-only Add, Edit and Delete controls.
+    \item Confirmation before deletion.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+Identifier & Positive resource ID from the route; ownership is checked by the API.\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Only items whose deletedAt is null are listed, opened or edited.
+\end{itemize}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+    \item BR-0905-01: Only the owning freelancer creates, updates or deletes a portfolio item.
+    \item BR-0905-02: Deletion sets deletedAt; it does not hard-delete the item.
+    \item BR-0905-03: The agreed database scope is title, description, technologies and project URL; media gallery, uploads and project role are excluded.
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item The actor opens \texttt{/\allowbreak{}profiles/\allowbreak{}[id]}; \texttt{/\allowbreak{}freelancer/\allowbreak{}profile} and selects Delete Portfolio.
+    \item The application presents the current values or action confirmation; the actor supplies the required data and submits.
+    \item The API checks authentication where required, authorization, resource existence and input validity.
+    \item Set deletedAt and remove the item from active list and detail results.
+    \item After the transaction succeeds, the screen displays the result and reloads affected data; a pending revision is labeled as awaiting review.
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Case}{Description}
+A1 & Missing or expired authentication token. Returns HTTP 401 Unauthorized.\\ \hline
+A2 & Insufficient permissions or role unauthorized. Returns HTTP 403 Forbidden.\\ \hline
+A3 & Target resource not found or soft-deleted. Returns HTTP 404 Not Found.\\ \hline
+A4 & Validation error or malformed payload. Returns HTTP 400 Bad Request.\\ \hline
+A5 & Database connectivity failure or server error. Returns HTTP 500.\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Data Name}{Description}
+Result & Set deletedAt and remove the item from active list and detail results.\\ \hline
+Failure & Structured error without sensitive data; no successful UI state when the operation failed.\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Successful delete portfolio produces the documented response and survives a reload where data is persisted.
+    \item An unauthorized actor cannot access or modify the resource.
+    \item Invalid input and missing resources do not create a false success state or expose sensitive data.
+\end{itemize}

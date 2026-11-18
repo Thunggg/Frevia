@@ -1,23 +1,24 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toastError, toastSuccess } from "@repo/ui/components/shadcn/toast";
 import { contractApiRequest, extractContractData } from "@/apiRequests/contract";
 import { paymentApiRequest } from "@/apiRequests/payment";
 import { useActionPermission } from "@/hooks/use-action-permission";
 import { ApiFail } from "@/lib/http";
+import { ContractChatPopup } from "../../../_components/contract-chat-popup";
+import { useCreateConversation } from "@/hooks/use-conversation";
 import type {
   ContractDetailType,
   GetSubmissionResponseType,
   MilestoneFileType,
   MilestoneType,
 } from "@shared/types";
-import { FundMilestoneDialog } from "../../_components/fund-milestone-dialog";
 import { SubmitMilestoneDialog } from "../../_components/submit-milestone-dialog";
 import { ReviewSubmissionDialog } from "../../_components/review-submission-dialog";
 import { MilestoneDetailHeader } from "./milestone-detail-header";
-import { MilestoneWorkflowStepper } from "./milestone-workflow-stepper";
 import { MilestoneDetailTabs, type MilestoneTabKey } from "./milestone-detail-tabs";
 import { MilestoneOverviewTab } from "./milestone-overview-tab";
 import { MilestoneSubmissionsTab } from "./milestone-submissions-tab";
@@ -30,6 +31,61 @@ interface MilestoneDetailContentProps {
   initialSubmissions: GetSubmissionResponseType[];
   initialFiles: MilestoneFileType[];
   basePath?: string;
+  currentUserId?: number | null;
+  accessToken?: string | null;
+  socketUrl?: string;
+}
+
+function MilestoneChatPopup({
+  counterpartyId,
+  counterpartyName,
+  counterpartyAvatarUrl,
+  currentUserId,
+  accessToken,
+  socketUrl,
+}: {
+  counterpartyId: number;
+  counterpartyName: string;
+  counterpartyAvatarUrl?: string | null;
+  currentUserId?: number | null;
+  accessToken?: string | null;
+  socketUrl?: string;
+}) {
+  const [open, setOpen] = useState(false);
+  const [conversationId, setConversationId] = useState<number | null>(null);
+  const [isStartingChat, setIsStartingChat] = useState(false);
+  const createConversation = useCreateConversation();
+
+  const openChat = async (targetUserId: number) => {
+    setIsStartingChat(true);
+    try {
+      const conv = await createConversation.mutateAsync(targetUserId);
+      if (conv?.id) {
+        setConversationId(conv.id);
+        setOpen(true);
+      }
+    } catch {
+      toastError({ message: "Could not open conversation. Try again." });
+    } finally {
+      setIsStartingChat(false);
+    }
+  };
+
+  return (
+    <ContractChatPopup
+      open={open}
+      onOpenChange={setOpen}
+      conversationId={conversationId}
+      counterpartyId={counterpartyId}
+      counterpartyName={counterpartyName}
+      counterpartyAvatarUrl={counterpartyAvatarUrl}
+      currentUserId={currentUserId}
+      accessToken={accessToken}
+      socketUrl={socketUrl}
+      isStartingChat={isStartingChat}
+      onOpenChat={openChat}
+    />
+  );
 }
 
 export function MilestoneDetailContent({
@@ -38,6 +94,9 @@ export function MilestoneDetailContent({
   initialSubmissions,
   initialFiles,
   basePath = "/client",
+  currentUserId,
+  accessToken,
+  socketUrl,
 }: MilestoneDetailContentProps) {
   const queryClient = useQueryClient();
   const { can } = useActionPermission();
@@ -51,11 +110,12 @@ export function MilestoneDetailContent({
   const [activeTab, setActiveTab] = useState<MilestoneTabKey>("overview");
 
   // Modals state
-  const [fundModalOpen, setFundModalOpen] = useState(false);
   const [submitModalOpen, setSubmitModalOpen] = useState(false);
   const [reviewModalOpen, setReviewModalOpen] = useState(false);
   const [selectedSubmissionToReview, setSelectedSubmissionToReview] =
     useState<GetSubmissionResponseType | null>(null);
+
+  const searchParams = useSearchParams();
 
   // Queries
   const { data: contract } = useQuery<ContractDetailType>({
@@ -103,7 +163,72 @@ export function MilestoneDetailContent({
     enabled: canViewFiles,
   });
 
+  // Sync Stripe Checkout session on return
+  useEffect(() => {
+    const paymentStatus = searchParams.get("payment");
+    const sessionId = searchParams.get("session_id");
+
+    if (paymentStatus === "success" && sessionId) {
+      const sync = async () => {
+        try {
+          await paymentApiRequest.syncCheckoutSession(sessionId);
+          toastSuccess({
+            message: `Escrow payment funded successfully via Stripe!`,
+          });
+        } catch {
+          // Handled or processed via webhook
+        } finally {
+          await Promise.all([
+            queryClient.invalidateQueries({
+              queryKey: ["milestone-detail", contract.id, milestone.id],
+            }),
+            queryClient.invalidateQueries({
+              queryKey: ["client-contract-detail", contract.id],
+            }),
+            queryClient.invalidateQueries({
+              queryKey: ["client-contract-milestones", contract.id],
+            }),
+            queryClient.invalidateQueries({ queryKey: ["client-transactions"] }),
+          ]);
+          window.history.replaceState({}, "", window.location.pathname);
+        }
+      };
+      void sync();
+    } else if (paymentStatus === "cancelled") {
+      toastError({
+        message: "Stripe checkout was cancelled. You can retry at any time.",
+      });
+      window.history.replaceState({}, "", window.location.pathname);
+    }
+  }, [searchParams, contract.id, milestone.id, queryClient]);
+
+  const counterparty = isFreelancer ? contract.client : contract.freelancer;
+  const counterpartyId = isFreelancer
+    ? contract.clientId
+    : contract.freelancerId;
+  const counterpartyName = counterparty?.profile?.displayName || "Counterpart";
+  const counterpartyAvatarUrl = counterparty?.profile?.avatarUrl;
+
   const latestSubmission = submissions.length > 0 ? submissions[0] : null;
+
+  const contractMilestones = contract.milestones ?? [];
+  const hasIncompletePreviousMilestone = contractMilestones.some(
+    (m) => m.id < milestone.id && m.status !== "COMPLETED",
+  );
+  const hasOtherActiveMilestone = contractMilestones.some(
+    (m) =>
+      m.id !== milestone.id &&
+      (m.status === "IN_PROGRESS" ||
+        m.status === "SUBMITTED" ||
+        m.status === "CHANGES_REQUESTED" ||
+        m.status === "LATE" ||
+        m.status === "DISPUTED"),
+  );
+  const startWorkBlockedReason = hasIncompletePreviousMilestone
+    ? "Complete previous milestone first"
+    : hasOtherActiveMilestone
+      ? "Finish the active milestone first"
+      : null;
 
   // Actions
   const handleStartWork = async () => {
@@ -164,6 +289,27 @@ export function MilestoneDetailContent({
     }
   };
 
+  const handleFundMilestone = async () => {
+    try {
+      const returnUrl = window.location.href.split("?")[0];
+      const res = await paymentApiRequest.createMilestoneFundCheckoutSession(
+        contract.id,
+        milestone.id,
+        { returnUrl },
+      );
+      if (res.data?.checkoutUrl) {
+        window.location.href = res.data.checkoutUrl;
+      }
+    } catch (error) {
+      toastError({
+        message:
+          error instanceof ApiFail
+            ? error.response.error.message
+            : "Failed to initiate Stripe Checkout session.",
+      });
+    }
+  };
+
   const handleRefundMilestone = async () => {
     if (
       !window.confirm(
@@ -203,17 +349,17 @@ export function MilestoneDetailContent({
 
   if (!canViewDetail) {
     return (
-      <div className="space-y-6 max-w-7xl mx-auto font-sans">
+      <div className="space-y-4 mx-auto font-sans pb-16">
         <MilestoneDetailHeader
           contract={contract}
           milestone={milestone}
           basePath={basePath}
         />
-        <div className="rounded-xl border border-amber-200/80 dark:border-amber-900/40 bg-amber-50/40 dark:bg-amber-950/20 p-8 text-center space-y-2">
-          <h3 className="text-sm font-semibold text-zinc-950 dark:text-zinc-100">
+        <div className="py-12 text-center space-y-2">
+          <h3 className="text-xs font-medium text-foreground">
             Không có quyền xem chi tiết milestone
           </h3>
-          <p className="text-xs text-zinc-500 dark:text-zinc-400 max-w-md mx-auto">
+          <p className="text-xs text-muted-foreground max-w-md mx-auto">
             Tài khoản của bạn chưa được cấp quyền xem thông tin chi tiết milestone này.
           </p>
         </div>
@@ -222,95 +368,82 @@ export function MilestoneDetailContent({
   }
 
   return (
-    <div className="space-y-6 max-w-7xl mx-auto font-sans">
-      {/* ── 1. Top Milestone Breadcrumb Header ── */}
+    <div className="space-y-4 mx-auto font-sans pb-16">
+      {/* ── 1. Top Milestone Header (Clean, minimal, no bold/bg clutter) ── */}
       <MilestoneDetailHeader
         contract={contract}
         milestone={milestone}
         basePath={basePath}
       />
 
-      {/* ── 2. Horizontal Workflow Stepper ── */}
-      <MilestoneWorkflowStepper
-        milestone={milestone}
-        submissions={submissions}
-      />
+      {/* ── 2. Tabs Navigation ── */}
+      <div className="space-y-4">
+        <MilestoneDetailTabs
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
+          submissionCount={submissions.length}
+          fileCount={files.length}
+          canViewSubmissions={canViewSubmissions}
+          canViewFiles={canViewFiles}
+        />
 
-      {/* ── 3. Main Two-Column Layout (Image 1: Left 4 Tabs & Content, Right Activity) ── */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-        {/* Left Column: 4 Tabs + Selected Tab Content (8 Cols) */}
-        <div className="lg:col-span-12 space-y-6">
-          <MilestoneDetailTabs
-            activeTab={activeTab}
-            onTabChange={setActiveTab}
-            submissionCount={submissions.length}
-            fileCount={files.length}
-            canViewSubmissions={canViewSubmissions}
-            canViewFiles={canViewFiles}
+        {activeTab === "overview" && (
+          <MilestoneOverviewTab
+            contract={contract}
+            milestone={milestone}
+            submissions={submissions}
+            isFreelancer={isFreelancer}
+            startWorkBlockedReason={startWorkBlockedReason}
+            onFund={() => void handleFundMilestone()}
+            onStartWork={() => void handleStartWork()}
+            onSubmitWork={() => setSubmitModalOpen(true)}
+            onReviewSubmission={handleReview}
+            onRelease={() => void handleReleaseMilestone()}
+            onRefund={() => void handleRefundMilestone()}
           />
+        )}
 
-          {activeTab === "overview" && (
-            <MilestoneOverviewTab
-              contract={contract}
-              milestone={milestone}
-              submissions={submissions}
-              isFreelancer={isFreelancer}
-            />
-          )}
+        {activeTab === "submissions" && canViewSubmissions && (
+          <MilestoneSubmissionsTab
+            contractStatus={contract.status}
+            milestone={milestone}
+            submissions={submissions}
+            isFreelancer={isFreelancer}
+            startWorkBlockedReason={startWorkBlockedReason}
+            onFund={() => void handleFundMilestone()}
+            onStartWork={() => void handleStartWork()}
+            onSubmitWork={() => setSubmitModalOpen(true)}
+            onReviewSubmission={handleReview}
+            onRelease={() => void handleReleaseMilestone()}
+            onRefund={() => void handleRefundMilestone()}
+          />
+        )}
 
-          {activeTab === "submissions" && canViewSubmissions && (
-            <MilestoneSubmissionsTab
-              contractStatus={contract.status}
-              milestone={milestone}
-              submissions={submissions}
-              isFreelancer={isFreelancer}
-              onFund={() => setFundModalOpen(true)}
-              onStartWork={() => void handleStartWork()}
-              onSubmitWork={() => setSubmitModalOpen(true)}
-              onReviewSubmission={handleReview}
-              onRelease={() => void handleReleaseMilestone()}
-              onRefund={() => void handleRefundMilestone()}
-            />
-          )}
+        {activeTab === "files" && canViewFiles && (
+          <MilestoneFilesTab
+            contractId={contract.id}
+            milestoneId={milestone.id}
+            files={files}
+            onFilesChanged={() => {
+              void queryClient.invalidateQueries({
+                queryKey: ["milestone-files", contract.id, milestone.id],
+              });
+            }}
+            isFreelancer={isFreelancer}
+          />
+        )}
 
-          {activeTab === "files" && canViewFiles && (
-            <MilestoneFilesTab
-              contractId={contract.id}
-              milestoneId={milestone.id}
-              files={files}
-              onFilesChanged={() => {
-                void queryClient.invalidateQueries({
-                  queryKey: ["milestone-files", contract.id, milestone.id],
-                });
-              }}
-              isFreelancer={isFreelancer}
-            />
-          )}
-
-          {activeTab === "activity" && (
-            <MilestoneActivityTimeline
-              contract={contract}
-              milestone={milestone}
-              submissions={submissions}
-              isFreelancer={isFreelancer}
-            />
-          )}
-        </div>
+        {activeTab === "activity" && (
+          <MilestoneActivityTimeline
+            contract={contract}
+            milestone={milestone}
+            submissions={submissions}
+            isFreelancer={isFreelancer}
+          />
+        )}
       </div>
 
       {/* ── Modals / Dialogs ── */}
-
-      {/* 1. Fund Escrow Dialog (Client) */}
-      {isClient && (
-        <FundMilestoneDialog
-          open={fundModalOpen}
-          onOpenChange={setFundModalOpen}
-          contractId={contract.id}
-          milestone={milestone}
-        />
-      )}
-
-      {/* 2. Submit Work Dialog (Freelancer) */}
       {isFreelancer && (
         <SubmitMilestoneDialog
           open={submitModalOpen}
@@ -320,7 +453,6 @@ export function MilestoneDetailContent({
         />
       )}
 
-      {/* 3. Review Submission Dialog (Client) */}
       {isClient && selectedSubmissionToReview && (
         <ReviewSubmissionDialog
           open={reviewModalOpen}
@@ -332,6 +464,16 @@ export function MilestoneDetailContent({
           submission={selectedSubmissionToReview}
         />
       )}
+
+      {/* Floating Messenger-style chat popup (bottom-right) */}
+      <MilestoneChatPopup
+        counterpartyId={counterpartyId}
+        counterpartyName={counterpartyName}
+        counterpartyAvatarUrl={counterpartyAvatarUrl}
+        currentUserId={currentUserId}
+        accessToken={accessToken}
+        socketUrl={socketUrl}
+      />
     </div>
   );
 }

@@ -8,10 +8,17 @@ import {
   WebSocketServer,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import { Injectable, Logger, UnauthorizedException } from '@nestjs/common';
+import {
+  Injectable,
+  Logger,
+  OnModuleDestroy,
+  OnModuleInit,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { z } from 'zod';
 import { envConfig } from '../../shared/config/validate-env';
 import { TokenService } from '../../shared/services/token.service';
+import { NotificationRealtimeService } from '../../shared/services/notification-realtime.service';
 import { ConversationService } from './conversations.service';
 import { MessageAttachmentSchema } from '@shared/types';
 
@@ -59,17 +66,33 @@ type SocketPayloadUser = { userId: number };
   },
 })
 export class ConversationsGateway
-  implements OnGatewayConnection, OnGatewayDisconnect
+  implements OnGatewayConnection, OnGatewayDisconnect, OnModuleInit, OnModuleDestroy
 {
   @WebSocketServer()
   server: Server;
 
   private readonly logger = new Logger(ConversationsGateway.name);
+  private unsubscribeNotification?: () => void;
 
   constructor(
     private readonly conversationService: ConversationService,
     private readonly tokenService: TokenService,
+    private readonly notificationRealtime: NotificationRealtimeService,
   ) {}
+
+  onModuleInit() {
+    this.unsubscribeNotification = this.notificationRealtime.subscribe(
+      ({ userId, notification }) => {
+        this.server
+          .to(`user:${userId}`)
+          .emit('notification:new', notification);
+      },
+    );
+  }
+
+  onModuleDestroy() {
+    this.unsubscribeNotification?.();
+  }
 
   // Xác thực khi client kết nối bằng JWT access token, sau đó join room của user
   async handleConnection(client: Socket) {

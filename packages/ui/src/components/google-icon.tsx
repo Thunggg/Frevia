@@ -56,7 +56,7 @@ export const GoogleIcon = React.forwardRef<HTMLSpanElement, GoogleIconProps>(
       <span
         ref={ref}
         aria-hidden="true"
-        className={cn("material-symbols-outlined", className)}
+        className={cn("material-symbols-outlined shrink-0", className)}
         style={customStyle}
         {...props}
       >

@@ -163,7 +163,19 @@ export async function syncContractAndJobCompletion(
       m.paymentStatus !== MilestonePaymentStatus.REFUNDED,
   ).length;
 
-  if (releasedCount === 0 || unsettledCount > 0) {
+  if (unsettledCount > 0) {
+    return false;
+  }
+
+  // Nếu tất cả milestone đều đã bị REFUND (không có milestone nào được giải ngân),
+  // tự động cập nhật hợp đồng sang CANCELLED để tránh bế tắc vĩnh viễn ở trạng thái ACTIVE.
+  if (releasedCount === 0) {
+    await tx.contract.update({
+      where: { id: contractId },
+      data: {
+        status: ContractStatus.CANCELLED,
+      },
+    });
     return false;
   }
 

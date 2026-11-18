@@ -1,7 +1,11 @@
 "use client";
 
+import Link from "next/link";
 import { useTranslations } from "next-intl";
+import { useQuery } from "@tanstack/react-query";
 import {
+  AlertCircle,
+  ArrowRight,
   Download,
   FileCheck,
   MessageSquare,
@@ -15,7 +19,12 @@ import {
 import { Button } from "@repo/ui/components/shadcn/button";
 import { Badge } from "@repo/ui/components/shadcn/badge";
 import { useActionPermission } from "@/hooks/use-action-permission";
-import type { ContractDetailType, SharedFileType } from "@shared/types";
+import { paymentApiRequest } from "@/apiRequests/payment";
+import type {
+  ContractDetailType,
+  SharedFileType,
+  StripeConnectStatusResponseType,
+} from "@shared/types";
 
 interface ContractActionsSidebarProps {
   contract: ContractDetailType;
@@ -61,6 +70,34 @@ export function ContractActionsSidebar({
     "POST",
     "/api/payments/contracts/:contractId/fund-hold/intent",
   );
+  const canGetConnectStatus = can("GET", "/api/payments/connect/status");
+
+  const shouldCheckStripeOnboarding =
+    isFreelancer &&
+    !contract.signedByFreelancer &&
+    (contract.status === "AWAITING_PAYMENT" ||
+      contract.status === "PENDING_SIGN") &&
+    canGetConnectStatus;
+
+  const { data: connectStatus, isLoading: isConnectLoading } =
+    useQuery<StripeConnectStatusResponseType>({
+      queryKey: ["stripe-connect-status"],
+      queryFn: async () => {
+        const res = await paymentApiRequest.getConnectStatus();
+        return res.data;
+      },
+      enabled: shouldCheckStripeOnboarding,
+      refetchOnMount: "always",
+      refetchOnWindowFocus: true,
+    });
+
+  const isStripeOnboardingReady = Boolean(
+    connectStatus?.isConnected && connectStatus?.payoutsEnabled,
+  );
+  const needsStripeOnboarding =
+    shouldCheckStripeOnboarding &&
+    !isConnectLoading &&
+    !isStripeOnboardingReady;
 
   const canSign =
     (isFreelancer
@@ -81,8 +118,17 @@ export function ContractActionsSidebar({
     Boolean(onOpenFundHold) &&
     canFundContractHold;
 
+  const hasUnsettledMilestones =
+    Array.isArray(contract.milestones) &&
+    contract.milestones.some(
+      (m) => m.paymentStatus !== "RELEASED" && m.paymentStatus !== "REFUNDED"
+    );
+
   const canComplete =
-    !isFreelancer && contract.status === "ACTIVE" && canCompleteContract;
+    !isFreelancer &&
+    contract.status === "ACTIVE" &&
+    canCompleteContract &&
+    !hasUnsettledMilestones;
 
   const canReject =
     isFreelancer &&
@@ -207,14 +253,43 @@ export function ContractActionsSidebar({
           </div>
         )}
 
-        {/* 2. Sign Contract Button */}
+        {/* 2. Freelancer Stripe Onboarding Gate */}
+        {needsStripeOnboarding && (
+          <div className="rounded-xl border border-amber-200/80 dark:border-amber-900/60 bg-amber-50/70 dark:bg-amber-950/30 p-3 space-y-2">
+            <div className="flex items-start gap-2">
+              <AlertCircle className="size-4 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
+              <div className="space-y-0.5 text-[11px] leading-snug">
+                <p className="font-medium text-amber-900 dark:text-amber-200">
+                  Stripe Onboarding Required
+                </p>
+                <p className="text-amber-800/85 dark:text-amber-300/80">
+                  Complete your Stripe payout account setup before signing this
+                  contract.
+                </p>
+              </div>
+            </div>
+            <Link
+              href="/freelancer/payments"
+              className="w-full h-8 inline-flex items-center justify-center gap-1.5 rounded-lg bg-amber-600 hover:bg-amber-700 text-white text-[11px] font-medium transition-colors"
+            >
+              <span>Complete Stripe Onboarding</span>
+              <ArrowRight className="size-3.5" />
+            </Link>
+          </div>
+        )}
+
+        {/* 3. Sign Contract Button */}
         {canSign && (
           <Button
             onClick={onOpenSignConfirm}
-            disabled={isSigning}
-            className="w-full h-10 rounded-xl bg-[#0069D3] hover:bg-[#0055b3] text-white font-semibold text-xs shadow-sm cursor-pointer"
+            disabled={
+              isSigning ||
+              (shouldCheckStripeOnboarding &&
+                (isConnectLoading || !isStripeOnboardingReady))
+            }
+            className="w-full h-10 rounded-xl bg-[#0069D3] hover:bg-[#0055b3] text-white font-semibold text-xs shadow-sm cursor-pointer disabled:opacity-50"
           >
-            {isSigning ? (
+            {isSigning || (shouldCheckStripeOnboarding && isConnectLoading) ? (
               <Loader2 className="mr-2 size-4 animate-spin" />
             ) : (
               <FileCheck className="mr-2 size-4" />

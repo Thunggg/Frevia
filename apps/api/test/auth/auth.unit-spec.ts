@@ -163,7 +163,11 @@ describe('User Authentication (UF-37 to UF-41)', () => {
     it('provisions a new freelancer account and returns tokens when a new Google profile signs in with FREELANCER role', async () => {
       mockGetToken.mockResolvedValue({ tokens: { access_token: 'g-token' } });
       mockOAuthRequest.mockResolvedValue({
-        data: { id: 'g-freelancer', email: 'freelancer@frevia.com', name: 'New Freelancer User' },
+        data: {
+          id: 'g-freelancer',
+          email: 'freelancer@frevia.com',
+          name: 'New Freelancer User',
+        },
       });
       authRepository.findUserByEmailIncludeRole.mockResolvedValue(null);
       sharedRoleRepository.getFreelancerRoleId.mockResolvedValue(3);
@@ -176,7 +180,11 @@ describe('User Authentication (UF-37 to UF-41)', () => {
       authRepository.createOauthAccount.mockResolvedValue({ id: 2 });
 
       const freelancerState = Buffer.from(
-        JSON.stringify({ userAgent: 'Jest/Test', ip: '127.0.0.1', role: RoleName.FREELANCER }),
+        JSON.stringify({
+          userAgent: 'Jest/Test',
+          ip: '127.0.0.1',
+          role: RoleName.FREELANCER,
+        }),
       ).toString('base64url');
 
       const result = await service.googleCallback({
@@ -902,7 +910,7 @@ describe('User Authentication (UF-37 to UF-41)', () => {
     it('returns user info with dynamic role, permissions and permissionModules', async () => {
       authRepository.findUserById.mockResolvedValue(mockUserWithPermissions);
 
-      const result = await service.getMe(10, 5);
+      const result = await service.getMe(10);
 
       expect(result.id).toBe(10);
       expect(result.email).toBe('cskh@frevia.com');
@@ -930,7 +938,7 @@ describe('User Authentication (UF-37 to UF-41)', () => {
       };
       authRepository.findUserById.mockResolvedValue(mockAdminUser);
 
-      const result = await service.getMe(1, 1);
+      const result = await service.getMe(1);
 
       expect(result.permissions).toContain('*');
     });

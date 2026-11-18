@@ -275,6 +275,55 @@ describe('ProposalService (UC-32)', () => {
       ).rejects.toBeInstanceOf(UnprocessableEntityException);
     });
 
+    it('throws UnprocessableEntityException if bidAmount exceeds maximum allowable limit', async () => {
+      await expect(
+        service.createProposal(12, RoleName.FREELANCER, 10, {
+          ...validBody,
+          bidAmount: 2_000_000_000_000,
+        }),
+      ).rejects.toBeInstanceOf(UnprocessableEntityException);
+    });
+
+    it('throws UnprocessableEntityException if deliveryDays exceeds 365 days', async () => {
+      await expect(
+        service.createProposal(12, RoleName.FREELANCER, 10, {
+          ...validBody,
+          deliveryDays: 366,
+        }),
+      ).rejects.toBeInstanceOf(UnprocessableEntityException);
+    });
+
+    it('throws UnprocessableEntityException if deliveryDays exceeds job deadline', async () => {
+      // Giả sử job có deadline 5 ngày tới
+      repository.findJobForProposal.mockResolvedValue({
+        ...mockJob,
+        deadline: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000),
+      });
+
+      // Freelancer nộp deliveryDays = 6 ngày -> vượt deadline
+      await expect(
+        service.createProposal(12, RoleName.FREELANCER, 10, {
+          ...validBody,
+          deliveryDays: 6,
+        }),
+      ).rejects.toBeInstanceOf(UnprocessableEntityException);
+    });
+
+    it('allows submission when deliveryDays is within job deadline', async () => {
+      repository.findJobForProposal.mockResolvedValue({
+        ...mockJob,
+        deadline: new Date(Date.now() + 10 * 24 * 60 * 60 * 1000),
+      });
+      repository.createSubmitted.mockResolvedValue(mockProposal);
+
+      const result = await service.createProposal(12, RoleName.FREELANCER, 10, {
+        ...validBody,
+        deliveryDays: 5,
+      });
+
+      expect(result).toEqual(mockProposal);
+    });
+
     it('throws UnprocessableEntityException if bidAmount is extreme compared to budget (BR-PR15)', async () => {
       // Job budgetMin = 100, budgetMax = 1000
       // Bid < budgetMin / 10 (< 10)

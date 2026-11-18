@@ -60,7 +60,11 @@ export class ReviewService {
     if (contract.status !== ContractStatus.COMPLETED) {
       throw ReviewContractNotCompletedException();
     }
-    if (await this.repository.findByContractAndReviewer(contractId, userId)) {
+    const existingReview = await this.repository.findByContractAndReviewer(
+      contractId,
+      userId,
+    );
+    if (existingReview && !existingReview.deletedAt) {
       throw ReviewAlreadyExistsException();
     }
     const revieweeId =
@@ -78,12 +82,13 @@ export class ReviewService {
           revieweeId,
           reviewerName,
           input,
+          existingReview?.id,
         ),
       );
     } catch (error) {
       if (
         error instanceof Prisma.PrismaClientKnownRequestError &&
-        error.code === 'P2002'
+        (error.code === 'P2002' || error.code === 'P2025')
       ) {
         throw ReviewAlreadyExistsException();
       }

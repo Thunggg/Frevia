@@ -1,5 +1,7 @@
 "use client";
 
+import { Star } from "@/components/icons";
+
 import {
   Bell,
   Briefcase,
@@ -40,6 +42,7 @@ import {
 } from "@repo/ui/components/shadcn/avatar";
 
 import { useNotifications } from "@/hooks/use-notifications";
+import { useConversations } from "@/hooks/use-conversation";
 
 type NavItem = {
   href: string;
@@ -105,6 +108,8 @@ export function ClientSidebar() {
   const activeLocale = useLocale();
   const [isLocalePending, startLocaleTransition] = useTransition();
   const { data: me } = useMe();
+  // const { data: notifications = [] } = useNotifications();
+  const { data: conversations = [] } = useConversations();
   const { can } = useActionPermission();
   const canViewJobs = can("GET", "/api/manage-jobs");
   const canViewContracts = can("GET", "/api/contracts");
@@ -150,6 +155,10 @@ export function ClientSidebar() {
 
   const isDark = mounted && resolvedTheme === "dark";
   const unreadNotifications = notifications.filter((n) => !n.isRead).length;
+  const unreadMessages = (conversations ?? []).reduce(
+    (sum, c) => sum + (c.unreadCount || 0),
+    0,
+  );
 
   const selectLocale = (nextLocale: string) => {
     if (!isLocale(nextLocale) || nextLocale === activeLocale) return;
@@ -188,10 +197,22 @@ export function ClientSidebar() {
       matchPrefix: true,
     },
     {
+      href: "/client/reviews",
+      labelKey: "navReviews",
+      icon: Star,
+      matchPrefix: true,
+    },
+    {
       href: "/client/conversations",
       labelKey: "navMessages",
       icon: MessageSquare,
       matchPrefix: true,
+      badge:
+        unreadMessages > 0
+          ? unreadMessages > 99
+            ? "99+"
+            : unreadMessages
+          : undefined,
     },
     {
       href: "/forum",

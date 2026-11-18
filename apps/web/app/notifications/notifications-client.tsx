@@ -16,6 +16,7 @@ import {
   DollarSign,
   FileCheck,
   FileText,
+  Heart,
   Loader2,
   MessageSquare,
   Star,
@@ -40,12 +41,14 @@ function notificationHref(data: unknown): string | null {
     : null;
 }
 
-function adaptHref(href: string | null, embedded?: boolean): string | null {
+function adaptHref(
+  href: string | null,
+  embedded?: boolean,
+  basePath?: string,
+): string | null {
   if (!href) return null;
-  if (embedded) {
-    if (href.startsWith("/conversations")) {
-      return href.replace("/conversations", "/client/conversations");
-    }
+  if (embedded && basePath && href.startsWith("/conversations")) {
+    return href.replace("/conversations", `${basePath}/conversations`);
   }
   return href;
 }
@@ -53,7 +56,10 @@ function adaptHref(href: string | null, embedded?: boolean): string | null {
 function getNotificationIcon(type?: string) {
   switch (type) {
     case "MESSAGE_NEW":
+    case "POST_COMMENT":
       return MessageSquare;
+    case "POST_LIKE":
+      return Heart;
     case "JOB_ALERT":
       return Briefcase;
     case "PROPOSAL_NEW":
@@ -85,6 +91,7 @@ export type NotificationsClientProps = {
 export function NotificationsClient({
   headerRole = "FREELANCER",
   embedded = false,
+  basePath,
 }: NotificationsClientProps) {
   const t = useTranslations("notifications");
   const tCommon = useTranslations("common");
@@ -298,7 +305,7 @@ export function NotificationsClient({
           <AnimatePresence initial={false}>
             {filteredNotifications.map((notification, index) => {
               const rawHref = notificationHref(notification.data);
-              const href = adaptHref(rawHref, embedded);
+              const href = adaptHref(rawHref, embedded, basePath);
               const Icon = getNotificationIcon(
                 notification.type as string | undefined,
               );

@@ -1,10 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { JobStatus } from '@prisma/client';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/client';
 
 import {
   CreateJobBodyType,
   JobType,
+  ManageJobMessage,
   RoleName,
   UpdateJobBodyType,
   ViewBookmarkedJobParsedFilterType,
@@ -33,13 +34,77 @@ import {
 } from './manage-job.error';
 import { ManageJobRepository } from './manage-job.repo';
 import { EmbeddingOutboxService } from '../recommendations/embedding-outbox.service';
+import { FastTextService } from '../../shared/services/fasttext.service';
 
 @Injectable()
 export class ManageJobService {
   constructor(
     private readonly manageJobRepository: ManageJobRepository,
     private readonly embeddingOutbox: EmbeddingOutboxService,
+    private readonly fastTextService: FastTextService,
   ) {}
+
+  private async validateJobLanguage(
+    title?: string,
+    description?: string,
+  ): Promise<void> {
+    const issues: Array<{ path: string; message: string }> = [];
+
+    if (title) {
+      const isTitleEnglish = await this.fastTextService.isEnglish(title);
+      if (!isTitleEnglish) {
+        issues.push({
+          path: 'title',
+          message: ManageJobMessage.JOB_TITLE_MUST_BE_ENGLISH,
+        });
+      }
+    }
+
+    if (description) {
+      const isDescEnglish = await this.fastTextService.isEnglish(description);
+      if (!isDescEnglish) {
+        issues.push({
+          path: 'description',
+          message: ManageJobMessage.JOB_DESCRIPTION_MUST_BE_ENGLISH,
+        });
+      }
+    }
+
+    if (issues.length > 0) {
+      throw new BadRequestException(issues);
+    }
+  }
+
+  async checkLanguage(
+    title?: string,
+    description?: string,
+    userId?: number,
+    roleName?: string,
+    excludeJobId?: number,
+  ) {
+    const titleIsEnglish = title
+      ? await this.fastTextService.isEnglish(title)
+      : true;
+    const descIsEnglish = description
+      ? await this.fastTextService.isEnglish(description)
+      : true;
+
+    let isDuplicate = false;
+    if (userId && roleName === RoleName.CLIENT && title) {
+      isDuplicate = await this.manageJobRepository.hasDuplicateTitle(
+        userId,
+        title,
+        excludeJobId,
+      );
+    }
+
+    return {
+      title: { isEnglish: titleIsEnglish, isDuplicate },
+      description: { isEnglish: descIsEnglish },
+      isEnglish: titleIsEnglish && descIsEnglish,
+      isDuplicate,
+    };
+  }
 
   private assertClientRole(roleName: string): void {
     if (roleName !== RoleName.CLIENT) {
@@ -145,11 +210,7 @@ export class ManageJobService {
     };
   }
 
-  async searchSkills(roleName: string, search?: string) {
-    if (roleName !== RoleName.CLIENT) {
-      throw BookmarkJobOnlyForFreelancerException();
-    }
-
+  async searchSkills(_roleName: string, search?: string) {
     return this.manageJobRepository.searchSkills(search);
   }
 
@@ -224,6 +285,7 @@ export class ManageJobService {
     body: CreateJobBodyType,
   ): Promise<JobType> {
     this.assertClientRole(roleName);
+    await this.validateJobLanguage(body.title, body.description);
     try {
       const job = await this.manageJobRepository.createJob(userId, body);
       await this.embeddingOutbox.enqueueAndProcess({
@@ -248,6 +310,7 @@ export class ManageJobService {
     body: UpdateJobBodyType,
   ): Promise<JobType> {
     this.assertClientRole(roleName);
+    await this.validateJobLanguage(body.title, body.description);
 
     try {
       const job = await this.manageJobRepository.updateJob(userId, jobId, body);
@@ -294,6 +357,18 @@ export class ManageJobService {
     jobId: number,
   ): Promise<JobType> {
     this.assertClientRole(roleName);
+
+    const jobDetail = await this.manageJobRepository.getClientJobDetail(
+      userId,
+      jobId,
+    );
+    if (!jobDetail) {
+      throw JobNotFoundException();
+    }
+    await this.validateJobLanguage(
+      jobDetail.title,
+      jobDetail.description ?? '',
+    );
 
     try {
       const job = await this.manageJobRepository.publishJob(userId, jobId);

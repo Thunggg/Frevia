@@ -4,6 +4,7 @@ import { HttpMethod, PrismaClient } from '@prisma/client';
 import { RoleName, getPermissionName } from '@shared/types';
 import 'dotenv/config';
 import { AppModule } from '../app.module';
+import { expertHasPermission } from '../shared/helper/expert-permission';
 import { IS_PUBLIC_KEY } from '../shared/decorators/auth.decorator';
 
 if (!process.env.DIRECT_URL) {
@@ -299,7 +300,11 @@ async function bootstrap() {
           '/api/recommendations/reindex',
           '/api/recommendations/outbox/process',
         ].includes(item.path) &&
-        !(item.module === 'MANAGE-JOBS' && !item.path.includes('/bookmark')),
+        !(
+          item.module === 'MANAGE-JOBS' &&
+          !item.path.includes('/bookmark') &&
+          !item.path.includes('/check-language')
+        ),
     )
     .map((item) => item.id);
 
@@ -319,15 +324,8 @@ async function bootstrap() {
     .map((item) => item.id);
 
   const expertPermissionIds = updatedPermissionInDb
-    .filter(
-      (item) =>
-        (expertModules.includes(item.module ?? '') ||
-          (item.path ?? '').startsWith('/api/admin/disputes') ||
-          (item.path ?? '').startsWith('/api/disputes')) &&
-        ((item.path ?? '').startsWith('/api/admin/disputes') ||
-          !(item.path ?? '').startsWith('/api/admin/')) &&
-        !item.path.startsWith('/api/users/') &&
-        !['/api/auth/join-role', '/api/auth/switch-role'].includes(item.path),
+    .filter((item) =>
+      expertHasPermission(item.method, item.path.replace(':id', '1')),
     )
     .map((item) => item.id);
 

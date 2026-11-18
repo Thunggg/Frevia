@@ -1,5 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { Conversation, DirectMessage } from '@prisma/client';
+import {
+  Conversation,
+  DirectMessage,
+  NotificationType,
+} from '@prisma/client';
 import { MessageAttachmentType } from '@shared/types';
 import { createConversationSlug } from '../../shared/helper/conversation.slug';
 import { PrismaService } from '../../shared/services/prisma.service';
@@ -288,6 +292,97 @@ export class ConversationRepository {
         deletedAt: null,
       },
       data: { isRead: true },
+    });
+  }
+
+  // Lấy tên hiển thị của người gửi để ghi vào thông báo tin nhắn mới
+  async findUserDisplayName(userId: number): Promise<string> {
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+      select: {
+        profile: {
+          select: { displayName: true },
+        },
+      },
+    });
+
+    return user?.profile?.displayName || 'Someone';
+  }
+
+  // Tạo (hoặc cập nhật) thông báo tin nhắn mới cho người nhận.
+  // Mỗi hội thoại chỉ giữ 1 thông báo chưa đọc để tránh spam.
+  async upsertMessageNotification(input: {
+    userId: number;
+    conversationId: number;
+    senderId: number;
+    senderName: string;
+    message: string;
+  }) {
+    const { userId, conversationId, senderId, senderName, message } = input;
+
+    const existing = await this.prisma.notification.findFirst({
+      where: {
+        userId,
+        type: NotificationType.MESSAGE_NEW,
+        isRead: false,
+        deletedAt: null,
+        data: {
+          path: ['conversationId'],
+          equals: conversationId,
+        },
+      },
+      select: { id: true },
+    });
+
+    const preview = message.trim()
+      ? message.trim().slice(0, 120)
+      : 'Sent an attachment';
+    const data = {
+      href: `/conversations/${conversationId}`,
+      conversationId,
+      senderId,
+      senderName,
+    };
+
+    if (existing) {
+      return this.prisma.notification.update({
+        where: { id: existing.id },
+        data: {
+          title: 'New message',
+          message: preview,
+          data,
+          isRead: false,
+          createdAt: new Date(),
+          deletedAt: null,
+        },
+      });
+    }
+
+    return this.prisma.notification.create({
+      data: {
+        userId,
+        type: NotificationType.MESSAGE_NEW,
+        title: 'New message',
+        message: preview,
+        data,
+      },
+    });
+  }
+
+  // Khi người dùng đọc hội thoại -> xóa thông báo tin nhắn của hội thoại đó
+  // (đã xem tin nhắn thì thông báo không còn ý nghĩa)
+  async clearMessageNotifications(userId: number, conversationId: number) {
+    return this.prisma.notification.updateMany({
+      where: {
+        userId,
+        type: NotificationType.MESSAGE_NEW,
+        deletedAt: null,
+        data: {
+          path: ['conversationId'],
+          equals: conversationId,
+        },
+      },
+      data: { isRead: true, deletedAt: new Date() },
     });
   }
 

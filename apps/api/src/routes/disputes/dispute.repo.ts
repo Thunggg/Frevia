@@ -9,10 +9,18 @@ import {
 } from '@prisma/client';
 import { PrismaService } from '../../shared/services/prisma.service';
 import { GetDisputeListQueryType } from '@shared/types';
+import { syncContractAndJobCompletion } from '../../shared/helper/contract-activation.helper';
 
 @Injectable()
 export class DisputeRepository {
   constructor(private readonly prisma: PrismaService) {}
+
+  findActiveExpert(userId: number) {
+    return this.prisma.expert.findFirst({
+      where: { profile: { userId }, isActive: true },
+      select: { id: true },
+    });
+  }
 
   async findMilestoneWithContract(milestoneId: number) {
     return this.prisma.milestone.findUnique({
@@ -414,7 +422,7 @@ export class DisputeRepository {
       });
 
       // 2. Cập nhật Milestone với trạng thái hoàn tất và thanh toán
-      await tx.milestone.update({
+      const updatedMilestone = await tx.milestone.update({
         where: { id: data.milestoneId },
         data: {
           status: data.milestoneStatus,
@@ -422,6 +430,9 @@ export class DisputeRepository {
           completedAt: new Date(),
         },
       });
+
+      // 3. Tự động đồng bộ trạng thái hợp đồng (COMPLETED hoặc CANCELLED)
+      await syncContractAndJobCompletion(tx, updatedMilestone.contractId);
 
       return tx.dispute.findUnique({
         where: { id: data.disputeId },

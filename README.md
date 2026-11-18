@@ -1,3 +1,25 @@
+# Frevia
+
+## Local development
+
+Yêu cầu: Node >= 18, pnpm 9, PostgreSQL chạy ở `localhost:5432` với DB `frevia_local` (xem `apps/api/.env`).
+
+```bash
+pnpm install          # tự động chạy prisma generate qua postinstall
+pnpm prisma:generate  # nếu Prisma Client còn cũ (lỗi "* does not exist in type ...")
+pnpm dev              # chạy api :3002 và web :3001
+```
+
+Nếu DB chưa có enum `MilestoneStatus.LATE`:
+
+```bash
+pnpm --filter api exec prisma migrate deploy
+# hoặc, với DB đã tạo thủ công không có _prisma_migrations:
+psql -d frevia_local -c "ALTER TYPE \"MilestoneStatus\" ADD VALUE IF NOT EXISTS 'LATE';"
+```
+
+---
+
 # Turborepo starter
 
 This Turborepo starter is maintained by the Turborepo core team.

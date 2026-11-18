@@ -10,10 +10,12 @@ import {
   AccessTokenPayload,
   AuthMessage,
   REQUEST_USER_KEY,
+  RoleName,
 } from '@shared/types';
 import { Request } from 'express';
 import { IS_PUBLIC_KEY } from '../decorators/auth.decorator';
 import { SharedPermissionRepository } from '../repositories/shared-permission.repo';
+import { expertHasPermission } from '../helper/expert-permission';
 
 @Injectable()
 export class PermissionGuard implements CanActivate {
@@ -44,11 +46,14 @@ export class PermissionGuard implements CanActivate {
     const method = request.method;
     const path = request.path; // vd: /api/roles/1
 
-    const allowed = await this.sharedPermissionRepository.roleHasPermission(
-      payload.roleId,
-      method,
-      path,
-    );
+    const allowed =
+      payload.roleName === RoleName.EXPERT
+        ? expertHasPermission(method, path)
+        : await this.sharedPermissionRepository.roleHasPermission(
+            payload.roleId,
+            method,
+            path,
+          );
 
     if (!allowed) {
       // Method + path chỉ dùng để ghi log phía server: đưa chúng vào message

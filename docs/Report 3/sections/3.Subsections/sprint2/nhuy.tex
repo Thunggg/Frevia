@@ -1,0 +1,993 @@
+% =================================================================
+% Sprint 2 - Identity Verification, Client Profile Management, Social Links Management, Favorite Freelancers (nhuy)
+% Following the detailed form of the report template:
+% Function Trigger, Function Description, Screen Layout and Function Details.
+% =================================================================
+
+
+\Needspace{12\baselineskip}
+\subsection{Identity Verification}
+
+% -----------------------------------------------------------------
+% UC-18.01: Upload Identity Documents
+% -----------------------------------------------------------------
+\Needspace{12\baselineskip}
+\subsubsection{ Upload Identity Documents}
+
+\fnhead{Function Trigger}
+The actor selects Upload Identity Documents.\newline
+\textbf{Navigation path:} Home $\rightarrow$ \texttt{/\allowbreak{}account-\allowbreak{}profile (Identity Verification tab).}
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item \textbf{Primary Actor:} Freelancer.
+    \item \textbf{Supporting Systems:} Frevia Web (Next.js), Frevia BFF proxy, Frevia REST API (NestJS), Prisma ORM, and PostgreSQL database.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent Validate the active-request constraint, securely store the submitted evidence, and record the verification outcome for review.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Document-type and front/back selectors.
+    \item Webcam liveness panel for AI submission.
+    \item Submit.
+    \item Latest status badge, submission history and rejection instructions.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item The client issues an HTTP request to \texttt{POST /\allowbreak{}identity-\allowbreak{}verifications/\allowbreak{}ai-\allowbreak{}check; POST /\allowbreak{}identity-\allowbreak{}verifications/\allowbreak{}documents} via Next.js BFF proxy.
+    \item NestJS guards verify JWT authentication and validate role-based access permissions.
+    \item The backend service queries or updates entities in PostgreSQL using Prisma ORM.
+    \item The API returns the structured JSON payload and handles domain invariants consistently.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint2/nhuy/Upload Identity Documents.png}{Upload Identity Documents interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Document-type and front/back selectors.
+    \item Webcam liveness panel for AI submission.
+    \item Submit.
+    \item Latest status badge, submission history and rejection instructions.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+documentType & Supported identity-document type.\\ \hline
+front / back & Document images; both sides where required by document type.\\ \hline
+selfie / liveness & Selfie and captured liveness frames for the AI path.\\ \hline
+document file & Manual-path JPEG, PNG, WebP or PDF; maximum 5 MB under the identity business rule.\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Rejected users may resubmit after correcting the stated problem. NOT\_SUBMITTED is displayed when API status is null.
+\end{itemize}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+    \item BR-1801-01: Only an authenticated freelancer submits or reads their own verification status.
+    \item BR-1801-02: At most one active PENDING or APPROVED request is allowed per freelancer.
+    \item BR-1801-03: Documents are confidential; storage delivery and file endpoints must enforce authorization.
+    \item BR-1801-04: AI success creates PENDING for administrator review; AI rejection records REJECTED with a reason. AI transport failure must not create a successful request.
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item The actor opens \texttt{/\allowbreak{}account-\allowbreak{}profile} (Identity Verification tab) and selects Upload Identity Documents.
+    \item The application presents the current values or action confirmation; the actor supplies the required data and submits.
+    \item The API checks authentication where required, authorization, resource existence and input validity.
+    \item Validate the active-request constraint, securely store the submitted evidence, and record the verification outcome for review.
+    \item After the transaction succeeds, the screen displays the result and reloads affected data; a pending revision is labeled as awaiting review.
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Case}{Description}
+A1 & Missing or expired authentication token. Returns HTTP 401 Unauthorized.\\ \hline
+A2 & Insufficient permissions or role unauthorized. Returns HTTP 403 Forbidden.\\ \hline
+A3 & Target resource not found or soft-deleted. Returns HTTP 404 Not Found.\\ \hline
+A4 & Validation error or malformed payload. Returns HTTP 400 Bad Request.\\ \hline
+A5 & Database connectivity failure or server error. Returns HTTP 500.\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Data Name}{Description}
+Result & Validate the active-request constraint, securely store the submitted evidence, and record the verification outcome for review.\\ \hline
+Failure & Structured error without sensitive data; no successful UI state when the operation failed.\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Successful upload identity documents produces the documented response and survives a reload where data is persisted.
+    \item An unauthorized actor cannot access or modify the resource.
+    \item Invalid input and missing resources do not create a false success state or expose sensitive data.
+\end{itemize}
+
+% -----------------------------------------------------------------
+% UC-18.02: View Verification Status
+% -----------------------------------------------------------------
+\Needspace{12\baselineskip}
+\subsubsection{ View Verification Status}
+
+\fnhead{Function Trigger}
+The actor selects View Verification Status.\newline
+\textbf{Navigation path:} Home $\rightarrow$ \texttt{/\allowbreak{}account-\allowbreak{}profile (Identity Verification tab).}
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item \textbf{Primary Actor:} Freelancer.
+    \item \textbf{Supporting Systems:} Frevia Web (Next.js), Frevia BFF proxy, Frevia REST API (NestJS), Prisma ORM, and PostgreSQL database.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent Return the latest verification state and submission history with rejection notes where present.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Document-type and front/back selectors.
+    \item Webcam liveness panel for AI submission.
+    \item Submit.
+    \item Latest status badge, submission history and rejection instructions.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item The client issues an HTTP request to \texttt{GET /\allowbreak{}identity-\allowbreak{}verifications/\allowbreak{}status} via Next.js BFF proxy.
+    \item NestJS guards verify JWT authentication and validate role-based access permissions.
+    \item The backend service queries or updates entities in PostgreSQL using Prisma ORM.
+    \item The API returns the structured JSON payload and handles domain invariants consistently.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint2/nhuy/View Verification Status.png}{View Verification Status interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Document-type and front/back selectors.
+    \item Webcam liveness panel for AI submission.
+    \item Submit.
+    \item Latest status badge, submission history and rejection instructions.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+Identifier & Authenticated user context; no other user ID can replace it.\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Rejected users may resubmit after correcting the stated problem. NOT\_SUBMITTED is displayed when API status is null.
+\end{itemize}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+    \item BR-1802-01: Only an authenticated freelancer submits or reads their own verification status.
+    \item BR-1802-02: At most one active PENDING or APPROVED request is allowed per freelancer.
+    \item BR-1802-03: Documents are confidential; storage delivery and file endpoints must enforce authorization.
+    \item BR-1802-04: AI success creates PENDING for administrator review; AI rejection records REJECTED with a reason. AI transport failure must not create a successful request.
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item The actor opens \texttt{/\allowbreak{}account-\allowbreak{}profile} (Identity Verification tab) and selects View Verification Status.
+    \item The application submits the selected identifier or list filters.
+    \item The API checks authentication where required, authorization, resource existence and input validity.
+    \item Return the latest verification state and submission history with rejection notes where present.
+    \item The screen renders the response, or an explicit empty state for a valid empty collection.
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Case}{Description}
+A1 & Missing or expired authentication token. Returns HTTP 401 Unauthorized.\\ \hline
+A2 & Insufficient permissions or role unauthorized. Returns HTTP 403 Forbidden.\\ \hline
+A3 & Target resource not found or soft-deleted. Returns HTTP 404 Not Found.\\ \hline
+A4 & Validation error or malformed payload. Returns HTTP 400 Bad Request.\\ \hline
+A5 & Database connectivity failure or server error. Returns HTTP 500.\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Data Name}{Description}
+Result & Return the latest verification state and submission history with rejection notes where present.\\ \hline
+Failure & Structured error without sensitive data; no successful UI state when the operation failed.\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Successful view verification status produces the documented response and survives a reload where data is persisted.
+    \item An unauthorized actor cannot access or modify the resource.
+    \item Invalid input and missing resources do not create a false success state or expose sensitive data.
+\end{itemize}
+
+
+\Needspace{12\baselineskip}
+\subsection{Client Profile Management}
+
+% -----------------------------------------------------------------
+% UC-19.01: View Client Profile
+% -----------------------------------------------------------------
+\Needspace{12\baselineskip}
+\subsubsection{ View Client Profile}
+
+\fnhead{Function Trigger}
+The actor selects View Client Profile.\newline
+\textbf{Navigation path:} Home $\rightarrow$ \texttt{/\allowbreak{}clients/\allowbreak{}[userId]} or \texttt{/\allowbreak{}client/\allowbreak{}profile.}
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item \textbf{Primary Actor:} Guest, Client, Freelancer.
+    \item \textbf{Supporting Systems:} Frevia Web (Next.js), Frevia BFF proxy, Frevia REST API (NestJS), Prisma ORM, and PostgreSQL database.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent Combine approved public Profile, ClientProfile and SocialLink fields without private user information.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Public company header, description, website and social links.
+    \item Owner link to settings.
+    \item Company tab with name, description and website fields.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item The client issues an HTTP request to \texttt{GET /\allowbreak{}clients/\allowbreak{}:\allowbreak{}userId} via Next.js BFF proxy.
+    \item NestJS guards verify JWT authentication and validate role-based access permissions.
+    \item The backend service queries or updates entities in PostgreSQL using Prisma ORM.
+    \item The API returns the structured JSON payload and handles domain invariants consistently.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint2/nhuy/View Client Profile.png}{View Client Profile interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Public company header, description, website and social links.
+    \item Owner link to settings.
+    \item Company tab with name, description and website fields.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+Identifier & Positive resource ID from the route; ownership is checked by the API.\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Input parameters must strictly adhere to the required data types, formats, and boundary constraints.
+    \item The active session must be valid and authenticated with appropriate role authorizations.
+\end{itemize}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+    \item BR-1901-01: Public client output contains approved company and profile fields, never password hashes, payment tokens or private identity documents.
+    \item BR-1901-02: Only the authenticated Client updates their own company; the server derives the user ID from authentication.
+    \item BR-1901-03: Apply the profile revision policy when strength is below 20 percent.
+    \item BR-1901-04: Industry and location are outside the current ClientProfile schema. Hiring statistics are not part of the current response contract.
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item The actor opens \texttt{/\allowbreak{}clients/\allowbreak{}[userId]}; \texttt{/\allowbreak{}client/\allowbreak{}profile} and selects View Client Profile.
+    \item The application submits the selected identifier or list filters.
+    \item The API checks authentication where required, authorization, resource existence and input validity.
+    \item Combine approved public Profile, ClientProfile and SocialLink fields without private user information.
+    \item The screen renders the response, or an explicit empty state for a valid empty collection.
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Case}{Description}
+A1 & Missing or expired authentication token. Returns HTTP 401 Unauthorized.\\ \hline
+A2 & Insufficient permissions or role unauthorized. Returns HTTP 403 Forbidden.\\ \hline
+A3 & Target resource not found or soft-deleted. Returns HTTP 404 Not Found.\\ \hline
+A4 & Validation error or malformed payload. Returns HTTP 400 Bad Request.\\ \hline
+A5 & Database connectivity failure or server error. Returns HTTP 500.\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Data Name}{Description}
+Result & Combine approved public Profile, ClientProfile and SocialLink fields without private user information.\\ \hline
+Failure & Structured error without sensitive data; no successful UI state when the operation failed.\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Successful view client profile produces the documented response and survives a reload where data is persisted.
+    \item An unauthorized actor cannot access or modify the resource.
+    \item Invalid input and missing resources do not create a false success state or expose sensitive data.
+\end{itemize}
+
+% -----------------------------------------------------------------
+% UC-19.02: Update Company Information
+% -----------------------------------------------------------------
+\Needspace{12\baselineskip}
+\subsubsection{ Update Company Information}
+
+\fnhead{Function Trigger}
+The actor selects Update Company Information.\newline
+\textbf{Navigation path:} Home $\rightarrow$ \texttt{/\allowbreak{}clients/\allowbreak{}[userId]} or \texttt{/\allowbreak{}client/\allowbreak{}profile.}
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item \textbf{Primary Actor:} Client.
+    \item \textbf{Supporting Systems:} Frevia Web (Next.js), Frevia BFF proxy, Frevia REST API (NestJS), Prisma ORM, and PostgreSQL database.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent Save or submit the authenticated Client company information according to the revision policy.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Public company header, description, website and social links.
+    \item Owner link to settings.
+    \item Company tab with name, description and website fields.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item The client issues an HTTP request to \texttt{PUT /\allowbreak{}clients/\allowbreak{}me/\allowbreak{}profile} via Next.js BFF proxy.
+    \item NestJS guards verify JWT authentication and validate role-based access permissions.
+    \item The backend service queries or updates entities in PostgreSQL using Prisma ORM.
+    \item The API returns the structured JSON payload and handles domain invariants consistently.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint2/nhuy/Update Company Information.png}{Update Company Information interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Public company header, description, website and social links.
+    \item Owner link to settings.
+    \item Company tab with name, description and website fields.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+companyName & Required trimmed company name, up to 255 characters.\\ \hline
+companyDescription & Optional company description up to 5,000 characters.\\ \hline
+website & Optional HTTP\texttt{/\allowbreak{}HTTPS} URL, at most 255 characters.\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Input parameters must strictly adhere to the required data types, formats, and boundary constraints.
+    \item The active session must be valid and authenticated with appropriate role authorizations.
+\end{itemize}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+    \item BR-1902-01: Public client output contains approved company and profile fields, never password hashes, payment tokens or private identity documents.
+    \item BR-1902-02: Only the authenticated Client updates their own company; the server derives the user ID from authentication.
+    \item BR-1902-03: Apply the profile revision policy when strength is below 20 percent.
+    \item BR-1902-04: Industry and location are outside the current ClientProfile schema. Hiring statistics are not part of the current response contract.
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item The actor opens \texttt{/\allowbreak{}clients/\allowbreak{}[userId]}; \texttt{/\allowbreak{}client/\allowbreak{}profile} and selects Update Company Information.
+    \item The application presents the current values or action confirmation; the actor supplies the required data and submits.
+    \item The API checks authentication where required, authorization, resource existence and input validity.
+    \item Save or submit the authenticated Client company information according to the revision policy.
+    \item After the transaction succeeds, the screen displays the result and reloads affected data; a pending revision is labeled as awaiting review.
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Case}{Description}
+A1 & Missing or expired authentication token. Returns HTTP 401 Unauthorized.\\ \hline
+A2 & Insufficient permissions or role unauthorized. Returns HTTP 403 Forbidden.\\ \hline
+A3 & Target resource not found or soft-deleted. Returns HTTP 404 Not Found.\\ \hline
+A4 & Validation error or malformed payload. Returns HTTP 400 Bad Request.\\ \hline
+A5 & Database connectivity failure or server error. Returns HTTP 500.\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Data Name}{Description}
+Result & Save or submit the authenticated Client company information according to the revision policy.\\ \hline
+Failure & Structured error without sensitive data; no successful UI state when the operation failed.\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Successful update company information produces the documented response and survives a reload where data is persisted.
+    \item An unauthorized actor cannot access or modify the resource.
+    \item Invalid input and missing resources do not create a false success state or expose sensitive data.
+\end{itemize}
+
+
+\Needspace{12\baselineskip}
+\subsection{Social Links Management}
+
+% -----------------------------------------------------------------
+% UC-20.01: View Social Link List
+% -----------------------------------------------------------------
+\Needspace{12\baselineskip}
+\subsubsection{ View Social Link List}
+
+\fnhead{Function Trigger}
+The actor selects View Social Link List.\newline
+\textbf{Navigation path:} Home $\rightarrow$ \texttt{/\allowbreak{}account-\allowbreak{}profile (Social Links)} or \texttt{/\allowbreak{}client/\allowbreak{}profile} or \texttt{public profile.}
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item \textbf{Primary Actor:} Client, Freelancer.
+    \item \textbf{Supporting Systems:} Frevia Web (Next.js), Frevia BFF proxy, Frevia REST API (NestJS), Prisma ORM, and PostgreSQL database.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent Retrieve links for the current account settings or the public client response; public freelancer rendering is a tracked gap.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Platform selector and URL input.
+    \item Saved links with labels and external-link icons.
+    \item Delete confirmation.
+    \item Public link area with empty-state handling.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item The client issues an HTTP request to \texttt{GET /\allowbreak{}social-\allowbreak{}links; GET /\allowbreak{}clients/\allowbreak{}:\allowbreak{}userId} via Next.js BFF proxy.
+    \item NestJS guards verify JWT authentication and validate role-based access permissions.
+    \item The backend service queries or updates entities in PostgreSQL using Prisma ORM.
+    \item The API returns the structured JSON payload and handles domain invariants consistently.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint2/nhuy/View Social Link List.png}{View Social Link List interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Platform selector and URL input.
+    \item Saved links with labels and external-link icons.
+    \item Delete confirmation.
+    \item Public link area with empty-state handling.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+Selection & Current account or selected profile\texttt{/\allowbreak{}contract}; no pagination is assumed unless exposed by the endpoint.\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Input parameters must strictly adhere to the required data types, formats, and boundary constraints.
+    \item The active session must be valid and authenticated with appropriate role authorizations.
+\end{itemize}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+    \item BR-2001-01: At most one link per platform per profile is allowed, including concurrent submissions.
+    \item BR-2001-02: Only the owning user can add or hard-delete a social link.
+    \item BR-2001-03: Open approved external links in a new tab with rel="noopener noreferrer".
+    \item BR-2001-04: Profile.id links the SocialLink table; the authenticated User.id resolves that profile.
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item The actor opens \texttt{/\allowbreak{}account-\allowbreak{}profile} (Social Links); \texttt{/\allowbreak{}client/\allowbreak{}profile}; public profile and selects View Social Link List.
+    \item The application submits the selected identifier or list filters.
+    \item The API checks authentication where required, authorization, resource existence and input validity.
+    \item Retrieve links for the current account settings or the public client response; public freelancer rendering is a tracked gap.
+    \item The screen renders the response, or an explicit empty state for a valid empty collection.
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Case}{Description}
+A1 & Missing or expired authentication token. Returns HTTP 401 Unauthorized.\\ \hline
+A2 & Insufficient permissions or role unauthorized. Returns HTTP 403 Forbidden.\\ \hline
+A3 & Target resource not found or soft-deleted. Returns HTTP 404 Not Found.\\ \hline
+A4 & Validation error or malformed payload. Returns HTTP 400 Bad Request.\\ \hline
+A5 & Database connectivity failure or server error. Returns HTTP 500.\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Data Name}{Description}
+Result & Retrieve links for the current account settings or the public client response; public freelancer rendering is a tracked gap.\\ \hline
+Failure & Structured error without sensitive data; no successful UI state when the operation failed.\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Successful view social link list produces the documented response and survives a reload where data is persisted.
+    \item An unauthorized actor cannot access or modify the resource.
+    \item Invalid input and missing resources do not create a false success state or expose sensitive data.
+\end{itemize}
+
+% -----------------------------------------------------------------
+% UC-20.02: Add Social Link
+% -----------------------------------------------------------------
+\Needspace{12\baselineskip}
+\subsubsection{ Add Social Link}
+
+\fnhead{Function Trigger}
+The actor selects Add Social Link.\newline
+\textbf{Navigation path:} Home $\rightarrow$ \texttt{/\allowbreak{}account-\allowbreak{}profile (Social Links)} or \texttt{/\allowbreak{}client/\allowbreak{}profile} or \texttt{public profile.}
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item \textbf{Primary Actor:} Client, Freelancer.
+    \item \textbf{Supporting Systems:} Frevia Web (Next.js), Frevia BFF proxy, Frevia REST API (NestJS), Prisma ORM, and PostgreSQL database.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent Validate the platform and external URL, then insert one link on the authenticated user profile.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Platform selector and URL input.
+    \item Saved links with labels and external-link icons.
+    \item Delete confirmation.
+    \item Public link area with empty-state handling.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item The client issues an HTTP request to \texttt{POST /\allowbreak{}social-\allowbreak{}links} via Next.js BFF proxy.
+    \item NestJS guards verify JWT authentication and validate role-based access permissions.
+    \item The backend service queries or updates entities in PostgreSQL using Prisma ORM.
+    \item The API returns the structured JSON payload and handles domain invariants consistently.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint2/nhuy/Add Social Link.png}{Add Social Link interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Platform selector and URL input.
+    \item Saved links with labels and external-link icons.
+    \item Delete confirmation.
+    \item Public link area with empty-state handling.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+platform & One supported social platform enum value.\\ \hline
+url & Required HTTP\texttt{/\allowbreak{}HTTPS} URL up to the SocialLink varchar(500) limit.\\ \hline
+id & SocialLink.id of the link selected for deletion.\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Input parameters must strictly adhere to the required data types, formats, and boundary constraints.
+    \item The active session must be valid and authenticated with appropriate role authorizations.
+\end{itemize}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+    \item BR-2002-01: At most one link per platform per profile is allowed, including concurrent submissions.
+    \item BR-2002-02: Only the owning user can add or hard-delete a social link.
+    \item BR-2002-03: Open approved external links in a new tab with rel="noopener noreferrer".
+    \item BR-2002-04: Profile.id links the SocialLink table; the authenticated User.id resolves that profile.
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item The actor opens \texttt{/\allowbreak{}account-\allowbreak{}profile} (Social Links); \texttt{/\allowbreak{}client/\allowbreak{}profile}; public profile and selects Add Social Link.
+    \item The application presents the current values or action confirmation; the actor supplies the required data and submits.
+    \item The API checks authentication where required, authorization, resource existence and input validity.
+    \item Validate the platform and external URL, then insert one link on the authenticated user profile.
+    \item After the transaction succeeds, the screen displays the result and reloads affected data; a pending revision is labeled as awaiting review.
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Case}{Description}
+A1 & Missing or expired authentication token. Returns HTTP 401 Unauthorized.\\ \hline
+A2 & Insufficient permissions or role unauthorized. Returns HTTP 403 Forbidden.\\ \hline
+A3 & Target resource not found or soft-deleted. Returns HTTP 404 Not Found.\\ \hline
+A4 & Validation error or malformed payload. Returns HTTP 400 Bad Request.\\ \hline
+A5 & Database connectivity failure or server error. Returns HTTP 500.\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Data Name}{Description}
+Result & Validate the platform and external URL, then insert one link on the authenticated user profile.\\ \hline
+Failure & Structured error without sensitive data; no successful UI state when the operation failed.\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Successful add social link produces the documented response and survives a reload where data is persisted.
+    \item An unauthorized actor cannot access or modify the resource.
+    \item Invalid input and missing resources do not create a false success state or expose sensitive data.
+\end{itemize}
+
+% -----------------------------------------------------------------
+% UC-20.03: Delete Social Link
+% -----------------------------------------------------------------
+\Needspace{12\baselineskip}
+\subsubsection{ Delete Social Link}
+
+\fnhead{Function Trigger}
+The actor selects Delete Social Link.\newline
+\textbf{Navigation path:} Home $\rightarrow$ \texttt{/\allowbreak{}account-\allowbreak{}profile (Social Links)} or \texttt{/\allowbreak{}client/\allowbreak{}profile} or \texttt{public profile.}
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item \textbf{Primary Actor:} Client, Freelancer.
+    \item \textbf{Supporting Systems:} Frevia Web (Next.js), Frevia BFF proxy, Frevia REST API (NestJS), Prisma ORM, and PostgreSQL database.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent Hard-delete the selected owned social link after confirmation.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Platform selector and URL input.
+    \item Saved links with labels and external-link icons.
+    \item Delete confirmation.
+    \item Public link area with empty-state handling.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item The client issues an HTTP request to \texttt{DELETE /\allowbreak{}social-\allowbreak{}links/\allowbreak{}:\allowbreak{}id} via Next.js BFF proxy.
+    \item NestJS guards verify JWT authentication and validate role-based access permissions.
+    \item The backend service queries or updates entities in PostgreSQL using Prisma ORM.
+    \item The API returns the structured JSON payload and handles domain invariants consistently.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint2/nhuy/Delete Social Link.png}{Delete Social Link interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Platform selector and URL input.
+    \item Saved links with labels and external-link icons.
+    \item Delete confirmation.
+    \item Public link area with empty-state handling.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+Identifier & Positive resource ID from the route; ownership is checked by the API.\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Input parameters must strictly adhere to the required data types, formats, and boundary constraints.
+    \item The active session must be valid and authenticated with appropriate role authorizations.
+\end{itemize}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+    \item BR-2003-01: At most one link per platform per profile is allowed, including concurrent submissions.
+    \item BR-2003-02: Only the owning user can add or hard-delete a social link.
+    \item BR-2003-03: Open approved external links in a new tab with rel="noopener noreferrer".
+    \item BR-2003-04: Profile.id links the SocialLink table; the authenticated User.id resolves that profile.
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item The actor opens \texttt{/\allowbreak{}account-\allowbreak{}profile} (Social Links); \texttt{/\allowbreak{}client/\allowbreak{}profile}; public profile and selects Delete Social Link.
+    \item The application presents the current values or action confirmation; the actor supplies the required data and submits.
+    \item The API checks authentication where required, authorization, resource existence and input validity.
+    \item Hard-delete the selected owned social link after confirmation.
+    \item After the transaction succeeds, the screen displays the result and reloads affected data; a pending revision is labeled as awaiting review.
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Case}{Description}
+A1 & Missing or expired authentication token. Returns HTTP 401 Unauthorized.\\ \hline
+A2 & Insufficient permissions or role unauthorized. Returns HTTP 403 Forbidden.\\ \hline
+A3 & Target resource not found or soft-deleted. Returns HTTP 404 Not Found.\\ \hline
+A4 & Validation error or malformed payload. Returns HTTP 400 Bad Request.\\ \hline
+A5 & Database connectivity failure or server error. Returns HTTP 500.\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Data Name}{Description}
+Result & Hard-delete the selected owned social link after confirmation.\\ \hline
+Failure & Structured error without sensitive data; no successful UI state when the operation failed.\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Successful delete social link produces the documented response and survives a reload where data is persisted.
+    \item An unauthorized actor cannot access or modify the resource.
+    \item Invalid input and missing resources do not create a false success state or expose sensitive data.
+\end{itemize}
+
+
+\Needspace{12\baselineskip}
+\subsection{Favorite Freelancers}
+
+% -----------------------------------------------------------------
+% UC-21.01: View Favorite Freelancer List
+% -----------------------------------------------------------------
+\Needspace{12\baselineskip}
+\subsubsection{ View Favorite Freelancer List}
+
+\fnhead{Function Trigger}
+The actor selects View Favorite Freelancer List.\newline
+\textbf{Navigation path:} Home $\rightarrow$ \texttt{/\allowbreak{}client/\allowbreak{}profile (Favorites)} or \texttt{/\allowbreak{}profiles/\allowbreak{}[id].}
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item \textbf{Primary Actor:} Client.
+    \item \textbf{Supporting Systems:} Frevia Web (Next.js), Frevia BFF proxy, Frevia REST API (NestJS), Prisma ORM, and PostgreSQL database.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent Load the current Client favorites and join public freelancer details.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Favorite toggle on public freelancer profile.
+    \item Favorites list with name, title, skills, profile link and Remove action.
+    \item Empty state.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item The client issues an HTTP request to \texttt{GET /\allowbreak{}favorites/\allowbreak{}freelancers} via Next.js BFF proxy.
+    \item NestJS guards verify JWT authentication and validate role-based access permissions.
+    \item The backend service queries or updates entities in PostgreSQL using Prisma ORM.
+    \item The API returns the structured JSON payload and handles domain invariants consistently.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint2/nhuy/View Favorite Freelancer List.png}{View Favorite Freelancer List interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Favorite toggle on public freelancer profile.
+    \item Favorites list with name, title, skills, profile link and Remove action.
+    \item Empty state.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+Selection & Current account or selected profile\texttt{/\allowbreak{}contract}; no pagination is assumed unless exposed by the endpoint.\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item A successful add must be visible after list reload, including a new freelancer with minimal professional data.
+\end{itemize}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+    \item BR-2101-01: Only an authenticated Client manages their own favorites.
+    \item BR-2101-02: Reject self-favoriting and targets without an active Freelancer role.
+    \item BR-2101-03: The composite key (clientId, freelancerId) prevents duplicate relationships.
+    \item BR-2101-04: Removal hard-deletes only the relationship; no freelancer account or profile is deleted.
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item The actor opens \texttt{/\allowbreak{}client/\allowbreak{}profile} (Favorites); \texttt{/\allowbreak{}profiles/\allowbreak{}[id]} and selects View Favorite Freelancer List.
+    \item The application submits the selected identifier or list filters.
+    \item The API checks authentication where required, authorization, resource existence and input validity.
+    \item Load the current Client favorites and join public freelancer details.
+    \item The screen renders the response, or an explicit empty state for a valid empty collection.
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Case}{Description}
+A1 & Missing or expired authentication token. Returns HTTP 401 Unauthorized.\\ \hline
+A2 & Insufficient permissions or role unauthorized. Returns HTTP 403 Forbidden.\\ \hline
+A3 & Target resource not found or soft-deleted. Returns HTTP 404 Not Found.\\ \hline
+A4 & Validation error or malformed payload. Returns HTTP 400 Bad Request.\\ \hline
+A5 & Database connectivity failure or server error. Returns HTTP 500.\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Data Name}{Description}
+Result & Load the current Client favorites and join public freelancer details.\\ \hline
+Failure & Structured error without sensitive data; no successful UI state when the operation failed.\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Successful view favorite freelancer list produces the documented response and survives a reload where data is persisted.
+    \item An unauthorized actor cannot access or modify the resource.
+    \item Invalid input and missing resources do not create a false success state or expose sensitive data.
+\end{itemize}
+
+% -----------------------------------------------------------------
+% UC-21.02: Add Freelancer to Favorites
+% -----------------------------------------------------------------
+\Needspace{12\baselineskip}
+\subsubsection{ Add Freelancer to Favorites}
+
+\fnhead{Function Trigger}
+The actor selects Add Freelancer to Favorites.\newline
+\textbf{Navigation path:} Home $\rightarrow$ \texttt{/\allowbreak{}client/\allowbreak{}profile (Favorites)} or \texttt{/\allowbreak{}profiles/\allowbreak{}[id].}
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item \textbf{Primary Actor:} Client.
+    \item \textbf{Supporting Systems:} Frevia Web (Next.js), Frevia BFF proxy, Frevia REST API (NestJS), Prisma ORM, and PostgreSQL database.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent Insert a unique relationship from the current Client to an active freelancer.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Favorite toggle on public freelancer profile.
+    \item Favorites list with name, title, skills, profile link and Remove action.
+    \item Empty state.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item The client issues an HTTP request to \texttt{POST /\allowbreak{}favorites/\allowbreak{}freelancers/\allowbreak{}:\allowbreak{}freelancerId} via Next.js BFF proxy.
+    \item NestJS guards verify JWT authentication and validate role-based access permissions.
+    \item The backend service queries or updates entities in PostgreSQL using Prisma ORM.
+    \item The API returns the structured JSON payload and handles domain invariants consistently.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint2/nhuy/Add Freelancer to Favorites.png}{Add Freelancer to Favorites interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Favorite toggle on public freelancer profile.
+    \item Favorites list with name, title, skills, profile link and Remove action.
+    \item Empty state.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+freelancerId & Target freelancer User.id, not Profile.id.\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item A successful add must be visible after list reload, including a new freelancer with minimal professional data.
+\end{itemize}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+    \item BR-2102-01: Only an authenticated Client manages their own favorites.
+    \item BR-2102-02: Reject self-favoriting and targets without an active Freelancer role.
+    \item BR-2102-03: The composite key (clientId, freelancerId) prevents duplicate relationships.
+    \item BR-2102-04: Removal hard-deletes only the relationship; no freelancer account or profile is deleted.
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item The actor opens \texttt{/\allowbreak{}client/\allowbreak{}profile} (Favorites); \texttt{/\allowbreak{}profiles/\allowbreak{}[id]} and selects Add Freelancer to Favorites.
+    \item The application presents the current values or action confirmation; the actor supplies the required data and submits.
+    \item The API checks authentication where required, authorization, resource existence and input validity.
+    \item Insert a unique relationship from the current Client to an active freelancer.
+    \item After the transaction succeeds, the screen displays the result and reloads affected data; a pending revision is labeled as awaiting review.
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Case}{Description}
+A1 & Missing or expired authentication token. Returns HTTP 401 Unauthorized.\\ \hline
+A2 & Insufficient permissions or role unauthorized. Returns HTTP 403 Forbidden.\\ \hline
+A3 & Target resource not found or soft-deleted. Returns HTTP 404 Not Found.\\ \hline
+A4 & Validation error or malformed payload. Returns HTTP 400 Bad Request.\\ \hline
+A5 & Database connectivity failure or server error. Returns HTTP 500.\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Data Name}{Description}
+Result & Insert a unique relationship from the current Client to an active freelancer.\\ \hline
+Failure & Structured error without sensitive data; no successful UI state when the operation failed.\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Successful add freelancer to favorites produces the documented response and survives a reload where data is persisted.
+    \item An unauthorized actor cannot access or modify the resource.
+    \item Invalid input and missing resources do not create a false success state or expose sensitive data.
+\end{itemize}
+
+% -----------------------------------------------------------------
+% UC-21.03: Remove Freelancer from Favorites
+% -----------------------------------------------------------------
+\Needspace{12\baselineskip}
+\subsubsection{ Remove Freelancer from Favorites}
+
+\fnhead{Function Trigger}
+The actor selects Remove Freelancer from Favorites.\newline
+\textbf{Navigation path:} Home $\rightarrow$ \texttt{/\allowbreak{}client/\allowbreak{}profile (Favorites)} or \texttt{/\allowbreak{}profiles/\allowbreak{}[id].}
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item \textbf{Primary Actor:} Client.
+    \item \textbf{Supporting Systems:} Frevia Web (Next.js), Frevia BFF proxy, Frevia REST API (NestJS), Prisma ORM, and PostgreSQL database.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent Hard-delete the current Client relationship and update the favorite toggle and list.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Favorite toggle on public freelancer profile.
+    \item Favorites list with name, title, skills, profile link and Remove action.
+    \item Empty state.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item The client issues an HTTP request to \texttt{DELETE /\allowbreak{}favorites/\allowbreak{}freelancers/\allowbreak{}:\allowbreak{}freelancerId} via Next.js BFF proxy.
+    \item NestJS guards verify JWT authentication and validate role-based access permissions.
+    \item The backend service queries or updates entities in PostgreSQL using Prisma ORM.
+    \item The API returns the structured JSON payload and handles domain invariants consistently.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint2/nhuy/Remove Freelancer from Favorites.png}{Remove Freelancer from Favorites interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Favorite toggle on public freelancer profile.
+    \item Favorites list with name, title, skills, profile link and Remove action.
+    \item Empty state.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+Identifier & Positive resource ID from the route; ownership is checked by the API.\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item A successful add must be visible after list reload, including a new freelancer with minimal professional data.
+\end{itemize}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+    \item BR-2103-01: Only an authenticated Client manages their own favorites.
+    \item BR-2103-02: Reject self-favoriting and targets without an active Freelancer role.
+    \item BR-2103-03: The composite key (clientId, freelancerId) prevents duplicate relationships.
+    \item BR-2103-04: Removal hard-deletes only the relationship; no freelancer account or profile is deleted.
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item The actor opens \texttt{/\allowbreak{}client/\allowbreak{}profile} (Favorites); \texttt{/\allowbreak{}profiles/\allowbreak{}[id]} and selects Remove Freelancer from Favorites.
+    \item The application presents the current values or action confirmation; the actor supplies the required data and submits.
+    \item The API checks authentication where required, authorization, resource existence and input validity.
+    \item Hard-delete the current Client relationship and update the favorite toggle and list.
+    \item After the transaction succeeds, the screen displays the result and reloads affected data; a pending revision is labeled as awaiting review.
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Case}{Description}
+A1 & Missing or expired authentication token. Returns HTTP 401 Unauthorized.\\ \hline
+A2 & Insufficient permissions or role unauthorized. Returns HTTP 403 Forbidden.\\ \hline
+A3 & Target resource not found or soft-deleted. Returns HTTP 404 Not Found.\\ \hline
+A4 & Validation error or malformed payload. Returns HTTP 400 Bad Request.\\ \hline
+A5 & Database connectivity failure or server error. Returns HTTP 500.\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Data Name}{Description}
+Result & Hard-delete the current Client relationship and update the favorite toggle and list.\\ \hline
+Failure & Structured error without sensitive data; no successful UI state when the operation failed.\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Successful remove freelancer from favorites produces the documented response and survives a reload where data is persisted.
+    \item An unauthorized actor cannot access or modify the resource.
+    \item Invalid input and missing resources do not create a false success state or expose sensitive data.
+\end{itemize}

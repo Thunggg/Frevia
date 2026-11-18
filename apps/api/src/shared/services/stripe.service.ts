@@ -195,6 +195,7 @@ export class StripeService {
     successUrl,
     cancelUrl,
     metadata,
+    captureMethod,
   }: {
     amountInCents: number;
     currency?: string;
@@ -205,6 +206,7 @@ export class StripeService {
     successUrl: string;
     cancelUrl: string;
     metadata?: Record<string, string>;
+    captureMethod?: 'manual' | 'automatic';
   }): Promise<Stripe.Checkout.Session> {
     return this.stripe.checkout.sessions.create({
       mode: 'payment',
@@ -232,6 +234,7 @@ export class StripeService {
       payment_intent_data: {
         metadata,
         setup_future_usage: 'off_session',
+        ...(captureMethod ? { capture_method: captureMethod } : {}),
       },
     });
   }

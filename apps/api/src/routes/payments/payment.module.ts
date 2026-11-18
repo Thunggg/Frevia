@@ -22,4 +22,4 @@ import { PaymentAutomationService } from '../../shared/services/payment-automati
     PaymentAutomationService,
   ],
 })
-export class PaymentModule { }
+export class PaymentModule {}

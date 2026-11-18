@@ -164,8 +164,16 @@ export function ContractLifecyclePanel({
     contract.status === "PENDING_SIGN" &&
     role === "FREELANCER" &&
     !contract.signedByClient;
+  const hasUnsettledMilestones =
+    Array.isArray(contract.milestones) &&
+    contract.milestones.some(
+      (m) => m.paymentStatus !== "RELEASED" && m.paymentStatus !== "REFUNDED"
+    );
   const canComplete =
-    role === "CLIENT" && contract.status === "ACTIVE" && canCompleteContract;
+    role === "CLIENT" &&
+    contract.status === "ACTIVE" &&
+    canCompleteContract &&
+    !hasUnsettledMilestones;
   const isCompleted = contract.status === "COMPLETED";
   const statusText = (CONTRACT_STATUSES as readonly string[]).includes(
     contract.status,
