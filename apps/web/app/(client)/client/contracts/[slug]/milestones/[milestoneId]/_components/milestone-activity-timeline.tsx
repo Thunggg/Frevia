@@ -1,6 +1,6 @@
 "use client";
 
-import { useFormatter } from "next-intl";
+import { useFormatter, useTranslations } from "next-intl";
 import {
   CheckCircle2,
   Clock,
@@ -44,16 +44,18 @@ export function MilestoneActivityTimeline({
   submissions,
 }: MilestoneActivityTimelineProps) {
   const format = useFormatter();
+  const t = useTranslations("milestoneWorkspace.activity");
+  const tOverview = useTranslations("milestoneWorkspace.overview");
 
   const clientName =
     contract.client?.profile?.displayName ||
     contract.client?.email?.split("@")[0] ||
-    "Client";
+    tOverview("clientRole");
 
   const freelancerName =
     contract.freelancer?.profile?.displayName ||
     contract.freelancer?.email?.split("@")[0] ||
-    "Freelancer";
+    tOverview("freelancerRole");
 
   const formatDate = (date: string | Date | null | undefined): string => {
     if (!date) return "";
@@ -74,8 +76,11 @@ export function MilestoneActivityTimeline({
     events.push({
       id: "completed",
       type: "approved",
-      title: "Accepted & Released",
-      description: `Approved by ${clientName}. Payment of $${Number(milestone.amount).toFixed(2)} transferred to freelancer.`,
+      title: t("acceptedReleased"),
+      description: t("acceptedReleasedDesc", {
+        name: clientName,
+        amount: `$${Number(milestone.amount).toFixed(2)}`,
+      }),
       timestamp: milestone.completedAt,
       actor: clientName,
     });
@@ -89,8 +94,8 @@ export function MilestoneActivityTimeline({
       events.push({
         id: `approved-${sub.id}`,
         type: "approved",
-        title: "Deliverables Approved",
-        description: `Accepted by ${clientName}. Escrow payout approved.`,
+        title: t("deliverablesApproved"),
+        description: t("deliverablesApprovedDesc", { name: clientName }),
         timestamp: sub.reviewedAt,
         actor: clientName,
       });
@@ -100,8 +105,9 @@ export function MilestoneActivityTimeline({
       events.push({
         id: `changes-${sub.id}`,
         type: "changes_requested",
-        title: "Correction Requested",
-        description: sub.changeRequestMessage || "Revisions required by client.",
+        title: t("correctionRequested"),
+        description:
+          sub.changeRequestMessage || t("revisionsRequiredFallback"),
         timestamp: sub.reviewedAt,
         actor: clientName,
       });
@@ -110,10 +116,16 @@ export function MilestoneActivityTimeline({
     events.push({
       id: `sub-${sub.id}`,
       type: "submitted",
-      title: `Deliverables Submitted`,
+      title: t("deliverablesSubmitted"),
       description: sub.message
-        ? `Attempt #${attemptNumber}: "${sub.message.slice(0, 70)}${sub.message.length > 70 ? "..." : ""}"`
-        : `Attempt #${attemptNumber} submitted by ${freelancerName}.`,
+        ? t("attemptWithMessage", {
+            number: attemptNumber,
+            message: `${sub.message.slice(0, 70)}${sub.message.length > 70 ? "..." : ""}`,
+          })
+        : t("attemptSubmittedBy", {
+            number: attemptNumber,
+            name: freelancerName,
+          }),
       timestamp: sub.submittedAt,
       actor: freelancerName,
     });
@@ -129,8 +141,8 @@ export function MilestoneActivityTimeline({
     events.push({
       id: "started",
       type: "started",
-      title: "Work In Progress",
-      description: `Freelancer ${freelancerName} started active milestone work.`,
+      title: t("workInProgress"),
+      description: t("workInProgressDesc", { name: freelancerName }),
       timestamp: milestone.updatedAt,
       actor: freelancerName,
     });
@@ -144,8 +156,10 @@ export function MilestoneActivityTimeline({
     events.push({
       id: "funded",
       type: "funded",
-      title: "Escrow Funded",
-      description: `$${Number(milestone.amount).toFixed(2)} USD deposited and secured in escrow.`,
+      title: t("escrowFunded"),
+      description: t("escrowFundedDesc", {
+        amount: `$${Number(milestone.amount).toFixed(2)}`,
+      }),
       timestamp: milestone.updatedAt,
       actor: clientName,
     });
@@ -155,8 +169,10 @@ export function MilestoneActivityTimeline({
   events.push({
     id: "created",
     type: "created",
-    title: "Milestone Created",
-    description: `Budget set at $${Number(milestone.amount).toFixed(2)} USD.`,
+    title: t("milestoneCreated"),
+    description: t("milestoneCreatedDesc", {
+      amount: `$${Number(milestone.amount).toFixed(2)}`,
+    }),
     timestamp: milestone.createdAt,
     actor: clientName,
   });
@@ -207,10 +223,10 @@ export function MilestoneActivityTimeline({
     <div className="space-y-3 font-sans pt-1">
       <div className="border-b border-border/40 pb-2">
         <h3 className="text-xs font-semibold text-foreground">
-          Activity History
+          {t("heading")}
         </h3>
         <p className="text-[11px] text-muted-foreground">
-          Lifecycle and milestone event log
+          {t("subheading")}
         </p>
       </div>
 
@@ -246,7 +262,7 @@ export function MilestoneActivityTimeline({
 
               {event.actor && (
                 <p className="text-[10px] text-muted-foreground/75">
-                  By {event.actor}
+                  {t("byActor", { actor: event.actor })}
                 </p>
               )}
             </div>

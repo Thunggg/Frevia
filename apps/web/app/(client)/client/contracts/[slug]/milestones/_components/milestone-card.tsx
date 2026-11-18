@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useFormatter } from "next-intl";
+import { useFormatter, useTranslations } from "next-intl";
 import {
   AlertTriangle,
   ArrowRight,
@@ -71,6 +71,7 @@ export function MilestoneCard({
   onViewDispute,
 }: MilestoneCardProps) {
   const format = useFormatter();
+  const t = useTranslations("milestoneWorkspace.card");
   const { can, canAny } = useActionPermission();
 
   const canViewDetail = can("GET", "/api/contracts/:contractId/milestones/:id");
@@ -98,7 +99,7 @@ export function MilestoneCard({
   const milestoneCode = `MLS-${String(milestone.id).padStart(4, "0")}`;
 
   const formatDate = (date: string | Date | null | undefined): string => {
-    if (!date) return "Not specified";
+    if (!date) return t("notSpecified");
     const d = new Date(date);
     return format.dateTime(d, {
       year: "numeric",
@@ -114,7 +115,7 @@ export function MilestoneCard({
     new Date(milestone.dueDate).getTime() < new Date().getTime();
 
   const getDueCountdown = () => {
-    if (milestone.status === "COMPLETED") return "Completed";
+    if (milestone.status === "COMPLETED") return t("completed");
     if (!milestone.dueDate) return null;
     const now = new Date().getTime();
     const target = new Date(milestone.dueDate).getTime();
@@ -122,10 +123,10 @@ export function MilestoneCard({
 
     if (diffDays < 0 || milestone.status === "LATE") {
       const overdueDays = Math.abs(diffDays);
-      return `${overdueDays} ${overdueDays === 1 ? "day" : "days"} overdue`;
+      return t("daysOverdue", { count: overdueDays });
     }
-    if (diffDays === 0) return "Due today";
-    return `${diffDays} ${diffDays === 1 ? "day" : "days"} left`;
+    if (diffDays === 0) return t("dueToday");
+    return t("daysLeft", { count: diffDays });
   };
 
   const isClient = !isFreelancer;
@@ -157,49 +158,49 @@ export function MilestoneCard({
         return (
           <span className="inline-flex items-center gap-1.5 text-xs font-medium text-emerald-600 dark:text-emerald-400">
             <CheckCircle2 className="size-3.5" />
-            <span>Completed</span>
+            <span>{t("statusCompleted")}</span>
           </span>
         );
       case "SUBMITTED":
         return (
           <span className="inline-flex items-center gap-1.5 text-xs font-medium text-[#0069D3] dark:text-blue-400">
             <FileCheck className="size-3.5" />
-            <span>Delivered • In Review</span>
+            <span>{t("statusSubmitted")}</span>
           </span>
         );
       case "IN_PROGRESS":
         return (
           <span className="inline-flex items-center gap-1.5 text-xs font-medium text-sky-600 dark:text-sky-400">
             <span className="size-1.5 rounded-full bg-sky-500 animate-pulse" />
-            <span>In Progress</span>
+            <span>{t("statusInProgress")}</span>
           </span>
         );
       case "CHANGES_REQUESTED":
         return (
           <span className="inline-flex items-center gap-1.5 text-xs font-medium text-amber-600 dark:text-amber-400">
             <RotateCcw className="size-3.5" />
-            <span>Revision Requested</span>
+            <span>{t("statusChangesRequested")}</span>
           </span>
         );
       case "LATE":
         return (
           <span className="inline-flex items-center gap-1.5 text-xs font-medium text-rose-600 dark:text-rose-400">
             <AlertTriangle className="size-3.5" />
-            <span>Overdue (Late)</span>
+            <span>{t("statusLate")}</span>
           </span>
         );
       case "DISPUTED":
         return (
           <span className="inline-flex items-center gap-1.5 text-xs font-medium text-rose-600 dark:text-rose-400">
             <Scale className="size-3.5" />
-            <span>Disputed</span>
+            <span>{t("statusDisputed")}</span>
           </span>
         );
       default:
         return (
           <span className="inline-flex items-center gap-1.5 text-xs text-muted-foreground">
             <Clock className="size-3.5" />
-            <span>Pending</span>
+            <span>{t("statusPending")}</span>
           </span>
         );
     }
@@ -212,28 +213,28 @@ export function MilestoneCard({
         return (
           <span className="inline-flex items-center gap-1 text-[11px] text-emerald-600 dark:text-emerald-400">
             <ShieldCheck className="size-3" />
-            <span>Escrow Funded</span>
+            <span>{t("escrowFunded")}</span>
           </span>
         );
       case "RELEASED":
         return (
           <span className="inline-flex items-center gap-1 text-[11px] text-blue-600 dark:text-blue-400">
             <Check className="size-3" />
-            <span>Paid</span>
+            <span>{t("escrowPaid")}</span>
           </span>
         );
       case "REFUNDED":
         return (
           <span className="inline-flex items-center gap-1 text-[11px] text-muted-foreground">
             <RotateCcw className="size-3" />
-            <span>Refunded</span>
+            <span>{t("escrowRefunded")}</span>
           </span>
         );
       default:
         return (
           <span className="inline-flex items-center gap-1 text-[11px] text-muted-foreground">
             <Lock className="size-3" />
-            <span>Awaiting Deposit</span>
+            <span>{t("escrowAwaiting")}</span>
           </span>
         );
     }
@@ -304,7 +305,7 @@ export function MilestoneCard({
                     }`}
                   >
                     <Clock className="size-3" />
-                    <span>Due: {formatDate(milestone.dueDate)}</span>
+                    <span>{t("duePrefix", { date: formatDate(milestone.dueDate) })}</span>
                     {countdownText && (
                       <span className="font-sans opacity-75">
                         ({countdownText})
@@ -338,7 +339,7 @@ export function MilestoneCard({
                 className="h-7 rounded-full bg-[#0069D3] hover:bg-[#0055b3] text-white text-xs font-normal px-3 cursor-pointer"
               >
                 <CreditCard className="mr-1 size-3" />
-                Fund Escrow
+                {t("fundEscrow")}
               </Button>
             )}
 
@@ -353,7 +354,7 @@ export function MilestoneCard({
                   className="h-7 rounded-full bg-[#0069D3] hover:bg-[#0055b3] text-white text-xs font-normal px-3 cursor-pointer"
                 >
                   <FileCheck className="mr-1 size-3" />
-                  Review Delivery
+                  {t("reviewDelivery")}
                 </Button>
               )}
 
@@ -365,7 +366,7 @@ export function MilestoneCard({
                 className="h-7 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-normal px-3 cursor-pointer"
               >
                 <Check className="mr-1 size-3" />
-                Release Payment
+                {t("releasePayment")}
               </Button>
             )}
 
@@ -378,7 +379,7 @@ export function MilestoneCard({
                 className="h-7 rounded-full border-rose-200 dark:border-rose-800 text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/30 text-xs font-normal px-2.5 cursor-pointer"
               >
                 <RotateCcw className="mr-1 size-3" />
-                Refund Escrow
+                {t("refundEscrow")}
               </Button>
             )}
 
@@ -403,7 +404,7 @@ export function MilestoneCard({
                   ) : (
                     <Play className="mr-1 size-3" />
                   )}
-                  Start Work
+                  {t("startWork")}
                 </Button>
               )}
 
@@ -418,7 +419,9 @@ export function MilestoneCard({
                   className="h-7 rounded-full bg-[#0069D3] hover:bg-[#0055b3] text-white text-xs font-normal px-3 cursor-pointer"
                 >
                   <Upload className="mr-1 size-3" />
-                  {milestone.status === "LATE" ? "Deliver Work (Late)" : "Deliver Work"}
+                  {milestone.status === "LATE"
+                    ? t("deliverWorkLate")
+                    : t("deliverWork")}
                 </Button>
               )}
 
@@ -433,7 +436,7 @@ export function MilestoneCard({
                   className="h-7 rounded-full bg-amber-600 hover:bg-amber-700 text-white text-xs font-normal px-3 cursor-pointer"
                 >
                   <RotateCcw className="mr-1 size-3" />
-                  Resubmit Work
+                  {t("resubmitWork")}
                 </Button>
               )}
 
@@ -448,7 +451,7 @@ export function MilestoneCard({
                   className="h-7 rounded-full border-rose-200 dark:border-rose-800 text-rose-600 hover:bg-rose-50 text-xs font-normal px-2.5 cursor-pointer"
                 >
                   <Scale className="mr-1 size-3" />
-                  Dispute
+                  {t("dispute")}
                 </Button>
               )}
 
@@ -463,7 +466,7 @@ export function MilestoneCard({
                   size="sm"
                   onClick={() => onOpenDispute(milestone)}
                   className="h-7 text-xs text-muted-foreground hover:text-rose-600 px-1.5 cursor-pointer"
-                  title="Dispute Milestone"
+                  title={t("disputeTooltip")}
                 >
                   <Scale className="size-3.5" />
                 </Button>
@@ -476,7 +479,7 @@ export function MilestoneCard({
                 size="sm"
                 onClick={() => onEdit(milestone)}
                 className="h-7 text-xs text-muted-foreground hover:text-[#0069D3] px-1.5 cursor-pointer"
-                title="Edit Milestone"
+                title={t("editTooltip")}
               >
                 <Edit2 className="size-3.5" />
               </Button>
@@ -489,7 +492,7 @@ export function MilestoneCard({
                 size="sm"
                 onClick={() => onDelete(milestone)}
                 className="h-7 text-xs text-muted-foreground hover:text-rose-600 px-1.5 cursor-pointer"
-                title="Delete Milestone"
+                title={t("deleteTooltip")}
               >
                 <Trash2 className="size-3.5" />
               </Button>
@@ -504,7 +507,7 @@ export function MilestoneCard({
                 className="h-7 text-xs font-normal text-muted-foreground hover:text-[#0069D3] px-2 cursor-pointer"
               >
                 <Link href={detailUrl} className="inline-flex items-center gap-1">
-                  <span>Details</span>
+                  <span>{t("details")}</span>
                   <ArrowRight className="size-3" />
                 </Link>
               </Button>

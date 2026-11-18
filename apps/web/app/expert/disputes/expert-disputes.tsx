@@ -85,7 +85,11 @@ export function ExpertDisputes() {
   const finalDecision =
     dispute?.status === "REVIEW_REQUESTED" ||
     dispute?.status === "DECISION_MADE";
-  const canDecide = dispute && statuses.slice(0, 5).includes(dispute.status);
+  const canDecide =
+    dispute &&
+    (dispute.status === "UNDER_REVIEW" ||
+      dispute.status === "DECISION_MADE" ||
+      dispute.status === "REVIEW_REQUESTED");
   const error = profile.error || (selectedId ? detail.error : list.error);
 
   const submit = (event: FormEvent<HTMLFormElement>) => {
@@ -220,6 +224,24 @@ export function ExpertDisputes() {
                       {dispute.openedBy?.email} / {dispute.respondent?.email}
                     </dd>
                   </div>
+                  {dispute.resolutionType && (
+                    <div>
+                      <dt className="text-muted-foreground">Requested Type</dt>
+                      <dd className="mt-1 font-medium">
+                        {dispute.resolutionType.replace(/_/g, " ")}
+                      </dd>
+                    </div>
+                  )}
+                  {dispute.declineReason && (
+                    <div className="sm:col-span-2">
+                      <dt className="text-muted-foreground">
+                        Counterparty Decline Reason
+                      </dt>
+                      <dd className="mt-1 whitespace-pre-wrap break-words text-rose-700 dark:text-rose-300">
+                        {dispute.declineReason}
+                      </dd>
+                    </div>
+                  )}
                 </dl>
                 {dispute.decisionReason && (
                   <div className="space-y-2 border-t pt-4">

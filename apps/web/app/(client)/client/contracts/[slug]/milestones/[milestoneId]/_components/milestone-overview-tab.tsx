@@ -1,6 +1,6 @@
 "use client";
 
-import { useFormatter } from "next-intl";
+import { useFormatter, useTranslations } from "next-intl";
 import {
   Check,
   CheckCircle2,
@@ -57,6 +57,8 @@ export function MilestoneOverviewTab({
   onRefund,
 }: MilestoneOverviewTabProps) {
   const format = useFormatter();
+  const t = useTranslations("milestoneWorkspace.overview");
+  const tCard = useTranslations("milestoneWorkspace.card");
   const { can, canAny } = useActionPermission();
   const isClient = !isFreelancer;
 
@@ -79,7 +81,7 @@ export function MilestoneOverviewTab({
   const latestSubmission = submissions.length > 0 ? submissions[0] : null;
 
   const formatDate = (date: string | Date | null | undefined): string => {
-    if (!date) return "Not specified";
+    if (!date) return tCard("notSpecified");
     const d = new Date(date);
     return format.dateTime(d, {
       year: "numeric",
@@ -105,22 +107,22 @@ export function MilestoneOverviewTab({
         const start = new Date(milestone.createdAt).getTime();
         const end = new Date(milestone.completedAt).getTime();
         const days = Math.max(1, Math.round((end - start) / (1000 * 60 * 60 * 24)));
-        return `${days} ${days === 1 ? "day" : "days"} total`;
+        return tCard("daysTotal", { count: days });
       }
-      return "Completed";
+      return tCard("completed");
     }
 
-    if (!milestone.dueDate) return "No deadline set";
+    if (!milestone.dueDate) return tCard("noDeadline");
     const now = new Date().getTime();
     const target = new Date(milestone.dueDate).getTime();
     const diffDays = Math.ceil((target - now) / (1000 * 60 * 60 * 24));
 
     if (diffDays < 0 || milestone.status === "LATE") {
       const overdue = Math.abs(diffDays);
-      return `${overdue} ${overdue === 1 ? "day" : "days"} overdue`;
+      return tCard("daysOverdue", { count: overdue });
     }
-    if (diffDays === 0) return "Due today";
-    return `${diffDays} ${diffDays === 1 ? "day" : "days"} left`;
+    if (diffDays === 0) return tCard("dueToday");
+    return tCard("daysLeft", { count: diffDays });
   };
 
   const amountNumber = Number(milestone.amount) || 0;
@@ -130,12 +132,12 @@ export function MilestoneOverviewTab({
   const clientName =
     contract.client?.profile?.displayName ||
     contract.client?.email?.split("@")[0] ||
-    "Client";
+    t("clientRole");
 
   const freelancerName =
     contract.freelancer?.profile?.displayName ||
     contract.freelancer?.email?.split("@")[0] ||
-    "Freelancer";
+    t("freelancerRole");
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start pt-1">
@@ -146,10 +148,10 @@ export function MilestoneOverviewTab({
           <div className="flex items-start justify-between gap-3 border-l-2 border-rose-500 pl-3 py-1 text-xs">
             <div className="space-y-0.5">
               <span className="font-medium text-rose-600 block">
-                Milestone is under formal dispute
+                {t("disputedTitle")}
               </span>
               <p className="text-muted-foreground leading-relaxed">
-                Escrow funds remain frozen while Frevia dispute arbiters review evidence from both parties.
+                {t("disputedDesc")}
               </p>
             </div>
             {canViewDispute && onViewDispute && (
@@ -159,7 +161,7 @@ export function MilestoneOverviewTab({
                 onClick={onViewDispute}
                 className="h-7 text-xs text-rose-600 shrink-0 cursor-pointer"
               >
-                View Dispute
+                {t("viewDispute")}
               </Button>
             )}
           </div>
@@ -170,10 +172,13 @@ export function MilestoneOverviewTab({
             <CheckCircle2 className="size-4 text-emerald-600 shrink-0 mt-0.5" />
             <div className="space-y-0.5">
               <span className="font-medium text-foreground block">
-                Milestone completed and payment released
+                {t("completedTitle")}
               </span>
               <p className="text-muted-foreground leading-relaxed">
-                Deliverables approved. Payout of ${freelancerPayout.toFixed(2)} USD transferred to {freelancerName} (5% platform fee deducted).
+                {t("completedDesc", {
+                  amount: `$${freelancerPayout.toFixed(2)}`,
+                  name: freelancerName,
+                })}
               </p>
             </div>
           </div>
@@ -184,10 +189,12 @@ export function MilestoneOverviewTab({
             <FileCheck className="size-4 text-[#0069D3] shrink-0 mt-0.5" />
             <div className="space-y-0.5">
               <span className="font-medium text-foreground block">
-                Work delivered and awaiting client review
+                {t("submittedTitle")}
               </span>
               <p className="text-muted-foreground leading-relaxed">
-                Freelancer submitted deliverables on {formatDateTime(latestSubmission?.submittedAt)}. Client has 7 days to review. If no response is received, funds will be released automatically.
+                {t("submittedDesc", {
+                  date: formatDateTime(latestSubmission?.submittedAt),
+                })}
               </p>
             </div>
           </div>
@@ -197,12 +204,12 @@ export function MilestoneOverviewTab({
           <div className="flex items-start justify-between gap-3 border-l-2 border-rose-500 pl-3 py-1 text-xs">
             <div className="space-y-0.5">
               <span className="font-medium text-rose-600 block">
-                Milestone is overdue (Late)
+                {t("lateTitle")}
               </span>
               <p className="text-muted-foreground leading-relaxed">
-                The agreed delivery deadline has passed without a submission.
+                {t("lateDesc")}
                 {milestone.paymentStatus === "FUNDED" && isClient
-                  ? " As client, you may request an immediate escrow refund to your card."
+                  ? t("lateClientExtra")
                   : ""}
               </p>
             </div>
@@ -216,7 +223,7 @@ export function MilestoneOverviewTab({
                   className="h-7 text-xs font-normal text-rose-600 border border-rose-200 dark:border-rose-800 bg-transparent hover:bg-rose-50 dark:hover:bg-rose-950/20 shrink-0 cursor-pointer"
                 >
                   <RotateCcw className="mr-1 size-3" />
-                  Refund Escrow
+                  {tCard("refundEscrow")}
                 </Button>
               )}
           </div>
@@ -227,10 +234,10 @@ export function MilestoneOverviewTab({
             <RotateCcw className="size-4 text-amber-600 shrink-0 mt-0.5" />
             <div className="space-y-0.5">
               <span className="font-medium text-amber-600 block">
-                Revisions requested by client
+                {t("changesTitle")}
               </span>
               <p className="text-muted-foreground leading-relaxed">
-                The client requested modifications. Please review feedback notes below and submit updated deliverables.
+                {t("changesDesc")}
               </p>
             </div>
           </div>
@@ -240,10 +247,10 @@ export function MilestoneOverviewTab({
           <div className="flex items-start justify-between gap-3 border-l-2 border-border pl-3 py-1 text-xs">
             <div className="space-y-0.5">
               <span className="font-medium text-foreground block">
-                Work in progress
+                {t("inProgressTitle")}
               </span>
               <p className="text-muted-foreground leading-relaxed">
-                Milestone is actively underway. Escrow funds of ${amountNumber.toFixed(2)} USD are safely held in protection.
+                {t("inProgressDesc", { amount: `$${amountNumber.toFixed(2)}` })}
               </p>
             </div>
             {isFreelancer && canSubmitWorkPermission && onSubmitWork && (
@@ -253,7 +260,7 @@ export function MilestoneOverviewTab({
                 className="h-7 rounded-full bg-[#0069D3] hover:bg-[#0055b3] text-white text-xs font-normal px-3 shrink-0 cursor-pointer"
               >
                 <Upload className="mr-1 size-3" />
-                Deliver Work
+                {tCard("deliverWork")}
               </Button>
             )}
           </div>
@@ -264,13 +271,13 @@ export function MilestoneOverviewTab({
             <div className="space-y-0.5">
               <span className="font-medium text-emerald-600 block">
                 {isFreelancer && startWorkBlockedReason
-                  ? "Escrow funded · Locked until prior milestone completes"
-                  : "Escrow funded & ready to start"}
+                  ? t("lockedTitle")
+                  : t("readyTitle")}
               </span>
               <p className="text-muted-foreground leading-relaxed">
                 {isFreelancer && startWorkBlockedReason
-                  ? `${startWorkBlockedReason} before starting work on this milestone.`
-                  : `Client deposited $${amountNumber.toFixed(2)} USD in escrow. Freelancer can begin working.`}
+                  ? t("lockedDesc", { reason: startWorkBlockedReason })
+                  : t("readyDesc", { amount: `$${amountNumber.toFixed(2)}` })}
               </p>
             </div>
             {isFreelancer && canStartWorkPermission && onStartWork && (
@@ -286,7 +293,7 @@ export function MilestoneOverviewTab({
                 ) : (
                   <Play className="mr-1 size-3" />
                 )}
-                Start Work
+                {tCard("startWork")}
               </Button>
             )}
           </div>
@@ -296,10 +303,10 @@ export function MilestoneOverviewTab({
           <div className="flex items-start justify-between gap-3 border-l-2 border-border pl-3 py-1 text-xs">
             <div className="space-y-0.5">
               <span className="font-medium text-foreground block">
-                Awaiting escrow deposit
+                {t("awaitingTitle")}
               </span>
               <p className="text-muted-foreground leading-relaxed">
-                Client must fund the milestone escrow before the freelancer begins work.
+                {t("awaitingDesc")}
               </p>
             </div>
             {isClient && canFundPermission && onFund && (
@@ -309,7 +316,7 @@ export function MilestoneOverviewTab({
                 className="h-7 rounded-full bg-[#0069D3] hover:bg-[#0055b3] text-white text-xs font-normal px-3 shrink-0 cursor-pointer"
               >
                 <CreditCard className="mr-1 size-3" />
-                Fund Escrow
+                {tCard("fundEscrow")}
               </Button>
             )}
           </div>
@@ -320,7 +327,7 @@ export function MilestoneOverviewTab({
           <div className="space-y-3 pt-2">
             <div className="flex items-center justify-between pb-1.5 border-b border-border/40">
               <h3 className="text-xs font-semibold text-foreground">
-                Latest Deliverable Submission
+                {t("latestDeliverable")}
               </h3>
               <span className="text-[11px] text-muted-foreground font-mono">
                 {formatDateTime(latestSubmission.submittedAt)}
@@ -331,7 +338,7 @@ export function MilestoneOverviewTab({
             {latestSubmission.message && (
               <div className="space-y-1">
                 <span className="text-xs text-muted-foreground">
-                  Notes from {freelancerName}:
+                  {t("notesFrom", { name: freelancerName })}
                 </span>
                 <p className="text-xs text-foreground leading-relaxed whitespace-pre-wrap pl-3 border-l-2 border-border/60 py-0.5">
                   {latestSubmission.message}
@@ -343,7 +350,7 @@ export function MilestoneOverviewTab({
             {latestSubmission.files && latestSubmission.files.length > 0 && (
               <div className="space-y-1.5">
                 <span className="text-xs text-muted-foreground">
-                  Deliverable Files:
+                  {t("deliverableFiles")}
                 </span>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                   {latestSubmission.files.map((item) => (
@@ -354,7 +361,8 @@ export function MilestoneOverviewTab({
                       <div className="flex items-center gap-2 min-w-0">
                         <FileText className="size-3.5 text-[#0069D3] shrink-0" />
                         <span className="text-xs font-normal text-foreground truncate max-w-[180px]">
-                          {item.file?.fileName || `Deliverable File #${item.fileId}`}
+                          {item.file?.fileName ||
+                            t("deliverableFileFallback", { id: item.fileId })}
                         </span>
                       </div>
                       {item.file?.fileUrl && (
@@ -364,7 +372,7 @@ export function MilestoneOverviewTab({
                           rel="noopener noreferrer"
                           download
                           className="p-1 text-muted-foreground hover:text-foreground transition-colors shrink-0"
-                          title="Download File"
+                          title={t("downloadFile")}
                         >
                           <Download className="size-3.5" />
                         </a>
@@ -379,7 +387,7 @@ export function MilestoneOverviewTab({
             {latestSubmission.links && latestSubmission.links.length > 0 && (
               <div className="space-y-1">
                 <span className="text-xs text-muted-foreground">
-                  Project Links:
+                  {t("projectLinks")}
                 </span>
                 <div className="flex flex-wrap gap-2">
                   {latestSubmission.links.map((link, idx) => (
@@ -402,14 +410,16 @@ export function MilestoneOverviewTab({
             {latestSubmission.changeRequestMessage && (
               <div className="border-l-2 border-amber-500 pl-3 py-1 text-xs space-y-1">
                 <span className="font-medium text-amber-600 block">
-                  Revisions Requested by {clientName}:
+                  {t("revisionsRequestedBy", { name: clientName })}
                 </span>
                 <p className="text-foreground leading-relaxed whitespace-pre-wrap">
                   {latestSubmission.changeRequestMessage}
                 </p>
                 {latestSubmission.changeRequestDueDate && (
                   <span className="block text-[11px] text-muted-foreground">
-                    Target revision date: {formatDate(latestSubmission.changeRequestDueDate)}
+                    {t("targetRevisionDate", {
+                      date: formatDate(latestSubmission.changeRequestDueDate),
+                    })}
                   </span>
                 )}
               </div>
@@ -424,7 +434,7 @@ export function MilestoneOverviewTab({
                   className="h-8 rounded-full bg-[#0069D3] hover:bg-[#0055b3] text-white text-xs font-normal px-4 cursor-pointer"
                 >
                   <Check className="mr-1.5 size-3.5" />
-                  Review & Approve Delivery
+                  {t("reviewApproveDelivery")}
                 </Button>
               )}
 
@@ -438,7 +448,7 @@ export function MilestoneOverviewTab({
                     className="h-8 rounded-full bg-amber-600 hover:bg-amber-700 text-white text-xs font-normal px-4 cursor-pointer"
                   >
                     <RotateCcw className="mr-1.5 size-3.5" />
-                    Resubmit Updated Work
+                    {t("resubmitUpdatedWork")}
                   </Button>
                 )}
 
@@ -453,7 +463,7 @@ export function MilestoneOverviewTab({
                     className="h-8 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-normal px-4 cursor-pointer"
                   >
                     <Check className="mr-1.5 size-3.5" />
-                    Release Payment
+                    {tCard("releasePayment")}
                   </Button>
                 )}
             </div>
@@ -463,12 +473,12 @@ export function MilestoneOverviewTab({
           <div className="py-6 text-center space-y-1.5 border-b border-border/40">
             <Clock className="size-5 mx-auto text-muted-foreground/60" />
             <h4 className="text-xs font-medium text-foreground">
-              No deliverables submitted yet
+              {t("noDeliverablesTitle")}
             </h4>
             <p className="text-xs text-muted-foreground max-w-sm mx-auto">
               {isFreelancer
-                ? "Once work is ready, use Deliver Work to upload files and notes."
-                : "Deliverables will appear here once submitted by the freelancer."}
+                ? t("noDeliverablesFreelancer")
+                : t("noDeliverablesClient")}
             </p>
             {isFreelancer &&
               (milestone.status === "IN_PROGRESS" || milestone.status === "LATE") &&
@@ -480,7 +490,7 @@ export function MilestoneOverviewTab({
                   className="rounded-full bg-[#0069D3] hover:bg-[#0055b3] text-white text-xs font-normal px-3.5 mt-2 cursor-pointer"
                 >
                   <Upload className="mr-1.5 size-3.5" />
-                  Deliver Work Now
+                  {t("deliverWorkNow")}
                 </Button>
               )}
           </div>
@@ -489,12 +499,12 @@ export function MilestoneOverviewTab({
         {/* ── Scope & Requirements ── */}
         <div className="space-y-2 pt-3 border-t border-border/40">
           <h3 className="text-xs font-semibold text-foreground">
-            Scope of Deliverables
+            {t("scopeTitle")}
           </h3>
           <div className="text-xs text-foreground/80 leading-relaxed whitespace-pre-wrap">
             {milestone.description || (
               <span className="text-muted-foreground italic">
-                No detailed scope description specified for this milestone.
+                {t("noScope")}
               </span>
             )}
           </div>
@@ -506,23 +516,23 @@ export function MilestoneOverviewTab({
         {/* Financial Summary */}
         <div className="space-y-2.5">
           <span className="text-xs font-medium text-muted-foreground">
-            Milestone Financials
+            {t("financialsTitle")}
           </span>
           <div className="space-y-1.5 text-xs">
             <div className="flex items-center justify-between">
-              <span className="text-muted-foreground">Budget:</span>
+              <span className="text-muted-foreground">{t("budget")}</span>
               <span className="font-mono font-medium text-foreground">
                 ${amountNumber.toLocaleString("en-US", { minimumFractionDigits: 2 })}
               </span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-muted-foreground">Freelancer Fee (5%):</span>
+              <span className="text-muted-foreground">{t("freelancerFee")}</span>
               <span className="font-mono text-muted-foreground">
                 -${freelancerFee.toFixed(2)}
               </span>
             </div>
             <div className="flex items-center justify-between pt-1 border-t border-border/30">
-              <span className="text-foreground">Freelancer Net (95%):</span>
+              <span className="text-foreground">{t("freelancerNet")}</span>
               <span className="font-mono font-medium text-emerald-600 dark:text-emerald-400">
                 ${freelancerPayout.toFixed(2)}
               </span>
@@ -533,30 +543,32 @@ export function MilestoneOverviewTab({
         {/* Schedule & Timeline Summary */}
         <div className="space-y-2.5 pt-3 border-t border-border/40">
           <span className="text-xs font-medium text-muted-foreground">
-            Timeline
+            {t("timelineTitle")}
           </span>
           <div className="space-y-1.5 text-xs">
             <div className="flex items-center justify-between">
-              <span className="text-muted-foreground">Target Deadline:</span>
+              <span className="text-muted-foreground">{t("targetDeadline")}</span>
               <span className="font-mono text-foreground">
                 {formatDate(milestone.dueDate)}
               </span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-muted-foreground">Time Status:</span>
+              <span className="text-muted-foreground">{t("timeStatus")}</span>
               <span className="text-foreground">
                 {getDurationOrDaysRemaining()}
               </span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-muted-foreground">Created:</span>
+              <span className="text-muted-foreground">{t("created")}</span>
               <span className="text-muted-foreground">
                 {formatDate(milestone.createdAt)}
               </span>
             </div>
             {milestone.completedAt && (
               <div className="flex items-center justify-between">
-                <span className="text-muted-foreground">Completed:</span>
+                <span className="text-muted-foreground">
+                  {t("completedLabel")}
+                </span>
                 <span className="text-emerald-600 dark:text-emerald-400">
                   {formatDate(milestone.completedAt)}
                 </span>
@@ -568,7 +580,7 @@ export function MilestoneOverviewTab({
         {/* Participants (Client & Freelancer) */}
         <div className="space-y-2.5 pt-3 border-t border-border/40">
           <span className="text-xs font-medium text-muted-foreground">
-            Participants
+            {t("participantsTitle")}
           </span>
           <div className="space-y-2 text-xs">
             <div className="flex items-center gap-2">
@@ -580,7 +592,7 @@ export function MilestoneOverviewTab({
                   {clientName}
                 </span>
                 <span className="text-[10px] text-muted-foreground block">
-                  Client
+                  {t("clientRole")}
                 </span>
               </div>
             </div>
@@ -594,7 +606,7 @@ export function MilestoneOverviewTab({
                   {freelancerName}
                 </span>
                 <span className="text-[10px] text-muted-foreground block">
-                  Freelancer
+                  {t("freelancerRole")}
                 </span>
               </div>
             </div>
@@ -615,7 +627,7 @@ export function MilestoneOverviewTab({
                 className="w-full justify-start text-xs text-muted-foreground hover:text-rose-600 px-0 h-auto cursor-pointer"
               >
                 <Scale className="mr-1.5 size-3.5" />
-                Having an issue? Open a dispute claim
+                {t("openDisputeCta")}
               </Button>
             </div>
           )}

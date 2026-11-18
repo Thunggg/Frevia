@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
@@ -31,6 +32,8 @@ import { SubmitMilestoneDialog } from "./submit-milestone-dialog";
 import { ReviewSubmissionDialog } from "./review-submission-dialog";
 import { ContractChatPopup } from "../../_components/contract-chat-popup";
 import { useCreateConversation } from "@/hooks/use-conversation";
+import { OpenResolutionDialog } from "@/components/disputes/open-resolution-dialog";
+import { ResolutionDetailSheet } from "@/components/disputes/resolution-detail-sheet";
 
 export interface MilestonesPageContentProps {
   initialContract: ContractDetailType;
@@ -50,6 +53,7 @@ export function MilestonesPageContent({
 }: MilestonesPageContentProps) {
   const router = useRouter();
   const queryClient = useQueryClient();
+  const t = useTranslations("milestoneWorkspace");
   const { can } = useActionPermission();
   const isFreelancer = basePath === "/freelancer";
   const isClient = !isFreelancer;
@@ -76,6 +80,12 @@ export function MilestonesPageContent({
     submission: GetSubmissionResponseType;
   } | null>(null);
 
+  const [disputeTargetMilestone, setDisputeTargetMilestone] =
+    useState<MilestoneType | null>(null);
+  const [viewDisputeMilestoneId, setViewDisputeMilestoneId] = useState<
+    number | null
+  >(null);
+
   const searchParams = useSearchParams();
 
   // Contract Query
@@ -98,7 +108,7 @@ export function MilestonesPageContent({
         try {
           await paymentApiRequest.syncCheckoutSession(sessionId);
           toastSuccess({
-            message: "Escrow payment funded successfully via Stripe!",
+            message: t("toasts.escrowFunded"),
           });
         } catch {
           // Handled or processed via webhook
@@ -118,11 +128,11 @@ export function MilestonesPageContent({
       void sync();
     } else if (paymentStatus === "cancelled") {
       toastError({
-        message: "Stripe checkout was cancelled. You can retry at any time.",
+        message: t("toasts.checkoutCancelled"),
       });
       window.history.replaceState({}, "", window.location.pathname);
     }
-  }, [searchParams, contract.id, queryClient]);
+  }, [searchParams, contract.id, queryClient, t]);
 
   const canManageMilestones =
     isClient &&
@@ -198,14 +208,14 @@ export function MilestonesPageContent({
         queryKey: ["client-contract-milestones", contract.id],
       });
       toastSuccess({
-        message: `Started work on milestone "${milestone.title}"!`,
+        message: t("toasts.startedWork", { title: milestone.title }),
       });
     } catch (error) {
       toastError({
         message:
           error instanceof ApiFail
             ? error.response.error.message
-            : "Failed to start milestone.",
+            : t("toasts.startFailed"),
       });
     }
   };
@@ -223,14 +233,14 @@ export function MilestonesPageContent({
         queryKey: ["client-transactions"],
       });
       toastSuccess({
-        message: `Payout transferred via Stripe for milestone "${milestone.title}" (5% freelancer fee deducted).`,
+        message: t("toasts.releasedPayout", { title: milestone.title }),
       });
     } catch (error) {
       toastError({
         message:
           error instanceof ApiFail
             ? error.response.error.message
-            : "Failed to release milestone payout.",
+            : t("toasts.releaseFailed"),
       });
     }
   };
@@ -251,7 +261,7 @@ export function MilestonesPageContent({
         message:
           error instanceof ApiFail
             ? error.response.error.message
-            : "Failed to initiate Stripe Checkout session.",
+            : t("toasts.checkoutInitFailed"),
       });
     }
   };
@@ -259,7 +269,10 @@ export function MilestonesPageContent({
   const handleRefundMilestone = async (milestone: MilestoneType) => {
     if (
       !window.confirm(
-        `Request automatic refund of $${Number(milestone.amount).toLocaleString("en-US", { minimumFractionDigits: 2 })} for "${milestone.title}" to your original payment card?`,
+        t("toasts.refundConfirm", {
+          amount: `$${Number(milestone.amount).toLocaleString("en-US", { minimumFractionDigits: 2 })}`,
+          title: milestone.title,
+        }),
       )
     ) {
       return;
@@ -276,23 +289,21 @@ export function MilestonesPageContent({
         queryKey: ["client-transactions"],
       });
       toastSuccess({
-        message: `Escrow funds refunded to your card for milestone "${milestone.title}".`,
+        message: t("toasts.refunded", { title: milestone.title }),
       });
     } catch (error) {
       toastError({
         message:
           error instanceof ApiFail
             ? error.response.error.message
-            : "Failed to refund milestone escrow.",
+            : t("toasts.refundFailed"),
       });
     }
   };
 
   const handleDeleteMilestone = async (milestone: MilestoneType) => {
     if (
-      !window.confirm(
-        `Are you sure you want to delete milestone "${milestone.title}"?`,
-      )
+      !window.confirm(t("toasts.deleteConfirm", { title: milestone.title }))
     ) {
       return;
     }
@@ -304,13 +315,13 @@ export function MilestonesPageContent({
       await queryClient.invalidateQueries({
         queryKey: ["client-contract-milestones", contract.id],
       });
-      toastSuccess({ message: `Milestone "${milestone.title}" removed.` });
+      toastSuccess({ message: t("toasts.deleted", { title: milestone.title }) });
     } catch (error) {
       toastError({
         message:
           error instanceof ApiFail
             ? error.response.error.message
-            : "Failed to delete milestone.",
+            : t("toasts.deleteFailed"),
       });
     }
   };
@@ -332,7 +343,7 @@ export function MilestonesPageContent({
         setChatOpen(true);
       }
     } catch {
-      toastError({ message: "Could not open conversation. Try again." });
+      toastError({ message: t("toasts.chatFailed") });
     } finally {
       setIsStartingChat(false);
     }
@@ -345,32 +356,32 @@ export function MilestonesPageContent({
 
   // Filter tabs (No loud backgrounds, subtle text tabs)
   const filterTabs = [
-    { key: "ALL", label: "All", count: milestones.length },
+    { key: "ALL", label: t("tabs.all"), count: milestones.length },
     {
       key: "IN_PROGRESS",
-      label: "In Progress",
+      label: t("tabs.inProgress"),
       count: milestones.filter((m) => m.status === "IN_PROGRESS").length,
     },
     {
       key: "SUBMITTED",
-      label: "Delivered",
+      label: t("tabs.delivered"),
       count: milestones.filter(
         (m) => m.status === "SUBMITTED" || m.status === "CHANGES_REQUESTED",
       ).length,
     },
     {
       key: "COMPLETED",
-      label: "Completed",
+      label: t("tabs.completed"),
       count: milestones.filter((m) => m.status === "COMPLETED").length,
     },
     {
       key: "PENDING_ESCROW",
-      label: "Awaiting Escrow",
+      label: t("tabs.awaitingEscrow"),
       count: milestones.filter((m) => m.paymentStatus === "PENDING").length,
     },
     {
       key: "LATE",
-      label: "Overdue",
+      label: t("tabs.overdue"),
       count: milestones.filter((m) => m.status === "LATE").length,
     },
   ];
@@ -385,7 +396,7 @@ export function MilestonesPageContent({
             className="inline-flex items-center gap-1 hover:text-foreground transition-colors"
           >
             <ChevronLeft className="size-4" />
-            <span>Contracts</span>
+            <span>{t("breadcrumb.contracts")}</span>
           </Link>
           <span>/</span>
           <Link
@@ -395,7 +406,9 @@ export function MilestonesPageContent({
             {contract.slug || contractCode}
           </Link>
           <span>/</span>
-          <span className="text-foreground font-medium">Milestones</span>
+          <span className="text-foreground font-medium">
+            {t("breadcrumb.milestones")}
+          </span>
         </div>
 
         {/* Action button if client can add milestone */}
@@ -409,7 +422,7 @@ export function MilestonesPageContent({
             className="rounded-full bg-[#0069D3] hover:bg-[#0055b3] text-white text-xs font-normal h-8 px-3.5 cursor-pointer"
           >
             <Plus className="mr-1 size-3.5" />
-            Add Milestone
+            {t("list.addMilestone")}
           </Button>
         )}
       </div>
@@ -461,7 +474,7 @@ export function MilestonesPageContent({
           <Search className="absolute left-2.5 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground" />
           <input
             type="text"
-            placeholder="Search milestones..."
+            placeholder={t("list.searchPlaceholder")}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="
@@ -485,10 +498,10 @@ export function MilestonesPageContent({
         <div className="py-12 text-center space-y-1.5">
           <Clock className="size-6 mx-auto text-muted-foreground" />
           <h3 className="text-xs font-medium text-foreground">
-            Không có quyền xem danh sách milestone
+            {t("list.noPermissionTitle")}
           </h3>
           <p className="text-xs text-muted-foreground max-w-md mx-auto">
-            Tài khoản của bạn chưa được cấp quyền xem danh sách các mốc công việc của hợp đồng này.
+            {t("list.noPermissionDesc")}
           </p>
         </div>
       ) : filteredMilestones.length > 0 ? (
@@ -507,9 +520,9 @@ export function MilestonesPageContent({
                   other.status === "DISPUTED"),
             );
             const startWorkBlockedReason = hasIncompletePrevious
-              ? "Complete previous milestone first"
+              ? t("list.blockedPrevious")
               : hasOtherActive
-                ? "Finish the active milestone first"
+                ? t("list.blockedActive")
                 : null;
 
             return (
@@ -569,12 +582,14 @@ export function MilestonesPageContent({
                   );
                 }
               }}
-              onSubmitWork={(target) => {
-                setMilestoneToSubmit(target);
-                setSubmitModalOpen(true);
-              }}
-              onStartWork={(target) => void handleStartWork(target)}
-            />
+                onSubmitWork={(target) => {
+                  setMilestoneToSubmit(target);
+                  setSubmitModalOpen(true);
+                }}
+                onStartWork={(target) => void handleStartWork(target)}
+                onOpenDispute={(target) => setDisputeTargetMilestone(target)}
+                onViewDispute={(target) => setViewDisputeMilestoneId(target.id)}
+              />
             );
           })}
         </div>
@@ -582,12 +597,10 @@ export function MilestonesPageContent({
         <div className="py-16 text-center space-y-2">
           <Clock className="size-6 mx-auto text-muted-foreground/60" />
           <h3 className="text-xs font-medium text-foreground">
-            No milestones found
+            {t("list.emptyTitle")}
           </h3>
           <p className="text-xs text-muted-foreground max-w-sm mx-auto">
-            {isClient
-              ? "You can add milestones to break down project deliverables and securely release payments."
-              : "No milestones matching this filter."}
+            {isClient ? t("list.emptyClient") : t("list.emptyFreelancer")}
           </p>
           {canManageMilestones && (
             <Button
@@ -599,7 +612,7 @@ export function MilestonesPageContent({
               className="rounded-full bg-[#0069D3] hover:bg-[#0055b3] text-white text-xs font-normal cursor-pointer mt-2"
             >
               <Plus className="mr-1 size-3.5" />
-              Add First Milestone
+              {t("list.addFirstMilestone")}
             </Button>
           )}
         </div>
@@ -643,6 +656,29 @@ export function MilestonesPageContent({
           submission={reviewContext.submission}
         />
       )}
+
+      {/* Resolution Center Dialogs */}
+      <OpenResolutionDialog
+        open={Boolean(disputeTargetMilestone)}
+        onOpenChange={(open) => {
+          if (!open) setDisputeTargetMilestone(null);
+        }}
+        contractId={contract.id}
+        contractExpiresAt={contract.expiresAt}
+        milestone={disputeTargetMilestone}
+        onCreated={(created) => {
+          setViewDisputeMilestoneId(created.milestoneId);
+        }}
+      />
+
+      <ResolutionDetailSheet
+        open={Boolean(viewDisputeMilestoneId)}
+        onOpenChange={(open) => {
+          if (!open) setViewDisputeMilestoneId(null);
+        }}
+        milestoneId={viewDisputeMilestoneId}
+        contractId={contract.id}
+      />
 
       {/* Floating Messenger-style chat popup (bottom-right) */}
       <ContractChatPopup

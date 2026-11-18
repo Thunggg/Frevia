@@ -271,6 +271,7 @@ function ProfileDropdown({ role }: { role: Exclude<UserRole, "GUEST"> }) {
   const canViewProposals = can("GET", "/api/proposals/my");
   const canViewSavedSearches = can("GET", "/api/saved-searches");
   const canViewContracts = can("GET", "/api/contracts");
+  const canViewDisputes = can("GET", "/api/disputes");
   const canViewSessions = can("GET", "/api/sessions");
   const canViewSocialLinks = can("GET", "/api/social-links");
   const displayName =
@@ -402,9 +403,20 @@ function ProfileDropdown({ role }: { role: Exclude<UserRole, "GUEST"> }) {
                 className="cursor-pointer"
               >
                 <CreditCard className="size-4 text-muted-foreground" />
-                Billing & Payments
+                {t("billingPayments")}
               </Link>
             </DropdownMenuItem>
+            {canViewDisputes && (
+              <DropdownMenuItem asChild>
+                <Link
+                  href="/freelancer/disputes"
+                  className="cursor-pointer"
+                >
+                  <ShieldCheck className="size-4 text-muted-foreground" />
+                  {t("resolutionCenter")}
+                </Link>
+              </DropdownMenuItem>
+            )}
           </>
         )}
         {role === "CLIENT" && (
@@ -436,9 +448,17 @@ function ProfileDropdown({ role }: { role: Exclude<UserRole, "GUEST"> }) {
             <DropdownMenuItem asChild>
               <Link href="/client/payments" className="cursor-pointer">
                 <CreditCard className="size-4 text-muted-foreground" />
-                Billing & Payments
+                {t("billingPayments")}
               </Link>
             </DropdownMenuItem>
+            {canViewDisputes && (
+              <DropdownMenuItem asChild>
+                <Link href="/client/disputes" className="cursor-pointer">
+                  <ShieldCheck className="size-4 text-muted-foreground" />
+                  {t("resolutionCenter")}
+                </Link>
+              </DropdownMenuItem>
+            )}
           </>
         )}
         {canViewSocialLinks && (

@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import {
   CheckCircle2,
   FileText,
@@ -43,6 +44,7 @@ export function ContractDetailHeader({
   onOpenConfirmComplete,
   onOpenConfirmCancel,
 }: ContractDetailHeaderProps) {
+  const tWorkspace = useTranslations("contractWorkspace");
   const hasUnsettledMilestones =
     Array.isArray(contract.milestones) &&
     contract.milestones.some(
@@ -120,7 +122,9 @@ export function ContractDetailHeader({
             ) : (
               <MessageSquare className="size-3.5" />
             )}
-            {isFreelancer ? "Chat with Client" : "Chat with Freelancer"}
+            {isFreelancer
+              ? tWorkspace("chatWithClient")
+              : tWorkspace("chatWithFreelancer")}
           </Button>
 
           <DropdownMenu>

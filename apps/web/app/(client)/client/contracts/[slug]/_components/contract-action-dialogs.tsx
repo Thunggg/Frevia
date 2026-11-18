@@ -111,6 +111,7 @@ export function ContractActionDialogs({
   onReject,
 }: ContractActionDialogsProps) {
   const t = useTranslations("contractDetail");
+  const tDialogs = useTranslations("contractWorkspace.dialogs");
   const tCommon = useTranslations("common");
   const totalContractAmount = contract.totalAmount;
 
@@ -315,26 +316,30 @@ export function ContractActionDialogs({
 
             {isFreelancer ? (
               <div className="text-xs text-muted-foreground leading-relaxed space-y-2">
-                <p>Are you sure you want to cancel this contract?</p>
+                <p>{tDialogs("cancelFreelancerConfirm")}</p>
                 {fundedMilestones.length > 0 && (
                   <div className="rounded-xl border border-amber-500/20 bg-amber-500/5 p-3 text-amber-700 dark:text-amber-400">
-                    <p className="font-semibold mb-0.5">Escrow Refund Notice:</p>
+                    <p className="font-semibold mb-0.5">
+                      {tDialogs("escrowRefundNoticeTitle")}
+                    </p>
                     <p>
-                      All funded escrow balance ({money(allFundedTotal)}) will be 100% refunded to the client, including any milestone you are currently working on.
+                      {tDialogs("escrowRefundNoticeDesc", {
+                        amount: money(allFundedTotal),
+                      })}
                     </p>
                   </div>
                 )}
               </div>
             ) : contract.status === "ACTIVE" && fundedMilestones.length > 0 ? (
               <div className="text-xs text-muted-foreground leading-relaxed space-y-2.5">
-                <p>
-                  Review how funded escrow amounts will be settled upon cancellation:
-                </p>
+                <p>{tDialogs("cancelClientSettlementIntro")}</p>
                 <div className="rounded-xl border border-border bg-muted/30 p-3 space-y-2">
                   {inProgressFundedMilestones.length > 0 && (
                     <div className="flex justify-between items-center text-xs">
                       <span className="text-foreground">
-                        Work in progress (released to {freelancerName}):
+                        {tDialogs("inProgressReleased", {
+                          name: freelancerName,
+                        })}
                       </span>
                       <span className="font-semibold text-emerald-600 dark:text-emerald-400 font-mono">
                         {money(inProgressTotal)}
@@ -344,7 +349,7 @@ export function ContractActionDialogs({
                   {unstartedFundedMilestones.length > 0 && (
                     <div className="flex justify-between items-center text-xs">
                       <span className="text-foreground">
-                        Unstarted milestones (refunded to you):
+                        {tDialogs("unstartedRefunded")}
                       </span>
                       <span className="font-semibold text-[#0069D3] font-mono">
                         {money(unstartedTotal)}
@@ -353,7 +358,7 @@ export function ContractActionDialogs({
                   )}
                 </div>
                 <p className="text-[11px] text-muted-foreground">
-                  If you are unsatisfied with the submitted work, please open a Dispute instead of cancelling.
+                  {tDialogs("disputeInsteadHint")}
                 </p>
               </div>
             ) : (
@@ -412,18 +417,17 @@ export function ContractActionDialogs({
               <XCircle className="size-6" />
             </div>
             <AlertDialogTitle className="text-lg font-bold text-foreground">
-              Decline Contract Offer
+              {tDialogs("declineTitle")}
             </AlertDialogTitle>
             <AlertDialogDescription className="text-xs text-muted-foreground leading-relaxed">
-              Declining this contract releases the Client&apos;s card
-              authorization hold immediately with zero refund fee.
+              {tDialogs("declineDescription")}
             </AlertDialogDescription>
 
             <textarea
               rows={3}
               value={rejectReason}
               onChange={(e) => onRejectReasonChange(e.target.value)}
-              placeholder="Optional reason for declining..."
+              placeholder={tDialogs("declinePlaceholder")}
               className="w-full rounded-xl border border-border bg-background px-3 py-2 text-xs text-foreground focus:border-[#0069D3] focus:outline-none focus:ring-1 focus:ring-[#0069D3]"
             />
 
@@ -438,7 +442,7 @@ export function ContractActionDialogs({
                 ) : (
                   <XCircle className="mr-1.5 size-4" />
                 )}
-                Confirm Decline
+                {tDialogs("confirmDecline")}
               </Button>
               <AlertDialogCancel
                 disabled={isRejecting}

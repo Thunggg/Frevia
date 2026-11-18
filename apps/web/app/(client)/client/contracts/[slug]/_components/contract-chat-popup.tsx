@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { useTranslations } from "next-intl";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "@repo/ui/components/shadcn/sonner";
 import {
@@ -41,6 +42,7 @@ export function ContractChatPopup({
   onOpenChat,
 }: ContractChatPopupProps) {
   const queryClient = useQueryClient();
+  const t = useTranslations("contractWorkspace");
   const socketValue = useConversationSocket(
     socketUrl ?? "",
     accessToken ?? null,
@@ -71,10 +73,10 @@ export function ContractChatPopup({
         (c) => c.id === payload.conversationId,
       );
       const senderName =
-        conv?.otherUser?.profile?.displayName || "New message";
+        conv?.otherUser?.profile?.displayName || t("newMessage");
       toast(senderName, {
         description:
-          payload?.message?.message?.slice(0, 80) || "You have a new message",
+          payload?.message?.message?.slice(0, 80) || t("newMessageFallback"),
         position: "top-right",
         duration: 4000,
       });
@@ -84,7 +86,7 @@ export function ContractChatPopup({
     return () => {
       socket.off("message:new", handler);
     };
-  }, [socketValue.socket, currentUserId, open, queryClient]);
+  }, [socketValue.socket, currentUserId, open, queryClient, t]);
 
   return (
     <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-3">
@@ -94,7 +96,7 @@ export function ContractChatPopup({
             type="button"
             onClick={() => onOpenChange(false)}
             className="absolute top-2 right-2 z-10 flex size-7 items-center justify-center rounded-full bg-background/80 text-muted-foreground hover:text-foreground cursor-pointer"
-            aria-label="Close chat"
+            aria-label={t("closeChatAria")}
           >
             <X className="size-4" />
           </button>
@@ -120,7 +122,7 @@ export function ContractChatPopup({
           }
           disabled={isStartingChat}
           className="flex size-14 items-center justify-center overflow-hidden rounded-full border border-border bg-card shadow-lg transition-transform hover:scale-105 cursor-pointer"
-          aria-label="Toggle chat"
+          aria-label={t("toggleChatAria")}
         >
           {isStartingChat ? (
             <Loader2 className="size-5 animate-spin text-[#0069D3]" />

@@ -13,7 +13,6 @@ import {
   LayoutDashboard,
   Megaphone,
   MessageSquare,
-  Scale,
   ShieldCheck,
   Sparkles,
   Tags,
@@ -33,12 +32,6 @@ const ALL_NAV_ITEMS: NavItem[] = [
     href: "/admin",
     icon: LayoutDashboard,
     requiredPermissions: ["/api/forums/admin/stats", "FORUMS-ADMIN"],
-  },
-  {
-    titleKey: "disputes",
-    href: "/admin/disputes",
-    icon: Scale,
-    requiredPermissions: ["/api/admin/disputes"],
   },
   {
     titleKey: "skills",
