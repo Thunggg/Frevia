@@ -329,6 +329,28 @@ describe('Dispute Management (UF-147 to UF-152)', () => {
       expect(disputeRepo.listDisputes).not.toHaveBeenCalled();
     });
 
+    it('allows custom staff roles granted dispute permissions to list disputes', async () => {
+      const expectedData = {
+        data: [mockDispute],
+        total: 1,
+        page: 1,
+        limit: 10,
+        totalPages: 1,
+      };
+      disputeRepo.listDisputes.mockResolvedValueOnce(expectedData);
+
+      const query: GetDisputeListQueryType = {
+        page: 1,
+        limit: 10,
+        sortBy: 'createdAt',
+        order: 'desc',
+      };
+      const result = await service.adminListDisputes('Support Staff', query);
+
+      expect(result).toEqual(expectedData);
+      expect(disputeRepo.listDisputes).toHaveBeenCalledWith(query);
+    });
+
     // Lọc danh sách tranh chấp theo trạng thái cụ thể.
     it('filters dispute list by status cleanly', async () => {
       disputeRepo.listDisputes.mockResolvedValueOnce({
