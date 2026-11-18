@@ -107,9 +107,9 @@ export function ContractChatPopup({
         </div>
       ) : null}
 
-      <div className="relative">
+      <div className="relative overflow-visible">
         {unreadMessages > 0 ? (
-          <span className="pointer-events-none absolute top-0 right-0 z-20 flex h-[18px] min-w-[18px] -translate-y-1/2 translate-x-1/2 items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-bold leading-none text-white shadow ring-2 ring-background">
+          <span className="pointer-events-none absolute -top-8 -right-2 z-40 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-bold leading-none text-white shadow ring-2 ring-background">
             {unreadMessages > 99 ? "99+" : unreadMessages}
           </span>
         ) : null}

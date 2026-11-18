@@ -2,6 +2,7 @@
   "name": "bazaar",
   "private": true,
   "scripts": {
+    "postinstall": "pnpm prisma:generate",
     "build": "turbo run build",
     "dev": "turbo run dev",
     "dev:api": "infisical run --env=dev --path=/api -- pnpm --filter api exec nest start --watch",
