@@ -24,8 +24,6 @@ import {
   CreateOnboardingLinkBodyDTO,
   CreatePaymentIntentResponseDTO,
   CreateSetupIntentResponseDTO,
-  DisputeSettlementBodyDTO,
-  DisputeSettlementResponseDTO,
   GetSavedPaymentMethodsResponseDTO,
   GetTransactionListQueryDTO,
   GetTransactionListResponseDTO,

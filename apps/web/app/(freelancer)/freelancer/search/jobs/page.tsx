@@ -5,7 +5,6 @@ import jobServerRequest from "@/apiRequests/job.server";
 import jobCategoryServerRequest from "@/apiRequests/job-category.server";
 import savedSearchServerRequest from "@/apiRequests/saved-search.server";
 import type {
-  JobBudgetType,
   JobCategoryBrowseItemType,
   JobHiringType,
   JobType,
@@ -68,6 +67,7 @@ export default async function FreelancerSearchJobsPage({
     "budget-high": { sortBy: "budgetMax", order: "desc" },
     "budget-low": { sortBy: "budgetMin", order: "asc" },
     "title-asc": { sortBy: "title", order: "asc" },
+    "title-desc": { sortBy: "title", order: "desc" },
     deadline: { sortBy: "deadline", order: "asc" },
   } as const;
   const selectedSort =
@@ -79,6 +79,7 @@ export default async function FreelancerSearchJobsPage({
   > = {
     "under-100": { budgetMax: 100 },
     "100-500": { budgetMin: 100, budgetMax: 500 },
+    "under-500": { budgetMax: 500 },
     "500-1000": { budgetMin: 500, budgetMax: 1000 },
     "1000-5000": { budgetMin: 1000, budgetMax: 5000 },
     "5000-plus": { budgetMin: 5000 },
@@ -86,9 +87,14 @@ export default async function FreelancerSearchJobsPage({
 
   const parsedMin = params.budgetMin ? Number(params.budgetMin) : undefined;
   const parsedMax = params.budgetMax ? Number(params.budgetMax) : undefined;
+  let budgetMin = Number.isFinite(parsedMin) && parsedMin! >= 0 ? parsedMin : undefined;
+  let budgetMax = Number.isFinite(parsedMax) && parsedMax! >= 0 ? parsedMax : undefined;
+  if (budgetMin !== undefined && budgetMax !== undefined && budgetMin > budgetMax) {
+    [budgetMin, budgetMax] = [budgetMax, budgetMin];
+  }
   const customBudget = {
-    budgetMin: Number.isFinite(parsedMin) ? parsedMin : undefined,
-    budgetMax: Number.isFinite(parsedMax) ? parsedMax : undefined,
+    budgetMin,
+    budgetMax,
   };
   const activeBudgetRange =
     customBudget.budgetMin !== undefined || customBudget.budgetMax !== undefined
@@ -113,9 +119,15 @@ export default async function FreelancerSearchJobsPage({
   const categories: JobCategoryBrowseItemType[] =
     categoriesResult?.jobCategories ?? [];
 
-  const category = categories.some((item) => item.slug === params.category)
-    ? params.category
-    : undefined;
+  const requestedCategorySlugs = (params.category ?? "")
+    .split(",")
+    .map((s) => s.trim())
+    .filter(Boolean);
+  const validCategorySlugs = requestedCategorySlugs.filter((slug) =>
+    categories.some((item) => item.slug === slug),
+  );
+  const category =
+    validCategorySlugs.length > 0 ? validCategorySlugs.join(",") : undefined;
 
   // Fetch jobs according to real schema fields
   const jobsResult = await jobServerRequest.getJobs({

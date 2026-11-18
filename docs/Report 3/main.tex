@@ -36,6 +36,7 @@
 \usepackage{array}
 \usepackage{multirow}
 \usepackage{makecell}
+\usepackage{hhline}
 \usepackage{caption}
 \usepackage{enumitem}
 
@@ -51,12 +52,13 @@
     headheight=14pt
 }
 
-\setlength{\emergencystretch}{3em}
+\setlength{\emergencystretch}{5em}
 
 %====================================================
 % SPACING
 %====================================================
 \usepackage{setspace}
+\usepackage{needspace}
 \onehalfspacing
 
 \usepackage{indentfirst}
@@ -291,11 +293,15 @@
   \par\addvspace{3pt}%
   \dimen0=\pagegoal \advance\dimen0 by -\pagetotal
   \ifdim\dimen0<11\baselineskip \newpage\fi
-  \renewcommand{\arraystretch}{1.22}%
-  \begin{longtable}{|>{\raggedright\arraybackslash}p{0.26\linewidth}|p{0.62\linewidth}|}
-  \hline\rowcolor{headerbg}\textbf{#1} & \textbf{#2}\\ \hline
+  \renewcommand{\arraystretch}{1.25}%
+  \begin{longtable}{|>{\raggedright\arraybackslash}p{0.30\linewidth}|>{\raggedright\arraybackslash}p{0.65\linewidth}|}
+  \hhline{|-|-|}
+  \rowcolor{headerbg}\textbf{#1} & \textbf{#2}\\
+  \hhline{|-|-|}
   \endfirsthead
-  \hline\rowcolor{headerbg}\textbf{#1} & \textbf{#2}\\ \hline
+  \hhline{|-|-|}
+  \rowcolor{headerbg}\textbf{#1} & \textbf{#2}\\
+  \hhline{|-|-|}
   \endhead
   \hline\endfoot
   }{%
@@ -305,11 +311,15 @@
 % Two-column table of the abnormal flow: case identifier and description.
 \newenvironment{flowtable}[2]{%
   \par\addvspace{3pt}%
-  \renewcommand{\arraystretch}{1.22}%
-  \begin{longtable}{|>{\centering\arraybackslash}p{0.09\linewidth}|p{0.79\linewidth}|}
-  \hline\rowcolor{headerbg}\textbf{#1} & \textbf{#2}\\ \hline
+  \renewcommand{\arraystretch}{1.25}%
+  \begin{longtable}{|>{\raggedright\arraybackslash}p{0.30\linewidth}|>{\raggedright\arraybackslash}p{0.65\linewidth}|}
+  \hhline{|-|-|}
+  \rowcolor{headerbg}\textbf{#1} & \textbf{#2}\\
+  \hhline{|-|-|}
   \endfirsthead
-  \hline\rowcolor{headerbg}\textbf{#1} & \textbf{#2}\\ \hline
+  \hhline{|-|-|}
+  \rowcolor{headerbg}\textbf{#1} & \textbf{#2}\\
+  \hhline{|-|-|}
   \endhead
   \hline\endfoot
   }{%

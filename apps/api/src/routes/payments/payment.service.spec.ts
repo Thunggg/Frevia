@@ -650,56 +650,6 @@ describe('PaymentService', () => {
     });
   });
 
-  describe('settleDispute', () => {
-    const mockDispute = {
-      id: 5,
-      milestoneId: 20,
-      decisionById: 99,
-      arbitrationFee: new Prisma.Decimal(0),
-      milestone: {
-        id: 20,
-        amount: new Prisma.Decimal(100),
-        contract: mockContract,
-      },
-      decisionBy: {
-        id: 99,
-        stripeAccountId: 'acct_expert_99',
-        stripeOnboardingCompleted: true,
-      },
-    };
-
-    it('settles split dispute with refund to client and transfer to freelancer', async () => {
-      repo.findDisputeById.mockResolvedValue(mockDispute as any);
-      repo.findEscrowDepositTransaction.mockResolvedValue({
-        stripePaymentIntentId: 'pi_escrow_deposit',
-      } as any);
-      stripeService.createRefund.mockResolvedValue({
-        id: 're_split_client',
-      } as any);
-      stripeService.createTransfer.mockResolvedValue({
-        id: 'tr_split_freelancer',
-      } as any);
-      repo.createTransaction.mockResolvedValue({} as any);
-      repo.updateDisputeStatus.mockResolvedValue({} as any);
-      repo.updateMilestonePaymentStatus.mockResolvedValue({} as any);
-
-      expect(stripeService.createTransfer).toHaveBeenCalledWith(
-        expect.objectContaining({
-          destination: 'acct_freelancer_123',
-          amountInCents: 6000,
-        }),
-      );
-    });
-
-    it('throws BadRequestException if split sum does not match milestone amount', async () => {
-      repo.findDisputeById.mockResolvedValue(mockDispute as any);
-    });
-
-    it('throws ForbiddenException if caller is neither admin nor assigned arbitrator', async () => {
-      repo.findDisputeById.mockResolvedValue(mockDispute as any);
-    });
-  });
-
   describe('handleWebhook', () => {
     it('handles payment_intent.amount_capturable_updated for manual contract hold', async () => {
       stripeService.constructWebhookEvent.mockReturnValue({

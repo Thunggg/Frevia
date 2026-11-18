@@ -40,7 +40,7 @@
     BR-SKILL-05 & Only the owning freelancer or an administrator can delete a skill from the profile. \\ \hline
     BR-PORT-01 & Only portfolios with deleted\_at = NULL shall be displayed. \\ \hline
     BR-PORT-02 & Portfolio title is a required field. \\ \hline
-    BR-PORT-03 & Media uploads must conform to system-defined size and type restrictions. \\ \hline
+    BR-PORT-03 & Portfolio fields are limited to title, description, technologies and an optional HTTP/HTTPS project URL within the database limit. \\ \hline
     BR-PORT-04 & Only portfolios with deleted\_at = NULL can be accessed. \\ \hline
     BR-PORT-05 & Only the portfolio owner can edit it. \\ \hline
     BR-PORT-06 & Portfolio title remains a required field. \\ \hline
@@ -138,4 +138,70 @@ BR-JOB-39 & Removing a bookmark is a hard delete from the database. \\ \hline
 
  
 
+% Nhuy -- Sprint 1--5 scoped rules
+BR-NH-18-01 & Only an authenticated freelancer submits or reads their own verification status. \\ \hline
+BR-NH-18-02 & At most one active PENDING or APPROVED request is allowed per freelancer. \\ \hline
+BR-NH-18-03 & Documents are confidential; storage delivery and file endpoints must enforce authorization. \\ \hline
+BR-NH-18-04 & AI success creates PENDING for administrator review; AI rejection records REJECTED with a reason. AI transport failure must not create a successful request. \\ \hline
+BR-NH-18-05 & Rejected users may resubmit after correcting the stated problem. NOT\_SUBMITTED is displayed when API status is null. \\ \hline
+BR-NH-19-01 & Public client output contains approved company and profile fields, never password hashes, payment tokens or private identity documents. \\ \hline
+BR-NH-19-02 & Only the authenticated Client updates their own company; the server derives the user ID from authentication. \\ \hline
+BR-NH-19-03 & Apply the profile revision policy when strength is below 20 percent. \\ \hline
+BR-NH-19-04 & Industry and location are outside the current ClientProfile schema. Hiring statistics are not part of the current response contract. \\ \hline
+BR-NH-20-01 & At most one link per platform per profile is allowed, including concurrent submissions. \\ \hline
+BR-NH-20-02 & Only the owning user can add or hard-delete a social link. \\ \hline
+BR-NH-20-03 & Open approved external links in a new tab with rel="noopener noreferrer". \\ \hline
+BR-NH-20-04 & Profile.id links the SocialLink table; the authenticated User.id resolves that profile. \\ \hline
+BR-NH-21-01 & Only an authenticated Client manages their own favorites. \\ \hline
+BR-NH-21-02 & Reject self-favoriting and targets without an active Freelancer role. \\ \hline
+BR-NH-21-03 & The composite key (clientId, freelancerId) prevents duplicate relationships. \\ \hline
+BR-NH-21-04 & Removal hard-deletes only the relationship; no freelancer account or profile is deleted. \\ \hline
+BR-NH-21-05 & A successful add must be visible after list reload, including a new freelancer with minimal professional data. \\ \hline
+BR-NH-29-01 & Only a Client follows or unfollows an active freelancer; self-follow is rejected. \\ \hline
+BR-NH-29-02 & A unique (clientId, freelancerId) mapping prevents duplicates. \\ \hline
+BR-NH-29-03 & Create the follow and its recipient notification together in a transaction. \\ \hline
+BR-NH-29-04 & Unfollow hard-deletes the mapping without deleting either user. \\ \hline
+BR-NH-30-01 & A user reads and changes only their own notifications. \\ \hline
+BR-NH-30-02 & Exclude rows with deletedAt set and sort by createdAt descending. \\ \hline
+BR-NH-30-03 & Mark-read sets isRead=true; mark-all affects only the recipient unread active rows. \\ \hline
+BR-NH-30-04 & Deletion is a soft delete and updates the displayed list and unread count. \\ \hline
+BR-NH-31-01 & Switch only to a role already assigned to the authenticated user. \\ \hline
+BR-NH-31-02 & Self-enrollment permits only Client or Freelancer; reject unsupported roles and duplicate UserRole mappings. \\ \hline
+BR-NH-31-03 & Maintain exactly one active primary role for an account; role-context changes issue updated session tokens. \\ \hline
+BR-NH-31-04 & Switching roles does not create a second user account or grant access to other users records. \\ \hline
+BR-NH-39-01 & Only contract participants can list or view contract reviews. \\ \hline
+BR-NH-39-02 & A review can be created only after the contract is COMPLETED, for the other party. \\ \hline
+BR-NH-39-03 & The pair (contractId, reviewerId) is unique. \\ \hline
+BR-NH-39-04 & Only the review author edits or soft-deletes their review. \\ \hline
+BR-NH-39-05 & An update must contain at least one accepted field. The current schema does not require a non-empty comment or an integer overall rating. \\ \hline
+BR-NH-40-01 & Only the user being reviewed may respond. \\ \hline
+BR-NH-40-02 & There is at most one active response per review. \\ \hline
+BR-NH-40-03 & Only the response author edits or soft-deletes it. \\ \hline
+BR-NH-40-04 & Soft-deleted responses must not be rendered as active feedback. \\ \hline
+BR-NH-41-01 & The server resolves the account from the session; users cannot edit another account via body IDs. \\ \hline
+BR-NH-41-02 & Verify the current password before hashing and storing a replacement; do not log credentials. \\ \hline
+BR-NH-41-03 & Apply the profile revision policy to general profile changes. \\ \hline
+BR-NH-41-04 & Avatar files must be validated; missing stored files return 404 without terminating the API process. \\ \hline
+BR-NH-47-01 & Only an authorized administrator can inspect or decide profile revisions. \\ \hline
+BR-NH-47-02 & Only PENDING revisions may be approved or rejected. Decision and profile writes are transactional. \\ \hline
+BR-NH-47-03 & Approval applies validated proposed data to the correct subtype; rejection retains existing public data. \\ \hline
+BR-NH-47-04 & Record reviewer, decision time and notes; preserve history and notify the requester. \\ \hline
+BR-NH-47-05 & An Expert submits their own update as a pending revision. Administrative expert editing is a separate authorized operation. \\ \hline
+BR-NH-07-01 & Use Profile.id for profile routes; User.id identifies the owner and must not be substituted for the profile ID. \\ \hline
+BR-NH-07-02 & Only the owner changes professional data. Public output excludes credentials and private CV locations. \\ \hline
+BR-NH-07-03 & Omitted optional fields are preserved. An explicit null or empty list clears the corresponding value. \\ \hline
+BR-NH-07-04 & Freelancer and Client updates below 20 percent profile strength require a pending revision; other updates apply directly. Pending changes are not shown as approved public data. \\ \hline
+BR-NH-08-01 & A freelancer can add and delete mappings only on their own profile. \\ \hline
+BR-NH-08-02 & The pair (freelancerProfileId, skillId) must be unique, including concurrent requests. \\ \hline
+BR-NH-08-03 & Deleting a skill permanently removes FreelancerSkill but retains the shared Skill definition. \\ \hline
+BR-NH-08-04 & Show an empty state when there are no active skills. \\ \hline
+BR-NH-09-01 & Only the owning freelancer creates, updates or deletes a portfolio item. \\ \hline
+BR-NH-09-02 & Only items whose deletedAt is null are listed, opened or edited. \\ \hline
+BR-NH-09-03 & Deletion sets deletedAt; it does not hard-delete the item. \\ \hline
+BR-NH-09-04 & The agreed database scope is title, description, technologies and project URL; media gallery, uploads and project role are excluded. \\ \hline
+BR-NH-CV-01 & Only the owning freelancer can upload, view, replace or delete their CV. \\ \hline
+BR-NH-CV-02 & Uploads are PDF-only, at most 10 MB, and must have a valid PDF signature; reject missing, oversized or invalid files. \\ \hline
+BR-NH-CV-03 & Store CV URL, file name, public ID and upload time on FreelancerProfile. Do not expose private storage paths in public profile responses. \\ \hline
+BR-NH-CV-04 & A replacement updates metadata only after the new file is stored. A missing local file returns 404 without crashing the API. \\ \hline
+BR-NH-CV-05 & Deleting a CV clears its metadata and triggers a search-index update; it does not delete the profile or previously confirmed professional sections. \\ \hline
 \end{longtable}

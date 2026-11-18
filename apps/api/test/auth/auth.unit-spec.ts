@@ -163,7 +163,11 @@ describe('User Authentication (UF-37 to UF-41)', () => {
     it('provisions a new freelancer account and returns tokens when a new Google profile signs in with FREELANCER role', async () => {
       mockGetToken.mockResolvedValue({ tokens: { access_token: 'g-token' } });
       mockOAuthRequest.mockResolvedValue({
-        data: { id: 'g-freelancer', email: 'freelancer@frevia.com', name: 'New Freelancer User' },
+        data: {
+          id: 'g-freelancer',
+          email: 'freelancer@frevia.com',
+          name: 'New Freelancer User',
+        },
       });
       authRepository.findUserByEmailIncludeRole.mockResolvedValue(null);
       sharedRoleRepository.getFreelancerRoleId.mockResolvedValue(3);
@@ -176,7 +180,11 @@ describe('User Authentication (UF-37 to UF-41)', () => {
       authRepository.createOauthAccount.mockResolvedValue({ id: 2 });
 
       const freelancerState = Buffer.from(
-        JSON.stringify({ userAgent: 'Jest/Test', ip: '127.0.0.1', role: RoleName.FREELANCER }),
+        JSON.stringify({
+          userAgent: 'Jest/Test',
+          ip: '127.0.0.1',
+          role: RoleName.FREELANCER,
+        }),
       ).toString('base64url');
 
       const result = await service.googleCallback({

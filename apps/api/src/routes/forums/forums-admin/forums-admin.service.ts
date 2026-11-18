@@ -164,7 +164,10 @@ export class ForumAdminService {
   ): Promise<ForumCategoryType> {
     this.ensureStaffAccess(roleName);
     try {
-      const result = await this.adminRepository.updateAdminCategory(categoryId, body);
+      const result = await this.adminRepository.updateAdminCategory(
+        categoryId,
+        body,
+      );
       this.cacheService?.delByPrefix('forum_categor');
       return result;
     } catch (error) {
@@ -198,7 +201,8 @@ export class ForumAdminService {
   ): Promise<ForumCategoryType> {
     this.ensureStaffAccess(roleName);
     try {
-      const result = await this.adminRepository.restoreAdminCategory(categoryId);
+      const result =
+        await this.adminRepository.restoreAdminCategory(categoryId);
       this.cacheService?.delByPrefix('forum_categor');
       return result;
     } catch (error) {

@@ -1,5 +1,10 @@
 import { z } from "zod";
 
+import {
+  MAX_PROPOSAL_BID_AMOUNT,
+  MAX_PROPOSAL_DELIVERY_DAYS,
+  MIN_PROPOSAL_DELIVERY_DAYS,
+} from "../constants/proposal.constant";
 import { ManageProposalMessage } from "../message/manage-proposal.message";
 import { JobHiringTypeSchema } from "./job.model";
 
@@ -39,12 +44,15 @@ const CoverLetterSchema = z
 
 const BidAmountSchema = z.coerce
   .number({ error: ManageProposalMessage.BID_AMOUNT_REQUIRED })
-  .positive(ManageProposalMessage.BID_AMOUNT_POSITIVE);
+  .positive(ManageProposalMessage.BID_AMOUNT_POSITIVE)
+  .max(MAX_PROPOSAL_BID_AMOUNT, ManageProposalMessage.BID_AMOUNT_TOO_LARGE);
 
 const DeliveryDaysSchema = z.coerce
   .number({ error: ManageProposalMessage.DELIVERY_DAYS_REQUIRED })
   .int(ManageProposalMessage.DELIVERY_DAYS_POSITIVE)
-  .positive(ManageProposalMessage.DELIVERY_DAYS_POSITIVE);
+  .positive(ManageProposalMessage.DELIVERY_DAYS_POSITIVE)
+  .min(MIN_PROPOSAL_DELIVERY_DAYS, ManageProposalMessage.DELIVERY_DAYS_POSITIVE)
+  .max(MAX_PROPOSAL_DELIVERY_DAYS, ManageProposalMessage.DELIVERY_DAYS_TOO_LARGE);
 
 export const ProposalSchema = z.object({
   id: z.number(),
