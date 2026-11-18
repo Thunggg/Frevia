@@ -17,6 +17,14 @@ const successStyle = {
     "light-dark(var(--color-green-600), var(--color-green-400))",
 } as React.CSSProperties;
 
+const warningStyle = {
+  "--normal-bg":
+    "color-mix(in oklab, light-dark(var(--color-amber-600), var(--color-amber-400)) 15%, var(--background))",
+  "--normal-text": "light-dark(var(--color-amber-800), var(--color-amber-300))",
+  "--normal-border":
+    "light-dark(var(--color-amber-500), var(--color-amber-400))",
+} as React.CSSProperties;
+
 export function toastError({
   message,
   className,
@@ -31,6 +39,23 @@ export function toastError({
     position: "top-right",
     className,
     duration: duration || 3000,
+  });
+}
+
+export function toastWarning({
+  message,
+  className,
+  duration,
+}: {
+  message: string;
+  className?: string;
+  duration?: number;
+}) {
+  return toast.warning(message, {
+    style: warningStyle,
+    position: "top-right",
+    className,
+    duration: duration || 4000,
   });
 }
 

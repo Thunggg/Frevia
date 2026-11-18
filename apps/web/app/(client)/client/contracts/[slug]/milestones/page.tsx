@@ -1,6 +1,9 @@
 import { notFound } from "next/navigation";
+import { cookies } from "next/headers";
 import contractServerRequest from "@/apiRequests/contract.server";
+import authServerRequest from "@/apiRequests/auth.server";
 import { MilestonesPageContent } from "./_components";
+import { envConfig } from "@/configs/validate-env";
 
 export async function generateMetadata({
   params,
@@ -36,6 +39,10 @@ export default async function ClientContractMilestonesPage({
 
   if (!contract) notFound();
 
+  const cookieStore = await cookies();
+  const token = cookieStore.get("accessToken")?.value ?? null;
+  const user = await authServerRequest.getMe();
+
   const sharedFiles = await contractServerRequest.getSharedFiles(contract.id);
 
   return (
@@ -45,6 +52,9 @@ export default async function ClientContractMilestonesPage({
           initialContract={contract}
           initialSharedFiles={sharedFiles}
           basePath="/client"
+          currentUserId={user?.id ?? null}
+          accessToken={token}
+          socketUrl={envConfig?.NESTJS_API_URL ?? ""}
         />
       </div>
     </div>

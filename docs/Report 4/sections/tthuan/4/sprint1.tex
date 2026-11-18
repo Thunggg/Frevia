@@ -32,6 +32,50 @@ A helper method to extract the Bearer token from the incoming HTTP Authorization
 03 & \code{sessionRepo} & \code{SessionRepository} \\ \hline
 \end{ClassAttributeTable}
 
+\subsection{PermissionGuard Class}
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{PermissionGuard(}\newline\code{reflector: Reflector,}\newline\code{sharedPermissionRepository:}\newline\code{SharedPermissionRepository)} &
+A method to initialize the route permission guard with dependency services.
+\newline -- \code{reflector}: \code{Reflector} -- metadata reflector to skip checks on public routes.
+\newline -- \code{sharedPermissionRepository}: \code{SharedPermissionRepository} -- repository used to verify role permissions against the request method and path.
+\newline -- \textit{Returns:} \code{void} -- constructor. \\ \hline
+
+02 & \code{canActivate(context: ExecutionContext)} &
+A method to verify whether the authenticated user's role is authorized to call the current HTTP method and route path via \code{SharedPermissionRepository.roleHasPermission}.
+\newline -- \code{context}: \code{ExecutionContext} -- execution context containing HTTP request metadata and attached user payload.
+\newline -- \textit{Returns:} \code{Promise<boolean>} -- \code{true} if permitted, or throws \code{ForbiddenException (403)} when missing \code{roleId} or permission is denied. \\ \hline
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{reflector} & \code{Reflector} \\ \hline
+02 & \code{sharedPermissionRepository} & \code{SharedPermissionRepository} \\ \hline
+\end{ClassAttributeTable}
+
+\subsection{SharedPermissionRepository Class}
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{SharedPermissionRepository(}\newline\code{prisma: PrismaService)} &
+A method to initialize the shared permission repository with Prisma client access.
+\newline -- \code{prisma}: \code{PrismaService} -- database client for querying role permissions.
+\newline -- \textit{Returns:} \code{void} -- constructor. \\ \hline
+
+02 & \code{roleHasPermission(}\newline\code{roleId: number,}\newline\code{method: string,}\newline\code{path: string)} &
+A method to query active permissions assigned to \code{roleId} for the given HTTP method and test whether any stored route pattern matches \code{path} via \code{matchRoutePath}.
+\newline -- \code{roleId}: \code{number} -- active role identifier from the verified token payload.
+\newline -- \code{method}: \code{string} -- HTTP request method (e.g., \code{GET}, \code{POST}, \code{PUT}, \code{DELETE}).
+\newline -- \code{path}: \code{string} -- incoming request route path.
+\newline -- \textit{Returns:} \code{Promise<boolean>} -- \code{true} if a matching permission exists, \code{false} otherwise. \\ \hline
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{prisma} & \code{PrismaService} \\ \hline
+\end{ClassAttributeTable}
+
 \subsection{AuthController Class}
 
 \paragraph{ClassMethod}

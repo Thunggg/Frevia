@@ -5,6 +5,9 @@ import { useQueryClient } from "@tanstack/react-query";
 import { io } from "socket.io-client";
 import { useTranslations } from "next-intl";
 import { conversationKeys } from "@/hooks/use-conversation";
+import { useNotificationText } from "@/hooks/use-notification-text";
+import { notificationKeys } from "@/hooks/use-notifications";
+import { toast } from "@repo/ui/components/shadcn/sonner";
 import {
   AlertDialog,
   AlertDialogContent,
@@ -18,6 +21,7 @@ import { Lock, ShieldAlert, LogOut, Loader2 } from "lucide-react";
 import type {
   ConversationListItemType,
   GetConversationsResponseType,
+  NotificationItemType,
 } from "@shared/types";
 
 type NotificationContextValue = {
@@ -57,6 +61,7 @@ export function NotificationProvider({
   children: React.ReactNode;
 }) {
   const t = useTranslations("auth.forceLogout");
+  const notificationText = useNotificationText();
   const queryClient = useQueryClient();
   const [connected, setConnected] = useState(false);
   const [modalState, setModalState] = useState<{
@@ -84,6 +89,30 @@ export function NotificationProvider({
 
     socket.on("connect", () => setConnected(true));
     socket.on("disconnect", () => setConnected(false));
+
+    socket.on("notification:new", (notification: NotificationItemType) => {
+      queryClient.setQueryData<NotificationItemType[]>(
+        notificationKeys.all,
+        (old) => {
+          if (!old) return old;
+          return [
+            notification,
+            ...old.filter((item) => item.id !== notification.id),
+          ];
+        },
+      );
+      void queryClient.invalidateQueries({ queryKey: notificationKeys.all });
+
+      const text = notificationText(
+        notification,
+        notification.title ?? "",
+      );
+      toast(text.title, {
+        description: text.message || undefined,
+        position: "top-right",
+        duration: 4000,
+      });
+    });
 
     authSocket.on(
       "AUTH_FORCE_LOGOUT",
@@ -113,10 +142,31 @@ export function NotificationProvider({
           conversationKeys.list(),
           (old) => {
             if (!old) return old;
-            const exists = old.some((c) => c.id === item.id);
+            const previous = old.find((c) => c.id === item.id);
+            const exists = Boolean(previous);
             const next = exists
               ? old.map((c) => (c.id === item.id ? item : c))
               : [...old, item];
+
+            // Thông báo tin nhắn mới (recipient có unreadCount tăng)
+            if (
+              (item.unreadCount ?? 0) > (previous?.unreadCount ?? 0) &&
+              item.lastMessage?.senderId !== currentUserId
+            ) {
+              const senderName =
+                item.otherUser?.profile?.displayName || "New message";
+              toast(senderName, {
+                description: item.lastMessage?.message?.slice(0, 80) || "You have a new message",
+                position: "top-right",
+                duration: 4000,
+              });
+
+              // Có tin nhắn mới -> làm mới danh sách thông báo trên chuông/trang notifications
+              void queryClient.invalidateQueries({
+                queryKey: notificationKeys.all,
+              });
+            }
+
             return sortByLastMessage(next);
           },
         );
@@ -141,7 +191,7 @@ export function NotificationProvider({
       authSocket.disconnect();
       setConnected(false);
     };
-  }, [socketUrl, token, currentUserId, queryClient]);
+  }, [socketUrl, token, currentUserId, queryClient, notificationText]);
 
   const handleConfirmLogout = async () => {
     setIsLoggingOut(true);

@@ -40,6 +40,7 @@ import { useMe } from "@/hooks/use-auth";
 import { useActionPermission } from "@/hooks/use-action-permission";
 import { canAccessAdminPortal } from "@/lib/admin-access";
 import { useNotifications } from "@/hooks/use-notifications";
+import { useConversations } from "@/hooks/use-conversation";
 
 type NavItem = {
   href: string;
@@ -123,6 +124,8 @@ export function FreelancerSidebar() {
   const activeLocale = useLocale();
   const [isLocalePending, startLocaleTransition] = useTransition();
   const { data: me } = useMe();
+  // const { data: notifications = [] } = useNotifications();
+  const { data: conversations = [] } = useConversations();
   const { can } = useActionPermission();
   const canViewProposals = can("GET", "/api/proposals/my");
   const canViewContracts = can("GET", "/api/contracts");
@@ -168,6 +171,10 @@ export function FreelancerSidebar() {
 
   const isDark = mounted && resolvedTheme === "dark";
   const unreadNotifications = notifications.filter((n) => !n.isRead).length;
+  const unreadMessages = (conversations ?? []).reduce(
+    (sum, c) => sum + (c.unreadCount || 0),
+    0,
+  );
 
   const selectLocale = (nextLocale: string) => {
     if (!isLocale(nextLocale) || nextLocale === activeLocale) return;
@@ -214,6 +221,12 @@ export function FreelancerSidebar() {
       labelKey: "navMessages",
       icon: MessageSquare,
       matchPrefix: true,
+      badge:
+        unreadMessages > 0
+          ? unreadMessages > 99
+            ? "99+"
+            : unreadMessages
+          : undefined,
     },
     {
       href: "/forum",

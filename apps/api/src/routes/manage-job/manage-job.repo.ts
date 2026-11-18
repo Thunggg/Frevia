@@ -20,7 +20,9 @@ import {
 import { PrismaService } from '../../shared/services/prisma.service';
 import {
   JobCannotBeClosedException,
+  JobCannotBeEditedException,
   JobCannotBePublishedException,
+  JobCannotBePublishedMissingFieldsException,
   JobCannotBeReopenedException,
   JobCannotBeDeletedWithActiveContractException,
   JobReopenPeriodExpiredException,
@@ -204,6 +206,25 @@ export class ManageJobRepository {
     return { jobs: jobs.map((job) => this.normalizeJob(job)), total };
   }
 
+  async hasDuplicateTitle(
+    clientId: number,
+    title: string,
+    excludeJobId?: number,
+  ): Promise<boolean> {
+    const trimmed = title.trim();
+    if (!trimmed) return false;
+    const existing = await this.prisma.job.findFirst({
+      where: {
+        clientId,
+        deletedAt: null,
+        title: { equals: trimmed, mode: Prisma.QueryMode.insensitive },
+        ...(excludeJobId && { id: { not: excludeJobId } }),
+      },
+      select: { id: true },
+    });
+    return Boolean(existing);
+  }
+
   async findJobBySlug(
     slug: string,
   ): Promise<Pick<
@@ -323,6 +344,16 @@ export class ManageJobRepository {
           where: { id: jobId },
           select: { positionsFilled: true, status: true, slug: true },
         });
+
+        // Chỉ cho phép chỉnh sửa khi công việc ở trạng thái DRAFT, OPEN hoặc CLOSED
+        const editableStatuses: JobStatus[] = [
+          JobStatus.DRAFT,
+          JobStatus.OPEN,
+          JobStatus.CLOSED,
+        ];
+        if (!editableStatuses.includes(current.status)) {
+          throw JobCannotBeEditedException();
+        }
 
         if (data.positionsRequired < current.positionsFilled) {
           throw PositionsRequiredBelowFilledException();
@@ -450,6 +481,83 @@ export class ManageJobRepository {
 
     if (job.status !== JobStatus.DRAFT) {
       throw JobCannotBePublishedException();
+    }
+
+    const jobDetail = await this.prisma.job.findUnique({
+      where: { id: jobId },
+      select: {
+        title: true,
+        description: true,
+        budgetMin: true,
+        budgetMax: true,
+        budgetType: true,
+        deadline: true,
+        expiryDate: true,
+        hiringType: true,
+        positionsRequired: true,
+        skills: { select: { skillId: true } },
+        jobCategories: { select: { categoryId: true } },
+      },
+    });
+
+    if (!jobDetail) {
+      throw JobNotFoundException();
+    }
+
+    const now = new Date();
+    const budgetMin =
+      jobDetail.budgetMin != null ? Number(jobDetail.budgetMin) : null;
+    const budgetMax =
+      jobDetail.budgetMax != null ? Number(jobDetail.budgetMax) : null;
+
+    const isTitleValid =
+      typeof jobDetail.title === 'string' &&
+      jobDetail.title.trim().length >= 10 &&
+      jobDetail.title.trim().length <= 255;
+
+    const isDescriptionValid =
+      typeof jobDetail.description === 'string' &&
+      jobDetail.description.trim().length >= 20 &&
+      jobDetail.description.trim().length <= 5000;
+
+    const isBudgetValid =
+      budgetMin !== null &&
+      budgetMax !== null &&
+      budgetMin >= 10 &&
+      budgetMax >= 10 &&
+      budgetMin <= budgetMax;
+
+    const isDatesValid =
+      jobDetail.deadline !== null &&
+      jobDetail.expiryDate !== null &&
+      jobDetail.deadline > now &&
+      jobDetail.expiryDate > now &&
+      jobDetail.expiryDate < jobDetail.deadline;
+
+    const isSkillsValid =
+      Array.isArray(jobDetail.skills) &&
+      jobDetail.skills.length >= 1 &&
+      jobDetail.skills.length <= 10;
+
+    const isCategoriesValid =
+      Array.isArray(jobDetail.jobCategories) &&
+      jobDetail.jobCategories.length === 1;
+
+    const isPositionsValid =
+      (jobDetail.hiringType === 'SINGLE' &&
+        jobDetail.positionsRequired === 1) ||
+      (jobDetail.hiringType === 'MULTIPLE' && jobDetail.positionsRequired >= 2);
+
+    if (
+      !isTitleValid ||
+      !isDescriptionValid ||
+      !isBudgetValid ||
+      !isDatesValid ||
+      !isSkillsValid ||
+      !isCategoriesValid ||
+      !isPositionsValid
+    ) {
+      throw JobCannotBePublishedMissingFieldsException();
     }
 
     const updatedJob = await this.prisma.job.update({
@@ -599,14 +707,22 @@ export class ManageJobRepository {
     };
 
     // Quan hệ N-N: làm phẳng JobJobCategory về danh mục thực tế.
-    return (
-      jobCategories
-        ? {
-            ...normalized,
-            jobCategories: jobCategories.map(({ category }) => category),
-          }
-        : normalized
-    ) as any;
+    const result = jobCategories
+      ? {
+          ...normalized,
+          jobCategories: jobCategories.map(({ category }) => category),
+        }
+      : normalized;
+
+    return result as unknown as Omit<
+      T,
+      'budgetMin' | 'budgetMax' | 'jobCategories' | '_count'
+    > & {
+      budgetMin: number | null;
+      budgetMax: number | null;
+      jobCategories?: Array<{ id: number; name: string; slug: string }>;
+      proposalsCount?: number;
+    };
   }
 
   private async replaceJobSkills(

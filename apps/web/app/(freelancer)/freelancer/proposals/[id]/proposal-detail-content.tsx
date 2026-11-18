@@ -41,6 +41,7 @@ import {
   CreateProposalBodySchema,
   ManageProposalMessage,
   SaveProposalDraftBodySchema,
+  MAX_PROPOSAL_DELIVERY_DAYS,
   type CreateProposalBodyType,
   type ProposalDetailType,
   type SaveProposalDraftBodyType,
@@ -90,7 +91,18 @@ export function ProposalDetailContent({
     !isPast(proposal.job.expiryDate) &&
     !isPast(proposal.job.deadline) &&
     (canUpdateDraft || canUpdate);
+
+  const maxDaysFromDeadline = proposal.job.deadline
+    ? Math.max(
+        1,
+        Math.ceil(
+          (new Date(proposal.job.deadline).getTime() - Date.now()) /
+            (24 * 60 * 60 * 1000),
+        ),
+      )
+    : undefined;
   const form = useForm<CreateProposalBodyType>({
+    mode: "onChange",
     resolver: useTranslatedResolver<CreateProposalBodyType>(
       CreateProposalBodySchema,
     ),
@@ -100,6 +112,23 @@ export function ProposalDetailContent({
       deliveryDays: proposal.deliveryDays ?? undefined,
     },
   });
+
+  const watchedBid = form.watch("bidAmount");
+  const budgetMin =
+    proposal.job.budgetMin !== null ? Number(proposal.job.budgetMin) : null;
+  const budgetMax =
+    proposal.job.budgetMax !== null ? Number(proposal.job.budgetMax) : null;
+  const isBelowBudget =
+    budgetMin !== null &&
+    watchedBid !== undefined &&
+    watchedBid !== null &&
+    watchedBid > 0 &&
+    watchedBid < budgetMin;
+  const isAboveBudget =
+    budgetMax !== null &&
+    watchedBid !== undefined &&
+    watchedBid !== null &&
+    watchedBid > budgetMax;
 
   const draftBody = (): SaveProposalDraftBodyType => {
     const values = form.getValues();
@@ -115,7 +144,20 @@ export function ProposalDetailContent({
   };
 
   const validateDraft = () => {
-    const result = SaveProposalDraftBodySchema.safeParse(draftBody());
+    const body = draftBody();
+    if (
+      maxDaysFromDeadline &&
+      body.deliveryDays !== undefined &&
+      body.deliveryDays > maxDaysFromDeadline
+    ) {
+      form.setError("deliveryDays", {
+        type: "manual",
+        message: t("deliveryExceedsDeadline", { days: maxDaysFromDeadline }),
+      });
+      return null;
+    }
+
+    const result = SaveProposalDraftBodySchema.safeParse(body);
     if (result.success) return result.data;
 
     const issue = result.error.issues[0];
@@ -165,6 +207,14 @@ export function ProposalDetailContent({
   const submit = form.handleSubmit(async (body) => {
     if (!canSubmitDraft) {
       toastError({ message: t("noPermissionSubmitDraft") });
+      return;
+    }
+
+    if (maxDaysFromDeadline && body.deliveryDays > maxDaysFromDeadline) {
+      form.setError("deliveryDays", {
+        type: "manual",
+        message: t("deliveryExceedsDeadline", { days: maxDaysFromDeadline }),
+      });
       return;
     }
     setAction("submit");
@@ -266,6 +316,12 @@ export function ProposalDetailContent({
                       <FieldLabel>{t("coverLetter")}</FieldLabel>
                       <Textarea
                         {...field}
+                        onChange={(e) => {
+                          field.onChange(e);
+                          if (form.formState.errors.coverLetter) {
+                            form.clearErrors("coverLetter");
+                          }
+                        }}
                         disabled={!canEditDraft || action !== null}
                         className="min-h-52"
                         maxLength={5000}
@@ -283,22 +339,49 @@ export function ProposalDetailContent({
                     control={form.control}
                     render={({ field, fieldState }) => (
                       <Field data-invalid={fieldState.invalid}>
-                        <FieldLabel>{t("yourBid")}</FieldLabel>
+                        <div className="flex flex-col gap-0.5">
+                          <FieldLabel>{t("yourBid")}</FieldLabel>
+                          {budgetMin || budgetMax ? (
+                            <span className="text-xs text-muted-foreground">
+                              {t("budgetHint", {
+                                range:
+                                  budgetMin && budgetMax
+                                    ? `${format.number(budgetMin)} - ${format.number(budgetMax)}`
+                                    : budgetMin
+                                      ? `>= ${format.number(budgetMin)}`
+                                      : `<= ${format.number(budgetMax!)}`,
+                              })}
+                            </span>
+                          ) : null}
+                        </div>
                         <Input
                           type="number"
                           min="0"
                           step="0.01"
                           disabled={!canEditDraft || action !== null}
                           value={field.value ?? ""}
-                          onChange={(event) =>
+                          onChange={(event) => {
                             field.onChange(
                               event.target.value === ""
                                 ? undefined
                                 : Number(event.target.value),
-                            )
-                          }
+                            );
+                            if (form.formState.errors.bidAmount) {
+                              form.clearErrors("bidAmount");
+                            }
+                          }}
                           aria-invalid={fieldState.invalid}
                         />
+                        {isBelowBudget ? (
+                          <p className="mt-1 text-xs text-amber-600 dark:text-amber-400">
+                            ⚠️ {t("bidBelowMin", { min: format.number(budgetMin!) })}
+                          </p>
+                        ) : null}
+                        {isAboveBudget ? (
+                          <p className="mt-1 text-xs text-amber-600 dark:text-amber-400">
+                            ⚠️ {t("bidAboveMax", { max: format.number(budgetMax!) })}
+                          </p>
+                        ) : null}
                         {fieldState.invalid ? (
                           <FieldError errors={[fieldState.error]} />
                         ) : null}
@@ -310,20 +393,44 @@ export function ProposalDetailContent({
                     control={form.control}
                     render={({ field, fieldState }) => (
                       <Field data-invalid={fieldState.invalid}>
-                        <FieldLabel>{t("deliveryDaysInput")}</FieldLabel>
+                        <div className="flex flex-col gap-0.5">
+                          <FieldLabel>{t("deliveryDaysInput")}</FieldLabel>
+                          {proposal.job.deadline && maxDaysFromDeadline ? (
+                            <span className="text-xs text-muted-foreground">
+                              {t("deadlineHint", {
+                                deadline: format.dateTime(
+                                  new Date(proposal.job.deadline),
+                                  { dateStyle: "medium" },
+                                ),
+                                days: maxDaysFromDeadline,
+                              })}
+                            </span>
+                          ) : null}
+                        </div>
                         <Input
                           type="number"
                           min="1"
+                          max={
+                            maxDaysFromDeadline
+                              ? Math.min(
+                                  MAX_PROPOSAL_DELIVERY_DAYS,
+                                  maxDaysFromDeadline,
+                                )
+                              : MAX_PROPOSAL_DELIVERY_DAYS
+                          }
                           step="1"
                           disabled={!canEditDraft || action !== null}
                           value={field.value ?? ""}
-                          onChange={(event) =>
+                          onChange={(event) => {
                             field.onChange(
                               event.target.value === ""
                                 ? undefined
                                 : Number(event.target.value),
-                            )
-                          }
+                            );
+                            if (form.formState.errors.deliveryDays) {
+                              form.clearErrors("deliveryDays");
+                            }
+                          }}
                           aria-invalid={fieldState.invalid}
                         />
                         {fieldState.invalid ? (

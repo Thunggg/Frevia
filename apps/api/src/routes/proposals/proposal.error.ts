@@ -108,7 +108,28 @@ export const BidAmountTooLowException = () =>
     { message: ManageProposalMessage.BID_AMOUNT_TOO_LOW, path: 'bidAmount' },
   ]);
 
+export const BidAmountTooLargeException = () =>
+  new UnprocessableEntityException([
+    { message: ManageProposalMessage.BID_AMOUNT_TOO_LARGE, path: 'bidAmount' },
+  ]);
+
 export const ExtremeBidAmountException = () =>
   new UnprocessableEntityException([
     { message: ManageProposalMessage.EXTREME_BID_AMOUNT, path: 'bidAmount' },
+  ]);
+
+export const ProposalDeliveryDaysTooLargeException = () =>
+  new UnprocessableEntityException([
+    {
+      message: ManageProposalMessage.DELIVERY_DAYS_TOO_LARGE,
+      path: 'deliveryDays',
+    },
+  ]);
+
+export const ProposalDeliveryExceedsDeadlineException = () =>
+  new UnprocessableEntityException([
+    {
+      message: ManageProposalMessage.DELIVERY_EXCEEDS_DEADLINE,
+      path: 'deliveryDays',
+    },
   ]);

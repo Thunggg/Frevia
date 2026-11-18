@@ -87,36 +87,73 @@ export class BrowseJobRepository {
         },
       }),
 
-      ...(skill && {
-        skills: {
-          some: {
-            skill: {
-              is: {
-                name: {
-                  contains: skill,
-                  mode: Prisma.QueryMode.insensitive,
+      ...(skill &&
+        (() => {
+          const skillList = skill
+            .split(',')
+            .map((s) => s.trim())
+            .filter(Boolean);
+          if (skillList.length === 0) return {};
+          if (skillList.length === 1) {
+            return {
+              skills: {
+                some: {
+                  skill: {
+                    is: {
+                      name: {
+                        contains: skillList[0],
+                        mode: Prisma.QueryMode.insensitive,
+                      },
+                    },
+                  },
+                },
+              },
+            };
+          }
+          return {
+            skills: {
+              some: {
+                skill: {
+                  is: {
+                    OR: skillList.map((s) => ({
+                      name: {
+                        contains: s,
+                        mode: Prisma.QueryMode.insensitive,
+                      },
+                    })),
+                  },
                 },
               },
             },
-          },
-        },
-      }),
+          };
+        })()),
 
       // Lọc theo danh mục công việc (UC-46.07 A.2): chỉ khớp danh mục đang ACTIVE,
       // chưa bị xoá — danh mục bị vô hiệu hoá sẽ biến mất khỏi flow tìm kiếm (BR-CAT-15).
-      ...(category && {
-        jobCategories: {
-          some: {
-            category: {
-              is: {
-                slug: category,
-                status: JobCategoryStatus.ACTIVE,
-                deletedAt: null,
+      ...(category &&
+        (() => {
+          const categoryList = category
+            .split(',')
+            .map((c) => c.trim())
+            .filter(Boolean);
+          if (categoryList.length === 0) return {};
+          return {
+            jobCategories: {
+              some: {
+                category: {
+                  is: {
+                    slug:
+                      categoryList.length === 1
+                        ? categoryList[0]
+                        : { in: categoryList },
+                    status: JobCategoryStatus.ACTIVE,
+                    deletedAt: null,
+                  },
+                },
               },
             },
-          },
-        },
-      }),
+          };
+        })()),
 
       ...(clientId !== undefined && { clientId }),
     } satisfies Prisma.JobWhereInput;
@@ -272,13 +309,21 @@ export class BrowseJobRepository {
     };
 
     // Quan hệ N-N: làm phẳng bảng trung gian JobJobCategory về danh mục thực tế.
-    return (
-      jobCategories
-        ? {
-            ...normalized,
-            jobCategories: jobCategories.map(({ category }) => category),
-          }
-        : normalized
-    ) as any;
+    const result = {
+      ...normalized,
+      ...(jobCategories && {
+        jobCategories: jobCategories.map(({ category }) => category),
+      }),
+    };
+
+    return result as unknown as Omit<
+      T,
+      'budgetMin' | 'budgetMax' | 'jobCategories' | '_count'
+    > & {
+      budgetMin: number | null;
+      budgetMax: number | null;
+      jobCategories?: Array<{ id: number; name: string; slug: string }>;
+      proposalsCount?: number;
+    };
   }
 }

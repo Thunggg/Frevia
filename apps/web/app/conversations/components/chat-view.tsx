@@ -4,7 +4,9 @@ import { useFormatter, useTranslations } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useQueryClient } from "@tanstack/react-query";
 import { useActionPermission } from "@/hooks/use-action-permission";
+import { notificationKeys } from "@/hooks/use-notifications";
 import {
   useConversationDetail,
   useConversationMessages,
@@ -33,12 +35,8 @@ import {
   Paperclip,
   Send,
   Trash2,
-  UserRound,
 } from "@/components/icons";
-import type {
-  DirectMessageType,
-  MessageAttachmentType,
-} from "@shared/types";
+import type { DirectMessageType, MessageAttachmentType } from "@shared/types";
 
 const MAX_FILE_SIZE = 25 * 1024 * 1024;
 
@@ -77,6 +75,7 @@ export function ChatView({
   const t = useTranslations("chat");
   const tCommon = useTranslations("common");
   const format = useFormatter();
+  const queryClient = useQueryClient();
   const { can } = useActionPermission();
   const canViewConversation = can("GET", "/api/conversations/:id");
   const canViewMessages = can("GET", "/api/conversations/:id/messages");
@@ -112,7 +111,7 @@ export function ChatView({
       : Number(targetIdOrSlug) || 0);
 
   const { data: messages, isLoading } = useConversationMessages(
-    targetIdOrSlug ?? 0,
+    conversation?.id ?? targetIdOrSlug ?? 0,
     canViewMessages,
   );
   const restSend = useSendConversationMessage();
@@ -145,10 +144,19 @@ export function ChatView({
     if (!conversationId || !canMarkRead) return;
     if (socket && connected) {
       socket.emit("message:read", { conversationId });
+      // Đọc hội thoại -> thông báo tin nhắn mới của hội thoại này hết chưa đọc
+      void queryClient.invalidateQueries({ queryKey: notificationKeys.all });
     } else {
       restMarkRead.mutate(conversationId);
     }
-  }, [socket, connected, conversationId, restMarkRead, canMarkRead]);
+  }, [
+    socket,
+    connected,
+    conversationId,
+    restMarkRead,
+    canMarkRead,
+    queryClient,
+  ]);
 
   useEffect(() => {
     if (!socket || !canMarkRead) return;
@@ -179,7 +187,10 @@ export function ChatView({
       clearTimeout(otherTypingTimeoutRef.current);
     }
 
-    const handler = (payload: { conversationId: number; isTyping: boolean }) => {
+    const handler = (payload: {
+      conversationId: number;
+      isTyping: boolean;
+    }) => {
       if (payload.conversationId !== conversationId) return;
 
       if (payload.isTyping) {
@@ -212,8 +223,26 @@ export function ChatView({
   }, [socket, conversationId]);
 
   useEffect(() => {
-    endRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+    const scrollToBottom = () => {
+      endRef.current?.scrollIntoView({ behavior: "auto", block: "end" });
+    };
+    scrollToBottom();
+    const timer = setTimeout(scrollToBottom, 120);
+    return () => clearTimeout(timer);
+  }, [messages, conversationId]);
+
+  useEffect(() => {
+    if (!socket) return;
+    const handler = (payload: { message?: string }) => {
+      toastError({
+        message: payload?.message || "Could not send message. Try again.",
+      });
+    };
+    socket.on("message:error", handler);
+    return () => {
+      socket.off("message:error", handler);
+    };
+  }, [socket]);
 
   const handleInputChange = (value: string) => {
     setInput(value);
@@ -237,7 +266,16 @@ export function ChatView({
       socket.emit("message:send", { conversationId, message: trimmed });
       socket.emit("typing", { conversationId, isTyping: false });
     } else {
-      restSend.mutate({ conversationId, message: trimmed });
+      restSend.mutate(
+        { conversationId, message: trimmed },
+        {
+          onError: (error) => {
+            toastError({
+              message: error.message || "Could not send message. Try again.",
+            });
+          },
+        },
+      );
     }
 
     if (typingStopTimeoutRef.current) {
@@ -309,8 +347,12 @@ export function ChatView({
   if (!canViewConversation) {
     return (
       <div className="flex h-full flex-col items-center justify-center p-6 text-center text-muted-foreground font-sans">
-        <p className="text-sm font-semibold text-foreground">Không có quyền truy cập</p>
-        <p className="mt-1 text-xs">Bạn không có quyền xem chi tiết cuộc trò chuyện này.</p>
+        <p className="text-sm font-semibold text-foreground">
+          Không có quyền truy cập
+        </p>
+        <p className="mt-1 text-xs">
+          Bạn không có quyền xem chi tiết cuộc trò chuyện này.
+        </p>
       </div>
     );
   }
@@ -333,32 +375,29 @@ export function ChatView({
             </AvatarFallback>
           </Avatar>
           <div className="min-w-0">
-            <h3 className="truncate text-sm font-bold text-foreground font-sans">
-              {displayName}
-            </h3>
-            <p className="text-[11px] text-muted-foreground flex items-center gap-1 font-normal">
-              <span className="inline-block size-1.5 rounded-full bg-[#0069D3]" />
-              {t("active")}
-            </p>
+            {otherUser?.id ? (
+              <Link
+                href={`/profiles/${otherUser.id}`}
+                className="truncate text-sm font-bold text-foreground font-sans hover:underline"
+              >
+                {displayName}
+              </Link>
+            ) : (
+              <h3 className="truncate text-sm font-bold text-foreground font-sans">
+                {displayName}
+              </h3>
+            )}
           </div>
         </div>
-
-        {otherUser?.id ? (
-          <Link
-            href={`/profiles/${otherUser.id}`}
-            className="rounded-full bg-[#F1F0F5] hover:bg-[#EAE9F0] dark:bg-zinc-800 dark:hover:bg-zinc-700 px-3.5 py-1.5 text-xs font-medium text-foreground transition-colors flex items-center gap-1.5 shrink-0"
-          >
-            <UserRound className="size-3.5 text-muted-foreground" />
-            <span>{t("profile")}</span>
-          </Link>
-        ) : null}
       </div>
 
       {/* Messages Stream */}
       <div className="flex-1 space-y-3 overflow-y-auto p-4 sm:p-6">
         {!canViewMessages ? (
           <div className="flex h-full flex-col items-center justify-center text-center p-6 text-muted-foreground">
-            <p className="text-sm font-medium">Bạn không có quyền xem tin nhắn trong cuộc trò chuyện này.</p>
+            <p className="text-sm font-medium">
+              Bạn không có quyền xem tin nhắn trong cuộc trò chuyện này.
+            </p>
           </div>
         ) : isLoading ? (
           <div className="flex h-full items-center justify-center px-4 py-8">

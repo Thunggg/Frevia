@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="860" height="540" viewBox="0 0 860 540">
+  <defs>
+    <linearGradient id="bg2" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0a2f73"/>
+      <stop offset="55%" stop-color="#1258ab"/>
+      <stop offset="100%" stop-color="#0b3d91"/>
+    </linearGradient>
+    <pattern id="wave2" width="120" height="120" patternUnits="userSpaceOnUse">
+      <path d="M0 60 Q30 20 60 60 T120 60" fill="none" stroke="#ffffff" stroke-opacity="0.05" stroke-width="2"/>
+    </pattern>
+  </defs>
+  <rect width="860" height="540" rx="26" fill="url(#bg2)"/>
+  <rect width="860" height="540" rx="26" fill="url(#wave2)"/>
+  <circle cx="760" cy="460" r="190" fill="none" stroke="#ffffff" stroke-opacity="0.05" stroke-width="24"/>
+
+  <text x="58" y="60" fill="#ffe08a" font-family="Arial, sans-serif" font-size="22" font-weight="800" letter-spacing="1.5">MẶT SAU - THẺ CĂN CƯỚC CÔNG DÂN</text>
+  <text x="58" y="82" fill="#cfe0ff" font-family="Arial, sans-serif" font-size="11" font-style="italic" letter-spacing="1">BACK SIDE · SAMPLE</text>
+
+  <!-- fake QR / data matrix -->
+  <g transform="translate(58,120)" fill="#e8f1ff">
+    <rect width="150" height="150" rx="8" fill="#ffffff"/>
+    <g fill="#0b2f73">
+      <rect x="12" y="12" width="36" height="36"/><rect x="48" y="12" width="6" height="6"/><rect x="60" y="12" width="12" height="12"/><rect x="80" y="12" width="6" height="6"/><rect x="102" y="12" width="36" height="36"/>
+      <rect x="12" y="48" width="6" height="6"/><rect x="24" y="48" width="12" height="12"/><rect x="48" y="48" width="24" height="24"/><rect x="84" y="48" width="6" height="6"/><rect x="102" y="48" width="6" height="6"/><rect x="126" y="48" width="12" height="12"/>
+      <rect x="12" y="60" width="12" height="6"/><rect x="36" y="60" width="6" height="12"/><rect x="60" y="60" width="18" height="6"/><rect x="96" y="60" width="6" height="18"/><rect x="120" y="60" width="18" height="6"/>
+      <rect x="12" y="102" width="36" height="36"/><rect x="60" y="84" width="6" height="6"/><rect x="78" y="84" width="12" height="12"/><rect x="102" y="102" width="36" height="36"/>
+      <rect x="60" y="108" width="12" height="6"/><rect x="84" y="108" width="6" height="12"/><rect x="60" y="126" width="18" height="6"/><rect x="90" y="126" width="6" height="12"/>
+    </g>
+  </g>
+
+  <g font-family="Arial, sans-serif">
+    <text x="240" y="140" fill="#bcd2f5" font-size="12">Đặc điểm nhận dạng</text>
+    <text x="240" y="163" fill="#ffffff" font-size="16" font-weight="600">Sẹo nhỏ bên trái cằm; không đeo kính.</text>
+
+    <text x="240" y="205" fill="#bcd2f5" font-size="12">Số định danh cá nhân</text>
+    <text x="240" y="230" fill="#ffe08a" font-size="24" font-weight="800" letter-spacing="3">012 345 678 901</text>
+
+    <text x="240" y="276" fill="#bcd2f5" font-size="12">Họ và tên</text>
+    <text x="240" y="298" fill="#ffffff" font-size="18" font-weight="700">NGUYỄN VĂN MINH</text>
+
+    <text x="240" y="340" fill="#bcd2f5" font-size="12">Nơi cấp</text>
+    <text x="240" y="363" fill="#ffffff" font-size="16" font-weight="600">Cục Cảnh sát Đăng ký cư dân, Bộ Công an</text>
+
+    <text x="240" y="408" fill="#bcd2f5" font-size="12">Ngày cấp</text>
+    <text x="240" y="430" fill="#ffffff" font-size="16" font-weight="600">12/06/2021</text>
+  </g>
+
+  <g transform="translate(58,478)" font-family="Courier New, monospace" font-size="15" fill="#cfe0ff" letter-spacing="1">
+    <text x="0" y="0">012345678901&lt;A&lt;&lt;MẪU&lt;&lt;KHÔNG CÓ GIÁ TRỊ</text>
+  </g>
+  <text x="790" y="512" text-anchor="end" fill="#9dbdf0" font-family="Arial, sans-serif" font-size="11" font-style="italic">SAMPLE - FOR DEMO ONLY</text>
+</svg>

@@ -113,7 +113,7 @@ User lacks Admin privileges & The backend throws HTTP 403 Forbidden. The UI disp
 Invalid pagination parameter values & The DTO validator rejects non-integer values with HTTP 400 Bad Request. The client defaults to page 1.\\ \hline
 Invalid operational status parameter & The validator rejects unknown status values with HTTP 400 Bad Request. The UI clears invalid status filter.\\ \hline
 Invalid deleted filter parameter value & The validator rejects unknown values with HTTP 400 Bad Request. The UI clears invalid filter.\\ \hline
-Database query error or timeout & The service throws \texttt{FailedToLoadJobCategoryListException} (HTTP 500). The UI displays: ``Error.FailedToLoadJobCategoryList''.\\ \hline
+Database query error or timeout & The service throws \texttt{FailedToLoad\-JobCategory\-ListException} (HTTP 500). The UI displays: ``Error.FailedToLoadJobCategoryList''.\\ \hline
 No categories match search or status & The query returns \texttt{jobCategories: []} and \texttt{total: 0}. The table displays an empty placeholder: ``No job categories found.''\\ \hline
 Network connection timeout & The client displays an error toast notification and offers a reload button.\\ \hline
 \end{flowtable}
@@ -166,7 +166,7 @@ An administrator clicks on a job category row or name in the category list, navi
     \item The backend validates administrative token and route permissions.
     \item \texttt{JobCategoriesAdminController.getJobCategoryDetail()} parses \texttt{id} via \texttt{ParseIntPipe}.
     \item \texttt{JobCategoriesAdminRepository.getJobCategoryDetail(id)} queries \texttt{prisma.jobCategory.findUnique} by \texttt{id}.
-    \item If the category record is not found, the service throws \texttt{JobCategoryAdminNotFoundException} (HTTP 404).
+    \item If the category record is not found, the service throws \texttt{JobCategory\-Admin\-Not\-Found\-Exception} (HTTP 404).
     \item The repository queries \texttt{prisma.jobJobCategory.findMany} where \texttt{categoryId = id} and \texttt{job.deletedAt = null}, ordered by \texttt{job.createdAt desc}, taking up to 10 records.
     \item Returns HTTP 200 with the category detail object including \texttt{jobCount} and \texttt{jobs} array.
     \item The frontend renders the comprehensive detail layout, metric cards, and associated jobs table.
@@ -218,8 +218,8 @@ id & Must be a positive integer greater than or equal to 1.\\ \hline
 Missing or invalid authentication token & The server returns HTTP 401 Unauthorized. The client redirects to \texttt{/login}.\\ \hline
 User lacks Admin privileges & The server throws HTTP 403 Forbidden. The client renders an access denied alert.\\ \hline
 Invalid category ID format (e.g., non-numeric) & \texttt{ParseIntPipe} throws HTTP 400 Bad Request. The UI displays an ``Invalid Category ID'' message and back button.\\ \hline
-Category ID does not exist in database & The service throws \texttt{JobCategoryAdminNotFoundException} (HTTP 404). The UI renders a ``Category Not Found'' screen with navigation back to catalog.\\ \hline
-Database query error or timeout & The service throws \texttt{FailedToLoadJobCategoryDetailException} (HTTP 500). The UI displays: ``Error.FailedToLoadJobCategoryDetail''.\\ \hline
+Category ID does not exist in database & The service throws \texttt{JobCategory\-Admin\-Not\-Found\-Exception} (HTTP 404). The UI renders a ``Category Not Found'' screen with navigation back to catalog.\\ \hline
+Database query error or timeout & The service throws \texttt{FailedToLoad\-JobCategory\-DetailException} (HTTP 500). The UI displays: ``Error.FailedToLoadJobCategoryDetail''.\\ \hline
 Category description is empty or null & The UI gracefully displays ``No description provided'' in muted text.\\ \hline
 No jobs associated with this category & The associated jobs table displays an empty row stating: ``No jobs found in this category.''\\ \hline
 \end{flowtable}
@@ -277,10 +277,10 @@ An administrator clicks the ``Create Job Category'' button on the category catal
         \begin{itemize}[leftmargin=1.6em,topsep=2pt,itemsep=2pt,parsep=0pt]
             \item Strips leading and trailing whitespace from \texttt{name}.
             \item Queries \texttt{prisma.jobCategory.findFirst} to check if an active category (\texttt{deletedAt = null}) with the same name exists (case-insensitive mode).
-            \item If an active duplicate exists, throws \texttt{JobCategoryNameAlreadyExistsException} (HTTP 409).
+            \item If an active duplicate exists, throws \texttt{JobCategory\-Name\-Already\-Exists\-Exception} (HTTP 409).
             \item Generates a unique slug via \texttt{generateUniqueSlug()}: strips Vietnamese diacritics, converts to lowercase, replaces non-alphanumeric characters with hyphens, and appends sequential numeric suffixes (\texttt{-2}, \texttt{-3}) if a slug collision occurs.
             \item Inserts the category record via \texttt{prisma.jobCategory.create()}.
-            \item Catches Prisma \texttt{P2002} errors (unique constraint violations) and converts to \texttt{JobCategoryNameAlreadyExistsException}.
+            \item Catches Prisma \texttt{P2002} errors (unique constraint violations) and converts to \texttt{JobCategory\-Name\-Already\-Exists\-Exception}.
         \end{itemize}
     \item Returns HTTP 201 with the created category entity.
     \item The frontend displays a success toast, closes the modal, and refreshes the category table.
@@ -336,11 +336,11 @@ status & Optional enum, must strictly match one of: \texttt{ACTIVE}, \texttt{INA
 Missing mandatory category name & Form validation blocks submission; backend throws HTTP 400 with \texttt{Error.JobCategoryNameRequired}.\\ \hline
 Category name exceeds 100 characters & Validator rejects input with HTTP 400 Bad Request (\texttt{Error.JobCategoryNameTooLong}). The UI highlights the name field.\\ \hline
 Description exceeds 500 characters & Validator rejects input with HTTP 400 Bad Request (\texttt{Error.JobCategoryDescriptionTooLong}). The UI highlights the description field.\\ \hline
-Active category with identical name already exists & The service throws \texttt{JobCategoryNameAlreadyExistsException} (HTTP 409 Conflict). The UI displays: ``Error.JobCategoryNameAlreadyExists''.\\ \hline
+Active category with identical name already exists & The service throws \texttt{JobCategory\-Name\-Already\-Exists\-Exception} (HTTP 409 Conflict). The UI displays: ``Error.JobCategoryNameAlreadyExists''.\\ \hline
 Concurrent request creates duplicate name & Database catches \texttt{P2002} constraint violation; backend converts to HTTP 409 Conflict. The UI alerts the administrator.\\ \hline
 Invalid status enum parameter & Validator rejects invalid status strings with HTTP 400 Bad Request. The UI flags the status field.\\ \hline
 Unauthorized or unauthenticated request & The server returns HTTP 401/403. The UI redirects to login or displays an access denied message.\\ \hline
-Database insert failure & The service throws \texttt{FailedToCreateJobCategoryException} (HTTP 500). The UI displays: ``Error.FailedToCreateJobCategory''.\\ \hline
+Database insert failure & The service throws \texttt{FailedToCreate\-JobCategory\-Exception} (HTTP 500). The UI displays: ``Error.FailedToCreateJobCategory''.\\ \hline
 \end{flowtable}
 
 \sublabel{Output Data}
@@ -395,8 +395,8 @@ An administrator clicks the Edit icon (pencil) on a category table row or detail
     \item The client issues an HTTP request: \texttt{PATCH /api/admin/job-categories/:id} with updated fields.
     \item \texttt{JobCategoriesAdminRepository.updateJobCategory(id, data)}:
         \begin{itemize}[leftmargin=1.6em,topsep=2pt,itemsep=2pt,parsep=0pt]
-            \item Verifies target category exists and is active (\texttt{deletedAt = null}); throws \texttt{JobCategoryAdminNotFoundException} if missing or soft-deleted (soft-deleted categories must be restored before editing).
-            \item If \texttt{name} is modified, checks if another active category (\texttt{id != currentId, deletedAt = null}) shares the same case-insensitive name. Throws \texttt{JobCategoryNameAlreadyExistsException} if conflict exists.
+            \item Verifies target category exists and is active (\texttt{deletedAt = null}); throws \texttt{JobCategory\-Admin\-Not\-Found\-Exception} if missing or soft-deleted (soft-deleted categories must be restored before editing).
+            \item If \texttt{name} is modified, checks if another active category (\texttt{id != currentId, deletedAt = null}) shares the same case-insensitive name. Throws \texttt{JobCategory\-Name\-Already\-Exists\-Exception} if conflict exists.
             \item If \texttt{name} is modified, regenerates the unique slug via \texttt{generateUniqueSlug()}.
             \item Updates the record in \texttt{prisma.jobCategory.update()}. If description is empty string, converts it to \texttt{null}.
         \end{itemize}
@@ -453,13 +453,13 @@ status & Optional enum, must strictly match one of: \texttt{ACTIVE}, \texttt{INA
 
 \sublabel{Abnormal Flow / Exception Handling}
 \begin{flowtable}{Abnormal Case}{Handling \& System Response}
-Target category does not exist or is soft-deleted & The service throws \texttt{JobCategoryAdminNotFoundException} (HTTP 404). The UI displays: ``Error.JobCategoryNotFound''.\\ \hline
-Updated name conflicts with active category & The service throws \texttt{JobCategoryNameAlreadyExistsException} (HTTP 409). The UI alerts: ``Error.JobCategoryNameAlreadyExists''.\\ \hline
+Target category does not exist or is soft-deleted & The service throws \texttt{JobCategory\-Admin\-Not\-Found\-Exception} (HTTP 404). The UI displays: ``Error.JobCategoryNotFound''.\\ \hline
+Updated name conflicts with active category & The service throws \texttt{JobCategory\-Name\-Already\-Exists\-Exception} (HTTP 409). The UI alerts: ``Error.JobCategoryNameAlreadyExists''.\\ \hline
 Name is set to empty or whitespace & Form validation blocks submission; backend returns HTTP 400 Bad Request with \texttt{Error.JobCategoryNameRequired}.\\ \hline
 Name exceeds 100 characters & Validator rejects input with HTTP 400 Bad Request (\texttt{Error.JobCategoryNameTooLong}). The UI highlights the name field.\\ \hline
 Description exceeds 500 characters & Validator rejects input with HTTP 400 Bad Request (\texttt{Error.JobCategoryDescriptionTooLong}). The UI highlights the description field.\\ \hline
 Unauthorized or unauthenticated session & The server returns HTTP 401/403. The UI redirects to login or displays an access denied message.\\ \hline
-Database update failure & The service throws \texttt{FailedToUpdateJobCategoryException} (HTTP 500). The UI displays: ``Error.FailedToUpdateJobCategory''.\\ \hline
+Database update failure & The service throws \texttt{FailedToUpdate\-JobCategory\-Exception} (HTTP 500). The UI displays: ``Error.FailedToUpdateJobCategory''.\\ \hline
 Network timeout & The client catches the network error, displays an error toast, and preserves dialog state.\\ \hline
 \end{flowtable}
 
@@ -515,9 +515,9 @@ An administrator clicks the Delete action icon (trash can) on a category table r
     \item \texttt{JobCategoriesAdminController.deleteJobCategory(id)} parses \texttt{id} via \texttt{ParseIntPipe}.
     \item \texttt{JobCategoriesAdminRepository.deleteJobCategory(id)}:
         \begin{itemize}[leftmargin=1.6em,topsep=2pt,itemsep=2pt,parsep=0pt]
-            \item Verifies target category exists and is active (\texttt{deletedAt = null}); throws \texttt{JobCategoryAdminNotFoundException} if missing.
+            \item Verifies target category exists and is active (\texttt{deletedAt = null}); throws \texttt{JobCategory\-Admin\-Not\-Found\-Exception} if missing.
             \item Checks count of active associated jobs: \texttt{\_count: \{ select: \{ jobs: \{ where: \{ job: \{ deletedAt: null \} \} \} \} \}}.
-            \item If \texttt{\_count.jobs > 0}, throws \texttt{JobCategoryHasJobsException} (HTTP 409 Conflict with message \texttt{Error.JobCategoryHasJobs}). Deletion is strictly blocked.
+            \item If \texttt{\_count.jobs > 0}, throws \texttt{JobCategory\-HasJobs\-Exception} (HTTP 409 Conflict with message \texttt{Error.JobCategoryHasJobs}). Deletion is strictly blocked.
             \item If \texttt{\_count.jobs === 0}, executes soft delete: \texttt{prisma.jobCategory.update(\{ where: \{ id \}, data: \{ deletedAt: new Date() \} \})}.
         \end{itemize}
     \item The backend returns HTTP 200 with \texttt{\{ message: "Success.JobCategoryDeleted" \}}.
@@ -569,14 +569,14 @@ id & Must be a positive integer greater than or equal to 1.\\ \hline
 
 \sublabel{Abnormal Flow / Exception Handling}
 \begin{flowtable}{Abnormal Case}{Handling \& System Response}
-Category has active linked jobs & The service throws \texttt{JobCategoryHasJobsException} (HTTP 409 Conflict). The dialog renders an inline callout advising switching to Inactive.\\ \hline
-Target category does not exist & The service throws \texttt{JobCategoryAdminNotFoundException} (HTTP 404). The UI displays: ``Error.JobCategoryNotFound''.\\ \hline
+Category has active linked jobs & The service throws \texttt{JobCategory\-HasJobs\-Exception} (HTTP 409 Conflict). The dialog renders an inline callout advising switching to Inactive.\\ \hline
+Target category does not exist & The service throws \texttt{JobCategory\-Admin\-Not\-Found\-Exception} (HTTP 404). The UI displays: ``Error.JobCategoryNotFound''.\\ \hline
 Category is already soft-deleted & The service throws HTTP 404. The UI displays that the category is no longer active.\\ \hline
 Missing or invalid authentication token & The server returns HTTP 401 Unauthorized. The client redirects to \texttt{/login}.\\ \hline
 User lacks Admin privileges & The server throws HTTP 403 Forbidden. The client renders an access denied alert.\\ \hline
 Invalid category ID format & \texttt{ParseIntPipe} throws HTTP 400 Bad Request. The UI notifies the user of an invalid parameter.\\ \hline
 Administrator cancels dialog & The modal closes immediately; no request is sent, leaving the database unaffected.\\ \hline
-Database update failure & The service throws \texttt{FailedToDeleteJobCategoryException} (HTTP 500). The UI displays: ``Error.FailedToDeleteJobCategory''.\\ \hline
+Database update failure & The service throws \texttt{FailedToDelete\-JobCategory\-Exception} (HTTP 500). The UI displays: ``Error.FailedToDeleteJobCategory''.\\ \hline
 \end{flowtable}
 
 \sublabel{Output Data}
@@ -622,10 +622,10 @@ An administrator viewing soft-deleted job categories (via the ``Deleted'' status
     \item \texttt{JobCategoriesAdminController.restoreJobCategory(id)} parses \texttt{id} via \texttt{ParseIntPipe}.
     \item \texttt{JobCategoriesAdminRepository.restoreJobCategory(id)}:
         \begin{itemize}[leftmargin=1.6em,topsep=2pt,itemsep=2pt,parsep=0pt]
-            \item Finds the category verifying that \texttt{deletedAt != null}; throws \texttt{JobCategoryAdminNotFoundException} if missing or already active.
+            \item Finds the category verifying that \texttt{deletedAt != null}; throws \texttt{JobCategory\-Admin\-Not\-Found\-Exception} if missing or already active.
             \item Checks if another active category has been created with the same name during the deletion period (\texttt{deletedAt = null, id != currentId, name equals category.name}).
-            \item If a name collision occurs, throws \texttt{JobCategoryNameAlreadyExistsException} (HTTP 409).
-            \item Sets \texttt{deletedAt = null} via \texttt{prisma.jobCategory.updateMany(\{ where: \{ id, deletedAt: \{ not: null \} \}, data: \{ deletedAt: null \} \})}.
+            \item If a name collision occurs, throws \texttt{JobCategory\-Name\-Already\-Exists\-Exception} (HTTP 409).
+            \item Sets \texttt{deletedAt = null} via Prisma \texttt{jobCategory.updateMany()} query.
             \item Queries the updated category entity with job count aggregation.
         \end{itemize}
     \item The backend returns HTTP 200 with the restored category entity.
@@ -674,13 +674,13 @@ id & Must be a positive integer greater than or equal to 1.\\ \hline
 
 \sublabel{Abnormal Flow / Exception Handling}
 \begin{flowtable}{Abnormal Case}{Handling \& System Response}
-Target category does not exist or is already active & The service throws \texttt{JobCategoryAdminNotFoundException} (HTTP 404). The UI displays: ``Error.JobCategoryNotFound''.\\ \hline
-Another active category now shares the same name & The service throws \texttt{JobCategoryNameAlreadyExistsException} (HTTP 409). The UI alerts: ``Error.JobCategoryNameAlreadyExists''.\\ \hline
+Target category does not exist or is already active & The service throws \texttt{JobCategory\-Admin\-Not\-Found\-Exception} (HTTP 404). The UI displays: ``Error.JobCategoryNotFound''.\\ \hline
+Another active category now shares the same name & The service throws \texttt{JobCategory\-Name\-Already\-Exists\-Exception} (HTTP 409). The UI alerts: ``Error.JobCategoryNameAlreadyExists''.\\ \hline
 Missing or invalid authentication token & The server returns HTTP 401 Unauthorized. The client redirects to \texttt{/login}.\\ \hline
 User lacks Admin privileges & The server throws HTTP 403 Forbidden. The client renders an access denied alert.\\ \hline
 Invalid category ID format & \texttt{ParseIntPipe} throws HTTP 400 Bad Request. The UI notifies the user of an invalid parameter.\\ \hline
 Administrator cancels dialog & The modal closes immediately; no request is sent, leaving the database unaffected.\\ \hline
-Database update failure & The service throws \texttt{FailedToRestoreJobCategoryException} (HTTP 500). The UI displays: ``Error.FailedToRestoreJobCategory''.\\ \hline
+Database update failure & The service throws \texttt{FailedToRestore\-JobCategory\-Exception} (HTTP 500). The UI displays: ``Error.FailedToRestoreJobCategory''.\\ \hline
 Network failure during request & The client catches the network error, displays an unexpected error toast, and preserves dialog state.\\ \hline
 \end{flowtable}
 

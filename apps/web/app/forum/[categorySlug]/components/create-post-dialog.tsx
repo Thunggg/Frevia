@@ -129,7 +129,7 @@ export function CreatePostDialog({
     return (
       <Button asChild className={brandButtonClass}>
         <Link href="/login">
-          <Plus className="h-4 w-4" />
+          <Plus className="size-4" />
           {t("newPost")}
         </Link>
       </Button>
@@ -144,7 +144,7 @@ export function CreatePostDialog({
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button className={brandButtonClass}>
-          <Plus className="h-4 w-4" />
+          <Plus className="size-4" />
           {t("newPost")}
         </Button>
       </DialogTrigger>
@@ -190,9 +190,9 @@ export function CreatePostDialog({
             disabled={!title.trim() || !content.trim() || isSubmitting}
           >
             {isSubmitting ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
+              <Loader2 className="size-4 animate-spin" />
             ) : (
-              <Plus className="h-4 w-4" />
+              <Plus className="size-4" />
             )}
             {t("post")}
           </Button>

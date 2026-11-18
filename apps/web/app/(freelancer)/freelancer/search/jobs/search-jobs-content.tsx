@@ -3,7 +3,7 @@
 import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState, useTransition, type FormEvent, type MouseEvent } from "react";
+import { useEffect, useState, useTransition, type FormEvent, type MouseEvent } from "react";
 import {
   ArrowLeft,
   Bookmark,
@@ -94,6 +94,11 @@ export function SearchJobsContent({
   ];
 
   const [searchInput, setSearchInput] = useState(initialQ);
+
+  useEffect(() => {
+    setSearchInput(initialQ);
+  }, [initialQ]);
+
   const [bookmarkedSlugs, setBookmarkedSlugs] = useState(
     () => new Set(initialBookmarkedSlugs),
   );
@@ -113,6 +118,10 @@ export function SearchJobsContent({
     updates: Record<string, string | number | null | undefined>,
   ) => {
     const params = new URLSearchParams(searchParams.toString());
+
+    if ("q" in updates) {
+      params.delete("keyword");
+    }
 
     for (const [key, value] of Object.entries(updates)) {
       if (value === null || value === undefined || value === "" || value === "all") {
@@ -139,7 +148,7 @@ export function SearchJobsContent({
 
   const handleClearSearch = () => {
     setSearchInput("");
-    updateFilters({ q: null });
+    updateFilters({ q: null, keyword: null });
   };
 
   const handleSortChange = (newSort: string) => {
@@ -240,9 +249,14 @@ export function SearchJobsContent({
     });
   };
 
-  const activeCategory = initialCategories.find(
-    (c) => c.slug === initialCategory,
-  );
+  const selectedCategorySlugs =
+    initialCategory && initialCategory !== "all"
+      ? initialCategory.split(",").map((s) => s.trim()).filter(Boolean)
+      : [];
+
+  const selectedSkills = initialSkill
+    ? initialSkill.split(",").map((s) => s.trim()).filter(Boolean)
+    : [];
 
   return (
     <div className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 font-sans space-y-6">
@@ -366,6 +380,7 @@ export function SearchJobsContent({
           selectedHiringType={initialHiringType}
           selectedSkill={initialSkill}
           onFilterChange={(key: string, val: string | null) => updateFilters({ [key]: val })}
+          onFiltersChange={updateFilters}
           onClearFilters={handleClearAllFilters}
         />
 
@@ -373,13 +388,13 @@ export function SearchJobsContent({
         <main className="flex-1 min-w-0 w-full space-y-4">
           {/* Active Filter Badges */}
           {(initialQ ||
-            (initialCategory && initialCategory !== "all") ||
+            selectedCategorySlugs.length > 0 ||
             (initialBudget && initialBudget !== "all") ||
             initialBudgetMin ||
             initialBudgetMax ||
             (initialTime && initialTime !== "all") ||
             (initialHiringType && initialHiringType !== "all") ||
-            initialSkill) && (
+            selectedSkills.length > 0) && (
             <div className="flex flex-wrap items-center gap-1.5 pb-2">
               <span className="text-xs text-muted-foreground mr-1">
                 {t("filters")}:
@@ -389,28 +404,49 @@ export function SearchJobsContent({
                   {t("chip.search", { value: initialQ })}
                   <button
                     type="button"
-                    onClick={() => updateFilters({ q: null })}
+                    onClick={() => updateFilters({ q: null, keyword: null })}
                     className="hover:opacity-70 cursor-pointer"
                   >
                     <X className="size-3" />
                   </button>
                 </span>
               )}
-              {activeCategory && (
-                <span className="inline-flex items-center gap-1 rounded-full bg-muted px-2.5 py-0.5 text-xs font-medium text-foreground">
-                  {t("chip.category", { value: activeCategory.name })}
-                  <button
-                    type="button"
-                    onClick={() => updateFilters({ category: null })}
-                    className="hover:opacity-70 cursor-pointer"
+              {selectedCategorySlugs.map((slug) => {
+                const cat = initialCategories.find((c) => c.slug === slug);
+                return (
+                  <span
+                    key={slug}
+                    className="inline-flex items-center gap-1 rounded-full bg-muted px-2.5 py-0.5 text-xs font-medium text-foreground"
                   >
-                    <X className="size-3" />
-                  </button>
-                </span>
-              )}
+                    {t("chip.category", { value: cat?.name ?? slug })}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const next = selectedCategorySlugs.filter(
+                          (s) => s !== slug,
+                        );
+                        updateFilters({
+                          category: next.length > 0 ? next.join(",") : null,
+                        });
+                      }}
+                      className="hover:opacity-70 cursor-pointer"
+                    >
+                      <X className="size-3" />
+                    </button>
+                  </span>
+                );
+              })}
               {initialBudget && initialBudget !== "all" && (
                 <span className="inline-flex items-center gap-1 rounded-full bg-muted px-2.5 py-0.5 text-xs font-medium text-foreground">
-                  {t("chip.budget", { value: initialBudget })}
+                  {initialBudget === "under-500"
+                    ? t("modal.under500")
+                    : initialBudget === "500-1000"
+                      ? t("modal.500to1000")
+                      : initialBudget === "1000-5000"
+                        ? t("modal.1000to5000")
+                        : initialBudget === "5000-plus"
+                          ? t("modal.over5000")
+                          : t("chip.budget", { value: initialBudget })}
                   <button
                     type="button"
                     onClick={() => updateFilters({ budget: null })}
@@ -434,6 +470,26 @@ export function SearchJobsContent({
                   </button>
                 </span>
               )}
+              {initialTime && initialTime !== "all" && (
+                <span className="inline-flex items-center gap-1 rounded-full bg-muted px-2.5 py-0.5 text-xs font-medium text-foreground">
+                  {initialTime === "today"
+                    ? t("modal.today")
+                    : initialTime === "last-3-days"
+                      ? t("modal.last3Days")
+                      : initialTime === "last-7-days"
+                        ? t("modal.last7Days")
+                        : initialTime === "last-30-days"
+                          ? t("modal.last30Days")
+                          : initialTime}
+                  <button
+                    type="button"
+                    onClick={() => updateFilters({ time: null })}
+                    className="hover:opacity-70 cursor-pointer"
+                  >
+                    <X className="size-3" />
+                  </button>
+                </span>
+              )}
               {initialHiringType && initialHiringType !== "all" && (
                 <span className="inline-flex items-center gap-1 rounded-full bg-muted px-2.5 py-0.5 text-xs font-medium text-foreground">
                   {initialHiringType === "SINGLE"
@@ -448,18 +504,26 @@ export function SearchJobsContent({
                   </button>
                 </span>
               )}
-              {initialSkill && (
-                <span className="inline-flex items-center gap-1 rounded-full bg-muted px-2.5 py-0.5 text-xs font-medium text-foreground">
-                  {t("chip.search", { value: initialSkill })}
+              {selectedSkills.map((sk) => (
+                <span
+                  key={sk}
+                  className="inline-flex items-center gap-1 rounded-full bg-emerald-50 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-200 border border-emerald-200 dark:border-emerald-800 px-2.5 py-0.5 text-xs font-medium"
+                >
+                  {t("chip.search", { value: sk })}
                   <button
                     type="button"
-                    onClick={() => updateFilters({ skill: null })}
+                    onClick={() => {
+                      const next = selectedSkills.filter((s) => s !== sk);
+                      updateFilters({
+                        skill: next.length > 0 ? next.join(",") : null,
+                      });
+                    }}
                     className="hover:opacity-70 cursor-pointer"
                   >
                     <X className="size-3" />
                   </button>
                 </span>
-              )}
+              ))}
             </div>
           )}
 

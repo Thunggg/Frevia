@@ -9,6 +9,7 @@ import {
   Briefcase,
   Edit2,
   Ellipsis,
+  Eye,
   FileText,
   Plus,
   Trash2,
@@ -22,6 +23,7 @@ import {
 } from "@/components/icons";
 
 import jobApiRequest from "@/apiRequests/job";
+import { ApiFail } from "@/lib/http";
 import { useActionPermission } from "@/hooks/use-action-permission";
 
 import {
@@ -261,13 +263,7 @@ function JobRowCard({
   const isOpen = job.status === "OPEN";
   const isClosed = job.status === "CLOSED";
   const isInProgress = job.status === "IN_PROGRESS";
-
-  const hasAnyMenuAction =
-    (isDraft && canPublish) ||
-    (isOpen && canClose) ||
-    (isClosed && canReopen) ||
-    canUpdate ||
-    (!isInProgress && canDelete);
+  const isEditable = isDraft || isOpen || isClosed;
 
   return (
     <motion.div
@@ -350,109 +346,125 @@ function JobRowCard({
           </button>
         )}
 
-        {/* 3-dot Action Menu (Publish, Close, Reopen, Edit & Delete) */}
-        {hasAnyMenuAction && (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <button
-                type="button"
-                className="flex size-8 items-center justify-center rounded-full bg-[#F3F3F7] dark:bg-zinc-800 hover:bg-[#EAE9F0] dark:hover:bg-zinc-700 text-muted-foreground hover:text-foreground cursor-pointer transition-colors outline-none"
-                title={t("moreOptions")}
-              >
-                <Ellipsis className="size-4" />
-              </button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent
-              align="end"
-              sideOffset={6}
-              className="w-52 rounded-[24px] border border-black/5 dark:border-white/10 bg-white dark:bg-zinc-900 p-2 shadow-2xl shadow-black/10 flex flex-col gap-1.5"
+        {/* 3-dot Action Menu (View, Publish, Close, Reopen, Edit & Delete) */}
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <button
+              type="button"
+              className="flex size-8 items-center justify-center rounded-full bg-[#F3F3F7] dark:bg-zinc-800 hover:bg-[#EAE9F0] dark:hover:bg-zinc-700 text-muted-foreground hover:text-foreground cursor-pointer transition-colors outline-none"
+              title={t("moreOptions")}
             >
-              {/* UC-11.03 Publish Job */}
-              {isDraft && canPublish && (
-                <DropdownMenuItem
-                  onClick={() => onPublish(job.id)}
-                  className="group flex items-center justify-between rounded-full px-3 py-2 bg-[#F3F3F7] hover:bg-emerald-50 focus:bg-emerald-50 dark:bg-zinc-800/60 dark:hover:bg-emerald-950/40 dark:focus:bg-emerald-950/40 cursor-pointer transition-all duration-200 outline-none text-emerald-700 dark:text-emerald-400"
-                >
-                  <div className="flex items-center gap-2.5">
-                    <div className="flex size-7 shrink-0 items-center justify-center rounded-full bg-emerald-100 dark:bg-emerald-900/50 text-emerald-700 dark:text-emerald-400 shadow-xs transition-transform group-hover:scale-105">
-                      <TrendingUp className="size-3.5" />
-                    </div>
-                    <span className="text-xs font-medium">{t("publish")}</span>
+              <Ellipsis className="size-4" />
+            </button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent
+            align="end"
+            sideOffset={6}
+            className="w-52 rounded-[24px] border border-black/5 dark:border-white/10 bg-white dark:bg-zinc-900 p-2 shadow-2xl shadow-black/10 flex flex-col gap-1.5"
+          >
+            {/* View Job Detail */}
+            <DropdownMenuItem
+              asChild
+              className="group flex items-center justify-between rounded-full px-3 py-2 bg-[#F3F3F7] hover:bg-[#EAE9F0] focus:bg-[#EAE9F0] dark:bg-zinc-800/60 dark:hover:bg-zinc-800 dark:focus:bg-zinc-800 cursor-pointer transition-all duration-200 outline-none"
+            >
+              <Link href={`/client/jobs/${job.id}`}>
+                <div className="flex items-center gap-2.5">
+                  <div className="flex size-7 shrink-0 items-center justify-center rounded-full bg-white dark:bg-zinc-700 text-foreground shadow-xs transition-transform group-hover:scale-105">
+                    <Eye className="size-3.5" />
                   </div>
-                  <ChevronRight className="size-3.5 text-emerald-400/50 group-hover:text-emerald-600 group-hover:translate-x-0.5 transition-all shrink-0 ml-2" />
-                </DropdownMenuItem>
-              )}
+                  <span className="text-xs font-medium text-foreground">
+                    {t("viewDetail")}
+                  </span>
+                </div>
+                <ChevronRight className="size-3.5 text-muted-foreground/50 group-hover:text-foreground group-hover:translate-x-0.5 transition-all shrink-0 ml-2" />
+              </Link>
+            </DropdownMenuItem>
 
-              {/* UC-11.06 Close Job */}
-              {isOpen && canClose && (
-                <DropdownMenuItem
-                  onClick={() => onClose(job.id)}
-                  className="group flex items-center justify-between rounded-full px-3 py-2 bg-[#F3F3F7] hover:bg-stone-100 focus:bg-stone-100 dark:bg-zinc-800/60 dark:hover:bg-zinc-800 dark:focus:bg-zinc-800 cursor-pointer transition-all duration-200 outline-none text-stone-700 dark:text-stone-300"
-                >
-                  <div className="flex items-center gap-2.5">
-                    <div className="flex size-7 shrink-0 items-center justify-center rounded-full bg-stone-200 dark:bg-stone-800 text-stone-700 dark:text-stone-300 shadow-xs transition-transform group-hover:scale-105">
-                      <XCircle className="size-3.5" />
-                    </div>
-                    <span className="text-xs font-medium">{t("close")}</span>
+            {/* UC-11.03 Publish Job */}
+            {isDraft && canPublish && (
+              <DropdownMenuItem
+                onClick={() => onPublish(job.id)}
+                className="group flex items-center justify-between rounded-full px-3 py-2 bg-[#F3F3F7] hover:bg-emerald-50 focus:bg-emerald-50 dark:bg-zinc-800/60 dark:hover:bg-emerald-950/40 dark:focus:bg-emerald-950/40 cursor-pointer transition-all duration-200 outline-none text-emerald-700 dark:text-emerald-400"
+              >
+                <div className="flex items-center gap-2.5">
+                  <div className="flex size-7 shrink-0 items-center justify-center rounded-full bg-emerald-100 dark:bg-emerald-900/50 text-emerald-700 dark:text-emerald-400 shadow-xs transition-transform group-hover:scale-105">
+                    <TrendingUp className="size-3.5" />
                   </div>
-                  <ChevronRight className="size-3.5 text-muted-foreground/50 group-hover:text-foreground group-hover:translate-x-0.5 transition-all shrink-0 ml-2" />
-                </DropdownMenuItem>
-              )}
+                  <span className="text-xs font-medium">{t("publish")}</span>
+                </div>
+                <ChevronRight className="size-3.5 text-emerald-400/50 group-hover:text-emerald-600 group-hover:translate-x-0.5 transition-all shrink-0 ml-2" />
+              </DropdownMenuItem>
+            )}
 
-              {/* UC-11.07 Reopen Job */}
-              {isClosed && canReopen && (
-                <DropdownMenuItem
-                  onClick={() => onReopen(job.id)}
-                  className="group flex items-center justify-between rounded-full px-3 py-2 bg-[#F3F3F7] hover:bg-[#EAE9F0] focus:bg-[#EAE9F0] dark:bg-zinc-800/60 dark:hover:bg-zinc-800 dark:focus:bg-zinc-800 cursor-pointer transition-all duration-200 outline-none text-[#0069D3] dark:text-blue-300"
-                >
-                  <div className="flex items-center gap-2.5">
-                    <div className="flex size-7 shrink-0 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900/50 text-[#0069D3] dark:text-blue-300 shadow-xs transition-transform group-hover:scale-105">
-                      <CheckCircle2 className="size-3.5" />
-                    </div>
-                    <span className="text-xs font-medium">{t("reopen")}</span>
+            {/* UC-11.06 Close Job */}
+            {isOpen && canClose && (
+              <DropdownMenuItem
+                onClick={() => onClose(job.id)}
+                className="group flex items-center justify-between rounded-full px-3 py-2 bg-[#F3F3F7] hover:bg-stone-100 focus:bg-stone-100 dark:bg-zinc-800/60 dark:hover:bg-zinc-800 dark:focus:bg-zinc-800 cursor-pointer transition-all duration-200 outline-none text-stone-700 dark:text-stone-300"
+              >
+                <div className="flex items-center gap-2.5">
+                  <div className="flex size-7 shrink-0 items-center justify-center rounded-full bg-stone-200 dark:bg-stone-800 text-stone-700 dark:text-stone-300 shadow-xs transition-transform group-hover:scale-105">
+                    <XCircle className="size-3.5" />
                   </div>
-                  <ChevronRight className="size-3.5 text-blue-400/50 group-hover:text-[#0069D3] group-hover:translate-x-0.5 transition-all shrink-0 ml-2" />
-                </DropdownMenuItem>
-              )}
+                  <span className="text-xs font-medium">{t("close")}</span>
+                </div>
+                <ChevronRight className="size-3.5 text-muted-foreground/50 group-hover:text-foreground group-hover:translate-x-0.5 transition-all shrink-0 ml-2" />
+              </DropdownMenuItem>
+            )}
 
-              {/* UC-11.04 Update Job */}
-              {canUpdate && (
-                <DropdownMenuItem
-                  onClick={() => onEdit(job)}
-                  className="group flex items-center justify-between rounded-full px-3 py-2 bg-[#F3F3F7] hover:bg-[#EAE9F0] focus:bg-[#EAE9F0] dark:bg-zinc-800/60 dark:hover:bg-zinc-800 dark:focus:bg-zinc-800 cursor-pointer transition-all duration-200 outline-none"
-                >
-                  <div className="flex items-center gap-2.5">
-                    <div className="flex size-7 shrink-0 items-center justify-center rounded-full bg-white dark:bg-zinc-700 text-foreground shadow-xs transition-transform group-hover:scale-105">
-                      <Edit2 className="size-3.5" />
-                    </div>
-                    <span className="text-xs font-medium text-foreground">
-                      {t("edit")}
-                    </span>
+            {/* UC-11.07 Reopen Job */}
+            {isClosed && canReopen && (
+              <DropdownMenuItem
+                onClick={() => onReopen(job.id)}
+                className="group flex items-center justify-between rounded-full px-3 py-2 bg-[#F3F3F7] hover:bg-[#EAE9F0] focus:bg-[#EAE9F0] dark:bg-zinc-800/60 dark:hover:bg-zinc-800 dark:focus:bg-zinc-800 cursor-pointer transition-all duration-200 outline-none text-[#0069D3] dark:text-blue-300"
+              >
+                <div className="flex items-center gap-2.5">
+                  <div className="flex size-7 shrink-0 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900/50 text-[#0069D3] dark:text-blue-300 shadow-xs transition-transform group-hover:scale-105">
+                    <CheckCircle2 className="size-3.5" />
                   </div>
-                  <ChevronRight className="size-3.5 text-muted-foreground/50 group-hover:text-foreground group-hover:translate-x-0.5 transition-all shrink-0 ml-2" />
-                </DropdownMenuItem>
-              )}
+                  <span className="text-xs font-medium">{t("reopen")}</span>
+                </div>
+                <ChevronRight className="size-3.5 text-blue-400/50 group-hover:text-[#0069D3] group-hover:translate-x-0.5 transition-all shrink-0 ml-2" />
+              </DropdownMenuItem>
+            )}
 
-              {/* UC-11.05 Delete Job */}
-              {!isInProgress && canDelete && (
-                <DropdownMenuItem
-                  onClick={() => onDelete(job.id)}
-                  className="group flex items-center justify-between rounded-full px-3 py-2 bg-[#F3F3F7] hover:bg-red-50 focus:bg-red-50 dark:bg-zinc-800/60 dark:hover:bg-red-950/40 dark:focus:bg-red-950/40 cursor-pointer transition-all duration-200 outline-none text-red-600 dark:text-red-400"
-                >
-                  <div className="flex items-center gap-2.5">
-                    <div className="flex size-7 shrink-0 items-center justify-center rounded-full bg-red-100 dark:bg-red-900/50 text-red-600 dark:text-red-400 shadow-xs transition-transform group-hover:scale-105">
-                      <Trash2 className="size-3.5" />
-                    </div>
-                    <span className="text-xs font-medium text-red-600 dark:text-red-400">
-                      {t("delete")}
-                    </span>
+            {/* UC-11.04 Update Job */}
+            {isEditable && canUpdate && (
+              <DropdownMenuItem
+                onClick={() => onEdit(job)}
+                className="group flex items-center justify-between rounded-full px-3 py-2 bg-[#F3F3F7] hover:bg-[#EAE9F0] focus:bg-[#EAE9F0] dark:bg-zinc-800/60 dark:hover:bg-zinc-800 dark:focus:bg-zinc-800 cursor-pointer transition-all duration-200 outline-none"
+              >
+                <div className="flex items-center gap-2.5">
+                  <div className="flex size-7 shrink-0 items-center justify-center rounded-full bg-white dark:bg-zinc-700 text-foreground shadow-xs transition-transform group-hover:scale-105">
+                    <Edit2 className="size-3.5" />
                   </div>
-                  <ChevronRight className="size-3.5 text-red-400/50 group-hover:text-red-600 group-hover:translate-x-0.5 transition-all shrink-0 ml-2" />
-                </DropdownMenuItem>
-              )}
-            </DropdownMenuContent>
-          </DropdownMenu>
-        )}
+                  <span className="text-xs font-medium text-foreground">
+                    {t("edit")}
+                  </span>
+                </div>
+                <ChevronRight className="size-3.5 text-muted-foreground/50 group-hover:text-foreground group-hover:translate-x-0.5 transition-all shrink-0 ml-2" />
+              </DropdownMenuItem>
+            )}
+
+            {/* UC-11.05 Delete Job */}
+            {!isInProgress && canDelete && (
+              <DropdownMenuItem
+                onClick={() => onDelete(job.id)}
+                className="group flex items-center justify-between rounded-full px-3 py-2 bg-[#F3F3F7] hover:bg-red-50 focus:bg-red-50 dark:bg-zinc-800/60 dark:hover:bg-red-950/40 dark:focus:bg-red-950/40 cursor-pointer transition-all duration-200 outline-none text-red-600 dark:text-red-400"
+              >
+                <div className="flex items-center gap-2.5">
+                  <div className="flex size-7 shrink-0 items-center justify-center rounded-full bg-red-100 dark:bg-red-900/50 text-red-600 dark:text-red-400 shadow-xs transition-transform group-hover:scale-105">
+                    <Trash2 className="size-3.5" />
+                  </div>
+                  <span className="text-xs font-medium text-red-600 dark:text-red-400">
+                    {t("delete")}
+                  </span>
+                </div>
+                <ChevronRight className="size-3.5 text-red-400/50 group-hover:text-red-600 group-hover:translate-x-0.5 transition-all shrink-0 ml-2" />
+              </DropdownMenuItem>
+            )}
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
     </motion.div>
   );
@@ -483,6 +495,10 @@ export function JobList({
   const [pendingDeleteJobId, setPendingDeleteJobId] = useState<number | null>(
     null,
   );
+  const [pendingPublishJobId, setPendingPublishJobId] = useState<number | null>(
+    null,
+  );
+  const [isPublishing, setIsPublishing] = useState(false);
 
   const draftCount = jobs.filter((j) => j.status === "DRAFT").length;
   const openCount = jobs.filter((j) => j.status === "OPEN").length;
@@ -520,22 +536,31 @@ export function JobList({
     setEditingJob(null);
   };
 
-  const publishJob = async (id: number) => {
+  const confirmPublishJob = async () => {
+    if (!pendingPublishJobId) return;
     if (!canPublish) {
       toastError({ message: t("noPermissionAction") });
       return;
     }
+    setIsPublishing(true);
     try {
-      const response = await jobApiRequest.publishJob(id);
+      const response = await jobApiRequest.publishJob(pendingPublishJobId);
       if (!response.success) throw new Error();
       setJobs((current) =>
         current.map((job) =>
-          job.id === id ? { ...job, status: "OPEN" } : job,
+          job.id === pendingPublishJobId ? { ...job, status: "OPEN" } : job,
         ),
       );
       toastSuccess({ message: t("published") });
-    } catch {
-      toastError({ message: t("publishFailed") });
+      setPendingPublishJobId(null);
+    } catch (error) {
+      const message =
+        error instanceof ApiFail
+          ? (error.response?.error?.message ?? error.message)
+          : t("publishFailed");
+      toastError({ message: message || t("publishFailed") });
+    } finally {
+      setIsPublishing(false);
     }
   };
 
@@ -674,7 +699,7 @@ export function JobList({
                     setIsFormOpen(true);
                   }}
                   onDelete={setPendingDeleteJobId}
-                  onPublish={publishJob}
+                  onPublish={setPendingPublishJobId}
                   onClose={closeJob}
                   onReopen={reopenJob}
                 />
@@ -782,7 +807,59 @@ export function JobList({
         onOpenChange={setIsFormOpen}
         onSaved={saveJob}
         job={editingJob ?? undefined}
+        existingJobs={jobs}
       />
+
+      {/* Confirmation Dialog for Publishing a Job */}
+      <AlertDialog
+        open={pendingPublishJobId !== null}
+        onOpenChange={(open) => !open && !isPublishing && setPendingPublishJobId(null)}
+      >
+        <AlertDialogContent className="max-w-sm rounded-[26px] border border-black/5 dark:border-white/10 bg-white dark:bg-zinc-900 p-5 shadow-2xl font-sans">
+          <div className="flex flex-col gap-3">
+            <div className="px-1">
+              <AlertDialogTitle className="text-base font-bold text-foreground font-sans">
+                {t("publishConfirmTitle")}
+              </AlertDialogTitle>
+              <AlertDialogDescription className="mt-1 text-xs text-muted-foreground leading-normal font-sans">
+                {t("publishConfirmDesc")}
+              </AlertDialogDescription>
+            </div>
+
+            <div className="mt-1 flex flex-col gap-2">
+              <button
+                type="button"
+                disabled={isPublishing}
+                onClick={() => void confirmPublishJob()}
+                className="group flex w-full items-center justify-between rounded-full px-3.5 py-2.5 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white cursor-pointer transition-all duration-200 outline-none shadow-xs"
+              >
+                <div className="flex items-center gap-2.5">
+                  <div className="flex size-7 shrink-0 items-center justify-center rounded-full bg-white/20 text-white shadow-xs transition-transform group-hover:scale-105">
+                    <TrendingUp className="size-3.5" />
+                  </div>
+                  <span className="text-xs font-semibold">
+                    {isPublishing ? t("publishing") : t("confirmPublish")}
+                  </span>
+                </div>
+                <ChevronRight className="size-3.5 text-white/70 group-hover:text-white group-hover:translate-x-0.5 transition-all" />
+              </button>
+
+              <AlertDialogCancel
+                disabled={isPublishing}
+                className="group flex w-full items-center justify-between rounded-full px-3.5 py-2.5 bg-[#F1F0F5] hover:bg-[#EAE9F0] dark:bg-zinc-800/80 dark:hover:bg-zinc-800 text-foreground cursor-pointer transition-all duration-200 outline-none border-0 m-0 h-auto"
+              >
+                <div className="flex items-center gap-2.5">
+                  <div className="flex size-7 shrink-0 items-center justify-center rounded-full bg-white dark:bg-zinc-700 text-muted-foreground shadow-xs transition-transform group-hover:scale-105">
+                    <X className="size-3.5" />
+                  </div>
+                  <span className="text-xs font-medium">{t("cancel")}</span>
+                </div>
+                <ChevronRight className="size-3.5 text-muted-foreground/50 group-hover:text-foreground group-hover:translate-x-0.5 transition-all" />
+              </AlertDialogCancel>
+            </div>
+          </div>
+        </AlertDialogContent>
+      </AlertDialog>
 
       <AlertDialog
         open={pendingDeleteJobId !== null}

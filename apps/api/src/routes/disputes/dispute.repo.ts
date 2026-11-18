@@ -15,6 +15,13 @@ import { syncContractAndJobCompletion } from '../../shared/helper/contract-activ
 export class DisputeRepository {
   constructor(private readonly prisma: PrismaService) {}
 
+  findActiveExpert(userId: number) {
+    return this.prisma.expert.findFirst({
+      where: { profile: { userId }, isActive: true },
+      select: { id: true },
+    });
+  }
+
   async findMilestoneWithContract(milestoneId: number) {
     return this.prisma.milestone.findUnique({
       where: { id: milestoneId },

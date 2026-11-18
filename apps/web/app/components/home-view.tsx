@@ -58,6 +58,7 @@ function resolveHeaderRole(user: GetMeResType | null): UserRole {
   const primaryRole =
     user.roles.find((role) => role.isPrimary) ?? user.roles[0];
 
+  if (primaryRole?.name === RoleName.EXPERT) return "EXPERT";
   if (primaryRole?.name === RoleName.CLIENT) return "CLIENT";
   if (primaryRole?.name === RoleName.FREELANCER) return "FREELANCER";
 
@@ -72,14 +73,20 @@ export function HomeView({ user }: HomeViewProps) {
     <div className="flex min-h-dvh flex-col bg-background font-sans">
       <Header role={role} />
 
-      <BannerSlot position="GLOBAL_HEADER" className="border-b border-border/50 bg-background" />
+      <BannerSlot
+        position="GLOBAL_HEADER"
+        className="border-b border-border/50 bg-background"
+      />
 
       <main className="flex-1">
         <section className="w-full">
           <HeroSlider />
         </section>
 
-        <BannerSlot position="HOME_HERO" className="border-b border-border/50 bg-background" />
+        <BannerSlot
+          position="HOME_HERO"
+          className="border-b border-border/50 bg-background"
+        />
 
         {/* ── Partners ── */}
         <section className="border-y border-border/50 bg-background">
@@ -135,7 +142,10 @@ export function HomeView({ user }: HomeViewProps) {
           </div>
         </section>
 
-        <BannerSlot position="HOME_BODY" className="border-b border-border/50 bg-background" />
+        <BannerSlot
+          position="HOME_BODY"
+          className="border-b border-border/50 bg-background"
+        />
 
         {/* ── Community ── */}
         <section className="border-b border-border/40 bg-background">
@@ -178,7 +188,10 @@ export function HomeView({ user }: HomeViewProps) {
         </section>
       </main>
 
-      <BannerSlot position="FOOTER" className="border-b border-border/50 bg-background" />
+      <BannerSlot
+        position="FOOTER"
+        className="border-b border-border/50 bg-background"
+      />
 
       <Footer />
       <BackToTop />
