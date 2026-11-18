@@ -24,6 +24,14 @@
 % GRAPHICS
 %====================================================
 \usepackage{graphicx}
+\usepackage{needspace}
+\usepackage{etoolbox}
+\usepackage{pdflscape}
+
+% Orphan/widow control for headings and paragraphs
+\clubpenalty=10000
+\widowpenalty=10000
+\displaywidowpenalty=10000
 
 %====================================================
 % TABLES
@@ -115,6 +123,13 @@
 \titlespacing*{\section}{0pt}{1.6ex plus .4ex minus .2ex}{0.8ex plus .2ex}
 \titlespacing*{\subsection}{0pt}{1.2ex plus .3ex minus .2ex}{0.5ex plus .2ex}
 \titlespacing*{\subsubsection}{0pt}{1.0ex plus .2ex minus .2ex}{0.4ex plus .2ex}
+
+% Orphan control for headings (after titlesec definitions)
+\pretocmd{\part}{\Needspace{12\baselineskip}}{}{}
+\pretocmd{\section}{\Needspace{12\baselineskip}}{}{}
+\pretocmd{\subsection}{\Needspace{12\baselineskip}}{}{}
+\pretocmd{\subsubsection}{\Needspace{12\baselineskip}}{}{}
+\pretocmd{\paragraph}{\Needspace{8\baselineskip}}{}{}
 
 %====================================================
 % PARAGRAPH NUMBERING
@@ -294,7 +309,8 @@
   \dimen0=\pagegoal \advance\dimen0 by -\pagetotal
   \ifdim\dimen0<11\baselineskip \newpage\fi
   \renewcommand{\arraystretch}{1.25}%
-  \begin{longtable}{|>{\raggedright\arraybackslash}p{0.30\linewidth}|>{\raggedright\arraybackslash}p{0.65\linewidth}|}
+  \Needspace{12\baselineskip}
+\begin{longtable}{|>{\raggedright\arraybackslash}p{0.30\linewidth}|>{\raggedright\arraybackslash}p{0.65\linewidth}|}
   \hhline{|-|-|}
   \rowcolor{headerbg}\textbf{#1} & \textbf{#2}\\
   \hhline{|-|-|}
@@ -312,7 +328,8 @@
 \newenvironment{flowtable}[2]{%
   \par\addvspace{3pt}%
   \renewcommand{\arraystretch}{1.25}%
-  \begin{longtable}{|>{\raggedright\arraybackslash}p{0.30\linewidth}|>{\raggedright\arraybackslash}p{0.65\linewidth}|}
+  \Needspace{12\baselineskip}
+\begin{longtable}{|>{\raggedright\arraybackslash}p{0.30\linewidth}|>{\raggedright\arraybackslash}p{0.65\linewidth}|}
   \hhline{|-|-|}
   \rowcolor{headerbg}\textbf{#1} & \textbf{#2}\\
   \hhline{|-|-|}
@@ -397,6 +414,7 @@
 %====================================================
 \input{sections/record_of_changes}
 
+\Needspace{12\baselineskip}
 \part{Software Requirement Specification}
 
 \input{sections/1.Product_Overview}
