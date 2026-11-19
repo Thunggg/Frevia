@@ -4,6 +4,7 @@ import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { RoleName, type GetMeResType } from "@shared/types";
 import { canAccessAdminPortal } from "@/lib/admin-access";
 import { useMarketplaceRoleAction } from "@/hooks/use-marketplace-role-action";
@@ -35,6 +36,7 @@ export function AccessDeniedContent({
   from,
 }: AccessDeniedContentProps) {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const t = useTranslations("accessDenied");
   const tRole = useTranslations("roleName");
   const [isLoggingOut, setIsLoggingOut] = useState(false);
@@ -68,6 +70,8 @@ export function AccessDeniedContent({
     setIsLoggingOut(true);
     try {
       await fetch("/api/auth/logout", { method: "POST" });
+      queryClient.clear();
+      queryClient.setQueryData(["me"], null);
       router.push("/login");
       router.refresh();
     } catch {

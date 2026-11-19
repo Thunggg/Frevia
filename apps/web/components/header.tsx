@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useEffect, useRef, useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import {
   Bookmark,
   ChevronDown,
@@ -271,6 +272,7 @@ function HeaderSearch({
 
 function ProfileDropdown({ role }: { role: Exclude<UserRole, "GUEST"> }) {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const t = useTranslations("nav");
   const tRole = useTranslations("roleName");
   const profile = roleConfig[role] ?? roleConfig.FREELANCER;
@@ -314,6 +316,8 @@ function ProfileDropdown({ role }: { role: Exclude<UserRole, "GUEST"> }) {
 
   const logout = async () => {
     await fetch("/api/auth/logout", { method: "POST" });
+    queryClient.clear();
+    queryClient.setQueryData(["me"], null);
     router.push("/login");
     router.refresh();
   };

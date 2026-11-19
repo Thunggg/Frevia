@@ -78,7 +78,7 @@ export function ChatView({
   const tCommon = useTranslations("common");
   const format = useFormatter();
   const queryClient = useQueryClient();
-  const { can } = useActionPermission();
+  const { can, isLoading: isPermissionLoading } = useActionPermission();
   const canViewConversation = can("GET", "/api/conversations/:id");
   const canViewMessages = can("GET", "/api/conversations/:id/messages");
   const canSendMessage = can("POST", "/api/conversations/:id/messages");
@@ -423,7 +423,7 @@ export function ChatView({
     tCommon("userFallback", { id: otherUser?.id ?? "" });
   const avatarUrl = otherUser?.profile?.avatarUrl ?? undefined;
 
-  if (!canViewConversation) {
+  if (!isPermissionLoading && !canViewConversation) {
     return (
       <div className="flex h-full flex-col items-center justify-center p-6 text-center text-muted-foreground font-sans">
         <p className="text-sm font-semibold text-foreground">

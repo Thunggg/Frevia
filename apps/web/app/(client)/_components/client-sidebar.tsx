@@ -33,6 +33,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef, useState, useTransition } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 
 import { useActionPermission } from "@/hooks/use-action-permission";
 import { useMarketplaceRoleAction } from "@/hooks/use-marketplace-role-action";
@@ -105,6 +106,7 @@ function NavLink({ item, collapsed }: { item: NavItem; collapsed: boolean }) {
 
 export function ClientSidebar() {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const t = useTranslations("sidebar");
   const tRole = useTranslations("roleName");
   const activeLocale = useLocale();
@@ -252,6 +254,8 @@ export function ClientSidebar() {
 
   const logout = async () => {
     await fetch("/api/auth/logout", { method: "POST" });
+    queryClient.clear();
+    queryClient.setQueryData(["me"], null);
     router.push("/login");
     router.refresh();
   };

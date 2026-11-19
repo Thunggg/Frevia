@@ -45,7 +45,11 @@ export function useMarketplaceRoleAction(currentRole: MarketplaceRole) {
         await authApiRequest.joinRole({ role: targetRole });
       }
 
-      await queryClient.invalidateQueries({ queryKey: ["me"] });
+      // Xóa cache phụ thuộc role cũ và nạp lại ["me"] xong xuôi trước khi điều hướng
+      queryClient.removeQueries({
+        predicate: (query) => query.queryKey[0] !== "me",
+      });
+      await queryClient.refetchQueries({ queryKey: ["me"] });
       toastSuccess({
         message: hasTargetRole
           ? tNav("switchedToRole", { role: targetRoleLabel })

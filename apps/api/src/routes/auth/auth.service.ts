@@ -1,4 +1,9 @@
-import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  Logger,
+  NotFoundException,
+  Optional,
+} from '@nestjs/common';
 import { JsonWebTokenError } from '@nestjs/jwt';
 import {
   PrismaClientKnownRequestError,
@@ -30,6 +35,7 @@ import { ServerErrorException } from '../../shared/errors/shared-message.error';
 import { isAdminPermissionPath } from '../../shared/helper/admin-permission';
 import { generateOTP } from '../../shared/helper/generate-otp';
 import { SharedRoleRepository } from '../../shared/repositories/shared-role.repo';
+import { CacheService } from '../../shared/services/cache.service';
 import { EmailService } from '../../shared/services/email.service';
 import { HashingService } from '../../shared/services/hashing.service';
 import { TokenService } from '../../shared/services/token.service';
@@ -51,6 +57,9 @@ import {
 import { AuthRepository } from './auth.repo';
 import { OAuth2Client } from 'google-auth-library';
 
+export const AUTH_ME_CACHE_PREFIX = 'auth:me:';
+const AUTH_ME_CACHE_TTL_SECONDS = 45;
+
 @Injectable()
 export class AuthService {
   private readonly logger = new Logger(AuthService.name);
@@ -62,6 +71,7 @@ export class AuthService {
     private readonly sharedRoleRepository: SharedRoleRepository,
     private readonly authRepository: AuthRepository,
     private readonly tokenService: TokenService,
+    @Optional() private readonly cacheService?: CacheService,
   ) {
     this.oauth2Client = new OAuth2Client({
       clientId: envConfig.GOOGLE_CLIENT_ID,
@@ -495,6 +505,17 @@ export class AuthService {
   }
 
   async getMe(userId: number): Promise<GetMeResType> {
+    if (this.cacheService) {
+      return this.cacheService.wrap(
+        `${AUTH_ME_CACHE_PREFIX}${userId}`,
+        () => this.loadMe(userId),
+        AUTH_ME_CACHE_TTL_SECONDS,
+      );
+    }
+    return this.loadMe(userId);
+  }
+
+  private async loadMe(userId: number): Promise<GetMeResType> {
     const user = await this.authRepository.findUserById(userId);
 
     if (!user) {
@@ -638,6 +659,8 @@ export class AuthService {
       throw RoleNotFoundException();
     }
 
+    this.cacheService?.del(`${AUTH_ME_CACHE_PREFIX}${userId}`);
+
     const accessToken = await this.tokenService.signAccessToken({
       userId,
       roleId: result.role.id,
@@ -672,6 +695,8 @@ export class AuthService {
       if (result.status === 'already-assigned') {
         throw RoleAlreadyAssignedException();
       }
+
+      this.cacheService?.del(`${AUTH_ME_CACHE_PREFIX}${userId}`);
 
       const accessToken = await this.tokenService.signAccessToken({
         userId,

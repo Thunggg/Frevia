@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, Optional } from '@nestjs/common';
 import {
   CreateRoleBodyType,
   CreateRoleResponseType,
@@ -25,13 +25,24 @@ import {
   RoleAlreadyExistsException,
   RoleInUseException,
 } from './roles.error';
+import { ROLE_PERMISSIONS_CACHE_PREFIX } from '../../shared/repositories/shared-permission.repo';
+import { CacheService } from '../../shared/services/cache.service';
+import { AUTH_ME_CACHE_PREFIX } from '../auth/auth.service';
 import { RolesRepository } from './roles.repo';
 
 @Injectable()
 export class RolesService {
   private readonly logger = new Logger(RolesService.name);
 
-  constructor(private readonly rolesRepository: RolesRepository) {}
+  constructor(
+    private readonly rolesRepository: RolesRepository,
+    @Optional() private readonly cacheService?: CacheService,
+  ) {}
+
+  private invalidateRoleCaches() {
+    this.cacheService?.delByPrefix(ROLE_PERMISSIONS_CACHE_PREFIX);
+    this.cacheService?.delByPrefix(AUTH_ME_CACHE_PREFIX);
+  }
 
   private isSystemRoleName(name: string): boolean {
     const normalizedName = name.trim().toLowerCase();
@@ -126,6 +137,7 @@ export class RolesService {
       }
 
       const updatedRole = await this.rolesRepository.updateRole(id, body);
+      this.invalidateRoleCaches();
       this.logger.log(`Role updated successfully: id=${id}`);
       return updatedRole;
     } catch (error) {
@@ -159,6 +171,7 @@ export class RolesService {
       }
 
       await this.rolesRepository.softDeleteRole(id);
+      this.invalidateRoleCaches();
       this.logger.log(`Role deleted successfully: id=${id}`);
       return { message: ManageRoleMessage.ROLE_DELETED };
     } catch (error) {
@@ -194,6 +207,7 @@ export class RolesService {
       }
 
       await this.rolesRepository.replaceRolePermissions(id, permissionIds);
+      this.invalidateRoleCaches();
 
       const updated = await this.rolesRepository.findById(id);
       this.logger.log(

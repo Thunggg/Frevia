@@ -24,11 +24,13 @@ import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { Controller, useForm } from "react-hook-form";
 import type * as z from "zod";
 
 export function LoginForm({ oauthError }: { oauthError?: string }) {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const t = useTranslations("auth.login");
   const tField = useTranslations("auth.fields");
   const tAction = useTranslations("auth.actions");
@@ -60,8 +62,12 @@ export function LoginForm({ oauthError }: { oauthError?: string }) {
       onSuccess: async (response) => {
         if (response.success) {
           toastSuccess({ message: t("success") });
+          queryClient.clear();
           try {
             const meRes = await authApiRequest.me();
+            if (meRes.success) {
+              queryClient.setQueryData(["me"], meRes.data);
+            }
             const primaryRole = meRes.success
               ? meRes.data?.roles?.find((r) => r.isPrimary)?.name
               : null;

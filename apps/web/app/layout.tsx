@@ -43,11 +43,13 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const cookieStore = await cookies();
+  const [cookieStore, user, locale, messages] = await Promise.all([
+    cookies(),
+    authServerRequest.getMe(),
+    getLocale(),
+    getMessages(),
+  ]);
   const token = cookieStore.get("accessToken")?.value ?? null;
-  const user = await authServerRequest.getMe();
-  const locale = await getLocale();
-  const messages = await getMessages();
 
   return (
     <html lang={locale} suppressHydrationWarning>
@@ -73,7 +75,7 @@ export default async function RootLayout({
           disableTransitionOnChange
         >
           <NextIntlClientProvider locale={locale} messages={messages}>
-            <QueryProvider>
+            <QueryProvider initialUser={user}>
               <NotificationProvider
                 socketUrl={getBrowserSocketUrl()}
                 token={token}
