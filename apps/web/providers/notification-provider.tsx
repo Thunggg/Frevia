@@ -2,9 +2,14 @@
 
 import { createContext, useContext, useEffect, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import { io } from "socket.io-client";
+import { io, type Socket } from "socket.io-client";
 import { useTranslations } from "next-intl";
-import { conversationKeys } from "@/hooks/use-conversation";
+import {
+  appendMessageToConversationCaches,
+  collectConversationMessageKeys,
+  conversationKeys,
+  removeMessageFromConversationCaches,
+} from "@/hooks/use-conversation";
 import { useNotificationText } from "@/hooks/use-notification-text";
 import { notificationKeys } from "@/hooks/use-notifications";
 import { toast } from "@repo/ui/components/shadcn/sonner";
@@ -20,16 +25,19 @@ import { Button } from "@repo/ui/components/shadcn/button";
 import { Lock, ShieldAlert, LogOut, Loader2 } from "lucide-react";
 import type {
   ConversationListItemType,
+  DirectMessageType,
   GetConversationsResponseType,
   NotificationItemType,
 } from "@shared/types";
 
 type NotificationContextValue = {
   connected: boolean;
+  conversationSocket: Socket | null;
 };
 
 const NotificationContext = createContext<NotificationContextValue>({
   connected: false,
+  conversationSocket: null,
 });
 
 export function useNotificationContext() {
@@ -64,6 +72,9 @@ export function NotificationProvider({
   const notificationText = useNotificationText();
   const queryClient = useQueryClient();
   const [connected, setConnected] = useState(false);
+  const [conversationSocket, setConversationSocket] = useState<Socket | null>(
+    null,
+  );
   const [modalState, setModalState] = useState<{
     isOpen: boolean;
     type: "BANNED" | "SESSION_REVOKED" | "DEFAULT";
@@ -188,6 +199,29 @@ export function NotificationProvider({
     );
 
     socket.on(
+      "message:new",
+      (payload: { conversationId: number; message: DirectMessageType }) => {
+        appendMessageToConversationCaches(queryClient, payload.message, [
+          payload.conversationId,
+        ]);
+      },
+    );
+
+    socket.on(
+      "message:deleted",
+      (payload: { conversationId: number; messageId: number }) => {
+        removeMessageFromConversationCaches(
+          queryClient,
+          payload.conversationId,
+          payload.messageId,
+        );
+        void queryClient.invalidateQueries({
+          queryKey: conversationKeys.list(),
+        });
+      },
+    );
+
+    socket.on(
       "conversation:updated",
       (item: ConversationListItemType) => {
         queryClient.setQueryData<GetConversationsResponseType>(
@@ -222,6 +256,17 @@ export function NotificationProvider({
             return sortByLastMessage(next);
           },
         );
+
+        const keysToInvalidate = collectConversationMessageKeys(
+          queryClient,
+          item.id,
+          [item.slug],
+        );
+        keysToInvalidate.forEach((key) => {
+          void queryClient.invalidateQueries({
+            queryKey: conversationKeys.messages(key),
+          });
+        });
       },
     );
 
@@ -238,12 +283,14 @@ export function NotificationProvider({
       },
     );
 
+    setConversationSocket(socket);
     void connectSockets(!activeToken);
 
     return () => {
       cancelled = true;
       socket.disconnect();
       authSocket.disconnect();
+      setConversationSocket(null);
       setConnected(false);
     };
   }, [socketUrl, token, currentUserId, queryClient, notificationText]);
@@ -274,7 +321,7 @@ export function NotificationProvider({
         : modalState.customReason || t("defaultDescription");
 
   return (
-    <NotificationContext.Provider value={{ connected }}>
+    <NotificationContext.Provider value={{ connected, conversationSocket }}>
       {children}
 
       <AlertDialog open={modalState.isOpen}>

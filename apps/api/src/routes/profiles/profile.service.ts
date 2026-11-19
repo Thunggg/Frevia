@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, Optional } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import {
   ProfileMessage,
@@ -18,7 +18,9 @@ import {
   type AiCvAnalysis,
   type AiCvSource,
 } from '../../shared/services/ai-cv-analyzer.service';
+import { CacheService } from '../../shared/services/cache.service';
 import { CloudinaryService } from '../../shared/services/cloudinary.service';
+import { AUTH_ME_CACHE_PREFIX } from '../auth/auth.service';
 import { SkillResolverService } from '../../shared/services/skill-resolver.service';
 import { ProfileRevisionService } from '../profile-revisions/profile-revision.service';
 import { EmbeddingOutboxService } from '../recommendations/embedding-outbox.service';
@@ -60,6 +62,7 @@ export class ProfileService {
     private readonly skillResolver: SkillResolverService,
     private readonly profileRevisionService: ProfileRevisionService,
     private readonly embeddingOutbox: EmbeddingOutboxService,
+    @Optional() private readonly cacheService?: CacheService,
   ) {}
 
   private async getOwnedFreelancerProfile(profileId: number, userId: number) {
@@ -585,6 +588,7 @@ export class ProfileService {
       profile.id,
       update,
     );
+    this.cacheService?.del(`${AUTH_ME_CACHE_PREFIX}${currentUserId}`);
     await this.embeddingOutbox.enqueueAndProcess({
       eventType: 'UPSERT',
       documentType: 'CV',

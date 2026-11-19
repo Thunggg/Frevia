@@ -1,14 +1,14 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { useTranslations } from "next-intl";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "@repo/ui/components/shadcn/sonner";
 import {
   conversationKeys,
   useConversations,
-  useConversationSocket,
 } from "@/hooks/use-conversation";
+import { useNotificationContext } from "@/providers/notification-provider";
 import { ConversationSocketContext } from "@/app/conversations/components/conversation-socket-context";
 import { ChatView } from "@/app/conversations/components/chat-view";
 import { Avatar, AvatarFallback, AvatarImage } from "@repo/ui/components/shadcn/avatar";
@@ -36,17 +36,15 @@ export function ContractChatPopup({
   counterpartyName,
   counterpartyAvatarUrl,
   currentUserId,
-  accessToken,
-  socketUrl,
   isStartingChat = false,
   onOpenChat,
 }: ContractChatPopupProps) {
   const queryClient = useQueryClient();
   const t = useTranslations("contractWorkspace");
-  const socketValue = useConversationSocket(
-    socketUrl ?? "",
-    accessToken ?? null,
-    currentUserId ?? null,
+  const { conversationSocket, connected } = useNotificationContext();
+  const socketValue = useMemo(
+    () => ({ socket: conversationSocket, connected }),
+    [conversationSocket, connected],
   );
   const { data: conversations = [] } = useConversations();
 

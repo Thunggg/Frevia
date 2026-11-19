@@ -117,7 +117,7 @@ export function ChatView({
     canViewMessages,
   );
   const restSend = useSendConversationMessage();
-  const restMarkRead = useMarkConversationRead();
+  const { mutate: markConversationRead } = useMarkConversationRead();
   const restDelete = useDeleteConversationMessage();
   const uploadFile = useUploadConversationFile();
 
@@ -127,6 +127,7 @@ export function ChatView({
   const [uploading, setUploading] = useState(false);
   const endRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const lastMarkedRef = useRef<string | null>(null);
   const otherTypingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(
     null,
   );
@@ -144,18 +145,23 @@ export function ChatView({
 
   useEffect(() => {
     if (!conversationId || !canMarkRead) return;
+    const mode = socket && connected ? "ws" : "rest";
+    const markKey = `${conversationId}:${mode}`;
+    if (lastMarkedRef.current === markKey) return;
+    lastMarkedRef.current = markKey;
+
     if (socket && connected) {
       socket.emit("message:read", { conversationId });
       // Đọc hội thoại -> thông báo tin nhắn mới của hội thoại này hết chưa đọc
       void queryClient.invalidateQueries({ queryKey: notificationKeys.all });
     } else {
-      restMarkRead.mutate(conversationId);
+      markConversationRead(conversationId);
     }
   }, [
     socket,
     connected,
     conversationId,
-    restMarkRead,
+    markConversationRead,
     canMarkRead,
     queryClient,
   ]);

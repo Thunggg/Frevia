@@ -47,7 +47,7 @@ function sortByLastMessage(items: GetConversationsResponseType) {
   });
 }
 
-function collectConversationMessageKeys(
+export function collectConversationMessageKeys(
   queryClient: QueryClient,
   conversationId: number | string,
   extraKeys: Array<number | string | null | undefined> = [],

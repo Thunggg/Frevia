@@ -1,9 +1,9 @@
 "use client";
 
-import type { ReactNode } from "react";
+import { useMemo, type ReactNode } from "react";
 import { usePathname } from "next/navigation";
 
-import { useConversationSocket } from "@/hooks/use-conversation";
+import { useNotificationContext } from "@/providers/notification-provider";
 
 import { ConversationList } from "./conversation-list";
 import { ConversationSocketContext } from "./conversation-socket-context";
@@ -16,13 +16,16 @@ type ConversationsShellProps = {
 };
 
 export function ConversationsShell({
-  socketUrl,
-  token,
   currentUserId,
   children,
 }: ConversationsShellProps) {
   const pathname = usePathname();
-  const socketValue = useConversationSocket(socketUrl, token, currentUserId);
+  // Tái sử dụng duy nhất 1 kết nối /conversations từ NotificationProvider ở root layout
+  const { conversationSocket, connected } = useNotificationContext();
+  const socketValue = useMemo(
+    () => ({ socket: conversationSocket, connected }),
+    [conversationSocket, connected],
+  );
   const basePath = pathname.startsWith("/client/conversations")
     ? "/client/conversations"
     : pathname.startsWith("/freelancer/conversations")
