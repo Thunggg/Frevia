@@ -6,7 +6,6 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState, useTransition, type FormEvent, type MouseEvent } from "react";
 import {
   ArrowLeft,
-  Bookmark,
   Search,
   SearchX,
   X,
@@ -36,7 +35,10 @@ import { useActionPermission } from "@/hooks/use-action-permission";
 import { JobCard } from "../../../_components/job-card";
 import { JobPagination } from "../../../_components/job-pagination";
 import { SearchFiltersSidebar } from "../../../_components/search-filters-sidebar";
-import { SaveSearchDialog } from "../../saved-searches/save-search-dialog";
+import {
+  SaveSearchModal,
+  SavedSearchesDialog,
+} from "../../saved-searches/save-search-dialog";
 
 type SearchJobsContentProps = {
   user: GetMeResType | null;
@@ -111,6 +113,14 @@ export function SearchJobsContent({
   const [savedSearches, setSavedSearches] = useState<SavedSearchType[]>(
     () => initialSavedSearches ?? [],
   );
+  const [savedSearchesDialogOpen, setSavedSearchesDialogOpen] = useState(false);
+
+  // Optimistic category filter state for zero latency UI
+  const [categoryFilter, setCategoryFilter] = useState(initialCategory);
+
+  useEffect(() => {
+    setCategoryFilter(initialCategory);
+  }, [initialCategory]);
 
   const canBookmark = Boolean(user);
 
@@ -121,6 +131,10 @@ export function SearchJobsContent({
 
     if ("q" in updates) {
       params.delete("keyword");
+    }
+
+    if ("category" in updates) {
+      setCategoryFilter(updates.category ? String(updates.category) : "all");
     }
 
     for (const [key, value] of Object.entries(updates)) {
@@ -165,6 +179,7 @@ export function SearchJobsContent({
 
   const handleClearAllFilters = () => {
     setSearchInput("");
+    setCategoryFilter("all");
     startTransition(() => {
       router.push("/freelancer/search/jobs");
     });
@@ -250,8 +265,8 @@ export function SearchJobsContent({
   };
 
   const selectedCategorySlugs =
-    initialCategory && initialCategory !== "all"
-      ? initialCategory.split(",").map((s) => s.trim()).filter(Boolean)
+    categoryFilter && categoryFilter !== "all"
+      ? categoryFilter.split(",").map((s) => s.trim()).filter(Boolean)
       : [];
 
   const selectedSkills = initialSkill
@@ -309,31 +324,62 @@ export function SearchJobsContent({
 
       {/* 2. Top Toolbar Bar (Save Search & Sort by) */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-2 pb-3 border-b border-border">
-        {/* Left: Save search and saved searches */}
-        <div className="flex items-center gap-2">
-          {(canCreateSavedSearch || canViewSavedSearches) && (
-            <SaveSearchDialog
+        {/* Left: Save search and saved searches (Upwork style) */}
+        <div className="flex items-center gap-2.5 flex-wrap sm:flex-nowrap shrink-0">
+          {canCreateSavedSearch && (
+            <SaveSearchModal
               searchParams={Object.fromEntries(searchParams.entries())}
               savedSearches={savedSearches}
-              onApply={handleApplySavedSearch}
-              onChanged={() => {
+              categories={initialCategories}
+              onSaved={(savedItem) => {
+                if (savedItem) {
+                  setSavedSearches((prev) => {
+                    const idx = prev.findIndex((s) => s.id === savedItem.id);
+                    if (idx >= 0) {
+                      const next = [...prev];
+                      next[idx] = savedItem;
+                      return next;
+                    }
+                    return [savedItem, ...prev];
+                  });
+                }
                 if (!canViewSavedSearches) return;
                 void savedSearchApiRequest
                   .getSavedSearches()
-                  .then((res: { data?: SavedSearchType[] }) => setSavedSearches(res.data ?? []));
+                  .then((res: { data?: SavedSearchType[] }) =>
+                    setSavedSearches(res.data ?? []),
+                  );
               }}
+              onOpenSavedSearches={() => setSavedSearchesDialogOpen(true)}
             />
           )}
           {canViewSavedSearches && (
-            <Link
-              href="/freelancer/find-work/saved-searches"
-              className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1.5 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
-            >
-              <Bookmark className="size-3.5 text-[#0069D3] dark:text-blue-400" />
-              <span>
-                {t("searchPage.savedSearches", { count: savedSearches.length })}
-              </span>
-            </Link>
+            <SavedSearchesDialog
+              savedSearches={savedSearches}
+              currentSearchParams={Object.fromEntries(searchParams.entries())}
+              categories={initialCategories}
+              onApply={handleApplySavedSearch}
+              onChanged={(updatedItem) => {
+                if (updatedItem) {
+                  setSavedSearches((prev) => {
+                    const idx = prev.findIndex((s) => s.id === updatedItem.id);
+                    if (idx >= 0) {
+                      const next = [...prev];
+                      next[idx] = updatedItem;
+                      return next;
+                    }
+                    return [updatedItem, ...prev];
+                  });
+                }
+                void savedSearchApiRequest
+                  .getSavedSearches()
+                  .then((res: { data?: SavedSearchType[] }) =>
+                    setSavedSearches(res.data ?? []),
+                  );
+              }}
+              open={savedSearchesDialogOpen}
+              onOpenChange={setSavedSearchesDialogOpen}
+            />
           )}
         </div>
 
@@ -372,7 +418,7 @@ export function SearchJobsContent({
         {/* Left Column: Filter Sidebar */}
         <SearchFiltersSidebar
           categories={initialCategories}
-          selectedCategory={initialCategory}
+          selectedCategory={categoryFilter}
           selectedBudget={initialBudget}
           selectedBudgetMin={initialBudgetMin}
           selectedBudgetMax={initialBudgetMax}

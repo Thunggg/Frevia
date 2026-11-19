@@ -1796,7 +1796,18 @@
     "manageTitle": "Manage saved searches",
     "updateCriteriaTooltip": "Update current criteria into this saved search",
     "saveAsNew": "Save as new search",
-    "limitIndicator": "{count}/30 saved"
+    "limitIndicator": "{count}/30 saved",
+    "apply": "Apply",
+    "filterCategory": "Category",
+    "filterSkill": "Skill",
+    "filterHiringType": "Hiring type",
+    "alreadySavedTitle": "Search already saved",
+    "alreadySavedHint": "This search is already saved as \"{name}\". Change the name to save your update.",
+    "currentActive": "Active",
+    "viewAllSaved": "View all saved searches",
+    "duplicateNameWarning": "You already have another saved search with this name",
+    "duplicateCriteriaNote": "Current filters match \"{name}\"",
+    "saveAsNewTooltip": "Save current filters as a new search entry with this name"
   },
   "bookmarks": {
     "breadcrumb": "Bookmarks",

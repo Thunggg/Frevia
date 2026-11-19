@@ -8,7 +8,6 @@ import {
   BookmarkCheck,
   ChevronLeft,
   ChevronRight,
-  Pencil,
   Search,
   SlidersHorizontal,
   Trash2,
@@ -35,7 +34,6 @@ import {
   DialogTitle,
 } from "@repo/ui/components/shadcn/dialog";
 import { Input } from "@repo/ui/components/shadcn/input";
-import { Label } from "@repo/ui/components/shadcn/label";
 import { toastError, toastSuccess } from "@repo/ui/components/shadcn/toast";
 import type { SavedSearchType } from "@shared/types";
 
@@ -49,7 +47,7 @@ const PAGE_SIZE_OPTIONS = [6, 9, 12, 24];
 
 function toFindWorkHref(
   searchParams: SavedSearchType["searchParams"],
-  baseUrl = "/find-work",
+  baseUrl = "/freelancer/search/jobs",
 ) {
   const params = new URLSearchParams();
 
@@ -80,7 +78,6 @@ export function SavedSearchesContent({
   const { can } = useActionPermission();
   const canViewSavedSearches = can("GET", "/api/saved-searches");
   const canViewSavedSearchDetail = can("GET", "/api/saved-searches/:id");
-  const canUpdateSavedSearch = can("PATCH", "/api/saved-searches/:id");
   const canDeleteSavedSearch = can("DELETE", "/api/saved-searches/:id");
 
   const [items, setItems] = useState<SavedSearchType[]>(initialSavedSearches);
@@ -88,10 +85,6 @@ export function SavedSearchesContent({
   const [sortOrder, setSortOrder] = useState<"desc" | "asc">("desc");
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(9);
-
-  // Rename Dialog State
-  const [editingItem, setEditingItem] = useState<SavedSearchType | null>(null);
-  const [editName, setEditName] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Delete Confirmation Dialog State
@@ -99,15 +92,20 @@ export function SavedSearchesContent({
 
   const filterSummary = (searchParams: SavedSearchType["searchParams"]) => {
     const labels: string[] = [];
-    const keyword = searchParams.keyword;
-    const budget = searchParams.budget;
-    const time = searchParams.time;
+    const keyword = (searchParams.q || searchParams.keyword) as
+      | string
+      | undefined;
+    const budget = searchParams.budget as string | undefined;
+    const time = searchParams.time as string | undefined;
+    const skill = searchParams.skill as string | undefined;
 
-    if (typeof keyword === "string" && keyword) labels.push(keyword);
+    if (typeof keyword === "string" && keyword.trim())
+      labels.push(keyword.trim());
     if (typeof budget === "string" && budget !== "all")
       labels.push(translateFilterOption(tFindWork, BUDGET_KEYS, budget));
     if (typeof time === "string" && time !== "all")
       labels.push(translateFilterOption(tFindWork, TIME_KEYS, time));
+    if (typeof skill === "string" && skill.trim()) labels.push(skill.trim());
 
     return labels.length ? labels : [t("allOpenProjects")];
   };
@@ -121,7 +119,7 @@ export function SavedSearchesContent({
 
   const effectiveBasePath =
     basePath ?? (embedded ? "/freelancer/saved-searches" : "/saved-searches");
-  const findWorkBaseUrl = "/freelancer";
+  const findWorkBaseUrl = "/freelancer/search/jobs";
 
   // Filter & Sort
   const filteredItems = useMemo(() => {
@@ -147,34 +145,6 @@ export function SavedSearchesContent({
     const start = (validCurrentPage - 1) * pageSize;
     return filteredItems.slice(start, start + pageSize);
   }, [filteredItems, validCurrentPage, pageSize]);
-
-  // Rename Handler
-  const handleStartRename = (item: SavedSearchType) => {
-    if (!canUpdateSavedSearch) return;
-    setEditingItem(item);
-    setEditName(item.name);
-  };
-
-  const handleSaveRename = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!editingItem || !editName.trim() || !canUpdateSavedSearch) return;
-
-    const trimmed = editName.trim();
-    setIsSubmitting(true);
-    try {
-      await savedSearchApiRequest.update(editingItem.id, { name: trimmed });
-      setItems((prev) =>
-        prev.map((it) => (it.id === editingItem.id ? { ...it, name: trimmed } : it)),
-      );
-      toastSuccess({ message: t("updated") });
-      setEditingItem(null);
-      setEditName("");
-    } catch {
-      toastError({ message: t("updateFailed") });
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
 
   // Delete Handler
   const handleDeleteConfirm = async () => {
@@ -406,18 +376,6 @@ export function SavedSearchesContent({
                               date: formatDate(savedSearch.createdAt),
                             })}
                           </span>
-                          {canUpdateSavedSearch && (
-                            <Button
-                              type="button"
-                              variant="ghost"
-                              size="icon"
-                              className="size-8 text-muted-foreground hover:text-foreground"
-                              aria-label={t("renameAria", { name: savedSearch.name })}
-                              onClick={() => handleStartRename(savedSearch)}
-                            >
-                              <Pencil className="size-3.5" />
-                            </Button>
-                          )}
                           {canDeleteSavedSearch && (
                             <Button
                               type="button"
@@ -521,56 +479,6 @@ export function SavedSearchesContent({
           )}
         </section>
       </main>
-
-      {/* Rename Dialog */}
-      {editingItem && (
-        <Dialog open onOpenChange={(open) => !open && setEditingItem(null)}>
-          <DialogContent className="sm:max-w-md rounded-[24px] border border-border bg-card p-6 shadow-xl font-sans">
-            <DialogHeader>
-              <DialogTitle className="text-lg font-bold text-foreground">
-                {t("rename")}
-              </DialogTitle>
-              <DialogDescription className="text-xs text-muted-foreground">
-                {t("namePlaceholder")}
-              </DialogDescription>
-            </DialogHeader>
-            <form onSubmit={handleSaveRename} className="mt-3 space-y-4">
-              <div className="space-y-1.5">
-                <Label htmlFor="rename-input" className="text-xs font-semibold">
-                  {t("nameLabel")}
-                </Label>
-                <Input
-                  id="rename-input"
-                  value={editName}
-                  onChange={(e) => setEditName(e.target.value)}
-                  maxLength={100}
-                  className="rounded-full bg-background text-sm"
-                  autoFocus
-                  required
-                />
-              </div>
-              <DialogFooter className="flex gap-2">
-                <Button
-                  type="button"
-                  variant="ghost"
-                  className="rounded-full"
-                  disabled={isSubmitting}
-                  onClick={() => setEditingItem(null)}
-                >
-                  {t("cancel")}
-                </Button>
-                <Button
-                  type="submit"
-                  className="rounded-full bg-[#0069D3] text-white hover:bg-[#005bb8] text-xs font-semibold"
-                  disabled={isSubmitting || !editName.trim()}
-                >
-                  {isSubmitting ? t("saving") : t("saveChanges")}
-                </Button>
-              </DialogFooter>
-            </form>
-          </DialogContent>
-        </Dialog>
-      )}
 
       {/* Delete Confirmation Dialog */}
       {deletingItem && (

@@ -1796,7 +1796,18 @@
     "manageTitle": "Quản lý tìm kiếm đã lưu",
     "updateCriteriaTooltip": "Cập nhật tiêu chí hiện tại vào bộ lọc này",
     "saveAsNew": "Lưu thành bộ lọc mới",
-    "limitIndicator": "{count}/30 đã lưu"
+    "limitIndicator": "{count}/30 đã lưu",
+    "apply": "Áp dụng",
+    "filterCategory": "Danh mục",
+    "filterSkill": "Kỹ năng",
+    "filterHiringType": "Hình thức",
+    "alreadySavedTitle": "Tìm kiếm này đã được lưu",
+    "alreadySavedHint": "Cấu hình tìm kiếm này đã được lưu dưới tên \"{name}\". Hãy đổi tên mới để lưu cập nhật.",
+    "currentActive": "Đang áp dụng",
+    "viewAllSaved": "Xem tất cả tìm kiếm đã lưu",
+    "duplicateNameWarning": "Bạn đã có một tìm kiếm khác cùng tên này",
+    "duplicateCriteriaNote": "Bộ lọc hiện tại khớp với \"{name}\"",
+    "saveAsNewTooltip": "Lưu các bộ lọc hiện tại thành một mục tìm kiếm mới với tên này"
   },
   "bookmarks": {
     "breadcrumb": "Việc đã lưu",
@@ -3381,7 +3392,7 @@
       "searchPlaceholder": "Tìm kiếm việc làm theo tiêu đề, kỹ năng...",
       "search": "Tìm kiếm",
       "clearSearch": "Xóa tìm kiếm",
-      "savedSearches": "Đã lưu ({count})",
+      "savedSearches": "Tìm kiếm đã lưu ({count})",
       "saveSearch": "Lưu tìm kiếm",
       "totalJobs": "Tổng cộng: {count} việc làm",
       "sortBy": "Sắp xếp:",

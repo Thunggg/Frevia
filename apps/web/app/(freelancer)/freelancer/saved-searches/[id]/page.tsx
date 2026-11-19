@@ -36,8 +36,8 @@ function toFindWorkHref(searchParams: SavedSearchType["searchParams"]) {
   }
   const query = params.toString();
   return query
-    ? `/freelancer/find-work/best-matches?${query}`
-    : "/freelancer/find-work/best-matches";
+    ? `/freelancer/search/jobs?${query}`
+    : "/freelancer/search/jobs";
 }
 
 export default async function FreelancerSavedSearchDetailPage({
@@ -57,8 +57,12 @@ export default async function FreelancerSavedSearchDetailPage({
   const tFindWork = await getTranslations("findWork");
 
   const filterName = (name: string) => {
-    if (name === "keyword") return t("filterSearch");
-    if (name === "budget") return t("filterBudget");
+    if (name === "keyword" || name === "q") return t("filterSearch");
+    if (name === "category") return t("filterCategory") || "Category";
+    if (name === "skill") return t("filterSkill") || "Skill";
+    if (name === "hiringType") return t("filterHiringType") || "Hiring type";
+    if (name === "budget" || name === "budgetMin" || name === "budgetMax")
+      return t("filterBudget");
     if (name === "time") return t("filterPosted");
     if (name === "sort") return t("filterSort");
 
