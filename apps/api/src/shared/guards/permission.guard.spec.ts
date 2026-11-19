@@ -159,7 +159,7 @@ describe('PermissionGuard', () => {
   it('checks database permissions dynamically for EXPERT and custom roles on Admin Portal routes', async () => {
     (reflector.getAllAndOverride as jest.Mock).mockReturnValue(false);
     roleHasPermissionMock.mockResolvedValue(true);
-    const context = createMockContext('GET', '/api/admin/disputes/12', {
+    const context = createMockContext('GET', '/api/expert/disputes/12', {
       userId: 5,
       roleId: 4,
       roleName: RoleName.EXPERT,
@@ -169,7 +169,7 @@ describe('PermissionGuard', () => {
     expect(roleHasPermissionMock).toHaveBeenCalledWith(
       4,
       'GET',
-      '/api/admin/disputes/12',
+      '/api/expert/disputes/12',
     );
   });
 

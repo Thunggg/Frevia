@@ -5,6 +5,8 @@ import { RoleName, type GetMeResType } from "@shared/types";
  */
 export const ADMIN_MODULES = new Set([
   "ADMIN",
+  "EXPERT",
+  "EXPERT-PROFILE",
   "USERS",
   "ROLES",
   "PERMISSIONS",
@@ -53,6 +55,10 @@ export function isStrictAdminEndpoint(path: string, method?: string): boolean {
   return (
     cleanPath === "/api/admin" ||
     cleanPath.startsWith("/api/admin/") ||
+    cleanPath === "/api/expert/disputes" ||
+    cleanPath.startsWith("/api/expert/disputes/") ||
+    cleanPath === "/api/expert-profile" ||
+    cleanPath.startsWith("/api/expert-profile/") ||
     cleanPath === "/api/forums/admin" ||
     cleanPath.startsWith("/api/forums/admin/") ||
     cleanPath === "/api/forums/reports" ||

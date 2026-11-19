@@ -205,6 +205,8 @@ export function getPermissionFeatureGroup(permission: {
   }
   if (
     path.startsWith("/api/admin/disputes") ||
+    path.startsWith("/api/expert/disputes") ||
+    path.startsWith("/api/expert-profile") ||
     (path.startsWith("/api/payments/disputes/") && path.endsWith("/settle"))
   ) {
     return FEATURE_GROUPS.ADMIN_DISPUTES;

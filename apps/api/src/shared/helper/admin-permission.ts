@@ -18,6 +18,8 @@ function normalizePath(path: string): string {
 export const ADMIN_PERMISSION_PRISMA_WHERE: Prisma.PermissionWhereInput = {
   OR: [
     { path: { startsWith: '/api/admin' } },
+    { path: { startsWith: '/api/expert/disputes' } },
+    { path: { startsWith: '/api/expert-profile' } },
     { path: { startsWith: '/api/forums/admin' } },
     { path: { equals: '/api/forums/reports' } },
     { path: { startsWith: '/api/forums/reports/' } },
@@ -60,6 +62,10 @@ export function isStrictAdminEndpoint(path: string, method?: string): boolean {
   return (
     normalized === '/api/admin' ||
     normalized.startsWith('/api/admin/') ||
+    normalized === '/api/expert/disputes' ||
+    normalized.startsWith('/api/expert/disputes/') ||
+    normalized === '/api/expert-profile' ||
+    normalized.startsWith('/api/expert-profile/') ||
     normalized === '/api/forums/admin' ||
     normalized.startsWith('/api/forums/admin/') ||
     normalized === '/api/forums/reports' ||

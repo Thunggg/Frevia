@@ -23,10 +23,12 @@ const prisma = new PrismaClient({
  * Quyen cua CLIENT / FREELANCER / Homepage duoc hardcode theo role.
  */
 const expertDefaultRoutes = new Set([
-  'GET /api/admin/disputes',
-  'GET /api/admin/disputes/:id',
-  'POST /api/admin/disputes/:id/decision',
-  'POST /api/admin/disputes/:id/final-decision',
+  'GET /api/expert-profile/me',
+  'PUT /api/expert-profile/me',
+  'GET /api/expert/disputes',
+  'GET /api/expert/disputes/:id',
+  'POST /api/expert/disputes/:id/decision',
+  'POST /api/expert/disputes/:id/final-decision',
 ]);
 
 type AvailableRoute = {
