@@ -5,7 +5,7 @@ import { getLocale, getMessages, getTranslations } from "next-intl/server";
 import { cookies } from "next/headers";
 import localFont from "next/font/local";
 import { ThemeProvider } from "@/components/theme-provider";
-import { envConfig } from "@/configs/validate-env";
+import { getBrowserSocketUrl } from "@/configs/validate-env";
 import authServerRequest from "@/apiRequests/auth.server";
 import { NotificationProvider } from "@/providers/notification-provider";
 import "./globals.css";
@@ -75,7 +75,7 @@ export default async function RootLayout({
           <NextIntlClientProvider locale={locale} messages={messages}>
             <QueryProvider>
               <NotificationProvider
-                socketUrl={envConfig?.NESTJS_API_URL ?? ""}
+                socketUrl={getBrowserSocketUrl()}
                 token={token}
                 currentUserId={user?.id ?? null}
               >

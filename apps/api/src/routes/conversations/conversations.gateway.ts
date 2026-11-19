@@ -20,7 +20,7 @@ import { envConfig } from '../../shared/config/validate-env';
 import { TokenService } from '../../shared/services/token.service';
 import { NotificationRealtimeService } from '../../shared/services/notification-realtime.service';
 import { ConversationService } from './conversations.service';
-import { MessageAttachmentSchema } from '@shared/types';
+import { type DirectMessageType, MessageAttachmentSchema } from '@shared/types';
 
 const IdOrSlugSchema = z.union([
   z.number().int().positive(),
@@ -66,7 +66,11 @@ type SocketPayloadUser = { userId: number };
   },
 })
 export class ConversationsGateway
-  implements OnGatewayConnection, OnGatewayDisconnect, OnModuleInit, OnModuleDestroy
+  implements
+    OnGatewayConnection,
+    OnGatewayDisconnect,
+    OnModuleInit,
+    OnModuleDestroy
 {
   @WebSocketServer()
   server: Server;
@@ -83,9 +87,7 @@ export class ConversationsGateway
   onModuleInit() {
     this.unsubscribeNotification = this.notificationRealtime.subscribe(
       ({ userId, notification }) => {
-        this.server
-          .to(`user:${userId}`)
-          .emit('notification:new', notification);
+        this.server.to(`user:${userId}`).emit('notification:new', notification);
       },
     );
   }
@@ -126,6 +128,74 @@ export class ConversationsGateway
     this.logger.log(
       `Socket disconnected: ${(client.data as SocketPayloadUser)?.userId ?? 'unknown'}`,
     );
+  }
+
+  // Broadcast tin nhắn mới được gửi qua REST fallback để cả 2 phía thấy realtime
+  async broadcastMessageSent(
+    conversationIdOrSlug: number | string,
+    senderId: number,
+    savedMessage: DirectMessageType,
+  ) {
+    if (!this.server) return;
+    try {
+      const conversation = await this.conversationService.ensureParticipant(
+        conversationIdOrSlug,
+        senderId,
+      );
+      const receiverId =
+        conversation.participant1 === senderId
+          ? conversation.participant2
+          : conversation.participant1;
+
+      this.server
+        .to(`user:${senderId}`)
+        .to(`user:${receiverId}`)
+        .emit('message:new', {
+          conversationId: conversation.id,
+          message: savedMessage,
+        });
+
+      await this.emitConversationUpdated(conversation.id, senderId);
+      await this.emitConversationUpdated(conversation.id, receiverId);
+    } catch (error) {
+      this.logger.warn(
+        `Failed to broadcast REST message: ${(error as Error).message}`,
+      );
+    }
+  }
+
+  // Broadcast tin nhắn bị xóa qua REST fallback
+  async broadcastMessageDeleted(
+    conversationIdOrSlug: number | string,
+    userId: number,
+    messageId: number,
+  ) {
+    if (!this.server) return;
+    try {
+      const conversation = await this.conversationService.ensureParticipant(
+        conversationIdOrSlug,
+        userId,
+      );
+      const otherUserId =
+        conversation.participant1 === userId
+          ? conversation.participant2
+          : conversation.participant1;
+
+      this.server
+        .to(`user:${userId}`)
+        .to(`user:${otherUserId}`)
+        .emit('message:deleted', {
+          conversationId: conversation.id,
+          messageId,
+        });
+
+      await this.emitConversationUpdated(conversation.id, userId);
+      await this.emitConversationUpdated(conversation.id, otherUserId);
+    } catch (error) {
+      this.logger.warn(
+        `Failed to broadcast REST message deletion: ${(error as Error).message}`,
+      );
+    }
   }
 
   // Gửi tin nhắn realtime
