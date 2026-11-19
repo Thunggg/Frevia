@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
-import { useFormatter } from "next-intl";
+import { useFormatter, useTranslations } from "next-intl";
 import { useQueryClient } from "@tanstack/react-query";
 import {
   Sheet,

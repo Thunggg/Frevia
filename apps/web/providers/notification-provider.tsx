@@ -69,6 +69,7 @@ export function NotificationProvider({
   children: React.ReactNode;
 }) {
   const t = useTranslations("auth.forceLogout");
+  const tChat = useTranslations("chat");
   const notificationText = useNotificationText();
   const queryClient = useQueryClient();
   const [connected, setConnected] = useState(false);
@@ -240,9 +241,12 @@ export function NotificationProvider({
               item.lastMessage?.senderId !== currentUserId
             ) {
               const senderName =
-                item.otherUser?.profile?.displayName || "New message";
+                item.otherUser?.profile?.displayName ||
+                tChat("newMessageFallbackTitle");
               toast(senderName, {
-                description: item.lastMessage?.message?.slice(0, 80) || "You have a new message",
+                description:
+                  item.lastMessage?.message?.slice(0, 80) ||
+                  tChat("newMessageFallbackBody"),
                 position: "top-right",
                 duration: 4000,
               });
@@ -293,7 +297,7 @@ export function NotificationProvider({
       setConversationSocket(null);
       setConnected(false);
     };
-  }, [socketUrl, token, currentUserId, queryClient, notificationText]);
+  }, [socketUrl, token, currentUserId, queryClient, notificationText, tChat]);
 
   const handleConfirmLogout = async () => {
     setIsLoggingOut(true);

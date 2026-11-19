@@ -558,7 +558,7 @@ function ProfileDropdown({ role }: { role: Exclude<UserRole, "GUEST"> }) {
               className="cursor-pointer font-medium text-[#4fae2e]"
             >
               <ShieldCheck className="size-4 text-[#4fae2e]" />
-              Admin Portal
+              {t("adminPortal")}
             </Link>
           </DropdownMenuItem>
         )}
@@ -618,7 +618,7 @@ function HeaderActions({ role }: HeaderProps) {
         >
           <Link href="/admin">
             <ShieldCheck className="mr-1.5 size-3.5" />
-            Admin Portal
+            {t("adminPortal")}
           </Link>
         </Button>
       )}
@@ -674,7 +674,7 @@ function MobileProfileNavigation({
           className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-[13px] font-medium text-[#0069D3] transition-colors hover:bg-[#0069D3]/10 dark:text-blue-300"
         >
           <ShieldCheck className="size-4 text-[#0069D3] dark:text-blue-300" />
-          Admin Portal
+          {t("adminPortal")}
         </Link>
       )}
       {(role !== "STAFF" || canAccessAdminPortal(me)) && (

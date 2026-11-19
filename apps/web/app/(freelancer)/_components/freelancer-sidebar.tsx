@@ -418,7 +418,7 @@ export function FreelancerSidebar() {
                   className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-xs font-medium text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-950/40 transition-colors"
                 >
                   <Shield className="size-3.5" />
-                  Admin Portal
+                  {tCommon("adminPortal")}
                 </Link>
               )}
 

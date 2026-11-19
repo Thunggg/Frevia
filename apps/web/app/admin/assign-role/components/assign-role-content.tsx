@@ -367,9 +367,7 @@ export function AssignRoleContent() {
             </div>
             {role?.name === RoleName.ADMIN && (
               <span className="px-2 text-xs text-muted-foreground">
-                {locale === "vi"
-                  ? "Role ADMIN gốc mặc định giữ toàn quyền Admin Portal."
-                  : "Root ADMIN retains full Admin Portal permissions by default."}
+                {t("rootAdminHint")}
               </span>
             )}
           </div>

@@ -39,7 +39,8 @@
     "budget": "Ngân sách",
     "deadline": "Hạn chót",
     "expires": "Hết hạn sau",
-    "tryAgain": "Thử lại"
+    "tryAgain": "Thử lại",
+    "adminPortal": "Cổng quản trị"
   },
   "sessions": {
     "title": "Phiên đăng nhập của tôi",
@@ -629,7 +630,9 @@
     "scopeHint": "Lọc theo khu vực sử dụng để dễ phân quyền hơn",
     "selectAllInScope": "Chọn tất cả",
     "deselectAllInScope": "Bỏ chọn tất cả",
-    "noPermissionToAssign": "Bạn không có quyền gán quyền cho vai trò."
+    "noPermissionToAssign": "Bạn không có quyền gán quyền cho vai trò.",
+    "rootAdminHint": "Role ADMIN gốc mặc định giữ toàn quyền Admin Portal.",
+    "selectedPermissionsLabel": "quyền đã chọn"
   },
   "adminTrash": {
     "accessDenied": "Bạn không có quyền xem thùng rác diễn đàn.",
@@ -1132,7 +1135,10 @@
     "newConversationLabel": "Cuộc trò chuyện mới",
     "sendToStart": "Gửi tin nhắn để bắt đầu cuộc trò chuyện",
     "typeFirstMessage": "Nhập tin nhắn đầu tiên...",
-    "openingConversation": "Đang mở cuộc trò chuyện..."
+    "openingConversation": "Đang mở cuộc trò chuyện...",
+    "sendFailedFallback": "Không thể gửi tin nhắn. Vui lòng thử lại.",
+    "newMessageFallbackTitle": "Tin nhắn mới",
+    "newMessageFallbackBody": "Bạn có tin nhắn mới"
   },
   "proposalStatus": {
     "DRAFT": "Bản nháp",
@@ -1175,7 +1181,48 @@
     "expiration": "Ngày hết hạn / Hạn chót hợp đồng (không bắt buộc)",
     "termsLabel": "Điều khoản & Phạm vi công việc",
     "termsPlaceholder": "Nêu rõ điều khoản, kỳ vọng và các cột mốc...",
-    "submit": "Tạo & Chuyển tới hợp đồng"
+    "submit": "Tạo & Chuyển tới hợp đồng",
+    "dialogTitle": "Tạo hợp đồng & Thuê Freelancer",
+    "dialogDescription": "Thiết lập điều khoản hợp đồng, ngân sách và các cột mốc cho {jobTitle}.",
+    "defaultTerms": "Phạm vi công việc dựa trên đề xuất cho \"{jobTitle}\". Toàn bộ sản phẩm bàn giao sẽ được khách hàng kiểm duyệt và phê duyệt.",
+    "defaultMilestoneTitle": "{jobTitle} - Cột mốc 1",
+    "defaultMilestoneDesc": "Bàn giao và hoàn thiện sản phẩm dự án",
+    "milestoneDefaultName": "Cột mốc {index}",
+    "freelancerFallbackTitle": "Freelancer",
+    "proposalBid": "Giá đề xuất",
+    "estDays": "Dự kiến {days} ngày",
+    "totalBudgetLabel": "Tổng ngân sách hợp đồng (USD)",
+    "totalBudgetHint": "Khách hàng ủy quyền tạm giữ ít nhất 1 cột mốc (hoặc toàn bộ) + 3% phí hợp đồng trước khi ký; Freelancer chịu phí 5% cho mỗi cột mốc được giải ngân.",
+    "endDateLabel": "Ngày kết thúc hợp đồng",
+    "endDateHint": "Bắt buộc chọn ngày hết hạn hợp đồng. Tất cả cột mốc phải hoàn thành trước hoặc trong ngày này.",
+    "milestonesHeading": "Cột mốc hợp đồng",
+    "milestonesSubtitle": "Xác định sản phẩm bàn giao và các đợt thanh toán. Phí freelancer (5%) áp dụng khi giải ngân.",
+    "addMilestone": "Thêm cột mốc",
+    "milestoneTitlePlaceholder": "Tiêu đề cột mốc {index} (bắt buộc)",
+    "amountFieldPlaceholder": "Số tiền",
+    "deliverablesPlaceholder": "Mô tả sản phẩm bàn giao (tùy chọn)",
+    "milestoneDueDateAria": "Hạn hoàn thành cột mốc {index}",
+    "dueDateExceedsError": "Hạn cột mốc không được vượt quá ngày kết thúc hợp đồng ({date}).",
+    "milestonesMatchBudget": "Tổng tiền các cột mốc khớp hoàn toàn với ngân sách",
+    "remainingToAllocate": "Còn lại chưa phân bổ: ${amount}",
+    "milestonesExceedBudget": "Các cột mốc vượt ngân sách: ${amount}",
+    "termsSectionLabel": "Điều khoản hợp đồng & Phạm vi công việc",
+    "termsSectionPlaceholder": "Mô tả sản phẩm bàn giao, kỳ vọng và tiêu chí nghiệm thu...",
+    "cancel": "Hủy",
+    "createAndHire": "Tạo hợp đồng & Thuê",
+    "validation": {
+      "budgetRequired": "Tổng ngân sách hợp đồng phải lớn hơn 0",
+      "endDateRequired": "Vui lòng chọn ngày kết thúc hợp đồng",
+      "endDatePast": "Ngày kết thúc hợp đồng không thể ở trong quá khứ",
+      "amountMismatch": "Tổng tiền các cột mốc (${milestonesTotal}) phải bằng tổng ngân sách hợp đồng (${targetAmount})",
+      "milestoneTitleRequired": "Vui lòng nhập tiêu đề cho Cột mốc {index}",
+      "milestoneAmountRequired": "Số tiền của Cột mốc {index} phải lớn hơn 0",
+      "milestoneDueDateRequired": "Vui lòng chọn hạn hoàn thành cho Cột mốc {index}",
+      "milestoneDueDatePast": "Hạn hoàn thành của Cột mốc {index} không thể ở trong quá khứ",
+      "milestoneDueDateExceeds": "Hạn hoàn thành của Cột mốc {index} không được vượt quá ngày kết thúc hợp đồng"
+    },
+    "createdAndHired": "Tạo hợp đồng thành công! Đã thuê freelancer và cập nhật trạng thái đề xuất.",
+    "createFailedDetailed": "Không thể tạo hợp đồng. Vui lòng kiểm tra lại thông tin và thử lại."
   },
   "contractStatus": {
     "ACTIVE": "Đang thực hiện",
@@ -2289,7 +2336,15 @@
     "changePasswordAction": "Đổi mật khẩu",
     "strengthLow": "Độ hoàn thiện hồ sơ của bạn là {percent}%. Thay đổi hồ sơ cần quản trị viên duyệt cho đến khi đạt 20%.",
     "strengthOk": "Hồ sơ của bạn đã đạt ngưỡng 20%, nên thay đổi được lưu ngay.",
-    "errInvalidValue": "Giá trị này không hợp lệ."
+    "errInvalidValue": "Giá trị này không hợp lệ.",
+    "aiAnalyzeFailed": "Không thể phân tích CV bằng AI. Vui lòng kiểm tra lại dịch vụ AI.",
+    "analyzingCv": "Đang phân tích...",
+    "analyzeCvWithAi": "Phân tích CV bằng AI",
+    "deleteCvButton": "Xóa CV",
+    "deleteCvTitle": "Xóa CV của bạn?",
+    "deleteCvDescription": "CV của bạn sẽ bị gỡ khỏi hồ sơ và không còn có thể tải xuống. Hành động này không thể hoàn tác.",
+    "cvClientHint": "Khách hàng có thể xem khi bạn ứng tuyển công việc.",
+    "appearanceDescription": "Tùy chỉnh giao diện hiển thị và ngôn ngữ hệ thống."
   },
   "expertShell": {
     "disputes": "Xử lý tranh chấp",
@@ -2650,7 +2705,9 @@
     "reportsPerPost": "Báo cáo mỗi bài viết",
     "pendingReportRate": "Tỷ lệ báo cáo chờ xử lý",
     "activeUsers": "Người dùng đang hoạt động",
-    "postsPerUser": "Bài viết mỗi người dùng"
+    "postsPerUser": "Bài viết mỗi người dùng",
+    "welcomeTitle": "Chào mừng bạn đến với Cổng Quản trị Frevia",
+    "welcomeDescription": "Bạn đã đăng nhập thành công vào hệ thống quản trị. Hãy chọn chức năng từ menu bên trái để bắt đầu thực hiện các tác vụ được phân quyền."
   },
   "notificationText": {
     "MESSAGE_NEW": {
@@ -2845,7 +2902,16 @@
     "professionalInfo": "Thông tin chuyên môn",
     "fieldExperience": "Kinh nghiệm làm việc",
     "saveProfessionalInfo": "Lưu thông tin chuyên môn",
-    "replaceCv": "Thay đổi CV"
+    "replaceCv": "Thay đổi CV",
+    "aiAnalyzeEmpty": "Không nhận được dữ liệu phân tích từ dịch vụ AI.",
+    "aiAnalyzeFailed": "Không thể phân tích CV bằng AI. Vui lòng đảm bảo dịch vụ AI đang hoạt động.",
+    "cvFileValidationError": "Vui lòng chọn tệp PDF có dung lượng không quá 10 MB.",
+    "cvUploadFailed": "Không thể tải lên CV.",
+    "cvDeleteFailed": "Không thể xoá CV.",
+    "professionalInfoSubtitle": "Chức danh, giới thiệu và trạng thái hoạt động công khai.",
+    "bioPlaceholder": "Giới thiệu bản thân, chuyên môn thế mạnh và mục tiêu nghề nghiệp...",
+    "experiencePlaceholder": "Senior Frontend Developer - ABC Corp (2022 - Nay)\nFullstack Developer - Freelance (2020 - 2022)",
+    "educationPlaceholder": "Đại học Bách Khoa\nKỹ thuật phần mềm (2018 - 2022)"
   },
   "forum": {
     "title": "Diễn đàn cộng đồng",
@@ -2991,7 +3057,8 @@
     "switchedToRole": "Đã chuyển sang {role}",
     "roleAdded": "Đã thêm vai trò {role}",
     "switchRoleFailed": "Không thể chuyển vai trò. Vui lòng thử lại.",
-    "addRoleFailed": "Không thể thêm vai trò. Vui lòng thử lại."
+    "addRoleFailed": "Không thể thêm vai trò. Vui lòng thử lại.",
+    "adminPortal": "Cổng quản trị"
   },
   "footer": {
     "platform": "Nền tảng",
@@ -3321,7 +3388,30 @@
       "noJobsTitle": "Không tìm thấy việc làm phù hợp",
       "noJobsDesc": "Hãy thử điều chỉnh từ khóa, danh mục hoặc khoảng ngân sách để tìm được nhiều việc làm hơn.",
       "clearAll": "Xóa tất cả bộ lọc"
-    }
+    },
+    "statusClosed": "Đã đóng tuyển",
+    "statusInProgress": "Đang thực hiện",
+    "statusCompleted": "Đã hoàn thành",
+    "statusCancelled": "Đã hủy",
+    "statusExpired": "Đã hết hạn nộp",
+    "statusOpen": "Đang mở tuyển",
+    "postedLabel": "Đăng {time}",
+    "proposalsCountLabel": "{count} đề xuất",
+    "positionsFilledLabel": "Đã tuyển {filled}/{required} vị trí",
+    "applyNow": "Ứng tuyển",
+    "expiryDateLabel": "Hạn nộp:",
+    "deadlineLabel": "Hạn hoàn thành:",
+    "showLess": "Thu gọn",
+    "showMore": "... xem thêm",
+    "paginationShowing": "Hiển thị {from} – {to} trong số {total} công việc",
+    "paginationPerPage": "Số lượng:",
+    "paginationPrevious": "Trước",
+    "paginationNext": "Sau",
+    "refreshRecommendationsFailed": "Không thể làm mới danh sách gợi ý",
+    "savedSearchDeleted": "Đã xóa tìm kiếm đã lưu",
+    "savedSearchDeleteFailed": "Không thể xóa tìm kiếm",
+    "searchPageTitle": "Tìm kiếm công việc | Frevia",
+    "searchPageDescription": "Tìm kiếm và lọc các cơ hội việc làm tự do phù hợp với kỹ năng và kinh nghiệm của bạn."
   },
   "jobCategories": {
     "metaTitle": "Danh mục công việc | Bảng điều khiển Freelancer | Frevia",
@@ -3563,7 +3653,9 @@
     "errorTitle": "Không thể tải danh sách thông báo việc làm",
     "errorDescription": "Đã xảy ra lỗi trong quá trình lấy dữ liệu. Vui lòng thử lại.",
     "retry": "Thử lại",
-    "createFromSavedSearch": "Tạo thông báo việc làm"
+    "createFromSavedSearch": "Tạo thông báo việc làm",
+    "resetFilter": "Đặt lại",
+    "addSkillBtn": "Thêm"
   },
   "cvAnalysis": {
     "dialogTitle": "Kết quả phân tích CV bằng AI",
@@ -3625,7 +3717,13 @@
     "outboxBtn": "Xử lý hàng đợi ngay",
     "outboxSuccess": "Đã xử lý hàng đợi sự kiện thành công.",
     "outboxFailed": "Xử lý hàng đợi thất bại.",
-    "noPermissionAction": "Bạn không có quyền thực hiện thao tác này."
+    "noPermissionAction": "Bạn không có quyền thực hiện thao tác này.",
+    "reindexHint": "Khuyến nghị: Chạy khi cập nhật hệ số hoặc nạp lại embeddings",
+    "outboxHint": "Đồng bộ sự kiện việc làm & hồ sơ chưa được cập nhật vào vector store",
+    "indexedItemsLabel": "Đã đánh chỉ mục:",
+    "itemsUnit": "mục",
+    "processedLabel": "Đã xử lý:",
+    "failedLabel": "Thất bại:"
   },
   "contractWorkspace": {
     "breadcrumbContracts": "Hợp đồng",
@@ -4308,6 +4406,380 @@
       "pageOf": "Trang {page} / {totalPages}",
       "previous": "Trước",
       "next": "Sau"
+    }
+  },
+  "payments": {
+    "types": {
+      "ESCROW_DEPOSIT": "Nạp ký quỹ (Escrow)",
+      "MILESTONE_PAYOUT": "Giải ngân cột mốc",
+      "PAYOUT_SHORT": "Giải ngân",
+      "PLATFORM_FEE": "Phí nền tảng",
+      "DISPUTE_FEE": "Phí tranh chấp",
+      "REFUND": "Hoàn tiền",
+      "ARBITRATOR_PAYOUT": "Chi trả trọng tài"
+    },
+    "statuses": {
+      "SUCCEEDED": "Thành công",
+      "PAID": "Đã thanh toán",
+      "PENDING": "Đang xử lý",
+      "FAILED": "Thất bại",
+      "REFUNDED": "Đã hoàn tiền"
+    },
+    "card": {
+      "title": "Phương thức thanh toán",
+      "securedByStripe": "Bảo mật bởi Stripe",
+      "loadingCard": "Đang tải thông tin thẻ...",
+      "virtualCard": "Thẻ thanh toán",
+      "nameLabel": "Chủ thẻ",
+      "defaultCardholder": "Chủ thẻ",
+      "noCardSaved": "Chưa lưu thẻ",
+      "savedAutomaticallyHint": "Tự động lưu ở lần thanh toán Stripe đầu tiên"
+    },
+    "connect": {
+      "title": "Tài khoản nhận tiền Stripe",
+      "verified": "Đã xác minh",
+      "incomplete": "Chưa hoàn tất",
+      "notConnected": "Chưa liên kết",
+      "refreshAria": "Làm mới trạng thái Stripe Connect",
+      "checkingStatus": "Đang kiểm tra trạng thái Stripe Connect...",
+      "activeTitle": "Stripe Express đang hoạt động",
+      "finishVerificationTitle": "Hoàn tất xác minh Stripe",
+      "connectBankTitle": "Liên kết ngân hàng / thẻ qua Stripe",
+      "activeDesc": "Tài khoản đã sẵn sàng nhận giải ngân cột mốc.",
+      "incompleteDesc": "Stripe đang xét duyệt thông tin (thường mất vài giây) hoặc cần bổ sung thêm bước xác minh. Hãy bấm Làm mới hoặc tiếp tục thiết lập.",
+      "notConnectedDesc": "Bắt buộc để nhận tiền giải ngân cột mốc trực tiếp qua Stripe (áp dụng phí freelancer 5%).",
+      "redirecting": "Đang chuyển hướng sang Stripe...",
+      "updateDetails": "Cập nhật thông tin Stripe Express",
+      "continueOnboarding": "Tiếp tục thiết lập Stripe",
+      "connectAccount": "Liên kết tài khoản Stripe",
+      "initFailed": "Không thể khởi tạo phiên liên kết Stripe Express."
+    },
+    "dialog": {
+      "amountDue": "Số tiền thanh toán",
+      "escrowNotice": "Số tiền được giữ an toàn trong ký quỹ (Escrow) cho đến khi bạn nghiệm thu sản phẩm hoàn thành.",
+      "paymentMethodLabel": "Thẻ hoặc phương thức thanh toán",
+      "encryptionBadge": "Mã hóa 256-bit bởi Stripe",
+      "cancel": "Hủy",
+      "processing": "Đang xử lý...",
+      "payAmount": "Thanh toán {amount}",
+      "preparingSession": "Đang chuẩn bị phiên thanh toán bảo mật...",
+      "processingFailed": "Xử lý thanh toán thất bại",
+      "cardProcessFailed": "Không thể xử lý thẻ của bạn",
+      "holdConfirmedToast": "Đã xác nhận tạm giữ thanh toán! Bạn có thể ký hợp đồng ngay bây giờ.",
+      "paymentSuccessToast": "Thanh toán thành công!",
+      "unexpectedError": "Đã xảy ra lỗi không mong muốn"
+    },
+    "detail": {
+      "title": "Chi tiết giao dịch",
+      "date": "Thời gian",
+      "type": "Loại giao dịch",
+      "contract": "Hợp đồng",
+      "contractNumber": "Hợp đồng #{id}",
+      "milestone": "Cột mốc",
+      "dispute": "Tranh chấp",
+      "disputeNumber": "Tranh chấp #{id}",
+      "referenceId": "Mã tham chiếu",
+      "copyRefAria": "Sao chép mã tham chiếu",
+      "refCopied": "Đã sao chép mã tham chiếu.",
+      "close": "Đóng",
+      "metadata": {
+        "milestonesAmount": "Tổng tiền cột mốc",
+        "platformFeeAmount": "Phí nền tảng",
+        "grossAmount": "Tổng giá trị",
+        "netAmount": "Thực nhận",
+        "feeAmount": "Phí khấu trừ",
+        "refundAmount": "Số tiền hoàn",
+        "milestoneCount": "Số cột mốc bao gồm",
+        "reason": "Lý do",
+        "note": "Ghi chú"
+      },
+      "descriptions": {
+        "escrowPending": "Đang tạm giữ hạn mức trên thẻ cho đến khi hợp đồng được ký kết.",
+        "escrowHeld": "Tiền ký quỹ được Stripe bảo vệ cho quá trình bàn giao cột mốc.",
+        "milestonePayout": "Khoản giải ngân cột mốc đã được chuyển qua Stripe.",
+        "platformFee": "Phí dịch vụ nền tảng Frevia.",
+        "refund": "Khoản hoàn tiền ký quỹ đã được hoàn về phương thức thanh toán ban đầu.",
+        "disputeFee": "Phí giải quyết tranh chấp.",
+        "default": "Giao dịch được ghi nhận qua Stripe."
+      }
+    },
+    "billing": {
+      "clientUsageTitle": "Tổng quan ký quỹ & chi tiêu",
+      "freelancerUsageTitle": "Tổng quan thu nhập & phí",
+      "escrowReleased": "Ký quỹ đã giải ngân",
+      "netPayouts": "Thu nhập thực nhận",
+      "releasedOfFunded": "Đã giải ngân / Đã nạp",
+      "percentReleased": "Thực nhận 95%",
+      "clientFeesAndRefunds": "Phí nền tảng & Hoàn tiền",
+      "freelancerPlatformFees": "Phí nền tảng (5%)",
+      "refundedAmount": "Đã hoàn {amount}",
+      "deductedOnRelease": "Khấu trừ khi giải ngân",
+      "clientHistoryTitle": "Lịch sử hóa đơn & thanh toán",
+      "freelancerHistoryTitle": "Lịch sử giải ngân & giao dịch",
+      "filterByTypeAria": "Lọc theo loại giao dịch",
+      "allTypes": "Tất cả loại",
+      "filterByStatusAria": "Lọc theo trạng thái giao dịch",
+      "allStatus": "Tất cả trạng thái",
+      "contractFilterPlaceholder": "Hợp đồng #",
+      "refreshHistoryAria": "Làm mới lịch sử giao dịch",
+      "colTransaction": "Mã giao dịch",
+      "colDescription": "Mô tả",
+      "colDate": "Ngày",
+      "colAmount": "Số tiền",
+      "colStatus": "Trạng thái",
+      "colDetail": "Chi tiết",
+      "loadingRecords": "Đang tải lịch sử thanh toán...",
+      "emptyTitle": "Chưa có giao dịch nào",
+      "emptyFiltered": "Thử điều chỉnh bộ lọc để xem thêm giao dịch.",
+      "emptyClient": "Các khoản nạp ký quỹ, thanh toán cột mốc và hoàn tiền sẽ hiển thị tại đây.",
+      "emptyFreelancer": "Các khoản giải ngân cột mốc và phí nền tảng sẽ hiển thị tại đây.",
+      "viewDetailAria": "Xem chi tiết {code}",
+      "view": "Xem",
+      "pageOf": "Trang {page} / {totalPages}",
+      "previous": "Trước",
+      "next": "Sau"
+    },
+    "settings": {
+      "connectSubtitle": "Liên kết tài khoản ngân hàng hoặc thẻ ghi nợ bằng Stripe Express. Khi khách hàng giải ngân thanh toán, thu nhập sẽ được chuyển thẳng về tài khoản ngân hàng của bạn.",
+      "refreshStatus": "Làm mới trạng thái",
+      "checkingVerification": "Đang kiểm tra xác minh tài khoản Stripe...",
+      "connectedActive": "Đã liên kết & sẵn sàng nhận tiền",
+      "accountId": "Mã tài khoản: {id}",
+      "expressDashboard": "Bảng điều khiển Stripe Express",
+      "noPayoutAccount": "Chưa liên kết tài khoản nhận tiền",
+      "actionRequired": "Cần thao tác",
+      "noPayoutDesc": "Bạn chưa thể nhận tiền giải ngân cho đến khi hoàn tất bước liên kết ngân hàng đơn giản trên Stripe Express.",
+      "connectBankBtn": "Liên kết tài khoản ngân hàng với Stripe",
+      "redirectingToast": "Đang chuyển hướng sang Stripe Express...",
+      "accountCreationFailed": "Không thể tạo tài khoản Stripe.",
+      "onboardingLinkFailed": "Không thể tạo liên kết thiết lập Stripe. Vui lòng kiểm tra cấu hình khóa Stripe.",
+      "savedMethodsTitle": "Phương thức thanh toán đã lưu",
+      "savedMethodsSubtitle": "Thanh toán 1 chạm và quản lý thẻ được cung cấp bởi Stripe",
+      "loadingSavedCards": "Đang tải danh sách thẻ đã lưu...",
+      "defaultBadge": "Mặc định",
+      "expires": "Hết hạn",
+      "noCardsSavedDesc": "Chưa có thẻ nào được lưu. Khi bạn thanh toán hợp đồng hoặc cột mốc qua Stripe, thẻ của bạn có thể được lưu bảo mật để thanh toán nhanh hơn.",
+      "escrowInfoTitle": "Bảo vệ thanh toán & Ký quỹ (Escrow)",
+      "escrowInfoSubtitle": "Cách thức thanh toán hoạt động trên nền tảng Frevia",
+      "escrowStep1Title": "1. Tạm giữ hạn mức & Ký kết",
+      "escrowStep1Desc": "Khách hàng ủy quyền tạm giữ ít nhất 1 cột mốc + 3% phí hợp đồng. Stripe chỉ thu tiền khi Freelancer ký xác nhận, và hủy miễn phí ($0) nếu bị từ chối hoặc hết hạn.",
+      "escrowStep2Title": "2. Nghiệm thu sản phẩm",
+      "escrowStep2Desc": "Kiểm tra sản phẩm bàn giao. Yêu cầu chỉnh sửa hoặc bổ sung nếu cần thiết.",
+      "escrowStep3Title": "3. Giải ngân (Phí 5%) hoặc Hoàn tiền",
+      "escrowStep3Desc": "Duyệt sản phẩm để giải ngân 95% cho freelancer (khấu trừ 5% phí nền tảng), hoặc hoàn tiền khi hai bên cùng đồng thuận.",
+      "historyTitle": "Lịch sử giao dịch",
+      "historySubtitle": "Toàn bộ bản ghi phí nền tảng, nạp ký quỹ, giải ngân và hoàn tiền",
+      "allTransactionTypes": "Tất cả loại giao dịch",
+      "loadingTransactions": "Đang tải giao dịch...",
+      "noTransactionsRecorded": "Chưa có giao dịch nào được ghi nhận.",
+      "pageSummary": "Trang {page} / {totalPages} (tổng {totalItems} giao dịch)"
+    }
+  },
+  "homeProfileSidebar": {
+    "defaultName": "Freelancer",
+    "defaultRoleBadge": "Freelancer",
+    "profileVisibility": "Hiển thị hồ sơ",
+    "editVisibilityTitle": "Chỉnh sửa quyền hiển thị",
+    "visibilityPublic": "Công khai",
+    "completeProfile": "Hoàn thiện hồ sơ của bạn",
+    "identityVerification": "Xác minh danh tính",
+    "identityDescription": "Tăng độ hiển thị hồ sơ trên kết quả tìm kiếm và nhận nhiều cơ hội việc làm hơn với Huy hiệu xác minh danh tính.",
+    "getIdvBadge": "Nhận Huy hiệu xác minh",
+    "reachMoreClients": "Tiếp cận nhiều khách hàng hơn",
+    "workNow": "Sẵn sàng làm ngay",
+    "openForWork": "Đang mở nhận việc",
+    "boostProfile": "Đẩy nổi bật hồ sơ",
+    "statusOff": "Tắt"
+  },
+  "privacyPolicy": {
+    "metaTitle": "Chính sách Quyền riêng tư | Frevia",
+    "metaDescription": "Tìm hiểu cách Frevia thu thập, bảo vệ và quản lý dữ liệu cá nhân cũng như quyền riêng tư của bạn.",
+    "backToHome": "Quay lại trang chủ",
+    "badge": "Chính sách Bảo mật",
+    "lastModified": "Cập nhật lần cuối: Tháng 11/2026",
+    "title": "Chính sách Quyền riêng tư Frevia",
+    "subtitle": "Chính sách này giải thích cách Frevia thu thập, sử dụng, bảo mật và quản lý thông tin cá nhân của bạn khi bạn sử dụng nền tảng sàn giao dịch việc làm của chúng tôi.",
+    "tocTitle": "Mục lục chính sách",
+    "tocFooterPrompt": "Bạn muốn yêu cầu trích xuất hoặc xóa dữ liệu? Liên hệ",
+    "commitmentTitle": "Cam kết bảo mật của Frevia",
+    "commitmentBody": "Chúng tôi không bán, cho thuê hay thương mại hóa dữ liệu cá nhân của bạn cho bên thứ ba vì mục đích tiếp thị hoặc quảng cáo độc lập. Dữ liệu chỉ được sử dụng để vận hành sàn, kết nối việc làm và bảo vệ an toàn thanh toán.",
+    "sections": {
+      "principles": {
+        "toc": "1. Nguyên tắc bảo vệ quyền riêng tư",
+        "title": "Nguyên tắc bảo vệ quyền riêng tư",
+        "p1": "Chính sách quyền riêng tư này áp dụng cho toàn bộ người dùng (bao gồm Freelancer, Khách hàng và Khách truy cập) khi tương tác với nền tảng Frevia.",
+        "p2": "Chúng tôi xử lý dữ liệu dựa trên các căn cứ hợp pháp: sự đồng ý của bạn khi đăng ký tài khoản, việc thực hiện hợp đồng dịch vụ mà bạn là một bên tham gia, và nghĩa vụ tuân thủ pháp luật phòng chống gian lận tài chính."
+      },
+      "collection": {
+        "toc": "2. Dữ liệu cá nhân chúng tôi thu thập",
+        "title": "Dữ liệu cá nhân chúng tôi thu thập",
+        "card1Title": "1. Thông tin tài khoản & Xác thực",
+        "card1Body": "Họ và tên, địa chỉ email, mật khẩu băm (bcrypt hash), vai trò lựa chọn (Freelancer hoặc Khách hàng), ảnh đại diện (avatar), mã OTP xác thực và tài khoản liên kết Google OAuth.",
+        "card2Title": "2. Hồ sơ nghề nghiệp & Portfolio",
+        "card2Body": "Chức danh, tiểu sử giới thiệu, mức thù lao, danh mục kỹ năng, lịch sử kinh nghiệm làm việc, trình độ học vấn, các tác phẩm portfolio tải lên và tệp CV/sơ yếu lý lịch.",
+        "card3Title": "3. Dữ liệu xác minh danh tính (KYC)",
+        "card3Body": "Ảnh chụp mặt trước/mặt sau Căn cước công dân hoặc Hộ chiếu và ảnh chụp khuôn mặt (selfie) do người dùng tự nguyện gửi để xác minh tài khoản. Dữ liệu này chỉ phục vụ mục đích kiểm duyệt danh tính và chống giả mạo.",
+        "card4Title": "4. Dữ liệu Hợp đồng, Cột mốc & Thanh toán",
+        "card4Body": "Nội dung tin đăng việc, hồ sơ đề xuất (bids), điều khoản hợp đồng cột mốc, tệp kết quả bàn giao, mã định danh khách hàng và giao dịch Stripe (Stripe Customer ID, Payment Intent ID), hóa đơn điện tử (Invoices). Frevia tuyệt đối không lưu trữ thông tin thẻ ngân hàng trực tiếp.",
+        "card5Title": "5. Tin nhắn & Diễn đàn cộng đồng",
+        "card5Body": "Tin nhắn trực tiếp trao đổi giữa Khách hàng và Freelancer, tệp đính kèm chia sẻ trong dự án, bài viết, bình luận và lượt thích trên Diễn đàn.",
+        "card6Title": "6. Dữ liệu kỹ thuật & Nhật ký hoạt động",
+        "card6Body": "Địa chỉ IP, loại thiết bị, thông tin trình duyệt, mã phiên đăng nhập (session tokens), thời gian truy cập và nhật ký lỗi hệ thống."
+      },
+      "usage": {
+        "toc": "3. Mục đích sử dụng thông tin",
+        "title": "Mục đích sử dụng thông tin",
+        "item1Label": "Vận hành dịch vụ:",
+        "item1Body": "Xác thực danh tính khi đăng nhập, hiển thị hồ sơ cá nhân, hỗ trợ tìm kiếm và kết nối công việc phù hợp.",
+        "item2Label": "Quản lý hợp đồng & Thanh toán:",
+        "item2Body": "Tạo hợp đồng theo cột mốc, tạm giữ và giải ngân tiền qua Stripe, lưu trữ lịch sử bàn giao sản phẩm và xuất hóa đơn.",
+        "item3Label": "Giải quyết tranh chấp:",
+        "item3Body": "Sử dụng tệp bàn giao và lịch sử tin nhắn để quản trị viên đánh giá khách quan khi xảy ra khiếu nại giữa hai bên.",
+        "item4Label": "Trí tuệ nhân tạo (AI):",
+        "item4Body": "Phân tích nội dung CV và kỹ năng để gợi ý các công việc hoặc ứng viên phù hợp nhất trên nền tảng.",
+        "item5Label": "Bảo vệ an toàn nền tảng:",
+        "item5Body": "Kiểm duyệt từ khóa vi phạm (Banned Keywords), ngăn chặn thư rác, tài khoản mạo danh và tấn công mạng."
+      },
+      "thirdParties": {
+        "toc": "4. Đơn vị xử lý dữ liệu bên thứ ba",
+        "title": "Đơn vị xử lý dữ liệu bên thứ ba",
+        "intro": "Frevia hợp tác với các nhà cung cấp dịch vụ hạ tầng uy tín hàng đầu nhằm đảm bảo an toàn tuyệt đối cho người dùng:",
+        "stripeBody": "Xử lý toàn bộ giao dịch thẻ, tài khoản ngân hàng và ký quỹ cột mốc tuân thủ nghiêm ngặt chuẩn bảo mật PCI-DSS Level 1.",
+        "cloudinaryBody": "Lưu trữ đám mây an toàn đối với ảnh đại diện, tác phẩm portfolio, tệp CV và các tài liệu bàn giao dự án.",
+        "googleBody": "Hỗ trợ xác thực đăng nhập một chạm bảo mật thông qua tài khoản Google khi người dùng lựa chọn."
+      },
+      "security": {
+        "toc": "5. Biện pháp an toàn & Thời hạn lưu trữ",
+        "title": "Biện pháp an toàn & Thời hạn lưu trữ",
+        "p1": "Chúng tôi áp dụng các tiêu chuẩn an ninh mạng nghiêm ngặt: mã hóa toàn diện dữ liệu truyền tải qua HTTPS/TLS, băm mật khẩu một chiều bằng bcrypt, xác thực phân quyền vai trò (RBAC) và kiểm tra phiên đăng nhập bảo mật.",
+        "p2": "Thời hạn lưu trữ: Dữ liệu tài khoản được duy trì trong suốt thời gian bạn sử dụng dịch vụ. Các hóa đơn và hồ sơ hợp đồng hoàn thành được lưu trữ theo quy định pháp luật về kế toán và phòng chống gian lận thương mại."
+      },
+      "userRights": {
+        "toc": "6. Quyền của bạn đối với dữ liệu",
+        "title": "Quyền của bạn đối với dữ liệu",
+        "item1Label": "Quyền xem & chỉnh sửa:",
+        "item1Body": "Bạn có thể tự do xem và chỉnh sửa thông tin hồ sơ, kỹ năng, kinh nghiệm và cài đặt thông báo trong trang Hồ sơ cá nhân.",
+        "item2Label": "Quyền quản lý phiên:",
+        "item2Body": "Bạn có quyền kiểm tra tất cả các thiết bị đang kết nối vào tài khoản của mình và thu hồi quyền truy cập (revoke session) ngay lập tức.",
+        "item3Label": "Quyền yêu cầu xóa tài khoản:",
+        "item3Body": "Bạn có quyền yêu cầu vô hiệu hóa hoặc xóa tài khoản vĩnh viễn khi không còn hợp đồng hoặc số dư tranh chấp đang diễn ra."
+      },
+      "cookies": {
+        "toc": "7. Cookie & Quản lý phiên (Sessions)",
+        "title": "Cookie & Quản lý phiên (Sessions)",
+        "intro": "Frevia chỉ sử dụng các cookie thiết yếu (Essential Cookies) phục vụ hoạt động cơ bản của hệ thống:",
+        "accessTokenBody": "Lưu trữ mã phiên đăng nhập an toàn (HttpOnly) nhằm duy trì trạng thái đăng nhập.",
+        "localeThemeBody": "Ghi nhớ ngôn ngữ ưu tiên (Tiếng Việt hoặc Tiếng Anh) và chế độ giao diện (Sáng hoặc Tối)."
+      },
+      "contact": {
+        "toc": "8. Thông tin liên hệ & Khiếu nại",
+        "title": "Thông tin liên hệ & Khiếu nại",
+        "intro": "Nếu bạn có bất kỳ câu hỏi, góp ý hoặc khiếu nại liên quan đến quyền riêng tư và xử lý dữ liệu, vui lòng liên hệ:",
+        "emailLabel": "Email:"
+      }
+    },
+    "actionCard": {
+      "title": "Tìm hiểu thêm các điều khoản của Frevia",
+      "body": "Đọc thêm Thỏa thuận Người dùng Freelancer để nắm rõ quyền và trách nhiệm khi hợp tác dự án và nhận thanh toán.",
+      "viewAgreement": "Xem Thỏa thuận Người dùng",
+      "backToRegister": "Quay lại trang Đăng ký"
+    }
+  },
+  "userAgreement": {
+    "metaTitle": "Thỏa thuận Người dùng Freelancer | Frevia",
+    "metaDescription": "Các điều khoản và điều kiện dành cho freelancer và khách hàng khi sử dụng nền tảng sàn giao dịch việc làm Frevia.",
+    "backToHome": "Quay lại trang chủ",
+    "badge": "Văn bản pháp lý",
+    "lastModified": "Cập nhật lần cuối: Tháng 11/2026",
+    "title": "Thỏa thuận Người dùng Freelancer",
+    "subtitle": "Thỏa thuận này quy định các điều khoản và điều kiện khi bạn sử dụng nền tảng Frevia để kết nối, hợp tác dự án theo cột mốc, xử lý thanh toán qua Stripe và tham gia cộng đồng.",
+    "tocTitle": "Mục lục điều khoản",
+    "tocFooterPrompt": "Cần giải đáp về điều khoản? Vui lòng gửi email đến",
+    "noticeTitle": "Tóm tắt quan trọng trước khi đăng ký",
+    "noticeBody": "Bằng cách đánh dấu vào ô 'Tôi đồng ý với Thỏa thuận Người dùng Freelancer và Chính sách Quyền riêng tư', bạn cam kết tuân thủ đầy đủ các quyền và nghĩa vụ được nêu rõ trong văn bản này.",
+    "sections": {
+      "overview": {
+        "toc": "1. Tổng quan & Mô hình hoạt động",
+        "title": "Tổng quan & Mô hình hoạt động",
+        "p1": "Frevia là sàn giao dịch việc làm trực tuyến (Online Freelance Marketplace), đóng vai trò nền tảng trung gian kết nối các Freelancer (Người cung cấp dịch vụ) với Khách hàng (Client/Employer - Người tuyển dụng và thuê dịch vụ).",
+        "p2": "Mối quan hệ Nhà thầu Độc lập (Independent Contractor): Freelancer là đối tác kinh doanh độc lập, không phải là nhân viên, người lao động, đại lý hay đối tác liên doanh của Frevia hoặc Khách hàng. Frevia không trực tiếp tuyển dụng, trả lương định kỳ, quản lý nhân sự hay giám sát giờ làm của Freelancer.",
+        "p3": "Frevia cung cấp các công cụ quản lý dự án, hợp đồng theo cột mốc (milestone), trung gian thanh toán và xử lý tranh chấp nhằm đảm bảo giao dịch diễn ra an toàn, minh bạch."
+      },
+      "eligibility": {
+        "toc": "2. Điều kiện tham gia & Bảo mật tài khoản",
+        "title": "Điều kiện tham gia & Bảo mật tài khoản",
+        "item1Label": "Độ tuổi:",
+        "item1Body": "Bạn phải từ đủ 18 tuổi trở lên (hoặc đủ tuổi chịu trách nhiệm dân sự theo pháp luật hiện hành) để đăng ký và giao kết hợp đồng trên Frevia.",
+        "item2Label": "Xác thực tài khoản:",
+        "item2Body": "Mỗi tài khoản được liên kết với một địa chỉ email duy nhất và xác thực thông qua mã OTP hoặc đăng nhập Google OAuth. Mật khẩu được mã hóa an toàn bằng thuật toán bcrypt.",
+        "item3Label": "Quản lý phiên đăng nhập:",
+        "item3Body": "Bạn có thể kiểm tra danh sách thiết bị/phiên đang đăng nhập và thu hồi phiên (revoke session) từ xa bất kỳ lúc nào trong trang Cài đặt.",
+        "item4Label": "Xác minh danh tính (KYC):",
+        "item4Body": "Freelancer có thể tự nguyện tải lên tài liệu tùy thân (Căn cước công dân/Hộ chiếu) và ảnh selfie để nhận huy hiệu xác minh danh tính. Dữ liệu này được kiểm duyệt bảo mật nhằm phòng chống gian lận và mạo danh."
+      },
+      "profiles": {
+        "toc": "3. Hồ sơ Freelancer & Portfolio",
+        "title": "Hồ sơ Freelancer & Portfolio",
+        "p1": "Freelancer có trách nhiệm đảm bảo mọi thông tin trên hồ sơ (chức danh, kỹ năng, kinh nghiệm làm việc, học vấn, mức thù lao theo giờ) là chính xác, trung thực và được cập nhật.",
+        "p2": "Tác phẩm Portfolio tải lên phải do chính Freelancer thực hiện hoặc có đầy đủ quyền sở hữu/sử dụng hợp pháp. Nghiêm cấm mạo danh tác phẩm của người khác.",
+        "p3": "Tính năng Tải lên CV & Phân tích AI: Frevia hỗ trợ trích xuất kỹ năng từ tệp CV của bạn để đề xuất công việc phù hợp. Các thay đổi hồ sơ lớn có thể được kiểm duyệt (Profile Revision) trước khi xuất hiện công khai."
+      },
+      "jobsProposals": {
+        "toc": "4. Đăng việc & Gửi đề xuất (Proposal)",
+        "title": "Đăng việc & Gửi đề xuất (Proposal)",
+        "p1": "Khách hàng đăng tin tuyển dụng với mô tả công việc cụ thể, danh mục ngành nghề, kỹ năng yêu cầu và ngân sách dự kiến.",
+        "p2": "Freelancer tìm kiếm việc làm, gửi Đề xuất (Proposal) nêu rõ giá thầu, thời gian hoàn thành dự kiến, kế hoạch cột mốc và tệp đính kèm liên quan. Khách hàng và Freelancer có thể trao đổi trực tiếp qua hệ thống tin nhắn tích hợp của Frevia."
+      },
+      "contractsMilestones": {
+        "toc": "5. Hợp đồng & Cột mốc (Milestones)",
+        "title": "Hợp đồng & Cột mốc (Milestones)",
+        "p1": "Hợp đồng dịch vụ trên Frevia được tổ chức theo Cột mốc (Milestones). Mỗi cột mốc định nghĩa rõ: kết quả bàn giao cụ thể (deliverables), hạn chót (deadline) và số tiền thanh toán tương ứng.",
+        "p2": "Nộp sản phẩm (Submission): Khi hoàn thành, Freelancer tải tệp kết quả lên hệ thống để Khách hàng nghiệm thu.",
+        "p3": "Nghiệm thu: Khách hàng có nghĩa vụ kiểm tra sản phẩm với tinh thần thiện chí và phê duyệt giải ngân cột mốc hoặc yêu cầu chỉnh sửa trong phạm vi đã thỏa thuận."
+      },
+      "payments": {
+        "toc": "6. Thanh toán qua Stripe & Ký quỹ",
+        "title": "Thanh toán qua Stripe & Ký quỹ an toàn",
+        "item1Label": "Cổng thanh toán Stripe:",
+        "item1Body": "Mọi giao dịch nạp tiền, tạm giữ và thanh toán được thực hiện an toàn qua Stripe. Frevia không lưu trữ số thẻ tín dụng hoặc mã CVV trên máy chủ của mình.",
+        "item2Label": "Tạm giữ cột mốc (Escrow Hold):",
+        "item2Body": "Trước khi Freelancer bắt đầu thực hiện cột mốc, Khách hàng phải nạp tiền tạm giữ qua Stripe. Số tiền này được bảo đảm và sẽ tự động giải ngân cho Freelancer khi Khách hàng nhấn 'Phê duyệt'.",
+        "item3Label": "Nghiêm cấm giao dịch ngoài sàn:",
+        "item3Body": "Nghiêm cấm hành vi thanh toán ngoài nền tảng Frevia đối với các dự án đã tìm thấy trên sàn. Vi phạm sẽ dẫn đến việc khóa tài khoản vĩnh viễn và mất quyền bảo vệ thanh toán.",
+        "item4Label": "Hóa đơn điện tử:",
+        "item4Body": "Hệ thống tự động xuất hóa đơn (Invoice) và biên lai giao dịch cho mỗi cột mốc được thanh toán thành công."
+      },
+      "disputes": {
+        "toc": "7. Giải quyết tranh chấp (Dispute)",
+        "title": "Giải quyết tranh chấp (Dispute)",
+        "p1": "Khi xảy ra bất đồng về chất lượng sản phẩm bàn giao hoặc việc giải ngân cột mốc mà hai bên không tự thương lượng được, Khách hàng hoặc Freelancer có quyền khởi tạo Tranh chấp (Dispute).",
+        "p2": "Quy trình giải quyết: Cả hai bên tải lên bằng chứng (tệp bàn giao, lịch sử tin nhắn, yêu cầu chỉnh sửa). Đội ngũ quản trị viên Frevia sẽ thẩm định khách quan dựa trên điều khoản hợp đồng và bằng chứng để đưa ra phán quyết ràng buộc (giải ngân toàn bộ cho freelancer, hoàn tiền cho khách hàng hoặc chia tỷ lệ thỏa đáng)."
+      },
+      "conduct": {
+        "toc": "8. Quy tắc ứng xử & Diễn đàn cộng đồng",
+        "title": "Quy tắc ứng xử & Diễn đàn cộng đồng",
+        "p1": "Người dùng cam kết giao tiếp lịch sự, tôn trọng trong tin nhắn và diễn đàn. Nghiêm cấm các hành vi: quấy rối, đe dọa, xúc phạm danh dự, phát tán phần mềm độc hại, gửi thư rác (spam) hoặc lừa đảo.",
+        "p2": "Cơ chế báo cáo vi phạm: Bài viết hoặc bình luận vi phạm trên Diễn đàn có thể bị thành viên báo cáo (Forum Report) và quản trị viên có quyền ẩn nội dung, khóa quyền đăng hoặc cấm tài khoản vi phạm."
+      },
+      "intellectualProperty": {
+        "toc": "9. Quyền sở hữu trí tuệ",
+        "title": "Quyền sở hữu trí tuệ",
+        "p1": "Sản phẩm bàn giao dự án: Khi Khách hàng đã thanh toán đầy đủ tiền cột mốc theo hợp đồng, quyền sở hữu trí tuệ đối với các sản phẩm được tạo riêng cho dự án sẽ chuyển giao trọn vẹn cho Khách hàng (trừ khi hai bên có thỏa thuận văn bản khác).",
+        "p2": "Tài sản trí tuệ sẵn có của Freelancer: Freelancer giữ quyền đối với các công cụ, mã nguồn khung hoặc thư viện sẵn có mà mình đã phát triển trước đó, đồng thời giữ quyền đưa tác phẩm vào Portfolio của mình trừ khi có thỏa thuận bảo mật (NDA) riêng.",
+        "p3": "Sở hữu nền tảng: Thương hiệu Frevia, logo, thiết kế giao diện và mã nguồn hệ thống thuộc quyền sở hữu độc quyền của Frevia."
+      },
+      "termination": {
+        "toc": "10. Chấm dứt & Điều khoản chung",
+        "title": "Chấm dứt & Điều khoản chung",
+        "p1": "Frevia có quyền tạm ngưng hoặc đóng vĩnh viễn tài khoản của người dùng có hành vi vi phạm nghiêm trọng Thỏa thuận này, gian lận thanh toán hoặc gây nguy hại đến an toàn hệ thống.",
+        "p2": "Giới hạn trách nhiệm: Nền tảng được cung cấp trên nguyên tắc 'nguyên trạng' (as-is). Frevia nỗ lực tối đa đảm bảo tính ổn định và bảo mật nhưng không chịu trách nhiệm đối với các tổn thất gián tiếp phát sinh từ sự cố mạng hoặc tranh chấp cá nhân giữa các bên ngoài thẩm quyền phân xử."
+      }
+    },
+    "contactCard": {
+      "title": "Bạn có thắc mắc về Thỏa thuận Người dùng?",
+      "body": "Nếu bạn cần làm rõ bất kỳ điều khoản nào, vui lòng liên hệ với bộ phận hỗ trợ pháp lý và người dùng của Frevia qua địa chỉ email hoặc diễn đàn hỗ trợ.",
+      "contactSupport": "Gửi email hỗ trợ",
+      "viewPrivacyPolicy": "Xem Chính sách Quyền riêng tư"
     }
   }
 }

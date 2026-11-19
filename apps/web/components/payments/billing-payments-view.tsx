@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { useLocale, useTranslations } from "next-intl";
 import {
   Eye,
   History,
@@ -24,8 +25,8 @@ import { PaymentMethodCard } from "./payment-method-card";
 import {
   formatCurrency,
   formatShortDate,
-  getTransactionTypeLabel,
   TransactionStatusPill,
+  usePaymentTypeLabel,
 } from "./payment-utils";
 import { StripeConnectCard } from "./stripe-connect-card";
 
@@ -37,6 +38,9 @@ interface BillingPaymentsViewProps {
  * Unified minimalist Billing & Payments view styled cleanly for Client and Freelancer roles.
  */
 export function BillingPaymentsView({ mode }: BillingPaymentsViewProps) {
+  const t = useTranslations("payments");
+  const locale = useLocale();
+  const getTransactionTypeLabel = usePaymentTypeLabel();
   const isClient = mode === "client";
   const basePath = isClient ? "/client" : "/freelancer";
   const returnPath = `${basePath}/payments`;
@@ -166,7 +170,9 @@ export function BillingPaymentsView({ mode }: BillingPaymentsViewProps) {
         <div className="lg:col-span-7">
           <div className="h-full flex flex-col justify-between gap-4 rounded-sm border border-zinc-200/80 dark:border-zinc-800 bg-white dark:bg-zinc-950 p-5 shadow-[0_1px_2px_rgba(0,0,0,0.03)]">
             <h3 className="text-[15px] font-medium tracking-tight text-foreground">
-              {isClient ? "Escrow & Spend Usage" : "Earnings & Fee Summary"}
+              {isClient
+                ? t("billing.clientUsageTitle")
+                : t("billing.freelancerUsageTitle")}
             </h3>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 flex-1">
@@ -180,14 +186,18 @@ export function BillingPaymentsView({ mode }: BillingPaymentsViewProps) {
                     )}
                   </div>
                   <span className="text-[13px] text-foreground">
-                    {isClient ? "Escrow Released" : "Net Payouts"}
+                    {isClient
+                      ? t("billing.escrowReleased")
+                      : t("billing.netPayouts")}
                   </span>
                 </div>
 
                 <div className="space-y-2">
                   <div className="flex items-baseline justify-between text-xs gap-2">
                     <span className="text-muted-foreground">
-                      {isClient ? "Released of funded" : "95% released"}
+                      {isClient
+                        ? t("billing.releasedOfFunded")
+                        : t("billing.percentReleased")}
                     </span>
                     <span className="tabular-nums text-foreground font-medium">
                       {isClient
@@ -214,8 +224,8 @@ export function BillingPaymentsView({ mode }: BillingPaymentsViewProps) {
                   </div>
                   <span className="text-[13px] text-foreground">
                     {isClient
-                      ? "Platform Fees & Refunds"
-                      : "Platform Fees (5%)"}
+                      ? t("billing.clientFeesAndRefunds")
+                      : t("billing.freelancerPlatformFees")}
                   </span>
                 </div>
 
@@ -223,8 +233,10 @@ export function BillingPaymentsView({ mode }: BillingPaymentsViewProps) {
                   <div className="flex items-baseline justify-between text-xs gap-2">
                     <span className="text-muted-foreground">
                       {isClient
-                        ? `Refunded ${formatCurrency(totalRefunded)}`
-                        : "Deducted on release"}
+                        ? t("billing.refundedAmount", {
+                            amount: formatCurrency(totalRefunded),
+                          })
+                        : t("billing.deductedOnRelease")}
                     </span>
                     <span className="tabular-nums text-foreground font-medium">
                       {formatCurrency(totalPlatformFees)}
@@ -253,8 +265,8 @@ export function BillingPaymentsView({ mode }: BillingPaymentsViewProps) {
             <div className="flex items-center gap-2">
               <h2 className="text-[15px] font-medium tracking-tight text-foreground">
                 {isClient
-                  ? "Invoice & Payment History"
-                  : "Payout & Transaction History"}
+                  ? t("billing.clientHistoryTitle")
+                  : t("billing.freelancerHistoryTitle")}
               </h2>
               <span className="rounded-full bg-zinc-100 dark:bg-zinc-800 px-2 py-0.5 text-[11px] text-muted-foreground tabular-nums">
                 {totalItems}
@@ -263,7 +275,7 @@ export function BillingPaymentsView({ mode }: BillingPaymentsViewProps) {
 
             <div className="flex flex-wrap items-center gap-2">
               <select
-                aria-label="Filter by transaction type"
+                aria-label={t("billing.filterByTypeAria")}
                 value={selectedType}
                 onChange={(e) => {
                   setSelectedType(e.target.value);
@@ -271,15 +283,19 @@ export function BillingPaymentsView({ mode }: BillingPaymentsViewProps) {
                 }}
                 className="h-8 rounded-lg border border-zinc-200/80 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-2.5 text-xs text-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-zinc-400 cursor-pointer"
               >
-                <option value="ALL">All Types</option>
-                <option value="ESCROW_DEPOSIT">Escrow Deposit</option>
-                <option value="MILESTONE_PAYOUT">Payout</option>
-                <option value="PLATFORM_FEE">Platform Fee</option>
-                <option value="REFUND">Refund</option>
+                <option value="ALL">{t("billing.allTypes")}</option>
+                <option value="ESCROW_DEPOSIT">
+                  {t("types.ESCROW_DEPOSIT")}
+                </option>
+                <option value="MILESTONE_PAYOUT">
+                  {t("types.PAYOUT_SHORT")}
+                </option>
+                <option value="PLATFORM_FEE">{t("types.PLATFORM_FEE")}</option>
+                <option value="REFUND">{t("types.REFUND")}</option>
               </select>
 
               <select
-                aria-label="Filter by transaction status"
+                aria-label={t("billing.filterByStatusAria")}
                 value={selectedStatus}
                 onChange={(e) => {
                   setSelectedStatus(e.target.value);
@@ -287,17 +303,17 @@ export function BillingPaymentsView({ mode }: BillingPaymentsViewProps) {
                 }}
                 className="h-8 rounded-lg border border-zinc-200/80 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-2.5 text-xs text-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-zinc-400 cursor-pointer"
               >
-                <option value="ALL">All Status</option>
-                <option value="SUCCEEDED">Paid</option>
-                <option value="PENDING">Pending</option>
-                <option value="FAILED">Failed</option>
+                <option value="ALL">{t("billing.allStatus")}</option>
+                <option value="SUCCEEDED">{t("statuses.PAID")}</option>
+                <option value="PENDING">{t("statuses.PENDING")}</option>
+                <option value="FAILED">{t("statuses.FAILED")}</option>
               </select>
 
               <div className="relative">
                 <Search className="absolute left-2.5 top-2 size-3.5 text-muted-foreground" />
                 <input
                   type="text"
-                  placeholder="Contract #"
+                  placeholder={t("billing.contractFilterPlaceholder")}
                   value={contractIdFilter}
                   onChange={(e) => {
                     setContractIdFilter(e.target.value);
@@ -311,7 +327,7 @@ export function BillingPaymentsView({ mode }: BillingPaymentsViewProps) {
                 type="button"
                 onClick={() => void refetch()}
                 disabled={isLoading || isRefetching}
-                aria-label="Refresh transaction history"
+                aria-label={t("billing.refreshHistoryAria")}
                 className="inline-flex size-8 items-center justify-center rounded-lg border border-zinc-200/80 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-muted-foreground hover:text-foreground hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors cursor-pointer"
               >
                 <RefreshCw
@@ -325,12 +341,24 @@ export function BillingPaymentsView({ mode }: BillingPaymentsViewProps) {
             <table className="w-full text-left text-xs">
               <thead>
                 <tr className="border-b border-zinc-200/80 dark:border-zinc-800 text-muted-foreground">
-                  <th className="px-3 py-2.5 font-normal">Transaction</th>
-                  <th className="px-3 py-2.5 font-normal">Description</th>
-                  <th className="px-3 py-2.5 font-normal">Date</th>
-                  <th className="px-3 py-2.5 font-normal">Amount</th>
-                  <th className="px-3 py-2.5 font-normal">Status</th>
-                  <th className="px-3 py-2.5 text-right font-normal">Detail</th>
+                  <th className="px-3 py-2.5 font-normal">
+                    {t("billing.colTransaction")}
+                  </th>
+                  <th className="px-3 py-2.5 font-normal">
+                    {t("billing.colDescription")}
+                  </th>
+                  <th className="px-3 py-2.5 font-normal">
+                    {t("billing.colDate")}
+                  </th>
+                  <th className="px-3 py-2.5 font-normal">
+                    {t("billing.colAmount")}
+                  </th>
+                  <th className="px-3 py-2.5 font-normal">
+                    {t("billing.colStatus")}
+                  </th>
+                  <th className="px-3 py-2.5 text-right font-normal">
+                    {t("billing.colDetail")}
+                  </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-zinc-100 dark:divide-zinc-800/80">
@@ -341,7 +369,7 @@ export function BillingPaymentsView({ mode }: BillingPaymentsViewProps) {
                       className="py-14 text-center text-muted-foreground"
                     >
                       <Loader2 className="size-4 animate-spin mx-auto mb-2" />
-                      <span>Loading payment records...</span>
+                      <span>{t("billing.loadingRecords")}</span>
                     </td>
                   </tr>
                 ) : transactions.length === 0 ? (
@@ -352,16 +380,16 @@ export function BillingPaymentsView({ mode }: BillingPaymentsViewProps) {
                           <History className="size-4" />
                         </div>
                         <p className="text-sm text-foreground">
-                          No transactions yet
+                          {t("billing.emptyTitle")}
                         </p>
                         <p className="text-xs text-muted-foreground leading-relaxed">
                           {selectedType !== "ALL" ||
                             selectedStatus !== "ALL" ||
                             contractIdFilter
-                            ? "Try adjusting your filters to view more transactions."
+                            ? t("billing.emptyFiltered")
                             : isClient
-                              ? "Escrow deposits, milestone payments, and refunds will appear here."
-                              : "Completed milestone payouts and platform fees will appear here."}
+                              ? t("billing.emptyClient")
+                              : t("billing.emptyFreelancer")}
                         </p>
                       </div>
                     </td>
@@ -385,7 +413,9 @@ export function BillingPaymentsView({ mode }: BillingPaymentsViewProps) {
                           </p>
                           {tx.contractId && (
                             <p className="text-[11px] text-muted-foreground truncate max-w-[260px] mt-0.5">
-                              Contract #{tx.contractId}
+                              {t("detail.contractNumber", {
+                                id: tx.contractId,
+                              })}
                               {tx.contract?.job?.title
                                 ? ` · ${tx.contract.job.title}`
                                 : ""}
@@ -393,7 +423,7 @@ export function BillingPaymentsView({ mode }: BillingPaymentsViewProps) {
                           )}
                         </td>
                         <td className="px-3 py-3.5 whitespace-nowrap text-muted-foreground">
-                          {formatShortDate(tx.createdAt)}
+                          {formatShortDate(tx.createdAt, locale)}
                         </td>
                         <td className="px-3 py-3.5 whitespace-nowrap font-medium tabular-nums text-foreground">
                           {formatCurrency(tx.amount, tx.currency)}
@@ -411,11 +441,13 @@ export function BillingPaymentsView({ mode }: BillingPaymentsViewProps) {
                               e.stopPropagation();
                               setSelectedTransaction(tx);
                             }}
-                            aria-label={`View detail ${txCode}`}
+                            aria-label={t("billing.viewDetailAria", {
+                              code: txCode,
+                            })}
                             className="inline-flex items-center gap-1 rounded-lg px-2 py-1 text-xs text-muted-foreground hover:text-foreground hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors cursor-pointer"
                           >
                             <Eye className="size-3.5" />
-                            <span>View</span>
+                            <span>{t("billing.view")}</span>
                           </button>
                         </td>
                       </tr>
@@ -429,7 +461,7 @@ export function BillingPaymentsView({ mode }: BillingPaymentsViewProps) {
           {totalPages > 1 && (
             <div className="flex items-center justify-between pt-3 border-t border-zinc-100 dark:border-zinc-800/80 text-xs">
               <span className="text-muted-foreground">
-                Page {page} of {totalPages}
+                {t("billing.pageOf", { page, totalPages })}
               </span>
               <div className="flex items-center gap-2">
                 <Button
@@ -440,7 +472,7 @@ export function BillingPaymentsView({ mode }: BillingPaymentsViewProps) {
                   onClick={() => setPage((p) => Math.max(1, p - 1))}
                   className="h-7 rounded-lg px-2.5 text-xs cursor-pointer"
                 >
-                  Previous
+                  {t("billing.previous")}
                 </Button>
                 <Button
                   type="button"
@@ -450,7 +482,7 @@ export function BillingPaymentsView({ mode }: BillingPaymentsViewProps) {
                   onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                   className="h-7 rounded-lg px-2.5 text-xs cursor-pointer"
                 >
-                  Next
+                  {t("billing.next")}
                 </Button>
               </div>
             </div>

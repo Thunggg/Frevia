@@ -243,7 +243,7 @@ export function ChatView({
     if (!socket) return;
     const handler = (payload: { message?: string }) => {
       toastError({
-        message: payload?.message || "Could not send message. Try again.",
+        message: payload?.message || t("sendFailedFallback"),
       });
     };
     socket.on("message:error", handler);
@@ -284,7 +284,7 @@ export function ChatView({
       {
         onError: (error) => {
           toastError({
-            message: error.message || "Could not send message. Try again.",
+            message: error.message || t("sendFailedFallback"),
           });
         },
       },

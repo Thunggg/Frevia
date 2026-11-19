@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { ChevronLeft, ChevronRight } from "@/components/icons";
 import { Button } from "@repo/ui/components/shadcn/button";
 import {
@@ -70,6 +71,8 @@ export function JobPagination({
   onPageSizeChange,
   isLoading = false,
 }: JobPaginationProps) {
+  const t = useTranslations("findWork");
+
   if (totalResults === 0) return null;
 
   const from = Math.min((currentPage - 1) * pageSize + 1, totalResults);
@@ -80,12 +83,7 @@ export function JobPagination({
     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-t border-border/80 pt-5 font-sans text-xs">
       {/* 1. Result Count */}
       <div className="flex items-center text-muted-foreground">
-        <span>
-          Hiển thị <span className="font-semibold text-foreground">{from}</span>{" "}
-          – <span className="font-semibold text-foreground">{to}</span> trong số{" "}
-          <span className="font-semibold text-foreground">{totalResults}</span>{" "}
-          công việc
-        </span>
+        <span>{t("paginationShowing", { from, to, total: totalResults })}</span>
       </div>
 
       {/* 2. Controls: Page size + Page buttons */}
@@ -93,7 +91,7 @@ export function JobPagination({
         {/* Page size selector: 10, 20, 50 */}
         {onPageSizeChange && (
           <div className="flex items-center gap-1.5">
-            <span className="text-muted-foreground">Số lượng:</span>
+            <span className="text-muted-foreground">{t("paginationPerPage")}</span>
             <Select
               value={String(pageSize)}
               onValueChange={(val) => onPageSizeChange(Number(val))}
@@ -126,7 +124,7 @@ export function JobPagination({
               className="h-8 rounded-lg px-2.5 text-xs font-medium gap-1 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
             >
               <ChevronLeft className="size-3.5" />
-              <span className="hidden sm:inline">Trước</span>
+              <span className="hidden sm:inline">{t("paginationPrevious")}</span>
             </Button>
 
             {/* Numeric page items & Ellipsis */}
@@ -171,7 +169,7 @@ export function JobPagination({
               onClick={() => onPageChange(currentPage + 1)}
               className="h-8 rounded-lg px-2.5 text-xs font-medium gap-1 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
             >
-              <span className="hidden sm:inline">Sau</span>
+              <span className="hidden sm:inline">{t("paginationNext")}</span>
               <ChevronRight className="size-3.5" />
             </Button>
           </div>

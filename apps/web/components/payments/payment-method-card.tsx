@@ -2,6 +2,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { Loader2, ShieldCheck } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useActionPermission } from "@/hooks/use-action-permission";
 import { useMe } from "@/hooks/use-auth";
 import { paymentApiRequest } from "@/apiRequests/payment";
@@ -50,6 +51,7 @@ function CardBrandMark({ brand }: { brand: string }) {
  * Displays the client's saved payment card as a sleek matte-black virtual card.
  */
 export function PaymentMethodCard() {
+  const t = useTranslations("payments.card");
   const { can } = useActionPermission();
   const canGetPaymentMethods = can("GET", "/api/payments/payment-methods");
   const { data: me } = useMe();
@@ -76,7 +78,7 @@ export function PaymentMethodCard() {
     defaultCard?.cardholderName?.trim() ||
     me?.profile?.displayName?.trim() ||
     me?.email?.split("@")[0] ||
-    "Cardholder";
+    t("defaultCardholder");
 
   const formattedExpiry = defaultCard
     ? `${String(defaultCard.expMonth).padStart(2, "0")}/${String(defaultCard.expYear).slice(-2)}`
@@ -86,18 +88,18 @@ export function PaymentMethodCard() {
     <div className="h-full flex flex-col justify-between gap-4 rounded-sm border border-zinc-200/80 dark:border-zinc-800 bg-white dark:bg-zinc-950 p-5 shadow-[0_1px_2px_rgba(0,0,0,0.03)]">
       <div className="flex items-center justify-between gap-2">
         <h3 className="text-[15px] font-medium tracking-tight text-foreground">
-          Payment Method
+          {t("title")}
         </h3>
         <span className="text-[11px] text-muted-foreground inline-flex items-center gap-1">
           <ShieldCheck className="size-3.5 text-muted-foreground" />
-          Secured by Stripe
+          {t("securedByStripe")}
         </span>
       </div>
 
       {isLoading ? (
         <div className="relative flex min-h-[188px] w-full flex-col justify-center items-center rounded-sm bg-gradient-to-br from-[#232326] via-[#151517] to-[#0B0B0D] text-white/70 ring-1 ring-white/10">
           <Loader2 className="size-4 animate-spin mb-2" />
-          <span className="text-xs">Loading card...</span>
+          <span className="text-xs">{t("loadingCard")}</span>
         </div>
       ) : defaultCard ? (
         <div
@@ -112,7 +114,7 @@ export function PaymentMethodCard() {
           {/* Top Row */}
           <div className="relative flex items-center justify-between gap-2">
             <span className="text-[15px] font-normal tracking-wide text-white/90">
-              Virtual Card
+              {t("virtualCard")}
             </span>
             {formattedExpiry && (
               <span className="text-xs font-mono text-white/55 tabular-nums">
@@ -132,7 +134,7 @@ export function PaymentMethodCard() {
           <div className="relative flex items-end justify-between gap-3">
             <div className="min-w-0">
               <span className="block text-[11px] text-white/45 mb-0.5">
-                Name
+                {t("nameLabel")}
               </span>
               <p className="text-sm font-normal tracking-wide text-white/95 truncate">
                 {cardholderName}
@@ -152,9 +154,9 @@ export function PaymentMethodCard() {
 
           <div className="relative flex items-center justify-between gap-2">
             <span className="text-[15px] font-normal tracking-wide text-white/75">
-              Virtual Card
+              {t("virtualCard")}
             </span>
-            <span className="text-[11px] text-white/45">No card saved</span>
+            <span className="text-[11px] text-white/45">{t("noCardSaved")}</span>
           </div>
 
           <div className="relative my-3">
@@ -166,10 +168,10 @@ export function PaymentMethodCard() {
           <div className="relative flex items-end justify-between gap-3">
             <div className="min-w-0">
               <span className="block text-[11px] text-white/40 mb-0.5">
-                Name
+                {t("nameLabel")}
               </span>
               <p className="text-xs text-white/60 truncate">
-                Saved automatically on first Stripe checkout
+                {t("savedAutomaticallyHint")}
               </p>
             </div>
             <span className="text-lg font-black italic tracking-tight text-white/25 leading-none select-none shrink-0">

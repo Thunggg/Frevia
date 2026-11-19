@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
 import { redirect } from "next/navigation";
 import authServerRequest from "@/apiRequests/auth.server";
 import jobServerRequest from "@/apiRequests/job.server";
@@ -13,10 +14,13 @@ import type {
 } from "@shared/types";
 import { SearchJobsContent } from "./search-jobs-content";
 
-export const metadata: Metadata = {
-  title: "Tìm kiếm công việc | Frevia",
-  description: "Tìm kiếm và lọc các cơ hội việc làm tự do phù hợp với kỹ năng và kinh nghiệm của bạn.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("findWork");
+  return {
+    title: t("searchPageTitle"),
+    description: t("searchPageDescription"),
+  };
+}
 
 type SearchJobsPageProps = {
   searchParams: Promise<{

@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import {
   ChevronDown,
   ChevronUp,
@@ -26,9 +27,10 @@ export function HomeProfileSidebar({
   user,
   profileCompletionPercentage = 40,
 }: HomeProfileSidebarProps) {
+  const t = useTranslations("homeProfileSidebar");
   const [reachMoreOpen, setReachMoreOpen] = useState(true);
 
-  const displayName = user?.profile?.displayName || "Tai T.";
+  const displayName = user?.profile?.displayName || t("defaultName");
   const avatarUrl = user?.profile?.avatarUrl;
   const initial = displayName.charAt(0).toUpperCase();
 
@@ -52,7 +54,9 @@ export function HomeProfileSidebar({
             >
               {displayName}
             </Link>
-            <p className="text-xs text-muted-foreground font-medium">IT II</p>
+            <p className="text-xs text-muted-foreground font-medium">
+              {t("defaultRoleBadge")}
+            </p>
           </div>
         </div>
 
@@ -60,17 +64,19 @@ export function HomeProfileSidebar({
         <div className="space-y-1.5 pt-2 border-t border-border/60">
           <div className="flex items-center justify-between text-xs">
             <span className="text-muted-foreground font-normal">
-              Profile Visibility
+              {t("profileVisibility")}
             </span>
             <Link
               href="/freelancer/profile"
               className="text-muted-foreground hover:text-foreground transition-colors"
-              title="Edit visibility"
+              title={t("editVisibilityTitle")}
             >
               <Pencil className="size-3.5" />
             </Link>
           </div>
-          <p className="text-xs font-semibold text-foreground">Public</p>
+          <p className="text-xs font-semibold text-foreground">
+            {t("visibilityPublic")}
+          </p>
         </div>
 
         {/* Complete your profile */}
@@ -80,7 +86,7 @@ export function HomeProfileSidebar({
               href="/freelancer/profile"
               className="font-medium text-foreground hover:underline text-xs"
             >
-              Complete your profile
+              {t("completeProfile")}
             </Link>
             <span className="text-xs font-bold text-foreground">
               {profileCompletionPercentage}%
@@ -99,17 +105,16 @@ export function HomeProfileSidebar({
       <div className="rounded-2xl border border-border bg-card p-5 shadow-xs space-y-3">
         <div className="flex items-center gap-2 text-foreground font-bold text-sm">
           <ShieldCheck className="size-5 text-foreground" />
-          <span>Identity verification</span>
+          <span>{t("identityVerification")}</span>
         </div>
         <p className="text-xs text-muted-foreground leading-relaxed">
-          Increase your profile visibility in search results and win more work
-          with an IDV Badge.
+          {t("identityDescription")}
         </p>
         <Link
           href="/freelancer/profile?tab=identity"
           className="inline-block text-xs font-semibold text-emerald-600 dark:text-emerald-400 hover:underline pt-1"
         >
-          Get an IDV Badge
+          {t("getIdvBadge")}
         </Link>
       </div>
 
@@ -120,7 +125,7 @@ export function HomeProfileSidebar({
           onClick={() => setReachMoreOpen(!reachMoreOpen)}
           className="flex w-full items-center justify-between text-left text-sm font-bold text-foreground cursor-pointer"
         >
-          <span>Reach more clients</span>
+          <span>{t("reachMoreClients")}</span>
           {reachMoreOpen ? (
             <ChevronUp className="size-4 text-muted-foreground" />
           ) : (
@@ -134,11 +139,13 @@ export function HomeProfileSidebar({
             <div className="flex items-center justify-between py-1">
               <div className="flex items-center gap-2">
                 <Clock className="size-3.5 text-muted-foreground" />
-                <span className="font-normal text-foreground">Work Now</span>
+                <span className="font-normal text-foreground">
+                  {t("workNow")}
+                </span>
               </div>
               <div className="flex items-center gap-2">
                 <span className="rounded-full bg-muted px-2 py-0.5 text-[11px] font-medium text-muted-foreground">
-                  Off
+                  {t("statusOff")}
                 </span>
                 <Link
                   href="/freelancer/profile"
@@ -153,13 +160,13 @@ export function HomeProfileSidebar({
             <div className="flex items-center justify-between py-1">
               <div className="flex items-center gap-1.5">
                 <span className="font-normal text-foreground">
-                  Open for work
+                  {t("openForWork")}
                 </span>
                 <HelpCircle className="size-3 text-muted-foreground/70" />
               </div>
               <div className="flex items-center gap-2">
                 <span className="rounded-full bg-muted px-2 py-0.5 text-[11px] font-medium text-muted-foreground">
-                  Off
+                  {t("statusOff")}
                 </span>
                 <Link
                   href="/freelancer/profile"
@@ -174,13 +181,13 @@ export function HomeProfileSidebar({
             <div className="flex items-center justify-between py-1">
               <div className="flex items-center gap-1.5">
                 <span className="font-normal text-foreground">
-                  Boost your profile
+                  {t("boostProfile")}
                 </span>
                 <HelpCircle className="size-3 text-muted-foreground/70" />
               </div>
               <div className="flex items-center gap-2">
                 <span className="rounded-full bg-muted px-2 py-0.5 text-[11px] font-medium text-muted-foreground">
-                  Off
+                  {t("statusOff")}
                 </span>
                 <Link
                   href="/freelancer/profile"
