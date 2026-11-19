@@ -466,10 +466,10 @@ export function GeneralSettings() {
       <div className="rounded-xl border border-border bg-card p-12 text-center text-muted-foreground shadow-sm">
         <UserRound className="mx-auto size-10 text-muted-foreground/60 mb-3" />
         <p className="font-medium text-base text-foreground">
-          Không có quyền truy cập
+          {t("noPermissionTitle")}
         </p>
         <p className="text-sm mt-1 text-muted-foreground">
-          Bạn không có quyền xem thông tin tài khoản cá nhân (#395).
+          {t("noPermissionViewProfile")}
         </p>
       </div>
     );

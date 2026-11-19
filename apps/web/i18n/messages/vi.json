@@ -44,6 +44,8 @@
   "sessions": {
     "title": "Phiên đăng nhập của tôi",
     "description": "Các thiết bị và trình duyệt hiện đang đăng nhập vào tài khoản của bạn.",
+    "noPermissionTitle": "Không có quyền truy cập",
+    "noPermissionDescription": "Bạn không có quyền xem danh sách phiên đăng nhập.",
     "searchPlaceholder": "Tìm theo thiết bị hoặc IP...",
     "clearSearch": "Xoá tìm kiếm",
     "search": "Tìm kiếm",
@@ -1076,6 +1078,12 @@
   "chat": {
     "active": "Đang hoạt động",
     "profile": "Trang cá nhân",
+    "noPermissionTitle": "Không có quyền truy cập",
+    "noPermissionViewConversation": "Bạn không có quyền xem chi tiết cuộc trò chuyện này.",
+    "noPermissionViewConversations": "Bạn không có quyền xem danh sách cuộc hội thoại.",
+    "noPermissionViewMessages": "Bạn không có quyền xem tin nhắn trong cuộc trò chuyện này.",
+    "noPermissionSendMessage": "Bạn không có quyền gửi tin nhắn trong cuộc hội thoại này.",
+    "noPermissionStartConversation": "Bạn không có quyền bắt đầu cuộc trò chuyện mới.",
     "sayHello": "Gửi lời chào tới {name}",
     "historyStart": "Đây là khởi đầu lịch sử tin nhắn của hai bạn.",
     "deleteMessage": "Xoá tin nhắn",
@@ -2095,6 +2103,8 @@
   "accountProfile": {
     "breadcrumb": "Hồ sơ & cài đặt tin cậy",
     "pageTitle": "Hồ sơ & cài đặt tin cậy",
+    "noPermissionTitle": "Không có quyền truy cập",
+    "noPermissionReviews": "Bạn không có quyền xem đánh giá của hợp đồng.",
     "pageSubtitleFreelancer": "Quản lý hồ sơ freelancer, xác minh danh tính và các liên kết công khai.",
     "pageSubtitleClient": "Quản lý hồ sơ công ty và các liên kết công khai.",
     "viewEditFreelancerProfile": "Xem và sửa hồ sơ freelancer",
@@ -2180,6 +2190,8 @@
     "OTHER": "Giấy tờ khác"
   },
   "reviewManager": {
+    "noPermissionTitle": "Không có quyền truy cập",
+    "noPermissionViewReviews": "Bạn không có quyền xem đánh giá của hợp đồng này.",
     "breakdownQuality": "Chất lượng công việc",
     "breakdownCommunication": "Giao tiếp",
     "breakdownDeadlines": "Đúng hạn",
@@ -2244,6 +2256,8 @@
     "deleteResponseAction": "Xoá phản hồi"
   },
   "generalSettings": {
+    "noPermissionTitle": "Không có quyền truy cập",
+    "noPermissionViewProfile": "Bạn không có quyền xem thông tin tài khoản cá nhân.",
     "hidePassword": "Ẩn {field}",
     "showPassword": "Hiện {field}",
     "avatarTypeError": "Chọn ảnh JPG, PNG hoặc WebP không lớn hơn 5 MB.",

@@ -151,7 +151,7 @@ export function NewConversationView({
       <div className="border-t border-border bg-background/95 backdrop-blur p-3 sm:p-4">
         {!canStartConversation ? (
           <div className="flex items-center justify-center rounded-xl bg-muted/40 p-3 text-xs text-muted-foreground">
-            Bạn không có quyền bắt đầu cuộc trò chuyện mới.
+            {t("noPermissionStartConversation")}
           </div>
         ) : (
           <form

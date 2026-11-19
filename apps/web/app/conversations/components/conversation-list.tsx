@@ -191,10 +191,10 @@ export function ConversationList({ currentUserId }: ConversationListProps) {
               <MessageSquare className="size-5" />
             </div>
             <p className="text-sm font-semibold text-foreground">
-              Không có quyền truy cập
+              {t("noPermissionTitle")}
             </p>
             <p className="mx-auto mt-1 max-w-xs text-xs text-muted-foreground">
-              Bạn không có quyền xem danh sách cuộc hội thoại (#131).
+              {t("noPermissionViewConversations")}
             </p>
           </div>
         ) : isLoading ? (

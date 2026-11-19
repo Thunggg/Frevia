@@ -44,6 +44,8 @@
   "sessions": {
     "title": "My Sessions",
     "description": "Devices and browsers currently signed in to your account.",
+    "noPermissionTitle": "Access denied",
+    "noPermissionDescription": "You do not have permission to view your active sessions.",
     "searchPlaceholder": "Search device or IP...",
     "clearSearch": "Clear search",
     "search": "Search",
@@ -1076,6 +1078,12 @@
   "chat": {
     "active": "Active",
     "profile": "Profile",
+    "noPermissionTitle": "Access denied",
+    "noPermissionViewConversation": "You do not have permission to view this conversation.",
+    "noPermissionViewConversations": "You do not have permission to view the conversation list.",
+    "noPermissionViewMessages": "You do not have permission to view messages in this conversation.",
+    "noPermissionSendMessage": "You do not have permission to send messages in this conversation.",
+    "noPermissionStartConversation": "You do not have permission to start a new conversation.",
     "sayHello": "Say hello to {name}",
     "historyStart": "This is the start of your message history together.",
     "deleteMessage": "Delete message",
@@ -2095,6 +2103,8 @@
   "accountProfile": {
     "breadcrumb": "Profile & trust settings",
     "pageTitle": "Profile & trust settings",
+    "noPermissionTitle": "Access denied",
+    "noPermissionReviews": "You do not have permission to view contract reviews.",
     "pageSubtitleFreelancer": "Manage your freelancer profile, identity verification and public social connections.",
     "pageSubtitleClient": "Manage your company profile and public social connections.",
     "viewEditFreelancerProfile": "View and edit freelancer profile",
@@ -2180,6 +2190,8 @@
     "OTHER": "Other document"
   },
   "reviewManager": {
+    "noPermissionTitle": "Access denied",
+    "noPermissionViewReviews": "You do not have permission to view reviews for this contract.",
     "breakdownQuality": "Work quality",
     "breakdownCommunication": "Communication",
     "breakdownDeadlines": "Deadline reliability",
@@ -2244,6 +2256,8 @@
     "deleteResponseAction": "Delete response"
   },
   "generalSettings": {
+    "noPermissionTitle": "Access denied",
+    "noPermissionViewProfile": "You do not have permission to view your account profile.",
     "hidePassword": "Hide {field}",
     "showPassword": "Show {field}",
     "avatarTypeError": "Choose a JPG, PNG, or WebP image no larger than 5 MB.",

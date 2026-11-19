@@ -433,10 +433,10 @@ export function ChatView({
     return (
       <div className="flex h-full flex-col items-center justify-center p-6 text-center text-muted-foreground font-sans">
         <p className="text-sm font-semibold text-foreground">
-          Không có quyền truy cập
+          {t("noPermissionTitle")}
         </p>
         <p className="mt-1 text-xs">
-          Bạn không có quyền xem chi tiết cuộc trò chuyện này.
+          {t("noPermissionViewConversation")}
         </p>
       </div>
     );
@@ -478,10 +478,10 @@ export function ChatView({
 
       {/* Messages Stream */}
       <div className="flex-1 space-y-3 overflow-y-auto p-4 sm:p-6">
-        {!canViewMessages ? (
+        {!isPermissionLoading && !canViewMessages ? (
           <div className="flex h-full flex-col items-center justify-center text-center p-6 text-muted-foreground">
             <p className="text-sm font-medium">
-              Bạn không có quyền xem tin nhắn trong cuộc trò chuyện này.
+              {t("noPermissionViewMessages")}
             </p>
           </div>
         ) : isLoading ? (
@@ -687,9 +687,9 @@ export function ChatView({
 
       {/* Modern Capsule Input Bar */}
       <div className="border-t border-border bg-background/95 backdrop-blur p-3 sm:p-4">
-        {!canSendMessage ? (
+        {!isPermissionLoading && !canSendMessage ? (
           <div className="flex items-center justify-center rounded-xl bg-muted/40 p-3 text-xs text-muted-foreground">
-            Bạn không có quyền gửi tin nhắn trong cuộc hội thoại này.
+            {t("noPermissionSendMessage")}
           </div>
         ) : (
           <form
