@@ -13,7 +13,7 @@ async function resolveHeaderRole(
   const primary = user.roles.find((r) => r.isPrimary) ?? user.roles[0];
   if (primary?.name === RoleName.CLIENT) return 'CLIENT';
   if (primary?.name === RoleName.FREELANCER) return 'FREELANCER';
-  return 'FREELANCER';
+  return 'STAFF';
 }
 
 export default async function ForumLayout({
@@ -24,8 +24,8 @@ export default async function ForumLayout({
   const user = await authServerRequest.getMe();
   const role = await resolveHeaderRole(user);
 
-  // Guest: public site header/footer
-  if (role === 'GUEST') {
+  // Guest & Admin/Staff: public site header/footer (khong dung Client/Freelancer sidebar)
+  if (role === 'GUEST' || role === 'STAFF') {
     return (
       <div className="flex min-h-dvh flex-col bg-background font-sans">
         <ForumTheme />

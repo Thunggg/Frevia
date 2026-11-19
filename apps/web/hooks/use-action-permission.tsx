@@ -7,54 +7,41 @@ import { useCallback, useMemo, type ReactNode } from "react";
 
 /**
  * Custom hook quản lý và kiểm tra quyền của người dùng.
- * Cung cấp các hàm kiểm tra một quyền, nhiều quyền và trạng thái toàn quyền.
+ * Client/Freelancer dùng quy tắc hardcode theo role;
+ * Admin/Expert/Custom role kiểm tra động trong phạm vi Admin Portal.
  */
 export function useActionPermission() {
   const { data: user } = useMe();
 
-  // Lấy danh sách permissions, mặc định là mảng rỗng nếu chưa có dữ liệu.
   const permissions = useMemo(
     () => user?.permissions ?? [],
     [user?.permissions],
   );
 
-  // Xác định người dùng có role ADMIN hay không.
   const isAdmin = useMemo(
     () => user?.roles?.some((r) => r.name === RoleName.ADMIN) ?? false,
     [user?.roles],
   );
 
-  // Xác định người dùng có quyền wildcard (*) hay không.
-  const hasWildcard = useMemo(
-    () => permissions.includes("*"),
-    [permissions],
-  );
-
-  // Kiểm tra người dùng có quyền thực hiện một action cụ thể hay không.
   const can = useCallback(
     (method: string, path: string): boolean => {
-      if (hasWildcard) return true;
-      return hasActionPermission(permissions, method, path);
+      return hasActionPermission(user, method, path);
     },
-    [hasWildcard, permissions],
+    [user],
   );
 
-  // Kiểm tra người dùng có ít nhất một quyền trong danh sách action.
   const canAny = useCallback(
     (actions: Array<{ method: string; path: string }>): boolean => {
-      if (hasWildcard) return true;
       return actions.some((action) => can(action.method, action.path));
     },
-    [can, hasWildcard],
+    [can],
   );
 
-  // Kiểm tra người dùng có đầy đủ quyền trên tất cả action trong danh sách.
   const canAll = useCallback(
     (actions: Array<{ method: string; path: string }>): boolean => {
-      if (hasWildcard) return true;
       return actions.every((action) => can(action.method, action.path));
     },
-    [can, hasWildcard],
+    [can],
   );
 
   return {
@@ -69,7 +56,6 @@ export function useActionPermission() {
 
 /**
  * Component kiểm soát hiển thị giao diện dựa trên permission.
- * Có quyền thì hiển thị children, không có quyền thì hiển thị fallback.
  */
 export function Can({
   method = "GET",
@@ -83,10 +69,5 @@ export function Can({
   children: ReactNode;
 }) {
   const { can } = useActionPermission();
-
-  if (can(method, path)) {
-    return <>{children}</>;
-  }
-
-  return <>{fallback}</>;
+  return can(method, path) ? <>{children}</> : <>{fallback}</>;
 }

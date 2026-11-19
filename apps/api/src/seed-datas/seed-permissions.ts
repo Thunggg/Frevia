@@ -5,6 +5,7 @@ import { RoleName, getPermissionName } from '@shared/types';
 import 'dotenv/config';
 import { AppModule } from '../app.module';
 import { IS_PUBLIC_KEY } from '../shared/decorators/auth.decorator';
+import { isAdminPermissionPath } from '../shared/helper/admin-permission';
 
 if (!process.env.DIRECT_URL) {
   console.log('Cannot find DB URL');
@@ -18,77 +19,14 @@ const prisma = new PrismaClient({
 });
 
 /**
- * Module gán theo role (Admin nhận tất cả).
- *
- * Profile / account surfaces:
- * - PROFILES: freelancer profile + skills + portfolios (`/api/profiles/...`)
- * - CLIENTS: client company profile (`/api/clients/...`)
- * - IDENTITY-VERIFICATIONS: freelancer KYC docs
- * - SOCIAL-LINKS: both roles
- * - FAVORITES: client saved freelancers (`/api/favorites/freelancers`)
- * - PROPOSALS: Freelancer submits proposals; Client reviews, accepts, or rejects
- *   proposals for jobs they own (`/api/proposals/...`, `/api/jobs/:jobId/proposals`)
- *
- * Cross-read: CLIENT cũng có PROFILES, FREELANCER cũng có CLIENTS
- * (GET public vẫn bypass guard; module đủ cho các thao tác auth-required).
+ * Chi luu va phan quyen dong cho cac endpoint thuoc pham vi Admin Portal.
+ * Quyen cua CLIENT / FREELANCER / Homepage duoc hardcode theo role.
  */
-const freelancerModules = [
-  'AUTH',
-  'SESSIONS',
-  'JOBS',
-  'SAVED-SEARCHES',
-  'JOB-ALERTS',
-  'MANAGE-JOBS',
-  'PROPOSALS',
-  'CONTRACTS',
-  'CONVERSATIONS',
-  'FORUMS',
-  'PROFILES',
-  'CLIENTS',
-  'IDENTITY-VERIFICATIONS',
-  'SOCIAL-LINKS',
-  'NOTIFICATIONS',
-  'ACCOUNT-PROFILE',
-  'REVIEWS',
-  'DISPUTES',
-  'PROFILE-REVISIONS',
-  'PAYMENTS',
-  'RECOMMENDATIONS',
-];
-
-const clientModules = [
-  'AUTH',
-  'SESSIONS',
-  'JOBS',
-  'SAVED-SEARCHES',
-  'MANAGE-JOBS',
-  'PROPOSALS',
-  'CONTRACTS',
-  'CONVERSATIONS',
-  'FORUMS',
-  'CLIENTS',
-  'PROFILES',
-  'SOCIAL-LINKS',
-  'FAVORITES',
-  'FOLLOWING',
-  'NOTIFICATIONS',
-  'ACCOUNT-PROFILE',
-  'REVIEWS',
-  'DISPUTES',
-  'PROFILE-REVISIONS',
-  'PAYMENTS',
-  'RECOMMENDATIONS',
-];
-
 const expertDefaultRoutes = new Set([
-  'GET /api/auth/me',
-  'GET /api/expert-profile/me',
-  'PUT /api/expert-profile/me',
-  'GET /api/profile-revisions/me',
-  'GET /api/expert/disputes',
-  'GET /api/expert/disputes/:id',
-  'POST /api/expert/disputes/:id/decision',
-  'POST /api/expert/disputes/:id/final-decision',
+  'GET /api/admin/disputes',
+  'GET /api/admin/disputes/:id',
+  'POST /api/admin/disputes/:id/decision',
+  'POST /api/admin/disputes/:id/final-decision',
 ]);
 
 type AvailableRoute = {
@@ -115,7 +53,10 @@ async function updateRolePermissions(
     where: { roleId: role.id },
   });
 
-  if (permissionIds.length === 0) return;
+  if (permissionIds.length === 0) {
+    console.log(`Updated role ${roleName}: 0 permissions (hardcoded)`);
+    return;
+  }
 
   await prisma.rolePermission.createMany({
     data: permissionIds.map((permissionId) => ({
@@ -130,7 +71,6 @@ async function updateRolePermissions(
 
 function resolveModule(path: string): string {
   const segments = path.split('/').filter(Boolean);
-  // Bỏ global prefix `api` khi lấy module (vd /api/roles → ROLES)
   const moduleSegment =
     segments[0]?.toLowerCase() === 'api' ? segments[1] : segments[0];
 
@@ -141,8 +81,6 @@ function resolveModule(path: string): string {
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { logger: false });
-  // Phải khớp main.ts — không có prefix thì seed ra /permissions,
-  // trong khi request thật tế là /api/permissions → PermissionGuard 403.
   app.setGlobalPrefix('api');
   await app.init();
 
@@ -158,7 +96,7 @@ async function bootstrap() {
       (layer: {
         route?: {
           path: string;
-          stack: { method: string; handle?: any }[];
+          stack: { method: string; handle?: unknown }[];
         };
       }) => {
         if (!layer.route) return undefined;
@@ -170,12 +108,16 @@ async function bootstrap() {
 
         if (!Object.values(HttpMethod).includes(method)) return undefined;
 
-        // Bỏ qua các route public (có decorator @IsPublic())
-        // vì các route này bypass PermissionGuard và không thuộc phạm vi RBAC.
         const isPublic = layer.route.stack.some((s) =>
-          Boolean(s?.handle && Reflect.getMetadata(IS_PUBLIC_KEY, s.handle)),
+          Boolean(
+            s?.handle &&
+              Reflect.getMetadata(IS_PUBLIC_KEY, s.handle as object),
+          ),
         );
         if (isPublic) return undefined;
+
+        // Chi seed cac permission thuoc Admin Portal de quan tri va gan quyen dong.
+        if (!isAdminPermissionPath(path, method)) return undefined;
 
         return {
           path,
@@ -189,22 +131,8 @@ async function bootstrap() {
       Boolean(item),
     );
 
-  console.log(`Discovered ${availableRoutes.length} routes from Nest router`);
-
-  const profileRelated = availableRoutes.filter((route) =>
-    [
-      'PROFILES',
-      'CLIENTS',
-      'IDENTITY-VERIFICATIONS',
-      'SOCIAL-LINKS',
-      'FAVORITES',
-      'FOLLOWING',
-      'NOTIFICATIONS',
-    ].includes(route.module),
-  );
   console.log(
-    `Profile-related routes (${profileRelated.length}):`,
-    profileRelated.map((route) => route.name).sort(),
+    `Discovered ${availableRoutes.length} Admin Portal routes from Nest router`,
   );
 
   let changed = false;
@@ -223,20 +151,23 @@ async function bootstrap() {
     return acc;
   }, {});
 
-  // Permission trong DB không còn route → xóa
+  // Permission cu khong con thuoc Admin Portal hoac da bi xoa route -> don sach khoi DB.
   const permissionToDelete = permissionInDB.filter(
     (item) => !availableRoutesMap[`${item.method}-${item.path}`],
   );
 
   if (permissionToDelete.length > 0) {
     changed = true;
-    const deleted = await prisma.permission.deleteMany({
-      where: { id: { in: permissionToDelete.map((item) => item.id) } },
+    const idsToDelete = permissionToDelete.map((item) => item.id);
+    await prisma.rolePermission.deleteMany({
+      where: { permissionId: { in: idsToDelete } },
     });
-    console.log('Deleted permissions:', deleted.count);
+    const deleted = await prisma.permission.deleteMany({
+      where: { id: { in: idsToDelete } },
+    });
+    console.log('Deleted non-admin/stale permissions:', deleted.count);
   }
 
-  // Route mới chưa có trong DB → tạo
   const permissionToCreate = availableRoutes.filter(
     (item) => !permissionInDBMap[`${item.method}-${item.path}`],
   );
@@ -247,13 +178,12 @@ async function bootstrap() {
       data: permissionToCreate,
       skipDuplicates: true,
     });
-    console.log('Created permissions:', created.count);
+    console.log('Created admin permissions:', created.count);
     for (const route of permissionToCreate) {
       console.log(`  + ${route.name} [${route.module}]`);
     }
   }
 
-  // Permission đã có nhưng name/module lệch → cập nhật
   const permissionToUpdate = availableRoutes.filter((route) => {
     const existing = permissionInDBMap[`${route.method}-${route.path}`];
     if (!existing) return false;
@@ -288,73 +218,14 @@ async function bootstrap() {
   });
 
   const adminPermissionIds = updatedPermissionInDb.map((item) => item.id);
-
-  const freelancerPermissionIds = updatedPermissionInDb
-    .filter(
-      (item) =>
-        freelancerModules.includes(item.module ?? '') &&
-        !(item.path ?? '').startsWith('/api/admin/') &&
-        !(item.path ?? '').startsWith('/api/forums/admin') &&
-        !(item.path ?? '').startsWith('/api/forums/reports') &&
-        ![
-          '/api/recommendations/reindex',
-          '/api/recommendations/outbox/process',
-        ].includes(item.path) &&
-        !(
-          item.module === 'MANAGE-JOBS' &&
-          !item.path.includes('/bookmark') &&
-          !item.path.includes('/check-language')
-        ),
-    )
-    .map((item) => item.id);
-
-  const clientPermissionIds = updatedPermissionInDb
-    .filter(
-      (item) =>
-        clientModules.includes(item.module ?? '') &&
-        !(item.path ?? '').startsWith('/api/admin/') &&
-        !(item.path ?? '').startsWith('/api/forums/admin') &&
-        !(item.path ?? '').startsWith('/api/forums/reports') &&
-        ![
-          '/api/recommendations/reindex',
-          '/api/recommendations/outbox/process',
-        ].includes(item.path) &&
-        !(item.module === 'MANAGE-JOBS' && item.path.includes('/bookmark')),
-    )
-    .map((item) => item.id);
-
   const expertPermissionIds = updatedPermissionInDb
     .filter((item) => expertDefaultRoutes.has(`${item.method} ${item.path}`))
     .map((item) => item.id);
 
-  const freelancerProfileCount = updatedPermissionInDb.filter(
-    (item) =>
-      freelancerModules.includes(item.module ?? '') &&
-      [
-        'PROFILES',
-        'CLIENTS',
-        'IDENTITY-VERIFICATIONS',
-        'SOCIAL-LINKS',
-      ].includes(item.module ?? ''),
-  ).length;
-
-  const clientProfileCount = updatedPermissionInDb.filter(
-    (item) =>
-      clientModules.includes(item.module ?? '') &&
-      ['PROFILES', 'CLIENTS', 'SOCIAL-LINKS', 'FAVORITES'].includes(
-        item.module ?? '',
-      ),
-  ).length;
-
-  console.log(
-    `Freelancer profile-related permissions: ${freelancerProfileCount}`,
-  );
-  console.log(`Client profile-related permissions: ${clientProfileCount}`);
-
   await Promise.all([
     updateRolePermissions(adminPermissionIds, RoleName.ADMIN),
-    updateRolePermissions(freelancerPermissionIds, RoleName.FREELANCER),
-    updateRolePermissions(clientPermissionIds, RoleName.CLIENT),
+    updateRolePermissions([], RoleName.FREELANCER),
+    updateRolePermissions([], RoleName.CLIENT),
     updateRolePermissions(expertPermissionIds, RoleName.EXPERT),
   ]);
 
@@ -363,9 +234,7 @@ async function bootstrap() {
 
 bootstrap()
   .catch((error) => {
-    console.error(error);
+    console.error('Seed permissions failed:', error);
     process.exit(1);
   })
-  .finally(async () => {
-    await prisma.$disconnect();
-  });
+  .finally(() => prisma.$disconnect());

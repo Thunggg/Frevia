@@ -51,6 +51,11 @@ export function AccessDeniedContent({
     }
   };
 
+  const isStaffRole =
+    Boolean(user) &&
+    primaryRole !== RoleName.CLIENT &&
+    primaryRole !== RoleName.FREELANCER;
+
   const currentRoleDashboardUrl =
     primaryRole === RoleName.CLIENT
       ? "/client/jobs"
@@ -58,7 +63,7 @@ export function AccessDeniedContent({
         ? "/freelancer"
         : primaryRole === RoleName.ADMIN || canAccessAdminPortal(user)
           ? "/admin"
-          : "/";
+          : "/forum";
 
   const primaryRoleLabel =
     primaryRole === RoleName.CLIENT
@@ -89,7 +94,7 @@ export function AccessDeniedContent({
       : primaryRole === RoleName.FREELANCER
         ? "FREELANCER"
         : user
-          ? "FREELANCER"
+          ? "STAFF"
           : "GUEST";
 
   return (
@@ -187,13 +192,15 @@ export function AccessDeniedContent({
 
                 {/* 2. Secondary Actions */}
                 <div className="flex items-center gap-2 pt-1">
-                  <Button
-                    variant="ghost"
-                    className="flex-1 text-xs text-muted-foreground hover:text-foreground"
-                    asChild
-                  >
-                    <Link href="/">{t("backHome")}</Link>
-                  </Button>
+                  {!isStaffRole && (
+                    <Button
+                      variant="ghost"
+                      className="flex-1 text-xs text-muted-foreground hover:text-foreground"
+                      asChild
+                    >
+                      <Link href="/">{t("backHome")}</Link>
+                    </Button>
+                  )}
 
                   <Button
                     variant="ghost"
