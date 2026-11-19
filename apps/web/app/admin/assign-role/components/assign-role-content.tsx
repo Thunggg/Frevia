@@ -528,9 +528,7 @@ export function AssignRoleContent() {
                       <span className="font-mono font-medium text-foreground/80">
                         {selectedCount}/{items.length}
                       </span>
-                      <span>
-                        {locale === "vi" ? "quyền đã chọn" : "selected"}
-                      </span>
+                      <span>{t("selectedPermissionsLabel")}</span>
                     </div>
                   </div>
 
