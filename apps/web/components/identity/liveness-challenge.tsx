@@ -47,6 +47,8 @@ export function LivenessChallenge({
   const framesRef = useRef<File[]>([]);
   const busyRef = useRef(false);
   const doneRef = useRef(false);
+  const mountedRef = useRef(true);
+  const startingRef = useRef(false);
   const tRef = useRef(t);
   tRef.current = t;
 
@@ -67,7 +69,13 @@ export function LivenessChallenge({
     setRunning(false);
   }, []);
 
-  useEffect(() => () => stop(), [stop]);
+  useEffect(() => {
+    mountedRef.current = true;
+    return () => {
+      mountedRef.current = false;
+      stop();
+    };
+  }, [stop]);
 
   const grabFrame = useCallback((): Promise<File | null> => {
     return new Promise((resolve) => {
@@ -160,7 +168,9 @@ export function LivenessChallenge({
   }, [collect, grabFrame, onComplete, stop, canLivenessPose]);
 
   const start = useCallback(async () => {
-    if (!canLivenessPose) return;
+    if (!canLivenessPose || startingRef.current) return;
+    startingRef.current = true;
+    stop();
     setError(null);
     framesRef.current = [];
     phaseRef.current = 0;
@@ -174,9 +184,14 @@ export function LivenessChallenge({
         video: { facingMode: "user", width: 640, height: 480 },
         audio: false,
       });
+      if (!mountedRef.current) {
+        stream.getTracks().forEach((track) => track.stop());
+        return;
+      }
       streamRef.current = stream;
       setRunning(true);
       setTimeout(() => {
+        if (!mountedRef.current) return;
         if (videoRef.current) {
           videoRef.current.srcObject = stream;
           videoRef.current.play().catch(() => {});
@@ -184,13 +199,16 @@ export function LivenessChallenge({
       }, 50);
       timerRef.current = window.setInterval(() => void tick(), POLL_MS);
     } catch (cameraError) {
+      if (!mountedRef.current) return;
       const message =
         (cameraError as Error)?.message ??
         (cameraError as Error)?.name ??
         "unknown";
       setError(tRef.current("liveness.cameraError", { message }));
+    } finally {
+      startingRef.current = false;
     }
-  }, [tick, canLivenessPose]);
+  }, [tick, stop, canLivenessPose]);
 
   const done = phaseIdx >= PHASE_KEYS.length;
 

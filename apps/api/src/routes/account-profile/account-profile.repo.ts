@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import {
   AddSocialLinkType,
+  ClientDirectoryQueryType,
   DocumentTypeType,
   RoleName,
   UpdateClientProfileType,
@@ -20,7 +21,11 @@ export class AccountProfileRepository {
   findUserWithRoles(userId: number) {
     return this.prisma.user.findFirst({
       where: { id: userId, deletedAt: null },
-      include: { role: true, profile: true },
+      include: {
+        role: true,
+        userRoles: { include: { role: true } },
+        profile: true,
+      },
     });
   }
 
@@ -30,8 +35,15 @@ export class AccountProfileRepository {
       select: {
         id: true,
         email: true,
+        roleId: true,
         profile: true,
-        role: { select: { name: true } },
+        role: { select: { id: true, name: true } },
+        userRoles: {
+          select: {
+            roleId: true,
+            role: { select: { id: true, name: true } },
+          },
+        },
       },
     });
   }
@@ -112,13 +124,94 @@ export class AccountProfileRepository {
     });
   }
 
+  async findClients({ search, page, limit }: ClientDirectoryQueryType) {
+    const where: Prisma.ProfileWhereInput = {
+      user: {
+        deletedAt: null,
+        isBanned: false,
+        OR: [
+          { role: { name: RoleName.CLIENT, deletedAt: null } },
+          {
+            userRoles: {
+              some: {
+                role: { name: RoleName.CLIENT, deletedAt: null },
+              },
+            },
+          },
+        ],
+      },
+      ...(search
+        ? {
+            OR: [
+              { displayName: { contains: search, mode: 'insensitive' } },
+              {
+                clientProfile: {
+                  companyName: { contains: search, mode: 'insensitive' },
+                },
+              },
+            ],
+          }
+        : {}),
+    };
+    const [profiles, total] = await Promise.all([
+      this.prisma.profile.findMany({
+        where,
+        skip: (page - 1) * limit,
+        take: limit,
+        orderBy: [{ createdAt: 'desc' }, { id: 'desc' }],
+        select: {
+          userId: true,
+          displayName: true,
+          avatarUrl: true,
+          bio: true,
+          updatedAt: true,
+          clientProfile: {
+            select: { companyName: true, companyDescription: true },
+          },
+        },
+      }),
+      this.prisma.profile.count({ where }),
+    ]);
+    return { profiles, total };
+  }
+
   findClientProfile(userId: number) {
     return this.prisma.profile.findFirst({
-      where: { userId, user: { deletedAt: null } },
-      include: {
-        clientProfile: true,
+      where: {
+        userId,
+        user: { deletedAt: null, isBanned: false },
+      },
+      select: {
+        id: true,
+        userId: true,
+        displayName: true,
+        avatarUrl: true,
+        coverUrl: true,
+        bio: true,
+        profileCompletionPercent: true,
+        createdAt: true,
+        updatedAt: true,
+        clientProfile: {
+          select: {
+            id: true,
+            profileId: true,
+            companyName: true,
+            companyDescription: true,
+            website: true,
+            createdAt: true,
+            updatedAt: true,
+          },
+        },
         socialLinks: { orderBy: { platform: 'asc' } },
-        user: { include: { role: true } },
+        user: {
+          select: {
+            role: { select: { name: true } },
+            userRoles: {
+              where: { role: { deletedAt: null } },
+              select: { role: { select: { name: true } } },
+            },
+          },
+        },
       },
     });
   }
@@ -392,7 +485,16 @@ export class AccountProfileRepository {
         id: { not: clientId },
         isBanned: false,
         deletedAt: null,
-        role: { name: RoleName.FREELANCER, deletedAt: null },
+        OR: [
+          { role: { name: RoleName.FREELANCER, deletedAt: null } },
+          {
+            userRoles: {
+              some: {
+                role: { name: RoleName.FREELANCER, deletedAt: null },
+              },
+            },
+          },
+        ],
         profile: {
           is: { freelancerProfile: { isNot: null } },
         },

@@ -1,8 +1,9 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import type { GetMeResType } from "@shared/types";
 
 /**
  * Tạo QueryClient với cấu hình mặc định:
@@ -24,13 +25,13 @@ function makeQueryClient() {
         gcTime: 5 * 60 * 1000, // 5 phút
       },
       mutations: {
-        retry: 1,
+        retry: 0,
       },
     },
   });
 }
 
-// Browser: giữ QueryClientsingleton qua useState để tránh tạo lại mỗi render
+// Browser: giữ QueryClient singleton để không mất cache khi điều hướng
 let browserQueryClient: QueryClient | undefined;
 
 function getQueryClient() {
@@ -45,12 +46,44 @@ function getQueryClient() {
   return browserQueryClient;
 }
 
+function getUserFingerprint(user: GetMeResType | null | undefined): string {
+  if (!user) return "guest";
+  const roles = (user.roles ?? [])
+    .map((r) => `${r.id ?? ""}:${r.name}:${r.isPrimary ? 1 : 0}`)
+    .join(",");
+  const permissionsKey = [...(user.permissions ?? [])].sort().join(",");
+  return `${user.id}|${roles}|${permissionsKey}|${user.profile?.displayName ?? ""}|${user.profile?.avatarUrl ?? ""}`;
+}
+
 export default function QueryProvider({
   children,
+  initialUser,
 }: {
   children: React.ReactNode;
+  initialUser?: GetMeResType | null;
 }) {
-  const queryClient = React.useState(() => getQueryClient())[0];
+  const [queryClient] = React.useState(() => {
+    const client = getQueryClient();
+    // Nạp sẵn ["me"] từ SSR ngay trước lần render đầu tiên để tránh nháy
+    // "Không có quyền truy cập" và bỏ vòng gọi /api/auth/me thừa khi reload trang.
+    if (initialUser !== undefined) {
+      client.setQueryData<GetMeResType | null>(["me"], initialUser);
+    }
+    return client;
+  });
+
+  const lastFingerprintRef = useRef<string | null>(
+    initialUser !== undefined ? getUserFingerprint(initialUser) : null,
+  );
+
+  useEffect(() => {
+    if (initialUser === undefined) return;
+    const nextFingerprint = getUserFingerprint(initialUser);
+    if (nextFingerprint !== lastFingerprintRef.current) {
+      lastFingerprintRef.current = nextFingerprint;
+      queryClient.setQueryData<GetMeResType | null>(["me"], initialUser);
+    }
+  }, [initialUser, queryClient]);
 
   return (
     <QueryClientProvider client={queryClient}>

@@ -4,11 +4,13 @@
 % Function Trigger, Function Description, Screen Layout and Function Details.
 % =================================================================
 
+\Needspace{12\baselineskip}
 \subsection{Banner Management}
 
 % -----------------------------------------------------------------
 % UC-37.01: View Banner List
 % -----------------------------------------------------------------
+\Needspace{12\baselineskip}
 \subsubsection{ View Banner List}
 
 \fnhead{Function Trigger}
@@ -129,6 +131,7 @@ pagination.totalPages & Total calculated pages available.\\ \hline
 % -----------------------------------------------------------------
 % UC-37.02: View Banner Detail
 % -----------------------------------------------------------------
+\Needspace{12\baselineskip}
 \subsubsection{ View Banner Detail}
 
 \fnhead{Function Trigger}
@@ -236,6 +239,7 @@ updatedAt & Timestamp of last modification.\\ \hline
 % -----------------------------------------------------------------
 % UC-37.03: Create Banner
 % -----------------------------------------------------------------
+\Needspace{12\baselineskip}
 \subsubsection{ Create Banner}
 
 \fnhead{Function Trigger}
@@ -369,6 +373,7 @@ updatedAt & Timestamp of last update.\\ \hline
 % -----------------------------------------------------------------
 % UC-37.04: Update Banner
 % -----------------------------------------------------------------
+\Needspace{12\baselineskip}
 \subsubsection{ Update Banner}
 
 \fnhead{Function Trigger}
@@ -501,6 +506,7 @@ updatedAt & Updated modification timestamp.\\ \hline
 % -----------------------------------------------------------------
 % UC-37.05: Delete Banner
 % -----------------------------------------------------------------
+\Needspace{12\baselineskip}
 \subsubsection{ Delete Banner}
 
 \fnhead{Function Trigger}
@@ -600,11 +606,13 @@ message & Success confirmation message string (\texttt{Success.BannerDeleted}).\
 % =================================================================
 % Skill Management
 % =================================================================
+\Needspace{12\baselineskip}
 \subsection{Skill Management}
 
 % -----------------------------------------------------------------
 % UC-38.01: View Skill List
 % -----------------------------------------------------------------
+\Needspace{12\baselineskip}
 \subsubsection{ View Skill List}
 
 \fnhead{Function Trigger}
@@ -727,6 +735,7 @@ pagination.totalPages & Total calculated pages available.\\ \hline
 % -----------------------------------------------------------------
 % UC-38.02: View Skill Detail
 % -----------------------------------------------------------------
+\Needspace{12\baselineskip}
 \subsubsection{ View Skill Detail}
 
 \fnhead{Function Trigger}
@@ -760,7 +769,7 @@ An administrator clicks on a skill row or name in the skill list, navigating to 
     \item The backend validates administrative token and route permissions.
     \item \texttt{SkillsAdminController.getSkillDetail()} parses \texttt{id} via \texttt{ParseIntPipe}.
     \item \texttt{SkillsAdminRepository.getSkillDetail(id)} queries \texttt{prisma.skill.findUnique} by \texttt{id}, including \texttt{\_count: \{ select: \{ jobs: true \} \}}.
-    \item If the skill record is not found, the service throws \texttt{SkillAdminNotFoundException} (HTTP 404).
+    \item If the skill record is not found, the service throws \texttt{SkillAdmin\-Not\-Found\-Exception} (HTTP 404).
     \item Returns HTTP 200 with the skill object including \texttt{jobCount}.
     \item The frontend renders the skill details view and contextual action buttons based on whether \texttt{deletedAt} is null.
 \end{itemize}
@@ -811,7 +820,7 @@ id & Must be a positive integer greater than or equal to 1.\\ \hline
 Missing or invalid authentication token & The server returns HTTP 401 Unauthorized. The client redirects to \texttt{/login}.\\ \hline
 User lacks Admin privileges & The server throws HTTP 403 Forbidden. The client renders an access denied alert.\\ \hline
 Invalid skill ID format (e.g., non-numeric) & \texttt{ParseIntPipe} throws HTTP 400 Bad Request. The UI displays an ``Invalid Skill ID'' message and back button.\\ \hline
-Skill ID does not exist in database & The service throws \texttt{SkillAdminNotFoundException} (HTTP 404). The UI renders a ``Skill Not Found'' screen with navigation back to catalog.\\ \hline
+Skill ID does not exist in database & The service throws \texttt{SkillAdmin\-Not\-Found\-Exception} (HTTP 404). The UI renders a ``Skill Not Found'' screen with navigation back to catalog.\\ \hline
 Database query error or timeout & The service throws \texttt{FailedToLoadSkillDetailException} (HTTP 500). The UI displays: ``Error.FailedToLoadSkillDetail''.\\ \hline
 Skill description is empty or null & The UI gracefully displays ``No description provided'' in muted text.\\ \hline
 Network connection failure & The client displays an error toast notification and offers a reload button.\\ \hline
@@ -835,6 +844,7 @@ jobCount & Total number of jobs referencing this skill.\\ \hline
 % -----------------------------------------------------------------
 % UC-38.03: Create Skill
 % -----------------------------------------------------------------
+\Needspace{12\baselineskip}
 \subsubsection{ Create Skill}
 
 \fnhead{Function Trigger}
@@ -867,10 +877,10 @@ An administrator clicks the ``Create Skill'' button on the skill catalog page (\
         \begin{itemize}[leftmargin=1.6em,topsep=2pt,itemsep=2pt,parsep=0pt]
             \item Strips leading and trailing whitespace from \texttt{name}.
             \item Queries \texttt{prisma.skill.findFirst} to check if an active skill (\texttt{deletedAt = null}) with the same name exists (case-insensitive mode).
-            \item If an active duplicate exists, throws \texttt{SkillNameAlreadyExistsException} (HTTP 409).
+            \item If an active duplicate exists, throws \texttt{SkillName\-Already\-Exists\-Exception} (HTTP 409).
             \item Generates a unique slug via \texttt{generateUniqueSlug()}: normalizes Vietnamese diacritics, converts to lowercase, replaces non-alphanumeric characters with hyphens, and appends sequential numeric suffixes (\texttt{-2}, \texttt{-3}) if a slug collision occurs.
             \item Inserts the skill record via \texttt{prisma.skill.create()}.
-            \item Catches Prisma \texttt{P2002} errors (unique constraint violations) and converts to \texttt{SkillNameAlreadyExistsException}.
+            \item Catches Prisma \texttt{P2002} errors (unique constraint violations) and converts to \texttt{SkillName\-Already\-Exists\-Exception}.
         \end{itemize}
     \item Returns HTTP 201 with the created skill entity.
     \item The frontend displays a success toast, closes the modal, and refreshes the skill table.
@@ -924,10 +934,10 @@ description & Optional string, max 500 chars (\texttt{Error.SkillDescriptionTooL
 Missing mandatory skill name & Form validation blocks submission; backend throws HTTP 400 with \texttt{Error.SkillNameRequired}.\\ \hline
 Skill name exceeds 100 characters & Validator rejects input with HTTP 400 Bad Request (\texttt{Error.SkillNameTooLong}). The UI highlights the name field.\\ \hline
 Description exceeds 500 characters & Validator rejects input with HTTP 400 Bad Request (\texttt{Error.SkillDescriptionTooLong}). The UI highlights the description field.\\ \hline
-Active skill with identical name already exists & The service throws \texttt{SkillNameAlreadyExistsException} (HTTP 409 Conflict). The UI displays: ``Error.SkillNameAlreadyExists''.\\ \hline
+Active skill with identical name already exists & The service throws \texttt{SkillName\-Already\-Exists\-Exception} (HTTP 409 Conflict). The UI displays: ``Error.SkillNameAlreadyExists''.\\ \hline
 Concurrent request creates duplicate name & Database catches \texttt{P2002} constraint violation; backend converts to HTTP 409 Conflict. The UI alerts the administrator.\\ \hline
 Unauthorized or unauthenticated request & The server returns HTTP 401/403. The UI redirects to login or displays an access denied message.\\ \hline
-Database insert failure & The service throws \texttt{FailedToCreateSkillException} (HTTP 500). The UI displays: ``Error.FailedToCreateSkill''.\\ \hline
+Database insert failure & The service throws \texttt{FailedToCreate\-Skill\-Exception} (HTTP 500). The UI displays: ``Error.FailedToCreateSkill''.\\ \hline
 Network timeout & The client catches the network failure, displays an error toast, and leaves the modal open for retry.\\ \hline
 \end{flowtable}
 
@@ -949,6 +959,7 @@ jobCount & Zero for newly created skills.\\ \hline
 % -----------------------------------------------------------------
 % UC-38.04: Update Skill
 % -----------------------------------------------------------------
+\Needspace{12\baselineskip}
 \subsubsection{ Update Skill}
 
 \fnhead{Function Trigger}
@@ -980,8 +991,8 @@ An administrator clicks the Edit icon (pencil) on a skill table row or detail pa
     \item The client issues an HTTP request: \texttt{PATCH /api/admin/skills/:id} with updated fields.
     \item \texttt{SkillsAdminRepository.updateSkill(id, data)}:
         \begin{itemize}[leftmargin=1.6em,topsep=2pt,itemsep=2pt,parsep=0pt]
-            \item Verifies target skill exists; throws \texttt{SkillAdminNotFoundException} if missing.
-            \item If \texttt{name} is modified, checks if another active skill (\texttt{id != currentId, deletedAt = null}) shares the same case-insensitive name. Throws \texttt{SkillNameAlreadyExistsException} if conflict exists.
+            \item Verifies target skill exists; throws \texttt{SkillAdmin\-Not\-Found\-Exception} if missing.
+            \item If \texttt{name} is modified, checks if another active skill (\texttt{id != currentId, deletedAt = null}) shares the same case-insensitive name. Throws \texttt{SkillName\-Already\-Exists\-Exception} if conflict exists.
             \item If \texttt{name} is modified, regenerates the unique slug via \texttt{generateUniqueSlug()}.
             \item Updates the record in \texttt{prisma.skill.update()}. If description is empty string, converts it to \texttt{null}.
         \end{itemize}
@@ -1036,13 +1047,13 @@ description & Optional string, max 500 chars (\texttt{Error.SkillDescriptionTooL
 
 \sublabel{Abnormal Flow / Exception Handling}
 \begin{flowtable}{Abnormal Case}{Handling \& System Response}
-Target skill does not exist & The service throws \texttt{SkillAdminNotFoundException} (HTTP 404). The UI displays: ``Error.SkillNotFound''.\\ \hline
-Updated name conflicts with active skill & The service throws \texttt{SkillNameAlreadyExistsException} (HTTP 409). The UI alerts: ``Error.SkillNameAlreadyExists''.\\ \hline
+Target skill does not exist & The service throws \texttt{SkillAdmin\-Not\-Found\-Exception} (HTTP 404). The UI displays: ``Error.SkillNotFound''.\\ \hline
+Updated name conflicts with active skill & The service throws \texttt{SkillName\-Already\-Exists\-Exception} (HTTP 409). The UI alerts: ``Error.SkillNameAlreadyExists''.\\ \hline
 Name is set to empty or whitespace & Form validation blocks submission; backend returns HTTP 400 Bad Request with \texttt{Error.SkillNameRequired}.\\ \hline
 Name exceeds 100 characters & Validator rejects input with HTTP 400 Bad Request (\texttt{Error.SkillNameTooLong}). The UI highlights the name field.\\ \hline
 Description exceeds 500 characters & Validator rejects input with HTTP 400 Bad Request (\texttt{Error.SkillDescriptionTooLong}). The UI highlights the description field.\\ \hline
 Unauthorized or unauthenticated session & The server returns HTTP 401/403. The UI redirects to login or displays an access denied message.\\ \hline
-Database update failure & The service throws \texttt{FailedToUpdateSkillException} (HTTP 500). The UI displays: ``Error.FailedToUpdateSkill''.\\ \hline
+Database update failure & The service throws \texttt{FailedToUpdate\-Skill\-Exception} (HTTP 500). The UI displays: ``Error.FailedToUpdateSkill''.\\ \hline
 Network timeout & The client catches the network error, displays an error toast, and preserves dialog state.\\ \hline
 \end{flowtable}
 
@@ -1063,6 +1074,7 @@ jobCount & Count of active jobs using this skill.\\ \hline
 % -----------------------------------------------------------------
 % UC-38.05: Delete Skill
 % -----------------------------------------------------------------
+\Needspace{12\baselineskip}
 \subsubsection{ Delete Skill}
 
 \fnhead{Function Trigger}
@@ -1096,7 +1108,7 @@ An administrator clicks the Delete action icon (trash can) on a skill table row 
     \item \texttt{SkillsAdminController.deleteSkill(id)} parses \texttt{id} via \texttt{ParseIntPipe}.
     \item \texttt{SkillsAdminRepository.deleteSkill(id)}:
         \begin{itemize}[leftmargin=1.6em,topsep=2pt,itemsep=2pt,parsep=0pt]
-            \item Verifies target skill exists; throws \texttt{SkillAdminNotFoundException} if missing.
+            \item Verifies target skill exists; throws \texttt{SkillAdmin\-Not\-Found\-Exception} if missing.
             \item Executes an atomic transaction via \texttt{prisma.\$transaction}:
                 \begin{enumerate}
                     \item Deletes all freelancer associations referencing this skill: \texttt{prisma.freelancerSkill.deleteMany({ where: { skillId: id } })}.
@@ -1152,12 +1164,12 @@ id & Must be a positive integer greater than or equal to 1.\\ \hline
 
 \sublabel{Abnormal Flow / Exception Handling}
 \begin{flowtable}{Abnormal Case}{Handling \& System Response}
-Target skill does not exist & The service throws \texttt{SkillAdminNotFoundException} (HTTP 404). The UI displays: ``Error.SkillNotFound''.\\ \hline
+Target skill does not exist & The service throws \texttt{SkillAdmin\-Not\-Found\-Exception} (HTTP 404). The UI displays: ``Error.SkillNotFound''.\\ \hline
 Missing or invalid authentication token & The server returns HTTP 401 Unauthorized. The client redirects to \texttt{/login}.\\ \hline
 User lacks Admin privileges & The server throws HTTP 403 Forbidden. The client renders an access denied alert.\\ \hline
 Invalid skill ID format & \texttt{ParseIntPipe} throws HTTP 400 Bad Request. The UI notifies the user of an invalid parameter.\\ \hline
 Administrator cancels dialog & The modal closes immediately; no request is sent, leaving the database unaffected.\\ \hline
-Database transaction failure & The service throws \texttt{FailedToDeleteSkillException} (HTTP 500). The UI displays: ``Error.FailedToDeleteSkill''.\\ \hline
+Database transaction failure & The service throws \texttt{FailedToDelete\-Skill\-Exception} (HTTP 500). The UI displays: ``Error.FailedToDeleteSkill''.\\ \hline
 Network failure during request & The client catches the network error, displays an unexpected error toast, and leaves the modal open.\\ \hline
 \end{flowtable}
 
@@ -1172,6 +1184,7 @@ message & Success confirmation message string (\texttt{Success.SkillDeleted}).\\
 % -----------------------------------------------------------------
 % UC-38.06: Restore Skill
 % -----------------------------------------------------------------
+\Needspace{12\baselineskip}
 \subsubsection{ Restore Skill}
 
 \fnhead{Function Trigger}
@@ -1204,9 +1217,9 @@ An administrator viewing soft-deleted skills (via the ``Deleted'' status filter 
     \item \texttt{SkillsAdminController.restoreSkill(id)} parses \texttt{id} via \texttt{ParseIntPipe}.
     \item \texttt{SkillsAdminRepository.restoreSkill(id)}:
         \begin{itemize}[leftmargin=1.6em,topsep=2pt,itemsep=2pt,parsep=0pt]
-            \item Finds the skill verifying that \texttt{deletedAt != null}; throws \texttt{SkillAdminNotFoundException} if missing or already active.
+            \item Finds the skill verifying that \texttt{deletedAt != null}; throws \texttt{SkillAdmin\-Not\-Found\-Exception} if missing or already active.
             \item Checks if another active skill has been created with the same name during the deletion period (\texttt{deletedAt = null, id != currentId, name equals skill.name}).
-            \item If a name collision occurs, throws \texttt{SkillNameAlreadyExistsException} (HTTP 409).
+            \item If a name collision occurs, throws \texttt{SkillName\-Already\-Exists\-Exception} (HTTP 409).
             \item Sets \texttt{deletedAt = null} via \texttt{prisma.skill.updateMany({ where: { id, deletedAt: { not: null } }, data: { deletedAt: null } })}.
             \item Queries the updated skill entity with job count aggregation.
         \end{itemize}
@@ -1256,13 +1269,13 @@ id & Must be a positive integer greater than or equal to 1.\\ \hline
 
 \sublabel{Abnormal Flow / Exception Handling}
 \begin{flowtable}{Abnormal Case}{Handling \& System Response}
-Target skill does not exist or is already active & The service throws \texttt{SkillAdminNotFoundException} (HTTP 404). The UI displays: ``Error.SkillNotFound''.\\ \hline
-Another active skill now shares the same name & The service throws \texttt{SkillNameAlreadyExistsException} (HTTP 409). The UI alerts: ``Error.SkillNameAlreadyExists''.\\ \hline
+Target skill does not exist or is already active & The service throws \texttt{SkillAdmin\-Not\-Found\-Exception} (HTTP 404). The UI displays: ``Error.SkillNotFound''.\\ \hline
+Another active skill now shares the same name & The service throws \texttt{SkillName\-Already\-Exists\-Exception} (HTTP 409). The UI alerts: ``Error.SkillNameAlreadyExists''.\\ \hline
 Missing or invalid authentication token & The server returns HTTP 401 Unauthorized. The client redirects to \texttt{/login}.\\ \hline
 User lacks Admin privileges & The server throws HTTP 403 Forbidden. The client renders an access denied alert.\\ \hline
 Invalid skill ID format & \texttt{ParseIntPipe} throws HTTP 400 Bad Request. The UI notifies the user of an invalid parameter.\\ \hline
 Administrator cancels dialog & The modal closes immediately; no request is sent, leaving the database unaffected.\\ \hline
-Database update failure & The service throws \texttt{FailedToRestoreSkillException} (HTTP 500). The UI displays: ``Error.FailedToRestoreSkill''.\\ \hline
+Database update failure & The service throws \texttt{FailedToRestore\-Skill\-Exception} (HTTP 500). The UI displays: ``Error.FailedToRestoreSkill''.\\ \hline
 Network failure during request & The client catches the network error, displays an unexpected error toast, and preserves dialog state.\\ \hline
 \end{flowtable}
 

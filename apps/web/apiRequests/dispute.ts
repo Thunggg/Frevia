@@ -2,15 +2,27 @@ import { http } from "@/lib/http";
 import type {
   CreateDisputeBodyType,
   DisputeDetailType,
+  GetResolutionReasonsResponseType,
+  RespondDisputeBodyType,
   ReviewDisputeDecisionBodyType,
-  SubmitDisputeResponseBodyType,
 } from "@shared/types";
 
 export const disputeApiRequest = {
   /**
-   * Lấy danh sách tranh chấp của tôi (Freelancer / Client)
+   * API 1: Lấy danh sách lý do Resolution Center theo vai trò & trạng thái Milestone
    */
-  getMyDisputes(query: { page?: number; limit?: number; status?: string } = {}) {
+  getResolutionReasons(milestoneId: number) {
+    return http.get<GetResolutionReasonsResponseType>(
+      `/disputes/reasons?milestoneId=${milestoneId}`,
+    );
+  },
+
+  /**
+   * Lấy danh sách yêu cầu giải quyết / tranh chấp của tôi (Client / Freelancer)
+   */
+  getMyDisputes(
+    query: { page?: number; limit?: number; status?: string } = {},
+  ) {
     const params = new URLSearchParams();
     if (query.page) params.append("page", query.page.toString());
     if (query.limit) params.append("limit", query.limit.toString());
@@ -18,40 +30,59 @@ export const disputeApiRequest = {
     const qs = params.toString();
     return http.get<{
       data: DisputeDetailType[];
-      pagination: { page: number; limit: number; total: number; totalPages: number };
+      pagination: {
+        page: number;
+        limit: number;
+        total: number;
+        totalPages: number;
+      };
     }>(`/disputes${qs ? `?${qs}` : ""}`);
   },
 
   /**
-   * Mở tranh chấp mới cho một Milestone
+   * API 2: Mở yêu cầu Resolution Center mới cho một Milestone
    */
   createDispute(body: CreateDisputeBodyType) {
     return http.post<DisputeDetailType>("/disputes", body);
   },
 
   /**
-   * Lấy chi tiết Dispute theo disputeId
+   * API 3: Lấy chi tiết theo disputeId
    */
   getDisputeDetail(disputeId: number) {
     return http.get<DisputeDetailType>(`/disputes/${disputeId}`);
   },
 
   /**
-   * Lấy chi tiết Dispute theo milestoneId
+   * Lấy chi tiết theo milestoneId
    */
   getByMilestoneId(milestoneId: number) {
     return http.get<DisputeDetailType>(`/disputes/milestone/${milestoneId}`);
   },
 
   /**
-   * Respondent phản hồi tranh chấp và gửi kèm bằng chứng (chỉ 1 lần duy nhất)
+   * API 4: Bên còn lại phản hồi yêu cầu (ACCEPT hoặc DECLINE kèm lý do)
    */
-  submitResponse(disputeId: number, body: SubmitDisputeResponseBodyType) {
-    return http.post<DisputeDetailType>(`/disputes/${disputeId}/response`, body);
+  respondToDispute(disputeId: number, body: RespondDisputeBodyType) {
+    return http.patch<DisputeDetailType>(`/disputes/${disputeId}/respond`, body);
   },
 
   /**
-   * Chấp thuận (ACCEPT) hoặc Từ chối (REJECT kèm lý do) quyết định phân xử
+   * API 5: Người tạo rút lại yêu cầu
+   */
+  withdrawDispute(disputeId: number) {
+    return http.patch<DisputeDetailType>(`/disputes/${disputeId}/withdraw`, {});
+  },
+
+  /**
+   * API 6: Gửi khiếu nại leo thang lên Chuyên gia (Expert) khi bị Decline hoặc quá 48h
+   */
+  escalateDispute(disputeId: number) {
+    return http.post<DisputeDetailType>(`/disputes/${disputeId}/escalate`, {});
+  },
+
+  /**
+   * Chấp thuận (ACCEPT) hoặc Từ chối (REJECT kèm lý do) phán quyết của Expert
    */
   submitDecisionReview(
     disputeId: number,
@@ -61,43 +92,65 @@ export const disputeApiRequest = {
   },
 
   /**
-   * Admin: Lấy danh sách tranh chấp
+   * API 7 (Expert): Lấy danh sách tranh chấp
    */
-  adminListDisputes(query: { page?: number; limit?: number; status?: string } = {}) {
+  expertListDisputes(
+    query: { page?: number; limit?: number; status?: string } = {},
+  ) {
     const params = new URLSearchParams();
     if (query.page) params.append("page", query.page.toString());
     if (query.limit) params.append("limit", query.limit.toString());
     if (query.status) params.append("status", query.status);
     const qs = params.toString();
-    return http.get<{ data: DisputeDetailType[]; pagination: { page: number; limit: number; total: number; totalPages: number } }>(
-      `/admin/disputes${qs ? `?${qs}` : ""}`,
+    return http.get<{
+      data: DisputeDetailType[];
+      pagination: {
+        page: number;
+        limit: number;
+        total: number;
+        totalPages: number;
+      };
+    }>(`/expert/disputes${qs ? `?${qs}` : ""}`);
+  },
+
+  /**
+   * API 7 (Expert): Lấy chi tiết tranh chấp
+   */
+  expertGetDisputeDetail(disputeId: number) {
+    return http.get<DisputeDetailType>(`/expert/disputes/${disputeId}`);
+  },
+
+  /**
+   * API 7 (Expert): Đưa ra phán quyết sơ bộ (DECISION_MADE)
+   */
+  expertMakeDecision(
+    disputeId: number,
+    body: {
+      freelancerAmount: number;
+      clientAmount: number;
+      decisionReason: string;
+    },
+  ) {
+    return http.post<DisputeDetailType>(
+      `/expert/disputes/${disputeId}/decision`,
+      body,
     );
   },
 
   /**
-   * Admin: Lấy chi tiết tranh chấp
+   * API 7 (Expert): Đưa ra phán quyết cuối cùng (FINALIZED)
    */
-  adminGetDisputeDetail(disputeId: number) {
-    return http.get<DisputeDetailType>(`/admin/disputes/${disputeId}`);
-  },
-
-  /**
-   * Admin: Đưa ra quyết định sơ bộ (DECISION_MADE)
-   */
-  adminMakeDecision(
+  expertFinalDecision(
     disputeId: number,
-    body: { freelancerAmount: number; clientAmount: number; decisionReason: string },
+    body: {
+      freelancerAmount: number;
+      clientAmount: number;
+      decisionReason: string;
+    },
   ) {
-    return http.post<DisputeDetailType>(`/admin/disputes/${disputeId}/decision`, body);
-  },
-
-  /**
-   * Admin: Đưa ra quyết định cuối cùng (FINALIZED)
-   */
-  adminFinalDecision(
-    disputeId: number,
-    body: { freelancerAmount: number; clientAmount: number; decisionReason: string },
-  ) {
-    return http.post<DisputeDetailType>(`/admin/disputes/${disputeId}/final-decision`, body);
+    return http.post<DisputeDetailType>(
+      `/expert/disputes/${disputeId}/final-decision`,
+      body,
+    );
   },
 };

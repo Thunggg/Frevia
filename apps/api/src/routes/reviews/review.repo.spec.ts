@@ -3,6 +3,46 @@ import { PrismaService } from '../../shared/services/prisma.service';
 import { ReviewRepository } from './review.repo';
 
 describe('ReviewRepository', () => {
+  it('replaces a deleted review and hides its old response before notifying', async () => {
+    const restoredReview = { id: 41, deletedAt: null };
+    const transaction = {
+      review: {
+        update: jest.fn().mockResolvedValue(restoredReview),
+        create: jest.fn(),
+      },
+      reviewResponse: { updateMany: jest.fn().mockResolvedValue({ count: 1 }) },
+      notification: { create: jest.fn().mockResolvedValue({ id: 73 }) },
+    };
+    const prisma = {
+      $transaction: jest.fn(
+        (callback: (client: typeof transaction) => unknown) =>
+          callback(transaction),
+      ),
+    };
+    const repository = new ReviewRepository(prisma as unknown as PrismaService);
+
+    await expect(
+      repository.create(12, 3, 8, 'Jordan Tran', { overallRating: 5 }, 41),
+    ).resolves.toBe(restoredReview);
+
+    expect(transaction.review.update).toHaveBeenCalledWith({
+      where: { id: 41, deletedAt: { not: null } },
+      data: expect.objectContaining({
+        overallRating: 5,
+        comment: null,
+        deletedAt: null,
+        createdAt: expect.any(Date),
+      }),
+      select: expect.any(Object),
+    });
+    expect(transaction.reviewResponse.updateMany).toHaveBeenCalledWith({
+      where: { reviewId: 41, deletedAt: null },
+      data: { deletedAt: expect.any(Date) },
+    });
+    expect(transaction.review.create).not.toHaveBeenCalled();
+    expect(transaction.notification.create).toHaveBeenCalledTimes(1);
+  });
+
   it('creates the review and recipient notification in one transaction', async () => {
     const createdReview = { id: 41 };
     const transaction = {

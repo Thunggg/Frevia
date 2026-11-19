@@ -3,7 +3,7 @@
 import { useFormatter, useTranslations } from "next-intl";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "motion/react";
 import {
   Briefcase,
@@ -479,7 +479,7 @@ export function JobList({
   const tStatus = useTranslations("jobStatus");
   const tSidebar = useTranslations("sidebar");
   const tCommon = useTranslations("common");
-  const { can } = useActionPermission();
+  const { can, isLoading: isPermissionLoading } = useActionPermission();
 
   const canViewList = can("GET", "/api/manage-jobs");
   const canCreate = can("POST", "/api/manage-jobs");
@@ -489,6 +489,10 @@ export function JobList({
   const canReopen = can("PATCH", "/api/manage-jobs/:id/reopen");
 
   const [jobs, setJobs] = useState<JobType[]>(initialJobs);
+
+  useEffect(() => {
+    setJobs(initialJobs);
+  }, [initialJobs]);
   const [statusFilter, setStatusFilter] = useState<StatusFilterType>("ALL");
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingJob, setEditingJob] = useState<JobType | null>(null);
@@ -553,6 +557,7 @@ export function JobList({
       );
       toastSuccess({ message: t("published") });
       setPendingPublishJobId(null);
+      router.refresh();
     } catch (error) {
       const message =
         error instanceof ApiFail
@@ -578,6 +583,7 @@ export function JobList({
         ),
       );
       toastSuccess({ message: t("closed") });
+      router.refresh();
     } catch {
       toastError({ message: t("closeFailed") });
     }
@@ -597,6 +603,7 @@ export function JobList({
         ),
       );
       toastSuccess({ message: t("reopened") });
+      router.refresh();
     } catch {
       toastError({ message: t("reopenFailed") });
     }
@@ -614,12 +621,13 @@ export function JobList({
       await jobApiRequest.deleteJob(id);
       setJobs((prev) => prev.filter((j) => j.id !== id));
       toastSuccess({ message: t("deleted") });
+      router.refresh();
     } catch {
       toastError({ message: t("deleteFailed") });
     }
   };
 
-  if (!canViewList) {
+  if (!isPermissionLoading && !canViewList) {
     return (
       <div className="min-h-full bg-background font-sans p-6 sm:p-10">
         <div className="rounded-2xl border border-border bg-card p-12 text-center text-muted-foreground">

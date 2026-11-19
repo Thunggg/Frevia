@@ -1,6 +1,6 @@
 import "server-only";
 
-import { cookies } from "next/headers";
+import { getServerAccessToken } from "@/lib/auth-session";
 
 import { envConfig } from "@/configs/validate-env";
 import type {
@@ -9,7 +9,6 @@ import type {
   ApiResponse,
   BannerAdminDetailResponseType,
   BannerAdminListResponseType,
-  DisputeDetailType,
   ForumAdminCategoryListResponseType,
   ForumAdminCommentListResponseType,
   ForumAdminStatsType,
@@ -42,7 +41,7 @@ function buildQueryString(
 }
 
 async function adminServerFetch<T>(url: string): Promise<T | null> {
-  const accessToken = (await cookies()).get("accessToken")?.value;
+  const accessToken = await getServerAccessToken();
 
   if (!accessToken || !envConfig?.NESTJS_API_URL) {
     return null;
@@ -299,37 +298,6 @@ const adminServerRequest = {
     return (
       result ?? {
         documents: [],
-        pagination: { page: 1, limit: 10, total: 0, totalPages: 0 },
-      }
-    );
-  },
-
-  async getDisputes(
-    page: number = 1,
-    limit: number = 10,
-    status?: string,
-  ): Promise<{
-    data: DisputeDetailType[];
-    pagination: {
-      page: number;
-      limit: number;
-      total: number;
-      totalPages: number;
-    };
-  }> {
-    const query = buildQueryString({ page, limit, status });
-    const result = await adminServerFetch<{
-      data: DisputeDetailType[];
-      pagination: {
-        page: number;
-        limit: number;
-        total: number;
-        totalPages: number;
-      };
-    }>(`/api/admin/disputes${query}`);
-    return (
-      result ?? {
-        data: [],
         pagination: { page: 1, limit: 10, total: 0, totalPages: 0 },
       }
     );

@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { Check, FileText, Lock, Play, Upload } from "lucide-react";
 import type { MilestoneType } from "@shared/types";
 
@@ -8,6 +9,7 @@ interface MilestoneMiniStepperProps {
 }
 
 export function MilestoneMiniStepper({ milestone }: MilestoneMiniStepperProps) {
+  const t = useTranslations("milestoneWorkspace.stepper");
   const isFunded =
     milestone.paymentStatus === "FUNDED" ||
     milestone.paymentStatus === "RELEASED";
@@ -26,15 +28,18 @@ export function MilestoneMiniStepper({ milestone }: MilestoneMiniStepperProps) {
   const isCompleted = milestone.status === "COMPLETED";
 
   const steps = [
-    { id: 1, label: "Created", completed: true, icon: FileText },
-    { id: 2, label: "Funded", completed: isFunded, icon: Lock },
-    { id: 3, label: "In Progress", completed: isStarted, icon: Play },
-    { id: 4, label: "Submitted", completed: isSubmitted, icon: Upload },
-    { id: 5, label: "Released", completed: isCompleted, icon: Check },
+    { id: 1, label: t("created"), completed: true, icon: FileText },
+    { id: 2, label: t("funded"), completed: isFunded, icon: Lock },
+    { id: 3, label: t("inProgress"), completed: isStarted, icon: Play },
+    { id: 4, label: t("submitted"), completed: isSubmitted, icon: Upload },
+    { id: 5, label: t("released"), completed: isCompleted, icon: Check },
   ];
 
   return (
-    <div className="inline-flex items-center" title={`Progress: ${milestone.status}`}>
+    <div
+      className="inline-flex items-center"
+      title={t("progressTitle", { status: milestone.status })}
+    >
       {steps.map((step, idx) => {
         const Icon = step.icon;
         const isLast = idx === steps.length - 1;

@@ -1,4 +1,4 @@
-import { HttpException, Injectable } from '@nestjs/common';
+import { HttpException, Injectable, Logger } from '@nestjs/common';
 import { ForumLikeRepository } from './forums-like.repo';
 import { ToggleLikeResponseType } from '@shared/types';
 import {
@@ -6,10 +6,16 @@ import {
   FailedToLikeForumPostException,
   FailedToViewForumLikeDetailException,
 } from './forums-like.error';
+import { NotificationRealtimeService } from '../../../shared/services/notification-realtime.service';
 
 @Injectable()
 export class ForumLikeService {
-  constructor(private readonly forumLikeRepository: ForumLikeRepository) {}
+  private readonly logger = new Logger(ForumLikeService.name);
+
+  constructor(
+    private readonly forumLikeRepository: ForumLikeRepository,
+    private readonly notificationRealtime: NotificationRealtimeService,
+  ) {}
 
   async toggleLikePost(
     userId: number,
@@ -38,6 +44,27 @@ export class ForumLikeService {
 
       // Nếu người dùng chưa like post -> like post
       await this.forumLikeRepository.createPostLike(userId, postId);
+
+      // Thông báo cho chủ bài viết (không chặn like nếu lỗi)
+      try {
+        const notification =
+          await this.forumLikeRepository.createPostLikeNotification({
+            postAuthorId: existingPost.userId,
+            likerId: userId,
+            postId: existingPost.id,
+            postSlug: existingPost.slug,
+            categoryId: existingPost.categoryId,
+            categorySlug: existingPost.category?.slug ?? null,
+          });
+
+        if (notification) {
+          this.notificationRealtime.emit(existingPost.userId, notification);
+        }
+      } catch (notifyError) {
+        this.logger.warn(
+          `Failed to create like notification: ${(notifyError as Error).message}`,
+        );
+      }
 
       return {
         liked: true,

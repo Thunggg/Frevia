@@ -4,12 +4,14 @@
 % Function Trigger, Function Description, Screen Layout and Function Details.
 % =================================================================
 
+\Needspace{12\baselineskip}
 \subsection{Job Browsing}
 
 % -----------------------------------------------------------------
 % UC-10.01: View Job List
 % -----------------------------------------------------------------
-\subsubsection{Function: View Job List}
+\Needspace{12\baselineskip}
+\subsubsection{View Job List}
 
 \fnhead{Function Trigger}
 A guest, freelancer, or client accesses the marketplace job catalog from the navigation menu or search input.\newline
@@ -111,7 +113,8 @@ A3 & Database connection timeout. Backend returns HTTP 500; frontend displays er
 % -----------------------------------------------------------------
 % UC-10.02: View Job Detail
 % -----------------------------------------------------------------
-\subsubsection{Function: View Job Detail}
+\Needspace{12\baselineskip}
+\subsubsection{View Job Detail}
 
 \fnhead{Function Trigger}
 A user clicks on a job card or navigates directly via a job slug URL.\newline
@@ -200,12 +203,14 @@ Job Object & Complete entity containing \texttt{id}, \texttt{title}, \texttt{des
     \item Proposal action is enabled if user is an eligible freelancer.
 \end{itemize}
 
+\Needspace{12\baselineskip}
 \subsection{Job Management}
 
 % -----------------------------------------------------------------
 % UC-11.01: View My Jobs
 % -----------------------------------------------------------------
-\subsubsection{Function: View My Jobs}
+\Needspace{12\baselineskip}
+\subsubsection{View My Jobs}
 
 \fnhead{Function Trigger}
 A client clicks on ``My Jobs'' in the main navigation.\newline
@@ -292,7 +297,8 @@ A2 & No jobs created yet. UI shows empty state with ``Post a Job'' call to actio
 % -----------------------------------------------------------------
 % UC-11.02: Create Job
 % -----------------------------------------------------------------
-\subsubsection{Function: Create Job}
+\Needspace{12\baselineskip}
+\subsubsection{Create Job}
 
 \fnhead{Function Trigger}
 A client clicks ``Post a Job'' from the client workspace.\newline
@@ -393,7 +399,8 @@ Job Record & Created entity with \texttt{id}, \texttt{slug}, \texttt{status = DR
 % -----------------------------------------------------------------
 % UC-11.03: Publish Job
 % -----------------------------------------------------------------
-\subsubsection{Function: Publish Job}
+\Needspace{12\baselineskip}
+\subsubsection{Publish Job}
 
 \fnhead{Function Trigger}
 A client clicks ``Publish Job'' on a draft job posting.\newline
@@ -483,7 +490,8 @@ Updated Job & Job object with \texttt{status = OPEN} and populated \texttt{publi
 % -----------------------------------------------------------------
 % UC-11.04: Update Job
 % -----------------------------------------------------------------
-\subsubsection{Function: Update Job}
+\Needspace{12\baselineskip}
+\subsubsection{Update Job}
 
 \fnhead{Function Trigger}
 A client clicks ``Edit'' on an active or draft job.\newline
@@ -573,7 +581,8 @@ Job Object & Updated job entity reflecting modifications.\\ \hline
 % -----------------------------------------------------------------
 % UC-11.05: Delete Job
 % -----------------------------------------------------------------
-\subsubsection{Function: Delete Job}
+\Needspace{12\baselineskip}
+\subsubsection{Delete Job}
 
 \fnhead{Function Trigger}
 A client clicks ``Delete'' on a draft or inactive job.\newline
@@ -659,7 +668,8 @@ Result & Status confirmation confirming job deletion.\\ \hline
 % -----------------------------------------------------------------
 % UC-11.06: Close Job
 % -----------------------------------------------------------------
-\subsubsection{Function: Close Job}
+\Needspace{12\baselineskip}
+\subsubsection{Close Job}
 
 \fnhead{Function Trigger}
 A client closes an open job before the expiration deadline.\newline
@@ -743,7 +753,8 @@ Updated Job & Job entity with \texttt{status = CLOSED}.\\ \hline
 % -----------------------------------------------------------------
 % UC-11.07: Reopen Job
 % -----------------------------------------------------------------
-\subsubsection{Function: Reopen Job}
+\Needspace{12\baselineskip}
+\subsubsection{Reopen Job}
 
 \fnhead{Function Trigger}
 A client re-activates a previously closed job.\newline
@@ -824,12 +835,14 @@ Reopened Job & Job entity with \texttt{status = OPEN} and updated \texttt{expiry
     \item Job is restored to \texttt{OPEN} status and visible in search.
 \end{itemize}
 
+\Needspace{12\baselineskip}
 \subsection{Bookmarked Jobs Management}
 
 % -----------------------------------------------------------------
 % UC-12.01: View Bookmarked Job List
 % -----------------------------------------------------------------
-\subsubsection{Function: View Bookmarked Job List}
+\Needspace{12\baselineskip}
+\subsubsection{View Bookmarked Job List}
 
 \fnhead{Function Trigger}
 A freelancer clicks ``Saved Jobs'' from the workspace menu.\newline
@@ -916,7 +929,8 @@ A1 & No jobs bookmarked yet. UI renders friendly empty state with a ``Browse Job
 % -----------------------------------------------------------------
 % UC-12.02: Bookmark Job
 % -----------------------------------------------------------------
-\subsubsection{Function: Bookmark Job}
+\Needspace{12\baselineskip}
+\subsubsection{Bookmark Job}
 
 \fnhead{Function Trigger}
 A freelancer clicks the bookmark / heart icon on a job card or detail screen.\newline
@@ -1001,7 +1015,8 @@ Bookmark Object & Created record with \texttt{id}, \texttt{userId}, \texttt{jobI
 % -----------------------------------------------------------------
 % UC-12.03: Remove Bookmark
 % -----------------------------------------------------------------
-\subsubsection{Function: Remove Bookmark}
+\Needspace{12\baselineskip}
+\subsubsection{Remove Bookmark}
 
 \fnhead{Function Trigger}
 A freelancer clicks the active bookmark icon or ``Remove'' button on a saved job.\newline

@@ -139,6 +139,20 @@ export class ConversationService {
     conversationIdOrSlug: number | string,
     userId: number,
   ): Promise<ConversationListItemType | null> {
+    if (
+      typeof this.conversationRepository.findConversationItemForUser ===
+      'function'
+    ) {
+      const conversation =
+        await this.conversationRepository.findConversationItemForUser(
+          conversationIdOrSlug,
+          userId,
+        );
+      return conversation
+        ? this.buildConversationItem(conversation, userId)
+        : null;
+    }
+
     const all =
       await this.conversationRepository.getConversationsByUserId(userId);
     const conversation = all.find(
@@ -261,6 +275,31 @@ export class ConversationService {
       // Có tin nhắn mới => bỏ ẩn conversation cho cả 2 phía
       await this.conversationRepository.unhideConversation(conversation.id);
 
+      // Ghi thông báo tin nhắn mới cho người nhận (không chặn việc gửi nếu lỗi)
+      try {
+        const receiverId =
+          conversation.participant1 === userId
+            ? conversation.participant2
+            : conversation.participant1;
+
+        if (receiverId && receiverId !== userId) {
+          const senderName =
+            await this.conversationRepository.findUserDisplayName(userId);
+
+          await this.conversationRepository.upsertMessageNotification({
+            userId: receiverId,
+            conversationId: conversation.id,
+            senderId: userId,
+            senderName,
+            message,
+          });
+        }
+      } catch (notifyError) {
+        this.logger.warn(
+          `Failed to create message notification: ${(notifyError as Error).message}`,
+        );
+      }
+
       return savedMessage;
     } catch (error) {
       if (error instanceof HttpException) {
@@ -348,6 +387,12 @@ export class ConversationService {
       const result = await this.conversationRepository.markMessagesAsRead(
         conversation.id,
         userId,
+      );
+
+      // Đọc hội thoại => xóa thông báo tin nhắn mới của hội thoại này
+      await this.conversationRepository.clearMessageNotifications(
+        userId,
+        conversation.id,
       );
 
       return { count: result.count };

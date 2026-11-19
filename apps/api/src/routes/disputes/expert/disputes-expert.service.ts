@@ -1,0 +1,199 @@
+import { HttpException, Injectable, Logger } from '@nestjs/common';
+import {
+  DisputeStatus,
+  MilestonePaymentStatus,
+  MilestoneStatus,
+} from '@prisma/client';
+import {
+  AdminDisputeDecisionBodyType,
+  AdminDisputeFinalDecisionBodyType,
+  GetDisputeListQueryType,
+  RoleName,
+} from '@shared/types';
+import { PaymentService } from '../../payments/payment.service';
+import {
+  ExpertDisputeAlreadyFinalizedException,
+  ExpertDisputeDecisionNotPendingException,
+  ExpertDisputeForbiddenException,
+  ExpertDisputeInvalidSplitAmountException,
+  ExpertDisputeNotFoundException,
+  FailedToFinalizeExpertDisputeException,
+  FailedToLoadExpertDisputeException,
+  FailedToMakeExpertDisputeDecisionException,
+} from './disputes-expert.error';
+import { DisputesExpertRepository } from './disputes-expert.repo';
+
+@Injectable()
+export class DisputesExpertService {
+  private readonly logger = new Logger(DisputesExpertService.name);
+
+  constructor(
+    private readonly expertDisputeRepo: DisputesExpertRepository,
+    private readonly paymentService: PaymentService,
+  ) { }
+
+  async requireActiveExpert(roleName: string, userId: number) {
+    if (roleName !== RoleName.EXPERT) {
+      throw ExpertDisputeForbiddenException();
+    }
+    if (!(await this.expertDisputeRepo.findActiveExpert(userId))) {
+      throw ExpertDisputeForbiddenException();
+    }
+  }
+
+  async listDisputes(
+    userId: number,
+    roleName: string,
+    query: GetDisputeListQueryType,
+  ) {
+    try {
+      await this.requireActiveExpert(roleName, userId);
+      return await this.expertDisputeRepo.listDisputes(query);
+    } catch (error) {
+      if (error instanceof HttpException) throw error;
+      this.logger.error('Failed to list disputes for expert', error);
+      throw FailedToLoadExpertDisputeException();
+    }
+  }
+
+  async getDisputeDetail(userId: number, roleName: string, disputeId: number) {
+    try {
+      await this.requireActiveExpert(roleName, userId);
+
+      const dispute = await this.expertDisputeRepo.findDisputeById(disputeId);
+      if (!dispute) {
+        throw ExpertDisputeNotFoundException();
+      }
+
+      const contract = dispute.milestone?.contract;
+      const conversationMessages =
+        contract &&
+        typeof this.expertDisputeRepo.findConversationMessages === 'function'
+          ? await this.expertDisputeRepo.findConversationMessages(
+              contract.clientId,
+              contract.freelancerId,
+            )
+          : [];
+
+      return {
+        ...dispute,
+        conversationMessages,
+      };
+    } catch (error) {
+      if (error instanceof HttpException) throw error;
+      this.logger.error('Failed to load dispute detail for expert', error);
+      throw FailedToLoadExpertDisputeException();
+    }
+  }
+
+  async makeDecision(
+    expertId: number,
+    roleName: string,
+    disputeId: number,
+    body: AdminDisputeDecisionBodyType,
+  ) {
+    try {
+      await this.requireActiveExpert(roleName, expertId);
+
+      const dispute = await this.expertDisputeRepo.findDisputeById(disputeId);
+      if (!dispute) {
+        throw ExpertDisputeNotFoundException();
+      }
+
+      if (dispute.status !== DisputeStatus.UNDER_REVIEW) {
+        throw ExpertDisputeDecisionNotPendingException();
+      }
+
+      const milestoneAmount = Number(dispute.milestone.amount);
+      const totalDecided = Number(
+        (body.freelancerAmount + body.clientAmount).toFixed(2),
+      );
+      if (totalDecided !== Number(milestoneAmount.toFixed(2))) {
+        throw ExpertDisputeInvalidSplitAmountException();
+      }
+
+      const clientId = dispute.milestone.contract.clientId;
+      const freelancerId = dispute.milestone.contract.freelancerId;
+
+      return await this.expertDisputeRepo.makeDecisionTransaction(
+        disputeId,
+        expertId,
+        body.freelancerAmount,
+        body.clientAmount,
+        body.decisionReason,
+        clientId,
+        freelancerId,
+      );
+    } catch (error) {
+      if (error instanceof HttpException) throw error;
+      this.logger.error('Failed to make expert dispute decision', error);
+      throw FailedToMakeExpertDisputeDecisionException();
+    }
+  }
+
+  async makeFinalDecision(
+    expertId: number,
+    roleName: string,
+    disputeId: number,
+    body: AdminDisputeFinalDecisionBodyType,
+  ) {
+    try {
+      await this.requireActiveExpert(roleName, expertId);
+
+      const dispute = await this.expertDisputeRepo.findDisputeById(disputeId);
+      if (!dispute) {
+        throw ExpertDisputeNotFoundException();
+      }
+
+      if (dispute.status === DisputeStatus.FINALIZED) {
+        throw ExpertDisputeAlreadyFinalizedException();
+      }
+
+      if (
+        dispute.status !== DisputeStatus.REVIEW_REQUESTED &&
+        dispute.status !== DisputeStatus.DECISION_MADE
+      ) {
+        throw ExpertDisputeDecisionNotPendingException();
+      }
+
+      const milestoneAmount = Number(dispute.milestone.amount);
+      const totalDecided = Number(
+        (body.freelancerAmount + body.clientAmount).toFixed(2),
+      );
+      if (totalDecided !== Number(milestoneAmount.toFixed(2))) {
+        throw ExpertDisputeInvalidSplitAmountException();
+      }
+
+      await this.paymentService.executeDisputeSettlementPayout({
+        disputeId: dispute.id,
+        contractId: dispute.milestone.contractId,
+        milestoneId: dispute.milestoneId,
+        freelancerId: dispute.milestone.contract.freelancerId,
+        clientId: dispute.milestone.contract.clientId,
+        freelancerAmount: body.freelancerAmount,
+        clientAmount: body.clientAmount,
+      });
+
+      const milestonePaymentStatus: MilestonePaymentStatus =
+        body.clientAmount === milestoneAmount
+          ? MilestonePaymentStatus.REFUNDED
+          : MilestonePaymentStatus.RELEASED;
+
+      return await this.expertDisputeRepo.finalizeDisputeTransaction({
+        disputeId: dispute.id,
+        milestoneId: dispute.milestoneId,
+        expertId,
+        freelancerAmount: body.freelancerAmount,
+        clientAmount: body.clientAmount,
+        decisionReason: body.decisionReason,
+        finalDecisionAt: new Date(),
+        milestoneStatus: MilestoneStatus.COMPLETED,
+        milestonePaymentStatus,
+      });
+    } catch (error) {
+      if (error instanceof HttpException) throw error;
+      this.logger.error('Failed to finalize expert dispute decision', error);
+      throw FailedToFinalizeExpertDisputeException();
+    }
+  }
+}

@@ -1,7 +1,11 @@
 import "server-only";
 
 import { cookies } from "next/headers";
-import { accessTokenNeedsRefresh, exchangeRefreshToken } from "@/lib/auth-session";
+import {
+  accessTokenNeedsRefresh,
+  exchangeRefreshToken,
+  getServerAccessToken,
+} from "@/lib/auth-session";
 
 import { envConfig } from "@/configs/validate-env";
 import type {
@@ -71,10 +75,11 @@ async function contractServerFetch<T>(
     return null;
   }
 
-  const cookieStore = await cookies();
-  let accessToken =
-    cookieStore.get("accessToken")?.value ??
-    cookieStore.get("access_token")?.value;
+  const [initialAccessToken, cookieStore] = await Promise.all([
+    getServerAccessToken(),
+    cookies(),
+  ]);
+  let accessToken = initialAccessToken;
   const refreshToken = cookieStore.get("refreshToken")?.value;
 
   if (requireAuth && !accessToken && !refreshToken) {

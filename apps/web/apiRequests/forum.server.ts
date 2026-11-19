@@ -1,7 +1,7 @@
 import "server-only";
 
 import { cache } from "react";
-import { cookies } from "next/headers";
+import { getServerAccessToken } from "@/lib/auth-session";
 
 import { envConfig } from "@/configs/validate-env";
 import type {
@@ -17,7 +17,7 @@ async function forumServerFetch<T>(
   revalidateTime: number = 60,
   tags?: string[],
 ): Promise<T | null> {
-  const accessToken = (await cookies()).get("accessToken")?.value;
+  const accessToken = await getServerAccessToken();
 
   if (!envConfig?.NESTJS_API_URL) {
     return null;

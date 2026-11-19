@@ -2,12 +2,14 @@ import {
   ForgotPasswordBodyType,
   GetAuthorizationUrlResType,
   GetMeResType,
+  JoinRoleBodyType,
   LoginBodyType,
   LoginResType,
   MessageResType,
   RegisterBodyType,
   RegisterResType,
   SendOTPBodyType,
+  SwitchRoleBodyType,
 } from "@shared/types";
 import { http } from "@/lib/http";
 
@@ -32,4 +34,10 @@ export const authApiRequest = {
     ),
 
   me: () => http.get<GetMeResType>("/api/auth/me"),
+
+  switchRole: (body: SwitchRoleBodyType) =>
+    http.post<{ roleName: string }>("/api/auth/switch-role", body, false),
+
+  joinRole: (body: JoinRoleBodyType) =>
+    http.post<{ roleName: string }>("/api/auth/join-role", body, false),
 };

@@ -2,8 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { VerificationCodeType } from '@prisma/client';
 import {
   EmailVerificationType,
+  JoinRoleBodyType,
   OauthProvider,
+  RoleName,
   RoleType,
+  SwitchRoleBodyType,
   TypeOfVerificationCode,
   UserType,
 } from '@shared/types';
@@ -97,6 +100,11 @@ export class AuthRepository {
           password: user.password,
           roleId: user.roleId,
           isBanned: user.isBanned ?? false,
+          userRoles: {
+            create: {
+              roleId: user.roleId,
+            },
+          },
           profile: {
             create: {
               displayName: user.fullName,
@@ -117,6 +125,11 @@ export class AuthRepository {
       data: {
         email: user.email,
         roleId: user.roleId,
+        userRoles: {
+          create: {
+            roleId: user.roleId,
+          },
+        },
         profile: {
           create: {
             displayName: user.fullName,
@@ -276,7 +289,11 @@ export class AuthRepository {
         id: userId,
         deletedAt: null,
       },
-      include: {
+      select: {
+        id: true,
+        email: true,
+        isBanned: true,
+        deletedAt: true,
         profile: {
           select: {
             id: true,
@@ -298,7 +315,210 @@ export class AuthRepository {
             },
           },
         },
+        userRoles: {
+          where: {
+            role: {
+              deletedAt: null,
+            },
+          },
+          select: {
+            roleId: true,
+            role: {
+              select: {
+                id: true,
+                name: true,
+                description: true,
+              },
+            },
+          },
+          orderBy: {
+            assignedAt: 'asc',
+          },
+        },
       },
+    });
+  }
+
+  async switchMarketplaceRole(
+    userId: number,
+    targetRoleName: SwitchRoleBodyType['role'],
+  ) {
+    return this.prisma.$transaction(async (transaction) => {
+      const user = await transaction.user.findUnique({
+        where: { id: userId, deletedAt: null },
+        select: {
+          id: true,
+          isBanned: true,
+          roleId: true,
+          role: {
+            select: {
+              id: true,
+              name: true,
+              description: true,
+            },
+          },
+          userRoles: {
+            where: {
+              role: { deletedAt: null },
+            },
+            select: {
+              roleId: true,
+              role: {
+                select: {
+                  id: true,
+                  name: true,
+                  description: true,
+                },
+              },
+            },
+          },
+        },
+      });
+
+      if (!user || !user.role) {
+        return { status: 'user-not-found' as const };
+      }
+
+      if (user.isBanned) {
+        return { status: 'banned' as const };
+      }
+
+      const currentRoleName = user.role.name;
+      if (
+        currentRoleName !== RoleName.CLIENT &&
+        currentRoleName !== RoleName.FREELANCER
+      ) {
+        return { status: 'forbidden' as const };
+      }
+
+      const ownedTargetRole =
+        user.role.name === targetRoleName
+          ? user.role
+          : user.userRoles.find((ur) => ur.role.name === targetRoleName)?.role;
+
+      if (!ownedTargetRole) {
+        return { status: 'not-owned' as const };
+      }
+
+      if (user.roleId !== ownedTargetRole.id) {
+        await transaction.user.update({
+          where: { id: userId },
+          data: { roleId: ownedTargetRole.id },
+        });
+      }
+
+      return { status: 'switched' as const, role: ownedTargetRole };
+    });
+  }
+
+  async joinMarketplaceRole(
+    userId: number,
+    targetRoleName: JoinRoleBodyType['role'],
+  ) {
+    return this.prisma.$transaction(async (transaction) => {
+      const user = await transaction.user.findUnique({
+        where: { id: userId, deletedAt: null },
+        select: {
+          id: true,
+          isBanned: true,
+          roleId: true,
+          role: {
+            select: {
+              id: true,
+              name: true,
+              description: true,
+            },
+          },
+          userRoles: {
+            where: {
+              role: { deletedAt: null },
+            },
+            select: {
+              roleId: true,
+              role: {
+                select: {
+                  id: true,
+                  name: true,
+                },
+              },
+            },
+          },
+        },
+      });
+
+      if (!user || !user.role) {
+        return { status: 'user-not-found' as const };
+      }
+
+      if (user.isBanned) {
+        return { status: 'banned' as const };
+      }
+
+      const currentRoleName = user.role.name;
+      if (
+        currentRoleName !== RoleName.CLIENT &&
+        currentRoleName !== RoleName.FREELANCER
+      ) {
+        return { status: 'forbidden' as const };
+      }
+
+      const targetRole = await transaction.role.findFirst({
+        where: { name: targetRoleName, deletedAt: null },
+        select: {
+          id: true,
+          name: true,
+          description: true,
+        },
+      });
+
+      if (!targetRole) {
+        return { status: 'role-not-found' as const };
+      }
+
+      const alreadyOwned =
+        user.roleId === targetRole.id ||
+        user.userRoles.some((ur) => ur.roleId === targetRole.id);
+
+      if (alreadyOwned) {
+        return { status: 'already-assigned' as const, role: targetRole };
+      }
+
+      // Explicitly record both the user's current role and newly joined role in UserRole.
+      await transaction.userRole.createMany({
+        data: [
+          { userId, roleId: user.roleId },
+          { userId, roleId: targetRole.id },
+        ],
+        skipDuplicates: true,
+      });
+
+      const profile = await transaction.profile.upsert({
+        where: { userId },
+        create: { userId },
+        update: {},
+        select: { id: true },
+      });
+
+      if (targetRoleName === RoleName.FREELANCER) {
+        await transaction.freelancerProfile.upsert({
+          where: { profileId: profile.id },
+          create: { profileId: profile.id },
+          update: {},
+        });
+      } else {
+        await transaction.clientProfile.upsert({
+          where: { profileId: profile.id },
+          create: { profileId: profile.id },
+          update: {},
+        });
+      }
+
+      await transaction.user.update({
+        where: { id: userId },
+        data: { roleId: targetRole.id },
+      });
+
+      return { status: 'joined' as const, role: targetRole };
     });
   }
 

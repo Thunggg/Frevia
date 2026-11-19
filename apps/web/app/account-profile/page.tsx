@@ -16,19 +16,17 @@ export default async function AccountProfileRedirectPage() {
     redirect("/client/profile");
   }
 
-  if (primaryRole === RoleName.EXPERT) {
-    redirect("/expert/profile");
+  if (primaryRole === RoleName.FREELANCER) {
+    redirect("/freelancer/profile");
   }
 
   if (
     primaryRole === RoleName.ADMIN ||
-    (primaryRole !== RoleName.CLIENT &&
-      primaryRole !== RoleName.FREELANCER &&
-      canAccessAdminPortal(user))
+    canAccessAdminPortal(user)
   ) {
     redirect("/admin/profile");
   }
 
-  redirect("/freelancer/profile");
+  redirect("/access-denied?requiredRole=admin");
 }
 

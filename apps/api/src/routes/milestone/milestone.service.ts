@@ -13,6 +13,7 @@ import {
   FailedToUpdateMilestoneException,
   MilestoneAmountExceedsContractException,
   MilestoneCannotBeDeletedException,
+  MilestoneCannotDeleteLastException,
   MilestoneCannotBeEditedException,
   MilestoneContractExpiresAtRequiredException,
   MilestoneContractNotFoundException,
@@ -24,6 +25,7 @@ import {
   FailedToProgressMilestoneException,
   MilestonePaymentStatusException,
   MilestoneAlreadyInProgressException,
+  MilestonePreviousNotCompletedException,
 } from './milestone.error';
 import { RoleName } from '@shared/types';
 import {
@@ -238,6 +240,12 @@ export class MilestoneService {
         throw MilestoneCannotBeDeletedException();
       }
 
+      const activeCount =
+        await this.milestoneRepository.countActiveMilestones(contractId);
+      if (activeCount <= 1) {
+        throw MilestoneCannotDeleteLastException();
+      }
+
       return await this.milestoneRepository.deleteMilestone(milestoneId);
     } catch (error) {
       if (error instanceof HttpException) throw error;
@@ -285,6 +293,16 @@ export class MilestoneService {
 
       if (inProgressMilestone && inProgressMilestone.id !== milestoneId) {
         throw MilestoneAlreadyInProgressException();
+      }
+
+      const incompletePreviousMilestone =
+        await this.milestoneRepository.findIncompletePreviousMilestone(
+          contractId,
+          milestoneId,
+        );
+
+      if (incompletePreviousMilestone) {
+        throw MilestonePreviousNotCompletedException();
       }
 
       return await this.milestoneRepository.progressMilestone(milestoneId);

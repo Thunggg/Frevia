@@ -1,45 +1,48 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, Optional } from '@nestjs/common';
+import { Prisma } from '@prisma/client';
 import {
+  ProfileMessage,
+  RoleName,
   type AddFreelancerSkillType,
   type CvAnalysisConfirmType,
   type CvAnalysisDraftType,
   type CvAnalysisPayloadType,
   type CvSourceType,
   type UpdateFreelancerProfileType,
-  RoleName,
-  ProfileMessage,
 } from '@shared/types';
-import { ProfileRepository } from './profile.repo';
-import { CloudinaryService } from '../../shared/services/cloudinary.service';
+import { randomUUID } from 'crypto';
+import { mkdir, readFile, unlink, writeFile } from 'fs/promises';
+import { dirname, isAbsolute, join, relative, resolve } from 'path';
 import {
   AiCvAnalyzerService,
   type AiCvAnalysis,
   type AiCvSource,
 } from '../../shared/services/ai-cv-analyzer.service';
+import { CacheService } from '../../shared/services/cache.service';
+import { CloudinaryService } from '../../shared/services/cloudinary.service';
+import { AUTH_ME_CACHE_PREFIX } from '../auth/auth.service';
 import { SkillResolverService } from '../../shared/services/skill-resolver.service';
 import { ProfileRevisionService } from '../profile-revisions/profile-revision.service';
 import { EmbeddingOutboxService } from '../recommendations/embedding-outbox.service';
-import { randomUUID } from 'crypto';
-import { mkdir, readFile, unlink, writeFile } from 'fs/promises';
-import { dirname, isAbsolute, join, relative, resolve } from 'path';
 import {
-  FreelancerProfileNotFoundException,
-  FreelancerSkillNotFoundException,
-  FreelancerSkillDuplicateException,
-  ProfileForbiddenException,
-  SkillForbiddenException,
+  CvAiUnavailableException,
+  CvAnalysisNotFoundException,
+  CvAnalysisNotPendingException,
+  CvAnalysisStaleException,
+  CvEncryptedException,
   CvFileInvalidException,
   CvFileRequiredException,
   CvFileTooLargeException,
   CvFileTypeException,
   CvNotFoundException,
-  CvAiUnavailableException,
   CvTextEmptyException,
-  CvEncryptedException,
-  CvAnalysisNotFoundException,
-  CvAnalysisNotPendingException,
-  CvAnalysisStaleException,
+  FreelancerProfileNotFoundException,
+  FreelancerSkillDuplicateException,
+  FreelancerSkillNotFoundException,
+  ProfileForbiddenException,
+  SkillForbiddenException,
 } from './profile.error';
+import { ProfileRepository } from './profile.repo';
 
 const CV_SOURCE_MAP: Record<AiCvSource, CvSourceType> = {
   pdf_text: 'PDF_TEXT',
@@ -59,6 +62,7 @@ export class ProfileService {
     private readonly skillResolver: SkillResolverService,
     private readonly profileRevisionService: ProfileRevisionService,
     private readonly embeddingOutbox: EmbeddingOutboxService,
+    @Optional() private readonly cacheService?: CacheService,
   ) {}
 
   private async getOwnedFreelancerProfile(profileId: number, userId: number) {
@@ -503,10 +507,27 @@ export class ProfileService {
     return { buffer, fileName };
   }
 
+  private isPublicFreelancerProfile(
+    profile: {
+      user?: {
+        role?: { name?: string | null } | null;
+        userRoles?: Array<{ role?: { name?: string | null } | null }>;
+      } | null;
+    } | null,
+  ) {
+    if (!profile) return false;
+    return (
+      profile.user?.role?.name === RoleName.FREELANCER ||
+      profile.user?.userRoles?.some(
+        (assignment) => assignment.role?.name === RoleName.FREELANCER,
+      ) === true
+    );
+  }
+
   async viewProfile(profileId: number) {
     const profile =
       await this.profileRepository.findFreelancerProfileById(profileId);
-    if (!profile || profile.user?.role?.name !== RoleName.FREELANCER) {
+    if (!this.isPublicFreelancerProfile(profile)) {
       throw FreelancerProfileNotFoundException();
     }
     return profile;
@@ -530,12 +551,24 @@ export class ProfileService {
     const update = {
       displayName: dto.displayName,
       title: dto.title,
-      bio: dto.bio,
+      bio: dto.bio === undefined ? profile.bio : dto.bio,
       availabilityStatus: dto.availabilityStatus,
-      education: dto.education,
-      certifications: dto.certifications,
-      languages: dto.languages,
-      experience: dto.experience,
+      education:
+        dto.education === undefined
+          ? profile.freelancerProfile?.education
+          : dto.education,
+      certifications:
+        dto.certifications === undefined
+          ? profile.freelancerProfile?.certifications
+          : dto.certifications,
+      languages:
+        dto.languages === undefined
+          ? profile.freelancerProfile?.languages
+          : dto.languages,
+      experience:
+        dto.experience === undefined
+          ? profile.freelancerProfile?.experience
+          : dto.experience,
     };
 
     if (
@@ -555,6 +588,7 @@ export class ProfileService {
       profile.id,
       update,
     );
+    this.cacheService?.del(`${AUTH_ME_CACHE_PREFIX}${currentUserId}`);
     await this.embeddingOutbox.enqueueAndProcess({
       eventType: 'UPSERT',
       documentType: 'CV',
@@ -568,11 +602,11 @@ export class ProfileService {
   async getSkills(profileId: number) {
     const profile =
       await this.profileRepository.findFreelancerProfileById(profileId);
-    if (!profile || profile.user?.role?.name !== RoleName.FREELANCER) {
+    if (!profile || !this.isPublicFreelancerProfile(profile)) {
       throw FreelancerProfileNotFoundException();
     }
 
-    return this.profileRepository.findSkillsByProfileId(profileId);
+    return this.profileRepository.findSkillsByProfileId(profile.id);
   }
 
   async searchSkillSuggestions(search?: string) {
@@ -601,22 +635,28 @@ export class ProfileService {
 
     const existingSkill =
       await this.profileRepository.findSkillByProfileIdAndSkillId(
-        profileId,
+        profile.id,
         catalogSkill.id,
       );
     if (existingSkill) {
       throw FreelancerSkillDuplicateException();
     }
 
-    const result = await this.profileRepository.addSkillToProfile(
-      profileId,
-      catalogSkill.id,
-      dto.proficiencyLevel,
-    );
+    const result = await this.profileRepository
+      .addSkillToProfile(profile.id, catalogSkill.id, dto.proficiencyLevel)
+      .catch((error: unknown) => {
+        if (
+          error instanceof Prisma.PrismaClientKnownRequestError &&
+          error.code === 'P2002'
+        ) {
+          throw FreelancerSkillDuplicateException();
+        }
+        throw error;
+      });
     await this.embeddingOutbox.enqueueAndProcess({
       eventType: 'UPSERT',
       documentType: 'CV',
-      documentId: profileId,
+      documentId: profile.id,
     });
     return result;
   }
@@ -635,7 +675,7 @@ export class ProfileService {
     await this.embeddingOutbox.enqueueAndProcess({
       eventType: 'UPSERT',
       documentType: 'CV',
-      documentId: skill.freelancerProfile.id,
+      documentId: skill.freelancerProfile.profile.id,
     });
     return result;
   }

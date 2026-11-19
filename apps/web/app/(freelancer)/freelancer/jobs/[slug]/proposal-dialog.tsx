@@ -5,6 +5,7 @@ import { useBackendMessage } from "@/hooks/use-backend-message";
 import { Loader2 } from "@/components/icons";
 import { useFormatter, useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
+import { useQueryClient } from "@tanstack/react-query";
 import { Controller, useForm } from "react-hook-form";
 import { useState } from "react";
 
@@ -58,6 +59,7 @@ export function ProposalDialog({
   onOpenChange,
 }: ProposalDialogProps) {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const t = useTranslations("jobProposal");
   const format = useFormatter();
   const translateMessage = useBackendMessage();
@@ -106,7 +108,8 @@ export function ProposalDialog({
   const finish = (proposalId: number, message: string, redirect = true) => {
     toastSuccess({ message });
     onOpenChange(false);
-    if (redirect) router.push(`/proposals/${proposalId}`);
+    void queryClient.invalidateQueries({ queryKey: ["proposals"] });
+    if (redirect) router.push(`/freelancer/proposals/${proposalId}`);
     router.refresh();
   };
   const handleApiError = (error: unknown, fallback: string) => {
@@ -115,8 +118,9 @@ export function ProposalDialog({
       toastError({
         message: t("alreadyExists"),
       });
+      void queryClient.invalidateQueries({ queryKey: ["proposals"] });
       void proposalApiRequest.getMyProposalForJob(jobId).then((proposal) => {
-        if (proposal) router.push(`/proposals/${proposal.id}`);
+        if (proposal) router.push(`/freelancer/proposals/${proposal.id}`);
         else router.refresh();
       });
       return;

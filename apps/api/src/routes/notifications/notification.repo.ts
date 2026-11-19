@@ -9,6 +9,7 @@ export class NotificationRepository {
     return this.prisma.notification.findMany({
       where: { userId, deletedAt: null },
       orderBy: { createdAt: 'desc' },
+      take: 100,
     });
   }
 

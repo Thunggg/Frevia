@@ -910,7 +910,7 @@ describe('User Authentication (UF-37 to UF-41)', () => {
     it('returns user info with dynamic role, permissions and permissionModules', async () => {
       authRepository.findUserById.mockResolvedValue(mockUserWithPermissions);
 
-      const result = await service.getMe(10, 5);
+      const result = await service.getMe(10);
 
       expect(result.id).toBe(10);
       expect(result.email).toBe('cskh@frevia.com');
@@ -938,7 +938,7 @@ describe('User Authentication (UF-37 to UF-41)', () => {
       };
       authRepository.findUserById.mockResolvedValue(mockAdminUser);
 
-      const result = await service.getMe(1, 1);
+      const result = await service.getMe(1);
 
       expect(result.permissions).toContain('*');
     });

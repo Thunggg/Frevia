@@ -21,12 +21,18 @@ export function RoleDetail({ roleId }: { roleId: number }) {
   const t = useTranslations("adminRoles");
   const tCommon = useTranslations("adminCommon");
   const format = useFormatter();
-  const { can } = useActionPermission();
+  const { can, isLoading: isPermissionLoading } = useActionPermission();
   const canViewDetail = can("GET", "/api/roles/:id");
   const canUpdate = can("PATCH", "/api/roles/:id");
   const canDelete = can("DELETE", "/api/roles/:id");
 
-  const { data: role, isLoading, isError } = useRole(roleId);
+  const { data: role, isLoading, isError } = useRole(
+    canViewDetail ? roleId : 0,
+  );
+
+  if (isPermissionLoading || isLoading) {
+    return <AdminDetailSkeleton />;
+  }
 
   if (!canViewDetail) {
     return (
@@ -37,10 +43,6 @@ export function RoleDetail({ roleId }: { roleId: number }) {
         </div>
       </div>
     );
-  }
-
-  if (isLoading) {
-    return <AdminDetailSkeleton />;
   }
 
   if (isError || !role) {

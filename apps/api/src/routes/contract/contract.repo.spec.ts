@@ -120,8 +120,16 @@ describe('ContractRepository', () => {
       platformFee: 7,
     };
     const transaction = {
-      contract: { update: jest.fn().mockResolvedValue(completedContract) },
-      job: { update: jest.fn().mockResolvedValue({ id: 10 }) },
+      contract: {
+        update: jest.fn().mockResolvedValue(completedContract),
+        count: jest.fn().mockResolvedValue(0),
+      },
+      job: {
+        findUnique: jest
+          .fn()
+          .mockResolvedValue({ positionsFilled: 1, positionsRequired: 1 }),
+        update: jest.fn().mockResolvedValue({ id: 10 }),
+      },
     };
     const prisma = {
       $transaction: jest.fn(

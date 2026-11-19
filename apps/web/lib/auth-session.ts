@@ -1,6 +1,6 @@
 import { envConfig } from "@/configs/validate-env";
 import ms, { StringValue } from "ms";
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
 
 type CookieStore = Awaited<ReturnType<typeof cookies>>;
 
@@ -9,7 +9,27 @@ export type RefreshedTokens = {
   refreshToken: string;
 };
 
-let refreshInFlight: Promise<RefreshedTokens | null> | null = null;
+/**
+ * Single-flight map keyed by refreshToken so concurrent 401s from the SAME user
+ * share one refresh call, while concurrent users NEVER receive each other's tokens.
+ */
+const refreshInFlightByToken = new Map<
+  string,
+  Promise<RefreshedTokens | null>
+>();
+
+/**
+ * Đọc accessToken trong Server Components: ưu tiên token mới mà proxy.ts
+ * vừa refresh trong cùng request (`x-refreshed-access-token`) trước cookie cũ.
+ */
+export async function getServerAccessToken(): Promise<string | undefined> {
+  const [headerStore, cookieStore] = await Promise.all([headers(), cookies()]);
+  return (
+    headerStore.get("x-refreshed-access-token") ??
+    cookieStore.get("accessToken")?.value ??
+    cookieStore.get("access_token")?.value
+  );
+}
 
 // Hàm để set các cookies accessToken và refreshToken
 export function setAuthCookies(
@@ -89,6 +109,7 @@ export async function exchangeRefreshToken(
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ refreshToken }),
+      signal: AbortSignal.timeout(10_000),
     },
   );
 
@@ -103,30 +124,25 @@ export async function exchangeRefreshToken(
   };
 }
 
-// Hàm để refresh các tokens sử dụng cookie store + single-flight (parallel 401s share one refresh).
+// Hàm để refresh các tokens sử dụng cookie store + per-token single-flight.
 export async function refreshAuthTokens(
   cookieStore: CookieStore,
 ): Promise<RefreshedTokens | null> {
-  if (!refreshInFlight) {
-    refreshInFlight = doRefresh(cookieStore).finally(() => {
-      refreshInFlight = null;
-    });
-  }
-  return refreshInFlight;
-}
-
-async function doRefresh(
-  cookieStore: CookieStore,
-): Promise<RefreshedTokens | null> {
   const refreshToken = cookieStore.get("refreshToken")?.value;
-  // Nếu không có refresh token thì xóa các cookies và trả về null
   if (!refreshToken) {
     clearAuthCookies(cookieStore);
     return null;
   }
 
-  const tokens = await exchangeRefreshToken(refreshToken);
-  // Nếu không thể exchange refresh token thì xóa các cookies và trả về null
+  let pending = refreshInFlightByToken.get(refreshToken);
+  if (!pending) {
+    pending = exchangeRefreshToken(refreshToken).finally(() => {
+      refreshInFlightByToken.delete(refreshToken);
+    });
+    refreshInFlightByToken.set(refreshToken, pending);
+  }
+
+  const tokens = await pending;
   if (!tokens) {
     clearAuthCookies(cookieStore);
     return null;

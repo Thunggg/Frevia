@@ -18,6 +18,7 @@ import { Button } from "@repo/ui/components/shadcn/button";
 import { toastError, toastSuccess } from "@repo/ui/components/shadcn/toast";
 import { Loader2, ShieldOff } from "@/components/icons";
 import { useRouter } from "next/navigation";
+import { useQueryClient } from "@tanstack/react-query";
 import { type MouseEvent } from "react";
 
 type RevokeSessionDialogProps = {
@@ -36,6 +37,7 @@ export function RevokeSessionDialog({
   onRevoked,
 }: RevokeSessionDialogProps) {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const t = useTranslations("sessions");
   const revokeSession = useRevokeSession();
 
@@ -72,6 +74,8 @@ export function RevokeSessionDialog({
 
         if (data.loggedOut) {
           await fetch("/api/auth/logout", { method: "POST" });
+          queryClient.clear();
+          queryClient.setQueryData(["me"], null);
           router.push("/login");
           router.refresh();
         }

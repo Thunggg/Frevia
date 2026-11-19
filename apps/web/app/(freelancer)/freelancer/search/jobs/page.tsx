@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
 import { redirect } from "next/navigation";
 import authServerRequest from "@/apiRequests/auth.server";
 import jobServerRequest from "@/apiRequests/job.server";
@@ -13,10 +14,13 @@ import type {
 } from "@shared/types";
 import { SearchJobsContent } from "./search-jobs-content";
 
-export const metadata: Metadata = {
-  title: "Tìm kiếm công việc | Frevia",
-  description: "Tìm kiếm và lọc các cơ hội việc làm tự do phù hợp với kỹ năng và kinh nghiệm của bạn.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("findWork");
+  return {
+    title: t("searchPageTitle"),
+    description: t("searchPageDescription"),
+  };
+}
 
 type SearchJobsPageProps = {
   searchParams: Promise<{
@@ -112,35 +116,58 @@ export default async function FreelancerSearchJobsPage({
     ? new Date(Date.now() - daysAgo * 24 * 60 * 60 * 1000)
     : undefined;
 
-  // Real categories from DB
-  const categoriesResult = await jobCategoryServerRequest.getJobCategories({
-    limit: 50,
-  });
-  const categories: JobCategoryBrowseItemType[] =
-    categoriesResult?.jobCategories ?? [];
-
   const requestedCategorySlugs = (params.category ?? "")
     .split(",")
     .map((s) => s.trim())
     .filter(Boolean);
+  const hasCategoryParam = requestedCategorySlugs.length > 0;
+
+  // Chạy song song các truy vấn độc lập thay vì waterfall nối tiếp
+  const [categoriesRes, directJobsRes, bookmarkedRes, savedSearchesRes] =
+    await Promise.allSettled([
+      jobCategoryServerRequest.getJobCategories({ limit: 50 }),
+      !hasCategoryParam
+        ? jobServerRequest.getJobs({
+            page,
+            limit,
+            search: q,
+            skill,
+            hiringType,
+            ...activeBudgetRange,
+            createdAfter,
+            ...selectedSort,
+          })
+        : Promise.resolve(null),
+      jobServerRequest.getBookmarkedJobs({ limit: 20 }),
+      savedSearchServerRequest.getSavedSearches(),
+    ]);
+
+  const categoriesResult =
+    categoriesRes.status === "fulfilled" ? categoriesRes.value : null;
+  const categories: JobCategoryBrowseItemType[] =
+    categoriesResult?.jobCategories ?? [];
+
   const validCategorySlugs = requestedCategorySlugs.filter((slug) =>
     categories.some((item) => item.slug === slug),
   );
   const category =
     validCategorySlugs.length > 0 ? validCategorySlugs.join(",") : undefined;
 
-  // Fetch jobs according to real schema fields
-  const jobsResult = await jobServerRequest.getJobs({
-    page,
-    limit,
-    search: q,
-    category,
-    skill,
-    hiringType,
-    ...activeBudgetRange,
-    createdAfter,
-    ...selectedSort,
-  });
+  const jobsResult = hasCategoryParam
+    ? await jobServerRequest.getJobs({
+        page,
+        limit,
+        search: q,
+        category,
+        skill,
+        hiringType,
+        ...activeBudgetRange,
+        createdAfter,
+        ...selectedSort,
+      })
+    : directJobsRes.status === "fulfilled"
+      ? directJobsRes.value
+      : null;
 
   const jobs: JobType[] = jobsResult?.data ?? [];
   const pagination = jobsResult?.pagination ?? {
@@ -150,15 +177,9 @@ export default async function FreelancerSearchJobsPage({
     totalPages: 0,
   };
 
-  // Fetch saved searches and bookmarks
   let initialBookmarkedJobs: ViewJobDetailResType[] = [];
   let initialBookmarkedSlugs: string[] = [];
   let initialSavedSearches: SavedSearchType[] = [];
-
-  const [bookmarkedRes, savedSearchesRes] = await Promise.allSettled([
-    jobServerRequest.getBookmarkedJobs({ limit: 20 }),
-    savedSearchServerRequest.getSavedSearches(),
-  ]);
 
   if (bookmarkedRes.status === "fulfilled" && bookmarkedRes.value?.data) {
     initialBookmarkedJobs = bookmarkedRes.value.data;

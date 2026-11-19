@@ -1,4 +1,4 @@
-import { HttpException, Injectable } from '@nestjs/common';
+import { HttpException, Injectable, Logger } from '@nestjs/common';
 import {
   CreateForumCommentType,
   EditForumCommentType,
@@ -21,12 +21,16 @@ import {
 } from './forums-comment.error';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/client';
 import { AIModerationService } from '../../../shared/services/ai-moderation.service';
+import { NotificationRealtimeService } from '../../../shared/services/notification-realtime.service';
 
 @Injectable()
 export class ForumCommentService {
+  private readonly logger = new Logger(ForumCommentService.name);
+
   constructor(
     private readonly forumCommentRepository: ForumCommentRepository,
     private readonly aiModerationService: AIModerationService,
+    private readonly notificationRealtime: NotificationRealtimeService,
   ) {}
 
   async createForumComment(
@@ -49,12 +53,39 @@ export class ForumCommentService {
         });
       }
 
-      return await this.forumCommentRepository.createForumComment(
-        postId,
-        userId,
-        body.content,
-        moderation,
-      );
+      const createdComment =
+        await this.forumCommentRepository.createForumComment(
+          postId,
+          userId,
+          body.content,
+          moderation,
+        );
+
+      // Thông báo cho chủ bài viết (không chặn tạo comment nếu lỗi)
+      try {
+        const notification =
+          await this.forumCommentRepository.createPostCommentNotification({
+            postAuthorId: post.userId,
+            commenterId: userId,
+            commenterName:
+              createdComment.user.profile?.displayName || 'Someone',
+            postId: post.id,
+            postSlug: post.slug,
+            categoryId: post.categoryId,
+            categorySlug: post.category?.slug ?? null,
+            commentId: createdComment.id,
+          });
+
+        if (notification) {
+          this.notificationRealtime.emit(post.userId, notification);
+        }
+      } catch (notifyError) {
+        this.logger.warn(
+          `Failed to create comment notification: ${(notifyError as Error).message}`,
+        );
+      }
+
+      return createdComment;
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;

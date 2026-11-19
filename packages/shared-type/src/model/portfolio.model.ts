@@ -41,6 +41,11 @@ export const AddPortfolioSchema = z
     technologies: TechnologiesSchema.optional(),
     projectUrl: z
       .url(PortfolioMessage.PORTFOLIO_INVALID_URL)
+      .max(500, PortfolioMessage.PORTFOLIO_INVALID_URL)
+      .refine(
+        (value) => /^https?:\/\//i.test(value),
+        PortfolioMessage.PORTFOLIO_INVALID_URL,
+      )
       .nullable()
       .optional(),
   })
@@ -69,6 +74,11 @@ export const UpdatePortfolioSchema = z
     technologies: TechnologiesSchema.optional(),
     projectUrl: z
       .url(PortfolioMessage.PORTFOLIO_INVALID_URL)
+      .max(500, PortfolioMessage.PORTFOLIO_INVALID_URL)
+      .refine(
+        (value) => /^https?:\/\//i.test(value),
+        PortfolioMessage.PORTFOLIO_INVALID_URL,
+      )
       .nullable()
       .optional(),
   })

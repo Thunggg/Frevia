@@ -179,7 +179,7 @@ export function AccountProfileClient({
   const tRole = useTranslations("roleName");
   const format = useFormatter();
 
-  const { can } = useActionPermission();
+  const { can, isLoading: isPermissionLoading } = useActionPermission();
   const canUpdateClientProfile = can("PUT", "/api/clients/me/profile");
   const canViewFavorites = can("GET", "/api/favorites/freelancers");
   const canRemoveFavorite = can(
@@ -898,13 +898,13 @@ export function AccountProfileClient({
               )}
 
               <TabsContent value="reviews">
-                {!canViewReviews ? (
+                {!isPermissionLoading && !canViewReviews ? (
                   <div className="rounded-xl border border-dashed border-border p-8 text-center text-muted-foreground">
                     <p className="font-semibold text-foreground">
-                      Không có quyền truy cập
+                      {t("noPermissionTitle")}
                     </p>
                     <p className="mt-1 text-sm">
-                      Bạn không có quyền xem đánh giá của hợp đồng.
+                      {t("noPermissionReviews")}
                     </p>
                   </div>
                 ) : userId ? (

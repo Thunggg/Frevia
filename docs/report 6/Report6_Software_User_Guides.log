@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.9.28)  9 NOV 2026 14:37
+This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.9.28)  19 NOV 2026 12:11
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1193,6 +1193,12 @@ Package pdftex.def Info: images/admin/m14_01_admin_dashboard.png  used on input
  line 22.
 (pdftex.def)             Requested size: 425.08147pt x 277.47363pt.
  [29 <./images/admin/m14_01_admin_dashboard.png (PNG copy)>]
+Overfull \hbox (45.30867pt too wide) in paragraph at lines 37--38
+\T1/cmtt/m/n/12 /conversations\T1/ptm/m/n/12 ); they may browse pub-lic pages (
+such as \T1/cmtt/m/n/12 /forum\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 /profiles/[id]\T
+1/ptm/m/n/12 , \T1/cmtt/m/n/12 /clients/[id]\T1/ptm/m/n/12 )
+ []
+
 [30]
 <images/admin/m14_02_admin_profile.png, id=549, 1445.4pt x 943.525pt>
 File: images/admin/m14_02_admin_profile.png Graphic file (type png)
@@ -1215,8 +1221,8 @@ File: images/admin/m14_04_role_permissions_matrix.png Graphic file (type png)
 Package pdftex.def Info: images/admin/m14_04_role_permissions_matrix.png  used 
 on input line 117.
 (pdftex.def)             Requested size: 425.08147pt x 277.47363pt.
- [34 <./images/admin/m14_04_role_permissions_matrix.png (PNG copy)>]
-<images/admin/m14_05_admin_permissions.png, id=592, 1445.4pt x 943.525pt>
+ [34 <./images/admin/m14_04_role_permissions_matrix.png (PNG copy)>] [35]
+<images/admin/m14_05_admin_permissions.png, id=596, 1445.4pt x 943.525pt>
 File: images/admin/m14_05_admin_permissions.png Graphic file (type png)
 <use images/admin/m14_05_admin_permissions.png>
 Package pdftex.def Info: images/admin/m14_05_admin_permissions.png  used on inp
@@ -1228,14 +1234,8 @@ Underfull \hbox (badness 8132) in paragraph at lines 148--148
 nd mod-ule fil-ters at
  []
 
-
-Overfull \hbox (7.17752pt too wide) in paragraph at lines 157--158
-\T1/ptm/m/n/12 color-coded \T1/ptm/m/it/12 Method \T1/ptm/m/n/12 badges (Blue f
-or GET, Green for POST, Am-ber for PUT, Red for DELETE),
- []
-
-[35 <./images/admin/m14_05_admin_permissions.png (PNG copy)>] [36]
-<images/admin/m14_06_admin_users_list_create.png, id=610, 1445.4pt x 943.525pt>
+[36 <./images/admin/m14_05_admin_permissions.png (PNG copy)>] [37]
+<images/admin/m14_06_admin_users_list_create.png, id=614, 1445.4pt x 943.525pt>
 
 File: images/admin/m14_06_admin_users_list_create.png Graphic file (type png)
 <use images/admin/m14_06_admin_users_list_create.png>
@@ -1249,16 +1249,16 @@ Overfull \hbox (37.41563pt too wide) in paragraph at lines 189--190
 \T1/ptm/m/n/12 ). 
  []
 
-[37 <./images/admin/m14_06_admin_users_list_create.png (PNG copy)>] [38]
-<images/admin/m14_07_admin_user_ban_unban.png, id=627, 1445.4pt x 943.525pt>
+[38 <./images/admin/m14_06_admin_users_list_create.png (PNG copy)>] [39]
+<images/admin/m14_07_admin_user_ban_unban.png, id=631, 1445.4pt x 943.525pt>
 File: images/admin/m14_07_admin_user_ban_unban.png Graphic file (type png)
 <use images/admin/m14_07_admin_user_ban_unban.png>
 Package pdftex.def Info: images/admin/m14_07_admin_user_ban_unban.png  used on 
 input line 211.
 (pdftex.def)             Requested size: 425.08147pt x 277.47363pt.
 
-[39 <./images/admin/m14_07_admin_user_ban_unban.png (PNG copy)>] [40]
-<images/admin/m14_08_admin_user_profile_tabs.png, id=643, 1445.4pt x 943.525pt>
+[40 <./images/admin/m14_07_admin_user_ban_unban.png (PNG copy)>] [41]
+<images/admin/m14_08_admin_user_profile_tabs.png, id=647, 1445.4pt x 943.525pt>
 
 File: images/admin/m14_08_admin_user_profile_tabs.png Graphic file (type png)
 <use images/admin/m14_08_admin_user_profile_tabs.png>
@@ -1266,27 +1266,27 @@ Package pdftex.def Info: images/admin/m14_08_admin_user_profile_tabs.png  used
 on input line 245.
 (pdftex.def)             Requested size: 425.08147pt x 277.47363pt.
 )
-(sections/sec3_m15_admin_catalogs.tex [41 <./images/admin/m14_08_admin_user_pro
+(sections/sec3_m15_admin_catalogs.tex [42 <./images/admin/m14_08_admin_user_pro
 file_tabs.png (PNG copy)>]
-<images/admin/m15_01_admin_skills.png, id=656, 1445.4pt x 943.525pt>
+<images/admin/m15_01_admin_skills.png, id=661, 1445.4pt x 943.525pt>
 File: images/admin/m15_01_admin_skills.png Graphic file (type png)
 <use images/admin/m15_01_admin_skills.png>
 Package pdftex.def Info: images/admin/m15_01_admin_skills.png  used on input li
 ne 22.
 (pdftex.def)             Requested size: 425.08147pt x 277.47363pt.
- [42 <./images/admin/m15_01_admin_skills.png (PNG copy)>]
+ [43 <./images/admin/m15_01_admin_skills.png (PNG copy)>]
 Overfull \hbox (6.75694pt too wide) in paragraph at lines 42--43
 \T1/ptm/m/n/12 com-plete sug-ges-tions for client job post-ings and free-lancer
  pro-files. Soft dele-tion sets \T1/cmtt/m/n/12 deletedAt
  []
 
-[43]
+[44]
 Overfull \hbox (3.63316pt too wide) in paragraph at lines 51--52
 []\T1/ptm/b/n/12 Screen Name & Route Path: \T1/ptm/m/n/12 Job Cat-e-gory Man-ag
 e-ment Con-sole -- \T1/cmtt/m/n/12 /admin/job-categories\T1/ptm/m/n/12 . 
  []
 
-<images/admin/m15_02_admin_job_categories.png, id=674, 1445.4pt x 943.525pt>
+<images/admin/m15_02_admin_job_categories.png, id=678, 1445.4pt x 943.525pt>
 File: images/admin/m15_02_admin_job_categories.png Graphic file (type png)
 <use images/admin/m15_02_admin_job_categories.png>
 Package pdftex.def Info: images/admin/m15_02_admin_job_categories.png  used on 
@@ -1298,14 +1298,14 @@ Underfull \hbox (badness 10000) in paragraph at lines 59--59
 -e-gory hi-er-ar-chy at
  []
 
-[44 <./images/admin/m15_02_admin_job_categories.png (PNG copy)>] [45]
-<images/admin/m15_03_admin_forum_categories.png, id=691, 1445.4pt x 943.525pt>
+[45 <./images/admin/m15_02_admin_job_categories.png (PNG copy)>] [46]
+<images/admin/m15_03_admin_forum_categories.png, id=695, 1445.4pt x 943.525pt>
 File: images/admin/m15_03_admin_forum_categories.png Graphic file (type png)
 <use images/admin/m15_03_admin_forum_categories.png>
 Package pdftex.def Info: images/admin/m15_03_admin_forum_categories.png  used o
 n input line 88.
 (pdftex.def)             Requested size: 425.08147pt x 277.47363pt.
-) [46 <./images/admin/m15_03_admin_forum_categories.png (PNG copy)>]
+) [47 <./images/admin/m15_03_admin_forum_categories.png (PNG copy)>]
 (Report6_Software_User_Guides.aux)
  ***********
 LaTeX2e <2025-11-01>
@@ -1316,13 +1316,13 @@ anged.
 (rerunfilecheck)             Checksum: 4004752B55EE2844A74955DF3D7C1480;16076.
  ) 
 Here is how much of TeX's memory you used:
- 26156 strings out of 467871
- 496922 string characters out of 5418860
+ 26157 strings out of 467871
+ 496929 string characters out of 5418860
  1301958 words of memory out of 5000000
  54305 multiletter control sequences out of 15000+600000
  680223 words of font info for 97 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 98i,13n,108p,662b,1238s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 98i,13n,108p,752b,1238s stack positions out of 10000i,1000n,20000p,200000b,200000s
  <C:\Users\ASUS\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ectt1
 000.pk> <C:\Users\ASUS\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\
 ectt1200.pk><C:/Users/ASUS/AppData/Local/Programs/MiKTeX/fonts/type1/public/ams
@@ -1332,9 +1332,9 @@ type1/urw/times/utmb8a.pfb><C:/Users/ASUS/AppData/Local/Programs/MiKTeX/fonts/t
 ype1/urw/times/utmbi8a.pfb><C:/Users/ASUS/AppData/Local/Programs/MiKTeX/fonts/t
 ype1/urw/times/utmr8a.pfb><C:/Users/ASUS/AppData/Local/Programs/MiKTeX/fonts/ty
 pe1/urw/times/utmri8a.pfb>
-Output written on Report6_Software_User_Guides.pdf (47 pages, 7496851 bytes).
+Output written on Report6_Software_User_Guides.pdf (48 pages, 7498388 bytes).
 PDF statistics:
- 955 PDF objects out of 1000 (max. 8388607)
- 299 named destinations out of 1000 (max. 500000)
+ 959 PDF objects out of 1000 (max. 8388607)
+ 300 named destinations out of 1000 (max. 500000)
  542 words of extra memory for PDF output out of 10000 (max. 10000000)
 

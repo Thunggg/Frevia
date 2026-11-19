@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="860" height="540" viewBox="0 0 860 540">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0b3d91"/>
+      <stop offset="55%" stop-color="#1462b9"/>
+      <stop offset="100%" stop-color="#0a2f73"/>
+    </linearGradient>
+    <linearGradient id="chip" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#f7d774"/>
+      <stop offset="100%" stop-color="#c99b2b"/>
+    </linearGradient>
+    <pattern id="wave" width="120" height="120" patternUnits="userSpaceOnUse">
+      <path d="M0 60 Q30 20 60 60 T120 60" fill="none" stroke="#ffffff" stroke-opacity="0.06" stroke-width="2"/>
+    </pattern>
+  </defs>
+  <rect width="860" height="540" rx="26" fill="url(#bg)"/>
+  <rect width="860" height="540" rx="26" fill="url(#wave)"/>
+  <circle cx="730" cy="90" r="180" fill="none" stroke="#ffffff" stroke-opacity="0.05" stroke-width="26"/>
+  <circle cx="120" cy="470" r="150" fill="none" stroke="#ffffff" stroke-opacity="0.04" stroke-width="20"/>
+
+  <!-- header -->
+  <g fill="#ffffff">
+    <circle cx="58" cy="50" r="19" fill="none" stroke="#ffcf4a" stroke-width="4"/>
+    <circle cx="58" cy="50" r="6" fill="#ff4b4b"/>
+    <text x="90" y="44" font-family="Arial, sans-serif" font-size="15" font-weight="700" letter-spacing="0.5">CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM</text>
+    <text x="90" y="65" font-family="Arial, sans-serif" font-size="13" font-weight="400" letter-spacing="1">Độc lập - Tự do - Hạnh phúc</text>
+  </g>
+  <text x="58" y="105" fill="#ffe08a" font-family="Arial, sans-serif" font-size="24" font-weight="800" letter-spacing="1.5">THẺ CĂN CƯỚC CÔNG DÂN</text>
+  <text x="58" y="125" fill="#cfe0ff" font-family="Arial, sans-serif" font-size="11" font-style="italic" letter-spacing="1">CITIZEN IDENTITY CARD · SAMPLE</text>
+
+  <!-- photo -->
+  <rect x="58" y="150" width="188" height="238" rx="10" fill="#dbe6f5" stroke="#ffffff" stroke-width="3"/>
+  <circle cx="152" cy="232" r="46" fill="#9fb2cc"/>
+  <path d="M72 388 Q152 300 232 388 Z" fill="#9fb2cc"/>
+  <text x="152" y="420" text-anchor="middle" fill="#4a5d78" font-family="Arial, sans-serif" font-size="11">ẢNH CHÂN DUNG</text>
+
+  <!-- chip -->
+  <g transform="translate(640,150)">
+    <rect width="70" height="52" rx="8" fill="url(#chip)" stroke="#8a6a18"/>
+    <path d="M0 18 H70 M0 34 H70 M24 0 V52 M46 0 V52" stroke="#8a6a18" stroke-width="2"/>
+  </g>
+  <text x="640" y="220" fill="#cfe0ff" font-family="Arial, sans-serif" font-size="11">CCCD</text>
+
+  <!-- fields -->
+  <g font-family="Arial, sans-serif">
+    <text x="280" y="168" fill="#bcd2f5" font-size="12">Họ và tên</text>
+    <text x="280" y="190" fill="#ffffff" font-size="20" font-weight="700" letter-spacing="0.5">NGUYỄN VĂN MINH</text>
+
+    <text x="280" y="222" fill="#bcd2f5" font-size="12">Ngày, tháng, năm sinh</text>
+    <text x="280" y="243" fill="#ffffff" font-size="16" font-weight="600">15 / 08 / 1995</text>
+
+    <text x="470" y="222" fill="#bcd2f5" font-size="12">Giới tính</text>
+    <text x="470" y="243" fill="#ffffff" font-size="16" font-weight="600">Nam</text>
+
+    <text x="600" y="222" fill="#bcd2f5" font-size="12">Quốc tịch</text>
+    <text x="600" y="243" fill="#ffffff" font-size="16" font-weight="600">Việt Nam</text>
+
+    <text x="280" y="276" fill="#bcd2f5" font-size="12">Nơi thường trú</text>
+    <text x="280" y="297" fill="#ffffff" font-size="14" font-weight="600">Số 12, Nguyễn Du, Quận 1, TP. Hồ Chí Minh</text>
+
+    <text x="280" y="336" fill="#bcd2f5" font-size="12">Số định danh cá nhân</text>
+    <text x="280" y="362" fill="#ffe08a" font-size="26" font-weight="800" letter-spacing="3">012 345 678 901</text>
+
+    <text x="280" y="398" fill="#bcd2f5" font-size="12">Ngày cấp</text>
+    <text x="280" y="418" fill="#ffffff" font-size="15" font-weight="600">12/06/2021</text>
+    <text x="470" y="398" fill="#bcd2f5" font-size="12">Ngày hết hạn</text>
+    <text x="470" y="418" fill="#ffffff" font-size="15" font-weight="600">12/06/2031</text>
+  </g>
+
+  <!-- MRZ -->
+  <g transform="translate(58,458)" font-family="Courier New, monospace" font-size="16" fill="#e8f1ff" letter-spacing="2">
+    <text x="0" y="0">IDVNM0123456789019&lt;&lt;9508152M3106127</text>
+    <text x="0" y="22">NGUYEN&lt;&lt;VAN&lt;&lt;&lt;MINH&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;</text>
+  </g>
+  <text x="760" y="512" text-anchor="end" fill="#9dbdf0" font-family="Arial, sans-serif" font-size="11" font-style="italic">MẪU - KHÔNG CÓ GIÁ TRỊ</text>
+</svg>

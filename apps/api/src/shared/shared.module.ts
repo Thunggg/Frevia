@@ -19,6 +19,7 @@ import { TokenService } from './services/token.service';
 import { ContractPdfService } from './services/contract-pdf.service';
 import { AIModerationService } from './services/ai-moderation.service';
 import { CacheService } from './services/cache.service';
+import { NotificationRealtimeService } from './services/notification-realtime.service';
 import { FastTextService } from './services/fasttext.service';
 
 @Module({
@@ -53,6 +54,7 @@ import { FastTextService } from './services/fasttext.service';
     ContractPdfService,
     AuthGateway,
     CacheService,
+    NotificationRealtimeService,
     FastTextService,
   ],
   exports: [
@@ -71,6 +73,7 @@ import { FastTextService } from './services/fasttext.service';
     ContractPdfService,
     AuthGateway,
     CacheService,
+    NotificationRealtimeService,
     FastTextService,
   ],
 })

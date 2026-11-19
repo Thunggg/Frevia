@@ -1,7 +1,7 @@
 "use client";
 
-import { useFormatter } from "next-intl";
-import { Check, Loader2, RotateCcw } from "lucide-react";
+import { useFormatter, useTranslations } from "next-intl";
+import { Check, Clock, Loader2, RotateCcw, ShieldCheck, Upload } from "lucide-react";
 import type { GetSubmissionResponseType, MilestoneType } from "@shared/types";
 
 interface MilestoneWorkflowStepperProps {
@@ -14,6 +14,7 @@ interface StepItem {
   label: string;
   sublabel: string;
   status: "completed" | "current" | "upcoming" | "warning";
+  icon: typeof ShieldCheck;
 }
 
 export function MilestoneWorkflowStepper({
@@ -21,6 +22,8 @@ export function MilestoneWorkflowStepper({
   submissions,
 }: MilestoneWorkflowStepperProps) {
   const format = useFormatter();
+  const t = useTranslations("milestoneWorkspace.stepper");
+  const tCard = useTranslations("milestoneWorkspace.card");
 
   const formatDate = (date: string | Date | null | undefined): string => {
     if (!date) return "";
@@ -49,52 +52,48 @@ export function MilestoneWorkflowStepper({
 
   const steps: StepItem[] = [
     {
-      id: "created",
-      label: "Created",
-      sublabel: formatDate(milestone.createdAt),
-      status: "completed",
-    },
-    {
       id: "funded",
-      label: "Escrow Funded",
-      sublabel: isFunded ? "Secured" : "Pending deposit",
+      label: t("escrowDeposit"),
+      sublabel: isFunded ? t("fundsSecured") : t("awaitingDeposit"),
       status: isFunded
         ? "completed"
         : milestone.paymentStatus === "PENDING"
           ? "current"
           : "upcoming",
+      icon: ShieldCheck,
     },
     {
       id: "progress",
-      label: "In Progress",
+      label: t("inProgress"),
       sublabel: isStarted
         ? milestone.status === "IN_PROGRESS"
-          ? "Active work"
-          : "Done"
-        : "Not started",
+          ? t("workUnderway")
+          : tCard("completed")
+        : t("notStarted"),
       status:
         milestone.status === "IN_PROGRESS"
           ? "current"
           : isStarted
             ? "completed"
             : "upcoming",
+      icon: Clock,
     },
     {
       id: "submitted",
       label: isLate
-        ? "Overdue (Late)"
+        ? tCard("statusLate")
         : isChangesRequested
-          ? "Correction Requested"
-          : "Submitted for Review",
+          ? tCard("statusChangesRequested")
+          : t("workDelivered"),
       sublabel: isLate
         ? milestone.paymentStatus === "REFUNDED"
-          ? "Refunded to client"
-          : "Deadline missed"
+          ? t("refundedToClient")
+          : t("deadlinePassed")
         : latestSubmission
           ? isChangesRequested
-            ? "Revisions needed"
+            ? t("actionRequired")
             : formatDate(latestSubmission.submittedAt)
-          : "Awaiting deliverables",
+          : t("awaitingSubmission"),
       status:
         isLate || isChangesRequested
           ? "warning"
@@ -103,23 +102,26 @@ export function MilestoneWorkflowStepper({
             : isCompleted
               ? "completed"
               : "upcoming",
+      icon: Upload,
     },
     {
       id: "released",
-      label: "Accepted & Released",
+      label: t("approvedPaid"),
       sublabel: isCompleted
-        ? formatDate(milestone.completedAt) || "Payment released"
-        : "Final approval",
+        ? formatDate(milestone.completedAt) || t("fundsReleased")
+        : t("finalPayout"),
       status: isCompleted ? "completed" : "upcoming",
+      icon: Check,
     },
   ];
 
   return (
-    <div className="mx-[-30] dark:border-zinc-800/80 bg-white dark:bg-zinc-950">
+    <div className="py-2">
       <div className="relative">
-        <div className="grid grid-cols-2 sm:grid-cols-5 gap-4 sm:gap-2">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-2">
           {steps.map((step, idx) => {
             const isLast = idx === steps.length - 1;
+            const Icon = step.icon;
 
             return (
               <div
@@ -129,38 +131,39 @@ export function MilestoneWorkflowStepper({
                 {/* Connecting Line for desktop */}
                 {!isLast && (
                   <div
-                    className={`hidden sm:block absolute top-3.5 left-1/2 w-full h-[2px] -z-0 ${step.status === "completed"
-                      ? "bg-zinc-950 dark:bg-zinc-100"
-                      : step.status === "warning"
-                        ? "border-t-2 border-dashed border-amber-400"
-                        : "border-t-2 border-dashed border-zinc-200 dark:border-zinc-800"
-                      }`}
+                    className={`hidden sm:block absolute top-3.5 left-1/2 w-full h-[2px] -z-0 ${
+                      step.status === "completed"
+                        ? "bg-emerald-500/80"
+                        : step.status === "warning"
+                          ? "border-t-2 border-dashed border-amber-400"
+                          : "border-t-2 border-dashed border-zinc-200 dark:border-zinc-800"
+                    }`}
                   />
                 )}
 
                 {/* Step Icon Badge */}
                 <div className="relative z-10 mb-2 flex items-center justify-center">
                   {step.status === "completed" && (
-                    <div className="flex size-7 items-center justify-center rounded-full bg-zinc-950 text-white dark:bg-zinc-100 dark:text-zinc-950 shadow-2xs">
-                      <Check className="size-3.5 stroke-[2.5]" />
+                    <div className="flex size-7 items-center justify-center rounded-full bg-emerald-600 text-white shadow-2xs">
+                      <Check className="size-3.5 stroke-[3]" />
                     </div>
                   )}
 
                   {step.status === "current" && (
-                    <div className="relative flex size-7 items-center justify-center rounded-full bg-[#0069D3] text-white shadow-2xs">
+                    <div className="relative flex size-7 items-center justify-center rounded-full bg-[#0069D3] text-white shadow-2xs ring-4 ring-blue-500/20">
                       <Loader2 className="size-3.5 animate-spin" />
                     </div>
                   )}
 
                   {step.status === "warning" && (
-                    <div className="flex size-7 items-center justify-center rounded-full bg-amber-600 text-white shadow-2xs">
-                      <RotateCcw className="size-3 stroke-[2.5]" />
+                    <div className="flex size-7 items-center justify-center rounded-full bg-amber-600 text-white shadow-2xs ring-4 ring-amber-500/20">
+                      <RotateCcw className="size-3.5 stroke-[2.5]" />
                     </div>
                   )}
 
                   {step.status === "upcoming" && (
-                    <div className="flex size-7 items-center justify-center rounded-full border border-zinc-200 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-900 text-zinc-400">
-                      <div className="size-1.5 rounded-full bg-zinc-300 dark:bg-zinc-700" />
+                    <div className="flex size-7 items-center justify-center rounded-full border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 text-zinc-400">
+                      <Icon className="size-3" />
                     </div>
                   )}
                 </div>
@@ -168,19 +171,20 @@ export function MilestoneWorkflowStepper({
                 {/* Step Label & Sublabel */}
                 <div className="space-y-0.5">
                   <p
-                    className={`text-xs leading-tight ${step.status === "completed"
-                      ? "text-zinc-950 dark:text-zinc-100"
-                      : step.status === "current"
-                        ? "text-[#0069D3] dark:text-blue-400 font-extrabold"
-                        : step.status === "warning"
-                          ? "text-amber-600 dark:text-amber-400 font-bold"
-                          : "text-zinc-400 dark:text-zinc-500"
-                      }`}
+                    className={`text-xs leading-tight ${
+                      step.status === "completed"
+                        ? "text-foreground font-bold"
+                        : step.status === "current"
+                          ? "text-[#0069D3] dark:text-blue-400 font-extrabold"
+                          : step.status === "warning"
+                            ? "text-amber-600 dark:text-amber-400 font-bold"
+                            : "text-muted-foreground font-medium"
+                    }`}
                   >
                     {step.label}
                   </p>
                   {step.sublabel && (
-                    <p className="text-[11px] text-zinc-500 dark:text-zinc-400 truncate max-w-[130px]">
+                    <p className="text-[11px] text-muted-foreground truncate max-w-[130px]">
                       {step.sublabel}
                     </p>
                   )}

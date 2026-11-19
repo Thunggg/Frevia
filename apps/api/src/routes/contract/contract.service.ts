@@ -25,6 +25,7 @@ import {
   ContractExpiresAtBeforeMilestonesException,
   ContractExpiresAtRequiredException,
   ContractForbiddenException,
+  ContractHasUnsettledMilestonesException,
   ContractNotActionableForRejectionException,
   ContractNotActiveException,
   ContractNotFoundException,
@@ -32,6 +33,7 @@ import {
   FailedToCreateContractException,
   FailedToLoadContractException,
   FailedToUpdateContractException,
+  FreelancerStripeOnboardingRequiredException,
   MilestoneAmountMismatchException,
   MilestoneDueDateExceedsContractException,
   MilestoneDueDateRequiredException,
@@ -39,7 +41,12 @@ import {
   ProposalNotActionableException,
   ProposalNotFoundException,
 } from './contract.error';
-import { ContractStatus, Prisma } from '@prisma/client';
+import {
+  ContractStatus,
+  MilestonePaymentStatus,
+  MilestoneStatus,
+  Prisma,
+} from '@prisma/client';
 import { ContractPdfService } from '../../shared/services/contract-pdf.service';
 import { PaymentService } from '../payments/payment.service';
 
@@ -259,6 +266,16 @@ export class ContractService implements OnModuleInit, OnModuleDestroy {
       }
 
       if (isFreelancer) {
+        const connectStatus =
+          await this.paymentService.getConnectStatus(userId);
+        if (
+          !connectStatus.isConnected ||
+          !connectStatus.stripeAccountId ||
+          !connectStatus.payoutsEnabled
+        ) {
+          throw FreelancerStripeOnboardingRequiredException();
+        }
+
         if (!contract.holdPaymentIntentId) {
           throw ContractAwaitingPaymentException();
         }
@@ -358,7 +375,23 @@ export class ContractService implements OnModuleInit, OnModuleDestroy {
 
       if (contract.clientId !== clientId) throw ContractForbiddenException();
 
-      if (contract.status !== 'ACTIVE') throw ContractNotActiveException();
+      if (contract.status !== ContractStatus.ACTIVE)
+        throw ContractNotActiveException();
+
+      const milestones =
+        await this.contractRepository.findContractMilestonesWithStatus(
+          contractId,
+        );
+
+      const hasUnsettled = milestones.some(
+        (m) =>
+          m.paymentStatus !== MilestonePaymentStatus.RELEASED &&
+          m.paymentStatus !== MilestonePaymentStatus.REFUNDED,
+      );
+
+      if (hasUnsettled) {
+        throw ContractHasUnsettledMilestonesException();
+      }
 
       return await this.contractRepository.completeContract(
         contractId,
@@ -388,7 +421,10 @@ export class ContractService implements OnModuleInit, OnModuleDestroy {
         throw ContractDisputedException();
       }
 
-      if (contract.holdPaymentIntentId) {
+      if (
+        contract.holdPaymentIntentId &&
+        contract.status !== ContractStatus.ACTIVE
+      ) {
         try {
           await this.paymentService.cancelContractHold(
             contract.holdPaymentIntentId,
@@ -403,11 +439,31 @@ export class ContractService implements OnModuleInit, OnModuleDestroy {
       }
 
       if (contract.status === ContractStatus.ACTIVE) {
+        const milestones =
+          await this.contractRepository.findContractMilestonesWithStatus(
+            contractId,
+          );
+
+        const hasDisputedMilestone = milestones.some(
+          (m) => m.status === MilestoneStatus.DISPUTED,
+        );
+        if (hasDisputedMilestone) {
+          throw ContractDisputedException();
+        }
+
+        const isClient = contract.clientId === userId;
+        const cancelledByRole: 'client' | 'freelancer' = isClient
+          ? 'client'
+          : 'freelancer';
+
         try {
-          await this.paymentService.refundContractEscrow(contractId);
+          await this.paymentService.settleContractEscrowOnCancel(
+            contractId,
+            cancelledByRole,
+          );
         } catch (refundErr) {
           this.logger.error(
-            `Failed to refund escrow on cancel for contract #${contractId}:`,
+            `Failed to settle escrow on cancel for contract #${contractId}:`,
             refundErr,
           );
         }

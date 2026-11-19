@@ -156,6 +156,18 @@ export class ContractRepository {
     });
   }
 
+  async findContractMilestonesWithStatus(contractId: number) {
+    return this.prisma.milestone.findMany({
+      where: { contractId, deletedAt: null },
+      select: {
+        id: true,
+        title: true,
+        status: true,
+        paymentStatus: true,
+      },
+    });
+  }
+
   async findContractBySlug(slug: string) {
     const cleanSlug = slug.replace(/^#/, '').trim();
     const strippedId = cleanSlug.replace(/^(CON|CTR|contract)-/i, '');
@@ -433,10 +445,32 @@ export class ContractRepository {
           completedAt: new Date(),
         },
       });
-      await tx.job.update({
+
+      const job = await tx.job.findUnique({
         where: { id: jobId },
-        data: { status: JobStatus.COMPLETED },
+        select: { positionsFilled: true, positionsRequired: true },
       });
+
+      const remainingOpenContracts = await tx.contract.count({
+        where: {
+          jobId,
+          deletedAt: null,
+          status: {
+            notIn: [ContractStatus.COMPLETED, ContractStatus.CANCELLED],
+          },
+        },
+      });
+
+      // Chỉ đóng Job sang COMPLETED khi tất cả vị trí đã tuyển đủ và không còn hợp đồng nào đang mở
+      if (
+        remainingOpenContracts === 0 &&
+        (!job || job.positionsFilled >= job.positionsRequired)
+      ) {
+        await tx.job.update({
+          where: { id: jobId },
+          data: { status: JobStatus.COMPLETED },
+        });
+      }
       return completedContract;
     });
 
@@ -455,7 +489,6 @@ export class ContractRepository {
         status: ContractStatus.CANCELLED,
         holdPaymentIntentId: null,
         holdMilestoneIds: [],
-        deletedAt: new Date(),
       },
     });
 

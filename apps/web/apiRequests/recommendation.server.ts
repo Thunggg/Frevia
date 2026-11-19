@@ -1,6 +1,6 @@
 import "server-only";
 
-import { cookies } from "next/headers";
+import { getServerAccessToken } from "@/lib/auth-session";
 import { envConfig } from "@/configs/validate-env";
 import type { RecommendedJobResponseType } from "@shared/types";
 
@@ -9,10 +9,7 @@ export const recommendationServerRequest = {
     const baseUrl = envConfig?.NESTJS_API_URL;
     if (!baseUrl) return null;
 
-    const cookieStore = await cookies();
-    const accessToken =
-      cookieStore.get("accessToken")?.value ??
-      cookieStore.get("access_token")?.value;
+    const accessToken = await getServerAccessToken();
 
     if (!accessToken) return null;
 
@@ -33,7 +30,12 @@ export const recommendationServerRequest = {
         if (Array.isArray(res.data)) {
           return { data: res.data };
         }
-        if (typeof res.data === "object" && res.data !== null && "data" in res.data && Array.isArray((res.data as any).data)) {
+        if (
+          typeof res.data === "object" &&
+          res.data !== null &&
+          "data" in res.data &&
+          Array.isArray((res.data as { data?: unknown }).data)
+        ) {
           return res.data as RecommendedJobResponseType;
         }
       }

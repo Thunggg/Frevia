@@ -76,10 +76,39 @@ export class MilestoneRepository {
     return await this.prisma.milestone.findFirst({
       where: {
         contractId,
-        status: MilestoneStatus.IN_PROGRESS,
+        deletedAt: null,
+        status: {
+          in: [
+            MilestoneStatus.IN_PROGRESS,
+            MilestoneStatus.SUBMITTED,
+            MilestoneStatus.CHANGES_REQUESTED,
+            MilestoneStatus.LATE,
+            MilestoneStatus.DISPUTED,
+          ],
+        },
       },
       select: {
         id: true,
+      },
+    });
+  }
+
+  async findIncompletePreviousMilestone(
+    contractId: number,
+    milestoneId: number,
+  ) {
+    return await this.prisma.milestone.findFirst({
+      where: {
+        contractId,
+        deletedAt: null,
+        id: { lt: milestoneId },
+        status: { not: MilestoneStatus.COMPLETED },
+      },
+      orderBy: { id: 'asc' },
+      select: {
+        id: true,
+        title: true,
+        status: true,
       },
     });
   }
@@ -153,6 +182,12 @@ export class MilestoneRepository {
     });
 
     return { ...milestone, amount: Number(milestone.amount) };
+  }
+
+  async countActiveMilestones(contractId: number) {
+    return this.prisma.milestone.count({
+      where: { contractId, deletedAt: null },
+    });
   }
 
   async deleteMilestone(milestoneId: number) {

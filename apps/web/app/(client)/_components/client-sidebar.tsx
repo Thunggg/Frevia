@@ -1,5 +1,7 @@
 "use client";
 
+import { Star } from "@/components/icons";
+
 import {
   Bell,
   Briefcase,
@@ -18,6 +20,8 @@ import {
   PanelLeftOpen,
   Shield,
   Sun,
+  SwitchCamera,
+  UserPlus,
   UserRound,
   Users,
 } from "@/components/icons";
@@ -29,9 +33,10 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef, useState, useTransition } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 
-import { useMe } from "@/hooks/use-auth";
 import { useActionPermission } from "@/hooks/use-action-permission";
+import { useMarketplaceRoleAction } from "@/hooks/use-marketplace-role-action";
 import { canAccessAdminPortal } from "@/lib/admin-access";
 import {
   Avatar,
@@ -40,6 +45,7 @@ import {
 } from "@repo/ui/components/shadcn/avatar";
 
 import { useNotifications } from "@/hooks/use-notifications";
+import { useConversations } from "@/hooks/use-conversation";
 
 type NavItem = {
   href: string;
@@ -100,11 +106,22 @@ function NavLink({ item, collapsed }: { item: NavItem; collapsed: boolean }) {
 
 export function ClientSidebar() {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const t = useTranslations("sidebar");
+  const tCommon = useTranslations("common");
   const tRole = useTranslations("roleName");
   const activeLocale = useLocale();
   const [isLocalePending, startLocaleTransition] = useTransition();
-  const { data: me } = useMe();
+  const {
+    me,
+    isMarketplaceUser,
+    hasTargetRole,
+    isMeLoading,
+    isPending: isRoleActionPending,
+    actionLabel: roleActionLabel,
+    executeRoleAction,
+  } = useMarketplaceRoleAction("CLIENT");
+  const { data: conversations = [] } = useConversations();
   const { can } = useActionPermission();
   const canViewJobs = can("GET", "/api/manage-jobs");
   const canViewContracts = can("GET", "/api/contracts");
@@ -150,6 +167,10 @@ export function ClientSidebar() {
 
   const isDark = mounted && resolvedTheme === "dark";
   const unreadNotifications = notifications.filter((n) => !n.isRead).length;
+  const unreadMessages = (conversations ?? []).reduce(
+    (sum, c) => sum + (c.unreadCount || 0),
+    0,
+  );
 
   const selectLocale = (nextLocale: string) => {
     if (!isLocale(nextLocale) || nextLocale === activeLocale) return;
@@ -188,10 +209,22 @@ export function ClientSidebar() {
       matchPrefix: true,
     },
     {
+      href: "/client/reviews",
+      labelKey: "navReviews",
+      icon: Star,
+      matchPrefix: true,
+    },
+    {
       href: "/client/conversations",
       labelKey: "navMessages",
       icon: MessageSquare,
       matchPrefix: true,
+      badge:
+        unreadMessages > 0
+          ? unreadMessages > 99
+            ? "99+"
+            : unreadMessages
+          : undefined,
     },
     {
       href: "/forum",
@@ -222,6 +255,8 @@ export function ClientSidebar() {
 
   const logout = async () => {
     await fetch("/api/auth/logout", { method: "POST" });
+    queryClient.clear();
+    queryClient.setQueryData(["me"], null);
     router.push("/login");
     router.refresh();
   };
@@ -376,7 +411,7 @@ export function ClientSidebar() {
                   className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-xs font-medium text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-950/40 transition-colors"
                 >
                   <Shield className="size-3.5" />
-                  Admin Portal
+                  {tCommon("adminPortal")}
                 </Link>
               )}
 
@@ -459,6 +494,29 @@ export function ClientSidebar() {
               </div>
 
               <div className="my-1 h-px bg-border" />
+
+              {isMarketplaceUser && (
+                <>
+                  <button
+                    type="button"
+                    disabled={isMeLoading || isRoleActionPending}
+                    onClick={() => {
+                      void executeRoleAction().then((didUpdate) => {
+                        if (didUpdate) setProfileOpen(false);
+                      });
+                    }}
+                    className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-xs font-medium text-foreground/80 transition-colors hover:bg-[#F1F0F5] hover:text-foreground dark:hover:bg-zinc-800 disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer"
+                  >
+                    {hasTargetRole ? (
+                      <SwitchCamera className="size-3.5 text-[#0069D3]" />
+                    ) : (
+                      <UserPlus className="size-3.5 text-[#0069D3]" />
+                    )}
+                    <span>{roleActionLabel}</span>
+                  </button>
+                  <div className="my-1 h-px bg-border" />
+                </>
+              )}
 
               <button
                 onClick={() => {
