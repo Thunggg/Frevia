@@ -109,9 +109,18 @@ export function isAdminPermissionPath(path: string, method?: string): boolean {
 /**
  * Self-service auth, account profile (password/avatar), and session endpoints
  * available to all authenticated roles without dynamic permission toggles.
+ * Note: `/api/auth/switch-role` and `/api/auth/join-role` are strictly restricted
+ * to marketplace roles (Client & Freelancer) and excluded here.
  */
 export function isSelfAccountOrSessionPath(path: string): boolean {
   const normalized = normalizePath(path);
+  if (
+    normalized === '/api/auth/switch-role' ||
+    normalized === '/api/auth/join-role'
+  ) {
+    return false;
+  }
+
   return (
     normalized === '/api/auth' ||
     normalized.startsWith('/api/auth/') ||

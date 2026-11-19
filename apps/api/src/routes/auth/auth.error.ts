@@ -56,6 +56,16 @@ export const RoleNotFoundException = () =>
     { message: AuthMessage.ROLE_NOT_FOUND, path: 'role' },
   ]);
 
+export const RoleAlreadyAssignedException = () =>
+  new ConflictException([
+    { message: AuthMessage.ROLE_ALREADY_ASSIGNED, path: 'role' },
+  ]);
+
+export const MarketplaceRoleOnlyException = () =>
+  new ForbiddenException([
+    { message: AuthMessage.PERMISSION_DENIED, path: 'role' },
+  ]);
+
 export const UniqueViolationException = () =>
   new ConflictException([
     { message: AuthMessage.EMAIL_ALREADY_EXISTS, path: 'email' },

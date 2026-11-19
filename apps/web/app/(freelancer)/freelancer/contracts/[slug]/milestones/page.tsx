@@ -1,10 +1,10 @@
-import { notFound } from "next/navigation";
-import { cookies } from "next/headers";
-import { getTranslations } from "next-intl/server";
-import contractServerRequest from "@/apiRequests/contract.server";
 import authServerRequest from "@/apiRequests/auth.server";
+import contractServerRequest from "@/apiRequests/contract.server";
 import { MilestonesPageContent } from "@/app/(client)/client/contracts/[slug]/milestones/_components";
-import { envConfig } from "@/configs/validate-env";
+import { getBrowserSocketUrl } from "@/configs/validate-env";
+import { getTranslations } from "next-intl/server";
+import { cookies } from "next/headers";
+import { notFound } from "next/navigation";
 
 export async function generateMetadata({
   params,
@@ -56,10 +56,9 @@ export default async function FreelancerContractMilestonesPage({
           basePath="/freelancer"
           currentUserId={user?.id ?? null}
           accessToken={token}
-          socketUrl={envConfig?.NESTJS_API_URL ?? ""}
+          socketUrl={getBrowserSocketUrl()}
         />
       </div>
     </div>
   );
 }
-

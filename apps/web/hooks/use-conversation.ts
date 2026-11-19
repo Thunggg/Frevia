@@ -1,5 +1,10 @@
 import { useCallback, useEffect, useState } from "react";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  type QueryClient,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 import { io, Socket } from "socket.io-client";
 import { conversationApiRequest } from "@/apiRequests/conversation";
 import { useApiDataExtractor } from "@/hooks/use-api-data-extractor";
@@ -40,6 +45,122 @@ function sortByLastMessage(items: GetConversationsResponseType) {
     const bTime = b.lastMessage?.createdAt ?? b.createdAt;
     return new Date(bTime).getTime() - new Date(aTime).getTime();
   });
+}
+
+function collectConversationMessageKeys(
+  queryClient: QueryClient,
+  conversationId: number | string,
+  extraKeys: Array<number | string | null | undefined> = [],
+): Array<number | string> {
+  const keys = new Set<number | string>();
+  const addKey = (val: number | string | null | undefined) => {
+    if (val === null || val === undefined) return;
+    if (typeof val === "number" && val > 0) {
+      keys.add(val);
+      keys.add(String(val));
+    } else if (typeof val === "string" && val.trim()) {
+      keys.add(val);
+      const asNum = Number(val);
+      if (Number.isInteger(asNum) && asNum > 0) {
+        keys.add(asNum);
+      }
+    }
+  };
+
+  addKey(conversationId);
+  extraKeys.forEach(addKey);
+
+  const conversations = queryClient.getQueryData<GetConversationsResponseType>(
+    conversationKeys.list(),
+  );
+  const matched = conversations?.find(
+    (c) =>
+      c.id === Number(conversationId) ||
+      c.slug === String(conversationId) ||
+      extraKeys.some((k) => k != null && (c.id === Number(k) || c.slug === String(k))),
+  );
+  if (matched) {
+    addKey(matched.id);
+    addKey(matched.slug);
+  }
+
+  return Array.from(keys);
+}
+
+export function appendMessageToConversationCaches(
+  queryClient: QueryClient,
+  message: DirectMessageType,
+  extraKeys: Array<number | string | null | undefined> = [],
+) {
+  const keys = collectConversationMessageKeys(
+    queryClient,
+    message.conversationId,
+    extraKeys,
+  );
+
+  let updatedAny = false;
+  for (const key of keys) {
+    const queryKey = conversationKeys.messages(key);
+    const state = queryClient.getQueryState(queryKey);
+    if (!state) continue;
+
+    updatedAny = true;
+    queryClient.setQueryData<GetMessagesResponseType>(queryKey, (old) => {
+      if (!old) return [message];
+      if (old.some((m) => m.id === message.id)) return old;
+      return [...old, message];
+    });
+  }
+
+  if (!updatedAny) {
+    queryClient.setQueryData<GetMessagesResponseType>(
+      conversationKeys.messages(message.conversationId),
+      (old) => {
+        if (!old) return [message];
+        if (old.some((m) => m.id === message.id)) return old;
+        return [...old, message];
+      },
+    );
+  }
+}
+
+export function removeMessageFromConversationCaches(
+  queryClient: QueryClient,
+  conversationId: number | string,
+  messageId: number,
+  extraKeys: Array<number | string | null | undefined> = [],
+) {
+  const keys = collectConversationMessageKeys(
+    queryClient,
+    conversationId,
+    extraKeys,
+  );
+
+  for (const key of keys) {
+    const queryKey = conversationKeys.messages(key);
+    if (!queryClient.getQueryState(queryKey)) continue;
+    queryClient.setQueryData<GetMessagesResponseType>(queryKey, (old) => {
+      if (!old) return old;
+      return old.filter((m) => m.id !== messageId);
+    });
+  }
+}
+
+async function fetchFreshSocketToken(): Promise<string | null> {
+  try {
+    const response = await fetch("/api/auth/socket-token", {
+      method: "GET",
+      cache: "no-store",
+    });
+    if (!response.ok) return null;
+    const body = (await response.json()) as {
+      success?: boolean;
+      data?: { token?: string };
+    };
+    return body?.success && body?.data?.token ? body.data.token : null;
+  } catch {
+    return null;
+  }
 }
 
 /**
@@ -119,6 +240,7 @@ export function useSendConversationMessage() {
       attachment,
     }: {
       conversationId: number | string;
+      slug?: string;
       message: string;
       attachment?: MessageAttachmentType;
     }) =>
@@ -127,15 +249,38 @@ export function useSendConversationMessage() {
         .then(extractData),
 
     onSuccess: (message, variables) => {
-      queryClient.setQueryData<GetMessagesResponseType>(
-        conversationKeys.messages(variables.conversationId),
+      appendMessageToConversationCaches(queryClient, message, [
+        variables.conversationId,
+        variables.slug,
+      ]);
+
+      queryClient.setQueryData<GetConversationsResponseType>(
+        conversationKeys.list(),
         (old) => {
           if (!old) return old;
-          if (old.some((m) => m.id === message.id)) return old;
-          return [...old, message];
+          const next = old.map((conv) =>
+            conv.id === message.conversationId
+              ? {
+                  ...conv,
+                  lastMessage: {
+                    id: message.id,
+                    senderId: message.senderId,
+                    message: message.message,
+                    fileUrl: message.fileUrl,
+                    fileName: message.fileName,
+                    fileSize: message.fileSize,
+                    fileType: message.fileType,
+                    isRead: message.isRead,
+                    createdAt: message.createdAt,
+                  },
+                }
+              : conv,
+          );
+          return sortByLastMessage(next);
         },
       );
-      queryClient.invalidateQueries({ queryKey: conversationKeys.list() });
+
+      void queryClient.invalidateQueries({ queryKey: conversationKeys.list() });
     },
   });
 }
@@ -240,21 +385,20 @@ export function useDeleteConversationMessage() {
       messageId,
     }: {
       conversationId: number | string;
+      slug?: string;
       messageId: number;
     }) =>
       conversationApiRequest
         .deleteMessage(conversationId, messageId)
         .then(extractData),
-    onSuccess: (_data, { conversationId, messageId }) => {
-      // Xóa tin nhắn khỏi cache messages ngay lập tức
-      queryClient.setQueryData<GetMessagesResponseType>(
-        conversationKeys.messages(conversationId),
-        (old) => {
-          if (!old) return old;
-          return old.filter((m) => m.id !== messageId);
-        },
+    onSuccess: (_data, { conversationId, slug, messageId }) => {
+      removeMessageFromConversationCaches(
+        queryClient,
+        conversationId,
+        messageId,
+        [slug],
       );
-      queryClient.invalidateQueries({ queryKey: conversationKeys.list() });
+      void queryClient.invalidateQueries({ queryKey: conversationKeys.list() });
     },
   });
 }
@@ -311,40 +455,63 @@ export function useConversationSocket(
   const [connected, setConnected] = useState(false);
 
   useEffect(() => {
-    if (!socketUrl || !token || !currentUserId) {
+    if (!socketUrl || !currentUserId) {
       return;
     }
 
+    let cancelled = false;
+    let activeToken = token;
+    let refreshedOnReject = false;
+
     const socketInstance = io(`${socketUrl}/conversations`, {
-      transports: ["websocket"],
-      auth: { token },
+      transports: ["websocket", "polling"],
+      autoConnect: false,
+      auth: (cb) => {
+        cb({ token: activeToken ?? "" });
+      },
     });
 
-    socketInstance.on("connect", () => setConnected(true));
-    socketInstance.on("disconnect", () => setConnected(false));
+    const connectWithFreshTokenIfNeeded = async (forceRefresh: boolean) => {
+      if (forceRefresh || !activeToken) {
+        const fresh = await fetchFreshSocketToken();
+        if (cancelled) return;
+        if (fresh) {
+          activeToken = fresh;
+        }
+      }
+      if (!cancelled && activeToken && !socketInstance.connected) {
+        socketInstance.connect();
+      }
+    };
+
+    socketInstance.on("connect", () => {
+      refreshedOnReject = false;
+      setConnected(true);
+    });
+    socketInstance.on("disconnect", (reason) => {
+      setConnected(false);
+      // Nếu server ngắt kết nối (thường do accessToken hết hạn), thử làm mới token 1 lần
+      if (reason === "io server disconnect" && !refreshedOnReject) {
+        refreshedOnReject = true;
+        void connectWithFreshTokenIfNeeded(true);
+      }
+    });
+    socketInstance.on("connect_error", () => {
+      setConnected(false);
+      if (!refreshedOnReject) {
+        refreshedOnReject = true;
+        void connectWithFreshTokenIfNeeded(true);
+      }
+    });
 
     // Tin nhắn mới (cả tin mình gửi và người khác gửi)
     socketInstance.on(
       "message:new",
       (payload: { conversationId: number; message: DirectMessageType }) => {
         const { conversationId, message } = payload;
-
-        const keysToUpdate = [conversationKeys.messages(conversationId)];
-        const conversations = queryClient.getQueryData<GetConversationsResponseType>(
-          conversationKeys.list(),
-        );
-        const conv = conversations?.find((c) => c.id === conversationId);
-        if (conv?.slug && conv.slug !== String(conversationId)) {
-          keysToUpdate.push(conversationKeys.messages(conv.slug));
-        }
-
-        keysToUpdate.forEach((key) => {
-          queryClient.setQueryData<GetMessagesResponseType>(key, (old) => {
-            if (!old) return old;
-            if (old.some((m) => m.id === message.id)) return old;
-            return [...old, message];
-          });
-        });
+        appendMessageToConversationCaches(queryClient, message, [
+          conversationId,
+        ]);
       },
     );
 
@@ -365,12 +532,15 @@ export function useConversationSocket(
         );
 
         // Refetch messages để cập nhật trạng thái đã đọc
-        const keysToInvalidate = [conversationKeys.messages(item.id)];
-        if (item.slug && item.slug !== String(item.id)) {
-          keysToInvalidate.push(conversationKeys.messages(item.slug));
-        }
+        const keysToInvalidate = collectConversationMessageKeys(
+          queryClient,
+          item.id,
+          [item.slug],
+        );
         keysToInvalidate.forEach((key) => {
-          queryClient.invalidateQueries({ queryKey: key });
+          void queryClient.invalidateQueries({
+            queryKey: conversationKeys.messages(key),
+          });
         });
       },
     );
@@ -380,16 +550,14 @@ export function useConversationSocket(
       "message:deleted",
       (payload: { conversationId: number; messageId: number }) => {
         const { conversationId, messageId } = payload;
-
-        queryClient.setQueryData<GetMessagesResponseType>(
-          conversationKeys.messages(conversationId),
-          (old) => {
-            if (!old) return old;
-            return old.filter((m) => m.id !== messageId);
-          },
+        removeMessageFromConversationCaches(
+          queryClient,
+          conversationId,
+          messageId,
         );
-
-        queryClient.invalidateQueries({ queryKey: conversationKeys.list() });
+        void queryClient.invalidateQueries({
+          queryKey: conversationKeys.list(),
+        });
       },
     );
 
@@ -408,8 +576,10 @@ export function useConversationSocket(
     );
 
     setSocket(socketInstance);
+    void connectWithFreshTokenIfNeeded(!activeToken);
 
     return () => {
+      cancelled = true;
       socketInstance.disconnect();
       setSocket(null);
       setConnected(false);

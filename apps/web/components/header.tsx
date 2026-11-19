@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useEffect, useRef, useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import {
   Bookmark,
   ChevronDown,
@@ -18,6 +19,8 @@ import {
   MonitorSmartphone,
   Search,
   ShieldCheck,
+  SwitchCamera,
+  UserPlus,
   UserRound,
   UserCheck,
   X,
@@ -44,6 +47,7 @@ import { NotificationsBell } from "@/components/notifications-bell";
 import { ContactDialog } from "@/components/contact-dialog";
 import { useMe } from "@/hooks/use-auth";
 import { useActionPermission } from "@/hooks/use-action-permission";
+import { useMarketplaceRoleAction } from "@/hooks/use-marketplace-role-action";
 import { canAccessAdminPortal } from "@/lib/admin-access";
 
 export type UserRole = "GUEST" | "CLIENT" | "FREELANCER" | "STAFF";
@@ -268,10 +272,19 @@ function HeaderSearch({
 
 function ProfileDropdown({ role }: { role: Exclude<UserRole, "GUEST"> }) {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const t = useTranslations("nav");
   const tRole = useTranslations("roleName");
   const profile = roleConfig[role] ?? roleConfig.FREELANCER;
-  const { data: me } = useMe();
+  const {
+    me,
+    isMarketplaceUser,
+    hasTargetRole,
+    isMeLoading,
+    isPending: isRoleActionPending,
+    actionLabel: roleActionLabel,
+    executeRoleAction,
+  } = useMarketplaceRoleAction(role === "FREELANCER" ? "FREELANCER" : "CLIENT");
   const { can } = useActionPermission();
   const canViewProposals = can("GET", "/api/proposals/my");
   const canViewSavedSearches = can("GET", "/api/saved-searches");
@@ -303,6 +316,8 @@ function ProfileDropdown({ role }: { role: Exclude<UserRole, "GUEST"> }) {
 
   const logout = async () => {
     await fetch("/api/auth/logout", { method: "POST" });
+    queryClient.clear();
+    queryClient.setQueryData(["me"], null);
     router.push("/login");
     router.refresh();
   };
@@ -503,6 +518,23 @@ function ProfileDropdown({ role }: { role: Exclude<UserRole, "GUEST"> }) {
           </DropdownMenuItem>
         )}
         <DropdownMenuSeparator />
+        {role !== "STAFF" && isMarketplaceUser && (
+          <DropdownMenuItem
+            className="cursor-pointer"
+            disabled={isMeLoading || isRoleActionPending}
+            onSelect={(event) => {
+              event.preventDefault();
+              void executeRoleAction();
+            }}
+          >
+            {hasTargetRole ? (
+              <SwitchCamera className="size-4 text-muted-foreground" />
+            ) : (
+              <UserPlus className="size-4 text-muted-foreground" />
+            )}
+            {roleActionLabel}
+          </DropdownMenuItem>
+        )}
         {role !== "STAFF" && canViewSessions && (
           <DropdownMenuItem asChild>
             <Link href="/sessions" className="cursor-pointer">
@@ -607,7 +639,15 @@ function MobileProfileNavigation({
   onNavigate: () => void;
 }) {
   const t = useTranslations("nav");
-  const { data: me } = useMe();
+  const {
+    me,
+    isMarketplaceUser,
+    hasTargetRole,
+    isMeLoading,
+    isPending: isRoleActionPending,
+    actionLabel: roleActionLabel,
+    executeRoleAction,
+  } = useMarketplaceRoleAction(role === "FREELANCER" ? "FREELANCER" : "CLIENT");
   const publicProfileHref =
     role === "STAFF" || !me?.profile?.id
       ? null
@@ -652,6 +692,25 @@ function MobileProfileNavigation({
           <UserRound className="size-4 text-muted-foreground" />
           {t("profileSettings")}
         </Link>
+      )}
+      {role !== "STAFF" && isMarketplaceUser && (
+        <button
+          type="button"
+          disabled={isMeLoading || isRoleActionPending}
+          onClick={() => {
+            void executeRoleAction().then((didUpdate) => {
+              if (didUpdate) onNavigate();
+            });
+          }}
+          className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-left text-[13px] font-medium text-foreground/70 transition-colors hover:bg-black/[0.04] hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#4fae2e]/30 active:translate-y-px disabled:cursor-not-allowed disabled:opacity-50 dark:hover:bg-white/[0.06]"
+        >
+          {hasTargetRole ? (
+            <SwitchCamera className="size-4 text-muted-foreground" />
+          ) : (
+            <UserPlus className="size-4 text-muted-foreground" />
+          )}
+          {roleActionLabel}
+        </button>
       )}
     </div>
   );

@@ -105,7 +105,7 @@ export function MilestoneDetailContent({
   const queryClient = useQueryClient();
   const t = useTranslations("milestoneWorkspace");
   const tContract = useTranslations("contractWorkspace");
-  const { can } = useActionPermission();
+  const { can, isLoading: isPermissionLoading } = useActionPermission();
   const isFreelancer = basePath === "/freelancer";
   const isClient = !isFreelancer;
 
@@ -359,7 +359,7 @@ export function MilestoneDetailContent({
     }
   };
 
-  if (!canViewDetail) {
+  if (!isPermissionLoading && !canViewDetail) {
     return (
       <div className="space-y-4 mx-auto font-sans pb-16">
         <MilestoneDetailHeader

@@ -45,17 +45,45 @@ export class UsersRepository {
     // ?role=ADMIN thì chỉ lấy Admin;
     // ?role=CUSTOM thì lấy các role khác 3 role đó.
     if (role && role !== 'all' && role !== 'ALL') {
+      const andClauses: Prisma.UserWhereInput[] = [];
       if (role === 'CLIENT' || role.toLowerCase() === 'client') {
-        where.role = {
-          name: { equals: RoleName.CLIENT, mode: 'insensitive' },
-        };
+        andClauses.push({
+          OR: [
+            {
+              role: { name: { equals: RoleName.CLIENT, mode: 'insensitive' } },
+            },
+            {
+              userRoles: {
+                some: {
+                  role: {
+                    name: { equals: RoleName.CLIENT, mode: 'insensitive' },
+                    deletedAt: null,
+                  },
+                },
+              },
+            },
+          ],
+        });
       } else if (role === 'FREELANCER' || role.toLowerCase() === 'freelancer') {
-        where.role = {
-          name: {
-            equals: RoleName.FREELANCER,
-            mode: 'insensitive',
-          },
-        };
+        andClauses.push({
+          OR: [
+            {
+              role: {
+                name: { equals: RoleName.FREELANCER, mode: 'insensitive' },
+              },
+            },
+            {
+              userRoles: {
+                some: {
+                  role: {
+                    name: { equals: RoleName.FREELANCER, mode: 'insensitive' },
+                    deletedAt: null,
+                  },
+                },
+              },
+            },
+          ],
+        });
       } else if (role === 'ADMIN' || role.toLowerCase() === 'admin') {
         where.role = {
           name: { equals: RoleName.ADMIN, mode: 'insensitive' },
@@ -80,6 +108,9 @@ export class UsersRepository {
         where.role = {
           name: { equals: role, mode: 'insensitive' },
         };
+      }
+      if (andClauses.length > 0) {
+        where.AND = andClauses;
       }
     }
 
@@ -117,6 +148,21 @@ export class UsersRepository {
               description: true,
             },
           },
+          userRoles: {
+            where: {
+              role: { deletedAt: null },
+            },
+            select: {
+              role: {
+                select: {
+                  id: true,
+                  name: true,
+                  description: true,
+                },
+              },
+            },
+            orderBy: { assignedAt: 'asc' },
+          },
         },
         skip,
         take: limit,
@@ -125,15 +171,8 @@ export class UsersRepository {
       this.prisma.user.count({ where }),
     ]);
 
-    const mappedUsers: AdminUserItemType[] = users.map((user) => ({
-      id: user.id,
-      email: user.email,
-      isBanned: user.isBanned,
-      createdAt: user.createdAt,
-      updatedAt: user.updatedAt,
-      displayName: user.profile?.displayName ?? null,
-      avatarUrl: user.profile?.avatarUrl ?? null,
-      roles: user.role
+    const mappedUsers: AdminUserItemType[] = users.map((user) => {
+      const roles = user.role
         ? [
             {
               id: user.role.id,
@@ -142,8 +181,28 @@ export class UsersRepository {
               isPrimary: true,
             },
           ]
-        : [],
-    }));
+        : [];
+      for (const assignment of user.userRoles ?? []) {
+        if (assignment.role && assignment.role.id !== user.role?.id) {
+          roles.push({
+            id: assignment.role.id,
+            name: assignment.role.name,
+            description: assignment.role.description,
+            isPrimary: false,
+          });
+        }
+      }
+      return {
+        id: user.id,
+        email: user.email,
+        isBanned: user.isBanned,
+        createdAt: user.createdAt,
+        updatedAt: user.updatedAt,
+        displayName: user.profile?.displayName ?? null,
+        avatarUrl: user.profile?.avatarUrl ?? null,
+        roles,
+      };
+    });
 
     return {
       users: mappedUsers,
@@ -169,6 +228,11 @@ export class UsersRepository {
         email: data.email,
         password: data.password,
         roleId: data.roleId,
+        userRoles: {
+          create: {
+            roleId: data.roleId,
+          },
+        },
         profile: {
           create: {
             displayName: data.fullName,
@@ -282,6 +346,10 @@ export class UsersRepository {
         role: {
           select: { name: true },
         },
+        userRoles: {
+          where: { role: { deletedAt: null } },
+          select: { role: { select: { name: true } } },
+        },
       },
     });
 
@@ -289,11 +357,14 @@ export class UsersRepository {
       return null;
     }
 
+    const hasClientRole =
+      user.role?.name?.toLowerCase() === 'client' ||
+      user.userRoles.some((ur) => ur.role.name.toLowerCase() === 'client');
     return {
       id: user.id,
       profileId: user.profile?.id ?? null,
       clientProfileId: user.profile?.clientProfile?.id ?? null,
-      hasClientRole: user.role?.name?.toLowerCase() === 'client',
+      hasClientRole,
     };
   }
 
@@ -365,6 +436,10 @@ export class UsersRepository {
         role: {
           select: { name: true },
         },
+        userRoles: {
+          where: { role: { deletedAt: null } },
+          select: { role: { select: { name: true } } },
+        },
       },
     });
 
@@ -372,11 +447,14 @@ export class UsersRepository {
       return null;
     }
 
+    const hasFreelancerRole =
+      user.role?.name?.toLowerCase() === 'freelancer' ||
+      user.userRoles.some((ur) => ur.role.name.toLowerCase() === 'freelancer');
     return {
       id: user.id,
       profileId: user.profile?.id ?? null,
       freelancerProfileId: user.profile?.freelancerProfile?.id ?? null,
-      hasFreelancerRole: user.role?.name?.toLowerCase() === 'freelancer',
+      hasFreelancerRole,
     };
   }
 
@@ -666,6 +744,19 @@ export class UsersRepository {
             },
           },
         },
+        userRoles: {
+          where: { role: { deletedAt: null } },
+          select: {
+            role: {
+              select: {
+                id: true,
+                name: true,
+                description: true,
+              },
+            },
+          },
+          orderBy: { assignedAt: 'asc' },
+        },
         _count: {
           select: {
             jobsPosted: true,
@@ -777,16 +868,29 @@ export class UsersRepository {
       onlineStatus: user.profile?.onlineStatus ?? false,
       availabilityStatus: user.profile?.availabilityStatus ?? 'OFFLINE',
       profileCompletionPercent: user.profile?.profileCompletionPercent ?? 0,
-      roles: user.role
-        ? [
-            {
-              id: user.role.id,
-              name: user.role.name,
-              description: user.role.description,
-              isPrimary: true,
-            },
-          ]
-        : [],
+      roles: (() => {
+        const list = user.role
+          ? [
+              {
+                id: user.role.id,
+                name: user.role.name,
+                description: user.role.description,
+                isPrimary: true,
+              },
+            ]
+          : [];
+        for (const assignment of user.userRoles ?? []) {
+          if (assignment.role && assignment.role.id !== user.role?.id) {
+            list.push({
+              id: assignment.role.id,
+              name: assignment.role.name,
+              description: assignment.role.description,
+              isPrimary: false,
+            });
+          }
+        }
+        return list;
+      })(),
       socialLinks: (user.profile?.socialLinks ?? []).map((s) => ({
         id: s.id,
         platform: s.platform,

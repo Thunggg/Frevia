@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import authServerRequest from "@/apiRequests/auth.server";
 import contractServerRequest from "@/apiRequests/contract.server";
-import { envConfig } from "@/configs/validate-env";
+import { getBrowserSocketUrl } from "@/configs/validate-env";
 import { ContractDetail } from "./_components/contract-detail";
 
 export async function generateMetadata({
@@ -54,7 +54,7 @@ export default async function ClientContractDetailPage({
           initialSharedFiles={sharedFiles}
           currentUserId={user?.id ?? null}
           accessToken={token}
-          socketUrl={envConfig?.NESTJS_API_URL ?? ""}
+          socketUrl={getBrowserSocketUrl()}
         />
       </div>
     </div>

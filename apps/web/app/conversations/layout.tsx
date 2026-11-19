@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import type { ReactNode } from "react";
 
 import authServerRequest from "@/apiRequests/auth.server";
-import { envConfig } from "@/configs/validate-env";
+import { getBrowserSocketUrl } from "@/configs/validate-env";
 import { RoleName } from "@shared/types";
 
 import { ConversationsShell } from "./components/conversations-shell";
@@ -32,7 +32,7 @@ const ConversationsLayout = async ({ children }: ConversationsLayoutProps) => {
     <div className="flex h-dvh flex-col bg-background font-sans">
       <div className="min-h-0 flex-1">
         <ConversationsShell
-          socketUrl={envConfig?.NESTJS_API_URL ?? ""}
+          socketUrl={getBrowserSocketUrl()}
           token={token}
           currentUserId={user?.id ?? null}
         >

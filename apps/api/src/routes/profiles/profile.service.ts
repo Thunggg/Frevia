@@ -1,46 +1,46 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import {
+  ProfileMessage,
+  RoleName,
   type AddFreelancerSkillType,
   type CvAnalysisConfirmType,
   type CvAnalysisDraftType,
   type CvAnalysisPayloadType,
   type CvSourceType,
   type UpdateFreelancerProfileType,
-  RoleName,
-  ProfileMessage,
 } from '@shared/types';
-import { ProfileRepository } from './profile.repo';
-import { CloudinaryService } from '../../shared/services/cloudinary.service';
+import { randomUUID } from 'crypto';
+import { mkdir, readFile, unlink, writeFile } from 'fs/promises';
+import { dirname, isAbsolute, join, relative, resolve } from 'path';
 import {
   AiCvAnalyzerService,
   type AiCvAnalysis,
   type AiCvSource,
 } from '../../shared/services/ai-cv-analyzer.service';
+import { CloudinaryService } from '../../shared/services/cloudinary.service';
 import { SkillResolverService } from '../../shared/services/skill-resolver.service';
 import { ProfileRevisionService } from '../profile-revisions/profile-revision.service';
 import { EmbeddingOutboxService } from '../recommendations/embedding-outbox.service';
-import { randomUUID } from 'crypto';
-import { mkdir, readFile, unlink, writeFile } from 'fs/promises';
-import { dirname, isAbsolute, join, relative, resolve } from 'path';
 import {
-  FreelancerProfileNotFoundException,
-  FreelancerSkillNotFoundException,
-  FreelancerSkillDuplicateException,
-  ProfileForbiddenException,
-  SkillForbiddenException,
+  CvAiUnavailableException,
+  CvAnalysisNotFoundException,
+  CvAnalysisNotPendingException,
+  CvAnalysisStaleException,
+  CvEncryptedException,
   CvFileInvalidException,
   CvFileRequiredException,
   CvFileTooLargeException,
   CvFileTypeException,
   CvNotFoundException,
-  CvAiUnavailableException,
   CvTextEmptyException,
-  CvEncryptedException,
-  CvAnalysisNotFoundException,
-  CvAnalysisNotPendingException,
-  CvAnalysisStaleException,
+  FreelancerProfileNotFoundException,
+  FreelancerSkillDuplicateException,
+  FreelancerSkillNotFoundException,
+  ProfileForbiddenException,
+  SkillForbiddenException,
 } from './profile.error';
+import { ProfileRepository } from './profile.repo';
 
 const CV_SOURCE_MAP: Record<AiCvSource, CvSourceType> = {
   pdf_text: 'PDF_TEXT',
@@ -504,10 +504,27 @@ export class ProfileService {
     return { buffer, fileName };
   }
 
+  private isPublicFreelancerProfile(
+    profile: {
+      user?: {
+        role?: { name?: string | null } | null;
+        userRoles?: Array<{ role?: { name?: string | null } | null }>;
+      } | null;
+    } | null,
+  ) {
+    if (!profile) return false;
+    return (
+      profile.user?.role?.name === RoleName.FREELANCER ||
+      profile.user?.userRoles?.some(
+        (assignment) => assignment.role?.name === RoleName.FREELANCER,
+      ) === true
+    );
+  }
+
   async viewProfile(profileId: number) {
     const profile =
       await this.profileRepository.findFreelancerProfileById(profileId);
-    if (!profile || profile.user?.role?.name !== RoleName.FREELANCER) {
+    if (!this.isPublicFreelancerProfile(profile)) {
       throw FreelancerProfileNotFoundException();
     }
     return profile;
@@ -581,7 +598,7 @@ export class ProfileService {
   async getSkills(profileId: number) {
     const profile =
       await this.profileRepository.findFreelancerProfileById(profileId);
-    if (!profile || profile.user?.role?.name !== RoleName.FREELANCER) {
+    if (!profile || !this.isPublicFreelancerProfile(profile)) {
       throw FreelancerProfileNotFoundException();
     }
 

@@ -11,7 +11,8 @@ import { useCallback, useMemo, type ReactNode } from "react";
  * Admin/Expert/Custom role kiểm tra động trong phạm vi Admin Portal.
  */
 export function useActionPermission() {
-  const { data: user } = useMe();
+  const { data: user, isPending } = useMe();
+  const isLoading = isPending && user === undefined;
 
   const permissions = useMemo(
     () => user?.permissions ?? [],
@@ -49,6 +50,7 @@ export function useActionPermission() {
     canAny,
     canAll,
     isAdmin,
+    isLoading,
     permissions,
     user,
   };

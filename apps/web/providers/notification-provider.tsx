@@ -75,20 +75,72 @@ export function NotificationProvider({
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   useEffect(() => {
-    if (!socketUrl || !token || !currentUserId) return;
+    if (!socketUrl || !currentUserId) return;
+
+    let cancelled = false;
+    let activeToken = token;
+    let refreshedOnReject = false;
 
     const socket = io(`${socketUrl}/conversations`, {
-      transports: ["websocket"],
-      auth: { token },
+      transports: ["websocket", "polling"],
+      autoConnect: false,
+      auth: (cb) => {
+        cb({ token: activeToken ?? "" });
+      },
     });
 
     const authSocket = io(`${socketUrl}/auth`, {
-      transports: ["websocket"],
-      auth: { token },
+      transports: ["websocket", "polling"],
+      autoConnect: false,
+      auth: (cb) => {
+        cb({ token: activeToken ?? "" });
+      },
     });
 
-    socket.on("connect", () => setConnected(true));
-    socket.on("disconnect", () => setConnected(false));
+    const connectSockets = async (forceRefresh: boolean) => {
+      if (forceRefresh || !activeToken) {
+        try {
+          const response = await fetch("/api/auth/socket-token", {
+            method: "GET",
+            cache: "no-store",
+          });
+          if (response.ok) {
+            const body = (await response.json()) as {
+              success?: boolean;
+              data?: { token?: string };
+            };
+            if (!cancelled && body?.success && body?.data?.token) {
+              activeToken = body.data.token;
+            }
+          }
+        } catch {
+          // Ignore network error; Socket.IO will retry later
+        }
+      }
+      if (!cancelled && activeToken) {
+        if (!socket.connected) socket.connect();
+        if (!authSocket.connected) authSocket.connect();
+      }
+    };
+
+    socket.on("connect", () => {
+      refreshedOnReject = false;
+      setConnected(true);
+    });
+    socket.on("disconnect", (reason) => {
+      setConnected(false);
+      if (reason === "io server disconnect" && !refreshedOnReject) {
+        refreshedOnReject = true;
+        void connectSockets(true);
+      }
+    });
+    socket.on("connect_error", () => {
+      setConnected(false);
+      if (!refreshedOnReject) {
+        refreshedOnReject = true;
+        void connectSockets(true);
+      }
+    });
 
     socket.on("notification:new", (notification: NotificationItemType) => {
       queryClient.setQueryData<NotificationItemType[]>(
@@ -186,7 +238,10 @@ export function NotificationProvider({
       },
     );
 
+    void connectSockets(!activeToken);
+
     return () => {
+      cancelled = true;
       socket.disconnect();
       authSocket.disconnect();
       setConnected(false);

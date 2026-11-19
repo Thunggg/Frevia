@@ -4,7 +4,7 @@ import { getTranslations } from "next-intl/server";
 import authServerRequest from "@/apiRequests/auth.server";
 import contractServerRequest from "@/apiRequests/contract.server";
 import { ContractDetail } from "@/app/(client)/client/contracts/[slug]/_components/contract-detail";
-import { envConfig } from "@/configs/validate-env";
+import { getBrowserSocketUrl } from "@/configs/validate-env";
 
 export async function generateMetadata({
   params,
@@ -56,7 +56,7 @@ export default async function FreelancerContractDetailPage({
           basePath="/freelancer"
           currentUserId={user?.id ?? null}
           accessToken={token}
-          socketUrl={envConfig?.NESTJS_API_URL ?? ""}
+          socketUrl={getBrowserSocketUrl()}
         />
       </div>
     </div>

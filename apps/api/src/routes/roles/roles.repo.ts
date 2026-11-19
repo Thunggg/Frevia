@@ -137,7 +137,10 @@ export class RolesRepository {
 
   async countAssignedUsers(roleId: number): Promise<number> {
     return this.prisma.user.count({
-      where: { roleId, deletedAt: null },
+      where: {
+        deletedAt: null,
+        OR: [{ roleId }, { userRoles: { some: { roleId } } }],
+      },
     });
   }
 
