@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { RoleName, type GetMeResType } from "@shared/types";
 import { canAccessAdminPortal } from "@/lib/admin-access";
+import { useMarketplaceRoleAction } from "@/hooks/use-marketplace-role-action";
 import { Header, type UserRole } from "@/components/header";
 import { Footer } from "@/components/footer";
 import {
@@ -15,6 +16,8 @@ import {
   ArrowRight,
   Loader2,
   LogOut,
+  RefreshCw,
+  UserPlus,
 } from "@/components/icons";
 import { Button } from "@repo/ui/components/shadcn/button";
 import { Badge } from "@repo/ui/components/shadcn/badge";
@@ -39,6 +42,27 @@ export function AccessDeniedContent({
   const primaryRole =
     user?.roles.find((r) => r.isPrimary)?.name ?? user?.roles[0]?.name;
 
+  const isStaffRole =
+    Boolean(user) &&
+    primaryRole !== RoleName.CLIENT &&
+    primaryRole !== RoleName.FREELANCER;
+
+  const {
+    hasTargetRole,
+    isPending: isRoleActionPending,
+    actionLabel: marketplaceRoleActionLabel,
+    executeRoleAction,
+  } = useMarketplaceRoleAction(
+    primaryRole === RoleName.FREELANCER ? "FREELANCER" : "CLIENT",
+  );
+
+  const requiredRoleLower = requiredRole?.toLowerCase();
+  const isTargetOppositeMarketplaceRole =
+    Boolean(user) &&
+    !isStaffRole &&
+    ((primaryRole === RoleName.CLIENT && requiredRoleLower === "freelancer") ||
+      (primaryRole === RoleName.FREELANCER && requiredRoleLower === "client"));
+
   const handleLogout = async () => {
     if (isLoggingOut) return;
     setIsLoggingOut(true);
@@ -50,11 +74,6 @@ export function AccessDeniedContent({
       setIsLoggingOut(false);
     }
   };
-
-  const isStaffRole =
-    Boolean(user) &&
-    primaryRole !== RoleName.CLIENT &&
-    primaryRole !== RoleName.FREELANCER;
 
   const currentRoleDashboardUrl =
     primaryRole === RoleName.CLIENT
@@ -76,7 +95,6 @@ export function AccessDeniedContent({
             ? tRole("EXPERT")
             : primaryRole ?? t("userFallback");
 
-  const requiredRoleLower = requiredRole?.toLowerCase();
   const requiredRoleLabel =
     requiredRoleLower === "client"
       ? tRole("CLIENT")
@@ -190,7 +208,28 @@ export function AccessDeniedContent({
                   </Link>
                 </Button>
 
-                {/* 2. Secondary Actions */}
+                {/* 2. Switch / Join opposite marketplace role (Client <-> Freelancer only) */}
+                {isTargetOppositeMarketplaceRole && (
+                  <Button
+                    variant="outline"
+                    className="w-full border-primary/40 hover:bg-primary/5 text-primary font-medium"
+                    onClick={() => void executeRoleAction(from)}
+                    disabled={isRoleActionPending}
+                  >
+                    {isRoleActionPending ? (
+                      <Loader2 className="mr-2 size-4 animate-spin" />
+                    ) : hasTargetRole ? (
+                      <RefreshCw className="mr-2 size-4" />
+                    ) : (
+                      <UserPlus className="mr-2 size-4" />
+                    )}
+                    {hasTargetRole
+                      ? t("switchToRole", { role: requiredRoleLabel })
+                      : marketplaceRoleActionLabel}
+                  </Button>
+                )}
+
+                {/* 3. Secondary Actions */}
                 <div className="flex items-center gap-2 pt-1">
                   {!isStaffRole && (
                     <Button

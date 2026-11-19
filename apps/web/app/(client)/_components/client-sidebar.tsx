@@ -20,6 +20,8 @@ import {
   PanelLeftOpen,
   Shield,
   Sun,
+  SwitchCamera,
+  UserPlus,
   UserRound,
   Users,
 } from "@/components/icons";
@@ -32,8 +34,8 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef, useState, useTransition } from "react";
 
-import { useMe } from "@/hooks/use-auth";
 import { useActionPermission } from "@/hooks/use-action-permission";
+import { useMarketplaceRoleAction } from "@/hooks/use-marketplace-role-action";
 import { canAccessAdminPortal } from "@/lib/admin-access";
 import {
   Avatar,
@@ -107,8 +109,15 @@ export function ClientSidebar() {
   const tRole = useTranslations("roleName");
   const activeLocale = useLocale();
   const [isLocalePending, startLocaleTransition] = useTransition();
-  const { data: me } = useMe();
-  // const { data: notifications = [] } = useNotifications();
+  const {
+    me,
+    isMarketplaceUser,
+    hasTargetRole,
+    isMeLoading,
+    isPending: isRoleActionPending,
+    actionLabel: roleActionLabel,
+    executeRoleAction,
+  } = useMarketplaceRoleAction("CLIENT");
   const { data: conversations = [] } = useConversations();
   const { can } = useActionPermission();
   const canViewJobs = can("GET", "/api/manage-jobs");
@@ -480,6 +489,29 @@ export function ClientSidebar() {
               </div>
 
               <div className="my-1 h-px bg-border" />
+
+              {isMarketplaceUser && (
+                <>
+                  <button
+                    type="button"
+                    disabled={isMeLoading || isRoleActionPending}
+                    onClick={() => {
+                      void executeRoleAction().then((didUpdate) => {
+                        if (didUpdate) setProfileOpen(false);
+                      });
+                    }}
+                    className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-xs font-medium text-foreground/80 transition-colors hover:bg-[#F1F0F5] hover:text-foreground dark:hover:bg-zinc-800 disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer"
+                  >
+                    {hasTargetRole ? (
+                      <SwitchCamera className="size-3.5 text-[#0069D3]" />
+                    ) : (
+                      <UserPlus className="size-3.5 text-[#0069D3]" />
+                    )}
+                    <span>{roleActionLabel}</span>
+                  </button>
+                  <div className="my-1 h-px bg-border" />
+                </>
+              )}
 
               <button
                 onClick={() => {

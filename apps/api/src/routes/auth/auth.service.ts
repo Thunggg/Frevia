@@ -10,6 +10,7 @@ import {
   GetAuthorizationUrlResType,
   GoogleUserInfo,
   GetMeResType,
+  JoinRoleBodyType,
   LoginBodyType,
   MessageResType,
   OauthProvider,
@@ -17,6 +18,7 @@ import {
   RegisterBodyType,
   RoleName,
   SendOTPBodyType,
+  SwitchRoleBodyType,
   TypeOfVerificationCode,
   UserType,
   AuthMessage,
@@ -37,8 +39,10 @@ import {
   IncorrectEmailException,
   IncorrectPasswordException,
   InvalidVerificationCodeException,
+  MarketplaceRoleOnlyException,
   OTPExpiredException,
   RefreshTokenRevokedException,
+  RoleAlreadyAssignedException,
   RoleNotFoundException,
   TooManyAttemptsException,
   UniqueViolationException,
@@ -549,6 +553,49 @@ export class AuthService {
       }
     }
 
+    const roles: GetMeResType['roles'] = userRole
+      ? [
+          {
+            id: userRole.id,
+            name: userRole.name,
+            description: userRole.description,
+            isPrimary: true,
+          },
+        ]
+      : [];
+
+    if (isMarketplaceRole && userRole) {
+      const ownedRoles =
+        (
+          user as {
+            userRoles?: Array<{
+              role: {
+                id: number;
+                name: string;
+                description: string | null;
+              };
+            }>;
+          }
+        ).userRoles ?? [];
+
+      for (const assignment of ownedRoles) {
+        const assignedRole = assignment.role;
+        if (
+          assignedRole &&
+          assignedRole.id !== userRole.id &&
+          (assignedRole.name === RoleName.CLIENT ||
+            assignedRole.name === RoleName.FREELANCER)
+        ) {
+          roles.push({
+            id: assignedRole.id,
+            name: assignedRole.name,
+            description: assignedRole.description,
+            isPrimary: false,
+          });
+        }
+      }
+    }
+
     return {
       id: user.id,
       email: user.email,
@@ -560,19 +607,89 @@ export class AuthService {
             avatarUrl: user.profile.avatarUrl,
           }
         : null,
-      roles: userRole
-        ? [
-            {
-              id: userRole.id,
-              name: userRole.name,
-              description: userRole.description,
-              isPrimary: true,
-            },
-          ]
-        : [],
+      roles,
       permissions: Array.from(permissionsSet),
       permissionModules: Array.from(modulesSet),
     };
+  }
+
+  async switchRole(
+    userId: number,
+    sessionId: number,
+    body: SwitchRoleBodyType,
+  ) {
+    const result = await this.authRepository.switchMarketplaceRole(
+      userId,
+      body.role,
+    );
+
+    if (result.status === 'user-not-found') {
+      throw new NotFoundException([
+        { message: AuthMessage.EMAIL_NOT_FOUND, path: 'userId' },
+      ]);
+    }
+    if (result.status === 'banned') {
+      throw UserBannedException();
+    }
+    if (result.status === 'forbidden') {
+      throw MarketplaceRoleOnlyException();
+    }
+    if (result.status === 'not-owned') {
+      throw RoleNotFoundException();
+    }
+
+    const accessToken = await this.tokenService.signAccessToken({
+      userId,
+      roleId: result.role.id,
+      roleName: result.role.name,
+      sessionId,
+    });
+
+    return { accessToken };
+  }
+
+  async joinRole(userId: number, sessionId: number, body: JoinRoleBodyType) {
+    try {
+      const result = await this.authRepository.joinMarketplaceRole(
+        userId,
+        body.role,
+      );
+
+      if (result.status === 'user-not-found') {
+        throw new NotFoundException([
+          { message: AuthMessage.EMAIL_NOT_FOUND, path: 'userId' },
+        ]);
+      }
+      if (result.status === 'banned') {
+        throw UserBannedException();
+      }
+      if (result.status === 'forbidden') {
+        throw MarketplaceRoleOnlyException();
+      }
+      if (result.status === 'role-not-found') {
+        throw RoleNotFoundException();
+      }
+      if (result.status === 'already-assigned') {
+        throw RoleAlreadyAssignedException();
+      }
+
+      const accessToken = await this.tokenService.signAccessToken({
+        userId,
+        roleId: result.role.id,
+        roleName: result.role.name,
+        sessionId,
+      });
+
+      return { accessToken };
+    } catch (error) {
+      if (
+        error instanceof PrismaClientKnownRequestError &&
+        error.code === 'P2002'
+      ) {
+        throw RoleAlreadyAssignedException();
+      }
+      throw error;
+    }
   }
 
   getAuthorizationUrl(payload: {

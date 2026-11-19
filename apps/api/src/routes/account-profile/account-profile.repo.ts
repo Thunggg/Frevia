@@ -118,7 +118,16 @@ export class AccountProfileRepository {
       user: {
         deletedAt: null,
         isBanned: false,
-        role: { name: RoleName.CLIENT, deletedAt: null },
+        OR: [
+          { role: { name: RoleName.CLIENT, deletedAt: null } },
+          {
+            userRoles: {
+              some: {
+                role: { name: RoleName.CLIENT, deletedAt: null },
+              },
+            },
+          },
+        ],
       },
       ...(search
         ? {
@@ -183,7 +192,15 @@ export class AccountProfileRepository {
           },
         },
         socialLinks: { orderBy: { platform: 'asc' } },
-        user: { select: { role: { select: { name: true } } } },
+        user: {
+          select: {
+            role: { select: { name: true } },
+            userRoles: {
+              where: { role: { deletedAt: null } },
+              select: { role: { select: { name: true } } },
+            },
+          },
+        },
       },
     });
   }
@@ -457,7 +474,16 @@ export class AccountProfileRepository {
         id: { not: clientId },
         isBanned: false,
         deletedAt: null,
-        role: { name: RoleName.FREELANCER, deletedAt: null },
+        OR: [
+          { role: { name: RoleName.FREELANCER, deletedAt: null } },
+          {
+            userRoles: {
+              some: {
+                role: { name: RoleName.FREELANCER, deletedAt: null },
+              },
+            },
+          },
+        ],
         profile: {
           is: { freelancerProfile: { isNot: null } },
         },

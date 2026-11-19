@@ -100,11 +100,15 @@ describe('PermissionGuard', () => {
   it('allows FREELANCER on hardcoded freelancer endpoints and blocks client-only & admin endpoints', async () => {
     (reflector.getAllAndOverride as jest.Mock).mockReturnValue(false);
 
-    const bookmarkCtx = createMockContext('POST', '/api/manage-jobs/1/bookmark', {
-      userId: 3,
-      roleId: 3,
-      roleName: RoleName.FREELANCER,
-    });
+    const bookmarkCtx = createMockContext(
+      'POST',
+      '/api/manage-jobs/1/bookmark',
+      {
+        userId: 3,
+        roleId: 3,
+        roleName: RoleName.FREELANCER,
+      },
+    );
     await expect(guard.canActivate(bookmarkCtx)).resolves.toBe(true);
 
     const favCtx = createMockContext('GET', '/api/favorites/freelancers', {
@@ -119,11 +123,15 @@ describe('PermissionGuard', () => {
   it('allows self-service account-profile and sessions for admin and custom roles without DB query', async () => {
     (reflector.getAllAndOverride as jest.Mock).mockReturnValue(false);
 
-    const accountCtx = createMockContext('PUT', '/api/account-profile/password', {
-      userId: 5,
-      roleId: 10,
-      roleName: 'Moderator',
-    });
+    const accountCtx = createMockContext(
+      'PUT',
+      '/api/account-profile/password',
+      {
+        userId: 5,
+        roleId: 10,
+        roleName: 'Moderator',
+      },
+    );
     await expect(guard.canActivate(accountCtx)).resolves.toBe(true);
 
     const sessionsCtx = createMockContext('GET', '/api/sessions', {
@@ -199,6 +207,68 @@ describe('PermissionGuard', () => {
     await expect(guard.canActivate(context)).rejects.toThrow(
       ForbiddenException,
     );
-    expect(roleHasPermissionMock).toHaveBeenCalledWith(12, 'POST', '/api/users');
+    expect(roleHasPermissionMock).toHaveBeenCalledWith(
+      12,
+      'POST',
+      '/api/users',
+    );
+  });
+
+  it('allows CLIENT and FREELANCER on join-role/switch-role while blocking ADMIN, EXPERT, and custom roles', async () => {
+    (reflector.getAllAndOverride as jest.Mock).mockReturnValue(false);
+
+    for (const path of ['/api/auth/join-role', '/api/auth/switch-role']) {
+      await expect(
+        guard.canActivate(
+          createMockContext('POST', path, {
+            userId: 2,
+            roleId: 2,
+            roleName: RoleName.CLIENT,
+          }),
+        ),
+      ).resolves.toBe(true);
+
+      await expect(
+        guard.canActivate(
+          createMockContext('POST', path, {
+            userId: 3,
+            roleId: 3,
+            roleName: RoleName.FREELANCER,
+          }),
+        ),
+      ).resolves.toBe(true);
+
+      await expect(
+        guard.canActivate(
+          createMockContext('POST', path, {
+            userId: 1,
+            roleId: 1,
+            roleName: RoleName.ADMIN,
+          }),
+        ),
+      ).rejects.toThrow(ForbiddenException);
+
+      await expect(
+        guard.canActivate(
+          createMockContext('POST', path, {
+            userId: 4,
+            roleId: 4,
+            roleName: RoleName.EXPERT,
+          }),
+        ),
+      ).rejects.toThrow(ForbiddenException);
+
+      await expect(
+        guard.canActivate(
+          createMockContext('POST', path, {
+            userId: 5,
+            roleId: 12,
+            roleName: 'Support',
+          }),
+        ),
+      ).rejects.toThrow(ForbiddenException);
+    }
+
+    expect(roleHasPermissionMock).not.toHaveBeenCalled();
   });
 });

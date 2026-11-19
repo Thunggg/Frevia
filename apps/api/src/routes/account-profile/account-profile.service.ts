@@ -576,7 +576,11 @@ export class AccountProfileService {
 
   async getClientProfile(userId: number) {
     const profile = await this.repository.findClientProfile(userId);
-    const isClient = profile?.user?.role?.name === RoleName.CLIENT;
+    const isClient =
+      profile?.user?.role?.name === RoleName.CLIENT ||
+      profile?.user?.userRoles?.some(
+        (assignment) => assignment.role?.name === RoleName.CLIENT,
+      ) === true;
     if (!profile || !isClient) throw ClientProfileNotFoundException();
     const avatarUrl = this.presentAvatarUrl(
       profile.userId,
