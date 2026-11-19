@@ -38,7 +38,7 @@ import { CvAnalysisDialog } from "./cv-analysis-dialog";
 import { useActionPermission } from "@/hooks/use-action-permission";
 import { useBackendMessage } from "@/hooks/use-backend-message";
 import { useQueryClient } from "@tanstack/react-query";
-import { useLocale, useTranslations } from "next-intl";
+import { useTranslations } from "next-intl";
 import {
   AlertCircle,
   Camera,
@@ -169,7 +169,6 @@ export function GeneralSettings() {
   const tSettings = useTranslations("clientProfileSettings");
   const tRole = useTranslations("roleName");
   const tCommon = useTranslations("common");
-  const activeLocale = useLocale();
   const { can } = useActionPermission();
   const canViewAccountProfile = can("GET", "/api/account-profile");
   const canUpdateAccountProfile = can("PUT", "/api/account-profile");

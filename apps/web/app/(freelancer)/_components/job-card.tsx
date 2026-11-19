@@ -36,8 +36,45 @@ export type JobCardJob = Pick<
   | "proposalsCount"
 >;
 
+type JobCardSkillInput =
+  | string
+  | {
+      id?: string | number;
+      skillId?: string | number;
+      name?: string;
+      skill?: { name?: string };
+    };
+
+type JobCardCategoryInput = {
+  id: string | number;
+  slug: string;
+  name: string;
+};
+
+type JobCardInput = {
+  id: string | number;
+  slug: string;
+  title: string;
+  description?: string | null;
+  budgetMin?: number | null;
+  budgetMax?: number | null;
+  budgetType?: string | null;
+  status?: string | null;
+  deadline?: string | Date | null;
+  expiryDate?: string | Date | null;
+  createdAt?: string | Date | null;
+  hiringType?: string | null;
+  positionsRequired?: number | null;
+  positionsFilled?: number | null;
+  skills?: JobCardSkillInput[] | null;
+  jobCategories?: JobCardCategoryInput[] | null;
+  proposalsCount?: number | null;
+  _count?: { proposals?: number };
+  proposals?: unknown[];
+};
+
 type JobCardProps = {
-  job: any;
+  job: JobCardInput;
   /** Trang danh sách job — mọi chip và nút "Xem chi tiết" đều trỏ về đây. */
   jobBaseUrl: string;
   /** Trang tìm việc để áp bộ lọc theo danh mục/kỹ năng. */
@@ -72,14 +109,12 @@ export function JobCard({
   isBookmarkPending = false,
   onToggleBookmark,
   matchScore,
-  components,
   recommendationId,
   onViewExplanation,
   showApplyButton = false,
 }: JobCardProps) {
   const t = useTranslations("findWork");
   const tRec = useTranslations("recommendation");
-  const tStatus = useTranslations("jobStatus");
   const tBudgetType = useTranslations("jobBudgetType");
   const tBookmark = useTranslations("bookmark");
   const tCommon = useTranslations("common");
@@ -93,7 +128,7 @@ export function JobCard({
 
   const normalizedSkills: Array<{ id: string | number; name: string }> = (
     job.skills ?? []
-  ).map((s: any, idx: number) => {
+  ).map((s, idx: number) => {
     if (typeof s === "string") {
       return { id: `skill-${idx}-${s}`, name: s };
     }
@@ -129,7 +164,7 @@ export function JobCard({
     job.expiryDate && new Date(job.expiryDate).getTime() < Date.now();
 
   const budgetText =
-    job.budgetMin === null || job.budgetMax === null
+    job.budgetMin == null || job.budgetMax == null
       ? t("negotiable")
       : `$${format.number(job.budgetMin)} - $${format.number(job.budgetMax)}`;
 
@@ -194,10 +229,12 @@ export function JobCard({
         <div className="flex flex-wrap items-center gap-2">
           {renderJobStatusBadge()}
 
-          <span className="inline-flex items-center gap-1">
-            <Clock className="size-3.5" />
-            {t("postedLabel", { time: formatPostedTime(job.createdAt) })}
-          </span>
+          {job.createdAt && (
+            <span className="inline-flex items-center gap-1">
+              <Clock className="size-3.5" />
+              {t("postedLabel", { time: formatPostedTime(job.createdAt) })}
+            </span>
+          )}
 
           <span>•</span>
 
@@ -299,7 +336,8 @@ export function JobCard({
       <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs sm:text-sm text-foreground/80">
         <div>
           <span className="font-semibold text-foreground">
-            {tBudgetType(job.budgetType)}: {budgetText}
+            {job.budgetType ? `${tBudgetType(job.budgetType)}: ` : ""}
+            {budgetText}
           </span>
         </div>
 
@@ -384,7 +422,7 @@ export function JobCard({
           </span>
         )}
 
-        {jobCategories.map((cat: any) => (
+        {jobCategories.map((cat) => (
           <Link
             key={`${job.id}-cat-${cat.id}`}
             href={`${filterBasePath}?category=${encodeURIComponent(cat.slug)}`}
