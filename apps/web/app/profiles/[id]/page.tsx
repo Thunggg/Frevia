@@ -12,14 +12,16 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
     authServerRequest.getMe(),
   ]);
   const profileId = Number(id);
-  const primaryRole = currentUser?.roles.find((role) => role.isPrimary)?.name;
+  const primaryRole =
+    currentUser?.roles.find((role) => role.isPrimary)?.name ??
+    currentUser?.roles[0]?.name;
   const headerRole =
     primaryRole === RoleName.FREELANCER
       ? "FREELANCER"
       : primaryRole === RoleName.CLIENT
         ? "CLIENT"
         : currentUser
-          ? "FREELANCER"
+          ? "STAFF"
           : "GUEST";
 
   return (

@@ -8,6 +8,7 @@ import {
   UpdateRoleBodyType,
   UpdateRoleResponseType,
 } from '@shared/types';
+import { ADMIN_PERMISSION_PRISMA_WHERE } from '../../shared/helper/admin-permission';
 import { PrismaService } from '../../shared/services/prisma.service';
 import { RoleNotFoundException } from './roles.error';
 
@@ -55,6 +56,7 @@ export class RolesRepository {
           where: {
             permission: {
               deletedAt: null,
+              AND: [ADMIN_PERMISSION_PRISMA_WHERE],
             },
           },
           select: {
@@ -146,6 +148,7 @@ export class RolesRepository {
       where: {
         id: { in: ids },
         deletedAt: null,
+        AND: [ADMIN_PERMISSION_PRISMA_WHERE],
       },
       select: { id: true },
     });

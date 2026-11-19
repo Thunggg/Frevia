@@ -722,7 +722,8 @@ export function ProfilePageClient({
   };
 
   if (isLoading) {
-    const isGuestLoading = headerRole === "GUEST";
+    const isGuestLoading =
+      headerRole === "GUEST" || headerRole === "STAFF";
     return (
       <div
         className={
@@ -750,7 +751,8 @@ export function ProfilePageClient({
   }
 
   if (loadError || !profile) {
-    const isGuestError = headerRole === "GUEST";
+    const isGuestError =
+      headerRole === "GUEST" || headerRole === "STAFF";
     return (
       <div
         className={
@@ -784,7 +786,7 @@ export function ProfilePageClient({
 
   const freelancer = profile.freelancerProfile;
 
-  const isGuest = headerRole === "GUEST";
+  const isGuest = headerRole === "GUEST" || headerRole === "STAFF";
 
   return (
     <div
@@ -826,13 +828,17 @@ export function ProfilePageClient({
                       ? "/client/conversations"
                       : headerRole === "FREELANCER"
                         ? "/freelancer/conversations"
-                        : "/"
+                        : headerRole === "STAFF"
+                          ? "/admin"
+                          : "/"
                   }
                   className="transition-colors hover:text-[#4fae2e]"
                 >
                   {headerRole === "GUEST"
                     ? tCommon("home")
-                    : tCommon("messages")}
+                    : headerRole === "STAFF"
+                      ? "Admin"
+                      : tCommon("messages")}
                 </Link>
                 <span className="mx-2 text-foreground/35">/</span>
                 <span className="font-medium text-foreground">
