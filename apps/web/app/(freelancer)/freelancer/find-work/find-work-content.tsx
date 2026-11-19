@@ -353,7 +353,7 @@ export function FindWorkContent({
       setHasFetchedRecs(true);
       toastSuccess({ message: tRec("refreshRecommendations") });
     } catch {
-      toastError({ message: "Không thể làm mới danh sách gợi ý" });
+      toastError({ message: t("refreshRecommendationsFailed") });
     } finally {
       setIsLoadingRecs(false);
     }
@@ -456,9 +456,9 @@ export function FindWorkContent({
     try {
       await savedSearchApiRequest.delete(id);
       setSavedSearches((prev) => prev.filter((item) => item.id !== id));
-      toastSuccess({ message: "Đã xóa tìm kiếm đã lưu" });
+      toastSuccess({ message: t("savedSearchDeleted") });
     } catch {
-      toastError({ message: "Không thể xóa tìm kiếm" });
+      toastError({ message: t("savedSearchDeleteFailed") });
     }
   };
 

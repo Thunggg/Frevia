@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { useLocale, useTranslations } from "next-intl";
 import { useActionPermission } from "@/hooks/use-action-permission";
 import { paymentApiRequest } from "@/apiRequests/payment";
 import { Button } from "@repo/ui/components/shadcn/button";
@@ -33,9 +34,9 @@ function money(amount: number | string, currency: string = "USD") {
   }).format(Number(amount));
 }
 
-function formatDate(date: string | Date | null | undefined) {
+function formatDate(date: string | Date | null | undefined, locale: string) {
   if (!date) return "—";
-  return new Intl.DateTimeFormat("en-US", {
+  return new Intl.DateTimeFormat(locale === "vi" ? "vi-VN" : "en-US", {
     month: "short",
     day: "numeric",
     year: "numeric",
@@ -49,6 +50,8 @@ interface PaymentSettingsProps {
 }
 
 export function PaymentSettings({ userRole }: PaymentSettingsProps) {
+  const t = useTranslations("payments");
+  const locale = useLocale();
   const { can } = useActionPermission();
   const canGetPaymentMethods = can("GET", "/api/payments/payment-methods");
   const canGetConnectStatus = can("GET", "/api/payments/connect/status");
@@ -118,7 +121,7 @@ export function PaymentSettings({ userRole }: PaymentSettingsProps) {
     try {
       const res = await paymentApiRequest.getOnboardingLink();
       if (res.data?.onboardingUrl) {
-        toastSuccess({ message: "Redirecting to Stripe Express..." });
+        toastSuccess({ message: t("settings.redirectingToast") });
         window.location.href = res.data.onboardingUrl;
       }
     } catch (err: unknown) {
@@ -127,8 +130,8 @@ export function PaymentSettings({ userRole }: PaymentSettingsProps) {
           ? err.message
           : typeof err === "object" && err !== null && "response" in err
             ? (err as { response?: { error?: { message?: string } } }).response
-                ?.error?.message || "Stripe account creation failed."
-            : "Could not create Stripe onboarding link. Please check your Stripe keys.";
+                ?.error?.message || t("settings.accountCreationFailed")
+            : t("settings.onboardingLinkFailed");
       toastError({
         message: errorMsg,
       });
@@ -141,22 +144,22 @@ export function PaymentSettings({ userRole }: PaymentSettingsProps) {
     switch (type) {
       case "ESCROW_DEPOSIT":
         return {
-          label: "Escrow Deposit",
+          label: t("types.ESCROW_DEPOSIT"),
           className: "bg-blue-50 text-[#0069D3] border-blue-200 dark:bg-blue-950/40 dark:text-blue-400",
         };
       case "MILESTONE_PAYOUT":
         return {
-          label: "Payout",
+          label: t("types.PAYOUT_SHORT"),
           className: "bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-400",
         };
       case "PLATFORM_FEE":
         return {
-          label: "Platform Fee",
+          label: t("types.PLATFORM_FEE"),
           className: "bg-purple-50 text-purple-700 border-purple-200 dark:bg-purple-950/40 dark:text-purple-400",
         };
       case "REFUND":
         return {
-          label: "Refund",
+          label: t("types.REFUND"),
           className: "bg-rose-50 text-rose-700 border-rose-200 dark:bg-rose-950/40 dark:text-rose-400",
         };
       default:
@@ -172,25 +175,25 @@ export function PaymentSettings({ userRole }: PaymentSettingsProps) {
       case "SUCCEEDED":
         return (
           <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-600 dark:text-emerald-400">
-            <CheckCircle2 className="size-3" /> Succeeded
+            <CheckCircle2 className="size-3" /> {t("statuses.SUCCEEDED")}
           </span>
         );
       case "PENDING":
         return (
           <span className="inline-flex items-center gap-1 text-[11px] font-medium text-amber-600 dark:text-amber-400">
-            <Clock className="size-3" /> Pending
+            <Clock className="size-3" /> {t("statuses.PENDING")}
           </span>
         );
       case "FAILED":
         return (
           <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-rose-600 dark:text-rose-400">
-            <XCircle className="size-3" /> Failed
+            <XCircle className="size-3" /> {t("statuses.FAILED")}
           </span>
         );
       case "REFUNDED":
         return (
           <span className="inline-flex items-center gap-1 text-[11px] font-medium text-purple-600 dark:text-purple-400">
-            <RefreshCw className="size-3" /> Refunded
+            <RefreshCw className="size-3" /> {t("statuses.REFUNDED")}
           </span>
         );
       default:
@@ -210,11 +213,11 @@ export function PaymentSettings({ userRole }: PaymentSettingsProps) {
                   <Wallet className="size-4" />
                 </div>
                 <h3 className="text-base font-bold text-foreground">
-                  Stripe Payout Account
+                  {t("connect.title")}
                 </h3>
               </div>
               <p className="text-xs text-muted-foreground leading-relaxed max-w-2xl pt-1">
-                Link your bank account or debit card using Stripe Express. When a client releases a payment, your earnings transfer directly to your bank account.
+                {t("settings.connectSubtitle")}
               </p>
             </div>
 
@@ -229,7 +232,7 @@ export function PaymentSettings({ userRole }: PaymentSettingsProps) {
               <RefreshCw
                 className={`mr-1.5 size-3.5 ${connectLoading ? "animate-spin" : ""}`}
               />
-              Refresh status
+              {t("settings.refreshStatus")}
             </Button>
           </div>
 
@@ -237,7 +240,7 @@ export function PaymentSettings({ userRole }: PaymentSettingsProps) {
             {connectLoading ? (
               <div className="flex items-center gap-2 text-xs text-muted-foreground py-4">
                 <Loader2 className="size-4 animate-spin text-[#0069D3]" />
-                <span>Checking Stripe account verification...</span>
+                <span>{t("settings.checkingVerification")}</span>
               </div>
             ) : connectStatus?.isConnected && connectStatus.payoutsEnabled ? (
               <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/5 p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
@@ -248,14 +251,16 @@ export function PaymentSettings({ userRole }: PaymentSettingsProps) {
                   <div>
                     <div className="flex items-center gap-2">
                       <span className="text-xs font-bold text-foreground">
-                        Connected & Payouts Active
+                        {t("settings.connectedActive")}
                       </span>
                       <Badge className="bg-emerald-600/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 text-[10px] px-2 py-0.5">
-                        Verified
+                        {t("connect.verified")}
                       </Badge>
                     </div>
                     <span className="text-[11px] text-muted-foreground font-mono mt-0.5 block">
-                      Account ID: {connectStatus.stripeAccountId}
+                      {t("settings.accountId", {
+                        id: connectStatus.stripeAccountId ?? "",
+                      })}
                     </span>
                   </div>
                 </div>
@@ -273,7 +278,7 @@ export function PaymentSettings({ userRole }: PaymentSettingsProps) {
                     ) : (
                       <ExternalLink className="mr-1.5 size-3.5" />
                     )}
-                    Stripe Express Dashboard
+                    {t("settings.expressDashboard")}
                   </Button>
                 )}
               </div>
@@ -282,14 +287,14 @@ export function PaymentSettings({ userRole }: PaymentSettingsProps) {
                 <div className="space-y-1">
                   <div className="flex items-center gap-2">
                     <span className="text-xs font-bold text-foreground">
-                      No Payout Account Connected
+                      {t("settings.noPayoutAccount")}
                     </span>
                     <Badge className="bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-500/30 text-[10px]">
-                      Action Required
+                      {t("settings.actionRequired")}
                     </Badge>
                   </div>
                   <p className="text-xs text-muted-foreground leading-relaxed">
-                    You cannot receive released payments until you complete the simple Stripe Express bank onboarding.
+                    {t("settings.noPayoutDesc")}
                   </p>
                 </div>
 
@@ -306,7 +311,7 @@ export function PaymentSettings({ userRole }: PaymentSettingsProps) {
                     ) : (
                       <Building2 className="mr-1.5 size-3.5" />
                     )}
-                    Connect Bank Account with Stripe
+                    {t("settings.connectBankBtn")}
                   </Button>
                 )}
               </div>
@@ -325,10 +330,10 @@ export function PaymentSettings({ userRole }: PaymentSettingsProps) {
               </div>
               <div>
                 <h3 className="text-base font-bold text-foreground">
-                  Saved Payment Methods
+                  {t("settings.savedMethodsTitle")}
                 </h3>
                 <p className="text-xs text-muted-foreground mt-0.5">
-                  1-Click checkout and card management powered by Stripe
+                  {t("settings.savedMethodsSubtitle")}
                 </p>
               </div>
             </div>
@@ -337,7 +342,7 @@ export function PaymentSettings({ userRole }: PaymentSettingsProps) {
           {paymentMethodsLoading ? (
             <div className="flex items-center justify-center py-6 text-muted-foreground">
               <Loader2 className="size-5 animate-spin mr-2" />
-              <span className="text-xs">Loading saved cards...</span>
+              <span className="text-xs">{t("settings.loadingSavedCards")}</span>
             </div>
           ) : paymentMethodsData?.paymentMethods &&
             paymentMethodsData.paymentMethods.length > 0 ? (
@@ -353,7 +358,7 @@ export function PaymentSettings({ userRole }: PaymentSettingsProps) {
                     </span>
                     {pm.isDefault && (
                       <Badge className="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20 text-[10px] px-2 py-0.5">
-                        Default
+                        {t("settings.defaultBadge")}
                       </Badge>
                     )}
                   </div>
@@ -361,7 +366,7 @@ export function PaymentSettings({ userRole }: PaymentSettingsProps) {
                     •••• •••• •••• {pm.last4}
                   </div>
                   <div className="flex items-center justify-between text-[11px] text-muted-foreground pt-1 border-t border-border/50">
-                    <span>Expires</span>
+                    <span>{t("settings.expires")}</span>
                     <span>
                       {String(pm.expMonth).padStart(2, "0")}/{pm.expYear}
                     </span>
@@ -373,7 +378,7 @@ export function PaymentSettings({ userRole }: PaymentSettingsProps) {
             <div className="rounded-xl border border-dashed border-border/80 bg-zinc-50/50 dark:bg-zinc-900/20 p-5 text-center space-y-2">
               <CreditCard className="size-6 text-muted-foreground mx-auto stroke-1" />
               <p className="text-xs text-muted-foreground max-w-sm mx-auto">
-                No cards saved yet. When you fund a contract or milestone via Stripe, your card can be securely saved for faster payments.
+                {t("settings.noCardsSavedDesc")}
               </p>
             </div>
           )}
@@ -389,37 +394,31 @@ export function PaymentSettings({ userRole }: PaymentSettingsProps) {
             </div>
             <div>
               <h3 className="text-base font-bold text-foreground">
-                Payment Protection & Escrow
+                {t("settings.escrowInfoTitle")}
               </h3>
               <p className="text-xs text-muted-foreground mt-0.5">
-                How payments work on Frevia marketplace
+                {t("settings.escrowInfoSubtitle")}
               </p>
             </div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4 text-xs text-muted-foreground">
             <div className="rounded-xl border border-border/60 bg-zinc-50 dark:bg-zinc-900/40 p-4 space-y-1">
               <span className="font-semibold text-foreground block">
-                1. Authorize Hold &amp; Sign
+                {t("settings.escrowStep1Title")}
               </span>
-              <p>
-                Client authorizes at least 1 milestone + 3% contract fee hold. Stripe captures the funds when Freelancer countersigns, and cancels with $0 fee if declined or expired.
-              </p>
+              <p>{t("settings.escrowStep1Desc")}</p>
             </div>
             <div className="rounded-xl border border-border/60 bg-zinc-50 dark:bg-zinc-900/40 p-4 space-y-1">
               <span className="font-semibold text-foreground block">
-                2. Review Work
+                {t("settings.escrowStep2Title")}
               </span>
-              <p>
-                Review submitted deliverables. Request revisions or ask for adjustments if needed.
-              </p>
+              <p>{t("settings.escrowStep2Desc")}</p>
             </div>
             <div className="rounded-xl border border-border/60 bg-zinc-50 dark:bg-zinc-900/40 p-4 space-y-1">
               <span className="font-semibold text-foreground block">
-                3. Release (5% Fee) or Refund
+                {t("settings.escrowStep3Title")}
               </span>
-              <p>
-                Approve deliverables to release 95% payout to the freelancer (5% platform fee deducted), or refund if mutually agreed.
-              </p>
+              <p>{t("settings.escrowStep3Desc")}</p>
             </div>
           </div>
         </div>
@@ -435,10 +434,10 @@ export function PaymentSettings({ userRole }: PaymentSettingsProps) {
             </div>
             <div>
               <h3 className="text-base font-bold text-foreground">
-                Transaction History
+                {t("settings.historyTitle")}
               </h3>
               <p className="text-xs text-muted-foreground">
-                All platform fee, escrow deposit, release, and refund records
+                {t("settings.historySubtitle")}
               </p>
             </div>
           </div>
@@ -452,11 +451,15 @@ export function PaymentSettings({ userRole }: PaymentSettingsProps) {
               }}
               className="h-8 rounded-full border border-border bg-transparent px-3 text-xs font-medium text-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#0069D3]"
             >
-              <option value="ALL">All Transaction Types</option>
-              <option value="ESCROW_DEPOSIT">Escrow Deposit</option>
-              <option value="MILESTONE_PAYOUT">Payout</option>
-              <option value="PLATFORM_FEE">Platform Fee</option>
-              <option value="REFUND">Refund</option>
+              <option value="ALL">{t("settings.allTransactionTypes")}</option>
+              <option value="ESCROW_DEPOSIT">
+                {t("types.ESCROW_DEPOSIT")}
+              </option>
+              <option value="MILESTONE_PAYOUT">
+                {t("types.PAYOUT_SHORT")}
+              </option>
+              <option value="PLATFORM_FEE">{t("types.PLATFORM_FEE")}</option>
+              <option value="REFUND">{t("types.REFUND")}</option>
             </select>
 
             <Button
@@ -479,11 +482,17 @@ export function PaymentSettings({ userRole }: PaymentSettingsProps) {
           <table className="w-full text-left text-xs">
             <thead className="bg-zinc-50 dark:bg-zinc-900/60 text-muted-foreground border-b border-border/80">
               <tr>
-                <th className="px-4 py-3 font-semibold">Date</th>
-                <th className="px-4 py-3 font-semibold">Type</th>
-                <th className="px-4 py-3 font-semibold text-right">Amount</th>
-                <th className="px-4 py-3 font-semibold">Status</th>
-                <th className="px-4 py-3 font-semibold">Reference ID</th>
+                <th className="px-4 py-3 font-semibold">{t("detail.date")}</th>
+                <th className="px-4 py-3 font-semibold">{t("detail.type")}</th>
+                <th className="px-4 py-3 font-semibold text-right">
+                  {t("billing.colAmount")}
+                </th>
+                <th className="px-4 py-3 font-semibold">
+                  {t("billing.colStatus")}
+                </th>
+                <th className="px-4 py-3 font-semibold">
+                  {t("detail.referenceId")}
+                </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border/60">
@@ -491,7 +500,7 @@ export function PaymentSettings({ userRole }: PaymentSettingsProps) {
                 <tr>
                   <td colSpan={5} className="py-8 text-center text-muted-foreground">
                     <Loader2 className="size-5 animate-spin mx-auto mb-2 text-[#0069D3]" />
-                    <span>Loading transactions...</span>
+                    <span>{t("settings.loadingTransactions")}</span>
                   </td>
                 </tr>
               ) : transactionsData?.data && transactionsData.data.length > 0 ? (
@@ -507,7 +516,7 @@ export function PaymentSettings({ userRole }: PaymentSettingsProps) {
                       className="hover:bg-zinc-50/50 dark:hover:bg-zinc-900/30 transition-colors"
                     >
                       <td className="px-4 py-3 text-muted-foreground whitespace-nowrap">
-                        {formatDate(tx.createdAt)}
+                        {formatDate(tx.createdAt, locale)}
                       </td>
                       <td className="px-4 py-3 whitespace-nowrap">
                         <span
@@ -547,7 +556,7 @@ export function PaymentSettings({ userRole }: PaymentSettingsProps) {
                     className="py-10 text-center text-muted-foreground"
                   >
                     <CreditCard className="size-6 mx-auto mb-2 text-muted-foreground/40" />
-                    <span>No transactions recorded yet.</span>
+                    <span>{t("settings.noTransactionsRecorded")}</span>
                   </td>
                 </tr>
               )}
@@ -559,8 +568,11 @@ export function PaymentSettings({ userRole }: PaymentSettingsProps) {
         {transactionsData && transactionsData.totalPages > 1 && (
           <div className="flex items-center justify-between text-xs text-muted-foreground pt-2">
             <span>
-              Page {transactionsData.page} of {transactionsData.totalPages} (
-              {transactionsData.totalItems} total)
+              {t("settings.pageSummary", {
+                page: transactionsData.page,
+                totalPages: transactionsData.totalPages,
+                totalItems: transactionsData.totalItems,
+              })}
             </span>
             <div className="flex items-center gap-2">
               <Button
@@ -570,7 +582,7 @@ export function PaymentSettings({ userRole }: PaymentSettingsProps) {
                 disabled={page <= 1}
                 className="rounded-full text-xs h-8 px-3"
               >
-                Previous
+                {t("billing.previous")}
               </Button>
               <Button
                 variant="outline"
@@ -581,7 +593,7 @@ export function PaymentSettings({ userRole }: PaymentSettingsProps) {
                 disabled={page >= transactionsData.totalPages}
                 className="rounded-full text-xs h-8 px-3"
               >
-                Next
+                {t("billing.next")}
               </Button>
             </div>
           </div>

@@ -1,7 +1,6 @@
 import authServerRequest from "@/apiRequests/auth.server";
 import { RoleName } from "@shared/types";
 import { redirect } from "next/navigation";
-import { NotificationsClient } from "./notifications-client";
 
 export default async function NotificationsPage() {
   const user = await authServerRequest.getMe();
@@ -9,7 +8,8 @@ export default async function NotificationsPage() {
     redirect("/login?redirect=/notifications");
   }
 
-  const activeRole = user?.roles.find((role) => role.isPrimary)?.name;
+  const activeRole =
+    user?.roles.find((role) => role.isPrimary)?.name ?? user?.roles[0]?.name;
 
   if (activeRole === RoleName.CLIENT) {
     redirect("/client/notifications");
@@ -19,5 +19,5 @@ export default async function NotificationsPage() {
     redirect("/freelancer/notifications");
   }
 
-  return <NotificationsClient headerRole="FREELANCER" />;
+  redirect("/access-denied");
 }

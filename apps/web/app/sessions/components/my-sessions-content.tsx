@@ -277,10 +277,10 @@ export function MySessionsContent({
     <div className="rounded-xl border border-border bg-card p-12 text-center text-muted-foreground shadow-sm">
       <MonitorSmartphone className="mx-auto size-10 text-muted-foreground/60 mb-3" />
       <p className="font-medium text-base text-foreground">
-        Không có quyền truy cập
+        {t("noPermissionTitle")}
       </p>
       <p className="text-sm mt-1 text-muted-foreground">
-        Bạn không có quyền xem danh sách phiên đăng nhập (#175).
+        {t("noPermissionDescription")}
       </p>
     </div>
   ) : (

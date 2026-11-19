@@ -8,9 +8,9 @@ import {
   getAllFeatureGroups,
   getPermissionFeatureGroup,
   getPermissionScope,
+  isAssignableAdminPermission,
   SCOPE_DEFINITIONS,
   type FeatureGroupDefinition,
-  type PermissionScope,
 } from "@/lib/permission-scopes";
 import { getPermissionDisplayName } from "@/lib/permission-utils";
 import { Badge } from "@repo/ui/components/shadcn/badge";
@@ -26,15 +26,10 @@ import {
 } from "@repo/ui/components/shadcn/select";
 import { Skeleton } from "@repo/ui/components/shadcn/skeleton";
 import { toastError, toastSuccess } from "@repo/ui/components/shadcn/toast";
-import { HttpMethod, type PermissionListItemType } from "@shared/types";
+import { HttpMethod, RoleName, type PermissionListItemType } from "@shared/types";
 import {
-  Briefcase,
   CheckCheck,
-  Globe,
-  Laptop,
-  Layers,
   Loader2,
-  Scale,
   Search,
   Shield,
   X,
@@ -91,49 +86,50 @@ export function AssignRoleContent() {
   const [search, setSearch] = useState("");
   const [methodFilter, setMethodFilter] = useState("all");
   const [featureGroupFilter, setFeatureGroupFilter] = useState("all");
-  const [scopeFilter, setScopeFilter] = useState<PermissionScope>("ALL");
 
-  useEffect(() => {
-    if (role && selectedRoleId === role.id) {
-      setSelectedIds(new Set(role.permissions.map((p) => p.id)));
-      setSearch("");
-      setMethodFilter("all");
-      setFeatureGroupFilter("all");
-      setScopeFilter("ALL");
-    }
-  }, [role, selectedRoleId]);
+  const assignableRoles = useMemo(
+    () =>
+      roles.filter(
+        (item) =>
+          item.name !== RoleName.CLIENT && item.name !== RoleName.FREELANCER,
+      ),
+    [roles],
+  );
 
   const permissions = useMemo(
-    () => data?.permissions ?? [],
+    () =>
+      (data?.permissions ?? []).filter((p) =>
+        isAssignableAdminPermission(p),
+      ),
     [data?.permissions],
   );
 
-  // Thống kê số lượng quyền theo từng Scope
-  const scopeCounts = useMemo(() => {
-    const counts: Record<PermissionScope, number> = {
-      ALL: permissions.length,
-      ADMIN: 0,
-      CLIENT: 0,
-      FREELANCER: 0,
-      CONTRACTS: 0,
-      COMMON: 0,
-    };
-    for (const p of permissions) {
-      const scope = getPermissionScope(p);
-      counts[scope] = (counts[scope] ?? 0) + 1;
+  const assignablePermissionIds = useMemo(
+    () => new Set(permissions.map((p) => p.id)),
+    [permissions],
+  );
+
+  useEffect(() => {
+    if (role && selectedRoleId === role.id) {
+      setSelectedIds(
+        new Set(
+          role.permissions
+            .filter((p) => isAssignableAdminPermission(p))
+            .map((p) => p.id),
+        ),
+      );
+      setSearch("");
+      setMethodFilter("all");
+      setFeatureGroupFilter("all");
     }
-    return counts;
-  }, [permissions]);
+  }, [role, selectedRoleId]);
 
-  // Danh sách các Cụm chức năng hiển thị trong dropdown theo Scope đang chọn
+  const adminPermissionCount = permissions.length;
+
+  // Danh sách các Cụm chức năng thuộc Admin Portal
   const availableGroups = useMemo(() => {
-    return getAllFeatureGroups(scopeFilter);
-  }, [scopeFilter]);
-
-  const handleScopeChange = (scope: PermissionScope) => {
-    setScopeFilter(scope);
-    setFeatureGroupFilter("all");
-  };
+    return getAllFeatureGroups("ADMIN");
+  }, []);
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
@@ -141,9 +137,6 @@ export function AssignRoleContent() {
     return permissions.filter((permission) => {
       const group = getPermissionFeatureGroup(permission);
 
-      if (scopeFilter !== "ALL" && group.scope !== scopeFilter) {
-        return false;
-      }
       if (methodFilter !== "all" && permission.method !== methodFilter) {
         return false;
       }
@@ -167,7 +160,7 @@ export function AssignRoleContent() {
         String(permission.id).includes(q)
       );
     });
-  }, [permissions, search, methodFilter, featureGroupFilter, scopeFilter]);
+  }, [permissions, search, methodFilter, featureGroupFilter]);
 
   const grouped = useMemo(() => {
     const map = new Map<
@@ -248,10 +241,14 @@ export function AssignRoleContent() {
       return;
     }
 
+    const validIds = Array.from(selectedIds).filter((id) =>
+      assignablePermissionIds.has(id),
+    );
+
     setRolePermissions.mutate(
       {
         id: selectedRoleId,
-        body: { permissionIds: Array.from(selectedIds) },
+        body: { permissionIds: validIds },
       },
       {
         onSuccess: (updated) => {
@@ -272,51 +269,6 @@ export function AssignRoleContent() {
       },
     );
   };
-
-  const SCOPE_TABS = [
-    {
-      key: "ALL" as const,
-      label: t("allScopes"),
-      icon: Layers,
-      count: scopeCounts.ALL,
-      badgeClass: "",
-    },
-    {
-      key: "ADMIN" as const,
-      label: t("scopeAdmin"),
-      icon: Shield,
-      count: scopeCounts.ADMIN,
-      badgeClass: SCOPE_DEFINITIONS.ADMIN.badgeClass,
-    },
-    {
-      key: "CLIENT" as const,
-      label: t("scopeClient"),
-      icon: Briefcase,
-      count: scopeCounts.CLIENT,
-      badgeClass: SCOPE_DEFINITIONS.CLIENT.badgeClass,
-    },
-    {
-      key: "FREELANCER" as const,
-      label: t("scopeFreelancer"),
-      icon: Laptop,
-      count: scopeCounts.FREELANCER,
-      badgeClass: SCOPE_DEFINITIONS.FREELANCER.badgeClass,
-    },
-    {
-      key: "CONTRACTS" as const,
-      label: t("scopeContracts"),
-      icon: Scale,
-      count: scopeCounts.CONTRACTS,
-      badgeClass: SCOPE_DEFINITIONS.CONTRACTS.badgeClass,
-    },
-    {
-      key: "COMMON" as const,
-      label: t("scopeCommon"),
-      icon: Globe,
-      count: scopeCounts.COMMON,
-      badgeClass: SCOPE_DEFINITIONS.COMMON.badgeClass,
-    },
-  ];
 
   return (
     <div className="space-y-6">
@@ -367,7 +319,7 @@ export function AssignRoleContent() {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="none">{t("selectRole")}</SelectItem>
-              {roles.map((item) => (
+              {assignableRoles.map((item) => (
                 <SelectItem key={item.id} value={String(item.id)}>
                   {item.name}
                 </SelectItem>
@@ -404,36 +356,20 @@ export function AssignRoleContent() {
 
       {selectedRoleId && (
         <div className="space-y-3">
-          {/* Scope Navigation Tabs */}
-          <div className="flex flex-wrap gap-1.5 p-1 bg-muted/60 dark:bg-muted/30 rounded-xl border border-border/50">
-            {SCOPE_TABS.map((tab) => {
-              const Icon = tab.icon;
-              const isActive = scopeFilter === tab.key;
-              return (
-                <button
-                  key={tab.key}
-                  type="button"
-                  onClick={() => handleScopeChange(tab.key)}
-                  className={`flex items-center gap-2 px-3 py-1.5 text-xs font-medium rounded-lg transition-all ${
-                    isActive
-                      ? "bg-background text-foreground shadow-xs font-semibold"
-                      : "text-muted-foreground hover:text-foreground hover:bg-background/50"
-                  }`}
-                >
-                  <Icon className="size-3.5 shrink-0" />
-                  <span>{tab.label}</span>
-                  <span
-                    className={`text-[10px] px-1.5 py-0.2 rounded-full font-mono ${
-                      isActive
-                        ? "bg-primary/10 text-primary font-bold"
-                        : "bg-muted text-muted-foreground"
-                    }`}
-                  >
-                    {tab.count}
-                  </span>
-                </button>
-              );
-            })}
+          {/* Admin Scope Header */}
+          <div className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-border/50 bg-muted/60 p-2 dark:bg-muted/30">
+            <div className="flex items-center gap-2 px-2 py-1 text-xs font-semibold text-foreground">
+              <Shield className="size-3.5 shrink-0 text-[#0069D3]" />
+              <span>{t("scopeAdmin")}</span>
+              <span className="rounded-full bg-[#0069D3]/10 px-2 py-0.5 font-mono text-[10px] font-bold text-[#0069D3] dark:text-blue-300">
+                {adminPermissionCount}
+              </span>
+            </div>
+            {role?.name === RoleName.ADMIN && (
+              <span className="px-2 text-xs text-muted-foreground">
+                {t("rootAdminHint")}
+              </span>
+            )}
           </div>
 
           {/* Search & Filters */}
@@ -592,9 +528,7 @@ export function AssignRoleContent() {
                       <span className="font-mono font-medium text-foreground/80">
                         {selectedCount}/{items.length}
                       </span>
-                      <span>
-                        {locale === "vi" ? "quyền đã chọn" : "selected"}
-                      </span>
+                      <span>{t("selectedPermissionsLabel")}</span>
                     </div>
                   </div>
 

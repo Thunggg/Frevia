@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
+import { useTranslations } from "next-intl";
 import {
   Elements,
   PaymentElement,
@@ -41,6 +42,7 @@ function PaymentForm({
   onSuccess,
   onClose,
 }: PaymentFormProps) {
+  const t = useTranslations("payments.dialog");
   const queryClient = useQueryClient();
   const stripe = useStripe();
   const elements = useElements();
@@ -64,9 +66,9 @@ function PaymentForm({
       });
 
       if (result.error) {
-        setErrorMessage(result.error.message || "Payment processing failed");
+        setErrorMessage(result.error.message || t("processingFailed"));
         toastError({
-          message: result.error.message || "Could not process your card",
+          message: result.error.message || t("cardProcessFailed"),
         });
       } else if (
         result.paymentIntent &&
@@ -85,14 +87,14 @@ function PaymentForm({
         toastSuccess({
           message:
             result.paymentIntent.status === "requires_capture"
-              ? "Payment authorization hold confirmed! You can now sign the contract."
-              : "Payment processed successfully!",
+              ? t("holdConfirmedToast")
+              : t("paymentSuccessToast"),
         });
         onSuccess();
         onClose();
       }
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : "An unexpected error occurred";
+      const msg = err instanceof Error ? err.message : t("unexpectedError");
       setErrorMessage(msg);
       toastError({
         message: msg,
@@ -106,20 +108,20 @@ function PaymentForm({
     <form onSubmit={handleSubmit} className="space-y-5 pt-2">
       <div className="rounded-xl border border-border/80 bg-zinc-50 dark:bg-zinc-900/50 p-4 space-y-3">
         <div className="flex items-center justify-between text-xs text-muted-foreground border-b border-border/60 pb-2.5">
-          <span>Amount due</span>
+          <span>{t("amountDue")}</span>
           <span className="text-base font-bold text-foreground">
             {money(amount, currency)}
           </span>
         </div>
         <div className="flex items-center gap-2 text-[11px] text-muted-foreground">
           <ShieldCheck className="size-4 text-emerald-600 shrink-0" />
-          <span>Held securely in Escrow until you approve completed deliverables.</span>
+          <span>{t("escrowNotice")}</span>
         </div>
       </div>
 
       <div className="space-y-2">
         <label className="text-xs font-semibold text-foreground block">
-          Card or Payment Method
+          {t("paymentMethodLabel")}
         </label>
         <div className="min-h-[140px] rounded-xl border border-input p-3 bg-white dark:bg-zinc-950">
           <PaymentElement />
@@ -135,7 +137,7 @@ function PaymentForm({
       <div className="flex items-center justify-between pt-2">
         <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
           <Lock className="size-3 text-muted-foreground/70" />
-          <span>256-bit Stripe encryption</span>
+          <span>{t("encryptionBadge")}</span>
         </div>
         <div className="flex items-center gap-2.5">
           <Button
@@ -146,7 +148,7 @@ function PaymentForm({
             disabled={submitting}
             className="rounded-full text-xs h-9 px-4"
           >
-            Cancel
+            {t("cancel")}
           </Button>
           <Button
             type="submit"
@@ -154,7 +156,9 @@ function PaymentForm({
             disabled={!stripe || submitting}
             className="rounded-full bg-[#0069D3] hover:bg-[#005bb8] text-white text-xs font-semibold h-9 px-5 shadow-sm"
           >
-            {submitting ? "Processing..." : `Pay ${money(amount, currency)}`}
+            {submitting
+              ? t("processing")
+              : t("payAmount", { amount: money(amount, currency) })}
           </Button>
         </div>
       </div>
@@ -183,6 +187,7 @@ export function StripePaymentDialog({
   clientSecret,
   onSuccess,
 }: StripePaymentDialogProps) {
+  const t = useTranslations("payments.dialog");
   const stripePromise = getStripe();
 
   return (
@@ -229,7 +234,7 @@ export function StripePaymentDialog({
         ) : (
           <div className="py-8 text-center text-xs text-muted-foreground flex flex-col items-center justify-center gap-2">
             <div className="size-5 border-2 border-[#0069D3] border-t-transparent rounded-full animate-spin" />
-            <span>Preparing secure checkout session...</span>
+            <span>{t("preparingSession")}</span>
           </div>
         )}
       </DialogContent>

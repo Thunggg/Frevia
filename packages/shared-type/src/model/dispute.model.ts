@@ -171,22 +171,104 @@ export const DisputeDetailSchema = z.object({
       id: z.number(),
       contractId: z.number(),
       title: z.string(),
+      description: z.string().nullable().optional(),
       amount: z.coerce.number(),
       status: z.string(),
       paymentStatus: z.string(),
       dueDate: z.coerce.date().nullable().optional(),
+      files: z
+        .array(
+          z.object({
+            id: z.number(),
+            uploaderId: z.number(),
+            fileUrl: z.string(),
+            fileName: z.string().nullable().optional(),
+            createdAt: z.coerce.date(),
+          }),
+        )
+        .optional(),
+      submissions: z
+        .array(
+          z.object({
+            id: z.number(),
+            freelancerId: z.number(),
+            message: z.string().nullable().optional(),
+            links: z.array(z.string()).default([]),
+            status: z.string(),
+            changeRequestMessage: z.string().nullable().optional(),
+            changeRequestDueDate: z.coerce.date().nullable().optional(),
+            submittedAt: z.coerce.date(),
+            reviewedAt: z.coerce.date().nullable().optional(),
+            files: z
+              .array(
+                z.object({
+                  file: z.object({
+                    id: z.number(),
+                    fileUrl: z.string(),
+                    fileName: z.string().nullable().optional(),
+                  }),
+                }),
+              )
+              .optional(),
+          }),
+        )
+        .optional(),
+      contract: z
+        .object({
+          id: z.number(),
+          slug: z.string().optional(),
+          clientId: z.number(),
+          freelancerId: z.number(),
+          terms: z.string().nullable().optional(),
+          totalAmount: z.coerce.number().optional(),
+          status: z.string().optional(),
+          signedAt: z.coerce.date().nullable().optional(),
+          expiresAt: z.coerce.date().nullable().optional(),
+          job: z
+            .object({
+              id: z.number(),
+              title: z.string(),
+            })
+            .optional(),
+          milestones: z
+            .array(
+              z.object({
+                id: z.number(),
+                title: z.string(),
+                amount: z.coerce.number(),
+                status: z.string(),
+                paymentStatus: z.string(),
+              }),
+            )
+            .optional(),
+        })
+        .optional(),
     })
     .optional(),
   openedBy: z
     .object({
       id: z.number(),
       email: z.string(),
+      profile: z
+        .object({
+          displayName: z.string().nullable().optional(),
+          avatarUrl: z.string().nullable().optional(),
+        })
+        .nullable()
+        .optional(),
     })
     .optional(),
   respondent: z
     .object({
       id: z.number(),
       email: z.string(),
+      profile: z
+        .object({
+          displayName: z.string().nullable().optional(),
+          avatarUrl: z.string().nullable().optional(),
+        })
+        .nullable()
+        .optional(),
     })
     .optional(),
   decisionBy: z
@@ -198,6 +280,18 @@ export const DisputeDetailSchema = z.object({
     .optional(),
   evidences: z.array(DisputeEvidenceSchema).optional(),
   decisionReviews: z.array(DisputeDecisionReviewSchema).optional(),
+  conversationMessages: z
+    .array(
+      z.object({
+        id: z.number(),
+        senderId: z.number(),
+        message: z.string(),
+        fileUrl: z.string().nullable().optional(),
+        fileName: z.string().nullable().optional(),
+        createdAt: z.coerce.date(),
+      }),
+    )
+    .optional(),
 });
 export type DisputeDetailType = z.infer<typeof DisputeDetailSchema>;
 

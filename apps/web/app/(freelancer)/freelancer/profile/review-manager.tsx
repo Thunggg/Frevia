@@ -465,10 +465,10 @@ export function ReviewManager({ userId }: { userId: number }) {
         !canViewReviews ? (
           <div className="rounded-xl border border-dashed border-border px-6 py-12 text-center text-muted-foreground">
             <p className="font-semibold text-foreground">
-              Không có quyền truy cập
+              {t("noPermissionTitle")}
             </p>
             <p className="mt-1 text-sm">
-              Bạn không có quyền xem đánh giá của hợp đồng này.
+              {t("noPermissionViewReviews")}
             </p>
           </div>
         ) : pending === "load" ? (

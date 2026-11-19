@@ -729,6 +729,11 @@ async function ensureSeedUser(input: {
       password: input.passwordHash,
       roleId: input.roleId,
       isBanned: false,
+      userRoles: {
+        create: {
+          roleId: input.roleId,
+        },
+      },
     },
     select: { id: true },
   });

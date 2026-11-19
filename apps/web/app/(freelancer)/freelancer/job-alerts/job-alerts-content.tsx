@@ -362,7 +362,7 @@ export function JobAlertsContent({
               onClick={() => setSearchQuery("")}
             >
               <X className="size-3.5 mr-1.5" />
-              Đặt lại
+              {t("resetFilter")}
             </Button>
           </div>
         ) : (
@@ -563,7 +563,7 @@ export function JobAlertsContent({
                   onClick={handleAddSkill}
                   className="rounded-full text-xs font-semibold px-4"
                 >
-                  <Plus className="size-3.5 mr-1" /> Thêm
+                  <Plus className="size-3.5 mr-1" /> {t("addSkillBtn")}
                 </Button>
               </div>
               {skills.length > 0 && (

@@ -532,6 +532,11 @@ async function ensureClients(
         password: passwordHash,
         isBanned: false,
         roleId: clientRoleId,
+        userRoles: {
+          create: {
+            roleId: clientRoleId,
+          },
+        },
         profile: {
           create: {
             displayName: company,

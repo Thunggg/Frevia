@@ -65,7 +65,20 @@ export class DisputesExpertService {
         throw ExpertDisputeNotFoundException();
       }
 
-      return dispute;
+      const contract = dispute.milestone?.contract;
+      const conversationMessages =
+        contract &&
+        typeof this.expertDisputeRepo.findConversationMessages === 'function'
+          ? await this.expertDisputeRepo.findConversationMessages(
+              contract.clientId,
+              contract.freelancerId,
+            )
+          : [];
+
+      return {
+        ...dispute,
+        conversationMessages,
+      };
     } catch (error) {
       if (error instanceof HttpException) throw error;
       this.logger.error('Failed to load dispute detail for expert', error);

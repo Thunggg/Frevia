@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Optional } from '@nestjs/common';
 import { Prisma, VerificationStatus } from '@prisma/client';
 import {
   AddSocialLinkType,
@@ -13,12 +13,14 @@ import { randomUUID } from 'crypto';
 import { existsSync } from 'fs';
 import { mkdir, writeFile } from 'fs/promises';
 import { dirname, extname, isAbsolute, join, relative, resolve } from 'path';
+import { CacheService } from '../../shared/services/cache.service';
 import { CloudinaryService } from '../../shared/services/cloudinary.service';
 import { HashingService } from '../../shared/services/hashing.service';
 import {
   IdentityAiService,
   type IdentityAiVerifyResult,
 } from '../../shared/services/identity-ai.service';
+import { AUTH_ME_CACHE_PREFIX } from '../auth/auth.service';
 import { ProfileRevisionService } from '../profile-revisions/profile-revision.service';
 import {
   AccountProfileForbiddenException,
@@ -56,6 +58,7 @@ export class AccountProfileService {
     private readonly cloudinary: CloudinaryService,
     private readonly hashing: HashingService,
     private readonly identityAi: IdentityAiService,
+    @Optional() private readonly cacheService?: CacheService,
   ) {}
 
   private presentAvatarUrl(
@@ -152,11 +155,13 @@ export class AccountProfileService {
         input,
         primaryRole,
       );
+      this.cacheService?.del(`${AUTH_ME_CACHE_PREFIX}${userId}`);
       return this.profileRevisionService.directUpdateResult(
         updated.profileCompletionPercent,
       );
     }
     await this.repository.updateGeneralProfile(userId, input);
+    this.cacheService?.del(`${AUTH_ME_CACHE_PREFIX}${userId}`);
     const updated = await this.repository.findGeneralProfile(userId);
     if (!updated?.profile) throw ProfileNotFoundException();
     return this.profileRevisionService.directUpdateResult(
@@ -210,6 +215,7 @@ export class AccountProfileService {
       avatarUrl = `local://${relativePath.replace(/\\/g, '/')}`;
     }
     const updated = await this.repository.updateAvatar(userId, avatarUrl);
+    this.cacheService?.del(`${AUTH_ME_CACHE_PREFIX}${userId}`);
     return {
       avatarUrl: this.presentAvatarUrl(
         userId,
@@ -576,7 +582,11 @@ export class AccountProfileService {
 
   async getClientProfile(userId: number) {
     const profile = await this.repository.findClientProfile(userId);
-    const isClient = profile?.user?.role?.name === RoleName.CLIENT;
+    const isClient =
+      profile?.user?.role?.name === RoleName.CLIENT ||
+      profile?.user?.userRoles?.some(
+        (assignment) => assignment.role?.name === RoleName.CLIENT,
+      ) === true;
     if (!profile || !isClient) throw ClientProfileNotFoundException();
     const avatarUrl = this.presentAvatarUrl(
       profile.userId,

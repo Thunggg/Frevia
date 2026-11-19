@@ -1,3 +1,4 @@
+import { RoleName } from '@shared/types';
 import { ProfileRepository } from './profile.repo';
 import { PrismaService } from '../../shared/services/prisma.service';
 import { PortfolioRepository } from '../portfolios/portfolio.repo';
@@ -13,12 +14,27 @@ describe('Freelancer profile database identifiers', () => {
   );
   beforeEach(() => jest.clearAllMocks());
 
-  it('does not resolve a missing profile by an unrelated user ID', async () => {
+  it('resolves freelancer profiles via explicit active role or UserRole ownership', async () => {
     await expect(profiles.findFreelancerProfileById(12)).resolves.toBeNull();
     expect(database.profile.findFirst).toHaveBeenCalledTimes(1);
     expect(database.profile.findFirst).toHaveBeenCalledWith(
       expect.objectContaining({
-        where: { id: 12, user: { deletedAt: null } },
+        where: {
+          OR: [{ id: 12 }, { userId: 12 }],
+          user: {
+            deletedAt: null,
+            OR: [
+              { role: { name: RoleName.FREELANCER } },
+              {
+                userRoles: {
+                  some: {
+                    role: { name: RoleName.FREELANCER, deletedAt: null },
+                  },
+                },
+              },
+            ],
+          },
+        },
       }),
     );
   });
@@ -27,7 +43,22 @@ describe('Freelancer profile database identifiers', () => {
     await portfolios.findFreelancerProfileById(12);
     expect(database.profile.findFirst).toHaveBeenCalledWith(
       expect.objectContaining({
-        where: { id: 12, user: { deletedAt: null } },
+        where: {
+          id: 12,
+          user: {
+            deletedAt: null,
+            OR: [
+              { role: { name: RoleName.FREELANCER } },
+              {
+                userRoles: {
+                  some: {
+                    role: { name: RoleName.FREELANCER, deletedAt: null },
+                  },
+                },
+              },
+            ],
+          },
+        },
       }),
     );
   });

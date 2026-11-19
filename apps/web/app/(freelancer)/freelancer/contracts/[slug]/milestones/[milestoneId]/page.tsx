@@ -4,7 +4,7 @@ import { getTranslations } from "next-intl/server";
 import contractServerRequest from "@/apiRequests/contract.server";
 import authServerRequest from "@/apiRequests/auth.server";
 import { MilestoneDetailContent } from "@/app/(client)/client/contracts/[slug]/milestones/[milestoneId]/_components";
-import { envConfig } from "@/configs/validate-env";
+import { getBrowserSocketUrl } from "@/configs/validate-env";
 
 export async function generateMetadata({
   params,
@@ -69,7 +69,7 @@ export default async function FreelancerMilestoneDetailPage({
           basePath="/freelancer"
           currentUserId={user?.id ?? null}
           accessToken={token}
-          socketUrl={envConfig?.NESTJS_API_URL ?? ""}
+          socketUrl={getBrowserSocketUrl()}
         />
       </div>
     </div>

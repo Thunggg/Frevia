@@ -5,6 +5,7 @@ import { useLocale, useTranslations } from "next-intl";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState, useTransition } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { useTheme } from "next-themes";
 import {
   Bell,
@@ -24,7 +25,9 @@ import {
   Search,
   Shield,
   Sun,
+  SwitchCamera,
   Tag,
+  UserPlus,
   UserRound,
   Users,
 } from "@/components/icons";
@@ -36,8 +39,8 @@ import {
   AvatarFallback,
   AvatarImage,
 } from "@repo/ui/components/shadcn/avatar";
-import { useMe } from "@/hooks/use-auth";
 import { useActionPermission } from "@/hooks/use-action-permission";
+import { useMarketplaceRoleAction } from "@/hooks/use-marketplace-role-action";
 import { canAccessAdminPortal } from "@/lib/admin-access";
 import { useNotifications } from "@/hooks/use-notifications";
 import { useConversations } from "@/hooks/use-conversation";
@@ -118,13 +121,21 @@ function NavLink({ item, collapsed }: { item: NavItem; collapsed: boolean }) {
 
 export function FreelancerSidebar() {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const t = useTranslations("sidebar");
   const tCommon = useTranslations("common");
   const tRole = useTranslations("roleName");
   const activeLocale = useLocale();
   const [isLocalePending, startLocaleTransition] = useTransition();
-  const { data: me } = useMe();
-  // const { data: notifications = [] } = useNotifications();
+  const {
+    me,
+    isMarketplaceUser,
+    hasTargetRole,
+    isMeLoading,
+    isPending: isRoleActionPending,
+    actionLabel: roleActionLabel,
+    executeRoleAction,
+  } = useMarketplaceRoleAction("FREELANCER");
   const { data: conversations = [] } = useConversations();
   const { can } = useActionPermission();
   const canViewProposals = can("GET", "/api/proposals/my");
@@ -261,6 +272,8 @@ export function FreelancerSidebar() {
 
   const logout = async () => {
     await fetch("/api/auth/logout", { method: "POST" });
+    queryClient.clear();
+    queryClient.setQueryData(["me"], null);
     router.push("/login");
     router.refresh();
   };
@@ -405,7 +418,7 @@ export function FreelancerSidebar() {
                   className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-xs font-medium text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-950/40 transition-colors"
                 >
                   <Shield className="size-3.5" />
-                  Admin Portal
+                  {tCommon("adminPortal")}
                 </Link>
               )}
 
@@ -488,6 +501,29 @@ export function FreelancerSidebar() {
               </div>
 
               <div className="my-1 h-px bg-border" />
+
+              {isMarketplaceUser && (
+                <>
+                  <button
+                    type="button"
+                    disabled={isMeLoading || isRoleActionPending}
+                    onClick={() => {
+                      void executeRoleAction().then((didUpdate) => {
+                        if (didUpdate) setProfileOpen(false);
+                      });
+                    }}
+                    className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-xs font-medium text-foreground/80 transition-colors hover:bg-[#F1F0F5] hover:text-foreground dark:hover:bg-zinc-800 disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer"
+                  >
+                    {hasTargetRole ? (
+                      <SwitchCamera className="size-3.5 text-emerald-600 dark:text-emerald-400" />
+                    ) : (
+                      <UserPlus className="size-3.5 text-emerald-600 dark:text-emerald-400" />
+                    )}
+                    <span>{roleActionLabel}</span>
+                  </button>
+                  <div className="my-1 h-px bg-border" />
+                </>
+              )}
 
               <button
                 type="button"

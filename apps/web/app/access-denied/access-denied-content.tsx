@@ -4,8 +4,10 @@ import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { RoleName, type GetMeResType } from "@shared/types";
 import { canAccessAdminPortal } from "@/lib/admin-access";
+import { useMarketplaceRoleAction } from "@/hooks/use-marketplace-role-action";
 import { Header, type UserRole } from "@/components/header";
 import { Footer } from "@/components/footer";
 import {
@@ -15,6 +17,8 @@ import {
   ArrowRight,
   Loader2,
   LogOut,
+  RefreshCw,
+  UserPlus,
 } from "@/components/icons";
 import { Button } from "@repo/ui/components/shadcn/button";
 import { Badge } from "@repo/ui/components/shadcn/badge";
@@ -32,6 +36,7 @@ export function AccessDeniedContent({
   from,
 }: AccessDeniedContentProps) {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const t = useTranslations("accessDenied");
   const tRole = useTranslations("roleName");
   const [isLoggingOut, setIsLoggingOut] = useState(false);
@@ -39,11 +44,34 @@ export function AccessDeniedContent({
   const primaryRole =
     user?.roles.find((r) => r.isPrimary)?.name ?? user?.roles[0]?.name;
 
+  const isStaffRole =
+    Boolean(user) &&
+    primaryRole !== RoleName.CLIENT &&
+    primaryRole !== RoleName.FREELANCER;
+
+  const {
+    hasTargetRole,
+    isPending: isRoleActionPending,
+    actionLabel: marketplaceRoleActionLabel,
+    executeRoleAction,
+  } = useMarketplaceRoleAction(
+    primaryRole === RoleName.FREELANCER ? "FREELANCER" : "CLIENT",
+  );
+
+  const requiredRoleLower = requiredRole?.toLowerCase();
+  const isTargetOppositeMarketplaceRole =
+    Boolean(user) &&
+    !isStaffRole &&
+    ((primaryRole === RoleName.CLIENT && requiredRoleLower === "freelancer") ||
+      (primaryRole === RoleName.FREELANCER && requiredRoleLower === "client"));
+
   const handleLogout = async () => {
     if (isLoggingOut) return;
     setIsLoggingOut(true);
     try {
       await fetch("/api/auth/logout", { method: "POST" });
+      queryClient.clear();
+      queryClient.setQueryData(["me"], null);
       router.push("/login");
       router.refresh();
     } catch {
@@ -58,7 +86,7 @@ export function AccessDeniedContent({
         ? "/freelancer"
         : primaryRole === RoleName.ADMIN || canAccessAdminPortal(user)
           ? "/admin"
-          : "/";
+          : "/forum";
 
   const primaryRoleLabel =
     primaryRole === RoleName.CLIENT
@@ -71,7 +99,6 @@ export function AccessDeniedContent({
             ? tRole("EXPERT")
             : primaryRole ?? t("userFallback");
 
-  const requiredRoleLower = requiredRole?.toLowerCase();
   const requiredRoleLabel =
     requiredRoleLower === "client"
       ? tRole("CLIENT")
@@ -89,7 +116,7 @@ export function AccessDeniedContent({
       : primaryRole === RoleName.FREELANCER
         ? "FREELANCER"
         : user
-          ? "FREELANCER"
+          ? "STAFF"
           : "GUEST";
 
   return (
@@ -185,15 +212,38 @@ export function AccessDeniedContent({
                   </Link>
                 </Button>
 
-                {/* 2. Secondary Actions */}
-                <div className="flex items-center gap-2 pt-1">
+                {/* 2. Switch / Join opposite marketplace role (Client <-> Freelancer only) */}
+                {isTargetOppositeMarketplaceRole && (
                   <Button
-                    variant="ghost"
-                    className="flex-1 text-xs text-muted-foreground hover:text-foreground"
-                    asChild
+                    variant="outline"
+                    className="w-full border-primary/40 hover:bg-primary/5 text-primary font-medium"
+                    onClick={() => void executeRoleAction(from)}
+                    disabled={isRoleActionPending}
                   >
-                    <Link href="/">{t("backHome")}</Link>
+                    {isRoleActionPending ? (
+                      <Loader2 className="mr-2 size-4 animate-spin" />
+                    ) : hasTargetRole ? (
+                      <RefreshCw className="mr-2 size-4" />
+                    ) : (
+                      <UserPlus className="mr-2 size-4" />
+                    )}
+                    {hasTargetRole
+                      ? t("switchToRole", { role: requiredRoleLabel })
+                      : marketplaceRoleActionLabel}
                   </Button>
+                )}
+
+                {/* 3. Secondary Actions */}
+                <div className="flex items-center gap-2 pt-1">
+                  {!isStaffRole && (
+                    <Button
+                      variant="ghost"
+                      className="flex-1 text-xs text-muted-foreground hover:text-foreground"
+                      asChild
+                    >
+                      <Link href="/">{t("backHome")}</Link>
+                    </Button>
+                  )}
 
                   <Button
                     variant="ghost"

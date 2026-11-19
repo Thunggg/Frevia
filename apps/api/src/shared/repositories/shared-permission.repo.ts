@@ -1,11 +1,18 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Optional } from '@nestjs/common';
 import { HttpMethod } from '@prisma/client';
 import { matchRoutePath } from '../helper/match-route-path';
+import { CacheService } from '../services/cache.service';
 import { PrismaService } from '../services/prisma.service';
+
+export const ROLE_PERMISSIONS_CACHE_PREFIX = 'rbac:role-perms:';
+const ROLE_PERMISSIONS_CACHE_TTL_SECONDS = 60;
 
 @Injectable()
 export class SharedPermissionRepository {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    @Optional() private readonly cacheService?: CacheService,
+  ) {}
 
   async roleHasPermission(
     roleId: number,
@@ -18,19 +25,28 @@ export class SharedPermissionRepository {
       return false;
     }
 
-    const permissions = await this.prisma.permission.findMany({
-      where: {
-        deletedAt: null,
-        method: httpMethod,
-        rolePermissions: {
-          some: { roleId },
+    const loadPaths = async (): Promise<string[]> => {
+      const permissions = await this.prisma.permission.findMany({
+        where: {
+          deletedAt: null,
+          method: httpMethod,
+          rolePermissions: {
+            some: { roleId },
+          },
         },
-      },
-      select: { path: true },
-    });
+        select: { path: true },
+      });
+      return permissions.map((permission) => permission.path);
+    };
 
-    return permissions.some((permission) =>
-      matchRoutePath(permission.path, path),
-    );
+    const paths = this.cacheService
+      ? await this.cacheService.wrap(
+          `${ROLE_PERMISSIONS_CACHE_PREFIX}${roleId}:${httpMethod}`,
+          loadPaths,
+          ROLE_PERMISSIONS_CACHE_TTL_SECONDS,
+        )
+      : await loadPaths();
+
+    return paths.some((permissionPath) => matchRoutePath(permissionPath, path));
   }
 }

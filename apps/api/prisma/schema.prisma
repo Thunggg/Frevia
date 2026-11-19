@@ -22,7 +22,20 @@ model Role {
   deletedAt   DateTime?
 
   users           User[]
+  userRoles       UserRole[]
   rolePermissions RolePermission[]
+}
+
+model UserRole {
+  userId     Int
+  roleId     Int
+  assignedAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  role Role @relation(fields: [roleId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+
+  @@id([userId, roleId])
+  @@index([roleId])
 }
 
 model Permission {
@@ -75,6 +88,7 @@ model User {
   // --- Auth / core ---
   roleId        Int
   role          Role          @relation(fields: [roleId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+  userRoles     UserRole[]
   sessions      Session[]
   oauthAccounts OauthAccount[]
   twoFactorAuth TwoFactorAuth?

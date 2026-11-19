@@ -295,7 +295,7 @@ export function GeneralSettings() {
         setCvAnalysisDialogOpen(true);
       } else {
         toastError({
-          message: "Không thể phân tích CV bằng AI. Vui lòng kiểm tra lại dịch vụ AI.",
+          message: t("aiAnalyzeFailed"),
         });
       }
     } catch (err) {
@@ -466,10 +466,10 @@ export function GeneralSettings() {
       <div className="rounded-xl border border-border bg-card p-12 text-center text-muted-foreground shadow-sm">
         <UserRound className="mx-auto size-10 text-muted-foreground/60 mb-3" />
         <p className="font-medium text-base text-foreground">
-          Không có quyền truy cập
+          {t("noPermissionTitle")}
         </p>
         <p className="text-sm mt-1 text-muted-foreground">
-          Bạn không có quyền xem thông tin tài khoản cá nhân (#395).
+          {t("noPermissionViewProfile")}
         </p>
       </div>
     );
@@ -735,8 +735,8 @@ export function GeneralSettings() {
                   <Sparkles className="mr-1.5 size-4" />
                 )}
                 {pending === "cv-analyze"
-                  ? "Đang phân tích..."
-                  : "✨ Phân tích CV bằng AI"}
+                  ? t("analyzingCv")
+                  : t("analyzeCvWithAi")}
               </Button>
             ) : null}
             {canDeleteCv && cvFileName ? (
@@ -753,20 +753,19 @@ export function GeneralSettings() {
                     ) : (
                       <Trash2 />
                     )}
-                    Delete CV
+                    {t("deleteCvButton")}
                   </Button>
                 </AlertDialogTrigger>
                 <AlertDialogContent>
                   <AlertDialogHeader>
-                    <AlertDialogTitle>Delete your CV?</AlertDialogTitle>
+                    <AlertDialogTitle>{t("deleteCvTitle")}</AlertDialogTitle>
                     <AlertDialogDescription>
-                      Your CV will be removed from your profile and will no
-                      longer be downloadable. This action cannot be undone.
+                      {t("deleteCvDescription")}
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
                     <AlertDialogCancel disabled={pending === "cv-delete"}>
-                      Cancel
+                      {tCommon("cancel")}
                     </AlertDialogCancel>
                     <AlertDialogAction
                       disabled={pending === "cv-delete"}
@@ -780,7 +779,7 @@ export function GeneralSettings() {
                       ) : (
                         <Trash2 />
                       )}
-                      Delete CV
+                      {t("deleteCvButton")}
                     </AlertDialogAction>
                   </AlertDialogFooter>
                 </AlertDialogContent>
@@ -790,7 +789,7 @@ export function GeneralSettings() {
               id="profile-cv-help"
               className={`mt-2 text-xs ${cvError ? "text-destructive" : "text-muted-foreground"}`}
             >
-              {cvError ?? "Available to clients when you apply to a job."}
+              {cvError ?? t("cvClientHint")}
             </p>
           </section>
         ) : null}
@@ -805,9 +804,7 @@ export function GeneralSettings() {
             </h2>
           </div>
           <p className="mt-2 text-sm text-muted-foreground">
-            {activeLocale === "vi"
-              ? "Tùy chỉnh giao diện hiển thị và ngôn ngữ hệ thống."
-              : "Customize display theme and system language."}
+            {t("appearanceDescription")}
           </p>
           <div className="mt-4 flex flex-wrap items-center gap-3">
             <div className="flex items-center gap-2.5 rounded-lg border border-border bg-card px-3.5 py-2 shadow-2xs">

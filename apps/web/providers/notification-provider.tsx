@@ -2,9 +2,14 @@
 
 import { createContext, useContext, useEffect, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import { io } from "socket.io-client";
+import { io, type Socket } from "socket.io-client";
 import { useTranslations } from "next-intl";
-import { conversationKeys } from "@/hooks/use-conversation";
+import {
+  appendMessageToConversationCaches,
+  collectConversationMessageKeys,
+  conversationKeys,
+  removeMessageFromConversationCaches,
+} from "@/hooks/use-conversation";
 import { useNotificationText } from "@/hooks/use-notification-text";
 import { notificationKeys } from "@/hooks/use-notifications";
 import { toast } from "@repo/ui/components/shadcn/sonner";
@@ -20,16 +25,19 @@ import { Button } from "@repo/ui/components/shadcn/button";
 import { Lock, ShieldAlert, LogOut, Loader2 } from "lucide-react";
 import type {
   ConversationListItemType,
+  DirectMessageType,
   GetConversationsResponseType,
   NotificationItemType,
 } from "@shared/types";
 
 type NotificationContextValue = {
   connected: boolean;
+  conversationSocket: Socket | null;
 };
 
 const NotificationContext = createContext<NotificationContextValue>({
   connected: false,
+  conversationSocket: null,
 });
 
 export function useNotificationContext() {
@@ -61,9 +69,13 @@ export function NotificationProvider({
   children: React.ReactNode;
 }) {
   const t = useTranslations("auth.forceLogout");
+  const tChat = useTranslations("chat");
   const notificationText = useNotificationText();
   const queryClient = useQueryClient();
   const [connected, setConnected] = useState(false);
+  const [conversationSocket, setConversationSocket] = useState<Socket | null>(
+    null,
+  );
   const [modalState, setModalState] = useState<{
     isOpen: boolean;
     type: "BANNED" | "SESSION_REVOKED" | "DEFAULT";
@@ -75,20 +87,72 @@ export function NotificationProvider({
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   useEffect(() => {
-    if (!socketUrl || !token || !currentUserId) return;
+    if (!socketUrl || !currentUserId) return;
+
+    let cancelled = false;
+    let activeToken = token;
+    let refreshedOnReject = false;
 
     const socket = io(`${socketUrl}/conversations`, {
-      transports: ["websocket"],
-      auth: { token },
+      transports: ["websocket", "polling"],
+      autoConnect: false,
+      auth: (cb) => {
+        cb({ token: activeToken ?? "" });
+      },
     });
 
     const authSocket = io(`${socketUrl}/auth`, {
-      transports: ["websocket"],
-      auth: { token },
+      transports: ["websocket", "polling"],
+      autoConnect: false,
+      auth: (cb) => {
+        cb({ token: activeToken ?? "" });
+      },
     });
 
-    socket.on("connect", () => setConnected(true));
-    socket.on("disconnect", () => setConnected(false));
+    const connectSockets = async (forceRefresh: boolean) => {
+      if (forceRefresh || !activeToken) {
+        try {
+          const response = await fetch("/api/auth/socket-token", {
+            method: "GET",
+            cache: "no-store",
+          });
+          if (response.ok) {
+            const body = (await response.json()) as {
+              success?: boolean;
+              data?: { token?: string };
+            };
+            if (!cancelled && body?.success && body?.data?.token) {
+              activeToken = body.data.token;
+            }
+          }
+        } catch {
+          // Ignore network error; Socket.IO will retry later
+        }
+      }
+      if (!cancelled && activeToken) {
+        if (!socket.connected) socket.connect();
+        if (!authSocket.connected) authSocket.connect();
+      }
+    };
+
+    socket.on("connect", () => {
+      refreshedOnReject = false;
+      setConnected(true);
+    });
+    socket.on("disconnect", (reason) => {
+      setConnected(false);
+      if (reason === "io server disconnect" && !refreshedOnReject) {
+        refreshedOnReject = true;
+        void connectSockets(true);
+      }
+    });
+    socket.on("connect_error", () => {
+      setConnected(false);
+      if (!refreshedOnReject) {
+        refreshedOnReject = true;
+        void connectSockets(true);
+      }
+    });
 
     socket.on("notification:new", (notification: NotificationItemType) => {
       queryClient.setQueryData<NotificationItemType[]>(
@@ -136,6 +200,29 @@ export function NotificationProvider({
     );
 
     socket.on(
+      "message:new",
+      (payload: { conversationId: number; message: DirectMessageType }) => {
+        appendMessageToConversationCaches(queryClient, payload.message, [
+          payload.conversationId,
+        ]);
+      },
+    );
+
+    socket.on(
+      "message:deleted",
+      (payload: { conversationId: number; messageId: number }) => {
+        removeMessageFromConversationCaches(
+          queryClient,
+          payload.conversationId,
+          payload.messageId,
+        );
+        void queryClient.invalidateQueries({
+          queryKey: conversationKeys.list(),
+        });
+      },
+    );
+
+    socket.on(
       "conversation:updated",
       (item: ConversationListItemType) => {
         queryClient.setQueryData<GetConversationsResponseType>(
@@ -154,9 +241,12 @@ export function NotificationProvider({
               item.lastMessage?.senderId !== currentUserId
             ) {
               const senderName =
-                item.otherUser?.profile?.displayName || "New message";
+                item.otherUser?.profile?.displayName ||
+                tChat("newMessageFallbackTitle");
               toast(senderName, {
-                description: item.lastMessage?.message?.slice(0, 80) || "You have a new message",
+                description:
+                  item.lastMessage?.message?.slice(0, 80) ||
+                  tChat("newMessageFallbackBody"),
                 position: "top-right",
                 duration: 4000,
               });
@@ -170,6 +260,17 @@ export function NotificationProvider({
             return sortByLastMessage(next);
           },
         );
+
+        const keysToInvalidate = collectConversationMessageKeys(
+          queryClient,
+          item.id,
+          [item.slug],
+        );
+        keysToInvalidate.forEach((key) => {
+          void queryClient.invalidateQueries({
+            queryKey: conversationKeys.messages(key),
+          });
+        });
       },
     );
 
@@ -186,12 +287,17 @@ export function NotificationProvider({
       },
     );
 
+    setConversationSocket(socket);
+    void connectSockets(!activeToken);
+
     return () => {
+      cancelled = true;
       socket.disconnect();
       authSocket.disconnect();
+      setConversationSocket(null);
       setConnected(false);
     };
-  }, [socketUrl, token, currentUserId, queryClient, notificationText]);
+  }, [socketUrl, token, currentUserId, queryClient, notificationText, tChat]);
 
   const handleConfirmLogout = async () => {
     setIsLoggingOut(true);
@@ -219,7 +325,7 @@ export function NotificationProvider({
         : modalState.customReason || t("defaultDescription");
 
   return (
-    <NotificationContext.Provider value={{ connected }}>
+    <NotificationContext.Provider value={{ connected, conversationSocket }}>
       {children}
 
       <AlertDialog open={modalState.isOpen}>

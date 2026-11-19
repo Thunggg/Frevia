@@ -5,6 +5,7 @@ import {
   PermissionListItemType,
 } from '@shared/types';
 import { Prisma } from '@prisma/client';
+import { ADMIN_PERMISSION_PRISMA_WHERE } from '../../shared/helper/admin-permission';
 import { PrismaService } from '../../shared/services/prisma.service';
 import { PermissionNotFoundException } from './permissions.error';
 
@@ -30,6 +31,7 @@ export class PermissionsRepository {
 
     const where: Prisma.PermissionWhereInput = {
       deletedAt: null,
+      AND: [ADMIN_PERMISSION_PRISMA_WHERE],
       ...(method && { method }),
       ...(module && {
         module: { equals: module, mode: Prisma.QueryMode.insensitive },
@@ -53,7 +55,11 @@ export class PermissionsRepository {
       }),
       this.prisma.permission.count({ where }),
       this.prisma.permission.findMany({
-        where: { deletedAt: null, module: { not: null } },
+        where: {
+          deletedAt: null,
+          module: { not: null },
+          AND: [ADMIN_PERMISSION_PRISMA_WHERE],
+        },
         select: { module: true },
         distinct: ['module'],
         orderBy: { module: 'asc' },
@@ -71,7 +77,7 @@ export class PermissionsRepository {
 
   async findById(id: number): Promise<PermissionDetailResponseType> {
     const permission = await this.prisma.permission.findFirst({
-      where: { id, deletedAt: null },
+      where: { id, deletedAt: null, AND: [ADMIN_PERMISSION_PRISMA_WHERE] },
       select: permissionSelect,
     });
 

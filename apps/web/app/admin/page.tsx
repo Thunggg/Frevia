@@ -114,10 +114,10 @@ export default async function AdminDashboardPage() {
             <TrendingUp className="size-7" />
           </div>
           <h2 className="mt-4 text-xl font-bold text-foreground">
-            Chào mừng bạn đến với Cổng Quản trị Frevia
+            {t("welcomeTitle")}
           </h2>
           <p className="mx-auto mt-2 max-w-md text-sm text-muted-foreground">
-            Bạn đã đăng nhập thành công vào hệ thống quản trị. Hãy chọn chức năng từ menu bên trái để bắt đầu thực hiện các tác vụ được phân quyền.
+            {t("welcomeDescription")}
           </p>
         </div>
       </div>

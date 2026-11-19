@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useEffect, useRef, useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import {
   Bookmark,
   ChevronDown,
@@ -18,6 +19,8 @@ import {
   MonitorSmartphone,
   Search,
   ShieldCheck,
+  SwitchCamera,
+  UserPlus,
   UserRound,
   UserCheck,
   X,
@@ -44,15 +47,16 @@ import { NotificationsBell } from "@/components/notifications-bell";
 import { ContactDialog } from "@/components/contact-dialog";
 import { useMe } from "@/hooks/use-auth";
 import { useActionPermission } from "@/hooks/use-action-permission";
+import { useMarketplaceRoleAction } from "@/hooks/use-marketplace-role-action";
 import { canAccessAdminPortal } from "@/lib/admin-access";
 
-export type UserRole = "GUEST" | "CLIENT" | "FREELANCER";
+export type UserRole = "GUEST" | "CLIENT" | "FREELANCER" | "STAFF";
 
 export type HeaderProps = {
   role: UserRole;
 };
 
-type NavRoleKey = "guest" | "client" | "freelancer";
+type NavRoleKey = "guest" | "client" | "freelancer" | "staff";
 
 type NavLinkKey =
   | "findWork"
@@ -107,6 +111,10 @@ const roleConfig: Record<UserRole, { nameKey: NavRoleKey; links: NavLink[] }> = 
       { href: "/forum", labelKey: "forum" },
     ],
   },
+  STAFF: {
+    nameKey: "staff",
+    links: [{ href: "/forum", labelKey: "forum" }],
+  },
 };
 
 function isNavLinkActive(link: NavLink, pathname: string) {
@@ -123,9 +131,9 @@ function isNavLinkActive(link: NavLink, pathname: string) {
   return true;
 }
 
-function Logo() {
+function Logo({ href = "/" }: { href?: string }) {
   return (
-    <Link href="/" className="flex shrink-0 items-center gap-2 mr-1 sm:mr-3">
+    <Link href={href} className="flex shrink-0 items-center gap-2 mr-1 sm:mr-3">
       <span className="text-3xl font-aquire tracking-tight sm:text-4xl">
         frevia
       </span>
@@ -264,10 +272,19 @@ function HeaderSearch({
 
 function ProfileDropdown({ role }: { role: Exclude<UserRole, "GUEST"> }) {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const t = useTranslations("nav");
   const tRole = useTranslations("roleName");
   const profile = roleConfig[role] ?? roleConfig.FREELANCER;
-  const { data: me } = useMe();
+  const {
+    me,
+    isMarketplaceUser,
+    hasTargetRole,
+    isMeLoading,
+    isPending: isRoleActionPending,
+    actionLabel: roleActionLabel,
+    executeRoleAction,
+  } = useMarketplaceRoleAction(role === "FREELANCER" ? "FREELANCER" : "CLIENT");
   const { can } = useActionPermission();
   const canViewProposals = can("GET", "/api/proposals/my");
   const canViewSavedSearches = can("GET", "/api/saved-searches");
@@ -290,14 +307,17 @@ function ProfileDropdown({ role }: { role: Exclude<UserRole, "GUEST"> }) {
   const displayName =
     me?.profile?.displayName || roleLabel;
   const initial = displayName?.charAt(0)?.toUpperCase() ?? "?";
-  const publicProfileHref = me?.profile?.id
-    ? role === "FREELANCER"
-      ? `/profiles/${me.profile.id}`
-      : `/clients/${me.id}`
-    : null;
+  const publicProfileHref =
+    role === "STAFF" || !me?.profile?.id
+      ? null
+      : role === "FREELANCER"
+        ? `/profiles/${me.profile.id}`
+        : `/clients/${me.id}`;
 
   const logout = async () => {
     await fetch("/api/auth/logout", { method: "POST" });
+    queryClient.clear();
+    queryClient.setQueryData(["me"], null);
     router.push("/login");
     router.refresh();
   };
@@ -354,21 +374,29 @@ function ProfileDropdown({ role }: { role: Exclude<UserRole, "GUEST"> }) {
             </Link>
           </DropdownMenuItem>
         ) : null}
-        <DropdownMenuItem asChild>
-          <Link
-            href={
-              canAccessAdminPortal(me)
-                ? "/admin/profile"
-                : role === "FREELANCER"
+        {role !== "STAFF" && (
+          <DropdownMenuItem asChild>
+            <Link
+              href={
+                role === "FREELANCER"
                   ? "/freelancer/profile"
                   : "/client/profile"
-            }
-            className="cursor-pointer"
-          >
-            <UserRound className="size-4 text-muted-foreground" />
-            {t("profileSettings")}
-          </Link>
-        </DropdownMenuItem>
+              }
+              className="cursor-pointer"
+            >
+              <UserRound className="size-4 text-muted-foreground" />
+              {t("profileSettings")}
+            </Link>
+          </DropdownMenuItem>
+        )}
+        {role === "STAFF" && canAccessAdminPortal(me) && (
+          <DropdownMenuItem asChild>
+            <Link href="/admin/profile" className="cursor-pointer">
+              <UserRound className="size-4 text-muted-foreground" />
+              {t("profileSettings")}
+            </Link>
+          </DropdownMenuItem>
+        )}
         {role === "FREELANCER" && (
           <>
             <DropdownMenuItem asChild>
@@ -474,7 +502,7 @@ function ProfileDropdown({ role }: { role: Exclude<UserRole, "GUEST"> }) {
             )}
           </>
         )}
-        {canViewSocialLinks && (
+        {role !== "STAFF" && canViewSocialLinks && (
           <DropdownMenuItem asChild>
             <Link
               href={
@@ -490,9 +518,34 @@ function ProfileDropdown({ role }: { role: Exclude<UserRole, "GUEST"> }) {
           </DropdownMenuItem>
         )}
         <DropdownMenuSeparator />
-        {canViewSessions && (
+        {role !== "STAFF" && isMarketplaceUser && (
+          <DropdownMenuItem
+            className="cursor-pointer"
+            disabled={isMeLoading || isRoleActionPending}
+            onSelect={(event) => {
+              event.preventDefault();
+              void executeRoleAction();
+            }}
+          >
+            {hasTargetRole ? (
+              <SwitchCamera className="size-4 text-muted-foreground" />
+            ) : (
+              <UserPlus className="size-4 text-muted-foreground" />
+            )}
+            {roleActionLabel}
+          </DropdownMenuItem>
+        )}
+        {role !== "STAFF" && canViewSessions && (
           <DropdownMenuItem asChild>
             <Link href="/sessions" className="cursor-pointer">
+              <MonitorSmartphone className="size-4 text-muted-foreground" />
+              {t("sessions")}
+            </Link>
+          </DropdownMenuItem>
+        )}
+        {role === "STAFF" && canAccessAdminPortal(me) && (
+          <DropdownMenuItem asChild>
+            <Link href="/admin/sessions" className="cursor-pointer">
               <MonitorSmartphone className="size-4 text-muted-foreground" />
               {t("sessions")}
             </Link>
@@ -505,7 +558,7 @@ function ProfileDropdown({ role }: { role: Exclude<UserRole, "GUEST"> }) {
               className="cursor-pointer font-medium text-[#4fae2e]"
             >
               <ShieldCheck className="size-4 text-[#4fae2e]" />
-              Admin Portal
+              {t("adminPortal")}
             </Link>
           </DropdownMenuItem>
         )}
@@ -525,6 +578,7 @@ function ProfileDropdown({ role }: { role: Exclude<UserRole, "GUEST"> }) {
 
 function HeaderActions({ role }: HeaderProps) {
   const t = useTranslations("nav");
+  const { data: me } = useMe();
   const { can } = useActionPermission();
   const canViewConversations = can("GET", "/api/conversations");
   const canViewNotifications = can("GET", "/api/notifications");
@@ -554,9 +608,22 @@ function HeaderActions({ role }: HeaderProps) {
 
   return (
     <div className="ml-auto flex items-center gap-0.5 sm:gap-1">
-      <ContactDialog />
-      {canViewConversations && <MessageBell />}
-      {canViewNotifications && <NotificationsBell />}
+      {role !== "STAFF" && <ContactDialog />}
+      {role === "STAFF" && canAccessAdminPortal(me) && (
+        <Button
+          variant="outline"
+          size="sm"
+          asChild
+          className="mr-1 hidden h-8 rounded-full border-[#0069D3]/30 bg-[#0069D3]/5 px-3 text-xs font-semibold text-[#0069D3] hover:bg-[#0069D3]/10 sm:inline-flex dark:text-blue-300"
+        >
+          <Link href="/admin">
+            <ShieldCheck className="mr-1.5 size-3.5" />
+            {t("adminPortal")}
+          </Link>
+        </Button>
+      )}
+      {role !== "STAFF" && canViewConversations && <MessageBell />}
+      {role !== "STAFF" && canViewNotifications && <NotificationsBell />}
       <LanguageSwitcher />
       <ThemeToggle />
       <ProfileDropdown role={role} />
@@ -572,12 +639,21 @@ function MobileProfileNavigation({
   onNavigate: () => void;
 }) {
   const t = useTranslations("nav");
-  const { data: me } = useMe();
-  const publicProfileHref = me?.profile?.id
-    ? role === "FREELANCER"
-      ? `/profiles/${me.profile.id}`
-      : `/clients/${me.id}`
-    : null;
+  const {
+    me,
+    isMarketplaceUser,
+    hasTargetRole,
+    isMeLoading,
+    isPending: isRoleActionPending,
+    actionLabel: roleActionLabel,
+    executeRoleAction,
+  } = useMarketplaceRoleAction(role === "FREELANCER" ? "FREELANCER" : "CLIENT");
+  const publicProfileHref =
+    role === "STAFF" || !me?.profile?.id
+      ? null
+      : role === "FREELANCER"
+        ? `/profiles/${me.profile.id}`
+        : `/clients/${me.id}`;
 
   return (
     <div className="space-y-1">
@@ -595,43 +671,80 @@ function MobileProfileNavigation({
         <Link
           href="/admin"
           onClick={onNavigate}
-          className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-[13px] font-medium text-[#4fae2e] transition-colors hover:bg-[#4fae2e]/10"
+          className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-[13px] font-medium text-[#0069D3] transition-colors hover:bg-[#0069D3]/10 dark:text-blue-300"
         >
-          <ShieldCheck className="size-4 text-[#4fae2e]" />
-          Admin Portal
+          <ShieldCheck className="size-4 text-[#0069D3] dark:text-blue-300" />
+          {t("adminPortal")}
         </Link>
       )}
-      <Link
-        href={
-          canAccessAdminPortal(me)
-            ? "/admin/profile"
-            : role === "FREELANCER"
-              ? "/freelancer/profile"
-              : role === "CLIENT"
-                ? "/client/profile"
-                : "/login"
-        }
-        onClick={onNavigate}
-        className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-[13px] font-medium text-foreground/70 transition-colors hover:bg-black/[0.04] hover:text-foreground dark:hover:bg-white/[0.06]"
-      >
-        <UserRound className="size-4 text-muted-foreground" />
-        {t("profileSettings")}
-      </Link>
+      {(role !== "STAFF" || canAccessAdminPortal(me)) && (
+        <Link
+          href={
+            role === "STAFF"
+              ? "/admin/profile"
+              : role === "FREELANCER"
+                ? "/freelancer/profile"
+                : "/client/profile"
+          }
+          onClick={onNavigate}
+          className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-[13px] font-medium text-foreground/70 transition-colors hover:bg-black/[0.04] hover:text-foreground dark:hover:bg-white/[0.06]"
+        >
+          <UserRound className="size-4 text-muted-foreground" />
+          {t("profileSettings")}
+        </Link>
+      )}
+      {role !== "STAFF" && isMarketplaceUser && (
+        <button
+          type="button"
+          disabled={isMeLoading || isRoleActionPending}
+          onClick={() => {
+            void executeRoleAction().then((didUpdate) => {
+              if (didUpdate) onNavigate();
+            });
+          }}
+          className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-left text-[13px] font-medium text-foreground/70 transition-colors hover:bg-black/[0.04] hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#4fae2e]/30 active:translate-y-px disabled:cursor-not-allowed disabled:opacity-50 dark:hover:bg-white/[0.06]"
+        >
+          {hasTargetRole ? (
+            <SwitchCamera className="size-4 text-muted-foreground" />
+          ) : (
+            <UserPlus className="size-4 text-muted-foreground" />
+          )}
+          {roleActionLabel}
+        </button>
+      )}
     </div>
   );
 }
 
 export function Header({ role }: HeaderProps) {
   const t = useTranslations("nav");
+  const tRole = useTranslations("roleName");
   const tCommon = useTranslations("common");
+  const { data: me } = useMe();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const closeMenu = () => setIsMenuOpen(false);
+  const logoHref =
+    role === "STAFF"
+      ? canAccessAdminPortal(me)
+        ? "/admin"
+        : "/forum"
+      : "/";
+  const primaryRoleName =
+    me?.roles?.find((r) => r.isPrimary)?.name ?? me?.roles?.[0]?.name;
+  const mobileRoleLabel =
+    role === "STAFF"
+      ? primaryRoleName === "ADMIN"
+        ? tRole("ADMIN")
+        : primaryRoleName === "EXPERT"
+          ? tRole("EXPERT")
+          : primaryRoleName || "Staff"
+      : t(`roles.${roleConfig[role].nameKey}`);
 
   return (
     <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-xl text-foreground shadow-[0_1px_3px_rgba(0,0,0,0.02)] dark:border-white/[0.08] dark:bg-zinc-950/90">
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-2 sm:px-6 lg:px-8">
         <div className="flex items-center gap-2 sm:gap-4">
-          <Logo />
+          <Logo href={logoHref} />
           <HeaderNavigation role={role} />
         </div>
 
@@ -694,23 +807,23 @@ export function Header({ role }: HeaderProps) {
             </div>
           ) : (
             <div className="space-y-1 border-t border-border/50 pt-3 dark:border-white/[0.08]">
-              <Link
-                href={
-                  role === "FREELANCER"
-                    ? "/freelancer/conversations"
-                    : role === "CLIENT"
-                      ? "/client/conversations"
-                      : "/conversations"
-                }
-                onClick={closeMenu}
-                className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-[13px] font-medium text-foreground/60 transition-colors hover:bg-black/[0.04] hover:text-foreground dark:text-foreground/65 dark:hover:bg-white/[0.06]"
-              >
-                <MessageSquare className="size-4 text-muted-foreground" />
-                {t("conversations")}
-              </Link>
+              {role !== "STAFF" && (
+                <Link
+                  href={
+                    role === "FREELANCER"
+                      ? "/freelancer/conversations"
+                      : "/client/conversations"
+                  }
+                  onClick={closeMenu}
+                  className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-[13px] font-medium text-foreground/60 transition-colors hover:bg-black/[0.04] hover:text-foreground dark:text-foreground/65 dark:hover:bg-white/[0.06]"
+                >
+                  <MessageSquare className="size-4 text-muted-foreground" />
+                  {t("conversations")}
+                </Link>
+              )}
               <MobileProfileNavigation role={role} onNavigate={closeMenu} />
               <div className="px-3 pt-1 text-[11px] font-medium uppercase tracking-wider text-muted-foreground/60">
-                {t(`roles.${roleConfig[role].nameKey}`)}
+                {mobileRoleLabel}
               </div>
             </div>
           )}

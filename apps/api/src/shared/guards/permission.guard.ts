@@ -10,9 +10,15 @@ import {
   AccessTokenPayload,
   AuthMessage,
   REQUEST_USER_KEY,
+  RoleName,
 } from '@shared/types';
 import { Request } from 'express';
 import { IS_PUBLIC_KEY } from '../decorators/auth.decorator';
+import {
+  isAdminPermissionPath,
+  isHardcodedMarketplaceAllowed,
+  isSelfAccountOrSessionPath,
+} from '../helper/admin-permission';
 import { SharedPermissionRepository } from '../repositories/shared-permission.repo';
 
 @Injectable()
@@ -43,7 +49,38 @@ export class PermissionGuard implements CanActivate {
 
     const method = request.method;
     const path = request.path; // vd: /api/roles/1
+    const roleName = payload.roleName;
 
+    // 1. Role marketplace (Client / Freelancer) sử dụng quy tắc hardcode cố định.
+    if (roleName === RoleName.CLIENT || roleName === RoleName.FREELANCER) {
+      if (!isHardcodedMarketplaceAllowed(roleName, method, path)) {
+        this.logger.warn(
+          `Marketplace role denied: role=${roleName}, ${method} ${path}`,
+        );
+        throw new ForbiddenException(AuthMessage.PERMISSION_DENIED);
+      }
+      return true;
+    }
+
+    // 2. Role quản trị (Admin, Expert, custom role): tự quản lý tài khoản & session của mình.
+    if (isSelfAccountOrSessionPath(path)) {
+      return true;
+    }
+
+    // 3. Chặn Admin/Custom role gọi các API nghiệp vụ riêng của Client/Freelancer/Homepage.
+    if (!isAdminPermissionPath(path, method)) {
+      this.logger.warn(
+        `Non-admin endpoint denied for admin/custom role: roleId=${payload.roleId}, ${method} ${path}`,
+      );
+      throw new ForbiddenException(AuthMessage.PERMISSION_DENIED);
+    }
+
+    // 4. Role ADMIN gốc giữ toàn quyền trong Admin Portal.
+    if (roleName === RoleName.ADMIN) {
+      return true;
+    }
+
+    // 5. Kiểm tra quyền Admin động trong DB cho EXPERT và các custom role.
     const allowed = await this.sharedPermissionRepository.roleHasPermission(
       payload.roleId,
       method,
