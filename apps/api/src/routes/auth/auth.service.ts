@@ -25,6 +25,7 @@ import { addMilliseconds } from 'date-fns';
 import ms, { StringValue } from 'ms';
 import { envConfig } from '../../shared/config/validate-env';
 import { ServerErrorException } from '../../shared/errors/shared-message.error';
+import { isAdminPermissionPath } from '../../shared/helper/admin-permission';
 import { generateOTP } from '../../shared/helper/generate-otp';
 import { SharedRoleRepository } from '../../shared/repositories/shared-role.repo';
 import { EmailService } from '../../shared/services/email.service';
@@ -507,7 +508,15 @@ export class AuthService {
     const permissionsSet = new Set<string>();
     const modulesSet = new Set<string>();
 
-    if (userRole && 'rolePermissions' in userRole) {
+    const isMarketplaceRole =
+      userRole?.name === RoleName.CLIENT ||
+      userRole?.name === RoleName.FREELANCER;
+
+    if (userRole?.name === RoleName.ADMIN) {
+      permissionsSet.add('*');
+    }
+
+    if (!isMarketplaceRole && userRole && 'rolePermissions' in userRole) {
       const rps =
         (
           userRole as {
@@ -523,13 +532,16 @@ export class AuthService {
         ).rolePermissions ?? [];
 
       for (const rp of rps) {
-        if (rp.permission && !rp.permission.deletedAt) {
-          if (rp.permission.method && rp.permission.path) {
+        if (
+          rp.permission &&
+          !rp.permission.deletedAt &&
+          rp.permission.path &&
+          isAdminPermissionPath(rp.permission.path, rp.permission.method)
+        ) {
+          if (rp.permission.method) {
             permissionsSet.add(`${rp.permission.method} ${rp.permission.path}`);
           }
-          if (rp.permission.path) {
-            permissionsSet.add(rp.permission.path);
-          }
+          permissionsSet.add(rp.permission.path);
           if (rp.permission.module) {
             modulesSet.add(rp.permission.module.toUpperCase());
           }

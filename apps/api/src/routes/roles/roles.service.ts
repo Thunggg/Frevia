@@ -175,7 +175,15 @@ export class RolesService {
     body: SetRolePermissionsBodyType,
   ): Promise<SetRolePermissionsResponseType> {
     try {
-      await this.rolesRepository.findById(id);
+      const role = await this.rolesRepository.findById(id);
+
+      const normalizedName = role.name.trim().toLowerCase();
+      if (
+        normalizedName === RoleName.CLIENT.toLowerCase() ||
+        normalizedName === RoleName.FREELANCER.toLowerCase()
+      ) {
+        throw CannotModifySystemRoleException();
+      }
 
       const permissionIds = [...new Set(body.permissionIds ?? [])] as number[];
       const activeIds =

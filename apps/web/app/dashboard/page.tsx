@@ -1,36 +1,17 @@
-import { getTranslations } from "next-intl/server";
 import authServerRequest from "@/apiRequests/auth.server";
 import { canAccessAdminPortal } from "@/lib/admin-access";
 import { RoleName } from "@shared/types";
 import { redirect } from "next/navigation";
 
-export async function generateMetadata() {
-  const t = await getTranslations("pageMeta");
-
-  return {
-    title: t("dashboardTitle"),
-    description: t("dashboardDescription"),
-  };
-}
-
-export default async function DashboardRedirectPage() {
+export default async function DashboardPage() {
   const user = await authServerRequest.getMe();
 
-  if (!user) {
+  if (!user || user.isBanned) {
     redirect("/login");
   }
 
   const primaryRole =
     user.roles.find((role) => role.isPrimary)?.name ?? user.roles[0]?.name;
-
-  if (
-    primaryRole === RoleName.ADMIN ||
-    (primaryRole !== RoleName.CLIENT &&
-      primaryRole !== RoleName.FREELANCER &&
-      canAccessAdminPortal(user))
-  ) {
-    redirect("/admin");
-  }
 
   if (primaryRole === RoleName.CLIENT) {
     redirect("/client/jobs");
@@ -40,5 +21,9 @@ export default async function DashboardRedirectPage() {
     redirect("/freelancer");
   }
 
-  redirect("/");
+  if (canAccessAdminPortal(user)) {
+    redirect("/admin");
+  }
+
+  redirect("/access-denied?requiredRole=admin");
 }

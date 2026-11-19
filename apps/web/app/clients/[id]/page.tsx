@@ -16,7 +16,9 @@ export default async function ClientProfilePage({ params }: Props) {
       ? "FREELANCER"
       : role === RoleName.CLIENT
         ? "CLIENT"
-        : "GUEST";
+        : user
+          ? "STAFF"
+          : "GUEST";
   return (
     <ClientProfileClient
       userId={userId}

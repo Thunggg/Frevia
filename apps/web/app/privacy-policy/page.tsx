@@ -11,13 +11,16 @@ export const metadata: Metadata = {
 
 export default async function PrivacyPolicyPage() {
   const user = await authServerRequest.getMe();
-  const role = user?.roles.find((item) => item.isPrimary)?.name;
+  const role =
+    user?.roles.find((item) => item.isPrimary)?.name ?? user?.roles[0]?.name;
   const headerRole =
     role === RoleName.FREELANCER
       ? "FREELANCER"
       : role === RoleName.CLIENT
         ? "CLIENT"
-        : "GUEST";
+        : user
+          ? "STAFF"
+          : "GUEST";
 
   return <PrivacyPolicyView headerRole={headerRole} />;
 }
