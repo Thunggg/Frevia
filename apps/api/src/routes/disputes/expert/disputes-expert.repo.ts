@@ -10,14 +10,104 @@ import { GetDisputeListQueryType } from '@shared/types';
 import { PrismaService } from '../../../shared/services/prisma.service';
 import { syncContractAndJobCompletion } from '../../../shared/helper/contract-activation.helper';
 
-const expertDisputeDetailInclude = {
+const expertDisputeListInclude = {
   milestone: {
     include: {
       contract: true,
     },
   },
-  openedBy: { select: { id: true, email: true } },
-  respondent: { select: { id: true, email: true } },
+  openedBy: {
+    select: {
+      id: true,
+      email: true,
+      profile: { select: { displayName: true, avatarUrl: true } },
+    },
+  },
+  respondent: {
+    select: {
+      id: true,
+      email: true,
+      profile: { select: { displayName: true, avatarUrl: true } },
+    },
+  },
+  decisionBy: { select: { id: true, email: true } },
+  evidences: {
+    include: {
+      file: {
+        select: {
+          id: true,
+          fileUrl: true,
+          fileName: true,
+        },
+      },
+    },
+    orderBy: { createdAt: 'asc' as const },
+  },
+  decisionReviews: true,
+};
+
+const expertDisputeFullDetailInclude = {
+  milestone: {
+    include: {
+      files: {
+        where: { deletedAt: null },
+        select: {
+          id: true,
+          uploaderId: true,
+          fileUrl: true,
+          fileName: true,
+          createdAt: true,
+        },
+        orderBy: { createdAt: 'asc' as const },
+      },
+      submissions: {
+        include: {
+          files: {
+            include: {
+              file: {
+                select: {
+                  id: true,
+                  fileUrl: true,
+                  fileName: true,
+                },
+              },
+            },
+          },
+        },
+        orderBy: { submittedAt: 'desc' as const },
+      },
+      contract: {
+        include: {
+          job: { select: { id: true, title: true } },
+          milestones: {
+            where: { deletedAt: null },
+            select: {
+              id: true,
+              title: true,
+              amount: true,
+              status: true,
+              paymentStatus: true,
+            },
+            orderBy: { id: 'asc' as const },
+          },
+        },
+      },
+    },
+  },
+  openedBy: {
+    select: {
+      id: true,
+      email: true,
+      profile: { select: { displayName: true, avatarUrl: true } },
+    },
+  },
+  respondent: {
+    select: {
+      id: true,
+      email: true,
+      profile: { select: { displayName: true, avatarUrl: true } },
+    },
+  },
   decisionBy: { select: { id: true, email: true } },
   evidences: {
     include: {
@@ -48,8 +138,48 @@ export class DisputesExpertRepository {
   async findDisputeById(disputeId: number) {
     return this.prisma.dispute.findUnique({
       where: { id: disputeId },
-      include: expertDisputeDetailInclude,
+      include: expertDisputeFullDetailInclude,
     });
+  }
+
+  async findConversationMessages(
+    userA: number,
+    userB: number,
+    limit = 50,
+  ) {
+    const conversation = await this.prisma.conversation.findFirst({
+      where: {
+        deletedAt: null,
+        OR: [
+          { participant1: userA, participant2: userB },
+          { participant1: userB, participant2: userA },
+        ],
+      },
+      select: { id: true },
+    });
+
+    if (!conversation) {
+      return [];
+    }
+
+    const latestMessages = await this.prisma.directMessage.findMany({
+      where: {
+        conversationId: conversation.id,
+        deletedAt: null,
+      },
+      select: {
+        id: true,
+        senderId: true,
+        message: true,
+        fileUrl: true,
+        fileName: true,
+        createdAt: true,
+      },
+      orderBy: { createdAt: 'desc' },
+      take: limit,
+    });
+
+    return latestMessages.reverse();
   }
 
   async listDisputes(query: GetDisputeListQueryType) {
@@ -73,7 +203,7 @@ export class DisputesExpertRepository {
         skip,
         take: limit,
         orderBy,
-        include: expertDisputeDetailInclude,
+        include: expertDisputeListInclude,
       }),
     ]);
 
@@ -132,7 +262,7 @@ export class DisputesExpertRepository {
 
       return tx.dispute.findUnique({
         where: { id: disputeId },
-        include: expertDisputeDetailInclude,
+        include: expertDisputeFullDetailInclude,
       });
     });
   }
@@ -174,7 +304,7 @@ export class DisputesExpertRepository {
 
       return tx.dispute.findUnique({
         where: { id: data.disputeId },
-        include: expertDisputeDetailInclude,
+        include: expertDisputeFullDetailInclude,
       });
     });
   }

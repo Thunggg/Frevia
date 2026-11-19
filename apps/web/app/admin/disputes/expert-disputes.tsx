@@ -1,487 +1,483 @@
 "use client";
 
-import { expertProfileApi } from "@/apiRequests/expert-profile";
-import { ApiFail, http } from "@/lib/http";
+import { useState } from "react";
+import Link from "next/link";
+import { useTranslations } from "next-intl";
+import { useQuery } from "@tanstack/react-query";
+import {
+  AlertCircle,
+  Eye,
+  Gavel,
+  Loader2,
+  RefreshCw,
+  Scale,
+  ShieldAlert,
+} from "lucide-react";
 import { Button } from "@repo/ui/components/shadcn/button";
-import { Input } from "@repo/ui/components/shadcn/input";
-import { Label } from "@repo/ui/components/shadcn/label";
-import { Textarea } from "@repo/ui/components/shadcn/textarea";
-import { Badge } from "@repo/ui/components/shadcn/badge";
-import { toastError, toastSuccess } from "@repo/ui/components/shadcn/toast";
+import { RoleName } from "@shared/types";
+import { disputeApiRequest } from "@/apiRequests/dispute";
+import { expertProfileApi } from "@/apiRequests/expert-profile";
+import { useActionPermission } from "@/hooks/use-action-permission";
+import { useMe } from "@/hooks/use-auth";
 import {
-  AdminDisputeDecisionBodySchema,
-  type DisputeDetailType,
-  type DisputeListResponseType,
-} from "@shared/types";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useFormatter, useTranslations } from "next-intl";
-import { useRouter } from "next/navigation";
-import { useEffect, useState, type FormEvent } from "react";
-import { AlertCircle, ArrowLeft, Loader2, Scale } from "lucide-react";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@repo/ui/components/shadcn/alert-dialog";
+  DisputeStatusBadge,
+  formatResolutionCurrency,
+  useResolutionHelpers,
+} from "@/components/disputes/resolution-utils";
+import { ExpertDisputeDetail } from "./expert-dispute-detail";
 
-const statuses = [
-  "OPEN",
-  "WAITING_RESPONSE",
-  "UNDER_REVIEW",
-  "DECISION_MADE",
-  "REVIEW_REQUESTED",
-  "FINALIZED",
-  "CANCELLED",
-];
+const STATUS_FILTERS = [
+  { key: "", labelKey: "all" },
+  { key: "UNDER_REVIEW", labelKey: "statuses.UNDER_REVIEW" },
+  { key: "REVIEW_REQUESTED", labelKey: "statuses.REVIEW_REQUESTED" },
+  { key: "DECISION_MADE", labelKey: "statuses.DECISION_MADE" },
+  { key: "WAITING_RESPONSE", labelKey: "statuses.WAITING_RESPONSE" },
+  { key: "FINALIZED", labelKey: "statuses.FINALIZED" },
+  { key: "CANCELLED", labelKey: "statuses.CANCELLED" },
+] as const;
 
 export function ExpertDisputes() {
   const t = useTranslations("expertDisputes");
-  const format = useFormatter();
-  const router = useRouter();
-  const queryClient = useQueryClient();
-  const [status, setStatus] = useState("");
+  const { formatDate, getTypeLabel, translateStoredReason } =
+    useResolutionHelpers();
+  const { data: me, isLoading: isMeLoading } = useMe();
+  const { can } = useActionPermission();
+
+  const [status, setStatus] = useState<string>("");
   const [page, setPage] = useState(1);
   const [selectedId, setSelectedId] = useState<number | null>(null);
-  const [pending, setPending] = useState(false);
-  const [confirmation, setConfirmation] = useState<{
-    freelancerAmount: number;
-    clientAmount: number;
-    decisionReason: string;
-  } | null>(null);
-  const profile = useQuery({
+
+  const isExpertRole = Boolean(
+    me?.roles?.some((r) => r.name === RoleName.EXPERT),
+  );
+  const canViewDisputes = can("GET", "/api/expert/disputes");
+
+  const profileQuery = useQuery({
     queryKey: ["expert-profile"],
     queryFn: () => expertProfileApi.getMine().then((res) => res.data),
+    enabled: isExpertRole && canViewDisputes,
     retry: false,
   });
-  const active = profile.data?.isActive === true;
-  useEffect(() => {
-    if (profile.data && !profile.data.isActive)
-      router.replace("/admin/profile");
-  }, [profile.data, router]);
-  const list = useQuery({
+
+  const isActiveExpert = profileQuery.data?.isActive === true;
+
+  const listQuery = useQuery({
     queryKey: ["expert-disputes", status, page],
-    enabled: active,
-    queryFn: () =>
-      http
-        .get<DisputeListResponseType>(
-          `/expert/disputes?page=${page}&limit=10${status ? `&status=${status}` : ""}`,
-        )
-        .then((res) => res.data),
-  });
-  const detail = useQuery({
-    queryKey: ["expert-dispute", selectedId],
-    enabled: active && selectedId !== null,
-    queryFn: () =>
-      http
-        .get<DisputeDetailType>(`/expert/disputes/${selectedId}`)
-        .then((res) => res.data),
-  });
-  const dispute = detail.data;
-  const finalDecision =
-    dispute?.status === "REVIEW_REQUESTED" ||
-    dispute?.status === "DECISION_MADE";
-  const canDecide =
-    dispute &&
-    (dispute.status === "UNDER_REVIEW" ||
-      dispute.status === "DECISION_MADE" ||
-      dispute.status === "REVIEW_REQUESTED");
-  const error = profile.error || (selectedId ? detail.error : list.error);
-
-  const submit = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    const parsed = AdminDisputeDecisionBodySchema.safeParse({
-      freelancerAmount: data.get("freelancerAmount"),
-      clientAmount: data.get("clientAmount"),
-      decisionReason: data.get("decisionReason"),
-    });
-    if (
-      !parsed.success ||
-      !dispute?.milestone ||
-      !Number.isFinite(parsed.data.freelancerAmount) ||
-      !Number.isFinite(parsed.data.clientAmount) ||
-      Math.round(
-        (parsed.data.freelancerAmount + parsed.data.clientAmount) * 100,
-      ) !== Math.round(dispute.milestone.amount * 100)
-    ) {
-      toastError({ message: t("invalidDecision") });
-      return;
-    }
-    setConfirmation(parsed.data);
-  };
-  const decide = async () => {
-    if (!confirmation || !dispute) return;
-    setPending(true);
-    try {
-      await http.post<DisputeDetailType>(
-        `/expert/disputes/${dispute.id}/${finalDecision ? "final-decision" : "decision"}`,
-        confirmation,
-      );
-      setConfirmation(null);
-      toastSuccess({ message: t("saved") });
-      await Promise.all([
-        queryClient.invalidateQueries({ queryKey: ["expert-disputes"] }),
-        queryClient.invalidateQueries({
-          queryKey: ["expert-dispute", dispute.id],
-        }),
-      ]);
-    } catch (error) {
-      toastError({
-        message: error instanceof ApiFail ? error.message : t("loadFailed"),
+    enabled: isExpertRole && canViewDisputes && isActiveExpert,
+    queryFn: async () => {
+      const res = await disputeApiRequest.expertListDisputes({
+        page,
+        limit: 10,
+        ...(status ? { status } : {}),
       });
-    } finally {
-      setPending(false);
-    }
-  };
+      return res.data;
+    },
+  });
 
-  return (
-    <div className="space-y-6">
-      <header className="flex items-start gap-3">
-        <Scale
-          className="mt-1 size-7 shrink-0 text-[#0069D3] dark:text-blue-300"
-          aria-hidden="true"
-        />
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">
-            {t("title")}
-          </h1>
-          <p className="mt-2 text-sm leading-6 text-muted-foreground">
-            {t("subtitle")}
+  const detailQuery = useQuery({
+    queryKey: ["expert-dispute", selectedId],
+    enabled:
+      isExpertRole &&
+      canViewDisputes &&
+      isActiveExpert &&
+      selectedId !== null,
+    queryFn: async () => {
+      if (selectedId === null) return null;
+      const res = await disputeApiRequest.expertGetDisputeDetail(selectedId);
+      return res.data;
+    },
+  });
+
+  if (isMeLoading) {
+    return (
+      <div className="flex items-center justify-center py-20 text-xs text-muted-foreground gap-2">
+        <Loader2 className="size-4 animate-spin" />
+        <span>{t("loading")}</span>
+      </div>
+    );
+  }
+
+  // Non-Expert users (e.g. Admin without Expert role) see a clear role notice
+  if (!isExpertRole || !canViewDisputes) {
+    return (
+      <div className="space-y-6">
+        <header className="flex items-start gap-3">
+          <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-[#0069D3]/10 text-[#0069D3] dark:text-sky-300">
+            <Scale className="size-5" />
+          </div>
+          <div>
+            <h1 className="text-2xl font-semibold tracking-tight text-foreground">
+              {t("title")}
+            </h1>
+            <p className="text-xs text-muted-foreground mt-1">{t("subtitle")}</p>
+          </div>
+        </header>
+
+        <div className="rounded-2xl border border-zinc-200/80 dark:border-zinc-800 bg-white dark:bg-zinc-950 p-10 text-center space-y-2.5">
+          <div className="mx-auto flex size-10 items-center justify-center rounded-xl bg-amber-50 dark:bg-amber-950/50 text-amber-700 dark:text-amber-300">
+            <ShieldAlert className="size-5" />
+          </div>
+          <h2 className="text-sm font-medium text-foreground">
+            {t("expertOnlyTitle")}
+          </h2>
+          <p className="text-xs text-muted-foreground max-w-md mx-auto leading-relaxed">
+            {t("expertOnlyDesc")}
           </p>
         </div>
-      </header>
-      {error ? (
-        <div
-          role="alert"
-          className="rounded-xl border border-destructive/30 p-5"
-        >
-          <p className="flex items-center gap-2 text-destructive">
+      </div>
+    );
+  }
+
+  // Loading expert profile
+  if (profileQuery.isLoading) {
+    return (
+      <div className="flex items-center justify-center py-20 text-xs text-muted-foreground gap-2">
+        <Loader2 className="size-4 animate-spin" />
+        <span>{t("loading")}</span>
+      </div>
+    );
+  }
+
+  // Inactive expert profile notice with direct link to /admin/profile
+  if (profileQuery.data && !profileQuery.data.isActive) {
+    return (
+      <div className="space-y-6">
+        <header className="flex items-start gap-3">
+          <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-[#0069D3]/10 text-[#0069D3] dark:text-sky-300">
+            <Scale className="size-5" />
+          </div>
+          <div>
+            <h1 className="text-2xl font-semibold tracking-tight text-foreground">
+              {t("title")}
+            </h1>
+            <p className="text-xs text-muted-foreground mt-1">{t("subtitle")}</p>
+          </div>
+        </header>
+
+        <div className="rounded-2xl border border-amber-200/80 dark:border-amber-900/60 bg-amber-50/40 dark:bg-amber-950/20 p-10 text-center space-y-3">
+          <div className="mx-auto flex size-10 items-center justify-center rounded-xl bg-amber-100 dark:bg-amber-900/60 text-amber-700 dark:text-amber-300">
+            <ShieldAlert className="size-5" />
+          </div>
+          <h2 className="text-sm font-medium text-foreground">
+            {t("inactiveProfileTitle")}
+          </h2>
+          <p className="text-xs text-muted-foreground max-w-md mx-auto leading-relaxed">
+            {t("inactiveProfileDesc")}
+          </p>
+          <div className="pt-1">
+            <Button asChild size="sm" className="h-8 rounded-lg text-xs">
+              <Link href="/admin/profile">{t("goToProfile")}</Link>
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Case Detail View
+  if (selectedId !== null) {
+    if (detailQuery.isLoading) {
+      return (
+        <div className="flex items-center justify-center py-20 text-xs text-muted-foreground gap-2">
+          <Loader2 className="size-4 animate-spin" />
+          <span>{t("loading")}</span>
+        </div>
+      );
+    }
+
+    if (detailQuery.error || !detailQuery.data) {
+      return (
+        <div className="rounded-2xl border border-destructive/30 bg-white dark:bg-zinc-950 p-6 space-y-3">
+          <p className="flex items-center gap-2 text-xs text-destructive">
             <AlertCircle className="size-4" />
             {t("loadFailed")}
           </p>
+          <div className="flex items-center gap-2">
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => void detailQuery.refetch()}
+              className="h-8 rounded-lg text-xs cursor-pointer"
+            >
+              {t("retry")}
+            </Button>
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={() => setSelectedId(null)}
+              className="h-8 rounded-lg text-xs cursor-pointer"
+            >
+              {t("back")}
+            </Button>
+          </div>
+        </div>
+      );
+    }
+
+    return (
+      <ExpertDisputeDetail
+        dispute={detailQuery.data}
+        onBack={() => setSelectedId(null)}
+      />
+    );
+  }
+
+  const disputes = listQuery.data?.data ?? [];
+  const totalItems = listQuery.data?.pagination?.total ?? 0;
+  const totalPages = listQuery.data?.pagination?.totalPages ?? 1;
+  const loadError = profileQuery.error || listQuery.error;
+
+  return (
+    <div className="space-y-6">
+      {/* Header */}
+      <header className="flex items-start gap-3">
+        <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-[#0069D3]/10 text-[#0069D3] dark:text-sky-300">
+          <Scale className="size-5" />
+        </div>
+        <div>
+          <h1 className="text-2xl font-semibold tracking-tight text-foreground">
+            {t("title")}
+          </h1>
+          <p className="text-xs text-muted-foreground mt-1">{t("subtitle")}</p>
+        </div>
+      </header>
+
+      {loadError && (
+        <div
+          role="alert"
+          className="rounded-xl border border-destructive/30 bg-destructive/5 p-4 flex flex-wrap items-center justify-between gap-3"
+        >
+          <p className="flex items-center gap-2 text-xs text-destructive">
+            <AlertCircle className="size-4 shrink-0" />
+            {t("loadFailed")}
+          </p>
           <Button
-            className="mt-3"
+            type="button"
             variant="outline"
+            size="sm"
             onClick={() =>
-              void (profile.error
-                ? profile.refetch()
-                : selectedId
-                  ? detail.refetch()
-                  : list.refetch())
+              void (profileQuery.error
+                ? profileQuery.refetch()
+                : listQuery.refetch())
             }
+            className="h-7 rounded-lg text-xs cursor-pointer"
           >
             {t("retry")}
           </Button>
         </div>
-      ) : null}
-      {!profile.data || !active ? (
-        !error && (
-          <div role="status" className="flex justify-center p-12">
-            <Loader2
-              className="size-6 animate-spin"
-              aria-label={t("loading")}
-            />
-          </div>
-        )
-      ) : selectedId ? (
-        <>
-          <Button variant="ghost" onClick={() => setSelectedId(null)}>
-            <ArrowLeft className="size-4" />
-            {t("back")}
-          </Button>
-          {detail.isFetching ? (
-            <p role="status">{t("loading")}</p>
-          ) : dispute ? (
-            <div className="space-y-5">
-              <section className="space-y-4 rounded-xl border bg-card p-5 sm:p-6">
-                <div className="flex flex-wrap items-center justify-between gap-3">
-                  <h2 className="text-xl font-semibold">
-                    #{dispute.id} · {dispute.reason}
-                  </h2>
-                  <Badge variant="secondary">
-                    {t(`statuses.${dispute.status}`)}
-                  </Badge>
-                </div>
-                <p className="whitespace-pre-wrap break-words text-sm leading-6">
-                  {dispute.description}
-                </p>
-                <dl className="grid gap-4 border-t pt-4 text-sm sm:grid-cols-2">
-                  <div>
-                    <dt className="text-muted-foreground">{t("milestone")}</dt>
-                    <dd className="mt-1 font-medium">
-                      {dispute.milestone?.title} ·{" "}
-                      {format.number(dispute.milestone?.amount ?? 0)}
-                    </dd>
-                  </div>
-                  <div>
-                    <dt className="text-muted-foreground">{t("parties")}</dt>
-                    <dd className="mt-1 break-words">
-                      {dispute.openedBy?.email} / {dispute.respondent?.email}
-                    </dd>
-                  </div>
-                  {dispute.resolutionType && (
-                    <div>
-                      <dt className="text-muted-foreground">Requested Type</dt>
-                      <dd className="mt-1 font-medium">
-                        {dispute.resolutionType.replace(/_/g, " ")}
-                      </dd>
-                    </div>
-                  )}
-                  {dispute.declineReason && (
-                    <div className="sm:col-span-2">
-                      <dt className="text-muted-foreground">
-                        Counterparty Decline Reason
-                      </dt>
-                      <dd className="mt-1 whitespace-pre-wrap break-words text-rose-700 dark:text-rose-300">
-                        {dispute.declineReason}
-                      </dd>
-                    </div>
-                  )}
-                </dl>
-                {dispute.decisionReason && (
-                  <div className="space-y-2 border-t pt-4">
-                    <h3 className="font-medium">{t("currentDecision")}</h3>
-                    <p className="whitespace-pre-wrap break-words text-sm">
-                      {dispute.decisionReason}
-                    </p>
-                    <p className="text-sm">
-                      {t("freelancerAmount")}:{" "}
-                      {format.number(dispute.freelancerAmount ?? 0)} ·{" "}
-                      {t("clientAmount")}:{" "}
-                      {format.number(dispute.clientAmount ?? 0)}
-                    </p>
-                  </div>
-                )}
-              </section>
-              <section className="space-y-4 rounded-xl border bg-card p-5 sm:p-6">
-                <h2 className="text-lg font-semibold">{t("evidence")}</h2>
-                {dispute.evidences?.length ? (
-                  dispute.evidences.map((evidence) => (
-                    <div
-                      key={evidence.id}
-                      className="space-y-2 rounded-lg border p-4"
-                    >
-                      <p className="text-xs text-muted-foreground">
-                        {t("submittedBy", { id: evidence.submittedById })} ·{" "}
-                        {evidence.type}
-                      </p>
-                      <p className="whitespace-pre-wrap break-words text-sm">
-                        {evidence.description}
-                      </p>
-                      {evidence.file &&
-                        /^https?:\/\//i.test(evidence.file.fileUrl) && (
-                          <a
-                            className="break-all text-sm text-[#0069D3] underline dark:text-blue-300"
-                            href={evidence.file.fileUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                          >
-                            {evidence.file.fileName || t("openFile")}
-                          </a>
-                        )}
-                    </div>
-                  ))
-                ) : (
-                  <p className="text-sm text-muted-foreground">
-                    {t("noEvidence")}
-                  </p>
-                )}
-                {dispute.decisionReviews?.map((review) => (
-                  <div
-                    key={review.id}
-                    className="rounded-lg border p-4 text-sm"
-                  >
-                    <p className="font-medium">
-                      {t("submittedBy", { id: review.userId })} ·{" "}
-                      {review.response}
-                    </p>
-                    <p className="mt-2 whitespace-pre-wrap break-words">
-                      {review.reason}
-                    </p>
-                  </div>
-                ))}
-              </section>
-              {canDecide && (
-                <form
-                  key={`${dispute.id}-${dispute.status}`}
-                  onSubmit={submit}
-                  className="space-y-5 rounded-xl border bg-card p-5 sm:p-6"
-                >
-                  <h2 className="text-lg font-semibold">
-                    {t(finalDecision ? "finalDecision" : "decision")}
-                  </h2>
-                  <p className="text-sm text-muted-foreground">
-                    {t("splitHint")}
-                  </p>
-                  <div className="grid gap-4 sm:grid-cols-2">
-                    <div className="space-y-2">
-                      <Label htmlFor="freelancerAmount">
-                        {t("freelancerAmount")}
-                      </Label>
-                      <Input
-                        id="freelancerAmount"
-                        name="freelancerAmount"
-                        type="number"
-                        min="0"
-                        max={dispute.milestone?.amount}
-                        step="0.01"
-                        required
-                        defaultValue={dispute.freelancerAmount ?? ""}
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="clientAmount">{t("clientAmount")}</Label>
-                      <Input
-                        id="clientAmount"
-                        name="clientAmount"
-                        type="number"
-                        min="0"
-                        max={dispute.milestone?.amount}
-                        step="0.01"
-                        required
-                        defaultValue={dispute.clientAmount ?? ""}
-                      />
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="decisionReason">{t("reason")}</Label>
-                    <Textarea
-                      id="decisionReason"
-                      name="decisionReason"
-                      minLength={5}
-                      maxLength={3000}
-                      required
-                      defaultValue={dispute.decisionReason ?? ""}
-                    />
-                  </div>
-                  <Button type="submit" disabled={pending}>
-                    {t(finalDecision ? "finalDecision" : "decision")}
-                  </Button>
-                </form>
-              )}
-            </div>
-          ) : null}
-        </>
-      ) : (
-        <>
-          <div className="flex flex-wrap items-center gap-3">
-            <Label htmlFor="dispute-status">{t("filter")}</Label>
-            <select
-              id="dispute-status"
-              value={status}
-              onChange={(event) => {
-                setStatus(event.target.value);
-                setPage(1);
-              }}
-              className="h-10 rounded-md border bg-background px-3 text-sm"
-            >
-              <option value="">{t("all")}</option>
-              {statuses.map((value) => (
-                <option key={value} value={value}>
-                  {t(`statuses.${value}`)}
-                </option>
-              ))}
-            </select>
-          </div>
-          {list.isFetching ? (
-            <p role="status">{t("loading")}</p>
-          ) : list.data?.data.length ? (
-            <div className="divide-y rounded-xl border bg-card">
-              {list.data.data.map((item) => (
+      )}
+
+      {/* Table Card */}
+      <div className="rounded-2xl border border-zinc-200/80 dark:border-zinc-800 bg-white dark:bg-zinc-950 p-5 sm:p-6 shadow-[0_1px_2px_rgba(0,0,0,0.03)] space-y-4">
+        {/* Top Bar: Pill Filter Tabs & Refresh */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="flex h-8 items-center gap-1 overflow-x-auto rounded-full bg-[#F1F0F5] p-1 text-xs dark:bg-muted scrollbar-none">
+            {STATUS_FILTERS.map((tab) => {
+              const isActive = status === tab.key;
+              return (
                 <button
-                  key={item.id}
-                  onClick={() => setSelectedId(item.id)}
-                  className="flex w-full flex-col gap-3 p-5 text-left hover:bg-muted/40 focus-visible:outline-2 focus-visible:outline-ring sm:flex-row sm:items-center sm:justify-between"
+                  key={tab.key || "ALL"}
+                  type="button"
+                  onClick={() => {
+                    setStatus(tab.key);
+                    setPage(1);
+                  }}
+                  className={`inline-flex h-6 cursor-pointer items-center whitespace-nowrap rounded-full px-3 text-xs transition-all ${
+                    isActive
+                      ? "bg-background font-medium text-foreground shadow-xs"
+                      : "text-muted-foreground hover:text-foreground"
+                  }`}
                 >
-                  <div className="min-w-0">
-                    <p className="break-words font-medium">
-                      #{item.id} · {item.reason}
-                    </p>
-                    <p className="mt-1 text-sm text-muted-foreground">
-                      {item.milestone?.title}
-                    </p>
-                  </div>
-                  <Badge variant="secondary" className="w-fit shrink-0">
-                    {t(`statuses.${item.status}`)}
-                  </Badge>
+                  {t(tab.labelKey)}
                 </button>
-              ))}
-            </div>
-          ) : (
-            !error && (
-              <div className="rounded-xl border border-dashed px-5 py-14 text-center text-muted-foreground">
-                {t("empty")}
-              </div>
-            )
-          )}
-          {list.data && (
-            <div className="flex flex-wrap items-center justify-between gap-3">
+              );
+            })}
+          </div>
+
+          <div className="flex items-center gap-2 self-end sm:self-auto">
+            <span className="rounded-full bg-zinc-100 dark:bg-zinc-800 px-2.5 py-0.5 text-[11px] text-muted-foreground tabular-nums">
+              {t("casesCount", { count: totalItems })}
+            </span>
+            <button
+              type="button"
+              onClick={() => void listQuery.refetch()}
+              disabled={listQuery.isLoading || listQuery.isRefetching}
+              aria-label={t("refreshAria")}
+              className="inline-flex size-8 items-center justify-center rounded-lg border border-zinc-200/80 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-muted-foreground hover:text-foreground hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors cursor-pointer"
+            >
+              <RefreshCw
+                className={`size-3.5 ${
+                  listQuery.isLoading || listQuery.isRefetching
+                    ? "animate-spin"
+                    : ""
+                }`}
+              />
+            </button>
+          </div>
+        </div>
+
+        {/* Table */}
+        <div className="overflow-x-auto">
+          <table className="w-full text-left text-xs">
+            <thead>
+              <tr className="border-b border-zinc-200/80 dark:border-zinc-800 text-muted-foreground">
+                <th className="px-3 py-2.5 font-normal">{t("colCase")}</th>
+                <th className="px-3 py-2.5 font-normal">
+                  {t("colMilestoneReason")}
+                </th>
+                <th className="px-3 py-2.5 font-normal">{t("colProposal")}</th>
+                <th className="px-3 py-2.5 font-normal">{t("colParties")}</th>
+                <th className="px-3 py-2.5 font-normal">{t("colEscrow")}</th>
+                <th className="px-3 py-2.5 font-normal">{t("colOpened")}</th>
+                <th className="px-3 py-2.5 font-normal">{t("colStatus")}</th>
+                <th className="px-3 py-2.5 text-right font-normal">
+                  {t("colAction")}
+                </th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-zinc-100 dark:divide-zinc-800/80">
+              {listQuery.isLoading ? (
+                <tr>
+                  <td
+                    colSpan={8}
+                    className="py-14 text-center text-muted-foreground"
+                  >
+                    <Loader2 className="size-4 animate-spin mx-auto mb-2" />
+                    <span>{t("loading")}</span>
+                  </td>
+                </tr>
+              ) : disputes.length === 0 ? (
+                <tr>
+                  <td colSpan={8} className="py-14 text-center">
+                    <div className="flex flex-col items-center justify-center max-w-xs mx-auto space-y-1.5">
+                      <div className="flex size-9 items-center justify-center rounded-xl bg-zinc-100 dark:bg-zinc-800 text-muted-foreground mb-1">
+                        <Scale className="size-4" />
+                      </div>
+                      <p className="text-sm text-foreground">{t("empty")}</p>
+                      <p className="text-xs text-muted-foreground leading-relaxed">
+                        {t("emptyHint")}
+                      </p>
+                    </div>
+                  </td>
+                </tr>
+              ) : (
+                disputes.map((item) => {
+                  const caseCode = `RES-${String(item.id).padStart(4, "0")}`;
+                  const needsArbitration =
+                    item.status === "UNDER_REVIEW" ||
+                    item.status === "REVIEW_REQUESTED" ||
+                    item.status === "DECISION_MADE";
+
+                  return (
+                    <tr
+                      key={item.id}
+                      onClick={() => setSelectedId(item.id)}
+                      className="hover:bg-zinc-50/70 dark:hover:bg-zinc-900/40 transition-colors cursor-pointer"
+                    >
+                      <td className="px-3 py-3.5 whitespace-nowrap font-mono text-muted-foreground tabular-nums">
+                        {caseCode}
+                      </td>
+                      <td className="px-3 py-3.5">
+                        <p className="font-medium text-foreground truncate max-w-[220px]">
+                          {item.milestone?.title || `#${item.milestoneId}`}
+                        </p>
+                        <p className="text-[11px] text-muted-foreground truncate max-w-[220px] mt-0.5">
+                          {translateStoredReason(item.reason)}
+                        </p>
+                      </td>
+                      <td className="px-3 py-3.5 whitespace-nowrap text-muted-foreground">
+                        {getTypeLabel(item.resolutionType)}
+                      </td>
+                      <td className="px-3 py-3.5">
+                        <p className="text-[11px] text-foreground truncate max-w-[180px]">
+                          <span className="text-muted-foreground">
+                            {t("claimantShort")}:{" "}
+                          </span>
+                          {item.openedBy?.email || `#${item.openedById}`}
+                        </p>
+                        <p className="text-[11px] text-muted-foreground truncate max-w-[180px] mt-0.5">
+                          <span>{t("respondentShort")}: </span>
+                          {item.respondent?.email || `#${item.respondentId}`}
+                        </p>
+                      </td>
+                      <td className="px-3 py-3.5 whitespace-nowrap font-medium tabular-nums text-foreground">
+                        {formatResolutionCurrency(item.milestone?.amount ?? 0)}
+                      </td>
+                      <td className="px-3 py-3.5 whitespace-nowrap text-muted-foreground">
+                        {formatDate(item.createdAt)}
+                      </td>
+                      <td className="px-3 py-3.5 whitespace-nowrap">
+                        <DisputeStatusBadge
+                          status={item.status}
+                          declinedAt={item.declinedAt}
+                        />
+                      </td>
+                      <td className="px-3 py-3.5 whitespace-nowrap text-right">
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setSelectedId(item.id);
+                          }}
+                          className={`inline-flex items-center gap-1 rounded-lg px-2.5 py-1 text-xs transition-colors cursor-pointer ${
+                            needsArbitration
+                              ? "bg-[#0069D3] text-white hover:bg-[#0055b3] font-medium"
+                              : "text-muted-foreground hover:text-foreground hover:bg-zinc-100 dark:hover:bg-zinc-800"
+                          }`}
+                        >
+                          {needsArbitration ? (
+                            <Gavel className="size-3.5" />
+                          ) : (
+                            <Eye className="size-3.5" />
+                          )}
+                          <span>
+                            {needsArbitration
+                              ? t("actionArbitrate")
+                              : t("actionView")}
+                          </span>
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                })
+              )}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Pagination */}
+        {totalPages > 1 && (
+          <div className="flex items-center justify-between pt-3 border-t border-zinc-100 dark:border-zinc-800/80 text-xs">
+            <span className="text-muted-foreground">
+              {t("page", { page, total: totalPages })}
+            </span>
+            <div className="flex items-center gap-2">
               <Button
+                type="button"
                 variant="outline"
-                disabled={page <= 1 || list.isFetching}
-                onClick={() => setPage((value) => value - 1)}
+                size="sm"
+                disabled={page <= 1 || listQuery.isFetching}
+                onClick={() => setPage((p) => Math.max(1, p - 1))}
+                className="h-7 rounded-lg px-2.5 text-xs cursor-pointer"
               >
                 {t("previous")}
               </Button>
-              <span className="text-sm text-muted-foreground">
-                {t("page", {
-                  page,
-                  total: Math.max(1, list.data.pagination.totalPages),
-                })}
-              </span>
               <Button
+                type="button"
                 variant="outline"
-                disabled={
-                  page >= list.data.pagination.totalPages || list.isFetching
-                }
-                onClick={() => setPage((value) => value + 1)}
+                size="sm"
+                disabled={page >= totalPages || listQuery.isFetching}
+                onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                className="h-7 rounded-lg px-2.5 text-xs cursor-pointer"
               >
                 {t("next")}
               </Button>
             </div>
-          )}
-        </>
-      )}
-      <AlertDialog
-        open={confirmation !== null}
-        onOpenChange={(open) => {
-          if (!open && !pending) setConfirmation(null);
-        }}
-      >
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>
-              {t(finalDecision ? "finalDecision" : "decision")}
-            </AlertDialogTitle>
-            <AlertDialogDescription>
-              {t(finalDecision ? "confirmFinal" : "confirmDecision")}
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel disabled={pending}>
-              {t("cancel")}
-            </AlertDialogCancel>
-            <AlertDialogAction
-              disabled={pending}
-              onClick={(event) => {
-                event.preventDefault();
-                void decide();
-              }}
-            >
-              {pending ? (
-                <Loader2 className="size-4 animate-spin" />
-              ) : (
-                t("confirm")
-              )}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
