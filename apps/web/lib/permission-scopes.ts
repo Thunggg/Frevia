@@ -486,7 +486,10 @@ export function getPermissionFeatureGroup(permission: {
   if (path.startsWith("/api/admin/banners")) {
     return FEATURE_GROUPS.ADMIN_BANNERS;
   }
-  if (path.startsWith("/api/admin/disputes")) {
+  if (
+    path.startsWith("/api/admin/disputes") ||
+    path.startsWith("/api/expert/disputes")
+  ) {
     return FEATURE_GROUPS.ADMIN_DISPUTES;
   }
   if (path.startsWith("/api/admin/profile-revisions")) {

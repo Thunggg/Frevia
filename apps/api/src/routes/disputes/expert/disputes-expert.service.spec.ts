@@ -62,6 +62,7 @@ describe('DisputesExpertService', () => {
     repo = {
       findActiveExpert: jest.fn(),
       findDisputeById: jest.fn(),
+      findConversationMessages: jest.fn().mockResolvedValue([]),
       listDisputes: jest.fn(),
       makeDecisionTransaction: jest.fn(),
       finalizeDisputeTransaction: jest.fn(),
@@ -129,12 +130,27 @@ describe('DisputesExpertService', () => {
       expect(repo.listDisputes).not.toHaveBeenCalled();
     });
 
-    it('returns dispute detail for active expert and throws NotFound if missing', async () => {
+    it('returns dispute detail with conversation messages for active expert and throws NotFound if missing', async () => {
       repo.findActiveExpert.mockResolvedValue({ id: 9 });
       repo.findDisputeById.mockResolvedValueOnce(mockDispute as any);
+      const mockMessages = [
+        {
+          id: 1,
+          senderId: 1,
+          message: 'Please share the repo link.',
+          fileUrl: null,
+          fileName: null,
+          createdAt: new Date(),
+        },
+      ];
+      repo.findConversationMessages.mockResolvedValueOnce(mockMessages);
 
       const detail = await service.getDisputeDetail(99, 'Expert', 5);
-      expect(detail).toEqual(mockDispute);
+      expect(repo.findConversationMessages).toHaveBeenCalledWith(1, 2);
+      expect(detail).toEqual({
+        ...mockDispute,
+        conversationMessages: mockMessages,
+      });
 
       repo.findDisputeById.mockResolvedValueOnce(null);
       await expect(
