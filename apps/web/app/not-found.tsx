@@ -17,13 +17,15 @@ export default async function NotFound() {
   let role: UserRole = "GUEST";
   if (primaryRole === RoleName.CLIENT) role = "CLIENT";
   else if (primaryRole === RoleName.FREELANCER) role = "FREELANCER";
-  else if (user) role = "FREELANCER";
+  else if (user) role = "STAFF";
 
   const homeHref =
     role === "CLIENT"
       ? "/client/jobs"
-      : canAccessAdminPortal(user)
-        ? "/admin"
+      : role === "STAFF"
+        ? canAccessAdminPortal(user)
+          ? "/admin"
+          : "/forum"
         : role === "FREELANCER"
           ? "/freelancer"
           : "/";
@@ -52,7 +54,9 @@ export default async function NotFound() {
 
             </Button>
             <Button variant="outline" asChild>
-              <Link href="/find-work">{t("findWork")}</Link>
+              <Link href={role === "STAFF" ? "/forum" : "/find-work"}>
+                {role === "STAFF" ? t("goHome") : t("findWork")}
+              </Link>
             </Button>
           </div>
         </section>
