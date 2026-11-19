@@ -1,6 +1,6 @@
 import "server-only";
 
-import { cookies } from "next/headers";
+import { getServerAccessToken } from "@/lib/auth-session";
 
 import { envConfig } from "@/configs/validate-env";
 import type {
@@ -66,10 +66,7 @@ async function jobServerFetch<T>(
     return null;
   }
 
-  const cookieStore = await cookies();
-  const accessToken =
-    cookieStore.get("accessToken")?.value ??
-    cookieStore.get("access_token")?.value;
+  const accessToken = await getServerAccessToken();
 
   if (requireAuth && !accessToken) {
     return null;

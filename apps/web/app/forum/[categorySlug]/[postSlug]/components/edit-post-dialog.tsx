@@ -52,10 +52,6 @@ export function EditPostDialog({
 
   const isSubmitting = updatePost.isPending;
 
-  if (!canEditPost) {
-    return null;
-  }
-
   // Khi mở dialog, reset về giá trị ban đầu
   const handleOpen = useCallback(
     (isOpen: boolean) => {
@@ -85,6 +81,10 @@ export function EditPostDialog({
       },
     );
   }, [postId, title, content, isSubmitting, updatePost, onUpdated]);
+
+  if (!canEditPost) {
+    return null;
+  }
 
   return (
     <Dialog open={open} onOpenChange={handleOpen}>

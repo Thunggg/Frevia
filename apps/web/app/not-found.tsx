@@ -54,7 +54,13 @@ export default async function NotFound() {
 
             </Button>
             <Button variant="outline" asChild>
-              <Link href={role === "STAFF" ? "/forum" : "/find-work"}>
+              <Link
+                href={
+                  role === "STAFF"
+                    ? "/forum"
+                    : "/freelancer/find-work/best-matches"
+                }
+              >
                 {role === "STAFF" ? t("goHome") : t("findWork")}
               </Link>
             </Button>

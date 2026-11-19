@@ -164,7 +164,7 @@ export class MilestoneSubmissionService {
     body: RequestChangesBodyType,
   ) {
     try {
-      await this.resolveAndGuardContext(
+      const { milestone } = await this.resolveAndGuardContext(
         userId,
         roleName,
         contractId,
@@ -176,6 +176,10 @@ export class MilestoneSubmissionService {
         await this.submissionRepository.findSubmissionById(submissionId);
       if (!submission || submission.milestoneId !== milestoneId) {
         throw SubmissionNotFoundException();
+      }
+
+      if (milestone.status === MilestoneStatus.DISPUTED) {
+        throw FailedToRequestChangesException();
       }
 
       if (submission.status !== SubmissionStatus.PENDING_REVIEW) {
@@ -213,6 +217,10 @@ export class MilestoneSubmissionService {
         await this.submissionRepository.findSubmissionById(submissionId);
       if (!submission || submission.milestoneId !== milestoneId) {
         throw SubmissionNotFoundException();
+      }
+
+      if (milestone.status === MilestoneStatus.DISPUTED) {
+        throw FailedToApproveException();
       }
 
       if (submission.status !== SubmissionStatus.PENDING_REVIEW) {

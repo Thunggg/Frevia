@@ -91,7 +91,10 @@ export function ContractLifecyclePanel({
         await contractApi.complete(contract.id);
         toastSuccess({ message: t("completed") });
       }
-      await queryClient.invalidateQueries({ queryKey: ["contracts"] });
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ["contracts"] }),
+        queryClient.invalidateQueries({ queryKey: ["contracts-list"] }),
+      ]);
       setConfirmAction(null);
     } catch (error) {
       toastError({ message: errorMessage(error, t("updateFailed")) });

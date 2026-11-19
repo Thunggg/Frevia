@@ -57,6 +57,7 @@ export function AdminProfileDropdown() {
       // ignore
     }
     queryClient.clear();
+    queryClient.setQueryData(["me"], null);
     router.push("/login");
     router.refresh();
   };

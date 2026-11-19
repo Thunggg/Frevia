@@ -32,7 +32,7 @@ export function MilestoneFilesTab({
 }: MilestoneFilesTabProps) {
   const format = useFormatter();
   const t = useTranslations("milestoneWorkspace.files");
-  const { can } = useActionPermission();
+  const { can, isLoading: isPermissionLoading } = useActionPermission();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
   const [deletingId, setDeletingId] = useState<number | null>(null);
@@ -118,7 +118,7 @@ export function MilestoneFilesTab({
     }
   };
 
-  if (!canViewFiles) {
+  if (!isPermissionLoading && !canViewFiles) {
     return (
       <div className="py-8 text-center space-y-2">
         <h3 className="text-sm font-semibold text-foreground">

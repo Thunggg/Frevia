@@ -136,7 +136,7 @@ export function EditContractSheet({
         queryKey: ["client-contract-detail", contract.id],
       });
       await queryClient.invalidateQueries({
-        queryKey: ["client-contracts"],
+        queryKey: ["contracts-list"],
       });
 
       onSuccess?.();

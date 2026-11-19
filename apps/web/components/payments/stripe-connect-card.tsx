@@ -53,6 +53,8 @@ export function StripeConnectCard({ returnPath }: StripeConnectCardProps) {
     refetchOnWindowFocus: true,
     refetchInterval: (query) => {
       const data = query.state.data;
+      // Giới hạn tối đa 20 lần poll (khoảng 1 phút) để tránh gọi liên tục vô hạn
+      if (query.state.dataUpdateCount >= 20) return false;
       return data?.isConnected && !data?.payoutsEnabled ? 3000 : false;
     },
   });

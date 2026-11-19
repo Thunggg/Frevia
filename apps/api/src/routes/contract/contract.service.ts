@@ -421,7 +421,10 @@ export class ContractService implements OnModuleInit, OnModuleDestroy {
         throw ContractDisputedException();
       }
 
-      if (contract.holdPaymentIntentId) {
+      if (
+        contract.holdPaymentIntentId &&
+        contract.status !== ContractStatus.ACTIVE
+      ) {
         try {
           await this.paymentService.cancelContractHold(
             contract.holdPaymentIntentId,

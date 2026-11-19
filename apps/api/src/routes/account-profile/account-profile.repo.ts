@@ -21,7 +21,11 @@ export class AccountProfileRepository {
   findUserWithRoles(userId: number) {
     return this.prisma.user.findFirst({
       where: { id: userId, deletedAt: null },
-      include: { role: true, profile: true },
+      include: {
+        role: true,
+        userRoles: { include: { role: true } },
+        profile: true,
+      },
     });
   }
 
@@ -31,8 +35,15 @@ export class AccountProfileRepository {
       select: {
         id: true,
         email: true,
+        roleId: true,
         profile: true,
-        role: { select: { name: true } },
+        role: { select: { id: true, name: true } },
+        userRoles: {
+          select: {
+            roleId: true,
+            role: { select: { id: true, name: true } },
+          },
+        },
       },
     });
   }

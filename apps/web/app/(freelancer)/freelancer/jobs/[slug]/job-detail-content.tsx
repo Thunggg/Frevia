@@ -387,7 +387,7 @@ export function JobDetailContent({
           toastError({ message: tBookmark("viewListAccessDenied") });
           return;
         }
-        router.push(`/proposals/${activeProposal.id}`);
+        router.push(`/freelancer/proposals/${activeProposal.id}`);
         return;
       }
 
@@ -407,7 +407,7 @@ export function JobDetailContent({
         .refetch()
         .then(({ data }) => {
           if (data) {
-            router.push(`/proposals/${data.id}`);
+            router.push(`/freelancer/proposals/${data.id}`);
             return;
           }
           setIsProposalDialogOpen(true);

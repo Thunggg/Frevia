@@ -25,6 +25,7 @@ import { Button } from "@repo/ui/components/shadcn/button";
 import { toastError, toastSuccess } from "@repo/ui/components/shadcn/toast";
 import { contractApiRequest } from "@/apiRequests/contract";
 import { useActionPermission } from "@/hooks/use-action-permission";
+import { toEndOfDayIso } from "@/lib/format";
 import { ApiFail } from "@/lib/http";
 import type { GetSubmissionResponseType } from "@shared/types";
 
@@ -95,18 +96,35 @@ export function ReviewSubmissionDialog({
         }),
       });
 
-      await queryClient.invalidateQueries({
-        queryKey: ["client-contract-milestones", contractId],
-      });
-      await queryClient.invalidateQueries({
-        queryKey: ["client-contract-detail", contractId],
-      });
-      await queryClient.invalidateQueries({
-        queryKey: ["milestone-detail", contractId, milestoneId],
-      });
-      await queryClient.invalidateQueries({
-        queryKey: ["client-transactions"],
-      });
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: ["client-contract-milestones", contractId],
+        }),
+        queryClient.invalidateQueries({
+          queryKey: ["client-contract-detail", contractId],
+        }),
+        queryClient.invalidateQueries({
+          queryKey: ["contracts-list"],
+        }),
+        queryClient.invalidateQueries({
+          queryKey: ["milestone-detail", contractId, milestoneId],
+        }),
+        queryClient.invalidateQueries({
+          queryKey: ["milestone-submissions", contractId, milestoneId],
+        }),
+        queryClient.invalidateQueries({
+          queryKey: ["client-transactions"],
+        }),
+        queryClient.invalidateQueries({
+          queryKey: ["freelancer-transactions"],
+        }),
+        queryClient.invalidateQueries({
+          queryKey: ["transactions-summary"],
+        }),
+        queryClient.invalidateQueries({
+          queryKey: ["transactions"],
+        }),
+      ]);
 
       onSuccess?.();
       onOpenChange(false);
@@ -132,13 +150,12 @@ export function ReviewSubmissionDialog({
 
     let formattedDueDate: string | undefined = undefined;
     if (changeRequestDueDate) {
-      const d = new Date(changeRequestDueDate);
-      d.setHours(23, 59, 59, 999);
-      if (d <= new Date()) {
+      const iso = toEndOfDayIso(changeRequestDueDate);
+      if (new Date(iso) <= new Date()) {
         toastError({ message: t("dueDateFuture") });
         return;
       }
-      formattedDueDate = d.toISOString();
+      formattedDueDate = iso;
     }
 
     setIsRequestingChanges(true);
@@ -154,9 +171,20 @@ export function ReviewSubmissionDialog({
       );
       toastSuccess({ message: t("changesRequested") });
 
-      await queryClient.invalidateQueries({
-        queryKey: ["client-contract-milestones", contractId],
-      });
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: ["client-contract-milestones", contractId],
+        }),
+        queryClient.invalidateQueries({
+          queryKey: ["client-contract-detail", contractId],
+        }),
+        queryClient.invalidateQueries({
+          queryKey: ["milestone-detail", contractId, milestoneId],
+        }),
+        queryClient.invalidateQueries({
+          queryKey: ["milestone-submissions", contractId, milestoneId],
+        }),
+      ]);
 
       onSuccess?.();
       onOpenChange(false);

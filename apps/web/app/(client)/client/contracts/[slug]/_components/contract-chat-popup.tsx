@@ -1,13 +1,8 @@
 "use client";
 
-import { useEffect, useMemo } from "react";
+import { useMemo } from "react";
 import { useTranslations } from "next-intl";
-import { useQueryClient } from "@tanstack/react-query";
-import { toast } from "@repo/ui/components/shadcn/sonner";
-import {
-  conversationKeys,
-  useConversations,
-} from "@/hooks/use-conversation";
+import { useConversations } from "@/hooks/use-conversation";
 import { useNotificationContext } from "@/providers/notification-provider";
 import { ConversationSocketContext } from "@/app/conversations/components/conversation-socket-context";
 import { ChatView } from "@/app/conversations/components/chat-view";
@@ -39,7 +34,6 @@ export function ContractChatPopup({
   isStartingChat = false,
   onOpenChat,
 }: ContractChatPopupProps) {
-  const queryClient = useQueryClient();
   const t = useTranslations("contractWorkspace");
   const { conversationSocket, connected } = useNotificationContext();
   const socketValue = useMemo(
@@ -52,39 +46,6 @@ export function ContractChatPopup({
     (sum, c) => sum + (c.unreadCount || 0),
     0,
   );
-
-  // Real-time message notification while on contract / milestone page
-  useEffect(() => {
-    const socket = socketValue.socket;
-    if (!socket) return;
-
-    const handler = (payload: {
-      conversationId: number;
-      message: { senderId: number; message?: string };
-    }) => {
-      if (payload?.message?.senderId === currentUserId) return;
-      if (open) return;
-      const conversations = queryClient.getQueryData<
-        { id: number; otherUser?: { profile?: { displayName?: string | null } } }[]
-      >(conversationKeys.list());
-      const conv = conversations?.find(
-        (c) => c.id === payload.conversationId,
-      );
-      const senderName =
-        conv?.otherUser?.profile?.displayName || t("newMessage");
-      toast(senderName, {
-        description:
-          payload?.message?.message?.slice(0, 80) || t("newMessageFallback"),
-        position: "top-right",
-        duration: 4000,
-      });
-    };
-
-    socket.on("message:new", handler);
-    return () => {
-      socket.off("message:new", handler);
-    };
-  }, [socketValue.socket, currentUserId, open, queryClient, t]);
 
   return (
     <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-3">

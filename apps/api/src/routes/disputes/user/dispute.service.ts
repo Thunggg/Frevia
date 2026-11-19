@@ -591,18 +591,25 @@ export class DisputeService {
         dispute.openedById === userId
           ? dispute.respondentId
           : dispute.openedById;
-      const otherReview = reviews.find((r) => r.userId === otherUserId);
+      // Đọc lại danh sách review SAU khi upsert để tránh race condition khi 2 bên bấm Chấp nhận đồng thời
+      const latestReviews =
+        await this.disputeRepo.findDecisionReviews(disputeId);
+      const otherReview = latestReviews.find((r) => r.userId === otherUserId);
 
       if (
         otherReview &&
         otherReview.response === DisputeDecisionResponse.ACCEPTED
       ) {
-        return await this.executeFinalization(
-          dispute,
-          Number(dispute.freelancerAmount),
-          Number(dispute.clientAmount),
-          dispute.decisionReason ?? 'Both parties accepted decision',
-        );
+        const freshDispute = await this.disputeRepo.findDisputeById(disputeId);
+        if (freshDispute && freshDispute.status === DisputeStatus.DECISION_MADE) {
+          return await this.executeFinalization(
+            freshDispute,
+            Number(freshDispute.freelancerAmount),
+            Number(freshDispute.clientAmount),
+            freshDispute.decisionReason ?? 'Both parties accepted decision',
+          );
+        }
+        return freshDispute;
       }
 
       return await this.disputeRepo.findDisputeById(disputeId);

@@ -572,7 +572,8 @@ export class ProposalRepository {
       }
 
       const slug = createContractSlug(jobTitle);
-      const platformFee = Math.round(Number(bidAmount) * 0.01 * 100) / 100;
+      const clientPlatformFee =
+        Math.round(Number(bidAmount) * 0.03 * 100) / 100;
 
       const contract = await tx.contract.create({
         data: {
@@ -582,7 +583,8 @@ export class ProposalRepository {
           clientId,
           freelancerId,
           totalAmount: bidAmount,
-          platformFee,
+          clientPlatformFee,
+          platformFee: clientPlatformFee,
         },
         select: { id: true },
       });

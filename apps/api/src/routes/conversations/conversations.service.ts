@@ -139,6 +139,20 @@ export class ConversationService {
     conversationIdOrSlug: number | string,
     userId: number,
   ): Promise<ConversationListItemType | null> {
+    if (
+      typeof this.conversationRepository.findConversationItemForUser ===
+      'function'
+    ) {
+      const conversation =
+        await this.conversationRepository.findConversationItemForUser(
+          conversationIdOrSlug,
+          userId,
+        );
+      return conversation
+        ? this.buildConversationItem(conversation, userId)
+        : null;
+    }
+
     const all =
       await this.conversationRepository.getConversationsByUserId(userId);
     const conversation = all.find(

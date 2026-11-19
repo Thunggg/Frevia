@@ -110,7 +110,7 @@ export function ReviewManager({ userId }: { userId: number }) {
   const tCommon = useTranslations("common");
   const format = useFormatter();
 
-  const { can } = useActionPermission();
+  const { can, isLoading: isPermissionLoading } = useActionPermission();
   const canViewReviews = can("GET", "/api/reviews/contracts/:contractId");
   const canCreateReview = can("POST", "/api/reviews/contracts/:contractId");
   const canViewReviewDetail = can("GET", "/api/reviews/:reviewId");
@@ -462,7 +462,7 @@ export function ReviewManager({ userId }: { userId: number }) {
       </section>
 
       {contractId ? (
-        !canViewReviews ? (
+        !isPermissionLoading && !canViewReviews ? (
           <div className="rounded-xl border border-dashed border-border px-6 py-12 text-center text-muted-foreground">
             <p className="font-semibold text-foreground">
               {t("noPermissionTitle")}

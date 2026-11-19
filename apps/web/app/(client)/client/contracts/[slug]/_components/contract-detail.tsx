@@ -7,8 +7,6 @@ import Link from "next/link";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { ChevronLeft } from "lucide-react";
 import { toastError, toastSuccess } from "@repo/ui/components/shadcn/toast";
-import { toast } from "@repo/ui/components/shadcn/sonner";
-import { conversationKeys, useConversationSocket } from "@/hooks/use-conversation";
 import { contractApiRequest, extractContractData } from "@/apiRequests/contract";
 import { paymentApiRequest } from "@/apiRequests/payment";
 import { useActionPermission } from "@/hooks/use-action-permission";
@@ -128,13 +126,22 @@ export function ContractDetail({
               queryKey: ["client-contract-detail", initialContract.id],
             }),
             queryClient.invalidateQueries({
-              queryKey: ["client-contracts"],
+              queryKey: ["contracts-list"],
             }),
             queryClient.invalidateQueries({
               queryKey: ["client-contract-milestones", initialContract.id],
             }),
             queryClient.invalidateQueries({
               queryKey: ["client-transactions"],
+            }),
+            queryClient.invalidateQueries({
+              queryKey: ["freelancer-transactions"],
+            }),
+            queryClient.invalidateQueries({
+              queryKey: ["transactions-summary"],
+            }),
+            queryClient.invalidateQueries({
+              queryKey: ["transactions"],
             }),
             queryClient.invalidateQueries({
               queryKey: ["saved-payment-methods"],
@@ -216,11 +223,6 @@ export function ContractDetail({
 
   // Chat Actions
   const createConversation = useCreateConversation();
-  const socketValue = useConversationSocket(
-    socketUrl,
-    accessToken ?? null,
-    currentUserId ?? null,
-  );
 
   const openChatWith = async (targetUserId: number | null | undefined) => {
     if (!targetUserId) return;
@@ -245,40 +247,6 @@ export function ContractDetail({
     await openChatWith(targetUserId);
   };
 
-  // Real-time message notification while on contract page
-  useEffect(() => {
-    const socket = socketValue.socket;
-    if (!socket) return;
-
-    const handler = (payload: {
-      conversationId: number;
-      message: { senderId: number; message?: string };
-    }) => {
-      if (payload?.message?.senderId === currentUserId) return;
-      if (chatOpen) return;
-      const conversations = queryClient.getQueryData<
-        { id: number; otherUser?: { profile?: { displayName?: string | null } } }[]
-      >(conversationKeys.list());
-      const conv = conversations?.find(
-        (c) => c.id === payload.conversationId,
-      );
-      const senderName =
-        conv?.otherUser?.profile?.displayName || tWorkspace("newMessage");
-      toast(senderName, {
-        description:
-          payload?.message?.message?.slice(0, 80) ||
-          tWorkspace("newMessageFallback"),
-        position: "top-right",
-        duration: 4000,
-      });
-    };
-
-    socket.on("message:new", handler);
-    return () => {
-      socket.off("message:new", handler);
-    };
-  }, [socketValue.socket, currentUserId, chatOpen, queryClient, tWorkspace]);
-
   // Sign Action
   const handleSign = async () => {
     if (!canSignContract) return;
@@ -292,7 +260,7 @@ export function ContractDetail({
         queryKey: ["contract-shared-files", contract.id],
       });
       await queryClient.invalidateQueries({
-        queryKey: ["client-contracts"],
+        queryKey: ["contracts-list"],
       });
       toastSuccess({ message: t("signed") });
       setConfirmSign(false);
@@ -347,7 +315,7 @@ export function ContractDetail({
         queryKey: ["client-contract-detail", contract.id],
       });
       await queryClient.invalidateQueries({
-        queryKey: ["client-contracts"],
+        queryKey: ["contracts-list"],
       });
       toastSuccess({ message: t("completed") });
       setConfirmComplete(false);
@@ -373,7 +341,7 @@ export function ContractDetail({
         queryKey: ["client-contract-detail", contract.id],
       });
       await queryClient.invalidateQueries({
-        queryKey: ["client-contracts"],
+        queryKey: ["contracts-list"],
       });
       toastSuccess({ message: t("cancelled") });
       setConfirmCancel(false);
@@ -403,7 +371,7 @@ export function ContractDetail({
         queryKey: ["client-contract-detail", contract.id],
       });
       await queryClient.invalidateQueries({
-        queryKey: ["client-contracts"],
+        queryKey: ["contracts-list"],
       });
       toastSuccess({
         message: tWorkspace("declinedToast"),
@@ -547,7 +515,7 @@ export function ContractDetail({
               queryKey: ["client-contract-detail", contract.id],
             });
             await queryClient.invalidateQueries({
-              queryKey: ["client-contracts"],
+              queryKey: ["contracts-list"],
             });
           }}
         />

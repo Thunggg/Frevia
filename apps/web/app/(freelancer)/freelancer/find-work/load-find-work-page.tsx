@@ -88,14 +88,6 @@ export async function renderFindWorkPage({
     ? new Date(Date.now() - timeRange * 24 * 60 * 60 * 1000)
     : undefined;
 
-  const categoriesResult = await jobCategoryServerRequest.getJobCategories({
-    limit: 50,
-  });
-  const jobCategories = categoriesResult?.jobCategories ?? [];
-  const category = jobCategories.some((item) => item.slug === params.category)
-    ? params.category
-    : undefined;
-
   const budgetType =
     params.budgetType === "FIXED_PRICE" ? "FIXED_PRICE" : undefined;
   const hiringType =
@@ -103,17 +95,68 @@ export async function renderFindWorkPage({
       ? params.hiringType
       : undefined;
 
-  const result = await jobServerRequest.getJobs({
-    page,
-    limit,
-    search: keyword,
-    category,
-    budgetType,
-    hiringType,
-    ...budgetRanges[budget],
-    createdAfter,
-    ...selectedSort,
-  });
+  const shouldFetchRecommendations = !tab || tab === "best-matches";
+  const canViewBookmarks = hasActionPermission(
+    user,
+    "GET",
+    "/api/manage-jobs/bookmarks",
+  );
+
+  // Chạy song song toàn bộ truy vấn độc lập để xóa waterfall 3 tầng
+  const hasCategoryParam = Boolean(params.category?.trim());
+  const [
+    categoriesRes,
+    directJobsRes,
+    bookmarkedJobsRes,
+    savedSearchesRes,
+    recommendationsRes,
+    jobAlertsRes,
+  ] = await Promise.allSettled([
+    jobCategoryServerRequest.getJobCategories({ limit: 50 }),
+    !hasCategoryParam
+      ? jobServerRequest.getJobs({
+          page,
+          limit,
+          search: keyword,
+          budgetType,
+          hiringType,
+          ...budgetRanges[budget],
+          createdAfter,
+          ...selectedSort,
+        })
+      : Promise.resolve(null),
+    canViewBookmarks
+      ? jobServerRequest.getBookmarkedJobs({ limit: 20 })
+      : Promise.resolve(null),
+    savedSearchServerRequest.getSavedSearches(),
+    shouldFetchRecommendations
+      ? recommendationServerRequest.getRecommendedJobs(15)
+      : Promise.resolve(null),
+    jobAlertServerRequest.getJobAlerts(),
+  ]);
+
+  const categoriesResult =
+    categoriesRes.status === "fulfilled" ? categoriesRes.value : null;
+  const jobCategories = categoriesResult?.jobCategories ?? [];
+  const category = jobCategories.some((item) => item.slug === params.category)
+    ? params.category
+    : undefined;
+
+  const result = hasCategoryParam
+    ? await jobServerRequest.getJobs({
+        page,
+        limit,
+        search: keyword,
+        category,
+        budgetType,
+        hiringType,
+        ...budgetRanges[budget],
+        createdAfter,
+        ...selectedSort,
+      })
+    : directJobsRes.status === "fulfilled"
+      ? directJobsRes.value
+      : null;
 
   let jobs = result?.data ?? [];
   if (params.proposals) {
@@ -139,30 +182,6 @@ export async function renderFindWorkPage({
   let initialSavedSearches: SavedSearchType[] = [];
   let initialRecommendedJobs: RecommendedJobType[] = [];
   let initialJobAlerts: JobAlertType[] = [];
-
-  const shouldFetchRecommendations = !tab || tab === "best-matches";
-
-  const canViewBookmarks = hasActionPermission(
-    user,
-    "GET",
-    "/api/manage-jobs/bookmarks",
-  );
-
-  const [
-    bookmarkedJobsRes,
-    savedSearchesRes,
-    recommendationsRes,
-    jobAlertsRes,
-  ] = await Promise.allSettled([
-    canViewBookmarks
-      ? jobServerRequest.getBookmarkedJobs({ limit: 20 })
-      : Promise.resolve(null),
-    savedSearchServerRequest.getSavedSearches(),
-    shouldFetchRecommendations
-      ? recommendationServerRequest.getRecommendedJobs(15)
-      : Promise.resolve(null),
-    jobAlertServerRequest.getJobAlerts(),
-  ]);
 
   if (bookmarkedJobsRes.status === "fulfilled" && bookmarkedJobsRes.value?.data) {
     initialBookmarkedJobs = bookmarkedJobsRes.value.data;

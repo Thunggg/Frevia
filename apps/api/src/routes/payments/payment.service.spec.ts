@@ -478,6 +478,7 @@ describe('PaymentService', () => {
         currency: 'usd',
         destination: 'acct_freelancer_123',
         transferGroup: 'contract_10',
+        idempotencyKey: 'release-milestone-20',
         metadata: expect.any(Object),
       });
       expect(repo.updateMilestonePaymentStatus).toHaveBeenCalledWith(

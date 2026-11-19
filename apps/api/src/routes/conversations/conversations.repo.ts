@@ -95,6 +95,80 @@ export class ConversationRepository {
     });
   }
 
+  // Lấy 1 conversation item chuẩn theo id hoặc slug (tránh tải toàn bộ danh sách hội thoại)
+  async findConversationItemForUser(
+    conversationIdOrSlug: number | string,
+    userId: number,
+  ) {
+    const parsedId =
+      typeof conversationIdOrSlug === 'number'
+        ? conversationIdOrSlug
+        : /^\d+$/.test(conversationIdOrSlug)
+          ? Number(conversationIdOrSlug)
+          : null;
+
+    return this.prisma.conversation.findFirst({
+      where: {
+        deletedAt: null,
+        ...(parsedId !== null
+          ? { id: parsedId }
+          : { slug: String(conversationIdOrSlug) }),
+        OR: [{ participant1: userId }, { participant2: userId }],
+      },
+      include: {
+        participantOne: {
+          select: {
+            id: true,
+            profile: {
+              select: {
+                displayName: true,
+                avatarUrl: true,
+              },
+            },
+          },
+        },
+        participantTwo: {
+          select: {
+            id: true,
+            profile: {
+              select: {
+                displayName: true,
+                avatarUrl: true,
+              },
+            },
+          },
+        },
+        messages: {
+          where: { deletedAt: null },
+          orderBy: { createdAt: 'desc' },
+          take: 1,
+          select: {
+            id: true,
+            senderId: true,
+            message: true,
+            fileUrl: true,
+            fileName: true,
+            fileSize: true,
+            fileType: true,
+            isRead: true,
+            createdAt: true,
+          },
+        },
+        _count: {
+          select: {
+            messages: {
+              where: {
+                senderId: { not: userId },
+                isRead: false,
+                deletedAt: null,
+              },
+            },
+          },
+        },
+      },
+    });
+  }
+
   // Lấy conversation theo id, chỉ khi user là participant
   async findConversationByIdForUser(
     conversationId: number,

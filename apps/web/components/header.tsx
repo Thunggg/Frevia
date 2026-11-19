@@ -102,12 +102,18 @@ const roleConfig: Record<UserRole, { nameKey: NavRoleKey; links: NavLink[] }> = 
   FREELANCER: {
     nameKey: "freelancer",
     links: [
-      { href: "/freelancer", labelKey: "findWork" },
-      { href: "/freelancer?tab=saved-jobs", labelKey: "bookmarks" },
+      {
+        href: "/freelancer/find-work/best-matches",
+        labelKey: "findWork",
+      },
+      { href: "/freelancer/find-work/saved-jobs", labelKey: "bookmarks" },
       { href: "/freelancer/proposals", labelKey: "myProposals" },
       { href: "/freelancer/contracts", labelKey: "contracts" },
       { href: "/freelancer/payments", labelKey: "payments" },
-      { href: "/freelancer?tab=saved-searches", labelKey: "savedSearches" },
+      {
+        href: "/freelancer/find-work/saved-searches",
+        labelKey: "savedSearches",
+      },
       { href: "/forum", labelKey: "forum" },
     ],
   },
@@ -749,7 +755,7 @@ export function Header({ role }: HeaderProps) {
         </div>
 
         <div className="flex flex-1 items-center justify-end gap-2 sm:gap-3">
-          {(role === "FREELANCER" || role === "GUEST") && (
+          {role === "FREELANCER" && (
             <HeaderSearch
               role={role}
               className="hidden max-w-xs flex-1 md:block lg:max-w-sm"

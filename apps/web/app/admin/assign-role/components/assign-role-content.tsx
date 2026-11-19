@@ -258,6 +258,7 @@ export function AssignRoleContent() {
               count: updated.permissions.length,
             }),
           });
+          router.refresh();
         },
         onError: (error) => {
           if (error instanceof ApiFail) {

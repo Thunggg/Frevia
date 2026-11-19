@@ -1,7 +1,7 @@
 import "server-only";
 
 import { cache } from "react";
-import { cookies } from "next/headers";
+import { getServerAccessToken } from "@/lib/auth-session";
 
 import { envConfig } from "@/configs/validate-env";
 import type {
@@ -37,10 +37,7 @@ async function jobCategoryServerFetch<T>(
     return { data: null, status: null };
   }
 
-  const cookieStore = await cookies();
-  const accessToken =
-    cookieStore.get("accessToken")?.value ??
-    cookieStore.get("access_token")?.value;
+  const accessToken = await getServerAccessToken();
 
   try {
     const response = await fetch(`${envConfig.NESTJS_API_URL}${url}`, {
@@ -87,21 +84,24 @@ const jobCategoryServerRequest = {
    * Chi tiết danh mục kèm danh sách công việc đang mở.
    * Trả về cả mã HTTP để phân biệt EX-01 (không tìm thấy danh mục) và EX-02 (lỗi hệ thống).
    */
-  getJobCategoryDetail(
-    slug: string,
-    params: Pick<JobCategoryBrowseQueryType, "page" | "limit"> = {},
-  ) {
-    const normalizedSlug = slug.trim();
-    if (!normalizedSlug) {
-      return Promise.resolve<ServerFetchResult<ViewJobCategoryDetailResponseType>>(
-        { data: null, status: 404 },
-      );
-    }
+  getJobCategoryDetail: cache(
+    async (
+      slug: string,
+      params: Pick<JobCategoryBrowseQueryType, "page" | "limit"> = {},
+    ) => {
+      const normalizedSlug = slug.trim();
+      if (!normalizedSlug) {
+        return {
+          data: null,
+          status: 404,
+        } satisfies ServerFetchResult<ViewJobCategoryDetailResponseType>;
+      }
 
-    return jobCategoryServerFetch<ViewJobCategoryDetailResponseType>(
-      `/api/job-categories/${encodeURIComponent(normalizedSlug)}${buildQueryString(params)}`,
-    );
-  },
+      return jobCategoryServerFetch<ViewJobCategoryDetailResponseType>(
+        `/api/job-categories/${encodeURIComponent(normalizedSlug)}${buildQueryString(params)}`,
+      );
+    },
+  ),
 };
 
 export default jobCategoryServerRequest;

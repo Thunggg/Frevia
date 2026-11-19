@@ -169,7 +169,7 @@ export function GeneralSettings() {
   const tSettings = useTranslations("clientProfileSettings");
   const tRole = useTranslations("roleName");
   const tCommon = useTranslations("common");
-  const { can } = useActionPermission();
+  const { can, isLoading: isPermissionLoading } = useActionPermission();
   const canViewAccountProfile = can("GET", "/api/account-profile");
   const canUpdateAccountProfile = can("PUT", "/api/account-profile");
   const canChangePassword = can("PUT", "/api/account-profile/password");
@@ -230,6 +230,7 @@ export function GeneralSettings() {
     (ROLE_KEYS as readonly string[]).includes(name) ? tRole(name) : name;
 
   const load = useCallback(async () => {
+    if (isPermissionLoading) return;
     if (!canViewAccountProfile) {
       setPending(null);
       return;
@@ -259,7 +260,7 @@ export function GeneralSettings() {
     } finally {
       setPending(null);
     }
-  }, [canViewAccountProfile, toMessage]);
+  }, [isPermissionLoading, canViewAccountProfile, toMessage]);
   useEffect(() => void load(), [load]);
 
   const busy = pending !== null;
@@ -368,6 +369,8 @@ export function GeneralSettings() {
               }
             : current,
         );
+        await queryClient.invalidateQueries({ queryKey: ["me"] });
+        router.refresh();
       }
       toastSuccess({ message: response.data.message });
     } catch (error) {
@@ -460,7 +463,7 @@ export function GeneralSettings() {
     );
   }
 
-  if (!canViewAccountProfile) {
+  if (!isPermissionLoading && !canViewAccountProfile) {
     return (
       <div className="rounded-xl border border-border bg-card p-12 text-center text-muted-foreground shadow-sm">
         <UserRound className="mx-auto size-10 text-muted-foreground/60 mb-3" />

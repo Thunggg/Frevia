@@ -54,7 +54,7 @@ export function MilestoneSubmissionsTab({
   const t = useTranslations("milestoneWorkspace.submissions");
   const tCard = useTranslations("milestoneWorkspace.card");
   const tOverview = useTranslations("milestoneWorkspace.overview");
-  const { can, canAny } = useActionPermission();
+  const { can, canAny, isLoading: isPermissionLoading } = useActionPermission();
   const isClient = !isFreelancer;
 
   const canViewSubmissions = can("GET", "/api/contracts/:contractId/milestones/:milestoneId/submissions");
@@ -237,7 +237,7 @@ export function MilestoneSubmissionsTab({
     }
   };
 
-  if (!canViewSubmissions) {
+  if (!isPermissionLoading && !canViewSubmissions) {
     return (
       <div className="py-8 text-center space-y-2">
         <h3 className="text-xs font-medium text-foreground">

@@ -61,7 +61,7 @@ function resolveHeaderRole(user: GetMeResType | null): UserRole {
   if (primaryRole?.name === RoleName.CLIENT) return "CLIENT";
   if (primaryRole?.name === RoleName.FREELANCER) return "FREELANCER";
 
-  return "FREELANCER";
+  return "STAFF";
 }
 
 export function HomeView({ user }: HomeViewProps) {

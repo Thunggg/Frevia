@@ -67,7 +67,8 @@ export function ReportDialog({
             .then(extractData)
         : forumApiRequest.checkPostReported(postId).then(extractData),
     select: (data) => data.reported ?? false,
-    enabled: canCheckReported,
+    // Chỉ kiểm tra khi người dùng mở hộp thoại báo cáo để tránh bão N+1 request trên danh sách bình luận
+    enabled: open && canCheckReported,
     staleTime: Infinity, // Nếu đã report thì không cần check lại
   });
 

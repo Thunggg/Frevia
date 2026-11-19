@@ -6,7 +6,17 @@ export async function POST(request: Request) {
   const cookieStore = await cookies();
   let accessToken = cookieStore.get("accessToken")?.value;
   const apiUrl = envConfig?.NESTJS_API_URL;
-  if (!accessToken || !apiUrl) {
+  if (!apiUrl) {
+    return Response.json(
+      { success: false, error: { message: "Backend API is not configured." } },
+      { status: 500 },
+    );
+  }
+  if (!accessToken) {
+    const refreshed = await refreshAuthTokens(cookieStore);
+    accessToken = refreshed?.accessToken;
+  }
+  if (!accessToken) {
     return Response.json(
       { success: false, error: { message: "Authentication required." } },
       { status: 401 },

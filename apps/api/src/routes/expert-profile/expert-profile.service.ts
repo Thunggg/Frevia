@@ -1,11 +1,13 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Optional } from '@nestjs/common';
 import {
   ExpertProfileMessage,
   RoleName,
   type AdminUpdateExpertProfileType,
   type UpdateExpertProfileType,
 } from '@shared/types';
+import { CacheService } from '../../shared/services/cache.service';
 import { calculateExpertProfileStrength } from '../../shared/utils/profile-strength';
+import { AUTH_ME_CACHE_PREFIX } from '../auth/auth.service';
 import { ProfileRevisionService } from '../profile-revisions/profile-revision.service';
 import {
   ExpertProfileNotFoundException,
@@ -19,6 +21,7 @@ export class ExpertProfileService {
   constructor(
     private readonly repository: ExpertProfileRepository,
     private readonly revisions: ProfileRevisionService,
+    @Optional() private readonly cacheService?: CacheService,
   ) {}
 
   private cleanList(values: string[]) {
@@ -98,6 +101,7 @@ export class ExpertProfileService {
       sanitized,
       calculateExpertProfileStrength(sanitized),
     );
+    this.cacheService?.del(`${AUTH_ME_CACHE_PREFIX}${userId}`);
     return { message: ExpertProfileMessage.UPDATED };
   }
 }

@@ -253,7 +253,7 @@ export function CreateContractDialog({
         queryKey: ["client-job-proposals", jobId],
       });
       await queryClient.invalidateQueries({
-        queryKey: ["client-contracts"],
+        queryKey: ["contracts-list"],
       });
 
       toastSuccess({

@@ -13,10 +13,12 @@ import {
   Logger,
   OnModuleDestroy,
   OnModuleInit,
+  Optional,
   UnauthorizedException,
 } from '@nestjs/common';
 import { z } from 'zod';
 import { envConfig } from '../../shared/config/validate-env';
+import { PrismaService } from '../../shared/services/prisma.service';
 import { TokenService } from '../../shared/services/token.service';
 import { NotificationRealtimeService } from '../../shared/services/notification-realtime.service';
 import { ConversationService } from './conversations.service';
@@ -82,6 +84,7 @@ export class ConversationsGateway
     private readonly conversationService: ConversationService,
     private readonly tokenService: TokenService,
     private readonly notificationRealtime: NotificationRealtimeService,
+    @Optional() private readonly prisma?: PrismaService,
   ) {}
 
   onModuleInit() {
@@ -110,6 +113,31 @@ export class ConversationsGateway
       }
 
       const payload = await this.tokenService.verifyAccessToken(token);
+
+      // Xác minh phiên vẫn còn hiệu lực và tài khoản chưa bị khóa / xóa
+      if (this.prisma) {
+        const session = await this.prisma.session.findUnique({
+          where: { id: payload.sessionId },
+          select: {
+            id: true,
+            user: {
+              select: {
+                isBanned: true,
+                deletedAt: true,
+              },
+            },
+          },
+        });
+        if (
+          !session ||
+          !session.user ||
+          session.user.isBanned ||
+          session.user.deletedAt
+        ) {
+          throw new UnauthorizedException('Session revoked or user banned');
+        }
+      }
+
       client.data.userId = payload.userId;
 
       // Mỗi user có 1 room riêng: user:{userId}
@@ -155,8 +183,10 @@ export class ConversationsGateway
           message: savedMessage,
         });
 
-      await this.emitConversationUpdated(conversation.id, senderId);
-      await this.emitConversationUpdated(conversation.id, receiverId);
+      await Promise.all([
+        this.emitConversationUpdated(conversation.id, senderId),
+        this.emitConversationUpdated(conversation.id, receiverId),
+      ]);
     } catch (error) {
       this.logger.warn(
         `Failed to broadcast REST message: ${(error as Error).message}`,
@@ -250,8 +280,10 @@ export class ConversationsGateway
         });
 
       // Cập nhật danh sách hội thoại realtime (reorder + unread count)
-      await this.emitConversationUpdated(conversation.id, senderId);
-      await this.emitConversationUpdated(conversation.id, receiverId);
+      await Promise.all([
+        this.emitConversationUpdated(conversation.id, senderId),
+        this.emitConversationUpdated(conversation.id, receiverId),
+      ]);
 
       return { success: true, message: savedMessage };
     } catch (error) {
@@ -284,14 +316,12 @@ export class ConversationsGateway
     const { conversationId } = parsed.data;
 
     try {
-      await this.conversationService.ensureParticipant(conversationId, userId);
-
-      await this.conversationService.markAsRead(userId, conversationId);
-
       const conversation = await this.conversationService.ensureParticipant(
         conversationId,
         userId,
       );
+
+      await this.conversationService.markAsRead(userId, conversationId);
 
       const otherUserId =
         conversation.participant1 === userId
@@ -299,8 +329,10 @@ export class ConversationsGateway
           : conversation.participant1;
 
       // Báo cho cả 2 phía để cập nhật trạng thái đã đọc + unread count
-      await this.emitConversationUpdated(conversation.id, userId);
-      await this.emitConversationUpdated(conversation.id, otherUserId);
+      await Promise.all([
+        this.emitConversationUpdated(conversation.id, userId),
+        this.emitConversationUpdated(conversation.id, otherUserId),
+      ]);
 
       return { success: true };
     } catch (error) {

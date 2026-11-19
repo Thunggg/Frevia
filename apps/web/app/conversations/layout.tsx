@@ -1,9 +1,9 @@
-import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import type { ReactNode } from "react";
 
 import authServerRequest from "@/apiRequests/auth.server";
 import { getBrowserSocketUrl } from "@/configs/validate-env";
+import { getServerAccessToken } from "@/lib/auth-session";
 import { RoleName } from "@shared/types";
 
 import { ConversationsShell } from "./components/conversations-shell";
@@ -13,9 +13,11 @@ type ConversationsLayoutProps = {
 };
 
 const ConversationsLayout = async ({ children }: ConversationsLayoutProps) => {
-  const cookieStore = await cookies();
-  const token = cookieStore.get("accessToken")?.value ?? null;
-  const user = await authServerRequest.getMe();
+  const [accessToken, user] = await Promise.all([
+    getServerAccessToken(),
+    authServerRequest.getMe(),
+  ]);
+  const token = accessToken ?? null;
 
   if (!user || user.isBanned) {
     redirect("/login?redirect=/conversations");

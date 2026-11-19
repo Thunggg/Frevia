@@ -2,7 +2,7 @@ import { HttpMethod, Prisma } from '@prisma/client';
 import { RoleName } from '@shared/types';
 
 function normalizePath(path: string): string {
-  const clean = path.trim().split('?')[0] || '';
+  const clean = (path.trim().split('?')[0] || '').replace(/\/+$/, '');
   if (!clean) return '';
   return clean.startsWith('/api')
     ? clean

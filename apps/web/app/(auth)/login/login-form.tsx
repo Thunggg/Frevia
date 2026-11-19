@@ -28,7 +28,13 @@ import { useQueryClient } from "@tanstack/react-query";
 import { Controller, useForm } from "react-hook-form";
 import type * as z from "zod";
 
-export function LoginForm({ oauthError }: { oauthError?: string }) {
+export function LoginForm({
+  oauthError,
+  redirectTo,
+}: {
+  oauthError?: string;
+  redirectTo?: string;
+}) {
   const router = useRouter();
   const queryClient = useQueryClient();
   const t = useTranslations("auth.login");
@@ -71,7 +77,18 @@ export function LoginForm({ oauthError }: { oauthError?: string }) {
             const primaryRole = meRes.success
               ? meRes.data?.roles?.find((r) => r.isPrimary)?.name
               : null;
-            if (
+            const safeRedirect =
+              redirectTo &&
+              redirectTo.startsWith("/") &&
+              !redirectTo.startsWith("//") &&
+              !redirectTo.startsWith("/login") &&
+              !redirectTo.startsWith("/register")
+                ? redirectTo
+                : null;
+
+            if (safeRedirect) {
+              router.push(safeRedirect);
+            } else if (
               primaryRole === RoleName.ADMIN ||
               (primaryRole !== RoleName.CLIENT &&
                 primaryRole !== RoleName.FREELANCER &&
@@ -88,6 +105,7 @@ export function LoginForm({ oauthError }: { oauthError?: string }) {
             router.refresh();
           } catch {
             router.push("/dashboard");
+            router.refresh();
           }
         }
       },

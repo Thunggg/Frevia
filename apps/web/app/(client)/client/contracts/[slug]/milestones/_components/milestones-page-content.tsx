@@ -121,6 +121,11 @@ export function MilestonesPageContent({
               queryKey: ["client-contract-detail", contract.id],
             }),
             queryClient.invalidateQueries({ queryKey: ["client-transactions"] }),
+            queryClient.invalidateQueries({
+              queryKey: ["freelancer-transactions"],
+            }),
+            queryClient.invalidateQueries({ queryKey: ["transactions-summary"] }),
+            queryClient.invalidateQueries({ queryKey: ["transactions"] }),
           ]);
           window.history.replaceState({}, "", window.location.pathname);
         }
@@ -223,15 +228,19 @@ export function MilestonesPageContent({
   const handleReleaseMilestone = async (milestone: MilestoneType) => {
     try {
       await paymentApiRequest.releaseMilestone(contract.id, milestone.id);
-      await queryClient.invalidateQueries({
-        queryKey: ["client-contract-detail", contract.id],
-      });
-      await queryClient.invalidateQueries({
-        queryKey: ["client-contract-milestones", contract.id],
-      });
-      await queryClient.invalidateQueries({
-        queryKey: ["client-transactions"],
-      });
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: ["client-contract-detail", contract.id],
+        }),
+        queryClient.invalidateQueries({
+          queryKey: ["client-contract-milestones", contract.id],
+        }),
+        queryClient.invalidateQueries({ queryKey: ["contracts-list"] }),
+        queryClient.invalidateQueries({ queryKey: ["client-transactions"] }),
+        queryClient.invalidateQueries({ queryKey: ["freelancer-transactions"] }),
+        queryClient.invalidateQueries({ queryKey: ["transactions-summary"] }),
+        queryClient.invalidateQueries({ queryKey: ["transactions"] }),
+      ]);
       toastSuccess({
         message: t("toasts.releasedPayout", { title: milestone.title }),
       });
@@ -279,15 +288,19 @@ export function MilestonesPageContent({
     }
     try {
       await paymentApiRequest.refundMilestone(contract.id, milestone.id);
-      await queryClient.invalidateQueries({
-        queryKey: ["client-contract-detail", contract.id],
-      });
-      await queryClient.invalidateQueries({
-        queryKey: ["client-contract-milestones", contract.id],
-      });
-      await queryClient.invalidateQueries({
-        queryKey: ["client-transactions"],
-      });
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: ["client-contract-detail", contract.id],
+        }),
+        queryClient.invalidateQueries({
+          queryKey: ["client-contract-milestones", contract.id],
+        }),
+        queryClient.invalidateQueries({ queryKey: ["contracts-list"] }),
+        queryClient.invalidateQueries({ queryKey: ["client-transactions"] }),
+        queryClient.invalidateQueries({ queryKey: ["freelancer-transactions"] }),
+        queryClient.invalidateQueries({ queryKey: ["transactions-summary"] }),
+        queryClient.invalidateQueries({ queryKey: ["transactions"] }),
+      ]);
       toastSuccess({
         message: t("toasts.refunded", { title: milestone.title }),
       });

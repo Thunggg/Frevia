@@ -2,10 +2,10 @@ import { Toaster } from "@repo/ui/components/shadcn/sonner";
 import type { Metadata } from "next";
 import { NextIntlClientProvider } from "next-intl";
 import { getLocale, getMessages, getTranslations } from "next-intl/server";
-import { cookies } from "next/headers";
 import localFont from "next/font/local";
 import { ThemeProvider } from "@/components/theme-provider";
 import { getBrowserSocketUrl } from "@/configs/validate-env";
+import { getServerAccessToken } from "@/lib/auth-session";
 import authServerRequest from "@/apiRequests/auth.server";
 import { NotificationProvider } from "@/providers/notification-provider";
 import "./globals.css";
@@ -43,13 +43,13 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const [cookieStore, user, locale, messages] = await Promise.all([
-    cookies(),
+  const [accessToken, user, locale, messages] = await Promise.all([
+    getServerAccessToken(),
     authServerRequest.getMe(),
     getLocale(),
     getMessages(),
   ]);
-  const token = cookieStore.get("accessToken")?.value ?? null;
+  const token = accessToken ?? null;
 
   return (
     <html lang={locale} suppressHydrationWarning>

@@ -11,7 +11,7 @@ export function UserIdAutoRedirect({ targetUserId }: { targetUserId: number }) {
   const router = useRouter();
   const pathname = usePathname();
   const t = useTranslations("chat");
-  const { can } = useActionPermission();
+  const { can, isLoading: isPermissionLoading } = useActionPermission();
   const canStartConversation = can("POST", "/api/conversations");
   const createConversation = useCreateConversation();
   const triggeredRef = useRef(false);
@@ -23,7 +23,14 @@ export function UserIdAutoRedirect({ targetUserId }: { targetUserId: number }) {
       : "/conversations";
 
   useEffect(() => {
-    if (triggeredRef.current || !targetUserId || targetUserId <= 0) return;
+    if (
+      isPermissionLoading ||
+      triggeredRef.current ||
+      !targetUserId ||
+      targetUserId <= 0
+    ) {
+      return;
+    }
     triggeredRef.current = true;
 
     if (!canStartConversation) {
@@ -39,7 +46,14 @@ export function UserIdAutoRedirect({ targetUserId }: { targetUserId: number }) {
         router.replace(basePath);
       },
     });
-  }, [targetUserId, createConversation, router, basePath, canStartConversation]);
+  }, [
+    isPermissionLoading,
+    targetUserId,
+    createConversation,
+    router,
+    basePath,
+    canStartConversation,
+  ]);
 
   return (
     <div className="absolute inset-0 z-50 flex flex-col items-center justify-center bg-background/80 backdrop-blur-xs">

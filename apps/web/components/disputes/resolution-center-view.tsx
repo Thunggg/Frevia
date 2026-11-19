@@ -32,7 +32,7 @@ export function ResolutionCenterView() {
   const tDetail = useTranslations("resolutionCenter.detailSheet");
   const { formatDate, getTypeLabel, translateStoredReason } =
     useResolutionHelpers();
-  const { can } = useActionPermission();
+  const { can, isLoading: isPermissionLoading } = useActionPermission();
   const canViewDisputes = can("GET", "/api/disputes");
 
   const [statusFilter, setStatusFilter] = useState<string>("ALL");
@@ -57,7 +57,7 @@ export function ResolutionCenterView() {
   const totalPages = data?.pagination?.totalPages ?? 1;
   const totalItems = data?.pagination?.total ?? 0;
 
-  if (!canViewDisputes) {
+  if (!isPermissionLoading && !canViewDisputes) {
     return (
       <div className="rounded-2xl border border-zinc-200/80 dark:border-zinc-800 bg-white dark:bg-zinc-950 p-12 text-center text-xs text-muted-foreground">
         {t("noPermission")}

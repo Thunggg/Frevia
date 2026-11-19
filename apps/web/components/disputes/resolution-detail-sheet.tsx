@@ -129,6 +129,10 @@ export function ResolutionDetailSheet({
           ]
         : []),
       queryClient.invalidateQueries({ queryKey: ["client-transactions"] }),
+      queryClient.invalidateQueries({ queryKey: ["freelancer-transactions"] }),
+      queryClient.invalidateQueries({ queryKey: ["transactions-summary"] }),
+      queryClient.invalidateQueries({ queryKey: ["transactions"] }),
+      queryClient.invalidateQueries({ queryKey: ["contracts-list"] }),
     ]);
   };
 

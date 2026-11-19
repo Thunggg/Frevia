@@ -116,7 +116,7 @@ export function ManageMilestoneDialog({
       return;
     }
 
-    if (maxAvailable > 0 && amount > maxAvailable) {
+    if (totalContractAmount > 0 && amount > maxAvailable) {
       toastError({
         message: t("amountExceeds", {
           amount: `$${maxAvailable.toLocaleString("en-US", { minimumFractionDigits: 2 })}`,
