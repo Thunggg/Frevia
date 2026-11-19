@@ -1,239 +1,138 @@
-# Tài liệu kỹ thuật: Phân quyền ẩn/hiện nút hành động trên giao diện Admin (Action-Level RBAC)
+# Tài liệu kỹ thuật: Phân quyền RBAC Admin động, Ẩn/Hiện nút hành động & Bảo vệ Route Frontend
 
-> **Nhánh Use Case**: `uc-06.08-permission-action-visibility`  
+> **Nhánh Use Case**: `uc-06.08-permission-action-visibility` → cập nhật đến `uc-06.11-admin-only-dynamic-permissions`  
 > **Dự án**: Frevia (frevia-clone)  
-> **Phạm vi**: Ứng dụng Web (`apps/web`), Cổng quản trị Admin (`/admin/*`)
+> **Phạm vi**: Monorepo (`apps/api` + `apps/web`) — Admin Portal (`/admin/*`), Public Routes & Marketplace Routes (`/client/*`, `/freelancer/*`)
 
 ---
 
-## 1. Đặt vấn đề & Mục tiêu
+## 1. Đặt vấn đề & Quy tắc kiến trúc
 
-### 1.1. Vấn đề
-Trước đây trên các giao diện quản trị Admin (ví dụ: Danh mục Kỹ năng, Danh mục Công việc, Danh mục Diễn đàn), các nút hành động như **Thêm mới (Create)**, **Chỉnh sửa (Edit)**, **Xóa (Delete)**, **Khôi phục (Restore)** luôn hiển thị mặc định cho mọi người dùng có quyền truy cập vào trang.
+### 1.1. Tách bạch Dynamic Admin RBAC và Hardcoded Marketplace Access
+Hệ thống áp dụng mô hình **Admin-Only Dynamic RBAC**:
+* **Chỉ các chức năng thuộc phạm vi Admin Portal** mới có trong danh mục quyền (`Permission` table), hiển thị tại `/admin/permissions` và gán động tại `/admin/assign-role` (chủ yếu cho `EXPERT` và các **Custom Role** nội bộ như Moderator, Support...).
+* **Các quyền và luồng nghiệp vụ của `CLIENT`, `FREELANCER` và Homepage/Common** được **hardcode cố định theo role** ở cả Frontend và Backend, không hiển thị hay cho phép bật/tắt động từ giao diện Admin RBAC.
+* **Role `ADMIN` gốc** mặc định giữ toàn quyền trong phạm vi Admin Portal (`*`), không bị thu hồi nhầm quyền quản trị, nhưng **vẫn bị chặn** khỏi Homepage `/` và các chức năng nghiệp vụ riêng của Client/Freelancer.
 
-Nếu một vai trò (Role) chỉ được cấp quyền xem (`GET`) và sửa (`PATCH`), nhưng **không** được cấp quyền tạo mới (`POST`), thì:
-* Nút Tạo mới vẫn hiển thị trên màn hình.
-* Khi người dùng nhấp vào nút Tạo và gửi form, Backend sẽ trả về lỗi `403 Forbidden`.
-* Trải nghiệm người dùng (UX) bị giảm sút và giao diện gây hiểu lầm về quyền hạn thực tế của tài khoản.
-
-### 1.2. Giải pháp (Best Practice từ các hệ thống lớn)
-Áp dụng giải pháp **Ẩn hoàn toàn (Remove from DOM)** đối với các nút và hành động mà tài khoản không có quyền:
-* **Server-side (SSR)**: Không sinh HTML của các nút hành động bị cấm ngay từ lúc render trên Server.
-* **Client-side (SPA / React)**: Tự động ẩn các nút trong bảng dữ liệu hoặc dialog khi kiểm tra danh sách quyền của người dùng.
-* **Nguyên tắc bảo vệ kép (Defense in Depth)**: Frontend ẩn nút để tối ưu UX, Backend tiếp tục giữ các Guard (`AuthGuard`, `PermissionGuard`) để bảo đảm an toàn dữ liệu tuyệt đối.
+### 1.2. Quy tắc truy cập Route cho `ADMIN`, `EXPERT` & Custom Role
+* **Trang Homepage (`/`):** Bị chặn với `ADMIN`, `EXPERT` và mọi custom role (`isInternalAdminRole`); tự động chuyển hướng sang `/admin` (nếu `canAccessAdminPortal(user)` hợp lệ) hoặc `/access-denied`.
+* **Các trang Public thật sự:** Được phép truy cập gồm `/forum` (chỉ đọc), `/profiles/[id]`, `/clients/[id]`, `/privacy-policy`, `/user-agreement`. Trên các trang này dùng `Header` chế độ `STAFF` — ẩn toàn bộ menu/nút của Client/Freelancer (tìm việc, giỏ thông báo, chat, social links...), chỉ giữ link công khai, nút vào **Admin Portal** (`/admin`), `/admin/profile`, `/admin/sessions` và **Đăng xuất**.
+* **Các trang không Public ngoài `/admin`:** Toàn bộ `/client/*`, `/freelancer/*`, `/notifications`, `/conversations/*`, `/sessions`, `/account-profile` đều chặn `ADMIN`, `EXPERT` và custom role (`/access-denied` hoặc chuyển đúng về `/admin/sessions`, `/admin/profile` nếu là trang tự quản trị cá nhân).
 
 ---
 
-## 2. Kiến trúc giải pháp (Architecture & Design)
+## 2. Kiến trúc giải pháp (Backend & Frontend)
 
 ```mermaid
 flowchart TD
-    User["Người dùng đăng nhập"] --> JWT["JWT / getMe: roles, permissions"]
-    
-    subgraph ServerSide ["1. Server Component (page.tsx)"]
-        SC["authServerRequest.getMe()"] --> CheckServer["hasActionPermission(user, METHOD, PATH)"]
-        CheckServer -- "Có quyền" --> RenderBtn["Render nút Create vào HTML"]
-        CheckServer -- "Không có quyền" --> HideBtn["Không render ra DOM (null)"]
-    end
+    Req["Request / UI Render"] --> RoleCheck{"Phân loại Role"}
 
-    subgraph ClientSide ["2. Client Component (Table / Dialog)"]
-        CC["useActionPermission()"] --> HookCan["can(METHOD, PATH)"]
-        HookCan -- "Có quyền" --> ShowRowAction["Hiển thị nút Edit / Delete / Restore"]
-        HookCan -- "Không có quyền" --> HideRowAction["Ẩn nút khỏi bảng"]
-    end
+    RoleCheck -- "CLIENT / FREELANCER" --> Hardcoded["Quy tắc Hardcode theo Role\n(isHardcodedMarketplaceAllowed)"]
+    Hardcoded -- "Chặn Strict Admin & trái Role" --> Deny403["403 Forbidden / Ẩn UI"]
+    Hardcoded -- "Hợp lệ" --> AllowMP["Cho phép thao tác Marketplace + Common"]
+
+    RoleCheck -- "ADMIN / EXPERT / Custom Role" --> SelfCheck{"Self-Service Account?\n(/api/auth, /api/account-profile, /api/sessions)"}
+    SelfCheck -- "Đúng" --> AllowSelf["Cho phép tự quản lý Profile & Session"]
+    SelfCheck -- "Không" --> AdminScope{"Thuộc Admin Portal?\n(isAdminPermissionPath)"}
+    AdminScope -- "Không" --> BlockNonAdmin["Chặn 403 / Ẩn UI (kể cả ADMIN *)"]
+    AdminScope -- "Đúng" --> AdminRole{"Role == ADMIN gốc?"}
+    AdminRole -- "Đúng" --> AllowAdmin["Cho phép (Full Admin Portal)"]
+    AdminRole -- "EXPERT / Custom Role" --> CheckDB["Kiểm tra động bảng RolePermission\n(SharedPermissionRepository / user.permissions)"]
 ```
 
-### 2.1. Hàm kiểm tra quyền dùng chung (`apps/web/lib/admin-access.ts`)
-Hàm `hasActionPermission(userOrPermissions, method, path)` nhận vào đối tượng người dùng hoặc mảng permissions, cùng cặp `(METHOD, PATH)`.
+### 2.1. Backend (`apps/api`)
+1. **`apps/api/src/shared/helper/admin-permission.ts`**:
+   * `isStrictAdminEndpoint(path, method)` & `isAdminPermissionPath(path, method)`: Định nghĩa tập endpoint thuộc Admin Portal (`/api/admin/*`, `/api/expert/disputes*`, `/api/expert-profile*`, `/api/forums/admin/*`, `/api/forums/reports*`, `DELETE /api/forums/posts/:postId`, `DELETE /api/forums/posts/:postId/comments/:commentId`, `/api/users*`, `/api/roles*`, `/api/permissions*`, `POST /api/payments/disputes/:disputeId/settle`, `/reindex`, `/outbox`).
+   * `ADMIN_PERMISSION_PRISMA_WHERE`: Bộ lọc Prisma dùng chung để chỉ truy vấn quyền Admin Portal.
+   * `isSelfAccountOrSessionPath(path)`: Cho phép `/api/auth/*`, `/api/account-profile*`, `/api/sessions*` cho mọi tài khoản đã đăng nhập.
+   * `isHardcodedMarketplaceAllowed(roleName, method, path)`: Quy tắc hardcode cho `CLIENT` và `FREELANCER`.
+2. **`PermissionGuard` (`apps/api/src/shared/guards/permission.guard.ts`)**:
+   * `@IsPublic()` luôn đi qua.
+   * `CLIENT` / `FREELANCER`: kiểm tra theo `isHardcodedMarketplaceAllowed` (không query `RolePermission`).
+   * `ADMIN` / `EXPERT` / Custom Role: cho phép `isSelfAccountOrSessionPath`, từ chối ngay nếu `!isAdminPermissionPath`, `ADMIN` gốc giữ toàn quyền Admin Portal, `EXPERT` và Custom Role query động `SharedPermissionRepository.roleHasPermission()`.
+3. **API Quản trị Roles & Permissions**:
+   * `PermissionsRepository` (`findAll`, `findById`, `modules`): lọc bằng `ADMIN_PERMISSION_PRISMA_WHERE`.
+   * `RolesRepository.findActivePermissionIds` & `RolesRepository.findById`: chỉ làm việc với tập quyền Admin Portal.
+   * `RolesService.setRolePermissions`: từ chối chỉnh sửa quyền cho `CLIENT` và `FREELANCER` (`CannotModifySystemRoleException`).
+   * `AuthService.getMe`: trả `permissions: []` cho `CLIENT`/`FREELANCER`; `'*'` + Admin permissions cho `ADMIN`; chỉ trả các permission thỏa `isAdminPermissionPath` cho `EXPERT` và Custom Role.
+   * `seed-permissions.ts`: chỉ seed và giữ lại các route thỏa `isAdminPermissionPath` trong bảng `Permission`; gán full cho `ADMIN`, mặc định dispute routes cho `EXPERT`, và `[]` cho `CLIENT`/`FREELANCER`.
 
-**Đặc điểm nổi bật**:
-1. **Wildcard & Admin bypass**: Tự động trả về `true` nếu người dùng có role `ADMIN` hoặc sở hữu quyền wildcard `*`.
-2. **Chuẩn hóa đường dẫn**: Tự động xử lý tiền tố `/api`, xóa query params.
-3. **So khớp tham số URL động (Route Parameters)**:
-   * Pattern trong database: `PATCH /api/admin/skills/:id`
-   * Đường dẫn thực tế gọi: `PATCH /api/admin/skills/15`
-   * Hàm tự động khớp các segment bắt đầu bằng `:` với giá trị ID thực tế.
-
-### 2.2. Hook & Component Client-side (`apps/web/hooks/use-action-permission.tsx`)
-Cung cấp bộ công cụ trực quan cho lập trình viên phía Client:
-* `can(method, path)`: Kiểm tra 1 hành động cụ thể.
-* `canAny([{ method, path }, ...])`: Kiểm tra xem có ít nhất 1 quyền trong danh sách hay không.
-* `canAll([{ method, path }, ...])`: Kiểm tra xem có đủ toàn bộ quyền hay không.
-* `<Can method="..." path="...">...</Can>`: Component bọc JSX để ẩn/hiện điều kiện mà không cần viết lệnh rẽ nhánh phức tạp.
-* Sử dụng `useMemo` và `useCallback` tránh re-render thừa.
+### 2.2. Frontend (`apps/web`)
+1. **Kiểm tra quyền (`apps/web/lib/admin-access.ts` & `apps/web/hooks/use-action-permission.tsx`)**:
+   * `hasActionPermission(userOrPermissions, method, path)` và hook `useActionPermission()` (`can`, `canAny`, `canAll`, `<Can>`) đồng bộ 100% logic 3 nhánh với Backend:
+     * `CLIENT` / `FREELANCER` dùng `isHardcodedMarketplaceAllowed`.
+     * `ADMIN` / `EXPERT` / Custom Role chỉ mở `isSelfAccountOrSessionApi` + `isAdminPermissionPath`; bị khóa (`false`) đối với các hành động tương tác diễn đàn/chat/thông báo/marketplace trên trang public.
+   * `canAccessAdminPortal(user)` và `isInternalAdminRole(user)`: chặn `CLIENT`/`FREELANCER` vào `/admin`, cho phép `ADMIN` hoặc role nội bộ có ít nhất 1 quyền/module Admin Portal (bao gồm `EXPERT` & `EXPERT-PROFILE`).
+2. **Nhóm quyền Admin (`apps/web/lib/permission-scopes.ts` & `assign-role-content.tsx`)**:
+   * Chỉ giữ duy nhất scope **`ADMIN` (Dashboard Quản trị)** với **11 Cụm chức năng (`FEATURE_GROUPS`)** và `isAssignableAdminPermission`.
+   * Loại bỏ hoàn toàn các scope `CLIENT`, `FREELANCER`, `CONTRACTS`, `COMMON` ("Trang chủ & Dùng chung") khỏi giao diện `/admin/assign-role` và `/admin/permissions`; lọc bỏ `CLIENT`/`FREELANCER` khỏi dropdown chọn role trong `/admin/assign-role`.
 
 ---
 
-## 3. Danh sách các màn hình đã triển khai
+## 3. Danh sách các màn hình Admin Portal áp dụng phân quyền động
 
-### 3.1. Quản lý Kỹ năng (Skills)
+### 3.1. Quản lý Kỹ năng (`ADMIN_SKILLS`)
 * **Route**: `/admin/skills` & `/admin/skills/[id]`
-* **Các quyền áp dụng**:
-  * `POST /api/admin/skills`: Ẩn/hiện nút **"Thêm kỹ năng"** trên thanh tiêu đề trang chính.
-  * `PATCH /api/admin/skills/:id`: Ẩn/hiện nút **Sửa** trong từng dòng và trên trang chi tiết.
-  * `DELETE /api/admin/skills/:id`: Ẩn/hiện nút **Xóa** trong từng dòng và trên trang chi tiết.
-  * `PATCH /api/admin/skills/:id/restore`: Ẩn/hiện nút **Khôi phục** đối với các kỹ năng đã xóa mềm.
-  * Nếu một kỹ năng không có quyền Sửa lẫn Xóa, ô Actions ở cuối dòng sẽ tự động ẩn sạch sẽ.
+* **Các quyền**: `GET /api/admin/skills`, `GET /api/admin/skills/:id`, `POST /api/admin/skills`, `PATCH /api/admin/skills/:id`, `DELETE /api/admin/skills/:id`, `PATCH /api/admin/skills/:id/restore`.
 
-### 3.2. Quản lý Danh mục Công việc (Job Categories)
+### 3.2. Quản lý Danh mục Công việc (`ADMIN_JOB_CATEGORIES`)
 * **Route**: `/admin/job-categories` & `/admin/job-categories/[id]`
-* **Các quyền áp dụng**:
-  * `POST /api/admin/job-categories`: Ẩn/hiện nút **"Thêm danh mục"** trên thanh tiêu đề trang chính.
-  * `PATCH /api/admin/job-categories/:id`: Ẩn/hiện nút **Sửa** (Dialog chỉnh sửa).
-  * `DELETE /api/admin/job-categories/:id`: Ẩn/hiện nút **Xóa**.
-  * `PATCH /api/admin/job-categories/:id/restore`: Ẩn/hiện nút **Khôi phục**.
-  * Đồng bộ tự động trên trang chi tiết `/admin/job-categories/[id]`.
+* **Các quyền**: `GET /api/admin/job-categories`, `GET /api/admin/job-categories/:id`, `POST /api/admin/job-categories`, `PATCH /api/admin/job-categories/:id`, `DELETE /api/admin/job-categories/:id`, `PATCH /api/admin/job-categories/:id/restore`.
 
-### 3.3. Quản lý Danh mục Diễn đàn (Forum Categories)
-* **Route**: `/admin/categories` & `/admin/categories/[id]`
-* **Các quyền áp dụng**:
-  * `POST /api/forums/admin/categories`: Ẩn/hiện nút **"Tạo danh mục"** trên trang chính.
-  * `GET /api/forums/admin/categories/:id`: Ẩn/hiện nút icon **Xem chi tiết**.
-  * `PATCH /api/forums/admin/categories/:id`: Ẩn/hiện nút icon **Sửa** trên bảng và nút `EditCategoryButton` trên trang chi tiết.
-  * `DELETE /api/forums/admin/categories/:id`: Ẩn/hiện nút icon **Xóa** trên bảng và nút `DeleteCategoryButton` trên trang chi tiết.
-  * `PATCH /api/forums/admin/categories/:id/restore`: Ẩn/hiện nút **Khôi phục**.
-
-### 3.4. Quản lý Banner & Quảng cáo (Banners)
+### 3.3. Quản lý Banner & Quảng cáo (`ADMIN_BANNERS`)
 * **Route**: `/admin/banners` & `/admin/banners/[id]`
-* **Các quyền áp dụng**:
-  * `GET /api/admin/banners`: Chặn SSR và hiển thị thông báo từ chối truy cập nếu thiếu quyền xem danh sách.
-  * `POST /api/admin/banners`: Ẩn/hiện nút **"Tạo banner"** trên thanh tiêu đề và dialog tạo mới.
-  * `PATCH /api/admin/banners/:id`: Ẩn/hiện nút **Sửa** trong từng dòng và trên trang chi tiết.
-  * `DELETE /api/admin/banners/:id`: Ẩn/hiện nút **Xóa** trong từng dòng và dialog xác nhận xóa.
-  * `POST /api/admin/banners/upload-image`: Vô hiệu hóa input tải ảnh và chặn tải ảnh mới trong form tạo/sửa nếu thiếu quyền.
-  * `GET /api/admin/banners/:id`: Ẩn/hiện nút icon **Xem chi tiết** trong từng dòng và chặn SSR trang chi tiết nếu thiếu quyền.
+* **Các quyền**: `GET /api/admin/banners`, `GET /api/admin/banners/:id`, `POST /api/admin/banners`, `PATCH /api/admin/banners/:id`, `DELETE /api/admin/banners/:id`, `POST /api/admin/banners/upload-image`.
 
-### 3.5. Quản lý Phán quyết Tranh chấp (Disputes)
-* **Route**: `/admin/disputes`
-* **Các quyền áp dụng**:
-  * `GET /api/admin/disputes`: Chặn SSR và hiển thị thông báo từ chối truy cập nếu thiếu quyền xem danh sách tranh chấp.
-  * `GET /api/admin/disputes/:id`: Kiểm soát quyền mở dialog xem chi tiết và hiển thị nút **Xem** trong bảng.
-  * `POST /api/admin/disputes/:id/decision`: Ẩn/hiện form và nút **"Đưa ra phán quyết đề xuất"** trong dialog; điều khiển nhãn nút thành **"Phân xử"** trên bảng.
-  * `POST /api/admin/disputes/:id/final-decision`: Ẩn/hiện form và nút **"Đưa ra phán quyết cuối cùng"** trong dialog; điều khiển nhãn nút thành **"Phân xử"** trên bảng.
+### 3.4. Phán quyết Tranh chấp (`ADMIN_DISPUTES`)
+* **Route**: `/admin/disputes` ([expert-disputes.tsx](file:///e:/PROJECT/Frevia/apps/web/app/admin/disputes/expert-disputes.tsx))
+* **Các quyền**:
+  * `GET /api/expert-profile/me` & `PUT /api/expert-profile/me`
+  * `GET /api/expert/disputes` & `GET /api/expert/disputes/:id`
+  * `POST /api/expert/disputes/:id/decision` & `POST /api/expert/disputes/:id/final-decision`
+  * `POST /api/payments/disputes/:disputeId/settle`
+  *(Ghi chú: Cổng cũ `/expert/*` ở frontend đã được xóa ở `uc-06.10` và gộp hoàn toàn về `/admin/disputes` + `/admin/profile`.)*
 
-### 3.6. Duyệt Hồ sơ Chuyên gia & Cập nhật (Profile Revisions)
-* **Route**: `/admin/profile-revisions`
-* **Các quyền áp dụng**:
-  * `GET /api/admin/profile-revisions`: Chặn SSR và hiển thị thông báo từ chối truy cập nếu thiếu quyền xem danh sách.
-  * `GET /api/admin/profile-revisions/:id`: Kiểm soát quyền mở dialog xem chi tiết hồ sơ thay đổi.
-  * `PATCH /api/admin/profile-revisions/:id/approve`: Ẩn/hiện nút **"Phê duyệt"** trong dialog xem xét.
-  * `PATCH /api/admin/profile-revisions/:id/reject`: Ẩn/hiện nút **"Từ chối"** trong dialog xem xét.
-  * Vô hiệu hóa ghi chú đánh giá nếu không có quyền phê duyệt lẫn từ chối.
+### 3.5. Duyệt Xác minh Danh tính eKYC (`ADMIN_KYC`) & Duyệt Hồ sơ (`ADMIN_PROFILE_REVISIONS`)
+* **Route**: `/admin/identity-verifications` & `/admin/profile-revisions`
+* **Các quyền**: `/api/admin/identity-verifications*` (`GET`, `approve`, `reject`) và `/api/admin/profile-revisions*` (`GET`, `approve`, `reject`).
 
-### 3.7. Kiểm duyệt diễn đàn (Forum Moderation - 15 quyền)
-* **Route**: `/admin`, `/admin/comments`, `/admin/moderation`, `/admin/trash`, `/admin/categories`, `/admin/categories/[id]`
-* **Các quyền áp dụng**:
-  * `#121 · GET /api/forums/admin/stats`: Kiểm tra SSR trên Dashboard chính `/admin`. Nếu thiếu quyền, không gọi API thống kê và tự động chuyển hướng hoặc hiển thị giao diện chào mừng.
-  * `#122 · GET /api/forums/admin/comments`: Kiểm tra SSR trên `/admin/comments`. Nếu thiếu quyền, chặn tải dữ liệu và hiển thị thông báo từ chối truy cập.
-  * `#242 · GET /api/forums/admin/pending-posts`: Kiểm tra SSR trên `/admin/moderation`. Nếu thiếu quyền, chặn tải dữ liệu và hiển thị thông báo từ chối truy cập.
-  * `#243 · GET /api/forums/admin/trash/posts`: Kiểm tra SSR trên `/admin/trash`. Chặn gọi API bài viết đã xóa nếu thiếu quyền; tự động chuyển tab hoặc ẩn tab Bài viết nếu không có quyền.
-  * `#244 · GET /api/forums/admin/trash/comments`: Kiểm tra SSR trên `/admin/trash`. Chặn gọi API bình luận đã xóa nếu thiếu quyền; tự động chuyển tab hoặc ẩn tab Bình luận nếu không có quyền.
-  * `#245 · PATCH /api/forums/admin/trash/posts/:id/restore`: Ẩn/hiện nút icon **Khôi phục** trong bảng bài viết đã xóa `/admin/trash?type=posts`.
-  * `#246 · PATCH /api/forums/admin/trash/comments/:id/restore`: Ẩn/hiện nút icon **Khôi phục** trong bảng bình luận đã xóa `/admin/trash?type=comments`.
-  * `#247 · PATCH /api/forums/admin/posts/:id/approve`: Ẩn/hiện nút **Duyệt** bài viết (`ShieldCheck`) trên bảng và trong Dialog xem nội dung tại `/admin/moderation`.
-  * `#248 · PATCH /api/forums/admin/posts/:id/reject`: Ẩn/hiện nút **Từ chối** bài viết (`ShieldAlert`) trên bảng và trong Dialog xem nội dung tại `/admin/moderation`.
-  * `#300 · GET /api/forums/admin/categories`: Kiểm tra SSR trên `/admin/categories`. Nếu thiếu quyền, chặn tải danh mục và hiển thị thông báo từ chối truy cập.
-  * `#301 · GET /api/forums/admin/categories/:id`: Ẩn/hiện nút icon **Xem chi tiết** trong bảng và chặn SSR trang chi tiết `/admin/categories/[id]`.
-  * `#302 · POST /api/forums/admin/categories`: Ẩn/hiện nút **"Tạo danh mục"** trên tiêu đề và chặn dialog tạo danh mục.
-  * `#303 · PATCH /api/forums/admin/categories/:id`: Ẩn/hiện nút icon **Sửa** trong bảng và nút `EditCategoryButton` trên trang chi tiết.
-  * `#304 · DELETE /api/forums/admin/categories/:id`: Ẩn/hiện nút icon **Xóa** trong bảng và nút `DeleteCategoryButton` trên trang chi tiết.
-  * `#416 · PATCH /api/forums/admin/categories/:id/restore`: Ẩn/hiện nút icon **Khôi phục** trong bảng danh mục diễn đàn.
+### 3.6. Kiểm duyệt Diễn đàn (`ADMIN_FORUMS`)
+* **Route**: `/admin`, `/admin/categories`, `/admin/categories/[id]`, `/admin/comments`, `/admin/moderation`, `/admin/reports`, `/admin/posts`, `/admin/trash`
+* **Các quyền**:
+  * `/api/forums/admin/stats`, `/api/forums/admin/comments`, `/api/forums/admin/pending-posts`
+  * `/api/forums/admin/posts/:id/approve`, `/api/forums/admin/posts/:id/reject`
+  * `/api/forums/admin/categories*`, `/api/forums/admin/trash/posts*`, `/api/forums/admin/trash/comments*`
+  * `GET /api/forums/reports`, `PATCH /api/forums/reports/:reportId/status`
+  * `DELETE /api/forums/posts/:postId`, `DELETE /api/forums/posts/:postId/comments/:commentId`
+
+### 3.7. Quản lý Người dùng, Vai trò, Quyền & Vận hành AI
+* `ADMIN_USERS`: `/admin/users`, `/admin/users/[id]` (`/api/users*`)
+* `ADMIN_ROLES`: `/admin/roles`, `/admin/roles/[id]`, `/admin/assign-role` (`/api/roles*`)
+* `ADMIN_PERMISSIONS`: `/admin/permissions`, `/admin/permissions/[id]` (`/api/permissions*`)
+* `ADMIN_AI_OPS`: `/admin/ai-ops` (`/api/recommendations/reindex`, `/api/recommendations/outbox/process`)
 
 ---
 
-## 4. Hướng dẫn mở rộng cho các phân hệ khác
+## 4. Tổng hợp các tệp thay đổi trọng tâm (`uc-06.11`)
 
-Hệ thống được thiết kế dạng **Generic**, có thể tái sử dụng ngay cho bất kỳ module nào khác trong dự án:
-
-### 4.1. Sử dụng trong Server Component (`page.tsx`)
-```tsx
-import { hasActionPermission } from "@/lib/admin-access";
-import authServerRequest from "@/apiRequests/auth.server";
-
-export default async function AnyPage() {
-  const currentUser = await authServerRequest.getMe();
-
-  // Kiểm tra quyền
-  const canCreate = hasActionPermission(currentUser, "POST", "/api/banners");
-
-  return (
-    <div>
-      {canCreate && <CreateBannerButton />}
-    </div>
-  );
-}
-```
-
-### 4.2. Sử dụng trong Client Component (`use client`)
-```tsx
-"use client";
-
-import { useActionPermission, Can } from "@/hooks/use-action-permission";
-
-export function RowActions({ item }: { item: { id: number } }) {
-  const { can } = useActionPermission();
-
-  return (
-    <div className="flex gap-2">
-      {/* Cách 1: Dùng hook can() */}
-      {can("PATCH", `/api/users/${item.id}/ban`) && (
-        <Button variant="destructive">Khóa tài khoản</Button>
-      )}
-
-      {/* Cách 2: Dùng component <Can> */}
-      <Can method="DELETE" path={`/api/banners/${item.id}`}>
-        <Button variant="ghost">Xóa banner</Button>
-      </Can>
-    </div>
-  );
-}
-```
-
----
-
-## 5. Tổng hợp các tệp thay đổi
-
-| Đường dẫn tệp | Loại thay đổi | Mô tả |
+| Đường dẫn tệp | Loại | Mô tả |
 | :--- | :--- | :--- |
-| `apps/web/lib/admin-access.ts` | Chỉnh sửa | Bổ sung hàm `hasActionPermission()` hỗ trợ kiểm tra quyền linh hoạt và khớp tham số URL. |
-| `apps/web/hooks/use-action-permission.tsx` | Tạo mới | Cung cấp Hook `useActionPermission()` và Component `<Can>` cho Client Components. |
-| `apps/web/app/admin/skills/page.tsx` | Chỉnh sửa | Ẩn nút "Thêm kỹ năng" nếu thiếu quyền `POST /api/admin/skills`. |
-| `apps/web/app/admin/skills/components/skill-actions.tsx` | Chỉnh sửa | Ẩn nút Sửa, Xóa, Khôi phục kỹ năng theo quyền thực tế. |
-| `apps/web/app/admin/job-categories/page.tsx` | Chỉnh sửa | Ẩn nút "Thêm danh mục" nếu thiếu quyền `POST /api/admin/job-categories`. |
-| `apps/web/app/admin/job-categories/components/job-category-actions.tsx` | Chỉnh sửa | Ẩn nút Sửa, Xóa, Khôi phục danh mục công việc theo quyền. |
-| `apps/web/app/admin/categories/page.tsx` | Chỉnh sửa | Ẩn nút "Tạo danh mục" nếu thiếu quyền `POST /api/forums/admin/categories`. |
-| `apps/web/app/admin/categories/components/categories-table.tsx` | Chỉnh sửa | Ẩn các nút Xem chi tiết, Sửa, Xóa, Khôi phục theo quyền trong bảng diễn đàn. |
-| `apps/web/app/admin/categories/[id]/components/edit-category-button.tsx` | Chỉnh sửa | Ẩn nút Sửa trên trang chi tiết danh mục diễn đàn. |
-| `apps/web/app/admin/categories/[id]/components/delete-category-button.tsx` | Chỉnh sửa | Ẩn nút Xóa trên trang chi tiết danh mục diễn đàn. |
-| `apps/web/app/admin/banners/page.tsx` | Chỉnh sửa | Kiểm tra quyền SSR `GET /api/admin/banners` và ẩn nút "Tạo banner" nếu thiếu `POST /api/admin/banners`. |
-| `apps/web/app/admin/banners/[id]/page.tsx` | Chỉnh sửa | Kiểm tra quyền SSR `GET /api/admin/banners/:id` và ẩn nút Sửa nếu thiếu `PATCH /api/admin/banners/:id`. |
-| `apps/web/app/admin/banners/components/banners-table.tsx` | Chỉnh sửa | Ẩn các nút Xem chi tiết, Sửa, Xóa theo quyền thực tế trên từng dòng banner. |
-| `apps/web/app/admin/banners/components/create-banner-dialog.tsx` | Chỉnh sửa | Ẩn dialog tạo nếu thiếu quyền `POST /api/admin/banners`. |
-| `apps/web/app/admin/banners/components/delete-banner-dialog.tsx` | Chỉnh sửa | Ẩn dialog xóa nếu thiếu quyền `DELETE /api/admin/banners/:id`. |
-| `apps/web/app/admin/banners/components/banner-form-dialog.tsx` | Chỉnh sửa | Kiểm tra quyền mở dialog và vô hiệu hóa chức năng tải ảnh nếu thiếu `POST /api/admin/banners/upload-image`. |
-| `apps/web/app/admin/disputes/page.tsx` | Chỉnh sửa | Kiểm tra quyền SSR `GET /api/admin/disputes` trước khi hiển thị danh sách. |
-| `apps/web/app/admin/disputes/components/disputes-table.tsx` | Chỉnh sửa | Ẩn/hiện nút Xem / Phân xử theo quyền thực tế trên từng dòng tranh chấp. |
-| `apps/web/app/admin/disputes/components/dispute-detail-dialog.tsx` | Chỉnh sửa | Kiểm soát quyền xem chi tiết và ẩn các nút ra phán quyết / phán quyết cuối cùng nếu thiếu quyền. |
-| `apps/web/app/admin/profile-revisions/page.tsx` | Chỉnh sửa | Kiểm tra quyền SSR `GET /api/admin/profile-revisions` trước khi hiển thị danh sách. |
-| `apps/web/app/admin/profile-revisions/profile-revisions-table.tsx` | Chỉnh sửa | Ẩn/hiện thao tác Xem / Xem xét và các nút Phê duyệt / Từ chối theo quyền. |
-| `apps/web/app/admin/page.tsx` | Chỉnh sửa | Kiểm tra quyền SSR `GET /api/forums/admin/stats` trước khi tải số liệu thống kê diễn đàn. |
-| `apps/web/app/admin/comments/page.tsx` | Chỉnh sửa | Kiểm tra quyền SSR `GET /api/forums/admin/comments` trước khi hiển thị danh sách bình luận. |
-| `apps/web/app/admin/moderation/page.tsx` | Chỉnh sửa | Kiểm tra quyền SSR `GET /api/forums/admin/pending-posts` trước khi hiển thị bài viết chờ duyệt. |
-| `apps/web/app/admin/moderation/components/moderation-table.tsx` | Chỉnh sửa | Ẩn/hiện nút Duyệt (`ShieldCheck`) và Từ chối (`ShieldAlert`) trên bảng và trong Dialog xem nội dung. |
-| `apps/web/app/admin/trash/page.tsx` | Chỉnh sửa | Kiểm tra SSR `GET /api/forums/admin/trash/posts` và `GET /api/forums/admin/trash/comments`, chỉ nạp dữ liệu tab có quyền và ẩn tab không có quyền. |
-| `apps/web/app/admin/trash/components/trash-posts-table.tsx` | Chỉnh sửa | Ẩn/hiện nút Khôi phục bài viết (`RotateCcw`) theo quyền `PATCH /api/forums/admin/trash/posts/:id/restore`. |
-| `apps/web/app/admin/trash/components/trash-comments-table.tsx` | Chỉnh sửa | Ẩn/hiện nút Khôi phục bình luận (`RotateCcw`) theo quyền `PATCH /api/forums/admin/trash/comments/:id/restore`. |
-| `apps/web/app/admin/categories/page.tsx` | Chỉnh sửa | Kiểm tra quyền SSR `GET /api/forums/admin/categories` trước khi hiển thị danh sách danh mục. |
-| `apps/web/app/admin/categories/[id]/page.tsx` | Chỉnh sửa | Kiểm tra quyền SSR `GET /api/forums/admin/categories/:id` trước khi tải chi tiết danh mục. |
-| `apps/web/app/admin/categories/components/create-category-dialog.tsx` | Chỉnh sửa | Ẩn dialog tạo danh mục ở client nếu thiếu `POST /api/forums/admin/categories`. |
-| `apps/web/i18n/messages/vi.json` & `en.json` | Chỉnh sửa | Bổ sung các thông báo truy cập từ chối `accessDenied`, `postsAccessDenied`, `commentsAccessDenied`, `detailAccessDenied`. |
+| `apps/api/src/shared/helper/admin-permission.ts` | Tạo mới | Định nghĩa `ADMIN_PERMISSION_PRISMA_WHERE`, `isStrictAdminEndpoint`, `isAdminPermissionPath`, `isSelfAccountOrSessionPath`, `isHardcodedMarketplaceAllowed`. |
+| `apps/api/src/shared/guards/permission.guard.ts` | Chỉnh sửa | Tách luồng hardcode cho Client/Freelancer và dynamic DB RBAC chỉ trong phạm vi Admin Portal cho Admin/Expert/Custom Role. |
+| `apps/api/src/routes/permissions/permissions.repo.ts` | Chỉnh sửa | Lọc danh sách/module/chi tiết quyền chỉ trả về Admin Portal permissions. |
+| `apps/api/src/routes/roles/roles.repo.ts` & `roles.service.ts` | Chỉnh sửa | Chỉ cho phép xem và gán Admin Portal permissions; chặn sửa quyền `CLIENT`/`FREELANCER`. |
+| `apps/api/src/routes/auth/auth.service.ts` | Chỉnh sửa | Chuẩn hóa `permissions`/`permissionModules` trả về từ `getMe()` theo từng nhóm role. |
+| `apps/api/src/seed-datas/seed-permissions.ts` | Chỉnh sửa | Chỉ seed Admin Portal permissions vào DB; `ADMIN` nhận full, `EXPERT` nhận bộ disputes mặc định, `CLIENT`/`FREELANCER` nhận `[]`. |
+| `apps/web/lib/admin-access.ts` & `hooks/use-action-permission.tsx` | Chỉnh sửa | Đồng bộ logic 3 nhánh và `canAccessAdminPortal()` cho `EXPERT`/Custom Role. |
+| `apps/web/lib/permission-scopes.ts` & `assign-role-content.tsx` | Chỉnh sửa | Xóa scope Homepage/Client/Freelancer/Common; chỉ giữ scope `ADMIN` (11 nhóm) và các role gán động. |
+| `apps/web/components/header.tsx`, `app/page.tsx`, `app/forum/layout.tsx`, `app/profiles/[id]/*`, `app/clients/[id]/*`, `app/notifications/page.tsx`, `app/conversations/layout.tsx`, `app/sessions/page.tsx`, `app/account-profile/page.tsx`, `app/dashboard/page.tsx`, `app/not-found.tsx`, `app/access-denied/access-denied-content.tsx` | Chỉnh sửa | Chặn `ADMIN`/Custom Role vào `/` và các trang non-public ngoài `/admin`; thêm chế độ Header `STAFF` cho các trang public. |
 
 ---
 
-## 6. Kết quả kiểm thử & Tuân thủ Definition of Done (DoD)
+## 5. Kết quả kiểm tra xác nhận (Verification)
 
-* **TypeScript Compilation**: Chạy `pnpm check-types` đạt 100% không có lỗi (3/3 packages passed).
-* **ESLint**: 0 errors, 0 warnings trên toàn bộ các tệp được thêm mới và sửa đổi.
-* **Next.js Production Build**: `pnpm --filter web build` biên dịch thành công toàn bộ 60 routes với Turbopack.
-* **NestJS API Build**: `pnpm --filter api build` biên dịch thành công không lỗi.
-
+* **TypeScript (`apps/web`)**: `pnpm --filter web check-types` (`next typegen && tsc --noEmit`) pass 0 lỗi.
+* **NestJS Build (`apps/api`)**: `pnpm --filter api build` biên dịch thành công.
+* **Unit Tests (`apps/api`)**:
+  * `src/shared/guards/permission.guard.spec.ts`: 9/9 test cases pass.
+  * `test/auth/auth.unit-spec.ts`, `test/permissions/permissions.unit-spec.ts`, `test/roles/roles.unit-spec.ts`: 3 suites (96/96 test cases) pass.

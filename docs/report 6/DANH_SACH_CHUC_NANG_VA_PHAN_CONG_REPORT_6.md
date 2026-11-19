@@ -140,14 +140,14 @@ Dưới đây là danh sách **toàn bộ 16 Modules (128 chức năng chi tiế
 *Actor: Guest (Khách chưa đăng nhập) / Tất cả người dùng*
 
 - [ ] **M1.01 – Tổng quan hệ thống (`3.1 Overview`):** Giới thiệu kiến trúc Frevia, bảng phân quyền 5 Actors (`Guest`, `Freelancer`, `Client`, `Expert`, `Admin`), và sơ đồ tổng thể luồng nghiệp vụ từ Đăng việc $\rightarrow$ Ứng tuyển $\rightarrow$ Hợp đồng & Ký quỹ Stripe $\rightarrow$ Bàn giao & Nghiệm thu $\rightarrow$ Đánh giá / Khiếu nại.
-- [ ] **M1.02 – Khám phá Trang chủ (`/` - Homepage):** Hướng dẫn sử dụng thanh điều hướng (Navbar), ô tìm kiếm nhanh trên Hero Banner, xem danh mục nghề nghiệp nổi bật, danh sách việc làm mới nhất, và các liên kết Footer.
-- [ ] **M1.03 – Tìm kiếm, Lọc & Sắp xếp việc làm công khai (`/find-work` - UC-21.01):** Hướng dẫn nhập từ khóa tìm kiếm, lọc theo Danh mục (Job Category), Kỹ năng (Skills), Loại ngân sách (Fixed-Price / Hourly), Khoảng giá (Min–Max Budget), Trình độ kinh nghiệm (Entry/Intermediate/Expert), và sắp xếp kết quả.
-- [ ] **M1.04 – Xem chi tiết tin tuyển dụng công khai (`/job/[slug]` - UC-21.02):** Hướng dẫn xem mô tả công việc, danh sách kỹ năng yêu cầu, ngân sách, các mốc Milestone dự kiến, thông tin tóm tắt về Client đăng bài, và nút chuyển sang ứng tuyển (`Apply Now`).
+- [ ] **M1.02 – Khám phá Trang chủ (`/` - Homepage):** Hướng dẫn sử dụng thanh điều hướng (Navbar), xem banner nổi bật, danh mục nghề nghiệp, và các liên kết Footer (áp dụng cho `Guest`, `Freelancer`, `Client`; `Admin`/`Expert`/custom role truy cập `/` sẽ được chuyển hướng về `/admin`).
+- [ ] **M1.03 – Tìm kiếm, Lọc & Sắp xếp việc làm công khai (`/freelancer` / `/freelancer/find-work` - UC-21.01):** Hướng dẫn nhập từ khóa tìm kiếm, lọc theo Danh mục (Job Category), Kỹ năng (Skills), Loại ngân sách (Fixed-Price), Khoảng giá (Min–Max Budget), Trình độ kinh nghiệm (Entry/Intermediate/Expert), và sắp xếp kết quả.
+- [ ] **M1.04 – Xem chi tiết tin tuyển dụng công khai (`/freelancer/jobs/[slug]` - UC-21.02):** Hướng dẫn xem mô tả công việc, danh sách kỹ năng yêu cầu, ngân sách, các mốc Milestone dự kiến, thông tin tóm tắt về Client đăng bài, và nút chuyển sang ứng tuyển (`Apply Now`).
 - [ ] **M1.05 – Xem hồ sơ công khai của Freelancer (`/profiles/[id]` - UC-18.02):** Xem thông tin giới thiệu, huy hiệu đã xác thực danh tính (Verified Badge), kỹ năng, danh sách dự án Portfolio, lịch sử công việc và đánh giá từ các hợp đồng trước.
-- [ ] **M1.06 – Xem chi tiết dự án Portfolio công khai (`/profiles/[id]/portfolio/[itemId]`):** Xem hình ảnh/tài liệu đính kèm của dự án mẫu, mô tả chi tiết và liên kết dự án thực tế của Freelancer.
+- [ ] **M1.06 – Xem chi tiết dự án Portfolio công khai (`/profiles/[id]`):** Xem hình ảnh/tài liệu đính kèm của dự án mẫu, mô tả chi tiết và liên kết dự án thực tế của Freelancer.
 - [ ] **M1.07 – Xem hồ sơ công khai của Client (`/clients/[id]` - UC-19.01):** Xem thông tin công ty, website, quy mô, lịch sử các công việc đã đăng và đánh giá từ Freelancer.
-- [ ] **M1.08 – Tra cứu Danh bạ Chuyên gia & Chi tiết Chuyên gia (`/experts` & `/experts/[id]` - UC-20.01, UC-20.02):** Tìm kiếm chuyên gia theo lĩnh vực chuyên môn, xem thông tin học vấn, chứng chỉ, kinh nghiệm và kênh liên hệ của Expert.
-- [ ] **M1.09 – Xem diễn đàn cộng đồng công khai (`/forum` & `/forum/posts/[id]`):** Duyệt danh sách bài viết theo chuyên mục, tìm kiếm bài viết và đọc nội dung thảo luận cùng bình luận.
+- [ ] **M1.08 – Tra cứu trang chính sách & điều khoản công khai (`/privacy-policy` & `/user-agreement`):** Xem chính sách bảo mật dữ liệu và điều khoản sử dụng nền tảng dành cho người dùng và khách truy cập.
+- [ ] **M1.09 – Xem diễn đàn cộng đồng công khai (`/forum` & `/forum/[categorySlug]/[postSlug]`):** Duyệt danh sách bài viết theo chuyên mục, tìm kiếm bài viết và đọc nội dung thảo luận cùng bình luận (các role nội bộ Admin/Custom role xem ở chế độ công khai chỉ đọc).
 
 ---
 
@@ -155,7 +155,7 @@ Dưới đây là danh sách **toàn bộ 16 Modules (128 chức năng chi tiế
 *Actor: Guest, Freelancer, Client, Expert, Admin*
 
 - [ ] **M2.01 – Đăng ký tài khoản mới bằng Email/Mật khẩu (`/register` - UC-04):** Hướng dẫn chọn vai trò khởi tạo (`Freelancer` hoặc `Client`), nhập Họ tên, Email, Mật khẩu, Xác nhận mật khẩu, đồng ý điều khoản và hoàn tất đăng ký.
-- [ ] **M2.02 – Đăng nhập bằng Email & Mật khẩu (`/login` - UC-02):** Hướng dẫn nhập Email, Mật khẩu, tùy chọn *Remember me*, nhấn *Sign In*, và giải thích cơ chế tự động điều hướng theo vai trò (Admin $\rightarrow$ `/admin`, Expert $\rightarrow$ `/expert/profile`, Client/Freelancer $\rightarrow$ `/dashboard`).
+- [ ] **M2.02 – Đăng nhập bằng Email & Mật khẩu (`/login` - UC-02):** Hướng dẫn nhập Email, Mật khẩu, tùy chọn *Remember me*, nhấn *Sign In*, và giải thích cơ chế tự động điều hướng theo vai trò (Admin / Expert / Custom role có quyền Admin $\rightarrow$ `/admin`, Client $\rightarrow$ `/client/jobs`, Freelancer $\rightarrow$ `/freelancer`).
 - [ ] **M2.03 – Đăng nhập / Đăng ký nhanh bằng Google OAuth (`/login`, `/register` - UC-01):** Hướng dẫn nhấn nút *Continue with Google*, chọn tài khoản Google trên cửa sổ popup OAuth và cấp quyền truy cập.
 - [ ] **M2.04 – Quên mật khẩu & Đặt lại mật khẩu qua Email (`/forgot-password` - UC-05):** Hướng dẫn nhập Email nhận mã/link khôi phục, kiểm tra hộp thư đến, mở link đặt lại mật khẩu và nhập mật khẩu mới.
 - [ ] **M2.05 – Xem danh sách & Chi tiết phiên đăng nhập đang hoạt động (`/sessions` - UC-16.01, UC-16.02):** Hướng dẫn kiểm tra các thiết bị đang đăng nhập tài khoản (Trình duyệt, Hệ điều hành, Địa chỉ IP, Thời gian đăng nhập, thẻ *Current Session*).
@@ -302,14 +302,12 @@ Dưới đây là danh sách **toàn bộ 16 Modules (128 chức năng chi tiế
 
 ---
 
-#### MODULE 13: Phân hệ Chuyên gia (Expert Workspace)
+#### MODULE 13: Phân hệ Chuyên gia trong Admin Portal (Expert Disputes & Admin Profile)
 *Actor: Expert*
 
-- [ ] **M13.01 – Đăng nhập & Không gian làm việc riêng của Chuyên gia (`/expert/profile`):** Giải thích cơ chế tự động chuyển hướng tài khoản có role `Expert` vào cổng chuyên gia `/expert/profile` với giao diện Expert Shell riêng biệt.
-- [ ] **M13.02 – Xem & Cập nhật Hồ sơ Chuyên gia (`/expert/profile` - UC-20.02, UC-20.03):**
-  - Chỉnh sửa Chức danh chuyên gia (Headline), Lĩnh vực tư vấn chuyên sâu (Expertise Areas), Tiểu sử nghề nghiệp (Bio), Số năm kinh nghiệm, Công ty/Tổ chức hiện tại và liên kết hồ sơ.
-  - Nhấn *Submit for Approval* để tạo yêu cầu duyệt hồ sơ (*Profile Revision*) gửi lên Admin.
-- [ ] **M13.03 – Theo dõi trạng thái duyệt cập nhật hồ sơ Expert:** Kiểm tra thông báo trạng thái bản chỉnh sửa (`PENDING`, `APPROVED`, hoặc `REJECTED` kèm lý do từ Admin).
+- [ ] **M13.01 – Đăng nhập & Vào cổng Quản trị của Chuyên gia (`/admin` & `/admin/profile`):** Giải thích cơ chế tự động chuyển hướng tài khoản có role `Expert` (khi được cấp quyền Admin Disputes) vào cổng quản trị `/admin` với Sidebar hiển thị theo đúng quyền được gán; trang `/expert/*` riêng biệt đã được gộp về `/admin`.
+- [ ] **M13.02 – Xem & Cập nhật thông tin tài khoản, Mật khẩu, Phiên đăng nhập (`/admin/profile` & `/admin/sessions`):** Cập nhật thông tin cá nhân, ảnh đại diện, đổi mật khẩu và quản lý phiên đăng nhập ngay trong Admin Portal.
+- [ ] **M13.03 – Phân xử tranh chấp dành cho Chuyên gia (`/admin/disputes`):** Xem danh sách tranh chấp hợp đồng, chi tiết hồ sơ và đưa ra phán quyết đề xuất/cuối cùng theo quyền `/api/expert/disputes*` được cấp.
 
 ---
 
@@ -321,8 +319,8 @@ Dưới đây là danh sách **toàn bộ 16 Modules (128 chức năng chi tiế
 - [ ] **M14.03 – Quản lý Vai trò (Roles Management - `/admin/roles` - UC-06.01 đến UC-06.05):**
   - Xem danh sách toàn bộ các Role trong hệ thống (`Admin`, `Client`, `Freelancer`, `Expert` và các Custom Role).
   - Xem chi tiết một Role, Tạo Role mới (*Create Role*), Cập nhật tên/mô tả Role (*Update Role*) và Xóa Role (*Delete Role*).
-- [ ] **M14.04 – Gán quyền truy cập API/Route cho từng Role (`/admin/roles/[id]` - UC-06.06):** Sử dụng giao diện bật/tắt (Toggle Matrix) theo từng Module để cấp hoặc thu hồi các Permission cho Role và lưu thay đổi.
-- [ ] **M14.05 – Tra cứu Danh sách & Chi tiết Quyền hạn hệ thống (`/admin/permissions` - UC-15.01, UC-15.02):** Tìm kiếm và lọc danh sách toàn bộ Permissions theo phương thức HTTP (`GET`, `POST`, `PUT`, `PATCH`, `DELETE`) và theo Module.
+- [ ] **M14.04 – Gán quyền truy cập API/Route động cho Role Admin/Expert/Custom Role (`/admin/assign-role` - UC-06.06):** Sử dụng giao diện ma trận theo 11 nhóm chức năng thuộc Admin Portal để cấp hoặc thu hồi các Permission động cho `Expert` và các Custom Role (quyền của `Client`, `Freelancer` và Homepage được hardcode theo role và không hiển thị tại đây).
+- [ ] **M14.05 – Tra cứu Danh sách & Chi tiết Quyền hạn Admin Portal (`/admin/permissions` - UC-15.01, UC-15.02):** Tìm kiếm và lọc danh sách các Permissions thuộc phạm vi Admin Portal theo phương thức HTTP (`GET`, `POST`, `PUT`, `PATCH`, `DELETE`) và theo Module.
 - [ ] **M14.06 – Xem danh sách, Tìm kiếm, Lọc & Tạo mới Người dùng (`/admin/users` - UC-28.01, UC-28.03):**
   - Lọc người dùng theo Role, Trạng thái tài khoản (`ACTIVE`, `INACTIVE`, `BANNED`), tìm kiếm theo tên/email.
   - Tạo tài khoản người dùng mới trực tiếp từ trang Admin và gán Role khởi tạo (bao gồm cấp tài khoản cho `Expert` hoặc `Admin` mới).
@@ -428,7 +426,7 @@ Nguyên tắc phân công:
   - Chụp ảnh & viết hướng dẫn cài đặt từ A–Z như máy chưa có gì (`A3.1`–`A3.4`): Cài đặt Git, Node.js LTS, PNPM, Docker Desktop, Clone repo, cấu hình file `.env`, chạy Prisma Migrate & Seed dữ liệu mẫu, bảng tài khoản Demo.
 - **Phần Hướng dẫn sử dụng (`II.3`):**
   - **Module 1 (`M1.07` – `M1.08`), Module 3 (`M3.01` – `M3.06`) & Module 7 (`M7.01` – `M7.04`):** Cài đặt tài khoản chung, Upload & Crop Avatar, Đổi mật khẩu, Quản lý Social Links, Đăng ký thêm vai trò & Chuyển đổi vai trò (`Client` $\leftrightarrow$ `Freelancer`), Client Dashboard, Xem & sửa Hồ sơ Công ty (`/client/profile`), Quản lý danh sách Freelancer yêu thích (`/favorites`) và đang theo dõi (`/following`), Xem danh bạ & chi tiết Chuyên gia công khai (`/experts`).
-  - **Module 5 (`M5.01` – `M5.02`) & Module 13 (`M13.01` – `M13.03`):** Freelancer gửi hồ sơ xác thực eKYC (chụp CCCD 2 mặt + Webcam Selfie Liveness qua AI `id-verification`) & theo dõi trạng thái; Không gian làm việc của Chuyên gia (`/expert/profile` – xem và gửi yêu cầu cập nhật hồ sơ Expert).
+  - **Module 5 (`M5.01` – `M5.02`) & Module 13 (`M13.01` – `M13.03`):** Freelancer gửi hồ sơ xác thực eKYC (chụp CCCD 2 mặt + Webcam Selfie Liveness qua AI `id-verification`) & theo dõi trạng thái; Phân hệ Chuyên gia gộp vào Admin Portal (`/admin/disputes`, `/admin/profile`).
   - **Module 11 (`M11.05` – `M11.06`), Module 15 (`M15.04`) & Module 16 (`M16.01` – `M16.02`):** Viết đánh giá sau hợp đồng (*Write Review*), Sửa/Xóa & Phản hồi đánh giá (*Respond to Review*); Admin quản lý Banner (`/admin/banners`); Admin hậu kiểm & duyệt eKYC (`/admin/identity-verifications`); Admin duyệt yêu cầu cập nhật hồ sơ có bảng so sánh Diff (`/admin/profile-revisions`).
 
 ---
