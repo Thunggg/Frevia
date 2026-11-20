@@ -629,7 +629,7 @@ export function SearchJobsContent({
           )}
 
           {/* Pagination */}
-          {!isPending && initialJobs.length > 0 && (
+          {!isPending && initialJobs.length > 0 && initialPagination.totalPages > 1 && (
             <JobPagination
               currentPage={initialPagination.page}
               totalPages={initialPagination.totalPages}

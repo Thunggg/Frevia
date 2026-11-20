@@ -20,9 +20,7 @@ export type FindWorkSearchParams = Promise<{
   page?: string;
   limit?: string;
   budget?: string;
-  budgetType?: "FIXED_PRICE";
   proposals?: string;
-  verified?: string;
   hiringType?: "SINGLE" | "MULTIPLE";
   time?: string;
   sort?: string;
@@ -51,7 +49,7 @@ export async function renderFindWorkPage({
   const parsedPage = Number(params.page);
   const page = Number.isInteger(parsedPage) && parsedPage > 0 ? parsedPage : 1;
   const parsedLimit = Number(params.limit);
-  const limit = [10, 20, 50].includes(parsedLimit) ? parsedLimit : 10;
+  const limit = [10, 20].includes(parsedLimit) ? parsedLimit : 10;
   const keyword = params.keyword?.trim() || undefined;
   const budget = params.budget ?? "all";
   const time = params.time ?? "all";
@@ -88,8 +86,6 @@ export async function renderFindWorkPage({
     ? new Date(Date.now() - timeRange * 24 * 60 * 60 * 1000)
     : undefined;
 
-  const budgetType =
-    params.budgetType === "FIXED_PRICE" ? "FIXED_PRICE" : undefined;
   const hiringType =
     params.hiringType === "SINGLE" || params.hiringType === "MULTIPLE"
       ? params.hiringType
@@ -118,7 +114,6 @@ export async function renderFindWorkPage({
           page,
           limit,
           search: keyword,
-          budgetType,
           hiringType,
           ...budgetRanges[budget],
           createdAfter,
@@ -148,7 +143,6 @@ export async function renderFindWorkPage({
         limit,
         search: keyword,
         category,
-        budgetType,
         hiringType,
         ...budgetRanges[budget],
         createdAfter,

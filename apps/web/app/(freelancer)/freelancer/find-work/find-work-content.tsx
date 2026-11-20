@@ -6,6 +6,7 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import {
   useCallback,
   useEffect,
+  useMemo,
   useState,
   useTransition,
   type FormEvent,
@@ -125,6 +126,12 @@ function JobListSkeleton() {
   );
 }
 
+interface RecommendedJobFilterableExtra {
+  category?: { slug?: string };
+  hiringType?: string;
+  proposalsCount?: number;
+}
+
 export function FindWorkContent({
   role,
   user = null,
@@ -186,7 +193,8 @@ export function FindWorkContent({
   // Tab State for Home View - Ưu tiên route path (e.g. /find-work/most-recent)
   const getTabFromContext = useCallback((): HomeTab => {
     const currentPath =
-      typeof window !== "undefined" ? window.location.pathname : pathname;
+      pathname ||
+      (typeof window !== "undefined" ? window.location.pathname : "");
     if (currentPath.includes("/most-recent")) return "most-recent";
     if (currentPath.includes("/saved-jobs")) return "saved-jobs";
     if (currentPath.includes("/saved-searches")) return "saved-searches";
@@ -261,15 +269,99 @@ export function FindWorkContent({
   const effectiveBasePath = basePath ?? "/freelancer/find-work/best-matches";
   const jobBaseUrl = "/freelancer/jobs";
 
+  const categoryFilter = searchParams.get("category");
+  const budgetFilter = searchParams.get("budget");
+  const hiringTypeFilter = searchParams.get("hiringType");
+  const timeFilter = searchParams.get("time");
+  const proposalsFilter = searchParams.get("proposals");
+
   const activeFiltersCount = [
-    Boolean(searchParams.get("category")),
-    Boolean(searchParams.get("budget")),
-    Boolean(searchParams.get("budgetType")),
-    Boolean(searchParams.get("proposals")),
-    Boolean(searchParams.get("verified")),
-    Boolean(searchParams.get("hiringType")),
-    Boolean(searchParams.get("time")),
+    Boolean(categoryFilter),
+    Boolean(budgetFilter),
+    Boolean(proposalsFilter),
+    Boolean(hiringTypeFilter),
+    Boolean(timeFilter),
   ].filter(Boolean).length;
+
+  const filteredRecommendedJobs = useMemo(() => {
+    return recommendedJobs.filter((rec) => {
+      const job = rec.job;
+      if (!job) return false;
+      const jobExtra = job as unknown as RecommendedJobFilterableExtra;
+
+      // Category filter
+      if (categoryFilter && categoryFilter !== "all") {
+        const catSlugs = categoryFilter
+          .split(",")
+          .map((s) => s.trim().toLowerCase())
+          .filter(Boolean);
+        const jobCatSlug = jobExtra.category?.slug?.toLowerCase();
+        if (!jobCatSlug || !catSlugs.includes(jobCatSlug)) {
+          return false;
+        }
+      }
+
+      // Budget filter
+      if (budgetFilter && budgetFilter !== "all") {
+        const min = job.budgetMin ?? 0;
+        const max = job.budgetMax ?? job.budgetMin ?? 0;
+        if (budgetFilter === "under-500" && max > 500) return false;
+        if (budgetFilter === "500-1000" && (min > 1000 || max < 500)) return false;
+        if (budgetFilter === "1000-5000" && (min > 5000 || max < 1000)) return false;
+        if (budgetFilter === "5000-plus" && max < 5000) return false;
+      }
+
+      // Hiring type filter
+      if (
+        hiringTypeFilter &&
+        (hiringTypeFilter === "SINGLE" || hiringTypeFilter === "MULTIPLE")
+      ) {
+        if (jobExtra.hiringType && jobExtra.hiringType !== hiringTypeFilter) {
+          return false;
+        }
+      }
+
+      // Time filter
+      if (timeFilter && timeFilter !== "all") {
+        const timeRanges: Record<string, number> = {
+          today: 1,
+          "last-3-days": 3,
+          "last-7-days": 7,
+          "last-30-days": 30,
+        };
+        const days = timeRanges[timeFilter];
+        if (days && job.createdAt) {
+          const jobDate = new Date(job.createdAt).getTime();
+          const cutoff = Date.now() - days * 24 * 60 * 60 * 1000;
+          if (jobDate < cutoff) return false;
+        }
+      }
+
+      // Proposals filter
+      if (proposalsFilter) {
+        const pFilters = proposalsFilter.split(",");
+        const count = jobExtra.proposalsCount ?? 0;
+        const matchProp = pFilters.some((f) => {
+          if (f === "fewer-than-5") return count < 5;
+          if (f === "5-to-10") return count >= 5 && count <= 10;
+          if (f === "10-to-15") return count >= 10 && count <= 15;
+          if (f === "15-to-20") return count >= 15 && count <= 20;
+          if (f === "20-to-50") return count >= 20 && count <= 50;
+          return false;
+        });
+        if (!matchProp) return false;
+      }
+
+      return true;
+    });
+  }, [
+    recommendedJobs,
+    categoryFilter,
+    budgetFilter,
+    hiringTypeFilter,
+    timeFilter,
+    proposalsFilter,
+  ]);
 
   useEffect(() => {
     setBookmarkedSlugs(new Set(initialBookmarkedSlugs));
@@ -398,11 +490,9 @@ export function FindWorkContent({
     }
 
     const query = params.toString();
-    const currentPath =
-      (typeof window !== "undefined" ? window.location.pathname : pathname) ||
-      effectiveBasePath;
+    const targetBase = `/freelancer/find-work/${activeTab}`;
     startTransition(() => {
-      router.push(query ? `${currentPath}?${query}` : currentPath, {
+      router.push(query ? `${targetBase}?${query}` : targetBase, {
         scroll: false,
       });
     });
@@ -420,15 +510,21 @@ export function FindWorkContent({
 
   const handleTabSelect = (tab: HomeTab) => {
     setActiveTab(tab);
+    setIsFiltersModalOpen(false);
+    const isFilterTab = tab === "best-matches" || tab === "most-recent";
     const params = new URLSearchParams(searchParams.toString());
     params.delete("tab");
     params.delete("keyword");
+    params.delete("page");
+    if (!isFilterTab) {
+      params.delete("category");
+      params.delete("budget");
+      params.delete("hiringType");
+      params.delete("time");
+      params.delete("proposals");
+    }
     const query = params.toString();
     const targetUrl = `/freelancer/find-work/${tab}${query ? `?${query}` : ""}`;
-    if (tab === "find-clients" || activeTab === "find-clients") {
-      router.push(targetUrl, { scroll: false });
-      return;
-    }
     if (typeof window !== "undefined") {
       window.history.pushState(null, "", targetUrl);
     }
@@ -581,9 +677,9 @@ export function FindWorkContent({
                       }`}
                     >
                       <span>{t("bestMatches")}</span>
-                      {recommendedJobs.length > 0 && (
+                      {filteredRecommendedJobs.length > 0 && (
                         <span className="ml-1.5 rounded-full bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300 px-2 py-0.5 text-xs font-semibold">
-                          {recommendedJobs.length}
+                          {filteredRecommendedJobs.length}
                         </span>
                       )}
                     </button>
@@ -670,18 +766,20 @@ export function FindWorkContent({
                 </div>
 
                 {/* Right Filter Icon Button: Mở Filters Modal áp dụng cho Best matches và Most recent */}
-                {activeTab !== "find-clients" && <button
-                  type="button"
-                  onClick={() => setIsFiltersModalOpen(true)}
-                  className={`flex size-9 shrink-0 items-center justify-center rounded-full border transition-all cursor-pointer ${
-                    activeFiltersCount > 0
-                      ? "border-[#0069D3] bg-blue-50 text-[#0069D3] dark:bg-blue-950/40 dark:border-blue-500 dark:text-blue-300 ring-2 ring-blue-500/20"
-                      : "border-border bg-card text-muted-foreground hover:text-foreground hover:bg-muted"
-                  }`}
-                  title={t("modal.filterTooltip")}
-                >
-                  <SlidersHorizontal className="size-4" />
-                </button>}
+                {(activeTab === "best-matches" || activeTab === "most-recent") && (
+                  <button
+                    type="button"
+                    onClick={() => setIsFiltersModalOpen(true)}
+                    className={`flex size-9 shrink-0 items-center justify-center rounded-full border transition-all cursor-pointer ${
+                      activeFiltersCount > 0
+                        ? "border-[#0069D3] bg-blue-50 text-[#0069D3] dark:bg-blue-950/40 dark:border-blue-500 dark:text-blue-300 ring-2 ring-blue-500/20"
+                        : "border-border bg-card text-muted-foreground hover:text-foreground hover:bg-muted"
+                    }`}
+                    title={t("modal.filterTooltip")}
+                  >
+                    <SlidersHorizontal className="size-4" />
+                  </button>
+                )}
               </div>
 
               {/* 5. Two-Column Home Content */}
@@ -714,37 +812,63 @@ export function FindWorkContent({
 
                       {!hasFetchedRecs || isLoadingRecs ? (
                         <JobListSkeleton />
-                      ) : recommendedJobs.length === 0 ? (
+                      ) : filteredRecommendedJobs.length === 0 ? (
                         <motion.div
                           initial={{ opacity: 0, y: 12 }}
                           animate={{ opacity: 1, y: 0 }}
                           className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-border bg-card/40 px-6 py-14 text-center font-sans"
                         >
                           <p className="text-base font-semibold text-foreground">
-                            {tRec("emptyRecommendationsTitle")}
+                            {recommendedJobs.length === 0
+                              ? tRec("emptyRecommendationsTitle")
+                              : t("emptyTitle")}
                           </p>
                           <p className="mx-auto mt-1 max-w-md text-xs text-muted-foreground leading-relaxed">
-                            {tRec("emptyRecommendationsDesc")}
+                            {recommendedJobs.length === 0
+                              ? tRec("emptyRecommendationsDesc")
+                              : t("emptyDescription")}
                           </p>
                           <div className="mt-5 flex items-center gap-2.5">
-                            <Link
-                              href="/freelancer/profile"
-                              className="inline-flex items-center rounded-full bg-[#0069D3] text-white hover:bg-[#005bb8] px-4 py-2 text-xs font-semibold shadow-xs transition-colors"
-                            >
-                              Update profile
-                            </Link>
-                            <button
-                              type="button"
-                              onClick={() => handleTabSelect("most-recent")}
-                              className="inline-flex items-center rounded-full border border-border bg-card hover:bg-accent/40 px-4 py-2 text-xs font-medium text-foreground transition-colors cursor-pointer"
-                            >
-                              Browse recent jobs
-                            </button>
+                            {recommendedJobs.length === 0 ? (
+                              <>
+                                <Link
+                                  href="/freelancer/profile"
+                                  className="inline-flex items-center rounded-full bg-[#0069D3] text-white hover:bg-[#005bb8] px-4 py-2 text-xs font-semibold shadow-xs transition-colors"
+                                >
+                                  Update profile
+                                </Link>
+                                <button
+                                  type="button"
+                                  onClick={() => handleTabSelect("most-recent")}
+                                  className="inline-flex items-center rounded-full border border-border bg-card hover:bg-accent/40 px-4 py-2 text-xs font-medium text-foreground transition-colors cursor-pointer"
+                                >
+                                  Browse recent jobs
+                                </button>
+                              </>
+                            ) : (
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                className="rounded-full text-xs font-semibold"
+                                onClick={() => {
+                                  updateParams({
+                                    category: null,
+                                    budget: null,
+                                    proposals: null,
+                                    hiringType: null,
+                                    time: null,
+                                    page: "1",
+                                  });
+                                }}
+                              >
+                                {t("clearFilters")}
+                              </Button>
+                            )}
                           </div>
                         </motion.div>
                       ) : (
                         <div className="space-y-3">
-                          {recommendedJobs.map((rec, index) => (
+                          {filteredRecommendedJobs.map((rec, index) => (
                             <JobCard
                               key={`rec-${rec.job.id}`}
                               job={rec.job}
@@ -796,6 +920,25 @@ export function FindWorkContent({
                           <p className="mt-1 text-xs text-muted-foreground">
                             {t("emptyDescription")}
                           </p>
+                          {activeFiltersCount > 0 && (
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="mt-4 rounded-full text-xs font-semibold"
+                              onClick={() => {
+                                updateParams({
+                                  category: null,
+                                  budget: null,
+                                  proposals: null,
+                                  hiringType: null,
+                                  time: null,
+                                  page: "1",
+                                });
+                              }}
+                            >
+                              {t("clearFilters")}
+                            </Button>
+                          )}
                         </motion.div>
                       ) : (
                         <div className="space-y-3">
@@ -818,7 +961,7 @@ export function FindWorkContent({
                       )}
 
                       {/* Pagination */}    
-                      {!isPending && (
+                      {pagination.totalPages > 1 && (
                         <JobPagination
                           currentPage={pagination.page}
                           totalPages={pagination.totalPages}
@@ -826,7 +969,7 @@ export function FindWorkContent({
                           pageSize={pagination.limit}
                           onPageChange={goToPage}
                           onPageSizeChange={handlePageSizeChange}
-                          isLoading={false}
+                          isLoading={isPending}
                         />
                       )}
                     </div>
@@ -1010,41 +1153,36 @@ export function FindWorkContent({
       />
 
       {/* Home Quick Filters Modal (Best matches & Most recent) */}
-      <HomeFiltersModal
-        open={isFiltersModalOpen}
-        onOpenChange={setIsFiltersModalOpen}
-        categories={initialCategories}
-        currentFilters={{
-          category: searchParams.get("category"),
-          budget: searchParams.get("budget"),
-          budgetType:
-            searchParams.get("budgetType") === "FIXED_PRICE"
-              ? "FIXED_PRICE"
+      {(activeTab === "best-matches" || activeTab === "most-recent") && (
+        <HomeFiltersModal
+          open={isFiltersModalOpen}
+          onOpenChange={setIsFiltersModalOpen}
+          categories={initialCategories}
+          currentFilters={{
+            category: searchParams.get("category"),
+            budget: searchParams.get("budget"),
+            proposals: searchParams.get("proposals")
+              ? searchParams.get("proposals")!.split(",")
               : null,
-          proposals: searchParams.get("proposals")
-            ? searchParams.get("proposals")!.split(",")
-            : null,
-          verified: searchParams.get("verified") === "true",
-          hiringType:
-            searchParams.get("hiringType") === "SINGLE" ||
-            searchParams.get("hiringType") === "MULTIPLE"
-              ? (searchParams.get("hiringType") as "SINGLE" | "MULTIPLE")
-              : null,
-          time: searchParams.get("time"),
-        }}
-        onApply={(newFilters) => {
-          updateParams({
-            category: newFilters.category ?? null,
-            budget: newFilters.budget ?? null,
-            budgetType: newFilters.budgetType ?? null,
-            proposals: newFilters.proposals?.join(",") ?? null,
-            verified: newFilters.verified ? "true" : null,
-            hiringType: newFilters.hiringType ?? null,
-            time: newFilters.time ?? null,
-            page: "1",
-          });
-        }}
-      />
+            hiringType:
+              searchParams.get("hiringType") === "SINGLE" ||
+              searchParams.get("hiringType") === "MULTIPLE"
+                ? (searchParams.get("hiringType") as "SINGLE" | "MULTIPLE")
+                : null,
+            time: searchParams.get("time"),
+          }}
+          onApply={(newFilters) => {
+            updateParams({
+              category: newFilters.category ?? null,
+              budget: newFilters.budget ?? null,
+              proposals: newFilters.proposals?.join(",") ?? null,
+              hiringType: newFilters.hiringType ?? null,
+              time: newFilters.time ?? null,
+              page: "1",
+            });
+          }}
+        />
+      )}
     </div>
   );
 }
