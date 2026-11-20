@@ -534,18 +534,27 @@ export function FindWorkContent({
     const nextParams = new URLSearchParams();
     const sp = (savedSearch.searchParams ?? {}) as Record<string, unknown>;
 
-    if (sp.keyword) nextParams.set("keyword", String(sp.keyword));
-    if (sp.category) nextParams.set("category", String(sp.category));
-    if (sp.budget) nextParams.set("budget", String(sp.budget));
-    if (sp.time) nextParams.set("time", String(sp.time));
-    if (sp.sort) nextParams.set("sort", String(sp.sort));
+    for (const [key, value] of Object.entries(sp)) {
+      if (
+        typeof value === "string" ||
+        typeof value === "number" ||
+        typeof value === "boolean"
+      ) {
+        if (key === "keyword") {
+          nextParams.set("q", String(value));
+        } else {
+          nextParams.set(key, String(value));
+        }
+      }
+    }
 
-    setSearchInput(sp.keyword ? String(sp.keyword) : "");
+    const queryText = sp.q || sp.keyword;
+    if (queryText && !nextParams.has("q")) {
+      nextParams.set("q", String(queryText));
+    }
 
     const query = nextParams.toString();
-    startTransition(() => {
-      router.push(query ? `${effectiveBasePath}?${query}` : effectiveBasePath);
-    });
+    router.push(query ? `/freelancer/search/jobs?${query}` : "/freelancer/search/jobs");
   };
 
   const handleDeleteSavedSearch = async (id: number) => {
@@ -1000,13 +1009,16 @@ export function FindWorkContent({
                               className="flex items-center justify-between rounded-2xl border border-border bg-card p-5 hover:border-black/20 dark:hover:border-white/20 transition-all font-sans"
                             >
                               <div className="space-y-1 min-w-0 flex-1 pr-4">
-                                <h3 className="text-sm font-bold text-foreground truncate">
+                                <h3
+                                  onClick={() => applySavedSearch(item)}
+                                  className="text-sm font-bold text-foreground truncate hover:text-[#0069D3] hover:underline cursor-pointer transition-colors"
+                                >
                                   {item.name}
                                 </h3>
                                 <div className="flex flex-wrap items-center gap-1.5 text-xs text-muted-foreground">
-                                  {Boolean(sp.keyword) && (
+                                  {Boolean(sp.q || sp.keyword) && (
                                     <span className="rounded-full bg-muted px-2.5 py-0.5">
-                                      Keyword: {String(sp.keyword)}
+                                      Keyword: {String(sp.q || sp.keyword)}
                                     </span>
                                   )}
                                   {Boolean(sp.category) && (
@@ -1017,6 +1029,11 @@ export function FindWorkContent({
                                   {Boolean(sp.budget) && (
                                     <span className="rounded-full bg-muted px-2.5 py-0.5">
                                       Budget: {String(sp.budget)}
+                                    </span>
+                                  )}
+                                  {Boolean(sp.time) && (
+                                    <span className="rounded-full bg-muted px-2.5 py-0.5">
+                                      Time: {String(sp.time)}
                                     </span>
                                   )}
                                 </div>
