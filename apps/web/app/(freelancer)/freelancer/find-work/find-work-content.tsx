@@ -532,10 +532,6 @@ export function FindWorkContent({
     }
     const query = params.toString();
     const targetUrl = `/freelancer/find-work/${tab}${query ? `?${query}` : ""}`;
-    if (tab === "find-clients" || activeTab === "find-clients") {
-      router.push(targetUrl, { scroll: false });
-      return;
-    }
     if (typeof window !== "undefined") {
       window.history.pushState(null, "", targetUrl);
     }
