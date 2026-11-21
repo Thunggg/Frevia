@@ -29,7 +29,7 @@ export default function BookmarksError({
       </p>
       <Button
         onClick={() => reset()}
-        className="mt-6 gap-2 rounded-full bg-[#4fae2e] text-white hover:bg-[#459928] cursor-pointer"
+        className="mt-6 gap-2 rounded-full bg-[#0069D3] text-white hover:bg-[#005bb8] cursor-pointer"
       >
         <RefreshCw className="size-4" />
         <span>{tCommon("tryAgain", { defaultValue: "Try again" })}</span>

@@ -21,11 +21,6 @@ export const RecommendationMessage = {
   FAILED_TO_LOAD_EXPLANATION: "Error.Recommendation.FailedToLoadExplanation",
 
   // =========================
-  // Feedback
-  // =========================
-  FAILED_TO_SUBMIT_FEEDBACK: "Error.Recommendation.FailedToSubmitFeedback",
-
-  // =========================
   // Reindex (vận hành §16)
   // =========================
   REINDEX_FORBIDDEN: "Error.Recommendation.ReindexForbidden",

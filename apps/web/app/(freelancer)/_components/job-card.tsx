@@ -15,26 +15,35 @@ import {
 
 import type { JobType, RecommendationComponentsType } from "@shared/types";
 
-export type JobCardJob = Pick<
-  JobType,
-  | "id"
-  | "slug"
-  | "title"
-  | "description"
-  | "budgetMin"
-  | "budgetMax"
-  | "budgetType"
-  | "status"
-  | "deadline"
-  | "expiryDate"
-  | "createdAt"
-  | "hiringType"
-  | "positionsRequired"
-  | "positionsFilled"
-  | "skills"
-  | "jobCategories"
-  | "proposalsCount"
->;
+export type JobCardJob = Partial<
+  Pick<
+    JobType,
+    | "deadline"
+    | "expiryDate"
+    | "hiringType"
+    | "positionsRequired"
+    | "positionsFilled"
+    | "jobCategories"
+    | "proposalsCount"
+  >
+> &
+  Pick<
+    JobType,
+    | "id"
+    | "slug"
+    | "title"
+    | "description"
+    | "budgetMin"
+    | "budgetMax"
+    | "budgetType"
+    | "status"
+  > & {
+    createdAt: Date | string;
+    skills?: unknown[];
+    jobCategories?: unknown[];
+    _count?: { proposals?: number };
+    proposals?: unknown[];
+  };
 
 type JobCardSkillInput =
   | string
@@ -74,7 +83,7 @@ type JobCardInput = {
 };
 
 type JobCardProps = {
-  job: JobCardInput;
+  job: JobCardInput & Record<string, unknown>;
   /** Trang danh sách job — mọi chip và nút "Xem chi tiết" đều trỏ về đây. */
   jobBaseUrl: string;
   /** Trang tìm việc để áp bộ lọc theo danh mục/kỹ năng. */
@@ -211,7 +220,7 @@ export function JobCard({
     }
 
     return (
-      <span className="inline-flex items-center rounded-full bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-900 px-2.5 py-0.5 text-xs font-semibold">
+      <span className="inline-flex items-center rounded-full bg-blue-50 dark:bg-blue-950/60 text-[#0069D3] dark:text-blue-300 border border-blue-200 dark:border-blue-900 px-2.5 py-0.5 text-xs font-semibold">
         {t("statusOpen")}
       </span>
     );
@@ -257,7 +266,7 @@ export function JobCard({
               }}
               className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors ${
                 recommendationId && onViewExplanation
-                  ? "border-[#4fae2e]/30 bg-[#eaf8df] text-[#2d6e1a] hover:bg-[#ddf2cd] dark:bg-[#4fae2e]/15 dark:text-[#7ad75d] dark:border-[#4fae2e]/30 cursor-pointer"
+                  ? "border-[#0069D3]/30 bg-[#D0E1F8]/40 text-[#0069D3] hover:bg-[#D0E1F8]/70 dark:bg-[#0069D3]/20 dark:text-blue-300 dark:border-[#0069D3]/30 cursor-pointer"
                   : "border-border bg-muted/40 text-foreground"
               }`}
             >
@@ -291,7 +300,7 @@ export function JobCard({
             onClick={(event) => onToggleBookmark?.(job.slug, event)}
             className={`flex size-8 shrink-0 items-center justify-center rounded-full transition-all cursor-pointer ${
               isBookmarked
-                ? "bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 hover:bg-emerald-100 dark:hover:bg-emerald-900/40"
+                ? "bg-blue-50 dark:bg-blue-950/40 text-[#0069D3] hover:bg-blue-100 dark:hover:bg-blue-900/40"
                 : "text-muted-foreground hover:bg-muted hover:text-foreground"
             }`}
             title={
@@ -303,7 +312,7 @@ export function JobCard({
             ) : (
               <Heart
                 className={`size-4 ${
-                  isBookmarked ? "fill-emerald-600 text-emerald-600" : ""
+                  isBookmarked ? "fill-[#0069D3] text-[#0069D3]" : ""
                 }`}
               />
             )}
@@ -316,7 +325,7 @@ export function JobCard({
         <Link
           href={`${jobBaseUrl}/${job.slug}`}
           prefetch={false}
-          className="text-base sm:text-lg font-bold text-foreground hover:text-emerald-700 dark:hover:text-emerald-400 transition-colors leading-snug line-clamp-2 hover:underline"
+          className="text-base sm:text-lg font-bold text-foreground hover:text-[#0069D3] dark:hover:text-blue-400 transition-colors leading-snug line-clamp-2 hover:underline"
         >
           {job.title}
         </Link>
@@ -325,7 +334,7 @@ export function JobCard({
           <Link
             href={`${jobBaseUrl}/${job.slug}`}
             prefetch={false}
-            className="rounded-full bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-1.5 text-xs font-semibold shadow-xs transition-colors shrink-0 self-start sm:self-auto"
+            className="rounded-full bg-[#0069D3] hover:bg-[#005bb8] text-white px-4 py-1.5 text-xs font-semibold shadow-xs transition-colors shrink-0 self-start sm:self-auto"
           >
             {t("applyNow")}
           </Link>
@@ -380,7 +389,7 @@ export function JobCard({
             <button
               type="button"
               onClick={() => setIsExpanded(false)}
-              className="text-emerald-600 hover:underline font-medium ml-1 cursor-pointer"
+              className="text-[#0069D3] hover:underline font-medium ml-1 cursor-pointer"
             >
               {t("showLess")}
             </button>
@@ -394,7 +403,7 @@ export function JobCard({
               <button
                 type="button"
                 onClick={() => setIsExpanded(true)}
-                className="text-emerald-600 hover:underline font-medium ml-1 inline cursor-pointer"
+                className="text-[#0069D3] hover:underline font-medium ml-1 inline cursor-pointer"
               >
                 {t("showMore")}
               </button>
@@ -427,7 +436,7 @@ export function JobCard({
             key={`${job.id}-cat-${cat.id}`}
             href={`${filterBasePath}?category=${encodeURIComponent(cat.slug)}`}
             prefetch={false}
-            className="inline-flex items-center gap-1 rounded-full border border-emerald-500/20 bg-emerald-50 dark:bg-emerald-950/30 px-3 py-1 text-xs font-medium text-emerald-700 dark:text-emerald-300 transition-colors hover:bg-emerald-100"
+            className="inline-flex items-center gap-1 rounded-full border border-blue-500/20 bg-blue-50 dark:bg-blue-950/30 px-3 py-1 text-xs font-medium text-[#0069D3] dark:text-blue-300 transition-colors hover:bg-blue-100"
           >
             <Tag className="size-3" />
             {cat.name}

@@ -900,7 +900,7 @@ export function FreelancerProfessionalSettings({ profileId }: Props) {
                       <Button
                         type="button"
                         size="sm"
-                        className="w-full bg-[#4fae2e] text-xs font-semibold text-white shadow-xs hover:bg-[#439c28]"
+                        className="w-full bg-[#0069D3] text-xs font-semibold text-white shadow-xs hover:bg-[#005bb8]"
                         onClick={() => void handleAnalyzeCv()}
                         disabled={pendingAction === "cv-analyze" || pendingAction === "cv-upload"}
                       >

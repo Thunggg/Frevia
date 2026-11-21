@@ -109,7 +109,7 @@ function ProposalStatusBadge({ status }: { status: ProposalStatus }) {
 
   const colorClass =
     status === "HIRED"
-      ? "text-emerald-600 dark:text-emerald-400"
+      ? "text-[#0069D3] dark:text-blue-400"
       : status === "SUBMITTED"
         ? "text-amber-600 dark:text-amber-400"
         : status === "INTERVIEWING"
@@ -429,7 +429,7 @@ export function ProposalList({
                     </span>
                   ) : null}
                   {isFilled ? (
-                    <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/50 px-3 py-1 text-xs font-medium text-emerald-700 dark:text-emerald-300">
+                    <span className="inline-flex items-center gap-1 rounded-full bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800/50 px-3 py-1 text-xs font-medium text-[#0069D3] dark:text-blue-300">
                       <Check className="size-3" />
                       {t("jobFilledBadge", { filled, required })}
                     </span>
@@ -672,7 +672,7 @@ export function ProposalList({
                             <Button
                               type="button"
                               size="sm"
-                              className="rounded-full bg-emerald-600 hover:bg-emerald-700 text-white px-3.5 h-8 text-xs font-semibold shadow-xs cursor-pointer transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                              className="rounded-full bg-[#0069D3] hover:bg-[#005bb8] text-white px-3.5 h-8 text-xs font-semibold shadow-xs cursor-pointer transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                               onClick={() => setContractingProposal(proposal)}
                               disabled={cannotHireMore}
                               title={cannotHireMore ? t("jobFilledDisabled") : undefined}

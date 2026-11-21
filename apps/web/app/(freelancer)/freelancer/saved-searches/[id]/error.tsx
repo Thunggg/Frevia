@@ -44,7 +44,7 @@ export default function SavedSearchDetailError({
         </Button>
         <Button
           onClick={() => reset()}
-          className="rounded-full bg-[#4fae2e] text-white hover:bg-[#459928] gap-2 text-xs"
+          className="rounded-full bg-[#0069D3] text-white hover:bg-[#005bb8] gap-2 text-xs"
         >
           <RotateCcw className="size-4" />
           {t("retry")}
