@@ -49,13 +49,13 @@ export function UserRoleTabs({ user }: UserRoleTabsProps) {
   const tCommon = useTranslations("adminCommon");
   const locale = useLocale();
 
-  const userRole = (user.roles[0]?.name ?? "").toLowerCase();
-  const hasClientProfile = userRole === "client";
-  const hasFreelancerProfile = userRole === "freelancer";
-  const hasExpertProfile = userRole === "expert";
+  const roleNames = new Set(user.roles.map((r) => r.name.toLowerCase()));
+  const hasClientProfile = roleNames.has("client");
+  const hasFreelancerProfile = roleNames.has("freelancer");
+  const hasExpertProfile = roleNames.has("expert");
   const customRoles = user.customRoleProfiles;
   const hasAdminOrCustomRoles =
-    Boolean(userRole) &&
+    roleNames.size > 0 &&
     !hasClientProfile &&
     !hasFreelancerProfile &&
     !hasExpertProfile;

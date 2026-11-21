@@ -148,6 +148,7 @@ export class ForumAdminService {
     try {
       const result = await this.adminRepository.createAdminCategory(body);
       this.cacheService?.delByPrefix('forum_categor');
+      this.cacheService?.delByPrefix('forum_top_categories_');
       return result;
     } catch (error) {
       if (error instanceof HttpException) {
@@ -169,6 +170,7 @@ export class ForumAdminService {
         body,
       );
       this.cacheService?.delByPrefix('forum_categor');
+      this.cacheService?.delByPrefix('forum_top_categories_');
       return result;
     } catch (error) {
       if (error instanceof HttpException) {
@@ -186,6 +188,7 @@ export class ForumAdminService {
     try {
       const result = await this.adminRepository.deleteAdminCategory(categoryId);
       this.cacheService?.delByPrefix('forum_categor');
+      this.cacheService?.delByPrefix('forum_top_categories_');
       return result;
     } catch (error) {
       if (error instanceof HttpException) {
@@ -204,6 +207,7 @@ export class ForumAdminService {
       const result =
         await this.adminRepository.restoreAdminCategory(categoryId);
       this.cacheService?.delByPrefix('forum_categor');
+      this.cacheService?.delByPrefix('forum_top_categories_');
       return result;
     } catch (error) {
       if (error instanceof HttpException) {

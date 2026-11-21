@@ -6,6 +6,7 @@ import { useTranslatedResolver } from "@/lib/form-resolver";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { ArrowLeft, Loader2 } from "@/components/icons";
 import { Controller, useForm } from "react-hook-form";
 
@@ -60,6 +61,7 @@ export function ProposalDetailContent({
   basePath?: string;
 }) {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const t = useTranslations("proposalDetail");
   const tStatus = useTranslations("proposalStatus");
   const tList = useTranslations("proposals");
@@ -196,6 +198,7 @@ export function ProposalDetailContent({
     setAction("save");
     try {
       await proposalApiRequest.updateDraft(proposal.id, body);
+      void queryClient.invalidateQueries({ queryKey: ["proposals"] });
       toastSuccess({ message: t("draftSaved") });
       router.refresh();
     } catch (error) {
@@ -221,6 +224,7 @@ export function ProposalDetailContent({
     try {
       await proposalApiRequest.updateDraft(proposal.id, body);
       await proposalApiRequest.submitDraft(proposal.id);
+      void queryClient.invalidateQueries({ queryKey: ["proposals"] });
       toastSuccess({ message: t("submitted") });
       router.refresh();
     } catch (error) {
@@ -237,6 +241,7 @@ export function ProposalDetailContent({
     setAction("withdraw");
     try {
       await proposalApiRequest.withdraw(proposal.id);
+      void queryClient.invalidateQueries({ queryKey: ["proposals"] });
       toastSuccess({ message: t("withdrawn") });
       setWithdrawOpen(false);
       router.refresh();
@@ -259,7 +264,7 @@ export function ProposalDetailContent({
           className={
             embedded
               ? "border-b border-border bg-background"
-              : "border-b border-[#4fae2e]/15 bg-[#eaf8df] dark:border-white/10 dark:bg-[#1a1c1a]"
+              : "border-b border-[#0069D3]/15 bg-[#D0E1F8]/30 dark:border-white/10 dark:bg-[#111c2e]"
           }
         >
           <div className="mx-auto max-w-5xl px-4 py-6 sm:px-6 lg:px-8">
@@ -459,7 +464,7 @@ export function ProposalDetailContent({
                   {canSubmitDraft ? (
                     <Button
                       type="submit"
-                      className="bg-[#4fae2e] text-white hover:bg-[#459928]"
+                      className="bg-[#0069D3] text-white hover:bg-[#005bb8]"
                       disabled={action !== null}
                     >
                       {action === "submit" ? (

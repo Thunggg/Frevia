@@ -13,11 +13,11 @@ export function PostJobPageContent() {
   const router = useRouter();
   const t = useTranslations("postJob");
   const tSidebar = useTranslations("sidebar");
-  const { can } = useActionPermission();
+  const { can, isLoading: isPermissionLoading } = useActionPermission();
 
   const canCreate = can("POST", "/api/manage-jobs");
 
-  if (!canCreate) {
+  if (!isPermissionLoading && !canCreate) {
     return (
       <div className="flex min-h-dvh flex-col bg-background font-sans">
         <main className="flex-1">
@@ -63,7 +63,10 @@ export function PostJobPageContent() {
           <div className="rounded-2xl border border-border bg-card p-6 sm:p-10 shadow-xs">
             <PostJobForm
               mode="page"
-              onSaved={() => router.push("/client/jobs")}
+              onSaved={() => {
+                router.push("/client/jobs");
+                router.refresh();
+              }}
               onCancel={() => router.push("/client/jobs")}
             />
           </div>

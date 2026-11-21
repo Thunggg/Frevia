@@ -38,7 +38,7 @@ const ALL_NAV_ITEMS: NavItem[] = [
     titleKey: "disputes",
     href: "/admin/disputes",
     icon: Scale,
-    requiredPermissions: ["/api/admin/disputes"],
+    requiredPermissions: ["/api/expert/disputes"],
   },
   {
     titleKey: "skills",

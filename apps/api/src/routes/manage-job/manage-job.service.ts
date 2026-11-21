@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, Optional } from '@nestjs/common';
 import { JobStatus } from '@prisma/client';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/client';
 
@@ -35,6 +35,7 @@ import {
 import { ManageJobRepository } from './manage-job.repo';
 import { EmbeddingOutboxService } from '../recommendations/embedding-outbox.service';
 import { FastTextService } from '../../shared/services/fasttext.service';
+import { CacheService } from '../../shared/services/cache.service';
 
 @Injectable()
 export class ManageJobService {
@@ -42,7 +43,12 @@ export class ManageJobService {
     private readonly manageJobRepository: ManageJobRepository,
     private readonly embeddingOutbox: EmbeddingOutboxService,
     private readonly fastTextService: FastTextService,
+    @Optional() private readonly cacheService?: CacheService,
   ) {}
+
+  private invalidateJobCategoryCache(): void {
+    this.cacheService?.delByPrefix('job_categor');
+  }
 
   private async validateJobLanguage(
     title?: string,
@@ -192,7 +198,7 @@ export class ManageJobService {
     filter: ViewListJobParsedFilterType,
   ): Promise<ViewListJobResponseType> {
     if (roleName !== RoleName.CLIENT) {
-      throw BookmarkJobOnlyForFreelancerException();
+      throw JobOnlyForClientException();
     }
 
     const { jobs, total } = await this.manageJobRepository.getClientJobLists(
@@ -220,7 +226,7 @@ export class ManageJobService {
     jobId: number,
   ): Promise<ViewJobDetailResType> {
     if (roleName !== RoleName.CLIENT) {
-      throw BookmarkJobOnlyForFreelancerException();
+      throw JobOnlyForClientException();
     }
 
     const job = await this.manageJobRepository.getClientJobDetail(
@@ -288,6 +294,7 @@ export class ManageJobService {
     await this.validateJobLanguage(body.title, body.description);
     try {
       const job = await this.manageJobRepository.createJob(userId, body);
+      this.invalidateJobCategoryCache();
       await this.embeddingOutbox.enqueueAndProcess({
         eventType: 'UPSERT',
         documentType: 'JOB',
@@ -314,6 +321,7 @@ export class ManageJobService {
 
     try {
       const job = await this.manageJobRepository.updateJob(userId, jobId, body);
+      this.invalidateJobCategoryCache();
       await this.embeddingOutbox.enqueueAndProcess({
         eventType: 'UPSERT',
         documentType: 'JOB',
@@ -337,6 +345,7 @@ export class ManageJobService {
     this.assertClientRole(roleName);
     try {
       await this.manageJobRepository.deleteJob(userId, jobId);
+      this.invalidateJobCategoryCache();
       await this.embeddingOutbox.enqueueAndProcess({
         eventType: 'DELETE',
         documentType: 'JOB',
@@ -372,6 +381,7 @@ export class ManageJobService {
 
     try {
       const job = await this.manageJobRepository.publishJob(userId, jobId);
+      this.invalidateJobCategoryCache();
       await this.embeddingOutbox.enqueueAndProcess({
         eventType: 'UPSERT',
         documentType: 'JOB',
@@ -396,6 +406,7 @@ export class ManageJobService {
 
     try {
       const job = await this.manageJobRepository.closeJob(userId, jobId);
+      this.invalidateJobCategoryCache();
       await this.embeddingOutbox.enqueueAndProcess({
         eventType: 'DELETE',
         documentType: 'JOB',
@@ -420,6 +431,7 @@ export class ManageJobService {
 
     try {
       const job = await this.manageJobRepository.reopenJob(userId, jobId);
+      this.invalidateJobCategoryCache();
       await this.embeddingOutbox.enqueueAndProcess({
         eventType: 'UPSERT',
         documentType: 'JOB',

@@ -1,6 +1,10 @@
-import { notFound } from "next/navigation";
+import authServerRequest from "@/apiRequests/auth.server";
 import contractServerRequest from "@/apiRequests/contract.server";
 import { MilestonesPageContent } from "@/app/(client)/client/contracts/[slug]/milestones/_components";
+import { getBrowserSocketUrl } from "@/configs/validate-env";
+import { getTranslations } from "next-intl/server";
+import { cookies } from "next/headers";
+import { notFound } from "next/navigation";
 
 export async function generateMetadata({
   params,
@@ -8,10 +12,11 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
+  const t = await getTranslations("milestoneWorkspace.meta");
 
   return {
-    title: `Milestones Management - #${slug}`,
-    description: "Track deliverables, submit milestone work, and monitor escrow earnings.",
+    title: t("listTitle", { slug }),
+    description: t("listFreelancerDescription"),
   };
 }
 
@@ -36,6 +41,10 @@ export default async function FreelancerContractMilestonesPage({
 
   if (!contract) notFound();
 
+  const cookieStore = await cookies();
+  const token = cookieStore.get("accessToken")?.value ?? null;
+  const user = await authServerRequest.getMe();
+
   const sharedFiles = await contractServerRequest.getSharedFiles(contract.id);
 
   return (
@@ -45,9 +54,11 @@ export default async function FreelancerContractMilestonesPage({
           initialContract={contract}
           initialSharedFiles={sharedFiles}
           basePath="/freelancer"
+          currentUserId={user?.id ?? null}
+          accessToken={token}
+          socketUrl={getBrowserSocketUrl()}
         />
       </div>
     </div>
   );
 }
-

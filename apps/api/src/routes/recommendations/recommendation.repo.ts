@@ -1,9 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import {
-  AiDocumentType,
-  Prisma,
-  RecommendationFeedbackType,
-} from '@prisma/client';
+import { AiDocumentType, Prisma } from '@prisma/client';
 
 import { PrismaService } from '../../shared/services/prisma.service';
 
@@ -338,21 +334,6 @@ export class RecommendationRepository {
 
   async findRecommendationById(id: number) {
     return this.prisma.recommendation.findUnique({ where: { id } });
-  }
-
-  async createFeedback(
-    recommendationId: number,
-    type: RecommendationFeedbackType,
-  ) {
-    return this.prisma.recommendationFeedback.create({
-      data: { recommendationId, type },
-      select: {
-        id: true,
-        recommendationId: true,
-        type: true,
-        createdAt: true,
-      },
-    });
   }
 }
 

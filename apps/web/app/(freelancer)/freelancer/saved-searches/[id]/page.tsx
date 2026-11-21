@@ -36,8 +36,8 @@ function toFindWorkHref(searchParams: SavedSearchType["searchParams"]) {
   }
   const query = params.toString();
   return query
-    ? `/freelancer/find-work/best-matches?${query}`
-    : "/freelancer/find-work/best-matches";
+    ? `/freelancer/search/jobs?${query}`
+    : "/freelancer/search/jobs";
 }
 
 export default async function FreelancerSavedSearchDetailPage({
@@ -57,8 +57,12 @@ export default async function FreelancerSavedSearchDetailPage({
   const tFindWork = await getTranslations("findWork");
 
   const filterName = (name: string) => {
-    if (name === "keyword") return t("filterSearch");
-    if (name === "budget") return t("filterBudget");
+    if (name === "keyword" || name === "q") return t("filterSearch");
+    if (name === "category") return t("filterCategory") || "Category";
+    if (name === "skill") return t("filterSkill") || "Skill";
+    if (name === "hiringType") return t("filterHiringType") || "Hiring type";
+    if (name === "budget" || name === "budgetMin" || name === "budgetMax")
+      return t("filterBudget");
     if (name === "time") return t("filterPosted");
     if (name === "sort") return t("filterSort");
 
@@ -103,11 +107,11 @@ export default async function FreelancerSavedSearchDetailPage({
               </Link>
             </Button>
             <div className="mt-4 flex items-start gap-4">
-              <div className="flex size-12 shrink-0 items-center justify-center rounded-xl bg-[#4fae2e] text-white">
+              <div className="flex size-12 shrink-0 items-center justify-center rounded-xl bg-[#0069D3] text-white">
                 <SlidersHorizontal className="size-6" />
               </div>
               <div>
-                <p className="text-xs font-medium text-[#3f9225]">
+                <p className="text-xs font-medium text-[#0069D3]">
                   {t("detailBadge")}
                 </p>
                 <h1 className="mt-1 text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
@@ -147,7 +151,7 @@ export default async function FreelancerSavedSearchDetailPage({
               </Badge>
               <Button
                 asChild
-                className="bg-[#4fae2e] text-white hover:bg-[#459928]"
+                className="bg-[#0069D3] text-white hover:bg-[#005bb8]"
               >
                 <Link href={toFindWorkHref(savedSearch.searchParams)}>
                   <Search className="mr-2 size-4" />

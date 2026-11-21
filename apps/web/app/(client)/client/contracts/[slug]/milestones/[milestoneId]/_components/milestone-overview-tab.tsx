@@ -1,17 +1,21 @@
 "use client";
 
-import { useFormatter } from "next-intl";
+import { useFormatter, useTranslations } from "next-intl";
 import {
-  AlertTriangle,
+  Check,
   CheckCircle2,
   Clock,
+  CreditCard,
   Download,
   ExternalLink,
+  FileCheck,
   FileText,
   Lock,
+  Play,
   RotateCcw,
   Scale,
-  ShieldCheck,
+  Upload,
+  User,
 } from "lucide-react";
 import { Button } from "@repo/ui/components/shadcn/button";
 import { useActionPermission } from "@/hooks/use-action-permission";
@@ -26,24 +30,58 @@ interface MilestoneOverviewTabProps {
   milestone: MilestoneType;
   submissions: GetSubmissionResponseType[];
   isFreelancer?: boolean;
+  startWorkBlockedReason?: string | null;
   onOpenDispute?: () => void;
   onViewDispute?: () => void;
+  onFund?: () => void;
+  onStartWork?: () => void;
+  onSubmitWork?: () => void;
+  onReviewSubmission?: (submission?: GetSubmissionResponseType) => void;
+  onRelease?: () => void;
+  onRefund?: () => void;
 }
 
 export function MilestoneOverviewTab({
+  contract,
   milestone,
   submissions,
+  isFreelancer = false,
+  startWorkBlockedReason = null,
   onOpenDispute,
   onViewDispute,
+  onFund,
+  onStartWork,
+  onSubmitWork,
+  onReviewSubmission,
+  onRelease,
+  onRefund,
 }: MilestoneOverviewTabProps) {
   const format = useFormatter();
-  const { can } = useActionPermission();
+  const t = useTranslations("milestoneWorkspace.overview");
+  const tCard = useTranslations("milestoneWorkspace.card");
+  const { can, canAny } = useActionPermission();
+  const isClient = !isFreelancer;
+
   const canViewDispute = can("GET", "/api/disputes/milestone/:milestoneId");
   const canCreateDispute = can("POST", "/api/disputes");
+
+  const canFundPermission = canAny([
+    { method: "POST", path: "/api/payments/contracts/:contractId/milestones/:milestoneId/fund/intent" },
+    { method: "POST", path: "/api/payments/contracts/:contractId/milestones/:milestoneId/fund/checkout-session" },
+    { method: "POST", path: "/api/payments/contracts/:contractId/milestones/:milestoneId/fund/saved-card" },
+  ]);
+  const canReleasePermission = can("POST", "/api/payments/contracts/:contractId/milestones/:milestoneId/release");
+  const canRefundPermission = can("POST", "/api/payments/contracts/:contractId/milestones/:milestoneId/refund");
+  const canStartWorkPermission = can("PATCH", "/api/contracts/:contractId/milestones/:id/progress");
+  const canSubmitWorkPermission = can("POST", "/api/contracts/:contractId/milestones/:milestoneId/submissions");
+  const canApprovePermission = can("PATCH", "/api/contracts/:contractId/milestones/:milestoneId/submissions/:id/approve");
+  const canRequestChangesPermission = can("PATCH", "/api/contracts/:contractId/milestones/:milestoneId/submissions/:id/request-changes");
+  const canReviewPermission = canApprovePermission || canRequestChangesPermission;
+
   const latestSubmission = submissions.length > 0 ? submissions[0] : null;
 
   const formatDate = (date: string | Date | null | undefined): string => {
-    if (!date) return "Not specified";
+    if (!date) return tCard("notSpecified");
     const d = new Date(date);
     return format.dateTime(d, {
       year: "numeric",
@@ -69,354 +107,530 @@ export function MilestoneOverviewTab({
         const start = new Date(milestone.createdAt).getTime();
         const end = new Date(milestone.completedAt).getTime();
         const days = Math.max(1, Math.round((end - start) / (1000 * 60 * 60 * 24)));
-        return `${days} ${days === 1 ? "day" : "days"} total`;
+        return tCard("daysTotal", { count: days });
       }
-      return "Completed";
+      return tCard("completed");
     }
 
-    if (!milestone.dueDate) return "No deadline set";
+    if (!milestone.dueDate) return tCard("noDeadline");
     const now = new Date().getTime();
     const target = new Date(milestone.dueDate).getTime();
     const diffDays = Math.ceil((target - now) / (1000 * 60 * 60 * 24));
 
-    if (diffDays < 0) {
-      return `${Math.abs(diffDays)} ${Math.abs(diffDays) === 1 ? "day" : "days"} overdue`;
+    if (diffDays < 0 || milestone.status === "LATE") {
+      const overdue = Math.abs(diffDays);
+      return tCard("daysOverdue", { count: overdue });
     }
-    if (diffDays === 0) return "Due today";
-    return `${diffDays} ${diffDays === 1 ? "day" : "days"} left`;
+    if (diffDays === 0) return tCard("dueToday");
+    return tCard("daysLeft", { count: diffDays });
   };
 
   const amountNumber = Number(milestone.amount) || 0;
+  const freelancerFee = Math.round(amountNumber * 0.05 * 100) / 100;
+  const freelancerPayout = Math.round((amountNumber - freelancerFee) * 100) / 100;
+
+  const clientName =
+    contract.client?.profile?.displayName ||
+    contract.client?.email?.split("@")[0] ||
+    t("clientRole");
+
+  const freelancerName =
+    contract.freelancer?.profile?.displayName ||
+    contract.freelancer?.email?.split("@")[0] ||
+    t("freelancerRole");
 
   return (
-    <div className="space-y-5">
-      {/* ── 1. Top Status Banner (Minimalist, subtle left border, no heavy bg) ── */}
-      {milestone.status === "DISPUTED" && (
-        <div className="rounded-sm border border-rose-200 dark:border-rose-900/60 bg-rose-50/40 dark:bg-rose-950/20 p-4 flex items-start justify-between gap-3">
-          <div className="flex items-start gap-3">
-            <Scale className="size-4 shrink-0 text-rose-600 mt-0.5" />
+    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start pt-1">
+      {/* ── Left Column: Main Deliverables & Workflow Workspace (8 Cols) ── */}
+      <div className="lg:col-span-8 space-y-5">
+        {/* ── Status Guidance Notice (Clean line, NO colored background boxes) ── */}
+        {milestone.status === "DISPUTED" && (
+          <div className="flex items-start justify-between gap-3 border-l-2 border-rose-500 pl-3 py-1 text-xs">
             <div className="space-y-0.5">
-              <h4 className="text-xs font-bold text-rose-600">
-                Milestone is under formal dispute
-              </h4>
-              <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">
-                A formal dispute claim has been filed for this milestone. Escrow funds remain frozen while Frevia dispute arbiters review evidence.
+              <span className="font-medium text-rose-600 block">
+                {t("disputedTitle")}
+              </span>
+              <p className="text-muted-foreground leading-relaxed">
+                {t("disputedDesc")}
+              </p>
+            </div>
+            {canViewDispute && onViewDispute && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={onViewDispute}
+                className="h-7 text-xs text-rose-600 shrink-0 cursor-pointer"
+              >
+                {t("viewDispute")}
+              </Button>
+            )}
+          </div>
+        )}
+
+        {milestone.status === "COMPLETED" && (
+          <div className="flex items-start gap-2.5 border-l-2 border-emerald-500 pl-3 py-1 text-xs">
+            <CheckCircle2 className="size-4 text-emerald-600 shrink-0 mt-0.5" />
+            <div className="space-y-0.5">
+              <span className="font-medium text-foreground block">
+                {t("completedTitle")}
+              </span>
+              <p className="text-muted-foreground leading-relaxed">
+                {t("completedDesc", {
+                  amount: `$${freelancerPayout.toFixed(2)}`,
+                  name: freelancerName,
+                })}
               </p>
             </div>
           </div>
-          {canViewDispute && onViewDispute && (
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={onViewDispute}
-              className="h-8 rounded-lg border-rose-200 dark:border-rose-800 bg-white dark:bg-zinc-900 text-xs text-rose-600 hover:bg-rose-50 shrink-0 cursor-pointer"
-            >
-              View Dispute Details
-            </Button>
-          )}
-        </div>
-      )}
+        )}
 
-      {milestone.status === "COMPLETED" && (
-        <div className="rounded-sm border border-zinc-200/80 dark:border-zinc-800 bg-white dark:bg-zinc-950 p-4 flex items-start gap-3">
-          <CheckCircle2 className="size-4 shrink-0 text-emerald-600 mt-0.5" />
-          <div className="space-y-0.5">
-            <h4 className="text-xs font-bold text-zinc-950 dark:text-zinc-100">
-              Milestone completed and payment released
-            </h4>
-            <p className="text-xs text-zinc-500 leading-relaxed">
-              All deliverables were approved. Gross value{" "}
-              <strong className="text-zinc-950 dark:text-zinc-100 font-mono">
-                ${amountNumber.toLocaleString("en-US", { minimumFractionDigits: 2 })} USD
-              </strong>{" "}
-              (5% Freelancer platform fee deducted; 95% net transferred to
-              freelancer via Stripe).
-            </p>
+        {milestone.status === "SUBMITTED" && (
+          <div className="flex items-start gap-2.5 border-l-2 border-[#0069D3] pl-3 py-1 text-xs">
+            <FileCheck className="size-4 text-[#0069D3] shrink-0 mt-0.5" />
+            <div className="space-y-0.5">
+              <span className="font-medium text-foreground block">
+                {t("submittedTitle")}
+              </span>
+              <p className="text-muted-foreground leading-relaxed">
+                {t("submittedDesc", {
+                  date: formatDateTime(latestSubmission?.submittedAt),
+                })}
+              </p>
+            </div>
           </div>
-        </div>
-      )}
+        )}
 
-      {milestone.status === "SUBMITTED" && (
-        <div className="rounded-sm border border-zinc-200/80 dark:border-zinc-800 bg-white dark:bg-zinc-950 p-4 flex items-start gap-3">
-          <FileText className="size-4 shrink-0 text-[#0069D3] mt-0.5" />
-          <div className="space-y-0.5">
-            <h4 className="text-xs font-bold text-[#0069D3]">
-              Work submitted and awaiting client review
-            </h4>
-            <p className="text-xs text-zinc-500 leading-relaxed">
-              Freelancer submitted deliverables on{" "}
-              {formatDateTime(latestSubmission?.submittedAt)}. Client can review the files,
-              links, and approve to release escrow. If the client does not respond within 7 days,
-              escrow funds are automatically released to the freelancer.
-            </p>
-          </div>
-        </div>
-      )}
-
-      {milestone.status === "LATE" && (
-        <div className="rounded-sm border border-rose-200 dark:border-rose-900/60 bg-rose-50/40 dark:bg-rose-950/20 p-4 flex items-start gap-3">
-          <AlertTriangle className="size-4 shrink-0 text-rose-600 mt-0.5" />
-          <div className="space-y-0.5">
-            <h4 className="text-xs font-bold text-rose-600">
-              Milestone overdue (Late)
-            </h4>
-            <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">
-              The deadline passed without a deliverable submission from the freelancer.
-              {milestone.paymentStatus === "REFUNDED"
-                ? " Escrowed funds have been automatically refunded to the client."
-                : milestone.paymentStatus === "FUNDED"
-                  ? " Funded escrow is eligible for automatic refund to the client."
+        {milestone.status === "LATE" && (
+          <div className="flex items-start justify-between gap-3 border-l-2 border-rose-500 pl-3 py-1 text-xs">
+            <div className="space-y-0.5">
+              <span className="font-medium text-rose-600 block">
+                {t("lateTitle")}
+              </span>
+              <p className="text-muted-foreground leading-relaxed">
+                {t("lateDesc")}
+                {milestone.paymentStatus === "FUNDED" && isClient
+                  ? t("lateClientExtra")
                   : ""}
-            </p>
-          </div>
-        </div>
-      )}
-
-      {milestone.status === "CHANGES_REQUESTED" && (
-        <div className="rounded-sm border border-zinc-200/80 dark:border-zinc-800 bg-white dark:bg-zinc-950 p-4 flex items-start gap-3">
-          <RotateCcw className="size-4 shrink-0 text-amber-600 mt-0.5" />
-          <div className="space-y-0.5">
-            <h4 className="text-xs font-bold text-amber-600">
-              Revisions requested by client
-            </h4>
-            <p className="text-xs text-zinc-500 leading-relaxed">
-              The client requested changes on the recent submission. Please review notes
-              below and resubmit updated deliverables.
-            </p>
-          </div>
-        </div>
-      )}
-
-      {milestone.status === "IN_PROGRESS" && (
-        <div className="rounded-sm border border-zinc-200/80 dark:border-zinc-800 bg-white dark:bg-zinc-950 p-4 flex items-start gap-3">
-          <Clock className="size-4 shrink-0 text-[#0069D3] mt-0.5" />
-          <div className="space-y-0.5">
-            <h4 className="text-xs font-bold text-[#0069D3]">
-              Work in progress
-            </h4>
-            <p className="text-xs text-zinc-500 leading-relaxed">
-              Milestone is actively in progress. Funds remain securely held in escrow.
-            </p>
-          </div>
-        </div>
-      )}
-
-      {milestone.status === "PENDING" && milestone.paymentStatus === "FUNDED" && (
-        <div className="rounded-sm border border-zinc-200/80 dark:border-zinc-800 bg-white dark:bg-zinc-950 p-4 flex items-start gap-3">
-          <ShieldCheck className="size-4 shrink-0 text-emerald-600 mt-0.5" />
-          <div className="space-y-0.5">
-            <h4 className="text-xs font-bold text-emerald-600">
-              Escrow funded and ready
-            </h4>
-            <p className="text-xs text-zinc-500 leading-relaxed">
-              Client deposited{" "}
-              <strong className="text-zinc-950 dark:text-zinc-100 font-mono">
-                ${amountNumber.toLocaleString("en-US", { minimumFractionDigits: 2 })} USD
-              </strong>{" "}
-              into escrow. The freelancer can safely start work.
-            </p>
-          </div>
-        </div>
-      )}
-
-      {milestone.status === "PENDING" && milestone.paymentStatus === "PENDING" && (
-        <div className="rounded-xl border border-zinc-200/80 dark:border-zinc-800 bg-white dark:bg-zinc-950 p-4 flex items-start gap-3">
-          <Lock className="size-4 shrink-0 text-zinc-400 mt-0.5" />
-          <div className="space-y-0.5">
-            <h4 className="text-xs font-bold text-zinc-700 dark:text-zinc-300">
-              Awaiting escrow deposit
-            </h4>
-            <p className="text-xs text-zinc-500 leading-relaxed">
-              Client should fund the milestone escrow before the freelancer begins work.
-            </p>
-          </div>
-        </div>
-      )}
-
-      {/* ── 2. Scope & Requirements Card ── */}
-      <div className="rounded-sm border border-zinc-200/80 dark:border-zinc-800/80 bg-white dark:bg-zinc-950 p-5 shadow-2xs space-y-3">
-        <div className="flex items-center justify-between border-b border-zinc-100 dark:border-zinc-800/80 pb-2.5">
-          <span className="text-xs text-zinc-400">
-            Scope & Deliverables Requirements
-          </span>
-          <div className="flex items-center gap-2">
-            {milestone.status !== "COMPLETED" &&
-              milestone.status !== "DISPUTED" &&
+              </p>
+            </div>
+            {isClient &&
               milestone.paymentStatus === "FUNDED" &&
-              canCreateDispute &&
-              onOpenDispute && (
+              canRefundPermission &&
+              onRefund && (
                 <Button
-                  variant="outline"
                   size="sm"
-                  onClick={onOpenDispute}
-                  className="h-7 text-xs border-zinc-200 dark:border-zinc-800 text-zinc-600 hover:text-rose-600 cursor-pointer"
+                  onClick={onRefund}
+                  className="h-7 text-xs font-normal text-rose-600 border border-rose-200 dark:border-rose-800 bg-transparent hover:bg-rose-50 dark:hover:bg-rose-950/20 shrink-0 cursor-pointer"
                 >
-                  <Scale className="mr-1 size-3" />
-                  Dispute Milestone
+                  <RotateCcw className="mr-1 size-3" />
+                  {tCard("refundEscrow")}
                 </Button>
               )}
-            <span className="font-mono text-xs font-semibold text-zinc-500">
-              Budget: ${amountNumber.toLocaleString("en-US", { minimumFractionDigits: 2 })}
-            </span>
           </div>
-        </div>
+        )}
 
-        <div className="text-xs sm:text-sm text-zinc-800 dark:text-zinc-200 leading-relaxed whitespace-pre-wrap">
-          {milestone.description || (
-            <span className="text-zinc-400 italic">
-              No specific description provided. Execution follows contract agreement terms.
-            </span>
-          )}
+        {milestone.status === "CHANGES_REQUESTED" && (
+          <div className="flex items-start gap-2.5 border-l-2 border-amber-500 pl-3 py-1 text-xs">
+            <RotateCcw className="size-4 text-amber-600 shrink-0 mt-0.5" />
+            <div className="space-y-0.5">
+              <span className="font-medium text-amber-600 block">
+                {t("changesTitle")}
+              </span>
+              <p className="text-muted-foreground leading-relaxed">
+                {t("changesDesc")}
+              </p>
+            </div>
+          </div>
+        )}
+
+        {milestone.status === "IN_PROGRESS" && (
+          <div className="flex items-start justify-between gap-3 border-l-2 border-border pl-3 py-1 text-xs">
+            <div className="space-y-0.5">
+              <span className="font-medium text-foreground block">
+                {t("inProgressTitle")}
+              </span>
+              <p className="text-muted-foreground leading-relaxed">
+                {t("inProgressDesc", { amount: `$${amountNumber.toFixed(2)}` })}
+              </p>
+            </div>
+            {isFreelancer && canSubmitWorkPermission && onSubmitWork && (
+              <Button
+                size="sm"
+                onClick={onSubmitWork}
+                className="h-7 rounded-full bg-[#0069D3] hover:bg-[#0055b3] text-white text-xs font-normal px-3 shrink-0 cursor-pointer"
+              >
+                <Upload className="mr-1 size-3" />
+                {tCard("deliverWork")}
+              </Button>
+            )}
+          </div>
+        )}
+
+        {milestone.status === "PENDING" && milestone.paymentStatus === "FUNDED" && (
+          <div className="flex items-start justify-between gap-3 border-l-2 border-emerald-500 pl-3 py-1 text-xs">
+            <div className="space-y-0.5">
+              <span className="font-medium text-emerald-600 block">
+                {isFreelancer && startWorkBlockedReason
+                  ? t("lockedTitle")
+                  : t("readyTitle")}
+              </span>
+              <p className="text-muted-foreground leading-relaxed">
+                {isFreelancer && startWorkBlockedReason
+                  ? t("lockedDesc", { reason: startWorkBlockedReason })
+                  : t("readyDesc", { amount: `$${amountNumber.toFixed(2)}` })}
+              </p>
+            </div>
+            {isFreelancer && canStartWorkPermission && onStartWork && (
+              <Button
+                size="sm"
+                disabled={Boolean(startWorkBlockedReason)}
+                title={startWorkBlockedReason ?? undefined}
+                onClick={onStartWork}
+                className="h-7 rounded-full bg-[#0069D3] hover:bg-[#0055b3] text-white text-xs font-normal px-3 shrink-0 cursor-pointer disabled:opacity-50"
+              >
+                {startWorkBlockedReason ? (
+                  <Lock className="mr-1 size-3" />
+                ) : (
+                  <Play className="mr-1 size-3" />
+                )}
+                {tCard("startWork")}
+              </Button>
+            )}
+          </div>
+        )}
+
+        {milestone.status === "PENDING" && milestone.paymentStatus === "PENDING" && (
+          <div className="flex items-start justify-between gap-3 border-l-2 border-border pl-3 py-1 text-xs">
+            <div className="space-y-0.5">
+              <span className="font-medium text-foreground block">
+                {t("awaitingTitle")}
+              </span>
+              <p className="text-muted-foreground leading-relaxed">
+                {t("awaitingDesc")}
+              </p>
+            </div>
+            {isClient && canFundPermission && onFund && (
+              <Button
+                size="sm"
+                onClick={onFund}
+                className="h-7 rounded-full bg-[#0069D3] hover:bg-[#0055b3] text-white text-xs font-normal px-3 shrink-0 cursor-pointer"
+              >
+                <CreditCard className="mr-1 size-3" />
+                {tCard("fundEscrow")}
+              </Button>
+            )}
+          </div>
+        )}
+
+        {/* ── Deliverables Section ── */}
+        {latestSubmission ? (
+          <div className="space-y-3 pt-2">
+            <div className="flex items-center justify-between pb-1.5 border-b border-border/40">
+              <h3 className="text-xs font-semibold text-foreground">
+                {t("latestDeliverable")}
+              </h3>
+              <span className="text-[11px] text-muted-foreground font-mono">
+                {formatDateTime(latestSubmission.submittedAt)}
+              </span>
+            </div>
+
+            {/* Freelancer message */}
+            {latestSubmission.message && (
+              <div className="space-y-1">
+                <span className="text-xs text-muted-foreground">
+                  {t("notesFrom", { name: freelancerName })}
+                </span>
+                <p className="text-xs text-foreground leading-relaxed whitespace-pre-wrap pl-3 border-l-2 border-border/60 py-0.5">
+                  {latestSubmission.message}
+                </p>
+              </div>
+            )}
+
+            {/* Attached Deliverable Files */}
+            {latestSubmission.files && latestSubmission.files.length > 0 && (
+              <div className="space-y-1.5">
+                <span className="text-xs text-muted-foreground">
+                  {t("deliverableFiles")}
+                </span>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  {latestSubmission.files.map((item) => (
+                    <div
+                      key={item.fileId}
+                      className="flex items-center justify-between gap-2 p-2 rounded-md border border-border/50 bg-transparent hover:bg-muted/10 transition-colors"
+                    >
+                      <div className="flex items-center gap-2 min-w-0">
+                        <FileText className="size-3.5 text-[#0069D3] shrink-0" />
+                        <span className="text-xs font-normal text-foreground truncate max-w-[180px]">
+                          {item.file?.fileName ||
+                            t("deliverableFileFallback", { id: item.fileId })}
+                        </span>
+                      </div>
+                      {item.file?.fileUrl && (
+                        <a
+                          href={item.file.fileUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          download
+                          className="p-1 text-muted-foreground hover:text-foreground transition-colors shrink-0"
+                          title={t("downloadFile")}
+                        >
+                          <Download className="size-3.5" />
+                        </a>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* External Links */}
+            {latestSubmission.links && latestSubmission.links.length > 0 && (
+              <div className="space-y-1">
+                <span className="text-xs text-muted-foreground">
+                  {t("projectLinks")}
+                </span>
+                <div className="flex flex-wrap gap-2">
+                  {latestSubmission.links.map((link, idx) => (
+                    <a
+                      key={idx}
+                      href={link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1.5 rounded-md border border-border/60 px-2.5 py-1 text-xs text-[#0069D3] hover:underline"
+                    >
+                      <ExternalLink className="size-3" />
+                      <span className="truncate max-w-[240px]">{link}</span>
+                    </a>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Client Revision Feedback note if revision requested */}
+            {latestSubmission.changeRequestMessage && (
+              <div className="border-l-2 border-amber-500 pl-3 py-1 text-xs space-y-1">
+                <span className="font-medium text-amber-600 block">
+                  {t("revisionsRequestedBy", { name: clientName })}
+                </span>
+                <p className="text-foreground leading-relaxed whitespace-pre-wrap">
+                  {latestSubmission.changeRequestMessage}
+                </p>
+                {latestSubmission.changeRequestDueDate && (
+                  <span className="block text-[11px] text-muted-foreground">
+                    {t("targetRevisionDate", {
+                      date: formatDate(latestSubmission.changeRequestDueDate),
+                    })}
+                  </span>
+                )}
+              </div>
+            )}
+
+            {/* Direct Contextual Actions Bar */}
+            <div className="flex flex-wrap items-center gap-2.5 pt-2">
+              {isClient && milestone.status === "SUBMITTED" && canReviewPermission && onReviewSubmission && (
+                <Button
+                  size="sm"
+                  onClick={() => onReviewSubmission(latestSubmission)}
+                  className="h-8 rounded-full bg-[#0069D3] hover:bg-[#0055b3] text-white text-xs font-normal px-4 cursor-pointer"
+                >
+                  <Check className="mr-1.5 size-3.5" />
+                  {t("reviewApproveDelivery")}
+                </Button>
+              )}
+
+              {isFreelancer &&
+                milestone.status === "CHANGES_REQUESTED" &&
+                canSubmitWorkPermission &&
+                onSubmitWork && (
+                  <Button
+                    size="sm"
+                    onClick={onSubmitWork}
+                    className="h-8 rounded-full bg-amber-600 hover:bg-amber-700 text-white text-xs font-normal px-4 cursor-pointer"
+                  >
+                    <RotateCcw className="mr-1.5 size-3.5" />
+                    {t("resubmitUpdatedWork")}
+                  </Button>
+                )}
+
+              {isClient &&
+                milestone.status === "COMPLETED" &&
+                milestone.paymentStatus === "FUNDED" &&
+                canReleasePermission &&
+                onRelease && (
+                  <Button
+                    size="sm"
+                    onClick={onRelease}
+                    className="h-8 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-normal px-4 cursor-pointer"
+                  >
+                    <Check className="mr-1.5 size-3.5" />
+                    {tCard("releasePayment")}
+                  </Button>
+                )}
+            </div>
+          </div>
+        ) : (
+          /* Empty Deliverables State */
+          <div className="py-6 text-center space-y-1.5 border-b border-border/40">
+            <Clock className="size-5 mx-auto text-muted-foreground/60" />
+            <h4 className="text-xs font-medium text-foreground">
+              {t("noDeliverablesTitle")}
+            </h4>
+            <p className="text-xs text-muted-foreground max-w-sm mx-auto">
+              {isFreelancer
+                ? t("noDeliverablesFreelancer")
+                : t("noDeliverablesClient")}
+            </p>
+            {isFreelancer &&
+              (milestone.status === "IN_PROGRESS" || milestone.status === "LATE") &&
+              canSubmitWorkPermission &&
+              onSubmitWork && (
+                <Button
+                  size="sm"
+                  onClick={onSubmitWork}
+                  className="rounded-full bg-[#0069D3] hover:bg-[#0055b3] text-white text-xs font-normal px-3.5 mt-2 cursor-pointer"
+                >
+                  <Upload className="mr-1.5 size-3.5" />
+                  {t("deliverWorkNow")}
+                </Button>
+              )}
+          </div>
+        )}
+
+        {/* ── Scope & Requirements ── */}
+        <div className="space-y-2 pt-3 border-t border-border/40">
+          <h3 className="text-xs font-semibold text-foreground">
+            {t("scopeTitle")}
+          </h3>
+          <div className="text-xs text-foreground/80 leading-relaxed whitespace-pre-wrap">
+            {milestone.description || (
+              <span className="text-muted-foreground italic">
+                {t("noScope")}
+              </span>
+            )}
+          </div>
         </div>
       </div>
 
-      {/* ── 3. Latest Submission / Deliverables Card ── */}
-      {latestSubmission && (
-        <div className="rounded-sm border border-zinc-200/80 dark:border-zinc-800/80 bg-white dark:bg-zinc-950 p-5 shadow-2xs space-y-4">
-          <div className="flex items-center justify-between border-b border-zinc-100 dark:border-zinc-800/80 pb-2.5">
-            <span className="text-xs font-bold uppercase tracking-wider text-zinc-400">
-              Latest Deliverables Submission
-            </span>
-            <span className="text-xs text-zinc-400">
-              Submitted {formatDateTime(latestSubmission.submittedAt)}
-            </span>
+      {/* ── Right Column: Milestone Summary & Counterparty (4 Cols) ── */}
+      <div className="lg:col-span-4 space-y-5 lg:pl-5 lg:border-l lg:border-border/40">
+        {/* Financial Summary */}
+        <div className="space-y-2.5">
+          <span className="text-xs font-medium text-muted-foreground">
+            {t("financialsTitle")}
+          </span>
+          <div className="space-y-1.5 text-xs">
+            <div className="flex items-center justify-between">
+              <span className="text-muted-foreground">{t("budget")}</span>
+              <span className="font-mono font-medium text-foreground">
+                ${amountNumber.toLocaleString("en-US", { minimumFractionDigits: 2 })}
+              </span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-muted-foreground">{t("freelancerFee")}</span>
+              <span className="font-mono text-muted-foreground">
+                -${freelancerFee.toFixed(2)}
+              </span>
+            </div>
+            <div className="flex items-center justify-between pt-1 border-t border-border/30">
+              <span className="text-foreground">{t("freelancerNet")}</span>
+              <span className="font-mono font-medium text-emerald-600 dark:text-emerald-400">
+                ${freelancerPayout.toFixed(2)}
+              </span>
+            </div>
           </div>
+        </div>
 
-          {/* Submission Note */}
-          {latestSubmission.message && (
-            <div className="space-y-1">
-              <span className="text-xs font-semibold text-zinc-400">
-                Freelancer Notes:
+        {/* Schedule & Timeline Summary */}
+        <div className="space-y-2.5 pt-3 border-t border-border/40">
+          <span className="text-xs font-medium text-muted-foreground">
+            {t("timelineTitle")}
+          </span>
+          <div className="space-y-1.5 text-xs">
+            <div className="flex items-center justify-between">
+              <span className="text-muted-foreground">{t("targetDeadline")}</span>
+              <span className="font-mono text-foreground">
+                {formatDate(milestone.dueDate)}
               </span>
-              <p className="p-3 rounded-lg border border-zinc-200/60 dark:border-zinc-800/60 bg-zinc-50/50 dark:bg-zinc-900/30 text-xs sm:text-sm text-zinc-900 dark:text-zinc-100 leading-relaxed whitespace-pre-wrap">
-                {latestSubmission.message}
-              </p>
             </div>
-          )}
-
-          {/* Links */}
-          {latestSubmission.links && latestSubmission.links.length > 0 && (
-            <div className="space-y-1.5">
-              <span className="text-xs font-semibold text-zinc-400 block">
-                Deliverable Links:
+            <div className="flex items-center justify-between">
+              <span className="text-muted-foreground">{t("timeStatus")}</span>
+              <span className="text-foreground">
+                {getDurationOrDaysRemaining()}
               </span>
-              <div className="flex flex-wrap gap-2">
-                {latestSubmission.links.map((link, idx) => (
-                  <a
-                    key={idx}
-                    href={link}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1.5 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-3 py-1.5 text-xs text-[#0069D3] hover:underline"
-                  >
-                    <ExternalLink className="size-3" />
-                    <span className="truncate max-w-[280px]">{link}</span>
-                  </a>
-                ))}
-              </div>
             </div>
-          )}
-
-          {/* Files */}
-          {latestSubmission.files && latestSubmission.files.length > 0 && (
-            <div className="space-y-1.5">
-              <span className="text-xs font-semibold text-zinc-400 block">
-                Attached Files:
+            <div className="flex items-center justify-between">
+              <span className="text-muted-foreground">{t("created")}</span>
+              <span className="text-muted-foreground">
+                {formatDate(milestone.createdAt)}
               </span>
-              <div className="flex flex-wrap gap-2">
-                {latestSubmission.files.map((item) => (
-                  <div
-                    key={item.fileId}
-                    className="inline-flex items-center gap-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-3 py-1.5 text-xs text-zinc-800 dark:text-zinc-200"
-                  >
-                    <FileText className="size-3.5 text-zinc-400" />
-                    <span className="truncate max-w-[220px]">
-                      {item.file?.fileName || `Deliverable File #${item.fileId}`}
-                    </span>
-                    {item.file?.fileUrl && (
-                      <a
-                        href={item.file.fileUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        download
-                        className="text-[#0069D3] hover:underline ml-1"
-                        title="Download"
-                      >
-                        <Download className="size-3.5" />
-                      </a>
-                    )}
-                  </div>
-                ))}
-              </div>
             </div>
-          )}
-
-          {/* Client Feedback / Revision Request */}
-          {latestSubmission.changeRequestMessage && (
-            <div className="rounded-lg border border-amber-200 dark:border-amber-900/60 p-3.5 text-xs space-y-1 bg-amber-50/30 dark:bg-amber-950/20">
-              <span className="font-bold uppercase tracking-wider text-amber-700 dark:text-amber-400 block text-[11px]">
-                Revisions Requested by Client:
-              </span>
-              <p className="text-zinc-800 dark:text-zinc-200 leading-relaxed whitespace-pre-wrap">
-                {latestSubmission.changeRequestMessage}
-              </p>
-              {latestSubmission.changeRequestDueDate && (
-                <span className="block pt-1 text-[11px] text-amber-600 dark:text-amber-400">
-                  Target revision deadline:{" "}
-                  {formatDate(latestSubmission.changeRequestDueDate)}
+            {milestone.completedAt && (
+              <div className="flex items-center justify-between">
+                <span className="text-muted-foreground">
+                  {t("completedLabel")}
                 </span>
-              )}
+                <span className="text-emerald-600 dark:text-emerald-400">
+                  {formatDate(milestone.completedAt)}
+                </span>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Participants (Client & Freelancer) */}
+        <div className="space-y-2.5 pt-3 border-t border-border/40">
+          <span className="text-xs font-medium text-muted-foreground">
+            {t("participantsTitle")}
+          </span>
+          <div className="space-y-2 text-xs">
+            <div className="flex items-center gap-2">
+              <div className="flex size-6 items-center justify-center rounded-full border border-border text-muted-foreground">
+                <User className="size-3" />
+              </div>
+              <div className="min-w-0 flex-1">
+                <span className="text-foreground truncate block">
+                  {clientName}
+                </span>
+                <span className="text-[10px] text-muted-foreground block">
+                  {t("clientRole")}
+                </span>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <div className="flex size-6 items-center justify-center rounded-full border border-border text-muted-foreground">
+                <User className="size-3" />
+              </div>
+              <div className="min-w-0 flex-1">
+                <span className="text-foreground truncate block">
+                  {freelancerName}
+                </span>
+                <span className="text-[10px] text-muted-foreground block">
+                  {t("freelancerRole")}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Dispute Action (if eligible) */}
+        {milestone.status !== "COMPLETED" &&
+          milestone.status !== "DISPUTED" &&
+          milestone.paymentStatus === "FUNDED" &&
+          canCreateDispute &&
+          onOpenDispute && (
+            <div className="pt-3 border-t border-border/40">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={onOpenDispute}
+                className="w-full justify-start text-xs text-muted-foreground hover:text-rose-600 px-0 h-auto cursor-pointer"
+              >
+                <Scale className="mr-1.5 size-3.5" />
+                {t("openDisputeCta")}
+              </Button>
             </div>
           )}
-        </div>
-      )}
-
-      {/* ── 4. Three-Column Metrics Row (Clean white/gray) ── */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-        {/* Metric 1 */}
-        <div className="rounded-sm border border-zinc-200/80 dark:border-zinc-800/80 bg-white dark:bg-zinc-950 p-4 space-y-1">
-          <span className="text-[11px] font-bold uppercase tracking-wider text-zinc-400 block">
-            {milestone.status === "COMPLETED" ? "Elapsed Time" : "Time to Deadline"}
-          </span>
-          <p className="font-mono text-sm sm:text-2xl font-extrabold text-zinc-950 dark:text-zinc-50">
-            {getDurationOrDaysRemaining()}
-          </p>
-          <span className="text-[11px] text-zinc-400 block">
-            {milestone.status === "COMPLETED"
-              ? "Completed successfully"
-              : "Track against contract schedule"}
-          </span>
-        </div>
-
-        {/* Metric 2 */}
-        <div className="rounded-sm border border-zinc-200/80 dark:border-zinc-800/80 bg-white dark:bg-zinc-950 p-4 space-y-1">
-          <span className="text-[11px] font-bold uppercase tracking-wider text-zinc-400 block">
-            Escrow Protection
-          </span>
-          <p className="font-mono text-sm sm:text-2xl font-extrabold text-zinc-950 dark:text-zinc-50">
-            ${amountNumber.toLocaleString("en-US", { minimumFractionDigits: 2 })}
-          </p>
-          <span className="text-[11px] text-zinc-400 block">
-            {milestone.paymentStatus === "RELEASED"
-              ? "Released to freelancer"
-              : milestone.paymentStatus === "FUNDED"
-                ? "Locked & guaranteed in escrow"
-                : "Awaiting client deposit"}
-          </span>
-        </div>
-
-        {/* Metric 3 */}
-        <div className="rounded-sm border border-zinc-200/80 dark:border-zinc-800/80 bg-white dark:bg-zinc-950 p-4 space-y-1">
-          <span className="text-[11px] font-bold uppercase tracking-wider text-zinc-400 block">
-            Target Due Date
-          </span>
-          <p className="font-mono text-sm sm:text-2xl font-extrabold text-zinc-950 dark:text-zinc-50">
-            {formatDate(milestone.dueDate)}
-          </p>
-          <span className="text-[11px] text-zinc-400 block">
-            {milestone.status === "COMPLETED" ? "Milestone fulfilled" : "Expected milestone delivery"}
-          </span>
-        </div>
       </div>
     </div>
   );

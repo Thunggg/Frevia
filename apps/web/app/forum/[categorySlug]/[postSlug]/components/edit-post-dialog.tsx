@@ -52,10 +52,6 @@ export function EditPostDialog({
 
   const isSubmitting = updatePost.isPending;
 
-  if (!canEditPost) {
-    return null;
-  }
-
   // Khi mở dialog, reset về giá trị ban đầu
   const handleOpen = useCallback(
     (isOpen: boolean) => {
@@ -86,6 +82,10 @@ export function EditPostDialog({
     );
   }, [postId, title, content, isSubmitting, updatePost, onUpdated]);
 
+  if (!canEditPost) {
+    return null;
+  }
+
   return (
     <Dialog open={open} onOpenChange={handleOpen}>
       <DialogTrigger asChild>
@@ -94,7 +94,7 @@ export function EditPostDialog({
           size="xs"
           className="gap-1 text-muted-foreground hover:text-foreground"
         >
-          <Pencil className="h-3.5 w-3.5" />
+          <Pencil className="size-3.5" />
           {t("edit")}
         </Button>
       </DialogTrigger>
@@ -138,9 +138,9 @@ export function EditPostDialog({
             disabled={!title.trim() || !content.trim() || isSubmitting}
           >
             {isSubmitting ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
+              <Loader2 className="size-4 animate-spin" />
             ) : (
-              <Pencil className="h-4 w-4" />
+              <Pencil className="size-4" />
             )}
             {t("saveChanges")}
           </Button>

@@ -134,7 +134,8 @@ export function AiOpsContent() {
                 <div className="flex items-center gap-2 rounded-md bg-muted/60 p-3 text-sm">
                   <CheckCircle2 className="size-4 text-green-600 dark:text-green-400 shrink-0" />
                   <span>
-                    Indexed: <strong>{reindexResult.indexed}</strong> items
+                    {t("indexedItemsLabel")} <strong>{reindexResult.indexed}</strong>{" "}
+                    {t("itemsUnit")}
                   </span>
                 </div>
               </CardContent>
@@ -149,7 +150,7 @@ export function AiOpsContent() {
               </div>
             ) : (
               <span className="text-xs text-muted-foreground">
-                Khuyến nghị: Chạy khi cập nhật hệ số hoặc nạp lại embeddings
+                {t("reindexHint")}
               </span>
             )}
             <Button
@@ -188,12 +189,16 @@ export function AiOpsContent() {
                 <div className="flex items-center gap-3 rounded-md bg-muted/60 p-3 text-sm">
                   <div className="flex items-center gap-1.5 text-green-600 dark:text-green-400">
                     <CheckCircle2 className="size-4 shrink-0" />
-                    <span>Processed: {outboxResult.processed}</span>
+                    <span>
+                      {t("processedLabel")} {outboxResult.processed}
+                    </span>
                   </div>
                   {outboxResult.failed > 0 && (
                     <div className="flex items-center gap-1.5 text-destructive">
                       <AlertTriangle className="size-4 shrink-0" />
-                      <span>Failed: {outboxResult.failed}</span>
+                      <span>
+                        {t("failedLabel")} {outboxResult.failed}
+                      </span>
                     </div>
                   )}
                 </div>
@@ -209,7 +214,7 @@ export function AiOpsContent() {
               </div>
             ) : (
               <span className="text-xs text-muted-foreground">
-                Đồng bộ sự kiện việc làm & hồ sơ chưa được cập nhật vào vector store
+                {t("outboxHint")}
               </span>
             )}
             <Button

@@ -1,25 +1,17 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
-  Check,
-  ChevronDown,
   ChevronLeft,
   Clock,
-  Filter,
   Plus,
   Search,
 } from "lucide-react";
 import { Button } from "@repo/ui/components/shadcn/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@repo/ui/components/shadcn/dropdown-menu";
 import { toastError, toastSuccess } from "@repo/ui/components/shadcn/toast";
 import { contractApiRequest, extractContractData } from "@/apiRequests/contract";
 import { paymentApiRequest } from "@/apiRequests/payment";
@@ -38,20 +30,30 @@ import {
 import { MilestoneCard } from "./milestone-card";
 import { SubmitMilestoneDialog } from "./submit-milestone-dialog";
 import { ReviewSubmissionDialog } from "./review-submission-dialog";
-import { FundMilestoneDialog } from "./fund-milestone-dialog";
+import { ContractChatPopup } from "../../_components/contract-chat-popup";
+import { useCreateConversation } from "@/hooks/use-conversation";
+import { OpenResolutionDialog } from "@/components/disputes/open-resolution-dialog";
+import { ResolutionDetailSheet } from "@/components/disputes/resolution-detail-sheet";
 
 export interface MilestonesPageContentProps {
   initialContract: ContractDetailType;
   initialSharedFiles?: SharedFileType[] | null;
   basePath?: string;
+  currentUserId?: number | null;
+  accessToken?: string | null;
+  socketUrl?: string;
 }
 
 export function MilestonesPageContent({
   initialContract,
   basePath = "/client",
+  currentUserId,
+  accessToken,
+  socketUrl,
 }: MilestonesPageContentProps) {
   const router = useRouter();
   const queryClient = useQueryClient();
+  const t = useTranslations("milestoneWorkspace");
   const { can } = useActionPermission();
   const isFreelancer = basePath === "/freelancer";
   const isClient = !isFreelancer;
@@ -78,9 +80,13 @@ export function MilestonesPageContent({
     submission: GetSubmissionResponseType;
   } | null>(null);
 
-  const [fundModalOpen, setFundModalOpen] = useState(false);
-  const [milestoneToFund, setMilestoneToFund] =
+  const [disputeTargetMilestone, setDisputeTargetMilestone] =
     useState<MilestoneType | null>(null);
+  const [viewDisputeMilestoneId, setViewDisputeMilestoneId] = useState<
+    number | null
+  >(null);
+
+  const searchParams = useSearchParams();
 
   // Contract Query
   const { data: contract } = useQuery<ContractDetailType>({
@@ -92,6 +98,47 @@ export function MilestonesPageContent({
     initialData: initialContract,
   });
 
+  // Sync Stripe Checkout session on return
+  useEffect(() => {
+    const paymentStatus = searchParams.get("payment");
+    const sessionId = searchParams.get("session_id");
+
+    if (paymentStatus === "success" && sessionId) {
+      const sync = async () => {
+        try {
+          await paymentApiRequest.syncCheckoutSession(sessionId);
+          toastSuccess({
+            message: t("toasts.escrowFunded"),
+          });
+        } catch {
+          // Handled or processed via webhook
+        } finally {
+          await Promise.all([
+            queryClient.invalidateQueries({
+              queryKey: ["client-contract-milestones", contract.id],
+            }),
+            queryClient.invalidateQueries({
+              queryKey: ["client-contract-detail", contract.id],
+            }),
+            queryClient.invalidateQueries({ queryKey: ["client-transactions"] }),
+            queryClient.invalidateQueries({
+              queryKey: ["freelancer-transactions"],
+            }),
+            queryClient.invalidateQueries({ queryKey: ["transactions-summary"] }),
+            queryClient.invalidateQueries({ queryKey: ["transactions"] }),
+          ]);
+          window.history.replaceState({}, "", window.location.pathname);
+        }
+      };
+      void sync();
+    } else if (paymentStatus === "cancelled") {
+      toastError({
+        message: t("toasts.checkoutCancelled"),
+      });
+      window.history.replaceState({}, "", window.location.pathname);
+    }
+  }, [searchParams, contract.id, queryClient, t]);
+
   const canManageMilestones =
     isClient &&
     (contract.status === "PENDING_SIGN" ||
@@ -101,7 +148,6 @@ export function MilestonesPageContent({
     return (contract.milestones || []) as MilestoneType[];
   }, [contract.milestones]);
 
-  // Financial metrics (clean numbers)
   const totalAmount = Number(contract.totalAmount) || 0;
 
   const currentAllocatedAmount = useMemo(() => {
@@ -109,7 +155,14 @@ export function MilestonesPageContent({
   }, [milestones]);
 
   const hasInProgressMilestone = useMemo(() => {
-    return milestones.some((m) => m.status === "IN_PROGRESS");
+    return milestones.some(
+      (m) =>
+        m.status === "IN_PROGRESS" ||
+        m.status === "SUBMITTED" ||
+        m.status === "CHANGES_REQUESTED" ||
+        m.status === "LATE" ||
+        m.status === "DISPUTED",
+    );
   }, [milestones]);
 
   // Filtered Milestones with search & status
@@ -142,6 +195,13 @@ export function MilestonesPageContent({
     return list;
   }, [milestones, statusFilter, searchQuery]);
 
+  const counterparty = isFreelancer ? contract.client : contract.freelancer;
+  const counterpartyId = isFreelancer
+    ? contract.clientId
+    : contract.freelancerId;
+  const counterpartyName = counterparty?.profile?.displayName || "Counterpart";
+  const counterpartyAvatarUrl = counterparty?.profile?.avatarUrl;
+
   // Milestone Actions
   const handleStartWork = async (milestone: MilestoneType) => {
     try {
@@ -153,14 +213,14 @@ export function MilestonesPageContent({
         queryKey: ["client-contract-milestones", contract.id],
       });
       toastSuccess({
-        message: `Started work on milestone "${milestone.title}"!`,
+        message: t("toasts.startedWork", { title: milestone.title }),
       });
     } catch (error) {
       toastError({
         message:
           error instanceof ApiFail
             ? error.response.error.message
-            : "Failed to start milestone.",
+            : t("toasts.startFailed"),
       });
     }
   };
@@ -168,24 +228,49 @@ export function MilestonesPageContent({
   const handleReleaseMilestone = async (milestone: MilestoneType) => {
     try {
       await paymentApiRequest.releaseMilestone(contract.id, milestone.id);
-      await queryClient.invalidateQueries({
-        queryKey: ["client-contract-detail", contract.id],
-      });
-      await queryClient.invalidateQueries({
-        queryKey: ["client-contract-milestones", contract.id],
-      });
-      await queryClient.invalidateQueries({
-        queryKey: ["client-transactions"],
-      });
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: ["client-contract-detail", contract.id],
+        }),
+        queryClient.invalidateQueries({
+          queryKey: ["client-contract-milestones", contract.id],
+        }),
+        queryClient.invalidateQueries({ queryKey: ["contracts-list"] }),
+        queryClient.invalidateQueries({ queryKey: ["client-transactions"] }),
+        queryClient.invalidateQueries({ queryKey: ["freelancer-transactions"] }),
+        queryClient.invalidateQueries({ queryKey: ["transactions-summary"] }),
+        queryClient.invalidateQueries({ queryKey: ["transactions"] }),
+      ]);
       toastSuccess({
-        message: `Payout transferred via Stripe for milestone "${milestone.title}" (5% freelancer fee deducted).`,
+        message: t("toasts.releasedPayout", { title: milestone.title }),
       });
     } catch (error) {
       toastError({
         message:
           error instanceof ApiFail
             ? error.response.error.message
-            : "Failed to release milestone payout.",
+            : t("toasts.releaseFailed"),
+      });
+    }
+  };
+
+  const handleFundMilestone = async (target: MilestoneType) => {
+    try {
+      const returnUrl = window.location.href.split("?")[0];
+      const res = await paymentApiRequest.createMilestoneFundCheckoutSession(
+        contract.id,
+        target.id,
+        { returnUrl },
+      );
+      if (res.data?.checkoutUrl) {
+        window.location.href = res.data.checkoutUrl;
+      }
+    } catch (error) {
+      toastError({
+        message:
+          error instanceof ApiFail
+            ? error.response.error.message
+            : t("toasts.checkoutInitFailed"),
       });
     }
   };
@@ -193,40 +278,45 @@ export function MilestonesPageContent({
   const handleRefundMilestone = async (milestone: MilestoneType) => {
     if (
       !window.confirm(
-        `Request automatic refund of $${Number(milestone.amount).toLocaleString("en-US", { minimumFractionDigits: 2 })} for "${milestone.title}" to your original payment card?`,
+        t("toasts.refundConfirm", {
+          amount: `$${Number(milestone.amount).toLocaleString("en-US", { minimumFractionDigits: 2 })}`,
+          title: milestone.title,
+        }),
       )
     ) {
       return;
     }
     try {
       await paymentApiRequest.refundMilestone(contract.id, milestone.id);
-      await queryClient.invalidateQueries({
-        queryKey: ["client-contract-detail", contract.id],
-      });
-      await queryClient.invalidateQueries({
-        queryKey: ["client-contract-milestones", contract.id],
-      });
-      await queryClient.invalidateQueries({
-        queryKey: ["client-transactions"],
-      });
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: ["client-contract-detail", contract.id],
+        }),
+        queryClient.invalidateQueries({
+          queryKey: ["client-contract-milestones", contract.id],
+        }),
+        queryClient.invalidateQueries({ queryKey: ["contracts-list"] }),
+        queryClient.invalidateQueries({ queryKey: ["client-transactions"] }),
+        queryClient.invalidateQueries({ queryKey: ["freelancer-transactions"] }),
+        queryClient.invalidateQueries({ queryKey: ["transactions-summary"] }),
+        queryClient.invalidateQueries({ queryKey: ["transactions"] }),
+      ]);
       toastSuccess({
-        message: `Escrow funds refunded to your card for milestone "${milestone.title}".`,
+        message: t("toasts.refunded", { title: milestone.title }),
       });
     } catch (error) {
       toastError({
         message:
           error instanceof ApiFail
             ? error.response.error.message
-            : "Failed to refund milestone escrow.",
+            : t("toasts.refundFailed"),
       });
     }
   };
 
   const handleDeleteMilestone = async (milestone: MilestoneType) => {
     if (
-      !window.confirm(
-        `Are you sure you want to delete milestone "${milestone.title}"?`,
-      )
+      !window.confirm(t("toasts.deleteConfirm", { title: milestone.title }))
     ) {
       return;
     }
@@ -238,14 +328,37 @@ export function MilestonesPageContent({
       await queryClient.invalidateQueries({
         queryKey: ["client-contract-milestones", contract.id],
       });
-      toastSuccess({ message: `Milestone "${milestone.title}" removed.` });
+      toastSuccess({ message: t("toasts.deleted", { title: milestone.title }) });
     } catch (error) {
       toastError({
         message:
           error instanceof ApiFail
             ? error.response.error.message
-            : "Failed to delete milestone.",
+            : t("toasts.deleteFailed"),
       });
+    }
+  };
+
+  const [chatOpen, setChatOpen] = useState(false);
+  const [chatConversationId, setChatConversationId] = useState<number | null>(
+    null,
+  );
+  const [isStartingChat, setIsStartingChat] = useState(false);
+  const createConversation = useCreateConversation();
+
+  const openChatWith = async (targetUserId: number | null | undefined) => {
+    if (!targetUserId) return;
+    setIsStartingChat(true);
+    try {
+      const conv = await createConversation.mutateAsync(targetUserId);
+      if (conv?.id) {
+        setChatConversationId(conv.id);
+        setChatOpen(true);
+      }
+    } catch {
+      toastError({ message: t("toasts.chatFailed") });
+    } finally {
+      setIsStartingChat(false);
     }
   };
 
@@ -254,220 +367,180 @@ export function MilestonesPageContent({
       ? `#${contract.slug}`
       : `#CON-${contract.id}`;
 
-  const filterOptions = [
-    { key: "ALL", label: "All Milestone Status" },
-    { key: "IN_PROGRESS", label: "In Progress" },
-    { key: "SUBMITTED", label: "Ready for Review" },
-    { key: "LATE", label: "Late / Overdue" },
-    { key: "PENDING_ESCROW", label: "Pending Escrow" },
-    { key: "COMPLETED", label: "Completed" },
+  // Filter tabs (No loud backgrounds, subtle text tabs)
+  const filterTabs = [
+    { key: "ALL", label: t("tabs.all"), count: milestones.length },
+    {
+      key: "IN_PROGRESS",
+      label: t("tabs.inProgress"),
+      count: milestones.filter((m) => m.status === "IN_PROGRESS").length,
+    },
+    {
+      key: "SUBMITTED",
+      label: t("tabs.delivered"),
+      count: milestones.filter(
+        (m) => m.status === "SUBMITTED" || m.status === "CHANGES_REQUESTED",
+      ).length,
+    },
+    {
+      key: "COMPLETED",
+      label: t("tabs.completed"),
+      count: milestones.filter((m) => m.status === "COMPLETED").length,
+    },
+    {
+      key: "PENDING_ESCROW",
+      label: t("tabs.awaitingEscrow"),
+      count: milestones.filter((m) => m.paymentStatus === "PENDING").length,
+    },
+    {
+      key: "LATE",
+      label: t("tabs.overdue"),
+      count: milestones.filter((m) => m.status === "LATE").length,
+    },
   ];
 
-  const currentFilterLabel =
-    filterOptions.find((f) => f.key === statusFilter)?.label || "All Status";
-
   return (
-    <div className="space-y-6 font-sans max-w-7xl mx-auto">
-      {/* ── Breadcrumb & Top Bar ── */}
-      <div className="flex items-center gap-2 border-b border-border/60 pb-3 text-xs">
-        <Link
-          href={`${basePath}/contracts`}
-          className="inline-flex items-center gap-1 font-medium text-muted-foreground hover:text-foreground transition-colors"
-        >
-          <ChevronLeft className="size-4" />
-          <span>Contracts</span>
-        </Link>
-        <span className="text-muted-foreground/60">/</span>
-        <Link
-          href={`${basePath}/contracts/${encodeURIComponent(contract.slug || String(contract.id))}`}
-          className="font-medium text-muted-foreground hover:text-foreground transition-colors"
-        >
-          {contract.slug || contractCode}
-        </Link>
-        <span className="text-muted-foreground/60">/</span>
-        <span className="font-semibold text-foreground">Milestone</span>
-      </div>
-
-      {/* ── Main Header ── */}
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-        {/* ── Table Toolbar (Search & Status Dropdown matching reference image) ── */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-2">
-          <div className="flex flex-wrap items-center gap-2.5">
-            {/* Search Input */}
-            <div className="relative w-full sm:w-64">
-              <Search className="size-4 text-zinc-400 absolute left-3 top-1/2 -translate-y-1/2" />
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search milestones..."
-                className="w-full h-9 rounded-sm border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 pl-9 pr-3 text-xs text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 focus:outline-hidden focus:border-[#0069D3]"
-              />
-            </div>
-
-            {/* Status Dropdown (Matching "All Shipment Status" dropdown in reference image) */}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="h-9 rounded-sm border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 text-xs font-medium text-zinc-700 dark:text-zinc-300 gap-1.5"
-                >
-                  <Filter className="size-3.5 text-zinc-400" />
-                  <span>{currentFilterLabel}</span>
-                  <ChevronDown className="size-3.5 text-zinc-400 ml-1" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="start" className="w-52 text-xs">
-                {filterOptions.map((opt) => (
-                  <DropdownMenuItem
-                    key={opt.key}
-                    onClick={() => setStatusFilter(opt.key)}
-                    className="flex items-center justify-between cursor-pointer py-2"
-                  >
-                    <span
-                      className={
-                        statusFilter === opt.key
-                          ? "font-semibold text-zinc-950 dark:text-zinc-100"
-                          : "text-zinc-600 dark:text-zinc-400"
-                      }
-                    >
-                      {opt.label}
-                    </span>
-                    {statusFilter === opt.key && (
-                      <Check className="size-3.5 text-[#0069D3]" />
-                    )}
-                  </DropdownMenuItem>
-                ))}
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
-
-          {/* Milestone counter */}
-          <div className="text-xs text-zinc-500 font-medium">
-            Showing <strong>{filteredMilestones.length}</strong> of{" "}
-            <strong>{milestones.length}</strong> milestones
-          </div>
+    <div className="space-y-4 font-sans mx-auto pb-16">
+      {/* ── Top Bar: Breadcrumb + Add Milestone (No big title, no progress bar) ── */}
+      <div className="flex items-center justify-between gap-4 pb-1">
+        <div className="flex items-center gap-2 text-xs text-muted-foreground">
+          <Link
+            href={`${basePath}/contracts`}
+            className="inline-flex items-center gap-1 hover:text-foreground transition-colors"
+          >
+            <ChevronLeft className="size-4" />
+            <span>{t("breadcrumb.contracts")}</span>
+          </Link>
+          <span>/</span>
+          <Link
+            href={`${basePath}/contracts/${encodeURIComponent(contract.slug || String(contract.id))}`}
+            className="hover:text-foreground transition-colors"
+          >
+            {contract.slug || contractCode}
+          </Link>
+          <span>/</span>
+          <span className="text-foreground font-medium">
+            {t("breadcrumb.milestones")}
+          </span>
         </div>
 
-        {/* Client Add Milestone Button (Only when contract is PENDING_SIGN or AWAITING_PAYMENT) */}
+        {/* Action button if client can add milestone */}
         {canManageMilestones && canCreateMilestone && (
           <Button
+            size="sm"
             onClick={() => {
               setMilestoneToEdit(null);
               setMilestoneModalOpen(true);
             }}
-            className="rounded-lg bg-[#0069D3] hover:bg-[#0055b3] text-white text-xs font-semibold h-9 px-4 shadow-xs cursor-pointer self-start lg:self-auto"
+            className="rounded-full bg-[#0069D3] hover:bg-[#0055b3] text-white text-xs font-normal h-8 px-3.5 cursor-pointer"
           >
-            <Plus className="mr-1.5 size-4" />
-            Add New Milestone
+            <Plus className="mr-1 size-3.5" />
+            {t("list.addMilestone")}
           </Button>
         )}
       </div>
 
-      {/* ── Milestones Content or Permission Warning ── */}
+      {/* ── Control Bar: Status Tabs & Search (Matching Contract List Reference Image) ── */}
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between pt-1">
+        {/* Status Tabs Pill Bar */}
+        <div className="flex h-8 items-center gap-1 overflow-x-auto rounded-full bg-[#F1F0F5] p-1 text-xs dark:bg-muted scrollbar-none">
+          {filterTabs.map((tab) => {
+            const isActive = statusFilter === tab.key;
+            return (
+              <button
+                key={tab.key}
+                type="button"
+                onClick={() => setStatusFilter(tab.key)}
+                className={`
+                  inline-flex h-6 cursor-pointer items-center gap-1.5
+                  whitespace-nowrap rounded-full px-3
+                  font-medium transition-all text-xs
+                  ${
+                    isActive
+                      ? "bg-background font-semibold text-foreground shadow-xs"
+                      : "text-muted-foreground hover:text-foreground"
+                  }
+                `}
+              >
+                <span>{tab.label}</span>
+                {tab.count > 0 && (
+                  <span
+                    className={`
+                      rounded-full px-1.5 py-0 text-[10px] font-semibold leading-tight
+                      ${
+                        isActive
+                          ? "bg-[#0069D3]/10 text-[#0069D3]"
+                          : "bg-muted-foreground/15 text-muted-foreground"
+                      }
+                    `}
+                  >
+                    {tab.count}
+                  </span>
+                )}
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Search Input (Matching Screenshot Height & Style) */}
+        <div className="relative w-full sm:w-64 shrink-0">
+          <Search className="absolute left-2.5 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground" />
+          <input
+            type="text"
+            placeholder={t("list.searchPlaceholder")}
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="
+              h-8 w-full rounded-full
+              border border-border
+              bg-background py-1
+              pr-3 pl-8 text-xs
+              text-foreground
+              placeholder:text-muted-foreground/60
+              focus:border-[#0069D3]
+              focus:ring-1
+              focus:ring-[#0069D3]
+              focus:outline-none
+            "
+          />
+        </div>
+      </div>
+
+      {/* ── Milestones List (Clean, borderless list) ── */}
       {!canViewMilestones ? (
-        <div className="rounded-xl border border-amber-200/80 dark:border-amber-900/40 bg-amber-50/40 dark:bg-amber-950/20 p-8 text-center space-y-2">
-          <Clock className="size-8 mx-auto text-amber-600" />
-          <h3 className="text-sm font-semibold text-zinc-950 dark:text-zinc-100">
-            Không có quyền xem danh sách milestone
+        <div className="py-12 text-center space-y-1.5">
+          <Clock className="size-6 mx-auto text-muted-foreground" />
+          <h3 className="text-xs font-medium text-foreground">
+            {t("list.noPermissionTitle")}
           </h3>
-          <p className="text-xs text-zinc-500 dark:text-zinc-400 max-w-md mx-auto">
-            Tài khoản của bạn chưa được cấp quyền xem danh sách các mốc công việc (milestones) của hợp đồng này.
+          <p className="text-xs text-muted-foreground max-w-md mx-auto">
+            {t("list.noPermissionDesc")}
           </p>
         </div>
       ) : filteredMilestones.length > 0 ? (
-        <div className="rounded-sm border border-zinc-200/80 dark:border-zinc-800/80 bg-white dark:bg-zinc-950 overflow-hidden shadow-2xs">
-          {/* Desktop Table View */}
-          <div className="hidden md:block overflow-x-auto">
-            <table className="w-full text-left border-collapse">
-              <thead>
-                <tr className="border-b border-zinc-200/80 dark:border-zinc-800 text-[11px] font-bold uppercase tracking-wider text-zinc-400 dark:text-zinc-500 bg-zinc-50/50 dark:bg-zinc-900/40">
-                  <th className="py-3 px-4">Milestone ID</th>
-                  <th className="py-3 px-4">Title & Scope</th>
-                  <th className="py-3 px-4">Status</th>
-                  <th className="py-3 px-4">Expected Due</th>
-                  <th className="py-3 px-4 text-right">Amount (USD)</th>
-                  <th className="py-3 px-4 text-right">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-zinc-100 dark:divide-zinc-800/60">
-                {filteredMilestones.map((m, idx) => (
-                  <MilestoneCard
-                    key={m.id}
-                    variant="table-row"
-                    contractId={contract.id}
-                    contractSlug={encodeURIComponent(
-                      contract.slug || String(contract.id),
-                    )}
-                    contractStatus={contract.status}
-                    isHeldInContract={Boolean(
-                      contract.holdMilestoneIds?.includes(m.id),
-                    )}
-                    basePath={basePath}
-                    milestone={m}
-                    index={idx}
-                    isFreelancer={isFreelancer}
-                    hasOtherInProgressMilestone={hasInProgressMilestone}
-                    onEdit={(target) => {
-                      setMilestoneToEdit({
-                        id: target.id,
-                        title: target.title,
-                        description: target.description,
-                        amount: Number(target.amount),
-                        dueDate: target.dueDate,
-                        status: target.status,
-                      });
-                      setMilestoneModalOpen(true);
-                    }}
-                    onDelete={(target) => void handleDeleteMilestone(target)}
-                    onFund={(target) => {
-                      setMilestoneToFund(target);
-                      setFundModalOpen(true);
-                    }}
-                    onRelease={(target) => void handleReleaseMilestone(target)}
-                    onRefund={(target) => void handleRefundMilestone(target)}
-                    onReview={async (target) => {
-                      try {
-                        const res = await contractApiRequest.getSubmissions(
-                          contract.id,
-                          target.id,
-                        );
-                        const data = extractContractData(res);
-                        if (data && data.length > 0 && data[0]) {
-                          setReviewContext({
-                            milestone: target,
-                            submission: data[0],
-                          });
-                          setReviewModalOpen(true);
-                        } else {
-                          router.push(
-                            `${basePath}/contracts/${encodeURIComponent(contract.slug || String(contract.id))}/milestones/${target.id}`,
-                          );
-                        }
-                      } catch {
-                        router.push(
-                          `${basePath}/contracts/${encodeURIComponent(contract.slug || String(contract.id))}/milestones/${target.id}`,
-                        );
-                      }
-                    }}
-                    onSubmitWork={(target) => {
-                      setMilestoneToSubmit(target);
-                      setSubmitModalOpen(true);
-                    }}
-                    onStartWork={(target) => void handleStartWork(target)}
-                  />
-                ))}
-              </tbody>
-            </table>
-          </div>
+        <div className="divide-y divide-border/40">
+          {filteredMilestones.map((m, idx) => {
+            const hasIncompletePrevious = milestones.some(
+              (prev) => prev.id < m.id && prev.status !== "COMPLETED",
+            );
+            const hasOtherActive = milestones.some(
+              (other) =>
+                other.id !== m.id &&
+                (other.status === "IN_PROGRESS" ||
+                  other.status === "SUBMITTED" ||
+                  other.status === "CHANGES_REQUESTED" ||
+                  other.status === "LATE" ||
+                  other.status === "DISPUTED"),
+            );
+            const startWorkBlockedReason = hasIncompletePrevious
+              ? t("list.blockedPrevious")
+              : hasOtherActive
+                ? t("list.blockedActive")
+                : null;
 
-          {/* Mobile Card Layout */}
-          <div className="md:hidden divide-y divide-zinc-100 dark:divide-zinc-800/80 px-4">
-            {filteredMilestones.map((m, idx) => (
+            return (
               <MilestoneCard
                 key={m.id}
-                variant="card"
                 contractId={contract.id}
                 contractSlug={encodeURIComponent(
                   contract.slug || String(contract.id),
@@ -479,88 +552,86 @@ export function MilestonesPageContent({
                 basePath={basePath}
                 milestone={m}
                 index={idx}
+                totalMilestones={filteredMilestones.length}
                 isFreelancer={isFreelancer}
                 hasOtherInProgressMilestone={hasInProgressMilestone}
-                onEdit={(target) => {
-                  setMilestoneToEdit({
-                    id: target.id,
-                    title: target.title,
-                    description: target.description,
-                    amount: Number(target.amount),
-                    dueDate: target.dueDate,
-                    status: target.status,
-                  });
-                  setMilestoneModalOpen(true);
-                }}
-                onDelete={(target) => void handleDeleteMilestone(target)}
-                onFund={(target) => {
-                  setMilestoneToFund(target);
-                  setFundModalOpen(true);
-                }}
-                onRelease={(target) => void handleReleaseMilestone(target)}
-                onRefund={(target) => void handleRefundMilestone(target)}
-                onReview={async (target) => {
-                  try {
-                    const res = await contractApiRequest.getSubmissions(
-                      contract.id,
-                      target.id,
-                    );
-                    const data = extractContractData(res);
-                    if (data && data.length > 0 && data[0]) {
-                      setReviewContext({
-                        milestone: target,
-                        submission: data[0],
-                      });
-                      setReviewModalOpen(true);
-                    } else {
-                      router.push(
-                        `${basePath}/contracts/${encodeURIComponent(contract.slug || String(contract.id))}/milestones/${target.id}`,
-                      );
-                    }
-                  } catch {
+                startWorkBlockedReason={startWorkBlockedReason}
+              onEdit={(target) => {
+                setMilestoneToEdit({
+                  id: target.id,
+                  title: target.title,
+                  description: target.description,
+                  amount: Number(target.amount),
+                  dueDate: target.dueDate,
+                  status: target.status,
+                });
+                setMilestoneModalOpen(true);
+              }}
+              onDelete={(target) => void handleDeleteMilestone(target)}
+              onFund={(target) => void handleFundMilestone(target)}
+              onRelease={(target) => void handleReleaseMilestone(target)}
+              onRefund={(target) => void handleRefundMilestone(target)}
+              onReview={async (target) => {
+                try {
+                  const res = await contractApiRequest.getSubmissions(
+                    contract.id,
+                    target.id,
+                  );
+                  const data = extractContractData(res);
+                  if (data && data.length > 0 && data[0]) {
+                    setReviewContext({
+                      milestone: target,
+                      submission: data[0],
+                    });
+                    setReviewModalOpen(true);
+                  } else {
                     router.push(
-                      `${basePath}/contracts/${contract.slug || contract.id}/milestones/${target.id}`,
+                      `${basePath}/contracts/${encodeURIComponent(contract.slug || String(contract.id))}/milestones/${target.id}`,
                     );
                   }
-                }}
+                } catch {
+                  router.push(
+                    `${basePath}/contracts/${encodeURIComponent(contract.slug || String(contract.id))}/milestones/${target.id}`,
+                  );
+                }
+              }}
                 onSubmitWork={(target) => {
                   setMilestoneToSubmit(target);
                   setSubmitModalOpen(true);
                 }}
                 onStartWork={(target) => void handleStartWork(target)}
+                onOpenDispute={(target) => setDisputeTargetMilestone(target)}
+                onViewDispute={(target) => setViewDisputeMilestoneId(target.id)}
               />
-            ))}
-          </div>
+            );
+          })}
         </div>
       ) : (
-        <div className="rounded-xl border border-dashed border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 p-12 text-center space-y-3">
-          <Clock className="size-8 mx-auto text-zinc-400" />
-          <h3 className="text-sm font-bold text-zinc-950 dark:text-zinc-50">
-            No milestones found
+        <div className="py-16 text-center space-y-2">
+          <Clock className="size-6 mx-auto text-muted-foreground/60" />
+          <h3 className="text-xs font-medium text-foreground">
+            {t("list.emptyTitle")}
           </h3>
-          <p className="text-xs text-zinc-500 max-w-sm mx-auto">
-            {isClient
-              ? "You can add milestones to break down the project deliverables and securely release payments."
-              : "No milestones matching this filter."}
+          <p className="text-xs text-muted-foreground max-w-sm mx-auto">
+            {isClient ? t("list.emptyClient") : t("list.emptyFreelancer")}
           </p>
           {canManageMilestones && (
             <Button
+              size="sm"
               onClick={() => {
                 setMilestoneToEdit(null);
                 setMilestoneModalOpen(true);
               }}
-              className="rounded-lg bg-[#0069D3] hover:bg-[#0055b3] text-white text-xs font-semibold cursor-pointer"
+              className="rounded-full bg-[#0069D3] hover:bg-[#0055b3] text-white text-xs font-normal cursor-pointer mt-2"
             >
-              <Plus className="mr-1.5 size-4" />
-              Add First Milestone
+              <Plus className="mr-1 size-3.5" />
+              {t("list.addFirstMilestone")}
             </Button>
           )}
         </div>
       )}
 
-      {/* ── Dialogs ── */}
-
-      {/* 1. Manage / Add / Edit Milestone Dialog (Client) */}
+      {/* ── Dialogs & Modals ── */}
       {isClient && (
         <ManageMilestoneDialog
           open={milestoneModalOpen}
@@ -572,13 +643,12 @@ export function MilestonesPageContent({
           milestoneToEdit={milestoneToEdit}
           isAmountLocked={Boolean(
             milestoneToEdit &&
-              contract.status === "PENDING_SIGN" &&
-              contract.holdMilestoneIds?.includes(milestoneToEdit.id),
+            contract.status === "PENDING_SIGN" &&
+            contract.holdMilestoneIds?.includes(milestoneToEdit.id),
           )}
         />
       )}
 
-      {/* 2. Submit Milestone Dialog (Freelancer) */}
       {isFreelancer && (
         <SubmitMilestoneDialog
           open={submitModalOpen}
@@ -588,7 +658,6 @@ export function MilestonesPageContent({
         />
       )}
 
-      {/* 3. Review Submission Dialog (Client) */}
       {isClient && reviewContext && (
         <ReviewSubmissionDialog
           open={reviewModalOpen}
@@ -601,15 +670,43 @@ export function MilestonesPageContent({
         />
       )}
 
-      {/* 4. Fund Milestone Escrow Dialog (Client) */}
-      {isClient && (
-        <FundMilestoneDialog
-          open={fundModalOpen}
-          onOpenChange={setFundModalOpen}
-          contractId={contract.id}
-          milestone={milestoneToFund}
-        />
-      )}
+      {/* Resolution Center Dialogs */}
+      <OpenResolutionDialog
+        open={Boolean(disputeTargetMilestone)}
+        onOpenChange={(open) => {
+          if (!open) setDisputeTargetMilestone(null);
+        }}
+        contractId={contract.id}
+        contractExpiresAt={contract.expiresAt}
+        milestone={disputeTargetMilestone}
+        onCreated={(created) => {
+          setViewDisputeMilestoneId(created.milestoneId);
+        }}
+      />
+
+      <ResolutionDetailSheet
+        open={Boolean(viewDisputeMilestoneId)}
+        onOpenChange={(open) => {
+          if (!open) setViewDisputeMilestoneId(null);
+        }}
+        milestoneId={viewDisputeMilestoneId}
+        contractId={contract.id}
+      />
+
+      {/* Floating Messenger-style chat popup (bottom-right) */}
+      <ContractChatPopup
+        open={chatOpen}
+        onOpenChange={setChatOpen}
+        conversationId={chatConversationId}
+        counterpartyId={counterpartyId}
+        counterpartyName={counterpartyName}
+        counterpartyAvatarUrl={counterpartyAvatarUrl}
+        currentUserId={currentUserId}
+        accessToken={accessToken}
+        socketUrl={socketUrl}
+        isStartingChat={isStartingChat}
+        onOpenChat={(targetUserId) => openChatWith(targetUserId)}
+      />
     </div>
   );
 }

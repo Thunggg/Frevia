@@ -1,4 +1,4 @@
-import { HttpException, Injectable } from '@nestjs/common';
+import { HttpException, Injectable, Optional } from '@nestjs/common';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/client';
 import {
   AdminClientProfileResponseType,
@@ -41,6 +41,8 @@ import {
   UserNotFoundException,
 } from './users.error';
 import { AuthGateway } from '../../shared/gateways/auth.gateway';
+import { CacheService } from '../../shared/services/cache.service';
+import { AUTH_ME_CACHE_PREFIX } from '../auth/auth.service';
 import { UsersRepository } from './users.repo';
 
 @Injectable()
@@ -49,6 +51,7 @@ export class UsersService {
     private readonly repository: UsersRepository,
     private readonly hashingService: HashingService,
     private readonly authGateway: AuthGateway,
+    @Optional() private readonly cacheService?: CacheService,
   ) {}
 
   // ====== Admin tạo tài khoản mới ======
@@ -179,6 +182,8 @@ export class UsersService {
       if (!updated) {
         throw UserNotFoundException();
       }
+
+      this.cacheService?.del(`${AUTH_ME_CACHE_PREFIX}${id}`);
 
       // Realtime: phát sự kiện khóa tài khoản xuống toàn bộ thiết bị đang đăng nhập
       if (body.isBanned === true) {

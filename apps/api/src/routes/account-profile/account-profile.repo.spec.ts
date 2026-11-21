@@ -18,7 +18,13 @@ describe('AccountProfileRepository', () => {
       user: { deletedAt: null, isBanned: false },
     });
     expect(args.select.user).toEqual({
-      select: { role: { select: { name: true } } },
+      select: {
+        role: { select: { name: true } },
+        userRoles: {
+          where: { role: { deletedAt: null } },
+          select: { role: { select: { name: true } } },
+        },
+      },
     });
     expect(args.select.clientProfile.select).toMatchObject({
       companyName: true,
@@ -42,7 +48,16 @@ describe('AccountProfileRepository', () => {
     expect(args.where.user).toEqual({
       deletedAt: null,
       isBanned: false,
-      role: { name: RoleName.CLIENT, deletedAt: null },
+      OR: [
+        { role: { name: RoleName.CLIENT, deletedAt: null } },
+        {
+          userRoles: {
+            some: {
+              role: { name: RoleName.CLIENT, deletedAt: null },
+            },
+          },
+        },
+      ],
     });
     expect(args.where.OR).toEqual([
       { displayName: { contains: 'Studio', mode: 'insensitive' } },

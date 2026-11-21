@@ -41,11 +41,6 @@ export const FailedToLoadExplanationException = () =>
     RecommendationMessage.FAILED_TO_LOAD_EXPLANATION,
   );
 
-export const FailedToSubmitFeedbackException = () =>
-  new InternalServerErrorException(
-    RecommendationMessage.FAILED_TO_SUBMIT_FEEDBACK,
-  );
-
 export const RecommendationReindexForbiddenException = () =>
   new ForbiddenException(RecommendationMessage.REINDEX_FORBIDDEN);
 

@@ -301,7 +301,13 @@ export function ClientProfileSettings({ userId }: ClientProfileSettingsProps) {
     } finally {
       setLoading(false);
     }
-  }, [userId, t, canViewFavorites, canDiscoverFreelancers, canViewSocialLinks]);
+  }, [
+    userId,
+    t,
+    canViewFavorites,
+    canDiscoverFreelancers,
+    canViewSocialLinks,
+  ]);
 
   useEffect(() => {
     void load();

@@ -131,7 +131,8 @@ const MILESTONE_PERMISSIONS: PermissionItem[] = [
     method: 'PATCH',
     path: '/api/contracts/:contractId/milestones/:milestoneId/submissions/:id/request-changes',
     description: 'Yêu cầu sửa đổi bài nộp milestone',
-    testActualPath: '/api/contracts/88/milestones/101/submissions/201/request-changes',
+    testActualPath:
+      '/api/contracts/88/milestones/101/submissions/201/request-changes',
   },
   {
     id: 262,
@@ -152,7 +153,8 @@ const MILESTONE_PERMISSIONS: PermissionItem[] = [
     method: 'POST',
     path: '/api/payments/contracts/:contractId/milestones/:milestoneId/fund/checkout-session',
     description: 'Tạo phiên thanh toán ký quỹ milestone',
-    testActualPath: '/api/payments/contracts/88/milestones/101/fund/checkout-session',
+    testActualPath:
+      '/api/payments/contracts/88/milestones/101/fund/checkout-session',
   },
   {
     id: 516,
@@ -211,28 +213,81 @@ function simulateMilestoneUiState(userPermissions: string[]) {
     hasPermission(userPermissions, method, path);
 
   const canViewMilestones = can('GET', '/api/contracts/:contractId/milestones');
-  const canViewMilestoneDetail = can('GET', '/api/contracts/:contractId/milestones/:id');
-  const canCreateMilestone = can('POST', '/api/contracts/:contractId/milestones');
-  const canUpdateMilestone = can('PATCH', '/api/contracts/:contractId/milestones/:id');
-  const canProgressMilestone = can('PATCH', '/api/contracts/:contractId/milestones/:id/progress');
-  const canDeleteMilestone = can('DELETE', '/api/contracts/:contractId/milestones/:id');
-  const canViewFiles = can('GET', '/api/contracts/:contractId/milestones/:milestoneId/files');
-  const canUploadFile = can('POST', '/api/contracts/:contractId/milestones/:milestoneId/files');
-  const canDeleteFile = can('DELETE', '/api/contracts/:contractId/milestones/:milestoneId/files/:fileId');
-  const canSubmit = can('POST', '/api/contracts/:contractId/milestones/:milestoneId/submissions');
-  const canViewSubmissions = can('GET', '/api/contracts/:contractId/milestones/:milestoneId/submissions');
-  const canViewSubmissionDetail = can('GET', '/api/contracts/:contractId/milestones/:milestoneId/submissions/:id');
-  const canRequestChanges = can('PATCH', '/api/contracts/:contractId/milestones/:milestoneId/submissions/:id/request-changes');
-  const canApprove = can('PATCH', '/api/contracts/:contractId/milestones/:milestoneId/submissions/:id/approve');
-  const canReview = canApprove || canRequestChanges;
+  const canViewMilestoneDetail = can(
+    'GET',
+    '/api/contracts/:contractId/milestones/:id',
+  );
+  const canCreateMilestone = can(
+    'POST',
+    '/api/contracts/:contractId/milestones',
+  );
+  const canUpdateMilestone = can(
+    'PATCH',
+    '/api/contracts/:contractId/milestones/:id',
+  );
+  const canProgressMilestone = can(
+    'PATCH',
+    '/api/contracts/:contractId/milestones/:id/progress',
+  );
+  const canDeleteMilestone = can(
+    'DELETE',
+    '/api/contracts/:contractId/milestones/:id',
+  );
+  const canViewFiles = can(
+    'GET',
+    '/api/contracts/:contractId/milestones/:milestoneId/files',
+  );
+  const canUploadFile = can(
+    'POST',
+    '/api/contracts/:contractId/milestones/:milestoneId/files',
+  );
+  const canDeleteFile = can(
+    'DELETE',
+    '/api/contracts/:contractId/milestones/:milestoneId/files/:fileId',
+  );
+  const canSubmit = can(
+    'POST',
+    '/api/contracts/:contractId/milestones/:milestoneId/submissions',
+  );
+  const canViewSubmissions = can(
+    'GET',
+    '/api/contracts/:contractId/milestones/:milestoneId/submissions',
+  );
+  const canViewSubmissionDetail = can(
+    'GET',
+    '/api/contracts/:contractId/milestones/:milestoneId/submissions/:id',
+  );
+  const canRequestChanges = can(
+    'PATCH',
+    '/api/contracts/:contractId/milestones/:milestoneId/submissions/:id/request-changes',
+  );
+  const canApprove = can(
+    'PATCH',
+    '/api/contracts/:contractId/milestones/:milestoneId/submissions/:id/approve',
+  );
 
-  const canFundIntent = can('POST', '/api/payments/contracts/:contractId/milestones/:milestoneId/fund/intent');
-  const canFundCheckout = can('POST', '/api/payments/contracts/:contractId/milestones/:milestoneId/fund/checkout-session');
-  const canFundSavedCard = can('POST', '/api/payments/contracts/:contractId/milestones/:milestoneId/fund/saved-card');
+  const canFundIntent = can(
+    'POST',
+    '/api/payments/contracts/:contractId/milestones/:milestoneId/fund/intent',
+  );
+  const canFundCheckout = can(
+    'POST',
+    '/api/payments/contracts/:contractId/milestones/:milestoneId/fund/checkout-session',
+  );
+  const canFundSavedCard = can(
+    'POST',
+    '/api/payments/contracts/:contractId/milestones/:milestoneId/fund/saved-card',
+  );
   const canFundEscrow = canFundIntent || canFundCheckout || canFundSavedCard;
 
-  const canRelease = can('POST', '/api/payments/contracts/:contractId/milestones/:milestoneId/release');
-  const canRefund = can('POST', '/api/payments/contracts/:contractId/milestones/:milestoneId/refund');
+  const canRelease = can(
+    'POST',
+    '/api/payments/contracts/:contractId/milestones/:milestoneId/release',
+  );
+  const canRefund = can(
+    'POST',
+    '/api/payments/contracts/:contractId/milestones/:milestoneId/refund',
+  );
 
   return {
     milestonesListVisible: canViewMilestones,
@@ -269,7 +324,11 @@ describe('MILESTONES RBAC & UI Control Test Suite (19 Permissions)', () => {
       'Permission #$id [$method $path] phải khớp chính xác với URL thực tế $testActualPath',
       ({ method, path, testActualPath }) => {
         const userPermissions = [`${method} ${path}`];
-        const isAllowed = hasPermission(userPermissions, method, testActualPath);
+        const isAllowed = hasPermission(
+          userPermissions,
+          method,
+          testActualPath,
+        );
         expect(isAllowed).toBe(true);
       },
     );
@@ -278,22 +337,42 @@ describe('MILESTONES RBAC & UI Control Test Suite (19 Permissions)', () => {
   describe('2. Phân lập Route và Ngăn chặn Khớp nhầm (Isolation & Route Precision)', () => {
     it('GET /api/contracts/:contractId/milestones KHÔNG được khớp nhầm với GET detail /api/contracts/88/milestones/101', () => {
       const perms = ['GET /api/contracts/:contractId/milestones'];
-      expect(hasPermission(perms, 'GET', '/api/contracts/88/milestones/101')).toBe(false);
+      expect(
+        hasPermission(perms, 'GET', '/api/contracts/88/milestones/101'),
+      ).toBe(false);
     });
 
     it('GET /api/contracts/:contractId/milestones/:id KHÔNG được khớp nhầm với GET files', () => {
       const perms = ['GET /api/contracts/:contractId/milestones/:id'];
-      expect(hasPermission(perms, 'GET', '/api/contracts/88/milestones/101/files')).toBe(false);
+      expect(
+        hasPermission(perms, 'GET', '/api/contracts/88/milestones/101/files'),
+      ).toBe(false);
     });
 
     it('GET /api/contracts/:contractId/milestones/:milestoneId/files KHÔNG được khớp nhầm với DELETE file', () => {
-      const perms = ['GET /api/contracts/:contractId/milestones/:milestoneId/files'];
-      expect(hasPermission(perms, 'DELETE', '/api/contracts/88/milestones/101/files/5')).toBe(false);
+      const perms = [
+        'GET /api/contracts/:contractId/milestones/:milestoneId/files',
+      ];
+      expect(
+        hasPermission(
+          perms,
+          'DELETE',
+          '/api/contracts/88/milestones/101/files/5',
+        ),
+      ).toBe(false);
     });
 
     it('POST /api/contracts/:contractId/milestones/:milestoneId/submissions KHÔNG được khớp nhầm với GET submissions', () => {
-      const perms = ['POST /api/contracts/:contractId/milestones/:milestoneId/submissions'];
-      expect(hasPermission(perms, 'GET', '/api/contracts/88/milestones/101/submissions')).toBe(false);
+      const perms = [
+        'POST /api/contracts/:contractId/milestones/:milestoneId/submissions',
+      ];
+      expect(
+        hasPermission(
+          perms,
+          'GET',
+          '/api/contracts/88/milestones/101/submissions',
+        ),
+      ).toBe(false);
     });
 
     it('PATCH approve submission KHÔNG được khớp nhầm với PATCH request-changes submission', () => {
@@ -301,7 +380,11 @@ describe('MILESTONES RBAC & UI Control Test Suite (19 Permissions)', () => {
         'PATCH /api/contracts/:contractId/milestones/:milestoneId/submissions/:id/approve',
       ];
       expect(
-        hasPermission(perms, 'PATCH', '/api/contracts/88/milestones/101/submissions/201/request-changes'),
+        hasPermission(
+          perms,
+          'PATCH',
+          '/api/contracts/88/milestones/101/submissions/201/request-changes',
+        ),
       ).toBe(false);
     });
 
@@ -310,7 +393,11 @@ describe('MILESTONES RBAC & UI Control Test Suite (19 Permissions)', () => {
         'POST /api/payments/contracts/:contractId/milestones/:milestoneId/fund/saved-card',
       ];
       expect(
-        hasPermission(perms, 'POST', '/api/payments/contracts/88/milestones/101/release'),
+        hasPermission(
+          perms,
+          'POST',
+          '/api/payments/contracts/88/milestones/101/release',
+        ),
       ).toBe(false);
     });
 
@@ -319,7 +406,11 @@ describe('MILESTONES RBAC & UI Control Test Suite (19 Permissions)', () => {
         'POST /api/payments/contracts/:contractId/milestones/:milestoneId/release',
       ];
       expect(
-        hasPermission(perms, 'POST', '/api/payments/contracts/88/milestones/101/refund'),
+        hasPermission(
+          perms,
+          'POST',
+          '/api/payments/contracts/88/milestones/101/refund',
+        ),
       ).toBe(false);
     });
   });
@@ -331,7 +422,9 @@ describe('MILESTONES RBAC & UI Control Test Suite (19 Permissions)', () => {
 
     it('phải cho phép thực thi tất cả 19 endpoints khi có đủ permissions', () => {
       MILESTONE_PERMISSIONS.forEach((p) => {
-        expect(hasPermission(allPermissions, p.method, p.testActualPath)).toBe(true);
+        expect(hasPermission(allPermissions, p.method, p.testActualPath)).toBe(
+          true,
+        );
       });
     });
 
@@ -379,7 +472,9 @@ describe('MILESTONES RBAC & UI Control Test Suite (19 Permissions)', () => {
 
     it('phải từ chối tất cả 19 endpoints khi danh sách quyền rỗng', () => {
       MILESTONE_PERMISSIONS.forEach((p) => {
-        expect(hasPermission(emptyPermissions, p.method, p.testActualPath)).toBe(false);
+        expect(
+          hasPermission(emptyPermissions, p.method, p.testActualPath),
+        ).toBe(false);
       });
     });
 
@@ -479,7 +574,8 @@ describe('MILESTONES RBAC & UI Control Test Suite (19 Permissions)', () => {
 
     it('Thu hồi #255 (GET files): Chỉ ẩn Tab tệp tin (Milestone Files Tab)', () => {
       const without = allPermissions.filter(
-        (p) => p !== 'GET /api/contracts/:contractId/milestones/:milestoneId/files',
+        (p) =>
+          p !== 'GET /api/contracts/:contractId/milestones/:milestoneId/files',
       );
       const ui = simulateMilestoneUiState(without);
       expect(ui.filesTabVisible).toBe(false);
@@ -488,7 +584,8 @@ describe('MILESTONES RBAC & UI Control Test Suite (19 Permissions)', () => {
 
     it('Thu hồi #256 (POST file): Chỉ ẩn nút tải lên file (Upload File)', () => {
       const without = allPermissions.filter(
-        (p) => p !== 'POST /api/contracts/:contractId/milestones/:milestoneId/files',
+        (p) =>
+          p !== 'POST /api/contracts/:contractId/milestones/:milestoneId/files',
       );
       const ui = simulateMilestoneUiState(without);
       expect(ui.uploadFileButton).toBe(false);
@@ -498,7 +595,9 @@ describe('MILESTONES RBAC & UI Control Test Suite (19 Permissions)', () => {
 
     it('Thu hồi #257 (DELETE file): Chỉ ẩn nút xóa file (Delete File)', () => {
       const without = allPermissions.filter(
-        (p) => p !== 'DELETE /api/contracts/:contractId/milestones/:milestoneId/files/:fileId',
+        (p) =>
+          p !==
+          'DELETE /api/contracts/:contractId/milestones/:milestoneId/files/:fileId',
       );
       const ui = simulateMilestoneUiState(without);
       expect(ui.deleteFileButton).toBe(false);
@@ -507,7 +606,9 @@ describe('MILESTONES RBAC & UI Control Test Suite (19 Permissions)', () => {
 
     it('Thu hồi #258 (POST submit): Chỉ ẩn nút nộp bài / nộp lại (Submit Work)', () => {
       const without = allPermissions.filter(
-        (p) => p !== 'POST /api/contracts/:contractId/milestones/:milestoneId/submissions',
+        (p) =>
+          p !==
+          'POST /api/contracts/:contractId/milestones/:milestoneId/submissions',
       );
       const ui = simulateMilestoneUiState(without);
       expect(ui.submitWorkButton).toBe(false);
@@ -516,7 +617,9 @@ describe('MILESTONES RBAC & UI Control Test Suite (19 Permissions)', () => {
 
     it('Thu hồi #259 (GET submissions): Chỉ ẩn Tab bài nộp (Deliverables & Submissions Tab)', () => {
       const without = allPermissions.filter(
-        (p) => p !== 'GET /api/contracts/:contractId/milestones/:milestoneId/submissions',
+        (p) =>
+          p !==
+          'GET /api/contracts/:contractId/milestones/:milestoneId/submissions',
       );
       const ui = simulateMilestoneUiState(without);
       expect(ui.submissionsTabVisible).toBe(false);
@@ -525,7 +628,9 @@ describe('MILESTONES RBAC & UI Control Test Suite (19 Permissions)', () => {
 
     it('Thu hồi #260 (GET submission detail): Chỉ ẩn chi tiết bài nộp deliverable', () => {
       const without = allPermissions.filter(
-        (p) => p !== 'GET /api/contracts/:contractId/milestones/:milestoneId/submissions/:id',
+        (p) =>
+          p !==
+          'GET /api/contracts/:contractId/milestones/:milestoneId/submissions/:id',
       );
       const ui = simulateMilestoneUiState(without);
       expect(ui.submissionDetailExpanded).toBe(false);
@@ -534,7 +639,9 @@ describe('MILESTONES RBAC & UI Control Test Suite (19 Permissions)', () => {
 
     it('Thu hồi #261 (PATCH request-changes): Chỉ ẩn nút yêu cầu sửa đổi (Request Changes)', () => {
       const without = allPermissions.filter(
-        (p) => p !== 'PATCH /api/contracts/:contractId/milestones/:milestoneId/submissions/:id/request-changes',
+        (p) =>
+          p !==
+          'PATCH /api/contracts/:contractId/milestones/:milestoneId/submissions/:id/request-changes',
       );
       const ui = simulateMilestoneUiState(without);
       expect(ui.requestChangesButton).toBe(false);
@@ -543,7 +650,9 @@ describe('MILESTONES RBAC & UI Control Test Suite (19 Permissions)', () => {
 
     it('Thu hồi #262 (PATCH approve): Chỉ ẩn nút phê duyệt bài nộp (Approve Deliverables)', () => {
       const without = allPermissions.filter(
-        (p) => p !== 'PATCH /api/contracts/:contractId/milestones/:milestoneId/submissions/:id/approve',
+        (p) =>
+          p !==
+          'PATCH /api/contracts/:contractId/milestones/:milestoneId/submissions/:id/approve',
       );
       const ui = simulateMilestoneUiState(without);
       expect(ui.approveDeliverablesButton).toBe(false);
@@ -552,7 +661,9 @@ describe('MILESTONES RBAC & UI Control Test Suite (19 Permissions)', () => {
 
     it('Thu hồi #516 (POST fund saved-card): Chỉ ẩn lựa chọn thanh toán thẻ đã lưu', () => {
       const without = allPermissions.filter(
-        (p) => p !== 'POST /api/payments/contracts/:contractId/milestones/:milestoneId/fund/saved-card',
+        (p) =>
+          p !==
+          'POST /api/payments/contracts/:contractId/milestones/:milestoneId/fund/saved-card',
       );
       const ui = simulateMilestoneUiState(without);
       expect(ui.quickPaySavedCardOption).toBe(false);
@@ -562,7 +673,9 @@ describe('MILESTONES RBAC & UI Control Test Suite (19 Permissions)', () => {
 
     it('Thu hồi #515 (POST checkout-session): Chỉ ẩn lựa chọn thanh toán Stripe Checkout', () => {
       const without = allPermissions.filter(
-        (p) => p !== 'POST /api/payments/contracts/:contractId/milestones/:milestoneId/fund/checkout-session',
+        (p) =>
+          p !==
+          'POST /api/payments/contracts/:contractId/milestones/:milestoneId/fund/checkout-session',
       );
       const ui = simulateMilestoneUiState(without);
       expect(ui.stripeCheckoutOption).toBe(false);
@@ -573,9 +686,12 @@ describe('MILESTONES RBAC & UI Control Test Suite (19 Permissions)', () => {
     it('Thu hồi cả 3 quyền ký quỹ (#514, #515, #516): Nút ký quỹ (Fund Escrow) bị ẩn hoàn toàn', () => {
       const without = allPermissions.filter(
         (p) =>
-          p !== 'POST /api/payments/contracts/:contractId/milestones/:milestoneId/fund/intent' &&
-          p !== 'POST /api/payments/contracts/:contractId/milestones/:milestoneId/fund/checkout-session' &&
-          p !== 'POST /api/payments/contracts/:contractId/milestones/:milestoneId/fund/saved-card',
+          p !==
+            'POST /api/payments/contracts/:contractId/milestones/:milestoneId/fund/intent' &&
+          p !==
+            'POST /api/payments/contracts/:contractId/milestones/:milestoneId/fund/checkout-session' &&
+          p !==
+            'POST /api/payments/contracts/:contractId/milestones/:milestoneId/fund/saved-card',
       );
       const ui = simulateMilestoneUiState(without);
       expect(ui.fundEscrowButton).toBe(false);
@@ -586,7 +702,9 @@ describe('MILESTONES RBAC & UI Control Test Suite (19 Permissions)', () => {
 
     it('Thu hồi #517 (POST release): Chỉ ẩn nút giải ngân tiền ký quỹ (Release Payment)', () => {
       const without = allPermissions.filter(
-        (p) => p !== 'POST /api/payments/contracts/:contractId/milestones/:milestoneId/release',
+        (p) =>
+          p !==
+          'POST /api/payments/contracts/:contractId/milestones/:milestoneId/release',
       );
       const ui = simulateMilestoneUiState(without);
       expect(ui.releasePaymentButton).toBe(false);
@@ -596,7 +714,9 @@ describe('MILESTONES RBAC & UI Control Test Suite (19 Permissions)', () => {
 
     it('Thu hồi #518 (POST refund): Chỉ ẩn nút hoàn tiền ký quỹ (Refund Milestone)', () => {
       const without = allPermissions.filter(
-        (p) => p !== 'POST /api/payments/contracts/:contractId/milestones/:milestoneId/refund',
+        (p) =>
+          p !==
+          'POST /api/payments/contracts/:contractId/milestones/:milestoneId/refund',
       );
       const ui = simulateMilestoneUiState(without);
       expect(ui.refundMilestoneButton).toBe(false);
@@ -607,12 +727,16 @@ describe('MILESTONES RBAC & UI Control Test Suite (19 Permissions)', () => {
   describe('6. Sai khác Phương thức HTTP (Method Mismatch)', () => {
     it('Gửi POST khi chỉ có quyền GET /api/contracts/:contractId/milestones -> Từ chối', () => {
       const perms = ['GET /api/contracts/:contractId/milestones'];
-      expect(hasPermission(perms, 'POST', '/api/contracts/88/milestones')).toBe(false);
+      expect(hasPermission(perms, 'POST', '/api/contracts/88/milestones')).toBe(
+        false,
+      );
     });
 
     it('Gửi DELETE khi chỉ có quyền PATCH /api/contracts/:contractId/milestones/:id -> Từ chối', () => {
       const perms = ['PATCH /api/contracts/:contractId/milestones/:id'];
-      expect(hasPermission(perms, 'DELETE', '/api/contracts/88/milestones/101')).toBe(false);
+      expect(
+        hasPermission(perms, 'DELETE', '/api/contracts/88/milestones/101'),
+      ).toBe(false);
     });
 
     it('Gửi GET khi chỉ có quyền POST /api/payments/contracts/:contractId/milestones/:milestoneId/release -> Từ chối', () => {
@@ -620,7 +744,11 @@ describe('MILESTONES RBAC & UI Control Test Suite (19 Permissions)', () => {
         'POST /api/payments/contracts/:contractId/milestones/:milestoneId/release',
       ];
       expect(
-        hasPermission(perms, 'GET', '/api/payments/contracts/88/milestones/101/release'),
+        hasPermission(
+          perms,
+          'GET',
+          '/api/payments/contracts/88/milestones/101/release',
+        ),
       ).toBe(false);
     });
   });

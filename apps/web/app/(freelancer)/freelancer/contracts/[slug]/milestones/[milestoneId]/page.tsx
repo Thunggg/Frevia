@@ -1,6 +1,10 @@
 import { notFound } from "next/navigation";
+import { cookies } from "next/headers";
+import { getTranslations } from "next-intl/server";
 import contractServerRequest from "@/apiRequests/contract.server";
+import authServerRequest from "@/apiRequests/auth.server";
 import { MilestoneDetailContent } from "@/app/(client)/client/contracts/[slug]/milestones/[milestoneId]/_components";
+import { getBrowserSocketUrl } from "@/configs/validate-env";
 
 export async function generateMetadata({
   params,
@@ -8,10 +12,11 @@ export async function generateMetadata({
   params: Promise<{ slug: string; milestoneId: string }>;
 }) {
   const { slug, milestoneId } = await params;
+  const t = await getTranslations("milestoneWorkspace.meta");
 
   return {
-    title: `Milestone MLS-${milestoneId} - #${slug}`,
-    description: "Submit deliverables, view client feedback, and track milestone payments.",
+    title: t("detailTitle", { milestoneId, slug }),
+    description: t("detailFreelancerDescription"),
   };
 }
 
@@ -49,6 +54,10 @@ export default async function FreelancerMilestoneDetailPage({
 
   if (!milestone) notFound();
 
+  const cookieStore = await cookies();
+  const token = cookieStore.get("accessToken")?.value ?? null;
+  const user = await authServerRequest.getMe();
+
   return (
     <div className="min-h-full bg-background font-sans">
       <div className="px-6 py-8 lg:px-8 max-w-7xl mx-auto">
@@ -58,6 +67,9 @@ export default async function FreelancerMilestoneDetailPage({
           initialSubmissions={submissions || []}
           initialFiles={files || []}
           basePath="/freelancer"
+          currentUserId={user?.id ?? null}
+          accessToken={token}
+          socketUrl={getBrowserSocketUrl()}
         />
       </div>
     </div>

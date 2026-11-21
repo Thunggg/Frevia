@@ -10,6 +10,7 @@ import {
   SubmitMilestoneBodyType,
 } from '@shared/types';
 import { MilestoneSubmissionRepository } from './milestone-submission.repo';
+import { PaymentService } from '../payments/payment.service';
 import {
   FailedToApproveException,
   FailedToLoadSubmissionException,
@@ -28,6 +29,7 @@ import {
 export class MilestoneSubmissionService {
   constructor(
     private readonly submissionRepository: MilestoneSubmissionRepository,
+    private readonly paymentService: PaymentService,
   ) {}
 
   private async resolveAndGuardContext(
@@ -81,7 +83,8 @@ export class MilestoneSubmissionService {
 
       if (
         milestone.status !== MilestoneStatus.IN_PROGRESS &&
-        milestone.status !== MilestoneStatus.CHANGES_REQUESTED
+        milestone.status !== MilestoneStatus.CHANGES_REQUESTED &&
+        milestone.status !== MilestoneStatus.LATE
       ) {
         throw MilestoneNotInProgressException();
       }
@@ -161,7 +164,7 @@ export class MilestoneSubmissionService {
     body: RequestChangesBodyType,
   ) {
     try {
-      await this.resolveAndGuardContext(
+      const { milestone } = await this.resolveAndGuardContext(
         userId,
         roleName,
         contractId,
@@ -173,6 +176,10 @@ export class MilestoneSubmissionService {
         await this.submissionRepository.findSubmissionById(submissionId);
       if (!submission || submission.milestoneId !== milestoneId) {
         throw SubmissionNotFoundException();
+      }
+
+      if (milestone.status === MilestoneStatus.DISPUTED) {
+        throw FailedToRequestChangesException();
       }
 
       if (submission.status !== SubmissionStatus.PENDING_REVIEW) {
@@ -198,7 +205,7 @@ export class MilestoneSubmissionService {
     submissionId: number,
   ) {
     try {
-      await this.resolveAndGuardContext(
+      const { milestone } = await this.resolveAndGuardContext(
         userId,
         roleName,
         contractId,
@@ -212,8 +219,23 @@ export class MilestoneSubmissionService {
         throw SubmissionNotFoundException();
       }
 
+      if (milestone.status === MilestoneStatus.DISPUTED) {
+        throw FailedToApproveException();
+      }
+
       if (submission.status !== SubmissionStatus.PENDING_REVIEW) {
         throw SubmissionNotPendingReviewException();
+      }
+
+      // Tự động giải ngân khoản ký quỹ của milestone cho Freelancer qua Stripe khi Client duyệt bài.
+      // Nếu giải ngân gặp lỗi (ví dụ: freelancer chưa liên kết tài khoản Stripe Connect),
+      // toàn bộ tiến trình sẽ dừng lại và báo lỗi để tránh tình trạng bài đã duyệt nhưng tiền bị kẹt.
+      if (milestone.paymentStatus === MilestonePaymentStatus.FUNDED) {
+        await this.paymentService.releaseMilestone(
+          userId,
+          contractId,
+          milestoneId,
+        );
       }
 
       return await this.submissionRepository.approveSubmission(

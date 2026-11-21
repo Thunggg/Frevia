@@ -52,14 +52,23 @@ describe('Contract Management (UF-122 to UF-131)', () => {
     cancelContract: jest.fn(),
     getContractList: jest.fn(),
     getContractDetail: jest.fn(),
+    findContractMilestonesWithStatus: jest.fn().mockResolvedValue([]),
   };
 
   const contractPdfService = {
-    generateAndSaveContractPdf: jest.fn(),
+    generateAndSaveContractPdf: jest.fn().mockResolvedValue({ id: 1 }),
   };
 
   const paymentService = {
+    getConnectStatus: jest.fn().mockResolvedValue({
+      isConnected: true,
+      payoutsEnabled: true,
+      chargesEnabled: true,
+      stripeAccountId: 'acct_test_freelancer',
+    }),
     refundContractEscrow: jest.fn(),
+    captureContractHold: jest.fn().mockResolvedValue({ success: true }),
+    cancelContractHold: jest.fn().mockResolvedValue({ success: true }),
   };
 
   const sharedFileRepository = {
@@ -110,6 +119,7 @@ describe('Contract Management (UF-122 to UF-131)', () => {
     terms: 'Initial agreement terms',
     totalAmount: new Prisma.Decimal(500.0),
     status: ContractStatus.PENDING_SIGN,
+    holdPaymentIntentId: 'pi_test_hold_123',
     signedByClient: false,
     signedByFreelancer: false,
     clientSignedAt: null,
@@ -140,6 +150,9 @@ describe('Contract Management (UF-122 to UF-131)', () => {
   // UF-122: createContract
   // =========================================================================
   describe('UF-122 createContract', () => {
+    const defaultExpiresAt = new Date(Date.now() + 86400000 * 30).toISOString();
+    const defaultDueDate = new Date(Date.now() + 86400000 * 7).toISOString();
+
     // UF-122: Khách hàng tạo hợp đồng thành công từ đề xuất hợp lệ kèm danh sách milestone.
     it('creates contract successfully with matching milestones', async () => {
       contractRepository.findProposalWithJob.mockResolvedValueOnce(
@@ -151,10 +164,11 @@ describe('Contract Management (UF-122 to UF-131)', () => {
       const body: CreateContractBodyType = {
         proposalId: 10,
         totalAmount: 500,
+        expiresAt: defaultExpiresAt,
         terms: 'Work contract terms',
         milestones: [
-          { title: 'Milestone 1', amount: 200 },
-          { title: 'Milestone 2', amount: 300 },
+          { title: 'Milestone 1', amount: 200, dueDate: defaultDueDate },
+          { title: 'Milestone 2', amount: 300, dueDate: defaultDueDate },
         ],
       };
 
@@ -180,6 +194,7 @@ describe('Contract Management (UF-122 to UF-131)', () => {
       const body: CreateContractBodyType = {
         proposalId: 10,
         totalAmount: 500,
+        expiresAt: defaultExpiresAt,
         terms: 'Contract without milestones',
       };
 
@@ -201,6 +216,7 @@ describe('Contract Management (UF-122 to UF-131)', () => {
       const body: CreateContractBodyType = {
         proposalId: 999,
         totalAmount: 500,
+        expiresAt: defaultExpiresAt,
       };
 
       await expect(contractService.createContract(1, body)).rejects.toThrow(
@@ -216,7 +232,11 @@ describe('Contract Management (UF-122 to UF-131)', () => {
         status: 'REJECTED',
       });
 
-      const body: CreateContractBodyType = { proposalId: 10, totalAmount: 500 };
+      const body: CreateContractBodyType = {
+        proposalId: 10,
+        totalAmount: 500,
+        expiresAt: defaultExpiresAt,
+      };
 
       await expect(contractService.createContract(1, body)).rejects.toThrow(
         ProposalNotActionableException(),
@@ -230,7 +250,11 @@ describe('Contract Management (UF-122 to UF-131)', () => {
         mockProposal,
       );
 
-      const body: CreateContractBodyType = { proposalId: 10, totalAmount: 500 };
+      const body: CreateContractBodyType = {
+        proposalId: 10,
+        totalAmount: 500,
+        expiresAt: defaultExpiresAt,
+      };
 
       await expect(contractService.createContract(99, body)).rejects.toThrow(
         ContractForbiddenException(),
@@ -245,7 +269,11 @@ describe('Contract Management (UF-122 to UF-131)', () => {
         job: { ...mockProposal.job, positionsRequired: 1, positionsFilled: 1 },
       });
 
-      const body: CreateContractBodyType = { proposalId: 10, totalAmount: 500 };
+      const body: CreateContractBodyType = {
+        proposalId: 10,
+        totalAmount: 500,
+        expiresAt: defaultExpiresAt,
+      };
 
       await expect(contractService.createContract(1, body)).rejects.toThrow(
         ProposalJobPositionsFilledException(),
@@ -262,9 +290,10 @@ describe('Contract Management (UF-122 to UF-131)', () => {
       const body: CreateContractBodyType = {
         proposalId: 10,
         totalAmount: 500,
+        expiresAt: defaultExpiresAt,
         milestones: [
-          { title: 'Milestone 1', amount: 200 },
-          { title: 'Milestone 2', amount: 200 },
+          { title: 'Milestone 1', amount: 200, dueDate: defaultDueDate },
+          { title: 'Milestone 2', amount: 200, dueDate: defaultDueDate },
         ],
       };
 
@@ -283,7 +312,11 @@ describe('Contract Management (UF-122 to UF-131)', () => {
         mockContract,
       );
 
-      const body: CreateContractBodyType = { proposalId: 10, totalAmount: 500 };
+      const body: CreateContractBodyType = {
+        proposalId: 10,
+        totalAmount: 500,
+        expiresAt: defaultExpiresAt,
+      };
 
       await expect(contractService.createContract(1, body)).rejects.toThrow(
         ContractAlreadyExistsException(),
@@ -561,7 +594,7 @@ describe('Contract Management (UF-122 to UF-131)', () => {
       expect(contractRepository.signContract).toHaveBeenCalledWith(5, 'client');
       expect(
         contractPdfService.generateAndSaveContractPdf,
-      ).not.toHaveBeenCalled();
+      ).toHaveBeenCalledWith(5);
     });
 
     // Freelancer ký số hợp đồng thành công và tự động tạo PDF nếu hợp đồng chuyển sang ACTIVE.

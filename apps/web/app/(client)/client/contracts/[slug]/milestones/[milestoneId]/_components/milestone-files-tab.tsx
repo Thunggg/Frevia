@@ -1,12 +1,11 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { useFormatter } from "next-intl";
+import { useFormatter, useTranslations } from "next-intl";
 import {
   Download,
   FileText,
   Loader2,
-  Plus,
   Trash2,
   UploadCloud,
 } from "lucide-react";
@@ -30,10 +29,10 @@ export function MilestoneFilesTab({
   milestoneId,
   files,
   onFilesChanged,
-  isFreelancer = false,
 }: MilestoneFilesTabProps) {
   const format = useFormatter();
-  const { can } = useActionPermission();
+  const t = useTranslations("milestoneWorkspace.files");
+  const { can, isLoading: isPermissionLoading } = useActionPermission();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
   const [deletingId, setDeletingId] = useState<number | null>(null);
@@ -59,7 +58,7 @@ export function MilestoneFilesTab({
     if (!selectedFile) return;
 
     if (selectedFile.size > 25 * 1024 * 1024) {
-      toastError({ message: "File exceeds 25MB limit." });
+      toastError({ message: t("fileTooLarge") });
       return;
     }
 
@@ -70,14 +69,14 @@ export function MilestoneFilesTab({
         milestoneId,
         selectedFile,
       );
-      toastSuccess({ message: `File "${selectedFile.name}" uploaded successfully!` });
+      toastSuccess({ message: t("uploaded", { name: selectedFile.name }) });
       onFilesChanged();
     } catch (error) {
       toastError({
         message:
           error instanceof ApiFail
             ? error.response.error.message
-            : "Failed to upload file. Please try again.",
+            : t("uploadFailed"),
       });
     } finally {
       setUploading(false);
@@ -88,7 +87,11 @@ export function MilestoneFilesTab({
   };
 
   const handleDeleteFile = async (file: MilestoneFileType) => {
-    if (!window.confirm(`Are you sure you want to delete file "${file.fileName || "this file"}"?`)) {
+    if (
+      !window.confirm(
+        t("deleteConfirm", { name: file.fileName || t("thisFile") }),
+      )
+    ) {
       return;
     }
 
@@ -99,119 +102,130 @@ export function MilestoneFilesTab({
         milestoneId,
         file.id,
       );
-      toastSuccess({ message: "File removed." });
+      toastSuccess({
+        message: t("deleted", { name: file.fileName || t("thisFile") }),
+      });
       onFilesChanged();
     } catch (error) {
       toastError({
         message:
           error instanceof ApiFail
             ? error.response.error.message
-            : "Failed to delete file.",
+            : t("deleteFailed"),
       });
     } finally {
       setDeletingId(null);
     }
   };
 
-  if (!canViewFiles) {
+  if (!isPermissionLoading && !canViewFiles) {
     return (
-      <div className="rounded-xl border border-amber-200/80 dark:border-amber-900/40 bg-amber-50/40 dark:bg-amber-950/20 p-8 text-center space-y-2">
-        <h3 className="text-sm font-semibold text-zinc-950 dark:text-zinc-100">
-          Không có quyền xem file milestone
+      <div className="py-8 text-center space-y-2">
+        <h3 className="text-sm font-semibold text-foreground">
+          {t("noPermissionTitle")}
         </h3>
-        <p className="text-xs text-zinc-500 dark:text-zinc-400 max-w-md mx-auto">
-          Tài khoản của bạn chưa được cấp quyền xem danh sách tài liệu hoặc tệp tin của milestone này.
+        <p className="text-xs text-muted-foreground max-w-md mx-auto">
+          {t("noPermissionDesc")}
         </p>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
-      {/* Hidden file input */}
-      {canUploadFile && (
-        <input
-          ref={fileInputRef}
-          type="file"
-          className="hidden"
-          onChange={handleUploadFile}
-        />
-      )}
-
-      {/* Top Header & Upload Button */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-zinc-100 dark:border-zinc-800/80 pb-3">
+    <div className="space-y-6 pt-2">
+      {/* Top action bar */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-border/50 pb-3">
         <div>
-          <h3 className="text-sm text-zinc-950 dark:text-zinc-50">
-            Milestone Files & Resources
+          <h3 className="text-xs font-medium text-foreground">
+            {t("heading")}
           </h3>
-          <p className="text-xs text-zinc-400 mt-0.5">
-            Documents, assets, and project deliverables attached to this milestone.
+          <p className="text-[11px] text-muted-foreground mt-0.5">
+            {t("subheading")}
           </p>
         </div>
 
         {canUploadFile && (
-          <Button
-            onClick={() => fileInputRef.current?.click()}
-            disabled={uploading}
-            className="rounded-sm bg-[#0069D3] hover:bg-[#0055b3] text-white text-xs font-semibold h-8 px-3 cursor-pointer self-start sm:self-auto"
-          >
-            {uploading ? (
-              <>
-                <Loader2 className="mr-1.5 size-3.5 animate-spin" />
-                <span>Uploading...</span>
-              </>
-            ) : (
-              <>
-                <UploadCloud className="mr-1.5 size-3.5" />
-                <span>Upload New File</span>
-              </>
-            )}
-          </Button>
+          <div>
+            <input
+              type="file"
+              ref={fileInputRef}
+              onChange={(e) => void handleUploadFile(e)}
+              className="hidden"
+            />
+            <Button
+              size="sm"
+              disabled={uploading}
+              onClick={() => fileInputRef.current?.click()}
+              className="rounded-full bg-[#0069D3] hover:bg-[#0055b3] text-white text-xs font-semibold h-8 px-4 shadow-2xs cursor-pointer"
+            >
+              {uploading ? (
+                <>
+                  <Loader2 className="mr-1.5 size-3.5 animate-spin" />
+                  {t("uploading")}
+                </>
+              ) : (
+                <>
+                  <UploadCloud className="mr-1.5 size-3.5" />
+                  {t("uploadFile")}
+                </>
+              )}
+            </Button>
+          </div>
         )}
       </div>
 
       {files.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+        <div className="divide-y divide-border/40">
           {files.map((file) => (
             <div
               key={file.id}
-              className="flex items-center justify-between p-3.5 rounded-xl border border-zinc-200/80 dark:border-zinc-800/80 bg-white dark:bg-zinc-950 hover:border-zinc-300 dark:hover:border-zinc-700 transition-colors shadow-2xs"
+              className="py-3 flex items-center justify-between gap-3 hover:bg-muted/20 px-2 rounded-lg transition-colors"
             >
-              <div className="flex items-center gap-2.5 min-w-0 flex-1 mr-2">
-                <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300">
+              <div className="flex items-center gap-3 min-w-0">
+                <div className="flex size-8 items-center justify-center rounded-lg bg-blue-500/10 text-[#0069D3] shrink-0">
                   <FileText className="size-4" />
                 </div>
-                <div className="space-y-0.5 min-w-0 flex-1">
-                  <p className="text-xs font-bold text-zinc-900 dark:text-zinc-100 truncate">
-                    {file.fileName || `File #${file.id}`}
-                  </p>
-                  <p className="text-[11px] text-zinc-400">
-                    Uploaded {formatDate(file.createdAt)}
-                  </p>
+                <div className="min-w-0">
+                  <span className="text-xs font-semibold text-foreground block truncate max-w-sm">
+                    {file.fileName || t("fileFallback", { id: file.id })}
+                  </span>
+                  <div className="flex items-center gap-2 text-[11px] text-muted-foreground">
+                    {file.createdAt && (
+                      <span>
+                        {t("uploadedAt", { date: formatDate(file.createdAt) })}
+                      </span>
+                    )}
+                  </div>
                 </div>
               </div>
 
-              <div className="flex items-center gap-1 shrink-0">
-                <Button
-                  asChild
-                  variant="ghost"
-                  size="icon"
-                  className="size-7 rounded-md text-[#0069D3] hover:bg-[#0069D3]/10"
-                  title="Download"
-                >
-                  <a href={file.fileUrl} download target="_blank" rel="noopener noreferrer">
-                    <Download className="size-3.5" />
-                  </a>
-                </Button>
+              <div className="flex items-center gap-1.5 shrink-0">
+                {file.fileUrl && (
+                  <Button
+                    asChild
+                    variant="ghost"
+                    size="sm"
+                    className="h-8 text-xs text-muted-foreground hover:text-foreground cursor-pointer"
+                  >
+                    <a
+                      href={file.fileUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      download
+                    >
+                      <Download className="size-3.5 mr-1" />
+                      {t("download")}
+                    </a>
+                  </Button>
+                )}
 
                 {canDeleteFile && (
                   <Button
                     variant="ghost"
-                    size="icon"
+                    size="sm"
                     disabled={deletingId === file.id}
-                    onClick={() => handleDeleteFile(file)}
-                    className="size-7 rounded-md text-zinc-400 hover:text-rose-600 hover:bg-rose-500/10 cursor-pointer"
-                    title="Delete file"
+                    onClick={() => void handleDeleteFile(file)}
+                    className="h-8 text-xs text-muted-foreground hover:text-rose-600 px-2 cursor-pointer"
                   >
                     {deletingId === file.id ? (
                       <Loader2 className="size-3.5 animate-spin" />
@@ -225,29 +239,16 @@ export function MilestoneFilesTab({
           ))}
         </div>
       ) : (
-        <div className="rounded-xl border border-dashed border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 p-12 text-center space-y-3">
-          <UploadCloud className="size-8 mx-auto text-zinc-400" />
-          <h4 className="text-sm font-bold text-zinc-950 dark:text-zinc-50">
-            No files attached yet
+        <div className="py-12 text-center space-y-2">
+          <FileText className="size-6 mx-auto text-muted-foreground/60" />
+          <h4 className="text-xs font-semibold text-foreground">
+            {t("emptyTitle")}
           </h4>
-          <p className="text-xs text-zinc-400 max-w-sm mx-auto">
-            Upload specifications, design files, or assets to share them between client
-            and freelancer for this milestone.
+          <p className="text-xs text-muted-foreground max-w-sm mx-auto">
+            {t("emptyDesc")}
           </p>
-          {canUploadFile && (
-            <Button
-              variant="outline"
-              onClick={() => fileInputRef.current?.click()}
-              disabled={uploading}
-              className="rounded-lg border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-xs font-semibold cursor-pointer"
-            >
-              <Plus className="mr-1.5 size-3.5" />
-              Upload File
-            </Button>
-          )}
         </div>
       )}
     </div>
   );
 }
-

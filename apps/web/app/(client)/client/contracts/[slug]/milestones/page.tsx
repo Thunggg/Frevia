@@ -1,6 +1,10 @@
 import { notFound } from "next/navigation";
+import { cookies } from "next/headers";
+import { getTranslations } from "next-intl/server";
 import contractServerRequest from "@/apiRequests/contract.server";
+import authServerRequest from "@/apiRequests/auth.server";
 import { MilestonesPageContent } from "./_components";
+import { getBrowserSocketUrl } from "@/configs/validate-env";
 
 export async function generateMetadata({
   params,
@@ -8,10 +12,11 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
+  const t = await getTranslations("milestoneWorkspace.meta");
 
   return {
-    title: `Milestones Management - #${slug}`,
-    description: "Manage contract milestones, deliverables, escrow deposits, and releases.",
+    title: t("listTitle", { slug }),
+    description: t("listClientDescription"),
   };
 }
 
@@ -36,6 +41,10 @@ export default async function ClientContractMilestonesPage({
 
   if (!contract) notFound();
 
+  const cookieStore = await cookies();
+  const token = cookieStore.get("accessToken")?.value ?? null;
+  const user = await authServerRequest.getMe();
+
   const sharedFiles = await contractServerRequest.getSharedFiles(contract.id);
 
   return (
@@ -45,6 +54,9 @@ export default async function ClientContractMilestonesPage({
           initialContract={contract}
           initialSharedFiles={sharedFiles}
           basePath="/client"
+          currentUserId={user?.id ?? null}
+          accessToken={token}
+          socketUrl={getBrowserSocketUrl()}
         />
       </div>
     </div>

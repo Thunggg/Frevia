@@ -152,6 +152,7 @@ services:
       NODE_ENV: production
       APP_URL: http://localhost:3003
       NESTJS_API_URL: http://backend:3000
+      NEXT_PUBLIC_SOCKET_URL: http://localhost:3002
 
 volumes:
   ollama:

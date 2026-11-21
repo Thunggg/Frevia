@@ -163,6 +163,8 @@ export function useCreatePost() {
 
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["forum", "posts"] });
+      queryClient.invalidateQueries({ queryKey: ["forum", "top-posts"] });
+      queryClient.invalidateQueries({ queryKey: ["forum", "categories"] });
     },
   });
 }
@@ -192,6 +194,7 @@ export function useUpdatePost() {
         queryKey: forumKeys.post(variables.postId),
       });
       queryClient.invalidateQueries({ queryKey: ["forum", "posts"] });
+      queryClient.invalidateQueries({ queryKey: ["forum", "top-posts"] });
     },
   });
 }
@@ -210,6 +213,8 @@ export function useDeletePost() {
 
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["forum", "posts"] });
+      queryClient.invalidateQueries({ queryKey: ["forum", "top-posts"] });
+      queryClient.invalidateQueries({ queryKey: ["forum", "categories"] });
     },
   });
 }
@@ -229,6 +234,9 @@ export function useCreateComment() {
     onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({
         queryKey: forumKeys.comments(variables.postId),
+      });
+      queryClient.invalidateQueries({
+        queryKey: forumKeys.post(variables.postId),
       });
     },
   });
@@ -258,6 +266,9 @@ export function useUpdateComment() {
       queryClient.invalidateQueries({
         queryKey: forumKeys.comments(variables.postId),
       });
+      queryClient.invalidateQueries({
+        queryKey: forumKeys.post(variables.postId),
+      });
     },
   });
 }
@@ -282,6 +293,9 @@ export function useDeleteComment() {
     onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({
         queryKey: forumKeys.comments(variables.postId),
+      });
+      queryClient.invalidateQueries({
+        queryKey: forumKeys.post(variables.postId),
       });
     },
   });
@@ -355,6 +369,7 @@ export function useTogglePostLike(
       queryClient.invalidateQueries({
         queryKey: forumKeys.post(postId),
       });
+      queryClient.invalidateQueries({ queryKey: ["forum", "posts"] });
     },
   });
 }

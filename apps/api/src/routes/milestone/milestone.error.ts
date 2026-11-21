@@ -69,6 +69,14 @@ export const MilestoneCannotBeDeletedException = () =>
     { message: ManageMilestoneMessage.MILESTONE_CANNOT_BE_DELETED, path: 'id' },
   ]);
 
+export const MilestoneCannotDeleteLastException = () =>
+  new UnprocessableEntityException([
+    {
+      message: ManageMilestoneMessage.MILESTONE_CANNOT_DELETE_LAST,
+      path: 'id',
+    },
+  ]);
+
 export const FailedToCreateMilestoneException = () =>
   new InternalServerErrorException([
     { message: ManageMilestoneMessage.FAILED_TO_CREATE_MILESTONE, path: '' },
@@ -103,6 +111,15 @@ export const MilestoneAlreadyInProgressException = () =>
   new UnprocessableEntityException([
     {
       message: ManageMilestoneMessage.MILESTONE_ALREADY_IN_PROGRESS,
+      path: 'id',
+    },
+  ]);
+
+export const MilestonePreviousNotCompletedException = () =>
+  new UnprocessableEntityException([
+    {
+      message:
+        'Previous milestones must be completed before starting this milestone.',
       path: 'id',
     },
   ]);

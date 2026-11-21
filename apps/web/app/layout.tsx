@@ -2,10 +2,10 @@ import { Toaster } from "@repo/ui/components/shadcn/sonner";
 import type { Metadata } from "next";
 import { NextIntlClientProvider } from "next-intl";
 import { getLocale, getMessages, getTranslations } from "next-intl/server";
-import { cookies } from "next/headers";
 import localFont from "next/font/local";
 import { ThemeProvider } from "@/components/theme-provider";
-import { envConfig } from "@/configs/validate-env";
+import { getBrowserSocketUrl } from "@/configs/validate-env";
+import { getServerAccessToken } from "@/lib/auth-session";
 import authServerRequest from "@/apiRequests/auth.server";
 import { NotificationProvider } from "@/providers/notification-provider";
 import "./globals.css";
@@ -43,11 +43,13 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const cookieStore = await cookies();
-  const token = cookieStore.get("accessToken")?.value ?? null;
-  const user = await authServerRequest.getMe();
-  const locale = await getLocale();
-  const messages = await getMessages();
+  const [accessToken, user, locale, messages] = await Promise.all([
+    getServerAccessToken(),
+    authServerRequest.getMe(),
+    getLocale(),
+    getMessages(),
+  ]);
+  const token = accessToken ?? null;
 
   return (
     <html lang={locale} suppressHydrationWarning>
@@ -58,6 +60,7 @@ export default async function RootLayout({
           href="https://fonts.gstatic.com"
           crossOrigin="anonymous"
         />
+        {/* eslint-disable-next-line @next/next/no-page-custom-font */}
         <link
           rel="stylesheet"
           href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap"
@@ -73,9 +76,9 @@ export default async function RootLayout({
           disableTransitionOnChange
         >
           <NextIntlClientProvider locale={locale} messages={messages}>
-            <QueryProvider>
+            <QueryProvider initialUser={user}>
               <NotificationProvider
-                socketUrl={envConfig?.NESTJS_API_URL ?? ""}
+                socketUrl={getBrowserSocketUrl()}
                 token={token}
                 currentUserId={user?.id ?? null}
               >

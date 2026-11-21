@@ -1,4 +1,4 @@
-import { cookies } from "next/headers";
+import { getServerAccessToken } from "@/lib/auth-session";
 
 import type {
   ApiResponse,
@@ -11,10 +11,7 @@ import { envConfig } from "@/configs/validate-env";
 
 async function proposalServerFetch<T>(path: string): Promise<T | null> {
   if (!envConfig?.NESTJS_API_URL) return null;
-  const cookieStore = await cookies();
-  const accessToken =
-    cookieStore.get("accessToken")?.value ??
-    cookieStore.get("access_token")?.value;
+  const accessToken = await getServerAccessToken();
   if (!accessToken) return null;
 
   try {

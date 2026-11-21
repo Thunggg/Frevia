@@ -58,11 +58,10 @@ function resolveHeaderRole(user: GetMeResType | null): UserRole {
   const primaryRole =
     user.roles.find((role) => role.isPrimary) ?? user.roles[0];
 
-  if (primaryRole?.name === RoleName.EXPERT) return "EXPERT";
   if (primaryRole?.name === RoleName.CLIENT) return "CLIENT";
   if (primaryRole?.name === RoleName.FREELANCER) return "FREELANCER";
 
-  return "FREELANCER";
+  return "STAFF";
 }
 
 export function HomeView({ user }: HomeViewProps) {

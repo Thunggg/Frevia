@@ -2,7 +2,7 @@ import Link from "next/link";
 import { useTranslations } from "next-intl";
 
 const platformLinks = [
-  { href: "/find-work", labelKey: "findWork" },
+  { href: "/freelancer/find-work/best-matches", labelKey: "findWork" },
   { href: "/conversations", labelKey: "messages" },
 ] as const;
 
@@ -82,7 +82,7 @@ function CenterTechWidget() {
 
       {/* Center Button (Get a Demo / Get Started FREE) */}
       <Link
-        href="/find-work"
+        href="/freelancer/find-work/best-matches"
         className="group inline-flex shrink-0 items-center gap-3 rounded-xl bg-[#18181b] px-6 py-3.5 text-sm font-medium text-white shadow-xl shadow-emerald-950/15 transition-all duration-200 hover:scale-[1.03] hover:bg-black hover:shadow-2xl active:scale-[0.98] dark:border dark:border-white/10 dark:bg-black"
       >
         <span className="font-semibold text-white tracking-wide">

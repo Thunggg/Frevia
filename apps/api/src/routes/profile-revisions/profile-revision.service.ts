@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Optional } from '@nestjs/common';
 import { Prisma, ProfileRevisionType, RevisionStatus } from '@prisma/client';
 import {
   ProfileMessage,
@@ -17,13 +17,18 @@ import {
   ProfileRevisionAlreadyReviewedException,
   ProfileRevisionNotFoundException,
 } from './profile-revision.error';
+import { CacheService } from '../../shared/services/cache.service';
+import { AUTH_ME_CACHE_PREFIX } from '../auth/auth.service';
 import { ProfileRevisionRepository } from './profile-revision.repo';
 
 @Injectable()
 export class ProfileRevisionService {
   static readonly MANUAL_REVIEW_STRENGTH_THRESHOLD = 20;
 
-  constructor(private readonly repository: ProfileRevisionRepository) {}
+  constructor(
+    private readonly repository: ProfileRevisionRepository,
+    @Optional() private readonly cacheService?: CacheService,
+  ) {}
 
   requiresManualReview(profileStrength: number) {
     return (
@@ -262,6 +267,9 @@ export class ProfileRevisionService {
       revision.profileType,
     );
     if (!reviewed) throw ProfileRevisionAlreadyReviewedException();
+    if (status === RevisionStatus.APPROVED) {
+      this.cacheService?.del(`${AUTH_ME_CACHE_PREFIX}${revision.userId}`);
+    }
     return reviewed;
   }
 }

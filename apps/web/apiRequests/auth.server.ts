@@ -1,7 +1,7 @@
 import "server-only";
 
 import { cache } from "react";
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
 import {
   accessTokenNeedsRefresh,
   exchangeRefreshToken,
@@ -11,8 +11,13 @@ import { envConfig } from "@/configs/validate-env";
 import type { ApiResponse, GetMeResType } from "@shared/types";
 
 const getMeInternal = cache(async (): Promise<GetMeResType | null> => {
-    const cookieStore = await cookies();
-    let accessToken = cookieStore.get("accessToken")?.value;
+    const [cookieStore, requestHeaders] = await Promise.all([
+      cookies(),
+      headers(),
+    ]);
+    let accessToken =
+      requestHeaders.get("x-refreshed-access-token") ??
+      cookieStore.get("accessToken")?.value;
     const refreshToken = cookieStore.get("refreshToken")?.value;
 
     if (!envConfig?.NESTJS_API_URL || (!accessToken && !refreshToken)) {

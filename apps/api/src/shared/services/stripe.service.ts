@@ -23,12 +23,14 @@ export class StripeService {
   async createExpressAccount(
     email: string,
     country: string = envConfig.STRIPE_ACCOUNT_COUNTRY,
+    userId?: number,
   ): Promise<Stripe.Account> {
     const type = envConfig.STRIPE_ACCOUNT_TYPE;
     const accountParams: Stripe.AccountCreateParams = {
       type,
       country,
       email,
+      ...(userId ? { metadata: { userId: String(userId) } } : {}),
     };
     if (type === 'express') {
       accountParams.capabilities = {
@@ -195,6 +197,7 @@ export class StripeService {
     successUrl,
     cancelUrl,
     metadata,
+    captureMethod,
   }: {
     amountInCents: number;
     currency?: string;
@@ -205,6 +208,7 @@ export class StripeService {
     successUrl: string;
     cancelUrl: string;
     metadata?: Record<string, string>;
+    captureMethod?: 'manual' | 'automatic';
   }): Promise<Stripe.Checkout.Session> {
     return this.stripe.checkout.sessions.create({
       mode: 'payment',
@@ -232,6 +236,7 @@ export class StripeService {
       payment_intent_data: {
         metadata,
         setup_future_usage: 'off_session',
+        ...(captureMethod ? { capture_method: captureMethod } : {}),
       },
     });
   }
@@ -312,22 +317,27 @@ export class StripeService {
     customerId,
     paymentMethodId,
     metadata,
+    idempotencyKey,
   }: {
     amountInCents: number;
     currency?: string;
     customerId: string;
     paymentMethodId: string;
     metadata?: Record<string, string>;
+    idempotencyKey?: string;
   }): Promise<Stripe.PaymentIntent> {
-    return this.stripe.paymentIntents.create({
-      amount: Math.round(amountInCents),
-      currency: currency.toLowerCase(),
-      customer: customerId,
-      payment_method: paymentMethodId,
-      off_session: true,
-      confirm: true,
-      metadata,
-    });
+    return this.stripe.paymentIntents.create(
+      {
+        amount: Math.round(amountInCents),
+        currency: currency.toLowerCase(),
+        customer: customerId,
+        payment_method: paymentMethodId,
+        off_session: true,
+        confirm: true,
+        metadata,
+      },
+      idempotencyKey ? { idempotencyKey } : undefined,
+    );
   }
 
   constructWebhookEvent(

@@ -737,7 +737,7 @@ export function PostJobForm({
                     {t("positionsLabel")}
                   </FieldLabel>
                   {job?.positionsFilled && job.positionsFilled > 0 ? (
-                    <span className="text-[11px] font-medium text-emerald-600 dark:text-emerald-400 font-sans">
+                    <span className="text-[11px] font-medium text-[#0069D3] dark:text-blue-300 font-sans">
                       {t("positionsFilledNote", {
                         filled: job.positionsFilled,
                       })}
@@ -982,7 +982,7 @@ export function PostJobForm({
                 {selectedCategories.map((jobCategory) => (
                   <Badge
                     key={jobCategory.id}
-                    className="rounded-full border-0 bg-[#eaf8df] dark:bg-[#4fae2e]/15 px-3 py-1 text-xs font-medium font-sans text-[#3f9225] dark:text-[#7ad75d] hover:bg-[#ddf2cd] dark:hover:bg-[#4fae2e]/25"
+                    className="rounded-full border border-[#D0E1F8] dark:border-[#0069D3]/30 bg-[#EBF3FE] dark:bg-[#0069D3]/15 px-3 py-1 text-xs font-medium font-sans text-[#0069D3] dark:text-blue-200 hover:bg-[#D0E1F8]/60 dark:hover:bg-[#0069D3]/25"
                   >
                     {jobCategory.name}
                     <button

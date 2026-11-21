@@ -43,6 +43,9 @@ describe('Conversations (UF-18 to UF-25)', () => {
     unhideConversation: jest.fn(),
     softDeleteMessage: jest.fn(),
     markMessagesAsRead: jest.fn(),
+    clearMessageNotifications: jest.fn().mockResolvedValue({ count: 0 }),
+    findUserDisplayName: jest.fn().mockResolvedValue('Test User'),
+    upsertMessageNotification: jest.fn().mockResolvedValue(undefined),
     hideConversationForUser: jest.fn(),
     setPinnedForUser: jest.fn(),
   };

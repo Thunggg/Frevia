@@ -27,7 +27,15 @@ export class PortfolioService {
         throw FreelancerProfileNotFoundException();
       }
 
-      const isFreelancer = profile.user.role.name === RoleName.FREELANCER;
+      const userWithRoles = profile.user as {
+        role: { name: string };
+        userRoles?: Array<{ role?: { name?: string | null } | null }>;
+      };
+      const isFreelancer =
+        userWithRoles.role.name === RoleName.FREELANCER ||
+        userWithRoles.userRoles?.some(
+          (assignment) => assignment.role?.name === RoleName.FREELANCER,
+        ) === true;
       if (!isFreelancer) {
         throw FreelancerProfileNotFoundException();
       }

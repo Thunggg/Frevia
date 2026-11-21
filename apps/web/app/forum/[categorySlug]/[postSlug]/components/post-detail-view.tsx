@@ -4,12 +4,13 @@ import { useCallback, useState } from "react";
 import { useFormatter, useTranslations } from "next-intl";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { motion } from "motion/react";
 import {
   Calendar,
-  Heart,
   MessageSquare,
   Trash2,
 } from "@/components/icons";
+import { ForumLikeHeart } from "@/components/forum-like-heart";
 
 import {
   AlertDialog,
@@ -183,7 +184,7 @@ export function PostDetailView({
                         size="xs"
                         className="gap-1 text-muted-foreground hover:text-red-500"
                       >
-                        <Trash2 className="h-3.5 w-3.5" />
+                        <Trash2 className="size-3.5" />
                         {t("delete")}
                       </Button>
                     </AlertDialogTrigger>
@@ -265,11 +266,15 @@ export function PostDetailView({
                     : "gap-1.5 px-3 text-muted-foreground/60 hover:bg-[#0069D3]/5 hover:text-[#0069D3] dark:hover:bg-blue-500/10"
                 }
               >
-                <Heart
-                  className={`size-[18px] transition-transform ${
-                    liked ? "scale-110 fill-current" : ""
-                  }`}
-                />
+                <motion.span
+                  key={liked ? "liked" : "unliked"}
+                  initial={{ scale: 0.4, rotate: -14 }}
+                  animate={{ scale: 1, rotate: 0 }}
+                  transition={{ type: "spring", stiffness: 380, damping: 14 }}
+                  className="flex items-center"
+                >
+                  <ForumLikeHeart liked={liked} className="size-5" />
+                </motion.span>
                 <span className="text-sm font-medium tabular-nums">
                   {likeCount}
                 </span>
@@ -277,7 +282,7 @@ export function PostDetailView({
             ) : null}
 
             <div className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-muted-foreground">
-              <MessageSquare className="size-[18px]" />
+              <MessageSquare className="size-5" />
               <span className="font-medium tabular-nums">{commentTotal}</span>
             </div>
 

@@ -20,6 +20,7 @@ import { CONTRACT_STATUSES } from "../../_components";
 import { EditContractSheet } from "./edit-contract-sheet";
 import { ContractDocumentPaper } from "./contract-document-paper";
 import { ContractActionsSidebar } from "./contract-actions-sidebar";
+import { ContractChatPopup } from "./contract-chat-popup";
 import { ContractSharedFilesSidebar } from "./contract-shared-files-sidebar";
 import { ContractActionDialogs } from "./contract-action-dialogs";
 import { FundContractHoldSheet } from "./fund-contract-hold-sheet";
@@ -32,16 +33,23 @@ export interface ContractDetailProps {
   initialContract: ContractDetailType;
   initialSharedFiles?: GetSharedFilesResponseType | null;
   basePath?: string;
+  currentUserId?: number | null;
+  accessToken?: string | null;
+  socketUrl?: string;
 }
 
 export function ContractDetail({
   initialContract,
   initialSharedFiles,
   basePath = "/client",
+  currentUserId = null,
+  accessToken = null,
+  socketUrl = "",
 }: ContractDetailProps) {
   const router = useRouter();
   const queryClient = useQueryClient();
   const t = useTranslations("contractDetail");
+  const tWorkspace = useTranslations("contractWorkspace");
   const tStatus = useTranslations("contractStatus");
   const tRole = useTranslations("roleName");
   const format = useFormatter();
@@ -87,41 +95,74 @@ export function ContractDetail({
   const [isCancelling, setIsCancelling] = useState(false);
   const [isRejecting, setIsRejecting] = useState(false);
   const [isStartingChat, setIsStartingChat] = useState(false);
+  const [chatOpen, setChatOpen] = useState(false);
+  const [chatConversationId, setChatConversationId] = useState<number | null>(
+    null,
+  );
 
   // Sync Checkout Session on URL return
   const searchParams = useSearchParams();
 
   useEffect(() => {
     const paymentStatus = searchParams.get("payment");
+    const holdStatus = searchParams.get("hold");
     const sessionId = searchParams.get("session_id");
 
-    if (paymentStatus === "success" && sessionId) {
+    if ((paymentStatus === "success" || holdStatus === "success") && sessionId) {
       const syncSession = async () => {
         try {
           await paymentApiRequest.syncCheckoutSession(sessionId);
-          toastSuccess({ message: "Payment completed successfully!" });
+          toastSuccess({
+            message:
+              holdStatus === "success"
+                ? tWorkspace("holdAuthorizedToast")
+                : tWorkspace("paymentCompletedToast"),
+          });
         } catch {
           // If already processed via webhook
         } finally {
-          await queryClient.invalidateQueries({
-            queryKey: ["client-contract-detail", initialContract.id],
-          });
-          await queryClient.invalidateQueries({
-            queryKey: ["client-contracts"],
-          });
+          await Promise.all([
+            queryClient.invalidateQueries({
+              queryKey: ["client-contract-detail", initialContract.id],
+            }),
+            queryClient.invalidateQueries({
+              queryKey: ["contracts-list"],
+            }),
+            queryClient.invalidateQueries({
+              queryKey: ["client-contract-milestones", initialContract.id],
+            }),
+            queryClient.invalidateQueries({
+              queryKey: ["client-transactions"],
+            }),
+            queryClient.invalidateQueries({
+              queryKey: ["freelancer-transactions"],
+            }),
+            queryClient.invalidateQueries({
+              queryKey: ["transactions-summary"],
+            }),
+            queryClient.invalidateQueries({
+              queryKey: ["transactions"],
+            }),
+            queryClient.invalidateQueries({
+              queryKey: ["saved-payment-methods"],
+            }),
+          ]);
           const newUrl = window.location.pathname;
           window.history.replaceState({}, "", newUrl);
         }
       };
       void syncSession();
-    } else if (paymentStatus === "cancelled") {
+    } else if (paymentStatus === "cancelled" || holdStatus === "cancelled") {
       toastError({
-        message: "Payment was cancelled. You can retry at any time.",
+        message:
+          holdStatus === "cancelled"
+            ? tWorkspace("holdCancelledToast")
+            : tWorkspace("paymentCancelledToast"),
       });
       const newUrl = window.location.pathname;
       window.history.replaceState({}, "", newUrl);
     }
-  }, [searchParams, initialContract.id, queryClient]);
+  }, [searchParams, initialContract.id, queryClient, tWorkspace]);
 
   // Main Contract Query
   const { data: contract } = useQuery<ContractDetailType>({
@@ -157,13 +198,22 @@ export function ContractDetail({
     );
   }, [contract.milestones]);
 
+  const client = contract.client;
+  const clientName = client?.profile?.displayName || tRole("CLIENT");
+  const clientAvatarUrl = client?.profile?.avatarUrl;
+
   const freelancer = contract.freelancer;
   const freelancerName =
     freelancer?.profile?.displayName || tRole("FREELANCER");
   const avatarUrl = freelancer?.profile?.avatarUrl;
 
-  const client = contract.client;
-  const clientName = client?.profile?.displayName || tRole("CLIENT");
+  const counterpartyName = isFreelancer ? clientName : freelancerName;
+  const counterpartyAvatarUrl = isFreelancer
+    ? clientAvatarUrl
+    : avatarUrl;
+  const counterpartyId = isFreelancer
+    ? contract.clientId
+    : contract.freelancerId;
 
   const contractStatusText = (
     CONTRACT_STATUSES as readonly string[]
@@ -174,29 +224,27 @@ export function ContractDetail({
   // Chat Actions
   const createConversation = useCreateConversation();
 
-  const handleMessageCounterparty = async () => {
-    const targetUserId = isFreelancer
-      ? contract.clientId
-      : contract.freelancerId;
-
+  const openChatWith = async (targetUserId: number | null | undefined) => {
     if (!targetUserId) return;
-
     setIsStartingChat(true);
     try {
       const conv = await createConversation.mutateAsync(targetUserId);
       if (conv?.id) {
-        const dest = conv.slug ?? conv.id;
-        router.push(
-          isFreelancer
-            ? `/freelancer/conversations/${dest}`
-            : `/client/conversations/${dest}`,
-        );
+        setChatConversationId(conv.id);
+        setChatOpen(true);
       }
     } catch {
-      toastError({ message: "Could not open conversation. Try again." });
+      toastError({ message: tWorkspace("openChatFailed") });
     } finally {
       setIsStartingChat(false);
     }
+  };
+
+  const handleMessageCounterparty = async () => {
+    const targetUserId = isFreelancer
+      ? contract.clientId
+      : contract.freelancerId;
+    await openChatWith(targetUserId);
   };
 
   // Sign Action
@@ -212,7 +260,7 @@ export function ContractDetail({
         queryKey: ["contract-shared-files", contract.id],
       });
       await queryClient.invalidateQueries({
-        queryKey: ["client-contracts"],
+        queryKey: ["contracts-list"],
       });
       toastSuccess({ message: t("signed") });
       setConfirmSign(false);
@@ -234,7 +282,7 @@ export function ContractDetail({
     title: string,
   ) => {
     if (
-      !window.confirm(`Are you sure you want to delete milestone "${title}"?`)
+      !window.confirm(tWorkspace("confirmDeleteMilestone", { title }))
     ) {
       return;
     }
@@ -246,13 +294,13 @@ export function ContractDetail({
       await queryClient.invalidateQueries({
         queryKey: ["client-contract-milestones", contract.id],
       });
-      toastSuccess({ message: `Milestone "${title}" removed.` });
+      toastSuccess({ message: tWorkspace("milestoneRemoved", { title }) });
     } catch (error) {
       toastError({
         message:
           error instanceof ApiFail
             ? error.response.error.message
-            : "Failed to delete milestone.",
+            : tWorkspace("milestoneDeleteFailed"),
       });
     }
   };
@@ -267,7 +315,7 @@ export function ContractDetail({
         queryKey: ["client-contract-detail", contract.id],
       });
       await queryClient.invalidateQueries({
-        queryKey: ["client-contracts"],
+        queryKey: ["contracts-list"],
       });
       toastSuccess({ message: t("completed") });
       setConfirmComplete(false);
@@ -293,7 +341,7 @@ export function ContractDetail({
         queryKey: ["client-contract-detail", contract.id],
       });
       await queryClient.invalidateQueries({
-        queryKey: ["client-contracts"],
+        queryKey: ["contracts-list"],
       });
       toastSuccess({ message: t("cancelled") });
       setConfirmCancel(false);
@@ -323,10 +371,10 @@ export function ContractDetail({
         queryKey: ["client-contract-detail", contract.id],
       });
       await queryClient.invalidateQueries({
-        queryKey: ["client-contracts"],
+        queryKey: ["contracts-list"],
       });
       toastSuccess({
-        message: "Contract declined. Any payment hold has been released.",
+        message: tWorkspace("declinedToast"),
       });
       setConfirmReject(false);
       setRejectReason("");
@@ -335,7 +383,7 @@ export function ContractDetail({
         message:
           error instanceof ApiFail
             ? error.response.error.message
-            : "Failed to decline contract.",
+            : tWorkspace("declineFailed"),
       });
     } finally {
       setIsRejecting(false);
@@ -351,7 +399,7 @@ export function ContractDetail({
           className="inline-flex items-center gap-1 font-medium text-muted-foreground hover:text-foreground transition-colors"
         >
           <ChevronLeft className="size-4" />
-          <span>Contracts</span>
+          <span>{tWorkspace("breadcrumbContracts")}</span>
         </Link>
         <span className="text-muted-foreground/60">/</span>
         <span className="font-semibold text-foreground">
@@ -364,7 +412,7 @@ export function ContractDetail({
               href={`${basePath}/contracts/${encodeURIComponent(contract.slug || String(contract.id))}/milestones`}
               className="font-medium text-muted-foreground hover:text-[#0069D3] transition-colors"
             >
-              Milestone
+              {tWorkspace("breadcrumbMilestone")}
             </Link>
           </>
         )}
@@ -467,11 +515,26 @@ export function ContractDetail({
               queryKey: ["client-contract-detail", contract.id],
             });
             await queryClient.invalidateQueries({
-              queryKey: ["client-contracts"],
+              queryKey: ["contracts-list"],
             });
           }}
         />
       )}
+
+      {/* Floating Messenger-style chat popup (bottom-right) */}
+      <ContractChatPopup
+        open={chatOpen}
+        onOpenChange={setChatOpen}
+        conversationId={chatConversationId}
+        counterpartyId={counterpartyId}
+        counterpartyName={counterpartyName}
+        counterpartyAvatarUrl={counterpartyAvatarUrl}
+        currentUserId={currentUserId}
+        accessToken={accessToken}
+        socketUrl={socketUrl}
+        isStartingChat={isStartingChat}
+        onOpenChat={(targetUserId) => openChatWith(targetUserId)}
+      />
 
       {/* All Action and Confirmation Dialogs */}
       <ContractActionDialogs

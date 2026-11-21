@@ -24,6 +24,8 @@ export const ManageContractMessage = {
     CONTRACT_ALREADY_COMPLETED: 'Error.ContractAlreadyCompleted',
     CONTRACT_DISPUTED: 'Error.ContractDisputed',
     ALREADY_SIGNED: 'Error.ContractAlreadySigned',
+    CONTRACT_HAS_UNSETTLED_MILESTONES: 'Error.ContractHasUnsettledMilestones',
+    CONTRACT_CANNOT_CANCEL_WITH_ACTIVE_SUBMISSION: 'Error.ContractCannotCancelWithActiveSubmission',
 
     FAILED_TO_CREATE_CONTRACT: 'Error.FailedToCreateContract',
     FAILED_TO_LOAD_CONTRACT: 'Error.FailedToLoadContract',

@@ -1,8 +1,12 @@
-\subsubsection{Entity Relationship Diagram}
-
+\setlength{\tabcolsep}{3pt}
 % ===============================================
 % 4.1.5.1 ERD tong
 % ===============================================
+\begin{landscape}
+\Needspace{12\baselineskip}
+\subsubsection{Entity Relationship Diagram}
+
+\Needspace{12\baselineskip}
 \paragraph{Overall Entity Relationship Diagram}
 \label{sec:erd-overall}
 \begin{figure}[H]
@@ -11,33 +15,83 @@
     \caption{Overall Entity Relationship Diagram}
     \label{fig:erd-overall}
 \end{figure}
+\end{landscape}
 
 % ===============================================
 % 4.1.5.2 ERD1
 % ===============================================
+\Needspace{12\baselineskip}
 \paragraph{Authentication \& Sessions}
+
+This ERD describes the Authentication \& Sessions module. It stores account identities, one-time verification codes, device sessions, OAuth links, two-factor authentication settings, and user preferences. User is the root account table and links to Role and Profile. VerificationCode supports registration, email verification, and password reset. Session stores refresh tokens and device information for each login. OauthAccount links Google login to a User. TwoFactorAuth stores the TOTP secret and enabled flag. UserSetting stores theme, language, and notification preferences. These tables support registration, login, logout, password reset, session revocation, Google OAuth, and 2FA.
+
+\Needspace{12\baselineskip}
+\paragraph*{a) ERD}
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.78\textwidth]{image/ERD/ERD-ERD1.drawio.pdf}
     \caption{Authentication \& Sessions ERD}
-    \label{fig:erd-authentication-sessions}
+    \label{fig:erd-authentication--sessions}
 \end{figure}
+
+\Needspace{6\baselineskip}
+\paragraph*{b) Table of entities}
+\begin{center}
+\small\sloppy
+\begin{tabular}{|L{2.5cm}|L{9.5cm}|}
+\hline
+\rowcolor{fptHeader}\textbf{Entity} & \textbf{Fields and data types} \\ \hline
+\texttt{User} & id (integer), email (varchar(255)), password (varchar(255)), is\allowbreak Banned (boolean), created\allowbreak At (timestamp(3)), updated\allowbreak At (timestamp(3)), deleted\allowbreak At (timestamp(3)), stripe\allowbreak Customer\allowbreak Id (varchar(255)), stripe\allowbreak Account\allowbreak Id (varchar(255)), stripe\allowbreak Onboarding\allowbreak Completed (boolean), role\allowbreak Id (integer) \\ \hline
+\texttt{Verification\allowbreak Code} & id (integer), email (varchar(500)), code (varchar(255)), type (enum(Verification\allowbreak Code\allowbreak Type)), attempts (integer), expires\allowbreak At (timestamp(3)), created\allowbreak At (timestamp(3)) \\ \hline
+\texttt{Session} & id (integer), user\allowbreak Id (integer), refresh\allowbreak Token (varchar(512)), device\allowbreak Info (varchar(255)), ip\allowbreak Address (varchar(45)), expires\allowbreak At (timestamp(3)), created\allowbreak At (timestamp(3)) \\ \hline
+\texttt{Oauth\allowbreak Account} & id (integer), user\allowbreak Id (integer), provider (enum(Oauth\allowbreak Provider)), provider\allowbreak User\allowbreak Id (varchar(255)), created\allowbreak At (timestamp(3)) \\ \hline
+\texttt{Two\allowbreak Factor\allowbreak Auth} & id (integer), user\allowbreak Id (integer), secret (varchar(255)), enabled (boolean), created\allowbreak At (timestamp(3)) \\ \hline
+\texttt{User\allowbreak Setting} & id (integer), user\allowbreak Id (integer), theme (varchar(20)), language (varchar(10)), notification\allowbreak Prefs (jsonb) \\ \hline
+\end{tabular}
+\end{center}
 
 % ===============================================
 % 4.1.5.3 ERD2
 % ===============================================
+\Needspace{12\baselineskip}
 \paragraph{Role-Based Access Control}
+
+This ERD describes the Role-Based Access Control module. It stores roles, permissions, role-permission assignments, and user-role assignments. Role defines a named role; Permission defines a route-level permission; RolePermission links permissions to roles; UserRole links users to roles. These tables support RBAC guards, permission checks, and role switching without redeployment.
+
+\Needspace{12\baselineskip}
+\paragraph*{a) ERD}
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.78\textwidth]{image/ERD/ERD-ERD2.drawio.pdf}
     \caption{Role-Based Access Control ERD}
-    \label{fig:erd-rbac}
+    \label{fig:erd-role-based-access-control}
 \end{figure}
+
+\Needspace{6\baselineskip}
+\paragraph*{b) Table of entities}
+\begin{center}
+\small\sloppy
+\begin{tabular}{|L{2.5cm}|L{9.5cm}|}
+\hline
+\rowcolor{fptHeader}\textbf{Entity} & \textbf{Fields and data types} \\ \hline
+\texttt{User} & id (integer), email (varchar(255)), password (varchar(255)), is\allowbreak Banned (boolean), created\allowbreak At (timestamp(3)), updated\allowbreak At (timestamp(3)), deleted\allowbreak At (timestamp(3)), stripe\allowbreak Customer\allowbreak Id (varchar(255)), stripe\allowbreak Account\allowbreak Id (varchar(255)), stripe\allowbreak Onboarding\allowbreak Completed (boolean), role\allowbreak Id (integer) \\ \hline
+\texttt{Role} & id (integer), name (varchar(500)), description (varchar(255)), created\allowbreak At (timestamp(3)), deleted\allowbreak At (timestamp(3)) \\ \hline
+\texttt{User\allowbreak Role} & user\allowbreak Id (integer), role\allowbreak Id (integer), is\allowbreak Primary (boolean), created\allowbreak At (timestamp(3)) \\ \hline
+\texttt{Permission} & id (integer), name (varchar(500)), path (varchar(1000)), method (enum(Http\allowbreak Method)), module (varchar(500)), created\allowbreak By\allowbreak Id (integer), updated\allowbreak By\allowbreak Id (integer), deleted\allowbreak By\allowbreak Id (integer), deleted\allowbreak At (timestamp(3)), created\allowbreak At (timestamp(3)), updated\allowbreak At (timestamp(3)) \\ \hline
+\texttt{Role\allowbreak Permission} & role\allowbreak Id (integer), permission\allowbreak Id (integer) \\ \hline
+\end{tabular}
+\end{center}
 
 % ===============================================
 % 4.1.5.4 ERD3
 % ===============================================
+\Needspace{12\baselineskip}
 \paragraph{Profile Core}
+
+This ERD describes the Profile Core module. It stores base profiles and role-specific profile extensions. Profile contains common display information; FreelancerProfile stores professional data; ClientProfile stores company data; Expert publishes expert directory entries; FreelancerSkill links freelancers to skills with proficiency. These tables support profile viewing/editing, freelancer/client/expert profiles, skills, and profile completion.
+
+\Needspace{12\baselineskip}
+\paragraph*{a) ERD}
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.78\textwidth]{image/ERD/ERD-ERD3.drawio.pdf}
@@ -45,54 +99,155 @@
     \label{fig:erd-profile-core}
 \end{figure}
 
+\Needspace{6\baselineskip}
+\paragraph*{b) Table of entities}
+\begin{center}
+\small\sloppy
+\begin{tabular}{|L{2.5cm}|L{9.5cm}|}
+\hline
+\rowcolor{fptHeader}\textbf{Entity} & \textbf{Fields and data types} \\ \hline
+\texttt{User} & id (integer), email (varchar(255)), password (varchar(255)), is\allowbreak Banned (boolean), created\allowbreak At (timestamp(3)), updated\allowbreak At (timestamp(3)), deleted\allowbreak At (timestamp(3)), stripe\allowbreak Customer\allowbreak Id (varchar(255)), stripe\allowbreak Account\allowbreak Id (varchar(255)), stripe\allowbreak Onboarding\allowbreak Completed (boolean), role\allowbreak Id (integer) \\ \hline
+\texttt{Profile} & id (integer), user\allowbreak Id (integer), display\allowbreak Name (varchar(255)), avatar\allowbreak Url (varchar(500)), cover\allowbreak Url (varchar(500)), bio (varchar(255)), online\allowbreak Status (boolean), availability\allowbreak Status (enum(Availability\allowbreak Status)), profile\allowbreak Completion\allowbreak Percent (integer), wallet\allowbreak Address (varchar(42)), created\allowbreak At (timestamp(3)), updated\allowbreak At (timestamp(3)) \\ \hline
+\texttt{Freelancer\allowbreak Profile} & id (integer), profile\allowbreak Id (integer), title (varchar(255)), education (varchar(255)), certifications (varchar(255)), languages (varchar(255)), cv\allowbreak Url (varchar(500)), cv\allowbreak File\allowbreak Name (varchar(255)), cv\allowbreak Public\allowbreak Id (varchar(255)), cv\allowbreak Uploaded\allowbreak At (timestamp(3)), experience (varchar(255)), id\allowbreak Verified (boolean), created\allowbreak At (timestamp(3)), updated\allowbreak At (timestamp(3)) \\ \hline
+\texttt{Client\allowbreak Profile} & id (integer), profile\allowbreak Id (integer), company\allowbreak Name (varchar(255)), company\allowbreak Description (varchar(255)), website (varchar(255)), created\allowbreak At (timestamp(3)), updated\allowbreak At (timestamp(3)) \\ \hline
+\texttt{Expert} & id (integer), profile\allowbreak Id (integer), title (varchar(255)), expertise (varchar(255)), years\allowbreak Of\allowbreak Experience (integer), education (varchar(255)), certifications (varchar(255)), website (varchar(500)), is\allowbreak Active (boolean), created\allowbreak At (timestamp(3)), updated\allowbreak At (timestamp(3)) \\ \hline
+\end{tabular}
+\end{center}
+
 % ===============================================
 % 4.1.5.5 ERD4
 % ===============================================
+\Needspace{12\baselineskip}
 \paragraph{Profile History \& Social Links}
+
+This ERD describes the Profile History \& Social Links module. It stores profile revisions, portfolio items, CV analysis, experience, education, document processing jobs, embedding records, recommendations, feedback, embedding outbox events, social links, identity documents, and profile visit logs. These tables support profile revision review, portfolio, CV processing, recommendations, social links, identity verification, and profile visit tracking.
+
+\Needspace{12\baselineskip}
+\paragraph*{a) ERD}
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.86\textwidth]{image/ERD/ERD-ERD4.drawio.pdf}
+    \includegraphics[width=0.78\textwidth]{image/ERD/ERD-ERD4.drawio.pdf}
     \caption{Profile History \& Social Links ERD}
-    \label{fig:erd-profile-history}
+    \label{fig:erd-profile-history--social-links}
 \end{figure}
+
+\Needspace{6\baselineskip}
+\paragraph*{b) Table of entities}
+\begin{center}
+\small\sloppy
+\begin{tabular}{|L{2.5cm}|L{9.5cm}|}
+\hline
+\rowcolor{fptHeader}\textbf{Entity} & \textbf{Fields and data types} \\ \hline
+\texttt{User} & id (integer), email (varchar(255)), password (varchar(255)), is\allowbreak Banned (boolean), created\allowbreak At (timestamp(3)), updated\allowbreak At (timestamp(3)), deleted\allowbreak At (timestamp(3)), stripe\allowbreak Customer\allowbreak Id (varchar(255)), stripe\allowbreak Account\allowbreak Id (varchar(255)), stripe\allowbreak Onboarding\allowbreak Completed (boolean), role\allowbreak Id (integer) \\ \hline
+\texttt{Profile} & id (integer), user\allowbreak Id (integer), display\allowbreak Name (varchar(255)), avatar\allowbreak Url (varchar(500)), cover\allowbreak Url (varchar(500)), bio (varchar(255)), online\allowbreak Status (boolean), availability\allowbreak Status (enum(Availability\allowbreak Status)), profile\allowbreak Completion\allowbreak Percent (integer), wallet\allowbreak Address (varchar(42)), created\allowbreak At (timestamp(3)), updated\allowbreak At (timestamp(3)) \\ \hline
+\texttt{Profile\allowbreak Revision} & id (integer), user\allowbreak Id (integer), profile\allowbreak Id (integer), profile\allowbreak Type (enum(Profile\allowbreak Revision\allowbreak Type)), status (enum(Revision\allowbreak Status)), current\allowbreak Data (jsonb), proposed\allowbreak Data (jsonb), profile\allowbreak Strength (integer), admin\allowbreak Id (integer), review\allowbreak Notes (varchar(255)), created\allowbreak At (timestamp(3)), updated\allowbreak At (timestamp(3)), reviewed\allowbreak At (timestamp(3)) \\ \hline
+\texttt{Social\allowbreak Link} & id (integer), profile\allowbreak Id (integer), platform (enum(Social\allowbreak Platform)), url (varchar(500)) \\ \hline
+\end{tabular}
+\end{center}
 
 % ===============================================
 % 4.1.5.6 ERD5
 % ===============================================
+\Needspace{12\baselineskip}
 \paragraph{Identity Verification \& Profile Visits}
+
+This ERD describes the Identity Verification \& Profile Visits module. It stores identity verification documents and profile visit logs. These tables support eKYC document upload/review and tracking profile views.
+
+\Needspace{12\baselineskip}
+\paragraph*{a) ERD}
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.95\textwidth]{image/ERD/ERD-ERD5.drawio.pdf}
+    \includegraphics[width=0.78\textwidth]{image/ERD/ERD-ERD5.drawio.pdf}
     \caption{Identity Verification \& Profile Visits ERD}
-    \label{fig:erd-identity-verification}
+    \label{fig:erd-identity-verification--profile-visits}
 \end{figure}
+
+\Needspace{6\baselineskip}
+\paragraph*{b) Table of entities}
+\begin{center}
+\small\sloppy
+\begin{tabular}{|L{2.5cm}|L{9.5cm}|}
+\hline
+\rowcolor{fptHeader}\textbf{Entity} & \textbf{Fields and data types} \\ \hline
+\texttt{User} & id (integer), email (varchar(255)), password (varchar(255)), is\allowbreak Banned (boolean), created\allowbreak At (timestamp(3)), updated\allowbreak At (timestamp(3)), deleted\allowbreak At (timestamp(3)), stripe\allowbreak Customer\allowbreak Id (varchar(255)), stripe\allowbreak Account\allowbreak Id (varchar(255)), stripe\allowbreak Onboarding\allowbreak Completed (boolean), role\allowbreak Id (integer) \\ \hline
+\texttt{Id\allowbreak Verification\allowbreak Document} & id (integer), user\allowbreak Id (integer), document\allowbreak Type (enum(Document\allowbreak Type)), file\allowbreak Url (varchar(500)), status (enum(Verification\allowbreak Status)), admin\allowbreak Id (integer), review\allowbreak Notes (varchar(255)), created\allowbreak At (timestamp(3)), reviewed\allowbreak At (timestamp(3)), deleted\allowbreak At (timestamp(3)), ai\allowbreak Status (varchar(20)), ai\allowbreak Score (double precision), ai\allowbreak Summary (jsonb), ai\allowbreak Selfie\allowbreak Summary (jsonb), ai\allowbreak Error (varchar(255)), ai\allowbreak Scanned\allowbreak At (timestamp(3)), back\allowbreak File\allowbreak Url (varchar(500)), identity\allowbreak Number (varchar(50)), duplicate\allowbreak Of\allowbreak Id (integer) \\ \hline
+\texttt{Profile\allowbreak Visit\allowbreak Log} & id (integer), viewer\allowbreak Id (integer), target\allowbreak Freelancer\allowbreak Id (integer), viewed\allowbreak At (timestamp(3)) \\ \hline
+\end{tabular}
+\end{center}
 
 % ===============================================
 % 4.1.5.7 ERD6
 % ===============================================
+\Needspace{12\baselineskip}
 \paragraph{Portfolio \& Skills}
+
+This ERD describes the Portfolio \& Skills module. It stores portfolio items, freelancer skills, skill catalog, and portfolio likes. These tables support portfolio management, skill catalog, skill proficiency, and liking portfolios.
+
+\Needspace{12\baselineskip}
+\paragraph*{a) ERD}
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.78\textwidth]{image/ERD/ERD-ERD6.drawio.pdf}
     \caption{Portfolio \& Skills ERD}
-    \label{fig:erd-portfolio-skills}
+    \label{fig:erd-portfolio--skills}
 \end{figure}
+
+\Needspace{6\baselineskip}
+\paragraph*{b) Table of entities}
+\begin{center}
+\small\sloppy
+\begin{tabular}{|L{2.5cm}|L{9.5cm}|}
+\hline
+\rowcolor{fptHeader}\textbf{Entity} & \textbf{Fields and data types} \\ \hline
+\texttt{User} & id (integer), email (varchar(255)), password (varchar(255)), is\allowbreak Banned (boolean), created\allowbreak At (timestamp(3)), updated\allowbreak At (timestamp(3)), deleted\allowbreak At (timestamp(3)), stripe\allowbreak Customer\allowbreak Id (varchar(255)), stripe\allowbreak Account\allowbreak Id (varchar(255)), stripe\allowbreak Onboarding\allowbreak Completed (boolean), role\allowbreak Id (integer) \\ \hline
+\texttt{Freelancer\allowbreak Profile} & id (integer), profile\allowbreak Id (integer), title (varchar(255)), education (varchar(255)), certifications (varchar(255)), languages (varchar(255)), cv\allowbreak Url (varchar(500)), cv\allowbreak File\allowbreak Name (varchar(255)), cv\allowbreak Public\allowbreak Id (varchar(255)), cv\allowbreak Uploaded\allowbreak At (timestamp(3)), experience (varchar(255)), id\allowbreak Verified (boolean), created\allowbreak At (timestamp(3)), updated\allowbreak At (timestamp(3)) \\ \hline
+\texttt{Freelancer\allowbreak Skill} & id (integer), freelancer\allowbreak Profile\allowbreak Id (integer), skill\allowbreak Id (integer), proficiency\allowbreak Level (integer) \\ \hline
+\texttt{Skill} & id (integer), name (varchar(100)), slug (varchar(120)), description (varchar(255)), deleted\allowbreak At (timestamp(3)), created\allowbreak At (timestamp(3)), updated\allowbreak At (timestamp(3)) \\ \hline
+\texttt{Portfolio\allowbreak Item} & id (integer), freelancer\allowbreak Profile\allowbreak Id (integer), title (varchar(255)), description (varchar(255)), technologies (varchar(255)), project\allowbreak Url (varchar(500)), source (enum(Profile\allowbreak Content\allowbreak Source)), created\allowbreak At (timestamp(3)), updated\allowbreak At (timestamp(3)), deleted\allowbreak At (timestamp(3)) \\ \hline
+\texttt{Portfolio\allowbreak Like} & user\allowbreak Id (integer), portfolio\allowbreak Item\allowbreak Id (integer), created\allowbreak At (timestamp(3)) \\ \hline
+\end{tabular}
+\end{center}
 
 % ===============================================
 % 4.1.5.8 ERD7
 % ===============================================
+\Needspace{12\baselineskip}
 \paragraph{Favorites \& Follows}
+
+This ERD describes the Favorites \& Follows module. It stores favorite freelancer and follow relationships. These tables support bookmarking favorite freelancers and following/unfollowing.
+
+\Needspace{12\baselineskip}
+\paragraph*{a) ERD}
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.95\textwidth]{image/ERD/ERD-ERD7.drawio.pdf}
+    \includegraphics[width=0.78\textwidth]{image/ERD/ERD-ERD7.drawio.pdf}
     \caption{Favorites \& Follows ERD}
-    \label{fig:erd-favorites-follows}
+    \label{fig:erd-favorites--follows}
 \end{figure}
+
+\Needspace{6\baselineskip}
+\paragraph*{b) Table of entities}
+\begin{center}
+\small\sloppy
+\begin{tabular}{|L{2.5cm}|L{9.5cm}|}
+\hline
+\rowcolor{fptHeader}\textbf{Entity} & \textbf{Fields and data types} \\ \hline
+\texttt{User} & id (integer), email (varchar(255)), password (varchar(255)), is\allowbreak Banned (boolean), created\allowbreak At (timestamp(3)), updated\allowbreak At (timestamp(3)), deleted\allowbreak At (timestamp(3)), stripe\allowbreak Customer\allowbreak Id (varchar(255)), stripe\allowbreak Account\allowbreak Id (varchar(255)), stripe\allowbreak Onboarding\allowbreak Completed (boolean), role\allowbreak Id (integer) \\ \hline
+\texttt{Favorite\allowbreak Freelancer} & client\allowbreak Id (integer), freelancer\allowbreak Id (integer), created\allowbreak At (timestamp(3)) \\ \hline
+\texttt{Follow\allowbreak Freelancer} & client\allowbreak Id (integer), freelancer\allowbreak Id (integer), created\allowbreak At (timestamp(3)) \\ \hline
+\end{tabular}
+\end{center}
 
 % ===============================================
 % 4.1.5.9 ERD8
 % ===============================================
+\Needspace{12\baselineskip}
 \paragraph{Job Posting}
+
+This ERD describes the Job Posting module. It stores job categories, jobs, job-category links, and job-skill links. These tables support creating, editing, publishing, closing, and categorizing jobs.
+
+\Needspace{12\baselineskip}
+\paragraph*{a) ERD}
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.78\textwidth]{image/ERD/ERD-ERD8.drawio.pdf}
@@ -100,32 +255,96 @@
     \label{fig:erd-job-posting}
 \end{figure}
 
+\Needspace{6\baselineskip}
+\paragraph*{b) Table of entities}
+\begin{center}
+\small\sloppy
+\begin{tabular}{|L{2.5cm}|L{9.5cm}|}
+\hline
+\rowcolor{fptHeader}\textbf{Entity} & \textbf{Fields and data types} \\ \hline
+\texttt{User} & id (integer), email (varchar(255)), password (varchar(255)), is\allowbreak Banned (boolean), created\allowbreak At (timestamp(3)), updated\allowbreak At (timestamp(3)), deleted\allowbreak At (timestamp(3)), stripe\allowbreak Customer\allowbreak Id (varchar(255)), stripe\allowbreak Account\allowbreak Id (varchar(255)), stripe\allowbreak Onboarding\allowbreak Completed (boolean), role\allowbreak Id (integer) \\ \hline
+\texttt{Job} & id (integer), client\allowbreak Id (integer), title (varchar(255)), slug (varchar(300)), description (varchar(255)), budget\allowbreak Min (decimal(65,30)), budget\allowbreak Max (decimal(65,30)), budget\allowbreak Type (enum(Budget\allowbreak Type)), deadline (timestamp(3)), status (enum(Job\allowbreak Status)), expiry\allowbreak Date (timestamp(3)), created\allowbreak At (timestamp(3)), updated\allowbreak At (timestamp(3)), deleted\allowbreak At (timestamp(3)), hiring\allowbreak Type (enum(Hiring\allowbreak Type)), positions\allowbreak Required (integer), positions\allowbreak Filled (integer) \\ \hline
+\texttt{Job\allowbreak Category} & id (integer), name (varchar(100)), slug (varchar(120)), description (varchar(255)), status (enum(Job\allowbreak Category\allowbreak Status)), deleted\allowbreak At (timestamp(3)), created\allowbreak At (timestamp(3)), updated\allowbreak At (timestamp(3)) \\ \hline
+\texttt{Job\allowbreak Job\allowbreak Category} & job\allowbreak Id (integer), category\allowbreak Id (integer) \\ \hline
+\texttt{Job\allowbreak Skill} & job\allowbreak Id (integer), skill\allowbreak Id (integer) \\ \hline
+\texttt{Skill} & id (integer), name (varchar(100)), slug (varchar(120)), description (varchar(255)), deleted\allowbreak At (timestamp(3)), created\allowbreak At (timestamp(3)), updated\allowbreak At (timestamp(3)) \\ \hline
+\end{tabular}
+\end{center}
+
 % ===============================================
 % 4.1.5.10 ERD9
 % ===============================================
+\Needspace{12\baselineskip}
 \paragraph{Job Discovery \& Alerts}
+
+This ERD describes the Job Discovery \& Alerts module. It stores job bookmarks, recently viewed jobs, saved searches, and job alerts. These tables support browsing, bookmarking, saved filters, and alert notifications.
+
+\Needspace{12\baselineskip}
+\paragraph*{a) ERD}
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.78\textwidth]{image/ERD/ERD-ERD9.drawio.pdf}
     \caption{Job Discovery \& Alerts ERD}
-    \label{fig:erd-job-discovery}
+    \label{fig:erd-job-discovery--alerts}
 \end{figure}
+
+\Needspace{6\baselineskip}
+\paragraph*{b) Table of entities}
+\begin{center}
+\small\sloppy
+\begin{tabular}{|L{2.5cm}|L{9.5cm}|}
+\hline
+\rowcolor{fptHeader}\textbf{Entity} & \textbf{Fields and data types} \\ \hline
+\texttt{User} & id (integer), email (varchar(255)), password (varchar(255)), is\allowbreak Banned (boolean), created\allowbreak At (timestamp(3)), updated\allowbreak At (timestamp(3)), deleted\allowbreak At (timestamp(3)), stripe\allowbreak Customer\allowbreak Id (varchar(255)), stripe\allowbreak Account\allowbreak Id (varchar(255)), stripe\allowbreak Onboarding\allowbreak Completed (boolean), role\allowbreak Id (integer) \\ \hline
+\texttt{Job} & id (integer), client\allowbreak Id (integer), title (varchar(255)), slug (varchar(300)), description (varchar(255)), budget\allowbreak Min (decimal(65,30)), budget\allowbreak Max (decimal(65,30)), budget\allowbreak Type (enum(Budget\allowbreak Type)), deadline (timestamp(3)), status (enum(Job\allowbreak Status)), expiry\allowbreak Date (timestamp(3)), created\allowbreak At (timestamp(3)), updated\allowbreak At (timestamp(3)), deleted\allowbreak At (timestamp(3)), hiring\allowbreak Type (enum(Hiring\allowbreak Type)), positions\allowbreak Required (integer), positions\allowbreak Filled (integer) \\ \hline
+\texttt{Job\allowbreak Bookmark} & user\allowbreak Id (integer), job\allowbreak Id (integer), created\allowbreak At (timestamp(3)) \\ \hline
+\texttt{Recently\allowbreak Viewed\allowbreak Job} & id (integer), user\allowbreak Id (integer), job\allowbreak Id (integer), viewed\allowbreak At (timestamp(3)) \\ \hline
+\texttt{Saved\allowbreak Search} & id (integer), user\allowbreak Id (integer), name (varchar(100)), search\allowbreak Params (jsonb), created\allowbreak At (timestamp(3)) \\ \hline
+\texttt{Job\allowbreak Alert} & id (integer), user\allowbreak Id (integer), name (varchar(100)), keywords (varchar(255)), skills (varchar(255)), frequency (enum(Job\allowbreak Alert\allowbreak Frequency)), channels (enum(Notification\allowbreak Channel)), is\allowbreak Active (boolean), last\allowbreak Sent\allowbreak At (timestamp(3)), created\allowbreak At (timestamp(3)), updated\allowbreak At (timestamp(3)) \\ \hline
+\end{tabular}
+\end{center}
 
 % ===============================================
 % 4.1.5.11 ERD10
 % ===============================================
+\Needspace{12\baselineskip}
 \paragraph{Proposal}
+
+This ERD describes the Proposal module. It stores proposals and proposal attachments. These tables support submitting, updating, withdrawing, accepting, and rejecting proposals.
+
+\Needspace{12\baselineskip}
+\paragraph*{a) ERD}
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.95\textwidth]{image/ERD/ERD-ERD10.drawio.pdf}
+    \includegraphics[width=0.78\textwidth]{image/ERD/ERD-ERD10.drawio.pdf}
     \caption{Proposal ERD}
     \label{fig:erd-proposal}
 \end{figure}
 
+\Needspace{6\baselineskip}
+\paragraph*{b) Table of entities}
+\begin{center}
+\small\sloppy
+\begin{tabular}{|L{2.5cm}|L{9.5cm}|}
+\hline
+\rowcolor{fptHeader}\textbf{Entity} & \textbf{Fields and data types} \\ \hline
+\texttt{Job} & id (integer), client\allowbreak Id (integer), title (varchar(255)), slug (varchar(300)), description (varchar(255)), budget\allowbreak Min (decimal(65,30)), budget\allowbreak Max (decimal(65,30)), budget\allowbreak Type (enum(Budget\allowbreak Type)), deadline (timestamp(3)), status (enum(Job\allowbreak Status)), expiry\allowbreak Date (timestamp(3)), created\allowbreak At (timestamp(3)), updated\allowbreak At (timestamp(3)), deleted\allowbreak At (timestamp(3)), hiring\allowbreak Type (enum(Hiring\allowbreak Type)), positions\allowbreak Required (integer), positions\allowbreak Filled (integer) \\ \hline
+\texttt{User} & id (integer), email (varchar(255)), password (varchar(255)), is\allowbreak Banned (boolean), created\allowbreak At (timestamp(3)), updated\allowbreak At (timestamp(3)), deleted\allowbreak At (timestamp(3)), stripe\allowbreak Customer\allowbreak Id (varchar(255)), stripe\allowbreak Account\allowbreak Id (varchar(255)), stripe\allowbreak Onboarding\allowbreak Completed (boolean), role\allowbreak Id (integer) \\ \hline
+\texttt{Proposal} & id (integer), job\allowbreak Id (integer), freelancer\allowbreak Id (integer), cover\allowbreak Letter (varchar(255)), bid\allowbreak Amount (decimal(65,30)), delivery\allowbreak Days (integer), status (enum(Proposal\allowbreak Status)), created\allowbreak At (timestamp(3)), submitted\allowbreak At (timestamp(3)), accepted\allowbreak At (timestamp(3)), rejected\allowbreak At (timestamp(3)), withdrawn\allowbreak At (timestamp(3)), expires\allowbreak At (timestamp(3)), updated\allowbreak At (timestamp(3)), deleted\allowbreak At (timestamp(3)) \\ \hline
+\texttt{Proposal\allowbreak Attachment} & id (integer), proposal\allowbreak Id (integer), file\allowbreak Url (varchar(500)), file\allowbreak Name (varchar(255)), file\allowbreak Size (integer), mime\allowbreak Type (varchar(100)), created\allowbreak At (timestamp(3)), deleted\allowbreak At (timestamp(3)) \\ \hline
+\end{tabular}
+\end{center}
+
 % ===============================================
 % 4.1.5.12 ERD11
 % ===============================================
+\Needspace{12\baselineskip}
 \paragraph{Contract}
+
+This ERD describes the Contract module. It stores contracts and contract term templates. These tables support contract creation, signing, cancellation, terms, and status management.
+
+\Needspace{12\baselineskip}
+\paragraph*{a) ERD}
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.78\textwidth]{image/ERD/ERD-ERD11.drawio.pdf}
@@ -133,43 +352,127 @@
     \label{fig:erd-contract}
 \end{figure}
 
+\Needspace{6\baselineskip}
+\paragraph*{b) Table of entities}
+\begin{center}
+\small\sloppy
+\begin{tabular}{|L{2.5cm}|L{9.5cm}|}
+\hline
+\rowcolor{fptHeader}\textbf{Entity} & \textbf{Fields and data types} \\ \hline
+\texttt{Job} & id (integer), client\allowbreak Id (integer), title (varchar(255)), slug (varchar(300)), description (varchar(255)), budget\allowbreak Min (decimal(65,30)), budget\allowbreak Max (decimal(65,30)), budget\allowbreak Type (enum(Budget\allowbreak Type)), deadline (timestamp(3)), status (enum(Job\allowbreak Status)), expiry\allowbreak Date (timestamp(3)), created\allowbreak At (timestamp(3)), updated\allowbreak At (timestamp(3)), deleted\allowbreak At (timestamp(3)), hiring\allowbreak Type (enum(Hiring\allowbreak Type)), positions\allowbreak Required (integer), positions\allowbreak Filled (integer) \\ \hline
+\texttt{Proposal} & id (integer), job\allowbreak Id (integer), freelancer\allowbreak Id (integer), cover\allowbreak Letter (varchar(255)), bid\allowbreak Amount (decimal(65,30)), delivery\allowbreak Days (integer), status (enum(Proposal\allowbreak Status)), created\allowbreak At (timestamp(3)), submitted\allowbreak At (timestamp(3)), accepted\allowbreak At (timestamp(3)), rejected\allowbreak At (timestamp(3)), withdrawn\allowbreak At (timestamp(3)), expires\allowbreak At (timestamp(3)), updated\allowbreak At (timestamp(3)), deleted\allowbreak At (timestamp(3)) \\ \hline
+\texttt{User} & id (integer), email (varchar(255)), password (varchar(255)), is\allowbreak Banned (boolean), created\allowbreak At (timestamp(3)), updated\allowbreak At (timestamp(3)), deleted\allowbreak At (timestamp(3)), stripe\allowbreak Customer\allowbreak Id (varchar(255)), stripe\allowbreak Account\allowbreak Id (varchar(255)), stripe\allowbreak Onboarding\allowbreak Completed (boolean), role\allowbreak Id (integer) \\ \hline
+\texttt{Contract} & id (integer), slug (varchar(255)), job\allowbreak Id (integer), proposal\allowbreak Id (integer), client\allowbreak Id (integer), freelancer\allowbreak Id (integer), terms (varchar(255)), total\allowbreak Amount (decimal(65,30)), status (enum(Contract\allowbreak Status)), signed\allowbreak By\allowbreak Client (boolean), signed\allowbreak By\allowbreak Freelancer (boolean), client\allowbreak Signed\allowbreak At (timestamp(3)), freelancer\allowbreak Signed\allowbreak At (timestamp(3)), client\allowbreak Platform\allowbreak Fee (decimal(65,30)), platform\allowbreak Fee (decimal(65,30)), platform\allowbreak Fee\allowbreak Status (enum(Platform\allowbreak Fee\allowbreak Status)), platform\allowbreak Fee\allowbreak Paid\allowbreak At (timestamp(3)), client\allowbreak Fee\allowbreak Status (enum(Platform\allowbreak Fee\allowbreak Status)), client\allowbreak Fee\allowbreak Paid\allowbreak At (timestamp(3)), freelancer\allowbreak Fee\allowbreak Status (enum(Platform\allowbreak Fee\allowbreak Status)), freelancer\allowbreak Fee\allowbreak Paid\allowbreak At (timestamp(3)), hold\allowbreak Payment\allowbreak Intent\allowbreak Id (varchar(255)), hold\allowbreak Milestone\allowbreak Ids (integer), rejected\allowbreak At (timestamp(3)), reject\allowbreak Reason (varchar(255)), created\allowbreak At (timestamp(3)), signed\allowbreak At (timestamp(3)), completed\allowbreak At (timestamp(3)), expires\allowbreak At (timestamp(3)), deleted\allowbreak At (timestamp(3)) \\ \hline
+\texttt{Contract\allowbreak Term\allowbreak Template} & id (integer), creator\allowbreak Id (integer), title (varchar(255)), content (varchar(255)), category (varchar(100)), is\allowbreak Active (boolean), created\allowbreak At (timestamp(3)), updated\allowbreak At (timestamp(3)), deleted\allowbreak At (timestamp(3)) \\ \hline
+\end{tabular}
+\end{center}
+
 % ===============================================
 % 4.1.5.13 ERD12
 % ===============================================
+\Needspace{12\baselineskip}
 \paragraph{Milestone \& Project Progress}
+
+This ERD describes the Milestone \& Project Progress module. It stores milestones and project progress updates. These tables support milestone creation, updates, progress tracking, and client/freelancer collaboration.
+
+\Needspace{12\baselineskip}
+\paragraph*{a) ERD}
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.78\textwidth]{image/ERD/ERD-ERD12.drawio.pdf}
     \caption{Milestone \& Project Progress ERD}
-    \label{fig:erd-milestone-progress}
+    \label{fig:erd-milestone--project-progress}
 \end{figure}
+
+\Needspace{6\baselineskip}
+\paragraph*{b) Table of entities}
+\begin{center}
+\small\sloppy
+\begin{tabular}{|L{2.5cm}|L{9.5cm}|}
+\hline
+\rowcolor{fptHeader}\textbf{Entity} & \textbf{Fields and data types} \\ \hline
+\texttt{User} & id (integer), email (varchar(255)), password (varchar(255)), is\allowbreak Banned (boolean), created\allowbreak At (timestamp(3)), updated\allowbreak At (timestamp(3)), deleted\allowbreak At (timestamp(3)), stripe\allowbreak Customer\allowbreak Id (varchar(255)), stripe\allowbreak Account\allowbreak Id (varchar(255)), stripe\allowbreak Onboarding\allowbreak Completed (boolean), role\allowbreak Id (integer) \\ \hline
+\texttt{Contract} & id (integer), slug (varchar(255)), job\allowbreak Id (integer), proposal\allowbreak Id (integer), client\allowbreak Id (integer), freelancer\allowbreak Id (integer), terms (varchar(255)), total\allowbreak Amount (decimal(65,30)), status (enum(Contract\allowbreak Status)), signed\allowbreak By\allowbreak Client (boolean), signed\allowbreak By\allowbreak Freelancer (boolean), client\allowbreak Signed\allowbreak At (timestamp(3)), freelancer\allowbreak Signed\allowbreak At (timestamp(3)), client\allowbreak Platform\allowbreak Fee (decimal(65,30)), platform\allowbreak Fee (decimal(65,30)), platform\allowbreak Fee\allowbreak Status (enum(Platform\allowbreak Fee\allowbreak Status)), platform\allowbreak Fee\allowbreak Paid\allowbreak At (timestamp(3)), client\allowbreak Fee\allowbreak Status (enum(Platform\allowbreak Fee\allowbreak Status)), client\allowbreak Fee\allowbreak Paid\allowbreak At (timestamp(3)), freelancer\allowbreak Fee\allowbreak Status (enum(Platform\allowbreak Fee\allowbreak Status)), freelancer\allowbreak Fee\allowbreak Paid\allowbreak At (timestamp(3)), hold\allowbreak Payment\allowbreak Intent\allowbreak Id (varchar(255)), hold\allowbreak Milestone\allowbreak Ids (integer), rejected\allowbreak At (timestamp(3)), reject\allowbreak Reason (varchar(255)), created\allowbreak At (timestamp(3)), signed\allowbreak At (timestamp(3)), completed\allowbreak At (timestamp(3)), expires\allowbreak At (timestamp(3)), deleted\allowbreak At (timestamp(3)) \\ \hline
+\texttt{Milestone} & id (integer), contract\allowbreak Id (integer), title (varchar(255)), description (varchar(255)), amount (decimal(65,30)), status (enum(Milestone\allowbreak Status)), payment\allowbreak Status (enum(Milestone\allowbreak Payment\allowbreak Status)), due\allowbreak Date (timestamp(3)), completed\allowbreak At (timestamp(3)), created\allowbreak At (timestamp(3)), updated\allowbreak At (timestamp(3)), deleted\allowbreak At (timestamp(3)) \\ \hline
+\texttt{Milestone\allowbreak File} & id (integer), milestone\allowbreak Id (integer), uploader\allowbreak Id (integer), file\allowbreak Url (varchar(255)), public\allowbreak Id (varchar(255)), file\allowbreak Name (varchar(255)), created\allowbreak At (timestamp(3)), deleted\allowbreak At (timestamp(3)) \\ \hline
+\texttt{Project\allowbreak Progress\allowbreak Update} & id (integer), contract\allowbreak Id (integer), freelancer\allowbreak Id (integer), note (varchar(255)), updated\allowbreak At (timestamp(3)) \\ \hline
+\end{tabular}
+\end{center}
 
 % ===============================================
 % 4.1.5.14 ERD13
 % ===============================================
+\Needspace{12\baselineskip}
 \paragraph{Milestone Submission}
+
+This ERD describes the Milestone Submission module. It stores milestone files, submissions, and submission files. These tables support uploading deliverables, submitting milestones, and reviewing submissions.
+
+\Needspace{12\baselineskip}
+\paragraph*{a) ERD}
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.86\textwidth]{image/ERD/ERD-ERD13.drawio.pdf}
+    \includegraphics[width=0.78\textwidth]{image/ERD/ERD-ERD13.drawio.pdf}
     \caption{Milestone Submission ERD}
     \label{fig:erd-milestone-submission}
 \end{figure}
 
+\Needspace{6\baselineskip}
+\paragraph*{b) Table of entities}
+\begin{center}
+\small\sloppy
+\begin{tabular}{|L{2.5cm}|L{9.5cm}|}
+\hline
+\rowcolor{fptHeader}\textbf{Entity} & \textbf{Fields and data types} \\ \hline
+\texttt{User} & id (integer), email (varchar(255)), password (varchar(255)), is\allowbreak Banned (boolean), created\allowbreak At (timestamp(3)), updated\allowbreak At (timestamp(3)), deleted\allowbreak At (timestamp(3)), stripe\allowbreak Customer\allowbreak Id (varchar(255)), stripe\allowbreak Account\allowbreak Id (varchar(255)), stripe\allowbreak Onboarding\allowbreak Completed (boolean), role\allowbreak Id (integer) \\ \hline
+\texttt{Milestone} & id (integer), contract\allowbreak Id (integer), title (varchar(255)), description (varchar(255)), amount (decimal(65,30)), status (enum(Milestone\allowbreak Status)), payment\allowbreak Status (enum(Milestone\allowbreak Payment\allowbreak Status)), due\allowbreak Date (timestamp(3)), completed\allowbreak At (timestamp(3)), created\allowbreak At (timestamp(3)), updated\allowbreak At (timestamp(3)), deleted\allowbreak At (timestamp(3)) \\ \hline
+\texttt{Milestone\allowbreak File} & id (integer), milestone\allowbreak Id (integer), uploader\allowbreak Id (integer), file\allowbreak Url (varchar(255)), public\allowbreak Id (varchar(255)), file\allowbreak Name (varchar(255)), created\allowbreak At (timestamp(3)), deleted\allowbreak At (timestamp(3)) \\ \hline
+\texttt{Milestone\allowbreak Submission} & id (integer), milestone\allowbreak Id (integer), freelancer\allowbreak Id (integer), message (varchar(255)), links (varchar(255)), status (enum(Submission\allowbreak Status)), change\allowbreak Request\allowbreak Message (varchar(255)), change\allowbreak Request\allowbreak Due\allowbreak Date (timestamp(3)), submitted\allowbreak At (timestamp(3)), reviewed\allowbreak At (timestamp(3)), created\allowbreak At (timestamp(3)), updated\allowbreak At (timestamp(3)) \\ \hline
+\texttt{Milestone\allowbreak Submission\allowbreak File} & submission\allowbreak Id (integer), file\allowbreak Id (integer) \\ \hline
+\end{tabular}
+\end{center}
+
 % ===============================================
 % 4.1.5.15 ERD14
 % ===============================================
+\Needspace{12\baselineskip}
 \paragraph{Escrow, Payments \& Certificates}
+
+This ERD describes the Escrow, Payments \& Certificates module. It stores invoices, certificates, and transactions. These tables support funding, releasing, refunding, platform fees, payout tracking, and completion certificates.
+
+\Needspace{12\baselineskip}
+\paragraph*{a) ERD}
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.95\textwidth]{image/ERD/ERD-ERD14.drawio.pdf}
+    \includegraphics[width=0.78\textwidth]{image/ERD/ERD-ERD14.drawio.pdf}
     \caption{Escrow, Payments \& Certificates ERD}
-    \label{fig:erd-escrow-payments}
+    \label{fig:erd-escrow-payments--certificates}
 \end{figure}
+
+\Needspace{6\baselineskip}
+\paragraph*{b) Table of entities}
+\begin{center}
+\small\sloppy
+\begin{tabular}{|L{2.5cm}|L{9.5cm}|}
+\hline
+\rowcolor{fptHeader}\textbf{Entity} & \textbf{Fields and data types} \\ \hline
+\texttt{User} & id (integer), email (varchar(255)), password (varchar(255)), is\allowbreak Banned (boolean), created\allowbreak At (timestamp(3)), updated\allowbreak At (timestamp(3)), deleted\allowbreak At (timestamp(3)), stripe\allowbreak Customer\allowbreak Id (varchar(255)), stripe\allowbreak Account\allowbreak Id (varchar(255)), stripe\allowbreak Onboarding\allowbreak Completed (boolean), role\allowbreak Id (integer) \\ \hline
+\texttt{Contract} & id (integer), slug (varchar(255)), job\allowbreak Id (integer), proposal\allowbreak Id (integer), client\allowbreak Id (integer), freelancer\allowbreak Id (integer), terms (varchar(255)), total\allowbreak Amount (decimal(65,30)), status (enum(Contract\allowbreak Status)), signed\allowbreak By\allowbreak Client (boolean), signed\allowbreak By\allowbreak Freelancer (boolean), client\allowbreak Signed\allowbreak At (timestamp(3)), freelancer\allowbreak Signed\allowbreak At (timestamp(3)), client\allowbreak Platform\allowbreak Fee (decimal(65,30)), platform\allowbreak Fee (decimal(65,30)), platform\allowbreak Fee\allowbreak Status (enum(Platform\allowbreak Fee\allowbreak Status)), platform\allowbreak Fee\allowbreak Paid\allowbreak At (timestamp(3)), client\allowbreak Fee\allowbreak Status (enum(Platform\allowbreak Fee\allowbreak Status)), client\allowbreak Fee\allowbreak Paid\allowbreak At (timestamp(3)), freelancer\allowbreak Fee\allowbreak Status (enum(Platform\allowbreak Fee\allowbreak Status)), freelancer\allowbreak Fee\allowbreak Paid\allowbreak At (timestamp(3)), hold\allowbreak Payment\allowbreak Intent\allowbreak Id (varchar(255)), hold\allowbreak Milestone\allowbreak Ids (integer), rejected\allowbreak At (timestamp(3)), reject\allowbreak Reason (varchar(255)), created\allowbreak At (timestamp(3)), signed\allowbreak At (timestamp(3)), completed\allowbreak At (timestamp(3)), expires\allowbreak At (timestamp(3)), deleted\allowbreak At (timestamp(3)) \\ \hline
+\texttt{Invoice} & id (integer), contract\allowbreak Id (integer), invoice\allowbreak Number (varchar(50)), total\allowbreak Amount (decimal(65,30)), description (varchar(255)), status (enum(Invoice\allowbreak Status)), issued\allowbreak At (timestamp(3)), due\allowbreak Date (timestamp(3)), paid\allowbreak At (timestamp(3)), created\allowbreak At (timestamp(3)), updated\allowbreak At (timestamp(3)), deleted\allowbreak At (timestamp(3)) \\ \hline
+\texttt{Transaction} & id (integer), user\allowbreak Id (integer), contract\allowbreak Id (integer), milestone\allowbreak Id (integer), dispute\allowbreak Id (integer), amount (decimal(65,30)), currency (varchar(10)), type (enum(Transaction\allowbreak Type)), status (enum(Transaction\allowbreak Status)), stripe\allowbreak Payment\allowbreak Intent\allowbreak Id (varchar(255)), stripe\allowbreak Transfer\allowbreak Id (varchar(255)), stripe\allowbreak Refund\allowbreak Id (varchar(255)), metadata (jsonb), created\allowbreak At (timestamp(3)), updated\allowbreak At (timestamp(3)) \\ \hline
+\texttt{Certificate} & id (integer), contract\allowbreak Id (integer), freelancer\allowbreak Id (integer), client\allowbreak Id (integer), certificate\allowbreak Uid (varchar(100)), completion\allowbreak Date (timestamp(3)), metadata (jsonb), created\allowbreak At (timestamp(3)) \\ \hline
+\end{tabular}
+\end{center}
 
 % ===============================================
 % 4.1.5.16 ERD15
 % ===============================================
+\Needspace{12\baselineskip}
 \paragraph{Dispute Core}
+
+This ERD describes the Dispute Core module. It stores disputes and dispute fees. These tables support opening disputes and charging dispute fees.
+
+\Needspace{12\baselineskip}
+\paragraph*{a) ERD}
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.78\textwidth]{image/ERD/ERD-ERD15.drawio.pdf}
@@ -177,10 +480,31 @@
     \label{fig:erd-dispute-core}
 \end{figure}
 
+\Needspace{6\baselineskip}
+\paragraph*{b) Table of entities}
+\begin{center}
+\small\sloppy
+\begin{tabular}{|L{2.5cm}|L{9.5cm}|}
+\hline
+\rowcolor{fptHeader}\textbf{Entity} & \textbf{Fields and data types} \\ \hline
+\texttt{Contract} & id (integer), slug (varchar(255)), job\allowbreak Id (integer), proposal\allowbreak Id (integer), client\allowbreak Id (integer), freelancer\allowbreak Id (integer), terms (varchar(255)), total\allowbreak Amount (decimal(65,30)), status (enum(Contract\allowbreak Status)), signed\allowbreak By\allowbreak Client (boolean), signed\allowbreak By\allowbreak Freelancer (boolean), client\allowbreak Signed\allowbreak At (timestamp(3)), freelancer\allowbreak Signed\allowbreak At (timestamp(3)), client\allowbreak Platform\allowbreak Fee (decimal(65,30)), platform\allowbreak Fee (decimal(65,30)), platform\allowbreak Fee\allowbreak Status (enum(Platform\allowbreak Fee\allowbreak Status)), platform\allowbreak Fee\allowbreak Paid\allowbreak At (timestamp(3)), client\allowbreak Fee\allowbreak Status (enum(Platform\allowbreak Fee\allowbreak Status)), client\allowbreak Fee\allowbreak Paid\allowbreak At (timestamp(3)), freelancer\allowbreak Fee\allowbreak Status (enum(Platform\allowbreak Fee\allowbreak Status)), freelancer\allowbreak Fee\allowbreak Paid\allowbreak At (timestamp(3)), hold\allowbreak Payment\allowbreak Intent\allowbreak Id (varchar(255)), hold\allowbreak Milestone\allowbreak Ids (integer), rejected\allowbreak At (timestamp(3)), reject\allowbreak Reason (varchar(255)), created\allowbreak At (timestamp(3)), signed\allowbreak At (timestamp(3)), completed\allowbreak At (timestamp(3)), expires\allowbreak At (timestamp(3)), deleted\allowbreak At (timestamp(3)) \\ \hline
+\texttt{Milestone} & id (integer), contract\allowbreak Id (integer), title (varchar(255)), description (varchar(255)), amount (decimal(65,30)), status (enum(Milestone\allowbreak Status)), payment\allowbreak Status (enum(Milestone\allowbreak Payment\allowbreak Status)), due\allowbreak Date (timestamp(3)), completed\allowbreak At (timestamp(3)), created\allowbreak At (timestamp(3)), updated\allowbreak At (timestamp(3)), deleted\allowbreak At (timestamp(3)) \\ \hline
+\texttt{User} & id (integer), email (varchar(255)), password (varchar(255)), is\allowbreak Banned (boolean), created\allowbreak At (timestamp(3)), updated\allowbreak At (timestamp(3)), deleted\allowbreak At (timestamp(3)), stripe\allowbreak Customer\allowbreak Id (varchar(255)), stripe\allowbreak Account\allowbreak Id (varchar(255)), stripe\allowbreak Onboarding\allowbreak Completed (boolean), role\allowbreak Id (integer) \\ \hline
+\texttt{Shared\allowbreak File} & id (integer), contract\allowbreak Id (integer), uploader\allowbreak Id (integer), file\allowbreak Url (varchar(255)), public\allowbreak Id (varchar(255)), file\allowbreak Name (varchar(255)), created\allowbreak At (timestamp(3)), deleted\allowbreak At (timestamp(3)) \\ \hline
+\texttt{Dispute} & id (integer), milestone\allowbreak Id (integer), opened\allowbreak By\allowbreak Id (integer), respondent\allowbreak Id (integer), reason (varchar(255)), description (varchar(255)), status (enum(Dispute\allowbreak Status)), arbitration\allowbreak Fee (decimal(65,30)), fee\allowbreak Deadline (timestamp(3)), response\allowbreak Deadline (timestamp(3)), freelancer\allowbreak Amount (decimal(65,30)), client\allowbreak Amount (decimal(65,30)), decision\allowbreak Reason (varchar(255)), decision\allowbreak By\allowbreak Id (integer), decision\allowbreak At (timestamp(3)), final\allowbreak Decision\allowbreak At (timestamp(3)), created\allowbreak At (timestamp(3)), updated\allowbreak At (timestamp(3)) \\ \hline
+\end{tabular}
+\end{center}
+
 % ===============================================
 % 4.1.5.17 ERD16
 % ===============================================
+\Needspace{12\baselineskip}
 \paragraph{Dispute Resolution}
+
+This ERD describes the Dispute Resolution module. It stores dispute evidence and decision reviews. These tables support evidence submission and review of dispute decisions.
+
+\Needspace{12\baselineskip}
+\paragraph*{a) ERD}
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.78\textwidth]{image/ERD/ERD-ERD16.drawio.pdf}
@@ -188,68 +512,206 @@
     \label{fig:erd-dispute-resolution}
 \end{figure}
 
+\Needspace{6\baselineskip}
+\paragraph*{b) Table of entities}
+\begin{center}
+\small\sloppy
+\begin{tabular}{|L{2.5cm}|L{9.5cm}|}
+\hline
+\rowcolor{fptHeader}\textbf{Entity} & \textbf{Fields and data types} \\ \hline
+\texttt{User} & id (integer), email (varchar(255)), password (varchar(255)), is\allowbreak Banned (boolean), created\allowbreak At (timestamp(3)), updated\allowbreak At (timestamp(3)), deleted\allowbreak At (timestamp(3)), stripe\allowbreak Customer\allowbreak Id (varchar(255)), stripe\allowbreak Account\allowbreak Id (varchar(255)), stripe\allowbreak Onboarding\allowbreak Completed (boolean), role\allowbreak Id (integer) \\ \hline
+\texttt{Dispute} & id (integer), milestone\allowbreak Id (integer), opened\allowbreak By\allowbreak Id (integer), respondent\allowbreak Id (integer), reason (varchar(255)), description (varchar(255)), status (enum(Dispute\allowbreak Status)), arbitration\allowbreak Fee (decimal(65,30)), fee\allowbreak Deadline (timestamp(3)), response\allowbreak Deadline (timestamp(3)), freelancer\allowbreak Amount (decimal(65,30)), client\allowbreak Amount (decimal(65,30)), decision\allowbreak Reason (varchar(255)), decision\allowbreak By\allowbreak Id (integer), decision\allowbreak At (timestamp(3)), final\allowbreak Decision\allowbreak At (timestamp(3)), created\allowbreak At (timestamp(3)), updated\allowbreak At (timestamp(3)) \\ \hline
+\texttt{Dispute\allowbreak Fee} & id (integer), dispute\allowbreak Id (integer), user\allowbreak Id (integer), amount (decimal(65,30)), status (enum(Dispute\allowbreak Fee\allowbreak Status)), payment\allowbreak Intent\allowbreak Id (varchar(255)), paid\allowbreak At (timestamp(3)), deadline (timestamp(3)), created\allowbreak At (timestamp(3)), updated\allowbreak At (timestamp(3)) \\ \hline
+\texttt{Dispute\allowbreak Evidence} & id (integer), dispute\allowbreak Id (integer), submitted\allowbreak By\allowbreak Id (integer), type (enum(Dispute\allowbreak Evidence\allowbreak Type)), description (varchar(255)), file\allowbreak Id (integer), created\allowbreak At (timestamp(3)) \\ \hline
+\texttt{Shared\allowbreak File} & id (integer), contract\allowbreak Id (integer), uploader\allowbreak Id (integer), file\allowbreak Url (varchar(255)), public\allowbreak Id (varchar(255)), file\allowbreak Name (varchar(255)), created\allowbreak At (timestamp(3)), deleted\allowbreak At (timestamp(3)) \\ \hline
+\texttt{Dispute\allowbreak Decision\allowbreak Review} & id (integer), dispute\allowbreak Id (integer), user\allowbreak Id (integer), response (enum(Dispute\allowbreak Decision\allowbreak Response)), reason (varchar(255)), created\allowbreak At (timestamp(3)) \\ \hline
+\end{tabular}
+\end{center}
+
 % ===============================================
 % 4.1.5.18 ERD17
 % ===============================================
+\Needspace{12\baselineskip}
 \paragraph{Reviews \& Reputation}
+
+This ERD describes the Reviews \& Reputation module. It stores reviews and review responses. These tables support rating contracts and responding to reviews.
+
+\Needspace{12\baselineskip}
+\paragraph*{a) ERD}
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.86\textwidth]{image/ERD/ERD-ERD17.drawio.pdf}
+    \includegraphics[width=0.78\textwidth]{image/ERD/ERD-ERD17.drawio.pdf}
     \caption{Reviews \& Reputation ERD}
-    \label{fig:erd-reviews}
+    \label{fig:erd-reviews--reputation}
 \end{figure}
+
+\Needspace{6\baselineskip}
+\paragraph*{b) Table of entities}
+\begin{center}
+\small\sloppy
+\begin{tabular}{|L{2.5cm}|L{9.5cm}|}
+\hline
+\rowcolor{fptHeader}\textbf{Entity} & \textbf{Fields and data types} \\ \hline
+\texttt{Contract} & id (integer), slug (varchar(255)), job\allowbreak Id (integer), proposal\allowbreak Id (integer), client\allowbreak Id (integer), freelancer\allowbreak Id (integer), terms (varchar(255)), total\allowbreak Amount (decimal(65,30)), status (enum(Contract\allowbreak Status)), signed\allowbreak By\allowbreak Client (boolean), signed\allowbreak By\allowbreak Freelancer (boolean), client\allowbreak Signed\allowbreak At (timestamp(3)), freelancer\allowbreak Signed\allowbreak At (timestamp(3)), client\allowbreak Platform\allowbreak Fee (decimal(65,30)), platform\allowbreak Fee (decimal(65,30)), platform\allowbreak Fee\allowbreak Status (enum(Platform\allowbreak Fee\allowbreak Status)), platform\allowbreak Fee\allowbreak Paid\allowbreak At (timestamp(3)), client\allowbreak Fee\allowbreak Status (enum(Platform\allowbreak Fee\allowbreak Status)), client\allowbreak Fee\allowbreak Paid\allowbreak At (timestamp(3)), freelancer\allowbreak Fee\allowbreak Status (enum(Platform\allowbreak Fee\allowbreak Status)), freelancer\allowbreak Fee\allowbreak Paid\allowbreak At (timestamp(3)), hold\allowbreak Payment\allowbreak Intent\allowbreak Id (varchar(255)), hold\allowbreak Milestone\allowbreak Ids (integer), rejected\allowbreak At (timestamp(3)), reject\allowbreak Reason (varchar(255)), created\allowbreak At (timestamp(3)), signed\allowbreak At (timestamp(3)), completed\allowbreak At (timestamp(3)), expires\allowbreak At (timestamp(3)), deleted\allowbreak At (timestamp(3)) \\ \hline
+\texttt{User} & id (integer), email (varchar(255)), password (varchar(255)), is\allowbreak Banned (boolean), created\allowbreak At (timestamp(3)), updated\allowbreak At (timestamp(3)), deleted\allowbreak At (timestamp(3)), stripe\allowbreak Customer\allowbreak Id (varchar(255)), stripe\allowbreak Account\allowbreak Id (varchar(255)), stripe\allowbreak Onboarding\allowbreak Completed (boolean), role\allowbreak Id (integer) \\ \hline
+\texttt{Review} & id (integer), contract\allowbreak Id (integer), reviewer\allowbreak Id (integer), reviewee\allowbreak Id (integer), overall\allowbreak Rating (decimal(65,30)), breakdown (jsonb), comment (varchar(255)), created\allowbreak At (timestamp(3)), updated\allowbreak At (timestamp(3)), deleted\allowbreak At (timestamp(3)) \\ \hline
+\texttt{Review\allowbreak Response} & id (integer), review\allowbreak Id (integer), user\allowbreak Id (integer), response\allowbreak Text (varchar(255)), created\allowbreak At (timestamp(3)), updated\allowbreak At (timestamp(3)), deleted\allowbreak At (timestamp(3)) \\ \hline
+\end{tabular}
+\end{center}
 
 % ===============================================
 % 4.1.5.19 ERD18
 % ===============================================
+\Needspace{12\baselineskip}
 \paragraph{Forum Posts \& Comments}
+
+This ERD describes the Forum Posts \& Comments module. It stores forum categories, posts, and comments. These tables support forum discussions and moderation.
+
+\Needspace{12\baselineskip}
+\paragraph*{a) ERD}
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.86\textwidth]{image/ERD/ERD-ERD18.drawio.pdf}
+    \includegraphics[width=0.78\textwidth]{image/ERD/ERD-ERD18.drawio.pdf}
     \caption{Forum Posts \& Comments ERD}
-    \label{fig:erd-forum-posts}
+    \label{fig:erd-forum-posts--comments}
 \end{figure}
+
+\Needspace{6\baselineskip}
+\paragraph*{b) Table of entities}
+\begin{center}
+\small\sloppy
+\begin{tabular}{|L{2.5cm}|L{9.5cm}|}
+\hline
+\rowcolor{fptHeader}\textbf{Entity} & \textbf{Fields and data types} \\ \hline
+\texttt{Forum\allowbreak Category} & id (integer), name (varchar(255)), slug (varchar(280)), description (varchar(255)), created\allowbreak At (timestamp(3)), updated\allowbreak At (timestamp(3)), deleted\allowbreak At (timestamp(3)) \\ \hline
+\texttt{Forum\allowbreak Post} & id (integer), category\allowbreak Id (integer), user\allowbreak Id (integer), title (varchar(255)), slug (varchar(320)), content (varchar(255)), moderation\allowbreak Status (enum(Forum\allowbreak Post\allowbreak Status)), moderation\allowbreak Score (double precision), moderation\allowbreak Categories (jsonb), moderation\allowbreak Message (varchar(255)), moderation\allowbreak Language (varchar(255)), reviewed\allowbreak By\allowbreak Id (integer), reviewed\allowbreak At (timestamp(3)), created\allowbreak At (timestamp(3)), updated\allowbreak At (timestamp(3)), deleted\allowbreak At (timestamp(3)) \\ \hline
+\texttt{User} & id (integer), email (varchar(255)), password (varchar(255)), is\allowbreak Banned (boolean), created\allowbreak At (timestamp(3)), updated\allowbreak At (timestamp(3)), deleted\allowbreak At (timestamp(3)), stripe\allowbreak Customer\allowbreak Id (varchar(255)), stripe\allowbreak Account\allowbreak Id (varchar(255)), stripe\allowbreak Onboarding\allowbreak Completed (boolean), role\allowbreak Id (integer) \\ \hline
+\texttt{Forum\allowbreak Comment} & id (integer), post\allowbreak Id (integer), user\allowbreak Id (integer), content (varchar(255)), moderation\allowbreak Status (enum(Forum\allowbreak Post\allowbreak Status)), moderation\allowbreak Score (double precision), moderation\allowbreak Categories (jsonb), moderation\allowbreak Message (varchar(255)), moderation\allowbreak Language (varchar(255)), reviewed\allowbreak By\allowbreak Id (integer), reviewed\allowbreak At (timestamp(3)), created\allowbreak At (timestamp(3)), updated\allowbreak At (timestamp(3)), deleted\allowbreak At (timestamp(3)) \\ \hline
+\end{tabular}
+\end{center}
 
 % ===============================================
 % 4.1.5.20 ERD19
 % ===============================================
+\Needspace{12\baselineskip}
 \paragraph{Forum Likes}
+
+This ERD describes the Forum Likes module. It stores likes on posts and comments. These tables support reactions.
+
+\Needspace{12\baselineskip}
+\paragraph*{a) ERD}
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.95\textwidth]{image/ERD/ERD-ERD19.drawio.pdf}
+    \includegraphics[width=0.78\textwidth]{image/ERD/ERD-ERD19.drawio.pdf}
     \caption{Forum Likes ERD}
     \label{fig:erd-forum-likes}
 \end{figure}
 
+\Needspace{6\baselineskip}
+\paragraph*{b) Table of entities}
+\begin{center}
+\small\sloppy
+\begin{tabular}{|L{2.5cm}|L{9.5cm}|}
+\hline
+\rowcolor{fptHeader}\textbf{Entity} & \textbf{Fields and data types} \\ \hline
+\texttt{User} & id (integer), email (varchar(255)), password (varchar(255)), is\allowbreak Banned (boolean), created\allowbreak At (timestamp(3)), updated\allowbreak At (timestamp(3)), deleted\allowbreak At (timestamp(3)), stripe\allowbreak Customer\allowbreak Id (varchar(255)), stripe\allowbreak Account\allowbreak Id (varchar(255)), stripe\allowbreak Onboarding\allowbreak Completed (boolean), role\allowbreak Id (integer) \\ \hline
+\texttt{Forum\allowbreak Post} & id (integer), category\allowbreak Id (integer), user\allowbreak Id (integer), title (varchar(255)), slug (varchar(320)), content (varchar(255)), moderation\allowbreak Status (enum(Forum\allowbreak Post\allowbreak Status)), moderation\allowbreak Score (double precision), moderation\allowbreak Categories (jsonb), moderation\allowbreak Message (varchar(255)), moderation\allowbreak Language (varchar(255)), reviewed\allowbreak By\allowbreak Id (integer), reviewed\allowbreak At (timestamp(3)), created\allowbreak At (timestamp(3)), updated\allowbreak At (timestamp(3)), deleted\allowbreak At (timestamp(3)) \\ \hline
+\texttt{Forum\allowbreak Comment} & id (integer), post\allowbreak Id (integer), user\allowbreak Id (integer), content (varchar(255)), moderation\allowbreak Status (enum(Forum\allowbreak Post\allowbreak Status)), moderation\allowbreak Score (double precision), moderation\allowbreak Categories (jsonb), moderation\allowbreak Message (varchar(255)), moderation\allowbreak Language (varchar(255)), reviewed\allowbreak By\allowbreak Id (integer), reviewed\allowbreak At (timestamp(3)), created\allowbreak At (timestamp(3)), updated\allowbreak At (timestamp(3)), deleted\allowbreak At (timestamp(3)) \\ \hline
+\texttt{Forum\allowbreak Like} & id (integer), user\allowbreak Id (integer), post\allowbreak Id (integer), comment\allowbreak Id (integer), reaction\allowbreak Type (varchar(20)), created\allowbreak At (timestamp(3)) \\ \hline
+\end{tabular}
+\end{center}
+
 % ===============================================
 % 4.1.5.21 ERD20
 % ===============================================
+\Needspace{12\baselineskip}
 \paragraph{Forum Reports \& Moderation}
+
+This ERD describes the Forum Reports \& Moderation module. It stores forum reports, moderation queue, and banned keywords. These tables support reporting content and admin moderation.
+
+\Needspace{12\baselineskip}
+\paragraph*{a) ERD}
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.86\textwidth]{image/ERD/ERD-ERD20.drawio.pdf}
+    \includegraphics[width=0.78\textwidth]{image/ERD/ERD-ERD20.drawio.pdf}
     \caption{Forum Reports \& Moderation ERD}
-    \label{fig:erd-forum-reports}
+    \label{fig:erd-forum-reports--moderation}
 \end{figure}
+
+\Needspace{6\baselineskip}
+\paragraph*{b) Table of entities}
+\begin{center}
+\small\sloppy
+\begin{tabular}{|L{2.5cm}|L{9.5cm}|}
+\hline
+\rowcolor{fptHeader}\textbf{Entity} & \textbf{Fields and data types} \\ \hline
+\texttt{User} & id (integer), email (varchar(255)), password (varchar(255)), is\allowbreak Banned (boolean), created\allowbreak At (timestamp(3)), updated\allowbreak At (timestamp(3)), deleted\allowbreak At (timestamp(3)), stripe\allowbreak Customer\allowbreak Id (varchar(255)), stripe\allowbreak Account\allowbreak Id (varchar(255)), stripe\allowbreak Onboarding\allowbreak Completed (boolean), role\allowbreak Id (integer) \\ \hline
+\texttt{Forum\allowbreak Post} & id (integer), category\allowbreak Id (integer), user\allowbreak Id (integer), title (varchar(255)), slug (varchar(320)), content (varchar(255)), moderation\allowbreak Status (enum(Forum\allowbreak Post\allowbreak Status)), moderation\allowbreak Score (double precision), moderation\allowbreak Categories (jsonb), moderation\allowbreak Message (varchar(255)), moderation\allowbreak Language (varchar(255)), reviewed\allowbreak By\allowbreak Id (integer), reviewed\allowbreak At (timestamp(3)), created\allowbreak At (timestamp(3)), updated\allowbreak At (timestamp(3)), deleted\allowbreak At (timestamp(3)) \\ \hline
+\texttt{Forum\allowbreak Comment} & id (integer), post\allowbreak Id (integer), user\allowbreak Id (integer), content (varchar(255)), moderation\allowbreak Status (enum(Forum\allowbreak Post\allowbreak Status)), moderation\allowbreak Score (double precision), moderation\allowbreak Categories (jsonb), moderation\allowbreak Message (varchar(255)), moderation\allowbreak Language (varchar(255)), reviewed\allowbreak By\allowbreak Id (integer), reviewed\allowbreak At (timestamp(3)), created\allowbreak At (timestamp(3)), updated\allowbreak At (timestamp(3)), deleted\allowbreak At (timestamp(3)) \\ \hline
+\texttt{Forum\allowbreak Report} & id (integer), reporter\allowbreak Id (integer), post\allowbreak Id (integer), comment\allowbreak Id (integer), reason (varchar(255)), status (enum(Report\allowbreak Status)), admin\allowbreak Id (integer), created\allowbreak At (timestamp(3)) \\ \hline
+\end{tabular}
+\end{center}
 
 % ===============================================
 % 4.1.5.22 ERD21
 % ===============================================
+\Needspace{12\baselineskip}
 \paragraph{Messaging \& Notifications}
+
+This ERD describes the Messaging \& Notifications module. It stores notifications, conversations, and direct messages. These tables support real-time chat and in-app notifications.
+
+\Needspace{12\baselineskip}
+\paragraph*{a) ERD}
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.86\textwidth]{image/ERD/ERD-ERD21.drawio.pdf}
+    \includegraphics[width=0.78\textwidth]{image/ERD/ERD-ERD21.drawio.pdf}
     \caption{Messaging \& Notifications ERD}
-    \label{fig:erd-messaging}
+    \label{fig:erd-messaging--notifications}
 \end{figure}
+
+\Needspace{6\baselineskip}
+\paragraph*{b) Table of entities}
+\begin{center}
+\small\sloppy
+\begin{tabular}{|L{2.5cm}|L{9.5cm}|}
+\hline
+\rowcolor{fptHeader}\textbf{Entity} & \textbf{Fields and data types} \\ \hline
+\texttt{User} & id (integer), email (varchar(255)), password (varchar(255)), is\allowbreak Banned (boolean), created\allowbreak At (timestamp(3)), updated\allowbreak At (timestamp(3)), deleted\allowbreak At (timestamp(3)), stripe\allowbreak Customer\allowbreak Id (varchar(255)), stripe\allowbreak Account\allowbreak Id (varchar(255)), stripe\allowbreak Onboarding\allowbreak Completed (boolean), role\allowbreak Id (integer) \\ \hline
+\texttt{Conversation} & id (integer), slug (varchar(100)), participant1 (integer), participant2 (integer), created\allowbreak At (timestamp(3)), deleted\allowbreak At (timestamp(3)), participant1Hidden\allowbreak At (timestamp(3)), participant2Hidden\allowbreak At (timestamp(3)), participant1Pinned\allowbreak At (timestamp(3)), participant2Pinned\allowbreak At (timestamp(3)) \\ \hline
+\texttt{Direct\allowbreak Message} & id (integer), conversation\allowbreak Id (integer), sender\allowbreak Id (integer), message (varchar(255)), file\allowbreak Url (varchar(500)), file\allowbreak Name (varchar(255)), file\allowbreak Size (integer), file\allowbreak Type (varchar(100)), is\allowbreak Read (boolean), created\allowbreak At (timestamp(3)), deleted\allowbreak At (timestamp(3)) \\ \hline
+\texttt{Notification} & id (integer), user\allowbreak Id (integer), type (enum(Notification\allowbreak Type)), title (varchar(255)), message (varchar(255)), data (jsonb), is\allowbreak Read (boolean), created\allowbreak At (timestamp(3)), deleted\allowbreak At (timestamp(3)) \\ \hline
+\end{tabular}
+\end{center}
 
 % ===============================================
 % 4.1.5.23 ERD22
 % ===============================================
+\Needspace{12\baselineskip}
 \paragraph{Administration \& System}
+
+This ERD describes the Administration \& System module. It stores announcement banners, system settings, and advertisement banners. These tables support admin configuration and banners.
+
+\Needspace{12\baselineskip}
+\paragraph*{a) ERD}
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.95\textwidth]{image/ERD/ERD-ERD22.drawio.pdf}
+    \includegraphics[width=0.78\textwidth]{image/ERD/ERD-ERD22.drawio.pdf}
     \caption{Administration \& System ERD}
-    \label{fig:erd-administration}
+    \label{fig:erd-administration--system}
 \end{figure}
+
+\Needspace{6\baselineskip}
+\paragraph*{b) Table of entities}
+\begin{center}
+\small\sloppy
+\begin{tabular}{|L{2.5cm}|L{9.5cm}|}
+\hline
+\rowcolor{fptHeader}\textbf{Entity} & \textbf{Fields and data types} \\ \hline
+\texttt{User} & id (integer), email (varchar(255)), password (varchar(255)), is\allowbreak Banned (boolean), created\allowbreak At (timestamp(3)), updated\allowbreak At (timestamp(3)), deleted\allowbreak At (timestamp(3)), stripe\allowbreak Customer\allowbreak Id (varchar(255)), stripe\allowbreak Account\allowbreak Id (varchar(255)), stripe\allowbreak Onboarding\allowbreak Completed (boolean), role\allowbreak Id (integer) \\ \hline
+\texttt{Moderation\allowbreak Queue} & id (integer), content\allowbreak Type (enum(Moderation\allowbreak Content\allowbreak Type)), content\allowbreak Id (integer), reporter\allowbreak Id (integer), reason (varchar(255)), status (enum(Report\allowbreak Status)), admin\allowbreak Id (integer), action\allowbreak Taken (varchar(255)), created\allowbreak At (timestamp(3)), resolved\allowbreak At (timestamp(3)) \\ \hline
+\texttt{Banned\allowbreak Keyword} & id (integer), keyword (varchar(255)), created\allowbreak By (integer), created\allowbreak At (timestamp(3)) \\ \hline
+\texttt{Announcement\allowbreak Banner} & id (integer), message (varchar(255)), link (varchar(500)), start\allowbreak Date (timestamp(3)), end\allowbreak Date (timestamp(3)), is\allowbreak Active (boolean), created\allowbreak At (timestamp(3)), updated\allowbreak At (timestamp(3)), deleted\allowbreak At (timestamp(3)) \\ \hline
+\texttt{Advertisement\allowbreak Banner} & id (integer), title (varchar(255)), image\allowbreak Url (varchar(500)), link\allowbreak Url (varchar(500)), position (enum(Banner\allowbreak Position)), start\allowbreak Date (timestamp(3)), end\allowbreak Date (timestamp(3)), is\allowbreak Active (boolean), created\allowbreak At (timestamp(3)), updated\allowbreak At (timestamp(3)) \\ \hline
+\texttt{System\allowbreak Setting} & id (integer), key (varchar(100)), value (jsonb), created\allowbreak At (timestamp(3)), updated\allowbreak At (timestamp(3)) \\ \hline
+\end{tabular}
+\end{center}

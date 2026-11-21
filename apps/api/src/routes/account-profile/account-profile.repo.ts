@@ -21,7 +21,11 @@ export class AccountProfileRepository {
   findUserWithRoles(userId: number) {
     return this.prisma.user.findFirst({
       where: { id: userId, deletedAt: null },
-      include: { role: true, profile: true },
+      include: {
+        role: true,
+        userRoles: { include: { role: true } },
+        profile: true,
+      },
     });
   }
 
@@ -31,8 +35,15 @@ export class AccountProfileRepository {
       select: {
         id: true,
         email: true,
+        roleId: true,
         profile: true,
-        role: { select: { name: true } },
+        role: { select: { id: true, name: true } },
+        userRoles: {
+          select: {
+            roleId: true,
+            role: { select: { id: true, name: true } },
+          },
+        },
       },
     });
   }
@@ -118,7 +129,16 @@ export class AccountProfileRepository {
       user: {
         deletedAt: null,
         isBanned: false,
-        role: { name: RoleName.CLIENT, deletedAt: null },
+        OR: [
+          { role: { name: RoleName.CLIENT, deletedAt: null } },
+          {
+            userRoles: {
+              some: {
+                role: { name: RoleName.CLIENT, deletedAt: null },
+              },
+            },
+          },
+        ],
       },
       ...(search
         ? {
@@ -183,7 +203,15 @@ export class AccountProfileRepository {
           },
         },
         socialLinks: { orderBy: { platform: 'asc' } },
-        user: { select: { role: { select: { name: true } } } },
+        user: {
+          select: {
+            role: { select: { name: true } },
+            userRoles: {
+              where: { role: { deletedAt: null } },
+              select: { role: { select: { name: true } } },
+            },
+          },
+        },
       },
     });
   }
@@ -457,7 +485,16 @@ export class AccountProfileRepository {
         id: { not: clientId },
         isBanned: false,
         deletedAt: null,
-        role: { name: RoleName.FREELANCER, deletedAt: null },
+        OR: [
+          { role: { name: RoleName.FREELANCER, deletedAt: null } },
+          {
+            userRoles: {
+              some: {
+                role: { name: RoleName.FREELANCER, deletedAt: null },
+              },
+            },
+          },
+        ],
         profile: {
           is: { freelancerProfile: { isNot: null } },
         },

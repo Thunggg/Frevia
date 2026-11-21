@@ -497,15 +497,12 @@ export function FreelancerProfessionalSettings({ profileId }: Props) {
         setCvAnalysisDialogOpen(true);
       } else {
         toastError({
-          message: "Không nhận được dữ liệu phân tích từ dịch vụ AI.",
+          message: t("aiAnalyzeEmpty"),
         });
       }
     } catch (err) {
       toastError({
-        message: getErrorMessage(
-          err,
-          "Không thể phân tích CV bằng AI. Vui lòng đảm bảo dịch vụ AI (port 8000 & Ollama) đang hoạt động.",
-        ),
+        message: getErrorMessage(err, t("aiAnalyzeFailed")),
       });
     } finally {
       setPendingAction(null);
@@ -515,9 +512,7 @@ export function FreelancerProfessionalSettings({ profileId }: Props) {
   const handleUploadCv = async (file: File) => {
     if (!canUploadCv) return;
     if (file.type !== "application/pdf" || file.size > MAX_CV_SIZE) {
-      toastError({
-        message: "Vui lòng chọn tệp PDF có dung lượng không quá 10 MB.",
-      });
+      toastError({ message: t("cvFileValidationError") });
       return;
     }
     setPendingAction("cv-upload");
@@ -541,7 +536,7 @@ export function FreelancerProfessionalSettings({ profileId }: Props) {
         void handleAnalyzeCv();
       }
     } catch (err) {
-      toastError({ message: getErrorMessage(err, "Không thể tải lên CV.") });
+      toastError({ message: getErrorMessage(err, t("cvUploadFailed")) });
     } finally {
       setPendingAction(null);
     }
@@ -567,7 +562,7 @@ export function FreelancerProfessionalSettings({ profileId }: Props) {
       setCvAnalysisDialogOpen(false);
       toastSuccess({ message: t("cvDeleteSuccess") });
     } catch (err) {
-      toastError({ message: getErrorMessage(err, "Không thể xoá CV.") });
+      toastError({ message: getErrorMessage(err, t("cvDeleteFailed")) });
     } finally {
       setPendingAction(null);
     }
@@ -665,7 +660,7 @@ export function FreelancerProfessionalSettings({ profileId }: Props) {
                   {t("professionalInfo")}
                 </h3>
                 <p className="text-xs text-muted-foreground">
-                  Chức danh, giới thiệu và trạng thái hoạt động công khai.
+                  {t("professionalInfoSubtitle")}
                 </p>
               </div>
             </div>
@@ -722,7 +717,7 @@ export function FreelancerProfessionalSettings({ profileId }: Props) {
                 <Textarea
                   id="pro-bio"
                   rows={4}
-                  placeholder="Giới thiệu bản thân, chuyên môn thế mạnh và mục tiêu nghề nghiệp..."
+                  placeholder={t("bioPlaceholder")}
                   value={form.bio}
                   onChange={(e) =>
                     setForm((prev) => ({ ...prev, bio: e.target.value }))
@@ -742,7 +737,7 @@ export function FreelancerProfessionalSettings({ profileId }: Props) {
                 <Textarea
                   id="pro-experience"
                   rows={3}
-                  placeholder="Senior Frontend Developer - ABC Corp (2022 - Nay)&#10;Fullstack Developer - Freelance (2020 - 2022)"
+                  placeholder={t("experiencePlaceholder")}
                   value={form.experience}
                   onChange={(e) =>
                     setForm((prev) => ({ ...prev, experience: e.target.value }))
@@ -760,7 +755,7 @@ export function FreelancerProfessionalSettings({ profileId }: Props) {
                   <Textarea
                     id="pro-education"
                     rows={3}
-                    placeholder="Đại học Bách Khoa&#10;Kỹ thuật phần mềm (2018 - 2022)"
+                    placeholder={t("educationPlaceholder")}
                     value={form.education}
                     onChange={(e) =>
                       setForm((prev) => ({

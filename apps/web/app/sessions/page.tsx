@@ -13,7 +13,7 @@ function resolveHeaderRole(
   const primary = roles.find((role) => role.isPrimary) ?? roles[0];
   if (primary?.name === RoleName.CLIENT) return "CLIENT";
   if (primary?.name === RoleName.FREELANCER) return "FREELANCER";
-  return "FREELANCER";
+  return "STAFF";
 }
 
 export default async function SessionsPage() {
@@ -26,6 +26,9 @@ export default async function SessionsPage() {
   }
 
   const role = resolveHeaderRole(user?.roles);
+  if (role !== "CLIENT" && role !== "FREELANCER") {
+    redirect("/access-denied");
+  }
 
   return (
     <Suspense>

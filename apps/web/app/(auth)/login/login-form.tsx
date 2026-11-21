@@ -24,11 +24,19 @@ import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { Controller, useForm } from "react-hook-form";
 import type * as z from "zod";
 
-export function LoginForm({ oauthError }: { oauthError?: string }) {
+export function LoginForm({
+  oauthError,
+  redirectTo,
+}: {
+  oauthError?: string;
+  redirectTo?: string;
+}) {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const t = useTranslations("auth.login");
   const tField = useTranslations("auth.fields");
   const tAction = useTranslations("auth.actions");
@@ -60,16 +68,30 @@ export function LoginForm({ oauthError }: { oauthError?: string }) {
       onSuccess: async (response) => {
         if (response.success) {
           toastSuccess({ message: t("success") });
+          queryClient.clear();
           try {
             const meRes = await authApiRequest.me();
+            if (meRes.success) {
+              queryClient.setQueryData(["me"], meRes.data);
+            }
             const primaryRole = meRes.success
               ? meRes.data?.roles?.find((r) => r.isPrimary)?.name
               : null;
-            if (
+            const safeRedirect =
+              redirectTo &&
+              redirectTo.startsWith("/") &&
+              !redirectTo.startsWith("//") &&
+              !redirectTo.startsWith("/login") &&
+              !redirectTo.startsWith("/register")
+                ? redirectTo
+                : null;
+
+            if (safeRedirect) {
+              router.push(safeRedirect);
+            } else if (
               primaryRole === RoleName.ADMIN ||
               (primaryRole !== RoleName.CLIENT &&
                 primaryRole !== RoleName.FREELANCER &&
-                primaryRole !== RoleName.EXPERT &&
                 canAccessAdminPortal(meRes.data))
             ) {
               router.push("/admin");
@@ -77,14 +99,13 @@ export function LoginForm({ oauthError }: { oauthError?: string }) {
               router.push("/client/jobs");
             } else if (primaryRole === RoleName.FREELANCER) {
               router.push("/freelancer");
-            } else if (primaryRole === RoleName.EXPERT) {
-              router.push("/expert/disputes");
             } else {
               router.push("/");
             }
             router.refresh();
           } catch {
             router.push("/dashboard");
+            router.refresh();
           }
         }
       },
