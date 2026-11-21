@@ -152,11 +152,14 @@ export function FindWorkContent({
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const t = useTranslations("findWork");
+  const tClients = useTranslations("clientDirectory");
   const tRec = useTranslations("recommendation");
   const tBookmark = useTranslations("bookmark");
   const [isPending, startTransition] = useTransition();
 
   const [searchInput, setSearchInput] = useState(initialKeyword);
+  const [clientSearchInput, setClientSearchInput] = useState("");
+  const [clientSearch, setClientSearch] = useState("");
   const [isFiltersModalOpen, setIsFiltersModalOpen] = useState(false);
 
   const [bookmarkedSlugs, setBookmarkedSlugs] = useState(
@@ -500,6 +503,10 @@ export function FindWorkContent({
 
   const handleSearchSubmit = (e: FormEvent) => {
     e.preventDefault();
+    if (activeTab === "find-clients") {
+      setClientSearch(clientSearchInput.trim());
+      return;
+    }
     const query = searchInput.trim();
     if (query) {
       router.push(`/freelancer/search/jobs?q=${encodeURIComponent(query)}`);
@@ -658,13 +665,31 @@ export function FindWorkContent({
             <ProjectHeroBanner />
 
               {/* 3. Search Bar Input */}
-              {activeTab !== "find-clients" && <form onSubmit={handleSearchSubmit} className="relative pt-1">
+              <form onSubmit={handleSearchSubmit} className="relative pt-1">
                 <Search className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
                 <input
                   type="text"
-                  value={searchInput}
-                  onChange={(e) => setSearchInput(e.target.value)}
-                  placeholder={t("searchPlaceholder")}
+                  value={
+                    activeTab === "find-clients" ? clientSearchInput : searchInput
+                  }
+                  onChange={(e) => {
+                    if (activeTab === "find-clients") {
+                      setClientSearchInput(e.target.value);
+                    } else {
+                      setSearchInput(e.target.value);
+                    }
+                  }}
+                  maxLength={activeTab === "find-clients" ? 100 : undefined}
+                  aria-label={
+                    activeTab === "find-clients"
+                      ? tClients("searchLabel")
+                      : t("searchPlaceholder")
+                  }
+                  placeholder={
+                    activeTab === "find-clients"
+                      ? tClients("searchPlaceholder")
+                      : t("searchPlaceholder")
+                  }
                   className="h-11 w-full rounded-full border border-border bg-card pl-11 pr-24 text-sm font-medium text-foreground placeholder:text-muted-foreground shadow-xs outline-none focus:border-[#0069D3] focus:ring-2 focus:ring-[#0069D3]/20 transition-all"
                 />
                 <button
@@ -673,7 +698,7 @@ export function FindWorkContent({
                 >
                   {t("searchPage.search")}
                 </button>
-              </form>}
+              </form>
 
               {/* 4. Unified Tabs Row */}
               <div className="flex items-center justify-between border-b border-border pt-2 pb-px">
@@ -772,7 +797,11 @@ export function FindWorkContent({
                   <button
                     type="button"
                     onClick={() => handleTabSelect("find-clients")}
-                    className={`pb-3 text-sm font-semibold border-b-2 transition-all cursor-pointer whitespace-nowrap ${activeTab === "find-clients" ? "border-emerald-600 text-emerald-600 dark:text-emerald-400" : "border-transparent text-muted-foreground hover:text-foreground"}`}
+                    className={`pb-3 text-sm font-semibold border-b-2 transition-all cursor-pointer whitespace-nowrap ${
+                      activeTab === "find-clients"
+                        ? "border-[#0069D3] text-[#0069D3] dark:text-blue-400"
+                        : "border-transparent text-muted-foreground hover:text-foreground"
+                    }`}
                   >
                     {t("findClients")}
                   </button>
@@ -800,9 +829,17 @@ export function FindWorkContent({
                 {/* Left / Main Column: Tab content */}
                 <div className="flex-1 min-w-0 w-full space-y-3">
                   {/* TAB: FIND CLIENTS */}
-                  {activeTab === "find-clients" && <ClientDirectory />}
+                  {activeTab === "find-clients" && (
+                    <ClientDirectory
+                      key={clientSearch}
+                      search={clientSearch}
+                      onClearSearch={() => {
+                        setClientSearchInput("");
+                        setClientSearch("");
+                      }}
+                    />
+                  )}
                   {/* TAB 1: BEST MATCHES */}
-                  {activeTab === "find-clients" && <ClientDirectory />}
                   {activeTab === "best-matches" && canViewRecommendedJobs && (
                     <div>
                       <div className="flex items-center justify-between pb-2">

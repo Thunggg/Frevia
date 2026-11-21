@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
 import { ClientProfileSheet } from "../../_components/client-profile-sheet";
@@ -14,10 +14,14 @@ import {
 import { Button } from "@repo/ui/components/shadcn/button";
 import { Skeleton } from "@repo/ui/components/shadcn/skeleton";
 
-export function ClientDirectory() {
+export function ClientDirectory({
+  search,
+  onClearSearch,
+}: {
+  search: string;
+  onClearSearch: () => void;
+}) {
   const t = useTranslations("clientDirectory");
-  const [draft, setDraft] = useState("");
-  const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
   const [selectedClientId, setSelectedClientId] = useState<number | null>(null);
   const query = useQuery({
@@ -27,41 +31,12 @@ export function ClientDirectory() {
     staleTime: 30_000,
   });
 
-  function submit(event: FormEvent) {
-    event.preventDefault();
-    setPage(1);
-    setSearch(draft.trim());
-  }
-
   return (
     <section className="space-y-5" aria-label={t("title")}>
       <div>
         <h2 className="text-lg font-semibold text-foreground">{t("title")}</h2>
         <p className="mt-1 text-sm text-muted-foreground">{t("description")}</p>
       </div>
-      <form onSubmit={submit} className="flex gap-2">
-        <div className="relative min-w-0 flex-1">
-          <Search className="pointer-events-none absolute left-4 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
-          <label htmlFor="client-search" className="sr-only">
-            {t("searchLabel")}
-          </label>
-          <input
-            id="client-search"
-            value={draft}
-            onChange={(event) => setDraft(event.target.value)}
-            maxLength={100}
-            placeholder={t("searchPlaceholder")}
-            className="h-11 w-full rounded-full border border-border bg-card pl-11 pr-4 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
-          />
-        </div>
-        <Button
-          type="submit"
-          className="h-11 rounded-full bg-blue-600 px-5 text-white hover:bg-blue-700"
-        >
-          {t("search")}
-        </Button>
-      </form>
-
       {query.isPending ? (
         <div
           className="grid gap-4 sm:grid-cols-2"
@@ -97,11 +72,7 @@ export function ClientDirectory() {
             <Button
               variant="outline"
               className="mt-4 rounded-full"
-              onClick={() => {
-                setDraft("");
-                setSearch("");
-                setPage(1);
-              }}
+              onClick={onClearSearch}
             >
               {t("clearSearch")}
             </Button>
