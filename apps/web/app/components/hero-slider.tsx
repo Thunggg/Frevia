@@ -1,17 +1,22 @@
-
 "use client";
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
-import { ArrowUpRight, ArrowRight } from "lucide-react";
+import { ArrowRight, ArrowUpRight } from "lucide-react";
 import { http } from "@/lib/http";
 
 const FALLBACK_HERO_IMAGE =
-  "https://i.pinimg.com/1200x/39/c0/ff/39c0ffbced02cc233ff42865fa394c68.jpg";
+  "https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=1920&q=80";
 
-// CHANGE: Điều chỉnh chiều cao Header
 const HEADER_HEIGHT = "80px";
+
+const TRUST_AVATARS = [
+  "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=120&q=80",
+  "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=120&q=80",
+  "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=120&q=80",
+  "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=120&q=80",
+];
 
 interface BannerItem {
   id: number;
@@ -41,7 +46,7 @@ export function HeroSlider() {
         }
       })
       .catch(() => {
-        // Use fallback background if API fails
+        // Fallback silently if API fails
       });
 
     return () => {
@@ -51,19 +56,6 @@ export function HeroSlider() {
 
   const heroImageAlt = banner?.title || t("imageAlt");
 
-  const imageCard = (
-    <div className="group relative aspect-4/3 w-full max-w-lg overflow-hidden rounded-2xl border border-white/20 shadow-lg sm:rounded-3xl">
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        src={banner?.imageUrl || ""}
-        alt={heroImageAlt}
-        className="h-full w-full object-cover object-center transition-transform duration-500 group-hover:scale-105"
-      />
-
-      <div className="pointer-events-none absolute inset-0 bg-linear-to-t from-black/20 via-transparent to-transparent" />
-    </div>
-  );
-
   return (
     <section
       className="flex w-full items-center"
@@ -71,66 +63,43 @@ export function HeroSlider() {
         minHeight: `calc(100vh - ${HEADER_HEIGHT})`,
       }}
     >
-      <div className="mx-auto flex w-full max-w-[1440px] items-center px-4 py-3 sm:px-6 lg:px-8">
-
-        {/* Hero Container */}
+      <div className="mx-auto flex w-full max-w-[1440px] items-center px-4 py-4 sm:px-6 lg:px-8">
+        {/* Hero Card Container (Pipely Style) */}
         <div
-          className="relative flex w-full items-center overflow-hidden rounded-[28px] border border-black/5 shadow-xs sm:rounded-[32px]"
+          className="relative flex w-full items-center overflow-hidden rounded-[28px] border border-black/5 shadow-xl sm:rounded-[36px]"
           style={{
-            minHeight: `calc(100vh - ${HEADER_HEIGHT} - 24px)`,
-            backgroundImage: `url("${FALLBACK_HERO_IMAGE}")`,
+            minHeight: `calc(100vh - ${HEADER_HEIGHT} - 32px)`,
+            backgroundImage: `url("${banner?.imageUrl || FALLBACK_HERO_IMAGE}")`,
             backgroundSize: "cover",
-            backgroundPosition: "center",
+            backgroundPosition: "center right",
           }}
         >
-          {/* Background Overlay */}
-          <div className="absolute inset-0 bg-black/45" />
+          {/* Subtle Dark Gradient Overlay to guarantee text legibility on left side */}
+          <div className="absolute inset-0 bg-linear-to-r from-black/85 via-black/60 to-black/30 lg:to-transparent" />
 
-          {/* Content */}
-          <div className="relative z-10 grid w-full grid-cols-1 items-center gap-8 p-6 sm:p-10 lg:grid-cols-12 lg:gap-12 lg:p-14 xl:p-16">
-
-            {/* Left Column: API Banner */}
-            {banner?.imageUrl && (
-              <div className="relative flex items-center justify-center lg:col-span-5 lg:col-start-1 lg:row-start-1">
-                {banner.linkUrl ? (
-                  <a
-                    href={banner.linkUrl}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="w-full max-w-lg"
-                  >
-                    {imageCard}
-                  </a>
-                ) : (
-                  <div className="w-full max-w-lg">
-                    {imageCard}
-                  </div>
-                )}
-              </div>
-            )}
-
-            {/* Right Column: Content */}
-            <div className="flex w-full flex-col items-end justify-center text-right lg:col-span-7 lg:col-start-6 lg:row-start-1">
-
-              {/* Heading */}
-              <h1 className="w-full text-right text-4xl font-extrabold leading-[1.08] tracking-tight text-white sm:text-5xl xl:text-6xl">
+          {/* Hero Content Grid */}
+          <div className="relative z-10 grid w-full grid-cols-1 items-center gap-10 p-6 sm:p-12 lg:grid-cols-12 lg:gap-12 lg:p-16 xl:p-20">
+            {/* Left Column: Heading, Subtitle, CTA buttons, Trust elements */}
+            <div className="flex w-full flex-col items-start justify-center text-left lg:col-span-8 xl:col-span-7">
+              {/* Main Heading (Matching Image: Expert insights. / Custom solutions.) */}
+              <h1 className="text-4xl font-extrabold leading-[1.08] tracking-tight text-white sm:text-5xl lg:text-6xl xl:text-7xl">
                 {t("titlePart1")}
                 <br />
-                <span className="text-blue-300">
+                <span className="text-blue-400">
                   {t("titlePart2")}
                 </span>
               </h1>
 
-              {/* Description */}
-              <p className="mt-5 w-full max-w-xl text-right text-sm leading-relaxed text-white/85 sm:text-base">
+              {/* Subtitle */}
+              <p className="mt-5 max-w-xl text-sm leading-relaxed text-zinc-200 sm:text-base lg:text-lg">
                 {t("desc")}
               </p>
 
               {/* CTA Buttons */}
-              <div className="mt-8 flex w-full flex-wrap items-center justify-end gap-3">
+              <div className="mt-8 flex flex-wrap items-center gap-3.5 sm:gap-4">
                 <Link
                   href="/find-work"
-                  className="inline-flex items-center gap-2 rounded-xl bg-[#0069D3] px-6 py-3.5 text-xs font-semibold text-white shadow-xs transition-all hover:bg-blue-700 hover:shadow-lg sm:text-sm"
+                  className="inline-flex items-center gap-2 rounded-xl bg-[#0069D3] hover:bg-blue-600 px-7 py-3.5 text-xs sm:text-sm font-semibold text-white shadow-lg shadow-blue-500/20 transition-all hover:scale-[1.02]"
                 >
                   <span>{t("findWorkBtn")}</span>
                   <ArrowRight className="size-4" />
@@ -138,14 +107,60 @@ export function HeroSlider() {
 
                 <Link
                   href="/profiles"
-                  className="inline-flex items-center gap-2 rounded-xl border border-white/50 bg-white/10 px-6 py-3.5 text-xs font-semibold text-white backdrop-blur-sm transition-all hover:bg-white/20 sm:text-sm"
+                  className="inline-flex items-center gap-2 rounded-xl border border-white/30 bg-white/10 hover:bg-white/20 px-7 py-3.5 text-xs sm:text-sm font-semibold text-white backdrop-blur-md transition-all hover:scale-[1.02]"
                 >
                   <span>{t("exploreExpertsBtn")}</span>
                   <ArrowUpRight className="size-4" />
                 </Link>
               </div>
 
+              {/* Trust Section (Avatars stack + 10K+ badge + Subtitle) */}
+              <div className="mt-10 pt-6 border-t border-white/15 w-full max-w-md">
+                <div className="flex items-center gap-3">
+                  {/* Overlapping Avatars */}
+                  <div className="flex -space-x-2.5 overflow-hidden">
+                    {TRUST_AVATARS.map((src, idx) => (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        key={idx}
+                        src={src}
+                        alt={`Trust avatar ${idx + 1}`}
+                        className="inline-block size-9 rounded-full ring-2 ring-black/80 object-cover"
+                      />
+                    ))}
+                    <div className="flex size-9 items-center justify-center rounded-full bg-zinc-900 text-[11px] font-bold text-white ring-2 ring-black/80">
+                      10K+
+                    </div>
+                  </div>
+
+                  <p className="text-xs sm:text-sm font-medium text-zinc-300">
+                    {t("consultantsTrust")}
+                  </p>
+                </div>
+              </div>
             </div>
+
+            {/* Right Column: In case an active Banner from DB has a link or secondary badge */}
+            {banner?.imageUrl && banner.linkUrl && (
+              <div className="hidden lg:flex lg:col-span-4 xl:col-span-5 justify-end items-center">
+                <a
+                  href={banner.linkUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="group relative overflow-hidden rounded-2xl border border-white/20 bg-black/40 backdrop-blur-md p-4 shadow-2xl transition-transform hover:scale-105 max-w-xs text-white"
+                >
+                  <p className="text-xs font-semibold text-blue-300">
+                    Featured Sponsor
+                  </p>
+                  <p className="text-sm font-bold mt-1 line-clamp-2">
+                    {heroImageAlt}
+                  </p>
+                  <span className="inline-flex items-center gap-1 text-xs text-zinc-300 mt-2 font-medium">
+                    Khám phá ngay <ArrowUpRight className="size-3.5" />
+                  </span>
+                </a>
+              </div>
+            )}
           </div>
         </div>
       </div>

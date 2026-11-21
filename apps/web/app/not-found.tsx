@@ -22,15 +22,15 @@ export default async function NotFound() {
   const t = await getTranslations("notFound");
 
   return (
-    <div className="flex min-h-dvh items-center justify-center p-4 sm:p-8 lg:p-12 font-sans dark:bg-zinc-950">
-      <div className="text-center flex flex-col items-center justify-center min-h-[460px] dark:bg-zinc-900 dark:border-zinc-800">
+    <div className="flex min-h-dvh items-center justify-center p-4 sm:p-8 lg:p-12 font-sans bg-[#E2E5E9] dark:bg-zinc-950">
+      <div className="w-full max-w-4xl rounded-[28px] sm:rounded-[36px] bg-white p-10 sm:p-20 lg:p-24 shadow-sm border border-zinc-200/60 flex flex-col items-center justify-center text-center dark:bg-zinc-900 dark:border-zinc-800">
         <span className="text-xs sm:text-sm font-semibold tracking-wider text-blue-600 uppercase mb-3 dark:text-blue-400">
           {t("errorBadge")}
         </span>
-        <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-zinc-950 mb-4 dark:text-zinc-50">
+        <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-zinc-950 mb-3 dark:text-zinc-50">
           {t("title")}
         </h1>
-        <p className="text-sm sm:text-base text-zinc-500 max-w-lg mb-8 leading-relaxed dark:text-zinc-400">
+        <p className="text-sm sm:text-base text-zinc-500 max-w-md mb-8 leading-relaxed dark:text-zinc-400">
           {t("description")}
         </p>
         <Button

@@ -84,19 +84,19 @@ export function AccessDeniedContent({
   });
 
   return (
-    <div className="flex min-h-dvh items-center justify-center p-4 font-sans sm:p-8 dark:bg-zinc-950">
-      <div className="flex min-h-[460px] w-full max-w-xl flex-col items-center justify-center text-center">
+    <div className="flex min-h-dvh items-center justify-center p-4 sm:p-8 lg:p-12 font-sans bg-[#E2E5E9] dark:bg-zinc-950">
+      <div className="w-full max-w-3xl rounded-[28px] sm:rounded-[36px] bg-white p-10 sm:p-16 lg:p-20 shadow-sm border border-zinc-200/60 flex flex-col items-center justify-center text-center dark:bg-zinc-900 dark:border-zinc-800">
         {/* TITLE */}
-        <span className="mb-3 text-xs font-semibold uppercase tracking-wider text-blue-600 dark:text-blue-400">
+        <span className="mb-3 text-xs sm:text-sm font-semibold uppercase tracking-wider text-blue-600 dark:text-blue-400">
           {t("badge")}
         </span>
 
-        <h1 className="mb-4 text-4xl font-bold tracking-tight text-zinc-950 sm:text-5xl dark:text-zinc-50">
+        <h1 className="mb-3 text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-zinc-950 dark:text-zinc-50">
           {t("title")}
         </h1>
 
         {/* DESCRIPTION */}
-        <p className="mb-8 max-w-lg text-sm leading-relaxed text-zinc-500 sm:text-base dark:text-zinc-400">
+        <p className="mb-8 max-w-md text-sm sm:text-base leading-relaxed text-zinc-500 dark:text-zinc-400">
           {!user ? (
             t("unauthenticatedMessage")
           ) : (
@@ -118,7 +118,7 @@ export function AccessDeniedContent({
             <>
               <Button
                 asChild
-                className="rounded-full bg-blue-600 px-8 text-sm font-medium text-white hover:bg-blue-700"
+                className="rounded-full bg-blue-600 px-8 text-sm font-medium text-white hover:bg-blue-700 shadow-sm"
               >
                 <Link
                   href={
@@ -134,7 +134,7 @@ export function AccessDeniedContent({
               <Button
                 asChild
                 variant="outline"
-                className="rounded-full px-8"
+                className="rounded-full px-8 text-sm font-medium"
               >
                 <Link href="/">{t("backHome")}</Link>
               </Button>
@@ -144,7 +144,7 @@ export function AccessDeniedContent({
               {/* GO TO DASHBOARD */}
               <Button
                 asChild
-                className="rounded-full bg-blue-600 px-8 text-sm font-medium text-white hover:bg-blue-700"
+                className="rounded-full bg-blue-600 px-8 text-sm font-medium text-white hover:bg-blue-700 shadow-sm"
               >
                 <Link href={dashboardUrl}>
                   {dashboardLabel}
