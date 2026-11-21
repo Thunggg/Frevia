@@ -319,10 +319,7 @@ export function JobList({ initialJobs, pagination }: JobListProps) {
         {/* ── Top Header Bar ── */}
         <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
           <div>
-            <div className="text-[11px] font-bold tracking-wider text-[#0069D3] dark:text-blue-400 uppercase">
-              {t("dashboardBreadcrumb")}
-            </div>
-            <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-foreground mt-1">
+            <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-foreground">
               {t("managePostedJobs")}
             </h1>
             <p className="text-xs sm:text-sm text-muted-foreground mt-1.5 max-w-2xl leading-relaxed">
@@ -778,95 +775,42 @@ export function JobList({ initialJobs, pagination }: JobListProps) {
                     </div>
                   ) : null}
 
-                  {/* Bottom Metrics and Action Buttons */}
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-4 border-t border-border/60">
-                    <div className="flex items-center gap-6 sm:gap-8">
-                      <div>
-                        <div className="text-[11px] font-medium text-muted-foreground">
-                          {t("proposalsMetric")}
-                        </div>
-                        <div className="text-base font-bold text-foreground mt-0.5">
-                          {proposalsCount}
-                        </div>
-                      </div>
+                  {/* Bottom Action Buttons: Chỉ giữ lại Xem chi tiết / Xem proposal */}
+                  <div className="flex items-center justify-end gap-2 pt-3 border-t border-border/60">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      asChild
+                      className="rounded-xl border-border/80 px-4 h-9 text-xs font-semibold cursor-pointer"
+                    >
+                      <Link href={`/client/jobs/${job.id}`}>
+                        <span>{t("viewDetail")}</span>
+                      </Link>
+                    </Button>
 
-                      <div>
-                        <div className="text-[11px] font-medium text-muted-foreground">
-                          {t("positionsRequiredMetric")}
-                        </div>
-                        <div className="text-base font-bold text-foreground mt-0.5">
-                          {job.positionsRequired || 1}
-                        </div>
-                      </div>
-
-                      <div>
-                        <div className="text-[11px] font-medium text-muted-foreground">
-                          {t("positionsFilledMetric")}
-                        </div>
-                        <div className="text-base font-bold text-foreground mt-0.5">
-                          {job.positionsFilled ?? 0}
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center gap-2 flex-wrap">
+                    {isDraft && canPublish ? (
                       <Button
-                        variant="outline"
+                        size="sm"
+                        onClick={() => setPendingPublishJobId(job.id)}
+                        className="rounded-xl bg-[#0069D3] hover:bg-[#005bb8] text-white px-5 h-9 text-xs font-semibold shadow-xs cursor-pointer"
+                      >
+                        <span>{t("publish")}</span>
+                      </Button>
+                    ) : (
+                      <Button
                         size="sm"
                         asChild
-                        className="rounded-xl border-border/80 px-4 h-9 text-xs font-semibold cursor-pointer"
+                        className="rounded-xl bg-[#0069D3] hover:bg-[#005bb8] text-white px-5 h-9 text-xs font-semibold shadow-xs cursor-pointer"
                       >
-                        <Link href="/freelancers">
-                          <span>{t("inviteCandidate")}</span>
+                        <Link href={`/client/jobs/${job.id}/proposals`}>
+                          <span>
+                            {t("viewProposalsCount", {
+                              count: proposalsCount,
+                            })}
+                          </span>
                         </Link>
                       </Button>
-
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => {
-                          setEditingJob(job);
-                          setIsFormOpen(true);
-                        }}
-                        className="rounded-xl border-border/80 px-4 h-9 text-xs font-semibold cursor-pointer"
-                      >
-                        <span>{t("editAction")}</span>
-                      </Button>
-
-                      {isDraft && canPublish ? (
-                        <Button
-                          size="sm"
-                          onClick={() => setPendingPublishJobId(job.id)}
-                          className="rounded-xl bg-[#0069D3] hover:bg-[#005bb8] text-white px-5 h-9 text-xs font-semibold shadow-xs cursor-pointer"
-                        >
-                          <span>{t("publish")}</span>
-                        </Button>
-                      ) : proposalsCount > 0 ? (
-                        <Button
-                          size="sm"
-                          asChild
-                          className="rounded-xl bg-[#0069D3] hover:bg-[#005bb8] text-white px-5 h-9 text-xs font-semibold shadow-xs cursor-pointer"
-                        >
-                          <Link href={`/client/jobs/${job.id}/proposals`}>
-                            <span>
-                              {t("viewProposalsCount", {
-                                count: proposalsCount,
-                              })}
-                            </span>
-                          </Link>
-                        </Button>
-                      ) : (
-                        <Button
-                          size="sm"
-                          asChild
-                          className="rounded-xl bg-[#0069D3] hover:bg-[#005bb8] text-white px-5 h-9 text-xs font-semibold shadow-xs cursor-pointer"
-                        >
-                          <Link href={`/client/jobs/${job.id}`}>
-                            <span>{t("viewDetailAction")}</span>
-                          </Link>
-                        </Button>
-                      )}
-                    </div>
+                    )}
                   </div>
                 </motion.div>
               );
