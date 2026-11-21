@@ -3075,16 +3075,22 @@
     "adminPortal": "Cổng quản trị"
   },
   "footer": {
+    "brandTagline": "Nền tảng kết nối nhân tài số hàng đầu, hỗ trợ hợp đồng dịch vụ chuẩn mực, ký quỹ Escrow bảo đảm 100% và ứng dụng AI thông minh.",
     "platform": "Nền tảng",
     "community": "Cộng đồng",
+    "legal": "Pháp lý",
     "findWork": "Tìm việc",
+    "expertsAndFreelancers": "Chuyên gia & Freelancer",
     "messages": "Tin nhắn",
     "forum": "Diễn đàn",
+    "talksForum": "Diễn đàn Talks",
+    "helpCenter": "Trung tâm hỗ trợ & Chính sách",
     "becomeFreelancer": "Trở thành Freelancer",
     "now": "NGAY",
     "termsAndConditions": "Điều khoản và điều kiện",
     "privacyPolicy": "Chính sách bảo mật",
-    "rights": "© {year} Frevia. Bảo lưu mọi quyền"
+    "rights": "© {year} Frevia. Bảo lưu mọi quyền",
+    "poweredBy": "Thiết kế & Công nghệ vận hành bởi Frevia."
   },
   "bookmark": {
     "added": "Đã lưu việc làm",
@@ -3512,7 +3518,9 @@
       "title": "Khám phá theo danh mục",
       "desc": "Tìm kiếm dự án theo chuyên môn của bạn từ hàng trăm cơ hội việc làm hấp dẫn nhất hiện nay.",
       "viewAll": "Xem tất cả công việc",
-      "jobsCount": "{count} việc làm đang tuyển",
+      "jobsCount": "{count, plural, =0 {Chưa có việc làm} other {# việc làm đang tuyển}}",
+      "noJobs": "Chưa có việc làm",
+      "exploreJobs": "Khám phá việc làm",
       "empty": "Hiện chưa có danh mục công việc nào được công bố."
     },
     "ai": {

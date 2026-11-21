@@ -19,7 +19,7 @@ export function Footer() {
               </span>
             </Link>
             <p className="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed max-w-sm">
-              Nền tảng kết nối nhân tài số hàng đầu, hỗ trợ hợp đồng dịch vụ chuẩn mực, ký quỹ Escrow bảo đảm 100% và ứng dụng AI thông minh.
+              {t("brandTagline")}
             </p>
 
             {/* Social Icons */}
@@ -83,7 +83,7 @@ export function Footer() {
                     href="/profiles"
                     className="hover:text-zinc-950 dark:hover:text-white transition-colors"
                   >
-                    Chuyên gia & Freelancer
+                    {t("expertsAndFreelancers")}
                   </Link>
                 </li>
                 <li>
@@ -108,7 +108,7 @@ export function Footer() {
                     href="/forum"
                     className="hover:text-zinc-950 dark:hover:text-white transition-colors"
                   >
-                    {t("forum")} (Talks)
+                    {t("talksForum")}
                   </Link>
                 </li>
                 <li>
@@ -116,7 +116,7 @@ export function Footer() {
                     href="/privacy-policy"
                     className="hover:text-zinc-950 dark:hover:text-white transition-colors"
                   >
-                    Trung tâm hỗ trợ
+                    {t("helpCenter")}
                   </Link>
                 </li>
               </ul>
@@ -125,7 +125,7 @@ export function Footer() {
             {/* Group 3: Legal */}
             <div className="space-y-3">
               <h3 className="text-xs font-bold uppercase tracking-wider text-zinc-900 dark:text-zinc-100">
-                Pháp lý
+                {t("legal")}
               </h3>
               <ul className="space-y-2 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400">
                 <li>
@@ -149,11 +149,11 @@ export function Footer() {
           </div>
         </div>
 
-        {/* ── Bottom Row: Copyright ── */}
+        {/* ── Bottom Row: Copyright & Branding ── */}
         <div className="mt-12 border-t border-zinc-200 dark:border-zinc-800 pt-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-zinc-500 dark:text-zinc-400">
           <p>{t("rights", { year })}</p>
           <p className="text-[11px] text-zinc-400">
-            Design & Technology powered by Frevia.
+            {t("poweredBy")}
           </p>
         </div>
       </div>
