@@ -38,9 +38,9 @@ export function AuthShell({
           />
           <div
             aria-hidden
-            className="absolute inset-0 bg-[linear-gradient(168deg,rgba(234,248,223,0.97)_0%,rgba(180,225,155,0.82)_30%,rgba(79,174,46,0.35)_60%,rgba(18,51,31,0.65)_100%)] dark:bg-[linear-gradient(168deg,rgba(22,23,22,0.98)_0%,rgba(26,28,26,0.95)_40%,rgba(18,18,18,0.92)_100%)]"
+            className="absolute inset-0 bg-[linear-gradient(168deg,rgba(235,243,254,0.97)_0%,rgba(186,214,248,0.82)_30%,rgba(0,105,211,0.35)_60%,rgba(10,36,77,0.65)_100%)] dark:bg-[linear-gradient(168deg,rgba(16,22,32,0.98)_0%,rgba(18,24,36,0.95)_40%,rgba(14,17,24,0.92)_100%)]"
           />
-          <div className="absolute left-0 top-0 h-1 w-20 bg-[#4fae2e] lg:block" />
+          <div className="absolute left-0 top-0 h-1 w-20 bg-[#0069D3] lg:block" />
           <div className="relative z-10 p-10 xl:p-12">
             <Link
               href="/"
@@ -54,7 +54,7 @@ export function AuthShell({
                 className="size-10 object-contain"
                 priority
               />
-              <span className="text-3xl font-bold tracking-tight text-[#4fae2e]">
+              <span className="text-3xl font-bold tracking-tight text-[#0069D3] dark:text-blue-400">
                 Frevia
               </span>
             </Link>
@@ -80,7 +80,7 @@ export function AuthShell({
       <main className="relative flex flex-1 flex-col overflow-y-auto bg-background">
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_85%_5%,rgba(79,174,46,0.06),transparent_50%)] dark:bg-[radial-gradient(ellipse_at_85%_5%,rgba(79,174,46,0.1),transparent_50%)]"
+          className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_85%_5%,rgba(0,105,211,0.06),transparent_50%)] dark:bg-[radial-gradient(ellipse_at_85%_5%,rgba(0,105,211,0.12),transparent_50%)]"
         />
 
         <div className="relative flex min-h-dvh flex-1 flex-col justify-center px-4 py-10 sm:px-8 lg:px-12 xl:px-16">
@@ -99,7 +99,7 @@ export function AuthShell({
                 className="size-8 object-contain"
                 priority
               />
-              <span className="text-2xl font-bold tracking-tight text-[#4fae2e]">
+              <span className="text-2xl font-bold tracking-tight text-[#0069D3] dark:text-blue-400">
                 Frevia
               </span>
             </Link>
