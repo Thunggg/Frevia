@@ -54,7 +54,7 @@ export function AuthShell({
                 className="size-10 object-contain"
                 priority
               />
-              <span className="text-3xl font-bold tracking-tight text-[#4fae2e]">
+              <span className="text-3xl font-aquire font-bold tracking-tight text-[#4fae2e]">
                 Frevia
               </span>
             </Link>
@@ -99,7 +99,7 @@ export function AuthShell({
                 className="size-8 object-contain"
                 priority
               />
-              <span className="text-2xl font-bold tracking-tight text-[#4fae2e]">
+              <span className="text-2xl font-aquire font-bold tracking-tight text-[#4fae2e]">
                 Frevia
               </span>
             </Link>
