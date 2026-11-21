@@ -31,7 +31,7 @@ import type {
 
 @Controller('disputes')
 export class DisputeController {
-  constructor(private readonly disputeService: DisputeService) { }
+  constructor(private readonly disputeService: DisputeService) {}
 
   @Get('reasons')
   @ZodSerializerDto(GetResolutionReasonsResponseDTO)

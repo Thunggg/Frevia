@@ -188,7 +188,8 @@ export class DisputeRepository {
         data: {
           declineReason,
           declinedAt: new Date(),
-          status: DisputeStatus.WAITING_RESPONSE,
+          escalatedAt: new Date(),
+          status: DisputeStatus.UNDER_REVIEW,
         },
         include: disputeDetailInclude,
       });

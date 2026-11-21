@@ -50,7 +50,7 @@ export class DisputeService {
   constructor(
     private readonly disputeRepo: DisputeRepository,
     private readonly paymentService: PaymentService,
-  ) { }
+  ) {}
 
   async getResolutionReasons(
     userId: number,
@@ -74,77 +74,77 @@ export class DisputeService {
 
       const reasons: GetResolutionReasonsResponseType['reasons'] = isClient
         ? [
-          {
-            code: 'QUALITY_NOT_AS_DESCRIBED',
-            label: 'Deliverable does not match agreed requirements',
-            description:
-              'The submitted work is incomplete or does not meet the milestone specifications.',
-            allowedResolutionTypes: [
-              'PARTIAL_REFUND',
-              'FULL_REFUND',
-              'EXTEND_DEADLINE',
-            ],
-          },
-          {
-            code: 'MISSED_DEADLINE',
-            label: 'Missed deadline or unresponsive freelancer',
-            description:
-              'Delivery is overdue or the freelancer is no longer responding to messages.',
-            allowedResolutionTypes: [
-              'FULL_REFUND',
-              'EXTEND_DEADLINE',
-              'PARTIAL_REFUND',
-            ],
-          },
-          {
-            code: 'EXTEND_DELIVERY',
-            label: 'Offer a deadline extension',
-            description:
-              'Grant additional time for the freelancer to complete this milestone.',
-            allowedResolutionTypes: ['EXTEND_DEADLINE'],
-          },
-          {
-            code: 'MUTUAL_CANCELLATION',
-            label: 'Mutual cancellation / project scope changed',
-            description:
-              'Request to cancel this milestone and settle the escrowed funds.',
-            allowedResolutionTypes: ['FULL_REFUND', 'PARTIAL_REFUND'],
-          },
-        ]
+            {
+              code: 'QUALITY_NOT_AS_DESCRIBED',
+              label: 'Deliverable does not match agreed requirements',
+              description:
+                'The submitted work is incomplete or does not meet the milestone specifications.',
+              allowedResolutionTypes: [
+                'PARTIAL_REFUND',
+                'FULL_REFUND',
+                'EXTEND_DEADLINE',
+              ],
+            },
+            {
+              code: 'MISSED_DEADLINE',
+              label: 'Missed deadline or unresponsive freelancer',
+              description:
+                'Delivery is overdue or the freelancer is no longer responding to messages.',
+              allowedResolutionTypes: [
+                'FULL_REFUND',
+                'EXTEND_DEADLINE',
+                'PARTIAL_REFUND',
+              ],
+            },
+            {
+              code: 'EXTEND_DELIVERY',
+              label: 'Offer a deadline extension',
+              description:
+                'Grant additional time for the freelancer to complete this milestone.',
+              allowedResolutionTypes: ['EXTEND_DEADLINE'],
+            },
+            {
+              code: 'MUTUAL_CANCELLATION',
+              label: 'Mutual cancellation / project scope changed',
+              description:
+                'Request to cancel this milestone and settle the escrowed funds.',
+              allowedResolutionTypes: ['FULL_REFUND', 'PARTIAL_REFUND'],
+            },
+          ]
         : [
-          {
-            code: 'NEED_MORE_TIME',
-            label: 'Request a delivery deadline extension',
-            description:
-              'Propose a new milestone due date for the client to approve.',
-            allowedResolutionTypes: ['EXTEND_DEADLINE'],
-          },
-          {
-            code: 'SCOPE_CREEP',
-            label: 'Client requested work outside original scope',
-            description:
-              'Additional requirements were requested beyond the agreed milestone terms.',
-            allowedResolutionTypes: [
-              'PARTIAL_REFUND',
-              'FULL_RELEASE',
-              'EXTEND_DEADLINE',
-            ],
-          },
-          {
-            code: 'CLIENT_UNRESPONSIVE',
-            label: 'Client is unresponsive or delaying approval',
-            description:
-              'Work has been delivered but the client has stopped responding.',
-            allowedResolutionTypes: ['FULL_RELEASE', 'PARTIAL_REFUND'],
-          },
-          {
-            code: 'MUTUAL_CANCELLATION',
-            label: 'Unable to complete milestone (mutual cancellation)',
-            description:
-              'Agree to cancel this milestone and return escrowed funds to the client.',
-            allowedResolutionTypes: ['FULL_REFUND', 'PARTIAL_REFUND'],
-          },
-        ];
+            {
+              code: 'NEED_MORE_TIME',
+              label: 'Request a delivery deadline extension',
+              description:
+                'Propose a new milestone due date for the client to approve.',
+              allowedResolutionTypes: ['EXTEND_DEADLINE'],
+            },
+            {
+              code: 'SCOPE_CREEP',
+              label: 'Client requested work outside original scope',
+              description:
+                'Additional requirements were requested beyond the agreed milestone terms.',
+              allowedResolutionTypes: [
+                'PARTIAL_REFUND',
+                'FULL_RELEASE',
+                'EXTEND_DEADLINE',
+              ],
+            },
+            {
+              code: 'CLIENT_UNRESPONSIVE',
+              label: 'Client is unresponsive or delaying approval',
+              description:
+                'Work has been delivered but the client has stopped responding.',
+              allowedResolutionTypes: ['FULL_RELEASE', 'PARTIAL_REFUND'],
+            },
+            {
+              code: 'MUTUAL_CANCELLATION',
+              label: 'Unable to complete milestone (mutual cancellation)',
+              description:
+                'Agree to cancel this milestone and return escrowed funds to the client.',
+              allowedResolutionTypes: ['FULL_REFUND', 'PARTIAL_REFUND'],
+            },
+          ];
 
       return {
         role,
@@ -179,10 +179,10 @@ export class DisputeService {
       const existingDispute = milestone.dispute;
       const canReplacePreviousDispute = Boolean(
         existingDispute &&
-          (existingDispute.status === DisputeStatus.CANCELLED ||
-            (existingDispute.status === DisputeStatus.FINALIZED &&
-              existingDispute.resolutionType ===
-                DisputeResolutionType.EXTEND_DEADLINE)),
+        (existingDispute.status === DisputeStatus.CANCELLED ||
+          (existingDispute.status === DisputeStatus.FINALIZED &&
+            existingDispute.resolutionType ===
+              DisputeResolutionType.EXTEND_DEADLINE)),
       );
       if (existingDispute && !canReplacePreviousDispute) {
         throw MilestoneAlreadyDisputedException();
@@ -334,8 +334,8 @@ export class DisputeService {
           }
           const restoredStatus =
             dispute.previousMilestoneStatus === MilestoneStatus.LATE ||
-              !dispute.previousMilestoneStatus ||
-              dispute.previousMilestoneStatus === MilestoneStatus.DISPUTED
+            !dispute.previousMilestoneStatus ||
+            dispute.previousMilestoneStatus === MilestoneStatus.DISPUTED
               ? MilestoneStatus.IN_PROGRESS
               : dispute.previousMilestoneStatus;
 
@@ -431,7 +431,7 @@ export class DisputeService {
 
       const restoredStatus =
         !dispute.previousMilestoneStatus ||
-          dispute.previousMilestoneStatus === MilestoneStatus.DISPUTED
+        dispute.previousMilestoneStatus === MilestoneStatus.DISPUTED
           ? MilestoneStatus.IN_PROGRESS
           : dispute.previousMilestoneStatus;
 
@@ -601,7 +601,10 @@ export class DisputeService {
         otherReview.response === DisputeDecisionResponse.ACCEPTED
       ) {
         const freshDispute = await this.disputeRepo.findDisputeById(disputeId);
-        if (freshDispute && freshDispute.status === DisputeStatus.DECISION_MADE) {
+        if (
+          freshDispute &&
+          freshDispute.status === DisputeStatus.DECISION_MADE
+        ) {
           return await this.executeFinalization(
             freshDispute,
             Number(freshDispute.freelancerAmount),

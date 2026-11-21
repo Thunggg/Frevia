@@ -502,11 +502,19 @@ export function SearchFiltersSidebar({
                 <div className="flex items-center rounded-xl border border-border bg-card px-2.5 py-1.5 text-xs flex-1 focus-within:border-[#0069D3] focus-within:ring-1 focus-within:ring-[#0069D3]/20 transition-all">
                   <span className="text-muted-foreground mr-1">$</span>
                   <input
-                    type="number"
-                    min="0"
+                    type="text"
+                    inputMode="decimal"
                     placeholder={t("sidebar.min")}
                     value={minInput}
-                    onChange={(e) => setMinInput(e.target.value)}
+                    onFocus={(e) => e.target.select()}
+                    onChange={(e) => {
+                      let val = e.target.value.replace(/[^\d.]/g, "");
+                      if (/^0\d/.test(val)) {
+                        val = val.replace(/^0+/, "");
+                        if (val === "") val = "0";
+                      }
+                      setMinInput(val);
+                    }}
                     onKeyDown={(e) => {
                       if (e.key === "Enter") {
                         e.preventDefault();
@@ -520,11 +528,19 @@ export function SearchFiltersSidebar({
                 <div className="flex items-center rounded-xl border border-border bg-card px-2.5 py-1.5 text-xs flex-1 focus-within:border-[#0069D3] focus-within:ring-1 focus-within:ring-[#0069D3]/20 transition-all">
                   <span className="text-muted-foreground mr-1">$</span>
                   <input
-                    type="number"
-                    min="0"
+                    type="text"
+                    inputMode="decimal"
                     placeholder={t("sidebar.max")}
                     value={maxInput}
-                    onChange={(e) => setMaxInput(e.target.value)}
+                    onFocus={(e) => e.target.select()}
+                    onChange={(e) => {
+                      let val = e.target.value.replace(/[^\d.]/g, "");
+                      if (/^0\d/.test(val)) {
+                        val = val.replace(/^0+/, "");
+                        if (val === "") val = "0";
+                      }
+                      setMaxInput(val);
+                    }}
                     onKeyDown={(e) => {
                       if (e.key === "Enter") {
                         e.preventDefault();

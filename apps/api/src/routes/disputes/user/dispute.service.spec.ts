@@ -469,7 +469,7 @@ describe('DisputeService', () => {
       } as any);
       repo.declineDisputeTransaction.mockResolvedValue({
         ...mockDispute,
-        status: DisputeStatus.WAITING_RESPONSE,
+        status: DisputeStatus.UNDER_REVIEW,
         declineReason: 'Work was delivered per requirements',
         declinedAt: new Date(),
       } as any);

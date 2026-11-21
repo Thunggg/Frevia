@@ -23,7 +23,7 @@ import type { DisputeDetailType } from "@shared/types";
 import {
   formatResolutionCurrency,
   useResolutionHelpers,
-} from "@/components/disputes/resolution-utils";
+} from "@/app/(client)/_components/disputes/resolution-utils";
 
 type DossierTab = "claim" | "submissions" | "scope" | "timeline";
 
@@ -192,11 +192,10 @@ export function ExpertDisputeDossier({
               key={tab.key}
               type="button"
               onClick={() => setActiveTab(tab.key)}
-              className={`inline-flex h-7 cursor-pointer items-center whitespace-nowrap rounded-full px-3 text-xs transition-all ${
-                active
+              className={`inline-flex h-7 cursor-pointer items-center whitespace-nowrap rounded-full px-3 text-xs transition-all ${active
                   ? "bg-background font-medium text-foreground shadow-xs"
                   : "text-muted-foreground hover:text-foreground"
-              }`}
+                }`}
             >
               {tab.label}
             </button>
@@ -365,8 +364,8 @@ export function ExpertDisputeDossier({
                 const isLate = dueDateMs !== null && submittedMs > dueDateMs;
                 const statusKey =
                   sub.status === "APPROVED" ||
-                  sub.status === "CHANGES_REQUESTED" ||
-                  sub.status === "PENDING_REVIEW"
+                    sub.status === "CHANGES_REQUESTED" ||
+                    sub.status === "PENDING_REVIEW"
                     ? sub.status
                     : "PENDING_REVIEW";
 
@@ -394,11 +393,10 @@ export function ExpertDisputeDossier({
                         </span>
                         {dueDateMs !== null && (
                           <span
-                            className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-medium ${
-                              isLate
+                            className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-medium ${isLate
                                 ? "bg-rose-50 text-rose-700 dark:bg-rose-950/50 dark:text-rose-300"
                                 : "bg-emerald-50 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-300"
-                            }`}
+                              }`}
                           >
                             {isLate ? (
                               <AlertTriangle className="size-3" />
@@ -628,9 +626,8 @@ export function ExpertDisputeDossier({
                       return (
                         <div
                           key={m.id}
-                          className={`flex items-center justify-between gap-3 px-3 py-2.5 ${
-                            isCurrent ? "bg-amber-50/50 dark:bg-amber-950/20" : ""
-                          }`}
+                          className={`flex items-center justify-between gap-3 px-3 py-2.5 ${isCurrent ? "bg-amber-50/50 dark:bg-amber-950/20" : ""
+                            }`}
                         >
                           <div className="min-w-0 flex items-center gap-2">
                             <span className="truncate font-medium text-foreground">
@@ -724,11 +721,10 @@ export function ExpertDisputeDossier({
                   return (
                     <div
                       key={msg.id}
-                      className={`rounded-xl border p-3 text-xs space-y-1 ${
-                        isClientMsg
+                      className={`rounded-xl border p-3 text-xs space-y-1 ${isClientMsg
                           ? "border-sky-200/70 dark:border-sky-900/50 bg-sky-50/40 dark:bg-sky-950/20"
                           : "border-zinc-200/80 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/40"
-                      }`}
+                        }`}
                     >
                       <div className="flex flex-wrap items-center justify-between gap-2 text-[11px]">
                         <span className="font-medium text-foreground">

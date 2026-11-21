@@ -17,7 +17,6 @@ import {
   ExpertDisputeForbiddenException,
   ExpertDisputeInvalidSplitAmountException,
   ExpertDisputeNotFoundException,
-  FailedToFinalizeExpertDisputeException,
   FailedToLoadExpertDisputeException,
   FailedToMakeExpertDisputeDecisionException,
 } from './disputes-expert.error';
@@ -68,11 +67,11 @@ export class DisputesExpertService {
       const contract = dispute.milestone?.contract;
       const conversationMessages =
         contract &&
-        typeof this.expertDisputeRepo.findConversationMessages === 'function'
+          typeof this.expertDisputeRepo.findConversationMessages === 'function'
           ? await this.expertDisputeRepo.findConversationMessages(
-              contract.clientId,
-              contract.freelancerId,
-            )
+            contract.clientId,
+            contract.freelancerId,
+          )
           : [];
 
       return {
@@ -100,58 +99,14 @@ export class DisputesExpertService {
         throw ExpertDisputeNotFoundException();
       }
 
-      if (dispute.status !== DisputeStatus.UNDER_REVIEW) {
-        throw ExpertDisputeDecisionNotPendingException();
-      }
-
-      const milestoneAmount = Number(dispute.milestone.amount);
-      const totalDecided = Number(
-        (body.freelancerAmount + body.clientAmount).toFixed(2),
-      );
-      if (totalDecided !== Number(milestoneAmount.toFixed(2))) {
-        throw ExpertDisputeInvalidSplitAmountException();
-      }
-
-      const clientId = dispute.milestone.contract.clientId;
-      const freelancerId = dispute.milestone.contract.freelancerId;
-
-      return await this.expertDisputeRepo.makeDecisionTransaction(
-        disputeId,
-        expertId,
-        body.freelancerAmount,
-        body.clientAmount,
-        body.decisionReason,
-        clientId,
-        freelancerId,
-      );
-    } catch (error) {
-      if (error instanceof HttpException) throw error;
-      this.logger.error('Failed to make expert dispute decision', error);
-      throw FailedToMakeExpertDisputeDecisionException();
-    }
-  }
-
-  async makeFinalDecision(
-    expertId: number,
-    roleName: string,
-    disputeId: number,
-    body: AdminDisputeFinalDecisionBodyType,
-  ) {
-    try {
-      await this.requireActiveExpert(roleName, expertId);
-
-      const dispute = await this.expertDisputeRepo.findDisputeById(disputeId);
-      if (!dispute) {
-        throw ExpertDisputeNotFoundException();
-      }
-
       if (dispute.status === DisputeStatus.FINALIZED) {
         throw ExpertDisputeAlreadyFinalizedException();
       }
 
       if (
-        dispute.status !== DisputeStatus.REVIEW_REQUESTED &&
-        dispute.status !== DisputeStatus.DECISION_MADE
+        dispute.status !== DisputeStatus.UNDER_REVIEW &&
+        dispute.status !== DisputeStatus.DECISION_MADE &&
+        dispute.status !== DisputeStatus.REVIEW_REQUESTED
       ) {
         throw ExpertDisputeDecisionNotPendingException();
       }
@@ -164,6 +119,7 @@ export class DisputesExpertService {
         throw ExpertDisputeInvalidSplitAmountException();
       }
 
+      // Phán quyết của Expert có tính cưỡng chế và tự động tất toán ký quỹ ngay lập tức
       await this.paymentService.executeDisputeSettlementPayout({
         disputeId: dispute.id,
         contractId: dispute.milestone.contractId,
@@ -192,8 +148,17 @@ export class DisputesExpertService {
       });
     } catch (error) {
       if (error instanceof HttpException) throw error;
-      this.logger.error('Failed to finalize expert dispute decision', error);
-      throw FailedToFinalizeExpertDisputeException();
+      this.logger.error('Failed to make expert dispute decision', error);
+      throw FailedToMakeExpertDisputeDecisionException();
     }
+  }
+
+  async makeFinalDecision(
+    expertId: number,
+    roleName: string,
+    disputeId: number,
+    body: AdminDisputeFinalDecisionBodyType,
+  ) {
+    return this.makeDecision(expertId, roleName, disputeId, body);
   }
 }

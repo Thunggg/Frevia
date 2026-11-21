@@ -112,8 +112,7 @@ async function bootstrap() {
 
         const isPublic = layer.route.stack.some((s) =>
           Boolean(
-            s?.handle &&
-              Reflect.getMetadata(IS_PUBLIC_KEY, s.handle as object),
+            s?.handle && Reflect.getMetadata(IS_PUBLIC_KEY, s.handle as object),
           ),
         );
         if (isPublic) return undefined;

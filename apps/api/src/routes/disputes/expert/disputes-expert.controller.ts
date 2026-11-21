@@ -25,7 +25,7 @@ import type {
 
 @Controller('expert/disputes')
 export class DisputesExpertController {
-  constructor(private readonly expertDisputeService: DisputesExpertService) { }
+  constructor(private readonly expertDisputeService: DisputesExpertService) {}
 
   @Get()
   @ZodSerializerDto(ExpertDisputeListResponseDTO)

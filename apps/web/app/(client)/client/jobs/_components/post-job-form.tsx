@@ -611,15 +611,22 @@ export function PostJobForm({
             <Field data-invalid={fieldState.invalid}>
               <FieldLabel className="text-xs font-semibold text-foreground font-sans">{t("minBudgetLabel")}</FieldLabel>
               <Input
-                type="number"
+                type="text"
+                inputMode="decimal"
                 value={field.value ?? ""}
-                onChange={(event) =>
+                onFocus={(e) => e.target.select()}
+                onChange={(event) => {
+                  let val = event.target.value.replace(/[^\d.]/g, "");
+                  if (/^0\d/.test(val)) {
+                    val = val.replace(/^0+/, "");
+                    if (val === "") val = "0";
+                  }
                   field.onChange(
-                    event.target.value === ""
+                    val === ""
                       ? null
-                      : Number(event.target.value),
-                  )
-                }
+                      : Number(val),
+                  );
+                }}
                 aria-invalid={fieldState.invalid}
                 placeholder={t("minBudgetPlaceholder")}
                 className="h-10 rounded-full border-0 bg-[#F1F0F5] px-4 text-xs font-normal font-sans dark:bg-zinc-800/90 outline-none"
@@ -635,15 +642,22 @@ export function PostJobForm({
             <Field data-invalid={fieldState.invalid}>
               <FieldLabel className="text-xs font-semibold text-foreground font-sans">{t("maxBudgetLabel")}</FieldLabel>
               <Input
-                type="number"
+                type="text"
+                inputMode="decimal"
                 value={field.value ?? ""}
-                onChange={(event) =>
+                onFocus={(e) => e.target.select()}
+                onChange={(event) => {
+                  let val = event.target.value.replace(/[^\d.]/g, "");
+                  if (/^0\d/.test(val)) {
+                    val = val.replace(/^0+/, "");
+                    if (val === "") val = "0";
+                  }
                   field.onChange(
-                    event.target.value === ""
+                    val === ""
                       ? null
-                      : Number(event.target.value),
-                  )
-                }
+                      : Number(val),
+                  );
+                }}
                 aria-invalid={fieldState.invalid}
                 placeholder={t("maxBudgetPlaceholder")}
                 className="h-10 rounded-full border-0 bg-[#F1F0F5] px-4 text-xs font-normal font-sans dark:bg-zinc-800/90 outline-none"
@@ -745,19 +759,23 @@ export function PostJobForm({
                   ) : null}
                 </div>
                 <Input
-                  type="number"
-                  min={String(minPositions)}
-                  max="100"
-                  step="1"
+                  type="text"
+                  inputMode="numeric"
                   disabled={isSingle}
                   value={isSingle ? 1 : (field.value ?? minPositions)}
-                  onChange={(event) =>
+                  onFocus={(e) => e.target.select()}
+                  onChange={(event) => {
+                    let val = event.target.value.replace(/[^\d]/g, "");
+                    if (/^0\d/.test(val)) {
+                      val = val.replace(/^0+/, "");
+                      if (val === "") val = "0";
+                    }
                     field.onChange(
-                      event.target.value === ""
+                      val === ""
                         ? minPositions
-                        : Number(event.target.value),
-                    )
-                  }
+                        : Number(val),
+                    );
+                  }}
                   aria-invalid={fieldState.invalid}
                   placeholder={t("positionsPlaceholder")}
                   className="h-10 rounded-full border-0 bg-[#F1F0F5] px-4 text-xs font-normal font-sans dark:bg-zinc-800/90 outline-none disabled:opacity-60"
