@@ -69,6 +69,25 @@ describe('AccountProfileService', () => {
 
   beforeEach(() => jest.clearAllMocks());
 
+  it('queues general freelancer edits even for a complete profile', async () => {
+    repository.findGeneralProfile.mockResolvedValue({
+      ...userWithRole(RoleName.FREELANCER),
+      profile: { id: 10, userId: 1, profileCompletionPercent: 100 },
+    });
+    profileRevisionService.requiresManualReview.mockReturnValue(false);
+    profileRevisionService.submitGeneral.mockResolvedValue({
+      reviewRequired: true,
+      revision: { id: 20, status: 'PENDING' },
+    });
+    const input = { displayName: 'Pending name', bio: 'Pending biography' };
+    const result = await service.updateGeneralProfile(1, input);
+    expect(profileRevisionService.submitGeneral).toHaveBeenCalledWith(
+      1, 10, RoleName.FREELANCER, input, 100,
+    );
+    expect(result.reviewRequired).toBe(true);
+    expect(repository.updateGeneralProfile).not.toHaveBeenCalled();
+  });
+
   it('presents only directory fields, normalizes local avatars and supports clients without company details', async () => {
     repository.findClients.mockResolvedValue({
       profiles: [

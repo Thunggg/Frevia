@@ -10,7 +10,9 @@ The confirmed scope uses the current portfolio fields: title, description,
 technologies and project URL. Media uploads and project role from the older
 report are excluded because the current database does not contain those fields.
 Skill editing is not a documented use case; skills support list, add and delete.
-The existing profile review policy remains in place.
+Freelancer professional and general profile edits are submitted for admin review
+at every completion level. Published fields remain unchanged until approval.
+The completion threshold still applies to client profile edits.
 
 ## Fixes
 

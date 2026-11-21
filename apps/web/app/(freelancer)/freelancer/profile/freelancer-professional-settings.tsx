@@ -313,27 +313,28 @@ export function FreelancerProfessionalSettings({ profileId }: Props) {
       if (!res.success) throw new Error(t("toast.profileUpdateFailed"));
       setProfileRevision(res.data.revision);
 
-      setProfile((prev) =>
-        prev
-          ? {
-              ...prev,
-              bio: form.bio.trim() || null,
-              availabilityStatus: form.availabilityStatus,
-              profileCompletionPercent: res.data.profileStrength,
-              freelancerProfile: prev.freelancerProfile
-                ? {
-                    ...prev.freelancerProfile,
-                    title: form.title.trim(),
-                    experience: splitValues(form.experience),
-                    education: splitValues(form.education),
-                    certifications: splitValues(form.certifications),
-                    languages: splitValues(form.languages),
-                  }
-                : prev.freelancerProfile,
-            }
-          : prev,
-      );
-
+      if (!res.data.reviewRequired) {
+        setProfile((prev) =>
+          prev
+            ? {
+                ...prev,
+                bio: form.bio.trim() || null,
+                availabilityStatus: form.availabilityStatus,
+                profileCompletionPercent: res.data.profileStrength,
+                freelancerProfile: prev.freelancerProfile
+                  ? {
+                      ...prev.freelancerProfile,
+                      title: form.title.trim(),
+                      experience: splitValues(form.experience),
+                      education: splitValues(form.education),
+                      certifications: splitValues(form.certifications),
+                      languages: splitValues(form.languages),
+                    }
+                  : prev.freelancerProfile,
+              }
+            : prev,
+        );
+      }
       toastSuccess({ message: res.data.message || t("savedSuccess") });
     } catch (err) {
       toastError({
