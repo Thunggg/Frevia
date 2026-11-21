@@ -175,35 +175,4 @@ describe('RecommendationService', () => {
       }),
     ]);
   });
-
-  it('blocks feedback from a user who does not own the recommendation', async () => {
-    const { service, repository } = buildService();
-    repository.findRecommendationById.mockResolvedValue({
-      id: 7,
-      requesterId: 99,
-    });
-
-    await expect(service.submitFeedback(2, 7, 'SAVE')).rejects.toBeInstanceOf(
-      ForbiddenException,
-    );
-  });
-
-  it('stores feedback for the recommendation owner', async () => {
-    const { service, repository } = buildService();
-    repository.findRecommendationById.mockResolvedValue({
-      id: 7,
-      requesterId: 2,
-    });
-    repository.createFeedback.mockResolvedValue({
-      id: 1,
-      recommendationId: 7,
-      type: 'SAVE',
-      createdAt: new Date(),
-    });
-
-    await expect(service.submitFeedback(2, 7, 'SAVE')).resolves.toMatchObject({
-      recommendationId: 7,
-    });
-    expect(repository.createFeedback).toHaveBeenCalledWith(7, 'SAVE');
-  });
 });

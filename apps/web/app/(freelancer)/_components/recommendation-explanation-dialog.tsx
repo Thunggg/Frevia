@@ -15,7 +15,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@repo/ui/components/shadcn/dialog";
-import { Button } from "@repo/ui/components/shadcn/button";
 import type {
   RecommendationComponentsType,
   RecommendationExplanationType,
@@ -43,18 +42,14 @@ export function RecommendationExplanationDialog({
   const t = useTranslations("recommendation");
   const { can } = useActionPermission();
   const canViewExplanation = can("GET", "/api/recommendations/:id/explanation");
-  const canSubmitFeedback = can("POST", "/api/recommendations/:id/feedback");
 
   const [loading, setLoading] = useState(false);
   const [explanation, setExplanation] =
     useState<RecommendationExplanationType | null>(null);
-  const [feedbackSent, setFeedbackSent] = useState(false);
-  const [feedbackLoading, setFeedbackLoading] = useState(false);
 
   useEffect(() => {
     if (!open || !recommendationId || !canViewExplanation) {
       setExplanation(null);
-      setFeedbackSent(false);
       return;
     }
 
@@ -83,19 +78,6 @@ export function RecommendationExplanationDialog({
       isMounted = false;
     };
   }, [open, recommendationId, canViewExplanation]);
-
-  const handleFeedback = async (type: "SHORTLIST" | "DISMISS") => {
-    if (!recommendationId || feedbackSent || feedbackLoading) return;
-    setFeedbackLoading(true);
-    try {
-      await recommendationApiRequest.submitFeedback(recommendationId, type);
-      setFeedbackSent(true);
-    } catch {
-      // ignore
-    } finally {
-      setFeedbackLoading(false);
-    }
-  };
 
   const scorePercent =
     typeof matchScore === "number" ? Math.round(matchScore * 100) : null;
@@ -237,37 +219,6 @@ export function RecommendationExplanationDialog({
             </div>
           )}
         </div>
-
-        {/* User Feedback Row */}
-        {recommendationId && canSubmitFeedback && (
-          <div className="mt-6 flex items-center justify-between border-t border-border pt-4">
-            <span className="text-xs text-muted-foreground font-medium">
-              {feedbackSent ? t("feedbackThanks") : t("feedbackHelpful")}
-            </span>
-            {!feedbackSent ? (
-              <div className="flex items-center gap-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  disabled={feedbackLoading}
-                  onClick={() => handleFeedback("SHORTLIST")}
-                  className="rounded-full text-xs h-8 px-3 text-[#0069D3] hover:bg-[#D0E1F8]/40 dark:text-blue-300 dark:hover:bg-[#0069D3]/20 cursor-pointer"
-                >
-                  {t("helpful")}
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  disabled={feedbackLoading}
-                  onClick={() => handleFeedback("DISMISS")}
-                  className="rounded-full text-xs h-8 px-3 text-muted-foreground hover:text-foreground cursor-pointer"
-                >
-                  {t("notHelpful")}
-                </Button>
-              </div>
-            ) : null}
-          </div>
-        )}
       </DialogContent>
     </Dialog>
   );

@@ -13,8 +13,6 @@ import { UserActive } from '../../shared/decorators/user-active.decorators';
 import { EmbeddingOutboxService } from './embedding-outbox.service';
 import {
   RecommendationExplanationDto,
-  RecommendationFeedbackBodyDto,
-  RecommendationFeedbackResponseDto,
   RecommendationOutboxProcessResponseDto,
   RecommendationReindexResponseDto,
   RecommendedFreelancerResponseDto,
@@ -72,16 +70,6 @@ export class RecommendationController {
     @Param('id', ParseIntPipe) id: number,
   ) {
     return this.recommendationService.getExplanation(userId, id);
-  }
-
-  @Post(':id/feedback')
-  @ZodSerializerDto(RecommendationFeedbackResponseDto)
-  submitFeedback(
-    @UserActive('userId') userId: number,
-    @Param('id', ParseIntPipe) id: number,
-    @Body() body: RecommendationFeedbackBodyDto,
-  ) {
-    return this.recommendationService.submitFeedback(userId, id, body.type);
   }
 
   @Post('reindex')
