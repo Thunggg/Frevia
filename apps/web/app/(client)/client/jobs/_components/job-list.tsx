@@ -27,6 +27,7 @@ import {
   User,
   UserCheck,
   Users,
+  X,
   XCircle,
 } from "@/components/icons";
 
@@ -100,9 +101,17 @@ export function JobList({ initialJobs, pagination }: JobListProps) {
   const [jobs, setJobs] = useState<JobType[]>(initialJobs);
   const [activeTab, setActiveTab] = useState<TabFilterType>("ALL");
   const [searchQuery, setSearchQuery] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
   const [bookmarkedJobIds, setBookmarkedJobIds] = useState<Set<number>>(
     new Set(),
   );
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(searchQuery);
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
 
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingJob, setEditingJob] = useState<JobType | null>(null);
@@ -179,8 +188,8 @@ export function JobList({ initialJobs, pagination }: JobListProps) {
       list = closedJobs;
     }
 
-    if (searchQuery.trim()) {
-      const q = searchQuery.toLowerCase().trim();
+    if (debouncedSearch.trim()) {
+      const q = debouncedSearch.toLowerCase().trim();
       list = list.filter(
         (j) =>
           j.title.toLowerCase().includes(q) ||
@@ -194,7 +203,7 @@ export function JobList({ initialJobs, pagination }: JobListProps) {
   }, [
     jobs,
     activeTab,
-    searchQuery,
+    debouncedSearch,
     draftJobs,
     openJobs,
     inProgressJobs,
@@ -505,8 +514,17 @@ export function JobList({ initialJobs, pagination }: JobListProps) {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder={t("searchJobsPlaceholder")}
-              className="w-full rounded-xl border border-border/80 bg-[#F9FAFC] dark:bg-zinc-800/60 pl-9 pr-4 py-2 text-xs placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-[#0069D3] transition-colors"
+              className="w-full rounded-xl border border-border/80 bg-[#F9FAFC] dark:bg-zinc-800/60 pl-9 pr-8 py-2 text-xs placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-[#0069D3] transition-colors"
             />
+            {searchQuery && (
+              <button
+                type="button"
+                onClick={() => setSearchQuery("")}
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground cursor-pointer p-0.5 rounded-full"
+              >
+                <X className="size-3.5" />
+              </button>
+            )}
           </div>
         </div>
 
