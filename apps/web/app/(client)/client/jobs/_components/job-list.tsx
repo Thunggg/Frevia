@@ -2,7 +2,7 @@
 
 import { useFormatter, useTranslations } from "next-intl";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { motion } from "motion/react";
 import {
@@ -62,6 +62,9 @@ type JobListProps = {
     total: number;
     totalPages: number;
   };
+  overviewJobs?: JobType[];
+  initialSearch?: string;
+  initialStatus?: string;
 };
 
 type TabFilterType =
@@ -84,8 +87,15 @@ function formatRelativeDays(dateInput: Date | string | null): string {
   return `${diffDays} ngày trước`;
 }
 
-export function JobList({ initialJobs, pagination }: JobListProps) {
+export function JobList({
+  initialJobs,
+  pagination,
+  overviewJobs = [],
+  initialSearch = "",
+  initialStatus,
+}: JobListProps) {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const t = useTranslations("jobsList");
   const tCommon = useTranslations("common");
   const format = useFormatter();
@@ -99,9 +109,11 @@ export function JobList({ initialJobs, pagination }: JobListProps) {
   const canReopen = can("PATCH", "/api/manage-jobs/:id/reopen");
 
   const [jobs, setJobs] = useState<JobType[]>(initialJobs);
-  const [activeTab, setActiveTab] = useState<TabFilterType>("ALL");
-  const [searchQuery, setSearchQuery] = useState("");
-  const [debouncedSearch, setDebouncedSearch] = useState("");
+  const [activeTab, setActiveTab] = useState<TabFilterType>(
+    (initialStatus as TabFilterType) || "ALL",
+  );
+  const [searchQuery, setSearchQuery] = useState(initialSearch);
+  const [debouncedSearch, setDebouncedSearch] = useState(initialSearch);
   const [bookmarkedJobIds, setBookmarkedJobIds] = useState<Set<number>>(
     new Set(),
   );
@@ -109,9 +121,35 @@ export function JobList({ initialJobs, pagination }: JobListProps) {
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedSearch(searchQuery);
-    }, 300);
+    }, 400);
     return () => clearTimeout(timer);
   }, [searchQuery]);
+
+  useEffect(() => {
+    const currentSearch = searchParams.get("search") || "";
+    if (debouncedSearch.trim() !== currentSearch) {
+      const params = new URLSearchParams(searchParams.toString());
+      if (debouncedSearch.trim()) {
+        params.set("search", debouncedSearch.trim());
+      } else {
+        params.delete("search");
+      }
+      params.delete("page");
+      router.replace(`?${params.toString()}`, { scroll: false });
+    }
+  }, [debouncedSearch, router, searchParams]);
+
+  const handleTabChange = (tab: TabFilterType) => {
+    setActiveTab(tab);
+    const params = new URLSearchParams(searchParams.toString());
+    if (tab === "ALL") {
+      params.delete("status");
+    } else {
+      params.set("status", tab);
+    }
+    params.delete("page");
+    router.replace(`?${params.toString()}`, { scroll: false });
+  };
 
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingJob, setEditingJob] = useState<JobType | null>(null);
@@ -139,26 +177,38 @@ export function JobList({ initialJobs, pagination }: JobListProps) {
     });
   };
 
-  // Metric counts based purely on real job data
+  const handleClearSearch = () => {
+    setSearchQuery("");
+    setDebouncedSearch("");
+    const params = new URLSearchParams(searchParams.toString());
+    params.delete("search");
+    params.delete("page");
+    router.replace(`?${params.toString()}`, { scroll: false });
+  };
+
+  // Metric counts based on overview stats jobs
+  const statsSource = overviewJobs.length > 0 ? overviewJobs : jobs;
+
   const draftJobs = useMemo(
-    () => jobs.filter((j) => j.status === "DRAFT"),
-    [jobs],
+    () => statsSource.filter((j) => j.status === "DRAFT"),
+    [statsSource],
   );
   const openJobs = useMemo(
-    () => jobs.filter((j) => j.status === "OPEN"),
-    [jobs],
+    () => statsSource.filter((j) => j.status === "OPEN"),
+    [statsSource],
   );
   const inProgressJobs = useMemo(
-    () => jobs.filter((j) => j.status === "IN_PROGRESS"),
-    [jobs],
+    () => statsSource.filter((j) => j.status === "IN_PROGRESS"),
+    [statsSource],
   );
   const completedJobs = useMemo(
-    () => jobs.filter((j) => j.status === "COMPLETED"),
-    [jobs],
+    () => statsSource.filter((j) => j.status === "COMPLETED"),
+    [statsSource],
   );
   const closedJobs = useMemo(
-    () => jobs.filter((j) => j.status === "CLOSED" || j.status === "CANCELLED"),
-    [jobs],
+    () =>
+      statsSource.filter((j) => j.status === "CLOSED" || j.status === "CANCELLED"),
+    [statsSource],
   );
 
   const draftCount = draftJobs.length;
@@ -168,8 +218,8 @@ export function JobList({ initialJobs, pagination }: JobListProps) {
   const closedCount = closedJobs.length;
 
   const totalProposals = useMemo(
-    () => jobs.reduce((acc, j) => acc + (j.proposalsCount ?? 0), 0),
-    [jobs],
+    () => statsSource.reduce((acc, j) => acc + (j.proposalsCount ?? 0), 0),
+    [statsSource],
   );
 
   // Filtered jobs based on tab and search
@@ -177,15 +227,17 @@ export function JobList({ initialJobs, pagination }: JobListProps) {
     let list = jobs;
 
     if (activeTab === "DRAFT") {
-      list = draftJobs;
+      list = list.filter((j) => j.status === "DRAFT");
     } else if (activeTab === "OPEN") {
-      list = openJobs;
+      list = list.filter((j) => j.status === "OPEN");
     } else if (activeTab === "IN_PROGRESS") {
-      list = inProgressJobs;
+      list = list.filter((j) => j.status === "IN_PROGRESS");
     } else if (activeTab === "COMPLETED") {
-      list = completedJobs;
+      list = list.filter((j) => j.status === "COMPLETED");
     } else if (activeTab === "CLOSED") {
-      list = closedJobs;
+      list = list.filter(
+        (j) => j.status === "CLOSED" || j.status === "CANCELLED",
+      );
     }
 
     if (debouncedSearch.trim()) {
@@ -200,16 +252,7 @@ export function JobList({ initialJobs, pagination }: JobListProps) {
     }
 
     return list;
-  }, [
-    jobs,
-    activeTab,
-    debouncedSearch,
-    draftJobs,
-    openJobs,
-    inProgressJobs,
-    completedJobs,
-    closedJobs,
-  ]);
+  }, [jobs, activeTab, debouncedSearch]);
 
   const saveJob = (saved: JobType) => {
     setJobs((prev) => {
@@ -340,7 +383,7 @@ export function JobList({ initialJobs, pagination }: JobListProps) {
             {/* Kho bản nháp button */}
             <button
               type="button"
-              onClick={() => setActiveTab(activeTab === "DRAFT" ? "ALL" : "DRAFT")}
+              onClick={() => handleTabChange(activeTab === "DRAFT" ? "ALL" : "DRAFT")}
               className={`rounded-xl border px-4 py-2.5 text-xs sm:text-sm font-semibold flex items-center gap-2 cursor-pointer transition-all shadow-xs ${
                 activeTab === "DRAFT"
                   ? "border-[#0069D3] bg-blue-50 text-[#0069D3] dark:bg-blue-950/40 dark:text-blue-300"
@@ -454,7 +497,7 @@ export function JobList({ initialJobs, pagination }: JobListProps) {
           {/* Tabs */}
           <div className="flex items-center gap-1 overflow-x-auto p-0.5 no-scrollbar">
             {[
-              { id: "ALL" as const, label: t("tabAll"), count: jobs.length },
+              { id: "ALL" as const, label: t("tabAll"), count: statsSource.length },
               { id: "OPEN" as const, label: t("tabOpen"), count: openCount },
               {
                 id: "IN_PROGRESS" as const,
@@ -482,7 +525,7 @@ export function JobList({ initialJobs, pagination }: JobListProps) {
                 <button
                   key={tab.id}
                   type="button"
-                  onClick={() => setActiveTab(tab.id)}
+                  onClick={() => handleTabChange(tab.id)}
                   className={`rounded-xl px-4 py-2 text-xs font-semibold flex items-center gap-2 cursor-pointer transition-all shrink-0 ${
                     isActive
                       ? "bg-[#F0F5FC] text-[#0069D3] dark:bg-blue-950/60 dark:text-blue-300 shadow-xs"
@@ -519,7 +562,7 @@ export function JobList({ initialJobs, pagination }: JobListProps) {
             {searchQuery && (
               <button
                 type="button"
-                onClick={() => setSearchQuery("")}
+                onClick={handleClearSearch}
                 className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground cursor-pointer p-0.5 rounded-full"
               >
                 <X className="size-3.5" />
@@ -861,9 +904,11 @@ export function JobList({ initialJobs, pagination }: JobListProps) {
                 size="icon"
                 className="size-8 rounded-xl cursor-pointer"
                 disabled={pagination.page <= 1}
-                onClick={() =>
-                  router.push(`/client/jobs?page=${pagination.page - 1}`)
-                }
+                onClick={() => {
+                  const params = new URLSearchParams(searchParams.toString());
+                  params.set("page", String(pagination.page - 1));
+                  router.push(`?${params.toString()}`);
+                }}
               >
                 <ChevronLeft className="size-4" />
               </Button>
@@ -872,9 +917,11 @@ export function JobList({ initialJobs, pagination }: JobListProps) {
                 size="icon"
                 className="size-8 rounded-xl cursor-pointer"
                 disabled={pagination.page >= pagination.totalPages}
-                onClick={() =>
-                  router.push(`/client/jobs?page=${pagination.page + 1}`)
-                }
+                onClick={() => {
+                  const params = new URLSearchParams(searchParams.toString());
+                  params.set("page", String(pagination.page + 1));
+                  router.push(`?${params.toString()}`);
+                }}
               >
                 <ChevronRight className="size-4" />
               </Button>

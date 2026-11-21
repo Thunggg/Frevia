@@ -185,13 +185,27 @@ export class ManageJobRepository {
     await this.autoCloseExpiredJobs(clientId);
 
     const { page, limit, status, search, sortBy, order } = filter;
+    const searchTrimmed = search?.trim();
+    let searchCondition: Prisma.JobWhereInput | undefined;
+    if (searchTrimmed) {
+      const cleanNumeric = searchTrimmed.replace(/^[#A-Za-z\-_]+/, '');
+      const searchId = Number(cleanNumeric);
+      const isSearchId = Number.isInteger(searchId) && searchId > 0;
+
+      searchCondition = {
+        OR: [
+          { title: { contains: searchTrimmed, mode: Prisma.QueryMode.insensitive } },
+          { description: { contains: searchTrimmed, mode: Prisma.QueryMode.insensitive } },
+          ...(isSearchId ? [{ id: searchId }] : []),
+        ],
+      };
+    }
+
     const where = {
       clientId,
       deletedAt: null,
       ...(status && { status }),
-      ...(search && {
-        title: { contains: search, mode: Prisma.QueryMode.insensitive },
-      }),
+      ...searchCondition,
     } satisfies Prisma.JobWhereInput;
     const [jobs, total] = await this.prisma.$transaction([
       this.prisma.job.findMany({
