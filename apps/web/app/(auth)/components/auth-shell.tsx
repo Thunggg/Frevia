@@ -76,19 +76,16 @@ export function AuthShell({
           </div>
         </div>
       </aside>
-
       <main className="relative flex flex-1 flex-col overflow-y-auto bg-background">
         <div
           aria-hidden
           className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_85%_5%,rgba(79,174,46,0.06),transparent_50%)] dark:bg-[radial-gradient(ellipse_at_85%_5%,rgba(79,174,46,0.1),transparent_50%)]"
         />
-
         <div className="relative flex min-h-dvh flex-1 flex-col justify-center px-4 py-10 sm:px-8 lg:px-12 xl:px-16">
           <div className="absolute right-4 top-4 flex items-center gap-1 sm:right-8 sm:top-6 lg:right-12">
             <LanguageSwitcher />
             <ThemeToggle />
           </div>
-
           <div className="mb-8 flex items-center gap-2.5 lg:hidden">
             <Link href="/" className="flex items-center gap-2.5">
               <Image
@@ -104,7 +101,6 @@ export function AuthShell({
               </span>
             </Link>
           </div>
-
           <div
             className={`mx-auto w-full max-w-md ${styles.reveal} ${styles.delay3}`}
           >

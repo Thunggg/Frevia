@@ -9,7 +9,19 @@ import { Star, ArrowRight, ShieldCheck } from "lucide-react";
 // Danh sách các chuyên gia nổi bật để khách xem hồ sơ
 const FEATURED_FREELANCERS = [
   {
-    id: 1,
+    id: "mitchel-jonson",
+    name: "Mitchel Jonson",
+    title: "Lead Digital Designer & Frontend Developer",
+    avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80",
+    rating: "5.0",
+    completedJobs: 100,
+    hourlyRate: "$65/hr",
+    bio: "Helping brands stand out with thoughtful and compelling design solutions that convert and scale.",
+    skills: ["UI/UX Design", "Next.js", "Design Systems", "Figma", "Branding"],
+    badge: "Firm of the Year 2026",
+  },
+  {
+    id: "1",
     name: "Alex Nguyen",
     title: "Senior Full-Stack & Cloud Architect",
     avatar: "https://i.pinimg.com/1200x/6d/10/c3/6d10c39c28732a13a03c99c7245878d1.jpg",
