@@ -564,6 +564,8 @@ export function JobList({ initialJobs, pagination }: JobListProps) {
                       : t("budgetNegotiable");
 
               const proposalsCount = job.proposalsCount ?? 0;
+              const isEditable =
+                job.status !== "IN_PROGRESS" && job.status !== "COMPLETED";
 
               return (
                 <motion.div
@@ -659,16 +661,18 @@ export function JobList({ initialJobs, pagination }: JobListProps) {
                             </DropdownMenuItem>
                           )}
 
-                          <DropdownMenuItem
-                            onClick={() => {
-                              setEditingJob(job);
-                              setIsFormOpen(true);
-                            }}
-                            className="flex items-center gap-2 text-xs font-medium cursor-pointer"
-                          >
-                            <Edit2 className="size-3.5" />
-                            <span>{t("edit")}</span>
-                          </DropdownMenuItem>
+                          {isEditable && (
+                            <DropdownMenuItem
+                              onClick={() => {
+                                setEditingJob(job);
+                                setIsFormOpen(true);
+                              }}
+                              className="flex items-center gap-2 text-xs font-medium cursor-pointer"
+                            >
+                              <Edit2 className="size-3.5" />
+                              <span>{t("edit")}</span>
+                            </DropdownMenuItem>
+                          )}
 
                           {job.status !== "IN_PROGRESS" && canDelete && (
                             <DropdownMenuItem
@@ -778,17 +782,21 @@ export function JobList({ initialJobs, pagination }: JobListProps) {
                   {/* Bottom Action Buttons: Chỉ giữ lại Xem chi tiết / Xem proposal */}
                   <div className="flex items-center justify-end gap-2 pt-3 border-t border-border/60">
                     <Button
-                      variant="outline"
+                      variant={proposalsCount > 0 ? "outline" : "default"}
                       size="sm"
                       asChild
-                      className="rounded-xl border-border/80 px-4 h-9 text-xs font-semibold cursor-pointer"
+                      className={
+                        proposalsCount > 0
+                          ? "rounded-xl border-border/80 px-4 h-9 text-xs font-semibold cursor-pointer"
+                          : "rounded-xl bg-[#0069D3] hover:bg-[#005bb8] text-white px-5 h-9 text-xs font-semibold shadow-xs cursor-pointer"
+                      }
                     >
                       <Link href={`/client/jobs/${job.id}`}>
                         <span>{t("viewDetail")}</span>
                       </Link>
                     </Button>
 
-                    {isDraft && canPublish ? (
+                    {isDraft && canPublish && (
                       <Button
                         size="sm"
                         onClick={() => setPendingPublishJobId(job.id)}
@@ -796,7 +804,9 @@ export function JobList({ initialJobs, pagination }: JobListProps) {
                       >
                         <span>{t("publish")}</span>
                       </Button>
-                    ) : (
+                    )}
+
+                    {proposalsCount > 0 && (
                       <Button
                         size="sm"
                         asChild
