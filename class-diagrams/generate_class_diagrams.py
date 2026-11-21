@@ -445,7 +445,7 @@ def enum_job_category_status():
 
 def enum_proposal_status():
     return C("eProposalStatus", "ProposalStatus", kind="enum",
-             stereo="enum", attrs=["DRAFT", "SUBMITTED", "INTERVIEWING", "HIRED",
+             stereo="enum", attrs=["DRAFT", "SUBMITTED", "HIRED",
                                     "REJECTED", "WITHDRAWN", "EXPIRED"])
 
 
@@ -1117,7 +1117,6 @@ def diagram_client_proposal():
             C("route", "ProposalRoutes", kind="route", attrs=[
                 "+GET /proposals/jobs/:jobId/submitted (AuthGuard, PermissionGuard)",
                 "+GET /proposals/:id/client (AuthGuard, PermissionGuard)",
-                "+PATCH /proposals/:id/interview (AuthGuard, PermissionGuard)",
                 "+PATCH /proposals/:id/reject (AuthGuard, PermissionGuard)",
                 "+PATCH /proposals/:id/accept (AuthGuard, PermissionGuard)",
             ]),
@@ -1131,7 +1130,6 @@ def diagram_client_proposal():
               methods=[
                   "+getSubmittedProposalsForClientJob(userId: number, roleName: string, jobId: number)",
                   "+getProposalDetailForClient(userId: number, roleName: string, proposalId: number)",
-                  "+interviewProposal(userId: number, roleName: string, proposalId: number)",
                   "+rejectProposal(userId: number, roleName: string, proposalId: number)",
                   "+acceptProposal(userId: number, roleName: string, proposalId: number)",
               ]),
@@ -1173,7 +1171,6 @@ def diagram_client_proposal():
                "+getSubmittedProposalsForClientJob(userId: number, roleName: string, jobId: number): Promise<ClientJobProposalsResponseType>",
                "+getSubmittedProposalsPageForClientJob(userId: number, roleName: string, jobId: number, query: ClientJobProposalsQueryType): Promise<ClientJobProposalsPageType>",
                "+getProposalDetailForClient(userId: number, roleName: string, proposalId: number): Promise<ClientProposalDetailType>",
-               "+interviewProposal(userId: number, roleName: string, proposalId: number): Promise<ProposalType>",
                "+rejectProposal(userId: number, roleName: string, proposalId: number): Promise<ProposalType>",
                "+acceptProposal(userId: number, roleName: string, proposalId: number): Promise<ProposalType>",
                "-assertActionable(status: ProposalStatusType): void",
@@ -1187,7 +1184,6 @@ def diagram_client_proposal():
                "+findSubmittedProposalsPageForClientJob(jobId: number, query: ClientJobProposalsQueryType): Promise<ClientJobProposalsPageType>",
                "+findProposalForClientDecision(proposalId: number)",
                "+findProposalDetailForClient(proposalId: number): Promise<ClientProposalDetailType | null>",
-               "+interviewProposal(proposalId: number): Promise<ProposalType>",
                "+rejectProposal(proposalId: number): Promise<ProposalType>",
                "+hireProposal(params: HireProposalParams): Promise<ProposalType>",
                "+expireOverdueProposals(jobId?: number): Promise<number>",

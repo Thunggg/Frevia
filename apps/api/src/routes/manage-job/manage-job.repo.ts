@@ -168,7 +168,7 @@ export class ManageJobRepository {
           where: {
             jobId: { in: expiredJobIds },
             status: {
-              in: [ProposalStatus.SUBMITTED, ProposalStatus.INTERVIEWING],
+              in: [ProposalStatus.SUBMITTED],
             },
           },
           data: { status: ProposalStatus.EXPIRED },
@@ -460,7 +460,7 @@ export class ManageJobRepository {
             where: {
               jobId,
               status: {
-                in: [ProposalStatus.SUBMITTED, ProposalStatus.INTERVIEWING],
+                in: [ProposalStatus.SUBMITTED],
               },
             },
             data: {

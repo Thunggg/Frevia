@@ -12,7 +12,7 @@ import {
 /**
  * Kích hoạt hợp đồng khi cả 2 bên đã ký và cả 2 bên đã thanh toán phí nền tảng:
  * - Chuyển contract.status sang ACTIVE.
- * - Đối với job SINGLE: các proposal còn lại (SUBMITTED / INTERVIEWING) chuyển sang REJECTED; job chuyển sang IN_PROGRESS.
+ * - Đối với job SINGLE: các proposal còn lại (SUBMITTED) chuyển sang REJECTED; job chuyển sang IN_PROGRESS.
  * - Đối với job MULTIPLE: nếu positionsFilled >= positionsRequired thì các proposal còn lại chuyển sang EXPIRED; job chuyển sang IN_PROGRESS.
  */
 export async function activateContractLifecycle(
@@ -57,7 +57,7 @@ export async function activateContractLifecycle(
           id: { not: contract.proposalId },
           deletedAt: null,
           status: {
-            in: [ProposalStatus.SUBMITTED, ProposalStatus.INTERVIEWING],
+            in: [ProposalStatus.SUBMITTED],
           },
         },
         data: {
@@ -79,7 +79,7 @@ export async function activateContractLifecycle(
             id: { not: contract.proposalId },
             deletedAt: null,
             status: {
-              in: [ProposalStatus.SUBMITTED, ProposalStatus.INTERVIEWING],
+              in: [ProposalStatus.SUBMITTED],
             },
           },
           data: {

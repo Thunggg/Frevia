@@ -50,7 +50,7 @@ import {
 import { ContractPdfService } from '../../shared/services/contract-pdf.service';
 import { PaymentService } from '../payments/payment.service';
 
-const ALLOWED_PROPOSAL_STATUSES = ['SUBMITTED', 'INTERVIEWING', 'HIRED'];
+const ALLOWED_PROPOSAL_STATUSES = ['SUBMITTED', 'HIRED'];
 
 @Injectable()
 export class ContractService implements OnModuleInit, OnModuleDestroy {
@@ -119,7 +119,7 @@ export class ContractService implements OnModuleInit, OnModuleDestroy {
 
       if (!proposal) throw ProposalNotFoundException();
 
-      // Cho phép lập hợp đồng khi proposal ở trạng thái SUBMITTED, INTERVIEWING hoặc HIRED
+      // Cho phép lập hợp đồng khi proposal ở trạng thái SUBMITTED hoặc HIRED
       if (!ALLOWED_PROPOSAL_STATUSES.includes(proposal.status)) {
         throw ProposalNotActionableException();
       }

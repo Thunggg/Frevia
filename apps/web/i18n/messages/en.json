@@ -1143,7 +1143,6 @@
   "proposalStatus": {
     "DRAFT": "Draft",
     "SUBMITTED": "Submitted",
-    "INTERVIEWING": "Interviewing",
     "HIRED": "Hired",
     "REJECTED": "Rejected",
     "WITHDRAWN": "Withdrawn",
@@ -1527,9 +1526,6 @@
     "hired": "Freelancer hired. A contract has been created.",
     "hiredHint": "This proposal has been hired and a contract was created automatically.",
     "viewContract": "View contract",
-    "interview": "Interview",
-    "interviewing": "Proposal moved to interviewing",
-    "interviewFailed": "Unable to start interviewing. Please try again.",
     "breadcrumbJobs": "My Jobs",
     "breadcrumbProposals": "Proposals",
     "allTab": "All ({count})",
@@ -3172,9 +3168,6 @@
       },
       "SUBMITTED": {
         "message": "You already submitted a proposal for this job."
-      },
-      "INTERVIEWING": {
-        "message": "The client is interviewing you for this job."
       },
       "HIRED": {
         "message": "You have been hired for this job. Sign the contract to start."

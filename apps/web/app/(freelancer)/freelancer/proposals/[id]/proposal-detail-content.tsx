@@ -85,8 +85,7 @@ export function ProposalDetailContent({
 
   const isDraft = proposal.status === "DRAFT";
   // Freelancer chỉ rút được đề xuất đang chờ khách hàng xử lý.
-  const isActionable =
-    proposal.status === "SUBMITTED" || proposal.status === "INTERVIEWING";
+  const isActionable = proposal.status === "SUBMITTED";
   const canEditDraft =
     isDraft &&
     proposal.job.status === "OPEN" &&

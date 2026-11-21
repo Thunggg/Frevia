@@ -1143,7 +1143,6 @@
   "proposalStatus": {
     "DRAFT": "Bản nháp",
     "SUBMITTED": "Đã gửi",
-    "INTERVIEWING": "Đang phỏng vấn",
     "HIRED": "Đã được tuyển",
     "REJECTED": "Bị từ chối",
     "WITHDRAWN": "Đã rút",
@@ -1527,9 +1526,6 @@
     "hired": "Đã tuyển freelancer. Hợp đồng đã được tạo.",
     "hiredHint": "Đề xuất này đã được tuyển và hợp đồng được tạo tự động.",
     "viewContract": "Xem hợp đồng",
-    "interview": "Mời phỏng vấn",
-    "interviewing": "Đã chuyển đề xuất sang trạng thái phỏng vấn",
-    "interviewFailed": "Không thể bắt đầu phỏng vấn. Vui lòng thử lại.",
     "breadcrumbJobs": "Việc của tôi",
     "breadcrumbProposals": "Đề xuất",
     "allTab": "Tất cả ({count})",
@@ -3172,9 +3168,6 @@
       },
       "SUBMITTED": {
         "message": "Bạn đã gửi đề xuất cho công việc này."
-      },
-      "INTERVIEWING": {
-        "message": "Khách hàng đang phỏng vấn bạn cho công việc này."
       },
       "HIRED": {
         "message": "Bạn đã được tuyển cho công việc này. Hãy ký hợp đồng để bắt đầu."

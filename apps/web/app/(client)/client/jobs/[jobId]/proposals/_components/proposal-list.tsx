@@ -11,7 +11,6 @@ import {
   ChevronRight,
   FileText,
   Loader2,
-  MessageSquare,
   Search,
   SlidersHorizontal,
   X,
@@ -59,8 +58,8 @@ import { useActionPermission } from "@/hooks/use-action-permission";
 type ProposalStatus = SubmittedProposalStatusType;
 type StatusFilter = "ALL" | ProposalStatus;
 
-// Các trạng thái khách hàng có thể phỏng vấn / từ chối / tuyển.
-const ACTIONABLE_STATUSES: ProposalStatus[] = ["SUBMITTED", "INTERVIEWING"];
+// Các trạng thái khách hàng có thể từ chối / tuyển.
+const ACTIONABLE_STATUSES: ProposalStatus[] = ["SUBMITTED"];
 
 type ClientProposal = {
   id: number;
@@ -112,11 +111,9 @@ function ProposalStatusBadge({ status }: { status: ProposalStatus }) {
       ? "text-[#0069D3] dark:text-blue-400"
       : status === "SUBMITTED"
         ? "text-amber-600 dark:text-amber-400"
-        : status === "INTERVIEWING"
-          ? "text-[#0069D3] dark:text-blue-400"
-          : status === "REJECTED"
-            ? "text-rose-600 dark:text-rose-400"
-            : "text-muted-foreground";
+        : status === "REJECTED"
+          ? "text-rose-600 dark:text-rose-400"
+          : "text-muted-foreground";
 
   return (
     <span
@@ -219,7 +216,6 @@ export function ProposalList({
   const [page, setPage] = useState(1);
   const [rejecting, setRejecting] = useState<ClientProposal | null>(null);
   const [isRejecting, setIsRejecting] = useState(false);
-  const [interviewingId, setInterviewingId] = useState<number | null>(null);
   const [contractingProposal, setContractingProposal] = useState<ClientProposal | null>(null);
 
   // Freelancer profile sheet
@@ -242,7 +238,6 @@ export function ProposalList({
     can("GET", "/api/jobs/:jobId/proposals") ||
     can("GET", "/api/proposals/jobs/:jobId/submitted");
   const canViewDetail = can("GET", "/api/proposals/:id/client");
-  const canInterview = can("PATCH", "/api/proposals/:id/interview");
   const canAccept = can("PATCH", "/api/proposals/:id/accept");
   const canReject = can("PATCH", "/api/proposals/:id/reject");
   const canCreateContract = can("POST", "/api/contracts");
@@ -363,30 +358,6 @@ export function ProposalList({
     }
   };
 
-  const interviewProposal = async (proposalId: number) => {
-    if (!canInterview) {
-      toastError({ message: t("noPermissionAction") });
-      return;
-    }
-    setInterviewingId(proposalId);
-    try {
-      await proposalApiRequest.interview(proposalId);
-      await queryClient.invalidateQueries({
-        queryKey: ["client-job-proposals", jobId],
-      });
-      toastSuccess({ message: t("interviewing") });
-    } catch (error) {
-      toastError({
-        message:
-          error instanceof ApiFail
-            ? error.response.error.message
-            : t("interviewFailed"),
-      });
-    } finally {
-      setInterviewingId(null);
-    }
-  };
-
   return (
     <div className="flex min-h-full flex-col bg-background font-sans">
       <main className="flex-1 font-sans">
@@ -459,7 +430,6 @@ export function ProposalList({
                 {(
                   [
                     "SUBMITTED",
-                    "INTERVIEWING",
                     "HIRED",
                     "REJECTED",
                     "WITHDRAWN",
@@ -650,24 +620,6 @@ export function ProposalList({
 
                       {ACTIONABLE_STATUSES.includes(proposal.status) ? (
                         <>
-                          {proposal.status === "SUBMITTED" && canInterview ? (
-                            <Button
-                              type="button"
-                              size="sm"
-                              variant="outline"
-                              className="rounded-full border-[#0069D3]/40 text-[#0069D3] hover:bg-[#D0E1F8]/40 px-3.5 h-8 text-xs font-semibold cursor-pointer transition-colors"
-                              onClick={() => void interviewProposal(proposal.id)}
-                              disabled={interviewingId === proposal.id}
-                            >
-                              {interviewingId === proposal.id ? (
-                                <Loader2 className="mr-1 size-3 animate-spin" />
-                              ) : (
-                                <MessageSquare className="mr-1 size-3" />
-                              )}
-                              {t("interview")}
-                            </Button>
-                          ) : null}
-
                           {canAccept && canCreateContract ? (
                             <Button
                               type="button"

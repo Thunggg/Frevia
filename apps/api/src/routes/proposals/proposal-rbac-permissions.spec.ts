@@ -1,4 +1,7 @@
-import { matchRoutePath, normalizeApiPath } from '../../shared/helper/match-route-path';
+import {
+  matchRoutePath,
+  normalizeApiPath,
+} from '../../shared/helper/match-route-path';
 
 /**
  * Bộ kiểm thử Action-Level RBAC cho nhóm chức năng:
@@ -17,7 +20,6 @@ import { matchRoutePath, normalizeApiPath } from '../../shared/helper/match-rout
  * #342 · PATCH /api/proposals/:id/reject (Từ chối đề xuất)
  * #343 · PATCH /api/proposals/:id/accept (Chấp nhận đề xuất)
  * #344 · GET /api/jobs/:jobId/proposals (Xem danh sách ứng viên nộp cho công việc)
- * #539 · PATCH /api/proposals/:id/interview (Mời phỏng vấn đề xuất)
  * #578 · PATCH /api/proposals/:id (Cập nhật đề xuất)
  */
 
@@ -122,13 +124,6 @@ const PROPOSAL_PERMISSIONS: PermissionItem[] = [
     testActualPath: '/api/jobs/42/proposals',
   },
   {
-    id: 539,
-    method: 'PATCH',
-    path: '/api/proposals/:id/interview',
-    description: 'Mời phỏng vấn đề xuất',
-    testActualPath: '/api/proposals/101/interview',
-  },
-  {
     id: 578,
     method: 'PATCH',
     path: '/api/proposals/:id',
@@ -153,9 +148,9 @@ function checkUserPermission(
   });
 }
 
-describe('Proposal RBAC Permissions Verification (15 permissions)', () => {
-  it('should have exactly 15 permissions in PROPOSALS & BIDS group', () => {
-    expect(PROPOSAL_PERMISSIONS.length).toBe(15);
+describe('Proposal RBAC Permissions Verification (14 permissions)', () => {
+  it('should have exactly 14 permissions in PROPOSALS & BIDS group', () => {
+    expect(PROPOSAL_PERMISSIONS.length).toBe(14);
   });
 
   describe('Route Path Matching', () => {
@@ -169,7 +164,9 @@ describe('Proposal RBAC Permissions Verification (15 permissions)', () => {
       expect(
         normalizeApiPath('/proposals/jobs/1/submitted?page=1&limit=10'),
       ).toBe('/api/proposals/jobs/1/submitted');
-      expect(normalizeApiPath('jobs/10/proposals')).toBe('/api/jobs/10/proposals');
+      expect(normalizeApiPath('jobs/10/proposals')).toBe(
+        '/api/jobs/10/proposals',
+      );
     });
   });
 
@@ -279,12 +276,6 @@ describe('Proposal RBAC Permissions Verification (15 permissions)', () => {
         ).toBe(true);
         expect(
           matchRoutePath(
-            '/api/proposals/:id/interview',
-            '/api/proposals/7777/interview',
-          ),
-        ).toBe(true);
-        expect(
-          matchRoutePath(
             '/api/proposals/:id/reject',
             '/api/proposals/1234/reject',
           ),
@@ -305,4 +296,3 @@ describe('Proposal RBAC Permissions Verification (15 permissions)', () => {
     });
   });
 });
-
