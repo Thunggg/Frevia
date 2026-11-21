@@ -242,13 +242,7 @@ export function JobList({
 
     if (debouncedSearch.trim()) {
       const q = debouncedSearch.toLowerCase().trim();
-      list = list.filter(
-        (j) =>
-          j.title.toLowerCase().includes(q) ||
-          (j.description && j.description.toLowerCase().includes(q)) ||
-          j.skills?.some((s) => s.skill.name.toLowerCase().includes(q)) ||
-          String(j.id).includes(q),
-      );
+      list = list.filter((j) => j.title.toLowerCase().includes(q));
     }
 
     return list;
