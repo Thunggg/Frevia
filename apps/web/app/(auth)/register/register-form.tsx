@@ -38,7 +38,7 @@ import { Controller, useForm } from "react-hook-form";
 import type * as z from "zod";
 
 const inputClass =
-  "h-11 border-border/60 bg-white/60 text-[14px] transition-colors placeholder:text-muted-foreground/40 focus:border-[#4fae2e] focus:ring-[#4fae2e]/15 dark:border-white/10 dark:bg-white/[0.03] dark:focus:border-[#4fae2e] dark:focus:ring-[#4fae2e]/20";
+  "h-11 border-border/60 bg-white/60 text-[14px] transition-colors placeholder:text-muted-foreground/40 focus:border-[#0069D3] focus:ring-[#0069D3]/15 dark:border-white/10 dark:bg-white/[0.03] dark:focus:border-[#0069D3] dark:focus:ring-[#0069D3]/20";
 
 export function RegisterForm() {
   const router = useRouter();
@@ -335,7 +335,7 @@ export function RegisterForm() {
                 >
                   <FieldLabel
                     htmlFor="role-freelancer"
-                    className="cursor-pointer rounded-xl border border-border/60 bg-white/60 p-4 transition-colors has-data-[state=checked]:border-[#4fae2e]/50 has-data-[state=checked]:bg-[#4fae2e]/5 dark:border-white/10 dark:bg-white/[0.03] dark:has-data-[state=checked]:border-[#4fae2e]/40 dark:has-data-[state=checked]:bg-[#4fae2e]/8"
+                    className="cursor-pointer rounded-xl border border-border/60 bg-white/60 p-4 transition-colors has-data-[state=checked]:border-[#0069D3]/50 has-data-[state=checked]:bg-[#0069D3]/5 dark:border-white/10 dark:bg-white/[0.03] dark:has-data-[state=checked]:border-[#0069D3]/50 dark:has-data-[state=checked]:bg-[#0069D3]/10"
                   >
                     <Field orientation="horizontal">
                       <FieldContent>
@@ -353,7 +353,7 @@ export function RegisterForm() {
                   </FieldLabel>
                   <FieldLabel
                     htmlFor="role-client"
-                    className="cursor-pointer rounded-xl border border-border/60 bg-white/60 p-4 transition-colors has-data-[state=checked]:border-[#4fae2e]/50 has-data-[state=checked]:bg-[#4fae2e]/5 dark:border-white/10 dark:bg-white/[0.03] dark:has-data-[state=checked]:border-[#4fae2e]/40 dark:has-data-[state=checked]:bg-[#4fae2e]/8"
+                    className="cursor-pointer rounded-xl border border-border/60 bg-white/60 p-4 transition-colors has-data-[state=checked]:border-[#0069D3]/50 has-data-[state=checked]:bg-[#0069D3]/5 dark:border-white/10 dark:bg-white/[0.03] dark:has-data-[state=checked]:border-[#0069D3]/50 dark:has-data-[state=checked]:bg-[#0069D3]/10"
                   >
                     <Field orientation="horizontal">
                       <FieldContent>
@@ -395,7 +395,7 @@ export function RegisterForm() {
                     href="/user-agreement"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="font-medium text-[#4fae2e] underline underline-offset-2 hover:text-[#3f9225] dark:text-[#4fae2e] dark:hover:text-[#5bc03a]"
+                    className="font-medium text-[#0069D3] underline underline-offset-2 hover:text-[#005bb8] dark:text-blue-400 dark:hover:text-blue-300"
                   >
                     {chunks}
                   </Link>
@@ -405,7 +405,7 @@ export function RegisterForm() {
                     href="/privacy-policy"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="font-medium text-[#4fae2e] underline underline-offset-2 hover:text-[#3f9225] dark:text-[#4fae2e] dark:hover:text-[#5bc03a]"
+                    className="font-medium text-[#0069D3] underline underline-offset-2 hover:text-[#005bb8] dark:text-blue-400 dark:hover:text-blue-300"
                   >
                     {chunks}
                   </Link>
@@ -428,7 +428,7 @@ export function RegisterForm() {
         <Button
           type="submit"
           form="register-form"
-          className="h-11 flex-1 rounded-lg bg-[#4fae2e] text-[14px] font-semibold text-white shadow-sm transition-all hover:bg-[#459928] hover:shadow-md active:scale-[0.99] dark:bg-[#4fae2e] dark:text-white dark:hover:bg-[#5bc03a]"
+          className="h-11 flex-1 rounded-lg bg-[#0069D3] text-[14px] font-semibold text-white shadow-sm transition-all hover:bg-[#005bb8] hover:shadow-md active:scale-[0.99] dark:bg-[#0069D3] dark:text-white dark:hover:bg-[#1a7fe6]"
           disabled={!isTermsAccepted || registerMutation.isPending}
         >
           {registerMutation.isPending ? (
@@ -485,7 +485,7 @@ export function RegisterForm() {
         {t("haveAccount")}{" "}
         <Link
           href="/login"
-          className="font-semibold text-[#4fae2e] transition-colors hover:text-[#3f9225]"
+          className="font-semibold text-[#0069D3] transition-colors hover:text-[#005bb8] dark:text-blue-400 dark:hover:text-blue-300"
         >
           {t("logIn")}
         </Link>
