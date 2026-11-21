@@ -62,9 +62,7 @@ export function ClientProfileClient({
       const response = await accountProfileApi.getClientProfile(userId);
       setProfile(response.data);
     } catch (cause) {
-      setError(
-        cause instanceof ApiFail ? cause.message : t("loadError"),
-      );
+      setError(cause instanceof ApiFail ? cause.message : t("loadError"));
     } finally {
       setLoading(false);
     }
@@ -75,9 +73,7 @@ export function ClientProfileClient({
   }, [load]);
 
   const companyName =
-    profile?.clientProfile.companyName ??
-    profile?.displayName ??
-    tRole("CLIENT");
+    profile?.clientProfile.companyName ?? t("companyNameMissing");
 
   const platformLabel = (platform: string) =>
     (SOCIAL_PLATFORM_KEYS as readonly string[]).includes(platform)
@@ -166,7 +162,6 @@ export function ClientProfileClient({
                   <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
                     <div className="flex flex-col gap-4 sm:flex-row sm:items-end">
                       <Avatar className="-mt-12 size-24 border-4 border-background sm:size-28">
-                        <AvatarImage src={profile.avatarUrl ?? undefined} />
                         <AvatarFallback className="bg-[#D0E1F8]/60 text-[#0069D3] dark:bg-[#0069D3]/20">
                           <Building2 />
                         </AvatarFallback>
@@ -185,7 +180,7 @@ export function ClientProfileClient({
                         asChild
                         className="rounded-full bg-[#0069D3] text-white hover:bg-[#005bb8]"
                       >
-                        <Link href="/client/profile">
+                        <Link href="/client/profile?tab=company">
                           <Pencil className="mr-2 size-4" />
                           {t("editCompany")}
                         </Link>
@@ -202,12 +197,32 @@ export function ClientProfileClient({
                   </h3>
                   <p className="mt-3 whitespace-pre-wrap text-[15px] leading-7 text-muted-foreground">
                     {profile.clientProfile.companyDescription ||
-                      profile.bio ||
                       t("noDescription")}
                   </p>
                 </section>
 
                 <aside className="space-y-8 lg:col-span-4">
+                  <section className="rounded-2xl border border-border p-5 sm:p-6">
+                    <h3 className="text-base font-semibold">
+                      {t("clientContact")}
+                    </h3>
+                    <div className="mt-4 flex items-center gap-3">
+                      <Avatar>
+                        <AvatarImage src={profile.avatarUrl ?? undefined} />
+                        <AvatarFallback>
+                          {profile.displayName?.charAt(0) ?? "?"}
+                        </AvatarFallback>
+                      </Avatar>
+                      <p className="font-medium">
+                        {profile.displayName ?? tRole("CLIENT")}
+                      </p>
+                    </div>
+                    {profile.bio && (
+                      <p className="mt-3 whitespace-pre-wrap text-sm text-muted-foreground">
+                        {profile.bio}
+                      </p>
+                    )}
+                  </section>
                   <div className="rounded-2xl border border-border p-5 sm:p-6">
                     <h3 className="text-base font-semibold tracking-tight text-foreground">
                       {t("companyDetailsTitle")}

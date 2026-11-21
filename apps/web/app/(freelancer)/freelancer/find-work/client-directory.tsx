@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
-import Link from "next/link";
+import { ClientProfileSheet } from "../../_components/client-profile-sheet";
 import { accountProfileApi } from "@/apiRequests/account-profile";
 import { Search, ChevronRight } from "@/components/icons";
 import {
@@ -14,11 +14,16 @@ import {
 import { Button } from "@repo/ui/components/shadcn/button";
 import { Skeleton } from "@repo/ui/components/shadcn/skeleton";
 
-export function ClientDirectory() {
+export function ClientDirectory({
+  search,
+  onClearSearch,
+}: {
+  search: string;
+  onClearSearch: () => void;
+}) {
   const t = useTranslations("clientDirectory");
-  const [draft, setDraft] = useState("");
-  const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
+  const [selectedClientId, setSelectedClientId] = useState<number | null>(null);
   const query = useQuery({
     queryKey: ["client-directory", search, page],
     queryFn: async () =>
@@ -26,41 +31,12 @@ export function ClientDirectory() {
     staleTime: 30_000,
   });
 
-  function submit(event: FormEvent) {
-    event.preventDefault();
-    setPage(1);
-    setSearch(draft.trim());
-  }
-
   return (
     <section className="space-y-5" aria-label={t("title")}>
       <div>
         <h2 className="text-lg font-semibold text-foreground">{t("title")}</h2>
         <p className="mt-1 text-sm text-muted-foreground">{t("description")}</p>
       </div>
-      <form onSubmit={submit} className="flex gap-2">
-        <div className="relative min-w-0 flex-1">
-          <Search className="pointer-events-none absolute left-4 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
-          <label htmlFor="client-search" className="sr-only">
-            {t("searchLabel")}
-          </label>
-          <input
-            id="client-search"
-            value={draft}
-            onChange={(event) => setDraft(event.target.value)}
-            maxLength={100}
-            placeholder={t("searchPlaceholder")}
-            className="h-11 w-full rounded-full border border-border bg-card pl-11 pr-4 text-sm outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20"
-          />
-        </div>
-        <Button
-          type="submit"
-          className="h-11 rounded-full bg-emerald-600 px-5 text-white hover:bg-emerald-700"
-        >
-          {t("search")}
-        </Button>
-      </form>
-
       {query.isPending ? (
         <div
           className="grid gap-4 sm:grid-cols-2"
@@ -96,11 +72,7 @@ export function ClientDirectory() {
             <Button
               variant="outline"
               className="mt-4 rounded-full"
-              onClick={() => {
-                setDraft("");
-                setSearch("");
-                setPage(1);
-              }}
+              onClick={onClearSearch}
             >
               {t("clearSearch")}
             </Button>
@@ -118,10 +90,12 @@ export function ClientDirectory() {
                 client.displayName?.trim() ||
                 t("unnamed");
               return (
-                <Link
+                <button
+                  type="button"
                   key={client.userId}
-                  href={`/clients/${client.userId}`}
-                  className="group flex flex-col rounded-2xl border border-border bg-card p-5 transition-colors hover:border-emerald-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
+                  onClick={() => setSelectedClientId(client.userId)}
+                  aria-haspopup="dialog"
+                  className="group flex flex-col text-left rounded-2xl border border-border bg-card p-5 transition-colors hover:border-blue-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
                 >
                   <div className="flex items-center gap-3">
                     <Avatar className="size-12 shrink-0">
@@ -149,11 +123,11 @@ export function ClientDirectory() {
                       client.bio?.trim() ||
                       t("noDescription")}
                   </p>
-                  <span className="mt-auto inline-flex items-center gap-1 text-sm font-semibold text-emerald-600 dark:text-emerald-400">
+                  <span className="mt-auto inline-flex items-center gap-1 text-sm font-semibold text-blue-600 dark:text-blue-400">
                     {t("viewProfile")}
                     <ChevronRight className="size-4" />
                   </span>
-                </Link>
+                </button>
               );
             })}
           </div>
@@ -185,6 +159,13 @@ export function ClientDirectory() {
           )}
         </>
       )}
+      <ClientProfileSheet
+        userId={selectedClientId}
+        open={selectedClientId !== null}
+        onOpenChange={(open) => {
+          if (!open) setSelectedClientId(null);
+        }}
+      />
     </section>
   );
 }

@@ -2,7 +2,6 @@
 
 import { useTranslations } from "next-intl";
 import { useEffect, useState, useCallback } from "react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
   Sheet,
@@ -78,8 +77,6 @@ export function FreelancerProfileSheet({
   const canCreateConversation = can("POST", "/api/conversations");
   const createConversation = useCreateConversation();
   const [isStartingChat, setIsStartingChat] = useState(false);
-
-
 
   const targetId = profileId ?? initialData?.freelancerId ?? null;
   const hasInitialName = Boolean(initialData?.displayName);
@@ -229,25 +226,7 @@ export function FreelancerProfileSheet({
                     ) : (
                       <MessageSquare className="size-3.5" />
                     )}
-                    <span>
-                      {isStartingChat ? t("opening") : t("message")}
-                    </span>
-                  </Button>
-                ) : null}
-
-                {profile?.id || targetId ? (
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    asChild
-                    className="rounded-full border-border hover:bg-muted text-foreground text-xs font-medium px-3 h-8 gap-1 cursor-pointer"
-                  >
-                    <Link href={`/profiles/${profile?.id ?? targetId}`} target="_blank">
-                      <ExternalLink className="size-3.5 text-muted-foreground" />
-                      <span className="hidden sm:inline">
-                        {t("openFull")}
-                      </span>
-                    </Link>
+                    <span>{isStartingChat ? t("opening") : t("message")}</span>
                   </Button>
                 ) : null}
               </div>

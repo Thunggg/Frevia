@@ -517,7 +517,7 @@
     "metaTitle": "Profile Review Requests | Admin Dashboard | Frevia",
     "metaDescription": "Review submitted profile changes before they go public.",
     "pageTitle": "Profile Review Requests",
-    "pageSubtitle": "Review existing accounts and submitted changes when profile strength is below 20%.",
+    "pageSubtitle": "Review submitted profile changes before publication and accounts with profile strength below 20%.",
     "accessDenied": "You do not have permission to view the profile review requests list.",
     "searchPlaceholder": "Search by email or display name...",
     "filterStatusLabel": "Status",
@@ -2103,6 +2103,16 @@
     "OTHER": "Other"
   },
   "clientProfileSettings": {
+    "tabPersonal": "Personal information",
+    "personalHint": "Your name, photo and personal introduction belong to your client account. Company details are managed separately in the Company tab.",
+    "companyPendingHint": "You are editing the submitted version. Your public profile stays unchanged until approval.",
+    "companyReviewHint": "These changes require administrator approval before appearing publicly.",
+    "companySaveHint": "Changes will appear on your public profile as soon as you save.",
+    "companyValidationError": "Check the company name (up to 255 characters), description (up to 5,000 characters), and a valid website (https://...).",
+    "retryCompany": "Reload profile",
+    "savingCompany": "Saving?",
+    "submitCompanyReview": "Submit changes for review",
+    "resetCompany": "Reset changes",
     "somethingWentWrong": "Something went wrong.",
     "pageTitle": "Profile Settings",
     "tabCompany": "Company Profile",
@@ -2160,6 +2170,11 @@
     "unfollow": "Unfollow"
   },
   "accountProfile": {
+    "hideIdentityDetails": "Hide details",
+    "showIdentityDetails": "Show details",
+    "identityHiddenTitle": "Identity documents are hidden",
+    "identityHiddenHint": "Select to reveal your document information and photos.",
+    "navPersonal": "Personal information",
     "breadcrumb": "Profile & trust settings",
     "pageTitle": "Profile & trust settings",
     "noPermissionTitle": "Access denied",
@@ -2510,6 +2525,8 @@
     }
   },
   "clientProfilePublic": {
+    "companyNameMissing": "Company name not provided",
+    "clientContact": "Client contact",
     "breadcrumb": "Client profile",
     "memberSince": "Member since {year}",
     "companyDetails": "Company details on Frevia.",

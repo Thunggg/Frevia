@@ -116,9 +116,9 @@ export function CvAnalysisDialog({
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [discardOpen, setDiscardOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-  const [pendingAction, setPendingAction] = useState<"confirm" | "discard" | null>(
-    null,
-  );
+  const [pendingAction, setPendingAction] = useState<
+    "confirm" | "discard" | null
+  >(null);
 
   const [skills, setSkills] = useState<SkillRow[]>([]);
   const [experience, setExperience] = useState<ExperienceRow[]>([]);
@@ -175,9 +175,7 @@ export function CvAnalysisDialog({
   const hasOcrNote =
     draft.meta.ocrUsed ||
     draft.meta.source === "PDF_OCR" ||
-    draft.meta.warnings.some((w) =>
-      w.toLowerCase().includes("ocr"),
-    );
+    draft.meta.warnings.some((w) => w.toLowerCase().includes("ocr"));
 
   const handleConfirm = async () => {
     if (!canConfirm) return;
@@ -189,10 +187,7 @@ export function CvAnalysisDialog({
           .filter((s) => s.selected && s.name.trim())
           .map((s) => ({
             skillName: s.name.trim(),
-            proficiencyLevel: Math.max(
-              1,
-              Math.min(10, s.proficiencyLevel),
-            ),
+            proficiencyLevel: Math.max(1, Math.min(10, s.proficiencyLevel)),
           })),
         experience: experience
           .filter(
@@ -373,9 +368,7 @@ export function CvAnalysisDialog({
                           onCheckedChange={(v) =>
                             setSkills((prev) =>
                               prev.map((x, i) =>
-                                i === idx
-                                  ? { ...x, selected: Boolean(v) }
-                                  : x,
+                                i === idx ? { ...x, selected: Boolean(v) } : x,
                               ),
                             )
                           }
@@ -388,7 +381,9 @@ export function CvAnalysisDialog({
                               onChange={(e) =>
                                 setSkills((prev) =>
                                   prev.map((x, i) =>
-                                    i === idx ? { ...x, name: e.target.value } : x,
+                                    i === idx
+                                      ? { ...x, name: e.target.value }
+                                      : x,
                                   ),
                                 )
                               }
@@ -400,7 +395,12 @@ export function CvAnalysisDialog({
                                 setSkills((prev) =>
                                   prev.map((x, i) =>
                                     i === idx
-                                      ? { ...x, proficiencyLevel: parseInt(e.target.value) }
+                                      ? {
+                                          ...x,
+                                          proficiencyLevel: parseInt(
+                                            e.target.value,
+                                          ),
+                                        }
                                       : x,
                                   ),
                                 )
@@ -421,7 +421,9 @@ export function CvAnalysisDialog({
                           )}
                           {s.evidence && (
                             <p className="text-xs text-muted-foreground">
-                              <span className="font-medium">{t("evidence")}:</span>{" "}
+                              <span className="font-medium">
+                                {t("evidence")}:
+                              </span>{" "}
                               {s.evidence}
                             </p>
                           )}
@@ -459,9 +461,7 @@ export function CvAnalysisDialog({
                           onCheckedChange={(v) =>
                             setExperience((prev) =>
                               prev.map((x, i) =>
-                                i === idx
-                                  ? { ...x, selected: Boolean(v) }
-                                  : x,
+                                i === idx ? { ...x, selected: Boolean(v) } : x,
                               ),
                             )
                           }
@@ -532,9 +532,7 @@ export function CvAnalysisDialog({
                                         ? {
                                             ...x,
                                             isCurrent: Boolean(v),
-                                            endDate: v
-                                              ? ""
-                                              : x.endDate,
+                                            endDate: v ? "" : x.endDate,
                                           }
                                         : x,
                                     ),
@@ -597,9 +595,7 @@ export function CvAnalysisDialog({
                           onCheckedChange={(v) =>
                             setEducation((prev) =>
                               prev.map((x, i) =>
-                                i === idx
-                                  ? { ...x, selected: Boolean(v) }
-                                  : x,
+                                i === idx ? { ...x, selected: Boolean(v) } : x,
                               ),
                             )
                           }
@@ -713,9 +709,7 @@ export function CvAnalysisDialog({
                           onCheckedChange={(v) =>
                             setProjects((prev) =>
                               prev.map((x, i) =>
-                                i === idx
-                                  ? { ...x, selected: Boolean(v) }
-                                  : x,
+                                i === idx ? { ...x, selected: Boolean(v) } : x,
                               ),
                             )
                           }

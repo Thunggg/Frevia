@@ -100,8 +100,7 @@ export function IdentityVerificationForm({
     } catch (error) {
       if (error instanceof ApiFail) {
         toastError({
-          message:
-            error.response.error.details?.[0]?.message ?? error.message,
+          message: error.response.error.details?.[0]?.message ?? error.message,
         });
       } else {
         toastError({ message: t("aiCheckFailed") });
@@ -165,7 +164,7 @@ export function IdentityVerificationForm({
 
       {canSubmitVerification && (
         <Button
-          className="bg-[#0069D3] text-white hover:bg-[#005bb8]"
+          className="bg-[#0069D3] text-white hover:bg-[#0058b3]"
           disabled={submitting}
         >
           {submitting ? <Loader2 className="animate-spin" /> : <Upload />}

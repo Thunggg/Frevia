@@ -150,7 +150,7 @@ export function PaymentSettings({ userRole }: PaymentSettingsProps) {
       case "MILESTONE_PAYOUT":
         return {
           label: t("types.PAYOUT_SHORT"),
-          className: "bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-400",
+          className: "bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950/40 dark:text-blue-400",
         };
       case "PLATFORM_FEE":
         return {
@@ -174,7 +174,7 @@ export function PaymentSettings({ userRole }: PaymentSettingsProps) {
     switch (status) {
       case "SUCCEEDED":
         return (
-          <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-600 dark:text-emerald-400">
+          <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-blue-600 dark:text-blue-400">
             <CheckCircle2 className="size-3" /> {t("statuses.SUCCEEDED")}
           </span>
         );
@@ -243,9 +243,9 @@ export function PaymentSettings({ userRole }: PaymentSettingsProps) {
                 <span>{t("settings.checkingVerification")}</span>
               </div>
             ) : connectStatus?.isConnected && connectStatus.payoutsEnabled ? (
-              <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/5 p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+              <div className="rounded-xl border border-blue-500/20 bg-blue-500/5 p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div className="flex items-center gap-3">
-                  <div className="flex size-9 items-center justify-center rounded-full bg-emerald-100 dark:bg-emerald-950/50 text-emerald-600">
+                  <div className="flex size-9 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-950/50 text-blue-600">
                     <CheckCircle2 className="size-5" />
                   </div>
                   <div>
@@ -253,7 +253,7 @@ export function PaymentSettings({ userRole }: PaymentSettingsProps) {
                       <span className="text-xs font-bold text-foreground">
                         {t("settings.connectedActive")}
                       </span>
-                      <Badge className="bg-emerald-600/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 text-[10px] px-2 py-0.5">
+                      <Badge className="bg-blue-600/10 text-blue-600 dark:text-blue-400 border border-blue-500/20 text-[10px] px-2 py-0.5">
                         {t("connect.verified")}
                       </Badge>
                     </div>
@@ -357,7 +357,7 @@ export function PaymentSettings({ userRole }: PaymentSettingsProps) {
                       {pm.brand}
                     </span>
                     {pm.isDefault && (
-                      <Badge className="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20 text-[10px] px-2 py-0.5">
+                      <Badge className="bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20 text-[10px] px-2 py-0.5">
                         {t("settings.defaultBadge")}
                       </Badge>
                     )}
@@ -389,7 +389,7 @@ export function PaymentSettings({ userRole }: PaymentSettingsProps) {
       {!isFreelancerOrExpert && (
         <div className="rounded-2xl border border-border bg-white dark:bg-zinc-950 p-6 shadow-sm">
           <div className="flex items-center gap-3 border-b border-border/60 pb-4">
-            <div className="flex size-8 items-center justify-center rounded-lg bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600">
+            <div className="flex size-8 items-center justify-center rounded-lg bg-blue-50 dark:bg-blue-950/50 text-blue-600">
               <ShieldCheck className="size-4" />
             </div>
             <div>
@@ -529,7 +529,7 @@ export function PaymentSettings({ userRole }: PaymentSettingsProps) {
                         <span
                           className={
                             isDebit
-                              ? "text-emerald-600 dark:text-emerald-400"
+                              ? "text-blue-600 dark:text-blue-400"
                               : "text-foreground"
                           }
                         >

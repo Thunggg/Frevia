@@ -66,3 +66,58 @@ describe('Expert profile approval', () => {
     expect(transaction.expert.upsert).not.toHaveBeenCalled();
   });
 });
+
+describe('Separate client and company edits', () => {
+  it.each([
+    [
+      { displayName: 'New name', companyName: 'Published company' },
+      ['displayName'],
+      { displayName: 'New name', companyName: 'Pending company' },
+    ],
+    [
+      { displayName: 'Published name', companyName: 'New company' },
+      ['companyName'],
+      { displayName: 'Pending name', companyName: 'New company' },
+    ],
+  ])(
+    'preserves pending fields outside the submitted form',
+    async (incoming, fields, expected) => {
+      const transaction = {
+        profileRevision: {
+          findFirst: jest
+            .fn()
+            .mockResolvedValue({
+              id: 1,
+              proposedData: {
+                displayName: 'Pending name',
+                companyName: 'Pending company',
+              },
+            }),
+          update: jest.fn().mockResolvedValue({ id: 1 }),
+        },
+      };
+      const prisma = {
+        $transaction: jest.fn((callback: (tx: typeof transaction) => unknown) =>
+          callback(transaction),
+        ),
+      };
+      const repository = new ProfileRevisionRepository(
+        prisma as unknown as PrismaService,
+      );
+      await repository.submit(
+        9,
+        7,
+        ProfileRevisionType.CLIENT,
+        {},
+        incoming,
+        0,
+        fields,
+      );
+      expect(transaction.profileRevision.update).toHaveBeenCalledWith(
+        expect.objectContaining({
+          data: expect.objectContaining({ proposedData: expected }),
+        }),
+      );
+    },
+  );
+});

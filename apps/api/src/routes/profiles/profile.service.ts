@@ -571,31 +571,11 @@ export class ProfileService {
           : dto.experience,
     };
 
-    if (
-      this.profileRevisionService.requiresManualReview(
-        profile.profileCompletionPercent,
-      )
-    ) {
-      return this.profileRevisionService.submitFreelancer(
-        currentUserId,
-        profile.id,
-        update,
-        profile.profileCompletionPercent,
-      );
-    }
-
-    const updated = await this.profileRepository.updateFreelancerProfile(
+    return this.profileRevisionService.submitFreelancer(
+      currentUserId,
       profile.id,
       update,
-    );
-    this.cacheService?.del(`${AUTH_ME_CACHE_PREFIX}${currentUserId}`);
-    await this.embeddingOutbox.enqueueAndProcess({
-      eventType: 'UPSERT',
-      documentType: 'CV',
-      documentId: profile.id,
-    });
-    return this.profileRevisionService.directUpdateResult(
-      updated?.profileCompletionPercent ?? profile.profileCompletionPercent,
+      profile.profileCompletionPercent,
     );
   }
 

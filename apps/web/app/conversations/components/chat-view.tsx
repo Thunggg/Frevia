@@ -3,6 +3,8 @@
 import { useFormatter, useTranslations } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import { FreelancerProfileSheet } from "@/app/(client)/_components/freelancer-profile-sheet";
+import { ClientProfileSheet } from "@/app/(freelancer)/_components/client-profile-sheet";
 import { usePathname } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
 import { useActionPermission } from "@/hooks/use-action-permission";
@@ -37,6 +39,7 @@ import {
   Paperclip,
   Send,
   Trash2,
+  UserRound,
 } from "@/components/icons";
 import type { DirectMessageType, MessageAttachmentType } from "@shared/types";
 
@@ -74,6 +77,7 @@ export function ChatView({
   conversationSlug,
   currentUserId,
 }: ChatViewProps) {
+  const [profileOpen, setProfileOpen] = useState(false);
   const t = useTranslations("chat");
   const tCommon = useTranslations("common");
   const format = useFormatter();
@@ -136,6 +140,9 @@ export function ChatView({
   );
 
   const otherUser = conversation?.otherUser;
+  useEffect(() => {
+    setProfileOpen(false);
+  }, [otherUser?.id]);
 
   const formatMessageTime = (createdAt: string | Date): string =>
     format.dateTime(new Date(createdAt), {
@@ -474,8 +481,34 @@ export function ChatView({
             )}
           </div>
         </div>
+
+        {otherUser?.id &&
+        (basePath === "/freelancer/conversations" ||
+          (basePath === "/client/conversations" && otherUser.profile?.id)) ? (
+          <button
+            type="button"
+            onClick={() => setProfileOpen(true)}
+            className="flex shrink-0 items-center gap-1.5 rounded-full bg-muted px-3.5 py-1.5 text-xs font-medium hover:bg-accent"
+          >
+            <UserRound className="size-3.5" />
+            {t("profile")}
+          </button>
+        ) : null}
       </div>
 
+      {basePath === "/client/conversations" ? (
+        <FreelancerProfileSheet
+          profileId={otherUser?.profile?.id ?? null}
+          open={profileOpen}
+          onOpenChange={setProfileOpen}
+        />
+      ) : basePath === "/freelancer/conversations" ? (
+        <ClientProfileSheet
+          userId={otherUser?.id ?? null}
+          open={profileOpen}
+          onOpenChange={setProfileOpen}
+        />
+      ) : null}
       {/* Messages Stream */}
       <div className="flex-1 space-y-3 overflow-y-auto p-4 sm:p-6">
         {!isPermissionLoading && !canViewMessages ? (

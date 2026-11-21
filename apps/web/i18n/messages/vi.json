@@ -517,7 +517,7 @@
     "metaTitle": "Yêu cầu duyệt hồ sơ | Quản trị | Frevia",
     "metaDescription": "Duyệt các thay đổi hồ sơ đã gửi trước khi công khai.",
     "pageTitle": "Yêu cầu duyệt hồ sơ",
-    "pageSubtitle": "Xem xét các tài khoản hiện có và thay đổi đã gửi khi độ mạnh hồ sơ dưới 20%.",
+    "pageSubtitle": "Duyệt các thay đổi hồ sơ đã gửi trước khi công khai và các tài khoản có độ hoàn thiện hồ sơ dưới 20%.",
     "accessDenied": "Bạn không có quyền xem danh sách hồ sơ chờ duyệt.",
     "searchPlaceholder": "Tìm theo email hoặc tên hiển thị...",
     "filterStatusLabel": "Trạng thái",
@@ -2103,6 +2103,16 @@
     "OTHER": "Khác"
   },
   "clientProfileSettings": {
+    "tabPersonal": "Thông tin cá nhân",
+    "personalHint": "Tên, ảnh và giới thiệu cá nhân thuộc tài khoản client. Thông tin công ty được quản lý riêng trong tab Công ty.",
+    "companyPendingHint": "Bạn đang chỉnh sửa bản đã gửi duyệt. Hồ sơ công khai giữ nguyên cho đến khi được phê duyệt.",
+    "companyReviewHint": "Thay đổi cần được quản trị viên duyệt trước khi hiển thị công khai.",
+    "companySaveHint": "Thay đổi sẽ hiển thị trên hồ sơ công khai ngay sau khi lưu.",
+    "companyValidationError": "Kiểm tra tên công ty (tối đa 255 ký tự), mô tả (tối đa 5.000 ký tự) và website hợp lệ (https://...).",
+    "retryCompany": "Tải lại hồ sơ",
+    "savingCompany": "Đang lưu…",
+    "submitCompanyReview": "Gửi duyệt thay đổi",
+    "resetCompany": "Hoàn tác thay đổi",
     "somethingWentWrong": "Đã xảy ra lỗi.",
     "pageTitle": "Cài đặt hồ sơ",
     "tabCompany": "Hồ sơ công ty",
@@ -2160,6 +2170,11 @@
     "unfollow": "Bỏ theo dõi"
   },
   "accountProfile": {
+    "hideIdentityDetails": "Ẩn thông tin",
+    "showIdentityDetails": "Hiện thông tin",
+    "identityHiddenTitle": "Giấy tờ đang được che",
+    "identityHiddenHint": "Nhấn để xem thông tin và ảnh giấy tờ của bạn.",
+    "navPersonal": "Thông tin cá nhân",
     "breadcrumb": "Hồ sơ & cài đặt tin cậy",
     "pageTitle": "Hồ sơ & cài đặt tin cậy",
     "noPermissionTitle": "Không có quyền truy cập",
@@ -2510,6 +2525,8 @@
     }
   },
   "clientProfilePublic": {
+    "companyNameMissing": "Chưa có tên công ty",
+    "clientContact": "Người liên hệ",
     "breadcrumb": "Hồ sơ khách hàng",
     "memberSince": "Thành viên từ {year}",
     "companyDetails": "Thông tin công ty trên Frevia.",

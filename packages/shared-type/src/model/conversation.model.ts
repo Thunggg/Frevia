@@ -61,6 +61,7 @@ export const ConversationListItemSchema = z.object({
     id: z.number(),
     profile: z
       .object({
+        id: z.number().optional(),
         displayName: z.string().nullable(),
         avatarUrl: z.string().nullable(),
       })

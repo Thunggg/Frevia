@@ -64,7 +64,8 @@ describe('ProfileService', () => {
       displayName: 'Updated name',
       title: 'Engineer',
     });
-    expect(repository.updateFreelancerProfile).toHaveBeenCalledWith(
+    expect(revisions.submitFreelancer).toHaveBeenCalledWith(
+      10,
       5,
       expect.objectContaining({
         bio: 'Existing biography',
@@ -73,7 +74,10 @@ describe('ProfileService', () => {
         languages: ['Vietnamese'],
         experience: ['Developer'],
       }),
+      80,
     );
+    expect(repository.updateFreelancerProfile).not.toHaveBeenCalled();
+    expect(outbox.enqueueAndProcess).not.toHaveBeenCalled();
   });
 
   it('clears explicitly empty professional fields', async () => {
@@ -87,10 +91,44 @@ describe('ProfileService', () => {
       title: 'Engineer',
       experience: [],
     });
-    expect(repository.updateFreelancerProfile).toHaveBeenCalledWith(
+    expect(revisions.submitFreelancer).toHaveBeenCalledWith(
+      10,
       5,
       expect.objectContaining({ experience: [] }),
+      80,
     );
+  });
+
+  it.each([0, 19, 20, 80, 100])(
+    'queues a freelancer update for review at %i percent completion',
+    async (profileCompletionPercent) => {
+      repository.findFreelancerProfileById.mockResolvedValue({
+        ...freelancerProfile(),
+        profileCompletionPercent,
+      });
+      revisions.submitFreelancer.mockResolvedValue({
+        reviewRequired: true,
+        revision: { id: 12, status: 'PENDING' },
+      });
+      const result = await service.updateProfile(5, 10, {
+        displayName: 'Updated freelancer',
+        title: 'Engineer',
+      });
+      expect(result.reviewRequired).toBe(true);
+      expect(result.revision.status).toBe('PENDING');
+      expect(revisions.submitFreelancer).toHaveBeenCalledWith(
+        10, 5, expect.objectContaining({ title: 'Engineer' }), profileCompletionPercent,
+      );
+      expect(repository.updateFreelancerProfile).not.toHaveBeenCalled();
+    },
+  );
+
+  it('rejects another user before creating a review request', async () => {
+    repository.findFreelancerProfileById.mockResolvedValue(freelancerProfile());
+    await expect(service.updateProfile(5, 99, {
+      displayName: 'Other user', title: 'Engineer',
+    })).rejects.toBeInstanceOf(ForbiddenException);
+    expect(revisions.submitFreelancer).not.toHaveBeenCalled();
   });
 
   it('indexes the general profile ID after deleting a skill', async () => {

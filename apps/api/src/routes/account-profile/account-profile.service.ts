@@ -152,6 +152,7 @@ export class AccountProfileService {
       primaryRole === RoleName.FREELANCER
     ) {
       if (
+        primaryRole === RoleName.FREELANCER ||
         this.profileRevisionService.requiresManualReview(
           user.profile.profileCompletionPercent,
         )
