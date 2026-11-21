@@ -283,7 +283,7 @@ export function ForgotPasswordForm() {
         <Button
           type="submit"
           form="forgot-password-form"
-          className="h-11 flex-1 bg-[#4fae2e] font-semibold text-white hover:bg-[#459928] active:scale-[0.99] dark:bg-[#4fae2e] dark:text-white dark:hover:bg-[#5bc03a]"
+          className="h-11 flex-1 bg-[#0069D3] font-semibold text-white hover:bg-[#005bb8] active:scale-[0.99] dark:bg-[#0069D3] dark:text-white dark:hover:bg-[#1a7fe6]"
           disabled={forgotPasswordMutation.isPending}
         >
           {forgotPasswordMutation.isPending ? (
@@ -301,7 +301,7 @@ export function ForgotPasswordForm() {
         {t("rememberPassword")}{" "}
         <Link
           href="/login"
-          className="font-semibold text-[#4fae2e] transition-colors hover:text-[#3f9225]"
+          className="font-semibold text-[#0069D3] transition-colors hover:text-[#005bb8] dark:text-blue-400 dark:hover:text-blue-300"
         >
           {t("logIn")}
         </Link>
