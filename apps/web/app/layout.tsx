@@ -11,8 +11,8 @@ import { NotificationProvider } from "@/providers/notification-provider";
 import "./globals.css";
 import QueryProvider from "@/providers/query-provider";
 
-const geistSans = localFont({
-  src: "./fonts/Poppins-Regular.ttf",
+const beVietnamPro = localFont({
+  src: "./fonts/be-vietnam-pro-latin-300-normal.ttf",
   variable: "--font-geist-sans",
 });
 const geistMono = localFont({
@@ -20,8 +20,8 @@ const geistMono = localFont({
   variable: "--font-geist-mono",
 });
 
-const aquire = localFont({
-  src: "./fonts/JoscelynnDemoRegular.ttf",
+const chunkFive = localFont({
+  src: "./fonts/chunk-five-latin-800-normal.ttf",
   variable: "--font-aquire",
 });
 
@@ -68,7 +68,7 @@ export default async function RootLayout({
       </head>
       <body
         suppressHydrationWarning
-        className={`${geistSans.variable} ${geistMono.variable} ${aquire.variable} font-sans antialiased`}
+        className={`${beVietnamPro.variable} ${geistMono.variable} ${chunkFive.variable} font-sans antialiased`}
       >
         <ThemeProvider
           attribute="class"
