@@ -1,4 +1,7 @@
-import { matchRoutePath, normalizeApiPath } from '../../shared/helper/match-route-path';
+import {
+  matchRoutePath,
+  normalizeApiPath,
+} from '../../shared/helper/match-route-path';
 
 /**
  * Bộ kiểm thử Action-Level RBAC và Kiểm soát hiển thị giao diện UI cho cụm chức năng:
@@ -253,7 +256,10 @@ function evaluateUiState(
     showCreateCommentForm: can('POST', '/api/forums/posts/:postId/comments'),
 
     // #99: PATCH /api/forums/posts/:postId/comments/:id -> Nút Chỉnh sửa bình luận trong CommentItem
-    showEditCommentButton: can('PATCH', '/api/forums/posts/:postId/comments/:id'),
+    showEditCommentButton: can(
+      'PATCH',
+      '/api/forums/posts/:postId/comments/:id',
+    ),
 
     // #100: DELETE /api/forums/posts/:postId/comments/:id -> Nút Xóa bình luận trong CommentItem
     showDeleteCommentButton: can(
@@ -350,11 +356,15 @@ describe('COMMUNITY FORUM - Action-Level RBAC & UI Visibility Tests', () => {
       const createPostOnly = [{ method: 'POST', path: '/api/forums/posts' }];
 
       expect(
-        checkPermissionGuard(createPostOnly, 'POST', '/api/forums/posts').allowed,
+        checkPermissionGuard(createPostOnly, 'POST', '/api/forums/posts')
+          .allowed,
       ).toBe(true);
       expect(
-        checkPermissionGuard(createPostOnly, 'POST', '/api/forums/posts/101/like')
-          .allowed,
+        checkPermissionGuard(
+          createPostOnly,
+          'POST',
+          '/api/forums/posts/101/like',
+        ).allowed,
       ).toBe(false);
       expect(
         checkPermissionGuard(
@@ -364,11 +374,8 @@ describe('COMMUNITY FORUM - Action-Level RBAC & UI Visibility Tests', () => {
         ).allowed,
       ).toBe(false);
       expect(
-        checkPermissionGuard(
-          createPostOnly,
-          'DELETE',
-          '/api/forums/posts/101',
-        ).allowed,
+        checkPermissionGuard(createPostOnly, 'DELETE', '/api/forums/posts/101')
+          .allowed,
       ).toBe(false);
     });
 
@@ -432,7 +439,8 @@ describe('COMMUNITY FORUM - Action-Level RBAC & UI Visibility Tests', () => {
       const viewReportsOnly = [{ method: 'GET', path: '/api/forums/reports' }];
 
       expect(
-        checkPermissionGuard(viewReportsOnly, 'GET', '/api/forums/reports').allowed,
+        checkPermissionGuard(viewReportsOnly, 'GET', '/api/forums/reports')
+          .allowed,
       ).toBe(true);
       expect(
         checkPermissionGuard(
@@ -520,7 +528,9 @@ describe('COMMUNITY FORUM - Action-Level RBAC & UI Visibility Tests', () => {
     it.each(FORUM_PERMISSIONS)(
       'Thu hồi quyền #$id ($method $path) -> Chỉ endpoint này bị 403 và UI $uiField bị ẩn hoàn toàn',
       (revokedPerm) => {
-        const remaining = FORUM_PERMISSIONS.filter((p) => p.id !== revokedPerm.id);
+        const remaining = FORUM_PERMISSIONS.filter(
+          (p) => p.id !== revokedPerm.id,
+        );
 
         // 1. Endpoint bị thu hồi trả về 403
         const revokedResult = checkPermissionGuard(
@@ -573,7 +583,9 @@ describe('COMMUNITY FORUM - Action-Level RBAC & UI Visibility Tests', () => {
         expect(result.status).toBe(200);
 
         // 2. Tất cả 14 endpoint khác bị từ chối 403
-        const otherPerms = FORUM_PERMISSIONS.filter((p) => p.id !== grantedPerm.id);
+        const otherPerms = FORUM_PERMISSIONS.filter(
+          (p) => p.id !== grantedPerm.id,
+        );
         for (const other of otherPerms) {
           const otherResult = checkPermissionGuard(
             singlePerm,
@@ -689,4 +701,3 @@ describe('COMMUNITY FORUM - Action-Level RBAC & UI Visibility Tests', () => {
     });
   });
 });
-

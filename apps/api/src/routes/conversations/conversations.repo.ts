@@ -1,9 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import {
-  Conversation,
-  DirectMessage,
-  NotificationType,
-} from '@prisma/client';
+import { Conversation, DirectMessage, NotificationType } from '@prisma/client';
 import { MessageAttachmentType } from '@shared/types';
 import { createConversationSlug } from '../../shared/helper/conversation.slug';
 import { PrismaService } from '../../shared/services/prisma.service';

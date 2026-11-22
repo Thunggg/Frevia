@@ -55,7 +55,7 @@ interface MilestoneInputItem {
   id: string;
   title: string;
   description: string;
-  amount: number | "";
+  amount: number | string;
   dueDate: string;
 }
 
@@ -81,7 +81,7 @@ export function CreateContractDialog({
   const { can } = useActionPermission();
   const canCreateContract = can("POST", "/api/contracts");
 
-  const [totalAmount, setTotalAmount] = useState<number | "">(0);
+  const [totalAmount, setTotalAmount] = useState<number | string>("");
   const [expiresAt, setExpiresAt] = useState<string>("");
   const [terms, setTerms] = useState<string>("");
   const [milestones, setMilestones] = useState<MilestoneInputItem[]>([]);
@@ -90,8 +90,9 @@ export function CreateContractDialog({
   // Khởi tạo dữ liệu form khi proposal thay đổi hoặc sheet mở
   useEffect(() => {
     if (proposal && open) {
-      const bid = Number(proposal.bidAmount) || 0;
-      setTotalAmount(bid);
+      const bid = Number(proposal.bidAmount);
+      const initialBid = !isNaN(bid) && bid > 0 ? String(bid) : "";
+      setTotalAmount(initialBid);
       setTerms(t("defaultTerms", { jobTitle }));
       setExpiresAt("");
 
@@ -101,7 +102,7 @@ export function CreateContractDialog({
           id: `m-${Date.now()}-1`,
           title: t("defaultMilestoneTitle", { jobTitle }),
           description: t("defaultMilestoneDesc"),
-          amount: bid,
+          amount: initialBid,
           dueDate: "",
         },
       ]);
@@ -109,13 +110,13 @@ export function CreateContractDialog({
   }, [proposal, jobTitle, open, t]);
 
   // Khi người dùng đổi totalAmount và chỉ có 1 milestone duy nhất, tự đồng bộ số tiền milestone
-  const handleTotalAmountChange = (newVal: number | "") => {
+  const handleTotalAmountChange = (newVal: number | string) => {
     setTotalAmount(newVal);
     if (milestones.length === 1) {
       setMilestones((prev) => [
         {
           ...prev[0]!,
-          amount: newVal === "" ? "" : newVal,
+          amount: newVal,
         },
       ]);
     }
@@ -124,12 +125,12 @@ export function CreateContractDialog({
   // Tính tổng số tiền các milestones
   const milestonesTotal = useMemo(() => {
     return milestones.reduce((sum, item) => {
-      const val = typeof item.amount === "number" ? item.amount : 0;
+      const val = typeof item.amount === "number" ? item.amount : parseFloat(item.amount) || 0;
       return sum + val;
     }, 0);
   }, [milestones]);
 
-  const targetAmount = typeof totalAmount === "number" ? totalAmount : 0;
+  const targetAmount = typeof totalAmount === "number" ? totalAmount : parseFloat(totalAmount) || 0;
   const isBudgetValid = targetAmount > 0;
   const isAmountMatch = Math.abs(milestonesTotal - targetAmount) < 0.01;
   const amountDiff = Math.round((targetAmount - milestonesTotal) * 100) / 100;
@@ -205,7 +206,8 @@ export function CreateContractDialog({
         });
         return;
       }
-      if (typeof m.amount !== "number" || m.amount <= 0) {
+      const numAmount = typeof m.amount === "number" ? m.amount : parseFloat(m.amount);
+      if (isNaN(numAmount) || numAmount <= 0) {
         toastError({
           message: t("validation.milestoneAmountRequired", { index: i + 1 }),
         });
@@ -346,16 +348,19 @@ export function CreateContractDialog({
                   <div className="relative">
                     <DollarSign className="absolute left-3 top-2.5 size-4 text-muted-foreground" />
                     <Input
-                      type="number"
-                      min={1}
-                      step="0.01"
+                      type="text"
+                      inputMode="decimal"
                       required
                       value={totalAmount}
-                      onChange={(e) =>
-                        handleTotalAmountChange(
-                          e.target.value === "" ? "" : Number(e.target.value),
-                        )
-                      }
+                      onFocus={(e) => e.target.select()}
+                      onChange={(e) => {
+                        let val = e.target.value.replace(/[^\d.]/g, "");
+                        if (/^0\d/.test(val)) {
+                          val = val.replace(/^0+/, "");
+                          if (val === "") val = "0";
+                        }
+                        handleTotalAmountChange(val);
+                      }}
                       className="pl-9 h-10 text-sm rounded-xl font-medium border-border/70 focus-visible:ring-[#0069D3]"
                       placeholder={t("amountPlaceholder")}
                     />
@@ -452,20 +457,23 @@ export function CreateContractDialog({
                             <div className="relative flex-1">
                               <DollarSign className="absolute left-2.5 top-2 size-3 text-muted-foreground" />
                               <Input
-                                type="number"
-                                min={1}
-                                step="0.01"
+                                type="text"
+                                inputMode="decimal"
                                 required
                                 value={m.amount}
-                                onChange={(e) =>
+                                onFocus={(e) => e.target.select()}
+                                onChange={(e) => {
+                                  let val = e.target.value.replace(/[^\d.]/g, "");
+                                  if (/^0\d/.test(val)) {
+                                    val = val.replace(/^0+/, "");
+                                    if (val === "") val = "0";
+                                  }
                                   handleMilestoneChange(
                                     m.id,
                                     "amount",
-                                    e.target.value === ""
-                                      ? ""
-                                      : Number(e.target.value),
-                                  )
-                                }
+                                    val,
+                                  );
+                                }}
                                 placeholder={t("amountFieldPlaceholder")}
                                 className="pl-7 h-8 text-xs font-semibold rounded-lg text-right border-border/70 focus-visible:ring-[#0069D3]"
                               />

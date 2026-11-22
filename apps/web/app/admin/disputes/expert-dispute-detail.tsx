@@ -40,7 +40,7 @@ import {
   formatResolutionCurrency,
   getDisputeApiErrorMessage,
   useResolutionHelpers,
-} from "@/components/disputes/resolution-utils";
+} from "@/app/(client)/_components/disputes/resolution-utils";
 import { ExpertDisputeDossier } from "./expert-dispute-dossier";
 
 interface ExpertDisputeDetailProps {
@@ -62,20 +62,18 @@ export function ExpertDisputeDetail({
   const queryClient = useQueryClient();
 
   const milestoneAmount = Number(dispute.milestone?.amount ?? 0);
-  const isFinalStage =
-    dispute.status === "REVIEW_REQUESTED" ||
-    dispute.status === "DECISION_MADE";
+  const isFinalStage = true;
   const isDecidableStatus =
     dispute.status === "UNDER_REVIEW" ||
     dispute.status === "DECISION_MADE" ||
     dispute.status === "REVIEW_REQUESTED";
 
-  const canSubmitDecision = isFinalStage
-    ? can("POST", "/api/expert/disputes/:id/final-decision")
-    : can("POST", "/api/expert/disputes/:id/decision");
+  const canSubmitDecision =
+    can("POST", "/api/expert/disputes/:id/decision") ||
+    can("POST", "/api/expert/disputes/:id/final-decision");
 
-  const [freelancerAmount, setFreelancerAmount] = useState<number>(0);
-  const [clientAmount, setClientAmount] = useState<number>(0);
+  const [freelancerAmount, setFreelancerAmount] = useState<string>("0");
+  const [clientAmount, setClientAmount] = useState<string>("0");
   const [decisionReason, setDecisionReason] = useState<string>("");
   const [pending, setPending] = useState(false);
   const [confirmation, setConfirmation] = useState<{
@@ -93,20 +91,20 @@ export function ExpertDisputeDetail({
       existingCl !== null &&
       existingCl !== undefined
     ) {
-      setFreelancerAmount(Number(existingFl));
-      setClientAmount(Number(existingCl));
+      setFreelancerAmount(Number(existingFl).toString());
+      setClientAmount(Number(existingCl).toString());
     } else if (
       dispute.proposedFreelancerAmount !== null &&
       dispute.proposedFreelancerAmount !== undefined &&
       dispute.proposedClientAmount !== null &&
       dispute.proposedClientAmount !== undefined
     ) {
-      setFreelancerAmount(Number(dispute.proposedFreelancerAmount));
-      setClientAmount(Number(dispute.proposedClientAmount));
+      setFreelancerAmount(Number(dispute.proposedFreelancerAmount).toString());
+      setClientAmount(Number(dispute.proposedClientAmount).toString());
     } else {
       const half = roundCents(milestoneAmount / 2);
-      setFreelancerAmount(half);
-      setClientAmount(roundCents(milestoneAmount - half));
+      setFreelancerAmount(half.toString());
+      setClientAmount(roundCents(milestoneAmount - half).toString());
     }
     setDecisionReason(dispute.decisionReason ?? "");
   }, [
@@ -176,41 +174,85 @@ export function ExpertDisputeDetail({
   };
 
   const handleFreelancerChange = (raw: string) => {
-    const parsed = Number(raw);
-    if (Number.isNaN(parsed)) return;
+    if (raw === "") {
+      setFreelancerAmount("");
+      setClientAmount("");
+      return;
+    }
+    let clean = raw.replace(/[^\d.]/g, "");
+    if (/^0\d/.test(clean)) {
+      clean = clean.replace(/^0+/, "");
+      if (clean === "") clean = "0";
+    }
+    const parsed = parseFloat(clean);
+    if (isNaN(parsed)) {
+      setFreelancerAmount(clean);
+      return;
+    }
     const clamped = roundCents(Math.max(0, Math.min(milestoneAmount, parsed)));
-    setFreelancerAmount(clamped);
-    setClientAmount(roundCents(milestoneAmount - clamped));
+    setFreelancerAmount(clean);
+    setClientAmount(roundCents(milestoneAmount - clamped).toString());
   };
 
   const handleClientChange = (raw: string) => {
-    const parsed = Number(raw);
-    if (Number.isNaN(parsed)) return;
+    if (raw === "") {
+      setClientAmount("");
+      setFreelancerAmount("");
+      return;
+    }
+    let clean = raw.replace(/[^\d.]/g, "");
+    if (/^0\d/.test(clean)) {
+      clean = clean.replace(/^0+/, "");
+      if (clean === "") clean = "0";
+    }
+    const parsed = parseFloat(clean);
+    if (isNaN(parsed)) {
+      setClientAmount(clean);
+      return;
+    }
     const clamped = roundCents(Math.max(0, Math.min(milestoneAmount, parsed)));
-    setClientAmount(clamped);
-    setFreelancerAmount(roundCents(milestoneAmount - clamped));
+    setClientAmount(clean);
+    setFreelancerAmount(roundCents(milestoneAmount - clamped).toString());
+  };
+
+  const handleFreelancerBlur = () => {
+    if (freelancerAmount === "") {
+      setFreelancerAmount("0");
+      setClientAmount(milestoneAmount.toString());
+    }
+  };
+
+  const handleClientBlur = () => {
+    if (clientAmount === "") {
+      setClientAmount("0");
+      setFreelancerAmount(milestoneAmount.toString());
+    }
   };
 
   const applyPreset = (freelancerShare: number) => {
     const fl = roundCents(milestoneAmount * freelancerShare);
-    setFreelancerAmount(fl);
-    setClientAmount(roundCents(milestoneAmount - fl));
+    setFreelancerAmount(fl.toString());
+    setClientAmount(roundCents(milestoneAmount - fl).toString());
   };
 
-  const splitSum = roundCents(freelancerAmount + clientAmount);
+  const flNum = parseFloat(freelancerAmount) || 0;
+  const clNum = parseFloat(clientAmount) || 0;
+  const splitSum = roundCents(flNum + clNum);
   const isSplitValid =
-    Math.round(splitSum * 100) === Math.round(milestoneAmount * 100);
+    Math.round(splitSum * 100) === Math.round(milestoneAmount * 100) &&
+    freelancerAmount !== "" &&
+    clientAmount !== "";
   const freelancerPercent =
     milestoneAmount > 0
-      ? Math.round((freelancerAmount / milestoneAmount) * 100)
+      ? Math.round((flNum / milestoneAmount) * 100)
       : 0;
   const clientPercent = 100 - freelancerPercent;
 
   const handleFormSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const parsed = AdminDisputeDecisionBodySchema.safeParse({
-      freelancerAmount,
-      clientAmount,
+      freelancerAmount: flNum,
+      clientAmount: clNum,
       decisionReason: decisionReason.trim(),
     });
     if (!parsed.success || !isSplitValid) {
@@ -224,13 +266,9 @@ export function ExpertDisputeDetail({
     if (!confirmation) return;
     setPending(true);
     try {
-      if (isFinalStage) {
-        await disputeApiRequest.expertFinalDecision(dispute.id, confirmation);
-      } else {
-        await disputeApiRequest.expertMakeDecision(dispute.id, confirmation);
-      }
+      await disputeApiRequest.expertMakeDecision(dispute.id, confirmation);
       setConfirmation(null);
-      toastSuccess({ message: t(isFinalStage ? "savedFinal" : "saved") });
+      toastSuccess({ message: t("savedFinal") });
       await Promise.all([
         queryClient.invalidateQueries({ queryKey: ["expert-disputes"] }),
         queryClient.invalidateQueries({
@@ -318,7 +356,7 @@ export function ExpertDisputeDetail({
               </div>
 
               {dispute.resolutionType === "EXTEND_DEADLINE" &&
-              dispute.proposedDueDate ? (
+                dispute.proposedDueDate ? (
                 <div className="rounded-xl bg-zinc-50/70 dark:bg-zinc-900/40 p-3 space-y-1">
                   <dt className="text-muted-foreground flex items-center gap-1">
                     <Calendar className="size-3" />
@@ -335,16 +373,16 @@ export function ExpertDisputeDetail({
                     {t("clientLabel")}{" "}
                     {formatResolutionCurrency(
                       dispute.proposedClientAmount ??
-                        (dispute.resolutionType === "FULL_RELEASE"
-                          ? 0
-                          : milestoneAmount),
+                      (dispute.resolutionType === "FULL_RELEASE"
+                        ? 0
+                        : milestoneAmount),
                     )}{" "}
                     · {t("freelancerLabel")}{" "}
                     {formatResolutionCurrency(
                       dispute.proposedFreelancerAmount ??
-                        (dispute.resolutionType === "FULL_RELEASE"
-                          ? milestoneAmount
-                          : 0),
+                      (dispute.resolutionType === "FULL_RELEASE"
+                        ? milestoneAmount
+                        : 0),
                     )}
                   </dd>
                 </div>
@@ -444,11 +482,10 @@ export function ExpertDisputeDetail({
               >
                 <div className="space-y-1.5">
                   <span
-                    className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-medium ${
-                      isFinalStage
+                    className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-medium ${isFinalStage
                         ? "bg-amber-50 text-amber-800 dark:bg-amber-950/60 dark:text-amber-300"
                         : "bg-sky-50 text-[#0069D3] dark:bg-sky-950/60 dark:text-sky-300"
-                    }`}
+                      }`}
                   >
                     <Gavel className="size-3" />
                     {t(isFinalStage ? "stage2Badge" : "stage1Badge")}
@@ -525,13 +562,14 @@ export function ExpertDisputeDetail({
                     </Label>
                     <Input
                       id="expertFreelancerAmount"
-                      type="number"
-                      min={0}
-                      max={milestoneAmount}
-                      step="0.01"
+                      type="text"
+                      inputMode="decimal"
                       required
                       value={freelancerAmount}
+                      onFocus={(e) => e.target.select()}
                       onChange={(e) => handleFreelancerChange(e.target.value)}
+                      onBlur={handleFreelancerBlur}
+                      placeholder="0.00"
                       className="h-9 text-xs tabular-nums"
                     />
                   </div>
@@ -544,13 +582,14 @@ export function ExpertDisputeDetail({
                     </Label>
                     <Input
                       id="expertClientAmount"
-                      type="number"
-                      min={0}
-                      max={milestoneAmount}
-                      step="0.01"
+                      type="text"
+                      inputMode="decimal"
                       required
                       value={clientAmount}
+                      onFocus={(e) => e.target.select()}
                       onChange={(e) => handleClientChange(e.target.value)}
+                      onBlur={handleClientBlur}
+                      placeholder="0.00"
                       className="h-9 text-xs tabular-nums"
                     />
                   </div>
@@ -566,12 +605,12 @@ export function ExpertDisputeDetail({
                   >
                     {isSplitValid
                       ? t("splitTotal", {
-                          total: formatResolutionCurrency(splitSum),
-                          target: formatResolutionCurrency(milestoneAmount),
-                        })
+                        total: formatResolutionCurrency(splitSum),
+                        target: formatResolutionCurrency(milestoneAmount),
+                      })
                       : t("splitMismatch", {
-                          amount: formatResolutionCurrency(milestoneAmount),
-                        })}
+                        amount: formatResolutionCurrency(milestoneAmount),
+                      })}
                   </span>
                 </div>
 
@@ -601,11 +640,10 @@ export function ExpertDisputeDetail({
                   disabled={
                     pending || !isSplitValid || decisionReason.trim().length < 5
                   }
-                  className={`w-full h-9 rounded-lg text-xs cursor-pointer ${
-                    isFinalStage
+                  className={`w-full h-9 rounded-lg text-xs cursor-pointer ${isFinalStage
                       ? "bg-[#0069D3] hover:bg-[#0055b3] text-white"
                       : "bg-zinc-900 hover:bg-zinc-800 dark:bg-zinc-100 dark:text-zinc-900 text-white"
-                  }`}
+                    }`}
                 >
                   <Gavel className="mr-1.5 size-3.5" />
                   {t(isFinalStage ? "finalDecision" : "decision")}

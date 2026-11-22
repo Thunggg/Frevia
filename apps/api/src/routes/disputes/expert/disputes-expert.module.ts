@@ -11,4 +11,4 @@ import { DisputesExpertService } from './disputes-expert.service';
   providers: [DisputesExpertService, DisputesExpertRepository],
   exports: [DisputesExpertService, DisputesExpertRepository],
 })
-export class DisputesExpertModule { }
+export class DisputesExpertModule {}

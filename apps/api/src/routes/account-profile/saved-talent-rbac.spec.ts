@@ -1,4 +1,7 @@
-import { matchRoutePath, normalizeApiPath } from '../../shared/helper/match-route-path';
+import {
+  matchRoutePath,
+  normalizeApiPath,
+} from '../../shared/helper/match-route-path';
 
 /**
  * Bộ kiểm thử Action-Level RBAC và Kiểm soát hiển thị giao diện UI cho 2 cụm chức năng:
@@ -107,18 +110,35 @@ function checkPermission(
  * Mô phỏng trạng thái UI Client Profile Settings & Profile Page
  * dựa trên permissions của tài khoản.
  */
-function deriveUiState(grantedPermissions: Array<{ method: string; path: string }>) {
+function deriveUiState(
+  grantedPermissions: Array<{ method: string; path: string }>,
+) {
   const can = (method: string, path: string) =>
     checkPermission(grantedPermissions, method, path);
 
   const canUpdateClientProfile = can('PUT', '/api/clients/me/profile');
   const canViewFavorites = can('GET', '/api/favorites/freelancers');
-  const canAddFavorite = can('POST', '/api/favorites/freelancers/:freelancerId');
-  const canRemoveFavorite = can('DELETE', '/api/favorites/freelancers/:freelancerId');
+  const canAddFavorite = can(
+    'POST',
+    '/api/favorites/freelancers/:freelancerId',
+  );
+  const canRemoveFavorite = can(
+    'DELETE',
+    '/api/favorites/freelancers/:freelancerId',
+  );
   const canGetFollowing = can('GET', '/api/following/freelancers');
-  const canDiscoverFreelancers = can('GET', '/api/following/freelancers/discover');
-  const canFollowFreelancer = can('POST', '/api/following/freelancers/:freelancerId');
-  const canUnfollowFreelancer = can('DELETE', '/api/following/freelancers/:freelancerId');
+  const canDiscoverFreelancers = can(
+    'GET',
+    '/api/following/freelancers/discover',
+  );
+  const canFollowFreelancer = can(
+    'POST',
+    '/api/following/freelancers/:freelancerId',
+  );
+  const canUnfollowFreelancer = can(
+    'DELETE',
+    '/api/following/freelancers/:freelancerId',
+  );
   const canViewFollowingTab = canGetFollowing || canDiscoverFreelancers;
 
   return {
@@ -177,9 +197,15 @@ describe('CLIENT PROFILE & SAVED TALENT RBAC & UI Visibility Specs', () => {
     });
 
     it('Chuẩn hóa normalizeApiPath hoạt động nhất quán', () => {
-      expect(normalizeApiPath('/favorites/freelancers')).toBe('/api/favorites/freelancers');
-      expect(normalizeApiPath('/api/favorites/freelancers')).toBe('/api/favorites/freelancers');
-      expect(normalizeApiPath('/api/favorites/freelancers?sort=desc')).toBe('/api/favorites/freelancers');
+      expect(normalizeApiPath('/favorites/freelancers')).toBe(
+        '/api/favorites/freelancers',
+      );
+      expect(normalizeApiPath('/api/favorites/freelancers')).toBe(
+        '/api/favorites/freelancers',
+      );
+      expect(normalizeApiPath('/api/favorites/freelancers?sort=desc')).toBe(
+        '/api/favorites/freelancers',
+      );
     });
   });
 
@@ -191,7 +217,11 @@ describe('CLIENT PROFILE & SAVED TALENT RBAC & UI Visibility Specs', () => {
 
     TALENT_PERMISSIONS.forEach((perm) => {
       it(`Được phép thực hiện #${perm.id} · ${perm.method} ${perm.path}`, () => {
-        const allowed = checkPermission(fullPermissions, perm.method, perm.testActualPath);
+        const allowed = checkPermission(
+          fullPermissions,
+          perm.method,
+          perm.testActualPath,
+        );
         expect(allowed).toBe(true);
       });
     });
@@ -229,7 +259,11 @@ describe('CLIENT PROFILE & SAVED TALENT RBAC & UI Visibility Specs', () => {
 
     TALENT_PERMISSIONS.forEach((perm) => {
       it(`BỊ CHẶN thực hiện #${perm.id} · ${perm.method} ${perm.path}`, () => {
-        const allowed = checkPermission(emptyPermissions, perm.method, perm.testActualPath);
+        const allowed = checkPermission(
+          emptyPermissions,
+          perm.method,
+          perm.testActualPath,
+        );
         expect(allowed).toBe(false);
       });
     });
@@ -268,12 +302,20 @@ describe('CLIENT PROFILE & SAVED TALENT RBAC & UI Visibility Specs', () => {
 
   describe('4. Kịch bản TƯỚC TỪNG QUYỀN ĐƠN LẺ & Kiểm tra Ẩn UI tương ứng', () => {
     it('Tước #193 (PUT /api/clients/me/profile): Nút "Lưu thay đổi" bị ẨN, form bị khóa read-only', () => {
-      const permissionsWithout193 = TALENT_PERMISSIONS.filter((p) => p.id !== 193).map((p) => ({
+      const permissionsWithout193 = TALENT_PERMISSIONS.filter(
+        (p) => p.id !== 193,
+      ).map((p) => ({
         method: p.method,
         path: p.path,
       }));
 
-      expect(checkPermission(permissionsWithout193, 'PUT', '/api/clients/me/profile')).toBe(false);
+      expect(
+        checkPermission(
+          permissionsWithout193,
+          'PUT',
+          '/api/clients/me/profile',
+        ),
+      ).toBe(false);
 
       const ui = deriveUiState(permissionsWithout193);
       expect(ui.isSaveCompanyButtonVisible).toBe(false);
@@ -284,12 +326,20 @@ describe('CLIENT PROFILE & SAVED TALENT RBAC & UI Visibility Specs', () => {
     });
 
     it('Tước #197 (GET /api/favorites/freelancers): Tab Yêu thích và Link Sidebar bị ẨN, không gọi API favorites', () => {
-      const permissionsWithout197 = TALENT_PERMISSIONS.filter((p) => p.id !== 197).map((p) => ({
+      const permissionsWithout197 = TALENT_PERMISSIONS.filter(
+        (p) => p.id !== 197,
+      ).map((p) => ({
         method: p.method,
         path: p.path,
       }));
 
-      expect(checkPermission(permissionsWithout197, 'GET', '/api/favorites/freelancers')).toBe(false);
+      expect(
+        checkPermission(
+          permissionsWithout197,
+          'GET',
+          '/api/favorites/freelancers',
+        ),
+      ).toBe(false);
 
       const ui = deriveUiState(permissionsWithout197);
       expect(ui.isFavoritesTabVisible).toBe(false);
@@ -301,7 +351,9 @@ describe('CLIENT PROFILE & SAVED TALENT RBAC & UI Visibility Specs', () => {
     });
 
     it('Tước #198 (POST /api/favorites/freelancers/:freelancerId): Nút "Thêm vào yêu thích" trên trang profile bị ẨN', () => {
-      const permissionsWithout198 = TALENT_PERMISSIONS.filter((p) => p.id !== 198).map((p) => ({
+      const permissionsWithout198 = TALENT_PERMISSIONS.filter(
+        (p) => p.id !== 198,
+      ).map((p) => ({
         method: p.method,
         path: p.path,
       }));
@@ -321,7 +373,9 @@ describe('CLIENT PROFILE & SAVED TALENT RBAC & UI Visibility Specs', () => {
     });
 
     it('Tước #199 (DELETE /api/favorites/freelancers/:freelancerId): Nút "Bỏ yêu thích" (thùng rác & đã thích) bị ẨN', () => {
-      const permissionsWithout199 = TALENT_PERMISSIONS.filter((p) => p.id !== 199).map((p) => ({
+      const permissionsWithout199 = TALENT_PERMISSIONS.filter(
+        (p) => p.id !== 199,
+      ).map((p) => ({
         method: p.method,
         path: p.path,
       }));
@@ -342,12 +396,20 @@ describe('CLIENT PROFILE & SAVED TALENT RBAC & UI Visibility Specs', () => {
     });
 
     it('Tước #307 (GET /api/following/freelancers): Bộ lọc "Đang theo dõi" bị ẨN, không gọi API getFollowing', () => {
-      const permissionsWithout307 = TALENT_PERMISSIONS.filter((p) => p.id !== 307).map((p) => ({
+      const permissionsWithout307 = TALENT_PERMISSIONS.filter(
+        (p) => p.id !== 307,
+      ).map((p) => ({
         method: p.method,
         path: p.path,
       }));
 
-      expect(checkPermission(permissionsWithout307, 'GET', '/api/following/freelancers')).toBe(false);
+      expect(
+        checkPermission(
+          permissionsWithout307,
+          'GET',
+          '/api/following/freelancers',
+        ),
+      ).toBe(false);
 
       const ui = deriveUiState(permissionsWithout307);
       expect(ui.isFollowingFilterVisible).toBe(false);
@@ -358,7 +420,9 @@ describe('CLIENT PROFILE & SAVED TALENT RBAC & UI Visibility Specs', () => {
     });
 
     it('Tước #308 (POST /api/following/freelancers/:freelancerId): Nút "Theo dõi" (Follow) bị ẨN', () => {
-      const permissionsWithout308 = TALENT_PERMISSIONS.filter((p) => p.id !== 308).map((p) => ({
+      const permissionsWithout308 = TALENT_PERMISSIONS.filter(
+        (p) => p.id !== 308,
+      ).map((p) => ({
         method: p.method,
         path: p.path,
       }));
@@ -380,7 +444,9 @@ describe('CLIENT PROFILE & SAVED TALENT RBAC & UI Visibility Specs', () => {
     });
 
     it('Tước #309 (DELETE /api/following/freelancers/:freelancerId): Nút "Bỏ theo dõi" (Unfollow) bị ẨN', () => {
-      const permissionsWithout309 = TALENT_PERMISSIONS.filter((p) => p.id !== 309).map((p) => ({
+      const permissionsWithout309 = TALENT_PERMISSIONS.filter(
+        (p) => p.id !== 309,
+      ).map((p) => ({
         method: p.method,
         path: p.path,
       }));
@@ -402,7 +468,9 @@ describe('CLIENT PROFILE & SAVED TALENT RBAC & UI Visibility Specs', () => {
     });
 
     it('Tước #394 (GET /api/following/freelancers/discover): Bộ lọc "Khám phá" bị ẨN, không gọi API discover', () => {
-      const permissionsWithout394 = TALENT_PERMISSIONS.filter((p) => p.id !== 394).map((p) => ({
+      const permissionsWithout394 = TALENT_PERMISSIONS.filter(
+        (p) => p.id !== 394,
+      ).map((p) => ({
         method: p.method,
         path: p.path,
       }));
@@ -445,19 +513,35 @@ describe('CLIENT PROFILE & SAVED TALENT RBAC & UI Visibility Specs', () => {
     }));
 
     it('POST vào /api/favorites/freelancers (GET only) -> Bị chặn', () => {
-      expect(checkPermission(fullPermissions, 'POST', '/api/favorites/freelancers')).toBe(false);
+      expect(
+        checkPermission(fullPermissions, 'POST', '/api/favorites/freelancers'),
+      ).toBe(false);
     });
 
     it('GET vào /api/clients/me/profile (PUT only) -> Bị chặn', () => {
-      expect(checkPermission(fullPermissions, 'GET', '/api/clients/me/profile')).toBe(false);
+      expect(
+        checkPermission(fullPermissions, 'GET', '/api/clients/me/profile'),
+      ).toBe(false);
     });
 
     it('PATCH vào /api/following/freelancers/discover (GET only) -> Bị chặn', () => {
-      expect(checkPermission(fullPermissions, 'PATCH', '/api/following/freelancers/discover')).toBe(false);
+      expect(
+        checkPermission(
+          fullPermissions,
+          'PATCH',
+          '/api/following/freelancers/discover',
+        ),
+      ).toBe(false);
     });
 
     it('PUT vào /api/favorites/freelancers/42 (POST/DELETE only) -> Bị chặn', () => {
-      expect(checkPermission(fullPermissions, 'PUT', '/api/favorites/freelancers/42')).toBe(false);
+      expect(
+        checkPermission(
+          fullPermissions,
+          'PUT',
+          '/api/favorites/freelancers/42',
+        ),
+      ).toBe(false);
     });
   });
 });

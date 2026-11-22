@@ -1,4 +1,7 @@
-import { matchRoutePath, normalizeApiPath } from '../../shared/helper/match-route-path';
+import {
+  matchRoutePath,
+  normalizeApiPath,
+} from '../../shared/helper/match-route-path';
 
 /**
  * Bộ kiểm thử Action-Level RBAC cho nhóm chức năng:
@@ -169,7 +172,9 @@ describe('Proposal RBAC Permissions Verification (15 permissions)', () => {
       expect(
         normalizeApiPath('/proposals/jobs/1/submitted?page=1&limit=10'),
       ).toBe('/api/proposals/jobs/1/submitted');
-      expect(normalizeApiPath('jobs/10/proposals')).toBe('/api/jobs/10/proposals');
+      expect(normalizeApiPath('jobs/10/proposals')).toBe(
+        '/api/jobs/10/proposals',
+      );
     });
   });
 
@@ -305,4 +310,3 @@ describe('Proposal RBAC Permissions Verification (15 permissions)', () => {
     });
   });
 });
-

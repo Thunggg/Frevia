@@ -1,4 +1,7 @@
-import { matchRoutePath, normalizeApiPath } from '../../shared/helper/match-route-path';
+import {
+  matchRoutePath,
+  normalizeApiPath,
+} from '../../shared/helper/match-route-path';
 
 /**
  * Bộ kiểm thử Action-Level RBAC và Kiểm soát hiển thị giao diện UI cho 3 cụm chức năng:
@@ -271,9 +274,7 @@ describe('ACCOUNT PROFILE, ACTIVE SESSIONS & MESSAGING - Action-Level RBAC & UI 
     );
 
     it('Xử lý an toàn với query parameters và trailing slash', () => {
-      const getConversations = [
-        { method: 'GET', path: '/api/conversations' },
-      ];
+      const getConversations = [{ method: 'GET', path: '/api/conversations' }];
       expect(
         checkPermissionGuard(
           getConversations,
@@ -282,12 +283,14 @@ describe('ACCOUNT PROFILE, ACTIVE SESSIONS & MESSAGING - Action-Level RBAC & UI 
         ).allowed,
       ).toBe(true);
       expect(
-        checkPermissionGuard(getConversations, 'GET', '/api/conversations/').allowed,
+        checkPermissionGuard(getConversations, 'GET', '/api/conversations/')
+          .allowed,
       ).toBe(true);
 
       const getSessions = [{ method: 'GET', path: '/api/sessions' }];
       expect(
-        checkPermissionGuard(getSessions, 'GET', '/api/sessions?active=true').allowed,
+        checkPermissionGuard(getSessions, 'GET', '/api/sessions?active=true')
+          .allowed,
       ).toBe(true);
       expect(
         checkPermissionGuard(getSessions, 'GET', '/api/sessions/').allowed,
@@ -302,10 +305,12 @@ describe('ACCOUNT PROFILE, ACTIVE SESSIONS & MESSAGING - Action-Level RBAC & UI 
 
       // Xem và cập nhật profile OK
       expect(
-        checkPermissionGuard(profileOnly, 'GET', '/api/account-profile').allowed,
+        checkPermissionGuard(profileOnly, 'GET', '/api/account-profile')
+          .allowed,
       ).toBe(true);
       expect(
-        checkPermissionGuard(profileOnly, 'PUT', '/api/account-profile').allowed,
+        checkPermissionGuard(profileOnly, 'PUT', '/api/account-profile')
+          .allowed,
       ).toBe(true);
 
       // Đổi mật khẩu hoặc upload avatar bị chặn (403)
@@ -317,11 +322,8 @@ describe('ACCOUNT PROFILE, ACTIVE SESSIONS & MESSAGING - Action-Level RBAC & UI 
         ).allowed,
       ).toBe(false);
       expect(
-        checkPermissionGuard(
-          profileOnly,
-          'POST',
-          '/api/account-profile/avatar',
-        ).allowed,
+        checkPermissionGuard(profileOnly, 'POST', '/api/account-profile/avatar')
+          .allowed,
       ).toBe(false);
     });
 
@@ -335,7 +337,8 @@ describe('ACCOUNT PROFILE, ACTIVE SESSIONS & MESSAGING - Action-Level RBAC & UI 
         checkPermissionGuard(listOnly, 'GET', '/api/sessions/sess_123').allowed,
       ).toBe(false);
       expect(
-        checkPermissionGuard(listOnly, 'DELETE', '/api/sessions/sess_123').allowed,
+        checkPermissionGuard(listOnly, 'DELETE', '/api/sessions/sess_123')
+          .allowed,
       ).toBe(false);
     });
 
@@ -343,29 +346,42 @@ describe('ACCOUNT PROFILE, ACTIVE SESSIONS & MESSAGING - Action-Level RBAC & UI 
       const detailOnly = [{ method: 'GET', path: '/api/conversations/:id' }];
 
       expect(
-        checkPermissionGuard(detailOnly, 'GET', '/api/conversations/42').allowed,
+        checkPermissionGuard(detailOnly, 'GET', '/api/conversations/42')
+          .allowed,
       ).toBe(true);
       // Không thể xem messages
       expect(
-        checkPermissionGuard(detailOnly, 'GET', '/api/conversations/42/messages').allowed,
+        checkPermissionGuard(
+          detailOnly,
+          'GET',
+          '/api/conversations/42/messages',
+        ).allowed,
       ).toBe(false);
       // Không thể gửi messages
       expect(
-        checkPermissionGuard(detailOnly, 'POST', '/api/conversations/42/messages').allowed,
+        checkPermissionGuard(
+          detailOnly,
+          'POST',
+          '/api/conversations/42/messages',
+        ).allowed,
       ).toBe(false);
       // Không thể upload files
       expect(
-        checkPermissionGuard(detailOnly, 'POST', '/api/conversations/42/files').allowed,
+        checkPermissionGuard(detailOnly, 'POST', '/api/conversations/42/files')
+          .allowed,
       ).toBe(false);
       // Không thể mark read / pin / hide
       expect(
-        checkPermissionGuard(detailOnly, 'PATCH', '/api/conversations/42/read').allowed,
+        checkPermissionGuard(detailOnly, 'PATCH', '/api/conversations/42/read')
+          .allowed,
       ).toBe(false);
       expect(
-        checkPermissionGuard(detailOnly, 'PATCH', '/api/conversations/42/pin').allowed,
+        checkPermissionGuard(detailOnly, 'PATCH', '/api/conversations/42/pin')
+          .allowed,
       ).toBe(false);
       expect(
-        checkPermissionGuard(detailOnly, 'PATCH', '/api/conversations/42/hide').allowed,
+        checkPermissionGuard(detailOnly, 'PATCH', '/api/conversations/42/hide')
+          .allowed,
       ).toBe(false);
     });
 
@@ -375,7 +391,8 @@ describe('ACCOUNT PROFILE, ACTIVE SESSIONS & MESSAGING - Action-Level RBAC & UI 
       ];
 
       expect(
-        checkPermissionGuard(sendOnly, 'POST', '/api/conversations/42/messages').allowed,
+        checkPermissionGuard(sendOnly, 'POST', '/api/conversations/42/messages')
+          .allowed,
       ).toBe(true);
       expect(
         checkPermissionGuard(
@@ -477,9 +494,10 @@ describe('ACCOUNT PROFILE, ACTIVE SESSIONS & MESSAGING - Action-Level RBAC & UI 
     it.each(ACCOUNT_SESSIONS_MESSAGING_PERMISSIONS)(
       'Thu hồi quyền #$id ($method $path): Endpoint tương ứng trả về 403, 16 endpoint còn lại vẫn 200 OK',
       (revokedPerm) => {
-        const remainingPermissions = ACCOUNT_SESSIONS_MESSAGING_PERMISSIONS.filter(
-          (p) => p.id !== revokedPerm.id,
-        );
+        const remainingPermissions =
+          ACCOUNT_SESSIONS_MESSAGING_PERMISSIONS.filter(
+            (p) => p.id !== revokedPerm.id,
+          );
 
         // Kiểm tra endpoint bị thu hồi bị chặn (403)
         const revokedResult = checkPermissionGuard(
@@ -613,10 +631,12 @@ describe('ACCOUNT PROFILE, ACTIVE SESSIONS & MESSAGING - Action-Level RBAC & UI 
       expect(uiState.showChangePasswordSection).toBe(false);
 
       expect(
-        checkPermissionGuard(basicProfilePerms, 'GET', '/api/account-profile').allowed,
+        checkPermissionGuard(basicProfilePerms, 'GET', '/api/account-profile')
+          .allowed,
       ).toBe(true);
       expect(
-        checkPermissionGuard(basicProfilePerms, 'PUT', '/api/account-profile').allowed,
+        checkPermissionGuard(basicProfilePerms, 'PUT', '/api/account-profile')
+          .allowed,
       ).toBe(true);
       expect(
         checkPermissionGuard(
@@ -646,7 +666,8 @@ describe('ACCOUNT PROFILE, ACTIVE SESSIONS & MESSAGING - Action-Level RBAC & UI 
       expect(uiState.showRevokeSessionButton).toBe(false);
 
       expect(
-        checkPermissionGuard(sessionAuditorPerms, 'GET', '/api/sessions').allowed,
+        checkPermissionGuard(sessionAuditorPerms, 'GET', '/api/sessions')
+          .allowed,
       ).toBe(true);
       expect(
         checkPermissionGuard(
@@ -681,10 +702,12 @@ describe('ACCOUNT PROFILE, ACTIVE SESSIONS & MESSAGING - Action-Level RBAC & UI 
       expect(uiState.showHideConversationOption).toBe(false);
 
       expect(
-        checkPermissionGuard(readOnlyChatPerms, 'GET', '/api/conversations').allowed,
+        checkPermissionGuard(readOnlyChatPerms, 'GET', '/api/conversations')
+          .allowed,
       ).toBe(true);
       expect(
-        checkPermissionGuard(readOnlyChatPerms, 'GET', '/api/conversations/42').allowed,
+        checkPermissionGuard(readOnlyChatPerms, 'GET', '/api/conversations/42')
+          .allowed,
       ).toBe(true);
       expect(
         checkPermissionGuard(
@@ -756,4 +779,3 @@ describe('ACCOUNT PROFILE, ACTIVE SESSIONS & MESSAGING - Action-Level RBAC & UI 
     });
   });
 });
-

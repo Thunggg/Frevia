@@ -66,7 +66,7 @@ export function ManageMilestoneDialog({
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [amount, setAmount] = useState<number>(0);
+  const [amount, setAmount] = useState<number | string>("");
   const [dueDate, setDueDate] = useState<string>("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -87,12 +87,12 @@ export function ManageMilestoneDialog({
       if (milestoneToEdit) {
         setTitle(milestoneToEdit.title);
         setDescription(milestoneToEdit.description || "");
-        setAmount(Number(milestoneToEdit.amount));
+        setAmount(milestoneToEdit.amount ? String(Number(milestoneToEdit.amount)) : "");
         setDueDate(toDateInputValue(milestoneToEdit.dueDate));
       } else {
         setTitle("");
         setDescription("");
-        setAmount(maxAvailable > 0 ? maxAvailable : 0);
+        setAmount(maxAvailable > 0 ? String(maxAvailable) : "");
         setDueDate("");
       }
     }
@@ -111,12 +111,13 @@ export function ManageMilestoneDialog({
       return;
     }
 
-    if (!amount || amount <= 0) {
+    const parsedAmount = typeof amount === "number" ? amount : parseFloat(amount);
+    if (isNaN(parsedAmount) || parsedAmount <= 0) {
       toastError({ message: t("amountRequired") });
       return;
     }
 
-    if (totalContractAmount > 0 && amount > maxAvailable) {
+    if (totalContractAmount > 0 && parsedAmount > maxAvailable) {
       toastError({
         message: t("amountExceeds", {
           amount: `$${maxAvailable.toLocaleString("en-US", { minimumFractionDigits: 2 })}`,
@@ -156,7 +157,7 @@ export function ManageMilestoneDialog({
       const payload = {
         title: title.trim(),
         description: description.trim() || undefined,
-        amount: Number(amount),
+        amount: parsedAmount,
         dueDate: formattedDueDate,
       };
 
@@ -259,13 +260,20 @@ export function ManageMilestoneDialog({
               <div className="relative mt-1.5">
                 <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-zinc-400" />
                 <input
-                  type="number"
-                  min="1"
-                  step="any"
+                  type="text"
+                  inputMode="decimal"
                   required
                   disabled={isAmountLocked}
-                  value={amount || ""}
-                  onChange={(e) => setAmount(Number(e.target.value))}
+                  value={amount}
+                  onFocus={(e) => e.target.select()}
+                  onChange={(e) => {
+                    let val = e.target.value.replace(/[^\d.]/g, "");
+                    if (/^0\d/.test(val)) {
+                      val = val.replace(/^0+/, "");
+                      if (val === "") val = "0";
+                    }
+                    setAmount(val);
+                  }}
                   placeholder="0.00"
                   className="w-full rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 py-2 pl-9 pr-3 text-xs text-zinc-900 dark:text-zinc-100 focus:border-[#0069D3] focus:outline-hidden disabled:opacity-60 disabled:cursor-not-allowed"
                 />

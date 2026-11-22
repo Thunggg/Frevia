@@ -3075,16 +3075,22 @@
     "adminPortal": "Admin Portal"
   },
   "footer": {
+    "brandTagline": "Leading digital talent marketplace with standard service contracts, 100% secured Escrow protection, and smart AI capabilities.",
     "platform": "Platform",
     "community": "Community",
+    "legal": "Legal",
     "findWork": "Find Work",
+    "expertsAndFreelancers": "Experts & Freelancers",
     "messages": "Messages",
     "forum": "Forum",
+    "talksForum": "Talks Forum",
+    "helpCenter": "Help Center & Policies",
     "becomeFreelancer": "Become a Freelancer",
     "now": "NOW",
     "termsAndConditions": "Terms and conditions",
     "privacyPolicy": "Privacy Policy",
-    "rights": "© {year} Frevia. All Rights Reserved"
+    "rights": "© {year} Frevia. All Rights Reserved",
+    "poweredBy": "Design & Technology powered by Frevia."
   },
   "bookmark": {
     "added": "Job saved to bookmarks",
@@ -3512,7 +3518,9 @@
       "title": "Browse Top Categories",
       "desc": "Find projects matching your skills across our most popular work domains.",
       "viewAll": "View all jobs",
-      "jobsCount": "{count} open jobs",
+      "jobsCount": "{count, plural, =0 {No open jobs} one {# open job} other {# open jobs}}",
+      "noJobs": "No open jobs",
+      "exploreJobs": "Explore jobs",
       "empty": "No job categories available at the moment."
     },
     "ai": {
@@ -4407,6 +4415,15 @@
       "continue": "Continue",
       "reviewRequest": "Review Request",
       "submitRequest": "Submit Request",
+      "quickSplitPresets": "Quick presets:",
+      "presetRefundClient": "100% Refund Client",
+      "presetFiftyFifty": "50% - 50%",
+      "presetPayFreelancer": "100% Pay Freelancer",
+      "reasonPlaceholder": "Enter reason title or select a common option below...",
+      "charactersMin": "{count}/10 characters minimum",
+      "twoTierNoticeTitle": "2-Tier Dispute Resolution Process",
+      "twoTierStep1": "Step 1 (Parties): The counterparty has 48 hours to Accept or Decline. If accepted, escrowed funds are split immediately as proposed.",
+      "twoTierStep2": "Step 2 (Frevia Expert): If declined or expired, the case escalates directly to a Frevia Expert. The expert can adjust the split ratio and issue a binding decision that settles funds immediately without requiring mutual approval.",
       "submitSuccess": "Resolution request sent. The counterparty has 48 hours to respond.",
       "submitError": "Failed to submit resolution request."
     },

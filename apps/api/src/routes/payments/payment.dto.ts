@@ -13,8 +13,6 @@ import {
   GetTransactionListQuerySchema,
   GetTransactionListResponseSchema,
   PaymentMethodActionResponseSchema,
-  RefundMilestoneBodySchema,
-  RefundMilestoneResponseSchema,
   ReleaseMilestoneResponseSchema,
   SetDefaultPaymentMethodBodySchema,
   StripeConnectStatusResponseSchema,
@@ -98,14 +96,6 @@ export class DisputeSettlementResponseDTO extends createZodDto(
   DisputeSettlementResponseSchema,
 ) {}
 
-export class RefundMilestoneBodyDTO extends createZodDto(
-  RefundMilestoneBodySchema,
-) {}
-
 export class ReleaseMilestoneResponseDTO extends createZodDto(
   ReleaseMilestoneResponseSchema,
-) {}
-
-export class RefundMilestoneResponseDTO extends createZodDto(
-  RefundMilestoneResponseSchema,
 ) {}

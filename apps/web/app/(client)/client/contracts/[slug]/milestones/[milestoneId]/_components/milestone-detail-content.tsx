@@ -25,8 +25,8 @@ import { MilestoneOverviewTab } from "./milestone-overview-tab";
 import { MilestoneSubmissionsTab } from "./milestone-submissions-tab";
 import { MilestoneFilesTab } from "./milestone-files-tab";
 import { MilestoneActivityTimeline } from "./milestone-activity-timeline";
-import { OpenResolutionDialog } from "@/components/disputes/open-resolution-dialog";
-import { ResolutionDetailSheet } from "@/components/disputes/resolution-detail-sheet";
+import { OpenResolutionDialog } from "@/app/(client)/_components/disputes/open-resolution-dialog";
+import { ResolutionDetailSheet } from "@/app/(client)/_components/disputes/resolution-detail-sheet";
 
 interface MilestoneDetailContentProps {
   initialContract: ContractDetailType;
@@ -328,58 +328,6 @@ export function MilestoneDetailContent({
     }
   };
 
-  const handleRefundMilestone = async () => {
-    if (
-      !window.confirm(
-        t("toasts.refundConfirm", {
-          amount: `$${Number(milestone.amount).toLocaleString("en-US", { minimumFractionDigits: 2 })}`,
-          title: milestone.title,
-        }),
-      )
-    ) {
-      return;
-    }
-    try {
-      await paymentApiRequest.refundMilestone(contract.id, milestone.id);
-      await Promise.all([
-        queryClient.invalidateQueries({
-          queryKey: ["milestone-detail", contract.id, milestone.id],
-        }),
-        queryClient.invalidateQueries({
-          queryKey: ["client-contract-detail", contract.id],
-        }),
-        queryClient.invalidateQueries({
-          queryKey: ["client-contract-milestones", contract.id],
-        }),
-        queryClient.invalidateQueries({
-          queryKey: ["client-transactions"],
-        }),
-        queryClient.invalidateQueries({
-          queryKey: ["freelancer-transactions"],
-        }),
-        queryClient.invalidateQueries({
-          queryKey: ["transactions-summary"],
-        }),
-        queryClient.invalidateQueries({
-          queryKey: ["transactions"],
-        }),
-        queryClient.invalidateQueries({
-          queryKey: ["contracts-list"],
-        }),
-      ]);
-      toastSuccess({
-        message: t("toasts.refunded", { title: milestone.title }),
-      });
-    } catch (error) {
-      toastError({
-        message:
-          error instanceof ApiFail
-            ? error.response.error.message
-            : t("toasts.refundFailed"),
-      });
-    }
-  };
-
   if (!isPermissionLoading && !canViewDetail) {
     return (
       <div className="space-y-4 mx-auto font-sans pb-16">
@@ -434,7 +382,6 @@ export function MilestoneDetailContent({
             onSubmitWork={() => setSubmitModalOpen(true)}
             onReviewSubmission={handleReview}
             onRelease={() => void handleReleaseMilestone()}
-            onRefund={() => void handleRefundMilestone()}
           />
         )}
 
@@ -450,7 +397,6 @@ export function MilestoneDetailContent({
             onSubmitWork={() => setSubmitModalOpen(true)}
             onReviewSubmission={handleReview}
             onRelease={() => void handleReleaseMilestone()}
-            onRefund={() => void handleRefundMilestone()}
           />
         )}
 
@@ -507,6 +453,7 @@ export function MilestoneDetailContent({
         contractId={contract.id}
         contractExpiresAt={contract.expiresAt}
         milestone={milestone}
+        isClient={isClient}
         onCreated={() => {
           setViewDisputeSheet(true);
         }}
