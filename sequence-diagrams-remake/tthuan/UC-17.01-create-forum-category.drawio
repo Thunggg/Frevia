@@ -25,8 +25,8 @@
             <mxPoint x="570" y="920" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="opt_auth_l2" value="[403 Forbidden: user is banned or deleted]" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;" parent="1" vertex="1">
-          <mxGeometry x="90" y="920" width="320" height="30" as="geometry" />
+        <mxCell id="opt_auth_l2" value="[user is banned&amp;nbsp;&lt;div&gt;|| roleId is missing&amp;nbsp;&lt;/div&gt;&lt;div&gt;|| permission denied]&lt;/div&gt;" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;" parent="1" vertex="1">
+          <mxGeometry x="115" y="922" width="175" height="38" as="geometry" />
         </mxCell>
         <mxCell id="inv1" value="5.1.1. Return 401 Unauthorized" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;" parent="1" edge="1">
           <mxGeometry relative="1" as="geometry">

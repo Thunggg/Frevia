@@ -154,8 +154,8 @@
             <mxPoint x="820" y="755" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="jwt_g2_04" value="[user is banned or deleted]" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;labelBackgroundColor=none;" parent="1" vertex="1">
-          <mxGeometry x="182" y="760" width="148" height="24" as="geometry" />
+        <mxCell id="jwt_g2_04" value="[user is banned || roleId is missing&amp;nbsp;&lt;div&gt;|| permission denied]&lt;/div&gt;" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;labelBackgroundColor=none;" parent="1" vertex="1">
+          <mxGeometry x="182" y="758" width="210" height="30" as="geometry" />
         </mxCell>
         <mxCell id="jwt_e21_04" value="" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;labelBackgroundColor=none;" parent="1" edge="1">
           <mxGeometry relative="1" as="geometry">

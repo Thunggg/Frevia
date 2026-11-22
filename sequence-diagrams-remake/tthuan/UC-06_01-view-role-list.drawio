@@ -106,8 +106,8 @@
             <mxPoint x="540" y="576" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="jwt_g2_01" value="[user is banned or deleted]" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;strokeColor=none;spacingLeft=3;labelBackgroundColor=none;" parent="1" vertex="1">
-          <mxGeometry x="172" y="577" width="250" height="26" as="geometry" />
+        <mxCell id="jwt_g2_01" value="[user is banned&amp;nbsp;&lt;div&gt;|| roleId is missing&amp;nbsp;&lt;/div&gt;&lt;div&gt;|| permission denied]&lt;/div&gt;" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;strokeColor=none;spacingLeft=3;labelBackgroundColor=none;" parent="1" vertex="1">
+          <mxGeometry x="172" y="577" width="170" height="42" as="geometry" />
         </mxCell>
         <mxCell id="jwt_m21_01" value="2.2.1. Return 403 response" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;" parent="1" edge="1">
           <mxGeometry relative="1" as="geometry">
