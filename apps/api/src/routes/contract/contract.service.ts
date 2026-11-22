@@ -4,6 +4,7 @@ import {
   Logger,
   OnModuleDestroy,
   OnModuleInit,
+  Optional,
 } from '@nestjs/common';
 import {
   CreateContractBodyType,
@@ -45,10 +46,12 @@ import {
   ContractStatus,
   MilestonePaymentStatus,
   MilestoneStatus,
+  NotificationType,
   Prisma,
 } from '@prisma/client';
 import { ContractPdfService } from '../../shared/services/contract-pdf.service';
 import { PaymentService } from '../payments/payment.service';
+import { AppNotificationService } from '../../shared/services/app-notification.service';
 
 const ALLOWED_PROPOSAL_STATUSES = ['SUBMITTED', 'INTERVIEWING', 'HIRED'];
 
@@ -61,6 +64,7 @@ export class ContractService implements OnModuleInit, OnModuleDestroy {
     private readonly contractRepository: ContractRepository,
     private readonly contractPdfService: ContractPdfService,
     private readonly paymentService: PaymentService,
+    @Optional() private readonly notificationService?: AppNotificationService,
   ) {}
 
   onModuleInit() {
@@ -304,6 +308,46 @@ export class ContractService implements OnModuleInit, OnModuleDestroy {
           );
         }
       }
+
+      if (signed.status === ContractStatus.ACTIVE) {
+        await this.notificationService?.sendMany([
+          {
+            userId: contract.clientId,
+            type: NotificationType.CONTRACT_CREATED,
+            title: 'Contract activated',
+            message: `Contract #${contractId} is now active. Work can begin!`,
+            data: {
+              contractId,
+              contractSlug: contract.slug,
+              href: `/client/contracts/${contract.slug ?? contractId}`,
+            },
+          },
+          {
+            userId: contract.freelancerId,
+            type: NotificationType.CONTRACT_CREATED,
+            title: 'Contract activated',
+            message: `Contract #${contractId} is now active. Work can begin!`,
+            data: {
+              contractId,
+              contractSlug: contract.slug,
+              href: `/freelancer/contracts/${contract.slug ?? contractId}`,
+            },
+          },
+        ]);
+      } else if (isClient) {
+        await this.notificationService?.send({
+          userId: contract.freelancerId,
+          type: NotificationType.CONTRACT_CREATED,
+          title: 'Contract signed by client',
+          message: `The client has signed contract #${contractId}. Please review and sign to activate the contract.`,
+          data: {
+            contractId,
+            contractSlug: contract.slug,
+            href: `/freelancer/contracts/${contract.slug ?? contractId}`,
+          },
+        });
+      }
+
       return signed;
     } catch (error) {
       this.logger.error(`Failed to sign contract #${contractId}:`, error);
@@ -393,10 +437,24 @@ export class ContractService implements OnModuleInit, OnModuleDestroy {
         throw ContractHasUnsettledMilestonesException();
       }
 
-      return await this.contractRepository.completeContract(
+      const completed = await this.contractRepository.completeContract(
         contractId,
         contract.jobId,
       );
+
+      await this.notificationService?.send({
+        userId: contract.freelancerId,
+        type: NotificationType.MILESTONE_COMPLETED,
+        title: 'Contract completed',
+        message: `The client has marked contract #${contractId} as completed.`,
+        data: {
+          contractId,
+          contractSlug: contract.slug,
+          href: `/freelancer/contracts/${contract.slug ?? contractId}`,
+        },
+      });
+
+      return completed;
     } catch (error) {
       this.logger.error(`Failed to complete contract #${contractId}:`, error);
       if (error instanceof HttpException) throw error;
@@ -469,7 +527,26 @@ export class ContractService implements OnModuleInit, OnModuleDestroy {
         }
       }
 
-      return await this.contractRepository.cancelContract(contractId);
+      const cancelled =
+        await this.contractRepository.cancelContract(contractId);
+
+      const isClient = contract.clientId === userId;
+      const targetUserId = isClient ? contract.freelancerId : contract.clientId;
+      await this.notificationService?.send({
+        userId: targetUserId,
+        type: NotificationType.JOB_ALERT,
+        title: 'Contract cancelled',
+        message: `Contract #${contractId} has been cancelled by the ${isClient ? 'client' : 'freelancer'}.`,
+        data: {
+          contractId,
+          contractSlug: contract.slug,
+          href: isClient
+            ? `/freelancer/contracts/${contract.slug ?? contractId}`
+            : `/client/contracts/${contract.slug ?? contractId}`,
+        },
+      });
+
+      return cancelled;
     } catch (error) {
       this.logger.error(`Failed to cancel contract #${contractId}:`, error);
       if (error instanceof HttpException) throw error;
