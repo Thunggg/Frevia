@@ -15,33 +15,18 @@ import {
   DisputeDetailResponseDTO,
   DisputeListResponseDTO,
   GetDisputeListQueryDTO,
-  GetResolutionReasonsQueryDTO,
-  GetResolutionReasonsResponseDTO,
   RespondDisputeBodyDTO,
-  ReviewDisputeDecisionBodyDTO,
 } from './dispute.dto';
 import { DisputeService } from './dispute.service';
 import type {
   CreateDisputeBodyType,
   GetDisputeListQueryType,
-  GetResolutionReasonsQueryType,
   RespondDisputeBodyType,
-  ReviewDisputeDecisionBodyType,
 } from '@shared/types';
 
 @Controller('disputes')
 export class DisputeController {
   constructor(private readonly disputeService: DisputeService) {}
-
-  @Get('reasons')
-  @ZodSerializerDto(GetResolutionReasonsResponseDTO)
-  getResolutionReasons(
-    @UserActive('userId') userId: number,
-    @Query() query: GetResolutionReasonsQueryDTO,
-  ) {
-    const { milestoneId } = query as GetResolutionReasonsQueryType;
-    return this.disputeService.getResolutionReasons(userId, milestoneId);
-  }
 
   @Get()
   @ZodSerializerDto(DisputeListResponseDTO)
@@ -115,19 +100,5 @@ export class DisputeController {
     @Param('id', ParseIntPipe) disputeId: number,
   ) {
     return this.disputeService.getDisputeDetail(userId, disputeId);
-  }
-
-  @Post(':id/review')
-  @ZodSerializerDto(DisputeDetailResponseDTO)
-  submitDecisionReview(
-    @UserActive('userId') userId: number,
-    @Param('id', ParseIntPipe) disputeId: number,
-    @Body() body: ReviewDisputeDecisionBodyDTO,
-  ) {
-    return this.disputeService.submitDecisionReview(
-      userId,
-      disputeId,
-      body as ReviewDisputeDecisionBodyType,
-    );
   }
 }

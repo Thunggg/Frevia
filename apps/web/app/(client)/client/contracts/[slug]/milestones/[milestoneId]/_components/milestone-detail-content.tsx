@@ -453,6 +453,7 @@ export function MilestoneDetailContent({
         contractId={contract.id}
         contractExpiresAt={contract.expiresAt}
         milestone={milestone}
+        isClient={isClient}
         onCreated={() => {
           setViewDisputeSheet(true);
         }}

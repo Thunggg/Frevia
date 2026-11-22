@@ -38,7 +38,7 @@ const disputeDetailInclude = {
 
 @Injectable()
 export class DisputeRepository {
-  constructor(private readonly prisma: PrismaService) { }
+  constructor(private readonly prisma: PrismaService) {}
 
   async findMilestoneWithContract(milestoneId: number) {
     return this.prisma.milestone.findUnique({
@@ -111,12 +111,12 @@ export class DisputeRepository {
           resolutionType: data.resolutionType,
           proposedFreelancerAmount:
             data.proposedFreelancerAmount !== undefined &&
-              data.proposedFreelancerAmount !== null
+            data.proposedFreelancerAmount !== null
               ? new Prisma.Decimal(data.proposedFreelancerAmount)
               : null,
           proposedClientAmount:
             data.proposedClientAmount !== undefined &&
-              data.proposedClientAmount !== null
+            data.proposedClientAmount !== null
               ? new Prisma.Decimal(data.proposedClientAmount)
               : null,
           proposedDueDate: data.proposedDueDate ?? null,

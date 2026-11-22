@@ -24,7 +24,6 @@ import {
   HoldMilestoneRequiredException,
   MilestoneAlreadyReleasedException,
   MilestoneNotEligibleForFundingException,
-  MilestoneNotEligibleForRefundException,
   MilestoneNotFundedException,
   PaymentForbiddenException,
   StripeAccountNotConnectedException,
@@ -1362,77 +1361,6 @@ export class PaymentService {
       success: true,
       releasedMilestoneIds,
       refundedMilestoneIds,
-    };
-  }
-
-  async refundMilestone(
-    userId: number,
-    contractId: number,
-    milestoneId: number,
-  ) {
-    const milestone = await this.paymentRepo.findMilestoneById(milestoneId);
-    if (
-      !milestone ||
-      milestone.contractId !== contractId ||
-      milestone.contract.clientId !== userId
-    ) {
-      throw PaymentForbiddenException();
-    }
-
-    if (milestone.paymentStatus !== MilestonePaymentStatus.FUNDED) {
-      throw MilestoneNotFundedException();
-    }
-
-    if (
-      milestone.status !== MilestoneStatus.LATE &&
-      milestone.status !== MilestoneStatus.PENDING
-    ) {
-      throw MilestoneNotEligibleForRefundException();
-    }
-
-    const escrowTx = await this.paymentRepo.findEscrowDepositTransaction(
-      milestoneId,
-      contractId,
-    );
-    if (!escrowTx || !escrowTx.stripePaymentIntentId) {
-      throw new Error('Original escrow payment record not found');
-    }
-
-    const reason =
-      milestone.status === MilestoneStatus.LATE
-        ? 'FREELANCER_LATE_NO_SUBMISSION'
-        : 'FREELANCER_NOT_STARTED';
-
-    const milestoneAmount = Number(milestone.amount);
-    const refund = await this.stripeService.createRefund({
-      paymentIntentId: escrowTx.stripePaymentIntentId,
-      amountInCents: Math.round(milestoneAmount * 100),
-      metadata: {
-        type: TransactionType.REFUND,
-        contractId: String(contractId),
-        milestoneId: String(milestoneId),
-        reason,
-      },
-      idempotencyKey: `refund-milestone-${milestoneId}`,
-    });
-
-    await this.paymentRepo.applyMilestoneRefundTransaction({
-      milestoneId,
-      contractId,
-      contractSlug: milestone.contract.slug,
-      clientId: userId,
-      freelancerId: milestone.contract.freelancerId,
-      milestoneTitle: milestone.title,
-      amount: milestoneAmount,
-      refundId: refund.id,
-      reason,
-      isAuto: true,
-    });
-
-    return {
-      success: true,
-      message: 'Milestone funds refunded to client successfully',
-      refundId: refund.id,
     };
   }
 

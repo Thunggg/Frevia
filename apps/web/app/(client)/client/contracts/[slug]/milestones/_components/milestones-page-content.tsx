@@ -637,6 +637,7 @@ export function MilestonesPageContent({
         contractId={contract.id}
         contractExpiresAt={contract.expiresAt}
         milestone={disputeTargetMilestone}
+        isClient={isClient}
         onCreated={(created) => {
           setViewDisputeMilestoneId(created.milestoneId);
         }}

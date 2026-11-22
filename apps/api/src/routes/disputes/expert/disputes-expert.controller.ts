@@ -12,14 +12,12 @@ import { UserActive } from '../../../shared/decorators/user-active.decorators';
 import {
   ExpertDisputeDecisionBodyDTO,
   ExpertDisputeDetailResponseDTO,
-  ExpertDisputeFinalDecisionBodyDTO,
   ExpertDisputeListResponseDTO,
   GetExpertDisputeListQueryDTO,
 } from './disputes-expert.dto';
 import { DisputesExpertService } from './disputes-expert.service';
 import type {
   AdminDisputeDecisionBodyType,
-  AdminDisputeFinalDecisionBodyType,
   GetDisputeListQueryType,
 } from '@shared/types';
 
@@ -68,22 +66,6 @@ export class DisputesExpertController {
       roleName,
       disputeId,
       body as AdminDisputeDecisionBodyType,
-    );
-  }
-
-  @Post(':id/final-decision')
-  @ZodSerializerDto(ExpertDisputeDetailResponseDTO)
-  makeFinalDecision(
-    @UserActive('userId') userId: number,
-    @UserActive('roleName') roleName: string,
-    @Param('id', ParseIntPipe) disputeId: number,
-    @Body() body: ExpertDisputeFinalDecisionBodyDTO,
-  ) {
-    return this.expertDisputeService.makeFinalDecision(
-      userId,
-      roleName,
-      disputeId,
-      body as AdminDisputeFinalDecisionBodyType,
     );
   }
 }

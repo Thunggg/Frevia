@@ -366,53 +366,6 @@ describe('Payment Management (UF-153 to UF-165)', () => {
   });
 
   // =========================================================================
-  // UF-157: refundPayment
-  // =========================================================================
-  describe('UF-157 refundPayment', () => {
-    // UF-157: Hoàn lại tiền ký quỹ milestone thành công cho khách hàng qua Stripe.
-    it('refunds escrow deposit to client for funded milestone', async () => {
-      repo.findMilestoneById.mockResolvedValueOnce({
-        ...mockMilestone,
-        status: MilestoneStatus.LATE,
-        paymentStatus: MilestonePaymentStatus.FUNDED,
-      });
-      repo.findEscrowDepositTransaction.mockResolvedValueOnce({
-        id: 77,
-        stripePaymentIntentId: 'pi_original_deposit',
-      });
-      stripeService.createRefund.mockResolvedValueOnce({ id: 're_refund_123' });
-      repo.updateMilestonePaymentStatus.mockResolvedValueOnce({});
-      repo.createTransaction.mockResolvedValueOnce({});
-
-      const result = await service.refundMilestone(1, 10, 20);
-
-      expect(result.success).toBe(true);
-      expect(result.refundId).toBe('re_refund_123');
-      expect(stripeService.createRefund).toHaveBeenCalledWith(
-        expect.objectContaining({
-          paymentIntentId: 'pi_original_deposit',
-          metadata: expect.any(Object),
-        }),
-      );
-      expect(repo.applyMilestoneRefundTransaction).toHaveBeenCalledWith(
-        expect.objectContaining({
-          milestoneId: 20,
-          contractId: 10,
-        }),
-      );
-    });
-
-    // Ném ngoại lệ UnprocessableEntityException khi cố hoàn tiền cho milestone chưa được nạp tiền.
-    it('throws UnprocessableEntityException when attempting to refund unfunded milestone', async () => {
-      repo.findMilestoneById.mockResolvedValueOnce(mockMilestone);
-
-      await expect(service.refundMilestone(1, 10, 20)).rejects.toThrow(
-        UnprocessableEntityException,
-      );
-    });
-  });
-
-  // =========================================================================
   // UF-159: releasePayment
   // =========================================================================
   describe('UF-159 releasePayment', () => {
@@ -663,6 +616,11 @@ describe('Payment Management (UF-153 to UF-165)', () => {
       stripeService.retrievePaymentIntent.mockResolvedValueOnce({
         id: 'pi_sync_test',
         status: 'requires_payment_method',
+        metadata: {
+          userId: '1',
+          type: TransactionType.ESCROW_DEPOSIT,
+          milestoneId: '20',
+        },
       });
 
       const result = await service.syncPaymentIntent(1, 'pi_sync_test');

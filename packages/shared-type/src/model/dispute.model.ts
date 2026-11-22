@@ -16,34 +16,6 @@ export type DisputeEvidenceFileItemType = z.infer<
   typeof DisputeEvidenceFileItemSchema
 >;
 
-export const GetResolutionReasonsQuerySchema = z.object({
-  milestoneId: z.coerce.number().int().positive(),
-});
-export type GetResolutionReasonsQueryType = z.infer<
-  typeof GetResolutionReasonsQuerySchema
->;
-
-export const ResolutionReasonItemSchema = z.object({
-  code: z.string(),
-  label: z.string(),
-  description: z.string(),
-  allowedResolutionTypes: z.array(DisputeResolutionTypeEnum),
-});
-export type ResolutionReasonItemType = z.infer<
-  typeof ResolutionReasonItemSchema
->;
-
-export const GetResolutionReasonsResponseSchema = z.object({
-  role: z.enum(['CLIENT', 'FREELANCER']),
-  milestoneStatus: z.string(),
-  milestoneAmount: z.coerce.number(),
-  milestoneDueDate: z.coerce.date().nullable().optional(),
-  reasons: z.array(ResolutionReasonItemSchema),
-});
-export type GetResolutionReasonsResponseType = z.infer<
-  typeof GetResolutionReasonsResponseSchema
->;
-
 export const CreateDisputeBodySchema = z.object({
   milestoneId: z.number().int().positive(),
   reason: z.string().min(3).max(255),
@@ -73,14 +45,6 @@ export const RespondDisputeBodySchema = z.object({
 });
 export type RespondDisputeBodyType = z.infer<typeof RespondDisputeBodySchema>;
 
-export const ReviewDisputeDecisionBodySchema = z.object({
-  response: z.enum(['ACCEPTED', 'REJECTED']),
-  reason: z.string().max(2000).optional(),
-});
-export type ReviewDisputeDecisionBodyType = z.infer<
-  typeof ReviewDisputeDecisionBodySchema
->;
-
 export const AdminDisputeDecisionBodySchema = z.object({
   freelancerAmount: z.coerce.number().min(0),
   clientAmount: z.coerce.number().min(0),
@@ -88,15 +52,6 @@ export const AdminDisputeDecisionBodySchema = z.object({
 });
 export type AdminDisputeDecisionBodyType = z.infer<
   typeof AdminDisputeDecisionBodySchema
->;
-
-export const AdminDisputeFinalDecisionBodySchema = z.object({
-  freelancerAmount: z.coerce.number().min(0),
-  clientAmount: z.coerce.number().min(0),
-  decisionReason: z.string().min(5).max(3000),
-});
-export type AdminDisputeFinalDecisionBodyType = z.infer<
-  typeof AdminDisputeFinalDecisionBodySchema
 >;
 
 export const GetDisputeListQuerySchema = z.object({

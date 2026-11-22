@@ -26,7 +26,6 @@ import {
   GetTransactionListQueryDTO,
   GetTransactionListResponseDTO,
   PaymentMethodActionResponseDTO,
-  RefundMilestoneResponseDTO,
   ReleaseMilestoneResponseDTO,
   SetDefaultPaymentMethodBodyDTO,
   StripeConnectStatusResponseDTO,
@@ -212,21 +211,6 @@ export class PaymentController {
       contractId,
       milestoneId,
     );
-  }
-
-  /**
-   * [Client] Hoàn tiền ký quỹ của milestone đang ở trạng thái `FUNDED` về lại cho Client.
-   * Tìm giao dịch `ESCROW_DEPOSIT` gốc để lấy `stripePaymentIntentId`, gọi Stripe Refund,
-   * chuyển milestone sang `REFUNDED` và lưu giao dịch `REFUND`.
-   */
-  @Post('contracts/:contractId/milestones/:milestoneId/refund')
-  @ZodSerializerDto(RefundMilestoneResponseDTO)
-  refundMilestone(
-    @UserActive('userId') userId: number,
-    @Param('contractId', ParseIntPipe) contractId: number,
-    @Param('milestoneId', ParseIntPipe) milestoneId: number,
-  ) {
-    return this.paymentService.refundMilestone(userId, contractId, milestoneId);
   }
 
   // =========================================================================

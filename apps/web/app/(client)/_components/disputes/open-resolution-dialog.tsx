@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import {
   AlertCircle,
   Loader2,
@@ -43,6 +43,7 @@ interface OpenResolutionDialogProps {
   milestone: MilestoneType | null;
   sharedFiles?: SharedFileType[];
   onCreated?: (dispute: DisputeDetailType) => void;
+  isClient?: boolean;
 }
 
 /**
@@ -58,6 +59,7 @@ export function OpenResolutionDialog({
   milestone,
   sharedFiles = [],
   onCreated,
+  isClient,
 }: OpenResolutionDialogProps) {
   const t = useTranslations("resolutionCenter.openDialog");
   const queryClient = useQueryClient();
@@ -71,16 +73,6 @@ export function OpenResolutionDialog({
 
   const milestoneAmount = Number(milestone?.amount ?? 0);
 
-  const { data: reasonsData } = useQuery({
-    queryKey: ["resolution-reasons", milestone?.id],
-    queryFn: async () => {
-      if (!milestone) return null;
-      const res = await disputeApiRequest.getResolutionReasons(milestone.id);
-      return res.data;
-    },
-    enabled: open && Boolean(milestone?.id),
-  });
-
   useEffect(() => {
     if (open && milestone) {
       setReason("");
@@ -90,7 +82,7 @@ export function OpenResolutionDialog({
       // Default split based on role:
       // Client requesting dispute defaults to full refund request
       // Freelancer requesting dispute defaults to full release request
-      if (reasonsData?.role === "FREELANCER") {
+      if (isClient === false) {
         setFreelancerAmount(milestoneAmount.toString());
         setClientAmount("0");
       } else {
@@ -98,7 +90,7 @@ export function OpenResolutionDialog({
         setFreelancerAmount("0");
       }
     }
-  }, [open, milestone, milestoneAmount, reasonsData?.role]);
+  }, [open, milestone, milestoneAmount, isClient]);
 
   if (!milestone) return null;
 
@@ -249,11 +241,6 @@ export function OpenResolutionDialog({
       setIsSubmitting(false);
     }
   };
-
-  const clientPct =
-    milestoneAmount > 0
-      ? Math.round((clientNum / milestoneAmount) * 100)
-      : 50;
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>

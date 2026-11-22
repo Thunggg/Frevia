@@ -6,7 +6,6 @@ import {
 } from '@prisma/client';
 import {
   AdminDisputeDecisionBodyType,
-  AdminDisputeFinalDecisionBodyType,
   GetDisputeListQueryType,
   RoleName,
 } from '@shared/types';
@@ -29,7 +28,7 @@ export class DisputesExpertService {
   constructor(
     private readonly expertDisputeRepo: DisputesExpertRepository,
     private readonly paymentService: PaymentService,
-  ) { }
+  ) {}
 
   async requireActiveExpert(roleName: string, userId: number) {
     if (roleName !== RoleName.EXPERT) {
@@ -67,11 +66,11 @@ export class DisputesExpertService {
       const contract = dispute.milestone?.contract;
       const conversationMessages =
         contract &&
-          typeof this.expertDisputeRepo.findConversationMessages === 'function'
+        typeof this.expertDisputeRepo.findConversationMessages === 'function'
           ? await this.expertDisputeRepo.findConversationMessages(
-            contract.clientId,
-            contract.freelancerId,
-          )
+              contract.clientId,
+              contract.freelancerId,
+            )
           : [];
 
       return {
@@ -151,14 +150,5 @@ export class DisputesExpertService {
       this.logger.error('Failed to make expert dispute decision', error);
       throw FailedToMakeExpertDisputeDecisionException();
     }
-  }
-
-  async makeFinalDecision(
-    expertId: number,
-    roleName: string,
-    disputeId: number,
-    body: AdminDisputeFinalDecisionBodyType,
-  ) {
-    return this.makeDecision(expertId, roleName, disputeId, body);
   }
 }

@@ -28,7 +28,6 @@ const expertDefaultRoutes = new Set([
   'GET /api/expert/disputes',
   'GET /api/expert/disputes/:id',
   'POST /api/expert/disputes/:id/decision',
-  'POST /api/expert/disputes/:id/final-decision',
 ]);
 
 type AvailableRoute = {
