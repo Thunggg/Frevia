@@ -1,9 +1,10 @@
-import { HttpException, Injectable, Logger } from '@nestjs/common';
+import { HttpException, Injectable, Logger, Optional } from '@nestjs/common';
 import {
   DisputeResolutionType,
   DisputeStatus,
   MilestonePaymentStatus,
   MilestoneStatus,
+  NotificationType,
 } from '@prisma/client';
 import {
   CreateDisputeBodyType,
@@ -13,6 +14,7 @@ import {
   getEffectiveContractDeadlineMs,
 } from '@shared/types';
 import { PaymentService } from '../../payments/payment.service';
+import { AppNotificationService } from '../../../shared/services/app-notification.service';
 import {
   DisputeDeclineReasonRequiredException,
   DisputeEscalateNotAllowedException,
@@ -43,6 +45,7 @@ export class DisputeService {
   constructor(
     private readonly disputeRepo: DisputeRepository,
     private readonly paymentService: PaymentService,
+    @Optional() private readonly notificationService?: AppNotificationService,
   ) {}
 
   async createDispute(userId: number, body: CreateDisputeBodyType) {
@@ -158,7 +161,7 @@ export class DisputeService {
         Date.now() + RESPONSE_DEADLINE_HOURS * 60 * 60 * 1000,
       );
 
-      return await this.disputeRepo.createDisputeTransaction({
+      const created = await this.disputeRepo.createDisputeTransaction({
         milestoneId: body.milestoneId,
         openedById: userId,
         respondentId,
@@ -176,6 +179,26 @@ export class DisputeService {
             ? existingDispute.id
             : undefined,
       });
+
+      if (created) {
+        await this.notificationService?.send({
+          userId: respondentId,
+          type: NotificationType.DISPUTE_OPENED,
+          title: 'Dispute opened on milestone',
+          message: `A dispute has been opened for milestone "${milestone.title}". Reason: ${body.reason}. Please review the proposed split.`,
+          data: {
+            disputeId: created.id,
+            milestoneId: body.milestoneId,
+            contractId: contract.id,
+            href:
+              respondentId === contract.clientId
+                ? `/client/contracts/${contract.slug ?? contract.id}`
+                : `/freelancer/contracts/${contract.slug ?? contract.id}`,
+          },
+        });
+      }
+
+      return created;
     } catch (error) {
       if (error instanceof HttpException) throw error;
       this.logger.error('Failed to create dispute', error);
@@ -251,12 +274,30 @@ export class DisputeService {
           }
         }
 
-        return await this.executeFinalization(
+        const result = await this.executeFinalization(
           dispute,
           freelancerAmount,
           clientAmount,
           'Mutual resolution accepted by counterparty.',
         );
+
+        await this.notificationService?.send({
+          userId: dispute.openedById,
+          type: NotificationType.DISPUTE_OPENED,
+          title: 'Dispute proposal accepted',
+          message: `The proposed split for milestone "${dispute.milestone.title}" was accepted. Funds have been settled as agreed.`,
+          data: {
+            disputeId: dispute.id,
+            milestoneId: dispute.milestoneId,
+            contractId: dispute.milestone.contractId,
+            href:
+              dispute.openedById === dispute.milestone.contract.clientId
+                ? `/client/contracts/${dispute.milestone.contract.slug ?? dispute.milestone.contractId}`
+                : `/freelancer/contracts/${dispute.milestone.contract.slug ?? dispute.milestone.contractId}`,
+          },
+        });
+
+        return result;
       }
 
       if (!body.reason || body.reason.trim().length < 5) {
@@ -283,12 +324,30 @@ export class DisputeService {
         }
       }
 
-      return await this.disputeRepo.declineDisputeTransaction(
+      const result = await this.disputeRepo.declineDisputeTransaction(
         disputeId,
         userId,
         body.reason.trim(),
         body.evidenceFiles,
       );
+
+      await this.notificationService?.send({
+        userId: dispute.openedById,
+        type: NotificationType.DISPUTE_OPENED,
+        title: 'Dispute proposal declined',
+        message: `The proposed split for milestone "${dispute.milestone.title}" was declined. Reason: ${body.reason.trim()}. You can escalate the dispute to a Frevia Expert.`,
+        data: {
+          disputeId: dispute.id,
+          milestoneId: dispute.milestoneId,
+          contractId: dispute.milestone.contractId,
+          href:
+            dispute.openedById === dispute.milestone.contract.clientId
+              ? `/client/contracts/${dispute.milestone.contract.slug ?? dispute.milestone.contractId}`
+              : `/freelancer/contracts/${dispute.milestone.contract.slug ?? dispute.milestone.contractId}`,
+        },
+      });
+
+      return result;
     } catch (error) {
       if (error instanceof HttpException) throw error;
       this.logger.error('Failed to respond to dispute', error);
@@ -320,11 +379,29 @@ export class DisputeService {
           ? MilestoneStatus.IN_PROGRESS
           : dispute.previousMilestoneStatus;
 
-      return await this.disputeRepo.withdrawDisputeTransaction(
+      const result = await this.disputeRepo.withdrawDisputeTransaction(
         disputeId,
         dispute.milestoneId,
         restoredStatus,
       );
+
+      await this.notificationService?.send({
+        userId: dispute.respondentId,
+        type: NotificationType.DISPUTE_OPENED,
+        title: 'Dispute withdrawn',
+        message: `The dispute for milestone "${dispute.milestone.title}" has been withdrawn by the opener. Milestone status has been restored.`,
+        data: {
+          disputeId: dispute.id,
+          milestoneId: dispute.milestoneId,
+          contractId: dispute.milestone.contractId,
+          href:
+            dispute.respondentId === dispute.milestone.contract.clientId
+              ? `/client/contracts/${dispute.milestone.contract.slug ?? dispute.milestone.contractId}`
+              : `/freelancer/contracts/${dispute.milestone.contract.slug ?? dispute.milestone.contractId}`,
+        },
+      });
+
+      return result;
     } catch (error) {
       if (error instanceof HttpException) throw error;
       this.logger.error('Failed to withdraw dispute', error);
@@ -362,7 +439,31 @@ export class DisputeService {
         throw DisputeEscalateNotAllowedException();
       }
 
-      return await this.disputeRepo.escalateDisputeTransaction(disputeId);
+      const result =
+        await this.disputeRepo.escalateDisputeTransaction(disputeId);
+
+      const otherPartyId =
+        dispute.openedById === userId
+          ? dispute.respondentId
+          : dispute.openedById;
+
+      await this.notificationService?.send({
+        userId: otherPartyId,
+        type: NotificationType.DISPUTE_OPENED,
+        title: 'Dispute escalated to Expert',
+        message: `The dispute for milestone "${dispute.milestone.title}" has been escalated to a Frevia Expert for binding arbitration.`,
+        data: {
+          disputeId: dispute.id,
+          milestoneId: dispute.milestoneId,
+          contractId: dispute.milestone.contractId,
+          href:
+            otherPartyId === dispute.milestone.contract.clientId
+              ? `/client/contracts/${dispute.milestone.contract.slug ?? dispute.milestone.contractId}`
+              : `/freelancer/contracts/${dispute.milestone.contract.slug ?? dispute.milestone.contractId}`,
+        },
+      });
+
+      return result;
     } catch (error) {
       if (error instanceof HttpException) throw error;
       this.logger.error('Failed to escalate dispute', error);

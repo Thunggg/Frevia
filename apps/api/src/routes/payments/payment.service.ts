@@ -1,9 +1,16 @@
-import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  Logger,
+  Optional,
+} from '@nestjs/common';
 import Stripe from 'stripe';
 import {
   ContractStatus,
   MilestonePaymentStatus,
   MilestoneStatus,
+  NotificationType,
   Prisma,
   TransactionStatus,
   TransactionType,
@@ -33,6 +40,7 @@ import {
 import { PaymentRepository } from './payment.repo';
 import { ContractPdfService } from '../../shared/services/contract-pdf.service';
 import { StripeService } from '../../shared/services/stripe.service';
+import { AppNotificationService } from '../../shared/services/app-notification.service';
 
 @Injectable()
 export class PaymentService {
@@ -42,6 +50,7 @@ export class PaymentService {
     private readonly paymentRepo: PaymentRepository,
     private readonly stripeService: StripeService,
     private readonly contractPdfService: ContractPdfService,
+    @Optional() private readonly notificationService?: AppNotificationService,
   ) {}
 
   async getOnboardingLink(userId: number, returnUrl?: string) {
@@ -752,6 +761,18 @@ export class PaymentService {
           stripePaymentIntentId: paymentIntent.id,
         });
 
+        await this.notificationService?.send({
+          userId: milestone.contract.freelancerId,
+          type: NotificationType.PAYMENT_RELEASED,
+          title: 'Milestone funded in escrow',
+          message: `Client deposited $${milestoneAmount.toFixed(2)} into escrow for milestone "${milestone.title}". Work can begin!`,
+          data: {
+            contractId,
+            milestoneId,
+            href: `/freelancer/contracts/${milestone.contract.slug ?? contractId}`,
+          },
+        });
+
         return {
           success: true,
           message: 'Milestone funded successfully using saved card',
@@ -938,6 +959,31 @@ export class PaymentService {
 
     await this.paymentRepo.checkAndCompleteFreelancerFee(contractId);
     await this.paymentRepo.syncContractCompletion(contractId);
+
+    await this.notificationService?.sendMany([
+      {
+        userId: freelancer.id,
+        type: NotificationType.PAYMENT_RELEASED,
+        title: 'Milestone payment released',
+        message: `Client released payment ($${freelancerPayout.toFixed(2)}) for milestone "${milestone.title}". Funds have been transferred to your Stripe account.`,
+        data: {
+          contractId,
+          milestoneId,
+          href: `/freelancer/contracts/${milestone.contract.slug ?? contractId}`,
+        },
+      },
+      {
+        userId,
+        type: NotificationType.PAYMENT_RELEASED,
+        title: 'Milestone payment released',
+        message: `You released payment of $${freelancerPayout.toFixed(2)} to the freelancer for milestone "${milestone.title}".`,
+        data: {
+          contractId,
+          milestoneId,
+          href: `/client/contracts/${milestone.contract.slug ?? contractId}`,
+        },
+      },
+    ]);
 
     return {
       success: true,
@@ -1504,10 +1550,26 @@ export class PaymentService {
     }
 
     if (type === TransactionType.ESCROW_DEPOSIT && metadata.milestoneId) {
+      const milestoneIdNum = Number(metadata.milestoneId);
       await this.paymentRepo.updateMilestonePaymentStatus(
-        Number(metadata.milestoneId),
+        milestoneIdNum,
         MilestonePaymentStatus.FUNDED,
       );
+
+      const m = await this.paymentRepo.findMilestoneById(milestoneIdNum);
+      if (m?.contract?.freelancerId) {
+        await this.notificationService?.send({
+          userId: m.contract.freelancerId,
+          type: NotificationType.PAYMENT_RELEASED,
+          title: 'Milestone funded in escrow',
+          message: `Client deposited $${Number(m.amount).toFixed(2)} into escrow for milestone "${m.title}". Work can begin!`,
+          data: {
+            contractId: m.contractId,
+            milestoneId: m.id,
+            href: `/freelancer/contracts/${m.contract.slug ?? m.contractId}`,
+          },
+        });
+      }
     }
   }
 
@@ -1605,10 +1667,26 @@ export class PaymentService {
     }
 
     if (type === TransactionType.ESCROW_DEPOSIT && metadata.milestoneId) {
+      const milestoneIdNum = Number(metadata.milestoneId);
       await this.paymentRepo.updateMilestonePaymentStatus(
-        Number(metadata.milestoneId),
+        milestoneIdNum,
         MilestonePaymentStatus.FUNDED,
       );
+
+      const m = await this.paymentRepo.findMilestoneById(milestoneIdNum);
+      if (m?.contract?.freelancerId) {
+        await this.notificationService?.send({
+          userId: m.contract.freelancerId,
+          type: NotificationType.PAYMENT_RELEASED,
+          title: 'Milestone funded in escrow',
+          message: `Client deposited $${Number(m.amount).toFixed(2)} into escrow for milestone "${m.title}". Work can begin!`,
+          data: {
+            contractId: m.contractId,
+            milestoneId: m.id,
+            href: `/freelancer/contracts/${m.contract.slug ?? m.contractId}`,
+          },
+        });
+      }
     }
   }
 
