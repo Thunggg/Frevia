@@ -37,6 +37,7 @@ export class MilestoneRepository {
       where: { id: contractId, deletedAt: null },
       select: {
         id: true,
+        slug: true,
         clientId: true,
         freelancerId: true,
         status: true,
