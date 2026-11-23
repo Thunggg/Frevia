@@ -32,8 +32,8 @@ import { SubmitMilestoneDialog } from "./submit-milestone-dialog";
 import { ReviewSubmissionDialog } from "./review-submission-dialog";
 import { ContractChatPopup } from "../../_components/contract-chat-popup";
 import { useCreateConversation } from "@/hooks/use-conversation";
-import { OpenResolutionDialog } from "@/components/disputes/open-resolution-dialog";
-import { ResolutionDetailSheet } from "@/components/disputes/resolution-detail-sheet";
+import { OpenResolutionDialog } from "@/app/(client)/_components/disputes/open-resolution-dialog";
+import { ResolutionDetailSheet } from "@/app/(client)/_components/disputes/resolution-detail-sheet";
 
 export interface MilestonesPageContentProps {
   initialContract: ContractDetailType;
@@ -275,45 +275,6 @@ export function MilestonesPageContent({
     }
   };
 
-  const handleRefundMilestone = async (milestone: MilestoneType) => {
-    if (
-      !window.confirm(
-        t("toasts.refundConfirm", {
-          amount: `$${Number(milestone.amount).toLocaleString("en-US", { minimumFractionDigits: 2 })}`,
-          title: milestone.title,
-        }),
-      )
-    ) {
-      return;
-    }
-    try {
-      await paymentApiRequest.refundMilestone(contract.id, milestone.id);
-      await Promise.all([
-        queryClient.invalidateQueries({
-          queryKey: ["client-contract-detail", contract.id],
-        }),
-        queryClient.invalidateQueries({
-          queryKey: ["client-contract-milestones", contract.id],
-        }),
-        queryClient.invalidateQueries({ queryKey: ["contracts-list"] }),
-        queryClient.invalidateQueries({ queryKey: ["client-transactions"] }),
-        queryClient.invalidateQueries({ queryKey: ["freelancer-transactions"] }),
-        queryClient.invalidateQueries({ queryKey: ["transactions-summary"] }),
-        queryClient.invalidateQueries({ queryKey: ["transactions"] }),
-      ]);
-      toastSuccess({
-        message: t("toasts.refunded", { title: milestone.title }),
-      });
-    } catch (error) {
-      toastError({
-        message:
-          error instanceof ApiFail
-            ? error.response.error.message
-            : t("toasts.refundFailed"),
-      });
-    }
-  };
-
   const handleDeleteMilestone = async (milestone: MilestoneType) => {
     if (
       !window.confirm(t("toasts.deleteConfirm", { title: milestone.title }))
@@ -455,10 +416,9 @@ export function MilestonesPageContent({
                   inline-flex h-6 cursor-pointer items-center gap-1.5
                   whitespace-nowrap rounded-full px-3
                   font-medium transition-all text-xs
-                  ${
-                    isActive
-                      ? "bg-background font-semibold text-foreground shadow-xs"
-                      : "text-muted-foreground hover:text-foreground"
+                  ${isActive
+                    ? "bg-background font-semibold text-foreground shadow-xs"
+                    : "text-muted-foreground hover:text-foreground"
                   }
                 `}
               >
@@ -467,10 +427,9 @@ export function MilestonesPageContent({
                   <span
                     className={`
                       rounded-full px-1.5 py-0 text-[10px] font-semibold leading-tight
-                      ${
-                        isActive
-                          ? "bg-[#0069D3]/10 text-[#0069D3]"
-                          : "bg-muted-foreground/15 text-muted-foreground"
+                      ${isActive
+                        ? "bg-[#0069D3]/10 text-[#0069D3]"
+                        : "bg-muted-foreground/15 text-muted-foreground"
                       }
                     `}
                   >
@@ -556,45 +515,44 @@ export function MilestonesPageContent({
                 isFreelancer={isFreelancer}
                 hasOtherInProgressMilestone={hasInProgressMilestone}
                 startWorkBlockedReason={startWorkBlockedReason}
-              onEdit={(target) => {
-                setMilestoneToEdit({
-                  id: target.id,
-                  title: target.title,
-                  description: target.description,
-                  amount: Number(target.amount),
-                  dueDate: target.dueDate,
-                  status: target.status,
-                });
-                setMilestoneModalOpen(true);
-              }}
-              onDelete={(target) => void handleDeleteMilestone(target)}
-              onFund={(target) => void handleFundMilestone(target)}
-              onRelease={(target) => void handleReleaseMilestone(target)}
-              onRefund={(target) => void handleRefundMilestone(target)}
-              onReview={async (target) => {
-                try {
-                  const res = await contractApiRequest.getSubmissions(
-                    contract.id,
-                    target.id,
-                  );
-                  const data = extractContractData(res);
-                  if (data && data.length > 0 && data[0]) {
-                    setReviewContext({
-                      milestone: target,
-                      submission: data[0],
-                    });
-                    setReviewModalOpen(true);
-                  } else {
+                onEdit={(target) => {
+                  setMilestoneToEdit({
+                    id: target.id,
+                    title: target.title,
+                    description: target.description,
+                    amount: Number(target.amount),
+                    dueDate: target.dueDate,
+                    status: target.status,
+                  });
+                  setMilestoneModalOpen(true);
+                }}
+                onDelete={(target) => void handleDeleteMilestone(target)}
+                onFund={(target) => void handleFundMilestone(target)}
+                onRelease={(target) => void handleReleaseMilestone(target)}
+                onReview={async (target) => {
+                  try {
+                    const res = await contractApiRequest.getSubmissions(
+                      contract.id,
+                      target.id,
+                    );
+                    const data = extractContractData(res);
+                    if (data && data.length > 0 && data[0]) {
+                      setReviewContext({
+                        milestone: target,
+                        submission: data[0],
+                      });
+                      setReviewModalOpen(true);
+                    } else {
+                      router.push(
+                        `${basePath}/contracts/${encodeURIComponent(contract.slug || String(contract.id))}/milestones/${target.id}`,
+                      );
+                    }
+                  } catch {
                     router.push(
                       `${basePath}/contracts/${encodeURIComponent(contract.slug || String(contract.id))}/milestones/${target.id}`,
                     );
                   }
-                } catch {
-                  router.push(
-                    `${basePath}/contracts/${encodeURIComponent(contract.slug || String(contract.id))}/milestones/${target.id}`,
-                  );
-                }
-              }}
+                }}
                 onSubmitWork={(target) => {
                   setMilestoneToSubmit(target);
                   setSubmitModalOpen(true);
@@ -679,6 +637,7 @@ export function MilestonesPageContent({
         contractId={contract.id}
         contractExpiresAt={contract.expiresAt}
         milestone={disputeTargetMilestone}
+        isClient={isClient}
         onCreated={(created) => {
           setViewDisputeMilestoneId(created.milestoneId);
         }}

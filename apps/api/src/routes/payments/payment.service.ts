@@ -24,7 +24,6 @@ import {
   HoldMilestoneRequiredException,
   MilestoneAlreadyReleasedException,
   MilestoneNotEligibleForFundingException,
-  MilestoneNotEligibleForRefundException,
   MilestoneNotFundedException,
   PaymentForbiddenException,
   StripeAccountNotConnectedException,
@@ -43,7 +42,7 @@ export class PaymentService {
     private readonly paymentRepo: PaymentRepository,
     private readonly stripeService: StripeService,
     private readonly contractPdfService: ContractPdfService,
-  ) { }
+  ) {}
 
   async getOnboardingLink(userId: number, returnUrl?: string) {
     const user = await this.paymentRepo.findUserById(userId);
@@ -561,9 +560,9 @@ export class PaymentService {
           await this.paymentRepo.findContractById(resolvedContractId);
         const milestoneIds = meta.milestoneIds
           ? meta.milestoneIds
-            .split(',')
-            .map((v) => Number(v.trim()))
-            .filter((v) => Number.isFinite(v) && v > 0)
+              .split(',')
+              .map((v) => Number(v.trim()))
+              .filter((v) => Number.isFinite(v) && v > 0)
           : Array.isArray(contract?.holdMilestoneIds)
             ? contract.holdMilestoneIds
             : [];
@@ -975,8 +974,7 @@ export class PaymentService {
         throw StripeOnboardingIncompleteException();
       }
 
-      const freelancerFee =
-        Math.round(freelancerAmount * 0.05 * 100) / 100;
+      const freelancerFee = Math.round(freelancerAmount * 0.05 * 100) / 100;
       const freelancerPayout =
         Math.round((freelancerAmount - freelancerFee) * 100) / 100;
       const amountInCents = Math.round(freelancerPayout * 100);
@@ -1036,8 +1034,7 @@ export class PaymentService {
       const targetDeposit =
         deposits.find((d) => {
           if (!d.stripePaymentIntentId) return false;
-          const meta =
-            (d.metadata as { milestoneIds?: unknown } | null) ?? {};
+          const meta = (d.metadata as { milestoneIds?: unknown } | null) ?? {};
           if (Array.isArray(meta.milestoneIds)) {
             return meta.milestoneIds.map(Number).includes(milestoneId);
           }
@@ -1319,10 +1316,11 @@ export class PaymentService {
         } else {
           // Unstarted milestone -> Refund to client!
           try {
-            const escrowTx = await this.paymentRepo.findEscrowDepositTransaction(
-              m.id,
-              contractId,
-            );
+            const escrowTx =
+              await this.paymentRepo.findEscrowDepositTransaction(
+                m.id,
+                contractId,
+              );
             if (escrowTx?.stripePaymentIntentId) {
               const refund = await this.stripeService.createRefund({
                 paymentIntentId: escrowTx.stripePaymentIntentId,
@@ -1363,77 +1361,6 @@ export class PaymentService {
       success: true,
       releasedMilestoneIds,
       refundedMilestoneIds,
-    };
-  }
-
-  async refundMilestone(
-    userId: number,
-    contractId: number,
-    milestoneId: number,
-  ) {
-    const milestone = await this.paymentRepo.findMilestoneById(milestoneId);
-    if (
-      !milestone ||
-      milestone.contractId !== contractId ||
-      milestone.contract.clientId !== userId
-    ) {
-      throw PaymentForbiddenException();
-    }
-
-    if (milestone.paymentStatus !== MilestonePaymentStatus.FUNDED) {
-      throw MilestoneNotFundedException();
-    }
-
-    if (
-      milestone.status !== MilestoneStatus.LATE &&
-      milestone.status !== MilestoneStatus.PENDING
-    ) {
-      throw MilestoneNotEligibleForRefundException();
-    }
-
-    const escrowTx = await this.paymentRepo.findEscrowDepositTransaction(
-      milestoneId,
-      contractId,
-    );
-    if (!escrowTx || !escrowTx.stripePaymentIntentId) {
-      throw new Error('Original escrow payment record not found');
-    }
-
-    const reason =
-      milestone.status === MilestoneStatus.LATE
-        ? 'FREELANCER_LATE_NO_SUBMISSION'
-        : 'FREELANCER_NOT_STARTED';
-
-    const milestoneAmount = Number(milestone.amount);
-    const refund = await this.stripeService.createRefund({
-      paymentIntentId: escrowTx.stripePaymentIntentId,
-      amountInCents: Math.round(milestoneAmount * 100),
-      metadata: {
-        type: TransactionType.REFUND,
-        contractId: String(contractId),
-        milestoneId: String(milestoneId),
-        reason,
-      },
-      idempotencyKey: `refund-milestone-${milestoneId}`,
-    });
-
-    await this.paymentRepo.applyMilestoneRefundTransaction({
-      milestoneId,
-      contractId,
-      contractSlug: milestone.contract.slug,
-      clientId: userId,
-      freelancerId: milestone.contract.freelancerId,
-      milestoneTitle: milestone.title,
-      amount: milestoneAmount,
-      refundId: refund.id,
-      reason,
-      isAuto: true,
-    });
-
-    return {
-      success: true,
-      message: 'Milestone funds refunded to client successfully',
-      refundId: refund.id,
     };
   }
 
@@ -1700,7 +1627,9 @@ export class PaymentService {
     }
     return {
       success: false,
-      status: session.payment_status ? String(session.payment_status) : undefined,
+      status: session.payment_status
+        ? String(session.payment_status)
+        : undefined,
     };
   }
 }

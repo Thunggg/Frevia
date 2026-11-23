@@ -126,7 +126,7 @@ const expertDisputeFullDetailInclude = {
 
 @Injectable()
 export class DisputesExpertRepository {
-  constructor(private readonly prisma: PrismaService) { }
+  constructor(private readonly prisma: PrismaService) {}
 
   findActiveExpert(userId: number) {
     return this.prisma.expert.findFirst({
@@ -142,11 +142,7 @@ export class DisputesExpertRepository {
     });
   }
 
-  async findConversationMessages(
-    userA: number,
-    userB: number,
-    limit = 50,
-  ) {
+  async findConversationMessages(userA: number, userB: number, limit = 50) {
     const conversation = await this.prisma.conversation.findFirst({
       where: {
         deletedAt: null,

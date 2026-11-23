@@ -28,7 +28,6 @@ const expertDefaultRoutes = new Set([
   'GET /api/expert/disputes',
   'GET /api/expert/disputes/:id',
   'POST /api/expert/disputes/:id/decision',
-  'POST /api/expert/disputes/:id/final-decision',
 ]);
 
 type AvailableRoute = {
@@ -112,8 +111,7 @@ async function bootstrap() {
 
         const isPublic = layer.route.stack.some((s) =>
           Boolean(
-            s?.handle &&
-              Reflect.getMetadata(IS_PUBLIC_KEY, s.handle as object),
+            s?.handle && Reflect.getMetadata(IS_PUBLIC_KEY, s.handle as object),
           ),
         );
         if (isPublic) return undefined;

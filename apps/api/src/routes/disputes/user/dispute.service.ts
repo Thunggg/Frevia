@@ -1,6 +1,5 @@
 import { HttpException, Injectable, Logger } from '@nestjs/common';
 import {
-  DisputeDecisionResponse,
   DisputeResolutionType,
   DisputeStatus,
   MilestonePaymentStatus,
@@ -9,15 +8,12 @@ import {
 import {
   CreateDisputeBodyType,
   GetDisputeListQueryType,
-  GetResolutionReasonsResponseType,
   RESPONSE_DEADLINE_HOURS,
   RespondDisputeBodyType,
-  ReviewDisputeDecisionBodyType,
   getEffectiveContractDeadlineMs,
 } from '@shared/types';
 import { PaymentService } from '../../payments/payment.service';
 import {
-  DisputeDecisionNotPendingException,
   DisputeDeclineReasonRequiredException,
   DisputeEscalateNotAllowedException,
   DisputeEvidenceLimitExceededException,
@@ -29,14 +25,11 @@ import {
   DisputeNotFoundException,
   DisputeResponseAlreadySubmittedException,
   DisputeResponseNotAllowedException,
-  DisputeReviewAlreadySubmittedException,
-  DisputeReviewReasonRequiredException,
   DisputeWithdrawNotAllowedException,
   FailedToCreateDisputeException,
   FailedToEscalateDisputeException,
   FailedToLoadDisputeException,
   FailedToSubmitDisputeResponseException,
-  FailedToSubmitDisputeReviewException,
   FailedToWithdrawDisputeException,
   MilestoneAlreadyDisputedException,
   MilestoneCannotBeDisputedException,
@@ -50,115 +43,7 @@ export class DisputeService {
   constructor(
     private readonly disputeRepo: DisputeRepository,
     private readonly paymentService: PaymentService,
-  ) { }
-
-  async getResolutionReasons(
-    userId: number,
-    milestoneId: number,
-  ): Promise<GetResolutionReasonsResponseType> {
-    try {
-      const milestone =
-        await this.disputeRepo.findMilestoneWithContract(milestoneId);
-      if (!milestone) {
-        throw DisputeMilestoneNotFoundException();
-      }
-
-      const contract = milestone.contract;
-      const isClient = contract.clientId === userId;
-      const isFreelancer = contract.freelancerId === userId;
-      if (!isClient && !isFreelancer) {
-        throw DisputeNotContractParticipantException();
-      }
-
-      const role: 'CLIENT' | 'FREELANCER' = isClient ? 'CLIENT' : 'FREELANCER';
-
-      const reasons: GetResolutionReasonsResponseType['reasons'] = isClient
-        ? [
-          {
-            code: 'QUALITY_NOT_AS_DESCRIBED',
-            label: 'Deliverable does not match agreed requirements',
-            description:
-              'The submitted work is incomplete or does not meet the milestone specifications.',
-            allowedResolutionTypes: [
-              'PARTIAL_REFUND',
-              'FULL_REFUND',
-              'EXTEND_DEADLINE',
-            ],
-          },
-          {
-            code: 'MISSED_DEADLINE',
-            label: 'Missed deadline or unresponsive freelancer',
-            description:
-              'Delivery is overdue or the freelancer is no longer responding to messages.',
-            allowedResolutionTypes: [
-              'FULL_REFUND',
-              'EXTEND_DEADLINE',
-              'PARTIAL_REFUND',
-            ],
-          },
-          {
-            code: 'EXTEND_DELIVERY',
-            label: 'Offer a deadline extension',
-            description:
-              'Grant additional time for the freelancer to complete this milestone.',
-            allowedResolutionTypes: ['EXTEND_DEADLINE'],
-          },
-          {
-            code: 'MUTUAL_CANCELLATION',
-            label: 'Mutual cancellation / project scope changed',
-            description:
-              'Request to cancel this milestone and settle the escrowed funds.',
-            allowedResolutionTypes: ['FULL_REFUND', 'PARTIAL_REFUND'],
-          },
-        ]
-        : [
-          {
-            code: 'NEED_MORE_TIME',
-            label: 'Request a delivery deadline extension',
-            description:
-              'Propose a new milestone due date for the client to approve.',
-            allowedResolutionTypes: ['EXTEND_DEADLINE'],
-          },
-          {
-            code: 'SCOPE_CREEP',
-            label: 'Client requested work outside original scope',
-            description:
-              'Additional requirements were requested beyond the agreed milestone terms.',
-            allowedResolutionTypes: [
-              'PARTIAL_REFUND',
-              'FULL_RELEASE',
-              'EXTEND_DEADLINE',
-            ],
-          },
-          {
-            code: 'CLIENT_UNRESPONSIVE',
-            label: 'Client is unresponsive or delaying approval',
-            description:
-              'Work has been delivered but the client has stopped responding.',
-            allowedResolutionTypes: ['FULL_RELEASE', 'PARTIAL_REFUND'],
-          },
-          {
-            code: 'MUTUAL_CANCELLATION',
-            label: 'Unable to complete milestone (mutual cancellation)',
-            description:
-              'Agree to cancel this milestone and return escrowed funds to the client.',
-            allowedResolutionTypes: ['FULL_REFUND', 'PARTIAL_REFUND'],
-          },
-        ];
-
-      return {
-        role,
-        milestoneStatus: milestone.status,
-        milestoneAmount: Number(milestone.amount),
-        milestoneDueDate: milestone.dueDate ?? null,
-        reasons,
-      };
-    } catch (error) {
-      if (error instanceof HttpException) throw error;
-      this.logger.error('Failed to load resolution reasons', error);
-      throw FailedToLoadDisputeException();
-    }
-  }
+  ) {}
 
   async createDispute(userId: number, body: CreateDisputeBodyType) {
     try {
@@ -179,10 +64,10 @@ export class DisputeService {
       const existingDispute = milestone.dispute;
       const canReplacePreviousDispute = Boolean(
         existingDispute &&
-          (existingDispute.status === DisputeStatus.CANCELLED ||
-            (existingDispute.status === DisputeStatus.FINALIZED &&
-              existingDispute.resolutionType ===
-                DisputeResolutionType.EXTEND_DEADLINE)),
+        (existingDispute.status === DisputeStatus.CANCELLED ||
+          (existingDispute.status === DisputeStatus.FINALIZED &&
+            existingDispute.resolutionType ===
+              DisputeResolutionType.EXTEND_DEADLINE)),
       );
       if (existingDispute && !canReplacePreviousDispute) {
         throw MilestoneAlreadyDisputedException();
@@ -334,8 +219,8 @@ export class DisputeService {
           }
           const restoredStatus =
             dispute.previousMilestoneStatus === MilestoneStatus.LATE ||
-              !dispute.previousMilestoneStatus ||
-              dispute.previousMilestoneStatus === MilestoneStatus.DISPUTED
+            !dispute.previousMilestoneStatus ||
+            dispute.previousMilestoneStatus === MilestoneStatus.DISPUTED
               ? MilestoneStatus.IN_PROGRESS
               : dispute.previousMilestoneStatus;
 
@@ -431,7 +316,7 @@ export class DisputeService {
 
       const restoredStatus =
         !dispute.previousMilestoneStatus ||
-          dispute.previousMilestoneStatus === MilestoneStatus.DISPUTED
+        dispute.previousMilestoneStatus === MilestoneStatus.DISPUTED
           ? MilestoneStatus.IN_PROGRESS
           : dispute.previousMilestoneStatus;
 
@@ -535,88 +420,6 @@ export class DisputeService {
       if (error instanceof HttpException) throw error;
       this.logger.error('Failed to list user disputes', error);
       throw FailedToLoadDisputeException();
-    }
-  }
-
-  async submitDecisionReview(
-    userId: number,
-    disputeId: number,
-    body: ReviewDisputeDecisionBodyType,
-  ) {
-    try {
-      const dispute = await this.disputeRepo.findDisputeById(disputeId);
-      if (!dispute) {
-        throw DisputeNotFoundException();
-      }
-
-      const isParticipant =
-        dispute.openedById === userId || dispute.respondentId === userId;
-      if (!isParticipant) {
-        throw DisputeForbiddenException();
-      }
-
-      if (dispute.status !== DisputeStatus.DECISION_MADE) {
-        throw DisputeDecisionNotPendingException();
-      }
-
-      const reviews = await this.disputeRepo.findDecisionReviews(disputeId);
-      const myReview = reviews.find((r) => r.userId === userId);
-
-      if (myReview && myReview.response !== DisputeDecisionResponse.PENDING) {
-        throw DisputeReviewAlreadySubmittedException();
-      }
-
-      if (
-        body.response === DisputeDecisionResponse.REJECTED &&
-        (!body.reason || body.reason.trim().length === 0)
-      ) {
-        throw DisputeReviewReasonRequiredException();
-      }
-
-      await this.disputeRepo.upsertDecisionReview(
-        disputeId,
-        userId,
-        body.response as DisputeDecisionResponse,
-        body.reason,
-      );
-
-      if (body.response === DisputeDecisionResponse.REJECTED) {
-        return await this.disputeRepo.updateDisputeStatus(
-          disputeId,
-          DisputeStatus.REVIEW_REQUESTED,
-        );
-      }
-
-      const otherUserId =
-        dispute.openedById === userId
-          ? dispute.respondentId
-          : dispute.openedById;
-      // Đọc lại danh sách review SAU khi upsert để tránh race condition khi 2 bên bấm Chấp nhận đồng thời
-      const latestReviews =
-        await this.disputeRepo.findDecisionReviews(disputeId);
-      const otherReview = latestReviews.find((r) => r.userId === otherUserId);
-
-      if (
-        otherReview &&
-        otherReview.response === DisputeDecisionResponse.ACCEPTED
-      ) {
-        const freshDispute = await this.disputeRepo.findDisputeById(disputeId);
-        if (freshDispute && freshDispute.status === DisputeStatus.DECISION_MADE) {
-          return await this.executeFinalization(
-            freshDispute,
-            Number(freshDispute.freelancerAmount),
-            Number(freshDispute.clientAmount),
-            freshDispute.decisionReason ?? 'Both parties accepted decision',
-          );
-        }
-        return freshDispute;
-      }
-
-      return await this.disputeRepo.findDisputeById(disputeId);
-    } catch (error) {
-      if (error instanceof HttpException) throw error;
-      this.logger.error('Failed to submit dispute review', error);
-      throw FailedToSubmitDisputeReviewException();
     }
   }
 

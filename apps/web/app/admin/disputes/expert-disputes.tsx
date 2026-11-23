@@ -23,7 +23,7 @@ import {
   DisputeStatusBadge,
   formatResolutionCurrency,
   useResolutionHelpers,
-} from "@/components/disputes/resolution-utils";
+} from "@/app/(client)/_components/disputes/resolution-utils";
 import { ExpertDisputeDetail } from "./expert-dispute-detail";
 
 const STATUS_FILTERS = [
@@ -284,11 +284,10 @@ export function ExpertDisputes() {
                     setStatus(tab.key);
                     setPage(1);
                   }}
-                  className={`inline-flex h-6 cursor-pointer items-center whitespace-nowrap rounded-full px-3 text-xs transition-all ${
-                    isActive
+                  className={`inline-flex h-6 cursor-pointer items-center whitespace-nowrap rounded-full px-3 text-xs transition-all ${isActive
                       ? "bg-background font-medium text-foreground shadow-xs"
                       : "text-muted-foreground hover:text-foreground"
-                  }`}
+                    }`}
                 >
                   {t(tab.labelKey)}
                 </button>
@@ -308,11 +307,10 @@ export function ExpertDisputes() {
               className="inline-flex size-8 items-center justify-center rounded-lg border border-zinc-200/80 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-muted-foreground hover:text-foreground hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors cursor-pointer"
             >
               <RefreshCw
-                className={`size-3.5 ${
-                  listQuery.isLoading || listQuery.isRefetching
+                className={`size-3.5 ${listQuery.isLoading || listQuery.isRefetching
                     ? "animate-spin"
                     : ""
-                }`}
+                  }`}
               />
             </button>
           </div>
@@ -421,11 +419,10 @@ export function ExpertDisputes() {
                             e.stopPropagation();
                             setSelectedId(item.id);
                           }}
-                          className={`inline-flex items-center gap-1 rounded-lg px-2.5 py-1 text-xs transition-colors cursor-pointer ${
-                            needsArbitration
+                          className={`inline-flex items-center gap-1 rounded-lg px-2.5 py-1 text-xs transition-colors cursor-pointer ${needsArbitration
                               ? "bg-[#0069D3] text-white hover:bg-[#0055b3] font-medium"
                               : "text-muted-foreground hover:text-foreground hover:bg-zinc-100 dark:hover:bg-zinc-800"
-                          }`}
+                            }`}
                         >
                           {needsArbitration ? (
                             <Gavel className="size-3.5" />

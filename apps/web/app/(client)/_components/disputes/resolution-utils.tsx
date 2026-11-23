@@ -4,7 +4,6 @@ import { useLocale, useTranslations } from "next-intl";
 import { ApiFail } from "@/lib/http";
 import type {
   DisputeDetailType,
-  ResolutionReasonItemType,
 } from "@shared/types";
 
 export function getDisputeApiErrorMessage(
@@ -109,26 +108,6 @@ export function useResolutionHelpers() {
     };
   };
 
-  const getLocalizedReason = (
-    item: ResolutionReasonItemType,
-    role?: "CLIENT" | "FREELANCER",
-  ): { label: string; description: string } => {
-    const key =
-      item.code === "MUTUAL_CANCELLATION"
-        ? role === "FREELANCER"
-          ? "FREELANCER_MUTUAL_CANCELLATION"
-          : "CLIENT_MUTUAL_CANCELLATION"
-        : item.code;
-
-    const labelKey = `reasons.${key}.label` as const;
-    const descKey = `reasons.${key}.description` as const;
-
-    return {
-      label: t.has(labelKey) ? t(labelKey) : item.label,
-      description: t.has(descKey) ? t(descKey) : item.description,
-    };
-  };
-
   const translateStoredReason = (reason?: string | null): string => {
     if (!reason) return "";
     const key = REASON_LABEL_TO_KEY[reason];
@@ -142,7 +121,6 @@ export function useResolutionHelpers() {
     formatDateTime,
     getTypeLabel,
     getCountdown,
-    getLocalizedReason,
     translateStoredReason,
   };
 }

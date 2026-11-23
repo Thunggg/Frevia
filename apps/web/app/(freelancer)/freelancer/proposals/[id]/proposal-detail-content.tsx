@@ -42,7 +42,6 @@ import {
   CreateProposalBodySchema,
   ManageProposalMessage,
   SaveProposalDraftBodySchema,
-  MAX_PROPOSAL_DELIVERY_DAYS,
   type CreateProposalBodyType,
   type ProposalDetailType,
   type SaveProposalDraftBodyType,
@@ -95,12 +94,12 @@ export function ProposalDetailContent({
 
   const maxDaysFromDeadline = proposal.job.deadline
     ? Math.max(
-        1,
-        Math.ceil(
-          (new Date(proposal.job.deadline).getTime() - Date.now()) /
-            (24 * 60 * 60 * 1000),
-        ),
-      )
+      1,
+      Math.ceil(
+        (new Date(proposal.job.deadline).getTime() - Date.now()) /
+        (24 * 60 * 60 * 1000),
+      ),
+    )
     : undefined;
   const form = useForm<CreateProposalBodyType>({
     mode: "onChange",
@@ -253,9 +252,8 @@ export function ProposalDetailContent({
 
   return (
     <div
-      className={`flex flex-col bg-background font-sans ${
-        embedded ? "min-h-0 flex-1" : "min-h-dvh"
-      }`}
+      className={`flex flex-col bg-background font-sans ${embedded ? "min-h-0 flex-1" : "min-h-dvh"
+        }`}
     >
       {!embedded && <Header role="FREELANCER" />}
       <main className="flex-1">
@@ -359,16 +357,19 @@ export function ProposalDetailContent({
                           ) : null}
                         </div>
                         <Input
-                          type="number"
-                          min="0"
-                          step="0.01"
+                          type="text"
+                          inputMode="decimal"
                           disabled={!canEditDraft || action !== null}
                           value={field.value ?? ""}
+                          onFocus={(e) => e.target.select()}
                           onChange={(event) => {
+                            let val = event.target.value.replace(/[^\d.]/g, "");
+                            if (/^0\d/.test(val)) {
+                              val = val.replace(/^0+/, "");
+                              if (val === "") val = "0";
+                            }
                             field.onChange(
-                              event.target.value === ""
-                                ? undefined
-                                : Number(event.target.value),
+                              val === "" ? undefined : Number(val),
                             );
                             if (form.formState.errors.bidAmount) {
                               form.clearErrors("bidAmount");
@@ -412,24 +413,19 @@ export function ProposalDetailContent({
                           ) : null}
                         </div>
                         <Input
-                          type="number"
-                          min="1"
-                          max={
-                            maxDaysFromDeadline
-                              ? Math.min(
-                                  MAX_PROPOSAL_DELIVERY_DAYS,
-                                  maxDaysFromDeadline,
-                                )
-                              : MAX_PROPOSAL_DELIVERY_DAYS
-                          }
-                          step="1"
+                          type="text"
+                          inputMode="numeric"
                           disabled={!canEditDraft || action !== null}
                           value={field.value ?? ""}
+                          onFocus={(e) => e.target.select()}
                           onChange={(event) => {
+                            let val = event.target.value.replace(/[^\d]/g, "");
+                            if (/^0\d/.test(val)) {
+                              val = val.replace(/^0+/, "");
+                              if (val === "") val = "0";
+                            }
                             field.onChange(
-                              event.target.value === ""
-                                ? undefined
-                                : Number(event.target.value),
+                              val === "" ? undefined : Number(val),
                             );
                             if (form.formState.errors.deliveryDays) {
                               form.clearErrors("deliveryDays");
@@ -509,10 +505,10 @@ export function ProposalDetailContent({
                 <dd className="mt-1 font-medium">
                   {proposal.submittedAt
                     ? format.dateTime(new Date(proposal.submittedAt), {
-                        day: "numeric",
-                        month: "short",
-                        year: "numeric",
-                      })
+                      day: "numeric",
+                      month: "short",
+                      year: "numeric",
+                    })
                     : tList("notSubmitted")}
                 </dd>
               </div>

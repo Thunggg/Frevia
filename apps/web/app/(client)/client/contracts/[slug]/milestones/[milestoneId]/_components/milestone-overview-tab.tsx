@@ -38,7 +38,6 @@ interface MilestoneOverviewTabProps {
   onSubmitWork?: () => void;
   onReviewSubmission?: (submission?: GetSubmissionResponseType) => void;
   onRelease?: () => void;
-  onRefund?: () => void;
 }
 
 export function MilestoneOverviewTab({
@@ -54,7 +53,6 @@ export function MilestoneOverviewTab({
   onSubmitWork,
   onReviewSubmission,
   onRelease,
-  onRefund,
 }: MilestoneOverviewTabProps) {
   const format = useFormatter();
   const t = useTranslations("milestoneWorkspace.overview");
@@ -71,7 +69,6 @@ export function MilestoneOverviewTab({
     { method: "POST", path: "/api/payments/contracts/:contractId/milestones/:milestoneId/fund/saved-card" },
   ]);
   const canReleasePermission = can("POST", "/api/payments/contracts/:contractId/milestones/:milestoneId/release");
-  const canRefundPermission = can("POST", "/api/payments/contracts/:contractId/milestones/:milestoneId/refund");
   const canStartWorkPermission = can("PATCH", "/api/contracts/:contractId/milestones/:id/progress");
   const canSubmitWorkPermission = can("POST", "/api/contracts/:contractId/milestones/:milestoneId/submissions");
   const canApprovePermission = can("PATCH", "/api/contracts/:contractId/milestones/:milestoneId/submissions/:id/approve");
@@ -213,19 +210,6 @@ export function MilestoneOverviewTab({
                   : ""}
               </p>
             </div>
-            {isClient &&
-              milestone.paymentStatus === "FUNDED" &&
-              canRefundPermission &&
-              onRefund && (
-                <Button
-                  size="sm"
-                  onClick={onRefund}
-                  className="h-7 text-xs font-normal text-rose-600 border border-rose-200 dark:border-rose-800 bg-transparent hover:bg-rose-50 dark:hover:bg-rose-950/20 shrink-0 cursor-pointer"
-                >
-                  <RotateCcw className="mr-1 size-3" />
-                  {tCard("refundEscrow")}
-                </Button>
-              )}
           </div>
         )}
 

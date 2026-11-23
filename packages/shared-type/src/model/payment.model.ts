@@ -167,13 +167,6 @@ export type CreateOnboardingLinkBodyType = z.infer<
   typeof CreateOnboardingLinkBodySchema
 >;
 
-export const RefundMilestoneBodySchema = z.object({
-  reason: z.string().optional(),
-});
-export type RefundMilestoneBodyType = z.infer<
-  typeof RefundMilestoneBodySchema
->;
-
 export const ReleaseMilestoneResponseSchema = z.object({
   success: z.boolean(),
   message: z.string(),
@@ -181,15 +174,6 @@ export const ReleaseMilestoneResponseSchema = z.object({
 });
 export type ReleaseMilestoneResponseType = z.infer<
   typeof ReleaseMilestoneResponseSchema
->;
-
-export const RefundMilestoneResponseSchema = z.object({
-  success: z.boolean(),
-  message: z.string(),
-  refundId: z.string(),
-});
-export type RefundMilestoneResponseType = z.infer<
-  typeof RefundMilestoneResponseSchema
 >;
 
 export const SyncPaymentIntentResponseSchema = z.object({

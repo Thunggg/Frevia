@@ -160,12 +160,12 @@ describe('DisputesExpertService', () => {
   });
 
   describe('makeDecision', () => {
-    it('records first decision with status DECISION_MADE when split amounts equal milestone amount', async () => {
+    it('finalizes decision, executes settlement payout immediately without requiring mutual approval', async () => {
       repo.findActiveExpert.mockResolvedValue({ id: 9 });
       repo.findDisputeById.mockResolvedValue(mockDispute as any);
-      repo.makeDecisionTransaction.mockResolvedValue({
+      repo.finalizeDisputeTransaction.mockResolvedValue({
         ...mockDispute,
-        status: DisputeStatus.DECISION_MADE,
+        status: DisputeStatus.FINALIZED,
         freelancerAmount: new Prisma.Decimal(300.0),
         clientAmount: new Prisma.Decimal(200.0),
         decisionReason: 'Work 60% complete based on evidence.',
@@ -177,16 +177,19 @@ describe('DisputesExpertService', () => {
         decisionReason: 'Work 60% complete based on evidence.',
       }))!;
 
-      expect(repo.makeDecisionTransaction).toHaveBeenCalledWith(
-        5,
-        99,
-        300.0,
-        200.0,
-        'Work 60% complete based on evidence.',
-        1,
-        2,
-      );
-      expect(result.status).toBe(DisputeStatus.DECISION_MADE);
+      expect(
+        paymentService.executeDisputeSettlementPayout,
+      ).toHaveBeenCalledWith({
+        disputeId: 5,
+        contractId: 100,
+        milestoneId: 10,
+        freelancerId: 2,
+        clientId: 1,
+        freelancerAmount: 300.0,
+        clientAmount: 200.0,
+      });
+      expect(repo.finalizeDisputeTransaction).toHaveBeenCalled();
+      expect(result.status).toBe(DisputeStatus.FINALIZED);
     });
 
     it('rejects decision if split amounts do not equal milestone amount', async () => {
@@ -202,7 +205,7 @@ describe('DisputesExpertService', () => {
       ).rejects.toThrow(BadRequestException);
     });
 
-    it('rejects decision if dispute is not UNDER_REVIEW', async () => {
+    it('rejects decision if dispute is not in a decidable status', async () => {
       repo.findActiveExpert.mockResolvedValue({ id: 9 });
       repo.findDisputeById.mockResolvedValue({
         ...mockDispute,
@@ -233,84 +236,6 @@ describe('DisputesExpertService', () => {
         service.makeDecision(1, 'Admin', 5, body),
       ).rejects.toBeInstanceOf(ForbiddenException);
       expect(repo.makeDecisionTransaction).not.toHaveBeenCalled();
-    });
-  });
-
-  describe('makeFinalDecision', () => {
-    it('finalizes dispute, executes settlement payout, and updates milestone status', async () => {
-      repo.findActiveExpert.mockResolvedValue({ id: 9 });
-      repo.findDisputeById.mockResolvedValue({
-        ...mockDispute,
-        status: DisputeStatus.REVIEW_REQUESTED,
-      } as any);
-      repo.finalizeDisputeTransaction.mockResolvedValue({
-        ...mockDispute,
-        status: DisputeStatus.FINALIZED,
-        freelancerAmount: new Prisma.Decimal(250.0),
-        clientAmount: new Prisma.Decimal(250.0),
-        decisionReason: 'Final 50/50 split resolution',
-      } as any);
-
-      const result = (await service.makeFinalDecision(99, 'Expert', 5, {
-        freelancerAmount: 250.0,
-        clientAmount: 250.0,
-        decisionReason: 'Final 50/50 split resolution',
-      }))!;
-
-      expect(
-        paymentService.executeDisputeSettlementPayout,
-      ).toHaveBeenCalledWith(
-        expect.objectContaining({
-          disputeId: 5,
-          freelancerAmount: 250.0,
-          clientAmount: 250.0,
-        }),
-      );
-      expect(repo.finalizeDisputeTransaction).toHaveBeenCalledWith(
-        expect.objectContaining({
-          disputeId: 5,
-          milestoneId: 10,
-          expertId: 99,
-          freelancerAmount: 250.0,
-          clientAmount: 250.0,
-          decisionReason: 'Final 50/50 split resolution',
-          milestoneStatus: MilestoneStatus.COMPLETED,
-          milestonePaymentStatus: MilestonePaymentStatus.RELEASED,
-        }),
-      );
-      expect(result.status).toBe(DisputeStatus.FINALIZED);
-    });
-
-    it('rejects final decision if dispute is already finalized', async () => {
-      repo.findActiveExpert.mockResolvedValue({ id: 9 });
-      repo.findDisputeById.mockResolvedValue({
-        ...mockDispute,
-        status: DisputeStatus.FINALIZED,
-      } as any);
-
-      await expect(
-        service.makeFinalDecision(99, 'Expert', 5, {
-          freelancerAmount: 250.0,
-          clientAmount: 250.0,
-          decisionReason: 'Trying to re-finalize',
-        }),
-      ).rejects.toThrow(UnprocessableEntityException);
-      expect(
-        paymentService.executeDisputeSettlementPayout,
-      ).not.toHaveBeenCalled();
-    });
-
-    it('blocks inactive experts from finalizing decisions', async () => {
-      repo.findActiveExpert.mockResolvedValue(null);
-
-      await expect(
-        service.makeFinalDecision(99, 'Expert', 5, {
-          freelancerAmount: 250.0,
-          clientAmount: 250.0,
-          decisionReason: 'Unauthorized',
-        }),
-      ).rejects.toBeInstanceOf(ForbiddenException);
-      expect(repo.finalizeDisputeTransaction).not.toHaveBeenCalled();
     });
   });
 });

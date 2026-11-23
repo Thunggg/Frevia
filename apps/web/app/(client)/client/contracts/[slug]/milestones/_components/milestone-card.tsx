@@ -39,7 +39,6 @@ export interface MilestoneCardProps {
   onDelete?: (milestone: MilestoneType) => void;
   onFund?: (milestone: MilestoneType) => void;
   onRelease?: (milestone: MilestoneType) => void;
-  onRefund?: (milestone: MilestoneType) => void;
   onReview?: (milestone: MilestoneType) => void;
   onSubmitWork?: (milestone: MilestoneType) => void;
   onStartWork?: (milestone: MilestoneType) => void;
@@ -63,7 +62,6 @@ export function MilestoneCard({
   onDelete,
   onFund,
   onRelease,
-  onRefund,
   onReview,
   onSubmitWork,
   onStartWork,
@@ -92,7 +90,6 @@ export function MilestoneCard({
     { method: "POST", path: "/api/payments/contracts/:contractId/milestones/:milestoneId/fund/saved-card" },
   ]);
   const canReleasePermission = can("POST", "/api/payments/contracts/:contractId/milestones/:milestoneId/release");
-  const canRefundPermission = can("POST", "/api/payments/contracts/:contractId/milestones/:milestoneId/refund");
 
   const slugParam = contractSlug || String(contractId);
   const detailUrl = `${basePath}/contracts/${slugParam}/milestones/${milestone.id}`;
@@ -144,12 +141,6 @@ export function MilestoneCard({
     milestone.status === "COMPLETED" &&
     milestone.paymentStatus === "FUNDED" &&
     Boolean(onRelease);
-  const canRefundMilestone =
-    isClient &&
-    contractStatus === "ACTIVE" &&
-    milestone.paymentStatus === "FUNDED" &&
-    (milestone.status === "LATE" || milestone.status === "PENDING") &&
-    Boolean(onRefund);
 
   // Status indicator: clean text & icon without colored background
   const renderWorkStatusText = () => {
@@ -367,19 +358,6 @@ export function MilestoneCard({
               >
                 <Check className="mr-1 size-3" />
                 {t("releasePayment")}
-              </Button>
-            )}
-
-            {/* Client: Refund Escrow */}
-            {canRefundMilestone && canRefundPermission && onRefund && (
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => onRefund(milestone)}
-                className="h-7 rounded-full border-rose-200 dark:border-rose-800 text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/30 text-xs font-normal px-2.5 cursor-pointer"
-              >
-                <RotateCcw className="mr-1 size-3" />
-                {t("refundEscrow")}
               </Button>
             )}
 

@@ -1,5 +1,5 @@
 import { getTranslations } from "next-intl/server";
-import { ResolutionCenterView } from "@/components/disputes/resolution-center-view";
+import { ResolutionCenterView } from "@/app/(client)/_components/disputes/resolution-center-view";
 
 export async function generateMetadata() {
   const t = await getTranslations("resolutionCenter.meta");

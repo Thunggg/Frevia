@@ -302,7 +302,7 @@ export function FreelancerSidebar() {
             />
           )}
           {!collapsed && (
-            <span className="font-semibold text-3xl tracking-tight">
+            <span className="font-aquire font-semibold text-3xl tracking-tight">
               Frevia
             </span>
           )}
