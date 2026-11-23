@@ -3,7 +3,7 @@
 import { useFormatter, useTranslations } from "next-intl";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { motion } from "motion/react";
 import {
   Bookmark,
@@ -19,6 +19,7 @@ import {
   Ellipsis,
   Eye,
   Inbox,
+  Loader2,
   Megaphone,
   Plus,
   Search,
@@ -109,15 +110,31 @@ export function JobList({
   const canReopen = can("PATCH", "/api/manage-jobs/:id/reopen");
 
   const [jobs, setJobs] = useState<JobType[]>(initialJobs);
+  const [paginationState, setPaginationState] = useState(pagination);
   const [activeTab, setActiveTab] = useState<TabFilterType>(
     (initialStatus as TabFilterType) || "ALL",
   );
   const [searchQuery, setSearchQuery] = useState(initialSearch);
   const [debouncedSearch, setDebouncedSearch] = useState(initialSearch);
+  const [isSearching, setIsSearching] = useState(false);
   const [bookmarkedJobIds, setBookmarkedJobIds] = useState<Set<number>>(
     new Set(),
   );
 
+  const isFirstMount = useRef(true);
+  const searchParamsRef = useRef(searchParams);
+  searchParamsRef.current = searchParams;
+
+  // Giữ jobs và pagination đồng bộ khi initialJobs/pagination từ server thay đổi
+  useEffect(() => {
+    setJobs(initialJobs);
+  }, [initialJobs]);
+
+  useEffect(() => {
+    setPaginationState(pagination);
+  }, [pagination]);
+
+  // Debounce 400ms: reset timer khi người dùng tiếp tục gõ phím
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedSearch(searchQuery);
@@ -125,19 +142,63 @@ export function JobList({
     return () => clearTimeout(timer);
   }, [searchQuery]);
 
+  const isDebouncing = searchQuery !== debouncedSearch;
+  const isBusy = isDebouncing || isSearching;
+
+  // Khi debouncedSearch hoặc activeTab thay đổi: gọi API và cập nhật URL
   useEffect(() => {
-    const currentSearch = searchParams.get("search") || "";
-    if (debouncedSearch.trim() !== currentSearch) {
-      const params = new URLSearchParams(searchParams.toString());
-      if (debouncedSearch.trim()) {
-        params.set("search", debouncedSearch.trim());
+    if (isFirstMount.current) {
+      isFirstMount.current = false;
+      return;
+    }
+
+    const trimmed = debouncedSearch.trim();
+    const currentSearch = searchParamsRef.current.get("search") || "";
+
+    // 1. Cập nhật query param trên URL
+    if (trimmed !== currentSearch) {
+      const params = new URLSearchParams(searchParamsRef.current.toString());
+      if (trimmed) {
+        params.set("search", trimmed);
       } else {
         params.delete("search");
       }
       params.delete("page");
       router.replace(`?${params.toString()}`, { scroll: false });
     }
-  }, [debouncedSearch, router, searchParams]);
+
+    // 2. Gọi trực tiếp API getClientJobs với debounce 400ms để hiển thị kết quả và Network tab
+    let isCancelled = false;
+    const fetchJobs = async () => {
+      setIsSearching(true);
+      try {
+        const res = await jobApiRequest.getClientJobs({
+          search: trimmed || undefined,
+          status: activeTab !== "ALL" ? activeTab : undefined,
+          page: 1,
+          limit: 10,
+        });
+        if (!isCancelled && res.data) {
+          setJobs(res.data.data);
+          if (res.data.pagination) {
+            setPaginationState(res.data.pagination);
+          }
+        }
+      } catch (error) {
+        console.error("Lỗi tìm kiếm công việc:", error);
+      } finally {
+        if (!isCancelled) {
+          setIsSearching(false);
+        }
+      }
+    };
+
+    void fetchJobs();
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [debouncedSearch, activeTab, router]);
 
   const handleTabChange = (tab: TabFilterType) => {
     setActiveTab(tab);
@@ -151,6 +212,32 @@ export function JobList({
     router.replace(`?${params.toString()}`, { scroll: false });
   };
 
+  const handlePageChange = async (newPage: number) => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("page", String(newPage));
+    router.replace(`?${params.toString()}`, { scroll: false });
+
+    setIsSearching(true);
+    try {
+      const res = await jobApiRequest.getClientJobs({
+        search: debouncedSearch.trim() || undefined,
+        status: activeTab !== "ALL" ? activeTab : undefined,
+        page: newPage,
+        limit: 10,
+      });
+      if (res.data) {
+        setJobs(res.data);
+        if (res.pagination) {
+          setPaginationState(res.pagination);
+        }
+      }
+    } catch (err) {
+      console.error("Lỗi chuyển trang:", err);
+    } finally {
+      setIsSearching(false);
+    }
+  };
+
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingJob, setEditingJob] = useState<JobType | null>(null);
   const [pendingDeleteJobId, setPendingDeleteJobId] = useState<number | null>(
@@ -160,10 +247,6 @@ export function JobList({
     null,
   );
   const [isPublishing, setIsPublishing] = useState(false);
-
-  useEffect(() => {
-    setJobs(initialJobs);
-  }, [initialJobs]);
 
   const toggleBookmark = (jobId: number) => {
     setBookmarkedJobIds((prev) => {
@@ -184,6 +267,21 @@ export function JobList({
     params.delete("search");
     params.delete("page");
     router.replace(`?${params.toString()}`, { scroll: false });
+
+    if (debouncedSearch === "") {
+      void jobApiRequest
+        .getClientJobs({
+          status: activeTab !== "ALL" ? activeTab : undefined,
+          page: 1,
+          limit: 10,
+        })
+        .then((res) => {
+          if (res.data) {
+            setJobs(res.data);
+            if (res.pagination) setPaginationState(res.pagination);
+          }
+        });
+    }
   };
 
   // Metric counts based on overview stats jobs
@@ -553,21 +651,33 @@ export function JobList({
               placeholder={t("searchJobsPlaceholder")}
               className="w-full rounded-xl border border-border/80 bg-[#F9FAFC] dark:bg-zinc-800/60 pl-9 pr-8 py-2 text-xs placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-[#0069D3] transition-colors"
             />
-            {searchQuery && (
+            {isBusy ? (
+              <div className="absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none">
+                <Loader2 className="size-3.5 animate-spin text-[#0069D3]" />
+              </div>
+            ) : searchQuery ? (
               <button
                 type="button"
                 onClick={handleClearSearch}
                 className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground cursor-pointer p-0.5 rounded-full"
+                title="Xóa tìm kiếm"
               >
                 <X className="size-3.5" />
               </button>
-            )}
+            ) : null}
           </div>
         </div>
 
         {/* ── Job Cards List ── */}
         <div className="mt-6 space-y-4">
-          {filteredJobs.length === 0 ? (
+          {isBusy && jobs.length === 0 ? (
+            <div className="rounded-2xl border border-border/80 bg-white dark:bg-zinc-900 p-12 text-center text-muted-foreground">
+              <Loader2 className="size-8 mx-auto mb-3 animate-spin text-[#0069D3]" />
+              <p className="text-xs text-muted-foreground font-medium">
+                Đang tìm kiếm...
+              </p>
+            </div>
+          ) : filteredJobs.length === 0 ? (
             <div className="rounded-2xl border border-border/80 bg-white dark:bg-zinc-900 p-12 text-center text-muted-foreground">
               <Briefcase className="size-12 mx-auto mb-3 text-muted-foreground/40" />
               <h3 className="text-base font-semibold text-foreground mb-1">
@@ -884,12 +994,12 @@ export function JobList({
         </div>
 
         {/* Pagination */}
-        {pagination.totalPages > 1 && (
+        {paginationState.totalPages > 1 && (
           <div className="mt-8 flex items-center justify-between border-t border-border pt-4">
             <p className="font-mono text-xs text-muted-foreground">
               {tCommon("pageOf", {
-                page: pagination.page,
-                totalPages: pagination.totalPages,
+                page: paginationState.page,
+                totalPages: paginationState.totalPages,
               })}
             </p>
             <div className="flex gap-1.5">
@@ -897,12 +1007,8 @@ export function JobList({
                 variant="outline"
                 size="icon"
                 className="size-8 rounded-xl cursor-pointer"
-                disabled={pagination.page <= 1}
-                onClick={() => {
-                  const params = new URLSearchParams(searchParams.toString());
-                  params.set("page", String(pagination.page - 1));
-                  router.push(`?${params.toString()}`);
-                }}
+                disabled={paginationState.page <= 1}
+                onClick={() => void handlePageChange(paginationState.page - 1)}
               >
                 <ChevronLeft className="size-4" />
               </Button>
@@ -910,12 +1016,8 @@ export function JobList({
                 variant="outline"
                 size="icon"
                 className="size-8 rounded-xl cursor-pointer"
-                disabled={pagination.page >= pagination.totalPages}
-                onClick={() => {
-                  const params = new URLSearchParams(searchParams.toString());
-                  params.set("page", String(pagination.page + 1));
-                  router.push(`?${params.toString()}`);
-                }}
+                disabled={paginationState.page >= paginationState.totalPages}
+                onClick={() => void handlePageChange(paginationState.page + 1)}
               >
                 <ChevronRight className="size-4" />
               </Button>

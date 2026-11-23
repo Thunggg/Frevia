@@ -14,85 +14,101 @@
 \subsubsection{Recommend Jobs and Freelancers}
 
 \fnhead{Function Trigger}
-Triggered automatically when a freelancer visits their dashboard, uploads/updates their CV, or when a client creates a new job posting.\newline
-\textbf{Navigation path:} Freelancer Dashboard $\rightarrow$ Recommended For You (\texttt{/freelancer/recommendations}) OR Client Job Overview $\rightarrow$ Recommended Candidates (\texttt{/client/jobs/:id/recommendations}).
+Triggered automatically when an authenticated freelancer opens the Best Matches recommendation feed on the Find Work workspace or when an authenticated client queries candidate matches for a specific owned job posting.\newline
+\textbf{Navigation path:} Freelancer Workspace $\rightarrow$ Find Work $\rightarrow$ Best Matches (\texttt{/freelancer/find-work/best-matches}) and Client API endpoint (\texttt{GET /api/recommendations/freelancers?jobId=:id}).
 
 \fnhead{Function Description}
 
 \sublabel{Actors / Roles}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-    \item \textbf{Primary Actor:} AI Recommendation Engine / System.
-    \item \textbf{Secondary Actor:} Freelancer (receiving job matches) and Client (receiving candidate matches).
-    \item \textbf{Supporting Systems:} Frevia Web application, Frevia REST API, SensitiveAI Vector Proxy, PostgreSQL with pgvector, and OpenAI text-embedding-3-small service.
+    \item \textbf{Primary Actor:} AI Recommendation Engine / System, Freelancer (receiving recommended open jobs), and Client (receiving recommended freelancers).
+    \item \textbf{Supporting Systems:} Frevia Web application (Next.js), Frevia REST API (\texttt{RecommendationController}), AI Ranking Service (\texttt{AiRecommendationService}), Prisma ORM, and PostgreSQL database.
 \end{itemize}
 
 \sublabel{Purpose}
-\noindent Automatically delivers highly relevant, semantic job recommendations to freelancers based on their profile and uploaded CV embeddings, and simultaneously recommends qualified freelancers to clients for their posted job requirements.
+\noindent Automatically ranks and delivers personalized job recommendations for freelancers (matching freelancer profile/CV against active \texttt{OPEN} jobs via \texttt{cv2jd}) and qualified freelancer recommendations for clients' jobs (\texttt{jd2cv}), complete with composite match score and component breakdown (semantic, skills, experience, budget, preferences, and optional keyword signal), plus on-demand natural-language match explanations.
 
 \sublabel{Interface}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-    \item ``Recommended For You'' widget on the Freelancer home workspace.
-    \item ``Recommended Candidates'' tab on the Client Job Details management dashboard.
-    \item Match percentage indicator badge (e.g., ``98\% Match'') on each recommended card.
+    \item ``Best Matches'' tab on the Freelancer Find Work workspace (\texttt{/freelancer/find-work/best-matches}).
+    \item Match percentage badge (derived from composite \texttt{score}) and explanation trigger dialog (\texttt{RecommendationExplanationDialog}) per recommended card.
+    \item Client recommendation API interface (\texttt{GET /api/recommendations/freelancers}) returning ranked freelancer candidates for an owned job.
 \end{itemize}
 
 \sublabel{Data Processing Overview}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-    \item When a freelancer uploads a CV or updates their profile skills, the backend generates a dense vector embedding via the embedding model and stores it in the database.
-    \item When generating recommendations for a freelancer, the system computes cosine similarity between the freelancer's embedding and active \texttt{OPEN} job embeddings.
-    \item When generating candidates for a client's job, the system computes cosine similarity between the job description embedding and active freelancer profiles.
-    \item Matches with a similarity score above threshold ($\ge 0.75$) are ranked in descending order and cached with a 6-hour TTL.
+    \item \textbf{Freelancer Job Recommendation (\texttt{GET /api/recommendations/jobs}):} Verifies \texttt{FREELANCER} role, loads freelancer profile and skill set (\texttt{repository.findFreelancerByUserId}), and fetches up to 35 active \texttt{OPEN} non-deleted jobs (excluding caller's own postings and banned/deleted clients).
+    \item \textbf{Client Candidate Recommendation (\texttt{GET /api/recommendations/freelancers}):} Verifies \texttt{CLIENT} role and job ownership (\texttt{job.clientId === userId}), then fetches up to 35 active freelancer candidates excluding caller.
+    \item Invokes \texttt{AiRecommendationService} with ranking version \texttt{hybrid-1.0.0} to score and select top \texttt{limit} items.
+    \item Persists recommendation score breakdowns (\texttt{semanticScore}, \texttt{skillScore}, \texttt{experienceScore}, \texttt{budgetScore}, \texttt{preferenceScore}, \texttt{finalScore}, \texttt{embeddingModel}) to PostgreSQL for traceability and match explanation (\texttt{GET /api/recommendations/:id/explanation}).
+    \item If the AI ranking engine fails or is unavailable, gracefully falls back to returning up to \texttt{limit} unranked eligible records with \texttt{score = 0}.
 \end{itemize}
 
 \fnhead{Screen Layout (Mock-up Description)}
-\screenfigure[0.95]{image/screenshot/sprint4/ptai/JobFreelancerRecommend.png}{AI matching and recommendation engine view}
+\screenfigure[0.95]{image/screenshot/sprint4/ptai/JobFreelancerRecommend.png}{Freelancer Best Matches AI recommendation interface}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-    \item Top section summarizing AI vector matching status and model specifications.
-    \item Two-column display: left column shows top matched jobs for freelancers, right column shows top candidate matches for clients.
-    \item Match percentage badges (e.g. 96\%, 94\%, 89\%) and one-click apply or invite actions.
+    \item Find Work header banner with search bar and workspace navigation tabs showing active \textbf{Best Matches} count.
+    \item Refresh action button to re-evaluate personalized job matches.
+    \item Job cards displaying status badge, posting age, proposal count, match score badge, budget range, description excerpt, and required skills.
+    \item Right profile sidebar displaying profile visibility, completion progress bar, identity verification card, and availability status.
 \end{itemize}
 
 \fnhead{Function Details}
 
 \sublabel{Input Data}
 \begin{specdatatable}{Data Name}{Description}
-User ID / Job ID & Target freelancer or job posting identifier.\\ \hline
-\texttt{limit} & Number of recommendations to retrieve, default 10.\\ \hline
+\texttt{limit} & Optional integer between 1 and 50 (default 10) controlling maximum returned recommendations.\\ \hline
+\texttt{jobId} & Positive integer ID of target job (required only when client calls \texttt{GET /api/recommendations/freelancers}).\\ \hline
+\texttt{id} & Positive integer recommendation ID when requesting explanation via \texttt{GET /api/recommendations/:id/explanation}.\\ \hline
 \end{specdatatable}
 
 \sublabel{Validation Rules}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-    \item Only active users and non-deleted jobs are included in vector indexing.
+    \item \texttt{limit} must be an integer between 1 and 50 (default 10).
+    \item \texttt{jobId} and recommendation \texttt{id} must be positive integers.
+    \item Endpoints require an authenticated session and matching directional role (\texttt{FREELANCER} for jobs, \texttt{CLIENT} for candidates).
 \end{itemize}
 
 \sublabel{Business Rules}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
-    \item BR-REC-01: Vector embedding matching requires minimum cosine similarity threshold of 0.75.
-    \item BR-REC-02: Only jobs with status \texttt{OPEN} are recommended to freelancers.
-    \item BR-REC-03: Banned or suspended users are excluded from all recommendation pipelines.
+    \item BR-REC-01: Role-Specific Recommendation Direction: Job recommendations (\texttt{cv2jd}) are strictly restricted to active \texttt{FREELANCER} callers with an existing freelancer profile, while candidate recommendations (\texttt{jd2cv}) are strictly restricted to the owning \texttt{CLIENT} of the target job.
+    \item BR-REC-02: Candidate Pool Pre-Filtering and Skill Prioritization: Up to 35 candidates are pre-filtered per request, prioritizing skill overlap; recommended jobs include only non-deleted, unexpired, unfilled \texttt{OPEN} jobs from active non-banned clients (excluding self-posted jobs), and recommended candidates include only active non-banned freelancer profiles with skills (excluding the caller).
+    \item BR-REC-03: Hybrid Multi-Signal Scoring: Match candidates are ranked using hybrid weighted scoring (\texttt{hybrid-1.0.0}), producing an overall composite score alongside individual semantic, skill, experience, budget, preference, and optional keyword signal components.
+    \item BR-REC-04: Graceful Fallback on AI Service Degradation: When the AI ranking engine fails or times out, recommendation views fall back to returning eligible unranked items with zeroed scores instead of failing page load, while explanation queries return an unready fallback state.
+    \item BR-REC-05: Recommendation Traceability and Index Synchronization: Ranked recommendation records are persisted asynchronously so explanation requests can verify requester ownership against historical match factors, while outbox and reindexing workflows keep vector embeddings synchronized.
 \end{itemize}
 
 \sublabel{Normal Flow}
 \begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
-    \item User opens dashboard or recommendation tab.
-    \item Frontend requests recommendations via \texttt{GET /api/recommendations}.
-    \item Backend executes vector similarity query against indexed embeddings.
-    \item Returns top ranked matches with match scores.
-    \item UI renders recommendations with match percentage badges.
+    \item Freelancer navigates to \texttt{/freelancer/find-work/best-matches} (or client requests candidate matches for an owned \texttt{jobId}).
+    \item Frontend dispatches \texttt{GET /api/recommendations/jobs?limit=10} (or \texttt{/api/recommendations/freelancers}).
+    \item Backend validates authentication token, role permission, and target profile or job existence.
+    \item Backend retrieves candidate pool (up to 35 entries) and invokes \texttt{AiRecommendationService.rank()}.
+    \item Ranked recommendations are stored in PostgreSQL and returned with score breakdowns and entity metadata.
+    \item UI renders recommended cards with match badges and optional explanation modal.
 \end{enumerate}
 
 \sublabel{Abnormal Flow / Exception Handling}
-\begin{flowtable}{Case}{Description}
-A1 & Vector service unreachable or user profile has no skills/CV yet. System falls back to recent popularity-based category recommendations.\\ \hline
+\begin{flowtable}{Abnormal Case}{Handling \& System Response}
+Missing or invalid authentication token & Global \texttt{AuthGuard} rejects the request with HTTP 401 Unauthorized. Frontend redirects to \texttt{/login}.\\ \hline
+Cross-role access attempt & Freelancer calling \texttt{/freelancers} or Client calling \texttt{/jobs} throws \texttt{RecommendationRoleNotAllowedException} (HTTP 403 Forbidden).\\ \hline
+Freelancer profile missing & If the authenticated freelancer has no profile record, backend throws \texttt{FreelancerProfileNotFoundException} (HTTP 404 Not Found).\\ \hline
+Target job missing for client match & If \texttt{jobId} does not exist, backend throws \texttt{JobForRecommendationNotFoundException} (HTTP 404 Not Found).\\ \hline
+Non-owner client requests job candidates & Calling client does not own \texttt{jobId}; backend throws \texttt{RecommendationForbiddenException} (HTTP 403 Forbidden).\\ \hline
+Non-owner or missing explanation record & Calling \texttt{GET /api/recommendations/:id/explanation} throws HTTP 404 if absent or HTTP 403 if \texttt{requesterId !== userId}.\\ \hline
+Invalid \texttt{limit} or \texttt{jobId} query parameter & Zod DTO rejects non-positive integers or \texttt{limit > 50} with HTTP 400 Bad Request.\\ \hline
+AI ranking service unavailable or timeout & Listing endpoints catch the AI error and return fallback unranked items with \texttt{score = 0}; explanation endpoint returns \texttt{ready = false} with \texttt{fallbackReason}.\\ \hline
+No eligible open jobs or freelancers exist & Repository returns an empty candidate pool; service returns \texttt{\{ data: [] \}} and UI renders empty state.\\ \hline
+Reindex or outbox processing failure & Administrative endpoints throw \texttt{FailedToReindexException} (HTTP 503) or \texttt{FailedToProcessOutboxException} (HTTP 500).\\ \hline
 \end{flowtable}
 
 \sublabel{Output Data}
 \begin{specdatatable}{Data Name}{Description}
-\texttt{recommendations} & Array of items containing entity data, match score (0.00--1.00), and top matched skill tags.\\ \hline
+\texttt{data} & Array of recommendation objects containing \texttt{recommendationId}, composite \texttt{score}, \texttt{components} breakdown, and embedded \texttt{job} or freelancer profile summary.\\ \hline
 \end{specdatatable}
 
 \sublabel{Post-Conditions}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-    \item Personalized recommendations are presented with match score transparency.
+    \item Ranked personalized job or freelancer recommendations are displayed with score transparency.
+    \item Recommendation audit rows are stored when AI ranking succeeds.
 \end{itemize}
-
