@@ -34,7 +34,6 @@ import { useActionPermission } from "@/hooks/use-action-permission";
 import {
   CreateProposalBodySchema,
   SaveProposalDraftBodySchema,
-  MAX_PROPOSAL_DELIVERY_DAYS,
   type CreateProposalBodyType,
   type SaveProposalDraftBodyType,
 } from "@shared/types";
@@ -71,11 +70,11 @@ export function ProposalDialog({
 
   const maxDaysFromDeadline = deadline
     ? Math.max(
-        1,
-        Math.ceil(
-          (new Date(deadline).getTime() - Date.now()) / (24 * 60 * 60 * 1000),
-        ),
-      )
+      1,
+      Math.ceil(
+        (new Date(deadline).getTime() - Date.now()) / (24 * 60 * 60 * 1000),
+      ),
+    )
     : undefined;
 
   const form = useForm<CreateProposalBodyType>({
@@ -280,15 +279,18 @@ export function ProposalDialog({
                       ) : null}
                     </div>
                     <Input
-                      type="number"
-                      min="0"
-                      step="0.01"
+                      type="text"
+                      inputMode="decimal"
                       value={field.value ?? ""}
+                      onFocus={(e) => e.target.select()}
                       onChange={(event) => {
+                        let val = event.target.value.replace(/[^\d.]/g, "");
+                        if (/^0\d/.test(val)) {
+                          val = val.replace(/^0+/, "");
+                          if (val === "") val = "0";
+                        }
                         field.onChange(
-                          event.target.value === ""
-                            ? undefined
-                            : Number(event.target.value),
+                          val === "" ? undefined : Number(val),
                         );
                         if (form.formState.errors.bidAmount) {
                           form.clearErrors("bidAmount");
@@ -332,23 +334,18 @@ export function ProposalDialog({
                       ) : null}
                     </div>
                     <Input
-                      type="number"
-                      min="1"
-                      max={
-                        maxDaysFromDeadline
-                          ? Math.min(
-                              MAX_PROPOSAL_DELIVERY_DAYS,
-                              maxDaysFromDeadline,
-                            )
-                          : MAX_PROPOSAL_DELIVERY_DAYS
-                      }
-                      step="1"
+                      type="text"
+                      inputMode="numeric"
                       value={field.value ?? ""}
+                      onFocus={(e) => e.target.select()}
                       onChange={(event) => {
+                        let val = event.target.value.replace(/[^\d]/g, "");
+                        if (/^0\d/.test(val)) {
+                          val = val.replace(/^0+/, "");
+                          if (val === "") val = "0";
+                        }
                         field.onChange(
-                          event.target.value === ""
-                            ? undefined
-                            : Number(event.target.value),
+                          val === "" ? undefined : Number(val),
                         );
                         if (form.formState.errors.deliveryDays) {
                           form.clearErrors("deliveryDays");

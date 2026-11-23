@@ -9,6 +9,8 @@ import type {
   ForumCategoryDetailResponseType,
   ForumCategoryListResponseType,
   ForumCategoryTopListResponseType,
+  ForumPostFilterType,
+  ForumPostListResponseType,
   ForumTopActiveUserListResponseType,
 } from "@shared/types";
 
@@ -79,6 +81,25 @@ const forumServerRequest = {
           `/api/forums/users/top?limit=${limit}`,
           120,
         )) ?? []
+      );
+    },
+  ),
+
+  getPosts: cache(
+    async (
+      params: Partial<ForumPostFilterType> = {},
+    ): Promise<ForumPostListResponseType | null> => {
+      const searchParams = new URLSearchParams();
+      if (params.page) searchParams.set("page", String(params.page));
+      if (params.limit) searchParams.set("limit", String(params.limit));
+      if (params.categoryId) searchParams.set("categoryId", String(params.categoryId));
+      if (params.userId) searchParams.set("userId", String(params.userId));
+      if (params.search) searchParams.set("search", params.search);
+      const qs = searchParams.toString();
+      return forumServerFetch<ForumPostListResponseType>(
+        `/api/forums/posts${qs ? `?${qs}` : ""}`,
+        30,
+        ["forum-posts"],
       );
     },
   ),

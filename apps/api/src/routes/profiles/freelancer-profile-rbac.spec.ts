@@ -1,4 +1,7 @@
-import { matchRoutePath, normalizeApiPath } from '../../shared/helper/match-route-path';
+import {
+  matchRoutePath,
+  normalizeApiPath,
+} from '../../shared/helper/match-route-path';
 
 /**
  * Bộ kiểm thử Action-Level RBAC và Kiểm soát hiển thị giao diện UI cho nhóm chức năng:

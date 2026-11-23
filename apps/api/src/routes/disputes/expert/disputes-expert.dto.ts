@@ -1,6 +1,5 @@
 import {
   AdminDisputeDecisionBodySchema,
-  AdminDisputeFinalDecisionBodySchema,
   DisputeDetailSchema,
   DisputeListResponseSchema,
   GetDisputeListQuerySchema,
@@ -9,10 +8,6 @@ import { createZodDto } from 'nestjs-zod';
 
 export class ExpertDisputeDecisionBodyDTO extends createZodDto(
   AdminDisputeDecisionBodySchema,
-) {}
-
-export class ExpertDisputeFinalDecisionBodyDTO extends createZodDto(
-  AdminDisputeFinalDecisionBodySchema,
 ) {}
 
 export class GetExpertDisputeListQueryDTO extends createZodDto(

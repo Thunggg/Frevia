@@ -1,4 +1,7 @@
-import { matchRoutePath, normalizeApiPath } from '../../shared/helper/match-route-path';
+import {
+  matchRoutePath,
+  normalizeApiPath,
+} from '../../shared/helper/match-route-path';
 
 /**
  * Bộ kiểm thử Action-Level RBAC và Kiểm soát hiển thị giao diện UI cho 2 cụm chức năng:
@@ -194,7 +197,10 @@ function evaluateUiState(can: (method: string, path: string) => boolean) {
     showDeleteReviewButton: can('DELETE', '/api/reviews/:reviewId'),
     showRespondToReviewButton: can('POST', '/api/reviews/:reviewId/response'),
     showEditResponseButton: can('PATCH', '/api/reviews/responses/:responseId'),
-    showDeleteResponseButton: can('DELETE', '/api/reviews/responses/:responseId'),
+    showDeleteResponseButton: can(
+      'DELETE',
+      '/api/reviews/responses/:responseId',
+    ),
   };
 }
 
@@ -223,7 +229,8 @@ describe('NOTIFICATIONS & REVIEWS - Action-Level RBAC & UI Visibility Tests', ()
         ).allowed,
       ).toBe(true);
       expect(
-        checkPermissionGuard(getNotifications, 'GET', '/api/notifications/').allowed,
+        checkPermissionGuard(getNotifications, 'GET', '/api/notifications/')
+          .allowed,
       ).toBe(true);
 
       const getReviews = [
@@ -237,7 +244,8 @@ describe('NOTIFICATIONS & REVIEWS - Action-Level RBAC & UI Visibility Tests', ()
         ).allowed,
       ).toBe(true);
       expect(
-        checkPermissionGuard(getReviews, 'GET', '/api/reviews/contracts/55/').allowed,
+        checkPermissionGuard(getReviews, 'GET', '/api/reviews/contracts/55/')
+          .allowed,
       ).toBe(true);
     });
 
@@ -248,13 +256,16 @@ describe('NOTIFICATIONS & REVIEWS - Action-Level RBAC & UI Visibility Tests', ()
         checkPermissionGuard(listOnly, 'GET', '/api/notifications').allowed,
       ).toBe(true);
       expect(
-        checkPermissionGuard(listOnly, 'PATCH', '/api/notifications/read-all').allowed,
+        checkPermissionGuard(listOnly, 'PATCH', '/api/notifications/read-all')
+          .allowed,
       ).toBe(false);
       expect(
-        checkPermissionGuard(listOnly, 'PATCH', '/api/notifications/88/read').allowed,
+        checkPermissionGuard(listOnly, 'PATCH', '/api/notifications/88/read')
+          .allowed,
       ).toBe(false);
       expect(
-        checkPermissionGuard(listOnly, 'DELETE', '/api/notifications/88').allowed,
+        checkPermissionGuard(listOnly, 'DELETE', '/api/notifications/88')
+          .allowed,
       ).toBe(false);
     });
 
@@ -264,13 +275,19 @@ describe('NOTIFICATIONS & REVIEWS - Action-Level RBAC & UI Visibility Tests', ()
       ];
 
       expect(
-        checkPermissionGuard(markAllOnly, 'PATCH', '/api/notifications/read-all').allowed,
+        checkPermissionGuard(
+          markAllOnly,
+          'PATCH',
+          '/api/notifications/read-all',
+        ).allowed,
       ).toBe(true);
       expect(
-        checkPermissionGuard(markAllOnly, 'PATCH', '/api/notifications/88/read').allowed,
+        checkPermissionGuard(markAllOnly, 'PATCH', '/api/notifications/88/read')
+          .allowed,
       ).toBe(false);
       expect(
-        checkPermissionGuard(markAllOnly, 'DELETE', '/api/notifications/88').allowed,
+        checkPermissionGuard(markAllOnly, 'DELETE', '/api/notifications/88')
+          .allowed,
       ).toBe(false);
     });
 
@@ -287,7 +304,8 @@ describe('NOTIFICATIONS & REVIEWS - Action-Level RBAC & UI Visibility Tests', ()
         ).allowed,
       ).toBe(true);
       expect(
-        checkPermissionGuard(contractReviewsOnly, 'GET', '/api/reviews/101').allowed,
+        checkPermissionGuard(contractReviewsOnly, 'GET', '/api/reviews/101')
+          .allowed,
       ).toBe(false);
     });
 
@@ -311,21 +329,16 @@ describe('NOTIFICATIONS & REVIEWS - Action-Level RBAC & UI Visibility Tests', ()
 
       // Thao tác trên response bị chặn (403)
       expect(
-        checkPermissionGuard(reviewOnly, 'POST', '/api/reviews/101/response').allowed,
+        checkPermissionGuard(reviewOnly, 'POST', '/api/reviews/101/response')
+          .allowed,
       ).toBe(false);
       expect(
-        checkPermissionGuard(
-          reviewOnly,
-          'PATCH',
-          '/api/reviews/responses/202',
-        ).allowed,
+        checkPermissionGuard(reviewOnly, 'PATCH', '/api/reviews/responses/202')
+          .allowed,
       ).toBe(false);
       expect(
-        checkPermissionGuard(
-          reviewOnly,
-          'DELETE',
-          '/api/reviews/responses/202',
-        ).allowed,
+        checkPermissionGuard(reviewOnly, 'DELETE', '/api/reviews/responses/202')
+          .allowed,
       ).toBe(false);
     });
   });
@@ -437,7 +450,9 @@ describe('NOTIFICATIONS & REVIEWS - Action-Level RBAC & UI Visibility Tests', ()
     );
 
     it('Thu hồi #311 (PATCH /api/notifications/read-all) -> Nút "Đánh dấu tất cả đã đọc" bị ẩn, vẫn xem và đánh dấu từng cái', () => {
-      const perms = NOTIFICATIONS_REVIEWS_PERMISSIONS.filter((p) => p.id !== 311);
+      const perms = NOTIFICATIONS_REVIEWS_PERMISSIONS.filter(
+        (p) => p.id !== 311,
+      );
       const uiState = evaluateUiState(createCanHelper(perms));
       expect(uiState.showMarkAllReadButton).toBe(false);
       expect(uiState.showNotificationsBell).toBe(true);
@@ -447,7 +462,9 @@ describe('NOTIFICATIONS & REVIEWS - Action-Level RBAC & UI Visibility Tests', ()
     });
 
     it('Thu hồi #313 (DELETE /api/notifications/:id) -> Nút "Xóa thông báo" bị ẩn', () => {
-      const perms = NOTIFICATIONS_REVIEWS_PERMISSIONS.filter((p) => p.id !== 313);
+      const perms = NOTIFICATIONS_REVIEWS_PERMISSIONS.filter(
+        (p) => p.id !== 313,
+      );
       const uiState = evaluateUiState(createCanHelper(perms));
       expect(uiState.showDeleteNotificationButton).toBe(false);
       expect(uiState.showNotificationsPage).toBe(true);
@@ -456,7 +473,9 @@ describe('NOTIFICATIONS & REVIEWS - Action-Level RBAC & UI Visibility Tests', ()
     });
 
     it('Thu hồi #401 (POST /api/reviews/contracts/:contractId) -> Khung tạo đánh giá mới bị ẩn, vẫn xem danh sách đánh giá', () => {
-      const perms = NOTIFICATIONS_REVIEWS_PERMISSIONS.filter((p) => p.id !== 401);
+      const perms = NOTIFICATIONS_REVIEWS_PERMISSIONS.filter(
+        (p) => p.id !== 401,
+      );
       const uiState = evaluateUiState(createCanHelper(perms));
       expect(uiState.showCreateReviewForm).toBe(false);
       expect(uiState.showContractReviewsList).toBe(true);
@@ -464,21 +483,27 @@ describe('NOTIFICATIONS & REVIEWS - Action-Level RBAC & UI Visibility Tests', ()
     });
 
     it('Thu hồi #402 (GET /api/reviews/:reviewId) -> Nút "Xem chi tiết" đánh giá bị ẩn', () => {
-      const perms = NOTIFICATIONS_REVIEWS_PERMISSIONS.filter((p) => p.id !== 402);
+      const perms = NOTIFICATIONS_REVIEWS_PERMISSIONS.filter(
+        (p) => p.id !== 402,
+      );
       const uiState = evaluateUiState(createCanHelper(perms));
       expect(uiState.showReviewDetailButton).toBe(false);
       expect(uiState.showContractReviewsList).toBe(true);
     });
 
     it('Thu hồi #405 (POST /api/reviews/:reviewId/response) -> Nút "Phản hồi đánh giá" bị ẩn', () => {
-      const perms = NOTIFICATIONS_REVIEWS_PERMISSIONS.filter((p) => p.id !== 405);
+      const perms = NOTIFICATIONS_REVIEWS_PERMISSIONS.filter(
+        (p) => p.id !== 405,
+      );
       const uiState = evaluateUiState(createCanHelper(perms));
       expect(uiState.showRespondToReviewButton).toBe(false);
       expect(uiState.showContractReviewsList).toBe(true);
     });
 
     it('Thu hồi #407 (DELETE /api/reviews/responses/:responseId) -> Nút "Xóa phản hồi" bị ẩn', () => {
-      const perms = NOTIFICATIONS_REVIEWS_PERMISSIONS.filter((p) => p.id !== 407);
+      const perms = NOTIFICATIONS_REVIEWS_PERMISSIONS.filter(
+        (p) => p.id !== 407,
+      );
       const uiState = evaluateUiState(createCanHelper(perms));
       expect(uiState.showDeleteResponseButton).toBe(false);
       expect(uiState.showEditResponseButton).toBe(true);
@@ -532,7 +557,11 @@ describe('NOTIFICATIONS & REVIEWS - Action-Level RBAC & UI Visibility Tests', ()
       expect(uiState.showDeleteNotificationButton).toBe(false);
 
       expect(
-        checkPermissionGuard(basicNotificationPerms, 'GET', '/api/notifications').allowed,
+        checkPermissionGuard(
+          basicNotificationPerms,
+          'GET',
+          '/api/notifications',
+        ).allowed,
       ).toBe(true);
       expect(
         checkPermissionGuard(
@@ -645,4 +674,3 @@ describe('NOTIFICATIONS & REVIEWS - Action-Level RBAC & UI Visibility Tests', ()
     });
   });
 });
-

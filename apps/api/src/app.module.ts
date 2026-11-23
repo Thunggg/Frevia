@@ -110,4 +110,4 @@ import { RecommendationModule } from './routes/recommendations/recommendation.mo
     },
   ],
 })
-export class AppModule { }
+export class AppModule {}

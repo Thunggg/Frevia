@@ -4,7 +4,6 @@ import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
-  AlertTriangle,
   Check,
   Clock,
   FileText,
@@ -69,8 +68,6 @@ export function ResolutionDetailSheet({
 
   const [showDeclineForm, setShowDeclineForm] = useState(false);
   const [declineReason, setDeclineReason] = useState("");
-  const [showRejectDecisionForm, setShowRejectDecisionForm] = useState(false);
-  const [rejectDecisionReason, setRejectDecisionReason] = useState("");
   const [isBusy, setIsBusy] = useState(false);
 
   const { data: dispute, isLoading } = useQuery<DisputeDetailType | null>({
@@ -225,38 +222,6 @@ export function ResolutionDetailSheet({
     }
   };
 
-  const handleDecisionReview = async (response: "ACCEPTED" | "REJECTED") => {
-    if (!dispute) return;
-    if (response === "REJECTED" && rejectDecisionReason.trim().length < 5) {
-      toastError({
-        message: t("reviewReasonRequired"),
-      });
-      return;
-    }
-    setIsBusy(true);
-    try {
-      const res = await disputeApiRequest.submitDecisionReview(dispute.id, {
-        response,
-        ...(response === "REJECTED" && { reason: rejectDecisionReason.trim() }),
-      });
-      await invalidateAll(res.data);
-      setShowRejectDecisionForm(false);
-      setRejectDecisionReason("");
-      toastSuccess({
-        message:
-          response === "ACCEPTED"
-            ? t("reviewAcceptSuccess")
-            : t("reviewRejectSuccess"),
-      });
-    } catch (error) {
-      toastError({
-        message: getDisputeApiErrorMessage(error, t("reviewError")),
-      });
-    } finally {
-      setIsBusy(false);
-    }
-  };
-
   const isOpener = Boolean(
     dispute && currentUserId && dispute.openedById === currentUserId,
   );
@@ -274,22 +239,15 @@ export function ResolutionDetailSheet({
     isWaitingResponse &&
     (Boolean(dispute?.declinedAt) || countdown.isExpired);
 
-  const myDecisionReview = dispute?.decisionReviews?.find(
-    (r) => r.userId === currentUserId,
-  );
-  const canReviewDecision =
-    dispute?.status === "DECISION_MADE" &&
-    (isOpener || isRespondent) &&
-    (!myDecisionReview || myDecisionReview.response === "PENDING");
-
   const activeStepIndex = !dispute
     ? 0
     : dispute.status === "FINALIZED" || dispute.status === "CANCELLED"
       ? 4
-      : dispute.status === "DECISION_MADE" ||
+      : dispute.status === "UNDER_REVIEW" ||
+          dispute.status === "DECISION_MADE" ||
           dispute.status === "REVIEW_REQUESTED"
         ? 3
-        : dispute.status === "UNDER_REVIEW"
+        : dispute.declinedAt
           ? 2
           : 1;
 
@@ -620,71 +578,6 @@ export function ResolutionDetailSheet({
                     <Undo2 className="mr-1.5 size-3.5" />
                     {t("withdrawRequest")}
                   </Button>
-                )}
-              </div>
-            )}
-
-            {/* Arbitrator Decision Review */}
-            {canReviewDecision && (
-              <div className="rounded-xl border border-zinc-200/80 dark:border-zinc-800 p-4 space-y-3">
-                <p className="text-xs font-medium text-foreground">
-                  {t("reviewDecisionTitle")}
-                </p>
-                {!showRejectDecisionForm ? (
-                  <div className="flex items-center gap-2">
-                    <Button
-                      type="button"
-                      size="sm"
-                      disabled={isBusy}
-                      onClick={() => void handleDecisionReview("ACCEPTED")}
-                      className="flex-1 h-9 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs cursor-pointer"
-                    >
-                      <Check className="mr-1.5 size-3.5" />
-                      {t("acceptDecision")}
-                    </Button>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      disabled={isBusy}
-                      onClick={() => setShowRejectDecisionForm(true)}
-                      className="flex-1 h-9 rounded-lg text-xs cursor-pointer"
-                    >
-                      <AlertTriangle className="mr-1.5 size-3.5" />
-                      {t("requestFinalReview")}
-                    </Button>
-                  </div>
-                ) : (
-                  <div className="space-y-2.5">
-                    <Textarea
-                      rows={3}
-                      placeholder={t("rejectDecisionPlaceholder")}
-                      value={rejectDecisionReason}
-                      onChange={(e) => setRejectDecisionReason(e.target.value)}
-                      className="text-xs resize-none"
-                    />
-                    <div className="flex items-center justify-end gap-2">
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="sm"
-                        disabled={isBusy}
-                        onClick={() => setShowRejectDecisionForm(false)}
-                        className="h-8 rounded-lg text-xs cursor-pointer"
-                      >
-                        {t("cancel")}
-                      </Button>
-                      <Button
-                        type="button"
-                        size="sm"
-                        disabled={isBusy}
-                        onClick={() => void handleDecisionReview("REJECTED")}
-                        className="h-8 rounded-lg bg-amber-600 hover:bg-amber-700 text-white text-xs cursor-pointer"
-                      >
-                        {t("submitReviewRequest")}
-                      </Button>
-                    </div>
-                  </div>
                 )}
               </div>
             )}

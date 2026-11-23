@@ -112,14 +112,14 @@ export async function renderFindWorkPage({
     jobCategoryServerRequest.getJobCategories({ limit: 50 }),
     !hasCategoryParam
       ? jobServerRequest.getJobs({
-          page,
-          limit,
-          search: keyword,
-          hiringType,
-          ...budgetRanges[budget],
-          createdAfter,
-          ...selectedSort,
-        })
+        page,
+        limit,
+        search: keyword,
+        hiringType,
+        ...budgetRanges[budget],
+        createdAfter,
+        ...selectedSort,
+      })
       : Promise.resolve(null),
     canViewBookmarks
       ? jobServerRequest.getBookmarkedJobs({ limit: 20 })
@@ -140,15 +140,15 @@ export async function renderFindWorkPage({
 
   const result = hasCategoryParam
     ? await jobServerRequest.getJobs({
-        page,
-        limit,
-        search: keyword,
-        category,
-        hiringType,
-        ...budgetRanges[budget],
-        createdAfter,
-        ...selectedSort,
-      })
+      page,
+      limit,
+      search: keyword,
+      category,
+      hiringType,
+      ...budgetRanges[budget],
+      createdAfter,
+      ...selectedSort,
+    })
     : directJobsRes.status === "fulfilled"
       ? directJobsRes.value
       : null;
