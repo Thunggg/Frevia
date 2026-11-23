@@ -1,4 +1,4 @@
-import { HttpException, Injectable } from '@nestjs/common';
+import { HttpException, Injectable, Optional } from '@nestjs/common';
 import {
   CreateMilestoneBodyType,
   GetMilestoneListQueryType,
@@ -32,11 +32,16 @@ import {
   ContractStatus,
   MilestonePaymentStatus,
   MilestoneStatus,
+  NotificationType,
 } from '@prisma/client';
+import { AppNotificationService } from '../../shared/services/app-notification.service';
 
 @Injectable()
 export class MilestoneService {
-  constructor(private readonly milestoneRepository: MilestoneRepository) {}
+  constructor(
+    private readonly milestoneRepository: MilestoneRepository,
+    @Optional() private readonly notificationService?: AppNotificationService,
+  ) {}
 
   async getMilestoneList(
     userId: number,
@@ -305,7 +310,22 @@ export class MilestoneService {
         throw MilestonePreviousNotCompletedException();
       }
 
-      return await this.milestoneRepository.progressMilestone(milestoneId);
+      const result =
+        await this.milestoneRepository.progressMilestone(milestoneId);
+
+      await this.notificationService?.send({
+        userId: contract.clientId,
+        type: NotificationType.SYSTEM_ANNOUNCEMENT,
+        title: 'Milestone work started',
+        message: `Freelancer has started working on milestone "${milestone.title}".`,
+        data: {
+          contractId,
+          milestoneId,
+          href: `/client/contracts/${contract.slug ?? contractId}`,
+        },
+      });
+
+      return result;
     } catch (error) {
       if (error instanceof HttpException) throw error;
 
