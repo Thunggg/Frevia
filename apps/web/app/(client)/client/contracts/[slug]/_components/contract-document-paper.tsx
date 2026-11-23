@@ -13,6 +13,11 @@ import {
   Pencil,
   Trash2,
   FileEdit,
+  ShieldCheck,
+  Check,
+  RotateCcw,
+  Scale,
+  Lock,
 } from "lucide-react";
 import { useActionPermission } from "@/hooks/use-action-permission";
 import type { ContractDetailType, SharedFileType } from "@shared/types";
@@ -40,6 +45,7 @@ export function ContractDocumentPaper({
 }: ContractDocumentPaperProps) {
   const format = useFormatter();
   const t = useTranslations("contractWorkspace.paper");
+  const tPaymentStatus = useTranslations("paymentStatus");
 
   const formatDate = (date: string | Date | null | undefined): string => {
     if (!date) return "—";
@@ -49,6 +55,48 @@ export function ContractDocumentPaper({
       month: "short",
       day: "numeric",
     });
+  };
+
+  const renderPaymentStatusBadge = (status?: string | null) => {
+    const paymentStatus = status || "PENDING";
+    switch (paymentStatus) {
+      case "FUNDED":
+        return (
+          <span className="inline-flex items-center gap-1 text-[11px] font-medium text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200/80">
+            <ShieldCheck className="size-3 shrink-0" />
+            <span>{tPaymentStatus("FUNDED")}</span>
+          </span>
+        );
+      case "RELEASED":
+        return (
+          <span className="inline-flex items-center gap-1 text-[11px] font-medium text-blue-700 bg-blue-50 px-2 py-0.5 rounded border border-blue-200/80">
+            <Check className="size-3 shrink-0" />
+            <span>{tPaymentStatus("RELEASED")}</span>
+          </span>
+        );
+      case "REFUNDED":
+        return (
+          <span className="inline-flex items-center gap-1 text-[11px] font-medium text-zinc-700 bg-zinc-100 px-2 py-0.5 rounded border border-zinc-200">
+            <RotateCcw className="size-3 shrink-0" />
+            <span>{tPaymentStatus("REFUNDED")}</span>
+          </span>
+        );
+      case "DISPUTED":
+        return (
+          <span className="inline-flex items-center gap-1 text-[11px] font-medium text-rose-700 bg-rose-50 px-2 py-0.5 rounded border border-rose-200/80">
+            <Scale className="size-3 shrink-0" />
+            <span>{tPaymentStatus("DISPUTED")}</span>
+          </span>
+        );
+      case "PENDING":
+      default:
+        return (
+          <span className="inline-flex items-center gap-1 text-[11px] font-medium text-amber-700 bg-amber-50 px-2 py-0.5 rounded border border-amber-200/80">
+            <Lock className="size-3 shrink-0" />
+            <span>{tPaymentStatus("PENDING")}</span>
+          </span>
+        );
+    }
   };
 
   const clientName =
@@ -95,6 +143,7 @@ export function ContractDocumentPaper({
       amount: Number(m.amount),
       dueDate: m.dueDate,
       status: m.status,
+      paymentStatus: m.paymentStatus,
     }))
     : [
       {
@@ -104,6 +153,7 @@ export function ContractDocumentPaper({
         amount: totalAmount,
         dueDate: contract.expiresAt || new Date(Date.now() + 14 * 86400000),
         status: "PENDING",
+        paymentStatus: "PENDING",
       },
     ];
 
@@ -339,6 +389,9 @@ export function ContractDocumentPaper({
                   <th className="py-2.5 px-3 w-28 border-r border-zinc-300">
                     {t("colAmount")}
                   </th>
+                  <th className="py-2.5 px-3 w-32 border-r border-zinc-300">
+                    {t("colPaymentStatus")}
+                  </th>
                   <th className="py-2.5 px-3 w-28 border-r border-zinc-300">
                     {t("colDueDate")}
                   </th>
@@ -384,6 +437,9 @@ export function ContractDocumentPaper({
                         {Number(m.amount).toLocaleString("en-US", {
                           minimumFractionDigits: 2,
                         })}
+                      </td>
+                      <td className="py-2.5 px-3 border-r border-zinc-200">
+                        {renderPaymentStatusBadge(m.paymentStatus)}
                       </td>
                       <td className="py-2.5 px-3 border-r border-zinc-200 text-zinc-600 font-mono text-[11px]">
                         {formatDate(m.dueDate)}

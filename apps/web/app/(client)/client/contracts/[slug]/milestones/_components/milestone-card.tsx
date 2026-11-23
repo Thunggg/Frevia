@@ -70,6 +70,7 @@ export function MilestoneCard({
 }: MilestoneCardProps) {
   const format = useFormatter();
   const t = useTranslations("milestoneWorkspace.card");
+  const tPaymentStatus = useTranslations("paymentStatus");
   const { can, canAny } = useActionPermission();
 
   const canViewDetail = can("GET", "/api/contracts/:contractId/milestones/:id");
@@ -197,35 +198,62 @@ export function MilestoneCard({
     }
   };
 
-  // Escrow status: clean text & icon without colored background
+  // Payment status indicator with full lifecycle coverage (PENDING, FUNDED, RELEASED, REFUNDED, DISPUTED)
   const renderEscrowStatusText = () => {
-    switch (milestone.paymentStatus) {
+    const paymentStatus = milestone.paymentStatus || "PENDING";
+    const statusLabel = tPaymentStatus(paymentStatus);
+    const tooltipText = t("paymentStatusLabel", { status: statusLabel });
+
+    switch (paymentStatus) {
       case "FUNDED":
         return (
-          <span className="inline-flex items-center gap-1 text-[11px] text-emerald-600 dark:text-emerald-400">
+          <span
+            className="inline-flex items-center gap-1 text-[11px] font-medium text-emerald-600 dark:text-emerald-400"
+            title={tooltipText}
+          >
             <ShieldCheck className="size-3" />
-            <span>{t("escrowFunded")}</span>
+            <span>{statusLabel}</span>
           </span>
         );
       case "RELEASED":
         return (
-          <span className="inline-flex items-center gap-1 text-[11px] text-blue-600 dark:text-blue-400">
+          <span
+            className="inline-flex items-center gap-1 text-[11px] font-medium text-blue-600 dark:text-blue-400"
+            title={tooltipText}
+          >
             <Check className="size-3" />
-            <span>{t("escrowPaid")}</span>
+            <span>{statusLabel}</span>
           </span>
         );
       case "REFUNDED":
         return (
-          <span className="inline-flex items-center gap-1 text-[11px] text-muted-foreground">
+          <span
+            className="inline-flex items-center gap-1 text-[11px] font-medium text-zinc-500 dark:text-zinc-400"
+            title={tooltipText}
+          >
             <RotateCcw className="size-3" />
-            <span>{t("escrowRefunded")}</span>
+            <span>{statusLabel}</span>
           </span>
         );
+      case "DISPUTED":
+        return (
+          <span
+            className="inline-flex items-center gap-1 text-[11px] font-medium text-rose-600 dark:text-rose-400"
+            title={tooltipText}
+          >
+            <Scale className="size-3" />
+            <span>{statusLabel}</span>
+          </span>
+        );
+      case "PENDING":
       default:
         return (
-          <span className="inline-flex items-center gap-1 text-[11px] text-muted-foreground">
+          <span
+            className="inline-flex items-center gap-1 text-[11px] text-muted-foreground"
+            title={tooltipText}
+          >
             <Lock className="size-3" />
-            <span>{t("escrowAwaiting")}</span>
+            <span>{statusLabel}</span>
           </span>
         );
     }

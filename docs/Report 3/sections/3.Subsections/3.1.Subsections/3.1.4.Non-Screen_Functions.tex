@@ -200,16 +200,18 @@ The Proposal Management feature supports the bidding process between freelancers
 &
 [GET] /\allowbreak{}api/\allowbreak{}contracts \newline
 [GET] /\allowbreak{}api/\allowbreak{}contracts/\allowbreak{}\{id\} \newline
+[GET] /\allowbreak{}api/\allowbreak{}contracts/\allowbreak{}\{id\}/\allowbreak{}pdf \newline
 [POST] /\allowbreak{}api/\allowbreak{}contracts \newline
 [PATCH] /\allowbreak{}api/\allowbreak{}contracts/\allowbreak{}\{id\} \newline
 [PATCH] /\allowbreak{}api/\allowbreak{}contracts/\allowbreak{}\{id\}/\allowbreak{}sign \newline
+[PATCH] /\allowbreak{}api/\allowbreak{}contracts/\allowbreak{}\{id\}/\allowbreak{}reject \newline
 [PATCH] /\allowbreak{}api/\allowbreak{}contracts/\allowbreak{}\{id\}/\allowbreak{}complete \newline
 [PATCH] /\allowbreak{}api/\allowbreak{}contracts/\allowbreak{}\{id\}/\allowbreak{}cancel \newline
 [GET] /\allowbreak{}api/\allowbreak{}contracts/\allowbreak{}\{contractId\}/\allowbreak{}files \newline
 [POST] /\allowbreak{}api/\allowbreak{}contracts/\allowbreak{}\{contractId\}/\allowbreak{}files \newline
 [DELETE] /\allowbreak{}api/\allowbreak{}contracts/\allowbreak{}\{contractId\}/\allowbreak{}files/\allowbreak{}\{fileId\}
 &
-The Contract Management feature manages the agreement between a client and a freelancer throughout the project lifecycle. Users can create a contract, list their contracts, view contract details, update contract terms, sign the contract to confirm participation, complete the contract and request cancellation. Contract participants can also list, upload and delete contract-level files that document the agreement.
+The Contract Management feature manages the agreement between a client and a freelancer throughout the project lifecycle. Users can create a contract, list their contracts, view contract details, export the contract as an immutable signed PDF, update contract terms, sign the contract, reject a contract offer with an explanatory reason, complete the contract upon fulfillment, and request mutual cancellation. Contract participants can also list, upload and delete contract-level files that document the agreement.
 \\ \hline
 
 11
@@ -257,43 +259,36 @@ The Milestone Submission feature supports the deliverable review workflow. A fre
 [POST] /\allowbreak{}api/\allowbreak{}payments/\allowbreak{}connect/\allowbreak{}onboarding-link \newline
 [GET] /\allowbreak{}api/\allowbreak{}payments/\allowbreak{}connect/\allowbreak{}status \newline
 [GET] /\allowbreak{}api/\allowbreak{}payments/\allowbreak{}payment-methods \newline
-[POST] /\allowbreak{}api/\allowbreak{}payments/\allowbreak{}customer-portal \newline
-[POST] /\allowbreak{}api/\allowbreak{}payments/\allowbreak{}contracts/\allowbreak{}\{contractId\}/\allowbreak{}platform-fee/\allowbreak{}intent \newline
-[POST] /\allowbreak{}api/\allowbreak{}payments/\allowbreak{}contracts/\allowbreak{}\{contractId\}/\allowbreak{}platform-fee/\allowbreak{}checkout-session \newline
-[POST] /\allowbreak{}api/\allowbreak{}payments/\allowbreak{}contracts/\allowbreak{}\{contractId\}/\allowbreak{}platform-fee/\allowbreak{}saved-card \newline
-[POST] /\allowbreak{}api/\allowbreak{}payments/\allowbreak{}contracts/\allowbreak{}\{contractId\}/\allowbreak{}milestones/\allowbreak{}\{milestoneId\}/\allowbreak{}fund/\allowbreak{}intent \newline
+[POST] /\allowbreak{}api/\allowbreak{}payments/\allowbreak{}payment-methods/\allowbreak{}default \newline
+[DELETE] /\allowbreak{}api/\allowbreak{}payments/\allowbreak{}payment-methods/\allowbreak{}\{paymentMethodId\} \newline
+[POST] /\allowbreak{}api/\allowbreak{}payments/\allowbreak{}contracts/\allowbreak{}\{contractId\}/\allowbreak{}fund-hold/\allowbreak{}intent \newline
 [POST] /\allowbreak{}api/\allowbreak{}payments/\allowbreak{}contracts/\allowbreak{}\{contractId\}/\allowbreak{}milestones/\allowbreak{}\{milestoneId\}/\allowbreak{}fund/\allowbreak{}checkout-session \newline
 [POST] /\allowbreak{}api/\allowbreak{}payments/\allowbreak{}contracts/\allowbreak{}\{contractId\}/\allowbreak{}milestones/\allowbreak{}\{milestoneId\}/\allowbreak{}fund/\allowbreak{}saved-card \newline
 [POST] /\allowbreak{}api/\allowbreak{}payments/\allowbreak{}contracts/\allowbreak{}\{contractId\}/\allowbreak{}milestones/\allowbreak{}\{milestoneId\}/\allowbreak{}release \newline
-[POST] /\allowbreak{}api/\allowbreak{}payments/\allowbreak{}contracts/\allowbreak{}\{contractId\}/\allowbreak{}milestones/\allowbreak{}\{milestoneId\}/\allowbreak{}refund \newline
-[POST] /\allowbreak{}api/\allowbreak{}payments/\allowbreak{}disputes/\allowbreak{}\{disputeId\}/\allowbreak{}fee/\allowbreak{}intent \newline
-[POST] /\allowbreak{}api/\allowbreak{}payments/\allowbreak{}disputes/\allowbreak{}\{disputeId\}/\allowbreak{}fee/\allowbreak{}checkout-session \newline
-[POST] /\allowbreak{}api/\allowbreak{}payments/\allowbreak{}disputes/\allowbreak{}\{disputeId\}/\allowbreak{}settle \newline
 [GET] /\allowbreak{}api/\allowbreak{}payments/\allowbreak{}transactions \newline
 [POST] /\allowbreak{}api/\allowbreak{}payments/\allowbreak{}intents/\allowbreak{}\{paymentIntentId\}/\allowbreak{}sync \newline
 [POST] /\allowbreak{}api/\allowbreak{}payments/\allowbreak{}checkout-sessions/\allowbreak{}\{sessionId\}/\allowbreak{}sync \newline
 [POST] /\allowbreak{}api/\allowbreak{}payments/\allowbreak{}webhook
 &
-The Payment Management feature integrates Stripe to provide secure escrow-style transactions. Users can connect a Stripe account and check its onboarding status, list saved payment methods, open the Stripe customer portal, and pay the platform fee or fund a milestone either through a PaymentIntent, a checkout session, or a saved card. Clients can release or refund milestone funds, pay a dispute fee and settle a dispute, and view their transaction history. The system also synchronizes PaymentIntent and CheckoutSession status and receives asynchronous Stripe webhook events.
+The Payment Management feature integrates Stripe to provide secure escrow-style transactions. Freelancers can link their bank account via Stripe Connect Express and check live account status. Clients can manage saved payment methods, set default cards, and detach obsolete cards. Contracts support upfront hold deposit authorizations with manual capture upon mutual signing. Clients can fund milestone escrow balances using Stripe Checkout or 1-click saved card charges, and release escrow payouts upon deliverable acceptance. The platform maintains a paginated transaction history, provides real-time PaymentIntent and Checkout Session reconciliation, and securely processes asynchronous Stripe webhook events.
 \\ \hline
 
 15
 &
 \textbf{Manage Dispute}
 &
-[GET] /\allowbreak{}api/\allowbreak{}disputes \newline
 [POST] /\allowbreak{}api/\allowbreak{}disputes \newline
+[GET] /\allowbreak{}api/\allowbreak{}disputes \newline
 [GET] /\allowbreak{}api/\allowbreak{}disputes/\allowbreak{}\{id\} \newline
-[POST] /\allowbreak{}api/\allowbreak{}disputes/\allowbreak{}\{id\}/\allowbreak{}fee \newline
-[POST] /\allowbreak{}api/\allowbreak{}disputes/\allowbreak{}\{id\}/\allowbreak{}response \newline
 [GET] /\allowbreak{}api/\allowbreak{}disputes/\allowbreak{}milestone/\allowbreak{}\{milestoneId\} \newline
-[POST] /\allowbreak{}api/\allowbreak{}disputes/\allowbreak{}\{id\}/\allowbreak{}review \newline
-[GET] /\allowbreak{}api/\allowbreak{}admin/\allowbreak{}disputes \newline
-[GET] /\allowbreak{}api/\allowbreak{}admin/\allowbreak{}disputes/\allowbreak{}\{id\} \newline
-[POST] /\allowbreak{}api/\allowbreak{}admin/\allowbreak{}disputes/\allowbreak{}\{id\}/\allowbreak{}decision \newline
-[POST] /\allowbreak{}api/\allowbreak{}admin/\allowbreak{}disputes/\allowbreak{}\{id\}/\allowbreak{}final-decision
+[PATCH] /\allowbreak{}api/\allowbreak{}disputes/\allowbreak{}\{id\}/\allowbreak{}respond \newline
+[PATCH] /\allowbreak{}api/\allowbreak{}disputes/\allowbreak{}\{id\}/\allowbreak{}withdraw \newline
+[POST] /\allowbreak{}api/\allowbreak{}disputes/\allowbreak{}\{id\}/\allowbreak{}escalate \newline
+[GET] /\allowbreak{}api/\allowbreak{}expert/\allowbreak{}disputes \newline
+[GET] /\allowbreak{}api/\allowbreak{}expert/\allowbreak{}disputes/\allowbreak{}\{id\} \newline
+[POST] /\allowbreak{}api/\allowbreak{}expert/\allowbreak{}disputes/\allowbreak{}\{id\}/\allowbreak{}decision
 &
-The Dispute Management feature handles conflicts that arise during a milestone. Participants can open a dispute for a milestone, list and view their disputes, pay the dispute fee, submit a response to the other party's claim, and review the proposed resolution. The dispute of a specific milestone can be looked up. Administrators can list all disputes, view dispute details, issue a decision, and record the final decision that settles the conflict.
+The Dispute Management feature provides comprehensive arbitration workflows for conflicts arising on funded milestones. Contract participants can open a formal dispute with claims and evidence files, freezing milestone escrow funds. Users can list their disputes, view detailed case files, and inspect contextual dispute warnings directly on milestones. The designated respondent can submit a formal rebuttal statement and counter-evidence within a 48-hour deadline, or the initiator can withdraw the dispute before ruling. Unresolved cases can be escalated to platform domain experts. Experts and administrators can review escalated disputes in a dedicated queue, examine symmetric evidence and deliverables, and issue a binding arbitration decision with fund distribution splits that automatically settle the escrow balance.
 \\ \hline
 
 16

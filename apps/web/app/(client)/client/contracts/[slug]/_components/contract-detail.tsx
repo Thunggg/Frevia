@@ -88,12 +88,17 @@ export function ContractDetail({
   const [confirmReject, setConfirmReject] = useState(false);
   const [rejectReason, setRejectReason] = useState("");
   const [fundHoldOpen, setFundHoldOpen] = useState(false);
+  const [milestoneToDelete, setMilestoneToDelete] = useState<{
+    id: number;
+    title: string;
+  } | null>(null);
 
   // Loading states
   const [isSigning, setIsSigning] = useState(false);
   const [isCompleting, setIsCompleting] = useState(false);
   const [isCancelling, setIsCancelling] = useState(false);
   const [isRejecting, setIsRejecting] = useState(false);
+  const [isDeletingMilestone, setIsDeletingMilestone] = useState(false);
   const [isStartingChat, setIsStartingChat] = useState(false);
   const [chatOpen, setChatOpen] = useState(false);
   const [chatConversationId, setChatConversationId] = useState<number | null>(
@@ -276,25 +281,27 @@ export function ContractDetail({
     }
   };
 
-  // Milestone Delete Action
-  const handleDeleteMilestone = async (
+  // Milestone Delete Action (opens confirmation dialog)
+  const handleDeleteMilestone = (
     milestoneId: number,
     title: string,
   ) => {
-    if (
-      !window.confirm(tWorkspace("confirmDeleteMilestone", { title }))
-    ) {
-      return;
-    }
+    setMilestoneToDelete({ id: milestoneId, title });
+  };
+
+  const handleConfirmDeleteMilestone = async () => {
+    if (!milestoneToDelete) return;
+    setIsDeletingMilestone(true);
     try {
-      await contractApiRequest.deleteMilestone(contract.id, milestoneId);
+      await contractApiRequest.deleteMilestone(contract.id, milestoneToDelete.id);
       await queryClient.invalidateQueries({
         queryKey: ["client-contract-detail", contract.id],
       });
       await queryClient.invalidateQueries({
         queryKey: ["client-contract-milestones", contract.id],
       });
-      toastSuccess({ message: tWorkspace("milestoneRemoved", { title }) });
+      toastSuccess({ message: tWorkspace("milestoneRemoved", { title: milestoneToDelete.title }) });
+      setMilestoneToDelete(null);
     } catch (error) {
       toastError({
         message:
@@ -302,6 +309,8 @@ export function ContractDetail({
             ? error.response.error.message
             : tWorkspace("milestoneDeleteFailed"),
       });
+    } finally {
+      setIsDeletingMilestone(false);
     }
   };
 
@@ -568,6 +577,10 @@ export function ContractDetail({
         onRejectReasonChange={setRejectReason}
         isRejecting={isRejecting}
         onReject={() => void handleReject()}
+        milestoneToDelete={milestoneToDelete}
+        onMilestoneToDeleteChange={setMilestoneToDelete}
+        isDeletingMilestone={isDeletingMilestone}
+        onDeleteMilestoneConfirm={() => void handleConfirmDeleteMilestone()}
       />
     </div>
   );

@@ -30,6 +30,7 @@ export interface MilestoneItemData {
   amount: number;
   dueDate?: Date | string | null;
   status?: string;
+  paymentStatus?: string | null;
 }
 
 interface ManageMilestoneDialogProps {

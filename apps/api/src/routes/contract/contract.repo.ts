@@ -4,6 +4,7 @@ import {
   JobStatus,
   MilestoneStatus,
   NotificationType,
+  PlatformFeeStatus,
   Prisma,
   ProposalStatus,
 } from '@prisma/client';
@@ -438,11 +439,14 @@ export class ContractRepository {
 
   async completeContract(contractId: number, jobId: number) {
     const contract = await this.prisma.$transaction(async (tx) => {
+      const now = new Date();
       const completedContract = await tx.contract.update({
         where: { id: contractId },
         data: {
           status: ContractStatus.COMPLETED,
-          completedAt: new Date(),
+          completedAt: now,
+          freelancerFeeStatus: PlatformFeeStatus.PAID,
+          freelancerFeePaidAt: now,
         },
       });
 
@@ -471,6 +475,38 @@ export class ContractRepository {
           data: { status: JobStatus.COMPLETED },
         });
       }
+
+      if (tx.notification?.createMany) {
+        await tx.notification.createMany({
+          data: [
+            {
+              userId: completedContract.clientId,
+              type: NotificationType.MILESTONE_COMPLETED,
+              title: 'Contract & Job completed',
+              message: `Contract #${completedContract.id} has been marked as Completed. You can now leave a review.`,
+              data: {
+                href: `/client/contracts/${completedContract.slug}`,
+                contractId: completedContract.id,
+                contractSlug: completedContract.slug,
+                jobId: completedContract.jobId,
+              },
+            },
+            {
+              userId: completedContract.freelancerId,
+              type: NotificationType.MILESTONE_COMPLETED,
+              title: 'Contract & Job completed',
+              message: `Contract #${completedContract.id} has been marked as Completed by the client. You can now leave a review.`,
+              data: {
+                href: `/freelancer/contracts/${completedContract.slug}`,
+                contractId: completedContract.id,
+                contractSlug: completedContract.slug,
+                jobId: completedContract.jobId,
+              },
+            },
+          ],
+        });
+      }
+
       return completedContract;
     });
 

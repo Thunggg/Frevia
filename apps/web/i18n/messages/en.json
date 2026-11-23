@@ -1462,8 +1462,8 @@
     "UPCOMING": "Upcoming"
   },
   "paymentStatus": {
-    "PENDING": "Pending",
-    "FUNDED": "Funded",
+    "PENDING": "Pending Escrow",
+    "FUNDED": "Escrow Funded",
     "RELEASED": "Released",
     "REFUNDED": "Refunded",
     "DISPUTED": "Disputed"
@@ -3828,6 +3828,9 @@
     "holdCancelledToast": "Escrow authorization was cancelled. You can retry at any time.",
     "paymentCancelledToast": "Payment was cancelled. You can retry at any time.",
     "confirmDeleteMilestone": "Are you sure you want to delete milestone \"{title}\"?",
+    "deleteMilestoneTitle": "Delete Milestone",
+    "deleteMilestoneDesc": "Are you sure you want to delete milestone \"{title}\"? The allocated amount will return to your unallocated budget.",
+    "confirmDelete": "Delete Milestone",
     "milestoneRemoved": "Milestone \"{title}\" removed.",
     "milestoneDeleteFailed": "Failed to delete milestone.",
     "declinedToast": "Contract declined. Any payment hold has been released.",
@@ -3875,6 +3878,7 @@
       "colMilestone": "Milestone",
       "colDescription": "Description",
       "colAmount": "Amount (USD)",
+      "colPaymentStatus": "Payment Status",
       "colDueDate": "Due Date",
       "colActions": "Actions",
       "fallbackMilestoneTitle": "Complete deliverables & milestones",
@@ -3945,6 +3949,9 @@
       "confirmDecline": "Confirm Decline"
     },
     "sharedFilesSidebar": {
+      "deleteTitle": "Delete Shared File",
+      "deleteHint": "Are you sure you want to delete \"{name}\"? This action cannot be undone.",
+      "confirmDelete": "Delete File",
       "fileTooLarge": "File size exceeds the 25MB limit.",
       "uploaded": "Uploaded \"{name}\" successfully!",
       "uploadFailed": "Failed to upload file. Please try again.",
@@ -4061,6 +4068,9 @@
       "refunded": "Escrow funds refunded to your card for milestone \"{title}\".",
       "refundFailed": "Failed to refund milestone escrow.",
       "deleteConfirm": "Are you sure you want to delete milestone \"{title}\"?",
+      "deleteMilestoneTitle": "Delete Milestone",
+      "deleteMilestoneDesc": "Are you sure you want to delete milestone \"{title}\"? The allocated amount will return to your unallocated budget.",
+      "confirmDelete": "Delete Milestone",
       "deleted": "Milestone \"{title}\" removed.",
       "deleteFailed": "Failed to delete milestone.",
       "chatFailed": "Could not open conversation. Try again."
@@ -4081,9 +4091,10 @@
       "statusDisputed": "Disputed",
       "statusPending": "Pending",
       "escrowFunded": "Escrow Funded",
-      "escrowPaid": "Paid",
+      "escrowPaid": "Released",
       "escrowRefunded": "Refunded",
-      "escrowAwaiting": "Awaiting Deposit",
+      "escrowAwaiting": "Pending Escrow",
+      "paymentStatusLabel": "Payment: {status}",
       "duePrefix": "Due: {date}",
       "fundEscrow": "Fund Escrow",
       "reviewDelivery": "Review Delivery",
@@ -4165,6 +4176,7 @@
       "noScope": "No detailed scope description specified for this milestone.",
       "financialsTitle": "Milestone Financials",
       "budget": "Budget:",
+      "paymentStatusLabel": "Payment Status:",
       "freelancerFee": "Freelancer Fee (5%):",
       "freelancerNet": "Freelancer Net (95%):",
       "timelineTitle": "Timeline",
@@ -4199,6 +4211,9 @@
       "emptyDesc": "Submissions will appear here once the freelancer delivers work for this milestone."
     },
     "files": {
+      "deleteTitle": "Delete Milestone File",
+      "deleteHint": "Are you sure you want to delete file \"{name}\"? This action cannot be undone.",
+      "confirmDelete": "Delete File",
       "fileTooLarge": "File exceeds 25MB limit.",
       "uploaded": "File \"{name}\" uploaded successfully!",
       "uploadFailed": "Failed to upload file. Please try again.",
@@ -4260,6 +4275,9 @@
       "filesLabel": "Attach Deliverable Files (ZIP, Code, PDF, etc. max 25MB)",
       "uploadDeliverableFile": "Upload Deliverable File",
       "removeFile": "Remove file",
+      "removeFileTitle": "Remove File Attachment",
+      "removeFileHint": "Are you sure you want to remove \"{name}\" from this submission?",
+      "confirmRemove": "Remove File",
       "resubmitAction": "Resubmit Work",
       "submitAction": "Submit Work"
     },

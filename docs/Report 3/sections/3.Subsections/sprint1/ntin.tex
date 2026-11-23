@@ -654,7 +654,97 @@ A Client or Freelancer clicks the ``Sign Contract'' action button on a pending c
 \end{itemize}
 
 % -----------------------------------------------------------------
-% UC-13.07: Cancel Contract
+% UC-13.07: Export Contract PDF
+% -----------------------------------------------------------------
+\Needspace{12\baselineskip}
+\subsubsection{ Export Contract PDF}
+
+\fnhead{Function Trigger}
+A Client, Freelancer, or Administrator clicks the ``Download PDF Contract'' button on the Contract Detail workspace or PDF toolbar.\newline
+\textbf{Navigation path:} Contract Detail (\texttt{/contracts/:slug}) $\rightarrow$ Contract Paper Toolbar $\rightarrow$ Click ``Download PDF Contract''.
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item \textbf{Primary Actor:} Client, Freelancer.
+      \item \textbf{Secondary Actor:} Administrator (\texttt{ADMIN} role).
+      \item \textbf{Supporting Systems:} Frevia Web application (Next.js), Frevia REST API (NestJS), Contract PDF Generation Service, Prisma ORM, and PostgreSQL database.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent Compiles, formats, and exports the full electronic contract agreement into an immutable standard PDF document. Includes contractual clauses, milestones, payment statuses, financial totals, and digital cryptographic signature stamps.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item Document paper toolbar action ``Download PDF Contract'' at \texttt{/contracts/:slug}.
+      \item Browser download dialog or integrated PDF preview viewer.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item The client issues an HTTP request: \texttt{GET /api/contracts/:id/pdf}.
+      \item The API validates that the caller is an authorized contract participant or an Administrator.
+      \item \texttt{ContractPdfService.getContractPdfBuffer()} compiles contract metadata, milestone details, and digital signatures.
+      \item The server sets \texttt{Content-Type: application/pdf} and streams the compiled PDF binary to the browser.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint1/ntin/ExportContractPdf.png}{Export Contract PDF document preview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item Header displays Frevia formal agreement branding, contract code, and creation date.
+      \item Contract body renders party details, terms, milestone tables, and financial summary.
+      \item Footer displays digital signature verification stamps with signing timestamps.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+      \texttt{contractId} & Numeric contract identifier (integer path parameter).\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item The contract must exist and be accessible to the calling user.
+      \item The caller must be the Client, Freelancer, or an Administrator.
+\end{itemize}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+      \item BR-CT-16: The exported PDF must display exact contractual terms, milestones, and platform fees at the time of export.
+      \item BR-CT-17: If the contract is signed, the PDF must render verified signature blocks with signing timestamps.
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
+      \item The user navigates to the Contract Detail workspace.
+      \item The user clicks ``Download PDF Contract''.
+      \item The system verifies access authorization.
+      \item The backend compiles the contract PDF binary and streams it to the client.
+      \item The browser downloads the PDF file.
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Case}{Description}
+      A1 & User is not a participant of the contract and not an Admin. The API returns HTTP 403 Forbidden.\\ \hline
+      A2 & Contract not found. The API returns HTTP 404 Not Found.\\ \hline
+      A3 & PDF compilation failure. The API returns HTTP 500: ``Unable to export contract PDF.''\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Data Name}{Description}
+      \texttt{fileBuffer} & Streamable binary PDF file payload (\texttt{application/pdf}).\\ \hline
+      \texttt{fileName} & Standardized filename: \texttt{Contract-[slug].pdf}.\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item The PDF contract is streamed to the user device.
+\end{itemize}
+
+% -----------------------------------------------------------------
+% UC-13.08: Cancel Contract
 % -----------------------------------------------------------------
 \Needspace{12\baselineskip}
 \subsubsection{ Cancel Contract}
@@ -758,7 +848,7 @@ A Client or Freelancer clicks the ``Cancel Contract'' option from the contract a
 \end{itemize}
 
 % -----------------------------------------------------------------
-% UC-13.08: View Contract Files
+% UC-13.09: View Contract Files
 % -----------------------------------------------------------------
 \Needspace{12\baselineskip}
 \subsubsection{ View Contract Files}
@@ -853,7 +943,7 @@ A participant clicks the ``Files'' tab inside the contract detail workspace.\new
 \end{itemize}
 
 % -----------------------------------------------------------------
-% UC-13.09: Upload Contract File
+% UC-13.10: Upload Contract File
 % -----------------------------------------------------------------
 \Needspace{12\baselineskip}
 \subsubsection{ Upload Contract File}
@@ -958,7 +1048,7 @@ A participant clicks the ``Upload File'' button or drops files into the file dro
 \end{itemize}
 
 % -----------------------------------------------------------------
-% UC-13.10: Delete Contract File
+% UC-13.11: Delete Contract File
 % -----------------------------------------------------------------
 \Needspace{12\baselineskip}
 \subsubsection{ Delete Contract File}
@@ -1052,5 +1142,107 @@ The file uploader or an Administrator clicks the delete trash icon next to a sha
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
       \item File is soft-deleted in the database (\texttt{deletedAt} populated).
       \item File is purged from the shared files view.
+\end{itemize}
+
+% -----------------------------------------------------------------
+% UC-13.12: Reject Contract Offer
+% -----------------------------------------------------------------
+\Needspace{12\baselineskip}
+\subsubsection{ Reject Contract Offer}
+
+\fnhead{Function Trigger}
+A Freelancer clicks ``Reject Offer'' upon reviewing an incoming contract offer before signing.\newline
+\textbf{Navigation path:} Contract Detail (\texttt{/freelancer/contracts/:slug}) $\rightarrow$ Action Menu $\rightarrow$ Click ``Reject Offer''.
+
+\fnhead{Function Description}
+
+\sublabel{Actors / Roles}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item \textbf{Primary Actor:} Freelancer (\texttt{FREELANCER} role).
+      \item \textbf{Supporting Systems:} Frevia Web application (Next.js), Frevia REST API (NestJS), Stripe payment hold service, Prisma ORM, and PostgreSQL database.
+\end{itemize}
+
+\sublabel{Purpose}
+\noindent Allows a Freelancer to formally decline a pending contract offer. The freelancer provides an optional explanation reason, any Client Stripe authorization hold is automatically voided at zero fee, and the contract transitions to \texttt{REJECTED}.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item ``Reject Offer'' action button on the pending contract detail banner.
+      \item Rejection dialog prompting for decline reason and confirmation.
+      \item Action triggers: ``Confirm Rejection'' (destructive) and ``Cancel''.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item The freelancer submits an HTTP request: \texttt{PATCH /api/contracts/:id/reject} with optional \texttt{reason}.
+      \item \texttt{ContractService.rejectContract()} verifies caller is the assigned freelancer.
+      \item Verifies contract status is \texttt{PENDING\_SIGN} or \texttt{AWAITING\_PAYMENT}.
+      \item If \texttt{holdPaymentIntentId} exists, calls Stripe to cancel the pre-authorization hold.
+      \item Updates contract \texttt{status = REJECTED}, records \texttt{rejectedAt = now()} and \texttt{rejectReason}.
+      \item Triggers notification to the Client alerting them of the declined offer.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint1/ntin/RejectContractOffer.png}{Reject Contract Offer confirmation dialog}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item Modal displays warning title ``Decline Contract Offer''.
+      \item Textarea allows entering explanation for the client (scope, timeline, rate).
+      \item Information notice informs that any client deposit authorization will be released.
+      \item Footer renders ``Cancel'' and red ``Decline Offer'' buttons.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+      \texttt{contractId} & Numeric contract identifier (integer path parameter).\\ \hline
+      \texttt{reason} & Optional textual explanation for declining the offer (string, up to 500 characters).\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item Caller must be the assigned Freelancer of the contract.
+      \item Contract must be in \texttt{PENDING\_SIGN} or \texttt{AWAITING\_PAYMENT} status.
+      \item Contract must not have already been signed or accepted by the Freelancer.
+\end{itemize}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+      \item BR-CT-24: Only the assigned Freelancer can reject a pending contract offer.
+      \item BR-CT-25: Rejecting a contract immediately voids any active Stripe escrow authorization hold with \$0 fee.
+      \item BR-CT-26: A rejected contract offer cannot be reinstated; the Client must create a new contract proposal.
+\end{itemize}
+
+\sublabel{Normal Flow}
+\begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
+      \item The Freelancer opens the pending contract offer.
+      \item The Freelancer reviews terms and clicks ``Reject Offer''.
+      \item The system opens the rejection dialog.
+      \item The Freelancer optionally enters a decline reason and confirms.
+      \item The backend cancels any pre-authorization hold via Stripe.
+      \item The backend updates contract status to \texttt{REJECTED} and records the reason.
+      \item The system sends a notification to the Client and updates the workspace.
+\end{enumerate}
+
+\sublabel{Abnormal Flow / Exception Handling}
+\begin{flowtable}{Case}{Description}
+      A1 & Caller is not the assigned Freelancer. The API returns HTTP 403 Forbidden.\\ \hline
+      A2 & Contract is not in a rejectable status (e.g. already active or canceled). The API returns HTTP 422 with error \texttt{ContractNotActionableForRejectionException}.\\ \hline
+      A3 & Stripe hold cancellation encounters network error. The system logs the incident and proceeds with rejection fallback refund.\\ \hline
+\end{flowtable}
+
+\sublabel{Output Data}
+\begin{specdatatable}{Data Name}{Description}
+      \texttt{id} & Numeric identifier of the rejected contract.\\ \hline
+      \texttt{status} & Updated contract status (\texttt{REJECTED}).\\ \hline
+      \texttt{rejectedAt} & ISO 8601 rejection timestamp.\\ \hline
+      \texttt{rejectReason} & Recorded explanation text.\\ \hline
+\end{specdatatable}
+
+\sublabel{Post-Conditions}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+      \item Contract status is transitioned to \texttt{REJECTED}.
+      \item Stripe pre-authorization hold is voided.
+      \item Client is notified with the decline explanation.
 \end{itemize}
 
