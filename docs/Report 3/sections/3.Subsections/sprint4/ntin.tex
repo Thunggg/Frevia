@@ -147,12 +147,7 @@ A Freelancer accesses their Payout Settings or an Admin inspects freelancer payo
 \end{itemize}
 
 \fnhead{Screen Layout (Mock-up Description)}
-\screenfigure[0.95]{image/screenshot/sprint4/ntin/CheckStripeConnectStatus.png}{Stripe Connect status and capabilities check}
-\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-      \item Screen presents status card with green checkmark indicating ``Payouts Active''.
-      \item Metadata row shows connected country, currency, and masked bank account last 4 digits.
-      \item Button ``Manage in Stripe'' opens the Express customer portal.
-\end{itemize}
+\noindent This function operates as an automated background capability inspection and account synchronization query; it does not possess a separate standalone user interface screen. Live account status and verified payout readiness indicators are rendered directly within the Stripe Connect payout management card (\textit{UC-43.01}).
 
 \fnhead{Function Details}
 
@@ -973,11 +968,7 @@ A user returns from a 3D Secure bank verification challenge or an Admin triggers
 \end{itemize}
 
 \fnhead{Screen Layout (Mock-up Description)}
-\screenfigure[0.95]{image/screenshot/sprint4/ntin/SyncPaymentIntentStatus.png}{PaymentIntent status reconciliation screen}
-\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-      \item Screen displays verification spinner reconciling payment with Stripe.
-      \item Upon reconciliation, a green checkmark confirms escrow funding.
-\end{itemize}
+\noindent This function operates as an automated background reconciliation service and does not possess a standalone user interface screen. Synchronization results are applied directly to local database records and reflected dynamically in the contract ledger and milestone payment status badges.
 
 \fnhead{Function Details}
 
@@ -1058,11 +1049,7 @@ A Client returns from a hosted Stripe Checkout redirect to the platform callback
 \end{itemize}
 
 \fnhead{Screen Layout (Mock-up Description)}
-\screenfigure[0.95]{image/screenshot/sprint4/ntin/SyncCheckoutSessionStatus.png}{Checkout session status synchronization screen}
-\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-      \item Screen renders success banner: ``Payment Successful! Escrow deposit verified.''
-      \item Disputed/funded milestone card updates in real-time.
-\end{itemize}
+\noindent This function operates as a background redirect synchronization handler and does not possess a standalone user interface screen. Upon redirection back from the hosted Stripe Checkout portal, the platform verifies session completion and updates the milestone escrow status to \texttt{FUNDED} automatically.
 
 \fnhead{Function Details}
 
@@ -1148,11 +1135,7 @@ Stripe dispatches an asynchronous HTTP POST webhook event to \texttt{/api/paymen
 \end{itemize}
 
 \fnhead{Screen Layout (Mock-up Description)}
-\screenfigure[0.95]{image/screenshot/sprint4/ntin/HandleStripeWebhookEvents.png}{Stripe webhook event processing and audit logs}
-\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-      \item Administrative view of real-time Stripe webhook event logs.
-      \item Status badges show verified HMAC signatures and event delivery timestamps.
-\end{itemize}
+\noindent This function is a backend server-to-server webhook endpoint executed asynchronously upon Stripe event delivery; it does not possess a frontend user interface screen. Event processing logs, cryptographic HMAC signature validations, and ledger state transitions are recorded directly in server audit trails and relational database transactions.
 
 \fnhead{Function Details}
 

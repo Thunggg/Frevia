@@ -1,8 +1,36 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
-import { Loader2, ShieldCheck } from "lucide-react";
+import { useState } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  Check,
+  CheckCircle2,
+  CreditCard,
+  Loader2,
+  ShieldCheck,
+  Trash2,
+} from "lucide-react";
 import { useTranslations } from "next-intl";
+import { Button } from "@repo/ui/components/shadcn/button";
+import { Badge } from "@repo/ui/components/shadcn/badge";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@repo/ui/components/shadcn/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@repo/ui/components/shadcn/alert-dialog";
+import { toastError, toastSuccess } from "@repo/ui/components/shadcn/toast";
 import { useActionPermission } from "@/hooks/use-action-permission";
 import { useMe } from "@/hooks/use-auth";
 import { paymentApiRequest } from "@/apiRequests/payment";
@@ -48,13 +76,20 @@ function CardBrandMark({ brand }: { brand: string }) {
 }
 
 /**
- * Displays the client's saved payment card as a sleek matte-black virtual card.
+ * Displays the client's saved payment card as a sleek matte-black virtual card
+ * and provides full interactive wallet management (Set Default, Remove Card).
  */
 export function PaymentMethodCard() {
   const t = useTranslations("payments.card");
+  const queryClient = useQueryClient();
   const { can } = useActionPermission();
   const canGetPaymentMethods = can("GET", "/api/payments/payment-methods");
   const { data: me } = useMe();
+
+  const [isManageOpen, setIsManageOpen] = useState(false);
+  const [cardToDelete, setCardToDelete] = useState<SavedPaymentMethodType | null>(null);
+  const [settingDefaultId, setSettingDefaultId] = useState<string | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const { data: savedMethodsData, isLoading } = useQuery({
     queryKey: ["saved-payment-methods"],
@@ -73,6 +108,46 @@ export function PaymentMethodCard() {
   if (!canGetPaymentMethods) {
     return null;
   }
+
+  const handleSetDefault = async (paymentMethodId: string) => {
+    try {
+      setSettingDefaultId(paymentMethodId);
+      await paymentApiRequest.setDefaultPaymentMethod(paymentMethodId);
+      toastSuccess({
+        message: t("defaultUpdatedSuccess"),
+      });
+      await queryClient.invalidateQueries({
+        queryKey: ["saved-payment-methods"],
+      });
+    } catch {
+      toastError({
+        message: t("actionFailed"),
+      });
+    } finally {
+      setSettingDefaultId(null);
+    }
+  };
+
+  const handleRemove = async () => {
+    if (!cardToDelete) return;
+    try {
+      setIsDeleting(true);
+      await paymentApiRequest.removePaymentMethod(cardToDelete.id);
+      toastSuccess({
+        message: t("removeSuccess"),
+      });
+      setCardToDelete(null);
+      await queryClient.invalidateQueries({
+        queryKey: ["saved-payment-methods"],
+      });
+    } catch {
+      toastError({
+        message: t("actionFailed"),
+      });
+    } finally {
+      setIsDeleting(false);
+    }
+  };
 
   const cardholderName =
     defaultCard?.cardholderName?.trim() ||
@@ -102,9 +177,7 @@ export function PaymentMethodCard() {
           <span className="text-xs">{t("loadingCard")}</span>
         </div>
       ) : defaultCard ? (
-        <div
-          className="relative flex min-h-[188px] w-full flex-col justify-between overflow-hidden rounded-xl bg-gradient-to-br from-[#242427] via-[#141416] to-[#09090B] p-5 text-white shadow-[0_10px_28px_-12px_rgba(0,0,0,0.55)] ring-1 ring-white/10"
-        >
+        <div className="relative flex min-h-[188px] w-full flex-col justify-between overflow-hidden rounded-xl bg-gradient-to-br from-[#242427] via-[#141416] to-[#09090B] p-5 text-white shadow-[0_10px_28px_-12px_rgba(0,0,0,0.55)] ring-1 ring-white/10">
           {/* Subtle diagonal matte sheen matching the reference card */}
           <div
             aria-hidden="true"
@@ -113,9 +186,17 @@ export function PaymentMethodCard() {
 
           {/* Top Row */}
           <div className="relative flex items-center justify-between gap-2">
-            <span className="text-[15px] font-normal tracking-wide text-white/90">
-              {t("virtualCard")}
-            </span>
+            <div className="flex items-center gap-2">
+              <span className="text-[15px] font-normal tracking-wide text-white/90">
+                {t("virtualCard")}
+              </span>
+              {defaultCard.isDefault && (
+                <span className="inline-flex items-center gap-1 rounded-full bg-blue-500/25 px-2 py-0.5 text-[10px] font-medium text-blue-200 border border-blue-400/30">
+                  <Check className="size-2.5" />
+                  {t("defaultBadge")}
+                </span>
+              )}
+            </div>
             {formattedExpiry && (
               <span className="text-xs font-mono text-white/55 tabular-nums">
                 {formattedExpiry}
@@ -180,6 +261,166 @@ export function PaymentMethodCard() {
           </div>
         </div>
       )}
+
+      {/* Interactive Wallet Management Bar */}
+      {paymentMethods.length > 0 && (
+        <div className="flex items-center justify-between pt-2 border-t border-zinc-100 dark:border-zinc-850">
+          <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+            <span className="font-semibold text-foreground">{paymentMethods.length}</span>
+            <span>{paymentMethods.length > 1 ? "cards saved" : "card saved"}</span>
+          </div>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            className="h-7 text-xs font-medium gap-1.5"
+            onClick={() => setIsManageOpen(true)}
+          >
+            <CreditCard className="size-3.5" />
+            {t("manageCards")}
+          </Button>
+        </div>
+      )}
+
+      {/* Manage Saved Payment Methods Dialog */}
+      <Dialog open={isManageOpen} onOpenChange={setIsManageOpen}>
+        <DialogContent className="sm:max-w-[520px]">
+          <DialogHeader>
+            <DialogTitle className="text-base font-semibold">
+              {t("manageDialogTitle")}
+            </DialogTitle>
+            <DialogDescription className="text-xs text-muted-foreground">
+              {t("manageDialogDesc")}
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-3 py-2 max-h-[60vh] overflow-y-auto">
+            {paymentMethods.map((card) => {
+              const isDefault = card.isDefault;
+              const isUpdating = settingDefaultId === card.id;
+
+              return (
+                <div
+                  key={card.id}
+                  className={`flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3.5 rounded-lg border transition-all ${
+                    isDefault
+                      ? "border-blue-500/50 bg-blue-50/40 dark:bg-blue-950/20"
+                      : "border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/40"
+                  }`}
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-10 w-14 shrink-0 items-center justify-center rounded-md bg-zinc-900 text-white font-bold text-xs p-1 shadow-sm">
+                      <CardBrandMark brand={card.brand} />
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className="font-mono text-sm font-semibold text-foreground tracking-wider">
+                          •••• {card.last4}
+                        </span>
+                        {isDefault && (
+                          <Badge
+                            variant="default"
+                            className="bg-blue-600 hover:bg-blue-600 text-[10px] h-4 px-1.5 font-normal"
+                          >
+                            {t("defaultBadge")}
+                          </Badge>
+                        )}
+                      </div>
+                      <p className="text-xs text-muted-foreground mt-0.5">
+                        Expires {String(card.expMonth).padStart(2, "0")}/
+                        {String(card.expYear).slice(-2)}
+                        {card.cardholderName ? ` • ${card.cardholderName}` : ""}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2 self-end sm:self-center">
+                    {!isDefault && (
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        className="h-8 text-xs font-medium text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-950/40 border-blue-200 dark:border-blue-900"
+                        disabled={isUpdating}
+                        onClick={() => handleSetDefault(card.id)}
+                      >
+                        {isUpdating ? (
+                          <Loader2 className="size-3.5 animate-spin mr-1" />
+                        ) : (
+                          <CheckCircle2 className="size-3.5 mr-1" />
+                        )}
+                        {t("setDefault")}
+                      </Button>
+                    )}
+
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      className="h-8 text-xs text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/40 hover:text-red-700"
+                      onClick={() => setCardToDelete(card)}
+                      aria-label={t("removeCard")}
+                    >
+                      <Trash2 className="size-4" />
+                    </Button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Confirmation Dialog for Removing a Payment Method */}
+      <AlertDialog
+        open={!!cardToDelete}
+        onOpenChange={(open) => {
+          if (!open && !isDeleting) setCardToDelete(null);
+        }}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <div className="flex items-center gap-2.5 text-red-600">
+              <div className="flex size-9 items-center justify-center rounded-full bg-red-100 dark:bg-red-950/50">
+                <Trash2 className="size-5 text-red-600 dark:text-red-400" />
+              </div>
+              <AlertDialogTitle className="text-base">
+                {t("removeDialogTitle")}
+              </AlertDialogTitle>
+            </div>
+            <AlertDialogDescription className="text-xs text-muted-foreground pt-2">
+              {cardToDelete
+                ? t("removeDialogDesc", {
+                    brand: cardToDelete.brand.toUpperCase(),
+                    last4: cardToDelete.last4,
+                  })
+                : ""}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="gap-2 sm:gap-0">
+            <AlertDialogCancel disabled={isDeleting} className="text-xs h-9">
+              {t("cancel")}
+            </AlertDialogCancel>
+            <AlertDialogAction
+              disabled={isDeleting}
+              onClick={(e) => {
+                e.preventDefault();
+                handleRemove();
+              }}
+              className="bg-red-600 hover:bg-red-700 text-white text-xs h-9"
+            >
+              {isDeleting ? (
+                <>
+                  <Loader2 className="size-3.5 animate-spin mr-1.5" />
+                  {t("removing")}
+                </>
+              ) : (
+                t("removeConfirm")
+              )}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

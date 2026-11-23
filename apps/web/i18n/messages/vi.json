@@ -4549,7 +4549,20 @@
       "nameLabel": "Chủ thẻ",
       "defaultCardholder": "Chủ thẻ",
       "noCardSaved": "Chưa lưu thẻ",
-      "savedAutomaticallyHint": "Tự động lưu ở lần thanh toán Stripe đầu tiên"
+      "savedAutomaticallyHint": "Tự động lưu ở lần thanh toán Stripe đầu tiên",
+      "manageCards": "Quản lý thẻ",
+      "defaultBadge": "Mặc định",
+      "setDefault": "Đặt làm mặc định",
+      "removeCard": "Xóa thẻ",
+      "manageDialogTitle": "Phương thức thanh toán đã lưu",
+      "manageDialogDesc": "Quản lý các thẻ đã lưu, đặt thẻ mặc định để ký quỹ hoặc xóa thẻ khỏi tài khoản.",
+      "removeDialogTitle": "Xác nhận xóa phương thức thanh toán",
+      "removeDialogDesc": "Bạn có chắc chắn muốn xóa thẻ {brand} kết thúc bằng {last4}? Thao tác này không thể hoàn tác.",
+      "removeConfirm": "Xóa thẻ",
+      "cancel": "Hủy",
+      "defaultUpdatedSuccess": "Đã cập nhật phương thức thanh toán mặc định.",
+      "removeSuccess": "Đã xóa phương thức thanh toán thành công.",
+      "actionFailed": "Thao tác thất bại. Vui lòng thử lại sau."
     },
     "connect": {
       "title": "Tài khoản nhận tiền Stripe",
