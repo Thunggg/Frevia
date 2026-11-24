@@ -2,306 +2,282 @@
 
 \subsection{Major Features}
 
-The feature list below details the functional capabilities delivered in FREVIA, structured into ten coherent functional modules. Each feature follows the administrative management format, identifying the concrete operations and the specific actors (Guest, Client, Freelancer, Expert, and Administrator) involved in the workflow. Each identifier (\texttt{FE-01} through \texttt{FE-83}) corresponds directly to the traceability matrix and estimation schedule in the project management documentation.
+The functional capabilities delivered in FREVIA are structured into ten coherent functional modules comprising 21 major features (\texttt{FE-01} through \texttt{FE-21}). Each feature adheres to the administrative management format, detailing its concrete business operations and explicitly distinguishing between \textbf{unauthenticated visitors} (Guest), \textbf{external authenticated users} (Client, Freelancer, and Expert), and \textbf{internal platform operators} (Administrator). Crucially, unauthenticated Guests do not possess login privileges; only registered account holders authenticate into the system.
 
 \paragraph*{Module 1: Authentication \& Authorization}
 \begin{itemize}[leftmargin=1.0cm, label=--]
 
-\item \textbf{FE-01: Manage Account Registration and Email Verification} \\
-Handles initial system access and user onboarding, where a Guest can register a personal account by submitting credentials, selecting an initial role (Client or Freelancer), and providing an emailed one-time verification code (OTP) to activate the account.
+\item \textbf{FE-01: Manage Authentication} \\
+Handles system access and user onboarding, where a Guest (unauthenticated visitor) can create personal accounts (Sign up) by providing credentials, selecting an initial role (Client or Freelancer), and submitting an emailed one-time verification code (OTP); external registered users (Client, Freelancer, Expert) and internal user (Administrator) can securely log in (via email/password credentials or Google OAuth 2.0 single sign-on) and reset forgotten passwords via email verification; and authenticated users (Client, Freelancer, Expert, Administrator) can securely log out of active sessions.
 
-\item \textbf{FE-02: Manage Google OAuth Authentication} \\
-Handles federated identity authentication, where a Guest or existing user can sign up or securely log in using Google OAuth 2.0 single sign-on, or link their Google profile to an existing FREVIA account without password re-entry.
+\item \textbf{FE-02: Manage Roles \& Permissions} \\
+Administers dynamic role-based access control (RBAC) and multi-role memberships, where Administrator (internal user) can view, search, create, update, and delete platform roles, and assign or remove module-level route permissions at runtime; while registered external users (Client, Freelancer, Expert) can join additional roles and seamlessly switch their active role context within an active session.
 
-\item \textbf{FE-03: Manage Authentication Tokens and Sessions} \\
-Handles cryptographically signed token issuance, where authenticated users receive JSON Web Token (JWT) access and refresh token pairs, with session metadata (IP address, client user-agent, device details, and expiration timestamps) persisted in the database to authorize subsequent requests.
-
-\item \textbf{FE-04: Manage User Sessions} \\
-Administers active client devices and sessions, where Client, Freelancer, Expert, and Administrator can view their active login sessions, inspect device types and IP addresses, and remotely revoke specific sessions or all other active sessions for security.
-
-\item \textbf{FE-05: Manage Password Recovery and Credentials} \\
-Handles credential recovery and maintenance, where a Guest can initiate password reset via an emailed one-time verification code, and authenticated users can securely update their passwords from account security settings.
-
-\item \textbf{FE-06: Manage Multi-Role Memberships} \\
-Enables flexible account identity switching, where a user can hold multiple platform roles (Client, Freelancer, and Expert) under a single unified credential and switch active role contexts seamlessly during an authenticated session.
-
-\item \textbf{FE-07: Manage Dynamic Role-Based Access Control} \\
-Handles fine-grained system authorization, where a dynamic API guard evaluates incoming HTTP request methods and URI path patterns against module permissions assigned to the user's currently active session role.
-
-\item \textbf{FE-08: Manage Administrative Roles and Permissions} \\
-Administers system roles and capabilities, where an Administrator can create custom internal roles, view role lists, search roles, and assign or remove module-level permissions at runtime without requiring application redeployment.
-
-\item \textbf{FE-09: Manage User Accounts} \\
-Oversees user account lifecycles, where an Administrator can search, filter, and inspect registered users, view profile statuses and identity badges, update account attributes, and ban or unban accounts violating platform policies.
+\item \textbf{FE-03: Manage User Accounts \& Sessions} \\
+Oversees user account lifecycles and device sessions, where registered users (Client, Freelancer, Expert, Administrator) can view their active login sessions with IP addresses and client user-agents and remotely revoke specific sessions; while Administrator (internal user) can search, filter, and inspect registered users, view profile statuses, update account attributes, and ban or unban accounts violating platform policies.
 
 \end{itemize}
 
 \paragraph*{Module 2: Profiles, Portfolios \& AI Skills}
 \begin{itemize}[leftmargin=1.0cm, label=--]
 
-\item \textbf{FE-10: Manage Account Profiles} \\
-Handles personal profile presentation, where Client, Freelancer, and Expert can view and update display names, biographies, avatars, cover images, online availability status, and track real-time profile completion percentages.
+\item \textbf{FE-04: Manage Profiles} \\
+Administers personal presentation and professional credentials, where Guest can view public profiles; Client, Freelancer, and Expert can view and update display names, biographies, avatars, cover images, and availability statuses; Freelancer can manage educational backgrounds, professional certifications, and employment history; and Administrator can review and approve or reject profile revision requests and expert applications.
 
-\item \textbf{FE-11: Manage Freelancer Profiles} \\
-Administers professional freelancer credentials, where a Freelancer can view, create, update, and delete professional titles, educational backgrounds, certifications, spoken languages, and employment history entries.
+\item \textbf{FE-05: Manage Skills Catalogue} \\
+Handles professional competencies, where Freelancer can browse standardized skills, add skills to their profile, assign self-assessed proficiency ratings (1 to 10), and remove skills; while Administrator can create, view, update, soft-delete, and restore system skills.
 
-\item \textbf{FE-12: Manage Professional Skills Catalogue} \\
-Handles professional competencies, where a Freelancer can browse standardized skills, assign proficiency ratings on a scale of one to ten, add suggested skills, and remove skills from their profile.
+\item \textbf{FE-06: Manage Portfolios} \\
+Showcases delivered creative and technical projects, where Guest and Client can view portfolio showcases and case-study details; while Freelancer can create, view details, update, reorder, and delete portfolio items with demo links, technology tags, and project cover images.
 
-\item \textbf{FE-13: Manage Portfolio Projects} \\
-Showcases delivered work, where a Freelancer can create, edit, reorder, and delete portfolio items containing project descriptions, technology stack tags, external demo links, and cover imagery.
-
-\item \textbf{FE-14: Manage Curriculum Vitae Documents} \\
-Administers resume files, where a Freelancer can upload, view, preview in-browser, replace, and delete curriculum vitae documents in PDF format up to ten megabytes in size.
-
-\item \textbf{FE-15: Manage AI-Assisted CV Skill Extraction} \\
-Enables automated resume analysis, where a Freelancer can trigger an external AI parsing pipeline to extract technical skills and estimated proficiency scores from an uploaded CV for interactive review and acceptance into their profile.
-
-\item \textbf{FE-16: Manage Profile Strength Scoring} \\
-Guides profile optimization, where a Freelancer can view an algorithmic profile strength score alongside contextual recommendations for increasing profile credibility and hiring visibility.
-
-\item \textbf{FE-17: Manage Profile Revision Workflow} \\
-Handles profile revision governance, where a Freelancer or Expert submits profile modifications as proposed snapshots, which remain pending until an Administrator reviews and approves or rejects the changes.
-
-\item \textbf{FE-18: Manage Client Organization Profiles} \\
-Administers hiring organization details, where a Client can view, create, and update company names, company overview descriptions, industry sectors, and corporate website links.
-
-\item \textbf{FE-19: Manage Expert Profiles and Directory} \\
-Oversees verified subject-matter experts, where an Expert can manage consultation specialties, years of experience, credentials, and portfolios, while Guest and Client can browse the public expert directory.
-
-\item \textbf{FE-20: Manage Freelancer Discovery and Social Connections} \\
-Facilitates talent exploration, where Guest and Client can search, filter, and view public freelancer profiles, follow favourite freelancers, and access connected professional social links.
+\item \textbf{FE-07: Manage Curriculum Vitae \& AI Skill Extraction} \\
+Administers resume documents and automated competency extraction, where Freelancer can upload, view, preview in-browser, replace, and delete curriculum vitae documents (PDF format up to 10MB); and trigger an external AI parsing pipeline to extract technical skills and experience levels for interactive review and inclusion into their profile.
 
 \end{itemize}
 
-\paragraph*{Module 3: Identity Verification \& Security}
+\paragraph*{Module 3: Identity Verification \& Trust}
 \begin{itemize}[leftmargin=1.0cm, label=--]
 
-\item \textbf{FE-21: Manage Identity Verification Submissions} \\
-Handles citizen identification submissions, where a Freelancer can upload front and back scans of their National Identity Card (CCCD), take a live portrait selfie, and record an active facial liveness video frame sequence.
-
-\item \textbf{FE-22: Manage Automated AI Identity Verification} \\
-Administers automated document and facial verification, where the AI pipeline performs OCR text extraction, QR code cross-validation, face-match similarity scoring, passive and active liveness verification, and document tampering checks.
-
-\item \textbf{FE-23: Manage Administrative Identity Reviews} \\
-Oversees verification adjudications, where an Administrator can inspect pending verification queues, review AI confidence scores and document artefacts, approve or reject submissions with formal review notes, and award verified identity badges.
+\item \textbf{FE-08: Manage Identity Verification (KYC)} \\
+Ensures platform trust and account integrity, where Freelancer can submit national identity documents (front and back images of CCCD/Passport) and record facial liveness video frames; external AI services perform automated OCR data parsing, facial liveness comparison, and duplicate identity detection; and Administrator inspects verification requests and approves or rejects verified identity badges.
 
 \end{itemize}
 
-\paragraph*{Module 4: Job Marketplace}
+\paragraph*{Module 4: Job Marketplace \& Discovery}
 \begin{itemize}[leftmargin=1.0cm, label=--]
 
-\item \textbf{FE-24: Manage Job Postings} \\
-Handles project opportunity creation, where a Client can draft and publish project postings specifying job titles, detailed project descriptions, fixed-price budget ranges, delivery deadlines, required skill sets, job categories, and hiring positions.
+\item \textbf{FE-09: Manage Job Postings} \\
+Administers fixed-price project listings, where Guest and Freelancer can search and browse published jobs, filter by category, required skills, and budget range, and view job details; while Client can create, view, update, close, and manage their job postings.
 
-\item \textbf{FE-25: Manage Job Lifecycles and Statuses} \\
-Administers project posting lifecycles, where a Client can view, update, close, or cancel postings across stages (Draft, Open, In Progress, Completed, Closed, and Cancelled), while an Administrator can moderate or archive postings.
+\item \textbf{FE-10: Manage Job Categories} \\
+Administers marketplace classification, where Guest, Client, and Freelancer can browse job categories; while Administrator can create, view, update, soft-delete, and restore job categories.
 
-\item \textbf{FE-26: Manage Stable Job Permalinks} \\
-Handles persistent resource addressing, where the platform automatically generates search-engine-friendly, slug-based URLs that remain stable and resolvable across job revisions and edits.
-
-\item \textbf{FE-27: Manage Public Job Search and Multi-Criteria Filtering} \\
-Enables project discovery, where Guest and Freelancer can execute full-text keyword searches, apply multi-criteria filters (category, required skills, budget range, deadline, and posting date), and configure result sorting.
-
-\item \textbf{FE-28: Manage Job Details and Hiring Context} \\
-Exposes project requirements, where a Freelancer can inspect comprehensive job specifications, client hiring history, and required competencies, while accessing contextual application submission actions.
-
-\item \textbf{FE-29: Manage Job Bookmarks} \\
-Facilitates project tracking, where a Freelancer can bookmark opportunities of interest, view saved job lists, check bookmark states, and remove postings from saved collections.
-
-\item \textbf{FE-30: Manage Saved Job Searches} \\
-Enables search preference persistence, where a Freelancer can save frequently used query and filter configurations for quick retrieval during future sessions.
-
-\item \textbf{FE-31: Manage Client Job Dashboards} \\
-Administers hiring overviews, where a Client can monitor all published, active, and past postings, filter listings by status, and track real-time applicant and proposal counts.
-
-\item \textbf{FE-32: Manage Job Categories} \\
-Enables taxonomy exploration, where Guest and Freelancer can browse structured job classifications to explore domain-specific project opportunities.
+\item \textbf{FE-11: Manage Bookmarks \& Saved Searches} \\
+Assists job opportunity tracking, where Freelancer can bookmark jobs, view bookmarked job lists, save custom search filters, and view personalized job alerts.
 
 \end{itemize}
 
-\paragraph*{Module 5: Proposals \& Contract Governance}
+\paragraph*{Module 5: Proposals \& Hiring}
 \begin{itemize}[leftmargin=1.0cm, label=--]
 
-\item \textbf{FE-33: Manage Proposal Submissions} \\
-Handles formal project bidding, where a Freelancer can draft, preview, and submit project proposals containing proposed bid amounts, estimated durations, cover letters, and supporting work attachments.
-
-\item \textbf{FE-34: Manage Proposal Lifecycles and Expiry} \\
-Administers submitted bids, where a Freelancer can edit draft proposals, withdraw submitted bids before acceptance, or track automatic expiration based on job closing deadlines.
-
-\item \textbf{FE-35: Manage Freelancer Proposal Dashboards} \\
-Tracks application progression, where a Freelancer can review all historical and pending proposals categorized by status (Pending, Accepted, Rejected, and Expired).
-
-\item \textbf{FE-36: Manage Client Proposal Reviews} \\
-Facilitates candidate evaluation, where a Client can view, compare, and filter all received proposals for a posting, evaluating applicant profiles, bid terms, and sample attachments.
-
-\item \textbf{FE-37: Manage Candidate Hiring and Contract Generation} \\
-Oversees hiring execution, where a Client can accept a proposal or reject candidates, with acceptance automatically generating a formal project contract linked to the agreed proposal terms.
-
-\item \textbf{FE-38: Manage Contract Overviews and Details} \\
-Administers engagement governance, where Client and Freelancer can inspect contract terms, milestone schedules, financial statuses, and participant account details.
-
-\item \textbf{FE-39: Manage Dual Contract Signing} \\
-Enforces bilateral commitment, where Client and Freelancer must each review the agreement and digitally record independent contract signatures before project work commences.
-
-\item \textbf{FE-40: Manage Contract Pricing and Platform Fees} \\
-Records financial commitments, where the contract tracks the agreed fixed project price and an independent per-contract platform fee (default USD~10.00) with its own payment tracking.
-
-\item \textbf{FE-41: Manage Contract Closure and Cancellation} \\
-Handles contract conclusion, where Client and Freelancer can complete finished engagements or mutually cancel contracts with appropriate escrow release or refund.
-
-\item \textbf{FE-42: Manage Contract Milestones} \\
-Administers work breakdown structures, where Client and Freelancer can create, edit, reorder, and remove milestone phases within a contract prior to milestone funding.
-
-\item \textbf{FE-43: Manage Milestone Lifecycle States} \\
-Tracks deliverable progression, where the system manages milestone transitions across operational states (Pending, Funded, In Progress, Submitted, Approved, Released, and Disputed).
-
-\item \textbf{FE-44: Manage Milestone Deliverable Submissions} \\
-Handles work delivery handoffs, where a Freelancer can submit milestone deliverables accompanied by completion notes, repository links, and uploaded deliverable files.
-
-\item \textbf{FE-45: Manage Milestone Revisions and Approvals} \\
-Coordinates deliverable inspection, where a Client can approve deliverables to release escrow funds, or request revisions by providing clear feedback and revision due dates.
-
-\item \textbf{FE-46: Manage Milestone and Contract Shared Files} \\
-Administers engagement assets, where Client and Freelancer can upload, preview, download, and delete shared project files at both milestone and contract scopes.
-
-\item \textbf{FE-47: Manage Milestone Progression Sequence} \\
-Enforces sequential milestone execution, where a Freelancer initiates milestone commencement, strictly restricted to the assigned freelancer and enforcing one active milestone per contract.
+\item \textbf{FE-12: Manage Proposals \& Hiring} \\
+Handles project bidding and talent acquisition, where Freelancer can draft, submit, view, update, and withdraw proposals containing bid prices, duration estimates, cover letters, and attachments; while Client can view received proposals, evaluate AI match scores, interview candidates via direct messaging, accept winning proposals to initiate contracts, or reject proposals.
 
 \end{itemize}
 
-\paragraph*{Module 6: Milestone Payments \& Escrow}
+\paragraph*{Module 6: Contracts \& Project Governance}
 \begin{itemize}[leftmargin=1.0cm, label=--]
 
-\item \textbf{FE-48: Manage Stripe Connect Express Onboarding} \\
-Handles financial account onboarding, where Freelancer and Client link their Stripe Express accounts through secure onboarding links, with verification and payout readiness tracked on the user record.
+\item \textbf{FE-13: Manage Contracts} \\
+Oversees legally binding agreements, where Client and Freelancer can view contract lists and details, negotiate contract term templates, execute dual digital signatures, upload and download shared workspace files, and track contract completion or mutual cancellation.
 
-\item \textbf{FE-49: Manage Customer Payment Methods} \\
-Administers saved billing credentials, where a Client can securely manage credit cards via a hosted Stripe customer portal session without raw card data touching FREVIA servers.
-
-\item \textbf{FE-50: Manage Platform Fee Payments} \\
-Processes required platform service fees, where a Client can pay the per-contract platform fee via a Stripe PaymentIntent, hosted Checkout Session, or saved credit card charge.
-
-\item \textbf{FE-51: Manage Milestone Escrow Funding} \\
-Enforces payment protection, where a Client funds milestone amounts into platform escrow via Stripe before work starts, holding capital securely until deliverable satisfaction.
-
-\item \textbf{FE-52: Manage Milestone Escrow Releases} \\
-Handles freelancer disbursements, where approving a milestone deliverable triggers an automated Stripe Transfer from platform escrow directly to the Freelancer's connected Stripe account.
-
-\item \textbf{FE-53: Manage Milestone Escrow Refunds} \\
-Processes payment reversals, where Client and Freelancer can execute escrow refunds for mutually cancelled or arbitrated milestones via Stripe refund APIs.
-
-\item \textbf{FE-54: Manage Dispute Fee Payments and Split Payouts} \\
-Administers arbitration finances, where disputing parties submit required arbitration deposits within designated deadlines, and an Administrator's split ruling triggers calculated partial disbursements.
-
-\item \textbf{FE-55: Manage Financial Transaction Ledger} \\
-Maintains immutable financial records, where the platform logs every money movement with transaction type, status, monetary amount, currency, and external Stripe reference identifiers.
-
-\item \textbf{FE-56: Manage Payment Status Reconciliation} \\
-Ensures transaction data integrity, where an Administrator can manually trigger status checks and synchronization between local ledger records and remote Stripe PaymentIntent/Session states.
-
-\item \textbf{FE-57: Manage Stripe Webhook Event Processing} \\
-Handles asynchronous financial notifications, where backend webhook endpoints receive and validate Stripe event notifications using raw request body HMAC signatures.
+\item \textbf{FE-14: Manage Milestones \& Deliverables} \\
+Administers progressive project stages, where Client and Freelancer can define milestone schedules, progress updates, and file attachments; Freelancer submits completed milestone deliverables; and Client reviews deliverables, requests modifications, or formally approves milestones for fund release.
 
 \end{itemize}
 
-\paragraph*{Module 7: Dispute Resolution \& Contract Reviews}
+\paragraph*{Module 7: Escrow Payments \& Financial Settlement}
 \begin{itemize}[leftmargin=1.0cm, label=--]
 
-\item \textbf{FE-58: Manage Milestone Dispute Filing} \\
-Handles formal conflict escalation, where a Client or Freelancer can raise a milestone dispute, stating grievance claims and submitting supporting evidence before the response deadline.
-
-\item \textbf{FE-59: Manage Dispute Responses and Evidence} \\
-Enables bilateral defense, where the respondent can review dispute claims and upload counter-evidence, documentation, and written justifications within the designated response window.
-
-\item \textbf{FE-60: Manage Bilateral Dispute Dashboards} \\
-Displays arbitration progression, where Client, Freelancer, and Administrator can inspect dispute statuses, fee payment states, response countdown timers, and filed evidence files.
-
-\item \textbf{FE-61: Manage Dispute Escalations and Decision Reviews} \\
-Handles arbitration appeals, where a participant dissatisfied with an initial administrative ruling can request an escalated review within the permitted grace period.
-
-\item \textbf{FE-62: Manage Administrative Arbitration and Split Rulings} \\
-Oversees conflict adjudication, where an Administrator evaluates bilateral evidence, determines an equitable milestone split ratio, records written reasoning, and issues a final binding award.
-
-\item \textbf{FE-63: Manage Contract Reviews and Ratings} \\
-Handles bilateral reputation feedback, where Client and Freelancer can submit overall star ratings and categorized evaluations (communication, quality, adherence to deadlines) upon contract completion.
-
-\item \textbf{FE-64: Manage Review Listings and Modifications} \\
-Administers public feedback, where users can view reviews on public profiles, and review authors can edit or remove their submitted feedback within defined policy limits.
-
-\item \textbf{FE-65: Manage Public Review Responses} \\
-Enables transparent communication, where review recipients can post a one-time public clarification response linked to a review displayed on their profile.
+\item \textbf{FE-15: Manage Payments \& Escrow} \\
+Administers financial transactions via Stripe Connect, where Freelancer connects their Stripe Express payout account and views payout history; Client funds milestone deposits into escrow, pays flat platform fees (\ fixed fee per contract), and approves payment releases upon milestone sign-off; and the system executes automated webhook synchronization and dispute fee settlements.
 
 \end{itemize}
 
-\paragraph*{Module 8: Real-Time Communication \& Notifications}
+\paragraph*{Module 8: Dispute Arbitration \& Reviews}
 \begin{itemize}[leftmargin=1.0cm, label=--]
 
-\item \textbf{FE-66: Manage Conversation Listings} \\
-Administers messaging dialogues, where Client and Freelancer can view active conversation threads, monitor unread message counts, and pin or hide individual conversation threads.
+\item \textbf{FE-16: Manage Disputes \& Arbitration} \\
+Adjudicates contract conflicts through a transparent 5-stage legal workflow, where Client or Freelancer can file a dispute on a funded milestone and submit evidence; while Administrator (Arbitrator) evaluates claims, allocates escrow balances (full release, refund, or percentage split), and processes dispute decision reviews (appeals).
 
-\item \textbf{FE-67: Manage Conversation Initiation} \\
-Establishes direct communication channels, where a Client can initiate a direct messaging dialogue with a Freelancer from their profile or proposal.
-
-\item \textbf{FE-68: Manage Real-Time Messaging and WebSockets} \\
-Facilitates instant collaboration, where Client and Freelancer exchange text messages, receive live delivery and read receipts, observe typing indicators, and delete sent messages over authenticated WebSockets.
-
-\item \textbf{FE-69: Manage Chat File Attachments} \\
-Handles communication file sharing, where chat participants can upload, preview, and download message attachments with enforced file type, size, and virus scanning validations.
-
-\item \textbf{FE-70: Manage System Notifications} \\
-Keeps participants informed, where Client, Freelancer, and Administrator can view a centralized notification inbox categorized by domain event types with unread badge indicators.
-
-\item \textbf{FE-71: Manage Notification Lifecycles} \\
-Administers notification states, where users can mark individual notifications or all notifications as read, and delete obsolete notifications from their inbox.
+\item \textbf{FE-17: Manage Contract Reviews \& Reputation} \\
+Governs post-contract evaluations, where Client and Freelancer submit star ratings, category breakdowns, and written reviews upon contract completion; and the evaluated party can post a single public review response.
 
 \end{itemize}
 
-\paragraph*{Module 9: Community Forum \& Moderation}
+\paragraph*{Module 9: Communication \& Community Forum}
 \begin{itemize}[leftmargin=1.0cm, label=--]
 
-\item \textbf{FE-72: Manage Community Forum Browsing} \\
-Facilitates knowledge exchange, where Guest, Client, and Freelancer can browse categorized community discussions, execute topic searches, filter by category tags, and sort by date or popularity.
+\item \textbf{FE-18: Manage Direct Messaging \& Notifications} \\
+Facilitates platform communication and collaboration, where registered users (Client, Freelancer, Expert) can exchange real-time direct messages and attachments; and all users receive in-app notification alerts for contract, proposal, and payment milestones.
 
-\item \textbf{FE-73: Manage Forum Post Authoring} \\
-Handles discussion publishing, where Client and Freelancer can author rich-text discussion posts with tags, edit their own posts, and delete obsolete discussions.
+\item \textbf{FE-19: Manage Community Forum} \\
+Encourages professional knowledge sharing, where Guest can view public categories and posts; registered users (Client, Freelancer, Expert) can author posts, write comments, like discussions, and report policy violations; while Administrator manages forum categories and restores soft-deleted items from trash.
 
-\item \textbf{FE-74: Manage Forum Comments, Likes, and Reports} \\
-Enables community engagement, where users can author comments, react to posts and comments with likes, and report policy-violating discussions to moderation queues.
-
-\item \textbf{FE-75: Manage Automated AI Forum Moderation} \\
-Ensures community safety, where submitted posts are evaluated by an external AI moderation service for toxicity, spam, and inappropriate content, routing suspicious items to moderation queues.
-
-\item \textbf{FE-76: Manage Administrative Forum Moderation and Trash} \\
-Oversees content moderation, where an Administrator can review pending posts, investigate user reports, approve or reject flagged discussions, and restore soft-deleted items from trash.
+\item \textbf{FE-20: Manage Content Moderation} \\
+Safeguards platform content standards, where automated AI filters submissions for profanity and banned keywords; and Administrator inspects moderation queues, evaluates user reports, and resolves tickets or removes inappropriate content.
 
 \end{itemize}
 
-\paragraph*{Module 10: System Administration \& Platform}
+\paragraph*{Module 10: Platform Administration \& Marketing}
 \begin{itemize}[leftmargin=1.0cm, label=--]
 
-\item \textbf{FE-77: Manage Job Category Administration} \\
-Administers project taxonomies, where an Administrator can create new job categories, update category titles, soft-delete obsolete categories, and restore archived items.
-
-\item \textbf{FE-78: Manage Skill Catalogue Administration} \\
-Administers competence taxonomies, where an Administrator can add standardized industry skills, update skill classifications, soft-delete skills, and restore previously removed items.
-
-\item \textbf{FE-79: Manage Advertisement Banners} \\
-Administers promotional campaigns, where an Administrator can create, update, schedule, and delete display banners across five homepage and dashboard placement slots.
-
-\item \textbf{FE-80: Manage Administrative Governance Dashboards} \\
-Centralizes platform governance, where an Administrator can monitor real-time review queues for pending identity verification submissions and profile revision approvals.
-
-\item \textbf{FE-81: Manage Bilingual Internationalization} \\
-Enables multilingual accessibility, where Guest, Client, and Freelancer can toggle between English and Vietnamese interfaces via locale cookies without altering URL paths.
-
-\item \textbf{FE-82: Manage Responsive Themes} \\
-Enhances user experience, where users can switch between light and dark themes across fully responsive layouts optimized for mobile, tablet, and desktop viewports.
-
-\item \textbf{FE-83: Manage Shared Schema Validation and Container Infrastructure} \\
-Ensures system reliability, where the platform enforces unified DTO validation schemas between Next.js and NestJS, standardized JSON response envelopes, global exception filters, and containerized Docker deployments with health checks.
+\item \textbf{FE-21: Manage Banners \& Platform Settings} \\
+Administers platform marketing banners and system configurations, where Guest, Client, and Freelancer view active promotional and announcement banners; while Administrator creates, updates, schedules, and deletes display banners, and manages global platform settings.
 
 \end{itemize}
+
+\subsubsection*{Cross-Report Traceability Matrix}
+
+Table~\ref{tab:feature-traceability} establishes the end-to-end consistency across the project documentation suite, linking each Major Feature in Report 1 directly to its corresponding SMAR work package in the Project Management Plan (Report 2), its detailed Use Case specification in the Software Requirements Specification (Report 3), and its authorized actors.
+
+\begingroup
+\small
+\setlength{\tabcolsep}{4pt}
+\begin{longtable}{|>{\raggedright\arraybackslash}p{2.8cm}|>{\raggedright\arraybackslash}p{2.7cm}|>{\raggedright\arraybackslash}p{3.5cm}|>{\raggedright\arraybackslash}p{5.0cm}|}
+\caption{Traceability matrix linking Report 1, Report 2, and Report 3}
+\label{tab:feature-traceability} \\
+\hline
+\rowcolor{fptHeader}
+\textcolor{fptHeaderText}{\textbf{Feature (Report 1)}} & 
+\textcolor{fptHeaderText}{\textbf{SMAR Plan (Report 2)}} & 
+\textcolor{fptHeaderText}{\textbf{SRS Use Cases (Report 3)}} & 
+\textcolor{fptHeaderText}{\textbf{Authorized Actors}} \\
+\hline
+\endfirsthead
+
+\hline
+\rowcolor{fptHeader}
+\textcolor{fptHeaderText}{\textbf{Feature (Report 1)}} & 
+\textcolor{fptHeaderText}{\textbf{SMAR Plan (Report 2)}} & 
+\textcolor{fptHeaderText}{\textbf{SRS Use Cases (Report 3)}} & 
+\textcolor{fptHeaderText}{\textbf{Authorized Actors}} \\
+\hline
+\endhead
+
+\hline
+\endfoot
+
+\hline
+\endlastfoot
+
+\textbf{FE-01: Manage Authentication} & 
+Module 1: Authentication (\#1.1--1.6) & 
+Section 3.2: User Authentication (\#3.2.1--3.2.5) & 
+\textbf{Guest:} Sign up (Register)\par
+\textbf{External:} Client, Freelancer, Expert (Login, Logout, Reset PW)\par
+\textbf{Internal:} Administrator (Login, Logout) \\ \hline
+
+\textbf{FE-02: Manage Roles \& Permissions} & 
+Module 2: Authorization (\#1.9--1.12), Module 20 (\#3.22--3.24) & 
+Section 3.3: Role Management (\#3.3.1--3.3.6), Section 3.24 (\#3.24.1--3.24.2) & 
+\textbf{External:} Client, Freelancer, Expert (Switch/Join Role)\par
+\textbf{Internal:} Administrator (CRUD Roles, Permissions) \\ \hline
+
+\textbf{FE-03: Manage User Accounts \& Sessions} & 
+Module 2: (\#1.13--1.15), Module 19 (\#3.19--3.21), Module 21 (\#3.25--3.32) & 
+Section 3.21: User Management (\#3.21.1--3.21.9) & 
+\textbf{External/Internal:} All users (Revoke own sessions)\par
+\textbf{Internal:} Administrator (Search, update, ban/unban users) \\ \hline
+
+\textbf{FE-04: Manage Profiles} & 
+Module 3: Profile (\#1.16--1.18, 1.21--1.23), Module 22 (\#3.33--3.35), Module 32 (\#5.5--5.8) & 
+Section 3.4: Freelancer Profile (\#3.4.1--3.4.2), Section 3.34 (\#3.34.1--3.34.4), Section 3.40 (\#3.40.1--3.40.6) & 
+\textbf{Guest:} View public profiles\par
+\textbf{External:} Client, Freelancer, Expert (Update profile/avatar)\par
+\textbf{Internal:} Administrator (Approve revisions/experts) \\ \hline
+
+\textbf{FE-05: Manage Skills Catalogue} & 
+Module 3: (\#1.19), Module 29: Skill Catalogue (\#4.19--4.23) & 
+Section 3.5: Freelancer Skills (\#3.5.1--3.5.3), Section 3.31 (\#3.31.1--3.31.6) & 
+\textbf{External:} Freelancer (Select skills, set proficiency)\par
+\textbf{Internal:} Administrator (CRUD, restore skills) \\ \hline
+
+\textbf{FE-06: Manage Portfolios} & 
+Module 3: Portfolio (\#1.20) & 
+Section 3.6: Portfolio Management (\#3.6.1--3.6.5) & 
+\textbf{Guest, Client:} View portfolio items\par
+\textbf{External:} Freelancer (CRUD portfolio projects) \\ \hline
+
+\textbf{FE-07: Manage CV \& AI Skill Extraction} & 
+Module 4: CV Handling (\#1.24--1.26), Module 31: AI CV (\#5.1--5.4) & 
+Section 3.41: Freelancer CV Management (\#3.41.1--3.41.4) & 
+\textbf{External:} Freelancer (Upload, view, replace, delete CV, run AI extraction) \\ \hline
+
+\textbf{FE-08: Manage Identity Verification (KYC)} & 
+Module 8: (\#1.45--1.48), Module 23: Review (\#3.36--3.38) & 
+Section 3.26: ID Verification (\#3.26.1--3.26.3), Section 3.38 (\#3.38.1) & 
+\textbf{External:} Freelancer (Submit CCCD/selfie)\par
+\textbf{Internal:} Administrator (Inspect, approve/reject badge) \\ \hline
+
+\textbf{FE-09: Manage Job Postings} & 
+Module 5: Job Marketplace (\#1.27--1.35) & 
+Section 3.9: Job Browsing (\#3.9.1--3.9.2) & 
+\textbf{Guest, Freelancer:} Search, filter, view jobs\par
+\textbf{External:} Client (Create, edit, close jobs) \\ \hline
+
+\textbf{FE-10: Manage Job Categories} & 
+Module 30: Job Categories (\#4.24--4.28) & 
+Section 3.39: Job Category (\#3.39.1--3.39.6), Section 3.42 (\#3.42.1--3.42.2) & 
+\textbf{Guest, External:} Browse job categories\par
+\textbf{Internal:} Administrator (CRUD, restore categories) \\ \hline
+
+\textbf{FE-11: Manage Bookmarks \& Saved Searches} & 
+Module 6: Bookmarks (\#1.36--1.39), Module 18: Saved Search (\#3.15--3.18) & 
+Supporting browse functions & 
+\textbf{External:} Freelancer (Bookmark jobs, manage saved searches) \\ \hline
+
+\textbf{FE-12: Manage Proposals \& Hiring} & 
+Module 10: Proposal (\#2.1--2.9), Module 11: Hiring (\#2.10--2.12) & 
+Section 3.29: Proposal Management (\#3.29.1--3.29.9) & 
+\textbf{External:} Freelancer (Draft, submit, withdraw proposal)\par
+\textbf{External:} Client (Evaluate AI score, accept/reject proposal) \\ \hline
+
+\textbf{FE-13: Manage Contracts} & 
+Module 9: Contract Management (\#1.49--1.52) & 
+Section 3.8: Contract Management (\#3.8.1--3.8.10) & 
+\textbf{External:} Client, Freelancer (Negotiate terms, sign, upload files, complete/cancel) \\ \hline
+
+\textbf{FE-14: Manage Milestones \& Deliverables} & 
+Module 12: (\#2.13--2.18), Module 13: (\#2.19--2.21), Module 14: (\#2.22--2.26) & 
+Section 3.20: Milestone Management (\#3.20.1--3.20.15) & 
+\textbf{External:} Freelancer (Submit deliverable, update progress)\par
+\textbf{External:} Client (Approve milestone, request changes) \\ \hline
+
+\textbf{FE-15: Manage Payments \& Escrow} & 
+Module 27: Payment Management (\#4.1--4.13) & 
+Section 3.35: Payment Management (\#3.35.1--3.35.13) & 
+\textbf{External:} Freelancer (Stripe Connect, payouts)\par
+\textbf{External:} Client (Fund escrow, pay platform fee, release funds) \\ \hline
+
+\textbf{FE-16: Manage Disputes \& Arbitration} & 
+Module 26: Dispute Management (\#3.48--3.52) & 
+Section 3.28: Dispute Management (\#3.28.1--3.28.6) & 
+\textbf{External:} Client, Freelancer (Open dispute, upload evidence)\par
+\textbf{Internal:} Administrator (Evaluate, split escrow, review appeal) \\ \hline
+
+\textbf{FE-17: Manage Contract Reviews \& Reputation} & 
+Module 15: Review and Rating (\#2.27--2.31) & 
+Section 3.32: Contract Review (\#3.32.1--3.32.5), Section 3.33 (\#3.33.1--3.33.3) & 
+\textbf{External:} Client, Freelancer (Write review, star rating)\par
+\textbf{External:} Evaluated party (Submit single response) \\ \hline
+
+\textbf{FE-18: Manage Direct Messaging \& Notifications} & 
+Module 16: Messaging (\#3.1--3.9), Module 17: Notifications (\#3.10--3.14) & 
+Section 3.23: Notification Management (\#3.23.1--3.23.4) & 
+\textbf{External:} Client, Freelancer, Expert (Direct chat, attachments)\par
+\textbf{External/Internal:} All users (Receive/read notification alerts) \\ \hline
+
+\textbf{FE-19: Manage Community Forum} & 
+Module 7: Forum (\#1.40--1.44), Module 24: Categories (\#3.39--3.42) & 
+Section 3.7: Manage Forum (\#3.7.1--3.7.13), Section 3.27 (\#3.27.1--3.27.6) & 
+\textbf{Guest:} View categories, view public posts\par
+\textbf{External:} Client, Freelancer, Expert (Create post, comment, like)\par
+\textbf{Internal:} Administrator (Manage categories, restore trash) \\ \hline
+
+\textbf{FE-20: Manage Content Moderation} & 
+Module 25: Forum Moderation (\#3.43--3.47) & 
+Section 3.25: Moderation (\#3.25.1--3.25.3), Section 3.37 (\#3.37.1) & 
+\textbf{Internal:} Administrator (Inspect moderation queue, resolve tickets) \\ \hline
+
+\textbf{FE-21: Manage Banners \& Platform Settings} & 
+Module 28: Advertisement Banners (\#4.14--4.18) & 
+Section 3.30: Banner Management (\#3.30.1--3.30.5) & 
+\textbf{Guest, External:} View active display banners\par
+\textbf{Internal:} Administrator (Create, update, delete banners, system settings) \\ \hline
+
+\end{longtable}
+\endgroup
 
 \subsection{Limitations \& Exclusions}
 
