@@ -1,4 +1,160 @@
 % =================================================================
 % Sprint 4 - section 3 feature description (kvy)
-% Placeholder: add the feature description for this sprint here.
+% AI content moderation for forum posts and AI face scan / identity
+% extraction with duplicate detection.
 % =================================================================
+
+% =================================================================
+% 3.x AI Content Moderation
+% Feature description written against the real implementation:
+%   apps/api/src/shared/services/ai-moderation.service.ts
+%   apps/api/src/routes/forums/forums-post/forums.service.ts
+%   apps/web/app/forum/[categorySlug]/components/create-post-dialog.tsx
+%   apps/web/app/admin/moderation/* and apps/web/app/admin/trash/*
+% Procedures are described from the user interface point of view.
+% =================================================================
+
+\Needspace{12\baselineskip}
+\subsection{AI Content Moderation}
+
+\Needspace{12\baselineskip}
+\subsubsection{Moderate Content by AI}
+
+\functionfield{Function Trigger} A logged-in Client or Freelancer opens a forum category, clicks \textbf{New Post}, fills in the title and content of the post and presses the \textbf{Post} button in the create-post dialog.
+
+\functionfield{Function Description} This function automatically scores the content of a forum post with an AI moderation service before the post is published. The title and the content are sent to the service, which returns a score, the detected categories and a decision. According to the score, the post is handled in one of three ways: a score of 0.80 or more is blocked and the post is not saved; a score from 0.30 to 0.79 keeps the post in the \textbf{PENDING} state for manual review by an administrator; a score below 0.30 approves the post immediately so that it becomes visible to everyone. Posts that are rejected later by an administrator are moved to the trash, where they can be restored. The user always receives a message that explains the result of the check.
+
+\screenfield[0.92]{image/screenshot/sprint4/kvy/CreatePostDialog.png}{Create post dialog with title and rich-text content}
+\screenfield[0.92]{image/screenshot/sprint4/kvy/AdminModeration.png}{Administrator moderation queue for posts that need manual review}
+\screenfield[0.92]{image/screenshot/sprint4/kvy/AdminTrash.png}{Trash list with posts rejected during moderation}
+
+\functionfield{Function Details}
+\begin{itemize}[leftmargin=1.6em,topsep=4pt,itemsep=3pt,parsep=0pt,label=$\bullet$]
+    \item \detailhead{Precondition}
+        \begin{itemize}[leftmargin=2.2em,topsep=2pt,itemsep=3pt,parsep=0pt,label=$\circ$]
+            \item The user is logged in with a Client or Freelancer account.
+            \item The user is connected to the internet.
+            \item The forum category exists and the user is allowed to create a post in it.
+            \item The title and the content of the post are not empty.
+        \end{itemize}
+    \item \detailhead{Process}
+        \begin{itemize}[leftmargin=2.2em,topsep=2pt,itemsep=3pt,parsep=0pt,label=$\circ$]
+            \item \textbf{Open the Create Post Dialog}: The user opens a forum category and clicks \textbf{New Post}, then types a title and the content in the dialog.
+            \item \textbf{Submit the Post}: The user presses the \textbf{Post} button. The frontend sends the request to create the post to the backend.
+            \item \textbf{Run the AI Check}: The backend calls the AI moderation service with the combined title and content of the post and the context \texttt{forum-post}.
+            \item \textbf{Receive the Result}: The service returns a score, the detected categories, a decision and a message.
+            \item \textbf{Apply the Threshold}: The backend applies the score thresholds before any public visibility is granted.
+                \begin{itemize}[leftmargin=2.2em,topsep=2pt,itemsep=3pt,parsep=0pt,label=$\blacksquare$]
+                    \item \textbf{Blocked (score $\geq$ 0.80)}: The post is rejected by the AI check. The backend does not create a database record and the request ends with HTTP 400. The dialog stays open and an error message explains that the content was rejected.
+                    \item \textbf{Pending (score from 0.30 to 0.79)}: The post is saved with status \texttt{PENDING}. The dialog closes, the form is cleared and an information message tells the user that the post is waiting for administrator review. The post is not shown in public listings.
+                    \item \textbf{Approved (score $<$ 0.30)}: The post is saved with status \texttt{APPROVED}. The dialog closes, the form is cleared and a success message is shown. The user is taken to the detail page of the new post, which is immediately visible to everyone.
+                \end{itemize}
+            \item \textbf{Review by an Administrator}: When a post is \texttt{PENDING}, it appears in the administrator moderation queue, where it can be approved or rejected (see the sprint 3 moderation features).
+            \item \textbf{Move Rejected Posts to Trash}: When an administrator rejects a pending post, the post is removed from public view and is moved to the trash, where it can be restored later.
+        \end{itemize}
+    \item \detailhead{Alternative Flow}
+        \begin{itemize}[leftmargin=2.2em,topsep=2pt,itemsep=3pt,parsep=0pt,label=$\circ$]
+            \item \textbf{Empty Title or Content}: The \textbf{Post} button stays disabled while the title or the content is empty, so no request is sent.
+            \item \textbf{Cancel the Dialog}: When the user closes the dialog or presses \textbf{Cancel}, no moderation request is made and nothing is saved.
+            \item \textbf{AI Service Unavailable}: When the AI service cannot be reached, the content is approved by default so that users are not blocked, and the post is saved with status \texttt{APPROVED}.
+            \item \textbf{Lost Connection}: When the connection to the server is lost while submitting, the post is not created and the dialog shows an error message.
+        \end{itemize}
+    \item \detailhead{Postconditions}
+        \begin{itemize}[leftmargin=2.2em,topsep=2pt,itemsep=3pt,parsep=0pt,label=$\circ$]
+            \item A blocked post leaves no record in the database.
+            \item A pending post is stored with status \texttt{PENDING}, is absent from public listings and appears in the moderation queue.
+            \item An approved post is stored with status \texttt{APPROVED} and is visible in the forum immediately.
+            \item A post rejected by an administrator is hidden from the public and can be found in the trash for restoration.
+        \end{itemize}
+    \item \detailhead{Error Handling}
+        \begin{itemize}[leftmargin=2.2em,topsep=2pt,itemsep=3pt,parsep=0pt,label=$\circ$]
+            \item \textbf{Not Authenticated}: When a guest tries to create a post, the user is sent to the login page.
+            \item \textbf{Content Blocked}: When the AI score is 0.80 or more, the backend returns HTTP 400 and the dialog shows the moderation message without saving the post.
+            \item \textbf{Validation Error}: When the title or the content does not pass validation, the backend returns HTTP 400 and the form shows the corresponding error.
+            \item \textbf{Lost Connection}: When the connection to the server is lost, the post is not created and the dialog shows an error message.
+        \end{itemize}
+    \item \detailhead{Security Measures}
+        \begin{itemize}[leftmargin=2.2em,topsep=2pt,itemsep=3pt,parsep=0pt,label=$\circ$]
+            \item Only authenticated users may create forum posts, and the check is made again on the server.
+            \item The score thresholds are enforced on the server, so they cannot be bypassed from the browser.
+            \item Pending posts are never returned to ordinary users, because public listings only contain posts with status \texttt{APPROVED}.
+            \item The moderation queue and the trash are only available to administrators.
+        \end{itemize}
+\end{itemize}
+
+% =================================================================
+% 3.x AI Face Scan & Duplicate Detection
+% Feature description written against the real implementation:
+%   apps/api/src/routes/account-profile/account-profile.service.ts
+%   apps/web/app/(freelancer)/freelancer/profile/identity-verification-form.tsx
+%   apps/web/app/admin/identity-verifications/*
+% Procedures are described from the user interface point of view.
+% =================================================================
+
+\Needspace{12\baselineskip}
+\subsection{AI Face Scan \& Duplicate Detection}
+
+\Needspace{12\baselineskip}
+\subsubsection{Scan Face and Detect Duplicate Identity}
+
+\functionfield{Function Trigger} A logged-in Freelancer opens \textbf{Profile} $\rightarrow$ \textbf{Identity} tab, uploads the required identity documents and selfie, completes the liveness check and submits the verification request.
+
+\functionfield{Function Description} This function uses an AI service to scan the face from the uploaded images, extract the identity information and store it in the database. The extracted data includes the full name, the date of birth, the identity number, the document type and the file URL. After extraction, the new record is compared with the existing verification records to detect duplicates, such as the same identity number or the same face, and repeated registrations are flagged for administrator review. The freelancer can follow the status of the request from the same tab, and administrators review flagged and pending requests from the identity verification screen.
+
+\screenfield[0.92]{image/screenshot/sprint4/kvy/IdentityVerificationTab.png}{Freelancer profile with the identity verification tab}
+\screenfield[0.92]{image/screenshot/sprint4/kvy/IdentityLivenessCheck.png}{Liveness challenge while scanning the face}
+\screenfield[0.92]{image/screenshot/sprint4/kvy/AdminIdentityVerifications.png}{Administrator screen for reviewing identity verification requests}
+
+\functionfield{Function Details}
+\begin{itemize}[leftmargin=1.6em,topsep=4pt,itemsep=3pt,parsep=0pt,label=$\bullet$]
+    \item \detailhead{Precondition}
+        \begin{itemize}[leftmargin=2.2em,topsep=2pt,itemsep=3pt,parsep=0pt,label=$\circ$]
+            \item The user is logged in with a Freelancer account.
+            \item The user is connected to the internet.
+            \item The front image of the identity document is provided, together with the selfie and the liveness frames required by the form.
+            \item The user has not already been fully verified, or is submitting a new document for review.
+        \end{itemize}
+    \item \detailhead{Process}
+        \begin{itemize}[leftmargin=2.2em,topsep=2pt,itemsep=3pt,parsep=0pt,label=$\circ$]
+            \item \textbf{Open the Identity Tab}: The freelancer opens the profile page and selects the \textbf{Identity} tab, which shows the current verification status and the upload form.
+            \item \textbf{Upload the Documents}: The user selects the document type and uploads the front image of the document, and optionally the back image.
+            \item \textbf{Capture the Selfie and Liveness}: The user takes a selfie and completes the liveness challenge, which captures the frames used for the face scan.
+            \item \textbf{Submit the Request}: The user presses the submit button. The frontend sends the document type, the images and the liveness frames to the backend.
+            \item \textbf{Validate the Files}: The backend checks that the required files are present and that their type and size are accepted.
+            \item \textbf{Scan the Face and Extract Identity}: The backend calls the AI identity service, which scans the face from the uploaded images and extracts the identity information, including the full name, the date of birth, the identity number, the document type and the file URL.
+            \item \textbf{Store the Result}: A verification record is created in the database with the extracted identity information, the uploaded file references and the status \texttt{PENDING}, so that it can be reviewed.
+            \item \textbf{Detect Duplicates}: The new record is compared with the existing verification records. When the same identity number or the same face is found, the record is flagged as a duplicate registration.
+            \item \textbf{Review by an Administrator}: The request appears in the administrator identity verification screen, where pending and flagged requests can be reviewed and approved or rejected.
+            \item \textbf{Show the Status}: The freelancer sees the current status of the request in the identity tab, including pending, approved, rejected or flagged for duplicate review.
+        \end{itemize}
+    \item \detailhead{Alternative Flow}
+        \begin{itemize}[leftmargin=2.2em,topsep=2pt,itemsep=3pt,parsep=0pt,label=$\circ$]
+            \item \textbf{Missing Required File}: When the front image, the selfie or the liveness frames are missing, the submission is rejected and the form asks the user to complete them.
+            \item \textbf{Unsupported File}: When an uploaded file is not an accepted image type or is too large, the form shows a validation error and no request is sent.
+            \item \textbf{AI Cannot Read the Document}: When the AI service cannot extract the identity information, the request is not stored as verified and an error message asks the user to try again with clearer images.
+            \item \textbf{Duplicate Detected}: When a duplicate identity number or face is found, the request is still stored but is flagged, and an administrator decides how to handle it.
+            \item \textbf{AI Service Unavailable}: When the AI service cannot be reached, the submission fails and the user is asked to try again later.
+        \end{itemize}
+    \item \detailhead{Postconditions}
+        \begin{itemize}[leftmargin=2.2em,topsep=2pt,itemsep=3pt,parsep=0pt,label=$\circ$]
+            \item A verification record is stored with the extracted identity information, the file references and the status \texttt{PENDING}.
+            \item When a duplicate is detected, the record is flagged so that repeated registrations can be reviewed.
+            \item The administrator can review, approve or reject the request from the identity verification screen.
+            \item The freelancer can see the current status of the request from the identity tab.
+        \end{itemize}
+    \item \detailhead{Error Handling}
+        \begin{itemize}[leftmargin=2.2em,topsep=2pt,itemsep=3pt,parsep=0pt,label=$\circ$]
+            \item \textbf{Not Authenticated}: When a guest tries to open the identity tab, the user is sent to the login page.
+            \item \textbf{Missing or Invalid File}: When a required file is missing or invalid, the backend returns an error and the form shows the corresponding message.
+            \item \textbf{AI Extraction Failure}: When the AI service cannot scan the face or extract the identity data, the request is not completed and an error message is shown.
+            \item \textbf{Lost Connection}: When the connection to the server is lost during submission, the request is not saved and the user is asked to try again.
+        \end{itemize}
+    \item \detailhead{Security Measures}
+        \begin{itemize}[leftmargin=2.2em,topsep=2pt,itemsep=3pt,parsep=0pt,label=$\circ$]
+            \item Only the owner of the profile may submit identity documents, and the check is made again on the server.
+            \item Uploaded files are validated for type and size before they are processed.
+            \item Extracted identity data and file references are stored so that the request can be audited.
+            \item Duplicate detection is performed on the server, so repeated registrations cannot be hidden from the browser.
+            \item The identity verification screens are only available to administrators.
+        \end{itemize}
+\end{itemize}

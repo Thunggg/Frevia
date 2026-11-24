@@ -63,3 +63,7 @@ docs/Report 3/SCREENSHOTS_CHECKLIST_PTAI.md
 # AI microservices repos (managed separately or as submodules)
 ai-services/*
 !ai-services/README.md
+
+
+ERD/*
+database_design/*
