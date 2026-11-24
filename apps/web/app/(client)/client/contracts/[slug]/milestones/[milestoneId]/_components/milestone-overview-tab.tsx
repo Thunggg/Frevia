@@ -14,6 +14,7 @@ import {
   Play,
   RotateCcw,
   Scale,
+  ShieldCheck,
   Upload,
   User,
 } from "lucide-react";
@@ -57,6 +58,7 @@ export function MilestoneOverviewTab({
   const format = useFormatter();
   const t = useTranslations("milestoneWorkspace.overview");
   const tCard = useTranslations("milestoneWorkspace.card");
+  const tPaymentStatus = useTranslations("paymentStatus");
   const { can, canAny } = useActionPermission();
   const isClient = !isFreelancer;
 
@@ -125,6 +127,48 @@ export function MilestoneOverviewTab({
   const amountNumber = Number(milestone.amount) || 0;
   const freelancerFee = Math.round(amountNumber * 0.05 * 100) / 100;
   const freelancerPayout = Math.round((amountNumber - freelancerFee) * 100) / 100;
+
+  const renderPaymentStatusBadge = () => {
+    const paymentStatus = milestone.paymentStatus || "PENDING";
+    switch (paymentStatus) {
+      case "FUNDED":
+        return (
+          <span className="inline-flex items-center gap-1 text-[11px] font-medium text-emerald-600 dark:text-emerald-400">
+            <ShieldCheck className="size-3" />
+            <span>{tPaymentStatus("FUNDED")}</span>
+          </span>
+        );
+      case "RELEASED":
+        return (
+          <span className="inline-flex items-center gap-1 text-[11px] font-medium text-blue-600 dark:text-blue-400">
+            <Check className="size-3" />
+            <span>{tPaymentStatus("RELEASED")}</span>
+          </span>
+        );
+      case "REFUNDED":
+        return (
+          <span className="inline-flex items-center gap-1 text-[11px] font-medium text-muted-foreground">
+            <RotateCcw className="size-3" />
+            <span>{tPaymentStatus("REFUNDED")}</span>
+          </span>
+        );
+      case "DISPUTED":
+        return (
+          <span className="inline-flex items-center gap-1 text-[11px] font-medium text-rose-600 dark:text-rose-400">
+            <Scale className="size-3" />
+            <span>{tPaymentStatus("DISPUTED")}</span>
+          </span>
+        );
+      case "PENDING":
+      default:
+        return (
+          <span className="inline-flex items-center gap-1 text-[11px] text-muted-foreground">
+            <Lock className="size-3" />
+            <span>{tPaymentStatus("PENDING")}</span>
+          </span>
+        );
+    }
+  };
 
   const clientName =
     contract.client?.profile?.displayName ||
@@ -508,6 +552,10 @@ export function MilestoneOverviewTab({
               <span className="font-mono font-medium text-foreground">
                 ${amountNumber.toLocaleString("en-US", { minimumFractionDigits: 2 })}
               </span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-muted-foreground">{t("paymentStatusLabel")}</span>
+              {renderPaymentStatusBadge()}
             </div>
             <div className="flex items-center justify-between">
               <span className="text-muted-foreground">{t("freelancerFee")}</span>

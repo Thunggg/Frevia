@@ -13,8 +13,8 @@ The following risks have been identified from the project backlog and from the t
 \endhead
 \hline
 \endfoot
-1 & \textbf{Stripe escrow and webhook failures}
-(PaymentIntent and Checkout Session funding, transfer release, refund, and duplicate or out-of-order webhook events)
+1 & \textbf{Stripe escrow, hold deposit and webhook failures}
+(PaymentIntent, Checkout Session funding, contract hold deposit, transfer release, refund, and duplicate or out-of-order webhook events)
     & High & High &
     Develop and test exclusively in Stripe test mode. Verify the signature against the raw request body, make every handler idempotent by keying on the Stripe event identifier, and always reconcile local state from Stripe before writing. Keep an explicit synchronisation endpoint so an operator can repair a stuck record without a database edit. \\
 \hline
@@ -33,15 +33,15 @@ The following risks have been identified from the project backlog and from the t
     & High & Medium &
     Serve identity documents only through authenticated endpoints with ownership or administrator checks, never through the public static directory. Store only the verification outcome and summary on the profile, restrict the review queue to the administrator role, and define a retention rule for rejected submissions. \\
 \hline
-5 & \textbf{Arbitration load and perceived fairness}
-(an administrator must decide disputes with real money at stake)
+5 & \textbf{Arbitration load, expert escalation and perceived fairness}
+(disputes with financial stakes escalated to experts and decided with split payouts)
     & Medium & High &
-    Keep the evidence structure symmetric, record the reasoning with every decision, and expose the split amounts to both parties. Publish a target of 48 hours for a first decision, provide the review request as an escalation path, and rotate the deciding administrator when a review is requested. \\
+    Keep the evidence structure symmetric, record the reasoning with every decision, and expose the split amounts to both parties. Support escalating unresolved disputes to verified experts with a structured review timeline, and ensure the deciding party records explicit findings before funds are released. \\
 \hline
 6 & \textbf{Scope creep across five sprints}
-(214 SMAR items and a fixed envelope of 296 man-days)
+(218 SMAR items and a fixed envelope of 302 man-days)
     & High & High &
-    Freeze the backlog at sprint planning. Any addition must be exchanged for an item of comparable effort rather than added on top, and the sprint commitment may not exceed 53 man-days. Total effort must stay within 296 $\pm$ 5\% (max. 311 man-days). \\
+    Freeze the backlog at sprint planning. Any addition must be exchanged for an item of comparable effort rather than added on top, and the sprint commitment may not exceed the agreed sprint cap. Total effort must stay within 302 $\pm$ 5\% (max. 317 man-days). \\
 \hline
 7 & \textbf{Prisma schema evolution}
 (milestone payment state, dispute state, and transaction types change during delivery)

@@ -77,7 +77,7 @@
 46 & Freelancer & Milestone Detail & Screen displaying detailed instructions, attached files, progress logs, and submission history for a specific milestone. \\ \hline
 47 & Freelancer & Update Milestone Progress & Form screen allowing the freelancer to post progress notes, code links, or work-in-progress samples for a milestone. \\ \hline
 48 & Freelancer & Submit Milestone & Screen allowing the freelancer to formally submit finished deliverables and request client approval and payout. \\ \hline
-49 & Freelancer & Delete Milestone Submission & Confirmation dialog allowing the freelancer to cancel or retract a pending milestone submission. \\ \hline
+49 & Freelancer & Reject Contract Offer & Confirmation dialog allowing the freelancer to formally decline a pending contract offer with an optional decline reason. \\ \hline
 50 & Freelancer & Milestone Files & Dedicated file viewer showing assets and work items uploaded specifically for a contract milestone. \\ \hline
 51 & Freelancer & Open Dispute & Form screen allowing the freelancer to open a formal dispute regarding milestone deliverables or payment non-release. \\ \hline
 52 & Freelancer & Dispute Detail & Screen displaying dispute claims, evidence files, mediator messages, and resolution proposals from both parties. \\ \hline
@@ -127,7 +127,7 @@
 93 & Client & Open Dispute (Client) & Form screen allowing the client to initiate formal arbitration when milestone deliverables fail to satisfy terms. \\ \hline
 94 & Client & Dispute Detail (Client) & Screen displaying the active dispute case, uploaded evidence, mediator commentary, and ruling proposals. \\ \hline
 95 & Client & Respond to Dispute & Form screen allowing the client to submit rebuttal evidence, project specifications, and timeline records. \\ \hline
-96 & Client & Pay Dispute Fee & Payment screen enabling the client to pay the arbitration fee deposit required for administrative dispute mediation. \\ \hline
+96 & Client & Escalate Dispute to Expert & Form dialog enabling contract participants to escalate an unresolved dispute to a domain expert arbitrator. \\ \hline
 97 & Client & Payment History & Screen displaying comprehensive billing transactions, monthly statements, invoices, and platform service fees. \\ \hline
 98 & Client & Payment Detail & Detailed invoice view showing breakdown of milestone amount, processing fees, taxes, and payment method details. \\ \hline
 99 & Client & Saved Payment Methods & Wallet management screen allowing clients to securely add, view, and set default payment cards via Stripe. \\ \hline
@@ -202,9 +202,9 @@
 165 & Admin & Admin Contract Oversight & Screen displaying all platform contracts across all users with filters for status, date, and dispute flags. \\ \hline
 166 & Admin & Admin View Contract Detail & Comprehensive audit screen displaying full contract history, escrow transactions, milestones, and dispute logs. \\ \hline
 167 & Admin & Admin Update Contract Status & Action screen enabling administrators to override contract status in exceptional administrative scenarios. \\ \hline
-168 & Admin & View Contract Disputes & Screen displaying all escalated disputes requiring third-party administrative mediation and binding rulings. \\ \hline
-169 & Admin & Propose Dispute Resolution & Form screen allowing administrator mediator to propose binding escrow fund distribution between the parties. \\ \hline
+168 & Admin & View Expert Dispute List & Queue screen displaying escalated dispute cases awaiting expert technical evaluation and arbitration. \\ \hline
+169 & Admin & View Expert Dispute Detail & Arbitration workbench displaying symmetric evidence, milestone deliverables, and claim files for technical review. \\ \hline
 170 & Admin & Confirm Cancel Contract & Confirmation dialog enabling administrators to terminate stalled or abandoned contracts and refund escrow. \\ \hline
-171 & Admin & Execute Dispute Resolution Payment & Screen allowing administrators to release escrow balances and execute final payouts per the dispute ruling. \\ \hline
+171 & Admin & Expert Make Dispute Decision & Decision screen allowing expert arbitrators and administrators to issue binding fund distribution rulings. \\ \hline
 172 & Admin & Session Management (Admin) & Screen displaying active user login sessions across devices with client IP, user agent, and force-logout controls.
 \end{longtable}

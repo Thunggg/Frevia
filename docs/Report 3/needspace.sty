@@ -1,0 +1,62 @@
+%%
+%% This is file `needspace.sty',
+%% generated with the docstrip utility.
+%%
+%% The original source files were:
+%%
+%% needspace.dtx  (with options: `package')
+%% 
+%%   Author: Peter Wilson (CUA)
+%%   Maintainer: Will Robertson (will.robertson@latex-project.org)
+%%   Copyright 1996--2003 Peter R. Wilson
+%% 
+%%   This work may be distributed and/or modified under the
+%%   conditions of the LaTeX Project Public License, either
+%%   version 1.3c of this license or (at your option) any
+%%   later version: <http://www.latex-project.org/lppl.txt>
+%% 
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{needspace}[2010/09/12 v1.3d Reserve page space]
+
+\newcommand{\needspace}[1]{%
+  \begingroup
+  \setlength{\dimen@}{#1}%
+  \vskip\z@skip
+  \penalty 9999
+  \vskip \dimen@
+  \penalty -9999
+  \vskip -\dimen@
+  \vskip \z@skip
+  \endgroup
+}
+
+\newcommand{\Needspace}{\@ifstar\Needspace@s\Needspace@}
+
+\newcommand{\Needspace@}[1]{%
+  \begingroup
+  \setlength{\dimen@}{#1}%
+  \vskip\z@skip
+  \penalty 9999
+  \advance\dimen@\pagetotal
+  \ifdim \dimen@>\pagegoal
+    \break
+  \fi
+  \vskip\z@skip
+  \endgroup
+}
+
+\newcommand{\Needspace@s}[1]{%
+  \begingroup
+  \setlength{\dimen@}{#1}%
+  \vskip\z@skip
+  \penalty 9999
+  \advance\dimen@\pagetotal
+  \ifdim \dimen@>\pagegoal
+    \newpage
+  \fi
+  \vskip\z@skip
+  \endgroup
+}
+\endinput
+%%
+%% End of file `needspace.sty'.

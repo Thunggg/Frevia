@@ -142,13 +142,17 @@ UC-13.05 & View Contract Detail & Client, Freelancer, Admin & Displays full cont
 \hline
 UC-13.06 & Sign Contract & Freelancer, Client & Allows users to digitally accept and sign a contract to activate it. \\
 \hline
-UC-13.07 & Cancel Contract & Client, Freelancer & Allows either party to cancel or terminate a contract prior to completion. \\
+UC-13.07 & Export Contract PDF & Client, Freelancer, Admin & Generates and exports contract terms, clauses, and signatures into a downloadable PDF document. \\
 \hline
-UC-13.08 & View Contract Files & Client, Freelancer, Admin & Manages and accesses all files and documentation associated with a contract. \\
+UC-13.08 & Cancel Contract & Client, Freelancer & Allows either party to cancel or terminate a contract prior to completion. \\
 \hline
-UC-13.09 & Upload Contract File & Client, Freelancer & Allows users to upload documents and deliverables to the contract workspace. \\
+UC-13.09 & View Contract Files & Client, Freelancer, Admin & Manages and accesses all files and documentation associated with a contract. \\
 \hline
-UC-13.10 & Delete Contract File & Client, Freelancer, Admin & Allows the uploader or admin to delete files from a contract workspace. \\
+UC-13.10 & Upload Contract File & Client, Freelancer & Allows users to upload documents and deliverables to the contract workspace. \\
+\hline
+UC-13.11 & Delete Contract File & Client, Freelancer, Admin & Allows the uploader or admin to delete files from a contract workspace. \\
+\hline
+UC-13.12 & Reject Contract Offer & Freelancer & Allows a freelancer to formally decline an offered contract with a mandatory decline reason. \\
 \hline
 UC-10 & Manage Profile & Freelancer & Manages freelancer profile information and settings. \\
 \hline
@@ -172,53 +176,89 @@ UC-22 & Reviews & Guest, Client, Freelancer, Admin & Manages post-contract ratin
 \hline
 UC-23 & Manage Response Review & Client, Freelancer, Admin & Manages recipient responses to reviews. \\
 \hline
-UC-24 & Manage Profile & Client, Freelancer, Admin & Manages account credentials, profile details, and avatar. \\
+UC-24 & Manage Milestone & Client, Freelancer, Admin & Manages lifecycle, planning, progress, and activation of project milestones within a contract. \\
 \hline
-UC-25 & Profile Update Review & Admin & Manages manual admin review of profile modification requests. \\
+UC-24.01 & View Milestone List & Client, Freelancer, Admin & Retrieves all project milestones associated with a contract, including funding status and deadlines. \\
 \hline
-UC-25.1 & View Pending Profile Update Requests & Admin & Retrieves list of profile update requests awaiting review. \\
+UC-24.02 & View Milestone Detail & Client, Freelancer, Admin & Displays detailed milestone specifications, deliverable requirements, timeline, and audit logs. \\
 \hline
-UC-33 & Manage Dispute & Client, Freelancer, Admin & Manages formal dispute arbitration on funded contract milestones. \\
+UC-24.03 & Create Milestone & Client & Allows clients to define and add new milestones with title, description, budget, and due date. \\
 \hline
-UC-33.01 & Open Dispute & Client, Freelancer & Allows a client or freelancer to initiate a formal dispute on a funded milestone. \\
+UC-24.04 & Update Milestone & Client & Allows clients to modify milestone scope, budget, and deadlines prior to escrow funding. \\
 \hline
-UC-33.02 & View Dispute List & Client, Freelancer, Admin & Retrieves paginated overview of disputes with status filtering and deadline badges. \\
+UC-24.05 & Delete Milestone & Client & Enables clients to remove unfunded draft milestones from a contract. \\
 \hline
-UC-33.03 & View Dispute Detail & Client, Freelancer, Admin & Displays full dispute case records, claims, evidence, fees, and resolutions. \\
+UC-24.06 & Update Milestone Progress & Freelancer & Allows freelancers to update ongoing progress percentage and status indicators for an active milestone. \\
 \hline
-UC-33.04 & Respond to Dispute & Client, Freelancer & Allows the respondent to submit a rebuttal statement and counter-evidence. \\
+UC-25 & Milestone Files & Client, Freelancer, Admin & Manages deliverable file exchanges, attachments, and artifact storage for project milestones. \\
 \hline
-UC-33.05 & Respond to Dispute Resolution & Client, Freelancer & Allows involved parties to accept or reject the arbitrator's proposed decision. \\
+UC-25.01 & View Milestone Files & Client, Freelancer, Admin & Retrieves and downloads files and deliverable attachments uploaded to a specific milestone. \\
 \hline
-UC-33.06 & Propose Dispute Resolution & Admin & Allows an administrator/arbitrator to evaluate claims and propose a fund split decision. \\
+UC-25.02 & Upload Milestone File & Client, Freelancer & Allows users to upload deliverable files and documentation with format and size validation. \\
 \hline
-UC-43 & Manage Payment & Client, Freelancer, Admin & Handles platform financial transactions, escrow deposits, payouts, and fees via Stripe. \\
+UC-25.03 & Delete Milestone File & Client, Freelancer, Admin & Enables authorized users to delete uploaded files from a milestone workspace before submission. \\
 \hline
-UC-43.01 & Connect Stripe Account & Freelancer & Connects a freelancer's bank account via Stripe Connect Express to receive payouts. \\
+UC-26 & Milestone Submissions & Client, Freelancer, Admin & Manages formal milestone deliverable submissions, client reviews, revision requests, and approvals. \\
 \hline
-UC-43.02 & View Payout History & Freelancer, Admin & Retrieves paginated history of all payout transfers sent to the freelancer's bank. \\
+UC-26.01 & Submit Milestone & Freelancer & Allows freelancers to submit completed work with deliverable attachments and completion notes. \\
 \hline
-UC-43.03 & View Payout Detail & Freelancer, Admin & Displays detailed ledger breakdown, fees, and arrival estimates for a payout transfer. \\
+UC-26.02 & View Milestone Submission List & Client, Freelancer, Admin & Retrieves chronological submission history and revision iterations for a milestone. \\
 \hline
-UC-43.04 & Fund Milestone & Client & Deposits milestone funds into platform escrow using credit card or saved payment methods. \\
+UC-26.03 & View Milestone Submission Detail & Client, Freelancer, Admin & Displays full submission package, attached files, external links, and review feedback. \\
 \hline
-UC-43.05 & Refund Payment & Client, Admin & Returns escrowed milestone funds to the client upon contract cancellation or dispute. \\
+UC-26.04 & Request Milestone Changes & Client & Allows clients to request deliverable revisions with specific feedback comments and deadlines. \\
 \hline
-UC-43.06 & Pay Platform Fee & Client & Processes the platform engagement fee upon contract initiation via Stripe. \\
+UC-26.05 & Approve Milestone & Client & Authorizes approval of milestone deliverables, triggering milestone completion and escrow release. \\
 \hline
-UC-43.07 & Release Payment & Client & Authorizes the release of escrowed milestone funds to the freelancer upon work approval. \\
+UC-33 & Manage Dispute & Client, Freelancer, Admin, Expert & Manages formal dispute arbitration on funded milestones, evidence submission, and expert escalation. \\
 \hline
-UC-43.08 & Pay Dispute Fee & Client, Freelancer & Processes arbitration fee payment within the 24-hour dispute window via Stripe. \\
+UC-33.01 & Open Dispute & Client, Freelancer & Allows a client or freelancer to initiate a formal dispute on a funded milestone with evidence. \\
 \hline
-UC-43.09 & View Payment History & Client, Freelancer, Admin & Displays a comprehensive, paginated ledger of all account financial transactions. \\
+UC-33.02 & View Dispute List & Client, Freelancer, Admin, Expert & Retrieves paginated overview of dispute cases with status filtering and countdown deadlines. \\
 \hline
-UC-43.10 & View Payment Detail & Client, Freelancer, Admin & Shows itemized receipt details, fees, and downloadable invoice for a transaction. \\
+UC-33.03 & View Dispute Detail & Client, Freelancer, Admin, Expert & Displays full dispute case records, claims, symmetric evidence timeline, and financial escrow audit. \\
 \hline
-UC-43.11 & Execute Dispute Resolution Payment & Admin, System & Executes split payouts (client refund and freelancer transfer) upon dispute finalization. \\
+UC-33.04 & View Dispute by Milestone & Client, Freelancer, Admin & Inspects dispute status directly linked to a specific milestone to display contextual warning banners. \\
 \hline
-UC-43.12 & Handle Stripe Webhook Event & Stripe, System & Listens for and verifies asynchronous Stripe webhook events to reconcile database state. \\
+UC-33.05 & Respond to Dispute & Client, Freelancer & Allows the respondent to submit a rebuttal statement and counter-evidence within the response window. \\
 \hline
-UC-43.13 & Sync Payment Intent Status & Client, System & Synchronizes real-time payment intent and checkout status directly with the Stripe API. \\
+UC-33.06 & Withdraw Dispute & Client, Freelancer & Allows the initiating party to voluntarily withdraw a dispute before an arbitration ruling is rendered. \\
+\hline
+UC-33.07 & Escalate Dispute to Expert & Client, Freelancer, Admin & Escalates an unresolved dispute to a specialized industry expert for neutral professional evaluation. \\
+\hline
+UC-33.08 & View Expert Dispute List & Expert, Admin & Displays specialized arbitration queue for expert arbitrators with category and priority filtering. \\
+\hline
+UC-33.09 & View Expert Dispute Detail & Expert, Admin & Provides expert arbitrators with a dedicated review console for symmetric evidence inspection. \\
+\hline
+UC-33.10 & Expert Make Dispute Decision & Expert, Admin & Renders the final binding arbitration decision with fund split percentages and legal reasoning. \\
+\hline
+UC-43 & Manage Payment & Client, Freelancer, Admin & Handles platform financial transactions, escrow deposits, payouts, payment methods, and webhooks via Stripe. \\
+\hline
+UC-43.01 & Connect Stripe Account & Freelancer & Generates a Stripe Connect Express onboarding link to link a freelancer's bank account for payouts. \\
+\hline
+UC-43.02 & Check Stripe Connect Status & Freelancer, Admin & Synchronizes and verifies freelancer onboarding status, capability activation, and payout readiness. \\
+\hline
+UC-43.03 & View Saved Payment Methods & Client & Displays customer saved cards and payment methods with card brand, last 4 digits, and expiration date. \\
+\hline
+UC-43.04 & Set Default Payment Method & Client & Designates a preferred saved payment method for one-click milestone escrow funding. \\
+\hline
+UC-43.05 & Remove Saved Payment Method & Client & Detaches and removes an obsolete or expired payment card from the customer's Stripe wallet. \\
+\hline
+UC-43.06 & Create Contract Hold Deposit Intent & Client & Authorizes an initial contract hold deposit via Stripe PaymentIntent to secure freelancer commitment. \\
+\hline
+UC-43.07 & Fund Milestone via Stripe Checkout & Client & Creates a hosted Stripe Checkout Session for secure escrow deposit funding on a milestone. \\
+\hline
+UC-43.08 & Fund Milestone with Saved Card & Client & Directly executes escrow funding for an active milestone using an authorized saved customer card. \\
+\hline
+UC-43.09 & Release Milestone Escrow Payment & Client, System & Authorizes the transfer of escrowed milestone funds to the freelancer's Stripe connected account. \\
+\hline
+UC-43.10 & View Payment Transactions History & Client, Freelancer, Admin & Retrieves a comprehensive, paginated financial ledger of all deposits, releases, fees, and transfers. \\
+\hline
+UC-43.11 & Sync Payment Intent Status & Client, System & Polls and reconciles pending authorization states of PaymentIntents directly with Stripe. \\
+\hline
+UC-43.12 & Sync Checkout Session Status & Client, System & Verifies completion of hosted Checkout Sessions and synchronizes milestone escrow status. \\
+\hline
+UC-43.13 & Handle Stripe Webhook Events & Stripe, System & Listens for and verifies cryptographic webhook signatures to process asynchronous Stripe events idempotently. \\
 \hline
 UC-46 & Job Category Management & Admin, Freelancer & Provides administrative category management and freelancer categorization for jobs. \\
 \hline

@@ -1,271 +1,200 @@
+<?xml version='1.0' encoding='utf-8'?>
 <mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/29.0.3 Chrome/140.0.7339.249 Electron/38.7.0 Safari/537.36" version="29.0.3">
-  <diagram id="contract-04-view-list" name="Contract-04-view-list">
-    <mxGraphModel dx="2249" dy="358" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1654" pageHeight="2900" math="0" shadow="0">
-  <root>
-    <mxCell id="0"/>
-    <mxCell id="1" parent="0"/>
-    <mxCell id="opt_data_label" value="[invalid query params]" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;" parent="1" vertex="1">
-      <mxGeometry x="120" y="460" width="150" height="30" as="geometry"/>
-    </mxCell>
-    <mxCell id="opt_data_frame" value="opt" style="shape=umlFrame;whiteSpace=wrap;html=1;pointerEvents=0;width=70;height=30;fontSize=12;fillColor=none;" parent="1" vertex="1">
-      <mxGeometry x="10" y="460" width="350" height="105" as="geometry"/>
-    </mxCell>
-    <mxCell id="ref_frame" value="ref" style="shape=umlFrame;whiteSpace=wrap;html=1;pointerEvents=0;width=50;height=22;fontSize=12;fillColor=none;" parent="1" vertex="1">
-      <mxGeometry x="420" y="640" width="280" height="56" as="geometry"/>
-    </mxCell>
-    <mxCell id="ref_label" value="3.1. Verify jwt" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;fontSize=12;" parent="1" vertex="1">
-      <mxGeometry x="515" y="653" width="175" height="30" as="geometry"/>
-    </mxCell>
-    <mxCell id="opt_token_label" value="[invalid token]" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;" parent="1" vertex="1">
-      <mxGeometry x="120" y="720" width="120" height="30" as="geometry"/>
-    </mxCell>
-    <mxCell id="opt_token_frame" value="opt" style="shape=umlFrame;whiteSpace=wrap;html=1;pointerEvents=0;width=70;height=30;fontSize=12;fillColor=none;" parent="1" vertex="1">
-      <mxGeometry x="10" y="720" width="550" height="145" as="geometry"/>
-    </mxCell>
-    <mxCell id="alt1_frame" value="alt" style="shape=umlFrame;whiteSpace=wrap;html=1;pointerEvents=0;width=70;height=30;fillColor=none;" parent="1" vertex="1">
-      <mxGeometry x="20" y="1420" width="1470" height="560" as="geometry"/>
-    </mxCell>
-    <mxCell id="alt1_l1" value="[get contract list failed]" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
-      <mxGeometry x="150" y="1420" width="180" height="36" as="geometry"/>
-    </mxCell>
-    <mxCell id="alt1_div" value="" style="endArrow=none;dashed=1;html=1;rounded=0;" parent="1" edge="1">
-      <mxGeometry relative="1" as="geometry">
-        <mxPoint x="50" y="1690" as="sourcePoint"/>
-        <mxPoint x="1490" y="1690" as="targetPoint"/>
-      </mxGeometry>
-    </mxCell>
-    <mxCell id="alt1_l2" value="[get contract list success]" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
-      <mxGeometry x="150" y="1690" width="180" height="40" as="geometry"/>
-    </mxCell>
-    <mxCell id="actor" value="Client/Freelancer/Admin" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;whiteSpace=wrap;" parent="1" vertex="1">
-      <mxGeometry x="85" y="200" width="30" height="60" as="geometry"/>
-    </mxCell>
-    <mxCell id="actor_line" value="" style="endArrow=none;dashed=1;html=1;rounded=0;" parent="1" edge="1">
-      <mxGeometry relative="1" as="geometry">
-        <mxPoint x="100" y="282" as="sourcePoint"/>
-        <mxPoint x="100" y="2050" as="targetPoint"/>
-      </mxGeometry>
-    </mxCell>
-    <mxCell id="bar_actor_0" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};" parent="1" vertex="1">
-      <mxGeometry x="95" y="340" width="10" height="1610" as="geometry"/>
-    </mxCell>
-    <mxCell id="ll_view" value=":ContractView" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};" parent="1" vertex="1">
-      <mxGeometry x="225" y="240" width="150" height="1870" as="geometry"/>
-    </mxCell>
-    <mxCell id="bar_view_0" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};" parent="ll_view" vertex="1">
-      <mxGeometry x="70" y="100" width="10" height="1610" as="geometry"/>
-    </mxCell>
-    <mxCell id="ll_route" value=":ContractRoute" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};" parent="1" vertex="1">
-      <mxGeometry x="430" y="240" width="140" height="1870" as="geometry"/>
-    </mxCell>
-    <mxCell id="bar_route_0" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};" parent="ll_route" vertex="1">
-      <mxGeometry x="65" y="370" width="10" height="1280" as="geometry"/>
-    </mxCell>
-    <mxCell id="ll_controller" value=":ContractController" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};" parent="1" vertex="1">
-      <mxGeometry x="635" y="240" width="170" height="1870" as="geometry"/>
-    </mxCell>
-    <mxCell id="bar_controller_0" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};" parent="ll_controller" vertex="1">
-      <mxGeometry x="80" y="655" width="10" height="940" as="geometry"/>
-    </mxCell>
-    <mxCell id="ll_service" value=":ContractService" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};" parent="1" vertex="1">
-      <mxGeometry x="850" y="240" width="150" height="1870" as="geometry"/>
-    </mxCell>
-    <mxCell id="bar_service_0" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};" parent="ll_service" vertex="1">
-      <mxGeometry x="70" y="710" width="10" height="830" as="geometry"/>
-    </mxCell>
-    <mxCell id="ll_repo" value=":ContractRepo" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};" parent="1" vertex="1">
-      <mxGeometry x="1065" y="240" width="140" height="1870" as="geometry"/>
-    </mxCell>
-    <mxCell id="ll_model" value=":ContractModel" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};" parent="1" vertex="1">
-      <mxGeometry x="1250" y="240" width="140" height="1870" as="geometry"/>
-    </mxCell>
-    <mxCell id="db_icon" value="" style="strokeWidth=2;html=1;shape=mxgraph.flowchart.database;whiteSpace=wrap;" parent="1" vertex="1">
-      <mxGeometry x="1450" y="220" width="60" height="70" as="geometry"/>
-    </mxCell>
-    <mxCell id="db_label" value="Database" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
-      <mxGeometry x="1450" y="292" width="60" height="30" as="geometry"/>
-    </mxCell>
-    <mxCell id="db_line" value="" style="endArrow=none;dashed=1;html=1;rounded=0;" parent="1" edge="1">
-      <mxGeometry relative="1" as="geometry">
-        <mxPoint x="1480" y="322" as="sourcePoint"/>
-        <mxPoint x="1480" y="2050" as="targetPoint"/>
-      </mxGeometry>
-    </mxCell>
-    <mxCell id="bar_repo_0" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};" parent="ll_repo" vertex="1">
-      <mxGeometry x="65" y="820" width="10" height="285" as="geometry"/>
-    </mxCell>
-    <mxCell id="bar_model_0" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};" parent="ll_model" vertex="1">
-      <mxGeometry x="65" y="875" width="10" height="180" as="geometry"/>
-    </mxCell>
-    <mxCell id="bar_db_0" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};" parent="1" vertex="1">
-      <mxGeometry x="1475" y="1170" width="10" height="55" as="geometry"/>
-    </mxCell>
-    <mxCell id="m1" value="1. Click &amp;quot;Contracts&amp;quot; / filter contracts" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;" parent="1" edge="1">
-      <mxGeometry relative="1" as="geometry">
-        <mxPoint x="105" y="340" as="sourcePoint"/>
-        <mxPoint x="295" y="340" as="targetPoint"/>
-      </mxGeometry>
-    </mxCell>
-    <mxCell id="val" value="" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;" parent="1" edge="1">
-      <mxGeometry relative="1" as="geometry">
-        <Array as="points">
-          <mxPoint x="365" y="400"/>
-          <mxPoint x="365" y="436"/>
-        </Array>
-        <mxPoint x="305" y="400" as="sourcePoint"/>
-        <mxPoint x="305" y="436" as="targetPoint"/>
-      </mxGeometry>
-    </mxCell>
-    <mxCell id="val_label" value="2. Check validate&lt;br&gt;query parameters" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
-      <mxGeometry x="372" y="400" width="120" height="36" as="geometry"/>
-    </mxCell>
-    <mxCell id="valmsg" value="2.1. Display validation error message" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;" parent="1" edge="1">
-      <mxGeometry relative="1" as="geometry">
-        <mxPoint x="295" y="530" as="sourcePoint"/>
-        <mxPoint x="105" y="530" as="targetPoint"/>
-      </mxGeometry>
-    </mxCell>
-    <mxCell id="rt" value="3. GET /contracts?page=&amp;limit=&amp;status=" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;" parent="1" edge="1">
-      <mxGeometry relative="1" as="geometry">
-        <mxPoint x="305" y="610" as="sourcePoint"/>
-        <mxPoint x="495" y="610" as="targetPoint"/>
-      </mxGeometry>
-    </mxCell>
-    <mxCell id="inv1" value="3.1.1. Return error message" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=12;" parent="1" edge="1">
-      <mxGeometry relative="1" as="geometry">
-        <mxPoint x="495" y="780" as="sourcePoint"/>
-        <mxPoint x="305" y="780" as="targetPoint"/>
-      </mxGeometry>
-    </mxCell>
-    <mxCell id="inv2" value="3.1.2. Return&lt;br&gt;error message" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=12;" parent="1" edge="1">
-      <mxGeometry relative="1" as="geometry">
-        <mxPoint x="295" y="835" as="sourcePoint"/>
-        <mxPoint x="105" y="835" as="targetPoint"/>
-      </mxGeometry>
-    </mxCell>
-    <mxCell id="c1" value="4. getContractList(req, res)" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;" parent="1" edge="1">
-      <mxGeometry relative="1" as="geometry">
-        <mxPoint x="505" y="895" as="sourcePoint"/>
-        <mxPoint x="715" y="895" as="targetPoint"/>
-      </mxGeometry>
-    </mxCell>
-    <mxCell id="c2" value="5. getContractList(userId, roleName, query)" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;" parent="1" edge="1">
-      <mxGeometry relative="1" as="geometry">
-        <mxPoint x="725" y="950" as="sourcePoint"/>
-        <mxPoint x="920" y="950" as="targetPoint"/>
-      </mxGeometry>
-    </mxCell>
-    <mxCell id="c3" value="6. Determine role filter (admin / client / freelancer)" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;" parent="1" edge="1">
-      <mxGeometry relative="1" as="geometry">
-        <Array as="points">
-          <mxPoint x="990" y="1005"/>
-          <mxPoint x="990" y="1041"/>
-        </Array>
-        <mxPoint x="930" y="1005" as="sourcePoint"/>
-        <mxPoint x="930" y="1041" as="targetPoint"/>
-      </mxGeometry>
-    </mxCell>
-    <mxCell id="c3_label" value="6. Determine filter" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
-      <mxGeometry x="998" y="1005" width="120" height="36" as="geometry"/>
-    </mxCell>
-    <mxCell id="c4" value="7. getContractList(query, filter)" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;" parent="1" edge="1">
-      <mxGeometry relative="1" as="geometry">
-        <mxPoint x="930" y="1060" as="sourcePoint"/>
-        <mxPoint x="1130" y="1060" as="targetPoint"/>
-      </mxGeometry>
-    </mxCell>
-    <mxCell id="c5" value="8. prisma.$transaction([findMany, count])" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;" parent="1" edge="1">
-      <mxGeometry relative="1" as="geometry">
-        <mxPoint x="1140" y="1115" as="sourcePoint"/>
-        <mxPoint x="1315" y="1115" as="targetPoint"/>
-      </mxGeometry>
-    </mxCell>
-    <mxCell id="c6" value="9. Execute query to fetch contracts and count" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;" parent="1" edge="1">
-      <mxGeometry relative="1" as="geometry">
-        <mxPoint x="1325" y="1170" as="sourcePoint"/>
-        <mxPoint x="1475" y="1170" as="targetPoint"/>
-      </mxGeometry>
-    </mxCell>
-    <mxCell id="r1" value="10. Return result" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;" parent="1" edge="1">
-      <mxGeometry relative="1" as="geometry">
-        <mxPoint x="1475" y="1225" as="sourcePoint"/>
-        <mxPoint x="1325" y="1225" as="targetPoint"/>
-      </mxGeometry>
-    </mxCell>
-    <mxCell id="r2" value="11. Return result" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;" parent="1" edge="1">
-      <mxGeometry relative="1" as="geometry">
-        <mxPoint x="1315" y="1275" as="sourcePoint"/>
-        <mxPoint x="1140" y="1275" as="targetPoint"/>
-      </mxGeometry>
-    </mxCell>
-    <mxCell id="r3" value="12. Return result" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;" parent="1" edge="1">
-      <mxGeometry relative="1" as="geometry">
-        <mxPoint x="1130" y="1325" as="sourcePoint"/>
-        <mxPoint x="930" y="1325" as="targetPoint"/>
-      </mxGeometry>
-    </mxCell>
-    <mxCell id="chk" value="" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;" parent="1" edge="1">
-      <mxGeometry relative="1" as="geometry">
-        <Array as="points">
-          <mxPoint x="990" y="1375"/>
-          <mxPoint x="990" y="1411"/>
-        </Array>
-        <mxPoint x="930" y="1375" as="sourcePoint"/>
-        <mxPoint x="930" y="1411" as="targetPoint"/>
-      </mxGeometry>
-    </mxCell>
-    <mxCell id="chk_label" value="13. Check query result" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
-      <mxGeometry x="998" y="1375" width="120" height="36" as="geometry"/>
-    </mxCell>
-    <mxCell id="b11" value="13.1.1. Return error" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;" parent="1" edge="1">
-      <mxGeometry relative="1" as="geometry">
-        <mxPoint x="920" y="1475" as="sourcePoint"/>
-        <mxPoint x="725" y="1475" as="targetPoint"/>
-      </mxGeometry>
-    </mxCell>
-    <mxCell id="b12" value="13.1.2. Return error" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;" parent="1" edge="1">
-      <mxGeometry relative="1" as="geometry">
-        <mxPoint x="715" y="1530" as="sourcePoint"/>
-        <mxPoint x="505" y="1530" as="targetPoint"/>
-      </mxGeometry>
-    </mxCell>
-    <mxCell id="b13" value="13.1.3. Return error" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;" parent="1" edge="1">
-      <mxGeometry relative="1" as="geometry">
-        <mxPoint x="495" y="1585" as="sourcePoint"/>
-        <mxPoint x="305" y="1585" as="targetPoint"/>
-      </mxGeometry>
-    </mxCell>
-    <mxCell id="b14" value="13.1.4. Show message &amp;quot;Failed to load contracts&amp;quot;" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;" parent="1" edge="1">
-      <mxGeometry relative="1" as="geometry">
-        <mxPoint x="295" y="1645" as="sourcePoint"/>
-        <mxPoint x="105" y="1645" as="targetPoint"/>
-      </mxGeometry>
-    </mxCell>
-    <mxCell id="b21" value="13.2.1. Return contract list and pagination" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;" parent="1" edge="1">
-      <mxGeometry relative="1" as="geometry">
-        <mxPoint x="920" y="1755" as="sourcePoint"/>
-        <mxPoint x="725" y="1755" as="targetPoint"/>
-      </mxGeometry>
-    </mxCell>
-    <mxCell id="b22" value="13.2.2. Return result" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;" parent="1" edge="1">
-      <mxGeometry relative="1" as="geometry">
-        <mxPoint x="715" y="1810" as="sourcePoint"/>
-        <mxPoint x="505" y="1810" as="targetPoint"/>
-      </mxGeometry>
-    </mxCell>
-    <mxCell id="b23" value="13.2.3. Return result" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;" parent="1" edge="1">
-      <mxGeometry relative="1" as="geometry">
-        <mxPoint x="495" y="1865" as="sourcePoint"/>
-        <mxPoint x="305" y="1865" as="targetPoint"/>
-      </mxGeometry>
-    </mxCell>
-    <mxCell id="b24" value="13.2.4. Render contract list and pagination" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;" parent="1" edge="1">
-      <mxGeometry relative="1" as="geometry">
-        <mxPoint x="295" y="1930" as="sourcePoint"/>
-        <mxPoint x="105" y="1930" as="targetPoint"/>
-      </mxGeometry>
-    </mxCell>
-  </root>
-</mxGraphModel>
+  <diagram id="UC-13_04-view-contract-list" name="UC-13.04 View Contract List">
+    <mxGraphModel dx="1600" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1920" pageHeight="1895" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="lf_actor" value="Client / Freelancer / Admin" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;whiteSpace=wrap;labelBackgroundColor=none;strokeColor=#000000;fillColor=#ffffff;" parent="1" vertex="1"><mxGeometry x="85" y="200" width="30" height="60" as="geometry" /></mxCell>
+        <mxCell id="dash_actor" value="" style="endArrow=none;dashed=1;html=1;rounded=0;labelBackgroundColor=none;strokeColor=#000000;" parent="1" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="100" y="280" as="sourcePoint" /><mxPoint x="100" y="1805" as="targetPoint" /></mxGeometry></mxCell>
+        <mxCell id="lf_view" value=":ContractListPage" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};labelBackgroundColor=none;strokeColor=#000000;fillColor=#ffffff;" parent="1" vertex="1"><mxGeometry x="260" y="240" width="160" height="1565" as="geometry" /></mxCell>
+        <mxCell id="lf_route" value=":ContractRoute" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};labelBackgroundColor=none;strokeColor=#000000;fillColor=#ffffff;" parent="1" vertex="1"><mxGeometry x="510" y="240" width="140" height="1565" as="geometry" /></mxCell>
+        <mxCell id="lf_controller" value=":ContractController" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};labelBackgroundColor=none;strokeColor=#000000;fillColor=#ffffff;" parent="1" vertex="1"><mxGeometry x="735" y="240" width="170" height="1565" as="geometry" /></mxCell>
+        <mxCell id="lf_service" value=":ContractService" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};labelBackgroundColor=none;strokeColor=#000000;fillColor=#ffffff;" parent="1" vertex="1"><mxGeometry x="985" y="240" width="150" height="1565" as="geometry" /></mxCell>
+        <mxCell id="lf_repo" value=":ContractRepository" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};labelBackgroundColor=none;strokeColor=#000000;fillColor=#ffffff;" parent="1" vertex="1"><mxGeometry x="1215" y="240" width="170" height="1565" as="geometry" /></mxCell>
+        <mxCell id="lf_prisma" value=":PrismaService" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};labelBackgroundColor=none;strokeColor=#000000;fillColor=#ffffff;" parent="1" vertex="1"><mxGeometry x="1470" y="240" width="140" height="1565" as="geometry" /></mxCell>
+        <mxCell id="node_db" value="" style="strokeWidth=2;html=1;shape=mxgraph.flowchart.database;whiteSpace=wrap;labelBackgroundColor=none;strokeColor=#000000;fillColor=#ffffff;" parent="1" vertex="1"><mxGeometry x="1750" y="220" width="60" height="70" as="geometry" /></mxCell>
+        <mxCell id="node_db_lbl" value="Database" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;labelBackgroundColor=none;strokeColor=none;fillColor=none;fontColor=#000000;" parent="1" vertex="1"><mxGeometry x="1750" y="292" width="60" height="30" as="geometry" /></mxCell>
+        <mxCell id="dash_db" value="" style="endArrow=none;dashed=1;html=1;rounded=0;labelBackgroundColor=none;strokeColor=#000000;" parent="1" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="1780" y="322" as="sourcePoint" /><mxPoint x="1780" y="1805" as="targetPoint" /></mxGeometry></mxCell>
+        <mxCell id="act_actor" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};labelBackgroundColor=none;fillColor=#ffffff;strokeColor=#000000;" parent="1" vertex="1"><mxGeometry x="95" y="340" width="10" height="1365" as="geometry" /></mxCell>
+        <mxCell id="act_view" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};labelBackgroundColor=none;fillColor=#ffffff;strokeColor=#000000;" parent="lf_view" vertex="1"><mxGeometry x="75" y="100" width="10" height="1365" as="geometry" /></mxCell>
+        <mxCell id="act_route" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};labelBackgroundColor=none;fillColor=#ffffff;strokeColor=#000000;" parent="lf_route" vertex="1"><mxGeometry x="65" y="300" width="10" height="1130" as="geometry" /></mxCell>
+        <mxCell id="act_controller" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};labelBackgroundColor=none;fillColor=#ffffff;strokeColor=#000000;" parent="lf_controller" vertex="1"><mxGeometry x="80" y="630" width="10" height="765" as="geometry" /></mxCell>
+        <mxCell id="act_service" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};labelBackgroundColor=none;fillColor=#ffffff;strokeColor=#000000;" parent="lf_service" vertex="1"><mxGeometry x="70" y="680" width="10" height="680" as="geometry" /></mxCell>
+        <mxCell id="act_self_s1" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};labelBackgroundColor=none;fillColor=#ffffff;strokeColor=#000000;" parent="lf_service" vertex="1"><mxGeometry x="80" y="750" width="10" height="28" as="geometry" /></mxCell>
+        <mxCell id="act_q_list_repo" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};labelBackgroundColor=none;fillColor=#ffffff;strokeColor=#000000;" parent="lf_repo" vertex="1"><mxGeometry x="80" y="810" width="10" height="215" as="geometry" /></mxCell>
+        <mxCell id="act_q_list_prisma" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};labelBackgroundColor=none;fillColor=#ffffff;strokeColor=#000000;" parent="lf_prisma" vertex="1"><mxGeometry x="65" y="855" width="10" height="135" as="geometry" /></mxCell>
+        <mxCell id="act_q_list_db" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};labelBackgroundColor=none;fillColor=#ffffff;strokeColor=#000000;" parent="1" vertex="1"><mxGeometry x="1775" y="1140" width="10" height="50" as="geometry" /></mxCell>
+        <mxCell id="act_self_s2" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};labelBackgroundColor=none;fillColor=#ffffff;strokeColor=#000000;" parent="lf_service" vertex="1"><mxGeometry x="80" y="1065" width="10" height="28" as="geometry" /></mxCell>
+        <mxCell id="fr_ref_jwt" value="ref" style="shape=umlFrame;whiteSpace=wrap;html=1;pointerEvents=0;width=50;height=22;fontSize=12;fillColor=none;strokeColor=#000000;labelBackgroundColor=none;" parent="1" vertex="1"><mxGeometry x="510" y="605" width="200" height="50" as="geometry" /></mxCell>
+        <mxCell id="fr_alt_auth" value="alt" style="shape=umlFrame;whiteSpace=wrap;html=1;pointerEvents=0;width=70;height=30;fontSize=12;fillColor=none;strokeColor=#000000;labelBackgroundColor=none;" parent="1" vertex="1"><mxGeometry x="20" y="675" width="640" height="180" as="geometry" /></mxCell>
+        <mxCell id="fr_alt_res" value="alt" style="shape=umlFrame;whiteSpace=wrap;html=1;pointerEvents=0;width=70;height=30;fontSize=12;fillColor=none;strokeColor=#000000;labelBackgroundColor=none;" parent="1" vertex="1"><mxGeometry x="20" y="1360" width="1820" height="380" as="geometry" /></mxCell>
+        <mxCell id="div_alt_auth" value="" style="endArrow=none;dashed=1;html=1;rounded=0;labelBackgroundColor=none;strokeColor=#000000;" parent="1" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="20" y="770" as="sourcePoint" /><mxPoint x="660" y="770" as="targetPoint" /></mxGeometry></mxCell>
+        <mxCell id="div_alt_res" value="" style="endArrow=none;dashed=1;html=1;rounded=0;labelBackgroundColor=none;strokeColor=#000000;" parent="1" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="20" y="1550" as="sourcePoint" /><mxPoint x="1840" y="1550" as="targetPoint" /></mxGeometry></mxCell>
+        <mxCell id="fr_ref_jwt_lbl" value="3.1. Verify jwt" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=none;fillColor=none;fontColor=#000000;" parent="1" vertex="1"><mxGeometry x="605" y="620" width="160" height="20" as="geometry" /></mxCell>
+        <mxCell id="fr_alt_auth_g1" value="[no Bearer token || verify failed ||&lt;br&gt;session is null]" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=none;fillColor=none;fontColor=#000000;" parent="1" vertex="1"><mxGeometry x="110" y="675" width="220" height="32" as="geometry" /></mxCell>
+        <mxCell id="fr_alt_auth_g2" value="[user is banned || roleId is missing&lt;br&gt;|| permission denied]" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=none;fillColor=none;fontColor=#000000;" parent="1" vertex="1"><mxGeometry x="110" y="772" width="220" height="32" as="geometry" /></mxCell>
+        <mxCell id="lbl_s1" value="5. Resolve role filter&lt;br&gt;(client / freelancer / admin)" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=none;fillColor=none;fontColor=#000000;" parent="1" vertex="1">
+  <mxGeometry x="1125" y="987" width="150" height="24" as="geometry" />
+</mxCell>
+        <mxCell id="lbl_s2" value="7. Handle query result" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=none;fillColor=none;fontColor=#000000;" parent="1" vertex="1">
+  <mxGeometry x="1125" y="1302" width="150" height="24" as="geometry" />
+</mxCell>
+        <mxCell id="fr_alt_res_g1" value="[query failed]" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=none;fillColor=none;fontColor=#000000;" parent="1" vertex="1"><mxGeometry x="120" y="1360" width="215" height="22" as="geometry" /></mxCell>
+        <mxCell id="fr_alt_res_g2" value="[query success]" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=none;fillColor=none;fontColor=#000000;" parent="1" vertex="1"><mxGeometry x="120" y="1552" width="215" height="22" as="geometry" /></mxCell>
+        <mxCell id="m_self_s1" value="" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=#000000;" parent="1" edge="1">
+  <mxGeometry relative="1" as="geometry">
+    <mxPoint x="1075" y="990" as="sourcePoint" />
+    <mxPoint x="1075" y="1010" as="targetPoint" />
+    <Array as="points">
+      <mxPoint x="1115" y="990" />
+      <mxPoint x="1115" y="1010" />
+    </Array>
+  </mxGeometry>
+</mxCell>
+        <mxCell id="m_self_s2" value="" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=#000000;" parent="1" edge="1">
+  <mxGeometry relative="1" as="geometry">
+    <mxPoint x="1075" y="1305" as="sourcePoint" />
+    <mxPoint x="1075" y="1325" as="targetPoint" />
+    <Array as="points">
+      <mxPoint x="1115" y="1305" />
+      <mxPoint x="1115" y="1325" />
+    </Array>
+  </mxGeometry>
+</mxCell>
+        <mxCell id="m_1" value="1. Navigate to Contracts page&lt;br&gt;&amp; apply filters" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=#000000;" parent="1" edge="1">
+  <mxGeometry relative="1" as="geometry">
+    <mxPoint x="105" y="340" as="sourcePoint" />
+    <mxPoint x="335" y="340" as="targetPoint" />
+  </mxGeometry>
+</mxCell>
+        <mxCell id="m_get" value="2. GET&lt;br&gt;/api/contracts?status=&amp;page=" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=#000000;" parent="1" edge="1">
+  <mxGeometry relative="1" as="geometry">
+    <mxPoint x="345" y="565" as="sourcePoint" />
+    <mxPoint x="575" y="565" as="targetPoint" />
+  </mxGeometry>
+</mxCell>
+        <mxCell id="m_auth_401_route" value="2.1.1. Return 401 response" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=#000000;" parent="1" edge="1">
+  <mxGeometry relative="1" as="geometry">
+    <mxPoint x="575" y="720" as="sourcePoint" />
+    <mxPoint x="345" y="720" as="targetPoint" />
+  </mxGeometry>
+</mxCell>
+        <mxCell id="m_auth_401_view" value="2.1.2. Display error message" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=#000000;" parent="1" edge="1">
+  <mxGeometry relative="1" as="geometry">
+    <mxPoint x="335" y="750" as="sourcePoint" />
+    <mxPoint x="105" y="750" as="targetPoint" />
+  </mxGeometry>
+</mxCell>
+        <mxCell id="m_auth_403_route" value="2.2.1. Return 403 response" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=#000000;" parent="1" edge="1">
+  <mxGeometry relative="1" as="geometry">
+    <mxPoint x="575" y="800" as="sourcePoint" />
+    <mxPoint x="345" y="800" as="targetPoint" />
+  </mxGeometry>
+</mxCell>
+        <mxCell id="m_auth_403_view" value="2.2.2. Display error message" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=#000000;" parent="1" edge="1">
+  <mxGeometry relative="1" as="geometry">
+    <mxPoint x="335" y="830" as="sourcePoint" />
+    <mxPoint x="105" y="830" as="targetPoint" />
+  </mxGeometry>
+</mxCell>
+        <mxCell id="m_req_dispatch" value="3. Send request by GET method" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=#000000;" parent="1" edge="1">
+  <mxGeometry relative="1" as="geometry">
+    <mxPoint x="585" y="890" as="sourcePoint" />
+    <mxPoint x="815" y="890" as="targetPoint" />
+  </mxGeometry>
+</mxCell>
+        <mxCell id="m_list_svc" value="4. getContractList(userId,&lt;br&gt;roleName, query)" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=#000000;" parent="1" edge="1">
+  <mxGeometry relative="1" as="geometry">
+    <mxPoint x="825" y="940" as="sourcePoint" />
+    <mxPoint x="1055" y="940" as="targetPoint" />
+  </mxGeometry>
+</mxCell>
+        <mxCell id="q_list_1" value="6.1. getContractList(query,&lt;br&gt;filter)" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=#000000;" parent="1" edge="1">
+  <mxGeometry relative="1" as="geometry">
+    <mxPoint x="1065" y="1050" as="sourcePoint" />
+    <mxPoint x="1295" y="1050" as="targetPoint" />
+  </mxGeometry>
+</mxCell>
+        <mxCell id="q_list_2" value="6.2.&lt;br&gt;prisma.contract.findMany({where,&lt;br&gt;skip, take}) &amp; count({where})" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=#000000;" parent="1" edge="1">
+  <mxGeometry relative="1" as="geometry">
+    <mxPoint x="1305" y="1095" as="sourcePoint" />
+    <mxPoint x="1535" y="1095" as="targetPoint" />
+  </mxGeometry>
+</mxCell>
+        <mxCell id="q_list_3" value="6.3. Execute SELECT &amp; COUNT&lt;br&gt;query" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=#000000;" parent="1" edge="1">
+  <mxGeometry relative="1" as="geometry">
+    <mxPoint x="1545" y="1140" as="sourcePoint" />
+    <mxPoint x="1775" y="1140" as="targetPoint" />
+  </mxGeometry>
+</mxCell>
+        <mxCell id="q_list_4" value="6.4. Return contracts &amp; total&lt;br&gt;count" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=#000000;" parent="1" edge="1">
+  <mxGeometry relative="1" as="geometry">
+    <mxPoint x="1775" y="1185" as="sourcePoint" />
+    <mxPoint x="1545" y="1185" as="targetPoint" />
+  </mxGeometry>
+</mxCell>
+        <mxCell id="q_list_5" value="6.5. Return contracts &amp; total&lt;br&gt;count" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=#000000;" parent="1" edge="1">
+  <mxGeometry relative="1" as="geometry">
+    <mxPoint x="1535" y="1220" as="sourcePoint" />
+    <mxPoint x="1305" y="1220" as="targetPoint" />
+  </mxGeometry>
+</mxCell>
+        <mxCell id="q_list_6" value="6.6. Return contracts &amp; total&lt;br&gt;count" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=#000000;" parent="1" edge="1">
+  <mxGeometry relative="1" as="geometry">
+    <mxPoint x="1295" y="1255" as="sourcePoint" />
+    <mxPoint x="1065" y="1255" as="targetPoint" />
+  </mxGeometry>
+</mxCell>
+        <mxCell id="err_res_1" value="7.1.1. throw 500&lt;br&gt;FailedToLoadContract" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=#000000;" parent="1" edge="1">
+  <mxGeometry relative="1" as="geometry">
+    <mxPoint x="1055" y="1400" as="sourcePoint" />
+    <mxPoint x="825" y="1400" as="targetPoint" />
+  </mxGeometry>
+</mxCell>
+        <mxCell id="err_res_2" value="7.1.2. Return 500 response" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=#000000;" parent="1" edge="1">
+  <mxGeometry relative="1" as="geometry">
+    <mxPoint x="815" y="1435" as="sourcePoint" />
+    <mxPoint x="585" y="1435" as="targetPoint" />
+  </mxGeometry>
+</mxCell>
+        <mxCell id="err_res_3" value="7.1.3. Return 500 response" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=#000000;" parent="1" edge="1">
+  <mxGeometry relative="1" as="geometry">
+    <mxPoint x="575" y="1470" as="sourcePoint" />
+    <mxPoint x="345" y="1470" as="targetPoint" />
+  </mxGeometry>
+</mxCell>
+        <mxCell id="err_res_4" value="7.1.4. Display error message" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=#000000;" parent="1" edge="1">
+  <mxGeometry relative="1" as="geometry">
+    <mxPoint x="335" y="1505" as="sourcePoint" />
+    <mxPoint x="105" y="1505" as="targetPoint" />
+  </mxGeometry>
+</mxCell>
+        <mxCell id="suc_res_1" value="7.2.1. Return {contracts, total,&lt;br&gt;page, limit}" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=#000000;" parent="1" edge="1">
+  <mxGeometry relative="1" as="geometry">
+    <mxPoint x="1055" y="1590" as="sourcePoint" />
+    <mxPoint x="825" y="1590" as="targetPoint" />
+  </mxGeometry>
+</mxCell>
+        <mxCell id="suc_res_2" value="7.2.2. Return 200 response" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=#000000;" parent="1" edge="1">
+  <mxGeometry relative="1" as="geometry">
+    <mxPoint x="815" y="1625" as="sourcePoint" />
+    <mxPoint x="585" y="1625" as="targetPoint" />
+  </mxGeometry>
+</mxCell>
+        <mxCell id="suc_res_3" value="7.2.3. Return 200 response" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=#000000;" parent="1" edge="1">
+  <mxGeometry relative="1" as="geometry">
+    <mxPoint x="575" y="1660" as="sourcePoint" />
+    <mxPoint x="345" y="1660" as="targetPoint" />
+  </mxGeometry>
+</mxCell>
+        <mxCell id="suc_res_4" value="7.2.4. Render contract list&lt;br&gt;cards" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=#000000;" parent="1" edge="1">
+  <mxGeometry relative="1" as="geometry">
+    <mxPoint x="335" y="1695" as="sourcePoint" />
+    <mxPoint x="105" y="1695" as="targetPoint" />
+  </mxGeometry>
+</mxCell>
+      </root>
+    </mxGraphModel>
   </diagram>
 </mxfile>

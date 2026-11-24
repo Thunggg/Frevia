@@ -248,6 +248,30 @@ export function ContractActionsSidebar({
           </div>
         )}
 
+        {/* 1.1 Complete Contract Prominent Callout (Client when all milestones settled and contract ACTIVE) */}
+        {canComplete && (
+          <div className="rounded-xl border border-emerald-200 dark:border-emerald-900/60 bg-emerald-50/70 dark:bg-emerald-950/30 p-3 space-y-2">
+            <div className="flex items-start gap-2">
+              <ShieldCheck className="size-4 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
+              <div className="space-y-0.5 text-[11px] leading-snug">
+                <p className="font-semibold text-emerald-900 dark:text-emerald-200">
+                  {t("completeContract")}
+                </p>
+                <p className="text-emerald-800/85 dark:text-emerald-300/80">
+                  {t("completeHint")}
+                </p>
+              </div>
+            </div>
+            <Button
+              onClick={onOpenConfirmComplete}
+              className="w-full h-9 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs shadow-sm cursor-pointer"
+            >
+              <CheckCircle2 className="mr-1.5 size-4" />
+              {t("completeContract")}
+            </Button>
+          </div>
+        )}
+
         {contract.status === "PENDING_SIGN" && contract.holdPaymentIntentId && (
           <div className="rounded-xl border border-[#0069D3]/20 bg-[#0069D3]/5 px-3 py-2 text-[11px] text-muted-foreground">
             <span className="font-semibold text-[#0069D3] block">

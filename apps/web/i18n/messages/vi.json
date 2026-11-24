@@ -1462,8 +1462,8 @@
     "UPCOMING": "Sắp tới"
   },
   "paymentStatus": {
-    "PENDING": "Chờ nạp",
-    "FUNDED": "Đã nạp",
+    "PENDING": "Chờ nạp ký quỹ",
+    "FUNDED": "Đã nạp ký quỹ",
     "RELEASED": "Đã giải ngân",
     "REFUNDED": "Đã hoàn tiền",
     "DISPUTED": "Tranh chấp"
@@ -3834,6 +3834,9 @@
     "holdCancelledToast": "Đã hủy ủy quyền giữ tiền ký quỹ. Bạn có thể thử lại bất cứ lúc nào.",
     "paymentCancelledToast": "Đã hủy thanh toán. Bạn có thể thử lại bất cứ lúc nào.",
     "confirmDeleteMilestone": "Bạn có chắc muốn xóa cột mốc \"{title}\" không?",
+    "deleteMilestoneTitle": "Xóa cột mốc",
+    "deleteMilestoneDesc": "Bạn có chắc muốn xóa cột mốc \"{title}\"? Số tiền đã phân bổ sẽ trở lại ngân sách chưa phân bổ của bạn.",
+    "confirmDelete": "Xóa cột mốc",
     "milestoneRemoved": "Đã xóa cột mốc \"{title}\".",
     "milestoneDeleteFailed": "Không thể xóa cột mốc.",
     "declinedToast": "Đã từ chối hợp đồng. Khoản giữ tiền thẻ (nếu có) đã được giải phóng.",
@@ -3881,6 +3884,7 @@
       "colMilestone": "Cột mốc",
       "colDescription": "Mô tả",
       "colAmount": "Số tiền (USD)",
+      "colPaymentStatus": "Trạng thái thanh toán",
       "colDueDate": "Hạn hoàn thành",
       "colActions": "Thao tác",
       "fallbackMilestoneTitle": "Hoàn thành sản phẩm & các cột mốc",
@@ -3951,6 +3955,9 @@
       "confirmDecline": "Xác nhận từ chối"
     },
     "sharedFilesSidebar": {
+      "deleteTitle": "Xóa tệp chia sẻ",
+      "deleteHint": "Bạn có chắc muốn xóa \"{name}\"? Hành động này không thể hoàn tác.",
+      "confirmDelete": "Xóa tệp",
       "fileTooLarge": "Dung lượng tệp vượt quá giới hạn 25MB.",
       "uploaded": "Đã tải lên \"{name}\" thành công!",
       "uploadFailed": "Không thể tải tệp lên. Vui lòng thử lại.",
@@ -4067,6 +4074,9 @@
       "refunded": "Đã hoàn tiền ký quỹ về thẻ của bạn cho cột mốc \"{title}\".",
       "refundFailed": "Không thể hoàn tiền ký quỹ cột mốc.",
       "deleteConfirm": "Bạn có chắc muốn xóa cột mốc \"{title}\" không?",
+      "deleteMilestoneTitle": "Xóa cột mốc",
+      "deleteMilestoneDesc": "Bạn có chắc muốn xóa cột mốc \"{title}\"? Số tiền đã phân bổ sẽ trở lại ngân sách chưa phân bổ của bạn.",
+      "confirmDelete": "Xóa cột mốc",
       "deleted": "Đã xóa cột mốc \"{title}\".",
       "deleteFailed": "Không thể xóa cột mốc.",
       "chatFailed": "Không thể mở cuộc trò chuyện. Vui lòng thử lại."
@@ -4086,10 +4096,11 @@
       "statusLate": "Quá hạn (Trễ)",
       "statusDisputed": "Đang tranh chấp",
       "statusPending": "Chờ bắt đầu",
-      "escrowFunded": "Đã ký quỹ",
-      "escrowPaid": "Đã thanh toán",
+      "escrowFunded": "Đã nạp ký quỹ",
+      "escrowPaid": "Đã giải ngân",
       "escrowRefunded": "Đã hoàn tiền",
-      "escrowAwaiting": "Chờ ký quỹ",
+      "escrowAwaiting": "Chờ nạp ký quỹ",
+      "paymentStatusLabel": "Thanh toán: {status}",
       "duePrefix": "Hạn: {date}",
       "fundEscrow": "Nạp ký quỹ",
       "reviewDelivery": "Duyệt bài nộp",
@@ -4171,6 +4182,7 @@
       "noScope": "Chưa có mô tả phạm vi chi tiết cho cột mốc này.",
       "financialsTitle": "Tài chính cột mốc",
       "budget": "Ngân sách:",
+      "paymentStatusLabel": "Trạng thái thanh toán:",
       "freelancerFee": "Phí Freelancer (5%):",
       "freelancerNet": "Thực nhận Freelancer (95%):",
       "timelineTitle": "Thời gian",
@@ -4205,6 +4217,9 @@
       "emptyDesc": "Các bài nộp sẽ hiển thị tại đây khi Freelancer bàn giao công việc cho cột mốc này."
     },
     "files": {
+      "deleteTitle": "Xóa tệp cột mốc",
+      "deleteHint": "Bạn có chắc muốn xóa tệp \"{name}\"? Hành động này không thể hoàn tác.",
+      "confirmDelete": "Xóa tệp",
       "fileTooLarge": "Dung lượng tệp vượt quá giới hạn 25MB.",
       "uploaded": "Đã tải lên tệp \"{name}\" thành công!",
       "uploadFailed": "Không thể tải tệp lên. Vui lòng thử lại.",
@@ -4266,6 +4281,9 @@
       "filesLabel": "Đính kèm tệp bàn giao (ZIP, Code, PDF... tối đa 25MB)",
       "uploadDeliverableFile": "Tải lên tệp bàn giao",
       "removeFile": "Xóa tệp",
+      "removeFileTitle": "Gỡ tệp đính kèm",
+      "removeFileHint": "Bạn có chắc muốn gỡ \"{name}\" khỏi đợt nộp này không?",
+      "confirmRemove": "Gỡ tệp",
       "resubmitAction": "Nộp lại bài",
       "submitAction": "Gửi bàn giao"
     },
@@ -4537,7 +4555,20 @@
       "nameLabel": "Chủ thẻ",
       "defaultCardholder": "Chủ thẻ",
       "noCardSaved": "Chưa lưu thẻ",
-      "savedAutomaticallyHint": "Tự động lưu ở lần thanh toán Stripe đầu tiên"
+      "savedAutomaticallyHint": "Tự động lưu ở lần thanh toán Stripe đầu tiên",
+      "manageCards": "Quản lý thẻ",
+      "defaultBadge": "Mặc định",
+      "setDefault": "Đặt làm mặc định",
+      "removeCard": "Xóa thẻ",
+      "manageDialogTitle": "Phương thức thanh toán đã lưu",
+      "manageDialogDesc": "Quản lý các thẻ đã lưu, đặt thẻ mặc định để ký quỹ hoặc xóa thẻ khỏi tài khoản.",
+      "removeDialogTitle": "Xác nhận xóa phương thức thanh toán",
+      "removeDialogDesc": "Bạn có chắc chắn muốn xóa thẻ {brand} kết thúc bằng {last4}? Thao tác này không thể hoàn tác.",
+      "removeConfirm": "Xóa thẻ",
+      "cancel": "Hủy",
+      "defaultUpdatedSuccess": "Đã cập nhật phương thức thanh toán mặc định.",
+      "removeSuccess": "Đã xóa phương thức thanh toán thành công.",
+      "actionFailed": "Thao tác thất bại. Vui lòng thử lại sau."
     },
     "connect": {
       "title": "Tài khoản nhận tiền Stripe",

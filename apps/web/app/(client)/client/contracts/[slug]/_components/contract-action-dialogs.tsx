@@ -9,6 +9,7 @@ import {
   ShieldCheck,
   XCircle,
 } from "@/components/icons";
+import { Trash2 } from "lucide-react";
 import { Button } from "@repo/ui/components/shadcn/button";
 import {
   AlertDialog,
@@ -70,6 +71,12 @@ interface ContractActionDialogsProps {
   onRejectReasonChange: (reason: string) => void;
   isRejecting: boolean;
   onReject: () => void;
+
+  // Milestone Delete Confirmation
+  milestoneToDelete?: { id: number; title: string } | null;
+  onMilestoneToDeleteChange?: (milestone: { id: number; title: string } | null) => void;
+  isDeletingMilestone?: boolean;
+  onDeleteMilestoneConfirm?: () => void;
 }
 
 export function ContractActionDialogs({
@@ -109,6 +116,11 @@ export function ContractActionDialogs({
   onRejectReasonChange,
   isRejecting,
   onReject,
+
+  milestoneToDelete,
+  onMilestoneToDeleteChange,
+  isDeletingMilestone,
+  onDeleteMilestoneConfirm,
 }: ContractActionDialogsProps) {
   const t = useTranslations("contractDetail");
   const tDialogs = useTranslations("contractWorkspace.dialogs");
@@ -449,6 +461,50 @@ export function ContractActionDialogs({
                 className="w-full rounded-full text-xs cursor-pointer"
               >
                 {t("goBack")}
+              </AlertDialogCancel>
+            </div>
+          </div>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Dialog: Confirm Delete Milestone */}
+      <AlertDialog
+        open={Boolean(milestoneToDelete)}
+        onOpenChange={(open) => {
+          if (!open && !isDeletingMilestone) {
+            onMilestoneToDeleteChange?.(null);
+          }
+        }}
+      >
+        <AlertDialogContent className="max-w-sm rounded-[24px] border border-border bg-background p-5 shadow-2xl font-sans">
+          <div className="flex flex-col gap-3">
+            <AlertDialogTitle className="text-base font-bold text-foreground">
+              {t("deleteMilestone")}
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-xs text-muted-foreground leading-relaxed">
+              {t("deleteMilestoneHint", {
+                title: milestoneToDelete?.title ?? "",
+              })}
+            </AlertDialogDescription>
+            <div className="mt-2 flex flex-col gap-2">
+              <Button
+                variant="destructive"
+                disabled={isDeletingMilestone}
+                onClick={onDeleteMilestoneConfirm}
+                className="w-full rounded-full bg-rose-600 hover:bg-rose-700 text-white text-xs font-semibold cursor-pointer"
+              >
+                {isDeletingMilestone ? (
+                  <Loader2 className="mr-1.5 size-3.5 animate-spin" />
+                ) : (
+                  <Trash2 className="mr-1.5 size-3.5" />
+                )}
+                {t("deleteMilestone")}
+              </Button>
+              <AlertDialogCancel
+                disabled={isDeletingMilestone}
+                className="w-full rounded-full text-xs cursor-pointer"
+              >
+                {tCommon("cancel")}
               </AlertDialogCancel>
             </div>
           </div>

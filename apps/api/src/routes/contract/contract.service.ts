@@ -419,6 +419,9 @@ export class ContractService implements OnModuleInit, OnModuleDestroy {
 
       if (contract.clientId !== clientId) throw ContractForbiddenException();
 
+      if (contract.status === ContractStatus.COMPLETED)
+        throw ContractAlreadyCompletedException();
+
       if (contract.status !== ContractStatus.ACTIVE)
         throw ContractNotActiveException();
 
