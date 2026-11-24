@@ -1,9 +1,16 @@
-import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  Logger,
+  Optional,
+} from '@nestjs/common';
 import Stripe from 'stripe';
 import {
   ContractStatus,
   MilestonePaymentStatus,
   MilestoneStatus,
+  NotificationType,
   Prisma,
   TransactionStatus,
   TransactionType,
@@ -24,7 +31,6 @@ import {
   HoldMilestoneRequiredException,
   MilestoneAlreadyReleasedException,
   MilestoneNotEligibleForFundingException,
-  MilestoneNotEligibleForRefundException,
   MilestoneNotFundedException,
   PaymentForbiddenException,
   StripeAccountNotConnectedException,
@@ -34,6 +40,7 @@ import {
 import { PaymentRepository } from './payment.repo';
 import { ContractPdfService } from '../../shared/services/contract-pdf.service';
 import { StripeService } from '../../shared/services/stripe.service';
+import { AppNotificationService } from '../../shared/services/app-notification.service';
 
 @Injectable()
 export class PaymentService {
@@ -43,7 +50,8 @@ export class PaymentService {
     private readonly paymentRepo: PaymentRepository,
     private readonly stripeService: StripeService,
     private readonly contractPdfService: ContractPdfService,
-  ) { }
+    @Optional() private readonly notificationService?: AppNotificationService,
+  ) {}
 
   async getOnboardingLink(userId: number, returnUrl?: string) {
     const user = await this.paymentRepo.findUserById(userId);
@@ -561,9 +569,9 @@ export class PaymentService {
           await this.paymentRepo.findContractById(resolvedContractId);
         const milestoneIds = meta.milestoneIds
           ? meta.milestoneIds
-            .split(',')
-            .map((v) => Number(v.trim()))
-            .filter((v) => Number.isFinite(v) && v > 0)
+              .split(',')
+              .map((v) => Number(v.trim()))
+              .filter((v) => Number.isFinite(v) && v > 0)
           : Array.isArray(contract?.holdMilestoneIds)
             ? contract.holdMilestoneIds
             : [];
@@ -699,9 +707,14 @@ export class PaymentService {
       );
     }
 
+    const { paymentMethods } = await this.getSavedPaymentMethods(userId);
     let targetPmId = paymentMethodId;
-    if (!targetPmId) {
-      const { paymentMethods } = await this.getSavedPaymentMethods(userId);
+    if (targetPmId) {
+      const ownsPaymentMethod = paymentMethods.some((p) => p.id === targetPmId);
+      if (!ownsPaymentMethod) {
+        throw PaymentForbiddenException();
+      }
+    } else {
       const defaultPm =
         paymentMethods.find((p) => p.isDefault) || paymentMethods[0];
       if (!defaultPm) {
@@ -722,6 +735,7 @@ export class PaymentService {
         currency: 'usd',
         customerId,
         paymentMethodId: targetPmId,
+        idempotencyKey: `fund-saved-card-${contractId}-m-${milestoneId}`,
         metadata: {
           type: TransactionType.ESCROW_DEPOSIT,
           contractId: String(contractId),
@@ -745,6 +759,18 @@ export class PaymentService {
           type: TransactionType.ESCROW_DEPOSIT,
           status: TransactionStatus.SUCCEEDED,
           stripePaymentIntentId: paymentIntent.id,
+        });
+
+        await this.notificationService?.send({
+          userId: milestone.contract.freelancerId,
+          type: NotificationType.PAYMENT_RELEASED,
+          title: 'Milestone funded in escrow',
+          message: `Client deposited $${milestoneAmount.toFixed(2)} into escrow for milestone "${milestone.title}". Work can begin!`,
+          data: {
+            contractId,
+            milestoneId,
+            href: `/freelancer/contracts/${milestone.contract.slug ?? contractId}`,
+          },
         });
 
         return {
@@ -853,6 +879,10 @@ export class PaymentService {
       throw PaymentForbiddenException();
     }
 
+    if (milestone.status === MilestoneStatus.DISPUTED) {
+      throw PaymentForbiddenException();
+    }
+
     if (milestone.paymentStatus === MilestonePaymentStatus.RELEASED) {
       throw MilestoneAlreadyReleasedException();
     }
@@ -880,6 +910,7 @@ export class PaymentService {
       currency: 'usd',
       destination: freelancer.stripeAccountId,
       transferGroup: `contract_${contractId}`,
+      idempotencyKey: `release-milestone-${milestoneId}`,
       metadata: {
         type: TransactionType.MILESTONE_PAYOUT,
         contractId: String(contractId),
@@ -929,6 +960,31 @@ export class PaymentService {
     await this.paymentRepo.checkAndCompleteFreelancerFee(contractId);
     await this.paymentRepo.syncContractCompletion(contractId);
 
+    await this.notificationService?.sendMany([
+      {
+        userId: freelancer.id,
+        type: NotificationType.PAYMENT_RELEASED,
+        title: 'Milestone payment released',
+        message: `Client released payment ($${freelancerPayout.toFixed(2)}) for milestone "${milestone.title}". Funds have been transferred to your Stripe account.`,
+        data: {
+          contractId,
+          milestoneId,
+          href: `/freelancer/contracts/${milestone.contract.slug ?? contractId}`,
+        },
+      },
+      {
+        userId,
+        type: NotificationType.PAYMENT_RELEASED,
+        title: 'Milestone payment released',
+        message: `You released payment of $${freelancerPayout.toFixed(2)} to the freelancer for milestone "${milestone.title}".`,
+        data: {
+          contractId,
+          milestoneId,
+          href: `/client/contracts/${milestone.contract.slug ?? contractId}`,
+        },
+      },
+    ]);
+
     return {
       success: true,
       message: 'Milestone payment released to freelancer successfully',
@@ -964,8 +1020,7 @@ export class PaymentService {
         throw StripeOnboardingIncompleteException();
       }
 
-      const freelancerFee =
-        Math.round(freelancerAmount * 0.05 * 100) / 100;
+      const freelancerFee = Math.round(freelancerAmount * 0.05 * 100) / 100;
       const freelancerPayout =
         Math.round((freelancerAmount - freelancerFee) * 100) / 100;
       const amountInCents = Math.round(freelancerPayout * 100);
@@ -975,6 +1030,7 @@ export class PaymentService {
         currency: 'usd',
         destination: freelancer.stripeAccountId,
         transferGroup: `contract_${contractId}`,
+        idempotencyKey: `dispute-transfer-${disputeId}`,
         metadata: {
           type: TransactionType.MILESTONE_PAYOUT,
           contractId: String(contractId),
@@ -1024,8 +1080,7 @@ export class PaymentService {
       const targetDeposit =
         deposits.find((d) => {
           if (!d.stripePaymentIntentId) return false;
-          const meta =
-            (d.metadata as { milestoneIds?: unknown } | null) ?? {};
+          const meta = (d.metadata as { milestoneIds?: unknown } | null) ?? {};
           if (Array.isArray(meta.milestoneIds)) {
             return meta.milestoneIds.map(Number).includes(milestoneId);
           }
@@ -1036,6 +1091,7 @@ export class PaymentService {
         const refund = await this.stripeService.createRefund({
           paymentIntentId: targetDeposit.stripePaymentIntentId,
           amountInCents: Math.round(clientAmount * 100),
+          idempotencyKey: `dispute-refund-${disputeId}`,
           metadata: {
             type: TransactionType.REFUND,
             contractId: String(contractId),
@@ -1074,19 +1130,24 @@ export class PaymentService {
     }
 
     const refundResults: { refundId: string; amount: number }[] = [];
+    const refundedMilestoneIds = new Set<number>();
     for (const deposit of deposits) {
       if (!deposit.stripePaymentIntentId) continue;
 
       const meta =
         (deposit.metadata as { milestoneIds?: unknown } | null) ?? {};
       let refundableAmount = Number(deposit.amount);
+      const depositMilestoneIds: number[] = [];
       if (Array.isArray(meta.milestoneIds)) {
         refundableAmount = meta.milestoneIds.reduce<number>((sum, rawId) => {
-          const milestoneAmount = fundedByMilestoneId.get(Number(rawId)) ?? 0;
+          const mId = Number(rawId);
+          const milestoneAmount = fundedByMilestoneId.get(mId) ?? 0;
+          if (milestoneAmount > 0) depositMilestoneIds.push(mId);
           return Math.round((sum + milestoneAmount) * 100) / 100;
         }, 0);
       } else if (deposit.milestoneId) {
         refundableAmount = fundedByMilestoneId.get(deposit.milestoneId) ?? 0;
+        if (refundableAmount > 0) depositMilestoneIds.push(deposit.milestoneId);
       }
 
       if (refundableAmount <= 0) continue;
@@ -1095,6 +1156,7 @@ export class PaymentService {
         const refund = await this.stripeService.createRefund({
           paymentIntentId: deposit.stripePaymentIntentId,
           amountInCents: Math.round(refundableAmount * 100),
+          idempotencyKey: `refund-escrow-contract-${contractId}-tx-${deposit.id}`,
           metadata: {
             type: TransactionType.REFUND,
             contractId: String(contractId),
@@ -1113,6 +1175,10 @@ export class PaymentService {
           stripeRefundId: refund.id,
         });
 
+        for (const mId of depositMilestoneIds) {
+          refundedMilestoneIds.add(mId);
+        }
+
         refundResults.push({
           refundId: refund.id,
           amount: refundableAmount,
@@ -1125,11 +1191,15 @@ export class PaymentService {
       }
     }
 
-    await this.paymentRepo.updateAllContractMilestonesPaymentStatus(
-      contractId,
-      MilestonePaymentStatus.FUNDED,
-      MilestonePaymentStatus.REFUNDED,
-    );
+    // Chỉ chuyển sang REFUNDED những milestone thực sự đã hoàn tiền thành công qua Stripe
+    if (refundedMilestoneIds.size > 0) {
+      await this.paymentRepo.updateMilestonesPaymentStatusByIds(
+        contractId,
+        Array.from(refundedMilestoneIds),
+        MilestonePaymentStatus.FUNDED,
+        MilestonePaymentStatus.REFUNDED,
+      );
+    }
 
     return {
       success: true,
@@ -1219,32 +1289,31 @@ export class PaymentService {
               Math.round((milestoneAmount - freelancerFee) * 100) / 100;
             const amountInCents = Math.round(freelancerPayout * 100);
 
-            let transferId: string | undefined;
             if (
-              freelancer?.stripeAccountId &&
-              freelancer?.stripeOnboardingCompleted
+              !freelancer?.stripeAccountId ||
+              !freelancer?.stripeOnboardingCompleted
             ) {
-              try {
-                const transfer = await this.stripeService.createTransfer({
-                  amountInCents,
-                  currency: 'usd',
-                  destination: freelancer.stripeAccountId,
-                  transferGroup: `contract_${contractId}`,
-                  metadata: {
-                    type: TransactionType.MILESTONE_PAYOUT,
-                    contractId: String(contractId),
-                    milestoneId: String(m.id),
-                    freelancerId: String(freelancer.id),
-                    freelancerFee: String(freelancerFee),
-                  },
-                });
-                transferId = transfer.id;
-              } catch (transferErr) {
-                this.logger.warn(
-                  `Could not transfer funds to Stripe account of freelancer #${freelancer.id}: ${transferErr instanceof Error ? transferErr.message : String(transferErr)}`,
-                );
-              }
+              this.logger.warn(
+                `Skipping payout release for milestone #${m.id} on client cancel: freelancer #${contract.freelancerId} has not completed Stripe Connect onboarding.`,
+              );
+              continue;
             }
+
+            const transfer = await this.stripeService.createTransfer({
+              amountInCents,
+              currency: 'usd',
+              destination: freelancer.stripeAccountId,
+              transferGroup: `contract_${contractId}`,
+              idempotencyKey: `release-cancel-contract-${contractId}-m-${m.id}`,
+              metadata: {
+                type: TransactionType.MILESTONE_PAYOUT,
+                contractId: String(contractId),
+                milestoneId: String(m.id),
+                freelancerId: String(freelancer.id),
+                freelancerFee: String(freelancerFee),
+              },
+            });
+            const transferId = transfer.id;
 
             await this.paymentRepo.updateMilestonePaymentStatus(
               m.id,
@@ -1293,10 +1362,11 @@ export class PaymentService {
         } else {
           // Unstarted milestone -> Refund to client!
           try {
-            const escrowTx = await this.paymentRepo.findEscrowDepositTransaction(
-              m.id,
-              contractId,
-            );
+            const escrowTx =
+              await this.paymentRepo.findEscrowDepositTransaction(
+                m.id,
+                contractId,
+              );
             if (escrowTx?.stripePaymentIntentId) {
               const refund = await this.stripeService.createRefund({
                 paymentIntentId: escrowTx.stripePaymentIntentId,
@@ -1337,77 +1407,6 @@ export class PaymentService {
       success: true,
       releasedMilestoneIds,
       refundedMilestoneIds,
-    };
-  }
-
-  async refundMilestone(
-    userId: number,
-    contractId: number,
-    milestoneId: number,
-  ) {
-    const milestone = await this.paymentRepo.findMilestoneById(milestoneId);
-    if (
-      !milestone ||
-      milestone.contractId !== contractId ||
-      milestone.contract.clientId !== userId
-    ) {
-      throw PaymentForbiddenException();
-    }
-
-    if (milestone.paymentStatus !== MilestonePaymentStatus.FUNDED) {
-      throw MilestoneNotFundedException();
-    }
-
-    if (
-      milestone.status !== MilestoneStatus.LATE &&
-      milestone.status !== MilestoneStatus.PENDING
-    ) {
-      throw MilestoneNotEligibleForRefundException();
-    }
-
-    const escrowTx = await this.paymentRepo.findEscrowDepositTransaction(
-      milestoneId,
-      contractId,
-    );
-    if (!escrowTx || !escrowTx.stripePaymentIntentId) {
-      throw new Error('Original escrow payment record not found');
-    }
-
-    const reason =
-      milestone.status === MilestoneStatus.LATE
-        ? 'FREELANCER_LATE_NO_SUBMISSION'
-        : 'FREELANCER_NOT_STARTED';
-
-    const milestoneAmount = Number(milestone.amount);
-    const refund = await this.stripeService.createRefund({
-      paymentIntentId: escrowTx.stripePaymentIntentId,
-      amountInCents: Math.round(milestoneAmount * 100),
-      metadata: {
-        type: TransactionType.REFUND,
-        contractId: String(contractId),
-        milestoneId: String(milestoneId),
-        reason,
-      },
-      idempotencyKey: `refund-milestone-${milestoneId}`,
-    });
-
-    await this.paymentRepo.applyMilestoneRefundTransaction({
-      milestoneId,
-      contractId,
-      contractSlug: milestone.contract.slug,
-      clientId: userId,
-      freelancerId: milestone.contract.freelancerId,
-      milestoneTitle: milestone.title,
-      amount: milestoneAmount,
-      refundId: refund.id,
-      reason,
-      isAuto: true,
-    });
-
-    return {
-      success: true,
-      message: 'Milestone funds refunded to client successfully',
-      refundId: refund.id,
     };
   }
 
@@ -1468,9 +1467,13 @@ export class PaymentService {
       case 'account.updated': {
         const account = event.data.object as Stripe.Account;
         if (account.id) {
-          const user = await this.paymentRepo.findUserById(
-            Number(account.metadata?.userId || 0),
-          );
+          const user =
+            (await this.paymentRepo.findUserByStripeAccountId(account.id)) ??
+            (account.metadata?.userId
+              ? await this.paymentRepo.findUserById(
+                  Number(account.metadata.userId),
+                )
+              : null);
           if (user) {
             await this.paymentRepo.updateUserStripe(user.id, {
               stripeOnboardingCompleted: !!account.payouts_enabled,
@@ -1547,15 +1550,54 @@ export class PaymentService {
     }
 
     if (type === TransactionType.ESCROW_DEPOSIT && metadata.milestoneId) {
+      const milestoneIdNum = Number(metadata.milestoneId);
       await this.paymentRepo.updateMilestonePaymentStatus(
-        Number(metadata.milestoneId),
+        milestoneIdNum,
         MilestonePaymentStatus.FUNDED,
       );
+
+      const m = await this.paymentRepo.findMilestoneById(milestoneIdNum);
+      if (m?.contract?.freelancerId) {
+        await this.notificationService?.send({
+          userId: m.contract.freelancerId,
+          type: NotificationType.PAYMENT_RELEASED,
+          title: 'Milestone funded in escrow',
+          message: `Client deposited $${Number(m.amount).toFixed(2)} into escrow for milestone "${m.title}". Work can begin!`,
+          data: {
+            contractId: m.contractId,
+            milestoneId: m.id,
+            href: `/freelancer/contracts/${m.contract.slug ?? m.contractId}`,
+          },
+        });
+      }
     }
+  }
+
+  private async assertStripeMetadataOwnership(
+    userId: number,
+    metadata: Record<string, string> | null | undefined,
+  ): Promise<void> {
+    const meta = metadata ?? {};
+    if (meta.userId && Number(meta.userId) === userId) {
+      return;
+    }
+    if (meta.contractId) {
+      const contract = await this.paymentRepo.findContractById(
+        Number(meta.contractId),
+      );
+      if (
+        contract &&
+        (contract.clientId === userId || contract.freelancerId === userId)
+      ) {
+        return;
+      }
+    }
+    throw PaymentForbiddenException();
   }
 
   async syncPaymentIntent(userId: number, paymentIntentId: string) {
     const pi = await this.stripeService.retrievePaymentIntent(paymentIntentId);
+    await this.assertStripeMetadataOwnership(userId, pi.metadata);
     if (pi.status === 'requires_capture') {
       await this.processPaymentIntentAuthorized(pi);
       return { success: true, status: 'requires_capture' };
@@ -1578,6 +1620,29 @@ export class PaymentService {
       typeof session.payment_intent === 'string'
         ? session.payment_intent
         : session.payment_intent?.id;
+
+    // Với CONTRACT_HOLD (manual capture): KHÔNG chuyển sang SUCCEEDED trước khi capture,
+    // nếu không bước captureContractHold sẽ bỏ qua tách phí nền tảng 3%.
+    if (type === 'CONTRACT_HOLD') {
+      const tx = await this.paymentRepo.findTransactionBySessionId(session.id);
+      if (tx && paymentIntentId && !tx.stripePaymentIntentId) {
+        await this.paymentRepo.updateTransactionStatus(
+          tx.id,
+          TransactionStatus.PENDING,
+          { stripePaymentIntentId: paymentIntentId },
+        );
+      }
+      if (paymentIntentId) {
+        const pi =
+          await this.stripeService.retrievePaymentIntent(paymentIntentId);
+        if (pi.status === 'requires_capture') {
+          await this.processPaymentIntentAuthorized(pi);
+        } else if (pi.status === 'succeeded') {
+          await this.captureContractHold(paymentIntentId);
+        }
+      }
+      return;
+    }
 
     const tx = await this.paymentRepo.findTransactionBySessionId(session.id);
     if (tx) {
@@ -1602,16 +1667,25 @@ export class PaymentService {
     }
 
     if (type === TransactionType.ESCROW_DEPOSIT && metadata.milestoneId) {
+      const milestoneIdNum = Number(metadata.milestoneId);
       await this.paymentRepo.updateMilestonePaymentStatus(
-        Number(metadata.milestoneId),
+        milestoneIdNum,
         MilestonePaymentStatus.FUNDED,
       );
-    }
 
-    if (type === 'CONTRACT_HOLD' && paymentIntentId) {
-      const pi = await this.stripeService.retrievePaymentIntent(paymentIntentId);
-      if (pi.status === 'requires_capture') {
-        await this.processPaymentIntentAuthorized(pi);
+      const m = await this.paymentRepo.findMilestoneById(milestoneIdNum);
+      if (m?.contract?.freelancerId) {
+        await this.notificationService?.send({
+          userId: m.contract.freelancerId,
+          type: NotificationType.PAYMENT_RELEASED,
+          title: 'Milestone funded in escrow',
+          message: `Client deposited $${Number(m.amount).toFixed(2)} into escrow for milestone "${m.title}". Work can begin!`,
+          data: {
+            contractId: m.contractId,
+            milestoneId: m.id,
+            href: `/freelancer/contracts/${m.contract.slug ?? m.contractId}`,
+          },
+        });
       }
     }
   }
@@ -1621,6 +1695,7 @@ export class PaymentService {
     sessionId: string,
   ): Promise<{ success: boolean; status?: string }> {
     const session = await this.stripeService.retrieveCheckoutSession(sessionId);
+    await this.assertStripeMetadataOwnership(userId, session.metadata);
     if (session.payment_status === 'paid' || session.status === 'complete') {
       await this.processCheckoutSessionCompleted(session);
       return {
@@ -1630,7 +1705,9 @@ export class PaymentService {
     }
     return {
       success: false,
-      status: session.payment_status ? String(session.payment_status) : undefined,
+      status: session.payment_status
+        ? String(session.payment_status)
+        : undefined,
     };
   }
 }

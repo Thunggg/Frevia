@@ -776,11 +776,16 @@ export class AuthService {
       this.logger.error('Error parsing client information', error);
     }
 
-    // Lấy token từ Google
-    const { tokens } = await this.oauth2Client.getToken(code as string);
-    this.oauth2Client.setCredentials(tokens);
+    // Tạo OAuth2Client riêng cho mỗi request để tránh race condition khi nhiều user login Google đồng thời
+    const requestOAuthClient = new OAuth2Client({
+      clientId: envConfig.GOOGLE_CLIENT_ID,
+      clientSecret: envConfig.GOOGLE_CLIENT_SECRET,
+      redirectUri: envConfig.GOOGLE_REDIRECT_URL,
+    });
+    const { tokens } = await requestOAuthClient.getToken(code as string);
+    requestOAuthClient.setCredentials(tokens);
 
-    const { data } = await this.oauth2Client.request<GoogleUserInfo>({
+    const { data } = await requestOAuthClient.request<GoogleUserInfo>({
       url: 'https://www.googleapis.com/oauth2/v2/userinfo',
       method: 'GET',
     });

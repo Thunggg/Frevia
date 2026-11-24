@@ -3,6 +3,7 @@
 % 4.1.5.1 ERD tong
 % ===============================================
 \begin{landscape}
+\thispagestyle{landscape}
 \Needspace{12\baselineskip}
 \subsubsection{Entity Relationship Diagram}
 
@@ -34,20 +35,60 @@ This ERD describes the Authentication \& Sessions module. It stores account iden
     \label{fig:erd-authentication--sessions}
 \end{figure}
 
-\Needspace{6\baselineskip}
-\paragraph*{b) Table of entities}
-\begin{center}
+\Needspace{8\baselineskip}
+\paragraph*{b) Table of entities}\nopagebreak[4]
+\begin{center}\nopagebreak[4]
 \small\sloppy
-\begin{tabular}{|L{2.5cm}|L{9.5cm}|}
+\begin{longtable}{|L{2.5cm}|L{9.5cm}|}
 \hline
-\rowcolor{fptHeader}\textbf{Entity} & \textbf{Fields and data types} \\ \hline
-\texttt{User} & id (integer), email (varchar(255)), password (varchar(255)), is\allowbreak Banned (boolean), created\allowbreak At (timestamp(3)), updated\allowbreak At (timestamp(3)), deleted\allowbreak At (timestamp(3)), stripe\allowbreak Customer\allowbreak Id (varchar(255)), stripe\allowbreak Account\allowbreak Id (varchar(255)), stripe\allowbreak Onboarding\allowbreak Completed (boolean), role\allowbreak Id (integer) \\ \hline
-\texttt{Verification\allowbreak Code} & id (integer), email (varchar(500)), code (varchar(255)), type (enum(Verification\allowbreak Code\allowbreak Type)), attempts (integer), expires\allowbreak At (timestamp(3)), created\allowbreak At (timestamp(3)) \\ \hline
-\texttt{Session} & id (integer), user\allowbreak Id (integer), refresh\allowbreak Token (varchar(512)), device\allowbreak Info (varchar(255)), ip\allowbreak Address (varchar(45)), expires\allowbreak At (timestamp(3)), created\allowbreak At (timestamp(3)) \\ \hline
-\texttt{Oauth\allowbreak Account} & id (integer), user\allowbreak Id (integer), provider (enum(Oauth\allowbreak Provider)), provider\allowbreak User\allowbreak Id (varchar(255)), created\allowbreak At (timestamp(3)) \\ \hline
-\texttt{Two\allowbreak Factor\allowbreak Auth} & id (integer), user\allowbreak Id (integer), secret (varchar(255)), enabled (boolean), created\allowbreak At (timestamp(3)) \\ \hline
-\texttt{User\allowbreak Setting} & id (integer), user\allowbreak Id (integer), theme (varchar(20)), language (varchar(10)), notification\allowbreak Prefs (jsonb) \\ \hline
-\end{tabular}
+\rowcolor{fptHeader}\textbf{Entity} & \textbf{Fields and descriptions} \\* \hline
+\endfirsthead
+\hline
+\rowcolor{fptHeader}\textbf{Entity} & \textbf{Fields and descriptions} \\* \hline
+\endhead
+\hline\endfoot
+\endlastfoot
+\texttt{User} & - id: used to store the unique identifier of the record \\*
+& - email: used to store the account email address \\
+& - password: used to store the hashed account password \\
+& - is\allowbreak Banned: used to store whether the account is banned \\
+& - created\allowbreak At: used to store the creation timestamp \\
+& - updated\allowbreak At: used to store the last update timestamp \\
+& - deleted\allowbreak At: used to store the soft-deletion timestamp \\
+& - stripe\allowbreak Customer\allowbreak Id: used to store the stripe customer id text value \\
+& - stripe\allowbreak Account\allowbreak Id: used to store the stripe account id text value \\
+& - stripe\allowbreak Onboarding\allowbreak Completed: used to store whether Stripe onboarding is completed \\
+& - role\allowbreak Id: used to store the foreign key reference to the primary role \\ \hline
+\texttt{Verification\allowbreak Code} & - id: used to store the unique identifier of the record \\*
+& - email: used to store the account email address \\
+& - code: used to store the one-time verification code \\
+& - type: used to store the type value from the VerificationCodeType enumeration \\
+& - attempts: used to store the verification attempt count \\
+& - expires\allowbreak At: used to store the expiration timestamp \\
+& - created\allowbreak At: used to store the creation timestamp \\ \hline
+\texttt{Session} & - id: used to store the unique identifier of the record \\*
+& - user\allowbreak Id: used to store the foreign key reference to the user \\
+& - refresh\allowbreak Token: used to store the refresh token \\
+& - device\allowbreak Info: used to store the device information text \\
+& - ip\allowbreak Address: used to store the IP address \\
+& - expires\allowbreak At: used to store the expiration timestamp \\
+& - created\allowbreak At: used to store the creation timestamp \\ \hline
+\texttt{Oauth\allowbreak Account} & - id: used to store the unique identifier of the record \\*
+& - user\allowbreak Id: used to store the foreign key reference to the user \\
+& - provider: used to store the provider value from the OauthProvider enumeration \\
+& - provider\allowbreak User\allowbreak Id: used to store the external provider user identifier \\
+& - created\allowbreak At: used to store the creation timestamp \\ \hline
+\texttt{Two\allowbreak Factor\allowbreak Auth} & - id: used to store the unique identifier of the record \\*
+& - user\allowbreak Id: used to store the foreign key reference to the user \\
+& - secret: used to store the TOTP secret value \\
+& - enabled: used to store whether two-factor authentication is enabled \\
+& - created\allowbreak At: used to store the creation timestamp \\ \hline
+\texttt{User\allowbreak Setting} & - id: used to store the unique identifier of the record \\*
+& - user\allowbreak Id: used to store the foreign key reference to the user \\
+& - theme: used to store the theme text value \\
+& - language: used to store the language text value \\
+& - notification\allowbreak Prefs: used to store the notification preferences data in JSON format \\ \hline
+\end{longtable}
 \end{center}
 
 % ===============================================
@@ -67,19 +108,52 @@ This ERD describes the Role-Based Access Control module. It stores roles, permis
     \label{fig:erd-role-based-access-control}
 \end{figure}
 
-\Needspace{6\baselineskip}
-\paragraph*{b) Table of entities}
-\begin{center}
+\Needspace{8\baselineskip}
+\paragraph*{b) Table of entities}\nopagebreak[4]
+\begin{center}\nopagebreak[4]
 \small\sloppy
-\begin{tabular}{|L{2.5cm}|L{9.5cm}|}
+\begin{longtable}{|L{2.5cm}|L{9.5cm}|}
 \hline
-\rowcolor{fptHeader}\textbf{Entity} & \textbf{Fields and data types} \\ \hline
-\texttt{User} & id (integer), email (varchar(255)), password (varchar(255)), is\allowbreak Banned (boolean), created\allowbreak At (timestamp(3)), updated\allowbreak At (timestamp(3)), deleted\allowbreak At (timestamp(3)), stripe\allowbreak Customer\allowbreak Id (varchar(255)), stripe\allowbreak Account\allowbreak Id (varchar(255)), stripe\allowbreak Onboarding\allowbreak Completed (boolean), role\allowbreak Id (integer) \\ \hline
-\texttt{Role} & id (integer), name (varchar(500)), description (varchar(255)), created\allowbreak At (timestamp(3)), deleted\allowbreak At (timestamp(3)) \\ \hline
-\texttt{User\allowbreak Role} & user\allowbreak Id (integer), role\allowbreak Id (integer), is\allowbreak Primary (boolean), created\allowbreak At (timestamp(3)) \\ \hline
-\texttt{Permission} & id (integer), name (varchar(500)), path (varchar(1000)), method (enum(Http\allowbreak Method)), module (varchar(500)), created\allowbreak By\allowbreak Id (integer), updated\allowbreak By\allowbreak Id (integer), deleted\allowbreak By\allowbreak Id (integer), deleted\allowbreak At (timestamp(3)), created\allowbreak At (timestamp(3)), updated\allowbreak At (timestamp(3)) \\ \hline
-\texttt{Role\allowbreak Permission} & role\allowbreak Id (integer), permission\allowbreak Id (integer) \\ \hline
-\end{tabular}
+\rowcolor{fptHeader}\textbf{Entity} & \textbf{Fields and descriptions} \\* \hline
+\endfirsthead
+\hline
+\rowcolor{fptHeader}\textbf{Entity} & \textbf{Fields and descriptions} \\* \hline
+\endhead
+\hline\endfoot
+\endlastfoot
+\texttt{User} & - id: used to store the unique identifier of the record \\*
+& - email: used to store the account email address \\
+& - password: used to store the hashed account password \\
+& - is\allowbreak Banned: used to store whether the account is banned \\
+& - created\allowbreak At: used to store the creation timestamp \\
+& - updated\allowbreak At: used to store the last update timestamp \\
+& - deleted\allowbreak At: used to store the soft-deletion timestamp \\
+& - stripe\allowbreak Customer\allowbreak Id: used to store the stripe customer id text value \\
+& - stripe\allowbreak Account\allowbreak Id: used to store the stripe account id text value \\
+& - stripe\allowbreak Onboarding\allowbreak Completed: used to store whether Stripe onboarding is completed \\
+& - role\allowbreak Id: used to store the foreign key reference to the primary role \\ \hline
+\texttt{Role} & - id: used to store the unique identifier of the record \\*
+& - name: used to store the name value \\
+& - description: used to store the description text \\
+& - created\allowbreak At: used to store the creation timestamp \\
+& - deleted\allowbreak At: used to store the soft-deletion timestamp \\ \hline
+\texttt{User\allowbreak Role} & - user\allowbreak Id: used to store the foreign key reference to the user \\*
+& - role\allowbreak Id: used to store the foreign key reference to the primary role \\
+& - assigned\allowbreak At: used to store the assigned at timestamp \\ \hline
+\texttt{Permission} & - id: used to store the unique identifier of the record \\*
+& - name: used to store the name value \\
+& - path: used to store the route path \\
+& - method: used to store the HTTP method value from the HttpMethod enumeration \\
+& - module: used to store the module name \\
+& - created\allowbreak By\allowbreak Id: used to store the created by id integer value \\
+& - updated\allowbreak By\allowbreak Id: used to store the updated by id integer value \\
+& - deleted\allowbreak By\allowbreak Id: used to store the deleted by id integer value \\
+& - deleted\allowbreak At: used to store the soft-deletion timestamp \\
+& - created\allowbreak At: used to store the creation timestamp \\
+& - updated\allowbreak At: used to store the last update timestamp \\ \hline
+\texttt{Role\allowbreak Permission} & - role\allowbreak Id: used to store the foreign key reference to the primary role \\*
+& - permission\allowbreak Id: used to store the foreign key reference to the permission \\ \hline
+\end{longtable}
 \end{center}
 
 % ===============================================
@@ -99,19 +173,75 @@ This ERD describes the Profile Core module. It stores base profiles and role-spe
     \label{fig:erd-profile-core}
 \end{figure}
 
-\Needspace{6\baselineskip}
-\paragraph*{b) Table of entities}
-\begin{center}
+\Needspace{8\baselineskip}
+\paragraph*{b) Table of entities}\nopagebreak[4]
+\begin{center}\nopagebreak[4]
 \small\sloppy
-\begin{tabular}{|L{2.5cm}|L{9.5cm}|}
+\begin{longtable}{|L{2.5cm}|L{9.5cm}|}
 \hline
-\rowcolor{fptHeader}\textbf{Entity} & \textbf{Fields and data types} \\ \hline
-\texttt{User} & id (integer), email (varchar(255)), password (varchar(255)), is\allowbreak Banned (boolean), created\allowbreak At (timestamp(3)), updated\allowbreak At (timestamp(3)), deleted\allowbreak At (timestamp(3)), stripe\allowbreak Customer\allowbreak Id (varchar(255)), stripe\allowbreak Account\allowbreak Id (varchar(255)), stripe\allowbreak Onboarding\allowbreak Completed (boolean), role\allowbreak Id (integer) \\ \hline
-\texttt{Profile} & id (integer), user\allowbreak Id (integer), display\allowbreak Name (varchar(255)), avatar\allowbreak Url (varchar(500)), cover\allowbreak Url (varchar(500)), bio (varchar(255)), online\allowbreak Status (boolean), availability\allowbreak Status (enum(Availability\allowbreak Status)), profile\allowbreak Completion\allowbreak Percent (integer), wallet\allowbreak Address (varchar(42)), created\allowbreak At (timestamp(3)), updated\allowbreak At (timestamp(3)) \\ \hline
-\texttt{Freelancer\allowbreak Profile} & id (integer), profile\allowbreak Id (integer), title (varchar(255)), education (varchar(255)), certifications (varchar(255)), languages (varchar(255)), cv\allowbreak Url (varchar(500)), cv\allowbreak File\allowbreak Name (varchar(255)), cv\allowbreak Public\allowbreak Id (varchar(255)), cv\allowbreak Uploaded\allowbreak At (timestamp(3)), experience (varchar(255)), id\allowbreak Verified (boolean), created\allowbreak At (timestamp(3)), updated\allowbreak At (timestamp(3)) \\ \hline
-\texttt{Client\allowbreak Profile} & id (integer), profile\allowbreak Id (integer), company\allowbreak Name (varchar(255)), company\allowbreak Description (varchar(255)), website (varchar(255)), created\allowbreak At (timestamp(3)), updated\allowbreak At (timestamp(3)) \\ \hline
-\texttt{Expert} & id (integer), profile\allowbreak Id (integer), title (varchar(255)), expertise (varchar(255)), years\allowbreak Of\allowbreak Experience (integer), education (varchar(255)), certifications (varchar(255)), website (varchar(500)), is\allowbreak Active (boolean), created\allowbreak At (timestamp(3)), updated\allowbreak At (timestamp(3)) \\ \hline
-\end{tabular}
+\rowcolor{fptHeader}\textbf{Entity} & \textbf{Fields and descriptions} \\* \hline
+\endfirsthead
+\hline
+\rowcolor{fptHeader}\textbf{Entity} & \textbf{Fields and descriptions} \\* \hline
+\endhead
+\hline\endfoot
+\endlastfoot
+\texttt{User} & - id: used to store the unique identifier of the record \\*
+& - email: used to store the account email address \\
+& - password: used to store the hashed account password \\
+& - is\allowbreak Banned: used to store whether the account is banned \\
+& - created\allowbreak At: used to store the creation timestamp \\
+& - updated\allowbreak At: used to store the last update timestamp \\
+& - deleted\allowbreak At: used to store the soft-deletion timestamp \\
+& - stripe\allowbreak Customer\allowbreak Id: used to store the stripe customer id text value \\
+& - stripe\allowbreak Account\allowbreak Id: used to store the stripe account id text value \\
+& - stripe\allowbreak Onboarding\allowbreak Completed: used to store whether Stripe onboarding is completed \\
+& - role\allowbreak Id: used to store the foreign key reference to the primary role \\ \hline
+\texttt{Profile} & - id: used to store the unique identifier of the record \\*
+& - user\allowbreak Id: used to store the foreign key reference to the user \\
+& - display\allowbreak Name: used to store the display name text value \\
+& - avatar\allowbreak Url: used to store the avatar file URL \\
+& - cover\allowbreak Url: used to store the cover image URL \\
+& - bio: used to store the bio text value \\
+& - online\allowbreak Status: used to store the online status flag \\
+& - availability\allowbreak Status: used to store the availability status value from the AvailabilityStatus enumeration \\
+& - profile\allowbreak Completion\allowbreak Percent: used to store the profile completion percentage \\
+& - wallet\allowbreak Address: used to store the wallet address \\
+& - created\allowbreak At: used to store the creation timestamp \\
+& - updated\allowbreak At: used to store the last update timestamp \\ \hline
+\texttt{Freelancer\allowbreak Profile} & - id: used to store the unique identifier of the record \\*
+& - profile\allowbreak Id: used to store the foreign key reference to the profile \\
+& - title: used to store the title text \\
+& - education: used to store the list of education \\
+& - certifications: used to store the list of certifications \\
+& - languages: used to store the list of languages \\
+& - cv\allowbreak Url: used to store the uploaded CV file URL \\
+& - cv\allowbreak File\allowbreak Name: used to store the cv file name text value \\
+& - cv\allowbreak Public\allowbreak Id: used to store the cv public id text value \\
+& - cv\allowbreak Uploaded\allowbreak At: used to store the cv uploaded at timestamp \\
+& - experience: used to store the list of experience \\
+& - id\allowbreak Verified: used to store whether the identity is verified \\
+& - created\allowbreak At: used to store the creation timestamp \\
+& - updated\allowbreak At: used to store the last update timestamp \\ \hline
+\texttt{Client\allowbreak Profile} & - id: used to store the unique identifier of the record \\*
+& - profile\allowbreak Id: used to store the foreign key reference to the profile \\
+& - company\allowbreak Name: used to store the company name text value \\
+& - company\allowbreak Description: used to store the company description text value \\
+& - website: used to store the website text value \\
+& - created\allowbreak At: used to store the creation timestamp \\
+& - updated\allowbreak At: used to store the last update timestamp \\ \hline
+\texttt{Expert} & - id: used to store the unique identifier of the record \\*
+& - profile\allowbreak Id: used to store the foreign key reference to the profile \\
+& - title: used to store the title text \\
+& - expertise: used to store the list of expertise \\
+& - years\allowbreak Of\allowbreak Experience: used to store the years of experience \\
+& - education: used to store the list of education \\
+& - certifications: used to store the list of certifications \\
+& - website: used to store the website text value \\
+& - is\allowbreak Active: used to store whether the record is active \\
+& - created\allowbreak At: used to store the creation timestamp \\
+& - updated\allowbreak At: used to store the last update timestamp \\ \hline
+\end{longtable}
 \end{center}
 
 % ===============================================
@@ -131,18 +261,163 @@ This ERD describes the Profile History \& Social Links module. It stores profile
     \label{fig:erd-profile-history--social-links}
 \end{figure}
 
-\Needspace{6\baselineskip}
-\paragraph*{b) Table of entities}
-\begin{center}
+\Needspace{8\baselineskip}
+\paragraph*{b) Table of entities}\nopagebreak[4]
+\begin{center}\nopagebreak[4]
 \small\sloppy
-\begin{tabular}{|L{2.5cm}|L{9.5cm}|}
+\begin{longtable}{|L{2.5cm}|L{9.5cm}|}
 \hline
-\rowcolor{fptHeader}\textbf{Entity} & \textbf{Fields and data types} \\ \hline
-\texttt{User} & id (integer), email (varchar(255)), password (varchar(255)), is\allowbreak Banned (boolean), created\allowbreak At (timestamp(3)), updated\allowbreak At (timestamp(3)), deleted\allowbreak At (timestamp(3)), stripe\allowbreak Customer\allowbreak Id (varchar(255)), stripe\allowbreak Account\allowbreak Id (varchar(255)), stripe\allowbreak Onboarding\allowbreak Completed (boolean), role\allowbreak Id (integer) \\ \hline
-\texttt{Profile} & id (integer), user\allowbreak Id (integer), display\allowbreak Name (varchar(255)), avatar\allowbreak Url (varchar(500)), cover\allowbreak Url (varchar(500)), bio (varchar(255)), online\allowbreak Status (boolean), availability\allowbreak Status (enum(Availability\allowbreak Status)), profile\allowbreak Completion\allowbreak Percent (integer), wallet\allowbreak Address (varchar(42)), created\allowbreak At (timestamp(3)), updated\allowbreak At (timestamp(3)) \\ \hline
-\texttt{Profile\allowbreak Revision} & id (integer), user\allowbreak Id (integer), profile\allowbreak Id (integer), profile\allowbreak Type (enum(Profile\allowbreak Revision\allowbreak Type)), status (enum(Revision\allowbreak Status)), current\allowbreak Data (jsonb), proposed\allowbreak Data (jsonb), profile\allowbreak Strength (integer), admin\allowbreak Id (integer), review\allowbreak Notes (varchar(255)), created\allowbreak At (timestamp(3)), updated\allowbreak At (timestamp(3)), reviewed\allowbreak At (timestamp(3)) \\ \hline
-\texttt{Social\allowbreak Link} & id (integer), profile\allowbreak Id (integer), platform (enum(Social\allowbreak Platform)), url (varchar(500)) \\ \hline
-\end{tabular}
+\rowcolor{fptHeader}\textbf{Entity} & \textbf{Fields and descriptions} \\* \hline
+\endfirsthead
+\hline
+\rowcolor{fptHeader}\textbf{Entity} & \textbf{Fields and descriptions} \\* \hline
+\endhead
+\hline\endfoot
+\endlastfoot
+\texttt{User} & - id: used to store the unique identifier of the record \\*
+& - email: used to store the account email address \\
+& - password: used to store the hashed account password \\
+& - is\allowbreak Banned: used to store whether the account is banned \\
+& - created\allowbreak At: used to store the creation timestamp \\
+& - updated\allowbreak At: used to store the last update timestamp \\
+& - deleted\allowbreak At: used to store the soft-deletion timestamp \\
+& - stripe\allowbreak Customer\allowbreak Id: used to store the stripe customer id text value \\
+& - stripe\allowbreak Account\allowbreak Id: used to store the stripe account id text value \\
+& - stripe\allowbreak Onboarding\allowbreak Completed: used to store whether Stripe onboarding is completed \\
+& - role\allowbreak Id: used to store the foreign key reference to the primary role \\ \hline
+\texttt{Profile} & - id: used to store the unique identifier of the record \\*
+& - user\allowbreak Id: used to store the foreign key reference to the user \\
+& - display\allowbreak Name: used to store the display name text value \\
+& - avatar\allowbreak Url: used to store the avatar file URL \\
+& - cover\allowbreak Url: used to store the cover image URL \\
+& - bio: used to store the bio text value \\
+& - online\allowbreak Status: used to store the online status flag \\
+& - availability\allowbreak Status: used to store the availability status value from the AvailabilityStatus enumeration \\
+& - profile\allowbreak Completion\allowbreak Percent: used to store the profile completion percentage \\
+& - wallet\allowbreak Address: used to store the wallet address \\
+& - created\allowbreak At: used to store the creation timestamp \\
+& - updated\allowbreak At: used to store the last update timestamp \\ \hline
+\texttt{Profile\allowbreak Revision} & - id: used to store the unique identifier of the record \\*
+& - user\allowbreak Id: used to store the foreign key reference to the user \\
+& - profile\allowbreak Id: used to store the foreign key reference to the profile \\
+& - profile\allowbreak Type: used to store the profile type value from the ProfileRevisionType enumeration \\
+& - status: used to store the status value from the RevisionStatus enumeration \\
+& - current\allowbreak Data: used to store the current profile data in JSON format \\
+& - proposed\allowbreak Data: used to store the proposed profile data in JSON format \\
+& - profile\allowbreak Strength: used to store the profile strength integer value \\
+& - admin\allowbreak Id: used to store the foreign key reference to the reviewing administrator \\
+& - review\allowbreak Notes: used to store the review notes text \\
+& - created\allowbreak At: used to store the creation timestamp \\
+& - updated\allowbreak At: used to store the last update timestamp \\
+& - reviewed\allowbreak At: used to store the review timestamp \\ \hline
+\texttt{Social\allowbreak Link} & - id: used to store the unique identifier of the record \\*
+& - profile\allowbreak Id: used to store the foreign key reference to the profile \\
+& - platform: used to store the platform value from the SocialPlatform enumeration \\
+& - url: used to store the url text value \\ \hline
+\texttt{Freelancer\allowbreak Profile} & - id: used to store the unique identifier of the record \\*
+& - profile\allowbreak Id: used to store the foreign key reference to the profile \\
+& - title: used to store the title text \\
+& - education: used to store the list of education \\
+& - certifications: used to store the list of certifications \\
+& - languages: used to store the list of languages \\
+& - cv\allowbreak Url: used to store the uploaded CV file URL \\
+& - cv\allowbreak File\allowbreak Name: used to store the cv file name text value \\
+& - cv\allowbreak Public\allowbreak Id: used to store the cv public id text value \\
+& - cv\allowbreak Uploaded\allowbreak At: used to store the cv uploaded at timestamp \\
+& - experience: used to store the list of experience \\
+& - id\allowbreak Verified: used to store whether the identity is verified \\
+& - created\allowbreak At: used to store the creation timestamp \\
+& - updated\allowbreak At: used to store the last update timestamp \\ \hline
+\texttt{Cv\allowbreak Analysis} & - id: used to store the unique identifier of the record \\*
+& - freelancer\allowbreak Profile\allowbreak Id: used to store the foreign key reference to the freelancer profile \\
+& - status: used to store the status value from the CvAnalysisStatus enumeration \\
+& - cv\allowbreak Url: used to store the uploaded CV file URL \\
+& - cv\allowbreak File\allowbreak Name: used to store the cv file name text value \\
+& - cv\allowbreak Uploaded\allowbreak At: used to store the cv uploaded at timestamp \\
+& - source: used to store the source value from the CvSourceType enumeration \\
+& - pages: used to store the number of processed pages \\
+& - chars: used to store the number of processed characters \\
+& - truncated: used to store whether the extracted content was truncated \\
+& - ocr\allowbreak Used: used to store whether OCR was used during processing \\
+& - model: used to store the model text value \\
+& - duration\allowbreak Ms: used to store the processing duration in milliseconds \\
+& - warnings: used to store the processing warning messages \\
+& - payload: used to store the structured analysis payload in JSON format \\
+& - confirmed\allowbreak At: used to store the confirmation timestamp \\
+& - discarded\allowbreak At: used to store the discard timestamp \\
+& - created\allowbreak At: used to store the creation timestamp \\
+& - updated\allowbreak At: used to store the last update timestamp \\ \hline
+\texttt{Freelancer\allowbreak Experience} & - id: used to store the unique identifier of the record \\*
+& - freelancer\allowbreak Profile\allowbreak Id: used to store the foreign key reference to the freelancer profile \\
+& - title: used to store the title text \\
+& - company: used to store the company text value \\
+& - start\allowbreak Date: used to store the start date text value \\
+& - end\allowbreak Date: used to store the end date text value \\
+& - is\allowbreak Current: used to store whether the experience is current \\
+& - description: used to store the description text \\
+& - source: used to store the source value from the ProfileContentSource enumeration \\
+& - created\allowbreak At: used to store the creation timestamp \\
+& - updated\allowbreak At: used to store the last update timestamp \\
+& - deleted\allowbreak At: used to store the soft-deletion timestamp \\ \hline
+\texttt{Freelancer\allowbreak Education} & - id: used to store the unique identifier of the record \\*
+& - freelancer\allowbreak Profile\allowbreak Id: used to store the foreign key reference to the freelancer profile \\
+& - degree: used to store the degree text value \\
+& - school: used to store the school text value \\
+& - start\allowbreak Year: used to store the start year \\
+& - end\allowbreak Year: used to store the end year \\
+& - description: used to store the description text \\
+& - source: used to store the source value from the ProfileContentSource enumeration \\
+& - created\allowbreak At: used to store the creation timestamp \\
+& - updated\allowbreak At: used to store the last update timestamp \\
+& - deleted\allowbreak At: used to store the soft-deletion timestamp \\ \hline
+\texttt{Document\allowbreak Processing\allowbreak Job} & - id: used to store the unique identifier of the record \\*
+& - document\allowbreak Type: used to store the document type value from the AiDocumentType enumeration \\
+& - document\allowbreak Id: used to store the document id integer value \\
+& - document\allowbreak Version: used to store the document version number \\
+& - status: used to store the status value from the AiProcessingStatus enumeration \\
+& - attempt\allowbreak Count: used to store the processing attempt count \\
+& - error\allowbreak Message: used to store the processing error message text \\
+& - created\allowbreak At: used to store the creation timestamp \\
+& - updated\allowbreak At: used to store the last update timestamp \\ \hline
+\texttt{Embedding\allowbreak Index\allowbreak Record} & - id: used to store the unique identifier of the record \\*
+& - document\allowbreak Type: used to store the document type value from the AiDocumentType enumeration \\
+& - document\allowbreak Id: used to store the document id integer value \\
+& - document\allowbreak Version: used to store the document version number \\
+& - section: used to store the section text value \\
+& - embedding\allowbreak Model: used to store the embedding model text value \\
+& - collection\allowbreak Name: used to store the collection name text value \\
+& - vector\allowbreak Record\allowbreak Id: used to store the vector record id text value \\
+& - content\allowbreak Hash: used to store the content hash text value \\
+& - index\allowbreak Status: used to store the index status value from the EmbeddingIndexStatus enumeration \\
+& - indexed\allowbreak At: used to store the indexing timestamp \\
+& - created\allowbreak At: used to store the creation timestamp \\
+& - updated\allowbreak At: used to store the last update timestamp \\ \hline
+\texttt{Recommendation} & - id: used to store the unique identifier of the record \\*
+& - requester\allowbreak Id: used to store the foreign key reference to the requesting user \\
+& - source\allowbreak Type: used to store the source type value from the AiDocumentType enumeration \\
+& - source\allowbreak Document\allowbreak Id: used to store the source document id integer value \\
+& - target\allowbreak Type: used to store the target type value from the AiDocumentType enumeration \\
+& - target\allowbreak Document\allowbreak Id: used to store the target document id integer value \\
+& - semantic\allowbreak Score: used to store the semantic match score \\
+& - skill\allowbreak Score: used to store the skill match score \\
+& - experience\allowbreak Score: used to store the experience match score \\
+& - budget\allowbreak Score: used to store the budget match score \\
+& - preference\allowbreak Score: used to store the preference match score \\
+& - final\allowbreak Score: used to store the final recommendation score \\
+& - ranking\allowbreak Version: used to store the ranking version text value \\
+& - embedding\allowbreak Model: used to store the embedding model text value \\
+& - created\allowbreak At: used to store the creation timestamp \\ \hline
+\texttt{Embedding\allowbreak Outbox\allowbreak Event} & - id: used to store the unique identifier of the record \\*
+& - event\allowbreak Type: used to store the event type value from the OutboxEventType enumeration \\
+& - document\allowbreak Type: used to store the document type value from the AiDocumentType enumeration \\
+& - document\allowbreak Id: used to store the document id integer value \\
+& - document\allowbreak Version: used to store the document version number \\
+& - status: used to store the status value from the OutboxEventStatus enumeration \\
+& - attempt\allowbreak Count: used to store the processing attempt count \\
+& - last\allowbreak Error: used to store the last processing error text \\
+& - created\allowbreak At: used to store the creation timestamp \\
+& - processed\allowbreak At: used to store the processing timestamp \\ \hline
+\end{longtable}
 \end{center}
 
 % ===============================================
@@ -162,17 +437,54 @@ This ERD describes the Identity Verification \& Profile Visits module. It stores
     \label{fig:erd-identity-verification--profile-visits}
 \end{figure}
 
-\Needspace{6\baselineskip}
-\paragraph*{b) Table of entities}
-\begin{center}
+\Needspace{8\baselineskip}
+\paragraph*{b) Table of entities}\nopagebreak[4]
+\begin{center}\nopagebreak[4]
 \small\sloppy
-\begin{tabular}{|L{2.5cm}|L{9.5cm}|}
+\begin{longtable}{|L{2.5cm}|L{9.5cm}|}
 \hline
-\rowcolor{fptHeader}\textbf{Entity} & \textbf{Fields and data types} \\ \hline
-\texttt{User} & id (integer), email (varchar(255)), password (varchar(255)), is\allowbreak Banned (boolean), created\allowbreak At (timestamp(3)), updated\allowbreak At (timestamp(3)), deleted\allowbreak At (timestamp(3)), stripe\allowbreak Customer\allowbreak Id (varchar(255)), stripe\allowbreak Account\allowbreak Id (varchar(255)), stripe\allowbreak Onboarding\allowbreak Completed (boolean), role\allowbreak Id (integer) \\ \hline
-\texttt{Id\allowbreak Verification\allowbreak Document} & id (integer), user\allowbreak Id (integer), document\allowbreak Type (enum(Document\allowbreak Type)), file\allowbreak Url (varchar(500)), status (enum(Verification\allowbreak Status)), admin\allowbreak Id (integer), review\allowbreak Notes (varchar(255)), created\allowbreak At (timestamp(3)), reviewed\allowbreak At (timestamp(3)), deleted\allowbreak At (timestamp(3)), ai\allowbreak Status (varchar(20)), ai\allowbreak Score (double precision), ai\allowbreak Summary (jsonb), ai\allowbreak Selfie\allowbreak Summary (jsonb), ai\allowbreak Error (varchar(255)), ai\allowbreak Scanned\allowbreak At (timestamp(3)), back\allowbreak File\allowbreak Url (varchar(500)), identity\allowbreak Number (varchar(50)), duplicate\allowbreak Of\allowbreak Id (integer) \\ \hline
-\texttt{Profile\allowbreak Visit\allowbreak Log} & id (integer), viewer\allowbreak Id (integer), target\allowbreak Freelancer\allowbreak Id (integer), viewed\allowbreak At (timestamp(3)) \\ \hline
-\end{tabular}
+\rowcolor{fptHeader}\textbf{Entity} & \textbf{Fields and descriptions} \\* \hline
+\endfirsthead
+\hline
+\rowcolor{fptHeader}\textbf{Entity} & \textbf{Fields and descriptions} \\* \hline
+\endhead
+\hline\endfoot
+\endlastfoot
+\texttt{User} & - id: used to store the unique identifier of the record \\*
+& - email: used to store the account email address \\
+& - password: used to store the hashed account password \\
+& - is\allowbreak Banned: used to store whether the account is banned \\
+& - created\allowbreak At: used to store the creation timestamp \\
+& - updated\allowbreak At: used to store the last update timestamp \\
+& - deleted\allowbreak At: used to store the soft-deletion timestamp \\
+& - stripe\allowbreak Customer\allowbreak Id: used to store the stripe customer id text value \\
+& - stripe\allowbreak Account\allowbreak Id: used to store the stripe account id text value \\
+& - stripe\allowbreak Onboarding\allowbreak Completed: used to store whether Stripe onboarding is completed \\
+& - role\allowbreak Id: used to store the foreign key reference to the primary role \\ \hline
+\texttt{Id\allowbreak Verification\allowbreak Document} & - id: used to store the unique identifier of the record \\*
+& - user\allowbreak Id: used to store the foreign key reference to the user \\
+& - document\allowbreak Type: used to store the document type value from the DocumentType enumeration \\
+& - file\allowbreak Url: used to store the file URL \\
+& - status: used to store the status value from the VerificationStatus enumeration \\
+& - admin\allowbreak Id: used to store the foreign key reference to the reviewing administrator \\
+& - review\allowbreak Notes: used to store the review notes text \\
+& - created\allowbreak At: used to store the creation timestamp \\
+& - reviewed\allowbreak At: used to store the review timestamp \\
+& - deleted\allowbreak At: used to store the soft-deletion timestamp \\
+& - ai\allowbreak Status: used to store the ai status text value \\
+& - ai\allowbreak Score: used to store the AI verification score \\
+& - ai\allowbreak Summary: used to store the AI summary data in JSON format \\
+& - ai\allowbreak Selfie\allowbreak Summary: used to store the AI selfie summary data in JSON format \\
+& - ai\allowbreak Error: used to store the ai error text value \\
+& - ai\allowbreak Scanned\allowbreak At: used to store the AI scan timestamp \\
+& - back\allowbreak File\allowbreak Url: used to store the back side file URL \\
+& - identity\allowbreak Number: used to store the identity document number \\
+& - duplicate\allowbreak Of\allowbreak Id: used to store the foreign key reference to the duplicate document \\ \hline
+\texttt{Profile\allowbreak Visit\allowbreak Log} & - id: used to store the unique identifier of the record \\*
+& - viewer\allowbreak Id: used to store the foreign key reference to the viewing user \\
+& - target\allowbreak Freelancer\allowbreak Id: used to store the foreign key reference to the target freelancer \\
+& - viewed\allowbreak At: used to store the view timestamp \\ \hline
+\end{longtable}
 \end{center}
 
 % ===============================================
@@ -192,20 +504,69 @@ This ERD describes the Portfolio \& Skills module. It stores portfolio items, fr
     \label{fig:erd-portfolio--skills}
 \end{figure}
 
-\Needspace{6\baselineskip}
-\paragraph*{b) Table of entities}
-\begin{center}
+\Needspace{8\baselineskip}
+\paragraph*{b) Table of entities}\nopagebreak[4]
+\begin{center}\nopagebreak[4]
 \small\sloppy
-\begin{tabular}{|L{2.5cm}|L{9.5cm}|}
+\begin{longtable}{|L{2.5cm}|L{9.5cm}|}
 \hline
-\rowcolor{fptHeader}\textbf{Entity} & \textbf{Fields and data types} \\ \hline
-\texttt{User} & id (integer), email (varchar(255)), password (varchar(255)), is\allowbreak Banned (boolean), created\allowbreak At (timestamp(3)), updated\allowbreak At (timestamp(3)), deleted\allowbreak At (timestamp(3)), stripe\allowbreak Customer\allowbreak Id (varchar(255)), stripe\allowbreak Account\allowbreak Id (varchar(255)), stripe\allowbreak Onboarding\allowbreak Completed (boolean), role\allowbreak Id (integer) \\ \hline
-\texttt{Freelancer\allowbreak Profile} & id (integer), profile\allowbreak Id (integer), title (varchar(255)), education (varchar(255)), certifications (varchar(255)), languages (varchar(255)), cv\allowbreak Url (varchar(500)), cv\allowbreak File\allowbreak Name (varchar(255)), cv\allowbreak Public\allowbreak Id (varchar(255)), cv\allowbreak Uploaded\allowbreak At (timestamp(3)), experience (varchar(255)), id\allowbreak Verified (boolean), created\allowbreak At (timestamp(3)), updated\allowbreak At (timestamp(3)) \\ \hline
-\texttt{Freelancer\allowbreak Skill} & id (integer), freelancer\allowbreak Profile\allowbreak Id (integer), skill\allowbreak Id (integer), proficiency\allowbreak Level (integer) \\ \hline
-\texttt{Skill} & id (integer), name (varchar(100)), slug (varchar(120)), description (varchar(255)), deleted\allowbreak At (timestamp(3)), created\allowbreak At (timestamp(3)), updated\allowbreak At (timestamp(3)) \\ \hline
-\texttt{Portfolio\allowbreak Item} & id (integer), freelancer\allowbreak Profile\allowbreak Id (integer), title (varchar(255)), description (varchar(255)), technologies (varchar(255)), project\allowbreak Url (varchar(500)), source (enum(Profile\allowbreak Content\allowbreak Source)), created\allowbreak At (timestamp(3)), updated\allowbreak At (timestamp(3)), deleted\allowbreak At (timestamp(3)) \\ \hline
-\texttt{Portfolio\allowbreak Like} & user\allowbreak Id (integer), portfolio\allowbreak Item\allowbreak Id (integer), created\allowbreak At (timestamp(3)) \\ \hline
-\end{tabular}
+\rowcolor{fptHeader}\textbf{Entity} & \textbf{Fields and descriptions} \\* \hline
+\endfirsthead
+\hline
+\rowcolor{fptHeader}\textbf{Entity} & \textbf{Fields and descriptions} \\* \hline
+\endhead
+\hline\endfoot
+\endlastfoot
+\texttt{User} & - id: used to store the unique identifier of the record \\*
+& - email: used to store the account email address \\
+& - password: used to store the hashed account password \\
+& - is\allowbreak Banned: used to store whether the account is banned \\
+& - created\allowbreak At: used to store the creation timestamp \\
+& - updated\allowbreak At: used to store the last update timestamp \\
+& - deleted\allowbreak At: used to store the soft-deletion timestamp \\
+& - stripe\allowbreak Customer\allowbreak Id: used to store the stripe customer id text value \\
+& - stripe\allowbreak Account\allowbreak Id: used to store the stripe account id text value \\
+& - stripe\allowbreak Onboarding\allowbreak Completed: used to store whether Stripe onboarding is completed \\
+& - role\allowbreak Id: used to store the foreign key reference to the primary role \\ \hline
+\texttt{Freelancer\allowbreak Profile} & - id: used to store the unique identifier of the record \\*
+& - profile\allowbreak Id: used to store the foreign key reference to the profile \\
+& - title: used to store the title text \\
+& - education: used to store the list of education \\
+& - certifications: used to store the list of certifications \\
+& - languages: used to store the list of languages \\
+& - cv\allowbreak Url: used to store the uploaded CV file URL \\
+& - cv\allowbreak File\allowbreak Name: used to store the cv file name text value \\
+& - cv\allowbreak Public\allowbreak Id: used to store the cv public id text value \\
+& - cv\allowbreak Uploaded\allowbreak At: used to store the cv uploaded at timestamp \\
+& - experience: used to store the list of experience \\
+& - id\allowbreak Verified: used to store whether the identity is verified \\
+& - created\allowbreak At: used to store the creation timestamp \\
+& - updated\allowbreak At: used to store the last update timestamp \\ \hline
+\texttt{Freelancer\allowbreak Skill} & - id: used to store the unique identifier of the record \\*
+& - freelancer\allowbreak Profile\allowbreak Id: used to store the foreign key reference to the freelancer profile \\
+& - skill\allowbreak Id: used to store the foreign key reference to the skill \\
+& - proficiency\allowbreak Level: used to store the skill proficiency level \\ \hline
+\texttt{Skill} & - id: used to store the unique identifier of the record \\*
+& - name: used to store the name value \\
+& - slug: used to store the URL slug \\
+& - description: used to store the description text \\
+& - deleted\allowbreak At: used to store the soft-deletion timestamp \\
+& - created\allowbreak At: used to store the creation timestamp \\
+& - updated\allowbreak At: used to store the last update timestamp \\ \hline
+\texttt{Portfolio\allowbreak Item} & - id: used to store the unique identifier of the record \\*
+& - freelancer\allowbreak Profile\allowbreak Id: used to store the foreign key reference to the freelancer profile \\
+& - title: used to store the title text \\
+& - description: used to store the description text \\
+& - technologies: used to store the list of technologies \\
+& - project\allowbreak Url: used to store the project URL \\
+& - source: used to store the source value from the ProfileContentSource enumeration \\
+& - created\allowbreak At: used to store the creation timestamp \\
+& - updated\allowbreak At: used to store the last update timestamp \\
+& - deleted\allowbreak At: used to store the soft-deletion timestamp \\ \hline
+\texttt{Portfolio\allowbreak Like} & - user\allowbreak Id: used to store the foreign key reference to the user \\*
+& - portfolio\allowbreak Item\allowbreak Id: used to store the foreign key reference to the portfolio item \\
+& - created\allowbreak At: used to store the creation timestamp \\ \hline
+\end{longtable}
 \end{center}
 
 % ===============================================
@@ -225,17 +586,37 @@ This ERD describes the Favorites \& Follows module. It stores favorite freelance
     \label{fig:erd-favorites--follows}
 \end{figure}
 
-\Needspace{6\baselineskip}
-\paragraph*{b) Table of entities}
-\begin{center}
+\Needspace{8\baselineskip}
+\paragraph*{b) Table of entities}\nopagebreak[4]
+\begin{center}\nopagebreak[4]
 \small\sloppy
-\begin{tabular}{|L{2.5cm}|L{9.5cm}|}
+\begin{longtable}{|L{2.5cm}|L{9.5cm}|}
 \hline
-\rowcolor{fptHeader}\textbf{Entity} & \textbf{Fields and data types} \\ \hline
-\texttt{User} & id (integer), email (varchar(255)), password (varchar(255)), is\allowbreak Banned (boolean), created\allowbreak At (timestamp(3)), updated\allowbreak At (timestamp(3)), deleted\allowbreak At (timestamp(3)), stripe\allowbreak Customer\allowbreak Id (varchar(255)), stripe\allowbreak Account\allowbreak Id (varchar(255)), stripe\allowbreak Onboarding\allowbreak Completed (boolean), role\allowbreak Id (integer) \\ \hline
-\texttt{Favorite\allowbreak Freelancer} & client\allowbreak Id (integer), freelancer\allowbreak Id (integer), created\allowbreak At (timestamp(3)) \\ \hline
-\texttt{Follow\allowbreak Freelancer} & client\allowbreak Id (integer), freelancer\allowbreak Id (integer), created\allowbreak At (timestamp(3)) \\ \hline
-\end{tabular}
+\rowcolor{fptHeader}\textbf{Entity} & \textbf{Fields and descriptions} \\* \hline
+\endfirsthead
+\hline
+\rowcolor{fptHeader}\textbf{Entity} & \textbf{Fields and descriptions} \\* \hline
+\endhead
+\hline\endfoot
+\endlastfoot
+\texttt{User} & - id: used to store the unique identifier of the record \\*
+& - email: used to store the account email address \\
+& - password: used to store the hashed account password \\
+& - is\allowbreak Banned: used to store whether the account is banned \\
+& - created\allowbreak At: used to store the creation timestamp \\
+& - updated\allowbreak At: used to store the last update timestamp \\
+& - deleted\allowbreak At: used to store the soft-deletion timestamp \\
+& - stripe\allowbreak Customer\allowbreak Id: used to store the stripe customer id text value \\
+& - stripe\allowbreak Account\allowbreak Id: used to store the stripe account id text value \\
+& - stripe\allowbreak Onboarding\allowbreak Completed: used to store whether Stripe onboarding is completed \\
+& - role\allowbreak Id: used to store the foreign key reference to the primary role \\ \hline
+\texttt{Favorite\allowbreak Freelancer} & - client\allowbreak Id: used to store the foreign key reference to the client \\*
+& - freelancer\allowbreak Id: used to store the foreign key reference to the freelancer \\
+& - created\allowbreak At: used to store the creation timestamp \\ \hline
+\texttt{Follow\allowbreak Freelancer} & - client\allowbreak Id: used to store the foreign key reference to the client \\*
+& - freelancer\allowbreak Id: used to store the foreign key reference to the freelancer \\
+& - created\allowbreak At: used to store the creation timestamp \\ \hline
+\end{longtable}
 \end{center}
 
 % ===============================================
@@ -255,20 +636,67 @@ This ERD describes the Job Posting module. It stores job categories, jobs, job-c
     \label{fig:erd-job-posting}
 \end{figure}
 
-\Needspace{6\baselineskip}
-\paragraph*{b) Table of entities}
-\begin{center}
+\Needspace{8\baselineskip}
+\paragraph*{b) Table of entities}\nopagebreak[4]
+\begin{center}\nopagebreak[4]
 \small\sloppy
-\begin{tabular}{|L{2.5cm}|L{9.5cm}|}
+\begin{longtable}{|L{2.5cm}|L{9.5cm}|}
 \hline
-\rowcolor{fptHeader}\textbf{Entity} & \textbf{Fields and data types} \\ \hline
-\texttt{User} & id (integer), email (varchar(255)), password (varchar(255)), is\allowbreak Banned (boolean), created\allowbreak At (timestamp(3)), updated\allowbreak At (timestamp(3)), deleted\allowbreak At (timestamp(3)), stripe\allowbreak Customer\allowbreak Id (varchar(255)), stripe\allowbreak Account\allowbreak Id (varchar(255)), stripe\allowbreak Onboarding\allowbreak Completed (boolean), role\allowbreak Id (integer) \\ \hline
-\texttt{Job} & id (integer), client\allowbreak Id (integer), title (varchar(255)), slug (varchar(300)), description (varchar(255)), budget\allowbreak Min (decimal(65,30)), budget\allowbreak Max (decimal(65,30)), budget\allowbreak Type (enum(Budget\allowbreak Type)), deadline (timestamp(3)), status (enum(Job\allowbreak Status)), expiry\allowbreak Date (timestamp(3)), created\allowbreak At (timestamp(3)), updated\allowbreak At (timestamp(3)), deleted\allowbreak At (timestamp(3)), hiring\allowbreak Type (enum(Hiring\allowbreak Type)), positions\allowbreak Required (integer), positions\allowbreak Filled (integer) \\ \hline
-\texttt{Job\allowbreak Category} & id (integer), name (varchar(100)), slug (varchar(120)), description (varchar(255)), status (enum(Job\allowbreak Category\allowbreak Status)), deleted\allowbreak At (timestamp(3)), created\allowbreak At (timestamp(3)), updated\allowbreak At (timestamp(3)) \\ \hline
-\texttt{Job\allowbreak Job\allowbreak Category} & job\allowbreak Id (integer), category\allowbreak Id (integer) \\ \hline
-\texttt{Job\allowbreak Skill} & job\allowbreak Id (integer), skill\allowbreak Id (integer) \\ \hline
-\texttt{Skill} & id (integer), name (varchar(100)), slug (varchar(120)), description (varchar(255)), deleted\allowbreak At (timestamp(3)), created\allowbreak At (timestamp(3)), updated\allowbreak At (timestamp(3)) \\ \hline
-\end{tabular}
+\rowcolor{fptHeader}\textbf{Entity} & \textbf{Fields and descriptions} \\* \hline
+\endfirsthead
+\hline
+\rowcolor{fptHeader}\textbf{Entity} & \textbf{Fields and descriptions} \\* \hline
+\endhead
+\hline\endfoot
+\endlastfoot
+\texttt{User} & - id: used to store the unique identifier of the record \\*
+& - email: used to store the account email address \\
+& - password: used to store the hashed account password \\
+& - is\allowbreak Banned: used to store whether the account is banned \\
+& - created\allowbreak At: used to store the creation timestamp \\
+& - updated\allowbreak At: used to store the last update timestamp \\
+& - deleted\allowbreak At: used to store the soft-deletion timestamp \\
+& - stripe\allowbreak Customer\allowbreak Id: used to store the stripe customer id text value \\
+& - stripe\allowbreak Account\allowbreak Id: used to store the stripe account id text value \\
+& - stripe\allowbreak Onboarding\allowbreak Completed: used to store whether Stripe onboarding is completed \\
+& - role\allowbreak Id: used to store the foreign key reference to the primary role \\ \hline
+\texttt{Job} & - id: used to store the unique identifier of the record \\*
+& - client\allowbreak Id: used to store the foreign key reference to the client \\
+& - title: used to store the title text \\
+& - slug: used to store the URL slug \\
+& - description: used to store the description text \\
+& - budget\allowbreak Min: used to store the minimum budget amount \\
+& - budget\allowbreak Max: used to store the maximum budget amount \\
+& - budget\allowbreak Type: used to store the budget type value from the BudgetType enumeration \\
+& - deadline: used to store the deadline timestamp \\
+& - status: used to store the status value from the JobStatus enumeration \\
+& - expiry\allowbreak Date: used to store the expiry date timestamp \\
+& - created\allowbreak At: used to store the creation timestamp \\
+& - updated\allowbreak At: used to store the last update timestamp \\
+& - deleted\allowbreak At: used to store the soft-deletion timestamp \\
+& - hiring\allowbreak Type: used to store the hiring type value from the HiringType enumeration \\
+& - positions\allowbreak Required: used to store the required number of positions \\
+& - positions\allowbreak Filled: used to store the filled number of positions \\ \hline
+\texttt{Job\allowbreak Category} & - id: used to store the unique identifier of the record \\*
+& - name: used to store the name value \\
+& - slug: used to store the URL slug \\
+& - description: used to store the description text \\
+& - status: used to store the status value from the JobCategoryStatus enumeration \\
+& - deleted\allowbreak At: used to store the soft-deletion timestamp \\
+& - created\allowbreak At: used to store the creation timestamp \\
+& - updated\allowbreak At: used to store the last update timestamp \\ \hline
+\texttt{Job\allowbreak Job\allowbreak Category} & - job\allowbreak Id: used to store the foreign key reference to the job \\*
+& - category\allowbreak Id: used to store the foreign key reference to the job category \\ \hline
+\texttt{Job\allowbreak Skill} & - job\allowbreak Id: used to store the foreign key reference to the job \\*
+& - skill\allowbreak Id: used to store the foreign key reference to the skill \\ \hline
+\texttt{Skill} & - id: used to store the unique identifier of the record \\*
+& - name: used to store the name value \\
+& - slug: used to store the URL slug \\
+& - description: used to store the description text \\
+& - deleted\allowbreak At: used to store the soft-deletion timestamp \\
+& - created\allowbreak At: used to store the creation timestamp \\
+& - updated\allowbreak At: used to store the last update timestamp \\ \hline
+\end{longtable}
 \end{center}
 
 % ===============================================
@@ -288,20 +716,71 @@ This ERD describes the Job Discovery \& Alerts module. It stores job bookmarks, 
     \label{fig:erd-job-discovery--alerts}
 \end{figure}
 
-\Needspace{6\baselineskip}
-\paragraph*{b) Table of entities}
-\begin{center}
+\Needspace{8\baselineskip}
+\paragraph*{b) Table of entities}\nopagebreak[4]
+\begin{center}\nopagebreak[4]
 \small\sloppy
-\begin{tabular}{|L{2.5cm}|L{9.5cm}|}
+\begin{longtable}{|L{2.5cm}|L{9.5cm}|}
 \hline
-\rowcolor{fptHeader}\textbf{Entity} & \textbf{Fields and data types} \\ \hline
-\texttt{User} & id (integer), email (varchar(255)), password (varchar(255)), is\allowbreak Banned (boolean), created\allowbreak At (timestamp(3)), updated\allowbreak At (timestamp(3)), deleted\allowbreak At (timestamp(3)), stripe\allowbreak Customer\allowbreak Id (varchar(255)), stripe\allowbreak Account\allowbreak Id (varchar(255)), stripe\allowbreak Onboarding\allowbreak Completed (boolean), role\allowbreak Id (integer) \\ \hline
-\texttt{Job} & id (integer), client\allowbreak Id (integer), title (varchar(255)), slug (varchar(300)), description (varchar(255)), budget\allowbreak Min (decimal(65,30)), budget\allowbreak Max (decimal(65,30)), budget\allowbreak Type (enum(Budget\allowbreak Type)), deadline (timestamp(3)), status (enum(Job\allowbreak Status)), expiry\allowbreak Date (timestamp(3)), created\allowbreak At (timestamp(3)), updated\allowbreak At (timestamp(3)), deleted\allowbreak At (timestamp(3)), hiring\allowbreak Type (enum(Hiring\allowbreak Type)), positions\allowbreak Required (integer), positions\allowbreak Filled (integer) \\ \hline
-\texttt{Job\allowbreak Bookmark} & user\allowbreak Id (integer), job\allowbreak Id (integer), created\allowbreak At (timestamp(3)) \\ \hline
-\texttt{Recently\allowbreak Viewed\allowbreak Job} & id (integer), user\allowbreak Id (integer), job\allowbreak Id (integer), viewed\allowbreak At (timestamp(3)) \\ \hline
-\texttt{Saved\allowbreak Search} & id (integer), user\allowbreak Id (integer), name (varchar(100)), search\allowbreak Params (jsonb), created\allowbreak At (timestamp(3)) \\ \hline
-\texttt{Job\allowbreak Alert} & id (integer), user\allowbreak Id (integer), name (varchar(100)), keywords (varchar(255)), skills (varchar(255)), frequency (enum(Job\allowbreak Alert\allowbreak Frequency)), channels (enum(Notification\allowbreak Channel)), is\allowbreak Active (boolean), last\allowbreak Sent\allowbreak At (timestamp(3)), created\allowbreak At (timestamp(3)), updated\allowbreak At (timestamp(3)) \\ \hline
-\end{tabular}
+\rowcolor{fptHeader}\textbf{Entity} & \textbf{Fields and descriptions} \\* \hline
+\endfirsthead
+\hline
+\rowcolor{fptHeader}\textbf{Entity} & \textbf{Fields and descriptions} \\* \hline
+\endhead
+\hline\endfoot
+\endlastfoot
+\texttt{User} & - id: used to store the unique identifier of the record \\*
+& - email: used to store the account email address \\
+& - password: used to store the hashed account password \\
+& - is\allowbreak Banned: used to store whether the account is banned \\
+& - created\allowbreak At: used to store the creation timestamp \\
+& - updated\allowbreak At: used to store the last update timestamp \\
+& - deleted\allowbreak At: used to store the soft-deletion timestamp \\
+& - stripe\allowbreak Customer\allowbreak Id: used to store the stripe customer id text value \\
+& - stripe\allowbreak Account\allowbreak Id: used to store the stripe account id text value \\
+& - stripe\allowbreak Onboarding\allowbreak Completed: used to store whether Stripe onboarding is completed \\
+& - role\allowbreak Id: used to store the foreign key reference to the primary role \\ \hline
+\texttt{Job} & - id: used to store the unique identifier of the record \\*
+& - client\allowbreak Id: used to store the foreign key reference to the client \\
+& - title: used to store the title text \\
+& - slug: used to store the URL slug \\
+& - description: used to store the description text \\
+& - budget\allowbreak Min: used to store the minimum budget amount \\
+& - budget\allowbreak Max: used to store the maximum budget amount \\
+& - budget\allowbreak Type: used to store the budget type value from the BudgetType enumeration \\
+& - deadline: used to store the deadline timestamp \\
+& - status: used to store the status value from the JobStatus enumeration \\
+& - expiry\allowbreak Date: used to store the expiry date timestamp \\
+& - created\allowbreak At: used to store the creation timestamp \\
+& - updated\allowbreak At: used to store the last update timestamp \\
+& - deleted\allowbreak At: used to store the soft-deletion timestamp \\
+& - hiring\allowbreak Type: used to store the hiring type value from the HiringType enumeration \\
+& - positions\allowbreak Required: used to store the required number of positions \\
+& - positions\allowbreak Filled: used to store the filled number of positions \\ \hline
+\texttt{Job\allowbreak Bookmark} & - user\allowbreak Id: used to store the foreign key reference to the user \\*
+& - job\allowbreak Id: used to store the foreign key reference to the job \\
+& - created\allowbreak At: used to store the creation timestamp \\ \hline
+\texttt{Recently\allowbreak Viewed\allowbreak Job} & - id: used to store the unique identifier of the record \\*
+& - user\allowbreak Id: used to store the foreign key reference to the user \\
+& - job\allowbreak Id: used to store the foreign key reference to the job \\
+& - viewed\allowbreak At: used to store the view timestamp \\ \hline
+\texttt{Saved\allowbreak Search} & - id: used to store the unique identifier of the record \\*
+& - user\allowbreak Id: used to store the foreign key reference to the user \\
+& - name: used to store the name value \\
+& - search\allowbreak Params: used to store the saved search parameters in JSON format \\
+& - created\allowbreak At: used to store the creation timestamp \\ \hline
+\texttt{Job\allowbreak Alert} & - id: used to store the unique identifier of the record \\*
+& - user\allowbreak Id: used to store the foreign key reference to the user \\
+& - name: used to store the name value \\
+& - keywords: used to store the keywords text value \\
+& - skills: used to store the list of skills \\
+& - frequency: used to store the frequency value from the JobAlertFrequency enumeration \\
+& - channels: used to store the list of channels \\
+& - is\allowbreak Active: used to store whether the record is active \\
+& - last\allowbreak Sent\allowbreak At: used to store the last sent timestamp \\
+& - created\allowbreak At: used to store the creation timestamp \\
+& - updated\allowbreak At: used to store the last update timestamp \\ \hline
+\end{longtable}
 \end{center}
 
 % ===============================================
@@ -321,18 +800,71 @@ This ERD describes the Proposal module. It stores proposals and proposal attachm
     \label{fig:erd-proposal}
 \end{figure}
 
-\Needspace{6\baselineskip}
-\paragraph*{b) Table of entities}
-\begin{center}
+\Needspace{8\baselineskip}
+\paragraph*{b) Table of entities}\nopagebreak[4]
+\begin{center}\nopagebreak[4]
 \small\sloppy
-\begin{tabular}{|L{2.5cm}|L{9.5cm}|}
+\begin{longtable}{|L{2.5cm}|L{9.5cm}|}
 \hline
-\rowcolor{fptHeader}\textbf{Entity} & \textbf{Fields and data types} \\ \hline
-\texttt{Job} & id (integer), client\allowbreak Id (integer), title (varchar(255)), slug (varchar(300)), description (varchar(255)), budget\allowbreak Min (decimal(65,30)), budget\allowbreak Max (decimal(65,30)), budget\allowbreak Type (enum(Budget\allowbreak Type)), deadline (timestamp(3)), status (enum(Job\allowbreak Status)), expiry\allowbreak Date (timestamp(3)), created\allowbreak At (timestamp(3)), updated\allowbreak At (timestamp(3)), deleted\allowbreak At (timestamp(3)), hiring\allowbreak Type (enum(Hiring\allowbreak Type)), positions\allowbreak Required (integer), positions\allowbreak Filled (integer) \\ \hline
-\texttt{User} & id (integer), email (varchar(255)), password (varchar(255)), is\allowbreak Banned (boolean), created\allowbreak At (timestamp(3)), updated\allowbreak At (timestamp(3)), deleted\allowbreak At (timestamp(3)), stripe\allowbreak Customer\allowbreak Id (varchar(255)), stripe\allowbreak Account\allowbreak Id (varchar(255)), stripe\allowbreak Onboarding\allowbreak Completed (boolean), role\allowbreak Id (integer) \\ \hline
-\texttt{Proposal} & id (integer), job\allowbreak Id (integer), freelancer\allowbreak Id (integer), cover\allowbreak Letter (varchar(255)), bid\allowbreak Amount (decimal(65,30)), delivery\allowbreak Days (integer), status (enum(Proposal\allowbreak Status)), created\allowbreak At (timestamp(3)), submitted\allowbreak At (timestamp(3)), accepted\allowbreak At (timestamp(3)), rejected\allowbreak At (timestamp(3)), withdrawn\allowbreak At (timestamp(3)), expires\allowbreak At (timestamp(3)), updated\allowbreak At (timestamp(3)), deleted\allowbreak At (timestamp(3)) \\ \hline
-\texttt{Proposal\allowbreak Attachment} & id (integer), proposal\allowbreak Id (integer), file\allowbreak Url (varchar(500)), file\allowbreak Name (varchar(255)), file\allowbreak Size (integer), mime\allowbreak Type (varchar(100)), created\allowbreak At (timestamp(3)), deleted\allowbreak At (timestamp(3)) \\ \hline
-\end{tabular}
+\rowcolor{fptHeader}\textbf{Entity} & \textbf{Fields and descriptions} \\* \hline
+\endfirsthead
+\hline
+\rowcolor{fptHeader}\textbf{Entity} & \textbf{Fields and descriptions} \\* \hline
+\endhead
+\hline\endfoot
+\endlastfoot
+\texttt{Job} & - id: used to store the unique identifier of the record \\*
+& - client\allowbreak Id: used to store the foreign key reference to the client \\
+& - title: used to store the title text \\
+& - slug: used to store the URL slug \\
+& - description: used to store the description text \\
+& - budget\allowbreak Min: used to store the minimum budget amount \\
+& - budget\allowbreak Max: used to store the maximum budget amount \\
+& - budget\allowbreak Type: used to store the budget type value from the BudgetType enumeration \\
+& - deadline: used to store the deadline timestamp \\
+& - status: used to store the status value from the JobStatus enumeration \\
+& - expiry\allowbreak Date: used to store the expiry date timestamp \\
+& - created\allowbreak At: used to store the creation timestamp \\
+& - updated\allowbreak At: used to store the last update timestamp \\
+& - deleted\allowbreak At: used to store the soft-deletion timestamp \\
+& - hiring\allowbreak Type: used to store the hiring type value from the HiringType enumeration \\
+& - positions\allowbreak Required: used to store the required number of positions \\
+& - positions\allowbreak Filled: used to store the filled number of positions \\ \hline
+\texttt{User} & - id: used to store the unique identifier of the record \\*
+& - email: used to store the account email address \\
+& - password: used to store the hashed account password \\
+& - is\allowbreak Banned: used to store whether the account is banned \\
+& - created\allowbreak At: used to store the creation timestamp \\
+& - updated\allowbreak At: used to store the last update timestamp \\
+& - deleted\allowbreak At: used to store the soft-deletion timestamp \\
+& - stripe\allowbreak Customer\allowbreak Id: used to store the stripe customer id text value \\
+& - stripe\allowbreak Account\allowbreak Id: used to store the stripe account id text value \\
+& - stripe\allowbreak Onboarding\allowbreak Completed: used to store whether Stripe onboarding is completed \\
+& - role\allowbreak Id: used to store the foreign key reference to the primary role \\ \hline
+\texttt{Proposal} & - id: used to store the unique identifier of the record \\*
+& - job\allowbreak Id: used to store the foreign key reference to the job \\
+& - freelancer\allowbreak Id: used to store the foreign key reference to the freelancer \\
+& - cover\allowbreak Letter: used to store the proposal cover letter text \\
+& - bid\allowbreak Amount: used to store the bid amount \\
+& - delivery\allowbreak Days: used to store the delivery days integer value \\
+& - status: used to store the status value from the ProposalStatus enumeration \\
+& - created\allowbreak At: used to store the creation timestamp \\
+& - submitted\allowbreak At: used to store the submission timestamp \\
+& - accepted\allowbreak At: used to store the acceptance timestamp \\
+& - rejected\allowbreak At: used to store the rejection timestamp \\
+& - withdrawn\allowbreak At: used to store the withdrawal timestamp \\
+& - expires\allowbreak At: used to store the expiration timestamp \\
+& - updated\allowbreak At: used to store the last update timestamp \\
+& - deleted\allowbreak At: used to store the soft-deletion timestamp \\ \hline
+\texttt{Proposal\allowbreak Attachment} & - id: used to store the unique identifier of the record \\*
+& - proposal\allowbreak Id: used to store the foreign key reference to the proposal \\
+& - file\allowbreak Url: used to store the file URL \\
+& - file\allowbreak Name: used to store the uploaded file name \\
+& - file\allowbreak Size: used to store the file size in bytes \\
+& - mime\allowbreak Type: used to store the file MIME type \\
+& - created\allowbreak At: used to store the creation timestamp \\
+& - deleted\allowbreak At: used to store the soft-deletion timestamp \\ \hline
+\end{longtable}
 \end{center}
 
 % ===============================================
@@ -352,19 +884,102 @@ This ERD describes the Contract module. It stores contracts and contract term te
     \label{fig:erd-contract}
 \end{figure}
 
-\Needspace{6\baselineskip}
-\paragraph*{b) Table of entities}
-\begin{center}
+\Needspace{8\baselineskip}
+\paragraph*{b) Table of entities}\nopagebreak[4]
+\begin{center}\nopagebreak[4]
 \small\sloppy
-\begin{tabular}{|L{2.5cm}|L{9.5cm}|}
+\begin{longtable}{|L{2.5cm}|L{9.5cm}|}
 \hline
-\rowcolor{fptHeader}\textbf{Entity} & \textbf{Fields and data types} \\ \hline
-\texttt{Job} & id (integer), client\allowbreak Id (integer), title (varchar(255)), slug (varchar(300)), description (varchar(255)), budget\allowbreak Min (decimal(65,30)), budget\allowbreak Max (decimal(65,30)), budget\allowbreak Type (enum(Budget\allowbreak Type)), deadline (timestamp(3)), status (enum(Job\allowbreak Status)), expiry\allowbreak Date (timestamp(3)), created\allowbreak At (timestamp(3)), updated\allowbreak At (timestamp(3)), deleted\allowbreak At (timestamp(3)), hiring\allowbreak Type (enum(Hiring\allowbreak Type)), positions\allowbreak Required (integer), positions\allowbreak Filled (integer) \\ \hline
-\texttt{Proposal} & id (integer), job\allowbreak Id (integer), freelancer\allowbreak Id (integer), cover\allowbreak Letter (varchar(255)), bid\allowbreak Amount (decimal(65,30)), delivery\allowbreak Days (integer), status (enum(Proposal\allowbreak Status)), created\allowbreak At (timestamp(3)), submitted\allowbreak At (timestamp(3)), accepted\allowbreak At (timestamp(3)), rejected\allowbreak At (timestamp(3)), withdrawn\allowbreak At (timestamp(3)), expires\allowbreak At (timestamp(3)), updated\allowbreak At (timestamp(3)), deleted\allowbreak At (timestamp(3)) \\ \hline
-\texttt{User} & id (integer), email (varchar(255)), password (varchar(255)), is\allowbreak Banned (boolean), created\allowbreak At (timestamp(3)), updated\allowbreak At (timestamp(3)), deleted\allowbreak At (timestamp(3)), stripe\allowbreak Customer\allowbreak Id (varchar(255)), stripe\allowbreak Account\allowbreak Id (varchar(255)), stripe\allowbreak Onboarding\allowbreak Completed (boolean), role\allowbreak Id (integer) \\ \hline
-\texttt{Contract} & id (integer), slug (varchar(255)), job\allowbreak Id (integer), proposal\allowbreak Id (integer), client\allowbreak Id (integer), freelancer\allowbreak Id (integer), terms (varchar(255)), total\allowbreak Amount (decimal(65,30)), status (enum(Contract\allowbreak Status)), signed\allowbreak By\allowbreak Client (boolean), signed\allowbreak By\allowbreak Freelancer (boolean), client\allowbreak Signed\allowbreak At (timestamp(3)), freelancer\allowbreak Signed\allowbreak At (timestamp(3)), client\allowbreak Platform\allowbreak Fee (decimal(65,30)), platform\allowbreak Fee (decimal(65,30)), platform\allowbreak Fee\allowbreak Status (enum(Platform\allowbreak Fee\allowbreak Status)), platform\allowbreak Fee\allowbreak Paid\allowbreak At (timestamp(3)), client\allowbreak Fee\allowbreak Status (enum(Platform\allowbreak Fee\allowbreak Status)), client\allowbreak Fee\allowbreak Paid\allowbreak At (timestamp(3)), freelancer\allowbreak Fee\allowbreak Status (enum(Platform\allowbreak Fee\allowbreak Status)), freelancer\allowbreak Fee\allowbreak Paid\allowbreak At (timestamp(3)), hold\allowbreak Payment\allowbreak Intent\allowbreak Id (varchar(255)), hold\allowbreak Milestone\allowbreak Ids (integer), rejected\allowbreak At (timestamp(3)), reject\allowbreak Reason (varchar(255)), created\allowbreak At (timestamp(3)), signed\allowbreak At (timestamp(3)), completed\allowbreak At (timestamp(3)), expires\allowbreak At (timestamp(3)), deleted\allowbreak At (timestamp(3)) \\ \hline
-\texttt{Contract\allowbreak Term\allowbreak Template} & id (integer), creator\allowbreak Id (integer), title (varchar(255)), content (varchar(255)), category (varchar(100)), is\allowbreak Active (boolean), created\allowbreak At (timestamp(3)), updated\allowbreak At (timestamp(3)), deleted\allowbreak At (timestamp(3)) \\ \hline
-\end{tabular}
+\rowcolor{fptHeader}\textbf{Entity} & \textbf{Fields and descriptions} \\* \hline
+\endfirsthead
+\hline
+\rowcolor{fptHeader}\textbf{Entity} & \textbf{Fields and descriptions} \\* \hline
+\endhead
+\hline\endfoot
+\endlastfoot
+\texttt{Job} & - id: used to store the unique identifier of the record \\*
+& - client\allowbreak Id: used to store the foreign key reference to the client \\
+& - title: used to store the title text \\
+& - slug: used to store the URL slug \\
+& - description: used to store the description text \\
+& - budget\allowbreak Min: used to store the minimum budget amount \\
+& - budget\allowbreak Max: used to store the maximum budget amount \\
+& - budget\allowbreak Type: used to store the budget type value from the BudgetType enumeration \\
+& - deadline: used to store the deadline timestamp \\
+& - status: used to store the status value from the JobStatus enumeration \\
+& - expiry\allowbreak Date: used to store the expiry date timestamp \\
+& - created\allowbreak At: used to store the creation timestamp \\
+& - updated\allowbreak At: used to store the last update timestamp \\
+& - deleted\allowbreak At: used to store the soft-deletion timestamp \\
+& - hiring\allowbreak Type: used to store the hiring type value from the HiringType enumeration \\
+& - positions\allowbreak Required: used to store the required number of positions \\
+& - positions\allowbreak Filled: used to store the filled number of positions \\ \hline
+\texttt{Proposal} & - id: used to store the unique identifier of the record \\*
+& - job\allowbreak Id: used to store the foreign key reference to the job \\
+& - freelancer\allowbreak Id: used to store the foreign key reference to the freelancer \\
+& - cover\allowbreak Letter: used to store the proposal cover letter text \\
+& - bid\allowbreak Amount: used to store the bid amount \\
+& - delivery\allowbreak Days: used to store the delivery days integer value \\
+& - status: used to store the status value from the ProposalStatus enumeration \\
+& - created\allowbreak At: used to store the creation timestamp \\
+& - submitted\allowbreak At: used to store the submission timestamp \\
+& - accepted\allowbreak At: used to store the acceptance timestamp \\
+& - rejected\allowbreak At: used to store the rejection timestamp \\
+& - withdrawn\allowbreak At: used to store the withdrawal timestamp \\
+& - expires\allowbreak At: used to store the expiration timestamp \\
+& - updated\allowbreak At: used to store the last update timestamp \\
+& - deleted\allowbreak At: used to store the soft-deletion timestamp \\ \hline
+\texttt{User} & - id: used to store the unique identifier of the record \\*
+& - email: used to store the account email address \\
+& - password: used to store the hashed account password \\
+& - is\allowbreak Banned: used to store whether the account is banned \\
+& - created\allowbreak At: used to store the creation timestamp \\
+& - updated\allowbreak At: used to store the last update timestamp \\
+& - deleted\allowbreak At: used to store the soft-deletion timestamp \\
+& - stripe\allowbreak Customer\allowbreak Id: used to store the stripe customer id text value \\
+& - stripe\allowbreak Account\allowbreak Id: used to store the stripe account id text value \\
+& - stripe\allowbreak Onboarding\allowbreak Completed: used to store whether Stripe onboarding is completed \\
+& - role\allowbreak Id: used to store the foreign key reference to the primary role \\ \hline
+\texttt{Contract} & - id: used to store the unique identifier of the record \\*
+& - slug: used to store the URL slug \\
+& - job\allowbreak Id: used to store the foreign key reference to the job \\
+& - proposal\allowbreak Id: used to store the foreign key reference to the proposal \\
+& - client\allowbreak Id: used to store the foreign key reference to the client \\
+& - freelancer\allowbreak Id: used to store the foreign key reference to the freelancer \\
+& - terms: used to store the contract terms text \\
+& - total\allowbreak Amount: used to store the total amount \\
+& - status: used to store the status value from the ContractStatus enumeration \\
+& - signed\allowbreak By\allowbreak Client: used to store whether the contract is signed by the client \\
+& - signed\allowbreak By\allowbreak Freelancer: used to store whether the contract is signed by the freelancer \\
+& - client\allowbreak Signed\allowbreak At: used to store the client signing timestamp \\
+& - freelancer\allowbreak Signed\allowbreak At: used to store the freelancer signing timestamp \\
+& - client\allowbreak Platform\allowbreak Fee: used to store the client platform fee amount \\
+& - platform\allowbreak Fee: used to store the platform fee amount \\
+& - platform\allowbreak Fee\allowbreak Status: used to store the platform fee status value from the PlatformFeeStatus enumeration \\
+& - platform\allowbreak Fee\allowbreak Paid\allowbreak At: used to store the platform fee payment timestamp \\
+& - client\allowbreak Fee\allowbreak Status: used to store the client fee status value from the PlatformFeeStatus enumeration \\
+& - client\allowbreak Fee\allowbreak Paid\allowbreak At: used to store the client fee payment timestamp \\
+& - freelancer\allowbreak Fee\allowbreak Status: used to store the freelancer fee status value from the PlatformFeeStatus enumeration \\
+& - freelancer\allowbreak Fee\allowbreak Paid\allowbreak At: used to store the freelancer fee payment timestamp \\
+& - hold\allowbreak Payment\allowbreak Intent\allowbreak Id: used to store the hold payment intent id text value \\
+& - hold\allowbreak Milestone\allowbreak Ids: used to store the list of hold milestone ids \\
+& - rejected\allowbreak At: used to store the rejection timestamp \\
+& - reject\allowbreak Reason: used to store the rejection reason text \\
+& - created\allowbreak At: used to store the creation timestamp \\
+& - signed\allowbreak At: used to store the signing timestamp \\
+& - completed\allowbreak At: used to store the completion timestamp \\
+& - expires\allowbreak At: used to store the expiration timestamp \\
+& - deleted\allowbreak At: used to store the soft-deletion timestamp \\ \hline
+\texttt{Contract\allowbreak Term\allowbreak Template} & - id: used to store the unique identifier of the record \\*
+& - creator\allowbreak Id: used to store the foreign key reference to the user \\
+& - title: used to store the title text \\
+& - content: used to store the content text \\
+& - category: used to store the category text value \\
+& - is\allowbreak Active: used to store whether the record is active \\
+& - created\allowbreak At: used to store the creation timestamp \\
+& - updated\allowbreak At: used to store the last update timestamp \\
+& - deleted\allowbreak At: used to store the soft-deletion timestamp \\ \hline
+\end{longtable}
 \end{center}
 
 % ===============================================
@@ -384,19 +999,86 @@ This ERD describes the Milestone \& Project Progress module. It stores milestone
     \label{fig:erd-milestone--project-progress}
 \end{figure}
 
-\Needspace{6\baselineskip}
-\paragraph*{b) Table of entities}
-\begin{center}
+\Needspace{8\baselineskip}
+\paragraph*{b) Table of entities}\nopagebreak[4]
+\begin{center}\nopagebreak[4]
 \small\sloppy
-\begin{tabular}{|L{2.5cm}|L{9.5cm}|}
+\begin{longtable}{|L{2.5cm}|L{9.5cm}|}
 \hline
-\rowcolor{fptHeader}\textbf{Entity} & \textbf{Fields and data types} \\ \hline
-\texttt{User} & id (integer), email (varchar(255)), password (varchar(255)), is\allowbreak Banned (boolean), created\allowbreak At (timestamp(3)), updated\allowbreak At (timestamp(3)), deleted\allowbreak At (timestamp(3)), stripe\allowbreak Customer\allowbreak Id (varchar(255)), stripe\allowbreak Account\allowbreak Id (varchar(255)), stripe\allowbreak Onboarding\allowbreak Completed (boolean), role\allowbreak Id (integer) \\ \hline
-\texttt{Contract} & id (integer), slug (varchar(255)), job\allowbreak Id (integer), proposal\allowbreak Id (integer), client\allowbreak Id (integer), freelancer\allowbreak Id (integer), terms (varchar(255)), total\allowbreak Amount (decimal(65,30)), status (enum(Contract\allowbreak Status)), signed\allowbreak By\allowbreak Client (boolean), signed\allowbreak By\allowbreak Freelancer (boolean), client\allowbreak Signed\allowbreak At (timestamp(3)), freelancer\allowbreak Signed\allowbreak At (timestamp(3)), client\allowbreak Platform\allowbreak Fee (decimal(65,30)), platform\allowbreak Fee (decimal(65,30)), platform\allowbreak Fee\allowbreak Status (enum(Platform\allowbreak Fee\allowbreak Status)), platform\allowbreak Fee\allowbreak Paid\allowbreak At (timestamp(3)), client\allowbreak Fee\allowbreak Status (enum(Platform\allowbreak Fee\allowbreak Status)), client\allowbreak Fee\allowbreak Paid\allowbreak At (timestamp(3)), freelancer\allowbreak Fee\allowbreak Status (enum(Platform\allowbreak Fee\allowbreak Status)), freelancer\allowbreak Fee\allowbreak Paid\allowbreak At (timestamp(3)), hold\allowbreak Payment\allowbreak Intent\allowbreak Id (varchar(255)), hold\allowbreak Milestone\allowbreak Ids (integer), rejected\allowbreak At (timestamp(3)), reject\allowbreak Reason (varchar(255)), created\allowbreak At (timestamp(3)), signed\allowbreak At (timestamp(3)), completed\allowbreak At (timestamp(3)), expires\allowbreak At (timestamp(3)), deleted\allowbreak At (timestamp(3)) \\ \hline
-\texttt{Milestone} & id (integer), contract\allowbreak Id (integer), title (varchar(255)), description (varchar(255)), amount (decimal(65,30)), status (enum(Milestone\allowbreak Status)), payment\allowbreak Status (enum(Milestone\allowbreak Payment\allowbreak Status)), due\allowbreak Date (timestamp(3)), completed\allowbreak At (timestamp(3)), created\allowbreak At (timestamp(3)), updated\allowbreak At (timestamp(3)), deleted\allowbreak At (timestamp(3)) \\ \hline
-\texttt{Milestone\allowbreak File} & id (integer), milestone\allowbreak Id (integer), uploader\allowbreak Id (integer), file\allowbreak Url (varchar(255)), public\allowbreak Id (varchar(255)), file\allowbreak Name (varchar(255)), created\allowbreak At (timestamp(3)), deleted\allowbreak At (timestamp(3)) \\ \hline
-\texttt{Project\allowbreak Progress\allowbreak Update} & id (integer), contract\allowbreak Id (integer), freelancer\allowbreak Id (integer), note (varchar(255)), updated\allowbreak At (timestamp(3)) \\ \hline
-\end{tabular}
+\rowcolor{fptHeader}\textbf{Entity} & \textbf{Fields and descriptions} \\* \hline
+\endfirsthead
+\hline
+\rowcolor{fptHeader}\textbf{Entity} & \textbf{Fields and descriptions} \\* \hline
+\endhead
+\hline\endfoot
+\endlastfoot
+\texttt{User} & - id: used to store the unique identifier of the record \\*
+& - email: used to store the account email address \\
+& - password: used to store the hashed account password \\
+& - is\allowbreak Banned: used to store whether the account is banned \\
+& - created\allowbreak At: used to store the creation timestamp \\
+& - updated\allowbreak At: used to store the last update timestamp \\
+& - deleted\allowbreak At: used to store the soft-deletion timestamp \\
+& - stripe\allowbreak Customer\allowbreak Id: used to store the stripe customer id text value \\
+& - stripe\allowbreak Account\allowbreak Id: used to store the stripe account id text value \\
+& - stripe\allowbreak Onboarding\allowbreak Completed: used to store whether Stripe onboarding is completed \\
+& - role\allowbreak Id: used to store the foreign key reference to the primary role \\ \hline
+\texttt{Contract} & - id: used to store the unique identifier of the record \\*
+& - slug: used to store the URL slug \\
+& - job\allowbreak Id: used to store the foreign key reference to the job \\
+& - proposal\allowbreak Id: used to store the foreign key reference to the proposal \\
+& - client\allowbreak Id: used to store the foreign key reference to the client \\
+& - freelancer\allowbreak Id: used to store the foreign key reference to the freelancer \\
+& - terms: used to store the contract terms text \\
+& - total\allowbreak Amount: used to store the total amount \\
+& - status: used to store the status value from the ContractStatus enumeration \\
+& - signed\allowbreak By\allowbreak Client: used to store whether the contract is signed by the client \\
+& - signed\allowbreak By\allowbreak Freelancer: used to store whether the contract is signed by the freelancer \\
+& - client\allowbreak Signed\allowbreak At: used to store the client signing timestamp \\
+& - freelancer\allowbreak Signed\allowbreak At: used to store the freelancer signing timestamp \\
+& - client\allowbreak Platform\allowbreak Fee: used to store the client platform fee amount \\
+& - platform\allowbreak Fee: used to store the platform fee amount \\
+& - platform\allowbreak Fee\allowbreak Status: used to store the platform fee status value from the PlatformFeeStatus enumeration \\
+& - platform\allowbreak Fee\allowbreak Paid\allowbreak At: used to store the platform fee payment timestamp \\
+& - client\allowbreak Fee\allowbreak Status: used to store the client fee status value from the PlatformFeeStatus enumeration \\
+& - client\allowbreak Fee\allowbreak Paid\allowbreak At: used to store the client fee payment timestamp \\
+& - freelancer\allowbreak Fee\allowbreak Status: used to store the freelancer fee status value from the PlatformFeeStatus enumeration \\
+& - freelancer\allowbreak Fee\allowbreak Paid\allowbreak At: used to store the freelancer fee payment timestamp \\
+& - hold\allowbreak Payment\allowbreak Intent\allowbreak Id: used to store the hold payment intent id text value \\
+& - hold\allowbreak Milestone\allowbreak Ids: used to store the list of hold milestone ids \\
+& - rejected\allowbreak At: used to store the rejection timestamp \\
+& - reject\allowbreak Reason: used to store the rejection reason text \\
+& - created\allowbreak At: used to store the creation timestamp \\
+& - signed\allowbreak At: used to store the signing timestamp \\
+& - completed\allowbreak At: used to store the completion timestamp \\
+& - expires\allowbreak At: used to store the expiration timestamp \\
+& - deleted\allowbreak At: used to store the soft-deletion timestamp \\ \hline
+\texttt{Milestone} & - id: used to store the unique identifier of the record \\*
+& - contract\allowbreak Id: used to store the foreign key reference to the contract \\
+& - title: used to store the title text \\
+& - description: used to store the description text \\
+& - amount: used to store the amount value \\
+& - status: used to store the status value from the MilestoneStatus enumeration \\
+& - payment\allowbreak Status: used to store the payment status value from the MilestonePaymentStatus enumeration \\
+& - due\allowbreak Date: used to store the due date timestamp \\
+& - completed\allowbreak At: used to store the completion timestamp \\
+& - created\allowbreak At: used to store the creation timestamp \\
+& - updated\allowbreak At: used to store the last update timestamp \\
+& - deleted\allowbreak At: used to store the soft-deletion timestamp \\ \hline
+\texttt{Milestone\allowbreak File} & - id: used to store the unique identifier of the record \\*
+& - milestone\allowbreak Id: used to store the foreign key reference to the milestone \\
+& - uploader\allowbreak Id: used to store the foreign key reference to the uploading user \\
+& - file\allowbreak Url: used to store the file URL \\
+& - public\allowbreak Id: used to store the Cloudinary public identifier \\
+& - file\allowbreak Name: used to store the uploaded file name \\
+& - created\allowbreak At: used to store the creation timestamp \\
+& - deleted\allowbreak At: used to store the soft-deletion timestamp \\ \hline
+\texttt{Project\allowbreak Progress\allowbreak Update} & - id: used to store the unique identifier of the record \\*
+& - contract\allowbreak Id: used to store the foreign key reference to the contract \\
+& - freelancer\allowbreak Id: used to store the foreign key reference to the freelancer \\
+& - note: used to store the progress note text \\
+& - updated\allowbreak At: used to store the last update timestamp \\ \hline
+\end{longtable}
 \end{center}
 
 % ===============================================
@@ -416,19 +1098,65 @@ This ERD describes the Milestone Submission module. It stores milestone files, s
     \label{fig:erd-milestone-submission}
 \end{figure}
 
-\Needspace{6\baselineskip}
-\paragraph*{b) Table of entities}
-\begin{center}
+\Needspace{8\baselineskip}
+\paragraph*{b) Table of entities}\nopagebreak[4]
+\begin{center}\nopagebreak[4]
 \small\sloppy
-\begin{tabular}{|L{2.5cm}|L{9.5cm}|}
+\begin{longtable}{|L{2.5cm}|L{9.5cm}|}
 \hline
-\rowcolor{fptHeader}\textbf{Entity} & \textbf{Fields and data types} \\ \hline
-\texttt{User} & id (integer), email (varchar(255)), password (varchar(255)), is\allowbreak Banned (boolean), created\allowbreak At (timestamp(3)), updated\allowbreak At (timestamp(3)), deleted\allowbreak At (timestamp(3)), stripe\allowbreak Customer\allowbreak Id (varchar(255)), stripe\allowbreak Account\allowbreak Id (varchar(255)), stripe\allowbreak Onboarding\allowbreak Completed (boolean), role\allowbreak Id (integer) \\ \hline
-\texttt{Milestone} & id (integer), contract\allowbreak Id (integer), title (varchar(255)), description (varchar(255)), amount (decimal(65,30)), status (enum(Milestone\allowbreak Status)), payment\allowbreak Status (enum(Milestone\allowbreak Payment\allowbreak Status)), due\allowbreak Date (timestamp(3)), completed\allowbreak At (timestamp(3)), created\allowbreak At (timestamp(3)), updated\allowbreak At (timestamp(3)), deleted\allowbreak At (timestamp(3)) \\ \hline
-\texttt{Milestone\allowbreak File} & id (integer), milestone\allowbreak Id (integer), uploader\allowbreak Id (integer), file\allowbreak Url (varchar(255)), public\allowbreak Id (varchar(255)), file\allowbreak Name (varchar(255)), created\allowbreak At (timestamp(3)), deleted\allowbreak At (timestamp(3)) \\ \hline
-\texttt{Milestone\allowbreak Submission} & id (integer), milestone\allowbreak Id (integer), freelancer\allowbreak Id (integer), message (varchar(255)), links (varchar(255)), status (enum(Submission\allowbreak Status)), change\allowbreak Request\allowbreak Message (varchar(255)), change\allowbreak Request\allowbreak Due\allowbreak Date (timestamp(3)), submitted\allowbreak At (timestamp(3)), reviewed\allowbreak At (timestamp(3)), created\allowbreak At (timestamp(3)), updated\allowbreak At (timestamp(3)) \\ \hline
-\texttt{Milestone\allowbreak Submission\allowbreak File} & submission\allowbreak Id (integer), file\allowbreak Id (integer) \\ \hline
-\end{tabular}
+\rowcolor{fptHeader}\textbf{Entity} & \textbf{Fields and descriptions} \\* \hline
+\endfirsthead
+\hline
+\rowcolor{fptHeader}\textbf{Entity} & \textbf{Fields and descriptions} \\* \hline
+\endhead
+\hline\endfoot
+\endlastfoot
+\texttt{User} & - id: used to store the unique identifier of the record \\*
+& - email: used to store the account email address \\
+& - password: used to store the hashed account password \\
+& - is\allowbreak Banned: used to store whether the account is banned \\
+& - created\allowbreak At: used to store the creation timestamp \\
+& - updated\allowbreak At: used to store the last update timestamp \\
+& - deleted\allowbreak At: used to store the soft-deletion timestamp \\
+& - stripe\allowbreak Customer\allowbreak Id: used to store the stripe customer id text value \\
+& - stripe\allowbreak Account\allowbreak Id: used to store the stripe account id text value \\
+& - stripe\allowbreak Onboarding\allowbreak Completed: used to store whether Stripe onboarding is completed \\
+& - role\allowbreak Id: used to store the foreign key reference to the primary role \\ \hline
+\texttt{Milestone} & - id: used to store the unique identifier of the record \\*
+& - contract\allowbreak Id: used to store the foreign key reference to the contract \\
+& - title: used to store the title text \\
+& - description: used to store the description text \\
+& - amount: used to store the amount value \\
+& - status: used to store the status value from the MilestoneStatus enumeration \\
+& - payment\allowbreak Status: used to store the payment status value from the MilestonePaymentStatus enumeration \\
+& - due\allowbreak Date: used to store the due date timestamp \\
+& - completed\allowbreak At: used to store the completion timestamp \\
+& - created\allowbreak At: used to store the creation timestamp \\
+& - updated\allowbreak At: used to store the last update timestamp \\
+& - deleted\allowbreak At: used to store the soft-deletion timestamp \\ \hline
+\texttt{Milestone\allowbreak File} & - id: used to store the unique identifier of the record \\*
+& - milestone\allowbreak Id: used to store the foreign key reference to the milestone \\
+& - uploader\allowbreak Id: used to store the foreign key reference to the uploading user \\
+& - file\allowbreak Url: used to store the file URL \\
+& - public\allowbreak Id: used to store the Cloudinary public identifier \\
+& - file\allowbreak Name: used to store the uploaded file name \\
+& - created\allowbreak At: used to store the creation timestamp \\
+& - deleted\allowbreak At: used to store the soft-deletion timestamp \\ \hline
+\texttt{Milestone\allowbreak Submission} & - id: used to store the unique identifier of the record \\*
+& - milestone\allowbreak Id: used to store the foreign key reference to the milestone \\
+& - freelancer\allowbreak Id: used to store the foreign key reference to the freelancer \\
+& - message: used to store the message text \\
+& - links: used to store the list of links \\
+& - status: used to store the status value from the SubmissionStatus enumeration \\
+& - change\allowbreak Request\allowbreak Message: used to store the change request message text value \\
+& - change\allowbreak Request\allowbreak Due\allowbreak Date: used to store the change request due date timestamp \\
+& - submitted\allowbreak At: used to store the submission timestamp \\
+& - reviewed\allowbreak At: used to store the review timestamp \\
+& - created\allowbreak At: used to store the creation timestamp \\
+& - updated\allowbreak At: used to store the last update timestamp \\ \hline
+\texttt{Milestone\allowbreak Submission\allowbreak File} & - submission\allowbreak Id: used to store the foreign key reference to the milestone submission \\*
+& - file\allowbreak Id: used to store the foreign key reference to the milestone file \\ \hline
+\end{longtable}
 \end{center}
 
 % ===============================================
@@ -448,19 +1176,96 @@ This ERD describes the Escrow, Payments \& Certificates module. It stores invoic
     \label{fig:erd-escrow-payments--certificates}
 \end{figure}
 
-\Needspace{6\baselineskip}
-\paragraph*{b) Table of entities}
-\begin{center}
+\Needspace{8\baselineskip}
+\paragraph*{b) Table of entities}\nopagebreak[4]
+\begin{center}\nopagebreak[4]
 \small\sloppy
-\begin{tabular}{|L{2.5cm}|L{9.5cm}|}
+\begin{longtable}{|L{2.5cm}|L{9.5cm}|}
 \hline
-\rowcolor{fptHeader}\textbf{Entity} & \textbf{Fields and data types} \\ \hline
-\texttt{User} & id (integer), email (varchar(255)), password (varchar(255)), is\allowbreak Banned (boolean), created\allowbreak At (timestamp(3)), updated\allowbreak At (timestamp(3)), deleted\allowbreak At (timestamp(3)), stripe\allowbreak Customer\allowbreak Id (varchar(255)), stripe\allowbreak Account\allowbreak Id (varchar(255)), stripe\allowbreak Onboarding\allowbreak Completed (boolean), role\allowbreak Id (integer) \\ \hline
-\texttt{Contract} & id (integer), slug (varchar(255)), job\allowbreak Id (integer), proposal\allowbreak Id (integer), client\allowbreak Id (integer), freelancer\allowbreak Id (integer), terms (varchar(255)), total\allowbreak Amount (decimal(65,30)), status (enum(Contract\allowbreak Status)), signed\allowbreak By\allowbreak Client (boolean), signed\allowbreak By\allowbreak Freelancer (boolean), client\allowbreak Signed\allowbreak At (timestamp(3)), freelancer\allowbreak Signed\allowbreak At (timestamp(3)), client\allowbreak Platform\allowbreak Fee (decimal(65,30)), platform\allowbreak Fee (decimal(65,30)), platform\allowbreak Fee\allowbreak Status (enum(Platform\allowbreak Fee\allowbreak Status)), platform\allowbreak Fee\allowbreak Paid\allowbreak At (timestamp(3)), client\allowbreak Fee\allowbreak Status (enum(Platform\allowbreak Fee\allowbreak Status)), client\allowbreak Fee\allowbreak Paid\allowbreak At (timestamp(3)), freelancer\allowbreak Fee\allowbreak Status (enum(Platform\allowbreak Fee\allowbreak Status)), freelancer\allowbreak Fee\allowbreak Paid\allowbreak At (timestamp(3)), hold\allowbreak Payment\allowbreak Intent\allowbreak Id (varchar(255)), hold\allowbreak Milestone\allowbreak Ids (integer), rejected\allowbreak At (timestamp(3)), reject\allowbreak Reason (varchar(255)), created\allowbreak At (timestamp(3)), signed\allowbreak At (timestamp(3)), completed\allowbreak At (timestamp(3)), expires\allowbreak At (timestamp(3)), deleted\allowbreak At (timestamp(3)) \\ \hline
-\texttt{Invoice} & id (integer), contract\allowbreak Id (integer), invoice\allowbreak Number (varchar(50)), total\allowbreak Amount (decimal(65,30)), description (varchar(255)), status (enum(Invoice\allowbreak Status)), issued\allowbreak At (timestamp(3)), due\allowbreak Date (timestamp(3)), paid\allowbreak At (timestamp(3)), created\allowbreak At (timestamp(3)), updated\allowbreak At (timestamp(3)), deleted\allowbreak At (timestamp(3)) \\ \hline
-\texttt{Transaction} & id (integer), user\allowbreak Id (integer), contract\allowbreak Id (integer), milestone\allowbreak Id (integer), dispute\allowbreak Id (integer), amount (decimal(65,30)), currency (varchar(10)), type (enum(Transaction\allowbreak Type)), status (enum(Transaction\allowbreak Status)), stripe\allowbreak Payment\allowbreak Intent\allowbreak Id (varchar(255)), stripe\allowbreak Transfer\allowbreak Id (varchar(255)), stripe\allowbreak Refund\allowbreak Id (varchar(255)), metadata (jsonb), created\allowbreak At (timestamp(3)), updated\allowbreak At (timestamp(3)) \\ \hline
-\texttt{Certificate} & id (integer), contract\allowbreak Id (integer), freelancer\allowbreak Id (integer), client\allowbreak Id (integer), certificate\allowbreak Uid (varchar(100)), completion\allowbreak Date (timestamp(3)), metadata (jsonb), created\allowbreak At (timestamp(3)) \\ \hline
-\end{tabular}
+\rowcolor{fptHeader}\textbf{Entity} & \textbf{Fields and descriptions} \\* \hline
+\endfirsthead
+\hline
+\rowcolor{fptHeader}\textbf{Entity} & \textbf{Fields and descriptions} \\* \hline
+\endhead
+\hline\endfoot
+\endlastfoot
+\texttt{User} & - id: used to store the unique identifier of the record \\*
+& - email: used to store the account email address \\
+& - password: used to store the hashed account password \\
+& - is\allowbreak Banned: used to store whether the account is banned \\
+& - created\allowbreak At: used to store the creation timestamp \\
+& - updated\allowbreak At: used to store the last update timestamp \\
+& - deleted\allowbreak At: used to store the soft-deletion timestamp \\
+& - stripe\allowbreak Customer\allowbreak Id: used to store the stripe customer id text value \\
+& - stripe\allowbreak Account\allowbreak Id: used to store the stripe account id text value \\
+& - stripe\allowbreak Onboarding\allowbreak Completed: used to store whether Stripe onboarding is completed \\
+& - role\allowbreak Id: used to store the foreign key reference to the primary role \\ \hline
+\texttt{Contract} & - id: used to store the unique identifier of the record \\*
+& - slug: used to store the URL slug \\
+& - job\allowbreak Id: used to store the foreign key reference to the job \\
+& - proposal\allowbreak Id: used to store the foreign key reference to the proposal \\
+& - client\allowbreak Id: used to store the foreign key reference to the client \\
+& - freelancer\allowbreak Id: used to store the foreign key reference to the freelancer \\
+& - terms: used to store the contract terms text \\
+& - total\allowbreak Amount: used to store the total amount \\
+& - status: used to store the status value from the ContractStatus enumeration \\
+& - signed\allowbreak By\allowbreak Client: used to store whether the contract is signed by the client \\
+& - signed\allowbreak By\allowbreak Freelancer: used to store whether the contract is signed by the freelancer \\
+& - client\allowbreak Signed\allowbreak At: used to store the client signing timestamp \\
+& - freelancer\allowbreak Signed\allowbreak At: used to store the freelancer signing timestamp \\
+& - client\allowbreak Platform\allowbreak Fee: used to store the client platform fee amount \\
+& - platform\allowbreak Fee: used to store the platform fee amount \\
+& - platform\allowbreak Fee\allowbreak Status: used to store the platform fee status value from the PlatformFeeStatus enumeration \\
+& - platform\allowbreak Fee\allowbreak Paid\allowbreak At: used to store the platform fee payment timestamp \\
+& - client\allowbreak Fee\allowbreak Status: used to store the client fee status value from the PlatformFeeStatus enumeration \\
+& - client\allowbreak Fee\allowbreak Paid\allowbreak At: used to store the client fee payment timestamp \\
+& - freelancer\allowbreak Fee\allowbreak Status: used to store the freelancer fee status value from the PlatformFeeStatus enumeration \\
+& - freelancer\allowbreak Fee\allowbreak Paid\allowbreak At: used to store the freelancer fee payment timestamp \\
+& - hold\allowbreak Payment\allowbreak Intent\allowbreak Id: used to store the hold payment intent id text value \\
+& - hold\allowbreak Milestone\allowbreak Ids: used to store the list of hold milestone ids \\
+& - rejected\allowbreak At: used to store the rejection timestamp \\
+& - reject\allowbreak Reason: used to store the rejection reason text \\
+& - created\allowbreak At: used to store the creation timestamp \\
+& - signed\allowbreak At: used to store the signing timestamp \\
+& - completed\allowbreak At: used to store the completion timestamp \\
+& - expires\allowbreak At: used to store the expiration timestamp \\
+& - deleted\allowbreak At: used to store the soft-deletion timestamp \\ \hline
+\texttt{Invoice} & - id: used to store the unique identifier of the record \\*
+& - contract\allowbreak Id: used to store the foreign key reference to the contract \\
+& - invoice\allowbreak Number: used to store the invoice number text value \\
+& - total\allowbreak Amount: used to store the total amount \\
+& - description: used to store the description text \\
+& - status: used to store the status value from the InvoiceStatus enumeration \\
+& - issued\allowbreak At: used to store the issue timestamp \\
+& - due\allowbreak Date: used to store the due date timestamp \\
+& - paid\allowbreak At: used to store the payment timestamp \\
+& - created\allowbreak At: used to store the creation timestamp \\
+& - updated\allowbreak At: used to store the last update timestamp \\
+& - deleted\allowbreak At: used to store the soft-deletion timestamp \\ \hline
+\texttt{Transaction} & - id: used to store the unique identifier of the record \\*
+& - user\allowbreak Id: used to store the foreign key reference to the user \\
+& - contract\allowbreak Id: used to store the foreign key reference to the contract \\
+& - milestone\allowbreak Id: used to store the milestone id integer value \\
+& - dispute\allowbreak Id: used to store the dispute id integer value \\
+& - amount: used to store the amount value \\
+& - currency: used to store the currency code \\
+& - type: used to store the type value from the TransactionType enumeration \\
+& - status: used to store the status value from the TransactionStatus enumeration \\
+& - stripe\allowbreak Payment\allowbreak Intent\allowbreak Id: used to store the stripe payment intent id text value \\
+& - stripe\allowbreak Transfer\allowbreak Id: used to store the stripe transfer id text value \\
+& - stripe\allowbreak Refund\allowbreak Id: used to store the stripe refund id text value \\
+& - metadata: used to store the metadata in JSON format \\
+& - created\allowbreak At: used to store the creation timestamp \\
+& - updated\allowbreak At: used to store the last update timestamp \\ \hline
+\texttt{Certificate} & - id: used to store the unique identifier of the record \\*
+& - contract\allowbreak Id: used to store the foreign key reference to the contract \\
+& - freelancer\allowbreak Id: used to store the foreign key reference to the freelancer \\
+& - client\allowbreak Id: used to store the foreign key reference to the client \\
+& - certificate\allowbreak Uid: used to store the certificate unique identifier \\
+& - completion\allowbreak Date: used to store the completion date timestamp \\
+& - metadata: used to store the metadata in JSON format \\
+& - created\allowbreak At: used to store the creation timestamp \\ \hline
+\end{longtable}
 \end{center}
 
 % ===============================================
@@ -480,19 +1285,107 @@ This ERD describes the Dispute Core module. It stores disputes and dispute fees.
     \label{fig:erd-dispute-core}
 \end{figure}
 
-\Needspace{6\baselineskip}
-\paragraph*{b) Table of entities}
-\begin{center}
+\Needspace{8\baselineskip}
+\paragraph*{b) Table of entities}\nopagebreak[4]
+\begin{center}\nopagebreak[4]
 \small\sloppy
-\begin{tabular}{|L{2.5cm}|L{9.5cm}|}
+\begin{longtable}{|L{2.5cm}|L{9.5cm}|}
 \hline
-\rowcolor{fptHeader}\textbf{Entity} & \textbf{Fields and data types} \\ \hline
-\texttt{Contract} & id (integer), slug (varchar(255)), job\allowbreak Id (integer), proposal\allowbreak Id (integer), client\allowbreak Id (integer), freelancer\allowbreak Id (integer), terms (varchar(255)), total\allowbreak Amount (decimal(65,30)), status (enum(Contract\allowbreak Status)), signed\allowbreak By\allowbreak Client (boolean), signed\allowbreak By\allowbreak Freelancer (boolean), client\allowbreak Signed\allowbreak At (timestamp(3)), freelancer\allowbreak Signed\allowbreak At (timestamp(3)), client\allowbreak Platform\allowbreak Fee (decimal(65,30)), platform\allowbreak Fee (decimal(65,30)), platform\allowbreak Fee\allowbreak Status (enum(Platform\allowbreak Fee\allowbreak Status)), platform\allowbreak Fee\allowbreak Paid\allowbreak At (timestamp(3)), client\allowbreak Fee\allowbreak Status (enum(Platform\allowbreak Fee\allowbreak Status)), client\allowbreak Fee\allowbreak Paid\allowbreak At (timestamp(3)), freelancer\allowbreak Fee\allowbreak Status (enum(Platform\allowbreak Fee\allowbreak Status)), freelancer\allowbreak Fee\allowbreak Paid\allowbreak At (timestamp(3)), hold\allowbreak Payment\allowbreak Intent\allowbreak Id (varchar(255)), hold\allowbreak Milestone\allowbreak Ids (integer), rejected\allowbreak At (timestamp(3)), reject\allowbreak Reason (varchar(255)), created\allowbreak At (timestamp(3)), signed\allowbreak At (timestamp(3)), completed\allowbreak At (timestamp(3)), expires\allowbreak At (timestamp(3)), deleted\allowbreak At (timestamp(3)) \\ \hline
-\texttt{Milestone} & id (integer), contract\allowbreak Id (integer), title (varchar(255)), description (varchar(255)), amount (decimal(65,30)), status (enum(Milestone\allowbreak Status)), payment\allowbreak Status (enum(Milestone\allowbreak Payment\allowbreak Status)), due\allowbreak Date (timestamp(3)), completed\allowbreak At (timestamp(3)), created\allowbreak At (timestamp(3)), updated\allowbreak At (timestamp(3)), deleted\allowbreak At (timestamp(3)) \\ \hline
-\texttt{User} & id (integer), email (varchar(255)), password (varchar(255)), is\allowbreak Banned (boolean), created\allowbreak At (timestamp(3)), updated\allowbreak At (timestamp(3)), deleted\allowbreak At (timestamp(3)), stripe\allowbreak Customer\allowbreak Id (varchar(255)), stripe\allowbreak Account\allowbreak Id (varchar(255)), stripe\allowbreak Onboarding\allowbreak Completed (boolean), role\allowbreak Id (integer) \\ \hline
-\texttt{Shared\allowbreak File} & id (integer), contract\allowbreak Id (integer), uploader\allowbreak Id (integer), file\allowbreak Url (varchar(255)), public\allowbreak Id (varchar(255)), file\allowbreak Name (varchar(255)), created\allowbreak At (timestamp(3)), deleted\allowbreak At (timestamp(3)) \\ \hline
-\texttt{Dispute} & id (integer), milestone\allowbreak Id (integer), opened\allowbreak By\allowbreak Id (integer), respondent\allowbreak Id (integer), reason (varchar(255)), description (varchar(255)), status (enum(Dispute\allowbreak Status)), arbitration\allowbreak Fee (decimal(65,30)), fee\allowbreak Deadline (timestamp(3)), response\allowbreak Deadline (timestamp(3)), freelancer\allowbreak Amount (decimal(65,30)), client\allowbreak Amount (decimal(65,30)), decision\allowbreak Reason (varchar(255)), decision\allowbreak By\allowbreak Id (integer), decision\allowbreak At (timestamp(3)), final\allowbreak Decision\allowbreak At (timestamp(3)), created\allowbreak At (timestamp(3)), updated\allowbreak At (timestamp(3)) \\ \hline
-\end{tabular}
+\rowcolor{fptHeader}\textbf{Entity} & \textbf{Fields and descriptions} \\* \hline
+\endfirsthead
+\hline
+\rowcolor{fptHeader}\textbf{Entity} & \textbf{Fields and descriptions} \\* \hline
+\endhead
+\hline\endfoot
+\endlastfoot
+\texttt{Contract} & - id: used to store the unique identifier of the record \\*
+& - slug: used to store the URL slug \\
+& - job\allowbreak Id: used to store the foreign key reference to the job \\
+& - proposal\allowbreak Id: used to store the foreign key reference to the proposal \\
+& - client\allowbreak Id: used to store the foreign key reference to the client \\
+& - freelancer\allowbreak Id: used to store the foreign key reference to the freelancer \\
+& - terms: used to store the contract terms text \\
+& - total\allowbreak Amount: used to store the total amount \\
+& - status: used to store the status value from the ContractStatus enumeration \\
+& - signed\allowbreak By\allowbreak Client: used to store whether the contract is signed by the client \\
+& - signed\allowbreak By\allowbreak Freelancer: used to store whether the contract is signed by the freelancer \\
+& - client\allowbreak Signed\allowbreak At: used to store the client signing timestamp \\
+& - freelancer\allowbreak Signed\allowbreak At: used to store the freelancer signing timestamp \\
+& - client\allowbreak Platform\allowbreak Fee: used to store the client platform fee amount \\
+& - platform\allowbreak Fee: used to store the platform fee amount \\
+& - platform\allowbreak Fee\allowbreak Status: used to store the platform fee status value from the PlatformFeeStatus enumeration \\
+& - platform\allowbreak Fee\allowbreak Paid\allowbreak At: used to store the platform fee payment timestamp \\
+& - client\allowbreak Fee\allowbreak Status: used to store the client fee status value from the PlatformFeeStatus enumeration \\
+& - client\allowbreak Fee\allowbreak Paid\allowbreak At: used to store the client fee payment timestamp \\
+& - freelancer\allowbreak Fee\allowbreak Status: used to store the freelancer fee status value from the PlatformFeeStatus enumeration \\
+& - freelancer\allowbreak Fee\allowbreak Paid\allowbreak At: used to store the freelancer fee payment timestamp \\
+& - hold\allowbreak Payment\allowbreak Intent\allowbreak Id: used to store the hold payment intent id text value \\
+& - hold\allowbreak Milestone\allowbreak Ids: used to store the list of hold milestone ids \\
+& - rejected\allowbreak At: used to store the rejection timestamp \\
+& - reject\allowbreak Reason: used to store the rejection reason text \\
+& - created\allowbreak At: used to store the creation timestamp \\
+& - signed\allowbreak At: used to store the signing timestamp \\
+& - completed\allowbreak At: used to store the completion timestamp \\
+& - expires\allowbreak At: used to store the expiration timestamp \\
+& - deleted\allowbreak At: used to store the soft-deletion timestamp \\ \hline
+\texttt{Milestone} & - id: used to store the unique identifier of the record \\*
+& - contract\allowbreak Id: used to store the foreign key reference to the contract \\
+& - title: used to store the title text \\
+& - description: used to store the description text \\
+& - amount: used to store the amount value \\
+& - status: used to store the status value from the MilestoneStatus enumeration \\
+& - payment\allowbreak Status: used to store the payment status value from the MilestonePaymentStatus enumeration \\
+& - due\allowbreak Date: used to store the due date timestamp \\
+& - completed\allowbreak At: used to store the completion timestamp \\
+& - created\allowbreak At: used to store the creation timestamp \\
+& - updated\allowbreak At: used to store the last update timestamp \\
+& - deleted\allowbreak At: used to store the soft-deletion timestamp \\ \hline
+\texttt{User} & - id: used to store the unique identifier of the record \\*
+& - email: used to store the account email address \\
+& - password: used to store the hashed account password \\
+& - is\allowbreak Banned: used to store whether the account is banned \\
+& - created\allowbreak At: used to store the creation timestamp \\
+& - updated\allowbreak At: used to store the last update timestamp \\
+& - deleted\allowbreak At: used to store the soft-deletion timestamp \\
+& - stripe\allowbreak Customer\allowbreak Id: used to store the stripe customer id text value \\
+& - stripe\allowbreak Account\allowbreak Id: used to store the stripe account id text value \\
+& - stripe\allowbreak Onboarding\allowbreak Completed: used to store whether Stripe onboarding is completed \\
+& - role\allowbreak Id: used to store the foreign key reference to the primary role \\ \hline
+\texttt{Shared\allowbreak File} & - id: used to store the unique identifier of the record \\*
+& - contract\allowbreak Id: used to store the foreign key reference to the contract \\
+& - uploader\allowbreak Id: used to store the foreign key reference to the uploading user \\
+& - file\allowbreak Url: used to store the file URL \\
+& - public\allowbreak Id: used to store the Cloudinary public identifier \\
+& - file\allowbreak Name: used to store the uploaded file name \\
+& - created\allowbreak At: used to store the creation timestamp \\
+& - deleted\allowbreak At: used to store the soft-deletion timestamp \\ \hline
+\texttt{Dispute} & - id: used to store the unique identifier of the record \\*
+& - milestone\allowbreak Id: used to store the foreign key reference to the milestone \\
+& - opened\allowbreak By\allowbreak Id: used to store the foreign key reference to the user who opened the dispute \\
+& - respondent\allowbreak Id: used to store the foreign key reference to the responding party \\
+& - reason: used to store the reason text \\
+& - description: used to store the description text \\
+& - resolution\allowbreak Type: used to store the resolution type value from the DisputeResolutionType enumeration \\
+& - proposed\allowbreak Freelancer\allowbreak Amount: used to store the proposed freelancer amount amount \\
+& - proposed\allowbreak Client\allowbreak Amount: used to store the proposed client amount amount \\
+& - proposed\allowbreak Due\allowbreak Date: used to store the proposed due date timestamp \\
+& - previous\allowbreak Milestone\allowbreak Status: used to store the previous milestone status value from the MilestoneStatus enumeration \\
+& - decline\allowbreak Reason: used to store the decline reason text \\
+& - declined\allowbreak At: used to store the declined at timestamp \\
+& - escalated\allowbreak At: used to store the escalated at timestamp \\
+& - status: used to store the status value from the DisputeStatus enumeration \\
+& - arbitration\allowbreak Fee: used to store the arbitration fee amount \\
+& - fee\allowbreak Deadline: used to store the fee deadline timestamp \\
+& - response\allowbreak Deadline: used to store the response deadline timestamp \\
+& - freelancer\allowbreak Amount: used to store the freelancer amount amount \\
+& - client\allowbreak Amount: used to store the client amount amount \\
+& - decision\allowbreak Reason: used to store the decision reason text value \\
+& - decision\allowbreak By\allowbreak Id: used to store the foreign key reference to the deciding administrator \\
+& - decision\allowbreak At: used to store the decision timestamp \\
+& - final\allowbreak Decision\allowbreak At: used to store the final decision timestamp \\
+& - created\allowbreak At: used to store the creation timestamp \\
+& - updated\allowbreak At: used to store the last update timestamp \\ \hline
+\end{longtable}
 \end{center}
 
 % ===============================================
@@ -512,20 +1405,88 @@ This ERD describes the Dispute Resolution module. It stores dispute evidence and
     \label{fig:erd-dispute-resolution}
 \end{figure}
 
-\Needspace{6\baselineskip}
-\paragraph*{b) Table of entities}
-\begin{center}
+\Needspace{8\baselineskip}
+\paragraph*{b) Table of entities}\nopagebreak[4]
+\begin{center}\nopagebreak[4]
 \small\sloppy
-\begin{tabular}{|L{2.5cm}|L{9.5cm}|}
+\begin{longtable}{|L{2.5cm}|L{9.5cm}|}
 \hline
-\rowcolor{fptHeader}\textbf{Entity} & \textbf{Fields and data types} \\ \hline
-\texttt{User} & id (integer), email (varchar(255)), password (varchar(255)), is\allowbreak Banned (boolean), created\allowbreak At (timestamp(3)), updated\allowbreak At (timestamp(3)), deleted\allowbreak At (timestamp(3)), stripe\allowbreak Customer\allowbreak Id (varchar(255)), stripe\allowbreak Account\allowbreak Id (varchar(255)), stripe\allowbreak Onboarding\allowbreak Completed (boolean), role\allowbreak Id (integer) \\ \hline
-\texttt{Dispute} & id (integer), milestone\allowbreak Id (integer), opened\allowbreak By\allowbreak Id (integer), respondent\allowbreak Id (integer), reason (varchar(255)), description (varchar(255)), status (enum(Dispute\allowbreak Status)), arbitration\allowbreak Fee (decimal(65,30)), fee\allowbreak Deadline (timestamp(3)), response\allowbreak Deadline (timestamp(3)), freelancer\allowbreak Amount (decimal(65,30)), client\allowbreak Amount (decimal(65,30)), decision\allowbreak Reason (varchar(255)), decision\allowbreak By\allowbreak Id (integer), decision\allowbreak At (timestamp(3)), final\allowbreak Decision\allowbreak At (timestamp(3)), created\allowbreak At (timestamp(3)), updated\allowbreak At (timestamp(3)) \\ \hline
-\texttt{Dispute\allowbreak Fee} & id (integer), dispute\allowbreak Id (integer), user\allowbreak Id (integer), amount (decimal(65,30)), status (enum(Dispute\allowbreak Fee\allowbreak Status)), payment\allowbreak Intent\allowbreak Id (varchar(255)), paid\allowbreak At (timestamp(3)), deadline (timestamp(3)), created\allowbreak At (timestamp(3)), updated\allowbreak At (timestamp(3)) \\ \hline
-\texttt{Dispute\allowbreak Evidence} & id (integer), dispute\allowbreak Id (integer), submitted\allowbreak By\allowbreak Id (integer), type (enum(Dispute\allowbreak Evidence\allowbreak Type)), description (varchar(255)), file\allowbreak Id (integer), created\allowbreak At (timestamp(3)) \\ \hline
-\texttt{Shared\allowbreak File} & id (integer), contract\allowbreak Id (integer), uploader\allowbreak Id (integer), file\allowbreak Url (varchar(255)), public\allowbreak Id (varchar(255)), file\allowbreak Name (varchar(255)), created\allowbreak At (timestamp(3)), deleted\allowbreak At (timestamp(3)) \\ \hline
-\texttt{Dispute\allowbreak Decision\allowbreak Review} & id (integer), dispute\allowbreak Id (integer), user\allowbreak Id (integer), response (enum(Dispute\allowbreak Decision\allowbreak Response)), reason (varchar(255)), created\allowbreak At (timestamp(3)) \\ \hline
-\end{tabular}
+\rowcolor{fptHeader}\textbf{Entity} & \textbf{Fields and descriptions} \\* \hline
+\endfirsthead
+\hline
+\rowcolor{fptHeader}\textbf{Entity} & \textbf{Fields and descriptions} \\* \hline
+\endhead
+\hline\endfoot
+\endlastfoot
+\texttt{User} & - id: used to store the unique identifier of the record \\*
+& - email: used to store the account email address \\
+& - password: used to store the hashed account password \\
+& - is\allowbreak Banned: used to store whether the account is banned \\
+& - created\allowbreak At: used to store the creation timestamp \\
+& - updated\allowbreak At: used to store the last update timestamp \\
+& - deleted\allowbreak At: used to store the soft-deletion timestamp \\
+& - stripe\allowbreak Customer\allowbreak Id: used to store the stripe customer id text value \\
+& - stripe\allowbreak Account\allowbreak Id: used to store the stripe account id text value \\
+& - stripe\allowbreak Onboarding\allowbreak Completed: used to store whether Stripe onboarding is completed \\
+& - role\allowbreak Id: used to store the foreign key reference to the primary role \\ \hline
+\texttt{Dispute} & - id: used to store the unique identifier of the record \\*
+& - milestone\allowbreak Id: used to store the foreign key reference to the milestone \\
+& - opened\allowbreak By\allowbreak Id: used to store the foreign key reference to the user who opened the dispute \\
+& - respondent\allowbreak Id: used to store the foreign key reference to the responding party \\
+& - reason: used to store the reason text \\
+& - description: used to store the description text \\
+& - resolution\allowbreak Type: used to store the resolution type value from the DisputeResolutionType enumeration \\
+& - proposed\allowbreak Freelancer\allowbreak Amount: used to store the proposed freelancer amount amount \\
+& - proposed\allowbreak Client\allowbreak Amount: used to store the proposed client amount amount \\
+& - proposed\allowbreak Due\allowbreak Date: used to store the proposed due date timestamp \\
+& - previous\allowbreak Milestone\allowbreak Status: used to store the previous milestone status value from the MilestoneStatus enumeration \\
+& - decline\allowbreak Reason: used to store the decline reason text \\
+& - declined\allowbreak At: used to store the declined at timestamp \\
+& - escalated\allowbreak At: used to store the escalated at timestamp \\
+& - status: used to store the status value from the DisputeStatus enumeration \\
+& - arbitration\allowbreak Fee: used to store the arbitration fee amount \\
+& - fee\allowbreak Deadline: used to store the fee deadline timestamp \\
+& - response\allowbreak Deadline: used to store the response deadline timestamp \\
+& - freelancer\allowbreak Amount: used to store the freelancer amount amount \\
+& - client\allowbreak Amount: used to store the client amount amount \\
+& - decision\allowbreak Reason: used to store the decision reason text value \\
+& - decision\allowbreak By\allowbreak Id: used to store the foreign key reference to the deciding administrator \\
+& - decision\allowbreak At: used to store the decision timestamp \\
+& - final\allowbreak Decision\allowbreak At: used to store the final decision timestamp \\
+& - created\allowbreak At: used to store the creation timestamp \\
+& - updated\allowbreak At: used to store the last update timestamp \\ \hline
+\texttt{Dispute\allowbreak Fee} & - id: used to store the unique identifier of the record \\*
+& - dispute\allowbreak Id: used to store the foreign key reference to the dispute \\
+& - user\allowbreak Id: used to store the foreign key reference to the user \\
+& - amount: used to store the amount value \\
+& - status: used to store the status value from the DisputeFeeStatus enumeration \\
+& - payment\allowbreak Intent\allowbreak Id: used to store the payment intent id text value \\
+& - paid\allowbreak At: used to store the payment timestamp \\
+& - deadline: used to store the deadline timestamp \\
+& - created\allowbreak At: used to store the creation timestamp \\
+& - updated\allowbreak At: used to store the last update timestamp \\ \hline
+\texttt{Dispute\allowbreak Evidence} & - id: used to store the unique identifier of the record \\*
+& - dispute\allowbreak Id: used to store the foreign key reference to the dispute \\
+& - submitted\allowbreak By\allowbreak Id: used to store the foreign key reference to the user \\
+& - type: used to store the type value from the DisputeEvidenceType enumeration \\
+& - description: used to store the description text \\
+& - file\allowbreak Id: used to store the foreign key reference to the shared file \\
+& - created\allowbreak At: used to store the creation timestamp \\ \hline
+\texttt{Shared\allowbreak File} & - id: used to store the unique identifier of the record \\*
+& - contract\allowbreak Id: used to store the foreign key reference to the contract \\
+& - uploader\allowbreak Id: used to store the foreign key reference to the uploading user \\
+& - file\allowbreak Url: used to store the file URL \\
+& - public\allowbreak Id: used to store the Cloudinary public identifier \\
+& - file\allowbreak Name: used to store the uploaded file name \\
+& - created\allowbreak At: used to store the creation timestamp \\
+& - deleted\allowbreak At: used to store the soft-deletion timestamp \\ \hline
+\texttt{Dispute\allowbreak Decision\allowbreak Review} & - id: used to store the unique identifier of the record \\*
+& - dispute\allowbreak Id: used to store the foreign key reference to the dispute \\
+& - user\allowbreak Id: used to store the foreign key reference to the user \\
+& - response: used to store the response value from the DisputeDecisionResponse enumeration \\
+& - reason: used to store the reason text \\
+& - created\allowbreak At: used to store the creation timestamp \\ \hline
+\end{longtable}
 \end{center}
 
 % ===============================================
@@ -540,23 +1501,83 @@ This ERD describes the Reviews \& Reputation module. It stores reviews and revie
 \paragraph*{a) ERD}
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.78\textwidth]{image/ERD/ERD-ERD17.drawio.pdf}
+    \includegraphics[width=0.52\textwidth]{image/ERD/ERD-ERD17.drawio.pdf}
     \caption{Reviews \& Reputation ERD}
     \label{fig:erd-reviews--reputation}
 \end{figure}
 
-\Needspace{6\baselineskip}
-\paragraph*{b) Table of entities}
-\begin{center}
+\Needspace{8\baselineskip}
+\paragraph*{b) Table of entities}\nopagebreak[4]
+\begin{center}\nopagebreak[4]
 \small\sloppy
-\begin{tabular}{|L{2.5cm}|L{9.5cm}|}
+\begin{longtable}{|L{2.5cm}|L{9.5cm}|}
 \hline
-\rowcolor{fptHeader}\textbf{Entity} & \textbf{Fields and data types} \\ \hline
-\texttt{Contract} & id (integer), slug (varchar(255)), job\allowbreak Id (integer), proposal\allowbreak Id (integer), client\allowbreak Id (integer), freelancer\allowbreak Id (integer), terms (varchar(255)), total\allowbreak Amount (decimal(65,30)), status (enum(Contract\allowbreak Status)), signed\allowbreak By\allowbreak Client (boolean), signed\allowbreak By\allowbreak Freelancer (boolean), client\allowbreak Signed\allowbreak At (timestamp(3)), freelancer\allowbreak Signed\allowbreak At (timestamp(3)), client\allowbreak Platform\allowbreak Fee (decimal(65,30)), platform\allowbreak Fee (decimal(65,30)), platform\allowbreak Fee\allowbreak Status (enum(Platform\allowbreak Fee\allowbreak Status)), platform\allowbreak Fee\allowbreak Paid\allowbreak At (timestamp(3)), client\allowbreak Fee\allowbreak Status (enum(Platform\allowbreak Fee\allowbreak Status)), client\allowbreak Fee\allowbreak Paid\allowbreak At (timestamp(3)), freelancer\allowbreak Fee\allowbreak Status (enum(Platform\allowbreak Fee\allowbreak Status)), freelancer\allowbreak Fee\allowbreak Paid\allowbreak At (timestamp(3)), hold\allowbreak Payment\allowbreak Intent\allowbreak Id (varchar(255)), hold\allowbreak Milestone\allowbreak Ids (integer), rejected\allowbreak At (timestamp(3)), reject\allowbreak Reason (varchar(255)), created\allowbreak At (timestamp(3)), signed\allowbreak At (timestamp(3)), completed\allowbreak At (timestamp(3)), expires\allowbreak At (timestamp(3)), deleted\allowbreak At (timestamp(3)) \\ \hline
-\texttt{User} & id (integer), email (varchar(255)), password (varchar(255)), is\allowbreak Banned (boolean), created\allowbreak At (timestamp(3)), updated\allowbreak At (timestamp(3)), deleted\allowbreak At (timestamp(3)), stripe\allowbreak Customer\allowbreak Id (varchar(255)), stripe\allowbreak Account\allowbreak Id (varchar(255)), stripe\allowbreak Onboarding\allowbreak Completed (boolean), role\allowbreak Id (integer) \\ \hline
-\texttt{Review} & id (integer), contract\allowbreak Id (integer), reviewer\allowbreak Id (integer), reviewee\allowbreak Id (integer), overall\allowbreak Rating (decimal(65,30)), breakdown (jsonb), comment (varchar(255)), created\allowbreak At (timestamp(3)), updated\allowbreak At (timestamp(3)), deleted\allowbreak At (timestamp(3)) \\ \hline
-\texttt{Review\allowbreak Response} & id (integer), review\allowbreak Id (integer), user\allowbreak Id (integer), response\allowbreak Text (varchar(255)), created\allowbreak At (timestamp(3)), updated\allowbreak At (timestamp(3)), deleted\allowbreak At (timestamp(3)) \\ \hline
-\end{tabular}
+\rowcolor{fptHeader}\textbf{Entity} & \textbf{Fields and descriptions} \\* \hline
+\endfirsthead
+\hline
+\rowcolor{fptHeader}\textbf{Entity} & \textbf{Fields and descriptions} \\* \hline
+\endhead
+\hline\endfoot
+\endlastfoot
+\texttt{Contract} & - id: used to store the unique identifier of the record \\*
+& - slug: used to store the URL slug \\
+& - job\allowbreak Id: used to store the foreign key reference to the job \\
+& - proposal\allowbreak Id: used to store the foreign key reference to the proposal \\
+& - client\allowbreak Id: used to store the foreign key reference to the client \\
+& - freelancer\allowbreak Id: used to store the foreign key reference to the freelancer \\
+& - terms: used to store the contract terms text \\
+& - total\allowbreak Amount: used to store the total amount \\
+& - status: used to store the status value from the ContractStatus enumeration \\
+& - signed\allowbreak By\allowbreak Client: used to store whether the contract is signed by the client \\
+& - signed\allowbreak By\allowbreak Freelancer: used to store whether the contract is signed by the freelancer \\
+& - client\allowbreak Signed\allowbreak At: used to store the client signing timestamp \\
+& - freelancer\allowbreak Signed\allowbreak At: used to store the freelancer signing timestamp \\
+& - client\allowbreak Platform\allowbreak Fee: used to store the client platform fee amount \\
+& - platform\allowbreak Fee: used to store the platform fee amount \\
+& - platform\allowbreak Fee\allowbreak Status: used to store the platform fee status value from the PlatformFeeStatus enumeration \\
+& - platform\allowbreak Fee\allowbreak Paid\allowbreak At: used to store the platform fee payment timestamp \\
+& - client\allowbreak Fee\allowbreak Status: used to store the client fee status value from the PlatformFeeStatus enumeration \\
+& - client\allowbreak Fee\allowbreak Paid\allowbreak At: used to store the client fee payment timestamp \\
+& - freelancer\allowbreak Fee\allowbreak Status: used to store the freelancer fee status value from the PlatformFeeStatus enumeration \\
+& - freelancer\allowbreak Fee\allowbreak Paid\allowbreak At: used to store the freelancer fee payment timestamp \\
+& - hold\allowbreak Payment\allowbreak Intent\allowbreak Id: used to store the hold payment intent id text value \\
+& - hold\allowbreak Milestone\allowbreak Ids: used to store the list of hold milestone ids \\
+& - rejected\allowbreak At: used to store the rejection timestamp \\
+& - reject\allowbreak Reason: used to store the rejection reason text \\
+& - created\allowbreak At: used to store the creation timestamp \\
+& - signed\allowbreak At: used to store the signing timestamp \\
+& - completed\allowbreak At: used to store the completion timestamp \\
+& - expires\allowbreak At: used to store the expiration timestamp \\
+& - deleted\allowbreak At: used to store the soft-deletion timestamp \\ \hline
+\texttt{User} & - id: used to store the unique identifier of the record \\*
+& - email: used to store the account email address \\
+& - password: used to store the hashed account password \\
+& - is\allowbreak Banned: used to store whether the account is banned \\
+& - created\allowbreak At: used to store the creation timestamp \\
+& - updated\allowbreak At: used to store the last update timestamp \\
+& - deleted\allowbreak At: used to store the soft-deletion timestamp \\
+& - stripe\allowbreak Customer\allowbreak Id: used to store the stripe customer id text value \\
+& - stripe\allowbreak Account\allowbreak Id: used to store the stripe account id text value \\
+& - stripe\allowbreak Onboarding\allowbreak Completed: used to store whether Stripe onboarding is completed \\
+& - role\allowbreak Id: used to store the foreign key reference to the primary role \\ \hline
+\texttt{Review} & - id: used to store the unique identifier of the record \\*
+& - contract\allowbreak Id: used to store the foreign key reference to the contract \\
+& - reviewer\allowbreak Id: used to store the foreign key reference to the reviewer \\
+& - reviewee\allowbreak Id: used to store the foreign key reference to the reviewee \\
+& - overall\allowbreak Rating: used to store the overall rating \\
+& - breakdown: used to store the rating breakdown in JSON format \\
+& - comment: used to store the comment text \\
+& - created\allowbreak At: used to store the creation timestamp \\
+& - updated\allowbreak At: used to store the last update timestamp \\
+& - deleted\allowbreak At: used to store the soft-deletion timestamp \\ \hline
+\texttt{Review\allowbreak Response} & - id: used to store the unique identifier of the record \\*
+& - review\allowbreak Id: used to store the foreign key reference to the review \\
+& - user\allowbreak Id: used to store the foreign key reference to the user \\
+& - response\allowbreak Text: used to store the response text \\
+& - created\allowbreak At: used to store the creation timestamp \\
+& - updated\allowbreak At: used to store the last update timestamp \\
+& - deleted\allowbreak At: used to store the soft-deletion timestamp \\ \hline
+\end{longtable}
 \end{center}
 
 % ===============================================
@@ -576,18 +1597,68 @@ This ERD describes the Forum Posts \& Comments module. It stores forum categorie
     \label{fig:erd-forum-posts--comments}
 \end{figure}
 
-\Needspace{6\baselineskip}
-\paragraph*{b) Table of entities}
-\begin{center}
+\Needspace{8\baselineskip}
+\paragraph*{b) Table of entities}\nopagebreak[4]
+\begin{center}\nopagebreak[4]
 \small\sloppy
-\begin{tabular}{|L{2.5cm}|L{9.5cm}|}
+\begin{longtable}{|L{2.5cm}|L{9.5cm}|}
 \hline
-\rowcolor{fptHeader}\textbf{Entity} & \textbf{Fields and data types} \\ \hline
-\texttt{Forum\allowbreak Category} & id (integer), name (varchar(255)), slug (varchar(280)), description (varchar(255)), created\allowbreak At (timestamp(3)), updated\allowbreak At (timestamp(3)), deleted\allowbreak At (timestamp(3)) \\ \hline
-\texttt{Forum\allowbreak Post} & id (integer), category\allowbreak Id (integer), user\allowbreak Id (integer), title (varchar(255)), slug (varchar(320)), content (varchar(255)), moderation\allowbreak Status (enum(Forum\allowbreak Post\allowbreak Status)), moderation\allowbreak Score (double precision), moderation\allowbreak Categories (jsonb), moderation\allowbreak Message (varchar(255)), moderation\allowbreak Language (varchar(255)), reviewed\allowbreak By\allowbreak Id (integer), reviewed\allowbreak At (timestamp(3)), created\allowbreak At (timestamp(3)), updated\allowbreak At (timestamp(3)), deleted\allowbreak At (timestamp(3)) \\ \hline
-\texttt{User} & id (integer), email (varchar(255)), password (varchar(255)), is\allowbreak Banned (boolean), created\allowbreak At (timestamp(3)), updated\allowbreak At (timestamp(3)), deleted\allowbreak At (timestamp(3)), stripe\allowbreak Customer\allowbreak Id (varchar(255)), stripe\allowbreak Account\allowbreak Id (varchar(255)), stripe\allowbreak Onboarding\allowbreak Completed (boolean), role\allowbreak Id (integer) \\ \hline
-\texttt{Forum\allowbreak Comment} & id (integer), post\allowbreak Id (integer), user\allowbreak Id (integer), content (varchar(255)), moderation\allowbreak Status (enum(Forum\allowbreak Post\allowbreak Status)), moderation\allowbreak Score (double precision), moderation\allowbreak Categories (jsonb), moderation\allowbreak Message (varchar(255)), moderation\allowbreak Language (varchar(255)), reviewed\allowbreak By\allowbreak Id (integer), reviewed\allowbreak At (timestamp(3)), created\allowbreak At (timestamp(3)), updated\allowbreak At (timestamp(3)), deleted\allowbreak At (timestamp(3)) \\ \hline
-\end{tabular}
+\rowcolor{fptHeader}\textbf{Entity} & \textbf{Fields and descriptions} \\* \hline
+\endfirsthead
+\hline
+\rowcolor{fptHeader}\textbf{Entity} & \textbf{Fields and descriptions} \\* \hline
+\endhead
+\hline\endfoot
+\endlastfoot
+\texttt{Forum\allowbreak Category} & - id: used to store the unique identifier of the record \\*
+& - name: used to store the name value \\
+& - slug: used to store the URL slug \\
+& - description: used to store the description text \\
+& - created\allowbreak At: used to store the creation timestamp \\
+& - updated\allowbreak At: used to store the last update timestamp \\
+& - deleted\allowbreak At: used to store the soft-deletion timestamp \\ \hline
+\texttt{Forum\allowbreak Post} & - id: used to store the unique identifier of the record \\*
+& - category\allowbreak Id: used to store the foreign key reference to the forum category \\
+& - user\allowbreak Id: used to store the foreign key reference to the user \\
+& - title: used to store the title text \\
+& - slug: used to store the URL slug \\
+& - content: used to store the content text \\
+& - moderation\allowbreak Status: used to store the moderation status value from the ForumPostStatus enumeration \\
+& - moderation\allowbreak Score: used to store the moderation score \\
+& - moderation\allowbreak Categories: used to store the moderation categories in JSON format \\
+& - moderation\allowbreak Message: used to store the moderation message text value \\
+& - moderation\allowbreak Language: used to store the moderation language text value \\
+& - reviewed\allowbreak By\allowbreak Id: used to store the foreign key reference to the reviewing administrator \\
+& - reviewed\allowbreak At: used to store the review timestamp \\
+& - created\allowbreak At: used to store the creation timestamp \\
+& - updated\allowbreak At: used to store the last update timestamp \\
+& - deleted\allowbreak At: used to store the soft-deletion timestamp \\ \hline
+\texttt{User} & - id: used to store the unique identifier of the record \\*
+& - email: used to store the account email address \\
+& - password: used to store the hashed account password \\
+& - is\allowbreak Banned: used to store whether the account is banned \\
+& - created\allowbreak At: used to store the creation timestamp \\
+& - updated\allowbreak At: used to store the last update timestamp \\
+& - deleted\allowbreak At: used to store the soft-deletion timestamp \\
+& - stripe\allowbreak Customer\allowbreak Id: used to store the stripe customer id text value \\
+& - stripe\allowbreak Account\allowbreak Id: used to store the stripe account id text value \\
+& - stripe\allowbreak Onboarding\allowbreak Completed: used to store whether Stripe onboarding is completed \\
+& - role\allowbreak Id: used to store the foreign key reference to the primary role \\ \hline
+\texttt{Forum\allowbreak Comment} & - id: used to store the unique identifier of the record \\*
+& - post\allowbreak Id: used to store the foreign key reference to the forum post \\
+& - user\allowbreak Id: used to store the foreign key reference to the user \\
+& - content: used to store the content text \\
+& - moderation\allowbreak Status: used to store the moderation status value from the ForumPostStatus enumeration \\
+& - moderation\allowbreak Score: used to store the moderation score \\
+& - moderation\allowbreak Categories: used to store the moderation categories in JSON format \\
+& - moderation\allowbreak Message: used to store the moderation message text value \\
+& - moderation\allowbreak Language: used to store the moderation language text value \\
+& - reviewed\allowbreak By\allowbreak Id: used to store the foreign key reference to the reviewing administrator \\
+& - reviewed\allowbreak At: used to store the review timestamp \\
+& - created\allowbreak At: used to store the creation timestamp \\
+& - updated\allowbreak At: used to store the last update timestamp \\
+& - deleted\allowbreak At: used to store the soft-deletion timestamp \\ \hline
+\end{longtable}
 \end{center}
 
 % ===============================================
@@ -602,23 +1673,72 @@ This ERD describes the Forum Likes module. It stores likes on posts and comments
 \paragraph*{a) ERD}
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.78\textwidth]{image/ERD/ERD-ERD19.drawio.pdf}
+    \includegraphics[width=0.52\textwidth]{image/ERD/ERD-ERD19.drawio.pdf}
     \caption{Forum Likes ERD}
     \label{fig:erd-forum-likes}
 \end{figure}
 
-\Needspace{6\baselineskip}
-\paragraph*{b) Table of entities}
-\begin{center}
+\Needspace{8\baselineskip}
+\paragraph*{b) Table of entities}\nopagebreak[4]
+\begin{center}\nopagebreak[4]
 \small\sloppy
-\begin{tabular}{|L{2.5cm}|L{9.5cm}|}
+\begin{longtable}{|L{2.5cm}|L{9.5cm}|}
 \hline
-\rowcolor{fptHeader}\textbf{Entity} & \textbf{Fields and data types} \\ \hline
-\texttt{User} & id (integer), email (varchar(255)), password (varchar(255)), is\allowbreak Banned (boolean), created\allowbreak At (timestamp(3)), updated\allowbreak At (timestamp(3)), deleted\allowbreak At (timestamp(3)), stripe\allowbreak Customer\allowbreak Id (varchar(255)), stripe\allowbreak Account\allowbreak Id (varchar(255)), stripe\allowbreak Onboarding\allowbreak Completed (boolean), role\allowbreak Id (integer) \\ \hline
-\texttt{Forum\allowbreak Post} & id (integer), category\allowbreak Id (integer), user\allowbreak Id (integer), title (varchar(255)), slug (varchar(320)), content (varchar(255)), moderation\allowbreak Status (enum(Forum\allowbreak Post\allowbreak Status)), moderation\allowbreak Score (double precision), moderation\allowbreak Categories (jsonb), moderation\allowbreak Message (varchar(255)), moderation\allowbreak Language (varchar(255)), reviewed\allowbreak By\allowbreak Id (integer), reviewed\allowbreak At (timestamp(3)), created\allowbreak At (timestamp(3)), updated\allowbreak At (timestamp(3)), deleted\allowbreak At (timestamp(3)) \\ \hline
-\texttt{Forum\allowbreak Comment} & id (integer), post\allowbreak Id (integer), user\allowbreak Id (integer), content (varchar(255)), moderation\allowbreak Status (enum(Forum\allowbreak Post\allowbreak Status)), moderation\allowbreak Score (double precision), moderation\allowbreak Categories (jsonb), moderation\allowbreak Message (varchar(255)), moderation\allowbreak Language (varchar(255)), reviewed\allowbreak By\allowbreak Id (integer), reviewed\allowbreak At (timestamp(3)), created\allowbreak At (timestamp(3)), updated\allowbreak At (timestamp(3)), deleted\allowbreak At (timestamp(3)) \\ \hline
-\texttt{Forum\allowbreak Like} & id (integer), user\allowbreak Id (integer), post\allowbreak Id (integer), comment\allowbreak Id (integer), reaction\allowbreak Type (varchar(20)), created\allowbreak At (timestamp(3)) \\ \hline
-\end{tabular}
+\rowcolor{fptHeader}\textbf{Entity} & \textbf{Fields and descriptions} \\* \hline
+\endfirsthead
+\hline
+\rowcolor{fptHeader}\textbf{Entity} & \textbf{Fields and descriptions} \\* \hline
+\endhead
+\hline\endfoot
+\endlastfoot
+\texttt{User} & - id: used to store the unique identifier of the record \\*
+& - email: used to store the account email address \\
+& - password: used to store the hashed account password \\
+& - is\allowbreak Banned: used to store whether the account is banned \\
+& - created\allowbreak At: used to store the creation timestamp \\
+& - updated\allowbreak At: used to store the last update timestamp \\
+& - deleted\allowbreak At: used to store the soft-deletion timestamp \\
+& - stripe\allowbreak Customer\allowbreak Id: used to store the stripe customer id text value \\
+& - stripe\allowbreak Account\allowbreak Id: used to store the stripe account id text value \\
+& - stripe\allowbreak Onboarding\allowbreak Completed: used to store whether Stripe onboarding is completed \\
+& - role\allowbreak Id: used to store the foreign key reference to the primary role \\ \hline
+\texttt{Forum\allowbreak Post} & - id: used to store the unique identifier of the record \\*
+& - category\allowbreak Id: used to store the foreign key reference to the forum category \\
+& - user\allowbreak Id: used to store the foreign key reference to the user \\
+& - title: used to store the title text \\
+& - slug: used to store the URL slug \\
+& - content: used to store the content text \\
+& - moderation\allowbreak Status: used to store the moderation status value from the ForumPostStatus enumeration \\
+& - moderation\allowbreak Score: used to store the moderation score \\
+& - moderation\allowbreak Categories: used to store the moderation categories in JSON format \\
+& - moderation\allowbreak Message: used to store the moderation message text value \\
+& - moderation\allowbreak Language: used to store the moderation language text value \\
+& - reviewed\allowbreak By\allowbreak Id: used to store the foreign key reference to the reviewing administrator \\
+& - reviewed\allowbreak At: used to store the review timestamp \\
+& - created\allowbreak At: used to store the creation timestamp \\
+& - updated\allowbreak At: used to store the last update timestamp \\
+& - deleted\allowbreak At: used to store the soft-deletion timestamp \\ \hline
+\texttt{Forum\allowbreak Comment} & - id: used to store the unique identifier of the record \\*
+& - post\allowbreak Id: used to store the foreign key reference to the forum post \\
+& - user\allowbreak Id: used to store the foreign key reference to the user \\
+& - content: used to store the content text \\
+& - moderation\allowbreak Status: used to store the moderation status value from the ForumPostStatus enumeration \\
+& - moderation\allowbreak Score: used to store the moderation score \\
+& - moderation\allowbreak Categories: used to store the moderation categories in JSON format \\
+& - moderation\allowbreak Message: used to store the moderation message text value \\
+& - moderation\allowbreak Language: used to store the moderation language text value \\
+& - reviewed\allowbreak By\allowbreak Id: used to store the foreign key reference to the reviewing administrator \\
+& - reviewed\allowbreak At: used to store the review timestamp \\
+& - created\allowbreak At: used to store the creation timestamp \\
+& - updated\allowbreak At: used to store the last update timestamp \\
+& - deleted\allowbreak At: used to store the soft-deletion timestamp \\ \hline
+\texttt{Forum\allowbreak Like} & - id: used to store the unique identifier of the record \\*
+& - user\allowbreak Id: used to store the foreign key reference to the user \\
+& - post\allowbreak Id: used to store the foreign key reference to the forum post \\
+& - comment\allowbreak Id: used to store the foreign key reference to the forum comment \\
+& - reaction\allowbreak Type: used to store the reaction type text value \\
+& - created\allowbreak At: used to store the creation timestamp \\ \hline
+\end{longtable}
 \end{center}
 
 % ===============================================
@@ -633,23 +1753,74 @@ This ERD describes the Forum Reports \& Moderation module. It stores forum repor
 \paragraph*{a) ERD}
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.78\textwidth]{image/ERD/ERD-ERD20.drawio.pdf}
+    \includegraphics[width=0.52\textwidth]{image/ERD/ERD-ERD20.drawio.pdf}
     \caption{Forum Reports \& Moderation ERD}
     \label{fig:erd-forum-reports--moderation}
 \end{figure}
 
-\Needspace{6\baselineskip}
-\paragraph*{b) Table of entities}
-\begin{center}
+\Needspace{8\baselineskip}
+\paragraph*{b) Table of entities}\nopagebreak[4]
+\begin{center}\nopagebreak[4]
 \small\sloppy
-\begin{tabular}{|L{2.5cm}|L{9.5cm}|}
+\begin{longtable}{|L{2.5cm}|L{9.5cm}|}
 \hline
-\rowcolor{fptHeader}\textbf{Entity} & \textbf{Fields and data types} \\ \hline
-\texttt{User} & id (integer), email (varchar(255)), password (varchar(255)), is\allowbreak Banned (boolean), created\allowbreak At (timestamp(3)), updated\allowbreak At (timestamp(3)), deleted\allowbreak At (timestamp(3)), stripe\allowbreak Customer\allowbreak Id (varchar(255)), stripe\allowbreak Account\allowbreak Id (varchar(255)), stripe\allowbreak Onboarding\allowbreak Completed (boolean), role\allowbreak Id (integer) \\ \hline
-\texttt{Forum\allowbreak Post} & id (integer), category\allowbreak Id (integer), user\allowbreak Id (integer), title (varchar(255)), slug (varchar(320)), content (varchar(255)), moderation\allowbreak Status (enum(Forum\allowbreak Post\allowbreak Status)), moderation\allowbreak Score (double precision), moderation\allowbreak Categories (jsonb), moderation\allowbreak Message (varchar(255)), moderation\allowbreak Language (varchar(255)), reviewed\allowbreak By\allowbreak Id (integer), reviewed\allowbreak At (timestamp(3)), created\allowbreak At (timestamp(3)), updated\allowbreak At (timestamp(3)), deleted\allowbreak At (timestamp(3)) \\ \hline
-\texttt{Forum\allowbreak Comment} & id (integer), post\allowbreak Id (integer), user\allowbreak Id (integer), content (varchar(255)), moderation\allowbreak Status (enum(Forum\allowbreak Post\allowbreak Status)), moderation\allowbreak Score (double precision), moderation\allowbreak Categories (jsonb), moderation\allowbreak Message (varchar(255)), moderation\allowbreak Language (varchar(255)), reviewed\allowbreak By\allowbreak Id (integer), reviewed\allowbreak At (timestamp(3)), created\allowbreak At (timestamp(3)), updated\allowbreak At (timestamp(3)), deleted\allowbreak At (timestamp(3)) \\ \hline
-\texttt{Forum\allowbreak Report} & id (integer), reporter\allowbreak Id (integer), post\allowbreak Id (integer), comment\allowbreak Id (integer), reason (varchar(255)), status (enum(Report\allowbreak Status)), admin\allowbreak Id (integer), created\allowbreak At (timestamp(3)) \\ \hline
-\end{tabular}
+\rowcolor{fptHeader}\textbf{Entity} & \textbf{Fields and descriptions} \\* \hline
+\endfirsthead
+\hline
+\rowcolor{fptHeader}\textbf{Entity} & \textbf{Fields and descriptions} \\* \hline
+\endhead
+\hline\endfoot
+\endlastfoot
+\texttt{User} & - id: used to store the unique identifier of the record \\*
+& - email: used to store the account email address \\
+& - password: used to store the hashed account password \\
+& - is\allowbreak Banned: used to store whether the account is banned \\
+& - created\allowbreak At: used to store the creation timestamp \\
+& - updated\allowbreak At: used to store the last update timestamp \\
+& - deleted\allowbreak At: used to store the soft-deletion timestamp \\
+& - stripe\allowbreak Customer\allowbreak Id: used to store the stripe customer id text value \\
+& - stripe\allowbreak Account\allowbreak Id: used to store the stripe account id text value \\
+& - stripe\allowbreak Onboarding\allowbreak Completed: used to store whether Stripe onboarding is completed \\
+& - role\allowbreak Id: used to store the foreign key reference to the primary role \\ \hline
+\texttt{Forum\allowbreak Post} & - id: used to store the unique identifier of the record \\*
+& - category\allowbreak Id: used to store the foreign key reference to the forum category \\
+& - user\allowbreak Id: used to store the foreign key reference to the user \\
+& - title: used to store the title text \\
+& - slug: used to store the URL slug \\
+& - content: used to store the content text \\
+& - moderation\allowbreak Status: used to store the moderation status value from the ForumPostStatus enumeration \\
+& - moderation\allowbreak Score: used to store the moderation score \\
+& - moderation\allowbreak Categories: used to store the moderation categories in JSON format \\
+& - moderation\allowbreak Message: used to store the moderation message text value \\
+& - moderation\allowbreak Language: used to store the moderation language text value \\
+& - reviewed\allowbreak By\allowbreak Id: used to store the foreign key reference to the reviewing administrator \\
+& - reviewed\allowbreak At: used to store the review timestamp \\
+& - created\allowbreak At: used to store the creation timestamp \\
+& - updated\allowbreak At: used to store the last update timestamp \\
+& - deleted\allowbreak At: used to store the soft-deletion timestamp \\ \hline
+\texttt{Forum\allowbreak Comment} & - id: used to store the unique identifier of the record \\*
+& - post\allowbreak Id: used to store the foreign key reference to the forum post \\
+& - user\allowbreak Id: used to store the foreign key reference to the user \\
+& - content: used to store the content text \\
+& - moderation\allowbreak Status: used to store the moderation status value from the ForumPostStatus enumeration \\
+& - moderation\allowbreak Score: used to store the moderation score \\
+& - moderation\allowbreak Categories: used to store the moderation categories in JSON format \\
+& - moderation\allowbreak Message: used to store the moderation message text value \\
+& - moderation\allowbreak Language: used to store the moderation language text value \\
+& - reviewed\allowbreak By\allowbreak Id: used to store the foreign key reference to the reviewing administrator \\
+& - reviewed\allowbreak At: used to store the review timestamp \\
+& - created\allowbreak At: used to store the creation timestamp \\
+& - updated\allowbreak At: used to store the last update timestamp \\
+& - deleted\allowbreak At: used to store the soft-deletion timestamp \\ \hline
+\texttt{Forum\allowbreak Report} & - id: used to store the unique identifier of the record \\*
+& - reporter\allowbreak Id: used to store the foreign key reference to the reporting user \\
+& - post\allowbreak Id: used to store the foreign key reference to the forum post \\
+& - comment\allowbreak Id: used to store the foreign key reference to the forum comment \\
+& - reason: used to store the reason text \\
+& - status: used to store the status value from the ReportStatus enumeration \\
+& - admin\allowbreak Id: used to store the foreign key reference to the reviewing administrator \\
+& - created\allowbreak At: used to store the creation timestamp \\ \hline
+\end{longtable}
 \end{center}
 
 % ===============================================
@@ -669,18 +1840,61 @@ This ERD describes the Messaging \& Notifications module. It stores notification
     \label{fig:erd-messaging--notifications}
 \end{figure}
 
-\Needspace{6\baselineskip}
-\paragraph*{b) Table of entities}
-\begin{center}
+\Needspace{8\baselineskip}
+\paragraph*{b) Table of entities}\nopagebreak[4]
+\begin{center}\nopagebreak[4]
 \small\sloppy
-\begin{tabular}{|L{2.5cm}|L{9.5cm}|}
+\begin{longtable}{|L{2.5cm}|L{9.5cm}|}
 \hline
-\rowcolor{fptHeader}\textbf{Entity} & \textbf{Fields and data types} \\ \hline
-\texttt{User} & id (integer), email (varchar(255)), password (varchar(255)), is\allowbreak Banned (boolean), created\allowbreak At (timestamp(3)), updated\allowbreak At (timestamp(3)), deleted\allowbreak At (timestamp(3)), stripe\allowbreak Customer\allowbreak Id (varchar(255)), stripe\allowbreak Account\allowbreak Id (varchar(255)), stripe\allowbreak Onboarding\allowbreak Completed (boolean), role\allowbreak Id (integer) \\ \hline
-\texttt{Conversation} & id (integer), slug (varchar(100)), participant1 (integer), participant2 (integer), created\allowbreak At (timestamp(3)), deleted\allowbreak At (timestamp(3)), participant1Hidden\allowbreak At (timestamp(3)), participant2Hidden\allowbreak At (timestamp(3)), participant1Pinned\allowbreak At (timestamp(3)), participant2Pinned\allowbreak At (timestamp(3)) \\ \hline
-\texttt{Direct\allowbreak Message} & id (integer), conversation\allowbreak Id (integer), sender\allowbreak Id (integer), message (varchar(255)), file\allowbreak Url (varchar(500)), file\allowbreak Name (varchar(255)), file\allowbreak Size (integer), file\allowbreak Type (varchar(100)), is\allowbreak Read (boolean), created\allowbreak At (timestamp(3)), deleted\allowbreak At (timestamp(3)) \\ \hline
-\texttt{Notification} & id (integer), user\allowbreak Id (integer), type (enum(Notification\allowbreak Type)), title (varchar(255)), message (varchar(255)), data (jsonb), is\allowbreak Read (boolean), created\allowbreak At (timestamp(3)), deleted\allowbreak At (timestamp(3)) \\ \hline
-\end{tabular}
+\rowcolor{fptHeader}\textbf{Entity} & \textbf{Fields and descriptions} \\* \hline
+\endfirsthead
+\hline
+\rowcolor{fptHeader}\textbf{Entity} & \textbf{Fields and descriptions} \\* \hline
+\endhead
+\hline\endfoot
+\endlastfoot
+\texttt{User} & - id: used to store the unique identifier of the record \\*
+& - email: used to store the account email address \\
+& - password: used to store the hashed account password \\
+& - is\allowbreak Banned: used to store whether the account is banned \\
+& - created\allowbreak At: used to store the creation timestamp \\
+& - updated\allowbreak At: used to store the last update timestamp \\
+& - deleted\allowbreak At: used to store the soft-deletion timestamp \\
+& - stripe\allowbreak Customer\allowbreak Id: used to store the stripe customer id text value \\
+& - stripe\allowbreak Account\allowbreak Id: used to store the stripe account id text value \\
+& - stripe\allowbreak Onboarding\allowbreak Completed: used to store whether Stripe onboarding is completed \\
+& - role\allowbreak Id: used to store the foreign key reference to the primary role \\ \hline
+\texttt{Conversation} & - id: used to store the unique identifier of the record \\*
+& - slug: used to store the URL slug \\
+& - participant1: used to store the foreign key reference to the first participant \\
+& - participant2: used to store the foreign key reference to the second participant \\
+& - created\allowbreak At: used to store the creation timestamp \\
+& - deleted\allowbreak At: used to store the soft-deletion timestamp \\
+& - participant1\allowbreak Hidden\allowbreak At: used to store the participant1 hidden at timestamp \\
+& - participant2\allowbreak Hidden\allowbreak At: used to store the participant2 hidden at timestamp \\
+& - participant1\allowbreak Pinned\allowbreak At: used to store the participant1 pinned at timestamp \\
+& - participant2\allowbreak Pinned\allowbreak At: used to store the participant2 pinned at timestamp \\ \hline
+\texttt{Direct\allowbreak Message} & - id: used to store the unique identifier of the record \\*
+& - conversation\allowbreak Id: used to store the foreign key reference to the conversation \\
+& - sender\allowbreak Id: used to store the foreign key reference to the sending user \\
+& - message: used to store the message text \\
+& - file\allowbreak Url: used to store the file URL \\
+& - file\allowbreak Name: used to store the uploaded file name \\
+& - file\allowbreak Size: used to store the file size in bytes \\
+& - file\allowbreak Type: used to store the file type text value \\
+& - is\allowbreak Read: used to store whether the record is read \\
+& - created\allowbreak At: used to store the creation timestamp \\
+& - deleted\allowbreak At: used to store the soft-deletion timestamp \\ \hline
+\texttt{Notification} & - id: used to store the unique identifier of the record \\*
+& - user\allowbreak Id: used to store the foreign key reference to the user \\
+& - type: used to store the type value from the NotificationType enumeration \\
+& - title: used to store the title text \\
+& - message: used to store the message text \\
+& - data: used to store the data data in JSON format \\
+& - is\allowbreak Read: used to store whether the record is read \\
+& - created\allowbreak At: used to store the creation timestamp \\
+& - deleted\allowbreak At: used to store the soft-deletion timestamp \\ \hline
+\end{longtable}
 \end{center}
 
 % ===============================================
@@ -700,18 +1914,67 @@ This ERD describes the Administration \& System module. It stores announcement b
     \label{fig:erd-administration--system}
 \end{figure}
 
-\Needspace{6\baselineskip}
-\paragraph*{b) Table of entities}
-\begin{center}
+\Needspace{8\baselineskip}
+\paragraph*{b) Table of entities}\nopagebreak[4]
+\begin{center}\nopagebreak[4]
 \small\sloppy
-\begin{tabular}{|L{2.5cm}|L{9.5cm}|}
+\begin{longtable}{|L{2.5cm}|L{9.5cm}|}
 \hline
-\rowcolor{fptHeader}\textbf{Entity} & \textbf{Fields and data types} \\ \hline
-\texttt{User} & id (integer), email (varchar(255)), password (varchar(255)), is\allowbreak Banned (boolean), created\allowbreak At (timestamp(3)), updated\allowbreak At (timestamp(3)), deleted\allowbreak At (timestamp(3)), stripe\allowbreak Customer\allowbreak Id (varchar(255)), stripe\allowbreak Account\allowbreak Id (varchar(255)), stripe\allowbreak Onboarding\allowbreak Completed (boolean), role\allowbreak Id (integer) \\ \hline
-\texttt{Moderation\allowbreak Queue} & id (integer), content\allowbreak Type (enum(Moderation\allowbreak Content\allowbreak Type)), content\allowbreak Id (integer), reporter\allowbreak Id (integer), reason (varchar(255)), status (enum(Report\allowbreak Status)), admin\allowbreak Id (integer), action\allowbreak Taken (varchar(255)), created\allowbreak At (timestamp(3)), resolved\allowbreak At (timestamp(3)) \\ \hline
-\texttt{Banned\allowbreak Keyword} & id (integer), keyword (varchar(255)), created\allowbreak By (integer), created\allowbreak At (timestamp(3)) \\ \hline
-\texttt{Announcement\allowbreak Banner} & id (integer), message (varchar(255)), link (varchar(500)), start\allowbreak Date (timestamp(3)), end\allowbreak Date (timestamp(3)), is\allowbreak Active (boolean), created\allowbreak At (timestamp(3)), updated\allowbreak At (timestamp(3)), deleted\allowbreak At (timestamp(3)) \\ \hline
-\texttt{Advertisement\allowbreak Banner} & id (integer), title (varchar(255)), image\allowbreak Url (varchar(500)), link\allowbreak Url (varchar(500)), position (enum(Banner\allowbreak Position)), start\allowbreak Date (timestamp(3)), end\allowbreak Date (timestamp(3)), is\allowbreak Active (boolean), created\allowbreak At (timestamp(3)), updated\allowbreak At (timestamp(3)) \\ \hline
-\texttt{System\allowbreak Setting} & id (integer), key (varchar(100)), value (jsonb), created\allowbreak At (timestamp(3)), updated\allowbreak At (timestamp(3)) \\ \hline
-\end{tabular}
+\rowcolor{fptHeader}\textbf{Entity} & \textbf{Fields and descriptions} \\* \hline
+\endfirsthead
+\hline
+\rowcolor{fptHeader}\textbf{Entity} & \textbf{Fields and descriptions} \\* \hline
+\endhead
+\hline\endfoot
+\endlastfoot
+\texttt{User} & - id: used to store the unique identifier of the record \\*
+& - email: used to store the account email address \\
+& - password: used to store the hashed account password \\
+& - is\allowbreak Banned: used to store whether the account is banned \\
+& - created\allowbreak At: used to store the creation timestamp \\
+& - updated\allowbreak At: used to store the last update timestamp \\
+& - deleted\allowbreak At: used to store the soft-deletion timestamp \\
+& - stripe\allowbreak Customer\allowbreak Id: used to store the stripe customer id text value \\
+& - stripe\allowbreak Account\allowbreak Id: used to store the stripe account id text value \\
+& - stripe\allowbreak Onboarding\allowbreak Completed: used to store whether Stripe onboarding is completed \\
+& - role\allowbreak Id: used to store the foreign key reference to the primary role \\ \hline
+\texttt{Moderation\allowbreak Queue} & - id: used to store the unique identifier of the record \\*
+& - content\allowbreak Type: used to store the content type value from the ModerationContentType enumeration \\
+& - content\allowbreak Id: used to store the content id integer value \\
+& - reporter\allowbreak Id: used to store the foreign key reference to the reporting user \\
+& - reason: used to store the reason text \\
+& - status: used to store the status value from the ReportStatus enumeration \\
+& - admin\allowbreak Id: used to store the foreign key reference to the reviewing administrator \\
+& - action\allowbreak Taken: used to store the moderation action text \\
+& - created\allowbreak At: used to store the creation timestamp \\
+& - resolved\allowbreak At: used to store the resolution timestamp \\ \hline
+\texttt{Banned\allowbreak Keyword} & - id: used to store the unique identifier of the record \\*
+& - keyword: used to store the banned keyword text \\
+& - created\allowbreak By: used to store the foreign key reference to the user \\
+& - created\allowbreak At: used to store the creation timestamp \\ \hline
+\texttt{Announcement\allowbreak Banner} & - id: used to store the unique identifier of the record \\*
+& - message: used to store the message text \\
+& - link: used to store the banner link \\
+& - start\allowbreak Date: used to store the start date timestamp \\
+& - end\allowbreak Date: used to store the end date timestamp \\
+& - is\allowbreak Active: used to store whether the record is active \\
+& - created\allowbreak At: used to store the creation timestamp \\
+& - updated\allowbreak At: used to store the last update timestamp \\
+& - deleted\allowbreak At: used to store the soft-deletion timestamp \\ \hline
+\texttt{Advertisement\allowbreak Banner} & - id: used to store the unique identifier of the record \\*
+& - title: used to store the title text \\
+& - image\allowbreak Url: used to store the banner image URL \\
+& - link\allowbreak Url: used to store the link URL \\
+& - position: used to store the position value from the BannerPosition enumeration \\
+& - start\allowbreak Date: used to store the start date timestamp \\
+& - end\allowbreak Date: used to store the end date timestamp \\
+& - is\allowbreak Active: used to store whether the record is active \\
+& - created\allowbreak At: used to store the creation timestamp \\
+& - updated\allowbreak At: used to store the last update timestamp \\ \hline
+\texttt{System\allowbreak Setting} & - id: used to store the unique identifier of the record \\*
+& - key: used to store the setting key \\
+& - value: used to store the setting value \\
+& - created\allowbreak At: used to store the creation timestamp \\
+& - updated\allowbreak At: used to store the last update timestamp \\ \hline
+\end{longtable}
 \end{center}

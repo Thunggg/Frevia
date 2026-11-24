@@ -13,7 +13,7 @@ export const ManageProposalMessage = {
   DRAFT_CONTENT_REQUIRED: "Error.ProposalDraftContentRequired",
   PROPOSAL_NOT_FOUND: "Error.ProposalNotFound",
   PROPOSAL_NOT_DRAFT: "Error.ProposalNotDraft",
-  // Đề xuất không còn ở trạng thái khách hàng có thể xử lý (SUBMITTED/INTERVIEWING).
+  // Đề xuất không còn ở trạng thái khách hàng có thể xử lý (SUBMITTED).
   PROPOSAL_NOT_SUBMITTED: "Error.ProposalNotSubmitted",
   PROPOSAL_EXPIRED: "Error.ProposalExpired",
   PROPOSAL_INCOMPLETE: "Error.ProposalIncomplete",

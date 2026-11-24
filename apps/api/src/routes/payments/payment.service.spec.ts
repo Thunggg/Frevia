@@ -478,6 +478,7 @@ describe('PaymentService', () => {
         currency: 'usd',
         destination: 'acct_freelancer_123',
         transferGroup: 'contract_10',
+        idempotencyKey: 'release-milestone-20',
         metadata: expect.any(Object),
       });
       expect(repo.updateMilestonePaymentStatus).toHaveBeenCalledWith(
@@ -513,83 +514,6 @@ describe('PaymentService', () => {
       } as any);
 
       await expect(service.releaseMilestone(1, 10, 20)).rejects.toThrow(
-        UnprocessableEntityException,
-      );
-    });
-  });
-
-  describe('refundMilestone', () => {
-    it('auto-refunds escrow deposit to client when milestone status is LATE', async () => {
-      repo.findMilestoneById.mockResolvedValue({
-        ...mockMilestone,
-        status: MilestoneStatus.LATE,
-        paymentStatus: MilestonePaymentStatus.FUNDED,
-      } as any);
-      repo.findEscrowDepositTransaction.mockResolvedValue({
-        id: 77,
-        stripePaymentIntentId: 'pi_original_deposit',
-      } as any);
-      stripeService.createRefund.mockResolvedValue({
-        id: 're_refund_123',
-      } as any);
-
-      const result = await service.refundMilestone(1, 10, 20);
-
-      expect(result.success).toBe(true);
-      expect(result.refundId).toBe('re_refund_123');
-      expect(stripeService.createRefund).toHaveBeenCalledWith({
-        paymentIntentId: 'pi_original_deposit',
-        amountInCents: 25000,
-        metadata: expect.objectContaining({
-          reason: 'FREELANCER_LATE_NO_SUBMISSION',
-        }),
-        idempotencyKey: 'refund-milestone-20',
-      });
-      expect(repo.applyMilestoneRefundTransaction).toHaveBeenCalledWith(
-        expect.objectContaining({
-          milestoneId: 20,
-          contractId: 10,
-          refundId: 're_refund_123',
-          reason: 'FREELANCER_LATE_NO_SUBMISSION',
-          isAuto: true,
-        }),
-      );
-    });
-
-    it('auto-refunds escrow deposit to client when freelancer has not started working (PENDING)', async () => {
-      repo.findMilestoneById.mockResolvedValue({
-        ...mockMilestone,
-        status: MilestoneStatus.PENDING,
-        paymentStatus: MilestonePaymentStatus.FUNDED,
-      } as any);
-      repo.findEscrowDepositTransaction.mockResolvedValue({
-        id: 77,
-        stripePaymentIntentId: 'pi_original_deposit',
-      } as any);
-      stripeService.createRefund.mockResolvedValue({
-        id: 're_refund_pending',
-      } as any);
-
-      const result = await service.refundMilestone(1, 10, 20);
-
-      expect(result.success).toBe(true);
-      expect(result.refundId).toBe('re_refund_pending');
-      expect(repo.applyMilestoneRefundTransaction).toHaveBeenCalledWith(
-        expect.objectContaining({
-          reason: 'FREELANCER_NOT_STARTED',
-          isAuto: true,
-        }),
-      );
-    });
-
-    it('throws UnprocessableEntityException when milestone is active IN_PROGRESS or SUBMITTED', async () => {
-      repo.findMilestoneById.mockResolvedValue({
-        ...mockMilestone,
-        status: MilestoneStatus.IN_PROGRESS,
-        paymentStatus: MilestonePaymentStatus.FUNDED,
-      } as any);
-
-      await expect(service.refundMilestone(1, 10, 20)).rejects.toThrow(
         UnprocessableEntityException,
       );
     });

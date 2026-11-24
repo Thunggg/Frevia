@@ -9,8 +9,13 @@
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
 
-UC ID and Name & \multicolumn{3}{l|}{UC View Saved Searches} \\ \hline
-
+\\rowcolor{fptHeader}UC ID and Name & \\multicolumn{3}{l|}{UC View Saved Searches} \\* \\hline
+\\endfirsthead
+\\hline
+\\rowcolor{fptHeader}UC ID and Name & \\multicolumn{3}{l|}{UC View Saved Searches \\textit{(cont.)}} \\* \\hline
+\\endhead
+\\hline\\endfoot
+\\endlastfoot
 Created By: & Tran Phat Tai & Date Created: & 28/09/2026 \\ \hline
 
 Primary Actor: & Freelancer & Secondary Actors: & N/A \\ \hline
@@ -82,8 +87,13 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{A freelancer may have zero or more sa
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
 
-UC ID and Name & \multicolumn{3}{l|}{UC View Saved Search Detail} \\ \hline
-
+\\rowcolor{fptHeader}UC ID and Name & \\multicolumn{3}{l|}{UC View Saved Search Detail} \\* \\hline
+\\endfirsthead
+\\hline
+\\rowcolor{fptHeader}UC ID and Name & \\multicolumn{3}{l|}{UC View Saved Search Detail \\textit{(cont.)}} \\* \\hline
+\\endhead
+\\hline\\endfoot
+\\endlastfoot
 Created By: & Tran Phat Tai & Date Created: & 29/09/2026 \\ \hline
 
 Primary Actor: & Freelancer & Secondary Actors: & N/A \\ \hline
@@ -159,8 +169,13 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{The saved search detail is only reach
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
 
-UC ID and Name & \multicolumn{3}{l|}{UC Create Saved Search} \\ \hline
-
+\\rowcolor{fptHeader}UC ID and Name & \\multicolumn{3}{l|}{UC Create Saved Search} \\* \\hline
+\\endfirsthead
+\\hline
+\\rowcolor{fptHeader}UC ID and Name & \\multicolumn{3}{l|}{UC Create Saved Search \\textit{(cont.)}} \\* \\hline
+\\endhead
+\\hline\\endfoot
+\\endlastfoot
 Created By: & Tran Phat Tai & Date Created: & 29/09/2026 \\ \hline
 
 Primary Actor: & Freelancer & Secondary Actors: & N/A \\ \hline
@@ -230,87 +245,6 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{The current search parameters are val
 \end{longtable}
 
 % =================================================================
-% UC-________ Edit Saved Search
-% =================================================================
-\subparagraph{UC Edit Saved Search}
-
-\Needspace{12\baselineskip}
-\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
-\hline
-
-UC ID and Name & \multicolumn{3}{l|}{UC Edit Saved Search} \\ \hline
-
-Created By: & Tran Phat Tai & Date Created: & 30/09/2026 \\ \hline
-
-Primary Actor: & Freelancer & Secondary Actors: & N/A \\ \hline
-
-Trigger: & \multicolumn{3}{L{11.1cm}|}{When a freelancer chooses to rename or edit a saved search from the saved searches list or detail page.} \\ \hline
-
-Description: & \multicolumn{3}{L{11.1cm}|}{Allows the owner of a saved search to modify its name or filter criteria. Only the owner can edit a saved search.} \\ \hline
-
-Preconditions: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{PRE-1} The freelancer is authenticated.
-} \\ \hline
-
-Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{POST-1} The saved search is updated with the new name and/or filter criteria. \newline
-\textbf{POST-2} The updated label is reflected in the saved searches list.
-} \\ \hline
-
-Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{A. Edit Saved Search} \newline
-1. The Freelancer selects the edit option on a saved search. \newline
-2. The system loads the current name and filter criteria of the saved search. \newline
-3. The Freelancer updates the name and/or the filter criteria. \newline
-4. The Freelancer confirms the changes. \newline
-5. The system validates the new name. \newline
-6. The system updates the saved search. \newline
-7. The system confirms the update to the Freelancer. The use case ends.
-} \\ \hline
-
-Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
-
-\textbf{A.1 Cancel Edit} \textit{(branch at step 4)} \newline
-1. The Freelancer cancels the edit. \newline
-2. The system takes no action. \newline
-3. The use case ends. \newline
-\textbf{A.2 Invalid Name} \textit{(branch at step 5)} \newline
-1. The system determines that the name is empty or exceeds 100 characters. \newline
-2. The system displays an appropriate error message. \newline
-3. Return to step 3 of the main flow.
-} \\ \hline
-
-Exceptions: & \multicolumn{3}{L{11.1cm}|}{
-
-\textbf{EX-01: Saved Search Not Found} \textit{(branch at step 6)} \newline
-1. The system cannot find the saved search, or the saved search belongs to another user. \newline
-2. The system displays the message ``Saved search not found.'' \newline
-3. The system does not modify the saved search. \newline
-4. The use case ends. \newline
-\textbf{EX-02: System Error While Updating} \textit{(branch at step 6)} \newline
-1. The system cannot update the saved search due to a processing or connection error. \newline
-2. The system displays the message ``Couldn't update the saved search. Please try again later.'' \newline
-3. The freelancer remains on the current page without the changes being saved. \newline
-4. The use case ends.
-} \\ \hline
-
-Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
-
-Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Low} \\ \hline
-
-Business Rules: & \multicolumn{3}{L{11.1cm}|}{
-BR-SAVE-09: Only the owner of a saved search can edit it. \newline
-BR-SAVE-10: The update shall only affect the saved search belonging to the current user. \newline
-BR-SAVE-11: The name is required and must not exceed 100 characters.
-} \\ \hline
-
-Other Information: & \multicolumn{3}{L{11.1cm}|}{The API supports updating the name; filter criteria may be edited via the search page and re-saved.} \\ \hline
-
-Assumptions: & \multicolumn{3}{L{11.1cm}|}{The freelancer can only edit saved searches they own.} \\ \hline
-
-\end{longtable}
-
-% =================================================================
 % UC-________ Delete Saved Search
 % =================================================================
 \subparagraph{UC Delete Saved Search}
@@ -319,8 +253,13 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{The freelancer can only edit saved se
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
 
-UC ID and Name & \multicolumn{3}{l|}{UC Delete Saved Search} \\ \hline
-
+\\rowcolor{fptHeader}UC ID and Name & \\multicolumn{3}{l|}{UC Delete Saved Search} \\* \\hline
+\\endfirsthead
+\\hline
+\\rowcolor{fptHeader}UC ID and Name & \\multicolumn{3}{l|}{UC Delete Saved Search \\textit{(cont.)}} \\* \\hline
+\\endhead
+\\hline\\endfoot
+\\endlastfoot
 Created By: & Tran Phat Tai & Date Created: & 01/10/2026 \\ \hline
 
 Primary Actor: & Freelancer & Secondary Actors: & N/A \\ \hline
@@ -394,8 +333,13 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{The freelancer can only delete saved 
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
 
-UC ID and Name & \multicolumn{3}{l|}{UC View Job Alerts} \\ \hline
-
+\\rowcolor{fptHeader}UC ID and Name & \\multicolumn{3}{l|}{UC View Job Alerts} \\* \\hline
+\\endfirsthead
+\\hline
+\\rowcolor{fptHeader}UC ID and Name & \\multicolumn{3}{l|}{UC View Job Alerts \\textit{(cont.)}} \\* \\hline
+\\endhead
+\\hline\\endfoot
+\\endlastfoot
 Created By: & Tran Phat Tai & Date Created: & 02/10/2026 \\ \hline
 
 Primary Actor: & Freelancer & Secondary Actors: & N/A \\ \hline
@@ -463,8 +407,13 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{A freelancer may have zero or more jo
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
 
-UC ID and Name & \multicolumn{3}{l|}{UC View Job Alert Detail} \\ \hline
-
+\\rowcolor{fptHeader}UC ID and Name & \\multicolumn{3}{l|}{UC View Job Alert Detail} \\* \\hline
+\\endfirsthead
+\\hline
+\\rowcolor{fptHeader}UC ID and Name & \\multicolumn{3}{l|}{UC View Job Alert Detail \\textit{(cont.)}} \\* \\hline
+\\endhead
+\\hline\\endfoot
+\\endlastfoot
 Created By: & Tran Phat Tai & Date Created: & 02/10/2026 \\ \hline
 
 Primary Actor: & Freelancer & Secondary Actors: & N/A \\ \hline
@@ -538,8 +487,13 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{The job alert detail page is only rea
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
 
-UC ID and Name & \multicolumn{3}{l|}{UC Create Job Alert} \\ \hline
-
+\\rowcolor{fptHeader}UC ID and Name & \\multicolumn{3}{l|}{UC Create Job Alert} \\* \\hline
+\\endfirsthead
+\\hline
+\\rowcolor{fptHeader}UC ID and Name & \\multicolumn{3}{l|}{UC Create Job Alert \\textit{(cont.)}} \\* \\hline
+\\endhead
+\\hline\\endfoot
+\\endlastfoot
 Created By: & Tran Phat Tai & Date Created: & 03/10/2026 \\ \hline
 
 Primary Actor: & Freelancer & Secondary Actors: & System \\ \hline
@@ -617,8 +571,13 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{The freelancer wants to receive autom
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
 
-UC ID and Name & \multicolumn{3}{l|}{UC Edit Job Alert} \\ \hline
-
+\\rowcolor{fptHeader}UC ID and Name & \\multicolumn{3}{l|}{UC Edit Job Alert} \\* \\hline
+\\endfirsthead
+\\hline
+\\rowcolor{fptHeader}UC ID and Name & \\multicolumn{3}{l|}{UC Edit Job Alert \\textit{(cont.)}} \\* \\hline
+\\endhead
+\\hline\\endfoot
+\\endlastfoot
 Created By: & Tran Phat Tai & Date Created: & 04/10/2026 \\ \hline
 
 Primary Actor: & Freelancer & Secondary Actors: & System \\ \hline
@@ -698,8 +657,13 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{The freelancer can only edit job aler
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
 
-UC ID and Name & \multicolumn{3}{l|}{UC Delete Job Alert} \\ \hline
-
+\\rowcolor{fptHeader}UC ID and Name & \\multicolumn{3}{l|}{UC Delete Job Alert} \\* \\hline
+\\endfirsthead
+\\hline
+\\rowcolor{fptHeader}UC ID and Name & \\multicolumn{3}{l|}{UC Delete Job Alert \\textit{(cont.)}} \\* \\hline
+\\endhead
+\\hline\\endfoot
+\\endlastfoot
 Created By: & Tran Phat Tai & Date Created: & 05/10/2026 \\ \hline
 
 Primary Actor: & Freelancer & Secondary Actors: & System \\ \hline

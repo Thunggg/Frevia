@@ -31,7 +31,7 @@ const proposalData = [
     coverLetter: `React Native is my primary tech stack. I've published 5+ apps on both App Store and Google Play. I can handle state management, push notifications, and Firebase integration. Happy to share my portfolio upon request.`,
     bidAmount: '2200',
     deliveryDays: 30,
-    status: 'INTERVIEWING' as const,
+    status: 'SUBMITTED' as const,
   },
   {
     coverLetter: `I have extensive e-commerce experience with Next.js and Stripe. I'll set up product catalog, cart, checkout flow, and admin dashboard. SEO optimization is included by default in my workflow.`,
@@ -107,7 +107,7 @@ async function main() {
         submittedAt,
         // Đề xuất đang chờ khách hàng xử lý có hạn 30 ngày.
         expiresAt:
-          data.status === 'SUBMITTED' || data.status === 'INTERVIEWING'
+          data.status === 'SUBMITTED'
             ? resolveProposalExpiryDate(submittedAt)
             : null,
       },
@@ -124,7 +124,6 @@ async function main() {
   );
   console.log('\nProposal summary:');
   console.log('  - SUBMITTED   : proposals waiting for client review');
-  console.log('  - INTERVIEWING: client responded, in discussion/interview');
   console.log('  - HIRED       : client hired the freelancer');
   console.log('  - REJECTED    : proposal rejected by client');
   console.log('  - WITHDRAWN   : proposal withdrawn by freelancer');

@@ -104,6 +104,27 @@ export class AccountProfileService {
     >,
   ) {
     if (!user.profile) throw ProfileNotFoundException();
+    const activeRoleName = user.role?.name;
+    const ownedRoles =
+      Array.isArray(user.userRoles) && user.userRoles.length > 0
+        ? user.userRoles
+            .map((ur) => ({
+              name: ur.role.name,
+              isPrimary:
+                typeof user.roleId === 'number'
+                  ? ur.roleId === user.roleId
+                  : ur.role.name === activeRoleName,
+            }))
+            .sort((a, b) => Number(b.isPrimary) - Number(a.isPrimary))
+        : activeRoleName
+          ? [
+              {
+                name: activeRoleName,
+                isPrimary: true,
+              },
+            ]
+          : [];
+
     return {
       ...user.profile,
       email: user.email,
@@ -112,14 +133,7 @@ export class AccountProfileService {
         user.profile.avatarUrl,
         user.profile.updatedAt,
       ),
-      roles: user.role
-        ? [
-            {
-              name: user.role.name,
-              isPrimary: true,
-            },
-          ]
-        : [],
+      roles: ownedRoles,
     };
   }
 
@@ -261,6 +275,21 @@ export class AccountProfileService {
       throw AccountProfileForbiddenException();
     }
     return user;
+  }
+
+  private hasOwnedRole(
+    user:
+      | {
+          role?: { name: string } | null;
+          userRoles?: Array<{ role: { name: string } }>;
+        }
+      | null
+      | undefined,
+    roleName: string,
+  ): boolean {
+    if (!user) return false;
+    if (user.role?.name === roleName) return true;
+    return Boolean(user.userRoles?.some((ur) => ur.role.name === roleName));
   }
 
   /**
@@ -661,7 +690,7 @@ export class AccountProfileService {
     await this.requireRole(clientId, RoleName.CLIENT);
     if (clientId === freelancerId) throw FreelancerNotFoundException();
     const freelancer = await this.repository.findUserWithRoles(freelancerId);
-    const isFreelancer = freelancer?.role?.name === RoleName.FREELANCER;
+    const isFreelancer = this.hasOwnedRole(freelancer, RoleName.FREELANCER);
     if (!freelancer?.profile || !isFreelancer)
       throw FreelancerNotFoundException();
     if (await this.repository.findFavorite(clientId, freelancerId)) {
@@ -708,7 +737,13 @@ export class AccountProfileService {
   async followFreelancer(clientId: number, freelancerId: number) {
     const client = await this.requireRole(clientId, RoleName.CLIENT);
     if (clientId === freelancerId) throw FreelancerNotFoundException();
-    await this.requireRole(freelancerId, RoleName.FREELANCER);
+    const freelancer = await this.repository.findUserWithRoles(freelancerId);
+    if (
+      !freelancer?.profile ||
+      !this.hasOwnedRole(freelancer, RoleName.FREELANCER)
+    ) {
+      throw FreelancerNotFoundException();
+    }
     if (await this.repository.findFollow(clientId, freelancerId)) {
       throw FollowDuplicateException();
     }

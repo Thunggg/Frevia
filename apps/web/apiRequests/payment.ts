@@ -9,7 +9,6 @@ import type {
   GetTransactionListQueryType,
   GetTransactionListResponseType,
   PaymentMethodActionResponseType,
-  RefundMilestoneResponseType,
   ReleaseMilestoneResponseType,
   StripeConnectStatusResponseType,
   StripeOnboardingLinkResponseType,
@@ -62,16 +61,6 @@ export const paymentApiRequest = {
   releaseMilestone(contractId: number, milestoneId: number) {
     return http.post<ReleaseMilestoneResponseType>(
       `/payments/contracts/${contractId}/milestones/${milestoneId}/release`,
-      {},
-    );
-  },
-
-  /**
-   * Hoàn tiền Milestone ký quỹ về lại thẻ của Client
-   */
-  refundMilestone(contractId: number, milestoneId: number) {
-    return http.post<RefundMilestoneResponseType>(
-      `/payments/contracts/${contractId}/milestones/${milestoneId}/refund`,
       {},
     );
   },

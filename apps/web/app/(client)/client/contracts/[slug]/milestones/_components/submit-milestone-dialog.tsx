@@ -15,6 +15,13 @@ import {
 } from "lucide-react";
 import { Button } from "@repo/ui/components/shadcn/button";
 import {
+  AlertDialog,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogTitle,
+} from "@repo/ui/components/shadcn/alert-dialog";
+import {
   Sheet,
   SheetContent,
   SheetDescription,
@@ -59,6 +66,8 @@ export function SubmitMilestoneDialog({
   const [uploadedFiles, setUploadedFiles] = useState<MilestoneFileType[]>([]);
   const [isUploadingFile, setIsUploadingFile] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [fileToRemove, setFileToRemove] = useState<MilestoneFileType | null>(null);
+  const [isRemovingFile, setIsRemovingFile] = useState(false);
 
   if (!milestone) return null;
 
@@ -141,15 +150,18 @@ export function SubmitMilestoneDialog({
     }
   };
 
-  const handleRemoveFile = async (file: MilestoneFileType) => {
+  const handleConfirmRemoveFile = async () => {
+    if (!fileToRemove || !milestone) return;
+    setIsRemovingFile(true);
     try {
       await contractApiRequest.deleteMilestoneFile(
         contractId,
         milestone.id,
-        file.id,
+        fileToRemove.id,
       );
-      setUploadedFiles((prev) => prev.filter((f) => f.id !== file.id));
+      setUploadedFiles((prev) => prev.filter((f) => f.id !== fileToRemove.id));
       toastSuccess({ message: t("removedFile") });
+      setFileToRemove(null);
     } catch (error) {
       toastError({
         message:
@@ -157,6 +169,8 @@ export function SubmitMilestoneDialog({
             ? error.response.error.message
             : t("removeFileFailed"),
       });
+    } finally {
+      setIsRemovingFile(false);
     }
   };
 
@@ -386,7 +400,7 @@ export function SubmitMilestoneDialog({
                       {canDeleteFile && (
                         <button
                           type="button"
-                          onClick={() => void handleRemoveFile(f)}
+                          onClick={() => setFileToRemove(f)}
                           className="text-zinc-400 hover:text-rose-500 cursor-pointer p-0.5"
                           title={t("removeFile")}
                         >
@@ -429,6 +443,50 @@ export function SubmitMilestoneDialog({
             </Button>
           )}
         </SheetFooter>
+
+        {/* Confirm Remove Attachment Dialog */}
+        <AlertDialog
+          open={Boolean(fileToRemove)}
+          onOpenChange={(open) => {
+            if (!open && !isRemovingFile) {
+              setFileToRemove(null);
+            }
+          }}
+        >
+          <AlertDialogContent className="max-w-sm rounded-[24px] border border-border bg-background p-5 shadow-2xl font-sans">
+            <div className="flex flex-col gap-3">
+              <AlertDialogTitle className="text-base font-bold text-foreground">
+                {t("removeFileTitle")}
+              </AlertDialogTitle>
+              <AlertDialogDescription className="text-xs text-muted-foreground leading-relaxed">
+                {t("removeFileHint", {
+                  name: fileToRemove?.fileName ?? "",
+                })}
+              </AlertDialogDescription>
+              <div className="mt-2 flex flex-col gap-2">
+                <Button
+                  variant="destructive"
+                  disabled={isRemovingFile}
+                  onClick={() => void handleConfirmRemoveFile()}
+                  className="w-full rounded-full bg-rose-600 hover:bg-rose-700 text-white text-xs font-semibold cursor-pointer"
+                >
+                  {isRemovingFile ? (
+                    <Loader2 className="mr-1.5 size-3.5 animate-spin" />
+                  ) : (
+                    <Trash2 className="mr-1.5 size-3.5" />
+                  )}
+                  {t("confirmRemove")}
+                </Button>
+                <AlertDialogCancel
+                  disabled={isRemovingFile}
+                  className="w-full rounded-full text-xs cursor-pointer"
+                >
+                  {tCommon("cancel")}
+                </AlertDialogCancel>
+              </div>
+            </div>
+          </AlertDialogContent>
+        </AlertDialog>
       </SheetContent>
     </Sheet>
   );

@@ -250,7 +250,7 @@ export function ChatView({
     return () => {
       socket.off("message:error", handler);
     };
-  }, [socket]);
+  }, [socket, t]);
 
   const handleInputChange = (value: string) => {
     setInput(value);

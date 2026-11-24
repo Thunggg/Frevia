@@ -1,10 +1,6 @@
-import { FileQuestion } from "@/components/icons";
 import { getTranslations } from "next-intl/server";
 import Link from "next/link";
-
 import authServerRequest from "@/apiRequests/auth.server";
-import { Footer } from "@/components/footer";
-import { Header, type UserRole } from "@/components/header";
 import { canAccessAdminPortal } from "@/lib/admin-access";
 import { Button } from "@repo/ui/components/shadcn/button";
 import { RoleName } from "@shared/types";
@@ -14,54 +10,36 @@ export default async function NotFound() {
   const primaryRole =
     user?.roles?.find((r) => r.isPrimary)?.name ?? user?.roles?.[0]?.name;
 
-  let role: UserRole = "GUEST";
-  if (primaryRole === RoleName.CLIENT) role = "CLIENT";
-  else if (primaryRole === RoleName.FREELANCER) role = "FREELANCER";
-  else if (user) role = "STAFF";
-
-  const homeHref =
-    role === "CLIENT"
-      ? "/client/jobs"
-      : role === "STAFF"
-        ? canAccessAdminPortal(user)
-          ? "/admin"
-          : "/forum"
-        : role === "FREELANCER"
-          ? "/freelancer"
-          : "/";
+  let homeHref = "/";
+  if (primaryRole === RoleName.CLIENT) {
+    homeHref = "/client";
+  } else if (primaryRole === RoleName.FREELANCER) {
+    homeHref = "/freelancer";
+  } else if (user && canAccessAdminPortal(user)) {
+    homeHref = "/admin";
+  }
 
   const t = await getTranslations("notFound");
 
   return (
-    <div className="flex min-h-dvh flex-col bg-background font-sans">
-      <Header role={role} />
-      <main className="flex flex-1 items-center justify-center px-4 py-16">
-        <section className="max-w-md text-center">
-          <div className="mx-auto flex size-14 items-center justify-center rounded-full bg-[#eaf8df] text-[#4fae2e] dark:bg-[#4fae2e]/15">
-            <FileQuestion className="size-7" />
-          </div>
-          <p className="mt-6 text-sm font-medium text-[#4fae2e]">404</p>
-          <h1 className="mt-2 text-2xl font-semibold tracking-tight text-foreground">
-            {t("title")}
-          </h1>
-          <p className="mt-3 text-muted-foreground">{t("description")}</p>
-          <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
-            <Button
-              className="bg-[#4fae2e] text-white hover:bg-[#459928] dark:bg-[#4fae2e] dark:text-white dark:hover:bg-[#5bc03a]"
-              asChild
-            >
-              <Link href={homeHref}>{t("goHome")}</Link>
-
-            </Button>
-            <Button variant="outline" asChild>
-              <Link href={role === "STAFF" ? "/forum" : "/find-work"}>
-                {role === "STAFF" ? t("goHome") : t("findWork")}
-              </Link>
-            </Button>
-          </div>
-        </section>
-      </main>
-      <Footer />
+    <div className="flex min-h-dvh items-center justify-center p-4 sm:p-8 lg:p-12 font-sans dark:bg-zinc-950">
+      <div className="text-center flex flex-col items-center justify-center min-h-[460px] dark:bg-zinc-900 dark:border-zinc-800">
+        <span className="text-xs sm:text-sm font-semibold tracking-wider text-blue-600 uppercase mb-3 dark:text-blue-400">
+          {t("errorBadge")}
+        </span>
+        <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-zinc-950 mb-4 dark:text-zinc-50">
+          {t("title")}
+        </h1>
+        <p className="text-sm sm:text-base text-zinc-500 max-w-lg mb-8 leading-relaxed dark:text-zinc-400">
+          {t("description")}
+        </p>
+        <Button
+          asChild
+          className="rounded-full bg-blue-600 hover:bg-blue-700 text-white font-medium px-8 py-3 text-sm transition-all shadow-sm hover:shadow"
+        >
+          <Link href={homeHref}>{t("goHome")}</Link>
+        </Button>
+      </div>
     </div>
   );
 }

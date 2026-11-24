@@ -34,7 +34,6 @@ interface MilestoneSubmissionsTabProps {
   onSubmitWork?: () => void;
   onReviewSubmission?: (submission?: GetSubmissionResponseType) => void;
   onRelease?: () => void;
-  onRefund?: () => void;
 }
 
 export function MilestoneSubmissionsTab({
@@ -48,13 +47,12 @@ export function MilestoneSubmissionsTab({
   onSubmitWork,
   onReviewSubmission,
   onRelease,
-  onRefund,
 }: MilestoneSubmissionsTabProps) {
   const format = useFormatter();
   const t = useTranslations("milestoneWorkspace.submissions");
   const tCard = useTranslations("milestoneWorkspace.card");
   const tOverview = useTranslations("milestoneWorkspace.overview");
-  const { can, canAny } = useActionPermission();
+  const { can, canAny, isLoading: isPermissionLoading } = useActionPermission();
   const isClient = !isFreelancer;
 
   const canViewSubmissions = can("GET", "/api/contracts/:contractId/milestones/:milestoneId/submissions");
@@ -68,7 +66,6 @@ export function MilestoneSubmissionsTab({
     { method: "POST", path: "/api/payments/contracts/:contractId/milestones/:milestoneId/fund/saved-card" },
   ]);
   const canRelease = can("POST", "/api/payments/contracts/:contractId/milestones/:milestoneId/release");
-  const canRefund = can("POST", "/api/payments/contracts/:contractId/milestones/:milestoneId/refund");
   const canStartWork = can("PATCH", "/api/contracts/:contractId/milestones/:id/progress");
   const canSubmitWork = can("POST", "/api/contracts/:contractId/milestones/:milestoneId/submissions");
 
@@ -117,26 +114,6 @@ export function MilestoneSubmissionsTab({
         >
           <Check className="mr-1.5 size-3" />
           {tCard("releasePayment")}
-        </Button>
-      );
-    }
-
-    if (
-      isClient &&
-      contractStatus === "ACTIVE" &&
-      milestone.paymentStatus === "FUNDED" &&
-      (milestone.status === "LATE" || milestone.status === "PENDING") &&
-      canRefund &&
-      onRefund
-    ) {
-      return (
-        <Button
-          variant="outline"
-          onClick={onRefund}
-          className="rounded-full border-rose-200 dark:border-rose-800 text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/20 text-xs font-normal h-7 px-3.5 cursor-pointer self-start sm:self-auto"
-        >
-          <RotateCcw className="mr-1.5 size-3" />
-          {tCard("refundEscrow")}
         </Button>
       );
     }
@@ -237,7 +214,7 @@ export function MilestoneSubmissionsTab({
     }
   };
 
-  if (!canViewSubmissions) {
+  if (!isPermissionLoading && !canViewSubmissions) {
     return (
       <div className="py-8 text-center space-y-2">
         <h3 className="text-xs font-medium text-foreground">

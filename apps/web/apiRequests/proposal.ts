@@ -72,14 +72,6 @@ export const proposalApiRequest = {
     return http.patch<ProposalType>(`/api/proposals/${proposalId}/reject`, {});
   },
 
-  // Khách hàng phản hồi và bắt đầu phỏng vấn/trao đổi với freelancer.
-  interview(proposalId: number) {
-    return http.patch<ProposalType>(
-      `/api/proposals/${proposalId}/interview`,
-      {},
-    );
-  },
-
   accept(proposalId: number) {
     return http.patch<ProposalType>(`/api/proposals/${proposalId}/accept`, {});
   },
@@ -117,7 +109,6 @@ export const proposalApiRequest = {
     const visibleStatuses: ProposalStatusType[] = [
       "DRAFT",
       "SUBMITTED",
-      "INTERVIEWING",
       "HIRED",
       "REJECTED",
     ];

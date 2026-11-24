@@ -8,7 +8,6 @@ import {
   BookmarkCheck,
   ChevronLeft,
   ChevronRight,
-  Pencil,
   Search,
   SlidersHorizontal,
   Trash2,
@@ -35,7 +34,6 @@ import {
   DialogTitle,
 } from "@repo/ui/components/shadcn/dialog";
 import { Input } from "@repo/ui/components/shadcn/input";
-import { Label } from "@repo/ui/components/shadcn/label";
 import { toastError, toastSuccess } from "@repo/ui/components/shadcn/toast";
 import type { SavedSearchType } from "@shared/types";
 
@@ -49,7 +47,7 @@ const PAGE_SIZE_OPTIONS = [6, 9, 12, 24];
 
 function toFindWorkHref(
   searchParams: SavedSearchType["searchParams"],
-  baseUrl = "/find-work",
+  baseUrl = "/freelancer/search/jobs",
 ) {
   const params = new URLSearchParams();
 
@@ -80,7 +78,6 @@ export function SavedSearchesContent({
   const { can } = useActionPermission();
   const canViewSavedSearches = can("GET", "/api/saved-searches");
   const canViewSavedSearchDetail = can("GET", "/api/saved-searches/:id");
-  const canUpdateSavedSearch = can("PATCH", "/api/saved-searches/:id");
   const canDeleteSavedSearch = can("DELETE", "/api/saved-searches/:id");
 
   const [items, setItems] = useState<SavedSearchType[]>(initialSavedSearches);
@@ -88,10 +85,6 @@ export function SavedSearchesContent({
   const [sortOrder, setSortOrder] = useState<"desc" | "asc">("desc");
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(9);
-
-  // Rename Dialog State
-  const [editingItem, setEditingItem] = useState<SavedSearchType | null>(null);
-  const [editName, setEditName] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Delete Confirmation Dialog State
@@ -99,15 +92,20 @@ export function SavedSearchesContent({
 
   const filterSummary = (searchParams: SavedSearchType["searchParams"]) => {
     const labels: string[] = [];
-    const keyword = searchParams.keyword;
-    const budget = searchParams.budget;
-    const time = searchParams.time;
+    const keyword = (searchParams.q || searchParams.keyword) as
+      | string
+      | undefined;
+    const budget = searchParams.budget as string | undefined;
+    const time = searchParams.time as string | undefined;
+    const skill = searchParams.skill as string | undefined;
 
-    if (typeof keyword === "string" && keyword) labels.push(keyword);
+    if (typeof keyword === "string" && keyword.trim())
+      labels.push(keyword.trim());
     if (typeof budget === "string" && budget !== "all")
       labels.push(translateFilterOption(tFindWork, BUDGET_KEYS, budget));
     if (typeof time === "string" && time !== "all")
       labels.push(translateFilterOption(tFindWork, TIME_KEYS, time));
+    if (typeof skill === "string" && skill.trim()) labels.push(skill.trim());
 
     return labels.length ? labels : [t("allOpenProjects")];
   };
@@ -121,7 +119,7 @@ export function SavedSearchesContent({
 
   const effectiveBasePath =
     basePath ?? (embedded ? "/freelancer/saved-searches" : "/saved-searches");
-  const findWorkBaseUrl = "/freelancer";
+  const findWorkBaseUrl = "/freelancer/search/jobs";
 
   // Filter & Sort
   const filteredItems = useMemo(() => {
@@ -147,34 +145,6 @@ export function SavedSearchesContent({
     const start = (validCurrentPage - 1) * pageSize;
     return filteredItems.slice(start, start + pageSize);
   }, [filteredItems, validCurrentPage, pageSize]);
-
-  // Rename Handler
-  const handleStartRename = (item: SavedSearchType) => {
-    if (!canUpdateSavedSearch) return;
-    setEditingItem(item);
-    setEditName(item.name);
-  };
-
-  const handleSaveRename = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!editingItem || !editName.trim() || !canUpdateSavedSearch) return;
-
-    const trimmed = editName.trim();
-    setIsSubmitting(true);
-    try {
-      await savedSearchApiRequest.update(editingItem.id, { name: trimmed });
-      setItems((prev) =>
-        prev.map((it) => (it.id === editingItem.id ? { ...it, name: trimmed } : it)),
-      );
-      toastSuccess({ message: t("updated") });
-      setEditingItem(null);
-      setEditName("");
-    } catch {
-      toastError({ message: t("updateFailed") });
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
 
   // Delete Handler
   const handleDeleteConfirm = async () => {
@@ -213,7 +183,7 @@ export function SavedSearchesContent({
           className={
             embedded
               ? "border-b border-border bg-background"
-              : "border-b border-[#4fae2e]/15 bg-[#eaf8df] dark:border-white/10 dark:bg-[#1a1c1a]"
+              : "border-b border-[#0069D3]/15 bg-[#D0E1F8]/30 dark:border-white/10 dark:bg-[#111c2e]"
           }
         >
           <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
@@ -221,7 +191,7 @@ export function SavedSearchesContent({
               <nav className="text-sm text-foreground/60">
                 <Link
                   href="/"
-                  className="transition-colors hover:text-[#4fae2e]"
+                  className="transition-colors hover:text-[#0069D3]"
                 >
                   {tCommon("home")}
                 </Link>
@@ -238,7 +208,7 @@ export function SavedSearchesContent({
             >
               <div>
                 <h1 className="flex items-center gap-2 text-2xl font-bold tracking-tight text-foreground font-sans sm:text-3xl">
-                  <BookmarkCheck className="size-6 text-[#4fae2e]" />
+                  <BookmarkCheck className="size-6 text-[#0069D3]" />
                   {t("title")}
                 </h1>
                 <p className="mt-1 text-xs font-normal text-muted-foreground">
@@ -295,7 +265,7 @@ export function SavedSearchesContent({
               <div className="flex flex-wrap items-center gap-3">
                 {/* Sort toggle */}
                 <div className="flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1.5 text-xs text-muted-foreground">
-                  <ArrowUpDown className="size-3.5 text-[#4fae2e]" />
+                  <ArrowUpDown className="size-3.5 text-[#0069D3]" />
                   <span className="font-medium text-foreground">{t("sortBy")}:</span>
                   <button
                     type="button"
@@ -303,7 +273,7 @@ export function SavedSearchesContent({
                       setSortOrder(sortOrder === "desc" ? "asc" : "desc");
                       setCurrentPage(1);
                     }}
-                    className="cursor-pointer font-semibold text-[#4fae2e] hover:underline"
+                    className="cursor-pointer font-semibold text-[#0069D3] hover:underline"
                   >
                     {sortOrder === "desc" ? t("sortNewest") : t("sortOldest")}
                   </button>
@@ -318,7 +288,7 @@ export function SavedSearchesContent({
                       setPageSize(Number(e.target.value));
                       setCurrentPage(1);
                     }}
-                    className="rounded-lg border border-border bg-card px-2 py-1 text-xs font-medium text-foreground focus:outline-none focus:ring-1 focus:ring-[#4fae2e]"
+                    className="rounded-lg border border-border bg-card px-2 py-1 text-xs font-medium text-foreground focus:outline-none focus:ring-1 focus:ring-[#0069D3]"
                   >
                     {PAGE_SIZE_OPTIONS.map((opt) => (
                       <option key={opt} value={opt}>
@@ -346,7 +316,7 @@ export function SavedSearchesContent({
           ) : items.length === 0 ? (
             /* Empty State: No saved searches */
             <div className="rounded-xl border border-dashed border-border px-6 py-16 text-center">
-              <div className="mx-auto mb-4 flex size-14 items-center justify-center rounded-full bg-[#eaf8df] text-[#4fae2e] dark:bg-[#4fae2e]/15">
+              <div className="mx-auto mb-4 flex size-14 items-center justify-center rounded-full bg-[#D0E1F8] text-[#0069D3] dark:bg-blue-950/60 dark:text-blue-300">
                 <BookmarkCheck className="size-7" />
               </div>
               <h2 className="text-lg font-medium text-foreground">
@@ -357,7 +327,7 @@ export function SavedSearchesContent({
               </p>
               <Button
                 asChild
-                className="mt-6 rounded-full bg-[#4fae2e] text-white hover:bg-[#459928]"
+                className="mt-6 rounded-full bg-[#0069D3] text-white hover:bg-[#005bb8]"
               >
                 <Link href={findWorkBaseUrl}>{t("findWork")}</Link>
               </Button>
@@ -394,10 +364,10 @@ export function SavedSearchesContent({
                   return (
                     <article
                       key={savedSearch.id}
-                      className="group flex min-h-56 flex-col rounded-xl border border-border bg-card p-5 shadow-xs transition-all duration-200 hover:-translate-y-0.5 hover:border-[#4fae2e]/40 hover:shadow-md"
+                      className="group flex min-h-56 flex-col rounded-xl border border-border bg-card p-5 shadow-xs transition-all duration-200 hover:-translate-y-0.5 hover:border-[#0069D3]/40 hover:shadow-md"
                     >
                       <div className="flex items-start justify-between gap-4">
-                        <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-[#eaf8df] text-[#4fae2e] dark:bg-[#4fae2e]/15">
+                        <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-[#D0E1F8] text-[#0069D3] dark:bg-blue-950/60 dark:text-blue-300">
                           <SlidersHorizontal className="size-5" />
                         </div>
                         <div className="flex items-center gap-1">
@@ -406,18 +376,6 @@ export function SavedSearchesContent({
                               date: formatDate(savedSearch.createdAt),
                             })}
                           </span>
-                          {canUpdateSavedSearch && (
-                            <Button
-                              type="button"
-                              variant="ghost"
-                              size="icon"
-                              className="size-8 text-muted-foreground hover:text-foreground"
-                              aria-label={t("renameAria", { name: savedSearch.name })}
-                              onClick={() => handleStartRename(savedSearch)}
-                            >
-                              <Pencil className="size-3.5" />
-                            </Button>
-                          )}
                           {canDeleteSavedSearch && (
                             <Button
                               type="button"
@@ -452,7 +410,7 @@ export function SavedSearchesContent({
                       <div className="mt-auto pt-5 flex flex-col gap-2">
                         <Button
                           asChild
-                          className="w-full rounded-lg bg-[#4fae2e] text-white hover:bg-[#459928] text-xs font-semibold h-9"
+                          className="w-full rounded-lg bg-[#0069D3] text-white hover:bg-[#005bb8] text-xs font-semibold h-9"
                         >
                           <Link
                             href={toFindWorkHref(
@@ -521,56 +479,6 @@ export function SavedSearchesContent({
           )}
         </section>
       </main>
-
-      {/* Rename Dialog */}
-      {editingItem && (
-        <Dialog open onOpenChange={(open) => !open && setEditingItem(null)}>
-          <DialogContent className="sm:max-w-md rounded-[24px] border border-border bg-card p-6 shadow-xl font-sans">
-            <DialogHeader>
-              <DialogTitle className="text-lg font-bold text-foreground">
-                {t("rename")}
-              </DialogTitle>
-              <DialogDescription className="text-xs text-muted-foreground">
-                {t("namePlaceholder")}
-              </DialogDescription>
-            </DialogHeader>
-            <form onSubmit={handleSaveRename} className="mt-3 space-y-4">
-              <div className="space-y-1.5">
-                <Label htmlFor="rename-input" className="text-xs font-semibold">
-                  {t("nameLabel")}
-                </Label>
-                <Input
-                  id="rename-input"
-                  value={editName}
-                  onChange={(e) => setEditName(e.target.value)}
-                  maxLength={100}
-                  className="rounded-full bg-background text-sm"
-                  autoFocus
-                  required
-                />
-              </div>
-              <DialogFooter className="flex gap-2">
-                <Button
-                  type="button"
-                  variant="ghost"
-                  className="rounded-full"
-                  disabled={isSubmitting}
-                  onClick={() => setEditingItem(null)}
-                >
-                  {t("cancel")}
-                </Button>
-                <Button
-                  type="submit"
-                  className="rounded-full bg-[#4fae2e] text-white hover:bg-[#459928] text-xs font-semibold"
-                  disabled={isSubmitting || !editName.trim()}
-                >
-                  {isSubmitting ? t("saving") : t("saveChanges")}
-                </Button>
-              </DialogFooter>
-            </form>
-          </DialogContent>
-        </Dialog>
-      )}
 
       {/* Delete Confirmation Dialog */}
       {deletingItem && (

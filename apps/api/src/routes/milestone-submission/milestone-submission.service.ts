@@ -1,7 +1,8 @@
-import { HttpException, Injectable } from '@nestjs/common';
+import { HttpException, Injectable, Optional } from '@nestjs/common';
 import {
   MilestonePaymentStatus,
   MilestoneStatus,
+  NotificationType,
   SubmissionStatus,
 } from '@prisma/client';
 import {
@@ -11,6 +12,7 @@ import {
 } from '@shared/types';
 import { MilestoneSubmissionRepository } from './milestone-submission.repo';
 import { PaymentService } from '../payments/payment.service';
+import { AppNotificationService } from '../../shared/services/app-notification.service';
 import {
   FailedToApproveException,
   FailedToLoadSubmissionException,
@@ -30,6 +32,7 @@ export class MilestoneSubmissionService {
   constructor(
     private readonly submissionRepository: MilestoneSubmissionRepository,
     private readonly paymentService: PaymentService,
+    @Optional() private readonly notificationService?: AppNotificationService,
   ) {}
 
   private async resolveAndGuardContext(
@@ -73,7 +76,7 @@ export class MilestoneSubmissionService {
     body: SubmitMilestoneBodyType,
   ) {
     try {
-      const { milestone } = await this.resolveAndGuardContext(
+      const { contract, milestone } = await this.resolveAndGuardContext(
         userId,
         roleName,
         contractId,
@@ -93,11 +96,26 @@ export class MilestoneSubmissionService {
         throw MilestoneNotFundedException();
       }
 
-      return await this.submissionRepository.createSubmission(
+      const submission = await this.submissionRepository.createSubmission(
         milestoneId,
         userId,
         body,
       );
+
+      await this.notificationService?.send({
+        userId: contract.clientId,
+        type: NotificationType.SYSTEM_ANNOUNCEMENT,
+        title: 'Milestone submitted for review',
+        message: `Freelancer submitted work for milestone "${milestone.title}". Please review the deliverables.`,
+        data: {
+          contractId,
+          milestoneId,
+          submissionId: submission.id,
+          href: `/client/contracts/${contract.slug ?? contractId}`,
+        },
+      });
+
+      return submission;
     } catch (error) {
       if (error instanceof HttpException) throw error;
       throw FailedToSubmitException();
@@ -164,7 +182,7 @@ export class MilestoneSubmissionService {
     body: RequestChangesBodyType,
   ) {
     try {
-      await this.resolveAndGuardContext(
+      const { contract, milestone } = await this.resolveAndGuardContext(
         userId,
         roleName,
         contractId,
@@ -178,15 +196,34 @@ export class MilestoneSubmissionService {
         throw SubmissionNotFoundException();
       }
 
+      if (milestone.status === MilestoneStatus.DISPUTED) {
+        throw FailedToRequestChangesException();
+      }
+
       if (submission.status !== SubmissionStatus.PENDING_REVIEW) {
         throw SubmissionNotPendingReviewException();
       }
 
-      return await this.submissionRepository.requestChanges(
+      const result = await this.submissionRepository.requestChanges(
         submissionId,
         milestoneId,
         body,
       );
+
+      await this.notificationService?.send({
+        userId: contract.freelancerId,
+        type: NotificationType.SYSTEM_ANNOUNCEMENT,
+        title: 'Revisions requested on milestone',
+        message: `Client requested revisions for milestone "${milestone.title}". Reason: ${body.changeRequestMessage}`,
+        data: {
+          contractId,
+          milestoneId,
+          submissionId,
+          href: `/freelancer/contracts/${contract.slug ?? contractId}`,
+        },
+      });
+
+      return result;
     } catch (error) {
       if (error instanceof HttpException) throw error;
       throw FailedToRequestChangesException();
@@ -201,7 +238,7 @@ export class MilestoneSubmissionService {
     submissionId: number,
   ) {
     try {
-      const { milestone } = await this.resolveAndGuardContext(
+      const { contract, milestone } = await this.resolveAndGuardContext(
         userId,
         roleName,
         contractId,
@@ -213,6 +250,10 @@ export class MilestoneSubmissionService {
         await this.submissionRepository.findSubmissionById(submissionId);
       if (!submission || submission.milestoneId !== milestoneId) {
         throw SubmissionNotFoundException();
+      }
+
+      if (milestone.status === MilestoneStatus.DISPUTED) {
+        throw FailedToApproveException();
       }
 
       if (submission.status !== SubmissionStatus.PENDING_REVIEW) {
@@ -230,10 +271,25 @@ export class MilestoneSubmissionService {
         );
       }
 
-      return await this.submissionRepository.approveSubmission(
+      const result = await this.submissionRepository.approveSubmission(
         submissionId,
         milestoneId,
       );
+
+      await this.notificationService?.send({
+        userId: contract.freelancerId,
+        type: NotificationType.MILESTONE_COMPLETED,
+        title: 'Milestone deliverables approved',
+        message: `Client approved your deliverables for milestone "${milestone.title}".`,
+        data: {
+          contractId,
+          milestoneId,
+          submissionId,
+          href: `/freelancer/contracts/${contract.slug ?? contractId}`,
+        },
+      });
+
+      return result;
     } catch (error) {
       if (error instanceof HttpException) throw error;
       throw FailedToApproveException();

@@ -515,23 +515,9 @@ model Recommendation {
   createdAt        DateTime       @default(now())
 
   requester User                     @relation("RecommendationRequester", fields: [requesterId], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  feedbacks RecommendationFeedback[]
 
   @@index([requesterId, sourceType, sourceDocumentId, createdAt])
   @@index([targetType, targetDocumentId])
-}
-
-// Sự kiện phản hồi của người dùng với một kết quả recommendation.
-model RecommendationFeedback {
-  id               Int                        @id @default(autoincrement())
-  recommendationId Int
-  type             RecommendationFeedbackType
-  createdAt        DateTime                   @default(now())
-
-  recommendation Recommendation @relation(fields: [recommendationId], references: [id], onDelete: Cascade, onUpdate: NoAction)
-
-  @@index([recommendationId])
-  @@index([type, createdAt])
 }
 
 // Transactional outbox: sự kiện cần đồng bộ vector sang ChromaDB.
@@ -1572,7 +1558,6 @@ enum HiringType {
 enum ProposalStatus {
   DRAFT
   SUBMITTED
-  INTERVIEWING
   HIRED
   REJECTED
   WITHDRAWN
@@ -1851,14 +1836,4 @@ enum OutboxEventStatus {
   PROCESSING
   PROCESSED
   FAILED
-}
-
-// Loại phản hồi của người dùng với một kết quả recommendation.
-enum RecommendationFeedbackType {
-  VIEW
-  SAVE
-  APPLY
-  DISMISS
-  SHORTLIST
-  HIRE
 }

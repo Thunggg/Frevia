@@ -8,10 +8,19 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   ChevronLeft,
   Clock,
+  Loader2,
   Plus,
   Search,
+  Trash2,
 } from "lucide-react";
 import { Button } from "@repo/ui/components/shadcn/button";
+import {
+  AlertDialog,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogTitle,
+} from "@repo/ui/components/shadcn/alert-dialog";
 import { toastError, toastSuccess } from "@repo/ui/components/shadcn/toast";
 import { contractApiRequest, extractContractData } from "@/apiRequests/contract";
 import { paymentApiRequest } from "@/apiRequests/payment";
@@ -32,8 +41,8 @@ import { SubmitMilestoneDialog } from "./submit-milestone-dialog";
 import { ReviewSubmissionDialog } from "./review-submission-dialog";
 import { ContractChatPopup } from "../../_components/contract-chat-popup";
 import { useCreateConversation } from "@/hooks/use-conversation";
-import { OpenResolutionDialog } from "@/components/disputes/open-resolution-dialog";
-import { ResolutionDetailSheet } from "@/components/disputes/resolution-detail-sheet";
+import { OpenResolutionDialog } from "@/app/(client)/_components/disputes/open-resolution-dialog";
+import { ResolutionDetailSheet } from "@/app/(client)/_components/disputes/resolution-detail-sheet";
 
 export interface MilestonesPageContentProps {
   initialContract: ContractDetailType;
@@ -54,6 +63,7 @@ export function MilestonesPageContent({
   const router = useRouter();
   const queryClient = useQueryClient();
   const t = useTranslations("milestoneWorkspace");
+  const tCommon = useTranslations("common");
   const { can } = useActionPermission();
   const isFreelancer = basePath === "/freelancer";
   const isClient = !isFreelancer;
@@ -85,6 +95,8 @@ export function MilestonesPageContent({
   const [viewDisputeMilestoneId, setViewDisputeMilestoneId] = useState<
     number | null
   >(null);
+  const [milestoneToDelete, setMilestoneToDelete] = useState<MilestoneType | null>(null);
+  const [isDeletingMilestone, setIsDeletingMilestone] = useState(false);
 
   const searchParams = useSearchParams();
 
@@ -121,6 +133,11 @@ export function MilestonesPageContent({
               queryKey: ["client-contract-detail", contract.id],
             }),
             queryClient.invalidateQueries({ queryKey: ["client-transactions"] }),
+            queryClient.invalidateQueries({
+              queryKey: ["freelancer-transactions"],
+            }),
+            queryClient.invalidateQueries({ queryKey: ["transactions-summary"] }),
+            queryClient.invalidateQueries({ queryKey: ["transactions"] }),
           ]);
           window.history.replaceState({}, "", window.location.pathname);
         }
@@ -223,15 +240,19 @@ export function MilestonesPageContent({
   const handleReleaseMilestone = async (milestone: MilestoneType) => {
     try {
       await paymentApiRequest.releaseMilestone(contract.id, milestone.id);
-      await queryClient.invalidateQueries({
-        queryKey: ["client-contract-detail", contract.id],
-      });
-      await queryClient.invalidateQueries({
-        queryKey: ["client-contract-milestones", contract.id],
-      });
-      await queryClient.invalidateQueries({
-        queryKey: ["client-transactions"],
-      });
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: ["client-contract-detail", contract.id],
+        }),
+        queryClient.invalidateQueries({
+          queryKey: ["client-contract-milestones", contract.id],
+        }),
+        queryClient.invalidateQueries({ queryKey: ["contracts-list"] }),
+        queryClient.invalidateQueries({ queryKey: ["client-transactions"] }),
+        queryClient.invalidateQueries({ queryKey: ["freelancer-transactions"] }),
+        queryClient.invalidateQueries({ queryKey: ["transactions-summary"] }),
+        queryClient.invalidateQueries({ queryKey: ["transactions"] }),
+      ]);
       toastSuccess({
         message: t("toasts.releasedPayout", { title: milestone.title }),
       });
@@ -266,56 +287,23 @@ export function MilestonesPageContent({
     }
   };
 
-  const handleRefundMilestone = async (milestone: MilestoneType) => {
-    if (
-      !window.confirm(
-        t("toasts.refundConfirm", {
-          amount: `$${Number(milestone.amount).toLocaleString("en-US", { minimumFractionDigits: 2 })}`,
-          title: milestone.title,
-        }),
-      )
-    ) {
-      return;
-    }
-    try {
-      await paymentApiRequest.refundMilestone(contract.id, milestone.id);
-      await queryClient.invalidateQueries({
-        queryKey: ["client-contract-detail", contract.id],
-      });
-      await queryClient.invalidateQueries({
-        queryKey: ["client-contract-milestones", contract.id],
-      });
-      await queryClient.invalidateQueries({
-        queryKey: ["client-transactions"],
-      });
-      toastSuccess({
-        message: t("toasts.refunded", { title: milestone.title }),
-      });
-    } catch (error) {
-      toastError({
-        message:
-          error instanceof ApiFail
-            ? error.response.error.message
-            : t("toasts.refundFailed"),
-      });
-    }
+  const handleDeleteMilestone = (milestone: MilestoneType) => {
+    setMilestoneToDelete(milestone);
   };
 
-  const handleDeleteMilestone = async (milestone: MilestoneType) => {
-    if (
-      !window.confirm(t("toasts.deleteConfirm", { title: milestone.title }))
-    ) {
-      return;
-    }
+  const handleConfirmDeleteMilestone = async () => {
+    if (!milestoneToDelete) return;
+    setIsDeletingMilestone(true);
     try {
-      await contractApiRequest.deleteMilestone(contract.id, milestone.id);
+      await contractApiRequest.deleteMilestone(contract.id, milestoneToDelete.id);
       await queryClient.invalidateQueries({
         queryKey: ["client-contract-detail", contract.id],
       });
       await queryClient.invalidateQueries({
         queryKey: ["client-contract-milestones", contract.id],
       });
-      toastSuccess({ message: t("toasts.deleted", { title: milestone.title }) });
+      toastSuccess({ message: t("toasts.deleted", { title: milestoneToDelete.title }) });
+      setMilestoneToDelete(null);
     } catch (error) {
       toastError({
         message:
@@ -323,6 +311,8 @@ export function MilestonesPageContent({
             ? error.response.error.message
             : t("toasts.deleteFailed"),
       });
+    } finally {
+      setIsDeletingMilestone(false);
     }
   };
 
@@ -442,10 +432,9 @@ export function MilestonesPageContent({
                   inline-flex h-6 cursor-pointer items-center gap-1.5
                   whitespace-nowrap rounded-full px-3
                   font-medium transition-all text-xs
-                  ${
-                    isActive
-                      ? "bg-background font-semibold text-foreground shadow-xs"
-                      : "text-muted-foreground hover:text-foreground"
+                  ${isActive
+                    ? "bg-background font-semibold text-foreground shadow-xs"
+                    : "text-muted-foreground hover:text-foreground"
                   }
                 `}
               >
@@ -454,10 +443,9 @@ export function MilestonesPageContent({
                   <span
                     className={`
                       rounded-full px-1.5 py-0 text-[10px] font-semibold leading-tight
-                      ${
-                        isActive
-                          ? "bg-[#0069D3]/10 text-[#0069D3]"
-                          : "bg-muted-foreground/15 text-muted-foreground"
+                      ${isActive
+                        ? "bg-[#0069D3]/10 text-[#0069D3]"
+                        : "bg-muted-foreground/15 text-muted-foreground"
                       }
                     `}
                   >
@@ -543,45 +531,44 @@ export function MilestonesPageContent({
                 isFreelancer={isFreelancer}
                 hasOtherInProgressMilestone={hasInProgressMilestone}
                 startWorkBlockedReason={startWorkBlockedReason}
-              onEdit={(target) => {
-                setMilestoneToEdit({
-                  id: target.id,
-                  title: target.title,
-                  description: target.description,
-                  amount: Number(target.amount),
-                  dueDate: target.dueDate,
-                  status: target.status,
-                });
-                setMilestoneModalOpen(true);
-              }}
-              onDelete={(target) => void handleDeleteMilestone(target)}
-              onFund={(target) => void handleFundMilestone(target)}
-              onRelease={(target) => void handleReleaseMilestone(target)}
-              onRefund={(target) => void handleRefundMilestone(target)}
-              onReview={async (target) => {
-                try {
-                  const res = await contractApiRequest.getSubmissions(
-                    contract.id,
-                    target.id,
-                  );
-                  const data = extractContractData(res);
-                  if (data && data.length > 0 && data[0]) {
-                    setReviewContext({
-                      milestone: target,
-                      submission: data[0],
-                    });
-                    setReviewModalOpen(true);
-                  } else {
+                onEdit={(target) => {
+                  setMilestoneToEdit({
+                    id: target.id,
+                    title: target.title,
+                    description: target.description,
+                    amount: Number(target.amount),
+                    dueDate: target.dueDate,
+                    status: target.status,
+                  });
+                  setMilestoneModalOpen(true);
+                }}
+                onDelete={(target) => void handleDeleteMilestone(target)}
+                onFund={(target) => void handleFundMilestone(target)}
+                onRelease={(target) => void handleReleaseMilestone(target)}
+                onReview={async (target) => {
+                  try {
+                    const res = await contractApiRequest.getSubmissions(
+                      contract.id,
+                      target.id,
+                    );
+                    const data = extractContractData(res);
+                    if (data && data.length > 0 && data[0]) {
+                      setReviewContext({
+                        milestone: target,
+                        submission: data[0],
+                      });
+                      setReviewModalOpen(true);
+                    } else {
+                      router.push(
+                        `${basePath}/contracts/${encodeURIComponent(contract.slug || String(contract.id))}/milestones/${target.id}`,
+                      );
+                    }
+                  } catch {
                     router.push(
                       `${basePath}/contracts/${encodeURIComponent(contract.slug || String(contract.id))}/milestones/${target.id}`,
                     );
                   }
-                } catch {
-                  router.push(
-                    `${basePath}/contracts/${encodeURIComponent(contract.slug || String(contract.id))}/milestones/${target.id}`,
-                  );
-                }
-              }}
+                }}
                 onSubmitWork={(target) => {
                   setMilestoneToSubmit(target);
                   setSubmitModalOpen(true);
@@ -666,6 +653,7 @@ export function MilestonesPageContent({
         contractId={contract.id}
         contractExpiresAt={contract.expiresAt}
         milestone={disputeTargetMilestone}
+        isClient={isClient}
         onCreated={(created) => {
           setViewDisputeMilestoneId(created.milestoneId);
         }}
@@ -694,6 +682,50 @@ export function MilestonesPageContent({
         isStartingChat={isStartingChat}
         onOpenChat={(targetUserId) => openChatWith(targetUserId)}
       />
+
+      {/* Delete Milestone Confirmation Dialog */}
+      <AlertDialog
+        open={Boolean(milestoneToDelete)}
+        onOpenChange={(open) => {
+          if (!open && !isDeletingMilestone) {
+            setMilestoneToDelete(null);
+          }
+        }}
+      >
+        <AlertDialogContent className="max-w-sm rounded-[24px] border border-border bg-background p-5 shadow-2xl font-sans">
+          <div className="flex flex-col gap-3">
+            <AlertDialogTitle className="text-base font-bold text-foreground">
+              {t("toasts.deleteMilestoneTitle")}
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-xs text-muted-foreground leading-relaxed">
+              {t("toasts.deleteMilestoneDesc", {
+                title: milestoneToDelete?.title ?? "",
+              })}
+            </AlertDialogDescription>
+            <div className="mt-2 flex flex-col gap-2">
+              <Button
+                variant="destructive"
+                disabled={isDeletingMilestone}
+                onClick={() => void handleConfirmDeleteMilestone()}
+                className="w-full rounded-full bg-rose-600 hover:bg-rose-700 text-white text-xs font-semibold cursor-pointer"
+              >
+                {isDeletingMilestone ? (
+                  <Loader2 className="mr-1.5 size-3.5 animate-spin" />
+                ) : (
+                  <Trash2 className="mr-1.5 size-3.5" />
+                )}
+                {t("toasts.confirmDelete")}
+              </Button>
+              <AlertDialogCancel
+                disabled={isDeletingMilestone}
+                className="w-full rounded-full text-xs cursor-pointer"
+              >
+                {tCommon("cancel")}
+              </AlertDialogCancel>
+            </div>
+          </div>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

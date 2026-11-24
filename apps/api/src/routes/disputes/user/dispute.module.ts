@@ -11,4 +11,4 @@ import { DisputeService } from './dispute.service';
   providers: [DisputeService, DisputeRepository],
   exports: [DisputeService, DisputeRepository],
 })
-export class DisputeModule { }
+export class DisputeModule {}

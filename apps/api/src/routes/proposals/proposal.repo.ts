@@ -28,11 +28,8 @@ import {
 } from './proposal.error';
 import { createContractSlug } from '../../shared/helper/contract.slug';
 
-// Trạng thái khách hàng còn có thể phỏng vấn / từ chối / tuyển.
-const ACTIONABLE_STATUSES = [
-  ProposalStatus.SUBMITTED,
-  ProposalStatus.INTERVIEWING,
-];
+// Trạng thái khách hàng còn có thể từ chối / tuyển.
+const ACTIONABLE_STATUSES = [ProposalStatus.SUBMITTED];
 
 const proposalSelect = {
   id: true,
@@ -127,7 +124,7 @@ export class ProposalRepository {
     const result = await this.prisma.proposal.updateMany({
       where: {
         jobId,
-        status: { in: [ProposalStatus.SUBMITTED, ProposalStatus.INTERVIEWING] },
+        status: { in: [ProposalStatus.SUBMITTED] },
         deletedAt: null,
       },
       data: {
@@ -250,7 +247,6 @@ export class ProposalRepository {
           in: [
             ProposalStatus.DRAFT,
             ProposalStatus.SUBMITTED,
-            ProposalStatus.INTERVIEWING,
             ProposalStatus.HIRED,
           ],
         },
@@ -270,7 +266,6 @@ export class ProposalRepository {
           in: [
             ProposalStatus.DRAFT,
             ProposalStatus.SUBMITTED,
-            ProposalStatus.INTERVIEWING,
             ProposalStatus.HIRED,
             ProposalStatus.REJECTED,
           ],
@@ -467,19 +462,6 @@ export class ProposalRepository {
     return this.normalize(proposal);
   }
 
-  // Khách hàng bắt đầu phỏng vấn/trao đổi: gia hạn thêm một chu kỳ xử lý.
-  async interviewProposal(proposalId: number): Promise<ProposalType> {
-    const proposal = await this.prisma.proposal.update({
-      where: { id: proposalId },
-      data: {
-        status: ProposalStatus.INTERVIEWING,
-        expiresAt: resolveProposalExpiryDate(new Date()),
-      },
-      select: proposalSelect,
-    });
-    return this.normalize(proposal);
-  }
-
   async rejectProposal(proposalId: number): Promise<ProposalType> {
     const proposal = await this.prisma.proposal.update({
       where: { id: proposalId },
@@ -496,7 +478,7 @@ export class ProposalRepository {
   /**
    * Tuyển (hire) một đề xuất.
    *
-   * - Chỉ chốt được đề xuất đang ở trạng thái khách hàng xử lý được (SUBMITTED/INTERVIEWING).
+   * - Chỉ chốt được đề xuất đang ở trạng thái khách hàng xử lý được (SUBMITTED).
    * - Chiếm 1 vị trí: điều kiện `positionsFilled < positionsRequired` được kiểm tra trong
    *   transaction nên không thể tuyển vượt số lượng.
    * - Job SINGLE: các đề xuất còn lại bị REJECTED. Job MULTIPLE: giữ nguyên trạng thái.
@@ -572,7 +554,8 @@ export class ProposalRepository {
       }
 
       const slug = createContractSlug(jobTitle);
-      const platformFee = Math.round(Number(bidAmount) * 0.01 * 100) / 100;
+      const clientPlatformFee =
+        Math.round(Number(bidAmount) * 0.03 * 100) / 100;
 
       const contract = await tx.contract.create({
         data: {
@@ -582,7 +565,8 @@ export class ProposalRepository {
           clientId,
           freelancerId,
           totalAmount: bidAmount,
-          platformFee,
+          clientPlatformFee,
+          platformFee: clientPlatformFee,
         },
         select: { id: true },
       });

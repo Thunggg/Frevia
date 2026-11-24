@@ -45,11 +45,11 @@ export function useMarketplaceRoleAction(currentRole: MarketplaceRole) {
         await authApiRequest.joinRole({ role: targetRole });
       }
 
-      // Xóa cache phụ thuộc role cũ và nạp lại ["me"] xong xuôi trước khi điều hướng
+      // Xóa cache phụ thuộc role cũ, điều hướng sang workspace role mới trước rồi mới đồng bộ ["me"]
+      // để tránh trang role cũ đang mount nháy màn hình "Không có quyền truy cập" trong tích tắc.
       queryClient.removeQueries({
         predicate: (query) => query.queryKey[0] !== "me",
       });
-      await queryClient.refetchQueries({ queryKey: ["me"] });
       toastSuccess({
         message: hasTargetRole
           ? tNav("switchedToRole", { role: targetRoleLabel })
@@ -65,6 +65,7 @@ export function useMarketplaceRoleAction(currentRole: MarketplaceRole) {
 
       router.push(safeRedirect);
       router.refresh();
+      void queryClient.invalidateQueries({ queryKey: ["me"] });
       return true;
     } catch {
       toastError({

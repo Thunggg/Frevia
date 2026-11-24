@@ -28,7 +28,13 @@ import { useQueryClient } from "@tanstack/react-query";
 import { Controller, useForm } from "react-hook-form";
 import type * as z from "zod";
 
-export function LoginForm({ oauthError }: { oauthError?: string }) {
+export function LoginForm({
+  oauthError,
+  redirectTo,
+}: {
+  oauthError?: string;
+  redirectTo?: string;
+}) {
   const router = useRouter();
   const queryClient = useQueryClient();
   const t = useTranslations("auth.login");
@@ -71,7 +77,18 @@ export function LoginForm({ oauthError }: { oauthError?: string }) {
             const primaryRole = meRes.success
               ? meRes.data?.roles?.find((r) => r.isPrimary)?.name
               : null;
-            if (
+            const safeRedirect =
+              redirectTo &&
+              redirectTo.startsWith("/") &&
+              !redirectTo.startsWith("//") &&
+              !redirectTo.startsWith("/login") &&
+              !redirectTo.startsWith("/register")
+                ? redirectTo
+                : null;
+
+            if (safeRedirect) {
+              router.push(safeRedirect);
+            } else if (
               primaryRole === RoleName.ADMIN ||
               (primaryRole !== RoleName.CLIENT &&
                 primaryRole !== RoleName.FREELANCER &&
@@ -88,6 +105,7 @@ export function LoginForm({ oauthError }: { oauthError?: string }) {
             router.refresh();
           } catch {
             router.push("/dashboard");
+            router.refresh();
           }
         }
       },
@@ -136,7 +154,7 @@ export function LoginForm({ oauthError }: { oauthError?: string }) {
                   type="email"
                   placeholder={tField("emailPlaceholder")}
                   autoComplete="email"
-                  className="h-11 border-border/60 bg-white/60 text-[14px] transition-colors placeholder:text-muted-foreground/40 focus:border-[#4fae2e] focus:ring-[#4fae2e]/15 dark:border-white/10 dark:bg-white/[0.03] dark:focus:border-[#4fae2e] dark:focus:ring-[#4fae2e]/20"
+                  className="h-11 border-border/60 bg-white/60 text-[14px] transition-colors placeholder:text-muted-foreground/40 focus:border-[#0069D3] focus:ring-[#0069D3]/15 dark:border-white/10 dark:bg-white/[0.03] dark:focus:border-[#0069D3] dark:focus:ring-[#0069D3]/20"
                   aria-invalid={fieldState.invalid}
                 />
                 {fieldState.invalid && (
@@ -161,7 +179,7 @@ export function LoginForm({ oauthError }: { oauthError?: string }) {
                     type={showPassword ? "text" : "password"}
                     placeholder={t("passwordPlaceholder")}
                     autoComplete="current-password"
-                    className="h-11 border-border/60 bg-white/60 pr-10 text-[14px] transition-colors placeholder:text-muted-foreground/40 focus:border-[#4fae2e] focus:ring-[#4fae2e]/15 dark:border-white/10 dark:bg-white/[0.03] dark:focus:border-[#4fae2e] dark:focus:ring-[#4fae2e]/20"
+                    className="h-11 border-border/60 bg-white/60 pr-10 text-[14px] transition-colors placeholder:text-muted-foreground/40 focus:border-[#0069D3] focus:ring-[#0069D3]/15 dark:border-white/10 dark:bg-white/[0.03] dark:focus:border-[#0069D3] dark:focus:ring-[#0069D3]/20"
                     aria-invalid={fieldState.invalid}
                   />
                   <button
@@ -200,7 +218,7 @@ export function LoginForm({ oauthError }: { oauthError?: string }) {
             </div>
             <Link
               href="/forgot-password"
-              className="text-[13px] font-medium text-[#4fae2e] transition-colors hover:text-[#3f9225]"
+              className="text-[13px] font-medium text-[#0069D3] transition-colors hover:text-[#005bb8] dark:text-blue-400 dark:hover:text-blue-300"
             >
               {t("forgotPassword")}
             </Link>
@@ -209,7 +227,7 @@ export function LoginForm({ oauthError }: { oauthError?: string }) {
           <Button
             type="submit"
             form="login-form"
-            className="mt-1 h-11 w-full rounded-lg bg-[#4fae2e] text-[14px] font-semibold text-white shadow-sm transition-all hover:bg-[#459928] hover:shadow-md active:scale-[0.99] dark:bg-[#4fae2e] dark:text-white dark:hover:bg-[#5bc03a]"
+            className="mt-1 h-11 w-full rounded-lg bg-[#0069D3] text-[14px] font-semibold text-white shadow-sm transition-all hover:bg-[#005bb8] hover:shadow-md active:scale-[0.99] dark:bg-[#0069D3] dark:text-white dark:hover:bg-[#1a7fe6]"
             disabled={loginMutation.isPending}
           >
             {loginMutation.isPending ? (
@@ -267,7 +285,7 @@ export function LoginForm({ oauthError }: { oauthError?: string }) {
         {t("noAccount")}{" "}
         <Link
           href="/register"
-          className="font-semibold text-[#4fae2e] transition-colors hover:text-[#3f9225]"
+          className="font-semibold text-[#0069D3] transition-colors hover:text-[#005bb8] dark:text-blue-400 dark:hover:text-blue-300"
         >
           {t("signUp")}
         </Link>

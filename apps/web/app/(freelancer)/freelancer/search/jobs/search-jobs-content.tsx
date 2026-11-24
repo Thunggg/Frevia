@@ -6,7 +6,6 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState, useTransition, type FormEvent, type MouseEvent } from "react";
 import {
   ArrowLeft,
-  Bookmark,
   Search,
   SearchX,
   X,
@@ -36,7 +35,10 @@ import { useActionPermission } from "@/hooks/use-action-permission";
 import { JobCard } from "../../../_components/job-card";
 import { JobPagination } from "../../../_components/job-pagination";
 import { SearchFiltersSidebar } from "../../../_components/search-filters-sidebar";
-import { SaveSearchDialog } from "../../saved-searches/save-search-dialog";
+import {
+  SaveSearchModal,
+  SavedSearchesDialog,
+} from "../../saved-searches/save-search-dialog";
 
 type SearchJobsContentProps = {
   user: GetMeResType | null;
@@ -111,6 +113,14 @@ export function SearchJobsContent({
   const [savedSearches, setSavedSearches] = useState<SavedSearchType[]>(
     () => initialSavedSearches ?? [],
   );
+  const [savedSearchesDialogOpen, setSavedSearchesDialogOpen] = useState(false);
+
+  // Optimistic category filter state for zero latency UI
+  const [categoryFilter, setCategoryFilter] = useState(initialCategory);
+
+  useEffect(() => {
+    setCategoryFilter(initialCategory);
+  }, [initialCategory]);
 
   const canBookmark = Boolean(user);
 
@@ -121,6 +131,10 @@ export function SearchJobsContent({
 
     if ("q" in updates) {
       params.delete("keyword");
+    }
+
+    if ("category" in updates) {
+      setCategoryFilter(updates.category ? String(updates.category) : "all");
     }
 
     for (const [key, value] of Object.entries(updates)) {
@@ -165,6 +179,7 @@ export function SearchJobsContent({
 
   const handleClearAllFilters = () => {
     setSearchInput("");
+    setCategoryFilter("all");
     startTransition(() => {
       router.push("/freelancer/search/jobs");
     });
@@ -250,8 +265,8 @@ export function SearchJobsContent({
   };
 
   const selectedCategorySlugs =
-    initialCategory && initialCategory !== "all"
-      ? initialCategory.split(",").map((s) => s.trim()).filter(Boolean)
+    categoryFilter && categoryFilter !== "all"
+      ? categoryFilter.split(",").map((s) => s.trim()).filter(Boolean)
       : [];
 
   const selectedSkills = initialSkill
@@ -285,7 +300,7 @@ export function SearchJobsContent({
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
               placeholder={t("searchPage.searchPlaceholder")}
-              className="h-12 w-full rounded-full border border-border bg-card pl-12 pr-32 text-sm sm:text-base font-medium text-foreground placeholder:text-muted-foreground shadow-xs outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all"
+              className="h-12 w-full rounded-full border border-border bg-card pl-12 pr-32 text-sm sm:text-base font-medium text-foreground placeholder:text-muted-foreground shadow-xs outline-none focus:border-[#0069D3] focus:ring-2 focus:ring-[#0069D3]/20 transition-all"
             />
             {searchInput && (
               <button
@@ -299,7 +314,7 @@ export function SearchJobsContent({
             )}
             <button
               type="submit"
-              className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2 text-xs sm:text-sm font-semibold shadow-xs transition-colors cursor-pointer"
+              className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-[#0069D3] hover:bg-[#005bb8] text-white px-5 py-2 text-xs sm:text-sm font-semibold shadow-xs transition-colors cursor-pointer"
             >
               {t("searchPage.search")}
             </button>
@@ -309,31 +324,62 @@ export function SearchJobsContent({
 
       {/* 2. Top Toolbar Bar (Save Search & Sort by) */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-2 pb-3 border-b border-border">
-        {/* Left: Save search and saved searches */}
-        <div className="flex items-center gap-2">
-          {(canCreateSavedSearch || canViewSavedSearches) && (
-            <SaveSearchDialog
+        {/* Left: Save search and saved searches (Upwork style) */}
+        <div className="flex items-center gap-2.5 flex-wrap sm:flex-nowrap shrink-0">
+          {canCreateSavedSearch && (
+            <SaveSearchModal
               searchParams={Object.fromEntries(searchParams.entries())}
               savedSearches={savedSearches}
-              onApply={handleApplySavedSearch}
-              onChanged={() => {
+              categories={initialCategories}
+              onSaved={(savedItem) => {
+                if (savedItem) {
+                  setSavedSearches((prev) => {
+                    const idx = prev.findIndex((s) => s.id === savedItem.id);
+                    if (idx >= 0) {
+                      const next = [...prev];
+                      next[idx] = savedItem;
+                      return next;
+                    }
+                    return [savedItem, ...prev];
+                  });
+                }
                 if (!canViewSavedSearches) return;
                 void savedSearchApiRequest
                   .getSavedSearches()
-                  .then((res: { data?: SavedSearchType[] }) => setSavedSearches(res.data ?? []));
+                  .then((res: { data?: SavedSearchType[] }) =>
+                    setSavedSearches(res.data ?? []),
+                  );
               }}
+              onOpenSavedSearches={() => setSavedSearchesDialogOpen(true)}
             />
           )}
           {canViewSavedSearches && (
-            <Link
-              href="/freelancer/find-work/saved-searches"
-              className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1.5 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
-            >
-              <Bookmark className="size-3.5 text-emerald-600 dark:text-emerald-400" />
-              <span>
-                {t("searchPage.savedSearches", { count: savedSearches.length })}
-              </span>
-            </Link>
+            <SavedSearchesDialog
+              savedSearches={savedSearches}
+              currentSearchParams={Object.fromEntries(searchParams.entries())}
+              categories={initialCategories}
+              onApply={handleApplySavedSearch}
+              onChanged={(updatedItem) => {
+                if (updatedItem) {
+                  setSavedSearches((prev) => {
+                    const idx = prev.findIndex((s) => s.id === updatedItem.id);
+                    if (idx >= 0) {
+                      const next = [...prev];
+                      next[idx] = updatedItem;
+                      return next;
+                    }
+                    return [updatedItem, ...prev];
+                  });
+                }
+                void savedSearchApiRequest
+                  .getSavedSearches()
+                  .then((res: { data?: SavedSearchType[] }) =>
+                    setSavedSearches(res.data ?? []),
+                  );
+              }}
+              open={savedSearchesDialogOpen}
+              onOpenChange={setSavedSearchesDialogOpen}
+            />
           )}
         </div>
 
@@ -372,7 +418,7 @@ export function SearchJobsContent({
         {/* Left Column: Filter Sidebar */}
         <SearchFiltersSidebar
           categories={initialCategories}
-          selectedCategory={initialCategory}
+          selectedCategory={categoryFilter}
           selectedBudget={initialBudget}
           selectedBudgetMin={initialBudgetMin}
           selectedBudgetMax={initialBudgetMax}
@@ -400,7 +446,7 @@ export function SearchJobsContent({
                 {t("filters")}:
               </span>
               {initialQ && (
-                <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-200 border border-emerald-200 dark:border-emerald-800 px-2.5 py-0.5 text-xs font-medium">
+                <span className="inline-flex items-center gap-1 rounded-full bg-blue-50 text-blue-800 dark:bg-blue-950 dark:text-blue-200 border border-blue-200 dark:border-blue-800 px-2.5 py-0.5 text-xs font-medium">
                   {t("chip.search", { value: initialQ })}
                   <button
                     type="button"
@@ -507,7 +553,7 @@ export function SearchJobsContent({
               {selectedSkills.map((sk) => (
                 <span
                   key={sk}
-                  className="inline-flex items-center gap-1 rounded-full bg-emerald-50 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-200 border border-emerald-200 dark:border-emerald-800 px-2.5 py-0.5 text-xs font-medium"
+                  className="inline-flex items-center gap-1 rounded-full bg-blue-50 text-blue-800 dark:bg-blue-950 dark:text-blue-200 border border-blue-200 dark:border-blue-800 px-2.5 py-0.5 text-xs font-medium"
                 >
                   {t("chip.search", { value: sk })}
                   <button
@@ -583,7 +629,7 @@ export function SearchJobsContent({
           )}
 
           {/* Pagination */}
-          {!isPending && initialJobs.length > 0 && (
+          {!isPending && initialJobs.length > 0 && initialPagination.totalPages > 1 && (
             <JobPagination
               currentPage={initialPagination.page}
               totalPages={initialPagination.totalPages}

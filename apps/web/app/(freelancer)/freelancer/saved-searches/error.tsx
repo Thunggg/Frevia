@@ -33,7 +33,7 @@ export default function FreelancerSavedSearchesError({
       </p>
       <Button
         onClick={() => reset()}
-        className="mt-6 rounded-full bg-[#4fae2e] text-white hover:bg-[#459928] gap-2"
+        className="mt-6 rounded-full bg-[#0069D3] text-white hover:bg-[#005bb8] gap-2"
       >
         <RotateCcw className="size-4" />
         {t("retry")}

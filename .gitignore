@@ -53,6 +53,13 @@ backup/
 *.drawio.dtmp
 
 # Local reports & UC lists (local only)
+/uc-*.md
+/UC-*.md
+*phat-tai*
+*phat_tai*
+*Phat_Tai*
+*Phat-Tai*
+Danh_Sach_Use_Cases_*
 docs/Report 5/*Tai*
 docs/Report 5/*tai*
 docs/Report 5/*Tran_Phat_Tai*
@@ -63,3 +70,7 @@ docs/Report 3/SCREENSHOTS_CHECKLIST_PTAI.md
 # AI microservices repos (managed separately or as submodules)
 ai-services/*
 !ai-services/README.md
+
+
+ERD/*
+database_design/*

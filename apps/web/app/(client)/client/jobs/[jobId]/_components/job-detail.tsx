@@ -21,7 +21,7 @@ const JOB_STATUS_KEYS = [
 const JOB_BUDGET_TYPE_KEYS = ["FIXED_PRICE"] as const;
 
 const JOB_STATUS_STYLES: Record<string, string> = {
-  OPEN: "text-emerald-600 dark:text-emerald-400",
+  OPEN: "text-[#0069D3] dark:text-blue-300",
   IN_PROGRESS: "text-[#0069D3] dark:text-blue-300",
   COMPLETED: "text-purple-600 dark:text-purple-400",
   CLOSED: "text-zinc-600 dark:text-zinc-400",

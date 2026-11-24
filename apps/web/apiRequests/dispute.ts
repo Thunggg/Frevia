@@ -2,21 +2,10 @@ import { http } from "@/lib/http";
 import type {
   CreateDisputeBodyType,
   DisputeDetailType,
-  GetResolutionReasonsResponseType,
   RespondDisputeBodyType,
-  ReviewDisputeDecisionBodyType,
 } from "@shared/types";
 
 export const disputeApiRequest = {
-  /**
-   * API 1: Lấy danh sách lý do Resolution Center theo vai trò & trạng thái Milestone
-   */
-  getResolutionReasons(milestoneId: number) {
-    return http.get<GetResolutionReasonsResponseType>(
-      `/disputes/reasons?milestoneId=${milestoneId}`,
-    );
-  },
-
   /**
    * Lấy danh sách yêu cầu giải quyết / tranh chấp của tôi (Client / Freelancer)
    */
@@ -79,16 +68,6 @@ export const disputeApiRequest = {
    */
   escalateDispute(disputeId: number) {
     return http.post<DisputeDetailType>(`/disputes/${disputeId}/escalate`, {});
-  },
-
-  /**
-   * Chấp thuận (ACCEPT) hoặc Từ chối (REJECT kèm lý do) phán quyết của Expert
-   */
-  submitDecisionReview(
-    disputeId: number,
-    body: ReviewDisputeDecisionBodyType,
-  ) {
-    return http.post<DisputeDetailType>(`/disputes/${disputeId}/review`, body);
   },
 
   /**

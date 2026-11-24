@@ -2,17 +2,17 @@ import { Toaster } from "@repo/ui/components/shadcn/sonner";
 import type { Metadata } from "next";
 import { NextIntlClientProvider } from "next-intl";
 import { getLocale, getMessages, getTranslations } from "next-intl/server";
-import { cookies } from "next/headers";
 import localFont from "next/font/local";
 import { ThemeProvider } from "@/components/theme-provider";
 import { getBrowserSocketUrl } from "@/configs/validate-env";
+import { getServerAccessToken } from "@/lib/auth-session";
 import authServerRequest from "@/apiRequests/auth.server";
 import { NotificationProvider } from "@/providers/notification-provider";
 import "./globals.css";
 import QueryProvider from "@/providers/query-provider";
 
-const geistSans = localFont({
-  src: "./fonts/Poppins-Regular.ttf",
+const beVietnamPro = localFont({
+  src: "./fonts/be-vietnam-pro-latin-300-normal.ttf",
   variable: "--font-geist-sans",
 });
 const geistMono = localFont({
@@ -20,8 +20,8 @@ const geistMono = localFont({
   variable: "--font-geist-mono",
 });
 
-const aquire = localFont({
-  src: "./fonts/JoscelynnDemoRegular.ttf",
+const chunkFive = localFont({
+  src: "./fonts/chunk-five-latin-800-normal.ttf",
   variable: "--font-aquire",
 });
 
@@ -43,13 +43,13 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const [cookieStore, user, locale, messages] = await Promise.all([
-    cookies(),
+  const [accessToken, user, locale, messages] = await Promise.all([
+    getServerAccessToken(),
     authServerRequest.getMe(),
     getLocale(),
     getMessages(),
   ]);
-  const token = cookieStore.get("accessToken")?.value ?? null;
+  const token = accessToken ?? null;
 
   return (
     <html lang={locale} suppressHydrationWarning>
@@ -60,6 +60,7 @@ export default async function RootLayout({
           href="https://fonts.gstatic.com"
           crossOrigin="anonymous"
         />
+        {/* eslint-disable-next-line @next/next/no-page-custom-font */}
         <link
           rel="stylesheet"
           href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap"
@@ -67,7 +68,7 @@ export default async function RootLayout({
       </head>
       <body
         suppressHydrationWarning
-        className={`${geistSans.variable} ${geistMono.variable} ${aquire.variable} font-sans antialiased`}
+        className={`${beVietnamPro.variable} ${geistMono.variable} ${chunkFive.variable} font-sans antialiased`}
       >
         <ThemeProvider
           attribute="class"

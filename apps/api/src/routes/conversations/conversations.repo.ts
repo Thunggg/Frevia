@@ -1,9 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import {
-  Conversation,
-  DirectMessage,
-  NotificationType,
-} from '@prisma/client';
+import { Conversation, DirectMessage, NotificationType } from '@prisma/client';
 import { MessageAttachmentType } from '@shared/types';
 import { createConversationSlug } from '../../shared/helper/conversation.slug';
 import { PrismaService } from '../../shared/services/prisma.service';
@@ -80,6 +76,80 @@ export class ConversationRepository {
           },
         },
         // Số tin nhắn chưa đọc của current user (người khác gửi, chưa đọc)
+        _count: {
+          select: {
+            messages: {
+              where: {
+                senderId: { not: userId },
+                isRead: false,
+                deletedAt: null,
+              },
+            },
+          },
+        },
+      },
+    });
+  }
+
+  // Lấy 1 conversation item chuẩn theo id hoặc slug (tránh tải toàn bộ danh sách hội thoại)
+  async findConversationItemForUser(
+    conversationIdOrSlug: number | string,
+    userId: number,
+  ) {
+    const parsedId =
+      typeof conversationIdOrSlug === 'number'
+        ? conversationIdOrSlug
+        : /^\d+$/.test(conversationIdOrSlug)
+          ? Number(conversationIdOrSlug)
+          : null;
+
+    return this.prisma.conversation.findFirst({
+      where: {
+        deletedAt: null,
+        ...(parsedId !== null
+          ? { id: parsedId }
+          : { slug: String(conversationIdOrSlug) }),
+        OR: [{ participant1: userId }, { participant2: userId }],
+      },
+      include: {
+        participantOne: {
+          select: {
+            id: true,
+            profile: {
+              select: {
+                displayName: true,
+                avatarUrl: true,
+              },
+            },
+          },
+        },
+        participantTwo: {
+          select: {
+            id: true,
+            profile: {
+              select: {
+                displayName: true,
+                avatarUrl: true,
+              },
+            },
+          },
+        },
+        messages: {
+          where: { deletedAt: null },
+          orderBy: { createdAt: 'desc' },
+          take: 1,
+          select: {
+            id: true,
+            senderId: true,
+            message: true,
+            fileUrl: true,
+            fileName: true,
+            fileSize: true,
+            fileType: true,
+            isRead: true,
+            createdAt: true,
+          },
+        },
         _count: {
           select: {
             messages: {

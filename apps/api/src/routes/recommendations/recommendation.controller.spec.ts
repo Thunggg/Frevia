@@ -1,6 +1,4 @@
-import {
-  ServiceUnavailableException,
-} from '@nestjs/common';
+import { ServiceUnavailableException } from '@nestjs/common';
 
 import type { EmbeddingOutboxService } from './embedding-outbox.service';
 import type { RecommendationIndexService } from './recommendation-index.service';

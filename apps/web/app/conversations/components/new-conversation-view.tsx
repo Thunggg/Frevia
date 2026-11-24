@@ -42,7 +42,7 @@ export function NewConversationView({
   const [participantName, setParticipantName] = useState<string | null>(null);
   const [participantAvatar, setParticipantAvatar] = useState<string | null>(null);
   const [loadingParticipant, setLoadingParticipant] = useState(true);
-  const { can } = useActionPermission();
+  const { can, isLoading: isPermissionLoading } = useActionPermission();
   const canStartConversation = can("POST", "/api/conversations");
   const createConversation = useCreateConversation();
   const sendConversationMessage = useSendConversationMessage();
@@ -149,7 +149,7 @@ export function NewConversationView({
 
       {/* Modern Capsule Input */}
       <div className="border-t border-border bg-background/95 backdrop-blur p-3 sm:p-4">
-        {!canStartConversation ? (
+        {!isPermissionLoading && !canStartConversation ? (
           <div className="flex items-center justify-center rounded-xl bg-muted/40 p-3 text-xs text-muted-foreground">
             {t("noPermissionStartConversation")}
           </div>

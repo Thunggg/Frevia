@@ -33,6 +33,19 @@ export class PaymentRepository {
     });
   }
 
+  async findUserByStripeAccountId(stripeAccountId: string) {
+    return this.prisma.user.findFirst({
+      where: { stripeAccountId, deletedAt: null },
+      select: {
+        id: true,
+        email: true,
+        stripeCustomerId: true,
+        stripeAccountId: true,
+        stripeOnboardingCompleted: true,
+      },
+    });
+  }
+
   async updateUserStripe(
     userId: number,
     data: {
@@ -332,11 +345,45 @@ export class PaymentRepository {
     paymentStatus: MilestonePaymentStatus,
     status?: MilestoneStatus,
   ) {
+    // Chặn ghi đè ngược từ RELEASED/REFUNDED về FUNDED khi replay webhook/sync cũ
+    if (paymentStatus === MilestonePaymentStatus.FUNDED) {
+      return this.prisma.milestone.updateMany({
+        where: {
+          id: milestoneId,
+          paymentStatus: MilestonePaymentStatus.PENDING,
+        },
+        data: {
+          paymentStatus,
+          ...(status && { status }),
+        },
+      });
+    }
+
     return this.prisma.milestone.update({
       where: { id: milestoneId },
       data: {
         paymentStatus,
         ...(status && { status }),
+      },
+    });
+  }
+
+  async updateMilestonesPaymentStatusByIds(
+    contractId: number,
+    milestoneIds: number[],
+    fromPaymentStatus: MilestonePaymentStatus,
+    toPaymentStatus: MilestonePaymentStatus,
+  ) {
+    if (milestoneIds.length === 0) return { count: 0 };
+    return this.prisma.milestone.updateMany({
+      where: {
+        contractId,
+        id: { in: milestoneIds },
+        paymentStatus: fromPaymentStatus,
+        deletedAt: null,
+      },
+      data: {
+        paymentStatus: toPaymentStatus,
       },
     });
   }

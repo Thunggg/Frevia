@@ -10,6 +10,13 @@ import {
   UploadCloud,
 } from "lucide-react";
 import { Button } from "@repo/ui/components/shadcn/button";
+import {
+  AlertDialog,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogTitle,
+} from "@repo/ui/components/shadcn/alert-dialog";
 import { toastError, toastSuccess } from "@repo/ui/components/shadcn/toast";
 import { contractApiRequest } from "@/apiRequests/contract";
 import { useActionPermission } from "@/hooks/use-action-permission";
@@ -32,10 +39,12 @@ export function MilestoneFilesTab({
 }: MilestoneFilesTabProps) {
   const format = useFormatter();
   const t = useTranslations("milestoneWorkspace.files");
-  const { can } = useActionPermission();
+  const tCommon = useTranslations("common");
+  const { can, isLoading: isPermissionLoading } = useActionPermission();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
   const [deletingId, setDeletingId] = useState<number | null>(null);
+  const [fileToDelete, setFileToDelete] = useState<MilestoneFileType | null>(null);
 
   const canViewFiles = can("GET", "/api/contracts/:contractId/milestones/:milestoneId/files");
   const canUploadFile = can("POST", "/api/contracts/:contractId/milestones/:milestoneId/files");
@@ -86,25 +95,19 @@ export function MilestoneFilesTab({
     }
   };
 
-  const handleDeleteFile = async (file: MilestoneFileType) => {
-    if (
-      !window.confirm(
-        t("deleteConfirm", { name: file.fileName || t("thisFile") }),
-      )
-    ) {
-      return;
-    }
-
+  const handleConfirmDelete = async () => {
+    if (!fileToDelete) return;
     try {
-      setDeletingId(file.id);
+      setDeletingId(fileToDelete.id);
       await contractApiRequest.deleteMilestoneFile(
         contractId,
         milestoneId,
-        file.id,
+        fileToDelete.id,
       );
       toastSuccess({
-        message: t("deleted", { name: file.fileName || t("thisFile") }),
+        message: t("deleted", { name: fileToDelete.fileName || t("thisFile") }),
       });
+      setFileToDelete(null);
       onFilesChanged();
     } catch (error) {
       toastError({
@@ -118,7 +121,7 @@ export function MilestoneFilesTab({
     }
   };
 
-  if (!canViewFiles) {
+  if (!isPermissionLoading && !canViewFiles) {
     return (
       <div className="py-8 text-center space-y-2">
         <h3 className="text-sm font-semibold text-foreground">
@@ -224,7 +227,7 @@ export function MilestoneFilesTab({
                     variant="ghost"
                     size="sm"
                     disabled={deletingId === file.id}
-                    onClick={() => void handleDeleteFile(file)}
+                    onClick={() => setFileToDelete(file)}
                     className="h-8 text-xs text-muted-foreground hover:text-rose-600 px-2 cursor-pointer"
                   >
                     {deletingId === file.id ? (
@@ -249,6 +252,50 @@ export function MilestoneFilesTab({
           </p>
         </div>
       )}
+
+      {/* Delete Milestone File Confirmation Dialog */}
+      <AlertDialog
+        open={Boolean(fileToDelete)}
+        onOpenChange={(open) => {
+          if (!open && !deletingId) {
+            setFileToDelete(null);
+          }
+        }}
+      >
+        <AlertDialogContent className="max-w-sm rounded-[24px] border border-border bg-background p-5 shadow-2xl font-sans">
+          <div className="flex flex-col gap-3">
+            <AlertDialogTitle className="text-base font-bold text-foreground">
+              {t("deleteTitle")}
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-xs text-muted-foreground leading-relaxed">
+              {t("deleteHint", {
+                name: fileToDelete?.fileName || t("thisFile"),
+              })}
+            </AlertDialogDescription>
+            <div className="mt-2 flex flex-col gap-2">
+              <Button
+                variant="destructive"
+                disabled={deletingId !== null}
+                onClick={() => void handleConfirmDelete()}
+                className="w-full rounded-full bg-rose-600 hover:bg-rose-700 text-white text-xs font-semibold cursor-pointer"
+              >
+                {deletingId !== null ? (
+                  <Loader2 className="mr-1.5 size-3.5 animate-spin" />
+                ) : (
+                  <Trash2 className="mr-1.5 size-3.5" />
+                )}
+                {t("confirmDelete")}
+              </Button>
+              <AlertDialogCancel
+                disabled={deletingId !== null}
+                className="w-full rounded-full text-xs cursor-pointer"
+              >
+                {tCommon("cancel")}
+              </AlertDialogCancel>
+            </div>
+          </div>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

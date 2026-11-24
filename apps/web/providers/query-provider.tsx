@@ -25,7 +25,7 @@ function makeQueryClient() {
         gcTime: 5 * 60 * 1000, // 5 phút
       },
       mutations: {
-        retry: 1,
+        retry: 0,
       },
     },
   });
@@ -51,7 +51,8 @@ function getUserFingerprint(user: GetMeResType | null | undefined): string {
   const roles = (user.roles ?? [])
     .map((r) => `${r.id ?? ""}:${r.name}:${r.isPrimary ? 1 : 0}`)
     .join(",");
-  return `${user.id}|${roles}|${user.permissions?.length ?? 0}|${user.profile?.displayName ?? ""}|${user.profile?.avatarUrl ?? ""}`;
+  const permissionsKey = [...(user.permissions ?? [])].sort().join(",");
+  return `${user.id}|${roles}|${permissionsKey}|${user.profile?.displayName ?? ""}|${user.profile?.avatarUrl ?? ""}`;
 }
 
 export default function QueryProvider({

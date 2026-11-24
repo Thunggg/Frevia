@@ -39,7 +39,6 @@ export interface MilestoneCardProps {
   onDelete?: (milestone: MilestoneType) => void;
   onFund?: (milestone: MilestoneType) => void;
   onRelease?: (milestone: MilestoneType) => void;
-  onRefund?: (milestone: MilestoneType) => void;
   onReview?: (milestone: MilestoneType) => void;
   onSubmitWork?: (milestone: MilestoneType) => void;
   onStartWork?: (milestone: MilestoneType) => void;
@@ -63,7 +62,6 @@ export function MilestoneCard({
   onDelete,
   onFund,
   onRelease,
-  onRefund,
   onReview,
   onSubmitWork,
   onStartWork,
@@ -72,6 +70,7 @@ export function MilestoneCard({
 }: MilestoneCardProps) {
   const format = useFormatter();
   const t = useTranslations("milestoneWorkspace.card");
+  const tPaymentStatus = useTranslations("paymentStatus");
   const { can, canAny } = useActionPermission();
 
   const canViewDetail = can("GET", "/api/contracts/:contractId/milestones/:id");
@@ -92,7 +91,6 @@ export function MilestoneCard({
     { method: "POST", path: "/api/payments/contracts/:contractId/milestones/:milestoneId/fund/saved-card" },
   ]);
   const canReleasePermission = can("POST", "/api/payments/contracts/:contractId/milestones/:milestoneId/release");
-  const canRefundPermission = can("POST", "/api/payments/contracts/:contractId/milestones/:milestoneId/refund");
 
   const slugParam = contractSlug || String(contractId);
   const detailUrl = `${basePath}/contracts/${slugParam}/milestones/${milestone.id}`;
@@ -144,12 +142,6 @@ export function MilestoneCard({
     milestone.status === "COMPLETED" &&
     milestone.paymentStatus === "FUNDED" &&
     Boolean(onRelease);
-  const canRefundMilestone =
-    isClient &&
-    contractStatus === "ACTIVE" &&
-    milestone.paymentStatus === "FUNDED" &&
-    (milestone.status === "LATE" || milestone.status === "PENDING") &&
-    Boolean(onRefund);
 
   // Status indicator: clean text & icon without colored background
   const renderWorkStatusText = () => {
@@ -206,35 +198,62 @@ export function MilestoneCard({
     }
   };
 
-  // Escrow status: clean text & icon without colored background
+  // Payment status indicator with full lifecycle coverage (PENDING, FUNDED, RELEASED, REFUNDED, DISPUTED)
   const renderEscrowStatusText = () => {
-    switch (milestone.paymentStatus) {
+    const paymentStatus = milestone.paymentStatus || "PENDING";
+    const statusLabel = tPaymentStatus(paymentStatus);
+    const tooltipText = t("paymentStatusLabel", { status: statusLabel });
+
+    switch (paymentStatus) {
       case "FUNDED":
         return (
-          <span className="inline-flex items-center gap-1 text-[11px] text-emerald-600 dark:text-emerald-400">
+          <span
+            className="inline-flex items-center gap-1 text-[11px] font-medium text-emerald-600 dark:text-emerald-400"
+            title={tooltipText}
+          >
             <ShieldCheck className="size-3" />
-            <span>{t("escrowFunded")}</span>
+            <span>{statusLabel}</span>
           </span>
         );
       case "RELEASED":
         return (
-          <span className="inline-flex items-center gap-1 text-[11px] text-blue-600 dark:text-blue-400">
+          <span
+            className="inline-flex items-center gap-1 text-[11px] font-medium text-blue-600 dark:text-blue-400"
+            title={tooltipText}
+          >
             <Check className="size-3" />
-            <span>{t("escrowPaid")}</span>
+            <span>{statusLabel}</span>
           </span>
         );
       case "REFUNDED":
         return (
-          <span className="inline-flex items-center gap-1 text-[11px] text-muted-foreground">
+          <span
+            className="inline-flex items-center gap-1 text-[11px] font-medium text-zinc-500 dark:text-zinc-400"
+            title={tooltipText}
+          >
             <RotateCcw className="size-3" />
-            <span>{t("escrowRefunded")}</span>
+            <span>{statusLabel}</span>
           </span>
         );
+      case "DISPUTED":
+        return (
+          <span
+            className="inline-flex items-center gap-1 text-[11px] font-medium text-rose-600 dark:text-rose-400"
+            title={tooltipText}
+          >
+            <Scale className="size-3" />
+            <span>{statusLabel}</span>
+          </span>
+        );
+      case "PENDING":
       default:
         return (
-          <span className="inline-flex items-center gap-1 text-[11px] text-muted-foreground">
+          <span
+            className="inline-flex items-center gap-1 text-[11px] text-muted-foreground"
+            title={tooltipText}
+          >
             <Lock className="size-3" />
-            <span>{t("escrowAwaiting")}</span>
+            <span>{statusLabel}</span>
           </span>
         );
     }
@@ -367,19 +386,6 @@ export function MilestoneCard({
               >
                 <Check className="mr-1 size-3" />
                 {t("releasePayment")}
-              </Button>
-            )}
-
-            {/* Client: Refund Escrow */}
-            {canRefundMilestone && canRefundPermission && onRefund && (
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => onRefund(milestone)}
-                className="h-7 rounded-full border-rose-200 dark:border-rose-800 text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/30 text-xs font-normal px-2.5 cursor-pointer"
-              >
-                <RotateCcw className="mr-1 size-3" />
-                {t("refundEscrow")}
               </Button>
             )}
 

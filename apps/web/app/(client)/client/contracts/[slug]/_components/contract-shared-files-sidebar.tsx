@@ -14,6 +14,13 @@ import {
   Loader2,
 } from "lucide-react";
 import { Button } from "@repo/ui/components/shadcn/button";
+import {
+  AlertDialog,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogTitle,
+} from "@repo/ui/components/shadcn/alert-dialog";
 import { toastError, toastSuccess } from "@repo/ui/components/shadcn/toast";
 import { contractApiRequest } from "@/apiRequests/contract";
 import { useActionPermission } from "@/hooks/use-action-permission";
@@ -33,6 +40,7 @@ export function ContractSharedFilesSidebar({
   const queryClient = useQueryClient();
   const format = useFormatter();
   const t = useTranslations("contractWorkspace.sharedFilesSidebar");
+  const tCommon = useTranslations("common");
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { can } = useActionPermission();
   const canViewSharedFiles = can("GET", "/api/contracts/:contractId/files");
@@ -41,6 +49,7 @@ export function ContractSharedFilesSidebar({
 
   const [isUploading, setIsUploading] = useState(false);
   const [deletingId, setDeletingId] = useState<number | null>(null);
+  const [fileToDelete, setFileToDelete] = useState<{ id: number; fileName: string } | null>(null);
 
   const formatDate = (date: string | Date | null | undefined): string => {
     if (!date) return "—";
@@ -99,6 +108,7 @@ export function ContractSharedFilesSidebar({
         queryKey: ["contract-shared-files", contractId],
       });
       toastSuccess({ message: t("deleted", { name: fileName }) });
+      setFileToDelete(null);
     } catch {
       toastError({ message: t("deleteFailed") });
     } finally {
@@ -195,7 +205,7 @@ export function ContractSharedFilesSidebar({
                   {/* Delete button (client or uploader) */}
                   {!isFreelancer && canDeleteSharedFile && (
                     <button
-                      onClick={() => handleDeleteFile(file.id, fileName)}
+                      onClick={() => setFileToDelete({ id: file.id, fileName })}
                       disabled={deletingId === file.id}
                       title={t("deleteTooltip")}
                       className="flex size-7 items-center justify-center rounded-lg text-muted-foreground hover:bg-rose-50 hover:text-rose-600 dark:hover:bg-rose-950/40 transition-colors cursor-pointer"
@@ -223,6 +233,53 @@ export function ContractSharedFilesSidebar({
           </p>
         </div>
       )}
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog
+        open={fileToDelete !== null}
+        onOpenChange={(open) => !open && !deletingId && setFileToDelete(null)}
+      >
+        <AlertDialogContent className="max-w-sm rounded-[24px] border border-border bg-background p-5 shadow-2xl font-sans">
+          <div className="flex flex-col gap-3">
+            <div className="px-1">
+              <AlertDialogTitle className="text-base font-bold text-foreground">
+                {t("deleteTitle")}
+              </AlertDialogTitle>
+              <AlertDialogDescription className="mt-1 text-xs text-muted-foreground leading-relaxed">
+                {t("deleteHint", {
+                  name: fileToDelete?.fileName || t("attachmentFallback"),
+                })}
+              </AlertDialogDescription>
+            </div>
+
+            <div className="mt-2 flex flex-col gap-2">
+              <Button
+                variant="destructive"
+                disabled={deletingId !== null}
+                onClick={() => {
+                  if (fileToDelete) {
+                    void handleDeleteFile(fileToDelete.id, fileToDelete.fileName);
+                  }
+                }}
+                className="w-full rounded-full bg-rose-600 hover:bg-rose-700 text-white text-xs font-semibold cursor-pointer"
+              >
+                {deletingId !== null ? (
+                  <Loader2 className="mr-1.5 size-3.5 animate-spin" />
+                ) : (
+                  <Trash2 className="mr-1.5 size-3.5" />
+                )}
+                {t("confirmDelete")}
+              </Button>
+              <AlertDialogCancel
+                disabled={deletingId !== null}
+                className="w-full rounded-full text-xs cursor-pointer"
+              >
+                {tCommon("cancel")}
+              </AlertDialogCancel>
+            </div>
+          </div>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

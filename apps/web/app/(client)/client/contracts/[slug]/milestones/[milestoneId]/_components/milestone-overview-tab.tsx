@@ -14,6 +14,7 @@ import {
   Play,
   RotateCcw,
   Scale,
+  ShieldCheck,
   Upload,
   User,
 } from "lucide-react";
@@ -38,7 +39,6 @@ interface MilestoneOverviewTabProps {
   onSubmitWork?: () => void;
   onReviewSubmission?: (submission?: GetSubmissionResponseType) => void;
   onRelease?: () => void;
-  onRefund?: () => void;
 }
 
 export function MilestoneOverviewTab({
@@ -54,11 +54,11 @@ export function MilestoneOverviewTab({
   onSubmitWork,
   onReviewSubmission,
   onRelease,
-  onRefund,
 }: MilestoneOverviewTabProps) {
   const format = useFormatter();
   const t = useTranslations("milestoneWorkspace.overview");
   const tCard = useTranslations("milestoneWorkspace.card");
+  const tPaymentStatus = useTranslations("paymentStatus");
   const { can, canAny } = useActionPermission();
   const isClient = !isFreelancer;
 
@@ -71,7 +71,6 @@ export function MilestoneOverviewTab({
     { method: "POST", path: "/api/payments/contracts/:contractId/milestones/:milestoneId/fund/saved-card" },
   ]);
   const canReleasePermission = can("POST", "/api/payments/contracts/:contractId/milestones/:milestoneId/release");
-  const canRefundPermission = can("POST", "/api/payments/contracts/:contractId/milestones/:milestoneId/refund");
   const canStartWorkPermission = can("PATCH", "/api/contracts/:contractId/milestones/:id/progress");
   const canSubmitWorkPermission = can("POST", "/api/contracts/:contractId/milestones/:milestoneId/submissions");
   const canApprovePermission = can("PATCH", "/api/contracts/:contractId/milestones/:milestoneId/submissions/:id/approve");
@@ -128,6 +127,48 @@ export function MilestoneOverviewTab({
   const amountNumber = Number(milestone.amount) || 0;
   const freelancerFee = Math.round(amountNumber * 0.05 * 100) / 100;
   const freelancerPayout = Math.round((amountNumber - freelancerFee) * 100) / 100;
+
+  const renderPaymentStatusBadge = () => {
+    const paymentStatus = milestone.paymentStatus || "PENDING";
+    switch (paymentStatus) {
+      case "FUNDED":
+        return (
+          <span className="inline-flex items-center gap-1 text-[11px] font-medium text-emerald-600 dark:text-emerald-400">
+            <ShieldCheck className="size-3" />
+            <span>{tPaymentStatus("FUNDED")}</span>
+          </span>
+        );
+      case "RELEASED":
+        return (
+          <span className="inline-flex items-center gap-1 text-[11px] font-medium text-blue-600 dark:text-blue-400">
+            <Check className="size-3" />
+            <span>{tPaymentStatus("RELEASED")}</span>
+          </span>
+        );
+      case "REFUNDED":
+        return (
+          <span className="inline-flex items-center gap-1 text-[11px] font-medium text-muted-foreground">
+            <RotateCcw className="size-3" />
+            <span>{tPaymentStatus("REFUNDED")}</span>
+          </span>
+        );
+      case "DISPUTED":
+        return (
+          <span className="inline-flex items-center gap-1 text-[11px] font-medium text-rose-600 dark:text-rose-400">
+            <Scale className="size-3" />
+            <span>{tPaymentStatus("DISPUTED")}</span>
+          </span>
+        );
+      case "PENDING":
+      default:
+        return (
+          <span className="inline-flex items-center gap-1 text-[11px] text-muted-foreground">
+            <Lock className="size-3" />
+            <span>{tPaymentStatus("PENDING")}</span>
+          </span>
+        );
+    }
+  };
 
   const clientName =
     contract.client?.profile?.displayName ||
@@ -213,19 +254,6 @@ export function MilestoneOverviewTab({
                   : ""}
               </p>
             </div>
-            {isClient &&
-              milestone.paymentStatus === "FUNDED" &&
-              canRefundPermission &&
-              onRefund && (
-                <Button
-                  size="sm"
-                  onClick={onRefund}
-                  className="h-7 text-xs font-normal text-rose-600 border border-rose-200 dark:border-rose-800 bg-transparent hover:bg-rose-50 dark:hover:bg-rose-950/20 shrink-0 cursor-pointer"
-                >
-                  <RotateCcw className="mr-1 size-3" />
-                  {tCard("refundEscrow")}
-                </Button>
-              )}
           </div>
         )}
 
@@ -524,6 +552,10 @@ export function MilestoneOverviewTab({
               <span className="font-mono font-medium text-foreground">
                 ${amountNumber.toLocaleString("en-US", { minimumFractionDigits: 2 })}
               </span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-muted-foreground">{t("paymentStatusLabel")}</span>
+              {renderPaymentStatusBadge()}
             </div>
             <div className="flex items-center justify-between">
               <span className="text-muted-foreground">{t("freelancerFee")}</span>

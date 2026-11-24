@@ -11,7 +11,6 @@ import {
   ChevronRight,
   FileText,
   Loader2,
-  MessageSquare,
   Search,
   SlidersHorizontal,
   X,
@@ -59,8 +58,8 @@ import { useActionPermission } from "@/hooks/use-action-permission";
 type ProposalStatus = SubmittedProposalStatusType;
 type StatusFilter = "ALL" | ProposalStatus;
 
-// Các trạng thái khách hàng có thể phỏng vấn / từ chối / tuyển.
-const ACTIONABLE_STATUSES: ProposalStatus[] = ["SUBMITTED", "INTERVIEWING"];
+// Các trạng thái khách hàng có thể từ chối / tuyển.
+const ACTIONABLE_STATUSES: ProposalStatus[] = ["SUBMITTED"];
 
 type ClientProposal = {
   id: number;
@@ -109,14 +108,12 @@ function ProposalStatusBadge({ status }: { status: ProposalStatus }) {
 
   const colorClass =
     status === "HIRED"
-      ? "text-emerald-600 dark:text-emerald-400"
+      ? "text-[#0069D3] dark:text-blue-400"
       : status === "SUBMITTED"
         ? "text-amber-600 dark:text-amber-400"
-        : status === "INTERVIEWING"
-          ? "text-[#0069D3] dark:text-blue-400"
-          : status === "REJECTED"
-            ? "text-rose-600 dark:text-rose-400"
-            : "text-muted-foreground";
+        : status === "REJECTED"
+          ? "text-rose-600 dark:text-rose-400"
+          : "text-muted-foreground";
 
   return (
     <span
@@ -219,7 +216,6 @@ export function ProposalList({
   const [page, setPage] = useState(1);
   const [rejecting, setRejecting] = useState<ClientProposal | null>(null);
   const [isRejecting, setIsRejecting] = useState(false);
-  const [interviewingId, setInterviewingId] = useState<number | null>(null);
   const [contractingProposal, setContractingProposal] = useState<ClientProposal | null>(null);
 
   // Freelancer profile sheet
@@ -242,7 +238,6 @@ export function ProposalList({
     can("GET", "/api/jobs/:jobId/proposals") ||
     can("GET", "/api/proposals/jobs/:jobId/submitted");
   const canViewDetail = can("GET", "/api/proposals/:id/client");
-  const canInterview = can("PATCH", "/api/proposals/:id/interview");
   const canAccept = can("PATCH", "/api/proposals/:id/accept");
   const canReject = can("PATCH", "/api/proposals/:id/reject");
   const canCreateContract = can("POST", "/api/contracts");
@@ -363,30 +358,6 @@ export function ProposalList({
     }
   };
 
-  const interviewProposal = async (proposalId: number) => {
-    if (!canInterview) {
-      toastError({ message: t("noPermissionAction") });
-      return;
-    }
-    setInterviewingId(proposalId);
-    try {
-      await proposalApiRequest.interview(proposalId);
-      await queryClient.invalidateQueries({
-        queryKey: ["client-job-proposals", jobId],
-      });
-      toastSuccess({ message: t("interviewing") });
-    } catch (error) {
-      toastError({
-        message:
-          error instanceof ApiFail
-            ? error.response.error.message
-            : t("interviewFailed"),
-      });
-    } finally {
-      setInterviewingId(null);
-    }
-  };
-
   return (
     <div className="flex min-h-full flex-col bg-background font-sans">
       <main className="flex-1 font-sans">
@@ -429,7 +400,7 @@ export function ProposalList({
                     </span>
                   ) : null}
                   {isFilled ? (
-                    <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/50 px-3 py-1 text-xs font-medium text-emerald-700 dark:text-emerald-300">
+                    <span className="inline-flex items-center gap-1 rounded-full bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800/50 px-3 py-1 text-xs font-medium text-[#0069D3] dark:text-blue-300">
                       <Check className="size-3" />
                       {t("jobFilledBadge", { filled, required })}
                     </span>
@@ -459,7 +430,6 @@ export function ProposalList({
                 {(
                   [
                     "SUBMITTED",
-                    "INTERVIEWING",
                     "HIRED",
                     "REJECTED",
                     "WITHDRAWN",
@@ -650,29 +620,11 @@ export function ProposalList({
 
                       {ACTIONABLE_STATUSES.includes(proposal.status) ? (
                         <>
-                          {proposal.status === "SUBMITTED" && canInterview ? (
-                            <Button
-                              type="button"
-                              size="sm"
-                              variant="outline"
-                              className="rounded-full border-[#0069D3]/40 text-[#0069D3] hover:bg-[#D0E1F8]/40 px-3.5 h-8 text-xs font-semibold cursor-pointer transition-colors"
-                              onClick={() => void interviewProposal(proposal.id)}
-                              disabled={interviewingId === proposal.id}
-                            >
-                              {interviewingId === proposal.id ? (
-                                <Loader2 className="mr-1 size-3 animate-spin" />
-                              ) : (
-                                <MessageSquare className="mr-1 size-3" />
-                              )}
-                              {t("interview")}
-                            </Button>
-                          ) : null}
-
                           {canAccept && canCreateContract ? (
                             <Button
                               type="button"
                               size="sm"
-                              className="rounded-full bg-emerald-600 hover:bg-emerald-700 text-white px-3.5 h-8 text-xs font-semibold shadow-xs cursor-pointer transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                              className="rounded-full bg-[#0069D3] hover:bg-[#005bb8] text-white px-3.5 h-8 text-xs font-semibold shadow-xs cursor-pointer transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                               onClick={() => setContractingProposal(proposal)}
                               disabled={cannotHireMore}
                               title={cannotHireMore ? t("jobFilledDisabled") : undefined}

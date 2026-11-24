@@ -1,6 +1,6 @@
 import "server-only";
 
-import { cookies } from "next/headers";
+import { getServerAccessToken } from "@/lib/auth-session";
 
 import { envConfig } from "@/configs/validate-env";
 import type {
@@ -41,7 +41,7 @@ function buildQueryString(
 }
 
 async function adminServerFetch<T>(url: string): Promise<T | null> {
-  const accessToken = (await cookies()).get("accessToken")?.value;
+  const accessToken = await getServerAccessToken();
 
   if (!accessToken || !envConfig?.NESTJS_API_URL) {
     return null;

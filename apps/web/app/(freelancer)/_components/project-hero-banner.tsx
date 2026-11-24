@@ -7,7 +7,6 @@ import type { BannerAdminItemType } from "@shared/types";
 
 export function ProjectHeroBanner() {
   const [banner, setBanner] = useState<BannerAdminItemType | null>(null);
-  const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -23,9 +22,6 @@ export function ProjectHeroBanner() {
       })
       .catch(() => {
         // Fallback to project default banner image if API fails or empty
-      })
-      .finally(() => {
-        if (!cancelled) setLoaded(true);
       });
 
     return () => {

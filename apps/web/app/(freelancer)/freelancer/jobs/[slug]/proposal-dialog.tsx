@@ -5,6 +5,7 @@ import { useBackendMessage } from "@/hooks/use-backend-message";
 import { Loader2 } from "@/components/icons";
 import { useFormatter, useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
+import { useQueryClient } from "@tanstack/react-query";
 import { Controller, useForm } from "react-hook-form";
 import { useState } from "react";
 
@@ -33,7 +34,6 @@ import { useActionPermission } from "@/hooks/use-action-permission";
 import {
   CreateProposalBodySchema,
   SaveProposalDraftBodySchema,
-  MAX_PROPOSAL_DELIVERY_DAYS,
   type CreateProposalBodyType,
   type SaveProposalDraftBodyType,
 } from "@shared/types";
@@ -58,6 +58,7 @@ export function ProposalDialog({
   onOpenChange,
 }: ProposalDialogProps) {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const t = useTranslations("jobProposal");
   const format = useFormatter();
   const translateMessage = useBackendMessage();
@@ -69,11 +70,11 @@ export function ProposalDialog({
 
   const maxDaysFromDeadline = deadline
     ? Math.max(
-        1,
-        Math.ceil(
-          (new Date(deadline).getTime() - Date.now()) / (24 * 60 * 60 * 1000),
-        ),
-      )
+      1,
+      Math.ceil(
+        (new Date(deadline).getTime() - Date.now()) / (24 * 60 * 60 * 1000),
+      ),
+    )
     : undefined;
 
   const form = useForm<CreateProposalBodyType>({
@@ -106,7 +107,8 @@ export function ProposalDialog({
   const finish = (proposalId: number, message: string, redirect = true) => {
     toastSuccess({ message });
     onOpenChange(false);
-    if (redirect) router.push(`/proposals/${proposalId}`);
+    void queryClient.invalidateQueries({ queryKey: ["proposals"] });
+    if (redirect) router.push(`/freelancer/proposals/${proposalId}`);
     router.refresh();
   };
   const handleApiError = (error: unknown, fallback: string) => {
@@ -115,8 +117,9 @@ export function ProposalDialog({
       toastError({
         message: t("alreadyExists"),
       });
+      void queryClient.invalidateQueries({ queryKey: ["proposals"] });
       void proposalApiRequest.getMyProposalForJob(jobId).then((proposal) => {
-        if (proposal) router.push(`/proposals/${proposal.id}`);
+        if (proposal) router.push(`/freelancer/proposals/${proposal.id}`);
         else router.refresh();
       });
       return;
@@ -276,15 +279,18 @@ export function ProposalDialog({
                       ) : null}
                     </div>
                     <Input
-                      type="number"
-                      min="0"
-                      step="0.01"
+                      type="text"
+                      inputMode="decimal"
                       value={field.value ?? ""}
+                      onFocus={(e) => e.target.select()}
                       onChange={(event) => {
+                        let val = event.target.value.replace(/[^\d.]/g, "");
+                        if (/^0\d/.test(val)) {
+                          val = val.replace(/^0+/, "");
+                          if (val === "") val = "0";
+                        }
                         field.onChange(
-                          event.target.value === ""
-                            ? undefined
-                            : Number(event.target.value),
+                          val === "" ? undefined : Number(val),
                         );
                         if (form.formState.errors.bidAmount) {
                           form.clearErrors("bidAmount");
@@ -328,23 +334,18 @@ export function ProposalDialog({
                       ) : null}
                     </div>
                     <Input
-                      type="number"
-                      min="1"
-                      max={
-                        maxDaysFromDeadline
-                          ? Math.min(
-                              MAX_PROPOSAL_DELIVERY_DAYS,
-                              maxDaysFromDeadline,
-                            )
-                          : MAX_PROPOSAL_DELIVERY_DAYS
-                      }
-                      step="1"
+                      type="text"
+                      inputMode="numeric"
                       value={field.value ?? ""}
+                      onFocus={(e) => e.target.select()}
                       onChange={(event) => {
+                        let val = event.target.value.replace(/[^\d]/g, "");
+                        if (/^0\d/.test(val)) {
+                          val = val.replace(/^0+/, "");
+                          if (val === "") val = "0";
+                        }
                         field.onChange(
-                          event.target.value === ""
-                            ? undefined
-                            : Number(event.target.value),
+                          val === "" ? undefined : Number(val),
                         );
                         if (form.formState.errors.deliveryDays) {
                           form.clearErrors("deliveryDays");
@@ -378,7 +379,7 @@ export function ProposalDialog({
             {canCreate ? (
               <Button
                 type="submit"
-                className="bg-[#4fae2e] text-white hover:bg-[#459928]"
+                className="bg-[#0069D3] text-white hover:bg-[#005bb8]"
                 disabled={action !== null}
               >
                 {action === "submit" ? (

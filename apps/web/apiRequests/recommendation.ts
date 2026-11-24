@@ -1,7 +1,6 @@
 import { http } from "@/lib/http";
 import type {
   RecommendationExplanationType,
-  RecommendationFeedbackType,
   RecommendedJobResponseType,
   RecommendedFreelancerResponseType,
   RecommendationReindexResponseType,
@@ -20,12 +19,6 @@ export const recommendationApiRequest = {
   getExplanation: (recommendationId: number) =>
     http.get<RecommendationExplanationType>(
       `/recommendations/${recommendationId}/explanation`,
-    ),
-
-  submitFeedback: (recommendationId: number, type: RecommendationFeedbackType) =>
-    http.post<{ id: number; recommendationId: number; type: string }>(
-      `/recommendations/${recommendationId}/feedback`,
-      { type },
     ),
 
   reindex: () =>

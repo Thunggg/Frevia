@@ -1,4 +1,7 @@
-import { matchRoutePath, normalizeApiPath } from '../../shared/helper/match-route-path';
+import {
+  matchRoutePath,
+  normalizeApiPath,
+} from '../../shared/helper/match-route-path';
 
 /**
  * Bộ kiểm thử Action-Level RBAC và Kiểm soát hiển thị giao diện UI cho 2 cụm chức năng:
@@ -8,13 +11,12 @@ import { matchRoutePath, normalizeApiPath } from '../../shared/helper/match-rout
  *  #195 · POST   /api/social-links (Thêm liên kết mạng xã hội)
  *  #196 · DELETE /api/social-links/:id (Xóa liên kết mạng xã hội)
  *
- * 2. AI RECOMMENDATIONS - Gợi ý thông minh (AI) (Trang chủ & Dùng chung) - 4 quyền:
+ * 2. AI RECOMMENDATIONS - Gợi ý thông minh (AI) (Trang chủ & Dùng chung) - 3 quyền:
  *  #562 · GET    /api/recommendations/jobs (Xem danh sách việc làm gợi ý)
  *  #563 · GET    /api/recommendations/freelancers (Xem danh sách ứng viên gợi ý)
  *  #564 · GET    /api/recommendations/:id/explanation (Xem giải thích lý do gợi ý)
- *  #565 · POST   /api/recommendations/:id/feedback (Gửi phản hồi về kết quả gợi ý)
  *
- * Tổng cộng: 7 quyền.
+ * Tổng cộng: 6 quyền.
  *
  * Yêu cầu kiểm thử:
  * "phải test trên giao diện ko hiển thị UI đó nữa"
@@ -42,7 +44,6 @@ interface CombinedUiState {
   showRecommendedJobsTab: boolean;
   showRecommendedFreelancersView: boolean;
   showRecommendationExplanation: boolean;
-  showRecommendationFeedbackButtons: boolean;
 }
 
 const SOCIAL_AND_RECOMMENDATION_PERMISSIONS: PermissionItem[] = [
@@ -103,15 +104,6 @@ const SOCIAL_AND_RECOMMENDATION_PERMISSIONS: PermissionItem[] = [
     testActualPath: '/api/recommendations/99/explanation',
     uiField: 'showRecommendationExplanation',
   },
-  {
-    id: 565,
-    group: 'AI RECOMMENDATIONS',
-    method: 'POST',
-    path: '/api/recommendations/:id/feedback',
-    description: 'Gửi phản hồi về kết quả gợi ý',
-    testActualPath: '/api/recommendations/99/feedback',
-    uiField: 'showRecommendationFeedbackButtons',
-  },
 ];
 
 /**
@@ -171,18 +163,15 @@ function evaluateUiState(
     showRecommendedJobsTab: can('GET', '/api/recommendations/jobs'),
 
     // #563: GET /api/recommendations/freelancers -> Khung ứng viên gợi ý cho Job
-    showRecommendedFreelancersView: can('GET', '/api/recommendations/freelancers'),
+    showRecommendedFreelancersView: can(
+      'GET',
+      '/api/recommendations/freelancers',
+    ),
 
     // #564: GET /api/recommendations/:id/explanation -> Xem giải thích chi tiết lý do gợi ý trên JobCard / Dialog
     showRecommendationExplanation: can(
       'GET',
       '/api/recommendations/:id/explanation',
-    ),
-
-    // #565: POST /api/recommendations/:id/feedback -> Hàng nút phản hồi Helpful / Not Helpful
-    showRecommendationFeedbackButtons: can(
-      'POST',
-      '/api/recommendations/:id/feedback',
     ),
   };
 }
@@ -212,7 +201,8 @@ describe('SOCIAL LINKS & AI RECOMMENDATIONS - Action-Level RBAC & UI Visibility 
         ).allowed,
       ).toBe(true);
       expect(
-        checkPermissionGuard(getSocialLinks, 'GET', '/api/social-links/').allowed,
+        checkPermissionGuard(getSocialLinks, 'GET', '/api/social-links/')
+          .allowed,
       ).toBe(true);
 
       const getRecommendedJobs = [
@@ -249,10 +239,12 @@ describe('SOCIAL LINKS & AI RECOMMENDATIONS - Action-Level RBAC & UI Visibility 
       const viewSocialOnly = [{ method: 'GET', path: '/api/social-links' }];
 
       expect(
-        checkPermissionGuard(viewSocialOnly, 'GET', '/api/social-links').allowed,
+        checkPermissionGuard(viewSocialOnly, 'GET', '/api/social-links')
+          .allowed,
       ).toBe(true);
       expect(
-        checkPermissionGuard(viewSocialOnly, 'POST', '/api/social-links').allowed,
+        checkPermissionGuard(viewSocialOnly, 'POST', '/api/social-links')
+          .allowed,
       ).toBe(false);
       expect(
         checkPermissionGuard(viewSocialOnly, 'DELETE', '/api/social-links/12')
@@ -355,12 +347,11 @@ describe('SOCIAL LINKS & AI RECOMMENDATIONS - Action-Level RBAC & UI Visibility 
       expect(ui.showRecommendedJobsTab).toBe(true);
       expect(ui.showRecommendedFreelancersView).toBe(true);
       expect(ui.showRecommendationExplanation).toBe(true);
-      expect(ui.showRecommendationFeedbackButtons).toBe(true);
     });
   });
 
-  describe('Phần 3: Thu Hồi Sạch Toàn Bộ 7 Quyền (Zero 0/7 Permissions - DoD Kiểm soát UI)', () => {
-    it('Từ chối tất cả 7 API (Status 403 Forbidden)', () => {
+  describe('Phần 3: Thu Hồi Sạch Toàn Bộ 6 Quyền (Zero 0/6 Permissions - DoD Kiểm soát UI)', () => {
+    it('Từ chối tất cả 6 API (Status 403 Forbidden)', () => {
       const emptyPermissions: PermissionItem[] = [];
 
       for (const perm of SOCIAL_AND_RECOMMENDATION_PERMISSIONS) {
@@ -385,7 +376,6 @@ describe('SOCIAL LINKS & AI RECOMMENDATIONS - Action-Level RBAC & UI Visibility 
       expect(ui.showRecommendedJobsTab).toBe(false);
       expect(ui.showRecommendedFreelancersView).toBe(false);
       expect(ui.showRecommendationExplanation).toBe(false);
-      expect(ui.showRecommendationFeedbackButtons).toBe(false);
     });
   });
 
@@ -481,16 +471,15 @@ describe('SOCIAL LINKS & AI RECOMMENDATIONS - Action-Level RBAC & UI Visibility 
       // Freelancer có quyền xem việc làm gợi ý (#562), giải thích lý do (#564) và gửi feedback (#565)
       const freelancerRecPermissions =
         SOCIAL_AND_RECOMMENDATION_PERMISSIONS.filter((p) =>
-          [562, 564, 565].includes(p.id),
+          [562, 564].includes(p.id),
         );
 
       const can = createCanHelper(freelancerRecPermissions);
       const ui = evaluateUiState(can);
 
-      // Tab Best matches, giải thích và nút feedback đều hiển thị
+      // Tab Best matches và giải thích đều hiển thị
       expect(ui.showRecommendedJobsTab).toBe(true);
       expect(ui.showRecommendationExplanation).toBe(true);
-      expect(ui.showRecommendationFeedbackButtons).toBe(true);
 
       // Không hiển thị ứng viên gợi ý (#563) hay social links
       expect(ui.showRecommendedFreelancersView).toBe(false);
@@ -510,10 +499,9 @@ describe('SOCIAL LINKS & AI RECOMMENDATIONS - Action-Level RBAC & UI Visibility 
 
       expect(ui.showRecommendedFreelancersView).toBe(true);
 
-      // Không có việc làm gợi ý (chỉ dành cho freelancer) hay feedback giải thích
+      // Không có việc làm gợi ý (chỉ dành cho freelancer) hay giải thích
       expect(ui.showRecommendedJobsTab).toBe(false);
       expect(ui.showRecommendationExplanation).toBe(false);
-      expect(ui.showRecommendationFeedbackButtons).toBe(false);
       expect(ui.showSocialLinksTab).toBe(false);
     });
 
@@ -536,7 +524,6 @@ describe('SOCIAL LINKS & AI RECOMMENDATIONS - Action-Level RBAC & UI Visibility 
       expect(ui.showRecommendedJobsTab).toBe(false);
       expect(ui.showRecommendedFreelancersView).toBe(false);
       expect(ui.showRecommendationExplanation).toBe(false);
-      expect(ui.showRecommendationFeedbackButtons).toBe(false);
     });
 
     it('Kịch bản 4: Người dùng bị giới hạn quyền Social Links (Chỉ được xem #194, không được thêm #195 hay xóa #196)', () => {
@@ -557,4 +544,3 @@ describe('SOCIAL LINKS & AI RECOMMENDATIONS - Action-Level RBAC & UI Visibility 
     });
   });
 });
-

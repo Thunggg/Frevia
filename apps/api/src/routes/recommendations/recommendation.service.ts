@@ -1,6 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
 import {
-  RecommendationFeedbackType,
   RecommendedFreelancerResponseType,
   RecommendedJobResponseType,
   RoleName,
@@ -356,25 +355,6 @@ export class RecommendationService {
       model: explanation.model,
       durationMs: explanation.durationMs,
     };
-  }
-
-  async submitFeedback(
-    userId: number,
-    recommendationId: number,
-    type: RecommendationFeedbackType,
-  ) {
-    const recommendation =
-      await this.repository.findRecommendationById(recommendationId);
-
-    if (!recommendation) {
-      throw RecommendationNotFoundException();
-    }
-
-    if (recommendation.requesterId !== userId) {
-      throw RecommendationForbiddenException();
-    }
-
-    return this.repository.createFeedback(recommendationId, type);
   }
 
   private async rank<T>(input: {

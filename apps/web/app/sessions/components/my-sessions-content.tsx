@@ -102,7 +102,7 @@ export function MySessionsContent({
   const t = useTranslations("sessions");
   const tCommon = useTranslations("common");
   const format = useFormatter();
-  const { can } = useActionPermission();
+  const { can, isLoading: isPermissionLoading } = useActionPermission();
 
   const canViewSessions = can("GET", "/api/sessions");
   const canViewSessionDetail = can("GET", "/api/sessions/:id");
@@ -273,7 +273,8 @@ export function MySessionsContent({
     </form>
   );
 
-  const sessionListContent = !canViewSessions ? (
+  const sessionListContent =
+    !isPermissionLoading && !canViewSessions ? (
     <div className="rounded-xl border border-border bg-card p-12 text-center text-muted-foreground shadow-sm">
       <MonitorSmartphone className="mx-auto size-10 text-muted-foreground/60 mb-3" />
       <p className="font-medium text-base text-foreground">

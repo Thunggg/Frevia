@@ -23,12 +23,14 @@ export class StripeService {
   async createExpressAccount(
     email: string,
     country: string = envConfig.STRIPE_ACCOUNT_COUNTRY,
+    userId?: number,
   ): Promise<Stripe.Account> {
     const type = envConfig.STRIPE_ACCOUNT_TYPE;
     const accountParams: Stripe.AccountCreateParams = {
       type,
       country,
       email,
+      ...(userId ? { metadata: { userId: String(userId) } } : {}),
     };
     if (type === 'express') {
       accountParams.capabilities = {
@@ -315,22 +317,27 @@ export class StripeService {
     customerId,
     paymentMethodId,
     metadata,
+    idempotencyKey,
   }: {
     amountInCents: number;
     currency?: string;
     customerId: string;
     paymentMethodId: string;
     metadata?: Record<string, string>;
+    idempotencyKey?: string;
   }): Promise<Stripe.PaymentIntent> {
-    return this.stripe.paymentIntents.create({
-      amount: Math.round(amountInCents),
-      currency: currency.toLowerCase(),
-      customer: customerId,
-      payment_method: paymentMethodId,
-      off_session: true,
-      confirm: true,
-      metadata,
-    });
+    return this.stripe.paymentIntents.create(
+      {
+        amount: Math.round(amountInCents),
+        currency: currency.toLowerCase(),
+        customer: customerId,
+        payment_method: paymentMethodId,
+        off_session: true,
+        confirm: true,
+        metadata,
+      },
+      idempotencyKey ? { idempotencyKey } : undefined,
+    );
   }
 
   constructWebhookEvent(

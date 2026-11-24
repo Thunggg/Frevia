@@ -45,7 +45,6 @@ describe('Proposals Management (UF-110 to UF-118)', () => {
     updateDraft: jest.Mock;
     submitDraft: jest.Mock;
     withdrawProposal: jest.Mock;
-    interviewProposal: jest.Mock;
     rejectProposal: jest.Mock;
     hireProposal: jest.Mock;
     getMyProposals: jest.Mock;
@@ -127,10 +126,6 @@ describe('Proposals Management (UF-110 to UF-118)', () => {
         ...mockProposal,
         status: 'WITHDRAWN',
         withdrawnAt: new Date(),
-      }),
-      interviewProposal: jest.fn().mockResolvedValue({
-        ...mockProposal,
-        status: 'INTERVIEWING',
       }),
       rejectProposal: jest.fn().mockResolvedValue({
         ...mockProposal,
@@ -216,21 +211,6 @@ describe('Proposals Management (UF-110 to UF-118)', () => {
         page: 1,
         limit: 10,
         status: 'DRAFT',
-      });
-    });
-
-    // Lọc danh sách đề xuất theo trạng thái INTERVIEWING.
-    it('filters proposals by INTERVIEWING status', async () => {
-      await service.getMyProposals(12, RoleName.FREELANCER, {
-        page: 1,
-        limit: 10,
-        status: 'INTERVIEWING',
-      });
-
-      expect(repository.getMyProposals).toHaveBeenCalledWith(12, {
-        page: 1,
-        limit: 10,
-        status: 'INTERVIEWING',
       });
     });
 
@@ -895,19 +875,6 @@ describe('Proposals Management (UF-110 to UF-118)', () => {
       expect(result.status).toBe('WITHDRAWN');
     });
 
-    // Rút đề xuất đang trong giai đoạn phỏng vấn (INTERVIEWING) thành công.
-    it('withdraws a proposal in interviewing status successfully', async () => {
-      repository.findProposal.mockResolvedValueOnce({
-        ...mockProposal,
-        status: 'INTERVIEWING',
-      });
-
-      const result = await service.withdrawProposal(12, RoleName.FREELANCER, 1);
-
-      expect(repository.withdrawProposal).toHaveBeenCalledWith(1);
-      expect(result.status).toBe('WITHDRAWN');
-    });
-
     // Báo lỗi khi rút đề xuất đã được tuyển dụng (HIRED).
     it('rejects withdrawing a proposal already in HIRED status', async () => {
       repository.findProposal.mockResolvedValueOnce({
@@ -1066,14 +1033,6 @@ describe('Proposals Management (UF-110 to UF-118)', () => {
 
       expect(repository.rejectProposal).toHaveBeenCalledWith(1);
       expect(result.status).toBe('REJECTED');
-    });
-
-    // Khách hàng bắt đầu phỏng vấn freelancer thành công qua interviewProposal.
-    it('moves proposal to INTERVIEWING status via interviewProposal', async () => {
-      const result = await service.interviewProposal(99, RoleName.CLIENT, 1);
-
-      expect(repository.interviewProposal).toHaveBeenCalledWith(1);
-      expect(result.status).toBe('INTERVIEWING');
     });
 
     // Khách hàng không sở hữu công việc bị từ chối thực hiện từ chối đề xuất.

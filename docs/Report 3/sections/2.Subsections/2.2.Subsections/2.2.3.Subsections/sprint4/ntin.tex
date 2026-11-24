@@ -8,15 +8,20 @@
 \Needspace{12\baselineskip}
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
-UC ID and Name & \multicolumn{3}{l|}{UC-43.01 Connect Stripe Account} \\ \hline
-
+\\rowcolor{fptHeader}UC ID and Name & \\multicolumn{3}{l|}{UC-43.01 Connect Stripe Account} \\* \\hline
+\\endfirsthead
+\\hline
+\\rowcolor{fptHeader}UC ID and Name & \\multicolumn{3}{l|}{UC-43.01 Connect Stripe Account \\textit{(cont.)}} \\* \\hline
+\\endhead
+\\hline\\endfoot
+\\endlastfoot
 Created By: & Vo Nhut Tin & Date Created: & DD/MM/YYYY \\ \hline
 
 Primary Actor: & Freelancer & Secondary Actors: & Stripe Connect \\ \hline
 
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When a Freelancer clicks ``Set up Payouts'' or ``Connect Stripe'' in their Billing and Payout settings.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Allows a Freelancer to connect their bank or debit account via Stripe Connect Express onboarding so that they can receive automated milestone releases and dispute disbursements.} \\ \hline
+Description: & \multicolumn{3}{L{11.1cm}|}{Allows a Freelancer to connect their bank or debit account via Stripe Connect Express onboarding so that they can receive automated milestone escrow releases and dispute disbursements.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The user is authenticated in the system with the Freelancer role. \newline
@@ -34,12 +39,12 @@ Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
 1. The Freelancer navigates to the Payout Settings page. \newline
 2. The system checks connection status; if unlinked, it displays a ``Connect with Stripe'' button. \newline
 3. The Freelancer clicks ``Connect with Stripe''. \newline
-4. The system requests an onboarding link from the Stripe Connect API with appropriate return URLs. \newline
+4. The system requests an onboarding link from the Stripe Connect API with platform return URLs. \newline
 5. The system redirects the Freelancer to the Stripe-hosted onboarding flow. \newline
 6. The Freelancer provides legal entity, identification, and bank account or routing details to Stripe. \newline
 7. Stripe redirects the Freelancer back to the platform return URL. \newline
 8. The system queries Stripe to verify that \texttt{payouts\_enabled} and \texttt{charges\_enabled} are active. \newline
-9. The system updates the Freelancer payout status to ``Connected'' and displays a green verified badge.
+9. The system updates the Freelancer payout status to ``Connected'' and displays a verified badge.
 } \\ \hline
 
 Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
@@ -54,7 +59,7 @@ Exceptions: & \multicolumn{3}{L{11.1cm}|}{
 1. If the payment gateway connection fails, the system displays: ``Unable to initiate Stripe setup. Please try again later.'' \newline
 2. The use case ends. \newline
 \textbf{EX-02: Verification Incomplete} \newline
-1. If the Freelancer exits the onboarding before providing required tax or identity details, Stripe marks requirements pending. \newline
+1. If the Freelancer exits onboarding before providing required tax or identity details, Stripe marks requirements pending. \newline
 2. The system marks status as ``Action Required'' and prompts the Freelancer to resume verification. \newline
 3. The use case ends.
 } \\ \hline
@@ -75,49 +80,61 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{Freelancers reside in countries suppo
 \end{longtable}
 
 % =================================================================
-% UC-43.02 View Payout History
+% UC-43.02 Check Stripe Connect Status
 % =================================================================
-\subparagraph{UC-43.02 View Payout History}
+\subparagraph{UC-43.02 Check Stripe Connect Status}
 
 \Needspace{12\baselineskip}
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
-UC ID and Name & \multicolumn{3}{l|}{UC-43.02 View Payout History} \\ \hline
-
+\\rowcolor{fptHeader}UC ID and Name & \\multicolumn{3}{l|}{UC-43.02 Check Stripe Connect Status} \\* \\hline
+\\endfirsthead
+\\hline
+\\rowcolor{fptHeader}UC ID and Name & \\multicolumn{3}{l|}{UC-43.02 Check Stripe Connect Status \\textit{(cont.)}} \\* \\hline
+\\endhead
+\\hline\\endfoot
+\\endlastfoot
 Created By: & Vo Nhut Tin & Date Created: & DD/MM/YYYY \\ \hline
 
-Primary Actor: & Freelancer, Admin & Secondary Actors: & N/A \\ \hline
+Primary Actor: & Freelancer, Admin & Secondary Actors: & Stripe Connect \\ \hline
 
-Trigger: & \multicolumn{3}{L{11.1cm}|}{When a user clicks on the ``Payouts'' tab in the financial dashboard.} \\ \hline
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When a Freelancer accesses their Payout Settings or an Admin inspects freelancer payout readiness.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Allows a Freelancer (or Admin) to view a paginated list of all payout transfers sent to their connected bank account, showing transfer dates, amounts, status, and destination account snippets.} \\ \hline
+Description: & \multicolumn{3}{L{11.1cm}|}{Synchronizes and verifies freelancer onboarding status, capability activation (\texttt{charges\_enabled}, \texttt{payouts\_enabled}, \texttt{details\_submitted}), and payout readiness directly with the Stripe API.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{PRE-1} The user is authenticated in the system. \newline
-\textbf{PRE-2} The user is an authorized Freelancer or an Administrator.
+\textbf{PRE-1} The user is authenticated as a Freelancer or Administrator. \newline
+\textbf{PRE-2} The freelancer has an associated \texttt{stripeAccountId} recorded.
 } \\ \hline
 
 Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{POST-1} A paginated listing of payout transactions is displayed.
+\textbf{POST-1} Local database records are updated to match Stripe capabilities. \newline
+\textbf{POST-2} Payout status badges (Connected, Restricted, Action Required) are rendered with actionable instructions.
 } \\ \hline
 
 Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{A. View Payout History} \newline
-1. The Freelancer navigates to the Payout History page. \newline
-2. The system queries payout transfer records associated with the user's account (Admin retrieves all platform payouts). \newline
-3. The system sorts payouts chronologically (newest first). \newline
-4. The system renders the payout table displaying: Payout ID, Initiated Date, Estimated Arrival Date, Destination Bank (last 4 digits), Amount, and Status badge (\texttt{PAID}, \texttt{PENDING}, or \texttt{FAILED}).
+\textbf{A. Check Stripe Connect Status} \newline
+1. The user navigates to Payout Settings (or Admin user detail). \newline
+2. The system retrieves the freelancer's \texttt{stripeAccountId}. \newline
+3. The system queries the Stripe Accounts API (\texttt{stripe.accounts.retrieve}). \newline
+4. The system inspects \texttt{payouts\_enabled}, \texttt{charges\_enabled}, and \texttt{requirements.currently\_due}. \newline
+5. The system persists updated status flags in the database. \newline
+6. If fully enabled, the system renders a green ``Payouts Ready'' status indicator.
 } \\ \hline
 
 Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{A.1 Empty Payout History} \newline
-1. If no payouts have been executed yet, the system renders: ``No payouts found. Complete and release milestones to receive earnings.'' \newline
-2. The use case ends.
+\textbf{A.1 Pending Requirements Detected} \newline
+1. Stripe returns items in \texttt{requirements.currently\_due} (e.g., ID document required). \newline
+2. The system renders an alert: ``Additional verification required by Stripe'' along with a ``Complete Onboarding'' button. \newline
+3. The user can click the button to generate a new Stripe account link.
 } \\ \hline
 
 Exceptions: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{EX-01: Retrieval Failure} \newline
-1. If the database or Stripe service query times out, the system displays: ``Failed to retrieve payout history. Please refresh the page.'' \newline
+\textbf{EX-01: No Stripe Account Associated} \newline
+1. If the freelancer has not initiated Stripe onboarding, the system renders: ``No payout account connected.'' \newline
+2. The use case ends. \newline
+\textbf{EX-02: Stripe API Communication Failure} \newline
+1. If Stripe API is temporarily unreachable, the system displays cached status and shows: ``Unable to refresh live status. Showing last known state.'' \newline
 2. The use case ends.
 } \\ \hline
 
@@ -126,64 +143,66 @@ Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
 Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
 
 Business Rules: & \multicolumn{3}{L{11.1cm}|}{
-BR-PAYMENT-03: Freelancers can only view their own payout transfers. \newline
-BR-PAYMENT-04: Failed payouts display a warning badge and prompt the user to inspect their bank connection.
+BR-PAYMENT-03: Real-time capability synchronization ensures escrow releases are not attempted on restricted bank accounts.
 } \\ \hline
 
 Other Information: & \multicolumn{3}{L{11.1cm}|}{N/A} \\ \hline
 
-Assumptions: & \multicolumn{3}{L{11.1cm}|}{Payout processing times follow standard banking network schedules (typically 1-3 business days).} \\ \hline
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{Stripe API status responses accurately reflect banking network compliance.} \\ \hline
 
 \end{longtable}
 
 % =================================================================
-% UC-43.03 View Payout Detail
+% UC-43.03 View Saved Payment Methods
 % =================================================================
-\subparagraph{UC-43.03 View Payout Detail}
+\subparagraph{UC-43.03 View Saved Payment Methods}
 
 \Needspace{12\baselineskip}
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
-UC ID and Name & \multicolumn{3}{l|}{UC-43.03 View Payout Detail} \\ \hline
-
+\\rowcolor{fptHeader}UC ID and Name & \\multicolumn{3}{l|}{UC-43.03 View Saved Payment Methods} \\* \\hline
+\\endfirsthead
+\\hline
+\\rowcolor{fptHeader}UC ID and Name & \\multicolumn{3}{l|}{UC-43.03 View Saved Payment Methods \\textit{(cont.)}} \\* \\hline
+\\endhead
+\\hline\\endfoot
+\\endlastfoot
 Created By: & Vo Nhut Tin & Date Created: & DD/MM/YYYY \\ \hline
 
-Primary Actor: & Freelancer, Admin & Secondary Actors: & N/A \\ \hline
+Primary Actor: & Client & Secondary Actors: & Stripe \\ \hline
 
-Trigger: & \multicolumn{3}{L{11.1cm}|}{When a user clicks on a payout row in the Payout History table.} \\ \hline
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When a Client navigates to the ``Payment Methods'' tab in Billing Settings.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Displays detailed financial breakdown of a specific payout transfer, including related milestone, gross amount, platform commission deductions, net transferred amount, arrival estimate, and bank reference code.} \\ \hline
+Description: & \multicolumn{3}{L{11.1cm}|}{Retrieves and displays saved customer payment cards (card brand, last 4 digits, expiration month/year, and default card indicator) stored in Stripe.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{PRE-1} The user is authenticated. \newline
-\textbf{PRE-2} The payout record exists. \newline
-\textbf{PRE-3} The user is the owner of the payout or an Administrator.
+\textbf{PRE-1} The user is authenticated as a Client. \newline
+\textbf{PRE-2} The client has a registered Stripe Customer ID.
 } \\ \hline
 
 Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{POST-1} The system renders the comprehensive payout details modal or page.
+\textbf{POST-1} A list of securely saved payment methods is rendered.
 } \\ \hline
 
 Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{A. View Payout Detail} \newline
-1. The user clicks on a specific payout entry. \newline
-2. The system checks authorization and loads the payout record and linked milestone contract data. \newline
-3. The system renders the detail view showing:
-   - Transfer Header: Transfer Reference ID, Status, and Date.
-   - Financial Ledger: Milestone gross revenue, platform service fee, net payout amount.
-   - Banking Information: Receiving financial institution, account type, masked account number.
-   - Associated Contract: Contract title and milestone identifier.
+\textbf{A. View Saved Payment Methods} \newline
+1. The Client navigates to Billing $\rightarrow$ Payment Methods. \newline
+2. The system retrieves the client's \texttt{stripeCustomerId}. \newline
+3. The system queries Stripe for customer payment methods (\texttt{type = 'card'}). \newline
+4. The system renders card cards showing: Card Brand icon (Visa, MasterCard, Amex), Masked Number (\texttt{**** **** **** 1234}), Expiry Date (MM/YY), and a ``Default'' badge if applicable. \newline
+5. Action options (``Set as Default'', ``Remove'') are rendered for each card.
 } \\ \hline
 
 Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
-N/A
+\textbf{A.1 No Saved Cards} \newline
+1. If no cards are attached to the customer, the system displays: ``No payment methods saved yet.'' and an ``+ Add New Card'' button. \newline
+2. The use case ends.
 } \\ \hline
 
 Exceptions: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{EX-01: Unauthorized Payout Inspection} \newline
-1. A user attempts to view a payout belonging to another user. \newline
-2. The system returns: ``Access Denied: You cannot view this payout.'' \newline
-3. The use case ends.
+\textbf{EX-01: Gateway Connection Error} \newline
+1. If Stripe API is unreachable, the system displays: ``Failed to retrieve payment methods. Please retry.'' \newline
+2. The use case ends.
 } \\ \hline
 
 Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
@@ -191,128 +210,56 @@ Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
 Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
 
 Business Rules: & \multicolumn{3}{L{11.1cm}|}{
-BR-PAYMENT-05: Payout ledgers must maintain itemized transparency between gross earnings, platform fees, and net disbursements.
+BR-PAYMENT-04: Full credit card numbers and CVV codes are never stored on platform servers; only PCI-compliant Stripe tokens and masked metadata are processed.
 } \\ \hline
 
 Other Information: & \multicolumn{3}{L{11.1cm}|}{N/A} \\ \hline
 
-Assumptions: & \multicolumn{3}{L{11.1cm}|}{Bank statement descriptors match the registered platform business name.} \\ \hline
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{Client browsers support modern HTTPS cryptographic ciphers.} \\ \hline
 
 \end{longtable}
 
 % =================================================================
-% UC-43.04 Fund Milestone
+% UC-43.04 Set Default Payment Method
 % =================================================================
-\subparagraph{UC-43.04 Fund Milestone}
+\subparagraph{UC-43.04 Set Default Payment Method}
 
 \Needspace{12\baselineskip}
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
-UC ID and Name & \multicolumn{3}{l|}{UC-43.04 Fund Milestone} \\ \hline
-
+\\rowcolor{fptHeader}UC ID and Name & \\multicolumn{3}{l|}{UC-43.04 Set Default Payment Method} \\* \\hline
+\\endfirsthead
+\\hline
+\\rowcolor{fptHeader}UC ID and Name & \\multicolumn{3}{l|}{UC-43.04 Set Default Payment Method \\textit{(cont.)}} \\* \\hline
+\\endhead
+\\hline\\endfoot
+\\endlastfoot
 Created By: & Vo Nhut Tin & Date Created: & DD/MM/YYYY \\ \hline
 
-Primary Actor: & Client & Secondary Actors: & Stripe Payment Gateway \\ \hline
+Primary Actor: & Client & Secondary Actors: & Stripe \\ \hline
 
-Trigger: & \multicolumn{3}{L{11.1cm}|}{When a Client clicks ``Deposit Funds'' or ``Fund Milestone'' on a pending contract milestone.} \\ \hline
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When a Client clicks ``Set as Default'' on a saved card in Payment Methods.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Allows a Client to securely deposit the required milestone amount into platform escrow using credit/debit cards or saved payment methods via Stripe, enabling the freelancer to begin work with guaranteed funding.} \\ \hline
+Description: & \multicolumn{3}{L{11.1cm}|}{Updates the customer's default payment method in Stripe and platform records so that it is automatically pre-selected during milestone funding.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{PRE-1} The user is logged in as the contract Client. \newline
-\textbf{PRE-2} The milestone paymentStatus is currently \texttt{PENDING}. \newline
-\textbf{PRE-3} The contract platform fee has been paid or bundled.
+\textbf{PRE-1} The user is an authenticated Client. \newline
+\textbf{PRE-2} The target payment method exists and belongs to the client's Stripe customer record.
 } \\ \hline
 
 Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{POST-1} The payment is authorized and captured into platform escrow through Stripe. \newline
-\textbf{POST-2} Milestone paymentStatus transitions to \texttt{FUNDED}. \newline
-\textbf{POST-3} A transaction deposit record is logged and the Freelancer is notified that work can begin.
+\textbf{POST-1} The default payment method is updated in Stripe customer settings (\texttt{invoice\_settings.default\_payment\_method}). \newline
+\textbf{POST-2} The UI refreshes with the ``Default'' badge moved to the selected card.
 } \\ \hline
 
 Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{A. Fund Milestone via Payment Gateway} \newline
-1. The Client navigates to the milestone and clicks ``Deposit into Escrow (\$X,XXX)''. \newline
-2. The system presents the payment checkout modal with saved card options and new payment method inputs. \newline
-3. The Client selects a payment method (saved card or enters card credentials). \newline
-4. The Client clicks ``Pay \& Fund Milestone''. \newline
-5. The system initiates a Stripe Payment Intent or Checkout Session. \newline
-6. Stripe authenticates the payment (including 3D Secure verification if required by the issuing bank). \newline
-7. Upon successful payment confirmation, the system captures funds into escrow, sets milestone paymentStatus to \texttt{FUNDED}, and updates contract escrow balances. \newline
-8. The modal closes, a receipt notification is displayed, and the Freelancer receives an alert to commence deliverables.
-} \\ \hline
-
-Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{A.1 Use Saved Payment Method} \newline
-1. At step 3, the Client selects a pre-saved credit card. \newline
-2. The system charges the saved customer payment method directly without re-entering card numbers. \newline
-3. Proceed to step 7.
-} \\ \hline
-
-Exceptions: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{EX-01: Card Declined} \newline
-1. If the issuing bank declines the card (insufficient funds, expired card, fraud check), Stripe returns an error. \newline
-2. The system displays: ``Payment failed: The card was declined. Please try another payment method.'' \newline
-3. The milestone remains unfunded and the use case ends. \newline
-\textbf{EX-02: Milestone Already Funded} \newline
-1. If the milestone is already funded by a concurrent session, the system prevents duplicate charges. \newline
-2. The use case ends.
-} \\ \hline
-
-Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
-
-Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
-
-Business Rules: & \multicolumn{3}{L{11.1cm}|}{
-BR-PAYMENT-06: Freelancers are not required or encouraged to begin work until the milestone paymentStatus is verified as \texttt{FUNDED}. \newline
-BR-PAYMENT-07: Deposited escrow funds are held securely by the platform and cannot be unilaterally withdrawn without milestone completion, mutual cancellation, or dispute resolution.
-} \\ \hline
-
-Other Information: & \multicolumn{3}{L{11.1cm}|}{N/A} \\ \hline
-
-Assumptions: & \multicolumn{3}{L{11.1cm}|}{Client payment methods support online transactions in USD.} \\ \hline
-
-\end{longtable}
-
-% =================================================================
-% UC-43.05 Refund Payment
-% =================================================================
-\subparagraph{UC-43.05 Refund Payment}
-
-\Needspace{12\baselineskip}
-\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
-\hline
-UC ID and Name & \multicolumn{3}{l|}{UC-43.05 Refund Payment} \\ \hline
-
-Created By: & Vo Nhut Tin & Date Created: & DD/MM/YYYY \\ \hline
-
-Primary Actor: & Client, Admin & Secondary Actors: & Stripe Payment Gateway \\ \hline
-
-Trigger: & \multicolumn{3}{L{11.1cm}|}{When a contract cancellation is approved or an Administrator issues an escrow refund.} \\ \hline
-
-Description: & \multicolumn{3}{L{11.1cm}|}{Allows the system or an Administrator to refund escrowed milestone funds back to the Client's original payment method via Stripe, adjusting escrow balances accordingly.} \\ \hline
-
-Preconditions: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{PRE-1} The user is logged in as an authorized Client or Administrator. \newline
-\textbf{PRE-2} The milestone has funds deposited (\texttt{paymentStatus = FUNDED}). \newline
-\textbf{PRE-3} The contract cancellation or refund request satisfies platform refund eligibility rules.
-} \\ \hline
-
-Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{POST-1} A refund request is executed via the Stripe Refund API against the original charge ID. \newline
-\textbf{POST-2} Milestone paymentStatus transitions to \texttt{REFUNDED}. \newline
-\textbf{POST-3} A refund transaction record is generated and both parties receive formal notifications.
-} \\ \hline
-
-Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{A. Execute Escrow Refund} \newline
-1. An Administrator (or mutual contract cancellation workflow) selects ``Refund Milestone''. \newline
-2. The system displays the refund dialog indicating the full refundable amount and original payment method. \newline
-3. The user enters a refund justification and clicks ``Confirm Refund''. \newline
-4. The system sends a refund request to Stripe targeting the original payment intent. \newline
-5. Stripe processes the refund back to the customer's funding source. \newline
-6. The system records the refund transaction, deducts the escrow balance, and sets milestone paymentStatus to \texttt{REFUNDED}. \newline
-7. The system sends an email receipt to the Client and updates the contract status.
+\textbf{A. Set Default Payment Method} \newline
+1. The Client views their saved payment methods. \newline
+2. The Client clicks ``Set as Default'' on a non-default card. \newline
+3. The system dispatches an update request to Stripe API (\texttt{stripe.customers.update}). \newline
+4. Stripe confirms default payment method assignment. \newline
+5. The system updates the local database record and displays a confirmation toast: ``Default payment method updated successfully.'' \newline
+6. The card list refreshes displaying the new default indicator.
 } \\ \hline
 
 Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
@@ -320,79 +267,150 @@ N/A
 } \\ \hline
 
 Exceptions: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{EX-01: Refund Already Processed} \newline
-1. If the charge has already been refunded, the system blocks the duplicate request. \newline
-2. The use case ends. \newline
-\textbf{EX-02: Payment Gateway Refund Error} \newline
-1. If Stripe returns an error (e.g., charge disputed or card closed), the system alerts the administrator for manual bank wire resolution. \newline
-2. The use case ends.
+\textbf{EX-01: Stripe Update Failure} \newline
+1. If the payment method is expired or detached in Stripe, the update fails. \newline
+2. The system displays: ``Failed to update default card. The card may be expired.'' \newline
+3. The use case ends.
 } \\ \hline
 
-Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
 
 Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Low} \\ \hline
 
 Business Rules: & \multicolumn{3}{L{11.1cm}|}{
-BR-PAYMENT-08: Refunds must strictly return to the original payment method used for the escrow deposit. \newline
-BR-PAYMENT-09: Platform fees are non-refundable unless authorized by platform dispute policy.
+BR-PAYMENT-05: Exactly one payment method can be designated as the customer default at any given time.
 } \\ \hline
 
 Other Information: & \multicolumn{3}{L{11.1cm}|}{N/A} \\ \hline
 
-Assumptions: & \multicolumn{3}{L{11.1cm}|}{Bank processing of card refunds takes 5-10 business days depending on the customer's financial institution.} \\ \hline
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{Stripe customer records remain synchronized with local user profiles.} \\ \hline
 
 \end{longtable}
 
 % =================================================================
-% UC-43.06 Pay Platform Fee
+% UC-43.05 Remove Saved Payment Method
 % =================================================================
-\subparagraph{UC-43.06 Pay Platform Fee}
+\subparagraph{UC-43.05 Remove Saved Payment Method}
 
 \Needspace{12\baselineskip}
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
-UC ID and Name & \multicolumn{3}{l|}{UC-43.06 Pay Platform Fee} \\ \hline
-
+\\rowcolor{fptHeader}UC ID and Name & \\multicolumn{3}{l|}{UC-43.05 Remove Saved Payment Method} \\* \\hline
+\\endfirsthead
+\\hline
+\\rowcolor{fptHeader}UC ID and Name & \\multicolumn{3}{l|}{UC-43.05 Remove Saved Payment Method \\textit{(cont.)}} \\* \\hline
+\\endhead
+\\hline\\endfoot
+\\endlastfoot
 Created By: & Vo Nhut Tin & Date Created: & DD/MM/YYYY \\ \hline
 
-Primary Actor: & Client & Secondary Actors: & Stripe Payment Gateway \\ \hline
+Primary Actor: & Client & Secondary Actors: & Stripe \\ \hline
 
-Trigger: & \multicolumn{3}{L{11.1cm}|}{When a Client hires a Freelancer and activates a contract requiring platform service fees.} \\ \hline
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When a Client clicks ``Remove'' or ``Delete'' on a saved card in Payment Methods.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Allows a Client to pay the one-time contract initiation or platform service fee via Stripe Payment Intent, Checkout Session, or saved credit card.} \\ \hline
+Description: & \multicolumn{3}{L{11.1cm}|}{Detaches and permanently deletes a saved credit or debit card from the customer's Stripe wallet.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{PRE-1} The user is logged in as a Client. \newline
-\textbf{PRE-2} The contract has been accepted and is awaiting platform fee settlement.
+\textbf{PRE-1} The user is an authenticated Client. \newline
+\textbf{PRE-2} The target card is attached to the client's Stripe customer account.
 } \\ \hline
 
 Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{POST-1} The platform fee charge is captured successfully. \newline
-\textbf{POST-2} The contract record marks platform fee as paid. \newline
-\textbf{POST-3} A platform fee invoice receipt is generated for the Client.
+\textbf{POST-1} The card is detached via Stripe API (\texttt{stripe.paymentMethods.detach}). \newline
+\textbf{POST-2} The card is removed from the client's displayed payment methods list.
 } \\ \hline
 
 Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{A. Pay Platform Fee} \newline
-1. The Client views the contract activation checkout summary. \newline
-2. The system details the calculated platform service fee (e.g., standard platform commission). \newline
-3. The Client selects payment method (saved card or new card). \newline
-4. The Client clicks ``Pay Platform Fee''. \newline
-5. The system initiates and executes the Stripe charge. \newline
-6. The system records the platform fee transaction in database ledger. \newline
-7. The system advances contract state, unlocks escrow funding steps, and displays a success confirmation.
+\textbf{A. Remove Saved Payment Method} \newline
+1. The Client views their saved payment methods. \newline
+2. The Client clicks ``Remove'' on a specific card. \newline
+3. The system displays a confirmation dialog: ``Are you sure you want to remove this card?'' \newline
+4. The Client clicks ``Confirm Remove''. \newline
+5. The system requests card detachment from Stripe. \newline
+6. Stripe detaches the payment method. \newline
+7. The system displays a confirmation notification and refreshes the card list with the card removed.
 } \\ \hline
 
 Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{A.1 Combined Fee and Milestone Payment} \newline
-1. The Client opts to pay the platform fee simultaneously with the first milestone funding. \newline
-2. The system bundles both charges into a single checkout session.
+\textbf{A.1 Cancel Removal} \newline
+1. The Client clicks ``Cancel'' in the confirmation dialog. \newline
+2. The dialog closes without removing the card. \newline
+3. Return to step A.1.
 } \\ \hline
 
 Exceptions: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{EX-01: Payment Rejection} \newline
-1. If the charge is declined, the system displays: ``Platform fee payment failed. Please check your payment details.'' \newline
-2. The contract remains in pending status.
+\textbf{EX-01: Detachment Failure} \newline
+1. If Stripe fails to detach the card, the system displays: ``Could not remove payment method. Please try again.'' \newline
+2. The use case ends.
+} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Low} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-PAYMENT-06: Detaching a payment method does not affect active escrow deposits or already executed charges.
+} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{N/A} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{Clients can re-add cards at any time via Stripe Checkout or SetupIntent.} \\ \hline
+
+\end{longtable}
+
+% =================================================================
+% UC-43.06 Create Contract Hold Deposit Intent
+% =================================================================
+\subparagraph{UC-43.06 Create Contract Hold Deposit Intent}
+
+\Needspace{12\baselineskip}
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+\\rowcolor{fptHeader}UC ID and Name & \\multicolumn{3}{l|}{UC-43.06 Create Contract Hold Deposit Intent} \\* \\hline
+\\endfirsthead
+\\hline
+\\rowcolor{fptHeader}UC ID and Name & \\multicolumn{3}{l|}{UC-43.06 Create Contract Hold Deposit Intent \\textit{(cont.)}} \\* \\hline
+\\endhead
+\\hline\\endfoot
+\\endlastfoot
+Created By: & Vo Nhut Tin & Date Created: & DD/MM/YYYY \\ \hline
+
+Primary Actor: & Client & Secondary Actors: & Stripe \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When a Client initiates or signs a contract requiring an upfront security hold deposit.} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{Creates a Stripe PaymentIntent with capture authorization to hold initial contract deposit funds in escrow, securing freelancer commitment before work begins.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The user is authenticated as the contract Client. \newline
+\textbf{PRE-2} The contract specifies an initial hold deposit amount. \newline
+\textbf{PRE-3} The contract is in \texttt{OFFER\_SENT} or \texttt{DRAFT} status.
+} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} A Stripe PaymentIntent is created with \texttt{capture\_method = 'manual'} or held in platform escrow balance. \newline
+\textbf{POST-2} A client secret is returned to the client application for payment authorization. \newline
+\textbf{POST-3} Deposit intent record is logged in the database.
+} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. Create Contract Hold Deposit Intent} \newline
+1. The Client reaches the contract finalization or signing stage. \newline
+2. The system calculates required hold deposit amount based on contract terms. \newline
+3. The system creates a Stripe PaymentIntent with appropriate contract metadata. \newline
+4. Stripe returns the created PaymentIntent ID and client secret. \newline
+5. The system stores the pending deposit intent record linked to the contract. \newline
+6. The system presents the payment authorization dialog to the Client.
+} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
+N/A
+} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{EX-01: Stripe Intent Creation Failed} \newline
+1. If Stripe API returns an error, the system displays: ``Unable to create payment authorization. Please try again.'' \newline
+2. The use case ends.
 } \\ \hline
 
 Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
@@ -400,66 +418,222 @@ Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
 Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
 
 Business Rules: & \multicolumn{3}{L{11.1cm}|}{
-BR-PAYMENT-10: Contract activation requires successful platform fee settlement.
+BR-PAYMENT-07: Hold deposit intents must explicitly track contract ID and client ID in Stripe metadata for auditability.
 } \\ \hline
 
 Other Information: & \multicolumn{3}{L{11.1cm}|}{N/A} \\ \hline
 
-Assumptions: & \multicolumn{3}{L{11.1cm}|}{Platform fee percentage is determined by global platform business rules.} \\ \hline
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{Deposit holds are finalized into escrow upon mutual contract signing.} \\ \hline
 
 \end{longtable}
 
 % =================================================================
-% UC-43.07 Release Payment
+% UC-43.07 Fund Milestone via Stripe Checkout
 % =================================================================
-\subparagraph{UC-43.07 Release Payment}
+\subparagraph{UC-43.07 Fund Milestone via Stripe Checkout}
 
 \Needspace{12\baselineskip}
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
-UC ID and Name & \multicolumn{3}{l|}{UC-43.07 Release Payment} \\ \hline
-
+\\rowcolor{fptHeader}UC ID and Name & \\multicolumn{3}{l|}{UC-43.07 Fund Milestone via Stripe Checkout} \\* \\hline
+\\endfirsthead
+\\hline
+\\rowcolor{fptHeader}UC ID and Name & \\multicolumn{3}{l|}{UC-43.07 Fund Milestone via Stripe Checkout \\textit{(cont.)}} \\* \\hline
+\\endhead
+\\hline\\endfoot
+\\endlastfoot
 Created By: & Vo Nhut Tin & Date Created: & DD/MM/YYYY \\ \hline
 
-Primary Actor: & Client & Secondary Actors: & Stripe Connect Transfer \\ \hline
+Primary Actor: & Client & Secondary Actors: & Stripe Checkout \\ \hline
 
-Trigger: & \multicolumn{3}{L{11.1cm}|}{When a Client approves submitted milestone deliverables and confirms escrow release.} \\ \hline
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When a Client clicks ``Deposit into Escrow'' on a milestone and chooses Stripe Checkout.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Allows a Client to authorize the immediate release of escrowed milestone funds to the Freelancer, triggering a Stripe Connect transfer to the Freelancer's connected account.} \\ \hline
+Description: & \multicolumn{3}{L{11.1cm}|}{Creates a hosted Stripe Checkout Session and redirects the client to Stripe's secure payment page to fund milestone escrow balances using international cards, Apple Pay, or Google Pay.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{PRE-1} The user is logged in as the contract Client. \newline
-\textbf{PRE-2} The milestone is in \texttt{FUNDED} status. \newline
-\textbf{PRE-3} The Freelancer has an active, verified Stripe Connect payout account.
+\textbf{PRE-1} The user is authenticated as the contract Client. \newline
+\textbf{PRE-2} The milestone paymentStatus is \texttt{PENDING}. \newline
+\textbf{PRE-3} The contract is active and signed.
 } \\ \hline
 
 Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{POST-1} A Stripe transfer is dispatched transferring net milestone funds to the Freelancer's account. \newline
-\textbf{POST-2} Milestone status transitions to \texttt{COMPLETED} and paymentStatus to \texttt{RELEASED}. \newline
-\textbf{POST-3} Both parties receive immediate settlement confirmations.
+\textbf{POST-1} A Stripe Checkout Session is initialized with success and cancel callback URLs. \newline
+\textbf{POST-2} The client is redirected to Stripe hosted checkout. \newline
+\textbf{POST-3} Upon payment completion, funds are captured into platform escrow and milestone paymentStatus updates to \texttt{FUNDED}.
+} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. Fund Milestone via Stripe Checkout} \newline
+1. The Client expands a milestone in the Contract Details view and clicks ``Deposit Escrow (\$X,XXX)''. \newline
+2. The Client selects ``Pay with Stripe Checkout''. \newline
+3. The system calls \texttt{stripe.checkout.sessions.create} with line items, milestone ID metadata, and redirect URLs. \newline
+4. The system logs a pending transaction record. \newline
+5. The system redirects the Client browser to the Stripe hosted URL. \newline
+6. The Client completes card entry and 3D Secure verification on Stripe. \newline
+7. Stripe redirects the Client to the platform success return URL. \newline
+8. The system updates milestone paymentStatus to \texttt{FUNDED} and notifies the Freelancer.
+} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A.1 Client Cancels Checkout} \newline
+1. On the Stripe page, the Client clicks ``Back to Frevia''. \newline
+2. Stripe redirects to the cancel URL. \newline
+3. The milestone remains in \texttt{PENDING} status without charging the Client.
+} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{EX-01: Payment Declined} \newline
+1. The Client's bank declines the card transaction. \newline
+2. Stripe prompts the user to try another card. \newline
+3. The use case ends.
+} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-PAYMENT-08: Escrow funds deposited via Stripe Checkout are held securely in platform accounts until milestone deliverables are formally approved.
+} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{N/A} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{Stripe Checkout handles multi-currency conversions automatically.} \\ \hline
+
+\end{longtable}
+
+% =================================================================
+% UC-43.08 Fund Milestone with Saved Card
+% =================================================================
+\subparagraph{UC-43.08 Fund Milestone with Saved Card}
+
+\Needspace{12\baselineskip}
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+\\rowcolor{fptHeader}UC ID and Name & \\multicolumn{3}{l|}{UC-43.08 Fund Milestone with Saved Card} \\* \\hline
+\\endfirsthead
+\\hline
+\\rowcolor{fptHeader}UC ID and Name & \\multicolumn{3}{l|}{UC-43.08 Fund Milestone with Saved Card \\textit{(cont.)}} \\* \\hline
+\\endhead
+\\hline\\endfoot
+\\endlastfoot
+Created By: & Vo Nhut Tin & Date Created: & DD/MM/YYYY \\ \hline
+
+Primary Actor: & Client & Secondary Actors: & Stripe \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When a Client selects a previously saved credit/debit card to fund a milestone escrow balance.} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{Executes instant 1-click milestone escrow funding using a customer saved card via Stripe PaymentIntent without requiring the client to leave the Frevia platform.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The user is authenticated as the contract Client. \newline
+\textbf{PRE-2} The client has at least one valid saved payment method in Stripe. \newline
+\textbf{PRE-3} The milestone paymentStatus is \texttt{PENDING}.
+} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} A Stripe PaymentIntent is created and confirmed with the saved payment method. \newline
+\textbf{POST-2} Milestone paymentStatus updates to \texttt{FUNDED}. \newline
+\textbf{POST-3} Transaction deposit record is logged and the Freelancer is alerted to start work.
+} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. Fund Milestone with Saved Card} \newline
+1. The Client clicks ``Deposit into Escrow'' on the target milestone. \newline
+2. The modal displays the Client's default saved card (e.g., Visa ending in 4242). \newline
+3. The Client clicks ``Confirm Payment (\$X,XXX)''. \newline
+4. The system creates and confirms a Stripe PaymentIntent off-session using the saved payment method ID. \newline
+5. Stripe confirms payment success. \newline
+6. The system transitions milestone paymentStatus to \texttt{FUNDED} and persists the transaction. \newline
+7. The modal closes, displaying a success receipt notification.
+} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A.1 3D Secure Verification Required} \newline
+1. Stripe returns \texttt{status = requires\_action}. \newline
+2. The system triggers Stripe.js 3DS modal for bank SMS/OTP verification. \newline
+3. The Client completes verification. \newline
+4. Return to step A.5.
+} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{EX-01: Insufficient Funds / Card Declined} \newline
+1. Stripe returns a card error (e.g., \texttt{insufficient\_funds}, \texttt{expired\_card}). \newline
+2. The system displays: ``Payment declined: [reason]. Please choose another payment method.'' \newline
+3. The use case ends.
+} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-PAYMENT-09: Off-session payments with saved cards must handle 3D Secure SCA (Strong Customer Authentication) challenges dynamically.
+} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{N/A} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{The saved card has not expired since it was attached.} \\ \hline
+
+\end{longtable}
+
+% =================================================================
+% UC-43.09 Release Milestone Escrow Payment
+% =================================================================
+\subparagraph{UC-43.09 Release Milestone Escrow Payment}
+
+\Needspace{12\baselineskip}
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+\\rowcolor{fptHeader}UC ID and Name & \\multicolumn{3}{l|}{UC-43.09 Release Milestone Escrow Payment} \\* \\hline
+\\endfirsthead
+\\hline
+\\rowcolor{fptHeader}UC ID and Name & \\multicolumn{3}{l|}{UC-43.09 Release Milestone Escrow Payment \\textit{(cont.)}} \\* \\hline
+\\endhead
+\\hline\\endfoot
+\\endlastfoot
+Created By: & Vo Nhut Tin & Date Created: & DD/MM/YYYY \\ \hline
+
+Primary Actor: & Client, Admin & Secondary Actors: & Stripe Connect \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When a Client approves a milestone deliverable or an Admin executes dispute settlement.} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{Automatically releases milestone escrow funds, transferring net earnings to the Freelancer's connected Stripe account via Stripe Transfer while deducting platform commission.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} The user is authenticated as the contract Client or Administrator. \newline
+\textbf{PRE-2} The milestone paymentStatus is \texttt{FUNDED}. \newline
+\textbf{PRE-3} The Freelancer has an active, verified Stripe Connect account with payouts enabled.
+} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} A Stripe Transfer is executed moving net funds to the Freelancer's Stripe account. \newline
+\textbf{POST-2} Platform service commission fee is captured in platform balance. \newline
+\textbf{POST-3} Milestone paymentStatus updates to \texttt{RELEASED} and status updates to \texttt{COMPLETED}. \newline
+\textbf{POST-4} Payout notification and invoice receipt are dispatched to the Freelancer.
 } \\ \hline
 
 Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{A. Release Milestone Escrow Payment} \newline
-1. The Client reviews submitted deliverables and clicks ``Approve \& Release Funds''. \newline
-2. The system renders the release confirmation modal detailing the amount released to the Freelancer. \newline
-3. The Client clicks ``Confirm Release''. \newline
-4. The system executes a database transaction marking submission \texttt{APPROVED} and milestone paymentStatus \texttt{RELEASED}. \newline
-5. The system initiates a Stripe Transfer to the Freelancer's Stripe Connect destination account. \newline
-6. The system debits the contract escrow balance and logs the release transaction. \newline
-7. The system closes the modal, renders a completed badge, and sends an alert to the Freelancer.
+1. The Client reviews completed deliverables and clicks ``Approve \& Release Funds''. \newline
+2. The system calculates platform commission and net freelancer transfer amount. \newline
+3. The system executes \texttt{stripe.transfers.create} targeting the Freelancer's \texttt{stripeAccountId}. \newline
+4. Stripe transfers net funds to the destination account. \newline
+5. The system records transfer transaction ID, updates milestone paymentStatus to \texttt{RELEASED}, and sets milestone status to \texttt{COMPLETED}. \newline
+6. The system displays release confirmation and alerts the Freelancer of received payout.
 } \\ \hline
 
 Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{A.1 Final Contract Release} \newline
-1. The released milestone is the final milestone in the contract. \newline
-2. Upon release, the system prompts the Client to complete the contract and leave a rating review.
+\textbf{A.1 Admin Dispute Settlement Release} \newline
+1. Following a binding dispute ruling, the Admin clicks ``Execute Disbursement''. \newline
+2. The system executes split transfers (partial refund to Client, partial transfer to Freelancer). \newline
+3. Milestone transitions to \texttt{RELEASED}.
 } \\ \hline
 
 Exceptions: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{EX-01: Freelancer Stripe Account Missing or Restricted} \newline
-1. If the Freelancer's Stripe account is unlinked or has payouts disabled, the system displays: ``Freelancer must complete payout onboarding before funds can be released.'' \newline
-2. Escrow funds remain secured in the platform until payout requirements are fulfilled. \newline
+\textbf{EX-01: Freelancer Stripe Account Restricted} \newline
+1. If the destination account has restricted payouts, Stripe transfer fails. \newline
+2. The system halts transfer, keeps funds in escrow, and alerts the Freelancer to update banking info. \newline
 3. The use case ends.
 } \\ \hline
 
@@ -468,132 +642,65 @@ Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
 Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
 
 Business Rules: & \multicolumn{3}{L{11.1cm}|}{
-BR-PAYMENT-11: Escrow releases are irreversible once the Stripe transfer has been executed. \newline
-BR-PAYMENT-12: The transferred amount equals the agreed milestone amount minus any applicable platform fee share.
+BR-PAYMENT-10: Milestone escrow funds can only be released upon explicit client approval or administrative dispute resolution. \newline
+BR-PAYMENT-11: Platform commission is deducted automatically at the moment of escrow transfer.
 } \\ \hline
 
 Other Information: & \multicolumn{3}{L{11.1cm}|}{N/A} \\ \hline
 
-Assumptions: & \multicolumn{3}{L{11.1cm}|}{Stripe Connect transfers settle instantly into the freelancer's platform balance.} \\ \hline
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{Stripe Connect transfers settle instantly into the freelancer's Stripe balance.} \\ \hline
 
 \end{longtable}
 
 % =================================================================
-% UC-43.08 Pay Dispute Fee
+% UC-43.10 View Payment Transactions History
 % =================================================================
-\subparagraph{UC-43.08 Pay Dispute Fee}
+\subparagraph{UC-43.10 View Payment Transactions History}
 
 \Needspace{12\baselineskip}
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
-UC ID and Name & \multicolumn{3}{l|}{UC-43.08 Pay Dispute Fee} \\ \hline
-
-Created By: & Vo Nhut Tin & Date Created: & DD/MM/YYYY \\ \hline
-
-Primary Actor: & Client, Freelancer & Secondary Actors: & Stripe Payment Gateway \\ \hline
-
-Trigger: & \multicolumn{3}{L{11.1cm}|}{When a dispute party clicks ``Pay Arbitration Fee'' on their pending dispute case.} \\ \hline
-
-Description: & \multicolumn{3}{L{11.1cm}|}{Allows a Client or Freelancer involved in an active dispute to pay their mandatory arbitration fee within the 24-hour deadline via Stripe.} \\ \hline
-
-Preconditions: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{PRE-1} The user is authenticated as an involved dispute participant. \newline
-\textbf{PRE-2} The dispute fee status is \texttt{PENDING}. \newline
-\textbf{PRE-3} The current time is within the 24-hour fee payment window.
-} \\ \hline
-
-Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{POST-1} The arbitration fee charge is processed via Stripe. \newline
-\textbf{POST-2} Fee status transitions to \texttt{PAID} with recorded payment reference. \newline
-\textbf{POST-3} The case proceeds toward arbitration review.
-} \\ \hline
-
-Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{A. Pay Dispute Arbitration Fee} \newline
-1. The user navigates to the Dispute Detail page. \newline
-2. The user views the fee invoice banner with the remaining countdown timer. \newline
-3. The user clicks ``Pay Arbitration Fee (\$XX.XX)''. \newline
-4. The system presents the payment interface (Payment Intent or Checkout Session). \newline
-5. The user enters or selects payment card details and authorizes the payment. \newline
-6. Stripe confirms successful capture of the fee. \newline
-7. The system updates the fee record status to \texttt{PAID} with a timestamp. \newline
-8. The page refreshes showing a green ``Fee Paid'' badge and payment receipt.
-} \\ \hline
-
-Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
-N/A
-} \\ \hline
-
-Exceptions: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{EX-01: Fee Deadline Expired} \newline
-1. If the 24-hour deadline has elapsed, the fee status becomes \texttt{OVERDUE}. \newline
-2. The system informs the user: ``The fee payment deadline has expired. This may impact arbitrator review.'' \newline
-3. The use case ends. \newline
-\textbf{EX-02: Fee Already Paid} \newline
-1. If the user attempts duplicate payment, the system displays: ``Fee has already been paid.'' \newline
-2. The use case ends.
-} \\ \hline
-
-Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
-
-Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Low} \\ \hline
-
-Business Rules: & \multicolumn{3}{L{11.1cm}|}{
-BR-PAYMENT-13: Both disputing parties must pay an equal arbitration fee to ensure fair mutual commitment. \newline
-BR-PAYMENT-14: Arbitration fees are refunded to the prevailing party or split based on final dispute resolution findings.
-} \\ \hline
-
-Other Information: & \multicolumn{3}{L{11.1cm}|}{N/A} \\ \hline
-
-Assumptions: & \multicolumn{3}{L{11.1cm}|}{Arbitration fee amount is fixed platform-wide (e.g., \$25.00).} \\ \hline
-
-\end{longtable}
-
-% =================================================================
-% UC-43.09 View Payment History
-% =================================================================
-\subparagraph{UC-43.09 View Payment History}
-
-\Needspace{12\baselineskip}
-\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
-\hline
-UC ID and Name & \multicolumn{3}{l|}{UC-43.09 View Payment History} \\ \hline
-
+\\rowcolor{fptHeader}UC ID and Name & \\multicolumn{3}{l|}{UC-43.10 View Payment Transactions History} \\* \\hline
+\\endfirsthead
+\\hline
+\\rowcolor{fptHeader}UC ID and Name & \\multicolumn{3}{l|}{UC-43.10 View Payment Transactions History \\textit{(cont.)}} \\* \\hline
+\\endhead
+\\hline\\endfoot
+\\endlastfoot
 Created By: & Vo Nhut Tin & Date Created: & DD/MM/YYYY \\ \hline
 
 Primary Actor: & Client, Freelancer, Admin & Secondary Actors: & N/A \\ \hline
 
-Trigger: & \multicolumn{3}{L{11.1cm}|}{When a user clicks on the ``Transactions'' or ``Billing History'' tab in their account settings.} \\ \hline
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When a user navigates to the ``Transactions'' tab in the financial dashboard.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Allows users to view a comprehensive, paginated transaction ledger of all platform financial activities, including milestone deposits, escrow releases, refunds, platform fees, and dispute fee payments.} \\ \hline
+Description: & \multicolumn{3}{L{11.1cm}|}{Displays a paginated history of all financial transactions (escrow deposits, milestone releases, refunds, hold deposits, platform fees) with status, date, amount, and invoice receipts.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The user is authenticated in the system. \newline
-\textbf{PRE-2} Database connection is operational.
+\textbf{PRE-2} The database connection is active.
 } \\ \hline
 
 Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{POST-1} A paginated list of transaction records is displayed with date, type, amount, status, and related contract/milestone.
+\textbf{POST-1} A paginated transaction ledger is rendered with filter and export capabilities.
 } \\ \hline
 
 Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{A. View Transaction History} \newline
-1. The user navigates to the Billing \& Transactions page. \newline
-2. The system queries transactions matching the user ID (Client, Freelancer, or all for Admin). \newline
-3. The system sorts records chronologically with newest transactions first. \newline
-4. The system renders the transaction table displaying: Transaction ID, Timestamp, Type (Deposit, Release, Fee, Refund), Amount, Status, and Action buttons.
+\textbf{A. View Payment Transactions History} \newline
+1. The user navigates to Billing $\rightarrow$ Transactions. \newline
+2. The system queries transactions where the user is payer or payee (Admin retrieves all platform transactions). \newline
+3. The system displays transaction entries showing: Transaction Reference ID, Type (Deposit, Payout, Refund), Related Contract/Milestone, Gross Amount, Fee, Net Amount, Date, and Status badge (\texttt{SUCCEEDED}, \texttt{PENDING}, \texttt{FAILED}). \newline
+4. The user can filter by Transaction Type, Date Range, or Status.
 } \\ \hline
 
 Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{A.1 Filter by Transaction Type} \newline
-1. The user selects a filter dropdown (Deposits, Releases, Refunds, Fees). \newline
-2. The system updates the list to display only records matching the chosen category. \newline
-3. Return to step A.4.
+\textbf{A.1 Download Transaction Receipt} \newline
+1. The user clicks ``Download Receipt'' on a succeeded transaction row. \newline
+2. The system generates and downloads the PDF invoice receipt.
 } \\ \hline
 
 Exceptions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{EX-01: No Transactions Found} \newline
-1. If the user has no transaction history, the system displays: ``No transactions found.'' \newline
+1. If no transactions exist, the system displays: ``No transaction records found.'' \newline
 2. The use case ends.
 } \\ \hline
 
@@ -602,56 +709,54 @@ Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
 Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
 
 Business Rules: & \multicolumn{3}{L{11.1cm}|}{
-BR-PAYMENT-15: Non-admin users are strictly restricted to transactions where their account is the payer or payee. \newline
-BR-PAYMENT-16: Financial transaction histories are immutable and cannot be deleted or purged by users.
+BR-PAYMENT-12: Users can only inspect transaction records in which their account is directly involved as payer or payee.
 } \\ \hline
 
 Other Information: & \multicolumn{3}{L{11.1cm}|}{N/A} \\ \hline
 
-Assumptions: & \multicolumn{3}{L{11.1cm}|}{Transactions are logged concurrently with payment gateway confirmations.} \\ \hline
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{Transactions are permanently preserved in the ledger for financial compliance.} \\ \hline
 
 \end{longtable}
 
 % =================================================================
-% UC-43.10 View Payment Detail
+% UC-43.11 Sync Payment Intent Status
 % =================================================================
-\subparagraph{UC-43.10 View Payment Detail}
+\subparagraph{UC-43.11 Sync Payment Intent Status}
 
 \Needspace{12\baselineskip}
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
-UC ID and Name & \multicolumn{3}{l|}{UC-43.10 View Payment Detail} \\ \hline
-
+\\rowcolor{fptHeader}UC ID and Name & \\multicolumn{3}{l|}{UC-43.11 Sync Payment Intent Status} \\* \\hline
+\\endfirsthead
+\\hline
+\\rowcolor{fptHeader}UC ID and Name & \\multicolumn{3}{l|}{UC-43.11 Sync Payment Intent Status \\textit{(cont.)}} \\* \\hline
+\\endhead
+\\hline\\endfoot
+\\endlastfoot
 Created By: & Vo Nhut Tin & Date Created: & DD/MM/YYYY \\ \hline
 
-Primary Actor: & Client, Freelancer, Admin & Secondary Actors: & N/A \\ \hline
+Primary Actor: & Client, Admin, System & Secondary Actors: & Stripe API \\ \hline
 
-Trigger: & \multicolumn{3}{L{11.1cm}|}{When a user clicks on a transaction row in the Payment History table.} \\ \hline
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When a user returns from 3D Secure challenge or an Admin manually triggers payment reconciliation.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Displays detailed transaction receipt information, including payment gateway references, itemized fee breakdowns, currency conversion, and downloadable PDF receipt.} \\ \hline
+Description: & \multicolumn{3}{L{11.1cm}|}{Actively queries the Stripe API to reconcile and synchronize local database status for a PaymentIntent immediately, eliminating reliance on webhook latency.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{PRE-1} The user is logged in. \newline
-\textbf{PRE-2} The transaction record exists in the system. \newline
-\textbf{PRE-3} The user is an authorized party to the transaction or an Administrator.
+\textbf{PRE-1} A PaymentIntent ID exists in local database records. \newline
+\textbf{PRE-2} The caller is authenticated or the call is made via trusted system handler.
 } \\ \hline
 
 Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{POST-1} Detailed receipt view is presented on screen with an option to download a PDF receipt.
+\textbf{POST-1} Local transaction and milestone escrow statuses are updated to reflect live Stripe state.
 } \\ \hline
 
 Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{A. View Payment Detail} \newline
-1. The user clicks a transaction item. \newline
-2. The system validates authorization and queries transaction details from the database. \newline
-3. The system renders the transaction receipt sheet displaying:
-   - Receipt Number and Transaction Reference ID.
-   - Associated Contract and Milestone details.
-   - Payer and Payee profiles.
-   - Itemized Breakdown: Base amount, Platform fee, Processing fee, Total charged/transferred.
-   - Payment Method snippet (e.g., Visa ending in 4242).
-   - Timestamp and Payment Gateway status code. \newline
-4. The user clicks ``Download Receipt'' to download a formal PDF invoice.
+\textbf{A. Sync Payment Intent Status} \newline
+1. The system invokes \texttt{POST /api/payments/payment-intents/:id/sync}. \newline
+2. The server calls \texttt{stripe.paymentIntents.retrieve(id)}. \newline
+3. Stripe returns live intent status (e.g., \texttt{succeeded}, \texttt{requires\_capture}, \texttt{canceled}). \newline
+4. The system updates the local transaction record and associated milestone \texttt{paymentStatus}. \newline
+5. The system returns the synchronized status to the client application.
 } \\ \hline
 
 Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
@@ -659,119 +764,117 @@ N/A
 } \\ \hline
 
 Exceptions: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{EX-01: Unauthorized Inspection} \newline
-1. An unauthorized user attempts to access a transaction by URL. \newline
-2. The system denies access with ``Permission Denied.'' \newline
-3. The use case ends.
-} \\ \hline
-
-Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
-
-Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
-
-Business Rules: & \multicolumn{3}{L{11.1cm}|}{
-BR-PAYMENT-17: Receipts must provide full tax, fee, and identification details to comply with e-commerce accounting standards.
-} \\ \hline
-
-Other Information: & \multicolumn{3}{L{11.1cm}|}{N/A} \\ \hline
-
-Assumptions: & \multicolumn{3}{L{11.1cm}|}{PDF receipts are generated dynamically from verified transaction records.} \\ \hline
-
-\end{longtable}
-
-% =================================================================
-% UC-43.11 Execute Dispute Resolution Payment
-% =================================================================
-\subparagraph{UC-43.11 Execute Dispute Resolution Payment}
-
-\Needspace{12\baselineskip}
-\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
-\hline
-UC ID and Name & \multicolumn{3}{l|}{UC-43.11 Execute Dispute Resolution Payment} \\ \hline
-
-Created By: & Vo Nhut Tin & Date Created: & DD/MM/YYYY \\ \hline
-
-Primary Actor: & Admin, System & Secondary Actors: & Stripe Payment Gateway \\ \hline
-
-Trigger: & \multicolumn{3}{L{11.1cm}|}{When both dispute parties accept a proposed resolution or an Administrator issues a final arbitration settlement.} \\ \hline
-
-Description: & \multicolumn{3}{L{11.1cm}|}{Executes the automated financial settlement of a disputed milestone by refunding the awarded client portion to the Client's card and transferring the awarded freelancer portion to the Freelancer's Stripe Connect account.} \\ \hline
-
-Preconditions: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{PRE-1} The dispute has reached a finalized decision state. \newline
-\textbf{PRE-2} The awarded split amounts (\texttt{clientAmount} and \texttt{freelancerAmount}) sum up to the total milestone escrow balance. \newline
-\textbf{PRE-3} Escrow funds remain secured and intact in platform custody.
-} \\ \hline
-
-Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{POST-1} Awarded client amount is refunded via Stripe Refund to the Client. \newline
-\textbf{POST-2} Awarded freelancer amount is transferred via Stripe Transfer to the Freelancer's connected account. \newline
-\textbf{POST-3} The dispute status transitions to \texttt{FINALIZED} and milestone status is resolved. \newline
-\textbf{POST-4} Immutable audit ledger entries are created for both financial legs.
-} \\ \hline
-
-Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{A. Execute Settlement Payouts} \newline
-1. The system triggers the dispute settlement workflow upon mutual agreement or administrative finalization. \newline
-2. The database transaction opens:
-   - Validates that \texttt{clientAmount + freelancerAmount == milestoneAmount}.
-   - Sets dispute status to \texttt{FINALIZED}.
-3. If \texttt{clientAmount > 0}:
-   - The system invokes the Stripe Refund API to return the allocated funds to the Client's payment source.
-4. If \texttt{freelancerAmount > 0}:
-   - The system invokes the Stripe Transfer API to transfer the allocated funds to the Freelancer's Stripe Connect account.
-5. The system records transaction ledger records for both legs with Stripe transfer IDs. \newline
-6. The system commits the database transaction and updates milestone paymentStatus to \texttt{RELEASED}. \newline
-7. Settlement notifications and breakdown receipts are transmitted to both Client and Freelancer.
-} \\ \hline
-
-Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{A.1 100\% Allocation to One Party} \newline
-1. If the entire escrow is awarded to the Client: only the Stripe refund is executed. \newline
-2. If the entire escrow is awarded to the Freelancer: only the Stripe transfer is executed.
-} \\ \hline
-
-Exceptions: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{EX-01: Transfer Failure to Freelancer} \newline
-1. If the Stripe transfer fails (e.g., freelancer bank restriction), the client refund is held or logged, and an emergency alert is escalated to platform financial ops. \newline
-2. The use case ends. \newline
-\textbf{EX-02: Amount Inconsistency} \newline
-1. If split amounts do not reconcile with the escrow balance, the settlement is aborted. \newline
+\textbf{EX-01: PaymentIntent Not Found in Stripe} \newline
+1. If Stripe returns 404 resource not found, the system logs an anomaly and marks transaction \texttt{FAILED}. \newline
 2. The use case ends.
 } \\ \hline
 
 Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
 
-Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Low} \\ \hline
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
 
 Business Rules: & \multicolumn{3}{L{11.1cm}|}{
-BR-PAYMENT-18: Dispute settlements must execute atomically; either both legs succeed or the failure is flagged for manual administrative intervention. \newline
-BR-PAYMENT-19: Dispute resolution payouts are legally final and cannot be reopened on the platform.
+BR-PAYMENT-13: Status synchronization operations must be idempotent to prevent duplicate processing.
 } \\ \hline
 
 Other Information: & \multicolumn{3}{L{11.1cm}|}{N/A} \\ \hline
 
-Assumptions: & \multicolumn{3}{L{11.1cm}|}{Stripe API operates with high availability and idempotency keys to prevent duplicate payout execution.} \\ \hline
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{Direct API queries provide authoritative status truth.} \\ \hline
 
 \end{longtable}
 
 % =================================================================
-% UC-43.12 Handle Stripe Webhook Event
+% UC-43.12 Sync Checkout Session Status
 % =================================================================
-\subparagraph{UC-43.12 Handle Stripe Webhook Event}
+\subparagraph{UC-43.12 Sync Checkout Session Status}
 
 \Needspace{12\baselineskip}
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
-UC ID and Name & \multicolumn{3}{l|}{UC-43.12 Handle Stripe Webhook Event} \\ \hline
-
+\\rowcolor{fptHeader}UC ID and Name & \\multicolumn{3}{l|}{UC-43.12 Sync Checkout Session Status} \\* \\hline
+\\endfirsthead
+\\hline
+\\rowcolor{fptHeader}UC ID and Name & \\multicolumn{3}{l|}{UC-43.12 Sync Checkout Session Status \\textit{(cont.)}} \\* \\hline
+\\endhead
+\\hline\\endfoot
+\\endlastfoot
 Created By: & Vo Nhut Tin & Date Created: & DD/MM/YYYY \\ \hline
 
-Primary Actor: & Stripe Webhook Service & Secondary Actors: & System \\ \hline
+Primary Actor: & Client, Admin, System & Secondary Actors: & Stripe API \\ \hline
 
-Trigger: & \multicolumn{3}{L{11.1cm}|}{When Stripe transmits an asynchronous HTTP POST webhook event to \texttt{/api/payments/webhook}.} \\ \hline
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When a Client returns from a Stripe Checkout redirect to the success callback page.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Listens for, verifies, and processes asynchronous Stripe events (e.g., \texttt{payment\_intent.succeeded}, \texttt{checkout.session.completed}, \texttt{transfer.created}, \texttt{account.updated}), reconciling database state with payment gateway events.} \\ \hline
+Description: & \multicolumn{3}{L{11.1cm}|}{Reconciles Checkout Session status with the Stripe API immediately upon user redirect, ensuring milestone is immediately marked FUNDED in real-time without webhook delay.} \\ \hline
+
+Preconditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{PRE-1} A valid Stripe Checkout \texttt{sessionId} is passed in the return URL. \newline
+\textbf{PRE-2} The user is authenticated.
+} \\ \hline
+
+Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{POST-1} Checkout Session status is verified as \texttt{complete} and \texttt{payment\_status = 'paid'}. \newline
+\textbf{POST-2} Milestone escrow paymentStatus is immediately set to \texttt{FUNDED}. \newline
+\textbf{POST-3} Client receives instant visual confirmation of funded milestone.
+} \\ \hline
+
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A. Sync Checkout Session Status} \newline
+1. Client browser lands on \texttt{/contracts/:id?session\_id=\{CHECKOUT\_SESSION\_ID\}}. \newline
+2. The web client calls \texttt{POST /api/payments/checkout-sessions/:sessionId/sync}. \newline
+3. The server calls \texttt{stripe.checkout.sessions.retrieve(sessionId)}. \newline
+4. The server validates that \texttt{payment\_status} equals \texttt{'paid'}. \newline
+5. The server updates milestone paymentStatus to \texttt{FUNDED} in the database. \newline
+6. The server returns success response; UI renders confirmed escrow balance.
+} \\ \hline
+
+Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{A.1 Session Already Processed} \newline
+1. If a webhook already processed the session, the sync recognizes the milestone as already \texttt{FUNDED}. \newline
+2. The system returns the updated record without duplicate processing.
+} \\ \hline
+
+Exceptions: & \multicolumn{3}{L{11.1cm}|}{
+\textbf{EX-01: Session Unpaid} \newline
+1. If the session status is \texttt{'unpaid'}, the system does not fund the milestone and alerts the user. \newline
+2. The use case ends.
+} \\ \hline
+
+Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+
+Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
+
+Business Rules: & \multicolumn{3}{L{11.1cm}|}{
+BR-PAYMENT-14: Client-side redirect reconciliation must independently verify payment status against Stripe API server-side before updating database state.
+} \\ \hline
+
+Other Information: & \multicolumn{3}{L{11.1cm}|}{N/A} \\ \hline
+
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{Stripe Checkout sessions expire after 24 hours if unpaid.} \\ \hline
+
+\end{longtable}
+
+% =================================================================
+% UC-43.13 Handle Stripe Webhook Events
+% =================================================================
+\subparagraph{UC-43.13 Handle Stripe Webhook Events}
+
+\Needspace{12\baselineskip}
+\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
+\hline
+\\rowcolor{fptHeader}UC ID and Name & \\multicolumn{3}{l|}{UC-43.13 Handle Stripe Webhook Events} \\* \\hline
+\\endfirsthead
+\\hline
+\\rowcolor{fptHeader}UC ID and Name & \\multicolumn{3}{l|}{UC-43.13 Handle Stripe Webhook Events \\textit{(cont.)}} \\* \\hline
+\\endhead
+\\hline\\endfoot
+\\endlastfoot
+Created By: & Vo Nhut Tin & Date Created: & DD/MM/YYYY \\ \hline
+
+Primary Actor: & Stripe Webhook Gateway (System) & Secondary Actors: & Admin \\ \hline
+
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When Stripe dispatches an asynchronous HTTP POST webhook event to \texttt{/api/payments/webhook}.} \\ \hline
+
+Description: & \multicolumn{3}{L{11.1cm}|}{Validates HMAC SHA-256 signature headers, parses incoming event payloads asynchronously, and synchronizes financial states (deposits, payouts, refunds, account updates) idempotently.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The incoming request contains a valid \texttt{stripe-signature} header. \newline
@@ -779,33 +882,36 @@ Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 } \\ \hline
 
 Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{POST-1} The event signature is cryptographically verified. \newline
-\textbf{POST-2} Associated milestone, payment, or account records are updated in the database. \newline
-\textbf{POST-3} HTTP 200 OK is returned to Stripe to acknowledge event receipt.
+\textbf{POST-1} Webhook event is cryptographically verified and recorded in the audit log. \newline
+\textbf{POST-2} Associated transaction, milestone, or account states are updated idempotently. \newline
+\textbf{POST-3} HTTP 200 OK is returned to Stripe within the timeout window.
 } \\ \hline
 
 Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{A. Process Stripe Webhook} \newline
-1. Stripe dispatches a webhook event payload with its signature header. \newline
-2. The system verifies the cryptographic signature against the endpoint signing secret. \newline
-3. The system parses the event type:
-   - If \texttt{payment\_intent.succeeded} or \texttt{checkout.session.completed}: updates milestone paymentStatus to \texttt{FUNDED} and records transaction.
-   - If \texttt{account.updated}: refreshes the Freelancer's Stripe Connect status (\texttt{payouts\_enabled}).
-   - If \texttt{charge.refunded}: verifies that milestone refund records match the refund ID. \newline
-4. The system commits database updates. \newline
-5. The system responds with HTTP status 200 to Stripe within 3 seconds.
+\textbf{A. Handle Stripe Webhook Events} \newline
+1. Stripe sends POST request with payload and \texttt{stripe-signature} header. \newline
+2. The server verifies cryptographic signature using \texttt{stripe.webhooks.constructEvent}. \newline
+3. The server identifies event type:
+   - \texttt{payment\_intent.succeeded}: Marks deposit transaction complete and milestone \texttt{FUNDED}.
+   - \texttt{checkout.session.completed}: Funds associated milestone escrow.
+   - \texttt{account.updated}: Updates freelancer Stripe Connect capabilities.
+   - \texttt{charge.refunded}: Updates refund status in transaction ledger. \newline
+4. The server executes database state transition within an atomic transaction. \newline
+5. The server records event ID to prevent duplicate handling. \newline
+6. The server responds with HTTP 200 \texttt{\{received: true\}}.
 } \\ \hline
 
 Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{A.1 Unhandled Event Type} \newline
-1. Stripe dispatches an informational event not subscribed to by platform logic. \newline
-2. The system logs the event type and returns HTTP 200 without making state changes.
+\textbf{A.1 Duplicate Event Dispatched} \newline
+1. Stripe re-sends an already processed event ID. \newline
+2. The server detects existing event ID in audit log. \newline
+3. The server immediately returns HTTP 200 OK without re-executing business logic.
 } \\ \hline
 
 Exceptions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{EX-01: Invalid Webhook Signature} \newline
-1. If the signature is missing or fails HMAC verification, the system rejects the request with HTTP 400 Bad Request. \newline
-2. No database changes are made. \newline
+1. Signature header is missing or does not match payload hash. \newline
+2. The server rejects request with HTTP 400 Bad Request and logs security alert. \newline
 3. The use case ends.
 } \\ \hline
 
@@ -814,83 +920,12 @@ Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
 Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
 
 Business Rules: & \multicolumn{3}{L{11.1cm}|}{
-BR-PAYMENT-20: Webhook processing must be idempotent to prevent duplicate database mutations from retried Stripe events. \newline
-BR-PAYMENT-21: Requests failing signature verification must be immediately dropped.
+BR-PAYMENT-15: All webhook endpoints must enforce cryptographic HMAC SHA-256 signature verification. \newline
+BR-PAYMENT-16: Webhook processing must be strictly idempotent to prevent duplicate fund transfers or state corruptions.
 } \\ \hline
 
 Other Information: & \multicolumn{3}{L{11.1cm}|}{N/A} \\ \hline
 
-Assumptions: & \multicolumn{3}{L{11.1cm}|}{Stripe automatically retries unacknowledged webhook events over 72 hours.} \\ \hline
-
-\end{longtable}
-
-% =================================================================
-% UC-43.13 Sync Payment Intent Status
-% =================================================================
-\subparagraph{UC-43.13 Sync Payment Intent Status}
-
-\Needspace{12\baselineskip}
-\begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
-\hline
-UC ID and Name & \multicolumn{3}{l|}{UC-43.13 Sync Payment Intent Status} \\ \hline
-
-Created By: & Vo Nhut Tin & Date Created: & DD/MM/YYYY \\ \hline
-
-Primary Actor: & Client, System & Secondary Actors: & Stripe API \\ \hline
-
-Trigger: & \multicolumn{3}{L{11.1cm}|}{When a user completes a Stripe Checkout redirect or when client-side confirms a Payment Intent and requests immediate state verification.} \\ \hline
-
-Description: & \multicolumn{3}{L{11.1cm}|}{Allows the client application or system to actively poll and synchronize the status of a specific Stripe Payment Intent or Checkout Session, updating local database records without waiting solely for asynchronous webhooks.} \\ \hline
-
-Preconditions: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{PRE-1} The user is authenticated in the system. \newline
-\textbf{PRE-2} A valid Payment Intent ID or Checkout Session ID is provided.
-} \\ \hline
-
-Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{POST-1} The platform queries the Stripe API in real time. \newline
-\textbf{POST-2} Local payment, milestone, and contract records are synchronized to match the Stripe authoritative state. \newline
-\textbf{POST-3} The updated status is returned to the client UI to immediately unlock funded views.
-} \\ \hline
-
-Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{A. Synchronize Payment Status} \newline
-1. Following payment authorization or return from Stripe Checkout, the frontend issues a sync request with the Payment Intent ID or Session ID. \newline
-2. The system checks user authorization to inspect the transaction. \newline
-3. The system queries the Stripe API to fetch the authoritative status of the Payment Intent. \newline
-4. If Stripe reports \texttt{status = succeeded}:
-   - The system verifies whether the milestone is already marked \texttt{FUNDED}.
-   - If still pending, the system updates milestone paymentStatus to \texttt{FUNDED} and records the deposit transaction. \newline
-5. The system returns the synchronized status and updated milestone entity to the frontend. \newline
-6. The UI immediately transitions to show the milestone as funded and dismisses the loading state.
-} \\ \hline
-
-Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{A.1 Payment Still Pending or Processing} \newline
-1. If Stripe reports the payment is still processing (e.g., bank transfer or 3DS pending), the system retains the pending status and informs the client. \newline
-2. The frontend displays a waiting indicator.
-} \\ \hline
-
-Exceptions: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{EX-01: Payment Intent Not Found} \newline
-1. If the provided payment identifier does not exist on Stripe, the system displays: ``Invalid payment reference.'' \newline
-2. The use case ends. \newline
-\textbf{EX-02: Payment Canceled or Failed} \newline
-1. If Stripe indicates the payment was canceled or failed, the system records the failure reason and updates local status to \texttt{FAILED}. \newline
-2. The use case ends.
-} \\ \hline
-
-Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
-
-Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
-
-Business Rules: & \multicolumn{3}{L{11.1cm}|}{
-BR-PAYMENT-22: Active sync operations serve as a fail-safe complement to asynchronous Stripe webhooks, eliminating latency for the end user. \newline
-BR-PAYMENT-23: Idempotent database operations ensure that concurrent sync and webhook updates never create duplicate financial transactions.
-} \\ \hline
-
-Other Information: & \multicolumn{3}{L{11.1cm}|}{N/A} \\ \hline
-
-Assumptions: & \multicolumn{3}{L{11.1cm}|}{Stripe API responds within normal low-latency parameters (< 500ms).} \\ \hline
+Assumptions: & \multicolumn{3}{L{11.1cm}|}{Stripe retries failed webhook deliveries with exponential backoff for up to 72 hours.} \\ \hline
 
 \end{longtable}
