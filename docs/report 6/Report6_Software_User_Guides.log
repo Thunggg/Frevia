@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.9.28)  24 NOV 2026 18:00
+This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.9.28)  24 NOV 2026 18:16
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -676,6 +676,43 @@ Package: booktabs 2020/01/12 v1.61803398 Publication quality tables
 \@lastruleclass=\count343
 \@thisrulewidth=\dimen300
 )
+(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/tocloft\tocloft.sty
+Package: tocloft 2026-09-12 v3.0c parameterised ToC, etc., typesetting
+Package tocloft Info: The document has section divisions on input line 64.
+\cftparskip=\skip78
+\cftbeforetoctitleskip=\skip79
+\cftaftertoctitleskip=\skip80
+\cftbeforepartskip=\skip81
+\cftpartnumwidth=\skip82
+\cftpartindent=\skip83
+\cftbeforesecskip=\skip84
+\cftsecindent=\skip85
+\cftsecnumwidth=\skip86
+\cftbeforesubsecskip=\skip87
+\cftsubsecindent=\skip88
+\cftsubsecnumwidth=\skip89
+\cftbeforesubsubsecskip=\skip90
+\cftsubsubsecindent=\skip91
+\cftsubsubsecnumwidth=\skip92
+\cftbeforeparaskip=\skip93
+\cftparaindent=\skip94
+\cftparanumwidth=\skip95
+\cftbeforesubparaskip=\skip96
+\cftsubparaindent=\skip97
+\cftsubparanumwidth=\skip98
+\cftbeforeloftitleskip=\skip99
+\cftafterloftitleskip=\skip100
+\cftbeforefigskip=\skip101
+\cftfigindent=\skip102
+\cftfignumwidth=\skip103
+\c@lofdepth=\count344
+\c@lotdepth=\count345
+\cftbeforelottitleskip=\skip104
+\cftafterlottitleskip=\skip105
+\cftbeforetabskip=\skip106
+\cfttabindent=\skip107
+\cfttabnumwidth=\skip108
+)
 (C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\hyperref.sty
 Package: hyperref 2025-07-12 v7.01o Hypertext links for LaTeX
 
@@ -719,7 +756,7 @@ Package: gettitlestring 2019/12/15 v1.6 Cleanup title references (HO)
 (C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/kvoptions\kvoptions.sty
 Package: kvoptions 2022-06-15 v3.15 Key value format for package options (HO)
 ))
-\c@section@level=\count344
+\c@section@level=\count346
 )
 (C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/generic/stringenc\stringenc.st
 y
@@ -727,8 +764,8 @@ Package: stringenc 2019/11/29 v1.12 Convert strings between diff. encodings (HO
 )
 )
 \@linkdim=\dimen301
-\Hy@linkcounter=\count345
-\Hy@pagecounter=\count346
+\Hy@linkcounter=\count347
+\Hy@pagecounter=\count348
  (C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\pd1enc.def
 File: pd1enc.def 2025-07-12 v7.01o Hyperref: PDFDocEncoding definition (HO)
 Now handling font encoding PD1 ...
@@ -737,7 +774,7 @@ Now handling font encoding PD1 ...
 (C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/generic/intcalc\intcalc.sty
 Package: intcalc 2019/12/15 v1.3 Expandable calculations with integers (HO)
 )
-\Hy@SavedSpaceFactor=\count347
+\Hy@SavedSpaceFactor=\count349
 
 (C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\puenc.def
 File: puenc.def 2025-07-12 v7.01o Hyperref: PDF Unicode definition (HO)
@@ -751,7 +788,7 @@ Package hyperref Info: Plain pages OFF on input line 4210.
 Package hyperref Info: Backreferencing OFF on input line 4215.
 Package hyperref Info: Implicit mode ON; LaTeX internals redefined.
 Package hyperref Info: Bookmarks ON on input line 4462.
-\c@Hy@tempcnt=\count348
+\c@Hy@tempcnt=\count350
 
 (C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/url\url.sty
 \Urlmuskip=\muskip18
@@ -768,7 +805,7 @@ sty
 Package: bigintcalc 2019/12/15 v1.5 Expandable calculations on big integers (HO
 )
 ))
-\Fld@menulength=\count349
+\Fld@menulength=\count351
 \Field@Width=\dimen303
 \Fld@charsize=\dimen304
 Package hyperref Info: Hyper figures OFF on input line 6078.
@@ -778,16 +815,16 @@ Package hyperref Info: backreferencing OFF on input line 6093.
 Package hyperref Info: Link coloring OFF on input line 6098.
 Package hyperref Info: Link coloring with OCG OFF on input line 6103.
 Package hyperref Info: PDF/A mode OFF on input line 6108.
-\Hy@abspage=\count350
-\c@Item=\count351
-\c@Hfootnote=\count352
+\Hy@abspage=\count352
+\c@Item=\count353
+\c@Hfootnote=\count354
 )
 Package hyperref Info: Driver (autodetected): hpdftex.
 
 (C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\hpdftex.def
 File: hpdftex.def 2025-07-12 v7.01o Hyperref driver for pdfTeX
-\Fld@listcount=\count353
-\c@bookmark@seq@number=\count354
+\Fld@listcount=\count355
+\c@bookmark@seq@number=\count356
 
 (C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/rerunfilecheck\rerunfile
 check.sty
@@ -800,10 +837,10 @@ Package: uniquecounter 2019/12/15 v1.4 Provide unlimited unique counter (HO)
 Package uniquecounter Info: New unique counter `rerunfilecheck' on input line 2
 84.
 )
-\Hy@SectionHShift=\skip78
+\Hy@SectionHShift=\skip109
 )
-Package hyperref Info: Option `colorlinks' set `true' on input line 34.
-LaTeX Font Info:    Trying to load font information for T1+ptm on input line 75
+Package hyperref Info: Option `colorlinks' set `true' on input line 51.
+LaTeX Font Info:    Trying to load font information for T1+ptm on input line 92
 .
 
 (C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\t1ptm.fd
@@ -812,28 +849,28 @@ File: t1ptm.fd 2001/06/04 font definitions for T1/ptm.
 (C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/l3backend\l3backend-pdft
 ex.def
 File: l3backend-pdftex.def 2025-10-09 L3 backend support: PDF output (pdfTeX)
-\l__color_backend_stack_int=\count355
+\l__color_backend_stack_int=\count357
 ) (Report6_Software_User_Guides.aux)
 \openout1 = `Report6_Software_User_Guides.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 75.
-LaTeX Font Info:    ... okay on input line 75.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 75.
-LaTeX Font Info:    ... okay on input line 75.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 75.
-LaTeX Font Info:    ... okay on input line 75.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 75.
-LaTeX Font Info:    ... okay on input line 75.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 75.
-LaTeX Font Info:    ... okay on input line 75.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 75.
-LaTeX Font Info:    ... okay on input line 75.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 75.
-LaTeX Font Info:    ... okay on input line 75.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 75.
-LaTeX Font Info:    ... okay on input line 75.
-LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 75.
-LaTeX Font Info:    ... okay on input line 75.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 92.
+LaTeX Font Info:    ... okay on input line 92.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 92.
+LaTeX Font Info:    ... okay on input line 92.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 92.
+LaTeX Font Info:    ... okay on input line 92.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 92.
+LaTeX Font Info:    ... okay on input line 92.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 92.
+LaTeX Font Info:    ... okay on input line 92.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 92.
+LaTeX Font Info:    ... okay on input line 92.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 92.
+LaTeX Font Info:    ... okay on input line 92.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 92.
+LaTeX Font Info:    ... okay on input line 92.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 92.
+LaTeX Font Info:    ... okay on input line 92.
 
 *geometry* driver: auto-detecting
 *geometry* detected driver: pdftex
@@ -873,16 +910,16 @@ LaTeX Font Info:    ... okay on input line 75.
 (C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/context/base/mkii\supp-pdf.mki
 i
 [Loading MPS to PDF converter (version 2006.09.02).]
-\scratchcounter=\count356
+\scratchcounter=\count358
 \scratchdimen=\dimen305
 \scratchbox=\box88
-\nofMPsegments=\count357
-\nofMParguments=\count358
+\nofMPsegments=\count359
+\nofMParguments=\count360
 \everyMPshowfont=\toks49
-\MPscratchCnt=\count359
+\MPscratchCnt=\count361
 \MPscratchDim=\dimen306
-\MPnumerator=\count360
-\makeMPintoPDFobject=\count361
+\MPnumerator=\count362
+\makeMPintoPDFobject=\count363
 \everyMPtoPDFconversion=\toks50
 )
 (C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/epstopdf-pkg\epstopdf-ba
@@ -895,8 +932,8 @@ Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 4
 g
 File: epstopdf-sys.cfg 2021/03/18 v2.0 Configuration of epstopdf for MiKTeX
 ))
-\c@lstlisting=\count362
-Package hyperref Info: Link coloring ON on input line 75.
+\c@lstlisting=\count364
+Package hyperref Info: Link coloring ON on input line 92.
  (Report6_Software_User_Guides.out) (Report6_Software_User_Guides.out)
 \@outlinefile=\write4
 \openout4 = `Report6_Software_User_Guides.out'.
@@ -904,7 +941,7 @@ Package hyperref Info: Link coloring ON on input line 75.
 <fpt_logo_r6.png, id=198, 1284.8pt x 500.87125pt>
 File: fpt_logo_r6.png Graphic file (type png)
 <use fpt_logo_r6.png>
-Package pdftex.def Info: fpt_logo_r6.png  used on input line 84.
+Package pdftex.def Info: fpt_logo_r6.png  used on input line 101.
 (pdftex.def)             Requested size: 184.9429pt x 72.09329pt.
 
 [1
@@ -913,71 +950,69 @@ Package pdftex.def Info: fpt_logo_r6.png  used on input line 84.
 AppData/Local/Programs/MiKTeX/fonts/enc/dvips/base/8r.enc} <./fpt_logo_r6.png>]
  (Report6_Software_User_Guides.toc
 LaTeX Font Info:    Trying to load font information for OT1+ztmcm on input line
- 5.
+ 1.
 
 (C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\ot1ztmcm.fd
 File: ot1ztmcm.fd 2000/01/03 Fontinst v1.801 font definitions for OT1/ztmcm.
 )
 LaTeX Font Info:    Trying to load font information for OML+ztmcm on input line
- 5.
+ 1.
 
 (C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\omlztmcm.fd
 File: omlztmcm.fd 2000/01/03 Fontinst v1.801 font definitions for OML/ztmcm.
 )
 LaTeX Font Info:    Trying to load font information for OMS+ztmcm on input line
- 5.
+ 1.
 
 (C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\omsztmcm.fd
 File: omsztmcm.fd 2000/01/03 Fontinst v1.801 font definitions for OMS/ztmcm.
 )
 LaTeX Font Info:    Trying to load font information for OMX+ztmcm on input line
- 5.
+ 1.
 
 (C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\omxztmcm.fd
 File: omxztmcm.fd 2000/01/03 Fontinst v1.801 font definitions for OMX/ztmcm.
 )
-LaTeX Font Info:    Trying to load font information for OT1+ptm on input line 5
+LaTeX Font Info:    Trying to load font information for OT1+ptm on input line 1
 .
 
 (C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\ot1ptm.fd
 File: ot1ptm.fd 2001/06/04 font definitions for OT1/ptm.
 )
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <12> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 5.
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 1.
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <9> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 5.
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 1.
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <7> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 5.
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 1.
 
 pdfTeX warning (ext4): destination with the same identifier (name{page.1}) has 
 been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.38 ...mail OTP (UC-04)}{24}{subsubsection.3.2.4}
-                                                  % [1]
-Overfull \hbox (18.61787pt too wide) in paragraph at lines 54--54
- [][] [][][]\T1/ptm/m/n/12 M14.02 -- Ad-min-is-tra-tor Pro-file, Iden-tity & Sy
-s-tem Priv-i-leges (\T1/cmtt/m/n/12 /admin/users/1\T1/ptm/m/n/12 )[][] [][]  
- []
-
-
-Overfull \hbox (0.98499pt too wide) in paragraph at lines 79--79
- [][] [][][]\T1/ptm/m/n/12 M15.02 -- Job Cat-e-gories & In-dus-try Clas-si-fi-c
-a-tion Man-age-ment (UC-12.01 
- []
-
-)
+l.69 ...UC-07.04--07.05)}{40}{subsubsection.3.3.7}
+                                                  % [1])
 \tf@toc=\write5
 \openout5 = `Report6_Software_User_Guides.toc'.
 
- [2] [3] (sections/sec1_deliverables_install.tex
+ [2]
+Overfull \hbox (3.97672pt too wide) in paragraph at lines 130--130
+ []|[]| 
+ []
+
+
+Overfull \hbox (3.97672pt too wide) in paragraph at lines 133--133
+ []|[]| 
+ []
+
+[3] (sections/sec1_deliverables_install.tex
 Overfull \hbox (6.27808pt too wide) in paragraph at lines 20--20
  \T1/cmtt/m/n/12 (.prisma/.ts)| 
  []
 
 ignored error: Infinite glue shrinkage found in box being split [4] [5]
 [6]
-<images/install/a01_git_download.png, id=314, 1445.4pt x 903.375pt>
+<images/install/a01_git_download.png, id=306, 1445.4pt x 903.375pt>
 File: images/install/a01_git_download.png Graphic file (type png)
 <use images/install/a01_git_download.png>
 Package pdftex.def Info: images/install/a01_git_download.png  used on input lin
@@ -988,7 +1023,7 @@ LaTeX Font Info:    Trying to load font information for TS1+ptm on input line 1
  (C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\ts1ptm.fd
 File: ts1ptm.fd 2001/06/04 font definitions for TS1/ptm.
 )
-<images/install/a02_nodejs_download.png, id=316, 1445.4pt x 903.375pt>
+<images/install/a02_nodejs_download.png, id=308, 1445.4pt x 903.375pt>
 File: images/install/a02_nodejs_download.png Graphic file (type png)
 <use images/install/a02_nodejs_download.png>
 Package pdftex.def Info: images/install/a02_nodejs_download.png  used on input 
@@ -996,14 +1031,14 @@ line 117.
 (pdftex.def)             Requested size: 425.08147pt x 265.66626pt.
 
 [7 <./images/install/a01_git_download.png (PNG copy)>]
-<images/install/a03_docker_download.png, id=323, 1445.4pt x 903.375pt>
+<images/install/a03_docker_download.png, id=315, 1445.4pt x 903.375pt>
 File: images/install/a03_docker_download.png Graphic file (type png)
 <use images/install/a03_docker_download.png>
 Package pdftex.def Info: images/install/a03_docker_download.png  used on input 
 line 136.
 (pdftex.def)             Requested size: 425.08147pt x 265.66626pt.
  [8 <./images/install/a02_nodejs_download.png (PNG copy)>]
-<images/install/a04_env_check_versions.png, id=334, 1445.4pt x 903.375pt>
+<images/install/a04_env_check_versions.png, id=326, 1445.4pt x 903.375pt>
 File: images/install/a04_env_check_versions.png Graphic file (type png)
 <use images/install/a04_env_check_versions.png>
 Package pdftex.def Info: images/install/a04_env_check_versions.png  used on inp
@@ -1037,20 +1072,20 @@ Overfull \hbox (10.14186pt too wide) in paragraph at lines 175--175
 
 ignored error: Infinite glue shrinkage found in box being split [10 <./images/i
 nstall/a04_env_check_versions.png (PNG copy)>]
-<images/install/a05_clone_and_install.png, id=347, 1445.4pt x 903.375pt>
+<images/install/a05_clone_and_install.png, id=339, 1445.4pt x 903.375pt>
 File: images/install/a05_clone_and_install.png Graphic file (type png)
 <use images/install/a05_clone_and_install.png>
 Package pdftex.def Info: images/install/a05_clone_and_install.png  used on inpu
 t line 186.
 (pdftex.def)             Requested size: 425.08147pt x 265.66626pt.
-<images/install/a06_env_configuration.png, id=348, 1445.4pt x 903.375pt>
+<images/install/a06_env_configuration.png, id=340, 1445.4pt x 903.375pt>
 File: images/install/a06_env_configuration.png Graphic file (type png)
 <use images/install/a06_env_configuration.png>
 Package pdftex.def Info: images/install/a06_env_configuration.png  used on inpu
 t line 199.
 (pdftex.def)             Requested size: 425.08147pt x 265.66626pt.
  [11 <./images/install/a05_clone_and_install.png (PNG copy)>]
-<images/install/a07_prisma_migrate_seed.png, id=354, 1445.4pt x 903.375pt>
+<images/install/a07_prisma_migrate_seed.png, id=346, 1445.4pt x 903.375pt>
 File: images/install/a07_prisma_migrate_seed.png Graphic file (type png)
 <use images/install/a07_prisma_migrate_seed.png>
 Package pdftex.def Info: images/install/a07_prisma_migrate_seed.png  used on in
@@ -1063,20 +1098,20 @@ Overfull \hbox (1.55367pt too wide) in paragraph at lines 18--18
  []
 
 [13 <./images/install/a07_prisma_migrate_seed.png (PNG copy)>]
-<images/install/a08_docker_compose_up.png, id=379, 1445.4pt x 903.375pt>
+<images/install/a08_docker_compose_up.png, id=371, 1445.4pt x 903.375pt>
 File: images/install/a08_docker_compose_up.png Graphic file (type png)
 <use images/install/a08_docker_compose_up.png>
 Package pdftex.def Info: images/install/a08_docker_compose_up.png  used on inpu
 t line 34.
 (pdftex.def)             Requested size: 425.08147pt x 265.66626pt.
  [14] [15 <./images/install/a08_docker_compose_up.png (PNG copy)>]
-<images/install/a09_verify_web_running.png, id=403, 1445.4pt x 903.375pt>
+<images/install/a09_verify_web_running.png, id=395, 1445.4pt x 903.375pt>
 File: images/install/a09_verify_web_running.png Graphic file (type png)
 <use images/install/a09_verify_web_running.png>
 Package pdftex.def Info: images/install/a09_verify_web_running.png  used on inp
 ut line 78.
 (pdftex.def)             Requested size: 425.08147pt x 265.66626pt.
-<images/install/a10_verify_api_swagger.png, id=405, 1445.4pt x 903.375pt>
+<images/install/a10_verify_api_swagger.png, id=397, 1445.4pt x 903.375pt>
 File: images/install/a10_verify_api_swagger.png Graphic file (type png)
 <use images/install/a10_verify_api_swagger.png>
 Package pdftex.def Info: images/install/a10_verify_api_swagger.png  used on inp
@@ -1108,7 +1143,7 @@ ole-permission as-sign-ments, ad-min-is-ter-ing multi-
  []
 
 [18]
-<images/auth/m02_01_register.png, id=429, 1445.4pt x 1063.975pt>
+<images/auth/m02_01_register.png, id=421, 1445.4pt x 1063.975pt>
 File: images/auth/m02_01_register.png Graphic file (type png)
 <use images/auth/m02_01_register.png>
 Package pdftex.def Info: images/auth/m02_01_register.png  used on input line 37
@@ -1122,13 +1157,13 @@ m/n/12 FREELANCER
  []
 
 [20]
-<images/auth/m02_02_login.png, id=451, 1445.4pt x 1063.975pt>
+<images/auth/m02_02_login.png, id=443, 1445.4pt x 1063.975pt>
 File: images/auth/m02_02_login.png Graphic file (type png)
 <use images/auth/m02_02_login.png>
 Package pdftex.def Info: images/auth/m02_02_login.png  used on input line 81.
 (pdftex.def)             Requested size: 425.08147pt x 312.89581pt.
  [21 <./images/auth/m02_02_login.png (PNG copy)>] [22]
-<images/auth/m02_03_google_oauth.png, id=468, 1445.4pt x 1063.975pt>
+<images/auth/m02_03_google_oauth.png, id=460, 1445.4pt x 1063.975pt>
 File: images/auth/m02_03_google_oauth.png Graphic file (type png)
 <use images/auth/m02_03_google_oauth.png>
 Package pdftex.def Info: images/auth/m02_03_google_oauth.png  used on input lin
@@ -1142,14 +1177,14 @@ Overfull \hbox (74.5134pt too wide) in paragraph at lines 132--133
  []
 
 [23 <./images/auth/m02_03_google_oauth.png (PNG copy)>]
-<images/auth/m02_04_forgot_password.png, id=478, 1445.4pt x 1063.975pt>
+<images/auth/m02_04_forgot_password.png, id=470, 1445.4pt x 1063.975pt>
 File: images/auth/m02_04_forgot_password.png Graphic file (type png)
 <use images/auth/m02_04_forgot_password.png>
 Package pdftex.def Info: images/auth/m02_04_forgot_password.png  used on input 
 line 148.
 (pdftex.def)             Requested size: 425.08147pt x 312.89581pt.
  [24 <./images/auth/m02_04_forgot_password.png (PNG copy)>] [25]
-<images/auth/m02_05_sessions_list.png, id=498, 1445.4pt x 943.525pt>
+<images/auth/m02_05_sessions_list.png, id=490, 1445.4pt x 943.525pt>
 File: images/auth/m02_05_sessions_list.png Graphic file (type png)
 <use images/auth/m02_05_sessions_list.png>
 Package pdftex.def Info: images/auth/m02_05_sessions_list.png  used on input li
@@ -1163,14 +1198,14 @@ ss columns:
  []
 
 [26 <./images/auth/m02_05_sessions_list.png (PNG copy)>]
-<images/auth/m02_06_revoke_session.png, id=511, 1445.4pt x 943.525pt>
+<images/auth/m02_06_revoke_session.png, id=503, 1445.4pt x 943.525pt>
 File: images/auth/m02_06_revoke_session.png Graphic file (type png)
 <use images/auth/m02_06_revoke_session.png>
 Package pdftex.def Info: images/auth/m02_06_revoke_session.png  used on input l
 ine 210.
 (pdftex.def)             Requested size: 425.08147pt x 277.47363pt.
  [27 <./images/auth/m02_06_revoke_session.png (PNG copy)>]
-<images/auth/m02_07_logout.png, id=522, 1445.4pt x 943.525pt>
+<images/auth/m02_07_logout.png, id=514, 1445.4pt x 943.525pt>
 File: images/auth/m02_07_logout.png Graphic file (type png)
 <use images/auth/m02_07_logout.png>
 Package pdftex.def Info: images/auth/m02_07_logout.png  used on input line 238.
@@ -1187,7 +1222,7 @@ Overfull \hbox (4.81459pt too wide) in paragraph at lines 244--245
 (PNG copy)>]
 LaTeX Font Info:    Font shape `T1/cmtt/bx/n' in size <12> not available
 (Font)              Font shape `T1/cmtt/m/n' tried instead on input line 12.
-<images/admin/m14_01_admin_dashboard.png, id=532, 1445.4pt x 943.525pt>
+<images/admin/m14_01_admin_dashboard.png, id=524, 1445.4pt x 943.525pt>
 File: images/admin/m14_01_admin_dashboard.png Graphic file (type png)
 <use images/admin/m14_01_admin_dashboard.png>
 Package pdftex.def Info: images/admin/m14_01_admin_dashboard.png  used on input
@@ -1201,21 +1236,21 @@ such as \T1/cmtt/m/n/12 /forum\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 /profiles/[id]\T
  []
 
 [30]
-<images/admin/m14_02_admin_profile.png, id=549, 1445.4pt x 943.525pt>
+<images/admin/m14_02_admin_profile.png, id=541, 1445.4pt x 943.525pt>
 File: images/admin/m14_02_admin_profile.png Graphic file (type png)
 <use images/admin/m14_02_admin_profile.png>
 Package pdftex.def Info: images/admin/m14_02_admin_profile.png  used on input l
 ine 52.
 (pdftex.def)             Requested size: 425.08147pt x 277.47363pt.
  [31 <./images/admin/m14_02_admin_profile.png (PNG copy)>]
-<images/admin/m14_03_admin_roles.png, id=562, 1445.4pt x 943.525pt>
+<images/admin/m14_03_admin_roles.png, id=554, 1445.4pt x 943.525pt>
 File: images/admin/m14_03_admin_roles.png Graphic file (type png)
 <use images/admin/m14_03_admin_roles.png>
 Package pdftex.def Info: images/admin/m14_03_admin_roles.png  used on input lin
 e 81.
 (pdftex.def)             Requested size: 425.08147pt x 277.47363pt.
  [32 <./images/admin/m14_03_admin_roles.png (PNG copy)>] [33]
-<images/admin/m14_04_role_permissions_matrix.png, id=579, 1445.4pt x 943.525pt>
+<images/admin/m14_04_role_permissions_matrix.png, id=571, 1445.4pt x 943.525pt>
 
 File: images/admin/m14_04_role_permissions_matrix.png Graphic file (type png)
 <use images/admin/m14_04_role_permissions_matrix.png>
@@ -1223,7 +1258,7 @@ Package pdftex.def Info: images/admin/m14_04_role_permissions_matrix.png  used
 on input line 117.
 (pdftex.def)             Requested size: 425.08147pt x 277.47363pt.
  [34 <./images/admin/m14_04_role_permissions_matrix.png (PNG copy)>] [35]
-<images/admin/m14_05_admin_permissions.png, id=596, 1445.4pt x 943.525pt>
+<images/admin/m14_05_admin_permissions.png, id=588, 1445.4pt x 943.525pt>
 File: images/admin/m14_05_admin_permissions.png Graphic file (type png)
 <use images/admin/m14_05_admin_permissions.png>
 Package pdftex.def Info: images/admin/m14_05_admin_permissions.png  used on inp
@@ -1236,7 +1271,7 @@ nd mod-ule fil-ters at
  []
 
 [36 <./images/admin/m14_05_admin_permissions.png (PNG copy)>] [37]
-<images/admin/m14_06_admin_users_list_create.png, id=614, 1445.4pt x 943.525pt>
+<images/admin/m14_06_admin_users_list_create.png, id=606, 1445.4pt x 943.525pt>
 
 File: images/admin/m14_06_admin_users_list_create.png Graphic file (type png)
 <use images/admin/m14_06_admin_users_list_create.png>
@@ -1251,7 +1286,7 @@ Overfull \hbox (37.41563pt too wide) in paragraph at lines 189--190
  []
 
 [38 <./images/admin/m14_06_admin_users_list_create.png (PNG copy)>] [39]
-<images/admin/m14_07_admin_user_ban_unban.png, id=631, 1445.4pt x 943.525pt>
+<images/admin/m14_07_admin_user_ban_unban.png, id=623, 1445.4pt x 943.525pt>
 File: images/admin/m14_07_admin_user_ban_unban.png Graphic file (type png)
 <use images/admin/m14_07_admin_user_ban_unban.png>
 Package pdftex.def Info: images/admin/m14_07_admin_user_ban_unban.png  used on 
@@ -1259,7 +1294,7 @@ input line 211.
 (pdftex.def)             Requested size: 425.08147pt x 277.47363pt.
 
 [40 <./images/admin/m14_07_admin_user_ban_unban.png (PNG copy)>] [41]
-<images/admin/m14_08_admin_user_profile_tabs.png, id=647, 1445.4pt x 943.525pt>
+<images/admin/m14_08_admin_user_profile_tabs.png, id=639, 1445.4pt x 943.525pt>
 
 File: images/admin/m14_08_admin_user_profile_tabs.png Graphic file (type png)
 <use images/admin/m14_08_admin_user_profile_tabs.png>
@@ -1269,7 +1304,7 @@ on input line 245.
 )
 (sections/sec3_m15_admin_catalogs.tex [42 <./images/admin/m14_08_admin_user_pro
 file_tabs.png (PNG copy)>]
-<images/admin/m15_01_admin_skills.png, id=661, 1445.4pt x 943.525pt>
+<images/admin/m15_01_admin_skills.png, id=653, 1445.4pt x 943.525pt>
 File: images/admin/m15_01_admin_skills.png Graphic file (type png)
 <use images/admin/m15_01_admin_skills.png>
 Package pdftex.def Info: images/admin/m15_01_admin_skills.png  used on input li
@@ -1287,7 +1322,7 @@ Overfull \hbox (3.63316pt too wide) in paragraph at lines 51--52
 e-ment Con-sole -- \T1/cmtt/m/n/12 /admin/job-categories\T1/ptm/m/n/12 . 
  []
 
-<images/admin/m15_02_admin_job_categories.png, id=678, 1445.4pt x 943.525pt>
+<images/admin/m15_02_admin_job_categories.png, id=670, 1445.4pt x 943.525pt>
 File: images/admin/m15_02_admin_job_categories.png Graphic file (type png)
 <use images/admin/m15_02_admin_job_categories.png>
 Package pdftex.def Info: images/admin/m15_02_admin_job_categories.png  used on 
@@ -1300,7 +1335,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 59--59
  []
 
 [45 <./images/admin/m15_02_admin_job_categories.png (PNG copy)>] [46]
-<images/admin/m15_03_admin_forum_categories.png, id=695, 1445.4pt x 943.525pt>
+<images/admin/m15_03_admin_forum_categories.png, id=687, 1445.4pt x 943.525pt>
 File: images/admin/m15_03_admin_forum_categories.png Graphic file (type png)
 <use images/admin/m15_03_admin_forum_categories.png>
 Package pdftex.def Info: images/admin/m15_03_admin_forum_categories.png  used o
@@ -1314,13 +1349,13 @@ L3 programming layer <2025-12-24>
  ***********
 Package rerunfilecheck Info: File `Report6_Software_User_Guides.out' has not ch
 anged.
-(rerunfilecheck)             Checksum: 4004752B55EE2844A74955DF3D7C1480;16076.
+(rerunfilecheck)             Checksum: BBD3E18CA9328225879828AFE0101E90;14904.
  ) 
 Here is how much of TeX's memory you used:
- 26153 strings out of 467871
- 496850 string characters out of 5418860
- 1301958 words of memory out of 5000000
- 54302 multiletter control sequences out of 15000+600000
+ 26463 strings out of 467871
+ 501719 string characters out of 5418860
+ 1309523 words of memory out of 5000000
+ 54608 multiletter control sequences out of 15000+600000
  677420 words of font info for 95 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  98i,13n,108p,752b,1238s stack positions out of 10000i,1000n,20000p,200000b,200000s
@@ -1333,9 +1368,9 @@ type1/urw/times/utmb8a.pfb><C:/Users/ASUS/AppData/Local/Programs/MiKTeX/fonts/t
 ype1/urw/times/utmbi8a.pfb><C:/Users/ASUS/AppData/Local/Programs/MiKTeX/fonts/t
 ype1/urw/times/utmr8a.pfb><C:/Users/ASUS/AppData/Local/Programs/MiKTeX/fonts/ty
 pe1/urw/times/utmri8a.pfb>
-Output written on Report6_Software_User_Guides.pdf (48 pages, 7498083 bytes).
+Output written on Report6_Software_User_Guides.pdf (48 pages, 7496221 bytes).
 PDF statistics:
- 959 PDF objects out of 1000 (max. 8388607)
+ 951 PDF objects out of 1000 (max. 8388607)
  300 named destinations out of 1000 (max. 500000)
  542 words of extra memory for PDF output out of 10000 (max. 10000000)
 
