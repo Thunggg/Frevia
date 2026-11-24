@@ -198,6 +198,22 @@
   \renewcommand{\headrulewidth}{0pt}
 }
 
+% Landscape pages (e.g. the overall ERD): put the page number at the bottom
+% of the landscape page, centered and rotated so it reads upright.
+\fancypagestyle{landscape}{
+  \fancyhf{}
+  \fancyfoot[R]{%
+    \makebox[0pt][l]{%
+      \hspace{32pt}%
+      \raisebox{375.5pt}[0pt][0pt]{%
+        \makebox[0pt][c]{\rotatebox{90}{\small\thepage}}%
+      }%
+    }%
+  }
+  \renewcommand{\headrulewidth}{0pt}
+  \renewcommand{\footrulewidth}{0pt}
+}
+
 %====================================================
 % CAPTIONS
 %====================================================
