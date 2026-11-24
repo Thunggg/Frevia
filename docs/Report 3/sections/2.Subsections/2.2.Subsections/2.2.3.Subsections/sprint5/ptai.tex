@@ -58,9 +58,9 @@ Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
 Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
 
 Business Rules: & \multicolumn{3}{L{11.1cm}|}{
-BR-CAT-01: Only active job categories shall be returned. \newline
-BR-CAT-02: The category list shall be available to all users without authentication. \newline
-BR-CAT-03: Job categories drive job browsing, search filters, and the job creation form.
+BR-FCAT-01: Only active job categories shall be returned. \newline
+BR-FCAT-02: The category list shall be available to all users without authentication. \newline
+BR-FCAT-03: Job categories drive job browsing, search filters, and the job creation form.
 } \\ \hline
 
 Other Information: & \multicolumn{3}{L{11.1cm}|}{The category list is typically requested together with the job homepage and the search sidebar.} \\ \hline
@@ -135,8 +135,8 @@ Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
 Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
 
 Business Rules: & \multicolumn{3}{L{11.1cm}|}{
-BR-CAT-04: The category detail shall include name and description. \newline
-BR-CAT-05: The associated jobs shall be listed, or the category can be used as a job browse filter.
+BR-FCAT-04: The category detail shall include name and description. \newline
+BR-FCAT-05: The associated jobs shall be listed, or the category can be used as a job browse filter.
 } \\ \hline
 
 Other Information: & \multicolumn{3}{L{11.1cm}|}{Browsing a category applies the category filter to the job list (UC View List Job).} \\ \hline
@@ -203,8 +203,8 @@ Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
 Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
 
 Business Rules: & \multicolumn{3}{L{11.1cm}|}{
-BR-CAT-06: Only an admin can open the job category management page. \newline
-BR-CAT-07: The admin view shall include all categories regardless of status.
+BR-FCAT-06: Only an admin can open the job category management page. \newline
+BR-FCAT-07: The admin view shall include all categories regardless of status.
 } \\ \hline
 
 Other Information: & \multicolumn{3}{L{11.1cm}|}{From this page the admin can create, edit, or delete a category.} \\ \hline
@@ -277,8 +277,8 @@ Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
 Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
 
 Business Rules: & \multicolumn{3}{L{11.1cm}|}{
-BR-CAT-08: The admin category detail shall include name, description, and status. \newline
-BR-CAT-09: The associated jobs shall be listed in the admin detail view.
+BR-FCAT-08: The admin category detail shall include name, description, and status. \newline
+BR-FCAT-09: The associated jobs shall be listed in the admin detail view.
 } \\ \hline
 
 Other Information: & \multicolumn{3}{L{11.1cm}|}{The admin detail view supports editing or deleting the category.} \\ \hline
@@ -357,9 +357,9 @@ Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
 Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Low} \\ \hline
 
 Business Rules: & \multicolumn{3}{L{11.1cm}|}{
-BR-CAT-10: A job category name is required and must be unique. \newline
-BR-CAT-11: New categories may be created as active or inactive. \newline
-BR-CAT-12: Only an admin can create job categories.
+BR-FCAT-10: A job category name is required and must be unique. \newline
+BR-FCAT-11: New categories may be created as active or inactive. \newline
+BR-FCAT-12: Only an admin can create job categories.
 } \\ \hline
 
 Other Information: & \multicolumn{3}{L{11.1cm}|}{A category created as inactive is hidden from public browsing.} \\ \hline
@@ -439,9 +439,9 @@ Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
 Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Low} \\ \hline
 
 Business Rules: & \multicolumn{3}{L{11.1cm}|}{
-BR-CAT-13: Only an admin can edit job categories. \newline
-BR-CAT-14: The category name is required and must be unique (excluding the category being edited). \newline
-BR-CAT-15: Deactivating a category hides it from public browsing.
+BR-FCAT-13: Only an admin can edit job categories. \newline
+BR-FCAT-14: The category name is required and must be unique (excluding the category being edited). \newline
+BR-FCAT-15: Deactivating a category hides it from public browsing.
 } \\ \hline
 
 Other Information: & \multicolumn{3}{L{11.1cm}|}{Editing a category does not affect jobs that already reference it.} \\ \hline
@@ -522,9 +522,9 @@ Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
 Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Low} \\ \hline
 
 Business Rules: & \multicolumn{3}{L{11.1cm}|}{
-BR-CAT-16: Only an admin can delete job categories. \newline
-BR-CAT-17: If the category has associated jobs, it shall be deactivated rather than deleted. \newline
-BR-CAT-18: A deleted category shall not appear in public category lists.
+BR-FCAT-16: Only an admin can delete job categories. \newline
+BR-FCAT-17: If the category has associated jobs, it shall be deactivated rather than deleted. \newline
+BR-FCAT-18: A deleted category shall not appear in public category lists.
 } \\ \hline
 
 Other Information: & \multicolumn{3}{L{11.1cm}|}{Existing jobs referencing the category retain their category reference.} \\ \hline

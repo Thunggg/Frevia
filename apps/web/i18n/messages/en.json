@@ -1143,7 +1143,6 @@
   "proposalStatus": {
     "DRAFT": "Draft",
     "SUBMITTED": "Submitted",
-    "INTERVIEWING": "Interviewing",
     "HIRED": "Hired",
     "REJECTED": "Rejected",
     "WITHDRAWN": "Withdrawn",
@@ -1527,9 +1526,6 @@
     "hired": "Freelancer hired. A contract has been created.",
     "hiredHint": "This proposal has been hired and a contract was created automatically.",
     "viewContract": "View contract",
-    "interview": "Interview",
-    "interviewing": "Proposal moved to interviewing",
-    "interviewFailed": "Unable to start interviewing. Please try again.",
     "breadcrumbJobs": "My Jobs",
     "breadcrumbProposals": "Proposals",
     "allTab": "All ({count})",
@@ -1998,7 +1994,42 @@
     "reopened": "Job reopened successfully",
     "reopenFailed": "Failed to reopen job",
     "accessDenied": "You do not have permission to view the list of posted jobs.",
-    "noPermissionAction": "You do not have permission to perform this action."
+    "noPermissionAction": "You do not have permission to perform this action.",
+    "dashboardBreadcrumb": "CLIENT DASHBOARD / MY JOBS",
+    "managePostedJobs": "Manage Posted Jobs",
+    "managePostedJobsSubtitle": "Track recruitment status, review quality applications, and supervise contracts in progress",
+    "draftBox": "Draft Box ({count})",
+    "postNewJob": "Post New Job",
+    "statActive": "Active Recruiting",
+    "statActiveUnit": "jobs",
+    "statProposals": "Total Proposals",
+    "statProposalsUnit": "proposals",
+    "statInProgress": "In Progress",
+    "statInProgressUnit": "jobs",
+    "statCompleted": "Completed",
+    "statCompletedUnit": "jobs",
+    "tabAll": "All",
+    "tabOpen": "Recruiting",
+    "tabInProgress": "In Progress",
+    "tabCompleted": "Completed",
+    "tabClosed": "Closed",
+    "tabDraft": "Drafts",
+    "searchJobsPlaceholder": "Search by job title...",
+    "jobCodeLabel": "ID: #{code}",
+    "postedDaysAgo": "Posted {days}",
+    "fixedPriceLabel": "Fixed price: {price}",
+    "hiringSingle": "Hiring 1 freelancer",
+    "hiringMultiple": "Hiring {count} freelancers",
+    "deadlineLabel": "Deadline: {date}",
+    "expiryLabel": "Apply before: {date}",
+    "budgetNegotiable": "Negotiable",
+    "proposalsMetric": "Proposals",
+    "positionsRequiredMetric": "Required Positions",
+    "positionsFilledMetric": "Positions Filled",
+    "inviteCandidate": "Invite Talent",
+    "editAction": "Edit",
+    "viewProposalsCount": "View {count} Proposals →",
+    "viewDetailAction": "View Details →"
   },
   "postJobForm": {
     "titleLabel": "Job title",
@@ -3187,9 +3218,6 @@
       },
       "SUBMITTED": {
         "message": "You already submitted a proposal for this job."
-      },
-      "INTERVIEWING": {
-        "message": "The client is interviewing you for this job."
       },
       "HIRED": {
         "message": "You have been hired for this job. Sign the contract to start."

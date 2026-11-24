@@ -2,24 +2,34 @@
 
 import { useFormatter, useTranslations } from "next-intl";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { motion } from "motion/react";
 import {
+  Bookmark,
+  BookmarkCheck,
   Briefcase,
+  Calendar,
+  CheckCircle2,
+  ChevronLeft,
+  ChevronRight,
+  Clock,
+  CreditCard,
   Edit2,
   Ellipsis,
   Eye,
-  FileText,
+  Inbox,
+  Loader2,
+  Megaphone,
   Plus,
+  Search,
   Trash2,
   TrendingUp,
-  Clock,
-  CheckCircle2,
-  XCircle,
-  ChevronLeft,
-  ChevronRight,
+  User,
+  UserCheck,
+  Users,
   X,
+  XCircle,
 } from "@/components/icons";
 
 import jobApiRequest from "@/apiRequests/job";
@@ -53,432 +63,43 @@ type JobListProps = {
     total: number;
     totalPages: number;
   };
+  overviewJobs?: JobType[];
+  initialSearch?: string;
+  initialStatus?: string;
 };
 
-type StatusFilterType =
+type TabFilterType =
   | "ALL"
-  | "DRAFT"
   | "OPEN"
   | "IN_PROGRESS"
   | "COMPLETED"
-  | "CLOSED";
+  | "CLOSED"
+  | "DRAFT";
 
-const JOB_STATUS_KEYS = [
-  "DRAFT",
-  "OPEN",
-  "IN_PROGRESS",
-  "COMPLETED",
-  "CLOSED",
-  "CANCELLED",
-] as const;
-
-const JOB_BUDGET_TYPE_KEYS = ["FIXED_PRICE"] as const;
-
-interface StatusCapsuleBarProps {
-  currentFilter: StatusFilterType;
-  onSelectFilter: (filter: StatusFilterType) => void;
-  counts: {
-    all: number;
-    draft: number;
-    open: number;
-    inProgress: number;
-    completed: number;
-    closed: number;
-  };
-}
-
-function StatusCapsuleBar({
-  currentFilter,
-  onSelectFilter,
-  counts,
-}: StatusCapsuleBarProps) {
-  const t = useTranslations("jobsList");
-  const tStatus = useTranslations("jobStatus");
-  const items = [
-    {
-      id: "ALL" as const,
-      label: t("allJobs"),
-      count: counts.all,
-      icon: Briefcase,
-      circleClass:
-        "bg-[#F1F0F5] shadow-blue-500/20 dark:bg-blue-700 dark:shadow-blue-700/20",
-    },
-    {
-      id: "DRAFT" as const,
-      label: tStatus("DRAFT"),
-      count: counts.draft,
-      icon: FileText,
-      circleClass:
-        "bg-[#F1F0F5] shadow-amber-500/20 dark:bg-amber-700 dark:shadow-amber-700/20",
-    },
-    {
-      id: "OPEN" as const,
-      label: tStatus("OPEN"),
-      count: counts.open,
-      icon: TrendingUp,
-      circleClass:
-        "bg-[#F1F0F5] shadow-blue-500/20 dark:bg-blue-700 dark:shadow-blue-700/20",
-    },
-    {
-      id: "IN_PROGRESS" as const,
-      label: tStatus("IN_PROGRESS"),
-      count: counts.inProgress,
-      icon: Clock,
-      circleClass:
-        "bg-[#F1F0F5] shadow-blue-500/20 dark:bg-blue-700 dark:shadow-blue-700/20",
-    },
-    {
-      id: "COMPLETED" as const,
-      label: tStatus("COMPLETED"),
-      count: counts.completed,
-      icon: CheckCircle2,
-      circleClass:
-        "bg-[#F1F0F5] shadow-purple-500/20 dark:bg-purple-700 dark:shadow-purple-700/20",
-    },
-    {
-      id: "CLOSED" as const,
-      label: tStatus("CLOSED"),
-      count: counts.closed,
-      icon: XCircle,
-      circleClass:
-        "bg-[#F1F0F5] shadow-stone-500/20 dark:bg-stone-700 dark:shadow-stone-700/20",
-    },
-  ];
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.35, delay: 0.1 }}
-      className="mt-6 w-full rounded-full bg-[#F3F3F7] p-0.5 border border-black/5 dark:bg-zinc-900/90 dark:border-white/10"
-    >
-      <div className="grid grid-cols-7 w-full items-center gap-1">
-        {items.map((item) => {
-          const isActive = currentFilter === item.id;
-          const Icon = item.icon;
-          return (
-            <button
-              key={item.id}
-              type="button"
-              onClick={() => onSelectFilter(item.id)}
-              className={`group flex items-center gap-1.5 sm:gap-2 rounded-full py-1 sm:py-1.5 px-2.5 sm:px-3 transition-all duration-200 cursor-pointer overflow-hidden ${
-                isActive
-                  ? "col-span-2 bg-white text-foreground shadow-xs font-semibold justify-between dark:bg-zinc-800"
-                  : "col-span-1 text-muted-foreground hover:text-foreground hover:bg-white/60 dark:hover:bg-zinc-800/60 font-medium justify-center"
-              }`}
-            >
-              <div className="flex items-center gap-1.5 sm:gap-2 min-w-0">
-                <div
-                  className={`flex size-5 sm:size-5.5 shrink-0 items-center justify-center rounded-full text-gray-600 transition-transform duration-200 group-hover:scale-105 ${item.circleClass}`}
-                >
-                  <Icon className="size-3 sm:size-3.5" />
-                </div>
-
-                <span
-                  className={`text-xs truncate ${
-                    isActive
-                      ? "font-semibold text-foreground inline-block"
-                      : "hidden lg:inline text-muted-foreground group-hover:text-foreground"
-                  }`}
-                >
-                  {item.label}
-                </span>
-              </div>
-
-              <span
-                className={`flex h-4 min-w-4 sm:h-4.5 sm:min-w-4.5 shrink-0 items-center justify-center rounded-full px-1 text-[10px] font-bold ${
-                  isActive
-                    ? "bg-muted text-foreground"
-                    : "bg-black/5 text-muted-foreground dark:bg-white/10 group-hover:text-foreground"
-                }`}
-              >
-                {item.count}
-              </span>
-            </button>
-          );
-        })}
-      </div>
-    </motion.div>
+function formatRelativeDays(dateInput: Date | string | null): string {
+  if (!dateInput) return "vừa xong";
+  const date = new Date(dateInput);
+  const now = new Date();
+  const diffDays = Math.floor(
+    (now.getTime() - date.getTime()) / (1000 * 60 * 60 * 24),
   );
-}
-
-function JobRowCard({
-  job,
-  index,
-  onEdit,
-  onDelete,
-  onPublish,
-  onClose,
-  onReopen,
-}: {
-  job: JobType;
-  index: number;
-  onEdit: (job: JobType) => void;
-  onDelete: (id: number) => void;
-  onPublish: (id: number) => void;
-  onClose: (id: number) => void;
-  onReopen: (id: number) => void;
-}) {
-  const t = useTranslations("jobsList");
-  const tStatus = useTranslations("jobStatus");
-  const tBudgetType = useTranslations("jobBudgetType");
-  const format = useFormatter();
-  const { can } = useActionPermission();
-
-  const canViewDetail = can("GET", "/api/manage-jobs/:id");
-  const canUpdate = can("PATCH", "/api/manage-jobs/:id");
-  const canDelete = can("DELETE", "/api/manage-jobs/:id");
-  const canPublish = can("PATCH", "/api/manage-jobs/:id/publish");
-  const canClose = can("PATCH", "/api/manage-jobs/:id/close");
-  const canReopen = can("PATCH", "/api/manage-jobs/:id/reopen");
-
-  const formattedDate = job.createdAt
-    ? format.dateTime(new Date(job.createdAt), {
-        day: "numeric",
-        month: "short",
-        year: "numeric",
-      })
-    : null;
-
-  const currentStatusLabel = (JOB_STATUS_KEYS as readonly string[]).includes(
-    job.status,
-  )
-    ? tStatus(job.status)
-    : job.status;
-
-  const budgetTypeLabel = (
-    JOB_BUDGET_TYPE_KEYS as readonly string[]
-  ).includes(job.budgetType)
-    ? tBudgetType(job.budgetType)
-    : job.budgetType;
-
-  const money = (value: number) =>
-    format.number(value, {
-      style: "currency",
-      currency: "USD",
-      maximumFractionDigits: 0,
-    });
-
-  const isDraft = job.status === "DRAFT";
-  const isOpen = job.status === "OPEN";
-  const isClosed = job.status === "CLOSED";
-  const isInProgress = job.status === "IN_PROGRESS";
-  const isEditable = isDraft || isOpen || isClosed;
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 8 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{
-        duration: 0.3,
-        delay: index * 0.03,
-      }}
-      className="group relative flex items-center justify-between gap-4 rounded-full border border-border bg-card p-4 sm:p-5 transition-colors hover:bg-accent/10"
-    >
-      {/* Tiêu đề in đậm, Số tiền & Ngày tạo */}
-      <div className="flex-col min-w-0 flex-wrap items-center gap-x-3.5 gap-y-1">
-        {canViewDetail ? (
-          <Link
-            href={`/client/jobs/${job.id}`}
-            className="text-base text-foreground transition-colors hover:text-foreground/80 line-clamp-1"
-          >
-            {job.title}
-          </Link>
-        ) : (
-          <span className="text-base font-semibold text-foreground/80 line-clamp-1">
-            {job.title}
-          </span>
-        )}
-        <span className="shrink-0 text-xs font-normal text-muted-foreground">
-          {t("budgetLine", {
-            min: money(job.budgetMin ?? 0),
-            max: money(job.budgetMax ?? 0),
-            type: budgetTypeLabel,
-          })}
-        </span>
-        {formattedDate && (
-          <span className="shrink-0 text-xs font-normal text-muted-foreground">
-            {" "}• {formattedDate}
-          </span>
-        )}
-      </div>
-
-      {/* Cụm hành động nằm ngang: Status badge, Quick action, icon 3 chấm */}
-      <div className="flex shrink-0 items-center gap-2">
-        {/* Status Badge */}
-        <div
-          className={`inline-flex h-9 items-center gap-1.5 rounded-full px-3.5 text-xs font-semibold select-none ${
-            isOpen
-              ? "bg-blue-50 text-[#0069D3] border border-blue-200/60 dark:bg-blue-950/40 dark:text-blue-300 dark:border-blue-800/40"
-              : isDraft
-                ? "bg-amber-50 text-amber-700 border border-amber-200/60 dark:bg-amber-950/40 dark:text-amber-400 dark:border-amber-800/40"
-                : isInProgress
-                  ? "bg-blue-50 text-blue-700 border border-blue-200/60 dark:bg-blue-950/40 dark:text-blue-400 dark:border-blue-800/40"
-                  : job.status === "COMPLETED"
-                    ? "bg-purple-50 text-purple-700 border border-purple-200/60 dark:bg-purple-950/40 dark:text-purple-400 dark:border-purple-800/40"
-                    : "bg-stone-100 text-stone-600 border border-stone-200/60 dark:bg-stone-800 dark:text-stone-300 dark:border-stone-700"
-          }`}
-        >
-          <span className="size-1.5 rounded-full bg-current" />
-          <span>{currentStatusLabel}</span>
-        </div>
-
-        {/* Quick action button for primary transitions */}
-        {isDraft && canPublish && (
-          <button
-            type="button"
-            onClick={() => onPublish(job.id)}
-            className="inline-flex h-9 items-center gap-1.5 rounded-full bg-[#0069D3] hover:bg-[#005bb8] text-white px-3.5 text-xs font-semibold transition-colors cursor-pointer shadow-xs"
-          >
-            <TrendingUp className="size-3.5" />
-            <span>{t("publish")}</span>
-          </button>
-        )}
-
-        {isClosed && canReopen && (
-          <button
-            type="button"
-            onClick={() => onReopen(job.id)}
-            className="inline-flex h-9 items-center gap-1.5 rounded-full bg-[#EAE9F0] hover:bg-[#D0E1F8] text-[#0069D3] dark:bg-zinc-800 dark:text-blue-300 px-3.5 text-xs font-semibold transition-colors cursor-pointer"
-          >
-            <CheckCircle2 className="size-3.5" />
-            <span>{t("reopen")}</span>
-          </button>
-        )}
-
-        {/* 3-dot Action Menu (View, Publish, Close, Reopen, Edit & Delete) */}
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <button
-              type="button"
-              className="flex size-8 items-center justify-center rounded-full bg-[#F3F3F7] dark:bg-zinc-800 hover:bg-[#EAE9F0] dark:hover:bg-zinc-700 text-muted-foreground hover:text-foreground cursor-pointer transition-colors outline-none"
-              title={t("moreOptions")}
-            >
-              <Ellipsis className="size-4" />
-            </button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent
-            align="end"
-            sideOffset={6}
-            className="w-52 rounded-[24px] border border-black/5 dark:border-white/10 bg-white dark:bg-zinc-900 p-2 shadow-2xl shadow-black/10 flex flex-col gap-1.5"
-          >
-            {/* View Job Detail */}
-            <DropdownMenuItem
-              asChild
-              className="group flex items-center justify-between rounded-full px-3 py-2 bg-[#F3F3F7] hover:bg-[#EAE9F0] focus:bg-[#EAE9F0] dark:bg-zinc-800/60 dark:hover:bg-zinc-800 dark:focus:bg-zinc-800 cursor-pointer transition-all duration-200 outline-none"
-            >
-              <Link href={`/client/jobs/${job.id}`}>
-                <div className="flex items-center gap-2.5">
-                  <div className="flex size-7 shrink-0 items-center justify-center rounded-full bg-white dark:bg-zinc-700 text-foreground shadow-xs transition-transform group-hover:scale-105">
-                    <Eye className="size-3.5" />
-                  </div>
-                  <span className="text-xs font-medium text-foreground">
-                    {t("viewDetail")}
-                  </span>
-                </div>
-                <ChevronRight className="size-3.5 text-muted-foreground/50 group-hover:text-foreground group-hover:translate-x-0.5 transition-all shrink-0 ml-2" />
-              </Link>
-            </DropdownMenuItem>
-
-            {/* UC-11.03 Publish Job */}
-            {isDraft && canPublish && (
-              <DropdownMenuItem
-                onClick={() => onPublish(job.id)}
-                className="group flex items-center justify-between rounded-full px-3 py-2 bg-[#F3F3F7] hover:bg-[#EAE9F0] focus:bg-[#EAE9F0] dark:bg-zinc-800/60 dark:hover:bg-zinc-800 dark:focus:bg-zinc-800 cursor-pointer transition-all duration-200 outline-none text-[#0069D3] dark:text-blue-300"
-              >
-                <div className="flex items-center gap-2.5">
-                  <div className="flex size-7 shrink-0 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900/50 text-[#0069D3] dark:text-blue-300 shadow-xs transition-transform group-hover:scale-105">
-                    <TrendingUp className="size-3.5" />
-                  </div>
-                  <span className="text-xs font-medium">{t("publish")}</span>
-                </div>
-                <ChevronRight className="size-3.5 text-blue-400/50 group-hover:text-[#0069D3] group-hover:translate-x-0.5 transition-all shrink-0 ml-2" />
-              </DropdownMenuItem>
-            )}
-
-            {/* UC-11.06 Close Job */}
-            {isOpen && canClose && (
-              <DropdownMenuItem
-                onClick={() => onClose(job.id)}
-                className="group flex items-center justify-between rounded-full px-3 py-2 bg-[#F3F3F7] hover:bg-stone-100 focus:bg-stone-100 dark:bg-zinc-800/60 dark:hover:bg-zinc-800 dark:focus:bg-zinc-800 cursor-pointer transition-all duration-200 outline-none text-stone-700 dark:text-stone-300"
-              >
-                <div className="flex items-center gap-2.5">
-                  <div className="flex size-7 shrink-0 items-center justify-center rounded-full bg-stone-200 dark:bg-stone-800 text-stone-700 dark:text-stone-300 shadow-xs transition-transform group-hover:scale-105">
-                    <XCircle className="size-3.5" />
-                  </div>
-                  <span className="text-xs font-medium">{t("close")}</span>
-                </div>
-                <ChevronRight className="size-3.5 text-muted-foreground/50 group-hover:text-foreground group-hover:translate-x-0.5 transition-all shrink-0 ml-2" />
-              </DropdownMenuItem>
-            )}
-
-            {/* UC-11.07 Reopen Job */}
-            {isClosed && canReopen && (
-              <DropdownMenuItem
-                onClick={() => onReopen(job.id)}
-                className="group flex items-center justify-between rounded-full px-3 py-2 bg-[#F3F3F7] hover:bg-[#EAE9F0] focus:bg-[#EAE9F0] dark:bg-zinc-800/60 dark:hover:bg-zinc-800 dark:focus:bg-zinc-800 cursor-pointer transition-all duration-200 outline-none text-[#0069D3] dark:text-blue-300"
-              >
-                <div className="flex items-center gap-2.5">
-                  <div className="flex size-7 shrink-0 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900/50 text-[#0069D3] dark:text-blue-300 shadow-xs transition-transform group-hover:scale-105">
-                    <CheckCircle2 className="size-3.5" />
-                  </div>
-                  <span className="text-xs font-medium">{t("reopen")}</span>
-                </div>
-                <ChevronRight className="size-3.5 text-blue-400/50 group-hover:text-[#0069D3] group-hover:translate-x-0.5 transition-all shrink-0 ml-2" />
-              </DropdownMenuItem>
-            )}
-
-            {/* UC-11.04 Update Job */}
-            {isEditable && canUpdate && (
-              <DropdownMenuItem
-                onClick={() => onEdit(job)}
-                className="group flex items-center justify-between rounded-full px-3 py-2 bg-[#F3F3F7] hover:bg-[#EAE9F0] focus:bg-[#EAE9F0] dark:bg-zinc-800/60 dark:hover:bg-zinc-800 dark:focus:bg-zinc-800 cursor-pointer transition-all duration-200 outline-none"
-              >
-                <div className="flex items-center gap-2.5">
-                  <div className="flex size-7 shrink-0 items-center justify-center rounded-full bg-white dark:bg-zinc-700 text-foreground shadow-xs transition-transform group-hover:scale-105">
-                    <Edit2 className="size-3.5" />
-                  </div>
-                  <span className="text-xs font-medium text-foreground">
-                    {t("edit")}
-                  </span>
-                </div>
-                <ChevronRight className="size-3.5 text-muted-foreground/50 group-hover:text-foreground group-hover:translate-x-0.5 transition-all shrink-0 ml-2" />
-              </DropdownMenuItem>
-            )}
-
-            {/* UC-11.05 Delete Job */}
-            {!isInProgress && canDelete && (
-              <DropdownMenuItem
-                onClick={() => onDelete(job.id)}
-                className="group flex items-center justify-between rounded-full px-3 py-2 bg-[#F3F3F7] hover:bg-red-50 focus:bg-red-50 dark:bg-zinc-800/60 dark:hover:bg-red-950/40 dark:focus:bg-red-950/40 cursor-pointer transition-all duration-200 outline-none text-red-600 dark:text-red-400"
-              >
-                <div className="flex items-center gap-2.5">
-                  <div className="flex size-7 shrink-0 items-center justify-center rounded-full bg-red-100 dark:bg-red-900/50 text-red-600 dark:text-red-400 shadow-xs transition-transform group-hover:scale-105">
-                    <Trash2 className="size-3.5" />
-                  </div>
-                  <span className="text-xs font-medium text-red-600 dark:text-red-400">
-                    {t("delete")}
-                  </span>
-                </div>
-                <ChevronRight className="size-3.5 text-red-400/50 group-hover:text-red-600 group-hover:translate-x-0.5 transition-all shrink-0 ml-2" />
-              </DropdownMenuItem>
-            )}
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </div>
-    </motion.div>
-  );
+  if (diffDays <= 0) return "hôm nay";
+  if (diffDays === 1) return "1 ngày trước";
+  return `${diffDays} ngày trước`;
 }
 
 export function JobList({
   initialJobs,
   pagination,
+  overviewJobs = [],
+  initialSearch = "",
+  initialStatus,
 }: JobListProps) {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const t = useTranslations("jobsList");
-  const tStatus = useTranslations("jobStatus");
-  const tSidebar = useTranslations("sidebar");
   const tCommon = useTranslations("common");
+  const format = useFormatter();
   const { can, isLoading: isPermissionLoading } = useActionPermission();
 
   const canViewList = can("GET", "/api/manage-jobs");
@@ -489,11 +110,134 @@ export function JobList({
   const canReopen = can("PATCH", "/api/manage-jobs/:id/reopen");
 
   const [jobs, setJobs] = useState<JobType[]>(initialJobs);
+  const [paginationState, setPaginationState] = useState(pagination);
+  const [activeTab, setActiveTab] = useState<TabFilterType>(
+    (initialStatus as TabFilterType) || "ALL",
+  );
+  const [searchQuery, setSearchQuery] = useState(initialSearch);
+  const [debouncedSearch, setDebouncedSearch] = useState(initialSearch);
+  const [isSearching, setIsSearching] = useState(false);
+  const [bookmarkedJobIds, setBookmarkedJobIds] = useState<Set<number>>(
+    new Set(),
+  );
 
+  const isFirstMount = useRef(true);
+  const searchParamsRef = useRef(searchParams);
+  searchParamsRef.current = searchParams;
+
+  // Giữ jobs và pagination đồng bộ khi initialJobs/pagination từ server thay đổi
   useEffect(() => {
     setJobs(initialJobs);
   }, [initialJobs]);
-  const [statusFilter, setStatusFilter] = useState<StatusFilterType>("ALL");
+
+  useEffect(() => {
+    setPaginationState(pagination);
+  }, [pagination]);
+
+  // Debounce 400ms: reset timer khi người dùng tiếp tục gõ phím
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(searchQuery);
+    }, 400);
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
+
+  const isDebouncing = searchQuery !== debouncedSearch;
+  const isBusy = isDebouncing || isSearching;
+
+  // Khi debouncedSearch hoặc activeTab thay đổi: gọi API và cập nhật URL
+  useEffect(() => {
+    if (isFirstMount.current) {
+      isFirstMount.current = false;
+      return;
+    }
+
+    const trimmed = debouncedSearch.trim();
+    const currentSearch = searchParamsRef.current.get("search") || "";
+
+    // 1. Cập nhật query param trên URL
+    if (trimmed !== currentSearch) {
+      const params = new URLSearchParams(searchParamsRef.current.toString());
+      if (trimmed) {
+        params.set("search", trimmed);
+      } else {
+        params.delete("search");
+      }
+      params.delete("page");
+      router.replace(`?${params.toString()}`, { scroll: false });
+    }
+
+    // 2. Gọi trực tiếp API getClientJobs với debounce 400ms để hiển thị kết quả và Network tab
+    let isCancelled = false;
+    const fetchJobs = async () => {
+      setIsSearching(true);
+      try {
+        const res = await jobApiRequest.getClientJobs({
+          search: trimmed || undefined,
+          status: activeTab !== "ALL" ? activeTab : undefined,
+          page: 1,
+          limit: 10,
+        });
+        if (!isCancelled && res.data) {
+          setJobs(res.data.data);
+          if (res.data.pagination) {
+            setPaginationState(res.data.pagination);
+          }
+        }
+      } catch (error) {
+        console.error("Lỗi tìm kiếm công việc:", error);
+      } finally {
+        if (!isCancelled) {
+          setIsSearching(false);
+        }
+      }
+    };
+
+    void fetchJobs();
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [debouncedSearch, activeTab, router]);
+
+  const handleTabChange = (tab: TabFilterType) => {
+    setActiveTab(tab);
+    const params = new URLSearchParams(searchParams.toString());
+    if (tab === "ALL") {
+      params.delete("status");
+    } else {
+      params.set("status", tab);
+    }
+    params.delete("page");
+    router.replace(`?${params.toString()}`, { scroll: false });
+  };
+
+  const handlePageChange = async (newPage: number) => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("page", String(newPage));
+    router.replace(`?${params.toString()}`, { scroll: false });
+
+    setIsSearching(true);
+    try {
+      const res = await jobApiRequest.getClientJobs({
+        search: debouncedSearch.trim() || undefined,
+        status: activeTab !== "ALL" ? activeTab : undefined,
+        page: newPage,
+        limit: 10,
+      });
+      if (res.data) {
+        setJobs(res.data);
+        if (res.pagination) {
+          setPaginationState(res.pagination);
+        }
+      }
+    } catch (err) {
+      console.error("Lỗi chuyển trang:", err);
+    } finally {
+      setIsSearching(false);
+    }
+  };
+
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingJob, setEditingJob] = useState<JobType | null>(null);
   const [pendingDeleteJobId, setPendingDeleteJobId] = useState<number | null>(
@@ -504,28 +248,103 @@ export function JobList({
   );
   const [isPublishing, setIsPublishing] = useState(false);
 
-  const draftCount = jobs.filter((j) => j.status === "DRAFT").length;
-  const openCount = jobs.filter((j) => j.status === "OPEN").length;
-  const inProgressCount = jobs.filter((j) => j.status === "IN_PROGRESS").length;
-  const completedCount = jobs.filter((j) => j.status === "COMPLETED").length;
-  const closedCount = jobs.filter(
-    (j) => j.status === "CLOSED" || j.status === "CANCELLED",
-  ).length;
+  const toggleBookmark = (jobId: number) => {
+    setBookmarkedJobIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(jobId)) {
+        next.delete(jobId);
+      } else {
+        next.add(jobId);
+      }
+      return next;
+    });
+  };
 
-  const filteredJobs = jobs.filter((job) => {
-    if (statusFilter === "ALL") return true;
-    if (statusFilter === "CLOSED") {
-      return job.status === "CLOSED" || job.status === "CANCELLED";
+  const handleClearSearch = () => {
+    setSearchQuery("");
+    setDebouncedSearch("");
+    const params = new URLSearchParams(searchParams.toString());
+    params.delete("search");
+    params.delete("page");
+    router.replace(`?${params.toString()}`, { scroll: false });
+
+    if (debouncedSearch === "") {
+      void jobApiRequest
+        .getClientJobs({
+          status: activeTab !== "ALL" ? activeTab : undefined,
+          page: 1,
+          limit: 10,
+        })
+        .then((res) => {
+          if (res.data) {
+            setJobs(res.data);
+            if (res.pagination) setPaginationState(res.pagination);
+          }
+        });
     }
-    return job.status === statusFilter;
-  });
+  };
 
-  const filterLabel =
-    statusFilter === "ALL"
-      ? t("allJobs")
-      : (JOB_STATUS_KEYS as readonly string[]).includes(statusFilter)
-        ? tStatus(statusFilter)
-        : statusFilter;
+  // Metric counts based on overview stats jobs
+  const statsSource = overviewJobs.length > 0 ? overviewJobs : jobs;
+
+  const draftJobs = useMemo(
+    () => statsSource.filter((j) => j.status === "DRAFT"),
+    [statsSource],
+  );
+  const openJobs = useMemo(
+    () => statsSource.filter((j) => j.status === "OPEN"),
+    [statsSource],
+  );
+  const inProgressJobs = useMemo(
+    () => statsSource.filter((j) => j.status === "IN_PROGRESS"),
+    [statsSource],
+  );
+  const completedJobs = useMemo(
+    () => statsSource.filter((j) => j.status === "COMPLETED"),
+    [statsSource],
+  );
+  const closedJobs = useMemo(
+    () =>
+      statsSource.filter((j) => j.status === "CLOSED" || j.status === "CANCELLED"),
+    [statsSource],
+  );
+
+  const draftCount = draftJobs.length;
+  const openCount = openJobs.length;
+  const inProgressCount = inProgressJobs.length;
+  const completedCount = completedJobs.length;
+  const closedCount = closedJobs.length;
+
+  const totalProposals = useMemo(
+    () => statsSource.reduce((acc, j) => acc + (j.proposalsCount ?? 0), 0),
+    [statsSource],
+  );
+
+  // Filtered jobs based on tab and search
+  const filteredJobs = useMemo(() => {
+    let list = jobs;
+
+    if (activeTab === "DRAFT") {
+      list = list.filter((j) => j.status === "DRAFT");
+    } else if (activeTab === "OPEN") {
+      list = list.filter((j) => j.status === "OPEN");
+    } else if (activeTab === "IN_PROGRESS") {
+      list = list.filter((j) => j.status === "IN_PROGRESS");
+    } else if (activeTab === "COMPLETED") {
+      list = list.filter((j) => j.status === "COMPLETED");
+    } else if (activeTab === "CLOSED") {
+      list = list.filter(
+        (j) => j.status === "CLOSED" || j.status === "CANCELLED",
+      );
+    }
+
+    if (debouncedSearch.trim()) {
+      const q = debouncedSearch.toLowerCase().trim();
+      list = list.filter((j) => j.title.toLowerCase().includes(q));
+    }
+
+    return list;
+  }, [jobs, activeTab, debouncedSearch]);
 
   const saveJob = (saved: JobType) => {
     setJobs((prev) => {
@@ -598,9 +417,7 @@ export function JobList({
       const response = await jobApiRequest.reopenJob(id);
       if (!response.success) throw new Error();
       setJobs((current) =>
-        current.map((job) =>
-          job.id === id ? { ...job, status: "OPEN" } : job,
-        ),
+        current.map((job) => (job.id === id ? { ...job, status: "OPEN" } : job)),
       );
       toastSuccess({ message: t("reopened") });
       router.refresh();
@@ -641,274 +458,631 @@ export function JobList({
   }
 
   return (
-    <div className="min-h-full bg-background font-sans">
-      {/* ── Page Header ── */}
-      <section className="border-b border-border bg-background">
-        <div className="px-6 pt-8 pb-6 lg:px-8">
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <div>
-              <motion.h1
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-                className="text-2xl font-semibold tracking-tight text-foreground sm:text-3xl"
-              >
-                {tSidebar("navMyJobs")}
-              </motion.h1>
-            </div>
-
-            {canCreate && (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.35, delay: 0.15 }}
-              >
-                <Button
-                  asChild
-                  className="gap-2 rounded-full px-5 py-2.5 bg-[#0069D3] hover:bg-[#005bb8] text-white text-sm font-semibold shadow-xs cursor-pointer transition-colors"
-                >
-                  <Link href="/client/jobs/new">
-                    <Plus className="size-4" />
-                    {t("postJob")}
-                  </Link>
-                </Button>
-              </motion.div>
-            )}
+    <div className="min-h-full bg-[#F9FAFC] dark:bg-zinc-950 font-sans pb-16">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
+        {/* ── Top Header Bar ── */}
+        <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
+          <div>
+            <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-foreground">
+              {t("managePostedJobs")}
+            </h1>
+            <p className="text-xs sm:text-sm text-muted-foreground mt-1.5 max-w-2xl leading-relaxed">
+              {t("managePostedJobsSubtitle")}
+            </p>
           </div>
 
-          {/* Full-width Capsule Status Bar */}
-          <StatusCapsuleBar
-            currentFilter={statusFilter}
-            onSelectFilter={setStatusFilter}
-            counts={{
-              all: jobs.length,
-              draft: draftCount,
-              open: openCount,
-              inProgress: inProgressCount,
-              completed: completedCount,
-              closed: closedCount,
-            }}
-          />
-        </div>
-      </section>
-
-      {/* ── Job list (Horizontal Cards) ── */}
-      <div className="px-6 py-8 lg:px-8">
-        {filteredJobs.length ? (
-          <>
-            <div className="space-y-3">
-              {filteredJobs.map((job, i) => (
-                <JobRowCard
-                  key={job.id}
-                  job={job}
-                  index={i}
-                  onEdit={(j) => {
-                    setEditingJob(j);
-                    setIsFormOpen(true);
-                  }}
-                  onDelete={setPendingDeleteJobId}
-                  onPublish={setPendingPublishJobId}
-                  onClose={closeJob}
-                  onReopen={reopenJob}
-                />
-              ))}
-            </div>
-
-            {pagination.totalPages > 1 && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.4 }}
-                className="mt-8 flex items-center justify-between border-t border-border pt-4"
-              >
-                <p className="font-mono text-xs text-muted-foreground">
-                  {tCommon("pageOf", {
-                    page: pagination.page,
-                    totalPages: pagination.totalPages,
-                  })}
-                </p>
-                <div className="flex gap-1.5">
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    className="size-8 rounded-xl"
-                    disabled={pagination.page <= 1}
-                    onClick={() =>
-                      router.push(`/client/jobs?page=${pagination.page - 1}`)
-                    }
-                  >
-                    <ChevronLeft className="size-4" />
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    className="size-8 rounded-xl"
-                    disabled={pagination.page >= pagination.totalPages}
-                    onClick={() =>
-                      router.push(`/client/jobs?page=${pagination.page + 1}`)
-                    }
-                  >
-                    <ChevronRight className="size-4" />
-                  </Button>
-                </div>
-              </motion.div>
-            )}
-          </>
-        ) : jobs.length ? (
-          <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.35 }}
-            className="flex flex-col items-center justify-center rounded-2xl border border-border bg-card/40 px-6 py-16 text-center"
-          >
-            <div className="mb-3 flex size-10 items-center justify-center rounded-2xl bg-muted text-muted-foreground">
-              <Briefcase className="size-5" />
-            </div>
-            <p className="text-sm font-semibold text-foreground">
-              {t("noJobsForStatus", { status: filterLabel })}
-            </p>
-            <p className="mx-auto mt-1 max-w-xs text-xs text-muted-foreground">
-              {t("noJobsForStatusHint")}
-            </p>
-            <Button
-              variant="outline"
-              size="sm"
-              className="mt-4 rounded-xl text-xs cursor-pointer"
-              onClick={() => setStatusFilter("ALL")}
+          <div className="flex items-center gap-3 shrink-0">
+            {/* Kho bản nháp button */}
+            <button
+              type="button"
+              onClick={() => handleTabChange(activeTab === "DRAFT" ? "ALL" : "DRAFT")}
+              className={`rounded-xl border px-4 py-2.5 text-xs sm:text-sm font-semibold flex items-center gap-2 cursor-pointer transition-all shadow-xs ${
+                activeTab === "DRAFT"
+                  ? "border-[#0069D3] bg-blue-50 text-[#0069D3] dark:bg-blue-950/40 dark:text-blue-300"
+                  : "border-border/80 bg-white hover:bg-muted/70 text-foreground dark:bg-zinc-900"
+              }`}
             >
-              {t("showAllJobs", { count: jobs.length })}
-            </Button>
-          </motion.div>
-        ) : (
-          <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4 }}
-            className="flex flex-col items-center justify-center rounded-2xl border border-border bg-card/40 px-6 py-20 text-center"
-          >
-            <div className="mb-4 flex size-12 items-center justify-center rounded-2xl bg-muted text-muted-foreground">
-              <Briefcase className="size-6" />
-            </div>
-            <p className="text-base font-semibold text-foreground">
-              {t("noJobsTitle")}
-            </p>
-            <p className="mx-auto mt-1 max-w-xs text-xs text-muted-foreground">
-              {t("noJobsHint")}
-            </p>
+              <Inbox className="size-4 text-muted-foreground" />
+              <span>{t("draftBox", { count: draftCount })}</span>
+            </button>
+
+            {/* + Đăng việc mới button */}
             {canCreate && (
               <Button
                 asChild
-                className="mt-6 gap-2 rounded-xl bg-foreground text-xs font-medium text-background hover:bg-foreground/90"
+                className="rounded-xl bg-[#0069D3] hover:bg-[#005bb8] text-white text-xs sm:text-sm font-semibold px-5 py-2.5 shadow-sm shadow-blue-500/20 flex items-center gap-2 cursor-pointer transition-all active:scale-[0.98]"
               >
                 <Link href="/client/jobs/new">
                   <Plus className="size-4" />
-                  {t("postJob")}
+                  <span>{t("postNewJob")}</span>
                 </Link>
               </Button>
             )}
-          </motion.div>
+          </div>
+        </div>
+
+        {/* ── 4 Overview Statistics Cards (Dữ liệu thực tế của hệ thống) ── */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
+          {/* Card 1: Đang tuyển (Active) */}
+          <div className="rounded-2xl border border-border/80 bg-white dark:bg-zinc-900 p-5 shadow-xs flex flex-col justify-between">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-semibold text-muted-foreground">
+                {t("statActive")}
+              </span>
+              <div className="size-9 rounded-xl bg-blue-50 text-[#0069D3] dark:bg-blue-950/60 dark:text-blue-400 flex items-center justify-center">
+                <Megaphone className="size-4.5" />
+              </div>
+            </div>
+            <div className="mt-4 flex items-baseline gap-1.5">
+              <span className="text-3xl font-black text-foreground tracking-tight">
+                {openCount < 10 ? `0${openCount}` : openCount}
+              </span>
+              <span className="text-xs text-muted-foreground font-semibold">
+                {t("statActiveUnit")}
+              </span>
+            </div>
+          </div>
+
+          {/* Card 2: Tổng đề xuất */}
+          <div className="rounded-2xl border border-border/80 bg-white dark:bg-zinc-900 p-5 shadow-xs flex flex-col justify-between">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-semibold text-muted-foreground">
+                {t("statProposals")}
+              </span>
+              <div className="size-9 rounded-xl bg-blue-50 text-[#0069D3] dark:bg-blue-950/60 dark:text-blue-400 flex items-center justify-center">
+                <UserCheck className="size-4.5" />
+              </div>
+            </div>
+            <div className="mt-4 flex items-baseline gap-1.5">
+              <span className="text-3xl font-black text-foreground tracking-tight">
+                {totalProposals < 10 ? `0${totalProposals}` : totalProposals}
+              </span>
+              <span className="text-xs text-muted-foreground font-semibold">
+                {t("statProposalsUnit")}
+              </span>
+            </div>
+          </div>
+
+          {/* Card 3: Đang thực hiện */}
+          <div className="rounded-2xl border border-border/80 bg-white dark:bg-zinc-900 p-5 shadow-xs flex flex-col justify-between">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-semibold text-muted-foreground">
+                {t("statInProgress")}
+              </span>
+              <div className="size-9 rounded-xl bg-blue-50 text-[#0069D3] dark:bg-blue-950/60 dark:text-blue-400 flex items-center justify-center">
+                <Clock className="size-4.5" />
+              </div>
+            </div>
+            <div className="mt-4 flex items-baseline gap-1.5">
+              <span className="text-3xl font-black text-foreground tracking-tight">
+                {inProgressCount < 10 ? `0${inProgressCount}` : inProgressCount}
+              </span>
+              <span className="text-xs text-muted-foreground font-semibold">
+                {t("statInProgressUnit")}
+              </span>
+            </div>
+          </div>
+
+          {/* Card 4: Đã hoàn thành */}
+          <div className="rounded-2xl border border-border/80 bg-white dark:bg-zinc-900 p-5 shadow-xs flex flex-col justify-between">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-semibold text-muted-foreground">
+                {t("statCompleted")}
+              </span>
+              <div className="size-9 rounded-xl bg-blue-50 text-[#0069D3] dark:bg-blue-950/60 dark:text-blue-400 flex items-center justify-center">
+                <CheckCircle2 className="size-4.5 text-blue-600" />
+              </div>
+            </div>
+            <div className="mt-4 flex items-baseline gap-1.5">
+              <span className="text-3xl font-black text-foreground tracking-tight">
+                {completedCount < 10 ? `0${completedCount}` : completedCount}
+              </span>
+              <span className="text-xs text-muted-foreground font-semibold">
+                {t("statCompletedUnit")}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        {/* ── Tabs & Search Filter Row ── */}
+        <div className="mt-7 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 p-1.5 rounded-2xl bg-white dark:bg-zinc-900 border border-border/80 shadow-xs">
+          {/* Tabs */}
+          <div className="flex items-center gap-1 overflow-x-auto p-0.5 no-scrollbar">
+            {[
+              { id: "ALL" as const, label: t("tabAll"), count: statsSource.length },
+              { id: "OPEN" as const, label: t("tabOpen"), count: openCount },
+              {
+                id: "IN_PROGRESS" as const,
+                label: t("tabInProgress"),
+                count: inProgressCount,
+              },
+              {
+                id: "COMPLETED" as const,
+                label: t("tabCompleted"),
+                count: completedCount,
+              },
+              {
+                id: "CLOSED" as const,
+                label: t("tabClosed"),
+                count: closedCount,
+              },
+              {
+                id: "DRAFT" as const,
+                label: t("tabDraft"),
+                count: draftCount,
+              },
+            ].map((tab) => {
+              const isActive = activeTab === tab.id;
+              return (
+                <button
+                  key={tab.id}
+                  type="button"
+                  onClick={() => handleTabChange(tab.id)}
+                  className={`rounded-xl px-4 py-2 text-xs font-semibold flex items-center gap-2 cursor-pointer transition-all shrink-0 ${
+                    isActive
+                      ? "bg-[#F0F5FC] text-[#0069D3] dark:bg-blue-950/60 dark:text-blue-300 shadow-xs"
+                      : "text-muted-foreground hover:text-foreground hover:bg-muted/60"
+                  }`}
+                >
+                  <span>{tab.label}</span>
+                  {tab.count > 0 && (
+                    <span
+                      className={`size-5 rounded-full text-[10px] font-bold flex items-center justify-center ${
+                        isActive
+                          ? "bg-blue-100 text-[#0069D3] dark:bg-blue-900 dark:text-blue-200"
+                          : "bg-muted text-muted-foreground"
+                      }`}
+                    >
+                      {tab.count}
+                    </span>
+                  )}
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Search Input */}
+          <div className="relative min-w-[240px]">
+            <Search className="size-4 text-muted-foreground absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder={t("searchJobsPlaceholder")}
+              className="w-full rounded-xl border border-border/80 bg-[#F9FAFC] dark:bg-zinc-800/60 pl-9 pr-8 py-2 text-xs placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-[#0069D3] transition-colors"
+            />
+            {isBusy ? (
+              <div className="absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none">
+                <Loader2 className="size-3.5 animate-spin text-[#0069D3]" />
+              </div>
+            ) : searchQuery ? (
+              <button
+                type="button"
+                onClick={handleClearSearch}
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground cursor-pointer p-0.5 rounded-full"
+                title="Xóa tìm kiếm"
+              >
+                <X className="size-3.5" />
+              </button>
+            ) : null}
+          </div>
+        </div>
+
+        {/* ── Job Cards List ── */}
+        <div className="mt-6 space-y-4">
+          {isBusy && jobs.length === 0 ? (
+            <div className="rounded-2xl border border-border/80 bg-white dark:bg-zinc-900 p-12 text-center text-muted-foreground">
+              <Loader2 className="size-8 mx-auto mb-3 animate-spin text-[#0069D3]" />
+              <p className="text-xs text-muted-foreground font-medium">
+                Đang tìm kiếm...
+              </p>
+            </div>
+          ) : filteredJobs.length === 0 ? (
+            <div className="rounded-2xl border border-border/80 bg-white dark:bg-zinc-900 p-12 text-center text-muted-foreground">
+              <Briefcase className="size-12 mx-auto mb-3 text-muted-foreground/40" />
+              <h3 className="text-base font-semibold text-foreground mb-1">
+                {t("noJobsTitle")}
+              </h3>
+              <p className="text-xs text-muted-foreground max-w-sm mx-auto">
+                {t("noJobsHint")}
+              </p>
+            </div>
+          ) : (
+            filteredJobs.map((job, index) => {
+              const isOpen = job.status === "OPEN";
+              const isDraft = job.status === "DRAFT";
+              const isInProgress = job.status === "IN_PROGRESS";
+              const isCompleted = job.status === "COMPLETED";
+              const isClosed =
+                job.status === "CLOSED" || job.status === "CANCELLED";
+
+              const isBookmarked = bookmarkedJobIds.has(job.id);
+              const relativeDate = formatRelativeDays(job.createdAt);
+
+              const statusColorBadge = isOpen
+                ? "bg-blue-50 text-[#0069D3] border border-blue-200/60 dark:bg-blue-950/40 dark:text-blue-300"
+                : isInProgress
+                  ? "bg-emerald-50 text-emerald-700 border border-emerald-200/60 dark:bg-emerald-950/40 dark:text-emerald-300"
+                  : isDraft
+                    ? "bg-amber-50 text-amber-700 border border-amber-200/60 dark:bg-amber-950/40 dark:text-amber-400"
+                    : isCompleted
+                      ? "bg-purple-50 text-purple-700 border border-purple-200/60 dark:bg-purple-950/40 dark:text-purple-300"
+                      : "bg-stone-100 text-stone-600 border border-stone-200/60 dark:bg-stone-800 dark:text-stone-300";
+
+              const statusText = isOpen
+                ? "Đang mở ứng tuyển"
+                : isInProgress
+                  ? "Đang thực hiện"
+                  : isDraft
+                    ? "Bản nháp"
+                    : isCompleted
+                      ? "Hoàn thành"
+                      : "Đã đóng tuyển dụng";
+
+              const formattedBudget =
+                job.budgetMin && job.budgetMax && job.budgetMin !== job.budgetMax
+                  ? `$${Number(job.budgetMin).toLocaleString()} - $${Number(job.budgetMax).toLocaleString()}`
+                  : job.budgetMax
+                    ? `$${Number(job.budgetMax).toLocaleString()}`
+                    : job.budgetMin
+                      ? `$${Number(job.budgetMin).toLocaleString()}`
+                      : t("budgetNegotiable");
+
+              const proposalsCount = job.proposalsCount ?? 0;
+              const isEditable =
+                job.status !== "IN_PROGRESS" && job.status !== "COMPLETED";
+
+              return (
+                <motion.div
+                  key={job.id}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3, delay: index * 0.04 }}
+                  className="rounded-2xl border border-border/80 bg-white dark:bg-zinc-900 p-5 sm:p-6 shadow-xs space-y-4 hover:shadow-md hover:border-[#0069D3]/30 transition-all"
+                >
+                  {/* Top Status & Code Header Row */}
+                  <div className="flex items-center justify-between gap-3 flex-wrap">
+                    <div className="flex items-center gap-2.5 flex-wrap">
+                      <span
+                        className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold ${statusColorBadge}`}
+                      >
+                        <span className="size-1.5 rounded-full bg-current" />
+                        <span>{statusText}</span>
+                      </span>
+                      <span className="text-xs font-medium text-muted-foreground">
+                        {t("jobCodeLabel", { code: job.id })}
+                      </span>
+                      <span className="text-muted-foreground/40">•</span>
+                      <span className="text-xs font-medium text-muted-foreground">
+                        {t("postedDaysAgo", { days: relativeDate })}
+                      </span>
+                    </div>
+
+                    <div className="flex items-center gap-1">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => toggleBookmark(job.id)}
+                        className="size-8 rounded-full text-muted-foreground hover:text-foreground cursor-pointer"
+                      >
+                        {isBookmarked ? (
+                          <BookmarkCheck className="size-4 text-[#0069D3]" />
+                        ) : (
+                          <Bookmark className="size-4" />
+                        )}
+                      </Button>
+
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="size-8 rounded-full text-muted-foreground hover:text-foreground cursor-pointer"
+                          >
+                            <Ellipsis className="size-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent
+                          align="end"
+                          className="w-48 rounded-2xl p-1.5 shadow-xl"
+                        >
+                          <DropdownMenuItem asChild>
+                            <Link
+                              href={`/client/jobs/${job.id}`}
+                              className="flex items-center gap-2 text-xs font-medium cursor-pointer"
+                            >
+                              <Eye className="size-3.5" />
+                              <span>{t("viewDetail")}</span>
+                            </Link>
+                          </DropdownMenuItem>
+
+                          {isDraft && canPublish && (
+                            <DropdownMenuItem
+                              onClick={() => setPendingPublishJobId(job.id)}
+                              className="flex items-center gap-2 text-xs font-medium text-[#0069D3] cursor-pointer"
+                            >
+                              <TrendingUp className="size-3.5" />
+                              <span>{t("publish")}</span>
+                            </DropdownMenuItem>
+                          )}
+
+                          {isOpen && canClose && (
+                            <DropdownMenuItem
+                              onClick={() => void closeJob(job.id)}
+                              className="flex items-center gap-2 text-xs font-medium text-stone-600 cursor-pointer"
+                            >
+                              <XCircle className="size-3.5" />
+                              <span>{t("close")}</span>
+                            </DropdownMenuItem>
+                          )}
+
+                          {isClosed && canReopen && (
+                            <DropdownMenuItem
+                              onClick={() => void reopenJob(job.id)}
+                              className="flex items-center gap-2 text-xs font-medium text-[#0069D3] cursor-pointer"
+                            >
+                              <CheckCircle2 className="size-3.5" />
+                              <span>{t("reopen")}</span>
+                            </DropdownMenuItem>
+                          )}
+
+                          {isEditable && (
+                            <DropdownMenuItem
+                              onClick={() => {
+                                setEditingJob(job);
+                                setIsFormOpen(true);
+                              }}
+                              className="flex items-center gap-2 text-xs font-medium cursor-pointer"
+                            >
+                              <Edit2 className="size-3.5" />
+                              <span>{t("edit")}</span>
+                            </DropdownMenuItem>
+                          )}
+
+                          {job.status !== "IN_PROGRESS" && canDelete && (
+                            <DropdownMenuItem
+                              onClick={() => setPendingDeleteJobId(job.id)}
+                              className="flex items-center gap-2 text-xs font-medium text-red-600 cursor-pointer"
+                            >
+                              <Trash2 className="size-3.5" />
+                              <span>{t("delete")}</span>
+                            </DropdownMenuItem>
+                          )}
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </div>
+                  </div>
+
+                  {/* Job Title */}
+                  <div>
+                    <Link
+                      href={`/client/jobs/${job.id}`}
+                      className="text-lg sm:text-xl font-bold text-foreground hover:text-[#0069D3] transition-colors leading-snug line-clamp-2"
+                    >
+                      {job.title}
+                    </Link>
+                  </div>
+
+                  {/* Meta Pills (Dữ liệu thực tế của job) */}
+                  <div className="flex items-center gap-2.5 flex-wrap">
+                    {/* Ngân sách */}
+                    <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#F3F3F7] dark:bg-zinc-800 text-xs font-semibold text-foreground/80">
+                      <CreditCard className="size-3.5 text-[#0069D3]" />
+                      <span>{t("fixedPriceLabel", { price: formattedBudget })}</span>
+                    </div>
+
+                    {/* Hình thức tuyển dụng */}
+                    <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#F3F3F7] dark:bg-zinc-800 text-xs font-semibold text-foreground/80">
+                      {job.hiringType === "SINGLE" ? (
+                        <>
+                          <User className="size-3.5 text-muted-foreground" />
+                          <span>{t("hiringSingle")}</span>
+                        </>
+                      ) : (
+                        <>
+                          <Users className="size-3.5 text-muted-foreground" />
+                          <span>
+                            {t("hiringMultiple", {
+                              count: job.positionsRequired || 1,
+                            })}
+                          </span>
+                        </>
+                      )}
+                    </div>
+
+                    {/* Hạn chót nếu có */}
+                    {job.deadline && (
+                      <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#F3F3F7] dark:bg-zinc-800 text-xs font-semibold text-foreground/80">
+                        <Clock className="size-3.5 text-muted-foreground" />
+                        <span>
+                          {t("deadlineLabel", {
+                            date: format.dateTime(new Date(job.deadline), {
+                              day: "numeric",
+                              month: "short",
+                              year: "numeric",
+                            }),
+                          })}
+                        </span>
+                      </div>
+                    )}
+
+                    {/* Hạn nhận hồ sơ nếu có */}
+                    {job.expiryDate && (
+                      <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#F3F3F7] dark:bg-zinc-800 text-xs font-semibold text-foreground/80">
+                        <Calendar className="size-3.5 text-muted-foreground" />
+                        <span>
+                          {t("expiryLabel", {
+                            date: format.dateTime(new Date(job.expiryDate), {
+                              day: "numeric",
+                              month: "short",
+                              year: "numeric",
+                            }),
+                          })}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Description Snippet (Chỉ hiển thị khi có mô tả thật) */}
+                  {job.description ? (
+                    <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed line-clamp-2">
+                      {job.description.replace(/<[^>]+>/g, "")}
+                    </p>
+                  ) : null}
+
+                  {/* Skills Tag Pills (Chỉ hiển thị các kỹ năng thực tế) */}
+                  {job.skills && job.skills.length > 0 ? (
+                    <div className="flex items-center gap-1.5 flex-wrap pt-1">
+                      {job.skills.map((s, idx) => (
+                        <span
+                          key={idx}
+                          className="px-2.5 py-1 text-xs rounded-lg bg-[#F3F3F7] dark:bg-zinc-800 text-muted-foreground font-medium"
+                        >
+                          {s.skill.name}
+                        </span>
+                      ))}
+                    </div>
+                  ) : null}
+
+                  {/* Bottom Action Buttons: Chỉ giữ lại Xem chi tiết / Xem proposal */}
+                  <div className="flex items-center justify-end gap-2 pt-3 border-t border-border/60">
+                    <Button
+                      variant={proposalsCount > 0 ? "outline" : "default"}
+                      size="sm"
+                      asChild
+                      className={
+                        proposalsCount > 0
+                          ? "rounded-xl border-border/80 px-4 h-9 text-xs font-semibold cursor-pointer"
+                          : "rounded-xl bg-[#0069D3] hover:bg-[#005bb8] text-white px-5 h-9 text-xs font-semibold shadow-xs cursor-pointer"
+                      }
+                    >
+                      <Link href={`/client/jobs/${job.id}`}>
+                        <span>{t("viewDetail")}</span>
+                      </Link>
+                    </Button>
+
+                    {isDraft && canPublish && (
+                      <Button
+                        size="sm"
+                        onClick={() => setPendingPublishJobId(job.id)}
+                        className="rounded-xl bg-[#0069D3] hover:bg-[#005bb8] text-white px-5 h-9 text-xs font-semibold shadow-xs cursor-pointer"
+                      >
+                        <span>{t("publish")}</span>
+                      </Button>
+                    )}
+
+                    {proposalsCount > 0 && (
+                      <Button
+                        size="sm"
+                        asChild
+                        className="rounded-xl bg-[#0069D3] hover:bg-[#005bb8] text-white px-5 h-9 text-xs font-semibold shadow-xs cursor-pointer"
+                      >
+                        <Link href={`/client/jobs/${job.id}/proposals`}>
+                          <span>
+                            {t("viewProposalsCount", {
+                              count: proposalsCount,
+                            })}
+                          </span>
+                        </Link>
+                      </Button>
+                    )}
+                  </div>
+                </motion.div>
+              );
+            })
+          )}
+        </div>
+
+        {/* Pagination */}
+        {paginationState.totalPages > 1 && (
+          <div className="mt-8 flex items-center justify-between border-t border-border pt-4">
+            <p className="font-mono text-xs text-muted-foreground">
+              {tCommon("pageOf", {
+                page: paginationState.page,
+                totalPages: paginationState.totalPages,
+              })}
+            </p>
+            <div className="flex gap-1.5">
+              <Button
+                variant="outline"
+                size="icon"
+                className="size-8 rounded-xl cursor-pointer"
+                disabled={paginationState.page <= 1}
+                onClick={() => void handlePageChange(paginationState.page - 1)}
+              >
+                <ChevronLeft className="size-4" />
+              </Button>
+              <Button
+                variant="outline"
+                size="icon"
+                className="size-8 rounded-xl cursor-pointer"
+                disabled={paginationState.page >= paginationState.totalPages}
+                onClick={() => void handlePageChange(paginationState.page + 1)}
+              >
+                <ChevronRight className="size-4" />
+              </Button>
+            </div>
+          </div>
         )}
       </div>
 
-      <PostJobForm
-        open={isFormOpen}
-        onOpenChange={setIsFormOpen}
-        onSaved={saveJob}
-        job={editingJob ?? undefined}
-        existingJobs={jobs}
-      />
+      {/* Edit Post Job Dialog */}
+      {isFormOpen && (
+        <PostJobForm
+          job={editingJob ?? undefined}
+          open={isFormOpen}
+          onOpenChange={(open) => {
+            setIsFormOpen(open);
+            if (!open) setEditingJob(null);
+          }}
+          onSaved={saveJob}
+        />
+      )}
 
-      {/* Confirmation Dialog for Publishing a Job */}
-      <AlertDialog
-        open={pendingPublishJobId !== null}
-        onOpenChange={(open) => !open && !isPublishing && setPendingPublishJobId(null)}
-      >
-        <AlertDialogContent className="max-w-sm rounded-[26px] border border-black/5 dark:border-white/10 bg-white dark:bg-zinc-900 p-5 shadow-2xl font-sans">
-          <div className="flex flex-col gap-3">
-            <div className="px-1">
-              <AlertDialogTitle className="text-base font-bold text-foreground font-sans">
-                {t("publishConfirmTitle")}
-              </AlertDialogTitle>
-              <AlertDialogDescription className="mt-1 text-xs text-muted-foreground leading-normal font-sans">
-                {t("publishConfirmDesc")}
-              </AlertDialogDescription>
-            </div>
-
-            <div className="mt-1 flex flex-col gap-2">
-              <button
-                type="button"
-                disabled={isPublishing}
-                onClick={() => void confirmPublishJob()}
-                className="group flex w-full items-center justify-between rounded-full px-3.5 py-2.5 bg-[#0069D3] hover:bg-[#005bb8] disabled:opacity-50 text-white cursor-pointer transition-all duration-200 outline-none shadow-xs"
-              >
-                <div className="flex items-center gap-2.5">
-                  <div className="flex size-7 shrink-0 items-center justify-center rounded-full bg-white/20 text-white shadow-xs transition-transform group-hover:scale-105">
-                    <TrendingUp className="size-3.5" />
-                  </div>
-                  <span className="text-xs font-semibold">
-                    {isPublishing ? t("publishing") : t("confirmPublish")}
-                  </span>
-                </div>
-                <ChevronRight className="size-3.5 text-white/70 group-hover:text-white group-hover:translate-x-0.5 transition-all" />
-              </button>
-
-              <AlertDialogCancel
-                disabled={isPublishing}
-                className="group flex w-full items-center justify-between rounded-full px-3.5 py-2.5 bg-[#F1F0F5] hover:bg-[#EAE9F0] dark:bg-zinc-800/80 dark:hover:bg-zinc-800 text-foreground cursor-pointer transition-all duration-200 outline-none border-0 m-0 h-auto"
-              >
-                <div className="flex items-center gap-2.5">
-                  <div className="flex size-7 shrink-0 items-center justify-center rounded-full bg-white dark:bg-zinc-700 text-muted-foreground shadow-xs transition-transform group-hover:scale-105">
-                    <X className="size-3.5" />
-                  </div>
-                  <span className="text-xs font-medium">{t("cancel")}</span>
-                </div>
-                <ChevronRight className="size-3.5 text-muted-foreground/50 group-hover:text-foreground group-hover:translate-x-0.5 transition-all" />
-              </AlertDialogCancel>
-            </div>
-          </div>
-        </AlertDialogContent>
-      </AlertDialog>
-
+      {/* Delete Job Confirmation */}
       <AlertDialog
         open={pendingDeleteJobId !== null}
         onOpenChange={(open) => !open && setPendingDeleteJobId(null)}
       >
-        <AlertDialogContent className="max-w-sm rounded-[26px] border border-black/5 dark:border-white/10 bg-white dark:bg-zinc-900 p-5 shadow-2xl font-sans">
-          <div className="flex flex-col gap-3">
-            <div className="px-1">
-              <AlertDialogTitle className="text-base font-bold text-foreground">
-                {t("deleteTitle")}
-              </AlertDialogTitle>
-              <AlertDialogDescription className="mt-1 text-xs text-muted-foreground leading-normal">
-                {t("deleteHint")}
-              </AlertDialogDescription>
-            </div>
+        <AlertDialogContent className="rounded-2xl max-w-md">
+          <AlertDialogTitle>{t("deleteTitle")}</AlertDialogTitle>
+          <AlertDialogDescription>{t("deleteHint")}</AlertDialogDescription>
+          <div className="mt-4 flex justify-end gap-2">
+            <AlertDialogCancel className="rounded-xl">
+              {t("cancel")}
+            </AlertDialogCancel>
+            <Button
+              variant="destructive"
+              className="rounded-xl bg-red-600 hover:bg-red-700 text-white cursor-pointer"
+              onClick={() => void deleteJob()}
+            >
+              {t("deleteJob")}
+            </Button>
+          </div>
+        </AlertDialogContent>
+      </AlertDialog>
 
-            <div className="mt-1 flex flex-col gap-2">
-              <button
-                type="button"
-                onClick={() => void deleteJob()}
-                className="group flex w-full items-center justify-between rounded-full px-3.5 py-2.5 bg-red-50 hover:bg-red-100 dark:bg-red-950/40 dark:hover:bg-red-900/50 text-red-600 dark:text-red-400 cursor-pointer transition-all duration-200 outline-none"
-              >
-                <div className="flex items-center gap-2.5">
-                  <div className="flex size-7 shrink-0 items-center justify-center rounded-full bg-red-100 dark:bg-red-900/60 text-red-600 dark:text-red-400 shadow-xs transition-transform group-hover:scale-105">
-                    <Trash2 className="size-3.5" />
-                  </div>
-                  <span className="text-xs font-semibold">
-                    {t("deleteJob")}
-                  </span>
-                </div>
-                <ChevronRight className="size-3.5 text-red-400 group-hover:text-red-600 group-hover:translate-x-0.5 transition-all" />
-              </button>
-
-              <AlertDialogCancel className="group flex w-full items-center justify-between rounded-full px-3.5 py-2.5 bg-[#F1F0F5] hover:bg-[#EAE9F0] dark:bg-zinc-800/80 dark:hover:bg-zinc-800 text-foreground cursor-pointer transition-all duration-200 outline-none border-0 m-0 h-auto"><div className="flex items-center gap-2.5">
-                    <div className="flex size-7 shrink-0 items-center justify-center rounded-full bg-white dark:bg-zinc-700 text-muted-foreground shadow-xs transition-transform group-hover:scale-105">
-                      <X className="size-3.5" />
-                    </div>
-                    <span className="text-xs font-medium">{t("cancel")}</span>
-                  </div>
-                  <ChevronRight className="size-3.5 text-muted-foreground/50 group-hover:text-foreground group-hover:translate-x-0.5 transition-all" /></AlertDialogCancel>
-            </div>
+      {/* Publish Job Confirmation */}
+      <AlertDialog
+        open={pendingPublishJobId !== null}
+        onOpenChange={(open) => !open && setPendingPublishJobId(null)}
+      >
+        <AlertDialogContent className="rounded-2xl max-w-md">
+          <AlertDialogTitle>{t("publishConfirmTitle")}</AlertDialogTitle>
+          <AlertDialogDescription>
+            {t("publishConfirmDesc")}
+          </AlertDialogDescription>
+          <div className="mt-4 flex justify-end gap-2">
+            <AlertDialogCancel className="rounded-xl">
+              {t("cancel")}
+            </AlertDialogCancel>
+            <Button
+              disabled={isPublishing}
+              className="rounded-xl bg-[#0069D3] hover:bg-[#005bb8] text-white cursor-pointer"
+              onClick={() => void confirmPublishJob()}
+            >
+              {isPublishing ? t("publishing") : t("confirmPublish")}
+            </Button>
           </div>
         </AlertDialogContent>
       </AlertDialog>

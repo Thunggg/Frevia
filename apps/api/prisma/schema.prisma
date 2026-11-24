@@ -1558,7 +1558,6 @@ enum HiringType {
 enum ProposalStatus {
   DRAFT
   SUBMITTED
-  INTERVIEWING
   HIRED
   REJECTED
   WITHDRAWN

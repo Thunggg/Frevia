@@ -118,14 +118,12 @@ export function ProposalDetailSheet({
   const [confirmReject, setConfirmReject] = useState(false);
   const [isRejecting, setIsRejecting] = useState(false);
   const [isAccepting, setIsAccepting] = useState(false);
-  const [isInterviewing, setIsInterviewing] = useState(false);
   const [profileSheetOpen, setProfileSheetOpen] = useState(false);
   const createConversation = useCreateConversation();
   const [isStartingChat, setIsStartingChat] = useState(false);
 
   const { can } = useActionPermission();
   const canViewDetail = can("GET", "/api/proposals/:id/client");
-  const canInterview = can("PATCH", "/api/proposals/:id/interview");
   const canCreateContract = can("POST", "/api/contracts");
   const canAccept =
     can("PATCH", "/api/proposals/:id/accept") &&
@@ -192,8 +190,8 @@ export function ProposalDetailSheet({
   };
 
   const status = detail?.status || initialProposal?.status || "SUBMITTED";
-  // Khách hàng còn có thể phỏng vấn / từ chối / tuyển trên hai trạng thái này.
-  const isActionable = status === "SUBMITTED" || status === "INTERVIEWING";
+  // Khách hàng còn có thể từ chối / tuyển trên trạng thái này.
+  const isActionable = status === "SUBMITTED";
   const isJobFilled =
     cannotHireMore ||
     (detail?.job != null &&
@@ -269,35 +267,6 @@ export function ProposalDetailSheet({
       });
     } finally {
       setIsAccepting(false);
-    }
-  };
-
-  // Khách hàng phản hồi và bắt đầu trao đổi/phỏng vấn.
-  const handleInterview = async () => {
-    if (!proposalId) return;
-    if (!canInterview) {
-      toastError({ message: t("noPermissionAction") });
-      return;
-    }
-    setIsInterviewing(true);
-    try {
-      await proposalApiRequest.interview(proposalId);
-      await queryClient.invalidateQueries({
-        queryKey: ["client-proposal-detail", proposalId],
-      });
-      await queryClient.invalidateQueries({
-        queryKey: ["client-job-proposals", jobId],
-      });
-      toastSuccess({ message: t("interviewing") });
-    } catch (error) {
-      toastError({
-        message:
-          error instanceof ApiFail
-            ? error.response.error.message
-            : t("interviewFailed"),
-      });
-    } finally {
-      setIsInterviewing(false);
     }
   };
 
@@ -445,7 +414,7 @@ export function ProposalDetailSheet({
           </div>
 
               {/* Action Footer Bar */}
-              {isActionable && (canReject || (status === "SUBMITTED" && canInterview) || canAccept) ? (
+              {isActionable && (canReject || canAccept) ? (
                 <div className="border-t border-border/80 bg-background px-6 py-3.5 flex items-center justify-between gap-3 flex-wrap">
                   {canReject ? (
                     <Button
@@ -453,7 +422,7 @@ export function ProposalDetailSheet({
                       size="sm"
                       className="rounded-full border-red-200 dark:border-red-900/40 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30 px-4 h-9 text-xs font-semibold cursor-pointer"
                       onClick={() => setConfirmReject(true)}
-                      disabled={isAccepting || isRejecting || isInterviewing}
+                      disabled={isAccepting || isRejecting}
                     >
                       <X className="mr-1.5 size-3.5" />
                       {t("reject")}
@@ -461,23 +430,6 @@ export function ProposalDetailSheet({
                   ) : null}
 
                   <div className="flex items-center gap-2 ml-auto">
-                    {status === "SUBMITTED" && canInterview ? (
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="rounded-full border-[#0069D3]/40 text-[#0069D3] hover:bg-[#D0E1F8]/40 px-4 h-9 text-xs font-semibold cursor-pointer"
-                        onClick={() => void handleInterview()}
-                        disabled={isAccepting || isRejecting || isInterviewing}
-                      >
-                        {isInterviewing ? (
-                          <Loader2 className="mr-1.5 size-3.5 animate-spin" />
-                        ) : (
-                          <MessageSquare className="mr-1.5 size-3.5" />
-                        )}
-                        {t("interview")}
-                      </Button>
-                    ) : null}
-
                     {isJobFilled ? (
                       <span className="text-xs text-amber-600 dark:text-amber-400 font-medium">
                         {t("jobFilledDisabled")}
@@ -492,7 +444,6 @@ export function ProposalDetailSheet({
                         disabled={
                           isAccepting ||
                           isRejecting ||
-                          isInterviewing ||
                           isJobFilled
                         }
                         title={isJobFilled ? t("jobFilledDisabled") : undefined}

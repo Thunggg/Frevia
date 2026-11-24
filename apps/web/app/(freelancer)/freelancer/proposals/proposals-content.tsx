@@ -30,7 +30,6 @@ import { useActionPermission } from "@/hooks/use-action-permission";
 const PROPOSAL_STATUSES = [
   "DRAFT",
   "SUBMITTED",
-  "INTERVIEWING",
   "HIRED",
   "REJECTED",
   "WITHDRAWN",
@@ -175,9 +174,7 @@ export function MyProposalsContent({
                           className={
                             proposal.status === "SUBMITTED"
                               ? "bg-amber-500/15 text-amber-800 dark:text-amber-200"
-                              : proposal.status === "INTERVIEWING"
-                                ? "bg-[#D0E1F8] text-[#0069D3] dark:bg-blue-950/60 dark:text-blue-300"
-                                : ""
+                              : ""
                           }
                         >
                           {tStatus(proposal.status)}

@@ -83,7 +83,7 @@ describe('ProposalRepository', () => {
       where: {
         id: 18,
         deletedAt: null,
-        status: { in: [ProposalStatus.SUBMITTED, ProposalStatus.INTERVIEWING] },
+        status: { in: [ProposalStatus.SUBMITTED] },
       },
       data: {
         status: ProposalStatus.HIRED,
@@ -157,7 +157,7 @@ describe('ProposalRepository', () => {
         jobId: 10,
         id: { not: 18 },
         deletedAt: null,
-        status: { in: [ProposalStatus.SUBMITTED, ProposalStatus.INTERVIEWING] },
+        status: { in: [ProposalStatus.SUBMITTED] },
       },
       data: {
         status: ProposalStatus.REJECTED,

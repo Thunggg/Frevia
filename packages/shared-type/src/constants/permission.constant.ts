@@ -293,7 +293,6 @@ export const PERMISSION_MAP: Record<string, PermissionDescriptor> = {
   "PATCH /api/proposals/:id/reject": { en: "Reject Proposal", vi: "Từ chối đề xuất" },
   "GET /api/proposals/:id/client": { en: "View Client Info for Proposal", vi: "Xem thông tin khách hàng cho đề xuất" },
   "PATCH /api/proposals/:id/draft": { en: "Update Proposal Draft", vi: "Cập nhật bản nháp đề xuất" },
-  "PATCH /api/proposals/:id/interview": { en: "Invite Proposal to Interview", vi: "Mời phỏng vấn đề xuất" },
   "PATCH /api/proposals/:id/submit": { en: "Submit Proposal Draft", vi: "Nộp chính thức bản nháp đề xuất" },
   "PATCH /api/proposals/:id/withdraw": { en: "Withdraw Proposal", vi: "Rút lại đề xuất" },
   "POST /api/proposals/jobs/:jobId": { en: "Submit Proposal for Job", vi: "Nộp đề xuất cho công việc" },

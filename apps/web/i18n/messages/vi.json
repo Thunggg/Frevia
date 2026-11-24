@@ -1143,7 +1143,6 @@
   "proposalStatus": {
     "DRAFT": "Bản nháp",
     "SUBMITTED": "Đã gửi",
-    "INTERVIEWING": "Đang phỏng vấn",
     "HIRED": "Đã được tuyển",
     "REJECTED": "Bị từ chối",
     "WITHDRAWN": "Đã rút",
@@ -1527,9 +1526,6 @@
     "hired": "Đã tuyển freelancer. Hợp đồng đã được tạo.",
     "hiredHint": "Đề xuất này đã được tuyển và hợp đồng được tạo tự động.",
     "viewContract": "Xem hợp đồng",
-    "interview": "Mời phỏng vấn",
-    "interviewing": "Đã chuyển đề xuất sang trạng thái phỏng vấn",
-    "interviewFailed": "Không thể bắt đầu phỏng vấn. Vui lòng thử lại.",
     "breadcrumbJobs": "Việc của tôi",
     "breadcrumbProposals": "Đề xuất",
     "allTab": "Tất cả ({count})",
@@ -1998,7 +1994,42 @@
     "reopened": "Đã mở lại tin tuyển dụng",
     "reopenFailed": "Không thể mở lại tin",
     "accessDenied": "Bạn không có quyền xem danh sách việc làm đã đăng.",
-    "noPermissionAction": "Bạn không có quyền thực hiện thao tác này."
+    "noPermissionAction": "Bạn không có quyền thực hiện thao tác này.",
+    "dashboardBreadcrumb": "BẢNG ĐIỀU KHIỂN KHÁCH HÀNG / MY JOBS",
+    "managePostedJobs": "Quản lý việc đã đăng",
+    "managePostedJobsSubtitle": "Theo dõi trạng thái tuyển dụng, xem hồ sơ ứng tuyển chất lượng cao và giám sát tiến độ hợp đồng đang thực hiện",
+    "draftBox": "Kho bản nháp ({count})",
+    "postNewJob": "Đăng việc mới",
+    "statActive": "Đang tuyển (Active)",
+    "statActiveUnit": "tin tuyển",
+    "statProposals": "Tổng đề xuất",
+    "statProposalsUnit": "đề xuất",
+    "statInProgress": "Đang thực hiện",
+    "statInProgressUnit": "công việc",
+    "statCompleted": "Đã hoàn thành",
+    "statCompletedUnit": "công việc",
+    "tabAll": "Tất cả",
+    "tabOpen": "Đang mở tuyển",
+    "tabInProgress": "Đang thực hiện",
+    "tabCompleted": "Hoàn thành",
+    "tabClosed": "Đã đóng",
+    "tabDraft": "Bản nháp",
+    "searchJobsPlaceholder": "Tìm kiếm theo tiêu đề công việc...",
+    "jobCodeLabel": "Mã: #{code}",
+    "postedDaysAgo": "Đăng {days}",
+    "fixedPriceLabel": "Giá cố định: {price}",
+    "hiringSingle": "Tuyển 1 freelancer",
+    "hiringMultiple": "Tuyển {count} freelancers",
+    "deadlineLabel": "Hạn chót: {date}",
+    "expiryLabel": "Hạn nộp: {date}",
+    "budgetNegotiable": "Thỏa thuận",
+    "proposalsMetric": "Đề xuất",
+    "positionsRequiredMetric": "Vị trí cần tuyển",
+    "positionsFilledMetric": "Đã tuyển",
+    "inviteCandidate": "Mời ứng viên",
+    "editAction": "Chỉnh sửa",
+    "viewProposalsCount": "Xem {count} Proposals →",
+    "viewDetailAction": "Xem chi tiết →"
   },
   "postJobForm": {
     "titleLabel": "Tên công việc",
@@ -3187,9 +3218,6 @@
       },
       "SUBMITTED": {
         "message": "Bạn đã gửi đề xuất cho công việc này."
-      },
-      "INTERVIEWING": {
-        "message": "Khách hàng đang phỏng vấn bạn cho công việc này."
       },
       "HIRED": {
         "message": "Bạn đã được tuyển cho công việc này. Hãy ký hợp đồng để bắt đầu."

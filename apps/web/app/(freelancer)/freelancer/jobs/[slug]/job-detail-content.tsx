@@ -80,8 +80,6 @@ function isPast(value: string | Date | null) {
 const proposalStatusStyles = {
   DRAFT: "bg-slate-500/10 text-slate-700 dark:text-slate-200",
   SUBMITTED: "bg-amber-500/15 text-amber-800 dark:text-amber-200",
-  INTERVIEWING:
-    "bg-[#D0E1F8] text-[#0069D3] dark:bg-blue-950/60 dark:text-blue-300",
   HIRED: "bg-blue-50 text-[#0069D3] dark:bg-blue-950/60 dark:text-blue-300",
   REJECTED: "bg-destructive/10 text-destructive",
   WITHDRAWN: "",
