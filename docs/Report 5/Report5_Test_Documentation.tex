@@ -14,6 +14,9 @@
 \usepackage{fancyhdr}
 \usepackage{amssymb}
 \usepackage{float}
+\usepackage{longtable}
+\sloppy
+\setlength{\emergencystretch}{3em}
 
 \definecolor{fptred}{RGB}{192,0,0}
 \hypersetup{colorlinks=true,linkcolor=black,urlcolor=blue}
@@ -70,8 +73,9 @@
 17/10/2026 & M & Tran Phat Tai & Updated integration and system test specifications for Sprint 2 (Proposals, Contracts, Milestones, Permissions, Sessions, and Forum Categories). \\ \hline
 24/10/2026 & M & Nguyen Lu Nhat Huy & Added test specifications for Sprint 3 (Real-time Messaging, Notifications, Community Forum, Moderation, ID Verification, and User Management). \\ \hline
 31/10/2026 & M & Vo Nhut Tin & Added test specifications for Sprint 4 (Stripe Escrow Payments, Webhooks, Disputes, Advertisement Banners, and Skill Management). \\ \hline
-02/11/2026 & M & Nguyen Tien Thuan & Added Sprint 5 test specifications and documented unit test sheets \texttt{UF-01} to \texttt{UF-84} alongside module system test suites. \\ \hline
-10/11/2026 & M & Group Frevia & Expanded unit test matrix to \texttt{UF-01}--\texttt{UF-246} (2,005 cases; 1,972 passed, 33 untested) and system test workbook to 44 modules (935 cases; 688 passed, 247 pending), plus Jest live snapshot (\texttt{Report5\_Unit\_Test\_Backend.html}, 489 passed across 19 suites). \\ \hline
+02/11/2026 & M & Nguyen Tien Thuan & Added Sprint 5 test specifications (Job Category Management, AI CV Analysis, Expert Directory) and completed unit test sheets \texttt{UF-01} to \texttt{UF-84}. \\ \hline
+04/11/2026 & M & Pham Kha Vy & Consolidated final test execution summary (507 unit test cases and 411 system test cases), defect metrics, test analysis, and conclusion. \\ \hline
+25/11/2026 & M & Nguyen Lu Nhat Huy & Synchronized current workbook inventory, aligned UF-122--UF-197 with the team layout, and re-executed 588 matrix cases plus 8 supplemental tests. \\ \hline
 \end{tabular}
 \end{center}
 
@@ -93,32 +97,32 @@
 Testing for the \textbf{Frevia -- Verified Freelance Marketplace Platform} (Project Code: \texttt{SEP490\_04}) covers all functional and non-functional deliverables across the five project sprints:
 
 \begin{itemize}
-  \item \textbf{Identity, Authentication, and Access Control (FE-01 to FE-03):}
+  \item \textbf{Identity, Authentication, and Access Control (FE-01 to FE-09):}
   \begin{itemize}
     \item Email and password registration with one-time-code (OTP) email verification, Google OAuth 2.0 sign-in, and linking a Google identity to an existing account.
     \item JWT access and refresh token authentication, persisted session management (listing active sessions, viewing device/IP details, and revoking individual sessions), password reset via OTP, and password change.
-    \item Multi-role membership (\texttt{CLIENT}, \texttt{FREELANCER}, \texttt{EXPERT}, \texttt{ADMIN}, and custom administrative roles), joining additional roles, active session role switching, and dynamic data-driven RBAC permission validation (\texttt{HTTP method} + \texttt{path} + \texttt{module}).
+    \item Multi-role membership (\texttt{CLIENT}, \texttt{FREELANCER}, \texttt{ADMIN}, and custom administrative roles), joining additional roles, active session role switching, and dynamic data-driven RBAC permission validation (\texttt{HTTP method} + \texttt{path} + \texttt{module}).
   \end{itemize}
-  \item \textbf{User Profiles, Skills, Portfolios, and AI CV Analysis (FE-04 to FE-07):}
+  \item \textbf{User Profiles, Portfolios, and AI CV Analysis (FE-10 to FE-20):}
   \begin{itemize}
     \item Account profile management with avatar/cover uploads, freelancer profiles (professional title, bio, education, certifications, languages, work experience, skills with proficiency levels 1--10, and portfolio items), client company profiles, and expert directory profiles.
     \item Profile completion and strength scoring, administrative approval workflow for profile revisions, PDF curriculum vitae upload (up to 10~MB), and AI-assisted CV skill extraction.
   \end{itemize}
-  \item \textbf{Electronic Identity Verification / eKYC (FE-08):}
+  \item \textbf{Electronic Identity Verification / eKYC (FE-21 to FE-23):}
   \begin{itemize}
     \item Submission of front/back identity card images, selfie capture, and active/passive liveness frames; AI verification pipeline (OCR, QR code reading, face matching, tamper detection); and the administrative review queue.
   \end{itemize}
-  \item \textbf{Job Marketplace, Proposals, Contracts, and Milestones (FE-09 to FE-14):}
+  \item \textbf{Job Marketplace, Proposals, Contracts, and Milestones (FE-24 to FE-47):}
   \begin{itemize}
-    \item Fixed-price job creation, editing, soft deletion, status lifecycle, stable slug generation, multi-criteria public job search, job bookmarks, saved searches, job alerts, and explainable AI job--freelancer recommendation scoring.
-    \item Proposal drafting, submission, editing, withdrawal, and expiry; client proposal evaluation and hiring decision; dual-signature contract execution; platform fee tracking; and milestone creation, funding state transitions, work submission, change requests, and approval.
+    \item Fixed-price job creation, editing, soft deletion, status lifecycle, stable slug generation, multi-criteria public job search, job bookmarks, and saved searches.
+    \item Proposal drafting, submission, editing, withdrawal, and expiry; client proposal evaluation and hiring decision; dual-signature contract execution; USD~10.00 platform fee tracking; and milestone creation, funding state transitions, work submission, change requests, and approval.
   \end{itemize}
-  \item \textbf{Stripe Escrow Payments, Disputes, and Reviews (FE-15 to FE-17):}
+  \item \textbf{Stripe Escrow Payments, Disputes, and Reviews (FE-48 to FE-65):}
   \begin{itemize}
     \item Stripe Connect Express onboarding, saved payment methods, platform fee and milestone funding via \texttt{PaymentIntent} and \texttt{Checkout Session}, milestone transfers on release, refunds, raw-body webhook signature verification, and ledger reconciliation.
-    \item Milestone dispute filing with evidence, respondent defence within deadlines, decision review escalation, administrative and expert arbitration with split payouts, and post-contract reviews/ratings.
+    \item Milestone dispute filing with evidence, respondent defence within deadlines, decision review escalation, administrative arbitration with split payouts, and post-contract reviews/ratings.
   \end{itemize}
-  \item \textbf{Real-Time Communication, Community Forum, and Administration (FE-18 to FE-21):}
+  \item \textbf{Real-Time Communication, Community Forum, and Administration (FE-66 to FE-83):}
   \begin{itemize}
     \item Authenticated Socket.IO WebSocket messaging (1-on-1 conversations, file attachments, read receipts, typing indicators, pin/hide/delete) and persistent notifications.
     \item Community forum browsing, rich-text post creation (Tiptap), comments, likes, reporting, AI moderation scoring, and administrative moderation/trash management.
@@ -135,7 +139,7 @@ In accordance with the project scope limitations defined in Report 1, the follow
   \item \textbf{Hourly Contracts and Multi-Currency Settlement (LI-01 to LI-04):} Hourly billing, automated time-tracking diaries, non-USD currency conversion, domestic e-wallets, direct bank wire transfers, and cryptocurrency settlement.
   \item \textbf{Machine Learning Model Training and Foreign ID Documents (LI-05 to LI-07):} Training or fine-tuning underlying neural network weights for OCR, liveness, or CV parsing, as well as identity verification for non-Vietnamese passports or driver's licences.
   \item \textbf{Native Mobile Clients and Multi-Replica Clustering (LI-09, LI-13):} Native iOS/Android mobile applications, multi-node horizontal load balancing, sticky session clustering, and distributed Redis WebSocket adapters.
-  \item \textbf{Unexposed Database Entities (LI-11):} Schema tables reserved for future releases that are not exposed through the current API or UI (\texttt{totp\_secrets}, \texttt{invoices}, \texttt{certificates}, \texttt{contract\_terms\_templates}, \texttt{banned\_keywords}, and \texttt{system\_settings}).
+  \item \textbf{Unexposed Database Entities (LI-11):} Schema tables reserved for future releases that are not exposed through the current API or UI (\texttt{totp\_secrets}, \texttt{invoices}, \texttt{certificates}, \path{contract_terms_templates}, \texttt{job\_alerts}, \texttt{banned\_keywords}, and \texttt{system\_settings}).
 \end{itemize}
 
 \subsection{Testing Levels}
@@ -147,10 +151,10 @@ In accordance with the project scope limitations defined in Report 1, the follow
 \subsubsection{Unit Testing}
 \begin{itemize}
   \item \textbf{In-charge:} All Developers (\texttt{Nguyen Tien Thuan}, \texttt{Vo Nhut Tin}, \texttt{Tran Phat Tai}, \texttt{Nguyen Lu Nhat Huy}), reviewed by \texttt{Pham Kha Vy}.
-  \item \textbf{Input / Time:} Software Design Document (Report 4), shared Zod validation schemas (\texttt{@shared/\allowbreak types}), and NestJS service/repository/guard source code; executed continuously throughout Sprints 1--5 prior to creating pull requests.
+  \item \textbf{Input / Time:} Software Design Document (Report 4), shared Zod validation schemas (\texttt{@shared/types}), and NestJS service/repository/guard source code; executed continuously throughout Sprints 1--5 prior to creating pull requests.
   \item \textbf{Focus:}
   \begin{itemize}
-    \item {\sloppy Isolated business logic in NestJS services (\texttt{Forum\allowbreak Service}, \texttt{Conversation\allowbreak Service}, \texttt{Moderation\allowbreak Service}, \texttt{Id\allowbreak Verification\allowbreak Service}, \texttt{Auth\allowbreak Service}, \texttt{Roles\allowbreak Service}, \texttt{Permissions\allowbreak Service}, \texttt{Sessions\allowbreak Service}, \texttt{Forum\allowbreak Admin\allowbreak Service}, \texttt{Users\allowbreak Service}, \texttt{Expert\allowbreak Profile\allowbreak Service}, \texttt{Banners\allowbreak Admin\allowbreak Service}, \texttt{Skills\allowbreak Admin\allowbreak Service}, \texttt{Job\allowbreak Categories\allowbreak Admin\allowbreak Service}, \texttt{Payment\allowbreak Service}, \texttt{Dispute\allowbreak Service}, and \texttt{Profile\allowbreak Service}).\par}
+    \item Isolated business logic in NestJS services (\texttt{ForumService}, \texttt{ConversationService}, \texttt{ModerationService}, \path{IdVerificationService}, \texttt{AuthService}, \texttt{RolesService}, \texttt{PermissionsService}, \texttt{SessionsService}, \texttt{ForumAdminService}, \texttt{UsersService}, \texttt{ExpertProfileService}, \texttt{BannersAdminService}, \texttt{SkillsAdminService}, \path{JobCategoriesAdminService}, \texttt{PaymentService}, \texttt{DisputeService}, and \texttt{ProfileService}).
     \item Data access queries and transaction callbacks in repository classes using mocked Prisma clients.
     \item Token verification, active role resolution, and route-level RBAC permission checking in \texttt{AccessTokenGuard}.
     \item Normal execution paths (\texttt{N}), abnormal exception branches (\texttt{A} -- \texttt{400}, \texttt{401}, \texttt{403}, \texttt{404}, \texttt{409}, \texttt{422}), and boundary value conditions (\texttt{B}).
@@ -158,9 +162,9 @@ In accordance with the project scope limitations defined in Report 1, the follow
   \item \textbf{Tools:} Jest \texttt{30.0.0}, \texttt{@nestjs/testing} \texttt{11.0.1}, \texttt{ts-jest} \texttt{29.2.5}, TypeScript \texttt{5.9.2}, ESLint \texttt{9.18.0}.
   \item \textbf{Acceptance Criteria:}
   \begin{itemize}
-    \item All 2,005 documented unit test cases across 246 service/schema functions (\texttt{UF-01} to \texttt{UF-246}) achieve zero failures (1,972 passed, 33 untested/pending, 98.35\% execution coverage), supported by the live backend Jest run (\texttt{Report5\_Unit\_Test\_Backend.html}: 19 suites, 489/489 passed).
+    \item Target: all documented unit cases pass. Current inventory: 2,005 cases across 246 matrices. The execution status is reported in Section 4.
     \item At least 80\% statement and branch coverage on critical domain services and guards.
-    \item \texttt{pnpm lint}, \texttt{pnpm check-types}, and \texttt{pnpm --filter api test} pass without errors.
+    \item \texttt{pnpm lint}, \texttt{pnpm check-types}, and \path{pnpm --filter api test} pass without errors.
   \end{itemize}
 \end{itemize}
 
@@ -171,7 +175,7 @@ In accordance with the project scope limitations defined in Report 1, the follow
   \item \textbf{Infrastructure:} Docker Compose stack running NestJS 11 API (\texttt{localhost:3002}), Next.js 16 Web Client (\texttt{localhost:3003}), PostgreSQL 16 with Prisma 7 migrations, Stripe Test Mode sandbox, and local/mocked AI HTTP services.
   \item \textbf{Focus:}
   \begin{itemize}
-    \item Controller-to-Service-to-Repository-to-PostgreSQL persistence, foreign-key integrity, unique constraints, soft-delete filtering (\texttt{deletedAt}), and transactional rollback behavior (\texttt{prisma.\allowbreak\$transaction}).
+    \item Controller-to-Service-to-Repository-to-PostgreSQL persistence, foreign-key integrity, unique constraints, soft-delete filtering (\texttt{deletedAt}), and transactional rollback behavior (\texttt{prisma.\$transaction}).
     \item Cross-module state transitions: Job Posting $\rightarrow$ Proposal Submission $\rightarrow$ Hiring Decision $\rightarrow$ Contract Generation \& Dual Signing $\rightarrow$ Milestone Escrow Funding $\rightarrow$ Work Submission $\rightarrow$ Approval \& Stripe Transfer.
     \item External integrations: Stripe \texttt{PaymentIntent} / \texttt{Checkout Session} creation and raw-body webhook signature verification, Google OAuth token exchange, Cloudinary upload, SMTP email delivery, and Socket.IO WebSocket event broadcasting.
   \end{itemize}
@@ -193,7 +197,7 @@ In accordance with the project scope limitations defined in Report 1, the follow
   \end{itemize}
   \item \textbf{Acceptance Criteria:}
   \begin{itemize}
-    \item Executed system test cases across all 44 functional modules in \texttt{Report5\_Test Report.xlsx} (935 total TCs: 688 passed, 247 pending) pass with zero failures (73.58\% execution coverage).
+    \item Target: all 935 system cases across 44 modules in \path{Report5_Test Report.xlsx} pass. Pending cases must be executed before sign-off.
     \item Zero Critical or Major defects remain open, and \texttt{docker compose build} / \texttt{docker compose up -d} succeed with healthy containers.
   \end{itemize}
 \end{itemize}
@@ -203,7 +207,7 @@ In accordance with the project scope limitations defined in Report 1, the follow
 \textbf{Assumptions}
 \begin{itemize}
   \item Third-party sandbox services (Stripe Test Mode API, Google OAuth 2.0 test credentials, Cloudinary media storage, and SMTP test relay) remain available and behave consistently with their documented contracts during test execution.
-  \item The PostgreSQL test database is initialized from Prisma migrations and populated deterministically using the repository seed scripts (\texttt{seed}, \texttt{seed:permissions}, \texttt{seed:job-categories}, \texttt{seed:jobs-dataset}, and \texttt{seed:freelancers-dataset}) before executing system and regression test suites.
+  \item The PostgreSQL test database is initialized from Prisma migrations and populated deterministically using the repository seed scripts (\texttt{seed}, \texttt{seed:permissions}, \texttt{seed:job-categories}, \texttt{seed:jobs-dataset}, and \path{seed:freelancers-dataset}) before executing system and regression test suites.
   \item External AI microservices for eKYC verification and CV skill extraction are reachable over HTTP (\texttt{FREVIA\_AI\_URL}) or simulated with deterministic test fixtures so that both automated scoring and administrative manual review fallbacks can be verified.
   \item Evaluators and UAT participants use modern desktop/mobile browsers (Google Chrome or Microsoft Edge) with camera permissions enabled when testing the eKYC selfie and liveness capture steps.
 \end{itemize}
@@ -226,11 +230,11 @@ In accordance with the project scope limitations defined in Report 1, the follow
   \item \textbf{Technique:}
   \begin{itemize}
     \item \textbf{Equivalence Partitioning \& Boundary Value Analysis:} Partitioning inputs into valid values, empty/whitespace strings, null/undefined parameters, pagination bounds (\texttt{page = 1}, \texttt{limit = 10}, maximum page size), skill proficiency limits (\texttt{1} to \texttt{10}), and file size limits (\texttt{10~MB}).
-    \item {\sloppy\textbf{White-Box Branch \& Mock-Based Exception Testing:} Mocking \texttt{Prisma\allowbreak Service}, \texttt{Jwt\allowbreak Service}, and external adapters via \texttt{jest.fn()} to exercise normal paths (\texttt{N}), abnormal exception branches (\texttt{A}), and boundary conditions (\texttt{B}).}
+    \item \textbf{White-Box Branch \& Mock-Based Exception Testing:} Mocking \texttt{PrismaService}, \texttt{JwtService}, and external adapters via \texttt{jest.fn()} to exercise normal paths (\texttt{N}), abnormal exception branches (\texttt{A}), and boundary conditions (\texttt{B}).
   \end{itemize}
   \item \textbf{Completion Criteria:}
   \begin{itemize}
-    \item 98.35\% execution coverage with zero failures across 2,005 unit test cases (\texttt{UF-01} to \texttt{UF-246}) documented in \texttt{Report5\_Unit Test.xls} (1,972 passed, 0 failed, 33 untested; Jest snapshot: 489 passed across 19 suites).
+    \item Target: 100\% pass rate for the current unit inventory in \path{Report5_Unit Test.xls}. This is an exit criterion, not the current execution result.
     \item Minimum 80\% code coverage on core business logic modules and zero lint or TypeScript compilation errors.
   \end{itemize}
 \end{itemize}
@@ -255,12 +259,12 @@ In accordance with the project scope limitations defined in Report 1, the follow
   \item \textbf{Objective:} Verify that the fully integrated Frevia web application satisfies all functional and non-functional requirements specified in the Software Requirement Specification (Report 3).
   \item \textbf{Technique:}
   \begin{itemize}
-    \item \textbf{Black-Box Use-Case \& Scenario Testing:} Executing end-to-end test procedures across all 44 functional modules from the user interface through to the database.
+    \item \textbf{Black-Box Use-Case \& Scenario Testing:} Executing end-to-end test procedures across the current 44 functional modules from the user interface through to the database.
     \item \textbf{Role-Based Negative \& Exploratory Testing:} Exercising protected pages and API endpoints with different active roles (\texttt{GUEST}, \texttt{CLIENT}, \texttt{FREELANCER}, \texttt{ADMIN}) to verify RBAC enforcement, validation feedback, and empty/error UI states.
   \end{itemize}
   \item \textbf{Completion Criteria:}
   \begin{itemize}
-    \item All 935 system test cases in \texttt{Report5\_Test Report.xlsx} achieve zero failures (688 passed, 0 failed, 247 pending execution).
+    \item Target: all system test cases pass. Current status: 688 recorded Passed and 247 Pending out of 935 cases.
     \item Zero open Critical or Major defects prior to Sprint Review and final release.
   \end{itemize}
 \end{itemize}
@@ -335,17 +339,15 @@ Test \& Defect Management & MS Excel / GitHub Issues & Microsoft / GitHub & 2024
 \begin{table}[H]
 \caption{Human resources table}
 \centering
-\begingroup\small\renewcommand{\arraystretch}{1.25}
 \begin{tabular}{|>{\raggedright\arraybackslash}p{4.5cm}|>{\raggedright\arraybackslash}p{2.8cm}|>{\raggedright\arraybackslash}p{6.5cm}|}
 \hline
 \hd{Worker/Doer} & \hd{Role} & \hd{Specific Responsibilities/Comments} \\ \hline
-Pham Kha Vy \newline (\texttt{CE182254}) \newline {\scriptsize\texttt{vypkce182254@fpt.edu.vn}} & Team Leader / \newline Test Lead & Defines the test strategy and test plan; authors and executes unit tests (\texttt{UF-01} to \texttt{UF-36}, 219 TCs) and system test cases (5 modules, 154 TCs) for Manage Forum, Conversation, Moderation, ID Verification, and Forum Trash; reviews all test deliverables and leads UAT. \\ \hline
-Nguyen Tien Thuan \newline (\texttt{CE181024}) \newline {\scriptsize\texttt{thuanntce181024@fpt.edu.vn}} & Backend Developer / \newline Functional Tester & Authors and executes unit tests (\texttt{UF-37} to \texttt{UF-84}, 288 TCs) and system test cases (9 modules, 257 TCs) for User Authentication, Role Management, Manage Permission, Session Management, Forum Category, User Management, Banners, Skills, and Job Categories. \\ \hline
-Tran Phat Tai \newline (\texttt{CE181632}) \newline {\scriptsize\texttt{taitpce181632@fpt.edu.vn}} & Full-Stack Developer / \newline Integration Tester & Authors and executes unit tests (\texttt{UF-85} to \texttt{UF-121}, 456 TCs; 423 passed, 33 untested) and system test cases (10 modules, 195 TCs; 146 passed, 49 pending AI) for Job Browsing/Management, Bookmarks, Saved Searches, Job Alerts, Proposals, AI Moderation/Face/Recommendation, and Job Categories. \\ \hline
-Vo Nhut Tin \newline (\texttt{CE180619}) \newline {\scriptsize\texttt{tinvnce180619@fpt.edu.vn}} & Backend Developer / \newline Security \& AI Tester & Authors and executes unit tests (\texttt{UF-198} to \texttt{UF-246}, 454 TCs) and system test cases (4 modules, 131 TCs) for Contracts, Milestones, Disputes, and Stripe Connect Escrow Payments \& Webhooks. \\ \hline
-Nguyen Lu Nhat Huy \newline (\texttt{CE181196}) \newline {\scriptsize\texttt{huynlnce181196@fpt.edu.vn}} & Frontend Developer / \newline System Tester & Authors and executes unit tests (\texttt{UF-122} to \texttt{UF-197}, 588 Jest TCs) and defines system test cases (16 modules, 198 TCs, pending execution) for Profiles, Skills, Portfolios, eKYC, Social Links, Favorites, Following, Notifications, Role Switching, Reviews, Account, and CV Management. \\ \hline
+Pham Kha Vy \newline (\texttt{CE182254}) \newline {\scriptsize\path{vypkce182254@fpt.edu.vn}} & Team Leader / \newline Test Lead & Defines the test strategy and test plan; authors and executes unit tests (\texttt{UF-01} to \texttt{UF-36}, 219 TCs) and system test cases (154 TCs) for Manage Forum, Conversation, Moderation, ID Verification, and Forum Trash; reviews all test deliverables and leads UAT. \\ \hline
+Nguyen Tien Thuan \newline (\texttt{CE181024}) \newline {\scriptsize\path{thuanntce181024@fpt.edu.vn}} & Backend Developer / \newline Functional Tester & Authors and executes unit tests (\texttt{UF-37} to \texttt{UF-84}, 288 TCs) and system test cases (257 TCs) for User Authentication, Role Management, Manage Permission, Session Management, Forum Category, User Management, Banners, Skills, and Job Categories. \\ \hline
+Tran Phat Tai \newline (\texttt{CE181632}) \newline {\scriptsize\path{taitpce181632@fpt.edu.vn}} & Full-Stack Developer / \newline Integration Tester & Executes unit, integration, and system tests for Job Marketplace, Bookmarks, Saved Searches, Proposal workflows, and Hiring decisions; performs cross-browser UI validation. \\ \hline
+Vo Nhut Tin \newline (\texttt{CE180619}) \newline {\scriptsize\path{tinvnce180619@fpt.edu.vn}} & Backend Developer / \newline Security \& AI Tester & Executes integration and security tests for Stripe Connect escrow payments, webhook signature \& idempotency, dispute arbitration splits, AI eKYC verification, and AI CV skill extraction. \\ \hline
+Nguyen Lu Nhat Huy \newline (\texttt{CE181196}) \newline {\scriptsize\path{huynlnce181196@fpt.edu.vn}} & Unit / System Tester & Maintains 76 unit matrices (588 cases) for assigned profile, portfolio, account, review, revision and CV features. Maintains 198 system/API cases, currently Pending. \\ \hline
 \end{tabular}
-\endgroup
 \end{table}
 
 \subsection{Test Environment}
@@ -377,73 +379,104 @@ Sprint 1 Test Execution & 21/09/2026 & 03/10/2026 & Unit \& system tests for Aut
 Sprint 2 Test Execution & 05/10/2026 & 17/10/2026 & Unit \& system tests for Proposals, Contracts, Milestones, Permissions, Sessions, and Categories. \\ \hline
 Sprint 3 Test Execution & 19/10/2026 & 24/10/2026 & Unit \& system tests for Messaging, Moderation, ID Verification, Trash, and User Management. \\ \hline
 Sprint 4 Test Execution & 26/10/2026 & 31/10/2026 & Integration \& system tests for Stripe Escrow, Webhooks, Disputes, Banners, and Skills. \\ \hline
-Sprint 5 Regression \& UAT & 01/11/2026 & 10/11/2026 & Job Category tests, full regression run (2,005 Unit TCs across UF-01--UF-246; 935 System TCs across 44 modules), and final UAT sign-off. \\ \hline
+Sprint 5 Regression \& UAT & 01/11/2026 & 04/11/2026 & Job Category tests, historical baseline regression (507 Unit TCs, 411 System TCs). Current verification and pending work are recorded in Section 4. \\ \hline
 \end{tabular}
 \end{table}
 
 \section{Test Cases}
+The current unit workbook contains 246 matrices, \texttt{UF-01} to \texttt{UF-246}, and 2,005 cases: 664 Normal, 979 Abnormal and 362 Boundary. A matrix represents one service/repository method or one explicitly named schema validation method. The source and line references for Nhat Huy's matrices are recorded in the Functions sheet.
 
-The detailed unit test cases are provided in the file \textbf{Report5\_Unit Test.xls} (covering 246 backend service and validation functions across sheets \texttt{UF-01} to \texttt{UF-246} with a total of 2,005 unit test cases: 664 Normal, 979 Abnormal, and 362 Boundary; supplemented by the Jest run report \textbf{Report5\_Unit\_Test\_Backend.html} recording 489/489 passed cases across 19 core suites). The detailed system test cases are provided in the file \textbf{Report5\_Test Report.xlsx} (covering 44 functional modules with a total of 935 system test cases: 688 Passed, 0 Failed, and 247 Pending execution).
+The system workbook contains 935 cases across 44 modules. The two workbooks represent different test levels. Mocked unit execution does not establish API, authentication, database, browser or third-party integration correctness.
 
 \begin{table}[H]
-\caption{Summary of unit and system test cases in Report5\_Unit Test.xls and Report5\_Test Report.xlsx}
-\centering
-\setlength{\tabcolsep}{4pt}
-\begin{tabular}{|c|>{\raggedright\arraybackslash}p{3.6cm}|c|c|c|>{\raggedright\arraybackslash}p{2.7cm}|}
+\caption{Current unit inventory by author}
+\centering\small
+\begin{tabular}{|p{4.2cm}|r|r|r|r|r|}
 \hline
-\hd{No} & \hd{Scope / Feature Group} & \hd{Unit Fns / Modules} & \hd{Unit TCs} & \hd{System TCs} & \hd{Tester in Charge} \\ \hline
-1 & Forum, Conversation, Moderation, eKYC Review, Forum Trash (\texttt{UF-01}--\texttt{UF-36}) & 36 / 5 & 219 & 154 & Pham Kha Vy \\ \hline
-2 & Auth, Roles, Permissions, Sessions, Forum Cat., Users, Banners, Skills, Job Cat. (\texttt{UF-37}--\texttt{UF-84}) & 48 / 9 & 288 & 257 & Nguyen Tien Thuan \\ \hline
-3 & Jobs, Bookmarks, Saved Search, Alerts, Proposals, AI Checks/Matching (\texttt{UF-85}--\texttt{UF-121}) & 37 / 10 & 456 & 195 & Tran Phat Tai \\ \hline
-4 & Profiles, Skills, Portfolios, eKYC, Social, Favorites, Reviews, Account, CV (\texttt{UF-122}--\texttt{UF-197}) & 76 / 16 & 588 & 198 & Nguyen Lu Nhat Huy \\ \hline
-5 & Contracts, Shared Files, Milestones, Submissions, Disputes, Stripe Payments (\texttt{UF-198}--\texttt{UF-246}) & 49 / 4 & 454 & 131 & Vo Nhut Tin \\ \hline
-\multicolumn{2}{|c|}{\hd{Total}} & \hd{246 / 44} & \hd{2,005} & \hd{935} & \\ \hline
-\end{tabular}
-\end{table}
+\hd{Author} & \hd{Matrices} & \hd{Cases} & \hd{Passed} & \hd{Failed} & \hd{Untested} \\ \hline
+Pham Kha Vy & 39 & 252 & 219 & 0 & 33 \\ \hline
+Nguyen Tien Thuan & 48 & 288 & 288 & 0 & 0 \\ \hline
+Tran Phat Tai & 34 & 423 & 423 & 0 & 0 \\ \hline
+Nguyen Lu Nhat Huy & 76 & 588 & 588 & 0 & 0 \\ \hline
+Vo Nhut Tin & 49 & 454 & 454 & 0 & 0 \\ \hline
+\hd{Total} & \hd{246} & \hd{2,005} & \hd{1,972} & \hd{0} & \hd{33} \\ \hline
+\end{tabular}\end{table}
+
+\small
+\begin{longtable}{|p{6.4cm}|r|r|r|}
+\caption{Current system test inventory and recorded first-round status}\\
+\hline\hd{Module} & \hd{Cases} & \hd{Passed} & \hd{Pending} \\ \hline\endfirsthead
+\hline\hd{Module} & \hd{Cases} & \hd{Passed} & \hd{Pending} \\ \hline\endhead
+Manage Forum & 69 & 69 & 0 \\ \hline
+Manage Conversation & 35 & 35 & 0 \\ \hline
+Manage Moderation & 14 & 14 & 0 \\ \hline
+Manage ID Verification & 18 & 18 & 0 \\ \hline
+Manage Forum Trash & 18 & 18 & 0 \\ \hline
+User Authentication & 42 & 42 & 0 \\ \hline
+Role Management & 32 & 32 & 0 \\ \hline
+Manage Permission & 12 & 12 & 0 \\ \hline
+Session Management & 17 & 17 & 0 \\ \hline
+Forum Category Management & 29 & 29 & 0 \\ \hline
+User Management & 42 & 42 & 0 \\ \hline
+Banners Management & 24 & 24 & 0 \\ \hline
+Skill Management & 27 & 27 & 0 \\ \hline
+Job Category Management & 32 & 32 & 0 \\ \hline
+Job Browsing & 13 & 13 & 0 \\ \hline
+Job Management & 46 & 46 & 0 \\ \hline
+AI Content Moderation & 19 & 0 & 19 \\ \hline
+AI Face Scan & 30 & 0 & 30 \\ \hline
+Bookmarked Jobs & 17 & 17 & 0 \\ \hline
+Saved Search & 14 & 14 & 0 \\ \hline
+Job Alert & 16 & 16 & 0 \\ \hline
+Proposal Management & 25 & 25 & 0 \\ \hline
+AI Recommendation & 8 & 8 & 0 \\ \hline
+Job Category Browsing & 7 & 7 & 0 \\ \hline
+Freelancer Profile & 7 & 0 & 7 \\ \hline
+Freelancer Skills & 10 & 0 & 10 \\ \hline
+Portfolio & 17 & 0 & 17 \\ \hline
+Identity Verification & 14 & 0 & 14 \\ \hline
+Client Profile & 7 & 0 & 7 \\ \hline
+Social Links & 10 & 0 & 10 \\ \hline
+Favorite Freelancers & 9 & 0 & 9 \\ \hline
+Following Freelancers & 9 & 0 & 9 \\ \hline
+Notifications & 10 & 0 & 10 \\ \hline
+Role Switching & 8 & 0 & 8 \\ \hline
+Reviews & 19 & 0 & 19 \\ \hline
+Review Responses & 13 & 0 & 13 \\ \hline
+Account Profile & 16 & 0 & 16 \\ \hline
+Profile Revision Review & 21 & 0 & 21 \\ \hline
+Expert Profile & 5 & 0 & 5 \\ \hline
+CV Management & 23 & 0 & 23 \\ \hline
+Contract Management & 34 & 34 & 0 \\ \hline
+Milestone Management & 36 & 36 & 0 \\ \hline
+Dispute Management & 27 & 27 & 0 \\ \hline
+Payment Management & 34 & 34 & 0 \\ \hline
+\hd{Total} & \hd{935} & \hd{688} & \hd{247} \\ \hline
+\end{longtable}\normalsize
 
 \section{Test Reports}
+\subsection{Verification on 25 November 2026}
+Nhat Huy's unit suite passed 596 tests across nine suites on the current local backend. Exactly 588 results map to the 76 matrices \texttt{UF-122}--\texttt{UF-197}; eight supplemental tests are listed separately in the backend execution report and are not added to the workbook total. Test results are mapped by class and method/schema, rather than the historical UF labels in the test source.
 
-\subsection{Test Execution Summary}
-
-\begin{table}[H]
-\caption{Test execution summary table}
-\centering
-\begin{tabular}{|p{3.8cm}|c|c|c|c|c|}
-\hline
-\hd{Test Type} & \hd{Total TCs} & \hd{Passed} & \hd{Failed} & \hd{Pending} & \hd{Coverage} \\ \hline
-Unit Testing & 2,005 & 1,972 & 0 & 33 & 98.35\% \\ \hline
-Integration Testing & 84 & 84 & 0 & 0 & 100.00\% \\ \hline
-System Testing & 935 & 688 & 0 & 247 & 73.58\% \\ \hline
-Acceptance Testing & 42 & 42 & 0 & 0 & 100.00\% \\ \hline
-\hd{Total} & \hd{3,066} & \hd{2,786} & \hd{0} & \hd{280} & \hd{90.87\%} \\ \hline
-\end{tabular}
-\end{table}
-
-\subsection{Defect Summary}
+The initial verification found 114 failed tests. The failures were resolved by updating stale test fixtures and assertions to the current implementation: active roles are supplied alongside owned-role assignments; role-switch/join mocks use the current repository methods and result states; freelancer updates delegate to the revision service; missing client subprofiles are created; target freelancer errors use the current 404 response; revision submissions include changed-field keys; and AI unavailability messages include the cause. Production backend behavior was not changed for this report synchronization.
 
 \begin{table}[H]
-\caption{Defect summary table}
-\centering
-\begin{tabular}{|>{\raggedright\arraybackslash}p{2.4cm}|>{\raggedright\arraybackslash}p{3.2cm}|>{\raggedright\arraybackslash}p{7.8cm}|}
-\hline
-\hd{Severity} & \hd{Number of Defects} & \hd{Description} \\ \hline
-Critical & 0 open \newline (2 resolved) & Early sprint defects involving duplicate Stripe webhook event delivery and revoked refresh token reuse were resolved by adding idempotency checks and strict session state validation (100\% resolved). \\ \hline
-Major & 0 open \newline (6 resolved) & Edge cases in soft-deleted category/skill slug uniqueness, role-switching permission lookup, and milestone state transition guards were fixed and verified during Sprints 2--4 (100\% resolved). \\ \hline
-Minor & 0 open \newline (9 resolved) & UI validation message formatting, missing Vietnamese (\texttt{vi}) translation entries, and pagination filter reset issues were resolved prior to the Sprint 5 regression run (100\% resolved). \\ \hline
-\end{tabular}
-\end{table}
+\caption{Recorded workbook execution status}
+\centering\small
+\begin{tabular}{|p{4.0cm}|r|r|r|r|}
+\hline\hd{Test level} & \hd{Total} & \hd{Passed} & \hd{Failed} & \hd{Pending / untested} \\ \hline
+Unit matrices & 2,005 & 1,972 & 0 & 33 \\ \hline
+System / API & 935 & 688 & 0 & 247 \\ \hline
+\end{tabular}\end{table}
 
-\subsection{Test Analysis}
+Only Nhat Huy's 588 matrix cases and eight supplemental tests were re-executed for this update. Other members' workbook statuses are retained records. The unit execution coverage is 98.35\% (1,972 executed of 2,005); it is not a measured statement, branch or code coverage percentage. The system execution coverage is 73.58\% (688 executed of 935). Nhat Huy's 198 system/API cases remain Pending, as do the 49 AI content/face-scan cases recorded elsewhere in the workbook.
 
-\begin{itemize}
-  \item \textbf{Unit Testing Coverage and Distribution:} Out of 2,005 unit test cases across 246 functions (\texttt{UF-01} to \texttt{UF-246}) in \texttt{Report5\_Unit Test.xls}, 1,972 cases passed with 0 failures and 33 remain untested (\texttt{98.35\%} execution coverage). Case distribution covers 664 normal scenarios (\texttt{33.12\%}), 979 abnormal/exception paths (\texttt{48.83\%}), and 362 boundary conditions (\texttt{18.05\%}). In addition, \texttt{Report5\_Unit\_Test\_Backend.html} verifies 489/489 passing Jest cases across 19 core backend suites.
-  \item \textbf{System and Integration Stability:} Across all 44 functional modules in \texttt{Report5\_Test Report.xlsx} (935 total system cases), 688 cases passed with 0 failures and 247 cases are marked Pending execution (\texttt{73.58\%} execution coverage), alongside 84/84 passing integration workflow checks on the containerized staging environment.
-  \item \textbf{Defect Prevention via Shared Contracts:} Sharing Zod schemas (\texttt{@shared/types}) between the Next.js 16 frontend and NestJS 11 backend, combined with centralized RBAC enforcement in \texttt{AccessTokenGuard}, prevented client-server payload drift and eliminated unauthorized access regressions across all five sprints.
-  \item \textbf{Defect Resolution Rate:} All 17 defects discovered during iterative sprint testing (2 Critical, 6 Major, 9 Minor) were fixed, covered by regression tests, and closed within the sprint in which they were detected, leaving zero open defects at release.
-\end{itemize}
+\subsection{Evidence and Reproduction}
+Run \path{node node_modules/jest/bin/jest.js --config test/jest-unit.json --runInBand --testPathPatterns=test/nhuy --json --outputFile=../../tmp/report5-current-results.json} from \texttt{apps/api}. The current matrix-to-test mapping is supplied in \path{Report5_NhatHuy_Test_Evidence.csv}. The backend PDF lists all matrix cases and the supplemental tests. Schema validation matrices assert \texttt{safeParse} results; HTTP envelopes are handled by controllers and the exception filter and require separate system execution.
+
+\subsection{Remaining Verification}
+Execute the 33 untested unit cases and 247 Pending system/API cases, retain dated execution evidence, and rerun affected checks after backend changes. Integration and UAT completion are not inferred from unit tests. No new measured code-coverage, defect-closure or acceptance-sign-off claim is made by this update.
 
 \subsection{Test Conclusion}
-
-Based on the execution results across 2,005 unit test cases (1,972 passed, 33 untested), 84 integration test cases (84 passed), 935 system test cases (688 passed, 247 pending), and 42 user acceptance test scenarios (42 passed)---achieving \textbf{zero failures across all 2,786 executed cases} and \textbf{zero open defects}---the \textbf{Frevia -- Verified Freelance Marketplace Platform} (\texttt{SEP490\_04}) satisfies the core functional and non-functional quality gates specified in the Project Management Plan (Report 2) and Software Requirement Specification (Report 3).
-
+The report files now share the current inventory and explicitly distinguish re-executed unit results, other members' recorded statuses, and pending system work. Nhat Huy's current unit suite passes. Final release or UAT acceptance remains dependent on completion of the pending tests and the project's sign-off process.
 \end{document}

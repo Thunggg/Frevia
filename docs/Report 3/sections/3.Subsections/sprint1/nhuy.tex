@@ -5,14 +5,12 @@
 % =================================================================
 
 
-\Needspace{12\baselineskip}
 \subsection{Freelancer Profile Management}
 
 % -----------------------------------------------------------------
 % UC-07.01: View Freelancer Profile
 % -----------------------------------------------------------------
-\Needspace{12\baselineskip}
-\subsubsection{ View Freelancer Profile}
+\subsubsection{View Freelancer Profile}
 
 \fnhead{Function Trigger}
 The actor selects View Freelancer Profile.\newline
@@ -107,8 +105,7 @@ Failure & Structured error without sensitive data; no successful UI state when t
 % -----------------------------------------------------------------
 % UC-07.02: Update Freelancer Profile
 % -----------------------------------------------------------------
-\Needspace{12\baselineskip}
-\subsubsection{ Update Freelancer Profile}
+\subsubsection{Update Freelancer Profile}
 
 \fnhead{Function Trigger}
 The actor selects Update Freelancer Profile.\newline
@@ -204,17 +201,15 @@ Failure & Structured error without sensitive data; no successful UI state when t
 \end{itemize}
 
 
-\Needspace{12\baselineskip}
 \subsection{Freelancer Skills Management}
 
 % -----------------------------------------------------------------
-% UC-08.01: View Freelancer Skills List
+% UC-08.01: View Freelancer Skill List
 % -----------------------------------------------------------------
-\Needspace{12\baselineskip}
-\subsubsection{ View Freelancer Skills List}
+\subsubsection{View Freelancer Skill List}
 
 \fnhead{Function Trigger}
-The actor selects View Freelancer Skills List.\newline
+The actor selects View Freelancer Skill List.\newline
 \textbf{Navigation path:} Home $\rightarrow$ \texttt{/\allowbreak{}profiles/\allowbreak{}[id]} or \texttt{/\allowbreak{}freelancer/\allowbreak{}profile.}
 
 \fnhead{Function Description}
@@ -243,7 +238,7 @@ The actor selects View Freelancer Skills List.\newline
 \end{itemize}
 
 \fnhead{Screen Layout (Mock-up Description)}
-\screenfigure[0.95]{image/screenshot/sprint1/nhuy/View Freelancer Skill List.png}{View Freelancer Skills List interface}
+\screenfigure[0.95]{image/screenshot/sprint1/nhuy/View Freelancer Skill List.png}{View Freelancer Skill List interface}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
     \item Skill list with catalog name, proficiency /10 and owner-only remove action.
     \item Add Skill dialog with suggestions and level selector.
@@ -270,7 +265,7 @@ Selection & Current account or selected profile\texttt{/\allowbreak{}contract}; 
 
 \sublabel{Normal Flow}
 \begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
-    \item The actor opens \texttt{/\allowbreak{}profiles/\allowbreak{}[id]}; \texttt{/\allowbreak{}freelancer/\allowbreak{}profile} and selects View Freelancer Skills List.
+    \item The actor opens \texttt{/\allowbreak{}profiles/\allowbreak{}[id]}; \texttt{/\allowbreak{}freelancer/\allowbreak{}profile} and selects View Freelancer Skill List.
     \item The application submits the selected identifier or list filters.
     \item The API checks authentication where required, authorization, resource existence and input validity.
     \item Join FreelancerSkill with active Skill catalog entries and show proficiency levels.
@@ -302,8 +297,7 @@ Failure & Structured error without sensitive data; no successful UI state when t
 % -----------------------------------------------------------------
 % UC-08.02: Add Freelancer Skill
 % -----------------------------------------------------------------
-\Needspace{12\baselineskip}
-\subsubsection{ Add Freelancer Skill}
+\subsubsection{Add Freelancer Skill}
 
 \fnhead{Function Trigger}
 The actor selects Add Freelancer Skill.\newline
@@ -396,8 +390,7 @@ Failure & Structured error without sensitive data; no successful UI state when t
 % -----------------------------------------------------------------
 % UC-08.03: Delete Freelancer Skill
 % -----------------------------------------------------------------
-\Needspace{12\baselineskip}
-\subsubsection{ Delete Freelancer Skill}
+\subsubsection{Delete Freelancer Skill}
 
 \fnhead{Function Trigger}
 The actor selects Delete Freelancer Skill.\newline
@@ -486,17 +479,15 @@ Failure & Structured error without sensitive data; no successful UI state when t
 \end{itemize}
 
 
-\Needspace{12\baselineskip}
 \subsection{Portfolio Management}
 
 % -----------------------------------------------------------------
-% UC-09.01: View Portfolios List
+% UC-09.01: View Portfolio List
 % -----------------------------------------------------------------
-\Needspace{12\baselineskip}
-\subsubsection{ View Portfolios List}
+\subsubsection{View Portfolio List}
 
 \fnhead{Function Trigger}
-The actor selects View Portfolios List.\newline
+The actor selects View Portfolio List.\newline
 \textbf{Navigation path:} Home $\rightarrow$ \texttt{/\allowbreak{}profiles/\allowbreak{}[id]} or \texttt{/\allowbreak{}freelancer/\allowbreak{}profile.}
 
 \fnhead{Function Description}
@@ -527,7 +518,7 @@ The actor selects View Portfolios List.\newline
 \end{itemize}
 
 \fnhead{Screen Layout (Mock-up Description)}
-\screenfigure[0.95]{image/screenshot/sprint1/nhuy/View Portfolio List.png}{View Portfolios List interface}
+\screenfigure[0.95]{image/screenshot/sprint1/nhuy/View Portfolio List.png}{View Portfolio List interface}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
     \item Portfolio card grid with title, description and technologies.
     \item Detail dialog.
@@ -556,7 +547,7 @@ Selection & Current account or selected profile\texttt{/\allowbreak{}contract}; 
 
 \sublabel{Normal Flow}
 \begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
-    \item The actor opens \texttt{/\allowbreak{}profiles/\allowbreak{}[id]}; \texttt{/\allowbreak{}freelancer/\allowbreak{}profile} and selects View Portfolios List.
+    \item The actor opens \texttt{/\allowbreak{}profiles/\allowbreak{}[id]}; \texttt{/\allowbreak{}freelancer/\allowbreak{}profile} and selects View Portfolio List.
     \item The application submits the selected identifier or list filters.
     \item The API checks authentication where required, authorization, resource existence and input validity.
     \item List only non-deleted PortfolioItem records of the selected freelancer.
@@ -588,8 +579,7 @@ Failure & Structured error without sensitive data; no successful UI state when t
 % -----------------------------------------------------------------
 % UC-09.02: Add Portfolio
 % -----------------------------------------------------------------
-\Needspace{12\baselineskip}
-\subsubsection{ Add Portfolio}
+\subsubsection{Add Portfolio}
 
 \fnhead{Function Trigger}
 The actor selects Add Portfolio.\newline
@@ -685,13 +675,12 @@ Failure & Structured error without sensitive data; no successful UI state when t
 \end{itemize}
 
 % -----------------------------------------------------------------
-% UC-09.03: View Portfolio Details
+% UC-09.03: View Portfolio Detail
 % -----------------------------------------------------------------
-\Needspace{12\baselineskip}
-\subsubsection{ View Portfolio Details}
+\subsubsection{View Portfolio Detail}
 
 \fnhead{Function Trigger}
-The actor selects View Portfolio Details.\newline
+The actor selects View Portfolio Detail.\newline
 \textbf{Navigation path:} Home $\rightarrow$ \texttt{/\allowbreak{}profiles/\allowbreak{}[id]} or \texttt{/\allowbreak{}freelancer/\allowbreak{}profile.}
 
 \fnhead{Function Description}
@@ -722,7 +711,7 @@ The actor selects View Portfolio Details.\newline
 \end{itemize}
 
 \fnhead{Screen Layout (Mock-up Description)}
-\screenfigure[0.95]{image/screenshot/sprint1/nhuy/View Portfolio Detail.png}{View Portfolio Details interface}
+\screenfigure[0.95]{image/screenshot/sprint1/nhuy/View Portfolio Detail.png}{View Portfolio Detail interface}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
     \item Portfolio card grid with title, description and technologies.
     \item Detail dialog.
@@ -751,7 +740,7 @@ Identifier & Positive resource ID from the route; ownership is checked by the AP
 
 \sublabel{Normal Flow}
 \begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
-    \item The actor opens \texttt{/\allowbreak{}profiles/\allowbreak{}[id]}; \texttt{/\allowbreak{}freelancer/\allowbreak{}profile} and selects View Portfolio Details.
+    \item The actor opens \texttt{/\allowbreak{}profiles/\allowbreak{}[id]}; \texttt{/\allowbreak{}freelancer/\allowbreak{}profile} and selects View Portfolio Detail.
     \item The application submits the selected identifier or list filters.
     \item The API checks authentication where required, authorization, resource existence and input validity.
     \item Display a single non-deleted portfolio item and its external project link.
@@ -783,8 +772,7 @@ Failure & Structured error without sensitive data; no successful UI state when t
 % -----------------------------------------------------------------
 % UC-09.04: Update Portfolio
 % -----------------------------------------------------------------
-\Needspace{12\baselineskip}
-\subsubsection{ Update Portfolio}
+\subsubsection{Update Portfolio}
 
 \fnhead{Function Trigger}
 The actor selects Update Portfolio.\newline
@@ -882,8 +870,7 @@ Failure & Structured error without sensitive data; no successful UI state when t
 % -----------------------------------------------------------------
 % UC-09.05: Delete Portfolio
 % -----------------------------------------------------------------
-\Needspace{12\baselineskip}
-\subsubsection{ Delete Portfolio}
+\subsubsection{Delete Portfolio}
 
 \fnhead{Function Trigger}
 The actor selects Delete Portfolio.\newline

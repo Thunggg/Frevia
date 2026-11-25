@@ -5,17 +5,15 @@
 % =================================================================
 
 
-\Needspace{12\baselineskip}
 \subsection{Profile Revision Review and Expert Profile}
 
 % -----------------------------------------------------------------
-% UC-47.01: View Pending Profile Update Requests List
+% UC-47.01: View Pending Profile Update Request List
 % -----------------------------------------------------------------
-\Needspace{12\baselineskip}
-\subsubsection{ View Pending Profile Update Requests List}
+\subsubsection{View Pending Profile Update Request List}
 
 \fnhead{Function Trigger}
-The actor selects View Pending Profile Update Requests List.\newline
+The actor selects View Pending Profile Update Request List.\newline
 \textbf{Navigation path:} Home $\rightarrow$ \texttt{/\allowbreak{}admin/\allowbreak{}profile-\allowbreak{}revisions} or \texttt{/\allowbreak{}expert/\allowbreak{}profile.}
 
 \fnhead{Function Description}
@@ -46,7 +44,7 @@ The actor selects View Pending Profile Update Requests List.\newline
 \end{itemize}
 
 \fnhead{Screen Layout (Mock-up Description)}
-\screenfigure[0.95]{image/screenshot/sprint5/nhuy/View Pending Profile Update Request List.png}{View Pending Profile Update Requests List interface}
+\screenfigure[0.95]{image/screenshot/sprint5/nhuy/View Pending Profile Update Request List.png}{View Pending Profile Update Request List interface}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
     \item Admin filter bar and revision table.
     \item Current/proposed comparison panel.
@@ -76,7 +74,7 @@ Selection & Validated page, limit, search, status and profileType filters.\\ \hl
 
 \sublabel{Normal Flow}
 \begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
-    \item The actor opens \texttt{/\allowbreak{}admin/\allowbreak{}profile-\allowbreak{}revisions}; \texttt{/\allowbreak{}expert/\allowbreak{}profile} and selects View Pending Profile Update Requests List.
+    \item The actor opens \texttt{/\allowbreak{}admin/\allowbreak{}profile-\allowbreak{}revisions}; \texttt{/\allowbreak{}expert/\allowbreak{}profile} and selects View Pending Profile Update Request List.
     \item The application submits the selected identifier or list filters.
     \item The API checks authentication where required, authorization, resource existence and input validity.
     \item Filter and paginate revisions, defaulting the review workflow to pending requests.
@@ -106,13 +104,12 @@ Failure & Structured error without sensitive data; no successful UI state when t
 \end{itemize}
 
 % -----------------------------------------------------------------
-% UC-47.02: View Profile Update Request Details
+% UC-47.02: View Profile Update Request Detail
 % -----------------------------------------------------------------
-\Needspace{12\baselineskip}
-\subsubsection{ View Profile Update Request Details}
+\subsubsection{View Profile Update Request Detail}
 
 \fnhead{Function Trigger}
-The actor selects View Profile Update Request Details.\newline
+The actor selects View Profile Update Request Detail.\newline
 \textbf{Navigation path:} Home $\rightarrow$ \texttt{/\allowbreak{}admin/\allowbreak{}profile-\allowbreak{}revisions} or \texttt{/\allowbreak{}expert/\allowbreak{}profile.}
 
 \fnhead{Function Description}
@@ -143,7 +140,7 @@ The actor selects View Profile Update Request Details.\newline
 \end{itemize}
 
 \fnhead{Screen Layout (Mock-up Description)}
-\screenfigure[0.95]{image/screenshot/sprint5/nhuy/View Profile Update Request Detail.png}{View Profile Update Request Details interface}
+\screenfigure[0.95]{image/screenshot/sprint5/nhuy/View Profile Update Request Detail.png}{View Profile Update Request Detail interface}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
     \item Admin filter bar and revision table.
     \item Current/proposed comparison panel.
@@ -173,7 +170,7 @@ Identifier & Positive resource ID from the route; ownership is checked by the AP
 
 \sublabel{Normal Flow}
 \begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
-    \item The actor opens \texttt{/\allowbreak{}admin/\allowbreak{}profile-\allowbreak{}revisions}; \texttt{/\allowbreak{}expert/\allowbreak{}profile} and selects View Profile Update Request Details.
+    \item The actor opens \texttt{/\allowbreak{}admin/\allowbreak{}profile-\allowbreak{}revisions}; \texttt{/\allowbreak{}expert/\allowbreak{}profile} and selects View Profile Update Request Detail.
     \item The application submits the selected identifier or list filters.
     \item The API checks authentication where required, authorization, resource existence and input validity.
     \item Display the current and proposed snapshots, requester, profile type and prior review notes.
@@ -205,8 +202,7 @@ Failure & Structured error without sensitive data; no successful UI state when t
 % -----------------------------------------------------------------
 % UC-47.03: Approve Profile Update Request
 % -----------------------------------------------------------------
-\Needspace{12\baselineskip}
-\subsubsection{ Approve Profile Update Request}
+\subsubsection{Approve Profile Update Request}
 
 \fnhead{Function Trigger}
 The actor selects Approve Profile Update Request.\newline
@@ -302,8 +298,7 @@ Failure & Structured error without sensitive data; no successful UI state when t
 % -----------------------------------------------------------------
 % UC-47.04: Reject Profile Update Request
 % -----------------------------------------------------------------
-\Needspace{12\baselineskip}
-\subsubsection{ Reject Profile Update Request}
+\subsubsection{Reject Profile Update Request}
 
 \fnhead{Function Trigger}
 The actor selects Reject Profile Update Request.\newline
@@ -399,8 +394,7 @@ Failure & Structured error without sensitive data; no successful UI state when t
 % -----------------------------------------------------------------
 % UC-47.05: View Profile Update Request History
 % -----------------------------------------------------------------
-\Needspace{12\baselineskip}
-\subsubsection{ View Profile Update Request History}
+\subsubsection{View Profile Update Request History}
 
 \fnhead{Function Trigger}
 The actor selects View Profile Update Request History.\newline
@@ -496,8 +490,7 @@ Failure & Structured error without sensitive data; no successful UI state when t
 % -----------------------------------------------------------------
 % UC-47.06: Update Profile Expert
 % -----------------------------------------------------------------
-\Needspace{12\baselineskip}
-\subsubsection{ Update Profile Expert}
+\subsubsection{Update Profile Expert}
 
 \fnhead{Function Trigger}
 The actor selects Update Profile Expert.\newline
@@ -591,14 +584,12 @@ Failure & Structured error without sensitive data; no successful UI state when t
 \end{itemize}
 
 
-\Needspace{12\baselineskip}
 \subsection{Freelancer CV Management}
 
 % -----------------------------------------------------------------
 % UC-07.03: Upload CV
 % -----------------------------------------------------------------
-\Needspace{12\baselineskip}
-\subsubsection{ Upload CV}
+\subsubsection{Upload CV}
 
 \fnhead{Function Trigger}
 The actor selects Upload CV.\newline
@@ -694,8 +685,7 @@ Failure & Structured error without sensitive data; no successful UI state when t
 % -----------------------------------------------------------------
 % UC-07.04: View CV
 % -----------------------------------------------------------------
-\Needspace{12\baselineskip}
-\subsubsection{ View CV}
+\subsubsection{View CV}
 
 \fnhead{Function Trigger}
 The actor selects View CV.\newline
@@ -791,8 +781,7 @@ Failure & Structured error without sensitive data; no successful UI state when t
 % -----------------------------------------------------------------
 % UC-07.05: Replace CV
 % -----------------------------------------------------------------
-\Needspace{12\baselineskip}
-\subsubsection{ Replace CV}
+\subsubsection{Replace CV}
 
 \fnhead{Function Trigger}
 The actor selects Replace CV.\newline
@@ -888,8 +877,7 @@ Failure & Structured error without sensitive data; no successful UI state when t
 % -----------------------------------------------------------------
 % UC-07.06: Delete CV
 % -----------------------------------------------------------------
-\Needspace{12\baselineskip}
-\subsubsection{ Delete CV}
+\subsubsection{Delete CV}
 
 \fnhead{Function Trigger}
 The actor selects Delete CV.\newline

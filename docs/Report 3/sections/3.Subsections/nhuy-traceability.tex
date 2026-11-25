@@ -1,30 +1,24 @@
-\Needspace{12\baselineskip}
-\subsection{Nhuy Requirement Traceability and Acceptance Scope}
+\subsection{Requirement Traceability and Acceptance Scope}
 \label{sec:nhuy-traceability}
-The following register covers the 51 use cases owned by Nguyen Lu Nhat Huy across Sprints 1--5. Use-case identifiers follow the project UC catalog. The specifications state required behavior; the acceptance-gap register distinguishes requirements from verified implementation. Screen layouts are schematic descriptions rather than fabricated screenshots.
+The following register covers the 51 use cases documented across Sprints 1--5. Use-case identifiers follow the project UC catalog. The specifications state required behavior; the acceptance-gap register distinguishes requirements from verified implementation. Screen layouts are schematic descriptions rather than fabricated screenshots.
 
-\Needspace{12\baselineskip}
-\begin{longtable}{|p{1.2cm}|p{2.5cm}|p{4.2cm}|p{5.8cm}|}
-\hline\rowcolor{headerbg}Sprint & UC group & Feature & Persistent entities \\ \hline
-\endfirsthead
-\hline\rowcolor{headerbg}Sprint & UC group & Feature & Persistent entities \\ \hline\endhead
-1, 5 & UC-07 & Freelancer Profile Management & Profile, FreelancerProfile, ProfileRevision \\ \hline
-1 & UC-08 & Freelancer Skills Management & Profile, FreelancerProfile, FreelancerSkill, Skill \\ \hline
-1 & UC-09 & Portfolio Management & Profile, FreelancerProfile, PortfolioItem \\ \hline
-2 & UC-18 & Identity Verification & User, IdVerificationDocument, FreelancerProfile \\ \hline
-2 & UC-19 & Client Profile Management & User, Profile, ClientProfile, SocialLink, ProfileRevision \\ \hline
-2 & UC-20 & Social Links Management & Profile, SocialLink \\ \hline
-2 & UC-21 & Favorite Freelancers & User, Profile, FreelancerProfile, FavoriteFreelancer \\ \hline
-3 & UC-29 & Following Management & User, FollowFreelancer, Notification \\ \hline
-3 & UC-30 & Notification Management & Notification \\ \hline
-3 & UC-31 & Role Switching and Enrollment & User, Role, UserRole, Session \\ \hline
-4 & UC-39 & Contract Review Management & Contract, Review, Notification \\ \hline
-4 & UC-40 & Review Response Management & Review, ReviewResponse, Notification \\ \hline
-4 & UC-41 & General Account Profile & User, Profile, ProfileRevision \\ \hline
-5 & UC-47 & Profile Revision Review and Expert Profile & ProfileRevision, Profile, FreelancerProfile, ClientProfile, Expert, Notification \\ \hline
-\end{longtable}
+\begin{specdatatable}{UC and Sprint}{Feature and persistent entities}
+UC-07 (Sprint 1, 5) & \textbf{Freelancer Profile Management}\newline Persistent entities: Profile, FreelancerProfile, ProfileRevision \\ \hline
+UC-08 (Sprint 1) & \textbf{Freelancer Skills Management}\newline Persistent entities: Profile, FreelancerProfile, FreelancerSkill, Skill \\ \hline
+UC-09 (Sprint 1) & \textbf{Portfolio Management}\newline Persistent entities: Profile, FreelancerProfile, PortfolioItem \\ \hline
+UC-18 (Sprint 2) & \textbf{Identity Verification}\newline Persistent entities: User, IdVerificationDocument, FreelancerProfile \\ \hline
+UC-19 (Sprint 2) & \textbf{Client Profile Management}\newline Persistent entities: User, Profile, ClientProfile, SocialLink, ProfileRevision \\ \hline
+UC-20 (Sprint 2) & \textbf{Social Links Management}\newline Persistent entities: Profile, SocialLink \\ \hline
+UC-21 (Sprint 2) & \textbf{Favorite Freelancers}\newline Persistent entities: User, Profile, FreelancerProfile, FavoriteFreelancer \\ \hline
+UC-29 (Sprint 3) & \textbf{Following Management}\newline Persistent entities: User, FollowFreelancer, Notification \\ \hline
+UC-30 (Sprint 3) & \textbf{Notification Management}\newline Persistent entities: Notification \\ \hline
+UC-31 (Sprint 3) & \textbf{Role Switching and Enrollment}\newline Persistent entities: User, Role, UserRole, Session \\ \hline
+UC-39 (Sprint 4) & \textbf{Contract Review Management}\newline Persistent entities: Contract, Review, Notification \\ \hline
+UC-40 (Sprint 4) & \textbf{Review Response Management}\newline Persistent entities: Review, ReviewResponse, Notification \\ \hline
+UC-41 (Sprint 4) & \textbf{General Account Profile}\newline Persistent entities: User, Profile, ProfileRevision \\ \hline
+UC-47 (Sprint 5) & \textbf{Profile Revision Review and Expert Profile}\newline Persistent entities: ProfileRevision, Profile, FreelancerProfile, ClientProfile, Expert, Notification \\ \hline
+\end{specdatatable}
 
-\Needspace{12\baselineskip}
 \subsubsection{Acceptance Gaps Requiring Verification}
 The following issues were identified in the earlier source/database audit. They are not asserted to be fixed by this documentation update. Revalidate them against the latest merged dev source.
 \begin{specdatatable}{UC}{Acceptance gap}
@@ -35,7 +29,6 @@ UC-21.01--02 & Favorites must consistently display new freelancers after a succe
 All owned UCs & A complete SRS is not evidence of completed implementation. Repeat integration and browser acceptance tests on the latest dev revision before marking these requirements verified. \\ \hline
 \end{specdatatable}
 
-\Needspace{12\baselineskip}
 \subsubsection{Schema and Identifier Conventions}
 \begin{itemize}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
 \item Profile.id identifies a general profile; User.id identifies an account. FreelancerProfile.id identifies the professional subtype. The three identifiers are not interchangeable.

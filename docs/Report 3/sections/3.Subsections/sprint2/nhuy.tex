@@ -5,14 +5,12 @@
 % =================================================================
 
 
-\Needspace{12\baselineskip}
 \subsection{Identity Verification}
 
 % -----------------------------------------------------------------
 % UC-18.01: Upload Identity Documents
 % -----------------------------------------------------------------
-\Needspace{12\baselineskip}
-\subsubsection{ Upload Identity Documents}
+\subsubsection{Upload Identity Documents}
 
 \fnhead{Function Trigger}
 The actor selects Upload Identity Documents.\newline
@@ -111,8 +109,7 @@ Failure & Structured error without sensitive data; no successful UI state when t
 % -----------------------------------------------------------------
 % UC-18.02: View Verification Status
 % -----------------------------------------------------------------
-\Needspace{12\baselineskip}
-\subsubsection{ View Verification Status}
+\subsubsection{View Verification Status}
 
 \fnhead{Function Trigger}
 The actor selects View Verification Status.\newline
@@ -206,14 +203,12 @@ Failure & Structured error without sensitive data; no successful UI state when t
 \end{itemize}
 
 
-\Needspace{12\baselineskip}
 \subsection{Client Profile Management}
 
 % -----------------------------------------------------------------
 % UC-19.01: View Client Profile
 % -----------------------------------------------------------------
-\Needspace{12\baselineskip}
-\subsubsection{ View Client Profile}
+\subsubsection{View Client Profile}
 
 \fnhead{Function Trigger}
 The actor selects View Client Profile.\newline
@@ -308,8 +303,7 @@ Failure & Structured error without sensitive data; no successful UI state when t
 % -----------------------------------------------------------------
 % UC-19.02: Update Company Information
 % -----------------------------------------------------------------
-\Needspace{12\baselineskip}
-\subsubsection{ Update Company Information}
+\subsubsection{Update Company Information}
 
 \fnhead{Function Trigger}
 The actor selects Update Company Information.\newline
@@ -404,17 +398,15 @@ Failure & Structured error without sensitive data; no successful UI state when t
 \end{itemize}
 
 
-\Needspace{12\baselineskip}
 \subsection{Social Links Management}
 
 % -----------------------------------------------------------------
-% UC-20.01: View Social Links List
+% UC-20.01: View Social Link List
 % -----------------------------------------------------------------
-\Needspace{12\baselineskip}
-\subsubsection{ View Social Links List}
+\subsubsection{View Social Link List}
 
 \fnhead{Function Trigger}
-The actor selects View Social Links List.\newline
+The actor selects View Social Link List.\newline
 \textbf{Navigation path:} Home $\rightarrow$ \texttt{/\allowbreak{}account-\allowbreak{}profile (Social Links)} or \texttt{/\allowbreak{}client/\allowbreak{}profile} or \texttt{public profile.}
 
 \fnhead{Function Description}
@@ -445,7 +437,7 @@ The actor selects View Social Links List.\newline
 \end{itemize}
 
 \fnhead{Screen Layout (Mock-up Description)}
-\screenfigure[0.95]{image/screenshot/sprint2/nhuy/View Social Link List.png}{View Social Links List interface}
+\screenfigure[0.95]{image/screenshot/sprint2/nhuy/View Social Link List.png}{View Social Link List interface}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
     \item Platform selector and URL input.
     \item Saved links with labels and external-link icons.
@@ -476,7 +468,7 @@ Selection & Current account or selected profile\texttt{/\allowbreak{}contract}; 
 
 \sublabel{Normal Flow}
 \begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
-    \item The actor opens \texttt{/\allowbreak{}account-\allowbreak{}profile} (Social Links); \texttt{/\allowbreak{}client/\allowbreak{}profile}; public profile and selects View Social Links List.
+    \item The actor opens \texttt{/\allowbreak{}account-\allowbreak{}profile} (Social Links); \texttt{/\allowbreak{}client/\allowbreak{}profile}; public profile and selects View Social Link List.
     \item The application submits the selected identifier or list filters.
     \item The API checks authentication where required, authorization, resource existence and input validity.
     \item Retrieve links for the current account settings or the public client response; public freelancer rendering is a tracked gap.
@@ -508,8 +500,7 @@ Failure & Structured error without sensitive data; no successful UI state when t
 % -----------------------------------------------------------------
 % UC-20.02: Add Social Link
 % -----------------------------------------------------------------
-\Needspace{12\baselineskip}
-\subsubsection{ Add Social Link}
+\subsubsection{Add Social Link}
 
 \fnhead{Function Trigger}
 The actor selects Add Social Link.\newline
@@ -608,8 +599,7 @@ Failure & Structured error without sensitive data; no successful UI state when t
 % -----------------------------------------------------------------
 % UC-20.03: Delete Social Link
 % -----------------------------------------------------------------
-\Needspace{12\baselineskip}
-\subsubsection{ Delete Social Link}
+\subsubsection{Delete Social Link}
 
 \fnhead{Function Trigger}
 The actor selects Delete Social Link.\newline
@@ -704,17 +694,15 @@ Failure & Structured error without sensitive data; no successful UI state when t
 \end{itemize}
 
 
-\Needspace{12\baselineskip}
 \subsection{Favorite Freelancers}
 
 % -----------------------------------------------------------------
-% UC-21.01: View Favorite Freelancers List
+% UC-21.01: View Favorite Freelancer List
 % -----------------------------------------------------------------
-\Needspace{12\baselineskip}
-\subsubsection{ View Favorite Freelancers List}
+\subsubsection{View Favorite Freelancer List}
 
 \fnhead{Function Trigger}
-The actor selects View Favorite Freelancers List.\newline
+The actor selects View Favorite Freelancer List.\newline
 \textbf{Navigation path:} Home $\rightarrow$ \texttt{/\allowbreak{}client/\allowbreak{}profile (Favorites)} or \texttt{/\allowbreak{}profiles/\allowbreak{}[id].}
 
 \fnhead{Function Description}
@@ -744,7 +732,7 @@ The actor selects View Favorite Freelancers List.\newline
 \end{itemize}
 
 \fnhead{Screen Layout (Mock-up Description)}
-\screenfigure[0.95]{image/screenshot/sprint2/nhuy/View Favorite Freelancer List.png}{View Favorite Freelancers List interface}
+\screenfigure[0.95]{image/screenshot/sprint2/nhuy/View Favorite Freelancer List.png}{View Favorite Freelancer List interface}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
     \item Favorite toggle on public freelancer profile.
     \item Favorites list with name, title, skills, profile link and Remove action.
@@ -773,7 +761,7 @@ Selection & Current account or selected profile\texttt{/\allowbreak{}contract}; 
 
 \sublabel{Normal Flow}
 \begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
-    \item The actor opens \texttt{/\allowbreak{}client/\allowbreak{}profile} (Favorites); \texttt{/\allowbreak{}profiles/\allowbreak{}[id]} and selects View Favorite Freelancers List.
+    \item The actor opens \texttt{/\allowbreak{}client/\allowbreak{}profile} (Favorites); \texttt{/\allowbreak{}profiles/\allowbreak{}[id]} and selects View Favorite Freelancer List.
     \item The application submits the selected identifier or list filters.
     \item The API checks authentication where required, authorization, resource existence and input validity.
     \item Load the current Client favorites and join public freelancer details.
@@ -805,8 +793,7 @@ Failure & Structured error without sensitive data; no successful UI state when t
 % -----------------------------------------------------------------
 % UC-21.02: Add Freelancer to Favorites
 % -----------------------------------------------------------------
-\Needspace{12\baselineskip}
-\subsubsection{ Add Freelancer to Favorites}
+\subsubsection{Add Freelancer to Favorites}
 
 \fnhead{Function Trigger}
 The actor selects Add Freelancer to Favorites.\newline
@@ -900,8 +887,7 @@ Failure & Structured error without sensitive data; no successful UI state when t
 % -----------------------------------------------------------------
 % UC-21.03: Remove Freelancer from Favorites
 % -----------------------------------------------------------------
-\Needspace{12\baselineskip}
-\subsubsection{ Remove Freelancer from Favorites}
+\subsubsection{Remove Freelancer from Favorites}
 
 \fnhead{Function Trigger}
 The actor selects Remove Freelancer from Favorites.\newline

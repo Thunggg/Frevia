@@ -5,17 +5,15 @@
 % =================================================================
 
 
-\Needspace{12\baselineskip}
 \subsection{Contract Review Management}
 
 % -----------------------------------------------------------------
-% UC-39.01: View Reviews List
+% UC-39.01: View Review List
 % -----------------------------------------------------------------
-\Needspace{12\baselineskip}
-\subsubsection{ View Reviews List}
+\subsubsection{View Review List}
 
 \fnhead{Function Trigger}
-The actor selects View Reviews List.\newline
+The actor selects View Review List.\newline
 \textbf{Navigation path:} Home $\rightarrow$ \texttt{/\allowbreak{}client/\allowbreak{}contracts/\allowbreak{}[slug]} or \texttt{/\allowbreak{}freelancer/\allowbreak{}contracts/\allowbreak{}[slug].}
 
 \fnhead{Function Description}
@@ -45,7 +43,7 @@ The actor selects View Reviews List.\newline
 \end{itemize}
 
 \fnhead{Screen Layout (Mock-up Description)}
-\screenfigure[0.95]{image/screenshot/sprint4/nhuy/View Review List.png}{View Reviews List interface}
+\screenfigure[0.95]{image/screenshot/sprint4/nhuy/View Review List.png}{View Review List interface}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
     \item Contract Reviews section with author, rating, breakdown and comment.
     \item Write Review dialog.
@@ -74,7 +72,7 @@ Selection & Current account or selected profile\texttt{/\allowbreak{}contract}; 
 
 \sublabel{Normal Flow}
 \begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
-    \item The actor opens \texttt{/\allowbreak{}client/\allowbreak{}contracts/\allowbreak{}[slug]}; \texttt{/\allowbreak{}freelancer/\allowbreak{}contracts/\allowbreak{}[slug]} and selects View Reviews List.
+    \item The actor opens \texttt{/\allowbreak{}client/\allowbreak{}contracts/\allowbreak{}[slug]}; \texttt{/\allowbreak{}freelancer/\allowbreak{}contracts/\allowbreak{}[slug]} and selects View Review List.
     \item The application submits the selected identifier or list filters.
     \item The API checks authentication where required, authorization, resource existence and input validity.
     \item Retrieve reviews and active responses for a contract after verifying participant access.
@@ -104,13 +102,12 @@ Failure & Structured error without sensitive data; no successful UI state when t
 \end{itemize}
 
 % -----------------------------------------------------------------
-% UC-39.02: View Review Details
+% UC-39.02: View Review Detail
 % -----------------------------------------------------------------
-\Needspace{12\baselineskip}
-\subsubsection{ View Review Details}
+\subsubsection{View Review Detail}
 
 \fnhead{Function Trigger}
-The actor selects View Review Details.\newline
+The actor selects View Review Detail.\newline
 \textbf{Navigation path:} Home $\rightarrow$ \texttt{/\allowbreak{}client/\allowbreak{}contracts/\allowbreak{}[slug]} or \texttt{/\allowbreak{}freelancer/\allowbreak{}contracts/\allowbreak{}[slug].}
 
 \fnhead{Function Description}
@@ -140,7 +137,7 @@ The actor selects View Review Details.\newline
 \end{itemize}
 
 \fnhead{Screen Layout (Mock-up Description)}
-\screenfigure[0.95]{image/screenshot/sprint4/nhuy/View Review Detail.png}{View Review Details interface}
+\screenfigure[0.95]{image/screenshot/sprint4/nhuy/View Review Detail.png}{View Review Detail interface}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
     \item Contract Reviews section with author, rating, breakdown and comment.
     \item Write Review dialog.
@@ -169,7 +166,7 @@ Identifier & Positive resource ID from the route; ownership is checked by the AP
 
 \sublabel{Normal Flow}
 \begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
-    \item The actor opens \texttt{/\allowbreak{}client/\allowbreak{}contracts/\allowbreak{}[slug]}; \texttt{/\allowbreak{}freelancer/\allowbreak{}contracts/\allowbreak{}[slug]} and selects View Review Details.
+    \item The actor opens \texttt{/\allowbreak{}client/\allowbreak{}contracts/\allowbreak{}[slug]}; \texttt{/\allowbreak{}freelancer/\allowbreak{}contracts/\allowbreak{}[slug]} and selects View Review Detail.
     \item The application submits the selected identifier or list filters.
     \item The API checks authentication where required, authorization, resource existence and input validity.
     \item Retrieve one review and response after checking contract participation.
@@ -201,8 +198,7 @@ Failure & Structured error without sensitive data; no successful UI state when t
 % -----------------------------------------------------------------
 % UC-39.03: Write Review
 % -----------------------------------------------------------------
-\Needspace{12\baselineskip}
-\subsubsection{ Write Review}
+\subsubsection{Write Review}
 
 \fnhead{Function Trigger}
 The actor selects Write Review.\newline
@@ -299,8 +295,7 @@ Failure & Structured error without sensitive data; no successful UI state when t
 % -----------------------------------------------------------------
 % UC-39.04: Update Review
 % -----------------------------------------------------------------
-\Needspace{12\baselineskip}
-\subsubsection{ Update Review}
+\subsubsection{Update Review}
 
 \fnhead{Function Trigger}
 The actor selects Update Review.\newline
@@ -397,8 +392,7 @@ Failure & Structured error without sensitive data; no successful UI state when t
 % -----------------------------------------------------------------
 % UC-39.05: Delete Review
 % -----------------------------------------------------------------
-\Needspace{12\baselineskip}
-\subsubsection{ Delete Review}
+\subsubsection{Delete Review}
 
 \fnhead{Function Trigger}
 The actor selects Delete Review.\newline
@@ -490,14 +484,12 @@ Failure & Structured error without sensitive data; no successful UI state when t
 \end{itemize}
 
 
-\Needspace{12\baselineskip}
 \subsection{Review Response Management}
 
 % -----------------------------------------------------------------
 % UC-40.01: Respond to Review
 % -----------------------------------------------------------------
-\Needspace{12\baselineskip}
-\subsubsection{ Respond to Review}
+\subsubsection{Respond to Review}
 
 \fnhead{Function Trigger}
 The actor selects Respond to Review.\newline
@@ -593,8 +585,7 @@ Failure & Structured error without sensitive data; no successful UI state when t
 % -----------------------------------------------------------------
 % UC-40.02: Update Review Response
 % -----------------------------------------------------------------
-\Needspace{12\baselineskip}
-\subsubsection{ Update Review Response}
+\subsubsection{Update Review Response}
 
 \fnhead{Function Trigger}
 The actor selects Update Review Response.\newline
@@ -690,8 +681,7 @@ Failure & Structured error without sensitive data; no successful UI state when t
 % -----------------------------------------------------------------
 % UC-40.03: Delete Review Response
 % -----------------------------------------------------------------
-\Needspace{12\baselineskip}
-\subsubsection{ Delete Review Response}
+\subsubsection{Delete Review Response}
 
 \fnhead{Function Trigger}
 The actor selects Delete Review Response.\newline
@@ -784,14 +774,12 @@ Failure & Structured error without sensitive data; no successful UI state when t
 \end{itemize}
 
 
-\Needspace{12\baselineskip}
 \subsection{General Account Profile}
 
 % -----------------------------------------------------------------
 % UC-41.01: View Profile
 % -----------------------------------------------------------------
-\Needspace{12\baselineskip}
-\subsubsection{ View Profile}
+\subsubsection{View Profile}
 
 \fnhead{Function Trigger}
 The actor selects View Profile.\newline
@@ -886,8 +874,7 @@ Failure & Structured error without sensitive data; no successful UI state when t
 % -----------------------------------------------------------------
 % UC-41.02: Update Profile
 % -----------------------------------------------------------------
-\Needspace{12\baselineskip}
-\subsubsection{ Update Profile}
+\subsubsection{Update Profile}
 
 \fnhead{Function Trigger}
 The actor selects Update Profile.\newline
@@ -982,8 +969,7 @@ Failure & Structured error without sensitive data; no successful UI state when t
 % -----------------------------------------------------------------
 % UC-41.03: Change Password
 % -----------------------------------------------------------------
-\Needspace{12\baselineskip}
-\subsubsection{ Change Password}
+\subsubsection{Change Password}
 
 \fnhead{Function Trigger}
 The actor selects Change Password.\newline
@@ -1078,8 +1064,7 @@ Failure & Structured error without sensitive data; no successful UI state when t
 % -----------------------------------------------------------------
 % UC-41.04: Upload Avatar
 % -----------------------------------------------------------------
-\Needspace{12\baselineskip}
-\subsubsection{ Upload Avatar}
+\subsubsection{Upload Avatar}
 
 \fnhead{Function Trigger}
 The actor selects Upload Avatar.\newline
