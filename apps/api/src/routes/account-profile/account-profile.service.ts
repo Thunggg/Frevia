@@ -277,6 +277,18 @@ export class AccountProfileService {
     return user;
   }
 
+  private async requireAnyRole(userId: number, roleNames: string[]) {
+    const user = await this.repository.findUserWithRoles(userId);
+    if (!user?.profile) throw ProfileNotFoundException();
+    const hasRole =
+      (user.role?.name && roleNames.includes(user.role.name)) ||
+      user.userRoles?.some((ur) => roleNames.includes(ur.role.name));
+    if (!hasRole) {
+      throw AccountProfileForbiddenException();
+    }
+    return user;
+  }
+
   private hasOwnedRole(
     user:
       | {
@@ -382,7 +394,7 @@ export class AccountProfileService {
     documentType: DocumentTypeType,
     file?: Express.Multer.File,
   ) {
-    await this.requireRole(userId, RoleName.FREELANCER);
+    await this.requireAnyRole(userId, [RoleName.FREELANCER, RoleName.CLIENT]);
     if (!file) throw IdentityFileRequiredException();
     const allowedTypes = ['application/pdf', 'image/jpeg', 'image/png'];
     if (!allowedTypes.includes(file.mimetype) || file.size > 10 * 1024 * 1024) {
@@ -426,7 +438,7 @@ export class AccountProfileService {
       liveness: Express.Multer.File[];
     },
   ) {
-    await this.requireRole(userId, RoleName.FREELANCER);
+    await this.requireAnyRole(userId, [RoleName.FREELANCER, RoleName.CLIENT]);
     const { front, back, selfie, liveness } = files;
     if (!front) throw IdentityAiFrontRequiredException();
     if (!selfie) throw IdentityAiSelfieRequiredException();
@@ -537,14 +549,14 @@ export class AccountProfileService {
 
   /** Proxy 1 khung webcam → AI /liveness/pose (poll trong lúc làm thử thách). */
   async livenessPose(userId: number, file?: Express.Multer.File) {
-    await this.requireRole(userId, RoleName.FREELANCER);
+    await this.requireAnyRole(userId, [RoleName.FREELANCER, RoleName.CLIENT]);
     if (!file) throw IdentityAiFramesInvalidException();
     this.assertAiImage(file, 'file');
     return this.identityAi.livenessPose(file);
   }
 
   async getIdentityStatus(userId: number) {
-    await this.requireRole(userId, RoleName.FREELANCER);
+    await this.requireAnyRole(userId, [RoleName.FREELANCER, RoleName.CLIENT]);
     const documents = await this.repository.findIdentityDocuments(userId);
     return {
       status: documents[0]?.status ?? null,
@@ -559,7 +571,7 @@ export class AccountProfileService {
     id: number,
     side: 'front' | 'back' = 'front',
   ) {
-    await this.requireRole(userId, RoleName.FREELANCER);
+    await this.requireAnyRole(userId, [RoleName.FREELANCER, RoleName.CLIENT]);
     const document = await this.repository.findIdentityDocumentById(id);
     if (!document || document.userId !== userId) {
       throw IdentityDocumentNotFoundException();
