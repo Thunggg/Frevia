@@ -1,17 +1,17 @@
 \Needspace{12\baselineskip}
 \paragraph{Manage Moderation}
 % =================================================================
-% UC-06.1 View Moderation Queue
+% UC-34.01 View Moderation Queue
 % =================================================================
-\subparagraph{UC-06.1 View Moderation Queue}
+\subparagraph{UC-34.01 View Moderation Queue}
 
 \Needspace{12\baselineskip}
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-06.1 View Moderation Queue} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-34.01 View Moderation Queue} \\* \hline
 \endfirsthead
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-06.1 View Moderation Queue \textit{(cont.)}} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-34.01 View Moderation Queue \textit{(cont.)}} \\* \hline
 \endhead
 \hline\endfoot
 \endlastfoot
@@ -22,7 +22,7 @@ Primary Actor: & Admin & Secondary Actors: & N/A \\ \hline
 
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When an admin accesses the Moderation section from the admin navigation menu.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Allows an administrator to view all forum posts with a PENDING moderation status, review their content, AI moderation scores, and categories, then approve or reject them.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Allows an administrator to view all forum posts with a PENDING moderation status, review their content, AI moderation scores, and categories, then approve or reject them.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The user is authenticated and has the Admin role. \newline
@@ -92,18 +92,18 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{The SensitiveAI proxy is operational 
 \end{longtable}
 
 % =================================================================
-% UC-06.2 Moderation Item Detail
+% UC-34.02 Moderation Item Details
 % =================================================================
 
-\subparagraph{UC-06.2 Moderation Item Detail}
+\subparagraph{UC-34.02 Moderation Item Details}
 
 \Needspace{12\baselineskip}
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-06.2 Moderation Item Detail} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-34.02 Moderation Item Details} \\* \hline
 \endfirsthead
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-06.2 Moderation Item Detail \textit{(cont.)}} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-34.02 Moderation Item Details \textit{(cont.)}} \\* \hline
 \endhead
 \hline\endfoot
 \endlastfoot
@@ -114,7 +114,7 @@ Primary Actor: & Admin & Secondary Actors: & N/A \\ \hline
 
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When an admin clicks the ``View'' action on a post in the moderation queue.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Allows an administrator to view the complete content and metadata of a pending forum post before deciding whether to approve or reject it.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Allows an administrator to view the complete content and metadata of a pending forum post before deciding whether to approve or reject it.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The user is authenticated and has the Admin role. \newline
@@ -176,18 +176,18 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{The post data is consistent and not m
 \end{longtable}
 
 % =================================================================
-% UC-06.3 Resolve Moderation
+% UC-34.03 Resolve Moderation
 % =================================================================
 
-\subparagraph{UC-06.3 Resolve Moderation}
+\subparagraph{UC-34.03 Resolve Moderation}
 
 \Needspace{12\baselineskip}
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-06.3 Resolve Moderation} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-34.03 Resolve Moderation} \\* \hline
 \endfirsthead
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-06.3 Resolve Moderation \textit{(cont.)}} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-34.03 Resolve Moderation \textit{(cont.)}} \\* \hline
 \endhead
 \hline\endfoot
 \endlastfoot
@@ -198,7 +198,7 @@ Primary Actor: & Admin & Secondary Actors: & N/A \\ \hline
 
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When an admin clicks the ``Approve'' or ``Reject'' button on a moderation item detail.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Allows an administrator to resolve a moderation item by approving or rejecting the post. Approval makes the post publicly visible; rejection soft-deletes the post and moves it to the trash.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Allows an administrator to resolve a moderation item by approving or rejecting the post. Approval makes the post publicly visible; rejection soft-deletes the post and moves it to the trash.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The user is authenticated and has the Admin role. \newline
@@ -266,7 +266,7 @@ BR-MOD-08: Only the Admin role may approve or reject a post. \newline
 BR-MOD-09: Approval shall set \texttt{moderationStatus} to APPROVED and make the post publicly visible. \newline
 BR-MOD-10: Rejection shall set \texttt{moderationStatus} to REJECTED, soft-delete the post, and move it to the trash. \newline
 BR-MOD-11: The \texttt{reviewedById} and \texttt{reviewedAt} fields shall record which admin reviewed the post and when. \newline
-BR-MOD-12: A rejected post may later be restored from the trash, which returns it to PENDING status (UC-07.3). \newline
+BR-MOD-12: A rejected post may later be restored from the trash, which returns it to PENDING status (UC-36.03). \newline
 BR-MOD-13: Once a post is approved or rejected, it cannot be re-moderated unless it is restored from trash.
 } \\ \hline
 
@@ -277,18 +277,18 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{The post has not been modified by the
 \end{longtable}
 
 % =================================================================
-% UC-06.4 View Reports Queue
+% UC-34.04 View Reports Queue
 % =================================================================
 
-\subparagraph{UC-06.4 View Reports Queue}
+\subparagraph{UC-34.04 View Reports Queue}
 
 \Needspace{12\baselineskip}
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-06.4 View Reports Queue} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-34.04 View Reports Queue} \\* \hline
 \endfirsthead
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-06.4 View Reports Queue \textit{(cont.)}} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-34.04 View Reports Queue \textit{(cont.)}} \\* \hline
 \endhead
 \hline\endfoot
 \endlastfoot
@@ -299,7 +299,7 @@ Primary Actor: & Admin & Secondary Actors: & N/A \\ \hline
 
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When an admin accesses the Reports section from the admin navigation menu.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Allows an administrator to view all user-submitted reports on forum posts and comments, filter by status, search by reason, and update report statuses.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Allows an administrator to view all user-submitted reports on forum posts and comments, filter by status, search by reason, and update report statuses.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The user is authenticated and has the Admin role. \newline
@@ -370,18 +370,18 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{At least one report exists in the sys
 \end{longtable}
 
 % =================================================================
-% UC-06.5 Update Report Status
+% UC-34.05 Update Report Status
 % =================================================================
 
-\subparagraph{UC-06.5 Update Report Status}
+\subparagraph{UC-34.05 Update Report Status}
 
 \Needspace{12\baselineskip}
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-06.5 Update Report Status} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-34.05 Update Report Status} \\* \hline
 \endfirsthead
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-06.5 Update Report Status \textit{(cont.)}} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-34.05 Update Report Status \textit{(cont.)}} \\* \hline
 \endhead
 \hline\endfoot
 \endlastfoot
@@ -392,7 +392,7 @@ Primary Actor: & Admin & Secondary Actors: & N/A \\ \hline
 
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When an admin changes the status of a report from the reports queue using the inline status dropdown.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Allows an administrator to update the status of a user-submitted report (e.g., from PENDING to REVIEWED, RESOLVED, or DISMISSED).} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Allows an administrator to update the status of a user-submitted report (e.g., from PENDING to REVIEWED, RESOLVED, or DISMISSED).} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The user is authenticated and has the Admin role. \newline
@@ -464,18 +464,18 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{The report data is consistent and not
 \Needspace{12\baselineskip}
 \paragraph{Manage ID Verification}
 % =================================================================
-% UC-06.6 View ID Verification Requests
+% UC-35.01 View ID Verification Requests
 % =================================================================
 
-\subparagraph{UC-06.6 View ID Verification Requests}
+\subparagraph{UC-35.01 View ID Verification Requests}
 
 \Needspace{12\baselineskip}
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-06.6 View ID Verification Requests} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-35.01 View ID Verification Requests} \\* \hline
 \endfirsthead
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-06.6 View ID Verification Requests \textit{(cont.)}} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-35.01 View ID Verification Requests \textit{(cont.)}} \\* \hline
 \endhead
 \hline\endfoot
 \endlastfoot
@@ -486,7 +486,7 @@ Primary Actor: & Admin & Secondary Actors: & N/A \\ \hline
 
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When an admin accesses the Identity Verification section from the admin navigation menu.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Allows an administrator to view all identity verification requests submitted by users, filter by status, and search by user name or email.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Allows an administrator to view all identity verification requests submitted by users, filter by status, and search by user name or email.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The user is authenticated and has the Admin role. \newline
@@ -558,18 +558,18 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{At least one verification request exi
 \end{longtable}
 
 % =================================================================
-% UC-06.7 ID Verification Detail
+% UC-35.02 ID Verification Details
 % =================================================================
 
-\subparagraph{UC-06.7 ID Verification Detail}
+\subparagraph{UC-35.02 ID Verification Details}
 
 \Needspace{12\baselineskip}
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-06.7 ID Verification Detail} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-35.02 ID Verification Details} \\* \hline
 \endfirsthead
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-06.7 ID Verification Detail \textit{(cont.)}} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-35.02 ID Verification Details \textit{(cont.)}} \\* \hline
 \endhead
 \hline\endfoot
 \endlastfoot
@@ -580,7 +580,7 @@ Primary Actor: & Admin & Secondary Actors: & N/A \\ \hline
 
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When an admin clicks the ``View'' action on a verification request in the list.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Allows an administrator to view the complete details of an identity verification request, including the uploaded document image, user profile information, and existing review notes.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Allows an administrator to view the complete details of an identity verification request, including the uploaded document image, user profile information, and existing review notes.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The user is authenticated and has the Admin role. \newline
@@ -649,18 +649,18 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{The uploaded document file is accessi
 \end{longtable}
 
 % =================================================================
-% UC-06.8 Approve ID Verification
+% UC-35.03 Approve ID Verification
 % =================================================================
 
-\subparagraph{UC-06.8 Approve ID Verification}
+\subparagraph{UC-35.03 Approve ID Verification}
 
 \Needspace{12\baselineskip}
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-06.8 Approve ID Verification} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-35.03 Approve ID Verification} \\* \hline
 \endfirsthead
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-06.8 Approve ID Verification \textit{(cont.)}} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-35.03 Approve ID Verification \textit{(cont.)}} \\* \hline
 \endhead
 \hline\endfoot
 \endlastfoot
@@ -671,7 +671,7 @@ Primary Actor: & Admin & Secondary Actors: & N/A \\ \hline
 
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When an admin clicks the ``Approve'' button on the identity verification detail.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Allows an administrator to approve an identity verification request, setting the user's freelancer profile \texttt{idVerified} flag to true.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Allows an administrator to approve an identity verification request, setting the user's freelancer profile \texttt{idVerified} flag to true.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The user is authenticated and has the Admin role. \newline
@@ -755,18 +755,18 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{The user's freelancer profile exists 
 \end{longtable}
 
 % =================================================================
-% UC-06.9 Reject ID Verification
+% UC-35.04 Reject ID Verification
 % =================================================================
 
-\subparagraph{UC-06.9 Reject ID Verification}
+\subparagraph{UC-35.04 Reject ID Verification}
 
 \Needspace{12\baselineskip}
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-06.9 Reject ID Verification} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-35.04 Reject ID Verification} \\* \hline
 \endfirsthead
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-06.9 Reject ID Verification \textit{(cont.)}} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-35.04 Reject ID Verification \textit{(cont.)}} \\* \hline
 \endhead
 \hline\endfoot
 \endlastfoot
@@ -777,7 +777,7 @@ Primary Actor: & Admin & Secondary Actors: & N/A \\ \hline
 
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When an admin clicks the ``Reject'' button on the identity verification detail.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Allows an administrator to reject an identity verification request, setting the user's freelancer profile \texttt{idVerified} flag to false.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Allows an administrator to reject an identity verification request, setting the user's freelancer profile \texttt{idVerified} flag to false.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The user is authenticated and has the Admin role. \newline
@@ -863,18 +863,18 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{The user's freelancer profile exists 
 \Needspace{12\baselineskip}
 \paragraph{Manage Forum Trash}
 % =================================================================
-% UC-06.10 View Deleted Posts / Comments List
+% UC-36.01 View Deleted Posts / Comments List
 % =================================================================
 
-\subparagraph{UC-06.10 View Deleted Posts / Comments List}
+\subparagraph{UC-36.01 View Deleted Posts / Comments List}
 
 \Needspace{12\baselineskip}
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-06.10 View Deleted Posts / Comments List} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-36.01 View Deleted Posts / Comments List} \\* \hline
 \endfirsthead
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-06.10 View Deleted Posts / Comments List \textit{(cont.)}} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-36.01 View Deleted Posts / Comments List \textit{(cont.)}} \\* \hline
 \endhead
 \hline\endfoot
 \endlastfoot
@@ -885,7 +885,7 @@ Primary Actor: & Admin & Secondary Actors: & N/A \\ \hline
 
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When an admin accesses the Trash section from the admin navigation menu.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Allows an administrator to view all soft-deleted forum posts and comments, including posts that were rejected by moderators. The admin can toggle between the Posts and Comments tabs.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Allows an administrator to view all soft-deleted forum posts and comments, including posts that were rejected by moderators. The admin can toggle between the Posts and Comments tabs.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The user is authenticated and has the Admin role. \newline
@@ -962,18 +962,18 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{At least one deleted post or comment 
 \end{longtable}
 
 % =================================================================
-% UC-06.11 View Deleted Posts / Comments Detail
+% UC-36.02 View Deleted Posts / Comments Details
 % =================================================================
 
-\subparagraph{UC-06.11 View Deleted Posts / Comments Detail}
+\subparagraph{UC-36.02 View Deleted Posts / Comments Details}
 
 \Needspace{12\baselineskip}
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-06.11 View Deleted Posts / Comments Detail} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-36.02 View Deleted Posts / Comments Details} \\* \hline
 \endfirsthead
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-06.11 View Deleted Posts / Comments Detail \textit{(cont.)}} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-36.02 View Deleted Posts / Comments Details \textit{(cont.)}} \\* \hline
 \endhead
 \hline\endfoot
 \endlastfoot
@@ -984,7 +984,7 @@ Primary Actor: & Admin & Secondary Actors: & N/A \\ \hline
 
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When an admin clicks the ``View'' action on a deleted post or comment in the trash list.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Allows an administrator to view the complete content and metadata of a deleted post or comment before deciding whether to restore it.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Allows an administrator to view the complete content and metadata of a deleted post or comment before deciding whether to restore it.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The user is authenticated and has the Admin role. \newline
@@ -997,7 +997,7 @@ Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
 } \\ \hline
 
 Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{A. View Deleted Post Detail} \newline
+\textbf{A. View Deleted Post Details} \newline
 1. The Admin clicks the ``View'' action on a deleted post in the trash. \newline
 2. The system retrieves the full post content including title, content body, author profile, moderation status, moderation score, moderation categories, creation date, and deletion date. \newline
 3. The system displays a detail dialog showing all post information. \newline
@@ -1007,7 +1007,7 @@ Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
 
 Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
 
-\textbf{A.1 View Deleted Comment Detail} \newline
+\textbf{A.1 View Deleted Comment Details} \newline
 1. The Admin clicks the ``View'' action on a deleted comment in the trash. \newline
 2. The system retrieves the full comment content including content body, author profile, associated post, creation date, and deletion date. \newline
 3. The system displays a detail dialog showing all comment information. \newline
@@ -1051,18 +1051,18 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{The deleted item data is consistent a
 \end{longtable}
 
 % =================================================================
-% UC-06.12 Restore Deleted Posts / Comments
+% UC-36.03 Restore Deleted Posts / Comments
 % =================================================================
 
-\subparagraph{UC-06.12 Restore Deleted Posts / Comments}
+\subparagraph{UC-36.03 Restore Deleted Posts / Comments}
 
 \Needspace{12\baselineskip}
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-06.12 Restore Deleted Posts / Comments} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-36.03 Restore Deleted Posts / Comments} \\* \hline
 \endfirsthead
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-06.12 Restore Deleted Posts / Comments \textit{(cont.)}} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-36.03 Restore Deleted Posts / Comments \textit{(cont.)}} \\* \hline
 \endhead
 \hline\endfoot
 \endlastfoot
@@ -1073,7 +1073,7 @@ Primary Actor: & Admin & Secondary Actors: & N/A \\ \hline
 
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When an admin clicks the ``Restore'' button on a deleted post or comment detail.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Allows an administrator to restore a soft-deleted post or comment from the trash. Restored posts are either made immediately public (if previously approved) or returned to the moderation queue (if previously rejected).} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Allows an administrator to restore a soft-deleted post or comment from the trash. Restored posts are either made immediately public (if previously approved) or returned to the moderation queue (if previously rejected).} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The user is authenticated and has the Admin role. \newline
@@ -1095,7 +1095,7 @@ Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
 4. If the original \texttt{moderationStatus} was REJECTED, the system also sets \texttt{moderationStatus = PENDING}, \texttt{reviewedById = null}, and \texttt{reviewedAt = null}. \newline
 5. The system returns the restored post. \newline
 6. If the post was previously APPROVED, it becomes publicly visible immediately. \newline
-7. If the post was REJECTED, it re-appears in the moderation queue (UC-06.1).
+7. If the post was REJECTED, it re-appears in the moderation queue (UC-34.01).
 } \\ \hline
 
 Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{

@@ -8,14 +8,14 @@
 \subsection{Job Category Browsing}
 
 % -----------------------------------------------------------------
-% UC-46.07: View Job Category List
+% UC-46.07: View Job Categories List
 % -----------------------------------------------------------------
 \Needspace{12\baselineskip}
-\subsubsection{View Job Category List}
+\subsubsection{View Job Categories List}
 
 \fnhead{Function Trigger}
 A freelancer or visitor selects ``Job Categories'' from the navigation sidebar.\newline
-\textbf{Navigation path:} Freelancer Workspace $\rightarrow$ Job Categories (\texttt{/freelancer/categories}).
+\textbf{Navigation path:} Freelancer Workspace $\rightarrow$ Job Categories (\texttt{/\allowbreak{}freelancer/\allowbreak{}categories}).
 
 \fnhead{Function Description}
 
@@ -38,8 +38,8 @@ A freelancer or visitor selects ``Job Categories'' from the navigation sidebar.\
 \sublabel{Data Processing Overview}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
     \item Frontend dispatches \texttt{GET /api/job-categories} with optional \texttt{page}, \texttt{limit}, and \texttt{search} query parameters.
-    \item \texttt{JobCategoriesService.viewJobCategoryList()} checks \texttt{CacheService} (300-second TTL, invalidated whenever jobs are created/updated/published/closed/reopened/deleted).
-    \item \texttt{JobCategoriesRepository.listJobCategories()} queries \texttt{prisma.jobCategory.findMany} where \texttt{status = 'ACTIVE'} and \texttt{deletedAt = null}, matching optional case-insensitive substring on \texttt{name} or \texttt{description}, sorted alphabetically by \texttt{name asc}.
+    \item \texttt{Job\allowbreak{}Categories\allowbreak{}Service.\allowbreak{}view\allowbreak{}Job\allowbreak{}Category\allowbreak{}List()} checks \texttt{CacheService} (300-second TTL, invalidated whenever jobs are created/updated/published/closed/reopened/deleted).
+    \item \texttt{Job\allowbreak{}Categories\allowbreak{}Repository.\allowbreak{}list\allowbreak{}Job\allowbreak{}Categories()} queries \texttt{prisma.\allowbreak{}jobCategory.\allowbreak{}findMany} where \texttt{status = 'ACTIVE'} and \texttt{deletedAt = null}, matching optional case-insensitive substring on \texttt{name} or \texttt{description}, sorted alphabetically by \texttt{name asc}.
     \item Aggregates active open job counts strictly for linked jobs where \texttt{status = 'OPEN'}, \texttt{deletedAt = null}, and client is not banned or deleted.
     \item Returns paginated category items alongside pagination metadata.
 \end{itemize}
@@ -104,10 +104,10 @@ Network connection failure & Frontend request times out and displays connection 
 \end{itemize}
 
 % -----------------------------------------------------------------
-% UC-46.08: View Job Category Detail
+% UC-46.08: View Job Category Details
 % -----------------------------------------------------------------
 \Needspace{12\baselineskip}
-\subsubsection{View Job Category Detail}
+\subsubsection{View Job Category Details}
 
 \fnhead{Function Trigger}
 A freelancer clicks a category card (``View category $\rightarrow$'') from the categories directory.\newline

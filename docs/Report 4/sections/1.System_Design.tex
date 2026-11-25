@@ -28,7 +28,7 @@ The client application transmits requests exclusively over HTTPS REST APIs and d
 The Presentation Layer is implemented within the NestJS 11 Web Server Application (\texttt{apps/api}). It serves as the entry boundary for incoming client requests and real-time events:
 \begin{itemize}[leftmargin=*]
     \item \textbf{Controllers:} Expose structured RESTful API endpoints (versioned under \texttt{/api/v1}), receive client requests, bind validated request payloads, and delegate processing to domain services.
-    \item \textbf{Authentication and Authorization Guards:} Intercept requests to verify JWT tokens and enforce role-based access control (\texttt{RoleGuard}) and fine-grained permission checks (\texttt{PermissionGuard}).
+    \item \textbf{Authentication and Authorization Guards:} Intercept requests to verify JWT tokens and enforce role-based access control (\texttt{RoleGuard}) and fine-grained permission checks (\texttt{Permission\allowbreak Guard}).
     \item \textbf{Validation and Serialization:} Validates incoming request payloads using shared Zod DTOs and sanitizes outgoing responses using the global \texttt{ZodSerializerInterceptor}.
     \item \textbf{Socket.io Gateway:} Manages real-time bidirectional WebSocket connections for peer-to-peer conversations and immediate notification pushes.
 \end{itemize}
@@ -101,8 +101,8 @@ The monorepo enforces four key architectural rules illustrated in Figure~\ref{fi
 \subsubsection*{Package Descriptions}
 Tables~\ref{tab:pkg:frontend}, \ref{tab:pkg:backend}, \ref{tab:pkg:shared}, and \ref{tab:pkg:ai} detail the responsibilities of every package in the Frevia project.
 
-{\small
-\begin{longtable}{|C{0.9cm}|L{4.0cm}|L{10.0cm}|}
+{\small\setlength{\tabcolsep}{4pt}
+\begin{longtable}{|C{0.8cm}|L{4.6cm}|L{9.6cm}|}
 \caption{Frontend package description (\texttt{apps/web})}
 \label{tab:pkg:frontend}
 \\
@@ -112,19 +112,21 @@ Tables~\ref{tab:pkg:frontend}, \ref{tab:pkg:backend}, \ref{tab:pkg:shared}, and 
 \hline
 \rowcolor{headerbg}\textbf{No} & \textbf{Package} & \textbf{Description} \\ \hline
 \endhead
-01 & \texttt{app} & Next.js App Router entry points, layout definitions, error boundaries, and route groups (\texttt{(auth)}, \texttt{(client)}, \texttt{(freelancer)}, \texttt{admin/}, and public pages). \\ \hline
+\hline\endfoot
+\hline\endlastfoot
+01 & \texttt{app} & Next.js App Router entry points, layout definitions, error boundaries, and route groups: \texttt{(auth)}, \texttt{(client)}, \texttt{(freelancer)}, \texttt{admin/}, and public pages. \\ \hline
 02 & \texttt{components} & Reusable UI components, page section blocks, modals, and screen layouts specific to the web application. \\ \hline
 03 & \texttt{apiRequests} & Typed HTTP client callers for all domain modules (auth, jobs, proposals, contracts, payments, etc.) that attach the JWT token and coordinate API communication. \\ \hline
 04 & \texttt{lib} & Core HTTP fetch wrapper (\texttt{http.ts}), authentication session token management, form validation resolvers, string utilities, and formatters. \\ \hline
 05 & \texttt{i18n} & Internationalization configuration and localization message catalogues (\texttt{messages/en.json}, \texttt{messages/vi.json}) powered by \texttt{next-intl}. \\ \hline
 06 & \texttt{hooks} & Custom React hooks for server state caching (TanStack Query), form management, debouncing, and authentication monitoring. \\ \hline
 07 & \texttt{configs} & Client application environment configuration variables, API endpoints, and system runtime constants. \\ \hline
-08 & \texttt{providers} & Application-wide React context providers, including QueryClientProvider, NextIntlClientProvider, and theme state providers. \\ \hline
+08 & \texttt{providers} & Application-wide React context providers, including \texttt{QueryClientProvider}, \texttt{NextIntlClientProvider}, and theme state providers. \\ \hline
 \end{longtable}
 }
 
-{\small
-\begin{longtable}{|C{0.9cm}|L{4.0cm}|L{10.0cm}|}
+{\small\setlength{\tabcolsep}{4pt}
+\begin{longtable}{|C{0.8cm}|L{4.6cm}|L{9.6cm}|}
 \caption{Backend package description (\texttt{apps/api})}
 \label{tab:pkg:backend}
 \\
@@ -134,40 +136,42 @@ Tables~\ref{tab:pkg:frontend}, \ref{tab:pkg:backend}, \ref{tab:pkg:shared}, and 
 \hline
 \rowcolor{headerbg}\textbf{No} & \textbf{Package} & \textbf{Description} \\ \hline
 \endhead
+\hline\endfoot
+\hline\endlastfoot
 01 & \texttt{src/routes} & 33 domain modules structured into Controller, Service, Repository, and DTO layers. \\ \hline
-02 & \texttt{src/routes/auth} & User registration, OTP delivery, login, Google OAuth, token refresh, and role switching. \\ \hline
-03 & \texttt{src/routes/sessions} & Device session telemetry tracking, session listing, and remote revocation. \\ \hline
-04 & \texttt{src/routes/account-profile, identity-verifications} & Account profile management, avatar uploads, citizen identity document submission (CCCD), and administrator verification reviews. \\ \hline
-05 & \texttt{src/routes/users} & Administrator user management, account status control, and role assignments. \\ \hline
-06 & \texttt{src/routes/roles, permissions} & Role-based access control (RBAC) administration and granular permission mapping. \\ \hline
-07 & \texttt{src/routes/profiles, portfolios, profile-revisions} & Freelancer professional resumes, CV analysis integration, portfolio showcases, skill tags, and profile revision audit history. \\ \hline
-08 & \texttt{src/routes/expert-profile} & Expert directory listings, consultation profiles, and domain certifications. \\ \hline
-09 & \texttt{src/routes/browse-job} & Public job search, keyword filtering, category navigation, and slug-based job details. \\ \hline
-10 & \texttt{src/routes/manage-job} & Client job posting, draft editing, applicant review, and bookmark management. \\ \hline
-11 & \texttt{src/routes/job-categories, job-categories-admin, skills-admin} & Job category taxonomy, category hierarchy management, and administrative skill tags. \\ \hline
-12 & \texttt{src/routes/proposals} & Freelancer bid submissions, cover letters, proposed terms, and proposal lifecycle management. \\ \hline
-13 & \texttt{src/routes/contract, milestone} & Contract generation, digital signing, milestone deliverable submissions, and progress reviews. \\ \hline
-14 & \texttt{src/routes/milestone-file, milestone-submission, shared-file} & Milestone file attachments, deliverable review submissions, and shared project documents. \\ \hline
-15 & \texttt{src/routes/payments} & Stripe Connect onboarding, milestone escrow deposits, fund releases, platform fee deductions, and webhook handlers. \\ \hline
-16 & \texttt{src/routes/disputes} & Contract dispute arbitration, claim filing, evidence submission, and administrator resolution. \\ \hline
-17 & \texttt{src/routes/reviews} & Bilateral post-contract rating reviews, score aggregations, and public responses. \\ \hline
-18 & \texttt{src/routes/conversations} & Direct real-time messaging, conversation threads, and message history persistence. \\ \hline
-19 & \texttt{src/routes/notifications} & User notification feed generation, unread status tracking, and push alerts. \\ \hline
-20 & \texttt{src/routes/forums, forums-admin} & Public discussion forums, posts, comments, likes, reports, AI moderation queues, and soft-delete trash recovery. \\ \hline
-21 & \texttt{src/routes/saved-search, job-alert} & Saved job filter criteria and automated alert notifications for matching postings. \\ \hline
-22 & \texttt{src/routes/recommendations} & AI-assisted candidate and job recommendations based on semantic CV matching. \\ \hline
-23 & \texttt{src/routes/banners, banners-admin} & Promotional banner delivery, placement targeting, and administrative banner management. \\ \hline
-24 & \texttt{src/shared/guards} & JWT authentication guards, role-based authorization guards, and permission guards. \\ \hline
-25 & \texttt{src/shared/filters} & Global exception filter converting internal exceptions into standard JSON error bodies. \\ \hline
-26 & \texttt{src/shared/interceptors} & Zod response serialization and transformation interceptor. \\ \hline
-27 & \texttt{src/shared/services} & Cross-cutting infrastructure services including Cloudinary media storage, Nodemailer email dispatch, and AI moderation client. \\ \hline
-28 & \texttt{src/shared/repositories} & Base repository definitions and database query execution helpers. \\ \hline
-29 & \texttt{prisma} & Prisma 7 ORM persistence configuration, \texttt{schema.prisma} (72 models, 43 enums), database migrations, and seed scripts. \\ \hline
+02 & \texttt{src/routes/}\newline\texttt{auth} & User registration, OTP delivery, login, Google OAuth, token refresh, and role switching. \\ \hline
+03 & \texttt{src/routes/}\newline\texttt{sessions} & Device session telemetry tracking, session listing, and remote revocation. \\ \hline
+04 & \texttt{src/routes/}\newline\texttt{account-profile}, \newline\texttt{src/routes/}\newline\texttt{identity-verifications} & Account profile management, avatar uploads, citizen identity document submission (CCCD), and administrator verification reviews. \\ \hline
+05 & \texttt{src/routes/}\newline\texttt{users} & Administrator user management, account status control, and role assignments. \\ \hline
+06 & \texttt{src/routes/}\newline\texttt{roles}, \newline\texttt{src/routes/}\newline\texttt{permissions} & Role-based access control (RBAC) administration and granular permission mapping. \\ \hline
+07 & \texttt{src/routes/}\newline\texttt{profiles}, \newline\texttt{src/routes/}\newline\texttt{portfolios}, \newline\texttt{src/routes/}\newline\texttt{profile-revisions} & Freelancer professional resumes, CV analysis integration, portfolio showcases, skill tags, and profile revision audit history. \\ \hline
+08 & \texttt{src/routes/}\newline\texttt{expert-profile} & Expert directory listings, consultation profiles, and domain certifications. \\ \hline
+09 & \texttt{src/routes/}\newline\texttt{browse-job} & Public job search, keyword filtering, category navigation, and slug-based job details. \\ \hline
+10 & \texttt{src/routes/}\newline\texttt{manage-job} & Client job posting, draft editing, applicant review, and bookmark management. \\ \hline
+11 & \texttt{src/routes/}\newline\texttt{job-categories}, \newline\texttt{src/routes/}\newline\texttt{job-categories-admin}, \newline\texttt{src/routes/}\newline\texttt{skills-admin} & Job category taxonomy, category hierarchy management, and administrative skill tags. \\ \hline
+12 & \texttt{src/routes/}\newline\texttt{proposals} & Freelancer bid submissions, cover letters, proposed terms, and proposal lifecycle management. \\ \hline
+13 & \texttt{src/routes/}\newline\texttt{contract}, \newline\texttt{src/routes/}\newline\texttt{milestone} & Contract generation, digital signing, milestone deliverable submissions, and progress reviews. \\ \hline
+14 & \texttt{src/routes/}\newline\texttt{milestone-file}, \newline\texttt{src/routes/}\newline\texttt{milestone-submission}, \newline\texttt{src/routes/}\newline\texttt{shared-file} & Milestone file attachments, deliverable review submissions, and shared project documents. \\ \hline
+15 & \texttt{src/routes/}\newline\texttt{payments} & Stripe Connect onboarding, milestone escrow deposits, fund releases, platform fee deductions, and webhook handlers. \\ \hline
+16 & \texttt{src/routes/}\newline\texttt{disputes} & Contract dispute arbitration, claim filing, evidence submission, and administrator resolution. \\ \hline
+17 & \texttt{src/routes/}\newline\texttt{reviews} & Bilateral post-contract rating reviews, score aggregations, and public responses. \\ \hline
+18 & \texttt{src/routes/}\newline\texttt{conversations} & Direct real-time messaging, conversation threads, and message history persistence. \\ \hline
+19 & \texttt{src/routes/}\newline\texttt{notifications} & User notification feed generation, unread status tracking, and push alerts. \\ \hline
+20 & \texttt{src/routes/}\newline\texttt{forums}, \newline\texttt{src/routes/}\newline\texttt{forums-admin} & Public discussion forums, posts, comments, likes, reports, AI moderation queues, and soft-delete trash recovery. \\ \hline
+21 & \texttt{src/routes/}\newline\texttt{saved-search}, \newline\texttt{src/routes/}\newline\texttt{job-alert} & Saved job filter criteria and automated alert notifications for matching postings. \\ \hline
+22 & \texttt{src/routes/}\newline\texttt{recommendations} & AI-assisted candidate and job recommendations based on semantic CV matching. \\ \hline
+23 & \texttt{src/routes/}\newline\texttt{banners}, \newline\texttt{src/routes/}\newline\texttt{banners-admin} & Promotional banner delivery, placement targeting, and administrative banner management. \\ \hline
+24 & \texttt{src/shared/}\newline\texttt{guards} & JWT authentication guards, role-based authorization guards, and permission guards. \\ \hline
+25 & \texttt{src/shared/}\newline\texttt{filters} & Global exception filter converting internal exceptions into standard JSON error bodies. \\ \hline
+26 & \texttt{src/shared/}\newline\texttt{interceptors} & Zod response serialization and transformation interceptor. \\ \hline
+27 & \texttt{src/shared/}\newline\texttt{services} & Cross-cutting infrastructure services including Cloudinary media storage, Nodemailer email dispatch, and AI moderation client. \\ \hline
+28 & \texttt{src/shared/}\newline\texttt{repositories} & Base repository definitions and database query execution helpers. \\ \hline
+29 & \texttt{prisma} & Prisma 7 ORM persistence configuration, \texttt{schema.prisma} (71 models, 43 enums), database migrations, and seed scripts. \\ \hline
 \end{longtable}
 }
 
-{\small
-\begin{longtable}{|C{0.9cm}|L{4.0cm}|L{10.0cm}|}
+{\small\setlength{\tabcolsep}{4pt}
+\begin{longtable}{|C{0.8cm}|L{4.6cm}|L{9.6cm}|}
 \caption{Shared and tooling packages description (\texttt{packages/})}
 \label{tab:pkg:shared}
 \\
@@ -177,15 +181,17 @@ Tables~\ref{tab:pkg:frontend}, \ref{tab:pkg:backend}, \ref{tab:pkg:shared}, and 
 \hline
 \rowcolor{headerbg}\textbf{No} & \textbf{Package} & \textbf{Description} \\ \hline
 \endhead
-01 & \texttt{packages/ui} & Shared React component library (\texttt{@repo/ui}) styled with TailwindCSS 4 and shadcn/ui (buttons, dialogs, form controls, tables) imported exclusively by the web application. \\ \hline
-02 & \texttt{packages/shared-type} & API contract single source of truth (\texttt{@shared/types}) providing Zod validation models, TypeScript interfaces, database enumerations, permission names, and error codes to both applications. \\ \hline
-03 & \texttt{packages/typescript-config} & Shared TypeScript configuration baselines (\texttt{@repo/typescript-config}) that the applications extend for strict type checking. \\ \hline
-04 & \texttt{packages/eslint-config} & Centralized ESLint configuration ruleset (\texttt{@repo/eslint-config}) enforced across every monorepo package. \\ \hline
+\hline\endfoot
+\hline\endlastfoot
+01 & \texttt{packages/}\newline\texttt{ui} & Shared React component library (\texttt{@repo/ui}) styled with TailwindCSS 4 and shadcn/ui (buttons, dialogs, form controls, tables) imported exclusively by the web application. \\ \hline
+02 & \texttt{packages/}\newline\texttt{shared-type} & API contract single source of truth (\texttt{@shared/types}) providing Zod validation models, TypeScript interfaces, database enumerations, permission names, and error codes to both applications. \\ \hline
+03 & \texttt{packages/}\newline\texttt{typescript-config} & Shared TypeScript configuration baselines (\texttt{@repo/typescript-config}) that the applications extend for strict type checking. \\ \hline
+04 & \texttt{packages/}\newline\texttt{eslint-config} & Centralized ESLint configuration ruleset (\texttt{@repo/eslint-config}) enforced across every monorepo package. \\ \hline
 \end{longtable}
 }
 
-{\small
-\begin{longtable}{|C{0.9cm}|L{4.0cm}|L{10.0cm}|}
+{\small\setlength{\tabcolsep}{4pt}
+\begin{longtable}{|C{0.8cm}|L{4.6cm}|L{9.6cm}|}
 \caption{AI microservices package description (\texttt{ai-services/})}
 \label{tab:pkg:ai}
 \\
@@ -195,6 +201,8 @@ Tables~\ref{tab:pkg:frontend}, \ref{tab:pkg:backend}, \ref{tab:pkg:shared}, and 
 \hline
 \rowcolor{headerbg}\textbf{No} & \textbf{Package} & \textbf{Description} \\ \hline
 \endhead
+\hline\endfoot
+\hline\endlastfoot
 01 & \texttt{id-verification} & FastAPI microservice (port 8001) performing Vietnamese citizen identity card (CCCD) OCR via RapidOCR, facial biometric embedding via InsightFace, and anti-spoofing liveness verification via MediaPipe. \\ \hline
 02 & \texttt{cv-matching} & FastAPI microservice (port 8000) performing section-aware candidate CV parsing, dense semantic vector embedding with BGE-M3, ChromaDB vector indexing, and candidate-job matching supported by Ollama LLM. \\ \hline
 03 & \texttt{ollama} & Containerized local Large Language Model runtime (port 11434) running instruction-tuned models (e.g., Qwen) for structured CV extraction and semantic matching. \\ \hline

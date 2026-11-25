@@ -1,17 +1,17 @@
 \Needspace{12\baselineskip}
 \paragraph{Manage Forum}
 % =================================================================
-% UC-04.1 View Forum Categories
+% UC-14.01 View Forum Categories
 % =================================================================
-\subparagraph{UC-04.1 View Forum Categories}
+\subparagraph{UC-14.01 View Forum Categories}
 
 \Needspace{12\baselineskip}
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-04.1 View Forum Categories} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-14.01 View Forum Categories} \\* \hline
 \endfirsthead
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-04.1 View Forum Categories \textit{(cont.)}} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-14.01 View Forum Categories \textit{(cont.)}} \\* \hline
 \endhead
 \hline\endfoot
 \endlastfoot
@@ -22,7 +22,7 @@ Primary Actor: & Guest, Client, Freelancer, Admin & Secondary Actors: & N/A \\ \
 
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When any user accesses the Forum section from the navigation menu.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{As a guest or registered user, I want to view all active forum categories so that I can browse discussion topics and select a category to explore forum posts.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{As a guest or registered user, I want to view all active forum categories so that I can browse discussion topics and select a category to explore forum posts.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The system is connected to the database. \newline
@@ -86,18 +86,18 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{Forum categories are created and main
 \end{longtable}
 
 % =================================================================
-% UC-04.2 View Forum Category Detail
+% UC-14.02 View Forum Category Details
 % =================================================================
 
-\subparagraph{UC-04.2 View Forum Category Detail}
+\subparagraph{UC-14.02 View Forum Category Details}
 
 \Needspace{12\baselineskip}
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-04.2 View Forum Category Detail} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-14.02 View Forum Category Details} \\* \hline
 \endfirsthead
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-04.2 View Forum Category Detail \textit{(cont.)}} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-14.02 View Forum Category Details \textit{(cont.)}} \\* \hline
 \endhead
 \hline\endfoot
 \endlastfoot
@@ -108,10 +108,10 @@ Primary Actor: & Guest, Client, Freelancer, Admin & Secondary Actors: & N/A \\ \
 
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When a user selects a forum category from the forum category list.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Allows users to view detailed information about a selected forum category including its name, slug, description, and creation date.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Allows users to view detailed information about a selected forum category including its name, slug, description, and creation date.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{PRE-1} The user is viewing the forum category list (UC-04.1). \newline
+\textbf{PRE-1} The user is viewing the forum category list (UC-14.01). \newline
 \textbf{PRE-2} The selected category exists and has \texttt{deletedAt = NULL}.
 } \\ \hline
 
@@ -121,7 +121,7 @@ Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
 } \\ \hline
 
 Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{A. View Forum Category Detail} \newline
+\textbf{A. View Forum Category Details} \newline
 1. The User selects a forum category from the Forum Categories page. \newline
 2. The system validates that the selected category exists and is active. \newline
 3. The system retrieves the category information including its name, slug, description, and creation date. \newline
@@ -171,18 +171,18 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{Forum categories are created and main
 \end{longtable}
 
 % =================================================================
-% UC-04.3 View Post List
+% UC-14.03 View Posts List
 % =================================================================
 
-\subparagraph{UC-04.3 View Post List}
+\subparagraph{UC-14.03 View Posts List}
 
 \Needspace{12\baselineskip}
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-04.3 View Post List} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-14.03 View Posts List} \\* \hline
 \endfirsthead
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-04.3 View Post List \textit{(cont.)}} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-14.03 View Posts List \textit{(cont.)}} \\* \hline
 \endhead
 \hline\endfoot
 \endlastfoot
@@ -193,7 +193,7 @@ Primary Actor: & Guest, Client, Freelancer, Admin & Secondary Actors: & N/A \\ \
 
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When a user opens a forum category to browse discussion posts.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Allows users to view a paginated list of forum posts within a selected category. The list includes post titles, authors, creation dates, like counts, and comment counts.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Allows users to view a paginated list of forum posts within a selected category. The list includes post titles, authors, creation dates, like counts, and comment counts.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The selected category exists and is active (\texttt{deletedAt = NULL}). \newline
@@ -206,7 +206,7 @@ Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
 } \\ \hline
 
 Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{A. View Post List} \newline
+\textbf{A. View Posts List} \newline
 1. The User opens a forum category from the Forum Categories page. \newline
 2. The system validates that the selected category exists and is active. \newline
 3. The system retrieves posts associated with the selected category from the ForumPost table, excluding deleted posts and posts that are not approved. \newline
@@ -266,18 +266,18 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{Forum posts are associated with valid
 \end{longtable}
 
 % =================================================================
-% UC-04.4 View Post Detail
+% UC-14.04 View Post Details
 % =================================================================
 
-\subparagraph{UC-04.4 View Post Detail}
+\subparagraph{UC-14.04 View Post Details}
 
 \Needspace{12\baselineskip}
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-04.4 View Post Detail} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-14.04 View Post Details} \\* \hline
 \endfirsthead
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-04.4 View Post Detail \textit{(cont.)}} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-14.04 View Post Details \textit{(cont.)}} \\* \hline
 \endhead
 \hline\endfoot
 \endlastfoot
@@ -288,7 +288,7 @@ Primary Actor: & Guest, Client, Freelancer, Admin & Secondary Actors: & N/A \\ \
 
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When a user selects a post from the post list.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Allows users to view the complete details of a forum post including its title, content, author, category, and creation date.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Allows users to view the complete details of a forum post including its title, content, author, category, and creation date.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The selected post exists. \newline
@@ -301,7 +301,7 @@ Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
 } \\ \hline
 
 Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{A. View Post Detail} \newline
+\textbf{A. View Post Details} \newline
 1. The User selects a post from the post list. \newline
 2. The system validates that the selected post exists, is not deleted, and is approved. \newline
 3. The system retrieves the post information, author information, and category information. \newline
@@ -359,18 +359,18 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{Each post is associated with a valid 
 \end{longtable}
 
 % =================================================================
-% UC-04.5 Create Post
+% UC-14.05 Create Post
 % =================================================================
 
-\subparagraph{UC-04.5 Create Post}
+\subparagraph{UC-14.05 Create Post}
 
 \Needspace{12\baselineskip}
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-04.5 Create Post} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-14.05 Create Post} \\* \hline
 \endfirsthead
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-04.5 Create Post \textit{(cont.)}} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-14.05 Create Post \textit{(cont.)}} \\* \hline
 \endhead
 \hline\endfoot
 \endlastfoot
@@ -381,7 +381,7 @@ Primary Actor: & Client, Freelancer & Secondary Actors: & N/A \\ \hline
 
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When a user clicks the ``Create Post'' button in the Forum section.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Allows authenticated users to create a new forum post by providing a title, content, and optional category.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Allows authenticated users to create a new forum post by providing a title, content, and optional category.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The user is authenticated. \newline
@@ -473,18 +473,18 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{Forum categories are available and ma
 \end{longtable}
 
 % =================================================================
-% UC-04.6 Edit Post
+% UC-14.06 Edit Post
 % =================================================================
 
-\subparagraph{UC-04.6 Edit Post}
+\subparagraph{UC-14.06 Edit Post}
 
 \Needspace{12\baselineskip}
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-04.6 Edit Post} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-14.06 Edit Post} \\* \hline
 \endfirsthead
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-04.6 Edit Post \textit{(cont.)}} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-14.06 Edit Post \textit{(cont.)}} \\* \hline
 \endhead
 \hline\endfoot
 \endlastfoot
@@ -495,7 +495,7 @@ Primary Actor: & Client, Freelancer & Secondary Actors: & N/A \\ \hline
 
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When the author selects the ``Edit Post'' option on their post.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Allows the author of a post to modify its title, content, or category.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Allows the author of a post to modify its title, content, or category.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The user is authenticated. \newline
@@ -579,18 +579,18 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{The user remains authenticated throug
 \end{longtable}
 
 % =================================================================
-% UC-04.7 Delete Post
+% UC-14.07 Delete Post
 % =================================================================
 
-\subparagraph{UC-04.7 Delete Post}
+\subparagraph{UC-14.07 Delete Post}
 
 \Needspace{12\baselineskip}
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-04.7 Delete Post} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-14.07 Delete Post} \\* \hline
 \endfirsthead
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-04.7 Delete Post \textit{(cont.)}} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-14.07 Delete Post \textit{(cont.)}} \\* \hline
 \endhead
 \hline\endfoot
 \endlastfoot
@@ -601,7 +601,7 @@ Primary Actor: & Client, Freelancer, Admin & Secondary Actors: & N/A \\ \hline
 
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When the author or an Admin selects the ``Delete Post'' option on a post.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Allows the author of a post or an Admin to remove it from public view by performing a soft delete operation.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Allows the author of a post or an Admin to remove it from public view by performing a soft delete operation.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The user is authenticated. \newline
@@ -679,18 +679,18 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{The user remains authenticated during
 \end{longtable}
 
 % =================================================================
-% UC-04.8 Like Post
+% UC-14.08 Like Post
 % =================================================================
 
-\subparagraph{UC-04.8 Like Post}
+\subparagraph{UC-14.08 Like Post}
 
 \Needspace{12\baselineskip}
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-04.8 Like Post} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-14.08 Like Post} \\* \hline
 \endfirsthead
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-04.8 Like Post \textit{(cont.)}} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-14.08 Like Post \textit{(cont.)}} \\* \hline
 \endhead
 \hline\endfoot
 \endlastfoot
@@ -701,7 +701,7 @@ Primary Actor: & Client, Freelancer & Secondary Actors: & N/A \\ \hline
 
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When a user clicks the ``Like'' button on a forum post.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Allows authenticated users to express appreciation for a post by adding a like reaction (toggle action).} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Allows authenticated users to express appreciation for a post by adding a like reaction (toggle action).} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The user is authenticated. \newline
@@ -740,7 +740,7 @@ Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{A.4 Post Already Liked} \newline
 1. The User clicks the ``Like'' button on a post they have already liked. \newline
 2. The system determines that the User has already liked the post. \newline
-3. The system performs the unlike action (see UC-04.9). \newline
+3. The system performs the unlike action (see UC-14.09). \newline
 4. The use case ends.
 } \\ \hline
 
@@ -779,18 +779,18 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{The selected post is accessible to th
 \end{longtable}
 
 % =================================================================
-% UC-04.9 Unlike Post
+% UC-14.09 Unlike Post
 % =================================================================
 
-\subparagraph{UC-04.9 Unlike Post}
+\subparagraph{UC-14.09 Unlike Post}
 
 \Needspace{12\baselineskip}
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-04.9 Unlike Post} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-14.09 Unlike Post} \\* \hline
 \endfirsthead
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-04.9 Unlike Post \textit{(cont.)}} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-14.09 Unlike Post \textit{(cont.)}} \\* \hline
 \endhead
 \hline\endfoot
 \endlastfoot
@@ -801,7 +801,7 @@ Primary Actor: & Client, Freelancer & Secondary Actors: & N/A \\ \hline
 
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When a user clicks an active ``Like'' button on a post that they have previously liked.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Allows authenticated users to remove their like reaction from a forum post.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Allows authenticated users to remove their like reaction from a forum post.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The user is authenticated. \newline
@@ -879,18 +879,18 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{The selected post is accessible to th
 \end{longtable}
 
 % =================================================================
-% UC-04.10 View Like Post Detail
+% UC-14.10 View Like Post Details
 % =================================================================
 
-\subparagraph{UC-04.10 View Like Post Detail}
+\subparagraph{UC-14.10 View Like Post Details}
 
 \Needspace{12\baselineskip}
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-04.10 View Like Post Detail} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-14.10 View Like Post Details} \\* \hline
 \endfirsthead
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-04.10 View Like Post Detail \textit{(cont.)}} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-14.10 View Like Post Details \textit{(cont.)}} \\* \hline
 \endhead
 \hline\endfoot
 \endlastfoot
@@ -901,7 +901,7 @@ Primary Actor: & Guest, Client, Freelancer, Admin & Secondary Actors: & N/A \\ \
 
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When a user clicks the reaction/like count link on a forum post.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Allows users to view the list of people who have liked a specific forum post.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Allows users to view the list of people who have liked a specific forum post.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The selected post exists and has \texttt{deletedAt = NULL}. \newline
@@ -914,7 +914,7 @@ Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
 } \\ \hline
 
 Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{A. View Like Post Detail} \newline
+\textbf{A. View Like Post Details} \newline
 1. The User clicks the reaction count link on the post action bar. \newline
 2. The system retrieves all likes for the selected post from the ForumLike table. \newline
 3. The system displays a dialog listing all likers with their avatars.
@@ -968,18 +968,18 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{The selected post is accessible to th
 \end{longtable}
 
 % =================================================================
-% UC-04.11 View Post Comments
+% UC-14.11 View Post Comments
 % =================================================================
 
-\subparagraph{UC-04.11 View Post Comments}
+\subparagraph{UC-14.11 View Post Comments}
 
 \Needspace{12\baselineskip}
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-04.11 View Post Comments} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-14.11 View Post Comments} \\* \hline
 \endfirsthead
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-04.11 View Post Comments \textit{(cont.)}} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-14.11 View Post Comments \textit{(cont.)}} \\* \hline
 \endhead
 \hline\endfoot
 \endlastfoot
@@ -988,9 +988,9 @@ Created By: & Pham Kha Vy & Date Created: & 25/09/2026 \\ \hline
 
 Primary Actor: & Guest, Client, Freelancer, Admin & Secondary Actors: & N/A \\ \hline
 
-Trigger: & \multicolumn{3}{L{11.1cm}|}{When a user views a forum post detail page (UC-04.4).} \\ \hline
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When a user views a forum post detail page (UC-14.04).} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Allows users to view all non-deleted comments associated with a selected forum post.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Allows users to view all non-deleted comments associated with a selected forum post.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The selected post exists and has \texttt{deletedAt = NULL}. \newline
@@ -1004,7 +1004,7 @@ Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
 
 Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{A. View Post Comments} \newline
-1. The User opens a post detail page (UC-04.4). \newline
+1. The User opens a post detail page (UC-14.04). \newline
 2. The system retrieves comments associated with the selected post from the ForumComment table, excluding deleted comments. \newline
 3. The system retrieves author information for each comment. \newline
 4. The system sorts the comments by creation date and applies pagination. \newline
@@ -1062,18 +1062,18 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{Each comment is associated with a val
 \end{longtable}
 
 % =================================================================
-% UC-04.12 Add Comment
+% UC-14.12 Add Comment
 % =================================================================
 
-\subparagraph{UC-04.12 Add Comment}
+\subparagraph{UC-14.12 Add Comment}
 
 \Needspace{12\baselineskip}
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-04.12 Add Comment} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-14.12 Add Comment} \\* \hline
 \endfirsthead
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-04.12 Add Comment \textit{(cont.)}} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-14.12 Add Comment \textit{(cont.)}} \\* \hline
 \endhead
 \hline\endfoot
 \endlastfoot
@@ -1084,7 +1084,7 @@ Primary Actor: & Client, Freelancer & Secondary Actors: & N/A \\ \hline
 
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When a user enters comment content and clicks the ``Submit Comment'' button.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Allows authenticated users to add a new comment to a forum post and participate in community discussions.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Allows authenticated users to add a new comment to a forum post and participate in community discussions.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The user is authenticated. \newline
@@ -1161,18 +1161,18 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{The selected post remains available d
 \end{longtable}
 
 % =================================================================
-% UC-04.13 Edit Comment
+% UC-14.13 Edit Comment
 % =================================================================
 
-\subparagraph{UC-04.13 Edit Comment}
+\subparagraph{UC-14.13 Edit Comment}
 
 \Needspace{12\baselineskip}
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-04.13 Edit Comment} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-14.13 Edit Comment} \\* \hline
 \endfirsthead
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-04.13 Edit Comment \textit{(cont.)}} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-14.13 Edit Comment \textit{(cont.)}} \\* \hline
 \endhead
 \hline\endfoot
 \endlastfoot
@@ -1183,7 +1183,7 @@ Primary Actor: & Client, Freelancer & Secondary Actors: & N/A \\ \hline
 
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When a user clicks the ``Edit'' option on one of their comments.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Allows users to modify the content of a comment that they previously created.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Allows users to modify the content of a comment that they previously created.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The user is authenticated. \newline
@@ -1267,18 +1267,18 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{The selected comment has not been del
 \end{longtable}
 
 % =================================================================
-% UC-04.14 Delete Comment
+% UC-14.14 Delete Comment
 % =================================================================
 
-\subparagraph{UC-04.14 Delete Comment}
+\subparagraph{UC-14.14 Delete Comment}
 
 \Needspace{12\baselineskip}
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-04.14 Delete Comment} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-14.14 Delete Comment} \\* \hline
 \endfirsthead
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-04.14 Delete Comment \textit{(cont.)}} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-14.14 Delete Comment \textit{(cont.)}} \\* \hline
 \endhead
 \hline\endfoot
 \endlastfoot
@@ -1289,7 +1289,7 @@ Primary Actor: & Client, Freelancer, Admin & Secondary Actors: & N/A \\ \hline
 
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When a user clicks the ``Delete'' option on one of their comments.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Allows the owner of a comment or an Admin to remove it from public view by performing a soft delete operation.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Allows the owner of a comment or an Admin to remove it from public view by performing a soft delete operation.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The user is authenticated. \newline
@@ -1366,18 +1366,18 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{The selected comment has not been per
 \end{longtable}
 
 % =================================================================
-% UC-04.15 Like Comment
+% UC-14.15 Like Comment
 % =================================================================
 
-\subparagraph{UC-04.15 Like Comment}
+\subparagraph{UC-14.15 Like Comment}
 
 \Needspace{12\baselineskip}
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-04.15 Like Comment} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-14.15 Like Comment} \\* \hline
 \endfirsthead
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-04.15 Like Comment \textit{(cont.)}} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-14.15 Like Comment \textit{(cont.)}} \\* \hline
 \endhead
 \hline\endfoot
 \endlastfoot
@@ -1388,7 +1388,7 @@ Primary Actor: & Client, Freelancer & Secondary Actors: & N/A \\ \hline
 
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When a user clicks the ``Like'' button on a comment.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Allows authenticated users to express appreciation for a comment by adding a like reaction (toggle action).} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Allows authenticated users to express appreciation for a comment by adding a like reaction (toggle action).} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The user is authenticated. \newline
@@ -1427,7 +1427,7 @@ Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{A.4 Comment Already Liked} \newline
 1. The User clicks the ``Like'' button on a comment they have already liked. \newline
 2. The system determines that the User has already liked the comment. \newline
-3. The system performs the unlike action (see UC-04.16). \newline
+3. The system performs the unlike action (see UC-14.16). \newline
 4. The use case ends.
 } \\ \hline
 
@@ -1466,18 +1466,18 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{The selected comment is accessible to
 \end{longtable}
 
 % =================================================================
-% UC-04.16 Unlike Comment
+% UC-14.16 Unlike Comment
 % =================================================================
 
-\subparagraph{UC-04.16 Unlike Comment}
+\subparagraph{UC-14.16 Unlike Comment}
 
 \Needspace{12\baselineskip}
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-04.16 Unlike Comment} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-14.16 Unlike Comment} \\* \hline
 \endfirsthead
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-04.16 Unlike Comment \textit{(cont.)}} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-14.16 Unlike Comment \textit{(cont.)}} \\* \hline
 \endhead
 \hline\endfoot
 \endlastfoot
@@ -1488,7 +1488,7 @@ Primary Actor: & Client, Freelancer & Secondary Actors: & N/A \\ \hline
 
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When a user clicks an active ``Like'' button on a comment that they have previously liked.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Allows authenticated users to remove their like reaction from a forum comment.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Allows authenticated users to remove their like reaction from a forum comment.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The user is authenticated. \newline
@@ -1566,18 +1566,18 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{The selected comment is accessible to
 \end{longtable}
 
 % =================================================================
-% UC-04.17 Report Content
+% UC-14.17 Report Content
 % =================================================================
 
-\subparagraph{UC-04.17 Report Content}
+\subparagraph{UC-14.17 Report Content}
 
 \Needspace{12\baselineskip}
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-04.17 Report Content} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-14.17 Report Content} \\* \hline
 \endfirsthead
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-04.17 Report Content \textit{(cont.)}} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-14.17 Report Content \textit{(cont.)}} \\* \hline
 \endhead
 \hline\endfoot
 \endlastfoot
@@ -1588,7 +1588,7 @@ Primary Actor: & Client, Freelancer & Secondary Actors: & Admin, Moderator \\ \h
 
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When a user selects the ``Report'' option for a forum post or comment.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Allows authenticated users to report forum posts or comments that violate community guidelines so that moderators can review and take appropriate actions.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Allows authenticated users to report forum posts or comments that violate community guidelines so that moderators can review and take appropriate actions.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The user is authenticated. \newline

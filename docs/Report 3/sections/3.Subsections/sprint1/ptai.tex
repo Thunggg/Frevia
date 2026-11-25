@@ -8,14 +8,14 @@
 \subsection{Job Browsing}
 
 % -----------------------------------------------------------------
-% UC-10.01: View Job List
+% UC-10.01: View Jobs List
 % -----------------------------------------------------------------
 \Needspace{12\baselineskip}
-\subsubsection{View Job List}
+\subsubsection{View Jobs List}
 
 \fnhead{Function Trigger}
 A guest, freelancer, or client opens the public Find Work catalog or freelancer Find Work tab to browse available job postings.\newline
-\textbf{Navigation path:} Public Find Work (\texttt{/find-work}) or Freelancer Workspace $\rightarrow$ Find Work (\texttt{/freelancer/find-work}).
+\textbf{Navigation path:} Public Find Work (\texttt{/find-work}) or Freelancer Workspace $\rightarrow$ Find Work (\texttt{/\allowbreak{}freelancer/\allowbreak{}find-\allowbreak{}work}).
 
 \fnhead{Function Description}
 
@@ -30,7 +30,7 @@ A guest, freelancer, or client opens the public Find Work catalog or freelancer 
 
 \sublabel{Interface}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-    \item \textbf{Freelancer view (\texttt{/freelancer/find-work}):} Search bar, tabs (Best Matches, Most Recent, Saved Searches, Saved Jobs, Invites, Find Clients), job summary cards, bookmark toggles, and profile progress sidebar.
+    \item \textbf{Freelancer view (\texttt{/\allowbreak{}freelancer/\allowbreak{}find-\allowbreak{}work}):} Search bar, tabs (Best Matches, Most Recent, Saved Searches, Saved Jobs, Invites, Find Clients), job summary cards, bookmark toggles, and profile progress sidebar.
     \item \textbf{Guest/Public view (\texttt{/find-work}):} Public header navigation, hero keyword/category/budget filter bar, job cards with direct ``Apply'' prompt, category quick-filter list, and registration CTA panel.
 \end{itemize}
 
@@ -109,10 +109,10 @@ Database query error or timeout & Service catches \texttt{PrismaClientKnownReque
 \end{itemize}
 
 % -----------------------------------------------------------------
-% UC-10.02: View Job Detail
+% UC-10.02: View Job Details
 % -----------------------------------------------------------------
 \Needspace{12\baselineskip}
-\subsubsection{View Job Detail}
+\subsubsection{View Job Details}
 
 \fnhead{Function Trigger}
 A freelancer/visitor opens a job posting detail page by URL slug, or a client opens their owned job detail page by numeric ID.\newline
@@ -832,10 +832,10 @@ Reopened Job & Updated \texttt{JobSchema} entity with \texttt{status = OPEN}.\\ 
 \subsection{Bookmarked Jobs Management}
 
 % -----------------------------------------------------------------
-% UC-12.01: View Bookmarked Job List
+% UC-12.01: View Bookmarked Jobs List
 % -----------------------------------------------------------------
 \Needspace{12\baselineskip}
-\subsubsection{View Bookmarked Job List}
+\subsubsection{View Bookmarked Jobs List}
 
 \fnhead{Function Trigger}
 A freelancer selects the ``Saved Jobs'' tab inside Find Work.\newline
@@ -882,7 +882,7 @@ JWT Token & Authenticated \texttt{FREELANCER} session token.\\ \hline
 
 \sublabel{Validation Rules}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-    \item Caller must hold active \texttt{FREELANCER} role; query params must pass \texttt{ViewBookmarkedJobQueryDto}.
+    \item Caller must hold active \texttt{FREELANCER} role; query params must pass \texttt{View\allowbreak{}Bookmarked\allowbreak{}Job\allowbreak{}Query\allowbreak{}Dto}.
 \end{itemize}
 
 \sublabel{Business Rules}

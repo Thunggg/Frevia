@@ -21,7 +21,7 @@ Primary Actor: & Freelancer & Secondary Actors: & Stripe Connect \\ \hline
 
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When a Freelancer clicks ``Set up Payouts'' or ``Connect Stripe'' in their Billing and Payout settings.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Allows a Freelancer to connect their bank or debit account via Stripe Connect Express onboarding so that they can receive automated milestone escrow releases and dispute disbursements.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Allows a Freelancer to connect their bank or debit account via Stripe Connect Express onboarding so that they can receive automated milestone escrow releases and dispute disbursements.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The user is authenticated in the system with the Freelancer role. \newline
@@ -100,7 +100,7 @@ Primary Actor: & Freelancer, Admin & Secondary Actors: & Stripe Connect \\ \hlin
 
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When a Freelancer accesses their Payout Settings or an Admin inspects freelancer payout readiness.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Synchronizes and verifies freelancer onboarding status, capability activation (\texttt{charges\_enabled}, \texttt{payouts\_enabled}, \texttt{details\_submitted}), and payout readiness directly with the Stripe API.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Synchronizes and verifies freelancer onboarding status, capability activation (\texttt{charges\_enabled}, \texttt{payouts\_enabled}, \texttt{details\_submitted}), and payout readiness directly with the Stripe API.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The user is authenticated as a Freelancer or Administrator. \newline
@@ -173,7 +173,7 @@ Primary Actor: & Client & Secondary Actors: & Stripe \\ \hline
 
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When a Client navigates to the ``Payment Methods'' tab in Billing Settings.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Retrieves and displays saved customer payment cards (card brand, last 4 digits, expiration month/year, and default card indicator) stored in Stripe.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Retrieves and displays saved customer payment cards (card brand, last 4 digits, expiration month/year, and default card indicator) stored in Stripe.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The user is authenticated as a Client. \newline
@@ -240,7 +240,7 @@ Primary Actor: & Client & Secondary Actors: & Stripe \\ \hline
 
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When a Client clicks ``Set as Default'' on a saved card in Payment Methods.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Updates the customer's default payment method in Stripe and platform records so that it is automatically pre-selected during milestone funding.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Updates the customer's default payment method in Stripe and platform records so that it is automatically pre-selected during milestone funding.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The user is an authenticated Client. \newline
@@ -308,7 +308,7 @@ Primary Actor: & Client & Secondary Actors: & Stripe \\ \hline
 
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When a Client clicks ``Remove'' or ``Delete'' on a saved card in Payment Methods.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Detaches and permanently deletes a saved credit or debit card from the customer's Stripe wallet.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Detaches and permanently deletes a saved credit or debit card from the customer's Stripe wallet.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The user is an authenticated Client. \newline
@@ -379,7 +379,7 @@ Primary Actor: & Client & Secondary Actors: & Stripe \\ \hline
 
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When a Client initiates or signs a contract requiring an upfront security hold deposit.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Creates a Stripe PaymentIntent with capture authorization to hold initial contract deposit funds in escrow, securing freelancer commitment before work begins.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Creates a Stripe PaymentIntent with capture authorization to hold initial contract deposit funds in escrow, securing freelancer commitment before work begins.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The user is authenticated as the contract Client. \newline
@@ -448,7 +448,7 @@ Primary Actor: & Client & Secondary Actors: & Stripe Checkout \\ \hline
 
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When a Client clicks ``Deposit into Escrow'' on a milestone and chooses Stripe Checkout.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Creates a hosted Stripe Checkout Session and redirects the client to Stripe's secure payment page to fund milestone escrow balances using international cards, Apple Pay, or Google Pay.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Creates a hosted Stripe Checkout Session and redirects the client to Stripe's secure payment page to fund milestone escrow balances using international cards, Apple Pay, or Google Pay.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The user is authenticated as the contract Client. \newline
@@ -523,7 +523,7 @@ Primary Actor: & Client & Secondary Actors: & Stripe \\ \hline
 
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When a Client selects a previously saved credit/debit card to fund a milestone escrow balance.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Executes instant 1-click milestone escrow funding using a customer saved card via Stripe PaymentIntent without requiring the client to leave the Frevia platform.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Executes instant 1-click milestone escrow funding using a customer saved card via Stripe PaymentIntent without requiring the client to leave the Frevia platform.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The user is authenticated as the contract Client. \newline
@@ -598,7 +598,7 @@ Primary Actor: & Client, Admin & Secondary Actors: & Stripe Connect \\ \hline
 
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When a Client approves a milestone deliverable or an Admin executes dispute settlement.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Automatically releases milestone escrow funds, transferring net earnings to the Freelancer's connected Stripe account via Stripe Transfer while deducting platform commission.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Automatically releases milestone escrow funds, transferring net earnings to the Freelancer's connected Stripe account via Stripe Transfer while deducting platform commission.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The user is authenticated as the contract Client or Administrator. \newline
@@ -673,7 +673,7 @@ Primary Actor: & Client, Freelancer, Admin & Secondary Actors: & N/A \\ \hline
 
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When a user navigates to the ``Transactions'' tab in the financial dashboard.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Displays a paginated history of all financial transactions (escrow deposits, milestone releases, refunds, hold deposits, platform fees) with status, date, amount, and invoice receipts.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Displays a paginated history of all financial transactions (escrow deposits, milestone releases, refunds, hold deposits, platform fees) with status, date, amount, and invoice receipts.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The user is authenticated in the system. \newline
@@ -739,7 +739,7 @@ Primary Actor: & Client, Admin, System & Secondary Actors: & Stripe API \\ \hlin
 
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When a user returns from 3D Secure challenge or an Admin manually triggers payment reconciliation.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Actively queries the Stripe API to reconcile and synchronize local database status for a PaymentIntent immediately, eliminating reliance on webhook latency.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Actively queries the Stripe API to reconcile and synchronize local database status for a PaymentIntent immediately, eliminating reliance on webhook latency.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} A PaymentIntent ID exists in local database records. \newline
@@ -804,7 +804,7 @@ Primary Actor: & Client, Admin, System & Secondary Actors: & Stripe API \\ \hlin
 
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When a Client returns from a Stripe Checkout redirect to the success callback page.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Reconciles Checkout Session status with the Stripe API immediately upon user redirect, ensuring milestone is immediately marked FUNDED in real-time without webhook delay.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Reconciles Checkout Session status with the Stripe API immediately upon user redirect, ensuring milestone is immediately marked FUNDED in real-time without webhook delay.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} A valid Stripe Checkout \texttt{sessionId} is passed in the return URL. \newline
@@ -874,7 +874,7 @@ Primary Actor: & Stripe Webhook Gateway (System) & Secondary Actors: & Admin \\ 
 
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When Stripe dispatches an asynchronous HTTP POST webhook event to \texttt{/api/payments/webhook}.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Validates HMAC SHA-256 signature headers, parses incoming event payloads asynchronously, and synchronizes financial states (deposits, payouts, refunds, account updates) idempotently.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Validates HMAC SHA-256 signature headers, parses incoming event payloads asynchronously, and synchronizes financial states (deposits, payouts, refunds, account updates) idempotently.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The incoming request contains a valid \texttt{stripe-signature} header. \newline

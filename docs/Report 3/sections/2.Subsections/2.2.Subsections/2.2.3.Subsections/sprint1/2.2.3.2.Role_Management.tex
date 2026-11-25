@@ -2,19 +2,19 @@
 \paragraph{Role Management}
 
 % =================================================================
-% UC-06.01 View Role List
+% UC-06.01 View Roles List
 % =================================================================
-\subparagraph{UC-06.01 View Role List}
+\subparagraph{UC-06.01 View Roles List}
 
 {\singlespacing
 \setlength{\extrarowheight}{4pt}
 \Needspace{12\baselineskip}
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-06.01 View Role List} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-06.01 View Roles List} \\* \hline
 \endfirsthead
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-06.01 View Role List \textit{(cont.)}} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-06.01 View Roles List \textit{(cont.)}} \\* \hline
 \endhead
 \hline\endfoot
 \endlastfoot
@@ -22,7 +22,7 @@
 Created By: & ThuanNT & Date Created: & 20/09/2026 \\ \hline
 Primary Actor: & Admin & Secondary Actors: & N/A \\ \hline
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When an admin navigates to the Role Management section from the admin dashboard.} \\ \hline
-Description: & \multicolumn{3}{L{11.1cm}|}{Retrieve list of all roles along with their assigned permissions.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Retrieve list of all roles along with their assigned permissions.} \\ \hline
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The user is authenticated as an Admin. \newline
 \textbf{PRE-2} The system is connected to the database.
@@ -32,7 +32,7 @@ Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{POST-2} The admin can select a role to view its details (UC-06.02) or manage permissions (UC-06.06).
 } \\ \hline
 Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{A. View Role List} \newline
+\textbf{A. View Roles List} \newline
 1. Admin navigates to the Role Management page (\texttt{/admin/roles}). \newline
 2. The system sends \texttt{GET /api/roles} to retrieve roles. \newline
 3. The system queries the database for all active (non-deleted) roles and their associated permissions. \newline
@@ -62,19 +62,19 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{Roles and permissions are maintained 
 }
 
 % =================================================================
-% UC-06.02 View Role Detail
+% UC-06.02 View Role Details
 % =================================================================
-\subparagraph{UC-06.02 View Role Detail}
+\subparagraph{UC-06.02 View Role Details}
 
 {\singlespacing
 \setlength{\extrarowheight}{4pt}
 \Needspace{12\baselineskip}
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-06.02 View Role Detail} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-06.02 View Role Details} \\* \hline
 \endfirsthead
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-06.02 View Role Detail \textit{(cont.)}} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-06.02 View Role Details \textit{(cont.)}} \\* \hline
 \endhead
 \hline\endfoot
 \endlastfoot
@@ -82,7 +82,7 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{Roles and permissions are maintained 
 Created By: & ThuanNT & Date Created: & 20/09/2026 \\ \hline
 Primary Actor: & Admin & Secondary Actors: & N/A \\ \hline
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When an admin selects a specific role from the role list, or navigates directly to a role detail URL.} \\ \hline
-Description: & \multicolumn{3}{L{11.1cm}|}{View detailed information of a specific role including its permissions.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{View detailed information of a specific role including its permissions.} \\ \hline
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The user is authenticated as an Admin. \newline
 \textbf{PRE-2} The selected role exists and has not been soft-deleted.
@@ -91,7 +91,7 @@ Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{POST-1} The detailed information of the selected role is displayed, including name, description, and assigned permissions.
 } \\ \hline
 Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{A. View Role Detail} \newline
+\textbf{A. View Role Details} \newline
 1. Admin selects a role from the role list or navigates directly to \texttt{/admin/roles/:id}. \newline
 2. The system validates that the role exists and is not soft-deleted. \newline
 3. The system sends \texttt{GET /api/roles/:id}. \newline
@@ -141,7 +141,7 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{Roles and their associated permission
 Created By: & ThuanNT & Date Created: & 20/09/2026 \\ \hline
 Primary Actor: & Admin & Secondary Actors: & N/A \\ \hline
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When an admin clicks the ``Create Role'' button on the Role Management page.} \\ \hline
-Description: & \multicolumn{3}{L{11.1cm}|}{Create a new role with name, description, and a list of permission IDs.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Create a new role with name, description, and a list of permission IDs.} \\ \hline
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The user is authenticated as an Admin. \newline
 \textbf{PRE-2} The system is connected to the database.
@@ -217,7 +217,7 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{The admin remains authenticated throu
 Created By: & ThuanNT & Date Created: & 20/09/2026 \\ \hline
 Primary Actor: & Admin & Secondary Actors: & N/A \\ \hline
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When an admin selects the ``Edit'' option on a specific role from the Role Management page.} \\ \hline
-Description: & \multicolumn{3}{L{11.1cm}|}{Update a role's name, description, and replace all assigned permissions.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Update a role's name, description, and replace all assigned permissions.} \\ \hline
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The user is authenticated as an Admin. \newline
 \textbf{PRE-2} The selected role exists and has not been soft-deleted.
@@ -297,7 +297,7 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{The admin remains authenticated throu
 Created By: & ThuanNT & Date Created: & 20/09/2026 \\ \hline
 Primary Actor: & Admin & Secondary Actors: & N/A \\ \hline
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When an admin selects the ``Delete'' option on a specific role from the Role Management page.} \\ \hline
-Description: & \multicolumn{3}{L{11.1cm}|}{Delete a role from the system.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Delete a role from the system.} \\ \hline
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The user is authenticated as an Admin. \newline
 \textbf{PRE-2} The selected role exists in the system. \newline
@@ -372,7 +372,7 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{The admin remains authenticated throu
 Created By: & ThuanNT & Date Created: & 20/09/2026 \\ \hline
 Primary Actor: & Admin & Secondary Actors: & N/A \\ \hline
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When an admin selects a role on the Assign Role page and clicks the ``Save permissions'' button.} \\ \hline
-Description: & \multicolumn{3}{L{11.1cm}|}{Assign route access rights to roles.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Assign route access rights to roles.} \\ \hline
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The user is authenticated as an Admin. \newline
 \textbf{PRE-2} The selected role exists and has not been soft-deleted. \newline

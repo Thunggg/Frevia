@@ -19,7 +19,7 @@
 Created By: & \multicolumn{3}{L{11.1cm}|}{Nguyen Lu Nhat Huy; updated 08/11/2026} \\ \hline
 Primary Actor: & \multicolumn{3}{L{11.1cm}|}{Freelancer} \\ \hline
 Trigger: & \multicolumn{3}{L{11.1cm}|}{The actor selects Upload Identity Documents from /account-profile (Identity Verification tab).} \\ \hline
-Description: & \multicolumn{3}{L{11.1cm}|}{Validate the active-request constraint, securely store the submitted evidence, and record the verification outcome for review.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Validate the active-request constraint, securely store the submitted evidence, and record the verification outcome for review.} \\ \hline
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{The actor is authenticated and has the required role and resource permission. The relevant database and dependent services are available.} \\ \hline
 Post-conditions: & \multicolumn{3}{L{11.1cm}|}{Validate the active-request constraint, securely store the submitted evidence, and record the verification outcome for review.} \\ \hline
 Normal Flow: & \multicolumn{3}{L{11.1cm}|}{1. The actor opens /account-profile (Identity Verification tab) and selects Upload Identity Documents. \newline 2. The application presents the current values or action confirmation; the actor supplies the required data and submits. \newline 3. The API checks authentication where required, authorization, resource existence and input validity. \newline 4. Validate the active-request constraint, securely store the submitted evidence, and record the verification outcome for review. \newline 5. After the transaction succeeds, the screen displays the result and reloads affected data; a pending revision is labeled as awaiting review.} \\ \hline
@@ -51,7 +51,7 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{This specification defines the requir
 Created By: & \multicolumn{3}{L{11.1cm}|}{Nguyen Lu Nhat Huy; updated 08/11/2026} \\ \hline
 Primary Actor: & \multicolumn{3}{L{11.1cm}|}{Freelancer} \\ \hline
 Trigger: & \multicolumn{3}{L{11.1cm}|}{The actor selects View Verification Status from /account-profile (Identity Verification tab).} \\ \hline
-Description: & \multicolumn{3}{L{11.1cm}|}{Return the latest verification state and submission history with rejection notes where present.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Return the latest verification state and submission history with rejection notes where present.} \\ \hline
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{The actor is authenticated and has the required role and resource permission. The relevant database and dependent services are available.} \\ \hline
 Post-conditions: & \multicolumn{3}{L{11.1cm}|}{Authorized data is displayed without modifying the underlying records.} \\ \hline
 Normal Flow: & \multicolumn{3}{L{11.1cm}|}{1. The actor opens /account-profile (Identity Verification tab) and selects View Verification Status. \newline 2. The application submits the selected identifier or list filters. \newline 3. The API checks authentication where required, authorization, resource existence and input validity. \newline 4. Return the latest verification state and submission history with rejection notes where present. \newline 5. The screen renders the response, or an explicit empty state for a valid empty collection.} \\ \hline
@@ -85,7 +85,7 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{This specification defines the requir
 Created By: & \multicolumn{3}{L{11.1cm}|}{Nguyen Lu Nhat Huy; updated 08/11/2026} \\ \hline
 Primary Actor: & \multicolumn{3}{L{11.1cm}|}{Guest, Client, Freelancer} \\ \hline
 Trigger: & \multicolumn{3}{L{11.1cm}|}{The actor selects View Client Profile from /clients/[userId]; /client/profile.} \\ \hline
-Description: & \multicolumn{3}{L{11.1cm}|}{Combine approved public Profile, ClientProfile and SocialLink fields without private user information.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Combine approved public Profile, ClientProfile and SocialLink fields without private user information.} \\ \hline
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{The requested active profile or item exists. The relevant database and dependent services are available.} \\ \hline
 Post-conditions: & \multicolumn{3}{L{11.1cm}|}{Authorized data is displayed without modifying the underlying records.} \\ \hline
 Normal Flow: & \multicolumn{3}{L{11.1cm}|}{1. The actor opens /clients/[userId]; /client/profile and selects View Client Profile. \newline 2. The application submits the selected identifier or list filters. \newline 3. The API checks authentication where required, authorization, resource existence and input validity. \newline 4. Combine approved public Profile, ClientProfile and SocialLink fields without private user information. \newline 5. The screen renders the response, or an explicit empty state for a valid empty collection.} \\ \hline
@@ -117,7 +117,7 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{This specification defines the requir
 Created By: & \multicolumn{3}{L{11.1cm}|}{Nguyen Lu Nhat Huy; updated 08/11/2026} \\ \hline
 Primary Actor: & \multicolumn{3}{L{11.1cm}|}{Client} \\ \hline
 Trigger: & \multicolumn{3}{L{11.1cm}|}{The actor selects Update Company Information from /clients/[userId]; /client/profile.} \\ \hline
-Description: & \multicolumn{3}{L{11.1cm}|}{Save or submit the authenticated Client company information according to the revision policy.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Save or submit the authenticated Client company information according to the revision policy.} \\ \hline
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{The actor is authenticated and has the required role and resource permission. The relevant database and dependent services are available.} \\ \hline
 Post-conditions: & \multicolumn{3}{L{11.1cm}|}{Save or submit the authenticated Client company information according to the revision policy.} \\ \hline
 Normal Flow: & \multicolumn{3}{L{11.1cm}|}{1. The actor opens /clients/[userId]; /client/profile and selects Update Company Information. \newline 2. The application presents the current values or action confirmation; the actor supplies the required data and submits. \newline 3. The API checks authentication where required, authorization, resource existence and input validity. \newline 4. Save or submit the authenticated Client company information according to the revision policy. \newline 5. After the transaction succeeds, the screen displays the result and reloads affected data; a pending revision is labeled as awaiting review.} \\ \hline
@@ -134,27 +134,27 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{This specification defines the requir
 \Needspace{12\baselineskip}
 \paragraph{Social Links Management}
 \Needspace{12\baselineskip}
-\subparagraph{UC-20.01 View Social Link List}
+\subparagraph{UC-20.01 View Social Links List}
 
 {\singlespacing
 \setlength{\extrarowheight}{3pt}
 \Needspace{12\baselineskip}
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{L{11.1cm}|}{UC-20.01 View Social Link List} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{L{11.1cm}|}{UC-20.01 View Social Links List} \\* \hline
 \endfirsthead
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{L{11.1cm}|}{UC-20.01 View Social Link List \textit{(cont.)}} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{L{11.1cm}|}{UC-20.01 View Social Links List \textit{(cont.)}} \\* \hline
 \endhead
 \hline\endfoot
 \endlastfoot
 Created By: & \multicolumn{3}{L{11.1cm}|}{Nguyen Lu Nhat Huy; updated 08/11/2026} \\ \hline
 Primary Actor: & \multicolumn{3}{L{11.1cm}|}{Client, Freelancer} \\ \hline
-Trigger: & \multicolumn{3}{L{11.1cm}|}{The actor selects View Social Link List from /account-profile (Social Links); /client/profile; public profile.} \\ \hline
-Description: & \multicolumn{3}{L{11.1cm}|}{Retrieve links for the current account settings or the public client response; public freelancer rendering is a tracked gap.} \\ \hline
+Trigger: & \multicolumn{3}{L{11.1cm}|}{The actor selects View Social Links List from /account-profile (Social Links); /client/profile; public profile.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Retrieve links for the current account settings or the public client response; public freelancer rendering is a tracked gap.} \\ \hline
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{The actor is authenticated and has the required role and resource permission. The relevant database and dependent services are available.} \\ \hline
 Post-conditions: & \multicolumn{3}{L{11.1cm}|}{Authorized data is displayed without modifying the underlying records.} \\ \hline
-Normal Flow: & \multicolumn{3}{L{11.1cm}|}{1. The actor opens /account-profile (Social Links); /client/profile; public profile and selects View Social Link List. \newline 2. The application submits the selected identifier or list filters. \newline 3. The API checks authentication where required, authorization, resource existence and input validity. \newline 4. Retrieve links for the current account settings or the public client response; public freelancer rendering is a tracked gap. \newline 5. The screen renders the response, or an explicit empty state for a valid empty collection.} \\ \hline
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{1. The actor opens /account-profile (Social Links); /client/profile; public profile and selects View Social Links List. \newline 2. The application submits the selected identifier or list filters. \newline 3. The API checks authentication where required, authorization, resource existence and input validity. \newline 4. Retrieve links for the current account settings or the public client response; public freelancer rendering is a tracked gap. \newline 5. The screen renders the response, or an explicit empty state for a valid empty collection.} \\ \hline
 Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{No matching records: display an empty state. A failed request offers Retry.} \\ \hline
 Exceptions: & \multicolumn{3}{L{11.1cm}|}{\textbf{E1:} Missing or expired authentication, or insufficient role/ownership: deny the operation and do not change data. \newline \textbf{E2:} Missing, deleted or inaccessible resource: show a not-found result. \newline \textbf{A1:} A valid empty collection displays an empty state; it must not be treated as a missing account. \newline \textbf{E4:} Database, network or storage failure: report a retryable error; do not report success or terminate the API process.} \\ \hline
 Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
@@ -183,7 +183,7 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{This specification defines the requir
 Created By: & \multicolumn{3}{L{11.1cm}|}{Nguyen Lu Nhat Huy; updated 08/11/2026} \\ \hline
 Primary Actor: & \multicolumn{3}{L{11.1cm}|}{Client, Freelancer} \\ \hline
 Trigger: & \multicolumn{3}{L{11.1cm}|}{The actor selects Add Social Link from /account-profile (Social Links); /client/profile; public profile.} \\ \hline
-Description: & \multicolumn{3}{L{11.1cm}|}{Validate the platform and external URL, then insert one link on the authenticated user profile.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Validate the platform and external URL, then insert one link on the authenticated user profile.} \\ \hline
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{The actor is authenticated and has the required role and resource permission. The relevant database and dependent services are available.} \\ \hline
 Post-conditions: & \multicolumn{3}{L{11.1cm}|}{Validate the platform and external URL, then insert one link on the authenticated user profile.} \\ \hline
 Normal Flow: & \multicolumn{3}{L{11.1cm}|}{1. The actor opens /account-profile (Social Links); /client/profile; public profile and selects Add Social Link. \newline 2. The application presents the current values or action confirmation; the actor supplies the required data and submits. \newline 3. The API checks authentication where required, authorization, resource existence and input validity. \newline 4. Validate the platform and external URL, then insert one link on the authenticated user profile. \newline 5. After the transaction succeeds, the screen displays the result and reloads affected data; a pending revision is labeled as awaiting review.} \\ \hline
@@ -215,7 +215,7 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{This specification defines the requir
 Created By: & \multicolumn{3}{L{11.1cm}|}{Nguyen Lu Nhat Huy; updated 08/11/2026} \\ \hline
 Primary Actor: & \multicolumn{3}{L{11.1cm}|}{Client, Freelancer} \\ \hline
 Trigger: & \multicolumn{3}{L{11.1cm}|}{The actor selects Delete Social Link from /account-profile (Social Links); /client/profile; public profile.} \\ \hline
-Description: & \multicolumn{3}{L{11.1cm}|}{Hard-delete the selected owned social link after confirmation.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Hard-delete the selected owned social link after confirmation.} \\ \hline
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{The actor is authenticated and has the required role and resource permission. The relevant database and dependent services are available.} \\ \hline
 Post-conditions: & \multicolumn{3}{L{11.1cm}|}{Hard-delete the selected owned social link after confirmation.} \\ \hline
 Normal Flow: & \multicolumn{3}{L{11.1cm}|}{1. The actor opens /account-profile (Social Links); /client/profile; public profile and selects Delete Social Link. \newline 2. The application presents the current values or action confirmation; the actor supplies the required data and submits. \newline 3. The API checks authentication where required, authorization, resource existence and input validity. \newline 4. Hard-delete the selected owned social link after confirmation. \newline 5. After the transaction succeeds, the screen displays the result and reloads affected data; a pending revision is labeled as awaiting review.} \\ \hline
@@ -232,27 +232,27 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{This specification defines the requir
 \Needspace{12\baselineskip}
 \paragraph{Favorite Freelancers}
 \Needspace{12\baselineskip}
-\subparagraph{UC-21.01 View Favorite Freelancer List}
+\subparagraph{UC-21.01 View Favorite Freelancers List}
 
 {\singlespacing
 \setlength{\extrarowheight}{3pt}
 \Needspace{12\baselineskip}
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{L{11.1cm}|}{UC-21.01 View Favorite Freelancer List} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{L{11.1cm}|}{UC-21.01 View Favorite Freelancers List} \\* \hline
 \endfirsthead
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{L{11.1cm}|}{UC-21.01 View Favorite Freelancer List \textit{(cont.)}} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{L{11.1cm}|}{UC-21.01 View Favorite Freelancers List \textit{(cont.)}} \\* \hline
 \endhead
 \hline\endfoot
 \endlastfoot
 Created By: & \multicolumn{3}{L{11.1cm}|}{Nguyen Lu Nhat Huy; updated 08/11/2026} \\ \hline
 Primary Actor: & \multicolumn{3}{L{11.1cm}|}{Client} \\ \hline
-Trigger: & \multicolumn{3}{L{11.1cm}|}{The actor selects View Favorite Freelancer List from /client/profile (Favorites); /profiles/[id].} \\ \hline
-Description: & \multicolumn{3}{L{11.1cm}|}{Load the current Client favorites and join public freelancer details.} \\ \hline
+Trigger: & \multicolumn{3}{L{11.1cm}|}{The actor selects View Favorite Freelancers List from /client/profile (Favorites); /profiles/[id].} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Load the current Client favorites and join public freelancer details.} \\ \hline
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{The actor is authenticated and has the required role and resource permission. The relevant database and dependent services are available.} \\ \hline
 Post-conditions: & \multicolumn{3}{L{11.1cm}|}{Authorized data is displayed without modifying the underlying records.} \\ \hline
-Normal Flow: & \multicolumn{3}{L{11.1cm}|}{1. The actor opens /client/profile (Favorites); /profiles/[id] and selects View Favorite Freelancer List. \newline 2. The application submits the selected identifier or list filters. \newline 3. The API checks authentication where required, authorization, resource existence and input validity. \newline 4. Load the current Client favorites and join public freelancer details. \newline 5. The screen renders the response, or an explicit empty state for a valid empty collection.} \\ \hline
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{1. The actor opens /client/profile (Favorites); /profiles/[id] and selects View Favorite Freelancers List. \newline 2. The application submits the selected identifier or list filters. \newline 3. The API checks authentication where required, authorization, resource existence and input validity. \newline 4. Load the current Client favorites and join public freelancer details. \newline 5. The screen renders the response, or an explicit empty state for a valid empty collection.} \\ \hline
 Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{No matching records: display an empty state. A failed request offers Retry.} \\ \hline
 Exceptions: & \multicolumn{3}{L{11.1cm}|}{\textbf{E1:} Missing or expired authentication, or insufficient role/ownership: deny the operation and do not change data. \newline \textbf{E2:} Missing, deleted or inaccessible resource: show a not-found result. \newline \textbf{A1:} A valid empty collection displays an empty state; it must not be treated as a missing account. \newline \textbf{E4:} Database, network or storage failure: report a retryable error; do not report success or terminate the API process.} \\ \hline
 Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
@@ -281,7 +281,7 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{This specification defines the requir
 Created By: & \multicolumn{3}{L{11.1cm}|}{Nguyen Lu Nhat Huy; updated 08/11/2026} \\ \hline
 Primary Actor: & \multicolumn{3}{L{11.1cm}|}{Client} \\ \hline
 Trigger: & \multicolumn{3}{L{11.1cm}|}{The actor selects Add Freelancer to Favorites from /client/profile (Favorites); /profiles/[id].} \\ \hline
-Description: & \multicolumn{3}{L{11.1cm}|}{Insert a unique relationship from the current Client to an active freelancer.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Insert a unique relationship from the current Client to an active freelancer.} \\ \hline
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{The actor is authenticated and has the required role and resource permission. The relevant database and dependent services are available.} \\ \hline
 Post-conditions: & \multicolumn{3}{L{11.1cm}|}{Insert a unique relationship from the current Client to an active freelancer.} \\ \hline
 Normal Flow: & \multicolumn{3}{L{11.1cm}|}{1. The actor opens /client/profile (Favorites); /profiles/[id] and selects Add Freelancer to Favorites. \newline 2. The application presents the current values or action confirmation; the actor supplies the required data and submits. \newline 3. The API checks authentication where required, authorization, resource existence and input validity. \newline 4. Insert a unique relationship from the current Client to an active freelancer. \newline 5. After the transaction succeeds, the screen displays the result and reloads affected data; a pending revision is labeled as awaiting review.} \\ \hline
@@ -313,7 +313,7 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{This specification defines the requir
 Created By: & \multicolumn{3}{L{11.1cm}|}{Nguyen Lu Nhat Huy; updated 08/11/2026} \\ \hline
 Primary Actor: & \multicolumn{3}{L{11.1cm}|}{Client} \\ \hline
 Trigger: & \multicolumn{3}{L{11.1cm}|}{The actor selects Remove Freelancer from Favorites from /client/profile (Favorites); /profiles/[id].} \\ \hline
-Description: & \multicolumn{3}{L{11.1cm}|}{Hard-delete the current Client relationship and update the favorite toggle and list.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Hard-delete the current Client relationship and update the favorite toggle and list.} \\ \hline
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{The actor is authenticated and has the required role and resource permission. The relevant database and dependent services are available.} \\ \hline
 Post-conditions: & \multicolumn{3}{L{11.1cm}|}{Hard-delete the current Client relationship and update the favorite toggle and list.} \\ \hline
 Normal Flow: & \multicolumn{3}{L{11.1cm}|}{1. The actor opens /client/profile (Favorites); /profiles/[id] and selects Remove Freelancer from Favorites. \newline 2. The application presents the current values or action confirmation; the actor supplies the required data and submits. \newline 3. The API checks authentication where required, authorization, resource existence and input validity. \newline 4. Hard-delete the current Client relationship and update the favorite toggle and list. \newline 5. After the transaction succeeds, the screen displays the result and reloads affected data; a pending revision is labeled as awaiting review.} \\ \hline

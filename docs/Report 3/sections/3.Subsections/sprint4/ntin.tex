@@ -20,7 +20,7 @@
 
 \fnhead{Function Trigger}
 A Freelancer clicks ``Set up Payouts'' or ``Connect Stripe'' in their Billing and Payout Settings.\newline
-\textbf{Navigation path:} Freelancer Dashboard $\rightarrow$ Settings $\rightarrow$ Payout Settings (\texttt{/freelancer/settings/payouts}) $\rightarrow$ Click ``Connect with Stripe''.
+\textbf{Navigation path:} Freelancer Dashboard $\rightarrow$ Settings $\rightarrow$ Payout Settings (\texttt{/\allowbreak{}freelancer/\allowbreak{}settings/\allowbreak{}payouts}) $\rightarrow$ Click ``Connect with Stripe''.
 
 \fnhead{Function Description}
 
@@ -398,9 +398,9 @@ A Client clicks ``Remove'' or ``Delete'' on a saved card in Payment Methods.\new
 
 \sublabel{Data Processing Overview}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-      \item Client submits an HTTP request: \texttt{DELETE /api/payments/payment-methods/:paymentMethodId}.
-      \item \texttt{PaymentService.removePaymentMethod()} verifies ownership of the card.
-      \item Calls \texttt{stripe.paymentMethods.detach(paymentMethodId)}.
+      \item Client submits an HTTP request: \texttt{DELETE /\allowbreak{}api/\allowbreak{}payments/\allowbreak{}payment-\allowbreak{}methods/\allowbreak{}:\allowbreak{}payment\allowbreak{}Method\allowbreak{}Id}.
+      \item \texttt{PaymentService.\allowbreak{}remove\allowbreak{}Payment\allowbreak{}Method()} verifies ownership of the card.
+      \item Calls \texttt{stripe.\allowbreak{}paymentMethods.\allowbreak{}detach(\allowbreak{}payment\allowbreak{}Method\allowbreak{}Id)}.
       \item Returns HTTP 200 with success confirmation.
 \end{itemize}
 
@@ -587,7 +587,7 @@ A Client clicks ``Deposit into Escrow'' on a milestone and chooses Stripe Checko
 
 \sublabel{Data Processing Overview}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-      \item Client requests \texttt{POST /api/payments/contracts/:contractId/milestones/:milestoneId/fund/checkout-session} with optional \texttt{returnUrl}.
+      \item Client requests \texttt{POST /\allowbreak{}api/\allowbreak{}payments/\allowbreak{}contracts/\allowbreak{}:\allowbreak{}contractId/\allowbreak{}milestones/\allowbreak{}:\allowbreak{}milestoneId/\allowbreak{}fund/\allowbreak{}checkout-\allowbreak{}session} with optional \texttt{returnUrl}.
       \item \texttt{PaymentService} validates caller is the contract Client and milestone is in \texttt{PENDING} status.
       \item Creates Stripe Checkout Session configured with milestone line items and metadata.
       \item Returns HTTP 200 with \texttt{checkoutUrl} and \texttt{sessionId}.
@@ -680,9 +680,9 @@ A Client selects a saved payment card to fund a milestone escrow balance.\newlin
 
 \sublabel{Data Processing Overview}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-      \item Client requests \texttt{POST /api/payments/contracts/:contractId/milestones/:milestoneId/fund/saved-card} with optional \texttt{paymentMethodId}.
-      \item \texttt{PaymentService.chargeSavedCardForMilestoneFund()} verifies caller is contract Client and milestone is in \texttt{PENDING} status.
-      \item Uses default card or specified \texttt{paymentMethodId} to execute off-session charge via Stripe PaymentIntent.
+      \item Client requests \texttt{POST /\allowbreak{}api/\allowbreak{}payments/\allowbreak{}contracts/\allowbreak{}:\allowbreak{}contractId/\allowbreak{}milestones/\allowbreak{}:\allowbreak{}milestoneId/\allowbreak{}fund/\allowbreak{}saved-\allowbreak{}card} with optional \texttt{payment\allowbreak{}Method\allowbreak{}Id}.
+      \item \texttt{PaymentService.\allowbreak{}charge\allowbreak{}Saved\allowbreak{}Card\allowbreak{}For\allowbreak{}Milestone\allowbreak{}Fund()} verifies caller is contract Client and milestone is in \texttt{PENDING} status.
+      \item Uses default card or specified \texttt{payment\allowbreak{}Method\allowbreak{}Id} to execute off-session charge via Stripe PaymentIntent.
       \item Upon successful charge, transitions milestone paymentStatus to \texttt{FUNDED}.
       \item Creates ledger transaction record (\texttt{ESCROW\_DEPOSIT}).
       \item Returns HTTP 200 with success status and transaction ID.
@@ -775,9 +775,9 @@ A Client approves a milestone deliverable or an Admin executes dispute settlemen
 
 \sublabel{Data Processing Overview}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-      \item Client requests \texttt{POST /api/payments/contracts/:contractId/milestones/:milestoneId/release}.
-      \item \texttt{PaymentService.releaseMilestone()} verifies caller is contract Client and milestone is in \texttt{FUNDED} status.
-      \item Verifies Freelancer has an active, verified Stripe account with \texttt{payouts\_enabled = true}.
+      \item Client requests \texttt{POST /\allowbreak{}api/\allowbreak{}payments/\allowbreak{}contracts/\allowbreak{}:\allowbreak{}contractId/\allowbreak{}milestones/\allowbreak{}:\allowbreak{}milestoneId/\allowbreak{}release}.
+      \item \texttt{PaymentService.\allowbreak{}release\allowbreak{}Milestone()} verifies caller is contract Client and milestone is in \texttt{FUNDED} status.
+      \item Verifies Freelancer has an active, verified Stripe account with \texttt{payouts\_\allowbreak{}enabled = true}.
       \item Calculates platform commission (5\%) and net freelancer amount (95\%).
       \item Executes \texttt{stripe.transfers.create()} transferring net amount to Freelancer's \texttt{stripeAccountId}.
       \item Updates milestone paymentStatus to \texttt{RELEASED} and status to \texttt{COMPLETED}.
@@ -939,7 +939,7 @@ A user navigates to the ``Transactions'' tab in the financial dashboard.\newline
 
 \fnhead{Function Trigger}
 A user returns from a 3D Secure bank verification challenge or an Admin triggers reconciliation.\newline
-\textbf{Navigation path:} Automatic callback following 3DS verification (\texttt{/api/payments/intents/:id/sync}).
+\textbf{Navigation path:} Automatic callback following 3DS verification (\texttt{/\allowbreak{}api/\allowbreak{}payments/\allowbreak{}intents/\allowbreak{}:\allowbreak{}id/\allowbreak{}sync}).
 
 \fnhead{Function Description}
 
@@ -961,8 +961,8 @@ A user returns from a 3D Secure bank verification challenge or an Admin triggers
 
 \sublabel{Data Processing Overview}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-      \item Client requests \texttt{POST /api/payments/intents/:paymentIntentId/sync}.
-      \item \texttt{PaymentService.syncPaymentIntent()} calls \texttt{stripe.paymentIntents.retrieve(paymentIntentId)}.
+      \item Client requests \texttt{POST /\allowbreak{}api/\allowbreak{}payments/\allowbreak{}intents/\allowbreak{}:\allowbreak{}payment\allowbreak{}Intent\allowbreak{}Id/\allowbreak{}sync}.
+      \item \texttt{PaymentService.\allowbreak{}sync\allowbreak{}Payment\allowbreak{}Intent()} calls \texttt{stripe.\allowbreak{}paymentIntents.\allowbreak{}retrieve(\allowbreak{}payment\allowbreak{}Intent\allowbreak{}Id)}.
       \item Inspects intent status: if \texttt{succeeded}, marks milestone \texttt{FUNDED} and transaction \texttt{SUCCEEDED}.
       \item Returns HTTP 200 with synchronized status.
 \end{itemize}
@@ -1019,7 +1019,7 @@ A user returns from a 3D Secure bank verification challenge or an Admin triggers
 
 \fnhead{Function Trigger}
 A Client returns from a hosted Stripe Checkout redirect to the platform callback page.\newline
-\textbf{Navigation path:} Automatic callback landing on \texttt{/contracts/:id?session\_id=\{CHECKOUT\_SESSION\_ID\}}.
+\textbf{Navigation path:} Automatic callback landing on \texttt{/\allowbreak{}contracts/\allowbreak{}:\allowbreak{}id?\allowbreak{}session\_\allowbreak{}id=\allowbreak{}\{CHECKOUT\_\allowbreak{}SESSION\_\allowbreak{}ID\}}.
 
 \fnhead{Function Description}
 
@@ -1041,9 +1041,9 @@ A Client returns from a hosted Stripe Checkout redirect to the platform callback
 
 \sublabel{Data Processing Overview}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-      \item Web client detects \texttt{session\_id} query param and requests \texttt{POST /api/payments/checkout-sessions/:sessionId/sync}.
-      \item \texttt{PaymentService.syncCheckoutSession()} retrieves the session from Stripe.
-      \item If \texttt{payment\_status === 'paid'}, updates milestone \texttt{paymentStatus = FUNDED}.
+      \item Web client detects \texttt{session\_id} query param and requests \texttt{POST /\allowbreak{}api/\allowbreak{}payments/\allowbreak{}checkout-\allowbreak{}sessions/\allowbreak{}:\allowbreak{}sessionId/\allowbreak{}sync}.
+      \item \texttt{PaymentService.\allowbreak{}sync\allowbreak{}Checkout\allowbreak{}Session()} retrieves the session from Stripe.
+      \item If \texttt{payment\_\allowbreak{}status =\allowbreak{}=\allowbreak{}= 'paid'}, updates milestone \texttt{paymentStatus = FUNDED}.
       \item Creates corresponding deposit transaction record if not already recorded by webhook.
       \item Returns HTTP 200 \texttt{\{success: true, status: 'paid'\}}.
 \end{itemize}
@@ -1099,8 +1099,8 @@ A Client returns from a hosted Stripe Checkout redirect to the platform callback
 \subsubsection{ Handle Stripe Webhook Events}
 
 \fnhead{Function Trigger}
-Stripe dispatches an asynchronous HTTP POST webhook event to \texttt{/api/payments/webhook}.\newline
-\textbf{Navigation path:} External webhook endpoint (\texttt{POST /api/payments/webhook}).
+Stripe dispatches an asynchronous HTTP POST webhook event to \texttt{/\allowbreak{}api/\allowbreak{}payments/\allowbreak{}webhook}.\newline
+\textbf{Navigation path:} External webhook endpoint (\texttt{POST /\allowbreak{}api/\allowbreak{}payments/\allowbreak{}webhook}).
 
 \fnhead{Function Description}
 

@@ -11,10 +11,10 @@
 \subsection{Permission Management}
 
 % -----------------------------------------------------------------
-% UC-15.01: View Permission List
+% UC-15.01: View Permissions List
 % -----------------------------------------------------------------
 \Needspace{12\baselineskip}
-\subsubsection{ View Permission List}
+\subsubsection{ View Permissions List}
 
 \fnhead{Function Trigger}
 An administrator accesses the Permission Management screen from the administrator console sidebar.\newline
@@ -43,10 +43,10 @@ An administrator accesses the Permission Management screen from the administrato
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
     \item The client initiates an HTTP request: \texttt{GET /api/permissions} with query parameters (\texttt{page}, \texttt{limit}, \texttt{search}, \texttt{method}, \texttt{module}, \texttt{sortBy}, \texttt{order}).
     \item The backend guard verifies the caller's JWT access token and ensures the caller possesses \texttt{ADMIN} role privileges.
-    \item \texttt{PermissionsController.getPermissions()} parses and validates the filter parameters through \texttt{PermissionFilterDto}.
-    \item \texttt{PermissionsService.getPermissions()} invokes \texttt{PermissionsRepository.findAll(filter)}.
+    \item \texttt{Permissions\allowbreak{}Controller.\allowbreak{}getPermissions()} parses and validates the filter parameters through \texttt{Permission\allowbreak{}Filter\allowbreak{}Dto}.
+    \item \texttt{Permissions\allowbreak{}Service.\allowbreak{}getPermissions()} invokes \texttt{Permissions\allowbreak{}Repository.\allowbreak{}findAll(\allowbreak{}filter)}.
     \item The repository executes a database transaction retrieving active records (\texttt{deletedAt = null}), counting the matching records, and fetching distinct module names.
-    \item The service formats the payload into a \texttt{PermissionListResponseDto} containing the items array, pagination metadata, and active module list.
+    \item The service formats the payload into a \texttt{Permission\allowbreak{}List\allowbreak{}Response\allowbreak{}Dto} containing the items array, pagination metadata, and active module list.
     \item The frontend renders the data table, applies color badges per HTTP method (GET: outline, POST: secondary, PUT/PATCH: outline, DELETE: destructive), and renders pagination buttons.
 \end{itemize}
 
@@ -134,10 +134,10 @@ modules & Array of unique module names available across active permissions.\\ \h
 \end{enumerate}
 
 % -----------------------------------------------------------------
-% UC-15.02: View Permission Detail
+% UC-15.02: View Permission Details
 % -----------------------------------------------------------------
 \Needspace{12\baselineskip}
-\subsubsection{ View Permission Detail}
+\subsubsection{ View Permission Details}
 
 \fnhead{Function Trigger}
 An administrator clicks ``View detail'' on a permission row in the permission table or navigates directly to a permission detail URL.\newline
@@ -245,10 +245,10 @@ createdAt & Timestamp indicating when the permission was registered.\\ \hline
 \subsection{Session Management}
 
 % -----------------------------------------------------------------
-% UC-16.01: View Session List
+% UC-16.01: View Sessions List
 % -----------------------------------------------------------------
 \Needspace{12\baselineskip}
-\subsubsection{ View Session List}
+\subsubsection{ View Sessions List}
 
 \fnhead{Function Trigger}
 An authenticated user accesses the active sessions management screen from their account settings.\newline
@@ -278,9 +278,9 @@ An authenticated user accesses the active sessions management screen from their 
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
     \item The client sends \texttt{GET /api/sessions} with query parameters (\texttt{page}, \texttt{limit}, \texttt{search}, \texttt{sortBy}, \texttt{order}) and the user's Bearer JWT access token.
     \item The authentication guard verifies the JWT token and extracts \texttt{userId} and \texttt{sessionId}.
-    \item \texttt{SessionsController.getMySessions()} invokes \texttt{SessionsService.getMySessions(userId, query, sessionId)}.
-    \item \texttt{SessionsRepository.findAllByUserId()} queries the database where \texttt{userId = userId}, applying optional search filters on \texttt{ipAddress} or \texttt{deviceInfo}.
-    \item The repository maps each record and dynamically sets \texttt{isCurrent = (row.id === sessionId)}.
+    \item \texttt{Sessions\allowbreak{}Controller.\allowbreak{}getMySessions()} invokes \texttt{Sessions\allowbreak{}Service.\allowbreak{}getMySessions(\allowbreak{}userId, query, sessionId)}.
+    \item \texttt{Sessions\allowbreak{}Repository.\allowbreak{}find\allowbreak{}All\allowbreak{}By\allowbreak{}User\allowbreak{}Id()} queries the database where \texttt{userId = userId}, applying optional search filters on \texttt{ipAddress} or \texttt{deviceInfo}.
+    \item The repository maps each record and dynamically sets \texttt{isCurrent = (\allowbreak{}row.\allowbreak{}id =\allowbreak{}=\allowbreak{}= sessionId)}.
     \item The backend returns HTTP 200 with the sessions collection and pagination metadata.
     \item The frontend renders the list, marking active sessions, indicating the current session, and providing detail inspection and revocation dialog triggers.
 \end{itemize}
@@ -363,10 +363,10 @@ pagination.totalPages & Total calculated pages available.\\ \hline
 \end{enumerate}
 
 % -----------------------------------------------------------------
-% UC-16.02: View Session Detail
+% UC-16.02: View Session Details
 % -----------------------------------------------------------------
 \Needspace{12\baselineskip}
-\subsubsection{ View Session Detail}
+\subsubsection{ View Session Details}
 
 \fnhead{Function Trigger}
 An authenticated user clicks the ``View detail'' (eye icon) button on any session row in the session list.\newline
@@ -394,9 +394,9 @@ An authenticated user clicks the ``View detail'' (eye icon) button on any sessio
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
     \item The client triggers an API call: \texttt{GET /api/sessions/:id} passing the session ID and Bearer token.
     \item The backend extracts \texttt{userId} and \texttt{sessionId} from the caller's JWT token.
-    \item \texttt{SessionsController.getMySessionById()} calls \texttt{SessionsService.getMySessionById(id, userId, sessionId)}.
-    \item \texttt{SessionsRepository.findByIdForUser()} queries \texttt{prisma.session.findFirst} where \texttt{id = id} and \texttt{userId = userId}.
-    \item If no record is found, the system throws \texttt{SessionNotFoundException} (HTTP 404).
+    \item \texttt{Sessions\allowbreak{}Controller.\allowbreak{}get\allowbreak{}My\allowbreak{}Session\allowbreak{}By\allowbreak{}Id()} calls \texttt{Sessions\allowbreak{}Service.\allowbreak{}get\allowbreak{}My\allowbreak{}Session\allowbreak{}By\allowbreak{}Id(\allowbreak{}id, userId, sessionId)}.
+    \item \texttt{Sessions\allowbreak{}Repository.\allowbreak{}find\allowbreak{}By\allowbreak{}Id\allowbreak{}For\allowbreak{}User()} queries \texttt{prisma.\allowbreak{}session.\allowbreak{}findFirst} where \texttt{id = id} and \texttt{userId = userId}.
+    \item If no record is found, the system throws \texttt{Session\allowbreak{}Not\allowbreak{}Found\allowbreak{}Exception} (HTTP 404).
     \item The repository evaluates \texttt{isCurrent = (id === sessionId)} and returns the session object.
     \item The client populates the dialog with formatted dates and status indicators.
 \end{itemize}
@@ -913,10 +913,10 @@ message & Confirmation message string (\texttt{Forum category deleted successful
 \end{enumerate}
 
 % -----------------------------------------------------------------
-% UC-14.01: View Forum Category List
+% UC-14.01: View Forum Categories List
 % -----------------------------------------------------------------
 \Needspace{12\baselineskip}
-\subsubsection{ View Forum Category List}
+\subsubsection{ View Forum Categories List}
 
 \fnhead{Function Trigger}
 An administrator accesses the forum categories administration section from the sidebar navigation.\newline
@@ -1034,10 +1034,10 @@ pagination.totalPages & Total calculated pages available.\\ \hline
 \end{enumerate}
 
 % -----------------------------------------------------------------
-% UC-14.02: View Forum Category Detail
+% UC-14.02: View Forum Category Details
 % -----------------------------------------------------------------
 \Needspace{12\baselineskip}
-\subsubsection{ View Forum Category Detail}
+\subsubsection{ View Forum Category Details}
 
 \fnhead{Function Trigger}
 An administrator clicks ``View detail'' on a category row or accesses the category detail route directly.\newline
@@ -1068,9 +1068,9 @@ An administrator clicks ``View detail'' on a category row or accesses the catego
     \item Client sends \texttt{GET /api/forums/admin/categories/:id}.
     \item \texttt{ParseIntPipe} ensures \texttt{id} is an integer.
     \item The backend guard verifies \texttt{ADMIN} role.
-    \item \texttt{ForumAdminService.getAdminCategoryById()} calls \texttt{ForumAdminRepo.getAdminCategoryById(id)}.
-    \item The repository queries \texttt{prisma.forumCategory.findFirst} where \texttt{id = id} and \texttt{deletedAt = null}, including active post count.
-    \item If the category is not found, the service throws \texttt{ForumCategoryNotFoundException} (HTTP 404).
+    \item \texttt{Forum\allowbreak{}Admin\allowbreak{}Service.\allowbreak{}get\allowbreak{}Admin\allowbreak{}Category\allowbreak{}By\allowbreak{}Id()} calls \texttt{ForumAdminRepo.\allowbreak{}get\allowbreak{}Admin\allowbreak{}Category\allowbreak{}By\allowbreak{}Id(\allowbreak{}id)}.
+    \item The repository queries \texttt{prisma.\allowbreak{}forumCategory.\allowbreak{}findFirst} where \texttt{id = id} and \texttt{deletedAt = null}, including active post count.
+    \item If the category is not found, the service throws \texttt{Forum\allowbreak{}Category\allowbreak{}Not\allowbreak{}Found\allowbreak{}Exception} (HTTP 404).
     \item The server responds with HTTP 200 and the category detail payload.
     \item The frontend renders the detail cards and navigation buttons.
 \end{itemize}

@@ -9,13 +9,13 @@
 \subsection{Profile Revision Review and Expert Profile}
 
 % -----------------------------------------------------------------
-% UC-47.01: View Pending Profile Update Request List
+% UC-47.01: View Pending Profile Update Requests List
 % -----------------------------------------------------------------
 \Needspace{12\baselineskip}
-\subsubsection{ View Pending Profile Update Request List}
+\subsubsection{ View Pending Profile Update Requests List}
 
 \fnhead{Function Trigger}
-The actor selects View Pending Profile Update Request List.\newline
+The actor selects View Pending Profile Update Requests List.\newline
 \textbf{Navigation path:} Home $\rightarrow$ \texttt{/\allowbreak{}admin/\allowbreak{}profile-\allowbreak{}revisions} or \texttt{/\allowbreak{}expert/\allowbreak{}profile.}
 
 \fnhead{Function Description}
@@ -46,7 +46,7 @@ The actor selects View Pending Profile Update Request List.\newline
 \end{itemize}
 
 \fnhead{Screen Layout (Mock-up Description)}
-\screenfigure[0.95]{image/screenshot/sprint5/nhuy/View Pending Profile Update Request List.png}{View Pending Profile Update Request List interface}
+\screenfigure[0.95]{image/screenshot/sprint5/nhuy/View Pending Profile Update Request List.png}{View Pending Profile Update Requests List interface}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
     \item Admin filter bar and revision table.
     \item Current/proposed comparison panel.
@@ -76,7 +76,7 @@ Selection & Validated page, limit, search, status and profileType filters.\\ \hl
 
 \sublabel{Normal Flow}
 \begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
-    \item The actor opens \texttt{/\allowbreak{}admin/\allowbreak{}profile-\allowbreak{}revisions}; \texttt{/\allowbreak{}expert/\allowbreak{}profile} and selects View Pending Profile Update Request List.
+    \item The actor opens \texttt{/\allowbreak{}admin/\allowbreak{}profile-\allowbreak{}revisions}; \texttt{/\allowbreak{}expert/\allowbreak{}profile} and selects View Pending Profile Update Requests List.
     \item The application submits the selected identifier or list filters.
     \item The API checks authentication where required, authorization, resource existence and input validity.
     \item Filter and paginate revisions, defaulting the review workflow to pending requests.
@@ -106,13 +106,13 @@ Failure & Structured error without sensitive data; no successful UI state when t
 \end{itemize}
 
 % -----------------------------------------------------------------
-% UC-47.02: View Profile Update Request Detail
+% UC-47.02: View Profile Update Request Details
 % -----------------------------------------------------------------
 \Needspace{12\baselineskip}
-\subsubsection{ View Profile Update Request Detail}
+\subsubsection{ View Profile Update Request Details}
 
 \fnhead{Function Trigger}
-The actor selects View Profile Update Request Detail.\newline
+The actor selects View Profile Update Request Details.\newline
 \textbf{Navigation path:} Home $\rightarrow$ \texttt{/\allowbreak{}admin/\allowbreak{}profile-\allowbreak{}revisions} or \texttt{/\allowbreak{}expert/\allowbreak{}profile.}
 
 \fnhead{Function Description}
@@ -143,7 +143,7 @@ The actor selects View Profile Update Request Detail.\newline
 \end{itemize}
 
 \fnhead{Screen Layout (Mock-up Description)}
-\screenfigure[0.95]{image/screenshot/sprint5/nhuy/View Profile Update Request Detail.png}{View Profile Update Request Detail interface}
+\screenfigure[0.95]{image/screenshot/sprint5/nhuy/View Profile Update Request Detail.png}{View Profile Update Request Details interface}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
     \item Admin filter bar and revision table.
     \item Current/proposed comparison panel.
@@ -173,7 +173,7 @@ Identifier & Positive resource ID from the route; ownership is checked by the AP
 
 \sublabel{Normal Flow}
 \begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
-    \item The actor opens \texttt{/\allowbreak{}admin/\allowbreak{}profile-\allowbreak{}revisions}; \texttt{/\allowbreak{}expert/\allowbreak{}profile} and selects View Profile Update Request Detail.
+    \item The actor opens \texttt{/\allowbreak{}admin/\allowbreak{}profile-\allowbreak{}revisions}; \texttt{/\allowbreak{}expert/\allowbreak{}profile} and selects View Profile Update Request Details.
     \item The application submits the selected identifier or list filters.
     \item The API checks authentication where required, authorization, resource existence and input validity.
     \item Display the current and proposed snapshots, requester, profile type and prior review notes.

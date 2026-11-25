@@ -1,6 +1,6 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version='1.0' encoding='utf-8'?>
 <mxfile host="app.diagrams.net" version="29.0.3">
-  <diagram id="UC-39.02-view-review-detail" name="UC-39.02 - View Review Detail">
+  <diagram id="UC-39.02-view-review-detail" name="UC-39.02 - View Review Details">
     <mxGraphModel grid="1" gridSize="10" page="0" pageWidth="1600" pageHeight="7293" math="0" shadow="0">
       <root>
         <mxCell id="0" />
@@ -32,7 +32,7 @@
         <mxCell id="c75" value="alt" style="shape=umlFrame;html=1;whiteSpace=wrap;pointerEvents=0;fillColor=none;width=45;height=24;fontSize=12;labelBackgroundColor=none;" parent="1" vertex="1">
           <mxGeometry x="12" y="5832" width="1513" height="1136" as="geometry" />
         </mxCell>
-        <mxCell id="c90" value="UC-39.02 - View Review Detail" style="text;html=1;align=center;fontSize=20;fontStyle=1;" parent="1" vertex="1">
+        <mxCell id="c90" value="UC-39.02 - View Review Details" style="text;html=1;align=center;fontSize=20;fontStyle=1;" parent="1" vertex="1">
           <mxGeometry x="100" y="20" width="1380" height="40" as="geometry" />
         </mxCell>
         <mxCell id="c91" value="Client / Freelancer" style="shape=umlActor;html=1;verticalLabelPosition=bottom;verticalAlign=top;fontSize=13;" parent="1" vertex="1">
@@ -125,7 +125,7 @@
         <mxCell id="c118" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};fontSize=13;" parent="1" vertex="1">
           <mxGeometry x="1475" y="4675" width="10" height="92" as="geometry" />
         </mxCell>
-        <mxCell id="c1" value="&lt;div&gt;1. Open View Review Detail&lt;/div&gt;" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=12;" parent="1" edge="1">
+        <mxCell id="c1" value="&lt;div&gt;1. Open View Review Details&lt;/div&gt;" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=12;" parent="1" edge="1">
           <mxGeometry relative="1" as="geometry">
             <mxPoint x="105" y="385" as="sourcePoint" />
             <mxPoint x="295" y="385" as="targetPoint" />

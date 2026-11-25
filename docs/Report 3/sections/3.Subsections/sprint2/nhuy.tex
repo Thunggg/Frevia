@@ -408,13 +408,13 @@ Failure & Structured error without sensitive data; no successful UI state when t
 \subsection{Social Links Management}
 
 % -----------------------------------------------------------------
-% UC-20.01: View Social Link List
+% UC-20.01: View Social Links List
 % -----------------------------------------------------------------
 \Needspace{12\baselineskip}
-\subsubsection{ View Social Link List}
+\subsubsection{ View Social Links List}
 
 \fnhead{Function Trigger}
-The actor selects View Social Link List.\newline
+The actor selects View Social Links List.\newline
 \textbf{Navigation path:} Home $\rightarrow$ \texttt{/\allowbreak{}account-\allowbreak{}profile (Social Links)} or \texttt{/\allowbreak{}client/\allowbreak{}profile} or \texttt{public profile.}
 
 \fnhead{Function Description}
@@ -445,7 +445,7 @@ The actor selects View Social Link List.\newline
 \end{itemize}
 
 \fnhead{Screen Layout (Mock-up Description)}
-\screenfigure[0.95]{image/screenshot/sprint2/nhuy/View Social Link List.png}{View Social Link List interface}
+\screenfigure[0.95]{image/screenshot/sprint2/nhuy/View Social Link List.png}{View Social Links List interface}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
     \item Platform selector and URL input.
     \item Saved links with labels and external-link icons.
@@ -476,7 +476,7 @@ Selection & Current account or selected profile\texttt{/\allowbreak{}contract}; 
 
 \sublabel{Normal Flow}
 \begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
-    \item The actor opens \texttt{/\allowbreak{}account-\allowbreak{}profile} (Social Links); \texttt{/\allowbreak{}client/\allowbreak{}profile}; public profile and selects View Social Link List.
+    \item The actor opens \texttt{/\allowbreak{}account-\allowbreak{}profile} (Social Links); \texttt{/\allowbreak{}client/\allowbreak{}profile}; public profile and selects View Social Links List.
     \item The application submits the selected identifier or list filters.
     \item The API checks authentication where required, authorization, resource existence and input validity.
     \item Retrieve links for the current account settings or the public client response; public freelancer rendering is a tracked gap.
@@ -708,13 +708,13 @@ Failure & Structured error without sensitive data; no successful UI state when t
 \subsection{Favorite Freelancers}
 
 % -----------------------------------------------------------------
-% UC-21.01: View Favorite Freelancer List
+% UC-21.01: View Favorite Freelancers List
 % -----------------------------------------------------------------
 \Needspace{12\baselineskip}
-\subsubsection{ View Favorite Freelancer List}
+\subsubsection{ View Favorite Freelancers List}
 
 \fnhead{Function Trigger}
-The actor selects View Favorite Freelancer List.\newline
+The actor selects View Favorite Freelancers List.\newline
 \textbf{Navigation path:} Home $\rightarrow$ \texttt{/\allowbreak{}client/\allowbreak{}profile (Favorites)} or \texttt{/\allowbreak{}profiles/\allowbreak{}[id].}
 
 \fnhead{Function Description}
@@ -744,7 +744,7 @@ The actor selects View Favorite Freelancer List.\newline
 \end{itemize}
 
 \fnhead{Screen Layout (Mock-up Description)}
-\screenfigure[0.95]{image/screenshot/sprint2/nhuy/View Favorite Freelancer List.png}{View Favorite Freelancer List interface}
+\screenfigure[0.95]{image/screenshot/sprint2/nhuy/View Favorite Freelancer List.png}{View Favorite Freelancers List interface}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
     \item Favorite toggle on public freelancer profile.
     \item Favorites list with name, title, skills, profile link and Remove action.
@@ -773,7 +773,7 @@ Selection & Current account or selected profile\texttt{/\allowbreak{}contract}; 
 
 \sublabel{Normal Flow}
 \begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
-    \item The actor opens \texttt{/\allowbreak{}client/\allowbreak{}profile} (Favorites); \texttt{/\allowbreak{}profiles/\allowbreak{}[id]} and selects View Favorite Freelancer List.
+    \item The actor opens \texttt{/\allowbreak{}client/\allowbreak{}profile} (Favorites); \texttt{/\allowbreak{}profiles/\allowbreak{}[id]} and selects View Favorite Freelancers List.
     \item The application submits the selected identifier or list filters.
     \item The API checks authentication where required, authorization, resource existence and input validity.
     \item Load the current Client favorites and join public freelancer details.
