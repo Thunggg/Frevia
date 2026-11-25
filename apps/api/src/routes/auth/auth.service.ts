@@ -116,7 +116,7 @@ export class AuthService {
       } else if (role === RoleName.FREELANCER) {
         roleId = await this.sharedRoleRepository.getFreelancerRoleId();
       } else {
-        roleId = await this.sharedRoleRepository.getAdminRoleId();
+        throw MarketplaceRoleOnlyException();
       }
 
       const hashedPassword = await this.hashingService.hash(password as string);
@@ -182,7 +182,7 @@ export class AuthService {
         record &&
         now.getTime() - record.createdAt.getTime() > ATTEMPT_WINDOW_MS;
 
-      if (record && record.attempts > 5 && !windowExpired) {
+      if (record && record.attempts >= 5 && !windowExpired) {
         this.logger.warn(`OTP rate limit exceeded for email: ${email}`);
         throw TooManyAttemptsException();
       }

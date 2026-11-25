@@ -2417,6 +2417,7 @@ describe('AccountProfileService (UF-132 to UF-175)', () => {
       expect(result.status).toBe('REJECTED');
       expect(repository.createIdentityAiDocument).toHaveBeenCalledWith(
         expect.objectContaining({
+          identityNumber: '001234567890',
           duplicateOfId: 99,
           status: 'REJECTED',
           reviewNotes:

@@ -232,6 +232,13 @@ export class DisputeService {
         throw DisputeResponseAlreadySubmittedException();
       }
 
+      if (
+        dispute.responseDeadline &&
+        new Date(dispute.responseDeadline).getTime() <= Date.now()
+      ) {
+        throw DisputeResponseNotAllowedException();
+      }
+
       if (body.action === 'ACCEPT') {
         const resolutionType =
           dispute.resolutionType ?? DisputeResolutionType.FULL_REFUND;

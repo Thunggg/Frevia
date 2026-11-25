@@ -40,6 +40,7 @@ import {
   IdentityAiLivenessRequiredException,
   IdentityAiSelfieRequiredException,
   IdentityAlreadyVerifiedException,
+  IdentityPendingReviewException,
   IdentityDocumentNotFoundException,
   IdentityFileInvalidException,
   IdentityFileRequiredException,
@@ -458,8 +459,11 @@ export class AccountProfileService {
     }
 
     const existing = await this.repository.findIdentityDocuments(userId);
-    if (existing[0]?.status === VerificationStatus.APPROVED) {
+    if (existing.some((doc) => doc.status === VerificationStatus.APPROVED)) {
       throw IdentityAlreadyVerifiedException();
+    }
+    if (existing.some((doc) => doc.status === VerificationStatus.PENDING)) {
+      throw IdentityPendingReviewException();
     }
 
     const ai: IdentityAiVerifyResult = await this.identityAi.verify({
@@ -513,6 +517,7 @@ export class AccountProfileService {
       documentType,
       fileUrl,
       backFileUrl,
+      identityNumber,
       status,
       reviewNotes,
       duplicateOfId,

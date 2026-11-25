@@ -58,7 +58,7 @@ const proposalServerRequest = {
     const result = await this.getMyProposals({ jobId, page: 1, limit: 50 });
     return (
       result?.data.find((proposal) =>
-        ["DRAFT", "PENDING", "ACCEPTED", "REJECTED"].includes(proposal.status),
+        ["DRAFT", "SUBMITTED", "HIRED", "REJECTED"].includes(proposal.status),
       ) ?? null
     );
   },

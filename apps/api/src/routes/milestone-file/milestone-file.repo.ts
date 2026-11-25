@@ -35,6 +35,7 @@ export class MilestoneFileRepository {
       select: {
         id: true,
         contractId: true,
+        status: true,
       },
     });
   }

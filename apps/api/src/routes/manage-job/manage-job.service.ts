@@ -259,7 +259,15 @@ export class ManageJobService {
     return { isBookmarked: Boolean(bookmark) };
   }
 
-  async removeBookmark(userId: number, slug: string): Promise<void> {
+  async removeBookmark(
+    userId: number,
+    slug: string,
+    roleName?: string,
+  ): Promise<void> {
+    if (roleName !== undefined) {
+      this.assertFreelancerRole(roleName);
+    }
+
     try {
       const job = await this.manageJobRepository.findJobBySlug(slug);
 

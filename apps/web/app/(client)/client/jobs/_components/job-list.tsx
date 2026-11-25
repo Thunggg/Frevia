@@ -227,9 +227,9 @@ export function JobList({
         limit: 10,
       });
       if (res.data) {
-        setJobs(res.data);
-        if (res.pagination) {
-          setPaginationState(res.pagination);
+        setJobs(res.data.data);
+        if (res.data.pagination) {
+          setPaginationState(res.data.pagination);
         }
       }
     } catch (err) {
@@ -297,8 +297,8 @@ export function JobList({
         })
         .then((res) => {
           if (res.data) {
-            setJobs(res.data);
-            if (res.pagination) setPaginationState(res.pagination);
+            setJobs(res.data.data);
+            if (res.data.pagination) setPaginationState(res.data.pagination);
           }
         });
     }

@@ -588,7 +588,7 @@ export class ProposalRepository {
           title: 'Your proposal was accepted',
           message: `You have been hired for ${jobTitle}. Review and sign the contract to begin work.`,
           data: {
-            href: `/proposals/${proposalId}`,
+            href: `/freelancer/proposals/${proposalId}`,
             proposalId,
             jobId,
             contractId: contract.id,

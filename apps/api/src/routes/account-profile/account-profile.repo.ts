@@ -266,6 +266,7 @@ export class AccountProfileRepository {
     documentType: DocumentTypeType;
     fileUrl: string;
     backFileUrl: string | null;
+    identityNumber: string | null;
     status: VerificationStatus;
     reviewNotes: string | null;
     duplicateOfId: number | null;
