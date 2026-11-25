@@ -1,5 +1,4 @@
 import {
-  DisputeDecisionResponse,
   DisputeStatus,
   MilestonePaymentStatus,
   MilestoneStatus,
@@ -16,6 +15,12 @@ import {
   RoleName,
 } from '@shared/types';
 import {
+  ExpertDisputeForbiddenException,
+  ExpertDisputeInvalidSplitAmountException,
+} from '../../src/routes/disputes/expert/disputes-expert.error';
+import { DisputesExpertRepository } from '../../src/routes/disputes/expert/disputes-expert.repo';
+import { DisputesExpertService } from '../../src/routes/disputes/expert/disputes-expert.service';
+import {
   DisputeEvidenceLimitExceededException,
   DisputeForbiddenException,
   DisputeMilestoneNotFoundException,
@@ -28,12 +33,6 @@ import {
 } from '../../src/routes/disputes/user/dispute.error';
 import { DisputeRepository } from '../../src/routes/disputes/user/dispute.repo';
 import { DisputeService } from '../../src/routes/disputes/user/dispute.service';
-import {
-  ExpertDisputeForbiddenException,
-  ExpertDisputeInvalidSplitAmountException,
-} from '../../src/routes/disputes/expert/disputes-expert.error';
-import { DisputesExpertRepository } from '../../src/routes/disputes/expert/disputes-expert.repo';
-import { DisputesExpertService } from '../../src/routes/disputes/expert/disputes-expert.service';
 import { PaymentService } from '../../src/routes/payments/payment.service';
 
 describe('Dispute Management (UF-147 to UF-152)', () => {

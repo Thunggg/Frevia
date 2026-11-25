@@ -1,8 +1,8 @@
-import fs from 'fs';
-import path from 'path';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { PrismaClient } from '@prisma/client';
 import 'dotenv/config';
+import fs from 'fs';
+import path from 'path';
 
 if (!process.env.DIRECT_URL) {
   console.log('Cannot find DIRECT_URL environment variable');
@@ -133,7 +133,7 @@ async function healSkills() {
   let mergedCount = 0;
   let updatedCount = 0;
 
-  for (const [targetSlug, group] of groupsByTargetSlug.entries()) {
+  for (const group of groupsByTargetSlug.values()) {
     // Sort members so the one with the most relations or lowest id becomes primary
     group.members.sort((a, b) => {
       const aRels = a._count.jobs + a._count.freelancerSkills;

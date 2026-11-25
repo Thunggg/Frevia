@@ -207,7 +207,7 @@ describe('KYC VERIFICATION & JOB ALERTS - Action-Level RBAC & UI Control Specifi
   describe('1. Chuẩn hóa và Khớp nối Đường dẫn (Route Matching & Static Segments)', () => {
     test.each(KYC_JOB_ALERTS_PERMISSIONS)(
       'Khớp pattern permission: $description ($method $path)',
-      ({ method, path, testActualPath }) => {
+      ({ path, testActualPath }) => {
         expect(normalizeApiPath(path)).toBe(path);
         expect(matchRoutePath(path, testActualPath)).toBe(true);
       },

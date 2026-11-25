@@ -1,7 +1,6 @@
 "use client";
 
 import { useFormatter, useTranslations } from "next-intl";
-import Link from "next/link";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useCallback, useEffect, useState, type FormEvent } from "react";
 import { motion, AnimatePresence } from "motion/react";
@@ -36,7 +35,6 @@ import {
   UserCheck,
   UserMinus,
   UserPlus,
-  Globe2,
 } from "@/components/icons";
 import { ShieldCheck } from "lucide-react";
 import { IdentityVerificationForm } from "@/app/(freelancer)/freelancer/profile/identity-verification-form";
@@ -107,7 +105,6 @@ export function ClientProfileSettings({ userId }: ClientProfileSettingsProps) {
   const t = useTranslations("clientProfileSettings");
   const tPlatform = useTranslations("socialPlatform");
   const tRole = useTranslations("roleName");
-  const tSidebar = useTranslations("sidebar");
   const tDocument = useTranslations("documentType");
   const tVerification = useTranslations("verificationStatus");
   const tAccountProfile = useTranslations("accountProfile");

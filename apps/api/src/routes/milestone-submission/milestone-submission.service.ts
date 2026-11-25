@@ -197,7 +197,7 @@ export class MilestoneSubmissionService {
       }
 
       if (milestone.status === MilestoneStatus.DISPUTED) {
-        throw FailedToRequestChangesException();
+        throw MilestoneNotInProgressException();
       }
 
       if (submission.status !== SubmissionStatus.PENDING_REVIEW) {
@@ -253,7 +253,7 @@ export class MilestoneSubmissionService {
       }
 
       if (milestone.status === MilestoneStatus.DISPUTED) {
-        throw FailedToApproveException();
+        throw MilestoneNotInProgressException();
       }
 
       if (submission.status !== SubmissionStatus.PENDING_REVIEW) {

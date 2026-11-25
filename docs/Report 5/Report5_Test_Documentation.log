@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.9.28)  25 NOV 2026 22:25
+This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.9.28)  26 NOV 2026 01:28
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -366,9 +366,7 @@ File: t1ptm.fd 2001/06/04 font definitions for T1/ptm.
 ex.def
 File: l3backend-pdftex.def 2025-10-09 L3 backend support: PDF output (pdfTeX)
 \l__color_backend_stack_int=\count304
-)
-(C:\Users\ASUS\.gemini\antigravity\brain\901340cd-a084-4162-b242-505e8cef7a07\s
-cratch\build_r5_final\Report5_Test_Documentation.aux)
+) (Report5_Test_Documentation.aux)
 \openout1 = `Report5_Test_Documentation.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 39.
@@ -456,11 +454,7 @@ Package caption Info: float package is loaded.
 Package caption Info: hyperref package is loaded.
 Package caption Info: End \AtBeginDocument code.
 Package hyperref Info: Link coloring ON on input line 39.
-
-(C:\Users\ASUS\.gemini\antigravity\brain\901340cd-a084-4162-b242-505e8cef7a07\s
-cratch\build_r5_final\Report5_Test_Documentation.out)
-(C:\Users\ASUS\.gemini\antigravity\brain\901340cd-a084-4162-b242-505e8cef7a07\s
-cratch\build_r5_final\Report5_Test_Documentation.out)
+ (Report5_Test_Documentation.out) (Report5_Test_Documentation.out)
 \@outlinefile=\write3
 \openout3 = `Report5_Test_Documentation.out'.
 
@@ -473,8 +467,7 @@ Package pdftex.def Info: fpt_logo.png  used on input line 46.
 
 {C:/Users/ASUS/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map}{C:/Users/ASUS/
 AppData/Local/Programs/MiKTeX/fonts/enc/dvips/base/8r.enc} <./fpt_logo.png>]
-(C:\Users\ASUS\.gemini\antigravity\brain\901340cd-a084-4162-b242-505e8cef7a07\s
-cratch\build_r5_final\Report5_Test_Documentation.toc
+(Report5_Test_Documentation.toc
 LaTeX Font Info:    Trying to load font information for OT1+ztmcm on input line
  4.
 
@@ -516,14 +509,13 @@ pdfTeX warning (ext4): destination with the same identifier (name{page.1}) has
 been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.30 ... {5.4}Test Conclusion}{16}{subsection.5.4}
+l.30 ... {5.4}Test Conclusion}{17}{subsection.5.4}
                                                   % [1])
 \tf@toc=\write4
 \openout4 = `Report5_Test_Documentation.toc'.
 
  [2]
-(C:\Users\ASUS\.gemini\antigravity\brain\901340cd-a084-4162-b242-505e8cef7a07\s
-cratch\build_r5_final\Report5_Test_Documentation.lot
+(Report5_Test_Documentation.lot
 Overfull \hbox (8.00003pt too wide) in paragraph at lines 6--6
  [][] [][][]\T1/ptm/m/n/12 Summary of unit and sys-tem test cases in Re-port5_U
 nit Test.xls and Re-port5_Test 
@@ -639,9 +631,7 @@ LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <7.4> not available
 (Font)              Font shape `OT1/ptm/b/n' tried instead on input line 339.
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <6> not available
 (Font)              Font shape `OT1/ptm/b/n' tried instead on input line 339.
- [11] [12] [13] [14] [15] [16] [17]
-(C:\Users\ASUS\.gemini\antigravity\brain\901340cd-a084-4162-b242-505e8cef7a07\s
-cratch\build_r5_final\Report5_Test_Documentation.aux)
+ [11] [12] [13] [14] [15] [16] [17] (Report5_Test_Documentation.aux)
  ***********
 LaTeX2e <2025-11-01>
 L3 programming layer <2025-12-24>
@@ -651,8 +641,8 @@ ged.
 (rerunfilecheck)             Checksum: F4DCB793DAC6F74ABBCDE9CCDBE02894;4326.
  ) 
 Here is how much of TeX's memory you used:
- 12945 strings out of 467871
- 206133 string characters out of 5418860
+ 12944 strings out of 467871
+ 204825 string characters out of 5418860
  635199 words of memory out of 5000000
  41594 multiletter control sequences out of 15000+600000
  684932 words of font info for 124 fonts, out of 8000000 for 9000
@@ -668,11 +658,9 @@ onts/type1/public/amsfonts/symbols/msam10.pfb><C:/Users/ASUS/AppData/Local/Prog
 rams/MiKTeX/fonts/type1/urw/times/utmb8a.pfb><C:/Users/ASUS/AppData/Local/Progr
 ams/MiKTeX/fonts/type1/urw/times/utmr8a.pfb><C:/Users/ASUS/AppData/Local/Progra
 ms/MiKTeX/fonts/type1/urw/times/utmri8a.pfb>
-Output written on C:\Users\ASUS\.gemini\antigravity\brain\901340cd-a084-4162-b2
-42-505e8cef7a07\scratch\build_r5_final\Report5_Test_Documentation.pdf (18 pages
-, 231703 bytes).
+Output written on Report5_Test_Documentation.pdf (18 pages, 232310 bytes).
 PDF statistics:
- 414 PDF objects out of 1000 (max. 8388607)
+ 415 PDF objects out of 1000 (max. 8388607)
  54 named destinations out of 1000 (max. 500000)
  246 words of extra memory for PDF output out of 10000 (max. 10000000)
 

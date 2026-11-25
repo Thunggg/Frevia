@@ -239,7 +239,7 @@ describe('FREELANCER PROFILE - Action-Level RBAC & UI Control Specification', ()
   describe('1. Chuẩn hóa và Khớp nối Đường dẫn (Route Matching & Static Segments)', () => {
     test.each(FREELANCER_PROFILE_PERMISSIONS)(
       'Khớp pattern permission: $description ($method $path)',
-      ({ method, path, testActualPath }) => {
+      ({ path, testActualPath }) => {
         expect(normalizeApiPath(path)).toBe(path);
         expect(matchRoutePath(path, testActualPath)).toBe(true);
       },
