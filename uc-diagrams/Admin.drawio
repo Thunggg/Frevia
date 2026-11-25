@@ -1,3 +1,4 @@
+<?xml version='1.0' encoding='utf-8'?>
 <mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/29.3.0 Chrome/140.0.7339.249 Electron/38.7.2 Safari/537.36" version="29.3.0" pages="4">
   <diagram name="Admin 1/4" id="Admin_1">
     <mxGraphModel dx="992" dy="642" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1250" pageHeight="1150" math="0" shadow="0">
@@ -355,6 +356,12 @@
               <mxPoint x="980" y="991" />
             </Array>
           </mxGeometry>
+        </mxCell>
+        <mxCell id="uc_sub_7" parent="swimlane_frevia" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;fontFamily=Tahoma;fillColor=#ffffff;strokeColor=#000000;" value="View Users List&#10;UC-28.01" vertex="1">
+          <mxGeometry height="48" width="135" x="224" y="63" as="geometry" />
+        </mxCell>
+        <mxCell id="m_8" edge="1" parent="swimlane_frevia" source="uc_mod_4" style="endArrow=none;html=1;rounded=0;fontFamily=Tahoma;fontSize=13;" target="uc_sub_7">
+          <mxGeometry relative="1" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>

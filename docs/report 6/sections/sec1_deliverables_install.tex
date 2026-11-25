@@ -16,7 +16,7 @@ The official release package (\textit{Release Package v1.0}) of the \textbf{Frev
 \endhead
 1 & Project Schedule \& Tracking & Comprehensive project roadmap, milestone tracking, resource allocations, and sprint burndown schedules. & \texttt{v1.0 (.xlsx)} \\ \hline
 2 & Product Backlog & Prioritized list of User Stories, Use Cases, acceptance criteria, and story point estimations across all modules. & \texttt{v1.0 (.xlsx)} \\ \hline
-3 & Source Codes (Monorepo) & Full application source code managed via \textbf{Turborepo} and \textbf{pnpm workspaces}: Backend REST/WebSocket API (\texttt{apps/api} -- NestJS 11, Prisma 7), Frontend Web App (\texttt{apps/web} -- Next.js 16, React 19, Tailwind CSS v4), and shared packages (\texttt{packages/shared-types}, \texttt{packages/ui}). & \texttt{v1.0.0 (Git)} \\ \hline
+3 & Source Codes (Monorepo) & Full application source code managed via \textbf{Turborepo} and \textbf{pnpm workspaces}: Backend REST/WebSocket API (\texttt{apps/api} -- NestJS 11, Prisma 7), Frontend Web App (\texttt{apps/web} -- Next.js 16, React 19, Tailwind CSS v4), and shared packages (\texttt{packages/shared-type}, \texttt{packages/ui}). & \texttt{v1.0.0 (Git)} \\ \hline
 4 & Database Scripts \& Seed Data & PostgreSQL relational schema containing 71 entity models (\texttt{apps/api/prisma/schema.prisma}), 72 sequential migration folders, and automated database seeders (\texttt{apps/api/src/seed-datas/}). & \texttt{v1.0 (.prisma/.ts)} \\ \hline
 5 & Technical Reports (R1--R7) & Complete formal documentation suite complying with FPT University Capstone Project standards: Report 1 (Introduction), Report 2 (Project Management Plan), Report 3 (SRS), Report 4 (SDS), Report 5 (Testing Document), Report 6 (User Guides), and Report 7 (Final Report). & \texttt{v1.0 (.pdf/.tex)} \\ \hline
 6 & Unit \& Integration Test Cases & Comprehensive unit test specification covering 246 API and service functions (\texttt{UF-01} to \texttt{UF-246} in \texttt{Report5\_Unit Test.xls}) and automated Jest test suites (\texttt{apps/api/src/**/*.spec.ts}). & \texttt{v1.0 (.xls/.ts)} \\ \hline
@@ -190,7 +190,7 @@ The \textbf{Frevia} platform integrates several external cloud APIs to support a
 
 \begin{itemize}[leftmargin=1.5em,itemsep=3pt]
   \item \rbadge{1} Run \texttt{git clone <repository\_url>} to clone the project to the local workspace.
-  \item \rbadge{2} Run \texttt{pnpm install} at the workspace root directory. The monorepo resolver links all shared packages (\texttt{packages/shared-types}, \texttt{packages/ui}) and resolves third-party dependencies efficiently.
+  \item \rbadge{2} Run \texttt{pnpm install} at the workspace root directory. The monorepo resolver links all shared packages (\texttt{packages/shared-type}, \texttt{packages/ui}) and resolves third-party dependencies efficiently.
 \end{itemize}
 
 \subsubsection{Step 2: Configure Environment Files}

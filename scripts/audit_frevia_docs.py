@@ -686,6 +686,34 @@ def audit_macros_images_and_leftovers(
         for sp in d.rglob("*.svg"):
             svg_stems.add(sp.stem.replace(".drawio", ""))
 
+    # Track dirty working-tree files & lazy-cache git commit timestamps to avoid git-checkout mtime noise
+    dirty_paths: set[str] = set()
+    try:
+        st_out = subprocess.check_output(["git", "status", "--porcelain"], cwd=REPO_ROOT, text=True, stderr=subprocess.DEVNULL)
+        for sln in st_out.splitlines():
+            if len(sln) > 3:
+                dirty_paths.add(sln[3:].strip().strip('"').replace("\\", "/"))
+    except Exception:
+        pass
+    git_ts_cache: dict[str, int] = {}
+
+    def _effective_ts(p: pathlib.Path) -> float:
+        rel = str(p.relative_to(REPO_ROOT)).replace("\\", "/")
+        if rel in dirty_paths:
+            return p.stat().st_mtime
+        if rel not in git_ts_cache:
+            try:
+                out = subprocess.check_output(
+                    ["git", "log", "-1", "--format=%ct", "--", rel],
+                    cwd=REPO_ROOT,
+                    text=True,
+                    stderr=subprocess.DEVNULL,
+                ).strip()
+                git_ts_cache[rel] = int(out) if out.isdigit() else 0
+            except Exception:
+                git_ts_cache[rel] = 0
+        return float(git_ts_cache[rel]) if git_ts_cache[rel] else p.stat().st_mtime
+
     # Check orphaned extensionless files inside docs/*/sections/ (common editor/backup clutter)
     docs_dir = REPO_ROOT / "docs"
     if docs_dir.exists():
@@ -789,11 +817,15 @@ def audit_macros_images_and_leftovers(
                         )
                     stem = resolved_img.stem.replace(".drawio", "")
                     drawio_matches = drawio_by_stem.get(stem, [])
+                    if member != "shared":
+                        drawio_matches = [
+                            dp for dp in drawio_matches if detect_member(str(dp).replace("\\", "/")) in (member, "shared")
+                        ]
                     has_drawio_src = bool(drawio_matches) or (stem in svg_stems)
                     if drawio_matches and resolved_img.exists():
-                        img_mtime = resolved_img.stat().st_mtime
+                        img_mtime = _effective_ts(resolved_img)
                         for dp in drawio_matches:
-                            if dp.stat().st_mtime > img_mtime + 60.0:
+                            if _effective_ts(dp) > img_mtime + 60.0:
                                 pair = (str(resolved_img), str(dp))
                                 if pair not in stale_diagram_pairs:
                                     stale_diagram_pairs.add(pair)

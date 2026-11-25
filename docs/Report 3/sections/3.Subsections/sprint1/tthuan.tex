@@ -853,7 +853,7 @@ An administrator clicks the ``Edit'' icon (pencil) on a role row in the Role Man
 \sublabel{Data Processing Overview}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
     \item Admin modifies fields and clicks ``Save Changes''.
-    \item Request sent via \texttt{PATCH /api/roles/:id} or \texttt{PUT /api/roles/:id}.
+    \item Request sent via \texttt{PATCH /api/roles/:id}.
     \item Backend validates name uniqueness against other active roles.
     \item Updates database row and returns updated entity.
 \end{itemize}
