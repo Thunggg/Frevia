@@ -1938,7 +1938,10 @@
   "postJob": {
     "breadcrumb": "Post a Job",
     "accessDenied": "You do not have permission to post a new job.",
-    "backToJobs": "Back to jobs"
+    "backToJobs": "Back to jobs",
+    "kycRequiredTitle": "Identity Verification Required",
+    "kycRequiredDesc": "You need to complete identity verification (CCCD) before you can create a new job.",
+    "verifyNow": "Verify Now"
   },
   "jobDetailClient": {
     "notSet": "Not set",
@@ -2015,8 +2018,20 @@
     "tabClosed": "Closed",
     "tabDraft": "Drafts",
     "searchJobsPlaceholder": "Search by job title...",
+    "clearSearch": "Clear search",
+    "searching": "Searching...",
     "jobCodeLabel": "ID: #{code}",
     "postedDaysAgo": "Posted {days}",
+    "relativeJustNow": "just now",
+    "relativeToday": "today",
+    "relativeOneDayAgo": "1 day ago",
+    "relativeDaysAgo": "{count} days ago",
+    "statusOpen": "Open for Proposals",
+    "statusInProgress": "In Progress",
+    "statusDraft": "Draft",
+    "statusCompleted": "Completed",
+    "statusClosed": "Closed",
+    "statusCancelled": "Cancelled",
     "fixedPriceLabel": "Fixed price: {price}",
     "hiringSingle": "Hiring 1 freelancer",
     "hiringMultiple": "Hiring {count} freelancers",
@@ -2029,7 +2044,13 @@
     "inviteCandidate": "Invite Talent",
     "editAction": "Edit",
     "viewProposalsCount": "View {count} Proposals →",
-    "viewDetailAction": "View Details →"
+    "viewDetailAction": "View Details →",
+    "kycDialog": {
+      "title": "Identity Verification Required",
+      "description": "You need to complete identity verification (CCCD) before you can create a new job.",
+      "cancel": "Later",
+      "confirm": "Verify Now"
+    }
   },
   "postJobForm": {
     "titleLabel": "Job title",

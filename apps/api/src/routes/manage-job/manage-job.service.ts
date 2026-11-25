@@ -31,6 +31,7 @@ import {
   JobAlreadyBookmarkedException,
   JobNotFoundException,
   JobOnlyForClientException,
+  ClientIdentityNotVerifiedException,
 } from './manage-job.error';
 import { ManageJobRepository } from './manage-job.repo';
 import { EmbeddingOutboxService } from '../recommendations/embedding-outbox.service';
@@ -291,6 +292,11 @@ export class ManageJobService {
     body: CreateJobBodyType,
   ): Promise<JobType> {
     this.assertClientRole(roleName);
+    const isVerified =
+      await this.manageJobRepository.isIdentityVerified(userId);
+    if (!isVerified) {
+      throw ClientIdentityNotVerifiedException();
+    }
     await this.validateJobLanguage(body.title, body.description);
     try {
       const job = await this.manageJobRepository.createJob(userId, body);

@@ -32,6 +32,7 @@ import {
   XCircle,
 } from "@/components/icons";
 
+import { accountProfileApi } from "@/apiRequests/account-profile";
 import jobApiRequest from "@/apiRequests/job";
 import { ApiFail } from "@/lib/http";
 import { useActionPermission } from "@/hooks/use-action-permission";
@@ -51,7 +52,7 @@ import {
   DropdownMenuTrigger,
 } from "@repo/ui/components/shadcn/dropdown-menu";
 import { toastError, toastSuccess } from "@repo/ui/components/shadcn/toast";
-import type { JobType } from "@shared/types";
+import { VerificationStatus, type JobType } from "@shared/types";
 
 import { PostJobForm } from "./post-job-form";
 
@@ -76,18 +77,6 @@ type TabFilterType =
   | "CLOSED"
   | "DRAFT";
 
-function formatRelativeDays(dateInput: Date | string | null): string {
-  if (!dateInput) return "vừa xong";
-  const date = new Date(dateInput);
-  const now = new Date();
-  const diffDays = Math.floor(
-    (now.getTime() - date.getTime()) / (1000 * 60 * 60 * 24),
-  );
-  if (diffDays <= 0) return "hôm nay";
-  if (diffDays === 1) return "1 ngày trước";
-  return `${diffDays} ngày trước`;
-}
-
 export function JobList({
   initialJobs,
   pagination,
@@ -100,6 +89,18 @@ export function JobList({
   const t = useTranslations("jobsList");
   const tCommon = useTranslations("common");
   const format = useFormatter();
+
+  const formatRelativeDays = (dateInput: Date | string | null): string => {
+    if (!dateInput) return t("relativeJustNow");
+    const date = new Date(dateInput);
+    const now = new Date();
+    const diffDays = Math.floor(
+      (now.getTime() - date.getTime()) / (1000 * 60 * 60 * 24),
+    );
+    if (diffDays <= 0) return t("relativeToday");
+    if (diffDays === 1) return t("relativeOneDayAgo");
+    return t("relativeDaysAgo", { count: diffDays });
+  };
   const { can, isLoading: isPermissionLoading } = useActionPermission();
 
   const canViewList = can("GET", "/api/manage-jobs");
@@ -247,6 +248,25 @@ export function JobList({
     null,
   );
   const [isPublishing, setIsPublishing] = useState(false);
+  const [isKYCDialogOpen, setIsKYCDialogOpen] = useState(false);
+  const [isCheckingKyc, setIsCheckingKyc] = useState(false);
+
+  const handleCreateJobClick = async () => {
+    if (isCheckingKyc) return;
+    setIsCheckingKyc(true);
+    try {
+      const status = await accountProfileApi.getIdentityStatus();
+      if (status.data?.status !== VerificationStatus.APPROVED) {
+        setIsKYCDialogOpen(true);
+        return;
+      }
+    } catch {
+      // Fail-open nếu backend lỗi; POST /manage-jobs vẫn chặn ở server.
+    } finally {
+      setIsCheckingKyc(false);
+    }
+    router.push("/client/jobs/new");
+  };
 
   const toggleBookmark = (jobId: number) => {
     setBookmarkedJobIds((prev) => {
@@ -489,13 +509,17 @@ export function JobList({
             {/* + Đăng việc mới button */}
             {canCreate && (
               <Button
-                asChild
+                type="button"
+                disabled={isCheckingKyc}
+                onClick={() => void handleCreateJobClick()}
                 className="rounded-xl bg-[#0069D3] hover:bg-[#005bb8] text-white text-xs sm:text-sm font-semibold px-5 py-2.5 shadow-sm shadow-blue-500/20 flex items-center gap-2 cursor-pointer transition-all active:scale-[0.98]"
               >
-                <Link href="/client/jobs/new">
+                {isCheckingKyc ? (
+                  <Loader2 className="size-4 animate-spin" />
+                ) : (
                   <Plus className="size-4" />
-                  <span>{t("postNewJob")}</span>
-                </Link>
+                )}
+                <span>{t("postNewJob")}</span>
               </Button>
             )}
           </div>
@@ -660,7 +684,7 @@ export function JobList({
                 type="button"
                 onClick={handleClearSearch}
                 className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground cursor-pointer p-0.5 rounded-full"
-                title="Xóa tìm kiếm"
+                title={t("clearSearch")}
               >
                 <X className="size-3.5" />
               </button>
@@ -674,7 +698,7 @@ export function JobList({
             <div className="rounded-2xl border border-border/80 bg-white dark:bg-zinc-900 p-12 text-center text-muted-foreground">
               <Loader2 className="size-8 mx-auto mb-3 animate-spin text-[#0069D3]" />
               <p className="text-xs text-muted-foreground font-medium">
-                Đang tìm kiếm...
+                {t("searching")}
               </p>
             </div>
           ) : filteredJobs.length === 0 ? (
@@ -710,14 +734,16 @@ export function JobList({
                       : "bg-stone-100 text-stone-600 border border-stone-200/60 dark:bg-stone-800 dark:text-stone-300";
 
               const statusText = isOpen
-                ? "Đang mở ứng tuyển"
+                ? t("statusOpen")
                 : isInProgress
-                  ? "Đang thực hiện"
+                  ? t("statusInProgress")
                   : isDraft
-                    ? "Bản nháp"
+                    ? t("statusDraft")
                     : isCompleted
-                      ? "Hoàn thành"
-                      : "Đã đóng tuyển dụng";
+                      ? t("statusCompleted")
+                      : job.status === "CANCELLED"
+                        ? t("statusCancelled")
+                        : t("statusClosed");
 
               const formattedBudget =
                 job.budgetMin && job.budgetMax && job.budgetMin !== job.budgetMax
@@ -1082,6 +1108,30 @@ export function JobList({
               onClick={() => void confirmPublishJob()}
             >
               {isPublishing ? t("publishing") : t("confirmPublish")}
+            </Button>
+          </div>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* KYC Verification Required */}
+      <AlertDialog open={isKYCDialogOpen} onOpenChange={setIsKYCDialogOpen}>
+        <AlertDialogContent className="rounded-2xl max-w-md">
+          <AlertDialogTitle>{t("kycDialog.title")}</AlertDialogTitle>
+          <AlertDialogDescription>
+            {t("kycDialog.description")}
+          </AlertDialogDescription>
+          <div className="mt-4 flex justify-end gap-2">
+            <AlertDialogCancel className="rounded-xl">
+              {t("kycDialog.cancel")}
+            </AlertDialogCancel>
+            <Button
+              className="rounded-xl bg-[#0069D3] hover:bg-[#005bb8] text-white cursor-pointer"
+              onClick={() => {
+                setIsKYCDialogOpen(false);
+                router.push("/client/profile?tab=identity");
+              }}
+            >
+              {t("kycDialog.confirm")}
             </Button>
           </div>
         </AlertDialogContent>

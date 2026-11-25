@@ -5,6 +5,7 @@ import {
   JobStatus,
   Prisma,
   ProposalStatus,
+  VerificationStatus,
 } from '@prisma/client';
 
 import {
@@ -287,6 +288,20 @@ export class ManageJobRepository {
         },
       },
     });
+  }
+
+  async isIdentityVerified(userId: number): Promise<boolean> {
+    const approvedDocument = await this.prisma.idVerificationDocument.findFirst(
+      {
+        where: {
+          userId,
+          status: VerificationStatus.APPROVED,
+          deletedAt: null,
+        },
+        select: { id: true },
+      },
+    );
+    return Boolean(approvedDocument);
   }
 
   async createJob(clientId: number, data: CreateJobBodyType): Promise<JobType> {
