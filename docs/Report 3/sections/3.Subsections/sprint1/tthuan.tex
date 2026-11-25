@@ -14,14 +14,14 @@
 \subsubsection{ Login with Google}
 
 \fnhead{Function Trigger}
-A guest clicks the ``Google'' authentication button on the sign-in screen or the registration screen.\newline
+A user clicks the ``Google'' authentication button on the sign-in screen or the registration screen.\newline
 \textbf{Navigation path:} Home $\rightarrow$ Login (\texttt{/login}) $\rightarrow$ Click ``Google'' button.
 
 \fnhead{Function Description}
 
 \sublabel{Actors / Roles}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-    \item \textbf{Primary Actor:} Guest (unauthenticated visitor).
+    \item \textbf{Primary Actor:} Registered User (External: Client, Freelancer, Expert; Internal: Administrator) for existing account sign-in; or Guest (unauthenticated visitor) for new account registration.
     \item \textbf{Secondary Actor:} Google OAuth 2.0 Authorization Server.
     \item \textbf{Supporting Systems:} Frevia Web application (Next.js), Frevia BFF authentication proxy (\texttt{/api/auth/google}), Frevia REST API (NestJS), and PostgreSQL database.
 \end{itemize}
@@ -129,7 +129,7 @@ A registered user enters their email and password into the sign-in form and subm
 
 \sublabel{Actors / Roles}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-    \item \textbf{Primary Actor:} Guest (unauthenticated registered user).
+    \item \textbf{Primary Actor:} Registered User (External: Client, Freelancer, Expert; Internal: Administrator).
     \item \textbf{Supporting Systems:} Frevia Web application (Next.js), Frevia BFF proxy (\texttt{/api/auth/login}), Frevia REST API (NestJS), and PostgreSQL database.
 \end{itemize}
 
@@ -190,8 +190,8 @@ A registered user enters their email and password into the sign-in form and subm
 
 \sublabel{Normal Flow}
 \begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
-    \item Guest navigates to \texttt{/login} and inputs valid registered email and password.
-    \item Guest clicks ``Log in'' button.
+    \item A registered user navigates to \texttt{/login} and inputs valid registered email and password.
+    \item The user clicks ``Log in'' button.
     \item Form resolver executes schema validation and initiates HTTP POST request.
     \item NestJS API retrieves user record, compares bcrypt hash, and verifies account active status.
     \item The system records the session in the database and creates JWT tokens.
@@ -450,7 +450,7 @@ A user clicks ``Forgot password?'' on the login screen and submits their email a
 
 \sublabel{Actors / Roles}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-    \item \textbf{Primary Actor:} Guest (registered user who lost access).
+    \item \textbf{Primary Actor:} Registered User (account holder requesting password recovery).
     \item \textbf{Secondary Actor:} Mail Delivery Service (Nodemailer / SMTP Server).
     \item \textbf{Supporting Systems:} Frevia Web application (Next.js), Frevia BFF proxy, Frevia REST API (NestJS), and PostgreSQL database.
 \end{itemize}
