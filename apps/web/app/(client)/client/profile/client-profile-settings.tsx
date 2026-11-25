@@ -1,6 +1,6 @@
 "use client";
 
-import { useTranslations } from "next-intl";
+import { useFormatter, useTranslations } from "next-intl";
 import Link from "next/link";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useCallback, useEffect, useState, type FormEvent } from "react";
@@ -10,6 +10,7 @@ import {
   AvatarFallback,
   AvatarImage,
 } from "@repo/ui/components/shadcn/avatar";
+import { Badge } from "@repo/ui/components/shadcn/badge";
 import { Button } from "@repo/ui/components/shadcn/button";
 import { Input } from "@repo/ui/components/shadcn/input";
 import { Label } from "@repo/ui/components/shadcn/label";
@@ -37,6 +38,8 @@ import {
   UserPlus,
   Globe2,
 } from "@/components/icons";
+import { ShieldCheck } from "lucide-react";
+import { IdentityVerificationForm } from "@/app/(freelancer)/freelancer/profile/identity-verification-form";
 import { accountProfileApi } from "@/apiRequests/account-profile";
 import { profileRevisionApiRequest } from "@/apiRequests/profile-revision";
 import { useActionPermission } from "@/hooks/use-action-permission";
@@ -46,8 +49,10 @@ import { FreelancerProfileSheet } from "@/app/(client)/_components/freelancer-pr
 import { VerifiedBadge } from "@/components/verified-badge";
 import {
   SocialPlatform,
+  VerificationStatus,
   type DiscoverFreelancerType,
   type FavoriteFreelancerType,
+  type IdentityVerificationStatusType,
   type SocialLinkType,
   type SocialPlatformType,
   type ProfileRevisionType,
@@ -68,7 +73,17 @@ function errorMessage(error: unknown, fallback: string) {
   return fallback;
 }
 
-type TabKey = "company" | "social" | "favorites" | "following";
+type TabKey = "company" | "identity" | "social" | "favorites" | "following";
+
+const DOCUMENT_TYPE_KEYS = [
+  "ID_CARD",
+  "PASSPORT",
+  "DRIVER_LICENSE",
+  "RESIDENCE_PERMIT",
+  "OTHER",
+] as const;
+
+const VERIFICATION_STATUS_KEYS = ["PENDING", "APPROVED", "REJECTED"] as const;
 
 const SOCIAL_PLATFORM_KEYS = [
   "GITHUB",
@@ -88,10 +103,24 @@ type ClientProfileSettingsProps = {
 export function ClientProfileSettings({ userId }: ClientProfileSettingsProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const format = useFormatter();
   const t = useTranslations("clientProfileSettings");
   const tPlatform = useTranslations("socialPlatform");
   const tRole = useTranslations("roleName");
   const tSidebar = useTranslations("sidebar");
+  const tDocument = useTranslations("documentType");
+  const tVerification = useTranslations("verificationStatus");
+  const tAccountProfile = useTranslations("accountProfile");
+
+  const documentTypeLabel = (value: string) =>
+    (DOCUMENT_TYPE_KEYS as readonly string[]).includes(value)
+      ? tDocument(value)
+      : value;
+
+  const verificationStatusLabel = (value: string | null | undefined) =>
+    value && (VERIFICATION_STATUS_KEYS as readonly string[]).includes(value)
+      ? tVerification(value)
+      : tVerification("NOT_SUBMITTED");
 
   const platformLabel = (value: string) =>
     (SOCIAL_PLATFORM_KEYS as readonly string[]).includes(value)
@@ -119,12 +148,31 @@ export function ClientProfileSettings({ userId }: ClientProfileSettingsProps) {
     "/api/following/freelancers/:freelancerId",
   );
   const canViewFollowingTab = canGetFollowing || canDiscoverFreelancers;
+  const canUploadIdentityDoc = can(
+    "POST",
+    "/api/identity-verifications/documents",
+  );
+  const canViewIdentityStatus = can(
+    "GET",
+    "/api/identity-verifications/status",
+  );
+  const canAiCheck = can("POST", "/api/identity-verifications/ai-check");
+  const canLivenessPose = can(
+    "POST",
+    "/api/identity-verifications/liveness-pose",
+  );
+  const canViewIdentityTab =
+    canViewIdentityStatus ||
+    canUploadIdentityDoc ||
+    canAiCheck ||
+    canLivenessPose;
   const canViewSocialLinks = can("GET", "/api/social-links");
   const canAddSocialLink = can("POST", "/api/social-links");
   const canDeleteSocialLink = can("DELETE", "/api/social-links/:id");
 
   const [activeTab, setActiveTab] = useState<TabKey>(() => {
     const tabParam = searchParams.get("tab");
+    if (tabParam === "identity" && canViewIdentityTab) return "identity";
     if (tabParam === "social" && canViewSocialLinks) return "social";
     if (tabParam === "favorites" && canViewFavorites) return "favorites";
     if (tabParam === "following" && canViewFollowingTab) return "following";
@@ -132,15 +180,25 @@ export function ClientProfileSettings({ userId }: ClientProfileSettingsProps) {
   });
 
   useEffect(() => {
-    if (activeTab === "social" && !canViewSocialLinks) {
+    if (activeTab === "identity" && !canViewIdentityTab) {
+      setActiveTab("company");
+    } else if (activeTab === "social" && !canViewSocialLinks) {
       setActiveTab("company");
     } else if (activeTab === "favorites" && !canViewFavorites) {
       setActiveTab("company");
     } else if (activeTab === "following" && !canViewFollowingTab) {
       setActiveTab("company");
     }
-  }, [activeTab, canViewSocialLinks, canViewFavorites, canViewFollowingTab]);
+  }, [
+    activeTab,
+    canViewIdentityTab,
+    canViewSocialLinks,
+    canViewFavorites,
+    canViewFollowingTab,
+  ]);
 
+  const [identity, setIdentity] =
+    useState<IdentityVerificationStatusType | null>(null);
   const [socialLinks, setSocialLinks] = useState<SocialLinkType[]>([]);
   const [favorites, setFavorites] = useState<FavoriteFreelancerType[]>([]);
   const [freelancers, setFreelancers] = useState<DiscoverFreelancerType[]>([]);
@@ -211,6 +269,7 @@ export function ClientProfileSettings({ userId }: ClientProfileSettingsProps) {
         favoritesResult,
         freelancersResult,
         revisionResult,
+        identityResult,
       ] = await Promise.allSettled([
         accountProfileApi.getClientProfile(userId),
         canViewSocialLinks
@@ -223,6 +282,9 @@ export function ClientProfileSettings({ userId }: ClientProfileSettingsProps) {
           ? accountProfileApi.discoverFreelancers()
           : Promise.resolve({ success: true, data: [] as DiscoverFreelancerType[] }),
         profileRevisionApiRequest.getMine("CLIENT"),
+        canViewIdentityStatus
+          ? accountProfileApi.getIdentityStatus()
+          : Promise.resolve(null),
       ]);
 
       if (profileResult.status === "fulfilled") {
@@ -256,6 +318,9 @@ export function ClientProfileSettings({ userId }: ClientProfileSettingsProps) {
       if (revisionResult.status === "fulfilled") {
         setProfileRevision(revisionResult.value.data.revision);
       }
+      if (identityResult.status === "fulfilled" && identityResult.value) {
+        setIdentity(identityResult.value.data);
+      }
     } finally {
       setLoading(false);
     }
@@ -265,6 +330,7 @@ export function ClientProfileSettings({ userId }: ClientProfileSettingsProps) {
     canViewFavorites,
     canDiscoverFreelancers,
     canViewSocialLinks,
+    canViewIdentityStatus,
   ]);
 
   useEffect(() => {
@@ -441,6 +507,15 @@ export function ClientProfileSettings({ userId }: ClientProfileSettingsProps) {
 
   const tabs = [
     { id: "company" as const, label: t("tabCompany"), icon: Building2 },
+    ...(canViewIdentityTab
+      ? [
+          {
+            id: "identity" as const,
+            label: t("tabIdentity"),
+            icon: ShieldCheck,
+          },
+        ]
+      : []),
     ...(canViewSocialLinks
       ? [
           {
@@ -650,7 +725,99 @@ export function ClientProfileSettings({ userId }: ClientProfileSettingsProps) {
                 </motion.div>
               )}
 
-              {/* 2. Social Links Tab */}
+              {/* 2. Identity Verification Tab */}
+              {activeTab === "identity" && canViewIdentityTab && (
+                <motion.div
+                  key="identity"
+                  initial={{ opacity: 0, y: 6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -6 }}
+                  transition={{ duration: 0.2 }}
+                  className="rounded-[26px] border border-border dark:border-white/10 bg-card p-6 sm:p-8 shadow-xs"
+                >
+                  <div
+                    className={`grid gap-8 ${
+                      canAiCheck || canUploadIdentityDoc
+                        ? "lg:grid-cols-[1fr_360px]"
+                        : "max-w-xl"
+                    }`}
+                  >
+                    {(canAiCheck || canUploadIdentityDoc) && (
+                      <div className="rounded-xl border border-border p-5 sm:p-6">
+                        <h2 className="text-base font-semibold tracking-tight text-foreground">
+                          {tAccountProfile("aiCheckTitle")}
+                        </h2>
+                        <p className="mt-1 text-sm text-muted-foreground">
+                          {tAccountProfile("aiCheckHint")}
+                        </p>
+                        <IdentityVerificationForm
+                          onSubmitted={() => void load()}
+                        />
+                      </div>
+                    )}
+
+                    {canViewIdentityStatus && (
+                      <div className="rounded-xl border border-border p-5 sm:p-6">
+                        <h2 className="text-base font-semibold tracking-tight text-foreground">
+                          {tAccountProfile("verificationStatusTitle")}
+                        </h2>
+                        <div className="mt-5 space-y-4">
+                          <Badge
+                            className={
+                              identity?.status === VerificationStatus.APPROVED
+                                ? "border-transparent bg-emerald-600 text-white hover:bg-emerald-600"
+                                : ""
+                            }
+                            variant={
+                              identity?.status === VerificationStatus.APPROVED
+                                ? "default"
+                                : "secondary"
+                            }
+                          >
+                            {verificationStatusLabel(identity?.status)}
+                          </Badge>
+                          {identity?.documents.length ? (
+                            <ul className="divide-y divide-border border-y border-border">
+                              {identity.documents.map((document) => (
+                                <li
+                                  key={document.id}
+                                  className="flex items-center justify-between gap-3 py-3"
+                                >
+                                  <div>
+                                    <p className="font-medium text-foreground">
+                                      {documentTypeLabel(document.documentType)}
+                                    </p>
+                                    <p className="text-xs text-muted-foreground">
+                                      {format.dateTime(
+                                        new Date(document.createdAt),
+                                        {
+                                          dateStyle: "medium",
+                                          timeStyle: "short",
+                                        },
+                                      )}
+                                    </p>
+                                    {document.reviewNotes ? (
+                                      <p className="mt-1 text-sm text-destructive">
+                                        {document.reviewNotes}
+                                      </p>
+                                    ) : null}
+                                  </div>
+                                </li>
+                              ))}
+                            </ul>
+                          ) : (
+                            <p className="text-xs text-muted-foreground">
+                              {tAccountProfile("noDocumentsYet")}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </motion.div>
+              )}
+
+              {/* 3. Social Links Tab */}
               {activeTab === "social" && canViewSocialLinks && (
                 <motion.div
                   key="social"

@@ -158,8 +158,6 @@ export function isHardcodedMarketplaceAllowed(
 
   if (roleName === RoleName.CLIENT) {
     if (
-      normalized === '/api/identity-verifications' ||
-      normalized.startsWith('/api/identity-verifications/') ||
       normalized === '/api/job-alerts' ||
       normalized.startsWith('/api/job-alerts/') ||
       normalized.includes('/bookmark')
