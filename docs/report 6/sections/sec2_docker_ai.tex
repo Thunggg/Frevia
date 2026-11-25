@@ -16,9 +16,10 @@ When operating the complete system on a local host or cloud virtual machine, the
 \textbf{Frontend Web} & \texttt{frevia-frontend} & \texttt{3003} & \url{http://localhost:3003} -- Next.js 16 Client Portal and Admin Management Console. \\ \hline
 \textbf{Backend API} & \texttt{frevia-backend} & \texttt{3002} & \url{http://localhost:3002} -- NestJS 11 RESTful API (\texttt{/api}) and Socket.IO WebSocket gateway. \\ \hline
 \textbf{CV Matching AI} & \texttt{frevia-cv-matching} & \texttt{8000} & \url{http://localhost:8000} -- FastAPI service for CV extraction, ChromaDB indexing, and matching. \\ \hline
-\textbf{ID Verification AI} & \texttt{frevia-\allowbreak{}id-\allowbreak{}verification} & \texttt{8001} & \url{http://localhost:8001} -- FastAPI eKYC service (RapidOCR, InsightFace, MediaPipe). \\ \hline
+\textbf{ID Verification AI} & \texttt{frevia-\allowbreak{}id-\allowbreak{}verification} & \texttt{8001} & \url{http://localhost:8001} -- FastAPI eKYC service (RapidOCR, UltraFace/ArcFace ONNX, MediaPipe). \\ \hline
 \textbf{Ollama LLM} & \texttt{frevia-ollama} & \texttt{11434} & \url{http://localhost:11434} -- Local LLM runtime serving \texttt{qwen3:4b} for \texttt{cv-matching}. \\ \hline
-\textbf{PostgreSQL DB} & Local / External & \texttt{5432} & \texttt{localhost:5432} -- Primary relational database configured via \texttt{DATABASE\_URL}. \\ \hline
+\textbf{AI Moderation (Optional Host)} & Optional external service & \texttt{8002} & \url{http://host.docker.internal:8002/api/v1} -- Optional external content moderation service (\texttt{AI\_MODERATION\_URL}); auto-approves fallback when unreachable. \\ \hline
+\textbf{PostgreSQL DB} & Local / External & \texttt{5432} & \texttt{localhost:5432} -- Primary relational database configured via \texttt{DIRECT\_URL} / \texttt{DATABASE\_URL}. \\ \hline
 \end{tabular}
 \end{center}
 
@@ -106,19 +107,19 @@ Invoke-RestMethod -Uri "http://localhost:8001/healthz" -Method Get
 \end{lstlisting}
 \end{itemize}
 
-\subsubsection{3. Pre-Configured Test Accounts}
+\subsubsection{3. Seeded Test Accounts}
 
-The database seeder automatically initializes dedicated accounts across all primary system roles to streamline functional evaluation:
+Running \texttt{pnpm --filter api seed} provisions dedicated evaluation accounts across all four core system roles using credentials supplied via environment or Infisical secrets (\texttt{SEED\_\allowbreak{}*\_\allowbreak{}EMAIL} and \texttt{SEED\_\allowbreak{}*\_\allowbreak{}PASSWORD}, with no hardcoded fallback passwords in source control):
 
 \begin{center}
 \renewcommand{\arraystretch}{1.45}
-\begin{longtable}{|L{2.8cm}|L{4.2cm}|L{3.2cm}|L{4.2cm}|}
+\begin{longtable}{|L{2.8cm}|L{5.1cm}|L{2.6cm}|L{4.1cm}|}
 \hline
-\rowcolor{hdrfill}\hd{Role} & \hd{Email Address} & \hd{Default Password} & \hd{Assigned Access Scope} \\ \hline
+\rowcolor{hdrfill}\hd{Role} & \hd{Configuration Variables} & \hd{Portal / Access} & \hd{Assigned Access Scope} \\ \hline
 \endhead
-\textbf{Administrator} & \texttt{admin@gmail.com} & \texttt{admin123456} & Complete access to \texttt{/\allowbreak admin} (Admin Portal permission suite). \\ \hline
-\textbf{Freelancer} & \texttt{freelancer@gmail.com} & \texttt{freelancer123456} & Profile management, AI CV analysis, proposals, contract milestones, payouts. \\ \hline
-\textbf{Client} & \texttt{client@gmail.com} & \texttt{client123456} & Job posting, candidate review, milestone funding, escrow deposits. \\ \hline
-\textbf{Expert} & \texttt{expert@gmail.com} & \texttt{expert123456} & Expert profile workspace (\texttt{/expert/profile}), revision submissions. \\ \hline
+\textbf{Administrator} & \texttt{SEED\_\allowbreak{}ADMIN\_\allowbreak{}EMAIL} / \texttt{SEED\_\allowbreak{}ADMIN\_\allowbreak{}PASSWORD} & \texttt{/\allowbreak admin} & Complete access to the Admin Portal permission suite. \\ \hline
+\textbf{Freelancer} & \texttt{SEED\_\allowbreak{}FREELANCER\_\allowbreak{}EMAIL} / \texttt{SEED\_\allowbreak{}FREELANCER\_\allowbreak{}PASSWORD} & \texttt{/\allowbreak freelancer} & Profile management, AI CV analysis, proposals, contract milestones, payouts. \\ \hline
+\textbf{Client} & \texttt{SEED\_\allowbreak{}CLIENT\_\allowbreak{}EMAIL} / \texttt{SEED\_\allowbreak{}CLIENT\_\allowbreak{}PASSWORD} & \texttt{/\allowbreak client} & Job posting, candidate review, milestone funding, escrow deposits. \\ \hline
+\textbf{Expert} & \texttt{SEED\_\allowbreak{}EXPERT\_\allowbreak{}EMAIL} / \texttt{SEED\_\allowbreak{}EXPERT\_\allowbreak{}PASSWORD} & \texttt{/\allowbreak admin/\allowbreak profile}, \texttt{/\allowbreak admin/\allowbreak disputes} & Expert dispute review (\texttt{/\allowbreak admin/\allowbreak disputes}) and profile (\texttt{/\allowbreak admin/\allowbreak profile}). \\ \hline
 \end{longtable}
 \end{center}

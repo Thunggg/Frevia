@@ -1,4 +1,3 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
 <mxfile host="app.diagrams.net" version="29.0.3">
   <diagram id="UC-18.02-view-verification-status" name="UC-18.02 - View Verification Status">
     <mxGraphModel grid="1" gridSize="10" page="0" pageWidth="1600" pageHeight="7017" math="0" shadow="0">
@@ -365,7 +364,7 @@
             <mxPoint x="1525" y="4366" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="c54" value="&lt;div&gt;[profile exists;&lt;/div&gt;&lt;div&gt;FREELANCER role absent]&lt;/div&gt;" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;overflow=visible;fontSize=12;labelBackgroundColor=none;" parent="1" vertex="1">
+        <mxCell id="c54" value="&lt;div&gt;[profile exists;&lt;/div&gt;&lt;div&gt;CLIENT/FREELANCER absent]&lt;/div&gt;" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;overflow=visible;fontSize=12;labelBackgroundColor=none;" parent="1" vertex="1">
           <mxGeometry x="120" y="4398" width="165" height="42" as="geometry" />
         </mxCell>
         <mxCell id="c55" value="&lt;div&gt;11.2.1. 403&lt;/div&gt;&lt;div&gt;AccountProfileForbidden&lt;/div&gt;&lt;div&gt;Exception&lt;/div&gt;" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=12;" parent="1" edge="1">
@@ -398,7 +397,7 @@
             <mxPoint x="1525" y="4861" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="c60" value="&lt;div&gt;[profile exists;&lt;/div&gt;&lt;div&gt;FREELANCER role assigned]&lt;/div&gt;" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;overflow=visible;fontSize=12;labelBackgroundColor=none;" parent="1" vertex="1">
+        <mxCell id="c60" value="&lt;div&gt;[profile exists;&lt;/div&gt;&lt;div&gt;CLIENT/FREELANCER assigned]&lt;/div&gt;" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;overflow=visible;fontSize=12;labelBackgroundColor=none;" parent="1" vertex="1">
           <mxGeometry x="120" y="4893" width="165" height="42" as="geometry" />
         </mxCell>
         <mxCell id="c61" value="&lt;div&gt;11.3.1.&lt;/div&gt;&lt;div&gt;findIdentityDocuments&lt;/div&gt;&lt;div&gt;(userId)&lt;/div&gt;" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=12;" parent="1" edge="1">

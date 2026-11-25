@@ -195,7 +195,7 @@
             <mxPoint x="105" y="620" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="rt" value="5. POST /forum-categories" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;" parent="1" edge="1">
+        <mxCell id="rt" value="5. POST /api/forums/admin/categories" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;" parent="1" edge="1">
           <mxGeometry relative="1" as="geometry">
             <mxPoint x="345" y="705" as="sourcePoint" />
             <mxPoint x="535" y="705" as="targetPoint" />

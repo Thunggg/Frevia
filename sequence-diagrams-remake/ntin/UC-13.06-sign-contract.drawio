@@ -1,4 +1,3 @@
-<?xml version='1.0' encoding='utf-8'?>
 <mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/29.0.3 Chrome/140.0.7339.249 Electron/38.7.0 Safari/537.36" version="29.0.3">
   <diagram id="UC-13_06-sign-contract" name="UC-13.06 Sign Contract">
     <mxGraphModel dx="1600" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1920" pageHeight="3245" math="0" shadow="0">
@@ -255,19 +254,19 @@
     <mxPoint x="105" y="1735" as="targetPoint" />
   </mxGeometry>
 </mxCell>
-        <mxCell id="err_stat_1" value="8.1.1. throw 400&lt;br&gt;ContractNotPendingSign" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=#000000;" parent="1" edge="1">
+        <mxCell id="err_stat_1" value="8.1.1. throw 422&lt;br&gt;ContractNotPendingSign" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=#000000;" parent="1" edge="1">
   <mxGeometry relative="1" as="geometry">
     <mxPoint x="1055" y="1920" as="sourcePoint" />
     <mxPoint x="825" y="1920" as="targetPoint" />
   </mxGeometry>
 </mxCell>
-        <mxCell id="err_stat_2" value="8.1.2. Return 400 response" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=#000000;" parent="1" edge="1">
+        <mxCell id="err_stat_2" value="8.1.2. Return 422 response" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=#000000;" parent="1" edge="1">
   <mxGeometry relative="1" as="geometry">
     <mxPoint x="815" y="1955" as="sourcePoint" />
     <mxPoint x="585" y="1955" as="targetPoint" />
   </mxGeometry>
 </mxCell>
-        <mxCell id="err_stat_3" value="8.1.3. Return 400 response" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=#000000;" parent="1" edge="1">
+        <mxCell id="err_stat_3" value="8.1.3. Return 422 response" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=#000000;" parent="1" edge="1">
   <mxGeometry relative="1" as="geometry">
     <mxPoint x="575" y="1990" as="sourcePoint" />
     <mxPoint x="345" y="1990" as="targetPoint" />
@@ -279,19 +278,19 @@
     <mxPoint x="105" y="2025" as="targetPoint" />
   </mxGeometry>
 </mxCell>
-        <mxCell id="err_ord_1" value="9.1.1. throw 400&lt;br&gt;ClientMustSignFirst" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=#000000;" parent="1" edge="1">
+        <mxCell id="err_ord_1" value="9.1.1. throw 422&lt;br&gt;ClientMustSignFirst" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=#000000;" parent="1" edge="1">
   <mxGeometry relative="1" as="geometry">
     <mxPoint x="1055" y="2210" as="sourcePoint" />
     <mxPoint x="825" y="2210" as="targetPoint" />
   </mxGeometry>
 </mxCell>
-        <mxCell id="err_ord_2" value="9.1.2. Return 400 response" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=#000000;" parent="1" edge="1">
+        <mxCell id="err_ord_2" value="9.1.2. Return 422 response" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=#000000;" parent="1" edge="1">
   <mxGeometry relative="1" as="geometry">
     <mxPoint x="815" y="2245" as="sourcePoint" />
     <mxPoint x="585" y="2245" as="targetPoint" />
   </mxGeometry>
 </mxCell>
-        <mxCell id="err_ord_3" value="9.1.3. Return 400 response" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=#000000;" parent="1" edge="1">
+        <mxCell id="err_ord_3" value="9.1.3. Return 422 response" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=#000000;" parent="1" edge="1">
   <mxGeometry relative="1" as="geometry">
     <mxPoint x="575" y="2280" as="sourcePoint" />
     <mxPoint x="345" y="2280" as="targetPoint" />

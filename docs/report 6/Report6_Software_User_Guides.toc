@@ -22,7 +22,7 @@
 \contentsline {subsection}{\numberline {2.7}Post-Installation System Verification}{16}{subsection.2.7}%
 \contentsline {subsubsection}{\numberline {2.7.1}1. Frontend Web Application Verification}{16}{subsubsection.2.7.1}%
 \contentsline {subsubsection}{\numberline {2.7.2}2. Backend RESTful API \& AI Health Check Verification}{17}{subsubsection.2.7.2}%
-\contentsline {subsubsection}{\numberline {2.7.3}3. Pre-Configured Test Accounts}{17}{subsubsection.2.7.3}%
+\contentsline {subsubsection}{\numberline {2.7.3}3. Seeded Test Accounts}{17}{subsubsection.2.7.3}%
 \contentsline {section}{\numberline {3}User Manual}{18}{section.3}%
 \contentsline {subsection}{\numberline {3.1}Overview of the Application \& System Actors}{18}{subsection.3.1}%
 \contentsline {subsection}{\numberline {3.2}Module 2: Authentication \& Session Management}{19}{subsection.3.2}%
@@ -31,7 +31,7 @@
 \contentsline {paragraph}{Expected Output \& Exception Handling:}{20}{paragraph*.2}%
 \contentsline {subsubsection}{\numberline {3.2.2}M2.02 -- User Authentication via Email \& Password (UC-02)}{21}{subsubsection.3.2.2}%
 \contentsline {paragraph}{Step-by-Step User Instructions:}{21}{paragraph*.3}%
-\contentsline {paragraph}{Expected Output \& Exception Handling:}{21}{paragraph*.4}%
+\contentsline {paragraph}{Expected Output \& Exception Handling:}{22}{paragraph*.4}%
 \contentsline {subsubsection}{\numberline {3.2.3}M2.03 -- Single Sign-On via Google OAuth 2.0 (UC-01)}{23}{subsubsection.3.2.3}%
 \contentsline {paragraph}{Step-by-Step User Instructions:}{23}{paragraph*.5}%
 \contentsline {paragraph}{Expected Output \& Exception Handling:}{23}{paragraph*.6}%
@@ -71,14 +71,14 @@
 \contentsline {paragraph}{Expected Output \& Exception Handling:}{40}{paragraph*.28}%
 \contentsline {subsubsection}{\numberline {3.3.8}M14.08 -- User Multi-Profile Management (UC-28.02, UC-28.05--28.09)}{41}{subsubsection.3.3.8}%
 \contentsline {paragraph}{Step-by-Step User Instructions:}{41}{paragraph*.29}%
-\contentsline {paragraph}{Expected Output \& Exception Handling:}{41}{paragraph*.30}%
-\contentsline {subsection}{\numberline {3.4}Module 15: Administrator Master Data Catalog Management}{42}{subsection.3.4}%
-\contentsline {subsubsection}{\numberline {3.4.1}M15.01 -- Skills Catalog Management (UC-38.01--38.06)}{42}{subsubsection.3.4.1}%
-\contentsline {paragraph}{Step-by-Step User Instructions:}{42}{paragraph*.31}%
-\contentsline {paragraph}{Expected Output \& Exception Handling:}{43}{paragraph*.32}%
-\contentsline {subsubsection}{\numberline {3.4.2}M15.02 -- Job Categories Management (UC-46.01--46.06)}{44}{subsubsection.3.4.2}%
-\contentsline {paragraph}{Step-by-Step User Instructions:}{44}{paragraph*.33}%
-\contentsline {paragraph}{Expected Output \& Exception Handling:}{44}{paragraph*.34}%
-\contentsline {subsubsection}{\numberline {3.4.3}M15.03 -- Forum Discussion Categories Management (UC-17.01 to UC-17.06)}{46}{subsubsection.3.4.3}%
-\contentsline {paragraph}{Step-by-Step User Instructions:}{46}{paragraph*.35}%
-\contentsline {paragraph}{Expected Output \& Exception Handling:}{46}{paragraph*.36}%
+\contentsline {paragraph}{Expected Output \& Exception Handling:}{42}{paragraph*.30}%
+\contentsline {subsection}{\numberline {3.4}Module 15: Administrator Master Data Catalog Management}{43}{subsection.3.4}%
+\contentsline {subsubsection}{\numberline {3.4.1}M15.01 -- Skills Catalog Management (UC-38.01--38.06)}{43}{subsubsection.3.4.1}%
+\contentsline {paragraph}{Step-by-Step User Instructions:}{43}{paragraph*.31}%
+\contentsline {paragraph}{Expected Output \& Exception Handling:}{44}{paragraph*.32}%
+\contentsline {subsubsection}{\numberline {3.4.2}M15.02 -- Job Categories Management (UC-46.01--46.06)}{45}{subsubsection.3.4.2}%
+\contentsline {paragraph}{Step-by-Step User Instructions:}{45}{paragraph*.33}%
+\contentsline {paragraph}{Expected Output \& Exception Handling:}{45}{paragraph*.34}%
+\contentsline {subsubsection}{\numberline {3.4.3}M15.03 -- Forum Discussion Categories Management (UC-17.01 to UC-17.06)}{47}{subsubsection.3.4.3}%
+\contentsline {paragraph}{Step-by-Step User Instructions:}{47}{paragraph*.35}%
+\contentsline {paragraph}{Expected Output \& Exception Handling:}{47}{paragraph*.36}%

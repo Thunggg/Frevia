@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.9.28)  25 NOV 2026 14:38
+This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.9.28)  25 NOV 2026 22:25
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -366,7 +366,9 @@ File: t1ptm.fd 2001/06/04 font definitions for T1/ptm.
 ex.def
 File: l3backend-pdftex.def 2025-10-09 L3 backend support: PDF output (pdfTeX)
 \l__color_backend_stack_int=\count304
-) (Report5_Test_Documentation.aux)
+)
+(C:\Users\ASUS\.gemini\antigravity\brain\901340cd-a084-4162-b242-505e8cef7a07\s
+cratch\build_r5_final\Report5_Test_Documentation.aux)
 \openout1 = `Report5_Test_Documentation.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 39.
@@ -454,7 +456,11 @@ Package caption Info: float package is loaded.
 Package caption Info: hyperref package is loaded.
 Package caption Info: End \AtBeginDocument code.
 Package hyperref Info: Link coloring ON on input line 39.
- (Report5_Test_Documentation.out) (Report5_Test_Documentation.out)
+
+(C:\Users\ASUS\.gemini\antigravity\brain\901340cd-a084-4162-b242-505e8cef7a07\s
+cratch\build_r5_final\Report5_Test_Documentation.out)
+(C:\Users\ASUS\.gemini\antigravity\brain\901340cd-a084-4162-b242-505e8cef7a07\s
+cratch\build_r5_final\Report5_Test_Documentation.out)
 \@outlinefile=\write3
 \openout3 = `Report5_Test_Documentation.out'.
 
@@ -467,7 +473,8 @@ Package pdftex.def Info: fpt_logo.png  used on input line 46.
 
 {C:/Users/ASUS/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map}{C:/Users/ASUS/
 AppData/Local/Programs/MiKTeX/fonts/enc/dvips/base/8r.enc} <./fpt_logo.png>]
-(Report5_Test_Documentation.toc
+(C:\Users\ASUS\.gemini\antigravity\brain\901340cd-a084-4162-b242-505e8cef7a07\s
+cratch\build_r5_final\Report5_Test_Documentation.toc
 LaTeX Font Info:    Trying to load font information for OT1+ztmcm on input line
  4.
 
@@ -515,7 +522,8 @@ l.30 ... {5.4}Test Conclusion}{16}{subsection.5.4}
 \openout4 = `Report5_Test_Documentation.toc'.
 
  [2]
-(Report5_Test_Documentation.lot
+(C:\Users\ASUS\.gemini\antigravity\brain\901340cd-a084-4162-b242-505e8cef7a07\s
+cratch\build_r5_final\Report5_Test_Documentation.lot
 Overfull \hbox (8.00003pt too wide) in paragraph at lines 6--6
  [][] [][][]\T1/ptm/m/n/12 Summary of unit and sys-tem test cases in Re-port5_U
 nit Test.xls and Re-port5_Test 
@@ -531,33 +539,28 @@ Underfull \hbox (badness 10000) in paragraph at lines 69--69
  []
 
 
-Underfull \hbox (badness 2726) in paragraph at lines 70--70
-[]|\T1/ptm/m/n/12 Updated in-te-gra-tion and sys-tem test
- []
-
-
-Underfull \hbox (badness 4429) in paragraph at lines 70--70
-\T1/ptm/m/n/12 spec-i-fi-ca-tions for Sprint 2 (Pro-pos-
- []
-
-
 Underfull \hbox (badness 2401) in paragraph at lines 71--71
 []|\T1/ptm/m/n/12 Nguyen Lu Nhat
  []
 
 
-Underfull \hbox (badness 3769) in paragraph at lines 71--71
-[]|\T1/ptm/m/n/12 Added test spec-i-fi-ca-tions for Sprint
+Underfull \hbox (badness 1424) in paragraph at lines 71--71
+[]|\T1/ptm/m/n/12 Added unit and pend-ing sys-tem test
  []
 
 
-Underfull \hbox (badness 3514) in paragraph at lines 71--71
-\T1/ptm/m/n/12 Com-mu-nity Fo-rum, Mod-er-a-tion, ID
+Underfull \hbox (badness 2181) in paragraph at lines 72--72
+[]|\T1/ptm/m/n/12 Added unit and sys-tem test spec-i-fi-
  []
 
 
-Underfull \hbox (badness 1168) in paragraph at lines 72--72
-\T1/ptm/m/n/12 (Stripe Es-crow Pay-ments, Web-hooks,
+Underfull \hbox (badness 3417) in paragraph at lines 72--72
+\T1/ptm/m/n/12 ca-tions for Con-tracts, Shared Files,
+ []
+
+
+Underfull \hbox (badness 2582) in paragraph at lines 72--72
+\T1/ptm/m/n/12 Stripe Con-nect Es-crow Pay-ments &
  []
 
 
@@ -600,57 +603,22 @@ guyen Tien Thuan\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 Vo Nhut Tin\T1/ptm/m/n/12 , \T
  []
 
 
-Overfull \hbox (19.43198pt too wide) in paragraph at lines 150--151
-[]\T1/ptm/b/n/12 Input / Time: \T1/ptm/m/n/12 Soft-ware De-sign Doc-u-ment (Re-
-port 4), shared Zod val-i-da-tion schemas (\T1/cmtt/m/n/12 @shared/
- []
-
-
-Underfull \hbox (badness 7796) in paragraph at lines 153--153
-\T1/cmtt/m/n/12 ModerationService\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 IdVerificatio
-nService\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 AuthService\T1/ptm/m/n/12 , \T1/cmtt/m
-/n/12 RolesService\T1/ptm/m/n/12 ,
- []
-
-
-Underfull \hbox (badness 3792) in paragraph at lines 153--153
-\T1/cmtt/m/n/12 PermissionsService\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 SessionsServ
-ice\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 ForumAdminService\T1/ptm/m/n/12 , \T1/cmtt/
-m/n/12 UsersService\T1/ptm/m/n/12 ,
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 153--153
-\T1/cmtt/m/n/12 ExpertProfileService\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 BannersAdm
-inService\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 SkillsAdminService\T1/ptm/m/n/12 , \T
-1/cmtt/m/n/12 Job
- []
-
-
-Underfull \hbox (badness 7595) in paragraph at lines 153--153
-\T1/cmtt/m/n/12 CategoriesAdminService\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 PaymentS
-ervice\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 DisputeService\T1/ptm/m/n/12 , and \T1/c
-mtt/m/n/12 Profile
+Underfull \hbox (badness 1043) in paragraph at lines 153--153
+\T1/cmtt/m/n/12 Service\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 PermissionsService\T1/p
+tm/m/n/12 , \T1/cmtt/m/n/12 SessionsService\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 For
+umAdminService\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 Users
  []
 
 [6]
-Overfull \hbox (12.47864pt too wide) in paragraph at lines 169--170
-[]\T1/ptm/b/n/12 In-charge: \T1/cmtt/m/n/12 Tran Phat Tai\T1/ptm/m/n/12 , \T1/c
-mtt/m/n/12 Vo Nhut Tin\T1/ptm/m/n/12 , and \T1/cmtt/m/n/12 Nguyen Lu Nhat Huy\T
-1/ptm/m/n/12 , sup-ported by \T1/cmtt/m/n/12 Nguyen
- []
-
-
-Overfull \hbox (18.7267pt too wide) in paragraph at lines 174--175
+Underfull \hbox (badness 1472) in paragraph at lines 174--174
 []\T1/ptm/m/n/12 Controller-to-Service-to-Repository-to-PostgreSQL per-sis-tenc
-e, foreign-key in-tegrity, unique
+e, foreign-key in-tegrity,
  []
 
 
-Overfull \hbox (9.2159pt too wide) in paragraph at lines 174--175
-\T1/ptm/m/n/12 con-straints, soft-delete fil-ter-ing (\T1/cmtt/m/n/12 deletedAt
-\T1/ptm/m/n/12 ), and trans-ac-tional roll-back be-hav-ior (\T1/cmtt/m/n/12 pri
-sma.
+Underfull \hbox (badness 3601) in paragraph at lines 174--174
+\T1/ptm/m/n/12 unique con-straints, soft-delete fil-ter-ing (\T1/cmtt/m/n/12 de
+letedAt\T1/ptm/m/n/12 ), and trans-ac-tional roll-back
  []
 
 [7]
@@ -659,38 +627,21 @@ Overfull \hbox (4.77238pt too wide) in paragraph at lines 192--193
 nt, re-voked ses-sion to-kens, banned
  []
 
-
-Overfull \hbox (16.96432pt too wide) in paragraph at lines 196--197
-[]\T1/ptm/m/n/12 Executed sys-tem test cases across all 44 func-tional mod-ules
- in \T1/cmtt/m/n/12 Report5_Test Report.xlsx
- []
-
-
-Overfull \hbox (18.67632pt too wide) in paragraph at lines 197--198
-[]\T1/ptm/m/n/12 Zero Crit-i-cal or Ma-jor de-fects re-main open, and \T1/cmtt/
-m/n/12 docker compose build \T1/ptm/m/n/12 / \T1/cmtt/m/n/12 docker compose
- []
-
-
-Overfull \hbox (11.4315pt too wide) in paragraph at lines 206--207
-\T1/ptm/m/n/12 is-ti-cally us-ing the repos-i-tory seed scripts (\T1/cmtt/m/n/1
-2 seed\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 seed:permissions\T1/ptm/m/n/12 , \T1/cmt
-t/m/n/12 seed:job-categories\T1/ptm/m/n/12 ,
- []
-
 [8] [9]
 Underfull \hbox (badness 2318) in paragraph at lines 309--309
 []|\T1/ptm/m/n/12 Database & Trans-ac-tion In-
  []
 
 [10]
-LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <10.95> not available
+LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <10> not available
 (Font)              Font shape `OT1/ptm/b/n' tried instead on input line 339.
-LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <8> not available
+LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <7.4> not available
 (Font)              Font shape `OT1/ptm/b/n' tried instead on input line 339.
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <6> not available
 (Font)              Font shape `OT1/ptm/b/n' tried instead on input line 339.
- [11] [12] [13] [14] [15] [16] [17] (Report5_Test_Documentation.aux)
+ [11] [12] [13] [14] [15] [16] [17]
+(C:\Users\ASUS\.gemini\antigravity\brain\901340cd-a084-4162-b242-505e8cef7a07\s
+cratch\build_r5_final\Report5_Test_Documentation.aux)
  ***********
 LaTeX2e <2025-11-01>
 L3 programming layer <2025-12-24>
@@ -700,16 +651,16 @@ ged.
 (rerunfilecheck)             Checksum: F4DCB793DAC6F74ABBCDE9CCDBE02894;4326.
  ) 
 Here is how much of TeX's memory you used:
- 12944 strings out of 467871
- 204843 string characters out of 5418860
+ 12945 strings out of 467871
+ 206133 string characters out of 5418860
  635199 words of memory out of 5000000
  41594 multiletter control sequences out of 15000+600000
- 684933 words of font info for 124 fonts, out of 8000000 for 9000
+ 684932 words of font info for 124 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 75i,12n,79p,890b,670s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 75i,12n,79p,926b,670s stack positions out of 10000i,1000n,20000p,200000b,200000s
  <C:\Users\ASUS\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ectt0
 800.pk> <C:\Users\ASUS\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\
-ectt1095.pk> <C:\Users\ASUS\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dp
+ectt1000.pk> <C:\Users\ASUS\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dp
 i600\ectt1200.pk><C:/Users/ASUS/AppData/Local/Programs/MiKTeX/fonts/type1/publi
 c/amsfonts/cm/cmmi10.pfb><C:/Users/ASUS/AppData/Local/Programs/MiKTeX/fonts/typ
 e1/public/amsfonts/cm/cmsy10.pfb><C:/Users/ASUS/AppData/Local/Programs/MiKTeX/f
@@ -717,9 +668,11 @@ onts/type1/public/amsfonts/symbols/msam10.pfb><C:/Users/ASUS/AppData/Local/Prog
 rams/MiKTeX/fonts/type1/urw/times/utmb8a.pfb><C:/Users/ASUS/AppData/Local/Progr
 ams/MiKTeX/fonts/type1/urw/times/utmr8a.pfb><C:/Users/ASUS/AppData/Local/Progra
 ms/MiKTeX/fonts/type1/urw/times/utmri8a.pfb>
-Output written on Report5_Test_Documentation.pdf (18 pages, 231018 bytes).
+Output written on C:\Users\ASUS\.gemini\antigravity\brain\901340cd-a084-4162-b2
+42-505e8cef7a07\scratch\build_r5_final\Report5_Test_Documentation.pdf (18 pages
+, 231703 bytes).
 PDF statistics:
- 413 PDF objects out of 1000 (max. 8388607)
+ 414 PDF objects out of 1000 (max. 8388607)
  54 named destinations out of 1000 (max. 500000)
  246 words of extra memory for PDF output out of 10000 (max. 10000000)
 

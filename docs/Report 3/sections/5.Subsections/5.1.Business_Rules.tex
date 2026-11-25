@@ -47,12 +47,12 @@
     BR-PORT-06 & Portfolio title remains a required field. \\ \hline
     BR-PORT-07 & Portfolio deletion must be a soft delete (updating the deleted\_at column). \\ \hline
     BR-PORT-08 & Soft-deleted portfolios must not be visible to clients or guests. \\ \hline
-    BR-FORUM-01 & Only categories with is\_active = TRUE shall be displayed. \\ \hline
+    BR-FORUM-01 & Only categories with deletedAt = NULL shall be displayed. \\ \hline
     BR-FORUM-02 & Category information displayed includes name and description. \\ \hline
-    BR-FORUM-03 & Only categories with is\_active = TRUE shall be accessible. \\ \hline
+    BR-FORUM-03 & Only categories with deletedAt = NULL shall be accessible. \\ \hline
     BR-FORUM-04 & Category information displayed includes name and description. \\ \hline
-    BR-FORUM-05 & Only posts with deleted\_at = NULL shall be displayed. \\ \hline
-    BR-FORUM-06 & Posts with is\_pinned = TRUE shall appear before regular posts. \\ \hline
+    BR-FORUM-05 & Only posts with deletedAt = NULL and moderationStatus = APPROVED shall be publicly displayed. \\ \hline
+    BR-FORUM-06 & Posts can be browsed in ForumTalksView across active, recent, unanswered, or popular feeds. \\ \hline
     BR-FORUM-07 & Posts shall be sorted by created\_at in descending order within each group. \\ \hline
     BR-FORUM-08 & The system shall support pagination for post listings. \\ \hline
     BR-FORUM-09 & Only posts with deleted\_at = NULL shall be displayed. \\ \hline
@@ -62,12 +62,12 @@
     BR-FORUM-13 & Only comments with deleted\_at = NULL shall be displayed. \\ \hline
     BR-FORUM-14 & Comment details shall include content, author, and created\_at information. \\ \hline
     BR-FORUM-15 & Only authenticated users can create posts. \\ \hline
-    BR-FORUM-16 & Every post must belong to exactly one category. \\ \hline
+    BR-FORUM-16 & Each post may optionally link to a valid forum category (or be uncategorized). \\ \hline
     BR-FORUM-17 & Title and content are required fields. \\ \hline
     BR-FORUM-18 & Only the author of a post can edit that post. \\ \hline
-    BR-FORUM-19 & Every post must belong to a valid category. \\ \hline
+    BR-FORUM-19 & Any supplied category\_id must reference an existing non-deleted forum category. \\ \hline
     BR-FORUM-20 & Title and content are required fields. \\ \hline
-    BR-FORUM-21 & Only the author of a post can delete that post. \\ \hline
+    BR-FORUM-21 & Only the post author or an Administrator can soft-delete a post. \\ \hline
     BR-FORUM-22 & Post deletion shall be implemented as a soft delete using the deleted\_at field. \\ \hline
     BR-FORUM-23 & Soft-deleted posts shall not appear in public forum listings. \\ \hline
     BR-FORUM-24 & Only authenticated users can like posts. \\ \hline
@@ -78,13 +78,13 @@
     BR-FORUM-29 & Removing a reaction shall delete the corresponding record from the forum\_likes table. \\ \hline
     BR-FORUM-30 & Only authenticated users can create comments. \\ \hline
     BR-FORUM-31 & Comment content cannot be empty. \\ \hline
-    BR-FORUM-32 & Comment content must contain at least 2 characters. \\ \hline
+    BR-FORUM-32 & Comment content must be a non-empty string of at least 1 character. \\ \hline
     BR-FORUM-33 & Each comment shall be associated with a valid post\_id and user\_id. \\ \hline
     BR-FORUM-34 & Only the owner of a comment can edit it. \\ \hline
     BR-FORUM-35 & Comment content cannot be empty. \\ \hline
-    BR-FORUM-36 & Comment content must contain at least 2 characters. \\ \hline
+    BR-FORUM-36 & Updated comment content must contain at least 1 character. \\ \hline
     BR-FORUM-37 & The system shall record the updated\_at timestamp when a comment is modified. \\ \hline
-    BR-FORUM-38 & Only the owner of a comment can delete it. \\ \hline
+    BR-FORUM-38 & Only the comment owner or an Administrator can delete it. \\ \hline
     BR-FORUM-39 & Comment deletion shall be implemented as a soft delete using the deleted\_at field. \\ \hline
     BR-FORUM-40 & Soft-deleted comments shall not be displayed in normal comment listings. \\ \hline
     BR-FORUM-41 & Only authenticated users can like comments. \\ \hline
@@ -147,7 +147,7 @@
     BR-JA-05 & Maximum Alert Quota: Each freelancer may maintain at most \texttt{MAX\_JOB\_ALERTS\_PER\_USER} (10) job alerts; exceeding 10 alerts is rejected. \\ \hline
     BR-JA-06 & Case-Insensitive Duplicate Criteria Prevention: Alert keywords (trimmed lowercase) and skill sets (sorted lowercase) are normalized per user to block duplicate alert configurations upon creation or update. \\ \hline
     BR-JA-07 & Partial Update Ownership and Criteria Integrity: Updating an alert verifies record ownership, ensures at least one keyword or skill criterion remains configured, and rejects updates that duplicate another existing alert belonging to the same user. \\ \hline
-    BR-JA-08 & Pause and Resume Dispatch Control: Toggling an alert's active state (\texttt{isActive}) immediately pauses or resumes automated notification triggers for that rule while preserving its criteria and quota slot. \\ \hline
+    BR-JA-08 & Active Flag Persistence: Toggling an alert's active state (\texttt{isActive}) persists the paused/active status flag while preserving its criteria and quota slot for matching-job queries. \\ \hline
     BR-JA-09 & Hard Delete and Quota Release: Deleting a job alert permanently removes the record and immediately frees one slot within the freelancer's 10-alert limit. \\ \hline
     BR-JA-10 & Non-Owner Deletion Isolation: Attempting to delete an absent alert or an alert owned by another account is rejected as not found without exposing foreign alert existence. \\ \hline
     BR-PROP-01 & Freelancer Role and Owned Proposal Scope: Only authenticated \texttt{FREELANCER} accounts may list their own submitted and draft proposals, returning strictly non-deleted records owned by the caller with pagination up to 50 items per page. \\ \hline
@@ -183,10 +183,10 @@
  
 
 % Nhuy -- Sprint 1--5 scoped rules
-BR-NH-18-01 & Only an authenticated freelancer submits or reads their own verification status. \\ \hline
-BR-NH-18-02 & At most one active PENDING or APPROVED request is allowed per freelancer. \\ \hline
+BR-NH-18-01 & Only an authenticated Client or Freelancer submits or reads their own verification status. \\ \hline
+BR-NH-18-02 & Approved accounts cannot create duplicate AI eKYC submissions; submissions with a duplicate verified \texttt{identityNumber} are automatically recorded as \texttt{REJECTED}. \\ \hline
 BR-NH-18-03 & Documents are confidential; storage delivery and file endpoints must enforce authorization. \\ \hline
-BR-NH-18-04 & AI success creates PENDING for administrator review; AI rejection records REJECTED with a reason. AI transport failure must not create a successful request. \\ \hline
+BR-NH-18-04 & AI \texttt{VERIFIED} without duplicates creates \texttt{PENDING} for administrator review; AI \texttt{REJECTED}/\texttt{RETRY} records \texttt{REJECTED} with notes. AI transport failure (503/504) throws an error without creating a document. \\ \hline
 BR-NH-18-05 & Rejected users may resubmit after correcting the stated problem. NOT\_SUBMITTED is displayed when API status is null. \\ \hline
 BR-NH-19-01 & Public client output contains approved company and profile fields, never password hashes, payment tokens or private identity documents. \\ \hline
 BR-NH-19-02 & Only the authenticated Client updates their own company; the server derives the user ID from authentication. \\ \hline
@@ -211,7 +211,7 @@ BR-NH-30-03 & Mark-read sets isRead=true; mark-all affects only the recipient un
 BR-NH-30-04 & Deletion is a soft delete and updates the displayed list and unread count. \\ \hline
 BR-NH-31-01 & Switch only to a role already assigned to the authenticated user. \\ \hline
 BR-NH-31-02 & Self-enrollment permits only Client or Freelancer; reject unsupported roles and duplicate UserRole mappings. \\ \hline
-BR-NH-31-03 & Maintain exactly one active primary role for an account; role-context changes issue updated session tokens. \\ \hline
+BR-NH-31-03 & Maintain one active primary \texttt{roleId} on the User record; role-context switches and enrollments return an updated JWT \texttt{accessToken}. \\ \hline
 BR-NH-31-04 & Switching roles does not create a second user account or grant access to other users records. \\ \hline
 BR-NH-39-01 & Only contract participants can list or view contract reviews. \\ \hline
 BR-NH-39-02 & A review can be created only after the contract is COMPLETED, for the other party. \\ \hline
@@ -251,46 +251,46 @@ BR-NH-CV-05 & Deleting a CV clears its metadata and triggers a search-index upda
     BR-CT-01 & Only users authenticated with the \texttt{CLIENT} role shall create new contracts. \\ \hline
     BR-CT-02 & Total contract budget shall strictly match the aggregate sum of all defined milestone amounts. \\ \hline
     BR-CT-03 & Creating a contract locks the linked proposal, preventing duplicate contracts on the same proposal. \\ \hline
-    BR-CT-04 & The contract shall be initialized in \texttt{PENDING} status until signed by both contract parties. \\ \hline
-    BR-CT-05 & Modifying contract terms shall automatically invalidate any existing signatures, setting \texttt{signed\allowbreak By\allowbreak Freelancer = false} and \texttt{signedByClient = false}. \\ \hline
-    BR-CT-06 & Active, completed, or cancelled contracts cannot be modified directly. \\ \hline
-    BR-CT-07 & A contract can only transition to \texttt{COMPLETED} when 100\% of its milestones have been released and no dispute is open. \\ \hline
+    BR-CT-04 & The contract shall be initialized in \texttt{AWAITING\_PAYMENT} status, moving to \texttt{PENDING\_SIGN} once the escrow hold is authorized. \\ \hline
+    BR-CT-05 & Updating editable contract terms, amount, or expiry date persists changes prior to activation without automatically resetting existing signature flags. \\ \hline
+    BR-CT-06 & Active, completed, cancelled, rejected, or expired contracts cannot be modified directly. \\ \hline
+    BR-CT-07 & A contract can only transition to \texttt{COMPLETED} when 100\% of its milestones have been settled and no dispute is open. \\ \hline
     BR-CT-08 & Completed contracts are permanently closed from further deliverable submissions or financial adjustments. \\ \hline
-    BR-CT-09 & Contract completion triggers automatic opening of the reciprocal 14-day review window. \\ \hline
+    BR-CT-09 & Submitted milestones enter a 7-day client review timeout window before eligible automation settlement. \\ \hline
     BR-CT-10 & Clients and Freelancers shall only see contracts in which they are a verified participant. \\ \hline
-    BR-CT-11 & Administrators shall have platform-wide access to view and inspect all contracts. \\ \hline
-    BR-CT-12 & Strict data isolation ensures only authorized parties (Client, Freelancer, Admin) can view contract details. \\ \hline
+    BR-CT-11 & Administrators may inspect contract details and files via read-only API authorization. \\ \hline
+    BR-CT-12 & Strict data isolation ensures only authorized parties (Client, Freelancer, and Admin read endpoints) can view contract details. \\ \hline
     BR-CT-13 & Contract financial figures must dynamically reflect verified ledger transactions. \\ \hline
-    BR-CT-14 & A contract transitions to \texttt{ACTIVE} only when both parties have signed and platform fee is settled. \\ \hline
-    BR-CT-15 & Digital signing generates an immutable contract PDF audit document with cryptographic integrity. \\ \hline
+    BR-CT-14 & A contract transitions to \texttt{ACTIVE} only after both parties sign sequentially (Client first, then Freelancer with Stripe Connect \texttt{payoutsEnabled}) and the authorized hold intent is captured. \\ \hline
+    BR-CT-15 & Contract export generates a formatted PDF summary stored inside the contract's shared files. \\ \hline
     BR-CT-16 & The exported PDF must display exact contractual terms, milestones, and platform fees at the time of export. \\ \hline
     BR-CT-17 & If the contract is signed, the PDF must render verified signature blocks with signing timestamps. \\ \hline
     BR-CT-18 & Only non-deleted files (\texttt{deletedAt = null}) belonging to the contract shall be returned. \\ \hline
     BR-CT-19 & Contract file access is strictly restricted to contract participants and system administrators. \\ \hline
     BR-CT-20 & Maximum individual file upload size shall be 25MB. \\ \hline
     BR-CT-21 & Uploaded contract files shall be associated with the uploader's user ID for audit ownership. \\ \hline
-    BR-CT-22 & Only the original file uploader or an Administrator shall delete a shared file. \\ \hline
-    BR-CT-23 & Files cited in active arbitration disputes are locked from deletion until dispute resolution. \\ \hline
+    BR-CT-22 & Only the original file uploader can delete a shared file (within 1 hour of upload). \\ \hline
+    BR-CT-23 & Shared contract files can only be deleted by the uploader within the 1-hour expiry window (\texttt{SharedFileDeleteExpiredException}). \\ \hline
     BR-CT-24 & Only the assigned Freelancer can reject a pending contract offer. \\ \hline
     BR-CT-25 & Rejecting a contract immediately voids any active Stripe escrow authorization hold with \$0 fee. \\ \hline
     BR-CT-26 & A rejected contract offer cannot be reinstated; the Client must create a new contract proposal. \\ \hline
     BR-UA-01 & Google OAuth shall follow standard OAuth 2.0 authorization code grant with secure PKCE/state verification. \\ \hline
-    BR-UA-02 & New users authenticated via Google OAuth shall be automatically registered with the \texttt{Client} role and \texttt{isEmailVerified = true}. \\ \hline
-    BR-UA-03 & Suspended or banned accounts shall be denied access and notified with an administrative contact notice. \\ \hline
-    BR-UA-04 & Issued JWT tokens shall be stored exclusively in secure, \texttt{httpOnly}, \texttt{SameSite=Lax} cookies. \\ \hline
+    BR-UA-02 & New users authenticated via Google OAuth shall be automatically provisioned with the \texttt{CLIENT} role. \\ \hline
+    BR-UA-03 & Banned accounts shall be denied access with an administrative notice. \\ \hline
+    BR-UA-04 & Issued JWT tokens are managed through secure HTTP-only cookies and Bearer authorization headers. \\ \hline
     BR-UA-05 & Passwords must be verified using bcrypt comparison with salted hashes. \\ \hline
-    BR-UA-06 & Error responses shall use a generic message ``Invalid email or password'' to mitigate account enumeration. \\ \hline
-    BR-UA-07 & Unverified accounts shall be rejected with a notice prompting verification completion. \\ \hline
-    BR-UA-08 & Suspended accounts shall be denied access across all client interfaces. \\ \hline
-    BR-UA-09 & Logout must invalidate the database session record before clearing browser cookies. \\ \hline
+    BR-UA-06 & Login differentiates unknown email (\texttt{Error.IncorrectEmail}, HTTP 401) from wrong password (\texttt{Error.IncorrectPassword}, HTTP 422). \\ \hline
+    BR-UA-07 & Registration validates a valid email OTP before persisting the new user account. \\ \hline
+    BR-UA-08 & Banned accounts shall be denied access across protected routes. \\ \hline
+    BR-UA-09 & Logout verifies and deletes the refresh-token session row before clearing browser session tokens. \\ \hline
     BR-UA-10 & Terminated sessions shall be rejected on all subsequent API requests. \\ \hline
     BR-UA-11 & Email addresses must be globally unique across all accounts. \\ \hline
-    BR-UA-12 & The user must explicitly choose an initial role; default assignment is forbidden. \\ \hline
+    BR-UA-12 & The registration DTO restricts role selection to \texttt{CLIENT} or \texttt{FREELANCER}. \\ \hline
     BR-UA-13 & Passwords must be hashed with bcrypt prior to persistence. \\ \hline
-    BR-UA-14 & OTP codes expire after 10 minutes and can only be validated once. \\ \hline
-    BR-UA-15 & System must return identical confirmation text whether the email is registered or not (anti-enumeration). \\ \hline
-    BR-UA-16 & Reset tokens expire exactly 1 hour following issuance. \\ \hline
-    BR-UA-17 & Successful reset terminates all existing sessions for the target account. \\ \hline
+    BR-UA-14 & OTP codes expire after the configured \texttt{OTP\_EXPIRES\_IN} duration and are deleted once verified. \\ \hline
+    BR-UA-15 & Forgot password validates that the email exists (\texttt{EmailNotFoundException} 422 if absent) before issuing an OTP. \\ \hline
+    BR-UA-16 & Resetting a password validates the 6-digit \texttt{FORGOT\_PASSWORD} OTP before consumption and deletion. \\ \hline
+    BR-UA-17 & Resetting a password updates \texttt{User.password} without automatically revoking existing device sessions. \\ \hline
     BR-RM-01 & Role management is strictly restricted to authenticated Administrators. \\ \hline
     BR-RM-02 & Soft-deleted roles shall be excluded from the active list. \\ \hline
     BR-RM-03 & Soft-deleted roles cannot be viewed in detail mode. \\ \hline
@@ -307,15 +307,15 @@ BR-NH-CV-05 & Deleting a CV clears its metadata and triggers a search-index upda
     BR-MS-04 & Deliverable specifications and acceptance criteria are legally binding once the milestone is funded. \\ \hline
     BR-MS-05 & Milestone submissions history must preserve all revision cycles for audit traceability. \\ \hline
     BR-MS-06 & Adding a milestone dynamically updates total contract budget commitments. \\ \hline
-    BR-MS-07 & Newly created milestones are initialized with status \texttt{PENDING} and payment status \texttt{UNPAID}. \\ \hline
+    BR-MS-07 & Newly created milestones are initialized with status \texttt{PENDING} and payment status \texttt{PENDING}. \\ \hline
     BR-MS-08 & Milestones that have already been funded in escrow cannot be modified without formal cancellation or refund. \\ \hline
-    BR-MS-09 & Funded milestones cannot be deleted; they must be refunded or completed. \\ \hline
-    BR-MS-10 & Deleting a milestone reduces the aggregate contract budget commitment. \\ \hline
-    BR-MS-15 & Freelancers can only transition milestones to \texttt{IN\_PROGRESS} after the client has funded escrow. \\ \hline
+    BR-MS-09 & Funded milestones cannot be deleted; only non-held \texttt{PENDING} milestones when more than one exists can be deleted. \\ \hline
+    BR-MS-10 & Creating a milestone validates that total milestone amounts do not exceed the contract total amount without altering \texttt{Contract.totalAmount}; deleting a milestone retains the contract total. \\ \hline
+    BR-MS-15 & Freelancers can only sequentially advance funded milestones to \texttt{IN\_PROGRESS}. \\ \hline
     BR-MSF-01 & Only non-deleted files associated with the milestone shall be displayed. \\ \hline
     BR-MSF-02 & Maximum milestone file attachment size is 25MB. \\ \hline
     BR-MSF-03 & Uploaded files are tagged with uploader ID for ownership tracking. \\ \hline
-    BR-MSF-04 & Deliverable files attached to already completed milestones cannot be deleted. \\ \hline
+    BR-MSF-04 & Only the file uploader (as a contract participant) may delete an uploaded milestone file. \\ \hline
     BR-MSS-01 & Submitting deliverables transitions milestone status to \texttt{SUBMITTED} and activates the client review countdown. \\ \hline
     BR-MSS-02 & Submissions create an immutable audit record preserving files and notes for dispute protection. \\ \hline
     BR-MSS-04 & Submission history records shall remain accessible throughout the contract lifecycle. \\ \hline
@@ -369,17 +369,17 @@ BR-NH-CV-05 & Deleting a CV clears its metadata and triggers a search-index upda
     BR-DISPUTE-03 & A maximum of 5 evidence files can be uploaded during the initial dispute claim. \\ \hline
     BR-DISPUTE-04 & Strict tenant-level isolation prevents users from browsing disputes outside their own contracts. \\ \hline
     BR-DISPUTE-05 & Disputes with active response deadlines must display dynamic real-time countdown badges. \\ \hline
-    BR-DISPUTE-06 & Case evidence and claims are strictly accessible only to direct case participants, designated administrators, and assigned experts. \\ \hline
+    BR-DISPUTE-06 & Case evidence and claims are strictly accessible only to direct dispute participants (\texttt{openedById} or \texttt{respondentId}) on participant endpoints, and active Experts on escalated cases. \\ \hline
     BR-DISPUTE-07 & Milestones linked to active disputes must prominently display dispute banners and disable standard milestone submission, modification, and approval buttons. \\ \hline
-    BR-DISPUTE-08 & Only the designated respondent can submit a formal response. \\ \hline
-    BR-DISPUTE-09 & A respondent is allowed exactly one rebuttal submission per dispute case. \\ \hline
-    BR-DISPUTE-10 & Submitting a valid response moves the dispute status to \texttt{UNDER\_REVIEW}. \\ \hline
-    BR-DISPUTE-11 & Only the original opener can withdraw a dispute. \\ \hline
-    BR-DISPUTE-12 & Withdrawing a dispute releases the escrow freeze and restores standard milestone operation. \\ \hline
-    BR-DISPUTE-13 & Escalation elevates the dispute to the platform expert arbitration pool. \\ \hline
-    BR-DISPUTE-14 & Expert arbitration decisions are final and binding on both contract parties. \\ \hline
-    BR-DISPUTE-15 & Only users with verified Expert or Admin roles can access the Expert Dispute List. \\ \hline
-    BR-DISPUTE-16 & Experts cannot view or arbitrate disputes involving contracts where they have an active conflict of interest. \\ \hline
+    BR-DISPUTE-08 & Only the designated respondent can respond to the dispute. \\ \hline
+    BR-DISPUTE-09 & A respondent responds using \texttt{ACCEPT} (immediately finalizing the dispute) or \texttt{DECLINE} (transitioning to \texttt{UNDER\_REVIEW}). \\ \hline
+    BR-DISPUTE-10 & Declining a dispute proposal or escalating an overdue waiting dispute moves its status to \texttt{UNDER\_REVIEW}. \\ \hline
+    BR-DISPUTE-11 & Only the original opener can withdraw a dispute while in \texttt{OPEN} or \texttt{WAITING\_RESPONSE} status (\texttt{CANCELLED}). \\ \hline
+    BR-DISPUTE-12 & Withdrawing a dispute releases the escrow freeze and restores the previous milestone status. \\ \hline
+    BR-DISPUTE-13 & Escalation elevates a declined or overdue dispute to \texttt{UNDER\_REVIEW} for expert arbitration. \\ \hline
+    BR-DISPUTE-14 & Expert arbitration decisions (\texttt{FINALIZED}) are final and binding on both contract parties. \\ \hline
+    BR-DISPUTE-15 & Only users holding the \texttt{EXPERT} role (with an active Expert profile) can access \texttt{/api/expert/disputes}. \\ \hline
+    BR-DISPUTE-16 & Expert arbitration assignments use active \texttt{Expert} records without automated category or conflict-of-interest filtering. \\ \hline
     BR-DISPUTE-17 & Experts must have access to symmetric evidence from both parties to ensure unbiased evaluation. \\ \hline
     BR-DISPUTE-18 & The sum of awarded amounts must mathematically equal 100\% of the disputed milestone escrow funds. \\ \hline
     BR-DISPUTE-19 & Expert arbitration rulings are irrevocable and trigger immediate automated financial settlement. \\ \hline
@@ -391,7 +391,7 @@ BR-NH-CV-05 & Deleting a CV clears its metadata and triggers a search-index upda
     BR-USER-05 & Role filtering supports built-in roles, \texttt{CUSTOM} (matching any custom role), and specific custom role names. \\ \hline
     BR-USER-06 & The \texttt{clientProfile}, \texttt{freelancerProfile}, and \texttt{expertProfile} fields may be \texttt{null} if the user does not possess the corresponding role or has not initialized that profile. \\ \hline
     BR-USER-07 & The \texttt{customRoleProfiles} array contains only roles outside the built-in Client, Freelancer, and Admin roles. \\ \hline
-    BR-USER-08 & Each assigned role includes an \texttt{isPrimary} flag indicating whether it serves as the user's default active role. \\ \hline
+    BR-USER-08 & Each assigned role in the role list identifies a built-in or custom role; the user's primary active role is stored in \texttt{User.roleId}. \\ \hline
     BR-USER-09 & The email address is automatically converted to lowercase before storage and must be at most 254 characters. \\ \hline
     BR-USER-10 & Email uniqueness is enforced among all active accounts (\texttt{deletedAt = null}). \\ \hline
     BR-USER-11 & Passwords must be hashed with bcrypt prior to storage; plaintext passwords are never persisted. \\ \hline

@@ -13,7 +13,7 @@
   \item \textbf{Guest (Unauthenticated Visitor):} Explores public job postings, reviews top-rated freelancer and expert portfolios, browses open community discussions, and executes self-service onboarding or sign-in flows.
   \item \textbf{Freelancer (Independent Talent):} Curates comprehensive multi-faceted profiles, uploads resumes for AI parsing, completes eKYC identity verification, submits bids on posted jobs, negotiates milestone contracts, submits deliverables, and receives payments via Stripe Connect.
   \item \textbf{Client (Employer / Enterprise Buyer):} Manages organization profiles, authors detailed job requisitions, evaluates incoming freelancer proposals, enters into binding milestone contracts, deposits escrow funds, approves deliverables, and submits ratings.
-  \item \textbf{Expert (Specialist Consultant):} Operates within an exclusive consultation workspace (\texttt{/expert/\allowbreak profile}), submits credentials for administrative revision approvals, and delivers high-tier advisory services.
+  \item \textbf{Expert (Specialist Consultant):} Uses the consultant portal (\texttt{/admin/\allowbreak{}disputes}, \texttt{/admin/\allowbreak{}profile}) to review escalated milestone disputes in their domain and issue final binding rulings.
   \item \textbf{Administrator (System Governor):} Exercises unrestricted governance across the dedicated \texttt{/admin} portal: orchestrating dynamic RBAC role-permission assignments, administering multi-profile user directories, maintaining system-wide master catalogs (Skills, Job Categories, Forum Categories), moderating community content, approving eKYC submissions, and mediating milestone dispute arbitrations.
 \end{itemize}
 
@@ -42,7 +42,7 @@ The Authentication and Session Management module delivers defense-in-depth secur
 \begin{enumerate}[leftmargin=1.8em,itemsep=3pt]
   \item \rbadge{1} \textbf{Enter Full Name (\textit{Full name}):} Type the legal or professional full name into the \textit{Full name} field (maximum 100 characters, e.g., \texttt{Nguyen Tien Thuan}).
   \item \rbadge{2} \textbf{Enter Email Address (\textit{Email address}):} Type a valid personal or business email address into the \textit{Email address} field.
-  \item \rbadge{3} \textbf{Enter Password (\textit{Password}):} Type a strong password (minimum 6 characters). Users may click the eye icon on the right to toggle password visibility.
+  \item \rbadge{3} \textbf{Enter Password (\textit{Password}):} Type a strong password (minimum 8 characters, maximum 32 characters, containing at least one uppercase letter and one numeric digit). Users may click the eye icon on the right to toggle password visibility.
   \item \rbadge{4} \textbf{Confirm Password (\textit{Confirm password}):} Retype the exact password entered in step 3 to prevent typographical errors.
   \item \rbadge{5} \textbf{Request Verification OTP (\textit{Send OTP}):} Click the blue \textbf{Send OTP} button adjacent to the OTP field. The server generates a cryptographic 6-digit code, stores it in the PostgreSQL \texttt{VerificationCode} table with an expiration window (\texttt{OTP\_EXPIRES\_IN}), dispatches it via Gmail SMTP, and enforces rate-limit cooldown tracking.
   \item \rbadge{6} \textbf{Enter Verification OTP (\textit{OTP code}):} Inspect the email inbox, copy the 6-digit verification code, and enter it into the \textit{OTP code} field.
@@ -57,7 +57,7 @@ The Authentication and Session Management module delivers defense-in-depth secur
 
 \paragraph{Expected Output \& Exception Handling:}
 \begin{itemize}[leftmargin=1.5em,itemsep=2pt]
-  \item \textbf{Success Scenario:} The server provisions a new \texttt{User} record, links the chosen role (\texttt{FREELANCER} or \texttt{CLIENT}), flags \texttt{isEmailVerified = true}, presents a green success toast notification, and navigates to \texttt{/login}.
+  \item \textbf{Success Scenario:} The server verifies and removes the consumed OTP record, provisions a new \texttt{User} record linked to the chosen role (\texttt{FREELANCER} or \texttt{CLIENT}), presents a green success toast notification, and navigates to \texttt{/login}.
   \item \textbf{Exception Scenarios:}
     \begin{itemize}
       \item If the email is already registered, an error toast displays: \textit{"Email already exists in the system"}.
@@ -86,7 +86,7 @@ The Authentication and Session Management module delivers defense-in-depth secur
 \begin{enumerate}[leftmargin=1.8em,itemsep=3pt]
   \item \rbadge{1} \textbf{Enter Registered Email (\textit{Email}):} Input the account email into the \textit{Email} field (e.g., \texttt{admin@gmail.com} or \texttt{freelancer@gmail.com}).
   \item \rbadge{2} \textbf{Enter Password (\textit{Password}):} Input the account password into the \textit{Password} field.
-  \item \rbadge{3} \textbf{Toggle Persistent Session (\textit{Remember me}):} Check the \textit{Remember me} checkbox to extend session persistence across browser restarts.
+  \item \rbadge{3} \textbf{Optional Form Checkbox (\textit{Remember me}):} Toggle the \textit{Remember me} checkbox on the login form (note: actual session lifetime is governed by the server-issued \texttt{HttpOnly} refresh token policy).
   \item \rbadge{4} \textbf{Password Recovery Link (\textit{Forgot password?}):} If credentials have been forgotten, click the \textit{Forgot password?} link to initiate the recovery flow.
   \item \rbadge{5} \textbf{Click Sign In (\textit{Sign in}):} Click the blue \textbf{Sign in} button to authenticate.
 \end{enumerate}
@@ -154,7 +154,7 @@ The Authentication and Session Management module delivers defense-in-depth secur
   \item \rbadge{1} \textbf{Enter Account Email (\textit{Email address}):} Type the registered email into the \textit{Email address} field.
   \item \rbadge{2} \textbf{Request Reset OTP (\textit{Send OTP}):} Click the blue \textbf{Send OTP} button to dispatch a reset code to the mailbox.
   \item \rbadge{3} \textbf{Enter Verification OTP (\textit{OTP code}):} Retrieve the 6-digit code from the received email and input it into the \textit{OTP code} field.
-  \item \rbadge{4} \textbf{Enter New Password (\textit{New password}):} Type the replacement password (minimum 6 characters).
+  \item \rbadge{4} \textbf{Enter New Password (\textit{New password}):} Type the replacement password (8 to 32 characters, including at least one uppercase letter and one digit).
   \item \rbadge{5} \textbf{Confirm New Password (\textit{Confirm new password}):} Retype the new password to ensure consistency.
   \item \rbadge{6} \textbf{Submit Password Reset (\textit{Reset password}):} Click the blue \textbf{Reset password} button to commit changes.
   \item \rbadge{7} \textbf{Return to Sign In Link (\textit{Back to sign in}):} Click \textbf{Back to sign in} to return to \texttt{/login} without resetting.
@@ -162,7 +162,7 @@ The Authentication and Session Management module delivers defense-in-depth secur
 
 \paragraph{Expected Output \& Exception Handling:}
 \begin{itemize}[leftmargin=1.5em,itemsep=2pt]
-  \item \textbf{Success Scenario:} The server validates the OTP against the \texttt{VerificationCode} table, re-hashes the new password with bcrypt, invalidates existing active sessions for security, displays a confirmation toast, and redirects to \texttt{/login}.
+  \item \textbf{Success Scenario:} The server validates the OTP against the \texttt{VerificationCode} table, re-hashes the new password with bcrypt, deletes the consumed verification code, displays a confirmation toast, and redirects to \texttt{/login} (existing remote sessions can also be managed manually under \texttt{/sessions}).
   \item \textbf{Exception Scenarios:} If the OTP is invalid or expired, the submission is rejected with an explicit error alert.
 \end{itemize}
 
@@ -186,7 +186,7 @@ The Authentication and Session Management module delivers defense-in-depth secur
 \begin{enumerate}[leftmargin=1.8em,itemsep=3pt]
   \item Navigate to \texttt{/sessions} (e.g., \url{http://localhost:3003/sessions}) from the user settings menu.
   \item \rbadge{1} \textbf{Filter Sessions by Device / IP (\textit{Search input}):} Type a browser name, operating system, or IP address into the search box to dynamically filter listed records.
-  \item \rbadge{2} \textbf{Inspect Active Session Records (\textit{Sessions table}):} Review session attributes across columns: \textit{Device / Browser} (detected User-Agent), \textit{IP Address}, \textit{Location}, \textit{Created} timestamp, and \textit{Status} (the active browser instance displays a blue \textbf{Current Session} badge).
+  \item \rbadge{2} \textbf{Inspect Active Session Records (\textit{Sessions table}):} Review session attributes across columns: \textit{Device / Browser} (detected User-Agent), \textit{IP Address}, \textit{Created} timestamp, and \textit{Status} (the active browser instance displays a blue \textbf{Current Session} badge).
   \item \rbadge{3} \textbf{Revoke Remote Session Button (\textit{Trash icon}):} Click the red trash icon on any remote session row to disconnect that specific device.
 \end{enumerate}
 
@@ -241,8 +241,8 @@ The Authentication and Session Management module delivers defense-in-depth secur
 
 \paragraph{Step-by-Step User Instructions:}
 \begin{enumerate}[leftmargin=1.8em,itemsep=3pt]
-  \item \rbadge{1} \textbf{Inspect User Profile Summary:} In the lower left section of the sidebar navigation, observe the authenticated identity card showing Avatar, Full Name (\texttt{admin}), Email (\texttt{admin@gmail.com}), and role badge.
-  \item \rbadge{2} \textbf{Click Sign Out Button (\textit{Logout icon}):} Click the red exit icon located on the right side of the identity card.
+  \item {\sloppy \rbadge{1} \textbf{Open Account Profile Menu:} Locate the user avatar/account menu in the navigation bar (top-right profile menu in the Admin Portal, or in the Client/Freelancer portal) showing the signed-in identity and email.\par}
+  \item \rbadge{2} \textbf{Click Sign Out Button (\textit{Log out}):} Select the \textbf{Log out} action to terminate the active session.
 \end{enumerate}
 
 \paragraph{Expected Output \& Exception Handling:}

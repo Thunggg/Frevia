@@ -38,7 +38,7 @@ A freelancer opens the ``Saved Searches'' tab on Find Work or navigates to the s
 \sublabel{Data Processing Overview}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
     \item Client dispatches \texttt{GET /api/saved-searches} with optional query params \texttt{search} and \texttt{order} (\texttt{asc} or \texttt{desc}, default \texttt{desc}).
-    \item Backend \texttt{AuthGuard} identifies \texttt{userId} from the JWT token; \texttt{SavedSearchRepository.findAllByUserId()} queries strictly \texttt{where: \{ userId \}} and filters by case-insensitive substring on \texttt{name} if supplied.
+    \item {\sloppy Backend \texttt{AuthGuard} identifies \texttt{userId} from the JWT token; \texttt{SavedSearch\allowbreak{}Repository.\allowbreak{}findAll\allowbreak{}ByUserId()} queries \texttt{where: \{ userId \}} and filters case-insensitively on \texttt{name} if supplied.\par}
     \item Returns array of \texttt{SavedSearch} records ordered by \texttt{createdAt}.
 \end{itemize}
 
@@ -131,7 +131,7 @@ A freelancer navigates to the detail page of a specific saved search.\newline
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
     \item Client dispatches \texttt{GET /api/saved-searches/:id} with positive integer path ID parsed by \texttt{ParseIntPipe}.
     \item Backend invokes \texttt{SavedSearchRepository.findByIdAndUserId(id, userId)}.
-    \item Returns \texttt{SavedSearch} entity if found and owned; throws \texttt{SavedSearchNotFoundException} (HTTP 404) otherwise.
+    \item {\sloppy Returns \texttt{SavedSearch} entity if found and owned; throws \texttt{Saved\allowbreak{}Search\allowbreak{}NotFound\allowbreak{}Exception} (HTTP 404) otherwise.\par}
 \end{itemize}
 
 \fnhead{Screen Layout (Mock-up Description)}
@@ -386,7 +386,7 @@ A freelancer opens ``Job Alerts'' from the navigation or profile settings.\newli
 \end{itemize}
 
 \sublabel{Purpose}
-\noindent Displays all automated job alerts configured by the freelancer alongside quota usage (\texttt{used/10 alerts}), keywords, skill tags, trigger frequency, delivery channels, active switch state, and matching jobs shortcuts.
+\noindent Displays all job alert configurations saved by the freelancer alongside quota usage (\texttt{used/10 alerts}), keywords, skill tags, preferred frequency, delivery channels, active switch state, and Find Work shortcuts.
 
 \sublabel{Interface}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
@@ -398,7 +398,7 @@ A freelancer opens ``Job Alerts'' from the navigation or profile settings.\newli
 \sublabel{Data Processing Overview}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
     \item Client requests \texttt{GET /api/job-alerts}.
-    \item Backend enforces \texttt{roleName === 'FREELANCER'} (\texttt{JobAlertOnlyForFreelancerException} HTTP 403 otherwise).
+    \item {\sloppy Backend enforces \texttt{roleName === 'FREELANCER'} (\texttt{JobAlert\allowbreak{}OnlyFor\allowbreak{}Freelancer\allowbreak{}Exception} HTTP 403 otherwise).\par}
     \item Repository retrieves all \texttt{JobAlert} rows matching \texttt{userId} ordered chronologically descending.
 \end{itemize}
 
@@ -485,9 +485,9 @@ A freelancer inspects an alert or clicks ``View matching jobs'' on a job alert c
 
 \sublabel{Data Processing Overview}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-    \item Detail lookup (\texttt{GET /api/job-alerts/:id}) and matching preview (\texttt{GET /api/job-alerts/:id/matching-jobs}) both validate \texttt{FREELANCER} role and \texttt{findByIdAndUserId(id, userId)}.
+    \item Detail lookup (\texttt{GET /api/job-alerts/:id}) and matching preview (\texttt{GET /api/job-alerts/:id/matching-jobs}) both validate \texttt{FREELANCER} role and \texttt{findByIdAndUserId(id, userId)}; in the current implementation, automated background dispatch is not active, so \texttt{lastSentAt} remains \texttt{null} and these endpoints operate on demand at the API layer.
     \item Matching endpoint executes \texttt{findMatchingJobs(userId, alert.keywords, alert.skills, 5)} querying up to 5 active open jobs.
-    \item Clicking ``View matching jobs'' navigates to Find Work pre-filtered with the alert's keyword and skill query parameters.
+    \item Clicking ``View matching jobs'' navigates to \texttt{/freelancer/find-work} with \texttt{keyword} and \texttt{skills} query parameters (note: the Find Work page currently filters by \texttt{keyword} and ignores \texttt{skills}).
 \end{itemize}
 
 \fnhead{Screen Layout (Mock-up Description)}
@@ -572,7 +572,7 @@ A freelancer clicks ``+ Create Job Alert'' on the Job Alerts page.\newline
 
 \sublabel{Data Processing Overview}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-    \item Client submits \texttt{POST /api/job-alerts} validated by \texttt{CreateJobAlertBodySchema.strict()}.
+    \item {\sloppy Client submits \texttt{POST /\allowbreak{}api/\allowbreak{}job-\allowbreak{}alerts} validated by \texttt{CreateJobAlertBodySchema.strict()}.\par}
     \item Backend enforces \texttt{FREELANCER} role, then verifies \texttt{countByUserId(userId) < 10}.
     \item Normalizes \texttt{keywords} (trimmed lowercase) and \texttt{skills} (trimmed, lowercased, sorted) to reject duplicate alert criteria for the same user.
     \item Inserts \texttt{JobAlert} with \texttt{isActive = true} and returns HTTP 201/200.
@@ -698,7 +698,7 @@ Payload & Optional partial fields: \texttt{name}, \texttt{keywords}, \texttt{ski
 \sublabel{Business Rules}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
     \item BR-JA-07: Partial Update Ownership and Criteria Integrity: Updating an alert verifies record ownership, ensures at least one keyword or skill criterion remains configured, and rejects updates that duplicate another existing alert belonging to the same user.
-    \item BR-JA-08: Pause and Resume Dispatch Control: Toggling an alert's active state (\texttt{isActive}) immediately pauses or resumes automated notification triggers for that rule while preserving its criteria and quota slot.
+    \item BR-JA-08: Pause and Resume State Control: Toggling an alert's active state (\texttt{isActive}) immediately persists the paused/active configuration state while preserving its criteria and quota slot (intended to gate scheduled delivery once a background dispatcher is enabled).
 \end{itemize}
 
 \sublabel{Normal Flow}
@@ -748,7 +748,7 @@ A freelancer clicks the red trash icon button on a job alert card and confirms d
 \end{itemize}
 
 \sublabel{Purpose}
-\noindent Permanently deletes an alert subscription owned by the freelancer, halting future notifications for that rule and immediately reclaiming 1 slot in the 10-alert quota.
+\noindent Permanently deletes an alert configuration owned by the freelancer, immediately reclaiming 1 slot in the 10-alert quota.
 
 \sublabel{Interface}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]

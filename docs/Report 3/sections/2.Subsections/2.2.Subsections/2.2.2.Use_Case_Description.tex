@@ -40,9 +40,9 @@ UC-06.01 & View Roles List & Admin & Retrieve list of all roles along with their
 \hline
 UC-06.02 & View Role Details & Admin & View detailed information of a specific role including its permissions. \\
 \hline
-UC-06.03 & Create Role & Admin & Create a new role with name, description, and a list of permission IDs. \\
+UC-06.03 & Create Role & Admin & Create a new role with name and optional description. \\
 \hline
-UC-06.04 & Update Role & Admin & Update a role's name, description, and replace all assigned permissions. \\
+UC-06.04 & Update Role & Admin & Update a custom role's name or description. \\
 \hline
 UC-06.05 & Delete Role & Admin & Delete a role from the system. \\
 \hline
@@ -86,7 +86,7 @@ UC-10 & Job Browsing & Guest, Client, Freelancer & Enables users to browse, filt
 \hline
 UC-10.01 & View Jobs List & Guest, Client, Freelancer & Retrieve paginated job list with filters (category, budget, skills, status, keywords) and sorting options. \\
 \hline
-UC-10.02 & View Job Details & Guest, Client, Freelancer & Get full job details: title, description, budget, skills, client info, proposals count, attachments, and timeline. \\
+UC-10.02 & View Job Details & Guest, Client, Freelancer & Get full job details: title, description, budget, skills, client info, proposals count, and deadline. \\
 \hline
 UC-11 & Job Management & Client & Manages client job postings across draft, published, updated, closed, reopened, and deleted states. \\
 \hline
@@ -116,9 +116,9 @@ UC-13 & Contract Management & Client, Freelancer, Admin & Manages contractual ag
 \hline
 UC-13.01 & Create Contract & Client & Allows clients to create and initiate a new contract with a freelancer. \\
 \hline
-UC-13.02 & Update Contract & Client & Allows clients to update contract terms, budget, milestones, or deadlines before signing. \\
+UC-13.02 & Update Contract & Client & Allows clients to update contract total amount, terms, or expiry date before signing. \\
 \hline
-UC-13.03 & Complete Contract & Client, Freelancer & Marks an active contract as completed after all milestones are approved and settled. \\
+UC-13.03 & Complete Contract & Client & Marks an active contract as completed after all milestones are approved and settled. \\
 \hline
 UC-13.04 & View Contracts List & Client, Freelancer, Admin & Retrieves paginated list of contracts with status filters and sorting. \\
 \hline
@@ -136,7 +136,7 @@ UC-13.10 & Upload Contract File & Client, Freelancer & Allows users to upload do
 \hline
 UC-13.11 & Delete Contract File & Client, Freelancer, Admin & Allows the uploader or admin to delete files from a contract workspace. \\
 \hline
-UC-13.12 & Reject Contract Offer & Freelancer & Allows a freelancer to formally decline an offered contract with a mandatory decline reason. \\
+UC-13.12 & Reject Contract Offer & Freelancer & Allows a freelancer to formally decline an offered contract with an optional decline reason. \\
 \hline
 UC-14 & Forum Management & Guest, Client, Freelancer, Admin & Manages community forum browsing, posts, comments, likes, and content reporting. \\
 \hline
@@ -148,9 +148,9 @@ UC-14.03 & View Posts List & Guest, Client, Freelancer, Admin & Retrieves pagina
 \hline
 UC-14.04 & View Post Details & Guest, Client, Freelancer, Admin & Displays full post content, author info, creation date, and associated tags. \\
 \hline
-UC-14.05 & Create Post & Client, Freelancer & Allows authenticated users to create new discussion posts or questions in the forum. \\
+UC-14.05 & Create Post & Client, Freelancer, Admin & Allows authenticated users to create new discussion posts or questions in the forum. \\
 \hline
-UC-14.06 & Update Post & Client, Freelancer & Allows post authors to edit their own forum posts. \\
+UC-14.06 & Update Post & Client, Freelancer, Admin & Allows post authors to edit their own forum posts. \\
 \hline
 UC-14.07 & Delete Post & Client, Freelancer, Admin & Allows post owners or admins to soft-delete a forum post. \\
 \hline
@@ -162,7 +162,7 @@ UC-14.10 & View Post Likes & Guest, Client, Freelancer, Admin & Retrieves the li
 \hline
 UC-14.11 & View Post Comments & Guest, Client, Freelancer, Admin & Retrieves all comments related to a specific forum post. \\
 \hline
-UC-14.12 & Create Comment & Client, Freelancer & Allows authenticated users to add comments to a forum post. \\
+UC-14.12 & Create Comment & Client, Freelancer, Admin & Allows authenticated users to add comments to a forum post. \\
 \hline
 UC-14.13 & Update Comment & Client, Freelancer & Allows comment owners to edit their own comments. \\
 \hline
@@ -184,7 +184,7 @@ UC-16 & Session Management & Client, Freelancer, Expert, Admin & Manages active 
 \hline
 UC-16.01 & View Sessions List & Client, Freelancer, Expert, Admin & View a list of active login sessions. \\
 \hline
-UC-16.02 & View Session Details & Client, Freelancer, Expert, Admin & View login session information (device, IP address, login time, approximate location, etc.). \\
+UC-16.02 & View Session Details & Client, Freelancer, Expert, Admin & View login session information (device, IP address, login time, expiry). \\
 \hline
 UC-16.03 & Revoke Session & Client, Freelancer, Expert, Admin & Log out of a specific device remotely. \\
 \hline
@@ -202,11 +202,11 @@ UC-17.05 & View Forum Category Details & Admin & Allows admins to view the detai
 \hline
 UC-17.06 & Restore Forum Category & Admin & Restore a deleted forum category by setting deletedAt back to null. \\
 \hline
-UC-18 & Identity Verification & Freelancer & Manages freelancer identity verification document submission and status tracking. \\
+UC-18 & Identity Verification & Client, Freelancer & Manages identity verification document submission and status tracking. \\
 \hline
-UC-18.01 & Upload Identity Documents & Freelancer & Validate the active-request constraint, securely store the submitted evidence, and record the verification outcome for review. \\
+UC-18.01 & Upload Identity Documents & Client, Freelancer & Validate the caller role and approved state, securely store the submitted evidence, and record the verification outcome for review. \\
 \hline
-UC-18.02 & View Verification Status & Freelancer & Return the latest verification state and submission history with rejection notes where present. \\
+UC-18.02 & View Verification Status & Client, Freelancer & Return the latest verification state and submission history with rejection notes where present. \\
 \hline
 UC-19 & Client Profile Management & Guest, Client, Freelancer, Expert & Manages public viewing and client editing of company profile information. \\
 \hline
@@ -240,13 +240,13 @@ UC-22.03 & Create Saved Search & Freelancer & Save current job search query para
 \hline
 UC-22.04 & Delete Saved Search & Freelancer & Delete an owned saved search preset. \\
 \hline
-UC-23 & Job Alert Management & Freelancer & Manages automated job alert subscriptions and notification schedules. \\
+UC-23 & Job Alert Management & Freelancer & Manages saved job alert criteria and matching-job queries. \\
 \hline
 UC-23.01 & View Job Alerts List & Freelancer & Retrieve all configured job alerts for the authenticated freelancer. \\
 \hline
 UC-23.02 & View Job Alert Details & Freelancer & Display configuration, frequency, and criteria of a specific job alert. \\
 \hline
-UC-23.03 & Create Job Alert & Freelancer & Create a new job alert rule based on keywords, category, skills, and frequency. \\
+UC-23.03 & Create Job Alert & Freelancer & Create a new job alert rule based on keywords, skills, frequency, and channels. \\
 \hline
 UC-23.04 & Update Job Alert & Freelancer & Modify notification frequency, status, or filter criteria of an existing job alert. \\
 \hline
@@ -264,7 +264,7 @@ UC-24.04 & Update Milestone & Client & Allows clients to modify milestone scope,
 \hline
 UC-24.05 & Delete Milestone & Client & Enables clients to remove unfunded draft milestones from a contract. \\
 \hline
-UC-24.06 & Update Milestone Progress & Freelancer & Allows freelancers to update ongoing progress percentage and status indicators for an active milestone. \\
+UC-24.06 & Update Milestone Progress & Freelancer & Allows freelancers to advance funded milestones sequentially into \texttt{IN\_PROGRESS}. \\
 \hline
 UC-25 & Milestone File Management & Client, Freelancer, Admin & Manages deliverable file exchanges, attachments, and artifact storage for project milestones. \\
 \hline
@@ -272,7 +272,7 @@ UC-25.01 & View Milestone Files & Client, Freelancer, Admin & Retrieves and down
 \hline
 UC-25.02 & Upload Milestone File & Client, Freelancer & Allows users to upload deliverable files and documentation with format and size validation. \\
 \hline
-UC-25.03 & Delete Milestone File & Client, Freelancer, Admin & Enables authorized users to delete uploaded files from a milestone workspace before submission. \\
+UC-25.03 & Delete Milestone File & Client, Freelancer & Enables the file uploader to delete uploaded files from a milestone workspace. \\
 \hline
 UC-26 & Milestone Submission Management & Client, Freelancer, Admin & Manages formal milestone deliverable submissions, client reviews, revision requests, and approvals. \\
 \hline
@@ -306,7 +306,7 @@ UC-27.08 & Send File & Client, Freelancer & Upload and send file attachments wit
 \hline
 UC-28 & User Management & Admin & Manages administrative directory viewing, account creation, editing, and multi-profile administration. \\
 \hline
-UC-28.01 & View Users List & Admin & Retrieve paginated user directory with role, status, and keyword filters. \\
+UC-28.01 & View Users List & Admin & Retrieve paginated user directory with role, sorting, and keyword filters. \\
 \hline
 UC-28.02 & View User Details & Admin & Inspect full user account metadata, roles, standing, and linked profiles. \\
 \hline
@@ -316,7 +316,7 @@ UC-28.04 & Update User & Admin & Update user status (active/banned), roles, and 
 \hline
 UC-28.05 & Update Client Profile & Admin & Administratively update a user's Client profile and company attributes. \\
 \hline
-UC-28.06 & Update Freelancer Basic Info & Admin & Administratively update a freelancer's headline, bio, hourly rate, and basic profile fields. \\
+UC-28.06 & Update Freelancer Basic Info & Admin & Administratively update a freelancer's professional title and biography. \\
 \hline
 UC-28.07 & Update Freelancer Skills & Admin & Administratively add, edit, or remove skills linked to a freelancer profile. \\
 \hline
@@ -344,7 +344,7 @@ UC-30.04 & Delete Notification & Client, Freelancer, Expert, Admin & Set deleted
 \hline
 UC-31 & Role Switching and Enrollment & Client, Freelancer & Manages switching active workspace roles and enrolling in complementary roles. \\
 \hline
-UC-31.01 & Switch Role & Client, Freelancer & Change the active primary role to an already assigned role and issue updated authentication tokens. \\
+UC-31.01 & Switch Role & Client, Freelancer & Change the active primary role to an already assigned role and issue an updated access token. \\
 \hline
 UC-31.02 & Join New Role & Client, Freelancer & Enroll in an allowed new role without duplicating the account or granting administrator privileges. \\
 \hline
@@ -354,59 +354,59 @@ UC-32.01 & View My Proposals List & Freelancer & Retrieve paginated proposals su
 \hline
 UC-32.02 & View My Proposal Details & Freelancer & Display full bid amount, cover letter, delivery timeline, and status of an owned proposal. \\
 \hline
-UC-32.03 & Submit Proposal & Freelancer & Submit a new job proposal with proposed budget, timeline, cover letter, and attachments. \\
+UC-32.03 & Submit Proposal & Freelancer & Submit a new job proposal with bid amount, delivery days, and cover letter. \\
 \hline
-UC-32.04 & Update Proposal & Freelancer & Edit a pending or draft proposal before client review. \\
+UC-32.04 & Update Proposal & Freelancer & Edit a draft or submitted proposal before client decision. \\
 \hline
 UC-32.05 & Withdraw Proposal & Freelancer & Withdraw a submitted proposal from client consideration. \\
 \hline
-UC-32.06 & Accept Proposal & Client & Accept a freelancer's proposal and initiate contract creation for the job. \\
+UC-32.06 & Accept Proposal & Client & Accept a freelancer's proposal and prepare contract creation for the job. \\
 \hline
 UC-32.07 & Reject Proposal & Client & Decline a submitted proposal and notify the applicant. \\
 \hline
 UC-32.08 & View Job Proposals List & Client & List all incoming freelancer proposals submitted to a client-owned job. \\
 \hline
-UC-32.09 & View Proposal Details & Client & Inspect a candidate freelancer's submitted proposal, cover letter, and attachments. \\
+UC-32.09 & View Proposal Details & Client & Inspect a candidate freelancer's submitted proposal, bid details, and cover letter. \\
 \hline
-UC-33 & Dispute Management & Client, Freelancer, Admin, Expert & Manages formal dispute arbitration on funded milestones, evidence submission, and expert escalation. \\
+UC-33 & Dispute Management & Client, Freelancer, Expert & Manages formal dispute arbitration on funded milestones, evidence submission, and expert escalation. \\
 \hline
 UC-33.01 & Open Dispute & Client, Freelancer & Allows a client or freelancer to initiate a formal dispute on a funded milestone with evidence. \\
 \hline
-UC-33.02 & View Disputes List & Client, Freelancer, Admin, Expert & Retrieves paginated overview of dispute cases with status filtering and countdown deadlines. \\
+UC-33.02 & View Disputes List & Client, Freelancer & Retrieves paginated overview of participant dispute cases with status filtering. \\
 \hline
-UC-33.03 & View Dispute Details & Client, Freelancer, Admin, Expert & Displays full dispute case records, claims, symmetric evidence timeline, and financial escrow audit. \\
+UC-33.03 & View Dispute Details & Client, Freelancer & Displays full dispute case records, claims, and uploaded evidence files to dispute participants. \\
 \hline
-UC-33.04 & View Dispute by Milestone & Client, Freelancer, Admin & Inspects dispute status directly linked to a specific milestone to display contextual warning banners. \\
+UC-33.04 & View Dispute by Milestone & Client, Freelancer & Inspects dispute status directly linked to a specific milestone for contract participants. \\
 \hline
-UC-33.05 & Respond to Dispute & Client, Freelancer & Allows the respondent to submit a rebuttal statement and counter-evidence within the response window. \\
+UC-33.05 & Respond to Dispute & Client, Freelancer & Allows the respondent to accept or decline a dispute resolution proposal. \\
 \hline
-UC-33.06 & Withdraw Dispute & Client, Freelancer & Allows the initiating party to voluntarily withdraw a dispute before an arbitration ruling is rendered. \\
+UC-33.06 & Withdraw Dispute & Client, Freelancer & Allows the initiating party to voluntarily withdraw a waiting dispute (\texttt{CANCELLED}) before escalation. \\
 \hline
-UC-33.07 & Escalate Dispute to Expert & Client, Freelancer, Admin & Escalates an unresolved dispute to a specialized industry expert for neutral professional evaluation. \\
+UC-33.07 & Escalate Dispute to Expert & Client, Freelancer & Escalates a declined or overdue dispute to expert review (\texttt{UNDER\_REVIEW}). \\
 \hline
-UC-33.08 & View Expert Disputes List & Expert, Admin & Displays specialized arbitration queue for expert arbitrators with category and priority filtering. \\
+UC-33.08 & View Expert Disputes List & Expert & Displays specialized arbitration queue for expert arbitrators (\texttt{EXPERT} role). \\
 \hline
-UC-33.09 & View Expert Dispute Details & Expert, Admin & Provides expert arbitrators with a dedicated review console for symmetric evidence inspection. \\
+UC-33.09 & View Expert Dispute Details & Expert & Provides expert arbitrators with a dedicated review console for evidence inspection. \\
 \hline
-UC-33.10 & Expert Make Dispute Decision & Expert, Admin & Renders the final binding arbitration decision with fund split percentages and legal reasoning. \\
+UC-33.10 & Expert Make Dispute Decision & Expert & Renders the final binding arbitration decision (\texttt{FINALIZED}) with fund distribution amounts and reasoning. \\
 \hline
-UC-34 & Moderation Management & Admin & Manages administrative moderation queue for flagged posts, comments, and reports. \\
+UC-34 & Moderation Management & Admin & Manages administrative moderation queue for pending posts and community reports. \\
 \hline
-UC-34.01 & View Moderation Queue & Admin & Retrieve pending moderation items and community abuse reports with priority and type filters. \\
+UC-34.01 & View Moderation Queue & Admin & Retrieve pending forum posts and community abuse reports. \\
 \hline
-UC-34.02 & View Moderation Item Details & Admin & Inspect reported content context, AI moderation score, reporter notes, and author history. \\
+UC-34.02 & View Moderation Item Details & Admin & Inspect loaded post or report content, AI moderation score/categories, and context. \\
 \hline
-UC-34.03 & Resolve Moderation Item & Admin & Approve, dismiss, hide, or remove reported content and record administrative resolution notes. \\
+UC-34.03 & Resolve Moderation Item & Admin & Approve or reject pending forum posts, or update report statuses (\texttt{REVIEWED}/\texttt{RESOLVED}/\texttt{DISMISSED}). \\
 \hline
-UC-35 & ID Verification Review & Admin & Manages administrative review and decisioning of freelancer eKYC verification submissions. \\
+UC-35 & ID Verification Review & Admin & Manages administrative review and decisioning of user eKYC verification submissions. \\
 \hline
-UC-35.01 & View ID Verification Requests List & Admin & List pending and historical freelancer eKYC verification requests with AI screening status. \\
+UC-35.01 & View ID Verification Requests List & Admin & List pending and historical user eKYC verification requests. \\
 \hline
-UC-35.02 & View ID Verification Request Details & Admin & Inspect submitted identity document images, selfie checks, AI liveness summary, and duplicate flags. \\
+UC-35.02 & View ID Verification Request Details & Admin & Inspect submitted front and back identity document images and review notes. \\
 \hline
-UC-35.03 & Approve ID Verification & Admin & Approve a freelancer's identity verification request and grant the verified badge. \\
+UC-35.03 & Approve ID Verification & Admin & Approve a user's identity verification request and grant verified status. \\
 \hline
-UC-35.04 & Reject ID Verification & Admin & Reject an identity verification submission with a mandatory explanatory rejection reason. \\
+UC-35.04 & Reject ID Verification & Admin & Reject an identity verification submission with optional review notes. \\
 \hline
 UC-36 & Forum Trash Management & Admin & Manages inspection and restoration of soft-deleted forum posts and comments. \\
 \hline
@@ -442,11 +442,11 @@ UC-38.05 & Delete Skill & Admin & Soft-delete a skill from active catalog select
 \hline
 UC-38.06 & Restore Skill & Admin & Restore a soft-deleted skill back into the active skills catalog. \\
 \hline
-UC-39 & Review Management & Guest, Client, Freelancer, Admin & Manages post-contract ratings and detailed feedback reviews. \\
+UC-39 & Review Management & Client, Freelancer & Manages post-contract ratings and detailed feedback reviews for contract participants. \\
 \hline
-UC-39.01 & View Reviews List & Guest, Client, Freelancer, Admin & Retrieve reviews and active responses for a contract or profile after verifying access. \\
+UC-39.01 & View Reviews List & Client, Freelancer & Retrieve reviews and active responses for a completed contract after verifying participation. \\
 \hline
-UC-39.02 & View Review Details & Guest, Client, Freelancer, Admin & Retrieve one review and response after verifying contract participation. \\
+UC-39.02 & View Review Details & Client, Freelancer & Retrieve one review and response after verifying contract participation. \\
 \hline
 UC-39.03 & Write Review & Client, Freelancer & Create one review of the other participant in a completed contract and notify that participant. \\
 \hline
@@ -478,7 +478,7 @@ UC-43 & Payment Management & Client, Freelancer, Admin & Handles platform financ
 \hline
 UC-43.01 & Connect Stripe Account & Freelancer & Generates a Stripe Connect Express onboarding link to link a freelancer's bank account for payouts. \\
 \hline
-UC-43.02 & Check Stripe Connect Status & Freelancer, Admin & Synchronizes and verifies freelancer onboarding status, capability activation, and payout readiness. \\
+UC-43.02 & Check Stripe Connect Status & Freelancer & Synchronizes and verifies freelancer onboarding status, capability activation, and payout readiness. \\
 \hline
 UC-43.03 & View Saved Payment Methods & Client & Displays customer saved cards and payment methods with card brand, last 4 digits, and expiration date. \\
 \hline
@@ -496,11 +496,11 @@ UC-43.09 & Release Milestone Escrow Payment & Client, System & Authorizes the tr
 \hline
 UC-43.10 & View Payment Transactions History & Client, Freelancer, Admin & Retrieves a comprehensive, paginated financial ledger of all deposits, releases, fees, and transfers. \\
 \hline
-UC-43.11 & Sync Payment Intent Status & Admin, System & Polls and reconciles pending authorization states of PaymentIntents directly with Stripe. \\
+UC-43.11 & Sync Payment Intent Status & Client, System & Polls and reconciles pending authorization states of PaymentIntents directly with Stripe. \\
 \hline
-UC-43.12 & Sync Checkout Session Status & Admin, System & Verifies completion of hosted Checkout Sessions and synchronizes milestone escrow status. \\
+UC-43.12 & Sync Checkout Session Status & Client, System & Verifies completion of hosted Checkout Sessions and synchronizes milestone escrow status. \\
 \hline
-UC-43.13 & Handle Stripe Webhook Events & Admin, Stripe, System & Listens for and verifies cryptographic webhook signatures to process asynchronous Stripe events idempotently. \\
+UC-43.13 & Handle Stripe Webhook Events & Stripe, System & Listens for and verifies cryptographic webhook signatures to process asynchronous Stripe events. \\
 \hline
 UC-44.01 & Moderate Content by AI & Client, Freelancer & Automatically evaluate forum posts and comments using AI moderation scoring and classification. \\
 \hline

@@ -22,12 +22,12 @@ The actor selects Upload Identity Documents.\newline
 
 \sublabel{Actors / Roles}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-    \item \textbf{Primary Actor:} Freelancer.
+    \item \textbf{Primary Actor:} Client, Freelancer.
     \item \textbf{Supporting Systems:} Frevia Web (Next.js), Frevia BFF proxy, Frevia REST API (NestJS), Prisma ORM, and PostgreSQL database.
 \end{itemize}
 
 \sublabel{Purpose}
-\noindent Validate the active-request constraint, securely store the submitted evidence, and record the verification outcome for review.
+\noindent Validate the caller role and approved state, securely store the submitted evidence, and record the verification outcome for review.
 
 \sublabel{Interface}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
@@ -61,7 +61,7 @@ The actor selects Upload Identity Documents.\newline
 documentType & Supported identity-document type.\\ \hline
 front / back & Document images; both sides where required by document type.\\ \hline
 selfie / liveness & Selfie and captured liveness frames for the AI path.\\ \hline
-document file & Manual-path JPEG, PNG, WebP or PDF; maximum 5 MB under the identity business rule.\\ \hline
+document file & Manual-path JPEG, PNG, or PDF; maximum 10 MB under \texttt{AccountProfileService.uploadIdentityDocument}.\\ \hline
 \end{specdatatable}
 
 \sublabel{Validation Rules}
@@ -71,10 +71,10 @@ document file & Manual-path JPEG, PNG, WebP or PDF; maximum 5 MB under the ident
 
 \sublabel{Business Rules}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
-    \item BR-1801-01: Only an authenticated freelancer submits or reads their own verification status.
-    \item BR-1801-02: At most one active PENDING or APPROVED request is allowed per freelancer.
+    \item BR-1801-01: Only an authenticated Client or Freelancer submits or reads their own verification status.
+    \item BR-1801-02: Approved accounts cannot submit another AI verification; duplicate verified \texttt{identityNumber} records are saved as \texttt{REJECTED}.
     \item BR-1801-03: Documents are confidential; storage delivery and file endpoints must enforce authorization.
-    \item BR-1801-04: AI success creates PENDING for administrator review; AI rejection records REJECTED with a reason. AI transport failure must not create a successful request.
+    \item BR-1801-04: AI \texttt{VERIFIED} without duplicates creates \texttt{PENDING} for administrator review; AI \texttt{REJECTED}/\texttt{RETRY} records \texttt{REJECTED} with a reason. AI transport failure throws an error without creating a row.
 \end{itemize}
 
 \sublabel{Normal Flow}
@@ -82,8 +82,8 @@ document file & Manual-path JPEG, PNG, WebP or PDF; maximum 5 MB under the ident
     \item The actor opens \texttt{/\allowbreak{}account-\allowbreak{}profile} (Identity Verification tab) and selects Upload Identity Documents.
     \item The application presents the current values or action confirmation; the actor supplies the required data and submits.
     \item The API checks authentication where required, authorization, resource existence and input validity.
-    \item Validate the active-request constraint, securely store the submitted evidence, and record the verification outcome for review.
-    \item After the transaction succeeds, the screen displays the result and reloads affected data; a pending revision is labeled as awaiting review.
+    \item Validate role/approval eligibility, securely store the submitted evidence, and record the verification outcome for review.
+    \item After the transaction succeeds, the screen displays the submission result and reloads verification history.
 \end{enumerate}
 
 \sublabel{Abnormal Flow / Exception Handling}
@@ -122,7 +122,7 @@ The actor selects View Verification Status.\newline
 
 \sublabel{Actors / Roles}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-    \item \textbf{Primary Actor:} Freelancer.
+    \item \textbf{Primary Actor:} Client, Freelancer.
     \item \textbf{Supporting Systems:} Frevia Web (Next.js), Frevia BFF proxy, Frevia REST API (NestJS), Prisma ORM, and PostgreSQL database.
 \end{itemize}
 
@@ -168,10 +168,10 @@ Identifier & Authenticated user context; no other user ID can replace it.\\ \hli
 
 \sublabel{Business Rules}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
-    \item BR-1802-01: Only an authenticated freelancer submits or reads their own verification status.
-    \item BR-1802-02: At most one active PENDING or APPROVED request is allowed per freelancer.
+    \item BR-1802-01: Only an authenticated Client or Freelancer submits or reads their own verification status.
+    \item BR-1802-02: Approved accounts cannot submit another AI verification; duplicate verified \texttt{identityNumber} records are saved as \texttt{REJECTED}.
     \item BR-1802-03: Documents are confidential; storage delivery and file endpoints must enforce authorization.
-    \item BR-1802-04: AI success creates PENDING for administrator review; AI rejection records REJECTED with a reason. AI transport failure must not create a successful request.
+    \item BR-1802-04: AI \texttt{VERIFIED} without duplicates creates \texttt{PENDING} for administrator review; AI \texttt{REJECTED}/\texttt{RETRY} records \texttt{REJECTED} with a reason. AI transport failure throws an error without creating a row.
 \end{itemize}
 
 \sublabel{Normal Flow}

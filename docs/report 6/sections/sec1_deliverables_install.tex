@@ -45,7 +45,7 @@ Frevia/
 |       `-- Dockerfile        # Multi-stage production container build for Next.js Web
 |-- ai-services/              # Independent FastAPI AI services (id-verification, cv-matching)
 |-- packages/
-|   |-- shared-types/         # Shared Zod schemas, DTOs, Enums across API & Web
+|   |-- shared-type/          # Shared Zod schemas, DTOs, Enums across API & Web (@shared/types)
 |   |-- ui/                   # Shared UI component library (Radix UI / Shadcn UI)
 |   |-- eslint-config/        # Standardized code quality and linting configurations
 |   `-- typescript-config/    # Monorepo-wide TypeScript compilation settings
@@ -171,10 +171,10 @@ The \textbf{Frevia} platform integrates several external cloud APIs to support a
 \rowcolor{hdrfill}\hd{Service Provider} & \hd{Environment Variables} & \hd{Role \& Functional Scope} \\ \hline
 \endhead
 \textbf{Google Identity} & \texttt{GOOGLE\_CLIENT\_ID} \newline \texttt{GOOGLE\_CLIENT\_SECRET} & Google OAuth 2.0 Single Sign-On (SSO) integration. \\ \hline
-\textbf{Gmail SMTP} & \texttt{MAIL\_HOST}, \texttt{MAIL\_PORT} \newline \texttt{MAIL\_USER}, \texttt{MAIL\_PASS} & Transmission of 6-digit email OTPs for registration, password recovery, and notifications. \\ \hline
-\textbf{Cloudinary CDN} & \texttt{CLOUDINARY\_CLOUD\_NAME} \newline \texttt{CLOUDINARY\_API\_KEY} \newline \texttt{CLOUDINARY\_API\_SECRET} & High-performance cloud hosting and image optimization for avatars, portfolios, and job attachments. \\ \hline
-\textbf{Stripe Connect} & \texttt{STRIPE\_SECRET\_KEY} \newline \texttt{STRIPE\_WEBHOOK\_SECRET} & Milestone escrow payment processing, customer checkouts, and automated freelancer payouts. \\ \hline
-\textbf{Containerized AI \& Ollama} & \texttt{AI\_SERVICE\_URL}, \texttt{FREVIA\_AI\_URL} \newline \texttt{OLLAMA\_URL}, \texttt{OLLAMA\_MODEL} & Internal FastAPI services (\texttt{id-verification} for CCCD OCR/liveness and \texttt{cv-matching} with BGE-M3, ChromaDB, and Ollama \texttt{qwen3:4b} for CV extraction and semantic job matching). \\ \hline
+\textbf{Gmail SMTP} & \texttt{EMAIL\_USERNAME} \newline \texttt{EMAIL\_PASSWORD} & Gmail account credentials (\texttt{smtp.gmail.com}) for 6-digit email OTPs and transactional notifications. \\ \hline
+\textbf{Cloudinary CDN} & \texttt{CLOUDINARY\_\allowbreak{}CLOUD\_NAME} \newline \texttt{CLOUDINARY\_\allowbreak{}API\_KEY} \newline \texttt{CLOUDINARY\_\allowbreak{}API\_SECRET} & High-performance cloud hosting and image optimization for avatars, portfolios, and job attachments. \\ \hline
+\textbf{Stripe Connect} & \texttt{STRIPE\_\allowbreak{}SECRET\_KEY} \newline \texttt{STRIPE\_\allowbreak{}WEBHOOK\_SECRET} & Milestone escrow payment processing, customer checkouts, and automated freelancer payouts. \\ \hline
+\textbf{Containerized AI \& Moderation} & \texttt{AI\_SERVICE\_URL}, \texttt{FREVIA\_AI\_URL} \newline \texttt{AI\_MODERATION\_URL} (optional) & Internal FastAPI services (\texttt{id-verification} on \texttt{8001} and \texttt{cv-matching} on \texttt{8000} backed by \texttt{OLLAMA\_URL} inside \texttt{cv-matching}), plus optional external text moderation (\texttt{8002}). \\ \hline
 \end{longtable}
 \end{center}
 
@@ -202,16 +202,17 @@ The \textbf{Frevia} platform integrates several external cloud APIs to support a
 \end{figure}
 
 \begin{itemize}[leftmargin=1.5em,itemsep=3pt]
-  \item \rbadge{1} Navigate to \texttt{apps/api} and duplicate \texttt{.env.example} to create \texttt{.env}. Verify PostgreSQL credentials, JWT secrets, AI service URLs, and external integration keys:
+  \item \rbadge{1} Navigate to \texttt{apps/api} and configure environment variables (either via Infisical CLI or local \texttt{.env}). Verify PostgreSQL credentials, JWT secrets, AI service URLs, and external integration keys:
 \begin{lstlisting}[frame=single,basicstyle=\footnotesize\ttfamily,backgroundcolor=\color{codebg}]
-DATABASE_URL="postgresql://frevia_user:frevia_password@localhost:5432/frevia?schema=public"
-ACCESS_TOKEN_SECRET="frevia_access_token_secret"
-REFRESH_TOKEN_SECRET="frevia_refresh_token_secret"
-AI_SERVICE_URL="http://127.0.0.1:8001"
-FREVIA_AI_URL="http://127.0.0.1:8000"
+DIRECT_URL="postgresql://frevia_user:frevia_password@localhost:5432/frevia?schema=public"
+ACCESS_TOKEN_SECRET="frevia_dev_access_token_secret_change_me"
+REFRESH_TOKEN_SECRET="frevia_dev_refresh_token_secret_change_me"
+AI_SERVICE_URL="http://127.0.0.1:8000"
+FREVIA_AI_URL="http://127.0.0.1:8001"
+AI_MODERATION_URL="http://127.0.0.1:8002"
 PORT=3000
 \end{lstlisting}
-  \item \rbadge{2} Navigate to \texttt{apps/web} and create \texttt{.env}. Configure public and server-side endpoints:
+  \item \rbadge{2} Navigate to \texttt{apps/web} and configure \texttt{.env}. Configure public and server-side endpoints:
 \begin{lstlisting}[frame=single,basicstyle=\footnotesize\ttfamily,backgroundcolor=\color{codebg}]
 APP_URL="http://localhost:3003"
 NESTJS_API_URL="http://backend:3000"
@@ -227,9 +228,9 @@ NEXT_PUBLIC_SOCKET_URL="http://localhost:3002"
   \caption{Generating Prisma Client, executing database migrations, and executing seed scripts}
 \end{figure}
 
-Open the terminal in \texttt{apps/api} (or pass filter flags from the monorepo root) and execute the database lifecycle commands:
+Open the terminal in \texttt{apps/api} (or pass workspace filter \texttt{--filter api} from the monorepo root) and execute the database lifecycle commands:
 \begin{itemize}[leftmargin=1.5em,itemsep=3pt]
-  \item \rbadge{1} Execute \texttt{pnpm --filter @frevia/api prisma generate} to compile the Prisma TypeScript Client.
-  \item \rbadge{2} Execute \texttt{pnpm --filter @frevia/api prisma migrate deploy} to apply all 72 database migrations to the PostgreSQL instance.
-  \item \rbadge{3} Execute \texttt{pnpm --filter @frevia/api seed} to populate default RBAC roles, granular system permissions, pre-configured system admin accounts, master skill catalogs, and sample category dictionaries.
+  \item \rbadge{1} Execute \texttt{pnpm --filter api prisma generate} to compile the Prisma TypeScript Client.
+  \item \rbadge{2} Execute \texttt{pnpm --filter api prisma migrate deploy} to apply all 72 database migrations to the PostgreSQL instance.
+  \item {\sloppy \rbadge{3} Execute \texttt{pnpm --filter api seed} (via Infisical or configured \texttt{SEED\_*\_EMAIL} / \texttt{SEED\_*\_PASSWORD} variables) and \texttt{pnpm --filter api seed:permissions} to populate default RBAC roles, granular permissions, seeded accounts, and catalogs.\par}
 \end{itemize}
