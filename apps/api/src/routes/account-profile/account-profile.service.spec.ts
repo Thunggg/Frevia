@@ -114,9 +114,21 @@ describe('AccountProfileService', () => {
     });
   });
 
-  it('rejects identity verification for a client account', async () => {
+  it('allows identity verification for a client account', async () => {
     repository.findUserWithRoles.mockResolvedValue(
       userWithRole(RoleName.CLIENT),
+    );
+    repository.findIdentityDocuments.mockResolvedValue([]);
+
+    await expect(service.getIdentityStatus(1)).resolves.toEqual({
+      status: null,
+      documents: [],
+    });
+  });
+
+  it('rejects identity verification for an unsupported role account', async () => {
+    repository.findUserWithRoles.mockResolvedValue(
+      userWithRole(RoleName.EXPERT),
     );
 
     await expect(service.getIdentityStatus(1)).rejects.toBeInstanceOf(

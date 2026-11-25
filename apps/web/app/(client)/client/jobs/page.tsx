@@ -32,7 +32,7 @@ export default async function ClientJobsPage({
       search: search?.trim() || undefined,
       status: parsedStatus,
     }),
-    jobServerRequest.getClientJobs({ limit: 100 }).catch(() => null),
+    jobServerRequest.getClientJobs({ limit: 20 }).catch(() => null),
   ]);
 
   return (
