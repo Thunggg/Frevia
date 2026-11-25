@@ -236,80 +236,84 @@
 \contentsline {subsubsection}{\numberline {3.34.6}UC-28.06 -- Update Freelancer Basic Info}{339}{subsubsection.560}%
 \contentsline {subsubsection}{\numberline {3.34.7}UC-28.07 -- Update Freelancer Skills}{341}{subsubsection.563}%
 \contentsline {subsubsection}{\numberline {3.34.8}UC-28.08 -- Update Freelancer Portfolio}{343}{subsubsection.566}%
-\contentsline {subsection}{\numberline {3.35}Review Management}{344}{subsection.569}%
-\contentsline {subsubsection}{\numberline {3.35.1}Class Diagram}{345}{subsubsection.570}%
-\contentsline {subsubsection}{\numberline {3.35.2}UC-39.01 -- View Review List}{346}{subsubsection.572}%
-\contentsline {subsubsection}{\numberline {3.35.3}UC-39.02 -- View Review Detail}{347}{subsubsection.574}%
-\contentsline {subsubsection}{\numberline {3.35.4}UC-39.03 -- Write Review}{348}{subsubsection.576}%
-\contentsline {subsubsection}{\numberline {3.35.5}UC-39.04 -- Update Review}{349}{subsubsection.578}%
-\contentsline {subsubsection}{\numberline {3.35.6}UC-39.05 -- Delete Review}{350}{subsubsection.580}%
-\contentsline {subsection}{\numberline {3.36}Review Response Management}{351}{subsection.582}%
-\contentsline {subsubsection}{\numberline {3.36.1}Class Diagram}{351}{subsubsection.583}%
-\contentsline {subsubsection}{\numberline {3.36.2}UC-40.01 -- Respond to Review}{352}{subsubsection.585}%
-\contentsline {subsubsection}{\numberline {3.36.3}UC-40.02 -- Update Review Response}{353}{subsubsection.587}%
-\contentsline {subsubsection}{\numberline {3.36.4}UC-40.03 -- Delete Review Response}{354}{subsubsection.589}%
-\contentsline {subsection}{\numberline {3.37}Account Profile Management}{355}{subsection.591}%
-\contentsline {subsubsection}{\numberline {3.37.1}Class Diagram}{355}{subsubsection.592}%
-\contentsline {subsubsection}{\numberline {3.37.2}UC-41.01 -- View Profile}{356}{subsubsection.594}%
-\contentsline {subsubsection}{\numberline {3.37.3}UC-41.02 -- Update Profile}{357}{subsubsection.596}%
-\contentsline {subsubsection}{\numberline {3.37.4}UC-41.03 -- Change Password}{358}{subsubsection.598}%
-\contentsline {subsubsection}{\numberline {3.37.5}UC-41.04 -- Upload Avatar}{359}{subsubsection.600}%
-\contentsline {subsection}{\numberline {3.38}Payment Management}{360}{subsection.602}%
-\contentsline {subsubsection}{\numberline {3.38.1}UC-43.01 -- Connect Stripe Account}{360}{subsubsection.603}%
-\contentsline {subsubsection}{\numberline {3.38.2}UC-43.02 -- Check Stripe Connect Status}{361}{subsubsection.606}%
-\contentsline {subsubsection}{\numberline {3.38.3}UC-43.03 -- View Saved Payment Methods}{362}{subsubsection.609}%
-\contentsline {subsubsection}{\numberline {3.38.4}UC-43.04 -- Set Default Payment Method}{363}{subsubsection.612}%
-\contentsline {subsubsection}{\numberline {3.38.5}UC-43.05 -- Remove Saved Payment Method}{364}{subsubsection.615}%
-\contentsline {subsubsection}{\numberline {3.38.6}UC-43.06 -- Create Contract Hold Deposit Intent}{365}{subsubsection.618}%
-\contentsline {subsubsection}{\numberline {3.38.7}UC-43.07 -- Fund Milestone via Stripe Checkout}{367}{subsubsection.621}%
-\contentsline {subsubsection}{\numberline {3.38.8}UC-43.08 -- Fund Milestone with Saved Card}{368}{subsubsection.624}%
-\contentsline {subsubsection}{\numberline {3.38.9}UC-43.09 -- Release Milestone Escrow Payment}{370}{subsubsection.627}%
-\contentsline {subsubsection}{\numberline {3.38.10}UC-43.10 -- View Payment Transactions History}{372}{subsubsection.630}%
-\contentsline {subsubsection}{\numberline {3.38.11}UC-43.11 -- Sync Payment Intent Status}{373}{subsubsection.633}%
-\contentsline {subsubsection}{\numberline {3.38.12}UC-43.12 -- Sync Checkout Session Status}{374}{subsubsection.636}%
-\contentsline {subsubsection}{\numberline {3.38.13}UC-43.13 -- Handle Stripe Webhook Events}{375}{subsubsection.639}%
-\contentsline {subsection}{\numberline {3.39}Banner Management}{375}{subsection.642}%
-\contentsline {subsubsection}{\numberline {3.39.1}UC-37.01 -- View Banner List}{376}{subsubsection.643}%
-\contentsline {subsubsection}{\numberline {3.39.2}UC-37.02 -- View Banner Detail}{378}{subsubsection.646}%
-\contentsline {subsubsection}{\numberline {3.39.3}UC-37.03 -- Create Banner}{380}{subsubsection.649}%
-\contentsline {subsubsection}{\numberline {3.39.4}UC-37.04 -- Update Banner}{382}{subsubsection.652}%
-\contentsline {subsubsection}{\numberline {3.39.5}UC-37.05 -- Delete Banner}{384}{subsubsection.655}%
-\contentsline {subsection}{\numberline {3.40}Skill Management}{385}{subsection.658}%
-\contentsline {subsubsection}{\numberline {3.40.1}UC-38.01 -- View Skill List}{386}{subsubsection.659}%
-\contentsline {subsubsection}{\numberline {3.40.2}UC-38.02 -- View Skill Detail}{388}{subsubsection.662}%
-\contentsline {subsubsection}{\numberline {3.40.3}UC-38.03 -- Create Skill}{390}{subsubsection.665}%
-\contentsline {subsubsection}{\numberline {3.40.4}UC-38.04 -- Update Skill}{392}{subsubsection.668}%
-\contentsline {subsubsection}{\numberline {3.40.5}UC-38.05 -- Delete Skill}{394}{subsubsection.671}%
-\contentsline {subsubsection}{\numberline {3.40.6}UC-38.06 -- Restore Skill}{396}{subsubsection.674}%
-\contentsline {subsection}{\numberline {3.41}Profile Update Review}{397}{subsection.677}%
-\contentsline {subsubsection}{\numberline {3.41.1}Class Diagram}{398}{subsubsection.678}%
-\contentsline {subsubsection}{\numberline {3.41.2}UC-47.01 -- View Pending Profile Update Request List}{399}{subsubsection.680}%
-\contentsline {subsubsection}{\numberline {3.41.3}UC-47.02 -- View Profile Update Request Detail}{400}{subsubsection.682}%
-\contentsline {subsubsection}{\numberline {3.41.4}UC-47.03 -- Approve Profile Update Request}{401}{subsubsection.684}%
-\contentsline {subsubsection}{\numberline {3.41.5}UC-47.04 -- Reject Profile Update Request}{402}{subsubsection.686}%
-\contentsline {subsubsection}{\numberline {3.41.6}UC-47.05 -- View Profile Update Request History}{403}{subsubsection.688}%
-\contentsline {subsection}{\numberline {3.42}Expert Profile Update}{404}{subsection.690}%
-\contentsline {subsubsection}{\numberline {3.42.1}Class Diagram}{404}{subsubsection.691}%
-\contentsline {subsubsection}{\numberline {3.42.2}UC-47.06 -- Update Profile Expert}{405}{subsubsection.693}%
-\contentsline {subsection}{\numberline {3.43}Freelancer CV Management}{406}{subsection.695}%
-\contentsline {subsubsection}{\numberline {3.43.1}Class Diagram}{406}{subsubsection.696}%
-\contentsline {subsubsection}{\numberline {3.43.2}UC-07.03 -- Upload CV}{407}{subsubsection.698}%
-\contentsline {subsubsection}{\numberline {3.43.3}UC-07.04 -- View CV}{408}{subsubsection.700}%
-\contentsline {subsubsection}{\numberline {3.43.4}UC-07.05 -- Replace CV}{409}{subsubsection.702}%
-\contentsline {subsubsection}{\numberline {3.43.5}UC-07.06 -- Delete CV}{410}{subsubsection.704}%
-\contentsline {subsection}{\numberline {3.44}Expert Profile Management}{411}{subsection.706}%
-\contentsline {subsubsection}{\numberline {3.44.1}UC-28.09 -- Update Expert Profile}{411}{subsubsection.707}%
-\contentsline {subsection}{\numberline {3.45}Job Category Management}{412}{subsection.710}%
-\contentsline {subsubsection}{\numberline {3.45.1}UC-46.01 -- View Job Category List}{413}{subsubsection.711}%
-\contentsline {subsubsection}{\numberline {3.45.2}UC-46.02 -- View Job Category Detail}{414}{subsubsection.714}%
-\contentsline {subsubsection}{\numberline {3.45.3}UC-46.03 -- Create Job Category}{415}{subsubsection.717}%
-\contentsline {subsubsection}{\numberline {3.45.4}UC-46.04 -- Update Job Category}{417}{subsubsection.720}%
-\contentsline {subsubsection}{\numberline {3.45.5}UC-46.05 -- Delete Job Category}{419}{subsubsection.723}%
-\contentsline {subsubsection}{\numberline {3.45.6}UC-46.06 -- Restore Job Category}{421}{subsubsection.726}%
-\contentsline {subsection}{\numberline {3.46}Shared Request Processing Sequences}{422}{subsection.729}%
-\contentsline {subsubsection}{\numberline {3.46.1}Verify JWT}{423}{subsubsection.730}%
-\contentsline {subsubsection}{\numberline {3.46.2}Optional JWT for Public Endpoints}{423}{subsubsection.732}%
-\contentsline {subsubsection}{\numberline {3.46.3}Check Permission}{424}{subsubsection.734}%
-\contentsline {subsubsection}{\numberline {3.46.4}Refresh Token}{424}{subsubsection.736}%
-\contentsline {subsubsection}{\numberline {3.46.5}Validate Input}{424}{subsubsection.738}%
-\contentsline {section}{\numberline {4.}Reference}{426}{section.740}%
+\contentsline {subsection}{\numberline {3.35}AI Content Moderation}{345}{subsection.569}%
+\contentsline {subsubsection}{\numberline {3.35.1}UC-44.01 -- Moderate Content by AI}{345}{subsubsection.570}%
+\contentsline {subsection}{\numberline {3.36}AI Face Scan \& Identity Extraction with Duplicate Check}{346}{subsection.573}%
+\contentsline {subsubsection}{\numberline {3.36.1}UC-45.01 -- Scan Face and Detect Duplicate Identity}{346}{subsubsection.574}%
+\contentsline {subsection}{\numberline {3.37}Review Management}{347}{subsection.577}%
+\contentsline {subsubsection}{\numberline {3.37.1}Class Diagram}{348}{subsubsection.578}%
+\contentsline {subsubsection}{\numberline {3.37.2}UC-39.01 -- View Review List}{349}{subsubsection.580}%
+\contentsline {subsubsection}{\numberline {3.37.3}UC-39.02 -- View Review Detail}{350}{subsubsection.582}%
+\contentsline {subsubsection}{\numberline {3.37.4}UC-39.03 -- Write Review}{351}{subsubsection.584}%
+\contentsline {subsubsection}{\numberline {3.37.5}UC-39.04 -- Update Review}{352}{subsubsection.586}%
+\contentsline {subsubsection}{\numberline {3.37.6}UC-39.05 -- Delete Review}{353}{subsubsection.588}%
+\contentsline {subsection}{\numberline {3.38}Review Response Management}{354}{subsection.590}%
+\contentsline {subsubsection}{\numberline {3.38.1}Class Diagram}{354}{subsubsection.591}%
+\contentsline {subsubsection}{\numberline {3.38.2}UC-40.01 -- Respond to Review}{355}{subsubsection.593}%
+\contentsline {subsubsection}{\numberline {3.38.3}UC-40.02 -- Update Review Response}{356}{subsubsection.595}%
+\contentsline {subsubsection}{\numberline {3.38.4}UC-40.03 -- Delete Review Response}{357}{subsubsection.597}%
+\contentsline {subsection}{\numberline {3.39}Account Profile Management}{358}{subsection.599}%
+\contentsline {subsubsection}{\numberline {3.39.1}Class Diagram}{358}{subsubsection.600}%
+\contentsline {subsubsection}{\numberline {3.39.2}UC-41.01 -- View Profile}{359}{subsubsection.602}%
+\contentsline {subsubsection}{\numberline {3.39.3}UC-41.02 -- Update Profile}{360}{subsubsection.604}%
+\contentsline {subsubsection}{\numberline {3.39.4}UC-41.03 -- Change Password}{361}{subsubsection.606}%
+\contentsline {subsubsection}{\numberline {3.39.5}UC-41.04 -- Upload Avatar}{362}{subsubsection.608}%
+\contentsline {subsection}{\numberline {3.40}Payment Management}{363}{subsection.610}%
+\contentsline {subsubsection}{\numberline {3.40.1}UC-43.01 -- Connect Stripe Account}{363}{subsubsection.611}%
+\contentsline {subsubsection}{\numberline {3.40.2}UC-43.02 -- Check Stripe Connect Status}{364}{subsubsection.614}%
+\contentsline {subsubsection}{\numberline {3.40.3}UC-43.03 -- View Saved Payment Methods}{365}{subsubsection.617}%
+\contentsline {subsubsection}{\numberline {3.40.4}UC-43.04 -- Set Default Payment Method}{366}{subsubsection.620}%
+\contentsline {subsubsection}{\numberline {3.40.5}UC-43.05 -- Remove Saved Payment Method}{367}{subsubsection.623}%
+\contentsline {subsubsection}{\numberline {3.40.6}UC-43.06 -- Create Contract Hold Deposit Intent}{368}{subsubsection.626}%
+\contentsline {subsubsection}{\numberline {3.40.7}UC-43.07 -- Fund Milestone via Stripe Checkout}{370}{subsubsection.629}%
+\contentsline {subsubsection}{\numberline {3.40.8}UC-43.08 -- Fund Milestone with Saved Card}{371}{subsubsection.632}%
+\contentsline {subsubsection}{\numberline {3.40.9}UC-43.09 -- Release Milestone Escrow Payment}{373}{subsubsection.635}%
+\contentsline {subsubsection}{\numberline {3.40.10}UC-43.10 -- View Payment Transactions History}{375}{subsubsection.638}%
+\contentsline {subsubsection}{\numberline {3.40.11}UC-43.11 -- Sync Payment Intent Status}{376}{subsubsection.641}%
+\contentsline {subsubsection}{\numberline {3.40.12}UC-43.12 -- Sync Checkout Session Status}{377}{subsubsection.644}%
+\contentsline {subsubsection}{\numberline {3.40.13}UC-43.13 -- Handle Stripe Webhook Events}{378}{subsubsection.647}%
+\contentsline {subsection}{\numberline {3.41}Banner Management}{378}{subsection.650}%
+\contentsline {subsubsection}{\numberline {3.41.1}UC-37.01 -- View Banner List}{379}{subsubsection.651}%
+\contentsline {subsubsection}{\numberline {3.41.2}UC-37.02 -- View Banner Detail}{381}{subsubsection.654}%
+\contentsline {subsubsection}{\numberline {3.41.3}UC-37.03 -- Create Banner}{383}{subsubsection.657}%
+\contentsline {subsubsection}{\numberline {3.41.4}UC-37.04 -- Update Banner}{385}{subsubsection.660}%
+\contentsline {subsubsection}{\numberline {3.41.5}UC-37.05 -- Delete Banner}{387}{subsubsection.663}%
+\contentsline {subsection}{\numberline {3.42}Skill Management}{388}{subsection.666}%
+\contentsline {subsubsection}{\numberline {3.42.1}UC-38.01 -- View Skill List}{389}{subsubsection.667}%
+\contentsline {subsubsection}{\numberline {3.42.2}UC-38.02 -- View Skill Detail}{391}{subsubsection.670}%
+\contentsline {subsubsection}{\numberline {3.42.3}UC-38.03 -- Create Skill}{393}{subsubsection.673}%
+\contentsline {subsubsection}{\numberline {3.42.4}UC-38.04 -- Update Skill}{395}{subsubsection.676}%
+\contentsline {subsubsection}{\numberline {3.42.5}UC-38.05 -- Delete Skill}{397}{subsubsection.679}%
+\contentsline {subsubsection}{\numberline {3.42.6}UC-38.06 -- Restore Skill}{399}{subsubsection.682}%
+\contentsline {subsection}{\numberline {3.43}Profile Update Review}{400}{subsection.685}%
+\contentsline {subsubsection}{\numberline {3.43.1}Class Diagram}{401}{subsubsection.686}%
+\contentsline {subsubsection}{\numberline {3.43.2}UC-47.01 -- View Pending Profile Update Request List}{402}{subsubsection.688}%
+\contentsline {subsubsection}{\numberline {3.43.3}UC-47.02 -- View Profile Update Request Detail}{403}{subsubsection.690}%
+\contentsline {subsubsection}{\numberline {3.43.4}UC-47.03 -- Approve Profile Update Request}{404}{subsubsection.692}%
+\contentsline {subsubsection}{\numberline {3.43.5}UC-47.04 -- Reject Profile Update Request}{405}{subsubsection.694}%
+\contentsline {subsubsection}{\numberline {3.43.6}UC-47.05 -- View Profile Update Request History}{406}{subsubsection.696}%
+\contentsline {subsection}{\numberline {3.44}Expert Profile Update}{407}{subsection.698}%
+\contentsline {subsubsection}{\numberline {3.44.1}Class Diagram}{407}{subsubsection.699}%
+\contentsline {subsubsection}{\numberline {3.44.2}UC-47.06 -- Update Profile Expert}{408}{subsubsection.701}%
+\contentsline {subsection}{\numberline {3.45}Freelancer CV Management}{409}{subsection.703}%
+\contentsline {subsubsection}{\numberline {3.45.1}Class Diagram}{409}{subsubsection.704}%
+\contentsline {subsubsection}{\numberline {3.45.2}UC-07.03 -- Upload CV}{410}{subsubsection.706}%
+\contentsline {subsubsection}{\numberline {3.45.3}UC-07.04 -- View CV}{411}{subsubsection.708}%
+\contentsline {subsubsection}{\numberline {3.45.4}UC-07.05 -- Replace CV}{412}{subsubsection.710}%
+\contentsline {subsubsection}{\numberline {3.45.5}UC-07.06 -- Delete CV}{413}{subsubsection.712}%
+\contentsline {subsection}{\numberline {3.46}Expert Profile Management}{414}{subsection.714}%
+\contentsline {subsubsection}{\numberline {3.46.1}UC-28.09 -- Update Expert Profile}{414}{subsubsection.715}%
+\contentsline {subsection}{\numberline {3.47}Job Category Management}{415}{subsection.718}%
+\contentsline {subsubsection}{\numberline {3.47.1}UC-46.01 -- View Job Category List}{416}{subsubsection.719}%
+\contentsline {subsubsection}{\numberline {3.47.2}UC-46.02 -- View Job Category Detail}{417}{subsubsection.722}%
+\contentsline {subsubsection}{\numberline {3.47.3}UC-46.03 -- Create Job Category}{418}{subsubsection.725}%
+\contentsline {subsubsection}{\numberline {3.47.4}UC-46.04 -- Update Job Category}{420}{subsubsection.728}%
+\contentsline {subsubsection}{\numberline {3.47.5}UC-46.05 -- Delete Job Category}{422}{subsubsection.731}%
+\contentsline {subsubsection}{\numberline {3.47.6}UC-46.06 -- Restore Job Category}{424}{subsubsection.734}%
+\contentsline {subsection}{\numberline {3.48}Shared Request Processing Sequences}{425}{subsection.737}%
+\contentsline {subsubsection}{\numberline {3.48.1}Verify JWT}{426}{subsubsection.738}%
+\contentsline {subsubsection}{\numberline {3.48.2}Optional JWT for Public Endpoints}{426}{subsubsection.740}%
+\contentsline {subsubsection}{\numberline {3.48.3}Check Permission}{427}{subsubsection.742}%
+\contentsline {subsubsection}{\numberline {3.48.4}Refresh Token}{427}{subsubsection.744}%
+\contentsline {subsubsection}{\numberline {3.48.5}Validate Input}{427}{subsubsection.746}%
+\contentsline {section}{\numberline {4.}Reference}{429}{section.748}%
