@@ -24,6 +24,7 @@ import {
   JobCannotBeReopenedException,
   JobNotFoundException,
   JobOnlyForClientException,
+  ClientIdentityNotVerifiedException,
   JobReopenPeriodExpiredException,
   JobCategoryOnlyOneException,
 } from './manage-job.error';
@@ -32,6 +33,7 @@ const mockJob = { id: 5, status: 'OPEN' } as unknown as JobType;
 
 describe('ManageJobService', () => {
   let repository: {
+    isIdentityVerified: jest.Mock;
     createJob: jest.Mock;
     updateJob: jest.Mock;
     deleteJob: jest.Mock;
@@ -57,6 +59,7 @@ describe('ManageJobService', () => {
 
   beforeEach(() => {
     repository = {
+      isIdentityVerified: jest.fn().mockResolvedValue(true),
       createJob: jest.fn().mockResolvedValue(mockJob),
       updateJob: jest.fn().mockResolvedValue(mockJob),
       deleteJob: jest.fn().mockResolvedValue(undefined),
@@ -95,6 +98,16 @@ describe('ManageJobService', () => {
       await expect(
         service.createJob(1, RoleName.FREELANCER, {} as never),
       ).rejects.toThrow(JobOnlyForClientException());
+    });
+    it('throws ClientIdentityNotVerifiedException if client has not verified CCCD', async () => {
+      repository.isIdentityVerified.mockResolvedValueOnce(false);
+
+      await expect(
+        service.createJob(1, RoleName.CLIENT, {} as never),
+      ).rejects.toThrow(ClientIdentityNotVerifiedException());
+
+      expect(repository.createJob).not.toHaveBeenCalled();
+      expect(embeddingOutbox.enqueueAndProcess).not.toHaveBeenCalled();
     });
     it('throws BadRequestException if title is not in English', async () => {
       fastTextService.isEnglish.mockImplementation((text: string) => {

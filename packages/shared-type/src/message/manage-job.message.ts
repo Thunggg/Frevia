@@ -106,5 +106,6 @@ export const ManageJobMessage = {
   FAILED_TO_REOPEN_JOB: "Error.FailedToReopenJob",
 
   JOB_ONLY_FOR_CLIENT: "Error.JobOnlyForClient",
+  IDENTITY_VERIFICATION_REQUIRED: "Error.IdentityVerificationRequired",
   JOB_STATUS_INVALID: "Error.JobStatusInvalid",
 } as const;
