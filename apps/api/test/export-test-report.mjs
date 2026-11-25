@@ -153,11 +153,14 @@ function loadJestResults(tests, resultsPath = null) {
     console.log(`Đọc kết quả Jest từ: ${resultsPath}`);
     rawJson = readFileSync(resultsPath, 'utf8');
   } else {
+    const jsonOutPath = join(tmpdir(), `frevia-jest-results-${process.pid}.json`);
     const args = [
       '--config',
       join(testDir, 'jest-unit.json'),
       '--runInBand',
       '--json',
+      '--outputFile',
+      jsonOutPath,
     ];
 
     const jestBin = join(apiDir, 'node_modules', 'jest', 'bin', 'jest.js');
@@ -170,17 +173,26 @@ function loadJestResults(tests, resultsPath = null) {
     const commandArgs = useLocalJest ? [jestBin, ...args] : ['jest', ...args];
 
     console.log('Đang chạy Jest để lấy kết quả...');
+    const existingNodeOptions = process.env.NODE_OPTIONS ?? '';
+    const nodeOptions = existingNodeOptions.includes('--experimental-vm-modules')
+      ? existingNodeOptions
+      : `${existingNodeOptions} --experimental-vm-modules`.trim();
     const run = spawnSync(command, commandArgs, {
       cwd: apiDir,
       encoding: 'utf8',
       timeout: 10 * 60 * 1000,
+      maxBuffer: 50 * 1024 * 1024,
       shell: !useLocalJest,
+      env: { ...process.env, NODE_OPTIONS: nodeOptions },
     });
 
-    if (!run.stdout) {
-      throw new Error(`Không chạy được Jest: ${run.error?.message ?? ''}`);
+    if (!existsSync(jsonOutPath)) {
+      throw new Error(
+        `Không chạy được Jest: ${run.error?.message ?? run.stderr ?? ''}`,
+      );
     }
-    rawJson = run.stdout;
+    rawJson = readFileSync(jsonOutPath, 'utf8');
+    rmSync(jsonOutPath, { force: true });
   }
 
   const parsed = JSON.parse(rawJson);
@@ -288,6 +300,16 @@ function renderHtml(tests, summary) {
     })
     .join('');
 
+  const ufKeys = [...groups.keys()].sort((a, b) => {
+    const na = Number.parseInt(a.replace(/\D+/g, ''), 10) || 0;
+    const nb = Number.parseInt(b.replace(/\D+/g, ''), 10) || 0;
+    return na - nb;
+  });
+  const ufRange =
+    ufKeys.length > 1
+      ? `${ufKeys[0]} → ${ufKeys[ufKeys.length - 1]}`
+      : (ufKeys[0] ?? 'UF-01 → UF-246');
+
   return `<!doctype html>
 <html lang="vi">
 <head>
@@ -342,7 +364,7 @@ function renderHtml(tests, summary) {
 </head>
 <body>
   <h1>BÁO CÁO UNIT TEST BACKEND — FREVIA</h1>
-  <div class="subtitle">Danh sách kiểm thử đơn vị theo ma trận UF-01 → UF-84 (Report 5 - Unit Test)</div>
+  <div class="subtitle">Danh sách kiểm thử đơn vị theo ma trận ${escapeHtml(ufRange)} (Report 5 - Unit Test)</div>
 
   <div class="meta">
     <span><b>Ngày xuất:</b> ${escapeHtml(today)}</span>
