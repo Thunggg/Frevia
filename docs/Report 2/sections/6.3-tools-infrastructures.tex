@@ -38,7 +38,7 @@ Shared contracts & Shared package containing the validation schemas and the type
 Payments & Escrow funding, release, refunds, dispute settlement, and a signature-verified webhook, all in test mode & Stripe (Connect Express, PaymentIntent, Checkout Session) \\ \hline
 Media storage & Profile and portfolio images; identity documents stored on the application's own storage & Cloudinary \\ \hline
 Email & One-time verification and password reset codes & SMTP, Nodemailer \\ \hline
-External AI services & Curriculum vitae analysis and identity verification, called only from the backend over HTTP with an explicit timeout & External AI APIs \\ \hline
+AI services & Curriculum vitae extraction, semantic job--candidate matching, identity verification, and optional forum moderation via internal HTTP endpoints & FastAPI services (\texttt{cv-matching}, \texttt{id-verification}), Ollama (\texttt{qwen3:4b}) \\ \hline
 Testing & Unit, integration, and end-to-end tests, plus exploratory API checks & Jest 30, Postman \\ \hline
 Quality tooling & Linting, formatting, and strict type checking & ESLint 9, Prettier, TypeScript strict mode \\ \hline
 Secret management & Environment variables injected at start-up; no secret stored in the repository & Infisical \\ \hline

@@ -61,7 +61,7 @@ The Shared Library Layer provides shared definitions and cross-cutting utilities
 
 \subsubsection*{Data Storage}
 \begin{itemize}[leftmargin=*]
-    \item \textbf{PostgreSQL Database:} Stores all persistent platform data across 72 relational domain models and 43 enumerations, maintaining relational integrity with foreign keys, compound indexes, and audit timestamps.
+    \item \textbf{PostgreSQL Database:} Stores all persistent platform data across 71 relational domain models and 43 enumerations, maintaining relational integrity with foreign keys, compound indexes, and audit timestamps.
     \item \textbf{Cloudinary Object Storage:} Dedicated cloud repository storing binary multimedia files, including user profile avatars, citizen identity document photographs (CCCD), candidate resumes, and contract deliverable archives.
 \end{itemize}
 
@@ -73,7 +73,7 @@ The Shared Library Layer provides shared definitions and cross-cutting utilities
     \begin{itemize}[leftmargin=*]
         \item \textit{eKYC ID Verification (\texttt{id-verification}, port 8001):} Employs RapidOCR for card text extraction, InsightFace for biometric facial embeddings, and MediaPipe for liveness detection to detect fraudulent identity documents.
         \item \textit{Section-Aware CV and Job Matching (\texttt{cv-matching}, port 8000):} BGE-M3 embeddings, ChromaDB vector indexing, and local Ollama LLM inference to parse candidate CVs and compute semantic candidate-to-job matching scores.
-        \item \textit{AI Content Moderation (\texttt{ai-moderation}, port 8001):} Automatically scores community forum posts and comments, quarantining toxic or abusive content into the administrative review queue.
+        \item \textit{AI Content Moderation (\texttt{ai-moderation}, optional external service on port 8002):} Automatically scores community forum posts and comments when configured via \texttt{AI\_\allowbreak{}MODERATION\_\allowbreak{}URL}, with a graceful backend fallback to administrative review when unavailable.
     \end{itemize}
     \item \textbf{SMTP Mail Service (Nodemailer):} Delivers transactional notifications, one-time passwords (OTP), and contract status alerts.
     \item \textbf{Infisical:} Secure secrets manager that injects environment variables and credentials into application containers at startup.
@@ -95,7 +95,7 @@ The monorepo enforces four key architectural rules illustrated in Figure~\ref{fi
     \item \textbf{Strict Downward Dependencies:} Applications (\texttt{apps/web} and \texttt{apps/api}) depend on shared packages (\texttt{packages/*}); a shared package never imports code or types from an application.
     \item \textbf{Module Isolation:} Domain route modules inside \texttt{apps/api/src/routes/} are strictly decoupled and never import controllers, services, or repositories from sibling modules. Cross-module data flows exclusively through database relationships at the Prisma ORM schema level.
     \item \textbf{Universal Configuration:} Common configurations for linting (\texttt{@repo/eslint-config}) and TypeScript compilation (\texttt{@repo/typescript-config}) are inherited by all workspaces to guarantee uniform code quality.
-    \item \textbf{Independent AI Service Boundaries:} Python-based AI microservices (\texttt{id-verification}, \texttt{cv-matching}, \texttt{ai-moderation} backed by Ollama) reside in \texttt{ai-services/} and communicate with the backend via standard HTTP REST endpoints, maintaining complete independence from the TypeScript pnpm workspaces.
+    \item \textbf{Independent AI Service Boundaries:} Containerized Python-based AI microservices (\texttt{id-\allowbreak{}verification} and \texttt{cv-\allowbreak{}matching} backed by Ollama) reside in \texttt{ai-services/}, alongside an optional external \texttt{ai-\allowbreak{}moderation} endpoint, and communicate with the backend via standard HTTP REST calls, maintaining complete independence from the TypeScript pnpm workspaces.
 \end{enumerate}
 
 \subsubsection*{Package Descriptions}
@@ -206,7 +206,7 @@ Tables~\ref{tab:pkg:frontend}, \ref{tab:pkg:backend}, \ref{tab:pkg:shared}, and 
 01 & \texttt{id-verification} & FastAPI microservice (port 8001) performing Vietnamese citizen identity card (CCCD) OCR via RapidOCR, facial biometric embedding via InsightFace, and anti-spoofing liveness verification via MediaPipe. \\ \hline
 02 & \texttt{cv-matching} & FastAPI microservice (port 8000) performing section-aware candidate CV parsing, dense semantic vector embedding with BGE-M3, ChromaDB vector indexing, and candidate-job matching supported by Ollama LLM. \\ \hline
 03 & \texttt{ollama} & Containerized local Large Language Model runtime (port 11434) running instruction-tuned models (e.g., Qwen) for structured CV extraction and semantic matching. \\ \hline
-04 & \texttt{ai-moderation} & FastAPI microservice (port 8001) providing automated toxic content classification, sensitive keyword detection, and moderation scoring for forum posts and user submissions. \\ \hline
+04 & \texttt{ai-moderation} & Optional external FastAPI microservice (default external port 8002 via \texttt{AI\_MODERATION\_URL}) providing automated toxic content classification and moderation scoring with graceful fallback in \texttt{AIModerationService}. \\ \hline
 \end{longtable}
 }
 

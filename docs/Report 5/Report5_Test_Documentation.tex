@@ -93,32 +93,32 @@
 Testing for the \textbf{Frevia -- Verified Freelance Marketplace Platform} (Project Code: \texttt{SEP490\_04}) covers all functional and non-functional deliverables across the five project sprints:
 
 \begin{itemize}
-  \item \textbf{Identity, Authentication, and Access Control (FE-01 to FE-09):}
+  \item \textbf{Identity, Authentication, and Access Control (FE-01 to FE-03):}
   \begin{itemize}
     \item Email and password registration with one-time-code (OTP) email verification, Google OAuth 2.0 sign-in, and linking a Google identity to an existing account.
     \item JWT access and refresh token authentication, persisted session management (listing active sessions, viewing device/IP details, and revoking individual sessions), password reset via OTP, and password change.
-    \item Multi-role membership (\texttt{CLIENT}, \texttt{FREELANCER}, \texttt{ADMIN}, and custom administrative roles), joining additional roles, active session role switching, and dynamic data-driven RBAC permission validation (\texttt{HTTP method} + \texttt{path} + \texttt{module}).
+    \item Multi-role membership (\texttt{CLIENT}, \texttt{FREELANCER}, \texttt{EXPERT}, \texttt{ADMIN}, and custom administrative roles), joining additional roles, active session role switching, and dynamic data-driven RBAC permission validation (\texttt{HTTP method} + \texttt{path} + \texttt{module}).
   \end{itemize}
-  \item \textbf{User Profiles, Portfolios, and AI CV Analysis (FE-10 to FE-20):}
+  \item \textbf{User Profiles, Skills, Portfolios, and AI CV Analysis (FE-04 to FE-07):}
   \begin{itemize}
     \item Account profile management with avatar/cover uploads, freelancer profiles (professional title, bio, education, certifications, languages, work experience, skills with proficiency levels 1--10, and portfolio items), client company profiles, and expert directory profiles.
     \item Profile completion and strength scoring, administrative approval workflow for profile revisions, PDF curriculum vitae upload (up to 10~MB), and AI-assisted CV skill extraction.
   \end{itemize}
-  \item \textbf{Electronic Identity Verification / eKYC (FE-21 to FE-23):}
+  \item \textbf{Electronic Identity Verification / eKYC (FE-08):}
   \begin{itemize}
     \item Submission of front/back identity card images, selfie capture, and active/passive liveness frames; AI verification pipeline (OCR, QR code reading, face matching, tamper detection); and the administrative review queue.
   \end{itemize}
-  \item \textbf{Job Marketplace, Proposals, Contracts, and Milestones (FE-24 to FE-47):}
+  \item \textbf{Job Marketplace, Proposals, Contracts, and Milestones (FE-09 to FE-14):}
   \begin{itemize}
-    \item Fixed-price job creation, editing, soft deletion, status lifecycle, stable slug generation, multi-criteria public job search, job bookmarks, and saved searches.
-    \item Proposal drafting, submission, editing, withdrawal, and expiry; client proposal evaluation and hiring decision; dual-signature contract execution; USD~10.00 platform fee tracking; and milestone creation, funding state transitions, work submission, change requests, and approval.
+    \item Fixed-price job creation, editing, soft deletion, status lifecycle, stable slug generation, multi-criteria public job search, job bookmarks, saved searches, job alerts, and explainable AI job--freelancer recommendation scoring.
+    \item Proposal drafting, submission, editing, withdrawal, and expiry; client proposal evaluation and hiring decision; dual-signature contract execution; platform fee tracking; and milestone creation, funding state transitions, work submission, change requests, and approval.
   \end{itemize}
-  \item \textbf{Stripe Escrow Payments, Disputes, and Reviews (FE-48 to FE-65):}
+  \item \textbf{Stripe Escrow Payments, Disputes, and Reviews (FE-15 to FE-17):}
   \begin{itemize}
     \item Stripe Connect Express onboarding, saved payment methods, platform fee and milestone funding via \texttt{PaymentIntent} and \texttt{Checkout Session}, milestone transfers on release, refunds, raw-body webhook signature verification, and ledger reconciliation.
-    \item Milestone dispute filing with evidence, respondent defence within deadlines, decision review escalation, administrative arbitration with split payouts, and post-contract reviews/ratings.
+    \item Milestone dispute filing with evidence, respondent defence within deadlines, decision review escalation, administrative and expert arbitration with split payouts, and post-contract reviews/ratings.
   \end{itemize}
-  \item \textbf{Real-Time Communication, Community Forum, and Administration (FE-66 to FE-83):}
+  \item \textbf{Real-Time Communication, Community Forum, and Administration (FE-18 to FE-21):}
   \begin{itemize}
     \item Authenticated Socket.IO WebSocket messaging (1-on-1 conversations, file attachments, read receipts, typing indicators, pin/hide/delete) and persistent notifications.
     \item Community forum browsing, rich-text post creation (Tiptap), comments, likes, reporting, AI moderation scoring, and administrative moderation/trash management.
@@ -135,7 +135,7 @@ In accordance with the project scope limitations defined in Report 1, the follow
   \item \textbf{Hourly Contracts and Multi-Currency Settlement (LI-01 to LI-04):} Hourly billing, automated time-tracking diaries, non-USD currency conversion, domestic e-wallets, direct bank wire transfers, and cryptocurrency settlement.
   \item \textbf{Machine Learning Model Training and Foreign ID Documents (LI-05 to LI-07):} Training or fine-tuning underlying neural network weights for OCR, liveness, or CV parsing, as well as identity verification for non-Vietnamese passports or driver's licences.
   \item \textbf{Native Mobile Clients and Multi-Replica Clustering (LI-09, LI-13):} Native iOS/Android mobile applications, multi-node horizontal load balancing, sticky session clustering, and distributed Redis WebSocket adapters.
-  \item \textbf{Unexposed Database Entities (LI-11):} Schema tables reserved for future releases that are not exposed through the current API or UI (\texttt{totp\_secrets}, \texttt{invoices}, \texttt{certificates}, \texttt{contract\_terms\_templates}, \texttt{job\_alerts}, \texttt{banned\_keywords}, and \texttt{system\_settings}).
+  \item \textbf{Unexposed Database Entities (LI-11):} Schema tables reserved for future releases that are not exposed through the current API or UI (\texttt{totp\_secrets}, \texttt{invoices}, \texttt{certificates}, \texttt{contract\_terms\_templates}, \texttt{banned\_keywords}, and \texttt{system\_settings}).
 \end{itemize}
 
 \subsection{Testing Levels}
