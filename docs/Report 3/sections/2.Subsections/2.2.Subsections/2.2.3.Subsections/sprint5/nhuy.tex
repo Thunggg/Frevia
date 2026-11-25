@@ -2,27 +2,27 @@
 \Needspace{12\baselineskip}
 \paragraph{Profile Revision Review and Expert Profile}
 \Needspace{12\baselineskip}
-\subparagraph{UC-47.01 View Pending Profile Update Request List}
+\subparagraph{UC-47.01 View Pending Profile Update Requests List}
 
 {\singlespacing
 \setlength{\extrarowheight}{3pt}
 \Needspace{12\baselineskip}
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{L{11.1cm}|}{UC-47.01 View Pending Profile Update Request List} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{L{11.1cm}|}{UC-47.01 View Pending Profile Update Requests List} \\* \hline
 \endfirsthead
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{L{11.1cm}|}{UC-47.01 View Pending Profile Update Request List \textit{(cont.)}} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{L{11.1cm}|}{UC-47.01 View Pending Profile Update Requests List \textit{(cont.)}} \\* \hline
 \endhead
 \hline\endfoot
 \endlastfoot
 Created By: & \multicolumn{3}{L{11.1cm}|}{Nguyen Lu Nhat Huy; updated 08/11/2026} \\ \hline
 Primary Actor: & \multicolumn{3}{L{11.1cm}|}{Admin} \\ \hline
-Trigger: & \multicolumn{3}{L{11.1cm}|}{The actor selects View Pending Profile Update Request List from /admin/profile-revisions; /expert/profile.} \\ \hline
-Description: & \multicolumn{3}{L{11.1cm}|}{Filter and paginate revisions, defaulting the review workflow to pending requests.} \\ \hline
+Trigger: & \multicolumn{3}{L{11.1cm}|}{The actor selects View Pending Profile Update Requests List from /admin/profile-revisions; /expert/profile.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Filter and paginate revisions, defaulting the review workflow to pending requests.} \\ \hline
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{The actor is authenticated and has the required role and resource permission. The relevant database and dependent services are available.} \\ \hline
 Post-conditions: & \multicolumn{3}{L{11.1cm}|}{Authorized data is displayed without modifying the underlying records.} \\ \hline
-Normal Flow: & \multicolumn{3}{L{11.1cm}|}{1. The actor opens /admin/profile-revisions; /expert/profile and selects View Pending Profile Update Request List. \newline 2. The application submits the selected identifier or list filters. \newline 3. The API checks authentication where required, authorization, resource existence and input validity. \newline 4. Filter and paginate revisions, defaulting the review workflow to pending requests. \newline 5. The screen renders the response, or an explicit empty state for a valid empty collection.} \\ \hline
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{1. The actor opens /admin/profile-revisions; /expert/profile and selects View Pending Profile Update Requests List. \newline 2. The application submits the selected identifier or list filters. \newline 3. The API checks authentication where required, authorization, resource existence and input validity. \newline 4. Filter and paginate revisions, defaulting the review workflow to pending requests. \newline 5. The screen renders the response, or an explicit empty state for a valid empty collection.} \\ \hline
 Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{No matching records: display an empty state. A failed request offers Retry.} \\ \hline
 Exceptions: & \multicolumn{3}{L{11.1cm}|}{\textbf{E1:} Missing or expired authentication, or insufficient role/ownership: deny the operation and do not change data. \newline \textbf{E2:} Missing, deleted or inaccessible resource: show a not-found result. \newline \textbf{A1:} A valid empty collection displays an empty state; it must not be treated as a missing account. \newline \textbf{E4:} Database, network or storage failure: report a retryable error; do not report success or terminate the API process.} \\ \hline
 Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
@@ -34,27 +34,27 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{This specification defines the requir
 }
 
 \Needspace{12\baselineskip}
-\subparagraph{UC-47.02 View Profile Update Request Detail}
+\subparagraph{UC-47.02 View Profile Update Request Details}
 
 {\singlespacing
 \setlength{\extrarowheight}{3pt}
 \Needspace{12\baselineskip}
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{L{11.1cm}|}{UC-47.02 View Profile Update Request Detail} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{L{11.1cm}|}{UC-47.02 View Profile Update Request Details} \\* \hline
 \endfirsthead
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{L{11.1cm}|}{UC-47.02 View Profile Update Request Detail \textit{(cont.)}} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{L{11.1cm}|}{UC-47.02 View Profile Update Request Details \textit{(cont.)}} \\* \hline
 \endhead
 \hline\endfoot
 \endlastfoot
 Created By: & \multicolumn{3}{L{11.1cm}|}{Nguyen Lu Nhat Huy; updated 08/11/2026} \\ \hline
 Primary Actor: & \multicolumn{3}{L{11.1cm}|}{Admin} \\ \hline
-Trigger: & \multicolumn{3}{L{11.1cm}|}{The actor selects View Profile Update Request Detail from /admin/profile-revisions; /expert/profile.} \\ \hline
-Description: & \multicolumn{3}{L{11.1cm}|}{Display the current and proposed snapshots, requester, profile type and prior review notes.} \\ \hline
+Trigger: & \multicolumn{3}{L{11.1cm}|}{The actor selects View Profile Update Request Details from /admin/profile-revisions; /expert/profile.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Display the current and proposed snapshots, requester, profile type and prior review notes.} \\ \hline
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{The actor is authenticated and has the required role and resource permission. The relevant database and dependent services are available.} \\ \hline
 Post-conditions: & \multicolumn{3}{L{11.1cm}|}{Authorized data is displayed without modifying the underlying records.} \\ \hline
-Normal Flow: & \multicolumn{3}{L{11.1cm}|}{1. The actor opens /admin/profile-revisions; /expert/profile and selects View Profile Update Request Detail. \newline 2. The application submits the selected identifier or list filters. \newline 3. The API checks authentication where required, authorization, resource existence and input validity. \newline 4. Display the current and proposed snapshots, requester, profile type and prior review notes. \newline 5. The screen renders the response, or an explicit empty state for a valid empty collection.} \\ \hline
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{1. The actor opens /admin/profile-revisions; /expert/profile and selects View Profile Update Request Details. \newline 2. The application submits the selected identifier or list filters. \newline 3. The API checks authentication where required, authorization, resource existence and input validity. \newline 4. Display the current and proposed snapshots, requester, profile type and prior review notes. \newline 5. The screen renders the response, or an explicit empty state for a valid empty collection.} \\ \hline
 Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{No matching records: display an empty state. A failed request offers Retry.} \\ \hline
 Exceptions: & \multicolumn{3}{L{11.1cm}|}{\textbf{E1:} Missing or expired authentication, or insufficient role/ownership: deny the operation and do not change data. \newline \textbf{E2:} Missing, deleted or inaccessible resource: show a not-found result. \newline \textbf{A1:} A valid empty collection displays an empty state; it must not be treated as a missing account. \newline \textbf{E4:} Database, network or storage failure: report a retryable error; do not report success or terminate the API process.} \\ \hline
 Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
@@ -83,7 +83,7 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{This specification defines the requir
 Created By: & \multicolumn{3}{L{11.1cm}|}{Nguyen Lu Nhat Huy; updated 08/11/2026} \\ \hline
 Primary Actor: & \multicolumn{3}{L{11.1cm}|}{Admin} \\ \hline
 Trigger: & \multicolumn{3}{L{11.1cm}|}{The actor selects Approve Profile Update Request from /admin/profile-revisions; /expert/profile.} \\ \hline
-Description: & \multicolumn{3}{L{11.1cm}|}{Apply validated proposed changes and record an APPROVED decision atomically.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Apply validated proposed changes and record an APPROVED decision atomically.} \\ \hline
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{The actor is authenticated and has the required role and resource permission. The selected revision exists and is still PENDING.} \\ \hline
 Post-conditions: & \multicolumn{3}{L{11.1cm}|}{Apply validated proposed changes and record an APPROVED decision atomically.} \\ \hline
 Normal Flow: & \multicolumn{3}{L{11.1cm}|}{1. The actor opens /admin/profile-revisions; /expert/profile and selects Approve Profile Update Request. \newline 2. The application presents the current values or action confirmation; the actor supplies the required data and submits. \newline 3. The API checks authentication where required, authorization, resource existence and input validity. \newline 4. Apply validated proposed changes and record an APPROVED decision atomically. \newline 5. After the transaction succeeds, the screen displays the result and reloads affected data; a pending revision is labeled as awaiting review.} \\ \hline
@@ -115,7 +115,7 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{This specification defines the requir
 Created By: & \multicolumn{3}{L{11.1cm}|}{Nguyen Lu Nhat Huy; updated 08/11/2026} \\ \hline
 Primary Actor: & \multicolumn{3}{L{11.1cm}|}{Admin} \\ \hline
 Trigger: & \multicolumn{3}{L{11.1cm}|}{The actor selects Reject Profile Update Request from /admin/profile-revisions; /expert/profile.} \\ \hline
-Description: & \multicolumn{3}{L{11.1cm}|}{Keep approved profile data unchanged and record REJECTED with an explanatory note.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Keep approved profile data unchanged and record REJECTED with an explanatory note.} \\ \hline
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{The actor is authenticated and has the required role and resource permission. The selected revision exists and is still PENDING.} \\ \hline
 Post-conditions: & \multicolumn{3}{L{11.1cm}|}{Keep approved profile data unchanged and record REJECTED with an explanatory note.} \\ \hline
 Normal Flow: & \multicolumn{3}{L{11.1cm}|}{1. The actor opens /admin/profile-revisions; /expert/profile and selects Reject Profile Update Request. \newline 2. The application presents the current values or action confirmation; the actor supplies the required data and submits. \newline 3. The API checks authentication where required, authorization, resource existence and input validity. \newline 4. Keep approved profile data unchanged and record REJECTED with an explanatory note. \newline 5. After the transaction succeeds, the screen displays the result and reloads affected data; a pending revision is labeled as awaiting review.} \\ \hline
@@ -147,7 +147,7 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{This specification defines the requir
 Created By: & \multicolumn{3}{L{11.1cm}|}{Nguyen Lu Nhat Huy; updated 08/11/2026} \\ \hline
 Primary Actor: & \multicolumn{3}{L{11.1cm}|}{Admin} \\ \hline
 Trigger: & \multicolumn{3}{L{11.1cm}|}{The actor selects View Profile Update Request History from /admin/profile-revisions; /expert/profile.} \\ \hline
-Description: & \multicolumn{3}{L{11.1cm}|}{Allow Admin to filter historical decisions; a requester can read only their latest revision for a profile type.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Allow Admin to filter historical decisions; a requester can read only their latest revision for a profile type.} \\ \hline
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{The actor is authenticated and has the required role and resource permission. The relevant database and dependent services are available.} \\ \hline
 Post-conditions: & \multicolumn{3}{L{11.1cm}|}{Authorized data is displayed without modifying the underlying records.} \\ \hline
 Normal Flow: & \multicolumn{3}{L{11.1cm}|}{1. The actor opens /admin/profile-revisions; /expert/profile and selects View Profile Update Request History. \newline 2. The application submits the selected identifier or list filters. \newline 3. The API checks authentication where required, authorization, resource existence and input validity. \newline 4. Allow Admin to filter historical decisions; a requester can read only their latest revision for a profile type. \newline 5. The screen renders the response, or an explicit empty state for a valid empty collection.} \\ \hline
@@ -179,7 +179,7 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{This specification defines the requir
 Created By: & \multicolumn{3}{L{11.1cm}|}{Nguyen Lu Nhat Huy; updated 08/11/2026} \\ \hline
 Primary Actor: & \multicolumn{3}{L{11.1cm}|}{Expert} \\ \hline
 Trigger: & \multicolumn{3}{L{11.1cm}|}{The actor selects Update Profile Expert from /admin/profile-revisions; /expert/profile.} \\ \hline
-Description: & \multicolumn{3}{L{11.1cm}|}{Submit the owned Expert profile as a pending revision for administrator review.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Submit the owned Expert profile as a pending revision for administrator review.} \\ \hline
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{The actor is authenticated and has the required role and resource permission. The relevant database and dependent services are available.} \\ \hline
 Post-conditions: & \multicolumn{3}{L{11.1cm}|}{Submit the owned Expert profile as a pending revision for administrator review.} \\ \hline
 Normal Flow: & \multicolumn{3}{L{11.1cm}|}{1. The actor opens /admin/profile-revisions; /expert/profile and selects Update Profile Expert. \newline 2. The application presents the current values or action confirmation; the actor supplies the required data and submits. \newline 3. The API checks authentication where required, authorization, resource existence and input validity. \newline 4. Submit the owned Expert profile as a pending revision for administrator review. \newline 5. After the transaction succeeds, the screen displays the result and reloads affected data; a pending revision is labeled as awaiting review.} \\ \hline
@@ -213,7 +213,7 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{This specification defines the requir
 Created By: & \multicolumn{3}{L{11.1cm}|}{Nguyen Lu Nhat Huy; updated 08/11/2026} \\ \hline
 Primary Actor: & \multicolumn{3}{L{11.1cm}|}{Freelancer} \\ \hline
 Trigger: & \multicolumn{3}{L{11.1cm}|}{The actor selects Upload CV from /freelancer/profile; /profiles/[id].} \\ \hline
-Description: & \multicolumn{3}{L{11.1cm}|}{Validate a PDF up to 10 MB and attach it to the owned FreelancerProfile.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Validate a PDF up to 10 MB and attach it to the owned FreelancerProfile.} \\ \hline
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{The actor is authenticated and has the required role and resource permission. The relevant database and dependent services are available.} \\ \hline
 Post-conditions: & \multicolumn{3}{L{11.1cm}|}{Validate a PDF up to 10 MB and attach it to the owned FreelancerProfile.} \\ \hline
 Normal Flow: & \multicolumn{3}{L{11.1cm}|}{1. The actor opens /freelancer/profile; /profiles/[id] and selects Upload CV. \newline 2. The application presents the current values or action confirmation; the actor supplies the required data and submits. \newline 3. The API checks authentication where required, authorization, resource existence and input validity. \newline 4. Validate a PDF up to 10 MB and attach it to the owned FreelancerProfile. \newline 5. After the transaction succeeds, the screen displays the result and reloads affected data; a pending revision is labeled as awaiting review.} \\ \hline
@@ -245,7 +245,7 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{This specification defines the requir
 Created By: & \multicolumn{3}{L{11.1cm}|}{Nguyen Lu Nhat Huy; updated 08/11/2026} \\ \hline
 Primary Actor: & \multicolumn{3}{L{11.1cm}|}{Freelancer} \\ \hline
 Trigger: & \multicolumn{3}{L{11.1cm}|}{The actor selects View CV from /freelancer/profile; /profiles/[id].} \\ \hline
-Description: & \multicolumn{3}{L{11.1cm}|}{Authorize the owner and serve or redirect to the current CV; return 404 when its stored file is unavailable.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Authorize the owner and serve or redirect to the current CV; return 404 when its stored file is unavailable.} \\ \hline
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{The actor is authenticated and has the required role and resource permission. The relevant database and dependent services are available.} \\ \hline
 Post-conditions: & \multicolumn{3}{L{11.1cm}|}{Authorized data is displayed without modifying the underlying records.} \\ \hline
 Normal Flow: & \multicolumn{3}{L{11.1cm}|}{1. The actor opens /freelancer/profile; /profiles/[id] and selects View CV. \newline 2. The application submits the selected identifier or list filters. \newline 3. The API checks authentication where required, authorization, resource existence and input validity. \newline 4. Authorize the owner and serve or redirect to the current CV; return 404 when its stored file is unavailable. \newline 5. The screen renders the response, or an explicit empty state for a valid empty collection.} \\ \hline
@@ -277,7 +277,7 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{This specification defines the requir
 Created By: & \multicolumn{3}{L{11.1cm}|}{Nguyen Lu Nhat Huy; updated 08/11/2026} \\ \hline
 Primary Actor: & \multicolumn{3}{L{11.1cm}|}{Freelancer} \\ \hline
 Trigger: & \multicolumn{3}{L{11.1cm}|}{The actor selects Replace CV from /freelancer/profile; /profiles/[id].} \\ \hline
-Description: & \multicolumn{3}{L{11.1cm}|}{Store a valid replacement PDF, update CV metadata and clean up the previous file after a successful update.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Store a valid replacement PDF, update CV metadata and clean up the previous file after a successful update.} \\ \hline
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{The actor is authenticated and has the required role and resource permission. The relevant database and dependent services are available.} \\ \hline
 Post-conditions: & \multicolumn{3}{L{11.1cm}|}{Store a valid replacement PDF, update CV metadata and clean up the previous file after a successful update.} \\ \hline
 Normal Flow: & \multicolumn{3}{L{11.1cm}|}{1. The actor opens /freelancer/profile; /profiles/[id] and selects Replace CV. \newline 2. The application presents the current values or action confirmation; the actor supplies the required data and submits. \newline 3. The API checks authentication where required, authorization, resource existence and input validity. \newline 4. Store a valid replacement PDF, update CV metadata and clean up the previous file after a successful update. \newline 5. After the transaction succeeds, the screen displays the result and reloads affected data; a pending revision is labeled as awaiting review.} \\ \hline
@@ -309,7 +309,7 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{This specification defines the requir
 Created By: & \multicolumn{3}{L{11.1cm}|}{Nguyen Lu Nhat Huy; updated 08/11/2026} \\ \hline
 Primary Actor: & \multicolumn{3}{L{11.1cm}|}{Freelancer} \\ \hline
 Trigger: & \multicolumn{3}{L{11.1cm}|}{The actor selects Delete CV from /freelancer/profile; /profiles/[id].} \\ \hline
-Description: & \multicolumn{3}{L{11.1cm}|}{Clear CV URL, public ID, file name and upload time, and update the related search index.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Clear CV URL, public ID, file name and upload time, and update the related search index.} \\ \hline
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{The actor is authenticated and has the required role and resource permission. The relevant database and dependent services are available.} \\ \hline
 Post-conditions: & \multicolumn{3}{L{11.1cm}|}{Clear CV URL, public ID, file name and upload time, and update the related search index.} \\ \hline
 Normal Flow: & \multicolumn{3}{L{11.1cm}|}{1. The actor opens /freelancer/profile; /profiles/[id] and selects Delete CV. \newline 2. The application presents the current values or action confirmation; the actor supplies the required data and submits. \newline 3. The API checks authentication where required, authorization, resource existence and input validity. \newline 4. Clear CV URL, public ID, file name and upload time, and update the related search index. \newline 5. After the transaction succeeds, the screen displays the result and reloads affected data; a pending revision is labeled as awaiting review.} \\ \hline

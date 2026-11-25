@@ -22,7 +22,7 @@ Primary Actor: & User & Secondary Actors: & N/A \\ \hline
 
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When a user browses jobs, filters search results, or opens the job creation form.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Allows users to retrieve the list of available job categories for browsing and job creation.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Allows users to retrieve the list of available job categories for browsing and job creation.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The system is connected to the database.
@@ -75,17 +75,17 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{Job categories are maintained by admi
 \end{longtable}
 
 % =================================================================
-% UC-________ View Job Category Detail (User)
+% UC-________ View Job Category Details (User)
 % =================================================================
-\subparagraph{UC View Job Category Detail (User)}
+\subparagraph{UC View Job Category Details (User)}
 
 \Needspace{12\baselineskip}
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC View Job Category Detail (User)} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC View Job Category Details (User)} \\* \hline
 \endfirsthead
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC View Job Category Detail (User) \textit{(cont.)}} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC View Job Category Details (User) \textit{(cont.)}} \\* \hline
 \endhead
 \hline\endfoot
 \endlastfoot
@@ -96,7 +96,7 @@ Primary Actor: & User & Secondary Actors: & N/A \\ \hline
 
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When a user opens a job category from the browse page.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Allows users to view category details and associated jobs.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Allows users to view category details and associated jobs.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The system is connected to the database.
@@ -109,7 +109,7 @@ Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
 } \\ \hline
 
 Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{A. View Job Category Detail} \newline
+\textbf{A. View Job Category Details} \newline
 1. The User opens a job category. \newline
 2. The system retrieves the category details (name, description). \newline
 3. The system retrieves the jobs belonging to the category. \newline
@@ -124,7 +124,7 @@ Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
 3. The use case ends. \newline
 \textbf{A.2 Browse Jobs by Category} \textit{(branch at step 3)} \newline
 1. The User applies the category as a filter while browsing jobs. \newline
-2. Continue with UC View List Job.
+2. Continue with UC View Jobs List.
 } \\ \hline
 
 Exceptions: & \multicolumn{3}{L{11.1cm}|}{
@@ -149,7 +149,7 @@ BR-FCAT-04: The category detail shall include name and description. \newline
 BR-FCAT-05: The associated jobs shall be listed, or the category can be used as a job browse filter.
 } \\ \hline
 
-Other Information: & \multicolumn{3}{L{11.1cm}|}{Browsing a category applies the category filter to the job list (UC View List Job).} \\ \hline
+Other Information: & \multicolumn{3}{L{11.1cm}|}{Browsing a category applies the category filter to the job list (UC View Jobs List).} \\ \hline
 
 Assumptions: & \multicolumn{3}{L{11.1cm}|}{A category may have zero or more associated jobs.} \\ \hline
 
@@ -177,7 +177,7 @@ Primary Actor: & Admin & Secondary Actors: & N/A \\ \hline
 
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When an admin opens the job category management page.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Allows admins to view and manage the list of job categories in the system.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Allows admins to view and manage the list of job categories in the system.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The admin is authenticated with the Admin role. \newline
@@ -229,17 +229,17 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{Job categories are maintained by admi
 \end{longtable}
 
 % =================================================================
-% UC-________ View Job Category Detail (Admin)
+% UC-________ View Job Category Details (Admin)
 % =================================================================
-\subparagraph{UC View Job Category Detail (Admin)}
+\subparagraph{UC View Job Category Details (Admin)}
 
 \Needspace{12\baselineskip}
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC View Job Category Detail (Admin)} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC View Job Category Details (Admin)} \\* \hline
 \endfirsthead
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC View Job Category Detail (Admin) \textit{(cont.)}} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC View Job Category Details (Admin) \textit{(cont.)}} \\* \hline
 \endhead
 \hline\endfoot
 \endlastfoot
@@ -250,7 +250,7 @@ Primary Actor: & Admin & Secondary Actors: & N/A \\ \hline
 
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When an admin opens a job category from the management page.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Allows admins to view category details, status, and associated jobs.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Allows admins to view category details, status, and associated jobs.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The admin is authenticated with the Admin role. \newline
@@ -264,7 +264,7 @@ Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
 } \\ \hline
 
 Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{A. View Job Category Detail} \newline
+\textbf{A. View Job Category Details} \newline
 1. The Admin opens a job category. \newline
 2. The system retrieves the category details (name, description, status). \newline
 3. The system retrieves the jobs belonging to the category. \newline
@@ -329,7 +329,7 @@ Primary Actor: & Admin & Secondary Actors: & N/A \\ \hline
 
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When an admin chooses to create a job category in the admin category management page.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Create a new job category with name, description, and status.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Create a new job category with name, description, and status.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The admin is authenticated with the Admin role. \newline
@@ -415,7 +415,7 @@ Primary Actor: & Admin & Secondary Actors: & N/A \\ \hline
 
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When an admin chooses to edit a job category in the admin category management page.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Update job category information and status.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Update job category information and status.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The admin is authenticated with the Admin role. \newline
@@ -502,7 +502,7 @@ Primary Actor: & Admin & Secondary Actors: & N/A \\ \hline
 
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When an admin chooses to delete a job category in the admin category management page.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Delete or deactivate a job category after checking associated jobs.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Delete or deactivate a job category after checking associated jobs.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The admin is authenticated with the Admin role. \newline
@@ -592,7 +592,7 @@ Primary Actor: & Freelancer & Secondary Actors: & N/A \\ \hline
 
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When a freelancer chooses to upload a CV on their profile page.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Allows a freelancer to upload a CV file in a supported format and associate it with their profile.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Allows a freelancer to upload a CV file in a supported format and associate it with their profile.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The freelancer is authenticated. \newline
@@ -679,7 +679,7 @@ Primary Actor: & Freelancer & Secondary Actors: & N/A \\ \hline
 
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When a freelancer chooses to view or download the CV on their profile.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Allows a freelancer to view or download the CV they have uploaded to their profile.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Allows a freelancer to view or download the CV they have uploaded to their profile.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The freelancer is authenticated.
@@ -754,7 +754,7 @@ Primary Actor: & Freelancer & Secondary Actors: & N/A \\ \hline
 
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When a freelancer uploads a new CV file while a CV already exists on their profile.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Allows a freelancer to replace the existing CV with a new file.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Allows a freelancer to replace the existing CV with a new file.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The freelancer is authenticated. \newline
@@ -839,7 +839,7 @@ Primary Actor: & Freelancer & Secondary Actors: & N/A \\ \hline
 
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When a freelancer chooses to delete the CV on their profile.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Allows a freelancer to remove their uploaded CV from their profile.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Allows a freelancer to remove their uploaded CV from their profile.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The freelancer is authenticated.

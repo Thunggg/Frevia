@@ -22,7 +22,7 @@ Primary Actor: & Client, Freelancer & Secondary Actors: & N/A \\ \hline
 
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When a user accesses the Conversations section from the navigation menu or notification bell.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Allows an authenticated user to view all active conversations they are participating in, sorted by pinned status and most recent message.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Allows an authenticated user to view all active conversations they are participating in, sorted by pinned status and most recent message.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The user is authenticated. \newline
@@ -109,7 +109,7 @@ Primary Actor: & Client, Freelancer & Secondary Actors: & N/A \\ \hline
 
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When a user clicks the ``Start Conversation'' button or navigates to the new conversation page.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Allows an authenticated user to start a new conversation with another user. If a conversation already exists between the two users, it is returned and unhidden instead of creating a duplicate.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Allows an authenticated user to start a new conversation with another user. If a conversation already exists between the two users, it is returned and unhidden instead of creating a duplicate.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The user is authenticated. \newline
@@ -182,18 +182,18 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{The target user exists and is a valid
 \end{longtable}
 
 % =================================================================
-% UC-05.3 Conversation Detail
+% UC-05.3 Conversation Details
 % =================================================================
 
-\subparagraph{UC-05.3 Conversation Detail}
+\subparagraph{UC-05.3 Conversation Details}
 
 \Needspace{12\baselineskip}
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-05.3 Conversation Detail} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-05.3 Conversation Details} \\* \hline
 \endfirsthead
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-05.3 Conversation Detail \textit{(cont.)}} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-05.3 Conversation Details \textit{(cont.)}} \\* \hline
 \endhead
 \hline\endfoot
 \endlastfoot
@@ -204,7 +204,7 @@ Primary Actor: & Client, Freelancer & Secondary Actors: & N/A \\ \hline
 
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When a user selects a conversation from the conversations list (UC-05.1) or after starting a new conversation (UC-05.2).} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Allows an authenticated user to view the complete message history of a conversation including all sent and received messages, file attachments, and other participant information.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Allows an authenticated user to view the complete message history of a conversation including all sent and received messages, file attachments, and other participant information.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The user is authenticated. \newline
@@ -219,7 +219,7 @@ Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
 } \\ \hline
 
 Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{A. Conversation Detail} \newline
+\textbf{A. Conversation Details} \newline
 1. The User opens a conversation from the list. \newline
 2. The system validates that the conversation exists, has not been deleted, and the User is a participant. \newline
 3. The system retrieves the other participant's profile information. \newline
@@ -301,7 +301,7 @@ Primary Actor: & Client, Freelancer & Secondary Actors: & N/A \\ \hline
 
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When a user types a message and clicks the ``Send'' button or presses Enter in the conversation detail page.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Allows an authenticated user to send a text message in an active conversation. The message is delivered in real-time to the other participant.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Allows an authenticated user to send a text message in an active conversation. The message is delivered in real-time to the other participant.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The user is authenticated. \newline
@@ -406,7 +406,7 @@ Primary Actor: & Client, Freelancer & Secondary Actors: & N/A \\ \hline
 
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When a user opens a conversation detail page or when a new message arrives from the other participant.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Allows an authenticated user to mark all unread messages from the other participant in a conversation as read, either automatically when opening the conversation or manually via the conversation list menu.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Allows an authenticated user to mark all unread messages from the other participant in a conversation as read, either automatically when opening the conversation or manually via the conversation list menu.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The user is authenticated. \newline
@@ -501,7 +501,7 @@ Primary Actor: & Client, Freelancer & Secondary Actors: & N/A \\ \hline
 
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When a user clicks the ``Delete'' option on a message they have sent.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Allows the sender of a message to recall or delete it from the conversation by performing a soft delete operation. The message is removed from view for both participants.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Allows the sender of a message to recall or delete it from the conversation by performing a soft delete operation. The message is removed from view for both participants.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The user is authenticated. \newline
@@ -598,7 +598,7 @@ Primary Actor: & Client, Freelancer & Secondary Actors: & N/A \\ \hline
 
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When a user selects the ``Pin'' or ``Unpin'' option from the conversation list context menu.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Allows an authenticated user to pin or unpin a conversation to keep it at the top of their conversation list. Pinning is independent per user.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Allows an authenticated user to pin or unpin a conversation to keep it at the top of their conversation list. Pinning is independent per user.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The user is authenticated. \newline
@@ -690,7 +690,7 @@ Primary Actor: & Client, Freelancer & Secondary Actors: & N/A \\ \hline
 
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When a user clicks the file attachment button and selects a file in the conversation detail page (UC-05.3).} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Allows an authenticated user to send a file attachment in a conversation. The file is uploaded to cloud storage and a message with the attachment metadata is created.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Allows an authenticated user to send a file attachment in a conversation. The file is uploaded to cloud storage and a message with the attachment metadata is created.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The user is authenticated. \newline

@@ -2,19 +2,19 @@
 \paragraph{Manage Permission}
 
 % =================================================================
-% UC-15.01 View Permission List
+% UC-15.01 View Permissions List
 % =================================================================
-\subparagraph{UC-15.01 View Permission List}
+\subparagraph{UC-15.01 View Permissions List}
 
 {\singlespacing
 \setlength{\extrarowheight}{4pt}
 \Needspace{12\baselineskip}
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-15.01 View Permission List} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-15.01 View Permissions List} \\* \hline
 \endfirsthead
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-15.01 View Permission List \textit{(cont.)}} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-15.01 View Permissions List \textit{(cont.)}} \\* \hline
 \endhead
 \hline\endfoot
 \endlastfoot
@@ -22,7 +22,7 @@
 Created By: & ThuanNT & Date Created: & 28/09/2026 \\ \hline
 Primary Actor: & Admin & Secondary Actors: & N/A \\ \hline
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When an admin navigates to the Permission Management section from the admin dashboard.} \\ \hline
-Description: & \multicolumn{3}{L{11.1cm}|}{Retrieve all permissions (id, name, path, method, module) for admin to assign to roles. Supports pagination, keyword search, filtering by HTTP method and module, and sorting.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Retrieve all permissions (id, name, path, method, module) for admin to assign to roles. Supports pagination, keyword search, filtering by HTTP method and module, and sorting.} \\ \hline
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The user is authenticated as an Admin with a valid JWT token. \newline
 \textbf{PRE-2} The caller's role is permitted to access \texttt{GET /api/permissions}. \newline
@@ -34,7 +34,7 @@ Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{POST-3} Total permission count and pagination controls are displayed.
 } \\ \hline
 Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{A. View Permission List} \newline
+\textbf{A. View Permissions List} \newline
 1. Admin clicks ``Permissions'' in the admin navigation menu. \newline
 2. The frontend validates query parameters (\texttt{page}, \texttt{limit}, \texttt{search}, \texttt{method}, \texttt{module}, \texttt{sortBy}, \texttt{order}). \newline
 3. The frontend sends \texttt{GET /api/permissions} with query parameters. \newline
@@ -86,19 +86,19 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{Permission definitions are seeded and
 }
 
 % =================================================================
-% UC-15.02 View Permission Detail
+% UC-15.02 View Permission Details
 % =================================================================
-\subparagraph{UC-15.02 View Permission Detail}
+\subparagraph{UC-15.02 View Permission Details}
 
 {\singlespacing
 \setlength{\extrarowheight}{4pt}
 \Needspace{12\baselineskip}
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-15.02 View Permission Detail} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-15.02 View Permission Details} \\* \hline
 \endfirsthead
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-15.02 View Permission Detail \textit{(cont.)}} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-15.02 View Permission Details \textit{(cont.)}} \\* \hline
 \endhead
 \hline\endfoot
 \endlastfoot
@@ -106,7 +106,7 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{Permission definitions are seeded and
 Created By: & ThuanNT & Date Created: & 28/09/2026 \\ \hline
 Primary Actor: & Admin & Secondary Actors: & N/A \\ \hline
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When an admin clicks ``View detail'' on a permission row or navigates directly to a permission detail URL.} \\ \hline
-Description: & \multicolumn{3}{L{11.1cm}|}{View detailed information of a specific permission (id, name, path, method, module, createdAt).} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{View detailed information of a specific permission (id, name, path, method, module, createdAt).} \\ \hline
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The user is authenticated as an Admin. \newline
 \textbf{PRE-2} The caller's role is permitted to access \texttt{GET /api/permissions/:id}. \newline
@@ -117,7 +117,7 @@ Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{POST-2} Admin can navigate back to the permission list.
 } \\ \hline
 Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{A. View Permission Detail} \newline
+\textbf{A. View Permission Details} \newline
 1. Admin clicks ``View detail'' on a permission row or accesses \texttt{/admin/permissions/:id}. \newline
 2. Frontend checks permission ID parameter and ensures it is a positive integer. \newline
 3. Frontend sends \texttt{GET /api/permissions/:id}. \newline
@@ -160,19 +160,19 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{The permission ID provided is valid w
 \paragraph{Session Management}
 
 % =================================================================
-% UC-16.01 View Session List
+% UC-16.01 View Sessions List
 % =================================================================
-\subparagraph{UC-16.01 View Session List}
+\subparagraph{UC-16.01 View Sessions List}
 
 {\singlespacing
 \setlength{\extrarowheight}{4pt}
 \Needspace{12\baselineskip}
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-16.01 View Session List} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-16.01 View Sessions List} \\* \hline
 \endfirsthead
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-16.01 View Session List \textit{(cont.)}} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-16.01 View Sessions List \textit{(cont.)}} \\* \hline
 \endhead
 \hline\endfoot
 \endlastfoot
@@ -180,7 +180,7 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{The permission ID provided is valid w
 Created By: & ThuanNT & Date Created: & 28/09/2026 \\ \hline
 Primary Actor: & Client, Expert, Freelancer, Admin & Secondary Actors: & N/A \\ \hline
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When an authenticated user accesses the active sessions section in their account settings.} \\ \hline
-Description: & \multicolumn{3}{L{11.1cm}|}{View a list of active login sessions for the current user's account, showing device, IP address, creation time, expiration time, and marking the currently used session.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{View a list of active login sessions for the current user's account, showing device, IP address, creation time, expiration time, and marking the currently used session.} \\ \hline
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The user is authenticated with a valid JWT access token. \newline
 \textbf{PRE-2} The session ID stored in the access token exists in the Session table.
@@ -190,7 +190,7 @@ Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{POST-2} User can view details (UC-16.02) or revoke remote sessions (UC-16.03).
 } \\ \hline
 Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{A. View Session List} \newline
+\textbf{A. View Sessions List} \newline
 1. User clicks ``Active sessions'' in account settings. \newline
 2. Frontend prepares query parameters (\texttt{page}, \texttt{limit}, \texttt{search}, \texttt{sortBy}, \texttt{order}). \newline
 3. Frontend sends \texttt{GET /api/sessions} with Bearer token. \newline
@@ -237,19 +237,19 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{Each session record represents a vali
 }
 
 % =================================================================
-% UC-16.02 View Session Detail
+% UC-16.02 View Session Details
 % =================================================================
-\subparagraph{UC-16.02 View Session Detail}
+\subparagraph{UC-16.02 View Session Details}
 
 {\singlespacing
 \setlength{\extrarowheight}{4pt}
 \Needspace{12\baselineskip}
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-16.02 View Session Detail} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-16.02 View Session Details} \\* \hline
 \endfirsthead
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-16.02 View Session Detail \textit{(cont.)}} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-16.02 View Session Details \textit{(cont.)}} \\* \hline
 \endhead
 \hline\endfoot
 \endlastfoot
@@ -257,7 +257,7 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{Each session record represents a vali
 Created By: & ThuanNT & Date Created: & 28/09/2026 \\ \hline
 Primary Actor: & Client, Expert, Freelancer, Admin & Secondary Actors: & N/A \\ \hline
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When a user clicks ``View detail'' on a session item.} \\ \hline
-Description: & \multicolumn{3}{L{11.1cm}|}{View login session information (device, IP address, login time, approximate location/status, and whether it is the current session).} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{View login session information (device, IP address, login time, approximate location/status, and whether it is the current session).} \\ \hline
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The user is authenticated. \newline
 \textbf{PRE-2} The session ID exists and belongs to the authenticated user.
@@ -267,7 +267,7 @@ Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{POST-2} User can trigger revoke session (UC-16.03) from the detail view.
 } \\ \hline
 Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{A. View Session Detail} \newline
+\textbf{A. View Session Details} \newline
 1. User clicks ``View detail'' on a session item. \newline
 2. Frontend checks session ID parameter. \newline
 3. Frontend sends \texttt{GET /api/sessions/:id}. \newline
@@ -326,7 +326,7 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{The authenticated user owns the sessi
 Created By: & ThuanNT & Date Created: & 28/09/2026 \\ \hline
 Primary Actor: & Client, Expert, Freelancer, Admin & Secondary Actors: & N/A \\ \hline
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When an authenticated user clicks ``Revoke'' on an active session item.} \\ \hline
-Description: & \multicolumn{3}{L{11.1cm}|}{Log out of a specific device remotely by deleting the session record. The refresh token associated with that session is immediately invalidated.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Log out of a specific device remotely by deleting the session record. The refresh token associated with that session is immediately invalidated.} \\ \hline
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The user is authenticated. \newline
 \textbf{PRE-2} The targeted session belongs to the current user. \newline
@@ -413,7 +413,7 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{The user has confirmed the intent to 
 Created By: & ThuanNT & Date Created: & 28/09/2026 \\ \hline
 Primary Actor: & Admin & Secondary Actors: & N/A \\ \hline
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When an admin clicks ``Create Category'' on the Forum Category Management page.} \\ \hline
-Description: & \multicolumn{3}{L{11.1cm}|}{Allows admins to create a new forum category with name and optional description. An automated slug is generated from the name.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Allows admins to create a new forum category with name and optional description. An automated slug is generated from the name.} \\ \hline
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The user is authenticated as an Admin. \newline
 \textbf{PRE-2} The user has permission to access \texttt{POST /api/forums/admin/categories}. \newline
@@ -498,7 +498,7 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{The admin has authority to create cat
 Created By: & ThuanNT & Date Created: & 28/09/2026 \\ \hline
 Primary Actor: & Admin & Secondary Actors: & N/A \\ \hline
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When an admin clicks ``Edit'' on a category row or detail page.} \\ \hline
-Description: & \multicolumn{3}{L{11.1cm}|}{Allows admins to update an existing forum category's name and description. If name changes, the slug is regenerated automatically.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Allows admins to update an existing forum category's name and description. If name changes, the slug is regenerated automatically.} \\ \hline
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The user is authenticated as an Admin. \newline
 \textbf{PRE-2} The targeted category exists and has \texttt{deletedAt = null}.
@@ -576,7 +576,7 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{The category ID is valid.} \\ \hline
 Created By: & ThuanNT & Date Created: & 28/09/2026 \\ \hline
 Primary Actor: & Admin & Secondary Actors: & N/A \\ \hline
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When an admin clicks ``Delete'' on a category row or detail page.} \\ \hline
-Description: & \multicolumn{3}{L{11.1cm}|}{Allows admins to soft-delete a forum category. In a database transaction, active posts in this category are detached to Uncategorized (categoryId = null) and the category is soft-deleted by setting deletedAt.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Allows admins to soft-delete a forum category. In a database transaction, active posts in this category are detached to Uncategorized (categoryId = null) and the category is soft-deleted by setting deletedAt.} \\ \hline
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The user is authenticated as an Admin. \newline
 \textbf{PRE-2} The targeted category exists and is active (\texttt{deletedAt = null}).
@@ -630,19 +630,19 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{The admin has confirmed the deletion.
 }
 
 % =================================================================
-% UC-14.01 View Forum Category List
+% UC-14.01 View Forum Categories List
 % =================================================================
-\subparagraph{UC-14.01 View Forum Category List}
+\subparagraph{UC-14.01 View Forum Categories List}
 
 {\singlespacing
 \setlength{\extrarowheight}{4pt}
 \Needspace{12\baselineskip}
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-14.01 View Forum Category List} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-14.01 View Forum Categories List} \\* \hline
 \endfirsthead
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-14.01 View Forum Category List \textit{(cont.)}} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-14.01 View Forum Categories List \textit{(cont.)}} \\* \hline
 \endhead
 \hline\endfoot
 \endlastfoot
@@ -650,7 +650,7 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{The admin has confirmed the deletion.
 Created By: & ThuanNT & Date Created: & 28/09/2026 \\ \hline
 Primary Actor: & Admin & Secondary Actors: & N/A \\ \hline
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When an admin accesses the Forum Categories section from the admin sidebar.} \\ \hline
-Description: & \multicolumn{3}{L{11.1cm}|}{Allows admins to view the list of forum categories with id, name, slug, description, creation/update dates, deleted status, and post count. Supports pagination, keyword search, sorting, and deleted status filtering.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Allows admins to view the list of forum categories with id, name, slug, description, creation/update dates, deleted status, and post count. Supports pagination, keyword search, sorting, and deleted status filtering.} \\ \hline
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The user is authenticated as an Admin. \newline
 \textbf{PRE-2} The user has permission to access \texttt{GET /api/forums/admin/categories}. \newline
@@ -661,7 +661,7 @@ Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{POST-2} Admin can navigate to create (UC-17.01), edit (UC-17.02), delete (UC-17.03), view detail (UC-14.02), or restore (UC-17.06).
 } \\ \hline
 Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{A. View Forum Category List} \newline
+\textbf{A. View Forum Categories List} \newline
 1. Admin clicks ``Forum Categories'' in the admin navigation. \newline
 2. Frontend prepares query parameters (\texttt{page}, \texttt{limit}, \texttt{search}, \texttt{deleted}, \texttt{sortBy}, \texttt{sortOrder}). \newline
 3. Frontend sends \texttt{GET /api/forums/admin/categories} with query parameters. \newline
@@ -713,19 +713,19 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{Categories and posts are stored in th
 }
 
 % =================================================================
-% UC-14.02 View Forum Category Detail
+% UC-14.02 View Forum Category Details
 % =================================================================
-\subparagraph{UC-14.02 View Forum Category Detail}
+\subparagraph{UC-14.02 View Forum Category Details}
 
 {\singlespacing
 \setlength{\extrarowheight}{4pt}
 \Needspace{12\baselineskip}
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-14.02 View Forum Category Detail} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-14.02 View Forum Category Details} \\* \hline
 \endfirsthead
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-14.02 View Forum Category Detail \textit{(cont.)}} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-14.02 View Forum Category Details \textit{(cont.)}} \\* \hline
 \endhead
 \hline\endfoot
 \endlastfoot
@@ -733,7 +733,7 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{Categories and posts are stored in th
 Created By: & ThuanNT & Date Created: & 28/09/2026 \\ \hline
 Primary Actor: & Admin & Secondary Actors: & N/A \\ \hline
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When an admin clicks ``View detail'' on a category row or accesses /admin/categories/:id.} \\ \hline
-Description: & \multicolumn{3}{L{11.1cm}|}{Allows admins to view the details of a specific forum category including id, name, slug, description, creation/update dates, and post count.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Allows admins to view the details of a specific forum category including id, name, slug, description, creation/update dates, and post count.} \\ \hline
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The user is authenticated as an Admin. \newline
 \textbf{PRE-2} The targeted category exists and has \texttt{deletedAt = null}.
@@ -743,7 +743,7 @@ Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{POST-2} Admin can trigger Edit (UC-17.02), Delete (UC-17.03), or view associated posts.
 } \\ \hline
 Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{A. View Forum Category Detail} \newline
+\textbf{A. View Forum Category Details} \newline
 1. Admin clicks ``View detail'' on a category row or accesses \texttt{/admin/categories/:id}. \newline
 2. Frontend checks category ID parameter. \newline
 3. Frontend sends \texttt{GET /api/forums/admin/categories/:id}. \newline
@@ -803,7 +803,7 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{The category exists in the system.} \
 Created By: & ThuanNT & Date Created: & 28/09/2026 \\ \hline
 Primary Actor: & Admin & Secondary Actors: & N/A \\ \hline
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When an admin clicks ``Restore'' on a soft-deleted category in the deleted categories list.} \\ \hline
-Description: & \multicolumn{3}{L{11.1cm}|}{Restore a deleted Category forum by setting deletedAt back to null. Verifies that no active category currently exists with the same name before restoring.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Restore a deleted Category forum by setting deletedAt back to null. Verifies that no active category currently exists with the same name before restoring.} \\ \hline
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The user is authenticated as an Admin. \newline
 \textbf{PRE-2} The targeted category exists and is currently soft-deleted (\texttt{deletedAt != null}). \newline

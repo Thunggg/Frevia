@@ -9,13 +9,13 @@
 \subsection{Contract Review Management}
 
 % -----------------------------------------------------------------
-% UC-39.01: View Review List
+% UC-39.01: View Reviews List
 % -----------------------------------------------------------------
 \Needspace{12\baselineskip}
-\subsubsection{ View Review List}
+\subsubsection{ View Reviews List}
 
 \fnhead{Function Trigger}
-The actor selects View Review List.\newline
+The actor selects View Reviews List.\newline
 \textbf{Navigation path:} Home $\rightarrow$ \texttt{/\allowbreak{}client/\allowbreak{}contracts/\allowbreak{}[slug]} or \texttt{/\allowbreak{}freelancer/\allowbreak{}contracts/\allowbreak{}[slug].}
 
 \fnhead{Function Description}
@@ -45,7 +45,7 @@ The actor selects View Review List.\newline
 \end{itemize}
 
 \fnhead{Screen Layout (Mock-up Description)}
-\screenfigure[0.95]{image/screenshot/sprint4/nhuy/View Review List.png}{View Review List interface}
+\screenfigure[0.95]{image/screenshot/sprint4/nhuy/View Review List.png}{View Reviews List interface}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
     \item Contract Reviews section with author, rating, breakdown and comment.
     \item Write Review dialog.
@@ -74,7 +74,7 @@ Selection & Current account or selected profile\texttt{/\allowbreak{}contract}; 
 
 \sublabel{Normal Flow}
 \begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
-    \item The actor opens \texttt{/\allowbreak{}client/\allowbreak{}contracts/\allowbreak{}[slug]}; \texttt{/\allowbreak{}freelancer/\allowbreak{}contracts/\allowbreak{}[slug]} and selects View Review List.
+    \item The actor opens \texttt{/\allowbreak{}client/\allowbreak{}contracts/\allowbreak{}[slug]}; \texttt{/\allowbreak{}freelancer/\allowbreak{}contracts/\allowbreak{}[slug]} and selects View Reviews List.
     \item The application submits the selected identifier or list filters.
     \item The API checks authentication where required, authorization, resource existence and input validity.
     \item Retrieve reviews and active responses for a contract after verifying participant access.
@@ -104,13 +104,13 @@ Failure & Structured error without sensitive data; no successful UI state when t
 \end{itemize}
 
 % -----------------------------------------------------------------
-% UC-39.02: View Review Detail
+% UC-39.02: View Review Details
 % -----------------------------------------------------------------
 \Needspace{12\baselineskip}
-\subsubsection{ View Review Detail}
+\subsubsection{ View Review Details}
 
 \fnhead{Function Trigger}
-The actor selects View Review Detail.\newline
+The actor selects View Review Details.\newline
 \textbf{Navigation path:} Home $\rightarrow$ \texttt{/\allowbreak{}client/\allowbreak{}contracts/\allowbreak{}[slug]} or \texttt{/\allowbreak{}freelancer/\allowbreak{}contracts/\allowbreak{}[slug].}
 
 \fnhead{Function Description}
@@ -140,7 +140,7 @@ The actor selects View Review Detail.\newline
 \end{itemize}
 
 \fnhead{Screen Layout (Mock-up Description)}
-\screenfigure[0.95]{image/screenshot/sprint4/nhuy/View Review Detail.png}{View Review Detail interface}
+\screenfigure[0.95]{image/screenshot/sprint4/nhuy/View Review Detail.png}{View Review Details interface}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
     \item Contract Reviews section with author, rating, breakdown and comment.
     \item Write Review dialog.
@@ -169,7 +169,7 @@ Identifier & Positive resource ID from the route; ownership is checked by the AP
 
 \sublabel{Normal Flow}
 \begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
-    \item The actor opens \texttt{/\allowbreak{}client/\allowbreak{}contracts/\allowbreak{}[slug]}; \texttt{/\allowbreak{}freelancer/\allowbreak{}contracts/\allowbreak{}[slug]} and selects View Review Detail.
+    \item The actor opens \texttt{/\allowbreak{}client/\allowbreak{}contracts/\allowbreak{}[slug]}; \texttt{/\allowbreak{}freelancer/\allowbreak{}contracts/\allowbreak{}[slug]} and selects View Review Details.
     \item The application submits the selected identifier or list filters.
     \item The API checks authentication where required, authorization, resource existence and input validity.
     \item Retrieve one review and response after checking contract participation.
