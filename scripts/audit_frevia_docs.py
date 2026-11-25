@@ -261,15 +261,18 @@ def parse_nestjs_routes() -> list[dict[str, str]]:
     for ctrl in sorted(routes_dir.rglob("*.controller.ts")):
         rel = str(ctrl.relative_to(REPO_ROOT)).replace("\\", "/")
         txt = ctrl.read_text(encoding="utf-8", errors="ignore")
-        m_ctrl = re.search(r"@Controller\(([^)]*)\)", txt)
-        base = ""
-        if m_ctrl:
-            m_str = re.search(r"['\"]([^'\"]*)['\"]", m_ctrl.group(1))
-            if m_str:
-                base = m_str.group(1).strip("/")
-
         lines = txt.splitlines()
+        base = ""
         for i, ln in enumerate(lines):
+            m_ctrl = re.search(r"@Controller\(([^)]*)\)", ln)
+            if m_ctrl:
+                m_str = re.search(r"['\"]([^'\"]*)['\"]", m_ctrl.group(1))
+                base = m_str.group(1).strip("/") if m_str else ""
+                if base.startswith("api/"):
+                    base = base[4:]
+                elif base == "api":
+                    base = ""
+                continue
             m_http = re.match(r"^\s*@(Get|Post|Put|Patch|Delete)\(([^)]*)\)", ln)
             if not m_http:
                 continue
@@ -349,9 +352,91 @@ def parse_docker_and_ai() -> dict[str, Any]:
     return {"services": services, "ai_folders": ai_folders, "ai_endpoints": ai_endpoints}
 
 
+def parse_test_codebase() -> dict[str, int]:
+    """Count real automated TypeScript and Python test files and test cases in the repo."""
+    ts_files: list[pathlib.Path] = []
+    apps_dir = REPO_ROOT / "apps"
+    if apps_dir.exists():
+        for pat in ("*.spec.ts", "*.test.ts", "*.spec.tsx", "*.test.tsx"):
+            ts_files.extend(p for p in apps_dir.rglob(pat) if "node_modules" not in p.parts)
+    ts_cases = 0
+    for p in set(ts_files):
+        txt = p.read_text(encoding="utf-8", errors="ignore")
+        ts_cases += len(re.findall(r"^\s*(?:it|test)\s*\(", txt, re.M))
+
+    py_files: list[pathlib.Path] = []
+    ai_dir = REPO_ROOT / "ai-services"
+    if ai_dir.exists():
+        py_files = [
+            p
+            for p in ai_dir.rglob("test_*.py")
+            if not any(skip in p.parts for skip in ("venv", ".venv", "__pycache__", "node_modules"))
+        ]
+    py_cases = 0
+    for p in py_files:
+        txt = p.read_text(encoding="utf-8", errors="ignore")
+        py_cases += len(re.findall(r"^\s*(?:async\s+)?def\s+test_", txt, re.M))
+
+    return {
+        "ts_files": len(set(ts_files)),
+        "ts_cases": ts_cases,
+        "py_files": len(py_files),
+        "py_cases": py_cases,
+    }
+
+
+def parse_r3_actors() -> set[str]:
+    """Parse canonical actor names from Report 3 2.1.Actors.tex."""
+    actors_tex = REPO_ROOT / "docs" / "Report 3" / "sections" / "2.Subsections" / "2.1.Actors.tex"
+    actors: set[str] = set()
+    if not actors_tex.exists():
+        return actors
+    for ln in actors_tex.read_text(encoding="utf-8", errors="ignore").splitlines():
+        m = re.match(r"^\s*\d+\s*&\s*([^&\\]+?)\s*&", ln)
+        if m:
+            raw_name = re.sub(r"\s*\([^)]*\)", "", m.group(1)).strip()
+            if raw_name:
+                actors.add(raw_name)
+    return actors
+
+
 # ==============================================================================
 # 3.1 LOGS, GEOMETRY, & REPORT 7 READINESS
 # ==============================================================================
+
+
+def _build_log_line_sources(log_lines: list[str], rep_dir: pathlib.Path) -> list[tuple[str, str]]:
+    """Single-pass O(N) TeX log file-stack attribution for every line in a compile .log."""
+    stack: list[str] = []
+    out: list[tuple[str, str]] = []
+    path_open_re = re.compile(r"^\(\s*([^\s()\[\]{}]+?\.(?:tex|sty|cls|aux|toc|lof|lot))\b")
+    for ln in log_lines:
+        cur_src = ("compile.log", "shared")
+        for fp in reversed(stack):
+            if fp.endswith(".tex"):
+                full = (rep_dir / fp).resolve()
+                try:
+                    rel = str(full.relative_to(REPO_ROOT)).replace("\\", "/")
+                    cur_src = (rel, detect_member(rel))
+                except Exception:
+                    cur_src = (fp, detect_member(fp))
+                break
+        out.append(cur_src)
+        pos = 0
+        n = len(ln)
+        while pos < n:
+            ch = ln[pos]
+            if ch == "(":
+                m_path = path_open_re.match(ln[pos:])
+                if m_path:
+                    stack.append(m_path.group(1).lstrip("./").replace("\\", "/"))
+                    pos += len(m_path.group(0))
+                    continue
+            elif ch == ")" and stack and (pos == 0 or ln[pos - 1] in (" ", ")", "]")):
+                stack.pop()
+            pos += 1
+    return out
+
 
 def audit_logs_and_geometry(expanded: dict[str, list[dict[str, Any]]]) -> tuple[list[dict], list[dict]]:
     log_issues: list[dict] = []
@@ -375,6 +460,8 @@ def audit_logs_and_geometry(expanded: dict[str, list[dict[str, Any]]]) -> tuple[
             )
             continue
 
+        rep_dir = root_tex.parent
+
         # Geometry & documentclass
         head_txt = "\n".join(r["clean"] for r in expanded[rep_name][:120])
         m_doc = re.search(r"\\documentclass\[([^\]]*)\]", head_txt)
@@ -385,7 +472,7 @@ def audit_logs_and_geometry(expanded: dict[str, list[dict[str, Any]]]) -> tuple[
         doc_str = m_doc.group(1) if m_doc else ""
         geometries[rep_name] = f"class=[{doc_str}] geometry=[{geo_str}]"
 
-        # Log parsing
+        # Log parsing & freshness check
         log_path = root_tex.with_suffix(".log")
         if not log_path.exists():
             log_issues.append(
@@ -399,16 +486,38 @@ def audit_logs_and_geometry(expanded: dict[str, list[dict[str, Any]]]) -> tuple[
                 }
             )
         else:
+            log_mtime = log_path.stat().st_mtime
+            newer_tex = sorted(
+                {
+                    rec["file"]
+                    for rec in expanded[rep_name]
+                    if (REPO_ROOT / rec["file"]).exists() and (REPO_ROOT / rec["file"]).stat().st_mtime > log_mtime + 60.0
+                }
+            )
+            if newer_tex:
+                log_issues.append(
+                    {
+                        "severity": "P1",
+                        "report": rep_name,
+                        "member": detect_member(newer_tex[0]),
+                        "category": "Stale Compile Log",
+                        "location": log_path.name,
+                        "detail": f"{len(newer_tex)} .tex file(s) modified >60s after {log_path.name}: {', '.join(newer_tex[:4])}",
+                    }
+                )
+
             log_lines = log_path.read_text(encoding="utf-8", errors="ignore").splitlines()
+            line_sources = _build_log_line_sources(log_lines, rep_dir)
             for idx, ln in enumerate(log_lines, 1):
+                src_f, mem = line_sources[idx - 1]
                 if re.search(r"Reference `[^']+' on page \d+ undefined|Citation `[^']+' .* undefined", ln):
                     log_issues.append(
                         {
                             "severity": "P0",
                             "report": rep_name,
-                            "member": "shared",
+                            "member": mem,
                             "category": "Undefined Reference (??)",
-                            "location": f"{log_path.name}:L{idx}",
+                            "location": f"{src_f} ({log_path.name}:L{idx})",
                             "detail": ln.strip(),
                         }
                     )
@@ -417,25 +526,37 @@ def audit_logs_and_geometry(expanded: dict[str, list[dict[str, Any]]]) -> tuple[
                         {
                             "severity": "P0",
                             "report": rep_name,
-                            "member": "shared",
+                            "member": mem,
                             "category": "Duplicate Label",
-                            "location": f"{log_path.name}:L{idx}",
+                            "location": f"{src_f} ({log_path.name}:L{idx})",
                             "detail": ln.strip(),
                         }
                     )
-                elif ln.startswith("!") or "not found" in ln.lower() and "file `" in ln.lower():
+                elif ln.startswith("Missing character: There is no "):
                     log_issues.append(
                         {
                             "severity": "P0",
                             "report": rep_name,
-                            "member": "shared",
-                            "category": "LaTeX Error / Missing File",
-                            "location": f"{log_path.name}:L{idx}",
+                            "member": mem,
+                            "category": "Missing Font Character",
+                            "location": f"{src_f} ({log_path.name}:L{idx})",
+                            "detail": ln.strip(),
+                        }
+                    )
+                elif "Float too large for page" in ln or ln.startswith("!") or ("not found" in ln.lower() and "file `" in ln.lower()):
+                    log_issues.append(
+                        {
+                            "severity": "P0",
+                            "report": rep_name,
+                            "member": mem,
+                            "category": "LaTeX Error / Float Too Large",
+                            "location": f"{src_f} ({log_path.name}:L{idx})",
                             "detail": ln.strip(),
                         }
                     )
                 else:
                     m_ov = re.search(r"Overfull \\hbox \(([0-9.]+)pt too wide\)", ln)
+                    m_vv = re.search(r"Overfull \\vbox \(([0-9.]+)pt too high\)", ln)
                     if m_ov:
                         pts = float(m_ov.group(1))
                         if pts > 10.0:
@@ -444,9 +565,23 @@ def audit_logs_and_geometry(expanded: dict[str, list[dict[str, Any]]]) -> tuple[
                                 {
                                     "severity": sev,
                                     "report": rep_name,
-                                    "member": "shared",
-                                    "category": f"Overfull \\hbox (>{10}pt)",
-                                    "location": f"{log_path.name}:L{idx}",
+                                    "member": mem,
+                                    "category": "Overfull \\hbox (>10pt)",
+                                    "location": f"{src_f} ({log_path.name}:L{idx})",
+                                    "detail": ln.strip(),
+                                }
+                            )
+                    elif m_vv:
+                        pts = float(m_vv.group(1))
+                        if pts > 5.0:
+                            sev = "P1" if pts > 15.0 else "P2"
+                            log_issues.append(
+                                {
+                                    "severity": sev,
+                                    "report": rep_name,
+                                    "member": mem,
+                                    "category": "Overfull \\vbox (>5pt)",
+                                    "location": f"{src_f} ({log_path.name}:L{idx})",
                                     "detail": ln.strip(),
                                 }
                             )
@@ -531,11 +666,43 @@ def audit_macros_images_and_leftovers(
         "r3_uc_defined": set(),
         "r3_br_defined": set(),
         "r3_msg_defined": set(),
+        "r3_uc_called": [],
+        "all_sub_uc_refs": defaultdict(list),
     }
 
     r3_uc_called: list[tuple[str, str, int]] = []
     r3_br_called: list[tuple[str, str, int]] = []
     r3_msg_called: list[tuple[str, str, int]] = []
+    stale_diagram_pairs: set[tuple[str, str]] = set()
+
+    # Pre-index Draw.io / SVG sources once to avoid repeated rglob walks per image reference
+    drawio_by_stem: dict[str, list[pathlib.Path]] = defaultdict(list)
+    svg_stems: set[str] = set()
+    for d in DRAWIO_DIRS:
+        if not d.exists():
+            continue
+        for dp in d.rglob("*.drawio"):
+            drawio_by_stem[dp.stem.replace(".drawio", "")].append(dp)
+        for sp in d.rglob("*.svg"):
+            svg_stems.add(sp.stem.replace(".drawio", ""))
+
+    # Check orphaned extensionless files inside docs/*/sections/ (common editor/backup clutter)
+    docs_dir = REPO_ROOT / "docs"
+    if docs_dir.exists():
+        for sec_dir in docs_dir.glob("*/sections"):
+            for p in sec_dir.rglob("*"):
+                if p.is_file() and p.suffix == "" and not p.name.startswith("."):
+                    rel = str(p.relative_to(REPO_ROOT)).replace("\\", "/")
+                    leftover_issues.append(
+                        {
+                            "severity": "P2",
+                            "report": p.parts[p.parts.index("docs") + 1],
+                            "member": detect_member(rel),
+                            "category": "Orphan Extensionless File",
+                            "location": rel,
+                            "detail": f"Extensionless file sitting next to .tex sources (likely stale backup): {p.name}",
+                        }
+                    )
 
     allowed_square = re.compile(
         r"^\[(?:GET|POST|PUT|PATCH|DELETE|id|slug|milestoneId|jobId|userId|postId|contractId|category|disputeId|A-Z0-9_|cont\.|optional|0-9]+)\]$"
@@ -600,7 +767,7 @@ def audit_macros_images_and_leftovers(
                         }
                     )
                 else:
-                    # Determine actual extension for Tier-3 raster/static diagram inventory
+                    # Determine actual extension for Tier-3 raster/static diagram inventory & integrity
                     resolved_img = matched_base / img_path
                     actual_ext = resolved_img.suffix.lower()
                     if actual_ext not in {".pdf", ".png", ".jpg", ".jpeg", ".svg"}:
@@ -609,10 +776,37 @@ def audit_macros_images_and_leftovers(
                                 actual_ext = cand_ext
                                 resolved_img = matched_base / (img_path + cand_ext)
                                 break
-                    has_drawio_src = False
+                    if resolved_img.exists() and resolved_img.stat().st_size == 0:
+                        log_format_issues.append(
+                            {
+                                "severity": "P0",
+                                "report": rep_name,
+                                "member": member,
+                                "category": "Empty Image File",
+                                "location": f"{fpath}:L{lnum}",
+                                "detail": f"{img_path} resolved to 0-byte file",
+                            }
+                        )
                     stem = resolved_img.stem.replace(".drawio", "")
-                    if any(d.exists() and (list(d.rglob(f"{stem}.drawio")) or list(d.rglob(f"{stem}.svg"))) for d in DRAWIO_DIRS):
-                        has_drawio_src = True
+                    drawio_matches = drawio_by_stem.get(stem, [])
+                    has_drawio_src = bool(drawio_matches) or (stem in svg_stems)
+                    if drawio_matches and resolved_img.exists():
+                        img_mtime = resolved_img.stat().st_mtime
+                        for dp in drawio_matches:
+                            if dp.stat().st_mtime > img_mtime + 60.0:
+                                pair = (str(resolved_img), str(dp))
+                                if pair not in stale_diagram_pairs:
+                                    stale_diagram_pairs.add(pair)
+                                    log_format_issues.append(
+                                        {
+                                            "severity": "P1",
+                                            "report": rep_name,
+                                            "member": member,
+                                            "category": "Stale Exported Diagram",
+                                            "location": f"{fpath}:L{lnum}",
+                                            "detail": f"Draw.io '{dp.name}' is newer (>60s) than exported '{resolved_img.name}'",
+                                        }
+                                    )
                     if actual_ext in {".png", ".jpg", ".jpeg", ".pdf"} and not has_drawio_src:
                         manual_diagrams.append(
                             {
@@ -695,6 +889,11 @@ def audit_macros_images_and_leftovers(
                 if re.search(r"&\s*&\s*(?:\\\\|\\hline)", clean) and not re.search(r"\\textbf\{Report ", clean):
                     pass  # Intentional blank RACI/matrix cells exist; check non-matrix tables selectively
 
+            # Collect sub-UC references across ALL reports (except definitions table in R3)
+            if not ("2.2.2.Use_Case_Description.tex" in fpath and rep_name == "Report 3"):
+                for m_sub_uc in re.findall(r"\b(UC-\d+\.\d+)\b", clean):
+                    parsed_meta["all_sub_uc_refs"][rep_name].append((m_sub_uc, fpath, lnum))
+
             # Report 3 internal code definitions & references
             if rep_name == "Report 3":
                 if "2.2.2.Use_Case_Description.tex" in fpath:
@@ -717,9 +916,13 @@ def audit_macros_images_and_leftovers(
                     for m_m in re.findall(r"\b(MSG\d+)\b", clean):
                         r3_msg_called.append((m_m, fpath, lnum))
 
+    parsed_meta["r3_uc_called"] = r3_uc_called
+
     # Compare Report 3 defined vs referenced codes
+    seen_missing_msg: set[tuple[str, str]] = set()
     for code, fp, ln in r3_msg_called:
-        if parsed_meta["r3_msg_defined"] and code not in parsed_meta["r3_msg_defined"]:
+        if parsed_meta["r3_msg_defined"] and code not in parsed_meta["r3_msg_defined"] and (code, fp) not in seen_missing_msg:
+            seen_missing_msg.add((code, fp))
             leftover_issues.append(
                 {
                     "severity": "P1",
@@ -730,10 +933,66 @@ def audit_macros_images_and_leftovers(
                     "detail": f"{code} used in SRS but missing in Application Messages List",
                 }
             )
+
+    canon_br_groups: dict[tuple[str, str], tuple[int, list[str]]] = {}
+    local_br_groups: dict[tuple[str, str], list[str]] = defaultdict(list)
     for code, fp, ln in r3_br_called:
         if parsed_meta["r3_br_defined"] and code not in parsed_meta["r3_br_defined"]:
-            # Flag only distinct missing rules once per code
-            pass
+            prefix = "-".join(code.split("-")[:2])
+            if re.match(r"^BR-[A-Z]+-\d+$", code):
+                cnt, samples = canon_br_groups.get((prefix, fp), (ln, []))
+                if code not in samples:
+                    samples.append(code)
+                canon_br_groups[(prefix, fp)] = (cnt, samples)
+            else:
+                if code not in local_br_groups[(prefix, fp)]:
+                    local_br_groups[(prefix, fp)].append(code)
+
+    for (prefix, fp), (first_ln, codes) in sorted(canon_br_groups.items()):
+        sample = ", ".join(codes[:6]) + (f" ... (+{len(codes) - 6})" if len(codes) > 6 else "")
+        leftover_issues.append(
+            {
+                "severity": "P1",
+                "report": "Report 3",
+                "member": detect_member(fp),
+                "category": "Undefined BR Code Group",
+                "location": f"{fp}:L{first_ln}",
+                "detail": f"{len(codes)} undefined rule(s) under {prefix}-* missing in 5.1.Business_Rules.tex ({sample})",
+            }
+        )
+
+    for (prefix, fp), codes in sorted(local_br_groups.items()):
+        sample = ", ".join(codes[:4]) + (f" ... (+{len(codes) - 4})" if len(codes) > 4 else "")
+        leftover_issues.append(
+            {
+                "severity": "P2",
+                "report": "Report 3",
+                "member": detect_member(fp),
+                "category": "Unregistered Screen-Local BR Series",
+                "location": fp,
+                "detail": f"{len(codes)} local BR code(s) under {prefix}-* not registered in 5.1.Business_Rules.tex ({sample})",
+            }
+        )
+
+    # Flag .tex files under docs/Report */sections/ not included from root .tex
+    visited_files = {rec["file"] for recs in expanded.values() for rec in recs}
+    for rep_name, root_tex in REPORTS:
+        sec_root = root_tex.parent / "sections"
+        if not sec_root.exists():
+            continue
+        for tex_p in sorted(sec_root.rglob("*.tex")):
+            rel = str(tex_p.relative_to(REPO_ROOT)).replace("\\", "/")
+            if rel not in visited_files:
+                leftover_issues.append(
+                    {
+                        "severity": "P2",
+                        "report": rep_name,
+                        "member": detect_member(rel),
+                        "category": "Unincluded .tex Section File",
+                        "location": rel,
+                        "detail": f"File exists in sections/ but is never \\input/\\included from {root_tex.name}",
+                    }
+                )
 
     called_br_set = {c for c, _, _ in r3_br_called}
     for br in sorted(parsed_meta["r3_br_defined"] - called_br_set):
@@ -878,11 +1137,23 @@ def extract_drawio_texts(drawio_path: pathlib.Path) -> list[str]:
 def audit_code_drawio_doc(
     prisma: dict[str, Any],
     routes: list[dict[str, str]],
+    web_pages: list[str],
     docker_ai: dict[str, Any],
     parsed_meta: dict[str, Any],
     expanded: dict[str, list[dict[str, Any]]],
+    r3_actors: set[str],
 ) -> list[dict]:
     mismatches: list[dict] = []
+
+    def _norm_param_path(raw_path: str) -> str:
+        clean_p = raw_path.split("?", 1)[0]
+        while clean_p and clean_p[-1] in ".,;):]\\/":
+            clean_p = clean_p[:-1]
+        while clean_p.endswith("}") and clean_p.count("{") < clean_p.count("}"):
+            clean_p = clean_p[:-1]
+        clean_p = re.sub(r"\\[a-zA-Z]+\s*", "", clean_p)
+        clean_p = re.sub(r":\w+|\{[^}]+\}|\[[^\]]+\]", ":param", clean_p)
+        return clean_p or "/"
 
     # 1. AI services in docker-compose.yml vs actual disk folders
     for svc in docker_ai["services"]:
@@ -898,11 +1169,13 @@ def audit_code_drawio_doc(
             )
 
     # 2. Report 3 2.1.Actors.tex vs context-diagram.drawio & uc-diagrams
-    r3_actors_expected = {"Guest", "Client", "Freelancer", "Admin", "Expert", "Google OAuth", "Email Service", "Cloud Storage", "Payment Gateway", "AI/ML Services"}
+    expected_human_actors = r3_actors & {"Guest", "Client", "Freelancer", "Admin", "Expert"}
+    if not expected_human_actors:
+        expected_human_actors = {"Guest", "Client", "Freelancer", "Admin", "Expert"}
     ctx_drawio = REPO_ROOT / "docs" / "Report 3" / "image" / "context_diagram" / "context-diagram.drawio"
     if ctx_drawio.exists():
         ctx_labels = set(extract_drawio_texts(ctx_drawio))
-        for must in ("Guest", "Client", "Freelancer", "Admin", "Expert", "AI/ML Services"):
+        for must in sorted(expected_human_actors | {"AI/ML Services"}):
             if must not in ctx_labels:
                 mismatches.append(
                     {
@@ -914,15 +1187,15 @@ def audit_code_drawio_doc(
                     }
                 )
 
-    # 3. UC-diagrams <-> Report 3 2.2.2 Use Case Descriptions
+    # 3. UC-diagrams <-> Report 3 2.2.2 Table <-> All Reports (Bidirectional)
     uc_dir = REPO_ROOT / "uc-diagrams"
+    r3_uc_def = parsed_meta["r3_uc_defined"]
     if uc_dir.exists():
         drawio_ucs: set[str] = set()
         for p in sorted(uc_dir.glob("*.drawio")):
             for txt in extract_drawio_texts(p):
                 for m in re.findall(r"\b(UC-\d+(?:\.\d+)?)\b", txt):
                     drawio_ucs.add(m)
-        r3_uc_def = parsed_meta["r3_uc_defined"]
         for u in sorted(drawio_ucs - r3_uc_def):
             mismatches.append(
                 {
@@ -933,14 +1206,42 @@ def audit_code_drawio_doc(
                     "detail": f"{u} appears in UC diagram but not in 2.2.2 Use Case Description table",
                 }
             )
+        r3_sub_ucs = {u for u in r3_uc_def if "." in u}
+        for u in sorted(r3_sub_ucs - drawio_ucs):
+            mismatches.append(
+                {
+                    "severity": "P1",
+                    "axis": "R3 2.2.2 Table <-> UC Draw.io",
+                    "source_a": "2.2.2.Use_Case_Description.tex",
+                    "source_b": "uc-diagrams/*.drawio",
+                    "detail": f"{u} defined in 2.2.2 table but missing from uc-diagrams/*.drawio",
+                }
+            )
+
+    if r3_uc_def:
+        seen_undef_uc: set[tuple[str, str, str]] = set()
+        for rep_name, refs in parsed_meta.get("all_sub_uc_refs", {}).items():
+            for u, fp, ln in refs:
+                if u not in r3_uc_def and (rep_name, u, fp) not in seen_undef_uc:
+                    seen_undef_uc.add((rep_name, u, fp))
+                    mismatches.append(
+                        {
+                            "severity": "P1",
+                            "axis": f"{rep_name} <-> R3 2.2.2 UC Table",
+                            "source_a": f"{fp}:L{ln}",
+                            "source_b": "2.2.2.Use_Case_Description.tex",
+                            "detail": f"Referenced sub-UC '{u}' does not exist in canonical R3 2.2.2 table",
+                        }
+                    )
 
     # 4. SVG / Vector PDF ERD text vs Prisma models
     erd_dir = REPO_ROOT / "docs" / "Report 3" / "image" / "ERD"
     erd_all_svg = erd_dir / "ERD-ALL.drawio.svg"
+    model_names = set(prisma["models"].keys())
     if erd_all_svg.exists():
         svg_txt = erd_all_svg.read_text(encoding="utf-8", errors="ignore")
         svg_words = set(re.findall(r">([A-Za-z_][A-Za-z0-9_]{2,})<", svg_txt))
-        for model_name in sorted(prisma["models"].keys()):
+        for model_name in sorted(model_names):
             if model_name not in svg_words and model_name.lower() not in {w.lower() for w in svg_words}:
                 mismatches.append(
                     {
@@ -952,9 +1253,58 @@ def audit_code_drawio_doc(
                     }
                 )
 
-    # 5. Prisma models vs Report 4 Database Design headings/tables
+    # 4b. Report 3 3.1.5 ERD Tables & Columns <-> Prisma Schema (Bidirectional)
+    r3_erd_path = REPO_ROOT / "docs" / "Report 3" / "sections" / "3.Subsections" / "3.1.Subsections" / "3.1.5.Entity_Relationship_Diagram.tex"
+    if r3_erd_path.exists():
+        erd_clean = r3_erd_path.read_text(encoding="utf-8", errors="ignore")
+        erd_clean = erd_clean.replace(r"\allowbreak ", "").replace(r"\allowbreak", "")
+        cur_tbl = None
+        seen_r3_tables: set[str] = set()
+        seen_field_err: set[tuple[str, str]] = set()
+        for ln_no, ln in enumerate(erd_clean.splitlines(), 1):
+            mt = re.match(r"^\d+\s*&\s*\\texttt\{([^}]+)\}\s*&", ln)
+            if mt:
+                cur_tbl = mt.group(1).strip()
+                seen_r3_tables.add(cur_tbl)
+                if cur_tbl not in model_names:
+                    mismatches.append(
+                        {
+                            "severity": "P1",
+                            "axis": "R3 ERD Table <-> Prisma Schema",
+                            "source_a": f"3.1.5.Entity_Relationship_Diagram.tex:L{ln_no}",
+                            "source_b": "apps/api/prisma/schema.prisma",
+                            "detail": f"Table '{cur_tbl}' listed in R3 ERD does not exist in schema.prisma",
+                        }
+                    )
+            mf = re.search(r"--\s*\\texttt\{([^}]+)\}", ln)
+            if mf and cur_tbl and cur_tbl in model_names:
+                fname = mf.group(1).strip()
+                pfields = {f["name"] for f in prisma["models"][cur_tbl]}
+                if fname not in pfields and (cur_tbl, fname) not in seen_field_err:
+                    seen_field_err.add((cur_tbl, fname))
+                    mismatches.append(
+                        {
+                            "severity": "P1",
+                            "axis": "R3 ERD Field <-> Prisma Schema",
+                            "source_a": f"3.1.5.Entity_Relationship_Diagram.tex:L{ln_no}",
+                            "source_b": f"schema.prisma ({cur_tbl})",
+                            "detail": f"Column '{cur_tbl}.{fname}' not found in Prisma model",
+                        }
+                    )
+        for missing_t in sorted(model_names - seen_r3_tables):
+            mismatches.append(
+                {
+                    "severity": "P1",
+                    "axis": "Prisma Schema <-> R3 ERD Table",
+                    "source_a": "apps/api/prisma/schema.prisma",
+                    "source_b": "3.1.5.Entity_Relationship_Diagram.tex",
+                    "detail": f"Prisma model '{missing_t}' missing from R3 3.1.5 entity descriptions",
+                }
+            )
+
+    # 5. Prisma models <-> Report 4 Database Design (Bidirectional + Foreign Keys)
     r4_text = "\n".join(r["clean"] for r in expanded.get("Report 4", []))
-    for model_name in sorted(prisma["models"].keys()):
+    for model_name in sorted(model_names):
         if not re.search(rf"\b{re.escape(model_name)}\b", r4_text, re.IGNORECASE):
             mismatches.append(
                 {
@@ -966,11 +1316,225 @@ def audit_code_drawio_doc(
                 }
             )
 
-    # 6. Class diagrams check
-    cls_dir = REPO_ROOT / "class-diagrams"
-    if cls_dir.exists():
-        for p in sorted(cls_dir.glob("*.drawio")):
-            _ = extract_drawio_texts(p)  # verify XML decodes cleanly
+    r4_db_path = REPO_ROOT / "docs" / "Report 4" / "sections" / "2.Database_Design.tex"
+    if r4_db_path.exists():
+        cur_t = None
+        seen_r4_tables: set[str] = set()
+        for ln_no, ln in enumerate(r4_db_path.read_text(encoding="utf-8", errors="ignore").splitlines(), 1):
+            mt = re.match(r"^\\texttt\{\d+\}\s*&\s*\\texttt\{([^}]+)\}\s*&", ln)
+            if mt:
+                cur_t = mt.group(1).strip()
+                seen_r4_tables.add(cur_t)
+                if cur_t not in model_names:
+                    mismatches.append(
+                        {
+                            "severity": "P1",
+                            "axis": "R4 DB Design <-> Prisma Schema",
+                            "source_a": f"2.Database_Design.tex:L{ln_no}",
+                            "source_b": "apps/api/prisma/schema.prisma",
+                            "detail": f"Table '{cur_t}' in Report 4 Table Descriptions does not exist in schema.prisma",
+                        }
+                    )
+            if "Foreign keys:" in ln and cur_t and cur_t in model_names:
+                pfields = {f["name"] for f in prisma["models"][cur_t]}
+                for m_fk in re.finditer(r"\\texttt\{([^}]+)\}\s*\$\\rightarrow\$\s*\\texttt\{([^}]+)\}", ln):
+                    col, target = m_fk.group(1).strip(), m_fk.group(2).strip()
+                    if col not in pfields or target not in model_names:
+                        mismatches.append(
+                            {
+                                "severity": "P1",
+                                "axis": "R4 DB Foreign Key <-> Prisma",
+                                "source_a": f"2.Database_Design.tex:L{ln_no}",
+                                "source_b": f"schema.prisma ({cur_t})",
+                                "detail": f"FK '{col} -> {target}' mismatch in model {cur_t}",
+                            }
+                        )
+        for missing_r4_t in sorted(model_names - seen_r4_tables):
+            mismatches.append(
+                {
+                    "severity": "P1",
+                    "axis": "Prisma Schema <-> R4 Table Descriptions",
+                    "source_a": "apps/api/prisma/schema.prisma",
+                    "source_b": "2.Database_Design.tex",
+                    "detail": f"Prisma model '{missing_r4_t}' missing from Report 4 Table Descriptions",
+                }
+            )
+
+    # 6. Class & Sequence Draw.io checks + deleted shared sequence guard
+    for diag_dir_name in ("class-diagrams", "sequence-diagrams-remake"):
+        ddir = REPO_ROOT / diag_dir_name
+        if ddir.exists():
+            for p in sorted(ddir.rglob("*.drawio")):
+                try:
+                    txts = extract_drawio_texts(p)
+                    if not txts:
+                        mismatches.append(
+                            {
+                                "severity": "P1",
+                                "axis": f"{diag_dir_name} Content",
+                                "source_a": str(p.relative_to(REPO_ROOT)).replace("\\", "/"),
+                                "source_b": "XML mxCell labels",
+                                "detail": "Draw.io file decoded with 0 text labels",
+                            }
+                        )
+                except Exception as exc:
+                    mismatches.append(
+                        {
+                            "severity": "P0",
+                            "axis": f"{diag_dir_name} XML",
+                            "source_a": str(p.relative_to(REPO_ROOT)).replace("\\", "/"),
+                            "source_b": "Draw.io XML parser",
+                            "detail": f"Failed to parse Draw.io XML: {exc}",
+                        }
+                    )
+
+    deleted_common_seqs = ("common-sequences", "images/common/", "nhuy/common/")
+    for rep_name, recs in expanded.items():
+        if rep_name not in ("Report 3", "Report 4"):
+            continue
+        for rec in recs:
+            for dtok in deleted_common_seqs:
+                if dtok in rec["clean"]:
+                    mismatches.append(
+                        {
+                            "severity": "P1",
+                            "axis": "Deleted Common Sequences Guard",
+                            "source_a": f"{rec['file']}:L{rec['line']}",
+                            "source_b": "Team removal rule",
+                            "detail": f"Reference to deleted shared sequence token '{dtok}'",
+                        }
+                    )
+
+    # 7. Repo Path & % Source: Reference Verification across Reports 1..6 (active + unincluded .tex)
+    seen_missing_paths: set[tuple[str, str]] = set()
+    repo_path_re = re.compile(
+        r"(?<![A-Za-z0-9_/-])((?:apps|packages|ai-services|ai|uc-diagrams|class-diagrams|sequence-diagrams-remake)/[A-Za-z0-9_./\[\]-]+)"
+    )
+    all_scan_recs = list(expanded.items())
+    for rep_name, recs in all_scan_recs:
+        for rec in recs:
+            scan_src = rec["raw"]
+            for m in repo_path_re.finditer(scan_src):
+                cand = m.group(1).rstrip(".,;)}]:")
+                if any(bad in cand for bad in ("*", "<", ">", "...")) or re.search(r"\[[0-9,-]+\]", cand):
+                    continue
+                if re.search(r"/images/|/\w+\.tex$", cand) and cand.startswith(("ai/", "ptai/")):
+                    continue
+                if not (REPO_ROOT / cand).exists() and (cand, rec["file"]) not in seen_missing_paths:
+                    seen_missing_paths.add((cand, rec["file"]))
+                    mismatches.append(
+                        {
+                            "severity": "P1",
+                            "axis": "Docs Code Path <-> Disk",
+                            "source_a": f"{rec['file']}:L{rec['line']}",
+                            "source_b": cand,
+                            "detail": f"Referenced repo path '{cand}' does not exist on disk",
+                        }
+                    )
+
+    # 8. NestJS API Endpoints <-> Docs (R3, R4, R6)
+    real_api_set = {(r["method"], _norm_param_path(r["path"])) for r in routes}
+    ai_api_set = {
+        (a["method"], _norm_param_path(a["path"])) for a in docker_ai.get("ai_endpoints", [])
+    } | {
+        ("POST", "/verify"),
+        ("POST", "/verify/"),
+        ("POST", "/liveness/pose"),
+        ("POST", "/moderate"),
+        ("GET", "/health"),
+    }
+    by_file_lines: dict[tuple[str, str], list[str]] = defaultdict(list)
+    for rep_name in ("Report 3", "Report 4", "Report 6"):
+        for rec in expanded.get(rep_name, []):
+            by_file_lines[(rep_name, rec["file"])].append(rec["clean"])
+
+    seen_api_miss: set[tuple[str, str, str, str]] = set()
+    for (rep_name, fp), lines_list in sorted(by_file_lines.items()):
+        joined = " ".join(lines_list)
+        unesc = (
+            joined.replace("{}", "")
+            .replace(r"\allowbreak ", "")
+            .replace(r"\allowbreak", "")
+            .replace(r"\{", "{")
+            .replace(r"\}", "}")
+            .replace(r"\_", "_")
+            .replace(r"\&", "&")
+        )
+        collapsed = re.sub(r"\s+", " ", unesc)
+        for m in re.finditer(r"\b(GET|POST|PUT|PATCH|DELETE)\s+(/[A-Za-z0-9_/:{}.-]+)", collapsed):
+            meth, raw_p = m.group(1), m.group(2)
+            raw_clean = raw_p.split("?", 1)[0].rstrip(".,;):]\\")
+            while raw_clean.endswith("}") and raw_clean.count("{") < raw_clean.count("}"):
+                raw_clean = raw_clean[:-1]
+            if len(raw_clean) < 3 or any(skip in raw_clean for skip in ("/_next", "/static", "/webhook", "/example", "/abc")):
+                continue
+            np = _norm_param_path(raw_clean)
+            if (meth, np) in ai_api_set or (meth, np.rstrip("/") or "/") in ai_api_set:
+                continue
+            np_api = np if np.startswith("/api") else ("/api" + np)
+            if (meth, np_api) not in real_api_set and (meth, np) not in real_api_set:
+                if (rep_name, fp, meth, np_api) not in seen_api_miss:
+                    seen_api_miss.add((rep_name, fp, meth, np_api))
+                    mismatches.append(
+                        {
+                            "severity": "P1",
+                            "axis": "Docs API Endpoint <-> NestJS",
+                            "source_a": fp,
+                            "source_b": "apps/api/src/routes/**/*.controller.ts",
+                            "detail": f"Documented endpoint '{meth} {raw_clean}' does not match any NestJS controller route",
+                        }
+                    )
+
+    # 9. Next.js App Router Pages <-> Explicit Web URLs in Docs
+    norm_web = {_norm_param_path(p) for p in web_pages}
+    seen_web_miss: set[tuple[str, str, str]] = set()
+    for rep_name, recs in expanded.items():
+        for rec in recs:
+            c = rec["clean"].replace("{}", "").replace(r"\allowbreak", "").replace(r"\_", "_").replace(r"\{", "{").replace(r"\}", "}")
+            for m in re.finditer(r"localhost:3000(/[A-Za-z0-9_/\[\]:{}-]*)", c):
+                raw_u = m.group(1).split("?", 1)[0].rstrip(".,;)}]:\\")
+                if raw_u.startswith("/api/") or raw_u in ("", "/"):
+                    continue
+                nu = _norm_param_path(raw_u)
+                if nu not in norm_web and (rep_name, rec["file"], raw_u) not in seen_web_miss:
+                    seen_web_miss.add((rep_name, rec["file"], raw_u))
+                    mismatches.append(
+                        {
+                            "severity": "P1",
+                            "axis": "Docs Web URL <-> Next.js App",
+                            "source_a": f"{rec['file']}:L{rec['line']}",
+                            "source_b": "apps/web/app/**/page.tsx",
+                            "detail": f"Documented frontend URL 'localhost:3000{raw_u}' has no matching Next.js page.tsx",
+                        }
+                    )
+
+    # 10. Scope / Deprecated Tech Drift Guard (R1..R6, +/-100 char negation-aware)
+    negation_re = re.compile(
+        r"\b(?:no|not|never|without|none|instead of|non-(?!admin\b|registered\b|deleted\b|functional\b|verified\b|empty\b|live\b)|eliminat\w*|remov\w*|replac\w*|exclud\w*|rather than|neither|does not|do not|optional external|host\w* separately|outside the scope|out of scope|deferred|unsupported)\b",
+        re.IGNORECASE,
+    )
+    drift_pat = re.compile(r"\b(blockchain|smart contracts?|gas fees?|solidity|web3|metamask|ai-moderation)\b", re.IGNORECASE)
+    for rep_name, recs in expanded.items():
+        for rec in recs:
+            if "record_of_changes" in rec["file"]:
+                continue
+            line_txt = rec["clean"]
+            for m in drift_pat.finditer(line_txt):
+                tok = m.group(1)
+                ctx_win = line_txt[max(0, m.start() - 100) : min(len(line_txt), m.end() + 100)]
+                if negation_re.search(ctx_win):
+                    continue
+                if tok.lower() == "ai-moderation" and "optional" in line_txt.lower():
+                    continue
+                mismatches.append(
+                    {
+                        "severity": "P1",
+                        "axis": "Scope / Deprecated Tech Drift",
+                        "source_a": f"{rec['file']}:L{rec['line']}",
+                        "source_b": "Verified Architecture / Scope",
+                        "detail": f"Affirmative mention of out-of-scope/removed term '{tok}': {line_txt.strip()[:100]}",
+                    }
+                )
 
     return mismatches
 
@@ -1018,7 +1582,12 @@ class UnitTestHtmlParser(HTMLParser):
             self._cur_lbl += data
 
 
-def audit_math_and_tests(parsed_meta: dict[str, Any]) -> tuple[list[dict], dict[str, Any]]:
+def audit_math_and_tests(
+    parsed_meta: dict[str, Any],
+    prisma: dict[str, Any],
+    expanded: dict[str, list[dict[str, Any]]],
+    codebase_tests: dict[str, int],
+) -> tuple[list[dict], dict[str, Any]]:
     rows: list[dict] = []
     stats_summary: dict[str, Any] = {}
 
@@ -1115,10 +1684,11 @@ def audit_math_and_tests(parsed_meta: dict[str, Any]) -> tuple[list[dict], dict[
         html_stats = dict(p.cards)
         stats_summary["html_unit"] = html_stats
 
-    # Read Report5_Unit Test.xls (UF-* sheets + Statistics Sub Total)
+    # Read Report5_Unit Test.xls (UF-* sheets + Statistics per-row & Sub Total)
     xls_uf_sheets = 0
     xls_tcs = 0
     xls_passed = 0
+    xls_uf_totals: dict[int, int] = {}
     if xls_path.exists():
         book = xlrd.open_workbook(str(xls_path))
         uf_sheets = [s for s in book.sheet_names() if re.match(r"^UF-\d+", s)]
@@ -1126,10 +1696,13 @@ def audit_math_and_tests(parsed_meta: dict[str, Any]) -> tuple[list[dict], dict[
         if "Statistics" in book.sheet_names():
             st_sh = book.sheet_by_name("Statistics")
             for r in range(st_sh.nrows):
-                if str(st_sh.cell_value(r, 1)).strip().lower() == "sub total":
+                c1 = str(st_sh.cell_value(r, 1)).strip()
+                m_uf = re.match(r"^UF-(\d+)$", c1)
+                if m_uf:
+                    xls_uf_totals[int(m_uf.group(1))] = int(st_sh.cell_value(r, 8) or 0)
+                elif c1.lower() == "sub total":
                     xls_passed = int(st_sh.cell_value(r, 2) or 0)
                     xls_tcs = int(st_sh.cell_value(r, 8) or 0)
-                    break
         stats_summary["xls_unit"] = {"uf_sheets": xls_uf_sheets, "tcs": xls_tcs, "passed": xls_passed}
 
     # Read Report5_Test Report.xlsx (44 feature sheets + Test Statistics Sub total)
@@ -1195,6 +1768,114 @@ def audit_math_and_tests(parsed_meta: dict[str, Any]) -> tuple[list[dict], dict[
                     "status": "MATCH" if str(html_passed) in r5_txt else "MISMATCH",
                 }
             )
+
+        # 2b. Per-member UF range breakdown in Report5_Test_Documentation.tex vs .xls Statistics
+        slice_mismatches = []
+        slice_checked = 0
+        for m_sl in re.finditer(
+            r"\\texttt\{UF-(\d+)\}--\\texttt\{UF-(\d+)\}\)\s*&\s*(\d+)\s*/\s*(\d+)\s*&\s*([0-9,]+)\s*&\s*([0-9,]+)\s*&",
+            r5_txt,
+        ):
+            s_lo, s_hi = int(m_sl.group(1)), int(m_sl.group(2))
+            u_cnt = int(m_sl.group(5).replace(",", ""))
+            if xls_uf_totals:
+                actual_sum = sum(xls_uf_totals.get(i, 0) for i in range(s_lo, s_hi + 1))
+                slice_checked += 1
+                if actual_sum != u_cnt:
+                    slice_mismatches.append(f"UF-{s_lo:02d}..{s_hi:02d}: doc={u_cnt} vs xls={actual_sum}")
+        if slice_checked:
+            rows.append(
+                {
+                    "severity": "P0" if slice_mismatches else "OK",
+                    "check": "Report 5 Member UF Range Breakdown (.xls <-> .tex)",
+                    "source_a": f"{slice_checked} member UF slices in Report5_Unit Test.xls",
+                    "source_b": "; ".join(slice_mismatches) if slice_mismatches else "All member slices exact match",
+                    "status": "MISMATCH" if slice_mismatches else "MATCH",
+                }
+            )
+
+        # 2c. Test Execution Summary Table Internal Arithmetic
+        exec_sum = [0, 0, 0, 0]
+        exec_bad = []
+        for m_ex in re.finditer(
+            r"^(Unit|Integration|System|Acceptance) Testing\s*&\s*([0-9,]+)\s*&\s*([0-9,]+)\s*&\s*([0-9,]+)\s*&\s*([0-9,]+)\s*&\s*([0-9.]+)\\%",
+            r5_txt,
+            re.M,
+        ):
+            kind = m_ex.group(1)
+            tot = int(m_ex.group(2).replace(",", ""))
+            pas = int(m_ex.group(3).replace(",", ""))
+            fai = int(m_ex.group(4).replace(",", ""))
+            pen = int(m_ex.group(5).replace(",", ""))
+            cov = float(m_ex.group(6))
+            exec_sum[0] += tot
+            exec_sum[1] += pas
+            exec_sum[2] += fai
+            exec_sum[3] += pen
+            if pas + fai + pen != tot:
+                exec_bad.append(f"{kind}: {pas}+{fai}+{pen}!={tot}")
+            exp_cov = round((pas / tot * 100.0) if tot else 0.0, 2)
+            if abs(exp_cov - cov) > 0.02:
+                exec_bad.append(f"{kind} cov: doc={cov}% vs calc={exp_cov}%")
+        m_ex_tot = re.search(
+            r"\\hd\{Total\}\s*&\s*\\hd\{([0-9,]+)\}\s*&\s*\\hd\{([0-9,]+)\}\s*&\s*\\hd\{([0-9,]+)\}\s*&\s*\\hd\{([0-9,]+)\}\s*&\s*\\hd\{([0-9.]+)\\%\}",
+            r5_txt,
+        )
+        if m_ex_tot:
+            st_tot = [int(m_ex_tot.group(i).replace(",", "")) for i in range(1, 5)]
+            if st_tot != exec_sum:
+                exec_bad.append(f"Total row {st_tot} != sum {exec_sum}")
+            rows.append(
+                {
+                    "severity": "P0" if exec_bad else "OK",
+                    "check": "Report 5 Test Execution Summary Arithmetic",
+                    "source_a": f"Row sums={exec_sum}",
+                    "source_b": "; ".join(exec_bad) if exec_bad else f"Total={st_tot}, Coverage exact",
+                    "status": "MISMATCH" if exec_bad else "MATCH",
+                }
+            )
+
+    # 3. Cross-Report Ground-Truth Numeric Claims (Prisma models/enums, Test totals)
+    actual_models = len(prisma["models"])
+    actual_enums = len(prisma["enums"])
+    for rep_name, recs in expanded.items():
+        for rec in recs:
+            c = rec["clean"]
+            for m_mod in re.finditer(r"\b(\d+)\s+(?:Prisma\s+)?(?:models?|enumerations?|enums?)\b", c, re.IGNORECASE):
+                num = int(m_mod.group(1))
+                kind = m_mod.group(0).lower()
+                if "enum" in kind and actual_enums and num != actual_enums:
+                    rows.append(
+                        {
+                            "severity": "P1",
+                            "check": f"{rep_name} Enum Count Claim <-> schema.prisma",
+                            "source_a": f"{rec['file']}:L{rec['line']} claims '{m_mod.group(0)}'",
+                            "source_b": f"schema.prisma has {actual_enums} enums",
+                            "status": "MISMATCH",
+                        }
+                    )
+                elif "model" in kind and actual_models and num != actual_models and num > 10:
+                    rows.append(
+                        {
+                            "severity": "P1",
+                            "check": f"{rep_name} Model Count Claim <-> schema.prisma",
+                            "source_a": f"{rec['file']}:L{rec['line']} claims '{m_mod.group(0)}'",
+                            "source_b": f"schema.prisma has {actual_models} models",
+                            "status": "MISMATCH",
+                        }
+                    )
+
+    # 4. Real Automated Test Codebase Inventory
+    stats_summary["codebase_tests"] = codebase_tests
+    rows.append(
+        {
+            "severity": "OK",
+            "check": "Automated Test Suite Inventory (apps + ai-services)",
+            "source_a": f"TS: {codebase_tests['ts_files']} files / {codebase_tests['ts_cases']} cases",
+            "source_b": f"Python: {codebase_tests['py_files']} files / {codebase_tests['py_cases']} cases",
+            "status": "INFO",
+        }
+    )
 
     return rows, stats_summary
 
@@ -1339,7 +2020,7 @@ def write_code_snapshot(
         for aep in docker_ai["ai_endpoints"]:
             lines.append(f"  - `{aep['method']} {aep['path']}` ({aep['file']})")
 
-    lines.extend(["", "## 5. Key Numeric Metrics (Report 2 & Report 5)"])
+    lines.extend(["", "## 5. Key Numeric Metrics (Codebase, Report 2 & Report 5)"])
     for k, v in stats_summary.items():
         lines.append(f"- **{k}**: `{v}`")
 
@@ -1362,13 +2043,15 @@ def main() -> None:
     routes = parse_nestjs_routes()
     web_pages = parse_nextjs_pages()
     docker_ai = parse_docker_and_ai()
+    codebase_tests = parse_test_codebase()
+    r3_actors = parse_r3_actors()
 
     log_issues, r7_conflicts = audit_logs_and_geometry(expanded)
     img_issues, leftover_issues, manual_diagrams, parsed_meta = audit_macros_images_and_leftovers(expanded)
     all_log_fmt = log_issues + img_issues
     vocab_issues = audit_cross_member_vocabulary(expanded, prisma, parsed_meta)
-    mismatch_issues = audit_code_drawio_doc(prisma, routes, docker_ai, parsed_meta, expanded)
-    math_rows, stats_summary = audit_math_and_tests(parsed_meta)
+    mismatch_issues = audit_code_drawio_doc(prisma, routes, web_pages, docker_ai, parsed_meta, expanded, r3_actors)
+    math_rows, stats_summary = audit_math_and_tests(parsed_meta, prisma, expanded, codebase_tests)
 
     xlsx_out = out_dir / "frevia_static_audit.xlsx"
     md_out = out_dir / "frevia_code_snapshot.md"
