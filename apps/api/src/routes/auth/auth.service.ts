@@ -10,11 +10,12 @@ import {
   PrismaClientValidationError,
 } from '@prisma/client/runtime/client';
 import {
+  AuthMessage,
   EmailVerificationType,
   ForgotPasswordBodyType,
   GetAuthorizationUrlResType,
-  GoogleUserInfo,
   GetMeResType,
+  GoogleUserInfo,
   JoinRoleBodyType,
   LoginBodyType,
   MessageResType,
@@ -26,9 +27,9 @@ import {
   SwitchRoleBodyType,
   TypeOfVerificationCode,
   UserType,
-  AuthMessage,
 } from '@shared/types';
 import { addMilliseconds } from 'date-fns';
+import { OAuth2Client } from 'google-auth-library';
 import ms, { StringValue } from 'ms';
 import { envConfig } from '../../shared/config/validate-env';
 import { ServerErrorException } from '../../shared/errors/shared-message.error';
@@ -55,7 +56,6 @@ import {
   UserBannedException,
 } from './auth.error';
 import { AuthRepository } from './auth.repo';
-import { OAuth2Client } from 'google-auth-library';
 
 export const AUTH_ME_CACHE_PREFIX = 'auth:me:';
 const AUTH_ME_CACHE_TTL_SECONDS = 45;
@@ -776,16 +776,10 @@ export class AuthService {
       this.logger.error('Error parsing client information', error);
     }
 
-    // Tạo OAuth2Client riêng cho mỗi request để tránh race condition khi nhiều user login Google đồng thời
-    const requestOAuthClient = new OAuth2Client({
-      clientId: envConfig.GOOGLE_CLIENT_ID,
-      clientSecret: envConfig.GOOGLE_CLIENT_SECRET,
-      redirectUri: envConfig.GOOGLE_REDIRECT_URL,
-    });
-    const { tokens } = await requestOAuthClient.getToken(code as string);
-    requestOAuthClient.setCredentials(tokens);
+    const { tokens } = await this.oauth2Client.getToken(code as string);
+    this.oauth2Client.setCredentials(tokens);
 
-    const { data } = await requestOAuthClient.request<GoogleUserInfo>({
+    const { data } = await this.oauth2Client.request<GoogleUserInfo>({
       url: 'https://www.googleapis.com/oauth2/v2/userinfo',
       method: 'GET',
     });

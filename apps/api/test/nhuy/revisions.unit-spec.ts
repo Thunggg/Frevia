@@ -4,9 +4,7 @@ jest.mock('fs/promises', () => ({
   unlink: jest.fn().mockResolvedValue(undefined),
   readFile: jest.fn().mockResolvedValue(Buffer.from('%PDF-1.7')),
 }));
-import { Prisma } from '@prisma/client';
 import * as shared from '@shared/types';
-import * as path from 'path';
 import * as storage from 'fs/promises';
 import { ProfileRevisionService } from '../../src/routes/profile-revisions/profile-revision.service';
 
@@ -34,20 +32,9 @@ describe('ProfileRevisionService (UF-163 to UF-174)', () => {
     uploadFile: jest.fn(),
     deleteFile: jest.fn(),
   };
-  const hashing = { verify: jest.fn(), hash: jest.fn() };
   const outbox = { enqueueAndProcess: jest.fn() };
-  const ai = { analyze: jest.fn() };
-  const resolver = { resolveSkillEntries: jest.fn() };
-  const identityAi = { verify: jest.fn(), livenessPose: jest.fn() };
-  const token = { signAccessToken: jest.fn() };
-  const fixedDate = new Date('2026-11-09T00:00:00Z');
   const service = new ProfileRevisionService(repository as never);
-  let profile: any;
-  let user: any;
-  let contract: any;
-  let review: any;
   let revision: any;
-  let expertUser: any;
   beforeEach(() => {
     jest.clearAllMocks();
     jest.resetAllMocks();
@@ -108,7 +95,7 @@ describe('ProfileRevisionService (UF-163 to UF-174)', () => {
       expect(repository.syncLowStrengthProfiles).toHaveBeenCalledWith(20);
     });
     // UTCID02: Từ chối tình huống rejects page zero; trả mã 400.
-    it('rejects page zero', async () => {
+    it('rejects page zero', () => {
       const result = shared.ProfileRevisionAdminFilterSchema.safeParse({
         page: 0,
         limit: 10,
@@ -125,7 +112,7 @@ describe('ProfileRevisionService (UF-163 to UF-174)', () => {
         ]);
     });
     // UTCID03: Xử lý tình huống accepts page minimum; đối chiếu kết quả và tác động phụ.
-    it('accepts page minimum', async () => {
+    it('accepts page minimum', () => {
       const result = shared.ProfileRevisionAdminFilterSchema.safeParse({
         page: 1,
         limit: 10,
@@ -134,7 +121,7 @@ describe('ProfileRevisionService (UF-163 to UF-174)', () => {
       if (result.success) expect(result.data).toEqual({ page: 1, limit: 10 });
     });
     // UTCID04: Từ chối tình huống rejects page fraction; trả mã 400.
-    it('rejects page fraction', async () => {
+    it('rejects page fraction', () => {
       const result = shared.ProfileRevisionAdminFilterSchema.safeParse({
         page: 1.5,
         limit: 10,
@@ -154,7 +141,7 @@ describe('ProfileRevisionService (UF-163 to UF-174)', () => {
         ]);
     });
     // UTCID05: Từ chối tình huống rejects limit zero; trả mã 400.
-    it('rejects limit zero', async () => {
+    it('rejects limit zero', () => {
       const result = shared.ProfileRevisionAdminFilterSchema.safeParse({
         page: 1,
         limit: 0,
@@ -171,7 +158,7 @@ describe('ProfileRevisionService (UF-163 to UF-174)', () => {
         ]);
     });
     // UTCID06: Xử lý tình huống accepts limit minimum; đối chiếu kết quả và tác động phụ.
-    it('accepts limit minimum', async () => {
+    it('accepts limit minimum', () => {
       const result = shared.ProfileRevisionAdminFilterSchema.safeParse({
         page: 1,
         limit: 1,
@@ -180,7 +167,7 @@ describe('ProfileRevisionService (UF-163 to UF-174)', () => {
       if (result.success) expect(result.data).toEqual({ page: 1, limit: 1 });
     });
     // UTCID07: Xử lý tình huống accepts limit maximum; đối chiếu kết quả và tác động phụ.
-    it('accepts limit maximum', async () => {
+    it('accepts limit maximum', () => {
       const result = shared.ProfileRevisionAdminFilterSchema.safeParse({
         page: 1,
         limit: 100,
@@ -189,7 +176,7 @@ describe('ProfileRevisionService (UF-163 to UF-174)', () => {
       if (result.success) expect(result.data).toEqual({ page: 1, limit: 100 });
     });
     // UTCID08: Từ chối tình huống rejects limit above maximum; trả mã 400.
-    it('rejects limit above maximum', async () => {
+    it('rejects limit above maximum', () => {
       const result = shared.ProfileRevisionAdminFilterSchema.safeParse({
         page: 1,
         limit: 101,
@@ -206,7 +193,7 @@ describe('ProfileRevisionService (UF-163 to UF-174)', () => {
         ]);
     });
     // UTCID09: Từ chối tình huống rejects status invalid; trả mã 400.
-    it('rejects status invalid', async () => {
+    it('rejects status invalid', () => {
       const result = shared.ProfileRevisionAdminFilterSchema.safeParse({
         page: 1,
         limit: 10,
@@ -228,7 +215,7 @@ describe('ProfileRevisionService (UF-163 to UF-174)', () => {
         ]);
     });
     // UTCID10: Xử lý tình huống accepts status pending; đối chiếu kết quả và tác động phụ.
-    it('accepts status pending', async () => {
+    it('accepts status pending', () => {
       const result = shared.ProfileRevisionAdminFilterSchema.safeParse({
         page: 1,
         limit: 10,
@@ -239,7 +226,7 @@ describe('ProfileRevisionService (UF-163 to UF-174)', () => {
         expect(result.data).toEqual({ page: 1, limit: 10, status: 'PENDING' });
     });
     // UTCID11: Từ chối tình huống rejects profileType invalid; trả mã 400.
-    it('rejects profileType invalid', async () => {
+    it('rejects profileType invalid', () => {
       const result = shared.ProfileRevisionAdminFilterSchema.safeParse({
         page: 1,
         limit: 10,
@@ -261,7 +248,7 @@ describe('ProfileRevisionService (UF-163 to UF-174)', () => {
         ]);
     });
     // UTCID12: Xử lý tình huống accepts profileType expert; đối chiếu kết quả và tác động phụ.
-    it('accepts profileType expert', async () => {
+    it('accepts profileType expert', () => {
       const result = shared.ProfileRevisionAdminFilterSchema.safeParse({
         page: 1,
         limit: 10,
@@ -276,7 +263,7 @@ describe('ProfileRevisionService (UF-163 to UF-174)', () => {
         });
     });
     // UTCID13: Xử lý tình huống accepts search maximum; đối chiếu kết quả và tác động phụ.
-    it('accepts search maximum', async () => {
+    it('accepts search maximum', () => {
       const result = shared.ProfileRevisionAdminFilterSchema.safeParse({
         page: 1,
         limit: 10,
@@ -291,7 +278,7 @@ describe('ProfileRevisionService (UF-163 to UF-174)', () => {
         });
     });
     // UTCID14: Từ chối tình huống rejects search above maximum; trả mã 400.
-    it('rejects search above maximum', async () => {
+    it('rejects search above maximum', () => {
       const result = shared.ProfileRevisionAdminFilterSchema.safeParse({
         page: 1,
         limit: 10,
@@ -434,7 +421,7 @@ describe('ProfileRevisionService (UF-163 to UF-174)', () => {
       expect(result).toEqual({ ...revision, status: 'APPROVED' });
     });
     // UTCID07: Xử lý tình huống accepts reviewNotes null; đối chiếu kết quả và tác động phụ.
-    it('accepts reviewNotes null', async () => {
+    it('accepts reviewNotes null', () => {
       const result = shared.ApproveProfileRevisionSchema.safeParse({
         reviewNotes: null,
       });
@@ -442,7 +429,7 @@ describe('ProfileRevisionService (UF-163 to UF-174)', () => {
       if (result.success) expect(result.data).toEqual({ reviewNotes: null });
     });
     // UTCID08: Xử lý tình huống accepts reviewNotes maximum; đối chiếu kết quả và tác động phụ.
-    it('accepts reviewNotes maximum', async () => {
+    it('accepts reviewNotes maximum', () => {
       const result = shared.ApproveProfileRevisionSchema.safeParse({
         reviewNotes: 'x'.repeat(1000),
       });
@@ -451,7 +438,7 @@ describe('ProfileRevisionService (UF-163 to UF-174)', () => {
         expect(result.data).toEqual({ reviewNotes: 'x'.repeat(1000) });
     });
     // UTCID09: Từ chối tình huống rejects reviewNotes above maximum; trả mã 400.
-    it('rejects reviewNotes above maximum', async () => {
+    it('rejects reviewNotes above maximum', () => {
       const result = shared.ApproveProfileRevisionSchema.safeParse({
         reviewNotes: 'x'.repeat(1001),
       });
@@ -562,7 +549,7 @@ describe('ProfileRevisionService (UF-163 to UF-174)', () => {
       expect(result).toEqual({ ...revision, status: 'APPROVED' });
     });
     // UTCID07: Từ chối tình huống rejects reviewNotes missing; trả mã 400.
-    it('rejects reviewNotes missing', async () => {
+    it('rejects reviewNotes missing', () => {
       const result = shared.RejectProfileRevisionSchema.safeParse({});
       expect(result.success).toBe(false);
       if (!result.success)
@@ -579,7 +566,7 @@ describe('ProfileRevisionService (UF-163 to UF-174)', () => {
         ]);
     });
     // UTCID08: Từ chối tình huống rejects reviewNotes empty; trả mã 400.
-    it('rejects reviewNotes empty', async () => {
+    it('rejects reviewNotes empty', () => {
       const result = shared.RejectProfileRevisionSchema.safeParse({
         reviewNotes: '',
       });
@@ -595,7 +582,7 @@ describe('ProfileRevisionService (UF-163 to UF-174)', () => {
         ]);
     });
     // UTCID09: Xử lý tình huống accepts reviewNotes minimum; đối chiếu kết quả và tác động phụ.
-    it('accepts reviewNotes minimum', async () => {
+    it('accepts reviewNotes minimum', () => {
       const result = shared.RejectProfileRevisionSchema.safeParse({
         reviewNotes: 'x',
       });
@@ -603,7 +590,7 @@ describe('ProfileRevisionService (UF-163 to UF-174)', () => {
       if (result.success) expect(result.data).toEqual({ reviewNotes: 'x' });
     });
     // UTCID10: Xử lý tình huống accepts reviewNotes maximum; đối chiếu kết quả và tác động phụ.
-    it('accepts reviewNotes maximum', async () => {
+    it('accepts reviewNotes maximum', () => {
       const result = shared.RejectProfileRevisionSchema.safeParse({
         reviewNotes: 'x'.repeat(1000),
       });
@@ -612,7 +599,7 @@ describe('ProfileRevisionService (UF-163 to UF-174)', () => {
         expect(result.data).toEqual({ reviewNotes: 'x'.repeat(1000) });
     });
     // UTCID11: Từ chối tình huống rejects reviewNotes above maximum; trả mã 400.
-    it('rejects reviewNotes above maximum', async () => {
+    it('rejects reviewNotes above maximum', () => {
       const result = shared.RejectProfileRevisionSchema.safeParse({
         reviewNotes: 'x'.repeat(1001),
       });
@@ -640,15 +627,15 @@ describe('ProfileRevisionService (UF-163 to UF-174)', () => {
   });
   describe('UF-173 requiresManualReview', () => {
     // UF-173: UTCID01: Xử lý tình huống returns true for strength 19; đối chiếu kết quả và tác động phụ.
-    it('returns true for strength 19', async () => {
+    it('returns true for strength 19', () => {
       expect(service.requiresManualReview(19)).toBe(true);
     });
     // UTCID02: Xử lý tình huống returns false for strength 20; đối chiếu kết quả và tác động phụ.
-    it('returns false for strength 20', async () => {
+    it('returns false for strength 20', () => {
       expect(service.requiresManualReview(20)).toBe(false);
     });
     // UTCID03: Xử lý tình huống returns false for strength 21; đối chiếu kết quả và tác động phụ.
-    it('returns false for strength 21', async () => {
+    it('returns false for strength 21', () => {
       expect(service.requiresManualReview(21)).toBe(false);
     });
   });

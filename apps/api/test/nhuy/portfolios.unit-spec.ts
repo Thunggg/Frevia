@@ -4,9 +4,7 @@ jest.mock('fs/promises', () => ({
   unlink: jest.fn().mockResolvedValue(undefined),
   readFile: jest.fn().mockResolvedValue(Buffer.from('%PDF-1.7')),
 }));
-import { Prisma } from '@prisma/client';
 import * as shared from '@shared/types';
-import * as path from 'path';
 import * as storage from 'fs/promises';
 import { PortfolioService } from '../../src/routes/portfolios/portfolio.service';
 
@@ -34,20 +32,9 @@ describe('PortfolioService (UF-127 to UF-131)', () => {
     uploadFile: jest.fn(),
     deleteFile: jest.fn(),
   };
-  const hashing = { verify: jest.fn(), hash: jest.fn() };
   const outbox = { enqueueAndProcess: jest.fn() };
-  const ai = { analyze: jest.fn() };
-  const resolver = { resolveSkillEntries: jest.fn() };
-  const identityAi = { verify: jest.fn(), livenessPose: jest.fn() };
-  const token = { signAccessToken: jest.fn() };
-  const fixedDate = new Date('2026-11-09T00:00:00Z');
   const service = new PortfolioService(repository as never);
   let profile: any;
-  let user: any;
-  let contract: any;
-  let review: any;
-  let revision: any;
-  let expertUser: any;
   beforeEach(() => {
     jest.clearAllMocks();
     jest.resetAllMocks();
@@ -87,7 +74,10 @@ describe('PortfolioService (UF-127 to UF-131)', () => {
         languages: [],
         experience: [],
       },
-      user: { userRoles: [{ role: { name: 'Freelancer' } }] },
+      user: {
+        role: { name: 'Freelancer' },
+        userRoles: [{ role: { name: 'Freelancer' } }],
+      },
     };
     repository.findFreelancerProfileById.mockResolvedValue(profile);
     repository.findPortfoliosByFreelancerProfileId.mockResolvedValue([]);
@@ -128,7 +118,7 @@ describe('PortfolioService (UF-127 to UF-131)', () => {
     it('rejects a profile without freelancer membership', async () => {
       repository.findFreelancerProfileById.mockResolvedValue({
         ...profile,
-        user: { userRoles: [] },
+        user: { role: { name: 'Client' }, userRoles: [] },
       });
 
       await expect(service.getPortfolios(5)).rejects.toMatchObject({
@@ -215,7 +205,7 @@ describe('PortfolioService (UF-127 to UF-131)', () => {
     it('rejects a profile without freelancer membership', async () => {
       repository.findFreelancerProfileById.mockResolvedValue({
         ...profile,
-        user: { userRoles: [] },
+        user: { role: { name: 'Client' }, userRoles: [] },
       });
 
       await expect(
@@ -252,7 +242,7 @@ describe('PortfolioService (UF-127 to UF-131)', () => {
       });
     });
     // UTCID06: Từ chối tình huống rejects title missing; trả mã 400.
-    it('rejects title missing', async () => {
+    it('rejects title missing', () => {
       const result = shared.AddPortfolioSchema.safeParse({});
       expect(result.success).toBe(false);
       if (!result.success)
@@ -266,7 +256,7 @@ describe('PortfolioService (UF-127 to UF-131)', () => {
         ]);
     });
     // UTCID07: Từ chối tình huống rejects title empty; trả mã 400.
-    it('rejects title empty', async () => {
+    it('rejects title empty', () => {
       const result = shared.AddPortfolioSchema.safeParse({ title: '' });
       expect(result.success).toBe(false);
       if (!result.success)
@@ -280,13 +270,13 @@ describe('PortfolioService (UF-127 to UF-131)', () => {
         ]);
     });
     // UTCID08: Xử lý tình huống accepts title minimum; đối chiếu kết quả và tác động phụ.
-    it('accepts title minimum', async () => {
+    it('accepts title minimum', () => {
       const result = shared.AddPortfolioSchema.safeParse({ title: 'x' });
       expect(result.success).toBe(true);
       if (result.success) expect(result.data).toEqual({ title: 'x' });
     });
     // UTCID09: Xử lý tình huống accepts title maximum; đối chiếu kết quả và tác động phụ.
-    it('accepts title maximum', async () => {
+    it('accepts title maximum', () => {
       const result = shared.AddPortfolioSchema.safeParse({
         title: 'x'.repeat(255),
       });
@@ -295,7 +285,7 @@ describe('PortfolioService (UF-127 to UF-131)', () => {
         expect(result.data).toEqual({ title: 'x'.repeat(255) });
     });
     // UTCID10: Từ chối tình huống rejects title above maximum; trả mã 400.
-    it('rejects title above maximum', async () => {
+    it('rejects title above maximum', () => {
       const result = shared.AddPortfolioSchema.safeParse({
         title: 'x'.repeat(256),
       });
@@ -314,7 +304,7 @@ describe('PortfolioService (UF-127 to UF-131)', () => {
         ]);
     });
     // UTCID11: Xử lý tình huống accepts description null; đối chiếu kết quả và tác động phụ.
-    it('accepts description null', async () => {
+    it('accepts description null', () => {
       const result = shared.AddPortfolioSchema.safeParse({
         title: 'Project',
         description: null,
@@ -324,7 +314,7 @@ describe('PortfolioService (UF-127 to UF-131)', () => {
         expect(result.data).toEqual({ title: 'Project', description: null });
     });
     // UTCID12: Xử lý tình huống accepts description maximum; đối chiếu kết quả và tác động phụ.
-    it('accepts description maximum', async () => {
+    it('accepts description maximum', () => {
       const result = shared.AddPortfolioSchema.safeParse({
         title: 'Project',
         description: 'x'.repeat(5000),
@@ -337,7 +327,7 @@ describe('PortfolioService (UF-127 to UF-131)', () => {
         });
     });
     // UTCID13: Từ chối tình huống rejects description above maximum; trả mã 400.
-    it('rejects description above maximum', async () => {
+    it('rejects description above maximum', () => {
       const result = shared.AddPortfolioSchema.safeParse({
         title: 'Project',
         description: 'x'.repeat(5001),
@@ -357,7 +347,7 @@ describe('PortfolioService (UF-127 to UF-131)', () => {
         ]);
     });
     // UTCID14: Xử lý tình huống accepts technologies empty; đối chiếu kết quả và tác động phụ.
-    it('accepts technologies empty', async () => {
+    it('accepts technologies empty', () => {
       const result = shared.AddPortfolioSchema.safeParse({
         title: 'Project',
         technologies: [],
@@ -367,7 +357,7 @@ describe('PortfolioService (UF-127 to UF-131)', () => {
         expect(result.data).toEqual({ title: 'Project', technologies: [] });
     });
     // UTCID15: Xử lý tình huống accepts technologies maximum count; đối chiếu kết quả và tác động phụ.
-    it('accepts technologies maximum count', async () => {
+    it('accepts technologies maximum count', () => {
       const result = shared.AddPortfolioSchema.safeParse({
         title: 'Project',
         technologies: [
@@ -422,7 +412,7 @@ describe('PortfolioService (UF-127 to UF-131)', () => {
         });
     });
     // UTCID16: Từ chối tình huống rejects technologies above count; trả mã 400.
-    it('rejects technologies above count', async () => {
+    it('rejects technologies above count', () => {
       const result = shared.AddPortfolioSchema.safeParse({
         title: 'Project',
         technologies: [
@@ -464,7 +454,7 @@ describe('PortfolioService (UF-127 to UF-131)', () => {
         ]);
     });
     // UTCID17: Từ chối tình huống rejects technologies empty entry; trả mã 400.
-    it('rejects technologies empty entry', async () => {
+    it('rejects technologies empty entry', () => {
       const result = shared.AddPortfolioSchema.safeParse({
         title: 'Project',
         technologies: [''],
@@ -484,7 +474,7 @@ describe('PortfolioService (UF-127 to UF-131)', () => {
         ]);
     });
     // UTCID18: Xử lý tình huống accepts technologies maximum entry; đối chiếu kết quả và tác động phụ.
-    it('accepts technologies maximum entry', async () => {
+    it('accepts technologies maximum entry', () => {
       const result = shared.AddPortfolioSchema.safeParse({
         title: 'Project',
         technologies: ['x'.repeat(100)],
@@ -497,7 +487,7 @@ describe('PortfolioService (UF-127 to UF-131)', () => {
         });
     });
     // UTCID19: Từ chối tình huống rejects technologies above entry; trả mã 400.
-    it('rejects technologies above entry', async () => {
+    it('rejects technologies above entry', () => {
       const result = shared.AddPortfolioSchema.safeParse({
         title: 'Project',
         technologies: ['x'.repeat(101)],
@@ -517,7 +507,7 @@ describe('PortfolioService (UF-127 to UF-131)', () => {
         ]);
     });
     // UTCID20: Xử lý tình huống accepts projectUrl null; đối chiếu kết quả và tác động phụ.
-    it('accepts projectUrl null', async () => {
+    it('accepts projectUrl null', () => {
       const result = shared.AddPortfolioSchema.safeParse({
         title: 'Project',
         projectUrl: null,
@@ -527,7 +517,7 @@ describe('PortfolioService (UF-127 to UF-131)', () => {
         expect(result.data).toEqual({ title: 'Project', projectUrl: null });
     });
     // UTCID21: Xử lý tình huống accepts projectUrl HTTPS; đối chiếu kết quả và tác động phụ.
-    it('accepts projectUrl HTTPS', async () => {
+    it('accepts projectUrl HTTPS', () => {
       const result = shared.AddPortfolioSchema.safeParse({
         title: 'Project',
         projectUrl: 'https://example.test/project',
@@ -540,7 +530,7 @@ describe('PortfolioService (UF-127 to UF-131)', () => {
         });
     });
     // UTCID22: Xử lý tình huống accepts projectUrl HTTP; đối chiếu kết quả và tác động phụ.
-    it('accepts projectUrl HTTP', async () => {
+    it('accepts projectUrl HTTP', () => {
       const result = shared.AddPortfolioSchema.safeParse({
         title: 'Project',
         projectUrl: 'http://example.test',
@@ -553,7 +543,7 @@ describe('PortfolioService (UF-127 to UF-131)', () => {
         });
     });
     // UTCID23: Từ chối tình huống rejects projectUrl invalid; trả mã 400.
-    it('rejects projectUrl invalid', async () => {
+    it('rejects projectUrl invalid', () => {
       const result = shared.AddPortfolioSchema.safeParse({
         title: 'Project',
         projectUrl: 'invalid',
@@ -571,7 +561,7 @@ describe('PortfolioService (UF-127 to UF-131)', () => {
         ]);
     });
     // UTCID24: Từ chối tình huống rejects projectUrl FTP; trả mã 400.
-    it('rejects projectUrl FTP', async () => {
+    it('rejects projectUrl FTP', () => {
       const result = shared.AddPortfolioSchema.safeParse({
         title: 'Project',
         projectUrl: 'ftp://example.test',
@@ -588,7 +578,7 @@ describe('PortfolioService (UF-127 to UF-131)', () => {
         ]);
     });
     // UTCID25: Xử lý tình huống accepts projectUrl maximum; đối chiếu kết quả và tác động phụ.
-    it('accepts projectUrl maximum', async () => {
+    it('accepts projectUrl maximum', () => {
       const result = shared.AddPortfolioSchema.safeParse({
         title: 'Project',
         projectUrl:
@@ -603,7 +593,7 @@ describe('PortfolioService (UF-127 to UF-131)', () => {
         });
     });
     // UTCID26: Từ chối tình huống rejects projectUrl above maximum; trả mã 400.
-    it('rejects projectUrl above maximum', async () => {
+    it('rejects projectUrl above maximum', () => {
       const result = shared.AddPortfolioSchema.safeParse({
         title: 'Project',
         projectUrl:
@@ -621,7 +611,7 @@ describe('PortfolioService (UF-127 to UF-131)', () => {
         ]);
     });
     // UTCID27: Từ chối tình huống rejects unexpected unknown field; trả mã 400.
-    it('rejects unexpected unknown field', async () => {
+    it('rejects unexpected unknown field', () => {
       const result = shared.AddPortfolioSchema.safeParse({
         title: 'Project',
         unexpected: 'value',
@@ -741,7 +731,7 @@ describe('PortfolioService (UF-127 to UF-131)', () => {
       });
     });
     // UTCID05: Từ chối tình huống rejects title missing; trả mã 400.
-    it('rejects title missing', async () => {
+    it('rejects title missing', () => {
       const result = shared.UpdatePortfolioSchema.safeParse({});
       expect(result.success).toBe(false);
       if (!result.success)
@@ -755,7 +745,7 @@ describe('PortfolioService (UF-127 to UF-131)', () => {
         ]);
     });
     // UTCID06: Từ chối tình huống rejects title empty; trả mã 400.
-    it('rejects title empty', async () => {
+    it('rejects title empty', () => {
       const result = shared.UpdatePortfolioSchema.safeParse({ title: '' });
       expect(result.success).toBe(false);
       if (!result.success)
@@ -769,13 +759,13 @@ describe('PortfolioService (UF-127 to UF-131)', () => {
         ]);
     });
     // UTCID07: Xử lý tình huống accepts title minimum; đối chiếu kết quả và tác động phụ.
-    it('accepts title minimum', async () => {
+    it('accepts title minimum', () => {
       const result = shared.UpdatePortfolioSchema.safeParse({ title: 'x' });
       expect(result.success).toBe(true);
       if (result.success) expect(result.data).toEqual({ title: 'x' });
     });
     // UTCID08: Xử lý tình huống accepts title maximum; đối chiếu kết quả và tác động phụ.
-    it('accepts title maximum', async () => {
+    it('accepts title maximum', () => {
       const result = shared.UpdatePortfolioSchema.safeParse({
         title: 'x'.repeat(255),
       });
@@ -784,7 +774,7 @@ describe('PortfolioService (UF-127 to UF-131)', () => {
         expect(result.data).toEqual({ title: 'x'.repeat(255) });
     });
     // UTCID09: Từ chối tình huống rejects title above maximum; trả mã 400.
-    it('rejects title above maximum', async () => {
+    it('rejects title above maximum', () => {
       const result = shared.UpdatePortfolioSchema.safeParse({
         title: 'x'.repeat(256),
       });
@@ -803,7 +793,7 @@ describe('PortfolioService (UF-127 to UF-131)', () => {
         ]);
     });
     // UTCID10: Xử lý tình huống accepts description null; đối chiếu kết quả và tác động phụ.
-    it('accepts description null', async () => {
+    it('accepts description null', () => {
       const result = shared.UpdatePortfolioSchema.safeParse({
         title: 'Project',
         description: null,
@@ -813,7 +803,7 @@ describe('PortfolioService (UF-127 to UF-131)', () => {
         expect(result.data).toEqual({ title: 'Project', description: null });
     });
     // UTCID11: Xử lý tình huống accepts description maximum; đối chiếu kết quả và tác động phụ.
-    it('accepts description maximum', async () => {
+    it('accepts description maximum', () => {
       const result = shared.UpdatePortfolioSchema.safeParse({
         title: 'Project',
         description: 'x'.repeat(5000),
@@ -826,7 +816,7 @@ describe('PortfolioService (UF-127 to UF-131)', () => {
         });
     });
     // UTCID12: Từ chối tình huống rejects description above maximum; trả mã 400.
-    it('rejects description above maximum', async () => {
+    it('rejects description above maximum', () => {
       const result = shared.UpdatePortfolioSchema.safeParse({
         title: 'Project',
         description: 'x'.repeat(5001),
@@ -846,7 +836,7 @@ describe('PortfolioService (UF-127 to UF-131)', () => {
         ]);
     });
     // UTCID13: Xử lý tình huống accepts technologies empty; đối chiếu kết quả và tác động phụ.
-    it('accepts technologies empty', async () => {
+    it('accepts technologies empty', () => {
       const result = shared.UpdatePortfolioSchema.safeParse({
         title: 'Project',
         technologies: [],
@@ -856,7 +846,7 @@ describe('PortfolioService (UF-127 to UF-131)', () => {
         expect(result.data).toEqual({ title: 'Project', technologies: [] });
     });
     // UTCID14: Xử lý tình huống accepts technologies maximum count; đối chiếu kết quả và tác động phụ.
-    it('accepts technologies maximum count', async () => {
+    it('accepts technologies maximum count', () => {
       const result = shared.UpdatePortfolioSchema.safeParse({
         title: 'Project',
         technologies: [
@@ -911,7 +901,7 @@ describe('PortfolioService (UF-127 to UF-131)', () => {
         });
     });
     // UTCID15: Từ chối tình huống rejects technologies above count; trả mã 400.
-    it('rejects technologies above count', async () => {
+    it('rejects technologies above count', () => {
       const result = shared.UpdatePortfolioSchema.safeParse({
         title: 'Project',
         technologies: [
@@ -953,7 +943,7 @@ describe('PortfolioService (UF-127 to UF-131)', () => {
         ]);
     });
     // UTCID16: Từ chối tình huống rejects technologies empty entry; trả mã 400.
-    it('rejects technologies empty entry', async () => {
+    it('rejects technologies empty entry', () => {
       const result = shared.UpdatePortfolioSchema.safeParse({
         title: 'Project',
         technologies: [''],
@@ -973,7 +963,7 @@ describe('PortfolioService (UF-127 to UF-131)', () => {
         ]);
     });
     // UTCID17: Xử lý tình huống accepts technologies maximum entry; đối chiếu kết quả và tác động phụ.
-    it('accepts technologies maximum entry', async () => {
+    it('accepts technologies maximum entry', () => {
       const result = shared.UpdatePortfolioSchema.safeParse({
         title: 'Project',
         technologies: ['x'.repeat(100)],
@@ -986,7 +976,7 @@ describe('PortfolioService (UF-127 to UF-131)', () => {
         });
     });
     // UTCID18: Từ chối tình huống rejects technologies above entry; trả mã 400.
-    it('rejects technologies above entry', async () => {
+    it('rejects technologies above entry', () => {
       const result = shared.UpdatePortfolioSchema.safeParse({
         title: 'Project',
         technologies: ['x'.repeat(101)],
@@ -1006,7 +996,7 @@ describe('PortfolioService (UF-127 to UF-131)', () => {
         ]);
     });
     // UTCID19: Xử lý tình huống accepts projectUrl null; đối chiếu kết quả và tác động phụ.
-    it('accepts projectUrl null', async () => {
+    it('accepts projectUrl null', () => {
       const result = shared.UpdatePortfolioSchema.safeParse({
         title: 'Project',
         projectUrl: null,
@@ -1016,7 +1006,7 @@ describe('PortfolioService (UF-127 to UF-131)', () => {
         expect(result.data).toEqual({ title: 'Project', projectUrl: null });
     });
     // UTCID20: Xử lý tình huống accepts projectUrl HTTPS; đối chiếu kết quả và tác động phụ.
-    it('accepts projectUrl HTTPS', async () => {
+    it('accepts projectUrl HTTPS', () => {
       const result = shared.UpdatePortfolioSchema.safeParse({
         title: 'Project',
         projectUrl: 'https://example.test/project',
@@ -1029,7 +1019,7 @@ describe('PortfolioService (UF-127 to UF-131)', () => {
         });
     });
     // UTCID21: Xử lý tình huống accepts projectUrl HTTP; đối chiếu kết quả và tác động phụ.
-    it('accepts projectUrl HTTP', async () => {
+    it('accepts projectUrl HTTP', () => {
       const result = shared.UpdatePortfolioSchema.safeParse({
         title: 'Project',
         projectUrl: 'http://example.test',
@@ -1042,7 +1032,7 @@ describe('PortfolioService (UF-127 to UF-131)', () => {
         });
     });
     // UTCID22: Từ chối tình huống rejects projectUrl invalid; trả mã 400.
-    it('rejects projectUrl invalid', async () => {
+    it('rejects projectUrl invalid', () => {
       const result = shared.UpdatePortfolioSchema.safeParse({
         title: 'Project',
         projectUrl: 'invalid',
@@ -1060,7 +1050,7 @@ describe('PortfolioService (UF-127 to UF-131)', () => {
         ]);
     });
     // UTCID23: Từ chối tình huống rejects projectUrl FTP; trả mã 400.
-    it('rejects projectUrl FTP', async () => {
+    it('rejects projectUrl FTP', () => {
       const result = shared.UpdatePortfolioSchema.safeParse({
         title: 'Project',
         projectUrl: 'ftp://example.test',
@@ -1077,7 +1067,7 @@ describe('PortfolioService (UF-127 to UF-131)', () => {
         ]);
     });
     // UTCID24: Xử lý tình huống accepts projectUrl maximum; đối chiếu kết quả và tác động phụ.
-    it('accepts projectUrl maximum', async () => {
+    it('accepts projectUrl maximum', () => {
       const result = shared.UpdatePortfolioSchema.safeParse({
         title: 'Project',
         projectUrl:
@@ -1092,7 +1082,7 @@ describe('PortfolioService (UF-127 to UF-131)', () => {
         });
     });
     // UTCID25: Từ chối tình huống rejects projectUrl above maximum; trả mã 400.
-    it('rejects projectUrl above maximum', async () => {
+    it('rejects projectUrl above maximum', () => {
       const result = shared.UpdatePortfolioSchema.safeParse({
         title: 'Project',
         projectUrl:
@@ -1110,7 +1100,7 @@ describe('PortfolioService (UF-127 to UF-131)', () => {
         ]);
     });
     // UTCID26: Từ chối tình huống rejects unexpected unknown field; trả mã 400.
-    it('rejects unexpected unknown field', async () => {
+    it('rejects unexpected unknown field', () => {
       const result = shared.UpdatePortfolioSchema.safeParse({
         title: 'Project',
         unexpected: 'value',

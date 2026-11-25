@@ -6,7 +6,6 @@ jest.mock('fs/promises', () => ({
 }));
 import { Prisma } from '@prisma/client';
 import * as shared from '@shared/types';
-import * as path from 'path';
 import * as storage from 'fs/promises';
 import { AuthService } from '../../src/routes/auth/auth.service';
 
@@ -26,7 +25,9 @@ describe('AuthService (UF-149 to UF-150)', () => {
     findVerificationCode: jest.fn(),
     findUserById: jest.fn(),
     switchPrimaryRole: jest.fn(),
+    switchMarketplaceRole: jest.fn(),
     joinRole: jest.fn(),
+    joinMarketplaceRole: jest.fn(),
     findUserByEmailIncludeRoles: jest.fn(),
     createUserAndRegisterGoogle: jest.fn(),
     createOauthAccount: jest.fn(),
@@ -44,13 +45,8 @@ describe('AuthService (UF-149 to UF-150)', () => {
     uploadFile: jest.fn(),
     deleteFile: jest.fn(),
   };
-  const hashing = { verify: jest.fn(), hash: jest.fn() };
   const outbox = { enqueueAndProcess: jest.fn() };
-  const ai = { analyze: jest.fn() };
-  const resolver = { resolveSkillEntries: jest.fn() };
-  const identityAi = { verify: jest.fn(), livenessPose: jest.fn() };
   const token = { signAccessToken: jest.fn() };
-  const fixedDate = new Date('2026-11-09T00:00:00Z');
   const service = new AuthService(
     {} as never,
     {} as never,
@@ -58,12 +54,6 @@ describe('AuthService (UF-149 to UF-150)', () => {
     repository as never,
     token as never,
   );
-  let profile: any;
-  let user: any;
-  let contract: any;
-  let review: any;
-  let revision: any;
-  let expertUser: any;
   beforeEach(() => {
     jest.clearAllMocks();
     jest.resetAllMocks();
@@ -95,7 +85,15 @@ describe('AuthService (UF-149 to UF-150)', () => {
       id: 3,
       name: 'Freelancer',
     });
+    repository.switchMarketplaceRole.mockResolvedValue({
+      status: 'ok',
+      role: { id: 3, name: 'Freelancer' },
+    });
     repository.joinRole.mockResolvedValue({
+      status: 'joined',
+      role: { id: 3, name: 'Freelancer' },
+    });
+    repository.joinMarketplaceRole.mockResolvedValue({
       status: 'joined',
       role: { id: 3, name: 'Freelancer' },
     });
@@ -117,7 +115,9 @@ describe('AuthService (UF-149 to UF-150)', () => {
     });
     // UTCID02: Từ chối tình huống rejects an unavailable role; trả mã 404.
     it('rejects an unavailable role', async () => {
-      repository.switchPrimaryRole.mockResolvedValue(null);
+      repository.switchMarketplaceRole.mockResolvedValue({
+        status: 'not-owned',
+      });
 
       await expect(
         service.switchRole(10, 22, { role: shared.RoleName.FREELANCER }),
@@ -132,7 +132,7 @@ describe('AuthService (UF-149 to UF-150)', () => {
       expect(token.signAccessToken).not.toHaveBeenCalled();
     });
     // UTCID03: Từ chối tình huống rejects role missing; trả mã 400.
-    it('rejects role missing', async () => {
+    it('rejects role missing', () => {
       const result = shared.SwitchRoleBodySchema.safeParse({});
       expect(result.success).toBe(false);
       if (!result.success)
@@ -149,13 +149,13 @@ describe('AuthService (UF-149 to UF-150)', () => {
         ]);
     });
     // UTCID04: Xử lý tình huống accepts role client; đối chiếu kết quả và tác động phụ.
-    it('accepts role client', async () => {
+    it('accepts role client', () => {
       const result = shared.SwitchRoleBodySchema.safeParse({ role: 'Client' });
       expect(result.success).toBe(true);
       if (result.success) expect(result.data).toEqual({ role: 'Client' });
     });
     // UTCID05: Từ chối tình huống rejects role admin; trả mã 400.
-    it('rejects role admin', async () => {
+    it('rejects role admin', () => {
       const result = shared.SwitchRoleBodySchema.safeParse({ role: 'ADMIN' });
       expect(result.success).toBe(false);
       if (!result.success)
@@ -188,7 +188,9 @@ describe('AuthService (UF-149 to UF-150)', () => {
     });
     // UTCID02: Từ chối tình huống rejects an unavailable role; trả mã 404.
     it('rejects an unavailable role', async () => {
-      repository.joinRole.mockResolvedValue(null);
+      repository.joinMarketplaceRole.mockResolvedValue({
+        status: 'role-not-found',
+      });
 
       await expect(
         service.joinRole(10, 22, { role: shared.RoleName.FREELANCER }),
@@ -204,7 +206,9 @@ describe('AuthService (UF-149 to UF-150)', () => {
     });
     // UTCID03: Từ chối tình huống rejects an already assigned role; trả mã 409.
     it('rejects an already assigned role', async () => {
-      repository.joinRole.mockResolvedValue({ status: 'already-assigned' });
+      repository.joinMarketplaceRole.mockResolvedValue({
+        status: 'already-assigned',
+      });
 
       await expect(
         service.joinRole(10, 22, { role: shared.RoleName.FREELANCER }),
@@ -220,7 +224,7 @@ describe('AuthService (UF-149 to UF-150)', () => {
     });
     // UTCID04: Từ chối tình huống maps a concurrent role assignment; trả mã 409.
     it('maps a concurrent role assignment', async () => {
-      repository.joinRole.mockRejectedValue(
+      repository.joinMarketplaceRole.mockRejectedValue(
         new Prisma.PrismaClientKnownRequestError('Duplicate', {
           code: 'P2002',
           clientVersion: '7',
@@ -239,7 +243,7 @@ describe('AuthService (UF-149 to UF-150)', () => {
       });
     });
     // UTCID05: Từ chối tình huống rejects role missing; trả mã 400.
-    it('rejects role missing', async () => {
+    it('rejects role missing', () => {
       const result = shared.JoinRoleBodySchema.safeParse({});
       expect(result.success).toBe(false);
       if (!result.success)
@@ -256,13 +260,13 @@ describe('AuthService (UF-149 to UF-150)', () => {
         ]);
     });
     // UTCID06: Xử lý tình huống accepts role client; đối chiếu kết quả và tác động phụ.
-    it('accepts role client', async () => {
+    it('accepts role client', () => {
       const result = shared.JoinRoleBodySchema.safeParse({ role: 'Client' });
       expect(result.success).toBe(true);
       if (result.success) expect(result.data).toEqual({ role: 'Client' });
     });
     // UTCID07: Từ chối tình huống rejects role admin; trả mã 400.
-    it('rejects role admin', async () => {
+    it('rejects role admin', () => {
       const result = shared.JoinRoleBodySchema.safeParse({ role: 'ADMIN' });
       expect(result.success).toBe(false);
       if (!result.success)

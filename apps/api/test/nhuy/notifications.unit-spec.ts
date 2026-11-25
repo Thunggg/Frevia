@@ -4,9 +4,7 @@ jest.mock('fs/promises', () => ({
   unlink: jest.fn().mockResolvedValue(undefined),
   readFile: jest.fn().mockResolvedValue(Buffer.from('%PDF-1.7')),
 }));
-import { Prisma } from '@prisma/client';
 import * as shared from '@shared/types';
-import * as path from 'path';
 import * as storage from 'fs/promises';
 import { NotificationService } from '../../src/routes/notifications/notification.service';
 
@@ -32,20 +30,8 @@ describe('NotificationService (UF-145 to UF-148)', () => {
     uploadFile: jest.fn(),
     deleteFile: jest.fn(),
   };
-  const hashing = { verify: jest.fn(), hash: jest.fn() };
   const outbox = { enqueueAndProcess: jest.fn() };
-  const ai = { analyze: jest.fn() };
-  const resolver = { resolveSkillEntries: jest.fn() };
-  const identityAi = { verify: jest.fn(), livenessPose: jest.fn() };
-  const token = { signAccessToken: jest.fn() };
-  const fixedDate = new Date('2026-11-09T00:00:00Z');
   const service = new NotificationService(repository as never);
-  let profile: any;
-  let user: any;
-  let contract: any;
-  let review: any;
-  let revision: any;
-  let expertUser: any;
   beforeEach(() => {
     jest.clearAllMocks();
     jest.resetAllMocks();
