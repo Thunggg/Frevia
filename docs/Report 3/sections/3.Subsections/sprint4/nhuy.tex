@@ -1,1003 +1,1157 @@
-% Functional requirements -- Nguyen Lu Nhat Huy -- Sprint 4
-\Needspace{12\baselineskip}
+% =================================================================
+% Sprint 4 - Contract Review Management, Review Response Management, General Account Profile (nhuy)
+% Following the detailed form of the report template:
+% Function Trigger, Function Description, Screen Layout and Function Details.
+% =================================================================
+
+
 \subsection{Contract Review Management}
-\Needspace{10\baselineskip}
-\subsubsection{Function: View Review List (UC-39.01)}
-\label{fn:nhuy-uc-39-01}
 
-\Needspace{7\baselineskip}
+% -----------------------------------------------------------------
+% UC-39.01: View Review List
+% -----------------------------------------------------------------
+\subsubsection{View Review List}
+
 \fnhead{Function Trigger}
-The actor selects View Review List. Navigation: /client/contracts/[slug]; /freelancer/contracts/[slug].
+The actor selects View Review List.\newline
+\textbf{Navigation path:} Home $\rightarrow$ \texttt{/\allowbreak{}client/\allowbreak{}contracts/\allowbreak{}[slug]} or \texttt{/\allowbreak{}freelancer/\allowbreak{}contracts/\allowbreak{}[slug].}
 
-\Needspace{7\baselineskip}
 \fnhead{Function Description}
-\Needspace{5\baselineskip}
+
 \sublabel{Actors / Roles}
-Client, Freelancer.
-\Needspace{5\baselineskip}
-\sublabel{Purpose}
-Retrieve reviews and active responses for a contract after verifying participant access.
-\Needspace{5\baselineskip}
-\sublabel{Interface and Data Processing}
-{\small\texttt{GET /\allowbreak{}reviews/\allowbreak{}contracts/\allowbreak{}:contractId}}. The browser calls the Next.js BFF, which forwards authenticated requests to the NestJS API. The server derives the acting user from authentication and accesses Contract, Review, Notification. Route IDs are validated independently from owner IDs.
-
-\Needspace{7\baselineskip}
-\fnhead{Screen Layout (Mock-up Description)}
-\begin{center}
-\fbox{\begin{minipage}{0.88\linewidth}
-\textbf{View Review List}\par\smallskip
-Contract Reviews section with author, rating, breakdown and comment; Write Review dialog; author-only Edit and Delete actions.\par\smallskip
-\textit{Schematic interface description, not an application screenshot.}
-\end{minipage}}
-\end{center}
-
-\Needspace{7\baselineskip}
-\Needspace{18\baselineskip}
-\fnhead{Function Details}
-\Needspace{5\baselineskip}
-\Needspace{14\baselineskip}
-\sublabel{Input Data}
-\begin{specdatatable}{Data}{Definition}
-Selection & Current account or selected profile/contract; no pagination is assumed unless exposed by the endpoint. \\ \hline
-\end{specdatatable}
-\Needspace{5\baselineskip}
-\sublabel{Validation and Business Rules}
-\begin{itemize}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
-\item Only contract participants can list or view contract reviews.
-\item A review can be created only after the contract is COMPLETED, for the other party.
-\item The pair (contractId, reviewerId) is unique.
-\item Only the review author edits or soft-deletes their review.
-\item An update must contain at least one accepted field. The current schema does not require a non-empty comment or an integer overall rating.
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item \textbf{Primary Actor:} Client, Freelancer.
+    \item \textbf{Supporting Systems:} Frevia Web (Next.js), Frevia BFF proxy, Frevia REST API (NestJS), Prisma ORM, and PostgreSQL database.
 \end{itemize}
-\Needspace{5\baselineskip}
+
+\sublabel{Purpose}
+\noindent Retrieve reviews and active responses for a contract after verifying participant access.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Contract Reviews section with author, rating, breakdown and comment.
+    \item Write Review dialog.
+    \item Author-only Edit and Delete actions.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item The client issues an HTTP request to \texttt{GET /\allowbreak{}reviews/\allowbreak{}contracts/\allowbreak{}:\allowbreak{}contractId} via Next.js BFF proxy.
+    \item NestJS guards verify JWT authentication and validate role-based access permissions.
+    \item The backend service queries or updates entities in PostgreSQL using Prisma ORM.
+    \item The API returns the structured JSON payload and handles domain invariants consistently.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint4/nhuy/View Review List.png}{View Review List interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Contract Reviews section with author, rating, breakdown and comment.
+    \item Write Review dialog.
+    \item Author-only Edit and Delete actions.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+Selection & Current account or selected profile\texttt{/\allowbreak{}contract}; no pagination is assumed unless exposed by the endpoint.\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item The pair (contractId, reviewerId) is unique.
+\end{itemize}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+    \item BR-3901-01: Only contract participants can list or view contract reviews.
+    \item BR-3901-02: A review can be created only after the contract is COMPLETED, for the other party.
+    \item BR-3901-03: Only the review author edits or soft-deletes their review.
+    \item BR-3901-04: An update must contain at least one accepted field. The current schema does not require a non-empty comment or an integer overall rating.
+\end{itemize}
+
 \sublabel{Normal Flow}
-\begin{enumerate}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
-\item The actor opens /client/contracts/[slug]; /freelancer/contracts/[slug] and selects View Review List.
-\item The application submits the selected identifier or list filters.
-\item The API checks authentication where required, authorization, resource existence and input validity.
-\item Retrieve reviews and active responses for a contract after verifying participant access.
-\item The screen renders the response, or an explicit empty state for a valid empty collection.
+\begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item The actor opens \texttt{/\allowbreak{}client/\allowbreak{}contracts/\allowbreak{}[slug]}; \texttt{/\allowbreak{}freelancer/\allowbreak{}contracts/\allowbreak{}[slug]} and selects View Review List.
+    \item The application submits the selected identifier or list filters.
+    \item The API checks authentication where required, authorization, resource existence and input validity.
+    \item Retrieve reviews and active responses for a contract after verifying participant access.
+    \item The screen renders the response, or an explicit empty state for a valid empty collection.
 \end{enumerate}
-\Needspace{5\baselineskip}
-\sublabel{Alternative Flow}
-Show an informative empty state for a valid empty result and allow retry after a transport failure.
-\Needspace{5\baselineskip}
+
 \sublabel{Abnormal Flow / Exception Handling}
 \begin{flowtable}{Case}{Description}
-E1 & Missing or expired authentication, or insufficient role/ownership: deny the operation and do not change data. \\ \hline
-E2 & Missing, deleted or inaccessible resource: show a not-found result. \\ \hline
-A1 & A valid empty collection displays an empty state; it must not be treated as a missing account. \\ \hline
-E4 & Database, network or storage failure: report a retryable error; do not report success or terminate the API process. \\ \hline
+A1 & Missing or expired authentication token. Returns HTTP 401 Unauthorized.\\ \hline
+A2 & Insufficient permissions or role unauthorized. Returns HTTP 403 Forbidden.\\ \hline
+A3 & Target resource not found or soft-deleted. Returns HTTP 404 Not Found.\\ \hline
+A4 & Validation error or malformed payload. Returns HTTP 400 Bad Request.\\ \hline
+A5 & Database connectivity failure or server error. Returns HTTP 500.\\ \hline
 \end{flowtable}
-\Needspace{5\baselineskip}
-\Needspace{14\baselineskip}
+
 \sublabel{Output Data}
-\begin{specdatatable}{Data}{Definition}
-Result & Retrieve reviews and active responses for a contract after verifying participant access. \\ \hline
-Failure & Structured error without sensitive data; no successful UI state when the operation failed. \\ \hline
+\begin{specdatatable}{Data Name}{Description}
+Result & Retrieve reviews and active responses for a contract after verifying participant access.\\ \hline
+Failure & Structured error without sensitive data; no successful UI state when the operation failed.\\ \hline
 \end{specdatatable}
-\Needspace{5\baselineskip}
-\sublabel{Acceptance Criteria}
-\begin{itemize}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
-\item Successful view review list produces the documented response and survives a reload where data is persisted.
-\item An unauthorized actor cannot access or modify the resource.
-\item Invalid input and missing resources do not create a false success state or expose sensitive data.
+
+\sublabel{Post-Conditions}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Successful view review list produces the documented response and survives a reload where data is persisted.
+    \item An unauthorized actor cannot access or modify the resource.
+    \item Invalid input and missing resources do not create a false success state or expose sensitive data.
 \end{itemize}
 
-\Needspace{10\baselineskip}
-\subsubsection{Function: View Review Detail (UC-39.02)}
-\label{fn:nhuy-uc-39-02}
+% -----------------------------------------------------------------
+% UC-39.02: View Review Detail
+% -----------------------------------------------------------------
+\subsubsection{View Review Detail}
 
-\Needspace{7\baselineskip}
 \fnhead{Function Trigger}
-The actor selects View Review Detail. Navigation: /client/contracts/[slug]; /freelancer/contracts/[slug].
+The actor selects View Review Detail.\newline
+\textbf{Navigation path:} Home $\rightarrow$ \texttt{/\allowbreak{}client/\allowbreak{}contracts/\allowbreak{}[slug]} or \texttt{/\allowbreak{}freelancer/\allowbreak{}contracts/\allowbreak{}[slug].}
 
-\Needspace{7\baselineskip}
 \fnhead{Function Description}
-\Needspace{5\baselineskip}
+
 \sublabel{Actors / Roles}
-Client, Freelancer.
-\Needspace{5\baselineskip}
-\sublabel{Purpose}
-Retrieve one review and response after checking contract participation.
-\Needspace{5\baselineskip}
-\sublabel{Interface and Data Processing}
-{\small\texttt{GET /\allowbreak{}reviews/\allowbreak{}:reviewId}}. The browser calls the Next.js BFF, which forwards authenticated requests to the NestJS API. The server derives the acting user from authentication and accesses Contract, Review, Notification. Route IDs are validated independently from owner IDs.
-
-\Needspace{7\baselineskip}
-\fnhead{Screen Layout (Mock-up Description)}
-\begin{center}
-\fbox{\begin{minipage}{0.88\linewidth}
-\textbf{View Review Detail}\par\smallskip
-Contract Reviews section with author, rating, breakdown and comment; Write Review dialog; author-only Edit and Delete actions.\par\smallskip
-\textit{Schematic interface description, not an application screenshot.}
-\end{minipage}}
-\end{center}
-
-\Needspace{7\baselineskip}
-\Needspace{18\baselineskip}
-\fnhead{Function Details}
-\Needspace{5\baselineskip}
-\Needspace{14\baselineskip}
-\sublabel{Input Data}
-\begin{specdatatable}{Data}{Definition}
-Identifier & Positive resource ID from the route; ownership is checked by the API. \\ \hline
-\end{specdatatable}
-\Needspace{5\baselineskip}
-\sublabel{Validation and Business Rules}
-\begin{itemize}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
-\item Only contract participants can list or view contract reviews.
-\item A review can be created only after the contract is COMPLETED, for the other party.
-\item The pair (contractId, reviewerId) is unique.
-\item Only the review author edits or soft-deletes their review.
-\item An update must contain at least one accepted field. The current schema does not require a non-empty comment or an integer overall rating.
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item \textbf{Primary Actor:} Client, Freelancer.
+    \item \textbf{Supporting Systems:} Frevia Web (Next.js), Frevia BFF proxy, Frevia REST API (NestJS), Prisma ORM, and PostgreSQL database.
 \end{itemize}
-\Needspace{5\baselineskip}
+
+\sublabel{Purpose}
+\noindent Retrieve one review and response after checking contract participation.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Contract Reviews section with author, rating, breakdown and comment.
+    \item Write Review dialog.
+    \item Author-only Edit and Delete actions.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item The client issues an HTTP request to \texttt{GET /\allowbreak{}reviews/\allowbreak{}:\allowbreak{}reviewId} via Next.js BFF proxy.
+    \item NestJS guards verify JWT authentication and validate role-based access permissions.
+    \item The backend service queries or updates entities in PostgreSQL using Prisma ORM.
+    \item The API returns the structured JSON payload and handles domain invariants consistently.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint4/nhuy/View Review Detail.png}{View Review Detail interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Contract Reviews section with author, rating, breakdown and comment.
+    \item Write Review dialog.
+    \item Author-only Edit and Delete actions.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+Identifier & Positive resource ID from the route; ownership is checked by the API.\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item The pair (contractId, reviewerId) is unique.
+\end{itemize}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+    \item BR-3902-01: Only contract participants can list or view contract reviews.
+    \item BR-3902-02: A review can be created only after the contract is COMPLETED, for the other party.
+    \item BR-3902-03: Only the review author edits or soft-deletes their review.
+    \item BR-3902-04: An update must contain at least one accepted field. The current schema does not require a non-empty comment or an integer overall rating.
+\end{itemize}
+
 \sublabel{Normal Flow}
-\begin{enumerate}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
-\item The actor opens /client/contracts/[slug]; /freelancer/contracts/[slug] and selects View Review Detail.
-\item The application submits the selected identifier or list filters.
-\item The API checks authentication where required, authorization, resource existence and input validity.
-\item Retrieve one review and response after checking contract participation.
-\item The screen renders the response, or an explicit empty state for a valid empty collection.
+\begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item The actor opens \texttt{/\allowbreak{}client/\allowbreak{}contracts/\allowbreak{}[slug]}; \texttt{/\allowbreak{}freelancer/\allowbreak{}contracts/\allowbreak{}[slug]} and selects View Review Detail.
+    \item The application submits the selected identifier or list filters.
+    \item The API checks authentication where required, authorization, resource existence and input validity.
+    \item Retrieve one review and response after checking contract participation.
+    \item The screen renders the response, or an explicit empty state for a valid empty collection.
 \end{enumerate}
-\Needspace{5\baselineskip}
-\sublabel{Alternative Flow}
-Show an informative empty state for a valid empty result and allow retry after a transport failure.
-\Needspace{5\baselineskip}
+
 \sublabel{Abnormal Flow / Exception Handling}
 \begin{flowtable}{Case}{Description}
-E1 & Missing or expired authentication, or insufficient role/ownership: deny the operation and do not change data. \\ \hline
-E2 & Missing, deleted or inaccessible resource: show a not-found result. \\ \hline
-A1 & A valid empty collection displays an empty state; it must not be treated as a missing account. \\ \hline
-E4 & Database, network or storage failure: report a retryable error; do not report success or terminate the API process. \\ \hline
+A1 & Missing or expired authentication token. Returns HTTP 401 Unauthorized.\\ \hline
+A2 & Insufficient permissions or role unauthorized. Returns HTTP 403 Forbidden.\\ \hline
+A3 & Target resource not found or soft-deleted. Returns HTTP 404 Not Found.\\ \hline
+A4 & Validation error or malformed payload. Returns HTTP 400 Bad Request.\\ \hline
+A5 & Database connectivity failure or server error. Returns HTTP 500.\\ \hline
 \end{flowtable}
-\Needspace{5\baselineskip}
-\Needspace{14\baselineskip}
+
 \sublabel{Output Data}
-\begin{specdatatable}{Data}{Definition}
-Result & Retrieve one review and response after checking contract participation. \\ \hline
-Failure & Structured error without sensitive data; no successful UI state when the operation failed. \\ \hline
+\begin{specdatatable}{Data Name}{Description}
+Result & Retrieve one review and response after checking contract participation.\\ \hline
+Failure & Structured error without sensitive data; no successful UI state when the operation failed.\\ \hline
 \end{specdatatable}
-\Needspace{5\baselineskip}
-\sublabel{Acceptance Criteria}
-\begin{itemize}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
-\item Successful view review detail produces the documented response and survives a reload where data is persisted.
-\item An unauthorized actor cannot access or modify the resource.
-\item Invalid input and missing resources do not create a false success state or expose sensitive data.
+
+\sublabel{Post-Conditions}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Successful view review detail produces the documented response and survives a reload where data is persisted.
+    \item An unauthorized actor cannot access or modify the resource.
+    \item Invalid input and missing resources do not create a false success state or expose sensitive data.
 \end{itemize}
 
-\Needspace{10\baselineskip}
-\subsubsection{Function: Write Review (UC-39.03)}
-\label{fn:nhuy-uc-39-03}
+% -----------------------------------------------------------------
+% UC-39.03: Write Review
+% -----------------------------------------------------------------
+\subsubsection{Write Review}
 
-\Needspace{7\baselineskip}
 \fnhead{Function Trigger}
-The actor selects Write Review. Navigation: /client/contracts/[slug]; /freelancer/contracts/[slug].
+The actor selects Write Review.\newline
+\textbf{Navigation path:} Home $\rightarrow$ \texttt{/\allowbreak{}client/\allowbreak{}contracts/\allowbreak{}[slug]} or \texttt{/\allowbreak{}freelancer/\allowbreak{}contracts/\allowbreak{}[slug].}
 
-\Needspace{7\baselineskip}
 \fnhead{Function Description}
-\Needspace{5\baselineskip}
+
 \sublabel{Actors / Roles}
-Client, Freelancer.
-\Needspace{5\baselineskip}
-\sublabel{Purpose}
-Create one review of the other participant in a completed contract and notify that participant.
-\Needspace{5\baselineskip}
-\sublabel{Interface and Data Processing}
-{\small\texttt{POST /\allowbreak{}reviews/\allowbreak{}contracts/\allowbreak{}:contractId}}. The browser calls the Next.js BFF, which forwards authenticated requests to the NestJS API. The server derives the acting user from authentication and accesses Contract, Review, Notification. Route IDs are validated independently from owner IDs.
-
-\Needspace{7\baselineskip}
-\fnhead{Screen Layout (Mock-up Description)}
-\begin{center}
-\fbox{\begin{minipage}{0.88\linewidth}
-\textbf{Write Review}\par\smallskip
-Contract Reviews section with author, rating, breakdown and comment; Write Review dialog; author-only Edit and Delete actions.\par\smallskip
-\textit{Schematic interface description, not an application screenshot.}
-\end{minipage}}
-\end{center}
-
-\Needspace{7\baselineskip}
-\Needspace{18\baselineskip}
-\fnhead{Function Details}
-\Needspace{5\baselineskip}
-\Needspace{14\baselineskip}
-\sublabel{Input Data}
-\begin{specdatatable}{Data}{Definition}
-overallRating & Required numeric rating from 1 to 5 when creating. \\ \hline
-breakdown & Optional ratings map: at most 10 criteria, names up to 50 characters, values 1--5. \\ \hline
-comment & Optional trimmed feedback, up to 3,000 characters. \\ \hline
-contractId / reviewId & Positive database identifiers; contract page URLs use slug. \\ \hline
-\end{specdatatable}
-\Needspace{5\baselineskip}
-\sublabel{Validation and Business Rules}
-\begin{itemize}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
-\item Only contract participants can list or view contract reviews.
-\item A review can be created only after the contract is COMPLETED, for the other party.
-\item The pair (contractId, reviewerId) is unique.
-\item Only the review author edits or soft-deletes their review.
-\item An update must contain at least one accepted field. The current schema does not require a non-empty comment or an integer overall rating.
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item \textbf{Primary Actor:} Client, Freelancer.
+    \item \textbf{Supporting Systems:} Frevia Web (Next.js), Frevia BFF proxy, Frevia REST API (NestJS), Prisma ORM, and PostgreSQL database.
 \end{itemize}
-\Needspace{5\baselineskip}
+
+\sublabel{Purpose}
+\noindent Create one review of the other participant in a completed contract and notify that participant.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Contract Reviews section with author, rating, breakdown and comment.
+    \item Write Review dialog.
+    \item Author-only Edit and Delete actions.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item The client issues an HTTP request to \texttt{POST /\allowbreak{}reviews/\allowbreak{}contracts/\allowbreak{}:\allowbreak{}contractId} via Next.js BFF proxy.
+    \item NestJS guards verify JWT authentication and validate role-based access permissions.
+    \item The backend service queries or updates entities in PostgreSQL using Prisma ORM.
+    \item The API returns the structured JSON payload and handles domain invariants consistently.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint4/nhuy/Write Review.png}{Write Review interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Contract Reviews section with author, rating, breakdown and comment.
+    \item Write Review dialog.
+    \item Author-only Edit and Delete actions.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+overallRating & Required numeric rating from 1 to 5 when creating.\\ \hline
+breakdown & Optional ratings map: at most 10 criteria, names up to 50 characters, values 1--5.\\ \hline
+comment & Optional trimmed feedback, up to 3,000 characters.\\ \hline
+contractId / reviewId & Positive database identifiers; contract page URLs use slug.\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item The pair (contractId, reviewerId) is unique.
+\end{itemize}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+    \item BR-3903-01: Only contract participants can list or view contract reviews.
+    \item BR-3903-02: A review can be created only after the contract is COMPLETED, for the other party.
+    \item BR-3903-03: Only the review author edits or soft-deletes their review.
+    \item BR-3903-04: An update must contain at least one accepted field. The current schema does not require a non-empty comment or an integer overall rating.
+\end{itemize}
+
 \sublabel{Normal Flow}
-\begin{enumerate}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
-\item The actor opens /client/contracts/[slug]; /freelancer/contracts/[slug] and selects Write Review.
-\item The application presents the current values or action confirmation; the actor supplies the required data and submits.
-\item The API checks authentication where required, authorization, resource existence and input validity.
-\item Create one review of the other participant in a completed contract and notify that participant.
-\item After the transaction succeeds, the screen displays the result and reloads affected data; a pending revision is labeled as awaiting review.
+\begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item The actor opens \texttt{/\allowbreak{}client/\allowbreak{}contracts/\allowbreak{}[slug]}; \texttt{/\allowbreak{}freelancer/\allowbreak{}contracts/\allowbreak{}[slug]} and selects Write Review.
+    \item The application presents the current values or action confirmation; the actor supplies the required data and submits.
+    \item The API checks authentication where required, authorization, resource existence and input validity.
+    \item Create one review of the other participant in a completed contract and notify that participant.
+    \item After the transaction succeeds, the screen displays the result and reloads affected data; a pending revision is labeled as awaiting review.
 \end{enumerate}
-\Needspace{5\baselineskip}
-\sublabel{Alternative Flow}
-Cancel before submission closes the form or confirmation without persisting changes. On failure, preserve user input for correction and retry.
-\Needspace{5\baselineskip}
+
 \sublabel{Abnormal Flow / Exception Handling}
 \begin{flowtable}{Case}{Description}
-E1 & Missing or expired authentication, or insufficient role/ownership: deny the operation and do not change data. \\ \hline
-E2 & Missing, deleted or inaccessible resource: show a not-found result. \\ \hline
-E3 & Invalid input, duplicate relationship, or invalid workflow state: explain the problem and retain the entered values. \\ \hline
-E4 & Database, network or storage failure: report a retryable error; do not report success or terminate the API process. \\ \hline
+A1 & Missing or expired authentication token. Returns HTTP 401 Unauthorized.\\ \hline
+A2 & Insufficient permissions or role unauthorized. Returns HTTP 403 Forbidden.\\ \hline
+A3 & Target resource not found or soft-deleted. Returns HTTP 404 Not Found.\\ \hline
+A4 & Validation error or malformed payload. Returns HTTP 400 Bad Request.\\ \hline
+A5 & Database connectivity failure or server error. Returns HTTP 500.\\ \hline
 \end{flowtable}
-\Needspace{5\baselineskip}
-\Needspace{14\baselineskip}
+
 \sublabel{Output Data}
-\begin{specdatatable}{Data}{Definition}
-Result & Create one review of the other participant in a completed contract and notify that participant. \\ \hline
-Failure & Structured error without sensitive data; no successful UI state when the operation failed. \\ \hline
+\begin{specdatatable}{Data Name}{Description}
+Result & Create one review of the other participant in a completed contract and notify that participant.\\ \hline
+Failure & Structured error without sensitive data; no successful UI state when the operation failed.\\ \hline
 \end{specdatatable}
-\Needspace{5\baselineskip}
-\sublabel{Acceptance Criteria}
-\begin{itemize}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
-\item Successful write review produces the documented response and survives a reload where data is persisted.
-\item An unauthorized actor cannot access or modify the resource.
-\item Invalid input and missing resources do not create a false success state or expose sensitive data.
+
+\sublabel{Post-Conditions}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Successful write review produces the documented response and survives a reload where data is persisted.
+    \item An unauthorized actor cannot access or modify the resource.
+    \item Invalid input and missing resources do not create a false success state or expose sensitive data.
 \end{itemize}
 
-\Needspace{10\baselineskip}
-\subsubsection{Function: Update Review (UC-39.04)}
-\label{fn:nhuy-uc-39-04}
+% -----------------------------------------------------------------
+% UC-39.04: Update Review
+% -----------------------------------------------------------------
+\subsubsection{Update Review}
 
-\Needspace{7\baselineskip}
 \fnhead{Function Trigger}
-The actor selects Update Review. Navigation: /client/contracts/[slug]; /freelancer/contracts/[slug].
+The actor selects Update Review.\newline
+\textbf{Navigation path:} Home $\rightarrow$ \texttt{/\allowbreak{}client/\allowbreak{}contracts/\allowbreak{}[slug]} or \texttt{/\allowbreak{}freelancer/\allowbreak{}contracts/\allowbreak{}[slug].}
 
-\Needspace{7\baselineskip}
 \fnhead{Function Description}
-\Needspace{5\baselineskip}
+
 \sublabel{Actors / Roles}
-Client, Freelancer.
-\Needspace{5\baselineskip}
-\sublabel{Purpose}
-Update accepted fields of an existing review authored by the current user.
-\Needspace{5\baselineskip}
-\sublabel{Interface and Data Processing}
-{\small\texttt{PATCH /\allowbreak{}reviews/\allowbreak{}:reviewId}}. The browser calls the Next.js BFF, which forwards authenticated requests to the NestJS API. The server derives the acting user from authentication and accesses Contract, Review, Notification. Route IDs are validated independently from owner IDs.
-
-\Needspace{7\baselineskip}
-\fnhead{Screen Layout (Mock-up Description)}
-\begin{center}
-\fbox{\begin{minipage}{0.88\linewidth}
-\textbf{Update Review}\par\smallskip
-Contract Reviews section with author, rating, breakdown and comment; Write Review dialog; author-only Edit and Delete actions.\par\smallskip
-\textit{Schematic interface description, not an application screenshot.}
-\end{minipage}}
-\end{center}
-
-\Needspace{7\baselineskip}
-\Needspace{18\baselineskip}
-\fnhead{Function Details}
-\Needspace{5\baselineskip}
-\Needspace{14\baselineskip}
-\sublabel{Input Data}
-\begin{specdatatable}{Data}{Definition}
-overallRating & Required numeric rating from 1 to 5 when creating. \\ \hline
-breakdown & Optional ratings map: at most 10 criteria, names up to 50 characters, values 1--5. \\ \hline
-comment & Optional trimmed feedback, up to 3,000 characters. \\ \hline
-contractId / reviewId & Positive database identifiers; contract page URLs use slug. \\ \hline
-\end{specdatatable}
-\Needspace{5\baselineskip}
-\sublabel{Validation and Business Rules}
-\begin{itemize}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
-\item Only contract participants can list or view contract reviews.
-\item A review can be created only after the contract is COMPLETED, for the other party.
-\item The pair (contractId, reviewerId) is unique.
-\item Only the review author edits or soft-deletes their review.
-\item An update must contain at least one accepted field. The current schema does not require a non-empty comment or an integer overall rating.
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item \textbf{Primary Actor:} Client, Freelancer.
+    \item \textbf{Supporting Systems:} Frevia Web (Next.js), Frevia BFF proxy, Frevia REST API (NestJS), Prisma ORM, and PostgreSQL database.
 \end{itemize}
-\Needspace{5\baselineskip}
+
+\sublabel{Purpose}
+\noindent Update accepted fields of an existing review authored by the current user.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Contract Reviews section with author, rating, breakdown and comment.
+    \item Write Review dialog.
+    \item Author-only Edit and Delete actions.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item The client issues an HTTP request to \texttt{PATCH /\allowbreak{}reviews/\allowbreak{}:\allowbreak{}reviewId} via Next.js BFF proxy.
+    \item NestJS guards verify JWT authentication and validate role-based access permissions.
+    \item The backend service queries or updates entities in PostgreSQL using Prisma ORM.
+    \item The API returns the structured JSON payload and handles domain invariants consistently.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint4/nhuy/Update Review.png}{Update Review interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Contract Reviews section with author, rating, breakdown and comment.
+    \item Write Review dialog.
+    \item Author-only Edit and Delete actions.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+overallRating & Required numeric rating from 1 to 5 when creating.\\ \hline
+breakdown & Optional ratings map: at most 10 criteria, names up to 50 characters, values 1--5.\\ \hline
+comment & Optional trimmed feedback, up to 3,000 characters.\\ \hline
+contractId / reviewId & Positive database identifiers; contract page URLs use slug.\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item The pair (contractId, reviewerId) is unique.
+\end{itemize}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+    \item BR-3904-01: Only contract participants can list or view contract reviews.
+    \item BR-3904-02: A review can be created only after the contract is COMPLETED, for the other party.
+    \item BR-3904-03: Only the review author edits or soft-deletes their review.
+    \item BR-3904-04: An update must contain at least one accepted field. The current schema does not require a non-empty comment or an integer overall rating.
+\end{itemize}
+
 \sublabel{Normal Flow}
-\begin{enumerate}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
-\item The actor opens /client/contracts/[slug]; /freelancer/contracts/[slug] and selects Update Review.
-\item The application presents the current values or action confirmation; the actor supplies the required data and submits.
-\item The API checks authentication where required, authorization, resource existence and input validity.
-\item Update accepted fields of an existing review authored by the current user.
-\item After the transaction succeeds, the screen displays the result and reloads affected data; a pending revision is labeled as awaiting review.
+\begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item The actor opens \texttt{/\allowbreak{}client/\allowbreak{}contracts/\allowbreak{}[slug]}; \texttt{/\allowbreak{}freelancer/\allowbreak{}contracts/\allowbreak{}[slug]} and selects Update Review.
+    \item The application presents the current values or action confirmation; the actor supplies the required data and submits.
+    \item The API checks authentication where required, authorization, resource existence and input validity.
+    \item Update accepted fields of an existing review authored by the current user.
+    \item After the transaction succeeds, the screen displays the result and reloads affected data; a pending revision is labeled as awaiting review.
 \end{enumerate}
-\Needspace{5\baselineskip}
-\sublabel{Alternative Flow}
-Cancel before submission closes the form or confirmation without persisting changes. On failure, preserve user input for correction and retry.
-\Needspace{5\baselineskip}
+
 \sublabel{Abnormal Flow / Exception Handling}
 \begin{flowtable}{Case}{Description}
-E1 & Missing or expired authentication, or insufficient role/ownership: deny the operation and do not change data. \\ \hline
-E2 & Missing, deleted or inaccessible resource: show a not-found result. \\ \hline
-E3 & Invalid input, duplicate relationship, or invalid workflow state: explain the problem and retain the entered values. \\ \hline
-E4 & Database, network or storage failure: report a retryable error; do not report success or terminate the API process. \\ \hline
+A1 & Missing or expired authentication token. Returns HTTP 401 Unauthorized.\\ \hline
+A2 & Insufficient permissions or role unauthorized. Returns HTTP 403 Forbidden.\\ \hline
+A3 & Target resource not found or soft-deleted. Returns HTTP 404 Not Found.\\ \hline
+A4 & Validation error or malformed payload. Returns HTTP 400 Bad Request.\\ \hline
+A5 & Database connectivity failure or server error. Returns HTTP 500.\\ \hline
 \end{flowtable}
-\Needspace{5\baselineskip}
-\Needspace{14\baselineskip}
+
 \sublabel{Output Data}
-\begin{specdatatable}{Data}{Definition}
-Result & Update accepted fields of an existing review authored by the current user. \\ \hline
-Failure & Structured error without sensitive data; no successful UI state when the operation failed. \\ \hline
+\begin{specdatatable}{Data Name}{Description}
+Result & Update accepted fields of an existing review authored by the current user.\\ \hline
+Failure & Structured error without sensitive data; no successful UI state when the operation failed.\\ \hline
 \end{specdatatable}
-\Needspace{5\baselineskip}
-\sublabel{Acceptance Criteria}
-\begin{itemize}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
-\item Successful update review produces the documented response and survives a reload where data is persisted.
-\item An unauthorized actor cannot access or modify the resource.
-\item Invalid input and missing resources do not create a false success state or expose sensitive data.
+
+\sublabel{Post-Conditions}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Successful update review produces the documented response and survives a reload where data is persisted.
+    \item An unauthorized actor cannot access or modify the resource.
+    \item Invalid input and missing resources do not create a false success state or expose sensitive data.
 \end{itemize}
 
-\Needspace{10\baselineskip}
-\subsubsection{Function: Delete Review (UC-39.05)}
-\label{fn:nhuy-uc-39-05}
+% -----------------------------------------------------------------
+% UC-39.05: Delete Review
+% -----------------------------------------------------------------
+\subsubsection{Delete Review}
 
-\Needspace{7\baselineskip}
 \fnhead{Function Trigger}
-The actor selects Delete Review. Navigation: /client/contracts/[slug]; /freelancer/contracts/[slug].
+The actor selects Delete Review.\newline
+\textbf{Navigation path:} Home $\rightarrow$ \texttt{/\allowbreak{}client/\allowbreak{}contracts/\allowbreak{}[slug]} or \texttt{/\allowbreak{}freelancer/\allowbreak{}contracts/\allowbreak{}[slug].}
 
-\Needspace{7\baselineskip}
 \fnhead{Function Description}
-\Needspace{5\baselineskip}
+
 \sublabel{Actors / Roles}
-Client, Freelancer.
-\Needspace{5\baselineskip}
-\sublabel{Purpose}
-Soft-delete the owned review so it no longer appears as active feedback.
-\Needspace{5\baselineskip}
-\sublabel{Interface and Data Processing}
-{\small\texttt{DELETE /\allowbreak{}reviews/\allowbreak{}:reviewId}}. The browser calls the Next.js BFF, which forwards authenticated requests to the NestJS API. The server derives the acting user from authentication and accesses Contract, Review, Notification. Route IDs are validated independently from owner IDs.
-
-\Needspace{7\baselineskip}
-\fnhead{Screen Layout (Mock-up Description)}
-\begin{center}
-\fbox{\begin{minipage}{0.88\linewidth}
-\textbf{Delete Review}\par\smallskip
-Contract Reviews section with author, rating, breakdown and comment; Write Review dialog; author-only Edit and Delete actions.\par\smallskip
-\textit{Schematic interface description, not an application screenshot.}
-\end{minipage}}
-\end{center}
-
-\Needspace{7\baselineskip}
-\Needspace{18\baselineskip}
-\fnhead{Function Details}
-\Needspace{5\baselineskip}
-\Needspace{14\baselineskip}
-\sublabel{Input Data}
-\begin{specdatatable}{Data}{Definition}
-Identifier & Positive resource ID from the route; ownership is checked by the API. \\ \hline
-\end{specdatatable}
-\Needspace{5\baselineskip}
-\sublabel{Validation and Business Rules}
-\begin{itemize}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
-\item Only contract participants can list or view contract reviews.
-\item A review can be created only after the contract is COMPLETED, for the other party.
-\item The pair (contractId, reviewerId) is unique.
-\item Only the review author edits or soft-deletes their review.
-\item An update must contain at least one accepted field. The current schema does not require a non-empty comment or an integer overall rating.
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item \textbf{Primary Actor:} Client, Freelancer.
+    \item \textbf{Supporting Systems:} Frevia Web (Next.js), Frevia BFF proxy, Frevia REST API (NestJS), Prisma ORM, and PostgreSQL database.
 \end{itemize}
-\Needspace{5\baselineskip}
+
+\sublabel{Purpose}
+\noindent Soft-delete the owned review so it no longer appears as active feedback.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Contract Reviews section with author, rating, breakdown and comment.
+    \item Write Review dialog.
+    \item Author-only Edit and Delete actions.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item The client issues an HTTP request to \texttt{DELETE /\allowbreak{}reviews/\allowbreak{}:\allowbreak{}reviewId} via Next.js BFF proxy.
+    \item NestJS guards verify JWT authentication and validate role-based access permissions.
+    \item The backend service queries or updates entities in PostgreSQL using Prisma ORM.
+    \item The API returns the structured JSON payload and handles domain invariants consistently.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint4/nhuy/Delete Review.png}{Delete Review interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Contract Reviews section with author, rating, breakdown and comment.
+    \item Write Review dialog.
+    \item Author-only Edit and Delete actions.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+Identifier & Positive resource ID from the route; ownership is checked by the API.\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item The pair (contractId, reviewerId) is unique.
+\end{itemize}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+    \item BR-3905-01: Only contract participants can list or view contract reviews.
+    \item BR-3905-02: A review can be created only after the contract is COMPLETED, for the other party.
+    \item BR-3905-03: Only the review author edits or soft-deletes their review.
+    \item BR-3905-04: An update must contain at least one accepted field. The current schema does not require a non-empty comment or an integer overall rating.
+\end{itemize}
+
 \sublabel{Normal Flow}
-\begin{enumerate}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
-\item The actor opens /client/contracts/[slug]; /freelancer/contracts/[slug] and selects Delete Review.
-\item The application presents the current values or action confirmation; the actor supplies the required data and submits.
-\item The API checks authentication where required, authorization, resource existence and input validity.
-\item Soft-delete the owned review so it no longer appears as active feedback.
-\item After the transaction succeeds, the screen displays the result and reloads affected data; a pending revision is labeled as awaiting review.
+\begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item The actor opens \texttt{/\allowbreak{}client/\allowbreak{}contracts/\allowbreak{}[slug]}; \texttt{/\allowbreak{}freelancer/\allowbreak{}contracts/\allowbreak{}[slug]} and selects Delete Review.
+    \item The application presents the current values or action confirmation; the actor supplies the required data and submits.
+    \item The API checks authentication where required, authorization, resource existence and input validity.
+    \item Soft-delete the owned review so it no longer appears as active feedback.
+    \item After the transaction succeeds, the screen displays the result and reloads affected data; a pending revision is labeled as awaiting review.
 \end{enumerate}
-\Needspace{5\baselineskip}
-\sublabel{Alternative Flow}
-Cancel before submission closes the form or confirmation without persisting changes. On failure, preserve user input for correction and retry.
-\Needspace{5\baselineskip}
+
 \sublabel{Abnormal Flow / Exception Handling}
 \begin{flowtable}{Case}{Description}
-E1 & Missing or expired authentication, or insufficient role/ownership: deny the operation and do not change data. \\ \hline
-E2 & Missing, deleted or inaccessible resource: show a not-found result. \\ \hline
-E3 & Invalid input, duplicate relationship, or invalid workflow state: explain the problem and retain the entered values. \\ \hline
-E4 & Database, network or storage failure: report a retryable error; do not report success or terminate the API process. \\ \hline
+A1 & Missing or expired authentication token. Returns HTTP 401 Unauthorized.\\ \hline
+A2 & Insufficient permissions or role unauthorized. Returns HTTP 403 Forbidden.\\ \hline
+A3 & Target resource not found or soft-deleted. Returns HTTP 404 Not Found.\\ \hline
+A4 & Validation error or malformed payload. Returns HTTP 400 Bad Request.\\ \hline
+A5 & Database connectivity failure or server error. Returns HTTP 500.\\ \hline
 \end{flowtable}
-\Needspace{5\baselineskip}
-\Needspace{14\baselineskip}
+
 \sublabel{Output Data}
-\begin{specdatatable}{Data}{Definition}
-Result & Soft-delete the owned review so it no longer appears as active feedback. \\ \hline
-Failure & Structured error without sensitive data; no successful UI state when the operation failed. \\ \hline
+\begin{specdatatable}{Data Name}{Description}
+Result & Soft-delete the owned review so it no longer appears as active feedback.\\ \hline
+Failure & Structured error without sensitive data; no successful UI state when the operation failed.\\ \hline
 \end{specdatatable}
-\Needspace{5\baselineskip}
-\sublabel{Acceptance Criteria}
-\begin{itemize}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
-\item Successful delete review produces the documented response and survives a reload where data is persisted.
-\item An unauthorized actor cannot access or modify the resource.
-\item Invalid input and missing resources do not create a false success state or expose sensitive data.
+
+\sublabel{Post-Conditions}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Successful delete review produces the documented response and survives a reload where data is persisted.
+    \item An unauthorized actor cannot access or modify the resource.
+    \item Invalid input and missing resources do not create a false success state or expose sensitive data.
 \end{itemize}
 
-\Needspace{12\baselineskip}
+
 \subsection{Review Response Management}
-\Needspace{10\baselineskip}
-\subsubsection{Function: Respond to Review (UC-40.01)}
-\label{fn:nhuy-uc-40-01}
 
-\Needspace{7\baselineskip}
+% -----------------------------------------------------------------
+% UC-40.01: Respond to Review
+% -----------------------------------------------------------------
+\subsubsection{Respond to Review}
+
 \fnhead{Function Trigger}
-The actor selects Respond to Review. Navigation: Contract Reviews section.
+The actor selects Respond to Review.\newline
+\textbf{Navigation path:} Home $\rightarrow$ \texttt{Contract Reviews section.}
 
-\Needspace{7\baselineskip}
 \fnhead{Function Description}
-\Needspace{5\baselineskip}
+
 \sublabel{Actors / Roles}
-Client, Freelancer.
-\Needspace{5\baselineskip}
-\sublabel{Purpose}
-Create an active response from the reviewee and notify the review author.
-\Needspace{5\baselineskip}
-\sublabel{Interface and Data Processing}
-{\small\texttt{POST /\allowbreak{}reviews/\allowbreak{}:reviewId/\allowbreak{}response}}. The browser calls the Next.js BFF, which forwards authenticated requests to the NestJS API. The server derives the acting user from authentication and accesses Review, ReviewResponse, Notification. Route IDs are validated independently from owner IDs.
-
-\Needspace{7\baselineskip}
-\fnhead{Screen Layout (Mock-up Description)}
-\begin{center}
-\fbox{\begin{minipage}{0.88\linewidth}
-\textbf{Respond to Review}\par\smallskip
-Response beneath its review with author and time; Respond/Edit form; response-author-only Delete confirmation.\par\smallskip
-\textit{Schematic interface description, not an application screenshot.}
-\end{minipage}}
-\end{center}
-
-\Needspace{7\baselineskip}
-\Needspace{18\baselineskip}
-\fnhead{Function Details}
-\Needspace{5\baselineskip}
-\Needspace{14\baselineskip}
-\sublabel{Input Data}
-\begin{specdatatable}{Data}{Definition}
-responseText & Required trimmed response, 1--3,000 characters. \\ \hline
-reviewId / responseId & Review being answered or existing response identifier. \\ \hline
-\end{specdatatable}
-\Needspace{5\baselineskip}
-\sublabel{Validation and Business Rules}
-\begin{itemize}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
-\item Only the user being reviewed may respond.
-\item There is at most one active response per review.
-\item Only the response author edits or soft-deletes it.
-\item Soft-deleted responses must not be rendered as active feedback.
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item \textbf{Primary Actor:} Client, Freelancer.
+    \item \textbf{Supporting Systems:} Frevia Web (Next.js), Frevia BFF proxy, Frevia REST API (NestJS), Prisma ORM, and PostgreSQL database.
 \end{itemize}
-\Needspace{5\baselineskip}
+
+\sublabel{Purpose}
+\noindent Create an active response from the reviewee and notify the review author.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Response beneath its review with author and time.
+    \item Respond/Edit form.
+    \item Response-author-only Delete confirmation.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item The client issues an HTTP request to \texttt{POST /\allowbreak{}reviews/\allowbreak{}:\allowbreak{}reviewId/\allowbreak{}response} via Next.js BFF proxy.
+    \item NestJS guards verify JWT authentication and validate role-based access permissions.
+    \item The backend service queries or updates entities in PostgreSQL using Prisma ORM.
+    \item The API returns the structured JSON payload and handles domain invariants consistently.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint4/nhuy/Respond to Review.png}{Respond to Review interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Response beneath its review with author and time.
+    \item Respond/Edit form.
+    \item Response-author-only Delete confirmation.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+responseText & Required trimmed response, 1--3,000 characters.\\ \hline
+reviewId / responseId & Review being answered or existing response identifier.\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Input parameters must strictly adhere to the required data types, formats, and boundary constraints.
+    \item The active session must be valid and authenticated with appropriate role authorizations.
+\end{itemize}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+    \item BR-4001-01: Only the user being reviewed may respond.
+    \item BR-4001-02: There is at most one active response per review.
+    \item BR-4001-03: Only the response author edits or soft-deletes it.
+    \item BR-4001-04: Soft-deleted responses must not be rendered as active feedback.
+\end{itemize}
+
 \sublabel{Normal Flow}
-\begin{enumerate}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
-\item The actor opens Contract Reviews section and selects Respond to Review.
-\item The application presents the current values or action confirmation; the actor supplies the required data and submits.
-\item The API checks authentication where required, authorization, resource existence and input validity.
-\item Create an active response from the reviewee and notify the review author.
-\item After the transaction succeeds, the screen displays the result and reloads affected data; a pending revision is labeled as awaiting review.
+\begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item The actor opens Contract Reviews section and selects Respond to Review.
+    \item The application presents the current values or action confirmation; the actor supplies the required data and submits.
+    \item The API checks authentication where required, authorization, resource existence and input validity.
+    \item Create an active response from the reviewee and notify the review author.
+    \item After the transaction succeeds, the screen displays the result and reloads affected data; a pending revision is labeled as awaiting review.
 \end{enumerate}
-\Needspace{5\baselineskip}
-\sublabel{Alternative Flow}
-Cancel before submission closes the form or confirmation without persisting changes. On failure, preserve user input for correction and retry.
-\Needspace{5\baselineskip}
+
 \sublabel{Abnormal Flow / Exception Handling}
 \begin{flowtable}{Case}{Description}
-E1 & Missing or expired authentication, or insufficient role/ownership: deny the operation and do not change data. \\ \hline
-E2 & Missing, deleted or inaccessible resource: show a not-found result. \\ \hline
-E3 & Invalid input, duplicate relationship, or invalid workflow state: explain the problem and retain the entered values. \\ \hline
-E4 & Database, network or storage failure: report a retryable error; do not report success or terminate the API process. \\ \hline
+A1 & Missing or expired authentication token. Returns HTTP 401 Unauthorized.\\ \hline
+A2 & Insufficient permissions or role unauthorized. Returns HTTP 403 Forbidden.\\ \hline
+A3 & Target resource not found or soft-deleted. Returns HTTP 404 Not Found.\\ \hline
+A4 & Validation error or malformed payload. Returns HTTP 400 Bad Request.\\ \hline
+A5 & Database connectivity failure or server error. Returns HTTP 500.\\ \hline
 \end{flowtable}
-\Needspace{5\baselineskip}
-\Needspace{14\baselineskip}
+
 \sublabel{Output Data}
-\begin{specdatatable}{Data}{Definition}
-Result & Create an active response from the reviewee and notify the review author. \\ \hline
-Failure & Structured error without sensitive data; no successful UI state when the operation failed. \\ \hline
+\begin{specdatatable}{Data Name}{Description}
+Result & Create an active response from the reviewee and notify the review author.\\ \hline
+Failure & Structured error without sensitive data; no successful UI state when the operation failed.\\ \hline
 \end{specdatatable}
-\Needspace{5\baselineskip}
-\sublabel{Acceptance Criteria}
-\begin{itemize}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
-\item Successful respond to review produces the documented response and survives a reload where data is persisted.
-\item An unauthorized actor cannot access or modify the resource.
-\item Invalid input and missing resources do not create a false success state or expose sensitive data.
+
+\sublabel{Post-Conditions}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Successful respond to review produces the documented response and survives a reload where data is persisted.
+    \item An unauthorized actor cannot access or modify the resource.
+    \item Invalid input and missing resources do not create a false success state or expose sensitive data.
 \end{itemize}
 
-\Needspace{10\baselineskip}
-\subsubsection{Function: Update Review Response (UC-40.02)}
-\label{fn:nhuy-uc-40-02}
+% -----------------------------------------------------------------
+% UC-40.02: Update Review Response
+% -----------------------------------------------------------------
+\subsubsection{Update Review Response}
 
-\Needspace{7\baselineskip}
 \fnhead{Function Trigger}
-The actor selects Update Review Response. Navigation: Contract Reviews section.
+The actor selects Update Review Response.\newline
+\textbf{Navigation path:} Home $\rightarrow$ \texttt{Contract Reviews section.}
 
-\Needspace{7\baselineskip}
 \fnhead{Function Description}
-\Needspace{5\baselineskip}
+
 \sublabel{Actors / Roles}
-Client, Freelancer.
-\Needspace{5\baselineskip}
-\sublabel{Purpose}
-Save validated text in the current user response.
-\Needspace{5\baselineskip}
-\sublabel{Interface and Data Processing}
-{\small\texttt{PATCH /\allowbreak{}reviews/\allowbreak{}responses/\allowbreak{}:responseId}}. The browser calls the Next.js BFF, which forwards authenticated requests to the NestJS API. The server derives the acting user from authentication and accesses Review, ReviewResponse, Notification. Route IDs are validated independently from owner IDs.
-
-\Needspace{7\baselineskip}
-\fnhead{Screen Layout (Mock-up Description)}
-\begin{center}
-\fbox{\begin{minipage}{0.88\linewidth}
-\textbf{Update Review Response}\par\smallskip
-Response beneath its review with author and time; Respond/Edit form; response-author-only Delete confirmation.\par\smallskip
-\textit{Schematic interface description, not an application screenshot.}
-\end{minipage}}
-\end{center}
-
-\Needspace{7\baselineskip}
-\Needspace{18\baselineskip}
-\fnhead{Function Details}
-\Needspace{5\baselineskip}
-\Needspace{14\baselineskip}
-\sublabel{Input Data}
-\begin{specdatatable}{Data}{Definition}
-responseText & Required trimmed response, 1--3,000 characters. \\ \hline
-reviewId / responseId & Review being answered or existing response identifier. \\ \hline
-\end{specdatatable}
-\Needspace{5\baselineskip}
-\sublabel{Validation and Business Rules}
-\begin{itemize}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
-\item Only the user being reviewed may respond.
-\item There is at most one active response per review.
-\item Only the response author edits or soft-deletes it.
-\item Soft-deleted responses must not be rendered as active feedback.
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item \textbf{Primary Actor:} Client, Freelancer.
+    \item \textbf{Supporting Systems:} Frevia Web (Next.js), Frevia BFF proxy, Frevia REST API (NestJS), Prisma ORM, and PostgreSQL database.
 \end{itemize}
-\Needspace{5\baselineskip}
+
+\sublabel{Purpose}
+\noindent Save validated text in the current user response.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Response beneath its review with author and time.
+    \item Respond/Edit form.
+    \item Response-author-only Delete confirmation.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item The client issues an HTTP request to \texttt{PATCH /\allowbreak{}reviews/\allowbreak{}responses/\allowbreak{}:\allowbreak{}responseId} via Next.js BFF proxy.
+    \item NestJS guards verify JWT authentication and validate role-based access permissions.
+    \item The backend service queries or updates entities in PostgreSQL using Prisma ORM.
+    \item The API returns the structured JSON payload and handles domain invariants consistently.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint4/nhuy/Update Review Response.png}{Update Review Response interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Response beneath its review with author and time.
+    \item Respond/Edit form.
+    \item Response-author-only Delete confirmation.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+responseText & Required trimmed response, 1--3,000 characters.\\ \hline
+reviewId / responseId & Review being answered or existing response identifier.\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Input parameters must strictly adhere to the required data types, formats, and boundary constraints.
+    \item The active session must be valid and authenticated with appropriate role authorizations.
+\end{itemize}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+    \item BR-4002-01: Only the user being reviewed may respond.
+    \item BR-4002-02: There is at most one active response per review.
+    \item BR-4002-03: Only the response author edits or soft-deletes it.
+    \item BR-4002-04: Soft-deleted responses must not be rendered as active feedback.
+\end{itemize}
+
 \sublabel{Normal Flow}
-\begin{enumerate}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
-\item The actor opens Contract Reviews section and selects Update Review Response.
-\item The application presents the current values or action confirmation; the actor supplies the required data and submits.
-\item The API checks authentication where required, authorization, resource existence and input validity.
-\item Save validated text in the current user response.
-\item After the transaction succeeds, the screen displays the result and reloads affected data; a pending revision is labeled as awaiting review.
+\begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item The actor opens Contract Reviews section and selects Update Review Response.
+    \item The application presents the current values or action confirmation; the actor supplies the required data and submits.
+    \item The API checks authentication where required, authorization, resource existence and input validity.
+    \item Save validated text in the current user response.
+    \item After the transaction succeeds, the screen displays the result and reloads affected data; a pending revision is labeled as awaiting review.
 \end{enumerate}
-\Needspace{5\baselineskip}
-\sublabel{Alternative Flow}
-Cancel before submission closes the form or confirmation without persisting changes. On failure, preserve user input for correction and retry.
-\Needspace{5\baselineskip}
+
 \sublabel{Abnormal Flow / Exception Handling}
 \begin{flowtable}{Case}{Description}
-E1 & Missing or expired authentication, or insufficient role/ownership: deny the operation and do not change data. \\ \hline
-E2 & Missing, deleted or inaccessible resource: show a not-found result. \\ \hline
-E3 & Invalid input, duplicate relationship, or invalid workflow state: explain the problem and retain the entered values. \\ \hline
-E4 & Database, network or storage failure: report a retryable error; do not report success or terminate the API process. \\ \hline
+A1 & Missing or expired authentication token. Returns HTTP 401 Unauthorized.\\ \hline
+A2 & Insufficient permissions or role unauthorized. Returns HTTP 403 Forbidden.\\ \hline
+A3 & Target resource not found or soft-deleted. Returns HTTP 404 Not Found.\\ \hline
+A4 & Validation error or malformed payload. Returns HTTP 400 Bad Request.\\ \hline
+A5 & Database connectivity failure or server error. Returns HTTP 500.\\ \hline
 \end{flowtable}
-\Needspace{5\baselineskip}
-\Needspace{14\baselineskip}
+
 \sublabel{Output Data}
-\begin{specdatatable}{Data}{Definition}
-Result & Save validated text in the current user response. \\ \hline
-Failure & Structured error without sensitive data; no successful UI state when the operation failed. \\ \hline
+\begin{specdatatable}{Data Name}{Description}
+Result & Save validated text in the current user response.\\ \hline
+Failure & Structured error without sensitive data; no successful UI state when the operation failed.\\ \hline
 \end{specdatatable}
-\Needspace{5\baselineskip}
-\sublabel{Acceptance Criteria}
-\begin{itemize}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
-\item Successful update review response produces the documented response and survives a reload where data is persisted.
-\item An unauthorized actor cannot access or modify the resource.
-\item Invalid input and missing resources do not create a false success state or expose sensitive data.
+
+\sublabel{Post-Conditions}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Successful update review response produces the documented response and survives a reload where data is persisted.
+    \item An unauthorized actor cannot access or modify the resource.
+    \item Invalid input and missing resources do not create a false success state or expose sensitive data.
 \end{itemize}
 
-\Needspace{10\baselineskip}
-\subsubsection{Function: Delete Review Response (UC-40.03)}
-\label{fn:nhuy-uc-40-03}
+% -----------------------------------------------------------------
+% UC-40.03: Delete Review Response
+% -----------------------------------------------------------------
+\subsubsection{Delete Review Response}
 
-\Needspace{7\baselineskip}
 \fnhead{Function Trigger}
-The actor selects Delete Review Response. Navigation: Contract Reviews section.
+The actor selects Delete Review Response.\newline
+\textbf{Navigation path:} Home $\rightarrow$ \texttt{Contract Reviews section.}
 
-\Needspace{7\baselineskip}
 \fnhead{Function Description}
-\Needspace{5\baselineskip}
+
 \sublabel{Actors / Roles}
-Client, Freelancer.
-\Needspace{5\baselineskip}
-\sublabel{Purpose}
-Soft-delete the response authored by the current user.
-\Needspace{5\baselineskip}
-\sublabel{Interface and Data Processing}
-{\small\texttt{DELETE /\allowbreak{}reviews/\allowbreak{}responses/\allowbreak{}:responseId}}. The browser calls the Next.js BFF, which forwards authenticated requests to the NestJS API. The server derives the acting user from authentication and accesses Review, ReviewResponse, Notification. Route IDs are validated independently from owner IDs.
-
-\Needspace{7\baselineskip}
-\fnhead{Screen Layout (Mock-up Description)}
-\begin{center}
-\fbox{\begin{minipage}{0.88\linewidth}
-\textbf{Delete Review Response}\par\smallskip
-Response beneath its review with author and time; Respond/Edit form; response-author-only Delete confirmation.\par\smallskip
-\textit{Schematic interface description, not an application screenshot.}
-\end{minipage}}
-\end{center}
-
-\Needspace{7\baselineskip}
-\Needspace{18\baselineskip}
-\fnhead{Function Details}
-\Needspace{5\baselineskip}
-\Needspace{14\baselineskip}
-\sublabel{Input Data}
-\begin{specdatatable}{Data}{Definition}
-Identifier & Positive resource ID from the route; ownership is checked by the API. \\ \hline
-\end{specdatatable}
-\Needspace{5\baselineskip}
-\sublabel{Validation and Business Rules}
-\begin{itemize}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
-\item Only the user being reviewed may respond.
-\item There is at most one active response per review.
-\item Only the response author edits or soft-deletes it.
-\item Soft-deleted responses must not be rendered as active feedback.
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item \textbf{Primary Actor:} Client, Freelancer.
+    \item \textbf{Supporting Systems:} Frevia Web (Next.js), Frevia BFF proxy, Frevia REST API (NestJS), Prisma ORM, and PostgreSQL database.
 \end{itemize}
-\Needspace{5\baselineskip}
+
+\sublabel{Purpose}
+\noindent Soft-delete the response authored by the current user.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Response beneath its review with author and time.
+    \item Respond/Edit form.
+    \item Response-author-only Delete confirmation.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item The client issues an HTTP request to \texttt{DELETE /\allowbreak{}reviews/\allowbreak{}responses/\allowbreak{}:\allowbreak{}responseId} via Next.js BFF proxy.
+    \item NestJS guards verify JWT authentication and validate role-based access permissions.
+    \item The backend service queries or updates entities in PostgreSQL using Prisma ORM.
+    \item The API returns the structured JSON payload and handles domain invariants consistently.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint4/nhuy/Delete Review Response.png}{Delete Review Response interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Response beneath its review with author and time.
+    \item Respond/Edit form.
+    \item Response-author-only Delete confirmation.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+Identifier & Positive resource ID from the route; ownership is checked by the API.\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Input parameters must strictly adhere to the required data types, formats, and boundary constraints.
+    \item The active session must be valid and authenticated with appropriate role authorizations.
+\end{itemize}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+    \item BR-4003-01: Only the user being reviewed may respond.
+    \item BR-4003-02: There is at most one active response per review.
+    \item BR-4003-03: Only the response author edits or soft-deletes it.
+    \item BR-4003-04: Soft-deleted responses must not be rendered as active feedback.
+\end{itemize}
+
 \sublabel{Normal Flow}
-\begin{enumerate}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
-\item The actor opens Contract Reviews section and selects Delete Review Response.
-\item The application presents the current values or action confirmation; the actor supplies the required data and submits.
-\item The API checks authentication where required, authorization, resource existence and input validity.
-\item Soft-delete the response authored by the current user.
-\item After the transaction succeeds, the screen displays the result and reloads affected data; a pending revision is labeled as awaiting review.
+\begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item The actor opens Contract Reviews section and selects Delete Review Response.
+    \item The application presents the current values or action confirmation; the actor supplies the required data and submits.
+    \item The API checks authentication where required, authorization, resource existence and input validity.
+    \item Soft-delete the response authored by the current user.
+    \item After the transaction succeeds, the screen displays the result and reloads affected data; a pending revision is labeled as awaiting review.
 \end{enumerate}
-\Needspace{5\baselineskip}
-\sublabel{Alternative Flow}
-Cancel before submission closes the form or confirmation without persisting changes. On failure, preserve user input for correction and retry.
-\Needspace{5\baselineskip}
+
 \sublabel{Abnormal Flow / Exception Handling}
 \begin{flowtable}{Case}{Description}
-E1 & Missing or expired authentication, or insufficient role/ownership: deny the operation and do not change data. \\ \hline
-E2 & Missing, deleted or inaccessible resource: show a not-found result. \\ \hline
-E3 & Invalid input, duplicate relationship, or invalid workflow state: explain the problem and retain the entered values. \\ \hline
-E4 & Database, network or storage failure: report a retryable error; do not report success or terminate the API process. \\ \hline
+A1 & Missing or expired authentication token. Returns HTTP 401 Unauthorized.\\ \hline
+A2 & Insufficient permissions or role unauthorized. Returns HTTP 403 Forbidden.\\ \hline
+A3 & Target resource not found or soft-deleted. Returns HTTP 404 Not Found.\\ \hline
+A4 & Validation error or malformed payload. Returns HTTP 400 Bad Request.\\ \hline
+A5 & Database connectivity failure or server error. Returns HTTP 500.\\ \hline
 \end{flowtable}
-\Needspace{5\baselineskip}
-\Needspace{14\baselineskip}
+
 \sublabel{Output Data}
-\begin{specdatatable}{Data}{Definition}
-Result & Soft-delete the response authored by the current user. \\ \hline
-Failure & Structured error without sensitive data; no successful UI state when the operation failed. \\ \hline
+\begin{specdatatable}{Data Name}{Description}
+Result & Soft-delete the response authored by the current user.\\ \hline
+Failure & Structured error without sensitive data; no successful UI state when the operation failed.\\ \hline
 \end{specdatatable}
-\Needspace{5\baselineskip}
-\sublabel{Acceptance Criteria}
-\begin{itemize}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
-\item Successful delete review response produces the documented response and survives a reload where data is persisted.
-\item An unauthorized actor cannot access or modify the resource.
-\item Invalid input and missing resources do not create a false success state or expose sensitive data.
+
+\sublabel{Post-Conditions}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Successful delete review response produces the documented response and survives a reload where data is persisted.
+    \item An unauthorized actor cannot access or modify the resource.
+    \item Invalid input and missing resources do not create a false success state or expose sensitive data.
 \end{itemize}
 
-\Needspace{12\baselineskip}
+
 \subsection{General Account Profile}
-\Needspace{10\baselineskip}
-\subsubsection{Function: View Profile (UC-41.01)}
-\label{fn:nhuy-uc-41-01}
 
-\Needspace{7\baselineskip}
+% -----------------------------------------------------------------
+% UC-41.01: View Profile
+% -----------------------------------------------------------------
+\subsubsection{View Profile}
+
 \fnhead{Function Trigger}
-The actor selects View Profile. Navigation: /account-profile (General Settings).
+The actor selects View Profile.\newline
+\textbf{Navigation path:} Home $\rightarrow$ \texttt{/\allowbreak{}account-\allowbreak{}profile (General Settings).}
 
-\Needspace{7\baselineskip}
 \fnhead{Function Description}
-\Needspace{5\baselineskip}
+
 \sublabel{Actors / Roles}
-Client, Freelancer, Expert, Admin.
-\Needspace{5\baselineskip}
-\sublabel{Purpose}
-Read the authenticated account profile, email and assigned roles.
-\Needspace{5\baselineskip}
-\sublabel{Interface and Data Processing}
-{\small\texttt{GET /\allowbreak{}account-profile}}. The browser calls the Next.js BFF, which forwards authenticated requests to the NestJS API. The server derives the acting user from authentication and accesses User, Profile, ProfileRevision. Route IDs are validated independently from owner IDs.
-
-\Needspace{7\baselineskip}
-\fnhead{Screen Layout (Mock-up Description)}
-\begin{center}
-\fbox{\begin{minipage}{0.88\linewidth}
-\textbf{View Profile}\par\smallskip
-Read-only email and role summary; display name and bio form; avatar picker; separate password-change form and confirmation field.\par\smallskip
-\textit{Schematic interface description, not an application screenshot.}
-\end{minipage}}
-\end{center}
-
-\Needspace{7\baselineskip}
-\Needspace{18\baselineskip}
-\fnhead{Function Details}
-\Needspace{5\baselineskip}
-\Needspace{14\baselineskip}
-\sublabel{Input Data}
-\begin{specdatatable}{Data}{Definition}
-Identifier & Authenticated user context; no other user ID can replace it. \\ \hline
-\end{specdatatable}
-\Needspace{5\baselineskip}
-\sublabel{Validation and Business Rules}
-\begin{itemize}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
-\item The server resolves the account from the session; users cannot edit another account via body IDs.
-\item Verify the current password before hashing and storing a replacement; do not log credentials.
-\item Apply the profile revision policy to general profile changes.
-\item Avatar files must be validated; missing stored files return 404 without terminating the API process.
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item \textbf{Primary Actor:} Client, Freelancer, Expert, Admin.
+    \item \textbf{Supporting Systems:} Frevia Web (Next.js), Frevia BFF proxy, Frevia REST API (NestJS), Prisma ORM, and PostgreSQL database.
 \end{itemize}
-\Needspace{5\baselineskip}
+
+\sublabel{Purpose}
+\noindent Read the authenticated account profile, email and assigned roles.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Read-only email and role summary.
+    \item Display name and bio form.
+    \item Avatar picker.
+    \item Separate password-change form and confirmation field.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item The client issues an HTTP request to \texttt{GET /\allowbreak{}account-\allowbreak{}profile} via Next.js BFF proxy.
+    \item NestJS guards verify JWT authentication and validate role-based access permissions.
+    \item The backend service queries or updates entities in PostgreSQL using Prisma ORM.
+    \item The API returns the structured JSON payload and handles domain invariants consistently.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint4/nhuy/Upload Avatar.png}{View Profile interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Read-only email and role summary.
+    \item Display name and bio form.
+    \item Avatar picker.
+    \item Separate password-change form and confirmation field.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+Identifier & Authenticated user context; no other user ID can replace it.\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Avatar files must be validated; missing stored files return 404 without terminating the API process.
+\end{itemize}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+    \item BR-4101-01: The server resolves the account from the session; users cannot edit another account via body IDs.
+    \item BR-4101-02: Verify the current password before hashing and storing a replacement; do not log credentials.
+    \item BR-4101-03: Apply the profile revision policy to general profile changes.
+\end{itemize}
+
 \sublabel{Normal Flow}
-\begin{enumerate}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
-\item The actor opens /account-profile (General Settings) and selects View Profile.
-\item The application submits the selected identifier or list filters.
-\item The API checks authentication where required, authorization, resource existence and input validity.
-\item Read the authenticated account profile, email and assigned roles.
-\item The screen renders the response, or an explicit empty state for a valid empty collection.
+\begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item The actor opens \texttt{/\allowbreak{}account-\allowbreak{}profile} (General Settings) and selects View Profile.
+    \item The application submits the selected identifier or list filters.
+    \item The API checks authentication where required, authorization, resource existence and input validity.
+    \item Read the authenticated account profile, email and assigned roles.
+    \item The screen renders the response, or an explicit empty state for a valid empty collection.
 \end{enumerate}
-\Needspace{5\baselineskip}
-\sublabel{Alternative Flow}
-Show an informative empty state for a valid empty result and allow retry after a transport failure.
-\Needspace{5\baselineskip}
+
 \sublabel{Abnormal Flow / Exception Handling}
 \begin{flowtable}{Case}{Description}
-E1 & Missing or expired authentication, or insufficient role/ownership: deny the operation and do not change data. \\ \hline
-E2 & Missing, deleted or inaccessible resource: show a not-found result. \\ \hline
-A1 & A valid empty collection displays an empty state; it must not be treated as a missing account. \\ \hline
-E4 & Database, network or storage failure: report a retryable error; do not report success or terminate the API process. \\ \hline
+A1 & Missing or expired authentication token. Returns HTTP 401 Unauthorized.\\ \hline
+A2 & Insufficient permissions or role unauthorized. Returns HTTP 403 Forbidden.\\ \hline
+A3 & Target resource not found or soft-deleted. Returns HTTP 404 Not Found.\\ \hline
+A4 & Validation error or malformed payload. Returns HTTP 400 Bad Request.\\ \hline
+A5 & Database connectivity failure or server error. Returns HTTP 500.\\ \hline
 \end{flowtable}
-\Needspace{5\baselineskip}
-\Needspace{14\baselineskip}
+
 \sublabel{Output Data}
-\begin{specdatatable}{Data}{Definition}
-Result & Read the authenticated account profile, email and assigned roles. \\ \hline
-Failure & Structured error without sensitive data; no successful UI state when the operation failed. \\ \hline
+\begin{specdatatable}{Data Name}{Description}
+Result & Read the authenticated account profile, email and assigned roles.\\ \hline
+Failure & Structured error without sensitive data; no successful UI state when the operation failed.\\ \hline
 \end{specdatatable}
-\Needspace{5\baselineskip}
-\sublabel{Acceptance Criteria}
-\begin{itemize}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
-\item Successful view profile produces the documented response and survives a reload where data is persisted.
-\item An unauthorized actor cannot access or modify the resource.
-\item Invalid input and missing resources do not create a false success state or expose sensitive data.
+
+\sublabel{Post-Conditions}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Successful view profile produces the documented response and survives a reload where data is persisted.
+    \item An unauthorized actor cannot access or modify the resource.
+    \item Invalid input and missing resources do not create a false success state or expose sensitive data.
 \end{itemize}
 
-\Needspace{10\baselineskip}
-\subsubsection{Function: Update Profile (UC-41.02)}
-\label{fn:nhuy-uc-41-02}
+% -----------------------------------------------------------------
+% UC-41.02: Update Profile
+% -----------------------------------------------------------------
+\subsubsection{Update Profile}
 
-\Needspace{7\baselineskip}
 \fnhead{Function Trigger}
-The actor selects Update Profile. Navigation: /account-profile (General Settings).
+The actor selects Update Profile.\newline
+\textbf{Navigation path:} Home $\rightarrow$ \texttt{/\allowbreak{}account-\allowbreak{}profile (General Settings).}
 
-\Needspace{7\baselineskip}
 \fnhead{Function Description}
-\Needspace{5\baselineskip}
+
 \sublabel{Actors / Roles}
-Client, Freelancer, Expert, Admin.
-\Needspace{5\baselineskip}
-\sublabel{Purpose}
-Save or submit general display name and biography according to profile strength.
-\Needspace{5\baselineskip}
-\sublabel{Interface and Data Processing}
-{\small\texttt{PUT /\allowbreak{}account-profile}}. The browser calls the Next.js BFF, which forwards authenticated requests to the NestJS API. The server derives the acting user from authentication and accesses User, Profile, ProfileRevision. Route IDs are validated independently from owner IDs.
-
-\Needspace{7\baselineskip}
-\fnhead{Screen Layout (Mock-up Description)}
-\begin{center}
-\fbox{\begin{minipage}{0.88\linewidth}
-\textbf{Update Profile}\par\smallskip
-Read-only email and role summary; display name and bio form; avatar picker; separate password-change form and confirmation field.\par\smallskip
-\textit{Schematic interface description, not an application screenshot.}
-\end{minipage}}
-\end{center}
-
-\Needspace{7\baselineskip}
-\Needspace{18\baselineskip}
-\fnhead{Function Details}
-\Needspace{5\baselineskip}
-\Needspace{14\baselineskip}
-\sublabel{Input Data}
-\begin{specdatatable}{Data}{Definition}
-Accepted input & displayName; optional bio \\ \hline
-\end{specdatatable}
-\Needspace{5\baselineskip}
-\sublabel{Validation and Business Rules}
-\begin{itemize}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
-\item The server resolves the account from the session; users cannot edit another account via body IDs.
-\item Verify the current password before hashing and storing a replacement; do not log credentials.
-\item Apply the profile revision policy to general profile changes.
-\item Avatar files must be validated; missing stored files return 404 without terminating the API process.
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item \textbf{Primary Actor:} Client, Freelancer, Expert, Admin.
+    \item \textbf{Supporting Systems:} Frevia Web (Next.js), Frevia BFF proxy, Frevia REST API (NestJS), Prisma ORM, and PostgreSQL database.
 \end{itemize}
-\Needspace{5\baselineskip}
+
+\sublabel{Purpose}
+\noindent Save or submit general display name and biography according to profile strength.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Read-only email and role summary.
+    \item Display name and bio form.
+    \item Avatar picker.
+    \item Separate password-change form and confirmation field.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item The client issues an HTTP request to \texttt{PUT /\allowbreak{}account-\allowbreak{}profile} via Next.js BFF proxy.
+    \item NestJS guards verify JWT authentication and validate role-based access permissions.
+    \item The backend service queries or updates entities in PostgreSQL using Prisma ORM.
+    \item The API returns the structured JSON payload and handles domain invariants consistently.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint4/nhuy/Upload Avatar.png}{Update Profile interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Read-only email and role summary.
+    \item Display name and bio form.
+    \item Avatar picker.
+    \item Separate password-change form and confirmation field.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+Accepted input & displayName; optional bio\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Avatar files must be validated; missing stored files return 404 without terminating the API process.
+\end{itemize}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+    \item BR-4102-01: The server resolves the account from the session; users cannot edit another account via body IDs.
+    \item BR-4102-02: Verify the current password before hashing and storing a replacement; do not log credentials.
+    \item BR-4102-03: Apply the profile revision policy to general profile changes.
+\end{itemize}
+
 \sublabel{Normal Flow}
-\begin{enumerate}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
-\item The actor opens /account-profile (General Settings) and selects Update Profile.
-\item The application presents the current values or action confirmation; the actor supplies the required data and submits.
-\item The API checks authentication where required, authorization, resource existence and input validity.
-\item Save or submit general display name and biography according to profile strength.
-\item After the transaction succeeds, the screen displays the result and reloads affected data; a pending revision is labeled as awaiting review.
+\begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item The actor opens \texttt{/\allowbreak{}account-\allowbreak{}profile} (General Settings) and selects Update Profile.
+    \item The application presents the current values or action confirmation; the actor supplies the required data and submits.
+    \item The API checks authentication where required, authorization, resource existence and input validity.
+    \item Save or submit general display name and biography according to profile strength.
+    \item After the transaction succeeds, the screen displays the result and reloads affected data; a pending revision is labeled as awaiting review.
 \end{enumerate}
-\Needspace{5\baselineskip}
-\sublabel{Alternative Flow}
-Cancel before submission closes the form or confirmation without persisting changes. On failure, preserve user input for correction and retry.
-\Needspace{5\baselineskip}
+
 \sublabel{Abnormal Flow / Exception Handling}
 \begin{flowtable}{Case}{Description}
-E1 & Missing or expired authentication, or insufficient role/ownership: deny the operation and do not change data. \\ \hline
-E2 & Missing, deleted or inaccessible resource: show a not-found result. \\ \hline
-E3 & Invalid input, duplicate relationship, or invalid workflow state: explain the problem and retain the entered values. \\ \hline
-E4 & Database, network or storage failure: report a retryable error; do not report success or terminate the API process. \\ \hline
+A1 & Missing or expired authentication token. Returns HTTP 401 Unauthorized.\\ \hline
+A2 & Insufficient permissions or role unauthorized. Returns HTTP 403 Forbidden.\\ \hline
+A3 & Target resource not found or soft-deleted. Returns HTTP 404 Not Found.\\ \hline
+A4 & Validation error or malformed payload. Returns HTTP 400 Bad Request.\\ \hline
+A5 & Database connectivity failure or server error. Returns HTTP 500.\\ \hline
 \end{flowtable}
-\Needspace{5\baselineskip}
-\Needspace{14\baselineskip}
+
 \sublabel{Output Data}
-\begin{specdatatable}{Data}{Definition}
-Result & Save or submit general display name and biography according to profile strength. \\ \hline
-Failure & Structured error without sensitive data; no successful UI state when the operation failed. \\ \hline
+\begin{specdatatable}{Data Name}{Description}
+Result & Save or submit general display name and biography according to profile strength.\\ \hline
+Failure & Structured error without sensitive data; no successful UI state when the operation failed.\\ \hline
 \end{specdatatable}
-\Needspace{5\baselineskip}
-\sublabel{Acceptance Criteria}
-\begin{itemize}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
-\item Successful update profile produces the documented response and survives a reload where data is persisted.
-\item An unauthorized actor cannot access or modify the resource.
-\item Invalid input and missing resources do not create a false success state or expose sensitive data.
+
+\sublabel{Post-Conditions}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Successful update profile produces the documented response and survives a reload where data is persisted.
+    \item An unauthorized actor cannot access or modify the resource.
+    \item Invalid input and missing resources do not create a false success state or expose sensitive data.
 \end{itemize}
 
-\Needspace{10\baselineskip}
-\subsubsection{Function: Change Password (UC-41.03)}
-\label{fn:nhuy-uc-41-03}
+% -----------------------------------------------------------------
+% UC-41.03: Change Password
+% -----------------------------------------------------------------
+\subsubsection{Change Password}
 
-\Needspace{7\baselineskip}
 \fnhead{Function Trigger}
-The actor selects Change Password. Navigation: /account-profile (General Settings).
+The actor selects Change Password.\newline
+\textbf{Navigation path:} Home $\rightarrow$ \texttt{/\allowbreak{}account-\allowbreak{}profile (General Settings).}
 
-\Needspace{7\baselineskip}
 \fnhead{Function Description}
-\Needspace{5\baselineskip}
+
 \sublabel{Actors / Roles}
-Client, Freelancer, Expert, Admin.
-\Needspace{5\baselineskip}
-\sublabel{Purpose}
-Verify the current credential, hash the confirmed replacement and update the password.
-\Needspace{5\baselineskip}
-\sublabel{Interface and Data Processing}
-{\small\texttt{PUT /\allowbreak{}account-profile/\allowbreak{}password}}. The browser calls the Next.js BFF, which forwards authenticated requests to the NestJS API. The server derives the acting user from authentication and accesses User, Profile, ProfileRevision. Route IDs are validated independently from owner IDs.
-
-\Needspace{7\baselineskip}
-\fnhead{Screen Layout (Mock-up Description)}
-\begin{center}
-\fbox{\begin{minipage}{0.88\linewidth}
-\textbf{Change Password}\par\smallskip
-Read-only email and role summary; display name and bio form; avatar picker; separate password-change form and confirmation field.\par\smallskip
-\textit{Schematic interface description, not an application screenshot.}
-\end{minipage}}
-\end{center}
-
-\Needspace{7\baselineskip}
-\Needspace{18\baselineskip}
-\fnhead{Function Details}
-\Needspace{5\baselineskip}
-\Needspace{14\baselineskip}
-\sublabel{Input Data}
-\begin{specdatatable}{Data}{Definition}
-Accepted input & currentPassword; newPassword; confirmPassword \\ \hline
-\end{specdatatable}
-\Needspace{5\baselineskip}
-\sublabel{Validation and Business Rules}
-\begin{itemize}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
-\item The server resolves the account from the session; users cannot edit another account via body IDs.
-\item Verify the current password before hashing and storing a replacement; do not log credentials.
-\item Apply the profile revision policy to general profile changes.
-\item Avatar files must be validated; missing stored files return 404 without terminating the API process.
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item \textbf{Primary Actor:} Client, Freelancer, Expert, Admin.
+    \item \textbf{Supporting Systems:} Frevia Web (Next.js), Frevia BFF proxy, Frevia REST API (NestJS), Prisma ORM, and PostgreSQL database.
 \end{itemize}
-\Needspace{5\baselineskip}
+
+\sublabel{Purpose}
+\noindent Verify the current credential, hash the confirmed replacement and update the password.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Read-only email and role summary.
+    \item Display name and bio form.
+    \item Avatar picker.
+    \item Separate password-change form and confirmation field.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item The client issues an HTTP request to \texttt{PUT /\allowbreak{}account-\allowbreak{}profile/\allowbreak{}password} via Next.js BFF proxy.
+    \item NestJS guards verify JWT authentication and validate role-based access permissions.
+    \item The backend service queries or updates entities in PostgreSQL using Prisma ORM.
+    \item The API returns the structured JSON payload and handles domain invariants consistently.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint4/nhuy/Change Password.png}{Change Password interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Read-only email and role summary.
+    \item Display name and bio form.
+    \item Avatar picker.
+    \item Separate password-change form and confirmation field.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+Accepted input & currentPassword; newPassword; confirmPassword\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Avatar files must be validated; missing stored files return 404 without terminating the API process.
+\end{itemize}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+    \item BR-4103-01: The server resolves the account from the session; users cannot edit another account via body IDs.
+    \item BR-4103-02: Verify the current password before hashing and storing a replacement; do not log credentials.
+    \item BR-4103-03: Apply the profile revision policy to general profile changes.
+\end{itemize}
+
 \sublabel{Normal Flow}
-\begin{enumerate}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
-\item The actor opens /account-profile (General Settings) and selects Change Password.
-\item The application presents the current values or action confirmation; the actor supplies the required data and submits.
-\item The API checks authentication where required, authorization, resource existence and input validity.
-\item Verify the current credential, hash the confirmed replacement and update the password.
-\item After the transaction succeeds, the screen displays the result and reloads affected data; a pending revision is labeled as awaiting review.
+\begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item The actor opens \texttt{/\allowbreak{}account-\allowbreak{}profile} (General Settings) and selects Change Password.
+    \item The application presents the current values or action confirmation; the actor supplies the required data and submits.
+    \item The API checks authentication where required, authorization, resource existence and input validity.
+    \item Verify the current credential, hash the confirmed replacement and update the password.
+    \item After the transaction succeeds, the screen displays the result and reloads affected data; a pending revision is labeled as awaiting review.
 \end{enumerate}
-\Needspace{5\baselineskip}
-\sublabel{Alternative Flow}
-Cancel before submission closes the form or confirmation without persisting changes. On failure, preserve user input for correction and retry.
-\Needspace{5\baselineskip}
+
 \sublabel{Abnormal Flow / Exception Handling}
 \begin{flowtable}{Case}{Description}
-E1 & Missing or expired authentication, or insufficient role/ownership: deny the operation and do not change data. \\ \hline
-E2 & Missing, deleted or inaccessible resource: show a not-found result. \\ \hline
-E3 & Invalid input, duplicate relationship, or invalid workflow state: explain the problem and retain the entered values. \\ \hline
-E4 & Database, network or storage failure: report a retryable error; do not report success or terminate the API process. \\ \hline
+A1 & Missing or expired authentication token. Returns HTTP 401 Unauthorized.\\ \hline
+A2 & Insufficient permissions or role unauthorized. Returns HTTP 403 Forbidden.\\ \hline
+A3 & Target resource not found or soft-deleted. Returns HTTP 404 Not Found.\\ \hline
+A4 & Validation error or malformed payload. Returns HTTP 400 Bad Request.\\ \hline
+A5 & Database connectivity failure or server error. Returns HTTP 500.\\ \hline
 \end{flowtable}
-\Needspace{5\baselineskip}
-\Needspace{14\baselineskip}
+
 \sublabel{Output Data}
-\begin{specdatatable}{Data}{Definition}
-Result & Verify the current credential, hash the confirmed replacement and update the password. \\ \hline
-Failure & Structured error without sensitive data; no successful UI state when the operation failed. \\ \hline
+\begin{specdatatable}{Data Name}{Description}
+Result & Verify the current credential, hash the confirmed replacement and update the password.\\ \hline
+Failure & Structured error without sensitive data; no successful UI state when the operation failed.\\ \hline
 \end{specdatatable}
-\Needspace{5\baselineskip}
-\sublabel{Acceptance Criteria}
-\begin{itemize}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
-\item Successful change password produces the documented response and survives a reload where data is persisted.
-\item An unauthorized actor cannot access or modify the resource.
-\item Invalid input and missing resources do not create a false success state or expose sensitive data.
+
+\sublabel{Post-Conditions}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Successful change password produces the documented response and survives a reload where data is persisted.
+    \item An unauthorized actor cannot access or modify the resource.
+    \item Invalid input and missing resources do not create a false success state or expose sensitive data.
 \end{itemize}
 
-\Needspace{10\baselineskip}
-\subsubsection{Function: Upload Avatar (UC-41.04)}
-\label{fn:nhuy-uc-41-04}
+% -----------------------------------------------------------------
+% UC-41.04: Upload Avatar
+% -----------------------------------------------------------------
+\subsubsection{Upload Avatar}
 
-\Needspace{7\baselineskip}
 \fnhead{Function Trigger}
-The actor selects Upload Avatar. Navigation: /account-profile (General Settings).
+The actor selects Upload Avatar.\newline
+\textbf{Navigation path:} Home $\rightarrow$ \texttt{/\allowbreak{}account-\allowbreak{}profile (General Settings).}
 
-\Needspace{7\baselineskip}
 \fnhead{Function Description}
-\Needspace{5\baselineskip}
+
 \sublabel{Actors / Roles}
-Client, Freelancer, Expert, Admin.
-\Needspace{5\baselineskip}
-\sublabel{Purpose}
-Validate image content and size, store it, and update the owned avatar URL.
-\Needspace{5\baselineskip}
-\sublabel{Interface and Data Processing}
-{\small\texttt{POST /\allowbreak{}account-profile/\allowbreak{}avatar}}. The browser calls the Next.js BFF, which forwards authenticated requests to the NestJS API. The server derives the acting user from authentication and accesses User, Profile, ProfileRevision. Route IDs are validated independently from owner IDs.
-
-\Needspace{7\baselineskip}
-\fnhead{Screen Layout (Mock-up Description)}
-\begin{center}
-\fbox{\begin{minipage}{0.88\linewidth}
-\textbf{Upload Avatar}\par\smallskip
-Read-only email and role summary; display name and bio form; avatar picker; separate password-change form and confirmation field.\par\smallskip
-\textit{Schematic interface description, not an application screenshot.}
-\end{minipage}}
-\end{center}
-
-\Needspace{7\baselineskip}
-\Needspace{18\baselineskip}
-\fnhead{Function Details}
-\Needspace{5\baselineskip}
-\Needspace{14\baselineskip}
-\sublabel{Input Data}
-\begin{specdatatable}{Data}{Definition}
-Accepted input & multipart file \\ \hline
-\end{specdatatable}
-\Needspace{5\baselineskip}
-\sublabel{Validation and Business Rules}
-\begin{itemize}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
-\item The server resolves the account from the session; users cannot edit another account via body IDs.
-\item Verify the current password before hashing and storing a replacement; do not log credentials.
-\item Apply the profile revision policy to general profile changes.
-\item Avatar files must be validated; missing stored files return 404 without terminating the API process.
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item \textbf{Primary Actor:} Client, Freelancer, Expert, Admin.
+    \item \textbf{Supporting Systems:} Frevia Web (Next.js), Frevia BFF proxy, Frevia REST API (NestJS), Prisma ORM, and PostgreSQL database.
 \end{itemize}
-\Needspace{5\baselineskip}
+
+\sublabel{Purpose}
+\noindent Validate image content and size, store it, and update the owned avatar URL.
+
+\sublabel{Interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Read-only email and role summary.
+    \item Display name and bio form.
+    \item Avatar picker.
+    \item Separate password-change form and confirmation field.
+\end{itemize}
+
+\sublabel{Data Processing Overview}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item The client issues an HTTP request to \texttt{POST /\allowbreak{}account-\allowbreak{}profile/\allowbreak{}avatar} via Next.js BFF proxy.
+    \item NestJS guards verify JWT authentication and validate role-based access permissions.
+    \item The backend service queries or updates entities in PostgreSQL using Prisma ORM.
+    \item The API returns the structured JSON payload and handles domain invariants consistently.
+\end{itemize}
+
+\fnhead{Screen Layout (Mock-up Description)}
+\screenfigure[0.95]{image/screenshot/sprint4/nhuy/Upload Avatar.png}{Upload Avatar interface}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Read-only email and role summary.
+    \item Display name and bio form.
+    \item Avatar picker.
+    \item Separate password-change form and confirmation field.
+\end{itemize}
+
+\fnhead{Function Details}
+
+\sublabel{Input Data}
+\begin{specdatatable}{Data Name}{Description}
+Accepted input & multipart file\\ \hline
+\end{specdatatable}
+
+\sublabel{Validation Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Avatar files must be validated; missing stored files return 404 without terminating the API process.
+\end{itemize}
+
+\sublabel{Business Rules}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
+    \item BR-4104-01: The server resolves the account from the session; users cannot edit another account via body IDs.
+    \item BR-4104-02: Verify the current password before hashing and storing a replacement; do not log credentials.
+    \item BR-4104-03: Apply the profile revision policy to general profile changes.
+\end{itemize}
+
 \sublabel{Normal Flow}
-\begin{enumerate}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
-\item The actor opens /account-profile (General Settings) and selects Upload Avatar.
-\item The application presents the current values or action confirmation; the actor supplies the required data and submits.
-\item The API checks authentication where required, authorization, resource existence and input validity.
-\item Validate image content and size, store it, and update the owned avatar URL.
-\item After the transaction succeeds, the screen displays the result and reloads affected data; a pending revision is labeled as awaiting review.
+\begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
+    \item The actor opens \texttt{/\allowbreak{}account-\allowbreak{}profile} (General Settings) and selects Upload Avatar.
+    \item The application presents the current values or action confirmation; the actor supplies the required data and submits.
+    \item The API checks authentication where required, authorization, resource existence and input validity.
+    \item Validate image content and size, store it, and update the owned avatar URL.
+    \item After the transaction succeeds, the screen displays the result and reloads affected data; a pending revision is labeled as awaiting review.
 \end{enumerate}
-\Needspace{5\baselineskip}
-\sublabel{Alternative Flow}
-Cancel before submission closes the form or confirmation without persisting changes. On failure, preserve user input for correction and retry.
-\Needspace{5\baselineskip}
+
 \sublabel{Abnormal Flow / Exception Handling}
 \begin{flowtable}{Case}{Description}
-E1 & Missing or expired authentication, or insufficient role/ownership: deny the operation and do not change data. \\ \hline
-E2 & Missing, deleted or inaccessible resource: show a not-found result. \\ \hline
-E3 & Invalid input, duplicate relationship, or invalid workflow state: explain the problem and retain the entered values. \\ \hline
-E4 & Database, network or storage failure: report a retryable error; do not report success or terminate the API process. \\ \hline
+A1 & Missing or expired authentication token. Returns HTTP 401 Unauthorized.\\ \hline
+A2 & Insufficient permissions or role unauthorized. Returns HTTP 403 Forbidden.\\ \hline
+A3 & Target resource not found or soft-deleted. Returns HTTP 404 Not Found.\\ \hline
+A4 & Validation error or malformed payload. Returns HTTP 400 Bad Request.\\ \hline
+A5 & Database connectivity failure or server error. Returns HTTP 500.\\ \hline
 \end{flowtable}
-\Needspace{5\baselineskip}
-\Needspace{14\baselineskip}
+
 \sublabel{Output Data}
-\begin{specdatatable}{Data}{Definition}
-Result & Validate image content and size, store it, and update the owned avatar URL. \\ \hline
-Failure & Structured error without sensitive data; no successful UI state when the operation failed. \\ \hline
+\begin{specdatatable}{Data Name}{Description}
+Result & Validate image content and size, store it, and update the owned avatar URL.\\ \hline
+Failure & Structured error without sensitive data; no successful UI state when the operation failed.\\ \hline
 \end{specdatatable}
-\Needspace{5\baselineskip}
-\sublabel{Acceptance Criteria}
-\begin{itemize}[leftmargin=1.7em,itemsep=2pt,topsep=3pt]
-\item Successful upload avatar produces the documented response and survives a reload where data is persisted.
-\item An unauthorized actor cannot access or modify the resource.
-\item Invalid input and missing resources do not create a false success state or expose sensitive data.
+
+\sublabel{Post-Conditions}
+\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
+    \item Successful upload avatar produces the documented response and survives a reload where data is persisted.
+    \item An unauthorized actor cannot access or modify the resource.
+    \item Invalid input and missing resources do not create a false success state or expose sensitive data.
 \end{itemize}
