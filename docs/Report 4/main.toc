@@ -16,15 +16,15 @@
 \contentsline {subsubsection}{\numberline {2.2.6}ERD6 --- Portfolio \& Skills}{47}{subsubsection.26}%
 \contentsline {subsubsection}{\numberline {2.2.7}ERD7 --- Favorites \& Follows}{48}{subsubsection.28}%
 \contentsline {subsubsection}{\numberline {2.2.8}ERD8 --- Job Posting}{49}{subsubsection.30}%
-\contentsline {subsubsection}{\numberline {2.2.9}ERD9 --- Job Discovery \& Alerts}{49}{subsubsection.32}%
+\contentsline {subsubsection}{\numberline {2.2.9}ERD9 --- Job Discovery \& Alerts}{50}{subsubsection.32}%
 \contentsline {subsubsection}{\numberline {2.2.10}ERD10 --- Proposal}{50}{subsubsection.34}%
 \contentsline {subsubsection}{\numberline {2.2.11}ERD11 --- Contract}{51}{subsubsection.36}%
 \contentsline {subsubsection}{\numberline {2.2.12}ERD12 --- Milestone \& Project Progress}{51}{subsubsection.38}%
 \contentsline {subsubsection}{\numberline {2.2.13}ERD13 --- Milestone Submission}{52}{subsubsection.40}%
-\contentsline {subsubsection}{\numberline {2.2.14}ERD14 --- Escrow, Payments \& Certificates}{52}{subsubsection.42}%
+\contentsline {subsubsection}{\numberline {2.2.14}ERD14 --- Escrow, Payments \& Certificates}{53}{subsubsection.42}%
 \contentsline {subsubsection}{\numberline {2.2.15}ERD15 --- Dispute Core}{53}{subsubsection.44}%
 \contentsline {subsubsection}{\numberline {2.2.16}ERD16 --- Dispute Resolution}{54}{subsubsection.46}%
-\contentsline {subsubsection}{\numberline {2.2.17}ERD17 --- Reviews \& Reputation}{54}{subsubsection.48}%
+\contentsline {subsubsection}{\numberline {2.2.17}ERD17 --- Reviews \& Reputation}{55}{subsubsection.48}%
 \contentsline {subsubsection}{\numberline {2.2.18}ERD18 --- Forum Posts \& Comments}{55}{subsubsection.50}%
 \contentsline {subsubsection}{\numberline {2.2.19}ERD19 --- Forum Likes}{55}{subsubsection.52}%
 \contentsline {subsubsection}{\numberline {2.2.20}ERD20 --- Forum Reports \& Moderation}{56}{subsubsection.54}%
@@ -306,10 +306,4 @@
 \contentsline {subsubsection}{\numberline {3.45.4}UC-46.04 -- Update Job Category}{417}{subsubsection.720}%
 \contentsline {subsubsection}{\numberline {3.45.5}UC-46.05 -- Delete Job Category}{419}{subsubsection.723}%
 \contentsline {subsubsection}{\numberline {3.45.6}UC-46.06 -- Restore Job Category}{421}{subsubsection.726}%
-\contentsline {subsection}{\numberline {3.46}Shared Request Processing Sequences}{422}{subsection.729}%
-\contentsline {subsubsection}{\numberline {3.46.1}Verify JWT}{423}{subsubsection.730}%
-\contentsline {subsubsection}{\numberline {3.46.2}Optional JWT for Public Endpoints}{423}{subsubsection.732}%
-\contentsline {subsubsection}{\numberline {3.46.3}Check Permission}{424}{subsubsection.734}%
-\contentsline {subsubsection}{\numberline {3.46.4}Refresh Token}{424}{subsubsection.736}%
-\contentsline {subsubsection}{\numberline {3.46.5}Validate Input}{424}{subsubsection.738}%
-\contentsline {section}{\numberline {4.}Reference}{426}{section.740}%
+\contentsline {section}{\numberline {4.}Reference}{423}{section.729}%

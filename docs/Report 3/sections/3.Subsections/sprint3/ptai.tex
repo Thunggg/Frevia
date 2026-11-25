@@ -131,8 +131,8 @@ A freelancer clicks ``View $\rightarrow$'' on a proposal in My Proposals.\newlin
 \sublabel{Data Processing Overview}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
     \item Client dispatches \texttt{GET /api/proposals/:id} with positive integer ID (\texttt{ParseIntPipe}).
-    \item Backend verifies \texttt{FREELANCER} role and runs \texttt{expireOverdueProposals()}.
-    \item Queries proposal with linked job and client info; checks existence (\texttt{ProposalNotFoundException} 404) and ownership (\texttt{proposal.freelancerId === userId}, else \texttt{ProposalForbiddenException} 403).
+    \item Backend verifies \texttt{FREELANCER} role and runs \texttt{expire\allowbreak{}Overdue\allowbreak{}Proposals()}.
+    \item Queries proposal with linked job and client info; checks existence (\texttt{Proposal\allowbreak{}Not\allowbreak{}Found\allowbreak{}Exception} 404) and ownership (\texttt{proposal.\allowbreak{}freelancerId =\allowbreak{}=\allowbreak{}= userId}, else \texttt{Proposal\allowbreak{}Forbidden\allowbreak{}Exception} 403).
 \end{itemize}
 
 \fnhead{Screen Layout (Mock-up Description)}
@@ -220,8 +220,8 @@ A freelancer clicks ``Apply now'' on an open job detail screen and submits (or s
 \sublabel{Data Processing Overview}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
     \item Direct submission posts \texttt{POST /api/proposals/jobs/:jobId}; saving draft posts \texttt{POST /api/proposals/jobs/:jobId/drafts} (or \texttt{PATCH /api/proposals/:id/submit} to promote an existing draft).
-    \item \texttt{assertCanPropose()} validates: (1) \texttt{FREELANCER} role, (2) account not banned/deleted, (3) job exists and not deleted, (4) client not banned/deleted, (5) \texttt{job.status === 'OPEN'}, (6) both \texttt{expiryDate} and \texttt{deadline} strictly in future, (7) caller is not \texttt{job.clientId}, (8) \texttt{positionsFilled < positionsRequired}, (9) no existing active proposal (\texttt{DRAFT}/\texttt{SUBMITTED}), and (10) total submissions on this job $< 3$.
-    \item \texttt{assertBidSafeguard()} validates \texttt{bidAmount} bounds and \texttt{assertDeliveryDaysSafeguard()} ensures delivery completes on or before \texttt{job.deadline}.
+    \item \texttt{assert\allowbreak{}Can\allowbreak{}Propose()} validates: (1) \texttt{FREELANCER} role, (2) account not banned/deleted, (3) job exists and not deleted, (4) client not banned/deleted, (5) \texttt{job.\allowbreak{}status =\allowbreak{}=\allowbreak{}= 'OPEN'}, (6) both \texttt{expiryDate} and \texttt{deadline} strictly in future, (7) caller is not \texttt{job.\allowbreak{}clientId}, (8) \texttt{positions\allowbreak{}Filled < positions\allowbreak{}Required}, (9) no existing active proposal (\texttt{DRAFT}/\texttt{SUBMITTED}), and (10) total submissions on this job $< 3$.
+    \item \texttt{assert\allowbreak{}Bid\allowbreak{}Safeguard()} validates \texttt{bidAmount} bounds and \texttt{assert\allowbreak{}Delivery\allowbreak{}Days\allowbreak{}Safeguard()} ensures delivery completes on or before \texttt{job.\allowbreak{}deadline}.
     \item Inserts proposal row in PostgreSQL (with \texttt{expiresAt = now + 30 days} upon submit).
 \end{itemize}
 
@@ -416,8 +416,8 @@ A freelancer clicks ``Withdraw proposal'' on a submitted proposal and confirms.\
 
 \sublabel{Data Processing Overview}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-    \item Client dispatches \texttt{PATCH /api/proposals/:id/withdraw}.
-    \item Backend enforces \texttt{FREELANCER} role, triggers \texttt{expireOverdueProposals()}, verifies ownership (\texttt{proposal.freelancerId === userId}), and calls \texttt{assertActionable(proposal.status)} requiring \texttt{SUBMITTED}.
+    \item Client dispatches \texttt{PATCH /\allowbreak{}api/\allowbreak{}proposals/\allowbreak{}:\allowbreak{}id/\allowbreak{}withdraw}.
+    \item Backend enforces \texttt{FREELANCER} role, triggers \texttt{expire\allowbreak{}Overdue\allowbreak{}Proposals()}, verifies ownership (\texttt{proposal.\allowbreak{}freelancerId =\allowbreak{}=\allowbreak{}= userId}), and calls \texttt{assert\allowbreak{}Actionable(\allowbreak{}proposal.\allowbreak{}status)} requiring \texttt{SUBMITTED}.
     \item Updates \texttt{status = 'WITHDRAWN'} and \texttt{withdrawnAt = now()}.
 \end{itemize}
 
@@ -688,8 +688,8 @@ A client clicks ``View Proposals'' or ``Check proposals $\rightarrow$'' on one o
 \sublabel{Data Processing Overview}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
     \item Client requests \texttt{GET /api/jobs/:jobId/proposals} (paginated) or \texttt{GET /api/proposals/jobs/:jobId/submitted}.
-    \item Backend enforces \texttt{CLIENT} role, verifies job exists (\texttt{ProposalJobNotFoundException} 404), is not deleted (\texttt{ProposalJobUnavailableException} 422), and belongs to \texttt{userId} (\texttt{ProposalForbiddenException} 403).
-    \item Cleans pending proposals if \texttt{job.status === 'CANCELLED'} and runs \texttt{expireOverdueProposals()}.
+    \item Backend enforces \texttt{CLIENT} role, verifies job exists (\texttt{Proposal\allowbreak{}Job\allowbreak{}Not\allowbreak{}Found\allowbreak{}Exception} 404), is not deleted (\texttt{Proposal\allowbreak{}Job\allowbreak{}Unavailable\allowbreak{}Exception} 422), and belongs to \texttt{userId} (\texttt{Proposal\allowbreak{}Forbidden\allowbreak{}Exception} 403).
+    \item Cleans pending proposals if \texttt{job.\allowbreak{}status =\allowbreak{}=\allowbreak{}= 'CANCELLED'} and runs \texttt{expire\allowbreak{}Overdue\allowbreak{}Proposals()}.
     \item Returns paginated applicant proposals joined with freelancer profile details.
 \end{itemize}
 

@@ -13,7 +13,7 @@
   \item \textbf{Guest (Unauthenticated Visitor):} Explores public job postings, reviews top-rated freelancer and expert portfolios, browses open community discussions, and executes self-service onboarding or sign-in flows.
   \item \textbf{Freelancer (Independent Talent):} Curates comprehensive multi-faceted profiles, uploads resumes for AI parsing, completes eKYC identity verification, submits bids on posted jobs, negotiates milestone contracts, submits deliverables, and receives payments via Stripe Connect.
   \item \textbf{Client (Employer / Enterprise Buyer):} Manages organization profiles, authors detailed job requisitions, evaluates incoming freelancer proposals, enters into binding milestone contracts, deposits escrow funds, approves deliverables, and submits ratings.
-  \item \textbf{Expert (Specialist Consultant):} Operates within an exclusive consultation workspace (\texttt{/expert/profile}), submits credentials for administrative revision approvals, and delivers high-tier advisory services.
+  \item \textbf{Expert (Specialist Consultant):} Operates within an exclusive consultation workspace (\texttt{/expert/\allowbreak profile}), submits credentials for administrative revision approvals, and delivers high-tier advisory services.
   \item \textbf{Administrator (System Governor):} Exercises unrestricted governance across the dedicated \texttt{/admin} portal: orchestrating dynamic RBAC role-permission assignments, administering multi-profile user directories, maintaining system-wide master catalogs (Skills, Job Categories, Forum Categories), moderating community content, approving eKYC submissions, and mediating milestone dispute arbitrations.
 \end{itemize}
 
@@ -129,7 +129,7 @@ The Authentication and Session Management module delivers defense-in-depth secur
 
 \paragraph{Expected Output \& Exception Handling:}
 \begin{itemize}[leftmargin=1.5em,itemsep=2pt]
-  \item \textbf{Success Scenario:} Google validates identity and redirects the browser back to \texttt{/api/auth/google/callback}. The backend links or provisions the user profile, sets authentication cookies, and signs the user in instantly.
+  \item \textbf{Success Scenario:} Google validates identity and redirects the browser back to \texttt{/api/\allowbreak auth/\allowbreak google/\allowbreak callback}. The backend links or provisions the user profile, sets authentication cookies, and signs the user in instantly.
   \item \textbf{Exception Scenarios:} If the user cancels the Google permission prompt, the callback redirects back to \texttt{/login} with a cancellation notification.
 \end{itemize}
 

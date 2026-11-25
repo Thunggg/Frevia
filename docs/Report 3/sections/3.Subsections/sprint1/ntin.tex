@@ -249,7 +249,7 @@ A Client clicks the ``Edit Terms'' button on a pending contract detail workspace
 
 \fnhead{Function Trigger}
 The Client clicks the ``Complete Contract'' button on an active contract detail workspace once all milestones have been finished and approved.\newline
-\textbf{Navigation path:} Client Dashboard $\rightarrow$ Contracts $\rightarrow$ Active Contract (\texttt{/client/contracts/:slug}) $\rightarrow$ Click ``Complete Contract''.
+\textbf{Navigation path:} Client Dashboard $\rightarrow$ Contracts $\rightarrow$ Active Contract (\texttt{/\allowbreak{}client/\allowbreak{}contracts/\allowbreak{}:\allowbreak{}slug}) $\rightarrow$ Click ``Complete Contract''.
 
 \fnhead{Function Description}
 
@@ -473,7 +473,7 @@ A user clicks a contract item in the contract list or navigates directly to a co
 
 \sublabel{Interface}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-      \item Contract workspace screen at \texttt{/client/contracts/:slug} or \texttt{/freelancer/contracts/:slug}.
+      \item Contract workspace screen at \texttt{/\allowbreak{}client/\allowbreak{}contracts/\allowbreak{}:\allowbreak{}slug} or \texttt{/\allowbreak{}freelancer/\allowbreak{}contracts/\allowbreak{}:\allowbreak{}slug}.
       \item Header banner: contract title, slug identifier, current status badge, counterpart summary, and contextual actions (Sign, Pay Fee, Complete, Cancel).
       \item Financial summary widget: total project budget, escrow funded balance, paid out earnings, and remaining balance.
       \item Workspace tab navigation: ``Milestones'', ``Contract Agreement (PDF)'', ``Shared Files'', and ``Activity History''.
@@ -974,10 +974,10 @@ A participant clicks the ``Upload File'' button or drops files into the file dro
 
 \sublabel{Data Processing Overview}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-      \item Client submits an HTTP \texttt{multipart/form-data} request: \texttt{POST /api/contracts/:contractId/files} with attached file payload.
-      \item \texttt{buildUploadFilePipe()} validates file size ($\le$ 25MB) and restricts malicious executable MIME types.
-      \item \texttt{SharedFileService.uploadSharedFile()} checks participant authorization.
-      \item Streams the file buffer to Cloudinary cloud storage under folder \texttt{frevia/contracts/:contractId}.
+      \item Client submits an HTTP \texttt{multipart/\allowbreak{}form-\allowbreak{}data} request: \texttt{POST /\allowbreak{}api/\allowbreak{}contracts/\allowbreak{}:\allowbreak{}contractId/\allowbreak{}files} with attached file payload.
+      \item \texttt{build\allowbreak{}Upload\allowbreak{}File\allowbreak{}Pipe()} validates file size ($\le$ 25MB) and restricts malicious executable MIME types.
+      \item \texttt{Shared\allowbreak{}File\allowbreak{}Service.\allowbreak{}upload\allowbreak{}Shared\allowbreak{}File()} checks participant authorization.
+      \item Streams the file buffer to Cloudinary cloud storage under folder \texttt{frevia/\allowbreak{}contracts/\allowbreak{}:\allowbreak{}contractId}.
       \item Persists \texttt{SharedFile} record in database with \texttt{contractId}, \texttt{uploaderId = userId}, \texttt{fileUrl}, \texttt{publicId}, and \texttt{fileName}.
       \item Returns HTTP 201 Created with the saved file record.
 \end{itemize}

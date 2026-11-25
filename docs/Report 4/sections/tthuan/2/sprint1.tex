@@ -7,10 +7,11 @@
 
 \subsection{Verify JWT}
 
-Verify JWT represents the shared global guard pipeline (\texttt{AuthGuard} followed by \texttt{PermissionGuard}) protecting API endpoints across all modules.
+{\sloppy
+Verify JWT represents the shared global guard pipeline (\texttt{Auth\allowbreak{}Guard} followed by \texttt{Permission\allowbreak{}Guard}) protecting API endpoints across all modules.
 Every incoming HTTP request on a non-public route has its Bearer token extracted, validated for cryptographic
 signature and expiration time, and verified against the database to guarantee the associated
-session remains active and the user is neither banned nor deleted; afterwards, \texttt{PermissionGuard} verifies route-level authorization against the caller's assigned role permissions (\texttt{SharedPermissionRepository}) before allowing the controller to execute.
+session remains active and the user is neither banned nor deleted; afterwards, \texttt{Permission\allowbreak{}Guard} verifies route-level authorization against the caller's assigned role permissions (\texttt{Shared\allowbreak{}Permission\allowbreak{}Repository}) before allowing the controller to execute.\par}
 
 \subsubsection{UC-0 -- Verify JWT}
 

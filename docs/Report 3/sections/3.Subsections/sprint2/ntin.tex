@@ -20,7 +20,7 @@
 
 \fnhead{Function Trigger}
 An authenticated contract participant (Client or Freelancer) accesses the Contract Detail workspace and views the default Milestones timeline tab.\newline
-\textbf{Navigation path:} Dashboard $\rightarrow$ Contracts $\rightarrow$ Contract Detail (\texttt{/contracts/:slug}) $\rightarrow$ Milestones Tab.
+\textbf{Navigation path:} Dashboard $\rightarrow$ Contracts $\rightarrow$ Contract Detail (\texttt{/\allowbreak{}contracts/\allowbreak{}:\allowbreak{}slug}) $\rightarrow$ Milestones Tab.
 
 \fnhead{Function Description}
 
@@ -532,8 +532,8 @@ The Freelancer clicks the ``Start Work'' button on an assigned, funded milestone
 
 \sublabel{Data Processing Overview}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-      \item Freelancer submits an HTTP request: \texttt{PATCH /api/contracts/:contractId/milestones/:id/progress}.
-      \item \texttt{MilestoneService.progressMilestone()} verifies caller is the contract's Freelancer.
+      \item Freelancer submits an HTTP request: \texttt{PATCH /\allowbreak{}api/\allowbreak{}contracts/\allowbreak{}:\allowbreak{}contractId/\allowbreak{}milestones/\allowbreak{}:\allowbreak{}id/\allowbreak{}progress}.
+      \item \texttt{Milestone\allowbreak{}Service.\allowbreak{}progress\allowbreak{}Milestone()} verifies caller is the contract's Freelancer.
       \item Checks that milestone status is \texttt{PENDING} and escrow \texttt{paymentStatus = FUNDED}.
       \item Updates milestone status to \texttt{IN\_PROGRESS}.
       \item Dispatches an update notification to the Client.
@@ -706,9 +706,9 @@ A Freelancer uploads deliverable attachments during work progress or before fina
 
 \sublabel{Data Processing Overview}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-      \item Client submits an HTTP \texttt{multipart/form-data} request: \texttt{POST /api/contracts/:contractId/milestones/:milestoneId/files}.
-      \item \texttt{buildUploadFilePipe()} validates file size ($\le$ 25MB) and prohibits malicious executable extensions.
-      \item \texttt{MilestoneFileService.uploadMilestoneFile()} streams file buffer to Cloudinary cloud storage.
+      \item Client submits an HTTP \texttt{multipart/\allowbreak{}form-\allowbreak{}data} request: \texttt{POST /\allowbreak{}api/\allowbreak{}contracts/\allowbreak{}:\allowbreak{}contractId/\allowbreak{}milestones/\allowbreak{}:\allowbreak{}milestoneId/\allowbreak{}files}.
+      \item \texttt{build\allowbreak{}Upload\allowbreak{}File\allowbreak{}Pipe()} validates file size ($\le$ 25MB) and prohibits malicious executable extensions.
+      \item \texttt{Milestone\allowbreak{}File\allowbreak{}Service.\allowbreak{}upload\allowbreak{}Milestone\allowbreak{}File()} streams file buffer to Cloudinary cloud storage.
       \item Persists \texttt{MilestoneFile} record in database linked to milestone and uploader.
       \item Returns HTTP 201 Created with the saved file record.
 \end{itemize}
@@ -798,8 +798,8 @@ The uploader or Admin clicks the trash icon next to a milestone file attachment.
 
 \sublabel{Data Processing Overview}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-      \item Client submits an HTTP request: \texttt{DELETE /api/contracts/:contractId/milestones/:milestoneId/files/:fileId}.
-      \item \texttt{MilestoneFileService.deleteMilestoneFile()} validates caller is original uploader or Admin.
+      \item Client submits an HTTP request: \texttt{DELETE /\allowbreak{}api/\allowbreak{}contracts/\allowbreak{}:\allowbreak{}contractId/\allowbreak{}milestones/\allowbreak{}:\allowbreak{}milestoneId/\allowbreak{}files/\allowbreak{}:\allowbreak{}fileId}.
+      \item \texttt{Milestone\allowbreak{}File\allowbreak{}Service.\allowbreak{}delete\allowbreak{}Milestone\allowbreak{}File()} validates caller is original uploader or Admin.
       \item Checks that milestone is not already in \texttt{COMPLETED} status.
       \item Marks database record with \texttt{deletedAt = new Date()} and purges cloud asset.
       \item Returns HTTP 200 with deletion confirmation.
@@ -890,9 +890,9 @@ The Freelancer clicks the ``Submit Work'' button on an in-progress milestone car
 
 \sublabel{Data Processing Overview}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-      \item Freelancer submits an HTTP request: \texttt{POST /api/contracts/:contractId/milestones/:milestoneId/submissions} with \texttt{notes}, \texttt{externalLink}, and \texttt{fileIds}.
-      \item \texttt{MilestoneSubmissionService.submitMilestone()} validates caller is the contract's Freelancer.
-      \item Checks milestone status: must be \texttt{IN\_PROGRESS} or \texttt{CHANGES\_REQUESTED}, and escrow must be \texttt{FUNDED}.
+      \item Freelancer submits an HTTP request: \texttt{POST /\allowbreak{}api/\allowbreak{}contracts/\allowbreak{}:\allowbreak{}contractId/\allowbreak{}milestones/\allowbreak{}:\allowbreak{}milestoneId/\allowbreak{}submissions} with \texttt{notes}, \texttt{externalLink}, and \texttt{fileIds}.
+      \item \texttt{Milestone\allowbreak{}Submission\allowbreak{}Service.\allowbreak{}submit\allowbreak{}Milestone()} validates caller is the contract's Freelancer.
+      \item Checks milestone status: must be \texttt{IN\_\allowbreak{}PROGRESS} or \texttt{CHANGES\_\allowbreak{}REQUESTED}, and escrow must be \texttt{FUNDED}.
       \item Persists new \texttt{MilestoneSubmission} record with status \texttt{PENDING\_REVIEW}.
       \item Transitions milestone status to \texttt{SUBMITTED}.
       \item Dispatches an urgent review notification to the Client with deliverable summary.
@@ -995,9 +995,9 @@ A contract participant opens the ``Submission History'' tab or accordion within 
 
 \sublabel{Data Processing Overview}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-      \item Client requests \texttt{GET /api/contracts/:contractId/milestones/:milestoneId/submissions}.
-      \item \texttt{MilestoneSubmissionService.getSubmission()} validates participant access.
-      \item Queries \texttt{prisma.milestoneSubmission.findMany} where \texttt{milestoneId = id} and \texttt{deletedAt = null}.
+      \item Client requests \texttt{GET /\allowbreak{}api/\allowbreak{}contracts/\allowbreak{}:\allowbreak{}contractId/\allowbreak{}milestones/\allowbreak{}:\allowbreak{}milestoneId/\allowbreak{}submissions}.
+      \item \texttt{Milestone\allowbreak{}Submission\allowbreak{}Service.\allowbreak{}getSubmission()} validates participant access.
+      \item Queries \texttt{prisma.\allowbreak{}milestone\allowbreak{}Submission.\allowbreak{}findMany} where \texttt{milestoneId = id} and \texttt{deletedAt = null}.
       \item Orders submissions chronologically by \texttt{createdAt asc}.
       \item Returns HTTP 200 with the submissions collection.
 \end{itemize}
@@ -1032,7 +1032,7 @@ A contract participant opens the ``Submission History'' tab or accordion within 
 \sublabel{Normal Flow}
 \begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
       \item User expands submission history in milestone card.
-      \item Client requests \texttt{GET /api/contracts/:contractId/milestones/:milestoneId/submissions}.
+      \item Client requests \texttt{GET /\allowbreak{}api/\allowbreak{}contracts/\allowbreak{}:\allowbreak{}contractId/\allowbreak{}milestones/\allowbreak{}:\allowbreak{}milestoneId/\allowbreak{}submissions}.
       \item API queries non-deleted submissions.
       \item Client renders submission timeline cards.
 \end{enumerate}
@@ -1086,9 +1086,9 @@ A user clicks on a specific submission entry in the submission history timeline 
 
 \sublabel{Data Processing Overview}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-      \item Client requests \texttt{GET /api/contracts/:contractId/milestones/:milestoneId/submissions/:id}.
-      \item \texttt{MilestoneSubmissionService.getSubmissionDetail()} validates participant authorization.
-      \item Queries \texttt{prisma.milestoneSubmission.findUnique} including attached files and reviewer info.
+      \item Client requests \texttt{GET /\allowbreak{}api/\allowbreak{}contracts/\allowbreak{}:\allowbreak{}contractId/\allowbreak{}milestones/\allowbreak{}:\allowbreak{}milestoneId/\allowbreak{}submissions/\allowbreak{}:\allowbreak{}id}.
+      \item \texttt{Milestone\allowbreak{}Submission\allowbreak{}Service.\allowbreak{}get\allowbreak{}Submission\allowbreak{}Detail()} validates participant authorization.
+      \item Queries \texttt{prisma.\allowbreak{}milestone\allowbreak{}Submission.\allowbreak{}findUnique} including attached files and reviewer info.
       \item Returns HTTP 200 with the submission detail entity.
 \end{itemize}
 
@@ -1124,7 +1124,7 @@ A user clicks on a specific submission entry in the submission history timeline 
 \sublabel{Normal Flow}
 \begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
       \item User clicks a submission entry in the history timeline.
-      \item Client requests \texttt{GET /api/contracts/:contractId/milestones/:milestoneId/submissions/:id}.
+      \item Client requests \texttt{GET /\allowbreak{}api/\allowbreak{}contracts/\allowbreak{}:\allowbreak{}contractId/\allowbreak{}milestones/\allowbreak{}:\allowbreak{}milestoneId/\allowbreak{}submissions/\allowbreak{}:\allowbreak{}id}.
       \item API validates access and loads submission details with files.
       \item System opens submission modal displaying deliverable notes, links, and review status.
 \end{enumerate}
@@ -1177,8 +1177,8 @@ The Client clicks the ``Request Changes'' button on a submitted milestone review
 
 \sublabel{Data Processing Overview}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-      \item Client submits an HTTP request: \texttt{PATCH /api/contracts/:contractId/milestones/:milestoneId/submissions/:id/request-changes} with \texttt{comment}.
-      \item \texttt{MilestoneSubmissionService.requestChanges()} verifies caller is the contract's Client.
+      \item Client submits an HTTP request: \texttt{PATCH /\allowbreak{}api/\allowbreak{}contracts/\allowbreak{}:\allowbreak{}contractId/\allowbreak{}milestones/\allowbreak{}:\allowbreak{}milestoneId/\allowbreak{}submissions/\allowbreak{}:\allowbreak{}id/\allowbreak{}request-\allowbreak{}changes} with \texttt{comment}.
+      \item \texttt{Milestone\allowbreak{}Submission\allowbreak{}Service.\allowbreak{}requestChanges()} verifies caller is the contract's Client.
       \item Checks that milestone status is currently \texttt{SUBMITTED}.
       \item Updates submission record with client review comment, review status \texttt{CHANGES\_REQUESTED}, and review timestamp.
       \item Transitions milestone status to \texttt{CHANGES\_REQUESTED}.
@@ -1277,9 +1277,9 @@ The Client clicks the ``Approve Milestone'' button on a submitted milestone afte
 
 \sublabel{Data Processing Overview}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-      \item Client submits an HTTP request: \texttt{PATCH /api/contracts/:contractId/milestones/:milestoneId/submissions/:id/approve}.
-      \item \texttt{MilestoneSubmissionService.approveMilestone()} verifies caller is the contract's Client.
-      \item Verifies milestone is in \texttt{SUBMITTED} or \texttt{CHANGES\_REQUESTED} status, and escrow \texttt{paymentStatus = FUNDED}.
+      \item Client submits an HTTP request: \texttt{PATCH /\allowbreak{}api/\allowbreak{}contracts/\allowbreak{}:\allowbreak{}contractId/\allowbreak{}milestones/\allowbreak{}:\allowbreak{}milestoneId/\allowbreak{}submissions/\allowbreak{}:\allowbreak{}id/\allowbreak{}approve}.
+      \item \texttt{Milestone\allowbreak{}Submission\allowbreak{}Service.\allowbreak{}approve\allowbreak{}Milestone()} verifies caller is the contract's Client.
+      \item Verifies milestone is in \texttt{SUBMITTED} or \texttt{CHANGES\_\allowbreak{}REQUESTED} status, and escrow \texttt{paymentStatus = FUNDED}.
       \item Checks that Freelancer has completed Stripe Connect onboarding.
       \item Inside a database transaction:
             \begin{itemize}[leftmargin=1.6em,topsep=2pt,itemsep=2pt,parsep=0pt]

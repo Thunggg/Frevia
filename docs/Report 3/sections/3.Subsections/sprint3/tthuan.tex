@@ -15,7 +15,7 @@
 
 \fnhead{Function Trigger}
 An administrator navigates to the Users management page from the admin dashboard sidebar navigation.\newline
-\textbf{Navigation path:} Admin Dashboard $\rightarrow$ User Management $\rightarrow$ Users (\texttt{/admin/users}).
+\textbf{Navigation path:} Admin Dashboard $\rightarrow$ User Management $\rightarrow$ Users (\texttt{/\allowbreak{}admin/\allowbreak{}users}).
 
 \fnhead{Function Description}
 
@@ -96,8 +96,8 @@ sortOrder & Must strictly be one of: \texttt{asc}, \texttt{desc}.\\ \hline
 
 \sublabel{Normal Flow}
 \begin{enumerate}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt]
-    \item The administrator opens the \texttt{/admin/users} page.
-    \item The frontend sends \texttt{GET /api/users} with default parameters (\texttt{page=1\&limit=10\&sortBy=id\&sortOrder=desc}).
+    \item The administrator opens the \texttt{/\allowbreak{}admin/\allowbreak{}users} page.
+    \item The frontend sends \texttt{GET /\allowbreak{}api/\allowbreak{}users} with default parameters (\texttt{page=\allowbreak{}1\&\allowbreak{}limit=\allowbreak{}10\&\allowbreak{}sortBy=\allowbreak{}id\&\allowbreak{}sortOrder=\allowbreak{}desc}).
     \item The backend validates administrator authentication and permissions.
     \item The repository queries active users and counts total matching records.
     \item The backend returns HTTP 200 with the users array and pagination metadata.
@@ -274,9 +274,9 @@ An administrator clicks the ``Create User'' button on the user list page.\newlin
     \item The backend validates schema constraints via \texttt{AdminCreateUserBodyDto}.
     \item \texttt{UsersService.createUser()} validates:
         \begin{itemize}[leftmargin=1.6em,topsep=2pt,itemsep=2pt,parsep=0pt]
-            \item Email uniqueness among active accounts; if taken, throws \texttt{EmailAlreadyExistsException} (HTTP 409).
-            \item Role validity: target role must exist and be active; if missing, throws \texttt{CreateUserRoleNotFoundException} (HTTP 404).
-            \item Role restriction: role cannot be the Admin role; if selected, throws \texttt{CannotAssignAdminRoleException} (HTTP 403).
+            \item Email uniqueness among active accounts; if taken, throws \texttt{Email\allowbreak{}Already\allowbreak{}Exists\allowbreak{}Exception} (HTTP 409).
+            \item Role validity: target role must exist and be active; if missing, throws \texttt{Create\allowbreak{}User\allowbreak{}Role\allowbreak{}Not\allowbreak{}Found\allowbreak{}Exception} (HTTP 404).
+            \item Role restriction: role cannot be the Admin role; if selected, throws \texttt{Cannot\allowbreak{}Assign\allowbreak{}Admin\allowbreak{}Role\allowbreak{}Exception} (HTTP 403).
         \end{itemize}
     \item In an atomic database transaction:
         \begin{enumerate}[leftmargin=1.6em,topsep=2pt,itemsep=2pt,parsep=0pt]
@@ -872,9 +872,9 @@ An administrator clicks ``Manage Freelancer Portfolio'' on the Freelancer Profil
 
 \sublabel{Data Processing Overview}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-    \item **Create Item:** Client sends \texttt{POST /api/users/:id/freelancer-profile/portfolio-items}. \texttt{UsersRepository.createPortfolioItem()} inserts into \texttt{prisma.portfolioItem.create}. Returns HTTP 201.
-    \item **Update Item:** Client sends \texttt{PATCH /api/users/:id/freelancer-profile/portfolio-items/:itemId}. \texttt{UsersRepository.updatePortfolioItemByAdmin()} verifies item ownership and \texttt{deletedAt = null}, then updates fields. Returns HTTP 200.
-    \item **Delete Item:** Client sends \texttt{DELETE /api/users/:id/freelancer-profile/portfolio-items/:itemId}. \texttt{UsersRepository.softDeletePortfolioItem()} verifies item ownership and sets \texttt{deletedAt = new Date()}. Returns HTTP 200.
+    \item \textbf{Create Item:} Client sends \texttt{POST /\allowbreak{}api/\allowbreak{}users/\allowbreak{}:\allowbreak{}id/\allowbreak{}freelancer-\allowbreak{}profile/\allowbreak{}portfolio-\allowbreak{}items}. \texttt{Users\allowbreak{}Repository.\allowbreak{}create\allowbreak{}Portfolio\allowbreak{}Item()} inserts into \texttt{prisma.\allowbreak{}portfolioItem.\allowbreak{}create}. Returns HTTP 201.
+    \item \textbf{Update Item:} Client sends \texttt{PATCH /\allowbreak{}api/\allowbreak{}users/\allowbreak{}:\allowbreak{}id/\allowbreak{}freelancer-\allowbreak{}profile/\allowbreak{}portfolio-\allowbreak{}items/\allowbreak{}:\allowbreak{}itemId}. \texttt{Users\allowbreak{}Repository.\allowbreak{}update\allowbreak{}Portfolio\allowbreak{}Item\allowbreak{}By\allowbreak{}Admin()} verifies item ownership and \texttt{deletedAt = null}, then updates fields. Returns HTTP 200.
+    \item \textbf{Delete Item:} Client sends \texttt{DELETE /\allowbreak{}api/\allowbreak{}users/\allowbreak{}:\allowbreak{}id/\allowbreak{}freelancer-\allowbreak{}profile/\allowbreak{}portfolio-\allowbreak{}items/\allowbreak{}:\allowbreak{}itemId}. \texttt{Users\allowbreak{}Repository.\allowbreak{}soft\allowbreak{}Delete\allowbreak{}Portfolio\allowbreak{}Item()} verifies item ownership and sets \texttt{deletedAt = new Date()}. Returns HTTP 200.
     \item The client displays success toasts and refreshes the portfolio list.
 \end{itemize}
 

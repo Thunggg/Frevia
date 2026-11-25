@@ -34,7 +34,7 @@ The Administrator System, RBAC, and User Management module empowers system gover
 \paragraph{Expected Output \& Exception Handling:}
 \begin{itemize}[leftmargin=1.5em,itemsep=2pt]
   \item \textbf{Success Scenario:} All analytics synchronize dynamically with the underlying database.
-  \item \textbf{Exception Scenarios:} If an unprivileged user navigates to \texttt{/admin}, the authorization guard intercepts the request and redirects to \texttt{/access-denied?requiredRole=admin}. Conversely, \texttt{ADMIN}, \texttt{EXPERT}, and internal custom roles cannot access the Marketplace Homepage (\texttt{/}) or non-public Client/Freelancer routes (such as \texttt{/client/*}, \texttt{/freelancer/*}, \texttt{/notifications}, \texttt{/conversations}); they may browse public pages (such as \texttt{/forum}, \texttt{/profiles/[id]}, \texttt{/clients/[id]}) with a streamlined navigation header linking back to the Admin Portal.
+  \item \textbf{Exception Scenarios:} If an unprivileged user navigates to \texttt{/admin}, the authorization guard intercepts the request and redirects to \texttt{/access-denied?requiredRole=admin}. Conversely, \texttt{ADMIN}, \texttt{EXPERT}, and internal custom roles cannot access the Marketplace Homepage (\texttt{/}) or non-public Client/Freelancer routes (such as \texttt{/client/*}, \texttt{/freelancer/*}, \texttt{/notifications}, \texttt{/conversations}); they may browse public pages (such as \texttt{/forum}, \texttt{/profiles/\allowbreak [id]}, \texttt{/clients/\allowbreak [id]}) with a streamlined navigation header linking back to the Admin Portal.
 \end{itemize}
 
 % -----------------------------------------------------------------------------
@@ -186,7 +186,7 @@ The Administrator System, RBAC, and User Management module empowers system gover
   \item \rbadge{3} \textbf{Direct Account Provisioning (\textit{+ Create User}):} Click \textbf{+ Create User} to open the modal dialog, input Full Name, Email, Password, and assign initial roles.
   \item \rbadge{4} \textbf{Inspect User Table \& Row Actions (\textit{Users Table \& Actions}):} Review user attributes (\textit{ID}, \textit{Name}, \textit{Email}, \textit{Status}, \textit{Roles}, \textit{Created}). On each row:
     \begin{itemize}
-      \item Click the eye icon (\textbf{Eye icon}) to open the user's multi-profile details view (\texttt{/admin/users/[id]}).
+      \item Click the eye icon (\textbf{Eye icon}) to open the user's multi-profile details view (\texttt{/admin/\allowbreak users/\allowbreak [id]}).
       \item Click the pencil icon (\textbf{Pencil icon}) to open the \textit{Edit user} modal dialog.
     \end{itemize}
 \end{enumerate}

@@ -8,15 +8,15 @@
 \contentsline {figure}{\numberline {7}{\ignorespaces ERD4 --- Profile History \& Social Links}}{46}{figure.caption.23}%
 \contentsline {figure}{\numberline {8}{\ignorespaces ERD5 --- Identity Verification \& Profile Visits}}{47}{figure.caption.25}%
 \contentsline {figure}{\numberline {9}{\ignorespaces ERD6 --- Portfolio \& Skills}}{48}{figure.caption.27}%
-\contentsline {figure}{\numberline {10}{\ignorespaces ERD7 --- Favorites \& Follows}}{48}{figure.caption.29}%
+\contentsline {figure}{\numberline {10}{\ignorespaces ERD7 --- Favorites \& Follows}}{49}{figure.caption.29}%
 \contentsline {figure}{\numberline {11}{\ignorespaces ERD8 --- Job Posting}}{49}{figure.caption.31}%
 \contentsline {figure}{\numberline {12}{\ignorespaces ERD9 --- Job Discovery \& Alerts}}{50}{figure.caption.33}%
-\contentsline {figure}{\numberline {13}{\ignorespaces ERD10 --- Proposal}}{50}{figure.caption.35}%
+\contentsline {figure}{\numberline {13}{\ignorespaces ERD10 --- Proposal}}{51}{figure.caption.35}%
 \contentsline {figure}{\numberline {14}{\ignorespaces ERD11 --- Contract}}{51}{figure.caption.37}%
-\contentsline {figure}{\numberline {15}{\ignorespaces ERD12 --- Milestone \& Project Progress}}{51}{figure.caption.39}%
+\contentsline {figure}{\numberline {15}{\ignorespaces ERD12 --- Milestone \& Project Progress}}{52}{figure.caption.39}%
 \contentsline {figure}{\numberline {16}{\ignorespaces ERD13 --- Milestone Submission}}{52}{figure.caption.41}%
 \contentsline {figure}{\numberline {17}{\ignorespaces ERD14 --- Escrow, Payments \& Certificates}}{53}{figure.caption.43}%
-\contentsline {figure}{\numberline {18}{\ignorespaces ERD15 --- Dispute Core}}{53}{figure.caption.45}%
+\contentsline {figure}{\numberline {18}{\ignorespaces ERD15 --- Dispute Core}}{54}{figure.caption.45}%
 \contentsline {figure}{\numberline {19}{\ignorespaces ERD16 --- Dispute Resolution}}{54}{figure.caption.47}%
 \contentsline {figure}{\numberline {20}{\ignorespaces ERD17 --- Reviews \& Reputation}}{55}{figure.caption.49}%
 \contentsline {figure}{\numberline {21}{\ignorespaces ERD18 --- Forum Posts \& Comments}}{55}{figure.caption.51}%
@@ -417,8 +417,3 @@
 \contentsline {figure}{\numberline {416}{\ignorespaces Sequence diagram of UC-46.05 Delete Job Category}}{420}{figure.caption.725}%
 \contentsline {figure}{\numberline {417}{\ignorespaces Class diagram of UC-46.06 Restore Job Category}}{421}{figure.caption.727}%
 \contentsline {figure}{\numberline {418}{\ignorespaces Sequence diagram of UC-46.06 Restore Job Category}}{422}{figure.caption.728}%
-\contentsline {figure}{\numberline {419}{\ignorespaces Shared sequence: Verify JWT for protected endpoints}}{423}{figure.caption.731}%
-\contentsline {figure}{\numberline {420}{\ignorespaces Shared sequence: Optional JWT for public endpoints}}{423}{figure.caption.733}%
-\contentsline {figure}{\numberline {421}{\ignorespaces Shared sequence: Check Permission}}{424}{figure.caption.735}%
-\contentsline {figure}{\numberline {422}{\ignorespaces Shared sequence: Refresh Token and one retry}}{424}{figure.caption.737}%
-\contentsline {figure}{\numberline {423}{\ignorespaces Shared sequence: Validate Input}}{425}{figure.caption.739}%

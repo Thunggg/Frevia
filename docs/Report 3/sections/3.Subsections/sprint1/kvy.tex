@@ -70,8 +70,7 @@ reach an ongoing discussion in one click and can immediately see which topics ar
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
       \item The server component of the page reads the optional \texttt{search},
             \texttt{page} and \texttt{limit} parameters from the query string.
-      \item The page requests \texttt{GET /api/forums/categories} and \texttt{GET
-                  /api/forums/users/top?limit=5} in parallel, adding the access token when the
+      \item The page requests \texttt{GET /\allowbreak{}api/\allowbreak{}forums/\allowbreak{}categories} and \texttt{GET /\allowbreak{}api/\allowbreak{}forums/\allowbreak{}users/\allowbreak{}top?\allowbreak{}limit=5} in parallel, adding the access token when the
             visitor is signed in.
       \item The API keeps only the categories whose \texttt{deletedAt} is null, orders the
             result by \texttt{name} in ascending order, and counts only the posts that are
@@ -438,7 +437,7 @@ commented posts published in the category during the last seven days.
 The visitor selects a post row, follows a shared post link, or opens a related post from the
 side panel of another discussion.\newline
 \textbf{Navigation path:} Home $\rightarrow$ Forum $\rightarrow$ \textit{Category} $\rightarrow$
-\textit{Post} (\texttt{/forum/\{category\}/\{post-slug\}-\{post-id\}}).
+\textit{Post} (\texttt{/\allowbreak{}forum/\allowbreak{}\{category\}/\allowbreak{}\{post-\allowbreak{}slug\}-\{post-\allowbreak{}id\}}).
 
 \fnhead{Function Description}
 

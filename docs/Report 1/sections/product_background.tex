@@ -13,11 +13,11 @@ Disagreement is treated as a first-class process rather than an exception. When 
 Identity verification handles sensitive personal identification and biometric facial data, so the system is deliberately conservative about what it retains and who can reach it. The platform strictly distinguishes between file storage and relational database persistence, and implements technical safeguards aligned with personal data protection regulations (such as Vietnam's Decree No. 13/2023/ND-CP on Personal Data Protection).
 
 \begin{itemize}
-\item \textbf{Data Stored in the Relational Database:} The relational database (\texttt{IdVerificationDocument} entity) never stores raw image files as binary objects (BLOBs). Instead, it persists only:
+\item \textbf{Data Stored in the Relational Database:} The relational database entity (\texttt{IdVerification\allowbreak Document}) never stores raw image files as binary objects (BLOBs). Instead, it persists only:
 \begin{itemize}
     \item Storage Uniform Resource Identifiers (\texttt{fileUrl}, \texttt{backFileUrl}) pointing to the document images and liveness verification artefacts.
     \item Document metadata and classification (\texttt{documentType}, e.g. Vietnamese Citizen Identity Card -- CCCD).
-    \item AI verification assessment outputs (\texttt{aiStatus}, \texttt{aiScore}, \texttt{aiSummary}, \texttt{aiSelfieSummary}, \texttt{aiScannedAt}), which store similarity confidence percentages, liveness detection results (passive and active blink/head movement checks), OCR extraction status, and document quality/tamper flags.
+    \item AI verification assessment outputs (\texttt{aiStatus}, \texttt{aiScore}, \texttt{aiSummary}, \texttt{aiSelfie\allowbreak Summary}, \texttt{aiScannedAt}), which store similarity confidence percentages, liveness detection results (passive and active blink/head movement checks), OCR extraction status, and document quality/tamper flags.
     \item An indexed, cryptographically normalized identity number (\texttt{identityNumber}) used exclusively for anti-fraud duplicate detection (\texttt{duplicateOfId}) so that the same citizen identification card cannot be registered across multiple accounts.
     \item Lifecycle audit attributes: verification status (\texttt{status} across PENDING, APPROVED, REJECTED), reviewing administrator identifier (\texttt{adminId}), review notes (\texttt{reviewNotes}), creation timestamp (\texttt{createdAt}), review timestamp (\texttt{reviewedAt}), and soft-deletion timestamp (\texttt{deletedAt}).
 \end{itemize}

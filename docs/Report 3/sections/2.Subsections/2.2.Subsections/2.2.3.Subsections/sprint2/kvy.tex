@@ -1,17 +1,17 @@
 \Needspace{12\baselineskip}
 \paragraph{Manage Conversation}
 % =================================================================
-% UC-05.1 Conversations List
+% UC-27.01 Conversations List
 % =================================================================
-\subparagraph{UC-05.1 View Conversations List}
+\subparagraph{UC-27.01 View Conversations List}
 
 \Needspace{12\baselineskip}
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-05.1 View Conversations List} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-27.01 View Conversations List} \\* \hline
 \endfirsthead
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-05.1 View Conversations List \textit{(cont.)}} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-27.01 View Conversations List \textit{(cont.)}} \\* \hline
 \endhead
 \hline\endfoot
 \endlastfoot
@@ -31,7 +31,7 @@ Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 
 Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{POST-1} A list of conversations is displayed with the other user's profile, last message preview, unread count, and pin status. \newline
-\textbf{POST-2} The user can select a conversation to view its details (UC-05.3) or start a new conversation (UC-05.2).
+\textbf{POST-2} The user can select a conversation to view its details (UC-27.03) or start a new conversation (UC-27.02).
 } \\ \hline
 
 Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
@@ -87,18 +87,18 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{Each user has at least one other user
 \end{longtable}
 
 % =================================================================
-% UC-05.2 Start Conversation
+% UC-27.02 Start Conversation
 % =================================================================
 
-\subparagraph{UC-05.2 Start Conversation}
+\subparagraph{UC-27.02 Start Conversation}
 
 \Needspace{12\baselineskip}
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-05.2 Start Conversation} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-27.02 Start Conversation} \\* \hline
 \endfirsthead
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-05.2 Start Conversation \textit{(cont.)}} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-27.02 Start Conversation \textit{(cont.)}} \\* \hline
 \endhead
 \hline\endfoot
 \endlastfoot
@@ -182,18 +182,18 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{The target user exists and is a valid
 \end{longtable}
 
 % =================================================================
-% UC-05.3 Conversation Details
+% UC-27.03 Conversation Details
 % =================================================================
 
-\subparagraph{UC-05.3 Conversation Details}
+\subparagraph{UC-27.03 Conversation Details}
 
 \Needspace{12\baselineskip}
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-05.3 Conversation Details} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-27.03 Conversation Details} \\* \hline
 \endfirsthead
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-05.3 Conversation Details \textit{(cont.)}} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-27.03 Conversation Details \textit{(cont.)}} \\* \hline
 \endhead
 \hline\endfoot
 \endlastfoot
@@ -202,7 +202,7 @@ Created By: & Pham Kha Vy & Date Created: & 30/09/2026 \\ \hline
 
 Primary Actor: & Client, Freelancer & Secondary Actors: & N/A \\ \hline
 
-Trigger: & \multicolumn{3}{L{11.1cm}|}{When a user selects a conversation from the conversations list (UC-05.1) or after starting a new conversation (UC-05.2).} \\ \hline
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When a user selects a conversation from the conversations list (UC-27.01) or after starting a new conversation (UC-27.02).} \\ \hline
 
 Description: & \multicolumn{3}{p{11.1cm}|}{Allows an authenticated user to view the complete message history of a conversation including all sent and received messages, file attachments, and other participant information.} \\ \hline
 
@@ -226,7 +226,7 @@ Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
 4. The system retrieves all non-deleted messages associated with the conversation. \newline
 5. The system displays the conversation header with the other participant's name and avatar. \newline
 6. The system displays the message list in chronological order with file attachments where applicable. \newline
-7. The system automatically marks all unread messages from the other participant as read (UC-05.5).
+7. The system automatically marks all unread messages from the other participant as read (UC-27.05).
 } \\ \hline
 
 Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
@@ -279,18 +279,18 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{Each conversation is associated with 
 \end{longtable}
 
 % =================================================================
-% UC-05.4 Send Message
+% UC-27.04 Send Message
 % =================================================================
 
-\subparagraph{UC-05.4 Send Message}
+\subparagraph{UC-27.04 Send Message}
 
 \Needspace{12\baselineskip}
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-05.4 Send Message} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-27.04 Send Message} \\* \hline
 \endfirsthead
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-05.4 Send Message \textit{(cont.)}} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-27.04 Send Message \textit{(cont.)}} \\* \hline
 \endhead
 \hline\endfoot
 \endlastfoot
@@ -384,18 +384,18 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{The conversation remains active durin
 \end{longtable}
 
 % =================================================================
-% UC-05.5 Mark Message as Read
+% UC-27.05 Mark Message as Read
 % =================================================================
 
-\subparagraph{UC-05.5 Mark Message as Read}
+\subparagraph{UC-27.05 Mark Message as Read}
 
 \Needspace{12\baselineskip}
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-05.5 Mark Message as Read} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-27.05 Mark Message as Read} \\* \hline
 \endfirsthead
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-05.5 Mark Message as Read \textit{(cont.)}} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-27.05 Mark Message as Read \textit{(cont.)}} \\* \hline
 \endhead
 \hline\endfoot
 \endlastfoot
@@ -479,18 +479,18 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{The user remains authenticated during
 \end{longtable}
 
 % =================================================================
-% UC-05.6 Delete/Recall Message
+% UC-27.06 Delete/Recall Message
 % =================================================================
 
-\subparagraph{UC-05.6 Delete/Recall Message}
+\subparagraph{UC-27.06 Delete/Recall Message}
 
 \Needspace{12\baselineskip}
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-05.6 Delete/Recall Message} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-27.06 Delete/Recall Message} \\* \hline
 \endfirsthead
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-05.6 Delete/Recall Message \textit{(cont.)}} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-27.06 Delete/Recall Message \textit{(cont.)}} \\* \hline
 \endhead
 \hline\endfoot
 \endlastfoot
@@ -576,18 +576,18 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{The message has not been permanently 
 \end{longtable}
 
 % =================================================================
-% UC-05.7 Pin/Unpin Conversation
+% UC-27.07 Pin/Unpin Conversation
 % =================================================================
 
-\subparagraph{UC-05.7 Pin/Unpin Conversation}
+\subparagraph{UC-27.07 Pin/Unpin Conversation}
 
 \Needspace{12\baselineskip}
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-05.7 Pin/Unpin Conversation} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-27.07 Pin/Unpin Conversation} \\* \hline
 \endfirsthead
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-05.7 Pin/Unpin Conversation \textit{(cont.)}} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-27.07 Pin/Unpin Conversation \textit{(cont.)}} \\* \hline
 \endhead
 \hline\endfoot
 \endlastfoot
@@ -668,18 +668,18 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{The user remains authenticated during
 \end{longtable}
 
 % =================================================================
-% UC-05.8 Send File
+% UC-27.08 Send File
 % =================================================================
 
-\subparagraph{UC-05.8 Send File}
+\subparagraph{UC-27.08 Send File}
 
 \Needspace{12\baselineskip}
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-05.8 Send File} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-27.08 Send File} \\* \hline
 \endfirsthead
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-05.8 Send File \textit{(cont.)}} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-27.08 Send File \textit{(cont.)}} \\* \hline
 \endhead
 \hline\endfoot
 \endlastfoot
@@ -688,7 +688,7 @@ Created By: & Pham Kha Vy & Date Created: & 05/10/2026 \\ \hline
 
 Primary Actor: & Client, Freelancer & Secondary Actors: & N/A \\ \hline
 
-Trigger: & \multicolumn{3}{L{11.1cm}|}{When a user clicks the file attachment button and selects a file in the conversation detail page (UC-05.3).} \\ \hline
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When a user clicks the file attachment button and selects a file in the conversation detail page (UC-27.03).} \\ \hline
 
 Description: & \multicolumn{3}{p{11.1cm}|}{Allows an authenticated user to send a file attachment in a conversation. The file is uploaded to cloud storage and a message with the attachment metadata is created.} \\ \hline
 

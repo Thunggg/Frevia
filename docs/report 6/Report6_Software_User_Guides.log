@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.9.28)  24 NOV 2026 18:16
+This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.9.28)  25 NOV 2026 13:21
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1130,10 +1130,9 @@ Overfull \hbox (7.72716pt too wide) in paragraph at lines 119--119
 ignored error: Infinite glue shrinkage found in box being split [17 <./images/i
 nstall/a10_verify_api_swagger.png (PNG copy)>])
 (sections/sec3_m02_auth_session.tex
-Overfull \hbox (62.71004pt too wide) in paragraph at lines 16--17
+Overfull \hbox (12.49963pt too wide) in paragraph at lines 16--17
 []\T1/ptm/b/n/12 Expert (Spe-cial-ist Con-sul-tant): \T1/ptm/m/n/12 Op-er-ates 
-within an ex-clu-sive con-sul-ta-tion workspace (\T1/cmtt/m/n/12 /expert/profil
-e\T1/ptm/m/n/12 ),
+within an ex-clu-sive con-sul-ta-tion workspace (\T1/cmtt/m/n/12 /expert/
  []
 
 
@@ -1169,14 +1168,7 @@ File: images/auth/m02_03_google_oauth.png Graphic file (type png)
 Package pdftex.def Info: images/auth/m02_03_google_oauth.png  used on input lin
 e 120.
 (pdftex.def)             Requested size: 425.08147pt x 312.89581pt.
-
-Overfull \hbox (74.5134pt too wide) in paragraph at lines 132--133
-[]\T1/ptm/b/n/12 Success Sce-nario: \T1/ptm/m/n/12 Google val-i-dates iden-tity
- and redi-rects the browser back to \T1/cmtt/m/n/12 /api/auth/google/callback\T
-1/ptm/m/n/12 .
- []
-
-[23 <./images/auth/m02_03_google_oauth.png (PNG copy)>]
+ [23 <./images/auth/m02_03_google_oauth.png (PNG copy)>]
 <images/auth/m02_04_forgot_password.png, id=470, 1445.4pt x 1063.975pt>
 File: images/auth/m02_04_forgot_password.png Graphic file (type png)
 <use images/auth/m02_04_forgot_password.png>
@@ -1229,10 +1221,10 @@ Package pdftex.def Info: images/admin/m14_01_admin_dashboard.png  used on input
  line 22.
 (pdftex.def)             Requested size: 425.08147pt x 277.47363pt.
  [29 <./images/admin/m14_01_admin_dashboard.png (PNG copy)>]
-Overfull \hbox (45.30867pt too wide) in paragraph at lines 37--38
+Overfull \hbox (16.61874pt too wide) in paragraph at lines 37--38
 \T1/cmtt/m/n/12 /conversations\T1/ptm/m/n/12 ); they may browse pub-lic pages (
 such as \T1/cmtt/m/n/12 /forum\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 /profiles/[id]\T
-1/ptm/m/n/12 , \T1/cmtt/m/n/12 /clients/[id]\T1/ptm/m/n/12 )
+1/ptm/m/n/12 , \T1/cmtt/m/n/12 /clients/
  []
 
 [30]
@@ -1278,22 +1270,14 @@ File: images/admin/m14_06_admin_users_list_create.png Graphic file (type png)
 Package pdftex.def Info: images/admin/m14_06_admin_users_list_create.png  used 
 on input line 177.
 (pdftex.def)             Requested size: 425.08147pt x 277.47363pt.
-
-Overfull \hbox (37.41563pt too wide) in paragraph at lines 189--190
-[]\T1/ptm/m/n/12 Click the eye icon (\T1/ptm/b/n/12 Eye icon\T1/ptm/m/n/12 ) to
- open the user's multi-profile de-tails view (\T1/cmtt/m/n/12 /admin/users/[id]
-\T1/ptm/m/n/12 ). 
- []
-
-[38 <./images/admin/m14_06_admin_users_list_create.png (PNG copy)>] [39]
+ [38 <./images/admin/m14_06_admin_users_list_create.png (PNG copy)>] [39]
 <images/admin/m14_07_admin_user_ban_unban.png, id=623, 1445.4pt x 943.525pt>
 File: images/admin/m14_07_admin_user_ban_unban.png Graphic file (type png)
 <use images/admin/m14_07_admin_user_ban_unban.png>
 Package pdftex.def Info: images/admin/m14_07_admin_user_ban_unban.png  used on 
 input line 211.
 (pdftex.def)             Requested size: 425.08147pt x 277.47363pt.
-
-[40 <./images/admin/m14_07_admin_user_ban_unban.png (PNG copy)>] [41]
+ [40 <./images/admin/m14_07_admin_user_ban_unban.png (PNG copy)>] [41]
 <images/admin/m14_08_admin_user_profile_tabs.png, id=639, 1445.4pt x 943.525pt>
 
 File: images/admin/m14_08_admin_user_profile_tabs.png Graphic file (type png)
@@ -1358,7 +1342,7 @@ Here is how much of TeX's memory you used:
  54608 multiletter control sequences out of 15000+600000
  677420 words of font info for 95 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 98i,13n,108p,752b,1238s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 98i,13n,108p,776b,1238s stack positions out of 10000i,1000n,20000p,200000b,200000s
  <C:\Users\ASUS\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ectt1
 000.pk> <C:\Users\ASUS\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\
 ectt1200.pk><C:/Users/ASUS/AppData/Local/Programs/MiKTeX/fonts/type1/public/ams
@@ -1368,7 +1352,7 @@ type1/urw/times/utmb8a.pfb><C:/Users/ASUS/AppData/Local/Programs/MiKTeX/fonts/t
 ype1/urw/times/utmbi8a.pfb><C:/Users/ASUS/AppData/Local/Programs/MiKTeX/fonts/t
 ype1/urw/times/utmr8a.pfb><C:/Users/ASUS/AppData/Local/Programs/MiKTeX/fonts/ty
 pe1/urw/times/utmri8a.pfb>
-Output written on Report6_Software_User_Guides.pdf (48 pages, 7496221 bytes).
+Output written on Report6_Software_User_Guides.pdf (48 pages, 7496240 bytes).
 PDF statistics:
  951 PDF objects out of 1000 (max. 8388607)
  300 named destinations out of 1000 (max. 500000)

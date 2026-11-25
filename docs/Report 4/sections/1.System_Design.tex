@@ -28,7 +28,7 @@ The client application transmits requests exclusively over HTTPS REST APIs and d
 The Presentation Layer is implemented within the NestJS 11 Web Server Application (\texttt{apps/api}). It serves as the entry boundary for incoming client requests and real-time events:
 \begin{itemize}[leftmargin=*]
     \item \textbf{Controllers:} Expose structured RESTful API endpoints (versioned under \texttt{/api/v1}), receive client requests, bind validated request payloads, and delegate processing to domain services.
-    \item \textbf{Authentication and Authorization Guards:} Intercept requests to verify JWT tokens and enforce role-based access control (\texttt{RoleGuard}) and fine-grained permission checks (\texttt{PermissionGuard}).
+    \item \textbf{Authentication and Authorization Guards:} Intercept requests to verify JWT tokens and enforce role-based access control (\texttt{RoleGuard}) and fine-grained permission checks (\texttt{Permission\allowbreak Guard}).
     \item \textbf{Validation and Serialization:} Validates incoming request payloads using shared Zod DTOs and sanitizes outgoing responses using the global \texttt{ZodSerializerInterceptor}.
     \item \textbf{Socket.io Gateway:} Manages real-time bidirectional WebSocket connections for peer-to-peer conversations and immediate notification pushes.
 \end{itemize}
