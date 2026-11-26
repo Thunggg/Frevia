@@ -37,6 +37,8 @@ import { Input } from "@repo/ui/components/shadcn/input";
 import { toastError, toastSuccess } from "@repo/ui/components/shadcn/toast";
 import type { SavedSearchType } from "@shared/types";
 
+import { SavedSearchDetailDialog } from "./saved-search-detail-dialog";
+
 type SavedSearchesContentProps = {
   savedSearches: SavedSearchType[];
   embedded?: boolean;
@@ -68,7 +70,6 @@ function toFindWorkHref(
 export function SavedSearchesContent({
   savedSearches: initialSavedSearches,
   embedded = false,
-  basePath,
 }: SavedSearchesContentProps) {
   const t = useTranslations("savedSearches");
   const tFindWork = useTranslations("findWork");
@@ -87,8 +88,9 @@ export function SavedSearchesContent({
   const [pageSize, setPageSize] = useState(9);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Delete Confirmation Dialog State
+  // Delete & Detail Dialog State
   const [deletingItem, setDeletingItem] = useState<SavedSearchType | null>(null);
+  const [viewingItem, setViewingItem] = useState<SavedSearchType | null>(null);
 
   const filterSummary = (searchParams: SavedSearchType["searchParams"]) => {
     const labels: string[] = [];
@@ -117,8 +119,6 @@ export function SavedSearchesContent({
       year: "numeric",
     });
 
-  const effectiveBasePath =
-    basePath ?? (embedded ? "/freelancer/saved-searches" : "/saved-searches");
   const findWorkBaseUrl = "/freelancer/search/jobs";
 
   // Filter & Sort
@@ -424,13 +424,12 @@ export function SavedSearchesContent({
                         </Button>
                         {canViewSavedSearchDetail && (
                           <Button
-                            asChild
+                            type="button"
                             variant="ghost"
-                            className="w-full rounded-lg text-foreground/70 hover:text-foreground text-xs h-8"
+                            className="w-full rounded-lg text-foreground/70 hover:text-foreground text-xs h-8 cursor-pointer"
+                            onClick={() => setViewingItem(savedSearch)}
                           >
-                            <Link href={`${effectiveBasePath}/${savedSearch.id}`}>
-                              {t("viewDetails")}
-                            </Link>
+                            {t("viewDetails")}
                           </Button>
                         )}
                       </div>
@@ -479,6 +478,13 @@ export function SavedSearchesContent({
           )}
         </section>
       </main>
+
+      {/* Detail Popup Dialog */}
+      <SavedSearchDetailDialog
+        savedSearch={viewingItem}
+        open={Boolean(viewingItem)}
+        onOpenChange={(nextOpen) => !nextOpen && setViewingItem(null)}
+      />
 
       {/* Delete Confirmation Dialog */}
       {deletingItem && (

@@ -16,6 +16,7 @@ import { motion } from "motion/react";
 import {
   Bookmark,
   InfoIcon,
+  Loader2,
   RefreshCw,
   Search,
   SearchX,
@@ -49,6 +50,7 @@ import { HomeProfileSidebar } from "../../_components/home-profile-sidebar";
 import { ProjectHeroBanner } from "../../_components/project-hero-banner";
 import { JobPagination } from "../../_components/job-pagination";
 import { HomeFiltersModal } from "../../_components/home-filters-modal";
+import { SavedSearchDetailDialog } from "../saved-searches/saved-search-detail-dialog";
 import { ClientDirectory } from "./client-directory";
 
 export type HomeTab =
@@ -154,10 +156,13 @@ export function FindWorkContent({
   const t = useTranslations("findWork");
   const tRec = useTranslations("recommendation");
   const tBookmark = useTranslations("bookmark");
+  const tSaved = useTranslations("savedSearches");
   const [isPending, startTransition] = useTransition();
 
   const [searchInput, setSearchInput] = useState(initialKeyword);
   const [isFiltersModalOpen, setIsFiltersModalOpen] = useState(false);
+  const [viewingSavedSearch, setViewingSavedSearch] =
+    useState<SavedSearchType | null>(null);
 
   const [bookmarkedSlugs, setBookmarkedSlugs] = useState(
     () => new Set(initialBookmarkedSlugs),
@@ -171,6 +176,7 @@ export function FindWorkContent({
   const [savedSearches, setSavedSearches] = useState<SavedSearchType[]>(
     () => initialSavedSearches ?? [],
   );
+  const [isLoadingSavedSearches, setIsLoadingSavedSearches] = useState(false);
   const [jobAlerts, setJobAlerts] = useState<JobAlertType[]>(
     () => initialJobAlerts ?? [],
   );
@@ -181,6 +187,8 @@ export function FindWorkContent({
   const canRemoveBookmark = can("DELETE", "/api/manage-jobs/bookmarks/:slug");
   const canViewJobAlerts = can("GET", "/api/job-alerts");
   const canViewSavedSearches = can("GET", "/api/saved-searches");
+  const canViewSavedSearchDetail = can("GET", "/api/saved-searches/:id");
+  const canDeleteSavedSearch = can("DELETE", "/api/saved-searches/:id");
   const canViewRecommendedJobs = can("GET", "/api/recommendations/jobs");
   const canViewRecommendationExplanation = can(
     "GET",
@@ -243,6 +251,37 @@ export function FindWorkContent({
       window.removeEventListener("popstate", handlePopState);
     };
   }, [getTabFromContext]);
+
+  useEffect(() => {
+    setSavedSearches(initialSavedSearches ?? []);
+  }, [initialSavedSearches]);
+
+  useEffect(() => {
+    if (activeTab !== "saved-searches" || !canViewSavedSearches) return;
+
+    let isCancelled = false;
+    setIsLoadingSavedSearches(true);
+
+    void savedSearchApiRequest
+      .getSavedSearches()
+      .then((res) => {
+        if (!isCancelled && res.data) {
+          setSavedSearches(res.data);
+        }
+      })
+      .catch(() => {
+        // Giữ dữ liệu hiện có nếu fetch lại thất bại
+      })
+      .finally(() => {
+        if (!isCancelled) {
+          setIsLoadingSavedSearches(false);
+        }
+      });
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [activeTab, canViewSavedSearches]);
 
   // State management for AI recommendations
   const [recommendedJobs, setRecommendedJobs] = useState<RecommendedJobType[]>(
@@ -987,7 +1026,11 @@ export function FindWorkContent({
                   {/* TAB 3: SAVED SEARCHES */}
                   {activeTab === "saved-searches" && canViewSavedSearches && (
                     <div className="space-y-3">
-                      {savedSearches.length === 0 ? (
+                      {isLoadingSavedSearches && savedSearches.length === 0 ? (
+                        <div className="flex items-center justify-center rounded-2xl border border-border bg-card/40 py-14">
+                          <Loader2 className="size-6 animate-spin text-muted-foreground" />
+                        </div>
+                      ) : savedSearches.length === 0 ? (
                         <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-border bg-card/40 px-6 py-14 text-center font-sans">
                           <Bookmark className="size-10 text-muted-foreground mb-3" />
                           <p className="text-base font-semibold text-foreground">
@@ -1039,24 +1082,37 @@ export function FindWorkContent({
                                 </div>
                               </div>
                               <div className="flex items-center gap-2 shrink-0">
+                                {canViewSavedSearchDetail && (
+                                  <Button
+                                    type="button"
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => setViewingSavedSearch(item)}
+                                    className="rounded-full text-xs font-semibold h-8 px-3.5 cursor-pointer"
+                                  >
+                                    {tSaved("viewDetails")}
+                                  </Button>
+                                )}
                                 <Button
                                   size="sm"
                                   onClick={() => applySavedSearch(item)}
-                                  className="rounded-full bg-[#0069D3] hover:bg-[#005bb8] text-white text-xs font-semibold h-8 px-4"
+                                  className="rounded-full bg-[#0069D3] hover:bg-[#005bb8] text-white text-xs font-semibold h-8 px-4 cursor-pointer"
                                 >
                                   {t("searchPage.search")}
                                 </Button>
-                                <Button
-                                  variant="ghost"
-                                  size="icon"
-                                  onClick={() =>
-                                    handleDeleteSavedSearch(item.id)
-                                  }
-                                  className="size-8 rounded-full text-muted-foreground hover:text-destructive cursor-pointer"
-                                  title="Delete saved search"
-                                >
-                                  <Trash2 className="size-3.5" />
-                                </Button>
+                                {canDeleteSavedSearch && (
+                                  <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    onClick={() =>
+                                      handleDeleteSavedSearch(item.id)
+                                    }
+                                    className="size-8 rounded-full text-muted-foreground hover:text-destructive cursor-pointer"
+                                    title="Delete saved search"
+                                  >
+                                    <Trash2 className="size-3.5" />
+                                  </Button>
+                                )}
                               </div>
                             </div>
                           );
@@ -1167,6 +1223,15 @@ export function FindWorkContent({
         jobTitle={explanationModal.jobTitle}
         components={explanationModal.components}
         matchScore={explanationModal.matchScore}
+      />
+
+      {/* Saved Search Detail Popup */}
+      <SavedSearchDetailDialog
+        savedSearch={viewingSavedSearch}
+        open={Boolean(viewingSavedSearch)}
+        onOpenChange={(nextOpen) => !nextOpen && setViewingSavedSearch(null)}
+        categories={initialCategories}
+        onApply={applySavedSearch}
       />
 
       {/* Home Quick Filters Modal (Best matches & Most recent) */}

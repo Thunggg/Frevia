@@ -3,6 +3,7 @@ import type { SavedSearchType } from '@shared/types';
 import {
   FailedToCreateSavedSearchException,
   FailedToLoadSavedSearchException,
+  SavedSearchDuplicateNameException,
   SavedSearchLimitExceededException,
   SavedSearchNotFoundException,
 } from './saved-search.error';
@@ -20,6 +21,7 @@ const mockSavedSearch: SavedSearchType = {
 describe('SavedSearchService (UC-22)', () => {
   let repository: {
     countByUserId: jest.Mock;
+    existsByNameAndUserId: jest.Mock;
     findAllByUserId: jest.Mock;
     findByIdAndUserId: jest.Mock;
     create: jest.Mock;
@@ -31,6 +33,7 @@ describe('SavedSearchService (UC-22)', () => {
   beforeEach(() => {
     repository = {
       countByUserId: jest.fn().mockResolvedValue(0),
+      existsByNameAndUserId: jest.fn().mockResolvedValue(false),
       findAllByUserId: jest.fn().mockResolvedValue([mockSavedSearch]),
       findByIdAndUserId: jest.fn().mockResolvedValue(mockSavedSearch),
       create: jest.fn().mockResolvedValue(mockSavedSearch),
@@ -118,6 +121,17 @@ describe('SavedSearchService (UC-22)', () => {
       expect(repository.create).not.toHaveBeenCalled();
     });
 
+    it('throws SavedSearchDuplicateNameException when user already has a saved search with the same name', async () => {
+      repository.existsByNameAndUserId.mockResolvedValue(true);
+      await expect(
+        service.createSavedSearch(10, {
+          name: 'React Developer',
+          searchParams: { budget: '1000-5000' },
+        }),
+      ).rejects.toThrow(SavedSearchDuplicateNameException());
+      expect(repository.create).not.toHaveBeenCalled();
+    });
+
     it('throws FailedToCreateSavedSearchException on database error', async () => {
       repository.create.mockRejectedValue(
         new PrismaClientKnownRequestError('db error', {
@@ -150,6 +164,14 @@ describe('SavedSearchService (UC-22)', () => {
       await expect(
         service.updateSavedSearch(10, 999, { name: 'Rename' }),
       ).rejects.toThrow(SavedSearchNotFoundException());
+    });
+
+    it('throws SavedSearchDuplicateNameException when updating to an existing name', async () => {
+      repository.existsByNameAndUserId.mockResolvedValue(true);
+      await expect(
+        service.updateSavedSearch(10, 1, { name: 'React Developer' }),
+      ).rejects.toThrow(SavedSearchDuplicateNameException());
+      expect(repository.update).not.toHaveBeenCalled();
     });
   });
 
