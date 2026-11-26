@@ -249,7 +249,7 @@
   "Error.PortfolioTitleRequired": "Portfolio title is required",
   "Error.PortfolioTitleTooLong": "Portfolio title is too long",
   "Error.PositionsRequiredBelowFilled": "Positions needed cannot be lower than the number of freelancers already hired",
-  "Error.PositionsRequiredInvalid": "Positions needed must be a whole number between 1 and 100",
+  "Error.PositionsRequiredInvalid": "Positions needed must be a whole number between 1 and 50",
   "Error.PositionsRequiredMustBeGreaterThanOneForMultiple": "Multiple hiring requires hiring at least 2 freelancers",
   "Error.PositionsRequiredMustBeOneForSingle": "A single-freelancer job can only hire one freelancer",
   "Error.ProfileRevisionAlreadyReviewed": "This profile revision has already been reviewed",

@@ -4,30 +4,22 @@ import { useFormatter, useTranslations } from "next-intl";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { motion } from "motion/react";
 import {
   Bookmark,
   BookmarkCheck,
   Briefcase,
-  Calendar,
   CheckCircle2,
   ChevronLeft,
   ChevronRight,
-  Clock,
-  CreditCard,
   Edit2,
   Ellipsis,
   Eye,
   Inbox,
   Loader2,
-  Megaphone,
   Plus,
   Search,
   Trash2,
   TrendingUp,
-  User,
-  UserCheck,
-  Users,
   X,
   XCircle,
 } from "@/components/icons";
@@ -64,7 +56,12 @@ type JobListProps = {
     total: number;
     totalPages: number;
   };
-  overviewJobs?: JobType[];
+  overviewCounts?: {
+    open: number;
+    inProgress: number;
+    completed: number;
+    draft: number;
+  };
   initialSearch?: string;
   initialStatus?: string;
 };
@@ -80,7 +77,7 @@ type TabFilterType =
 export function JobList({
   initialJobs,
   pagination,
-  overviewJobs = [],
+  overviewCounts,
   initialSearch = "",
   initialStatus,
 }: JobListProps) {
@@ -304,41 +301,10 @@ export function JobList({
     }
   };
 
-  // Metric counts based on overview stats jobs
-  const statsSource = overviewJobs.length > 0 ? overviewJobs : jobs;
-
-  const draftJobs = useMemo(
-    () => statsSource.filter((j) => j.status === "DRAFT"),
-    [statsSource],
-  );
-  const openJobs = useMemo(
-    () => statsSource.filter((j) => j.status === "OPEN"),
-    [statsSource],
-  );
-  const inProgressJobs = useMemo(
-    () => statsSource.filter((j) => j.status === "IN_PROGRESS"),
-    [statsSource],
-  );
-  const completedJobs = useMemo(
-    () => statsSource.filter((j) => j.status === "COMPLETED"),
-    [statsSource],
-  );
-  const closedJobs = useMemo(
-    () =>
-      statsSource.filter((j) => j.status === "CLOSED" || j.status === "CANCELLED"),
-    [statsSource],
-  );
-
-  const draftCount = draftJobs.length;
-  const openCount = openJobs.length;
-  const inProgressCount = inProgressJobs.length;
-  const completedCount = completedJobs.length;
-  const closedCount = closedJobs.length;
-
-  const totalProposals = useMemo(
-    () => statsSource.reduce((acc, j) => acc + (j.proposalsCount ?? 0), 0),
-    [statsSource],
-  );
+  const draftCount = overviewCounts?.draft ?? 0;
+  const openCount = overviewCounts?.open ?? 0;
+  const inProgressCount = overviewCounts?.inProgress ?? 0;
+  const completedCount = overviewCounts?.completed ?? 0;
 
   // Filtered jobs based on tab and search
   const filteredJobs = useMemo(() => {
@@ -478,12 +444,12 @@ export function JobList({
   }
 
   return (
-    <div className="min-h-full bg-[#F9FAFC] dark:bg-zinc-950 font-sans pb-16">
+    <div className="min-h-full bg-background font-sans pb-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
         {/* ── Top Header Bar ── */}
         <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
           <div>
-            <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-foreground">
+            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
               {t("managePostedJobs")}
             </h1>
             <p className="text-xs sm:text-sm text-muted-foreground mt-1.5 max-w-2xl leading-relaxed">
@@ -491,20 +457,19 @@ export function JobList({
             </p>
           </div>
 
-          <div className="flex items-center gap-3 shrink-0">
+          <div className="flex items-center gap-2.5 shrink-0">
             {/* Kho bản nháp button */}
-            <button
+            <Button
               type="button"
-              onClick={() => handleTabChange(activeTab === "DRAFT" ? "ALL" : "DRAFT")}
-              className={`rounded-xl border px-4 py-2.5 text-xs sm:text-sm font-semibold flex items-center gap-2 cursor-pointer transition-all shadow-xs ${
-                activeTab === "DRAFT"
-                  ? "border-[#0069D3] bg-blue-50 text-[#0069D3] dark:bg-blue-950/40 dark:text-blue-300"
-                  : "border-border/80 bg-white hover:bg-muted/70 text-foreground dark:bg-zinc-900"
-              }`}
+              variant={activeTab === "DRAFT" ? "secondary" : "outline"}
+              onClick={() =>
+                handleTabChange(activeTab === "DRAFT" ? "ALL" : "DRAFT")
+              }
+              className="rounded-lg text-xs sm:text-sm font-medium h-9 px-3.5 cursor-pointer"
             >
-              <Inbox className="size-4 text-muted-foreground" />
+              <Inbox className="mr-1.5 size-4 text-muted-foreground" />
               <span>{t("draftBox", { count: draftCount })}</span>
-            </button>
+            </Button>
 
             {/* + Đăng việc mới button */}
             {canCreate && (
@@ -512,12 +477,12 @@ export function JobList({
                 type="button"
                 disabled={isCheckingKyc}
                 onClick={() => void handleCreateJobClick()}
-                className="rounded-xl bg-[#0069D3] hover:bg-[#005bb8] text-white text-xs sm:text-sm font-semibold px-5 py-2.5 shadow-sm shadow-blue-500/20 flex items-center gap-2 cursor-pointer transition-all active:scale-[0.98]"
+                className="rounded-lg bg-[#0069D3] hover:bg-[#005bb8] text-white text-xs sm:text-sm font-medium h-9 px-4 cursor-pointer"
               >
                 {isCheckingKyc ? (
-                  <Loader2 className="size-4 animate-spin" />
+                  <Loader2 className="mr-1.5 size-4 animate-spin" />
                 ) : (
-                  <Plus className="size-4" />
+                  <Plus className="mr-1.5 size-4" />
                 )}
                 <span>{t("postNewJob")}</span>
               </Button>
@@ -525,83 +490,45 @@ export function JobList({
           </div>
         </div>
 
-        {/* ── 4 Overview Statistics Cards (Dữ liệu thực tế của hệ thống) ── */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
-          {/* Card 1: Đang tuyển (Active) */}
-          <div className="rounded-2xl border border-border/80 bg-white dark:bg-zinc-900 p-5 shadow-xs flex flex-col justify-between">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold text-muted-foreground">
-                {t("statActive")}
-              </span>
-              <div className="size-9 rounded-xl bg-blue-50 text-[#0069D3] dark:bg-blue-950/60 dark:text-blue-400 flex items-center justify-center">
-                <Megaphone className="size-4.5" />
-              </div>
-            </div>
-            <div className="mt-4 flex items-baseline gap-1.5">
-              <span className="text-3xl font-black text-foreground tracking-tight">
+        {/* ── 3 Overview Statistics Cards (Clean, no decorative icons) ── */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-6">
+          <div className="rounded-xl border border-border bg-card p-5">
+            <span className="text-xs font-medium text-muted-foreground">
+              {t("statActive")}
+            </span>
+            <div className="mt-2 flex items-baseline gap-1.5">
+              <span className="text-2xl sm:text-3xl font-bold tabular-nums text-foreground">
                 {openCount < 10 ? `0${openCount}` : openCount}
               </span>
-              <span className="text-xs text-muted-foreground font-semibold">
+              <span className="text-xs text-muted-foreground">
                 {t("statActiveUnit")}
               </span>
             </div>
           </div>
 
-          {/* Card 2: Tổng đề xuất */}
-          <div className="rounded-2xl border border-border/80 bg-white dark:bg-zinc-900 p-5 shadow-xs flex flex-col justify-between">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold text-muted-foreground">
-                {t("statProposals")}
-              </span>
-              <div className="size-9 rounded-xl bg-blue-50 text-[#0069D3] dark:bg-blue-950/60 dark:text-blue-400 flex items-center justify-center">
-                <UserCheck className="size-4.5" />
-              </div>
-            </div>
-            <div className="mt-4 flex items-baseline gap-1.5">
-              <span className="text-3xl font-black text-foreground tracking-tight">
-                {totalProposals < 10 ? `0${totalProposals}` : totalProposals}
-              </span>
-              <span className="text-xs text-muted-foreground font-semibold">
-                {t("statProposalsUnit")}
-              </span>
-            </div>
-          </div>
-
-          {/* Card 3: Đang thực hiện */}
-          <div className="rounded-2xl border border-border/80 bg-white dark:bg-zinc-900 p-5 shadow-xs flex flex-col justify-between">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold text-muted-foreground">
-                {t("statInProgress")}
-              </span>
-              <div className="size-9 rounded-xl bg-blue-50 text-[#0069D3] dark:bg-blue-950/60 dark:text-blue-400 flex items-center justify-center">
-                <Clock className="size-4.5" />
-              </div>
-            </div>
-            <div className="mt-4 flex items-baseline gap-1.5">
-              <span className="text-3xl font-black text-foreground tracking-tight">
+          <div className="rounded-xl border border-border bg-card p-5">
+            <span className="text-xs font-medium text-muted-foreground">
+              {t("statInProgress")}
+            </span>
+            <div className="mt-2 flex items-baseline gap-1.5">
+              <span className="text-2xl sm:text-3xl font-bold tabular-nums text-foreground">
                 {inProgressCount < 10 ? `0${inProgressCount}` : inProgressCount}
               </span>
-              <span className="text-xs text-muted-foreground font-semibold">
+              <span className="text-xs text-muted-foreground">
                 {t("statInProgressUnit")}
               </span>
             </div>
           </div>
 
-          {/* Card 4: Đã hoàn thành */}
-          <div className="rounded-2xl border border-border/80 bg-white dark:bg-zinc-900 p-5 shadow-xs flex flex-col justify-between">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold text-muted-foreground">
-                {t("statCompleted")}
-              </span>
-              <div className="size-9 rounded-xl bg-blue-50 text-[#0069D3] dark:bg-blue-950/60 dark:text-blue-400 flex items-center justify-center">
-                <CheckCircle2 className="size-4.5 text-blue-600" />
-              </div>
-            </div>
-            <div className="mt-4 flex items-baseline gap-1.5">
-              <span className="text-3xl font-black text-foreground tracking-tight">
+          <div className="rounded-xl border border-border bg-card p-5">
+            <span className="text-xs font-medium text-muted-foreground">
+              {t("statCompleted")}
+            </span>
+            <div className="mt-2 flex items-baseline gap-1.5">
+              <span className="text-2xl sm:text-3xl font-bold tabular-nums text-foreground">
                 {completedCount < 10 ? `0${completedCount}` : completedCount}
               </span>
-              <span className="text-xs text-muted-foreground font-semibold">
+              <span className="text-xs text-muted-foreground">
                 {t("statCompletedUnit")}
               </span>
             </div>
@@ -609,32 +536,16 @@ export function JobList({
         </div>
 
         {/* ── Tabs & Search Filter Row ── */}
-        <div className="mt-7 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 p-1.5 rounded-2xl bg-white dark:bg-zinc-900 border border-border/80 shadow-xs">
+        <div className="mt-6 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 pb-3 border-b border-border">
           {/* Tabs */}
-          <div className="flex items-center gap-1 overflow-x-auto p-0.5 no-scrollbar">
+          <div className="flex items-center gap-1 overflow-x-auto no-scrollbar">
             {[
-              { id: "ALL" as const, label: t("tabAll"), count: statsSource.length },
-              { id: "OPEN" as const, label: t("tabOpen"), count: openCount },
-              {
-                id: "IN_PROGRESS" as const,
-                label: t("tabInProgress"),
-                count: inProgressCount,
-              },
-              {
-                id: "COMPLETED" as const,
-                label: t("tabCompleted"),
-                count: completedCount,
-              },
-              {
-                id: "CLOSED" as const,
-                label: t("tabClosed"),
-                count: closedCount,
-              },
-              {
-                id: "DRAFT" as const,
-                label: t("tabDraft"),
-                count: draftCount,
-              },
+              { id: "ALL" as const, label: t("tabAll") },
+              { id: "OPEN" as const, label: t("tabOpen") },
+              { id: "IN_PROGRESS" as const, label: t("tabInProgress") },
+              { id: "COMPLETED" as const, label: t("tabCompleted") },
+              { id: "CLOSED" as const, label: t("tabClosed") },
+              { id: "DRAFT" as const, label: t("tabDraft") },
             ].map((tab) => {
               const isActive = activeTab === tab.id;
               return (
@@ -642,24 +553,13 @@ export function JobList({
                   key={tab.id}
                   type="button"
                   onClick={() => handleTabChange(tab.id)}
-                  className={`rounded-xl px-4 py-2 text-xs font-semibold flex items-center gap-2 cursor-pointer transition-all shrink-0 ${
+                  className={`rounded-lg px-3 py-1.5 text-xs font-medium cursor-pointer shrink-0 ${
                     isActive
-                      ? "bg-[#F0F5FC] text-[#0069D3] dark:bg-blue-950/60 dark:text-blue-300 shadow-xs"
-                      : "text-muted-foreground hover:text-foreground hover:bg-muted/60"
+                      ? "bg-muted text-foreground font-semibold"
+                      : "text-muted-foreground hover:text-foreground"
                   }`}
                 >
-                  <span>{tab.label}</span>
-                  {tab.count > 0 && (
-                    <span
-                      className={`size-5 rounded-full text-[10px] font-bold flex items-center justify-center ${
-                        isActive
-                          ? "bg-blue-100 text-[#0069D3] dark:bg-blue-900 dark:text-blue-200"
-                          : "bg-muted text-muted-foreground"
-                      }`}
-                    >
-                      {tab.count}
-                    </span>
-                  )}
+                  {tab.label}
                 </button>
               );
             })}
@@ -667,23 +567,23 @@ export function JobList({
 
           {/* Search Input */}
           <div className="relative min-w-[240px]">
-            <Search className="size-4 text-muted-foreground absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+            <Search className="size-4 text-muted-foreground absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder={t("searchJobsPlaceholder")}
-              className="w-full rounded-xl border border-border/80 bg-[#F9FAFC] dark:bg-zinc-800/60 pl-9 pr-8 py-2 text-xs placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-[#0069D3] transition-colors"
+              className="w-full rounded-lg border border-border bg-background pl-9 pr-8 py-1.5 text-xs placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-[#0069D3]"
             />
             {isBusy ? (
               <div className="absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none">
-                <Loader2 className="size-3.5 animate-spin text-[#0069D3]" />
+                <Loader2 className="size-3.5 animate-spin text-muted-foreground" />
               </div>
             ) : searchQuery ? (
               <button
                 type="button"
                 onClick={handleClearSearch}
-                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground cursor-pointer p-0.5 rounded-full"
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground cursor-pointer p-0.5"
                 title={t("clearSearch")}
               >
                 <X className="size-3.5" />
@@ -693,18 +593,16 @@ export function JobList({
         </div>
 
         {/* ── Job Cards List ── */}
-        <div className="mt-6 space-y-4">
+        <div className="mt-5 space-y-3">
           {isBusy && jobs.length === 0 ? (
-            <div className="rounded-2xl border border-border/80 bg-white dark:bg-zinc-900 p-12 text-center text-muted-foreground">
-              <Loader2 className="size-8 mx-auto mb-3 animate-spin text-[#0069D3]" />
-              <p className="text-xs text-muted-foreground font-medium">
-                {t("searching")}
-              </p>
+            <div className="rounded-xl border border-border bg-card py-14 text-center text-muted-foreground">
+              <Loader2 className="size-6 mx-auto mb-2.5 animate-spin text-muted-foreground" />
+              <p className="text-xs text-muted-foreground">{t("searching")}</p>
             </div>
           ) : filteredJobs.length === 0 ? (
-            <div className="rounded-2xl border border-border/80 bg-white dark:bg-zinc-900 p-12 text-center text-muted-foreground">
-              <Briefcase className="size-12 mx-auto mb-3 text-muted-foreground/40" />
-              <h3 className="text-base font-semibold text-foreground mb-1">
+            <div className="rounded-xl border border-border bg-card py-14 text-center text-muted-foreground">
+              <Briefcase className="size-10 mx-auto mb-3 text-muted-foreground/40" />
+              <h3 className="text-sm font-semibold text-foreground mb-1">
                 {t("noJobsTitle")}
               </h3>
               <p className="text-xs text-muted-foreground max-w-sm mx-auto">
@@ -712,7 +610,7 @@ export function JobList({
               </p>
             </div>
           ) : (
-            filteredJobs.map((job, index) => {
+            filteredJobs.map((job) => {
               const isOpen = job.status === "OPEN";
               const isDraft = job.status === "DRAFT";
               const isInProgress = job.status === "IN_PROGRESS";
@@ -723,15 +621,14 @@ export function JobList({
               const isBookmarked = bookmarkedJobIds.has(job.id);
               const relativeDate = formatRelativeDays(job.createdAt);
 
-              const statusColorBadge = isOpen
-                ? "bg-blue-50 text-[#0069D3] border border-blue-200/60 dark:bg-blue-950/40 dark:text-blue-300"
-                : isInProgress
-                  ? "bg-emerald-50 text-emerald-700 border border-emerald-200/60 dark:bg-emerald-950/40 dark:text-emerald-300"
-                  : isDraft
-                    ? "bg-amber-50 text-amber-700 border border-amber-200/60 dark:bg-amber-950/40 dark:text-amber-400"
-                    : isCompleted
-                      ? "bg-purple-50 text-purple-700 border border-purple-200/60 dark:bg-purple-950/40 dark:text-purple-300"
-                      : "bg-stone-100 text-stone-600 border border-stone-200/60 dark:bg-stone-800 dark:text-stone-300";
+              const statusTextColor =
+                isOpen || isInProgress
+                  ? "text-[#0069D3] dark:text-blue-400"
+                  : isCompleted
+                    ? "text-foreground"
+                    : job.status === "CANCELLED"
+                      ? "text-destructive"
+                      : "text-muted-foreground";
 
               const statusText = isOpen
                 ? t("statusOpen")
@@ -759,29 +656,23 @@ export function JobList({
                 job.status !== "IN_PROGRESS" && job.status !== "COMPLETED";
 
               return (
-                <motion.div
+                <div
                   key={job.id}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3, delay: index * 0.04 }}
-                  className="rounded-2xl border border-border/80 bg-white dark:bg-zinc-900 p-5 sm:p-6 shadow-xs space-y-4 hover:shadow-md hover:border-[#0069D3]/30 transition-all"
+                  className="rounded-xl border border-border bg-card p-5 space-y-3"
                 >
                   {/* Top Status & Code Header Row */}
                   <div className="flex items-center justify-between gap-3 flex-wrap">
-                    <div className="flex items-center gap-2.5 flex-wrap">
+                    <div className="flex items-center gap-2.5 flex-wrap text-xs text-muted-foreground">
                       <span
-                        className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold ${statusColorBadge}`}
+                        className={`inline-flex items-center gap-1.5 font-semibold ${statusTextColor}`}
                       >
                         <span className="size-1.5 rounded-full bg-current" />
                         <span>{statusText}</span>
                       </span>
-                      <span className="text-xs font-medium text-muted-foreground">
-                        {t("jobCodeLabel", { code: job.id })}
-                      </span>
                       <span className="text-muted-foreground/40">•</span>
-                      <span className="text-xs font-medium text-muted-foreground">
-                        {t("postedDaysAgo", { days: relativeDate })}
-                      </span>
+                      <span>{t("jobCodeLabel", { code: job.id })}</span>
+                      <span className="text-muted-foreground/40">•</span>
+                      <span>{t("postedDaysAgo", { days: relativeDate })}</span>
                     </div>
 
                     <div className="flex items-center gap-1">
@@ -789,7 +680,7 @@ export function JobList({
                         variant="ghost"
                         size="icon"
                         onClick={() => toggleBookmark(job.id)}
-                        className="size-8 rounded-full text-muted-foreground hover:text-foreground cursor-pointer"
+                        className="size-8 rounded-lg text-muted-foreground hover:text-foreground cursor-pointer"
                       >
                         {isBookmarked ? (
                           <BookmarkCheck className="size-4 text-[#0069D3]" />
@@ -803,14 +694,14 @@ export function JobList({
                           <Button
                             variant="ghost"
                             size="icon"
-                            className="size-8 rounded-full text-muted-foreground hover:text-foreground cursor-pointer"
+                            className="size-8 rounded-lg text-muted-foreground hover:text-foreground cursor-pointer"
                           >
                             <Ellipsis className="size-4" />
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent
                           align="end"
-                          className="w-48 rounded-2xl p-1.5 shadow-xl"
+                          className="w-48 rounded-xl p-1"
                         >
                           <DropdownMenuItem asChild>
                             <Link
@@ -835,7 +726,7 @@ export function JobList({
                           {isOpen && canClose && (
                             <DropdownMenuItem
                               onClick={() => void closeJob(job.id)}
-                              className="flex items-center gap-2 text-xs font-medium text-stone-600 cursor-pointer"
+                              className="flex items-center gap-2 text-xs font-medium text-muted-foreground cursor-pointer"
                             >
                               <XCircle className="size-3.5" />
                               <span>{t("close")}</span>
@@ -868,7 +759,7 @@ export function JobList({
                           {job.status !== "IN_PROGRESS" && canDelete && (
                             <DropdownMenuItem
                               onClick={() => setPendingDeleteJobId(job.id)}
-                              className="flex items-center gap-2 text-xs font-medium text-red-600 cursor-pointer"
+                              className="flex items-center gap-2 text-xs font-medium text-destructive cursor-pointer"
                             >
                               <Trash2 className="size-3.5" />
                               <span>{t("delete")}</span>
@@ -883,43 +774,28 @@ export function JobList({
                   <div>
                     <Link
                       href={`/client/jobs/${job.id}`}
-                      className="text-lg sm:text-xl font-bold text-foreground hover:text-[#0069D3] transition-colors leading-snug line-clamp-2"
+                      className="text-base sm:text-lg font-semibold text-foreground hover:text-[#0069D3] leading-snug line-clamp-2"
                     >
                       {job.title}
                     </Link>
                   </div>
 
-                  {/* Meta Pills (Dữ liệu thực tế của job) */}
-                  <div className="flex items-center gap-2.5 flex-wrap">
-                    {/* Ngân sách */}
-                    <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#F3F3F7] dark:bg-zinc-800 text-xs font-semibold text-foreground/80">
-                      <CreditCard className="size-3.5 text-[#0069D3]" />
-                      <span>{t("fixedPriceLabel", { price: formattedBudget })}</span>
-                    </div>
-
-                    {/* Hình thức tuyển dụng */}
-                    <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#F3F3F7] dark:bg-zinc-800 text-xs font-semibold text-foreground/80">
-                      {job.hiringType === "SINGLE" ? (
-                        <>
-                          <User className="size-3.5 text-muted-foreground" />
-                          <span>{t("hiringSingle")}</span>
-                        </>
-                      ) : (
-                        <>
-                          <Users className="size-3.5 text-muted-foreground" />
-                          <span>
-                            {t("hiringMultiple", {
-                              count: job.positionsRequired || 1,
-                            })}
-                          </span>
-                        </>
-                      )}
-                    </div>
-
-                    {/* Hạn chót nếu có */}
+                  {/* Clean Inline Meta Info (No decorative icons) */}
+                  <div className="flex items-center gap-x-3 gap-y-1 flex-wrap text-xs text-muted-foreground">
+                    <span className="font-medium text-foreground">
+                      {t("fixedPriceLabel", { price: formattedBudget })}
+                    </span>
+                    <span className="text-muted-foreground/40">•</span>
+                    <span>
+                      {job.hiringType === "SINGLE"
+                        ? t("hiringSingle")
+                        : t("hiringMultiple", {
+                            count: job.positionsRequired || 1,
+                          })}
+                    </span>
                     {job.deadline && (
-                      <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#F3F3F7] dark:bg-zinc-800 text-xs font-semibold text-foreground/80">
-                        <Clock className="size-3.5 text-muted-foreground" />
+                      <>
+                        <span className="text-muted-foreground/40">•</span>
                         <span>
                           {t("deadlineLabel", {
                             date: format.dateTime(new Date(job.deadline), {
@@ -929,13 +805,11 @@ export function JobList({
                             }),
                           })}
                         </span>
-                      </div>
+                      </>
                     )}
-
-                    {/* Hạn nhận hồ sơ nếu có */}
                     {job.expiryDate && (
-                      <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#F3F3F7] dark:bg-zinc-800 text-xs font-semibold text-foreground/80">
-                        <Calendar className="size-3.5 text-muted-foreground" />
+                      <>
+                        <span className="text-muted-foreground/40">•</span>
                         <span>
                           {t("expiryLabel", {
                             date: format.dateTime(new Date(job.expiryDate), {
@@ -945,75 +819,76 @@ export function JobList({
                             }),
                           })}
                         </span>
-                      </div>
+                      </>
                     )}
                   </div>
 
-                  {/* Description Snippet (Chỉ hiển thị khi có mô tả thật) */}
+                  {/* Description Snippet */}
                   {job.description ? (
                     <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed line-clamp-2">
                       {job.description.replace(/<[^>]+>/g, "")}
                     </p>
                   ) : null}
 
-                  {/* Skills Tag Pills (Chỉ hiển thị các kỹ năng thực tế) */}
-                  {job.skills && job.skills.length > 0 ? (
-                    <div className="flex items-center gap-1.5 flex-wrap pt-1">
-                      {job.skills.map((s, idx) => (
-                        <span
-                          key={idx}
-                          className="px-2.5 py-1 text-xs rounded-lg bg-[#F3F3F7] dark:bg-zinc-800 text-muted-foreground font-medium"
-                        >
-                          {s.skill.name}
-                        </span>
-                      ))}
+                  {/* Bottom Row: Skills & Action Buttons */}
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-2 border-t border-border">
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      {job.skills && job.skills.length > 0
+                        ? job.skills.map((s, idx) => (
+                            <span
+                              key={idx}
+                              className="px-2 py-0.5 text-xs rounded-md bg-muted text-muted-foreground"
+                            >
+                              {s.skill.name}
+                            </span>
+                          ))
+                        : null}
                     </div>
-                  ) : null}
 
-                  {/* Bottom Action Buttons: Chỉ giữ lại Xem chi tiết / Xem proposal */}
-                  <div className="flex items-center justify-end gap-2 pt-3 border-t border-border/60">
-                    <Button
-                      variant={proposalsCount > 0 ? "outline" : "default"}
-                      size="sm"
-                      asChild
-                      className={
-                        proposalsCount > 0
-                          ? "rounded-xl border-border/80 px-4 h-9 text-xs font-semibold cursor-pointer"
-                          : "rounded-xl bg-[#0069D3] hover:bg-[#005bb8] text-white px-5 h-9 text-xs font-semibold shadow-xs cursor-pointer"
-                      }
-                    >
-                      <Link href={`/client/jobs/${job.id}`}>
-                        <span>{t("viewDetail")}</span>
-                      </Link>
-                    </Button>
-
-                    {isDraft && canPublish && (
+                    <div className="flex items-center gap-2 shrink-0">
                       <Button
-                        size="sm"
-                        onClick={() => setPendingPublishJobId(job.id)}
-                        className="rounded-xl bg-[#0069D3] hover:bg-[#005bb8] text-white px-5 h-9 text-xs font-semibold shadow-xs cursor-pointer"
-                      >
-                        <span>{t("publish")}</span>
-                      </Button>
-                    )}
-
-                    {proposalsCount > 0 && (
-                      <Button
+                        variant={proposalsCount > 0 ? "outline" : "default"}
                         size="sm"
                         asChild
-                        className="rounded-xl bg-[#0069D3] hover:bg-[#005bb8] text-white px-5 h-9 text-xs font-semibold shadow-xs cursor-pointer"
+                        className={
+                          proposalsCount > 0
+                            ? "rounded-lg px-3.5 h-8 text-xs font-medium cursor-pointer"
+                            : "rounded-lg bg-[#0069D3] hover:bg-[#005bb8] text-white px-4 h-8 text-xs font-medium cursor-pointer"
+                        }
                       >
-                        <Link href={`/client/jobs/${job.id}/proposals`}>
-                          <span>
-                            {t("viewProposalsCount", {
-                              count: proposalsCount,
-                            })}
-                          </span>
+                        <Link href={`/client/jobs/${job.id}`}>
+                          <span>{t("viewDetail")}</span>
                         </Link>
                       </Button>
-                    )}
+
+                      {isDraft && canPublish && (
+                        <Button
+                          size="sm"
+                          onClick={() => setPendingPublishJobId(job.id)}
+                          className="rounded-lg bg-[#0069D3] hover:bg-[#005bb8] text-white px-4 h-8 text-xs font-medium cursor-pointer"
+                        >
+                          <span>{t("publish")}</span>
+                        </Button>
+                      )}
+
+                      {proposalsCount > 0 && (
+                        <Button
+                          size="sm"
+                          asChild
+                          className="rounded-lg bg-[#0069D3] hover:bg-[#005bb8] text-white px-4 h-8 text-xs font-medium cursor-pointer"
+                        >
+                          <Link href={`/client/jobs/${job.id}/proposals`}>
+                            <span>
+                              {t("viewProposalsCount", {
+                                count: proposalsCount,
+                              })}
+                            </span>
+                          </Link>
+                        </Button>
+                      )}
+                    </div>
                   </div>
-                </motion.div>
+                </div>
               );
             })
           )}

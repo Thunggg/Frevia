@@ -42,8 +42,12 @@ export default async function ClientJobDetailPage({
     );
   }
 
+  const canViewProposals =
+    hasActionPermission(user, "GET", "/api/jobs/:jobId/proposals") ||
+    hasActionPermission(user, "GET", "/api/proposals/jobs/:jobId/submitted");
+
   const job = await jobServerRequest.getClientJobDetail(jobId);
   if (!job) notFound();
 
-  return <JobDetail job={job} />;
+  return <JobDetail job={job} canViewProposals={canViewProposals} />;
 }

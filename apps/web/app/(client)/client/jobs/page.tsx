@@ -25,14 +25,27 @@ export default async function ClientJobsPage({
       ? (status as JobStatusType)
       : undefined;
 
-  const [result, overviewResult] = await Promise.all([
+  const [
+    result,
+    openResult,
+    inProgressResult,
+    completedResult,
+    draftResult,
+  ] = await Promise.all([
     jobServerRequest.getClientJobs({
       page,
       limit: 10,
       search: search?.trim() || undefined,
       status: parsedStatus,
     }),
-    jobServerRequest.getClientJobs({ limit: 20 }).catch(() => null),
+    jobServerRequest.getClientJobs({ status: "OPEN", limit: 1 }).catch(() => null),
+    jobServerRequest
+      .getClientJobs({ status: "IN_PROGRESS", limit: 1 })
+      .catch(() => null),
+    jobServerRequest
+      .getClientJobs({ status: "COMPLETED", limit: 1 })
+      .catch(() => null),
+    jobServerRequest.getClientJobs({ status: "DRAFT", limit: 1 }).catch(() => null),
   ]);
 
   return (
@@ -41,7 +54,12 @@ export default async function ClientJobsPage({
       pagination={
         result?.pagination ?? { page: 1, limit: 10, total: 0, totalPages: 0 }
       }
-      overviewJobs={overviewResult?.data ?? result?.data ?? []}
+      overviewCounts={{
+        open: openResult?.pagination?.total ?? 0,
+        inProgress: inProgressResult?.pagination?.total ?? 0,
+        completed: completedResult?.pagination?.total ?? 0,
+        draft: draftResult?.pagination?.total ?? 0,
+      }}
       initialSearch={search?.trim() || ""}
       initialStatus={parsedStatus}
     />

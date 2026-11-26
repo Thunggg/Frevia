@@ -433,6 +433,43 @@ describe('ManageJobService', () => {
       expect(result.success).toBe(true);
     });
 
+    it('validates positionsRequired bounds (empty, negative, max 50)', () => {
+      const base = {
+        title: 'Backend Developer Position',
+        description:
+          'We need a senior NestJS engineer with at least 5 years experience',
+        budgetMin: 500,
+        budgetMax: 1000,
+        budgetType: 'FIXED_PRICE',
+        deadline: futureDeadline,
+        expiryDate: futureExpiryDate,
+        skills: [1, 2],
+        jobCategories: [1],
+        hiringType: 'MULTIPLE' as const,
+      };
+
+      expect(
+        CreateJobBodySchema.safeParse({ ...base, positionsRequired: null })
+          .success,
+      ).toBe(false);
+      expect(
+        CreateJobBodySchema.safeParse({ ...base, positionsRequired: '' })
+          .success,
+      ).toBe(false);
+      expect(
+        CreateJobBodySchema.safeParse({ ...base, positionsRequired: -1 })
+          .success,
+      ).toBe(false);
+      expect(
+        CreateJobBodySchema.safeParse({ ...base, positionsRequired: 51 })
+          .success,
+      ).toBe(false);
+      expect(
+        CreateJobBodySchema.safeParse({ ...base, positionsRequired: 50 })
+          .success,
+      ).toBe(true);
+    });
+
     it('fails when required fields are missing', () => {
       const result = CreateJobBodySchema.safeParse({
         title: 'Backend Developer Position',

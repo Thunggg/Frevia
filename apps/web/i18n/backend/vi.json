@@ -249,7 +249,7 @@
   "Error.PortfolioTitleRequired": "Vui lòng nhập tiêu đề portfolio",
   "Error.PortfolioTitleTooLong": "Tiêu đề portfolio quá dài",
   "Error.PositionsRequiredBelowFilled": "Số lượng cần tuyển không được nhỏ hơn số freelancer đã tuyển",
-  "Error.PositionsRequiredInvalid": "Số lượng cần tuyển phải là số nguyên từ 1 đến 100",
+  "Error.PositionsRequiredInvalid": "Số lượng cần tuyển phải là số nguyên từ 1 đến 50",
   "Error.PositionsRequiredMustBeGreaterThanOneForMultiple": "Hình thức tuyển nhiều người yêu cầu tuyển từ 2 freelancer trở lên",
   "Error.PositionsRequiredMustBeOneForSingle": "Công việc tuyển một người chỉ có thể tuyển đúng 1 freelancer",
   "Error.ProfileRevisionAlreadyReviewed": "Yêu cầu chỉnh sửa hồ sơ này đã được xử lý",
