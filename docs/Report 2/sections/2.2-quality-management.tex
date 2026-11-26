@@ -20,7 +20,7 @@ Quality management in Frevia is built into the delivery process rather than adde
     \item \textbf{Software Testing}
     \begin{itemize}
         \item Unit tests cover services, repositories, and guards with Jest. The suite already exercises the access-token guard, the authentication role transitions, the contract and proposal repositories, the payment service, the dispute service, the profile revision workflow, the curriculum vitae analyser, and the profile strength calculation.
-        \item Integration tests run against a real PostgreSQL database configured through environment variables, so a query that is syntactically valid but semantically wrong is caught before the sprint review.
+        \item Integration tests run against a real PostgreSQL database [7] configured through environment variables, so a query that is syntactically valid but semantically wrong is caught before the sprint review.
         \item An end-to-end test drives the application through its HTTP surface and verifies the response envelope, the validation behaviour, and the authorisation behaviour of protected routes.
         \item Manual exploratory testing is performed on the flows that are difficult to automate reliably: the identity document capture sequence, the Stripe Checkout redirect, the dispute evidence upload, and the real-time messaging session.
         \item Each item is accepted against written acceptance criteria at the Sprint Review, and an item that fails is recorded as a defect rather than counted as delivered.

@@ -48,7 +48,7 @@ All 218 items must pass through the following testing stages. Table \ref{tab:tes
 \end{table}
 
 \begin{itemize}
-    \item Reviewing includes peer review and static analysis with ESLint for both the NestJS API and the Next.js web client, together with explicit review of every Stripe call site and webhook handler.
+    \item Reviewing includes peer review and static analysis with ESLint for both the NestJS API [4] and the Next.js web client [5], together with explicit review of every Stripe call site and webhook handler [3].
     \item Unit Test requires at least 80\% coverage for critical modules: authentication, access-token validation, job and proposal handling, contract and milestone state transitions, payment services, and the dispute service.
     \item Integration Test verifies the main flow: create job $\rightarrow$ submit proposal $\rightarrow$ accept proposal $\rightarrow$ generate and sign contract $\rightarrow$ create milestone $\rightarrow$ fund the milestone into escrow $\rightarrow$ submit work $\rightarrow$ approve the submission $\rightarrow$ release the payment.
     \item System Test executes end-to-end scenarios on a staging environment using Stripe test mode with simulated webhook events, a test identity document set for the verification pipeline, and a sample curriculum vitae for skill extraction.

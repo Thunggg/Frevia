@@ -20,7 +20,7 @@ Every item is measured against a single Definition of Done before it is counted 
 \item The change is merged into the integration branch through a reviewed pull request, and at least one other member has approved it.
 \item \texttt{pnpm lint} and \texttt{pnpm check-types} pass on the merged result, and the API unit test suite (\texttt{pnpm --filter api test}) passes for the affected modules.
 \item \texttt{docker compose build} and \texttt{docker compose up -d} produce a running API that reports a healthy status and a web client that becomes available once the API is healthy, and the new behaviour can be exercised from the browser.
-\item Database changes are delivered as a migration generated from the Prisma schema, never as a manual alteration of a shared database.
+\item Database changes are delivered as a migration generated from the Prisma schema [6], never as a manual alteration of a shared database.
 \item The new endpoint is registered in the permission model with the correct module, method, and path, and an unauthorised role receives a permission error rather than a successful response.
 \item User-facing text exists in both English and Vietnamese message catalogues; no string is hard-coded in a component.
 \item At least one automated test covers the new behaviour, or the pull request states explicitly why a test is not applicable.
