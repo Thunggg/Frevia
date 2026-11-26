@@ -16,6 +16,7 @@
 \usepackage{float}
 \usepackage{tcolorbox}
 \usepackage{booktabs}
+\usepackage{needspace}
 \usepackage{caption}
 \usepackage{tocloft}
 \usepackage{hyperref}
@@ -182,6 +183,8 @@
 19/11/2026 & M & TinVN & Reviewed authentication, session revocation, and administrator RBAC user instructions and verified expected output cases. \\ \hline
 21/11/2026 & M & HuyNLN & Cross-checked troubleshooting notes, figure numbering, and screenshot annotations across installation and user manual sections. \\ \hline
 24/11/2026 & M & ThuanNT & Updated cover page (November 2026), reformatted Table of Contents, consolidated Record of Changes, and compiled final PDF. \\ \hline
+27/11/2026 & M & VyPK & Added User Manuals for Forum (M14), Conversation (M27), Moderation/eKYC/Trash (M34--M36), and AI Features (M44--M45). \\ \hline
+27/11/2026 & M & ThuanNT & Updated 25 screenshots with English annotations (Sprints 1--5 including Banners M15.04) and standardized Report 6 formatting. \\ \hline
 \end{longtable}
 \setcounter{table}{0}
 
@@ -208,7 +211,19 @@
 % Input Part B: Module 14 - Admin RBAC & User Management (M14.01 - M14.08)
 \input{sections/sec3_m14_admin_rbac_users.tex}
 
-% Input Part B: Module 15 - Admin Master Data Catalogs (M15.01 - M15.03)
+% Input Part B: Module 15 - Admin Master Data Catalogs (M15.01 - M15.04)
 \input{sections/sec3_m15_admin_catalogs.tex}
+
+% Input Part B: Module 14 - Forum Management (UC-14.01 - UC-14.17)
+\input{sections/sec3_m14_forum_management.tex}
+
+% Input Part B: Module 27 - Conversation Management (UC-27.01 - UC-27.08)
+\input{sections/sec3_m27_conversation_management.tex}
+
+% Input Part B: Module 34-36 - Moderation, ID Verification, Forum Trash
+\input{sections/sec3_m34_moderation_management.tex}
+
+% Input Part B: Module 44-45 - AI Features
+\input{sections/sec3_m44_ai_features.tex}
 
 \end{document}
