@@ -19,6 +19,16 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@repo/ui/components/shadcn/sheet";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@repo/ui/components/shadcn/alert-dialog";
 import { Button } from "@repo/ui/components/shadcn/button";
 import { toastError, toastSuccess } from "@repo/ui/components/shadcn/toast";
 import { paymentApiRequest } from "@/apiRequests/payment";
@@ -47,6 +57,7 @@ export function FundMilestoneDialog({
   const { can } = useActionPermission();
   const [isProcessing, setIsProcessing] = useState(false);
   const [selectedPmId, setSelectedPmId] = useState<string>("");
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false);
 
   const canFundSavedCard = can("POST", "/api/payments/contracts/:contractId/milestones/:milestoneId/fund/saved-card");
   const canFundCheckout = can("POST", "/api/payments/contracts/:contractId/milestones/:milestoneId/fund/checkout-session");
@@ -63,6 +74,9 @@ export function FundMilestoneDialog({
 
   const savedCards = savedCardsData?.paymentMethods || [];
   const defaultCard = savedCards.find((card) => card.isDefault) || savedCards[0];
+  const activeCard =
+    savedCards.find((card) => card.id === (selectedPmId || defaultCard?.id)) ||
+    defaultCard;
 
   if (!milestone) return null;
 
@@ -264,7 +278,7 @@ export function FundMilestoneDialog({
                 <Button
                   type="button"
                   disabled={isProcessing}
-                  onClick={() => void handlePaySavedCard()}
+                  onClick={() => setIsConfirmOpen(true)}
                   className="w-full h-9 rounded-lg bg-[#0069D3] hover:bg-[#0055b3] text-white text-xs font-semibold shadow-xs cursor-pointer"
                 >
                   {isProcessing ? (
@@ -320,6 +334,40 @@ export function FundMilestoneDialog({
           </Button>
         </SheetFooter>
       </SheetContent>
+
+      <AlertDialog open={isConfirmOpen} onOpenChange={setIsConfirmOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{t("confirmTitle")}</AlertDialogTitle>
+            <AlertDialogDescription>
+              {t("confirmDesc", {
+                amount: `$${milestoneAmount.toLocaleString("en-US", { minimumFractionDigits: 2 })}`,
+                brand: (activeCard?.brand || "CARD").toUpperCase(),
+                last4: activeCard?.last4 || "****",
+              })}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={isProcessing}>
+              {tCommon("cancel")}
+            </AlertDialogCancel>
+            <AlertDialogAction
+              disabled={isProcessing}
+              onClick={(e) => {
+                e.preventDefault();
+                setIsConfirmOpen(false);
+                void handlePaySavedCard(activeCard?.id);
+              }}
+              className="bg-[#0069D3] hover:bg-[#0055b3] text-white"
+            >
+              {isProcessing ? (
+                <Loader2 className="mr-2 size-4 animate-spin" />
+              ) : null}
+              {t("confirmButton")}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </Sheet>
   );
 }

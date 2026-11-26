@@ -1,11 +1,16 @@
 import {
   CreateDisputeBodySchema,
   DisputeDetailSchema,
+  DisputeFileSchema,
   DisputeListResponseSchema,
   GetDisputeListQuerySchema,
   RespondDisputeBodySchema,
 } from '@shared/types';
 import { createZodDto } from 'nestjs-zod';
+
+export class UploadDisputeFileResponseDTO extends createZodDto(
+  DisputeFileSchema,
+) {}
 
 export class CreateDisputeBodyDTO extends createZodDto(
   CreateDisputeBodySchema,

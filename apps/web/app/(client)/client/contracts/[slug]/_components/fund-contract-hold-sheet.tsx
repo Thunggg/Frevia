@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
+import { useQuery } from "@tanstack/react-query";
 import {
   Sheet,
   SheetContent,
@@ -10,10 +11,21 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@repo/ui/components/shadcn/sheet";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@repo/ui/components/shadcn/alert-dialog";
 import { Button } from "@repo/ui/components/shadcn/button";
 import { Checkbox } from "@repo/ui/components/shadcn/checkbox";
-import { toastError } from "@repo/ui/components/shadcn/toast";
-import { CheckCircle2, ExternalLink, Loader2, ShieldCheck } from "@/components/icons";
+import { toastError, toastSuccess } from "@repo/ui/components/shadcn/toast";
+import { CheckCircle2, CreditCard, ExternalLink, Loader2, ShieldCheck } from "@/components/icons";
+import { Zap } from "lucide-react";
 import { useActionPermission } from "@/hooks/use-action-permission";
 import { paymentApiRequest } from "@/apiRequests/payment";
 import { ApiFail } from "@/lib/http";
@@ -24,7 +36,7 @@ interface FundContractHoldSheetProps {
   onOpenChange: (open: boolean) => void;
   contract: ContractDetailType;
   initialMilestoneId?: number;
-  onSuccess: () => void;
+  onSuccess?: () => void;
 }
 
 export function FundContractHoldSheet({
@@ -32,6 +44,7 @@ export function FundContractHoldSheet({
   onOpenChange,
   contract,
   initialMilestoneId,
+  onSuccess,
 }: FundContractHoldSheetProps) {
   const t = useTranslations("contractWorkspace.fundHold");
   const tCommon = useTranslations("common");
@@ -51,6 +64,24 @@ export function FundContractHoldSheet({
 
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
   const [isRedirecting, setIsRedirecting] = useState(false);
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+  const [selectedPmId, setSelectedPmId] = useState<string>("");
+
+  const { data: savedCardsData } = useQuery({
+    queryKey: ["saved-payment-methods"],
+    queryFn: async () => {
+      const res = await paymentApiRequest.getSavedPaymentMethods();
+      return res.data;
+    },
+    enabled: open,
+  });
+
+  const savedCards = savedCardsData?.paymentMethods || [];
+  const defaultCard =
+    savedCards.find((card) => card.isDefault) || savedCards[0];
+  const activeCard =
+    savedCards.find((card) => card.id === (selectedPmId || defaultCard?.id)) ||
+    defaultCard;
 
   useEffect(() => {
     if (!open) return;
@@ -150,6 +181,56 @@ export function FundContractHoldSheet({
         errorMessage = error.message;
       }
       toastError({ message: errorMessage });
+      setIsRedirecting(false);
+    }
+  };
+
+  const handleAuthorizeWithSavedCard = async (pmId?: string) => {
+    if (selectedIds.length === 0) {
+      toastError({ message: t("selectAtLeastOne") });
+      return;
+    }
+    const cardId = pmId || activeCard?.id;
+    if (!cardId) {
+      void handleAuthorizeHold();
+      return;
+    }
+
+    setIsRedirecting(true);
+    try {
+      const returnUrl = window.location.href;
+      const response = await paymentApiRequest.createContractHoldIntent(
+        contract.id,
+        selectedIds,
+        cardId,
+        returnUrl,
+      );
+      const data = response.data;
+      if (data?.checkoutUrl) {
+        window.location.href = data.checkoutUrl;
+        return;
+      }
+      toastSuccess({
+        message: t("holdAuthorizedToast"),
+      });
+      onSuccess?.();
+      onOpenChange(false);
+    } catch (error) {
+      let errorMessage = t("initFailed");
+      if (error instanceof ApiFail) {
+        const resp = error.response as unknown as Record<string, unknown>;
+        if (Array.isArray(resp?.message) && resp.message[0]?.message) {
+          errorMessage = String(resp.message[0].message);
+        } else if (typeof resp?.message === "string") {
+          errorMessage = resp.message;
+        }
+      } else if (error instanceof Error) {
+        errorMessage = error.message;
+      }
+      toastError({ message: errorMessage });
+      // Fallback to Checkout
+      await handleAuthorizeHold();
+    } finally {
       setIsRedirecting(false);
     }
   };
@@ -273,9 +354,54 @@ export function FundContractHoldSheet({
               <p>{t("stripeExplainBody")}</p>
             </div>
           </div>
+
+          {/* Saved Card Option if available */}
+          {savedCards.length > 0 && (
+            <div className="space-y-2 pt-2">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground block">
+                Saved Payment Method
+              </span>
+              <div className="flex flex-col gap-2">
+                {savedCards.map((card) => {
+                  const isSelected =
+                    (selectedPmId || defaultCard?.id) === card.id;
+                  return (
+                    <div
+                      key={card.id}
+                      onClick={() => setSelectedPmId(card.id)}
+                      className={`flex items-center justify-between rounded-xl border p-3 cursor-pointer text-xs transition-colors ${
+                        isSelected
+                          ? "border-[#0069D3] bg-[#0069D3]/5"
+                          : "border-border hover:border-border/80"
+                      }`}
+                    >
+                      <div className="flex items-center gap-2.5">
+                        <CreditCard className="size-4 text-[#0069D3]" />
+                        <span className="font-medium text-foreground uppercase">
+                          {card.brand} •••• {card.last4}
+                        </span>
+                        <span className="text-[11px] text-muted-foreground font-mono">
+                          {String(card.expMonth).padStart(2, "0")}/
+                          {card.expYear}
+                        </span>
+                        {card.isDefault && (
+                          <span className="rounded-full bg-[#0069D3]/10 px-2 py-0.5 text-[10px] font-semibold text-[#0069D3]">
+                            Default
+                          </span>
+                        )}
+                      </div>
+                      <span className="text-[11px] font-semibold text-[#0069D3]">
+                        {isSelected ? "Selected" : "Select"}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
         </div>
 
-        <SheetFooter className="pt-6 border-t border-border/60 gap-2 sm:justify-end">
+        <SheetFooter className="pt-6 border-t border-border/60 gap-2 sm:justify-end flex-wrap">
           <Button
             type="button"
             variant="outline"
@@ -286,22 +412,90 @@ export function FundContractHoldSheet({
             {tCommon("cancel")}
           </Button>
           {canCreateHoldIntent && (
-            <Button
-              type="button"
-              onClick={handleAuthorizeHold}
-              disabled={isRedirecting || selectedIds.length === 0}
-              className="rounded-full bg-[#0069D3] hover:bg-[#0055b3] text-white text-xs px-5 gap-1.5 cursor-pointer"
-            >
-              {isRedirecting ? (
-                <Loader2 className="size-3.5 animate-spin" />
+            <>
+              {savedCards.length > 0 ? (
+                <>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={handleAuthorizeHold}
+                    disabled={isRedirecting || selectedIds.length === 0}
+                    className="rounded-full text-xs px-4 gap-1.5 cursor-pointer"
+                  >
+                    <ExternalLink className="size-3.5" />
+                    Stripe Checkout
+                  </Button>
+                  <Button
+                    type="button"
+                    onClick={() => setIsConfirmOpen(true)}
+                    disabled={isRedirecting || selectedIds.length === 0}
+                    className="rounded-full bg-[#0069D3] hover:bg-[#0055b3] text-white text-xs px-5 gap-1.5 cursor-pointer shadow-xs"
+                  >
+                    {isRedirecting ? (
+                      <Loader2 className="size-3.5 animate-spin" />
+                    ) : (
+                      <Zap className="size-3.5 text-amber-300" />
+                    )}
+                    {t("payWithSavedCard", {
+                      amount: formatMoney(totalHoldAmount),
+                    })}
+                  </Button>
+                </>
               ) : (
-                <ExternalLink className="size-3.5" />
+                <Button
+                  type="button"
+                  onClick={handleAuthorizeHold}
+                  disabled={isRedirecting || selectedIds.length === 0}
+                  className="rounded-full bg-[#0069D3] hover:bg-[#0055b3] text-white text-xs px-5 gap-1.5 cursor-pointer"
+                >
+                  {isRedirecting ? (
+                    <Loader2 className="size-3.5 animate-spin" />
+                  ) : (
+                    <ExternalLink className="size-3.5" />
+                  )}
+                  {t("proceedCheckout", {
+                    amount: formatMoney(totalHoldAmount),
+                  })}
+                </Button>
               )}
-              {t("proceedCheckout", { amount: formatMoney(totalHoldAmount) })}
-            </Button>
+            </>
           )}
         </SheetFooter>
       </SheetContent>
+
+      <AlertDialog open={isConfirmOpen} onOpenChange={setIsConfirmOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{t("confirmHoldTitle")}</AlertDialogTitle>
+            <AlertDialogDescription>
+              {t("confirmHoldDesc", {
+                amount: formatMoney(totalHoldAmount),
+                brand: (activeCard?.brand || "CARD").toUpperCase(),
+                last4: activeCard?.last4 || "****",
+              })}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={isRedirecting}>
+              {tCommon("cancel")}
+            </AlertDialogCancel>
+            <AlertDialogAction
+              disabled={isRedirecting}
+              onClick={(e) => {
+                e.preventDefault();
+                setIsConfirmOpen(false);
+                void handleAuthorizeWithSavedCard(activeCard?.id);
+              }}
+              className="bg-[#0069D3] hover:bg-[#0055b3] text-white"
+            >
+              {isRedirecting ? (
+                <Loader2 className="mr-2 size-4 animate-spin" />
+              ) : null}
+              {t("confirmHoldButton")}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </Sheet>
   );
 }

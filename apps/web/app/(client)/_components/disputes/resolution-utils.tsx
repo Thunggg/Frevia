@@ -136,8 +136,9 @@ export function DisputeStatusBadge({
 
   if ((status === "OPEN" || status === "WAITING_RESPONSE") && declinedAt) {
     return (
-      <span className="inline-flex items-center rounded-full bg-rose-50 dark:bg-rose-950/50 px-2.5 py-0.5 text-[11px] font-medium text-rose-700 dark:text-rose-300">
-        {t("DECLINED_ESCALATE")}
+      <span className="inline-flex items-center gap-1.5 text-xs font-medium text-rose-600 dark:text-rose-400">
+        <span className="size-1.5 rounded-full bg-rose-500 shrink-0" />
+        <span>{t("DECLINED_ESCALATE")}</span>
       </span>
     );
   }
@@ -146,44 +147,51 @@ export function DisputeStatusBadge({
     case "OPEN":
     case "WAITING_RESPONSE":
       return (
-        <span className="inline-flex items-center rounded-full bg-amber-50 dark:bg-amber-950/50 px-2.5 py-0.5 text-[11px] font-medium text-amber-700 dark:text-amber-300">
-          {t("WAITING_RESPONSE")}
+        <span className="inline-flex items-center gap-1.5 text-xs font-medium text-amber-600 dark:text-amber-400">
+          <span className="size-1.5 rounded-full bg-amber-500 shrink-0" />
+          <span>{t("WAITING_RESPONSE")}</span>
         </span>
       );
     case "UNDER_REVIEW":
       return (
-        <span className="inline-flex items-center rounded-full bg-sky-50 dark:bg-sky-950/50 px-2.5 py-0.5 text-[11px] font-medium text-[#0069D3] dark:text-sky-300">
-          {t("UNDER_REVIEW")}
+        <span className="inline-flex items-center gap-1.5 text-xs font-medium text-sky-600 dark:text-sky-400">
+          <span className="size-1.5 rounded-full bg-sky-500 shrink-0" />
+          <span>{t("UNDER_REVIEW")}</span>
         </span>
       );
     case "DECISION_MADE":
       return (
-        <span className="inline-flex items-center rounded-full bg-indigo-50 dark:bg-indigo-950/50 px-2.5 py-0.5 text-[11px] font-medium text-indigo-700 dark:text-indigo-300">
-          {t("DECISION_MADE")}
+        <span className="inline-flex items-center gap-1.5 text-xs font-medium text-indigo-600 dark:text-indigo-400">
+          <span className="size-1.5 rounded-full bg-indigo-500 shrink-0" />
+          <span>{t("DECISION_MADE")}</span>
         </span>
       );
     case "REVIEW_REQUESTED":
       return (
-        <span className="inline-flex items-center rounded-full bg-orange-50 dark:bg-orange-950/50 px-2.5 py-0.5 text-[11px] font-medium text-orange-700 dark:text-orange-300">
-          {t("REVIEW_REQUESTED")}
+        <span className="inline-flex items-center gap-1.5 text-xs font-medium text-orange-600 dark:text-orange-400">
+          <span className="size-1.5 rounded-full bg-orange-500 shrink-0" />
+          <span>{t("REVIEW_REQUESTED")}</span>
         </span>
       );
     case "FINALIZED":
       return (
-        <span className="inline-flex items-center rounded-full bg-emerald-50 dark:bg-emerald-950/50 px-2.5 py-0.5 text-[11px] font-medium text-emerald-700 dark:text-emerald-300">
-          {t("FINALIZED")}
+        <span className="inline-flex items-center gap-1.5 text-xs font-medium text-emerald-600 dark:text-emerald-400">
+          <span className="size-1.5 rounded-full bg-emerald-500 shrink-0" />
+          <span>{t("FINALIZED")}</span>
         </span>
       );
     case "CANCELLED":
       return (
-        <span className="inline-flex items-center rounded-full bg-zinc-100 dark:bg-zinc-800 px-2.5 py-0.5 text-[11px] font-medium text-zinc-600 dark:text-zinc-300">
-          {t("CANCELLED")}
+        <span className="inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
+          <span className="size-1.5 rounded-full bg-muted-foreground/60 shrink-0" />
+          <span>{t("CANCELLED")}</span>
         </span>
       );
     default:
       return (
-        <span className="inline-flex items-center rounded-full bg-zinc-100 dark:bg-zinc-800 px-2.5 py-0.5 text-[11px] font-medium text-zinc-600 dark:text-zinc-300">
-          {status}
+        <span className="inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
+          <span className="size-1.5 rounded-full bg-muted-foreground/60 shrink-0" />
+          <span>{status}</span>
         </span>
       );
   }

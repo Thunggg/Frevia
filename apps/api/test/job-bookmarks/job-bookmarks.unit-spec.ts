@@ -270,9 +270,9 @@ describe('Job Bookmarks (UF-97 to UF-99)', () => {
       expect(parsed.success).toBe(false);
     });
 
-    // Schema từ chối khi số lượng mỗi trang vượt quá 20.
-    it('rejects limit greater than 20 in query schema validation', () => {
-      const parsed = ViewBookmarkedJobFilterSchema.safeParse({ limit: 21 });
+    // Schema từ chối khi số lượng mỗi trang vượt quá 100.
+    it('rejects limit greater than 100 in query schema validation', () => {
+      const parsed = ViewBookmarkedJobFilterSchema.safeParse({ limit: 101 });
 
       expect(parsed.success).toBe(false);
     });

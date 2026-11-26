@@ -1013,6 +1013,49 @@ export class PaymentService {
       clientAmount,
     } = params;
 
+    // 1. Process Client refund first if any
+    if (clientAmount > 0) {
+      const deposits =
+        await this.paymentRepo.findContractEscrowDeposits(contractId);
+      const targetDeposit =
+        deposits.find((d) => {
+          if (!d.stripePaymentIntentId) return false;
+          const meta = (d.metadata as { milestoneIds?: unknown } | null) ?? {};
+          if (Array.isArray(meta.milestoneIds)) {
+            return meta.milestoneIds.map(Number).includes(milestoneId);
+          }
+          return d.milestoneId === milestoneId;
+        }) ?? deposits[0];
+
+      if (targetDeposit?.stripePaymentIntentId) {
+        const refund = await this.stripeService.createRefund({
+          paymentIntentId: targetDeposit.stripePaymentIntentId,
+          amountInCents: Math.round(clientAmount * 100),
+          idempotencyKey: `dispute-refund-${disputeId}`,
+          metadata: {
+            type: TransactionType.REFUND,
+            contractId: String(contractId),
+            disputeId: String(disputeId),
+            milestoneId: String(milestoneId),
+            reason: 'dispute_settlement',
+          },
+        });
+
+        await this.paymentRepo.createTransaction({
+          userId: clientId,
+          contractId,
+          milestoneId,
+          disputeId,
+          amount: clientAmount,
+          currency: 'usd',
+          type: TransactionType.REFUND,
+          status: TransactionStatus.SUCCEEDED,
+          stripeRefundId: refund.id,
+        });
+      }
+    }
+
+    // 2. Process Freelancer payout
     if (freelancerAmount > 0) {
       const freelancer = await this.paymentRepo.findUserById(freelancerId);
       if (!freelancer?.stripeAccountId) {
@@ -1072,47 +1115,6 @@ export class PaymentService {
             transferId: transfer.id,
             disputeId,
           } as Prisma.InputJsonValue,
-        });
-      }
-    }
-
-    if (clientAmount > 0) {
-      const deposits =
-        await this.paymentRepo.findContractEscrowDeposits(contractId);
-      const targetDeposit =
-        deposits.find((d) => {
-          if (!d.stripePaymentIntentId) return false;
-          const meta = (d.metadata as { milestoneIds?: unknown } | null) ?? {};
-          if (Array.isArray(meta.milestoneIds)) {
-            return meta.milestoneIds.map(Number).includes(milestoneId);
-          }
-          return d.milestoneId === milestoneId;
-        }) ?? deposits[0];
-
-      if (targetDeposit?.stripePaymentIntentId) {
-        const refund = await this.stripeService.createRefund({
-          paymentIntentId: targetDeposit.stripePaymentIntentId,
-          amountInCents: Math.round(clientAmount * 100),
-          idempotencyKey: `dispute-refund-${disputeId}`,
-          metadata: {
-            type: TransactionType.REFUND,
-            contractId: String(contractId),
-            disputeId: String(disputeId),
-            milestoneId: String(milestoneId),
-            reason: 'dispute_settlement',
-          },
-        });
-
-        await this.paymentRepo.createTransaction({
-          userId: clientId,
-          contractId,
-          milestoneId,
-          disputeId,
-          amount: clientAmount,
-          currency: 'usd',
-          type: TransactionType.REFUND,
-          status: TransactionStatus.SUCCEEDED,
-          stripeRefundId: refund.id,
         });
       }
     }
@@ -1637,6 +1639,41 @@ export class PaymentService {
       typeof session.payment_intent === 'string'
         ? session.payment_intent
         : session.payment_intent?.id;
+
+    const customerId =
+      typeof session.customer === 'string'
+        ? session.customer
+        : session.customer?.id;
+
+    if (customerId && paymentIntentId) {
+      try {
+        const pi =
+          await this.stripeService.retrievePaymentIntent(paymentIntentId);
+        const pmId =
+          typeof pi.payment_method === 'string'
+            ? pi.payment_method
+            : pi.payment_method?.id;
+        if (pmId) {
+          const customer = await this.stripeService.getCustomer(customerId);
+          if (customer && !('deleted' in customer && customer.deleted)) {
+            const defaultPm = customer.invoice_settings?.default_payment_method;
+            if (!defaultPm) {
+              await this.stripeService.setDefaultPaymentMethod(
+                customerId,
+                pmId,
+              );
+              this.logger.log(
+                `Automatically set default payment method ${pmId} for customer ${customerId}`,
+              );
+            }
+          }
+        }
+      } catch (err) {
+        this.logger.warn(
+          `Failed to auto-set default payment method for session ${session.id}: ${err}`,
+        );
+      }
+    }
 
     // Với CONTRACT_HOLD (manual capture): KHÔNG chuyển sang SUCCEEDED trước khi capture,
     // nếu không bước captureContractHold sẽ bỏ qua tách phí nền tảng 3%.

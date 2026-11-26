@@ -37,8 +37,6 @@ describe('Payment Management (UF-153 to UF-165)', () => {
     findMilestoneById: jest.fn(),
     updateMilestonePaymentStatus: jest.fn(),
     findDisputeById: jest.fn(),
-    findDisputeFee: jest.fn(),
-    updateDisputeFeeStatus: jest.fn(),
     updateDisputeStatus: jest.fn(),
     createTransaction: jest.fn(),
     findTransactionById: jest.fn(),

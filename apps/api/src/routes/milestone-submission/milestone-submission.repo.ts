@@ -31,6 +31,7 @@ export class MilestoneSubmissionRepository {
         clientId: true,
         freelancerId: true,
         status: true,
+        expiresAt: true,
       },
     });
   }

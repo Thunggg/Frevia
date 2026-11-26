@@ -402,29 +402,31 @@ export function ContractDetail({
   return (
     <div className="space-y-6 font-sans">
       {/* ── Breadcrumb & Top Bar ── */}
-      <div className="flex items-center gap-2 border-b border-border/60 pb-3 text-xs">
-        <Link
-          href={`${basePath}/contracts`}
-          className="inline-flex items-center gap-1 font-medium text-muted-foreground hover:text-foreground transition-colors"
-        >
-          <ChevronLeft className="size-4" />
-          <span>{tWorkspace("breadcrumbContracts")}</span>
-        </Link>
-        <span className="text-muted-foreground/60">/</span>
-        <span className="font-semibold text-foreground">
-          {contract.slug || `#CON-${contract.id}`}
-        </span>
-        {canViewMilestones && (
-          <>
-            <span className="text-muted-foreground/60">/</span>
-            <Link
-              href={`${basePath}/contracts/${encodeURIComponent(contract.slug || String(contract.id))}/milestones`}
-              className="font-medium text-muted-foreground hover:text-[#0069D3] transition-colors"
-            >
-              {tWorkspace("breadcrumbMilestone")}
-            </Link>
-          </>
-        )}
+      <div className="flex items-center justify-between border-b border-border/60 pb-3 text-xs">
+        <div className="flex items-center gap-2">
+          <Link
+            href={`${basePath}/contracts`}
+            className="inline-flex items-center gap-1 font-medium text-muted-foreground hover:text-foreground transition-colors"
+          >
+            <ChevronLeft className="size-4" />
+            <span>{tWorkspace("breadcrumbContracts")}</span>
+          </Link>
+          <span className="text-muted-foreground/60">/</span>
+          <span className="font-semibold text-foreground">
+            {contract.slug || `#CON-${contract.id}`}
+          </span>
+          {canViewMilestones && (
+            <>
+              <span className="text-muted-foreground/60">/</span>
+              <Link
+                href={`${basePath}/contracts/${encodeURIComponent(contract.slug || String(contract.id))}/milestones`}
+                className="font-medium text-muted-foreground hover:text-[#0069D3] transition-colors"
+              >
+                {tWorkspace("breadcrumbMilestone")}
+              </Link>
+            </>
+          )}
+        </div>
       </div>
 
       {/* ── Main 2-Column Grid ── */}
@@ -480,6 +482,8 @@ export function ContractDetail({
               contractId={contract.id}
               sharedFiles={sharedFilesList}
               isFreelancer={isFreelancer}
+              contractStatus={contract.status}
+              contractExpiresAt={contract.expiresAt}
             />
           )}
         </div>
@@ -507,8 +511,8 @@ export function ContractDetail({
           milestoneToEdit={milestoneToEdit}
           isAmountLocked={Boolean(
             milestoneToEdit &&
-              contract.status === "PENDING_SIGN" &&
-              contract.holdMilestoneIds?.includes(milestoneToEdit.id),
+            contract.status === "PENDING_SIGN" &&
+            contract.holdMilestoneIds?.includes(milestoneToEdit.id),
           )}
         />
       )}

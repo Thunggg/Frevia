@@ -126,6 +126,9 @@ async function contractServerFetch<T>(
 
     const responseData = (await response.json()) as ApiResponse<T>;
     if (!response.ok || !responseData.success) {
+      if (response.status === 404) {
+        return null;
+      }
       console.error(
         `Contract API request failed: ${url} (status: ${response.status})`,
         JSON.stringify(responseData),
