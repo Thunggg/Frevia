@@ -3,9 +3,9 @@
 % Front matter: Definition and Acronyms
 % ========================================================
 \part*{Definition and Acronyms}
-\addcontentsline{toc}{part}{Definition and Acronyms}
 
 \begingroup
+\renewcommand{\theHtable}{acronym.\arabic{table}}
 \small
 \renewcommand{\arraystretch}{1.22}
 \setlength{\tabcolsep}{6pt}
@@ -59,6 +59,7 @@ WebSocket & Full-Duplex Bidirectional Communication Protocol \\ \hline
 \end{longtable}
 \endgroup
 
+\renewcommand{\theHtable}{\arabic{table}}
 \setcounter{table}{0}
 
 \newpage
