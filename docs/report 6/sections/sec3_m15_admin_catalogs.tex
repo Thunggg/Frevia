@@ -13,8 +13,8 @@ The Administrator Master Data Catalog Management module empowers system administ
 
 \begin{itemize}[leftmargin=1.5em,itemsep=2pt]
   \item \textbf{Screen Name \& Route Path:} Skills Management Console -- \texttt{/admin/skills}.
-  \item \textbf{Target Actor:} Administrator.
-  \item \textbf{Preconditions:} Administrator has permissions to access the \texttt{ADMIN\_SKILLS} module.
+  \item \textbf{Who Can Use This:} Administrator.
+  \item \Needspace{6\baselineskip}\textbf{Before You Begin:} Administrator has permissions to access the \texttt{ADMIN\_SKILLS} module.
 \end{itemize}
 
 \begin{figure}[H]
@@ -39,8 +39,8 @@ The Administrator Master Data Catalog Management module empowers system administ
 
 \paragraph{Expected Output \& Exception Handling:}
 \begin{itemize}[leftmargin=1.5em,itemsep=2pt]
-  \item \textbf{Success Scenario:} Newly added or updated skills become available immediately in the autocomplete suggestions for client job postings and freelancer profiles. Soft deletion sets \texttt{deletedAt = NOW()} without breaking existing foreign key associations.
-  \item \textbf{Exception Scenarios:} If a user attempts to create a skill with a duplicate Name or Slug, the server rejects the request with an explicit uniqueness validation error.
+  \item \textbf{What Happens Next:} Newly added or updated skills become available immediately in the autocomplete suggestions for client job postings and freelancer profiles. Soft deletion sets \texttt{deletedAt = NOW()} without breaking existing foreign key associations.
+  \item \textbf{Troubleshooting \& Common Messages:} If a user attempts to create a skill with a duplicate Name or Slug, the server rejects the request with an explicit uniqueness validation error.
 \end{itemize}
 
 % -----------------------------------------------------------------------------
@@ -49,8 +49,8 @@ The Administrator Master Data Catalog Management module empowers system administ
 
 \begin{itemize}[leftmargin=1.5em,itemsep=2pt]
   \item \textbf{Screen Name \& Route Path:} Job Category Management Console -- \texttt{/admin/job-categories}.
-  \item \textbf{Target Actor:} Administrator.
-  \item \textbf{Preconditions:} Administrator has permissions to access \texttt{ADMIN\_JOB\_CATEGORIES}.
+  \item \textbf{Who Can Use This:} Administrator.
+  \item \Needspace{6\baselineskip}\textbf{Before You Begin:} Administrator has permissions to access \texttt{ADMIN\_JOB\_CATEGORIES}.
 \end{itemize}
 
 \begin{figure}[H]
@@ -70,7 +70,7 @@ The Administrator Master Data Catalog Management module empowers system administ
 
 \paragraph{Expected Output \& Exception Handling:}
 \begin{itemize}[leftmargin=1.5em,itemsep=2pt]
-  \item \textbf{Success Scenario:} Updated job categories immediately update the marketplace search facets and job creation forms.
+  \item \textbf{What Happens Next:} Updated job categories immediately update the marketplace search facets and job creation forms.
 \end{itemize}
 
 % -----------------------------------------------------------------------------
@@ -79,8 +79,8 @@ The Administrator Master Data Catalog Management module empowers system administ
 
 \begin{itemize}[leftmargin=1.5em,itemsep=2pt]
   \item \textbf{Screen Name \& Route Path:} Forum Category Management Console -- \texttt{/admin/categories}.
-  \item \textbf{Target Actor:} Administrator.
-  \item \textbf{Preconditions:} Administrator has permissions to access \texttt{ADMIN\_FORUM\_CATEGORIES}.
+  \item \textbf{Who Can Use This:} Administrator.
+  \item \Needspace{6\baselineskip}\textbf{Before You Begin:} Administrator has permissions to access \texttt{ADMIN\_FORUM\_CATEGORIES}.
 \end{itemize}
 
 \begin{figure}[H]
@@ -100,5 +100,5 @@ The Administrator Master Data Catalog Management module empowers system administ
 
 \paragraph{Expected Output \& Exception Handling:}
 \begin{itemize}[leftmargin=1.5em,itemsep=2pt]
-  \item \textbf{Success Scenario:} Community discussion boards on \texttt{/forum} update in real time based on active category configurations.
+  \item \textbf{What Happens Next:} Community discussion boards on \texttt{/forum} update in real time based on active category configurations.
 \end{itemize}

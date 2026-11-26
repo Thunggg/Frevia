@@ -13,8 +13,8 @@ The Administrator System, RBAC, and User Management module empowers system gover
 
 \begin{itemize}[leftmargin=1.5em,itemsep=2pt]
   \item \textbf{Screen Name \& Route Path:} Administrator Dashboard -- \texttt{/admin}.
-  \item \textbf{Target Actor:} Administrator.
-  \item \textbf{Preconditions:} Authenticated user holds the \texttt{ADMIN} role in good standing.
+  \item \textbf{Who Can Use This:} Administrator.
+  \item \Needspace{6\baselineskip}\textbf{Before You Begin:} Authenticated user holds the \texttt{ADMIN} role in good standing.
 \end{itemize}
 
 \begin{figure}[H]
@@ -33,8 +33,8 @@ The Administrator System, RBAC, and User Management module empowers system gover
 
 \paragraph{Expected Output \& Exception Handling:}
 \begin{itemize}[leftmargin=1.5em,itemsep=2pt]
-  \item \textbf{Success Scenario:} All analytics synchronize dynamically with the underlying database.
-  \item {\sloppy \textbf{Exception Scenarios:} If an unprivileged user navigates to \texttt{/admin}, the guard redirects to \texttt{/access-\allowbreak{}denied?requiredRole=admin}. Conversely, \texttt{ADMIN}, \texttt{EXPERT}, and custom roles cannot open the Marketplace Homepage (\texttt{/}) or Client/Freelancer routes (\texttt{/client/*}, \texttt{/freelancer/*}, \texttt{/notifications}, \texttt{/\allowbreak{}conversations}); they can still browse public pages (\texttt{/forum}, \texttt{/profiles/\allowbreak{}[id]}, \texttt{/clients/\allowbreak{}[id]}) with a streamlined navigation header linking back to the Admin Portal.\par}
+  \item \textbf{What Happens Next:} All analytics synchronize dynamically with the underlying database.
+  \item {\sloppy \textbf{Troubleshooting \& Common Messages:} If an unprivileged user navigates to \texttt{/admin}, the guard redirects to \texttt{/access-\allowbreak{}denied?requiredRole=admin}. Conversely, \texttt{ADMIN}, \texttt{EXPERT}, and custom roles cannot open the Marketplace Homepage (\texttt{/}) or Client/Freelancer routes (\texttt{/client/*}, \texttt{/freelancer/*}, \texttt{/notifications}, \texttt{/\allowbreak{}conversations}); they can still browse public pages (\texttt{/forum}, \texttt{/profiles/\allowbreak{}[id]}, \texttt{/clients/\allowbreak{}[id]}) with a streamlined navigation header linking back to the Admin Portal.\par}
 \end{itemize}
 
 % -----------------------------------------------------------------------------
@@ -43,8 +43,8 @@ The Administrator System, RBAC, and User Management module empowers system gover
 
 \begin{itemize}[leftmargin=1.5em,itemsep=2pt]
   \item \textbf{Screen Name \& Route Path:} Administrator Profile \& Privileges View -- \texttt{/admin/users/1}.
-  \item \textbf{Target Actor:} Administrator.
-  \item \textbf{Preconditions:} Administrator is signed in and authorized.
+  \item \textbf{Who Can Use This:} Administrator.
+  \item \Needspace{6\baselineskip}\textbf{Before You Begin:} Administrator is signed in and authorized.
 \end{itemize}
 
 \begin{figure}[H]
@@ -63,7 +63,7 @@ The Administrator System, RBAC, and User Management module empowers system gover
 
 \paragraph{Expected Output \& Exception Handling:}
 \begin{itemize}[leftmargin=1.5em,itemsep=2pt]
-  \item \textbf{Success Scenario:} Detailed administrative authority and system credentials are transparently presented for auditability.
+  \item \textbf{What Happens Next:} Detailed administrative authority and system credentials are transparently presented for auditability.
 \end{itemize}
 
 % -----------------------------------------------------------------------------
@@ -72,8 +72,8 @@ The Administrator System, RBAC, and User Management module empowers system gover
 
 \begin{itemize}[leftmargin=1.5em,itemsep=2pt]
   \item \textbf{Screen Name \& Route Path:} Roles Management Console -- \texttt{/admin/roles}.
-  \item \textbf{Target Actor:} Administrator.
-  \item \textbf{Preconditions:} Access to \texttt{ADMIN\_ROLES} module permissions.
+  \item \textbf{Who Can Use This:} Administrator.
+  \item \Needspace{6\baselineskip}\textbf{Before You Begin:} Access to \texttt{ADMIN\_ROLES} module permissions.
 \end{itemize}
 
 \begin{figure}[H]
@@ -98,8 +98,8 @@ The Administrator System, RBAC, and User Management module empowers system gover
 
 \paragraph{Expected Output \& Exception Handling:}
 \begin{itemize}[leftmargin=1.5em,itemsep=2pt]
-  \item \textbf{Success Scenario:} New roles are immediately available across the user management and permission assignment interfaces.
-  \item \textbf{Exception Scenarios:} The backend enforces a uniqueness constraint on role names and rejects attempts to delete default system roles.
+  \item \textbf{What Happens Next:} New roles are immediately available across the user management and permission assignment interfaces.
+  \item \textbf{Troubleshooting \& Common Messages:} The backend enforces a uniqueness constraint on role names and rejects attempts to delete default system roles.
 \end{itemize}
 
 % -----------------------------------------------------------------------------
@@ -108,8 +108,8 @@ The Administrator System, RBAC, and User Management module empowers system gover
 
 \begin{itemize}[leftmargin=1.5em,itemsep=2pt]
   \item \textbf{Screen Name \& Route Path:} Role Permission Assignment Matrix -- \texttt{/admin/assign-role}.
-  \item \textbf{Target Actor:} Administrator.
-  \item \textbf{Preconditions:} Administrator has permissions to assign RBAC rights.
+  \item \textbf{Who Can Use This:} Administrator.
+  \item \Needspace{6\baselineskip}\textbf{Before You Begin:} Administrator has permissions to assign RBAC rights.
 \end{itemize}
 
 \begin{figure}[H]
@@ -129,7 +129,7 @@ The Administrator System, RBAC, and User Management module empowers system gover
 
 \paragraph{Expected Output \& Exception Handling:}
 \begin{itemize}[leftmargin=1.5em,itemsep=2pt]
-  \item \textbf{Success Scenario:} The server updates the \texttt{RolePermission} junction table. NestJS guards evaluate these updated permissions on subsequent requests without requiring server reboots.
+  \item \textbf{What Happens Next:} The server updates the \texttt{RolePermission} junction table. NestJS guards evaluate these updated permissions on subsequent requests without requiring server reboots.
 \end{itemize}
 
 % -----------------------------------------------------------------------------
@@ -138,8 +138,8 @@ The Administrator System, RBAC, and User Management module empowers system gover
 
 \begin{itemize}[leftmargin=1.5em,itemsep=2pt]
   \item \textbf{Screen Name \& Route Path:} Permissions Catalog -- \texttt{/admin/permissions}.
-  \item \textbf{Target Actor:} Administrator.
-  \item \textbf{Preconditions:} Access to \texttt{ADMIN\_PERMISSIONS} module.
+  \item \textbf{Who Can Use This:} Administrator.
+  \item \Needspace{6\baselineskip}\textbf{Before You Begin:} Access to \texttt{ADMIN\_PERMISSIONS} module.
 \end{itemize}
 
 \begin{figure}[H]
@@ -159,7 +159,7 @@ The Administrator System, RBAC, and User Management module empowers system gover
 
 \paragraph{Expected Output \& Exception Handling:}
 \begin{itemize}[leftmargin=1.5em,itemsep=2pt]
-  \item \textbf{Success Scenario:} Instantaneous client-side and server-side filtering across the Admin Portal permission catalog (non-admin Marketplace and Homepage permissions are excluded and hardcoded by role).
+  \item \textbf{What Happens Next:} Instantaneous client-side and server-side filtering across the Admin Portal permission catalog (non-admin Marketplace and Homepage permissions are excluded and hardcoded by role).
 \end{itemize}
 
 % -----------------------------------------------------------------------------
@@ -168,8 +168,8 @@ The Administrator System, RBAC, and User Management module empowers system gover
 
 \begin{itemize}[leftmargin=1.5em,itemsep=2pt]
   \item \textbf{Screen Name \& Route Path:} User Management Console -- \texttt{/admin/users}.
-  \item \textbf{Target Actor:} Administrator.
-  \item \textbf{Preconditions:} Access to \texttt{ADMIN\_USERS} module.
+  \item \textbf{Who Can Use This:} Administrator.
+  \item \Needspace{6\baselineskip}\textbf{Before You Begin:} Access to \texttt{ADMIN\_USERS} module.
 \end{itemize}
 
 \begin{figure}[H]
@@ -193,7 +193,7 @@ The Administrator System, RBAC, and User Management module empowers system gover
 
 \paragraph{Expected Output \& Exception Handling:}
 \begin{itemize}[leftmargin=1.5em,itemsep=2pt]
-  \item \textbf{Success Scenario:} Administrators maintain full directory oversight and can provision verified staff accounts directly.
+  \item \textbf{What Happens Next:} Administrators maintain full directory oversight and can provision verified staff accounts directly.
 \end{itemize}
 
 % -----------------------------------------------------------------------------
@@ -202,8 +202,8 @@ The Administrator System, RBAC, and User Management module empowers system gover
 
 \begin{itemize}[leftmargin=1.5em,itemsep=2pt]
   \item \textbf{Screen Name \& Route Path:} Edit User Dialog -- \texttt{/admin/users}.
-  \item \textbf{Target Actor:} Administrator.
-  \item \textbf{Preconditions:} Target user account exists in the system.
+  \item \textbf{Who Can Use This:} Administrator.
+  \item \Needspace{6\baselineskip}\textbf{Before You Begin:} Target user account exists in the system.
 \end{itemize}
 
 \begin{figure}[H]
@@ -227,7 +227,7 @@ The Administrator System, RBAC, and User Management module empowers system gover
 
 \paragraph{Expected Output \& Exception Handling:}
 \begin{itemize}[leftmargin=1.5em,itemsep=2pt]
-  \item \textbf{Success Scenario:} Setting \texttt{isBanned = true} immediately invalidates all active sessions for that user. Subsequent sign-in attempts by that account will be blocked with an account suspension notification.
+  \item \textbf{What Happens Next:} Setting \texttt{isBanned = true} immediately invalidates all active sessions for that user. Subsequent sign-in attempts by that account will be blocked with an account suspension notification.
 \end{itemize}
 
 % -----------------------------------------------------------------------------
@@ -236,8 +236,8 @@ The Administrator System, RBAC, and User Management module empowers system gover
 
 \begin{itemize}[leftmargin=1.5em,itemsep=2pt]
   \item \textbf{Screen Name \& Route Path:} Multi-Profile Inspection View -- \texttt{/admin/users/[id]}.
-  \item \textbf{Target Actor:} Administrator.
-  \item \textbf{Preconditions:} User holds multi-role profile records (e.g., User \#2 holding Client and Freelancer identities).
+  \item \textbf{Who Can Use This:} Administrator.
+  \item \Needspace{6\baselineskip}\textbf{Before You Begin:} User holds multi-role profile records (e.g., User \#2 holding Client and Freelancer identities).
 \end{itemize}
 
 \begin{figure}[H]
@@ -257,5 +257,5 @@ The Administrator System, RBAC, and User Management module empowers system gover
 
 \paragraph{Expected Output \& Exception Handling:}
 \begin{itemize}[leftmargin=1.5em,itemsep=2pt]
-  \item \textbf{Success Scenario:} The administrator can seamlessly inspect and audit both sides of a dual-role user account without having to log in as that user.
+  \item \textbf{What Happens Next:} The administrator can seamlessly inspect and audit both sides of a dual-role user account without having to log in as that user.
 \end{itemize}

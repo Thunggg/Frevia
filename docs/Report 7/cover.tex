@@ -1,42 +1,62 @@
 % ========================================================
 % FILE: cover.tex
-% Cover page for Report 7 - Final Project Report
+% Cover page matching sample/Report7_Final Project Report.docx
 % ========================================================
 \begin{titlepage}
-    \centering
     \thispagestyle{empty}
     \hypersetup{pageanchor=false}
 
-    % Header text
-    {\fontsize{13}{16}\selectfont\bfseries MINISTRY OF EDUCATION AND TRAINING}\\[0.2cm]
-    {\fontsize{14}{17}\selectfont\bfseries FPT UNIVERSITY}\\[1.0cm]
+    % Top header row: FPT Logo on left, MINISTRY OF EDUCATION AND TRAINING on right
+    \noindent
+    \begin{tabularx}{\textwidth}{@{}L{4.5cm} R{10.5cm}@{}}
+        \raisebox{-0.4\height}{\includegraphics[width=4.2cm]{images/school_logo.png}} &
+        {\fontsize{14}{17}\selectfont\bfseries MINISTRY OF EDUCATION AND TRAINING} \\
+    \end{tabularx}
 
-    % Logo
-    \includegraphics[width=6.5cm]{images/school_logo.png}\\[1.2cm]
+    \vspace{1.6cm}
 
-    {\fontsize{24}{28}\selectfont\bfseries\textcolor{fptred}{CAPSTONE PROJECT DOCUMENT}}\\[0.4cm]
-    {\fontsize{18}{22}\selectfont\bfseries\textcolor{fptred}{FREVIA -- VERIFIED FREELANCE MARKETPLACE PLATFORM}}\\[0.3cm]
-    {\fontsize{14}{18}\selectfont\bfseries Report 7 -- Final Project Report}\\[1.2cm]
+    % Center Banner: FPT UNIVERSITY / Capstone Project Document / Project Name
+    \begin{center}
+        {\fontsize{32}{38}\selectfont\bfseries FPT UNIVERSITY}\\[0.5cm]
+        {\fontsize{34}{40}\selectfont Capstone Project Document}\\[0.25cm]
+        {\color{wordblue}\rule{\textwidth}{1.5pt}}\\[0.35cm]
+        {\fontsize{20}{25}\selectfont Frevia -- Verified Freelance Marketplace Platform}
+    \end{center}
 
-    \begin{minipage}{0.88\textwidth}
-        \fontsize{12}{15}\selectfont
-        \textbf{Group Name:} Frevia\\[0.3cm]
-        \textbf{Group Members:}\\[0.15cm]
-        \begin{tabular}{lllc}
-            Pham Kha Vy & (Leader) & RollNo: CE182254 & Student Code: CE182254 \\
-            Nguyen Tien Thuan & (Member) & RollNo: CE181024 & Student Code: CE181024 \\
-            Tran Phat Tai & (Member) & RollNo: CE181632 & Student Code: CE181632 \\
-            Vo Nhut Tin & (Member) & RollNo: CE180619 & Student Code: CE180619 \\
-            Nguyen Lu Nhat Huy & (Member) & RollNo: CE181196 & Student Code: CE181196 \\
-        \end{tabular}\\[0.4cm]
-        \textbf{Supervisor:} Cao Hong Nga\\[0.15cm]
-        \textbf{Ext Supervisor:} FPT Software Consulting Committee\\[0.15cm]
-        \textbf{Capstone Project Code:} SEP490\_04
-    \end{minipage}
+    \vspace{1.4cm}
+
+    % Project Information Table (bordered 2-column box)
+    \begin{center}
+    \renewcommand{\arraystretch}{1.45}
+    \setlength{\tabcolsep}{6pt}
+    \begin{tabular}{|R{4.2cm}|L{10.4cm}|}
+        \hline
+        \multicolumn{2}{|c|}{\fontsize{16}{20}\selectfont\bfseries Frevia} \\
+        \hline
+        {\fontsize{12}{15}\selectfont\bfseries Group Members} &
+        {\fontsize{11}{15}\selectfont
+        \begin{tabular}{@{}L{4.1cm} C{2.1cm} L{3.6cm}@{}}
+            Pham Kha Vy & CE182254 & VyPKCE182254 \\
+            Nguyen Tien Thuan & CE181024 & ThuanNTCE181024 \\
+            Tran Phat Tai & CE181632 & TaiTPCE181632 \\
+            Vo Nhut Tin & CE180619 & TinVNCE180619 \\
+            Nguyen Lu Nhat Huy & CE181196 & HuyNLNCE181196 \\
+        \end{tabular}} \\
+        \hline
+        {\fontsize{12}{15}\selectfont\bfseries Supervisor} & {\fontsize{12}{15}\selectfont Cao Hong Nga} \\
+        \hline
+        {\fontsize{12}{15}\selectfont\bfseries Ext Supervisor} & \\
+        \hline
+        {\fontsize{12}{15}\selectfont\bfseries Capstone Project code} & {\fontsize{12}{15}\selectfont SEP490\_04} \\
+        \hline
+    \end{tabular}
+    \end{center}
 
     \vfill
 
-    {\fontsize{13}{16}\selectfont -- Can Tho, November 2026 --}
+    \begin{center}
+        {\fontsize{14}{17}\selectfont - Can Tho, September, 2026 -}
+    \end{center}
 
     \hypersetup{pageanchor=true}
 \end{titlepage}

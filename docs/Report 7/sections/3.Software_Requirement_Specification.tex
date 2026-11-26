@@ -1,223 +1,286 @@
 % ========================================================
 % FILE: sections/3.Software_Requirement_Specification.tex
-% Part III: Software Requirement Specification
+% Part III: Software Requirement Specification (Verbatim from Report 3)
 % ========================================================
 \part{Software Requirement Specification}
 
+\Needspace{12\baselineskip}
 \section{Product Overview}
-The Frevia platform is an enterprise-grade digital freelance marketplace designed to eliminate transactional uncertainty between hiring clients and independent service providers. Operating as a Software-as-a-Service (SaaS) web application, Frevia provides an integrated workflow spanning candidate discovery, verified bidding, milestone-governed escrow settlement, bilateral digital contracting, and expert-mediated dispute arbitration.
 
-\subsection{User Classes and Characteristics}
-Frevia categorizes system users into five primary classes with distinct operational responsibilities:
-\begin{enumerate}[leftmargin=1.2cm]
-    \item \textbf{Guest (Unauthenticated User):} Browses public landing pages, explores active job listings, searches freelancer directory profiles, reads public forum discussions, and initiates registration.
-    \item \textbf{Client (Employer / Buyer):} Posts project job specifications, defines budget and milestone requirements, reviews freelancer proposals, conducts chat interviews, extends contract offers, deposits escrow funds into Stripe, reviews submitted deliverables, releases payments, and rates freelancers.
-    \item \textbf{Freelancer (Service Provider / Seller):} Submits identity documents for eKYC verification, creates dynamic skill portfolios, submits customized job proposals with milestone bids, signs contract agreements, submits work deliverables, receives escrow payouts into connected Stripe accounts, and files disputes if required.
-    \item \textbf{Expert (Independent Arbitrator):} Certified industry professional assigned to adjudicate technical, legal, or creative contract disputes. Reviews evidence logs, examines code/deliverable quality, and issues binding escrow split determinations.
-    \item \textbf{Administrator (Platform Operator):} Manages platform catalogs (skills, job categories, banners), monitors the eKYC identity verification queue, oversees system-wide dispute resolution, audits transaction logs, manages RBAC role permissions, and moderates forum content.
-\end{enumerate}
+The Frevia project is a comprehensive freelancing platform that enables clients, freelancers, and administrators to build trusted professional relationships and efficiently manage the entire project lifecycle. Designed to connect businesses with skilled talent worldwide, Frevia provides intelligent job matching, structured contract workflows, and secure payment solutions to facilitate successful collaborations.
 
-\subsection{Operating Environment and Constraints}
-\begin{itemize}[leftmargin=1.2cm]
-    \item \textbf{Client Environment:} Cross-platform desktop and mobile modern web browsers (Google Chrome 110+, Mozilla Firefox 115+, Apple Safari 16+, Microsoft Edge 110+).
-    \item \textbf{Server Hosting Environment:} Linux containerized Docker environment (Debian/Ubuntu LTS), Node.js runtime v20.x, Python 3.11 for AI microservices, PostgreSQL 16 relational database, and Redis 7 in-memory cache.
-    \item \textbf{Regulatory Constraints:} Compliance with Vietnamese regulations on electronic transactions (Law on E-Transactions) and personal data protection (Decree 13/2023/ND-CP). Financial storage complies with PCI-DSS through Stripe elements tokenization.
+Through AI-powered recommendations, real-time communication, and advanced moderation mechanisms, the platform helps users discover suitable opportunities, deliver high-quality work, and maintain transparent interactions.
+
+Frevia serves five primary stakeholder roles: guests browsing public listings, clients seeking specialized expertise, freelancers showcasing their skills and services, expert arbitrators reviewing escalated disputes, and administrators responsible for maintaining platform integrity and operational efficiency. The platform offers an intuitive user experience, dynamic communication channels, and comprehensive management capabilities to support collaboration, professional growth, and secure transactions.
+
+Key features of Frevia include:
+
+\begin{itemize}
+  \item \textbf{Smart Job Matching and AI Recommendations:} The platform analyzes freelancer skills, experience, and preferences to recommend relevant job opportunities. AI-powered profile scoring provides quality assessments, while job alerts and saved searches help users stay informed about new opportunities.
+
+  \item \textbf{End-to-End Contract and Milestone Management:} Clients and freelancers can negotiate project terms, define milestones and tasks, monitor progress, and securely manage payments. Integrated contract signing, activity logs, and file-sharing capabilities ensure transparency throughout the project lifecycle.
+
+  \item \textbf{Community and Forum Engagement:} Frevia includes a community forum where users can discuss industry topics, exchange knowledge, and seek professional advice. Features such as categories, posts, comments, reactions, and reporting mechanisms encourage active participation and self-moderation.
+
+  \item \textbf{Identity Verification and Content Moderation:} Freelancers can verify their identities through document submission, while administrators utilize moderation queues, user reports, and AI-assisted violation detection to maintain a secure and trustworthy environment.
+
+  \item \textbf{Stripe Escrow Payments and Connect Payouts:} Clients fund project milestones into escrow via Stripe PaymentIntents or hosted Checkout Sessions, and approved deliverables trigger automated Stripe Connect Express payouts alongside transparent USD transaction ledgers and refund handling.
+
+  \item \textbf{Administrative Management Tools:} Administrators have access to comprehensive management functionalities, including user administration, role and permission control, system configuration, advertisement management, activity monitoring, and dispute resolution, ensuring fair and reliable platform operations.
 \end{itemize}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.9\linewidth]{image/context_diagram/context-diagram.pdf}
+    \caption{Context diagram}
+    \label{fig:context-diagram}
+\end{figure}
+
 
 \section{User Requirements}
 
-\subsection{Actors Specification}
-Table~\ref{tab:actors_spec} summarizes the five user actors interacting with the Frevia platform.
+\Needspace{12\baselineskip}
+\subsection{Actors}
 
-\begin{table}[H]
-\centering
-\caption{System Actors Specification}
-\label{tab:actors_spec}
-\renewcommand{\arraystretch}{1.25}
-\setlength{\tabcolsep}{6pt}
-\small
-\begin{tabular}{|c|L{2.8cm}|L{10.2cm}|}
-\hline
-\rowcolor{fptHeader}
-\textbf{No.} & \textbf{Actor} & \textbf{Description and Responsibilities} \\
-\hline
-1 & Guest & Anonymous visitor accessing public catalog views, landing info, and authentication gateways. \\
-\hline
-2 & Client & Individual or business commissioning freelance deliverables, funding escrow, and approving work. \\
-\hline
-3 & Freelancer & Professional providing specialized services, executing milestones, and receiving earnings. \\
-\hline
-4 & Expert & Impartial third-party professional adjudicating escalated contract and milestone disputes. \\
-\hline
-5 & Administrator & System supervisor governing identity verifications, catalog taxonomies, RBAC, and system audit logs. \\
-\hline
-\end{tabular}
-\end{table}
+\begingroup
+\renewcommand{\arraystretch}{1.4}
+\Needspace{12\baselineskip}
+\begin{longtable}{|c|>{\raggedright\arraybackslash}p{3.2cm}|p{10.5cm}|}
+\caption{Actors of the Frevia Platform} \label{tab:actors} \\
+\hhline{|-|-|-|}
+\rowcolor{headerbg}
+\multicolumn{1}{|c|}{\textbf{No}} &
+\multicolumn{1}{c|}{\textbf{Actor}} &
+\multicolumn{1}{c|}{\textbf{Description}} \\
+\hhline{|-|-|-|}
+\endfirsthead
 
-\subsection{Use Case Structure}
-The system defines 48 formal Use Cases (UC-01 through UC-48) spanning authentication, profile management, job posting, bidding, contract lifecycle, milestone escrow, dispute arbitration, real-time messaging, and admin moderation. In accordance with capstone guidelines, the detailed specification below highlights the \textbf{Core 5\% Key Features} that constitute the foundational operational engine of Frevia.
+\hhline{|-|-|-|}
+\rowcolor{headerbg}
+\multicolumn{1}{|c|}{\textbf{No}} &
+\multicolumn{1}{c|}{\textbf{Actor}} &
+\multicolumn{1}{c|}{\textbf{Description}} \\
+\hhline{|-|-|-|}
+\endhead
+
+\hline
+\endfoot
+
+\hline
+\endlastfoot
+
+1 & Guest &
+Guests are unregistered visitors who have not yet created an account on the platform. They can browse publicly available information such as job listings, freelancer profiles, forum content, and platform features. Guests may also register a new account (via email/password or Google OAuth) or authenticate using supported login methods to access platform services.
+\\
+\hline
+
+2 & Client &
+Clients are individuals or organizations seeking professional services from freelancers. They can create and manage job postings, review proposals, hire freelancers, establish contracts, manage escrow payments, monitor project progress, initiate disputes, and provide reviews upon project completion.
+\\
+\hline
+
+3 & Freelancer &
+Freelancers are service providers who offer professional skills and expertise through the platform. They can create and manage profiles, portfolios, and skills; search and apply for jobs; submit proposals; collaborate with clients; complete project tasks and milestones; and receive payments after successful project delivery.
+\\
+\hline
+
+4 & Admin &
+Administrators are responsible for managing and maintaining the platform's operations, security, and compliance. Their responsibilities include user management, role and permission management, identity verification, content moderation, dispute resolution, system configuration, and monitoring platform activities to ensure a secure and reliable environment.
+\\
+\hline
+
+5 & Expert &
+Experts are verified, high-ranking domain specialists featured in the platform's public expert showcase. They possess verified credentials, manage specialized public showcase profiles, consult on high-value client projects, review escalated project disputes within their domain of expertise, and render final binding arbitration rulings on contested milestone deliverables.
+\\
+\hline
+
+6 & System &
+The internal automated execution engine and background scheduler of the platform. The System autonomously executes scheduled background jobs, manages deadline expirations, triggers automatic state transitions for contracts and proposals, processes automated dispute resolution payouts upon administrative decisions, and dispatches automated notifications.
+\\
+\hline
+
+7 & AI Service &
+The artificial intelligence and machine learning microservice providing automated cognitive capabilities. It analyzes resumes to compute CV-to-job matching scores, evaluates forum posts and comments for toxicity and spam to assist content moderation, and performs optical character recognition (OCR) and face-matching validation on identity verification documents.
+\\
+\hline
+
+8 & Payment Gateway (Stripe) &
+The third-party financial processor (Stripe Checkout and Stripe Connect) powering platform monetary operations. It securely processes client escrow funding, holds funds in escrow during project execution, handles automated payouts to freelancer bank accounts, processes refunds and dispute arbitration fees, and transmits asynchronous webhook events to synchronize payment statuses.
+\\
+\hline
+
+9 & Email Service (Gmail / SMTP) &
+The external transactional email delivery provider (SMTP / Nodemailer). It delivers transactional and security communications to users, including email verification links, multi-factor authentication one-time passwords (OTP), password reset instructions, contract status updates, and dispute notifications.
+\\
+\hline
+
+10 & Google OAuth 2.0 &
+Third-party federated identity provider. Enables seamless and secure single sign-on (SSO) authentication, allowing guests to register and log in to the Frevia platform using their Google accounts without requiring separate password management.
+\\
+\hline
+
+11 & Cloud Storage (Cloudinary) &
+Third-party media storage and content delivery network (CDN) service. Securely stores, optimizes, and delivers user-uploaded digital assets, including user avatars, portfolio media, project deliverable files, and identity verification documents.
+\\
+\hline
+
+\end{longtable}
+\endgroup
+
+
+\subsection{Use Cases}
+\input{../Report 3/sections/2.Subsections/2.2.Subsections/2.2.1.Diagram}
 
 \section{Functional Requirements}
 
 \subsection{System Functional Overview}
-\begin{itemize}[leftmargin=1.2cm]
-    \item \textbf{Screen Flow:} User journeys progress smoothly from public discovery (Home $\rightarrow$ Jobs $\rightarrow$ Details) through secure onboarding (Register $\rightarrow$ Verify Email $\rightarrow$ eKYC $\rightarrow$ Complete Profile) into core transaction cycles (Post Job $\rightarrow$ Review Proposals $\rightarrow$ Sign Contract $\rightarrow$ Fund Milestone Escrow $\rightarrow$ Submit Deliverable $\rightarrow$ Release Payment $\rightarrow$ Review).
-    \item \textbf{Screen Authorization Matrix:} Table~\ref{tab:screen_auth} summarizes access permissions across platform views based on authenticated role.
-\end{itemize}
+\input{../Report 3/sections/3.Subsections/3.1.Subsections/3.1.1.Screen_Flow}
+\input{../Report 3/sections/3.Subsections/3.1.Subsections/3.1.3.Screen_Authorization}
+\input{../Report 3/sections/3.Subsections/3.1.Subsections/3.1.4.Non-Screen_Functions}
 
-\begin{table}[H]
-\centering
-\caption{Screen Authorization Matrix (Summary)}
-\label{tab:screen_auth}
-\renewcommand{\arraystretch}{1.2}
-\setlength{\tabcolsep}{5pt}
-\small
-\begin{tabular}{|L{5.4cm}|C{1.6cm}|C{1.6cm}|C{1.8cm}|C{1.6cm}|C{1.6cm}|}
-\hline
-\rowcolor{fptHeader}
-\textbf{Screen / Functional Area} & \textbf{Guest} & \textbf{Client} & \textbf{Freelancer} & \textbf{Expert} & \textbf{Admin} \\
-\hline
-Public Job Browsing \& Details & Permitted & Permitted & Permitted & Permitted & Permitted \\
-\hline
-Job Creation, Publishing \& Editing & Denied & Permitted & Denied & Denied & Read-only \\
-\hline
-Proposal Submission \& Bidding & Denied & Denied & Permitted & Denied & Read-only \\
-\hline
-Contract Signing \& Milestone Review & Denied & Permitted & Permitted & Denied & Permitted \\
-\hline
-Milestone Escrow Funding via Stripe & Denied & Permitted & Denied & Denied & Audited \\
-\hline
-Deliverable Submission & Denied & Denied & Permitted & Denied & Audited \\
-\hline
-Dispute Arbitration Dashboard & Denied & Party-only & Party-only & Permitted & Permitted \\
-\hline
-Admin eKYC Verification Queue & Denied & Denied & Denied & Denied & Permitted \\
-\hline
-Admin Catalogs \& RBAC Control & Denied & Denied & Denied & Denied & Permitted \\
-\hline
-\end{tabular}
-\end{table}
+\input{../Report 3/sections/3.Subsections/sprint1/ptai}
 
-\subsection{Core 5\% Features (Detailed Functional Specifications)}
+\input{../Report 3/sections/3.Subsections/sprint3/ptai}
 
-\subsubsection{Core Feature 1: Job Management and Proposal Submission (UC-11 \& UC-32)}
-\textbf{Use Case ID:} UC-11 (Job Management) \& UC-32 (Proposal Management)\\
-\textbf{Primary Actors:} Client, Freelancer\\
-\textbf{Pre-conditions:} Client and Freelancer are authenticated. Freelancer has completed profile setup.
+\input{../Report 3/sections/3.Subsections/sprint1/ntin}
 
-\textbf{Main Success Scenario (Flow of Events):}
-\begin{enumerate}[leftmargin=1.2cm]
-    \item Client navigates to \textit{Post a Job}, specifies title, description, category, required skills, fixed-price budget range, deadline, and payment terms.
-    \item System validates inputs, creates a job record with status \texttt{DRAFT}, and publishes it upon confirmation to status \texttt{OPEN}.
-    \item Freelancers search or browse the job catalog, view complete job details, and click \textit{Apply Now}.
-    \item Freelancer authors a proposal: cover letter, proposed total bid amount, estimated completion duration, proposed milestone breakdown, and portfolio attachments.
-    \item System validates proposal parameters against job constraints (e.g., bid within reasonable variance, valid attachments) and saves proposal with status \texttt{SUBMITTED}.
-    \item Client receives real-time notification, inspects candidate proposals side-by-side, views freelancer verification badges, and initiates direct interview chat.
-    \item Client selects the winning candidate and clicks \textit{Accept Proposal}. System updates proposal status to \texttt{ACCEPTED} and automatically transitions into Contract Offer generation.
-\end{enumerate}
+\input{../Report 3/sections/3.Subsections/sprint4/ntin}
 
-\textbf{Alternative / Exception Flows:}
-\begin{itemize}[leftmargin=1.2cm]
-    \item \textbf{A1: Freelancer Withdraws Proposal:} Freelancer may withdraw a pending proposal prior to client acceptance. Status transitions to \texttt{WITHDRAWN}.
-    \item \textbf{A2: Client Rejects Proposal:} Client can reject unsuitable proposals, triggering an automated status update to \texttt{REJECTED} and notifying the freelancer.
-\end{itemize}
+\input{../Report 3/sections/3.Subsections/sprint3/ntin}
 
-\textbf{Business Rules:} A freelancer cannot submit duplicate active proposals to the same job. Proposals cannot be submitted once the job reaches status \texttt{IN\_PROGRESS} or \texttt{CLOSED}.
-
-\subsubsection{Core Feature 2: Contract Lifecycle and Digital Signing (UC-13)}
-\textbf{Use Case ID:} UC-13 (Contract Management)\\
-\textbf{Primary Actors:} Client, Freelancer\\
-\textbf{Pre-conditions:} Client has accepted a proposal.
-
-\textbf{Main Success Scenario:}
-\begin{enumerate}[leftmargin=1.2cm]
-    \item System initializes a Contract with status \texttt{PENDING\_SIGNATURE}, importing scope, total price, and milestone schedules directly from the accepted proposal.
-    \item Client reviews contract terms, appends contractual clauses or custom milestones, and applies their digital signature. Contract status transitions to \texttt{OFFERED}.
-    \item Freelancer receives real-time contract notification, inspects all milestone specifications and payment schedules, and reviews the agreement.
-    \item Freelancer signs the contract electronically.
-    \item System validates bilateral digital acceptance, timestamps the agreement, generates a tamper-evident, cryptographically hashed PDF contract document, and updates contract status to \texttt{ACTIVE}.
-    \item Contract is locked; milestone execution commences.
-\end{enumerate}
-
-\textbf{Alternative Flows:} If the freelancer rejects the offer terms, they provide a rejection reason; contract status transitions to \texttt{REJECTED}, and client may revise and resend.
-
-\subsubsection{Core Feature 3: Milestone Escrow and Payment Processing via Stripe (UC-24 \& UC-43)}
-\textbf{Use Case ID:} UC-24 (Milestone Management) \& UC-43 (Payment Management)\\
-\textbf{Primary Actors:} Client, Freelancer, Stripe Gateway\\
-\textbf{Pre-conditions:} Contract is \texttt{ACTIVE}. Freelancer has connected a verified Stripe Express account.
-
-\textbf{Main Success Scenario:}
-\begin{enumerate}[leftmargin=1.2cm]
-    \item Prior to work commencing on Milestone 1, Client clicks \textit{Fund Milestone Escrow}.
-    \item System requests Stripe API to create a \texttt{PaymentIntent} with automatic payment methods and capture hold.
-    \item Client completes 3D-Secure payment via Stripe Checkout or saved card.
-    \item Stripe dispatches a cryptographically verified webhook (\texttt{payment\_intent.amount\_capturable\_updated} or \texttt{charge.succeeded}) to Frevia backend.
-    \item System marks Milestone status as \texttt{FUNDED} (\texttt{IN\_PROGRESS}). Freelancer is notified that funds are securely held in escrow and safe to proceed.
-    \item Freelancer executes work, packages deliverables (source code links, documents), and clicks \textit{Submit Milestone Deliverable}. Status changes to \texttt{SUBMITTED}.
-    \item Client inspects deliverables. Upon satisfaction, Client clicks \textit{Approve \& Release Payment}.
-    \item System instructs Stripe API to capture funds and execute an automated \texttt{Transfer} to Freelancer's Stripe Connect account (deducting platform fee).
-    \item Milestone status updates to \texttt{COMPLETED}; contract progress increments.
-\end{enumerate}
-
-\textbf{Alternative Flows:}
-\begin{itemize}[leftmargin=1.2cm]
-    \item \textbf{A1: Client Requests Revision:} If deliverable is deficient, Client submits a \textit{Revision Request} with itemized feedback. Milestone reverts to \texttt{REVISION\_REQUESTED}.
-\end{itemize}
-
-\subsubsection{Core Feature 4: Identity Verification and Biometric eKYC (UC-35)}
-\textbf{Use Case ID:} UC-35 (ID Verification Management)\\
-\textbf{Primary Actors:} Freelancer, Admin, AI Verification Service\\
-\textbf{Pre-conditions:} Freelancer is logged in with unverified status.
-
-\textbf{Main Success Scenario:}
-\begin{enumerate}[leftmargin=1.2cm]
-    \item Freelancer accesses \textit{ID Verification}, captures front and back images of National ID Card (CCCD), and records a short live selfie/portrait.
-    \item System uploads encrypted images to private object storage and invokes AI eKYC pipeline:
-    \begin{itemize}
-        \item OCR extracts Citizen ID number, Full Name, Date of Birth, and Expiration date.
-        \item MediaPipe 3D face mesh verifies live biometric presence (anti-spoofing).
-        \item Facial embedding vector distance compares selfie face against CCCD document photo.
-    \end{itemize}
-    \item If confidence score exceeds threshold ($\ge 0.88$), system queues verification request with status \texttt{PENDING\_ADMIN\_REVIEW}.
-    \item Admin inspects OCR extraction and facial similarity match percentage in the Admin Verification Dashboard.
-    \item Admin clicks \textit{Approve Verification}.
-    \item System sets user profile \texttt{isVerified = true}, displays the blue Verified Shield badge on public profiles, and unlocks high-tier bidding capabilities.
-\end{enumerate}
-
-\textbf{Alternative Flows:} If document is unreadable, forged, or face mismatch occurs, Admin clicks \textit{Reject} with mandatory explanation note. Freelancer receives notification to resubmit.
-
-\subsubsection{Core Feature 5: Dispute Resolution and Expert Arbitration (UC-33)}
-\textbf{Use Case ID:} UC-33 (Dispute Management)\\
-\textbf{Primary Actors:} Client, Freelancer, Expert Arbitrator, Admin\\
-\textbf{Pre-conditions:} Contract is \texttt{ACTIVE} and target milestone is in \texttt{FUNDED} or \texttt{SUBMITTED} state.
-
-\textbf{Main Success Scenario:}
-\begin{enumerate}[leftmargin=1.2cm]
-    \item If consensus breaks down, either Client or Freelancer initiates \textit{File a Dispute}.
-    \item Initiator selects dispute category (Unfinished Work, Subpar Quality, Refusal to Pay, Scope Violation), states disputed amount, and uploads supporting evidence.
-    \item Target milestone is locked into \texttt{DISPUTED} state; automated escrow releases are suspended.
-    \item Both parties enter a structured 3-day mutual negotiation window with dedicated dispute messaging.
-    \item If mutual resolution fails, either party clicks \textit{Escalate to Expert}.
-    \item System assigns an accredited Expert in the relevant domain category.
-    \item Expert reviews milestone specifications, deliverables, revision logs, and chat records.
-    \item Expert renders a binding decision specifying financial split (e.g., 70\% released to Freelancer for completed portions, 30\% refunded to Client).
-    \item System executes automated Stripe transfers and refunds matching the determination. Contract is finalized; dispute closes with status \texttt{RESOLVED}.
-\end{enumerate}
-
+\Needspace{12\baselineskip}
 \section{Non-Functional Requirements}
 
+This section describes the non-functional requirements of the Frevia platform: the external interfaces through which the system communicates, and the quality attributes that the delivered system must satisfy.
+
+\Needspace{12\baselineskip}
 \subsection{External Interfaces}
-\begin{itemize}[leftmargin=1.2cm]
-    \item \textbf{Payment Gateway Interface:} Stripe API v2024 via official Node.js SDK, supporting Stripe Connect Express/Custom accounts, PaymentIntents, Webhook signature verification (\texttt{stripe-signature}), and automated Transfers.
-    \item \textbf{Object Storage CDN:} Cloudinary API for secure avatar, portfolio, and forum image uploads; AWS S3 / Private bucket with pre-signed URLs for sensitive eKYC identity documents and contract attachments.
-    \item \textbf{Email Delivery:} Resend API / SMTP protocol delivering transactional verification codes (OTP), contract signature alerts, and milestone status notifications.
-    \item \textbf{AI Biometric Engine:} Internal containerized Python FastAPI service running MediaPipe and UltraFace models with strict JSON REST exchange.
+
+The system communicates with four kinds of external element. Each interface is listed below with the constraint that the implementation must respect.
+
+\begin{itemize}
+    \item \textbf{User interfaces.} The platform is delivered as a responsive web client that runs in a current version of Chrome, Edge, Firefox, or Safari. The layout must remain usable from a viewport width of 320 px upwards, and every screen must be available in English and Vietnamese.
+    \item \textbf{Software interfaces.} Payments are processed through Stripe (Connect Express, PaymentIntent, Checkout Session, and signature-verified webhooks); profile, portfolio, and portfolio media are stored on Cloudinary; one-time verification and password reset codes are delivered over SMTP through Nodemailer; curriculum vitae analysis and identity document verification are performed by external AI services called over HTTPS; and all persistent data is stored in PostgreSQL and accessed through Prisma.
+    \item \textbf{Communication interfaces.} Browser-to-server traffic uses HTTPS with TLS 1.3. Calls from the API to Stripe, Cloudinary, the mail server, and the external AI services are made server-side over HTTPS with an explicit timeout, and a failure of any of them must be reported to the caller as a handled error rather than as an unhandled exception. Real-time messaging between the web client and the API uses a Socket.IO connection authenticated with the same JWT as the REST endpoints.
+    \item \textbf{Hardware interfaces.} No dedicated hardware is required beyond the device that runs the browser and the camera or file system used to supply identity documents, avatars, and portfolio media.
 \end{itemize}
 
+\Needspace{12\baselineskip}
 \subsection{Quality Attributes}
-\begin{itemize}[leftmargin=1.2cm]
-    \item \textbf{Performance and Latency:} API 95th percentile response time $< 200$\,ms for transactional database queries under a concurrent load of 500 active users. WebSocket message delivery latency $< 50$\,ms.
-    \item \textbf{Security \& Compliance:} Zero hardcoded secrets; dynamic environment isolation via Infisical. Passwords hashed using bcrypt (cost factor 10). Cryptographic JWT access tokens (15-min expiry) paired with persisted rotating refresh tokens. Complete protection against OWASP Top 10 vulnerabilities (SQL injection prevented via Prisma parameterized queries; XSS sanitized via DOMPurify).
-    \item \textbf{Reliability \& Availability:} System target uptime 99.9\%. Relational integrity safeguarded via PostgreSQL ACID transactions. Automated health-check endpoints monitoring database and Redis connectivity.
-    \item \textbf{Usability:} Mobile-first responsive UI built with TailwindCSS, compliant with WCAG 2.1 AA accessibility standards for color contrast and screen-reader navigable controls.
+
+\Needspace{12\baselineskip}
+\subsubsection{Usability}
+\begin{itemize}
+    \item \textbf{Responsive Design:} The user interface must be fully responsive, supporting mobile devices, tablets, and desktop viewports (minimum width 320px).
+    \item \textbf{Toast Notification System:} Interactive toast notifications (success, warning, error) must have the highest z-index to overlay all content, auto-dismiss after 3000ms, and must not freeze or block other user interactions.
+    \item \textbf{Client-side Image Processing:} The avatar cropping tool must handle images locally before upload. The system must restrict upload sizes to under 5MB and validate formats (.jpg, .jpeg, .png, .webp) before initiating API requests.
 \end{itemize}
+
+\Needspace{12\baselineskip}
+\subsubsection{Reliability}
+\begin{itemize}
+    \item \textbf{System Uptime:} The system core services must maintain a 99.9\% monthly uptime, excluding scheduled maintenance.
+    \item \textbf{Service Resilience \& Fallback:} In case external AI microservices (eKYC verification or content moderation) or Redis cache nodes experience transient downtime or timeouts, core platform workflows must degrade gracefully, log telemetry, and route pending verification items to manual administrative review without crashing active sessions.
+    \item \textbf{Escrow Reliability:} All milestone escrow deposits, holds, releases, refunds, and dispute split settlements must be processed through Stripe Connect Express and PaymentIntent webhooks with signature verification and idempotent ledger persistence.
+\end{itemize}
+
+\Needspace{12\baselineskip}
+\subsubsection{Performance}
+\begin{itemize}
+    \item \textbf{Response Time:} The system's API read operations must respond within 200ms under normal load (up to 500 concurrent requests). Write and transactional database update operations (excluding third-party Stripe/Cloudinary webhook callbacks or ML inference) must complete within 500ms.
+    \item \textbf{Page Load Time:} The web application must achieve a Largest Contentful Paint (LCP) of less than 2.5 seconds, adhering to Google's Core Web Vitals guidelines.
+    \item \textbf{Concurrency:} The system backend must support at least 1,000 concurrent active users and handle a database connection pool efficiently.
+    \item \textbf{Search and Filtering Efficiency:} The job search page must employ debouncing (300ms delay) and pagination (default 10 items per page) to optimize query performance and reduce server load.
+\end{itemize}
+
+\Needspace{12\baselineskip}
+\subsubsection{Security \& Privacy}
+\begin{itemize}
+    \item \textbf{Authentication and Authorization:} All network communications must be encrypted using HTTPS/TLS 1.3. User passwords must be hashed using bcrypt with a work factor of 12.
+    \item \textbf{Session Management:} JWT Access Tokens must have a short lifespan (e.g., 15 minutes) and be stored in memory. Refresh Tokens must have a longer lifespan (e.g., 7 days), be stored in HTTP-only, Secure, and SameSite=Strict cookies, and be invalidated in the database upon user logout.
+    \item \textbf{Role-Based Access Control (RBAC):} The system must strictly enforce role boundaries (Guest, Freelancer, Client, Expert, Admin). Administrative features, such as managing user roles, permissions, eKYC reviews, moderation queues, or dispute rulings, must be blocked by server-side authentication and permission guards for unauthorized accounts.
+    \item \textbf{Payment \& Identity Data Protection:} Stripe webhook payloads must pass cryptographic signature validation before mutating ledger records, and uploaded citizen identity documents (CCCD) must be validated, stored securely via private media URLs, and accessible only to authorized reviewers.
+\end{itemize}
+
+
+\Needspace{12\baselineskip}
+\section{Requirement Appendix}
+
+This appendix collects the requirements that apply across features rather than to a single screen: the business rules that every use case must respect, the common requirements that hold for the whole system, and the standard application messages that the interface reuses.
+
+\Needspace{12\baselineskip}
+\subsection{Business Rules}
+
+The rules below are grouped by the feature they constrain. A use case that violates a rule is rejected, and the identifier of the rule is quoted in the corresponding alternative flow.
+
+
+\input{../Report 3/sections/5.Subsections/5.1.Business_Rules}
+
+\Needspace{12\baselineskip}
+\subsection{Common Requirements}
+
+The following requirements apply to every feature of the platform and are therefore not repeated in each use case.
+
+\begin{itemize}
+    \item \textbf{Authorisation.} Every endpoint is protected by the server-side permission guard, which checks the method, the path, and the module against the permissions of the caller's role. A hidden button or a disabled menu item is never treated as an access control.
+    \item \textbf{Pagination.} Every list endpoint is paginated, with a default page size of 10 items and an explicit page parameter, so that no screen loads an unbounded result set.
+    \item \textbf{Deletion.} Records that other records refer to are soft-deleted by setting \texttt{deleted\_at}; a soft-deleted record is excluded from every public listing and from every lookup used by a normal user. Hard deletion is limited to join records such as skills, bookmarks, and reactions.
+    \item \textbf{Timestamps.} Creation and modification times are stored in UTC and displayed in the time zone of the browser.
+    \item \textbf{Money.} All amounts are stored in the smallest currency unit and displayed with two decimals and an explicit currency; a financial record is never updated in place but is corrected by a new ledger entry.
+    \item \textbf{File uploads.} Every uploaded file is validated for type and size on the client before the request is sent and on the server before the file is stored.
+    \item \textbf{Language.} Every label, message, and validation error is read from the message catalogue, so that the same screen can be rendered in English and in Vietnamese without a code change.
+\end{itemize}
+
+\Needspace{12\baselineskip}
+\subsection{Application Messages List}
+
+The messages below are reused across features. The context column states when the message is raised, and the content column gives the English source text that the message catalogue translates.
+
+\begingroup
+\small
+\setlength{\tabcolsep}{4pt}
+\renewcommand{\arraystretch}{1.3}
+
+\Needspace{12\baselineskip}
+\begin{longtable}{|C{0.8cm}|C{1.5cm}|L{3.2cm}|L{4.2cm}|L{4.9cm}|}
+\caption{Application Messages List}
+\label{tab:application-messages} \\
+\hline
+\rowcolor{headerbg}
+\textbf{\#} &
+\textbf{Message code} &
+\textbf{Message Type} &
+\textbf{Context} &
+\textbf{Content} \\
+\hline
+\endfirsthead
+
+\caption[]{Application Messages List \textit{(cont.)}} \\
+\hline
+\rowcolor{headerbg}
+\textbf{\#} &
+\textbf{Message code} &
+\textbf{Message Type} &
+\textbf{Context} &
+\textbf{Content} \\
+\hline
+\endhead
+
+\hline
+\endfoot
+\hline
+\endlastfoot
+
+1 & MSG01 & Toast, red & The API cannot be reached or the network is down & Cannot connect to the server. Please try again later. \\ \hline
+2 & MSG02 & Toast, red & The server returns an unexpected error & Unable to process your request. Please try again later. \\ \hline
+3 & MSG03 & Toast, red & The caller requests a route outside the permissions of its role & You do not have permission to access this page. \\ \hline
+4 & MSG04 & Inline, under the field & A required field is left empty & All fields are required. \\ \hline
+5 & MSG05 & Inline, under the field & The email does not match a valid format & Please enter a valid email address. \\ \hline
+6 & MSG06 & Inline, under the field & The password does not meet the password policy & Password must be at least 8 characters and include at least one uppercase letter, one number, and one special character. \\ \hline
+7 & MSG07 & Inline, under the field & The password confirmation differs from the password & Passwords do not match. \\ \hline
+8 & MSG08 & Toast, red & A requested record does not exist or has been soft-deleted & Post not found. / Comment not found. / Proposal not found. \\ \hline
+9 & MSG09 & Toast, green & A record has been saved & Profile updated successfully. / Skill added successfully. / Portfolio created successfully. \\ \hline
+\end{longtable}
+
+\endgroup
+

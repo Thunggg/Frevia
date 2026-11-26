@@ -16,6 +16,7 @@
 \usepackage{float}
 \usepackage{tcolorbox}
 \usepackage{booktabs}
+\usepackage{needspace}
 \usepackage[titles]{tocloft}
 \usepackage{hyperref}
 
@@ -64,16 +65,14 @@
 \titleformat{\subsection}{\large\bfseries\color{fptblue}}{\thesubsection}{0.5em}{}
 \titleformat{\subsubsection}{\normalsize\bfseries}{\thesubsubsection}{0.5em}{}
 
-% Header and Footer
+% Header and Footer (Clean page number only, no header text or rules)
 \pagestyle{fancy}
 \fancyhf{}
 \setlength{\headheight}{15pt}
 \addtolength{\topmargin}{-3pt}
-\fancyhead[L]{\small\itshape Frevia Platform -- Report 6: Software User Guides}
-\fancyhead[R]{\small\itshape Capstone Project}
-\fancyfoot[C]{Page \thepage}
-\renewcommand{\headrulewidth}{0.4pt}
-\renewcommand{\footrulewidth}{0.4pt}
+\fancyfoot[C]{\small\thepage}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
 
 % Custom macros
 \newcommand{\hd}[1]{\textbf{#1}}
@@ -142,7 +141,8 @@
 16/11/2026 & M & TaiTP & Verified installation workflows, environment variable tables, and service startup procedures against the monorepo setup. \\ \hline
 19/11/2026 & M & TinVN & Reviewed authentication, session revocation, and administrator RBAC user instructions and verified expected output cases. \\ \hline
 21/11/2026 & M & HuyNLN & Cross-checked troubleshooting notes, figure numbering, and screenshot annotations across installation and user manual sections. \\ \hline
-24/11/2026 & M & ThuanNT & Updated cover page (November 2026), reformatted Table of Contents, consolidated Record of Changes, and compiled final PDF. \\ \hline
+24/11/2026 & M & ThuanNT & Updated cover page (November 2026), reformatted Table of Contents, and consolidated Record of Changes. \\ \hline
+27/11/2026 & M & VyPK & Finalized Software User Guides, aligned release inventory with Sprint 5 deliverables, and compiled final submission PDF. \\ \hline
 \end{longtable}
 \end{center}
 
@@ -171,5 +171,17 @@
 
 % Input Part B: Module 15 - Admin Master Data Catalogs (M15.01 - M15.03)
 \input{sections/sec3_m15_admin_catalogs.tex}
+
+% Input Part B: Module 14 - Forum Management (M14.01 - M14.17)
+\input{sections/sec3_m14_forum_management.tex}
+
+% Input Part B: Module 27 - Conversation Management (M27.01 - M27.08)
+\input{sections/sec3_m27_conversation_management.tex}
+
+% Input Part B: Module 34-36 - Moderation, ID Verification, Forum Trash
+\input{sections/sec3_m34_moderation_management.tex}
+
+% Input Part B: Module 44-45 - AI Features
+\input{sections/sec3_m44_ai_features.tex}
 
 \end{document}

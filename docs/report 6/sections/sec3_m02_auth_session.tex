@@ -28,8 +28,8 @@ The Authentication and Session Management module delivers defense-in-depth secur
 
 \begin{itemize}[leftmargin=1.5em,itemsep=2pt]
   \item \textbf{Screen Name \& Route Path:} User Registration Screen -- \texttt{/register}.
-  \item \textbf{Target Actor:} Guest (New visitor without an existing account).
-  \item \textbf{Preconditions:} The user is not currently authenticated and possesses an accessible email address not previously registered on Frevia.
+  \item \textbf{Who Can Use This:} Guest (New visitor without an existing account).
+  \item \Needspace{6\baselineskip}\textbf{Before You Begin:} The user is not currently authenticated and possesses an accessible email address not previously registered on Frevia.
 \end{itemize}
 
 \begin{figure}[H]
@@ -57,8 +57,8 @@ The Authentication and Session Management module delivers defense-in-depth secur
 
 \paragraph{Expected Output \& Exception Handling:}
 \begin{itemize}[leftmargin=1.5em,itemsep=2pt]
-  \item \textbf{Success Scenario:} The server verifies and removes the consumed OTP record, provisions a new \texttt{User} record linked to the chosen role (\texttt{FREELANCER} or \texttt{CLIENT}), presents a green success toast notification, and navigates to \texttt{/login}.
-  \item \textbf{Exception Scenarios:}
+  \item \textbf{What Happens Next:} The server verifies and removes the consumed OTP record, provisions a new \texttt{User} record linked to the chosen role (\texttt{FREELANCER} or \texttt{CLIENT}), presents a green success toast notification, and navigates to \texttt{/login}.
+  \item \textbf{Troubleshooting \& Common Messages:}
     \begin{itemize}
       \item If the email is already registered, an error toast displays: \textit{"Email already exists in the system"}.
       \item If the OTP is expired or incorrect, an error alert displays: \textit{"Invalid or expired verification code"}.
@@ -72,8 +72,8 @@ The Authentication and Session Management module delivers defense-in-depth secur
 
 \begin{itemize}[leftmargin=1.5em,itemsep=2pt]
   \item \textbf{Screen Name \& Route Path:} User Sign In Screen -- \texttt{/login}.
-  \item \textbf{Target Actor:} Registered User (Guest).
-  \item \textbf{Preconditions:} The account has been previously registered and is currently in good standing (\texttt{isBanned = false}).
+  \item \textbf{Who Can Use This:} Registered User (Guest).
+  \item \Needspace{6\baselineskip}\textbf{Before You Begin:} The account has been previously registered and is currently in good standing (\texttt{isBanned = false}).
 \end{itemize}
 
 \begin{figure}[H]
@@ -93,12 +93,12 @@ The Authentication and Session Management module delivers defense-in-depth secur
 
 \paragraph{Expected Output \& Exception Handling:}
 \begin{itemize}[leftmargin=1.5em,itemsep=2pt]
-  \item \textbf{Success Scenario:} The backend verifies the \texttt{bcrypt} hash, creates an active \texttt{Session} entity recording client IP, User-Agent, and device metadata, sets secure \texttt{HttpOnly} cookies, and redirects the user:
+  \item \textbf{What Happens Next:} The system verifies your credentials, starts your secure login session, and automatically redirects you:
     \begin{itemize}
       \item Accounts holding the \texttt{ADMIN} role are redirected to the administrator console at \texttt{/admin}.
       \item Freelancers and Clients are redirected to their tailored home dashboard.
     \end{itemize}
-  \item \textbf{Exception Scenarios:}
+  \item \textbf{Troubleshooting \& Common Messages:}
     \begin{itemize}
       \item If credentials do not match, the application presents an error alert: \textit{"Invalid email or password"}.
       \item If the account is suspended, an alert states: \textit{"Your account has been suspended. Please contact support"}.
@@ -111,8 +111,8 @@ The Authentication and Session Management module delivers defense-in-depth secur
 
 \begin{itemize}[leftmargin=1.5em,itemsep=2pt]
   \item \textbf{Screen Name \& Route Path:} Social Sign-In Interface -- \texttt{/login}.
-  \item \textbf{Target Actor:} Guest.
-  \item \textbf{Preconditions:} The user possesses an active Google account.
+  \item \textbf{Who Can Use This:} Guest.
+  \item \Needspace{6\baselineskip}\textbf{Before You Begin:} The user possesses an active Google account.
 \end{itemize}
 
 \begin{figure}[H]
@@ -129,8 +129,8 @@ The Authentication and Session Management module delivers defense-in-depth secur
 
 \paragraph{Expected Output \& Exception Handling:}
 \begin{itemize}[leftmargin=1.5em,itemsep=2pt]
-  \item \textbf{Success Scenario:} Google validates identity and redirects the browser back to \texttt{/api/\allowbreak auth/\allowbreak google/\allowbreak callback}. The backend links or provisions the user profile, sets authentication cookies, and signs the user in instantly.
-  \item \textbf{Exception Scenarios:} If the user cancels the Google permission prompt, the callback redirects back to \texttt{/login} with a cancellation notification.
+  \item \textbf{What Happens Next:} Google validates identity and redirects the browser back to \texttt{/api/\allowbreak auth/\allowbreak google/\allowbreak callback}. The backend links or provisions the user profile, sets authentication cookies, and signs the user in instantly.
+  \item \textbf{Troubleshooting \& Common Messages:} If the user cancels the Google permission prompt, the callback redirects back to \texttt{/login} with a cancellation notification.
 \end{itemize}
 
 % -----------------------------------------------------------------------------
@@ -139,8 +139,8 @@ The Authentication and Session Management module delivers defense-in-depth secur
 
 \begin{itemize}[leftmargin=1.5em,itemsep=2pt]
   \item \textbf{Screen Name \& Route Path:} Password Recovery Screen -- \texttt{/forgot-password}.
-  \item \textbf{Target Actor:} Registered User who has forgotten their account password.
-  \item \textbf{Preconditions:} The user knows the registered email address associated with their Frevia account.
+  \item \textbf{Who Can Use This:} Registered User who has forgotten their account password.
+  \item \Needspace{6\baselineskip}\textbf{Before You Begin:} The user knows the registered email address associated with their Frevia account.
 \end{itemize}
 
 \begin{figure}[H]
@@ -162,8 +162,8 @@ The Authentication and Session Management module delivers defense-in-depth secur
 
 \paragraph{Expected Output \& Exception Handling:}
 \begin{itemize}[leftmargin=1.5em,itemsep=2pt]
-  \item \textbf{Success Scenario:} The server validates the OTP against the \texttt{VerificationCode} table, re-hashes the new password with bcrypt, deletes the consumed verification code, displays a confirmation toast, and redirects to \texttt{/login} (existing remote sessions can also be managed manually under \texttt{/sessions}).
-  \item \textbf{Exception Scenarios:} If the OTP is invalid or expired, the submission is rejected with an explicit error alert.
+  \item \textbf{What Happens Next:} The server validates the OTP against the \texttt{VerificationCode} table, re-hashes the new password with bcrypt, deletes the consumed verification code, displays a confirmation toast, and redirects to \texttt{/login} (existing remote sessions can also be managed manually under \texttt{/sessions}).
+  \item \textbf{Troubleshooting \& Common Messages:} If the OTP is invalid or expired, the submission is rejected with an explicit error alert.
 \end{itemize}
 
 % -----------------------------------------------------------------------------
@@ -172,8 +172,8 @@ The Authentication and Session Management module delivers defense-in-depth secur
 
 \begin{itemize}[leftmargin=1.5em,itemsep=2pt]
   \item \textbf{Screen Name \& Route Path:} Session Management Console -- \texttt{/sessions}.
-  \item \textbf{Target Actor:} Authenticated User (Freelancer, Client, Expert, Admin).
-  \item \textbf{Preconditions:} User is logged into the application with at least one active session record in the database.
+  \item \textbf{Who Can Use This:} Authenticated User (Freelancer, Client, Expert, Admin).
+  \item \Needspace{6\baselineskip}\textbf{Before You Begin:} User is logged into the application with at least one active session record in the database.
 \end{itemize}
 
 \begin{figure}[H]
@@ -192,7 +192,7 @@ The Authentication and Session Management module delivers defense-in-depth secur
 
 \paragraph{Expected Output \& Exception Handling:}
 \begin{itemize}[leftmargin=1.5em,itemsep=2pt]
-  \item \textbf{Success Scenario:} The user gains full visibility over all authorized devices, identifying potential unauthorized account access.
+  \item \textbf{What Happens Next:} The user gains full visibility over all authorized devices, identifying potential unauthorized account access.
 \end{itemize}
 
 % -----------------------------------------------------------------------------
@@ -201,8 +201,8 @@ The Authentication and Session Management module delivers defense-in-depth secur
 
 \begin{itemize}[leftmargin=1.5em,itemsep=2pt]
   \item \textbf{Screen Name \& Route Path:} Remote Session Termination Confirmation Dialog -- \texttt{/sessions}.
-  \item \textbf{Target Actor:} Authenticated User.
-  \item \textbf{Preconditions:} At least one non-current active session exists in the sessions table.
+  \item \textbf{Who Can Use This:} Authenticated User.
+  \item \Needspace{6\baselineskip}\textbf{Before You Begin:} At least one non-current active session exists in the sessions table.
 \end{itemize}
 
 \begin{figure}[H]
@@ -220,7 +220,7 @@ The Authentication and Session Management module delivers defense-in-depth secur
 
 \paragraph{Expected Output \& Exception Handling:}
 \begin{itemize}[leftmargin=1.5em,itemsep=2pt]
-  \item \textbf{Success Scenario:} The backend invalidates the corresponding \texttt{Session} record in PostgreSQL so subsequent requests using the revoked token pair are rejected, redirecting the targeted device to \texttt{/login}. A green toast confirms: \textit{"Session revoked successfully"}.
+  \item \textbf{What Happens Next:} The backend invalidates the corresponding \texttt{Session} record in PostgreSQL so subsequent requests using the revoked token pair are rejected, redirecting the targeted device to \texttt{/login}. A green toast confirms: \textit{"Session revoked successfully"}.
 \end{itemize}
 
 % -----------------------------------------------------------------------------
@@ -229,8 +229,8 @@ The Authentication and Session Management module delivers defense-in-depth secur
 
 \begin{itemize}[leftmargin=1.5em,itemsep=2pt]
   \item \textbf{Screen Name \& Route Path:} Sidebar / Header Navigation across all portals.
-  \item \textbf{Target Actor:} Authenticated User.
-  \item \textbf{Preconditions:} User is currently logged into the system.
+  \item \textbf{Who Can Use This:} Authenticated User.
+  \item \Needspace{6\baselineskip}\textbf{Before You Begin:} User is currently logged into the system.
 \end{itemize}
 
 \begin{figure}[H]
@@ -247,5 +247,5 @@ The Authentication and Session Management module delivers defense-in-depth secur
 
 \paragraph{Expected Output \& Exception Handling:}
 \begin{itemize}[leftmargin=1.5em,itemsep=2pt]
-  \item \textbf{Success Scenario:} The application dispatches an HTTP POST request to \texttt{/api/auth/logout}, expires client \texttt{HttpOnly} cookies, purges cached application state from TanStack Query, and redirects the browser cleanly to \texttt{/login}.
+  \item \textbf{What Happens Next:} The application dispatches an HTTP POST request to \texttt{/api/auth/logout}, expires client \texttt{HttpOnly} cookies, purges cached application state from TanStack Query, and redirects the browser cleanly to \texttt{/login}.
 \end{itemize}

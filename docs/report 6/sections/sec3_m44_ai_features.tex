@@ -1,0 +1,51 @@
+% =============================================================================
+% PART B - MODULE 44-45: AI CONTENT MODERATION \& FACE SCAN
+% In Charge: Pham Kha Vy
+% =============================================================================
+\subsection{Module 44--45: AI Content Moderation \& Face Scan}
+
+\subsubsection{M44.01 -- Moderate Content by AI (UC-44.01)}
+\begin{itemize}[leftmargin=1.5em,itemsep=2pt]
+  \item \textbf{Screen Name \& Route Path:} Create Post Modal -- \texttt{/forum/\{categorySlug\}}.
+  \item \textbf{Who Can Use This:} Client, Freelancer, AI System.
+  \item \Needspace{6\baselineskip}\textbf{Before You Begin:} User is creating a new forum post.
+\end{itemize}
+\begin{figure}[H]\centering
+  \includegraphics[width=0.90\textwidth]{images/ai/ai_moderate_guide.png}
+  \caption{AI Content Moderation scoring during post creation}
+\end{figure}
+\Needspace{6\baselineskip}\paragraph{Step-by-Step User Guide:}
+\begin{enumerate}[leftmargin=1.8em,itemsep=3pt]
+  \item \rbadge{1} \textbf{Enter Post Title:} Type your post title in the Create Post dialog.
+  \item \rbadge{2} \textbf{Compose Content for AI Scoring:} Write your post body; upon submit, the AI service scores toxicity from 0.0 to 1.0.
+  \item \rbadge{3} \textbf{Submit \& Observe Outcome:} Click \textbf{+ Post}: score $<0.3$ publishes immediately; $0.3$--$0.8$ queues as PENDING; $\ge 0.8$ is blocked.
+\end{enumerate}
+\Needspace{6\baselineskip}\paragraph{After You Submit (Result \& Troubleshooting):}
+\begin{itemize}[leftmargin=1.5em,itemsep=2pt]
+  \item \textbf{What Happens Next:} Safe content goes live instantly while borderline content is routed to Admin Moderation.
+  \item \textbf{Troubleshooting \& Common Messages:} Posts scoring $\ge 0.8$ return HTTP 400 with a policy violation alert and are not stored.
+\end{itemize}
+
+\subsubsection{M45.01 -- Scan Face and Detect Duplicate Identity (UC-45.01)}
+\begin{itemize}[leftmargin=1.5em,itemsep=2pt]
+  \item \textbf{Screen Name \& Route Path:} Identity Verification (eKYC) -- \texttt{/settings/verification}.
+  \item \textbf{Who Can Use This:} Freelancer, Expert, AI System.
+  \item \Needspace{6\baselineskip}\textbf{Before You Begin:} Prepare a clear CCCD and allow browser camera access.
+\end{itemize}
+\begin{figure}[H]\centering
+  \includegraphics[width=0.90\textwidth]{images/ai/ai_face_scan_guide.png}
+  \caption{User Guide: CCCD Upload, OCR Extraction, and Live AI Face Scan}
+\end{figure}
+\Needspace{6\baselineskip}\paragraph{Step-by-Step User Guide:}
+\begin{enumerate}[leftmargin=1.8em,itemsep=3pt]
+  \item \rbadge{1} \textbf{Upload CCCD Front \& Back:} Upload clear photos of both sides of your National Citizen ID Card (CCCD).
+  \item \rbadge{2} \textbf{Verify OCR Extracted Info:} Confirm the auto-extracted Citizen ID number, full name, and birth date.
+  \item \rbadge{3} \textbf{Complete Live AI Face Scan:} Align your face inside the green oval for 3D liveness detection and duplicate identity comparison.
+  \item \rbadge{4} \textbf{Submit for Admin Review:} Click the green \textbf{Submit for Admin Review} button to enqueue your request.
+\end{enumerate}
+\Needspace{6\baselineskip}\paragraph{After You Submit (Result \& Troubleshooting):}
+\begin{itemize}[leftmargin=1.5em,itemsep=2pt]
+  \item \textbf{What Happens Next:} Extracted identity data and facial match scores are stored with duplicate-check flags.
+  \item \textbf{Troubleshooting \& Common Messages:} Blurry documents or duplicate ID/face matches trigger an alert for manual review.
+\end{itemize}
+

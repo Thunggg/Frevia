@@ -1,16 +1,34 @@
 \babel@toc {english}{}\relax 
-\contentsline {table}{\numberline {1}{\ignorespaces Definition and Acronyms}}{3}{table.1}%
-\contentsline {table}{\numberline {2}{\ignorespaces Project Team and Stakeholder Directory}}{10}{table.caption.1}%
-\contentsline {table}{\numberline {3}{\ignorespaces Comparative Analysis of Existing Systems vs. Frevia}}{11}{table.caption.2}%
-\contentsline {table}{\numberline {4}{\ignorespaces Module Scope and Effort Estimation Summary}}{15}{table.caption.3}%
-\contentsline {table}{\numberline {5}{\ignorespaces Project Risk Matrix and Mitigation Strategies}}{16}{table.caption.4}%
-\contentsline {table}{\numberline {6}{\ignorespaces Frevia Project Deliverables}}{18}{table.caption.5}%
-\contentsline {table}{\numberline {7}{\ignorespaces RACI Responsibility Assignment Matrix}}{18}{table.caption.6}%
-\contentsline {table}{\numberline {8}{\ignorespaces System Actors Specification}}{21}{table.caption.7}%
-\contentsline {table}{\numberline {9}{\ignorespaces Screen Authorization Matrix (Summary)}}{22}{table.caption.8}%
-\contentsline {table}{\numberline {10}{\ignorespaces Core Database Tables and Relationship Overview}}{29}{table.caption.10}%
-\contentsline {table}{\numberline {11}{\ignorespaces Software Testing Milestones}}{47}{table.caption.27}%
-\contentsline {table}{\numberline {12}{\ignorespaces Comprehensive Test Cases Summary across Modules}}{48}{table.caption.28}%
-\contentsline {table}{\numberline {13}{\ignorespaces Backend Domain Service Code Coverage Metrics}}{48}{table.caption.29}%
-\contentsline {table}{\numberline {14}{\ignorespaces Official Release Package Deliverable Inventory}}{50}{table.caption.30}%
-\contentsline {table}{\numberline {15}{\ignorespaces Platform Domain Glossary}}{55}{table.caption.31}%
+\contentsline {table}{\numberline {1}{\ignorespaces Definition and Acronyms}}{22}{table.1}%
+\contentsline {table}{\numberline {2}{\ignorespaces Project team table}}{24}{table.caption.1}%
+\contentsline {table}{\numberline {3}{\ignorespaces Supervisors table}}{24}{table.caption.2}%
+\contentsline {table}{\numberline {4}{\ignorespaces Comparative feature matrix between existing platforms and FREVIA}}{35}{table.caption.7}%
+\contentsline {table}{\numberline {5}{\ignorespaces Traceability matrix linking Report 1, Report 2, and Report 3}}{44}{table.5}%
+\contentsline {table}{\numberline {6}{\ignorespaces Scope and Estimation (SMAR Work Breakdown)}}{53}{table.6}%
+\contentsline {table}{\numberline {7}{\ignorespaces Testing Stages and Quality Targets}}{65}{table.caption.8}%
+\contentsline {table}{\numberline {8}{\ignorespaces Project Risks and Response Plans}}{66}{table.8}%
+\contentsline {table}{\numberline {9}{\ignorespaces Team Training Plan}}{76}{table.9}%
+\contentsline {table}{\numberline {10}{\ignorespaces Project Deliverables}}{78}{table.10}%
+\contentsline {table}{\numberline {11}{\ignorespaces Roles and Responsibilities}}{81}{table.11}%
+\contentsline {table}{\numberline {12}{\ignorespaces Responsibility Assignments Matrix}}{82}{table.12}%
+\contentsline {table}{\numberline {13}{\ignorespaces Project Communication Plan}}{87}{table.caption.10}%
+\contentsline {table}{\numberline {14}{\ignorespaces Tools and Infrastructures}}{90}{table.14}%
+\contentsline {table}{\numberline {15}{\ignorespaces Actors of the Frevia Platform}}{95}{table.15}%
+\contentsline {table}{\numberline {16}{\ignorespaces Screen Authorization}}{120}{table.16}%
+\contentsline {table}{\numberline {17}{\ignorespaces Non-Screen Functions}}{127}{table.17}%
+\contentsline {table}{\numberline {186}{\ignorespaces Business Rules}}{314}{table.186}%
+\contentsline {table}{\numberline {187}{\ignorespaces Application Messages List}}{352}{table.187}%
+\contentsline {table}{\numberline {188}{\ignorespaces Frontend package description (\texttt {apps/web})}}{358}{table.188}%
+\contentsline {table}{\numberline {189}{\ignorespaces Backend package description (\texttt {apps/api})}}{359}{table.189}%
+\contentsline {table}{\numberline {190}{\ignorespaces Shared and tooling packages description (\texttt {packages/})}}{361}{table.190}%
+\contentsline {table}{\numberline {191}{\ignorespaces AI microservices package description (\texttt {ai-services/})}}{362}{table.191}%
+\contentsline {table}{\numberline {192}{\ignorespaces Table descriptions of the Frevia database}}{365}{table.192}%
+\contentsline {table}{\numberline {193}{\ignorespaces Test levels table}}{493}{table.caption.227}%
+\contentsline {table}{\numberline {194}{\ignorespaces Supporting tools table}}{493}{table.caption.228}%
+\contentsline {table}{\numberline {195}{\ignorespaces Human resources table}}{494}{table.caption.229}%
+\contentsline {table}{\numberline {196}{\ignorespaces Test environment table}}{495}{table.caption.230}%
+\contentsline {table}{\numberline {197}{\ignorespaces Test milestones table}}{496}{table.caption.231}%
+\contentsline {table}{\numberline {198}{\ignorespaces Summary of unit and system test cases in Report5\_Unit Test.xls and Report5\_Test Report.xlsx}}{497}{table.caption.232}%
+\contentsline {table}{\numberline {199}{\ignorespaces Test execution summary table}}{498}{table.caption.233}%
+\contentsline {table}{\numberline {200}{\ignorespaces Defect summary table}}{498}{table.caption.234}%
+\contentsline {table}{\numberline {204}{\ignorespaces Platform Domain Glossary}}{590}{table.caption.300}%

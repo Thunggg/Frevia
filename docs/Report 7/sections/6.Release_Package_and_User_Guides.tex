@@ -1,191 +1,23 @@
 % ========================================================
 % FILE: sections/6.Release_Package_and_User_Guides.tex
-% Part VI: Release Package & User Guides
+% Part VI: Release Package & User Guides (Verbatim from Report 6)
 % ========================================================
 \part{Release Package \& User Guides}
 
-\section{Deliverable Package}
-The official release package of the Frevia platform (\textit{Release Package v1.0}) delivers the complete monorepo source codebase, database migration schemas, automated seed scripts, containerization specifications, and the comprehensive suite of engineering reports from Report 1 through Report 7. Table~\ref{tab:release_deliverables} delineates the deliverable inventory.
+\input{../report 6/sections/sec1_deliverables_install}
 
-\begin{table}[H]
-\centering
-\caption{Official Release Package Deliverable Inventory}
-\label{tab:release_deliverables}
-\renewcommand{\arraystretch}{1.25}
-\setlength{\tabcolsep}{5pt}
-\small
-\begin{tabular}{|C{0.8cm}|L{4.2cm}|L{7.2cm}|C{2.6cm}|}
-\hline
-\rowcolor{fptHeader}
-\textbf{No.} & \textbf{Deliverable Item} & \textbf{Description \& Storage Location} & \textbf{Version / Format} \\
-\hline
-1 & Project Roadmap \& Tracking & Sprint burndown charts, WBS effort tracking, milestone delivery records. & \texttt{v1.0 (.xlsx)} \\
-\hline
-2 & Product Backlog & Prioritized User Stories, Use Case specifications, and story point estimates. & \texttt{v1.0 (.xlsx)} \\
-\hline
-3 & Source Code Monorepo & Complete application source code (\texttt{apps/web}, \texttt{apps/api}, \texttt{packages/}). & Git Repository \\
-\hline
-4 & Database Migrations \& Seed & Prisma migrations (\texttt{schema.prisma}), relational definitions, and test seed data. & SQL / TypeScript \\
-\hline
-5 & Docker Staging Package & Multi-stage container definitions (\texttt{Dockerfile}), \texttt{docker-compose.yml}, and scripts. & YAML / Docker \\
-\hline
-6 & Engineering Reports (1--7) & Formal academic and technical documentation suite (SRS, SDD, Test, Manual, Final). & PDF Format \\
-\hline
-7 & Test Workbooks \& Reports & Consolidated unit and system test matrices (\texttt{Report5\_Unit Test.xls}, etc.). & XLS / HTML \\
-\hline
-8 & Final Presentation Slides & Capstone defense slide deck detailing architecture, live demos, and business impact. & PPTX / PDF \\
-\hline
-\end{tabular}
-\end{table}
+\input{../report 6/sections/sec2_docker_ai}
 
-\section{Installation Guides}
+\input{../report 6/sections/sec3_m02_auth_session}
 
-\subsection{System Requirements}
-\begin{itemize}[leftmargin=1.2cm]
-    \item \textbf{Hardware Requirements (Server / Development Machine):}
-    \begin{itemize}
-        \item Minimum: 4-core 64-bit CPU (x86\_64 or ARM64), 8\,GB RAM, 20\,GB available SSD storage.
-        \item Recommended: 8-core CPU, 16\,GB RAM, 50\,GB NVMe SSD storage.
-    \end{itemize}
-    \item \textbf{Software Prerequisites:}
-    \begin{itemize}
-        \item Operating System: Linux (Ubuntu 22.04+ LTS / Debian 12), macOS 13+, or Windows 11 with WSL2.
-        \item Node.js runtime: v20.12.0 LTS or higher; Corepack enabled for pnpm v9.x.
-        \item Containerization: Docker Engine v24.0+ and Docker Compose v2.20+.
-        \item Git Version Control: v2.40+.
-    \end{itemize}
-\end{itemize}
+\input{../report 6/sections/sec3_m14_admin_rbac_users}
 
-\subsection{Step-by-Step Installation Instructions}
-The complete platform can be deployed locally using the following sequence:
+\input{../report 6/sections/sec3_m15_admin_catalogs}
 
-\begin{enumerate}[leftmargin=1.2cm]
-    \item \textbf{Clone the Repository:}
-    \begin{lstlisting}[language=bash]
-git clone https://github.com/Frevia-Capstone/frevia-platform.git
-cd frevia-platform
-    \end{lstlisting}
+\input{../report 6/sections/sec3_m14_forum_management}
 
-    \item \textbf{Install Dependencies via pnpm Workspaces:}
-    \begin{lstlisting}[language=bash]
-corepack enable
-pnpm install --frozen-lockfile
-    \end{lstlisting}
+\input{../report 6/sections/sec3_m27_conversation_management}
 
-    \item \textbf{Configure Environment Variables:}
-    Copy the example configuration files and supply required third-party credentials:
-    \begin{lstlisting}[language=bash]
-cp apps/api/.env.example apps/api/.env
-cp apps/web/.env.example apps/web/.env
-    \end{lstlisting}
-    Essential variables to configure in \texttt{apps/api/.env}:
-    \begin{itemize}
-        \item \texttt{DATABASE\_URL="postgresql://frevia\_user:frevia\_pass@localhost:5432/frevia\_db"}
-        \item \texttt{REDIS\_URL="redis://localhost:6379"}
-        \item \texttt{JWT\_ACCESS\_SECRET} and \texttt{JWT\_REFRESH\_SECRET}
-        \item \texttt{STRIPE\_SECRET\_KEY} and \texttt{STRIPE\_WEBHOOK\_SECRET}
-        \item \texttt{CLOUDINARY\_CLOUD\_NAME}, \texttt{API\_KEY}, and \texttt{API\_SECRET}
-    \end{itemize}
+\input{../report 6/sections/sec3_m34_moderation_management}
 
-    \item \textbf{Start Infrastructure Containers via Docker Compose:}
-    \begin{lstlisting}[language=bash]
-docker compose up -d postgres redis
-    \end{lstlisting}
-
-    \item \textbf{Run Prisma Database Migrations and Seed Test Data:}
-    \begin{lstlisting}[language=bash]
-pnpm --filter api prisma migrate deploy
-pnpm --filter api prisma db seed
-    \end{lstlisting}
-
-    \item \textbf{Start the Full-Stack Application in Development Mode:}
-    \begin{lstlisting}[language=bash]
-pnpm dev
-    \end{lstlisting}
-    The web client will be accessible at \texttt{http://localhost:3000}, the NestJS REST API at \texttt{http://localhost:5000/api}, and interactive Swagger API documentation at \texttt{http://localhost:5000/api/docs}.
-\end{enumerate}
-
-\section{User Manual (Core 5\% Workflows)}
-
-\subsection{Workflow 1: Client Posting a Job \& Reviewing Candidate Proposals}
-\begin{enumerate}[leftmargin=1.2cm]
-    \item \textbf{Accessing the Job Creator:} Log in with a Client account. From the top navigation header, click the \textit{Post a Job} button.
-    \item \textbf{Specifying Requirements:}
-    \begin{itemize}
-        \item Enter a clear \textbf{Job Title} (e.g., ``Full-Stack Next.js \& NestJS Developer for E-Commerce Platform'').
-        \item Select the primary \textbf{Job Category} (e.g., Web Development $\rightarrow$ Full-Stack).
-        \item Define the \textbf{Fixed Budget} (e.g., \$1,500) and target \textbf{Completion Deadline}.
-        \item Add required \textbf{Skill Tags} (e.g., React, TypeScript, Node.js, PostgreSQL).
-        \item Write detailed project specifications and deliverables in the rich-text editor.
-    \end{itemize}
-    \item \textbf{Publishing the Job:} Click \textit{Review \& Publish}. The job transitions to \texttt{OPEN} status and is immediately indexed in the public search catalog.
-    \item \textbf{Reviewing Proposals:} As freelancers apply, the Client navigates to \textit{My Jobs} $\rightarrow$ \textit{View Proposals}. Inspect applicant bid amounts, estimated durations, cover letters, and verified eKYC badges. Click \textit{Chat} to initiate direct interview messaging.
-\end{enumerate}
-
-\subsection{Workflow 2: Freelancer Submitting a Proposal \& Bidding}
-\begin{enumerate}[leftmargin=1.2cm]
-    \item \textbf{Discovering Opportunities:} Log in with a Freelancer account. Navigate to \textit{Find Work}. Utilize faceted filters (category, budget range, skills) to locate relevant jobs.
-    \item \textbf{Authoring Proposal:} Click on the job card to review specifications, then click \textit{Submit a Proposal}.
-    \item \textbf{Specifying Bid Terms:}
-    \begin{itemize}
-        \item Enter the \textbf{Total Bid Amount} and \textbf{Estimated Delivery Time}.
-        \item Decompose the project into recommended \textbf{Milestones} (e.g., Milestone 1: UI Implementation -- \$600; Milestone 2: API Integration \& Escrow Test -- \$900).
-        \item Draft a tailored \textbf{Cover Letter} highlighting relevant experience and attach past portfolio deliverables.
-    \end{itemize}
-    \item \textbf{Submitting:} Click \textit{Submit Application}. The proposal is queued and the client is notified instantly.
-\end{enumerate}
-
-\subsection{Workflow 3: Bilateral Contract Digital Signing \& PDF Export}
-\begin{enumerate}[leftmargin=1.2cm]
-    \item \textbf{Offer Extension:} When the Client accepts a proposal, click \textit{Generate Contract Offer}. The system populates the legal agreement with agreed milestones.
-    \item \textbf{Client Digital Signing:} Client reviews legal clauses, checks the electronic signature consent box, and clicks \textit{Sign \& Send Offer}. Contract moves to \texttt{OFFERED}.
-    \item \textbf{Freelancer Review \& Signing:} Freelancer receives notification, navigates to \textit{Contracts} $\rightarrow$ \textit{Pending Offer}, reviews milestone schedules, and applies their electronic signature.
-    \item \textbf{Execution \& PDF Export:} Both signatures are validated; contract status updates to \texttt{ACTIVE}. Either party can click \textit{Download Signed Contract PDF} to export the official, cryptographically hashed agreement.
-\end{enumerate}
-
-\subsection{Workflow 4: Milestone Escrow Funding via Stripe \& Automatic Payout Release}
-\begin{enumerate}[leftmargin=1.2cm]
-    \item \textbf{Escrow Funding by Client:}
-    \begin{itemize}
-        \item Client accesses the active contract dashboard and clicks \textit{Deposit Milestone 1 Escrow}.
-        \item System directs the user to secure Stripe Checkout or utilizes a saved credit card.
-        \item Upon successful 3D-Secure payment authorization, Stripe captures the funds into platform escrow hold.
-        \item Milestone status updates to \texttt{FUNDED} (\texttt{IN\_PROGRESS}). Freelancer is notified that funds are secured.
-    \end{itemize}
-    \item \textbf{Deliverable Submission by Freelancer:}
-    \begin{itemize}
-        \item Upon completing milestone tasks, Freelancer navigates to the contract page and clicks \textit{Submit Deliverable}.
-        \item Enters deliverable summary notes, GitHub pull request links, and attaches production build assets.
-        \item Milestone updates to \texttt{SUBMITTED}.
-    \end{itemize}
-    \item \textbf{Approval \& Automated Payout:}
-    \begin{itemize}
-        \item Client tests and inspects submitted deliverables.
-        \item Client clicks \textit{Approve Work \& Release Payment}.
-        \item System triggers Stripe API Transfer, instantly moving funds into the Freelancer's connected Stripe Express account (minus platform commission).
-        \item Milestone is marked \texttt{COMPLETED}.
-    \end{itemize}
-\end{enumerate}
-
-\subsection{Workflow 5: Submitting eKYC Biometric Verification \& Admin Review}
-\begin{enumerate}[leftmargin=1.2cm]
-    \item \textbf{Freelancer Submission:}
-    \begin{itemize}
-        \item Navigate to \textit{Account Settings} $\rightarrow$ \textit{Identity Verification}.
-        \item Upload high-resolution front and back photos of the Citizen ID Card (CCCD).
-        \item Position face within the on-screen camera oval to capture a live liveness portrait.
-        \item System performs client-side alignment and uploads encrypted images to the private storage bucket.
-    \end{itemize}
-    \item \textbf{Automated AI Processing:}
-    \begin{itemize}
-        \item OCR extracts ID number, full name, birth date, and expiry.
-        \item Facial embedding vector calculates biometric distance between selfie and ID photo.
-        \item Verification request enters \texttt{PENDING\_ADMIN\_REVIEW} with AI confidence score.
-    \end{itemize}
-    \item \textbf{Admin Adjudication:}
-    \begin{itemize}
-        \item Administrator logs in and opens the \textit{eKYC Verification Queue}.
-        \item Inspects side-by-side comparison of document OCR and biometric match score.
-        \item Clicks \textit{Approve Verification}. System awards the user the verified shield badge immediately.
-    \end{itemize}
-\end{enumerate}
+\input{../report 6/sections/sec3_m44_ai_features}

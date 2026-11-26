@@ -19,7 +19,7 @@
 \hline\endfoot
 \endlastfoot
 
-Created By: & ThuanNT & Date Created: & 28/09/2026 \\ \hline
+Created By: & ThuanNT & Date Created: & 12/10/2026 \\ \hline
 Primary Actor: & Admin & Secondary Actors: & N/A \\ \hline
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When an admin navigates to the Permission Management section from the admin dashboard.} \\ \hline
 Description: & \multicolumn{3}{p{11.1cm}|}{Retrieve all permissions (id, name, path, method, module) for admin to assign to roles. Supports pagination, keyword search, filtering by HTTP method and module, and sorting.} \\ \hline
@@ -103,7 +103,7 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{Permission definitions are seeded and
 \hline\endfoot
 \endlastfoot
 
-Created By: & ThuanNT & Date Created: & 28/09/2026 \\ \hline
+Created By: & ThuanNT & Date Created: & 12/10/2026 \\ \hline
 Primary Actor: & Admin & Secondary Actors: & N/A \\ \hline
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When an admin clicks ``View detail'' on a permission row or navigates directly to a permission detail URL.} \\ \hline
 Description: & \multicolumn{3}{p{11.1cm}|}{View detailed information of a specific permission (id, name, path, method, module, createdAt).} \\ \hline
@@ -177,7 +177,7 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{The permission ID provided is valid w
 \hline\endfoot
 \endlastfoot
 
-Created By: & ThuanNT & Date Created: & 28/09/2026 \\ \hline
+Created By: & ThuanNT & Date Created: & 12/10/2026 \\ \hline
 Primary Actor: & Client, Expert, Freelancer, Admin & Secondary Actors: & N/A \\ \hline
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When an authenticated user accesses the active sessions section in their account settings.} \\ \hline
 Description: & \multicolumn{3}{p{11.1cm}|}{View a list of active login sessions for the current user's account, showing device, IP address, creation time, expiration time, and marking the currently used session.} \\ \hline
@@ -254,7 +254,7 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{Each session record represents a vali
 \hline\endfoot
 \endlastfoot
 
-Created By: & ThuanNT & Date Created: & 28/09/2026 \\ \hline
+Created By: & ThuanNT & Date Created: & 12/10/2026 \\ \hline
 Primary Actor: & Client, Expert, Freelancer, Admin & Secondary Actors: & N/A \\ \hline
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When a user clicks ``View detail'' on a session item.} \\ \hline
 Description: & \multicolumn{3}{p{11.1cm}|}{View login session information (device, IP address, login time, approximate location/status, and whether it is the current session).} \\ \hline
@@ -323,7 +323,7 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{The authenticated user owns the sessi
 \hline\endfoot
 \endlastfoot
 
-Created By: & ThuanNT & Date Created: & 28/09/2026 \\ \hline
+Created By: & ThuanNT & Date Created: & 12/10/2026 \\ \hline
 Primary Actor: & Client, Expert, Freelancer, Admin & Secondary Actors: & N/A \\ \hline
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When an authenticated user clicks ``Revoke'' on an active session item.} \\ \hline
 Description: & \multicolumn{3}{p{11.1cm}|}{Log out of a specific device remotely by deleting the session record. The refresh token associated with that session is immediately invalidated.} \\ \hline
@@ -410,7 +410,7 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{The user has confirmed the intent to 
 \hline\endfoot
 \endlastfoot
 
-Created By: & ThuanNT & Date Created: & 28/09/2026 \\ \hline
+Created By: & ThuanNT & Date Created: & 12/10/2026 \\ \hline
 Primary Actor: & Admin & Secondary Actors: & N/A \\ \hline
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When an admin clicks ``Create Category'' on the Forum Category Management page.} \\ \hline
 Description: & \multicolumn{3}{p{11.1cm}|}{Allows admins to create a new forum category with name and optional description. An automated slug is generated from the name.} \\ \hline
@@ -495,7 +495,7 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{The admin has authority to create cat
 \hline\endfoot
 \endlastfoot
 
-Created By: & ThuanNT & Date Created: & 28/09/2026 \\ \hline
+Created By: & ThuanNT & Date Created: & 12/10/2026 \\ \hline
 Primary Actor: & Admin & Secondary Actors: & N/A \\ \hline
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When an admin clicks ``Edit'' on a category row or detail page.} \\ \hline
 Description: & \multicolumn{3}{p{11.1cm}|}{Allows admins to update an existing forum category's name and description. If name changes, the slug is regenerated automatically.} \\ \hline
@@ -573,7 +573,7 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{The category ID is valid.} \\ \hline
 \hline\endfoot
 \endlastfoot
 
-Created By: & ThuanNT & Date Created: & 28/09/2026 \\ \hline
+Created By: & ThuanNT & Date Created: & 12/10/2026 \\ \hline
 Primary Actor: & Admin & Secondary Actors: & N/A \\ \hline
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When an admin clicks ``Delete'' on a category row or detail page.} \\ \hline
 Description: & \multicolumn{3}{p{11.1cm}|}{Allows admins to soft-delete a forum category. In a database transaction, active posts in this category are detached to Uncategorized (categoryId = null) and the category is soft-deleted by setting deletedAt.} \\ \hline
@@ -647,7 +647,7 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{The admin has confirmed the deletion.
 \hline\endfoot
 \endlastfoot
 
-Created By: & ThuanNT & Date Created: & 28/09/2026 \\ \hline
+Created By: & ThuanNT & Date Created: & 12/10/2026 \\ \hline
 Primary Actor: & Admin & Secondary Actors: & N/A \\ \hline
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When an admin accesses the Forum Categories section from the admin sidebar.} \\ \hline
 Description: & \multicolumn{3}{p{11.1cm}|}{Allows admins to view the list of forum categories with id, name, slug, description, creation/update dates, deleted status, and post count. Supports pagination, keyword search, sorting, and deleted status filtering.} \\ \hline
@@ -730,7 +730,7 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{Categories and posts are stored in th
 \hline\endfoot
 \endlastfoot
 
-Created By: & ThuanNT & Date Created: & 28/09/2026 \\ \hline
+Created By: & ThuanNT & Date Created: & 12/10/2026 \\ \hline
 Primary Actor: & Admin & Secondary Actors: & N/A \\ \hline
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When an admin clicks ``View detail'' on a category row or accesses /admin/categories/:id.} \\ \hline
 Description: & \multicolumn{3}{p{11.1cm}|}{Allows admins to view the details of a specific forum category including id, name, slug, description, creation/update dates, and post count.} \\ \hline
@@ -800,7 +800,7 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{The category exists in the system.} \
 \hline\endfoot
 \endlastfoot
 
-Created By: & ThuanNT & Date Created: & 28/09/2026 \\ \hline
+Created By: & ThuanNT & Date Created: & 12/10/2026 \\ \hline
 Primary Actor: & Admin & Secondary Actors: & N/A \\ \hline
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When an admin clicks ``Restore'' on a soft-deleted category in the deleted categories list.} \\ \hline
 Description: & \multicolumn{3}{p{11.1cm}|}{Restore a deleted Category forum by setting deletedAt back to null. Verifies that no active category currently exists with the same name before restoring.} \\ \hline
