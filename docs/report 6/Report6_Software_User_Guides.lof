@@ -33,3 +33,40 @@
 \contentsline {figure}{\numberline {33}{\ignorespaces Forum Discussion Categories management console at \texttt {/admin/categories}}}{47}{figure.caption.70}%
 \contentsline {figure}{\numberline {34}{\ignorespaces Advertisement Banners management console at \texttt {/admin/banners} (UC-37.01, UC-37.02, UC-37.04, UC-37.05)}}{48}{figure.caption.73}%
 \contentsline {figure}{\numberline {35}{\ignorespaces Create New Banner dialog configuring title, position, image upload, target link, and schedule (UC-37.03)}}{49}{figure.caption.75}%
+\contentsline {figure}{\numberline {36}{\ignorespaces Forum home displaying discussion tabs and category tags}}{50}{figure.caption.77}%
+\contentsline {figure}{\numberline {37}{\ignorespaces Forum category detail page with search and post creation}}{51}{figure.caption.80}%
+\contentsline {figure}{\numberline {38}{\ignorespaces Paginated list of approved forum posts}}{52}{figure.caption.83}%
+\contentsline {figure}{\numberline {39}{\ignorespaces Forum post detail view with engagement bar and related posts}}{53}{figure.caption.86}%
+\contentsline {figure}{\numberline {40}{\ignorespaces Create Post dialog with rich-text editor}}{54}{figure.caption.89}%
+\contentsline {figure}{\numberline {41}{\ignorespaces Update Post modal for editing title or body}}{55}{figure.caption.92}%
+\contentsline {figure}{\numberline {42}{\ignorespaces Soft-delete confirmation dialog for forum post}}{56}{figure.caption.95}%
+\contentsline {figure}{\numberline {43}{\ignorespaces Liking a forum post}}{57}{figure.caption.98}%
+\contentsline {figure}{\numberline {44}{\ignorespaces Removing a like from a forum post}}{58}{figure.caption.101}%
+\contentsline {figure}{\numberline {45}{\ignorespaces Modal showing users who liked the post}}{59}{figure.caption.104}%
+\contentsline {figure}{\numberline {46}{\ignorespaces Viewing post comments thread}}{60}{figure.caption.107}%
+\contentsline {figure}{\numberline {47}{\ignorespaces Adding a new comment to a forum post}}{61}{figure.caption.110}%
+\contentsline {figure}{\numberline {48}{\ignorespaces Editing an existing comment}}{62}{figure.caption.113}%
+\contentsline {figure}{\numberline {49}{\ignorespaces Soft-deleting a comment}}{63}{figure.caption.116}%
+\contentsline {figure}{\numberline {50}{\ignorespaces Liking a comment}}{64}{figure.caption.119}%
+\contentsline {figure}{\numberline {51}{\ignorespaces Unliking a comment}}{65}{figure.caption.122}%
+\contentsline {figure}{\numberline {52}{\ignorespaces Reporting inappropriate forum content}}{66}{figure.caption.125}%
+\contentsline {figure}{\numberline {53}{\ignorespaces Conversation list with last message preview and unread count}}{67}{figure.caption.128}%
+\contentsline {figure}{\numberline {54}{\ignorespaces Starting or resuming a direct conversation}}{68}{figure.caption.131}%
+\contentsline {figure}{\numberline {55}{\ignorespaces Full chronological message thread view}}{69}{figure.caption.134}%
+\contentsline {figure}{\numberline {56}{\ignorespaces Sending a real-time text message via Socket.IO}}{70}{figure.caption.137}%
+\contentsline {figure}{\numberline {57}{\ignorespaces Marking incoming messages as read}}{71}{figure.caption.140}%
+\contentsline {figure}{\numberline {58}{\ignorespaces Recalling a sent message}}{72}{figure.caption.143}%
+\contentsline {figure}{\numberline {59}{\ignorespaces Pinning or unpinning a conversation to top}}{73}{figure.caption.146}%
+\contentsline {figure}{\numberline {60}{\ignorespaces Real-time Messaging and File Attachment Sharing (/messages)}}{74}{figure.caption.149}%
+\contentsline {figure}{\numberline {61}{\ignorespaces Admin Content Moderation Queue}}{75}{figure.caption.152}%
+\contentsline {figure}{\numberline {62}{\ignorespaces Inspecting flagged moderation item details}}{76}{figure.caption.155}%
+\contentsline {figure}{\numberline {63}{\ignorespaces Approving or rejecting a moderation item}}{77}{figure.caption.158}%
+\contentsline {figure}{\numberline {64}{\ignorespaces Admin ID Verification Request queue}}{78}{figure.caption.161}%
+\contentsline {figure}{\numberline {65}{\ignorespaces Admin Reviewing CCCD Images and Verification Detail}}{79}{figure.caption.164}%
+\contentsline {figure}{\numberline {66}{\ignorespaces Approving an eKYC identity verification request}}{80}{figure.caption.167}%
+\contentsline {figure}{\numberline {67}{\ignorespaces Rejecting an eKYC verification request with reason}}{81}{figure.caption.170}%
+\contentsline {figure}{\numberline {68}{\ignorespaces Admin Forum Trash list of soft-deleted and rejected items}}{82}{figure.caption.173}%
+\contentsline {figure}{\numberline {69}{\ignorespaces Inspecting deleted or rejected forum item details}}{83}{figure.caption.176}%
+\contentsline {figure}{\numberline {70}{\ignorespaces Restoring a deleted or rejected forum item}}{84}{figure.caption.179}%
+\contentsline {figure}{\numberline {71}{\ignorespaces AI Content Moderation scoring during post creation}}{85}{figure.caption.182}%
+\contentsline {figure}{\numberline {72}{\ignorespaces User Guide: Profile Identity Tab -- CCCD Upload and Live AI Liveness Face Scan}}{86}{figure.caption.185}%

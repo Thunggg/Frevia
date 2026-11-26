@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.10.29)  26 NOV 2026 23:16
+This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.10.29)  26 NOV 2026 23:47
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1313,27 +1313,34 @@ _logo.png>]) (table_of_contents.tex (main.toc [2] [3] [4] [5] [6] [7]
 \tf@toc=\write5
 \openout5 = `main.toc'.
 
- [11] (main.lot)
+ [11] (main.lot [12])
 \tf@lot=\write6
 \openout6 = `main.lot'.
 
- [12] (main.lof [13] [14] [15] [16] [17] [18]
-Overfull \hbox (5.2767pt too wide) in paragraph at lines 241--241
+ [13] (main.lof [14] [15] [16] [17] [18]
+[19]
+Overfull \hbox (5.2767pt too wide) in paragraph at lines 242--242
  [][] [][][]\T1/ptm/m/n/12 Administrator pro-file iden-tity, stand-ing, and gra
 nted priv-i-leges at \T1/cmtt/m/n/12 /admin/users/1[][] []  
  []
 
 
-Underfull \hbox (badness 5431) in paragraph at lines 244--244
+Overfull \hbox (2.15437pt too wide) in paragraph at lines 245--245
+ [][] [][][]\T1/ptm/m/n/12 Dynamic RBAC role-permission ma-trix con-fig-u-ra-ti
+on at \T1/cmtt/m/n/12 /admin/assign-role 
+ []
+
+
+Underfull \hbox (badness 5431) in paragraph at lines 246--246
  [][] [][][]\T1/ptm/m/n/12 System API Per-mis-sion cat-a-log with method and mo
 d-ule fil-ters at 
  []
 
-[19])
+[20])
 \tf@lof=\write7
 \openout7 = `main.lof'.
 
- [20]) (acknowledgement.tex [21]) (definition_and_acronyms.tex
+ [21]) (acknowledgement.tex [22]) (definition_and_acronyms.tex
 Overfull \hbox (4.71352pt too wide) in alignment at lines 15--22
  [] [] 
  []
@@ -1353,7 +1360,7 @@ Overfull \hbox (4.71352pt too wide) in alignment at lines 32--88
  [] [] 
  []
 
-ignored error: Infinite glue shrinkage found in box being split [22] [23])
+ignored error: Infinite glue shrinkage found in box being split [23] [24])
 (sections/1.Project_Introduction.tex (../Report 1/sections/overview.tex
 LaTeX Font Info:    Trying to load font information for TS1+ptm on input line 6
 .
@@ -1361,41 +1368,41 @@ LaTeX Font Info:    Trying to load font information for TS1+ptm on input line 6
 (C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\ts1ptm.fd
 File: ts1ptm.fd 2001/06/04 font definitions for TS1/ptm.
 ))
-(../Report 1/sections/product_background.tex [24] [25]
+(../Report 1/sections/product_background.tex [25] [26]
 Underfull \hbox (badness 3482) in paragraph at lines 22--23
 \T1/ptm/m/n/12 notes (\T1/cmtt/m/n/12 reviewNotes\T1/ptm/m/n/12 ), cre-ation ti
 mes-tamp (\T1/cmtt/m/n/12 createdAt\T1/ptm/m/n/12 ), re-view times-tamp
  []
 
-[26] [27]) (../Report 1/sections/existing_system.tex [28]
-<../Report 1/image/existing/upwork.png, id=2483, 1371.1225pt x 770.88pt>
+[27] [28]) (../Report 1/sections/existing_system.tex [29]
+<../Report 1/image/existing/upwork.png, id=2527, 1371.1225pt x 770.88pt>
 File: ../Report 1/image/existing/upwork.png Graphic file (type png)
 <use ../Report 1/image/existing/upwork.png>
 Package pdftex.def Info: ../Report 1/image/existing/upwork.png  used on input l
 ine 9.
 (pdftex.def)             Requested size: 385.02577pt x 216.46835pt.
- [29 <../Report 1/image/existing/upwork.png (PNG copy)>]
-<../Report 1/image/existing/fiverr.png, id=2490, 1135.8435pt x 519.1395pt>
+ [30 <../Report 1/image/existing/upwork.png (PNG copy)>]
+<../Report 1/image/existing/fiverr.png, id=2534, 1135.8435pt x 519.1395pt>
 File: ../Report 1/image/existing/fiverr.png Graphic file (type png)
 <use ../Report 1/image/existing/fiverr.png>
 Package pdftex.def Info: ../Report 1/image/existing/fiverr.png  used on input l
 ine 34.
 (pdftex.def)             Requested size: 385.02577pt x 175.97435pt.
- [30 <../Report 1/image/existing/fiverr.png>]
-<../Report 1/image/existing/freelancer.png, id=2497, 1371.1225pt x 770.88pt>
+ [31 <../Report 1/image/existing/fiverr.png>]
+<../Report 1/image/existing/freelancer.png, id=2542, 1371.1225pt x 770.88pt>
 File: ../Report 1/image/existing/freelancer.png Graphic file (type png)
 <use ../Report 1/image/existing/freelancer.png>
 Package pdftex.def Info: ../Report 1/image/existing/freelancer.png  used on inp
 ut line 59.
 (pdftex.def)             Requested size: 385.02577pt x 216.46835pt.
-[31 <../Report 1/image/existing/freelancer.png (PNG copy)>]
-<../Report 1/image/existing/toptal.png, id=2504, 1371.1225pt x 770.88pt>
+[32 <../Report 1/image/existing/freelancer.png (PNG copy)>]
+<../Report 1/image/existing/toptal.png, id=2548, 1371.1225pt x 770.88pt>
 File: ../Report 1/image/existing/toptal.png Graphic file (type png)
 <use ../Report 1/image/existing/toptal.png>
 Package pdftex.def Info: ../Report 1/image/existing/toptal.png  used on input l
 ine 82.
 (pdftex.def)             Requested size: 385.02577pt x 216.46835pt.
- [32] [33 <../Report 1/image/existing/toptal.png (PNG copy)>] [34]
+ [33] [34 <../Report 1/image/existing/toptal.png (PNG copy)>] [35]
 Underfull \hbox (badness 10000) in paragraph at lines 146--146
 []|\T1/ptm/b/n/10 Marketplace
  []
@@ -1505,29 +1512,28 @@ Underfull \hbox (badness 1895) in paragraph at lines 146--146
 []|\T1/ptm/m/n/10 Direct hir-ing with
  []
 
-) (../Report 1/sections/business_opportunity.tex [35] [36])
-(../Report 1/sections/software_product_vision.tex [37] [38])
-(../Report 1/sections/project_scope_limitations.tex [39] [40] [41] [42]
-[43]
-ignored error: Infinite glue shrinkage found in box being split [44]
+) (../Report 1/sections/business_opportunity.tex [36] [37])
+(../Report 1/sections/software_product_vision.tex [38] [39])
+(../Report 1/sections/project_scope_limitations.tex [40] [41] [42] [43]
+[44]
 ignored error: Infinite glue shrinkage found in box being split [45]
 ignored error: Infinite glue shrinkage found in box being split [46]
+ignored error: Infinite glue shrinkage found in box being split [47]
 Underfull \hbox (badness 1072) in paragraph at lines 325--326
 \T1/ptm/m/n/12 al-ity is pro-vided ex-clu-sively by Stripe. Di-rect do-mes-tic 
 bank trans-fers,
  []
 
-[47] [48]
+[48] [49]
 LaTeX Font Info:    Trying to load font information for T5+ptm on input line 37
 3.
 
 (C:\Users\Lenovo\AppData\Local\Programs\MiKTeX\tex/latex/vntex\t5ptm.fd
 File: t5utm.fd 2005/08/24 Fontinst v1.929 font definitions for T5/ptm.
 )
-[49{C:/Users/Lenovo/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/vntex/t5.enc}
-] [50] [51])) [52] (sections/2.Project_Management_Plan.tex
+[50{C:/Users/Lenovo/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/vntex/t5.enc}
+] [51] [52])) [53] (sections/2.Project_Management_Plan.tex
 (../Report 2/sections/1.1-scope-and-estimation.tex
-ignored error: Infinite glue shrinkage found in box being split [53]
 ignored error: Infinite glue shrinkage found in box being split [54]
 ignored error: Infinite glue shrinkage found in box being split [55]
 ignored error: Infinite glue shrinkage found in box being split [56]
@@ -1536,55 +1542,56 @@ ignored error: Infinite glue shrinkage found in box being split [58]
 ignored error: Infinite glue shrinkage found in box being split [59]
 ignored error: Infinite glue shrinkage found in box being split [60]
 ignored error: Infinite glue shrinkage found in box being split [61]
-ignored error: Infinite glue shrinkage found in box being split [62])
-(../Report 2/sections/1.2-project-objectives.tex [63] [64]
+ignored error: Infinite glue shrinkage found in box being split [62]
+ignored error: Infinite glue shrinkage found in box being split [63])
+(../Report 2/sections/1.2-project-objectives.tex [64] [65]
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <10.95> not available
 (Font)              Font shape `OT1/ptm/b/n' tried instead on input line 32.
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <8> not available
 (Font)              Font shape `OT1/ptm/b/n' tried instead on input line 32.
- [65])
+ [66])
 (../Report 2/sections/1.3-project-risk.tex
-ignored error: Infinite glue shrinkage found in box being split [66]
 ignored error: Infinite glue shrinkage found in box being split [67]
-ignored error: Infinite glue shrinkage found in box being split [68])
-(../Report 2/sections/2-management-approach.tex [69] [70])
-(../Report 2/sections/2.1-project-process.tex [71] [72])
-(../Report 2/sections/2.2-quality-management.tex [73] [74] [75])
+ignored error: Infinite glue shrinkage found in box being split [68]
+ignored error: Infinite glue shrinkage found in box being split [69])
+(../Report 2/sections/2-management-approach.tex [70] [71])
+(../Report 2/sections/2.1-project-process.tex [72] [73])
+(../Report 2/sections/2.2-quality-management.tex [74] [75] [76])
 (../Report 2/sections/2.3-training-plan.tex
-ignored error: Infinite glue shrinkage found in box being split [76]
-ignored error: Infinite glue shrinkage found in box being split [77])
-(../Report 2/sections/3-project-deliverables.tex
+ignored error: Infinite glue shrinkage found in box being split [77]
 ignored error: Infinite glue shrinkage found in box being split [78])
-(../Report 2/sections/4-responsibility-assignments.tex) [79]
+(../Report 2/sections/3-project-deliverables.tex
+ignored error: Infinite glue shrinkage found in box being split [79])
+(../Report 2/sections/4-responsibility-assignments.tex) [80]
 (../Report 2/sections/4.1-team-structures.tex
-<../Report 2/image/team-structure.png, id=2712, 3613.5pt x 1758.57pt>
+<../Report 2/image/team-structure.png, id=2756, 3613.5pt x 1758.57pt>
 File: ../Report 2/image/team-structure.png Graphic file (type png)
 <use ../Report 2/image/team-structure.png>
 Package pdftex.def Info: ../Report 2/image/team-structure.png  used on input li
 ne 9.
 (pdftex.def)             Requested size: 452.96826pt x 220.43788pt.
 )
-(../Report 2/sections/4.2-role-responsibilities.tex [80 <../Report 2/image/team
+(../Report 2/sections/4.2-role-responsibilities.tex [81 <../Report 2/image/team
 -structure.png (PNG copy)>]
-ignored error: Infinite glue shrinkage found in box being split [81])
+ignored error: Infinite glue shrinkage found in box being split [82])
 (../Report 2/sections/4.3-responsibility-matrix.tex
-ignored error: Infinite glue shrinkage found in box being split [82]
 ignored error: Infinite glue shrinkage found in box being split [83]
 ignored error: Infinite glue shrinkage found in box being split [84]
-ignored error: Infinite glue shrinkage found in box being split [85])
-(../Report 2/sections/5-project-communications.tex [86]) [87]
-(../Report 2/sections/6.1-document-management.tex [88])
-(../Report 2/sections/6.2-source-code-management.tex [89])
+ignored error: Infinite glue shrinkage found in box being split [85]
+ignored error: Infinite glue shrinkage found in box being split [86])
+(../Report 2/sections/5-project-communications.tex [87]) [88]
+(../Report 2/sections/6.1-document-management.tex [89])
+(../Report 2/sections/6.2-source-code-management.tex [90])
 Underfull \hbox (badness 1237) in paragraph at lines 20--55
 \T1/cmtt/m/n/12 packages/shared-type \T1/ptm/m/n/12 con-tains the Zod schemas a
 nd the types de-rived from them,
  []
 
 (../Report 2/sections/6.3-tools-infrastructures.tex
-ignored error: Infinite glue shrinkage found in box being split [90]
-ignored error: Infinite glue shrinkage found in box being split [91])) [92]
-(sections/3.Software_Requirement_Specification.tex [93]
-<../Report 3/image/context_diagram/context-diagram.pdf, id=2772, 1548.74606pt x
+ignored error: Infinite glue shrinkage found in box being split [91]
+ignored error: Infinite glue shrinkage found in box being split [92])) [93]
+(sections/3.Software_Requirement_Specification.tex [94]
+<../Report 3/image/context_diagram/context-diagram.pdf, id=2816, 1548.74606pt x
  1302.78712pt>
 File: ../Report 3/image/context_diagram/context-diagram.pdf Graphic file (type 
 pdf)
@@ -1592,80 +1599,80 @@ pdf)
 Package pdftex.def Info: ../Report 3/image/context_diagram/context-diagram.pdf 
  used on input line 34.
 (pdftex.def)             Requested size: 407.66867pt x 342.931pt.
- [94 <../Report 3/image/context_diagram/context-diagram.pdf>]
+ [95 <../Report 3/image/context_diagram/context-diagram.pdf>]
 Underfull \hbox (badness 2302) in paragraph at lines 123--125
 []|\T1/ptm/m/n/12 Third-party me-dia stor-age and con-tent de-liv-ery net-work
  []
 
-ignored error: Infinite glue shrinkage found in box being split [95]
+ignored error: Infinite glue shrinkage found in box being split [96]
 (../Report 3/sections/2.Subsections/2.2.Subsections/2.2.1.Diagram.tex
-<../Report 3/image/UC_diagram/Guest.pdf, id=2807, 736.67218pt x 449.76028pt>
+<../Report 3/image/UC_diagram/Guest.pdf, id=2851, 736.67218pt x 449.76028pt>
 File: ../Report 3/image/UC_diagram/Guest.pdf Graphic file (type pdf)
 <use ../Report 3/image/UC_diagram/Guest.pdf>
 Package pdftex.def Info: ../Report 3/image/UC_diagram/Guest.pdf  used on input 
 line 10.
 (pdftex.def)             Requested size: 452.9664pt x 276.54945pt.
- [96]
-<../Report 3/image/UC_diagram/Client_1.pdf, id=2812, 507.81718pt x 355.3275pt>
+ [97]
+<../Report 3/image/UC_diagram/Client_1.pdf, id=2857, 507.81718pt x 355.3275pt>
 File: ../Report 3/image/UC_diagram/Client_1.pdf Graphic file (type pdf)
 <use ../Report 3/image/UC_diagram/Client_1.pdf>
 Package pdftex.def Info: ../Report 3/image/UC_diagram/Client_1.pdf  used on inp
 ut line 24.
 (pdftex.def)             Requested size: 452.97093pt x 316.95073pt.
-<../Report 3/image/UC_diagram/Client_2.pdf, id=2813, 767.9892pt x 803.8833pt>
+<../Report 3/image/UC_diagram/Client_2.pdf, id=2858, 767.9892pt x 803.8833pt>
 File: ../Report 3/image/UC_diagram/Client_2.pdf Graphic file (type pdf)
 <use ../Report 3/image/UC_diagram/Client_2.pdf>
 Package pdftex.def Info: ../Report 3/image/UC_diagram/Client_2.pdf  used on inp
 ut line 35.
 (pdftex.def)             Requested size: 452.96907pt x 474.13985pt.
 
-[97 <../Report 3/image/UC_diagram/Guest.pdf> <../Report 3/image/UC_diagram/Clie
+[98 <../Report 3/image/UC_diagram/Guest.pdf> <../Report 3/image/UC_diagram/Clie
 nt_1.pdf>]
-<../Report 3/image/UC_diagram/Client_3.pdf, id=2847, 803.8833pt x 738.84026pt>
+<../Report 3/image/UC_diagram/Client_3.pdf, id=2891, 803.8833pt x 738.84026pt>
 File: ../Report 3/image/UC_diagram/Client_3.pdf Graphic file (type pdf)
 <use ../Report 3/image/UC_diagram/Client_3.pdf>
 Package pdftex.def Info: ../Report 3/image/UC_diagram/Client_3.pdf  used on inp
 ut line 46.
 (pdftex.def)             Requested size: 452.96828pt x 416.31815pt.
- [98 <../Report 3/image/UC_diagram/Client_2.pdf>]
-<../Report 3/image/UC_diagram/Client_4.pdf, id=2866, 767.9892pt x 637.42137pt>
+ [99 <../Report 3/image/UC_diagram/Client_2.pdf>]
+<../Report 3/image/UC_diagram/Client_4.pdf, id=2910, 767.9892pt x 637.42137pt>
 File: ../Report 3/image/UC_diagram/Client_4.pdf Graphic file (type pdf)
 <use ../Report 3/image/UC_diagram/Client_4.pdf>
 Package pdftex.def Info: ../Report 3/image/UC_diagram/Client_4.pdf  used on inp
 ut line 57.
 (pdftex.def)             Requested size: 452.96907pt x 375.95863pt.
- [99 <../Report 3/image/UC_diagram/Client_3.pdf>]
-<../Report 3/image/UC_diagram/Client_5.pdf, id=2885, 767.9892pt x 738.84026pt>
+ [100 <../Report 3/image/UC_diagram/Client_3.pdf>]
+<../Report 3/image/UC_diagram/Client_5.pdf, id=2929, 767.9892pt x 738.84026pt>
 File: ../Report 3/image/UC_diagram/Client_5.pdf Graphic file (type pdf)
 <use ../Report 3/image/UC_diagram/Client_5.pdf>
 Package pdftex.def Info: ../Report 3/image/UC_diagram/Client_5.pdf  used on inp
 ut line 68.
 (pdftex.def)             Requested size: 452.96907pt x 435.77669pt.
- [100 <../Report 3/image/UC_diagram/Client_4.pdf>]
-<../Report 3/image/UC_diagram/Client_6.pdf, id=2904, 774.97525pt x 984.5583pt>
+ [101 <../Report 3/image/UC_diagram/Client_4.pdf>]
+<../Report 3/image/UC_diagram/Client_6.pdf, id=2948, 774.97525pt x 984.5583pt>
 File: ../Report 3/image/UC_diagram/Client_6.pdf Graphic file (type pdf)
 <use ../Report 3/image/UC_diagram/Client_6.pdf>
 Package pdftex.def Info: ../Report 3/image/UC_diagram/Client_6.pdf  used on inp
 ut line 79.
 (pdftex.def)             Requested size: 452.96255pt x 575.46103pt.
-[101 <../Report 3/image/UC_diagram/Client_5.pdf>]
-<../Report 3/image/UC_diagram/Freelancer_1.pdf, id=2923, 590.205pt x 334.3692pt
+ [102 <../Report 3/image/UC_diagram/Client_5.pdf>]
+<../Report 3/image/UC_diagram/Freelancer_1.pdf, id=2967, 590.205pt x 334.3692pt
 >
 File: ../Report 3/image/UC_diagram/Freelancer_1.pdf Graphic file (type pdf)
 <use ../Report 3/image/UC_diagram/Freelancer_1.pdf>
 Package pdftex.def Info: ../Report 3/image/UC_diagram/Freelancer_1.pdf  used on
  input line 93.
 (pdftex.def)             Requested size: 452.9733pt x 256.62323pt.
- [102 <../Report 3/image/UC_diagram/Client_6.pdf>]
-<../Report 3/image/UC_diagram/Freelancer_2.pdf, id=2942, 741.73106pt x 637.4213
+ [103 <../Report 3/image/UC_diagram/Client_6.pdf>]
+<../Report 3/image/UC_diagram/Freelancer_2.pdf, id=2987, 741.73106pt x 637.4213
 7pt>
 File: ../Report 3/image/UC_diagram/Freelancer_2.pdf Graphic file (type pdf)
 <use ../Report 3/image/UC_diagram/Freelancer_2.pdf>
 Package pdftex.def Info: ../Report 3/image/UC_diagram/Freelancer_2.pdf  used on
  input line 104.
 (pdftex.def)             Requested size: 452.96458pt x 389.26414pt.
- [103 <../Report 3/image/UC_diagram/Freelancer_1.pdf>]
-<../Report 3/image/UC_diagram/Freelancer_3.pdf, id=2962, 741.73106pt x 738.8402
+ [104 <../Report 3/image/UC_diagram/Freelancer_1.pdf>]
+<../Report 3/image/UC_diagram/Freelancer_3.pdf, id=3006, 741.73106pt x 738.8402
 6pt>
 File: ../Report 3/image/UC_diagram/Freelancer_3.pdf Graphic file (type pdf)
 <use ../Report 3/image/UC_diagram/Freelancer_3.pdf>
@@ -1673,77 +1680,77 @@ Package pdftex.def Info: ../Report 3/image/UC_diagram/Freelancer_3.pdf  used on
  input line 115.
 (pdftex.def)             Requested size: 452.96458pt x 451.19922pt.
 
-[104 <../Report 3/image/UC_diagram/Freelancer_2.pdf>]
-<../Report 3/image/UC_diagram/Freelancer_4.pdf, id=2981, 777.86606pt x 637.4213
+[105 <../Report 3/image/UC_diagram/Freelancer_2.pdf>]
+<../Report 3/image/UC_diagram/Freelancer_4.pdf, id=3025, 777.86606pt x 637.4213
 7pt>
 File: ../Report 3/image/UC_diagram/Freelancer_4.pdf Graphic file (type pdf)
 <use ../Report 3/image/UC_diagram/Freelancer_4.pdf>
 Package pdftex.def Info: ../Report 3/image/UC_diagram/Freelancer_4.pdf  used on
  input line 126.
 (pdftex.def)             Requested size: 452.97862pt x 371.19276pt.
- [105 <../Report 3/image/UC_diagram/Freelancer_3.pdf>]
-<../Report 3/image/UC_diagram/Freelancer_5.pdf, id=3000, 741.73106pt x 862.1810
+ [106 <../Report 3/image/UC_diagram/Freelancer_3.pdf>]
+<../Report 3/image/UC_diagram/Freelancer_5.pdf, id=3044, 741.73106pt x 862.1810
 6pt>
 File: ../Report 3/image/UC_diagram/Freelancer_5.pdf Graphic file (type pdf)
 <use ../Report 3/image/UC_diagram/Freelancer_5.pdf>
 Package pdftex.def Info: ../Report 3/image/UC_diagram/Freelancer_5.pdf  used on
  input line 137.
 (pdftex.def)             Requested size: 452.96458pt x 526.5217pt.
- [106 <../Report 3/image/UC_diagram/Freelancer_4.pdf>]
-<../Report 3/image/UC_diagram/Freelancer_6.pdf, id=3019, 726.79526pt x 767.9892
+ [107 <../Report 3/image/UC_diagram/Freelancer_4.pdf>]
+<../Report 3/image/UC_diagram/Freelancer_6.pdf, id=3063, 726.79526pt x 767.9892
 pt>
 File: ../Report 3/image/UC_diagram/Freelancer_6.pdf Graphic file (type pdf)
 <use ../Report 3/image/UC_diagram/Freelancer_6.pdf>
 Package pdftex.def Info: ../Report 3/image/UC_diagram/Freelancer_6.pdf  used on
  input line 148.
 (pdftex.def)             Requested size: 452.97057pt x 478.64444pt.
- [107 <../Report 3/image/UC_diagram/Freelancer_5.pdf>]
-<../Report 3/image/UC_diagram/Freelancer_7.pdf, id=3038, 734.745pt x 840.01831p
+ [108 <../Report 3/image/UC_diagram/Freelancer_5.pdf>]
+<../Report 3/image/UC_diagram/Freelancer_7.pdf, id=3082, 734.745pt x 840.01831p
 t>
 File: ../Report 3/image/UC_diagram/Freelancer_7.pdf Graphic file (type pdf)
 <use ../Report 3/image/UC_diagram/Freelancer_7.pdf>
 Package pdftex.def Info: ../Report 3/image/UC_diagram/Freelancer_7.pdf  used on
  input line 159.
 (pdftex.def)             Requested size: 452.98102pt x 517.88356pt.
- [108 <../Report 3/image/UC_diagram/Freelancer_6.pdf>]
-<../Report 3/image/UC_diagram/Admin_1.pdf, id=3057, 509.0217pt x 270.0489pt>
+ [109 <../Report 3/image/UC_diagram/Freelancer_6.pdf>]
+<../Report 3/image/UC_diagram/Admin_1.pdf, id=3102, 509.0217pt x 270.0489pt>
 File: ../Report 3/image/UC_diagram/Admin_1.pdf Graphic file (type pdf)
 <use ../Report 3/image/UC_diagram/Admin_1.pdf>
 Package pdftex.def Info: ../Report 3/image/UC_diagram/Admin_1.pdf  used on inpu
 t line 173.
 (pdftex.def)             Requested size: 452.98128pt x 240.31804pt.
- [109 <../Report 3/image/UC_diagram/Freelancer_7.pdf>]
-<../Report 3/image/UC_diagram/Admin_2.pdf, id=3077, 754.73969pt x 630.43526pt>
+ [110 <../Report 3/image/UC_diagram/Freelancer_7.pdf>]
+<../Report 3/image/UC_diagram/Admin_2.pdf, id=3121, 754.73969pt x 630.43526pt>
 File: ../Report 3/image/UC_diagram/Admin_2.pdf Graphic file (type pdf)
 <use ../Report 3/image/UC_diagram/Admin_2.pdf>
 Package pdftex.def Info: ../Report 3/image/UC_diagram/Admin_2.pdf  used on inpu
 t line 184.
 (pdftex.def)             Requested size: 452.97398pt x 378.36989pt.
-<../Report 3/image/UC_diagram/Admin_3.pdf, id=3078, 768.95276pt x 738.84026pt>
+<../Report 3/image/UC_diagram/Admin_3.pdf, id=3122, 768.95276pt x 738.84026pt>
 File: ../Report 3/image/UC_diagram/Admin_3.pdf Graphic file (type pdf)
 <use ../Report 3/image/UC_diagram/Admin_3.pdf>
 Package pdftex.def Info: ../Report 3/image/UC_diagram/Admin_3.pdf  used on inpu
 t line 195.
 (pdftex.def)             Requested size: 452.9742pt x 435.23555pt.
- [110 <../Report 3/image/UC_diagram/Admin_1.pdf> <../Report 3/image/UC_diagram/
+ [111 <../Report 3/image/UC_diagram/Admin_1.pdf> <../Report 3/image/UC_diagram/
 Admin_2.pdf>]
-<../Report 3/image/UC_diagram/Admin_4.pdf, id=3111, 779.7933pt x 818.09637pt>
+<../Report 3/image/UC_diagram/Admin_4.pdf, id=3155, 779.7933pt x 818.09637pt>
 File: ../Report 3/image/UC_diagram/Admin_4.pdf Graphic file (type pdf)
 <use ../Report 3/image/UC_diagram/Admin_4.pdf>
 Package pdftex.def Info: ../Report 3/image/UC_diagram/Admin_4.pdf  used on inpu
 t line 206.
 (pdftex.def)             Requested size: 452.97055pt x 475.22025pt.
- [111 <../Report 3/image/UC_diagram/Admin_3.pdf>]
-<../Report 3/image/UC_diagram/Expert.pdf, id=3130, 739.80388pt x 688.49219pt>
+ [112 <../Report 3/image/UC_diagram/Admin_3.pdf>]
+<../Report 3/image/UC_diagram/Expert.pdf, id=3174, 739.80388pt x 688.49219pt>
 File: ../Report 3/image/UC_diagram/Expert.pdf Graphic file (type pdf)
 <use ../Report 3/image/UC_diagram/Expert.pdf>
 Package pdftex.def Info: ../Report 3/image/UC_diagram/Expert.pdf  used on input
  line 220.
 (pdftex.def)             Requested size: 452.97298pt x 421.55545pt.
-) [112 <../Report 3/image/UC_diagram/Admin_4.pdf>]
+) [113 <../Report 3/image/UC_diagram/Admin_4.pdf>]
 (../Report 3/sections/3.Subsections/3.1.Subsections/3.1.1.Screen_Flow.tex
-[113 <../Report 3/image/UC_diagram/Expert.pdf>]
-<../Report 3/image/Screen_flow/Screen_flow_for_guest.pdf, id=3167, 1392.16106pt
+[114 <../Report 3/image/UC_diagram/Expert.pdf>]
+<../Report 3/image/Screen_flow/Screen_flow_for_guest.pdf, id=3211, 1392.16106pt
  x 478.66827pt>
 File: ../Report 3/image/Screen_flow/Screen_flow_for_guest.pdf Graphic file (typ
 e pdf)
@@ -1751,7 +1758,7 @@ e pdf)
 Package pdftex.def Info: ../Report 3/image/Screen_flow/Screen_flow_for_guest.pd
 f  used on input line 6.
 (pdftex.def)             Requested size: 452.96826pt x 155.74063pt.
-<../Report 3/image/Screen_flow/Screen_flow_for_client_1.pdf, id=3168, 1782.66pt
+<../Report 3/image/Screen_flow/Screen_flow_for_client_1.pdf, id=3212, 1782.66pt
  x 1508.7567pt>
 File: ../Report 3/image/Screen_flow/Screen_flow_for_client_1.pdf Graphic file (
 type pdf)
@@ -1759,7 +1766,7 @@ type pdf)
 Package pdftex.def Info: ../Report 3/image/Screen_flow/Screen_flow_for_client_1
 .pdf  used on input line 13.
 (pdftex.def)             Requested size: 452.96826pt x 383.35808pt.
-<../Report 3/image/Screen_flow/Screen_flow_for_client_2.pdf, id=3169, 1782.66pt
+<../Report 3/image/Screen_flow/Screen_flow_for_client_2.pdf, id=3213, 1782.66pt
  x 1317.96382pt>
 File: ../Report 3/image/Screen_flow/Screen_flow_for_client_2.pdf Graphic file (
 type pdf)
@@ -1767,9 +1774,9 @@ type pdf)
 Package pdftex.def Info: ../Report 3/image/Screen_flow/Screen_flow_for_client_2
 .pdf  used on input line 20.
 (pdftex.def)             Requested size: 452.96826pt x 334.87975pt.
- [114 <../Report 3/image/Screen_flow/Screen_flow_for_guest.pdf> <../Report 3/im
+ [115 <../Report 3/image/Screen_flow/Screen_flow_for_guest.pdf> <../Report 3/im
 age/Screen_flow/Screen_flow_for_client_1.pdf>]
-<../Report 3/image/Screen_flow/Screen_flow_for_freelancer1.pdf, id=3194, 2545.5
+<../Report 3/image/Screen_flow/Screen_flow_for_freelancer1.pdf, id=3239, 2545.5
 9013pt x 1886.00606pt>
 File: ../Report 3/image/Screen_flow/Screen_flow_for_freelancer1.pdf Graphic fil
 e (type pdf)
@@ -1777,8 +1784,8 @@ e (type pdf)
 Package pdftex.def Info: ../Report 3/image/Screen_flow/Screen_flow_for_freelanc
 er1.pdf  used on input line 27.
 (pdftex.def)             Requested size: 452.96826pt x 335.5814pt.
- [115 <../Report 3/image/Screen_flow/Screen_flow_for_client_2.pdf>]
-<../Report 3/image/Screen_flow/Screen_flow_for_freelancer2.pdf, id=3211, 2545.5
+ [116 <../Report 3/image/Screen_flow/Screen_flow_for_client_2.pdf>]
+<../Report 3/image/Screen_flow/Screen_flow_for_freelancer2.pdf, id=3255, 2545.5
 9013pt x 2383.94644pt>
 File: ../Report 3/image/Screen_flow/Screen_flow_for_freelancer2.pdf Graphic fil
 e (type pdf)
@@ -1786,8 +1793,8 @@ e (type pdf)
 Package pdftex.def Info: ../Report 3/image/Screen_flow/Screen_flow_for_freelanc
 er2.pdf  used on input line 34.
 (pdftex.def)             Requested size: 452.96826pt x 424.18109pt.
- [116 <../Report 3/image/Screen_flow/Screen_flow_for_freelancer1.pdf>]
-<../Report 3/image/Screen_flow/Screen_flow_for_admin_1.pdf, id=3225, 1268.82025
+ [117 <../Report 3/image/Screen_flow/Screen_flow_for_freelancer1.pdf>]
+<../Report 3/image/Screen_flow/Screen_flow_for_admin_1.pdf, id=3269, 1268.82025
 pt x 1147.4067pt>
 File: ../Report 3/image/Screen_flow/Screen_flow_for_admin_1.pdf Graphic file (t
 ype pdf)
@@ -1796,8 +1803,8 @@ Package pdftex.def Info: ../Report 3/image/Screen_flow/Screen_flow_for_admin_1.
 pdf  used on input line 41.
 (pdftex.def)             Requested size: 452.96826pt x 409.61702pt.
 
-[117 <../Report 3/image/Screen_flow/Screen_flow_for_freelancer2.pdf>]
-<../Report 3/image/Screen_flow/Screen_flow_for_admin_2.pdf, id=3239, 1303.9917p
+[118 <../Report 3/image/Screen_flow/Screen_flow_for_freelancer2.pdf>]
+<../Report 3/image/Screen_flow/Screen_flow_for_admin_2.pdf, id=3283, 1303.9917p
 t x 948.42331pt>
 File: ../Report 3/image/Screen_flow/Screen_flow_for_admin_2.pdf Graphic file (t
 ype pdf)
@@ -1805,8 +1812,8 @@ ype pdf)
 Package pdftex.def Info: ../Report 3/image/Screen_flow/Screen_flow_for_admin_2.
 pdf  used on input line 48.
 (pdftex.def)             Requested size: 452.96826pt x 329.44952pt.
- [118 <../Report 3/image/Screen_flow/Screen_flow_for_admin_1.pdf>]
-<../Report 3/image/Screen_flow/Screen_flow_for_expert.pdf, id=3255, 1207.6317pt
+ [119 <../Report 3/image/Screen_flow/Screen_flow_for_admin_1.pdf>]
+<../Report 3/image/Screen_flow/Screen_flow_for_expert.pdf, id=3299, 1207.6317pt
  x 579.12357pt>
 File: ../Report 3/image/Screen_flow/Screen_flow_for_expert.pdf Graphic file (ty
 pe pdf)
@@ -1814,115 +1821,25 @@ pe pdf)
 Package pdftex.def Info: ../Report 3/image/Screen_flow/Screen_flow_for_expert.p
 df  used on input line 55.
 (pdftex.def)             Requested size: 452.96826pt x 217.21498pt.
- [119 <../Report 3/image/Screen_flow/Screen_flow_for_admin_2.pdf> <../Report 3/
+ [120 <../Report 3/image/Screen_flow/Screen_flow_for_admin_2.pdf> <../Report 3/
 image/Screen_flow/Screen_flow_for_expert.pdf>])
 (../Report 3/sections/3.Subsections/3.1.Subsections/3.1.3.Screen_Authorization.
 tex
-Underfull \hbox (badness 10000) in paragraph at lines 87--87
-[]|\T1/ptm/m/n/12 Update Mile-stone
+Underfull \hbox (badness 1688) in paragraph at lines 76--76
+[]|\T1/ptm/m/n/12 Disputes (Res-o-lu-tion Cen-
  []
 
 
-Underfull \hbox (badness 2173) in paragraph at lines 109--109
-[]|\T1/ptm/m/n/12 Edit Com-pany In-for-ma-
+Underfull \hbox (badness 3965) in paragraph at lines 100--100
+[]|\T1/ptm/m/n/12 Forum Cat-e-gory Man-age-
  []
 
-
-Underfull \hbox (badness 6559) in paragraph at lines 116--116
-[]|\T1/ptm/m/n/12 Proposal De-tail (Client
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 132--132
-[]|\T1/ptm/m/n/12 Request Mile-stone
- []
-
-
-Underfull \hbox (badness 1152) in paragraph at lines 136--136
-[]|\T1/ptm/m/n/12 Escalate Dis-pute to Ex-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 144--144
-[]|\T1/ptm/m/n/12 Respond to Re-view
- []
-
-
-Underfull \hbox (badness 1147) in paragraph at lines 161--161
-[]|\T1/ptm/m/n/12 Edit Client Pro-file (Ad-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 178--178
-[]|\T1/ptm/m/n/12 Job Cat-e-gory Man-age-
- []
-
-
-Underfull \hbox (badness 1314) in paragraph at lines 181--181
-[]|\T1/ptm/m/n/12 View Job Cat-e-gory De-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 187--187
-[]|\T1/ptm/m/n/12 View Fo-rum Cat-e-gory
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 188--188
-[]|\T1/ptm/m/n/12 Confirm Delete Fo-rum
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 191--191
-[]|\T1/ptm/m/n/12 View Mod-er-a-tion Item
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 193--193
-[]|\T1/ptm/m/n/12 Forum Trash Man-age-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 194--194
-[]|\T1/ptm/m/n/12 View Deleted
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 194--194
-\T1/ptm/m/n/12 Posts/Comments De-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 195--195
-[]|\T1/ptm/m/n/12 Restore Deleted
- []
-
-
-Underfull \hbox (badness 1052) in paragraph at lines 196--196
-[]|\T1/ptm/m/n/12 ID Ver-i-fi-ca-tion Man-age-
- []
-
-
-Underfull \hbox (badness 2772) in paragraph at lines 203--203
-[]|\T1/ptm/m/n/12 Approve Pro-file Up-date
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 209--209
-[]|\T1/ptm/m/n/12 Session Man-age-ment
- []
-
-ignored error: Infinite glue shrinkage found in box being split [120
+ignored error: Infinite glue shrinkage found in box being split [121
 
 ]
-ignored error: Infinite glue shrinkage found in box being split [121]
-ignored error: Infinite glue shrinkage found in box being split [122]
-ignored error: Infinite glue shrinkage found in box being split [123]
-ignored error: Infinite glue shrinkage found in box being split [124]
-ignored error: Infinite glue shrinkage found in box being split [125]
-ignored error: Infinite glue shrinkage found in box being split [126])
+ignored error: Infinite glue shrinkage found in box being split [122])
 (../Report 3/sections/3.Subsections/3.1.Subsections/3.1.4.Non-Screen_Functions.
-tex
+tex [123]
 Overfull \hbox (2.66803pt too wide) in alignment at lines 12--19
  [] [] [] [] 
  []
@@ -1943,236 +1860,495 @@ Overfull \hbox (2.66803pt too wide) in alignment at lines 29--32
  []
 
 
-Underfull \hbox (badness 3029) in paragraph at lines 38--39
-\T1/ptm/m/n/12 tion and password-reset emails
+Underfull \hbox (badness 3579) in paragraph at lines 38--39
+[]|\T1/ptm/m/n/12 Extracts \T1/cmtt/m/n/12 Bearer \T1/ptm/m/n/12 ac-cess to-ken
+s
  []
 
 
-Underfull \hbox (badness 1082) in paragraph at lines 45--46
-[]|\T1/ptm/m/n/12 Maintains au-then-ti-cated per-user
+Underfull \hbox (badness 10000) in paragraph at lines 38--39
+\T1/ptm/m/n/12 sig-na-tures (\T1/cmtt/m/n/12 ACCESS_TOKEN_
  []
 
 
-Underfull \hbox (badness 2846) in paragraph at lines 45--46
-\T1/ptm/m/n/12 ti-fi-ca-tions (pro-pos-als, con-tracts,
+Underfull \hbox (badness 10000) in paragraph at lines 38--39
+\T1/cmtt/m/n/12 SECRET\T1/ptm/m/n/12 ), checks ac-tive DB
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 52--53
+Underfull \hbox (badness 3209) in paragraph at lines 38--39
+\T1/ptm/m/n/12 sta-tus (\T1/cmtt/m/n/12 401 \T1/ptm/m/n/12 if re-voked/missing,
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 38--39
+\T1/ptm/m/n/12 al-lows op-tional guest con-text
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 38--39
+\T1/ptm/m/n/12 on \T1/cmtt/m/n/12 @IsPublic() \T1/ptm/m/n/12 routes, and
+ []
+
+
+Underfull \hbox (badness 2065) in paragraph at lines 38--39
+\T1/ptm/m/n/12 en-forces hard-coded mar-ket-place
+ []
+
+
+Underfull \hbox (badness 3302) in paragraph at lines 38--39
+\T1/ptm/m/n/12 sions for \T1/cmtt/m/n/12 ADMIN\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 
+EXPERT\T1/ptm/m/n/12 , and
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 45--46
+[]|\T1/ptm/m/n/12 Verifies re-fresh to-ken sig-na-
+ []
+
+
+Underfull \hbox (badness 1303) in paragraph at lines 45--46
+\T1/ptm/m/n/12 tures (\T1/cmtt/m/n/12 REFRESH_TOKEN_SECRET\T1/ptm/m/n/12 ),
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 53--54
+[]|\T1/ptm/m/n/12 Validates email el-i-gi-bil-ity
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 53--54
+\T1/ptm/m/n/12 (\T1/cmtt/m/n/12 EMAIL_VERIFICATION \T1/ptm/m/n/12 or
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 53--54
+\T1/cmtt/m/n/12 PASSWORD_RESET\T1/ptm/m/n/12 ), en-forces
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 53--54
+\T1/cmtt/m/n/12 OTP_ATTEMPT_WINDOW\T1/ptm/m/n/12 ), gen-er-
+ []
+
+
+Underfull \hbox (badness 1168) in paragraph at lines 53--54
+\T1/ptm/m/n/12 ates ex-pir-ing OTP codes (\T1/cmtt/m/n/12 OTP_
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 53--54
+\T1/cmtt/m/n/12 EXPIRES_IN\T1/ptm/m/n/12 ), up-serts ver-i-fi-ca-
+ []
+
+
+Underfull \hbox (badness 1983) in paragraph at lines 53--54
+\T1/ptm/m/n/12 tion records, and sends emails
+ []
+
+
+Underfull \hbox (badness 1521) in paragraph at lines 60--61
+\T1/ptm/m/n/12 URLs en-cod-ing client meta-data
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 67--68
+[]|\T1/ptm/m/n/12 Resolves the signed-in user's
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 67--68
+\T1/ptm/m/n/12 pro-file sum-mary, ac-tive pri-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 67--68
+\T1/ptm/m/n/12 mary and sec-ondary mar-ket-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 67--68
+\T1/ptm/m/n/12 place roles, ef-fec-tive end-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 67--68
+\T1/ptm/m/n/12 point \T1/cmtt/m/n/12 permissions\T1/ptm/m/n/12 , and UI
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 67--68
+\T1/cmtt/m/n/12 permissionModules\T1/ptm/m/n/12 , backed
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 67--68
+\T1/ptm/m/n/12 by \T1/cmtt/m/n/12 AUTH_ME_CACHE_PREFIX
+ []
+
+
+Underfull \hbox (badness 3895) in paragraph at lines 74--75
+\T1/ptm/m/n/12 (\T1/cmtt/m/n/12 10s \T1/ptm/m/n/12 buffer on page re-quests;
+ []
+
+
+Underfull \hbox (badness 2426) in paragraph at lines 74--75
+\T1/cmtt/m/n/12 30s \T1/ptm/m/n/12 buffer on \T1/cmtt/m/n/12 socket-token\T1/pt
+m/m/n/12 ),
+ []
+
+
+Underfull \hbox (badness 2359) in paragraph at lines 74--75
+\T1/ptm/m/n/12 trans-par-ently ro-tates to-kens via
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 74--75
+\T1/cmtt/m/n/12 /api/auth/refresh-token\T1/ptm/m/n/12 ,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 74--75
+\T1/ptm/m/n/12 per-sists \T1/cmtt/m/n/12 httpOnly
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 74--75
+\T1/ptm/m/n/12 (\T1/cmtt/m/n/12 SameSite=Lax\T1/ptm/m/n/12 ) auth cook-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 74--75
+\T1/ptm/m/n/12 ac-cess to-kens for Socket.IO
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 81--82
+[]|\T1/ptm/m/n/12 Forwards fron-tend API calls
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 81--82
+\T1/ptm/m/n/12 to-kens, au-to-mat-i-cally trig-gers
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 81--82
+\T1/ptm/m/n/12 a single-flight to-ken re-fresh
+ []
+
+
+Underfull \hbox (badness 2503) in paragraph at lines 81--82
+\T1/ptm/m/n/12 and retry on back-end \T1/cmtt/m/n/12 401 \T1/ptm/m/n/12 re-
+ []
+
+
+Underfull \hbox (badness 1199) in paragraph at lines 81--82
+\T1/ptm/m/n/12 sponses, clears cook-ies on \T1/cmtt/m/n/12 403
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 81--82
+\T1/ptm/m/n/12 user-ban er-rors, routes \T1/cmtt/m/n/12 POST
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 81--82
+\T1/ptm/m/n/12 and trans-lates i18n re-sponse
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 88--89
+\T1/cmtt/m/n/12 bcrypt \T1/ptm/m/n/12 (\T1/cmtt/m/n/12 SALT_ROUNDS = 10\T1/ptm/
+m/n/12 ),
+ []
+
+
+Underfull \hbox (badness 2903) in paragraph at lines 88--89
+\T1/ptm/m/n/12 role per-mis-sions, ban-ners, and
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 102--103
+[]|\T1/ptm/m/n/12 Verifies JWT ac-cess to-kens
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 102--103
+\T1/ptm/m/n/12 Web-Socket hand-shakes, joins
+ []
+
+
+Underfull \hbox (badness 3746) in paragraph at lines 102--103
+\T1/cmtt/m/n/12 user:{id} \T1/ptm/m/n/12 and \T1/cmtt/m/n/12 session:{id}
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 102--103
+\T1/cmtt/m/n/12 LOGOUT \T1/ptm/m/n/12 on bans or re-voked
+ []
+
+
+Underfull \hbox (badness 1383) in paragraph at lines 102--103
+\T1/ptm/m/n/12 typ-ing in-di-ca-tors, read re-ceipts,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 109--110
 []|\T1/ptm/m/n/12 Executes a non-overlapping
  []
 
 
-Underfull \hbox (badness 2495) in paragraph at lines 52--53
+Underfull \hbox (badness 2495) in paragraph at lines 109--110
 \T1/ptm/m/n/12 sched-uled sweep that (i) auto-
  []
 
 
-Underfull \hbox (badness 2635) in paragraph at lines 52--53
+Underfull \hbox (badness 2635) in paragraph at lines 109--110
 \T1/ptm/m/n/12 approves mile-stone sub-mis-sions
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 52--53
+Underfull \hbox (badness 10000) in paragraph at lines 109--110
 \T1/ptm/m/n/12 (\T1/cmtt/m/n/12 CLIENT_REVIEW_TIMEOUT_MS\T1/ptm/m/n/12 ),
  []
 
 
-Underfull \hbox (badness 2452) in paragraph at lines 52--53
+Underfull \hbox (badness 2452) in paragraph at lines 109--110
 \T1/ptm/m/n/12 re-leases Stripe Con-nect es-crow
  []
 
 
-Underfull \hbox (badness 6032) in paragraph at lines 52--53
+Underfull \hbox (badness 6032) in paragraph at lines 109--110
 \T1/ptm/m/n/12 con-tracts/jobs; and (ii) marks
  []
 
 
-Underfull \hbox (badness 3323) in paragraph at lines 60--61
-[]|\T1/ptm/m/n/12 Verifies Stripe web-hook sig-na-
+Underfull \hbox (badness 10000) in paragraph at lines 116--117
+[]|\T1/ptm/m/n/12 Verifies Stripe
  []
 
 
-Underfull \hbox (badness 6284) in paragraph at lines 60--61
-\T1/ptm/m/n/12 tures against the raw re-quest
+Underfull \hbox (badness 10000) in paragraph at lines 116--117
+\T1/cmtt/m/n/12 stripe-signature \T1/ptm/m/n/12 head-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 60--61
+Underfull \hbox (badness 10000) in paragraph at lines 116--117
+\T1/ptm/m/n/12 ers against raw re-quest
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 116--117
+\T1/ptm/m/n/12 bod-ies (\T1/cmtt/m/n/12 rawBody: true\T1/ptm/m/n/12 )
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 116--117
+\T1/ptm/m/n/12 and idem-po-tently rec-on-ciles
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 116--117
 \T1/cmtt/m/n/12 checkout.session.completed\T1/ptm/m/n/12 ,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 60--61
+Underfull \hbox (badness 10000) in paragraph at lines 116--117
 \T1/cmtt/m/n/12 payment_intent.*\T1/ptm/m/n/12 , and
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 60--61
-\T1/cmtt/m/n/12 account.updated \T1/ptm/m/n/12 events to
+Underfull \hbox (badness 10000) in paragraph at lines 116--117
+\T1/cmtt/m/n/12 account.updated \T1/ptm/m/n/12 events via
  []
 
 
-Underfull \hbox (badness 1881) in paragraph at lines 60--61
-\T1/ptm/m/n/12 ad-vance con-tract fund-ing states
+Underfull \hbox (badness 2717) in paragraph at lines 116--117
+\T1/ptm/m/n/12 asyn-chronous web-hooks or ex-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 60--61
-\T1/ptm/m/n/12 (\T1/cmtt/m/n/12 PENDING_SIGN\T1/ptm/m/n/12 ), up-date mile-
+Underfull \hbox (badness 1661) in paragraph at lines 116--117
+\T1/ptm/m/n/12 plicit return-URL sync calls to
  []
 
 
-Underfull \hbox (badness 5345) in paragraph at lines 60--61
-\T1/ptm/m/n/12 stone es-crow bal-ances, record
- []
-
-
-Underfull \hbox (badness 4660) in paragraph at lines 60--61
-\T1/ptm/m/n/12 trans-ac-tion ledger en-tries, and
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 60--61
-\T1/ptm/m/n/12 syn-chro-nize Con-nect Ex-press
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 67--68
+Underfull \hbox (badness 10000) in paragraph at lines 123--124
 []|\T1/ptm/m/n/12 Polls \T1/cmtt/m/n/12 EmbeddingOutboxEvent
  []
 
 
-Underfull \hbox (badness 1590) in paragraph at lines 67--68
+Underfull \hbox (badness 1590) in paragraph at lines 123--124
 \T1/ptm/m/n/12 in-dexes section-aware doc-u-ment
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 67--68
-\T1/ptm/m/n/12 vec-tors into Chro-maDB via
+Underfull \hbox (badness 7925) in paragraph at lines 123--124
+\T1/ptm/m/n/12 vec-tors into Chro-maDB, with
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 67--68
-\T1/cmtt/m/n/12 RecommendationIndexService\T1/ptm/m/n/12 ,
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 67--68
-\T1/ptm/m/n/12 re-cov-er-ing stuck records and
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 74--75
+Underfull \hbox (badness 10000) in paragraph at lines 130--131
 []|\T1/ptm/m/n/12 Computes con-tex-tual match-ing
  []
 
 
-Underfull \hbox (badness 1303) in paragraph at lines 74--75
+Underfull \hbox (badness 1303) in paragraph at lines 130--131
 \T1/ptm/m/n/12 scores be-tween job de-scrip-tions
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 74--75
+Underfull \hbox (badness 10000) in paragraph at lines 130--131
 \T1/ptm/m/n/12 and free-lancer pro-files us-ing
  []
 
 
-Underfull \hbox (badness 5119) in paragraph at lines 74--75
+Underfull \hbox (badness 5119) in paragraph at lines 130--131
 \T1/ptm/m/n/12 section-aware BGE-M3 se-man-
  []
 
 
-Underfull \hbox (badness 3323) in paragraph at lines 74--75
+Underfull \hbox (badness 3323) in paragraph at lines 130--131
 \T1/ptm/m/n/12 tic em-bed-dings com-bined with
  []
 
 
-Underfull \hbox (badness 8038) in paragraph at lines 74--75
+Underfull \hbox (badness 8038) in paragraph at lines 130--131
 \T1/ptm/m/n/12 gen-er-ates claim-level match-ing
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 81--82
+Underfull \hbox (badness 10000) in paragraph at lines 137--138
 []|\T1/ptm/m/n/12 Evaluates user-submitted fo-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 81--82
+Underfull \hbox (badness 10000) in paragraph at lines 137--138
 \T1/ptm/m/n/12 rum posts and com-ments
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 81--82
+Underfull \hbox (badness 10000) in paragraph at lines 137--138
 \T1/ptm/m/n/12 server-side against the ex-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 81--82
+Underfull \hbox (badness 10000) in paragraph at lines 137--138
 \T1/ptm/m/n/12 ter-nal \T1/cmtt/m/n/12 AI_MODERATION_URL
  []
 
 
-Underfull \hbox (badness 1418) in paragraph at lines 81--82
+Underfull \hbox (badness 1418) in paragraph at lines 137--138
 \T1/ptm/m/n/12 (\T1/cmtt/m/n/12 /moderate\T1/ptm/m/n/12 ) end-point, clas-si-fy
 -
  []
 
 
-Underfull \hbox (badness 4792) in paragraph at lines 81--82
+Underfull \hbox (badness 4792) in paragraph at lines 137--138
 \T1/ptm/m/n/12 ing sub-mis-sions as \T1/cmtt/m/n/12 APPROVED\T1/ptm/m/n/12 ,
  []
 
 
-Underfull \hbox (badness 2529) in paragraph at lines 81--82
+Underfull \hbox (badness 2529) in paragraph at lines 137--138
 \T1/cmtt/m/n/12 PENDING \T1/ptm/m/n/12 (routed to the ad-min
  []
 
 
-Underfull \hbox (badness 3514) in paragraph at lines 81--82
+Underfull \hbox (badness 3514) in paragraph at lines 137--138
 \T1/ptm/m/n/12 fo-rum trash), de-fault-ing safely
  []
 
 
-Underfull \hbox (badness 3407) in paragraph at lines 88--89
+Underfull \hbox (badness 3407) in paragraph at lines 144--145
 \T1/ptm/m/n/12 time), val-i-dates ac-tive live-ness
  []
 
 
-Underfull \hbox (badness 5119) in paragraph at lines 102--103
+Underfull \hbox (badness 5119) in paragraph at lines 158--159
 \T1/ptm/m/n/12 guage de-tec-tor com-bined with
  []
 
 
-Underfull \hbox (badness 4205) in paragraph at lines 102--103
+Underfull \hbox (badness 4205) in paragraph at lines 158--159
 \T1/ptm/m/n/12 Viet-namese di-a-critic checks to
  []
 
 
-Underfull \hbox (badness 1688) in paragraph at lines 102--103
+Underfull \hbox (badness 1688) in paragraph at lines 158--159
 \T1/ptm/m/n/12 en-force English-language pol-icy
  []
 
 
-Underfull \hbox (badness 1454) in paragraph at lines 109--110
-\T1/ptm/m/n/12 terms, mile-stone sched-ules, fee
+Underfull \hbox (badness 2042) in paragraph at lines 165--166
+\T1/ptm/m/n/12 tracts into PDF doc-u-ments via
  []
 
 
-Overfull \hbox (2.66803pt too wide) in alignment at lines 32--112
+Underfull \hbox (badness 7151) in paragraph at lines 165--166
+\T1/cmtt/m/n/12 pdf-lib\T1/ptm/m/n/12 , man-ages Cloud-i-nary
+ []
+
+
+Underfull \hbox (badness 3884) in paragraph at lines 165--166
+\T1/ptm/m/n/12 and pro-tected lo-cal me-dia as-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 165--166
+\T1/ptm/m/n/12 sets (plus static \T1/cmtt/m/n/12 /uploads/\T1/ptm/m/n/12 ),
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 165--166
+\T1/ptm/m/n/12 and streams pri-vate iden-tity
+ []
+
+
+Underfull \hbox (badness 3907) in paragraph at lines 165--166
+\T1/ptm/m/n/12 doc-u-ments, CVs, avatars, and
+ []
+
+
+Underfull \hbox (badness 2103) in paragraph at lines 165--166
+\T1/ptm/m/n/12 lo-cal ban-ner files with ex-plicit
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 165--166
+\T1/cmtt/m/n/12 Content-Disposition \T1/ptm/m/n/12 and
+ []
+
+
+Underfull \hbox (badness 1107) in paragraph at lines 172--173
+[]|\T1/ptm/m/n/12 Periodically scans pend-ing con-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 172--173
+\T1/ptm/m/n/12 Pay-mentIn-tent au-tho-riza-tion
+ []
+
+
+Overfull \hbox (2.66803pt too wide) in alignment at lines 32--175
  [] [] [] [] 
  []
 
+ignored error: Infinite glue shrinkage found in box being split [124]
+ignored error: Infinite glue shrinkage found in box being split [125]
+ignored error: Infinite glue shrinkage found in box being split [126]
 ignored error: Infinite glue shrinkage found in box being split [127]
 ignored error: Infinite glue shrinkage found in box being split [128]
 ignored error: Infinite glue shrinkage found in box being split [129])
-(../Report 3/sections/3.Subsections/sprint1/ptai.tex [130]
+(../Report 3/sections/3.Subsections/sprint1/ptai.tex
 Overfull \hbox (49.16328pt too wide) in paragraph at lines 25--26
 []\T1/ptm/b/n/12 Supporting Sys-tems: \T1/ptm/m/n/12 Fre-via Web ap-pli-ca-tion
  (Next.js), Fre-via REST API (\T1/cmtt/m/n/12 BrowseJobController\T1/ptm/m/n/12
  ),
  []
 
+[130]
 LaTeX Font Info:    Font shape `T1/cmtt/bx/n' in size <12> not available
 (Font)              Font shape `T1/cmtt/m/n' tried instead on input line 33.
 
@@ -2187,8 +2363,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 40--41
 ryDto \T1/ptm/m/n/12 en-forc-ing \T1/cmtt/m/n/12 budgetMin <=
  []
 
-[131]
-<../Report 3/image/screenshot/sprint1/ptai/ViewJobList.png, id=3337, 1445.4pt x
+<../Report 3/image/screenshot/sprint1/ptai/ViewJobList.png, id=3373, 1445.4pt x
  903.375pt>
 File: ../Report 3/image/screenshot/sprint1/ptai/ViewJobList.png Graphic file (t
 ype png)
@@ -2196,7 +2371,7 @@ ype png)
 Package pdftex.def Info: ../Report 3/image/screenshot/sprint1/ptai/ViewJobList.
 png  used on input line 47.
 (pdftex.def)             Requested size: 430.3151pt x 268.94693pt.
-<../Report 3/image/screenshot/sprint1/ptai/ViewJobListGuest.png, id=3338, 1445.
+<../Report 3/image/screenshot/sprint1/ptai/ViewJobListGuest.png, id=3374, 1445.
 4pt x 903.375pt>
 File: ../Report 3/image/screenshot/sprint1/ptai/ViewJobListGuest.png Graphic fi
 le (type png)
@@ -2204,10 +2379,9 @@ le (type png)
 Package pdftex.def Info: ../Report 3/image/screenshot/sprint1/ptai/ViewJobListG
 uest.png  used on input line 48.
 (pdftex.def)             Requested size: 430.3151pt x 268.94693pt.
- [132 <../Report 3/image/screenshot/sprint1/ptai/ViewJobList.png (PNG copy)>]
-ignored error: Infinite glue shrinkage found in box being split [133 <../Report
- 3/image/screenshot/sprint1/ptai/ViewJobListGuest.png (PNG copy)>] [134]
-[135]
+[131] [132 <../Report 3/image/screenshot/sprint1/ptai/ViewJobList.png (PNG copy
+)> <../Report 3/image/screenshot/sprint1/ptai/ViewJobListGuest.png (PNG copy)>]
+[133] [134]
 Overfull \hbox (42.16733pt too wide) in paragraph at lines 126--127
 []\T1/ptm/b/n/12 Supporting Sys-tems: \T1/ptm/m/n/12 Fre-via Web ap-pli-ca-tion
  (Next.js), Fre-via REST API (\T1/cmtt/m/n/12 BrowseJobController
@@ -2219,8 +2393,8 @@ Underfull \hbox (badness 1117) in paragraph at lines 130--131
 -tion con-trols via slug (\T1/cmtt/m/n/12 GET
  []
 
-[136]
-<../Report 3/image/screenshot/sprint1/ptai/ViewJobDetail.png, id=3368, 1445.4pt
+[135]
+<../Report 3/image/screenshot/sprint1/ptai/ViewJobDetail.png, id=3404, 1445.4pt
  x 903.375pt>
 File: ../Report 3/image/screenshot/sprint1/ptai/ViewJobDetail.png Graphic file 
 (type png)
@@ -2228,7 +2402,7 @@ File: ../Report 3/image/screenshot/sprint1/ptai/ViewJobDetail.png Graphic file
 Package pdftex.def Info: ../Report 3/image/screenshot/sprint1/ptai/ViewJobDetai
 l.png  used on input line 145.
 (pdftex.def)             Requested size: 430.3151pt x 268.94693pt.
-<../Report 3/image/screenshot/sprint1/ptai/ViewJobDetailClient.png, id=3369, 14
+<../Report 3/image/screenshot/sprint1/ptai/ViewJobDetailClient.png, id=3405, 14
 45.4pt x 903.375pt>
 File: ../Report 3/image/screenshot/sprint1/ptai/ViewJobDetailClient.png Graphic
  file (type png)
@@ -2236,16 +2410,16 @@ File: ../Report 3/image/screenshot/sprint1/ptai/ViewJobDetailClient.png Graphic
 Package pdftex.def Info: ../Report 3/image/screenshot/sprint1/ptai/ViewJobDetai
 lClient.png  used on input line 146.
 (pdftex.def)             Requested size: 430.3151pt x 268.94693pt.
- [137 <../Report 3/image/screenshot/sprint1/ptai/ViewJobDetail.png (PNG copy)> 
-<../Report 3/image/screenshot/sprint1/ptai/ViewJobDetailClient.png (PNG copy)>]
-
+ [136 <../Report 3/image/screenshot/sprint1/ptai/ViewJobDetail.png (PNG copy)>]
+ [137 <../Report 3/image/screenshot/sprint1/ptai/ViewJobDetailClient.png (PNG c
+opy)>]
 Overfull \hbox (5.33157pt too wide) in paragraph at lines 174--175
 []\T1/ptm/m/n/12 Viewer opens \T1/cmtt/m/n/12 /freelancer/jobs/:slug \T1/ptm/m/
 n/12 (or client owner opens \T1/cmtt/m/n/12 /client/jobs/:jobId\T1/ptm/m/n/12 )
 . 
  []
 
-[138] [139]
+[138]
 Overfull \hbox (49.16328pt too wide) in paragraph at lines 218--219
 []\T1/ptm/b/n/12 Supporting Sys-tems: \T1/ptm/m/n/12 Fre-via Web ap-pli-ca-tion
  (Next.js), Fre-via REST API (\T1/cmtt/m/n/12 ManageJobController\T1/ptm/m/n/12
@@ -2258,8 +2432,8 @@ Underfull \hbox (badness 2582) in paragraph at lines 234--235
 m/m/n/12 (\T1/cmtt/m/n/12 JobOnlyForClientException \T1/ptm/m/n/12 HTTP
  []
 
-[140]
-<../Report 3/image/screenshot/sprint1/ptai/ViewMyJobs.png, id=3394, 1445.4pt x 
+[139]
+<../Report 3/image/screenshot/sprint1/ptai/ViewMyJobs.png, id=3430, 1445.4pt x 
 903.375pt>
 File: ../Report 3/image/screenshot/sprint1/ptai/ViewMyJobs.png Graphic file (ty
 pe png)
@@ -2267,15 +2441,15 @@ pe png)
 Package pdftex.def Info: ../Report 3/image/screenshot/sprint1/ptai/ViewMyJobs.p
 ng  used on input line 239.
 (pdftex.def)             Requested size: 430.3151pt x 268.94693pt.
- [141 <../Report 3/image/screenshot/sprint1/ptai/ViewMyJobs.png (PNG copy)>] [1
-42]
+ [140 <../Report 3/image/screenshot/sprint1/ptai/ViewMyJobs.png (PNG copy)>] [1
+41]
 Overfull \hbox (49.16328pt too wide) in paragraph at lines 310--311
 []\T1/ptm/b/n/12 Supporting Sys-tems: \T1/ptm/m/n/12 Fre-via Web ap-pli-ca-tion
  (Next.js), Fre-via REST API (\T1/cmtt/m/n/12 ManageJobController\T1/ptm/m/n/12
  ),
  []
 
-
+[142]
 Underfull \hbox (badness 1360) in paragraph at lines 319--320
 []\T1/ptm/m/n/12 Inputs for Job ti-tle (``En-glish only'' tag), De-scrip-tion (
 ``En-glish only'' tag), Min-i-
@@ -2287,8 +2461,7 @@ Underfull \hbox (badness 3439) in paragraph at lines 324--324
 m/m/n/12 val-i-dated by \T1/cmtt/m/n/12 CreateJobBodySchema.
  []
 
-[143]
-<../Report 3/image/screenshot/sprint1/ptai/CreateJob.png, id=3415, 1445.4pt x 9
+<../Report 3/image/screenshot/sprint1/ptai/CreateJob.png, id=3451, 1445.4pt x 9
 03.375pt>
 File: ../Report 3/image/screenshot/sprint1/ptai/CreateJob.png Graphic file (typ
 e png)
@@ -2296,8 +2469,8 @@ e png)
 Package pdftex.def Info: ../Report 3/image/screenshot/sprint1/ptai/CreateJob.pn
 g  used on input line 331.
 (pdftex.def)             Requested size: 430.3151pt x 268.94693pt.
- [144 <../Report 3/image/screenshot/sprint1/ptai/CreateJob.png (PNG copy)>] [14
-5] [146]
+[143] [144 <../Report 3/image/screenshot/sprint1/ptai/CreateJob.png (PNG copy)>
+] [145] [146]
 Overfull \hbox (49.16328pt too wide) in paragraph at lines 410--411
 []\T1/ptm/b/n/12 Supporting Sys-tems: \T1/ptm/m/n/12 Fre-via Web ap-pli-ca-tion
  (Next.js), Fre-via REST API (\T1/cmtt/m/n/12 ManageJobController\T1/ptm/m/n/12
@@ -2311,8 +2484,7 @@ Overfull \hbox (11.06953pt too wide) in paragraph at lines 424--425
  description\T1/ptm/m/n/12 . 
  []
 
-[147]
-<../Report 3/image/screenshot/sprint1/ptai/PublishJob.png, id=3442, 1445.4pt x 
+<../Report 3/image/screenshot/sprint1/ptai/PublishJob.png, id=3478, 1445.4pt x 
 903.375pt>
 File: ../Report 3/image/screenshot/sprint1/ptai/PublishJob.png Graphic file (ty
 pe png)
@@ -2320,8 +2492,8 @@ pe png)
 Package pdftex.def Info: ../Report 3/image/screenshot/sprint1/ptai/PublishJob.p
 ng  used on input line 430.
 (pdftex.def)             Requested size: 430.3151pt x 268.94693pt.
- [148 <../Report 3/image/screenshot/sprint1/ptai/PublishJob.png (PNG copy)>] [1
-49]
+[147] [148 <../Report 3/image/screenshot/sprint1/ptai/PublishJob.png (PNG copy)
+>] [149]
 Overfull \hbox (49.16328pt too wide) in paragraph at lines 499--500
 []\T1/ptm/b/n/12 Supporting Sys-tems: \T1/ptm/m/n/12 Fre-via Web ap-pli-ca-tion
  (Next.js), Fre-via REST API (\T1/cmtt/m/n/12 ManageJobController\T1/ptm/m/n/12
@@ -2335,7 +2507,7 @@ Underfull \hbox (badness 1762) in paragraph at lines 514--515
  []
 
 [150]
-<../Report 3/image/screenshot/sprint1/ptai/UpdateJob.png, id=3463, 1445.4pt x 9
+<../Report 3/image/screenshot/sprint1/ptai/UpdateJob.png, id=3503, 1445.4pt x 9
 03.375pt>
 File: ../Report 3/image/screenshot/sprint1/ptai/UpdateJob.png Graphic file (typ
 e png)
@@ -2365,7 +2537,7 @@ tiveContractException \T1/ptm/m/n/12 (HTTP
  []
 
 [153]
-<../Report 3/image/screenshot/sprint1/ptai/DeleteJob.png, id=3484, 1445.4pt x 9
+<../Report 3/image/screenshot/sprint1/ptai/DeleteJob.png, id=3524, 1445.4pt x 9
 03.375pt>
 File: ../Report 3/image/screenshot/sprint1/ptai/DeleteJob.png Graphic file (typ
 e png)
@@ -2401,7 +2573,7 @@ tm/m/n/12 ,
  []
 
 [156]
-<../Report 3/image/screenshot/sprint1/ptai/CloseJob.png, id=3504, 1445.4pt x 90
+<../Report 3/image/screenshot/sprint1/ptai/CloseJob.png, id=3544, 1445.4pt x 90
 3.375pt>
 File: ../Report 3/image/screenshot/sprint1/ptai/CloseJob.png Graphic file (type
  png)
@@ -2429,7 +2601,7 @@ Underfull \hbox (badness 2980) in paragraph at lines 773--774
  \T1/ptm/m/n/12 does not ex-ceed 60 days
  []
 
-<../Report 3/image/screenshot/sprint1/ptai/ReopenJob.png, id=3522, 1445.4pt x 9
+<../Report 3/image/screenshot/sprint1/ptai/ReopenJob.png, id=3562, 1445.4pt x 9
 03.375pt>
 File: ../Report 3/image/screenshot/sprint1/ptai/ReopenJob.png Graphic file (typ
 e png)
@@ -2452,7 +2624,7 @@ le (\T1/cmtt/m/n/12 BookmarkJobOnlyForFreelancerException
  []
 
 [162]
-<../Report 3/image/screenshot/sprint1/ptai/ViewBookmarkedJobList.png, id=3547, 
+<../Report 3/image/screenshot/sprint1/ptai/ViewBookmarkedJobList.png, id=3587, 
 1445.4pt x 903.375pt>
 File: ../Report 3/image/screenshot/sprint1/ptai/ViewBookmarkedJobList.png Graph
 ic file (type png)
@@ -2469,7 +2641,7 @@ Overfull \hbox (49.16328pt too wide) in paragraph at lines 937--938
  []
 
 [165]
-<../Report 3/image/screenshot/sprint1/ptai/BookmarkJob.png, id=3568, 1445.4pt x
+<../Report 3/image/screenshot/sprint1/ptai/BookmarkJob.png, id=3608, 1445.4pt x
  903.375pt>
 File: ../Report 3/image/screenshot/sprint1/ptai/BookmarkJob.png Graphic file (t
 ype png)
@@ -2486,7 +2658,7 @@ Overfull \hbox (49.16328pt too wide) in paragraph at lines 1025--1026
  []
 
 [168]
-<../Report 3/image/screenshot/sprint1/ptai/RemoveBookmark.png, id=3589, 1445.4p
+<../Report 3/image/screenshot/sprint1/ptai/RemoveBookmark.png, id=3629, 1445.4p
 t x 903.375pt>
 File: ../Report 3/image/screenshot/sprint1/ptai/RemoveBookmark.png Graphic file
  (type png)
@@ -2509,7 +2681,7 @@ Underfull \hbox (badness 1264) in paragraph at lines 43--44
  []
 
 [171]
-<../Report 3/image/screenshot/sprint3/ptai/ViewMyProposalList.png, id=3610, 144
+<../Report 3/image/screenshot/sprint3/ptai/ViewMyProposalList.png, id=3650, 144
 5.4pt x 903.375pt>
 File: ../Report 3/image/screenshot/sprint3/ptai/ViewMyProposalList.png Graphic 
 file (type png)
@@ -2539,7 +2711,7 @@ Overfull \hbox (42.98979pt too wide) in paragraph at lines 118--119
  []
 
 [174]
-<../Report 3/image/screenshot/sprint3/ptai/ViewMyProposalDetail.png, id=3631, 1
+<../Report 3/image/screenshot/sprint3/ptai/ViewMyProposalDetail.png, id=3671, 1
 445.4pt x 903.375pt>
 File: ../Report 3/image/screenshot/sprint3/ptai/ViewMyProposalDetail.png Graphi
 c file (type png)
@@ -2568,7 +2740,7 @@ Underfull \hbox (badness 5504) in paragraph at lines 224--225
 12 bidAmount \T1/ptm/m/n/12 bounds and \T1/cmtt/m/n/12 assertDeliveryDays
  []
 
-<../Report 3/image/screenshot/sprint3/ptai/SubmitProposal.png, id=3652, 1445.4p
+<../Report 3/image/screenshot/sprint3/ptai/SubmitProposal.png, id=3692, 1445.4p
 t x 903.375pt>
 File: ../Report 3/image/screenshot/sprint3/ptai/SubmitProposal.png Graphic file
  (type png)
@@ -2610,7 +2782,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 327--328
 /ptm/m/n/12 and val-i-dates any sup-plied
  []
 
-<../Report 3/image/screenshot/sprint3/ptai/UpdateProposal.png, id=3678, 1445.4p
+<../Report 3/image/screenshot/sprint3/ptai/UpdateProposal.png, id=3718, 1445.4p
 t x 903.375pt>
 File: ../Report 3/image/screenshot/sprint3/ptai/UpdateProposal.png Graphic file
  (type png)
@@ -2640,7 +2812,7 @@ Underfull \hbox (badness 1590) in paragraph at lines 420--421
  []
 
 [185]
-<../Report 3/image/screenshot/sprint3/ptai/WithdrawProposal.png, id=3703, 1445.
+<../Report 3/image/screenshot/sprint3/ptai/WithdrawProposal.png, id=3743, 1445.
 4pt x 903.375pt>
 File: ../Report 3/image/screenshot/sprint3/ptai/WithdrawProposal.png Graphic fi
 le (type png)
@@ -2668,7 +2840,7 @@ Underfull \hbox (badness 3668) in paragraph at lines 509--510
 /ptm/m/n/12 ): sets pro-posal \T1/cmtt/m/n/12 status = 'HIRED'
  []
 
-<../Report 3/image/screenshot/sprint3/ptai/AcceptProposal.png, id=3724, 1445.4p
+<../Report 3/image/screenshot/sprint3/ptai/AcceptProposal.png, id=3764, 1445.4p
 t x 903.375pt>
 File: ../Report 3/image/screenshot/sprint3/ptai/AcceptProposal.png Graphic file
  (type png)
@@ -2690,7 +2862,7 @@ Underfull \hbox (badness 2717) in paragraph at lines 601--602
 cs over-due ex-pi-ra-tions, val-i-dates pro-posal and
  []
 
-<../Report 3/image/screenshot/sprint3/ptai/RejectProposal.png, id=3744, 1445.4p
+<../Report 3/image/screenshot/sprint3/ptai/RejectProposal.png, id=3784, 1445.4p
 t x 903.375pt>
 File: ../Report 3/image/screenshot/sprint3/ptai/RejectProposal.png Graphic file
  (type png)
@@ -2713,7 +2885,7 @@ d/submitted\T1/ptm/m/n/12 .
  []
 
 [195]
-<../Report 3/image/screenshot/sprint3/ptai/ViewJobProposalList.png, id=3769, 14
+<../Report 3/image/screenshot/sprint3/ptai/ViewJobProposalList.png, id=3809, 14
 45.4pt x 903.375pt>
 File: ../Report 3/image/screenshot/sprint3/ptai/ViewJobProposalList.png Graphic
  file (type png)
@@ -2737,7 +2909,7 @@ drawer opened from \T1/cmtt/m/n/12 /client/jobs/:jobId/
  []
 
 [198]
-<../Report 3/image/screenshot/sprint3/ptai/ViewProposalDetail.png, id=3789, 144
+<../Report 3/image/screenshot/sprint3/ptai/ViewProposalDetail.png, id=3829, 144
 5.4pt x 903.375pt>
 File: ../Report 3/image/screenshot/sprint3/ptai/ViewProposalDetail.png Graphic 
 file (type png)
@@ -2747,10 +2919,10 @@ Detail.png  used on input line 790.
 (pdftex.def)             Requested size: 430.3151pt x 268.94693pt.
  [199 <../Report 3/image/screenshot/sprint3/ptai/ViewProposalDetail.png (PNG co
 py)>] [200]) (../Report 3/sections/3.Subsections/sprint1/ntin.tex [201]
-Underfull \hbox (badness 1383) in paragraph at lines 21--23
-\T1/ptm/b/n/12 Navigation path: \T1/ptm/m/n/12 Client Dash-board $\OMS/ztmcm/m/
-n/12 !$ \T1/ptm/m/n/12 My Jobs $\OMS/ztmcm/m/n/12 !$ \T1/ptm/m/n/12 Pro-pos-als
- (\T1/cmtt/m/n/12 /client/jobs/:id/
+Underfull \hbox (badness 1286) in paragraph at lines 21--23
+\T1/ptm/b/n/12 Navigation path: \T1/ptm/m/n/12 Client Workspace $\OMS/ztmcm/m/n
+/12 !$ \T1/ptm/m/n/12 My Jobs $\OMS/ztmcm/m/n/12 !$ \T1/ptm/m/n/12 Pro-pos-als 
+(\T1/cmtt/m/n/12 /client/jobs/:id/
  []
 
 
@@ -2765,7 +2937,7 @@ Overfull \hbox (1.36334pt too wide) in paragraph at lines 49--50
 al-i-dates the Client's JWT to-ken, and \T1/cmtt/m/n/12 PermissionGuard
  []
 
-<../Report 3/image/screenshot/sprint1/ntin/CreateContract.png, id=3815, 1083.04
+<../Report 3/image/screenshot/sprint1/ntin/CreateContract.png, id=3855, 1083.04
 625pt x 623.83063pt>
 File: ../Report 3/image/screenshot/sprint1/ntin/CreateContract.png Graphic file
  (type png)
@@ -2781,7 +2953,7 @@ pi/contracts/:id \T1/ptm/m/n/12 with op-tional
  []
 
 [207]
-<../Report 3/image/screenshot/sprint1/ntin/UpdateContract.png, id=3849, 1078.02
+<../Report 3/image/screenshot/sprint1/ntin/UpdateContract.png, id=3889, 1078.02
 75pt x 623.83063pt>
 File: ../Report 3/image/screenshot/sprint1/ntin/UpdateContract.png Graphic file
  (type png)
@@ -2797,7 +2969,7 @@ Underfull \hbox (badness 6412) in paragraph at lines 201--202
  []
 
 [209] [210] [211]
-<../Report 3/image/screenshot/sprint1/ntin/CompleteContract.png, id=3877, 1083.
+<../Report 3/image/screenshot/sprint1/ntin/CompleteContract.png, id=3917, 1083.
 04625pt x 626.84187pt>
 File: ../Report 3/image/screenshot/sprint1/ntin/CompleteContract.png Graphic fi
 le (type png)
@@ -2807,7 +2979,7 @@ ract.png  used on input line 275.
 (pdftex.def)             Requested size: 430.31879pt x 249.05846pt.
  [212 <../Report 3/image/screenshot/sprint1/ntin/CompleteContract.png>] [213] [
 214] [215]
-<../Report 3/image/screenshot/sprint1/ntin/ViewContractList.png, id=3904, 1080.
+<../Report 3/image/screenshot/sprint1/ntin/ViewContractList.png, id=3944, 1080.
 035pt x 625.33624pt>
 File: ../Report 3/image/screenshot/sprint1/ntin/ViewContractList.png Graphic fi
 le (type png)
@@ -2828,7 +3000,7 @@ Underfull \hbox (badness 2626) in paragraph at lines 470--471
 contracts/slug/:slug \T1/ptm/m/n/12 or \T1/cmtt/m/n/12 GET
  []
 
-<../Report 3/image/screenshot/sprint1/ntin/ViewContractDetail.png, id=3928, 108
+<../Report 3/image/screenshot/sprint1/ntin/ViewContractDetail.png, id=3968, 108
 2.54437pt x 623.32875pt>
 File: ../Report 3/image/screenshot/sprint1/ntin/ViewContractDetail.png Graphic 
 file (type png)
@@ -2843,7 +3015,7 @@ Overfull \hbox (2.13605pt too wide) in paragraph at lines 566--567
  the caller is ei-ther \T1/cmtt/m/n/12 contract.clientId
  []
 
-<../Report 3/image/screenshot/sprint1/ntin/SignContract.png, id=3950, 1081.5406
+<../Report 3/image/screenshot/sprint1/ntin/SignContract.png, id=3990, 1081.5406
 2pt x 623.83063pt>
 File: ../Report 3/image/screenshot/sprint1/ntin/SignContract.png Graphic file (
 type png)
@@ -2853,7 +3025,7 @@ Package pdftex.def Info: ../Report 3/image/screenshot/sprint1/ntin/SignContract
 (pdftex.def)             Requested size: 430.31467pt x 248.2047pt.
 [222 <../Report 3/image/screenshot/sprint1/ntin/SignContract.png>] [223]
 [224] [225]
-<../Report 3/image/screenshot/sprint1/ntin/ExportContractPdf.png, id=3977, 1083
+<../Report 3/image/screenshot/sprint1/ntin/ExportContractPdf.png, id=4017, 1083
 .04625pt x 625.33624pt>
 File: ../Report 3/image/screenshot/sprint1/ntin/ExportContractPdf.png Graphic f
 ile (type png)
@@ -2887,7 +3059,7 @@ ree-lancer
  []
 
 [228]
-<../Report 3/image/screenshot/sprint1/ntin/CancelContract.png, id=3999, 1083.04
+<../Report 3/image/screenshot/sprint1/ntin/CancelContract.png, id=4039, 1083.04
 625pt x 622.325pt>
 File: ../Report 3/image/screenshot/sprint1/ntin/CancelContract.png Graphic file
  (type png)
@@ -2902,7 +3074,7 @@ Underfull \hbox (badness 3229) in paragraph at lines 853--854
 /12 where \T1/cmtt/m/n/12 contractId === contractId \T1/ptm/m/n/12 and
  []
 
-<../Report 3/image/screenshot/sprint1/ntin/ViewContractFiles.png, id=4022, 1083
+<../Report 3/image/screenshot/sprint1/ntin/ViewContractFiles.png, id=4062, 1083
 .04625pt x 625.33624pt>
 File: ../Report 3/image/screenshot/sprint1/ntin/ViewContractFiles.png Graphic f
 ile (type png)
@@ -2912,7 +3084,7 @@ Files.png  used on input line 859.
 (pdftex.def)             Requested size: 430.31879pt x 248.46024pt.
 [232 <../Report 3/image/screenshot/sprint1/ntin/ViewContractFiles.png>]
 [233] [234]
-<../Report 3/image/screenshot/sprint1/ntin/UploadContractFile.png, id=4045, 108
+<../Report 3/image/screenshot/sprint1/ntin/UploadContractFile.png, id=4085, 108
 3.04625pt x 626.34pt>
 File: ../Report 3/image/screenshot/sprint1/ntin/UploadContractFile.png Graphic 
 file (type png)
@@ -2922,7 +3094,7 @@ ctFile.png  used on input line 954.
 (pdftex.def)             Requested size: 430.31879pt x 248.85905pt.
  [235 <../Report 3/image/screenshot/sprint1/ntin/UploadContractFile.png>] [236]
  [237]
-<../Report 3/image/screenshot/sprint1/ntin/DeleteContractFile.png, id=4071, 108
+<../Report 3/image/screenshot/sprint1/ntin/DeleteContractFile.png, id=4111, 108
 3.04625pt x 623.32875pt>
 File: ../Report 3/image/screenshot/sprint1/ntin/DeleteContractFile.png Graphic 
 file (type png)
@@ -2938,7 +3110,7 @@ Overfull \hbox (6.68475pt too wide) in paragraph at lines 1147--1148
 n/12 rejectReason\T1/ptm/m/n/12 . 
  []
 
-<../Report 3/image/screenshot/sprint1/ntin/RejectContractOffer.png, id=4094, 10
+<../Report 3/image/screenshot/sprint1/ntin/RejectContractOffer.png, id=4134, 10
 80.035pt x 623.32875pt>
 File: ../Report 3/image/screenshot/sprint1/ntin/RejectContractOffer.png Graphic
  file (type png)
@@ -2948,218 +3120,218 @@ ctOffer.png  used on input line 1152.
 (pdftex.def)             Requested size: 430.30891pt x 248.34743pt.
 [241 <../Report 3/image/screenshot/sprint1/ntin/RejectContractOffer.png>]
 [242]) (../Report 3/sections/3.Subsections/sprint4/ntin.tex [243]
-Overfull \hbox (5.29982pt too wide) in paragraph at lines 48--49
+Overfull \hbox (5.29982pt too wide) in paragraph at lines 47--48
 []\T1/ptm/m/n/12 Freelancer sub-mits an HTTP re-quest: \T1/cmtt/m/n/12 POST /ap
 i/payments/connect/onboarding-link
  []
 
 [244]
-<../Report 3/image/screenshot/sprint4/ntin/ConnectStripeAccount.png, id=4123, 1
+<../Report 3/image/screenshot/sprint4/ntin/ConnectStripeAccount.png, id=4163, 1
 082.54437pt x 625.33624pt>
 File: ../Report 3/image/screenshot/sprint4/ntin/ConnectStripeAccount.png Graphi
 c file (type png)
 <use ../Report 3/image/screenshot/sprint4/ntin/ConnectStripeAccount.png>
 Package pdftex.def Info: ../Report 3/image/screenshot/sprint4/ntin/ConnectStrip
-eAccount.png  used on input line 57.
+eAccount.png  used on input line 56.
 (pdftex.def)             Requested size: 430.3176pt x 248.57474pt.
  [245 <../Report 3/image/screenshot/sprint4/ntin/ConnectStripeAccount.png>] [24
 6]
-Overfull \hbox (9.15839pt too wide) in paragraph at lines 131--132
+Overfull \hbox (9.15839pt too wide) in paragraph at lines 130--131
 \T1/ptm/m/n/12 Synchronizes and ver-i-fies free-lancer on-board-ing sta-tus, ca
 -pa-bil-ity ac-ti-va-tion (\T1/cmtt/m/n/12 charges_enabled\T1/ptm/m/n/12 ,
  []
 
 [247] [248] [249]
-Overfull \hbox (8.06065pt too wide) in paragraph at lines 229--230
+Overfull \hbox (8.06065pt too wide) in paragraph at lines 228--229
 []\T1/cmtt/m/n/12 PaymentService.getSavedPaymentMethods() \T1/ptm/m/n/12 re-tri
 eves the client's \T1/cmtt/m/n/12 stripeCustomerId\T1/ptm/m/n/12 . 
  []
 
-<../Report 3/image/screenshot/sprint4/ntin/ViewSavedPaymentMethods.png, id=4163
+<../Report 3/image/screenshot/sprint4/ntin/ViewSavedPaymentMethods.png, id=4203
 , 1083.04625pt x 625.33624pt>
 File: ../Report 3/image/screenshot/sprint4/ntin/ViewSavedPaymentMethods.png Gra
 phic file (type png)
 <use ../Report 3/image/screenshot/sprint4/ntin/ViewSavedPaymentMethods.png>
 Package pdftex.def Info: ../Report 3/image/screenshot/sprint4/ntin/ViewSavedPay
-mentMethods.png  used on input line 236.
+mentMethods.png  used on input line 235.
 (pdftex.def)             Requested size: 430.31879pt x 248.46024pt.
 [250 <../Report 3/image/screenshot/sprint4/ntin/ViewSavedPaymentMethods.png>]
 [251]
-Overfull \hbox (102.40968pt too wide) in paragraph at lines 317--318
+Overfull \hbox (102.40968pt too wide) in paragraph at lines 316--317
 []\T1/ptm/m/n/12 Calls \T1/cmtt/m/n/12 stripe.customers.update(customerId, {inv
 oice_settings: {default_payment_method}})\T1/ptm/m/n/12 . 
  []
 
 [252]
-<../Report 3/image/screenshot/sprint4/ntin/SetDefaultPaymentMethod.png, id=4184
+<../Report 3/image/screenshot/sprint4/ntin/SetDefaultPaymentMethod.png, id=4224
 , 1082.54437pt x 624.83438pt>
 File: ../Report 3/image/screenshot/sprint4/ntin/SetDefaultPaymentMethod.png Gra
 phic file (type png)
 <use ../Report 3/image/screenshot/sprint4/ntin/SetDefaultPaymentMethod.png>
 Package pdftex.def Info: ../Report 3/image/screenshot/sprint4/ntin/SetDefaultPa
-ymentMethod.png  used on input line 322.
+ymentMethod.png  used on input line 321.
 (pdftex.def)             Requested size: 430.3176pt x 248.37524pt.
  [253 <../Report 3/image/screenshot/sprint4/ntin/SetDefaultPaymentMethod.png>] 
 [254]
-Underfull \hbox (badness 4168) in paragraph at lines 401--402
+Underfull \hbox (badness 4168) in paragraph at lines 400--401
 []\T1/ptm/m/n/12 Client sub-mits an HTTP re-quest: \T1/cmtt/m/n/12 DELETE /api/
 payments/payment-methods/:
  []
 
-<../Report 3/image/screenshot/sprint4/ntin/RemoveSavedPaymentMethod.png, id=420
+<../Report 3/image/screenshot/sprint4/ntin/RemoveSavedPaymentMethod.png, id=424
 2, 1074.0125pt x 623.83063pt>
 File: ../Report 3/image/screenshot/sprint4/ntin/RemoveSavedPaymentMethod.png Gr
 aphic file (type png)
 <use ../Report 3/image/screenshot/sprint4/ntin/RemoveSavedPaymentMethod.png>
 Package pdftex.def Info: ../Report 3/image/screenshot/sprint4/ntin/RemoveSavedP
-aymentMethod.png  used on input line 408.
+aymentMethod.png  used on input line 407.
 (pdftex.def)             Requested size: 430.31847pt x 249.94666pt.
 [255 <../Report 3/image/screenshot/sprint4/ntin/RemoveSavedPaymentMethod.png>]
 [256]
-Underfull \hbox (badness 1728) in paragraph at lines 477--478
+Underfull \hbox (badness 1728) in paragraph at lines 476--477
 \T1/ptm/m/n/12 Creates a Stripe Pay-mentIn-tent with man-ual cap-ture au-tho-ri
 za-tion (\T1/cmtt/m/n/12 capture_method:
  []
 
 [257]
 <../Report 3/image/screenshot/sprint4/ntin/CreateContractHoldDepositIntent.png,
- id=4223, 1082.54437pt x 624.83438pt>
+ id=4263, 1082.54437pt x 624.83438pt>
 File: ../Report 3/image/screenshot/sprint4/ntin/CreateContractHoldDepositIntent
 .png Graphic file (type png)
 <use ../Report 3/image/screenshot/sprint4/ntin/CreateContractHoldDepositIntent.
 png>
 Package pdftex.def Info: ../Report 3/image/screenshot/sprint4/ntin/CreateContra
-ctHoldDepositIntent.png  used on input line 499.
+ctHoldDepositIntent.png  used on input line 498.
 (pdftex.def)             Requested size: 430.3176pt x 248.37524pt.
  [258 <../Report 3/image/screenshot/sprint4/ntin/CreateContractHoldDepositInten
 t.png>] [259] [260]
-Underfull \hbox (badness 10000) in paragraph at lines 590--591
+Underfull \hbox (badness 10000) in paragraph at lines 589--590
 []\T1/ptm/m/n/12 Client re-quests \T1/cmtt/m/n/12 POST /api/payments/contracts/
 :contractId/milestones/:
  []
 
 <../Report 3/image/screenshot/sprint4/ntin/FundMilestoneViaStripeCheckout.png, 
-id=4246, 1083.04625pt x 625.33624pt>
+id=4286, 1083.04625pt x 625.33624pt>
 File: ../Report 3/image/screenshot/sprint4/ntin/FundMilestoneViaStripeCheckout.
 png Graphic file (type png)
 <use ../Report 3/image/screenshot/sprint4/ntin/FundMilestoneViaStripeCheckout.p
 ng>
 Package pdftex.def Info: ../Report 3/image/screenshot/sprint4/ntin/FundMileston
-eViaStripeCheckout.png  used on input line 599.
+eViaStripeCheckout.png  used on input line 598.
 (pdftex.def)             Requested size: 430.31879pt x 248.46024pt.
 [261 <../Report 3/image/screenshot/sprint4/ntin/FundMilestoneViaStripeCheckout.
 png>] [262] [263]
-Underfull \hbox (badness 10000) in paragraph at lines 683--684
+Underfull \hbox (badness 10000) in paragraph at lines 682--683
 []\T1/ptm/m/n/12 Client re-quests \T1/cmtt/m/n/12 POST /api/payments/contracts/
 :contractId/milestones/:
  []
 
 
-Underfull \hbox (badness 1308) in paragraph at lines 684--685
+Underfull \hbox (badness 1308) in paragraph at lines 683--684
 []\T1/cmtt/m/n/12 PaymentService.chargeSavedCardForMilestoneFund() \T1/ptm/m/n/
 12 ver-i-fies caller is con-tract
  []
 
 [264]
 <../Report 3/image/screenshot/sprint4/ntin/FundMilestoneWithSavedCard.png, id=4
-271, 1083.04625pt x 626.84187pt>
+311, 1083.04625pt x 626.84187pt>
 File: ../Report 3/image/screenshot/sprint4/ntin/FundMilestoneWithSavedCard.png 
 Graphic file (type png)
 <use ../Report 3/image/screenshot/sprint4/ntin/FundMilestoneWithSavedCard.png>
 Package pdftex.def Info: ../Report 3/image/screenshot/sprint4/ntin/FundMileston
-eWithSavedCard.png  used on input line 692.
+eWithSavedCard.png  used on input line 691.
 (pdftex.def)             Requested size: 430.31879pt x 249.05846pt.
  [265 <../Report 3/image/screenshot/sprint4/ntin/FundMilestoneWithSavedCard.png
 >] [266]
-Underfull \hbox (badness 10000) in paragraph at lines 778--779
+Underfull \hbox (badness 10000) in paragraph at lines 777--778
 []\T1/ptm/m/n/12 Client re-quests \T1/cmtt/m/n/12 POST /api/payments/contracts/
 :contractId/milestones/:
  []
 
 [267]
-Underfull \hbox (badness 6592) in paragraph at lines 782--783
+Underfull \hbox (badness 6592) in paragraph at lines 781--782
 []\T1/ptm/m/n/12 Executes \T1/cmtt/m/n/12 stripe.transfers.create() \T1/ptm/m/n
 /12 trans-fer-ring net amount to Free-lancer's
  []
 
 <../Report 3/image/screenshot/sprint4/ntin/ReleaseMilestoneEscrowPayment.png, i
-d=4294, 1083.04625pt x 625.33624pt>
+d=4334, 1083.04625pt x 625.33624pt>
 File: ../Report 3/image/screenshot/sprint4/ntin/ReleaseMilestoneEscrowPayment.p
 ng Graphic file (type png)
 <use ../Report 3/image/screenshot/sprint4/ntin/ReleaseMilestoneEscrowPayment.pn
 g>
 Package pdftex.def Info: ../Report 3/image/screenshot/sprint4/ntin/ReleaseMiles
-toneEscrowPayment.png  used on input line 789.
+toneEscrowPayment.png  used on input line 788.
 (pdftex.def)             Requested size: 430.31879pt x 248.46024pt.
 [268 <../Report 3/image/screenshot/sprint4/ntin/ReleaseMilestoneEscrowPayment.p
 ng>] [269] [270]
 <../Report 3/image/screenshot/sprint4/ntin/ViewPaymentTransactionsHistory.png, 
-id=4316, 1083.04625pt x 626.84187pt>
+id=4356, 1083.04625pt x 626.84187pt>
 File: ../Report 3/image/screenshot/sprint4/ntin/ViewPaymentTransactionsHistory.
 png Graphic file (type png)
 <use ../Report 3/image/screenshot/sprint4/ntin/ViewPaymentTransactionsHistory.p
 ng>
 Package pdftex.def Info: ../Report 3/image/screenshot/sprint4/ntin/ViewPaymentT
-ransactionsHistory.png  used on input line 881.
+ransactionsHistory.png  used on input line 880.
 (pdftex.def)             Requested size: 430.31879pt x 249.05846pt.
  [271 <../Report 3/image/screenshot/sprint4/ntin/ViewPaymentTransactionsHistory
 .png>] [272]
-Underfull \hbox (badness 6461) in paragraph at lines 941--943
+Underfull \hbox (badness 6461) in paragraph at lines 940--942
 \T1/ptm/b/n/12 Navigation path: \T1/ptm/m/n/12 Au-to-matic call-back trig-ger-i
 ng \T1/cmtt/m/n/12 POST /api/payments/intents/:
  []
 
 [273] [274]
-Underfull \hbox (badness 7030) in paragraph at lines 1021--1023
+Underfull \hbox (badness 7030) in paragraph at lines 1020--1022
 \T1/ptm/b/n/12 Navigation path: \T1/ptm/m/n/12 Au-to-matic call-back land-ing o
 n \T1/cmtt/m/n/12 /contracts/:id?session_id=
  []
 
 
-Underfull \hbox (badness 1442) in paragraph at lines 1044--1045
+Underfull \hbox (badness 1442) in paragraph at lines 1043--1044
 []\T1/ptm/m/n/12 Web client de-tects \T1/cmtt/m/n/12 session_id \T1/ptm/m/n/12 
 query param and re-quests \T1/cmtt/m/n/12 POST /api/payments/
  []
 
 [275] [276]
-Underfull \hbox (badness 1694) in paragraph at lines 1102--1104
+Underfull \hbox (badness 1694) in paragraph at lines 1101--1103
 []\T1/ptm/m/n/12 Stripe dis-patches an asyn-chronous HTTP POST web-hook event t
 o \T1/cmtt/m/n/12 POST /api/
  []
 
 [277]
-Underfull \hbox (badness 2285) in paragraph at lines 1125--1125
+Underfull \hbox (badness 2285) in paragraph at lines 1124--1124
 []\T1/ptm/m/n/12 Dispatches across the 6 sup-ported Stripe events (\T1/cmtt/m/n
 /12 checkout.session.completed\T1/ptm/m/n/12 ,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1125--1125
+Underfull \hbox (badness 10000) in paragraph at lines 1124--1124
 \T1/cmtt/m/n/12 payment_intent.amount_capturable_updated\T1/ptm/m/n/12 , \T1/cm
 tt/m/n/12 payment_intent.succeeded\T1/ptm/m/n/12 ,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1125--1125
+Underfull \hbox (badness 10000) in paragraph at lines 1124--1124
 \T1/cmtt/m/n/12 payment_intent.canceled\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 payment
 _intent.payment_failed\T1/ptm/m/n/12 , and \T1/cmtt/m/n/12 account.
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1126--1126
+Underfull \hbox (badness 10000) in paragraph at lines 1125--1125
 []\T1/ptm/m/n/12 Updates con-tracts (\T1/cmtt/m/n/12 PENDING_SIGN\T1/ptm/m/n/12
  ), mile-stones (\T1/cmtt/m/n/12 FUNDED\T1/ptm/m/n/12 ), trans-ac-tions
  []
 
 
-Underfull \hbox (badness 1342) in paragraph at lines 1126--1126
+Underfull \hbox (badness 1342) in paragraph at lines 1125--1125
 \T1/ptm/m/n/12 (\T1/cmtt/m/n/12 SUCCEEDED\T1/ptm/m/n/12 /\T1/cmtt/m/n/12 FAILED
 \T1/ptm/m/n/12 ), and Con-nect readi-ness (\T1/cmtt/m/n/12 stripeOnboardingComp
 leted\T1/ptm/m/n/12 ); note
  []
 
 [278]) (../Report 3/sections/3.Subsections/sprint3/ntin.tex [279] [280]
-<../Report 3/image/screenshot/sprint3/ntin/OpenDispute.png, id=4387, 1082.54437
+<../Report 3/image/screenshot/sprint3/ntin/OpenDispute.png, id=4427, 1082.54437
 pt x 622.325pt>
 File: ../Report 3/image/screenshot/sprint3/ntin/OpenDispute.png Graphic file (t
 ype png)
@@ -3183,7 +3355,7 @@ ry strictly to records where
  []
 
 [284]
-<../Report 3/image/screenshot/sprint3/ntin/ViewDisputeList.png, id=4416, 1082.5
+<../Report 3/image/screenshot/sprint3/ntin/ViewDisputeList.png, id=4456, 1082.5
 4437pt x 624.83438pt>
 File: ../Report 3/image/screenshot/sprint3/ntin/ViewDisputeList.png Graphic fil
 e (type png)
@@ -3193,7 +3365,7 @@ ist.png  used on input line 170.
 (pdftex.def)             Requested size: 430.3176pt x 248.37524pt.
  [285 <../Report 3/image/screenshot/sprint3/ntin/ViewDisputeList.png>]
 [286] [287]
-<../Report 3/image/screenshot/sprint3/ntin/ViewDisputeDetail.png, id=4437, 1083
+<../Report 3/image/screenshot/sprint3/ntin/ViewDisputeDetail.png, id=4477, 1083
 .04625pt x 624.83438pt>
 File: ../Report 3/image/screenshot/sprint3/ntin/ViewDisputeDetail.png Graphic f
 ile (type png)
@@ -3246,7 +3418,7 @@ Underfull \hbox (badness 5345) in paragraph at lines 431--432
 l-izes res-o-lu-tion (ex-tend-ing mile-stone dead-line for
  []
 
-<../Report 3/image/screenshot/sprint3/ntin/RespondToDispute.png, id=4474, 1082.
+<../Report 3/image/screenshot/sprint3/ntin/RespondToDispute.png, id=4514, 1082.
 54437pt x 620.81938pt>
 File: ../Report 3/image/screenshot/sprint3/ntin/RespondToDispute.png Graphic fi
 le (type png)
@@ -3266,7 +3438,7 @@ Overfull \hbox (5.80222pt too wide) in paragraph at lines 524--525
 at \T1/cmtt/m/n/12 userId === dispute.openedById\T1/ptm/m/n/12 . 
  []
 
-<../Report 3/image/screenshot/sprint3/ntin/WithdrawDispute.png, id=4500, 1081.5
+<../Report 3/image/screenshot/sprint3/ntin/WithdrawDispute.png, id=4540, 1081.5
 4062pt x 625.33624pt>
 File: ../Report 3/image/screenshot/sprint3/ntin/WithdrawDispute.png Graphic fil
 e (type png)
@@ -3276,7 +3448,7 @@ ute.png  used on input line 531.
 (pdftex.def)             Requested size: 430.31467pt x 248.80374pt.
 [297 <../Report 3/image/screenshot/sprint3/ntin/WithdrawDispute.png>] [298]
 [299]
-<../Report 3/image/screenshot/sprint3/ntin/EscalateDisputeToExpert.png, id=4522
+<../Report 3/image/screenshot/sprint3/ntin/EscalateDisputeToExpert.png, id=4562
 , 1078.52937pt x 625.33624pt>
 File: ../Report 3/image/screenshot/sprint3/ntin/EscalateDisputeToExpert.png Gra
 phic file (type png)
@@ -3310,7 +3482,7 @@ cmtt/m/n/12 roleName === 'EXPERT' \T1/ptm/m/n/12 and an ac-tive
  []
 
 [302]
-<../Report 3/image/screenshot/sprint3/ntin/ViewExpertDisputeList.png, id=4545, 
+<../Report 3/image/screenshot/sprint3/ntin/ViewExpertDisputeList.png, id=4585, 
 1061.46562pt x 455.20062pt>
 File: ../Report 3/image/screenshot/sprint3/ntin/ViewExpertDisputeList.png Graph
 ic file (type png)
@@ -3337,7 +3509,7 @@ Underfull \hbox (badness 4403) in paragraph at lines 793--793
 \T1/cmtt/m/n/12 EXPERT \T1/ptm/m/n/12 with ac-tive pro-file;
  []
 
-<../Report 3/image/screenshot/sprint3/ntin/ViewExpertDisputeDetail.png, id=4562
+<../Report 3/image/screenshot/sprint3/ntin/ViewExpertDisputeDetail.png, id=4602
 , 1083.04625pt x 587.19376pt>
 File: ../Report 3/image/screenshot/sprint3/ntin/ViewExpertDisputeDetail.png Gra
 phic file (type png)
@@ -3365,8 +3537,8 @@ Id\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 decisionReason\T1/ptm/m/n/12 , \T1/cmtt/m/n/
 12 finalDecisionAt\T1/ptm/m/n/12 ), sets
  []
 
-<../Report 3/image/screenshot/sprint3/ntin/ExpertMakeDisputeDecision.png, id=45
-83, 1081.54062pt x 583.17876pt>
+<../Report 3/image/screenshot/sprint3/ntin/ExpertMakeDisputeDecision.png, id=46
+23, 1081.54062pt x 583.17876pt>
 File: ../Report 3/image/screenshot/sprint3/ntin/ExpertMakeDisputeDecision.png G
 raphic file (type png)
 <use ../Report 3/image/screenshot/sprint3/ntin/ExpertMakeDisputeDecision.png>
@@ -3586,7 +3758,7 @@ Overfull \hbox (4.84163pt too wide) in alignment at lines 272--283
  []
 
 ) [352] (sections/4.Software_Design_Description.tex
-<../Report 4/images/architecture/frevia-overall-architecture.pdf, id=4781, 1100
+<../Report 4/images/architecture/frevia-overall-architecture.pdf, id=4821, 1100
 .19026pt x 453.61469pt>
 File: ../Report 4/images/architecture/frevia-overall-architecture.pdf Graphic f
 ile (type pdf)
@@ -3596,7 +3768,7 @@ cture.pdf  used on input line 13.
 (pdftex.def)             Requested size: 430.31476pt x 177.4212pt.
  [353 <../Report 4/images/architecture/frevia-overall-architecture.pdf>] [354] 
 [355] [356]
-<../Report 4/images/architecture/frevia-package-diagram.pdf, id=4831, 1100.1902
+<../Report 4/images/architecture/frevia-package-diagram.pdf, id=4871, 1100.1902
 6pt x 745.82639pt>
 File: ../Report 4/images/architecture/frevia-package-diagram.pdf Graphic file (
 type pdf)
@@ -3609,7 +3781,7 @@ ignored error: Infinite glue shrinkage found in box being split [358]
 ignored error: Infinite glue shrinkage found in box being split [359]
 ignored error: Infinite glue shrinkage found in box being split [360]
 ignored error: Infinite glue shrinkage found in box being split [361] [362]
-<../Report 4/images/database/erd.pdf, id=4886, 3920.6475pt x 2930.06657pt>
+<../Report 4/images/database/erd.pdf, id=4926, 3920.6475pt x 2930.06657pt>
 File: ../Report 4/images/database/erd.pdf Graphic file (type pdf)
 <use ../Report 4/images/database/erd.pdf>
 Package pdftex.def Info: ../Report 4/images/database/erd.pdf  used on input lin
@@ -3640,14 +3812,14 @@ ignored error: Infinite glue shrinkage found in box being split [371]
 ignored error: Infinite glue shrinkage found in box being split [372]
 ignored error: Infinite glue shrinkage found in box being split [373]
 ignored error: Infinite glue shrinkage found in box being split [374]
-<../Report 4/images/database/erd-01.pdf, id=4952, 533.1117pt x 594.30032pt>
+<../Report 4/images/database/erd-01.pdf, id=4992, 533.1117pt x 594.30032pt>
 File: ../Report 4/images/database/erd-01.pdf Graphic file (type pdf)
 <use ../Report 4/images/database/erd-01.pdf>
 Package pdftex.def Info: ../Report 4/images/database/erd-01.pdf  used on input 
 line 500.
 (pdftex.def)             Requested size: 430.32947pt x 479.72113pt.
  [375]
-<../Report 4/images/database/erd-02.pdf, id=4957, 752.8125pt x 391.4625pt>
+<../Report 4/images/database/erd-02.pdf, id=4997, 752.8125pt x 391.4625pt>
 File: ../Report 4/images/database/erd-02.pdf Graphic file (type pdf)
 <use ../Report 4/images/database/erd-02.pdf>
 Package pdftex.def Info: ../Report 4/images/database/erd-02.pdf  used on input 
@@ -3655,35 +3827,35 @@ line 506.
 (pdftex.def)             Requested size: 430.3252pt x 223.76909pt.
 
 [376 <../Report 4/images/database/erd-01.pdf>]
-<../Report 4/images/database/erd-03.pdf, id=4975, 871.33525pt x 708.72775pt>
+<../Report 4/images/database/erd-03.pdf, id=5015, 871.33525pt x 708.72775pt>
 File: ../Report 4/images/database/erd-03.pdf Graphic file (type pdf)
 <use ../Report 4/images/database/erd-03.pdf>
 Package pdftex.def Info: ../Report 4/images/database/erd-03.pdf  used on input 
 line 512.
 (pdftex.def)             Requested size: 430.32176pt x 350.01566pt.
  [377 <../Report 4/images/database/erd-02.pdf>]
-<../Report 4/images/database/erd-04.pdf, id=4993, 1203.53632pt x 943.60526pt>
+<../Report 4/images/database/erd-04.pdf, id=5033, 1203.53632pt x 943.60526pt>
 File: ../Report 4/images/database/erd-04.pdf Graphic file (type pdf)
 <use ../Report 4/images/database/erd-04.pdf>
 Package pdftex.def Info: ../Report 4/images/database/erd-04.pdf  used on input 
 line 518.
 (pdftex.def)             Requested size: 430.31607pt x 337.37952pt.
  [378 <../Report 4/images/database/erd-03.pdf>]
-<../Report 4/images/database/erd-05.pdf, id=5011, 554.07pt x 507.81718pt>
+<../Report 4/images/database/erd-05.pdf, id=5051, 554.07pt x 507.81718pt>
 File: ../Report 4/images/database/erd-05.pdf Graphic file (type pdf)
 <use ../Report 4/images/database/erd-05.pdf>
 Package pdftex.def Info: ../Report 4/images/database/erd-05.pdf  used on input 
 line 524.
 (pdftex.def)             Requested size: 430.32135pt x 394.39885pt.
  [379 <../Report 4/images/database/erd-04.pdf>]
-<../Report 4/images/database/erd-06.pdf, id=5031, 843.15pt x 708.72775pt>
+<../Report 4/images/database/erd-06.pdf, id=5071, 843.15pt x 708.72775pt>
 File: ../Report 4/images/database/erd-06.pdf Graphic file (type pdf)
 <use ../Report 4/images/database/erd-06.pdf>
 Package pdftex.def Info: ../Report 4/images/database/erd-06.pdf  used on input 
 line 530.
 (pdftex.def)             Requested size: 430.32245pt x 361.71672pt.
  [380 <../Report 4/images/database/erd-05.pdf>]
-<../Report 4/images/database/erd-07.pdf, id=5050, 513.83968pt x 257.04028pt>
+<../Report 4/images/database/erd-07.pdf, id=5090, 513.83968pt x 257.04028pt>
 File: ../Report 4/images/database/erd-07.pdf Graphic file (type pdf)
 <use ../Report 4/images/database/erd-07.pdf>
 Package pdftex.def Info: ../Report 4/images/database/erd-07.pdf  used on input 
@@ -3691,7 +3863,7 @@ line 536.
 (pdftex.def)             Requested size: 430.33653pt x 215.26913pt.
 
 [381 <../Report 4/images/database/erd-06.pdf>]
-<../Report 4/images/database/erd-08.pdf, id=5068, 784.85219pt x 609.23605pt>
+<../Report 4/images/database/erd-08.pdf, id=5108, 784.85219pt x 609.23605pt>
 File: ../Report 4/images/database/erd-08.pdf Graphic file (type pdf)
 <use ../Report 4/images/database/erd-08.pdf>
 Package pdftex.def Info: ../Report 4/images/database/erd-08.pdf  used on input 
@@ -3699,26 +3871,26 @@ line 542.
 (pdftex.def)             Requested size: 430.31677pt x 334.0304pt.
  [382 <../Report 4/images/database/erd-07.pdf> <../Report 4/images/database/erd
 -08.pdf>]
-<../Report 4/images/database/erd-09.pdf, id=5099, 784.85219pt x 725.8317pt>
+<../Report 4/images/database/erd-09.pdf, id=5139, 784.85219pt x 725.8317pt>
 File: ../Report 4/images/database/erd-09.pdf Graphic file (type pdf)
 <use ../Report 4/images/database/erd-09.pdf>
 Package pdftex.def Info: ../Report 4/images/database/erd-09.pdf  used on input 
 line 548.
 (pdftex.def)             Requested size: 430.31677pt x 397.95715pt.
-<../Report 4/images/database/erd-10.pdf, id=5100, 1040.92882pt x 357.25468pt>
+<../Report 4/images/database/erd-10.pdf, id=5140, 1040.92882pt x 357.25468pt>
 File: ../Report 4/images/database/erd-10.pdf Graphic file (type pdf)
 <use ../Report 4/images/database/erd-10.pdf>
 Package pdftex.def Info: ../Report 4/images/database/erd-10.pdf  used on input 
 line 554.
 (pdftex.def)             Requested size: 430.32555pt x 147.691pt.
  [383 <../Report 4/images/database/erd-09.pdf>]
-<../Report 4/images/database/erd-11.pdf, id=5118, 1104.04462pt x 573.10106pt>
+<../Report 4/images/database/erd-11.pdf, id=5158, 1104.04462pt x 573.10106pt>
 File: ../Report 4/images/database/erd-11.pdf Graphic file (type pdf)
 <use ../Report 4/images/database/erd-11.pdf>
 Package pdftex.def Info: ../Report 4/images/database/erd-11.pdf  used on input 
 line 560.
 (pdftex.def)             Requested size: 430.30614pt x 223.36859pt.
-<../Report 4/images/database/erd-12.pdf, id=5119, 1107.17632pt x 573.10106pt>
+<../Report 4/images/database/erd-12.pdf, id=5159, 1107.17632pt x 573.10106pt>
 File: ../Report 4/images/database/erd-12.pdf Graphic file (type pdf)
 <use ../Report 4/images/database/erd-12.pdf>
 Package pdftex.def Info: ../Report 4/images/database/erd-12.pdf  used on input 
@@ -3726,7 +3898,7 @@ line 566.
 (pdftex.def)             Requested size: 430.31035pt x 222.73897pt.
  [384 <../Report 4/images/database/erd-10.pdf> <../Report 4/images/database/erd
 -11.pdf>]
-<../Report 4/images/database/erd-13.pdf, id=5150, 807.015pt x 507.81718pt>
+<../Report 4/images/database/erd-13.pdf, id=5190, 807.015pt x 507.81718pt>
 File: ../Report 4/images/database/erd-13.pdf Graphic file (type pdf)
 <use ../Report 4/images/database/erd-13.pdf>
 Package pdftex.def Info: ../Report 4/images/database/erd-13.pdf  used on input 
@@ -3734,26 +3906,26 @@ line 572.
 (pdftex.def)             Requested size: 430.31418pt x 270.77678pt.
  [385 <../Report 4/images/database/erd-12.pdf> <../Report 4/images/database/erd
 -13.pdf>]
-<../Report 4/images/database/erd-14.pdf, id=5182, 880.24857pt x 758.835pt>
+<../Report 4/images/database/erd-14.pdf, id=5222, 880.24857pt x 758.835pt>
 File: ../Report 4/images/database/erd-14.pdf Graphic file (type pdf)
 <use ../Report 4/images/database/erd-14.pdf>
 Package pdftex.def Info: ../Report 4/images/database/erd-14.pdf  used on input 
 line 578.
 (pdftex.def)             Requested size: 430.33165pt x 370.97557pt.
-<../Report 4/images/database/erd-15.pdf, id=5183, 1128.13463pt x 473.85028pt>
+<../Report 4/images/database/erd-15.pdf, id=5223, 1128.13463pt x 473.85028pt>
 File: ../Report 4/images/database/erd-15.pdf Graphic file (type pdf)
 <use ../Report 4/images/database/erd-15.pdf>
 Package pdftex.def Info: ../Report 4/images/database/erd-15.pdf  used on input 
 line 584.
 (pdftex.def)             Requested size: 430.31372pt x 180.74463pt.
  [386 <../Report 4/images/database/erd-14.pdf>]
-<../Report 4/images/database/erd-16.pdf, id=5202, 891.33pt x 690.66026pt>
+<../Report 4/images/database/erd-16.pdf, id=5242, 891.33pt x 690.66026pt>
 File: ../Report 4/images/database/erd-16.pdf Graphic file (type pdf)
 <use ../Report 4/images/database/erd-16.pdf>
 Package pdftex.def Info: ../Report 4/images/database/erd-16.pdf  used on input 
 line 590.
 (pdftex.def)             Requested size: 430.32245pt x 333.44173pt.
-<../Report 4/images/database/erd-17.pdf, id=5203, 1064.05525pt x 593.3367pt>
+<../Report 4/images/database/erd-17.pdf, id=5243, 1064.05525pt x 593.3367pt>
 File: ../Report 4/images/database/erd-17.pdf Graphic file (type pdf)
 <use ../Report 4/images/database/erd-17.pdf>
 Package pdftex.def Info: ../Report 4/images/database/erd-17.pdf  used on input 
@@ -3761,13 +3933,13 @@ line 596.
 (pdftex.def)             Requested size: 430.32304pt x 239.95601pt.
  [387 <../Report 4/images/database/erd-15.pdf> <../Report 4/images/database/erd
 -16.pdf>]
-<../Report 4/images/database/erd-18.pdf, id=5236, 871.33525pt x 424.4658pt>
+<../Report 4/images/database/erd-18.pdf, id=5276, 871.33525pt x 424.4658pt>
 File: ../Report 4/images/database/erd-18.pdf Graphic file (type pdf)
 <use ../Report 4/images/database/erd-18.pdf>
 Package pdftex.def Info: ../Report 4/images/database/erd-18.pdf  used on input 
 line 602.
 (pdftex.def)             Requested size: 430.32176pt x 209.6287pt.
-<../Report 4/images/database/erd-19.pdf, id=5237, 1111.2717pt x 351.23218pt>
+<../Report 4/images/database/erd-19.pdf, id=5277, 1111.2717pt x 351.23218pt>
 File: ../Report 4/images/database/erd-19.pdf Graphic file (type pdf)
 <use ../Report 4/images/database/erd-19.pdf>
 Package pdftex.def Info: ../Report 4/images/database/erd-19.pdf  used on input 
@@ -3775,13 +3947,13 @@ line 608.
 (pdftex.def)             Requested size: 430.32507pt x 136.00995pt.
  [388 <../Report 4/images/database/erd-17.pdf> <../Report 4/images/database/erd
 -18.pdf>]
-<../Report 4/images/database/erd-20.pdf, id=5269, 1102.1175pt x 366.40887pt>
+<../Report 4/images/database/erd-20.pdf, id=5309, 1102.1175pt x 366.40887pt>
 File: ../Report 4/images/database/erd-20.pdf Graphic file (type pdf)
 <use ../Report 4/images/database/erd-20.pdf>
 Package pdftex.def Info: ../Report 4/images/database/erd-20.pdf  used on input 
 line 614.
 (pdftex.def)             Requested size: 430.31178pt x 143.06102pt.
-<../Report 4/images/database/erd-21.pdf, id=5270, 807.97856pt x 441.56969pt>
+<../Report 4/images/database/erd-21.pdf, id=5310, 807.97856pt x 441.56969pt>
 File: ../Report 4/images/database/erd-21.pdf Graphic file (type pdf)
 <use ../Report 4/images/database/erd-21.pdf>
 Package pdftex.def Info: ../Report 4/images/database/erd-21.pdf  used on input 
@@ -3789,7 +3961,7 @@ line 620.
 (pdftex.def)             Requested size: 430.3225pt x 235.17624pt.
  [389 <../Report 4/images/database/erd-19.pdf> <../Report 4/images/database/erd
 -20.pdf>]
-<../Report 4/images/database/erd-22.pdf, id=5303, 736.67218pt x 576.23282pt>
+<../Report 4/images/database/erd-22.pdf, id=5343, 736.67218pt x 576.23282pt>
 File: ../Report 4/images/database/erd-22.pdf Graphic file (type pdf)
 <use ../Report 4/images/database/erd-22.pdf>
 Package pdftex.def Info: ../Report 4/images/database/erd-22.pdf  used on input 
@@ -3797,7 +3969,7 @@ line 626.
 (pdftex.def)             Requested size: 430.31639pt x 336.59805pt.
  [390 <../Report 4/images/database/erd-21.pdf>]
 <../Report 4/images/sprint1/ptai/class-diagrams/UC-11_Job_Management_Class_Diag
-ram.pdf, id=5321, 1563.92276pt x 1539.83275pt>
+ram.pdf, id=5361, 1563.92276pt x 1539.83275pt>
 File: ../Report 4/images/sprint1/ptai/class-diagrams/UC-11_Job_Management_Class
 _Diagram.pdf Graphic file (type pdf)
 <use ../Report 4/images/sprint1/ptai/class-diagrams/UC-11_Job_Management_Class_
@@ -3806,7 +3978,7 @@ Package pdftex.def Info: ../Report 4/images/sprint1/ptai/class-diagrams/UC-11_J
 ob_Management_Class_Diagram.pdf  used on input line 637.
 (pdftex.def)             Requested size: 416.72845pt x 410.30934pt.
  [391 <../Report 4/images/database/erd-22.pdf>]
-<../Report 4/images/sprint1/ptai/UC-11.01_-_View_My_Jobs.pdf, id=5341, 1101.153
+<../Report 4/images/sprint1/ptai/UC-11.01_-_View_My_Jobs.pdf, id=5381, 1101.153
 82pt x 1152.22462pt>
 File: ../Report 4/images/sprint1/ptai/UC-11.01_-_View_My_Jobs.pdf Graphic file 
 (type pdf)
@@ -3824,7 +3996,7 @@ Package pdftex.def Info: ../Report 4/images/sprint1/ptai/class-diagrams/UC-11_J
 ob_Management_Class_Diagram.pdf  used on input line 645.
 (pdftex.def)             Requested size: 416.72845pt x 410.30934pt.
  [393 <../Report 4/images/sprint1/ptai/UC-11.01_-_View_My_Jobs.pdf>]
-<../Report 4/images/sprint1/ptai/UC-11.02_-_Create_Job.pdf, id=5373, 1101.15382
+<../Report 4/images/sprint1/ptai/UC-11.02_-_Create_Job.pdf, id=5413, 1101.15382
 pt x 1679.31381pt>
 File: ../Report 4/images/sprint1/ptai/UC-11.02_-_Create_Job.pdf Graphic file (t
 ype pdf)
@@ -3841,7 +4013,7 @@ Package pdftex.def Info: ../Report 4/images/sprint1/ptai/class-diagrams/UC-11_J
 ob_Management_Class_Diagram.pdf  used on input line 653.
 (pdftex.def)             Requested size: 416.72845pt x 410.30934pt.
  [395 <../Report 4/images/sprint1/ptai/UC-11.02_-_Create_Job.pdf>]
-<../Report 4/images/sprint1/ptai/UC-11.03_-_Publish_Job.pdf, id=5392, 1101.1538
+<../Report 4/images/sprint1/ptai/UC-11.03_-_Publish_Job.pdf, id=5432, 1101.1538
 2pt x 2040.66382pt>
 File: ../Report 4/images/sprint1/ptai/UC-11.03_-_Publish_Job.pdf Graphic file (
 type pdf)
@@ -3858,7 +4030,7 @@ Package pdftex.def Info: ../Report 4/images/sprint1/ptai/class-diagrams/UC-11_J
 ob_Management_Class_Diagram.pdf  used on input line 661.
 (pdftex.def)             Requested size: 416.72845pt x 410.30934pt.
  [397 <../Report 4/images/sprint1/ptai/UC-11.03_-_Publish_Job.pdf>]
-<../Report 4/images/sprint1/ptai/UC-11.04_-_Update_Job.pdf, id=5412, 1101.15382
+<../Report 4/images/sprint1/ptai/UC-11.04_-_Update_Job.pdf, id=5452, 1101.15382
 pt x 2062.82657pt>
 File: ../Report 4/images/sprint1/ptai/UC-11.04_-_Update_Job.pdf Graphic file (t
 ype pdf)
@@ -3875,7 +4047,7 @@ Package pdftex.def Info: ../Report 4/images/sprint1/ptai/class-diagrams/UC-11_J
 ob_Management_Class_Diagram.pdf  used on input line 669.
 (pdftex.def)             Requested size: 416.72845pt x 410.30934pt.
  [399 <../Report 4/images/sprint1/ptai/UC-11.04_-_Update_Job.pdf>]
-<../Report 4/images/sprint1/ptai/UC-11.05_-_Delete_Job.pdf, id=5431, 1101.15382
+<../Report 4/images/sprint1/ptai/UC-11.05_-_Delete_Job.pdf, id=5471, 1101.15382
 pt x 2062.82657pt>
 File: ../Report 4/images/sprint1/ptai/UC-11.05_-_Delete_Job.pdf Graphic file (t
 ype pdf)
@@ -3892,7 +4064,7 @@ Package pdftex.def Info: ../Report 4/images/sprint1/ptai/class-diagrams/UC-11_J
 ob_Management_Class_Diagram.pdf  used on input line 677.
 (pdftex.def)             Requested size: 416.72845pt x 410.30934pt.
  [401 <../Report 4/images/sprint1/ptai/UC-11.05_-_Delete_Job.pdf>]
-<../Report 4/images/sprint1/ptai/UC-11.06_-_Close_Job.pdf, id=5450, 1101.15382p
+<../Report 4/images/sprint1/ptai/UC-11.06_-_Close_Job.pdf, id=5490, 1101.15382p
 t x 2040.66382pt>
 File: ../Report 4/images/sprint1/ptai/UC-11.06_-_Close_Job.pdf Graphic file (ty
 pe pdf)
@@ -3909,7 +4081,7 @@ Package pdftex.def Info: ../Report 4/images/sprint1/ptai/class-diagrams/UC-11_J
 ob_Management_Class_Diagram.pdf  used on input line 685.
 (pdftex.def)             Requested size: 416.72845pt x 410.30934pt.
  [403 <../Report 4/images/sprint1/ptai/UC-11.06_-_Close_Job.pdf>]
-<../Report 4/images/sprint1/ptai/UC-11.07_-_Reopen_Job.pdf, id=5470, 1101.15382
+<../Report 4/images/sprint1/ptai/UC-11.07_-_Reopen_Job.pdf, id=5510, 1101.15382
 pt x 2040.66382pt>
 File: ../Report 4/images/sprint1/ptai/UC-11.07_-_Reopen_Job.pdf Graphic file (t
 ype pdf)
@@ -3919,7 +4091,7 @@ pdf  used on input line 688.
 (pdftex.def)             Requested size: 321.2923pt x 595.4205pt.
  [404] [405 <../Report 4/images/sprint1/ptai/UC-11.07_-_Reopen_Job.pdf>]
 <../Report 4/images/sprint3/ptai/class-diagrams/UC-32_Freelancer_Proposal_Manag
-ement_Class_Diagram.pdf, id=5489, 1630.17026pt x 1516.70631pt>
+ement_Class_Diagram.pdf, id=5529, 1630.17026pt x 1516.70631pt>
 File: ../Report 4/images/sprint3/ptai/class-diagrams/UC-32_Freelancer_Proposal_
 Management_Class_Diagram.pdf Graphic file (type pdf)
 <use ../Report 4/images/sprint3/ptai/class-diagrams/UC-32_Freelancer_Proposal_M
@@ -3927,7 +4099,7 @@ anagement_Class_Diagram.pdf>
 Package pdftex.def Info: ../Report 4/images/sprint3/ptai/class-diagrams/UC-32_F
 reelancer_Proposal_Management_Class_Diagram.pdf  used on input line 697.
 (pdftex.def)             Requested size: 416.7202pt x 387.71544pt.
-<../Report 4/images/sprint3/ptai/UC-32.01_-_View_My_Proposal_List.pdf, id=5490,
+<../Report 4/images/sprint3/ptai/UC-32.01_-_View_My_Proposal_List.pdf, id=5530,
  1101.15382pt x 1195.5867pt>
 File: ../Report 4/images/sprint3/ptai/UC-32.01_-_View_My_Proposal_List.pdf Grap
 hic file (type pdf)
@@ -3945,7 +4117,7 @@ Package pdftex.def Info: ../Report 4/images/sprint3/ptai/class-diagrams/UC-32_F
 reelancer_Proposal_Management_Class_Diagram.pdf  used on input line 705.
 (pdftex.def)             Requested size: 416.7202pt x 387.71544pt.
  [407 <../Report 4/images/sprint3/ptai/UC-32.01_-_View_My_Proposal_List.pdf>]
-<../Report 4/images/sprint3/ptai/UC-32.02_-_View_My_Proposal_Detail.pdf, id=552
+<../Report 4/images/sprint3/ptai/UC-32.02_-_View_My_Proposal_Detail.pdf, id=556
 2, 1101.15382pt x 1534.77382pt>
 File: ../Report 4/images/sprint3/ptai/UC-32.02_-_View_My_Proposal_Detail.pdf Gr
 aphic file (type pdf)
@@ -3962,7 +4134,7 @@ Package pdftex.def Info: ../Report 4/images/sprint3/ptai/class-diagrams/UC-32_F
 reelancer_Proposal_Management_Class_Diagram.pdf  used on input line 713.
 (pdftex.def)             Requested size: 416.7202pt x 387.71544pt.
  [409 <../Report 4/images/sprint3/ptai/UC-32.02_-_View_My_Proposal_Detail.pdf>]
-<../Report 4/images/sprint3/ptai/UC-32.03_-_Submit_Proposal.pdf, id=5542, 1101.
+<../Report 4/images/sprint3/ptai/UC-32.03_-_Submit_Proposal.pdf, id=5582, 1101.
 15382pt x 2062.82657pt>
 File: ../Report 4/images/sprint3/ptai/UC-32.03_-_Submit_Proposal.pdf Graphic fi
 le (type pdf)
@@ -3979,7 +4151,7 @@ Package pdftex.def Info: ../Report 4/images/sprint3/ptai/class-diagrams/UC-32_F
 reelancer_Proposal_Management_Class_Diagram.pdf  used on input line 721.
 (pdftex.def)             Requested size: 416.7202pt x 387.71544pt.
  [411 <../Report 4/images/sprint3/ptai/UC-32.03_-_Submit_Proposal.pdf>]
-<../Report 4/images/sprint3/ptai/UC-32.04_-_Update_Proposal.pdf, id=5561, 1101.
+<../Report 4/images/sprint3/ptai/UC-32.04_-_Update_Proposal.pdf, id=5601, 1101.
 15382pt x 2040.66382pt>
 File: ../Report 4/images/sprint3/ptai/UC-32.04_-_Update_Proposal.pdf Graphic fi
 le (type pdf)
@@ -3996,7 +4168,7 @@ Package pdftex.def Info: ../Report 4/images/sprint3/ptai/class-diagrams/UC-32_F
 reelancer_Proposal_Management_Class_Diagram.pdf  used on input line 729.
 (pdftex.def)             Requested size: 416.7202pt x 387.71544pt.
  [413 <../Report 4/images/sprint3/ptai/UC-32.04_-_Update_Proposal.pdf>]
-<../Report 4/images/sprint3/ptai/UC-32.05_-_Withdraw_Proposal.pdf, id=5580, 110
+<../Report 4/images/sprint3/ptai/UC-32.05_-_Withdraw_Proposal.pdf, id=5620, 110
 1.15382pt x 2040.66382pt>
 File: ../Report 4/images/sprint3/ptai/UC-32.05_-_Withdraw_Proposal.pdf Graphic 
 file (type pdf)
@@ -4006,7 +4178,7 @@ oposal.pdf  used on input line 732.
 (pdftex.def)             Requested size: 321.2923pt x 595.4205pt.
  [414]
 <../Report 4/images/sprint3/ptai/class-diagrams/UC-32_Client_Proposal_Managemen
-t_Class_Diagram.pdf, id=5585, 1634.02463pt x 1945.2675pt>
+t_Class_Diagram.pdf, id=5625, 1634.02463pt x 1945.2675pt>
 File: ../Report 4/images/sprint3/ptai/class-diagrams/UC-32_Client_Proposal_Mana
 gement_Class_Diagram.pdf Graphic file (type pdf)
 <use ../Report 4/images/sprint3/ptai/class-diagrams/UC-32_Client_Proposal_Manag
@@ -4015,7 +4187,7 @@ Package pdftex.def Info: ../Report 4/images/sprint3/ptai/class-diagrams/UC-32_C
 lient_Proposal_Management_Class_Diagram.pdf  used on input line 737.
 (pdftex.def)             Requested size: 416.73311pt x 496.11086pt.
  [415 <../Report 4/images/sprint3/ptai/UC-32.05_-_Withdraw_Proposal.pdf>]
-<../Report 4/images/sprint3/ptai/UC-32.06_-_Accept_Proposal.pdf, id=5601, 1101.
+<../Report 4/images/sprint3/ptai/UC-32.06_-_Accept_Proposal.pdf, id=5641, 1101.
 15382pt x 2040.66382pt>
 File: ../Report 4/images/sprint3/ptai/UC-32.06_-_Accept_Proposal.pdf Graphic fi
 le (type pdf)
@@ -4034,7 +4206,7 @@ lient_Proposal_Management_Class_Diagram.pdf  used on input line 745.
 (pdftex.def)             Requested size: 416.73311pt x 496.11086pt.
 
 [417 <../Report 4/images/sprint3/ptai/UC-32.06_-_Accept_Proposal.pdf>]
-<../Report 4/images/sprint3/ptai/UC-32.07_-_Reject_Proposal.pdf, id=5633, 1101.
+<../Report 4/images/sprint3/ptai/UC-32.07_-_Reject_Proposal.pdf, id=5673, 1101.
 15382pt x 2040.66382pt>
 File: ../Report 4/images/sprint3/ptai/UC-32.07_-_Reject_Proposal.pdf Graphic fi
 le (type pdf)
@@ -4052,7 +4224,7 @@ lient_Proposal_Management_Class_Diagram.pdf  used on input line 753.
 (pdftex.def)             Requested size: 416.73311pt x 496.11086pt.
 
 [419 <../Report 4/images/sprint3/ptai/UC-32.07_-_Reject_Proposal.pdf>]
-<../Report 4/images/sprint3/ptai/UC-32.08_-_View_Job_Proposal_List.pdf, id=5652
+<../Report 4/images/sprint3/ptai/UC-32.08_-_View_Job_Proposal_List.pdf, id=5692
 , 1101.15382pt x 1715.44882pt>
 File: ../Report 4/images/sprint3/ptai/UC-32.08_-_View_Job_Proposal_List.pdf Gra
 phic file (type pdf)
@@ -4070,7 +4242,7 @@ lient_Proposal_Management_Class_Diagram.pdf  used on input line 761.
 (pdftex.def)             Requested size: 416.73311pt x 496.11086pt.
 
 [421 <../Report 4/images/sprint3/ptai/UC-32.08_-_View_Job_Proposal_List.pdf>]
-<../Report 4/images/sprint3/ptai/UC-32.09_-_View_Proposal_Detail.pdf, id=5672, 
+<../Report 4/images/sprint3/ptai/UC-32.09_-_View_Proposal_Detail.pdf, id=5712, 
 1101.15382pt x 1540.79631pt>
 File: ../Report 4/images/sprint3/ptai/UC-32.09_-_View_Proposal_Detail.pdf Graph
 ic file (type pdf)
@@ -4080,7 +4252,7 @@ al_Detail.pdf  used on input line 764.
 (pdftex.def)             Requested size: 353.31735pt x 494.38148pt.
 
 [422]
-<../Report 4/images/sprint1/ntin/classDiagram/ContractManagement.pdf, id=5677, 
+<../Report 4/images/sprint1/ntin/classDiagram/ContractManagement.pdf, id=5717, 
 3008.35907pt x 1603.91212pt>
 File: ../Report 4/images/sprint1/ntin/classDiagram/ContractManagement.pdf Graph
 ic file (type pdf)
@@ -4089,7 +4261,7 @@ Package pdftex.def Info: ../Report 4/images/sprint1/ntin/classDiagram/ContractM
 anagement.pdf  used on input line 773.
 (pdftex.def)             Requested size: 416.71474pt x 222.17221pt.
  [423 <../Report 4/images/sprint3/ptai/UC-32.09_-_View_Proposal_Detail.pdf>]
-<../Report 4/images/sprint1/ntin/sequences/UC-13.01-create-contract.pdf, id=569
+<../Report 4/images/sprint1/ntin/sequences/UC-13.01-create-contract.pdf, id=573
 2, 1317.96382pt x 2318.6625pt>
 File: ../Report 4/images/sprint1/ntin/sequences/UC-13.01-create-contract.pdf Gr
 aphic file (type pdf)
@@ -4106,7 +4278,7 @@ anagement.pdf  used on input line 781.
 (pdftex.def)             Requested size: 416.71474pt x 222.17221pt.
 
 [425 <../Report 4/images/sprint1/ntin/sequences/UC-13.01-create-contract.pdf>]
-<../Report 4/images/sprint1/ntin/sequences/UC-13.02-update-contract.pdf, id=572
+<../Report 4/images/sprint1/ntin/sequences/UC-13.02-update-contract.pdf, id=576
 4, 1317.96382pt x 2318.6625pt>
 File: ../Report 4/images/sprint1/ntin/sequences/UC-13.02-update-contract.pdf Gr
 aphic file (type pdf)
@@ -4124,7 +4296,7 @@ anagement.pdf  used on input line 789.
 (pdftex.def)             Requested size: 416.71474pt x 222.17221pt.
  [427 <../Report 4/images/sprint1/ntin/sequences/UC-13.02-update-contract.pdf>]
 <../Report 4/images/sprint1/ntin/sequences/UC-13.03-complete-contract.pdf, id=5
-744, 1317.96382pt x 2318.6625pt>
+784, 1317.96382pt x 2318.6625pt>
 File: ../Report 4/images/sprint1/ntin/sequences/UC-13.03-complete-contract.pdf 
 Graphic file (type pdf)
 <use ../Report 4/images/sprint1/ntin/sequences/UC-13.03-complete-contract.pdf>
@@ -4141,7 +4313,7 @@ anagement.pdf  used on input line 797.
  [429 <../Report 4/images/sprint1/ntin/sequences/UC-13.03-complete-contract.pdf
 >]
 <../Report 4/images/sprint1/ntin/sequences/UC-13.04-view-contract-list.pdf, id=
-5763, 1317.96382pt x 1162.3425pt>
+5803, 1317.96382pt x 1162.3425pt>
 File: ../Report 4/images/sprint1/ntin/sequences/UC-13.04-view-contract-list.pdf
  Graphic file (type pdf)
 <use ../Report 4/images/sprint1/ntin/sequences/UC-13.04-view-contract-list.pdf>
@@ -4158,7 +4330,7 @@ Package pdftex.def Info: ../Report 4/images/sprint1/ntin/classDiagram/ContractM
 anagement.pdf  used on input line 805.
 (pdftex.def)             Requested size: 416.71474pt x 222.17221pt.
 <../Report 4/images/sprint1/ntin/sequences/UC-13.05-view-contract-detail.pdf, i
-d=5778, 1317.96382pt x 1552.84132pt>
+d=5818, 1317.96382pt x 1552.84132pt>
 File: ../Report 4/images/sprint1/ntin/sequences/UC-13.05-view-contract-detail.p
 df Graphic file (type pdf)
 <use ../Report 4/images/sprint1/ntin/sequences/UC-13.05-view-contract-detail.pd
@@ -4175,7 +4347,7 @@ anagement.pdf  used on input line 813.
 (pdftex.def)             Requested size: 416.71474pt x 222.17221pt.
  [432 <../Report 4/images/sprint1/ntin/sequences/UC-13.05-view-contract-detail.
 pdf>]
-<../Report 4/images/sprint1/ntin/sequences/UC-13.06-sign-contract.pdf, id=5797,
+<../Report 4/images/sprint1/ntin/sequences/UC-13.06-sign-contract.pdf, id=5837,
  1317.96382pt x 2137.9875pt>
 File: ../Report 4/images/sprint1/ntin/sequences/UC-13.06-sign-contract.pdf Grap
 hic file (type pdf)
@@ -4192,7 +4364,7 @@ anagement.pdf  used on input line 821.
 (pdftex.def)             Requested size: 416.71474pt x 222.17221pt.
  [434 <../Report 4/images/sprint1/ntin/sequences/UC-13.06-sign-contract.pdf>]
 <../Report 4/images/sprint1/ntin/sequences/UC-13.07-export-contract-pdf.pdf, id
-=5817, 1317.96382pt x 1725.3258pt>
+=5857, 1317.96382pt x 1725.3258pt>
 File: ../Report 4/images/sprint1/ntin/sequences/UC-13.07-export-contract-pdf.pd
 f Graphic file (type pdf)
 <use ../Report 4/images/sprint1/ntin/sequences/UC-13.07-export-contract-pdf.pdf
@@ -4209,7 +4381,7 @@ anagement.pdf  used on input line 829.
 (pdftex.def)             Requested size: 416.71474pt x 222.17221pt.
  [436 <../Report 4/images/sprint1/ntin/sequences/UC-13.07-export-contract-pdf.p
 df>]
-<../Report 4/images/sprint1/ntin/sequences/UC-13.08-cancel-contract.pdf, id=583
+<../Report 4/images/sprint1/ntin/sequences/UC-13.08-cancel-contract.pdf, id=587
 6, 1317.96382pt x 1928.16356pt>
 File: ../Report 4/images/sprint1/ntin/sequences/UC-13.08-cancel-contract.pdf Gr
 aphic file (type pdf)
@@ -4226,7 +4398,7 @@ anagement.pdf  used on input line 837.
 (pdftex.def)             Requested size: 416.71474pt x 222.17221pt.
  [438 <../Report 4/images/sprint1/ntin/sequences/UC-13.08-cancel-contract.pdf>]
 <../Report 4/images/sprint1/ntin/sequences/UC-13.09-view-contract-files.pdf, id
-=5855, 1317.96382pt x 1512.61105pt>
+=5895, 1317.96382pt x 1512.61105pt>
 File: ../Report 4/images/sprint1/ntin/sequences/UC-13.09-view-contract-files.pd
 f Graphic file (type pdf)
 <use ../Report 4/images/sprint1/ntin/sequences/UC-13.09-view-contract-files.pdf
@@ -4244,7 +4416,7 @@ anagement.pdf  used on input line 845.
  [440 <../Report 4/images/sprint1/ntin/sequences/UC-13.09-view-contract-files.p
 df>]
 <../Report 4/images/sprint1/ntin/sequences/UC-13.10-upload-contract-file.pdf, i
-d=5875, 1317.96382pt x 1718.33961pt>
+d=5915, 1317.96382pt x 1718.33961pt>
 File: ../Report 4/images/sprint1/ntin/sequences/UC-13.10-upload-contract-file.p
 df Graphic file (type pdf)
 <use ../Report 4/images/sprint1/ntin/sequences/UC-13.10-upload-contract-file.pd
@@ -4262,7 +4434,7 @@ anagement.pdf  used on input line 853.
  [442 <../Report 4/images/sprint1/ntin/sequences/UC-13.10-upload-contract-file.
 pdf>]
 <../Report 4/images/sprint1/ntin/sequences/UC-13.11-delete-contract-file.pdf, i
-d=5894, 1317.96382pt x 1903.11pt>
+d=5934, 1317.96382pt x 1903.11pt>
 File: ../Report 4/images/sprint1/ntin/sequences/UC-13.11-delete-contract-file.p
 df Graphic file (type pdf)
 <use ../Report 4/images/sprint1/ntin/sequences/UC-13.11-delete-contract-file.pd
@@ -4281,7 +4453,7 @@ anagement.pdf  used on input line 861.
 [444 <../Report 4/images/sprint1/ntin/sequences/UC-13.11-delete-contract-file.p
 df>]
 <../Report 4/images/sprint1/ntin/sequences/UC-13.12-reject-contract-offer.pdf, 
-id=5913, 1317.96382pt x 1928.16356pt>
+id=5953, 1317.96382pt x 1928.16356pt>
 File: ../Report 4/images/sprint1/ntin/sequences/UC-13.12-reject-contract-offer.
 pdf Graphic file (type pdf)
 <use ../Report 4/images/sprint1/ntin/sequences/UC-13.12-reject-contract-offer.p
@@ -4291,7 +4463,7 @@ ect-contract-offer.pdf  used on input line 864.
 (pdftex.def)             Requested size: 353.30095pt x 516.8746pt.
  [445] [446 <../Report 4/images/sprint1/ntin/sequences/UC-13.12-reject-contract
 -offer.pdf>]
-<../Report 4/images/sprint4/ntin/classDiagram/PaymentManagement.pdf, id=5933, 2
+<../Report 4/images/sprint4/ntin/classDiagram/PaymentManagement.pdf, id=5973, 2
 733.25143pt x 845.07718pt>
 File: ../Report 4/images/sprint4/ntin/classDiagram/PaymentManagement.pdf Graphi
 c file (type pdf)
@@ -4300,7 +4472,7 @@ Package pdftex.def Info: ../Report 4/images/sprint4/ntin/classDiagram/PaymentMa
 nagement.pdf  used on input line 873.
 (pdftex.def)             Requested size: 416.72641pt x 128.84506pt.
 <../Report 4/images/sprint4/ntin/sequences/UC-43.01-connect-stripe-account.pdf,
- id=5934, 1490.6892pt x 1800.7275pt>
+ id=5974, 1490.6892pt x 1800.7275pt>
 File: ../Report 4/images/sprint4/ntin/sequences/UC-43.01-connect-stripe-account
 .pdf Graphic file (type pdf)
 <use ../Report 4/images/sprint4/ntin/sequences/UC-43.01-connect-stripe-account.
@@ -4318,7 +4490,7 @@ nagement.pdf  used on input line 881.
  [448 <../Report 4/images/sprint4/ntin/sequences/UC-43.01-connect-stripe-accoun
 t.pdf>]
 <../Report 4/images/sprint4/ntin/sequences/UC-43.02-check-stripe-connect-status
-.pdf, id=5966, 1490.6892pt x 1735.44356pt>
+.pdf, id=6006, 1490.6892pt x 1735.44356pt>
 File: ../Report 4/images/sprint4/ntin/sequences/UC-43.02-check-stripe-connect-s
 tatus.pdf Graphic file (type pdf)
 <use ../Report 4/images/sprint4/ntin/sequences/UC-43.02-check-stripe-connect-st
@@ -4335,7 +4507,7 @@ nagement.pdf  used on input line 889.
  [449 <../Report 4/images/sprint4/ntin/sequences/UC-43.02-check-stripe-connect-
 status.pdf>]
 <../Report 4/images/sprint4/ntin/sequences/UC-43.03-view-saved-payment-methods.
-pdf, id=5981, 1490.6892pt x 1620.0525pt>
+pdf, id=6021, 1490.6892pt x 1620.0525pt>
 File: ../Report 4/images/sprint4/ntin/sequences/UC-43.03-view-saved-payment-met
 hods.pdf Graphic file (type pdf)
 <use ../Report 4/images/sprint4/ntin/sequences/UC-43.03-view-saved-payment-meth
@@ -4352,7 +4524,7 @@ nagement.pdf  used on input line 897.
  [450 <../Report 4/images/sprint4/ntin/sequences/UC-43.03-view-saved-payment-me
 thods.pdf>]
 <../Report 4/images/sprint4/ntin/sequences/UC-43.04-set-default-payment-method.
-pdf, id=5996, 1490.6892pt x 1620.0525pt>
+pdf, id=6036, 1490.6892pt x 1620.0525pt>
 File: ../Report 4/images/sprint4/ntin/sequences/UC-43.04-set-default-payment-me
 thod.pdf Graphic file (type pdf)
 <use ../Report 4/images/sprint4/ntin/sequences/UC-43.04-set-default-payment-met
@@ -4369,7 +4541,7 @@ nagement.pdf  used on input line 905.
  [451 <../Report 4/images/sprint4/ntin/sequences/UC-43.04-set-default-payment-m
 ethod.pdf>]
 <../Report 4/images/sprint4/ntin/sequences/UC-43.05-remove-saved-payment-method
-.pdf, id=6012, 1490.6892pt x 1620.0525pt>
+.pdf, id=6052, 1490.6892pt x 1620.0525pt>
 File: ../Report 4/images/sprint4/ntin/sequences/UC-43.05-remove-saved-payment-m
 ethod.pdf Graphic file (type pdf)
 <use ../Report 4/images/sprint4/ntin/sequences/UC-43.05-remove-saved-payment-me
@@ -4386,7 +4558,7 @@ nagement.pdf  used on input line 913.
  [452 <../Report 4/images/sprint4/ntin/sequences/UC-43.05-remove-saved-payment-
 method.pdf>]
 <../Report 4/images/sprint4/ntin/sequences/UC-43.06-create-contract-hold-deposi
-t-intent.pdf, id=6027, 1490.6892pt x 1945.2675pt>
+t-intent.pdf, id=6067, 1490.6892pt x 1945.2675pt>
 File: ../Report 4/images/sprint4/ntin/sequences/UC-43.06-create-contract-hold-d
 eposit-intent.pdf Graphic file (type pdf)
 <use ../Report 4/images/sprint4/ntin/sequences/UC-43.06-create-contract-hold-de
@@ -4403,7 +4575,7 @@ nagement.pdf  used on input line 921.
  [453 <../Report 4/images/sprint4/ntin/sequences/UC-43.06-create-contract-hold-
 deposit-intent.pdf>]
 <../Report 4/images/sprint4/ntin/sequences/UC-43.07-fund-milestone-via-stripe-c
-heckout.pdf, id=6042, 1490.6892pt x 1793.74132pt>
+heckout.pdf, id=6082, 1490.6892pt x 1793.74132pt>
 File: ../Report 4/images/sprint4/ntin/sequences/UC-43.07-fund-milestone-via-str
 ipe-checkout.pdf Graphic file (type pdf)
 <use ../Report 4/images/sprint4/ntin/sequences/UC-43.07-fund-milestone-via-stri
@@ -4420,7 +4592,7 @@ Package pdftex.def Info: ../Report 4/images/sprint4/ntin/classDiagram/PaymentMa
 nagement.pdf  used on input line 929.
 (pdftex.def)             Requested size: 416.72641pt x 128.84506pt.
 <../Report 4/images/sprint4/ntin/sequences/UC-43.08-fund-milestone-with-saved-c
-ard.pdf, id=6057, 1490.6892pt x 2198.2125pt>
+ard.pdf, id=6097, 1490.6892pt x 2198.2125pt>
 File: ../Report 4/images/sprint4/ntin/sequences/UC-43.08-fund-milestone-with-sa
 ved-card.pdf Graphic file (type pdf)
 <use ../Report 4/images/sprint4/ntin/sequences/UC-43.08-fund-milestone-with-sav
@@ -4438,7 +4610,7 @@ nagement.pdf  used on input line 937.
  [456 <../Report 4/images/sprint4/ntin/sequences/UC-43.08-fund-milestone-with-s
 aved-card.pdf>]
 <../Report 4/images/sprint4/ntin/sequences/UC-43.09-release-milestone-escrow-pa
-yment.pdf, id=6076, 1490.6892pt x 2192.19pt>
+yment.pdf, id=6116, 1490.6892pt x 2192.19pt>
 File: ../Report 4/images/sprint4/ntin/sequences/UC-43.09-release-milestone-escr
 ow-payment.pdf Graphic file (type pdf)
 <use ../Report 4/images/sprint4/ntin/sequences/UC-43.09-release-milestone-escro
@@ -4456,7 +4628,7 @@ nagement.pdf  used on input line 945.
  [458 <../Report 4/images/sprint4/ntin/sequences/UC-43.09-release-milestone-esc
 row-payment.pdf>]
 <../Report 4/images/sprint4/ntin/sequences/UC-43.10-view-payment-transactions-h
-istory.pdf, id=6096, 1490.6892pt x 1129.33919pt>
+istory.pdf, id=6136, 1490.6892pt x 1129.33919pt>
 File: ../Report 4/images/sprint4/ntin/sequences/UC-43.10-view-payment-transacti
 ons-history.pdf Graphic file (type pdf)
 <use ../Report 4/images/sprint4/ntin/sequences/UC-43.10-view-payment-transactio
@@ -4473,7 +4645,7 @@ nagement.pdf  used on input line 953.
  [459 <../Report 4/images/sprint4/ntin/sequences/UC-43.10-view-payment-transact
 ions-history.pdf>]
 <../Report 4/images/sprint4/ntin/sequences/UC-43.11-sync-payment-intent-status.
-pdf, id=6111, 1491.65276pt x 1360.12132pt>
+pdf, id=6151, 1491.65276pt x 1360.12132pt>
 File: ../Report 4/images/sprint4/ntin/sequences/UC-43.11-sync-payment-intent-st
 atus.pdf Graphic file (type pdf)
 <use ../Report 4/images/sprint4/ntin/sequences/UC-43.11-sync-payment-intent-sta
@@ -4490,7 +4662,7 @@ nagement.pdf  used on input line 961.
  [460 <../Report 4/images/sprint4/ntin/sequences/UC-43.11-sync-payment-intent-s
 tatus.pdf>]
 <../Report 4/images/sprint4/ntin/sequences/UC-43.12-sync-checkout-session-statu
-s.pdf, id=6126, 1490.6892pt x 1548.74606pt>
+s.pdf, id=6166, 1490.6892pt x 1548.74606pt>
 File: ../Report 4/images/sprint4/ntin/sequences/UC-43.12-sync-checkout-session-
 status.pdf Graphic file (type pdf)
 <use ../Report 4/images/sprint4/ntin/sequences/UC-43.12-sync-checkout-session-s
@@ -4507,7 +4679,7 @@ nagement.pdf  used on input line 969.
  [461 <../Report 4/images/sprint4/ntin/sequences/UC-43.12-sync-checkout-session
 -status.pdf>]
 <../Report 4/images/sprint4/ntin/sequences/UC-43.13-handle-stripe-webhook-event
-s.pdf, id=6141, 1490.6892pt x 1361.085pt>
+s.pdf, id=6181, 1490.6892pt x 1361.085pt>
 File: ../Report 4/images/sprint4/ntin/sequences/UC-43.13-handle-stripe-webhook-
 events.pdf Graphic file (type pdf)
 <use ../Report 4/images/sprint4/ntin/sequences/UC-43.13-handle-stripe-webhook-e
@@ -4517,7 +4689,7 @@ dle-stripe-webhook-events.pdf  used on input line 972.
 (pdftex.def)             Requested size: 353.3145pt x 322.59645pt.
  [462 <../Report 4/images/sprint4/ntin/sequences/UC-43.13-handle-stripe-webhook
 -events.pdf>]
-<../Report 4/images/sprint3/kvy/classDiagram/ManageIDVerification.pdf, id=6156,
+<../Report 4/images/sprint3/kvy/classDiagram/ManageIDVerification.pdf, id=6196,
  2213.38907pt x 663.43857pt>
 File: ../Report 4/images/sprint3/kvy/classDiagram/ManageIDVerification.pdf Grap
 hic file (type pdf)
@@ -4526,7 +4698,7 @@ Package pdftex.def Info: ../Report 4/images/sprint3/kvy/classDiagram/ManageIDVe
 rification.pdf  used on input line 984.
 (pdftex.def)             Requested size: 416.6981pt x 124.90059pt.
 <../Report 4/images/sprint3/kvy/sequences/UC-35.01-view-id-verification-request
--list.pdf, id=6157, 1085.97713pt x 1169.32857pt>
+-list.pdf, id=6197, 1085.97713pt x 1169.32857pt>
 File: ../Report 4/images/sprint3/kvy/sequences/UC-35.01-view-id-verification-re
 quest-list.pdf Graphic file (type pdf)
 <use ../Report 4/images/sprint3/kvy/sequences/UC-35.01-view-id-verification-req
@@ -4544,7 +4716,7 @@ Package pdftex.def Info: ../Report 4/images/sprint3/kvy/classDiagram/ManageIDVe
 rification.pdf  used on input line 992.
 (pdftex.def)             Requested size: 416.6981pt x 124.90059pt.
 <../Report 4/images/sprint3/kvy/sequences/UC-35.02-view-id-verification-request
--detail.pdf, id=6186, 1085.97713pt x 1205.46356pt>
+-detail.pdf, id=6226, 1085.97713pt x 1205.46356pt>
 File: ../Report 4/images/sprint3/kvy/sequences/UC-35.02-view-id-verification-re
 quest-detail.pdf Graphic file (type pdf)
 <use ../Report 4/images/sprint3/kvy/sequences/UC-35.02-view-id-verification-req
@@ -4561,7 +4733,7 @@ rification.pdf  used on input line 1000.
  [464 <../Report 4/images/sprint3/kvy/sequences/UC-35.02-view-id-verification-r
 equest-detail.pdf>]
 <../Report 4/images/sprint3/kvy/sequences/UC-35.03-approve-id-verification.pdf,
- id=6201, 1085.97713pt x 1896.12381pt>
+ id=6241, 1085.97713pt x 1896.12381pt>
 File: ../Report 4/images/sprint3/kvy/sequences/UC-35.03-approve-id-verification
 .pdf Graphic file (type pdf)
 <use ../Report 4/images/sprint3/kvy/sequences/UC-35.03-approve-id-verification.
@@ -4580,7 +4752,7 @@ rification.pdf  used on input line 1008.
  [466 <../Report 4/images/sprint3/kvy/sequences/UC-35.03-approve-id-verificatio
 n.pdf>]
 <../Report 4/images/sprint3/kvy/sequences/UC-35.04-reject-id-verification.pdf, 
-id=6220, 1085.97713pt x 1896.12381pt>
+id=6260, 1085.97713pt x 1896.12381pt>
 File: ../Report 4/images/sprint3/kvy/sequences/UC-35.04-reject-id-verification.
 pdf Graphic file (type pdf)
 <use ../Report 4/images/sprint3/kvy/sequences/UC-35.04-reject-id-verification.p
@@ -4590,7 +4762,7 @@ ct-id-verification.pdf  used on input line 1011.
 (pdftex.def)             Requested size: 341.02408pt x 595.4305pt.
  [467] [468 <../Report 4/images/sprint3/kvy/sequences/UC-35.04-reject-id-verifi
 cation.pdf>]
-<../Report 4/images/sprint3/ntin/classDiagram/DisputeManagement.pdf, id=6239, 2
+<../Report 4/images/sprint3/ntin/classDiagram/DisputeManagement.pdf, id=6279, 2
 719.27907pt x 1149.33382pt>
 File: ../Report 4/images/sprint3/ntin/classDiagram/DisputeManagement.pdf Graphi
 c file (type pdf)
@@ -4598,7 +4770,7 @@ c file (type pdf)
 Package pdftex.def Info: ../Report 4/images/sprint3/ntin/classDiagram/DisputeMa
 nagement.pdf  used on input line 1020.
 (pdftex.def)             Requested size: 416.71223pt x 176.1281pt.
-<../Report 4/images/sprint3/ntin/sequences/UC-33.01-open-dispute.pdf, id=6240, 
+<../Report 4/images/sprint3/ntin/sequences/UC-33.01-open-dispute.pdf, id=6280, 
 1317.96382pt x 1928.16356pt>
 File: ../Report 4/images/sprint3/ntin/sequences/UC-33.01-open-dispute.pdf Graph
 ic file (type pdf)
@@ -4615,7 +4787,7 @@ nagement.pdf  used on input line 1028.
 (pdftex.def)             Requested size: 416.71223pt x 176.1281pt.
  [470 <../Report 4/images/sprint3/ntin/sequences/UC-33.01-open-dispute.pdf>]
 <../Report 4/images/sprint3/ntin/sequences/UC-33.02-view-dispute-list.pdf, id=6
-273, 1317.96382pt x 1119.22131pt>
+313, 1317.96382pt x 1119.22131pt>
 File: ../Report 4/images/sprint3/ntin/sequences/UC-33.02-view-dispute-list.pdf 
 Graphic file (type pdf)
 <use ../Report 4/images/sprint3/ntin/sequences/UC-33.02-view-dispute-list.pdf>
@@ -4631,7 +4803,7 @@ nagement.pdf  used on input line 1036.
  [471 <../Report 4/images/sprint3/ntin/sequences/UC-33.02-view-dispute-list.pdf
 >]
 <../Report 4/images/sprint3/ntin/sequences/UC-33.03-view-dispute-detail.pdf, id
-=6288, 1317.96382pt x 1328.0817pt>
+=6328, 1317.96382pt x 1328.0817pt>
 File: ../Report 4/images/sprint3/ntin/sequences/UC-33.03-view-dispute-detail.pd
 f Graphic file (type pdf)
 <use ../Report 4/images/sprint3/ntin/sequences/UC-33.03-view-dispute-detail.pdf
@@ -4648,7 +4820,7 @@ Package pdftex.def Info: ../Report 4/images/sprint3/ntin/classDiagram/DisputeMa
 nagement.pdf  used on input line 1044.
 (pdftex.def)             Requested size: 416.71223pt x 176.1281pt.
 <../Report 4/images/sprint3/ntin/sequences/UC-33.04-view-dispute-by-milestone.p
-df, id=6303, 1317.96382pt x 1328.0817pt>
+df, id=6343, 1317.96382pt x 1328.0817pt>
 File: ../Report 4/images/sprint3/ntin/sequences/UC-33.04-view-dispute-by-milest
 one.pdf Graphic file (type pdf)
 <use ../Report 4/images/sprint3/ntin/sequences/UC-33.04-view-dispute-by-milesto
@@ -4665,7 +4837,7 @@ Package pdftex.def Info: ../Report 4/images/sprint3/ntin/classDiagram/DisputeMa
 nagement.pdf  used on input line 1052.
 (pdftex.def)             Requested size: 416.71223pt x 176.1281pt.
 <../Report 4/images/sprint3/ntin/sequences/UC-33.05-respond-to-dispute.pdf, id=
-6318, 1317.96382pt x 2181.10857pt>
+6358, 1317.96382pt x 2181.10857pt>
 File: ../Report 4/images/sprint3/ntin/sequences/UC-33.05-respond-to-dispute.pdf
  Graphic file (type pdf)
 <use ../Report 4/images/sprint3/ntin/sequences/UC-33.05-respond-to-dispute.pdf>
@@ -4683,7 +4855,7 @@ nagement.pdf  used on input line 1060.
  [475 <../Report 4/images/sprint3/ntin/sequences/UC-33.05-respond-to-dispute.pd
 f>]
 <../Report 4/images/sprint3/ntin/sequences/UC-33.06-withdraw-dispute.pdf, id=63
-38, 1317.96382pt x 1928.16356pt>
+78, 1317.96382pt x 1928.16356pt>
 File: ../Report 4/images/sprint3/ntin/sequences/UC-33.06-withdraw-dispute.pdf G
 raphic file (type pdf)
 <use ../Report 4/images/sprint3/ntin/sequences/UC-33.06-withdraw-dispute.pdf>
@@ -4700,7 +4872,7 @@ nagement.pdf  used on input line 1068.
  [477 <../Report 4/images/sprint3/ntin/sequences/UC-33.06-withdraw-dispute.pdf>
 ]
 <../Report 4/images/sprint3/ntin/sequences/UC-33.07-escalate-dispute-to-expert.
-pdf, id=6357, 1317.96382pt x 1928.16356pt>
+pdf, id=6397, 1317.96382pt x 1928.16356pt>
 File: ../Report 4/images/sprint3/ntin/sequences/UC-33.07-escalate-dispute-to-ex
 pert.pdf Graphic file (type pdf)
 <use ../Report 4/images/sprint3/ntin/sequences/UC-33.07-escalate-dispute-to-exp
@@ -4718,7 +4890,7 @@ nagement.pdf  used on input line 1076.
  [479 <../Report 4/images/sprint3/ntin/sequences/UC-33.07-escalate-dispute-to-e
 xpert.pdf>]
 <../Report 4/images/sprint3/ntin/sequences/UC-33.08-view-expert-dispute-list.pd
-f, id=6376, 1317.96382pt x 1501.52962pt>
+f, id=6416, 1317.96382pt x 1501.52962pt>
 File: ../Report 4/images/sprint3/ntin/sequences/UC-33.08-view-expert-dispute-li
 st.pdf Graphic file (type pdf)
 <use ../Report 4/images/sprint3/ntin/sequences/UC-33.08-view-expert-dispute-lis
@@ -4737,7 +4909,7 @@ nagement.pdf  used on input line 1084.
 [481 <../Report 4/images/sprint3/ntin/sequences/UC-33.08-view-expert-dispute-li
 st.pdf>]
 <../Report 4/images/sprint3/ntin/sequences/UC-33.09-view-expert-dispute-detail.
-pdf, id=6396, 1317.96382pt x 1501.52962pt>
+pdf, id=6436, 1317.96382pt x 1501.52962pt>
 File: ../Report 4/images/sprint3/ntin/sequences/UC-33.09-view-expert-dispute-de
 tail.pdf Graphic file (type pdf)
 <use ../Report 4/images/sprint3/ntin/sequences/UC-33.09-view-expert-dispute-det
@@ -4754,7 +4926,7 @@ nagement.pdf  used on input line 1092.
  [482 <../Report 4/images/sprint3/ntin/sequences/UC-33.09-view-expert-dispute-d
 etail.pdf>]
 <../Report 4/images/sprint3/ntin/sequences/UC-33.10-expert-make-dispute-decisio
-n.pdf, id=6411, 1317.96382pt x 2131.00143pt>
+n.pdf, id=6451, 1317.96382pt x 2131.00143pt>
 File: ../Report 4/images/sprint3/ntin/sequences/UC-33.10-expert-make-dispute-de
 cision.pdf Graphic file (type pdf)
 <use ../Report 4/images/sprint3/ntin/sequences/UC-33.10-expert-make-dispute-dec
@@ -4860,364 +5032,446 @@ Underfull \hbox (badness 2318) in paragraph at lines 229--229
 [493] [494] [495] [496] [497] [498]) [499]
 (sections/6.Release_Package_and_User_Guides.tex
 (../report 6/sections/sec1_deliverables_install.tex
-Overfull \hbox (6.27808pt too wide) in paragraph at lines 20--20
+Overfull \hbox (1.59662pt too wide) in alignment at lines 13--17
+ [] [] [] [] 
+ []
+
+
+Overfull \hbox (1.59662pt too wide) in alignment at lines 17--20
+ [] [] [] [] 
+ []
+
+
+Overfull \hbox (6.27808pt too wide) in paragraph at lines 24--24
  \T1/cmtt/m/n/12 (.prisma/.ts)| 
  []
 
+
+Overfull \hbox (1.59662pt too wide) in alignment at lines 20--30
+ [] [] [] [] 
+ []
+
 ignored error: Infinite glue shrinkage found in box being split [500] [501]
-[502] [503]
-<../report 6/images/install/a01_git_download.png, id=6534, 1445.4pt x 903.375pt
+[502]
+<../report 6/images/install/a01_git_download.png, id=6569, 1445.4pt x 903.375pt
 >
 File: ../report 6/images/install/a01_git_download.png Graphic file (type png)
 <use ../report 6/images/install/a01_git_download.png>
 Package pdftex.def Info: ../report 6/images/install/a01_git_download.png  used 
-on input line 104.
+on input line 112.
 (pdftex.def)             Requested size: 407.66867pt x 254.79037pt.
- [504]
-<../report 6/images/install/a02_nodejs_download.png, id=6540, 1445.4pt x 903.37
+ [503 <../report 6/images/install/a01_git_download.png (PNG copy)>]
+<../report 6/images/install/a02_nodejs_download.png, id=6575, 1445.4pt x 903.37
 5pt>
 File: ../report 6/images/install/a02_nodejs_download.png Graphic file (type png
 )
 <use ../report 6/images/install/a02_nodejs_download.png>
 Package pdftex.def Info: ../report 6/images/install/a02_nodejs_download.png  us
-ed on input line 118.
+ed on input line 126.
 (pdftex.def)             Requested size: 407.66867pt x 254.79037pt.
- [505 <../report 6/images/install/a01_git_download.png (PNG copy)>]
-Underfull \hbox (badness 1163) in paragraph at lines 123--124
+
+Underfull \hbox (badness 1163) in paragraph at lines 131--132
 [][]\T1/ptm/b/n/12 [1][] \T1/ptm/m/n/12 Nav-i-gate to the of-fi-cial Node.js do
 wn-load por-tal at [][]$\T1/cmtt/m/n/12 https : / / nodejs . org / en /
  []
 
-<../report 6/images/install/a03_docker_download.png, id=6548, 1445.4pt x 903.37
+<../report 6/images/install/a03_docker_download.png, id=6577, 1445.4pt x 903.37
 5pt>
 File: ../report 6/images/install/a03_docker_download.png Graphic file (type png
 )
 <use ../report 6/images/install/a03_docker_download.png>
 Package pdftex.def Info: ../report 6/images/install/a03_docker_download.png  us
-ed on input line 137.
+ed on input line 145.
 (pdftex.def)             Requested size: 407.66867pt x 254.79037pt.
-[506 <../report 6/images/install/a02_nodejs_download.png (PNG copy)>]
-<../report 6/images/install/a04_env_check_versions.png, id=6559, 1445.4pt x 903
+[504 <../report 6/images/install/a02_nodejs_download.png (PNG copy)>]
+<../report 6/images/install/a04_env_check_versions.png, id=6589, 1445.4pt x 903
 .375pt>
 File: ../report 6/images/install/a04_env_check_versions.png Graphic file (type 
 png)
 <use ../report 6/images/install/a04_env_check_versions.png>
 Package pdftex.def Info: ../report 6/images/install/a04_env_check_versions.png 
- used on input line 151.
+ used on input line 159.
 (pdftex.def)             Requested size: 407.66867pt x 254.79037pt.
- [507 <../report 6/images/install/a03_docker_download.png (PNG copy)>]
-Overfull \hbox (18.6222pt too wide) in paragraph at lines 157--158
+ [505 <../report 6/images/install/a03_docker_download.png (PNG copy)>]
+Overfull \hbox (18.6222pt too wide) in paragraph at lines 165--166
 [][]\T1/ptm/b/n/12 [1][] \T1/ptm/m/n/12 Ex-e-cute \T1/cmtt/m/n/12 git --version
  $\OMS/ztmcm/m/n/12 !$ \T1/ptm/m/n/12 con-firms Git ver-sion (e.g., \T1/cmtt/m/
 n/12 git version 2.47.1.windows.1\T1/ptm/m/n/12 ). 
  []
 
-
-Overfull \hbox (3.96837pt too wide) in paragraph at lines 173--173
-\T1/cmtt/m/n/12 GOOGLE_CLIENT_SECRET|  
- []
-
-ignored error: Infinite glue shrinkage found in box being split [508 <../report
- 6/images/install/a04_env_check_versions.png (PNG copy)>]
-<../report 6/images/install/a05_clone_and_install.png, id=6570, 1445.4pt x 903.
+[506 <../report 6/images/install/a04_env_check_versions.png (PNG copy)>]
+<../report 6/images/install/a05_clone_and_install.png, id=6600, 1445.4pt x 903.
 375pt>
 File: ../report 6/images/install/a05_clone_and_install.png Graphic file (type p
 ng)
 <use ../report 6/images/install/a05_clone_and_install.png>
 Package pdftex.def Info: ../report 6/images/install/a05_clone_and_install.png  
-used on input line 187.
+used on input line 198.
 (pdftex.def)             Requested size: 407.66867pt x 254.79037pt.
- [509]
-<../report 6/images/install/a06_env_configuration.png, id=6575, 1445.4pt x 903.
+
+[507]
+<../report 6/images/install/a06_env_configuration.png, id=6605, 1445.4pt x 903.
 375pt>
 File: ../report 6/images/install/a06_env_configuration.png Graphic file (type p
 ng)
 <use ../report 6/images/install/a06_env_configuration.png>
 Package pdftex.def Info: ../report 6/images/install/a06_env_configuration.png  
-used on input line 200.
+used on input line 211.
 (pdftex.def)             Requested size: 407.66867pt x 254.79037pt.
- [510 <../report 6/images/install/a05_clone_and_install.png (PNG copy)>]
-<../report 6/images/install/a07_prisma_migrate_seed.png, id=6580, 1445.4pt x 90
+ [508 <../report 6/images/install/a05_clone_and_install.png (PNG copy)>]
+<../report 6/images/install/a07_prisma_migrate_seed.png, id=6610, 1445.4pt x 90
 3.375pt>
 File: ../report 6/images/install/a07_prisma_migrate_seed.png Graphic file (type
  png)
 <use ../report 6/images/install/a07_prisma_migrate_seed.png>
 Package pdftex.def Info: ../report 6/images/install/a07_prisma_migrate_seed.png
-  used on input line 227.
+  used on input line 238.
 (pdftex.def)             Requested size: 407.66867pt x 254.79037pt.
- [511 <../report 6/images/install/a06_env_configuration.png (PNG copy)>]
-Underfull \hbox (badness 1178) in paragraph at lines 235--235
+
+[509 <../report 6/images/install/a06_env_configuration.png (PNG copy)>]
+Underfull \hbox (badness 1178) in paragraph at lines 246--246
 [][]\T1/ptm/b/n/12 [3][] \T1/ptm/m/n/12 Ex-e-cute \T1/cmtt/m/n/12 pnpm --filter
  api seed \T1/ptm/m/n/12 (via In-fisi-cal or con-fig-ured \T1/cmtt/m/n/12 SEED_
 *_EMAIL \T1/ptm/m/n/12 /
  []
 
-) (../report 6/sections/sec2_docker_ai.tex [512 <../report 6/images/install/a07
-_prisma_migrate_seed.png (PNG copy)>] [513]
-<../report 6/images/install/a08_docker_compose_up.png, id=6613, 1445.4pt x 903.
+) (../report 6/sections/sec2_docker_ai.tex
+Overfull \hbox (1.59665pt too wide) in paragraph at lines 16--27
+ [][] 
+ []
+
+[510 <../report 6/images/install/a07_prisma_migrate_seed.png (PNG copy)>]
+<../report 6/images/install/a08_docker_compose_up.png, id=6637, 1445.4pt x 903.
 375pt>
 File: ../report 6/images/install/a08_docker_compose_up.png Graphic file (type p
 ng)
 <use ../report 6/images/install/a08_docker_compose_up.png>
 Package pdftex.def Info: ../report 6/images/install/a08_docker_compose_up.png  
-used on input line 36.
+used on input line 39.
 (pdftex.def)             Requested size: 407.66867pt x 254.79037pt.
- [514 <../report 6/images/install/a08_docker_compose_up.png (PNG copy)>]
-<../report 6/images/install/a09_verify_web_running.png, id=6626, 1445.4pt x 903
+
+[511] [512 <../report 6/images/install/a08_docker_compose_up.png (PNG copy)>]
+<../report 6/images/install/a09_verify_web_running.png, id=6660, 1445.4pt x 903
 .375pt>
 File: ../report 6/images/install/a09_verify_web_running.png Graphic file (type 
 png)
 <use ../report 6/images/install/a09_verify_web_running.png>
 Package pdftex.def Info: ../report 6/images/install/a09_verify_web_running.png 
- used on input line 80.
+ used on input line 83.
 (pdftex.def)             Requested size: 407.66867pt x 254.79037pt.
- [515 <../report 6/images/install/a09_verify_web_running.png (PNG copy)>]
-<../report 6/images/install/a10_verify_api_swagger.png, id=6638, 1445.4pt x 903
+<../report 6/images/install/a10_verify_api_swagger.png, id=6662, 1445.4pt x 903
 .375pt>
 File: ../report 6/images/install/a10_verify_api_swagger.png Graphic file (type 
 png)
 <use ../report 6/images/install/a10_verify_api_swagger.png>
 Package pdftex.def Info: ../report 6/images/install/a10_verify_api_swagger.png 
- used on input line 93.
+ used on input line 96.
 (pdftex.def)             Requested size: 407.66867pt x 254.79037pt.
- [516 <../report 6/images/install/a10_verify_api_swagger.png (PNG copy)>]) (../
-report 6/sections/sec3_m02_auth_session.tex
+
+[513 <../report 6/images/install/a09_verify_web_running.png (PNG copy)>]
+Overfull \hbox (1.59663pt too wide) in alignment at lines 119--123
+ [] [] [] [] 
+ []
+
+
+Overfull \hbox (1.59663pt too wide) in alignment at lines 123--126
+ [] [] [] [] 
+ []
+
+
+Overfull \hbox (1.59663pt too wide) in alignment at lines 126--131
+ [] [] [] [] 
+ []
+
+[514 <../report 6/images/install/a10_verify_api_swagger.png (PNG copy)>])
+(../report 6/sections/sec3_m02_auth_session.tex
 Underfull \hbox (badness 1097) in paragraph at lines 13--14
 []\T1/ptm/b/n/12 Guest (Unau-then-ti-cated Vis-i-tor): \T1/ptm/m/n/12 Ex-plores
  pub-lic job post-ings, re-views top-rated
  []
 
-[517] [518]
-<../report 6/images/auth/m02_01_register.png, id=6658, 1445.4pt x 1063.975pt>
+[515] [516]
+<../report 6/images/auth/m02_01_register.png, id=6686, 1324.95pt x 1195.46625pt
+>
 File: ../report 6/images/auth/m02_01_register.png Graphic file (type png)
 <use ../report 6/images/auth/m02_01_register.png>
 Package pdftex.def Info: ../report 6/images/auth/m02_01_register.png  used on i
 nput line 37.
-(pdftex.def)             Requested size: 407.66867pt x 300.08646pt.
- [519 <../report 6/images/auth/m02_01_register.png (PNG copy)>]
-[520]
-<../report 6/images/auth/m02_02_login.png, id=6678, 1445.4pt x 1063.975pt>
+(pdftex.def)             Requested size: 326.1377pt x 294.25078pt.
+ [517 <../report 6/images/auth/m02_01_register.png (PNG copy)>]
+[518]
+<../report 6/images/auth/m02_02_login.png, id=6707, 1445.4pt x 903.375pt>
 File: ../report 6/images/auth/m02_02_login.png Graphic file (type png)
 <use ../report 6/images/auth/m02_02_login.png>
 Package pdftex.def Info: ../report 6/images/auth/m02_02_login.png  used on inpu
 t line 81.
-(pdftex.def)             Requested size: 407.66867pt x 300.08646pt.
- [521 <../report 6/images/auth/m02_02_login.png (PNG copy)>] [522]
-<../report 6/images/auth/m02_03_google_oauth.png, id=6694, 1445.4pt x 1063.975p
-t>
+(pdftex.def)             Requested size: 407.66867pt x 254.79037pt.
+ [519 <../report 6/images/auth/m02_02_login.png (PNG copy)>] [520]
+<../report 6/images/auth/m02_03_google_oauth.png, id=6723, 1445.4pt x 903.375pt
+>
 File: ../report 6/images/auth/m02_03_google_oauth.png Graphic file (type png)
 <use ../report 6/images/auth/m02_03_google_oauth.png>
 Package pdftex.def Info: ../report 6/images/auth/m02_03_google_oauth.png  used 
 on input line 120.
-(pdftex.def)             Requested size: 407.66867pt x 300.08646pt.
+(pdftex.def)             Requested size: 407.66867pt x 254.79037pt.
 
-[523 <../report 6/images/auth/m02_03_google_oauth.png (PNG copy)>] [524]
-<../report 6/images/auth/m02_04_forgot_password.png, id=6708, 1445.4pt x 1063.9
-75pt>
+[521 <../report 6/images/auth/m02_03_google_oauth.png (PNG copy)>]
+<../report 6/images/auth/m02_04_forgot_password.png, id=6732, 1445.4pt x 903.37
+5pt>
 File: ../report 6/images/auth/m02_04_forgot_password.png Graphic file (type png
 )
 <use ../report 6/images/auth/m02_04_forgot_password.png>
 Package pdftex.def Info: ../report 6/images/auth/m02_04_forgot_password.png  us
 ed on input line 148.
-(pdftex.def)             Requested size: 407.66867pt x 300.08646pt.
-
-[525 <../report 6/images/auth/m02_04_forgot_password.png (PNG copy)>] [526]
-<../report 6/images/auth/m02_05_sessions_list.png, id=6726, 1445.4pt x 943.525p
+(pdftex.def)             Requested size: 407.66867pt x 254.79037pt.
+ [522 <../report 6/images/auth/m02_04_forgot_password.png (PNG copy)>] [523]
+<../report 6/images/auth/m02_05_sessions_list.png, id=6751, 1445.4pt x 903.375p
 t>
 File: ../report 6/images/auth/m02_05_sessions_list.png Graphic file (type png)
 <use ../report 6/images/auth/m02_05_sessions_list.png>
 Package pdftex.def Info: ../report 6/images/auth/m02_05_sessions_list.png  used
  on input line 181.
-(pdftex.def)             Requested size: 407.66867pt x 266.1144pt.
-
-[527 <../report 6/images/auth/m02_05_sessions_list.png (PNG copy)>] [528]
-<../report 6/images/auth/m02_06_revoke_session.png, id=6742, 1445.4pt x 943.525
+(pdftex.def)             Requested size: 389.55298pt x 243.4734pt.
+<../report 6/images/auth/m02_05b_session_detail.png, id=6752, 1445.4pt x 903.37
+5pt>
+File: ../report 6/images/auth/m02_05b_session_detail.png Graphic file (type png
+)
+<use ../report 6/images/auth/m02_05b_session_detail.png>
+Package pdftex.def Info: ../report 6/images/auth/m02_05b_session_detail.png  us
+ed on input line 195.
+(pdftex.def)             Requested size: 344.25339pt x 215.16031pt.
+ [524 <../report 6/images/auth/m02_05_sessions_list.png (PNG copy)>] [525 <../r
+eport 6/images/auth/m02_05b_session_detail.png (PNG copy)>]
+<../report 6/images/auth/m02_06_revoke_session.png, id=6767, 1445.4pt x 903.375
 pt>
 File: ../report 6/images/auth/m02_06_revoke_session.png Graphic file (type png)
 
 <use ../report 6/images/auth/m02_06_revoke_session.png>
 Package pdftex.def Info: ../report 6/images/auth/m02_06_revoke_session.png  use
-d on input line 210.
-(pdftex.def)             Requested size: 407.66867pt x 266.1144pt.
-
-[529 <../report 6/images/auth/m02_06_revoke_session.png (PNG copy)>]
-<../report 6/images/auth/m02_07_logout.png, id=6753, 1445.4pt x 943.525pt>
+d on input line 216.
+(pdftex.def)             Requested size: 389.55298pt x 243.4734pt.
+ [526 <../report 6/images/auth/m02_06_revoke_session.png (PNG copy)>]
+<../report 6/images/auth/m02_07_logout.png, id=6777, 1445.4pt x 903.375pt>
 File: ../report 6/images/auth/m02_07_logout.png Graphic file (type png)
 <use ../report 6/images/auth/m02_07_logout.png>
 Package pdftex.def Info: ../report 6/images/auth/m02_07_logout.png  used on inp
-ut line 238.
-(pdftex.def)             Requested size: 407.66867pt x 266.1144pt.
+ut line 244.
+(pdftex.def)             Requested size: 398.61427pt x 249.125pt.
 
-Underfull \hbox (badness 3635) in paragraph at lines 250--251
+Underfull \hbox (badness 3635) in paragraph at lines 256--257
 []\T1/ptm/b/n/12 What Hap-pens Next: \T1/ptm/m/n/12 The ap-pli-ca-tion dis-patc
 hes an HTTP POST re-quest to
  []
 
 
-Underfull \hbox (badness 3364) in paragraph at lines 250--251
+Underfull \hbox (badness 3364) in paragraph at lines 256--257
 \T1/cmtt/m/n/12 /api/auth/logout\T1/ptm/m/n/12 , ex-pires client \T1/cmtt/m/n/1
 2 HttpOnly \T1/ptm/m/n/12 cook-ies, purges cached ap-pli-ca-tion
  []
 
-) (../report 6/sections/sec3_m14_admin_rbac_users.tex [530 <../report 6/images/
+) (../report 6/sections/sec3_m14_admin_rbac_users.tex [527 <../report 6/images/
 auth/m02_07_logout.png (PNG copy)>]
 LaTeX Font Info:    Font shape `T1/cmtt/bx/it' in size <12> not available
 (Font)              Font shape `T1/cmtt/m/it' tried instead on input line 12.
-<../report 6/images/admin/m14_01_admin_dashboard.png, id=6762, 1445.4pt x 943.5
-25pt>
+<../report 6/images/admin/m14_01_admin_dashboard.png, id=6786, 1445.4pt x 903.3
+75pt>
 File: ../report 6/images/admin/m14_01_admin_dashboard.png Graphic file (type pn
 g)
 <use ../report 6/images/admin/m14_01_admin_dashboard.png>
 Package pdftex.def Info: ../report 6/images/admin/m14_01_admin_dashboard.png  u
 sed on input line 22.
-(pdftex.def)             Requested size: 407.66867pt x 266.1144pt.
- [531 <../report 6/images/admin/m14_01_admin_dashboard.png (PNG copy)>] [532]
+(pdftex.def)             Requested size: 407.66867pt x 254.79037pt.
+ [528 <../report 6/images/admin/m14_01_admin_dashboard.png (PNG copy)>] [529]
 Overfull \hbox (0.74153pt too wide) in paragraph at lines 45--46
 []\T1/ptm/b/n/12 Screen Name & Route Path: \T1/ptm/m/n/12 Ad-min-is-tra-tor Pro
 -file & Priv-i-leges View -- \T1/cmtt/m/n/12 /admin/users/1\T1/ptm/m/n/12 . 
  []
 
-<../report 6/images/admin/m14_02_admin_profile.png, id=6777, 1445.4pt x 943.525
+<../report 6/images/admin/m14_02_admin_profile.png, id=6802, 1445.4pt x 903.375
 pt>
 File: ../report 6/images/admin/m14_02_admin_profile.png Graphic file (type png)
 
 <use ../report 6/images/admin/m14_02_admin_profile.png>
 Package pdftex.def Info: ../report 6/images/admin/m14_02_admin_profile.png  use
 d on input line 52.
-(pdftex.def)             Requested size: 407.66867pt x 266.1144pt.
-[533 <../report 6/images/admin/m14_02_admin_profile.png (PNG copy)>] [534]
-<../report 6/images/admin/m14_03_admin_roles.png, id=6792, 1445.4pt x 943.525pt
+(pdftex.def)             Requested size: 407.66867pt x 254.79037pt.
+[530 <../report 6/images/admin/m14_02_admin_profile.png (PNG copy)>] [531]
+<../report 6/images/admin/m14_03_admin_roles.png, id=6817, 1445.4pt x 903.375pt
 >
 File: ../report 6/images/admin/m14_03_admin_roles.png Graphic file (type png)
 <use ../report 6/images/admin/m14_03_admin_roles.png>
 Package pdftex.def Info: ../report 6/images/admin/m14_03_admin_roles.png  used 
 on input line 81.
-(pdftex.def)             Requested size: 407.66867pt x 266.1144pt.
+(pdftex.def)             Requested size: 344.25339pt x 215.16031pt.
+<../report 6/images/admin/m14_03b_admin_role_detail.png, id=6818, 1445.4pt x 90
+3.375pt>
+File: ../report 6/images/admin/m14_03b_admin_role_detail.png Graphic file (type
+ png)
+<use ../report 6/images/admin/m14_03b_admin_role_detail.png>
+Package pdftex.def Info: ../report 6/images/admin/m14_03b_admin_role_detail.png
+  used on input line 100.
+(pdftex.def)             Requested size: 353.31468pt x 220.81189pt.
 
-[535 <../report 6/images/admin/m14_03_admin_roles.png (PNG copy)>] [536]
-Overfull \hbox (7.99954pt too wide) in paragraph at lines 110--111
+[532 <../report 6/images/admin/m14_03_admin_roles.png (PNG copy)>] [533 <../rep
+ort 6/images/admin/m14_03b_admin_role_detail.png (PNG copy)>]
+Overfull \hbox (7.99954pt too wide) in paragraph at lines 115--116
 []\T1/ptm/b/n/12 Screen Name & Route Path: \T1/ptm/m/n/12 Role Per-mis-sion As-
 sign-ment Ma-trix -- \T1/cmtt/m/n/12 /admin/assign-role\T1/ptm/m/n/12 . 
  []
 
-<../report 6/images/admin/m14_04_role_permissions_matrix.png, id=6809, 1445.4pt
- x 943.525pt>
+<../report 6/images/admin/m14_04_role_permissions_matrix.png, id=6833, 1445.4pt
+ x 903.375pt>
 File: ../report 6/images/admin/m14_04_role_permissions_matrix.png Graphic file 
 (type png)
 <use ../report 6/images/admin/m14_04_role_permissions_matrix.png>
 Package pdftex.def Info: ../report 6/images/admin/m14_04_role_permissions_matri
-x.png  used on input line 117.
-(pdftex.def)             Requested size: 407.66867pt x 266.1144pt.
-
-Underfull \hbox (badness 1796) in paragraph at lines 126--127
-\T1/ptm/m/n/12 the Ad-min Por-tal fea-ture groups (\T1/ptm/m/it/12 KYC\T1/ptm/m
-/n/12 , \T1/ptm/m/it/12 SKILLS\T1/ptm/m/n/12 , \T1/ptm/m/it/12 JOB CAT-E-GORIES
-\T1/ptm/m/n/12 , \T1/ptm/m/it/12 BAN-NERS\T1/ptm/m/n/12 ,
- []
-
-[537 <../report 6/images/admin/m14_04_role_permissions_matrix.png (PNG copy)>]
-[538]
-<../report 6/images/admin/m14_05_admin_permissions.png, id=6825, 1445.4pt x 943
-.525pt>
+x.png  used on input line 122.
+(pdftex.def)             Requested size: 362.37598pt x 226.47728pt.
+[534 <../report 6/images/admin/m14_04_role_permissions_matrix.png (PNG copy)>]
+[535]
+<../report 6/images/admin/m14_05_admin_permissions.png, id=6851, 1445.4pt x 903
+.375pt>
 File: ../report 6/images/admin/m14_05_admin_permissions.png Graphic file (type 
 png)
 <use ../report 6/images/admin/m14_05_admin_permissions.png>
 Package pdftex.def Info: ../report 6/images/admin/m14_05_admin_permissions.png 
- used on input line 147.
-(pdftex.def)             Requested size: 407.66867pt x 266.1144pt.
- [539 <../report 6/images/admin/m14_05_admin_permissions.png (PNG copy)>]
-[540]
-<../report 6/images/admin/m14_06_admin_users_list_create.png, id=6841, 1445.4pt
- x 943.525pt>
+ used on input line 153.
+(pdftex.def)             Requested size: 362.37598pt x 226.47728pt.
+<../report 6/images/admin/m14_05b_admin_permission_detail.png, id=6852, 1445.4p
+t x 903.375pt>
+File: ../report 6/images/admin/m14_05b_admin_permission_detail.png Graphic file
+ (type png)
+<use ../report 6/images/admin/m14_05b_admin_permission_detail.png>
+Package pdftex.def Info: ../report 6/images/admin/m14_05b_admin_permission_deta
+il.png  used on input line 168.
+(pdftex.def)             Requested size: 353.31468pt x 220.81189pt.
+ [536 <../report 6/images/admin/m14_05_admin_permissions.png (PNG copy)>]
+[537 <../report 6/images/admin/m14_05b_admin_permission_detail.png (PNG copy)>]
+<../report 6/images/admin/m14_06_admin_users_list_create.png, id=6868, 1445.4pt
+ x 903.375pt>
 File: ../report 6/images/admin/m14_06_admin_users_list_create.png Graphic file 
 (type png)
 <use ../report 6/images/admin/m14_06_admin_users_list_create.png>
 Package pdftex.def Info: ../report 6/images/admin/m14_06_admin_users_list_creat
-e.png  used on input line 177.
-(pdftex.def)             Requested size: 407.66867pt x 266.1144pt.
- [541 <../report 6/images/admin/m14_06_admin_users_list_create.png (PNG copy)>]
- [542]
-<../report 6/images/admin/m14_07_admin_user_ban_unban.png, id=6858, 1445.4pt x 
-943.525pt>
+e.png  used on input line 189.
+(pdftex.def)             Requested size: 371.43729pt x 232.14265pt.
+[538 <../report 6/images/admin/m14_06_admin_users_list_create.png (PNG copy)>]
+[539]
+<../report 6/images/admin/m14_07_admin_user_ban_unban.png, id=6884, 1445.4pt x 
+903.375pt>
 File: ../report 6/images/admin/m14_07_admin_user_ban_unban.png Graphic file (ty
 pe png)
 <use ../report 6/images/admin/m14_07_admin_user_ban_unban.png>
 Package pdftex.def Info: ../report 6/images/admin/m14_07_admin_user_ban_unban.p
-ng  used on input line 211.
-(pdftex.def)             Requested size: 407.66867pt x 266.1144pt.
- [543 <../report 6/images/admin/m14_07_admin_user_ban_unban.png (PNG copy)>] [5
-44]
-<../report 6/images/admin/m14_08_admin_user_profile_tabs.png, id=6873, 1445.4pt
- x 943.525pt>
+ng  used on input line 219.
+(pdftex.def)             Requested size: 407.66867pt x 254.79037pt.
+ [540 <../report 6/images/admin/m14_07_admin_user_ban_unban.png (PNG copy)>]
+<../report 6/images/admin/m14_08_admin_user_profile_tabs.png, id=6896, 1445.4pt
+ x 903.375pt>
 File: ../report 6/images/admin/m14_08_admin_user_profile_tabs.png Graphic file 
 (type png)
 <use ../report 6/images/admin/m14_08_admin_user_profile_tabs.png>
 Package pdftex.def Info: ../report 6/images/admin/m14_08_admin_user_profile_tab
-s.png  used on input line 245.
-(pdftex.def)             Requested size: 407.66867pt x 266.1144pt.
- [545 <../report 6/images/admin/m14_08_admin_user_profile_tabs.png (PNG copy)>]
-) (../report 6/sections/sec3_m15_admin_catalogs.tex [546]
-<../report 6/images/admin/m15_01_admin_skills.png, id=6889, 1445.4pt x 943.525p
+s.png  used on input line 249.
+(pdftex.def)             Requested size: 371.43729pt x 232.14265pt.
+<../report 6/images/admin/m14_08b_freelancer_tab.png, id=6897, 1445.4pt x 903.3
+75pt>
+File: ../report 6/images/admin/m14_08b_freelancer_tab.png Graphic file (type pn
+g)
+<use ../report 6/images/admin/m14_08b_freelancer_tab.png>
+Package pdftex.def Info: ../report 6/images/admin/m14_08b_freelancer_tab.png  u
+sed on input line 263.
+(pdftex.def)             Requested size: 335.19899pt x 209.49492pt.
+ [541 <../report 6/images/admin/m14_08_admin_user_profile_tabs.png (PNG copy)>]
+<../report 6/images/admin/m14_08c_expert_tab.png, id=6908, 1445.4pt x 903.375pt
+>
+File: ../report 6/images/admin/m14_08c_expert_tab.png Graphic file (type png)
+<use ../report 6/images/admin/m14_08c_expert_tab.png>
+Package pdftex.def Info: ../report 6/images/admin/m14_08c_expert_tab.png  used 
+on input line 276.
+(pdftex.def)             Requested size: 335.19899pt x 209.49492pt.
+ [542 <../report 6/images/admin/m14_08b_freelancer_tab.png (PNG copy)> <../repo
+rt 6/images/admin/m14_08c_expert_tab.png (PNG copy)>])
+(../report 6/sections/sec3_m15_admin_catalogs.tex [543]
+<../report 6/images/admin/m15_01_admin_skills.png, id=6922, 1445.4pt x 903.375p
 t>
 File: ../report 6/images/admin/m15_01_admin_skills.png Graphic file (type png)
 <use ../report 6/images/admin/m15_01_admin_skills.png>
 Package pdftex.def Info: ../report 6/images/admin/m15_01_admin_skills.png  used
  on input line 22.
-(pdftex.def)             Requested size: 407.66867pt x 266.1144pt.
-
-[547 <../report 6/images/admin/m15_01_admin_skills.png (PNG copy)>] [548]
+(pdftex.def)             Requested size: 407.66867pt x 254.79037pt.
+ [544 <../report 6/images/admin/m15_01_admin_skills.png (PNG copy)>] [545]
 Overfull \hbox (22.98085pt too wide) in paragraph at lines 51--52
 []\T1/ptm/b/n/12 Screen Name & Route Path: \T1/ptm/m/n/12 Job Cat-e-gory Man-ag
 e-ment Con-sole -- \T1/cmtt/m/n/12 /admin/job-categories\T1/ptm/m/n/12 . 
  []
 
-<../report 6/images/admin/m15_02_admin_job_categories.png, id=6906, 1445.4pt x 
-943.525pt>
+<../report 6/images/admin/m15_02_admin_job_categories.png, id=6938, 1445.4pt x 
+903.375pt>
 File: ../report 6/images/admin/m15_02_admin_job_categories.png Graphic file (ty
 pe png)
 <use ../report 6/images/admin/m15_02_admin_job_categories.png>
 Package pdftex.def Info: ../report 6/images/admin/m15_02_admin_job_categories.p
 ng  used on input line 58.
-(pdftex.def)             Requested size: 407.66867pt x 266.1144pt.
-[549 <../report 6/images/admin/m15_02_admin_job_categories.png (PNG copy)>]
-[550]
+(pdftex.def)             Requested size: 407.66867pt x 254.79037pt.
+[546 <../report 6/images/admin/m15_02_admin_job_categories.png (PNG copy)>]
+[547]
 Overfull \hbox (13.44287pt too wide) in paragraph at lines 81--82
 []\T1/ptm/b/n/12 Screen Name & Route Path: \T1/ptm/m/n/12 Fo-rum Cat-e-gory Man
 -age-ment Con-sole -- \T1/cmtt/m/n/12 /admin/categories\T1/ptm/m/n/12 . 
  []
 
-<../report 6/images/admin/m15_03_admin_forum_categories.png, id=6922, 1445.4pt 
-x 943.525pt>
+<../report 6/images/admin/m15_03_admin_forum_categories.png, id=6955, 1445.4pt 
+x 903.375pt>
 File: ../report 6/images/admin/m15_03_admin_forum_categories.png Graphic file (
 type png)
 <use ../report 6/images/admin/m15_03_admin_forum_categories.png>
 Package pdftex.def Info: ../report 6/images/admin/m15_03_admin_forum_categories
 .png  used on input line 88.
-(pdftex.def)             Requested size: 407.66867pt x 266.1144pt.
-[551 <../report 6/images/admin/m15_03_admin_forum_categories.png (PNG copy)>])
+(pdftex.def)             Requested size: 407.66867pt x 254.79037pt.
+[548 <../report 6/images/admin/m15_03_admin_forum_categories.png (PNG copy)>]
+[549]
+<../report 6/images/admin/m15_04_admin_banners.png, id=6971, 1445.4pt x 903.375
+pt>
+File: ../report 6/images/admin/m15_04_admin_banners.png Graphic file (type png)
+
+<use ../report 6/images/admin/m15_04_admin_banners.png>
+Package pdftex.def Info: ../report 6/images/admin/m15_04_admin_banners.png  use
+d on input line 118.
+(pdftex.def)             Requested size: 380.49167pt x 237.80803pt.
+<../report 6/images/admin/m15_04b_admin_banner_dialog.png, id=6972, 1445.4pt x 
+903.375pt>
+File: ../report 6/images/admin/m15_04b_admin_banner_dialog.png Graphic file (ty
+pe png)
+<use ../report 6/images/admin/m15_04b_admin_banner_dialog.png>
+Package pdftex.def Info: ../report 6/images/admin/m15_04b_admin_banner_dialog.p
+ng  used on input line 133.
+(pdftex.def)             Requested size: 362.37598pt x 226.47728pt.
+ [550 <../report 6/images/admin/m15_04_admin_banners.png (PNG copy)>])
 (../report 6/sections/sec3_m14_forum_management.tex
-<../report 6/images/forum/f14_01_guide.png, id=6933, 1371.1225pt x 903.375pt>
+<../report 6/images/forum/f14_01_guide.png, id=6983, 1371.1225pt x 903.375pt>
 File: ../report 6/images/forum/f14_01_guide.png Graphic file (type png)
 <use ../report 6/images/forum/f14_01_guide.png>
 Package pdftex.def Info: ../report 6/images/forum/f14_01_guide.png  used on inp
 ut line 14.
 (pdftex.def)             Requested size: 407.66867pt x 268.58855pt.
- [552 <../report 6/images/forum/f14_01_guide.png (PNG copy)>]
-<../report 6/images/forum/f14_02_guide.png, id=6943, 1371.1225pt x 903.375pt>
+ [551 <../report 6/images/admin/m15_04b_admin_banner_dialog.png (PNG copy)>] [5
+52 <../report 6/images/forum/f14_01_guide.png (PNG copy)>]
+<../report 6/images/forum/f14_02_guide.png, id=6999, 1371.1225pt x 903.375pt>
 File: ../report 6/images/forum/f14_02_guide.png Graphic file (type png)
 <use ../report 6/images/forum/f14_02_guide.png>
 Package pdftex.def Info: ../report 6/images/forum/f14_02_guide.png  used on inp
 ut line 37.
 (pdftex.def)             Requested size: 407.66867pt x 268.58855pt.
  [553 <../report 6/images/forum/f14_02_guide.png (PNG copy)>]
-<../report 6/images/forum/f14_03_guide.png, id=6951, 1371.1225pt x 903.375pt>
+<../report 6/images/forum/f14_03_guide.png, id=7010, 1371.1225pt x 903.375pt>
 File: ../report 6/images/forum/f14_03_guide.png Graphic file (type png)
 <use ../report 6/images/forum/f14_03_guide.png>
 Package pdftex.def Info: ../report 6/images/forum/f14_03_guide.png  used on inp
 ut line 59.
 (pdftex.def)             Requested size: 407.66867pt x 268.58855pt.
  [554 <../report 6/images/forum/f14_03_guide.png (PNG copy)>]
-<../report 6/images/forum/f14_04_guide.png, id=6961, 1371.1225pt x 903.375pt>
+<../report 6/images/forum/f14_04_guide.png, id=7020, 1371.1225pt x 903.375pt>
 File: ../report 6/images/forum/f14_04_guide.png Graphic file (type png)
 <use ../report 6/images/forum/f14_04_guide.png>
 Package pdftex.def Info: ../report 6/images/forum/f14_04_guide.png  used on inp
@@ -5225,14 +5479,14 @@ ut line 81.
 (pdftex.def)             Requested size: 407.66867pt x 268.58855pt.
 
 [555 <../report 6/images/forum/f14_04_guide.png (PNG copy)>]
-<../report 6/images/forum/f14_05_guide.png, id=6971, 1371.1225pt x 903.375pt>
+<../report 6/images/forum/f14_05_guide.png, id=7031, 1371.1225pt x 903.375pt>
 File: ../report 6/images/forum/f14_05_guide.png Graphic file (type png)
 <use ../report 6/images/forum/f14_05_guide.png>
 Package pdftex.def Info: ../report 6/images/forum/f14_05_guide.png  used on inp
 ut line 104.
 (pdftex.def)             Requested size: 407.66867pt x 268.58855pt.
- [556] [557 <../report 6/images/forum/f14_05_guide.png (PNG copy)>]
-<../report 6/images/forum/f14_06_guide.png, id=6991, 1371.1225pt x 903.375pt>
+ [556 <../report 6/images/forum/f14_05_guide.png (PNG copy)>]
+<../report 6/images/forum/f14_06_guide.png, id=7041, 1371.1225pt x 903.375pt>
 File: ../report 6/images/forum/f14_06_guide.png Graphic file (type png)
 <use ../report 6/images/forum/f14_06_guide.png>
 Package pdftex.def Info: ../report 6/images/forum/f14_06_guide.png  used on inp
@@ -5244,22 +5498,22 @@ Overfull \hbox (10.80153pt too wide) in paragraph at lines 143--144
 -- \T1/cmtt/m/n/12 /forum/{categorySlug}/{postSlug}\T1/ptm/m/n/12 . 
  []
 
-[558 <../report 6/images/forum/f14_06_guide.png (PNG copy)>]
-<../report 6/images/forum/f14_07_guide.png, id=7001, 1371.1225pt x 903.375pt>
+[557 <../report 6/images/forum/f14_06_guide.png (PNG copy)>]
+<../report 6/images/forum/f14_07_guide.png, id=7051, 1371.1225pt x 903.375pt>
 File: ../report 6/images/forum/f14_07_guide.png Graphic file (type png)
 <use ../report 6/images/forum/f14_07_guide.png>
 Package pdftex.def Info: ../report 6/images/forum/f14_07_guide.png  used on inp
 ut line 148.
 (pdftex.def)             Requested size: 407.66867pt x 268.58855pt.
- [559 <../report 6/images/forum/f14_07_guide.png (PNG copy)>]
-<../report 6/images/forum/f14_08_guide.png, id=7011, 1371.1225pt x 903.375pt>
+ [558 <../report 6/images/forum/f14_07_guide.png (PNG copy)>]
+<../report 6/images/forum/f14_08_guide.png, id=7060, 1371.1225pt x 903.375pt>
 File: ../report 6/images/forum/f14_08_guide.png Graphic file (type png)
 <use ../report 6/images/forum/f14_08_guide.png>
 Package pdftex.def Info: ../report 6/images/forum/f14_08_guide.png  used on inp
 ut line 169.
 (pdftex.def)             Requested size: 407.66867pt x 268.58855pt.
- [560 <../report 6/images/forum/f14_08_guide.png (PNG copy)>]
-<../report 6/images/forum/f14_09_guide.png, id=7020, 1371.1225pt x 903.375pt>
+ [559 <../report 6/images/forum/f14_08_guide.png (PNG copy)>]
+<../report 6/images/forum/f14_09_guide.png, id=7070, 1371.1225pt x 903.375pt>
 File: ../report 6/images/forum/f14_09_guide.png Graphic file (type png)
 <use ../report 6/images/forum/f14_09_guide.png>
 Package pdftex.def Info: ../report 6/images/forum/f14_09_guide.png  used on inp
@@ -5271,8 +5525,8 @@ Overfull \hbox (4.69377pt too wide) in paragraph at lines 206--207
 T1/cmtt/m/n/12 /forum/{categorySlug}/{postSlug}\T1/ptm/m/n/12 . 
  []
 
-[561 <../report 6/images/forum/f14_09_guide.png (PNG copy)>]
-<../report 6/images/forum/f14_10_guide.png, id=7029, 1371.1225pt x 903.375pt>
+[560 <../report 6/images/forum/f14_09_guide.png (PNG copy)>]
+<../report 6/images/forum/f14_10_guide.png, id=7079, 1371.1225pt x 903.375pt>
 File: ../report 6/images/forum/f14_10_guide.png Graphic file (type png)
 <use ../report 6/images/forum/f14_10_guide.png>
 Package pdftex.def Info: ../report 6/images/forum/f14_10_guide.png  used on inp
@@ -5284,8 +5538,8 @@ Overfull \hbox (11.86957pt too wide) in paragraph at lines 227--228
  \T1/cmtt/m/n/12 /forum/{categorySlug}/{postSlug}\T1/ptm/m/n/12 . 
  []
 
-[562 <../report 6/images/forum/f14_10_guide.png (PNG copy)>]
-<../report 6/images/forum/f14_11_guide.png, id=7038, 1371.1225pt x 903.375pt>
+[561 <../report 6/images/forum/f14_10_guide.png (PNG copy)>]
+<../report 6/images/forum/f14_11_guide.png, id=7088, 1371.1225pt x 903.375pt>
 File: ../report 6/images/forum/f14_11_guide.png Graphic file (type png)
 <use ../report 6/images/forum/f14_11_guide.png>
 Package pdftex.def Info: ../report 6/images/forum/f14_11_guide.png  used on inp
@@ -5297,15 +5551,15 @@ Overfull \hbox (20.5337pt too wide) in paragraph at lines 248--249
  \T1/cmtt/m/n/12 /forum/{categorySlug}/{postSlug}\T1/ptm/m/n/12 . 
  []
 
-[563 <../report 6/images/forum/f14_11_guide.png (PNG copy)>]
-<../report 6/images/forum/f14_12_guide.png, id=7047, 1371.1225pt x 903.375pt>
+[562 <../report 6/images/forum/f14_11_guide.png (PNG copy)>]
+<../report 6/images/forum/f14_12_guide.png, id=7097, 1371.1225pt x 903.375pt>
 File: ../report 6/images/forum/f14_12_guide.png Graphic file (type png)
 <use ../report 6/images/forum/f14_12_guide.png>
 Package pdftex.def Info: ../report 6/images/forum/f14_12_guide.png  used on inp
 ut line 253.
 (pdftex.def)             Requested size: 407.66867pt x 268.58855pt.
- [564 <../report 6/images/forum/f14_12_guide.png (PNG copy)>]
-<../report 6/images/forum/f14_13_guide.png, id=7056, 1371.1225pt x 903.375pt>
+ [563 <../report 6/images/forum/f14_12_guide.png (PNG copy)>]
+<../report 6/images/forum/f14_13_guide.png, id=7106, 1371.1225pt x 903.375pt>
 File: ../report 6/images/forum/f14_13_guide.png Graphic file (type png)
 <use ../report 6/images/forum/f14_13_guide.png>
 Package pdftex.def Info: ../report 6/images/forum/f14_13_guide.png  used on inp
@@ -5317,77 +5571,77 @@ Overfull \hbox (2.52165pt too wide) in paragraph at lines 290--291
 1/cmtt/m/n/12 /forum/{categorySlug}/{postSlug}\T1/ptm/m/n/12 . 
  []
 
-[565 <../report 6/images/forum/f14_13_guide.png (PNG copy)>]
-<../report 6/images/forum/f14_14_guide.png, id=7066, 1371.1225pt x 903.375pt>
+[564 <../report 6/images/forum/f14_13_guide.png (PNG copy)>]
+<../report 6/images/forum/f14_14_guide.png, id=7115, 1371.1225pt x 903.375pt>
 File: ../report 6/images/forum/f14_14_guide.png Graphic file (type png)
 <use ../report 6/images/forum/f14_14_guide.png>
 Package pdftex.def Info: ../report 6/images/forum/f14_14_guide.png  used on inp
 ut line 295.
 (pdftex.def)             Requested size: 407.66867pt x 268.58855pt.
- [566 <../report 6/images/forum/f14_14_guide.png (PNG copy)>]
-<../report 6/images/forum/f14_15_guide.png, id=7075, 1371.1225pt x 903.375pt>
+ [565 <../report 6/images/forum/f14_14_guide.png (PNG copy)>]
+<../report 6/images/forum/f14_15_guide.png, id=7125, 1371.1225pt x 903.375pt>
 File: ../report 6/images/forum/f14_15_guide.png Graphic file (type png)
 <use ../report 6/images/forum/f14_15_guide.png>
 Package pdftex.def Info: ../report 6/images/forum/f14_15_guide.png  used on inp
 ut line 316.
 (pdftex.def)             Requested size: 407.66867pt x 268.58855pt.
-<../report 6/images/forum/f14_16_guide.png, id=7076, 1371.1225pt x 903.375pt>
+<../report 6/images/forum/f14_16_guide.png, id=7126, 1371.1225pt x 903.375pt>
 File: ../report 6/images/forum/f14_16_guide.png Graphic file (type png)
 <use ../report 6/images/forum/f14_16_guide.png>
 Package pdftex.def Info: ../report 6/images/forum/f14_16_guide.png  used on inp
 ut line 336.
 (pdftex.def)             Requested size: 407.66867pt x 268.58855pt.
- [567 <../report 6/images/forum/f14_15_guide.png (PNG copy)>]
-<../report 6/images/forum/f14_17_guide.png, id=7084, 1371.1225pt x 903.375pt>
+ [566 <../report 6/images/forum/f14_15_guide.png (PNG copy)>]
+<../report 6/images/forum/f14_17_guide.png, id=7134, 1371.1225pt x 903.375pt>
 File: ../report 6/images/forum/f14_17_guide.png Graphic file (type png)
 <use ../report 6/images/forum/f14_17_guide.png>
 Package pdftex.def Info: ../report 6/images/forum/f14_17_guide.png  used on inp
 ut line 356.
 (pdftex.def)             Requested size: 407.66867pt x 268.58855pt.
- [568 <../report 6/images/forum/f14_16_guide.png (PNG copy)>]) (../report 6/sec
-tions/sec3_m27_conversation_management.tex [569 <../report 6/images/forum/f14_1
+ [567 <../report 6/images/forum/f14_16_guide.png (PNG copy)>]) (../report 6/sec
+tions/sec3_m27_conversation_management.tex [568 <../report 6/images/forum/f14_1
 7_guide.png (PNG copy)>]
-<../report 6/images/conversation/c27_01_guide.png, id=7100, 1371.1225pt x 903.3
+<../report 6/images/conversation/c27_01_guide.png, id=7150, 1371.1225pt x 903.3
 75pt>
 File: ../report 6/images/conversation/c27_01_guide.png Graphic file (type png)
 <use ../report 6/images/conversation/c27_01_guide.png>
 Package pdftex.def Info: ../report 6/images/conversation/c27_01_guide.png  used
  on input line 14.
 (pdftex.def)             Requested size: 407.66867pt x 268.58855pt.
- [570 <../report 6/images/conversation/c27_01_guide.png (PNG copy)>]
-<../report 6/images/conversation/c27_02_guide.png, id=7110, 1371.1225pt x 903.3
+ [569 <../report 6/images/conversation/c27_01_guide.png (PNG copy)>]
+<../report 6/images/conversation/c27_02_guide.png, id=7160, 1371.1225pt x 903.3
 75pt>
 File: ../report 6/images/conversation/c27_02_guide.png Graphic file (type png)
 <use ../report 6/images/conversation/c27_02_guide.png>
 Package pdftex.def Info: ../report 6/images/conversation/c27_02_guide.png  used
  on input line 36.
 (pdftex.def)             Requested size: 407.66867pt x 268.58855pt.
- [571 <../report 6/images/conversation/c27_02_guide.png (PNG copy)>]
-<../report 6/images/conversation/c27_03_guide.png, id=7121, 1371.1225pt x 903.3
+ [570 <../report 6/images/conversation/c27_02_guide.png (PNG copy)>]
+<../report 6/images/conversation/c27_03_guide.png, id=7170, 1371.1225pt x 903.3
 75pt>
 File: ../report 6/images/conversation/c27_03_guide.png Graphic file (type png)
 <use ../report 6/images/conversation/c27_03_guide.png>
 Package pdftex.def Info: ../report 6/images/conversation/c27_03_guide.png  used
  on input line 58.
 (pdftex.def)             Requested size: 407.66867pt x 268.58855pt.
- [572 <../report 6/images/conversation/c27_03_guide.png (PNG copy)>]
-<../report 6/images/conversation/c27_04_guide.png, id=7131, 1371.1225pt x 903.3
+ [571 <../report 6/images/conversation/c27_03_guide.png (PNG copy)>]
+<../report 6/images/conversation/c27_04_guide.png, id=7181, 1371.1225pt x 903.3
 75pt>
 File: ../report 6/images/conversation/c27_04_guide.png Graphic file (type png)
 <use ../report 6/images/conversation/c27_04_guide.png>
 Package pdftex.def Info: ../report 6/images/conversation/c27_04_guide.png  used
  on input line 80.
 (pdftex.def)             Requested size: 407.66867pt x 268.58855pt.
- [573 <../report 6/images/conversation/c27_04_guide.png (PNG copy)>]
-<../report 6/images/conversation/c27_05_guide.png, id=7141, 1371.1225pt x 903.3
+ [572 <../report 6/images/conversation/c27_04_guide.png (PNG copy)>]
+<../report 6/images/conversation/c27_05_guide.png, id=7191, 1371.1225pt x 903.3
 75pt>
 File: ../report 6/images/conversation/c27_05_guide.png Graphic file (type png)
 <use ../report 6/images/conversation/c27_05_guide.png>
 Package pdftex.def Info: ../report 6/images/conversation/c27_05_guide.png  used
  on input line 102.
 (pdftex.def)             Requested size: 407.66867pt x 268.58855pt.
- [574 <../report 6/images/conversation/c27_05_guide.png (PNG copy)>]
-<../report 6/images/conversation/c27_06_guide.png, id=7150, 1371.1225pt x 903.3
+ [573 <../report 6/images/conversation/c27_05_guide.png (PNG copy)>]
+<../report 6/images/conversation/c27_06_guide.png, id=7200, 1371.1225pt x 903.3
 75pt>
 File: ../report 6/images/conversation/c27_06_guide.png Graphic file (type png)
 <use ../report 6/images/conversation/c27_06_guide.png>
@@ -5395,16 +5649,16 @@ Package pdftex.def Info: ../report 6/images/conversation/c27_06_guide.png  used
  on input line 123.
 (pdftex.def)             Requested size: 407.66867pt x 268.58855pt.
 
-[575 <../report 6/images/conversation/c27_06_guide.png (PNG copy)>]
-<../report 6/images/conversation/c27_07_guide.png, id=7159, 1371.1225pt x 903.3
+[574 <../report 6/images/conversation/c27_06_guide.png (PNG copy)>]
+<../report 6/images/conversation/c27_07_guide.png, id=7209, 1371.1225pt x 903.3
 75pt>
 File: ../report 6/images/conversation/c27_07_guide.png Graphic file (type png)
 <use ../report 6/images/conversation/c27_07_guide.png>
 Package pdftex.def Info: ../report 6/images/conversation/c27_07_guide.png  used
  on input line 144.
 (pdftex.def)             Requested size: 407.66867pt x 268.58855pt.
- [576 <../report 6/images/conversation/c27_07_guide.png (PNG copy)>]
-<../report 6/images/conversation/c27_08_send_file_guide.png, id=7168, 1371.1225
+ [575 <../report 6/images/conversation/c27_07_guide.png (PNG copy)>]
+<../report 6/images/conversation/c27_08_send_file_guide.png, id=7218, 1371.1225
 pt x 903.375pt>
 File: ../report 6/images/conversation/c27_08_send_file_guide.png Graphic file (
 type png)
@@ -5413,9 +5667,9 @@ Package pdftex.def Info: ../report 6/images/conversation/c27_08_send_file_guide
 .png  used on input line 165.
 (pdftex.def)             Requested size: 407.66867pt x 268.58855pt.
 )
-(../report 6/sections/sec3_m34_moderation_management.tex [577 <../report 6/imag
+(../report 6/sections/sec3_m34_moderation_management.tex [576 <../report 6/imag
 es/conversation/c27_08_send_file_guide.png (PNG copy)>]
-<../report 6/images/admin/moderation/m34_01_moderation_guide.png, id=7180, 1371
+<../report 6/images/admin/moderation/m34_01_moderation_guide.png, id=7229, 1371
 .1225pt x 903.375pt>
 File: ../report 6/images/admin/moderation/m34_01_moderation_guide.png Graphic f
 ile (type png)
@@ -5423,9 +5677,9 @@ ile (type png)
 Package pdftex.def Info: ../report 6/images/admin/moderation/m34_01_moderation_
 guide.png  used on input line 14.
 (pdftex.def)             Requested size: 407.66867pt x 268.58855pt.
- [578 <../report 6/images/admin/moderation/m34_01_moderation_guide.png (PNG cop
+ [577 <../report 6/images/admin/moderation/m34_01_moderation_guide.png (PNG cop
 y)>]
-<../report 6/images/admin/moderation/m34_02_guide.png, id=7189, 1371.1225pt x 9
+<../report 6/images/admin/moderation/m34_02_guide.png, id=7239, 1371.1225pt x 9
 03.375pt>
 File: ../report 6/images/admin/moderation/m34_02_guide.png Graphic file (type p
 ng)
@@ -5433,8 +5687,8 @@ ng)
 Package pdftex.def Info: ../report 6/images/admin/moderation/m34_02_guide.png  
 used on input line 36.
 (pdftex.def)             Requested size: 407.66867pt x 268.58855pt.
- [579 <../report 6/images/admin/moderation/m34_02_guide.png (PNG copy)>]
-<../report 6/images/admin/moderation/m34_03_guide.png, id=7199, 1371.1225pt x 9
+ [578 <../report 6/images/admin/moderation/m34_02_guide.png (PNG copy)>]
+<../report 6/images/admin/moderation/m34_03_guide.png, id=7249, 1371.1225pt x 9
 03.375pt>
 File: ../report 6/images/admin/moderation/m34_03_guide.png Graphic file (type p
 ng)
@@ -5442,8 +5696,8 @@ ng)
 Package pdftex.def Info: ../report 6/images/admin/moderation/m34_03_guide.png  
 used on input line 58.
 (pdftex.def)             Requested size: 407.66867pt x 268.58855pt.
- [580 <../report 6/images/admin/moderation/m34_03_guide.png (PNG copy)>]
-<../report 6/images/admin/identity/m35_01_guide.png, id=7208, 1371.1225pt x 903
+ [579 <../report 6/images/admin/moderation/m34_03_guide.png (PNG copy)>]
+<../report 6/images/admin/identity/m35_01_guide.png, id=7258, 1371.1225pt x 903
 .375pt>
 File: ../report 6/images/admin/identity/m35_01_guide.png Graphic file (type png
 )
@@ -5451,13 +5705,13 @@ File: ../report 6/images/admin/identity/m35_01_guide.png Graphic file (type png
 Package pdftex.def Info: ../report 6/images/admin/identity/m35_01_guide.png  us
 ed on input line 79.
 (pdftex.def)             Requested size: 407.66867pt x 268.58855pt.
- [581 <../report 6/images/admin/identity/m35_01_guide.png (PNG copy)>]
+ [580 <../report 6/images/admin/identity/m35_01_guide.png (PNG copy)>]
 Overfull \hbox (7.60437pt too wide) in paragraph at lines 96--97
 []\T1/ptm/b/n/12 Screen Name & Route Path: \T1/ptm/m/n/12 ID Ver-i-fi-ca-tion M
 odal -- \T1/cmtt/m/n/12 /admin/identity-verifications\T1/ptm/m/n/12 . 
  []
 
-<../report 6/images/admin/identity/m35_02_id_review_guide.png, id=7218, 1371.12
+<../report 6/images/admin/identity/m35_02_id_review_guide.png, id=7268, 1371.12
 25pt x 903.375pt>
 File: ../report 6/images/admin/identity/m35_02_id_review_guide.png Graphic file
  (type png)
@@ -5465,14 +5719,14 @@ File: ../report 6/images/admin/identity/m35_02_id_review_guide.png Graphic file
 Package pdftex.def Info: ../report 6/images/admin/identity/m35_02_id_review_gui
 de.png  used on input line 101.
 (pdftex.def)             Requested size: 407.66867pt x 268.58855pt.
-[582 <../report 6/images/admin/identity/m35_02_id_review_guide.png (PNG copy)>]
+[581 <../report 6/images/admin/identity/m35_02_id_review_guide.png (PNG copy)>]
 
 Overfull \hbox (7.60437pt too wide) in paragraph at lines 119--120
 []\T1/ptm/b/n/12 Screen Name & Route Path: \T1/ptm/m/n/12 ID Ver-i-fi-ca-tion M
 odal -- \T1/cmtt/m/n/12 /admin/identity-verifications\T1/ptm/m/n/12 . 
  []
 
-<../report 6/images/admin/identity/m35_03_guide.png, id=7229, 1371.1225pt x 903
+<../report 6/images/admin/identity/m35_03_guide.png, id=7279, 1371.1225pt x 903
 .375pt>
 File: ../report 6/images/admin/identity/m35_03_guide.png Graphic file (type png
 )
@@ -5480,13 +5734,13 @@ File: ../report 6/images/admin/identity/m35_03_guide.png Graphic file (type png
 Package pdftex.def Info: ../report 6/images/admin/identity/m35_03_guide.png  us
 ed on input line 124.
 (pdftex.def)             Requested size: 407.66867pt x 268.58855pt.
-[583 <../report 6/images/admin/identity/m35_03_guide.png (PNG copy)>]
+[582 <../report 6/images/admin/identity/m35_03_guide.png (PNG copy)>]
 Overfull \hbox (7.60437pt too wide) in paragraph at lines 141--142
 []\T1/ptm/b/n/12 Screen Name & Route Path: \T1/ptm/m/n/12 ID Ver-i-fi-ca-tion M
 odal -- \T1/cmtt/m/n/12 /admin/identity-verifications\T1/ptm/m/n/12 . 
  []
 
-<../report 6/images/admin/identity/m35_04_guide.png, id=7240, 1371.1225pt x 903
+<../report 6/images/admin/identity/m35_04_guide.png, id=7289, 1371.1225pt x 903
 .375pt>
 File: ../report 6/images/admin/identity/m35_04_guide.png Graphic file (type png
 )
@@ -5494,8 +5748,8 @@ File: ../report 6/images/admin/identity/m35_04_guide.png Graphic file (type png
 Package pdftex.def Info: ../report 6/images/admin/identity/m35_04_guide.png  us
 ed on input line 146.
 (pdftex.def)             Requested size: 407.66867pt x 268.58855pt.
-[584 <../report 6/images/admin/identity/m35_04_guide.png (PNG copy)>]
-<../report 6/images/admin/trash/m36_01_trash_guide.png, id=7250, 1371.1225pt x 
+[583 <../report 6/images/admin/identity/m35_04_guide.png (PNG copy)>]
+<../report 6/images/admin/trash/m36_01_trash_guide.png, id=7300, 1371.1225pt x 
 903.375pt>
 File: ../report 6/images/admin/trash/m36_01_trash_guide.png Graphic file (type 
 png)
@@ -5503,52 +5757,52 @@ png)
 Package pdftex.def Info: ../report 6/images/admin/trash/m36_01_trash_guide.png 
  used on input line 168.
 (pdftex.def)             Requested size: 407.66867pt x 268.58855pt.
- [585 <../report 6/images/admin/trash/m36_01_trash_guide.png (PNG copy)>]
-<../report 6/images/admin/trash/m36_02_guide.png, id=7260, 1371.1225pt x 903.37
+ [584 <../report 6/images/admin/trash/m36_01_trash_guide.png (PNG copy)>]
+<../report 6/images/admin/trash/m36_02_guide.png, id=7310, 1371.1225pt x 903.37
 5pt>
 File: ../report 6/images/admin/trash/m36_02_guide.png Graphic file (type png)
 <use ../report 6/images/admin/trash/m36_02_guide.png>
 Package pdftex.def Info: ../report 6/images/admin/trash/m36_02_guide.png  used 
 on input line 190.
 (pdftex.def)             Requested size: 407.66867pt x 268.58855pt.
- [586 <../report 6/images/admin/trash/m36_02_guide.png (PNG copy)>]
-<../report 6/images/admin/trash/m36_03_guide.png, id=7269, 1371.1225pt x 903.37
+ [585 <../report 6/images/admin/trash/m36_02_guide.png (PNG copy)>]
+<../report 6/images/admin/trash/m36_03_guide.png, id=7319, 1371.1225pt x 903.37
 5pt>
 File: ../report 6/images/admin/trash/m36_03_guide.png Graphic file (type png)
 <use ../report 6/images/admin/trash/m36_03_guide.png>
 Package pdftex.def Info: ../report 6/images/admin/trash/m36_03_guide.png  used 
 on input line 211.
 (pdftex.def)             Requested size: 407.66867pt x 268.58855pt.
- [587 <../report 6/images/admin/trash/m36_03_guide.png (PNG copy)>])
+ [586 <../report 6/images/admin/trash/m36_03_guide.png (PNG copy)>])
 (../report 6/sections/sec3_m44_ai_features.tex
-<../report 6/images/ai/ai_moderate_guide.png, id=7278, 1371.1225pt x 903.375pt>
+<../report 6/images/ai/ai_moderate_guide.png, id=7328, 1371.1225pt x 903.375pt>
 
 File: ../report 6/images/ai/ai_moderate_guide.png Graphic file (type png)
 <use ../report 6/images/ai/ai_moderate_guide.png>
 Package pdftex.def Info: ../report 6/images/ai/ai_moderate_guide.png  used on i
 nput line 14.
 (pdftex.def)             Requested size: 407.66867pt x 268.58855pt.
- [588 <../report 6/images/ai/ai_moderate_guide.png (PNG copy)>]
+ [587 <../report 6/images/ai/ai_moderate_guide.png (PNG copy)>]
 Overfull \hbox (20.67737pt too wide) in paragraph at lines 32--33
 []\T1/ptm/b/n/12 Screen Name & Route Path: \T1/ptm/m/n/12 Pro-file & Trust Set-
 tings (Iden-tity Tab) -- \T1/cmtt/m/n/12 /freelancer/profile\T1/ptm/m/n/12 . 
  []
 
-<../report 6/images/ai/ai_face_scan_guide.png, id=7288, 1427.3325pt x 1080.035p
+<../report 6/images/ai/ai_face_scan_guide.png, id=7338, 1427.3325pt x 1080.035p
 t>
 File: ../report 6/images/ai/ai_face_scan_guide.png Graphic file (type png)
 <use ../report 6/images/ai/ai_face_scan_guide.png>
 Package pdftex.def Info: ../report 6/images/ai/ai_face_scan_guide.png  used on 
 input line 37.
 (pdftex.def)             Requested size: 407.66867pt x 308.47238pt.
-[589 <../report 6/images/ai/ai_face_scan_guide.png (PNG copy)>])) [590]
+[588 <../report 6/images/ai/ai_face_scan_guide.png (PNG copy)>])) [589]
 (sections/7.Appendix.tex
 Overfull \hbox (8.19029pt too wide) in paragraph at lines 41--42
 \T1/ptm/m/it/12 and Es-crow Set-tle-ment\T1/ptm/m/n/12 . Stripe De-vel-oper Doc
 -u-men-ta-tion. https://docs.stripe.com/connect 
  []
 
-[591]
+[590]
 Underfull \hbox (badness 1087) in paragraph at lines 43--44
 []\T1/ptm/b/n/12 Open Web Ap-pli-ca-tion Se-cu-rity Project (OWASP) \T1/ptm/m/n
 /12 (2021). \T1/ptm/m/it/12 OWASP Top 10:
@@ -5560,22 +5814,26 @@ Underfull \hbox (badness 1953) in paragraph at lines 43--44
 ptm/m/n/12 . OWASP Foun-da-tion.
  []
 
-) [592] (main.aux)
+) [591] (main.aux)
  ***********
 LaTeX2e <2025-11-01>
 L3 programming layer <2025-12-24>
  ***********
+
+
+LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
+
 Package rerunfilecheck Info: File `main.out' has not changed.
-(rerunfilecheck)             Checksum: EDBE4FF4915EAF3B49653D77F7329B66;74578.
+(rerunfilecheck)             Checksum: 4DE9201F8807C831EEE8F3DFB69DBF96;74805.
  ) 
 Here is how much of TeX's memory you used:
- 35160 strings out of 467871
- 740922 string characters out of 5417891
- 1352813 words of memory out of 5000000
- 61242 multiletter control sequences out of 15000+600000
+ 35250 strings out of 467871
+ 744899 string characters out of 5417891
+ 1294831 words of memory out of 5000000
+ 61311 multiletter control sequences out of 15000+600000
  728531 words of font info for 189 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 98i,18n,108p,1191b,1245s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 98i,18n,108p,1191b,2013s stack positions out of 10000i,1000n,20000p,200000b,200000s
  <C:\Users\Lenovo\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ect
 t0800.pk> <C:\Users\Lenovo\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi
 600\ecit1200.pk> <C:\Users\Lenovo\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen
@@ -5592,9 +5850,9 @@ fb><C:/Users/Lenovo/AppData/Local/Programs/MiKTeX/fonts/type1/urw/times/utmr8a.
 pfb><C:/Users/Lenovo/AppData/Local/Programs/MiKTeX/fonts/type1/vntex/urwvn/utmr
 8v.pfb><C:/Users/Lenovo/AppData/Local/Programs/MiKTeX/fonts/type1/urw/times/utm
 ri8a.pfb>
-Output written on main.pdf (592 pages, 35069636 bytes).
+Output written on main.pdf (591 pages, 34571971 bytes).
 PDF statistics:
- 8093 PDF objects out of 8907 (max. 8388607)
- 2058 named destinations out of 2073 (max. 500000)
- 3928 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 8188 PDF objects out of 8907 (max. 8388607)
+ 2079 named destinations out of 2487 (max. 500000)
+ 3971 words of extra memory for PDF output out of 10000 (max. 10000000)
 
