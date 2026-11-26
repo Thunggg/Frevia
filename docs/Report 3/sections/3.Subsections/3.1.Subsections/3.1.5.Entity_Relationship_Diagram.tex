@@ -95,7 +95,7 @@ This ERD describes the Authentication \& Sessions module. It stores account iden
 \hspace*{1em}-- \texttt{theme} \newline
 \hspace*{1em}-- \texttt{language} \newline
 \hspace*{1em}-- \texttt{notification\allowbreak Prefs} \\ \hline
-\end{longtable}
+\end{longtable}\addtocounter{table}{-1}
 \end{center}
 
 % ===============================================
@@ -165,7 +165,7 @@ This ERD describes the Role-Based Access Control module. It stores roles, permis
 5 & \texttt{Role\allowbreak Permission} & Permissions granted to a role; drives the effective permission list of every signed-in account.\par\smallskip
 \hspace*{1em}-- \texttt{role\allowbreak Id} (PK, FK) \newline
 \hspace*{1em}-- \texttt{permission\allowbreak Id} (PK, FK) \\ \hline
-\end{longtable}
+\end{longtable}\addtocounter{table}{-1}
 \end{center}
 
 % ===============================================
@@ -258,7 +258,7 @@ This ERD describes the Profile Core module. It stores base profiles and role-spe
 \hspace*{1em}-- \texttt{is\allowbreak Active} \newline
 \hspace*{1em}-- \texttt{created\allowbreak At} \newline
 \hspace*{1em}-- \texttt{updated\allowbreak At} \\ \hline
-\end{longtable}
+\end{longtable}\addtocounter{table}{-1}
 \end{center}
 
 % ===============================================
@@ -446,7 +446,7 @@ This ERD describes the Profile History \& Social Links module. It stores profile
 \hspace*{1em}-- \texttt{last\allowbreak Error} \newline
 \hspace*{1em}-- \texttt{created\allowbreak At} \newline
 \hspace*{1em}-- \texttt{processed\allowbreak At} \\ \hline
-\end{longtable}
+\end{longtable}\addtocounter{table}{-1}
 \end{center}
 
 % ===============================================
@@ -516,7 +516,7 @@ This ERD describes the Identity Verification \& Profile Visits module. It stores
 \hspace*{1em}-- \texttt{viewer\allowbreak Id} (FK) \newline
 \hspace*{1em}-- \texttt{target\allowbreak Freelancer\allowbreak Id} (FK) \newline
 \hspace*{1em}-- \texttt{viewed\allowbreak At} \\ \hline
-\end{longtable}
+\end{longtable}\addtocounter{table}{-1}
 \end{center}
 
 % ===============================================
@@ -604,7 +604,7 @@ This ERD describes the Portfolio \& Skills module. It stores portfolio items, fr
 \hspace*{1em}-- \texttt{user\allowbreak Id} (PK, FK) \newline
 \hspace*{1em}-- \texttt{portfolio\allowbreak Item\allowbreak Id} (PK, FK) \newline
 \hspace*{1em}-- \texttt{created\allowbreak At} \\ \hline
-\end{longtable}
+\end{longtable}\addtocounter{table}{-1}
 \end{center}
 
 % ===============================================
@@ -657,7 +657,7 @@ This ERD describes the Favorites \& Follows module. It stores favorite freelance
 \hspace*{1em}-- \texttt{client\allowbreak Id} (PK, FK) \newline
 \hspace*{1em}-- \texttt{freelancer\allowbreak Id} (PK, FK) \newline
 \hspace*{1em}-- \texttt{created\allowbreak At} \\ \hline
-\end{longtable}
+\end{longtable}\addtocounter{table}{-1}
 \end{center}
 
 % ===============================================
@@ -743,7 +743,7 @@ This ERD describes the Job Posting module. It stores job categories, jobs, job-c
 \hspace*{1em}-- \texttt{deleted\allowbreak At} \newline
 \hspace*{1em}-- \texttt{created\allowbreak At} \newline
 \hspace*{1em}-- \texttt{updated\allowbreak At} \\ \hline
-\end{longtable}
+\end{longtable}\addtocounter{table}{-1}
 \end{center}
 
 % ===============================================
@@ -833,7 +833,7 @@ This ERD describes the Job Discovery \& Alerts module. It stores job bookmarks, 
 \hspace*{1em}-- \texttt{last\allowbreak Sent\allowbreak At} \newline
 \hspace*{1em}-- \texttt{created\allowbreak At} \newline
 \hspace*{1em}-- \texttt{updated\allowbreak At} \\ \hline
-\end{longtable}
+\end{longtable}\addtocounter{table}{-1}
 \end{center}
 
 % ===============================================
@@ -921,7 +921,7 @@ This ERD describes the Proposal module. It stores proposals and proposal attachm
 \hspace*{1em}-- \texttt{mime\allowbreak Type} \newline
 \hspace*{1em}-- \texttt{created\allowbreak At} \newline
 \hspace*{1em}-- \texttt{deleted\allowbreak At} \\ \hline
-\end{longtable}
+\end{longtable}\addtocounter{table}{-1}
 \end{center}
 
 % ===============================================
@@ -1041,7 +1041,7 @@ This ERD describes the Contract module. It stores contracts and contract term te
 \hspace*{1em}-- \texttt{created\allowbreak At} \newline
 \hspace*{1em}-- \texttt{updated\allowbreak At} \newline
 \hspace*{1em}-- \texttt{deleted\allowbreak At} \\ \hline
-\end{longtable}
+\end{longtable}\addtocounter{table}{-1}
 \end{center}
 
 % ===============================================
@@ -1145,7 +1145,7 @@ This ERD describes the Milestone \& Project Progress module. It stores milestone
 \hspace*{1em}-- \texttt{freelancer\allowbreak Id} (FK) \newline
 \hspace*{1em}-- \texttt{note} \newline
 \hspace*{1em}-- \texttt{updated\allowbreak At} \\ \hline
-\end{longtable}
+\end{longtable}\addtocounter{table}{-1}
 \end{center}
 
 % ===============================================
@@ -1228,7 +1228,7 @@ This ERD describes the Milestone Submission module. It stores milestone files, s
 5 & \texttt{Milestone\allowbreak Submission\allowbreak File} & Join table linking a submission to the milestone files it delivers.\par\smallskip
 \hspace*{1em}-- \texttt{submission\allowbreak Id} (PK, FK) \newline
 \hspace*{1em}-- \texttt{file\allowbreak Id} (PK, FK) \\ \hline
-\end{longtable}
+\end{longtable}\addtocounter{table}{-1}
 \end{center}
 
 % ===============================================
@@ -1342,7 +1342,7 @@ This ERD describes the Escrow, Payments \& Certificates module. It stores invoic
 \hspace*{1em}-- \texttt{completion\allowbreak Date} \newline
 \hspace*{1em}-- \texttt{metadata} \newline
 \hspace*{1em}-- \texttt{created\allowbreak At} \\ \hline
-\end{longtable}
+\end{longtable}\addtocounter{table}{-1}
 \end{center}
 
 % ===============================================
@@ -1467,7 +1467,7 @@ This ERD describes the Dispute Core module. It stores disputes and dispute fees.
 \hspace*{1em}-- \texttt{final\allowbreak Decision\allowbreak At} \newline
 \hspace*{1em}-- \texttt{created\allowbreak At} \newline
 \hspace*{1em}-- \texttt{updated\allowbreak At} \\ \hline
-\end{longtable}
+\end{longtable}\addtocounter{table}{-1}
 \end{center}
 
 % ===============================================
@@ -1574,7 +1574,7 @@ This ERD describes the Dispute Resolution module. It stores dispute evidence and
 \hspace*{1em}-- \texttt{response} \newline
 \hspace*{1em}-- \texttt{reason} \newline
 \hspace*{1em}-- \texttt{created\allowbreak At} \\ \hline
-\end{longtable}
+\end{longtable}\addtocounter{table}{-1}
 \end{center}
 
 % ===============================================
@@ -1669,7 +1669,7 @@ This ERD describes the Reviews \& Reputation module. It stores reviews and revie
 \hspace*{1em}-- \texttt{created\allowbreak At} \newline
 \hspace*{1em}-- \texttt{updated\allowbreak At} \newline
 \hspace*{1em}-- \texttt{deleted\allowbreak At} \\ \hline
-\end{longtable}
+\end{longtable}\addtocounter{table}{-1}
 \end{center}
 
 % ===============================================
@@ -1754,7 +1754,7 @@ This ERD describes the Forum Posts \& Comments module. It stores forum categorie
 \hspace*{1em}-- \texttt{created\allowbreak At} \newline
 \hspace*{1em}-- \texttt{updated\allowbreak At} \newline
 \hspace*{1em}-- \texttt{deleted\allowbreak At} \\ \hline
-\end{longtable}
+\end{longtable}\addtocounter{table}{-1}
 \end{center}
 
 % ===============================================
@@ -1838,7 +1838,7 @@ This ERD describes the Forum Likes module. It stores likes on posts and comments
 \hspace*{1em}-- \texttt{comment\allowbreak Id} (FK) \newline
 \hspace*{1em}-- \texttt{reaction\allowbreak Type} \newline
 \hspace*{1em}-- \texttt{created\allowbreak At} \\ \hline
-\end{longtable}
+\end{longtable}\addtocounter{table}{-1}
 \end{center}
 
 % ===============================================
@@ -1924,7 +1924,7 @@ This ERD describes the Forum Reports \& Moderation module. It stores forum repor
 \hspace*{1em}-- \texttt{status} \newline
 \hspace*{1em}-- \texttt{admin\allowbreak Id} (FK) \newline
 \hspace*{1em}-- \texttt{created\allowbreak At} \\ \hline
-\end{longtable}
+\end{longtable}\addtocounter{table}{-1}
 \end{center}
 
 % ===============================================
@@ -2002,7 +2002,7 @@ This ERD describes the Messaging \& Notifications module. It stores notification
 \hspace*{1em}-- \texttt{is\allowbreak Read} \newline
 \hspace*{1em}-- \texttt{created\allowbreak At} \newline
 \hspace*{1em}-- \texttt{deleted\allowbreak At} \\ \hline
-\end{longtable}
+\end{longtable}\addtocounter{table}{-1}
 \end{center}
 
 % ===============================================
@@ -2090,5 +2090,5 @@ This ERD describes the Administration \& System module. It stores announcement b
 \hspace*{1em}-- \texttt{value} \newline
 \hspace*{1em}-- \texttt{created\allowbreak At} \newline
 \hspace*{1em}-- \texttt{updated\allowbreak At} \\ \hline
-\end{longtable}
+\end{longtable}\addtocounter{table}{-1}
 \end{center}

@@ -3,7 +3,7 @@
 %====================================================
 % ENCODING & LANGUAGE
 %====================================================
-\usepackage[T1]{fontenc}
+\usepackage[T5,T1]{fontenc}
 \usepackage[utf8]{inputenc}
 \usepackage[vietnamese,english]{babel}
 
@@ -339,7 +339,7 @@
   \hline\endfoot
   }{%
   \hline
-  \end{longtable}}
+  \end{longtable}\addtocounter{table}{-1}}
 
 % Two-column table of the abnormal flow: case identifier and description.
 \newenvironment{flowtable}[2]{%
@@ -358,7 +358,7 @@
   \hline\endfoot
   }{%
   \hline
-  \end{longtable}}
+  \end{longtable}\addtocounter{table}{-1}}
 
 %====================================================
 % TABLE OF CONTENTS

@@ -109,5 +109,12 @@ Trigger: Contract generation / PDF export &
 Renders formal multi-party contract agreements (party metadata, terms, milestone schedules, fee breakdowns, and digital signature timestamps) into PDF documents via \texttt{pdf-lib} and persists/cleans up media assets through Cloudinary and protected local storage.
 \\ \hline
 
+12 &
+\textbf{Scheduled Overdue Contract Expiry \& Hold Release} &
+\texttt{ContractService.\allowbreak{}expireOverdueContracts()}, \texttt{PaymentService.\allowbreak{}cancelContractHold()} \newline
+Trigger: Background interval timer every 5 minutes &
+Periodically scans pending contracts past their \texttt{expiresAt} deadline, cancels any attached Stripe PaymentIntent authorization hold (\texttt{holdPaymentIntentId}) if present, and marks the contract as \texttt{EXPIRED}.
+\\ \hline
+
 \end{longtable}
 \endgroup
