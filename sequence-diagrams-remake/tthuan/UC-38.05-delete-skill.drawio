@@ -355,13 +355,13 @@
             <mxPoint x="755" y="2245" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="m12_2_7_2_2" value="12.2.7.2.2. Return 200 OK&amp;nbsp;&lt;div&gt;({ message: &quot;SKILL_DELETED&quot; })&lt;/div&gt;" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;" parent="1" edge="1">
+        <mxCell id="m12_2_7_2_2" value="12.2.7.2.2. Return 200 OK&amp;nbsp;&lt;div&gt;({ message: &quot;Success.SkillDeleted&quot; })&lt;/div&gt;" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;" parent="1" edge="1">
           <mxGeometry relative="1" as="geometry">
             <mxPoint x="745" y="2295" as="sourcePoint" />
             <mxPoint x="545" y="2295" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="m12_2_7_2_3" value="12.2.7.2.3. Return 200 OK&amp;nbsp;&lt;div&gt;({ message: &quot;SKILL_DELETED&quot; })&lt;/div&gt;" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;" parent="1" edge="1">
+        <mxCell id="m12_2_7_2_3" value="12.2.7.2.3. Return 200 OK&amp;nbsp;&lt;div&gt;({ message: &quot;Success.SkillDeleted&quot; })&lt;/div&gt;" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;" parent="1" edge="1">
           <mxGeometry relative="1" as="geometry">
             <mxPoint x="535" y="2345" as="sourcePoint" />
             <mxPoint x="345" y="2345" as="targetPoint" />

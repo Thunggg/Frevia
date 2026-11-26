@@ -1938,7 +1938,10 @@
   "postJob": {
     "breadcrumb": "Đăng tin tuyển dụng",
     "accessDenied": "Bạn không có quyền đăng tin tuyển dụng mới.",
-    "backToJobs": "Quay lại danh sách việc làm"
+    "backToJobs": "Quay lại danh sách việc làm",
+    "kycRequiredTitle": "Yêu cầu xác minh danh tính",
+    "kycRequiredDesc": "Bạn cần hoàn tất xác minh danh tính (CCCD) trước khi tạo công việc mới.",
+    "verifyNow": "Xác minh ngay"
   },
   "jobDetailClient": {
     "notSet": "Chưa đặt",
@@ -1995,12 +1998,12 @@
     "reopenFailed": "Không thể mở lại tin",
     "accessDenied": "Bạn không có quyền xem danh sách việc làm đã đăng.",
     "noPermissionAction": "Bạn không có quyền thực hiện thao tác này.",
-    "dashboardBreadcrumb": "BẢNG ĐIỀU KHIỂN KHÁCH HÀNG / MY JOBS",
+    "dashboardBreadcrumb": "BẢNG ĐIỀU KHIỂN KHÁCH HÀNG / VIỆC CỦA TÔI",
     "managePostedJobs": "Quản lý việc đã đăng",
     "managePostedJobsSubtitle": "Theo dõi trạng thái tuyển dụng, xem hồ sơ ứng tuyển chất lượng cao và giám sát tiến độ hợp đồng đang thực hiện",
     "draftBox": "Kho bản nháp ({count})",
     "postNewJob": "Đăng việc mới",
-    "statActive": "Đang tuyển (Active)",
+    "statActive": "Đang tuyển",
     "statActiveUnit": "tin tuyển",
     "statProposals": "Tổng đề xuất",
     "statProposalsUnit": "đề xuất",
@@ -2015,11 +2018,23 @@
     "tabClosed": "Đã đóng",
     "tabDraft": "Bản nháp",
     "searchJobsPlaceholder": "Tìm kiếm theo tiêu đề công việc...",
+    "clearSearch": "Xoá tìm kiếm",
+    "searching": "Đang tìm kiếm...",
     "jobCodeLabel": "Mã: #{code}",
     "postedDaysAgo": "Đăng {days}",
+    "relativeJustNow": "vừa xong",
+    "relativeToday": "hôm nay",
+    "relativeOneDayAgo": "1 ngày trước",
+    "relativeDaysAgo": "{count} ngày trước",
+    "statusOpen": "Đang mở ứng tuyển",
+    "statusInProgress": "Đang thực hiện",
+    "statusDraft": "Bản nháp",
+    "statusCompleted": "Hoàn thành",
+    "statusClosed": "Đã đóng tuyển dụng",
+    "statusCancelled": "Đã huỷ",
     "fixedPriceLabel": "Giá cố định: {price}",
     "hiringSingle": "Tuyển 1 freelancer",
-    "hiringMultiple": "Tuyển {count} freelancers",
+    "hiringMultiple": "Tuyển {count} freelancer",
     "deadlineLabel": "Hạn chót: {date}",
     "expiryLabel": "Hạn nộp: {date}",
     "budgetNegotiable": "Thỏa thuận",
@@ -2028,8 +2043,14 @@
     "positionsFilledMetric": "Đã tuyển",
     "inviteCandidate": "Mời ứng viên",
     "editAction": "Chỉnh sửa",
-    "viewProposalsCount": "Xem {count} Proposals →",
-    "viewDetailAction": "Xem chi tiết →"
+    "viewProposalsCount": "Xem {count} đề xuất →",
+    "viewDetailAction": "Xem chi tiết →",
+    "kycDialog": {
+      "title": "Yêu cầu xác minh danh tính",
+      "description": "Bạn cần hoàn tất xác minh danh tính (CCCD) trước khi tạo công việc mới.",
+      "cancel": "Để sau",
+      "confirm": "Xác minh ngay"
+    }
   },
   "postJobForm": {
     "titleLabel": "Tên công việc",
@@ -2094,6 +2115,18 @@
     "cannotEditStatus": "Công việc ở trạng thái {status} không thể chỉnh sửa."
   },
   "freelancerSheet": {
+    "reviews": {
+      "title": "Đánh giá",
+      "loading": "Đang tải đánh giá…",
+      "count": "{count} đánh giá",
+      "empty": "Chưa có đánh giá nào",
+      "client": "Khách hàng",
+      "rating": "{rating} trên 5 sao",
+      "response": "Phản hồi từ freelancer",
+      "loadFailed": "Không thể tải đánh giá. Vui lòng thử lại.",
+      "retry": "Thử lại",
+      "more": "Xem thêm"
+    },
     "loadFailed": "Không thể tải đầy đủ thông tin freelancer.",
     "loadUnexpected": "Đã xảy ra lỗi không mong muốn khi tải hồ sơ.",
     "sheetTitle": "Hồ sơ {name}",
@@ -2137,6 +2170,7 @@
     "somethingWentWrong": "Đã xảy ra lỗi.",
     "pageTitle": "Cài đặt hồ sơ",
     "tabCompany": "Hồ sơ công ty",
+    "tabIdentity": "Xác minh danh tính",
     "tabSocial": "Liên kết mạng xã hội",
     "tabFavorites": "Freelancer yêu thích",
     "tabFollowing": "Đang theo dõi",

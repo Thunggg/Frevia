@@ -82,16 +82,40 @@ describe('PermissionGuard', () => {
       ForbiddenException,
     );
 
-    const clientKycCtx = createMockContext(
+    const clientSavedSearchCtx = createMockContext(
       'GET',
-      '/api/identity-verifications',
+      '/api/saved-searches',
       {
         userId: 2,
         roleId: 2,
         roleName: RoleName.CLIENT,
       },
     );
-    await expect(guard.canActivate(clientKycCtx)).rejects.toThrow(
+    await expect(guard.canActivate(clientSavedSearchCtx)).rejects.toThrow(
+      ForbiddenException,
+    );
+
+    const clientKycCtx = createMockContext(
+      'GET',
+      '/api/identity-verifications/status',
+      {
+        userId: 2,
+        roleId: 2,
+        roleName: RoleName.CLIENT,
+      },
+    );
+    await expect(guard.canActivate(clientKycCtx)).resolves.toBe(true);
+
+    const clientAdminKycCtx = createMockContext(
+      'GET',
+      '/api/admin/identity-verifications',
+      {
+        userId: 2,
+        roleId: 2,
+        roleName: RoleName.CLIENT,
+      },
+    );
+    await expect(guard.canActivate(clientAdminKycCtx)).rejects.toThrow(
       ForbiddenException,
     );
     expect(roleHasPermissionMock).not.toHaveBeenCalled();
@@ -140,6 +164,24 @@ describe('PermissionGuard', () => {
       roleName: 'Moderator',
     });
     await expect(guard.canActivate(sessionsCtx)).resolves.toBe(true);
+
+    const notificationCtx = createMockContext('GET', '/api/notifications', {
+      userId: 4,
+      roleId: 4,
+      roleName: RoleName.EXPERT,
+    });
+    await expect(guard.canActivate(notificationCtx)).resolves.toBe(true);
+
+    const myRevisionCtx = createMockContext(
+      'GET',
+      '/api/profile-revisions/me',
+      {
+        userId: 4,
+        roleId: 4,
+        roleName: RoleName.EXPERT,
+      },
+    );
+    await expect(guard.canActivate(myRevisionCtx)).resolves.toBe(true);
     expect(roleHasPermissionMock).not.toHaveBeenCalled();
   });
 

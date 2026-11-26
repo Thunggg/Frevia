@@ -50,7 +50,7 @@
 [POST] /\allowbreak{}api/\allowbreak{}auth/\allowbreak{}switch-role \newline
 [POST] /\allowbreak{}api/\allowbreak{}auth/\allowbreak{}join-role
 &
-The Authentication feature handles user identity verification and session establishment. It supports account registration with OTP verification, email/password login with JWT access and refresh tokens, token renewal, logout, and password reset through an email verification link. Users can also sign in with Google OAuth, retrieve the currently authenticated account, and switch or join a role (Client or Freelancer) on the same account.
+The Authentication feature handles user identity verification and session establishment. It supports account registration with OTP verification, email/password login with JWT access and refresh tokens, token renewal, logout, and password reset through a 6-digit email OTP verification code. Users can also sign in with Google OAuth, retrieve the currently authenticated account, and switch or join a marketplace role (Client or Freelancer) on the same account.
 \\ \hline
 
 2
@@ -62,6 +62,7 @@ The Authentication feature handles user identity verification and session establ
 [PUT] /\allowbreak{}api/\allowbreak{}account-profile/\allowbreak{}password \newline
 [POST] /\allowbreak{}api/\allowbreak{}account-profile/\allowbreak{}avatar \newline
 [GET] /\allowbreak{}api/\allowbreak{}account-profile/\allowbreak{}avatar/\allowbreak{}\{userId\}/\allowbreak{}file \newline
+[GET] /\allowbreak{}api/\allowbreak{}clients \newline
 [GET] /\allowbreak{}api/\allowbreak{}clients/\allowbreak{}\{userId\} \newline
 [PUT] /\allowbreak{}api/\allowbreak{}clients/\allowbreak{}me/\allowbreak{}profile \newline
 [GET] /\allowbreak{}api/\allowbreak{}social-links \newline
@@ -87,6 +88,9 @@ The Account Profile feature lets authenticated users manage their account-level 
 [POST] /\allowbreak{}api/\allowbreak{}profiles/\allowbreak{}\{id\}/\allowbreak{}cv \newline
 [GET] /\allowbreak{}api/\allowbreak{}profiles/\allowbreak{}\{id\}/\allowbreak{}cv/\allowbreak{}file \newline
 [POST] /\allowbreak{}api/\allowbreak{}profiles/\allowbreak{}\{id\}/\allowbreak{}cv/\allowbreak{}analyze \newline
+[GET] /\allowbreak{}api/\allowbreak{}profiles/\allowbreak{}\{id\}/\allowbreak{}cv/\allowbreak{}analysis \newline
+[POST] /\allowbreak{}api/\allowbreak{}profiles/\allowbreak{}\{id\}/\allowbreak{}cv/\allowbreak{}analysis/\allowbreak{}\{analysisId\}/\allowbreak{}confirm \newline
+[POST] /\allowbreak{}api/\allowbreak{}profiles/\allowbreak{}\{id\}/\allowbreak{}cv/\allowbreak{}analysis/\allowbreak{}\{analysisId\}/\allowbreak{}discard \newline
 [DELETE] /\allowbreak{}api/\allowbreak{}profiles/\allowbreak{}\{id\}/\allowbreak{}cv \newline
 [GET] /\allowbreak{}api/\allowbreak{}expert-profile/\allowbreak{}me \newline
 [PUT] /\allowbreak{}api/\allowbreak{}expert-profile/\allowbreak{}me \newline
@@ -94,7 +98,7 @@ The Account Profile feature lets authenticated users manage their account-level 
 [GET] /\allowbreak{}api/\allowbreak{}experts \newline
 [GET] /\allowbreak{}api/\allowbreak{}experts/\allowbreak{}\{id\}
 &
-The Freelancer Profile feature enables freelancers to build and maintain their professional identity, including bio, professional title, education, availability status and profile strength. Freelancers can upload, download, delete and AI-analyze their CV. The feature also exposes the expert (verified freelancer) profile endpoints, the public expert directory, and allows a freelancer to view and update their own expert profile while administrators can update it on behalf of a user.
+The Freelancer Profile feature enables freelancers to build and maintain their professional identity, including bio, professional title, education, availability status and profile strength. Freelancers can upload, download, delete and AI-analyze their CV (including reviewing, confirming, or discarding draft extraction suggestions). The feature also exposes the expert profile endpoints for accounts holding the \texttt{EXPERT} role, the public expert directory, and allows an expert to view and update their profile while administrators can update it on behalf of a user.
 \\ \hline
 
 4
@@ -131,18 +135,21 @@ The Freelancer Portfolio feature enables freelancers to demonstrate their past w
 [GET] /\allowbreak{}api/\allowbreak{}job-categories \newline
 [GET] /\allowbreak{}api/\allowbreak{}job-categories/\allowbreak{}\{slug\} \newline
 [GET] /\allowbreak{}api/\allowbreak{}manage-jobs/\allowbreak{}skills \newline
+[POST] /\allowbreak{}api/\allowbreak{}manage-jobs/\allowbreak{}check-language \newline
 [GET] /\allowbreak{}api/\allowbreak{}manage-jobs \newline
 [GET] /\allowbreak{}api/\allowbreak{}manage-jobs/\allowbreak{}\{id\} \newline
 [POST] /\allowbreak{}api/\allowbreak{}manage-jobs \newline
 [PATCH] /\allowbreak{}api/\allowbreak{}manage-jobs/\allowbreak{}\{id\} \newline
 [DELETE] /\allowbreak{}api/\allowbreak{}manage-jobs/\allowbreak{}\{id\} \newline
-[PATCH] /\allowbreak{}api/\allowbreak{}manage-jobs/\allowbreak{}\{id\}/\allowbreak{}status \newline
+[PATCH] /\allowbreak{}api/\allowbreak{}manage-jobs/\allowbreak{}\{id\}/\allowbreak{}publish \newline
+[PATCH] /\allowbreak{}api/\allowbreak{}manage-jobs/\allowbreak{}\{id\}/\allowbreak{}close \newline
+[PATCH] /\allowbreak{}api/\allowbreak{}manage-jobs/\allowbreak{}\{id\}/\allowbreak{}reopen \newline
 [GET] /\allowbreak{}api/\allowbreak{}manage-jobs/\allowbreak{}bookmarks \newline
 [POST] /\allowbreak{}api/\allowbreak{}manage-jobs/\allowbreak{}jobs/\allowbreak{}\{slug\}/\allowbreak{}bookmark \newline
 [GET] /\allowbreak{}api/\allowbreak{}manage-jobs/\allowbreak{}jobs/\allowbreak{}\{slug\}/\allowbreak{}bookmark \newline
 [DELETE] /\allowbreak{}api/\allowbreak{}manage-jobs/\allowbreak{}bookmarks/\allowbreak{}\{slug\}
 &
-The Job Management feature is the core marketplace functionality that connects clients with freelancers. Guests and freelancers can browse and search the paginated job list, view a job detail by slug, and browse job categories. Clients can create a job posting with description, budget, required skills and timeline, list their own jobs, view a job detail, update or delete a job, and change its status (Open, In Progress, Closed, Cancelled); they can also look up skills while composing a job. Freelancers can list, add and remove bookmarked jobs and check whether a job is bookmarked.
+The Job Management feature is the core marketplace functionality that connects clients with freelancers. Guests and freelancers can browse and search the paginated job list, view a job detail by slug, and browse job categories. Clients can create a job posting with description, budget, required skills and deadline (including English language checks), list their own jobs, view a job detail, update or soft-delete a job, and transition its lifecycle via publish, close, or reopen actions; they can also look up skills while composing a job. Freelancers can list, add and remove bookmarked jobs and check whether a job is bookmarked.
 \\ \hline
 
 7
@@ -161,15 +168,21 @@ The Job Category Management feature allows administrators to maintain the taxono
 
 8
 &
-\textbf{Manage Saved Searches}
+\textbf{Manage Saved Searches \& Job Alerts}
 &
 [GET] /\allowbreak{}api/\allowbreak{}saved-searches \newline
 [GET] /\allowbreak{}api/\allowbreak{}saved-searches/\allowbreak{}\{id\} \newline
 [POST] /\allowbreak{}api/\allowbreak{}saved-searches \newline
 [PATCH] /\allowbreak{}api/\allowbreak{}saved-searches/\allowbreak{}\{id\} \newline
-[DELETE] /\allowbreak{}api/\allowbreak{}saved-searches/\allowbreak{}\{id\}
+[DELETE] /\allowbreak{}api/\allowbreak{}saved-searches/\allowbreak{}\{id\} \newline
+[GET] /\allowbreak{}api/\allowbreak{}job-alerts \newline
+[GET] /\allowbreak{}api/\allowbreak{}job-alerts/\allowbreak{}\{id\} \newline
+[GET] /\allowbreak{}api/\allowbreak{}job-alerts/\allowbreak{}\{id\}/\allowbreak{}matching-jobs \newline
+[POST] /\allowbreak{}api/\allowbreak{}job-alerts \newline
+[PATCH] /\allowbreak{}api/\allowbreak{}job-alerts/\allowbreak{}\{id\} \newline
+[DELETE] /\allowbreak{}api/\allowbreak{}job-alerts/\allowbreak{}\{id\}
 &
-The Saved Search feature allows authenticated users to store job search criteria for later reuse. Users can list their saved searches, view the detail of one saved search, create a new saved search from the current filters, update its name or filter conditions, and delete a saved search that is no longer needed.
+The Saved Search and Job Alert features allow authenticated users to store reusable job search criteria and configure keyword/skill alert preferences, as well as query open matching job postings against an alert on demand.
 \\ \hline
 
 9
@@ -187,11 +200,11 @@ The Saved Search feature allows authenticated users to store job search criteria
 [PATCH] /\allowbreak{}api/\allowbreak{}proposals/\allowbreak{}\{id\}/\allowbreak{}draft \newline
 [PATCH] /\allowbreak{}api/\allowbreak{}proposals/\allowbreak{}\{id\}/\allowbreak{}submit \newline
 [PATCH] /\allowbreak{}api/\allowbreak{}proposals/\allowbreak{}\{id\}/\allowbreak{}withdraw \newline
-[PATCH] /\allowbreak{}api/\allowbreak{}proposals/\allowbreak{}\{id\}/\allowbreak{}interview \newline
+[PATCH] /\allowbreak{}api/\allowbreak{}proposals/\allowbreak{}\{id\} \newline
 [PATCH] /\allowbreak{}api/\allowbreak{}proposals/\allowbreak{}\{id\}/\allowbreak{}reject \newline
 [PATCH] /\allowbreak{}api/\allowbreak{}proposals/\allowbreak{}\{id\}/\allowbreak{}accept
 &
-The Proposal Management feature supports the bidding process between freelancers and clients. Freelancers can submit a proposal to a job, save it as a draft, update and submit a draft, withdraw a submitted proposal, and view their own proposals for a job. Clients can list all proposals submitted to their job, view proposal details, and move a proposal through interview, acceptance or rejection, while acceptance can later be used to create a contract.
+The Proposal Management feature supports the bidding process between freelancers and clients. Freelancers can submit a proposal to a job, save it as a draft, update a draft or submitted proposal, withdraw a submitted proposal, and view their own proposals for a job. Clients can list all proposals submitted to their job, view proposal details, accept a submitted proposal (moving it to \texttt{HIRED}), or reject it.
 \\ \hline
 
 10
@@ -211,7 +224,7 @@ The Proposal Management feature supports the bidding process between freelancers
 [POST] /\allowbreak{}api/\allowbreak{}contracts/\allowbreak{}\{contractId\}/\allowbreak{}files \newline
 [DELETE] /\allowbreak{}api/\allowbreak{}contracts/\allowbreak{}\{contractId\}/\allowbreak{}files/\allowbreak{}\{fileId\}
 &
-The Contract Management feature manages the agreement between a client and a freelancer throughout the project lifecycle. Users can create a contract, list their contracts, view contract details, export the contract as an immutable signed PDF, update contract terms, sign the contract, reject a contract offer with an explanatory reason, complete the contract upon fulfillment, and request mutual cancellation. Contract participants can also list, upload and delete contract-level files that document the agreement.
+The Contract Management feature manages the agreement between a client and a freelancer throughout the project lifecycle. Users can create a contract, list their contracts, view contract details, export the contract as a PDF saved to shared files, update editable contract terms, sign the contract sequentially (client first, then freelancer), decline a contract offer with an optional reason, complete the contract upon fulfillment, and cancel the contract (triggering automated escrow settlement for active contracts). Contract participants can also list, upload and delete contract-level files that document the agreement.
 \\ \hline
 
 11
@@ -225,7 +238,7 @@ The Contract Management feature manages the agreement between a client and a fre
 [PATCH] /\allowbreak{}api/\allowbreak{}contracts/\allowbreak{}\{contractId\}/\allowbreak{}milestones/\allowbreak{}\{id\}/\allowbreak{}progress \newline
 [DELETE] /\allowbreak{}api/\allowbreak{}contracts/\allowbreak{}\{contractId\}/\allowbreak{}milestones/\allowbreak{}\{id\}
 &
-The Milestone Management feature breaks a contract into payable deliverables. Contract participants can list and view the milestones of a contract, create a new milestone with its amount and due date, update milestone information, report progress on a milestone, and delete a milestone that is no longer part of the agreement.
+The Milestone Management feature breaks a contract into payable deliverables. Contract participants can list and view the milestones of a contract, create a new milestone with its amount and due date, update milestone information, advance funded milestones sequentially to \texttt{IN\_PROGRESS}, and delete a milestone that is no longer part of the agreement.
 \\ \hline
 
 12
@@ -288,7 +301,7 @@ The Payment Management feature integrates Stripe to provide secure escrow-style 
 [GET] /\allowbreak{}api/\allowbreak{}expert/\allowbreak{}disputes/\allowbreak{}\{id\} \newline
 [POST] /\allowbreak{}api/\allowbreak{}expert/\allowbreak{}disputes/\allowbreak{}\{id\}/\allowbreak{}decision
 &
-The Dispute Management feature provides comprehensive arbitration workflows for conflicts arising on funded milestones. Contract participants can open a formal dispute with claims and evidence files, freezing milestone escrow funds. Users can list their disputes, view detailed case files, and inspect contextual dispute warnings directly on milestones. The designated respondent can submit a formal rebuttal statement and counter-evidence within a 48-hour deadline, or the initiator can withdraw the dispute before ruling. Unresolved cases can be escalated to platform domain experts. Experts and administrators can review escalated disputes in a dedicated queue, examine symmetric evidence and deliverables, and issue a binding arbitration decision with fund distribution splits that automatically settle the escrow balance.
+The Dispute Management feature provides formal arbitration workflows for conflicts arising on funded milestones. Contract participants can open a formal dispute (\texttt{WAITING\_RESPONSE}) with claims and evidence files, freezing milestone escrow funds. Users can list their disputes, view detailed case files, and inspect contextual dispute statuses directly on milestones. The designated respondent can accept or decline the proposal, or the initiator can withdraw the dispute (\texttt{CANCELLED}) before escalation. Declined or overdue cases can be escalated by a participant to \texttt{UNDER\_REVIEW}. Dedicated domain expert arbitrators (\texttt{EXPERT} role) review escalated disputes via \texttt{/api/expert/disputes} and issue a binding settlement decision (\texttt{FINALIZED}) that distributes the escrow balance.
 \\ \hline
 
 16
@@ -321,6 +334,7 @@ The Review Management feature lets contract participants rate and comment on eac
 [GET] /\allowbreak{}api/\allowbreak{}forums/\allowbreak{}posts/\allowbreak{}by-slug/\allowbreak{}\{slug\} \newline
 [GET] /\allowbreak{}api/\allowbreak{}forums/\allowbreak{}users/\allowbreak{}top \newline
 [POST] /\allowbreak{}api/\allowbreak{}forums/\allowbreak{}posts \newline
+[PATCH] /\allowbreak{}api/\allowbreak{}forums/\allowbreak{}posts/\allowbreak{}\{id\} \newline
 [DELETE] /\allowbreak{}api/\allowbreak{}forums/\allowbreak{}posts/\allowbreak{}\{id\} \newline
 [GET] /\allowbreak{}api/\allowbreak{}forums/\allowbreak{}posts/\allowbreak{}\{postId\}/\allowbreak{}comments \newline
 [POST] /\allowbreak{}api/\allowbreak{}forums/\allowbreak{}posts/\allowbreak{}\{postId\}/\allowbreak{}comments \newline
@@ -334,7 +348,7 @@ The Review Management feature lets contract participants rate and comment on eac
 [GET] /\allowbreak{}api/\allowbreak{}forums/\allowbreak{}posts/\allowbreak{}\{postId\}/\allowbreak{}is-reported \newline
 [GET] /\allowbreak{}api/\allowbreak{}forums/\allowbreak{}posts/\allowbreak{}\{postId\}/\allowbreak{}comments/\allowbreak{}\{commentId\}/\allowbreak{}is-reported
 &
-The Forum Management feature enables community discussion and knowledge sharing within the platform. Guests and authenticated users can browse forum categories (including the most active categories), browse and search posts (including the most interacted posts and the most active users), and open a post by id or slug. Registered users can create a post, delete their own post, and manage comments (list, add, edit and delete). Posts and comments support a like/unlike toggle and a liker list, and users can report inappropriate posts or comments and check whether they have already reported them.
+The Forum Management feature enables community discussion and knowledge sharing within the platform. Guests and authenticated users can browse forum categories (including the most active categories), browse and search posts (including the most interacted posts and the most active users), and open a post by id or slug. Registered users can create, edit and delete their own post, and manage comments (list, add, edit and delete). Posts and comments support a like/unlike toggle and a liker list, and users can report inappropriate posts or comments and check whether they have already reported them.
 \\ \hline
 
 18
@@ -368,6 +382,7 @@ The Forum Moderation feature gives administrators the tools to keep the communit
 &
 [GET] /\allowbreak{}api/\allowbreak{}conversations \newline
 [POST] /\allowbreak{}api/\allowbreak{}conversations \newline
+[GET] /\allowbreak{}api/\allowbreak{}conversations/\allowbreak{}\{id\} \newline
 [GET] /\allowbreak{}api/\allowbreak{}conversations/\allowbreak{}\{id\}/\allowbreak{}messages \newline
 [POST] /\allowbreak{}api/\allowbreak{}conversations/\allowbreak{}\{id\}/\allowbreak{}messages \newline
 [POST] /\allowbreak{}api/\allowbreak{}conversations/\allowbreak{}\{id\}/\allowbreak{}files \newline
@@ -503,29 +518,32 @@ The Advertisement Banner feature manages promotional banners displayed on the pl
 [PATCH] /\allowbreak{}api/\allowbreak{}admin/\allowbreak{}skills/\allowbreak{}\{id\}/\allowbreak{}restore \newline
 [DELETE] /\allowbreak{}api/\allowbreak{}admin/\allowbreak{}skills/\allowbreak{}\{id\}
 &
-The Skill Management feature allows administrators to maintain the master skill catalog used by freelancer profiles and job postings. Administrators can list skills, view the detail of a skill, create a new skill, update its name or category, soft-delete a skill, and restore a previously deleted skill.
+The Skill Management feature allows administrators to maintain the master skill catalog used by freelancer profiles and job postings. Administrators can list skills, view the detail of a skill, create a new skill, update its name or description, soft-delete a skill, and restore a previously deleted skill.
 \\ \hline
 
 29
 &
 \textbf{AI Job \& Freelancer Recommendation Engine}
 &
-[POST] /\allowbreak{}api/\allowbreak{}ai/\allowbreak{}recommendations/\allowbreak{}jobs \newline
-[POST] /\allowbreak{}api/\allowbreak{}ai/\allowbreak{}recommendations/\allowbreak{}freelancers \newline
-[GET] /\allowbreak{}api/\allowbreak{}ai/\allowbreak{}matching-score/\allowbreak{}\string{jobId\string}/\allowbreak{}\string{freelancerId\string}
+[GET] /\allowbreak{}api/\allowbreak{}recommendations/\allowbreak{}jobs \newline
+[GET] /\allowbreak{}api/\allowbreak{}recommendations/\allowbreak{}freelancers \newline
+[GET] /\allowbreak{}api/\allowbreak{}recommendations/\allowbreak{}\{id\}/\allowbreak{}explanation \newline
+[POST] /\allowbreak{}api/\allowbreak{}recommendations/\allowbreak{}reindex \newline
+[POST] /\allowbreak{}api/\allowbreak{}recommendations/\allowbreak{}outbox/\allowbreak{}process
 &
-The AI Recommendation Engine computes contextual matching scores between job postings and freelancer profiles using natural language embeddings and cosine similarity. It analyzes required skills, experience levels, budget constraints, and historical contract ratings to recommend optimal jobs to freelancers and qualified candidates to clients without manual keyword searching.
+The AI Recommendation Engine computes contextual matching scores between job postings and freelancer profiles using section-aware BGE-M3 semantic embeddings alongside structured rules. It evaluates semantic similarity, required skills, experience, budget alignment, and preferences to rank recommended jobs for freelancers and qualified candidates for clients, with per-factor score explanations.
 \\ \hline
 
 30
 &
 \textbf{AI Content Moderation}
 &
-[POST] /\allowbreak{}api/\allowbreak{}ai/\allowbreak{}moderation/\allowbreak{}check-text \newline
-[POST] /\allowbreak{}api/\allowbreak{}ai/\allowbreak{}moderation/\allowbreak{}filter-spam \newline
-[GET] /\allowbreak{}api/\allowbreak{}admin/\allowbreak{}moderation/\allowbreak{}ai-logs
+\textit{Invoked internally during:} \newline
+[POST] /\allowbreak{}api/\allowbreak{}forums/\allowbreak{}posts \newline
+[POST] /\allowbreak{}api/\allowbreak{}forums/\allowbreak{}posts/\allowbreak{}\{postId\}/\allowbreak{}comments \newline
+[GET] /\allowbreak{}api/\allowbreak{}forums/\allowbreak{}admin/\allowbreak{}pending-posts
 &
-The AI Content Moderation service processes user-generated text asynchronously across forum posts, thread comments, and direct chat messages. It analyzes submissions for profanity, toxic sentiment, hate speech, and spam. Content exceeding policy violation thresholds is automatically quarantined, flagged with high severity, and queued for administrator intervention while notifying the submitter.
+AI Content Moderation evaluates newly created and updated forum posts and comments via \texttt{AIModerationService} calling the configured \texttt{AI\_MODERATION\_URL} service (\texttt{/moderate}). It classifies submissions into \texttt{APPROVED}, \texttt{PENDING} (queued for administrator review), or \texttt{REJECTED} (visible in forum trash while still persisted in the database), defaulting to \texttt{APPROVED} when the external service is unavailable. Direct chat messages are not routed through AI moderation.
 \\ \hline
 
 31
@@ -534,9 +552,9 @@ The AI Content Moderation service processes user-generated text asynchronously a
 &
 [POST] /\allowbreak{}api/\allowbreak{}identity-verifications/\allowbreak{}ai-check \newline
 [POST] /\allowbreak{}api/\allowbreak{}identity-verifications/\allowbreak{}liveness-pose \newline
-[POST] /\allowbreak{}api/\allowbreak{}ai/\allowbreak{}biometrics/\allowbreak{}duplicate-check
+[GET] /\allowbreak{}api/\allowbreak{}identity-verifications/\allowbreak{}status
 &
-The AI Biometric Verification pipeline automates eKYC validation for freelancer identity onboarding. It extracts personal data from identity documents via optical character recognition (OCR), verifies head poses and face liveness via computer vision, and generates biometric facial feature vectors. The system cross-checks biometric signatures against existing verified profiles to prevent fraudulent account duplication.
+The AI Biometric Verification pipeline automates eKYC screening for Client and Freelancer accounts. It extracts text and citizen ID numbers via RapidOCR, detects faces and matches biometric embeddings with UltraFace/ArcFace (ONNX Runtime), and validates active liveness poses with MediaPipe. Submissions are checked for duplicate \texttt{identityNumber} matches and stored as \texttt{PENDING} on AI verification or \texttt{REJECTED} on AI rejection, retry, or duplicate detection.
 \\ \hline
 
 32
@@ -547,7 +565,7 @@ The AI Biometric Verification pipeline automates eKYC validation for freelancer 
 [POST] /\allowbreak{}api/\allowbreak{}payments/\allowbreak{}intents/\allowbreak{}\string{paymentIntentId\string}/\allowbreak{}sync \newline
 [POST] /\allowbreak{}api/\allowbreak{}payments/\allowbreak{}checkout-sessions/\allowbreak{}\string{sessionId\string}/\allowbreak{}sync
 &
-The Automated Payment Processing service reliably handles asynchronous webhook callbacks emitted by Stripe. It processes payment intent confirmations, escrow funding authorizations, payout transfers, and dispute chargebacks. In addition, automated reconciliation routines synchronize transient payment intent statuses, resolve interrupted checkout sessions, and update contract ledger balances in real time.
+The Automated Payment Processing service handles Stripe webhook callbacks (\texttt{checkout.\allowbreak{}session.\allowbreak{}completed}, \texttt{payment\_\allowbreak{}intent.*}, and \texttt{account.\allowbreak{}updated}) using Stripe signature verification. In addition, reconciliation routines synchronize transient PaymentIntent statuses (updating funded contracts to \texttt{PENDING\_SIGN}), resolve interrupted Checkout Sessions, and update milestone and transaction records.
 \\ \hline
 
 \end{longtable}

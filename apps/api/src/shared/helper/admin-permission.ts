@@ -126,6 +126,9 @@ export function isSelfAccountOrSessionPath(path: string): boolean {
     normalized.startsWith('/api/auth/') ||
     normalized === '/api/account-profile' ||
     normalized.startsWith('/api/account-profile/') ||
+    normalized === '/api/notifications' ||
+    normalized.startsWith('/api/notifications/') ||
+    normalized === '/api/profile-revisions/me' ||
     normalized === '/api/sessions' ||
     normalized.startsWith('/api/sessions/')
   );
@@ -158,10 +161,10 @@ export function isHardcodedMarketplaceAllowed(
 
   if (roleName === RoleName.CLIENT) {
     if (
-      normalized === '/api/identity-verifications' ||
-      normalized.startsWith('/api/identity-verifications/') ||
       normalized === '/api/job-alerts' ||
       normalized.startsWith('/api/job-alerts/') ||
+      normalized === '/api/saved-searches' ||
+      normalized.startsWith('/api/saved-searches/') ||
       normalized.includes('/bookmark')
     ) {
       return false;

@@ -35,6 +35,15 @@ export const JobOnlyForClientException = () =>
     },
   ]);
 
+// Khách hàng chưa xác minh danh tính (CCCD) thì không được phép tạo công việc mới.
+export const ClientIdentityNotVerifiedException = () =>
+  new ForbiddenException([
+    {
+      message: ManageJobMessage.IDENTITY_VERIFICATION_REQUIRED,
+      path: 'userId',
+    },
+  ]);
+
 export const JobNotFoundException = () =>
   new NotFoundException(ManageJobMessage.JOB_NOT_FOUND);
 

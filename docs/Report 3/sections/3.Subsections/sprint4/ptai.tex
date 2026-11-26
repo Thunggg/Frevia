@@ -99,7 +99,7 @@ Non-owner or missing explanation record & Calling \texttt{GET /api/recommendatio
 Invalid \texttt{limit} or \texttt{jobId} query parameter & Zod DTO rejects non-positive integers or \texttt{limit > 50} with HTTP 400 Bad Request.\\ \hline
 AI ranking service unavailable or timeout & Listing endpoints catch the AI error and return fallback unranked items with \texttt{score = 0}; explanation endpoint returns \texttt{ready = false} with \texttt{fallbackReason}.\\ \hline
 No eligible open jobs or freelancers exist & Repository returns an empty candidate pool; service returns \texttt{\{ data: [] \}} and UI renders empty state.\\ \hline
-Reindex or outbox processing failure & Administrative endpoints throw \texttt{FailedToReindexException} (HTTP 503) or \texttt{FailedToProcessOutboxException} (HTTP 500).\\ \hline
+Reindex or outbox processing failure & Protected endpoints throw \texttt{FailedToReindexException} (HTTP 503) or \texttt{FailedToProcessOutboxException} (HTTP 500).\\ \hline
 \end{flowtable}
 
 \sublabel{Output Data}

@@ -527,6 +527,13 @@ describe('Job Bookmarks (UF-97 to UF-99)', () => {
       ).rejects.toThrow(FailedToRemoveBookmarkException());
     });
 
+    it('throws BookmarkJobOnlyForFreelancerException when a non-freelancer removes bookmark with roleName', async () => {
+      await expect(
+        service.removeBookmark(1, 'senior-nestjs-engineer', RoleName.CLIENT),
+      ).rejects.toThrow(BookmarkJobOnlyForFreelancerException());
+      expect(repository.removeBookmark).not.toHaveBeenCalled();
+    });
+
     // Kiểm tra trạng thái đã lưu trả về true khi đã bookmark và false khi chưa.
     it('returns correct bookmark status via getBookmarkStatus', async () => {
       repository.findBookmark.mockResolvedValueOnce({

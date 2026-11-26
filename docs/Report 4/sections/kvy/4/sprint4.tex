@@ -1,0 +1,398 @@
+% =================================================================
+% FILE: sections/kvy/4/sprint4.tex -- Class Specifications (AI Services)
+% AI Biometric eKYC & Anti-Spoofing and SensitiveAI Content Moderation.
+% Engineer: Pham Kha Vy
+% Supervisor: TS. Cao Hong Nga (PhD)
+% Research Paper Accepted at ICIER 2026
+% =================================================================
+
+\subsection{VerificationRouter Class}
+\label{cls:kvy-VerificationRouter}
+% Source: ai/ekyc_service/app/routers/verification_router.py
+
+This class acts as the API boundary for the AI Biometric eKYC and Anti-Spoofing microservice, exposing REST endpoints consumed by the platform backend.
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{verify(cardFront: UploadFile, cardBack: UploadFile, liveFrames: List[UploadFile])} &
+Executes the comprehensive multimodal biometric eKYC verification pipeline across citizen identity cards and live selfie video frames.
+\newline -- \code{cardFront}: \code{UploadFile} -- front image of the citizen identity card (CCCD).
+\newline -- \code{cardBack}: \code{UploadFile} -- rear image of the citizen identity card containing QR code / MRZ.
+\newline -- \code{liveFrames}: \code{List[UploadFile]} -- sequence of interactive facial selfie frames for liveness checks.
+\newline -- \textit{Returns:} \code{Promise<VerificationResult>} containing status, confidence, extracted identity fields, and anti-spoofing telemetry.
+\newline -- Route: \code{POST /verify/}.
+ \\ \hline
+
+02 & \code{livenessPose(file: UploadFile)} &
+Performs real-time head pose estimation (Pitch, Yaw, Roll) and eye blink detection on a single camera stream frame.
+\newline -- \code{file}: \code{UploadFile} -- real-time user video capture frame.
+\newline -- \textit{Returns:} \code{Promise<PoseEstimationResult>} with yaw angle, EAR ratio, and posture compliance indicator.
+\newline -- Route: \code{POST /liveness/pose}.
+ \\ \hline
+
+03 & \code{healthCheck()} &
+Probes service health, GPU memory allocation, and loaded ONNX model sessions.
+\newline -- \textit{Returns:} \code{HealthStatusDto} indicating engine operational state.
+\newline -- Route: \code{GET /health}.
+ \\ \hline
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{verificationService} & \code{VerificationService} -- injected core verification orchestration engine. \\ \hline
+\end{ClassAttributeTable}
+
+% ================= IdentityAiService =================
+
+\subsection{IdentityAiService Class}
+\label{cls:kvy-IdentityAiService}
+% Source: apps/api/src/modules/identity-ai/identity-ai.service.ts
+
+This NestJS client service bridges the core platform backend with the remote FastAPI eKYC microservice over HTTP.
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{IdentityAiService(configService: ConfigService, httpService: HttpService)} &
+Initializes the HTTP client with microservice target URL and request timeout policies.
+\newline -- \code{configService}: \code{ConfigService} -- NestJS configuration provider.
+\newline -- \code{httpService}: \code{HttpService} -- HTTP client module.
+\newline -- \textit{Returns:} \code{void} -- constructor. \\ \hline
+
+02 & \code{verify(input: VerifyIdentityDto)} &
+Dispatches uploaded card images and live frames via multipart form data to the eKYC FastAPI microservice.
+\newline -- \code{input}: \code{VerifyIdentityDto} -- binary file buffers and freelancer account metadata.
+\newline -- \textit{Returns:} \code{Promise<IdentityAiVerifyResult>} with parsed citizen data and security verification status.
+ \\ \hline
+
+03 & \code{livenessPose(file: Express.Multer.File)} &
+Dispatches a frame for interactive liveness head posture tracking.
+\newline -- \code{file}: \code{Express.Multer.File} -- uploaded image frame.
+\newline -- \textit{Returns:} \code{Promise<IdentityAiPoseResult>} with angle compliance.
+ \\ \hline
+
+04 & \code{postForm<T>(path: string, form: FormData)} &
+Generic private transport helper executing multipart HTTP requests with retry and circuit breaking.
+\newline -- \code{path}: \code{string} -- relative microservice path.
+\newline -- \code{form}: \code{FormData} -- payload package.
+\newline -- \textit{Returns:} \code{Promise<T>} -- parsed response DTO.
+ \\ \hline
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{baseUrl} & \code{string} -- base HTTP endpoint of the eKYC service. \\ \hline
+02 & \code{timeoutMs} & \code{number} -- connection timeout threshold in milliseconds (default: 30000ms). \\ \hline
+\end{ClassAttributeTable}
+
+% ================= VerificationService =================
+
+\subsection{VerificationService Class}
+\label{cls:kvy-VerificationService}
+% Source: ai/ekyc_service/app/services/verification_service.py
+
+This class orchestrates the complete multi-model computer vision pipeline for identity verification.
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{processVerification(frontBytes: bytes, backBytes: bytes, liveBytes: List[bytes])} &
+Coordinates parallel OCR, face detection with tiling, liveness validation, tampering analysis, and biometric embedding matching.
+\newline -- \code{frontBytes}: \code{bytes} -- raw front card binary buffer.
+\newline -- \code{backBytes}: \code{bytes} -- raw back card binary buffer.
+\newline -- \code{liveBytes}: \code{List[bytes]} -- sequence of live selfie frame buffers.
+\newline -- \textit{Returns:} \code{VerificationResult} containing full identity attributes and score breakdowns.
+ \\ \hline
+
+02 & \code{evaluateLiveness(liveBytes: List[bytes])} &
+Evaluates head pose movement, Eye Aspect Ratio (EAR) blink transitions, and presentation attacks across video frames.
+\newline -- \code{liveBytes}: \code{List[bytes]} -- frame list.
+\newline -- \textit{Returns:} \code{Tuple[bool, float]} indicating liveness validity and confidence score.
+ \\ \hline
+
+03 & \code{matchFaces(cardCrop: np.ndarray, liveCrop: np.ndarray)} &
+Computes Cosine Similarity between ArcFace 512-dimensional feature embeddings.
+\newline -- \code{cardCrop}: \code{np.ndarray} -- aligned $112 \times 112$ face crop from ID card.
+\newline -- \code{liveCrop}: \code{np.ndarray} -- aligned $112 \times 112$ face crop from verified live frame.
+\newline -- \textit{Returns:} \code{float} -- cosine similarity score (threshold $\ge 0.30$).
+ \\ \hline
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{ocrEngine} & \code{RapidOcrEngine} -- Vietnamese text and field extractor. \\ \hline
+02 & \code{qrDetector} & \code{WeChatQrDetector} -- robust QR decoder for citizen card chips. \\ \hline
+03 & \code{faceDetector} & \code{UltraFaceDetector} -- RFB-640 face detector with 800px tiling. \\ \hline
+04 & \code{landmarker} & \code{MediaPipe3DFaceLandmarker} -- 468 3D landmark mesh and pose tracker. \\ \hline
+05 & \code{antiSpoofing} & \code{MiniFASNetV2AntiSpoofing} -- physical presentation attack detector. \\ \hline
+06 & \code{tamperDetector} & \code{TamperNetTriStreamCNN} -- RGB + SRM + DCT forgery detector. \\ \hline
+07 & \code{faceRecognizer} & \code{ArcFaceRecognizer} -- 512-dim face representation matcher. \\ \hline
+\end{ClassAttributeTable}
+
+% ================= Computer Vision Engines =================
+
+\subsection{UltraFaceDetector Class}
+\label{cls:kvy-UltraFaceDetector}
+% Source: ai/ekyc_service/app/engines/ultra_face_detector.py
+
+Executes face detection using the lightweight RFB-640 architecture, enhanced with 800px sliding-window tiling and Non-Maximum Suppression (NMS) to localize card portrait faces on high-resolution camera frames without downsampling loss.
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{detect(image: np.ndarray)} &
+Runs RFB-640 inference over the image frame.
+\newline -- \code{image}: \code{np.ndarray} -- input BGR frame.
+\newline -- \textit{Returns:} \code{List[BoundingBox]} with confidence and 5 alignment landmarks.
+ \\ \hline
+
+02 & \code{detectWithTiling(image: np.ndarray, tileSize: int = 800, overlap: float = 0.5)} &
+Partitions high-resolution frame into overlapping tiles, executes detection on each tile, maps coordinates back to original scale, and applies soft-NMS.
+\newline -- \code{image}: \code{np.ndarray} -- full-scale capture image.
+\newline -- \code{tileSize}: \code{int} -- tile dimension (800 pixels).
+\newline -- \code{overlap}: \code{float} -- spatial overlap percentage (50\%).
+\newline -- \textit{Returns:} \code{List[BoundingBox]} with high precision on small faces.
+ \\ \hline
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{onnxSession} & \code{InferenceSession} -- ONNX Runtime execution session for RFB-640. \\ \hline
+02 & \code{confThreshold} & \code{float} -- minimum confidence score threshold (default: 0.7). \\ \hline
+03 & \code{iouThreshold} & \code{float} -- intersection-over-union NMS threshold (default: 0.4). \\ \hline
+\end{ClassAttributeTable}
+
+\subsection{MediaPipe3DFaceLandmarker Class}
+\label{cls:kvy-MediaPipe3DFaceLandmarker}
+% Source: ai/ekyc_service/app/engines/mediapipe_landmarker.py
+
+Extracts 468 3D metric landmarks from facial crops to track head pose orientation and eye blink transitions.
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{extractLandmarks(image: np.ndarray)} &
+Extracts 468 3D $(x, y, z)$ facial mesh vertices and 5 primary affine alignment points.
+\newline -- \code{image}: \code{np.ndarray} -- cropped face image.
+\newline -- \textit{Returns:} \code{FaceMeshLandmarks} -- coordinate array.
+ \\ \hline
+
+02 & \code{estimateHeadPose(landmarks: FaceMeshLandmarks)} &
+Computes Perspective-n-Point (PnP) pose transformation to obtain Euler angles (Pitch, Yaw, Roll).
+\newline -- \code{landmarks}: \code{FaceMeshLandmarks} -- 3D landmark array.
+\newline -- \textit{Returns:} \code{HeadPose} with yaw angle verified against boundaries ($\text{Yaw} \le 12^\circ \text{ or } \ge 18^\circ$).
+ \\ \hline
+
+03 & \code{calculateEAR(landmarks: FaceMeshLandmarks)} &
+Calculates the Eye Aspect Ratio (EAR) across 6 upper and lower eyelid vertices.
+\newline -- \code{landmarks}: \code{FaceMeshLandmarks} -- landmark array.
+\newline -- \textit{Returns:} \code{float} -- EAR value for blink cycle verification.
+ \\ \hline
+
+04 & \code{isFrozen(framePoses: List[HeadPose])} &
+Detects static image injection or frozen video stream by computing standard deviation of landmark movement.
+\newline -- \code{framePoses}: \code{List[HeadPose]} -- temporal pose history.
+\newline -- \textit{Returns:} \code{bool} -- true if variance $< 1.5$ indicating non-live spoofing.
+ \\ \hline
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{meshDetector} & \code{FaceMesh} -- underlying MediaPipe 3D landmark tracking graph. \\ \hline
+\end{ClassAttributeTable}
+
+\subsection{TamperNetTriStreamCNN Class}
+\label{cls:kvy-TamperNetTriStreamCNN}
+% Source: ai/ekyc_service/app/engines/tamper_net.py
+
+Specialized tri-stream convolutional neural network (~492K parameters) designed to detect digital tampering, splicing, and copy-move attacks on identity card images.
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{forward(rgb: Tensor, srm: Tensor, dct: Tensor)} &
+Executes multi-stream feature fusion across spatial, noise residual, and frequency domains.
+\newline -- \code{rgb}: \code{Tensor} -- normalized spatial RGB tensor ($3 \times 256 \times 256$).
+\newline -- \code{srm}: \code{Tensor} -- $5 \times 5$ Spatial Rich Model noise residuals revealing resampling discrepancies.
+\newline -- \code{dct}: \code{Tensor} -- $8 \times 8$ Block Discrete Cosine Transform capturing JPEG compression grids.
+\newline -- \textit{Returns:} \code{Tensor} -- binary classification logits (tampered vs authentic).
+ \\ \hline
+
+02 & \code{predictTamperScore(image: np.ndarray)} &
+Preprocesses image into RGB, SRM, and DCT inputs, runs inference, and returns tamper confidence.
+\newline -- \code{image}: \code{np.ndarray} -- ID card crop.
+\newline -- \textit{Returns:} \code{TamperResult} with anomaly heatmaps and tamper probability.
+ \\ \hline
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{modelSession} & \code{InferenceSession} -- ONNX Runtime execution session for TamperNet. \\ \hline
+02 & \code{tamperThreshold} & \code{float} -- threshold above which document is flagged as forged (default: 0.65). \\ \hline
+\end{ClassAttributeTable}
+
+% ================= SensitiveAI Content Moderation =================
+
+\subsection{AIModerationService Class}
+\label{cls:kvy-AIModerationService}
+% Source: apps/api/src/modules/ai-moderation/ai-moderation.service.ts
+
+This NestJS service encapsulates communication with the SensitiveAI content moderation microservice, supporting Forum Posts (UC-14.05, UC-14.06) and Comments (UC-14.12, UC-14.13).
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{AIModerationService(configService: ConfigService, httpService: HttpService)} &
+Initializes the service with microservice URL and timeout options.
+\newline -- \code{configService}: \code{ConfigService} -- NestJS configuration.
+\newline -- \code{httpService}: \code{HttpService} -- HTTP client module.
+\newline -- \textit{Returns:} \code{void} -- constructor. \\ \hline
+
+02 & \code{moderateContent(req: ModerationRequestDto)} &
+Sends concatenated post/comment text to \texttt{POST /moderate} and receives composite toxicity score and action verdict.
+\newline -- \code{req}: \code{ModerationRequestDto} -- text payload with author ID and context.
+\newline -- \textit{Returns:} \code{Promise<ModerationResponseDto>} containing status (\texttt{ALLOW}, \texttt{REVIEW}, \texttt{BLOCK}), toxicity score, and matched categories.
+ \\ \hline
+
+03 & \code{mapDecisionToStatus(action: ModerationAction)} &
+Maps moderation action verdict to platform entity status enumeration (\texttt{PUBLISHED}, \texttt{FLAGGED}, or \texttt{REJECTED}).
+\newline -- \code{action}: \code{ModerationAction} -- verdict from AI microservice.
+\newline -- \textit{Returns:} \code{PostStatus | CommentStatus} -- database entity status.
+ \\ \hline
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{baseUrl} & \code{string} -- base HTTP endpoint of the SensitiveAI microservice. \\ \hline
+02 & \code{timeoutMs} & \code{number} -- connection timeout threshold in milliseconds (default: 3000ms). \\ \hline
+\end{ClassAttributeTable}
+
+\subsection{ModerationRouter Class}
+\label{cls:kvy-ModerationRouter}
+% Source: ai/sensitive_moderation/app/routers/moderation_router.py
+
+FastAPI router exposing endpoints for real-time text moderation.
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{moderateText(payload: ModerationInputSchema)} &
+Evaluates incoming text string through hybrid rule-engine, transformer multi-view classifier, and policy engine.
+\newline -- \code{payload}: \code{ModerationInputSchema} -- UTF-8 text string and client metadata.
+\newline -- \textit{Returns:} \code{ModerationOutputSchema} with action verdict and granular category probabilities.
+\newline -- Route: \code{POST /moderate}.
+ \\ \hline
+
+02 & \code{healthCheck()} &
+Returns health status and transformer warmup state.
+\newline -- \textit{Returns:} \code{Dict[str, str]} -- status payload.
+\newline -- Route: \code{GET /health}.
+ \\ \hline
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{moderationService} & \code{ContentModerationService} -- core orchestration service. \\ \hline
+\end{ClassAttributeTable}
+
+\subsection{ContentModerationService Class}
+\label{cls:kvy-ContentModerationService}
+% Source: ai/sensitive_moderation/app/services/content_moderation_service.py
+
+Orchestrates the hybrid moderation pipeline combining rule filtering, transformer inference, meta-classification, and policy execution.
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{moderate(text: str)} &
+Executes the hybrid decision pipeline: matches against 668+ regex rules, evaluates transformer multi-view head on \texttt{mDeBERTa-v3-base}, merges scores via logistic meta-classifier, and evaluates 3-tier action policy in $< 50$ms.
+\newline -- \code{text}: \code{str} -- raw text string submitted by user.
+\newline -- \textit{Returns:} \code{ModerationDecision} with action (\texttt{BLOCK}, \texttt{REVIEW}, \texttt{ALLOW}) and component confidences.
+ \\ \hline
+
+02 & \code{normalizeText(text: str)} &
+Normalizes unicode diacritics, leetspeak character substitutions, and emoji obfuscations.
+\newline -- \code{text}: \code{str} -- input string.
+\newline -- \textit{Returns:} \code{str} -- cleaned canonical string.
+ \\ \hline
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{ruleEngine} & \code{TunedRuleEngine} -- regex pattern matcher (sub-5ms execution). \\ \hline
+02 & \code{transformerEngine} & \code{TransformerInferenceEngine} -- \texttt{mDeBERTa-v3-base} with multi-view head. \\ \hline
+03 & \code{metaClassifier} & \code{LogisticRegressionMetaClassifier} -- stacking meta-classifier. \\ \hline
+04 & \code{policyEngine} & \code{ModerationPolicyEngine} -- 3-tier decision policy engine. \\ \hline
+\end{ClassAttributeTable}
+
+\subsection{TransformerInferenceEngine Class}
+\label{cls:kvy-TransformerInferenceEngine}
+% Source: ai/sensitive_moderation/app/engines/transformer_inference_engine.py
+
+Encapsulates \texttt{microsoft/mdeberta-v3-base} (~278M parameters) fine-tuned on the Vietnamese Hate Speech Dataset (ViHSD). Scientific paper accepted at \textbf{ICIER 2026}.
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{predict(text: str)} &
+Tokenizes text using DeBERTa SentencePiece tokenizer and executes ONNX / PyTorch inference with the custom multi-view head.
+\newline -- \code{text}: \code{str} -- normalized Vietnamese text.
+\newline -- \textit{Returns:} \code{Dict[str, float]} with probability distribution over hate speech, offensive, and clean categories.
+ \\ \hline
+
+02 & \code{batchPredict(texts: List[str])} &
+Executes batched inference with dynamic padding for optimal throughput.
+\newline -- \code{texts}: \code{List[str]} -- batch of text strings.
+\newline -- \textit{Returns:} \code{List[Dict[str, float]]} -- list of prediction maps.
+ \\ \hline
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{tokenizer} & \code{DebertaV2TokenizerFast} -- SentencePiece subword tokenizer. \\ \hline
+02 & \code{model} & \code{MultiViewDebertaModel} -- fine-tuned multilingual DeBERTa with multi-view fusion head. \\ \hline
+03 & \code{maxSeqLength} & \code{int} -- maximum sequence truncation length (default: 256 tokens). \\ \hline
+\end{ClassAttributeTable}
+
+\subsection{MultiViewClassificationHead Class}
+\label{cls:kvy-MultiViewClassificationHead}
+% Source: ai/sensitive_moderation/app/models/multiview_head.py
+
+Custom neural pooling and classification head combining \texttt{[CLS]} token embedding ($h_{\text{cls}}$), sequence mean pooling ($h_{\text{mean}}$), and sequence max pooling ($h_{\text{max}}$) into a rich document representation.
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{forward(hiddenStates: Tensor, attentionMask: Tensor)} &
+Computes multi-view pooled representations, concatenates vectors ($3 \times 768 = 2304$ dimensions), applies LayerNorm, and passes through a 2-layer Fusion MLP with GELU activations and dropout.
+\newline -- \code{hiddenStates}: \code{Tensor} -- last hidden layer states from transformer backbone ($B \times L \times D$).
+\newline -- \code{attentionMask}: \code{Tensor} -- token attention mask ($B \times L$).
+\newline -- \textit{Returns:} \code{Tensor} -- output class logits ($B \times 3$).
+ \\ \hline
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{layerNorm} & \code{nn.LayerNorm} -- normalizes concatenated 2304-dimensional feature vector. \\ \hline
+02 & \code{dense1} & \code{nn.Linear} -- projection layer ($2304 \to 512$). \\ \hline
+03 & \code{activation} & \code{nn.GELU} -- non-linear Gaussian Error Linear Unit. \\ \hline
+04 & \code{dropout} & \code{nn.Dropout} -- regularization layer ($p = 0.2$). \\ \hline
+05 & \code{classifier} & \code{nn.Linear} -- final classification layer ($512 \to 3$). \\ \hline
+\end{ClassAttributeTable}
+
+\subsection{ModerationPolicyEngine Class}
+\label{cls:kvy-ModerationPolicyEngine}
+% Source: ai/sensitive_moderation/app/engines/policy_engine.py
+
+Applies a 3-tier risk threshold policy to determine the automated operational disposition for incoming content.
+
+\paragraph{ClassMethod}
+\begin{ClassMethodTable}
+01 & \code{evaluatePolicy(compositeScore: float, ruleMatched: bool)} &
+Evaluates the toxicity score and rule match flag against operational policy thresholds.
+\newline -- \code{compositeScore}: \code{float} -- blended risk score from meta-classifier ($[0.0, 1.0]$).
+\newline -- \code{ruleMatched}: \code{bool} -- whether deterministic regex blacklists were triggered.
+\newline -- \textit{Returns:} \code{PolicyVerdict} with action:
+\begin{itemize}
+    \item \code{BLOCK} if $\text{Score} \ge 0.8$ or severe rule matched;
+    \item \code{REVIEW} if $0.3 \le \text{Score} < 0.8$;
+    \item \code{ALLOW} if $\text{Score} < 0.3$.
+\end{itemize}
+ \\ \hline
+\end{ClassMethodTable}
+
+\paragraph{ClassAttribute}
+\begin{ClassAttributeTable}
+01 & \code{blockThreshold} & \code{float} -- strict quarantine threshold (default: 0.80). \\ \hline
+02 & \code{reviewThreshold} & \code{float} -- manual review boundary threshold (default: 0.30). \\ \hline
+\end{ClassAttributeTable}

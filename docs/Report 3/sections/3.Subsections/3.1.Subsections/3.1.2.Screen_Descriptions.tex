@@ -30,15 +30,15 @@
 2 & Guest & Login & Allows users to sign in using their registered email and password with secure JWT access and refresh token authentication. \\ \hline
 3 & Guest & Google Login & OAuth 2.0 third-party authentication interface allowing users to sign in or register instantly using their Google account. \\ \hline
 4 & Guest & Register & Allows new visitors to create an account by providing basic credentials and choosing their primary role (Client or Freelancer). \\ \hline
-5 & Guest & Forgot Password & Allows users to request a password reset email containing a secure, time-limited verification token. \\ \hline
-6 & Guest & Reset Password & Allows users to set a new account password after successfully verifying the reset link received in their email. \\ \hline
+5 & Guest & Forgot Password & Allows users to request a password reset email containing a 6-digit verification OTP code. \\ \hline
+6 & Guest & Reset Password & Allows users to set a new account password after entering the 6-digit OTP code received in their email. \\ \hline
 7 & Guest & Job List & Public job directory displaying all active job postings with keyword search, category filtering, and budget sorting. \\ \hline
 8 & Guest & Job Detail & Displays full details of a specific job posting including title, description, budget, required skills, and client statistics. \\ \hline
 9 & Guest & Freelancer Profile & Public approved freelancer profile combining basic and professional details, active skills and portfolio items. Owner-only controls are hidden from other visitors. \\ \hline
 10 & Guest & Client Profile & Public approved client profile with display name, company name, description, website and social links. Private account and identity fields are excluded. \\ \hline
 11 & Guest & Forum Categories & Main forum overview screen displaying all discussion categories, total threads, and community activity statistics. \\ \hline
 12 & Guest & Forum Category Detail & Displays the list of discussion threads and topics contained within a selected forum category. \\ \hline
-13 & Guest & Post List & Displays all active discussion posts within a category with options to filter by popularity, latest activity, or keywords. \\ \hline
+13 & Guest & Post List & Displays active discussion posts across community tabs (\texttt{active}, \texttt{recent}, \texttt{unanswered}, \texttt{popular}) with filtering by category, author, or search keywords. \\ \hline
 14 & Guest & Post Detail & Displays the full text of a forum post, author information, timestamps, and the interactive threaded comments section. \\ \hline
 % ==========================================================
 % Freelancer
@@ -57,15 +57,15 @@
 26 & Freelancer & Portfolio Detail & Active portfolio detail with title, full description, technologies and the external project link. \\ \hline
 27 & Freelancer & Edit Portfolio & Owner-only form to edit title, description, technologies and project URL of an active portfolio item. \\ \hline
 28 & Freelancer & Delete Portfolio & Confirmation dialog prompting the freelancer to confirm the soft deletion of a portfolio project. \\ \hline
-29 & Freelancer & Identity Verification Upload & Screen allowing the freelancer to upload government-issued ID card/passport images and capture a selfie for eKYC verification. \\ \hline
-30 & Freelancer & Verification Status & Screen displaying the current status of the eKYC review (Pending Review, Approved, or Rejected with reason). \\ \hline
+29 & Freelancer / Client & Identity Verification Upload & Screen allowing freelancers and clients to upload government-issued ID card/passport images and capture selfie/liveness poses for eKYC verification. \\ \hline
+30 & Freelancer / Client & Verification Status & Screen displaying the current status of the eKYC review (Pending Review, Approved, or Rejected with reason). \\ \hline
 31 & Freelancer & Bookmarked Jobs & Screen displaying all job postings that the freelancer has bookmarked for future review or proposal submission. \\ \hline
 32 & Freelancer & Saved Searches & Screen allowing the freelancer to view, execute, and manage custom saved job search filters and keyword queries. \\ \hline
 33 & Freelancer & Job Alerts & Screen allowing the freelancer to configure notification alerts for newly posted jobs matching specific skill criteria. \\ \hline
-34 & Freelancer & My Proposals List & Screen displaying all proposals submitted by the freelancer with current statuses (Pending, Accepted, Rejected). \\ \hline
-35 & Freelancer & Submit Proposal & Form screen allowing the freelancer to apply to a job with a cover letter, bid amount, delivery timeline, and milestones. \\ \hline
-36 & Freelancer & Proposal Detail & Detailed view of a submitted proposal showing proposed milestone breakdown, attachments, and client responses. \\ \hline
-37 & Freelancer & Edit Proposal & Form screen allowing the freelancer to adjust bid pricing, timeline, or cover letter of a pending proposal. \\ \hline
+34 & Freelancer & My Proposals List & Screen displaying all proposals created by the freelancer with current statuses (Draft, Submitted, Hired, Rejected, Withdrawn, Expired). \\ \hline
+35 & Freelancer & Submit Proposal & Form screen allowing the freelancer to apply to a job with a cover letter, bid amount, and delivery days. \\ \hline
+36 & Freelancer & Proposal Detail & Detailed view of a submitted proposal showing cover letter, bid amount, delivery days, and current lifecycle status. \\ \hline
+37 & Freelancer & Edit Proposal & Form screen allowing the freelancer to adjust bid pricing, delivery days, or cover letter of a draft or submitted proposal. \\ \hline
 38 & Freelancer & Withdraw Proposal & Confirmation dialog allowing the freelancer to withdraw an active proposal before client acceptance. \\ \hline
 39 & Freelancer & My Contract List & Screen displaying all contracts associated with the freelancer categorized by status (Active, Completed, Cancelled). \\ \hline
 40 & Freelancer & Contract Detail & Workspace displaying contract terms, milestone schedules, deadlines, escrow funding status, and activity timeline. \\ \hline
@@ -75,7 +75,7 @@
 44 & Freelancer & Delete Contract File & Confirmation dialog allowing the freelancer to delete a file they uploaded to the contract workspace. \\ \hline
 45 & Freelancer & Milestone List & Displays all agreed milestone deliverables of the contract along with individual payment amounts and deadlines. \\ \hline
 46 & Freelancer & Milestone Detail & Screen displaying detailed instructions, attached files, progress logs, and submission history for a specific milestone. \\ \hline
-47 & Freelancer & Update Milestone Progress & Form screen allowing the freelancer to post progress notes, code links, or work-in-progress samples for a milestone. \\ \hline
+47 & Freelancer & Update Milestone Progress & Action control allowing the freelancer to sequentially advance a funded milestone into \texttt{IN\_PROGRESS}. \\ \hline
 48 & Freelancer & Submit Milestone & Screen allowing the freelancer to formally submit finished deliverables and request client approval and payout. \\ \hline
 49 & Freelancer & Reject Contract Offer & Confirmation dialog allowing the freelancer to formally decline a pending contract offer with an optional decline reason. \\ \hline
 50 & Freelancer & Milestone Files & Dedicated file viewer showing assets and work items uploaded specifically for a contract milestone. \\ \hline
@@ -100,22 +100,22 @@
 % ==========================================================
 67 & Client & Client Dashboard & Main workspace dashboard for clients showing active job postings, proposal counts, active contracts, and spent funds. \\ \hline
 68 & Client & Client Profile & Client company settings for company name, company description and website; public display uses approved data. \\ \hline
-69 & Client & Edit Company Information & Form screen allowing the client to update their business profile, logo, headquarters address, and company bio. \\ \hline
+69 & Client & Edit Company Information & Form screen allowing the client to update their company name, company description, and website URL. \\ \hline
 70 & Client & Post Job & Multi-step job creation wizard allowing the client to define job title, category, required skills, budget, and scope. \\ \hline
 71 & Client & My Jobs & Screen displaying all job listings posted by the client with status filters (Draft, Open, In Progress, Closed, Cancelled). \\ \hline
 72 & Client & Edit Job & Form screen allowing the client to modify description, budget range, deadline, or skill tags of an open job posting. \\ \hline
 73 & Client & Delete Job & Confirmation modal prompting the client to confirm soft deletion or cancellation of an existing job posting. \\ \hline
-74 & Client & Change Job Status & Control action allowing the client to pause, close, or reopen an existing job posting. \\ \hline
-75 & Client & Job Proposals List & Screen displaying all incoming proposals submitted by freelancers for a specific job, with sorting and filtering. \\ \hline
-76 & Client & Proposal Detail (Client View) & Detailed evaluation screen displaying a freelancer\textquotesingle{}s proposal, cover letter, rate, and portfolio match. \\ \hline
-77 & Client & Accept Proposal & Action modal to accept a freelancer\textquotesingle{}s proposal and transition automatically into contract creation. \\ \hline
-78 & Client & Reject Proposal & Action dialog allowing the client to decline a proposal with optional constructive feedback. \\ \hline
-79 & Client & Create Contract & Form screen allowing the client to generate a formal contract with defined fixed or milestone payment structures. \\ \hline
+74 & Client & Change Job Status & Control actions allowing the client to publish a draft job, close an open job, or reopen a closed job posting. \\ \hline
+75 & Client & Job Proposals List & Screen displaying incoming submitted proposals for a specific job. \\ \hline
+76 & Client & Proposal Detail (Client View) & Detailed evaluation screen displaying a freelancer\textquotesingle{}s proposal, cover letter, bid amount, and delivery days. \\ \hline
+77 & Client & Accept Proposal & Action modal to accept a submitted proposal and prepare contract creation. \\ \hline
+78 & Client & Reject Proposal & Action control allowing the client to decline a submitted proposal. \\ \hline
+79 & Client & Create Contract & Form screen allowing the client to generate a formal contract from a hired proposal with defined terms and milestone amounts. \\ \hline
 80 & Client & My Contract List (Client) & Screen displaying all current and archived contracts managed by the client with status indicators. \\ \hline
-81 & Client & Contract Detail (Client) & Central management interface for monitoring project milestones, communication, deliverables, and payments. \\ \hline
-82 & Client & Update Contract Terms & Form screen allowing the client to propose amendments to contract deadlines, scope, or milestone budgets. \\ \hline
-83 & Client & Sign Contract & Screen allowing the client to digitally sign and ratify the contract agreement. \\ \hline
-84 & Client & Cancel Contract & Screen allowing the client to request mutual contract termination and configure escrow refund allocations. \\ \hline
+81 & Client & Contract Detail (Client) & Central management interface for monitoring contract terms, milestones, shared files, and escrow payments. \\ \hline
+82 & Client & Update Contract Terms & Form screen allowing the client to update editable contract terms, total amount, or expiry date prior to final activation. \\ \hline
+83 & Client & Sign Contract & Screen allowing the client to digitally sign a \texttt{PENDING\_SIGN} contract (client signs first, then freelancer). \\ \hline
+84 & Client & Cancel Contract & Action allowing the client or freelancer to cancel a contract, triggering automated settlement rules for funded milestones when active. \\ \hline
 85 & Client & Contract Files (Client) & Document repository displaying shared project specifications, requirements documents, and assets. \\ \hline
 86 & Client & Upload Contract File & Modal allowing the client to upload additional reference materials, NDAs, or briefs to the contract repository. \\ \hline
 87 & Client & Delete Contract File & Confirmation dialog prompting the client to remove an uploaded document from the contract repository. \\ \hline
@@ -143,68 +143,68 @@
 106 & Admin & Admin Dashboard & Executive dashboard displaying key system health metrics, daily active users, transaction volume, and alerts. \\ \hline
 107 & Admin & Admin Profile & Screen allowing the system administrator to view and edit administrative profile credentials and preferences. \\ \hline
 108 & Admin & Admin Change Password & Screen allowing the administrator to update their security password with multi-factor verification. \\ \hline
-109 & Admin & Role Management & Screen displaying all defined system access roles (Admin, Moderator, Client, Freelancer) and assigned permissions. \\ \hline
-110 & Admin & Create New Role & Form screen allowing administrators to create a new RBAC role with customized permission sets. \\ \hline
-111 & Admin & Edit Role & Form screen allowing administrators to rename a role, update its description, or modify its scope of authority. \\ \hline
-112 & Admin & View Role Details & Screen showing detailed permissions, system capabilities, and user counts associated with a specific role. \\ \hline
-113 & Admin & Confirm Delete Role & Confirmation dialog prompting the administrator to confirm the permanent removal of a role. \\ \hline
-114 & Admin & Update Role Permissions & Matrix configuration screen allowing granular assignment of system capabilities and endpoints to a role. \\ \hline
+109 & Admin & Role Management & Screen displaying all defined system access roles (Admin, Client, Freelancer, Expert, and custom roles) and assigned permissions. \\ \hline
+110 & Admin & Create New Role & Form screen allowing administrators to create a new RBAC role with name and description. \\ \hline
+111 & Admin & Edit Role & Form screen allowing administrators to rename a custom role or update its description. \\ \hline
+112 & Admin & View Role Details & Screen showing detailed permissions and user assignments associated with a specific role. \\ \hline
+113 & Admin & Confirm Delete Role & Confirmation dialog prompting the administrator to confirm the soft deletion of an unused custom role. \\ \hline
+114 & Admin & Update Role Permissions & Matrix configuration screen allowing granular assignment of system permissions to custom, Admin, or Expert roles. \\ \hline
 115 & Admin & Permission Management & Screen displaying the comprehensive system permission catalog organized by functional domain module. \\ \hline
-116 & Admin & View Permission Details & Modal showing underlying API endpoints, scope parameters, and roles currently granting a specific permission. \\ \hline
-117 & Admin & User Management & Screen displaying all registered users with filters by role, email verification status, and account state. \\ \hline
-118 & Admin & Create New User & Form screen allowing administrators to manually provision a user account with specific roles and attributes. \\ \hline
-119 & Admin & Edit User & Form screen allowing administrators to modify user email, account status (Active, Suspended, Banned), and roles. \\ \hline
-120 & Admin & View User Details & Comprehensive profile view showing user activity history, linked contracts, billing records, and audit logs. \\ \hline
-121 & Admin & Edit Client Profile (Admin) & Form screen allowing administrators to update company profile attributes, verification badges, and notes. \\ \hline
-122 & Admin & Edit Freelancer Basics & Form screen allowing administrators to update a freelancer\textquotesingle{}s headline, bio, hourly rate, and profile status. \\ \hline
-123 & Admin & Edit Freelancer Skills & Screen allowing administrators to review, add, or prune skills associated with a freelancer\textquotesingle{}s profile. \\ \hline
-124 & Admin & Edit Freelancer Portfolio & Screen allowing administrators to inspect, edit, or remove inappropriate or copyrighted portfolio items. \\ \hline
-125 & Admin & Edit Expert Profile & Form screen allowing administrators to manage verified expert status, endorsements, and homepage spotlight details. \\ \hline
-126 & Admin & Banners Management & Screen displaying promotional and announcement banners with active schedules, impressions, and target links. \\ \hline
-127 & Admin & Create New Banner & Form screen allowing administrators to configure a new banner campaign with image asset, placement, and dates. \\ \hline
-128 & Admin & Upload Banner Image & Media upload interface with image cropping for hero, sidebar, and notification banner placements. \\ \hline
-129 & Admin & Edit Banner & Form screen allowing administrators to modify copy, destination link, display order, or active state of a banner. \\ \hline
-130 & Admin & View Banner Details & Screen displaying detailed engagement analytics, click-through rates, and live preview of a banner. \\ \hline
+116 & Admin & View Permission Details & Modal showing underlying API endpoints and HTTP methods bound to a specific permission. \\ \hline
+117 & Admin & User Management & Screen displaying all registered users with search, sorting (\texttt{id}, \texttt{email}, \texttt{createdAt}, \texttt{displayName}), and role filtering. \\ \hline
+118 & Admin & Create New User & Form screen allowing administrators to manually provision a user account with email, display name, password, and role. \\ \hline
+119 & Admin & Edit User & Form screen allowing administrators to modify user email, display name, and ban flag (\texttt{isBanned}). \\ \hline
+120 & Admin & View User Details & Profile inspection screen displaying account summary and role-specific tabs (Client, Freelancer, Expert, and Admin/Custom roles). \\ \hline
+121 & Admin & Edit Client Profile (Admin) & Form screen allowing administrators to update a user\textquotesingle{}s company name, description, and website. \\ \hline
+122 & Admin & Edit Freelancer Basics & Form screen allowing administrators to update a freelancer\textquotesingle{}s professional title and biography. \\ \hline
+123 & Admin & Edit Freelancer Skills & Screen allowing administrators to inspect and replace skills and proficiency levels on a freelancer\textquotesingle{}s profile. \\ \hline
+124 & Admin & Edit Freelancer Portfolio & Screen allowing administrators to create, inspect, edit, or soft-delete portfolio items on a freelancer profile. \\ \hline
+125 & Admin & Edit Expert Profile & Form screen allowing administrators to update an expert\textquotesingle{}s specialization, experience, credentials, website, and active status. \\ \hline
+126 & Admin & Banners Management & Screen displaying promotional banners with active status, placement position, schedule, and target links. \\ \hline
+127 & Admin & Create New Banner & Form screen allowing administrators to configure a new banner campaign with title, image asset, position, and dates. \\ \hline
+128 & Admin & Upload Banner Image & Media upload interface for uploading banner image assets. \\ \hline
+129 & Admin & Edit Banner & Form screen allowing administrators to modify banner title, image, destination link, position, schedule, or active state. \\ \hline
+130 & Admin & View Banner Details & Screen displaying stored banner attributes, schedule, destination URL, and image preview. \\ \hline
 131 & Admin & Confirm Delete Banner & Confirmation dialog prompting the administrator to verify permanent deletion of a banner. \\ \hline
 132 & Admin & Skill Management & Screen displaying the master skill catalog utilized by the platform for freelancer profiles and job tags. \\ \hline
-133 & Admin & Create New Skill & Form screen allowing administrators to register a new standardized skill name and categorize it. \\ \hline
-134 & Admin & Edit Skill & Form screen allowing administrators to rename an existing skill or reassign it to a different category. \\ \hline
-135 & Admin & View Skill Details & Screen displaying skill metadata, category relations, and total freelancer and job associations. \\ \hline
-136 & Admin & Confirm Delete Skill & Confirmation dialog prompting the administrator to soft-delete a skill from the active selection list. \\ \hline
+133 & Admin & Create New Skill & Form screen allowing administrators to register a new standardized skill with name and description. \\ \hline
+134 & Admin & Edit Skill & Form screen allowing administrators to update an existing skill\textquotesingle{}s name or description. \\ \hline
+135 & Admin & View Skill Details & Screen displaying skill metadata, slug, deletion status, and timestamps. \\ \hline
+136 & Admin & Confirm Delete Skill & Confirmation dialog prompting the administrator to soft-delete a skill from the active catalog. \\ \hline
 137 & Admin & Restore Skill & Action dialog allowing administrators to restore a previously soft-deleted skill back to active availability. \\ \hline
-138 & Admin & Job Category Management & Screen displaying the hierarchical job category classification tree and industry taxonomies. \\ \hline
-139 & Admin & Add Job Category & Form screen allowing administrators to create a new job category with title, slug, icon, and parent node. \\ \hline
-140 & Admin & Edit Job Category & Form screen allowing administrators to update the title, description, or hierarchy of an existing category. \\ \hline
-141 & Admin & View Job Category Details & Screen displaying category statistics including active job postings, freelancer counts, and revenue. \\ \hline
+138 & Admin & Job Category Management & Screen displaying the flat job category catalog and active status filters. \\ \hline
+139 & Admin & Add Job Category & Form screen allowing administrators to create a new job category with name, description, and status. \\ \hline
+140 & Admin & Edit Job Category & Form screen allowing administrators to update the name, description, or status of an existing job category. \\ \hline
+141 & Admin & View Job Category Details & Screen displaying category metadata, description, status, and soft-delete timestamps. \\ \hline
 142 & Admin & Confirm Delete Job Category & Confirmation dialog prompting the administrator to soft-delete an existing job category. \\ \hline
 143 & Admin & Restore Job Category & Action dialog allowing administrators to restore a previously soft-deleted job category. \\ \hline
-144 & Admin & Forum Category Management & Screen displaying all community forum categories, permission rules, and moderation assignments. \\ \hline
-145 & Admin & Add Forum Category & Form screen allowing administrators to configure a new discussion section with name, description, and icon. \\ \hline
-146 & Admin & Edit Forum Category & Form screen allowing administrators to update forum category titles, display ordering, or access rules. \\ \hline
-147 & Admin & View Forum Category Details & Screen displaying detailed forum category metrics, thread volume, active participants, and post frequency. \\ \hline
+144 & Admin & Forum Category Management & Screen displaying all community forum categories with search and trash filters. \\ \hline
+145 & Admin & Add Forum Category & Form screen allowing administrators to configure a new discussion section with name and description. \\ \hline
+146 & Admin & Edit Forum Category & Form screen allowing administrators to update forum category name and description. \\ \hline
+147 & Admin & View Forum Category Details & Screen displaying forum category metadata (name, slug, description, and post count). \\ \hline
 148 & Admin & Confirm Delete Forum Category & Confirmation dialog prompting the administrator to soft-delete a forum category. \\ \hline
 149 & Admin & Restore Forum Category & Action dialog allowing administrators to reactivate a previously soft-deleted forum category. \\ \hline
-150 & Admin & Moderation Queue & Screen displaying flagged user reports, reported offensive posts, spam comments, and policy violation cases. \\ \hline
-151 & Admin & View Moderation Item Details & Screen displaying original reported content, reporter comments, automated AI toxicity scores, and context. \\ \hline
-152 & Admin & Resolve Moderation Item & Action screen allowing administrators to dismiss flags, issue user warnings, delete content, or suspend accounts. \\ \hline
-153 & Admin & Forum Trash Management & Screen displaying all soft-deleted forum threads and comments awaiting administrative review or permanent purge. \\ \hline
-154 & Admin & View Deleted Posts/Comments Details & Screen showing original deleted post text, deletion metadata, reason, and author history. \\ \hline
-155 & Admin & Restore Deleted Posts/Comments & Action dialog allowing administrators to recover and reinstate accidentally or incorrectly removed forum posts. \\ \hline
-156 & Admin & ID Verification Management & Screen displaying queue of pending eKYC identity submissions awaiting official verification review. \\ \hline
-157 & Admin & View ID Verification Details & Screen displaying government ID photos, automated face match score, OCR data, and liveness pose validation. \\ \hline
-158 & Admin & Approve ID Verification & Action dialog allowing administrators to verify identity documents and assign the Verified Freelancer badge. \\ \hline
-159 & Admin & Reject ID Verification & Action dialog allowing administrators to reject an eKYC submission with specific rejection guidance to the user. \\ \hline
+150 & Admin & Moderation Queue & Screen displaying AI-flagged pending forum posts and user-submitted forum content reports. \\ \hline
+151 & Admin & View Moderation Item Details & Modal displaying the loaded post or report content, AI status/score/categories, and context. \\ \hline
+152 & Admin & Resolve Moderation Item & Action control allowing administrators to approve or reject pending posts, or update report statuses (\texttt{REVIEWED}/\texttt{RESOLVED}/\texttt{DISMISSED}). \\ \hline
+153 & Admin & Forum Trash Management & Screen displaying soft-deleted and AI-\texttt{REJECTED} forum posts and soft-deleted comments. \\ \hline
+154 & Admin & View Deleted Posts/Comments Details & Modal displaying loaded deleted/rejected post or comment details from the trash list. \\ \hline
+155 & Admin & Restore Deleted Posts/Comments & Action dialog allowing administrators to restore removed forum posts or comments. \\ \hline
+156 & Admin & ID Verification Management & Screen displaying queue of eKYC identity submissions awaiting administrative verification review. \\ \hline
+157 & Admin & View ID Verification Details & Screen displaying uploaded front and back identity document images, submission metadata, and administrative review notes. \\ \hline
+158 & Admin & Approve ID Verification & Action dialog allowing administrators to verify identity documents and assign verified status. \\ \hline
+159 & Admin & Reject ID Verification & Action dialog allowing administrators to reject an eKYC submission with optional review notes. \\ \hline
 160 & Admin & Profile Update Review & Screen displaying incoming requests from freelancers to update verified identity and sensitive profile fields. \\ \hline
 161 & Admin & View Profile Update Request Details & Side-by-side comparison screen highlighting changes between current profile data and requested modifications. \\ \hline
 162 & Admin & View Profile Update Request History & Audit log screen showing previously processed profile update requests, administrative decisions, and notes. \\ \hline
 163 & Admin & Approve Profile Update Request & Action dialog allowing administrators to accept changes and immediately publish them to the live profile. \\ \hline
 164 & Admin & Reject Profile Update Request & Action dialog allowing administrators to decline requested revisions with feedback provided to the applicant. \\ \hline
-165 & Admin & Admin Contract Oversight & Screen displaying all platform contracts across all users with filters for status, date, and dispute flags. \\ \hline
-166 & Admin & Admin View Contract Details & Comprehensive audit screen displaying full contract history, escrow transactions, milestones, and dispute logs. \\ \hline
-167 & Admin & Admin Update Contract Status & Action screen enabling administrators to override contract status in exceptional administrative scenarios. \\ \hline
-168 & Admin & View Expert Disputes List & Queue screen displaying escalated dispute cases awaiting expert technical evaluation and arbitration. \\ \hline
-169 & Admin & View Expert Dispute Details & Arbitration workbench displaying symmetric evidence, milestone deliverables, and claim files for technical review. \\ \hline
-170 & Admin & Confirm Cancel Contract & Confirmation dialog enabling administrators to terminate stalled or abandoned contracts and refund escrow. \\ \hline
-171 & Admin & Expert Make Dispute Decision & Decision screen allowing expert arbitrators and administrators to issue binding fund distribution rulings. \\ \hline
+165 & Admin & Admin Contract Oversight (Read API Only) & Read-only administrative API inspection capability for contract and milestone records (no dedicated web page exposed). \\ \hline
+166 & Admin & Admin View Contract Details & Read-only administrative API access to inspect contract terms, milestones, and shared files. \\ \hline
+167 & Admin & Admin Update Contract Status (Unexposed) & Unexposed administrative status-override concept; runtime contract status updates are executed by contract participants. \\ \hline
+168 & Expert & View Expert Disputes List & Queue screen (\texttt{/admin/disputes}) displaying escalated disputes awaiting expert arbitrator evaluation. \\ \hline
+169 & Expert & View Expert Dispute Details & Arbitration workbench displaying submitted claim details, evidence files, and milestone records for expert review. \\ \hline
+170 & Client / Freelancer & Confirm Cancel Contract & Action allowing the client or freelancer to cancel a contract, settling funded milestones when active. \\ \hline
+171 & Expert & Expert Make Dispute Decision & Decision screen allowing expert arbitrators (\texttt{EXPERT} role) to issue binding fund distribution rulings (\texttt{FINALIZED}). \\ \hline
 172 & Admin & Session Management (Admin) & Screen displaying active user login sessions across devices with client IP, user agent, and force-logout controls.
 \end{longtable}

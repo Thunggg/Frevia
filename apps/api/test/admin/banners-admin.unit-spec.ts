@@ -331,6 +331,15 @@ describe('Banners Management (UF-68 to UF-72)', () => {
       expect(repository.deleteBanner).toHaveBeenCalledWith(1);
     });
 
+    // ID banner không tồn tại trả về NotFoundException từ repository.
+    it('rethrows NotFoundException when repository reports BannerAdminNotFoundException', async () => {
+      repository.deleteBanner.mockRejectedValue(BannerAdminNotFoundException());
+
+      await expect(service.deleteBanner(999999)).rejects.toBeInstanceOf(
+        NotFoundException,
+      );
+    });
+
     // ID banner không tồn tại làm repository lỗi và service trả về FailedToDeleteBannerException (500).
     it('throws InternalServerErrorException when the banner ID does not exist', async () => {
       repository.deleteBanner.mockRejectedValue(new Error('Record not found'));

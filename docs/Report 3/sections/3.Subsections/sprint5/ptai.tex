@@ -57,14 +57,14 @@ A freelancer or visitor selects ``Job Categories'' from the navigation sidebar.\
 \sublabel{Input Data}
 \begin{specdatatable}{Data Name}{Description}
 \texttt{page} & Optional page integer $\ge 1$ (default 1).\\ \hline
-\texttt{limit} & Optional items per page integer between 1 and 100 (default 50 on browse page).\\ \hline
+\texttt{limit} & Optional items per page integer between 1 and 50 (default 20).\\ \hline
 \texttt{search} & Optional search text matching category \texttt{name} or \texttt{description} case-insensitively.\\ \hline
 \end{specdatatable}
 
 \sublabel{Validation Rules}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
     \item Publicly accessible (\texttt{@IsPublic()}); no JWT required.
-    \item \texttt{page} must be an integer $\ge 1$ and \texttt{limit} must be an integer between 1 and 100.
+    \item \texttt{page} must be an integer $\ge 1$ and \texttt{limit} must be an integer between 1 and 50.
 \end{itemize}
 
 \sublabel{Business Rules}
@@ -85,7 +85,7 @@ A freelancer or visitor selects ``Job Categories'' from the navigation sidebar.\
 
 \sublabel{Abnormal Flow / Exception Handling}
 \begin{flowtable}{Abnormal Case}{Handling \& System Response}
-Invalid pagination or limit query & DTO validator rejects \texttt{page < 1} or \texttt{limit > 100} with HTTP 400 Bad Request; UI resets to page 1.\\ \hline
+Invalid pagination or limit query & DTO validator rejects \texttt{page < 1} or \texttt{limit > 50} with HTTP 400 Bad Request; UI resets to page 1.\\ \hline
 No active categories match search & Repository returns \texttt{jobCategories: []} and \texttt{total: 0}; UI displays friendly empty state with search clear prompt.\\ \hline
 Cache service error or miss & \texttt{CacheService.wrap()} falls back seamlessly or queries PostgreSQL directly without failing the request.\\ \hline
 Database query failure or timeout & Service catches \texttt{PrismaClientKnownRequestError} and throws \texttt{FailedToLoadJobCategoryListException} (HTTP 500). UI shows retry notice.\\ \hline
