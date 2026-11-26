@@ -20,6 +20,7 @@ const PUBLIC_ROUTES = [
   "/",
   "/find-work",
   "/job",
+  "/jobs",
   "/forum",
   "/profiles",
   "/clients",

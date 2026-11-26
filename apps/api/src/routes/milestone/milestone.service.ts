@@ -285,7 +285,10 @@ export class MilestoneService {
         throw MilestoneForbiddenException();
       }
 
-      if (milestone.status !== MilestoneStatus.PENDING) {
+      if (
+        milestone.status !== MilestoneStatus.PENDING &&
+        milestone.status !== MilestoneStatus.LATE
+      ) {
         throw MilestoneAlreadyInProgressException();
       }
 

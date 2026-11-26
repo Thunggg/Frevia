@@ -3,7 +3,7 @@ import jobCategoryServerRequest from "@/apiRequests/job-category.server";
 import { FindWorkGuestView } from "./find-work-guest-view";
 import type { ViewListJobFilterType } from "@shared/types";
 
-type FindWorkPageProps = {
+type JobPageProps = {
   searchParams: Promise<{
     keyword?: string;
     category?: string;
@@ -14,9 +14,9 @@ type FindWorkPageProps = {
   }>;
 };
 
-export default async function FindWorkPage({
+export default async function JobPage({
   searchParams,
-}: FindWorkPageProps) {
+}: JobPageProps) {
   const params = await searchParams;
 
   const keyword = params.keyword?.trim() || undefined;
@@ -37,16 +37,16 @@ export default async function FindWorkPage({
   };
 
   // Map budget
-  if (budget === "under-5m") {
-    filter.budgetMax = 5000000;
-  } else if (budget === "5m-20m") {
-    filter.budgetMin = 5000000;
-    filter.budgetMax = 20000000;
-  } else if (budget === "20m-50m") {
-    filter.budgetMin = 20000000;
-    filter.budgetMax = 50000000;
-  } else if (budget === "over-50m") {
-    filter.budgetMin = 50000000;
+  if (budget === "under-500" || budget === "under-5m") {
+    filter.budgetMax = 500;
+  } else if (budget === "500-1000" || budget === "5m-20m") {
+    filter.budgetMin = 500;
+    filter.budgetMax = 1000;
+  } else if (budget === "1000-5000" || budget === "20m-50m") {
+    filter.budgetMin = 1000;
+    filter.budgetMax = 5000;
+  } else if (budget === "5000-plus" || budget === "over-50m") {
+    filter.budgetMin = 5000;
   }
 
   // Map sort

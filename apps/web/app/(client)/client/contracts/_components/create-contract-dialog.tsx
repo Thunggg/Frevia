@@ -526,11 +526,10 @@ export function CreateContractDialog({
                                   e.target.value,
                                 )
                               }
-                              className={`h-8 text-xs rounded-lg focus-visible:ring-[#0069D3] ${
-                                isDateExceeding
-                                  ? "border-rose-500 text-rose-600 dark:text-rose-400"
-                                  : "border-border/70"
-                              }`}
+                              className={`h-8 text-xs rounded-lg focus-visible:ring-[#0069D3] ${isDateExceeding
+                                ? "border-rose-500 text-rose-600 dark:text-rose-400"
+                                : "border-border/70"
+                                }`}
                             />
                           </div>
                         </div>
@@ -548,11 +547,10 @@ export function CreateContractDialog({
                 {/* Milestones vs Budget Balance Status (No border, no background color) */}
                 <div className="flex items-center justify-between pt-1 text-xs">
                   <div
-                    className={`flex items-center gap-1.5 font-medium ${
-                      isAmountMatch
-                        ? "text-emerald-600 dark:text-emerald-400"
-                        : "text-amber-600 dark:text-amber-400"
-                    }`}
+                    className={`flex items-center gap-1.5 font-medium ${isAmountMatch
+                      ? "text-emerald-600 dark:text-emerald-400"
+                      : "text-amber-600 dark:text-amber-400"
+                      }`}
                   >
                     {isAmountMatch ? (
                       <CheckCircle2 className="size-4 shrink-0" />
@@ -564,11 +562,11 @@ export function CreateContractDialog({
                         ? t("milestonesMatchBudget")
                         : amountDiff > 0
                           ? t("remainingToAllocate", {
-                              amount: amountDiff.toLocaleString(),
-                            })
+                            amount: amountDiff.toLocaleString(),
+                          })
                           : t("milestonesExceedBudget", {
-                              amount: Math.abs(amountDiff).toLocaleString(),
-                            })}
+                            amount: Math.abs(amountDiff).toLocaleString(),
+                          })}
                     </span>
                   </div>
                   <div className="font-semibold text-foreground tabular-nums">
@@ -607,7 +605,7 @@ export function CreateContractDialog({
 
               <Button
                 type="submit"
-                disabled={isSubmitting || !isBudgetValid || !isAmountMatch}
+                disabled={isSubmitting || !isBudgetValid}
                 className="rounded-full bg-[#0069D3] hover:bg-[#005bb8] text-white text-xs font-semibold h-9 px-6 shadow-xs cursor-pointer transition-colors"
               >
                 {isSubmitting ? (

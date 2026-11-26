@@ -174,7 +174,8 @@ export function ContractDetailHeader({
               {contract.status !== "COMPLETED" &&
                 contract.status !== "CANCELLED" &&
                 contract.status !== "REJECTED" &&
-                contract.status !== "EXPIRED" && (
+                contract.status !== "EXPIRED" &&
+                (!isFreelancer || contract.status === "ACTIVE") && (
                   <DropdownMenuItem
                     onClick={onOpenConfirmCancel}
                     className="cursor-pointer text-xs font-medium text-red-600"

@@ -7,15 +7,20 @@ import {
   Patch,
   Post,
   Query,
+  UploadedFile,
+  UseInterceptors,
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { ZodSerializerDto } from 'nestjs-zod';
 import { UserActive } from '../../../shared/decorators/user-active.decorators';
+import { buildUploadFilePipe } from '../../../shared/config/file-upload.config';
 import {
   CreateDisputeBodyDTO,
   DisputeDetailResponseDTO,
   DisputeListResponseDTO,
   GetDisputeListQueryDTO,
   RespondDisputeBodyDTO,
+  UploadDisputeFileResponseDTO,
 } from './dispute.dto';
 import { DisputeService } from './dispute.service';
 import type {
@@ -50,6 +55,16 @@ export class DisputeController {
       userId,
       body as CreateDisputeBodyType,
     );
+  }
+
+  @Post('files/upload')
+  @UseInterceptors(FileInterceptor('file'))
+  @ZodSerializerDto(UploadDisputeFileResponseDTO)
+  uploadEvidenceFile(
+    @UserActive('userId') userId: number,
+    @UploadedFile(buildUploadFilePipe()) file: Express.Multer.File,
+  ) {
+    return this.disputeService.uploadEvidenceFile(userId, file);
   }
 
   @Patch(':id/respond')

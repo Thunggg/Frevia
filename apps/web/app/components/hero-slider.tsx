@@ -129,7 +129,7 @@ export function HeroSlider() {
               {/* CTA Buttons */}
               <div className="mt-8 flex w-full flex-wrap items-center justify-end gap-3">
                 <Link
-                  href="/find-work"
+                  href="/job"
                   className="inline-flex items-center gap-2 rounded-xl bg-[#0069D3] px-6 py-3.5 text-xs font-semibold text-white shadow-xs transition-all hover:bg-blue-700 hover:shadow-lg sm:text-sm"
                 >
                   <span>{t("findWorkBtn")}</span>

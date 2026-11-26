@@ -119,14 +119,6 @@ export const MilestoneNotEligibleForRefundException = () =>
     },
   ]);
 
-export const DisputeFeeAlreadyPaidException = () =>
-  new UnprocessableEntityException([
-    {
-      message: ManagePaymentMessage.DISPUTE_FEE_ALREADY_PAID,
-      path: 'status',
-    },
-  ]);
-
 export const DisputeSettlementInvalidAmountException = () =>
   new BadRequestException([
     {

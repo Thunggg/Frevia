@@ -6,18 +6,12 @@ import {
   Calendar,
   FileText,
   Mail,
-  MapPin,
   CheckCircle2,
   Clock,
   Plus,
   Pencil,
   Trash2,
   FileEdit,
-  ShieldCheck,
-  Check,
-  RotateCcw,
-  Scale,
-  Lock,
 } from "lucide-react";
 import { useActionPermission } from "@/hooks/use-action-permission";
 import type { ContractDetailType, SharedFileType } from "@shared/types";
@@ -45,7 +39,6 @@ export function ContractDocumentPaper({
 }: ContractDocumentPaperProps) {
   const format = useFormatter();
   const t = useTranslations("contractWorkspace.paper");
-  const tPaymentStatus = useTranslations("paymentStatus");
 
   const formatDate = (date: string | Date | null | undefined): string => {
     if (!date) return "—";
@@ -55,48 +48,6 @@ export function ContractDocumentPaper({
       month: "short",
       day: "numeric",
     });
-  };
-
-  const renderPaymentStatusBadge = (status?: string | null) => {
-    const paymentStatus = status || "PENDING";
-    switch (paymentStatus) {
-      case "FUNDED":
-        return (
-          <span className="inline-flex items-center gap-1 text-[11px] font-medium text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200/80">
-            <ShieldCheck className="size-3 shrink-0" />
-            <span>{tPaymentStatus("FUNDED")}</span>
-          </span>
-        );
-      case "RELEASED":
-        return (
-          <span className="inline-flex items-center gap-1 text-[11px] font-medium text-blue-700 bg-blue-50 px-2 py-0.5 rounded border border-blue-200/80">
-            <Check className="size-3 shrink-0" />
-            <span>{tPaymentStatus("RELEASED")}</span>
-          </span>
-        );
-      case "REFUNDED":
-        return (
-          <span className="inline-flex items-center gap-1 text-[11px] font-medium text-zinc-700 bg-zinc-100 px-2 py-0.5 rounded border border-zinc-200">
-            <RotateCcw className="size-3 shrink-0" />
-            <span>{tPaymentStatus("REFUNDED")}</span>
-          </span>
-        );
-      case "DISPUTED":
-        return (
-          <span className="inline-flex items-center gap-1 text-[11px] font-medium text-rose-700 bg-rose-50 px-2 py-0.5 rounded border border-rose-200/80">
-            <Scale className="size-3 shrink-0" />
-            <span>{tPaymentStatus("DISPUTED")}</span>
-          </span>
-        );
-      case "PENDING":
-      default:
-        return (
-          <span className="inline-flex items-center gap-1 text-[11px] font-medium text-amber-700 bg-amber-50 px-2 py-0.5 rounded border border-amber-200/80">
-            <Lock className="size-3 shrink-0" />
-            <span>{tPaymentStatus("PENDING")}</span>
-          </span>
-        );
-    }
   };
 
   const clientName =
@@ -279,10 +230,6 @@ export function ContractDocumentPaper({
                 <Mail className="size-3 text-zinc-400" />
                 <span>{clientEmail}</span>
               </p>
-              <p className="flex items-center gap-2 text-zinc-600 mt-0.5 text-xs">
-                <MapPin className="size-3 text-zinc-400" />
-                <span>Ho Chi Minh City, Vietnam</span>
-              </p>
             </div>
 
             {/* Freelancer */}
@@ -296,10 +243,6 @@ export function ContractDocumentPaper({
               <p className="flex items-center gap-2 text-zinc-600 mt-1 text-xs">
                 <Mail className="size-3 text-zinc-400" />
                 <span>{freelancerEmail}</span>
-              </p>
-              <p className="flex items-center gap-2 text-zinc-600 mt-0.5 text-xs">
-                <MapPin className="size-3 text-zinc-400" />
-                <span>Hanoi, Vietnam</span>
               </p>
             </div>
           </div>
@@ -324,26 +267,18 @@ export function ContractDocumentPaper({
               </button>
             )}
           </div>
-          <p className="text-zinc-600 mb-3">{t("sec2Intro")}</p>
-
-          <div className="border border-zinc-300 rounded-xs grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-zinc-300 text-xs">
-            <div className="p-3">
-              <span className="font-bold text-zinc-950">
-                {t("jobTitleLabel")}{" "}
-              </span>
-              <span className="text-zinc-800">
-                {contract.job?.title || t("defaultProjectTitle")}
-              </span>
-            </div>
-            <div className="p-3">
-              <span className="font-bold text-zinc-950">
-                {t("deliverablesLabel")}{" "}
-              </span>
-              <span className="text-zinc-800">
-                {contract.terms?.slice(0, 150) || t("defaultDeliverables")}
-              </span>
-            </div>
-          </div>
+          <p className="text-zinc-700 leading-relaxed">
+            {t("sec2ServiceIntro", {
+              jobTitle: contract.job?.title || t("defaultProjectTitle"),
+            })}
+          </p>
+          <p className="text-zinc-700 leading-relaxed mt-2">
+            <span className="font-semibold text-zinc-900">{t("deliverablesLabel")}{" "}</span>
+            {contract.terms || t("defaultDeliverables")}
+          </p>
+          <p className="text-zinc-700 leading-relaxed mt-2">
+            {t("sec2QualityStandards")}
+          </p>
         </section>
 
         <hr className="border-zinc-200" />
@@ -368,7 +303,7 @@ export function ContractDocumentPaper({
             </div>
           </div>
 
-          <p className="text-zinc-600 mb-3">
+          <p className="text-zinc-700 leading-relaxed">
             {t("sec3Summary", {
               totalAmount: `$${totalAmount.toLocaleString("en-US", { minimumFractionDigits: 2 })}`,
               feePercent: clientFeePercent,
@@ -376,117 +311,78 @@ export function ContractDocumentPaper({
             })}
           </p>
 
-          <div className="overflow-x-auto border border-zinc-300 rounded-xs">
-            <table className="w-full text-left border-collapse text-xs">
-              <thead>
-                <tr className="bg-zinc-50 border-b border-zinc-300 text-zinc-900 font-semibold">
-                  <th className="py-2.5 px-3 w-16 border-r border-zinc-300">
-                    {t("colMilestone")}
-                  </th>
-                  <th className="py-2.5 px-3 border-r border-zinc-300">
-                    {t("colDescription")}
-                  </th>
-                  <th className="py-2.5 px-3 w-28 border-r border-zinc-300">
-                    {t("colAmount")}
-                  </th>
-                  <th className="py-2.5 px-3 w-32 border-r border-zinc-300">
-                    {t("colPaymentStatus")}
-                  </th>
-                  <th className="py-2.5 px-3 w-28 border-r border-zinc-300">
-                    {t("colDueDate")}
-                  </th>
-                  {canEditMilestones && (
-                    <th className="py-2.5 px-3 w-20 text-center">
-                      {t("colActions")}
-                    </th>
-                  )}
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-zinc-200">
-                {milestones.map((m, idx) => {
-                  const isRealMilestone = Boolean(m.id && m.id > 0);
-                  const isEditable =
-                    canEditMilestones &&
-                    isRealMilestone &&
-                    m.status !== "COMPLETED";
+          <div className="mt-3 space-y-2">
+            <p className="font-semibold text-zinc-900">{t("milestoneScheduleLabel")}:</p>
+            <ul className="space-y-2 pl-4 list-disc text-zinc-700">
+              {milestones.map((m, idx) => {
+                const isRealMilestone = Boolean(m.id && m.id > 0);
+                const isEditable =
+                  canEditMilestones &&
+                  isRealMilestone &&
+                  m.status !== "COMPLETED";
 
-                  return (
-                    <tr key={m.id || idx} className="hover:bg-zinc-50/50">
-                      <td className="py-2.5 px-3 border-r border-zinc-200 font-mono text-zinc-800">
-                        {idx + 1}
-                      </td>
-                      <td className="py-2.5 px-3 border-r border-zinc-200 text-zinc-800">
-                        {isRealMilestone && canViewMilestoneDetail ? (
-                          <Link
-                            href={`${basePath}/contracts/${encodeURIComponent(contract.slug || String(contract.id))}/milestones/${m.id}`}
-                            className="font-medium text-zinc-950 hover:text-[#0069D3] hover:underline transition-colors"
+                return (
+                  <li key={m.id || idx} className="leading-relaxed">
+                    <span className="font-semibold text-zinc-900">
+                      {t("colMilestone")} {idx + 1}:{" "}
+                    </span>
+                    {isRealMilestone && canViewMilestoneDetail ? (
+                      <Link
+                        href={`${basePath}/contracts/${encodeURIComponent(contract.slug || String(contract.id))}/milestones/${m.id}`}
+                        className="font-medium text-zinc-950 hover:text-[#0069D3] hover:underline"
+                      >
+                        {m.title}
+                      </Link>
+                    ) : (
+                      <span className="font-medium text-zinc-950">{m.title}</span>
+                    )}
+                    {" — "}
+                    <span className="font-mono font-semibold text-zinc-900">
+                      ${Number(m.amount).toLocaleString("en-US", { minimumFractionDigits: 2 })}
+                    </span>
+                    {m.dueDate && (
+                      <span className="text-zinc-600">
+                        {" "}({t("colDueDate")}: {formatDate(m.dueDate)})
+                      </span>
+                    )}
+                    {isEditable && (
+                      <span className="ml-2 inline-flex items-center gap-1.5 align-middle">
+                        {canUpdateMilestone && onEditMilestone && (
+                          <button
+                            type="button"
+                            onClick={() => onEditMilestone(m)}
+                            title={t("editMilestoneTooltip")}
+                            className="p-1 text-zinc-600 hover:text-[#0069D3] cursor-pointer"
                           >
-                            {m.title}
-                          </Link>
-                        ) : (
-                          <p className="font-medium text-zinc-950">{m.title}</p>
+                            <Pencil className="size-3.5" />
+                          </button>
                         )}
-                        {m.description && (
-                          <p className="text-[11px] text-zinc-500 mt-0.5 line-clamp-1">
-                            {m.description}
-                          </p>
-                        )}
-                      </td>
-                      <td className="py-2.5 px-3 border-r border-zinc-200 font-mono font-semibold text-zinc-900">
-                        $
-                        {Number(m.amount).toLocaleString("en-US", {
-                          minimumFractionDigits: 2,
-                        })}
-                      </td>
-                      <td className="py-2.5 px-3 border-r border-zinc-200">
-                        {renderPaymentStatusBadge(m.paymentStatus)}
-                      </td>
-                      <td className="py-2.5 px-3 border-r border-zinc-200 text-zinc-600 font-mono text-[11px]">
-                        {formatDate(m.dueDate)}
-                      </td>
-
-                      {/* Milestone Actions for Client */}
-                      {canEditMilestones && (
-                        <td className="py-2.5 px-3 text-center">
-                          {isEditable ? (
-                            <div className="flex items-center justify-center gap-1.5">
-                              {canUpdateMilestone && onEditMilestone && (
-                                <button
-                                  type="button"
-                                  onClick={() => onEditMilestone(m)}
-                                  title={t("editMilestoneTooltip")}
-                                  className="flex size-6 items-center justify-center rounded-md text-zinc-600 hover:bg-zinc-100 hover:text-[#0069D3] transition-colors cursor-pointer"
-                                >
-                                  <Pencil className="size-3.5" />
-                                </button>
-                              )}
-                              {canDeleteMilestone &&
-                                onDeleteMilestone &&
-                                !(
-                                  contract.status === "PENDING_SIGN" &&
-                                  contract.holdMilestoneIds?.includes(m.id)
-                                ) && (
-                                  <button
-                                    type="button"
-                                    onClick={() => onDeleteMilestone(m.id, m.title)}
-                                    title={t("deleteMilestoneTooltip")}
-                                    className="flex size-6 items-center justify-center rounded-md text-zinc-500 hover:bg-rose-50 hover:text-rose-600 transition-colors cursor-pointer"
-                                  >
-                                    <Trash2 className="size-3.5" />
-                                  </button>
-                                )}
-                            </div>
-                          ) : (
-                            <span className="text-[10px] text-zinc-400">—</span>
+                        {canDeleteMilestone &&
+                          onDeleteMilestone &&
+                          !(
+                            contract.status === "PENDING_SIGN" &&
+                            contract.holdMilestoneIds?.includes(m.id)
+                          ) && (
+                            <button
+                              type="button"
+                              onClick={() => onDeleteMilestone(m.id, m.title)}
+                              title={t("deleteMilestoneTooltip")}
+                              className="p-1 text-zinc-500 hover:text-rose-600 cursor-pointer"
+                            >
+                              <Trash2 className="size-3.5" />
+                            </button>
                           )}
-                        </td>
-                      )}
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
+                      </span>
+                    )}
+                  </li>
+                );
+              })}
+            </ul>
           </div>
+
+          <p className="text-zinc-700 leading-relaxed mt-3">
+            {t("sec3EscrowNote")}
+          </p>
         </section>
 
         <hr className="border-zinc-200" />
@@ -525,7 +421,7 @@ export function ContractDocumentPaper({
 
         <hr className="border-zinc-200" />
 
-        {/* ── 7. DISPUTE RESOLUTION ── */}
+        {/* ── 7. CONFIDENTIALITY AND NON-DISCLOSURE ── */}
         <section>
           <h2 className="text-sm font-bold uppercase tracking-wider text-zinc-950 mb-1.5">
             {t("sec7Title")}
@@ -535,12 +431,52 @@ export function ContractDocumentPaper({
 
         <hr className="border-zinc-200" />
 
-        {/* ── 8. SIGNATURES ── */}
-        <section className="pt-2">
+        {/* ── 8. ESCROW ARBITRATION AND DISPUTE RESOLUTION ── */}
+        <section>
           <h2 className="text-sm font-bold uppercase tracking-wider text-zinc-950 mb-1.5">
             {t("sec8Title")}
           </h2>
-          <p className="text-zinc-600 mb-8">{t("sec8Intro")}</p>
+          <p className="text-zinc-600">{t("sec8Body")}</p>
+        </section>
+
+        <hr className="border-zinc-200" />
+
+        {/* ── 9. ANTI-CIRCUMVENTION AND PLATFORM INTEGRITY ── */}
+        <section>
+          <h2 className="text-sm font-bold uppercase tracking-wider text-zinc-950 mb-1.5">
+            {t("sec9Title")}
+          </h2>
+          <p className="text-zinc-600">{t("sec9Body")}</p>
+        </section>
+
+        <hr className="border-zinc-200" />
+
+        {/* ── 10. TERMINATION AND CANCELLATION ── */}
+        <section>
+          <h2 className="text-sm font-bold uppercase tracking-wider text-zinc-950 mb-1.5">
+            {t("sec10Title")}
+          </h2>
+          <p className="text-zinc-600">{t("sec10Body")}</p>
+        </section>
+
+        <hr className="border-zinc-200" />
+
+        {/* ── 11. GENERAL TERMS AND INDEPENDENT CONTRACTOR ── */}
+        <section>
+          <h2 className="text-sm font-bold uppercase tracking-wider text-zinc-950 mb-1.5">
+            {t("sec11Title")}
+          </h2>
+          <p className="text-zinc-600">{t("sec11Body")}</p>
+        </section>
+
+        <hr className="border-zinc-200" />
+
+        {/* ── 12. SIGNATURES AND ELECTRONIC ACKNOWLEDGEMENT ── */}
+        <section className="pt-2">
+          <h2 className="text-sm font-bold uppercase tracking-wider text-zinc-950 mb-1.5">
+            {t("sec12Title")}
+          </h2>
+          <p className="text-zinc-600 mb-8">{t("sec12Intro")}</p>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 text-center pt-4">
             {/* Client Signature */}
