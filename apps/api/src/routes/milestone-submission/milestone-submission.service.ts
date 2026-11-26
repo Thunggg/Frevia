@@ -85,6 +85,13 @@ export class MilestoneSubmissionService {
       );
 
       if (
+        contract.expiresAt &&
+        new Date(contract.expiresAt).getTime() < Date.now()
+      ) {
+        throw SubmissionForbiddenException();
+      }
+
+      if (
         milestone.status !== MilestoneStatus.IN_PROGRESS &&
         milestone.status !== MilestoneStatus.CHANGES_REQUESTED &&
         milestone.status !== MilestoneStatus.LATE

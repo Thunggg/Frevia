@@ -51,3 +51,11 @@ export const FailedToDeleteMilestoneFileException = () =>
   new InternalServerErrorException([
     { message: ManageMilestoneFileMessage.FAILED_TO_DELETE, path: '' },
   ]);
+
+export const MilestoneFileSubmittedCannotDeleteException = () =>
+  new UnprocessableEntityException([
+    {
+      message: ManageMilestoneFileMessage.CANNOT_DELETE_SUBMITTED,
+      path: 'fileId',
+    },
+  ]);

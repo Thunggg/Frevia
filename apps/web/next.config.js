@@ -18,6 +18,21 @@ const nextConfig = {
         destination: "/freelancer/search/jobs",
         permanent: false,
       },
+      {
+        source: "/find-work",
+        destination: "/job",
+        permanent: false,
+      },
+      {
+        source: "/jobs",
+        destination: "/job",
+        permanent: false,
+      },
+      {
+        source: "/jobs/:slug*",
+        destination: "/job/:slug*",
+        permanent: false,
+      },
     ];
   },
   async rewrites() {

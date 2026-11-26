@@ -12,7 +12,7 @@ import {
   TransactionType,
 } from '@prisma/client';
 import { GetTransactionListQueryType } from '@shared/types';
-import { syncContractAndJobCompletion } from '../../shared/helper/contract-activation.helper';
+import { syncContractAndJobCompletion } from '../contract/contract.repo';
 import { PrismaService } from '../../shared/services/prisma.service';
 
 @Injectable()

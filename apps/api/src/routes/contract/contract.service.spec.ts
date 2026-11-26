@@ -398,4 +398,22 @@ describe('ContractService date validation', () => {
     expect(cancelContract).toHaveBeenCalledWith(99);
     expect(result.status).toBe(ContractStatus.CANCELLED);
   });
+
+  it('throws ContractForbiddenException when freelancer attempts to cancel a non-active contract', async () => {
+    const repository = {
+      findContractById: jest.fn().mockResolvedValue({
+        id: 99,
+        clientId: 10,
+        freelancerId: 20,
+        status: ContractStatus.PENDING_SIGN,
+      }),
+    } as unknown as ContractRepository;
+    const service = new ContractService(
+      repository,
+      {} as ContractPdfService,
+      {} as unknown as PaymentService,
+    );
+
+    await expect(service.cancelContract(20, 99)).rejects.toThrow();
+  });
 });

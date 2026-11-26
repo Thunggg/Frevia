@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.9.28)  26 NOV 2026 11:42
+This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.9.28)  26 NOV 2026 12:04
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -954,24 +954,24 @@ File: image/existing/upwork.png Graphic file (type png)
 Package pdftex.def Info: image/existing/upwork.png  used on input line 9.
 (pdftex.def)             Requested size: 385.02577pt x 216.46835pt.
  [12 <./image/existing/upwork.png (PNG copy)>]
-<image/existing/fiverr.png, id=208, 1371.1225pt x 702.625pt>
+<image/existing/fiverr.png, id=208, 1135.8435pt x 519.1395pt>
 File: image/existing/fiverr.png Graphic file (type png)
 <use image/existing/fiverr.png>
 Package pdftex.def Info: image/existing/fiverr.png  used on input line 34.
-(pdftex.def)             Requested size: 385.02577pt x 197.30188pt.
- [13 <./image/existing/fiverr.png (PNG copy)>]
-<image/existing/freelancer.png, id=215, 1371.1225pt x 770.88pt>
+(pdftex.def)             Requested size: 385.02577pt x 175.97435pt.
+ [13 <./image/existing/fiverr.png>]
+<image/existing/freelancer.png, id=216, 1371.1225pt x 770.88pt>
 File: image/existing/freelancer.png Graphic file (type png)
 <use image/existing/freelancer.png>
 Package pdftex.def Info: image/existing/freelancer.png  used on input line 59.
 (pdftex.def)             Requested size: 385.02577pt x 216.46835pt.
- [14] [15 <./image/existing/freelancer.png (PNG copy)>]
-<image/existing/toptal.png, id=225, 1371.1225pt x 770.88pt>
+ [14 <./image/existing/freelancer.png (PNG copy)>]
+<image/existing/toptal.png, id=222, 1371.1225pt x 770.88pt>
 File: image/existing/toptal.png Graphic file (type png)
 <use image/existing/toptal.png>
 Package pdftex.def Info: image/existing/toptal.png  used on input line 82.
 (pdftex.def)             Requested size: 385.02577pt x 216.46835pt.
- [16 <./image/existing/toptal.png (PNG copy)>] [17]
+ [15] [16 <./image/existing/toptal.png (PNG copy)>] [17]
 Underfull \hbox (badness 10000) in paragraph at lines 146--146
 []|\T1/ptm/b/n/10 Marketplace
  []
@@ -1116,9 +1116,9 @@ s/utmbi8a.pfb><C:/Users/ASUS/AppData/Local/Programs/MiKTeX/fonts/type1/urw/time
 s/utmr8a.pfb><C:/Users/ASUS/AppData/Local/Programs/MiKTeX/fonts/type1/vntex/urw
 vn/utmr8v.pfb><C:/Users/ASUS/AppData/Local/Programs/MiKTeX/fonts/type1/urw/time
 s/utmri8a.pfb>
-Output written on main.pdf (35 pages, 2672874 bytes).
+Output written on main.pdf (35 pages, 2203259 bytes).
 PDF statistics:
- 439 PDF objects out of 1000 (max. 8388607)
+ 441 PDF objects out of 1000 (max. 8388607)
  83 named destinations out of 1000 (max. 500000)
  218 words of extra memory for PDF output out of 10000 (max. 10000000)
 

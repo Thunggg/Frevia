@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.9.28)  26 NOV 2026 01:28
+This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.9.28)  26 NOV 2026 16:20
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -94,6 +94,44 @@ Package: iftex 2024/12/12 v1.0g TeX engine tests
 \Gm@dimlist=\toks20
 
 (C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/geometry\geometry.cfg))
+(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/xcolor\xcolor.sty
+Package: xcolor 2024/09/29 v3.02 LaTeX color extensions (UK)
+
+(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/graphics-cfg\color.cfg
+File: color.cfg 2016/01/02 v1.6 sample color configuration
+)
+Package xcolor Info: Driver file: pdftex.def on input line 274.
+
+(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/graphics-def\pdftex.def
+File: pdftex.def 2025/09/29 v1.2d Graphics/color driver for pdftex
+) (C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/graphics\mathcolor.ltx
+)
+Package xcolor Info: Model `cmy' substituted by `cmy0' on input line 1349.
+Package xcolor Info: Model `hsb' substituted by `rgb' on input line 1353.
+Package xcolor Info: Model `RGB' extended on input line 1365.
+Package xcolor Info: Model `HTML' substituted by `rgb' on input line 1367.
+Package xcolor Info: Model `Hsb' substituted by `hsb' on input line 1368.
+Package xcolor Info: Model `tHsb' substituted by `hsb' on input line 1369.
+Package xcolor Info: Model `HSB' substituted by `hsb' on input line 1370.
+Package xcolor Info: Model `Gray' substituted by `gray' on input line 1371.
+Package xcolor Info: Model `wave' substituted by `hsb' on input line 1372.
+) (C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/colortbl\colortbl.sty
+Package: colortbl 2026/05/01 v1.0l Color table columns (DPC)
+
+(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/tools\array.sty
+Package: array 2025/09/25 v2.6n Tabular extension package (FMi)
+\col@sep=\dimen157
+\ar@mcellbox=\box53
+\extrarowheight=\dimen158
+\NC@list=\toks21
+\extratabsurround=\skip51
+\backup@length=\skip52
+\ar@cellbox=\box54
+)
+\everycr=\toks22
+\minrowclearance=\skip53
+\rownum=\count286
+)
 (C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/graphics\graphicx.sty
 Package: graphicx 2024/12/31 v1.2e Enhanced LaTeX Graphics (DPC,SPQR)
 
@@ -108,85 +146,117 @@ g
 File: graphics.cfg 2016/06/04 v1.11 sample graphics configuration
 )
 Package graphics Info: Driver file: pdftex.def on input line 106.
-
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/graphics-def\pdftex.def
-File: pdftex.def 2025/09/29 v1.2d Graphics/color driver for pdftex
-))
-\Gin@req@height=\dimen157
-\Gin@req@width=\dimen158
-) (C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/tools\array.sty
-Package: array 2025/09/25 v2.6n Tabular extension package (FMi)
-\col@sep=\dimen159
-\ar@mcellbox=\box53
-\extrarowheight=\dimen160
-\NC@list=\toks21
-\extratabsurround=\skip51
-\backup@length=\skip52
-\ar@cellbox=\box54
 )
-(C:\Program Files\MiKTeX\tex/latex/multirow\multirow.sty
+\Gin@req@height=\dimen159
+\Gin@req@width=\dimen160
+) (C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/tools\tabularx.sty
+Package: tabularx 2023/12/11 v2.12a `tabularx' package (DPC)
+\TX@col@width=\dimen161
+\TX@old@table=\dimen162
+\TX@old@col=\dimen163
+\TX@target=\dimen164
+\TX@delta=\dimen165
+\TX@cols=\count287
+\TX@ftn=\toks23
+) (C:\Program Files\MiKTeX\tex/latex/multirow\multirow.sty
 Package: multirow 2024/11/12 v2.9 Span multiple rows of a table
-\multirow@colwidth=\skip53
-\multirow@cntb=\count286
-\multirow@dima=\skip54
-\bigstrutjot=\dimen161
+\multirow@colwidth=\skip54
+\multirow@cntb=\count288
+\multirow@dima=\skip55
+\bigstrutjot=\dimen166
+)
+(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/makecell\makecell.sty
+Package: makecell 2009/08/03 V0.1e Managing of Tab Column Heads and Cells
+\rotheadsize=\dimen167
+\c@nlinenum=\count289
+\TeXr@lab=\toks24
 )
 (C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/enumitem\enumitem.sty
 Package: enumitem 2025/02/06 v3.11 Customized lists
-\labelindent=\skip55
-\enit@outerparindent=\dimen162
-\enit@toks=\toks22
+\labelindent=\skip56
+\enit@outerparindent=\dimen168
+\enit@toks=\toks25
 \enit@inbox=\box55
-\enit@count@id=\count287
-\enitdp@description=\count288
+\enit@count@id=\count290
+\enitdp@description=\count291
 )
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/xcolor\xcolor.sty
-Package: xcolor 2024/09/29 v3.02 LaTeX color extensions (UK)
-
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/graphics-cfg\color.cfg
-File: color.cfg 2016/01/02 v1.6 sample color configuration
+(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/setspace\setspace.sty
+Package: setspace 2022/12/04 v6.7b set line spacing
 )
-Package xcolor Info: Driver file: pdftex.def on input line 274.
-
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/graphics\mathcolor.ltx)
-Package xcolor Info: Model `cmy' substituted by `cmy0' on input line 1349.
-Package xcolor Info: Model `hsb' substituted by `rgb' on input line 1353.
-Package xcolor Info: Model `RGB' extended on input line 1365.
-Package xcolor Info: Model `HTML' substituted by `rgb' on input line 1367.
-Package xcolor Info: Model `Hsb' substituted by `hsb' on input line 1368.
-Package xcolor Info: Model `tHsb' substituted by `hsb' on input line 1369.
-Package xcolor Info: Model `HSB' substituted by `hsb' on input line 1370.
-Package xcolor Info: Model `Gray' substituted by `gray' on input line 1371.
-Package xcolor Info: Model `wave' substituted by `hsb' on input line 1372.
-) (C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/caption\caption.sty
+(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/tools\indentfirst.sty
+Package: indentfirst 2023/07/02 v1.03 Indent first paragraph (DPC)
+)
+(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/caption\caption.sty
 Package: caption 2023/08/05 v3.6o Customizing captions (AR)
 
 (C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/caption\caption3.sty
 Package: caption3 2023/07/31 v2.4d caption3 kernel (AR)
-\caption@tempdima=\dimen163
-\captionmargin=\dimen164
-\caption@leftmargin=\dimen165
-\caption@rightmargin=\dimen166
-\caption@width=\dimen167
-\caption@indent=\dimen168
-\caption@parindent=\dimen169
-\caption@hangindent=\dimen170
+\caption@tempdima=\dimen169
+\captionmargin=\dimen170
+\caption@leftmargin=\dimen171
+\caption@rightmargin=\dimen172
+\caption@width=\dimen173
+\caption@indent=\dimen174
+\caption@parindent=\dimen175
+\caption@hangindent=\dimen176
 Package caption Info: Standard document class detected.
 )
-\c@caption@flags=\count289
-\c@continuedfloat=\count290
+\c@caption@flags=\count292
+\c@continuedfloat=\count293
 )
 (C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/titlesec\titlesec.sty
 Package: titlesec 2025/01/04 v2.17 Sectioning titles
 \ttl@box=\box56
-\beforetitleunit=\skip56
-\aftertitleunit=\skip57
-\ttl@plus=\dimen171
-\ttl@minus=\dimen172
-\ttl@toksa=\toks23
-\titlewidth=\dimen173
-\titlewidthlast=\dimen174
-\titlewidthfirst=\dimen175
+\beforetitleunit=\skip57
+\aftertitleunit=\skip58
+\ttl@plus=\dimen177
+\ttl@minus=\dimen178
+\ttl@toksa=\toks26
+\titlewidth=\dimen179
+\titlewidthlast=\dimen180
+\titlewidthfirst=\dimen181
+)
+(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/tocloft\tocloft.sty
+Package: tocloft 2026-09-12 v3.0c parameterised ToC, etc., typesetting
+
+(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/etoolbox\etoolbox.sty
+Package: etoolbox 2025/10/02 v2.5m e-TeX tools for LaTeX (JAW)
+\etb@tempcnta=\count294
+)
+Package tocloft Info: The document has section divisions on input line 64.
+\cftparskip=\skip59
+\cftbeforetoctitleskip=\skip60
+\cftaftertoctitleskip=\skip61
+\cftbeforepartskip=\skip62
+\cftpartnumwidth=\skip63
+\cftpartindent=\skip64
+\cftbeforesecskip=\skip65
+\cftsecindent=\skip66
+\cftsecnumwidth=\skip67
+\cftbeforesubsecskip=\skip68
+\cftsubsecindent=\skip69
+\cftsubsecnumwidth=\skip70
+\cftbeforesubsubsecskip=\skip71
+\cftsubsubsecindent=\skip72
+\cftsubsubsecnumwidth=\skip73
+\cftbeforeparaskip=\skip74
+\cftparaindent=\skip75
+\cftparanumwidth=\skip76
+\cftbeforesubparaskip=\skip77
+\cftsubparaindent=\skip78
+\cftsubparanumwidth=\skip79
+\cftbeforeloftitleskip=\skip80
+\cftafterloftitleskip=\skip81
+\cftbeforefigskip=\skip82
+\cftfigindent=\skip83
+\cftfignumwidth=\skip84
+\c@lofdepth=\count295
+\c@lotdepth=\count296
+\cftbeforelottitleskip=\skip85
+\cftafterlottitleskip=\skip86
+\cftbeforetabskip=\skip87
+\cfttabindent=\skip88
+\cfttabnumwidth=\skip89
 )
 (C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\hyperref.sty
 Package: hyperref 2025-07-12 v7.01o Hypertext links for LaTeX
@@ -231,19 +301,16 @@ Package: gettitlestring 2019/12/15 v1.6 Cleanup title references (HO)
 (C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/kvoptions\kvoptions.sty
 Package: kvoptions 2022-06-15 v3.15 Key value format for package options (HO)
 ))
-\c@section@level=\count291
-) (C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/etoolbox\etoolbox.sty
-Package: etoolbox 2025/10/02 v2.5m e-TeX tools for LaTeX (JAW)
-\etb@tempcnta=\count292
+\c@section@level=\count297
 )
 (C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/generic/stringenc\stringenc.st
 y
 Package: stringenc 2019/11/29 v1.12 Convert strings between diff. encodings (HO
 )
 )
-\@linkdim=\dimen176
-\Hy@linkcounter=\count293
-\Hy@pagecounter=\count294
+\@linkdim=\dimen182
+\Hy@linkcounter=\count298
+\Hy@pagecounter=\count299
  (C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\pd1enc.def
 File: pd1enc.def 2025-07-12 v7.01o Hyperref: PDFDocEncoding definition (HO)
 Now handling font encoding PD1 ...
@@ -252,7 +319,7 @@ Now handling font encoding PD1 ...
 (C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/generic/intcalc\intcalc.sty
 Package: intcalc 2019/12/15 v1.3 Expandable calculations with integers (HO)
 )
-\Hy@SavedSpaceFactor=\count295
+\Hy@SavedSpaceFactor=\count300
 
 (C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\puenc.def
 File: puenc.def 2025-07-12 v7.01o Hyperref: PDF Unicode definition (HO)
@@ -266,14 +333,14 @@ Package hyperref Info: Plain pages OFF on input line 4210.
 Package hyperref Info: Backreferencing OFF on input line 4215.
 Package hyperref Info: Implicit mode ON; LaTeX internals redefined.
 Package hyperref Info: Bookmarks ON on input line 4462.
-\c@Hy@tempcnt=\count296
+\c@Hy@tempcnt=\count301
 
 (C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/url\url.sty
 \Urlmuskip=\muskip17
 Package: url 2013/09/16  ver 3.4  Verb mode for urls, etc.
 )
 LaTeX Info: Redefining \url on input line 4801.
-\XeTeXLinkMargin=\dimen177
+\XeTeXLinkMargin=\dimen183
 
 (C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/generic/bitset\bitset.sty
 Package: bitset 2019/12/09 v1.3 Handle bit-vector datatype (HO)
@@ -283,9 +350,9 @@ sty
 Package: bigintcalc 2019/12/15 v1.5 Expandable calculations on big integers (HO
 )
 ))
-\Fld@menulength=\count297
-\Field@Width=\dimen178
-\Fld@charsize=\dimen179
+\Fld@menulength=\count302
+\Field@Width=\dimen184
+\Fld@charsize=\dimen185
 Package hyperref Info: Hyper figures OFF on input line 6078.
 Package hyperref Info: Link nesting OFF on input line 6083.
 Package hyperref Info: Hyper index ON on input line 6086.
@@ -293,16 +360,16 @@ Package hyperref Info: backreferencing OFF on input line 6093.
 Package hyperref Info: Link coloring OFF on input line 6098.
 Package hyperref Info: Link coloring with OCG OFF on input line 6103.
 Package hyperref Info: PDF/A mode OFF on input line 6108.
-\Hy@abspage=\count298
-\c@Item=\count299
-\c@Hfootnote=\count300
+\Hy@abspage=\count303
+\c@Item=\count304
+\c@Hfootnote=\count305
 )
 Package hyperref Info: Driver (autodetected): hpdftex.
 
 (C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\hpdftex.def
 File: hpdftex.def 2025-07-12 v7.01o Hyperref driver for pdfTeX
-\Fld@listcount=\count301
-\c@bookmark@seq@number=\count302
+\Fld@listcount=\count306
+\c@bookmark@seq@number=\count307
 
 (C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/rerunfilecheck\rerunfile
 check.sty
@@ -315,33 +382,33 @@ Package: uniquecounter 2019/12/15 v1.4 Provide unlimited unique counter (HO)
 Package uniquecounter Info: New unique counter `rerunfilecheck' on input line 2
 84.
 )
-\Hy@SectionHShift=\skip58
+\Hy@SectionHShift=\skip90
 )
 (C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/fancyhdr\fancyhdr.sty
 Package: fancyhdr 2025/02/07 v5.2 Extensive control of page headers and footers
 
-\f@nch@headwidth=\skip59
-\f@nch@offset@elh=\skip60
-\f@nch@offset@erh=\skip61
-\f@nch@offset@olh=\skip62
-\f@nch@offset@orh=\skip63
-\f@nch@offset@elf=\skip64
-\f@nch@offset@erf=\skip65
-\f@nch@offset@olf=\skip66
-\f@nch@offset@orf=\skip67
-\f@nch@height=\skip68
-\f@nch@footalignment=\skip69
-\f@nch@widthL=\skip70
-\f@nch@widthC=\skip71
-\f@nch@widthR=\skip72
-\@temptokenb=\toks24
+\f@nch@headwidth=\skip91
+\f@nch@offset@elh=\skip92
+\f@nch@offset@erh=\skip93
+\f@nch@offset@olh=\skip94
+\f@nch@offset@orh=\skip95
+\f@nch@offset@elf=\skip96
+\f@nch@offset@erf=\skip97
+\f@nch@offset@olf=\skip98
+\f@nch@offset@orf=\skip99
+\f@nch@height=\skip100
+\f@nch@footalignment=\skip101
+\f@nch@widthL=\skip102
+\f@nch@widthC=\skip103
+\f@nch@widthR=\skip104
+\@temptokenb=\toks27
 )
 (C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\amssymb.sty
 Package: amssymb 2013/01/14 v3.01 AMS font symbols
 
 (C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\amsfonts.sty
 Package: amsfonts 2013/01/14 v3.01 Basic AMSFonts support
-\@emptytoks=\toks25
+\@emptytoks=\toks28
 \symAMSa=\mathgroup6
 \symAMSb=\mathgroup7
 LaTeX Font Info:    Overwriting math alphabet `\mathfrak' in version `bold'
@@ -349,14 +416,14 @@ LaTeX Font Info:    Overwriting math alphabet `\mathfrak' in version `bold'
 ))
 (C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/float\float.sty
 Package: float 2001/11/08 v1.3d Float enhancements (AL)
-\c@float@type=\count303
-\float@exts=\toks26
+\c@float@type=\count308
+\float@exts=\toks29
 \float@box=\box57
-\@float@everytoks=\toks27
+\@float@everytoks=\toks30
 \@floatcapt=\box58
 )
-Package hyperref Info: Option `colorlinks' set `true' on input line 19.
-LaTeX Font Info:    Trying to load font information for T1+ptm on input line 39
+Package hyperref Info: Option `colorlinks' set `true' on input line 28.
+LaTeX Font Info:    Trying to load font information for T1+ptm on input line 86
 .
 
 (C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\t1ptm.fd
@@ -365,29 +432,29 @@ File: t1ptm.fd 2001/06/04 font definitions for T1/ptm.
 (C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/l3backend\l3backend-pdft
 ex.def
 File: l3backend-pdftex.def 2025-10-09 L3 backend support: PDF output (pdfTeX)
-\l__color_backend_stack_int=\count304
+\l__color_backend_stack_int=\count309
 ) (Report5_Test_Documentation.aux)
 \openout1 = `Report5_Test_Documentation.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 39.
-LaTeX Font Info:    ... okay on input line 39.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 39.
-LaTeX Font Info:    ... okay on input line 39.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 39.
-LaTeX Font Info:    ... okay on input line 39.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 39.
-LaTeX Font Info:    ... okay on input line 39.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 39.
-LaTeX Font Info:    ... okay on input line 39.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 39.
-LaTeX Font Info:    ... okay on input line 39.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 39.
-LaTeX Font Info:    ... okay on input line 39.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 39.
-LaTeX Font Info:    ... okay on input line 39.
-LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 39.
-LaTeX Font Info:    ... okay on input line 39.
-\big@size=\dimen180
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 86.
+LaTeX Font Info:    ... okay on input line 86.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 86.
+LaTeX Font Info:    ... okay on input line 86.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 86.
+LaTeX Font Info:    ... okay on input line 86.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 86.
+LaTeX Font Info:    ... okay on input line 86.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 86.
+LaTeX Font Info:    ... okay on input line 86.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 86.
+LaTeX Font Info:    ... okay on input line 86.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 86.
+LaTeX Font Info:    ... okay on input line 86.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 86.
+LaTeX Font Info:    ... okay on input line 86.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 86.
+LaTeX Font Info:    ... okay on input line 86.
+\big@size=\dimen186
 
 *geometry* driver: auto-detecting
 *geometry* detected driver: pdftex
@@ -397,15 +464,15 @@ LaTeX Font Info:    ... okay on input line 39.
 * layout: <same size as paper>
 * layoutoffset:(h,v)=(0.0pt,0.0pt)
 * modes: 
-* h-part:(L,W,R)=(71.13188pt, 455.24411pt, 71.13188pt)
-* v-part:(T,H,B)=(71.13188pt, 702.78308pt, 71.13188pt)
+* h-part:(L,W,R)=(85.35826pt, 455.24411pt, 56.9055pt)
+* v-part:(T,H,B)=(56.9055pt, 731.23584pt, 56.9055pt)
 * \paperwidth=597.50787pt
 * \paperheight=845.04684pt
 * \textwidth=455.24411pt
-* \textheight=702.78308pt
-* \oddsidemargin=-1.1381pt
-* \evensidemargin=-1.1381pt
-* \topmargin=-38.1381pt
+* \textheight=731.23584pt
+* \oddsidemargin=13.08827pt
+* \evensidemargin=13.08827pt
+* \topmargin=-52.36449pt
 * \headheight=12.0pt
 * \headsep=25.0pt
 * \topskip=12.0pt
@@ -427,17 +494,17 @@ LaTeX Font Info:    ... okay on input line 39.
 (C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/context/base/mkii\supp-pdf.mki
 i
 [Loading MPS to PDF converter (version 2006.09.02).]
-\scratchcounter=\count305
-\scratchdimen=\dimen181
+\scratchcounter=\count310
+\scratchdimen=\dimen187
 \scratchbox=\box59
-\nofMPsegments=\count306
-\nofMParguments=\count307
-\everyMPshowfont=\toks28
-\MPscratchCnt=\count308
-\MPscratchDim=\dimen182
-\MPnumerator=\count309
-\makeMPintoPDFobject=\count310
-\everyMPtoPDFconversion=\toks29
+\nofMPsegments=\count311
+\nofMParguments=\count312
+\everyMPshowfont=\toks31
+\MPscratchCnt=\count313
+\MPscratchDim=\dimen188
+\MPnumerator=\count314
+\makeMPintoPDFobject=\count315
+\everyMPtoPDFconversion=\toks32
 )
 (C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/epstopdf-pkg\epstopdf-ba
 se.sty
@@ -453,15 +520,15 @@ Package caption Info: Begin \AtBeginDocument code.
 Package caption Info: float package is loaded.
 Package caption Info: hyperref package is loaded.
 Package caption Info: End \AtBeginDocument code.
-Package hyperref Info: Link coloring ON on input line 39.
+Package hyperref Info: Link coloring ON on input line 86.
  (Report5_Test_Documentation.out) (Report5_Test_Documentation.out)
 \@outlinefile=\write3
 \openout3 = `Report5_Test_Documentation.out'.
 
-<fpt_logo.png, id=122, 1284.8pt x 500.87125pt>
+<fpt_logo.png, id=85, 1284.8pt x 500.87125pt>
 File: fpt_logo.png Graphic file (type png)
 <use fpt_logo.png>
-Package pdftex.def Info: fpt_logo.png  used on input line 46.
+Package pdftex.def Info: fpt_logo.png  used on input line 93.
 (pdftex.def)             Requested size: 204.85846pt x 79.85825pt.
  [1
 
@@ -469,198 +536,152 @@ Package pdftex.def Info: fpt_logo.png  used on input line 46.
 AppData/Local/Programs/MiKTeX/fonts/enc/dvips/base/8r.enc} <./fpt_logo.png>]
 (Report5_Test_Documentation.toc
 LaTeX Font Info:    Trying to load font information for OT1+ztmcm on input line
- 4.
+ 1.
 
 (C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\ot1ztmcm.fd
 File: ot1ztmcm.fd 2000/01/03 Fontinst v1.801 font definitions for OT1/ztmcm.
 )
 LaTeX Font Info:    Trying to load font information for OML+ztmcm on input line
- 4.
+ 1.
 
 (C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\omlztmcm.fd
 File: omlztmcm.fd 2000/01/03 Fontinst v1.801 font definitions for OML/ztmcm.
 )
 LaTeX Font Info:    Trying to load font information for OMS+ztmcm on input line
- 4.
+ 1.
 
 (C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\omsztmcm.fd
 File: omsztmcm.fd 2000/01/03 Fontinst v1.801 font definitions for OMS/ztmcm.
 )
 LaTeX Font Info:    Trying to load font information for OMX+ztmcm on input line
- 4.
+ 1.
 
 (C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\omxztmcm.fd
 File: omxztmcm.fd 2000/01/03 Fontinst v1.801 font definitions for OMX/ztmcm.
 )
-LaTeX Font Info:    Trying to load font information for OT1+ptm on input line 4
+LaTeX Font Info:    Trying to load font information for OT1+ptm on input line 1
 .
 
 (C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\ot1ptm.fd
 File: ot1ptm.fd 2001/06/04 font definitions for OT1/ptm.
 )
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <12> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 4.
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 1.
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <9> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 4.
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 1.
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <7> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 4.
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 1.
+)
+\tf@toc=\write4
+\openout4 = `Report5_Test_Documentation.toc'.
+
 
 pdfTeX warning (ext4): destination with the same identifier (name{page.1}) has 
 been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.30 ... {5.4}Test Conclusion}{17}{subsection.5.4}
-                                                  % [1])
-\tf@toc=\write4
-\openout4 = `Report5_Test_Documentation.toc'.
-
- [2]
-(Report5_Test_Documentation.lot
-Overfull \hbox (8.00003pt too wide) in paragraph at lines 6--6
- [][] [][][]\T1/ptm/m/n/12 Summary of unit and sys-tem test cases in Re-port5_U
-nit Test.xls and Re-port5_Test 
- []
-
-)
+l.102 \newpage
+               [1] (Report5_Test_Documentation.lot)
 \tf@lot=\write5
 \openout5 = `Report5_Test_Documentation.lot'.
 
- [3]
-Underfull \hbox (badness 10000) in paragraph at lines 69--69
-[]|\T1/ptm/m/n/12 Nguyen Tien
+ [2] [3] [4] [5]
+Overfull \hbox (6.40157pt too wide) in paragraph at lines 221--222
+\T1/ptm/m/n/12 ment zones, to-gether with bilin-gual lo-cal-iza-tion (\T1/cmtt/
+m/n/12 en\T1/ptm/m/n/12 /\T1/cmtt/m/n/12 vi\T1/ptm/m/n/12 ) and re-spon-sive li
+ght/dark themes. 
  []
 
 
-Underfull \hbox (badness 2401) in paragraph at lines 71--71
-[]|\T1/ptm/m/n/12 Nguyen Lu Nhat
- []
-
-
-Underfull \hbox (badness 1424) in paragraph at lines 71--71
-[]|\T1/ptm/m/n/12 Added unit and pend-ing sys-tem test
- []
-
-
-Underfull \hbox (badness 2181) in paragraph at lines 72--72
-[]|\T1/ptm/m/n/12 Added unit and sys-tem test spec-i-fi-
- []
-
-
-Underfull \hbox (badness 3417) in paragraph at lines 72--72
-\T1/ptm/m/n/12 ca-tions for Con-tracts, Shared Files,
- []
-
-
-Underfull \hbox (badness 2582) in paragraph at lines 72--72
-\T1/ptm/m/n/12 Stripe Con-nect Es-crow Pay-ments &
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 73--73
-[]|\T1/ptm/m/n/12 Nguyen Tien
- []
-
-
-Underfull \hbox (badness 1721) in paragraph at lines 73--73
-\T1/cmtt/m/n/12 UF-84 \T1/ptm/m/n/12 along-side mod-ule sys-tem test
- []
-
-
-Underfull \hbox (badness 1122) in paragraph at lines 74--74
-\T1/ptm/m/n/12 44 mod-ules (935 cases; 688 passed,
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 74--74
-\T1/ptm/m/n/12 (\T1/cmtt/m/n/12 Report5_Unit_Test_Backend.html\T1/ptm/m/n/12 ,
- []
-
-[4]
-Overfull \hbox (0.64583pt too wide) in paragraph at lines 93--94
-\T1/ptm/m/n/12 Testing for the \T1/ptm/b/n/12 Fre-via -- Ver-i-fied Free-lance 
-Mar-ket-place Plat-form \T1/ptm/m/n/12 (Project Code: \T1/cmtt/m/n/12 SEP490_04
-\T1/ptm/m/n/12 )
- []
-
-LaTeX Font Info:    Trying to load font information for TS1+ptm on input line 9
-6.
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\ts1ptm.fd
-File: ts1ptm.fd 2001/06/04 font definitions for TS1/ptm.
-)
-[5]
-Overfull \hbox (0.86877pt too wide) in paragraph at lines 149--150
+Overfull \hbox (4.46881pt too wide) in paragraph at lines 245--246
 []\T1/ptm/b/n/12 In-charge: \T1/ptm/m/n/12 All De-vel-op-ers (\T1/cmtt/m/n/12 N
 guyen Tien Thuan\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 Vo Nhut Tin\T1/ptm/m/n/12 , \T
 1/cmtt/m/n/12 Tran Phat Tai\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 Nguyen
  []
 
-
-Underfull \hbox (badness 1043) in paragraph at lines 153--153
-\T1/cmtt/m/n/12 Service\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 PermissionsService\T1/p
-tm/m/n/12 , \T1/cmtt/m/n/12 SessionsService\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 For
-umAdminService\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 Users
- []
-
 [6]
-Underfull \hbox (badness 1472) in paragraph at lines 174--174
-[]\T1/ptm/m/n/12 Controller-to-Service-to-Repository-to-PostgreSQL per-sis-tenc
-e, foreign-key in-tegrity,
+Underfull \hbox (badness 10000) in paragraph at lines 249--249
+\T1/cmtt/m/n/12 ForumPostsService\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 IdentityVerif
+icationsAdminService\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 AuthService\T1/ptm/m/n/12 
+,
  []
 
 
-Underfull \hbox (badness 3601) in paragraph at lines 174--174
+Underfull \hbox (badness 1675) in paragraph at lines 249--249
+\T1/cmtt/m/n/12 UsersService\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 ExpertProfileServi
+ce\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 BannersAdminService\T1/ptm/m/n/12 , \T1/cmtt
+/m/n/12 SkillsAdmin
+ []
+
+
+Overfull \hbox (8.1912pt too wide) in paragraph at lines 257--258
+\T1/ptm/m/n/12 cov-er-age), sup-ported by the live back-end Jest run (\T1/cmtt/
+m/n/12 Report5_Unit_Test_Backend.html\T1/ptm/m/n/12 :
+ []
+
+
+Overfull \hbox (1.02023pt too wide) in paragraph at lines 267--268
+[]\T1/ptm/b/n/12 Infrastructure: \T1/ptm/m/n/12 Docker Com-pose stack run-ning 
+NestJS 11 API (\T1/cmtt/m/n/12 localhost:3002\T1/ptm/m/n/12 ), Next.js
+ []
+
+
+Underfull \hbox (badness 1924) in paragraph at lines 270--270
 \T1/ptm/m/n/12 unique con-straints, soft-delete fil-ter-ing (\T1/cmtt/m/n/12 de
 letedAt\T1/ptm/m/n/12 ), and trans-ac-tional roll-back
  []
 
-[7]
-Overfull \hbox (4.77238pt too wide) in paragraph at lines 192--193
-[]\T1/ptm/m/n/12 Negative au-tho-riza-tion test-ing (role bound-ary en-force-me
-nt, re-voked ses-sion to-kens, banned
+[7] [8] [9] [10]
+Overfull \hbox (2.64377pt too wide) in paragraph at lines 385--386
+[]\T1/ptm/b/n/12 Localization & Cross-Browser Test-ing: \T1/ptm/m/n/12 Run-ning
+ au-to-mated i18n checks (\T1/cmtt/m/n/12 check-i18n
  []
 
-[8] [9]
-Underfull \hbox (badness 2318) in paragraph at lines 309--309
-[]|\T1/ptm/m/n/12 Database & Trans-ac-tion In-
+
+Overfull \hbox (8.32957pt too wide) in paragraph at lines 389--390
+[]\T1/ptm/m/n/12 100% of unau-tho-rized re-quests are blocked with \T1/cmtt/m/n
+/12 401 Unauthorized \T1/ptm/m/n/12 or \T1/cmtt/m/n/12 403 Forbidden\T1/ptm/m/n
+/12 . 
  []
 
-[10]
-LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <10> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 339.
-LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <7.4> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 339.
-LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <6> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 339.
- [11] [12] [13] [14] [15] [16] [17] (Report5_Test_Documentation.aux)
+[11] [12] [13] [14] [15] [16] [17]
+Overfull \hbox (1.5469pt too wide) in paragraph at lines 535--536
+[]\T1/ptm/m/n/12 Based on the recorded test re-sults across 2,005 unit test cas
+es (1,972 passed, 33 untested),
+ []
+
+[18] (Report5_Test_Documentation.aux)
  ***********
 LaTeX2e <2025-11-01>
 L3 programming layer <2025-12-24>
  ***********
 Package rerunfilecheck Info: File `Report5_Test_Documentation.out' has not chan
 ged.
-(rerunfilecheck)             Checksum: F4DCB793DAC6F74ABBCDE9CCDBE02894;4326.
+(rerunfilecheck)             Checksum: 10F2A7BC29B0635A2CD107B8877CE157;2884.
  ) 
 Here is how much of TeX's memory you used:
- 12944 strings out of 467871
- 204825 string characters out of 5418860
- 635199 words of memory out of 5000000
- 41594 multiletter control sequences out of 15000+600000
- 684932 words of font info for 124 fonts, out of 8000000 for 9000
+ 13633 strings out of 467871
+ 215542 string characters out of 5418860
+ 649802 words of memory out of 5000000
+ 42258 multiletter control sequences out of 15000+600000
+ 705523 words of font info for 150 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 75i,12n,79p,926b,670s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 75i,17n,83p,926b,685s stack positions out of 10000i,1000n,20000p,200000b,200000s
  <C:\Users\ASUS\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ectt0
 800.pk> <C:\Users\ASUS\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\
 ectt1000.pk> <C:\Users\ASUS\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dp
-i600\ectt1200.pk><C:/Users/ASUS/AppData/Local/Programs/MiKTeX/fonts/type1/publi
-c/amsfonts/cm/cmmi10.pfb><C:/Users/ASUS/AppData/Local/Programs/MiKTeX/fonts/typ
-e1/public/amsfonts/cm/cmsy10.pfb><C:/Users/ASUS/AppData/Local/Programs/MiKTeX/f
-onts/type1/public/amsfonts/symbols/msam10.pfb><C:/Users/ASUS/AppData/Local/Prog
-rams/MiKTeX/fonts/type1/urw/times/utmb8a.pfb><C:/Users/ASUS/AppData/Local/Progr
-ams/MiKTeX/fonts/type1/urw/times/utmr8a.pfb><C:/Users/ASUS/AppData/Local/Progra
-ms/MiKTeX/fonts/type1/urw/times/utmri8a.pfb>
-Output written on Report5_Test_Documentation.pdf (18 pages, 232310 bytes).
+i600\ectt1200.pk> <C:\Users\ASUS\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/
+ec/dpi600\ectt1095.pk><C:/Users/ASUS/AppData/Local/Programs/MiKTeX/fonts/type1/
+public/amsfonts/cm/cmmi10.pfb><C:/Users/ASUS/AppData/Local/Programs/MiKTeX/font
+s/type1/public/amsfonts/cm/cmsy10.pfb><C:/Users/ASUS/AppData/Local/Programs/MiK
+TeX/fonts/type1/public/amsfonts/symbols/msam10.pfb><C:/Users/ASUS/AppData/Local
+/Programs/MiKTeX/fonts/type1/urw/times/utmb8a.pfb><C:/Users/ASUS/AppData/Local/
+Programs/MiKTeX/fonts/type1/urw/times/utmbi8a.pfb><C:/Users/ASUS/AppData/Local/
+Programs/MiKTeX/fonts/type1/urw/times/utmr8a.pfb><C:/Users/ASUS/AppData/Local/P
+rograms/MiKTeX/fonts/type1/urw/times/utmri8a.pfb>
+Output written on Report5_Test_Documentation.pdf (19 pages, 253992 bytes).
 PDF statistics:
- 415 PDF objects out of 1000 (max. 8388607)
- 54 named destinations out of 1000 (max. 500000)
- 246 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 425 PDF objects out of 1000 (max. 8388607)
+ 55 named destinations out of 1000 (max. 500000)
+ 174 words of extra memory for PDF output out of 10000 (max. 10000000)
 

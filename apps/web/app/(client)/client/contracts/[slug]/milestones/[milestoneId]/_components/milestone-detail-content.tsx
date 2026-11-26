@@ -19,6 +19,7 @@ import type {
 } from "@shared/types";
 import { SubmitMilestoneDialog } from "../../_components/submit-milestone-dialog";
 import { ReviewSubmissionDialog } from "../../_components/review-submission-dialog";
+import { FundMilestoneDialog } from "../../_components/fund-milestone-dialog";
 import { MilestoneDetailHeader } from "./milestone-detail-header";
 import { MilestoneDetailTabs, type MilestoneTabKey } from "./milestone-detail-tabs";
 import { MilestoneOverviewTab } from "./milestone-overview-tab";
@@ -122,6 +123,7 @@ export function MilestoneDetailContent({
     useState<GetSubmissionResponseType | null>(null);
   const [openDisputeDialog, setOpenDisputeDialog] = useState(false);
   const [viewDisputeSheet, setViewDisputeSheet] = useState(false);
+  const [fundDialogOpen, setFundDialogOpen] = useState(false);
 
   const searchParams = useSearchParams();
 
@@ -307,25 +309,8 @@ export function MilestoneDetailContent({
     }
   };
 
-  const handleFundMilestone = async () => {
-    try {
-      const returnUrl = window.location.href.split("?")[0];
-      const res = await paymentApiRequest.createMilestoneFundCheckoutSession(
-        contract.id,
-        milestone.id,
-        { returnUrl },
-      );
-      if (res.data?.checkoutUrl) {
-        window.location.href = res.data.checkoutUrl;
-      }
-    } catch (error) {
-      toastError({
-        message:
-          error instanceof ApiFail
-            ? error.response.error.message
-            : t("toasts.checkoutInitFailed"),
-      });
-    }
+  const handleFundMilestone = () => {
+    setFundDialogOpen(true);
   };
 
   if (!isPermissionLoading && !canViewDetail) {
@@ -377,7 +362,11 @@ export function MilestoneDetailContent({
             startWorkBlockedReason={startWorkBlockedReason}
             onOpenDispute={() => setOpenDisputeDialog(true)}
             onViewDispute={() => setViewDisputeSheet(true)}
-            onFund={() => void handleFundMilestone()}
+            onFund={
+              contract.status === "ACTIVE"
+                ? () => void handleFundMilestone()
+                : undefined
+            }
             onStartWork={() => void handleStartWork()}
             onSubmitWork={() => setSubmitModalOpen(true)}
             onReviewSubmission={handleReview}
@@ -392,7 +381,11 @@ export function MilestoneDetailContent({
             submissions={submissions}
             isFreelancer={isFreelancer}
             startWorkBlockedReason={startWorkBlockedReason}
-            onFund={() => void handleFundMilestone()}
+            onFund={
+              contract.status === "ACTIVE"
+                ? () => void handleFundMilestone()
+                : undefined
+            }
             onStartWork={() => void handleStartWork()}
             onSubmitWork={() => setSubmitModalOpen(true)}
             onReviewSubmission={handleReview}
@@ -411,6 +404,7 @@ export function MilestoneDetailContent({
               });
             }}
             isFreelancer={isFreelancer}
+            contractExpiresAt={contract.expiresAt}
           />
         )}
 
@@ -431,6 +425,7 @@ export function MilestoneDetailContent({
           onOpenChange={setSubmitModalOpen}
           contractId={contract.id}
           milestone={milestone}
+          contractExpiresAt={contract.expiresAt}
         />
       )}
 
@@ -474,6 +469,25 @@ export function MilestoneDetailContent({
         currentUserId={currentUserId}
         accessToken={accessToken}
         socketUrl={socketUrl}
+      />
+
+      <FundMilestoneDialog
+        contractId={contract.id}
+        milestone={milestone}
+        open={fundDialogOpen}
+        onOpenChange={setFundDialogOpen}
+        onSuccess={() => {
+          setFundDialogOpen(false);
+          void queryClient.invalidateQueries({
+            queryKey: ["milestone-detail", contract.id, milestone.id],
+          });
+          void queryClient.invalidateQueries({
+            queryKey: ["client-contract-detail", contract.id],
+          });
+          void queryClient.invalidateQueries({
+            queryKey: ["client-contract-milestones", contract.id],
+          });
+        }}
       />
     </div>
   );

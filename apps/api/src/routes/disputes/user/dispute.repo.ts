@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import {
+  ContractStatus,
   DisputeDecisionResponse,
   DisputeEvidenceType,
   DisputeResolutionType,
@@ -10,7 +11,7 @@ import {
 } from '@prisma/client';
 import { GetDisputeListQueryType } from '@shared/types';
 import { PrismaService } from '../../../shared/services/prisma.service';
-import { syncContractAndJobCompletion } from '../../../shared/helper/contract-activation.helper';
+import { syncContractAndJobCompletion } from '../../contract/contract.repo';
 
 const disputeDetailInclude = {
   milestone: {
@@ -69,12 +70,33 @@ export class DisputeRepository {
     });
   }
 
-  async findSharedFilesByIds(fileIds: number[], contractId: number) {
-    return this.prisma.sharedFile.findMany({
+  async findDisputeFilesByIds(fileIds: number[], uploaderId: number) {
+    return this.prisma.disputeFile.findMany({
       where: {
         id: { in: fileIds },
-        contractId,
-        deletedAt: null,
+        uploaderId,
+      },
+    });
+  }
+
+  async createDisputeFile(data: {
+    uploaderId: number;
+    fileUrl: string;
+    publicId: string;
+    fileName?: string | null;
+    fileSize?: number | null;
+    fileType?: string | null;
+    disputeId?: number | null;
+  }) {
+    return this.prisma.disputeFile.create({
+      data: {
+        uploaderId: data.uploaderId,
+        fileUrl: data.fileUrl,
+        publicId: data.publicId,
+        fileName: data.fileName,
+        fileSize: data.fileSize,
+        fileType: data.fileType,
+        disputeId: data.disputeId ?? null,
       },
     });
   }
@@ -121,14 +143,23 @@ export class DisputeRepository {
               : null,
           proposedDueDate: data.proposedDueDate ?? null,
           previousMilestoneStatus: data.previousMilestoneStatus,
-          arbitrationFee: new Prisma.Decimal(0),
-          feeDeadline: new Date(),
           responseDeadline: data.responseDeadline,
           status: DisputeStatus.WAITING_RESPONSE,
         },
       });
 
       if (data.evidenceFiles && data.evidenceFiles.length > 0) {
+        const fileIds = data.evidenceFiles
+          .map((e) => e.fileId)
+          .filter((id): id is number => typeof id === 'number');
+
+        if (fileIds.length > 0) {
+          await tx.disputeFile.updateMany({
+            where: { id: { in: fileIds } },
+            data: { disputeId: dispute.id },
+          });
+        }
+
         await tx.disputeEvidence.createMany({
           data: data.evidenceFiles.map((evidence) => ({
             disputeId: dispute.id,
@@ -140,11 +171,19 @@ export class DisputeRepository {
         });
       }
 
-      await tx.milestone.update({
+      const updatedMilestone = await tx.milestone.update({
         where: { id: data.milestoneId },
         data: {
           status: MilestoneStatus.DISPUTED,
           paymentStatus: MilestonePaymentStatus.DISPUTED,
+        },
+        select: { contractId: true },
+      });
+
+      await tx.contract.update({
+        where: { id: updatedMilestone.contractId },
+        data: {
+          status: ContractStatus.DISPUTED,
         },
       });
 
@@ -172,6 +211,17 @@ export class DisputeRepository {
       });
 
       if (evidenceFiles && evidenceFiles.length > 0) {
+        const fileIds = evidenceFiles
+          .map((e) => e.fileId)
+          .filter((id): id is number => typeof id === 'number');
+
+        if (fileIds.length > 0) {
+          await tx.disputeFile.updateMany({
+            where: { id: { in: fileIds } },
+            data: { disputeId },
+          });
+        }
+
         await tx.disputeEvidence.createMany({
           data: evidenceFiles.map((evidence) => ({
             disputeId,
@@ -204,14 +254,31 @@ export class DisputeRepository {
     decisionReason: string;
   }) {
     return this.prisma.$transaction(async (tx) => {
-      await tx.milestone.update({
+      const milestone = await tx.milestone.update({
         where: { id: data.milestoneId },
         data: {
           dueDate: data.proposedDueDate,
           status: data.restoredStatus,
           paymentStatus: MilestonePaymentStatus.FUNDED,
         },
+        select: { id: true, contractId: true },
       });
+
+      const otherDisputedCount = await tx.milestone.count({
+        where: {
+          contractId: milestone.contractId,
+          id: { not: data.milestoneId },
+          status: MilestoneStatus.DISPUTED,
+          deletedAt: null,
+        },
+      });
+
+      if (otherDisputedCount === 0) {
+        await tx.contract.update({
+          where: { id: milestone.contractId },
+          data: { status: ContractStatus.ACTIVE },
+        });
+      }
 
       return tx.dispute.update({
         where: { id: data.disputeId },
@@ -231,13 +298,30 @@ export class DisputeRepository {
     restoredStatus: MilestoneStatus,
   ) {
     return this.prisma.$transaction(async (tx) => {
-      await tx.milestone.update({
+      const milestone = await tx.milestone.update({
         where: { id: milestoneId },
         data: {
           status: restoredStatus,
           paymentStatus: MilestonePaymentStatus.FUNDED,
         },
+        select: { id: true, contractId: true },
       });
+
+      const otherDisputedCount = await tx.milestone.count({
+        where: {
+          contractId: milestone.contractId,
+          id: { not: milestoneId },
+          status: MilestoneStatus.DISPUTED,
+          deletedAt: null,
+        },
+      });
+
+      if (otherDisputedCount === 0) {
+        await tx.contract.update({
+          where: { id: milestone.contractId },
+          data: { status: ContractStatus.ACTIVE },
+        });
+      }
 
       return tx.dispute.update({
         where: { id: disputeId },
@@ -270,6 +354,9 @@ export class DisputeRepository {
     };
     if (query.status) {
       where.status = query.status as DisputeStatus;
+    }
+    if (query.contractId) {
+      where.milestone = { contractId: query.contractId };
     }
 
     const orderBy: Prisma.DisputeOrderByWithRelationInput = {
@@ -365,6 +452,22 @@ export class DisputeRepository {
           completedAt: new Date(),
         },
       });
+
+      const otherDisputedCount = await tx.milestone.count({
+        where: {
+          contractId: updatedMilestone.contractId,
+          id: { not: data.milestoneId },
+          status: MilestoneStatus.DISPUTED,
+          deletedAt: null,
+        },
+      });
+
+      if (otherDisputedCount === 0) {
+        await tx.contract.update({
+          where: { id: updatedMilestone.contractId },
+          data: { status: ContractStatus.ACTIVE },
+        });
+      }
 
       await syncContractAndJobCompletion(tx, updatedMilestone.contractId);
 

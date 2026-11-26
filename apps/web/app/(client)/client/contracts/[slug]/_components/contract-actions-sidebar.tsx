@@ -1,12 +1,11 @@
 "use client";
 
-import Link from "next/link";
+import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { useQuery } from "@tanstack/react-query";
 import {
   AlertCircle,
   ArrowRight,
-  Download,
   FileCheck,
   MessageSquare,
   CreditCard,
@@ -18,6 +17,17 @@ import {
 } from "lucide-react";
 import { Button } from "@repo/ui/components/shadcn/button";
 import { Badge } from "@repo/ui/components/shadcn/badge";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@repo/ui/components/shadcn/alert-dialog";
+import { toastError } from "@repo/ui/components/shadcn/toast";
 import { useActionPermission } from "@/hooks/use-action-permission";
 import { paymentApiRequest } from "@/apiRequests/payment";
 import type {
@@ -46,7 +56,6 @@ interface ContractActionsSidebarProps {
 export function ContractActionsSidebar({
   contract,
   isFreelancer,
-  pdfFile,
   isStartingChat = false,
   isSigning = false,
   onMessageCounterparty,
@@ -58,14 +67,17 @@ export function ContractActionsSidebar({
 }: ContractActionsSidebarProps) {
   const t = useTranslations("contractDetail");
   const tSidebar = useTranslations("contractWorkspace.sidebar");
+  const tCommon = useTranslations("common");
   const tStatus = useTranslations("contractStatus");
   const tRole = useTranslations("roleName");
   const { can } = useActionPermission();
+
+  const [isOnboardingModalOpen, setIsOnboardingModalOpen] = useState(false);
+  const [isGettingOnboardingLink, setIsGettingOnboardingLink] = useState(false);
   const canSignContract = can("PATCH", "/api/contracts/:id/sign");
   const canCompleteContract = can("PATCH", "/api/contracts/:id/complete");
   const canCancelContract = can("PATCH", "/api/contracts/:id/cancel");
   const canRejectContract = can("PATCH", "/api/contracts/:id/reject");
-  const canExportPdf = can("GET", "/api/contracts/:id/pdf");
   const canCreateConversation = can("POST", "/api/conversations");
   const canFundContractHold = can(
     "POST",
@@ -100,11 +112,36 @@ export function ContractActionsSidebar({
     !isConnectLoading &&
     !isStripeOnboardingReady;
 
+  const handleConnectStripe = async () => {
+    setIsGettingOnboardingLink(true);
+    try {
+      const returnUrl = window.location.href;
+      const res = await paymentApiRequest.getOnboardingLink(returnUrl);
+      if (res.data?.onboardingUrl) {
+        window.location.href = res.data.onboardingUrl;
+        return;
+      }
+      toastError({ message: "Could not create Stripe onboarding link." });
+    } catch {
+      toastError({ message: "Failed to connect Stripe. Please try again." });
+    } finally {
+      setIsGettingOnboardingLink(false);
+    }
+  };
+
+  const handleSignClick = () => {
+    if (isFreelancer && shouldCheckStripeOnboarding && !isStripeOnboardingReady) {
+      setIsOnboardingModalOpen(true);
+      return;
+    }
+    onOpenSignConfirm();
+  };
+
   const canSign =
     (isFreelancer
       ? contract.status === "PENDING_SIGN" &&
-        contract.signedByClient &&
-        !contract.signedByFreelancer
+      contract.signedByClient &&
+      !contract.signedByFreelancer
       : contract.status === "PENDING_SIGN" && !contract.signedByClient) &&
     canSignContract;
 
@@ -139,9 +176,12 @@ export function ContractActionsSidebar({
     canRejectContract;
 
   const canCancel =
-    !isFreelancer &&
-    (contract.status === "PENDING_SIGN" ||
-      contract.status === "AWAITING_PAYMENT") &&
+    contract.status !== "COMPLETED" &&
+    contract.status !== "CANCELLED" &&
+    contract.status !== "DISPUTED" &&
+    contract.status !== "REJECTED" &&
+    contract.status !== "EXPIRED" &&
+    (!isFreelancer || contract.status === "ACTIVE") &&
     canCancelContract;
 
   const targetRoleName = isFreelancer ? tRole("CLIENT") : tRole("FREELANCER");
@@ -165,6 +205,12 @@ export function ContractActionsSidebar({
         return (
           <Badge className="bg-white border-0 text-blue-800 dark:bg-blue-950/60 dark:text-blue-300 hover:bg-white shadow-none">
             {tStatus("COMPLETED")}
+          </Badge>
+        );
+      case "DISPUTED":
+        return (
+          <Badge className="bg-white border-0 text-amber-800 dark:bg-amber-950/60 dark:text-amber-300 hover:bg-white shadow-none">
+            {tStatus("DISPUTED")}
           </Badge>
         );
       case "CANCELLED":
@@ -248,30 +294,6 @@ export function ContractActionsSidebar({
           </div>
         )}
 
-        {/* 1.1 Complete Contract Prominent Callout (Client when all milestones settled and contract ACTIVE) */}
-        {canComplete && (
-          <div className="rounded-xl border border-emerald-200 dark:border-emerald-900/60 bg-emerald-50/70 dark:bg-emerald-950/30 p-3 space-y-2">
-            <div className="flex items-start gap-2">
-              <ShieldCheck className="size-4 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
-              <div className="space-y-0.5 text-[11px] leading-snug">
-                <p className="font-semibold text-emerald-900 dark:text-emerald-200">
-                  {t("completeContract")}
-                </p>
-                <p className="text-emerald-800/85 dark:text-emerald-300/80">
-                  {t("completeHint")}
-                </p>
-              </div>
-            </div>
-            <Button
-              onClick={onOpenConfirmComplete}
-              className="w-full h-9 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs shadow-sm cursor-pointer"
-            >
-              <CheckCircle2 className="mr-1.5 size-4" />
-              {t("completeContract")}
-            </Button>
-          </div>
-        )}
-
         {contract.status === "PENDING_SIGN" && contract.holdPaymentIntentId && (
           <div className="rounded-xl border border-[#0069D3]/20 bg-[#0069D3]/5 px-3 py-2 text-[11px] text-muted-foreground">
             <span className="font-semibold text-[#0069D3] block">
@@ -297,24 +319,28 @@ export function ContractActionsSidebar({
                 </p>
               </div>
             </div>
-            <Link
-              href="/freelancer/payments"
-              className="w-full h-8 inline-flex items-center justify-center gap-1.5 rounded-lg bg-amber-600 hover:bg-amber-700 text-white text-[11px] font-medium transition-colors"
+            <Button
+              type="button"
+              disabled={isGettingOnboardingLink}
+              onClick={() => void handleConnectStripe()}
+              className="w-full h-8 inline-flex items-center justify-center gap-1.5 rounded-lg bg-amber-600 hover:bg-amber-700 text-white text-[11px] font-medium transition-colors cursor-pointer"
             >
+              {isGettingOnboardingLink ? (
+                <Loader2 className="size-3.5 animate-spin" />
+              ) : null}
               <span>{tSidebar("completeStripeOnboarding")}</span>
               <ArrowRight className="size-3.5" />
-            </Link>
+            </Button>
           </div>
         )}
 
         {/* 3. Sign Contract Button */}
         {canSign && (
           <Button
-            onClick={onOpenSignConfirm}
+            onClick={handleSignClick}
             disabled={
               isSigning ||
-              (shouldCheckStripeOnboarding &&
-                (isConnectLoading || !isStripeOnboardingReady))
+              (shouldCheckStripeOnboarding && isConnectLoading)
             }
             className="w-full h-10 rounded-xl bg-[#0069D3] hover:bg-[#0055b3] text-white font-semibold text-xs shadow-sm cursor-pointer disabled:opacity-50"
           >
@@ -331,20 +357,6 @@ export function ContractActionsSidebar({
           <div className="rounded-xl border border-border bg-muted/40 px-3 py-2 text-[11px] text-muted-foreground">
             {tSidebar("waitingClientSign")}
           </div>
-        )}
-
-        {/* 5. Download PDF Agreement */}
-        {canExportPdf && (pdfFile?.fileUrl || contract.id) && (
-          <a
-            href={pdfFile?.fileUrl || `/api/contracts/${contract.id}/pdf`}
-            target="_blank"
-            rel="noopener noreferrer"
-            download
-            className="w-full h-9 inline-flex items-center justify-center rounded-xl border border-border bg-background hover:bg-muted text-foreground text-xs font-medium transition-colors"
-          >
-            <Download className="mr-2 size-3.5 text-[#0069D3]" />
-            {tSidebar("downloadPdfAgreement")}
-          </a>
         )}
 
         {/* 6. Message Counterparty */}
@@ -392,16 +404,53 @@ export function ContractActionsSidebar({
 
           {canCancel && (
             <Button
-              variant="ghost"
+              variant="outline"
               onClick={onOpenConfirmCancel}
-              className="w-full h-8 rounded-xl text-rose-600 hover:bg-rose-50 hover:text-rose-700 dark:hover:bg-rose-950/40 text-xs font-medium cursor-pointer"
+              className="w-full h-9 rounded-xl border-rose-300 text-rose-600 hover:bg-rose-50 hover:text-rose-700 dark:border-rose-900/60 dark:hover:bg-rose-950/40 text-xs font-semibold cursor-pointer"
             >
-              <XCircle className="mr-1.5 size-3.5 text-rose-500" />
+              <XCircle className="mr-1.5 size-4 text-rose-500" />
               {t("cancelContract")}
             </Button>
           )}
         </div>
       )}
+
+      <AlertDialog
+        open={isOnboardingModalOpen}
+        onOpenChange={setIsOnboardingModalOpen}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle className="flex items-center gap-2 text-amber-600 dark:text-amber-400">
+              <AlertCircle className="size-5 shrink-0" />
+              {tSidebar("onboardingModalTitle")}
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-xs text-muted-foreground leading-relaxed pt-1">
+              {tSidebar("onboardingModalDesc")}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={isGettingOnboardingLink}>
+              {tCommon("cancel")}
+            </AlertDialogCancel>
+            <AlertDialogAction
+              disabled={isGettingOnboardingLink}
+              onClick={(e) => {
+                e.preventDefault();
+                void handleConnectStripe();
+              }}
+              className="bg-[#0069D3] hover:bg-[#0055b3] text-white"
+            >
+              {isGettingOnboardingLink ? (
+                <Loader2 className="mr-2 size-4 animate-spin" />
+              ) : (
+                <ArrowRight className="mr-2 size-4" />
+              )}
+              {tSidebar("connectStripeNow")}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

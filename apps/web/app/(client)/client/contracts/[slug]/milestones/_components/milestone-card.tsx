@@ -27,13 +27,13 @@ export interface MilestoneCardProps {
   contractId: number;
   contractSlug?: string;
   contractStatus?: string;
+  contractExpiresAt?: string | Date | null;
   isHeldInContract?: boolean;
   milestone: MilestoneType;
   index: number;
   totalMilestones?: number;
   isFreelancer?: boolean;
   basePath?: string;
-  hasOtherInProgressMilestone?: boolean;
   startWorkBlockedReason?: string | null;
   onEdit?: (milestone: MilestoneType) => void;
   onDelete?: (milestone: MilestoneType) => void;
@@ -50,13 +50,13 @@ export function MilestoneCard({
   contractId,
   contractSlug,
   contractStatus,
+  contractExpiresAt,
   isHeldInContract = false,
   milestone,
   index,
   totalMilestones = 1,
   isFreelancer = false,
   basePath = "/client",
-  hasOtherInProgressMilestone = false,
   startWorkBlockedReason = null,
   onEdit,
   onDelete,
@@ -105,6 +105,10 @@ export function MilestoneCard({
       day: "numeric",
     });
   };
+
+  const isContractExpired = Boolean(
+    contractExpiresAt && new Date(contractExpiresAt).getTime() < Date.now(),
+  );
 
   const isOverdue =
     milestone.dueDate &&
@@ -317,11 +321,10 @@ export function MilestoneCard({
                 <>
                   <span className="text-border">•</span>
                   <span
-                    className={`inline-flex items-center gap-1 font-mono text-[11px] ${
-                      isOverdue || milestone.status === "LATE"
-                        ? "text-rose-600 dark:text-rose-400 font-medium"
-                        : "text-muted-foreground"
-                    }`}
+                    className={`inline-flex items-center gap-1 font-mono text-[11px] ${isOverdue || milestone.status === "LATE"
+                      ? "text-rose-600 dark:text-rose-400 font-medium"
+                      : "text-muted-foreground"
+                      }`}
                   >
                     <Clock className="size-3" />
                     <span>{t("duePrefix", { date: formatDate(milestone.dueDate) })}</span>
@@ -391,16 +394,13 @@ export function MilestoneCard({
 
             {/* Freelancer: Start Work */}
             {isFreelancer &&
-              milestone.status === "PENDING" &&
+              (milestone.status === "PENDING" || milestone.status === "LATE") &&
               milestone.paymentStatus === "FUNDED" &&
               canProgressPermission &&
               onStartWork && (
                 <Button
                   size="sm"
-                  disabled={
-                    hasOtherInProgressMilestone ||
-                    Boolean(startWorkBlockedReason)
-                  }
+                  disabled={Boolean(startWorkBlockedReason)}
                   title={startWorkBlockedReason ?? undefined}
                   onClick={() => onStartWork(milestone)}
                   className="h-7 rounded-full bg-[#0069D3] hover:bg-[#0055b3] text-white text-xs font-normal px-3 cursor-pointer disabled:opacity-50"
@@ -418,7 +418,8 @@ export function MilestoneCard({
             {isFreelancer &&
               (milestone.status === "IN_PROGRESS" || milestone.status === "LATE") &&
               canSubmitPermission &&
-              onSubmitWork && (
+              onSubmitWork &&
+              !isContractExpired && (
                 <Button
                   size="sm"
                   onClick={() => onSubmitWork(milestone)}
@@ -435,7 +436,8 @@ export function MilestoneCard({
             {isFreelancer &&
               milestone.status === "CHANGES_REQUESTED" &&
               canSubmitPermission &&
-              onSubmitWork && (
+              onSubmitWork &&
+              !isContractExpired && (
                 <Button
                   size="sm"
                   onClick={() => onSubmitWork(milestone)}

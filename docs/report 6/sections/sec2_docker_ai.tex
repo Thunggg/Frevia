@@ -8,9 +8,12 @@
 
 When operating the complete system on a local host or cloud virtual machine, the \textbf{Frevia} architecture utilizes the following default network ports. The system administrator or developer must verify that these ports are unoccupied prior to starting the containers:
 
-\begin{center}
+\begin{table}[H]
+\centering
+\caption{Service port mapping table}\label{tab:port_mapping}
 \renewcommand{\arraystretch}{1.45}
-\begin{tabular}{|L{3.0cm}|L{4.2cm}|C{1.6cm}|L{5.2cm}|}
+\setlength{\tabcolsep}{5pt}
+\begin{tabular}{|L{3.0cm}|L{4.0cm}|C{1.4cm}|L{6.1cm}|}
 \hline
 \rowcolor{hdrfill}\hd{Service Name} & \hd{Container Name} & \hd{Port} & \hd{Endpoint URL \& Functional Role} \\ \hline
 \textbf{Frontend Web} & \texttt{frevia-frontend} & \texttt{3003} & \url{http://localhost:3003} -- Next.js 16 Client Portal and Admin Management Console. \\ \hline
@@ -21,7 +24,7 @@ When operating the complete system on a local host or cloud virtual machine, the
 \textbf{AI Moderation (Optional Host)} & Optional external service & \texttt{8002} & \url{http://host.docker.internal:8002/api/v1} -- Optional external content moderation service (\texttt{AI\_MODERATION\_URL}); auto-approves fallback when unreachable. \\ \hline
 \textbf{PostgreSQL DB} & Local / External & \texttt{5432} & \texttt{localhost:5432} -- Primary relational database configured via \texttt{DIRECT\_URL} / \texttt{DATABASE\_URL}. \\ \hline
 \end{tabular}
-\end{center}
+\end{table}
 
 \subsection{System Startup Options}
 
@@ -73,7 +76,7 @@ pnpm dev
 
 Following deployment, evaluators should verify system availability across both client-side and server-side tiers:
 
-\subsubsection{1. Frontend Web Application Verification}
+\subsubsection{Frontend Web Application Verification}
 
 \begin{figure}[H]
   \centering
@@ -86,7 +89,7 @@ Following deployment, evaluators should verify system availability across both c
   \item \rbadge{2} Verify that the hero banner renders correctly with the job search interface, featured skills pills, and call-to-action buttons.
 \end{itemize}
 
-\subsubsection{2. Backend RESTful API \& AI Health Check Verification}
+\subsubsection{Backend RESTful API \& AI Health Check Verification}
 
 \begin{figure}[H]
   \centering
@@ -107,13 +110,17 @@ Invoke-RestMethod -Uri "http://localhost:8001/healthz" -Method Get
 \end{lstlisting}
 \end{itemize}
 
-\subsubsection{3. Seeded Test Accounts}
+\subsubsection{Seeded Test Accounts}
 
 Running \texttt{pnpm --filter api seed} provisions dedicated evaluation accounts across all four core system roles using credentials supplied via environment or Infisical secrets (\texttt{SEED\_\allowbreak{}*\_\allowbreak{}EMAIL} and \texttt{SEED\_\allowbreak{}*\_\allowbreak{}PASSWORD}, with no hardcoded fallback passwords in source control):
 
-\begin{center}
 \renewcommand{\arraystretch}{1.45}
-\begin{longtable}{|L{2.8cm}|L{5.1cm}|L{2.6cm}|L{4.1cm}|}
+\setlength{\tabcolsep}{5pt}
+\begin{longtable}{|L{2.6cm}|L{5.2cm}|L{2.5cm}|L{4.2cm}|}
+\caption{Seeded test accounts table}\label{tab:seeded_accounts} \\
+\hline
+\rowcolor{hdrfill}\hd{Role} & \hd{Configuration Variables} & \hd{Portal / Access} & \hd{Assigned Access Scope} \\ \hline
+\endfirsthead
 \hline
 \rowcolor{hdrfill}\hd{Role} & \hd{Configuration Variables} & \hd{Portal / Access} & \hd{Assigned Access Scope} \\ \hline
 \endhead
@@ -122,4 +129,3 @@ Running \texttt{pnpm --filter api seed} provisions dedicated evaluation accounts
 \textbf{Client} & \texttt{SEED\_\allowbreak{}CLIENT\_\allowbreak{}EMAIL} / \texttt{SEED\_\allowbreak{}CLIENT\_\allowbreak{}PASSWORD} & \texttt{/\allowbreak client} & Job posting, candidate review, milestone funding, escrow deposits. \\ \hline
 \textbf{Expert} & \texttt{SEED\_\allowbreak{}EXPERT\_\allowbreak{}EMAIL} / \texttt{SEED\_\allowbreak{}EXPERT\_\allowbreak{}PASSWORD} & \texttt{/\allowbreak admin/\allowbreak profile}, \texttt{/\allowbreak admin/\allowbreak disputes} & Expert dispute review (\texttt{/\allowbreak admin/\allowbreak disputes}) and profile (\texttt{/\allowbreak admin/\allowbreak profile}). \\ \hline
 \end{longtable}
-\end{center}
