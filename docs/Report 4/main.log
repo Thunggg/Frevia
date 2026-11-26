@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.9.28)  25 NOV 2026 22:19
+This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.9.28)  26 NOV 2026 12:14
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -759,9 +759,7 @@ File: t1ptm.fd 2001/06/04 font definitions for T1/ptm.
 ex.def
 File: l3backend-pdftex.def 2025-10-09 L3 backend support: PDF output (pdfTeX)
 \l__color_backend_stack_int=\count332
-)
-(C:\Users\ASUS\.gemini\antigravity\brain\901340cd-a084-4162-b242-505e8cef7a07\s
-cratch\build_r4\main.aux)
+) (main.aux)
 \openout1 = `main.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 340.
@@ -855,11 +853,7 @@ Package caption Info: End \AtBeginDocument code.
 * (1in=72.27pt=25.4mm, 1cm=28.453pt)
 
 Package hyperref Info: Link coloring ON on input line 340.
-
-(C:\Users\ASUS\.gemini\antigravity\brain\901340cd-a084-4162-b242-505e8cef7a07\s
-cratch\build_r4\main.out)
-(C:\Users\ASUS\.gemini\antigravity\brain\901340cd-a084-4162-b242-505e8cef7a07\s
-cratch\build_r4\main.out)
+(main.out) (main.out)
 \@outlinefile=\write3
 \openout3 = `main.out'.
 
@@ -875,9 +869,7 @@ Package hyperref Info: Option `pageanchor' set `true' on input line 25.
 
 {C:/Users/ASUS/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map}{C:/Users/ASUS/
 AppData/Local/Programs/MiKTeX/fonts/enc/dvips/base/8r.enc} <./images/school_log
-o.png>]) (table_of_contents.tex
-(C:\Users\ASUS\.gemini\antigravity\brain\901340cd-a084-4162-b242-505e8cef7a07\s
-cratch\build_r4\main.toc
+o.png>]) (table_of_contents.tex (main.toc
 LaTeX Font Info:    Trying to load font information for OT1+ztmcm on input line
  2.
 
@@ -919,16 +911,12 @@ LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <7> not available
 \tf@toc=\write4
 \openout4 = `main.toc'.
 
- [3]
-(C:\Users\ASUS\.gemini\antigravity\brain\901340cd-a084-4162-b242-505e8cef7a07\s
-cratch\build_r4\main.lof [4] [5] [6] [7] [8] [9] [10] [11] [12] [13] [14]
-[15])
+ [3] (main.lof [4] [5] [6] [7] [8] [9] [10] [11] [12] [13] [14] [15])
 \tf@lof=\write5
 \openout5 = `main.lof'.
 
- [16]
-(C:\Users\ASUS\.gemini\antigravity\brain\901340cd-a084-4162-b242-505e8cef7a07\s
-cratch\build_r4\main.lot)
+
+[16] (main.lot)
 \tf@lot=\write6
 \openout6 = `main.lot'.
 
@@ -1573,13 +1561,13 @@ sed on input line 19.
 (pdftex.def)             Requested size: 418.78687pt x 283.1857pt.
  [102 <./images/sprint1/ptai/UC-12.03_-_Remove_Bookmark.pdf>]
 <images/sprint1/kvy/sequences/UC-14.01-view-forum-category-list.pdf, id=2349, 1
-195.5867pt x 1398.18356pt>
+085.97713pt x 1010.81638pt>
 File: images/sprint1/kvy/sequences/UC-14.01-view-forum-category-list.pdf Graphi
 c file (type pdf)
 <use images/sprint1/kvy/sequences/UC-14.01-view-forum-category-list.pdf>
 Package pdftex.def Info: images/sprint1/kvy/sequences/UC-14.01-view-forum-categ
 ory-list.pdf  used on input line 22.
-(pdftex.def)             Requested size: 355.08487pt x 415.2554pt.
+(pdftex.def)             Requested size: 355.07599pt x 330.5011pt.
  [103 <./images/sprint1/kvy/classDiagram/ForumManagement.pdf>]
 File: images/sprint1/kvy/classDiagram/ForumManagement.pdf Graphic file (type pd
 f)
@@ -1589,13 +1577,13 @@ sed on input line 27.
 (pdftex.def)             Requested size: 418.78687pt x 283.1857pt.
  [104 <./images/sprint1/kvy/sequences/UC-14.01-view-forum-category-list.pdf>]
 <images/sprint1/kvy/sequences/UC-14.02-view-forum-category-detail.pdf, id=2383,
- 1195.5867pt x 1637.15631pt>
+ 1085.97713pt x 1256.77525pt>
 File: images/sprint1/kvy/sequences/UC-14.02-view-forum-category-detail.pdf Grap
 hic file (type pdf)
 <use images/sprint1/kvy/sequences/UC-14.02-view-forum-category-detail.pdf>
 Package pdftex.def Info: images/sprint1/kvy/sequences/UC-14.02-view-forum-categ
 ory-detail.pdf  used on input line 30.
-(pdftex.def)             Requested size: 355.08487pt x 486.22943pt.
+(pdftex.def)             Requested size: 355.07599pt x 410.92093pt.
  [105]
 File: images/sprint1/kvy/classDiagram/ForumManagement.pdf Graphic file (type pd
 f)
@@ -1604,14 +1592,14 @@ Package pdftex.def Info: images/sprint1/kvy/classDiagram/ForumManagement.pdf  u
 sed on input line 35.
 (pdftex.def)             Requested size: 418.78687pt x 283.1857pt.
  [106 <./images/sprint1/kvy/sequences/UC-14.02-view-forum-category-detail.pdf>]
-<images/sprint1/kvy/sequences/UC-14.03-view-post-list.pdf, id=2403, 1195.5867pt
- x 1398.18356pt>
+<images/sprint1/kvy/sequences/UC-14.03-view-post-list.pdf, id=2403, 1085.97713p
+t x 1024.78856pt>
 File: images/sprint1/kvy/sequences/UC-14.03-view-post-list.pdf Graphic file (ty
 pe pdf)
 <use images/sprint1/kvy/sequences/UC-14.03-view-post-list.pdf>
 Package pdftex.def Info: images/sprint1/kvy/sequences/UC-14.03-view-post-list.p
 df  used on input line 38.
-(pdftex.def)             Requested size: 355.08487pt x 415.2554pt.
+(pdftex.def)             Requested size: 355.07599pt x 335.0695pt.
  [107]
 File: images/sprint1/kvy/classDiagram/ForumManagement.pdf Graphic file (type pd
 f)
@@ -1620,14 +1608,14 @@ Package pdftex.def Info: images/sprint1/kvy/classDiagram/ForumManagement.pdf  u
 sed on input line 43.
 (pdftex.def)             Requested size: 418.78687pt x 283.1857pt.
  [108 <./images/sprint1/kvy/sequences/UC-14.03-view-post-list.pdf>]
-<images/sprint1/kvy/sequences/UC-14.04-view-post-detail.pdf, id=2423, 1195.5867
-pt x 1637.15631pt>
+<images/sprint1/kvy/sequences/UC-14.04-view-post-detail.pdf, id=2423, 1085.9771
+3pt x 1408.30132pt>
 File: images/sprint1/kvy/sequences/UC-14.04-view-post-detail.pdf Graphic file (
 type pdf)
 <use images/sprint1/kvy/sequences/UC-14.04-view-post-detail.pdf>
 Package pdftex.def Info: images/sprint1/kvy/sequences/UC-14.04-view-post-detail
 .pdf  used on input line 46.
-(pdftex.def)             Requested size: 355.08487pt x 486.22943pt.
+(pdftex.def)             Requested size: 355.07599pt x 460.46458pt.
  [109]
 File: images/sprint1/kvy/classDiagram/ForumManagement.pdf Graphic file (type pd
 f)
@@ -1668,14 +1656,14 @@ Package pdftex.def Info: images/sprint1/kvy/classDiagram/ForumManagement.pdf  u
 sed on input line 67.
 (pdftex.def)             Requested size: 418.78687pt x 283.1857pt.
  [114 <./images/sprint1/kvy/sequences/UC-14.06-update-post.pdf>]
-<images/sprint1/kvy/sequences/UC-14.07-delete-post.pdf, id=2484, 1195.5867pt x 
-1901.18275pt>
+<images/sprint1/kvy/sequences/UC-14.07-delete-post.pdf, id=2484, 1085.97713pt x
+ 1671.1233pt>
 File: images/sprint1/kvy/sequences/UC-14.07-delete-post.pdf Graphic file (type 
 pdf)
 <use images/sprint1/kvy/sequences/UC-14.07-delete-post.pdf>
 Package pdftex.def Info: images/sprint1/kvy/sequences/UC-14.07-delete-post.pdf 
  used on input line 70.
-(pdftex.def)             Requested size: 355.08487pt x 564.64433pt.
+(pdftex.def)             Requested size: 355.07599pt x 546.39804pt.
  [115]
 File: images/sprint1/kvy/classDiagram/ForumManagement.pdf Graphic file (type pd
 f)
@@ -1717,14 +1705,14 @@ Package pdftex.def Info: images/sprint1/kvy/classDiagram/ForumManagement.pdf  u
 sed on input line 91.
 (pdftex.def)             Requested size: 418.78687pt x 283.1857pt.
  [120 <./images/sprint1/kvy/sequences/UC-14.09-unlike-post.pdf>]
-<images/sprint1/kvy/sequences/UC-14.10-view-post-likes.pdf, id=2545, 1195.5867p
-t x 1398.18356pt>
+<images/sprint1/kvy/sequences/UC-14.10-view-post-likes.pdf, id=2545, 1085.97713
+pt x 1169.32857pt>
 File: images/sprint1/kvy/sequences/UC-14.10-view-post-likes.pdf Graphic file (t
 ype pdf)
 <use images/sprint1/kvy/sequences/UC-14.10-view-post-likes.pdf>
 Package pdftex.def Info: images/sprint1/kvy/sequences/UC-14.10-view-post-likes.
 pdf  used on input line 94.
-(pdftex.def)             Requested size: 355.08487pt x 415.2554pt.
+(pdftex.def)             Requested size: 355.07599pt x 382.32896pt.
  [121]
 File: images/sprint1/kvy/classDiagram/ForumManagement.pdf Graphic file (type pd
 f)
@@ -1733,14 +1721,14 @@ Package pdftex.def Info: images/sprint1/kvy/classDiagram/ForumManagement.pdf  u
 sed on input line 99.
 (pdftex.def)             Requested size: 418.78687pt x 283.1857pt.
  [122 <./images/sprint1/kvy/sequences/UC-14.10-view-post-likes.pdf>]
-<images/sprint1/kvy/sequences/UC-14.11-view-post-comments.pdf, id=2566, 1195.58
-67pt x 1398.18356pt>
+<images/sprint1/kvy/sequences/UC-14.11-view-post-comments.pdf, id=2566, 1085.97
+713pt x 1169.32857pt>
 File: images/sprint1/kvy/sequences/UC-14.11-view-post-comments.pdf Graphic file
  (type pdf)
 <use images/sprint1/kvy/sequences/UC-14.11-view-post-comments.pdf>
 Package pdftex.def Info: images/sprint1/kvy/sequences/UC-14.11-view-post-commen
 ts.pdf  used on input line 102.
-(pdftex.def)             Requested size: 355.08487pt x 415.2554pt.
+(pdftex.def)             Requested size: 355.07599pt x 382.32896pt.
  [123]
 File: images/sprint1/kvy/classDiagram/ForumManagement.pdf Graphic file (type pd
 f)
@@ -1781,14 +1769,14 @@ Package pdftex.def Info: images/sprint1/kvy/classDiagram/ForumManagement.pdf  u
 sed on input line 123.
 (pdftex.def)             Requested size: 418.78687pt x 283.1857pt.
  [128 <./images/sprint1/kvy/sequences/UC-14.13-update-comment.pdf>]
-<images/sprint1/kvy/sequences/UC-14.14-delete-comment.pdf, id=2627, 1195.5867pt
- x 1901.18275pt>
+<images/sprint1/kvy/sequences/UC-14.14-delete-comment.pdf, id=2627, 1085.97713p
+t x 1671.1233pt>
 File: images/sprint1/kvy/sequences/UC-14.14-delete-comment.pdf Graphic file (ty
 pe pdf)
 <use images/sprint1/kvy/sequences/UC-14.14-delete-comment.pdf>
 Package pdftex.def Info: images/sprint1/kvy/sequences/UC-14.14-delete-comment.p
 df  used on input line 126.
-(pdftex.def)             Requested size: 355.08487pt x 564.64433pt.
+(pdftex.def)             Requested size: 355.07599pt x 546.39804pt.
  [129]
 File: images/sprint1/kvy/classDiagram/ForumManagement.pdf Graphic file (type pd
 f)
@@ -1813,14 +1801,14 @@ Package pdftex.def Info: images/sprint1/kvy/classDiagram/ForumManagement.pdf  u
 sed on input line 139.
 (pdftex.def)             Requested size: 418.78687pt x 283.1857pt.
  [132 <./images/sprint1/kvy/sequences/UC-14.15-like-comment.pdf>]
-<images/sprint1/kvy/sequences/UC-14.16-unlike-comment.pdf, id=2667, 1195.5867pt
- x 2425.14014pt>
+<images/sprint1/kvy/sequences/UC-14.16-unlike-comment.pdf, id=2667, 1114.1625pt
+ x 2195.32158pt>
 File: images/sprint1/kvy/sequences/UC-14.16-unlike-comment.pdf Graphic file (ty
 pe pdf)
 <use images/sprint1/kvy/sequences/UC-14.16-unlike-comment.pdf>
 Package pdftex.def Info: images/sprint1/kvy/sequences/UC-14.16-unlike-comment.p
 df  used on input line 142.
-(pdftex.def)             Requested size: 324.43637pt x 658.09001pt.
+(pdftex.def)             Requested size: 333.99632pt x 658.0991pt.
  [133]
 File: images/sprint1/kvy/classDiagram/ForumManagement.pdf Graphic file (type pd
 f)
@@ -1829,14 +1817,14 @@ Package pdftex.def Info: images/sprint1/kvy/classDiagram/ForumManagement.pdf  u
 sed on input line 147.
 (pdftex.def)             Requested size: 418.78687pt x 283.1857pt.
  [134 <./images/sprint1/kvy/sequences/UC-14.16-unlike-comment.pdf>]
-<images/sprint1/kvy/sequences/UC-14.17-report-content.pdf, id=2688, 1195.5867pt
- x 2421.045pt>
+<images/sprint1/kvy/sequences/UC-14.17-report-content.pdf, id=2688, 1117.29419p
+t x 2192.19pt>
 File: images/sprint1/kvy/sequences/UC-14.17-report-content.pdf Graphic file (ty
 pe pdf)
 <use images/sprint1/kvy/sequences/UC-14.17-report-content.pdf>
 Package pdftex.def Info: images/sprint1/kvy/sequences/UC-14.17-report-content.p
 df  used on input line 150.
-(pdftex.def)             Requested size: 324.98366pt x 658.087pt.
+(pdftex.def)             Requested size: 335.41248pt x 658.09694pt.
 ) (sections/nhuy/2/sprint1.tex [135] [136 <./images/sprint1/kvy/sequences/UC-14
 .17-report-content.pdf>]
 <images/sprint1/nhuy/classDiagram/ProfileManagement.pdf, id=2708, 1925.27275pt 
@@ -2150,135 +2138,135 @@ Package pdftex.def Info: images/sprint1/ntin/sequences/UC-13.12-reject-contract
 -offer.pdf  used on input line 104.
 (pdftex.def)             Requested size: 355.09079pt x 519.4931pt.
 ) [171] (sections/kvy/2/sprint2.tex
-<images/sprint2/kvy/classDiagram/ManageConversation.pdf, id=3214, 2445.135pt x 
-1236.53963pt>
+<images/sprint2/kvy/classDiagram/ManageConversation.pdf, id=3214, 2546.55394pt 
+x 1287.85132pt>
 File: images/sprint2/kvy/classDiagram/ManageConversation.pdf Graphic file (type
  pdf)
 <use images/sprint2/kvy/classDiagram/ManageConversation.pdf>
 Package pdftex.def Info: images/sprint2/kvy/classDiagram/ManageConversation.pdf
   used on input line 21.
-(pdftex.def)             Requested size: 418.80147pt x 211.79387pt.
+(pdftex.def)             Requested size: 418.80327pt x 211.79851pt.
  [172 <./images/sprint1/ntin/sequences/UC-13.12-reject-contract-offer.pdf>]
-<images/sprint2/kvy/sequences/UC-27.01-view-conversation-list.pdf, id=3229, 119
-5.5867pt x 1398.18356pt>
+<images/sprint2/kvy/sequences/UC-27.01-view-conversation-list.pdf, id=3229, 108
+5.97713pt x 1169.32857pt>
 File: images/sprint2/kvy/sequences/UC-27.01-view-conversation-list.pdf Graphic 
 file (type pdf)
 <use images/sprint2/kvy/sequences/UC-27.01-view-conversation-list.pdf>
 Package pdftex.def Info: images/sprint2/kvy/sequences/UC-27.01-view-conversatio
 n-list.pdf  used on input line 24.
-(pdftex.def)             Requested size: 355.08487pt x 415.2554pt.
+(pdftex.def)             Requested size: 355.07599pt x 382.32896pt.
  [173 <./images/sprint2/kvy/classDiagram/ManageConversation.pdf>]
 File: images/sprint2/kvy/classDiagram/ManageConversation.pdf Graphic file (type
  pdf)
 <use images/sprint2/kvy/classDiagram/ManageConversation.pdf>
 Package pdftex.def Info: images/sprint2/kvy/classDiagram/ManageConversation.pdf
   used on input line 29.
-(pdftex.def)             Requested size: 418.80147pt x 211.79387pt.
+(pdftex.def)             Requested size: 418.80327pt x 211.79851pt.
  [174 <./images/sprint2/kvy/sequences/UC-27.01-view-conversation-list.pdf>]
-<images/sprint2/kvy/sequences/UC-27.02-start-conversation.pdf, id=3262, 1195.58
-67pt x 1874.92462pt>
+<images/sprint2/kvy/sequences/UC-27.02-start-conversation.pdf, id=3262, 1085.97
+713pt x 1646.06963pt>
 File: images/sprint2/kvy/sequences/UC-27.02-start-conversation.pdf Graphic file
  (type pdf)
 <use images/sprint2/kvy/sequences/UC-27.02-start-conversation.pdf>
 Package pdftex.def Info: images/sprint2/kvy/sequences/UC-27.02-start-conversati
 on.pdf  used on input line 32.
-(pdftex.def)             Requested size: 355.08487pt x 556.84576pt.
+(pdftex.def)             Requested size: 355.07599pt x 538.20638pt.
  [175]
 File: images/sprint2/kvy/classDiagram/ManageConversation.pdf Graphic file (type
  pdf)
 <use images/sprint2/kvy/classDiagram/ManageConversation.pdf>
 Package pdftex.def Info: images/sprint2/kvy/classDiagram/ManageConversation.pdf
   used on input line 37.
-(pdftex.def)             Requested size: 418.80147pt x 211.79387pt.
+(pdftex.def)             Requested size: 418.80327pt x 211.79851pt.
  [176 <./images/sprint2/kvy/sequences/UC-27.02-start-conversation.pdf>]
 <images/sprint2/kvy/sequences/UC-27.03-view-conversation-detail.pdf, id=3283, 1
-195.5867pt x 1637.15631pt>
+085.97713pt x 1408.30132pt>
 File: images/sprint2/kvy/sequences/UC-27.03-view-conversation-detail.pdf Graphi
 c file (type pdf)
 <use images/sprint2/kvy/sequences/UC-27.03-view-conversation-detail.pdf>
 Package pdftex.def Info: images/sprint2/kvy/sequences/UC-27.03-view-conversatio
 n-detail.pdf  used on input line 40.
-(pdftex.def)             Requested size: 355.08487pt x 486.22943pt.
+(pdftex.def)             Requested size: 355.07599pt x 460.46458pt.
  [177]
 File: images/sprint2/kvy/classDiagram/ManageConversation.pdf Graphic file (type
  pdf)
 <use images/sprint2/kvy/classDiagram/ManageConversation.pdf>
 Package pdftex.def Info: images/sprint2/kvy/classDiagram/ManageConversation.pdf
   used on input line 45.
-(pdftex.def)             Requested size: 418.80147pt x 211.79387pt.
+(pdftex.def)             Requested size: 418.80327pt x 211.79851pt.
  [178 <./images/sprint2/kvy/sequences/UC-27.03-view-conversation-detail.pdf>]
-<images/sprint2/kvy/sequences/UC-27.04-send-message.pdf, id=3303, 1195.5867pt x
- 2109.80212pt>
+<images/sprint2/kvy/sequences/UC-27.04-send-message.pdf, id=3303, 1093.2042pt x
+ 1880.94713pt>
 File: images/sprint2/kvy/sequences/UC-27.04-send-message.pdf Graphic file (type
  pdf)
 <use images/sprint2/kvy/sequences/UC-27.04-send-message.pdf>
 Package pdftex.def Info: images/sprint2/kvy/sequences/UC-27.04-send-message.pdf
   used on input line 48.
-(pdftex.def)             Requested size: 355.08487pt x 626.60352pt.
+(pdftex.def)             Requested size: 355.08698pt x 610.95618pt.
  [179]
 File: images/sprint2/kvy/classDiagram/ManageConversation.pdf Graphic file (type
  pdf)
 <use images/sprint2/kvy/classDiagram/ManageConversation.pdf>
 Package pdftex.def Info: images/sprint2/kvy/classDiagram/ManageConversation.pdf
   used on input line 53.
-(pdftex.def)             Requested size: 418.80147pt x 211.79387pt.
+(pdftex.def)             Requested size: 418.80327pt x 211.79851pt.
  [180 <./images/sprint2/kvy/sequences/UC-27.04-send-message.pdf>]
-<images/sprint2/kvy/sequences/UC-27.05-mark-message-as-read.pdf, id=3323, 1195.
-5867pt x 1637.15631pt>
+<images/sprint2/kvy/sequences/UC-27.05-mark-message-as-read.pdf, id=3323, 1085.
+97713pt x 1408.30132pt>
 File: images/sprint2/kvy/sequences/UC-27.05-mark-message-as-read.pdf Graphic fi
 le (type pdf)
 <use images/sprint2/kvy/sequences/UC-27.05-mark-message-as-read.pdf>
 Package pdftex.def Info: images/sprint2/kvy/sequences/UC-27.05-mark-message-as-
 read.pdf  used on input line 56.
-(pdftex.def)             Requested size: 355.08487pt x 486.22943pt.
+(pdftex.def)             Requested size: 355.07599pt x 460.46458pt.
  [181]
 File: images/sprint2/kvy/classDiagram/ManageConversation.pdf Graphic file (type
  pdf)
 <use images/sprint2/kvy/classDiagram/ManageConversation.pdf>
 Package pdftex.def Info: images/sprint2/kvy/classDiagram/ManageConversation.pdf
   used on input line 61.
-(pdftex.def)             Requested size: 418.80147pt x 211.79387pt.
+(pdftex.def)             Requested size: 418.80327pt x 211.79851pt.
  [182 <./images/sprint2/kvy/sequences/UC-27.05-mark-message-as-read.pdf>]
-<images/sprint2/kvy/sequences/UC-27.06-delete-recall-message.pdf, id=3344, 1195
-.5867pt x 2027.65526pt>
+<images/sprint2/kvy/sequences/UC-27.06-delete-recall-message.pdf, id=3344, 1116
+.08961pt x 1797.59581pt>
 File: images/sprint2/kvy/sequences/UC-27.06-delete-recall-message.pdf Graphic f
 ile (type pdf)
 <use images/sprint2/kvy/sequences/UC-27.06-delete-recall-message.pdf>
 Package pdftex.def Info: images/sprint2/kvy/sequences/UC-27.06-delete-recall-me
 ssage.pdf  used on input line 64.
-(pdftex.def)             Requested size: 355.08487pt x 602.2062pt.
+(pdftex.def)             Requested size: 355.09532pt x 571.92351pt.
  [183]
 File: images/sprint2/kvy/classDiagram/ManageConversation.pdf Graphic file (type
  pdf)
 <use images/sprint2/kvy/classDiagram/ManageConversation.pdf>
 Package pdftex.def Info: images/sprint2/kvy/classDiagram/ManageConversation.pdf
   used on input line 69.
-(pdftex.def)             Requested size: 418.80147pt x 211.79387pt.
+(pdftex.def)             Requested size: 418.80327pt x 211.79851pt.
  [184 <./images/sprint2/kvy/sequences/UC-27.06-delete-recall-message.pdf>]
-<images/sprint2/kvy/sequences/UC-27.07-pin-unpin-conversation.pdf, id=3364, 119
-5.5867pt x 2059.695pt>
+<images/sprint2/kvy/sequences/UC-27.07-pin-unpin-conversation.pdf, id=3364, 108
+5.97713pt x 1830.84pt>
 File: images/sprint2/kvy/sequences/UC-27.07-pin-unpin-conversation.pdf Graphic 
 file (type pdf)
 <use images/sprint2/kvy/sequences/UC-27.07-pin-unpin-conversation.pdf>
 Package pdftex.def Info: images/sprint2/kvy/sequences/UC-27.07-pin-unpin-conver
 sation.pdf  used on input line 72.
-(pdftex.def)             Requested size: 355.08487pt x 611.7219pt.
+(pdftex.def)             Requested size: 355.07599pt x 598.61975pt.
  [185]
 File: images/sprint2/kvy/classDiagram/ManageConversation.pdf Graphic file (type
  pdf)
 <use images/sprint2/kvy/classDiagram/ManageConversation.pdf>
 Package pdftex.def Info: images/sprint2/kvy/classDiagram/ManageConversation.pdf
   used on input line 77.
-(pdftex.def)             Requested size: 418.80147pt x 211.79387pt.
+(pdftex.def)             Requested size: 418.80327pt x 211.79851pt.
  [186 <./images/sprint2/kvy/sequences/UC-27.07-pin-unpin-conversation.pdf>]
-<images/sprint2/kvy/sequences/UC-27.08-send-file.pdf, id=3384, 1195.5867pt x 14
-49.49525pt>
+<images/sprint2/kvy/sequences/UC-27.08-send-file.pdf, id=3384, 1085.97713pt x 1
+219.6767pt>
 File: images/sprint2/kvy/sequences/UC-27.08-send-file.pdf Graphic file (type pd
 f)
 <use images/sprint2/kvy/sequences/UC-27.08-send-file.pdf>
 Package pdftex.def Info: images/sprint2/kvy/sequences/UC-27.08-send-file.pdf  u
 sed on input line 80.
-(pdftex.def)             Requested size: 355.08487pt x 430.4948pt.
+(pdftex.def)             Requested size: 355.07599pt x 398.79102pt.
 ) (sections/nhuy/2/sprint2.tex [187]
 <images/sprint2/nhuy/classDiagram/IdentityVerification.pdf, id=3391, 1925.27275
 pt x 1480.57132pt>
@@ -3034,14 +3022,14 @@ Package pdftex.def Info: images/sprint3/kvy/classDiagram/ManageModeration.pdf
 used on input line 21.
 (pdftex.def)             Requested size: 418.80612pt x 96.02834pt.
  [268 <./images/sprint2/tthuan/sequences/RestoreForumCategory.pdf>]
-<images/sprint3/kvy/sequences/UC-34.01-view-moderation-queue.pdf, id=4531, 1195
-.5867pt x 1398.18356pt>
+<images/sprint3/kvy/sequences/UC-34.01-view-moderation-queue.pdf, id=4531, 1085
+.97713pt x 1169.32857pt>
 File: images/sprint3/kvy/sequences/UC-34.01-view-moderation-queue.pdf Graphic f
 ile (type pdf)
 <use images/sprint3/kvy/sequences/UC-34.01-view-moderation-queue.pdf>
 Package pdftex.def Info: images/sprint3/kvy/sequences/UC-34.01-view-moderation-
 queue.pdf  used on input line 24.
-(pdftex.def)             Requested size: 355.08487pt x 415.2554pt.
+(pdftex.def)             Requested size: 355.07599pt x 382.32896pt.
 File: images/sprint3/kvy/classDiagram/ManageModeration.pdf Graphic file (type p
 df)
 <use images/sprint3/kvy/classDiagram/ManageModeration.pdf>
@@ -3051,13 +3039,13 @@ used on input line 29.
  [269 <./images/sprint3/kvy/classDiagram/ManageModeration.pdf> <./images/sprint
 3/kvy/sequences/UC-34.01-view-moderation-queue.pdf>]
 <images/sprint3/kvy/sequences/UC-34.02-view-moderation-item-detail.pdf, id=4560
-, 1195.5867pt x 1434.31856pt>
+, 1085.97713pt x 1205.46356pt>
 File: images/sprint3/kvy/sequences/UC-34.02-view-moderation-item-detail.pdf Gra
 phic file (type pdf)
 <use images/sprint3/kvy/sequences/UC-34.02-view-moderation-item-detail.pdf>
 Package pdftex.def Info: images/sprint3/kvy/sequences/UC-34.02-view-moderation-
 item-detail.pdf  used on input line 32.
-(pdftex.def)             Requested size: 355.08487pt x 425.98737pt.
+(pdftex.def)             Requested size: 355.07599pt x 394.14383pt.
 File: images/sprint3/kvy/classDiagram/ManageModeration.pdf Graphic file (type p
 df)
 <use images/sprint3/kvy/classDiagram/ManageModeration.pdf>
@@ -3066,14 +3054,14 @@ used on input line 37.
 (pdftex.def)             Requested size: 418.80612pt x 96.02834pt.
  [270 <./images/sprint3/kvy/sequences/UC-34.02-view-moderation-item-detail.pdf>
 ]
-<images/sprint3/kvy/sequences/UC-34.03-resolve-moderation-item.pdf, id=4576, 11
-95.5867pt x 2138.95107pt>
+<images/sprint3/kvy/sequences/UC-34.03-resolve-moderation-item.pdf, id=4576, 10
+85.97713pt x 1910.09605pt>
 File: images/sprint3/kvy/sequences/UC-34.03-resolve-moderation-item.pdf Graphic
  file (type pdf)
 <use images/sprint3/kvy/sequences/UC-34.03-resolve-moderation-item.pdf>
 Package pdftex.def Info: images/sprint3/kvy/sequences/UC-34.03-resolve-moderati
 on-item.pdf  used on input line 40.
-(pdftex.def)             Requested size: 355.08487pt x 635.26065pt.
+(pdftex.def)             Requested size: 355.07599pt x 624.53366pt.
  [271]
 [272 <./images/sprint3/kvy/sequences/UC-34.03-resolve-moderation-item.pdf>]
 <images/sprint3/kvy/classDiagram/ManageIDVerification.pdf, id=4597, 2832.50212p
@@ -3085,50 +3073,50 @@ Package pdftex.def Info: images/sprint3/kvy/classDiagram/ManageIDVerification.p
 df  used on input line 52.
 (pdftex.def)             Requested size: 418.80612pt x 102.26164pt.
 <images/sprint3/kvy/sequences/UC-35.01-view-id-verification-request-list.pdf, i
-d=4598, 1195.5867pt x 1398.18356pt>
+d=4598, 1085.97713pt x 1169.32857pt>
 File: images/sprint3/kvy/sequences/UC-35.01-view-id-verification-request-list.p
 df Graphic file (type pdf)
 <use images/sprint3/kvy/sequences/UC-35.01-view-id-verification-request-list.pd
 f>
 Package pdftex.def Info: images/sprint3/kvy/sequences/UC-35.01-view-id-verifica
 tion-request-list.pdf  used on input line 55.
-(pdftex.def)             Requested size: 355.08487pt x 415.2554pt.
-
-[273 <./images/sprint3/kvy/classDiagram/ManageIDVerification.pdf>]
+(pdftex.def)             Requested size: 355.07599pt x 382.32896pt.
 File: images/sprint3/kvy/classDiagram/ManageIDVerification.pdf Graphic file (ty
 pe pdf)
 <use images/sprint3/kvy/classDiagram/ManageIDVerification.pdf>
 Package pdftex.def Info: images/sprint3/kvy/classDiagram/ManageIDVerification.p
 df  used on input line 60.
 (pdftex.def)             Requested size: 418.80612pt x 102.26164pt.
+
+[273 <./images/sprint3/kvy/classDiagram/ManageIDVerification.pdf> <./images/spr
+int3/kvy/sequences/UC-35.01-view-id-verification-request-list.pdf>]
 <images/sprint3/kvy/sequences/UC-35.02-view-id-verification-request-detail.pdf,
- id=4617, 1195.5867pt x 1434.31856pt>
+ id=4627, 1085.97713pt x 1205.46356pt>
 File: images/sprint3/kvy/sequences/UC-35.02-view-id-verification-request-detail
 .pdf Graphic file (type pdf)
 <use images/sprint3/kvy/sequences/UC-35.02-view-id-verification-request-detail.
 pdf>
 Package pdftex.def Info: images/sprint3/kvy/sequences/UC-35.02-view-id-verifica
 tion-request-detail.pdf  used on input line 63.
-(pdftex.def)             Requested size: 355.08487pt x 425.98737pt.
- [274 <./images/sprint3/kvy/sequences/UC-35.01-view-id-verification-request-lis
-t.pdf>]
+(pdftex.def)             Requested size: 355.07599pt x 394.14383pt.
 File: images/sprint3/kvy/classDiagram/ManageIDVerification.pdf Graphic file (ty
 pe pdf)
 <use images/sprint3/kvy/classDiagram/ManageIDVerification.pdf>
 Package pdftex.def Info: images/sprint3/kvy/classDiagram/ManageIDVerification.p
 df  used on input line 68.
 (pdftex.def)             Requested size: 418.80612pt x 102.26164pt.
-<images/sprint3/kvy/sequences/UC-35.03-approve-id-verification.pdf, id=4633, 11
-95.5867pt x 2124.97894pt>
+ [274 <./images/sprint3/kvy/sequences/UC-35.02-view-id-verification-request-det
+ail.pdf>]
+<images/sprint3/kvy/sequences/UC-35.03-approve-id-verification.pdf, id=4643, 10
+85.97713pt x 1896.12381pt>
 File: images/sprint3/kvy/sequences/UC-35.03-approve-id-verification.pdf Graphic
  file (type pdf)
 <use images/sprint3/kvy/sequences/UC-35.03-approve-id-verification.pdf>
 Package pdftex.def Info: images/sprint3/kvy/sequences/UC-35.03-approve-id-verif
 ication.pdf  used on input line 71.
-(pdftex.def)             Requested size: 355.08487pt x 631.11098pt.
+(pdftex.def)             Requested size: 355.07599pt x 619.96524pt.
 
-[275 <./images/sprint3/kvy/sequences/UC-35.02-view-id-verification-request-deta
-il.pdf>]
+[275]
 File: images/sprint3/kvy/classDiagram/ManageIDVerification.pdf Graphic file (ty
 pe pdf)
 <use images/sprint3/kvy/classDiagram/ManageIDVerification.pdf>
@@ -3136,14 +3124,14 @@ Package pdftex.def Info: images/sprint3/kvy/classDiagram/ManageIDVerification.p
 df  used on input line 76.
 (pdftex.def)             Requested size: 418.80612pt x 102.26164pt.
  [276 <./images/sprint3/kvy/sequences/UC-35.03-approve-id-verification.pdf>]
-<images/sprint3/kvy/sequences/UC-35.04-reject-id-verification.pdf, id=4663, 119
-5.5867pt x 2124.97894pt>
+<images/sprint3/kvy/sequences/UC-35.04-reject-id-verification.pdf, id=4663, 108
+5.97713pt x 1896.12381pt>
 File: images/sprint3/kvy/sequences/UC-35.04-reject-id-verification.pdf Graphic 
 file (type pdf)
 <use images/sprint3/kvy/sequences/UC-35.04-reject-id-verification.pdf>
 Package pdftex.def Info: images/sprint3/kvy/sequences/UC-35.04-reject-id-verifi
 cation.pdf  used on input line 79.
-(pdftex.def)             Requested size: 355.08487pt x 631.11098pt.
+(pdftex.def)             Requested size: 355.07599pt x 619.96524pt.
  [277] [278 <./images/sprint3/kvy/sequences/UC-35.04-reject-id-verification.pdf
 >]
 <images/sprint3/kvy/classDiagram/ManageForumTrash.pdf, id=4684, 2546.55394pt x 
@@ -3155,14 +3143,14 @@ Package pdftex.def Info: images/sprint3/kvy/classDiagram/ManageForumTrash.pdf
 used on input line 90.
 (pdftex.def)             Requested size: 418.80327pt x 99.8773pt.
 <images/sprint3/kvy/sequences/UC-36.01-view-deleted-posts-comments-list.pdf, id
-=4685, 1195.5867pt x 1929.12712pt>
+=4685, 1085.97713pt x 1700.27213pt>
 File: images/sprint3/kvy/sequences/UC-36.01-view-deleted-posts-comments-list.pd
 f Graphic file (type pdf)
 <use images/sprint3/kvy/sequences/UC-36.01-view-deleted-posts-comments-list.pdf
 >
 Package pdftex.def Info: images/sprint3/kvy/sequences/UC-36.01-view-deleted-pos
 ts-comments-list.pdf  used on input line 93.
-(pdftex.def)             Requested size: 355.08487pt x 572.9437pt.
+(pdftex.def)             Requested size: 355.07599pt x 555.92868pt.
  [279 <./images/sprint3/kvy/classDiagram/ManageForumTrash.pdf>]
 File: images/sprint3/kvy/classDiagram/ManageForumTrash.pdf Graphic file (type p
 df)
@@ -3173,14 +3161,14 @@ used on input line 98.
  [280 <./images/sprint3/kvy/sequences/UC-36.01-view-deleted-posts-comments-list
 .pdf>]
 <images/sprint3/kvy/sequences/UC-36.02-view-deleted-posts-comments-detail.pdf, 
-id=4718, 1195.5867pt x 1434.31856pt>
+id=4718, 1085.97713pt x 1205.46356pt>
 File: images/sprint3/kvy/sequences/UC-36.02-view-deleted-posts-comments-detail.
 pdf Graphic file (type pdf)
 <use images/sprint3/kvy/sequences/UC-36.02-view-deleted-posts-comments-detail.p
 df>
 Package pdftex.def Info: images/sprint3/kvy/sequences/UC-36.02-view-deleted-pos
 ts-comments-detail.pdf  used on input line 101.
-(pdftex.def)             Requested size: 355.08487pt x 425.98737pt.
+(pdftex.def)             Requested size: 355.07599pt x 394.14383pt.
 File: images/sprint3/kvy/classDiagram/ManageForumTrash.pdf Graphic file (type p
 df)
 <use images/sprint3/kvy/classDiagram/ManageForumTrash.pdf>
@@ -3191,13 +3179,13 @@ used on input line 106.
 [281 <./images/sprint3/kvy/sequences/UC-36.02-view-deleted-posts-comments-detai
 l.pdf>]
 <images/sprint3/kvy/sequences/UC-36.03-restore-deleted-posts-comments.pdf, id=4
-734, 1195.5867pt x 2384.91pt>
+734, 1085.97713pt x 2156.055pt>
 File: images/sprint3/kvy/sequences/UC-36.03-restore-deleted-posts-comments.pdf 
 Graphic file (type pdf)
 <use images/sprint3/kvy/sequences/UC-36.03-restore-deleted-posts-comments.pdf>
 Package pdftex.def Info: images/sprint3/kvy/sequences/UC-36.03-restore-deleted-
 posts-comments.pdf  used on input line 109.
-(pdftex.def)             Requested size: 329.90932pt x 658.09032pt.
+(pdftex.def)             Requested size: 331.47939pt x 658.10576pt.
 ) (sections/nhuy/2/sprint3.tex [282] [283 <./images/sprint3/kvy/sequences/UC-36
 .03-restore-deleted-posts-comments.pdf>]
 <images/sprint3/nhuy/classDiagram/FollowingManagement.pdf, id=4755, 1925.27275p
@@ -4592,24 +4580,18 @@ Overfull \hbox (7.03575pt too wide) in paragraph at lines 17--18
 velopers . google . com / identity / protocols /
  []
 
-) [428]
-(C:\Users\ASUS\.gemini\antigravity\brain\901340cd-a084-4162-b242-505e8cef7a07\s
-cratch\build_r4\main.aux)
+) [428] (main.aux)
  ***********
 LaTeX2e <2025-11-01>
 L3 programming layer <2025-12-24>
  ***********
-
-
-LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
-
 Package rerunfilecheck Info: File `main.out' has not changed.
 (rerunfilecheck)             Checksum: 7D337CB8069C9ACE25D3B80C3382DD03;9658.
  ) 
 Here is how much of TeX's memory you used:
- 19972 strings out of 467871
- 443506 string characters out of 5418860
- 828526 words of memory out of 5000000
+ 19971 strings out of 467871
+ 442132 string characters out of 5418860
+ 828539 words of memory out of 5000000
  47313 multiletter control sequences out of 15000+600000
  691361 words of font info for 127 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
@@ -4622,8 +4604,7 @@ c/amsfonts/cm/cmsy10.pfb><C:/Users/ASUS/AppData/Local/Programs/MiKTeX/fonts/typ
 e1/urw/times/utmb8a.pfb><C:/Users/ASUS/AppData/Local/Programs/MiKTeX/fonts/type
 1/urw/times/utmr8a.pfb><C:/Users/ASUS/AppData/Local/Programs/MiKTeX/fonts/type1
 /urw/times/utmri8a.pfb>
-Output written on C:\Users\ASUS\.gemini\antigravity\brain\901340cd-a084-4162-b2
-42-505e8cef7a07\scratch\build_r4\main.pdf (428 pages, 49487271 bytes).
+Output written on main.pdf (428 pages, 49473635 bytes).
 PDF statistics:
  7323 PDF objects out of 7423 (max. 8388607)
  1187 named destinations out of 1200 (max. 500000)
