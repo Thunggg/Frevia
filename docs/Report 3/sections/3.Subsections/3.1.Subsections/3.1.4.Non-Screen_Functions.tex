@@ -1,7 +1,7 @@
 \Needspace{12\baselineskip}
 \subsubsection{Non-Screen Functions}
 
-Unlike the interactive pages listed in Sections~3.1.2 and~3.1.3, the following system functions execute without a dedicated user interface. They operate as background workers, scheduled sweeps, real-time WebSocket event broadcasters, webhook receivers, or internal server-side AI and document-generation pipelines triggered automatically by platform events.
+Unlike the interactive pages listed in Sections~3.1.2 and~3.1.3, the following system functions execute without a dedicated user interface. They encompass authentication guards, token verification and refresh APIs, OTP/email and OAuth callbacks, Next.js BFF cookie/proxy handlers, global middleware pipelines, caching and hashing services, real-time WebSocket gateways, background workers, scheduled sweeps, webhook receivers, and server-side AI or document-generation pipelines.
 
 \begingroup
 \renewcommand{\arraystretch}{1.4}
@@ -32,84 +32,140 @@ Unlike the interactive pages listed in Sections~3.1.2 and~3.1.3, the following s
 \endlastfoot
 
 1 &
-\textbf{Automated Email \& OTP Dispatch} &
-\texttt{EmailService.sendOTP()} \newline
-Trigger: Registration and password reset events (SMTP via Nodemailer) &
-Dispatches transactional verification and password-reset emails carrying 6-digit OTP codes asynchronously via Gmail SMTP without exposing any standalone web page.
+\textbf{JWT Verification, Session \& RBAC Guards} &
+\texttt{TokenService.\allowbreak{}verifyAccessToken()}, \texttt{AuthGuard}, \texttt{PermissionGuard} \newline
+Scope: Global NestJS \texttt{APP\_GUARD} pipeline &
+Extracts \texttt{Bearer} access tokens on HTTP requests, verifies JWT signatures (\texttt{ACCESS\_\allowbreak{}TOKEN\_\allowbreak{}SECRET}), checks active DB \texttt{sessionId} persistence and user status (\texttt{401} if revoked/missing, \texttt{403} if \texttt{isBanned} or \texttt{deletedAt}), allows optional guest context on \texttt{@IsPublic()} routes, and enforces hardcoded marketplace rules plus dynamic DB permissions for \texttt{ADMIN}, \texttt{EXPERT}, and custom roles.
 \\ \hline
 
 2 &
-\textbf{Real-Time Messaging \& Notification Gateway} &
-\texttt{ConversationsGateway}, \texttt{AppNotificationService}, \texttt{NotificationRealtimeService} \newline
-Trigger: Authenticated Socket.IO events \& domain state transitions &
-Maintains authenticated per-user Socket.IO rooms to deliver chat messages, typing indicators, read receipts, and real-time domain notifications (proposals, contracts, milestones, escrow payments, disputes, and moderation) immediately upon persistence.
+\textbf{Token Refresh \& Session Rotation API} &
+\texttt{AuthService.\allowbreak{}refreshToken()}, \texttt{TokenService.\allowbreak{}verifyRefreshToken()} \newline
+Endpoint: \texttt{[POST] /api/\allowbreak{}auth/\allowbreak{}refresh-token} (\texttt{@IsPublic()}) &
+Verifies refresh token signatures (\texttt{REFRESH\_\allowbreak{}TOKEN\_\allowbreak{}SECRET}), matches persisted session records, atomically deletes the consumed session before issuing a fresh access/refresh token pair (single-use rotation), and blocks banned or soft-deleted accounts.
 \\ \hline
 
 3 &
+\textbf{OTP Verification \& Automated Email Dispatch} &
+\texttt{AuthService.\allowbreak{}sendOTP()}, \texttt{EmailService.\allowbreak{}sendOTP()} \newline
+Endpoint: \texttt{[POST] /api/\allowbreak{}auth/otp} (\texttt{@IsPublic()}) \newline
+Trigger: Registration \& password reset &
+Validates email eligibility (\texttt{EMAIL\_\allowbreak{}VERIFICATION} or \texttt{PASSWORD\_\allowbreak{}RESET}), enforces rate limits (max 5 attempts per \texttt{OTP\_\allowbreak{}ATTEMPT\_\allowbreak{}WINDOW}), generates expiring OTP codes (\texttt{OTP\_\allowbreak{}EXPIRES\_IN}), upserts verification records, and sends emails asynchronously via Gmail SMTP (Nodemailer).
+\\ \hline
+
+4 &
+\textbf{Google OAuth Callback \& Auto-Provisioning} &
+\texttt{AuthService.\allowbreak{}googleCallback()} \newline
+Endpoints: \texttt{[GET] /api/\allowbreak{}auth/\allowbreak{}google-link}, \texttt{[GET] /api/\allowbreak{}auth/\allowbreak{}google/\allowbreak{}callback} (\texttt{@IsPublic()}) &
+Generates Google OAuth consent URLs encoding client metadata (\texttt{userAgent}, \texttt{ip}, \texttt{role}) in \texttt{state}, exchanges authorization codes for Google userinfo, auto-provisions missing users and OAuth account records, issues JWT session tokens, and redirects to the Next.js \texttt{/api/auth/google} cookie handler.
+\\ \hline
+
+5 &
+\textbf{Session Identity \& Permission Resolution API} &
+\texttt{AuthService.\allowbreak{}getMe()} \newline
+Endpoint: \texttt{[GET] /api/\allowbreak{}auth/me} &
+Resolves the signed-in user's profile summary, active primary and secondary marketplace roles, effective endpoint \texttt{permissions}, and UI \texttt{permissionModules}, backed by \texttt{AUTH\_ME\_\allowbreak{}CACHE\_PREFIX} in-memory caching.
+\\ \hline
+
+6 &
+\textbf{Next.js Edge Proxy Auto-Refresh \& BFF Cookie Handlers} &
+\texttt{proxy()}, \texttt{accessTokenNeedsRefresh()}, \texttt{exchangeRefreshToken()}, Next.js \texttt{/api/auth/*} \newline
+Routes: \texttt{proxy.ts}; \texttt{/api/auth/\allowbreak{}login}, \texttt{logout}, \texttt{google}, \texttt{switch-role}, \texttt{join-role}, \texttt{socket-token} &
+Detects expiring JWTs server-side (\texttt{10s} buffer on page requests; \texttt{30s} buffer on \texttt{socket-token}), transparently rotates tokens via \texttt{/api/auth/refresh-token}, persists \texttt{httpOnly} (\texttt{SameSite=Lax}) auth cookies without exposing raw tokens to client JavaScript, and brokers access tokens for Socket.IO clients.
+\\ \hline
+
+7 &
+\textbf{Catch-All BFF API Proxy \& Response Localization} &
+Next.js Catch-All Route Handler \newline
+Endpoint: \texttt{/api/backend/\allowbreak{}[...path]} (\texttt{GET}, \texttt{POST}, \texttt{PUT}, \texttt{PATCH}, \texttt{DELETE}) &
+Forwards frontend API calls with server-stored \texttt{Bearer} access tokens, automatically triggers a single-flight token refresh and retry on backend \texttt{401} responses, clears cookies on \texttt{403} user-ban errors, routes \texttt{POST api/forums/posts} via \texttt{NESTJS\_\allowbreak{}PROXY\_URL} for content screening, and translates i18n response messages per \texttt{LOCALE\_COOKIE}.
+\\ \hline
+
+8 &
+\textbf{Password Hashing \& In-Memory Caching Services} &
+\texttt{HashingService}, \texttt{CacheService} \newline
+Scope: Shared backend infrastructure services &
+Hashes and verifies passwords via \texttt{bcrypt} (\texttt{SALT\_ROUNDS = 10}), while \texttt{CacheService} maintains a bounded TTL store (\texttt{MAX\_CACHE\_\allowbreak{}ENTRIES = 2000}) for \texttt{auth:me:}, role permissions, banners, and forum/job categories with prefix-based invalidation (\texttt{delByPrefix}) on mutations.
+\\ \hline
+
+9 &
+\textbf{Global Validation, Envelope \& Error Normalization} &
+\texttt{MyZodValidationPipe}, \texttt{ApiResponseInterceptor}, \texttt{ZodSerializerInterceptor}, \texttt{HttpExceptionFilter} \newline
+Scope: Global \texttt{APP\_PIPE}, \texttt{APP\_INTERCEPTOR}, \texttt{APP\_FILTER} &
+Validates request payloads via Zod schemas, wraps JSON responses into a uniform \texttt{\{success, data, timestamp\}} envelope, strips undeclared output fields during serialization, and normalizes Zod, Multer (\texttt{LIMIT\_\allowbreak{}FILE\_\allowbreak{}SIZE}), and HTTP exceptions into structured \texttt{ApiError} payloads.
+\\ \hline
+
+10 &
+\textbf{Real-Time Messaging, Notifications \& Force-Logout Gateways} &
+\texttt{AuthGateway}, \texttt{ConversationsGateway}, \texttt{AppNotificationService}, \texttt{NotificationRealtimeService} \newline
+Namespaces: \texttt{/auth}, \texttt{/conversations} (Socket.IO) &
+Verifies JWT access tokens (plus active DB session and ban checks in \texttt{/conversations}) on WebSocket handshakes, joins \texttt{user:\{id\}} and \texttt{session:\{id\}} rooms, broadcasts \texttt{AUTH\_\allowbreak{}FORCE\_\allowbreak{}LOGOUT} on bans or revoked sessions, and delivers live chat, typing indicators, read receipts, and domain notifications.
+\\ \hline
+
+11 &
 \textbf{Scheduled Milestone Timeout \& Escrow Sweep} &
 \texttt{PaymentAutomationService.\allowbreak{}runScheduledChecks()} \newline
 Trigger: Periodic background timer every 5 minutes (\texttt{AUTOMATION\_SWEEP\_INTERVAL\_MS}) &
 Executes a non-overlapping scheduled sweep that (i) auto-approves milestone submissions pending client review past 7 days (\texttt{CLIENT\_REVIEW\_TIMEOUT\_MS}), releases Stripe Connect escrow payouts, and completes exhausted contracts/jobs; and (ii) marks overdue active milestones as \texttt{LATE} while notifying both parties.
 \\ \hline
 
-4 &
-\textbf{Automated Stripe Webhook Processing \& Reconciliation} &
+12 &
+\textbf{Automated Stripe Webhook \& Payment Sync Fallback} &
 \texttt{StripeService}, \texttt{PaymentService} \newline
-Endpoint: \texttt{[POST] /api/payments/webhook} \newline
-Trigger: Asynchronous Stripe webhook callbacks &
-Verifies Stripe webhook signatures against the raw request body and idempotently processes \texttt{checkout.session.completed}, \texttt{payment\_intent.*}, and \texttt{account.updated} events to advance contract funding states (\texttt{PENDING\_SIGN}), update milestone escrow balances, record transaction ledger entries, and synchronize Connect Express payout readiness.
+Endpoints: \texttt{[POST] /api/\allowbreak{}payments/\allowbreak{}webhook} (\texttt{@IsPublic()}), \texttt{intents/\allowbreak{}:id/\allowbreak{}sync}, \texttt{checkout-sessions/\allowbreak{}:id/\allowbreak{}sync} &
+Verifies Stripe \texttt{stripe-signature} headers against raw request bodies (\texttt{rawBody: true}) and idempotently reconciles \texttt{checkout.session.completed}, \texttt{payment\_intent.*}, and \texttt{account.updated} events via asynchronous webhooks or explicit return-URL sync calls to update contract holds, escrow balances, ledger rows, and Connect readiness.
 \\ \hline
 
-5 &
-\textbf{Transactional Embedding Outbox Worker} &
-\texttt{EmbeddingOutboxService.\allowbreak{}tick()} \newline
-Trigger: Background worker every 30 seconds (\texttt{WORKER\_INTERVAL\_MS = 30s}, max 5 retries) &
-Polls \texttt{EmbeddingOutboxEvent} rows created during job posting or CV updates and asynchronously indexes section-aware document vectors into ChromaDB via \texttt{RecommendationIndexService}, recovering stuck records and isolating transactional writes from AI service downtime.
+13 &
+\textbf{Transactional Embedding Outbox Worker \& Reindex APIs} &
+\texttt{EmbeddingOutboxService.\allowbreak{}tick()}, \texttt{RecommendationIndexService} \newline
+Trigger: Worker every \texttt{30s} (\texttt{WORKER\_INTERVAL\_MS}, max 5 retries); \texttt{[POST] /api/\allowbreak{}recommendations/\allowbreak{}reindex}, \texttt{outbox/\allowbreak{}process} &
+Polls \texttt{EmbeddingOutboxEvent} rows created during job posting or CV updates and asynchronously indexes section-aware document vectors into ChromaDB, with explicit API endpoints to rebuild the vector index or flush pending outbox events on demand.
 \\ \hline
 
-6 &
+14 &
 \textbf{AI Job \& Freelancer Recommendation Engine} &
 \texttt{AiRecommendationService} \newline
 Trigger: Internal recommendation computation &
 Computes contextual matching scores between job descriptions and freelancer profiles using section-aware BGE-M3 semantic embeddings combined with structured rule scoring (skills, experience, budget, preferences) and generates claim-level matching explanations.
 \\ \hline
 
-7 &
+15 &
 \textbf{AI Content Moderation Pipeline} &
 \texttt{AIModerationService} \newline
 Trigger: Forum post and comment creation or update &
 Evaluates user-submitted forum posts and comments server-side against the external \texttt{AI\_MODERATION\_URL} (\texttt{/moderate}) endpoint, classifying submissions as \texttt{APPROVED}, \texttt{PENDING} (routed to the admin queue), or \texttt{REJECTED} (moved to forum trash), defaulting safely to \texttt{APPROVED} if the AI service is unreachable.
 \\ \hline
 
-8 &
+16 &
 \textbf{AI Biometric eKYC \& Duplicate Identity Detection} &
 \texttt{IdentityAiService} \newline
 Trigger: Identity verification submission (\texttt{ai-check} / \texttt{liveness-pose}) &
 Extracts citizen identity fields via RapidOCR, computes facial embeddings and matches selfies via UltraFace/ArcFace (ONNX Runtime), validates active liveness poses with MediaPipe, and detects duplicate \texttt{identityNumber} collisions across accounts before administrative review.
 \\ \hline
 
-9 &
+17 &
 \textbf{AI CV Skill Extraction Pipeline} &
 \texttt{AiCvAnalyzerService} \newline
 Trigger: Freelancer CV analysis request &
 Parses uploaded PDF curriculum vitae documents on the backend and extracts normalized candidate skill suggestions for draft review before any profile skills are persisted.
 \\ \hline
 
-10 &
+18 &
 \textbf{Automated Language Compliance Verification} &
 \texttt{FastTextService} \newline
 Trigger: Job text validation / startup pre-loaded WASM model &
 Strips HTML and noise from submitted job text and executes an in-process FastText WASM language detector combined with Vietnamese diacritic checks to enforce English-language policy compliance automatically.
 \\ \hline
 
-11 &
-\textbf{Automated Contract PDF Generation \& Media Storage} &
-\texttt{ContractPdfService}, \texttt{CloudinaryService} \newline
-Trigger: Contract generation / PDF export &
-Renders formal multi-party contract agreements (party metadata, terms, milestone schedules, fee breakdowns, and digital signature timestamps) into PDF documents via \texttt{pdf-lib} and persists/cleans up media assets through Cloudinary and protected local storage.
+19 &
+\textbf{Contract PDF Generation, Media Storage \& File Streaming} &
+\texttt{ContractPdfService}, \texttt{CloudinaryService}, \texttt{streamStoredFile()} \newline
+Endpoints: \texttt{[GET] /api/\allowbreak{}contracts/\allowbreak{}:id/\allowbreak{}pdf}, \texttt{account-profile/\allowbreak{}avatar/\allowbreak{}:userId/\allowbreak{}file} (\texttt{@IsPublic()}), \texttt{identity-verifications/\allowbreak{}documents/\allowbreak{}:id/\allowbreak{}file}, \texttt{admin/\allowbreak{}identity-verifications/\allowbreak{}:id/\allowbreak{}file}, \texttt{profiles/\allowbreak{}:id/\allowbreak{}cv/\allowbreak{}file}, \texttt{banners/\allowbreak{}image/\allowbreak{}:filename} (\texttt{@IsPublic()}) &
+Renders formal multi-party contracts into PDF documents via \texttt{pdf-lib}, manages Cloudinary and protected local media assets (plus static \texttt{/uploads/}), and streams private identity documents, CVs, avatars, and local banner files with explicit \texttt{Content-Disposition} and caching headers.
 \\ \hline
 
-12 &
+20 &
 \textbf{Scheduled Overdue Contract Expiry \& Hold Release} &
 \texttt{ContractService.\allowbreak{}expireOverdueContracts()}, \texttt{PaymentService.\allowbreak{}cancelContractHold()} \newline
 Trigger: Background interval timer every 5 minutes &

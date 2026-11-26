@@ -46,8 +46,8 @@ The system communicates with four kinds of external element. Each interface is l
 \Needspace{12\baselineskip}
 \subsubsection{Security \& Privacy}
 \begin{itemize}
-    \item \textbf{Authentication and Authorization:} All network communications must be encrypted using HTTPS/TLS 1.3. User passwords must be hashed using bcrypt with a work factor of 12.
-    \item \textbf{Session Management:} JWT Access Tokens must have a short lifespan (e.g., 15 minutes) and be stored in memory. Refresh Tokens must have a longer lifespan (e.g., 7 days), be stored in HTTP-only, Secure, and SameSite=Strict cookies, and be invalidated in the database upon user logout.
+    \item \textbf{Authentication and Authorization:} All network communications must be encrypted using HTTPS/TLS 1.3. User passwords must be hashed using bcrypt with a work factor of 10 (\texttt{SALT\_ROUNDS = 10}).
+    \item \textbf{Session Management:} JWT Access Tokens and Refresh Tokens are issued with configurable lifespans, stored in HTTP-only (\texttt{SameSite=Lax}, \texttt{Secure} in production) BFF cookies, automatically refreshed transparently on expiration, and invalidated in the database session table upon rotation, revocation, or user logout.
     \item \textbf{Role-Based Access Control (RBAC):} The system must strictly enforce role boundaries (Guest, Freelancer, Client, Expert, Admin). Administrative features, such as managing user roles, permissions, eKYC reviews, moderation queues, or dispute rulings, must be blocked by server-side authentication and permission guards for unauthorized accounts.
     \item \textbf{Payment \& Identity Data Protection:} Stripe webhook payloads must pass cryptographic signature validation before mutating ledger records, and uploaded citizen identity documents (CCCD) must be validated, stored securely via private media URLs, and accessible only to authorized reviewers.
 \end{itemize}
