@@ -1,0 +1,28 @@
+\contentsline {figure}{\numberline {1}{\ignorespaces Downloading the Git SCM installer for 64-bit Windows from the official website}}{8}{figure.caption.3}%
+\contentsline {figure}{\numberline {2}{\ignorespaces Downloading the Node.js Long Term Support (LTS) installer from the official website}}{9}{figure.caption.4}%
+\contentsline {figure}{\numberline {3}{\ignorespaces Downloading the Docker Desktop installer for Windows with WSL2 support}}{10}{figure.caption.5}%
+\contentsline {figure}{\numberline {4}{\ignorespaces Verifying installed version signatures of Git, Node.js, pnpm, and Docker via PowerShell}}{11}{figure.caption.6}%
+\contentsline {figure}{\numberline {5}{\ignorespaces Cloning repository and executing pnpm install across all monorepo packages}}{12}{figure.caption.7}%
+\contentsline {figure}{\numberline {6}{\ignorespaces Verifying environment configuration files for API (\texttt {apps/api/.env}) and Web (\texttt {apps/web/.env})}}{13}{figure.caption.8}%
+\contentsline {figure}{\numberline {7}{\ignorespaces Generating Prisma Client, executing database migrations, and executing seed scripts}}{14}{figure.caption.9}%
+\contentsline {figure}{\numberline {8}{\ignorespaces Building and deploying all 5 system containers using Docker Compose}}{16}{figure.caption.11}%
+\contentsline {figure}{\numberline {9}{\ignorespaces Verifying the Next.js web application running on the local Web portal}}{17}{figure.caption.12}%
+\contentsline {figure}{\numberline {10}{\ignorespaces Verifying Backend RESTful API endpoints and response payloads via HTTP request}}{18}{figure.caption.13}%
+\contentsline {figure}{\numberline {11}{\ignorespaces User Registration and Email OTP Verification interface at \texttt {/register}}}{20}{figure.caption.14}%
+\contentsline {figure}{\numberline {12}{\ignorespaces User Login authentication screen at \texttt {/login}}}{22}{figure.caption.17}%
+\contentsline {figure}{\numberline {13}{\ignorespaces Google OAuth 2.0 Single Sign-On button and registration link on the login screen}}{24}{figure.caption.20}%
+\contentsline {figure}{\numberline {14}{\ignorespaces Password recovery and OTP reset interface at \texttt {/forgot-password}}}{25}{figure.caption.23}%
+\contentsline {figure}{\numberline {15}{\ignorespaces Active login sessions audit table with search and filtering at \texttt {/sessions}}}{27}{figure.caption.26}%
+\contentsline {figure}{\numberline {16}{\ignorespaces Confirmation modal dialog for revoking a remote session at \texttt {/sessions}}}{28}{figure.caption.29}%
+\contentsline {figure}{\numberline {17}{\ignorespaces User identity card and sign-out button located in the application navigation bar}}{29}{figure.caption.32}%
+\contentsline {figure}{\numberline {18}{\ignorespaces Central Administrator Dashboard and operational KPI metrics at \texttt {/admin}}}{30}{figure.caption.35}%
+\contentsline {figure}{\numberline {19}{\ignorespaces Administrator profile identity, standing, and granted privileges at \texttt {/admin/users/1}}}{32}{figure.caption.38}%
+\contentsline {figure}{\numberline {20}{\ignorespaces System and Custom Roles management console at \texttt {/admin/roles}}}{33}{figure.caption.41}%
+\contentsline {figure}{\numberline {21}{\ignorespaces Dynamic RBAC role-permission matrix configuration at \texttt {/admin/assign-role}}}{34}{figure.caption.44}%
+\contentsline {figure}{\numberline {22}{\ignorespaces System API Permission catalog with method and module filters at \texttt {/admin/permissions}}}{35}{figure.caption.47}%
+\contentsline {figure}{\numberline {23}{\ignorespaces User directory table and account provisioning interface at \texttt {/admin/users}}}{36}{figure.caption.50}%
+\contentsline {figure}{\numberline {24}{\ignorespaces Edit User modal dialog featuring the Banned account toggle at \texttt {/admin/users}}}{37}{figure.caption.53}%
+\contentsline {figure}{\numberline {25}{\ignorespaces Admin inspection view of dual Client and Freelancer profiles at \texttt {/admin/users/2}}}{38}{figure.caption.56}%
+\contentsline {figure}{\numberline {26}{\ignorespaces Skills catalog management console with search and soft delete at \texttt {/admin/skills}}}{39}{figure.caption.59}%
+\contentsline {figure}{\numberline {27}{\ignorespaces Job Categories management console at \texttt {/admin/job-categories}}}{41}{figure.caption.62}%
+\contentsline {figure}{\numberline {28}{\ignorespaces Forum Discussion Categories management console at \texttt {/admin/categories}}}{42}{figure.caption.65}%
