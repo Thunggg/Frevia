@@ -1,0 +1,262 @@
+\pdfminorversion=7
+\documentclass[12pt,a4paper]{article}
+
+%====================================================
+% ENCODING & LANGUAGE
+%====================================================
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[vietnamese,english]{babel}
+
+%====================================================
+% FONT & MATH
+%====================================================
+\usepackage{mathptmx}
+\usepackage{helvet}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+
+%====================================================
+% GRAPHICS & PATHS
+%====================================================
+\usepackage{graphicx}
+\graphicspath{{./images/}{../Report 4/}{../Report 4/images/}{../Report 3/}{../Report 1/image/}{../report 6/}}
+
+%====================================================
+% TABLES
+%====================================================
+\usepackage[table]{xcolor}
+\usepackage{float}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{makecell}
+\usepackage{caption}
+\usepackage{enumitem}
+\usepackage{hhline}
+
+%====================================================
+% PAGE LAYOUT
+%====================================================
+\usepackage{geometry}
+\geometry{
+    top=2.54cm,
+    bottom=2.54cm,
+    left=2.54cm,
+    right=2.54cm,
+    headheight=15pt
+}
+
+\setlength{\emergencystretch}{3em}
+
+%====================================================
+% SPACING
+%====================================================
+\usepackage{setspace}
+\onehalfspacing
+
+\usepackage{indentfirst}
+\setlength{\parindent}{1.0cm}
+\setlength{\parskip}{5pt}
+
+%====================================================
+% COLORS
+%====================================================
+\definecolor{fptred}{RGB}{192,0,0}
+\definecolor{fptBlue}{RGB}{0,0,139}
+\definecolor{fptOrange}{RGB}{255,140,0}
+\definecolor{fptLightOrange}{RGB}{255,224,178}
+\definecolor{fptHeader}{RGB}{255,232,225}
+\definecolor{fptHeaderText}{RGB}{110,37,0}
+\definecolor{fptTocBlue}{RGB}{46,116,181}
+\definecolor{codebg}{RGB}{248,249,250}
+
+%====================================================
+% SECTION NUMBERING & FORMATTING
+%====================================================
+\usepackage{titlesec}
+
+\setcounter{secnumdepth}{4}
+\setcounter{tocdepth}{3}
+
+% Part: I., II., ... (Roman numeral)
+\titleformat{\part}
+  {\normalfont\fontsize{16}{19}\selectfont\bfseries\color{fptred}}
+  {\thepart}{0.8em}{}
+
+% Section: 1., 2., ...
+\titleformat{\section}
+  {\normalfont\fontsize{13}{16}\selectfont\bfseries\color{black}}
+  {\thesection}{0.8em}{}
+
+% Subsection: 1.1, 1.2, ...
+\titleformat{\subsection}
+  {\normalfont\fontsize{12}{14}\selectfont\bfseries\color{black}}
+  {\thesubsection}{0.8em}{}
+
+% Subsubsection: 1.1.1, ...
+\titleformat{\subsubsection}
+  {\normalfont\fontsize{12}{14}\selectfont\bfseries\itshape\color{black}}
+  {\thesubsubsection}{0.8em}{}
+
+\renewcommand{\thepart}{\Roman{part}.}
+\renewcommand{\thesection}{\arabic{section}.}
+\renewcommand{\thesubsection}{\arabic{section}.\arabic{subsection}}
+\renewcommand{\thesubsubsection}{\thesubsection.\arabic{subsubsection}}
+
+\titlespacing*{\part}{0pt}{1.5ex plus .2ex}{1.2ex plus .2ex}
+\titlespacing*{\section}{0pt}{1.4ex plus .3ex minus .2ex}{0.6ex plus .2ex}
+\titlespacing*{\subsection}{0pt}{1.0ex plus .2ex minus .2ex}{0.4ex plus .2ex}
+\titlespacing*{\subsubsection}{0pt}{0.8ex plus .2ex minus .2ex}{0.3ex plus .2ex}
+
+%====================================================
+% HEADER & FOOTER
+%====================================================
+\usepackage{fancyhdr}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\itshape Frevia Platform -- Report 7: Final Project Report}
+\fancyhead[R]{\small\itshape Capstone Project SEP490\_04}
+\fancyfoot[C]{\small\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.4pt}
+
+\fancypagestyle{plain}{
+  \fancyhf{}
+  \fancyfoot[C]{\small\thepage}
+  \renewcommand{\headrulewidth}{0pt}
+  \renewcommand{\footrulewidth}{0pt}
+}
+
+%====================================================
+% CAPTIONS
+%====================================================
+\captionsetup{
+    font=small,
+    labelfont=bf,
+    justification=centering,
+    skip=6pt
+}
+
+%====================================================
+% TABLE OF CONTENTS FORMATTING
+%====================================================
+\usepackage{tocloft}
+
+\renewcommand{\cftpartleader}{\cftdotfill{\cftdotsep}}
+\renewcommand{\cftsecleader}{\cftdotfill{\cftdotsep}}
+\renewcommand{\cftsubsecleader}{\cftdotfill{\cftdotsep}}
+\renewcommand{\cftsubsubsecleader}{\cftdotfill{\cftdotsep}}
+
+\renewcommand{\cftpartfont}{\normalfont\normalsize\bfseries}
+\renewcommand{\cftpartpagefont}{\normalfont\normalsize\bfseries}
+\renewcommand{\cftsecfont}{\normalfont}
+\renewcommand{\cftsecpagefont}{\normalfont}
+
+\setlength{\cftbeforepartskip}{6pt}
+\setlength{\cftbeforesecskip}{3pt}
+\setlength{\cftbeforesubsecskip}{2pt}
+
+%====================================================
+% CODE LISTINGS
+%====================================================
+\usepackage{listings}
+\lstset{
+  basicstyle=\footnotesize\ttfamily,
+  backgroundcolor=\color{codebg},
+  frame=single,
+  rulecolor=\color{black!20},
+  breaklines=true,
+  tabsize=2,
+  showstringspaces=false
+}
+
+%====================================================
+% HYPERLINKS
+%====================================================
+\usepackage{hyperref}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=black,
+    citecolor=black,
+    filecolor=black,
+    urlcolor=fptBlue,
+    pdftitle={Frevia - Report 7: Final Project Report},
+    pdfauthor={Group Frevia - SEP490_04}
+}
+
+%====================================================
+% CUSTOM COLUMN TYPES & MACROS
+%====================================================
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
+\newcolumntype{C}[1]{>{\centering\arraybackslash}p{#1}}
+\newcolumntype{R}[1]{>{\raggedleft\arraybackslash}p{#1}}
+
+% Resilient figure macro: checks Report 4 vector PDF, then local PDF, then PNG, then placeholder box
+\newcommand{\kfig}[4]{%
+\begin{figure}[H]
+    \centering
+    \IfFileExists{../Report 4/#2.pdf}{%
+        \includegraphics[width=#1,height=0.85\textheight,keepaspectratio]{../Report 4/#2.pdf}%
+    }{%
+        \IfFileExists{#2.pdf}{%
+            \includegraphics[width=#1,height=0.85\textheight,keepaspectratio]{#2.pdf}%
+        }{%
+            \IfFileExists{../Report 4/#2.png}{%
+                \includegraphics[width=#1,height=0.85\textheight,keepaspectratio]{../Report 4/#2.png}%
+            }{%
+                \IfFileExists{#2.png}{%
+                    \includegraphics[width=#1,height=0.85\textheight,keepaspectratio]{#2.png}%
+                }{%
+                    \setlength{\fboxsep}{10pt}%
+                    \fbox{\parbox{0.8\textwidth}{\centering\textbf{[Figure: #3]}\\\small\texttt{\detokenize{#2}}}}%
+                }%
+            }%
+        }%
+    }%
+    \caption{#3}
+    \label{#4}
+\end{figure}
+}
+
+%====================================================
+% DOCUMENT
+%====================================================
+\begin{document}
+
+% Cover page
+\input{cover}
+
+% Front matter
+\setcounter{page}{2}
+\input{acknowledgement}
+\input{definition_and_acronyms}
+\input{table_of_contents}
+
+% Main sections
+\input{sections/1.Project_Introduction}
+\newpage
+
+\input{sections/2.Project_Management_Plan}
+\newpage
+
+\input{sections/3.Software_Requirement_Specification}
+\newpage
+
+\input{sections/4.Software_Design_Description}
+\newpage
+
+\input{sections/5.Software_Testing_Documentation}
+\newpage
+
+\input{sections/6.Release_Package_and_User_Guides}
+\newpage
+
+\input{sections/7.Appendix}
+
+\end{document}

@@ -1,0 +1,134 @@
+% ========================================================
+% FILE: sections/1.Project_Introduction.tex
+% Part I: Project Introduction
+% ========================================================
+\part{Project Introduction}
+
+\section{Overview}
+
+\subsection{Project Information}
+\begin{itemize}[leftmargin=1.5cm]
+    \item \textbf{Project Name:} Frevia -- Verified Freelance Marketplace Platform
+    \item \textbf{Project Code:} SEP490\_04
+    \item \textbf{Group Name:} Frevia
+    \item \textbf{Software Type:} Full-stack Web Application (SaaS Marketplace)
+    \item \textbf{Target Market:} Digital Freelancers, Clients (SMEs, Startups, Individuals), and Independent Domain Experts in Vietnam and Southeast Asia.
+\end{itemize}
+
+\subsection{Project Team}
+The project team comprises five senior software engineering students from FPT University Can Tho, guided by academic supervisor Ms. Cao Hong Nga, as summarized in Table~\ref{tab:project_team}.
+
+\begin{table}[H]
+\centering
+\caption{Project Team and Stakeholder Directory}
+\label{tab:project_team}
+\renewcommand{\arraystretch}{1.3}
+\setlength{\tabcolsep}{6pt}
+\small
+\begin{tabular}{|L{3.6cm}|C{2.0cm}|C{2.0cm}|L{4.8cm}|C{2.4cm}|}
+\hline
+\rowcolor{fptHeader}
+\textbf{Full Name} & \textbf{Roll No.} & \textbf{Role} & \textbf{Email} & \textbf{Mobile} \\
+\hline
+Cao Hong Nga & -- & Supervisor & ngach@fe.edu.vn & 0942150108 \\
+\hline
+Pham Kha Vy & CE182254 & Leader / Fullstack & vypkce182254@fpt.edu.vn & 0943767501 \\
+\hline
+Nguyen Tien Thuan & CE181024 & Backend Lead & thuanntce181024@fpt.edu.vn & 0912986533 \\
+\hline
+Tran Phat Tai & CE181632 & Frontend Lead & taitpce181632@fpt.edu.vn & 0944778191 \\
+\hline
+Vo Nhut Tin & CE180619 & Core Backend & tinvnce180619@fpt.edu.vn & 0965374478 \\
+\hline
+Nguyen Lu Nhat Huy & CE181196 & Fullstack / QA & huynlnce181196@fpt.edu.vn & 0911737406 \\
+\hline
+\end{tabular}
+\end{table}
+
+\section{Product Background}
+The global knowledge economy has witnessed a structural shift toward remote freelance collaboration. In software engineering, graphic design, content creation, and digital marketing, organizations increasingly rely on agile on-demand talent rather than long-term physical employment. However, conventional online freelance marketplaces suffer from four persistent structural dysfunctions:
+\begin{enumerate}[leftmargin=1.2cm]
+    \item \textbf{Identity Asymmetry and Credential Fraud:} Clients cannot reliably verify whether a freelancer's profile represents a real, qualified professional or an anonymous entity reusing stolen portfolios.
+    \item \textbf{Financial Insecurity and Payment Default:} Freelancers frequently face non-payment, scope creep, or arbitrary cancellations after investing significant effort, while clients risk paying upfront for incomplete or subpar deliverables.
+    \item \textbf{Ambiguous Contractual Governance:} Most agreements remain informal text chats lacking enforceable milestone terms, legal exportability, or clear digital acceptance criteria.
+    \item \textbf{Biased and Prolonged Dispute Resolution:} Traditional platforms utilize centralized customer support agents who lack domain expertise to objectively adjudicate technical programming or creative disputes.
+\end{enumerate}
+
+Frevia was conceived to eliminate this trust deficit. By unifying \textbf{AI-driven eKYC biometric verification}, \textbf{milestone-based Stripe escrow payments}, \textbf{digitally signed legally binding contracts}, and a \textbf{tripartite dispute arbitration model} involving certified independent Experts, Frevia establishes a secure, transparent ecosystem where parties can collaborate safely without prior mutual trust.
+
+\section{Existing Systems}
+To determine Frevia's technical and competitive positioning, the team conducted an in-depth audit of leading international and domestic platforms: Upwork, Fiverr, Freelancer.com, and vLance (Table~\ref{tab:existing_systems_comparison}).
+
+\begin{table}[H]
+\centering
+\caption{Comparative Analysis of Existing Systems vs. Frevia}
+\label{tab:existing_systems_comparison}
+\renewcommand{\arraystretch}{1.25}
+\setlength{\tabcolsep}{4pt}
+\scriptsize
+\begin{tabular}{|L{2.8cm}|L{2.9cm}|L{2.9cm}|L{2.9cm}|L{3.2cm}|}
+\hline
+\rowcolor{fptHeader}
+\textbf{Feature / Dimension} & \textbf{Upwork} & \textbf{Fiverr} & \textbf{vLance (Vietnam)} & \textbf{Frevia (Proposed)} \\
+\hline
+\textbf{Core Business Model} & Hourly \& Fixed-price project bidding. & Pre-packaged catalog gig purchases. & Domestic freelance project bidding. & Verified fixed-price milestone contracts. \\
+\hline
+\textbf{Identity Verification} & Passive ID check; easily spoofed via rented accounts. & Minimal initial verification; badges tied to sales volume. & Basic phone/email verification; weak KYC. & \textbf{Strict eKYC: CCCD OCR + 3D facial biometric liveness.} \\
+\hline
+\textbf{Payment \& Settlement} & Proprietary escrow; high transaction fees (10--20\%). & Closed balance wallet; high withdrawal hold (14 days). & Domestic bank transfer; manual admin approval. & \textbf{Direct Stripe Escrow with automated milestone payout.} \\
+\hline
+\textbf{Contract Governance} & Generic electronic agreement. & Order terms without formal digital signature. & Basic agreement without signed legal PDF export. & \textbf{Bilateral digital signing + tamper-evident PDF export.} \\
+\hline
+\textbf{Dispute Resolution} & Generic customer support mediation. & Automated cancellation favoring buyers. & Slow manual administrative mediation. & \textbf{Domain Expert arbitration with structured evidence logs.} \\
+\hline
+\textbf{Real-time Communication} & Web socket chat \& video call. & Asynchronous order messaging. & Simple web chat. & \textbf{Real-time Socket.IO chat, direct file attachments, read receipts.} \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsection*{Detailed Limitations of Existing Platforms and Frevia Solutions}
+\begin{itemize}[leftmargin=1.2cm]
+    \item \textbf{Upwork Limitation:} Upwork's extensive global talent pool results in severe proposal spamming and rampant account renting where unverified workers execute contracts under someone else's credentials. \\
+    \textit{Frevia Resolution:} Mandatory biometric face verification before bidding or receiving payouts, tied cryptographically to a unique national ID (CCCD), preventing account sharing.
+    \item \textbf{Fiverr Limitation:} Fixed gig models cannot accommodate complex, iterative, multi-stage engineering projects that require flexible milestone deliverables and custom specifications. \\
+    \textit{Frevia Resolution:} Dynamic milestone creation and submission workflows with dedicated revision requests and partial escrow release capabilities.
+    \item \textbf{vLance Limitation:} Lacks automated escrow infrastructure and relies on manual bank transfers, leading to administrative bottlenecks, delayed releases, and vulnerable transaction handling. \\
+    \textit{Frevia Resolution:} Full integration with Stripe Connect Express and Custom Accounts, guaranteeing programmatic escrow capture and immediate payout upon milestone approval.
+\end{itemize}
+
+\section{Business Opportunity}
+The Southeast Asian digital economy is expanding at over 20\% annually, with Vietnam emerging as a premier software outsourcing and creative hub. Over 2 million professionals engage in freelance activities domestically. However, the market suffers from a fragmented payment infrastructure and high fraud rates in informal social media deals (Facebook groups, Telegram). 
+
+Frevia addresses this massive business opportunity by serving as the \textbf{trusted, localized intermediary}. By combining low platform commission rates (5--8\% compared to Upwork's 10--20\%), automated Stripe escrow, and localized eKYC compliant with Vietnamese ID formats, Frevia captures substantial market share among tech startups, digital agencies, and independent knowledge workers.
+
+\section{Software Product Vision}
+\begin{quote}
+\textit{``For businesses seeking dependable digital talent and freelancers demanding guaranteed compensation, Frevia is a verified freelance marketplace that enforces end-to-end contractual integrity. Unlike conventional platforms that rely on blind trust and delayed customer support, Frevia combines automated biometric identity verification, milestone-governed Stripe escrow, and impartial expert dispute resolution into an integrated web platform.''}
+\end{quote}
+
+\section{Project Scope \& Limitations}
+
+\subsection{Major Features (Scope)}
+The Frevia platform delivers 21 major feature groups organized across core modules:
+\begin{itemize}[leftmargin=1.2cm]
+    \item \textbf{FE-01: Authentication \& Session Management:} Multi-role credential registration, Google OAuth 2.0, OTP email verification, JWT issuance, device tracking, and multi-session revocation.
+    \item \textbf{FE-02: Multi-Role Membership \& Profile Management:} Dynamic switching between Client, Freelancer, and Expert roles within a single account, with customized profile fields and portfolio displays.
+    \item \textbf{FE-03: Identity Verification (eKYC):} Citizen ID (CCCD) upload, optical character recognition (OCR), 3D facial mesh liveness detection, and admin verification dashboard.
+    \item \textbf{FE-04: Job Posting \& Browsing:} Advanced faceted search, skill tagging, fixed-budget estimation, deadline enforcement, draft/publish lifecycle, and bookmarking.
+    \item \textbf{FE-05: Proposal \& Bidding Management:} Proposal submission with milestone cost breakdowns, cover letters, file attachments, withdrawal, interview invitations, and acceptance.
+    \item \textbf{FE-06: Contract Lifecycle Management:} Offer generation, bilateral digital signatures, milestone schedules, contract amendment, and tamper-evident PDF generation.
+    \item \textbf{FE-07: Milestone Delivery \& Progress Tracking:} Multi-stage milestone submission, review workflows, file attachments, revision change requests, and completion approvals.
+    \item \textbf{FE-08: Escrow Payment Processing via Stripe:} Client milestone funding (PaymentIntent hold), automated escrow release upon approval, payout transfers, and saved payment methods.
+    \item \textbf{FE-09: Dispute Arbitration:} Structured dispute filing, evidence submission, position statements, and expert arbitrator binding decisions.
+    \item \textbf{FE-10: Real-time Communication \& Direct Messaging:} WebSocket-powered 1-on-1 conversations, unread counters, message recall, attachments, and typing indicators.
+    \item \textbf{FE-11: Community Forum \& Knowledge Hub:} Category-based discussions, post authoring, moderation workflows, upvoting, commenting, and content reporting.
+    \item \textbf{FE-12: System Administration \& RBAC:} Comprehensive permission matrix management, catalog maintenance (skills, categories, banners), audit logging, and trash bin restoration.
+\end{itemize}
+
+\subsection{Limitations \& Exclusions}
+\begin{itemize}[leftmargin=1.2cm]
+    \item \textbf{LI-01 (Payment Gateway):} Payment and payout operations are provided exclusively through Stripe. Direct local domestic e-wallets (MoMo, ZaloPay) and cryptocurrency settlements are excluded in the current release.
+    \item \textbf{LI-02 (Country Availability):} Stripe Connect onboarding depends on Stripe-supported countries. Payouts to countries unsupported by Stripe require manual intermediary processing.
+    \item \textbf{LI-03 (Contract Pricing Model):} Only fixed-price milestone contracts are supported. Hourly contracts with background screenshot desktop time-tracking are excluded.
+    \item \textbf{LI-04 (Native Mobile Client):} Frevia is delivered as a fully responsive Web Progressive Web Application (PWA); native iOS and Android binary applications are out of scope.
+\end{itemize}

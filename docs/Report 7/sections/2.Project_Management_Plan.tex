@@ -1,0 +1,221 @@
+% ========================================================
+% FILE: sections/2.Project_Management_Plan.tex
+% Part II: Project Management Plan
+% ========================================================
+\part{Project Management Plan}
+
+\section{Overview}
+
+\subsection{Scope \& Estimation}
+The Frevia development roadmap was structured using the Work Breakdown Structure (WBS) decomposed into SMAR (Specific, Measurable, Achievable, Relevant) items distributed across five two-week development sprints. Table~\ref{tab:effort_estimation} summarizes the scope complexity and estimated effort across platform modules.
+
+\begin{table}[H]
+\centering
+\caption{Module Scope and Effort Estimation Summary}
+\label{tab:effort_estimation}
+\renewcommand{\arraystretch}{1.25}
+\setlength{\tabcolsep}{6pt}
+\small
+\begin{tabular}{|c|L{6.2cm}|C{2.6cm}|C{2.6cm}|C{2.4cm}|}
+\hline
+\rowcolor{fptHeader}
+\textbf{No.} & \textbf{Module Name} & \textbf{SMAR Items} & \textbf{Avg. Complexity} & \textbf{Effort (days)} \\
+\hline
+1 & Authentication \& Session Management & 6 items & Medium & 17 \\
+\hline
+2 & Multi-Role Membership \& Profile & 8 items & Medium & 22 \\
+\hline
+3 & Identity Verification (eKYC) & 5 items & High & 24 \\
+\hline
+4 & Job Browsing \& Management & 7 items & Medium & 21 \\
+\hline
+5 & Proposal \& Bidding Management & 8 items & Medium & 23 \\
+\hline
+6 & Contract Lifecycle Management & 8 items & High & 28 \\
+\hline
+7 & Milestone Delivery \& Progress & 6 items & Medium & 20 \\
+\hline
+8 & Stripe Escrow \& Payment Processing & 8 items & High & 30 \\
+\hline
+9 & Dispute Arbitration Management & 8 items & High & 26 \\
+\hline
+10 & Real-time Messaging \& Socket.IO & 8 items & Medium & 22 \\
+\hline
+11 & Forum \& Community Moderation & 10 items & Low--Medium & 20 \\
+\hline
+12 & System Administration \& RBAC & 9 items & Low--Medium & 19 \\
+\hline
+\rowcolor{fptHeader}
+\multicolumn{2}{|c|}{\textbf{Total Project Scope}} & \textbf{91 items} & \textbf{--} & \textbf{272 man-days} \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsection{Project Objectives}
+The project successfully satisfied all target metrics established in the project charter:
+\begin{itemize}[leftmargin=1.2cm]
+    \item \textbf{Quality Objectives:}
+    \begin{itemize}
+        \item Unit and integration test line coverage exceeds 85\% across all core service classes.
+        \item Zero unresolved blocker or critical security defects at final release.
+        \item Total test suite pass rate $\ge$ 99.0\% across automated test runs.
+        \item Complete architectural isolation between controller, service, repository, and presentation layers.
+    \end{itemize}
+    \item \textbf{Time \& Schedule Objectives:}
+    \begin{itemize}
+        \item Strict adherence to the 12-week capstone timeline (07/09/2026 to 27/11/2026).
+        \item Five two-week sprints delivered on schedule with demoable increments at each sprint review.
+    \end{itemize}
+    \item \textbf{Cost \& Resource Objectives:}
+    \begin{itemize}
+        \item Total consumed effort within the planned 272 man-days across the five team members.
+        \item Zero budget overrun on cloud services by leveraging Dockerized local staging and free tiers (Stripe Testmode, Supabase/Local PostgreSQL, Cloudinary, Ollama).
+    \end{itemize}
+\end{itemize}
+
+\subsection{Project Risks}
+Table~\ref{tab:project_risks} delineates the principal engineering and operational risks managed throughout the project lifecycle.
+
+\begin{table}[H]
+\centering
+\caption{Project Risk Matrix and Mitigation Strategies}
+\label{tab:project_risks}
+\renewcommand{\arraystretch}{1.25}
+\setlength{\tabcolsep}{5pt}
+\scriptsize
+\begin{tabular}{|C{0.8cm}|L{4.2cm}|C{1.4cm}|C{1.4cm}|L{6.4cm}|}
+\hline
+\rowcolor{fptHeader}
+\textbf{ID} & \textbf{Risk Description} & \textbf{Likelihood} & \textbf{Impact} & \textbf{Mitigation Strategy} \\
+\hline
+RS-01 & Stripe Webhook loss or duplicate delivery during escrow capture. & Medium & Critical & Implemented idempotent database webhook handlers storing processed event IDs and verifying Stripe cryptographic signatures. \\
+\hline
+RS-02 & False negatives / rejections in AI biometric eKYC face matching. & High & High & Integrated confidence score thresholds; edge cases routed to human Admin review queue rather than hard auto-rejection. \\
+\hline
+RS-03 & WebSocket disconnects and missed messages in high-concurrency chat. & Medium & High & Implemented Redis-backed Socket.IO adapter, message delivery ack callbacks, and persistent database storage with unread counters. \\
+\hline
+RS-04 & Contract dispute deadlock between client and freelancer. & Medium & Critical & Established mandatory 3-stage arbitration workflow with independent certified Experts empowered to issue binding financial splits. \\
+\hline
+RS-05 & Schema migration drift between local environments and Docker. & Low & High & Enforced Prisma migrate deploy in CI/CD pipeline and container entrypoints; prohibited manual raw SQL mutations. \\
+\hline
+\end{tabular}
+\end{table}
+
+\section{Management Approach}
+
+\subsection{Project Process (Scrum Agile)}
+Frevia adopted the Scrum Agile framework tailored for software engineering capstone delivery over 12 weeks:
+\begin{itemize}[leftmargin=1.2cm]
+    \item \textbf{Sprint 0 (07/09 -- 19/09/2026):} Project initiation, architecture design, monorepo setup (pnpm workspaces, NestJS, Next.js, Prisma, TailwindCSS), and initial backlog refinement.
+    \item \textbf{Sprint 1 (20/09 -- 03/10/2026):} Core Authentication, RBAC, User Profile, Job Browsing, Initial Contract Management, and Forum Category management.
+    \item \textbf{Sprint 2 (04/10 -- 17/10/2026):} Job Creation \& Publishing, Proposal Bidding, Milestone Management, Notification System, and Direct Messaging Gateway.
+    \item \textbf{Sprint 3 (18/10 -- 31/10/2026):} Stripe Escrow integration, Milestone Deposit/Release, AI eKYC Biometric pipeline, Dispute Management, and Audit Logging.
+    \item \textbf{Sprint 4 (01/11 -- 14/11/2026):} Expert Arbitration workflow, Milestone Submissions, Message Recall, Admin Moderation Queue, and Comprehensive Testing.
+    \item \textbf{Sprint 5 (15/11 -- 27/11/2026):} End-to-end integration, performance optimization, Docker production packaging, User Guides, and Final Report compilation.
+\end{itemize}
+
+\subsection{Quality Management}
+Quality assurance was enforced through a rigorous \textbf{Definition of Done (DoD)}:
+\begin{enumerate}[leftmargin=1.2cm]
+    \item Automated linting (\texttt{pnpm lint}) and strict TypeScript typechecking (\texttt{pnpm check-types}) pass with zero warnings/errors.
+    \item Automated unit and integration test suites pass (\texttt{pnpm test}).
+    \item Docker Compose builds and starts up cleanly in isolated environments.
+    \item Mandatory GitHub Pull Request review and approval by at least one peer reviewer before merging into \texttt{develop}.
+    \item Zero sensitive secrets hardcoded; strict validation using Zod and class-validator DTOs.
+\end{enumerate}
+
+\subsection{Training Plan}
+Prior to Sprint 1, team members conducted internal knowledge-sharing workshops on Next.js 14 App Router (Server vs. Client Components), NestJS modular dependency injection, Prisma 7 transactions, Stripe Connect APIs, and Docker multi-stage builds.
+
+\section{Project Deliverables}
+Table~\ref{tab:deliverables} enumerates the primary engineering and documentation deliverables produced by the team.
+
+\begin{table}[H]
+\centering
+\caption{Frevia Project Deliverables}
+\label{tab:deliverables}
+\renewcommand{\arraystretch}{1.25}
+\setlength{\tabcolsep}{6pt}
+\small
+\begin{tabular}{|C{1.0cm}|L{6.2cm}|C{2.4cm}|L{5.0cm}|}
+\hline
+\rowcolor{fptHeader}
+\textbf{\#} & \textbf{Deliverable Item} & \textbf{Type} & \textbf{Format / Description} \\
+\hline
+1 & Report 1: Project Introduction & Document & PDF / Formal academic report \\
+\hline
+2 & Report 2: Project Management Plan & Document & PDF / Schedule, RACI, risks \\
+\hline
+3 & Report 3: Software Requirement Specification & Document & PDF / 48 Use cases, ERD, flows \\
+\hline
+4 & Report 4: Software Design Description & Document & PDF / Architecture, Class, Sequence \\
+\hline
+5 & Report 5: Software Testing Documentation & Document & PDF + Excel / Unit, IT, ST cases \\
+\hline
+6 & Report 6: Software User Guides & Document & PDF / Step-by-step UI guides \\
+\hline
+7 & Report 7: Final Project Report & Document & PDF / Complete synthesis \\
+\hline
+8 & Source Code Monorepo & Software & GitHub repository (\texttt{apps/web}, \texttt{apps/api}) \\
+\hline
+9 & Docker Deployment Package & Software & \texttt{docker-compose.yml}, Dockerfiles \\
+\hline
+10 & Database Schema \& Seed Scripts & Database & Prisma schema + automated seed script \\
+\hline
+\end{tabular}
+\end{table}
+
+\section{Responsibility Assignments (RACI Matrix)}
+Table~\ref{tab:raci} outlines the responsibility assignment across the team using the RACI framework (\textbf{R}esponsible, \textbf{A}ccountable, \textbf{C}onsulted, \textbf{I}nformed).
+
+\begin{table}[H]
+\centering
+\caption{RACI Responsibility Assignment Matrix}
+\label{tab:raci}
+\renewcommand{\arraystretch}{1.2}
+\setlength{\tabcolsep}{4pt}
+\small
+\begin{tabular}{|L{6.4cm}|C{1.6cm}|C{1.6cm}|C{1.6cm}|C{1.6cm}|C{1.6cm}|}
+\hline
+\rowcolor{fptHeader}
+\textbf{Deliverable / Engineering Area} & \textbf{VyPK} & \textbf{ThuanNT} & \textbf{TaiTP} & \textbf{TinVN} & \textbf{HuyNLN} \\
+\hline
+Project Planning \& Backlog Oversight & \textbf{A/R} & C & C & C & C \\
+\hline
+Architecture Design \& Monorepo Setup & R & \textbf{A/R} & R & R & R \\
+\hline
+Authentication, RBAC, Sessions & I & \textbf{A/R} & C & I & I \\
+\hline
+Job Browsing, Posting, Proposals & I & I & \textbf{A/R} & C & I \\
+\hline
+Contract Lifecycle, Milestones, Escrow & C & I & C & \textbf{A/R} & I \\
+\hline
+Dispute Arbitration \& Expert Workflow & C & I & I & \textbf{A/R} & I \\
+\hline
+AI eKYC Biometric Face Scan \& OCR & \textbf{A/R} & C & I & I & I \\
+\hline
+Real-time Messaging \& Socket Gateway & \textbf{A/R} & I & C & I & I \\
+\hline
+User Profiles, Reviews, Portfolios & I & I & I & I & \textbf{A/R} \\
+\hline
+Quality Assurance, Unit \& E2E Testing & R & R & R & R & \textbf{A/R} \\
+\hline
+Docker Packaging \& Deployment & R & \textbf{A/R} & I & R & I \\
+\hline
+\end{tabular}
+\end{table}
+
+\section{Project Communications}
+The team maintained a disciplined communication rhythm:
+\begin{itemize}[leftmargin=1.2cm]
+    \item \textbf{Daily Standup (Discord):} 15-minute sync at 09:00 AM to review completed items, daily goals, and blockers.
+    \item \textbf{Weekly Supervisor Review (Google Meet / On-campus):} Every Tuesday with Ms. Cao Hong Nga to demonstrate sprint progress and obtain academic feedback.
+    \item \textbf{Task Tracking \& Backlog Management:} GitHub Projects and Kanban board mapping Use Case IDs to active PRs.
+\end{itemize}
+
+\section{Configuration Management}
+\begin{itemize}[leftmargin=1.2cm]
+    \item \textbf{Document Management:} All project documentation authored in LaTeX and Markdown, maintained under version control in \texttt{docs/} within the repository, ensuring complete traceability.
+    \item \textbf{Source Code Management:} Git Flow strategy utilizing \texttt{main} (production-ready release), \texttt{develop} (integration branch), and feature branches adhering strictly to the naming convention \texttt{uc-[id]-[action]} (e.g., \texttt{uc-13-create-contract}, \texttt{uc-43-escrow-payment}).
+    \item \textbf{Tools \& Infrastructure:} Monorepo managed with Turborepo and pnpm; Next.js 14 App Router (web), NestJS 10 (API), Prisma ORM 7, PostgreSQL 16, Redis 7, Stripe API, Cloudinary (CDN), Docker \& Docker Compose.
+\end{itemize}

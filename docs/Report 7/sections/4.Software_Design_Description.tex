@@ -1,0 +1,168 @@
+% ========================================================
+% FILE: sections/4.Software_Design_Description.tex
+% Part IV: Software Design Description
+% ========================================================
+\part{Software Design Description}
+
+\section{Overall Description \& System Architecture Design}
+
+\subsection{Architectural Pattern (N-Layer Clean Architecture)}
+The Frevia platform is architected around the \textbf{Clean Architecture} paradigm and domain-driven design, cleanly segregating user interaction, business logic, persistence mechanisms, and third-party infrastructure. Figure~\ref{fig:arch:overall} illustrates the layered system architecture.
+
+\kfig{0.95\textwidth}{images/architecture/frevia-overall-architecture}{Frevia System Architecture Diagram}{fig:arch:overall}
+
+\subsection{Architectural Tiers and Responsibilities}
+\begin{enumerate}[leftmargin=1.2cm]
+    \item \textbf{Presentation Tier (Frontend Application):} Built with Next.js 14 App Router, React Server Components (RSC), TailwindCSS, and TanStack React Query. Handles client-side state, form validation via Zod, and responsive user rendering.
+    \item \textbf{API Gateway \& Routing Layer (Backend Controller):} Implemented using NestJS 10. Intercepts inbound HTTP/REST requests and WebSocket connections, enforces authentication via \texttt{AuthGuard} (JWT validation) and role authorization via \texttt{PermissionGuard}, transforms payloads using DTO pipes, and maps responses.
+    \item \textbf{Domain \& Application Logic Tier (Services):} Pure TypeScript business logic encapsulated within domain services (e.g., \texttt{ContractService}, \texttt{PaymentService}, \texttt{IdentityAiService}). Enforces business rules, state machine transitions, and orchestrates atomic transactions.
+    \item \textbf{Persistence \& Data Access Tier (Repositories):} Encapsulated database operations utilizing Prisma ORM 7 to communicate with PostgreSQL 16. Ensures strong typing and abstracts complex queries away from business services.
+    \item \textbf{Cache \& Real-time Event Tier:} Redis 7 cluster providing in-memory session caching, rate-limiting counters, and the Socket.IO Pub/Sub adapter for instant multi-instance message broadcast.
+    \item \textbf{External Integration Services:}
+    \begin{itemize}
+        \item \textbf{Stripe Connect:} Programmatic escrow hold, payment capture, and automated seller transfers.
+        \item \textbf{Cloudinary \& Private Object Storage:} Distributed media storage for avatars, portfolios, and encrypted ID documents.
+        \item \textbf{Google OAuth 2.0:} Social authentication identity provider.
+        \item \textbf{Python AI Microservice:} Dedicated biometric facial landmarker and OCR extraction container.
+    \end{itemize}
+\end{enumerate}
+
+\section{Package Diagram \& Structure}
+The codebase is organized as a unified monorepo managed with Turborepo and pnpm workspaces:
+\begin{itemize}[leftmargin=1.2cm]
+    \item \textbf{\texttt{apps/web} (Frontend Package):}
+    \begin{itemize}
+        \item \texttt{app/}: Next.js App Router entry points, layout definitions, route groups (\texttt{(auth)}, \texttt{(client)}, \texttt{(freelancer)}, \texttt{(admin)}, \texttt{(expert)}), and error boundaries.
+        \item \texttt{components/}: Atomic UI components, shared modals, data tables, and rich-text editors.
+        \item \texttt{hooks/}: Custom React hooks for authentication, WebSocket subscriptions, and queries.
+        \item \texttt{lib/}: API client configurations, formatting utilities, and local storage helpers.
+    \end{itemize}
+    \item \textbf{\texttt{apps/api} (Backend Package):}
+    \begin{itemize}
+        \item \texttt{modules/}: Domain-specific modules (Auth, User, Job, Proposal, Contract, Milestone, Payment, Dispute, Chat, Forum, Verification, Admin).
+        \item \texttt{common/}: Global exception filters, logging interceptors, security guards, and custom parameter decorators.
+        \item \texttt{prisma/}: Schema definitions (\texttt{schema.prisma}), migrations, and automated database seeder.
+    \end{itemize}
+    \item \textbf{\texttt{packages/shared-types} (Shared Package):} Common TypeScript interfaces, DTO schemas, and business constants shared across web and API.
+\end{itemize}
+
+\section{Database Design}
+
+\subsection{Relational Architecture Overview}
+Frevia persists all domain entities in a single PostgreSQL 16 relational database whose schema is formally declared in \texttt{apps/api/prisma/schema.prisma}. The database comprises 71 tables and 43 enumerations. Relational integrity is enforced via foreign key constraints with \texttt{RESTRICT} or \texttt{CASCADE} rules. Table~\ref{tab:core_database_tables} highlights the primary entities governing the platform's core transactions.
+
+\begin{table}[H]
+\centering
+\caption{Core Database Tables and Relationship Overview}
+\label{tab:core_database_tables}
+\renewcommand{\arraystretch}{1.22}
+\setlength{\tabcolsep}{5pt}
+\scriptsize
+\begin{tabular}{|L{2.8cm}|L{4.2cm}|C{2.6cm}|L{4.8cm}|}
+\hline
+\rowcolor{fptHeader}
+\textbf{Table Name} & \textbf{Business Purpose} & \textbf{Primary Key} & \textbf{Foreign Keys / Relationships} \\
+\hline
+\texttt{users} & Master user account credentials, email, and global status. & \texttt{id} (Int, PK) & 1:M to \texttt{account\_profiles}, 1:M to \texttt{sessions}. \\
+\hline
+\texttt{jobs} & Project job specifications, fixed budget, deadline, status. & \texttt{id} (Int, PK) & \texttt{client\_id} $\rightarrow$ \texttt{users(id)}, \texttt{category\_id}. \\
+\hline
+\texttt{proposals} & Freelancer job applications, proposed price, milestones. & \texttt{id} (Int, PK) & \texttt{job\_id} $\rightarrow$ \texttt{jobs(id)}, \texttt{freelancer\_id} $\rightarrow$ \texttt{users(id)}. \\
+\hline
+\texttt{contracts} & Legally binding agreements between client and freelancer. & \texttt{id} (Int, PK) & \texttt{proposal\_id} $\rightarrow$ \texttt{proposals(id)}, \texttt{client\_id}, \texttt{freelancer\_id}. \\
+\hline
+\texttt{milestones} & Multi-stage deliverables, amounts, and escrow statuses. & \texttt{id} (Int, PK) & \texttt{contract\_id} $\rightarrow$ \texttt{contracts(id)}. \\
+\hline
+\texttt{payment\_tx} & Financial records: escrow holds, captures, payouts, refunds. & \texttt{id} (Int, PK) & \texttt{contract\_id}, \texttt{milestone\_id}, \texttt{user\_id}. \\
+\hline
+\texttt{disputes} & Formal dispute cases raised on contracts or milestones. & \texttt{id} (Int, PK) & \texttt{contract\_id}, \texttt{milestone\_id}, \texttt{initiator\_id}, \texttt{expert\_id}. \\
+\hline
+\texttt{id\_verifications} & Freelancer CCCD and facial biometric eKYC records. & \texttt{id} (Int, PK) & \texttt{user\_id} $\rightarrow$ \texttt{users(id)}, \texttt{reviewer\_id} $\rightarrow$ \texttt{users(id)}. \\
+\hline
+\end{tabular}
+\end{table}
+
+\section{Detailed Design for Core 5\% Features}
+
+\subsection{Job Management \& Proposal Submission (UC-11 \& UC-32)}
+
+\paragraph*{a. Class Specifications}
+\begin{itemize}[leftmargin=1.2cm]
+    \item \textbf{\texttt{JobController}:} Exposes endpoints \texttt{POST /jobs} (create draft), \texttt{PATCH /jobs/:id/publish} (publish job), and \texttt{GET /jobs} (filtered search).
+    \item \textbf{\texttt{JobService}:} Implements validation ensuring client profile completeness and budget rationality before persisting via \texttt{JobRepository}.
+    \item \textbf{\texttt{ProposalController}:} Exposes endpoints \texttt{POST /jobs/:id/proposals} (submit proposal), \texttt{PATCH /proposals/:id/accept} (accept proposal), and \texttt{GET /proposals/my}.
+    \item \textbf{\texttt{ProposalService}:} Enforces single active application per freelancer, validates proposed milestone sums against total bid, and triggers contract creation upon acceptance.
+\end{itemize}
+
+\paragraph*{b. Class Diagram}
+\kfig{0.92\textwidth}{images/sprint1/ptai/class-diagrams/UC-11_Job_Management_Class_Diagram}{Class Diagram of Job Management}{fig:cls:job_mgmt}
+
+\paragraph*{c. Sequence Diagrams}
+Figure~\ref{fig:seq:create_job} illustrates the job creation flow, while Figure~\ref{fig:seq:submit_proposal} and Figure~\ref{fig:seq:accept_proposal} detail proposal submission and client acceptance.
+
+\kfig{0.82\textwidth}{images/sprint1/ptai/UC-11.02_-_Create_Job}{Sequence Diagram of UC-11.02 Create Job}{fig:seq:create_job}
+\kfig{0.82\textwidth}{images/sprint3/ptai/UC-32.03_-_Submit_Proposal}{Sequence Diagram of UC-32.03 Submit Proposal}{fig:seq:submit_proposal}
+\kfig{0.82\textwidth}{images/sprint3/ptai/UC-32.06_-_Accept_Proposal}{Sequence Diagram of UC-32.06 Accept Proposal}{fig:seq:accept_proposal}
+
+\subsection{Contract Lifecycle Management (UC-13)}
+
+\paragraph*{a. Class Specifications}
+\begin{itemize}[leftmargin=1.2cm]
+    \item \textbf{\texttt{ContractController}:} Exposes \texttt{POST /contracts} (create offer), \texttt{POST /contracts/:id/sign} (apply digital signature), and \texttt{GET /contracts/:id/pdf} (download signed agreement).
+    \item \textbf{\texttt{ContractService}:} Manages contract state machine (\texttt{OFFERED} $\rightarrow$ \texttt{ACTIVE} $\rightarrow$ \texttt{COMPLETED} / \texttt{TERMINATED}), coordinates with PDF generator service, and secures digital hash signatures.
+\end{itemize}
+
+\paragraph*{b. Class Diagram}
+\kfig{0.92\textwidth}{images/sprint1/ntin/classDiagram/ContractManagement}{Class Diagram of Contract Management}{fig:cls:contract_mgmt}
+
+\paragraph*{c. Sequence Diagrams}
+\kfig{0.82\textwidth}{images/sprint1/ntin/sequences/UC-13.01-create-contract}{Sequence Diagram of UC-13.01 Create Contract}{fig:seq:create_contract}
+\kfig{0.82\textwidth}{images/sprint1/ntin/sequences/UC-13.06-sign-contract}{Sequence Diagram of UC-13.06 Sign Contract}{fig:seq:sign_contract}
+
+\subsection{Milestone Escrow \& Stripe Payment Processing (UC-24 \& UC-43)}
+
+\paragraph*{a. Class Specifications}
+\begin{itemize}[leftmargin=1.2cm]
+    \item \textbf{\texttt{MilestoneController}:} Exposes endpoints to create milestones, update progress, submit deliverables, and request revisions.
+    \item \textbf{\texttt{PaymentController} \& \texttt{StripeService}:} Generates Stripe \texttt{PaymentIntent} sessions for milestone escrow funding, verifies incoming Stripe webhook cryptographic signatures, captures escrow funds, and initiates automated \texttt{Transfer} payouts to seller accounts.
+\end{itemize}
+
+\paragraph*{b. Class Diagram}
+\kfig{0.92\textwidth}{images/sprint4/ntin/classDiagram/PaymentManagement}{Class Diagram of Payment Management}{fig:cls:payment_mgmt}
+
+\paragraph*{c. Sequence Diagrams}
+Figure~\ref{fig:seq:fund_milestone} illustrates the escrow funding flow via Stripe, and Figure~\ref{fig:seq:update_milestone} details milestone deliverable submission.
+
+\kfig{0.82\textwidth}{images/sprint4/ntin/sequences/UC-43.07-fund-milestone-via-stripe-checkout}{Sequence Diagram of UC-43.07 Fund Milestone via Stripe}{fig:seq:fund_milestone}
+\kfig{0.82\textwidth}{images/sprint2/ntin/sequences/UC-24.06-update-milestone-progress}{Sequence Diagram of UC-24.06 Milestone Submission}{fig:seq:update_milestone}
+
+\subsection{Identity Verification and Biometric eKYC (UC-35)}
+
+\paragraph*{a. Class Specifications}
+\begin{itemize}[leftmargin=1.2cm]
+    \item \textbf{\texttt{IdentityVerificationController}:} Receives encrypted CCCD front/back images and live portrait selfies from freelancers.
+    \item \textbf{\texttt{IdentityAiService}:} Communicates with Python AI container for optical text recognition (OCR) and facial landmark embedding comparison.
+    \item \textbf{\texttt{AdminIdentityVerificationController}:} Enables administrators to review verification queues, inspect similarity confidence scores, and approve or reject submissions.
+\end{itemize}
+
+\paragraph*{b. Class Diagram}
+\kfig{0.92\textwidth}{images/sprint3/kvy/classDiagram/ManageIDVerification}{Class Diagram of Identity Verification}{fig:cls:id_verification}
+
+\paragraph*{c. Sequence Diagrams}
+\kfig{0.82\textwidth}{images/sprint3/kvy/sequences/UC-35.01-view-id-verification-request-list}{Sequence Diagram of UC-35.01 View ID Verification Requests}{fig:seq:view_id_requests}
+\kfig{0.82\textwidth}{images/sprint3/kvy/sequences/UC-35.03-approve-id-verification}{Sequence Diagram of UC-35.03 Approve ID Verification}{fig:seq:approve_id}
+
+\subsection{Dispute Resolution Management (UC-33)}
+
+\paragraph*{a. Class Specifications}
+\begin{itemize}[leftmargin=1.2cm]
+    \item \textbf{\texttt{DisputeController}:} Exposes endpoints for opening disputes, submitting evidence, and escalating to expert review.
+    \item \textbf{\texttt{DisputeService}:} Enforces milestone fund freezing, coordinates expert assignment, logs evidence chronologically, and executes binding financial determinations.
+\end{itemize}
+
+\paragraph*{b. Class Diagram}
+\kfig{0.92\textwidth}{images/sprint3/ntin/classDiagram/DisputeManagement}{Class Diagram of Dispute Management}{fig:cls:dispute_mgmt}
+
+\paragraph*{c. Sequence Diagrams}
+\kfig{0.82\textwidth}{images/sprint3/ntin/sequences/UC-33.01-open-dispute}{Sequence Diagram of UC-33.01 Open Dispute}{fig:seq:open_dispute}
+\kfig{0.82\textwidth}{images/sprint3/ntin/sequences/UC-33.05-respond-to-dispute}{Sequence Diagram of UC-33.05 Respond to Dispute}{fig:seq:respond_dispute}

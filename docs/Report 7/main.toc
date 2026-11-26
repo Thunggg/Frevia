@@ -1,0 +1,84 @@
+\babel@toc {english}{}\relax 
+\contentsline {section}{Acknowledgement}{2}{Doc-Start}%
+\contentsline {section}{Definition and Acronyms}{3}{Doc-Start}%
+\contentsline {part}{I.\hspace {1em}Project Introduction}{10}{part.1}%
+\contentsline {section}{\numberline {1.}Overview}{10}{section.1}%
+\contentsline {subsection}{\numberline {1.1}Project Information}{10}{subsection.1.1}%
+\contentsline {subsection}{\numberline {1.2}Project Team}{10}{subsection.1.2}%
+\contentsline {section}{\numberline {2.}Product Background}{10}{section.2}%
+\contentsline {section}{\numberline {3.}Existing Systems}{11}{section.3}%
+\contentsline {section}{\numberline {4.}Business Opportunity}{12}{section.4}%
+\contentsline {section}{\numberline {5.}Software Product Vision}{12}{section.5}%
+\contentsline {section}{\numberline {6.}Project Scope \& Limitations}{13}{section.6}%
+\contentsline {subsection}{\numberline {6.1}Major Features (Scope)}{13}{subsection.6.1}%
+\contentsline {subsection}{\numberline {6.2}Limitations \& Exclusions}{14}{subsection.6.2}%
+\contentsline {part}{II.\hspace {1em}Project Management Plan}{15}{part.2}%
+\contentsline {section}{\numberline {7.}Overview}{15}{section.7}%
+\contentsline {subsection}{\numberline {7.1}Scope \& Estimation}{15}{subsection.7.1}%
+\contentsline {subsection}{\numberline {7.2}Project Objectives}{15}{subsection.7.2}%
+\contentsline {subsection}{\numberline {7.3}Project Risks}{16}{subsection.7.3}%
+\contentsline {section}{\numberline {8.}Management Approach}{16}{section.8}%
+\contentsline {subsection}{\numberline {8.1}Project Process (Scrum Agile)}{16}{subsection.8.1}%
+\contentsline {subsection}{\numberline {8.2}Quality Management}{17}{subsection.8.2}%
+\contentsline {subsection}{\numberline {8.3}Training Plan}{17}{subsection.8.3}%
+\contentsline {section}{\numberline {9.}Project Deliverables}{17}{section.9}%
+\contentsline {section}{\numberline {10.}Responsibility Assignments (RACI Matrix)}{18}{section.10}%
+\contentsline {section}{\numberline {11.}Project Communications}{18}{section.11}%
+\contentsline {section}{\numberline {12.}Configuration Management}{19}{section.12}%
+\contentsline {part}{III.\hspace {1em}Software Requirement Specification}{20}{part.3}%
+\contentsline {section}{\numberline {13.}Product Overview}{20}{section.13}%
+\contentsline {subsection}{\numberline {13.1}User Classes and Characteristics}{20}{subsection.13.1}%
+\contentsline {subsection}{\numberline {13.2}Operating Environment and Constraints}{20}{subsection.13.2}%
+\contentsline {section}{\numberline {14.}User Requirements}{21}{section.14}%
+\contentsline {subsection}{\numberline {14.1}Actors Specification}{21}{subsection.14.1}%
+\contentsline {subsection}{\numberline {14.2}Use Case Structure}{21}{subsection.14.2}%
+\contentsline {section}{\numberline {15.}Functional Requirements}{21}{section.15}%
+\contentsline {subsection}{\numberline {15.1}System Functional Overview}{21}{subsection.15.1}%
+\contentsline {subsection}{\numberline {15.2}Core 5\% Features (Detailed Functional Specifications)}{22}{subsection.15.2}%
+\contentsline {subsubsection}{\numberline {15.2.1}Core Feature 1: Job Management and Proposal Submission (UC-11 \& UC-32)}{22}{subsubsection.15.2.1}%
+\contentsline {subsubsection}{\numberline {15.2.2}Core Feature 2: Contract Lifecycle and Digital Signing (UC-13)}{23}{subsubsection.15.2.2}%
+\contentsline {subsubsection}{\numberline {15.2.3}Core Feature 3: Milestone Escrow and Payment Processing via Stripe (UC-24 \& UC-43)}{24}{subsubsection.15.2.3}%
+\contentsline {subsubsection}{\numberline {15.2.4}Core Feature 4: Identity Verification and Biometric eKYC (UC-35)}{24}{subsubsection.15.2.4}%
+\contentsline {subsubsection}{\numberline {15.2.5}Core Feature 5: Dispute Resolution and Expert Arbitration (UC-33)}{25}{subsubsection.15.2.5}%
+\contentsline {section}{\numberline {16.}Non-Functional Requirements}{26}{section.16}%
+\contentsline {subsection}{\numberline {16.1}External Interfaces}{26}{subsection.16.1}%
+\contentsline {subsection}{\numberline {16.2}Quality Attributes}{26}{subsection.16.2}%
+\contentsline {part}{IV.\hspace {1em}Software Design Description}{27}{part.4}%
+\contentsline {section}{\numberline {17.}Overall Description \& System Architecture Design}{27}{section.17}%
+\contentsline {subsection}{\numberline {17.1}Architectural Pattern (N-Layer Clean Architecture)}{27}{subsection.17.1}%
+\contentsline {subsection}{\numberline {17.2}Architectural Tiers and Responsibilities}{27}{subsection.17.2}%
+\contentsline {section}{\numberline {18.}Package Diagram \& Structure}{28}{section.18}%
+\contentsline {section}{\numberline {19.}Database Design}{29}{section.19}%
+\contentsline {subsection}{\numberline {19.1}Relational Architecture Overview}{29}{subsection.19.1}%
+\contentsline {section}{\numberline {20.}Detailed Design for Core 5\% Features}{29}{section.20}%
+\contentsline {subsection}{\numberline {20.1}Job Management \& Proposal Submission (UC-11 \& UC-32)}{29}{subsection.20.1}%
+\contentsline {subsection}{\numberline {20.2}Contract Lifecycle Management (UC-13)}{33}{subsection.20.2}%
+\contentsline {subsection}{\numberline {20.3}Milestone Escrow \& Stripe Payment Processing (UC-24 \& UC-43)}{36}{subsection.20.3}%
+\contentsline {subsection}{\numberline {20.4}Identity Verification and Biometric eKYC (UC-35)}{39}{subsection.20.4}%
+\contentsline {subsection}{\numberline {20.5}Dispute Resolution Management (UC-33)}{42}{subsection.20.5}%
+\contentsline {part}{V.\hspace {1em}Software Testing Documentation}{46}{part.5}%
+\contentsline {section}{\numberline {21.}Scope of Testing}{46}{section.21}%
+\contentsline {section}{\numberline {22.}Test Strategy \& Testing Types}{46}{section.22}%
+\contentsline {subsection}{\numberline {22.1}Testing Types}{46}{subsection.22.1}%
+\contentsline {subsection}{\numberline {22.2}Test Levels and Supporting Tools}{46}{subsection.22.2}%
+\contentsline {section}{\numberline {23.}Test Plan \& Milestones}{47}{section.23}%
+\contentsline {section}{\numberline {24.}Test Cases Summary}{47}{section.24}%
+\contentsline {section}{\numberline {25.}Test Reports \& Quality Metrics}{48}{section.25}%
+\contentsline {subsection}{\numberline {25.1}Execution Results and Pass Rate}{48}{subsection.25.1}%
+\contentsline {subsection}{\numberline {25.2}Code Coverage Analysis}{48}{subsection.25.2}%
+\contentsline {subsection}{\numberline {25.3}Defect Density and Resolution}{49}{subsection.25.3}%
+\contentsline {part}{VI.\hspace {1em}Release Package \& User Guides}{50}{part.6}%
+\contentsline {section}{\numberline {26.}Deliverable Package}{50}{section.26}%
+\contentsline {section}{\numberline {27.}Installation Guides}{50}{section.27}%
+\contentsline {subsection}{\numberline {27.1}System Requirements}{50}{subsection.27.1}%
+\contentsline {subsection}{\numberline {27.2}Step-by-Step Installation Instructions}{51}{subsection.27.2}%
+\contentsline {section}{\numberline {28.}User Manual (Core 5\% Workflows)}{52}{section.28}%
+\contentsline {subsection}{\numberline {28.1}Workflow 1: Client Posting a Job \& Reviewing Candidate Proposals}{52}{subsection.28.1}%
+\contentsline {subsection}{\numberline {28.2}Workflow 2: Freelancer Submitting a Proposal \& Bidding}{52}{subsection.28.2}%
+\contentsline {subsection}{\numberline {28.3}Workflow 3: Bilateral Contract Digital Signing \& PDF Export}{53}{subsection.28.3}%
+\contentsline {subsection}{\numberline {28.4}Workflow 4: Milestone Escrow Funding via Stripe \& Automatic Payout Release}{53}{subsection.28.4}%
+\contentsline {subsection}{\numberline {28.5}Workflow 5: Submitting eKYC Biometric Verification \& Admin Review}{54}{subsection.28.5}%
+\contentsline {part}{VII.\hspace {1em}Appendix}{55}{part.7}%
+\contentsline {section}{\numberline {29.}Glossary}{55}{section.29}%
+\contentsline {section}{\numberline {30.}References}{55}{section.30}%
+\contentsline {section}{\numberline {31.}Project Links \& Artifacts}{56}{section.31}%

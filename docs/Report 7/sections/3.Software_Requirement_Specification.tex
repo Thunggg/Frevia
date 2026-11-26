@@ -1,0 +1,223 @@
+% ========================================================
+% FILE: sections/3.Software_Requirement_Specification.tex
+% Part III: Software Requirement Specification
+% ========================================================
+\part{Software Requirement Specification}
+
+\section{Product Overview}
+The Frevia platform is an enterprise-grade digital freelance marketplace designed to eliminate transactional uncertainty between hiring clients and independent service providers. Operating as a Software-as-a-Service (SaaS) web application, Frevia provides an integrated workflow spanning candidate discovery, verified bidding, milestone-governed escrow settlement, bilateral digital contracting, and expert-mediated dispute arbitration.
+
+\subsection{User Classes and Characteristics}
+Frevia categorizes system users into five primary classes with distinct operational responsibilities:
+\begin{enumerate}[leftmargin=1.2cm]
+    \item \textbf{Guest (Unauthenticated User):} Browses public landing pages, explores active job listings, searches freelancer directory profiles, reads public forum discussions, and initiates registration.
+    \item \textbf{Client (Employer / Buyer):} Posts project job specifications, defines budget and milestone requirements, reviews freelancer proposals, conducts chat interviews, extends contract offers, deposits escrow funds into Stripe, reviews submitted deliverables, releases payments, and rates freelancers.
+    \item \textbf{Freelancer (Service Provider / Seller):} Submits identity documents for eKYC verification, creates dynamic skill portfolios, submits customized job proposals with milestone bids, signs contract agreements, submits work deliverables, receives escrow payouts into connected Stripe accounts, and files disputes if required.
+    \item \textbf{Expert (Independent Arbitrator):} Certified industry professional assigned to adjudicate technical, legal, or creative contract disputes. Reviews evidence logs, examines code/deliverable quality, and issues binding escrow split determinations.
+    \item \textbf{Administrator (Platform Operator):} Manages platform catalogs (skills, job categories, banners), monitors the eKYC identity verification queue, oversees system-wide dispute resolution, audits transaction logs, manages RBAC role permissions, and moderates forum content.
+\end{enumerate}
+
+\subsection{Operating Environment and Constraints}
+\begin{itemize}[leftmargin=1.2cm]
+    \item \textbf{Client Environment:} Cross-platform desktop and mobile modern web browsers (Google Chrome 110+, Mozilla Firefox 115+, Apple Safari 16+, Microsoft Edge 110+).
+    \item \textbf{Server Hosting Environment:} Linux containerized Docker environment (Debian/Ubuntu LTS), Node.js runtime v20.x, Python 3.11 for AI microservices, PostgreSQL 16 relational database, and Redis 7 in-memory cache.
+    \item \textbf{Regulatory Constraints:} Compliance with Vietnamese regulations on electronic transactions (Law on E-Transactions) and personal data protection (Decree 13/2023/ND-CP). Financial storage complies with PCI-DSS through Stripe elements tokenization.
+\end{itemize}
+
+\section{User Requirements}
+
+\subsection{Actors Specification}
+Table~\ref{tab:actors_spec} summarizes the five user actors interacting with the Frevia platform.
+
+\begin{table}[H]
+\centering
+\caption{System Actors Specification}
+\label{tab:actors_spec}
+\renewcommand{\arraystretch}{1.25}
+\setlength{\tabcolsep}{6pt}
+\small
+\begin{tabular}{|c|L{2.8cm}|L{10.2cm}|}
+\hline
+\rowcolor{fptHeader}
+\textbf{No.} & \textbf{Actor} & \textbf{Description and Responsibilities} \\
+\hline
+1 & Guest & Anonymous visitor accessing public catalog views, landing info, and authentication gateways. \\
+\hline
+2 & Client & Individual or business commissioning freelance deliverables, funding escrow, and approving work. \\
+\hline
+3 & Freelancer & Professional providing specialized services, executing milestones, and receiving earnings. \\
+\hline
+4 & Expert & Impartial third-party professional adjudicating escalated contract and milestone disputes. \\
+\hline
+5 & Administrator & System supervisor governing identity verifications, catalog taxonomies, RBAC, and system audit logs. \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsection{Use Case Structure}
+The system defines 48 formal Use Cases (UC-01 through UC-48) spanning authentication, profile management, job posting, bidding, contract lifecycle, milestone escrow, dispute arbitration, real-time messaging, and admin moderation. In accordance with capstone guidelines, the detailed specification below highlights the \textbf{Core 5\% Key Features} that constitute the foundational operational engine of Frevia.
+
+\section{Functional Requirements}
+
+\subsection{System Functional Overview}
+\begin{itemize}[leftmargin=1.2cm]
+    \item \textbf{Screen Flow:} User journeys progress smoothly from public discovery (Home $\rightarrow$ Jobs $\rightarrow$ Details) through secure onboarding (Register $\rightarrow$ Verify Email $\rightarrow$ eKYC $\rightarrow$ Complete Profile) into core transaction cycles (Post Job $\rightarrow$ Review Proposals $\rightarrow$ Sign Contract $\rightarrow$ Fund Milestone Escrow $\rightarrow$ Submit Deliverable $\rightarrow$ Release Payment $\rightarrow$ Review).
+    \item \textbf{Screen Authorization Matrix:} Table~\ref{tab:screen_auth} summarizes access permissions across platform views based on authenticated role.
+\end{itemize}
+
+\begin{table}[H]
+\centering
+\caption{Screen Authorization Matrix (Summary)}
+\label{tab:screen_auth}
+\renewcommand{\arraystretch}{1.2}
+\setlength{\tabcolsep}{5pt}
+\small
+\begin{tabular}{|L{5.4cm}|C{1.6cm}|C{1.6cm}|C{1.8cm}|C{1.6cm}|C{1.6cm}|}
+\hline
+\rowcolor{fptHeader}
+\textbf{Screen / Functional Area} & \textbf{Guest} & \textbf{Client} & \textbf{Freelancer} & \textbf{Expert} & \textbf{Admin} \\
+\hline
+Public Job Browsing \& Details & Permitted & Permitted & Permitted & Permitted & Permitted \\
+\hline
+Job Creation, Publishing \& Editing & Denied & Permitted & Denied & Denied & Read-only \\
+\hline
+Proposal Submission \& Bidding & Denied & Denied & Permitted & Denied & Read-only \\
+\hline
+Contract Signing \& Milestone Review & Denied & Permitted & Permitted & Denied & Permitted \\
+\hline
+Milestone Escrow Funding via Stripe & Denied & Permitted & Denied & Denied & Audited \\
+\hline
+Deliverable Submission & Denied & Denied & Permitted & Denied & Audited \\
+\hline
+Dispute Arbitration Dashboard & Denied & Party-only & Party-only & Permitted & Permitted \\
+\hline
+Admin eKYC Verification Queue & Denied & Denied & Denied & Denied & Permitted \\
+\hline
+Admin Catalogs \& RBAC Control & Denied & Denied & Denied & Denied & Permitted \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsection{Core 5\% Features (Detailed Functional Specifications)}
+
+\subsubsection{Core Feature 1: Job Management and Proposal Submission (UC-11 \& UC-32)}
+\textbf{Use Case ID:} UC-11 (Job Management) \& UC-32 (Proposal Management)\\
+\textbf{Primary Actors:} Client, Freelancer\\
+\textbf{Pre-conditions:} Client and Freelancer are authenticated. Freelancer has completed profile setup.
+
+\textbf{Main Success Scenario (Flow of Events):}
+\begin{enumerate}[leftmargin=1.2cm]
+    \item Client navigates to \textit{Post a Job}, specifies title, description, category, required skills, fixed-price budget range, deadline, and payment terms.
+    \item System validates inputs, creates a job record with status \texttt{DRAFT}, and publishes it upon confirmation to status \texttt{OPEN}.
+    \item Freelancers search or browse the job catalog, view complete job details, and click \textit{Apply Now}.
+    \item Freelancer authors a proposal: cover letter, proposed total bid amount, estimated completion duration, proposed milestone breakdown, and portfolio attachments.
+    \item System validates proposal parameters against job constraints (e.g., bid within reasonable variance, valid attachments) and saves proposal with status \texttt{SUBMITTED}.
+    \item Client receives real-time notification, inspects candidate proposals side-by-side, views freelancer verification badges, and initiates direct interview chat.
+    \item Client selects the winning candidate and clicks \textit{Accept Proposal}. System updates proposal status to \texttt{ACCEPTED} and automatically transitions into Contract Offer generation.
+\end{enumerate}
+
+\textbf{Alternative / Exception Flows:}
+\begin{itemize}[leftmargin=1.2cm]
+    \item \textbf{A1: Freelancer Withdraws Proposal:} Freelancer may withdraw a pending proposal prior to client acceptance. Status transitions to \texttt{WITHDRAWN}.
+    \item \textbf{A2: Client Rejects Proposal:} Client can reject unsuitable proposals, triggering an automated status update to \texttt{REJECTED} and notifying the freelancer.
+\end{itemize}
+
+\textbf{Business Rules:} A freelancer cannot submit duplicate active proposals to the same job. Proposals cannot be submitted once the job reaches status \texttt{IN\_PROGRESS} or \texttt{CLOSED}.
+
+\subsubsection{Core Feature 2: Contract Lifecycle and Digital Signing (UC-13)}
+\textbf{Use Case ID:} UC-13 (Contract Management)\\
+\textbf{Primary Actors:} Client, Freelancer\\
+\textbf{Pre-conditions:} Client has accepted a proposal.
+
+\textbf{Main Success Scenario:}
+\begin{enumerate}[leftmargin=1.2cm]
+    \item System initializes a Contract with status \texttt{PENDING\_SIGNATURE}, importing scope, total price, and milestone schedules directly from the accepted proposal.
+    \item Client reviews contract terms, appends contractual clauses or custom milestones, and applies their digital signature. Contract status transitions to \texttt{OFFERED}.
+    \item Freelancer receives real-time contract notification, inspects all milestone specifications and payment schedules, and reviews the agreement.
+    \item Freelancer signs the contract electronically.
+    \item System validates bilateral digital acceptance, timestamps the agreement, generates a tamper-evident, cryptographically hashed PDF contract document, and updates contract status to \texttt{ACTIVE}.
+    \item Contract is locked; milestone execution commences.
+\end{enumerate}
+
+\textbf{Alternative Flows:} If the freelancer rejects the offer terms, they provide a rejection reason; contract status transitions to \texttt{REJECTED}, and client may revise and resend.
+
+\subsubsection{Core Feature 3: Milestone Escrow and Payment Processing via Stripe (UC-24 \& UC-43)}
+\textbf{Use Case ID:} UC-24 (Milestone Management) \& UC-43 (Payment Management)\\
+\textbf{Primary Actors:} Client, Freelancer, Stripe Gateway\\
+\textbf{Pre-conditions:} Contract is \texttt{ACTIVE}. Freelancer has connected a verified Stripe Express account.
+
+\textbf{Main Success Scenario:}
+\begin{enumerate}[leftmargin=1.2cm]
+    \item Prior to work commencing on Milestone 1, Client clicks \textit{Fund Milestone Escrow}.
+    \item System requests Stripe API to create a \texttt{PaymentIntent} with automatic payment methods and capture hold.
+    \item Client completes 3D-Secure payment via Stripe Checkout or saved card.
+    \item Stripe dispatches a cryptographically verified webhook (\texttt{payment\_intent.amount\_capturable\_updated} or \texttt{charge.succeeded}) to Frevia backend.
+    \item System marks Milestone status as \texttt{FUNDED} (\texttt{IN\_PROGRESS}). Freelancer is notified that funds are securely held in escrow and safe to proceed.
+    \item Freelancer executes work, packages deliverables (source code links, documents), and clicks \textit{Submit Milestone Deliverable}. Status changes to \texttt{SUBMITTED}.
+    \item Client inspects deliverables. Upon satisfaction, Client clicks \textit{Approve \& Release Payment}.
+    \item System instructs Stripe API to capture funds and execute an automated \texttt{Transfer} to Freelancer's Stripe Connect account (deducting platform fee).
+    \item Milestone status updates to \texttt{COMPLETED}; contract progress increments.
+\end{enumerate}
+
+\textbf{Alternative Flows:}
+\begin{itemize}[leftmargin=1.2cm]
+    \item \textbf{A1: Client Requests Revision:} If deliverable is deficient, Client submits a \textit{Revision Request} with itemized feedback. Milestone reverts to \texttt{REVISION\_REQUESTED}.
+\end{itemize}
+
+\subsubsection{Core Feature 4: Identity Verification and Biometric eKYC (UC-35)}
+\textbf{Use Case ID:} UC-35 (ID Verification Management)\\
+\textbf{Primary Actors:} Freelancer, Admin, AI Verification Service\\
+\textbf{Pre-conditions:} Freelancer is logged in with unverified status.
+
+\textbf{Main Success Scenario:}
+\begin{enumerate}[leftmargin=1.2cm]
+    \item Freelancer accesses \textit{ID Verification}, captures front and back images of National ID Card (CCCD), and records a short live selfie/portrait.
+    \item System uploads encrypted images to private object storage and invokes AI eKYC pipeline:
+    \begin{itemize}
+        \item OCR extracts Citizen ID number, Full Name, Date of Birth, and Expiration date.
+        \item MediaPipe 3D face mesh verifies live biometric presence (anti-spoofing).
+        \item Facial embedding vector distance compares selfie face against CCCD document photo.
+    \end{itemize}
+    \item If confidence score exceeds threshold ($\ge 0.88$), system queues verification request with status \texttt{PENDING\_ADMIN\_REVIEW}.
+    \item Admin inspects OCR extraction and facial similarity match percentage in the Admin Verification Dashboard.
+    \item Admin clicks \textit{Approve Verification}.
+    \item System sets user profile \texttt{isVerified = true}, displays the blue Verified Shield badge on public profiles, and unlocks high-tier bidding capabilities.
+\end{enumerate}
+
+\textbf{Alternative Flows:} If document is unreadable, forged, or face mismatch occurs, Admin clicks \textit{Reject} with mandatory explanation note. Freelancer receives notification to resubmit.
+
+\subsubsection{Core Feature 5: Dispute Resolution and Expert Arbitration (UC-33)}
+\textbf{Use Case ID:} UC-33 (Dispute Management)\\
+\textbf{Primary Actors:} Client, Freelancer, Expert Arbitrator, Admin\\
+\textbf{Pre-conditions:} Contract is \texttt{ACTIVE} and target milestone is in \texttt{FUNDED} or \texttt{SUBMITTED} state.
+
+\textbf{Main Success Scenario:}
+\begin{enumerate}[leftmargin=1.2cm]
+    \item If consensus breaks down, either Client or Freelancer initiates \textit{File a Dispute}.
+    \item Initiator selects dispute category (Unfinished Work, Subpar Quality, Refusal to Pay, Scope Violation), states disputed amount, and uploads supporting evidence.
+    \item Target milestone is locked into \texttt{DISPUTED} state; automated escrow releases are suspended.
+    \item Both parties enter a structured 3-day mutual negotiation window with dedicated dispute messaging.
+    \item If mutual resolution fails, either party clicks \textit{Escalate to Expert}.
+    \item System assigns an accredited Expert in the relevant domain category.
+    \item Expert reviews milestone specifications, deliverables, revision logs, and chat records.
+    \item Expert renders a binding decision specifying financial split (e.g., 70\% released to Freelancer for completed portions, 30\% refunded to Client).
+    \item System executes automated Stripe transfers and refunds matching the determination. Contract is finalized; dispute closes with status \texttt{RESOLVED}.
+\end{enumerate}
+
+\section{Non-Functional Requirements}
+
+\subsection{External Interfaces}
+\begin{itemize}[leftmargin=1.2cm]
+    \item \textbf{Payment Gateway Interface:} Stripe API v2024 via official Node.js SDK, supporting Stripe Connect Express/Custom accounts, PaymentIntents, Webhook signature verification (\texttt{stripe-signature}), and automated Transfers.
+    \item \textbf{Object Storage CDN:} Cloudinary API for secure avatar, portfolio, and forum image uploads; AWS S3 / Private bucket with pre-signed URLs for sensitive eKYC identity documents and contract attachments.
+    \item \textbf{Email Delivery:} Resend API / SMTP protocol delivering transactional verification codes (OTP), contract signature alerts, and milestone status notifications.
+    \item \textbf{AI Biometric Engine:} Internal containerized Python FastAPI service running MediaPipe and UltraFace models with strict JSON REST exchange.
+\end{itemize}
+
+\subsection{Quality Attributes}
+\begin{itemize}[leftmargin=1.2cm]
+    \item \textbf{Performance and Latency:} API 95th percentile response time $< 200$\,ms for transactional database queries under a concurrent load of 500 active users. WebSocket message delivery latency $< 50$\,ms.
+    \item \textbf{Security \& Compliance:} Zero hardcoded secrets; dynamic environment isolation via Infisical. Passwords hashed using bcrypt (cost factor 10). Cryptographic JWT access tokens (15-min expiry) paired with persisted rotating refresh tokens. Complete protection against OWASP Top 10 vulnerabilities (SQL injection prevented via Prisma parameterized queries; XSS sanitized via DOMPurify).
+    \item \textbf{Reliability \& Availability:} System target uptime 99.9\%. Relational integrity safeguarded via PostgreSQL ACID transactions. Automated health-check endpoints monitoring database and Redis connectivity.
+    \item \textbf{Usability:} Mobile-first responsive UI built with TailwindCSS, compliant with WCAG 2.1 AA accessibility standards for color contrast and screen-reader navigable controls.
+\end{itemize}
