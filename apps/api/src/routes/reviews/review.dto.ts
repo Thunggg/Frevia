@@ -1,4 +1,6 @@
 import {
+  FreelancerReviewsQuerySchema,
+  FreelancerReviewsSchema,
   CreateReviewResponseSchema,
   CreateReviewSchema,
   ReviewListSchema,
@@ -8,6 +10,13 @@ import {
   UpdateReviewSchema,
 } from '@shared/types';
 import { createZodDto } from 'nestjs-zod';
+
+export class FreelancerReviewsQueryDto extends createZodDto(
+  FreelancerReviewsQuerySchema,
+) {}
+export class FreelancerReviewsDto extends createZodDto(
+  FreelancerReviewsSchema,
+) {}
 
 export class CreateReviewDto extends createZodDto(CreateReviewSchema) {}
 export class UpdateReviewDto extends createZodDto(UpdateReviewSchema) {}

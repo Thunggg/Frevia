@@ -49,6 +49,44 @@ const reviewSelect = {
 export class ReviewRepository {
   constructor(private readonly prisma: PrismaService) {}
 
+  listForFreelancer(userId: number, page: number, limit: number) {
+    // Reviews are bidirectional: only feedback received as the freelancer belongs here.
+    const where: Prisma.ReviewWhereInput = {
+      revieweeId: userId,
+      reviewerId: { not: userId },
+      deletedAt: null,
+      contract: { freelancerId: userId, deletedAt: null },
+    };
+    return this.prisma.$transaction(
+      [
+        this.prisma.review.findMany({
+          where,
+          select: {
+            id: true,
+            overallRating: true,
+            comment: true,
+            createdAt: true,
+            reviewer: {
+              select: {
+                profile: { select: { displayName: true, avatarUrl: true } },
+              },
+            },
+            response: { select: { responseText: true, deletedAt: true } },
+          },
+          orderBy: [{ createdAt: 'desc' }, { id: 'desc' }],
+          skip: (page - 1) * limit,
+          take: limit,
+        }),
+        this.prisma.review.aggregate({
+          where,
+          _count: { _all: true },
+          _avg: { overallRating: true },
+        }),
+      ],
+      { isolationLevel: Prisma.TransactionIsolationLevel.RepeatableRead },
+    );
+  }
+
   findContract(contractId: number) {
     return this.prisma.contract.findFirst({
       where: { id: contractId, deletedAt: null },
