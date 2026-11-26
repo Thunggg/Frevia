@@ -21,7 +21,7 @@ Primary Actor: & Client, Freelancer & Secondary Actors: & Admin \\ \hline
 
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When an authorized contract participant clicks the ``Open Dispute'' button on an active, funded milestone.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Allows a Client or Freelancer to initiate formal dispute arbitration over milestone deliverables, quality discrepancies, or unresponsive counterpart behavior, freezing milestone escrow funds and scheduling a 48-hour response countdown for the respondent.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Allows a Client or Freelancer to initiate formal dispute arbitration over milestone deliverables, quality discrepancies, or unresponsive counterpart behavior, freezing milestone escrow funds and scheduling a 48-hour response countdown for the respondent.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The user is authenticated in the system. \newline
@@ -84,17 +84,17 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{Parties have attempted direct communi
 \end{longtable}
 
 % =================================================================
-% UC-33.02 View Dispute List
+% UC-33.02 View Disputes List
 % =================================================================
-\subparagraph{UC-33.02 View Dispute List}
+\subparagraph{UC-33.02 View Disputes List}
 
 \Needspace{12\baselineskip}
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
-\\rowcolor{fptHeader}UC ID and Name & \\multicolumn{3}{l|}{UC-33.02 View Dispute List} \\* \\hline
+\\rowcolor{fptHeader}UC ID and Name & \\multicolumn{3}{l|}{UC-33.02 View Disputes List} \\* \\hline
 \\endfirsthead
 \\hline
-\\rowcolor{fptHeader}UC ID and Name & \\multicolumn{3}{l|}{UC-33.02 View Dispute List \\textit{(cont.)}} \\* \\hline
+\\rowcolor{fptHeader}UC ID and Name & \\multicolumn{3}{l|}{UC-33.02 View Disputes List \\textit{(cont.)}} \\* \\hline
 \\endhead
 \\hline\\endfoot
 \\endlastfoot
@@ -104,7 +104,7 @@ Primary Actor: & Client, Freelancer, Admin, Expert & Secondary Actors: & N/A \\ 
 
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When a user navigates to the ``Disputes'' section from the main navigation menu.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Allows a Client, Freelancer, Administrator, or Expert to retrieve a paginated overview of disputes relevant to their account, with status filters and deadline countdown indicators.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Allows a Client, Freelancer, Administrator, or Expert to retrieve a paginated overview of disputes relevant to their account, with status filters and deadline countdown indicators.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The user is authenticated in the system. \newline
@@ -116,7 +116,7 @@ Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
 } \\ \hline
 
 Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{A. View Dispute List} \newline
+\textbf{A. View Disputes List} \newline
 1. The user navigates to the Disputes page. \newline
 2. The system queries disputes where the user is either the opener or the respondent (or all platform disputes if Admin). \newline
 3. The system sorts disputes chronologically with urgent cases (pending response deadline) prioritized at the top. \newline
@@ -155,17 +155,17 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{Dispute listings are paginated to mai
 \end{longtable}
 
 % =================================================================
-% UC-33.03 View Dispute Detail
+% UC-33.03 View Dispute Details
 % =================================================================
-\subparagraph{UC-33.03 View Dispute Detail}
+\subparagraph{UC-33.03 View Dispute Details}
 
 \Needspace{12\baselineskip}
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
-\\rowcolor{fptHeader}UC ID and Name & \\multicolumn{3}{l|}{UC-33.03 View Dispute Detail} \\* \\hline
+\\rowcolor{fptHeader}UC ID and Name & \\multicolumn{3}{l|}{UC-33.03 View Dispute Details} \\* \\hline
 \\endfirsthead
 \\hline
-\\rowcolor{fptHeader}UC ID and Name & \\multicolumn{3}{l|}{UC-33.03 View Dispute Detail \\textit{(cont.)}} \\* \\hline
+\\rowcolor{fptHeader}UC ID and Name & \\multicolumn{3}{l|}{UC-33.03 View Dispute Details \\textit{(cont.)}} \\* \\hline
 \\endhead
 \\hline\\endfoot
 \\endlastfoot
@@ -175,7 +175,7 @@ Primary Actor: & Client, Freelancer, Admin, Expert & Secondary Actors: & N/A \\ 
 
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When a user clicks on a dispute card from the list or follows a dispute notification link.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Allows an involved party, Administrator, or Expert arbitrator to view full case records, including opener claims, counter-rebuttal narratives, evidence files, escrow amount, resolution findings, and chronological audit timeline.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Allows an involved party, Administrator, or Expert arbitrator to view full case records, including opener claims, counter-rebuttal narratives, evidence files, escrow amount, resolution findings, and chronological audit timeline.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The user is authenticated in the system. \newline
@@ -188,7 +188,7 @@ Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
 } \\ \hline
 
 Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{A. View Dispute Detail} \newline
+\textbf{A. View Dispute Details} \newline
 1. The user clicks on a dispute entry. \newline
 2. The system verifies user authorization to view the case. \newline
 3. The system renders the Dispute Detail page displaying:
@@ -252,7 +252,7 @@ Primary Actor: & Client, Freelancer, Admin & Secondary Actors: & N/A \\ \hline
 
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When a user views a milestone card in the contract workspace that has an active or past dispute associated with it.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Displays contextual dispute status banners and direct action links directly on a specific milestone card, alerting participants of frozen escrow, current dispute stage, and providing seamless navigation to dispute arbitration.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Displays contextual dispute status banners and direct action links directly on a specific milestone card, alerting participants of frozen escrow, current dispute stage, and providing seamless navigation to dispute arbitration.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The user is an authenticated contract participant (Client or Freelancer) or Administrator. \newline
@@ -319,7 +319,7 @@ Primary Actor: & Client, Freelancer (Respondent) & Secondary Actors: & Admin \\ 
 
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When the designated respondent clicks ``Submit Response'' on an open dispute.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Allows the respondent party to submit their official rebuttal statement and counter-evidence within the 48-hour response window, ensuring equal hearing during arbitration.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Allows the respondent party to submit their official rebuttal statement and counter-evidence within the 48-hour response window, ensuring equal hearing during arbitration.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The user is authenticated as the designated respondent (\texttt{respondentId = userId}). \newline
@@ -402,7 +402,7 @@ Primary Actor: & Client, Freelancer (Opener) & Secondary Actors: & Admin \\ \hli
 
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When the user who initiated the dispute clicks the ``Withdraw Dispute'' button.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Allows the dispute opener to voluntarily withdraw their dispute claim prior to an expert ruling, unfreezing the milestone escrow balance and restoring regular milestone workflow.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Allows the dispute opener to voluntarily withdraw their dispute claim prior to an expert ruling, unfreezing the milestone escrow balance and restoring regular milestone workflow.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The user is authenticated as the dispute opener (\texttt{openerId = userId}). \newline
@@ -479,7 +479,7 @@ Primary Actor: & Client, Freelancer, Admin & Secondary Actors: & Expert \\ \hlin
 
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When parties are unable to reach bilateral agreement or an Admin refers a complex dispute to a specialized expert.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Escalates an unresolved dispute to a certified domain Expert arbitrator for technical review and binding arbitration ruling.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Escalates an unresolved dispute to a certified domain Expert arbitrator for technical review and binding arbitration ruling.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The user is an authenticated dispute participant or Administrator. \newline
@@ -533,17 +533,17 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{Sufficient certified domain experts a
 \end{longtable}
 
 % =================================================================
-% UC-33.08 View Expert Dispute List
+% UC-33.08 View Expert Disputes List
 % =================================================================
-\subparagraph{UC-33.08 View Expert Dispute List}
+\subparagraph{UC-33.08 View Expert Disputes List}
 
 \Needspace{12\baselineskip}
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
-\\rowcolor{fptHeader}UC ID and Name & \\multicolumn{3}{l|}{UC-33.08 View Expert Dispute List} \\* \\hline
+\\rowcolor{fptHeader}UC ID and Name & \\multicolumn{3}{l|}{UC-33.08 View Expert Disputes List} \\* \\hline
 \\endfirsthead
 \\hline
-\\rowcolor{fptHeader}UC ID and Name & \\multicolumn{3}{l|}{UC-33.08 View Expert Dispute List \\textit{(cont.)}} \\* \\hline
+\\rowcolor{fptHeader}UC ID and Name & \\multicolumn{3}{l|}{UC-33.08 View Expert Disputes List \\textit{(cont.)}} \\* \\hline
 \\endhead
 \\hline\\endfoot
 \\endlastfoot
@@ -553,7 +553,7 @@ Primary Actor: & Expert, Admin & Secondary Actors: & N/A \\ \hline
 
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When an authenticated Expert or Administrator navigates to the ``Expert Arbitration'' portal.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Displays a specialized arbitration worklist of escalated dispute cases filtered by domain expertise, urgency, disputed escrow value, and assignment status.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Displays a specialized arbitration worklist of escalated dispute cases filtered by domain expertise, urgency, disputed escrow value, and assignment status.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The user is authenticated and holds the Expert or Admin role. \newline
@@ -565,7 +565,7 @@ Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
 } \\ \hline
 
 Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{A. View Expert Dispute List} \newline
+\textbf{A. View Expert Disputes List} \newline
 1. The Expert accesses the Expert Arbitration Portal. \newline
 2. The system queries escalated dispute records (\texttt{status = ESCALATED\_TO\_EXPERT}) matching the expert's registered domain categories. \newline
 3. The system renders dispute worklist cards showing: Case ID, Category, Disputed Amount, Contract Title, Submission Age, Parties, and Assignment Status. \newline
@@ -602,17 +602,17 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{Experts maintain active certification
 \end{longtable}
 
 % =================================================================
-% UC-33.09 View Expert Dispute Detail
+% UC-33.09 View Expert Dispute Details
 % =================================================================
-\subparagraph{UC-33.09 View Expert Dispute Detail}
+\subparagraph{UC-33.09 View Expert Dispute Details}
 
 \Needspace{12\baselineskip}
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
-\\rowcolor{fptHeader}UC ID and Name & \\multicolumn{3}{l|}{UC-33.09 View Expert Dispute Detail} \\* \\hline
+\\rowcolor{fptHeader}UC ID and Name & \\multicolumn{3}{l|}{UC-33.09 View Expert Dispute Details} \\* \\hline
 \\endfirsthead
 \\hline
-\\rowcolor{fptHeader}UC ID and Name & \\multicolumn{3}{l|}{UC-33.09 View Expert Dispute Detail \\textit{(cont.)}} \\* \\hline
+\\rowcolor{fptHeader}UC ID and Name & \\multicolumn{3}{l|}{UC-33.09 View Expert Dispute Details \\textit{(cont.)}} \\* \\hline
 \\endhead
 \\hline\\endfoot
 \\endlastfoot
@@ -622,7 +622,7 @@ Primary Actor: & Expert, Admin & Secondary Actors: & N/A \\ \hline
 
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When an Expert or Administrator opens a specific escalated dispute from the expert worklist.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Provides a specialized arbitration console allowing domain experts to inspect contract milestone requirements, examine symmetric evidence files, analyze communication logs, and prepare a binding decision.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Provides a specialized arbitration console allowing domain experts to inspect contract milestone requirements, examine symmetric evidence files, analyze communication logs, and prepare a binding decision.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The user is an authenticated Expert or Administrator. \newline
@@ -635,7 +635,7 @@ Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
 } \\ \hline
 
 Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{A. View Expert Dispute Detail} \newline
+\textbf{A. View Expert Dispute Details} \newline
 1. The Expert selects a case from the expert queue. \newline
 2. The system verifies the expert's credentials and lack of conflict of interest. \newline
 3. The system loads and renders:
@@ -695,7 +695,7 @@ Primary Actor: & Expert, Admin & Secondary Actors: & Client, Freelancer \\ \hlin
 
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When an Expert or Administrator completes evaluation in the arbitration console and clicks ``Issue Binding Decision''.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Allows an Expert arbitrator (or Admin) to formulate and issue the final binding decision, defining the exact percentage or financial split of milestone escrow funds between Client and Freelancer along with formal technical findings, automatically disbursing escrow funds.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Allows an Expert arbitrator (or Admin) to formulate and issue the final binding decision, defining the exact percentage or financial split of milestone escrow funds between Client and Freelancer along with formal technical findings, automatically disbursing escrow funds.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The user is an authenticated Expert or Administrator assigned to this dispute. \newline

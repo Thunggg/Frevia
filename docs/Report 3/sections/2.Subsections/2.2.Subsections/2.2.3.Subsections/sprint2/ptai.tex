@@ -3,16 +3,16 @@
 % =================================================================
 % UC-________ View Saved Searches
 % =================================================================
-\subparagraph{UC View Saved Searches}
+\subparagraph{UC-22.01 View Saved Searches List}
 
 \Needspace{12\baselineskip}
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
 
-\\rowcolor{fptHeader}UC ID and Name & \\multicolumn{3}{l|}{UC View Saved Searches} \\* \\hline
+\\rowcolor{fptHeader}UC ID and Name & \\multicolumn{3}{l|}{UC-22.01 View Saved Searches List} \\* \\hline
 \\endfirsthead
 \\hline
-\\rowcolor{fptHeader}UC ID and Name & \\multicolumn{3}{l|}{UC View Saved Searches \\textit{(cont.)}} \\* \\hline
+\\rowcolor{fptHeader}UC ID and Name & \\multicolumn{3}{l|}{UC-22.01 View Saved Searches List \\textit{(cont.)}} \\* \\hline
 \\endhead
 \\hline\\endfoot
 \\endlastfoot
@@ -22,7 +22,7 @@ Primary Actor: & Freelancer & Secondary Actors: & N/A \\ \hline
 
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When a freelancer accesses the ``Saved Searches'' page from the navigation menu or profile.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Allows a freelancer to retrieve all saved job search filters with their labels and filter criteria, so they can review the criteria they previously saved.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Allows a freelancer to retrieve all saved job search filters with their labels and filter criteria, so they can review the criteria they previously saved.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The freelancer is authenticated. \newline
@@ -32,7 +32,7 @@ Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{POST-1} A list of saved searches is displayed, each showing its label and filter criteria. \newline
 \textbf{POST-2} No data is changed by this use case. \newline
-\textbf{POST-3} The freelancer can select a saved search to view its details (UC View Saved Search Detail).
+\textbf{POST-3} The freelancer can select a saved search to view its details (UC-22.02 View Saved Search Details).
 } \\ \hline
 
 Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
@@ -48,9 +48,9 @@ Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
 1. The system determines that the freelancer has no saved searches. \newline
 2. The system displays a message indicating no saved searches are available. \newline
 3. The use case ends. \newline
-\textbf{A.2 View Saved Search Detail} \textit{(branch at step 3)} \newline
+\textbf{A.2 View Saved Search Details} \textit{(branch at step 3)} \newline
 1. The Freelancer selects a saved search from the list. \newline
-2. Continue with UC View Saved Search Detail.
+2. Continue with UC-22.02 View Saved Search Details.
 } \\ \hline
 
 Exceptions: & \multicolumn{3}{L{11.1cm}|}{
@@ -79,18 +79,18 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{A freelancer may have zero or more sa
 \end{longtable}
 
 % =================================================================
-% UC-________ View Saved Search Detail
+% UC-________ View Saved Search Details
 % =================================================================
-\subparagraph{UC View Saved Search Detail}
+\subparagraph{UC-22.02 View Saved Search Details}
 
 \Needspace{12\baselineskip}
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
 
-\\rowcolor{fptHeader}UC ID and Name & \\multicolumn{3}{l|}{UC View Saved Search Detail} \\* \\hline
+\\rowcolor{fptHeader}UC ID and Name & \\multicolumn{3}{l|}{UC-22.02 View Saved Search Details} \\* \\hline
 \\endfirsthead
 \\hline
-\\rowcolor{fptHeader}UC ID and Name & \\multicolumn{3}{l|}{UC View Saved Search Detail \\textit{(cont.)}} \\* \\hline
+\\rowcolor{fptHeader}UC ID and Name & \\multicolumn{3}{l|}{UC-22.02 View Saved Search Details \\textit{(cont.)}} \\* \\hline
 \\endhead
 \\hline\\endfoot
 \\endlastfoot
@@ -100,7 +100,7 @@ Primary Actor: & Freelancer & Secondary Actors: & N/A \\ \hline
 
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When a freelancer opens the detail of a saved search from the saved searches list or navigates to it directly.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Allows a freelancer to view the full details of a saved search, including its label and all filter criteria such as keywords, category, skills, and budget.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Allows a freelancer to view the full details of a saved search, including its label and all filter criteria such as keywords, category, skills, and budget.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The freelancer is authenticated.
@@ -109,11 +109,11 @@ Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{POST-1} The saved search details are displayed: label and filter criteria. \newline
 \textbf{POST-2} No data is changed by this use case. \newline
-\textbf{POST-3} The freelancer can edit (UC Edit Saved Search), delete (UC Delete Saved Search), or apply the saved search to a job search.
+\textbf{POST-3} The freelancer can edit (UC Edit Saved Search), delete (UC-22.04 Delete Saved Search), or apply the saved search to a job search.
 } \\ \hline
 
 Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{A. View Saved Search Detail} \newline
+\textbf{A. View Saved Search Details} \newline
 1. The Freelancer opens a saved search detail. \newline
 2. The system retrieves the saved search. \newline
 3. The system displays the saved search with its label and filter criteria (keywords, category, skills, budget). The use case ends.
@@ -123,13 +123,13 @@ Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
 
 \textbf{A.1 Apply Saved Search} \textit{(branch at step 3)} \newline
 1. The Freelancer chooses to run the saved search. \newline
-2. Continue with UC View List Job. \newline
+2. Continue with UC View Jobs List. \newline
 \textbf{A.2 Edit Saved Search} \textit{(branch at step 3)} \newline
 1. The Freelancer chooses the edit action. \newline
 2. Continue with UC Edit Saved Search. \newline
 \textbf{A.3 Delete Saved Search} \textit{(branch at step 3)} \newline
 1. The Freelancer chooses the delete action. \newline
-2. Continue with UC Delete Saved Search.
+2. Continue with UC-22.04 Delete Saved Search.
 } \\ \hline
 
 Exceptions: & \multicolumn{3}{L{11.1cm}|}{
@@ -163,16 +163,16 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{The saved search detail is only reach
 % =================================================================
 % UC-________ Create Saved Search
 % =================================================================
-\subparagraph{UC Create Saved Search}
+\subparagraph{UC-22.03 Create Saved Search}
 
 \Needspace{12\baselineskip}
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
 
-\\rowcolor{fptHeader}UC ID and Name & \\multicolumn{3}{l|}{UC Create Saved Search} \\* \\hline
+\\rowcolor{fptHeader}UC ID and Name & \\multicolumn{3}{l|}{UC-22.03 Create Saved Search} \\* \\hline
 \\endfirsthead
 \\hline
-\\rowcolor{fptHeader}UC ID and Name & \\multicolumn{3}{l|}{UC Create Saved Search \\textit{(cont.)}} \\* \\hline
+\\rowcolor{fptHeader}UC ID and Name & \\multicolumn{3}{l|}{UC-22.03 Create Saved Search \\textit{(cont.)}} \\* \\hline
 \\endhead
 \\hline\\endfoot
 \\endlastfoot
@@ -182,7 +182,7 @@ Primary Actor: & Freelancer & Secondary Actors: & N/A \\ \hline
 
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When a freelancer chooses to save the current search from the job search page or the saved searches feature.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Allows a freelancer to save the current search parameters as a named filter for quick reuse later.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Allows a freelancer to save the current search parameters as a named filter for quick reuse later.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The freelancer is authenticated. \newline
@@ -247,16 +247,16 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{The current search parameters are val
 % =================================================================
 % UC-________ Delete Saved Search
 % =================================================================
-\subparagraph{UC Delete Saved Search}
+\subparagraph{UC-22.04 Delete Saved Search}
 
 \Needspace{12\baselineskip}
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
 
-\\rowcolor{fptHeader}UC ID and Name & \\multicolumn{3}{l|}{UC Delete Saved Search} \\* \\hline
+\\rowcolor{fptHeader}UC ID and Name & \\multicolumn{3}{l|}{UC-22.04 Delete Saved Search} \\* \\hline
 \\endfirsthead
 \\hline
-\\rowcolor{fptHeader}UC ID and Name & \\multicolumn{3}{l|}{UC Delete Saved Search \\textit{(cont.)}} \\* \\hline
+\\rowcolor{fptHeader}UC ID and Name & \\multicolumn{3}{l|}{UC-22.04 Delete Saved Search \\textit{(cont.)}} \\* \\hline
 \\endhead
 \\hline\\endfoot
 \\endlastfoot
@@ -266,7 +266,7 @@ Primary Actor: & Freelancer & Secondary Actors: & N/A \\ \hline
 
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When a freelancer chooses to delete a saved search from the saved searches list or detail page.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Allows the owner of a saved search to permanently delete it from the system.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Allows the owner of a saved search to permanently delete it from the system.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The freelancer is authenticated.
@@ -327,16 +327,16 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{The freelancer can only delete saved 
 % =================================================================
 % UC-________ View Job Alerts
 % =================================================================
-\subparagraph{UC View Job Alerts}
+\subparagraph{UC-23.01 View Job Alerts List}
 
 \Needspace{12\baselineskip}
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
 
-\\rowcolor{fptHeader}UC ID and Name & \\multicolumn{3}{l|}{UC View Job Alerts} \\* \\hline
+\\rowcolor{fptHeader}UC ID and Name & \\multicolumn{3}{l|}{UC-23.01 View Job Alerts List} \\* \\hline
 \\endfirsthead
 \\hline
-\\rowcolor{fptHeader}UC ID and Name & \\multicolumn{3}{l|}{UC View Job Alerts \\textit{(cont.)}} \\* \\hline
+\\rowcolor{fptHeader}UC ID and Name & \\multicolumn{3}{l|}{UC-23.01 View Job Alerts List \\textit{(cont.)}} \\* \\hline
 \\endhead
 \\hline\\endfoot
 \\endlastfoot
@@ -346,7 +346,7 @@ Primary Actor: & Freelancer & Secondary Actors: & N/A \\ \hline
 
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When a freelancer accesses the ``Job Alerts'' page from the navigation menu or profile.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Allows a freelancer to view all of their job alerts, each showing its criteria, frequency (daily, weekly, or instant), and notification channel.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Allows a freelancer to view all of their job alerts, each showing its criteria, frequency (daily, weekly, or instant), and notification channel.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The freelancer is authenticated. \newline
@@ -356,7 +356,7 @@ Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{POST-1} A list of job alerts is displayed, each showing its criteria, frequency, and notification channel. \newline
 \textbf{POST-2} No data is changed by this use case. \newline
-\textbf{POST-3} The freelancer can select a job alert to view its details (UC View Job Alert Detail), create a new one (UC Create Job Alert), or manage existing alerts.
+\textbf{POST-3} The freelancer can select a job alert to view its details (UC-23.02 View Job Alert Details), create a new one (UC-23.03 Create Job Alert), or manage existing alerts.
 } \\ \hline
 
 Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
@@ -399,18 +399,18 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{A freelancer may have zero or more jo
 \end{longtable}
 
 % =================================================================
-% UC-________ View Job Alert Detail
+% UC-________ View Job Alert Details
 % =================================================================
-\subparagraph{UC View Job Alert Detail}
+\subparagraph{UC-23.02 View Job Alert Details}
 
 \Needspace{12\baselineskip}
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
 
-\\rowcolor{fptHeader}UC ID and Name & \\multicolumn{3}{l|}{UC View Job Alert Detail} \\* \\hline
+\\rowcolor{fptHeader}UC ID and Name & \\multicolumn{3}{l|}{UC-23.02 View Job Alert Details} \\* \\hline
 \\endfirsthead
 \\hline
-\\rowcolor{fptHeader}UC ID and Name & \\multicolumn{3}{l|}{UC View Job Alert Detail \\textit{(cont.)}} \\* \\hline
+\\rowcolor{fptHeader}UC ID and Name & \\multicolumn{3}{l|}{UC-23.02 View Job Alert Details \\textit{(cont.)}} \\* \\hline
 \\endhead
 \\hline\\endfoot
 \\endlastfoot
@@ -420,7 +420,7 @@ Primary Actor: & Freelancer & Secondary Actors: & N/A \\ \hline
 
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When a freelancer opens the detail of a job alert from the job alerts list or navigates to it directly.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Allows a freelancer to view the configuration of a job alert, including its filters, frequency, active status, and the time it was last triggered.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Allows a freelancer to view the configuration of a job alert, including its filters, frequency, active status, and the time it was last triggered.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The freelancer is authenticated.
@@ -429,11 +429,11 @@ Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{POST-1} The job alert configuration is displayed: filters, frequency, active status, and last triggered time. \newline
 \textbf{POST-2} No data is changed by this use case. \newline
-\textbf{POST-3} The freelancer can edit (UC Edit Job Alert), delete (UC Delete Job Alert), or toggle the alert.
+\textbf{POST-3} The freelancer can edit (UC-23.04 Update Job Alert), delete (UC-23.05 Delete Job Alert), or toggle the alert.
 } \\ \hline
 
 Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{A. View Job Alert Detail} \newline
+\textbf{A. View Job Alert Details} \newline
 1. The Freelancer opens a job alert detail. \newline
 2. The system retrieves the job alert. \newline
 3. The system displays the filters (keywords/skills), frequency, active status, and the last triggered time. The use case ends.
@@ -443,7 +443,7 @@ Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
 
 \textbf{A.1 Edit Job Alert} \textit{(branch at step 3)} \newline
 1. The Freelancer chooses the edit action. \newline
-2. Continue with UC Edit Job Alert. \newline
+2. Continue with UC-23.04 Update Job Alert. \newline
 \textbf{A.2 Toggle Active Status} \textit{(branch at step 3)} \newline
 1. The Freelancer toggles the alert on or off. \newline
 2. The system updates the active status. \newline
@@ -481,16 +481,16 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{The job alert detail page is only rea
 % =================================================================
 % UC-________ Create Job Alert
 % =================================================================
-\subparagraph{UC Create Job Alert}
+\subparagraph{UC-23.03 Create Job Alert}
 
 \Needspace{12\baselineskip}
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
 
-\\rowcolor{fptHeader}UC ID and Name & \\multicolumn{3}{l|}{UC Create Job Alert} \\* \\hline
+\\rowcolor{fptHeader}UC ID and Name & \\multicolumn{3}{l|}{UC-23.03 Create Job Alert} \\* \\hline
 \\endfirsthead
 \\hline
-\\rowcolor{fptHeader}UC ID and Name & \\multicolumn{3}{l|}{UC Create Job Alert \\textit{(cont.)}} \\* \\hline
+\\rowcolor{fptHeader}UC ID and Name & \\multicolumn{3}{l|}{UC-23.03 Create Job Alert \\textit{(cont.)}} \\* \\hline
 \\endhead
 \\hline\\endfoot
 \\endlastfoot
@@ -500,7 +500,7 @@ Primary Actor: & Freelancer & Secondary Actors: & System \\ \hline
 
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When a freelancer chooses to create a job alert from the job alerts page or the job search page.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Allows a freelancer to create a job alert with criteria, frequency, and delivery channel. The system automatically sends notifications for matching job postings from that point on.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Allows a freelancer to create a job alert with criteria, frequency, and delivery channel. The system automatically sends notifications for matching job postings from that point on.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The freelancer is authenticated. \newline
@@ -565,16 +565,16 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{The freelancer wants to receive autom
 % =================================================================
 % UC-________ Edit Job Alert
 % =================================================================
-\subparagraph{UC Edit Job Alert}
+\subparagraph{UC-23.04 Update Job Alert}
 
 \Needspace{12\baselineskip}
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
 
-\\rowcolor{fptHeader}UC ID and Name & \\multicolumn{3}{l|}{UC Edit Job Alert} \\* \\hline
+\\rowcolor{fptHeader}UC ID and Name & \\multicolumn{3}{l|}{UC-23.04 Update Job Alert} \\* \\hline
 \\endfirsthead
 \\hline
-\\rowcolor{fptHeader}UC ID and Name & \\multicolumn{3}{l|}{UC Edit Job Alert \\textit{(cont.)}} \\* \\hline
+\\rowcolor{fptHeader}UC ID and Name & \\multicolumn{3}{l|}{UC-23.04 Update Job Alert \\textit{(cont.)}} \\* \\hline
 \\endhead
 \\hline\\endfoot
 \\endlastfoot
@@ -584,7 +584,7 @@ Primary Actor: & Freelancer & Secondary Actors: & System \\ \hline
 
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When a freelancer chooses to edit a job alert from the job alerts list or detail page.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Allows the owner of a job alert to update its criteria, frequency, notification channels, and active status (on/off). Only the owner can edit a job alert.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Allows the owner of a job alert to update its criteria, frequency, notification channels, and active status (on/off). Only the owner can edit a job alert.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The freelancer is authenticated.
@@ -651,16 +651,16 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{The freelancer can only edit job aler
 % =================================================================
 % UC-________ Delete Job Alert
 % =================================================================
-\subparagraph{UC Delete Job Alert}
+\subparagraph{UC-23.05 Delete Job Alert}
 
 \Needspace{12\baselineskip}
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
 
-\\rowcolor{fptHeader}UC ID and Name & \\multicolumn{3}{l|}{UC Delete Job Alert} \\* \\hline
+\\rowcolor{fptHeader}UC ID and Name & \\multicolumn{3}{l|}{UC-23.05 Delete Job Alert} \\* \\hline
 \\endfirsthead
 \\hline
-\\rowcolor{fptHeader}UC ID and Name & \\multicolumn{3}{l|}{UC Delete Job Alert \\textit{(cont.)}} \\* \\hline
+\\rowcolor{fptHeader}UC ID and Name & \\multicolumn{3}{l|}{UC-23.05 Delete Job Alert \\textit{(cont.)}} \\* \\hline
 \\endhead
 \\hline\\endfoot
 \\endlastfoot
@@ -670,7 +670,7 @@ Primary Actor: & Freelancer & Secondary Actors: & System \\ \hline
 
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When a freelancer chooses to delete a job alert from the job alerts list or detail page.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Allows the owner of a job alert to permanently delete it. Deleting an alert stops all future notifications for that alert.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Allows the owner of a job alert to permanently delete it. Deleting an alert stops all future notifications for that alert.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The freelancer is authenticated.

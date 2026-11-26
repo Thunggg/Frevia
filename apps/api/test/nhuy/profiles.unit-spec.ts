@@ -43,12 +43,9 @@ describe('ProfileService (UF-122 to UF-179)', () => {
     uploadFile: jest.fn(),
     deleteFile: jest.fn(),
   };
-  const hashing = { verify: jest.fn(), hash: jest.fn() };
   const outbox = { enqueueAndProcess: jest.fn() };
   const ai = { analyze: jest.fn() };
   const resolver = { resolveSkillEntries: jest.fn() };
-  const identityAi = { verify: jest.fn(), livenessPose: jest.fn() };
-  const token = { signAccessToken: jest.fn() };
   const fixedDate = new Date('2026-11-09T00:00:00Z');
   const service = new ProfileService(
     repository as never,
@@ -59,11 +56,6 @@ describe('ProfileService (UF-122 to UF-179)', () => {
     outbox as never,
   );
   let profile: any;
-  let user: any;
-  let contract: any;
-  let review: any;
-  let revision: any;
-  let expertUser: any;
   beforeEach(() => {
     jest.clearAllMocks();
     jest.resetAllMocks();
@@ -103,7 +95,10 @@ describe('ProfileService (UF-122 to UF-179)', () => {
         languages: [],
         experience: [],
       },
-      user: { userRoles: [{ role: { name: 'Freelancer' } }] },
+      user: {
+        role: { name: 'Freelancer' },
+        userRoles: [{ role: { name: 'Freelancer' } }],
+      },
     };
     repository.findFreelancerProfileById.mockResolvedValue(profile);
     repository.updateFreelancerProfile.mockResolvedValue({
@@ -212,7 +207,7 @@ describe('ProfileService (UF-122 to UF-179)', () => {
     it('rejects a non-freelancer profile', async () => {
       repository.findFreelancerProfileById.mockResolvedValue({
         ...profile,
-        user: { userRoles: [] },
+        user: { role: { name: 'Client' }, userRoles: [] },
       });
 
       await expect(service.viewProfile(5)).rejects.toMatchObject({
@@ -307,7 +302,7 @@ describe('ProfileService (UF-122 to UF-179)', () => {
     it('rejects a profile without freelancer membership', async () => {
       repository.findFreelancerProfileById.mockResolvedValue({
         ...profile,
-        user: { userRoles: [] },
+        user: { role: { name: 'Client' }, userRoles: [] },
       });
 
       await expect(
@@ -325,7 +320,7 @@ describe('ProfileService (UF-122 to UF-179)', () => {
       });
     });
     // UTCID06: Từ chối tình huống rejects displayName missing; trả mã 400.
-    it('rejects displayName missing', async () => {
+    it('rejects displayName missing', () => {
       const result = shared.UpdateFreelancerProfileSchema.safeParse({
         title: 'Engineer',
       });
@@ -341,7 +336,7 @@ describe('ProfileService (UF-122 to UF-179)', () => {
         ]);
     });
     // UTCID07: Từ chối tình huống rejects displayName empty; trả mã 400.
-    it('rejects displayName empty', async () => {
+    it('rejects displayName empty', () => {
       const result = shared.UpdateFreelancerProfileSchema.safeParse({
         displayName: '',
         title: 'Engineer',
@@ -358,7 +353,7 @@ describe('ProfileService (UF-122 to UF-179)', () => {
         ]);
     });
     // UTCID08: Xử lý tình huống accepts displayName minimum; đối chiếu kết quả và tác động phụ.
-    it('accepts displayName minimum', async () => {
+    it('accepts displayName minimum', () => {
       const result = shared.UpdateFreelancerProfileSchema.safeParse({
         displayName: 'x',
         title: 'Engineer',
@@ -368,7 +363,7 @@ describe('ProfileService (UF-122 to UF-179)', () => {
         expect(result.data).toEqual({ displayName: 'x', title: 'Engineer' });
     });
     // UTCID09: Xử lý tình huống accepts displayName maximum; đối chiếu kết quả và tác động phụ.
-    it('accepts displayName maximum', async () => {
+    it('accepts displayName maximum', () => {
       const result = shared.UpdateFreelancerProfileSchema.safeParse({
         displayName: 'x'.repeat(255),
         title: 'Engineer',
@@ -381,7 +376,7 @@ describe('ProfileService (UF-122 to UF-179)', () => {
         });
     });
     // UTCID10: Từ chối tình huống rejects displayName above maximum; trả mã 400.
-    it('rejects displayName above maximum', async () => {
+    it('rejects displayName above maximum', () => {
       const result = shared.UpdateFreelancerProfileSchema.safeParse({
         displayName: 'x'.repeat(256),
         title: 'Engineer',
@@ -401,7 +396,7 @@ describe('ProfileService (UF-122 to UF-179)', () => {
         ]);
     });
     // UTCID11: Từ chối tình huống rejects title missing; trả mã 400.
-    it('rejects title missing', async () => {
+    it('rejects title missing', () => {
       const result = shared.UpdateFreelancerProfileSchema.safeParse({
         displayName: 'Name',
       });
@@ -415,7 +410,7 @@ describe('ProfileService (UF-122 to UF-179)', () => {
         ).toEqual([{ path: ['title'], message: 'Title is required.' }]);
     });
     // UTCID12: Từ chối tình huống rejects title empty; trả mã 400.
-    it('rejects title empty', async () => {
+    it('rejects title empty', () => {
       const result = shared.UpdateFreelancerProfileSchema.safeParse({
         displayName: 'Name',
         title: '',
@@ -430,7 +425,7 @@ describe('ProfileService (UF-122 to UF-179)', () => {
         ).toEqual([{ path: ['title'], message: 'Title is required.' }]);
     });
     // UTCID13: Xử lý tình huống accepts title minimum; đối chiếu kết quả và tác động phụ.
-    it('accepts title minimum', async () => {
+    it('accepts title minimum', () => {
       const result = shared.UpdateFreelancerProfileSchema.safeParse({
         displayName: 'Name',
         title: 'x',
@@ -440,7 +435,7 @@ describe('ProfileService (UF-122 to UF-179)', () => {
         expect(result.data).toEqual({ displayName: 'Name', title: 'x' });
     });
     // UTCID14: Xử lý tình huống accepts title maximum; đối chiếu kết quả và tác động phụ.
-    it('accepts title maximum', async () => {
+    it('accepts title maximum', () => {
       const result = shared.UpdateFreelancerProfileSchema.safeParse({
         displayName: 'Name',
         title: 'x'.repeat(255),
@@ -453,7 +448,7 @@ describe('ProfileService (UF-122 to UF-179)', () => {
         });
     });
     // UTCID15: Từ chối tình huống rejects title above maximum; trả mã 400.
-    it('rejects title above maximum', async () => {
+    it('rejects title above maximum', () => {
       const result = shared.UpdateFreelancerProfileSchema.safeParse({
         displayName: 'Name',
         title: 'x'.repeat(256),
@@ -473,7 +468,7 @@ describe('ProfileService (UF-122 to UF-179)', () => {
         ]);
     });
     // UTCID16: Xử lý tình huống accepts bio null; đối chiếu kết quả và tác động phụ.
-    it('accepts bio null', async () => {
+    it('accepts bio null', () => {
       const result = shared.UpdateFreelancerProfileSchema.safeParse({
         displayName: 'Name',
         title: 'Engineer',
@@ -488,7 +483,7 @@ describe('ProfileService (UF-122 to UF-179)', () => {
         });
     });
     // UTCID17: Xử lý tình huống accepts bio maximum; đối chiếu kết quả và tác động phụ.
-    it('accepts bio maximum', async () => {
+    it('accepts bio maximum', () => {
       const result = shared.UpdateFreelancerProfileSchema.safeParse({
         displayName: 'Name',
         title: 'Engineer',
@@ -503,7 +498,7 @@ describe('ProfileService (UF-122 to UF-179)', () => {
         });
     });
     // UTCID18: Từ chối tình huống rejects bio above maximum; trả mã 400.
-    it('rejects bio above maximum', async () => {
+    it('rejects bio above maximum', () => {
       const result = shared.UpdateFreelancerProfileSchema.safeParse({
         displayName: 'Name',
         title: 'Engineer',
@@ -524,7 +519,7 @@ describe('ProfileService (UF-122 to UF-179)', () => {
         ]);
     });
     // UTCID19: Xử lý tình huống accepts availabilityStatus available; đối chiếu kết quả và tác động phụ.
-    it('accepts availabilityStatus available', async () => {
+    it('accepts availabilityStatus available', () => {
       const result = shared.UpdateFreelancerProfileSchema.safeParse({
         displayName: 'Name',
         title: 'Engineer',
@@ -539,7 +534,7 @@ describe('ProfileService (UF-122 to UF-179)', () => {
         });
     });
     // UTCID20: Từ chối tình huống rejects availabilityStatus invalid; trả mã 400.
-    it('rejects availabilityStatus invalid', async () => {
+    it('rejects availabilityStatus invalid', () => {
       const result = shared.UpdateFreelancerProfileSchema.safeParse({
         displayName: 'Name',
         title: 'Engineer',
@@ -561,7 +556,7 @@ describe('ProfileService (UF-122 to UF-179)', () => {
         ]);
     });
     // UTCID21: Xử lý tình huống accepts education null; đối chiếu kết quả và tác động phụ.
-    it('accepts education null', async () => {
+    it('accepts education null', () => {
       const result = shared.UpdateFreelancerProfileSchema.safeParse({
         displayName: 'Name',
         title: 'Engineer',
@@ -576,7 +571,7 @@ describe('ProfileService (UF-122 to UF-179)', () => {
         });
     });
     // UTCID22: Xử lý tình huống accepts education empty; đối chiếu kết quả và tác động phụ.
-    it('accepts education empty', async () => {
+    it('accepts education empty', () => {
       const result = shared.UpdateFreelancerProfileSchema.safeParse({
         displayName: 'Name',
         title: 'Engineer',
@@ -591,7 +586,7 @@ describe('ProfileService (UF-122 to UF-179)', () => {
         });
     });
     // UTCID23: Xử lý tình huống accepts education maximum count; đối chiếu kết quả và tác động phụ.
-    it('accepts education maximum count', async () => {
+    it('accepts education maximum count', () => {
       const result = shared.UpdateFreelancerProfileSchema.safeParse({
         displayName: 'Name',
         title: 'Engineer',
@@ -648,7 +643,7 @@ describe('ProfileService (UF-122 to UF-179)', () => {
         });
     });
     // UTCID24: Từ chối tình huống rejects education above count; trả mã 400.
-    it('rejects education above count', async () => {
+    it('rejects education above count', () => {
       const result = shared.UpdateFreelancerProfileSchema.safeParse({
         displayName: 'Name',
         title: 'Engineer',
@@ -691,7 +686,7 @@ describe('ProfileService (UF-122 to UF-179)', () => {
         ]);
     });
     // UTCID25: Từ chối tình huống rejects education empty entry; trả mã 400.
-    it('rejects education empty entry', async () => {
+    it('rejects education empty entry', () => {
       const result = shared.UpdateFreelancerProfileSchema.safeParse({
         displayName: 'Name',
         title: 'Engineer',
@@ -712,7 +707,7 @@ describe('ProfileService (UF-122 to UF-179)', () => {
         ]);
     });
     // UTCID26: Xử lý tình huống accepts education maximum entry; đối chiếu kết quả và tác động phụ.
-    it('accepts education maximum entry', async () => {
+    it('accepts education maximum entry', () => {
       const result = shared.UpdateFreelancerProfileSchema.safeParse({
         displayName: 'Name',
         title: 'Engineer',
@@ -727,7 +722,7 @@ describe('ProfileService (UF-122 to UF-179)', () => {
         });
     });
     // UTCID27: Từ chối tình huống rejects education above entry; trả mã 400.
-    it('rejects education above entry', async () => {
+    it('rejects education above entry', () => {
       const result = shared.UpdateFreelancerProfileSchema.safeParse({
         displayName: 'Name',
         title: 'Engineer',
@@ -748,7 +743,7 @@ describe('ProfileService (UF-122 to UF-179)', () => {
         ]);
     });
     // UTCID28: Xử lý tình huống accepts certifications null; đối chiếu kết quả và tác động phụ.
-    it('accepts certifications null', async () => {
+    it('accepts certifications null', () => {
       const result = shared.UpdateFreelancerProfileSchema.safeParse({
         displayName: 'Name',
         title: 'Engineer',
@@ -763,7 +758,7 @@ describe('ProfileService (UF-122 to UF-179)', () => {
         });
     });
     // UTCID29: Xử lý tình huống accepts certifications empty; đối chiếu kết quả và tác động phụ.
-    it('accepts certifications empty', async () => {
+    it('accepts certifications empty', () => {
       const result = shared.UpdateFreelancerProfileSchema.safeParse({
         displayName: 'Name',
         title: 'Engineer',
@@ -778,7 +773,7 @@ describe('ProfileService (UF-122 to UF-179)', () => {
         });
     });
     // UTCID30: Xử lý tình huống accepts certifications maximum count; đối chiếu kết quả và tác động phụ.
-    it('accepts certifications maximum count', async () => {
+    it('accepts certifications maximum count', () => {
       const result = shared.UpdateFreelancerProfileSchema.safeParse({
         displayName: 'Name',
         title: 'Engineer',
@@ -835,7 +830,7 @@ describe('ProfileService (UF-122 to UF-179)', () => {
         });
     });
     // UTCID31: Từ chối tình huống rejects certifications above count; trả mã 400.
-    it('rejects certifications above count', async () => {
+    it('rejects certifications above count', () => {
       const result = shared.UpdateFreelancerProfileSchema.safeParse({
         displayName: 'Name',
         title: 'Engineer',
@@ -878,7 +873,7 @@ describe('ProfileService (UF-122 to UF-179)', () => {
         ]);
     });
     // UTCID32: Từ chối tình huống rejects certifications empty entry; trả mã 400.
-    it('rejects certifications empty entry', async () => {
+    it('rejects certifications empty entry', () => {
       const result = shared.UpdateFreelancerProfileSchema.safeParse({
         displayName: 'Name',
         title: 'Engineer',
@@ -899,7 +894,7 @@ describe('ProfileService (UF-122 to UF-179)', () => {
         ]);
     });
     // UTCID33: Xử lý tình huống accepts certifications maximum entry; đối chiếu kết quả và tác động phụ.
-    it('accepts certifications maximum entry', async () => {
+    it('accepts certifications maximum entry', () => {
       const result = shared.UpdateFreelancerProfileSchema.safeParse({
         displayName: 'Name',
         title: 'Engineer',
@@ -914,7 +909,7 @@ describe('ProfileService (UF-122 to UF-179)', () => {
         });
     });
     // UTCID34: Từ chối tình huống rejects certifications above entry; trả mã 400.
-    it('rejects certifications above entry', async () => {
+    it('rejects certifications above entry', () => {
       const result = shared.UpdateFreelancerProfileSchema.safeParse({
         displayName: 'Name',
         title: 'Engineer',
@@ -935,7 +930,7 @@ describe('ProfileService (UF-122 to UF-179)', () => {
         ]);
     });
     // UTCID35: Xử lý tình huống accepts languages null; đối chiếu kết quả và tác động phụ.
-    it('accepts languages null', async () => {
+    it('accepts languages null', () => {
       const result = shared.UpdateFreelancerProfileSchema.safeParse({
         displayName: 'Name',
         title: 'Engineer',
@@ -950,7 +945,7 @@ describe('ProfileService (UF-122 to UF-179)', () => {
         });
     });
     // UTCID36: Xử lý tình huống accepts languages empty; đối chiếu kết quả và tác động phụ.
-    it('accepts languages empty', async () => {
+    it('accepts languages empty', () => {
       const result = shared.UpdateFreelancerProfileSchema.safeParse({
         displayName: 'Name',
         title: 'Engineer',
@@ -965,7 +960,7 @@ describe('ProfileService (UF-122 to UF-179)', () => {
         });
     });
     // UTCID37: Xử lý tình huống accepts languages maximum count; đối chiếu kết quả và tác động phụ.
-    it('accepts languages maximum count', async () => {
+    it('accepts languages maximum count', () => {
       const result = shared.UpdateFreelancerProfileSchema.safeParse({
         displayName: 'Name',
         title: 'Engineer',
@@ -1022,7 +1017,7 @@ describe('ProfileService (UF-122 to UF-179)', () => {
         });
     });
     // UTCID38: Từ chối tình huống rejects languages above count; trả mã 400.
-    it('rejects languages above count', async () => {
+    it('rejects languages above count', () => {
       const result = shared.UpdateFreelancerProfileSchema.safeParse({
         displayName: 'Name',
         title: 'Engineer',
@@ -1065,7 +1060,7 @@ describe('ProfileService (UF-122 to UF-179)', () => {
         ]);
     });
     // UTCID39: Từ chối tình huống rejects languages empty entry; trả mã 400.
-    it('rejects languages empty entry', async () => {
+    it('rejects languages empty entry', () => {
       const result = shared.UpdateFreelancerProfileSchema.safeParse({
         displayName: 'Name',
         title: 'Engineer',
@@ -1086,7 +1081,7 @@ describe('ProfileService (UF-122 to UF-179)', () => {
         ]);
     });
     // UTCID40: Xử lý tình huống accepts languages maximum entry; đối chiếu kết quả và tác động phụ.
-    it('accepts languages maximum entry', async () => {
+    it('accepts languages maximum entry', () => {
       const result = shared.UpdateFreelancerProfileSchema.safeParse({
         displayName: 'Name',
         title: 'Engineer',
@@ -1101,7 +1096,7 @@ describe('ProfileService (UF-122 to UF-179)', () => {
         });
     });
     // UTCID41: Từ chối tình huống rejects languages above entry; trả mã 400.
-    it('rejects languages above entry', async () => {
+    it('rejects languages above entry', () => {
       const result = shared.UpdateFreelancerProfileSchema.safeParse({
         displayName: 'Name',
         title: 'Engineer',
@@ -1122,7 +1117,7 @@ describe('ProfileService (UF-122 to UF-179)', () => {
         ]);
     });
     // UTCID42: Xử lý tình huống accepts experience null; đối chiếu kết quả và tác động phụ.
-    it('accepts experience null', async () => {
+    it('accepts experience null', () => {
       const result = shared.UpdateFreelancerProfileSchema.safeParse({
         displayName: 'Name',
         title: 'Engineer',
@@ -1137,7 +1132,7 @@ describe('ProfileService (UF-122 to UF-179)', () => {
         });
     });
     // UTCID43: Xử lý tình huống accepts experience empty; đối chiếu kết quả và tác động phụ.
-    it('accepts experience empty', async () => {
+    it('accepts experience empty', () => {
       const result = shared.UpdateFreelancerProfileSchema.safeParse({
         displayName: 'Name',
         title: 'Engineer',
@@ -1152,7 +1147,7 @@ describe('ProfileService (UF-122 to UF-179)', () => {
         });
     });
     // UTCID44: Xử lý tình huống accepts experience maximum count; đối chiếu kết quả và tác động phụ.
-    it('accepts experience maximum count', async () => {
+    it('accepts experience maximum count', () => {
       const result = shared.UpdateFreelancerProfileSchema.safeParse({
         displayName: 'Name',
         title: 'Engineer',
@@ -1209,7 +1204,7 @@ describe('ProfileService (UF-122 to UF-179)', () => {
         });
     });
     // UTCID45: Từ chối tình huống rejects experience above count; trả mã 400.
-    it('rejects experience above count', async () => {
+    it('rejects experience above count', () => {
       const result = shared.UpdateFreelancerProfileSchema.safeParse({
         displayName: 'Name',
         title: 'Engineer',
@@ -1252,7 +1247,7 @@ describe('ProfileService (UF-122 to UF-179)', () => {
         ]);
     });
     // UTCID46: Từ chối tình huống rejects experience empty entry; trả mã 400.
-    it('rejects experience empty entry', async () => {
+    it('rejects experience empty entry', () => {
       const result = shared.UpdateFreelancerProfileSchema.safeParse({
         displayName: 'Name',
         title: 'Engineer',
@@ -1273,7 +1268,7 @@ describe('ProfileService (UF-122 to UF-179)', () => {
         ]);
     });
     // UTCID47: Xử lý tình huống accepts experience maximum entry; đối chiếu kết quả và tác động phụ.
-    it('accepts experience maximum entry', async () => {
+    it('accepts experience maximum entry', () => {
       const result = shared.UpdateFreelancerProfileSchema.safeParse({
         displayName: 'Name',
         title: 'Engineer',
@@ -1288,7 +1283,7 @@ describe('ProfileService (UF-122 to UF-179)', () => {
         });
     });
     // UTCID48: Từ chối tình huống rejects experience above entry; trả mã 400.
-    it('rejects experience above entry', async () => {
+    it('rejects experience above entry', () => {
       const result = shared.UpdateFreelancerProfileSchema.safeParse({
         displayName: 'Name',
         title: 'Engineer',
@@ -1309,7 +1304,7 @@ describe('ProfileService (UF-122 to UF-179)', () => {
         ]);
     });
     // UTCID49: Từ chối tình huống rejects unexpected unknown field; trả mã 400.
-    it('rejects unexpected unknown field', async () => {
+    it('rejects unexpected unknown field', () => {
       const result = shared.UpdateFreelancerProfileSchema.safeParse({
         displayName: 'Name',
         title: 'Engineer',
@@ -1343,7 +1338,7 @@ describe('ProfileService (UF-122 to UF-179)', () => {
     it('rejects a profile without freelancer membership', async () => {
       repository.findFreelancerProfileById.mockResolvedValue({
         ...profile,
-        user: { userRoles: [] },
+        user: { role: { name: 'Client' }, userRoles: [] },
       });
 
       await expect(service.getSkills(5)).rejects.toMatchObject({
@@ -1393,7 +1388,7 @@ describe('ProfileService (UF-122 to UF-179)', () => {
     it('rejects a profile without freelancer membership', async () => {
       repository.findFreelancerProfileById.mockResolvedValue({
         ...profile,
-        user: { userRoles: [] },
+        user: { role: { name: 'Client' }, userRoles: [] },
       });
 
       await expect(
@@ -1511,7 +1506,7 @@ describe('ProfileService (UF-122 to UF-179)', () => {
       ).rejects.toBe(failure);
     });
     // UTCID08: Từ chối tình huống rejects skillName missing; trả mã 400.
-    it('rejects skillName missing', async () => {
+    it('rejects skillName missing', () => {
       const result = shared.AddFreelancerSkillSchema.safeParse({
         proficiencyLevel: 5,
       });
@@ -1527,7 +1522,7 @@ describe('ProfileService (UF-122 to UF-179)', () => {
         ]);
     });
     // UTCID09: Từ chối tình huống rejects skillName empty; trả mã 400.
-    it('rejects skillName empty', async () => {
+    it('rejects skillName empty', () => {
       const result = shared.AddFreelancerSkillSchema.safeParse({
         skillName: '',
         proficiencyLevel: 5,
@@ -1544,7 +1539,7 @@ describe('ProfileService (UF-122 to UF-179)', () => {
         ]);
     });
     // UTCID10: Xử lý tình huống accepts skillName minimum; đối chiếu kết quả và tác động phụ.
-    it('accepts skillName minimum', async () => {
+    it('accepts skillName minimum', () => {
       const result = shared.AddFreelancerSkillSchema.safeParse({
         skillName: 'x',
         proficiencyLevel: 5,
@@ -1554,7 +1549,7 @@ describe('ProfileService (UF-122 to UF-179)', () => {
         expect(result.data).toEqual({ skillName: 'x', proficiencyLevel: 5 });
     });
     // UTCID11: Xử lý tình huống accepts skillName maximum; đối chiếu kết quả và tác động phụ.
-    it('accepts skillName maximum', async () => {
+    it('accepts skillName maximum', () => {
       const result = shared.AddFreelancerSkillSchema.safeParse({
         skillName: 'x'.repeat(100),
         proficiencyLevel: 5,
@@ -1567,7 +1562,7 @@ describe('ProfileService (UF-122 to UF-179)', () => {
         });
     });
     // UTCID12: Từ chối tình huống rejects skillName above maximum; trả mã 400.
-    it('rejects skillName above maximum', async () => {
+    it('rejects skillName above maximum', () => {
       const result = shared.AddFreelancerSkillSchema.safeParse({
         skillName: 'x'.repeat(101),
         proficiencyLevel: 5,
@@ -1587,7 +1582,7 @@ describe('ProfileService (UF-122 to UF-179)', () => {
         ]);
     });
     // UTCID13: Từ chối tình huống rejects proficiencyLevel missing; trả mã 400.
-    it('rejects proficiencyLevel missing', async () => {
+    it('rejects proficiencyLevel missing', () => {
       const result = shared.AddFreelancerSkillSchema.safeParse({
         skillName: 'TypeScript',
       });
@@ -1606,7 +1601,7 @@ describe('ProfileService (UF-122 to UF-179)', () => {
         ]);
     });
     // UTCID14: Từ chối tình huống rejects proficiencyLevel zero; trả mã 400.
-    it('rejects proficiencyLevel zero', async () => {
+    it('rejects proficiencyLevel zero', () => {
       const result = shared.AddFreelancerSkillSchema.safeParse({
         skillName: 'TypeScript',
         proficiencyLevel: 0,
@@ -1626,7 +1621,7 @@ describe('ProfileService (UF-122 to UF-179)', () => {
         ]);
     });
     // UTCID15: Xử lý tình huống accepts proficiencyLevel minimum; đối chiếu kết quả và tác động phụ.
-    it('accepts proficiencyLevel minimum', async () => {
+    it('accepts proficiencyLevel minimum', () => {
       const result = shared.AddFreelancerSkillSchema.safeParse({
         skillName: 'TypeScript',
         proficiencyLevel: 1,
@@ -1639,7 +1634,7 @@ describe('ProfileService (UF-122 to UF-179)', () => {
         });
     });
     // UTCID16: Xử lý tình huống accepts proficiencyLevel maximum; đối chiếu kết quả và tác động phụ.
-    it('accepts proficiencyLevel maximum', async () => {
+    it('accepts proficiencyLevel maximum', () => {
       const result = shared.AddFreelancerSkillSchema.safeParse({
         skillName: 'TypeScript',
         proficiencyLevel: 10,
@@ -1652,7 +1647,7 @@ describe('ProfileService (UF-122 to UF-179)', () => {
         });
     });
     // UTCID17: Từ chối tình huống rejects proficiencyLevel above maximum; trả mã 400.
-    it('rejects proficiencyLevel above maximum', async () => {
+    it('rejects proficiencyLevel above maximum', () => {
       const result = shared.AddFreelancerSkillSchema.safeParse({
         skillName: 'TypeScript',
         proficiencyLevel: 11,
@@ -1672,7 +1667,7 @@ describe('ProfileService (UF-122 to UF-179)', () => {
         ]);
     });
     // UTCID18: Từ chối tình huống rejects proficiencyLevel fraction; trả mã 400.
-    it('rejects proficiencyLevel fraction', async () => {
+    it('rejects proficiencyLevel fraction', () => {
       const result = shared.AddFreelancerSkillSchema.safeParse({
         skillName: 'TypeScript',
         proficiencyLevel: 1.5,
@@ -1692,7 +1687,7 @@ describe('ProfileService (UF-122 to UF-179)', () => {
         ]);
     });
     // UTCID19: Từ chối tình huống rejects proficiencyLevel string; trả mã 400.
-    it('rejects proficiencyLevel string', async () => {
+    it('rejects proficiencyLevel string', () => {
       const result = shared.AddFreelancerSkillSchema.safeParse({
         skillName: 'TypeScript',
         proficiencyLevel: '5',
@@ -1712,7 +1707,7 @@ describe('ProfileService (UF-122 to UF-179)', () => {
         ]);
     });
     // UTCID20: Từ chối tình huống rejects unexpected unknown field; trả mã 400.
-    it('rejects unexpected unknown field', async () => {
+    it('rejects unexpected unknown field', () => {
       const result = shared.AddFreelancerSkillSchema.safeParse({
         skillName: 'TypeScript',
         proficiencyLevel: 5,
@@ -2212,8 +2207,7 @@ describe('ProfileService (UF-122 to UF-179)', () => {
         response: {
           message: [
             {
-              message:
-                'The AI CV analysis service is unavailable. Please try again later.',
+              message: 'The AI CV analysis service is unavailable: AI offline',
               path: 'cv',
             },
           ],
@@ -2548,13 +2542,13 @@ describe('ProfileService (UF-122 to UF-179)', () => {
       });
     });
     // UTCID10: Xử lý tình huống accepts skills empty; đối chiếu kết quả và tác động phụ.
-    it('accepts skills empty', async () => {
+    it('accepts skills empty', () => {
       const result = shared.CvAnalysisConfirmSchema.safeParse({ skills: [] });
       expect(result.success).toBe(true);
       if (result.success) expect(result.data).toEqual({ skills: [] });
     });
     // UTCID11: Xử lý tình huống accepts skills maximum count; đối chiếu kết quả và tác động phụ.
-    it('accepts skills maximum count', async () => {
+    it('accepts skills maximum count', () => {
       const result = shared.CvAnalysisConfirmSchema.safeParse({
         skills: [
           { skillName: 'TypeScript', proficiencyLevel: 5 },
@@ -2667,7 +2661,7 @@ describe('ProfileService (UF-122 to UF-179)', () => {
         });
     });
     // UTCID12: Từ chối tình huống rejects skills above count; trả mã 400.
-    it('rejects skills above count', async () => {
+    it('rejects skills above count', () => {
       const result = shared.CvAnalysisConfirmSchema.safeParse({
         skills: [
           { skillName: 'TypeScript', proficiencyLevel: 5 },
@@ -2738,7 +2732,7 @@ describe('ProfileService (UF-122 to UF-179)', () => {
         ]);
     });
     // UTCID13: Xử lý tình huống accepts experience empty; đối chiếu kết quả và tác động phụ.
-    it('accepts experience empty', async () => {
+    it('accepts experience empty', () => {
       const result = shared.CvAnalysisConfirmSchema.safeParse({
         experience: [],
       });
@@ -2746,7 +2740,7 @@ describe('ProfileService (UF-122 to UF-179)', () => {
       if (result.success) expect(result.data).toEqual({ experience: [] });
     });
     // UTCID14: Xử lý tình huống accepts experience maximum count; đối chiếu kết quả và tác động phụ.
-    it('accepts experience maximum count', async () => {
+    it('accepts experience maximum count', () => {
       const result = shared.CvAnalysisConfirmSchema.safeParse({
         experience: [
           {
@@ -3079,7 +3073,7 @@ describe('ProfileService (UF-122 to UF-179)', () => {
         });
     });
     // UTCID15: Từ chối tình huống rejects experience above count; trả mã 400.
-    it('rejects experience above count', async () => {
+    it('rejects experience above count', () => {
       const result = shared.CvAnalysisConfirmSchema.safeParse({
         experience: [
           {
@@ -3267,7 +3261,7 @@ describe('ProfileService (UF-122 to UF-179)', () => {
         ]);
     });
     // UTCID16: Xử lý tình huống accepts education empty; đối chiếu kết quả và tác động phụ.
-    it('accepts education empty', async () => {
+    it('accepts education empty', () => {
       const result = shared.CvAnalysisConfirmSchema.safeParse({
         education: [],
       });
@@ -3275,7 +3269,7 @@ describe('ProfileService (UF-122 to UF-179)', () => {
       if (result.success) expect(result.data).toEqual({ education: [] });
     });
     // UTCID17: Xử lý tình huống accepts education maximum count; đối chiếu kết quả và tác động phụ.
-    it('accepts education maximum count', async () => {
+    it('accepts education maximum count', () => {
       const result = shared.CvAnalysisConfirmSchema.safeParse({
         education: [
           {
@@ -3428,7 +3422,7 @@ describe('ProfileService (UF-122 to UF-179)', () => {
         });
     });
     // UTCID18: Từ chối tình huống rejects education above count; trả mã 400.
-    it('rejects education above count', async () => {
+    it('rejects education above count', () => {
       const result = shared.CvAnalysisConfirmSchema.safeParse({
         education: [
           {
@@ -3525,13 +3519,13 @@ describe('ProfileService (UF-122 to UF-179)', () => {
         ]);
     });
     // UTCID19: Xử lý tình huống accepts projects empty; đối chiếu kết quả và tác động phụ.
-    it('accepts projects empty', async () => {
+    it('accepts projects empty', () => {
       const result = shared.CvAnalysisConfirmSchema.safeParse({ projects: [] });
       expect(result.success).toBe(true);
       if (result.success) expect(result.data).toEqual({ projects: [] });
     });
     // UTCID20: Xử lý tình huống accepts projects maximum count; đối chiếu kết quả và tác động phụ.
-    it('accepts projects maximum count', async () => {
+    it('accepts projects maximum count', () => {
       const result = shared.CvAnalysisConfirmSchema.safeParse({
         projects: [
           { name: 'Project', technologies: ['TypeScript'], description: null },
@@ -3664,7 +3658,7 @@ describe('ProfileService (UF-122 to UF-179)', () => {
         });
     });
     // UTCID21: Từ chối tình huống rejects projects above count; trả mã 400.
-    it('rejects projects above count', async () => {
+    it('rejects projects above count', () => {
       const result = shared.CvAnalysisConfirmSchema.safeParse({
         projects: [
           { name: 'Project', technologies: ['TypeScript'], description: null },
@@ -3705,7 +3699,7 @@ describe('ProfileService (UF-122 to UF-179)', () => {
         ]);
     });
     // UTCID22: Xử lý tình huống accepts skills skillName maximum; đối chiếu kết quả và tác động phụ.
-    it('accepts skills skillName maximum', async () => {
+    it('accepts skills skillName maximum', () => {
       const result = shared.CvAnalysisConfirmSchema.safeParse({
         skills: [{ skillName: 'x'.repeat(100), proficiencyLevel: 5 }],
       });
@@ -3716,7 +3710,7 @@ describe('ProfileService (UF-122 to UF-179)', () => {
         });
     });
     // UTCID23: Từ chối tình huống rejects skills skillName above maximum; trả mã 400.
-    it('rejects skills skillName above maximum', async () => {
+    it('rejects skills skillName above maximum', () => {
       const result = shared.CvAnalysisConfirmSchema.safeParse({
         skills: [{ skillName: 'x'.repeat(101), proficiencyLevel: 5 }],
       });
@@ -3735,7 +3729,7 @@ describe('ProfileService (UF-122 to UF-179)', () => {
         ]);
     });
     // UTCID24: Từ chối tình huống rejects skills skillName empty; trả mã 400.
-    it('rejects skills skillName empty', async () => {
+    it('rejects skills skillName empty', () => {
       const result = shared.CvAnalysisConfirmSchema.safeParse({
         skills: [{ skillName: '', proficiencyLevel: 5 }],
       });
@@ -3754,7 +3748,7 @@ describe('ProfileService (UF-122 to UF-179)', () => {
         ]);
     });
     // UTCID25: Xử lý tình huống accepts skills skillName minimum; đối chiếu kết quả và tác động phụ.
-    it('accepts skills skillName minimum', async () => {
+    it('accepts skills skillName minimum', () => {
       const result = shared.CvAnalysisConfirmSchema.safeParse({
         skills: [{ skillName: 'x', proficiencyLevel: 5 }],
       });
@@ -3765,7 +3759,7 @@ describe('ProfileService (UF-122 to UF-179)', () => {
         });
     });
     // UTCID26: Xử lý tình huống accepts experience title maximum; đối chiếu kết quả và tác động phụ.
-    it('accepts experience title maximum', async () => {
+    it('accepts experience title maximum', () => {
       const result = shared.CvAnalysisConfirmSchema.safeParse({
         experience: [
           {
@@ -3794,7 +3788,7 @@ describe('ProfileService (UF-122 to UF-179)', () => {
         });
     });
     // UTCID27: Từ chối tình huống rejects experience title above maximum; trả mã 400.
-    it('rejects experience title above maximum', async () => {
+    it('rejects experience title above maximum', () => {
       const result = shared.CvAnalysisConfirmSchema.safeParse({
         experience: [
           {
@@ -3822,7 +3816,7 @@ describe('ProfileService (UF-122 to UF-179)', () => {
         ]);
     });
     // UTCID28: Xử lý tình huống accepts experience title null; đối chiếu kết quả và tác động phụ.
-    it('accepts experience title null', async () => {
+    it('accepts experience title null', () => {
       const result = shared.CvAnalysisConfirmSchema.safeParse({
         experience: [
           {
@@ -3851,7 +3845,7 @@ describe('ProfileService (UF-122 to UF-179)', () => {
         });
     });
     // UTCID29: Xử lý tình huống accepts experience company maximum; đối chiếu kết quả và tác động phụ.
-    it('accepts experience company maximum', async () => {
+    it('accepts experience company maximum', () => {
       const result = shared.CvAnalysisConfirmSchema.safeParse({
         experience: [
           {
@@ -3880,7 +3874,7 @@ describe('ProfileService (UF-122 to UF-179)', () => {
         });
     });
     // UTCID30: Từ chối tình huống rejects experience company above maximum; trả mã 400.
-    it('rejects experience company above maximum', async () => {
+    it('rejects experience company above maximum', () => {
       const result = shared.CvAnalysisConfirmSchema.safeParse({
         experience: [
           {
@@ -3908,7 +3902,7 @@ describe('ProfileService (UF-122 to UF-179)', () => {
         ]);
     });
     // UTCID31: Xử lý tình huống accepts experience company null; đối chiếu kết quả và tác động phụ.
-    it('accepts experience company null', async () => {
+    it('accepts experience company null', () => {
       const result = shared.CvAnalysisConfirmSchema.safeParse({
         experience: [
           {
@@ -3937,7 +3931,7 @@ describe('ProfileService (UF-122 to UF-179)', () => {
         });
     });
     // UTCID32: Xử lý tình huống accepts experience startDate maximum; đối chiếu kết quả và tác động phụ.
-    it('accepts experience startDate maximum', async () => {
+    it('accepts experience startDate maximum', () => {
       const result = shared.CvAnalysisConfirmSchema.safeParse({
         experience: [
           {
@@ -3966,7 +3960,7 @@ describe('ProfileService (UF-122 to UF-179)', () => {
         });
     });
     // UTCID33: Từ chối tình huống rejects experience startDate above maximum; trả mã 400.
-    it('rejects experience startDate above maximum', async () => {
+    it('rejects experience startDate above maximum', () => {
       const result = shared.CvAnalysisConfirmSchema.safeParse({
         experience: [
           {
@@ -3994,7 +3988,7 @@ describe('ProfileService (UF-122 to UF-179)', () => {
         ]);
     });
     // UTCID34: Xử lý tình huống accepts experience startDate null; đối chiếu kết quả và tác động phụ.
-    it('accepts experience startDate null', async () => {
+    it('accepts experience startDate null', () => {
       const result = shared.CvAnalysisConfirmSchema.safeParse({
         experience: [
           {
@@ -4023,7 +4017,7 @@ describe('ProfileService (UF-122 to UF-179)', () => {
         });
     });
     // UTCID35: Xử lý tình huống accepts experience endDate maximum; đối chiếu kết quả và tác động phụ.
-    it('accepts experience endDate maximum', async () => {
+    it('accepts experience endDate maximum', () => {
       const result = shared.CvAnalysisConfirmSchema.safeParse({
         experience: [
           {
@@ -4052,7 +4046,7 @@ describe('ProfileService (UF-122 to UF-179)', () => {
         });
     });
     // UTCID36: Từ chối tình huống rejects experience endDate above maximum; trả mã 400.
-    it('rejects experience endDate above maximum', async () => {
+    it('rejects experience endDate above maximum', () => {
       const result = shared.CvAnalysisConfirmSchema.safeParse({
         experience: [
           {
@@ -4080,7 +4074,7 @@ describe('ProfileService (UF-122 to UF-179)', () => {
         ]);
     });
     // UTCID37: Xử lý tình huống accepts experience endDate null; đối chiếu kết quả và tác động phụ.
-    it('accepts experience endDate null', async () => {
+    it('accepts experience endDate null', () => {
       const result = shared.CvAnalysisConfirmSchema.safeParse({
         experience: [
           {
@@ -4109,7 +4103,7 @@ describe('ProfileService (UF-122 to UF-179)', () => {
         });
     });
     // UTCID38: Xử lý tình huống accepts experience description maximum; đối chiếu kết quả và tác động phụ.
-    it('accepts experience description maximum', async () => {
+    it('accepts experience description maximum', () => {
       const result = shared.CvAnalysisConfirmSchema.safeParse({
         experience: [
           {
@@ -4138,7 +4132,7 @@ describe('ProfileService (UF-122 to UF-179)', () => {
         });
     });
     // UTCID39: Từ chối tình huống rejects experience description above maximum; trả mã 400.
-    it('rejects experience description above maximum', async () => {
+    it('rejects experience description above maximum', () => {
       const result = shared.CvAnalysisConfirmSchema.safeParse({
         experience: [
           {
@@ -4166,7 +4160,7 @@ describe('ProfileService (UF-122 to UF-179)', () => {
         ]);
     });
     // UTCID40: Xử lý tình huống accepts experience description null; đối chiếu kết quả và tác động phụ.
-    it('accepts experience description null', async () => {
+    it('accepts experience description null', () => {
       const result = shared.CvAnalysisConfirmSchema.safeParse({
         experience: [
           {
@@ -4195,7 +4189,7 @@ describe('ProfileService (UF-122 to UF-179)', () => {
         });
     });
     // UTCID41: Xử lý tình huống accepts education degree maximum; đối chiếu kết quả và tác động phụ.
-    it('accepts education degree maximum', async () => {
+    it('accepts education degree maximum', () => {
       const result = shared.CvAnalysisConfirmSchema.safeParse({
         education: [
           {
@@ -4222,7 +4216,7 @@ describe('ProfileService (UF-122 to UF-179)', () => {
         });
     });
     // UTCID42: Từ chối tình huống rejects education degree above maximum; trả mã 400.
-    it('rejects education degree above maximum', async () => {
+    it('rejects education degree above maximum', () => {
       const result = shared.CvAnalysisConfirmSchema.safeParse({
         education: [
           {
@@ -4249,7 +4243,7 @@ describe('ProfileService (UF-122 to UF-179)', () => {
         ]);
     });
     // UTCID43: Xử lý tình huống accepts education degree null; đối chiếu kết quả và tác động phụ.
-    it('accepts education degree null', async () => {
+    it('accepts education degree null', () => {
       const result = shared.CvAnalysisConfirmSchema.safeParse({
         education: [
           {
@@ -4276,7 +4270,7 @@ describe('ProfileService (UF-122 to UF-179)', () => {
         });
     });
     // UTCID44: Xử lý tình huống accepts education school maximum; đối chiếu kết quả và tác động phụ.
-    it('accepts education school maximum', async () => {
+    it('accepts education school maximum', () => {
       const result = shared.CvAnalysisConfirmSchema.safeParse({
         education: [
           {
@@ -4303,7 +4297,7 @@ describe('ProfileService (UF-122 to UF-179)', () => {
         });
     });
     // UTCID45: Từ chối tình huống rejects education school above maximum; trả mã 400.
-    it('rejects education school above maximum', async () => {
+    it('rejects education school above maximum', () => {
       const result = shared.CvAnalysisConfirmSchema.safeParse({
         education: [
           {
@@ -4330,7 +4324,7 @@ describe('ProfileService (UF-122 to UF-179)', () => {
         ]);
     });
     // UTCID46: Xử lý tình huống accepts education school null; đối chiếu kết quả và tác động phụ.
-    it('accepts education school null', async () => {
+    it('accepts education school null', () => {
       const result = shared.CvAnalysisConfirmSchema.safeParse({
         education: [
           {
@@ -4357,7 +4351,7 @@ describe('ProfileService (UF-122 to UF-179)', () => {
         });
     });
     // UTCID47: Xử lý tình huống accepts education description maximum; đối chiếu kết quả và tác động phụ.
-    it('accepts education description maximum', async () => {
+    it('accepts education description maximum', () => {
       const result = shared.CvAnalysisConfirmSchema.safeParse({
         education: [
           {
@@ -4384,7 +4378,7 @@ describe('ProfileService (UF-122 to UF-179)', () => {
         });
     });
     // UTCID48: Từ chối tình huống rejects education description above maximum; trả mã 400.
-    it('rejects education description above maximum', async () => {
+    it('rejects education description above maximum', () => {
       const result = shared.CvAnalysisConfirmSchema.safeParse({
         education: [
           {
@@ -4411,7 +4405,7 @@ describe('ProfileService (UF-122 to UF-179)', () => {
         ]);
     });
     // UTCID49: Xử lý tình huống accepts education description null; đối chiếu kết quả và tác động phụ.
-    it('accepts education description null', async () => {
+    it('accepts education description null', () => {
       const result = shared.CvAnalysisConfirmSchema.safeParse({
         education: [
           {
@@ -4438,7 +4432,7 @@ describe('ProfileService (UF-122 to UF-179)', () => {
         });
     });
     // UTCID50: Xử lý tình huống accepts projects name maximum; đối chiếu kết quả và tác động phụ.
-    it('accepts projects name maximum', async () => {
+    it('accepts projects name maximum', () => {
       const result = shared.CvAnalysisConfirmSchema.safeParse({
         projects: [
           {
@@ -4461,7 +4455,7 @@ describe('ProfileService (UF-122 to UF-179)', () => {
         });
     });
     // UTCID51: Từ chối tình huống rejects projects name above maximum; trả mã 400.
-    it('rejects projects name above maximum', async () => {
+    it('rejects projects name above maximum', () => {
       const result = shared.CvAnalysisConfirmSchema.safeParse({
         projects: [
           {
@@ -4486,7 +4480,7 @@ describe('ProfileService (UF-122 to UF-179)', () => {
         ]);
     });
     // UTCID52: Từ chối tình huống rejects projects name empty; trả mã 400.
-    it('rejects projects name empty', async () => {
+    it('rejects projects name empty', () => {
       const result = shared.CvAnalysisConfirmSchema.safeParse({
         projects: [
           { name: '', technologies: ['TypeScript'], description: null },
@@ -4507,7 +4501,7 @@ describe('ProfileService (UF-122 to UF-179)', () => {
         ]);
     });
     // UTCID53: Xử lý tình huống accepts projects name minimum; đối chiếu kết quả và tác động phụ.
-    it('accepts projects name minimum', async () => {
+    it('accepts projects name minimum', () => {
       const result = shared.CvAnalysisConfirmSchema.safeParse({
         projects: [
           { name: 'x', technologies: ['TypeScript'], description: null },
@@ -4522,7 +4516,7 @@ describe('ProfileService (UF-122 to UF-179)', () => {
         });
     });
     // UTCID54: Xử lý tình huống accepts projects description maximum; đối chiếu kết quả và tác động phụ.
-    it('accepts projects description maximum', async () => {
+    it('accepts projects description maximum', () => {
       const result = shared.CvAnalysisConfirmSchema.safeParse({
         projects: [
           {
@@ -4545,7 +4539,7 @@ describe('ProfileService (UF-122 to UF-179)', () => {
         });
     });
     // UTCID55: Từ chối tình huống rejects projects description above maximum; trả mã 400.
-    it('rejects projects description above maximum', async () => {
+    it('rejects projects description above maximum', () => {
       const result = shared.CvAnalysisConfirmSchema.safeParse({
         projects: [
           {
@@ -4570,7 +4564,7 @@ describe('ProfileService (UF-122 to UF-179)', () => {
         ]);
     });
     // UTCID56: Xử lý tình huống accepts projects description null; đối chiếu kết quả và tác động phụ.
-    it('accepts projects description null', async () => {
+    it('accepts projects description null', () => {
       const result = shared.CvAnalysisConfirmSchema.safeParse({
         projects: [
           { name: 'Project', technologies: ['TypeScript'], description: null },
@@ -4589,7 +4583,7 @@ describe('ProfileService (UF-122 to UF-179)', () => {
         });
     });
     // UTCID57: Xử lý tình huống accepts skills proficiency minimum; đối chiếu kết quả và tác động phụ.
-    it('accepts skills proficiency minimum', async () => {
+    it('accepts skills proficiency minimum', () => {
       const result = shared.CvAnalysisConfirmSchema.safeParse({
         skills: [{ skillName: 'TypeScript', proficiencyLevel: 1 }],
       });
@@ -4600,7 +4594,7 @@ describe('ProfileService (UF-122 to UF-179)', () => {
         });
     });
     // UTCID58: Xử lý tình huống accepts skills proficiency maximum; đối chiếu kết quả và tác động phụ.
-    it('accepts skills proficiency maximum', async () => {
+    it('accepts skills proficiency maximum', () => {
       const result = shared.CvAnalysisConfirmSchema.safeParse({
         skills: [{ skillName: 'TypeScript', proficiencyLevel: 10 }],
       });
@@ -4611,7 +4605,7 @@ describe('ProfileService (UF-122 to UF-179)', () => {
         });
     });
     // UTCID59: Từ chối tình huống rejects skills proficiency zero; trả mã 400.
-    it('rejects skills proficiency zero', async () => {
+    it('rejects skills proficiency zero', () => {
       const result = shared.CvAnalysisConfirmSchema.safeParse({
         skills: [{ skillName: 'TypeScript', proficiencyLevel: 0 }],
       });
@@ -4630,7 +4624,7 @@ describe('ProfileService (UF-122 to UF-179)', () => {
         ]);
     });
     // UTCID60: Từ chối tình huống rejects skills proficiency above maximum; trả mã 400.
-    it('rejects skills proficiency above maximum', async () => {
+    it('rejects skills proficiency above maximum', () => {
       const result = shared.CvAnalysisConfirmSchema.safeParse({
         skills: [{ skillName: 'TypeScript', proficiencyLevel: 11 }],
       });
@@ -4649,7 +4643,7 @@ describe('ProfileService (UF-122 to UF-179)', () => {
         ]);
     });
     // UTCID61: Từ chối tình huống rejects skills proficiency fraction; trả mã 400.
-    it('rejects skills proficiency fraction', async () => {
+    it('rejects skills proficiency fraction', () => {
       const result = shared.CvAnalysisConfirmSchema.safeParse({
         skills: [{ skillName: 'TypeScript', proficiencyLevel: 1.5 }],
       });
@@ -4668,7 +4662,7 @@ describe('ProfileService (UF-122 to UF-179)', () => {
         ]);
     });
     // UTCID62: Xử lý tình huống accepts education startYear minimum; đối chiếu kết quả và tác động phụ.
-    it('accepts education startYear minimum', async () => {
+    it('accepts education startYear minimum', () => {
       const result = shared.CvAnalysisConfirmSchema.safeParse({
         education: [
           {
@@ -4695,7 +4689,7 @@ describe('ProfileService (UF-122 to UF-179)', () => {
         });
     });
     // UTCID63: Xử lý tình huống accepts education startYear maximum; đối chiếu kết quả và tác động phụ.
-    it('accepts education startYear maximum', async () => {
+    it('accepts education startYear maximum', () => {
       const result = shared.CvAnalysisConfirmSchema.safeParse({
         education: [
           {
@@ -4722,7 +4716,7 @@ describe('ProfileService (UF-122 to UF-179)', () => {
         });
     });
     // UTCID64: Từ chối tình huống rejects education startYear below minimum; trả mã 400.
-    it('rejects education startYear below minimum', async () => {
+    it('rejects education startYear below minimum', () => {
       const result = shared.CvAnalysisConfirmSchema.safeParse({
         education: [
           {
@@ -4749,7 +4743,7 @@ describe('ProfileService (UF-122 to UF-179)', () => {
         ]);
     });
     // UTCID65: Từ chối tình huống rejects education startYear above maximum; trả mã 400.
-    it('rejects education startYear above maximum', async () => {
+    it('rejects education startYear above maximum', () => {
       const result = shared.CvAnalysisConfirmSchema.safeParse({
         education: [
           {
@@ -4776,7 +4770,7 @@ describe('ProfileService (UF-122 to UF-179)', () => {
         ]);
     });
     // UTCID66: Từ chối tình huống rejects education startYear fraction; trả mã 400.
-    it('rejects education startYear fraction', async () => {
+    it('rejects education startYear fraction', () => {
       const result = shared.CvAnalysisConfirmSchema.safeParse({
         education: [
           {
@@ -4803,7 +4797,7 @@ describe('ProfileService (UF-122 to UF-179)', () => {
         ]);
     });
     // UTCID67: Xử lý tình huống accepts education startYear null; đối chiếu kết quả và tác động phụ.
-    it('accepts education startYear null', async () => {
+    it('accepts education startYear null', () => {
       const result = shared.CvAnalysisConfirmSchema.safeParse({
         education: [
           {
@@ -4830,7 +4824,7 @@ describe('ProfileService (UF-122 to UF-179)', () => {
         });
     });
     // UTCID68: Xử lý tình huống accepts education endYear minimum; đối chiếu kết quả và tác động phụ.
-    it('accepts education endYear minimum', async () => {
+    it('accepts education endYear minimum', () => {
       const result = shared.CvAnalysisConfirmSchema.safeParse({
         education: [
           {
@@ -4857,7 +4851,7 @@ describe('ProfileService (UF-122 to UF-179)', () => {
         });
     });
     // UTCID69: Xử lý tình huống accepts education endYear maximum; đối chiếu kết quả và tác động phụ.
-    it('accepts education endYear maximum', async () => {
+    it('accepts education endYear maximum', () => {
       const result = shared.CvAnalysisConfirmSchema.safeParse({
         education: [
           {
@@ -4884,7 +4878,7 @@ describe('ProfileService (UF-122 to UF-179)', () => {
         });
     });
     // UTCID70: Từ chối tình huống rejects education endYear below minimum; trả mã 400.
-    it('rejects education endYear below minimum', async () => {
+    it('rejects education endYear below minimum', () => {
       const result = shared.CvAnalysisConfirmSchema.safeParse({
         education: [
           {
@@ -4911,7 +4905,7 @@ describe('ProfileService (UF-122 to UF-179)', () => {
         ]);
     });
     // UTCID71: Từ chối tình huống rejects education endYear above maximum; trả mã 400.
-    it('rejects education endYear above maximum', async () => {
+    it('rejects education endYear above maximum', () => {
       const result = shared.CvAnalysisConfirmSchema.safeParse({
         education: [
           {
@@ -4938,7 +4932,7 @@ describe('ProfileService (UF-122 to UF-179)', () => {
         ]);
     });
     // UTCID72: Từ chối tình huống rejects education endYear fraction; trả mã 400.
-    it('rejects education endYear fraction', async () => {
+    it('rejects education endYear fraction', () => {
       const result = shared.CvAnalysisConfirmSchema.safeParse({
         education: [
           {
@@ -4965,7 +4959,7 @@ describe('ProfileService (UF-122 to UF-179)', () => {
         ]);
     });
     // UTCID73: Xử lý tình huống accepts education endYear null; đối chiếu kết quả và tác động phụ.
-    it('accepts education endYear null', async () => {
+    it('accepts education endYear null', () => {
       const result = shared.CvAnalysisConfirmSchema.safeParse({
         education: [
           {
@@ -4992,7 +4986,7 @@ describe('ProfileService (UF-122 to UF-179)', () => {
         });
     });
     // UTCID74: Xử lý tình huống accepts projects technologies maximum count; đối chiếu kết quả và tác động phụ.
-    it('accepts projects technologies maximum count', async () => {
+    it('accepts projects technologies maximum count', () => {
       const result = shared.CvAnalysisConfirmSchema.safeParse({
         projects: [
           {
@@ -5077,7 +5071,7 @@ describe('ProfileService (UF-122 to UF-179)', () => {
         });
     });
     // UTCID75: Từ chối tình huống rejects projects technologies above count; trả mã 400.
-    it('rejects projects technologies above count', async () => {
+    it('rejects projects technologies above count', () => {
       const result = shared.CvAnalysisConfirmSchema.safeParse({
         projects: [
           {
@@ -5134,7 +5128,7 @@ describe('ProfileService (UF-122 to UF-179)', () => {
         ]);
     });
     // UTCID76: Từ chối tình huống rejects projects technology empty; trả mã 400.
-    it('rejects projects technology empty', async () => {
+    it('rejects projects technology empty', () => {
       const result = shared.CvAnalysisConfirmSchema.safeParse({
         projects: [{ name: 'Project', technologies: [''], description: null }],
       });
@@ -5153,7 +5147,7 @@ describe('ProfileService (UF-122 to UF-179)', () => {
         ]);
     });
     // UTCID77: Xử lý tình huống accepts projects technology maximum entry; đối chiếu kết quả và tác động phụ.
-    it('accepts projects technology maximum entry', async () => {
+    it('accepts projects technology maximum entry', () => {
       const result = shared.CvAnalysisConfirmSchema.safeParse({
         projects: [
           {
@@ -5180,7 +5174,7 @@ describe('ProfileService (UF-122 to UF-179)', () => {
         });
     });
     // UTCID78: Từ chối tình huống rejects projects technology above entry; trả mã 400.
-    it('rejects projects technology above entry', async () => {
+    it('rejects projects technology above entry', () => {
       const result = shared.CvAnalysisConfirmSchema.safeParse({
         projects: [
           {
@@ -5207,7 +5201,7 @@ describe('ProfileService (UF-122 to UF-179)', () => {
         ]);
     });
     // UTCID79: Từ chối tình huống rejects unexpected unknown field; trả mã 400.
-    it('rejects unexpected unknown field', async () => {
+    it('rejects unexpected unknown field', () => {
       const result = shared.CvAnalysisConfirmSchema.safeParse({
         unexpected: 'value',
       });

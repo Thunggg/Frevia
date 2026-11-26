@@ -16,6 +16,7 @@ import {
 import { RoleName } from '@shared/types';
 import { PaymentRepository } from './payment.repo';
 import { PaymentService } from './payment.service';
+import { CacheService } from '../../shared/services/cache.service';
 import { StripeService } from '../../shared/services/stripe.service';
 
 describe('PaymentService', () => {
@@ -607,6 +608,44 @@ describe('PaymentService', () => {
         20,
         MilestonePaymentStatus.FUNDED,
       );
+    });
+
+    it('skips duplicate Stripe webhook event IDs when CacheService is present', async () => {
+      const cache = new CacheService();
+      const cachedService = new PaymentService(
+        repo,
+        stripeService,
+        mockContractPdfService as any,
+        undefined,
+        cache,
+      );
+      stripeService.constructWebhookEvent.mockReturnValue({
+        id: 'evt_duplicate_123',
+        type: 'payment_intent.succeeded',
+        data: {
+          object: {
+            id: 'pi_escrow_dup',
+            metadata: {
+              type: TransactionType.ESCROW_DEPOSIT,
+              milestoneId: '20',
+            },
+          },
+        },
+      } as any);
+      repo.findTransactionByPaymentIntentId.mockResolvedValue({
+        id: 102,
+      } as any);
+      repo.updateTransactionStatus.mockResolvedValue({} as any);
+      repo.updateMilestonePaymentStatus.mockResolvedValue({} as any);
+
+      await expect(
+        cachedService.handleWebhook(Buffer.from('payload'), 'sig_123'),
+      ).resolves.toEqual({ received: true });
+      await expect(
+        cachedService.handleWebhook(Buffer.from('payload'), 'sig_123'),
+      ).resolves.toEqual({ received: true });
+
+      expect(repo.updateMilestonePaymentStatus).toHaveBeenCalledTimes(1);
     });
   });
 

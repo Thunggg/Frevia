@@ -18,7 +18,7 @@
 \subsection{Manage Forum}
 
 \Needspace{12\baselineskip}
-\subsubsection{ View Forum Category List}
+\subsubsection{ View Forum Categories List}
 
 \fnhead{Function Trigger}
 Any visitor opens the Community Forum area from the main navigation, or follows a direct
@@ -70,8 +70,7 @@ reach an ongoing discussion in one click and can immediately see which topics ar
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
       \item The server component of the page reads the optional \texttt{search},
             \texttt{page} and \texttt{limit} parameters from the query string.
-      \item The page requests \texttt{GET /api/forums/categories} and \texttt{GET
-                  /api/forums/users/top?limit=5} in parallel, adding the access token when the
+      \item The page requests \texttt{GET /\allowbreak{}api/\allowbreak{}forums/\allowbreak{}categories} and \texttt{GET /\allowbreak{}api/\allowbreak{}forums/\allowbreak{}users/\allowbreak{}top?\allowbreak{}limit=5} in parallel, adding the access token when the
             visitor is signed in.
       \item The API keeps only the categories whose \texttt{deletedAt} is null, orders the
             result by \texttt{name} in ascending order, and counts only the posts that are
@@ -218,7 +217,7 @@ reach an ongoing discussion in one click and can immediately see which topics ar
 % =================================================================
 
 \Needspace{12\baselineskip}
-\subsubsection{ View Forum Category Detail and Post List}
+\subsubsection{ View Forum Category Details and Post List}
 
 \fnhead{Function Trigger}
 The visitor selects a category row on the forum landing page, follows a shared category link,
@@ -432,13 +431,13 @@ commented posts published in the category during the last seven days.
 % =================================================================
 
 \Needspace{12\baselineskip}
-\subsubsection{ View Post Detail}
+\subsubsection{ View Post Details}
 
 \fnhead{Function Trigger}
 The visitor selects a post row, follows a shared post link, or opens a related post from the
 side panel of another discussion.\newline
 \textbf{Navigation path:} Home $\rightarrow$ Forum $\rightarrow$ \textit{Category} $\rightarrow$
-\textit{Post} (\texttt{/forum/\{category\}/\{post-slug\}-\{post-id\}}).
+\textit{Post} (\texttt{/\allowbreak{}forum/\allowbreak{}\{category\}/\allowbreak{}\{post-\allowbreak{}slug\}-\{post-\allowbreak{}id\}}).
 
 \fnhead{Function Description}
 
@@ -677,23 +676,15 @@ approved discussions become visible to the community.
       \item The dialog trims the title and the content and blocks the submission while
             either of them is empty.
       \item The client posts the form to \texttt{/api/backend/forums/posts}.
-      \item The BFF proxy recognises this exact route as the only forum route that must be
-            screened and forwards it to the SensitiveAI moderation proxy instead of the
-            REST API.
-      \item The moderation proxy scans the text, attaches the verdict (status, score and
-            categories) to the request body and forwards the request to the REST API.
-      \item The API validates the body, verifies that the category exists and is not soft
-            deleted, and creates the post.
-      \item When the request reaches the API without a verdict, the API calls its own
-            \texttt{AIModerationService}: \texttt{ALLOW} maps to \texttt{APPROVED},
+      \item The client passes the form payload to the backend \texttt{/api/forums/posts} route.
+      \item The backend validates the body, verifies that the category exists (when provided) and is not soft
+            deleted, and invokes \texttt{AIModerationService} (when moderation metadata is not supplied): \texttt{ALLOW} maps to \texttt{APPROVED},
             \texttt{REVIEW} to \texttt{PENDING} and \texttt{BLOCK} to \texttt{REJECTED}; a
-            failure of that service is treated as \texttt{APPROVED} so publishing is not
+            failure of that service defaults to \texttt{APPROVED} so publishing is not
             blocked by an outage.
       \item The slug is generated from the title, normalised to lower case without accents,
             and completed with a timestamp and a random suffix to keep it unique.
-      \item The moderation status is taken from the verdict; when no verdict and no
-            moderation result are available the post is stored as \texttt{PENDING}, which
-            means it is invisible until an administrator approves it.
+      \item The post is saved in PostgreSQL with its computed \texttt{moderationStatus}, \texttt{moderationScore}, and \texttt{moderationCategories}.
       \item The API returns the created post and the client invalidates the post lists of
             the category so the next visit shows the new discussion.
       \item The client branches on the returned status: \texttt{REJECTED} keeps the dialog
@@ -795,8 +786,7 @@ approved discussions become visible to the community.
       A3 & The member is not signed in or the session expired. The BFF proxy refreshes the token once;
       if the refresh fails the API rejects the request with an authentication error and the client
       redirects to the sign-in page.\\ \hline
-      A4 & The moderation proxy is unavailable. The request fails before reaching the API, no post is
-      created, and the client shows an error toast while keeping the draft.\\ \hline
+      A4 & The AI moderation service is unavailable. \texttt{AIModerationService} falls back to \texttt{APPROVED} so the post is saved and published without blocking the user.\\ \hline
       A5 & The moderation verdict is \texttt{REJECTED}. The post is stored with that status, is not
       publicly visible, and the dialog stays open with an error toast so the member can rewrite the
       content.\\ \hline
@@ -831,7 +821,7 @@ approved discussions become visible to the community.
       \item An approved post becomes visible in the category list immediately after the
             cache is invalidated; a pending or rejected post stays hidden until an
             administrator resolves it.
-      \item The post appears in the moderation queue of the administrator.
+      \item Posts with \texttt{PENDING} status appear in the administrator moderation queue, while \texttt{REJECTED} posts appear in forum trash.
 \end{itemize}
 
 % =================================================================

@@ -8,14 +8,14 @@
 \subsection{User Management}
 
 % -----------------------------------------------------------------
-% UC-28.01: View User List
+% UC-28.01: View Users List
 % -----------------------------------------------------------------
 \Needspace{12\baselineskip}
-\subsubsection{ View User List}
+\subsubsection{ View Users List}
 
 \fnhead{Function Trigger}
 An administrator navigates to the Users management page from the admin dashboard sidebar navigation.\newline
-\textbf{Navigation path:} Admin Dashboard $\rightarrow$ User Management $\rightarrow$ Users (\texttt{/admin/users}).
+\textbf{Navigation path:} Admin Dashboard $\rightarrow$ User Management $\rightarrow$ Users (\texttt{/\allowbreak{}admin/\allowbreak{}users}).
 
 \fnhead{Function Description}
 
@@ -46,7 +46,7 @@ An administrator navigates to the Users management page from the admin dashboard
         \begin{itemize}[leftmargin=1.6em,topsep=2pt,itemsep=2pt,parsep=0pt]
             \item If \texttt{search} is provided, searches \texttt{email} or \texttt{profile.displayName} case-insensitively.
             \item If \texttt{role} is provided (and not \texttt{'all'}), filters users whose assigned roles match the role name.
-            \item Orders records by the requested column (\texttt{id}, \texttt{email}, \texttt{createdAt}, \texttt{isBanned}, or \texttt{displayName}) and direction.
+            \item Orders records by the requested column (\texttt{id}, \texttt{email}, \texttt{createdAt}, or \texttt{displayName}) and direction.
         \end{itemize}
     \item The repository executes \texttt{prisma.user.count()} to compute total matching records in parallel.
     \item The system returns HTTP 200 with the users array and pagination metadata.
@@ -71,7 +71,7 @@ page & Target page number (defaults to 1).\\ \hline
 limit & Maximum records returned per page (defaults to 10).\\ \hline
 search & Optional text query matching user email or display name.\\ \hline
 role & Optional role filter string (e.g., \texttt{CLIENT}, \texttt{FREELANCER}, \texttt{ADMIN}, \texttt{CUSTOM}, or specific custom role name).\\ \hline
-sortBy & Sort column field (\texttt{id}, \texttt{email}, \texttt{createdAt}, \texttt{isBanned}, or \texttt{displayName}; defaults to \texttt{id}).\\ \hline
+sortBy & Sort column field (\texttt{id}, \texttt{email}, \texttt{createdAt}, or \texttt{displayName}; defaults to \texttt{id}).\\ \hline
 sortOrder & Sort direction sequence (\texttt{asc} or \texttt{desc}; defaults to \texttt{desc}).\\ \hline
 \end{specdatatable}
 
@@ -81,7 +81,7 @@ page & Must be an integer greater than or equal to 1.\\ \hline
 limit & Must be an integer between 1 and 100.\\ \hline
 search & String, optional, max length 100 characters; whitespace trimmed.\\ \hline
 role & String, optional, max length 50 characters.\\ \hline
-sortBy & Must strictly be one of: \texttt{id}, \texttt{email}, \texttt{createdAt}, \texttt{isBanned}, \texttt{displayName}.\\ \hline
+sortBy & Must strictly be one of: \texttt{id}, \texttt{email}, \texttt{createdAt}, \texttt{displayName}.\\ \hline
 sortOrder & Must strictly be one of: \texttt{asc}, \texttt{desc}.\\ \hline
 \end{specdatatable}
 
@@ -96,8 +96,8 @@ sortOrder & Must strictly be one of: \texttt{asc}, \texttt{desc}.\\ \hline
 
 \sublabel{Normal Flow}
 \begin{enumerate}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt]
-    \item The administrator opens the \texttt{/admin/users} page.
-    \item The frontend sends \texttt{GET /api/users} with default parameters (\texttt{page=1\&limit=10\&sortBy=id\&sortOrder=desc}).
+    \item The administrator opens the \texttt{/\allowbreak{}admin/\allowbreak{}users} page.
+    \item The frontend sends \texttt{GET /\allowbreak{}api/\allowbreak{}users} with default parameters (\texttt{page=\allowbreak{}1\&\allowbreak{}limit=\allowbreak{}10\&\allowbreak{}sortBy=\allowbreak{}id\&\allowbreak{}sortOrder=\allowbreak{}desc}).
     \item The backend validates administrator authentication and permissions.
     \item The repository queries active users and counts total matching records.
     \item The backend returns HTTP 200 with the users array and pagination metadata.
@@ -107,7 +107,7 @@ sortOrder & Must strictly be one of: \texttt{asc}, \texttt{desc}.\\ \hline
 \sublabel{Abnormal Flow / Exception Handling}
 \begin{flowtable}{Abnormal Case}{Handling \& System Response}
 Missing or invalid authentication token & The server returns HTTP 401 Unauthorized. The client clears authentication cookies and redirects to \texttt{/login}.\\ \hline
-User lacks Admin privileges & The backend throws \texttt{UserForbiddenException} (HTTP 403 Forbidden). The UI displays: ``You do not have permission to access this page.''\\ \hline
+User lacks Admin privileges & \texttt{PermissionGuard} rejects unauthorized callers with HTTP 403 Forbidden (\texttt{PERMISSION\_DENIED}).\\ \hline
 Invalid pagination parameter values & The DTO validator rejects non-integer or negative values with HTTP 400 Bad Request. The client resets to page 1.\\ \hline
 Unsupported sort column parameter & The system rejects invalid sort keys with HTTP 400 Bad Request. The client defaults to \texttt{id desc}.\\ \hline
 Database query error or timeout & The service catches the Prisma error and throws \texttt{FailedToGetUsersException} (HTTP 500). The UI displays: ``Couldn't load users. Try again.''\\ \hline
@@ -130,10 +130,10 @@ pagination.totalPages & Total calculated pages available.\\ \hline
 \end{enumerate}
 
 % -----------------------------------------------------------------
-% UC-28.02: View User Detail
+% UC-28.02: View User Details
 % -----------------------------------------------------------------
 \Needspace{12\baselineskip}
-\subsubsection{ View User Detail}
+\subsubsection{ View User Details}
 
 \fnhead{Function Trigger}
 An administrator clicks ``View detail'' on a user row in the user table or navigates directly to \texttt{/admin/users/:id}.\newline
@@ -274,16 +274,16 @@ An administrator clicks the ``Create User'' button on the user list page.\newlin
     \item The backend validates schema constraints via \texttt{AdminCreateUserBodyDto}.
     \item \texttt{UsersService.createUser()} validates:
         \begin{itemize}[leftmargin=1.6em,topsep=2pt,itemsep=2pt,parsep=0pt]
-            \item Email uniqueness among active accounts; if taken, throws \texttt{EmailAlreadyExistsException} (HTTP 409).
-            \item Role validity: target role must exist and be active; if missing, throws \texttt{CreateUserRoleNotFoundException} (HTTP 404).
-            \item Role restriction: role cannot be the Admin role; if selected, throws \texttt{CannotAssignAdminRoleException} (HTTP 403).
+            \item Email uniqueness among active accounts; if taken, throws \texttt{Email\allowbreak{}Already\allowbreak{}Exists\allowbreak{}Exception} (HTTP 409).
+            \item Role validity: target role must exist and be active; if missing, throws \texttt{Create\allowbreak{}User\allowbreak{}Role\allowbreak{}Not\allowbreak{}Found\allowbreak{}Exception} (HTTP 404).
+            \item Role restriction: role cannot be the Admin role; if selected, throws \texttt{Cannot\allowbreak{}Assign\allowbreak{}Admin\allowbreak{}Role\allowbreak{}Exception} (HTTP 403).
         \end{itemize}
     \item In an atomic database transaction:
         \begin{enumerate}[leftmargin=1.6em,topsep=2pt,itemsep=2pt,parsep=0pt]
             \item Hashes password with bcrypt (10 salt rounds).
-            \item Creates User record with lowercased email, password hash, and \texttt{isEmailVerified = true}.
+            \item Creates User record with lowercased email and password hash (assigning primary \texttt{roleId}).
             \item Creates Profile record with \texttt{displayName = fullName}.
-            \item Creates UserRole record assigning the role with \texttt{isPrimary = true}.
+            \item Creates \texttt{UserRole} record linking the account to the selected role.
         \end{enumerate}
     \item The server responds with HTTP 201 Created and the new user summary.
     \item The frontend closes the dialog, displays a success toast, and refreshes the user list.
@@ -410,7 +410,7 @@ An administrator clicks ``Edit'' on a user row in the table or clicks ``Edit Use
             \item Self-ban protection: if \texttt{isBanned = true} and \texttt{id === actorId}, throws \texttt{CannotBanSelfException} (HTTP 403).
             \item Email uniqueness: if email is modified, ensures no other active user uses it; otherwise throws \texttt{EmailAlreadyExistsException} (HTTP 409).
         \end{itemize}
-    \item In a transaction, updates \texttt{user.email}, \texttt{user.isBanned}, and upserts \texttt{profile.displayName}.
+    \item In a transaction, updates \texttt{user.\allowbreak{}email}, \texttt{user.\allowbreak{}isBanned}, and upserts \texttt{profile.\allowbreak{}displayName}.
     \item The server responds with HTTP 200 and the updated user summary.
     \item The frontend closes the dialog, displays a success toast, and refreshes the user view.
 \end{itemize}
@@ -872,9 +872,9 @@ An administrator clicks ``Manage Freelancer Portfolio'' on the Freelancer Profil
 
 \sublabel{Data Processing Overview}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-    \item **Create Item:** Client sends \texttt{POST /api/users/:id/freelancer-profile/portfolio-items}. \texttt{UsersRepository.createPortfolioItem()} inserts into \texttt{prisma.portfolioItem.create}. Returns HTTP 201.
-    \item **Update Item:** Client sends \texttt{PATCH /api/users/:id/freelancer-profile/portfolio-items/:itemId}. \texttt{UsersRepository.updatePortfolioItemByAdmin()} verifies item ownership and \texttt{deletedAt = null}, then updates fields. Returns HTTP 200.
-    \item **Delete Item:** Client sends \texttt{DELETE /api/users/:id/freelancer-profile/portfolio-items/:itemId}. \texttt{UsersRepository.softDeletePortfolioItem()} verifies item ownership and sets \texttt{deletedAt = new Date()}. Returns HTTP 200.
+    \item \textbf{Create Item:} Client sends \texttt{POST /\allowbreak{}api/\allowbreak{}users/\allowbreak{}:\allowbreak{}id/\allowbreak{}freelancer-\allowbreak{}profile/\allowbreak{}portfolio-\allowbreak{}items}. \texttt{Users\allowbreak{}Repository.\allowbreak{}create\allowbreak{}Portfolio\allowbreak{}Item()} inserts into \texttt{prisma.\allowbreak{}portfolioItem.\allowbreak{}create}. Returns HTTP 201.
+    \item \textbf{Update Item:} Client sends \texttt{PATCH /\allowbreak{}api/\allowbreak{}users/\allowbreak{}:\allowbreak{}id/\allowbreak{}freelancer-\allowbreak{}profile/\allowbreak{}portfolio-\allowbreak{}items/\allowbreak{}:\allowbreak{}itemId}. \texttt{Users\allowbreak{}Repository.\allowbreak{}update\allowbreak{}Portfolio\allowbreak{}Item\allowbreak{}By\allowbreak{}Admin()} verifies item ownership and \texttt{deletedAt = null}, then updates fields. Returns HTTP 200.
+    \item \textbf{Delete Item:} Client sends \texttt{DELETE /\allowbreak{}api/\allowbreak{}users/\allowbreak{}:\allowbreak{}id/\allowbreak{}freelancer-\allowbreak{}profile/\allowbreak{}portfolio-\allowbreak{}items/\allowbreak{}:\allowbreak{}itemId}. \texttt{Users\allowbreak{}Repository.\allowbreak{}soft\allowbreak{}Delete\allowbreak{}Portfolio\allowbreak{}Item()} verifies item ownership and sets \texttt{deletedAt = new Date()}. Returns HTTP 200.
     \item The client displays success toasts and refreshes the portfolio list.
 \end{itemize}
 
@@ -1006,7 +1006,7 @@ An administrator clicks ``Edit Expert Profile'' on the Expert Profile tab of the
     \item Field: \textbf{Professional title} (input, max 255 characters, optional).
     \item Field: \textbf{Years of experience} (number input, 0 to 80 years).
     \item Field: \textbf{Website URL} (URL format, optional).
-    \item Toggle switch: \textbf{Public visibility} (Switch controlling whether the expert appears on the public \texttt{/experts} directory).
+    \item Toggle switch: \textbf{Public visibility} (Switch controlling whether the expert is published via \texttt{GET /api/experts}).
     \item Dynamic string lists: \textbf{Areas of expertise}, \textbf{Education}, and \textbf{Certifications} with ``Add entry'' buttons and badge tags.
     \item Field: \textbf{Biography} (multi-line textarea, max 5000 characters).
     \item Action buttons: ``Cancel'' and ``Save changes''.
@@ -1048,7 +1048,7 @@ bio & String, optional, max 5000 characters, nullable.\\ \hline
     \item BR-EXP-02: Administrative updates apply directly to the database without requiring review approval or revision tickets.
     \item BR-EXP-03: Years of experience must be an integer between 0 and 80.
     \item BR-EXP-04: Credential arrays (expertise, education, certifications) are deduplicated case-insensitively and sanitized on submission.
-    \item BR-EXP-05: The \texttt{isActive} toggle controls whether the expert is searchable and listed on the public platform directory (\texttt{/experts}).
+    \item BR-EXP-05: The \texttt{isActive} toggle controls whether the expert is exposed in public expert directory queries (\texttt{GET /api/experts} and profile showcase views).
     \item BR-EXP-06: The expert's profile strength score is recalculated automatically upon each update.
 \end{itemize}
 

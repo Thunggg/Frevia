@@ -204,7 +204,7 @@
             <mxPoint x="1295" y="990" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="st_pi_ret" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=#000000;" value="5.2. Return paymentIntent {id, status:&lt;br&gt;&#39;requires_capture&#39;,metadata }">
+        <mxCell id="st_pi_ret" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=#000000;" value="5.2. Return paymentIntent {id, status:&lt;br&gt;'requires_capture',metadata }">
           <mxGeometry relative="1" x="-0.087" y="5" as="geometry">
             <mxPoint as="offset" />
             <mxPoint x="1295" y="1035" as="sourcePoint" />
@@ -277,7 +277,7 @@
             <mxPoint x="1535" y="1620" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="q_upd_2" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=#000000;" value="8.2.prisma.contract.update({where:&lt;br&gt;{id}, data: {status: ACTIVE}})">
+        <mxCell id="q_upd_2" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=#000000;" value="8.2.prisma.contract.update({where:&lt;br&gt;{id}, data: {status: PENDING_SIGN}})">
           <mxGeometry relative="1" as="geometry">
             <mxPoint x="1545" y="1665" as="sourcePoint" />
             <mxPoint x="1775" y="1665" as="targetPoint" />
@@ -325,7 +325,7 @@
             <mxPoint x="345" y="1940" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="suc_sync_4" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=#000000;" value="9.4. Update contract deposit&lt;br&gt;status &amp; display active status">
+        <mxCell id="suc_sync_4" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=#000000;" value="9.4. Update contract deposit&lt;br&gt;status &amp; display pending sign status">
           <mxGeometry relative="1" as="geometry">
             <mxPoint x="335" y="1975" as="sourcePoint" />
             <mxPoint x="105" y="1975" as="targetPoint" />

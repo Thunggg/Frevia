@@ -104,10 +104,11 @@ export class ManageJobController {
   removeBookmark(
     @UserActive('userId')
     userId: number,
+    @UserActive('roleName') roleName: string,
 
     @Param('slug') slug: string,
   ) {
-    return this.manageJobService.removeBookmark(userId, slug);
+    return this.manageJobService.removeBookmark(userId, slug, roleName);
   }
 
   @Get(':id')

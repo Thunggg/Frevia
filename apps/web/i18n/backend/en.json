@@ -180,6 +180,7 @@
   "Error.IdentityVerificationFileNotAvailable": "Identity document file is not available.",
   "Error.IdentityVerificationListNotFound": "No verification requests found",
   "Error.IdentityVerificationNotFound": "Verification request not found",
+  "Error.IdentityVerificationRequired": "You need to complete identity verification (CCCD) before creating a job.",
   "Error.IncorrectEmail": "Incorrect email",
   "Error.IncorrectPassword": "Incorrect password",
   "Error.Internal": "Something went wrong. Please try again",

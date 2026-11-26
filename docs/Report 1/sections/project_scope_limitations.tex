@@ -315,7 +315,7 @@ Each limitation below details the concrete operational boundary, its resolution 
 
 \item[LI-05] \textbf{Artificial Intelligence Scope and Autonomous Decision-Making}
 \begin{itemize}[leftmargin=0.5cm, label=--]
-\item \textbf{Problem Statement:} AI integration is strictly limited to three auxiliary workflows: CV skill extraction, identity document OCR/liveness verification, and community forum moderation. Fully automated job-candidate matching algorithms and autonomous AI hiring or dispute adjudication are excluded.
+\item \textbf{Problem Statement:} AI integration is scoped strictly to four advisory workflows: CV skill extraction, identity document OCR/liveness verification, community forum moderation scoring, and explainable job--freelancer recommendation ranking. Autonomous AI hiring, automated contract formation, and autonomous dispute adjudication are excluded.
 \item \textbf{Current Status:} Solved by Architectural Design (Human-in-the-Loop Governance).
 \item \textbf{Resolution / Mitigation Method:} Keeping AI in an advisory role is a deliberate design decision to prevent algorithmic bias, hallucination, and legal liability. All legally binding decisions (hiring candidates, verifying identity badges, banning accounts, and settling financial disputes) strictly require explicit human authorization (Client or Administrator).
 \end{itemize}
@@ -357,7 +357,7 @@ Each limitation below details the concrete operational boundary, its resolution 
 
 \item[LI-11] \textbf{Data Model Capabilities vs. Exposed User Interface Features}
 \begin{itemize}[leftmargin=0.5cm, label=--]
-\item \textbf{Problem Statement:} Several advanced capabilities are modeled in the database schema (e.g. detailed invoice generation, completion certificates, contract clause templates, search alert subscriptions, portfolio likes) but are not yet exposed as dedicated UI screens.
+\item \textbf{Problem Statement:} Several auxiliary capabilities are modeled in the database schema (e.g. detailed invoice generation, completion certificates, contract clause templates, TOTP two-factor secrets, banned keyword tables, and system settings) but are not yet exposed as dedicated UI screens.
 \item \textbf{Current Status:} Solved by Foundation Readiness (Phased Rollout).
 \item \textbf{Resolution / Mitigation Method:} The underlying database schemas, relations, and migrations are fully defined and tested. Features are rolled out progressively across development sprints to ensure stability without requiring breaking database migrations later.
 \end{itemize}

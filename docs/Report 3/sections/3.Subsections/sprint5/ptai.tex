@@ -8,14 +8,14 @@
 \subsection{Job Category Browsing}
 
 % -----------------------------------------------------------------
-% UC-46.07: View Job Category List
+% UC-46.07: View Job Categories List
 % -----------------------------------------------------------------
 \Needspace{12\baselineskip}
-\subsubsection{View Job Category List}
+\subsubsection{View Job Categories List}
 
 \fnhead{Function Trigger}
 A freelancer or visitor selects ``Job Categories'' from the navigation sidebar.\newline
-\textbf{Navigation path:} Freelancer Workspace $\rightarrow$ Job Categories (\texttt{/freelancer/categories}).
+\textbf{Navigation path:} Freelancer Workspace $\rightarrow$ Job Categories (\texttt{/\allowbreak{}freelancer/\allowbreak{}categories}).
 
 \fnhead{Function Description}
 
@@ -38,8 +38,8 @@ A freelancer or visitor selects ``Job Categories'' from the navigation sidebar.\
 \sublabel{Data Processing Overview}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
     \item Frontend dispatches \texttt{GET /api/job-categories} with optional \texttt{page}, \texttt{limit}, and \texttt{search} query parameters.
-    \item \texttt{JobCategoriesService.viewJobCategoryList()} checks \texttt{CacheService} (300-second TTL, invalidated whenever jobs are created/updated/published/closed/reopened/deleted).
-    \item \texttt{JobCategoriesRepository.listJobCategories()} queries \texttt{prisma.jobCategory.findMany} where \texttt{status = 'ACTIVE'} and \texttt{deletedAt = null}, matching optional case-insensitive substring on \texttt{name} or \texttt{description}, sorted alphabetically by \texttt{name asc}.
+    \item \texttt{Job\allowbreak{}Categories\allowbreak{}Service.\allowbreak{}view\allowbreak{}Job\allowbreak{}Category\allowbreak{}List()} checks \texttt{CacheService} (300-second TTL, invalidated whenever jobs are created/updated/published/closed/reopened/deleted).
+    \item \texttt{Job\allowbreak{}Categories\allowbreak{}Repository.\allowbreak{}list\allowbreak{}Job\allowbreak{}Categories()} queries \texttt{prisma.\allowbreak{}jobCategory.\allowbreak{}findMany} where \texttt{status = 'ACTIVE'} and \texttt{deletedAt = null}, matching optional case-insensitive substring on \texttt{name} or \texttt{description}, sorted alphabetically by \texttt{name asc}.
     \item Aggregates active open job counts strictly for linked jobs where \texttt{status = 'OPEN'}, \texttt{deletedAt = null}, and client is not banned or deleted.
     \item Returns paginated category items alongside pagination metadata.
 \end{itemize}
@@ -57,14 +57,14 @@ A freelancer or visitor selects ``Job Categories'' from the navigation sidebar.\
 \sublabel{Input Data}
 \begin{specdatatable}{Data Name}{Description}
 \texttt{page} & Optional page integer $\ge 1$ (default 1).\\ \hline
-\texttt{limit} & Optional items per page integer between 1 and 100 (default 50 on browse page).\\ \hline
+\texttt{limit} & Optional items per page integer between 1 and 50 (default 20).\\ \hline
 \texttt{search} & Optional search text matching category \texttt{name} or \texttt{description} case-insensitively.\\ \hline
 \end{specdatatable}
 
 \sublabel{Validation Rules}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
     \item Publicly accessible (\texttt{@IsPublic()}); no JWT required.
-    \item \texttt{page} must be an integer $\ge 1$ and \texttt{limit} must be an integer between 1 and 100.
+    \item \texttt{page} must be an integer $\ge 1$ and \texttt{limit} must be an integer between 1 and 50.
 \end{itemize}
 
 \sublabel{Business Rules}
@@ -85,7 +85,7 @@ A freelancer or visitor selects ``Job Categories'' from the navigation sidebar.\
 
 \sublabel{Abnormal Flow / Exception Handling}
 \begin{flowtable}{Abnormal Case}{Handling \& System Response}
-Invalid pagination or limit query & DTO validator rejects \texttt{page < 1} or \texttt{limit > 100} with HTTP 400 Bad Request; UI resets to page 1.\\ \hline
+Invalid pagination or limit query & DTO validator rejects \texttt{page < 1} or \texttt{limit > 50} with HTTP 400 Bad Request; UI resets to page 1.\\ \hline
 No active categories match search & Repository returns \texttt{jobCategories: []} and \texttt{total: 0}; UI displays friendly empty state with search clear prompt.\\ \hline
 Cache service error or miss & \texttt{CacheService.wrap()} falls back seamlessly or queries PostgreSQL directly without failing the request.\\ \hline
 Database query failure or timeout & Service catches \texttt{PrismaClientKnownRequestError} and throws \texttt{FailedToLoadJobCategoryListException} (HTTP 500). UI shows retry notice.\\ \hline
@@ -104,10 +104,10 @@ Network connection failure & Frontend request times out and displays connection 
 \end{itemize}
 
 % -----------------------------------------------------------------
-% UC-46.08: View Job Category Detail
+% UC-46.08: View Job Category Details
 % -----------------------------------------------------------------
 \Needspace{12\baselineskip}
-\subsubsection{View Job Category Detail}
+\subsubsection{View Job Category Details}
 
 \fnhead{Function Trigger}
 A freelancer clicks a category card (``View category $\rightarrow$'') from the categories directory.\newline

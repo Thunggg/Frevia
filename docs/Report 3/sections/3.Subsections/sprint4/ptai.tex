@@ -15,7 +15,7 @@
 
 \fnhead{Function Trigger}
 Triggered automatically when an authenticated freelancer opens the Best Matches recommendation feed on the Find Work workspace or when an authenticated client queries candidate matches for a specific owned job posting.\newline
-\textbf{Navigation path:} Freelancer Workspace $\rightarrow$ Find Work $\rightarrow$ Best Matches (\texttt{/freelancer/find-work/best-matches}) and Client API endpoint (\texttt{GET /api/recommendations/freelancers?jobId=:id}).
+\textbf{Navigation path:} Freelancer Workspace $\rightarrow$ Find Work $\rightarrow$ Best Matches (\texttt{/\allowbreak{}freelancer/\allowbreak{}find-\allowbreak{}work/\allowbreak{}best-\allowbreak{}matches}) and Client API endpoint (\texttt{GET /\allowbreak{}api/\allowbreak{}recommendations/\allowbreak{}freelancers?\allowbreak{}jobId=\allowbreak{}:id}).
 
 \fnhead{Function Description}
 
@@ -30,17 +30,17 @@ Triggered automatically when an authenticated freelancer opens the Best Matches 
 
 \sublabel{Interface}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-    \item ``Best Matches'' tab on the Freelancer Find Work workspace (\texttt{/freelancer/find-work/best-matches}).
-    \item Match percentage badge (derived from composite \texttt{score}) and explanation trigger dialog (\texttt{RecommendationExplanationDialog}) per recommended card.
+    \item ``Best Matches'' tab on the Freelancer Find Work workspace (\texttt{/\allowbreak{}freelancer/\allowbreak{}find-\allowbreak{}work/\allowbreak{}best-\allowbreak{}matches}).
+    \item Match percentage badge (derived from composite \texttt{score}) and explanation trigger dialog (\texttt{Recommendation\allowbreak{}Explanation\allowbreak{}Dialog}) per recommended card.
     \item Client recommendation API interface (\texttt{GET /api/recommendations/freelancers}) returning ranked freelancer candidates for an owned job.
 \end{itemize}
 
 \sublabel{Data Processing Overview}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-    \item \textbf{Freelancer Job Recommendation (\texttt{GET /api/recommendations/jobs}):} Verifies \texttt{FREELANCER} role, loads freelancer profile and skill set (\texttt{repository.findFreelancerByUserId}), and fetches up to 35 active \texttt{OPEN} non-deleted jobs (excluding caller's own postings and banned/deleted clients).
-    \item \textbf{Client Candidate Recommendation (\texttt{GET /api/recommendations/freelancers}):} Verifies \texttt{CLIENT} role and job ownership (\texttt{job.clientId === userId}), then fetches up to 35 active freelancer candidates excluding caller.
-    \item Invokes \texttt{AiRecommendationService} with ranking version \texttt{hybrid-1.0.0} to score and select top \texttt{limit} items.
-    \item Persists recommendation score breakdowns (\texttt{semanticScore}, \texttt{skillScore}, \texttt{experienceScore}, \texttt{budgetScore}, \texttt{preferenceScore}, \texttt{finalScore}, \texttt{embeddingModel}) to PostgreSQL for traceability and match explanation (\texttt{GET /api/recommendations/:id/explanation}).
+    \item \textbf{Freelancer Job Recommendation (\texttt{GET /\allowbreak{}api/\allowbreak{}recommendations/\allowbreak{}jobs}):} Verifies \texttt{FREELANCER} role, loads freelancer profile and skill set (\texttt{repository.\allowbreak{}find\allowbreak{}Freelancer\allowbreak{}By\allowbreak{}User\allowbreak{}Id}), and fetches up to 35 active \texttt{OPEN} non-deleted jobs (excluding caller's own postings and banned/deleted clients).
+    \item \textbf{Client Candidate Recommendation (\texttt{GET /\allowbreak{}api/\allowbreak{}recommendations/\allowbreak{}freelancers}):} Verifies \texttt{CLIENT} role and job ownership (\texttt{job.\allowbreak{}clientId =\allowbreak{}=\allowbreak{}= userId}), then fetches up to 35 active freelancer candidates excluding caller.
+    \item Invokes \texttt{Ai\allowbreak{}Recommendation\allowbreak{}Service} with ranking version \texttt{hybrid-1.\allowbreak{}0.\allowbreak{}0} to score and select top \texttt{limit} items.
+    \item Persists recommendation score breakdowns (\texttt{semanticScore}, \texttt{skillScore}, \texttt{experience\allowbreak{}Score}, \texttt{budgetScore}, \texttt{preference\allowbreak{}Score}, \texttt{finalScore}, \texttt{embeddingModel}) to PostgreSQL for traceability and match explanation (\texttt{GET /\allowbreak{}api/\allowbreak{}recommendations/\allowbreak{}:\allowbreak{}id/\allowbreak{}explanation}).
     \item If the AI ranking engine fails or is unavailable, gracefully falls back to returning up to \texttt{limit} unranked eligible records with \texttt{score = 0}.
 \end{itemize}
 
@@ -83,7 +83,7 @@ Triggered automatically when an authenticated freelancer opens the Best Matches 
     \item Freelancer navigates to \texttt{/freelancer/find-work/best-matches} (or client requests candidate matches for an owned \texttt{jobId}).
     \item Frontend dispatches \texttt{GET /api/recommendations/jobs?limit=10} (or \texttt{/api/recommendations/freelancers}).
     \item Backend validates authentication token, role permission, and target profile or job existence.
-    \item Backend retrieves candidate pool (up to 35 entries) and invokes \texttt{AiRecommendationService.rank()}.
+    \item Backend retrieves candidate pool (up to 35 entries) and invokes \texttt{Ai\allowbreak{}Recommendation\allowbreak{}Service.\allowbreak{}rank()}.
     \item Ranked recommendations are stored in PostgreSQL and returned with score breakdowns and entity metadata.
     \item UI renders recommended cards with match badges and optional explanation modal.
 \end{enumerate}
@@ -99,7 +99,7 @@ Non-owner or missing explanation record & Calling \texttt{GET /api/recommendatio
 Invalid \texttt{limit} or \texttt{jobId} query parameter & Zod DTO rejects non-positive integers or \texttt{limit > 50} with HTTP 400 Bad Request.\\ \hline
 AI ranking service unavailable or timeout & Listing endpoints catch the AI error and return fallback unranked items with \texttt{score = 0}; explanation endpoint returns \texttt{ready = false} with \texttt{fallbackReason}.\\ \hline
 No eligible open jobs or freelancers exist & Repository returns an empty candidate pool; service returns \texttt{\{ data: [] \}} and UI renders empty state.\\ \hline
-Reindex or outbox processing failure & Administrative endpoints throw \texttt{FailedToReindexException} (HTTP 503) or \texttt{FailedToProcessOutboxException} (HTTP 500).\\ \hline
+Reindex or outbox processing failure & Protected endpoints throw \texttt{FailedToReindexException} (HTTP 503) or \texttt{FailedToProcessOutboxException} (HTTP 500).\\ \hline
 \end{flowtable}
 
 \sublabel{Output Data}

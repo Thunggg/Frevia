@@ -27,8 +27,8 @@ The client application transmits requests exclusively over HTTPS REST APIs and d
 \subsubsection*{Presentation Layer}
 The Presentation Layer is implemented within the NestJS 11 Web Server Application (\texttt{apps/api}). It serves as the entry boundary for incoming client requests and real-time events:
 \begin{itemize}[leftmargin=*]
-    \item \textbf{Controllers:} Expose structured RESTful API endpoints (versioned under \texttt{/api/v1}), receive client requests, bind validated request payloads, and delegate processing to domain services.
-    \item \textbf{Authentication and Authorization Guards:} Intercept requests to verify JWT tokens and enforce role-based access control (\texttt{RoleGuard}) and fine-grained permission checks (\texttt{PermissionGuard}).
+    \item \textbf{Controllers:} Expose structured RESTful API endpoints (mounted under \texttt{/api}), receive client requests, bind validated request payloads, and delegate processing to domain services.
+    \item {\sloppy \textbf{Authentication and Authorization Guards:} Intercept requests to verify JWT tokens (\texttt{Access\allowbreak{}Token\allowbreak{}Guard}) and enforce role and fine-grained permission checks (\texttt{Permission\allowbreak{}Guard}).\par}
     \item \textbf{Validation and Serialization:} Validates incoming request payloads using shared Zod DTOs and sanitizes outgoing responses using the global \texttt{ZodSerializerInterceptor}.
     \item \textbf{Socket.io Gateway:} Manages real-time bidirectional WebSocket connections for peer-to-peer conversations and immediate notification pushes.
 \end{itemize}
@@ -38,17 +38,17 @@ The Business Logic Layer represents the core of the Frevia platform, encapsulati
 \begin{itemize}[leftmargin=*]
     \item \textbf{Authentication and Access Control Module:} Manages user registration, OTP verification, credential login, Google OAuth federated sign-in, token refresh, device sessions, roles, and granular permissions.
     \item \textbf{User and Profile Management Module:} Handles administrator user accounts, account profiles, freelancer professional portfolios, CV uploads, and expert consultation profiles.
-    \item \textbf{Job and Proposal Management Module:} Governs client job postings, faceted job browsing, bookmarking, freelancer proposal submissions, interviews, and proposal acceptance/rejection workflows.
-    \item \textbf{Contract and Milestone Module:} Enforces contract lifecycle transitions (draft, agreement, digital signature, completion, cancellation) and milestone delivery reviews.
+    \item \textbf{Job and Proposal Management Module:} Governs client job postings, faceted job browsing, bookmarking, freelancer proposal submissions, and proposal acceptance/rejection workflows.
+    \item \textbf{Contract and Milestone Module:} Enforces contract lifecycle transitions (awaiting payment, pending signature, active, completion, cancellation, rejection) and sequential milestone workflows.
     \item \textbf{Payment and Escrow Module:} Integrates Stripe Checkout for milestone escrow funding, platform fee collections, dispute fee handling, and automated Stripe Connect payouts to freelancer bank accounts.
     \item \textbf{Communication and Community Module:} Facilitates real-time direct messaging, multi-category discussion forums, post interactions, and automated user notification feeds.
     \item \textbf{Dispute Arbitration Module:} Provides formal dispute filing, evidence attachment, and administrator arbitration workflows.
 \end{itemize}
 
 \subsubsection*{Data Access Layer}
-The Data Access Layer encapsulates all persistence logic using the Repository Pattern combined with Prisma 7 ORM and the native PostgreSQL driver adapter (\texttt{@prisma/adapter-pg}):
+The Data Access Layer encapsulates persistence logic using the Repository Pattern, Prisma 7 ORM, and the native PostgreSQL adapter (\texttt{@prisma/\allowbreak{}adapter-\allowbreak{}pg}):
 \begin{itemize}[leftmargin=*]
-    \item \textbf{Repositories:} Implement dedicated query methods, data filtering, pagination helpers, and soft-delete semantics (\texttt{isDeleted}). Controllers and services are strictly decoupled from raw database queries.
+    \item \textbf{Repositories:} Implement dedicated query methods, data filtering, pagination helpers, and soft-delete semantics (\texttt{deletedAt}). Controllers and services are strictly decoupled from raw database queries.
     \item \textbf{Transaction Management:} Wraps complex multi-table workflows (such as escrow fund transfers, contract creation, and user onboarding cascades) inside atomic \texttt{\$transaction} blocks to maintain absolute relational integrity.
 \end{itemize}
 
@@ -61,7 +61,7 @@ The Shared Library Layer provides shared definitions and cross-cutting utilities
 
 \subsubsection*{Data Storage}
 \begin{itemize}[leftmargin=*]
-    \item \textbf{PostgreSQL Database:} Stores all persistent platform data across 72 relational domain models and 43 enumerations, maintaining relational integrity with foreign keys, compound indexes, and audit timestamps.
+    \item \textbf{PostgreSQL Database:} Stores all persistent platform data across 71 relational domain models and 43 enumerations, maintaining relational integrity with foreign keys, compound indexes, and audit timestamps.
     \item \textbf{Cloudinary Object Storage:} Dedicated cloud repository storing binary multimedia files, including user profile avatars, citizen identity document photographs (CCCD), candidate resumes, and contract deliverable archives.
 \end{itemize}
 
@@ -71,16 +71,16 @@ The Shared Library Layer provides shared definitions and cross-cutting utilities
     \item \textbf{Stripe:} Processes online financial transactions, managing escrow funding via Stripe Checkout, platform fee collection, dispute deposits, and automated freelancer payouts via Stripe Connect. Status updates are synchronized securely via cryptographic webhooks.
     \item \textbf{Internal AI Microservices (FastAPI \& Python):}
     \begin{itemize}[leftmargin=*]
-        \item \textit{eKYC ID Verification (\texttt{id-verification}, port 8001):} Employs RapidOCR for card text extraction, InsightFace for biometric facial embeddings, and MediaPipe for liveness detection to detect fraudulent identity documents.
+        \item \textit{eKYC ID Verification (\texttt{id-verification}, port 8001):} Employs RapidOCR for card text extraction, UltraFace and ArcFace (ONNX Runtime) for facial detection and biometric embeddings, and MediaPipe for liveness detection to detect fraudulent identity documents.
         \item \textit{Section-Aware CV and Job Matching (\texttt{cv-matching}, port 8000):} BGE-M3 embeddings, ChromaDB vector indexing, and local Ollama LLM inference to parse candidate CVs and compute semantic candidate-to-job matching scores.
-        \item \textit{AI Content Moderation (\texttt{ai-moderation}, port 8001):} Automatically scores community forum posts and comments, quarantining toxic or abusive content into the administrative review queue.
+        \item \textit{AI Content Moderation (\texttt{ai-moderation}, optional external service on port 8002):} Scores forum posts and comments when \texttt{AI\_\allowbreak{}MODERATION\_\allowbreak{}URL} is set, falling back to \texttt{APPROVED} when unavailable.
     \end{itemize}
     \item \textbf{SMTP Mail Service (Nodemailer):} Delivers transactional notifications, one-time passwords (OTP), and contract status alerts.
     \item \textbf{Infisical:} Secure secrets manager that injects environment variables and credentials into application containers at startup.
 \end{itemize}
 
 \subsubsection*{Request-Response Data Flow}
-A typical user request originates on a Next.js Page or Screen, triggers a TanStack Query hook, and invokes a typed API method in \texttt{apiRequests/}. The service binds the JWT access token and issues an HTTPS REST call to the NestJS backend. The request passes through the Authentication Guard, Role/Permission Guards, and Zod DTO validation before reaching the appropriate Controller. The Controller delegates execution to the Service Layer, which validates business rules and state machines, then commands the Repository to execute queries through Prisma 7 to PostgreSQL. The resulting entity follows the reverse path, is sanitized by the Zod serializer interceptor, and is returned as a uniform JSON response to update the client-side cache and re-render the user interface. Real-time events follow an asynchronous parallel path via the Socket.io Gateway.
+A typical user request originates on a Next.js Page or Screen, triggers a TanStack Query hook, and invokes a typed API method in \texttt{apiRequests/}. The service binds the JWT access token and issues an HTTPS REST call to the NestJS backend. The request passes through the \texttt{AccessTokenGuard}, \texttt{PermissionGuard}, and Zod DTO validation before reaching the appropriate Controller. The Controller delegates execution to the Service Layer, which validates business rules and state machines, then commands the Repository to execute queries through Prisma 7 to PostgreSQL. The resulting entity follows the reverse path, is sanitized by the Zod serializer interceptor, and is returned as a uniform JSON response to update the client-side cache and re-render the user interface. Real-time events follow an asynchronous parallel path via the Socket.io Gateway.
 
 \subsection{Package Diagram}
 \label{subsec:package-diagram}
@@ -95,7 +95,7 @@ The monorepo enforces four key architectural rules illustrated in Figure~\ref{fi
     \item \textbf{Strict Downward Dependencies:} Applications (\texttt{apps/web} and \texttt{apps/api}) depend on shared packages (\texttt{packages/*}); a shared package never imports code or types from an application.
     \item \textbf{Module Isolation:} Domain route modules inside \texttt{apps/api/src/routes/} are strictly decoupled and never import controllers, services, or repositories from sibling modules. Cross-module data flows exclusively through database relationships at the Prisma ORM schema level.
     \item \textbf{Universal Configuration:} Common configurations for linting (\texttt{@repo/eslint-config}) and TypeScript compilation (\texttt{@repo/typescript-config}) are inherited by all workspaces to guarantee uniform code quality.
-    \item \textbf{Independent AI Service Boundaries:} Python-based AI microservices (\texttt{id-verification}, \texttt{cv-matching}, \texttt{ai-moderation} backed by Ollama) reside in \texttt{ai-services/} and communicate with the backend via standard HTTP REST endpoints, maintaining complete independence from the TypeScript pnpm workspaces.
+    \item \textbf{Independent AI Service Boundaries:} Containerized Python-based AI microservices (\texttt{id-\allowbreak{}verification} and \texttt{cv-\allowbreak{}matching} backed by Ollama) reside in \texttt{ai-services/}, alongside an optional external \texttt{ai-\allowbreak{}moderation} endpoint, and communicate with the backend via standard HTTP REST calls, maintaining complete independence from the TypeScript pnpm workspaces.
 \end{enumerate}
 
 \subsubsection*{Package Descriptions}
@@ -148,20 +148,20 @@ Tables~\ref{tab:pkg:frontend}, \ref{tab:pkg:backend}, \ref{tab:pkg:shared}, and 
 08 & \texttt{src/routes/}\newline\texttt{expert-profile} & Expert directory listings, consultation profiles, and domain certifications. \\ \hline
 09 & \texttt{src/routes/}\newline\texttt{browse-job} & Public job search, keyword filtering, category navigation, and slug-based job details. \\ \hline
 10 & \texttt{src/routes/}\newline\texttt{manage-job} & Client job posting, draft editing, applicant review, and bookmark management. \\ \hline
-11 & \texttt{src/routes/}\newline\texttt{job-categories}, \newline\texttt{src/routes/}\newline\texttt{job-categories-admin}, \newline\texttt{src/routes/}\newline\texttt{skills-admin} & Job category taxonomy, category hierarchy management, and administrative skill tags. \\ \hline
+11 & \texttt{src/routes/}\newline\texttt{job-categories}, \newline\texttt{src/routes/}\newline\texttt{job-categories-admin}, \newline\texttt{src/routes/}\newline\texttt{skills-admin} & Flat job category taxonomy and administrative skill tags management. \\ \hline
 12 & \texttt{src/routes/}\newline\texttt{proposals} & Freelancer bid submissions, cover letters, proposed terms, and proposal lifecycle management. \\ \hline
-13 & \texttt{src/routes/}\newline\texttt{contract}, \newline\texttt{src/routes/}\newline\texttt{milestone} & Contract generation, digital signing, milestone deliverable submissions, and progress reviews. \\ \hline
+13 & \texttt{src/routes/}\newline\texttt{contract}, \newline\texttt{src/routes/}\newline\texttt{milestone} & Contract generation, bilateral digital signing, milestone lifecycle management, and sequential progress transitions. \\ \hline
 14 & \texttt{src/routes/}\newline\texttt{milestone-file}, \newline\texttt{src/routes/}\newline\texttt{milestone-submission}, \newline\texttt{src/routes/}\newline\texttt{shared-file} & Milestone file attachments, deliverable review submissions, and shared project documents. \\ \hline
 15 & \texttt{src/routes/}\newline\texttt{payments} & Stripe Connect onboarding, milestone escrow deposits, fund releases, platform fee deductions, and webhook handlers. \\ \hline
-16 & \texttt{src/routes/}\newline\texttt{disputes} & Contract dispute arbitration, claim filing, evidence submission, and administrator resolution. \\ \hline
+16 & \texttt{src/routes/}\newline\texttt{disputes} & Contract dispute arbitration, claim filing, evidence submission, and expert arbitrator resolution. \\ \hline
 17 & \texttt{src/routes/}\newline\texttt{reviews} & Bilateral post-contract rating reviews, score aggregations, and public responses. \\ \hline
 18 & \texttt{src/routes/}\newline\texttt{conversations} & Direct real-time messaging, conversation threads, and message history persistence. \\ \hline
 19 & \texttt{src/routes/}\newline\texttt{notifications} & User notification feed generation, unread status tracking, and push alerts. \\ \hline
 20 & \texttt{src/routes/}\newline\texttt{forums}, \newline\texttt{src/routes/}\newline\texttt{forums-admin} & Public discussion forums, posts, comments, likes, reports, AI moderation queues, and soft-delete trash recovery. \\ \hline
-21 & \texttt{src/routes/}\newline\texttt{saved-search}, \newline\texttt{src/routes/}\newline\texttt{job-alert} & Saved job filter criteria and automated alert notifications for matching postings. \\ \hline
+21 & \texttt{src/routes/}\newline\texttt{saved-search}, \newline\texttt{src/routes/}\newline\texttt{job-alert} & Saved job filter criteria and user-configured job alert criteria with matching-job queries. \\ \hline
 22 & \texttt{src/routes/}\newline\texttt{recommendations} & AI-assisted candidate and job recommendations based on semantic CV matching. \\ \hline
 23 & \texttt{src/routes/}\newline\texttt{banners}, \newline\texttt{src/routes/}\newline\texttt{banners-admin} & Promotional banner delivery, placement targeting, and administrative banner management. \\ \hline
-24 & \texttt{src/shared/}\newline\texttt{guards} & JWT authentication guards, role-based authorization guards, and permission guards. \\ \hline
+24 & \texttt{src/shared/}\newline\texttt{guards} & JWT authentication (\texttt{AccessTokenGuard}) and route permission (\texttt{PermissionGuard}) guards. \\ \hline
 25 & \texttt{src/shared/}\newline\texttt{filters} & Global exception filter converting internal exceptions into standard JSON error bodies. \\ \hline
 26 & \texttt{src/shared/}\newline\texttt{interceptors} & Zod response serialization and transformation interceptor. \\ \hline
 27 & \texttt{src/shared/}\newline\texttt{services} & Cross-cutting infrastructure services including Cloudinary media storage, Nodemailer email dispatch, and AI moderation client. \\ \hline
@@ -203,10 +203,10 @@ Tables~\ref{tab:pkg:frontend}, \ref{tab:pkg:backend}, \ref{tab:pkg:shared}, and 
 \endhead
 \hline\endfoot
 \hline\endlastfoot
-01 & \texttt{id-verification} & FastAPI microservice (port 8001) performing Vietnamese citizen identity card (CCCD) OCR via RapidOCR, facial biometric embedding via InsightFace, and anti-spoofing liveness verification via MediaPipe. \\ \hline
+01 & \texttt{id-verification} & FastAPI microservice (port 8001) performing Vietnamese citizen identity card (CCCD) OCR via RapidOCR, facial detection and biometric embedding via UltraFace and ArcFace (ONNX Runtime), and anti-spoofing liveness verification via MediaPipe. \\ \hline
 02 & \texttt{cv-matching} & FastAPI microservice (port 8000) performing section-aware candidate CV parsing, dense semantic vector embedding with BGE-M3, ChromaDB vector indexing, and candidate-job matching supported by Ollama LLM. \\ \hline
 03 & \texttt{ollama} & Containerized local Large Language Model runtime (port 11434) running instruction-tuned models (e.g., Qwen) for structured CV extraction and semantic matching. \\ \hline
-04 & \texttt{ai-moderation} & FastAPI microservice (port 8001) providing automated toxic content classification, sensitive keyword detection, and moderation scoring for forum posts and user submissions. \\ \hline
+04 & \texttt{ai-moderation} & Optional external FastAPI microservice (default external port 8002 via \texttt{AI\_MODERATION\_URL}) providing automated toxic content classification and moderation scoring with fail-open \texttt{APPROVED} fallback in \texttt{AIModerationService}. \\ \hline
 \end{longtable}
 }
 

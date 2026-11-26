@@ -42,7 +42,7 @@ A user clicks the ``Google'' authentication button on the sign-in screen or the 
     \item The backend generates the Google OAuth consent URL configured with client ID, callback URI, and identity scopes (\texttt{openid email profile}).
     \item The guest grants permission on Google's consent dialog, and Google redirects to the callback endpoint with an authorization code.
     \item The backend exchanges the code for Google tokens and fetches profile information (email, full name, avatar URL).
-    \item The system queries the database: if no account exists with the email, a new account is automatically provisioned with verified email status and assigned the default \texttt{Client} role.
+    \item The system queries the database: if no account exists with the email, a new account is automatically provisioned and assigned the default \texttt{Client} role.
     \item The system creates an active session, issues signed JWT access and refresh tokens, stores them in secure \texttt{httpOnly} cookies, and redirects the user to their designated dashboard.
 \end{itemize}
 
@@ -68,13 +68,13 @@ Session Headers & IP address and User-Agent captured from request headers for se
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
     \item The OAuth code must be valid, non-expired, and verifiable against Google OAuth endpoints.
     \item The email address retrieved from Google profile must be non-empty and marked as verified by Google.
-    \item The matched user account must have \texttt{status = ACTIVE}; suspended or banned accounts are rejected.
+    \item The matched user account must have \texttt{isBanned = false} and \texttt{deletedAt = null}; banned or deleted accounts are rejected.
 \end{itemize}
 
 \sublabel{Business Rules}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
     \item BR-UA-01: Google OAuth shall follow standard OAuth 2.0 authorization code grant with secure PKCE/state verification.
-    \item BR-UA-02: New users authenticated via Google OAuth shall be automatically registered with the \texttt{Client} role and \texttt{isEmailVerified = true}.
+    \item BR-UA-02: New users authenticated via Google OAuth shall be automatically provisioned with the \texttt{Client} role.
     \item BR-UA-03: Suspended or banned accounts shall be denied access and notified with an administrative contact notice.
     \item BR-UA-04: Issued JWT tokens shall be stored exclusively in secure, \texttt{httpOnly}, \texttt{SameSite=Lax} cookies.
 \end{itemize}
@@ -140,7 +140,7 @@ A registered user enters their email and password into the sign-in form and subm
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
     \item Login screen at \texttt{/login} with Email Address input and Password input.
     \item Toggle visibility button (eye icon) to show or hide entered password.
-    \item ``Remember me'' checkbox and ``Forgot password?'' navigation link.
+    \item ``Remember me'' UI checkbox and ``Forgot password?'' navigation link.
     \item Primary ``Log in'' button with loading spinner state during submission.
 \end{itemize}
 
@@ -150,7 +150,7 @@ A registered user enters their email and password into the sign-in form and subm
     \item The client posts credentials to BFF \texttt{/api/auth/login}, which forwards to NestJS API.
     \item The API queries the user by email including associated roles and profiles.
     \item The system verifies the supplied password against the stored bcrypt hash.
-    \item The system verifies that the account is active and the email address is confirmed.
+    \item The system verifies that the account is not deleted (\texttt{deletedAt = null}) and not banned (\texttt{isBanned = false}).
     \item Upon success, a new session record is written into the database, JWT access/refresh tokens are generated and attached as \texttt{httpOnly} cookies, and user metadata is returned.
 \end{itemize}
 
@@ -160,7 +160,7 @@ A registered user enters their email and password into the sign-in form and subm
     \item Left branded imagery panel showcases workspace lifestyle graphics with the Frevia slogan.
     \item Right form card provides fields for ``Email address'' and ``Password'' with subtle placeholder hints.
     \item Password input includes an embedded visibility toggle icon on the right edge.
-    \item Action row features ``Remember me'' checkbox alongside ``Forgot password?'' link in primary green.
+    \item Action row features UI ``Remember me'' checkbox alongside ``Forgot password?'' link in primary green.
     \item Solid green ``Log in'' submit button spans full container width.
 \end{itemize}
 
@@ -169,23 +169,22 @@ A registered user enters their email and password into the sign-in form and subm
 \sublabel{Input Data}
 \begin{specdatatable}{Data Name}{Description}
 \texttt{email} & Registered email address string; must be a valid RFC 5322 format.\\ \hline
-\texttt{password} & User account password string; required, minimum 6 characters.\\ \hline
+\texttt{password} & User account password string; required, non-empty (\texttt{.min(1)} in \texttt{LoginBodySchema}).\\ \hline
 \end{specdatatable}
 
 \sublabel{Validation Rules}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
     \item \texttt{email} is trimmed and validated as a syntactically valid email address.
     \item \texttt{password} cannot be empty and must match the stored bcrypt hash.
-    \item The account must not have \texttt{deletedAt} set and must have \texttt{status = ACTIVE}.
-    \item The user must have verified their email address (\texttt{isEmailVerified = true}).
+    \item The account must have \texttt{deletedAt = null} and \texttt{isBanned = false}.
 \end{itemize}
 
 \sublabel{Business Rules}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
     \item BR-UA-05: Passwords must be verified using bcrypt comparison with salted hashes.
-    \item BR-UA-06: Error responses shall use a generic message ``Invalid email or password'' to mitigate account enumeration.
-    \item BR-UA-07: Unverified accounts shall be rejected with a notice prompting verification completion.
-    \item BR-UA-08: Suspended accounts shall be denied access across all client interfaces.
+    \item BR-UA-06: Backend distinguishes unregistered email (\texttt{Error.IncorrectEmail}, HTTP 401) from wrong password (\texttt{Error.IncorrectPassword}, HTTP 422).
+    \item BR-UA-07: Email OTP verification is completed during registration prior to account persistence.
+    \item BR-UA-08: Banned accounts (\texttt{isBanned = true}) shall be denied access with HTTP 403.
 \end{itemize}
 
 \sublabel{Normal Flow}
@@ -193,7 +192,7 @@ A registered user enters their email and password into the sign-in form and subm
     \item A registered user navigates to \texttt{/login} and inputs valid registered email and password.
     \item The user clicks ``Log in'' button.
     \item Form resolver executes schema validation and initiates HTTP POST request.
-    \item NestJS API retrieves user record, compares bcrypt hash, and verifies account active status.
+    \item NestJS API retrieves user record, checks ban/deleted flags, and compares bcrypt hash.
     \item The system records the session in the database and creates JWT tokens.
     \item The BFF proxy serializes \texttt{httpOnly} cookies and responds with HTTP 200.
     \item The frontend detects user roles and redirects to the appropriate dashboard (Admin, Client, or Freelancer).
@@ -202,10 +201,10 @@ A registered user enters their email and password into the sign-in form and subm
 \sublabel{Abnormal Flow / Exception Handling}
 \begin{flowtable}{Case}{Description}
 A1 & Required field is missing (empty email or password). Form resolver intercepts input and renders inline errors before sending any network request.\\ \hline
-A2 & Email is not registered in the system. The API returns HTTP 401 with generic error \texttt{AuthMessage.INCORRECT\_EMAIL} mapped to ``Invalid email or password.''\\ \hline
-A3 & Incorrect password provided. Bcrypt comparison fails; API returns HTTP 422 with \texttt{AuthMessage.INCORRECT\_PASSWORD} mapped to ``Invalid email or password.''\\ \hline
-A4 & Account email is unconfirmed (\texttt{isEmailVerified = false}). System returns HTTP 403: ``Please verify your email before logging in. Resend verification email?''\\ \hline
-A5 & Account is marked as \texttt{status = BANNED} or \texttt{SUSPENDED}. System throws \texttt{UserBannedException} (HTTP 403): ``Your account has been suspended. Please contact support.''\\ \hline
+A2 & Email is not registered in the system. The API returns HTTP 401 with \texttt{Error.IncorrectEmail}.\\ \hline
+A3 & Incorrect password provided. Bcrypt comparison fails; API returns HTTP 422 with \texttt{Error.IncorrectPassword}.\\ \hline
+A4 & Account is soft-deleted (\texttt{deletedAt != null}). System treats account as not found or rejects login accordingly.\\ \hline
+A5 & Account is marked as \texttt{isBanned = true}. System throws \texttt{UserBannedException} (HTTP 403).\\ \hline
 A6 & Excessive consecutive failed login attempts detected. Rate limiter triggers HTTP 429: ``Too many login attempts. Please wait 15 minutes before trying again.''\\ \hline
 A7 & Database connection times out or pool is exhausted. API returns HTTP 500; frontend alerts ``Login failed. Please try again later.''\\ \hline
 A8 & Network connectivity drops during form submission. Client request fails with network error; frontend displays offline alert toast.\\ \hline
@@ -232,8 +231,8 @@ A8 & Network connectivity drops during form submission. Client request fails wit
 \subsubsection{ Logout}
 
 \fnhead{Function Trigger}
-An authenticated user clicks the ``Log out'' button from the main navigation sidebar or user profile menu.\newline
-\textbf{Navigation path:} Any authenticated screen $\rightarrow$ Sidebar bottom $\rightarrow$ Click ``Log out''.
+An authenticated user clicks the ``Log out'' action from the account dropdown menu (top-right Admin header or top profile popover in Client/Freelancer navigation).\newline
+\textbf{Navigation path:} Any authenticated screen $\rightarrow$ Profile dropdown $\rightarrow$ Click ``Log out''.
 
 \fnhead{Function Description}
 
@@ -244,29 +243,27 @@ An authenticated user clicks the ``Log out'' button from the main navigation sid
 \end{itemize}
 
 \sublabel{Purpose}
-\noindent Terminates the current active session on both the client application and server database, revoking the validity of issued tokens and protecting user accounts from unauthorized session reuse.
+\noindent Terminates the current active session on both the client application and server database, revoking the refresh token and protecting user accounts from unauthorized session reuse.
 
 \sublabel{Interface}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-    \item Sidebar bottom control labeled ``Log out'' with logout icon.
-    \item Header profile popover menu containing secondary sign-out trigger.
+    \item Top-right header profile dropdown menu (\texttt{admin-profile-dropdown}) or top profile popover menu containing the ``Log out'' action.
     \item Immediate redirection back to the public sign-in screen upon termination.
 \end{itemize}
 
 \sublabel{Data Processing Overview}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
     \item Client dispatches a POST request to \texttt{/api/auth/logout}.
-    \item The backend extracts the session token from the request cookies or authorization headers.
-    \item The API locates the matching session row in the \texttt{Session} table and soft-deletes or purges it.
-    \item The BFF proxy expires the \texttt{accessToken} and \texttt{refreshToken} cookies by setting their \texttt{Max-Age} to 0.
-    \item The web client clears local client-side caches (TanStack Query, session store) and redirects the visitor to \texttt{/login}.
+    \item The BFF forwards \texttt{\{ refreshToken \}} to the public (\texttt{@IsPublic()}) NestJS \texttt{POST /api/auth/logout} endpoint.
+    \item The API verifies the refresh token, deletes the matching row from the \texttt{Session} table (or throws 401 \texttt{RefreshTokenRevokedException} if invalid/already revoked).
+    \item The BFF proxy expires the \texttt{accessToken} and \texttt{refreshToken} cookies regardless, clears client caches, and redirects to \texttt{/login}.
 \end{itemize}
 
 \fnhead{Screen Layout (Mock-up Description)}
 \screenfigure[0.95]{image/screenshot/sprint1/tthuan/Logout.png}{User logout interface}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-    \item Navigation sidebar includes workspace navigation links and administrative sections.
-    \item The bottom section of the sidebar features the ``Log out'' command with a distinct exit glyph.
+    \item Navigation header / profile popover displays the active account summary and menu controls.
+    \item Profile menu features the ``Log out'' option to end the active session.
     \item Visual feedback indicates hover state, alerting the user to session termination.
 \end{itemize}
 
@@ -274,26 +271,26 @@ An authenticated user clicks the ``Log out'' button from the main navigation sid
 
 \sublabel{Input Data}
 \begin{specdatatable}{Data Name}{Description}
-Session Cookies & Active \texttt{accessToken} and \texttt{refreshToken} supplied via HTTP request.\\ \hline
+\texttt{refreshToken} & Active refresh token string passed in request body (\texttt{LogoutBodyDTO}) by BFF from cookie.\\ \hline
 \end{specdatatable}
 
 \sublabel{Validation Rules}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-    \item The request must supply a valid authentication cookie or bearer token.
-    \item Session must correspond to an active record in the database.
+    \item The backend endpoint is public (\texttt{@IsPublic()}) and validates a non-empty \texttt{refreshToken} body.
+    \item Token signature must verify and correspond to a stored row in \texttt{Session}.
 \end{itemize}
 
 \sublabel{Business Rules}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
-    \item BR-UA-09: Logout must invalidate the database session record before clearing browser cookies.
-    \item BR-UA-10: Terminated sessions shall be rejected on all subsequent API requests.
+    \item BR-UA-09: Logout must verify and delete the database session row before clearing browser cookies.
+    \item BR-UA-10: Terminated sessions shall be rejected on all subsequent refresh and API requests.
 \end{itemize}
 
 \sublabel{Normal Flow}
 \begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
-    \item User clicks ``Log out'' in the application sidebar.
-    \item Frontend invokes \texttt{POST /api/auth/logout}.
-    \item Server deletes active session record from the database.
+    \item User clicks ``Log out'' in the header profile menu / popover.
+    \item Frontend invokes BFF \texttt{POST /api/auth/logout}, which forwards \texttt{\{ refreshToken \}} to the API.
+    \item Server verifies the refresh token and deletes the active session record from the database.
     \item Response sets expired cookie headers (\texttt{Max-Age=0}).
     \item Client resets in-memory cache and state.
     \item Browser transitions to the public login page.
@@ -301,7 +298,7 @@ Session Cookies & Active \texttt{accessToken} and \texttt{refreshToken} supplied
 
 \sublabel{Abnormal Flow / Exception Handling}
 \begin{flowtable}{Case}{Description}
-A1 & The session token in the cookie has already expired prior to clicking logout. The backend returns HTTP 200/204; the client cleans up remaining cookies and finishes redirect.\\ \hline
+A1 & The refresh token is expired, invalid, or already revoked remotely. Backend returns HTTP 401 \texttt{RefreshTokenRevokedException}; BFF still clears local cookies and finishes redirect to \texttt{/login}.\\ \hline
 A2 & The session record was deleted remotely (e.g. via Revoke Session UC-16.03 on another device). System acknowledges logout request without error and purges local credentials.\\ \hline
 A3 & Database failure occurs during session row removal. The BFF proxy forcefully clears client \texttt{httpOnly} cookies regardless, guaranteeing the user is locally signed out.\\ \hline
 A4 & The user clicks the ``Log out'' button rapidly multiple times. The first call succeeds; subsequent calls encounter no active session and redirect gracefully.\\ \hline
@@ -376,18 +373,18 @@ A new visitor clicks the ``Sign up'' link and completes the registration form.\n
 
 \sublabel{Input Data}
 \begin{specdatatable}{Data Name}{Description}
-\texttt{name} & User's full display name string (2 to 50 characters).\\ \hline
+\texttt{fullName} & User's full display name string (1 to 100 characters).\\ \hline
 \texttt{email} & Valid email address string; must be unique across the platform.\\ \hline
-\texttt{password} & Strong password (minimum 8 characters with letters, numbers, and symbols).\\ \hline
+\texttt{password} & Password (8 to 32 characters, at least one uppercase letter and one number).\\ \hline
 \texttt{role} & Selected initial platform role: \texttt{CLIENT} or \texttt{FREELANCER}.\\ \hline
-\texttt{otp} & 6-digit verification code delivered to the user's email.\\ \hline
+\texttt{code} & 6-digit verification code delivered to the user's email.\\ \hline
 \texttt{agreeTerms} & Boolean flag indicating user accepted terms and policies.\\ \hline
 \end{specdatatable}
 
 \sublabel{Validation Rules}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
     \item Email must conform to RFC 5322 format and not already exist in the database.
-    \item Password must be at least 8 characters and match \texttt{confirmPassword}.
+    \item Password must be 8--32 characters (uppercase and number) and match \texttt{confirmPassword}.
     \item OTP must match the unexpired code recorded for that email address.
     \item \texttt{agreeTerms} must be strictly \texttt{true}.
 \end{itemize}
@@ -395,9 +392,9 @@ A new visitor clicks the ``Sign up'' link and completes the registration form.\n
 \sublabel{Business Rules}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
     \item BR-UA-11: Email addresses must be globally unique across all accounts.
-    \item BR-UA-12: The user must explicitly choose an initial role; default assignment is forbidden.
+    \item BR-UA-12: The registration DTO restricts selection to \texttt{CLIENT} or \texttt{FREELANCER}.
     \item BR-UA-13: Passwords must be hashed with bcrypt prior to persistence.
-    \item BR-UA-14: OTP codes expire after 10 minutes and can only be validated once.
+    \item BR-UA-14: OTP codes expire after the configured \texttt{OTP\_EXPIRES\_IN} duration and are deleted once verified.
 \end{itemize}
 
 \sublabel{Normal Flow}
@@ -456,30 +453,26 @@ A user clicks ``Forgot password?'' on the login screen and submits their email a
 \end{itemize}
 
 \sublabel{Purpose}
-\noindent Provides a secure self-service mechanism for users to reset their forgotten passwords via email verification links, preventing account lockout while safeguarding against credential enumeration attacks.
+\noindent Provides a self-service mechanism for users to reset forgotten passwords via a 6-digit one-time verification code (OTP) sent by email.
 
 \sublabel{Interface}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-    \item Forgot password page at \texttt{/forgot-password} with email input and submit button.
-    \item Confirmation feedback screen informing user to check their email inbox.
-    \item Secure reset password screen accessed through the unique tokenized email link.
+    \item Forgot password page at \texttt{/forgot-password} with email input, OTP request button, 6-digit OTP input, new password, and confirm new password fields.
 \end{itemize}
 
 \sublabel{Data Processing Overview}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-    \item User enters email and submits \texttt{POST /api/auth/forgot-password}.
-    \item Backend looks up user record; if found, generates a cryptographically random token with 1-hour expiration.
-    \item An email containing the password reset URL is dispatched.
-    \item Regardless of whether the email exists, the API returns the identical generic message to prevent account enumeration.
-    \item When user opens the link and submits a new password, backend validates token, hashes new password, updates database, invalidates the token, and revokes all active sessions.
+    \item User enters email and triggers OTP dispatch (\texttt{POST /api/auth/otp} with type \texttt{FORGOT\_PASSWORD}).
+    \item Backend looks up the user by email (throwing HTTP 422 \texttt{EmailNotFoundException} if absent), generates a 6-digit OTP stored in \texttt{VerificationCode}, and emails it via Nodemailer.
+    \item User enters the 6-digit OTP, \texttt{newPassword}, and \texttt{confirmNewPassword}, then submits \texttt{POST /api/auth/forgot-password}.
+    \item Backend verifies the OTP type, value, and expiry, validates password match and strength (8--32 characters with uppercase and digit), updates \texttt{User.password} with bcrypt, and deletes the consumed OTP row (existing device sessions are not automatically revoked).
 \end{itemize}
 
 \fnhead{Screen Layout (Mock-up Description)}
 \screenfigure[0.95]{image/screenshot/sprint1/tthuan/ForgotPassword.png}{Forgot password screen}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-    \item Card heading reads ``Forgot password?'' with descriptive subtitle explaining the recovery process.
-    \item Email input field with placeholder ``you@company.com''.
-    \item Solid green button ``Send reset link''.
+    \item Card heading reads ``Forgot password?'' with email input, OTP code field, and new/confirm password fields.
+    \item Action controls to request OTP (with countdown) and submit password reset.
     \item Navigation link ``Back to login'' at the bottom of the card.
 \end{itemize}
 
@@ -488,57 +481,53 @@ A user clicks ``Forgot password?'' on the login screen and submits their email a
 \sublabel{Input Data}
 \begin{specdatatable}{Data Name}{Description}
 \texttt{email} & Registered email address string.\\ \hline
-\texttt{token} & Secret reset token received in URL parameter (during password update).\\ \hline
-\texttt{newPassword} & Replacement password meeting platform strength criteria.\\ \hline
+\texttt{code} & 6-digit numeric OTP sent to the user's email.\\ \hline
+\texttt{newPassword} & Replacement password (8--32 chars, uppercase and number).\\ \hline
+\texttt{confirmNewPassword} & Must match \texttt{newPassword}.\\ \hline
 \end{specdatatable}
 
 \sublabel{Validation Rules}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-    \item \texttt{email} must be a valid email string.
-    \item Reset token must exist, not be expired, and have not been previously consumed.
-    \item \texttt{newPassword} must meet minimum length (8 chars) and complexity rules.
+    \item \texttt{email} must be a registered valid email string.
+    \item \texttt{code} must be exactly 6 characters and match a non-expired \texttt{FORGOT\_PASSWORD} OTP in \texttt{VerificationCode}.
+    \item \texttt{newPassword} must be 8--32 characters with at least one uppercase letter and one number, matching \texttt{confirmNewPassword}.
 \end{itemize}
 
 \sublabel{Business Rules}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
-    \item BR-UA-15: System must return identical confirmation text whether the email is registered or not (anti-enumeration).
-    \item BR-UA-16: Reset tokens expire exactly 1 hour following issuance.
-    \item BR-UA-17: Successful reset terminates all existing sessions for the target account.
+    \item BR-UA-15: Password recovery requires validating a 6-digit \texttt{FORGOT\_PASSWORD} OTP delivered to the account's registered email.
+    \item BR-UA-16: OTP codes expire after the configured \texttt{OTP\_EXPIRES\_IN} duration and are deleted upon consumption.
+    \item BR-UA-17: Existing device sessions remain intact after password reset unless revoked individually via Session Management.
 \end{itemize}
 
 \sublabel{Normal Flow}
 \begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
-    \item User navigates to \texttt{/forgot-password} and enters registered email.
-    \item User clicks ``Send reset link''.
-    \item Backend generates token, sends email, and returns generic confirmation.
-    \item User clicks the link in email to reach the reset screen.
-    \item User inputs new password and submits.
-    \item System updates password, revokes active sessions, and redirects to login with success toast.
+    \item User navigates to \texttt{/forgot-password}, enters their registered email, and clicks ``Send OTP''.
+    \item Backend validates the email exists, creates/updates the \texttt{VerificationCode} record, and sends the 6-digit OTP email.
+    \item User enters the 6-digit OTP, \texttt{newPassword}, and \texttt{confirmNewPassword}, then submits the form.
+    \item Backend verifies the OTP, updates the bcrypt-hashed password, deletes the OTP record, and frontend redirects to \texttt{/login}.
 \end{enumerate}
 
 \sublabel{Abnormal Flow / Exception Handling}
 \begin{flowtable}{Case}{Description}
-A1 & Email field left blank or submitted with invalid syntax. Client validation displays ``Please enter a valid email address.''\\ \hline
-A2 & The email entered is not associated with any account in the database. The system returns the identical success message to prevent user enumeration.\\ \hline
-A3 & The account exists but was registered purely via Google OAuth (no local password). System sends an advisory email guiding the user to sign in via Google OAuth.\\ \hline
-A4 & The password reset token in the link has exceeded its 1-hour expiration window. The reset page displays ``This reset link has expired. Please request a new one.''\\ \hline
-A5 & The token has already been consumed or carries an invalid cryptographic signature. System surfaces ``This reset link is invalid or has already been used.''\\ \hline
-A6 & The replacement password fails strength constraints or confirmation mismatch occurs. Form highlights the fields inline with guidance text.\\ \hline
-A7 & Mail server failure during email dispatch. System logs error internally and returns standard response to protect user privacy.\\ \hline
-A8 & Database connection drops during password update and session revocation. System returns HTTP 500; old password remains active.\\ \hline
+A1 & Email field left blank or invalid syntax. Client validation displays inline error.\\ \hline
+A2 & Email is not registered. API returns HTTP 422 \texttt{EmailNotFoundException}.\\ \hline
+A3 & Too many OTP requests within the throttle window. API throws HTTP 422 \texttt{TooManyAttemptsException}.\\ \hline
+A4 & OTP code is expired or invalid. API returns HTTP 422 \texttt{InvalidOTPException} or \texttt{OTPExpiredException}.\\ \hline
+A5 & \texttt{newPassword} and \texttt{confirmNewPassword} do not match or violate length/complexity rules. Validation fails with HTTP 422.\\ \hline
+A6 & Mail server failure during email dispatch or database failure during update returns HTTP 500.\\ \hline
 \end{flowtable}
 
 \sublabel{Output Data}
 \begin{specdatatable}{Data Name}{Description}
-Email Dispatch & HTML email containing secure reset link with query token.\\ \hline
-Status Message & Informational confirmation indicating reset link dispatch.\\ \hline
+Email Dispatch & Email containing the 6-digit \texttt{FORGOT\_PASSWORD} OTP.\\ \hline
+Response Payload & JSON message confirming OTP sent or password changed successfully.\\ \hline
 \end{specdatatable}
 
 \sublabel{Post-Conditions}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-    \item Account password is updated to new hashed value.
-    \item Reset token is destroyed.
-    \item Prior authentication sessions are revoked.
+    \item \texttt{User.password} is updated to the new bcrypt hash.
+    \item Consumed \texttt{VerificationCode} record is deleted from the database.
 \end{itemize}
 
 % =================================================================
@@ -548,10 +537,10 @@ Status Message & Informational confirmation indicating reset link dispatch.\\ \h
 \subsection{Role Management}
 
 % -----------------------------------------------------------------
-% UC-06.01: View Role List
+% UC-06.01: View Roles List
 % -----------------------------------------------------------------
 \Needspace{12\baselineskip}
-\subsubsection{ View Role List}
+\subsubsection{ View Roles List}
 
 \fnhead{Function Trigger}
 An administrator accesses the Role Management section from the admin portal sidebar.\newline
@@ -640,10 +629,10 @@ A6 & A role title or description contains exceptionally long text. The table cel
 \end{itemize}
 
 % -----------------------------------------------------------------
-% UC-06.02: View Role Detail
+% UC-06.02: View Role Details
 % -----------------------------------------------------------------
 \Needspace{12\baselineskip}
-\subsubsection{ View Role Detail}
+\subsubsection{ View Role Details}
 
 \fnhead{Function Trigger}
 An administrator clicks the ``View details'' button (eye icon) on a role row or navigates to \texttt{/admin/roles/:id}.\newline
@@ -777,7 +766,7 @@ An administrator clicks the ``Create Role'' button on the Role Management page.\
 
 \sublabel{Input Data}
 \begin{specdatatable}{Data Name}{Description}
-\texttt{name} & Unique role name string (required, 2 to 50 characters).\\ \hline
+\texttt{name} & Unique role name string (required, 1 to 500 characters).\\ \hline
 \texttt{description} & Optional role purpose description string.\\ \hline
 \end{specdatatable}
 
@@ -853,7 +842,7 @@ An administrator clicks the ``Edit'' icon (pencil) on a role row in the Role Man
 \sublabel{Data Processing Overview}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
     \item Admin modifies fields and clicks ``Save Changes''.
-    \item Request sent via \texttt{PATCH /api/roles/:id} or \texttt{PUT /api/roles/:id}.
+    \item Request sent via \texttt{PATCH /api/roles/:id}.
     \item Backend validates name uniqueness against other active roles.
     \item Updates database row and returns updated entity.
 \end{itemize}
@@ -1029,7 +1018,7 @@ An administrator navigates to the Assign Role screen, selects a role, modifies p
 \end{itemize}
 
 \sublabel{Purpose}
-\noindent Configures granular API route access permissions for any system or custom role by selecting or unchecking individual permissions grouped by functional module.
+\noindent Configures granular API route access permissions for custom roles (as well as Admin/Expert) while blocking modifications to \texttt{CLIENT} and \texttt{FREELANCER} system roles.
 
 \sublabel{Interface}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]

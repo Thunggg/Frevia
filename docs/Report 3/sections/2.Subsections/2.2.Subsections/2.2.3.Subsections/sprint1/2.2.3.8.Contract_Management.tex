@@ -21,7 +21,7 @@ Primary Actor: & Client & Secondary Actors: & N/A \\ \hline
 
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When a Client initiates contract creation from an accepted job proposal or direct hire action.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Allows a Client to create and initiate a new contract with a selected Freelancer, specifying contract title, description, milestones, budget amount, and project timeline.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Allows a Client to create and initiate a new contract with a selected Freelancer, specifying contract title, description, milestones, budget amount, and project timeline.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The user is logged into the system as a Client. \newline
@@ -100,7 +100,7 @@ Primary Actor: & Client & Secondary Actors: & N/A \\ \hline
 
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When a Client clicks the ``Edit Terms'' button on a pending Contract Detail page.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Allows a Client to update contract terms, scope, milestones, or timeline before the agreement is finalized and signed.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Allows a Client to update contract terms, scope, milestones, or timeline before the agreement is finalized and signed.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The user is logged in as a Client. \newline
@@ -176,7 +176,7 @@ Primary Actor: & Client, Freelancer & Secondary Actors: & N/A \\ \hline
 
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When a user clicks the ``Complete Contract'' button on an active Contract Detail page.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Allows a Client or Freelancer to mark an active contract as completed after all milestones are approved and settled, officially concluding the project engagement.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Allows a Client or Freelancer to mark an active contract as completed after all milestones are approved and settled, officially concluding the project engagement.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The user is logged into the system as a contract participant. \newline
@@ -231,17 +231,17 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{Both parties agree on the final compl
 \end{longtable}
 
 % =================================================================
-% UC-13.04 View Contract List
+% UC-13.04 View Contracts List
 % =================================================================
-\subparagraph{UC-13.04 View Contract List}
+\subparagraph{UC-13.04 View Contracts List}
 
 \Needspace{12\baselineskip}
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
-\\rowcolor{fptHeader}UC ID and Name & \\multicolumn{3}{l|}{UC-13.04 View Contract List} \\* \\hline
+\\rowcolor{fptHeader}UC ID and Name & \\multicolumn{3}{l|}{UC-13.04 View Contracts List} \\* \\hline
 \\endfirsthead
 \\hline
-\\rowcolor{fptHeader}UC ID and Name & \\multicolumn{3}{l|}{UC-13.04 View Contract List \\textit{(cont.)}} \\* \\hline
+\\rowcolor{fptHeader}UC ID and Name & \\multicolumn{3}{l|}{UC-13.04 View Contracts List \\textit{(cont.)}} \\* \\hline
 \\endhead
 \\hline\\endfoot
 \\endlastfoot
@@ -251,7 +251,7 @@ Primary Actor: & Client, Freelancer, Admin & Secondary Actors: & N/A \\ \hline
 
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When a user navigates to the Contracts section from the navigation menu.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Allows a Client, Freelancer, or Admin to retrieve a paginated list of contracts with status filters (Pending, Active, Completed, Canceled) and search capabilities.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Allows a Client, Freelancer, or Admin to retrieve a paginated list of contracts with status filters (Pending, Active, Completed, Canceled) and search capabilities.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The user is logged into the system. \newline
@@ -263,7 +263,7 @@ Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
 } \\ \hline
 
 Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{A. View Contract List} \newline
+\textbf{A. View Contracts List} \newline
 1. The user navigates to the Contracts page. \newline
 2. The system retrieves contracts associated with the user account (Client or Freelancer; Admin retrieves all). \newline
 3. The system applies default pagination and sorts by newest created date. \newline
@@ -302,17 +302,17 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{Users understand pagination and statu
 \end{longtable}
 
 % =================================================================
-% UC-13.05 View Contract Detail
+% UC-13.05 View Contract Details
 % =================================================================
-\subparagraph{UC-13.05 View Contract Detail}
+\subparagraph{UC-13.05 View Contract Details}
 
 \Needspace{12\baselineskip}
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
-\\rowcolor{fptHeader}UC ID and Name & \\multicolumn{3}{l|}{UC-13.05 View Contract Detail} \\* \\hline
+\\rowcolor{fptHeader}UC ID and Name & \\multicolumn{3}{l|}{UC-13.05 View Contract Details} \\* \\hline
 \\endfirsthead
 \\hline
-\\rowcolor{fptHeader}UC ID and Name & \\multicolumn{3}{l|}{UC-13.05 View Contract Detail \\textit{(cont.)}} \\* \\hline
+\\rowcolor{fptHeader}UC ID and Name & \\multicolumn{3}{l|}{UC-13.05 View Contract Details \\textit{(cont.)}} \\* \\hline
 \\endhead
 \\hline\\endfoot
 \\endlastfoot
@@ -322,7 +322,7 @@ Primary Actor: & Client, Freelancer, Admin & Secondary Actors: & N/A \\ \hline
 
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When the user clicks on a contract item from the Contract List page.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Allows a Client, Freelancer, or Admin to view full contract details including project scope, participant profiles, escrow financial status, milestones, attached files, and activity logs.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Allows a Client, Freelancer, or Admin to view full contract details including project scope, participant profiles, escrow financial status, milestones, attached files, and activity logs.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The user is authenticated in the system. \newline
@@ -398,7 +398,7 @@ Primary Actor: & Freelancer, Client & Secondary Actors: & N/A \\ \hline
 
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When a user clicks the ``Sign Contract'' button on a pending Contract Detail page.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Allows a Freelancer (or Client) to digitally accept and sign a contract, activating the agreement so that project work and escrow deposits can officially commence.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Allows a Freelancer (or Client) to digitally accept and sign a contract, activating the agreement so that project work and escrow deposits can officially commence.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The user is logged into the system. \newline
@@ -475,7 +475,7 @@ Primary Actor: & Client, Freelancer & Secondary Actors: & N/A \\ \hline
 
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When a user clicks ``Export PDF'' on the Contract Detail page.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Allows a Client or Freelancer to generate, render, and download a compiled PDF contract document containing complete contractual terms, scope, milestone schedules, financial values, and cryptographic signature audit stamps.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Allows a Client or Freelancer to generate, render, and download a compiled PDF contract document containing complete contractual terms, scope, milestone schedules, financial values, and cryptographic signature audit stamps.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The user is logged into the system. \newline
@@ -552,7 +552,7 @@ Primary Actor: & Client, Freelancer & Secondary Actors: & N/A \\ \hline
 
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When a user clicks ``Cancel Contract'' from the contract action menu.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Allows a Client or Freelancer to cancel or terminate a contract prior to completion, specifying a cancellation reason and handling pending escrow resolutions.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Allows a Client or Freelancer to cancel or terminate a contract prior to completion, specifying a cancellation reason and handling pending escrow resolutions.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The user is logged into the system as a contract participant. \newline
@@ -629,7 +629,7 @@ Primary Actor: & Client, Freelancer, Admin & Secondary Actors: & N/A \\ \hline
 
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When a user clicks the ``Files'' tab within the Contract Detail page.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Allows contract participants to view and access all files, project briefs, and documents attached to the contract workspace.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Allows contract participants to view and access all files, project briefs, and documents attached to the contract workspace.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The user is authenticated in the system. \newline
@@ -697,7 +697,7 @@ Primary Actor: & Client, Freelancer & Secondary Actors: & Cloud Storage \\ \hlin
 
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When a user clicks ``Upload File'' in the Contract Files section.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Allows a Client or Freelancer to upload documentation, technical specifications, or deliverable files to the contract workspace.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Allows a Client or Freelancer to upload documentation, technical specifications, or deliverable files to the contract workspace.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The user is logged in as an authorized contract participant. \newline
@@ -773,7 +773,7 @@ Primary Actor: & Client, Freelancer & Secondary Actors: & Cloud Storage \\ \hlin
 
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When a user clicks the delete trash icon next to a file card in the Files section.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Allows the file uploader or an Administrator to remove an obsolete or incorrect file from the contract workspace.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Allows the file uploader or an Administrator to remove an obsolete or incorrect file from the contract workspace.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The user is logged in. \newline
@@ -848,7 +848,7 @@ Primary Actor: & Freelancer & Secondary Actors: & N/A \\ \hline
 
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When a Freelancer clicks ``Reject Offer'' upon reviewing a contract offer.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Allows a Freelancer to formally decline an offered contract offer prior to signing, requiring an explanatory decline reason and notifying the Client.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Allows a Freelancer to formally decline an offered contract offer prior to signing, requiring an explanatory decline reason and notifying the Client.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The user is logged in as a Freelancer. \newline

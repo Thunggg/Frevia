@@ -2,18 +2,18 @@
 \paragraph{Manage Advertisement Banner}
 
 % =================================================================
-% UC-18.1 Advertisement Banners List
+% UC-37.01 Advertisement Banners List
 % =================================================================
 
-\subparagraph{UC-18.1 Advertisement Banners List}
+\subparagraph{UC-37.01 Advertisement Banners List}
 
 \Needspace{12\baselineskip}
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-18.1 Advertisement Banners List} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-37.01 Advertisement Banners List} \\* \hline
 \endfirsthead
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-18.1 Advertisement Banners List \textit{(cont.)}} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-37.01 Advertisement Banners List \textit{(cont.)}} \\* \hline
 \endhead
 \hline\endfoot
 \endlastfoot
@@ -24,7 +24,7 @@ Primary Actor: & Admin & Secondary Actors: & N/A \\ \hline
 
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When an admin navigates to the Banners Management section from the admin dashboard.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Allows an administrator to retrieve the list of advertisement banners with their id, title, image, link, position, active period, and status, with support for search, filtering by position and deleted status, sorting, and pagination.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Allows an administrator to retrieve the list of advertisement banners with their id, title, image, link, position, active period, and status, with support for search, filtering by position and deleted status, sorting, and pagination.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The user is authenticated as an Admin whose role is allowed to access the banners endpoints (guarded by \texttt{AuthGuard} and \texttt{PermissionGuard}). \newline
@@ -33,7 +33,7 @@ Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 
 Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{POST-1} A paginated list of banners is displayed with \texttt{id}, \texttt{title}, \texttt{imageUrl}, \texttt{linkUrl}, \texttt{position}, \texttt{startDate}, \texttt{endDate}, \texttt{isActive}, \texttt{deletedAt}, \texttt{createdAt}, and \texttt{updatedAt}. \newline
-\textbf{POST-2} The admin can create (UC-18.3), edit (UC-18.4), delete (UC-18.5), or open a banner detail (UC-18.2).
+\textbf{POST-2} The admin can create (UC-37.03), edit (UC-37.04), delete (UC-37.05), or open a banner detail (UC-37.02).
 } \\ \hline
 
 Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
@@ -100,7 +100,7 @@ Business Rules: & \multicolumn{3}{L{11.1cm}|}{
 } \\ \hline
 
 Other Information: & \multicolumn{3}{L{11.1cm}|}{
-The list page provides Create, Edit, Delete, and View actions to start UC-18.3, UC-18.4, UC-18.5, and UC-18.2.
+The list page provides Create, Edit, Delete, and View actions to start UC-37.03, UC-37.04, UC-37.05, and UC-37.02.
 } \\ \hline
 
 Assumptions: & \multicolumn{3}{L{11.1cm}|}{Banner records are stored in the AdvertisementBanner table of the system database.} \\ \hline
@@ -108,18 +108,18 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{Banner records are stored in the Adve
 \end{longtable}
 
 % =================================================================
-% UC-18.2 Banner Detail
+% UC-37.02 Banner Details
 % =================================================================
 
-\subparagraph{UC-18.2 Banner Detail}
+\subparagraph{UC-37.02 Banner Details}
 
 \Needspace{12\baselineskip}
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-18.2 Banner Detail} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-37.02 Banner Details} \\* \hline
 \endfirsthead
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-18.2 Banner Detail \textit{(cont.)}} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-37.02 Banner Details \textit{(cont.)}} \\* \hline
 \endhead
 \hline\endfoot
 \endlastfoot
@@ -128,9 +128,9 @@ Created By: & ThuanNT & Date Created: & 14/09/2026 \\ \hline
 
 Primary Actor: & Admin & Secondary Actors: & N/A \\ \hline
 
-Trigger: & \multicolumn{3}{L{11.1cm}|}{When an admin selects a banner from the banner list (UC-18.1) or navigates directly to a banner detail URL.} \\ \hline
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When an admin selects a banner from the banner list (UC-37.01) or navigates directly to a banner detail URL.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Allows an administrator to view the detailed information of a single advertisement banner, including its id, title, image, link, position, active period, status, and timestamps. The detail remains accessible even when the banner is soft-deleted.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Allows an administrator to view the detailed information of a single advertisement banner, including its id, title, image, link, position, active period, status, and timestamps. The detail remains accessible even when the banner is soft-deleted.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The user is authenticated as an Admin whose role is allowed to access \texttt{GET /api/admin/banners/:id} (guarded by \texttt{AuthGuard} and \texttt{PermissionGuard}). \newline
@@ -139,12 +139,12 @@ Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 
 Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{POST-1} The detailed information of the selected banner is displayed, including the \texttt{deletedAt} field. \newline
-\textbf{POST-2} The admin can edit (UC-18.4) or delete (UC-18.5) the displayed banner.
+\textbf{POST-2} The admin can edit (UC-37.04) or delete (UC-37.05) the displayed banner.
 } \\ \hline
 
 Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{A. View Banner Detail} \newline
-1. The Admin clicks the view action on a banner row (UC-18.1) or navigates directly to \texttt{/admin/banners/:id}. \newline
+\textbf{A. View Banner Details} \newline
+1. The Admin clicks the view action on a banner row (UC-37.01) or navigates directly to \texttt{/admin/banners/:id}. \newline
 2. The system sends \texttt{GET /api/admin/banners/:id}. \newline
 3. The system queries the banner with the matching \texttt{id}. \newline
 4. The system verifies that the banner exists. \newline
@@ -190,25 +190,25 @@ Business Rules: & \multicolumn{3}{L{11.1cm}|}{
 } \\ \hline
 
 Other Information: & \multicolumn{3}{L{11.1cm}|}{
-A soft-deleted banner can still be opened in the detail page, which is used to reach the Edit (UC-18.4) and Delete (UC-18.5) flows.
+A soft-deleted banner can still be opened in the detail page, which is used to reach the Edit (UC-37.04) and Delete (UC-37.05) flows.
 } \\ \hline
 
 Assumptions: & \multicolumn{3}{L{11.1cm}|}{The banner id is a positive integer.} \\ \hline
 
 \end{longtable}
 % =================================================================
-% UC-18.3 Create Banner
+% UC-37.03 Create Banner
 % =================================================================
 
-\subparagraph{UC-18.3 Create Banner}
+\subparagraph{UC-37.03 Create Banner}
 
 \Needspace{12\baselineskip}
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-18.3 Create Banner} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-37.03 Create Banner} \\* \hline
 \endfirsthead
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-18.3 Create Banner \textit{(cont.)}} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-37.03 Create Banner \textit{(cont.)}} \\* \hline
 \endhead
 \hline\endfoot
 \endlastfoot
@@ -217,9 +217,9 @@ Created By: & ThuanNT & Date Created: & 14/09/2026 \\ \hline
 
 Primary Actor: & Admin & Secondary Actors: & N/A \\ \hline
 
-Trigger: & \multicolumn{3}{L{11.1cm}|}{When an admin clicks the ``Create'' button on the Banners Management page (UC-18.1).} \\ \hline
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When an admin clicks the ``Create'' button on the Banners Management page (UC-37.01).} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Allows an administrator to create a new advertisement banner by providing a title (required), an image, an optional link, a position, optional start/end dates, and an active status.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Allows an administrator to create a new advertisement banner by providing a title (required), an image, an optional link, a position, optional start/end dates, and an active status.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The user is authenticated as an Admin whose role is allowed to access \texttt{POST /api/admin/banners} (guarded by \texttt{AuthGuard} and \texttt{PermissionGuard}). \newline
@@ -228,7 +228,7 @@ Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 
 Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{POST-1} A new record is created in the AdvertisementBanner table with the provided fields and \texttt{isActive} (default \texttt{true}). \newline
-\textbf{POST-2} The new banner appears in the banner list (UC-18.1).
+\textbf{POST-2} The new banner appears in the banner list (UC-37.01).
 } \\ \hline
 
 Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
@@ -333,18 +333,18 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{The banner image is provided either b
 
 \end{longtable}
 % =================================================================
-% UC-18.4 Edit Banner
+% UC-37.04 Edit Banner
 % =================================================================
 
-\subparagraph{UC-18.4 Edit Banner}
+\subparagraph{UC-37.04 Edit Banner}
 
 \Needspace{12\baselineskip}
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-18.4 Edit Banner} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-37.04 Edit Banner} \\* \hline
 \endfirsthead
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-18.4 Edit Banner \textit{(cont.)}} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-37.04 Edit Banner \textit{(cont.)}} \\* \hline
 \endhead
 \hline\endfoot
 \endlastfoot
@@ -353,9 +353,9 @@ Created By: & ThuanNT & Date Created: & 14/09/2026 \\ \hline
 
 Primary Actor: & Admin & Secondary Actors: & N/A \\ \hline
 
-Trigger: & \multicolumn{3}{L{11.1cm}|}{When an admin clicks the edit action on a banner row (UC-18.1) or on the banner detail page (UC-18.2).} \\ \hline
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When an admin clicks the edit action on a banner row (UC-37.01) or on the banner detail page (UC-37.02).} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Allows an administrator to update an existing advertisement banner's title, image, link, position, active period, or active status. All fields are optional in the update request.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Allows an administrator to update an existing advertisement banner's title, image, link, position, active period, or active status. All fields are optional in the update request.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The user is authenticated as an Admin whose role is allowed to access \texttt{PATCH /api/admin/banners/:id} (guarded by \texttt{AuthGuard} and \texttt{PermissionGuard}). \newline
@@ -364,12 +364,12 @@ Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 
 Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{POST-1} The banner's \texttt{title}, \texttt{imageUrl}, \texttt{linkUrl}, \texttt{position}, \texttt{startDate}, \texttt{endDate}, and/or \texttt{isActive} are updated in the AdvertisementBanner table. \newline
-\textbf{POST-2} The updated banner is displayed in the banner list (UC-18.1).
+\textbf{POST-2} The updated banner is displayed in the banner list (UC-37.01).
 } \\ \hline
 
 Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{A. Edit Banner} \newline
-1. The Admin clicks the edit action on a banner row (UC-18.1) or on the banner detail page (UC-18.2). \newline
+1. The Admin clicks the edit action on a banner row (UC-37.01) or on the banner detail page (UC-37.02). \newline
 2. The system opens the BannerFormDialog pre-filled with the current banner values (\texttt{title}, \texttt{imageUrl}, \texttt{linkUrl}, \texttt{position}, \texttt{startDate}, \texttt{endDate}, \texttt{isActive}). \newline
 3. The Admin modifies the desired fields; the image can be replaced through \texttt{POST /api/admin/banners/upload-image}. \newline
 4. The Admin clicks the Save Changes button. \newline
@@ -452,18 +452,18 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{The admin remains authenticated throu
 \end{longtable}
 
 % =================================================================
-% UC-18.5 Delete Banner
+% UC-37.05 Delete Banner
 % =================================================================
 
-\subparagraph{UC-18.5 Delete Banner}
+\subparagraph{UC-37.05 Delete Banner}
 
 \Needspace{12\baselineskip}
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-18.5 Delete Banner} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-37.05 Delete Banner} \\* \hline
 \endfirsthead
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-18.5 Delete Banner \textit{(cont.)}} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-37.05 Delete Banner \textit{(cont.)}} \\* \hline
 \endhead
 \hline\endfoot
 \endlastfoot
@@ -472,9 +472,9 @@ Created By: & ThuanNT & Date Created: & 14/09/2026 \\ \hline
 
 Primary Actor: & Admin & Secondary Actors: & N/A \\ \hline
 
-Trigger: & \multicolumn{3}{L{11.1cm}|}{When an admin clicks the delete action on a banner row (UC-18.1) or on the banner detail page (UC-18.2).} \\ \hline
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When an admin clicks the delete action on a banner row (UC-37.01) or on the banner detail page (UC-37.02).} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Allows an administrator to soft-delete an existing advertisement banner by setting its \texttt{deletedAt} field to the current timestamp.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Allows an administrator to soft-delete an existing advertisement banner by setting its \texttt{deletedAt} field to the current timestamp.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The user is authenticated as an Admin whose role is allowed to access \texttt{DELETE /api/admin/banners/:id} (guarded by \texttt{AuthGuard} and \texttt{PermissionGuard}). \newline
@@ -483,12 +483,12 @@ Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 
 Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{POST-1} The banner is soft-deleted by setting its \texttt{deletedAt} field to the current timestamp. \newline
-\textbf{POST-2} The deleted banner no longer appears in the active banner list (UC-18.1) unless the Deleted filter is applied.
+\textbf{POST-2} The deleted banner no longer appears in the active banner list (UC-37.01) unless the Deleted filter is applied.
 } \\ \hline
 
 Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{A. Delete Banner} \newline
-1. The Admin clicks the delete action on a banner row (UC-18.1) or on the banner detail page (UC-18.2). \newline
+1. The Admin clicks the delete action on a banner row (UC-37.01) or on the banner detail page (UC-37.02). \newline
 2. The system opens the DeleteBannerDialog with a confirmation message. \newline
 3. The Admin confirms the deletion request. \newline
 4. The system sends \texttt{DELETE /api/admin/banners/:id}. \newline
@@ -548,18 +548,18 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{The admin remains authenticated durin
 \paragraph{Manage Skill}
 
 % =================================================================
-% UC-19.1 View List Skill
+% UC-38.01 View Skills List
 % =================================================================
 
-\subparagraph{UC-19.1 View List Skill}
+\subparagraph{UC-38.01 View Skills List}
 
 \Needspace{12\baselineskip}
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-19.1 View List Skill} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-38.01 View Skills List} \\* \hline
 \endfirsthead
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-19.1 View List Skill \textit{(cont.)}} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-38.01 View Skills List \textit{(cont.)}} \\* \hline
 \endhead
 \hline\endfoot
 \endlastfoot
@@ -570,7 +570,7 @@ Primary Actor: & Admin & Secondary Actors: & N/A \\ \hline
 
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When an admin navigates to the Skills Management section from the admin dashboard.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Allows an administrator to retrieve the list of skills with their id, name, slug, description, status, creation date, and the number of jobs using each skill, with support for search, filtering by active status, sorting, and pagination.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Allows an administrator to retrieve the list of skills with their id, name, slug, description, status, creation date, and the number of jobs using each skill, with support for search, filtering by active status, sorting, and pagination.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The user is authenticated as an Admin whose role is allowed to access the skills endpoints (guarded by \texttt{AuthGuard} and \texttt{PermissionGuard}). \newline
@@ -579,11 +579,11 @@ Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 
 Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{POST-1} A paginated list of skills is displayed with \texttt{id}, \texttt{name}, \texttt{slug}, \texttt{description}, \texttt{deletedAt}, \texttt{createdAt}, \texttt{updatedAt}, and \texttt{jobCount}. \newline
-\textbf{POST-2} The admin can create (UC-19.3), edit (UC-19.4), delete (UC-19.5), restore (UC-19.6), or open a skill detail (UC-19.2).
+\textbf{POST-2} The admin can create (UC-38.03), edit (UC-38.04), delete (UC-38.05), restore (UC-38.06), or open a skill detail (UC-38.02).
 } \\ \hline
 
 Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{A. View List Skill} \newline
+\textbf{A. View Skills List} \newline
 1. The Admin navigates to the Skills Management page (\texttt{/admin/skills}). \newline
 2. The system sends \texttt{GET /api/admin/skills} with \texttt{page} (default 1), \texttt{limit} (default 10, max 100), and optionally \texttt{search}, \texttt{deleted}, \texttt{sortBy}, and \texttt{sortOrder}. \newline
 3. The system queries the Skill table applying the keyword search on \texttt{name}, \texttt{slug}, or \texttt{description} (case-insensitive) and the \texttt{deleted} filter (\texttt{true}, \texttt{false}, or absent). \newline
@@ -641,7 +641,7 @@ Business Rules: & \multicolumn{3}{L{11.1cm}|}{
 } \\ \hline
 
 Other Information: & \multicolumn{3}{L{11.1cm}|}{
-The list page provides the Actions column to start UC-19.2, UC-19.3, UC-19.4, UC-19.5, and UC-19.6.
+The list page provides the Actions column to start UC-38.02, UC-38.03, UC-38.04, UC-38.05, and UC-38.06.
 } \\ \hline
 
 Assumptions: & \multicolumn{3}{L{11.1cm}|}{Skill records are stored in the Skill table of the system database.} \\ \hline
@@ -649,18 +649,18 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{Skill records are stored in the Skill
 \end{longtable}
 
 % =================================================================
-% UC-19.2 View Detail Skill
+% UC-38.02 View Skill Details
 % =================================================================
 
-\subparagraph{UC-19.2 View Detail Skill}
+\subparagraph{UC-38.02 View Skill Details}
 
 \Needspace{12\baselineskip}
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-19.2 View Detail Skill} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-38.02 View Skill Details} \\* \hline
 \endfirsthead
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-19.2 View Detail Skill \textit{(cont.)}} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-38.02 View Skill Details \textit{(cont.)}} \\* \hline
 \endhead
 \hline\endfoot
 \endlastfoot
@@ -669,9 +669,9 @@ Created By: & ThuanNT & Date Created: & 14/09/2026 \\ \hline
 
 Primary Actor: & Admin & Secondary Actors: & N/A \\ \hline
 
-Trigger: & \multicolumn{3}{L{11.1cm}|}{When an admin clicks the view action on a skill row (UC-19.1) or navigates directly to a skill detail URL.} \\ \hline
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When an admin clicks the view action on a skill row (UC-38.01) or navigates directly to a skill detail URL.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Allows an administrator to view the detailed information of a single skill, including its id, name, slug, description, timestamps, deletion status, and the number of jobs currently using the skill.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Allows an administrator to view the detailed information of a single skill, including its id, name, slug, description, timestamps, deletion status, and the number of jobs currently using the skill.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The user is authenticated as an Admin whose role is allowed to access \texttt{GET /api/admin/skills/:id} (guarded by \texttt{AuthGuard} and \texttt{PermissionGuard}). \newline
@@ -680,12 +680,12 @@ Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 
 Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{POST-1} The detailed information of the selected skill is displayed together with its \texttt{jobCount}. \newline
-\textbf{POST-2} The admin can edit (UC-19.4), delete (UC-19.5), or restore (UC-19.6) the displayed skill.
+\textbf{POST-2} The admin can edit (UC-38.04), delete (UC-38.05), or restore (UC-38.06) the displayed skill.
 } \\ \hline
 
 Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{A. View Detail Skill} \newline
-1. The Admin clicks the view action on a skill row (UC-19.1) or navigates directly to \texttt{/admin/skills/:id}. \newline
+\textbf{A. View Skill Details} \newline
+1. The Admin clicks the view action on a skill row (UC-38.01) or navigates directly to \texttt{/admin/skills/:id}. \newline
 2. The system sends \texttt{GET /api/admin/skills/:id}. \newline
 3. The system queries the skill with the matching \texttt{id}. \newline
 4. The system verifies that the skill exists. \newline
@@ -740,18 +740,18 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{The skill id is a positive integer.} 
 
 \end{longtable}
 % =================================================================
-% UC-19.3 Create New Skill
+% UC-38.03 Create New Skill
 % =================================================================
 
-\subparagraph{UC-19.3 Create New Skill}
+\subparagraph{UC-38.03 Create New Skill}
 
 \Needspace{12\baselineskip}
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-19.3 Create New Skill} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-38.03 Create New Skill} \\* \hline
 \endfirsthead
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-19.3 Create New Skill \textit{(cont.)}} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-38.03 Create New Skill \textit{(cont.)}} \\* \hline
 \endhead
 \hline\endfoot
 \endlastfoot
@@ -760,9 +760,9 @@ Created By: & ThuanNT & Date Created: & 14/09/2026 \\ \hline
 
 Primary Actor: & Admin & Secondary Actors: & N/A \\ \hline
 
-Trigger: & \multicolumn{3}{L{11.1cm}|}{When an admin clicks the ``Create Skill'' button on the Skills Management page (UC-19.1).} \\ \hline
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When an admin clicks the ``Create Skill'' button on the Skills Management page (UC-38.01).} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Allows an administrator to create a new skill by providing a name (required) and an optional description. A unique slug is generated automatically from the name.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Allows an administrator to create a new skill by providing a name (required) and an optional description. A unique slug is generated automatically from the name.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The user is authenticated as an Admin whose role is allowed to access \texttt{POST /api/admin/skills} (guarded by \texttt{AuthGuard} and \texttt{PermissionGuard}). \newline
@@ -771,7 +771,7 @@ Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 
 Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{POST-1} A new record is created in the Skill table with \texttt{name}, an auto-generated \texttt{slug}, and \texttt{description}. \newline
-\textbf{POST-2} The new skill appears in the skill list (UC-19.1) with \texttt{jobCount} equal to 0.
+\textbf{POST-2} The new skill appears in the skill list (UC-38.01) with \texttt{jobCount} equal to 0.
 } \\ \hline
 
 Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
@@ -851,18 +851,18 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{The admin remains authenticated durin
 \end{longtable}
 
 % =================================================================
-% UC-19.4 Edit Skill
+% UC-38.04 Edit Skill
 % =================================================================
 
-\subparagraph{UC-19.4 Edit Skill}
+\subparagraph{UC-38.04 Edit Skill}
 
 \Needspace{12\baselineskip}
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-19.4 Edit Skill} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-38.04 Edit Skill} \\* \hline
 \endfirsthead
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-19.4 Edit Skill \textit{(cont.)}} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-38.04 Edit Skill \textit{(cont.)}} \\* \hline
 \endhead
 \hline\endfoot
 \endlastfoot
@@ -871,9 +871,9 @@ Created By: & ThuanNT & Date Created: & 14/09/2026 \\ \hline
 
 Primary Actor: & Admin & Secondary Actors: & N/A \\ \hline
 
-Trigger: & \multicolumn{3}{L{11.1cm}|}{When an admin clicks the edit action on a skill row (UC-19.1) or on the skill detail page (UC-19.2).} \\ \hline
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When an admin clicks the edit action on a skill row (UC-38.01) or on the skill detail page (UC-38.02).} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Allows an administrator to update an existing skill's name and/or description. When the name changes, the slug is regenerated automatically.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Allows an administrator to update an existing skill's name and/or description. When the name changes, the slug is regenerated automatically.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The user is authenticated as an Admin whose role is allowed to access \texttt{PATCH /api/admin/skills/:id} (guarded by \texttt{AuthGuard} and \texttt{PermissionGuard}). \newline
@@ -883,12 +883,12 @@ Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{POST-1} The skill's \texttt{name} and/or \texttt{description} are updated in the Skill table. \newline
 \textbf{POST-2} The skill's \texttt{slug} is regenerated when the name changes. \newline
-\textbf{POST-3} The updated skill is displayed in the skill list (UC-19.1).
+\textbf{POST-3} The updated skill is displayed in the skill list (UC-38.01).
 } \\ \hline
 
 Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{A. Edit Skill} \newline
-1. The Admin clicks the edit action on a skill row (UC-19.1) or on the skill detail page (UC-19.2). \newline
+1. The Admin clicks the edit action on a skill row (UC-38.01) or on the skill detail page (UC-38.02). \newline
 2. The system opens the UpdateSkillDialog pre-filled with the current skill name and description. \newline
 3. The Admin modifies the name and/or description. \newline
 4. The Admin clicks the Save Changes button. \newline
@@ -959,18 +959,18 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{The admin remains authenticated throu
 
 \end{longtable}
 % =================================================================
-% UC-19.5 Delete Skill
+% UC-38.05 Delete Skill
 % =================================================================
 
-\subparagraph{UC-19.5 Delete Skill}
+\subparagraph{UC-38.05 Delete Skill}
 
 \Needspace{12\baselineskip}
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-19.5 Delete Skill} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-38.05 Delete Skill} \\* \hline
 \endfirsthead
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-19.5 Delete Skill \textit{(cont.)}} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-38.05 Delete Skill \textit{(cont.)}} \\* \hline
 \endhead
 \hline\endfoot
 \endlastfoot
@@ -979,9 +979,9 @@ Created By: & ThuanNT & Date Created: & 14/09/2026 \\ \hline
 
 Primary Actor: & Admin & Secondary Actors: & N/A \\ \hline
 
-Trigger: & \multicolumn{3}{L{11.1cm}|}{When an admin clicks the delete action on an active skill row (UC-19.1) or on the skill detail page (UC-19.2).} \\ \hline
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When an admin clicks the delete action on an active skill row (UC-38.01) or on the skill detail page (UC-38.02).} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Allows an administrator to soft-delete an existing active skill by setting its \texttt{deletedAt} field. Deletion is blocked when the skill is still used by active jobs.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Allows an administrator to soft-delete an existing active skill by setting its \texttt{deletedAt} field. Deletion is blocked when the skill is still used by active jobs.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The user is authenticated as an Admin whose role is allowed to access \texttt{DELETE /api/admin/skills/:id} (guarded by \texttt{AuthGuard} and \texttt{PermissionGuard}). \newline
@@ -991,12 +991,12 @@ Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 
 Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{POST-1} The skill is soft-deleted by setting its \texttt{deletedAt} field to the current timestamp. \newline
-\textbf{POST-2} The deleted skill no longer appears in the active skill list (UC-19.1) unless the Deleted filter is applied, and its actions change from Edit/Delete to Restore.
+\textbf{POST-2} The deleted skill no longer appears in the active skill list (UC-38.01) unless the Deleted filter is applied, and its actions change from Edit/Delete to Restore.
 } \\ \hline
 
 Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{A. Delete Skill} \newline
-1. The Admin clicks the delete action on an active skill row (UC-19.1) or on the skill detail page (UC-19.2). \newline
+1. The Admin clicks the delete action on an active skill row (UC-38.01) or on the skill detail page (UC-38.02). \newline
 2. The system opens the DeleteSkillDialog with a confirmation message. \newline
 3. The Admin confirms the deletion request. \newline
 4. The system sends \texttt{DELETE /api/admin/skills/:id}. \newline
@@ -1054,7 +1054,7 @@ Business Rules: & \multicolumn{3}{L{11.1cm}|}{
 } \\ \hline
 
 Other Information: & \multicolumn{3}{L{11.1cm}|}{
-Deleted skills remain stored in the database and can be restored through UC-19.6.
+Deleted skills remain stored in the database and can be restored through UC-38.06.
 } \\ \hline
 
 Assumptions: & \multicolumn{3}{L{11.1cm}|}{The admin remains authenticated during the deletion process.} \\ \hline
@@ -1062,18 +1062,18 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{The admin remains authenticated durin
 \end{longtable}
 
 % =================================================================
-% UC-19.6 Restore Skill
+% UC-38.06 Restore Skill
 % =================================================================
 
-\subparagraph{UC-19.6 Restore Skill}
+\subparagraph{UC-38.06 Restore Skill}
 
 \Needspace{12\baselineskip}
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-19.6 Restore Skill} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-38.06 Restore Skill} \\* \hline
 \endfirsthead
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-19.6 Restore Skill \textit{(cont.)}} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-38.06 Restore Skill \textit{(cont.)}} \\* \hline
 \endhead
 \hline\endfoot
 \endlastfoot
@@ -1082,9 +1082,9 @@ Created By: & ThuanNT & Date Created: & 14/09/2026 \\ \hline
 
 Primary Actor: & Admin & Secondary Actors: & N/A \\ \hline
 
-Trigger: & \multicolumn{3}{L{11.1cm}|}{When an admin clicks the restore action on a deleted skill row (UC-19.1) or on the skill detail page (UC-19.2).} \\ \hline
+Trigger: & \multicolumn{3}{L{11.1cm}|}{When an admin clicks the restore action on a deleted skill row (UC-38.01) or on the skill detail page (UC-38.02).} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Allows an administrator to restore a soft-deleted skill by setting its \texttt{deletedAt} field to \texttt{null}, making it active again.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Allows an administrator to restore a soft-deleted skill by setting its \texttt{deletedAt} field to \texttt{null}, making it active again.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The user is authenticated as an Admin whose role is allowed to access \texttt{PATCH /api/admin/skills/:id/restore} (guarded by \texttt{AuthGuard} and \texttt{PermissionGuard}). \newline
@@ -1093,12 +1093,12 @@ Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 
 Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{POST-1} The skill's \texttt{deletedAt} field is set to \texttt{null}. \newline
-\textbf{POST-2} The restored skill appears again in the active skill list (UC-19.1) with its Edit/Delete actions.
+\textbf{POST-2} The restored skill appears again in the active skill list (UC-38.01) with its Edit/Delete actions.
 } \\ \hline
 
 Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{A. Restore Skill} \newline
-1. The Admin clicks the restore action on a deleted skill row (UC-19.1) or on the skill detail page (UC-19.2). \newline
+1. The Admin clicks the restore action on a deleted skill row (UC-38.01) or on the skill detail page (UC-38.02). \newline
 2. The system opens the RestoreSkillDialog with a confirmation message. \newline
 3. The Admin confirms the restoration request. \newline
 4. The system sends \texttt{PATCH /api/admin/skills/:id/restore}. \newline
@@ -1149,7 +1149,7 @@ Business Rules: & \multicolumn{3}{L{11.1cm}|}{
 } \\ \hline
 
 Other Information: & \multicolumn{3}{L{11.1cm}|}{
-The restore action is shown only for soft-deleted skills in the list and detail pages; it is the counterpart of the Delete action (UC-19.5).
+The restore action is shown only for soft-deleted skills in the list and detail pages; it is the counterpart of the Delete action (UC-38.05).
 } \\ \hline
 
 Assumptions: & \multicolumn{3}{L{11.1cm}|}{The restored skill remains linked to the same JobSkill and freelancerSkill relations as before deletion.} \\ \hline

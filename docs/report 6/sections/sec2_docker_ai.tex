@@ -10,14 +10,16 @@ When operating the complete system on a local host or cloud virtual machine, the
 
 \begin{center}
 \renewcommand{\arraystretch}{1.45}
-\begin{tabular}{|L{3.2cm}|L{3.2cm}|C{2.0cm}|L{5.6cm}|}
+\begin{tabular}{|L{3.0cm}|L{4.2cm}|C{1.6cm}|L{5.2cm}|}
 \hline
 \rowcolor{hdrfill}\hd{Service Name} & \hd{Container Name} & \hd{Port} & \hd{Endpoint URL \& Functional Role} \\ \hline
-\textbf{Frontend Web} & \texttt{frevia-web} & \texttt{3001} & \url{http://localhost:3001} -- Next.js 16 Client Portal and Admin Management Console. \\ \hline
-\textbf{Backend API} & \texttt{frevia-api} & \texttt{3000} & \url{http://localhost:3000} -- NestJS 11 RESTful API endpoints and WebSocket gateway. \\ \hline
-\textbf{PostgreSQL DB} & \texttt{frevia-postgres} & \texttt{5432} & \texttt{localhost:5432} -- Primary relational database storage (Database: \texttt{frevia}). \\ \hline
-\textbf{Redis Server} & \texttt{frevia-redis} & \texttt{6379} & \texttt{localhost:6379} -- In-memory caching engine, OTP storage, and session broker. \\ \hline
-\textbf{pgAdmin 4} & \texttt{frevia-pgadmin} & \texttt{5050} & \url{http://localhost:5050} -- Web-based database management and visualization console. \\ \hline
+\textbf{Frontend Web} & \texttt{frevia-frontend} & \texttt{3003} & \url{http://localhost:3003} -- Next.js 16 Client Portal and Admin Management Console. \\ \hline
+\textbf{Backend API} & \texttt{frevia-backend} & \texttt{3002} & \url{http://localhost:3002} -- NestJS 11 RESTful API (\texttt{/api}) and Socket.IO WebSocket gateway. \\ \hline
+\textbf{CV Matching AI} & \texttt{frevia-cv-matching} & \texttt{8000} & \url{http://localhost:8000} -- FastAPI service for CV extraction, ChromaDB indexing, and matching. \\ \hline
+\textbf{ID Verification AI} & \texttt{frevia-\allowbreak{}id-\allowbreak{}verification} & \texttt{8001} & \url{http://localhost:8001} -- FastAPI eKYC service (RapidOCR, UltraFace/ArcFace ONNX, MediaPipe). \\ \hline
+\textbf{Ollama LLM} & \texttt{frevia-ollama} & \texttt{11434} & \url{http://localhost:11434} -- Local LLM runtime serving \texttt{qwen3:4b} for \texttt{cv-matching}. \\ \hline
+\textbf{AI Moderation (Optional Host)} & Optional external service & \texttt{8002} & \url{http://host.docker.internal:8002/api/v1} -- Optional external content moderation service (\texttt{AI\_MODERATION\_URL}); auto-approves fallback when unreachable. \\ \hline
+\textbf{PostgreSQL DB} & Local / External & \texttt{5432} & \texttt{localhost:5432} -- Primary relational database configured via \texttt{DIRECT\_URL} / \texttt{DATABASE\_URL}. \\ \hline
 \end{tabular}
 \end{center}
 
@@ -27,7 +29,7 @@ The platform supports \textbf{two distinct execution workflows} tailored for pro
 
 \subsubsection{Option 1: Automated Deployment via Docker Compose (Recommended)}
 
-This workflow packages and orchestrates all 5 system services (\texttt{postgres}, \texttt{redis}, \texttt{pgadmin}, \texttt{api}, \texttt{web}) within an isolated internal bridge network (\texttt{frevia-network}) using a single terminal command:
+This workflow packages and orchestrates all 5 system services (\texttt{id-verification}, \texttt{cv-matching}, \texttt{ollama}, \texttt{backend}, \texttt{frontend}) within the Compose stack using a single terminal command (connecting to PostgreSQL via \texttt{DATABASE\_URL}):
 
 \begin{figure}[H]
   \centering
@@ -40,14 +42,14 @@ This workflow packages and orchestrates all 5 system services (\texttt{postgres}
 \begin{lstlisting}[frame=single,basicstyle=\footnotesize\ttfamily,backgroundcolor=\color{codebg}]
 docker compose up -d --build
 \end{lstlisting}
-  Docker builds production images for the API and Web applications, initializes persistent volumes, and launches all containers in detached mode.
-  \item \rbadge{2} Run \texttt{docker compose ps} to verify container execution states: confirm that the database and cache report \texttt{Up (healthy)} status and the port mappings align with the architecture specification.
+  Docker builds images for the API, Web frontend, and AI services, initializes model/vector volumes, and launches all containers in detached mode.
+  \item \rbadge{2} Run \texttt{docker compose ps} to verify container execution states: confirm that health checks report \texttt{Up (healthy)} and port mappings align with the specification.
   \item Routine monitoring and shutdown commands:
 \begin{lstlisting}[frame=single,basicstyle=\footnotesize\ttfamily,backgroundcolor=\color{codebg}]
-# Tail live logs for the API and Web services
-docker compose logs -f api web
+# Tail live logs for the API, Web, and AI services
+docker compose logs -f backend frontend cv-matching id-verification
 
-# Gracefully terminate all containers while retaining database volume data
+# Gracefully terminate all containers while retaining persistent volumes
 docker compose down
 \end{lstlisting}
 \end{itemize}
@@ -56,15 +58,15 @@ docker compose down
 
 For active development with hot-module reloading and interactive debugging:
 \begin{enumerate}[leftmargin=1.8em,itemsep=3pt]
-  \item Start the backend infrastructure services via Docker:
+  \item Ensure PostgreSQL is running locally or externally and start the AI services if needed:
 \begin{lstlisting}[frame=single,basicstyle=\footnotesize\ttfamily,backgroundcolor=\color{codebg}]
-docker compose up -d postgres redis pgadmin
+docker compose up -d ollama id-verification cv-matching
 \end{lstlisting}
   \item Launch the NestJS backend and Next.js frontend concurrently across the monorepo:
 \begin{lstlisting}[frame=single,basicstyle=\footnotesize\ttfamily,backgroundcolor=\color{codebg}]
 pnpm dev
 \end{lstlisting}
-  Turborepo coordinates concurrent processes: the NestJS API compiles on port \texttt{3000} and Next.js compiles on port \texttt{3001} with instantaneous hot reloading.
+  Turborepo coordinates concurrent processes: the NestJS API runs on its configured local \texttt{PORT} (Docker Compose exposes it on host port \texttt{3002}) and Next.js runs with hot module reloading.
 \end{enumerate}
 
 \subsection{Post-Installation System Verification}
@@ -76,15 +78,15 @@ Following deployment, evaluators should verify system availability across both c
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.90\textwidth]{images/install/a09_verify_web_running.png}
-  \caption{Verifying the Next.js web application running at http://localhost:3001}
+  \caption{Verifying the Next.js web application running on the local Web portal}
 \end{figure}
 
 \begin{itemize}[leftmargin=1.5em,itemsep=3pt]
-  \item \rbadge{1} Open a modern web browser and navigate to \url{http://localhost:3001}. Confirm that the header renders navigation links (\textit{Browse Jobs}, \textit{Freelancers}, \textit{Community}) alongside \textbf{Sign in} and \textbf{Sign up} buttons.
-  \item \rbadge{2} Verify that the hero banner renders correctly with the AI search interface, featured skills pills, and call-to-action buttons.
+  \item \rbadge{1} Open a modern web browser and navigate to \url{http://localhost:3003} (in Docker Compose) or the configured local frontend URL. Confirm that the header renders navigation links (\textit{Browse Jobs}, \textit{Freelancers}, \textit{Community}) alongside \textbf{Sign in} and \textbf{Sign up} buttons.
+  \item \rbadge{2} Verify that the hero banner renders correctly with the job search interface, featured skills pills, and call-to-action buttons.
 \end{itemize}
 
-\subsubsection{2. Backend RESTful API \& Health Check Verification}
+\subsubsection{2. Backend RESTful API \& AI Health Check Verification}
 
 \begin{figure}[H]
   \centering
@@ -93,31 +95,31 @@ Following deployment, evaluators should verify system availability across both c
 \end{figure}
 
 \begin{itemize}[leftmargin=1.5em,itemsep=3pt]
-  \item \rbadge{1} Query the public skills catalog API:
+  \item \rbadge{1} Query the public job categories API on the backend container:
 \begin{lstlisting}[frame=single,basicstyle=\footnotesize\ttfamily,backgroundcolor=\color{codebg}]
-Invoke-RestMethod -Uri "http://localhost:3000/skills" -Method Get
+Invoke-RestMethod -Uri "http://localhost:3002/api/job-categories" -Method Get
 \end{lstlisting}
-  Confirm an \textbf{HTTP 200 OK} status returning a structured JSON response array populated with seed skill records.
-  \item \rbadge{2} Test the Redis cache connection:
+  Confirm an \textbf{HTTP 200 OK} status returning a structured JSON response populated with seeded job category records.
+  \item \rbadge{2} Test the AI microservice health checks:
 \begin{lstlisting}[frame=single,basicstyle=\footnotesize\ttfamily,backgroundcolor=\color{codebg}]
-docker exec -it frevia-redis redis-cli ping
-# Expected output: PONG
+Invoke-RestMethod -Uri "http://localhost:8000/healthz" -Method Get
+Invoke-RestMethod -Uri "http://localhost:8001/healthz" -Method Get
 \end{lstlisting}
 \end{itemize}
 
-\subsubsection{3. Pre-Configured Test Accounts}
+\subsubsection{3. Seeded Test Accounts}
 
-The database seeder automatically initializes dedicated accounts across all primary system roles to streamline functional evaluation:
+Running \texttt{pnpm --filter api seed} provisions dedicated evaluation accounts across all four core system roles using credentials supplied via environment or Infisical secrets (\texttt{SEED\_\allowbreak{}*\_\allowbreak{}EMAIL} and \texttt{SEED\_\allowbreak{}*\_\allowbreak{}PASSWORD}, with no hardcoded fallback passwords in source control):
 
 \begin{center}
 \renewcommand{\arraystretch}{1.45}
-\begin{longtable}{|L{2.8cm}|L{4.2cm}|L{3.2cm}|L{4.2cm}|}
+\begin{longtable}{|L{2.8cm}|L{5.1cm}|L{2.6cm}|L{4.1cm}|}
 \hline
-\rowcolor{hdrfill}\hd{Role} & \hd{Email Address} & \hd{Default Password} & \hd{Assigned Access Scope} \\ \hline
+\rowcolor{hdrfill}\hd{Role} & \hd{Configuration Variables} & \hd{Portal / Access} & \hd{Assigned Access Scope} \\ \hline
 \endhead
-\textbf{Administrator} & \texttt{admin@gmail.com} & \texttt{admin123456} & Complete access to \url{http://localhost:3001/admin} (All 275 permissions). \\ \hline
-\textbf{Freelancer} & \texttt{freelancer@gmail.com} & \texttt{freelancer123456} & Profile management, AI CV analysis, proposals, contract milestones, payouts. \\ \hline
-\textbf{Client} & \texttt{client@gmail.com} & \texttt{client123456} & Job posting, candidate review, milestone funding, escrow deposits. \\ \hline
-\textbf{Expert} & \texttt{expert@gmail.com} & \texttt{expert123456} & Expert profile workspace (\texttt{/expert/profile}), revision submissions. \\ \hline
+\textbf{Administrator} & \texttt{SEED\_\allowbreak{}ADMIN\_\allowbreak{}EMAIL} / \texttt{SEED\_\allowbreak{}ADMIN\_\allowbreak{}PASSWORD} & \texttt{/\allowbreak admin} & Complete access to the Admin Portal permission suite. \\ \hline
+\textbf{Freelancer} & \texttt{SEED\_\allowbreak{}FREELANCER\_\allowbreak{}EMAIL} / \texttt{SEED\_\allowbreak{}FREELANCER\_\allowbreak{}PASSWORD} & \texttt{/\allowbreak freelancer} & Profile management, AI CV analysis, proposals, contract milestones, payouts. \\ \hline
+\textbf{Client} & \texttt{SEED\_\allowbreak{}CLIENT\_\allowbreak{}EMAIL} / \texttt{SEED\_\allowbreak{}CLIENT\_\allowbreak{}PASSWORD} & \texttt{/\allowbreak client} & Job posting, candidate review, milestone funding, escrow deposits. \\ \hline
+\textbf{Expert} & \texttt{SEED\_\allowbreak{}EXPERT\_\allowbreak{}EMAIL} / \texttt{SEED\_\allowbreak{}EXPERT\_\allowbreak{}PASSWORD} & \texttt{/\allowbreak admin/\allowbreak profile}, \texttt{/\allowbreak admin/\allowbreak disputes} & Expert dispute review (\texttt{/\allowbreak admin/\allowbreak disputes}) and profile (\texttt{/\allowbreak admin/\allowbreak profile}). \\ \hline
 \end{longtable}
 \end{center}

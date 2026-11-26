@@ -127,7 +127,7 @@ describe('ProposalRepository', () => {
         message:
           'You have been hired for AI Dev App. Review and sign the contract to begin work.',
         data: {
-          href: '/proposals/18',
+          href: '/freelancer/proposals/18',
           proposalId: 18,
           jobId: 10,
           contractId: 22,

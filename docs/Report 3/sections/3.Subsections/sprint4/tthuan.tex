@@ -8,10 +8,10 @@
 \subsection{Banner Management}
 
 % -----------------------------------------------------------------
-% UC-37.01: View Banner List
+% UC-37.01: View Banners List
 % -----------------------------------------------------------------
 \Needspace{12\baselineskip}
-\subsubsection{ View Banner List}
+\subsubsection{ View Banners List}
 
 \fnhead{Function Trigger}
 An administrator navigates to the Banners management page from the admin dashboard sidebar navigation.\newline
@@ -41,8 +41,8 @@ An administrator navigates to the Banners management page from the admin dashboa
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
     \item The client initiates an HTTP request: \texttt{GET /api/admin/banners} with query parameters (\texttt{page}, \texttt{limit}, \texttt{search}, \texttt{position}, \texttt{sortBy}, \texttt{sortOrder}).
     \item The backend \texttt{AuthGuard} validates the administrator's JWT access token, and \texttt{PermissionGuard} verifies administrative route authorization.
-    \item \texttt{BannersAdminController.listBanners()} parses query parameters via \texttt{BannerAdminQueryDto}.
-    \item \texttt{BannersAdminRepository.listBanners()} executes \texttt{prisma.advertisementBanner.findMany} with:
+    \item \texttt{Banners\allowbreak{}Admin\allowbreak{}Controller.\allowbreak{}listBanners()} parses query parameters via \texttt{Banner\allowbreak{}Admin\allowbreak{}Query\allowbreak{}Dto}.
+    \item \texttt{Banners\allowbreak{}Admin\allowbreak{}Repository.\allowbreak{}listBanners()} executes \texttt{prisma.\allowbreak{}advertisement\allowbreak{}Banner.\allowbreak{}findMany} with:
         \begin{itemize}[leftmargin=1.6em,topsep=2pt,itemsep=2pt,parsep=0pt]
             \item Substring search on \texttt{title} using case-insensitive mode if \texttt{search} is provided.
             \item Exact filter on \texttt{position} if a specific position slot is selected.
@@ -96,8 +96,8 @@ sortOrder & Must strictly be one of: \texttt{asc}, \texttt{desc}.\\ \hline
 
 \sublabel{Normal Flow}
 \begin{enumerate}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt]
-    \item The administrator opens the \texttt{/admin/banners} page from the admin dashboard.
-    \item The client issues \texttt{GET /api/admin/banners} with query parameters (\texttt{page=1\&limit=10\&sortBy=id\&sortOrder=desc}).
+    \item The administrator opens the \texttt{/\allowbreak{}admin/\allowbreak{}banners} page from the admin dashboard.
+    \item The client issues \texttt{GET /\allowbreak{}api/\allowbreak{}admin/\allowbreak{}banners} with query parameters (\texttt{page=\allowbreak{}1\&\allowbreak{}limit=\allowbreak{}10\&\allowbreak{}sortBy=\allowbreak{}id\&\allowbreak{}sortOrder=\allowbreak{}desc}).
     \item The backend validates administrative authentication and route permissions.
     \item The repository queries advertisement banners and counts total matching records.
     \item The backend returns HTTP 200 with the banners array and pagination metadata.
@@ -129,10 +129,10 @@ pagination.totalPages & Total calculated pages available.\\ \hline
 \noindent The administrator views the paginated list of advertisement banners, inspects status and positions, and can initiate creation, inspection, modification, or deletion actions.
 
 % -----------------------------------------------------------------
-% UC-37.02: View Banner Detail
+% UC-37.02: View Banner Details
 % -----------------------------------------------------------------
 \Needspace{12\baselineskip}
-\subsubsection{ View Banner Detail}
+\subsubsection{ View Banner Details}
 
 \fnhead{Function Trigger}
 An administrator clicks on a banner row or the ``View detail'' action on the banner list page, navigating to \texttt{/admin/banners/[id]}.\newline
@@ -162,9 +162,9 @@ An administrator clicks on a banner row or the ``View detail'' action on the ban
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
     \item The client sends an HTTP request: \texttt{GET /api/admin/banners/:id}.
     \item The backend validates administrative token and route permissions.
-    \item \texttt{BannersAdminController.getBannerDetail()} parses \texttt{id} via \texttt{ParseIntPipe}.
-    \item \texttt{BannersAdminRepository.getBannerDetail(id)} queries \texttt{prisma.advertisementBanner.findUnique} by primary key \texttt{id}.
-    \item If the banner record is not found, the service throws \texttt{BannerAdminNotFoundException} (HTTP 404).
+    \item \texttt{Banners\allowbreak{}Admin\allowbreak{}Controller.\allowbreak{}get\allowbreak{}Banner\allowbreak{}Detail()} parses \texttt{id} via \texttt{ParseIntPipe}.
+    \item \texttt{Banners\allowbreak{}Admin\allowbreak{}Repository.\allowbreak{}get\allowbreak{}Banner\allowbreak{}Detail(\allowbreak{}id)} queries \texttt{prisma.\allowbreak{}advertisement\allowbreak{}Banner.\allowbreak{}findUnique} by primary key \texttt{id}.
+    \item If the banner record is not found, the service throws \texttt{Banner\allowbreak{}Admin\allowbreak{}Not\allowbreak{}Found\allowbreak{}Exception} (HTTP 404).
     \item If found, returns the complete banner entity with HTTP 200.
     \item The frontend renders the banner details layout, full image preview, and action controls.
 \end{itemize}
@@ -280,7 +280,7 @@ An administrator clicks the ``Create Banner'' button on the banner list page (\t
     \item The client issues an HTTP request: \texttt{POST /api/admin/banners} with JSON payload conforming to \texttt{BannerCreateBodySchema}.
     \item \texttt{BannersAdminRepository.createBanner()} checks whether an active banner already occupies the selected position slot (\texttt{prisma.advertisementBanner.findFirst({ where: { position } })}).
     \item If position is already occupied, the service throws \texttt{BannerPositionTakenException} (HTTP 409).
-    \item The repository inserts the new banner record via \texttt{prisma.advertisementBanner.create()}.
+    \item The repository inserts the new banner record via \texttt{prisma.\allowbreak{}advertisement\allowbreak{}Banner.\allowbreak{}create()}.
     \item The backend returns HTTP 201 with the created banner entity.
     \item The frontend shows a success toast notification, closes the dialog modal, and refreshes the banner list table.
 \end{itemize}
@@ -406,9 +406,9 @@ An administrator clicks the Edit icon in the banner table row or the ``Edit Bann
 \sublabel{Data Processing Overview}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
     \item The client pre-fills the form with existing banner fields.
-    \item If a new replacement image is selected, the client uploads it via \texttt{POST /api/admin/banners/upload-image} before submitting changes.
-    \item The client issues an HTTP request: \texttt{PATCH /api/admin/banners/:id} with updated attributes.
-    \item \texttt{BannersAdminRepository.updateBanner(id, data)}:
+    \item If a new replacement image is selected, the client uploads it via \texttt{POST /\allowbreak{}api/\allowbreak{}admin/\allowbreak{}banners/\allowbreak{}upload-\allowbreak{}image} before submitting changes.
+    \item The client issues an HTTP request: \texttt{PATCH /\allowbreak{}api/\allowbreak{}admin/\allowbreak{}banners/\allowbreak{}:\allowbreak{}id} with updated attributes.
+    \item \texttt{Banners\allowbreak{}Admin\allowbreak{}Repository.\allowbreak{}updateBanner(\allowbreak{}id, data)}:
         \begin{itemize}[leftmargin=1.6em,topsep=2pt,itemsep=2pt,parsep=0pt]
             \item Verifies target banner exists; throws \texttt{BannerAdminNotFoundException} if not found.
             \item If \texttt{position} is changed, checks if another banner already occupies the new position slot (\texttt{id != currentId}). Throws \texttt{BannerPositionTakenException} if taken.
@@ -536,10 +536,10 @@ An administrator clicks the Delete action icon (trash can) on a banner table row
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
     \item The administrator confirms the deletion in the modal dialog.
     \item The client sends an HTTP request: \texttt{DELETE /api/admin/banners/:id}.
-    \item \texttt{BannersAdminController.deleteBanner(id)} parses \texttt{id} via \texttt{ParseIntPipe}.
-    \item \texttt{BannersAdminRepository.deleteBanner(id)} executes \texttt{prisma.advertisementBanner.deleteMany({ where: { id } })}.
-    \item If \texttt{result.count === 0}, the service throws \texttt{BannerAdminNotFoundException} (HTTP 404).
-    \item Returns HTTP 200 with \texttt{\{ message: "Success.BannerDeleted" \}}.
+    \item \texttt{Banners\allowbreak{}Admin\allowbreak{}Controller.\allowbreak{}deleteBanner(\allowbreak{}id)} parses \texttt{id} via \texttt{ParseIntPipe}.
+    \item \texttt{Banners\allowbreak{}Admin\allowbreak{}Repository.\allowbreak{}deleteBanner(\allowbreak{}id)} executes \texttt{prisma.\allowbreak{}advertisement\allowbreak{}Banner.\allowbreak{}deleteMany(\allowbreak{}{ where: { id } })}.
+    \item If \texttt{result.\allowbreak{}count =\allowbreak{}=\allowbreak{}= 0}, the service throws \texttt{Banner\allowbreak{}Admin\allowbreak{}Not\allowbreak{}Found\allowbreak{}Exception} (HTTP 404).
+    \item Returns HTTP 200 with \texttt{\{ message: "Success.\allowbreak{}BannerDeleted" \}}.
     \item The frontend displays a success toast, closes the confirmation dialog, and triggers \texttt{router.refresh()} to remove the row from the table.
 \end{itemize}
 
@@ -610,10 +610,10 @@ message & Success confirmation message string (\texttt{Success.BannerDeleted}).\
 \subsection{Skill Management}
 
 % -----------------------------------------------------------------
-% UC-38.01: View Skill List
+% UC-38.01: View Skills List
 % -----------------------------------------------------------------
 \Needspace{12\baselineskip}
-\subsubsection{ View Skill List}
+\subsubsection{ View Skills List}
 
 \fnhead{Function Trigger}
 An administrator navigates to the Skills management page from the admin dashboard sidebar navigation.\newline
@@ -642,9 +642,9 @@ An administrator navigates to the Skills management page from the admin dashboar
 \sublabel{Data Processing Overview}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
     \item The client initiates an HTTP request: \texttt{GET /api/admin/skills} with query parameters (\texttt{page}, \texttt{limit}, \texttt{search}, \texttt{deleted}, \texttt{sortBy}, \texttt{sortOrder}).
-    \item The backend \texttt{AuthGuard} and \texttt{PermissionGuard} verify the administrator's credentials and permissions.
-    \item \texttt{SkillsAdminController.listSkills()} parses query parameters via \texttt{SkillAdminQueryDto}.
-    \item \texttt{SkillsAdminRepository.listSkills()} queries \texttt{prisma.skill.findMany}:
+    \item The backend \texttt{AuthGuard} and \texttt{Permission\allowbreak{}Guard} verify the administrator's credentials and permissions.
+    \item \texttt{Skills\allowbreak{}Admin\allowbreak{}Controller.\allowbreak{}listSkills()} parses query parameters via \texttt{Skill\allowbreak{}Admin\allowbreak{}Query\allowbreak{}Dto}.
+    \item \texttt{Skills\allowbreak{}Admin\allowbreak{}Repository.\allowbreak{}listSkills()} queries \texttt{prisma.\allowbreak{}skill.\allowbreak{}findMany}:
         \begin{itemize}[leftmargin=1.6em,topsep=2pt,itemsep=2pt,parsep=0pt]
             \item If \texttt{search} is provided, executes case-insensitive \texttt{OR} query matching on \texttt{name}, \texttt{slug}, or \texttt{description}.
             \item If \texttt{deleted === 'true'}, filters records where \texttt{deletedAt != null}; if \texttt{deleted === 'false'}, filters records where \texttt{deletedAt = null}.
@@ -733,10 +733,10 @@ pagination.totalPages & Total calculated pages available.\\ \hline
 \noindent The administrator inspects the master skill catalog, views job usage metrics, and can initiate creation, editing, deletion, or restoration.
 
 % -----------------------------------------------------------------
-% UC-38.02: View Skill Detail
+% UC-38.02: View Skill Details
 % -----------------------------------------------------------------
 \Needspace{12\baselineskip}
-\subsubsection{ View Skill Detail}
+\subsubsection{ View Skill Details}
 
 \fnhead{Function Trigger}
 An administrator clicks on a skill row or name in the skill list, navigating to \texttt{/admin/skills/[id]}.\newline
@@ -1111,8 +1111,8 @@ An administrator clicks the Delete action icon (trash can) on a skill table row 
             \item Verifies target skill exists; throws \texttt{SkillAdmin\-Not\-Found\-Exception} if missing.
             \item Executes an atomic transaction via \texttt{prisma.\$transaction}:
                 \begin{enumerate}
-                    \item Deletes all freelancer associations referencing this skill: \texttt{prisma.freelancerSkill.deleteMany({ where: { skillId: id } })}.
-                    \item Sets soft-deletion timestamp on the skill: \texttt{prisma.skill.update({ where: { id }, data: { deletedAt: new Date() } })}.
+                    \item Deletes all freelancer associations referencing this skill: \texttt{prisma.\allowbreak{}freelancer\allowbreak{}Skill.\allowbreak{}deleteMany(\allowbreak{}{ where: { skillId: id } })}.
+                    \item Sets soft-deletion timestamp on the skill: \texttt{prisma.\allowbreak{}skill.\allowbreak{}update(\allowbreak{}{ where: { id }, data: { deletedAt: new Date() } })}.
                 \end{enumerate}
             \item Leaves \texttt{job\_skills} records intact so existing historical job postings remain accurate.
         \end{itemize}

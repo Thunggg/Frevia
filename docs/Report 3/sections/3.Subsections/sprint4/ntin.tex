@@ -19,8 +19,8 @@
 \subsubsection{ Connect Stripe Account}
 
 \fnhead{Function Trigger}
-A Freelancer clicks ``Set up Payouts'' or ``Connect Stripe'' in their Billing and Payout Settings.\newline
-\textbf{Navigation path:} Freelancer Dashboard $\rightarrow$ Settings $\rightarrow$ Payout Settings (\texttt{/freelancer/settings/payouts}) $\rightarrow$ Click ``Connect with Stripe''.
+A Freelancer clicks ``Set up Payouts'' or ``Connect Stripe'' in their Payments dashboard.\newline
+\textbf{Navigation path:} Freelancer Dashboard $\rightarrow$ Payments (\texttt{/\allowbreak{}freelancer/\allowbreak{}payments}) $\rightarrow$ Click ``Connect with Stripe''.
 
 \fnhead{Function Description}
 
@@ -36,7 +36,7 @@ A Freelancer clicks ``Set up Payouts'' or ``Connect Stripe'' in their Billing an
 
 \sublabel{Interface}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-      \item Payout Settings screen at \texttt{/freelancer/settings/payouts}.
+      \item Payments \& Payouts screen at \texttt{/freelancer/payments}.
       \item Status banner indicating connection state: ``Unconnected'', ``Action Required'', or ``Connected \& Verified''.
       \item Primary action button: ``Connect with Stripe'' or ``Update Payout Details''.
       \item Stripe-hosted Express onboarding flow for identity verification, tax details, and bank account entry.
@@ -115,14 +115,14 @@ A Freelancer clicks ``Set up Payouts'' or ``Connect Stripe'' in their Billing an
 \subsubsection{ Check Stripe Connect Status}
 
 \fnhead{Function Trigger}
-A Freelancer accesses their Payout Settings or an Admin inspects freelancer payout readiness.\newline
-\textbf{Navigation path:} Freelancer Dashboard $\rightarrow$ Payout Settings (\texttt{/freelancer/settings/payouts}).
+An authenticated Freelancer opens the Payments dashboard to check connected Stripe payout readiness.\newline
+\textbf{Navigation path:} Freelancer Dashboard $\rightarrow$ Payments (\texttt{/freelancer/payments}).
 
 \fnhead{Function Description}
 
 \sublabel{Actors / Roles}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-      \item \textbf{Primary Actor:} Freelancer, Administrator.
+      \item \textbf{Primary Actor:} Freelancer (authenticated user).
       \item \textbf{Secondary Actor:} Stripe Connect.
       \item \textbf{Supporting Systems:} Frevia Web application, Frevia REST API, Prisma ORM, and PostgreSQL database.
 \end{itemize}
@@ -200,8 +200,8 @@ A Freelancer accesses their Payout Settings or an Admin inspects freelancer payo
 \subsubsection{ View Saved Payment Methods}
 
 \fnhead{Function Trigger}
-A Client navigates to the ``Payment Methods'' tab in Billing Settings.\newline
-\textbf{Navigation path:} Client Dashboard $\rightarrow$ Settings $\rightarrow$ Billing $\rightarrow$ Payment Methods (\texttt{/client/settings/billing}).
+A Client navigates to the ``Payment Methods'' section in Billing \& Payments.\newline
+\textbf{Navigation path:} Client Dashboard $\rightarrow$ Payments (\texttt{/client/payments}).
 
 \fnhead{Function Description}
 
@@ -238,7 +238,7 @@ A Client navigates to the ``Payment Methods'' tab in Billing Settings.\newline
       \item Top section features secure payment guarantee badge and total cards counter.
       \item Grid of credit card components showing card brand emblem, masked number, and expiry date.
       \item Default card is highlighted with a blue border and ``Default'' badge.
-      \item Secondary action button ``Add New Card'' triggers Stripe Elements SetupIntent.
+      \item Saved payment cards attached to the Client's Stripe Customer profile are displayed (new cards can be saved during Stripe Checkout or off-session payments).
 \end{itemize}
 
 \fnhead{Function Details}
@@ -398,9 +398,9 @@ A Client clicks ``Remove'' or ``Delete'' on a saved card in Payment Methods.\new
 
 \sublabel{Data Processing Overview}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-      \item Client submits an HTTP request: \texttt{DELETE /api/payments/payment-methods/:paymentMethodId}.
-      \item \texttt{PaymentService.removePaymentMethod()} verifies ownership of the card.
-      \item Calls \texttt{stripe.paymentMethods.detach(paymentMethodId)}.
+      \item Client submits an HTTP request: \texttt{DELETE /\allowbreak{}api/\allowbreak{}payments/\allowbreak{}payment-\allowbreak{}methods/\allowbreak{}:\allowbreak{}payment\allowbreak{}Method\allowbreak{}Id}.
+      \item \texttt{PaymentService.\allowbreak{}remove\allowbreak{}Payment\allowbreak{}Method()} verifies ownership of the card.
+      \item Calls \texttt{stripe.\allowbreak{}paymentMethods.\allowbreak{}detach(\allowbreak{}payment\allowbreak{}Method\allowbreak{}Id)}.
       \item Returns HTTP 200 with success confirmation.
 \end{itemize}
 
@@ -587,7 +587,7 @@ A Client clicks ``Deposit into Escrow'' on a milestone and chooses Stripe Checko
 
 \sublabel{Data Processing Overview}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-      \item Client requests \texttt{POST /api/payments/contracts/:contractId/milestones/:milestoneId/fund/checkout-session} with optional \texttt{returnUrl}.
+      \item Client requests \texttt{POST /\allowbreak{}api/\allowbreak{}payments/\allowbreak{}contracts/\allowbreak{}:\allowbreak{}contractId/\allowbreak{}milestones/\allowbreak{}:\allowbreak{}milestoneId/\allowbreak{}fund/\allowbreak{}checkout-\allowbreak{}session} with optional \texttt{returnUrl}.
       \item \texttt{PaymentService} validates caller is the contract Client and milestone is in \texttt{PENDING} status.
       \item Creates Stripe Checkout Session configured with milestone line items and metadata.
       \item Returns HTTP 200 with \texttt{checkoutUrl} and \texttt{sessionId}.
@@ -633,8 +633,8 @@ A Client clicks ``Deposit into Escrow'' on a milestone and chooses Stripe Checko
 
 \sublabel{Abnormal Flow / Exception Handling}
 \begin{flowtable}{Case}{Description}
-      A1 & Milestone already funded. API returns HTTP 400: ``Milestone is already funded.''\\ \hline
-      A2 & Payment declined by card issuer. Stripe displays decline message on checkout page.\\ \hline
+      A1 & Milestone already funded or contract not active. API returns HTTP 422 (\texttt{MilestoneNotEligibleForFundingException} or \texttt{ContractNotActiveException}).\\ \hline
+      A2 & Caller is not the contract Client. API returns HTTP 403 Forbidden (\texttt{PaymentForbiddenException}).\\ \hline
 \end{flowtable}
 
 \sublabel{Output Data}
@@ -680,9 +680,9 @@ A Client selects a saved payment card to fund a milestone escrow balance.\newlin
 
 \sublabel{Data Processing Overview}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-      \item Client requests \texttt{POST /api/payments/contracts/:contractId/milestones/:milestoneId/fund/saved-card} with optional \texttt{paymentMethodId}.
-      \item \texttt{PaymentService.chargeSavedCardForMilestoneFund()} verifies caller is contract Client and milestone is in \texttt{PENDING} status.
-      \item Uses default card or specified \texttt{paymentMethodId} to execute off-session charge via Stripe PaymentIntent.
+      \item Client requests \texttt{POST /\allowbreak{}api/\allowbreak{}payments/\allowbreak{}contracts/\allowbreak{}:\allowbreak{}contractId/\allowbreak{}milestones/\allowbreak{}:\allowbreak{}milestoneId/\allowbreak{}fund/\allowbreak{}saved-\allowbreak{}card} with optional \texttt{payment\allowbreak{}Method\allowbreak{}Id}.
+      \item \texttt{PaymentService.\allowbreak{}charge\allowbreak{}Saved\allowbreak{}Card\allowbreak{}For\allowbreak{}Milestone\allowbreak{}Fund()} verifies caller is contract Client and milestone is in \texttt{PENDING} status.
+      \item Uses default card or specified \texttt{payment\allowbreak{}Method\allowbreak{}Id} to execute off-session charge via Stripe PaymentIntent.
       \item Upon successful charge, transitions milestone paymentStatus to \texttt{FUNDED}.
       \item Creates ledger transaction record (\texttt{ESCROW\_DEPOSIT}).
       \item Returns HTTP 200 with success status and transaction ID.
@@ -729,7 +729,7 @@ A Client selects a saved payment card to fund a milestone escrow balance.\newlin
 \sublabel{Abnormal Flow / Exception Handling}
 \begin{flowtable}{Case}{Description}
       A1 & 3D Secure required. Stripe returns \texttt{requires\_action}; frontend launches 3DS challenge.\\ \hline
-      A2 & Card declined or insufficient funds. API returns HTTP 400 with Stripe decline code.\\ \hline
+      A2 & Off-session charge fails or requires Checkout. API returns HTTP 402 Payment Required.\\ \hline
 \end{flowtable}
 
 \sublabel{Output Data}
@@ -751,14 +751,14 @@ A Client selects a saved payment card to fund a milestone escrow balance.\newlin
 \subsubsection{ Release Milestone Escrow Payment}
 
 \fnhead{Function Trigger}
-A Client approves a milestone deliverable or an Admin executes dispute settlement.\newline
-\textbf{Navigation path:} Contract Workspace $\rightarrow$ Milestones Tab $\rightarrow$ Milestone Submissions $\rightarrow$ Click ``Approve \& Release Funds''.
+A Client approves and releases escrow payment for a funded milestone.\newline
+\textbf{Navigation path:} Contract Workspace $\rightarrow$ Milestones Tab $\rightarrow$ Click ``Release Payment'' / ``Approve''.
 
 \fnhead{Function Description}
 
 \sublabel{Actors / Roles}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-      \item \textbf{Primary Actor:} Client (\texttt{CLIENT} role), Administrator.
+      \item \textbf{Primary Actor:} Client (\texttt{CLIENT} role only).
       \item \textbf{Secondary Actor:} Stripe Connect.
       \item \textbf{Supporting Systems:} Frevia Web application, Frevia REST API, Stripe Transfer API, Prisma ORM, and PostgreSQL database.
 \end{itemize}
@@ -775,9 +775,9 @@ A Client approves a milestone deliverable or an Admin executes dispute settlemen
 
 \sublabel{Data Processing Overview}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-      \item Client requests \texttt{POST /api/payments/contracts/:contractId/milestones/:milestoneId/release}.
-      \item \texttt{PaymentService.releaseMilestone()} verifies caller is contract Client and milestone is in \texttt{FUNDED} status.
-      \item Verifies Freelancer has an active, verified Stripe account with \texttt{payouts\_enabled = true}.
+      \item Client requests \texttt{POST /\allowbreak{}api/\allowbreak{}payments/\allowbreak{}contracts/\allowbreak{}:\allowbreak{}contractId/\allowbreak{}milestones/\allowbreak{}:\allowbreak{}milestoneId/\allowbreak{}release}.
+      \item \texttt{PaymentService.\allowbreak{}release\allowbreak{}Milestone()} verifies caller is contract Client and milestone is in \texttt{FUNDED} status.
+      \item Verifies Freelancer has an active, verified Stripe account with \texttt{payouts\_\allowbreak{}enabled = true}.
       \item Calculates platform commission (5\%) and net freelancer amount (95\%).
       \item Executes \texttt{stripe.transfers.create()} transferring net amount to Freelancer's \texttt{stripeAccountId}.
       \item Updates milestone paymentStatus to \texttt{RELEASED} and status to \texttt{COMPLETED}.
@@ -803,15 +803,15 @@ A Client approves a milestone deliverable or an Admin executes dispute settlemen
 
 \sublabel{Validation Rules}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-      \item Caller must be contract Client or Administrator.
+      \item Caller must be the contract Client (\texttt{contract.clientId === userId}; Administrators are rejected with HTTP 403).
       \item Milestone paymentStatus must be \texttt{FUNDED}.
       \item Freelancer must have verified Stripe account with payouts enabled.
 \end{itemize}
 
 \sublabel{Business Rules}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
-      \item BR-PAYMENT-10: Milestone escrow funds can only be released upon explicit client approval or administrative dispute resolution.
-      \item BR-PAYMENT-11: Platform commission is deducted automatically at the moment of escrow transfer.
+      \item BR-PAYMENT-10: Milestone escrow funds on \texttt{/release} can only be released by the contract Client (\texttt{PaymentService.releaseMilestone()}); Expert arbitration settlements use \texttt{executeDisputeSettlementPayout()}.
+      \item BR-PAYMENT-11: Platform commission (5\%) is deducted automatically at the moment of escrow transfer.
 \end{itemize}
 
 \sublabel{Normal Flow}
@@ -825,8 +825,8 @@ A Client approves a milestone deliverable or an Admin executes dispute settlemen
 
 \sublabel{Abnormal Flow / Exception Handling}
 \begin{flowtable}{Case}{Description}
-      A1 & Freelancer Stripe account not connected or restricted. API returns HTTP 400: ``Freelancer has not configured a valid payout account.''\\ \hline
-      A2 & Milestone not in FUNDED status. API returns HTTP 400: ``Milestone escrow funds have not been deposited.''\\ \hline
+      A1 & Freelancer Stripe account not connected or restricted. API returns HTTP 422 (\texttt{FreelancerStripeNotConnectedException} or \texttt{MilestoneAlreadyReleasedException}).\\ \hline
+      A2 & Milestone not in FUNDED status or caller is not contract Client. API returns HTTP 422 (\texttt{MilestoneNotFundedException}) or HTTP 403 (\texttt{PaymentForbiddenException}).\\ \hline
 \end{flowtable}
 
 \sublabel{Output Data}
@@ -882,7 +882,7 @@ A user navigates to the ``Transactions'' tab in the financial dashboard.\newline
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
       \item Top KPI cards show cumulative transaction volumes and current escrow held.
       \item Table lists transaction records with colored status badges (green Succeeded, amber Pending).
-      \item Action icon allows downloading official PDF payment receipts.
+      \item Each row displays transaction date, type badge, status badge, amount, and linked contract reference.
 \end{itemize}
 
 \fnhead{Function Details}
@@ -938,14 +938,14 @@ A user navigates to the ``Transactions'' tab in the financial dashboard.\newline
 \subsubsection{ Sync Payment Intent Status}
 
 \fnhead{Function Trigger}
-A user returns from a 3D Secure bank verification challenge or an Admin triggers reconciliation.\newline
-\textbf{Navigation path:} Automatic callback following 3DS verification (\texttt{/api/payments/intents/:id/sync}).
+A user returns from a 3D Secure verification challenge or contract funding flow requiring live reconciliation.\newline
+\textbf{Navigation path:} Automatic callback triggering \texttt{POST /\allowbreak{}api/\allowbreak{}payments/\allowbreak{}intents/\allowbreak{}:\allowbreak{}paymentIntentId/\allowbreak{}sync}.
 
 \fnhead{Function Description}
 
 \sublabel{Actors / Roles}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-      \item \textbf{Primary Actor:} Client, System, Administrator.
+      \item \textbf{Primary Actor:} Client, System.
       \item \textbf{Secondary Actor:} Stripe API.
       \item \textbf{Supporting Systems:} Frevia Web application, Frevia REST API, Stripe SDK, and PostgreSQL database.
 \end{itemize}
@@ -961,9 +961,9 @@ A user returns from a 3D Secure bank verification challenge or an Admin triggers
 
 \sublabel{Data Processing Overview}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-      \item Client requests \texttt{POST /api/payments/intents/:paymentIntentId/sync}.
-      \item \texttt{PaymentService.syncPaymentIntent()} calls \texttt{stripe.paymentIntents.retrieve(paymentIntentId)}.
-      \item Inspects intent status: if \texttt{succeeded}, marks milestone \texttt{FUNDED} and transaction \texttt{SUCCEEDED}.
+      \item Client requests \texttt{POST /\allowbreak{}api/\allowbreak{}payments/\allowbreak{}intents/\allowbreak{}:\allowbreak{}payment\allowbreak{}Intent\allowbreak{}Id/\allowbreak{}sync}.
+      \item \texttt{PaymentService.\allowbreak{}sync\allowbreak{}Payment\allowbreak{}Intent()} calls \texttt{stripe.\allowbreak{}paymentIntents.\allowbreak{}retrieve(\allowbreak{}payment\allowbreak{}Intent\allowbreak{}Id)}.
+      \item Inspects intent status: if \texttt{requires\_capture} for a contract hold, marks contract hold authorized (\texttt{status = PENDING\_SIGN}); if \texttt{succeeded} for a milestone deposit, marks milestone \texttt{FUNDED} and transaction \texttt{SUCCEEDED}.
       \item Returns HTTP 200 with synchronized status.
 \end{itemize}
 
@@ -1019,7 +1019,7 @@ A user returns from a 3D Secure bank verification challenge or an Admin triggers
 
 \fnhead{Function Trigger}
 A Client returns from a hosted Stripe Checkout redirect to the platform callback page.\newline
-\textbf{Navigation path:} Automatic callback landing on \texttt{/contracts/:id?session\_id=\{CHECKOUT\_SESSION\_ID\}}.
+\textbf{Navigation path:} Automatic callback landing on \texttt{/\allowbreak{}contracts/\allowbreak{}:\allowbreak{}id?\allowbreak{}session\_\allowbreak{}id=\allowbreak{}\{CHECKOUT\_\allowbreak{}SESSION\_\allowbreak{}ID\}}.
 
 \fnhead{Function Description}
 
@@ -1041,9 +1041,9 @@ A Client returns from a hosted Stripe Checkout redirect to the platform callback
 
 \sublabel{Data Processing Overview}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-      \item Web client detects \texttt{session\_id} query param and requests \texttt{POST /api/payments/checkout-sessions/:sessionId/sync}.
-      \item \texttt{PaymentService.syncCheckoutSession()} retrieves the session from Stripe.
-      \item If \texttt{payment\_status === 'paid'}, updates milestone \texttt{paymentStatus = FUNDED}.
+      \item Web client detects \texttt{session\_id} query param and requests \texttt{POST /\allowbreak{}api/\allowbreak{}payments/\allowbreak{}checkout-\allowbreak{}sessions/\allowbreak{}:\allowbreak{}sessionId/\allowbreak{}sync}.
+      \item \texttt{PaymentService.\allowbreak{}sync\allowbreak{}Checkout\allowbreak{}Session()} retrieves the session from Stripe.
+      \item If \texttt{payment\_\allowbreak{}status =\allowbreak{}=\allowbreak{}= 'paid'}, updates milestone \texttt{paymentStatus = FUNDED}.
       \item Creates corresponding deposit transaction record if not already recorded by webhook.
       \item Returns HTTP 200 \texttt{\{success: true, status: 'paid'\}}.
 \end{itemize}
@@ -1099,43 +1099,36 @@ A Client returns from a hosted Stripe Checkout redirect to the platform callback
 \subsubsection{ Handle Stripe Webhook Events}
 
 \fnhead{Function Trigger}
-Stripe dispatches an asynchronous HTTP POST webhook event to \texttt{/api/payments/webhook}.\newline
-\textbf{Navigation path:} External webhook endpoint (\texttt{POST /api/payments/webhook}).
+Stripe dispatches an asynchronous HTTP POST webhook event to \texttt{POST /\allowbreak{}api/\allowbreak{}payments/\allowbreak{}webhook}.\newline
+\textbf{Navigation path:} External webhook endpoint (\texttt{POST /\allowbreak{}api/\allowbreak{}payments/\allowbreak{}webhook}).
 
 \fnhead{Function Description}
 
 \sublabel{Actors / Roles}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
       \item \textbf{Primary Actor:} Stripe Webhook Gateway (System).
-      \item \textbf{Secondary Actor:} Administrator.
       \item \textbf{Supporting Systems:} Frevia REST API, Stripe SDK, Prisma ORM, and PostgreSQL database.
 \end{itemize}
 
 \sublabel{Purpose}
-\noindent Validates HMAC SHA-256 cryptographic signatures, parses asynchronous Stripe event payloads, and synchronizes financial states (deposits, payouts, refunds, connect updates) idempotently.
+\noindent Validates Stripe HMAC SHA-256 webhook signatures, parses asynchronous Stripe event payloads, and synchronizes financial and onboarding states (Checkout completion, PaymentIntent lifecycle events, and Connect account updates).
 
 \sublabel{Interface}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-      \item Public API endpoint at \texttt{POST /api/payments/webhook} with raw payload body.
-      \item Admin audit logs recording processed webhook event IDs.
+      \item Public server-to-server webhook endpoint at \texttt{POST /api/payments/webhook} with raw payload body and \texttt{stripe-signature} header (no user-facing UI screen).
 \end{itemize}
 
 \sublabel{Data Processing Overview}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
       \item Endpoint receives raw payload and \texttt{stripe-signature} header.
       \item Calls \texttt{stripe.webhooks.constructEvent(rawBody, signature, webhookSecret)}.
-      \item Identifies event type:
-            \begin{itemize}[leftmargin=1.6em,topsep=2pt,itemsep=2pt,parsep=0pt]
-                  \item \texttt{checkout.session.completed}: Funds corresponding milestone escrow.
-                  \item \texttt{payment\_intent.succeeded}: Completes deposit transaction.
-                  \item \texttt{account.updated}: Synchronizes freelancer Stripe Connect capabilities.
-            \end{itemize}
-      \item Executes database updates inside an atomic transaction.
+      \item {\sloppy Dispatches across the 6 supported Stripe events (\texttt{checkout.\allowbreak{}session.\allowbreak{}completed}, \texttt{payment\_\allowbreak{}intent.\allowbreak{}amount\_\allowbreak{}capturable\_\allowbreak{}updated}, \texttt{payment\_\allowbreak{}intent.\allowbreak{}succeeded}, \texttt{payment\_\allowbreak{}intent.\allowbreak{}canceled}, \texttt{payment\_\allowbreak{}intent.\allowbreak{}payment\_\allowbreak{}failed}, and \texttt{account.\allowbreak{}updated}); unhandled events are logged cleanly.\par}
+      \item {\sloppy Updates contracts (\texttt{PENDING\_\allowbreak{}SIGN}), milestones (\texttt{FUNDED}), transactions (\texttt{SUCCEEDED}/\texttt{FAILED}), and Connect readiness (\texttt{stripeOnboardingCompleted}); note that webhook events do not use a persisted Stripe \texttt{event.id} deduplication table.\par}
       \item Returns HTTP 200 \texttt{\{received: true\}}.
 \end{itemize}
 
 \fnhead{Screen Layout (Mock-up Description)}
-\noindent This function is a backend server-to-server webhook endpoint executed asynchronously upon Stripe event delivery; it does not possess a frontend user interface screen. Event processing logs, cryptographic HMAC signature validations, and ledger state transitions are recorded directly in server audit trails and relational database transactions.
+\noindent This function is a backend server-to-server webhook endpoint executed asynchronously upon Stripe event delivery; it does not possess a frontend user interface screen. Signature validation and state transitions are logged via application logger and persisted in PostgreSQL.
 
 \fnhead{Function Details}
 
@@ -1147,27 +1140,27 @@ Stripe dispatches an asynchronous HTTP POST webhook event to \texttt{/api/paymen
 
 \sublabel{Validation Rules}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-      \item Signature header must match calculated HMAC SHA-256 hash using the platform webhook secret.
+      \item Signature header must match calculated HMAC SHA-256 hash using the platform webhook secret (\texttt{WebhookSignatureInvalidException}).
 \end{itemize}
 
 \sublabel{Business Rules}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
       \item BR-PAYMENT-15: All webhook endpoints must enforce cryptographic HMAC SHA-256 signature verification.
-      \item BR-PAYMENT-16: Webhook processing must be strictly idempotent to prevent duplicate fund transfers or state corruptions.
+      \item BR-PAYMENT-16: Webhook delivery logs handled and unhandled Stripe event types and returns \texttt{\{received: true\}}; note that event-ID level replay deduplication is not persisted in PostgreSQL in the current implementation.
 \end{itemize}
 
 \sublabel{Normal Flow}
 \begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
       \item Stripe sends webhook request with payload and signature header.
       \item Server verifies signature using platform webhook secret.
-      \item Server identifies event type and executes corresponding state update.
-      \item Server logs event ID and responds with HTTP 200 \texttt{\{received: true\}}.
+      \item Server matches one of the 6 handled event types and executes the corresponding DB update.
+      \item Server responds with HTTP 200 \texttt{\{received: true\}}.
 \end{enumerate}
 
 \sublabel{Abnormal Flow / Exception Handling}
 \begin{flowtable}{Case}{Description}
-      A1 & Invalid signature. Server returns HTTP 400 Bad Request and logs security alert.\\ \hline
-      A2 & Duplicate event. Server recognizes event ID in log and returns HTTP 200 without duplicate execution.\\ \hline
+      A1 & Invalid signature. Server returns HTTP 400 Bad Request (\texttt{WebhookSignatureInvalidException}).\\ \hline
+      A2 & Unhandled Stripe event type (such as external unsupported events). Server logs the event type and responds HTTP 200 \texttt{\{received: true\}}.\\ \hline
 \end{flowtable}
 
 \sublabel{Output Data}
@@ -1177,5 +1170,5 @@ Stripe dispatches an asynchronous HTTP POST webhook event to \texttt{/api/paymen
 
 \sublabel{Post-Conditions}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-      \item Event verified and processed idempotently in the database.
+      \item Webhook signature verified and supported event state updates applied in PostgreSQL.
 \end{itemize}

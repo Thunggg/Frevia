@@ -2,27 +2,27 @@
 \Needspace{12\baselineskip}
 \paragraph{Contract Review Management}
 \Needspace{12\baselineskip}
-\subparagraph{UC-39.01 View Review List}
+\subparagraph{UC-39.01 View Reviews List}
 
 {\singlespacing
 \setlength{\extrarowheight}{3pt}
 \Needspace{12\baselineskip}
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{L{11.1cm}|}{UC-39.01 View Review List} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{L{11.1cm}|}{UC-39.01 View Reviews List} \\* \hline
 \endfirsthead
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{L{11.1cm}|}{UC-39.01 View Review List \textit{(cont.)}} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{L{11.1cm}|}{UC-39.01 View Reviews List \textit{(cont.)}} \\* \hline
 \endhead
 \hline\endfoot
 \endlastfoot
 Created By: & \multicolumn{3}{L{11.1cm}|}{Nguyen Lu Nhat Huy; updated 08/11/2026} \\ \hline
 Primary Actor: & \multicolumn{3}{L{11.1cm}|}{Client, Freelancer} \\ \hline
-Trigger: & \multicolumn{3}{L{11.1cm}|}{The actor selects View Review List from /client/contracts/[slug]; /freelancer/contracts/[slug].} \\ \hline
-Description: & \multicolumn{3}{L{11.1cm}|}{Retrieve reviews and active responses for a contract after verifying participant access.} \\ \hline
+Trigger: & \multicolumn{3}{L{11.1cm}|}{The actor selects View Reviews List from /client/contracts/[slug]; /freelancer/contracts/[slug].} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Retrieve reviews and active responses for a contract after verifying participant access.} \\ \hline
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{The actor is authenticated and has the required role and resource permission. The authenticated user is an authorized participant in the referenced contract.} \\ \hline
 Post-conditions: & \multicolumn{3}{L{11.1cm}|}{Authorized data is displayed without modifying the underlying records.} \\ \hline
-Normal Flow: & \multicolumn{3}{L{11.1cm}|}{1. The actor opens /client/contracts/[slug]; /freelancer/contracts/[slug] and selects View Review List. \newline 2. The application submits the selected identifier or list filters. \newline 3. The API checks authentication where required, authorization, resource existence and input validity. \newline 4. Retrieve reviews and active responses for a contract after verifying participant access. \newline 5. The screen renders the response, or an explicit empty state for a valid empty collection.} \\ \hline
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{1. The actor opens /client/contracts/[slug]; /freelancer/contracts/[slug] and selects View Reviews List. \newline 2. The application submits the selected identifier or list filters. \newline 3. The API checks authentication where required, authorization, resource existence and input validity. \newline 4. Retrieve reviews and active responses for a contract after verifying participant access. \newline 5. The screen renders the response, or an explicit empty state for a valid empty collection.} \\ \hline
 Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{No matching records: display an empty state. A failed request offers Retry.} \\ \hline
 Exceptions: & \multicolumn{3}{L{11.1cm}|}{\textbf{E1:} Missing or expired authentication, or insufficient role/ownership: deny the operation and do not change data. \newline \textbf{E2:} Missing, deleted or inaccessible resource: show a not-found result. \newline \textbf{A1:} A valid empty collection displays an empty state; it must not be treated as a missing account. \newline \textbf{E4:} Database, network or storage failure: report a retryable error; do not report success or terminate the API process.} \\ \hline
 Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
@@ -34,27 +34,27 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{This specification defines the requir
 }
 
 \Needspace{12\baselineskip}
-\subparagraph{UC-39.02 View Review Detail}
+\subparagraph{UC-39.02 View Review Details}
 
 {\singlespacing
 \setlength{\extrarowheight}{3pt}
 \Needspace{12\baselineskip}
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{L{11.1cm}|}{UC-39.02 View Review Detail} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{L{11.1cm}|}{UC-39.02 View Review Details} \\* \hline
 \endfirsthead
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{L{11.1cm}|}{UC-39.02 View Review Detail \textit{(cont.)}} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{L{11.1cm}|}{UC-39.02 View Review Details \textit{(cont.)}} \\* \hline
 \endhead
 \hline\endfoot
 \endlastfoot
 Created By: & \multicolumn{3}{L{11.1cm}|}{Nguyen Lu Nhat Huy; updated 08/11/2026} \\ \hline
 Primary Actor: & \multicolumn{3}{L{11.1cm}|}{Client, Freelancer} \\ \hline
-Trigger: & \multicolumn{3}{L{11.1cm}|}{The actor selects View Review Detail from /client/contracts/[slug]; /freelancer/contracts/[slug].} \\ \hline
-Description: & \multicolumn{3}{L{11.1cm}|}{Retrieve one review and response after checking contract participation.} \\ \hline
+Trigger: & \multicolumn{3}{L{11.1cm}|}{The actor selects View Review Details from /client/contracts/[slug]; /freelancer/contracts/[slug].} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Retrieve one review and response after checking contract participation.} \\ \hline
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{The actor is authenticated and has the required role and resource permission. The authenticated user is an authorized participant in the referenced contract.} \\ \hline
 Post-conditions: & \multicolumn{3}{L{11.1cm}|}{Authorized data is displayed without modifying the underlying records.} \\ \hline
-Normal Flow: & \multicolumn{3}{L{11.1cm}|}{1. The actor opens /client/contracts/[slug]; /freelancer/contracts/[slug] and selects View Review Detail. \newline 2. The application submits the selected identifier or list filters. \newline 3. The API checks authentication where required, authorization, resource existence and input validity. \newline 4. Retrieve one review and response after checking contract participation. \newline 5. The screen renders the response, or an explicit empty state for a valid empty collection.} \\ \hline
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{1. The actor opens /client/contracts/[slug]; /freelancer/contracts/[slug] and selects View Review Details. \newline 2. The application submits the selected identifier or list filters. \newline 3. The API checks authentication where required, authorization, resource existence and input validity. \newline 4. Retrieve one review and response after checking contract participation. \newline 5. The screen renders the response, or an explicit empty state for a valid empty collection.} \\ \hline
 Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{No matching records: display an empty state. A failed request offers Retry.} \\ \hline
 Exceptions: & \multicolumn{3}{L{11.1cm}|}{\textbf{E1:} Missing or expired authentication, or insufficient role/ownership: deny the operation and do not change data. \newline \textbf{E2:} Missing, deleted or inaccessible resource: show a not-found result. \newline \textbf{A1:} A valid empty collection displays an empty state; it must not be treated as a missing account. \newline \textbf{E4:} Database, network or storage failure: report a retryable error; do not report success or terminate the API process.} \\ \hline
 Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
@@ -83,7 +83,7 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{This specification defines the requir
 Created By: & \multicolumn{3}{L{11.1cm}|}{Nguyen Lu Nhat Huy; updated 08/11/2026} \\ \hline
 Primary Actor: & \multicolumn{3}{L{11.1cm}|}{Client, Freelancer} \\ \hline
 Trigger: & \multicolumn{3}{L{11.1cm}|}{The actor selects Write Review from /client/contracts/[slug]; /freelancer/contracts/[slug].} \\ \hline
-Description: & \multicolumn{3}{L{11.1cm}|}{Create one review of the other participant in a completed contract and notify that participant.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Create one review of the other participant in a completed contract and notify that participant.} \\ \hline
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{The actor is authenticated and has the required role and resource permission. The authenticated user is an authorized participant in the referenced contract.} \\ \hline
 Post-conditions: & \multicolumn{3}{L{11.1cm}|}{Create one review of the other participant in a completed contract and notify that participant.} \\ \hline
 Normal Flow: & \multicolumn{3}{L{11.1cm}|}{1. The actor opens /client/contracts/[slug]; /freelancer/contracts/[slug] and selects Write Review. \newline 2. The application presents the current values or action confirmation; the actor supplies the required data and submits. \newline 3. The API checks authentication where required, authorization, resource existence and input validity. \newline 4. Create one review of the other participant in a completed contract and notify that participant. \newline 5. After the transaction succeeds, the screen displays the result and reloads affected data; a pending revision is labeled as awaiting review.} \\ \hline
@@ -115,7 +115,7 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{This specification defines the requir
 Created By: & \multicolumn{3}{L{11.1cm}|}{Nguyen Lu Nhat Huy; updated 08/11/2026} \\ \hline
 Primary Actor: & \multicolumn{3}{L{11.1cm}|}{Client, Freelancer} \\ \hline
 Trigger: & \multicolumn{3}{L{11.1cm}|}{The actor selects Update Review from /client/contracts/[slug]; /freelancer/contracts/[slug].} \\ \hline
-Description: & \multicolumn{3}{L{11.1cm}|}{Update accepted fields of an existing review authored by the current user.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Update accepted fields of an existing review authored by the current user.} \\ \hline
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{The actor is authenticated and has the required role and resource permission. The authenticated user is an authorized participant in the referenced contract.} \\ \hline
 Post-conditions: & \multicolumn{3}{L{11.1cm}|}{Update accepted fields of an existing review authored by the current user.} \\ \hline
 Normal Flow: & \multicolumn{3}{L{11.1cm}|}{1. The actor opens /client/contracts/[slug]; /freelancer/contracts/[slug] and selects Update Review. \newline 2. The application presents the current values or action confirmation; the actor supplies the required data and submits. \newline 3. The API checks authentication where required, authorization, resource existence and input validity. \newline 4. Update accepted fields of an existing review authored by the current user. \newline 5. After the transaction succeeds, the screen displays the result and reloads affected data; a pending revision is labeled as awaiting review.} \\ \hline
@@ -147,7 +147,7 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{This specification defines the requir
 Created By: & \multicolumn{3}{L{11.1cm}|}{Nguyen Lu Nhat Huy; updated 08/11/2026} \\ \hline
 Primary Actor: & \multicolumn{3}{L{11.1cm}|}{Client, Freelancer} \\ \hline
 Trigger: & \multicolumn{3}{L{11.1cm}|}{The actor selects Delete Review from /client/contracts/[slug]; /freelancer/contracts/[slug].} \\ \hline
-Description: & \multicolumn{3}{L{11.1cm}|}{Soft-delete the owned review so it no longer appears as active feedback.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Soft-delete the owned review so it no longer appears as active feedback.} \\ \hline
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{The actor is authenticated and has the required role and resource permission. The authenticated user is an authorized participant in the referenced contract.} \\ \hline
 Post-conditions: & \multicolumn{3}{L{11.1cm}|}{Soft-delete the owned review so it no longer appears as active feedback.} \\ \hline
 Normal Flow: & \multicolumn{3}{L{11.1cm}|}{1. The actor opens /client/contracts/[slug]; /freelancer/contracts/[slug] and selects Delete Review. \newline 2. The application presents the current values or action confirmation; the actor supplies the required data and submits. \newline 3. The API checks authentication where required, authorization, resource existence and input validity. \newline 4. Soft-delete the owned review so it no longer appears as active feedback. \newline 5. After the transaction succeeds, the screen displays the result and reloads affected data; a pending revision is labeled as awaiting review.} \\ \hline
@@ -181,7 +181,7 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{This specification defines the requir
 Created By: & \multicolumn{3}{L{11.1cm}|}{Nguyen Lu Nhat Huy; updated 08/11/2026} \\ \hline
 Primary Actor: & \multicolumn{3}{L{11.1cm}|}{Client, Freelancer} \\ \hline
 Trigger: & \multicolumn{3}{L{11.1cm}|}{The actor selects Respond to Review from Contract Reviews section.} \\ \hline
-Description: & \multicolumn{3}{L{11.1cm}|}{Create an active response from the reviewee and notify the review author.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Create an active response from the reviewee and notify the review author.} \\ \hline
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{The actor is authenticated and has the required role and resource permission. The authenticated user is an authorized participant in the referenced contract.} \\ \hline
 Post-conditions: & \multicolumn{3}{L{11.1cm}|}{Create an active response from the reviewee and notify the review author.} \\ \hline
 Normal Flow: & \multicolumn{3}{L{11.1cm}|}{1. The actor opens Contract Reviews section and selects Respond to Review. \newline 2. The application presents the current values or action confirmation; the actor supplies the required data and submits. \newline 3. The API checks authentication where required, authorization, resource existence and input validity. \newline 4. Create an active response from the reviewee and notify the review author. \newline 5. After the transaction succeeds, the screen displays the result and reloads affected data; a pending revision is labeled as awaiting review.} \\ \hline
@@ -213,7 +213,7 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{This specification defines the requir
 Created By: & \multicolumn{3}{L{11.1cm}|}{Nguyen Lu Nhat Huy; updated 08/11/2026} \\ \hline
 Primary Actor: & \multicolumn{3}{L{11.1cm}|}{Client, Freelancer} \\ \hline
 Trigger: & \multicolumn{3}{L{11.1cm}|}{The actor selects Update Review Response from Contract Reviews section.} \\ \hline
-Description: & \multicolumn{3}{L{11.1cm}|}{Save validated text in the current user response.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Save validated text in the current user response.} \\ \hline
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{The actor is authenticated and has the required role and resource permission. The authenticated user is an authorized participant in the referenced contract.} \\ \hline
 Post-conditions: & \multicolumn{3}{L{11.1cm}|}{Save validated text in the current user response.} \\ \hline
 Normal Flow: & \multicolumn{3}{L{11.1cm}|}{1. The actor opens Contract Reviews section and selects Update Review Response. \newline 2. The application presents the current values or action confirmation; the actor supplies the required data and submits. \newline 3. The API checks authentication where required, authorization, resource existence and input validity. \newline 4. Save validated text in the current user response. \newline 5. After the transaction succeeds, the screen displays the result and reloads affected data; a pending revision is labeled as awaiting review.} \\ \hline
@@ -245,7 +245,7 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{This specification defines the requir
 Created By: & \multicolumn{3}{L{11.1cm}|}{Nguyen Lu Nhat Huy; updated 08/11/2026} \\ \hline
 Primary Actor: & \multicolumn{3}{L{11.1cm}|}{Client, Freelancer} \\ \hline
 Trigger: & \multicolumn{3}{L{11.1cm}|}{The actor selects Delete Review Response from Contract Reviews section.} \\ \hline
-Description: & \multicolumn{3}{L{11.1cm}|}{Soft-delete the response authored by the current user.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Soft-delete the response authored by the current user.} \\ \hline
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{The actor is authenticated and has the required role and resource permission. The authenticated user is an authorized participant in the referenced contract.} \\ \hline
 Post-conditions: & \multicolumn{3}{L{11.1cm}|}{Soft-delete the response authored by the current user.} \\ \hline
 Normal Flow: & \multicolumn{3}{L{11.1cm}|}{1. The actor opens Contract Reviews section and selects Delete Review Response. \newline 2. The application presents the current values or action confirmation; the actor supplies the required data and submits. \newline 3. The API checks authentication where required, authorization, resource existence and input validity. \newline 4. Soft-delete the response authored by the current user. \newline 5. After the transaction succeeds, the screen displays the result and reloads affected data; a pending revision is labeled as awaiting review.} \\ \hline
@@ -279,7 +279,7 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{This specification defines the requir
 Created By: & \multicolumn{3}{L{11.1cm}|}{Nguyen Lu Nhat Huy; updated 08/11/2026} \\ \hline
 Primary Actor: & \multicolumn{3}{L{11.1cm}|}{Client, Freelancer, Expert, Admin} \\ \hline
 Trigger: & \multicolumn{3}{L{11.1cm}|}{The actor selects View Profile from /account-profile (General Settings).} \\ \hline
-Description: & \multicolumn{3}{L{11.1cm}|}{Read the authenticated account profile, email and assigned roles.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Read the authenticated account profile, email and assigned roles.} \\ \hline
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{The actor is authenticated and has the required role and resource permission. The relevant database and dependent services are available.} \\ \hline
 Post-conditions: & \multicolumn{3}{L{11.1cm}|}{Authorized data is displayed without modifying the underlying records.} \\ \hline
 Normal Flow: & \multicolumn{3}{L{11.1cm}|}{1. The actor opens /account-profile (General Settings) and selects View Profile. \newline 2. The application submits the selected identifier or list filters. \newline 3. The API checks authentication where required, authorization, resource existence and input validity. \newline 4. Read the authenticated account profile, email and assigned roles. \newline 5. The screen renders the response, or an explicit empty state for a valid empty collection.} \\ \hline
@@ -311,7 +311,7 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{This specification defines the requir
 Created By: & \multicolumn{3}{L{11.1cm}|}{Nguyen Lu Nhat Huy; updated 08/11/2026} \\ \hline
 Primary Actor: & \multicolumn{3}{L{11.1cm}|}{Client, Freelancer, Expert, Admin} \\ \hline
 Trigger: & \multicolumn{3}{L{11.1cm}|}{The actor selects Update Profile from /account-profile (General Settings).} \\ \hline
-Description: & \multicolumn{3}{L{11.1cm}|}{Save or submit general display name and biography according to profile strength.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Save or submit general display name and biography according to profile strength.} \\ \hline
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{The actor is authenticated and has the required role and resource permission. The relevant database and dependent services are available.} \\ \hline
 Post-conditions: & \multicolumn{3}{L{11.1cm}|}{Save or submit general display name and biography according to profile strength.} \\ \hline
 Normal Flow: & \multicolumn{3}{L{11.1cm}|}{1. The actor opens /account-profile (General Settings) and selects Update Profile. \newline 2. The application presents the current values or action confirmation; the actor supplies the required data and submits. \newline 3. The API checks authentication where required, authorization, resource existence and input validity. \newline 4. Save or submit general display name and biography according to profile strength. \newline 5. After the transaction succeeds, the screen displays the result and reloads affected data; a pending revision is labeled as awaiting review.} \\ \hline
@@ -343,7 +343,7 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{This specification defines the requir
 Created By: & \multicolumn{3}{L{11.1cm}|}{Nguyen Lu Nhat Huy; updated 08/11/2026} \\ \hline
 Primary Actor: & \multicolumn{3}{L{11.1cm}|}{Client, Freelancer, Expert, Admin} \\ \hline
 Trigger: & \multicolumn{3}{L{11.1cm}|}{The actor selects Change Password from /account-profile (General Settings).} \\ \hline
-Description: & \multicolumn{3}{L{11.1cm}|}{Verify the current credential, hash the confirmed replacement and update the password.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Verify the current credential, hash the confirmed replacement and update the password.} \\ \hline
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{The actor is authenticated and has the required role and resource permission. The relevant database and dependent services are available.} \\ \hline
 Post-conditions: & \multicolumn{3}{L{11.1cm}|}{Verify the current credential, hash the confirmed replacement and update the password.} \\ \hline
 Normal Flow: & \multicolumn{3}{L{11.1cm}|}{1. The actor opens /account-profile (General Settings) and selects Change Password. \newline 2. The application presents the current values or action confirmation; the actor supplies the required data and submits. \newline 3. The API checks authentication where required, authorization, resource existence and input validity. \newline 4. Verify the current credential, hash the confirmed replacement and update the password. \newline 5. After the transaction succeeds, the screen displays the result and reloads affected data; a pending revision is labeled as awaiting review.} \\ \hline
@@ -375,7 +375,7 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{This specification defines the requir
 Created By: & \multicolumn{3}{L{11.1cm}|}{Nguyen Lu Nhat Huy; updated 08/11/2026} \\ \hline
 Primary Actor: & \multicolumn{3}{L{11.1cm}|}{Client, Freelancer, Expert, Admin} \\ \hline
 Trigger: & \multicolumn{3}{L{11.1cm}|}{The actor selects Upload Avatar from /account-profile (General Settings).} \\ \hline
-Description: & \multicolumn{3}{L{11.1cm}|}{Validate image content and size, store it, and update the owned avatar URL.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Validate image content and size, store it, and update the owned avatar URL.} \\ \hline
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{The actor is authenticated and has the required role and resource permission. The relevant database and dependent services are available.} \\ \hline
 Post-conditions: & \multicolumn{3}{L{11.1cm}|}{Validate image content and size, store it, and update the owned avatar URL.} \\ \hline
 Normal Flow: & \multicolumn{3}{L{11.1cm}|}{1. The actor opens /account-profile (General Settings) and selects Upload Avatar. \newline 2. The application presents the current values or action confirmation; the actor supplies the required data and submits. \newline 3. The API checks authentication where required, authorization, resource existence and input validity. \newline 4. Validate image content and size, store it, and update the owned avatar URL. \newline 5. After the transaction succeeds, the screen displays the result and reloads affected data; a pending revision is labeled as awaiting review.} \\ \hline

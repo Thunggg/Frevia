@@ -405,5 +405,19 @@ describe('DisputeService', () => {
       const escalated = (await service.escalateDispute(1, 5))!;
       expect(escalated.status).toBe(DisputeStatus.UNDER_REVIEW);
     });
+
+    it('rejects respondToDispute after responseDeadline has expired', async () => {
+      repo.findDisputeById.mockResolvedValueOnce({
+        ...mockDispute,
+        status: DisputeStatus.WAITING_RESPONSE,
+        declinedAt: null,
+        responseDeadline: new Date(Date.now() - 60 * 1000),
+      } as any);
+
+      await expect(
+        service.respondToDispute(2, 5, { action: 'ACCEPT' }),
+      ).rejects.toThrow(UnprocessableEntityException);
+      expect(repo.finalizeDisputeTransaction).not.toHaveBeenCalled();
+    });
   });
 });

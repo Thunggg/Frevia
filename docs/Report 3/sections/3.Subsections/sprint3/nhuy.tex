@@ -295,13 +295,13 @@ Failure & Structured error without sensitive data; no successful UI state when t
 \subsection{Notification Management}
 
 % -----------------------------------------------------------------
-% UC-30.01: View Notification List
+% UC-30.01: View Notifications List
 % -----------------------------------------------------------------
 \Needspace{12\baselineskip}
-\subsubsection{ View Notification List}
+\subsubsection{ View Notifications List}
 
 \fnhead{Function Trigger}
-The actor selects View Notification List.\newline
+The actor selects View Notifications List.\newline
 \textbf{Navigation path:} Home $\rightarrow$ \texttt{Header notification menu} or \texttt{/\allowbreak{}notifications.}
 
 \fnhead{Function Description}
@@ -330,7 +330,7 @@ The actor selects View Notification List.\newline
 \end{itemize}
 
 \fnhead{Screen Layout (Mock-up Description)}
-\screenfigure[0.95]{image/screenshot/sprint3/nhuy/View Notification List.png}{View Notification List interface}
+\screenfigure[0.95]{image/screenshot/sprint3/nhuy/View Notification List.png}{View Notifications List interface}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
     \item Notification list with title, content, timestamp and unread indication.
     \item Mark as Read, Mark All as Read and Delete controls.
@@ -359,7 +359,7 @@ Selection & Current account or selected profile\texttt{/\allowbreak{}contract}; 
 
 \sublabel{Normal Flow}
 \begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
-    \item The actor opens Header notification menu; \texttt{/\allowbreak{}notifications} and selects View Notification List.
+    \item The actor opens Header notification menu; \texttt{/\allowbreak{}notifications} and selects View Notifications List.
     \item The application submits the selected identifier or list filters.
     \item The API checks authentication where required, authorization, resource existence and input validity.
     \item Load the recipient active notifications in reverse chronological order.

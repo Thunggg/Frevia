@@ -1,17 +1,17 @@
 % =================================================================
-% UC-06.2 Post New Job
+% UC-11.02 Post New Job
 % =================================================================
-\subparagraph{UC-06.2 Post New Job}
+\subparagraph{UC-11.02 Post New Job}
 
 {\singlespacing
 \setlength{\extrarowheight}{4pt}
 \Needspace{12\baselineskip}
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-06.2 Post New Job} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-11.02 Post New Job} \\* \hline
 \endfirsthead
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-06.2 Post New Job \textit{(cont.)}} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-11.02 Post New Job \textit{(cont.)}} \\* \hline
 \endhead
 \hline\endfoot
 \endlastfoot
@@ -22,7 +22,7 @@ Primary Actor: & Client & Secondary Actors: & N/A \\ \hline
 
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When a client clicks the "Post New Job" or "Create Job" button from the job management page.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Allows a registered client to create and publish a new job posting with details including title, description, budget, category, and required skills.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Allows a registered client to create and publish a new job posting with details including title, description, budget, category, and required skills.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The client is logged in to the system. \newline
@@ -115,19 +115,19 @@ Categories and skills are predefined in the system.
 
 
 % =================================================================
-% UC-06.3 Edit Job
+% UC-11.04 Edit Job
 % =================================================================
-\subparagraph{UC-06.3 Edit Job}
+\subparagraph{UC-11.04 Edit Job}
 
 {\singlespacing
 \setlength{\extrarowheight}{4pt}
 \Needspace{12\baselineskip}
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-06.3 Edit Job} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-11.04 Edit Job} \\* \hline
 \endfirsthead
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-06.3 Edit Job \textit{(cont.)}} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-11.04 Edit Job \textit{(cont.)}} \\* \hline
 \endhead
 \hline\endfoot
 \endlastfoot
@@ -138,7 +138,7 @@ Primary Actor: & Client & Secondary Actors: & N/A \\ \hline
 
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When a client clicks the "Edit" button on a job they own from the job list or job detail page.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Allows the client who created a job to modify its details such as title, description, budget, category, skills, and status. Editing is restricted if the job has an active contract.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Allows the client who created a job to modify its details such as title, description, budget, category, skills, and status. Editing is restricted if the job has an active contract.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The client is logged in to the system. \newline
@@ -213,7 +213,7 @@ Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
 Business Rules: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{BR-JOB-14:} Only the job owner can edit the job. \newline
 \textbf{BR-JOB-15:} Editing is restricted if the job has an active contract. \newline
-\textbf{BR-JOB-16:} All validation rules from UC-06.2 apply to edits. \newline
+\textbf{BR-JOB-16:} All validation rules from UC-11.02 apply to edits. \newline
 \textbf{BR-JOB-17:} Edit actions shall be logged for auditing purposes.
 } \\ \hline
 
@@ -230,19 +230,19 @@ The job exists and is accessible.
 
 
 % =================================================================
-% UC-06.4 Delete Job
+% UC-11.05 Delete Job
 % =================================================================
-\subparagraph{UC-06.4 Delete Job}
+\subparagraph{UC-11.05 Delete Job}
 
 {\singlespacing
 \setlength{\extrarowheight}{4pt}
 \Needspace{12\baselineskip}
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-06.4 Delete Job} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-11.05 Delete Job} \\* \hline
 \endfirsthead
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-06.4 Delete Job \textit{(cont.)}} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-11.05 Delete Job \textit{(cont.)}} \\* \hline
 \endhead
 \hline\endfoot
 \endlastfoot
@@ -253,7 +253,7 @@ Primary Actor: & Client & Secondary Actors: & N/A \\ \hline
 
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When a client clicks the "Delete" button on a job they own from the job list or job detail page.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Allows the client who created a job to delete it (soft delete). The job is hidden from public view but retained in the database. The system checks for active proposals or contracts before allowing deletion.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Allows the client who created a job to delete it (soft delete). The job is hidden from public view but retained in the database. The system checks for active proposals or contracts before allowing deletion.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The client is logged in to the system. \newline
@@ -341,19 +341,19 @@ The job exists and is accessible.
 
 
 % =================================================================
-% UC-06.5 Change Job Status
+% UC-11.03 Change Job Status
 % =================================================================
-\subparagraph{UC-06.5 Change Job Status}
+\subparagraph{UC-11.03 Change Job Status}
 
 {\singlespacing
 \setlength{\extrarowheight}{4pt}
 \Needspace{12\baselineskip}
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-06.5 Change Job Status} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-11.03 Change Job Status} \\* \hline
 \endfirsthead
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-06.5 Change Job Status \textit{(cont.)}} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-11.03 Change Job Status \textit{(cont.)}} \\* \hline
 \endhead
 \hline\endfoot
 \endlastfoot
@@ -364,7 +364,7 @@ Primary Actor: & Client & Secondary Actors: & N/A \\ \hline
 
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When a client or system action triggers a status change on a job.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Allows the job owner to change the status of a job following the workflow: draft → open → in\_progress → completed → closed. Each transition has specific constraints and permissions. The system may also auto-transition statuses based on business events.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Allows the job owner to change the status of a job following the workflow: draft → open → in\_progress → completed → closed. Each transition has specific constraints and permissions. The system may also auto-transition statuses based on business events.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The client is logged in to the system (for manual changes). \newline
@@ -469,19 +469,19 @@ The job exists and is accessible.
 }
 
 % =================================================================
-% UC-06.6 View List Bookmarked Job
+% UC-12.01 View Bookmarked Jobs List
 % =================================================================
-\subparagraph{UC-06.6 View List Bookmarked Job}
+\subparagraph{UC-12.01 View Bookmarked Jobs List}
 
 {\singlespacing
 \setlength{\extrarowheight}{4pt}
 \Needspace{12\baselineskip}
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-06.6 View List Bookmarked Job} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-12.01 View Bookmarked Jobs List} \\* \hline
 \endfirsthead
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-06.6 View List Bookmarked Job \textit{(cont.)}} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-12.01 View Bookmarked Jobs List \textit{(cont.)}} \\* \hline
 \endhead
 \hline\endfoot
 \endlastfoot
@@ -492,7 +492,7 @@ Primary Actor: & Freelancer & Secondary Actors: & N/A \\ \hline
 
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When a freelancer accesses the "Bookmarked Jobs" page from the navigation menu or profile.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Allows a freelancer to view a list of all jobs they have bookmarked. The list displays job title, budget, client name, and bookmark date with pagination support.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Allows a freelancer to view a list of all jobs they have bookmarked. The list displays job title, budget, client name, and bookmark date with pagination support.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The freelancer is logged in to the system. \newline
@@ -505,7 +505,7 @@ Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
 } \\ \hline
 
 Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{A. View List Bookmarked Job} \newline
+\textbf{A. View Bookmarked Jobs List} \newline
 1. Freelancer accesses the "Bookmarked Jobs" page. \newline
 2. The system receives the request with default parameters (page 1, sorting by bookmark created\_at DESC). \newline
 3. The system queries the database to retrieve the bookmark list from the bookmarks table for the current freelancer. \newline
@@ -537,7 +537,7 @@ Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
 4. Return to step A.7.
 } \\ \arrayrulecolor{white}\cline{2-4}\arrayrulecolor{black}
 & \multicolumn{3}{L{11.1cm}|}{
-\textbf{A.8c View Job Detail} \newline
+\textbf{A.8c View Job Details} \newline
 1. Freelancer clicks on a job title in the list. \newline
 2. The system navigates to the job detail page. \newline
 3. The use case ends.
@@ -584,19 +584,19 @@ Bookmarks are created only by freelancers.
 
 
 % =================================================================
-% UC-06.7 Bookmark Job
+% UC-12.02 Bookmark Job
 % =================================================================
-\subparagraph{UC-06.7 Bookmark Job}
+\subparagraph{UC-12.02 Bookmark Job}
 
 {\singlespacing
 \setlength{\extrarowheight}{4pt}
 \Needspace{12\baselineskip}
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-06.7 Bookmark Job} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-12.02 Bookmark Job} \\* \hline
 \endfirsthead
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-06.7 Bookmark Job \textit{(cont.)}} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-12.02 Bookmark Job \textit{(cont.)}} \\* \hline
 \endhead
 \hline\endfoot
 \endlastfoot
@@ -607,7 +607,7 @@ Primary Actor: & Freelancer & Secondary Actors: & N/A \\ \hline
 
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When a freelancer clicks the "Bookmark" button on a job detail page or job list.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Allows a freelancer to add a job to their bookmark list for easy tracking. The system automatically checks for duplicates and ignores if the job is already bookmarked.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Allows a freelancer to add a job to their bookmark list for easy tracking. The system automatically checks for duplicates and ignores if the job is already bookmarked.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The freelancer is logged in to the system. \newline
@@ -680,19 +680,19 @@ The job exists and is active.
 
 
 % =================================================================
-% UC-06.8 Remove Bookmark
+% UC-12.03 Remove Bookmark
 % =================================================================
-\subparagraph{UC-06.8 Remove Bookmark}
+\subparagraph{UC-12.03 Remove Bookmark}
 
 {\singlespacing
 \setlength{\extrarowheight}{4pt}
 \Needspace{12\baselineskip}
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-06.8 Remove Bookmark} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-12.03 Remove Bookmark} \\* \hline
 \endfirsthead
 \hline
-\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-06.8 Remove Bookmark \textit{(cont.)}} \\* \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-12.03 Remove Bookmark \textit{(cont.)}} \\* \hline
 \endhead
 \hline\endfoot
 \endlastfoot
@@ -703,7 +703,7 @@ Primary Actor: & Freelancer & Secondary Actors: & N/A \\ \hline
 
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When a freelancer clicks the "Remove Bookmark" or "Unbookmark" button on a job detail page or bookmark list.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Allows a freelancer to remove a job from their bookmark list. The system checks if the bookmark exists before deleting and returns a 404 error if not found.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Allows a freelancer to remove a job from their bookmark list. The system checks if the bookmark exists before deleting and returns a 404 error if not found.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The freelancer is logged in to the system. \newline

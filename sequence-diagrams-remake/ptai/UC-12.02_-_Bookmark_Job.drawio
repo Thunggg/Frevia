@@ -126,7 +126,7 @@
             <mxPoint x="105" y="490" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="m_5" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;" value="3. POST&lt;br&gt;/manage-jobs/bookmarks/:slug">
+        <mxCell id="m_5" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;" value="3. POST&lt;br&gt;/manage-jobs/jobs/:slug/bookmark">
           <mxGeometry relative="1" as="geometry">
             <mxPoint x="305" y="570" as="sourcePoint" />
             <mxPoint x="495" y="570" as="targetPoint" />
@@ -177,7 +177,7 @@
             <mxPoint x="105" y="835" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="m_13" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;" value="4. POST&lt;br&gt;/manage-jobs/bookmarks/:slug">
+        <mxCell id="m_13" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;" value="4. POST&lt;br&gt;/manage-jobs/jobs/:slug/bookmark">
           <mxGeometry relative="1" as="geometry">
             <mxPoint x="505" y="900" as="sourcePoint" />
             <mxPoint x="705" y="900" as="targetPoint" />
@@ -328,19 +328,19 @@
         <mxCell id="fr_alt_35_g1" parent="1" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;labelBackgroundColor=none;" value="[already bookmarked]" vertex="1">
           <mxGeometry height="22" width="260" x="130" y="1870" as="geometry" />
         </mxCell>
-        <mxCell id="m_36" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;" value="12.2.7.1.1.&lt;br&gt;Return { message:&lt;br&gt;&quot;ALREADY_BOOKMARKED&quot; }">
+        <mxCell id="m_36" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;" value="12.2.7.1.1.&lt;br&gt;throw 400&lt;br&gt;JobAlreadyBookmarked">
           <mxGeometry relative="1" as="geometry">
             <mxPoint x="915" y="1910" as="sourcePoint" />
             <mxPoint x="715" y="1910" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="m_37" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;" value="12.2.7.1.2.&lt;br&gt;Return 200 response">
+        <mxCell id="m_37" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;" value="12.2.7.1.2.&lt;br&gt;Return 400 response">
           <mxGeometry relative="1" as="geometry">
             <mxPoint x="705" y="1950" as="sourcePoint" />
             <mxPoint x="505" y="1950" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="m_38" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;" value="12.2.7.1.3.&lt;br&gt;Return 200 response">
+        <mxCell id="m_38" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;" value="12.2.7.1.3.&lt;br&gt;Return 400 response">
           <mxGeometry relative="1" as="geometry">
             <mxPoint x="495" y="1990" as="sourcePoint" />
             <mxPoint x="305" y="1990" as="targetPoint" />

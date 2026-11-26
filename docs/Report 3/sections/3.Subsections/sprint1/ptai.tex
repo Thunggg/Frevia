@@ -8,14 +8,14 @@
 \subsection{Job Browsing}
 
 % -----------------------------------------------------------------
-% UC-10.01: View Job List
+% UC-10.01: View Jobs List
 % -----------------------------------------------------------------
 \Needspace{12\baselineskip}
-\subsubsection{View Job List}
+\subsubsection{View Jobs List}
 
 \fnhead{Function Trigger}
 A guest, freelancer, or client opens the public Find Work catalog or freelancer Find Work tab to browse available job postings.\newline
-\textbf{Navigation path:} Public Find Work (\texttt{/find-work}) or Freelancer Workspace $\rightarrow$ Find Work (\texttt{/freelancer/find-work}).
+\textbf{Navigation path:} Public Find Work (\texttt{/find-work}) or Freelancer Workspace $\rightarrow$ Find Work (\texttt{/\allowbreak{}freelancer/\allowbreak{}find-\allowbreak{}work}).
 
 \fnhead{Function Description}
 
@@ -30,7 +30,7 @@ A guest, freelancer, or client opens the public Find Work catalog or freelancer 
 
 \sublabel{Interface}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-    \item \textbf{Freelancer view (\texttt{/freelancer/find-work}):} Search bar, tabs (Best Matches, Most Recent, Saved Searches, Saved Jobs, Invites, Find Clients), job summary cards, bookmark toggles, and profile progress sidebar.
+    \item \textbf{Freelancer view (\texttt{/\allowbreak{}freelancer/\allowbreak{}find-\allowbreak{}work}):} Search bar, tabs (Best Matches, Most Recent, Saved Searches, Saved Jobs, Invites, Find Clients), job summary cards, bookmark toggles, and profile progress sidebar.
     \item \textbf{Guest/Public view (\texttt{/find-work}):} Public header navigation, hero keyword/category/budget filter bar, job cards with direct ``Apply'' prompt, category quick-filter list, and registration CTA panel.
 \end{itemize}
 
@@ -109,10 +109,10 @@ Database query error or timeout & Service catches \texttt{PrismaClientKnownReque
 \end{itemize}
 
 % -----------------------------------------------------------------
-% UC-10.02: View Job Detail
+% UC-10.02: View Job Details
 % -----------------------------------------------------------------
 \Needspace{12\baselineskip}
-\subsubsection{View Job Detail}
+\subsubsection{View Job Details}
 
 \fnhead{Function Trigger}
 A freelancer/visitor opens a job posting detail page by URL slug, or a client opens their owned job detail page by numeric ID.\newline
@@ -321,7 +321,7 @@ A client clicks ``+ Post New Job'' from the My Jobs dashboard.\newline
 
 \sublabel{Data Processing Overview}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-    \item Frontend submits \texttt{POST /api/manage-jobs} validated by \texttt{CreateJobBodySchema.strict()}.
+    \item {\sloppy Frontend submits \texttt{POST /\allowbreak{}api/\allowbreak{}manage-\allowbreak{}jobs} validated by \texttt{CreateJobBodySchema.\allowbreak{}strict()}.\par}
     \item Backend enforces \texttt{CLIENT} role and verifies both \texttt{title} and \texttt{description} are English via \texttt{FastTextService.isEnglish()}.
     \item Inside a Prisma transaction: verifies submitted \texttt{jobCategories} exist, are active, and non-deleted; generates unique slug; creates \texttt{Job} record defaulting to \texttt{status = 'DRAFT'}; attaches \texttt{JobSkill} and \texttt{JobJobCategory} mappings.
     \item Invalidates \texttt{job\_categor*} cache entries and enqueues an \texttt{UPSERT} job embedding event via \texttt{EmbeddingOutboxService}.
@@ -364,7 +364,7 @@ A client clicks ``+ Post New Job'' from the My Jobs dashboard.\newline
 \sublabel{Normal Flow}
 \begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
     \item Client fills title, description, budgets, dates, skills, and category on \texttt{/client/jobs/new} and submits.
-    \item Frontend checks language/duplicate warnings via \texttt{/api/manage-jobs/check-language} and submits \texttt{POST /api/manage-jobs}.
+    \item {\sloppy Frontend checks language/duplicate warnings via \texttt{/\allowbreak{}api/\allowbreak{}manage-\allowbreak{}jobs/\allowbreak{}check-\allowbreak{}language} and submits \texttt{POST /\allowbreak{}api/\allowbreak{}manage-\allowbreak{}jobs}.\par}
     \item Backend verifies \texttt{CLIENT} role, FastText English compliance, and active category existence.
     \item Creates job in \texttt{DRAFT} status with relational skills and category inside a transaction.
     \item Returns created job; UI navigates/notifies client.
@@ -832,10 +832,10 @@ Reopened Job & Updated \texttt{JobSchema} entity with \texttt{status = OPEN}.\\ 
 \subsection{Bookmarked Jobs Management}
 
 % -----------------------------------------------------------------
-% UC-12.01: View Bookmarked Job List
+% UC-12.01: View Bookmarked Jobs List
 % -----------------------------------------------------------------
 \Needspace{12\baselineskip}
-\subsubsection{View Bookmarked Job List}
+\subsubsection{View Bookmarked Jobs List}
 
 \fnhead{Function Trigger}
 A freelancer selects the ``Saved Jobs'' tab inside Find Work.\newline
@@ -882,7 +882,7 @@ JWT Token & Authenticated \texttt{FREELANCER} session token.\\ \hline
 
 \sublabel{Validation Rules}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-    \item Caller must hold active \texttt{FREELANCER} role; query params must pass \texttt{ViewBookmarkedJobQueryDto}.
+    \item Caller must hold active \texttt{FREELANCER} role; query params must pass \texttt{View\allowbreak{}Bookmarked\allowbreak{}Job\allowbreak{}Query\allowbreak{}Dto}.
 \end{itemize}
 
 \sublabel{Business Rules}
@@ -947,7 +947,7 @@ A freelancer clicks the Bookmark icon on an open job card or job detail header.\
 
 \sublabel{Data Processing Overview}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-    \item Client dispatches \texttt{POST /api/manage-jobs/jobs/:slug/bookmark}.
+    \item Client dispatches \texttt{POST /\allowbreak{}api/\allowbreak{}manage-\allowbreak{}jobs/\allowbreak{}jobs/\allowbreak{}:\allowbreak{}slug/\allowbreak{}bookmark}.
     \item Backend verifies \texttt{FREELANCER} role, locates target job by \texttt{slug} (404 if absent), rejects self-bookmarking (\texttt{job.clientId === userId}), checks \texttt{job.status === 'OPEN'} and non-expired \texttt{expiryDate}, and checks existing \texttt{(userId, jobId)} bookmark.
     \item Inserts \texttt{JobBookmark} record in PostgreSQL and guards against race-condition unique violations (\texttt{P2002}).
 \end{itemize}

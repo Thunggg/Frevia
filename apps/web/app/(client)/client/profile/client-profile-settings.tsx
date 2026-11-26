@@ -1,7 +1,6 @@
 "use client";
 
 import { useFormatter, useTranslations } from "next-intl";
-import Link from "next/link";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useCallback, useEffect, useState, type FormEvent } from "react";
 import { motion, AnimatePresence } from "motion/react";
@@ -36,7 +35,6 @@ import {
   UserCheck,
   UserMinus,
   UserPlus,
-  Globe2,
 } from "@/components/icons";
 import { ShieldCheck } from "lucide-react";
 import { IdentityVerificationForm } from "@/app/(freelancer)/freelancer/profile/identity-verification-form";
@@ -107,7 +105,6 @@ export function ClientProfileSettings({ userId }: ClientProfileSettingsProps) {
   const t = useTranslations("clientProfileSettings");
   const tPlatform = useTranslations("socialPlatform");
   const tRole = useTranslations("roleName");
-  const tSidebar = useTranslations("sidebar");
   const tDocument = useTranslations("documentType");
   const tVerification = useTranslations("verificationStatus");
   const tAccountProfile = useTranslations("accountProfile");
@@ -558,18 +555,6 @@ export function ClientProfileSettings({ userId }: ClientProfileSettingsProps) {
               {t("pageTitle")}
             </h1>
           </div>
-
-          <Button
-            variant="outline"
-            asChild
-            className="self-start sm:self-auto gap-2 rounded-full border-black/10 dark:border-white/10 hover:bg-[#D0E1F8]/50 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-foreground text-xs px-4 py-2 transition-colors cursor-pointer"
-          >
-            <Link href={`/clients/${userId}`} target="_blank">
-              <Globe2 className="size-3.5 text-[#0069D3]" />
-              <span>{tSidebar("viewPublicProfile")}</span>
-              <ExternalLink className="size-3 opacity-60 ml-0.5" />
-            </Link>
-          </Button>
         </div>
 
         {/* ── Capsule Tab Bar ── */}

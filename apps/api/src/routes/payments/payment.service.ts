@@ -39,6 +39,7 @@ import {
 } from './payment.error';
 import { PaymentRepository } from './payment.repo';
 import { ContractPdfService } from '../../shared/services/contract-pdf.service';
+import { CacheService } from '../../shared/services/cache.service';
 import { StripeService } from '../../shared/services/stripe.service';
 import { AppNotificationService } from '../../shared/services/app-notification.service';
 
@@ -51,6 +52,7 @@ export class PaymentService {
     private readonly stripeService: StripeService,
     private readonly contractPdfService: ContractPdfService,
     @Optional() private readonly notificationService?: AppNotificationService,
+    @Optional() private readonly cacheService?: CacheService,
   ) {}
 
   async getOnboardingLink(userId: number, returnUrl?: string) {
@@ -1425,6 +1427,13 @@ export class PaymentService {
       throw WebhookSignatureInvalidException();
     }
 
+    const eventCacheKey =
+      event.id && this.cacheService ? `stripe_webhook_event_${event.id}` : null;
+    if (eventCacheKey && this.cacheService?.get<boolean>(eventCacheKey)) {
+      this.logger.log(`Skipping duplicate Stripe webhook event: ${event.id}`);
+      return { received: true };
+    }
+
     switch (event.type) {
       case 'checkout.session.completed': {
         const session = event.data.object as Stripe.Checkout.Session;
@@ -1485,6 +1494,10 @@ export class PaymentService {
 
       default:
         this.logger.log(`Unhandled webhook event: ${event.type}`);
+    }
+
+    if (eventCacheKey) {
+      this.cacheService?.set(eventCacheKey, true, 86400);
     }
 
     return { received: true };
@@ -1551,22 +1564,26 @@ export class PaymentService {
 
     if (type === TransactionType.ESCROW_DEPOSIT && metadata.milestoneId) {
       const milestoneIdNum = Number(metadata.milestoneId);
+      const existingMilestone =
+        await this.paymentRepo.findMilestoneById(milestoneIdNum);
       await this.paymentRepo.updateMilestonePaymentStatus(
         milestoneIdNum,
         MilestonePaymentStatus.FUNDED,
       );
 
-      const m = await this.paymentRepo.findMilestoneById(milestoneIdNum);
-      if (m?.contract?.freelancerId) {
+      if (
+        existingMilestone?.contract?.freelancerId &&
+        existingMilestone.paymentStatus !== MilestonePaymentStatus.FUNDED
+      ) {
         await this.notificationService?.send({
-          userId: m.contract.freelancerId,
+          userId: existingMilestone.contract.freelancerId,
           type: NotificationType.PAYMENT_RELEASED,
           title: 'Milestone funded in escrow',
-          message: `Client deposited $${Number(m.amount).toFixed(2)} into escrow for milestone "${m.title}". Work can begin!`,
+          message: `Client deposited $${Number(existingMilestone.amount).toFixed(2)} into escrow for milestone "${existingMilestone.title}". Work can begin!`,
           data: {
-            contractId: m.contractId,
-            milestoneId: m.id,
-            href: `/freelancer/contracts/${m.contract.slug ?? m.contractId}`,
+            contractId: existingMilestone.contractId,
+            milestoneId: existingMilestone.id,
+            href: `/freelancer/contracts/${existingMilestone.contract.slug ?? existingMilestone.contractId}`,
           },
         });
       }
@@ -1668,22 +1685,26 @@ export class PaymentService {
 
     if (type === TransactionType.ESCROW_DEPOSIT && metadata.milestoneId) {
       const milestoneIdNum = Number(metadata.milestoneId);
+      const existingMilestone =
+        await this.paymentRepo.findMilestoneById(milestoneIdNum);
       await this.paymentRepo.updateMilestonePaymentStatus(
         milestoneIdNum,
         MilestonePaymentStatus.FUNDED,
       );
 
-      const m = await this.paymentRepo.findMilestoneById(milestoneIdNum);
-      if (m?.contract?.freelancerId) {
+      if (
+        existingMilestone?.contract?.freelancerId &&
+        existingMilestone.paymentStatus !== MilestonePaymentStatus.FUNDED
+      ) {
         await this.notificationService?.send({
-          userId: m.contract.freelancerId,
+          userId: existingMilestone.contract.freelancerId,
           type: NotificationType.PAYMENT_RELEASED,
           title: 'Milestone funded in escrow',
-          message: `Client deposited $${Number(m.amount).toFixed(2)} into escrow for milestone "${m.title}". Work can begin!`,
+          message: `Client deposited $${Number(existingMilestone.amount).toFixed(2)} into escrow for milestone "${existingMilestone.title}". Work can begin!`,
           data: {
-            contractId: m.contractId,
-            milestoneId: m.id,
-            href: `/freelancer/contracts/${m.contract.slug ?? m.contractId}`,
+            contractId: existingMilestone.contractId,
+            milestoneId: existingMilestone.id,
+            href: `/freelancer/contracts/${existingMilestone.contract.slug ?? existingMilestone.contractId}`,
           },
         });
       }

@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.9.28)  24 NOV 2026 18:16
+This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.9.28)  25 NOV 2026 22:25
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -850,7 +850,9 @@ File: t1ptm.fd 2001/06/04 font definitions for T1/ptm.
 ex.def
 File: l3backend-pdftex.def 2025-10-09 L3 backend support: PDF output (pdfTeX)
 \l__color_backend_stack_int=\count357
-) (Report6_Software_User_Guides.aux)
+)
+(C:\Users\ASUS\.gemini\antigravity\brain\901340cd-a084-4162-b242-505e8cef7a07\s
+cratch\build_r6_final\Report6_Software_User_Guides.aux)
 \openout1 = `Report6_Software_User_Guides.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 92.
@@ -934,7 +936,11 @@ File: epstopdf-sys.cfg 2021/03/18 v2.0 Configuration of epstopdf for MiKTeX
 ))
 \c@lstlisting=\count364
 Package hyperref Info: Link coloring ON on input line 92.
- (Report6_Software_User_Guides.out) (Report6_Software_User_Guides.out)
+
+(C:\Users\ASUS\.gemini\antigravity\brain\901340cd-a084-4162-b242-505e8cef7a07\s
+cratch\build_r6_final\Report6_Software_User_Guides.out)
+(C:\Users\ASUS\.gemini\antigravity\brain\901340cd-a084-4162-b242-505e8cef7a07\s
+cratch\build_r6_final\Report6_Software_User_Guides.out)
 \@outlinefile=\write4
 \openout4 = `Report6_Software_User_Guides.out'.
 
@@ -943,12 +949,13 @@ File: fpt_logo_r6.png Graphic file (type png)
 <use fpt_logo_r6.png>
 Package pdftex.def Info: fpt_logo_r6.png  used on input line 101.
 (pdftex.def)             Requested size: 184.9429pt x 72.09329pt.
-
-[1
+ [1
 
 {C:/Users/ASUS/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map}{C:/Users/ASUS/
 AppData/Local/Programs/MiKTeX/fonts/enc/dvips/base/8r.enc} <./fpt_logo_r6.png>]
- (Report6_Software_User_Guides.toc
+
+(C:\Users\ASUS\.gemini\antigravity\brain\901340cd-a084-4162-b242-505e8cef7a07\s
+cratch\build_r6_final\Report6_Software_User_Guides.toc
 LaTeX Font Info:    Trying to load font information for OT1+ztmcm on input line
  1.
 
@@ -990,7 +997,7 @@ pdfTeX warning (ext4): destination with the same identifier (name{page.1}) has
 been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.69 ...UC-07.04--07.05)}{40}{subsubsection.3.3.7}
+l.69 ...nsion (UC-28.04)}{39}{subsubsection.3.3.7}
                                                   % [1])
 \tf@toc=\write5
 \openout5 = `Report6_Software_User_Guides.toc'.
@@ -1012,179 +1019,136 @@ Overfull \hbox (6.27808pt too wide) in paragraph at lines 20--20
 
 ignored error: Infinite glue shrinkage found in box being split [4] [5]
 [6]
-<images/install/a01_git_download.png, id=306, 1445.4pt x 903.375pt>
+<images/install/a01_git_download.png, id=307, 1445.4pt x 903.375pt>
 File: images/install/a01_git_download.png Graphic file (type png)
 <use images/install/a01_git_download.png>
 Package pdftex.def Info: images/install/a01_git_download.png  used on input lin
-e 103.
+e 104.
 (pdftex.def)             Requested size: 425.08147pt x 265.66626pt.
 LaTeX Font Info:    Trying to load font information for TS1+ptm on input line 1
-08.
+09.
  (C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\ts1ptm.fd
 File: ts1ptm.fd 2001/06/04 font definitions for TS1/ptm.
 )
-<images/install/a02_nodejs_download.png, id=308, 1445.4pt x 903.375pt>
+[7 <./images/install/a01_git_download.png (PNG copy)>]
+<images/install/a02_nodejs_download.png, id=314, 1445.4pt x 903.375pt>
 File: images/install/a02_nodejs_download.png Graphic file (type png)
 <use images/install/a02_nodejs_download.png>
 Package pdftex.def Info: images/install/a02_nodejs_download.png  used on input 
-line 117.
+line 118.
 (pdftex.def)             Requested size: 425.08147pt x 265.66626pt.
-
-[7 <./images/install/a01_git_download.png (PNG copy)>]
-<images/install/a03_docker_download.png, id=315, 1445.4pt x 903.375pt>
+<images/install/a03_docker_download.png, id=316, 1445.4pt x 903.375pt>
 File: images/install/a03_docker_download.png Graphic file (type png)
 <use images/install/a03_docker_download.png>
 Package pdftex.def Info: images/install/a03_docker_download.png  used on input 
-line 136.
+line 137.
 (pdftex.def)             Requested size: 425.08147pt x 265.66626pt.
  [8 <./images/install/a02_nodejs_download.png (PNG copy)>]
-<images/install/a04_env_check_versions.png, id=326, 1445.4pt x 903.375pt>
+<images/install/a04_env_check_versions.png, id=327, 1445.4pt x 903.375pt>
 File: images/install/a04_env_check_versions.png Graphic file (type png)
 <use images/install/a04_env_check_versions.png>
 Package pdftex.def Info: images/install/a04_env_check_versions.png  used on inp
-ut line 150.
+ut line 151.
 (pdftex.def)             Requested size: 425.08147pt x 265.66626pt.
  [9 <./images/install/a03_docker_download.png (PNG copy)>]
-Overfull \hbox (2.3937pt too wide) in paragraph at lines 159--160
+Overfull \hbox (2.3937pt too wide) in paragraph at lines 160--161
 \T1/ptm/m/n/12 (e.g., \T1/cmtt/m/n/12 Docker version 27.4.0, build bde2b89\T1/p
 tm/m/n/12 ) and Docker Com-pose plu-gin (e.g., \T1/cmtt/m/n/12 Docker
  []
 
 
-Overfull \hbox (3.96837pt too wide) in paragraph at lines 172--172
+Overfull \hbox (3.96837pt too wide) in paragraph at lines 173--173
 \T1/cmtt/m/n/12 GOOGLE_CLIENT_SECRET|  
- []
-
-
-Overfull \hbox (10.14186pt too wide) in paragraph at lines 174--174
-[]|\T1/cmtt/m/n/12 CLOUDINARY_CLOUD_NAME  
- []
-
-
-Overfull \hbox (10.14186pt too wide) in paragraph at lines 174--174
-\T1/cmtt/m/n/12 CLOUDINARY_API_SECRET|  
- []
-
-
-Overfull \hbox (10.14186pt too wide) in paragraph at lines 175--175
-\T1/cmtt/m/n/12 STRIPE_WEBHOOK_SECRET|  
  []
 
 ignored error: Infinite glue shrinkage found in box being split [10 <./images/i
 nstall/a04_env_check_versions.png (PNG copy)>]
-<images/install/a05_clone_and_install.png, id=339, 1445.4pt x 903.375pt>
+<images/install/a05_clone_and_install.png, id=340, 1445.4pt x 903.375pt>
 File: images/install/a05_clone_and_install.png Graphic file (type png)
 <use images/install/a05_clone_and_install.png>
 Package pdftex.def Info: images/install/a05_clone_and_install.png  used on inpu
-t line 186.
+t line 187.
 (pdftex.def)             Requested size: 425.08147pt x 265.66626pt.
-<images/install/a06_env_configuration.png, id=340, 1445.4pt x 903.375pt>
+ [11 <./images/install/a05_clone_and_install.png (PNG copy)>]
+<images/install/a06_env_configuration.png, id=346, 1445.4pt x 903.375pt>
 File: images/install/a06_env_configuration.png Graphic file (type png)
 <use images/install/a06_env_configuration.png>
 Package pdftex.def Info: images/install/a06_env_configuration.png  used on inpu
-t line 199.
+t line 200.
 (pdftex.def)             Requested size: 425.08147pt x 265.66626pt.
- [11 <./images/install/a05_clone_and_install.png (PNG copy)>]
-<images/install/a07_prisma_migrate_seed.png, id=346, 1445.4pt x 903.375pt>
+<images/install/a07_prisma_migrate_seed.png, id=347, 1445.4pt x 903.375pt>
 File: images/install/a07_prisma_migrate_seed.png Graphic file (type png)
 <use images/install/a07_prisma_migrate_seed.png>
 Package pdftex.def Info: images/install/a07_prisma_migrate_seed.png  used on in
-put line 224.
+put line 227.
 (pdftex.def)             Requested size: 425.08147pt x 265.66626pt.
- [12 <./images/install/a06_env_configuration.png (PNG copy)>]) (sections/sec2_d
-ocker_ai.tex
-Overfull \hbox (1.55367pt too wide) in paragraph at lines 18--18
-[]|\T1/cmtt/m/n/12 frevia-postgres|  
+ [12 <./images/install/a06_env_configuration.png (PNG copy)>]
+Underfull \hbox (badness 4739) in paragraph at lines 235--235
+[][]\T1/ptm/b/n/12 [3][] \T1/ptm/m/n/12 Ex-e-cute \T1/cmtt/m/n/12 pnpm --filter
+ api seed \T1/ptm/m/n/12 (via In-fisi-cal or con-fig-ured \T1/cmtt/m/n/12 SEED_
+*_EMAIL \T1/ptm/m/n/12 /
  []
 
-[13 <./images/install/a07_prisma_migrate_seed.png (PNG copy)>]
-<images/install/a08_docker_compose_up.png, id=371, 1445.4pt x 903.375pt>
+) (sections/sec2_docker_ai.tex [13 <./images/install/a07_prisma_migrate_seed.pn
+g (PNG copy)>]
+<images/install/a08_docker_compose_up.png, id=377, 1445.4pt x 903.375pt>
 File: images/install/a08_docker_compose_up.png Graphic file (type png)
 <use images/install/a08_docker_compose_up.png>
 Package pdftex.def Info: images/install/a08_docker_compose_up.png  used on inpu
-t line 34.
+t line 36.
 (pdftex.def)             Requested size: 425.08147pt x 265.66626pt.
  [14] [15 <./images/install/a08_docker_compose_up.png (PNG copy)>]
-<images/install/a09_verify_web_running.png, id=395, 1445.4pt x 903.375pt>
+<images/install/a09_verify_web_running.png, id=402, 1445.4pt x 903.375pt>
 File: images/install/a09_verify_web_running.png Graphic file (type png)
 <use images/install/a09_verify_web_running.png>
 Package pdftex.def Info: images/install/a09_verify_web_running.png  used on inp
-ut line 78.
+ut line 80.
 (pdftex.def)             Requested size: 425.08147pt x 265.66626pt.
-<images/install/a10_verify_api_swagger.png, id=397, 1445.4pt x 903.375pt>
+<images/install/a10_verify_api_swagger.png, id=404, 1445.4pt x 903.375pt>
 File: images/install/a10_verify_api_swagger.png Graphic file (type png)
 <use images/install/a10_verify_api_swagger.png>
 Package pdftex.def Info: images/install/a10_verify_api_swagger.png  used on inp
-ut line 91.
+ut line 93.
 (pdftex.def)             Requested size: 425.08147pt x 265.66626pt.
  [16 <./images/install/a09_verify_web_running.png (PNG copy)>]
-Overfull \hbox (3.96837pt too wide) in paragraph at lines 119--119
-[]|\T1/cmtt/m/n/12 freelancer@gmail.com|  
- []
-
-
-Overfull \hbox (7.72716pt too wide) in paragraph at lines 119--119
-[]|\T1/cmtt/m/n/12 freelancer123456|  
- []
-
 ignored error: Infinite glue shrinkage found in box being split [17 <./images/i
 nstall/a10_verify_api_swagger.png (PNG copy)>])
 (sections/sec3_m02_auth_session.tex
-Overfull \hbox (62.71004pt too wide) in paragraph at lines 16--17
-[]\T1/ptm/b/n/12 Expert (Spe-cial-ist Con-sul-tant): \T1/ptm/m/n/12 Op-er-ates 
-within an ex-clu-sive con-sul-ta-tion workspace (\T1/cmtt/m/n/12 /expert/profil
-e\T1/ptm/m/n/12 ),
- []
-
-
 Overfull \hbox (1.60323pt too wide) in paragraph at lines 17--18
 \T1/cmtt/m/n/12 /admin \T1/ptm/m/n/12 por-tal: or-ches-trat-ing dy-namic RBAC r
 ole-permission as-sign-ments, ad-min-is-ter-ing multi-
  []
 
 [18]
-<images/auth/m02_01_register.png, id=421, 1445.4pt x 1063.975pt>
+<images/auth/m02_01_register.png, id=426, 1445.4pt x 1063.975pt>
 File: images/auth/m02_01_register.png Graphic file (type png)
 <use images/auth/m02_01_register.png>
 Package pdftex.def Info: images/auth/m02_01_register.png  used on input line 37
 .
 (pdftex.def)             Requested size: 425.08147pt x 312.89581pt.
- [19 <./images/auth/m02_01_register.png (PNG copy)>]
-Overfull \hbox (0.56981pt too wide) in paragraph at lines 60--61
-[]\T1/ptm/b/n/12 Success Sce-nario: \T1/ptm/m/n/12 The server pro-vi-sions a ne
-w \T1/cmtt/m/n/12 User \T1/ptm/m/n/12 record, links the cho-sen role (\T1/cmtt/
-m/n/12 FREELANCER
- []
-
-[20]
-<images/auth/m02_02_login.png, id=443, 1445.4pt x 1063.975pt>
+ [19 <./images/auth/m02_01_register.png (PNG copy)>] [20]
+<images/auth/m02_02_login.png, id=448, 1445.4pt x 1063.975pt>
 File: images/auth/m02_02_login.png Graphic file (type png)
 <use images/auth/m02_02_login.png>
 Package pdftex.def Info: images/auth/m02_02_login.png  used on input line 81.
 (pdftex.def)             Requested size: 425.08147pt x 312.89581pt.
  [21 <./images/auth/m02_02_login.png (PNG copy)>] [22]
-<images/auth/m02_03_google_oauth.png, id=460, 1445.4pt x 1063.975pt>
+<images/auth/m02_03_google_oauth.png, id=465, 1445.4pt x 1063.975pt>
 File: images/auth/m02_03_google_oauth.png Graphic file (type png)
 <use images/auth/m02_03_google_oauth.png>
 Package pdftex.def Info: images/auth/m02_03_google_oauth.png  used on input lin
 e 120.
 (pdftex.def)             Requested size: 425.08147pt x 312.89581pt.
-
-Overfull \hbox (74.5134pt too wide) in paragraph at lines 132--133
-[]\T1/ptm/b/n/12 Success Sce-nario: \T1/ptm/m/n/12 Google val-i-dates iden-tity
- and redi-rects the browser back to \T1/cmtt/m/n/12 /api/auth/google/callback\T
-1/ptm/m/n/12 .
- []
-
-[23 <./images/auth/m02_03_google_oauth.png (PNG copy)>]
-<images/auth/m02_04_forgot_password.png, id=470, 1445.4pt x 1063.975pt>
+ [23 <./images/auth/m02_03_google_oauth.png (PNG copy)>]
+<images/auth/m02_04_forgot_password.png, id=475, 1445.4pt x 1063.975pt>
 File: images/auth/m02_04_forgot_password.png Graphic file (type png)
 <use images/auth/m02_04_forgot_password.png>
 Package pdftex.def Info: images/auth/m02_04_forgot_password.png  used on input 
 line 148.
 (pdftex.def)             Requested size: 425.08147pt x 312.89581pt.
- [24 <./images/auth/m02_04_forgot_password.png (PNG copy)>] [25]
-<images/auth/m02_05_sessions_list.png, id=490, 1445.4pt x 943.525pt>
+ [24 <./images/auth/m02_04_forgot_password.png (PNG copy)>]
+[25]
+<images/auth/m02_05_sessions_list.png, id=495, 1445.4pt x 943.525pt>
 File: images/auth/m02_05_sessions_list.png Graphic file (type png)
 <use images/auth/m02_05_sessions_list.png>
 Package pdftex.def Info: images/auth/m02_05_sessions_list.png  used on input li
@@ -1198,59 +1162,52 @@ ss columns:
  []
 
 [26 <./images/auth/m02_05_sessions_list.png (PNG copy)>]
-<images/auth/m02_06_revoke_session.png, id=503, 1445.4pt x 943.525pt>
+<images/auth/m02_06_revoke_session.png, id=508, 1445.4pt x 943.525pt>
 File: images/auth/m02_06_revoke_session.png Graphic file (type png)
 <use images/auth/m02_06_revoke_session.png>
 Package pdftex.def Info: images/auth/m02_06_revoke_session.png  used on input l
 ine 210.
 (pdftex.def)             Requested size: 425.08147pt x 277.47363pt.
  [27 <./images/auth/m02_06_revoke_session.png (PNG copy)>]
-<images/auth/m02_07_logout.png, id=514, 1445.4pt x 943.525pt>
+<images/auth/m02_07_logout.png, id=519, 1445.4pt x 943.525pt>
 File: images/auth/m02_07_logout.png Graphic file (type png)
 <use images/auth/m02_07_logout.png>
 Package pdftex.def Info: images/auth/m02_07_logout.png  used on input line 238.
 
 (pdftex.def)             Requested size: 425.08147pt x 277.47363pt.
-
-Overfull \hbox (4.81459pt too wide) in paragraph at lines 244--245
-\T1/ptm/m/n/12 the au-then-ti-cated iden-tity card show-ing Avatar, Full Name (
-\T1/cmtt/m/n/12 admin\T1/ptm/m/n/12 ), Email (\T1/cmtt/m/n/12 admin@gmail.com\T
-1/ptm/m/n/12 ),
- []
-
-) (sections/sec3_m14_admin_rbac_users.tex [28 <./images/auth/m02_07_logout.png 
-(PNG copy)>]
+) (sections/sec3_m14_admin_rbac_users.tex
+[28 <./images/auth/m02_07_logout.png (PNG copy)>]
 LaTeX Font Info:    Font shape `T1/cmtt/bx/n' in size <12> not available
 (Font)              Font shape `T1/cmtt/m/n' tried instead on input line 12.
-<images/admin/m14_01_admin_dashboard.png, id=524, 1445.4pt x 943.525pt>
+<images/admin/m14_01_admin_dashboard.png, id=529, 1445.4pt x 943.525pt>
 File: images/admin/m14_01_admin_dashboard.png Graphic file (type png)
 <use images/admin/m14_01_admin_dashboard.png>
 Package pdftex.def Info: images/admin/m14_01_admin_dashboard.png  used on input
  line 22.
 (pdftex.def)             Requested size: 425.08147pt x 277.47363pt.
  [29 <./images/admin/m14_01_admin_dashboard.png (PNG copy)>]
-Overfull \hbox (45.30867pt too wide) in paragraph at lines 37--38
-\T1/cmtt/m/n/12 /conversations\T1/ptm/m/n/12 ); they may browse pub-lic pages (
-such as \T1/cmtt/m/n/12 /forum\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 /profiles/[id]\T
-1/ptm/m/n/12 , \T1/cmtt/m/n/12 /clients/[id]\T1/ptm/m/n/12 )
+Underfull \hbox (badness 1596) in paragraph at lines 37--37
+\T1/ptm/m/n/12 to \T1/cmtt/m/n/12 /access-denied?requiredRole=admin\T1/ptm/m/n/
+12 . Con-versely, \T1/cmtt/m/n/12 ADMIN\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 EXPERT\
+T1/ptm/m/n/12 , and cus-tom
  []
 
 [30]
-<images/admin/m14_02_admin_profile.png, id=541, 1445.4pt x 943.525pt>
+<images/admin/m14_02_admin_profile.png, id=546, 1445.4pt x 943.525pt>
 File: images/admin/m14_02_admin_profile.png Graphic file (type png)
 <use images/admin/m14_02_admin_profile.png>
 Package pdftex.def Info: images/admin/m14_02_admin_profile.png  used on input l
 ine 52.
 (pdftex.def)             Requested size: 425.08147pt x 277.47363pt.
  [31 <./images/admin/m14_02_admin_profile.png (PNG copy)>]
-<images/admin/m14_03_admin_roles.png, id=554, 1445.4pt x 943.525pt>
+<images/admin/m14_03_admin_roles.png, id=559, 1445.4pt x 943.525pt>
 File: images/admin/m14_03_admin_roles.png Graphic file (type png)
 <use images/admin/m14_03_admin_roles.png>
 Package pdftex.def Info: images/admin/m14_03_admin_roles.png  used on input lin
 e 81.
 (pdftex.def)             Requested size: 425.08147pt x 277.47363pt.
  [32 <./images/admin/m14_03_admin_roles.png (PNG copy)>] [33]
-<images/admin/m14_04_role_permissions_matrix.png, id=571, 1445.4pt x 943.525pt>
+<images/admin/m14_04_role_permissions_matrix.png, id=576, 1445.4pt x 943.525pt>
 
 File: images/admin/m14_04_role_permissions_matrix.png Graphic file (type png)
 <use images/admin/m14_04_role_permissions_matrix.png>
@@ -1258,7 +1215,7 @@ Package pdftex.def Info: images/admin/m14_04_role_permissions_matrix.png  used
 on input line 117.
 (pdftex.def)             Requested size: 425.08147pt x 277.47363pt.
  [34 <./images/admin/m14_04_role_permissions_matrix.png (PNG copy)>] [35]
-<images/admin/m14_05_admin_permissions.png, id=588, 1445.4pt x 943.525pt>
+<images/admin/m14_05_admin_permissions.png, id=593, 1445.4pt x 943.525pt>
 File: images/admin/m14_05_admin_permissions.png Graphic file (type png)
 <use images/admin/m14_05_admin_permissions.png>
 Package pdftex.def Info: images/admin/m14_05_admin_permissions.png  used on inp
@@ -1271,40 +1228,32 @@ nd mod-ule fil-ters at
  []
 
 [36 <./images/admin/m14_05_admin_permissions.png (PNG copy)>] [37]
-<images/admin/m14_06_admin_users_list_create.png, id=606, 1445.4pt x 943.525pt>
+<images/admin/m14_06_admin_users_list_create.png, id=611, 1445.4pt x 943.525pt>
 
 File: images/admin/m14_06_admin_users_list_create.png Graphic file (type png)
 <use images/admin/m14_06_admin_users_list_create.png>
 Package pdftex.def Info: images/admin/m14_06_admin_users_list_create.png  used 
 on input line 177.
 (pdftex.def)             Requested size: 425.08147pt x 277.47363pt.
-
-Overfull \hbox (37.41563pt too wide) in paragraph at lines 189--190
-[]\T1/ptm/m/n/12 Click the eye icon (\T1/ptm/b/n/12 Eye icon\T1/ptm/m/n/12 ) to
- open the user's multi-profile de-tails view (\T1/cmtt/m/n/12 /admin/users/[id]
-\T1/ptm/m/n/12 ). 
- []
-
-[38 <./images/admin/m14_06_admin_users_list_create.png (PNG copy)>] [39]
-<images/admin/m14_07_admin_user_ban_unban.png, id=623, 1445.4pt x 943.525pt>
+ [38 <./images/admin/m14_06_admin_users_list_create.png (PNG copy)>] [39]
+<images/admin/m14_07_admin_user_ban_unban.png, id=628, 1445.4pt x 943.525pt>
 File: images/admin/m14_07_admin_user_ban_unban.png Graphic file (type png)
 <use images/admin/m14_07_admin_user_ban_unban.png>
 Package pdftex.def Info: images/admin/m14_07_admin_user_ban_unban.png  used on 
 input line 211.
 (pdftex.def)             Requested size: 425.08147pt x 277.47363pt.
-
-[40 <./images/admin/m14_07_admin_user_ban_unban.png (PNG copy)>] [41]
-<images/admin/m14_08_admin_user_profile_tabs.png, id=639, 1445.4pt x 943.525pt>
+ [40 <./images/admin/m14_07_admin_user_ban_unban.png (PNG copy)>]
+<images/admin/m14_08_admin_user_profile_tabs.png, id=640, 1445.4pt x 943.525pt>
 
 File: images/admin/m14_08_admin_user_profile_tabs.png Graphic file (type png)
 <use images/admin/m14_08_admin_user_profile_tabs.png>
 Package pdftex.def Info: images/admin/m14_08_admin_user_profile_tabs.png  used 
 on input line 245.
 (pdftex.def)             Requested size: 425.08147pt x 277.47363pt.
-)
-(sections/sec3_m15_admin_catalogs.tex [42 <./images/admin/m14_08_admin_user_pro
-file_tabs.png (PNG copy)>]
-<images/admin/m15_01_admin_skills.png, id=653, 1445.4pt x 943.525pt>
+ [41 <./images/admin/m14_08_admin_user_profile_tabs.png (PNG copy)>]) (sections
+/sec3_m15_admin_catalogs.tex
+[42]
+<images/admin/m15_01_admin_skills.png, id=658, 1445.4pt x 943.525pt>
 File: images/admin/m15_01_admin_skills.png Graphic file (type png)
 <use images/admin/m15_01_admin_skills.png>
 Package pdftex.def Info: images/admin/m15_01_admin_skills.png  used on input li
@@ -1322,43 +1271,42 @@ Overfull \hbox (3.63316pt too wide) in paragraph at lines 51--52
 e-ment Con-sole -- \T1/cmtt/m/n/12 /admin/job-categories\T1/ptm/m/n/12 . 
  []
 
-<images/admin/m15_02_admin_job_categories.png, id=670, 1445.4pt x 943.525pt>
+<images/admin/m15_02_admin_job_categories.png, id=675, 1445.4pt x 943.525pt>
 File: images/admin/m15_02_admin_job_categories.png Graphic file (type png)
 <use images/admin/m15_02_admin_job_categories.png>
 Package pdftex.def Info: images/admin/m15_02_admin_job_categories.png  used on 
 input line 58.
 (pdftex.def)             Requested size: 425.08147pt x 277.47363pt.
-
-Underfull \hbox (badness 10000) in paragraph at lines 59--59
-[]\T1/ptm/m/n/12 Figure 3.17: []Job Cat-e-gories man-age-ment con-sole with cat
--e-gory hi-er-ar-chy at
- []
-
 [45 <./images/admin/m15_02_admin_job_categories.png (PNG copy)>] [46]
-<images/admin/m15_03_admin_forum_categories.png, id=687, 1445.4pt x 943.525pt>
+<images/admin/m15_03_admin_forum_categories.png, id=692, 1445.4pt x 943.525pt>
 File: images/admin/m15_03_admin_forum_categories.png Graphic file (type png)
 <use images/admin/m15_03_admin_forum_categories.png>
 Package pdftex.def Info: images/admin/m15_03_admin_forum_categories.png  used o
 n input line 88.
 (pdftex.def)             Requested size: 425.08147pt x 277.47363pt.
 ) [47 <./images/admin/m15_03_admin_forum_categories.png (PNG copy)>]
-(Report6_Software_User_Guides.aux)
+(C:\Users\ASUS\.gemini\antigravity\brain\901340cd-a084-4162-b242-505e8cef7a07\s
+cratch\build_r6_final\Report6_Software_User_Guides.aux)
  ***********
 LaTeX2e <2025-11-01>
 L3 programming layer <2025-12-24>
  ***********
+
+
+LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
+
 Package rerunfilecheck Info: File `Report6_Software_User_Guides.out' has not ch
 anged.
-(rerunfilecheck)             Checksum: BBD3E18CA9328225879828AFE0101E90;14904.
+(rerunfilecheck)             Checksum: 27CDE7B442F10D9A9BBB9B782B480FF8;14907.
  ) 
 Here is how much of TeX's memory you used:
- 26463 strings out of 467871
- 501719 string characters out of 5418860
- 1309523 words of memory out of 5000000
+ 26467 strings out of 467871
+ 502902 string characters out of 5418860
+ 1260522 words of memory out of 5000000
  54608 multiletter control sequences out of 15000+600000
  677420 words of font info for 95 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 98i,13n,108p,752b,1238s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 98i,13n,108p,745b,2005s stack positions out of 10000i,1000n,20000p,200000b,200000s
  <C:\Users\ASUS\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ectt1
 000.pk> <C:\Users\ASUS\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\
 ectt1200.pk><C:/Users/ASUS/AppData/Local/Programs/MiKTeX/fonts/type1/public/ams
@@ -1368,9 +1316,11 @@ type1/urw/times/utmb8a.pfb><C:/Users/ASUS/AppData/Local/Programs/MiKTeX/fonts/t
 ype1/urw/times/utmbi8a.pfb><C:/Users/ASUS/AppData/Local/Programs/MiKTeX/fonts/t
 ype1/urw/times/utmr8a.pfb><C:/Users/ASUS/AppData/Local/Programs/MiKTeX/fonts/ty
 pe1/urw/times/utmri8a.pfb>
-Output written on Report6_Software_User_Guides.pdf (48 pages, 7496221 bytes).
+Output written on C:\Users\ASUS\.gemini\antigravity\brain\901340cd-a084-4162-b2
+42-505e8cef7a07\scratch\build_r6_final\Report6_Software_User_Guides.pdf (48 pag
+es, 7499872 bytes).
 PDF statistics:
- 951 PDF objects out of 1000 (max. 8388607)
- 300 named destinations out of 1000 (max. 500000)
+ 959 PDF objects out of 1000 (max. 8388607)
+ 303 named destinations out of 1000 (max. 500000)
  542 words of extra memory for PDF output out of 10000 (max. 10000000)
 

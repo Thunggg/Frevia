@@ -10,6 +10,7 @@ import {
   type ViewListJobParsedFilterType,
 } from '@shared/types';
 import type { EmbeddingOutboxService } from '../../src/routes/recommendations/embedding-outbox.service';
+import type { FastTextService } from '../../src/shared/services/fasttext.service';
 import type { ManageJobRepository } from '../../src/routes/manage-job/manage-job.repo';
 import { ManageJobService } from '../../src/routes/manage-job/manage-job.service';
 import {
@@ -25,6 +26,7 @@ import {
   JobCannotBeReopenedException,
   JobNotFoundException,
   JobOnlyForClientException,
+  ClientIdentityNotVerifiedException,
   JobReopenPeriodExpiredException,
   PositionsRequiredBelowFilledException,
 } from '../../src/routes/manage-job/manage-job.error';
@@ -56,6 +58,7 @@ describe('Job Management (UF-87 to UF-93)', () => {
     });
 
   let repository: {
+    isIdentityVerified: jest.Mock;
     createJob: jest.Mock;
     updateJob: jest.Mock;
     deleteJob: jest.Mock;
@@ -64,6 +67,7 @@ describe('Job Management (UF-87 to UF-93)', () => {
     reopenJob: jest.Mock;
     getClientJobLists: jest.Mock;
     getClientJobDetail: jest.Mock;
+    hasDuplicateTitle: jest.Mock;
     searchSkills: jest.Mock;
   };
 
@@ -71,10 +75,16 @@ describe('Job Management (UF-87 to UF-93)', () => {
     enqueueAndProcess: jest.Mock;
   };
 
+  let fastTextService: {
+    isEnglish: jest.Mock;
+    detect: jest.Mock;
+  };
+
   let service: ManageJobService;
 
   beforeEach(() => {
     repository = {
+      isIdentityVerified: jest.fn().mockResolvedValue(true),
       createJob: jest.fn().mockResolvedValue(mockJob),
       updateJob: jest.fn().mockResolvedValue(mockJob),
       deleteJob: jest.fn().mockResolvedValue(undefined),
@@ -85,6 +95,7 @@ describe('Job Management (UF-87 to UF-93)', () => {
         .fn()
         .mockResolvedValue({ jobs: [mockJob], total: 1 }),
       getClientJobDetail: jest.fn().mockResolvedValue(mockJob),
+      hasDuplicateTitle: jest.fn().mockResolvedValue(false),
       searchSkills: jest.fn().mockResolvedValue([]),
     };
 
@@ -92,9 +103,15 @@ describe('Job Management (UF-87 to UF-93)', () => {
       enqueueAndProcess: jest.fn().mockResolvedValue(undefined),
     };
 
+    fastTextService = {
+      isEnglish: jest.fn().mockResolvedValue(true),
+      detect: jest.fn().mockResolvedValue('en'),
+    };
+
     service = new ManageJobService(
       repository as unknown as ManageJobRepository,
       embeddingOutbox as unknown as EmbeddingOutboxService,
+      fastTextService as unknown as FastTextService,
     );
 
     jest.clearAllMocks();
@@ -264,6 +281,19 @@ describe('Job Management (UF-87 to UF-93)', () => {
         service.createJob(1, RoleName.FREELANCER, validBody),
       ).rejects.toThrow(JobOnlyForClientException());
 
+      expect(repository.createJob).not.toHaveBeenCalled();
+      expect(embeddingOutbox.enqueueAndProcess).not.toHaveBeenCalled();
+    });
+
+    // Từ chối tạo công việc khi client chưa xác minh danh tính (CCCD).
+    it('throws ClientIdentityNotVerifiedException when client identity is not verified', async () => {
+      repository.isIdentityVerified.mockResolvedValueOnce(false);
+
+      await expect(
+        service.createJob(1, RoleName.CLIENT, validBody),
+      ).rejects.toThrow(ClientIdentityNotVerifiedException());
+
+      expect(repository.isIdentityVerified).toHaveBeenCalledWith(1);
       expect(repository.createJob).not.toHaveBeenCalled();
       expect(embeddingOutbox.enqueueAndProcess).not.toHaveBeenCalled();
     });

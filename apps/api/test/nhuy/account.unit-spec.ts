@@ -4,9 +4,7 @@ jest.mock('fs/promises', () => ({
   unlink: jest.fn().mockResolvedValue(undefined),
   readFile: jest.fn().mockResolvedValue(Buffer.from('%PDF-1.7')),
 }));
-import { Prisma } from '@prisma/client';
 import * as shared from '@shared/types';
-import * as path from 'path';
 import * as storage from 'fs/promises';
 import { AccountProfileService } from '../../src/routes/account-profile/account-profile.service';
 
@@ -25,6 +23,7 @@ describe('AccountProfileService (UF-132 to UF-175)', () => {
     createIdentityAiDocument: jest.fn(),
     findIdentityDocumentById: jest.fn(),
     findClientProfile: jest.fn(),
+    createClientProfile: jest.fn(),
     updateClientProfile: jest.fn(),
     findSocialLinks: jest.fn(),
     findSocialLinkByPlatform: jest.fn(),
@@ -56,10 +55,7 @@ describe('AccountProfileService (UF-132 to UF-175)', () => {
   };
   const hashing = { verify: jest.fn(), hash: jest.fn() };
   const outbox = { enqueueAndProcess: jest.fn() };
-  const ai = { analyze: jest.fn() };
-  const resolver = { resolveSkillEntries: jest.fn() };
   const identityAi = { verify: jest.fn(), livenessPose: jest.fn() };
-  const token = { signAccessToken: jest.fn() };
   const fixedDate = new Date('2026-11-09T00:00:00Z');
   const service = new AccountProfileService(
     repository as never,
@@ -68,12 +64,20 @@ describe('AccountProfileService (UF-132 to UF-175)', () => {
     hashing as never,
     identityAi as never,
   );
-  let profile: any;
-  let user: any;
-  let contract: any;
-  let review: any;
-  let revision: any;
-  let expertUser: any;
+  let user: {
+    id: number;
+    email: string;
+    profile: {
+      id: number;
+      userId: number;
+      displayName: string;
+      profileCompletionPercent: number;
+      avatarUrl: string | null;
+      updatedAt: Date;
+    };
+    role: { name: string } | null;
+    userRoles: Array<{ isPrimary?: boolean; role: { name: string } }>;
+  };
   beforeEach(() => {
     jest.clearAllMocks();
     jest.resetAllMocks();
@@ -112,15 +116,17 @@ describe('AccountProfileService (UF-132 to UF-175)', () => {
         avatarUrl: null,
         updatedAt: new Date('2026-11-09T00:00:00Z'),
       },
+      role: { name: 'Client' },
       userRoles: [{ isPrimary: true, role: { name: 'Client' } }],
     };
-    repository.findUserWithRoles.mockImplementation(async (id: number) =>
+    repository.findUserWithRoles.mockImplementation((id: number) =>
       id === 10
         ? user
         : {
             ...user,
             id,
             profile: { ...user.profile, userId: id },
+            role: { name: 'Freelancer' },
             userRoles: [{ role: { name: 'Freelancer' } }],
           },
     );
@@ -131,8 +137,18 @@ describe('AccountProfileService (UF-132 to UF-175)', () => {
     });
     repository.findClientProfile.mockResolvedValue({
       id: 5,
-      user: { userRoles: [{ role: { name: 'Client' } }] },
+      user: {
+        role: { name: 'Client' },
+        userRoles: [{ role: { name: 'Client' } }],
+      },
       clientProfile: { id: 8 },
+    });
+    repository.createClientProfile.mockResolvedValue({
+      id: 9,
+      profileId: 5,
+      companyName: null,
+      companyDescription: null,
+      website: null,
     });
     repository.findSocialLinks.mockResolvedValue([]);
     repository.findSocialLinkByPlatform.mockResolvedValue(null);
@@ -174,7 +190,7 @@ describe('AccountProfileService (UF-132 to UF-175)', () => {
       null,
     );
     repository.createIdentityAiDocument.mockImplementation(
-      async (data: Record<string, unknown>) => ({ id: 4, ...data }),
+      (data: Record<string, unknown>) => Promise.resolve({ id: 4, ...data }),
     );
   });
   describe('UF-132 uploadIdentityDocument', () => {
@@ -217,6 +233,7 @@ describe('AccountProfileService (UF-132 to UF-175)', () => {
     it('rejects an account without FREELANCER membership', async () => {
       repository.findUserWithRoles.mockResolvedValue({
         ...user,
+        role: null,
         userRoles: [],
       });
 
@@ -320,7 +337,7 @@ describe('AccountProfileService (UF-132 to UF-175)', () => {
       });
     });
     // UTCID08: Từ chối tình huống rejects documentType missing; trả mã 400.
-    it('rejects documentType missing', async () => {
+    it('rejects documentType missing', () => {
       const result = shared.UploadIdentityDocumentSchema.safeParse({});
       expect(result.success).toBe(false);
       if (!result.success)
@@ -338,7 +355,7 @@ describe('AccountProfileService (UF-132 to UF-175)', () => {
         ]);
     });
     // UTCID09: Từ chối tình huống rejects documentType invalid; trả mã 400.
-    it('rejects documentType invalid', async () => {
+    it('rejects documentType invalid', () => {
       const result = shared.UploadIdentityDocumentSchema.safeParse({
         documentType: 'INVALID',
       });
@@ -358,7 +375,7 @@ describe('AccountProfileService (UF-132 to UF-175)', () => {
         ]);
     });
     // UTCID10: Xử lý tình huống accepts documentType passport; đối chiếu kết quả và tác động phụ.
-    it('accepts documentType passport', async () => {
+    it('accepts documentType passport', () => {
       const result = shared.UploadIdentityDocumentSchema.safeParse({
         documentType: 'PASSPORT',
       });
@@ -367,7 +384,7 @@ describe('AccountProfileService (UF-132 to UF-175)', () => {
         expect(result.data).toEqual({ documentType: 'PASSPORT' });
     });
     // UTCID11: Từ chối tình huống rejects unexpected unknown field; trả mã 400.
-    it('rejects unexpected unknown field', async () => {
+    it('rejects unexpected unknown field', () => {
       const result = shared.UploadIdentityDocumentSchema.safeParse({
         documentType: 'ID_CARD',
         unexpected: 'value',
@@ -405,6 +422,7 @@ describe('AccountProfileService (UF-132 to UF-175)', () => {
     it('rejects an account without FREELANCER membership', async () => {
       repository.findUserWithRoles.mockResolvedValue({
         ...user,
+        role: null,
         userRoles: [],
       });
 
@@ -455,7 +473,10 @@ describe('AccountProfileService (UF-132 to UF-175)', () => {
       const result = await service.getClientProfile(10);
       expect(result).toEqual({
         id: 5,
-        user: { userRoles: [{ role: { name: 'Client' } }] },
+        user: {
+          role: { name: 'Client' },
+          userRoles: [{ role: { name: 'Client' } }],
+        },
         clientProfile: { id: 8 },
       });
     });
@@ -475,7 +496,7 @@ describe('AccountProfileService (UF-132 to UF-175)', () => {
     // UTCID03: Từ chối tình huống rejects a missing role; trả mã 404.
     it('rejects a missing role', async () => {
       repository.findClientProfile.mockResolvedValue({
-        user: { userRoles: [] },
+        user: { role: null, userRoles: [] },
         clientProfile: { id: 8 },
       });
 
@@ -488,21 +509,22 @@ describe('AccountProfileService (UF-132 to UF-175)', () => {
         },
       });
     });
-    // UTCID04: Từ chối tình huống rejects a missing clientProfile; trả mã 404.
-    it('rejects a missing clientProfile', async () => {
+    // UTCID04: Xử lý tình huống auto-creates a missing clientProfile; trả dữ liệu đã khởi tạo.
+    it('auto-creates a missing clientProfile', async () => {
       repository.findClientProfile.mockResolvedValue({
-        user: { userRoles: [{ role: { name: 'Client' } }] },
+        id: 5,
+        user: {
+          role: { name: 'Client' },
+          userRoles: [{ role: { name: 'Client' } }],
+        },
         clientProfile: null,
       });
 
-      await expect(service.getClientProfile(10)).rejects.toMatchObject({
-        status: 404,
-        response: {
-          message: [{ message: 'Client profile not found.', path: 'userId' }],
-          error: 'Not Found',
-          statusCode: 404,
-        },
+      await expect(service.getClientProfile(10)).resolves.toMatchObject({
+        id: 5,
+        clientProfile: { id: 9, profileId: 5 },
       });
+      expect(repository.createClientProfile).toHaveBeenCalledWith(5);
     });
   });
   describe('UF-135 updateClientProfile', () => {
@@ -547,6 +569,7 @@ describe('AccountProfileService (UF-132 to UF-175)', () => {
     it('rejects an account without CLIENT membership', async () => {
       repository.findUserWithRoles.mockResolvedValue({
         ...user,
+        role: null,
         userRoles: [],
       });
 
@@ -567,7 +590,7 @@ describe('AccountProfileService (UF-132 to UF-175)', () => {
       });
     });
     // UTCID05: Từ chối tình huống rejects companyName missing; trả mã 400.
-    it('rejects companyName missing', async () => {
+    it('rejects companyName missing', () => {
       const result = shared.UpdateClientProfileSchema.safeParse({});
       expect(result.success).toBe(false);
       if (!result.success)
@@ -584,7 +607,7 @@ describe('AccountProfileService (UF-132 to UF-175)', () => {
         ]);
     });
     // UTCID06: Từ chối tình huống rejects companyName empty; trả mã 400.
-    it('rejects companyName empty', async () => {
+    it('rejects companyName empty', () => {
       const result = shared.UpdateClientProfileSchema.safeParse({
         companyName: '',
       });
@@ -600,7 +623,7 @@ describe('AccountProfileService (UF-132 to UF-175)', () => {
         ]);
     });
     // UTCID07: Xử lý tình huống accepts companyName minimum; đối chiếu kết quả và tác động phụ.
-    it('accepts companyName minimum', async () => {
+    it('accepts companyName minimum', () => {
       const result = shared.UpdateClientProfileSchema.safeParse({
         companyName: 'x',
       });
@@ -608,7 +631,7 @@ describe('AccountProfileService (UF-132 to UF-175)', () => {
       if (result.success) expect(result.data).toEqual({ companyName: 'x' });
     });
     // UTCID08: Xử lý tình huống accepts companyName maximum; đối chiếu kết quả và tác động phụ.
-    it('accepts companyName maximum', async () => {
+    it('accepts companyName maximum', () => {
       const result = shared.UpdateClientProfileSchema.safeParse({
         companyName: 'x'.repeat(255),
       });
@@ -617,7 +640,7 @@ describe('AccountProfileService (UF-132 to UF-175)', () => {
         expect(result.data).toEqual({ companyName: 'x'.repeat(255) });
     });
     // UTCID09: Từ chối tình huống rejects companyName above maximum; trả mã 400.
-    it('rejects companyName above maximum', async () => {
+    it('rejects companyName above maximum', () => {
       const result = shared.UpdateClientProfileSchema.safeParse({
         companyName: 'x'.repeat(256),
       });
@@ -633,7 +656,7 @@ describe('AccountProfileService (UF-132 to UF-175)', () => {
         ]);
     });
     // UTCID10: Xử lý tình huống accepts companyDescription null; đối chiếu kết quả và tác động phụ.
-    it('accepts companyDescription null', async () => {
+    it('accepts companyDescription null', () => {
       const result = shared.UpdateClientProfileSchema.safeParse({
         companyName: 'Company',
         companyDescription: null,
@@ -646,7 +669,7 @@ describe('AccountProfileService (UF-132 to UF-175)', () => {
         });
     });
     // UTCID11: Xử lý tình huống accepts companyDescription maximum; đối chiếu kết quả và tác động phụ.
-    it('accepts companyDescription maximum', async () => {
+    it('accepts companyDescription maximum', () => {
       const result = shared.UpdateClientProfileSchema.safeParse({
         companyName: 'Company',
         companyDescription: 'x'.repeat(5000),
@@ -659,7 +682,7 @@ describe('AccountProfileService (UF-132 to UF-175)', () => {
         });
     });
     // UTCID12: Từ chối tình huống rejects companyDescription above maximum; trả mã 400.
-    it('rejects companyDescription above maximum', async () => {
+    it('rejects companyDescription above maximum', () => {
       const result = shared.UpdateClientProfileSchema.safeParse({
         companyName: 'Company',
         companyDescription: 'x'.repeat(5001),
@@ -679,7 +702,7 @@ describe('AccountProfileService (UF-132 to UF-175)', () => {
         ]);
     });
     // UTCID13: Xử lý tình huống accepts website null; đối chiếu kết quả và tác động phụ.
-    it('accepts website null', async () => {
+    it('accepts website null', () => {
       const result = shared.UpdateClientProfileSchema.safeParse({
         companyName: 'Company',
         website: null,
@@ -689,7 +712,7 @@ describe('AccountProfileService (UF-132 to UF-175)', () => {
         expect(result.data).toEqual({ companyName: 'Company', website: null });
     });
     // UTCID14: Xử lý tình huống accepts website valid; đối chiếu kết quả và tác động phụ.
-    it('accepts website valid', async () => {
+    it('accepts website valid', () => {
       const result = shared.UpdateClientProfileSchema.safeParse({
         companyName: 'Company',
         website: 'https://example.test',
@@ -702,7 +725,7 @@ describe('AccountProfileService (UF-132 to UF-175)', () => {
         });
     });
     // UTCID15: Từ chối tình huống rejects website invalid; trả mã 400.
-    it('rejects website invalid', async () => {
+    it('rejects website invalid', () => {
       const result = shared.UpdateClientProfileSchema.safeParse({
         companyName: 'Company',
         website: 'invalid',
@@ -717,7 +740,7 @@ describe('AccountProfileService (UF-132 to UF-175)', () => {
         ).toEqual([{ path: ['website'], message: 'Error.InvalidWebsite' }]);
     });
     // UTCID16: Từ chối tình huống rejects unexpected unknown field; trả mã 400.
-    it('rejects unexpected unknown field', async () => {
+    it('rejects unexpected unknown field', () => {
       const result = shared.UpdateClientProfileSchema.safeParse({
         companyName: 'Company',
         unexpected: 'value',
@@ -812,7 +835,7 @@ describe('AccountProfileService (UF-132 to UF-175)', () => {
       expect(repository.createSocialLink).not.toHaveBeenCalled();
     });
     // UTCID04: Từ chối tình huống rejects platform missing; trả mã 400.
-    it('rejects platform missing', async () => {
+    it('rejects platform missing', () => {
       const result = shared.AddSocialLinkSchema.safeParse({
         url: 'https://github.com/test',
       });
@@ -832,7 +855,7 @@ describe('AccountProfileService (UF-132 to UF-175)', () => {
         ]);
     });
     // UTCID05: Từ chối tình huống rejects platform invalid; trả mã 400.
-    it('rejects platform invalid', async () => {
+    it('rejects platform invalid', () => {
       const result = shared.AddSocialLinkSchema.safeParse({
         platform: 'INVALID',
         url: 'https://github.com/test',
@@ -853,7 +876,7 @@ describe('AccountProfileService (UF-132 to UF-175)', () => {
         ]);
     });
     // UTCID06: Xử lý tình huống accepts platform other; đối chiếu kết quả và tác động phụ.
-    it('accepts platform other', async () => {
+    it('accepts platform other', () => {
       const result = shared.AddSocialLinkSchema.safeParse({
         platform: 'OTHER',
         url: 'https://github.com/test',
@@ -866,7 +889,7 @@ describe('AccountProfileService (UF-132 to UF-175)', () => {
         });
     });
     // UTCID07: Từ chối tình huống rejects url missing; trả mã 400.
-    it('rejects url missing', async () => {
+    it('rejects url missing', () => {
       const result = shared.AddSocialLinkSchema.safeParse({
         platform: 'GITHUB',
       });
@@ -880,7 +903,7 @@ describe('AccountProfileService (UF-132 to UF-175)', () => {
         ).toEqual([{ path: ['url'], message: 'Error.InvalidUrl' }]);
     });
     // UTCID08: Từ chối tình huống rejects url invalid; trả mã 400.
-    it('rejects url invalid', async () => {
+    it('rejects url invalid', () => {
       const result = shared.AddSocialLinkSchema.safeParse({
         platform: 'GITHUB',
         url: 'invalid',
@@ -895,7 +918,7 @@ describe('AccountProfileService (UF-132 to UF-175)', () => {
         ).toEqual([{ path: ['url'], message: 'Error.InvalidUrl' }]);
     });
     // UTCID09: Từ chối tình huống rejects unexpected unknown field; trả mã 400.
-    it('rejects unexpected unknown field', async () => {
+    it('rejects unexpected unknown field', () => {
       const result = shared.AddSocialLinkSchema.safeParse({
         platform: 'GITHUB',
         url: 'https://example.test',
@@ -996,6 +1019,7 @@ describe('AccountProfileService (UF-132 to UF-175)', () => {
     it('rejects an account without CLIENT membership', async () => {
       repository.findUserWithRoles.mockResolvedValue({
         ...user,
+        role: null,
         userRoles: [],
       });
 
@@ -1038,6 +1062,7 @@ describe('AccountProfileService (UF-132 to UF-175)', () => {
     it('rejects an account without CLIENT membership', async () => {
       repository.findUserWithRoles.mockResolvedValue({
         ...user,
+        role: null,
         userRoles: [],
       });
 
@@ -1089,7 +1114,7 @@ describe('AccountProfileService (UF-132 to UF-175)', () => {
     it('rejects a target without freelancer membership', async () => {
       repository.findUserWithRoles
         .mockResolvedValueOnce(user)
-        .mockResolvedValueOnce({ ...user, userRoles: [] });
+        .mockResolvedValueOnce({ ...user, role: null, userRoles: [] });
 
       await expect(service.addFavorite(10, 30)).rejects.toMatchObject({
         status: 404,
@@ -1140,6 +1165,7 @@ describe('AccountProfileService (UF-132 to UF-175)', () => {
     it('rejects an account without CLIENT membership', async () => {
       repository.findUserWithRoles.mockResolvedValue({
         ...user,
+        role: null,
         userRoles: [],
       });
 
@@ -1205,6 +1231,7 @@ describe('AccountProfileService (UF-132 to UF-175)', () => {
     it('rejects an account without CLIENT membership', async () => {
       repository.findUserWithRoles.mockResolvedValue({
         ...user,
+        role: null,
         userRoles: [],
       });
 
@@ -1253,6 +1280,7 @@ describe('AccountProfileService (UF-132 to UF-175)', () => {
     it('rejects an account without CLIENT membership', async () => {
       repository.findUserWithRoles.mockResolvedValue({
         ...user,
+        role: null,
         userRoles: [],
       });
 
@@ -1304,19 +1332,19 @@ describe('AccountProfileService (UF-132 to UF-175)', () => {
     it('rejects a target without freelancer membership', async () => {
       repository.findUserWithRoles
         .mockResolvedValueOnce(user)
-        .mockResolvedValueOnce({ ...user, userRoles: [] });
+        .mockResolvedValueOnce({ ...user, role: null, userRoles: [] });
 
       await expect(service.followFreelancer(10, 30)).rejects.toMatchObject({
-        status: 403,
+        status: 404,
         response: {
           message: [
             {
-              message: 'This action is not available for your role.',
-              path: 'role',
+              message: 'Freelancer not found.',
+              path: 'freelancerId',
             },
           ],
-          error: 'Forbidden',
-          statusCode: 403,
+          error: 'Not Found',
+          statusCode: 404,
         },
       });
     });
@@ -1377,6 +1405,7 @@ describe('AccountProfileService (UF-132 to UF-175)', () => {
     it('rejects an account without CLIENT membership', async () => {
       repository.findUserWithRoles.mockResolvedValue({
         ...user,
+        role: null,
         userRoles: [],
       });
 
@@ -1465,6 +1494,7 @@ describe('AccountProfileService (UF-132 to UF-175)', () => {
     it('updates an administrative profile', async () => {
       repository.findGeneralProfile.mockResolvedValue({
         ...user,
+        role: { name: 'Admin' },
         userRoles: [{ isPrimary: true, role: { name: 'Admin' } }],
       });
 
@@ -1494,7 +1524,7 @@ describe('AccountProfileService (UF-132 to UF-175)', () => {
       });
     });
     // UTCID05: Từ chối tình huống rejects displayName missing; trả mã 400.
-    it('rejects displayName missing', async () => {
+    it('rejects displayName missing', () => {
       const result = shared.UpdateGeneralProfileSchema.safeParse({});
       expect(result.success).toBe(false);
       if (!result.success)
@@ -1511,7 +1541,7 @@ describe('AccountProfileService (UF-132 to UF-175)', () => {
         ]);
     });
     // UTCID06: Từ chối tình huống rejects displayName empty; trả mã 400.
-    it('rejects displayName empty', async () => {
+    it('rejects displayName empty', () => {
       const result = shared.UpdateGeneralProfileSchema.safeParse({
         displayName: '',
       });
@@ -1527,7 +1557,7 @@ describe('AccountProfileService (UF-132 to UF-175)', () => {
         ]);
     });
     // UTCID07: Xử lý tình huống accepts displayName minimum; đối chiếu kết quả và tác động phụ.
-    it('accepts displayName minimum', async () => {
+    it('accepts displayName minimum', () => {
       const result = shared.UpdateGeneralProfileSchema.safeParse({
         displayName: 'x',
       });
@@ -1535,7 +1565,7 @@ describe('AccountProfileService (UF-132 to UF-175)', () => {
       if (result.success) expect(result.data).toEqual({ displayName: 'x' });
     });
     // UTCID08: Xử lý tình huống accepts displayName maximum; đối chiếu kết quả và tác động phụ.
-    it('accepts displayName maximum', async () => {
+    it('accepts displayName maximum', () => {
       const result = shared.UpdateGeneralProfileSchema.safeParse({
         displayName: 'x'.repeat(255),
       });
@@ -1544,7 +1574,7 @@ describe('AccountProfileService (UF-132 to UF-175)', () => {
         expect(result.data).toEqual({ displayName: 'x'.repeat(255) });
     });
     // UTCID09: Từ chối tình huống rejects displayName above maximum; trả mã 400.
-    it('rejects displayName above maximum', async () => {
+    it('rejects displayName above maximum', () => {
       const result = shared.UpdateGeneralProfileSchema.safeParse({
         displayName: 'x'.repeat(256),
       });
@@ -1560,7 +1590,7 @@ describe('AccountProfileService (UF-132 to UF-175)', () => {
         ]);
     });
     // UTCID10: Xử lý tình huống accepts bio null; đối chiếu kết quả và tác động phụ.
-    it('accepts bio null', async () => {
+    it('accepts bio null', () => {
       const result = shared.UpdateGeneralProfileSchema.safeParse({
         displayName: 'Name',
         bio: null,
@@ -1570,7 +1600,7 @@ describe('AccountProfileService (UF-132 to UF-175)', () => {
         expect(result.data).toEqual({ displayName: 'Name', bio: null });
     });
     // UTCID11: Xử lý tình huống accepts bio maximum; đối chiếu kết quả và tác động phụ.
-    it('accepts bio maximum', async () => {
+    it('accepts bio maximum', () => {
       const result = shared.UpdateGeneralProfileSchema.safeParse({
         displayName: 'Name',
         bio: 'x'.repeat(5000),
@@ -1583,7 +1613,7 @@ describe('AccountProfileService (UF-132 to UF-175)', () => {
         });
     });
     // UTCID12: Từ chối tình huống rejects bio above maximum; trả mã 400.
-    it('rejects bio above maximum', async () => {
+    it('rejects bio above maximum', () => {
       const result = shared.UpdateGeneralProfileSchema.safeParse({
         displayName: 'Name',
         bio: 'x'.repeat(5001),
@@ -1598,7 +1628,7 @@ describe('AccountProfileService (UF-132 to UF-175)', () => {
         ).toEqual([{ path: ['bio'], message: 'Error.BioTooLong' }]);
     });
     // UTCID13: Từ chối tình huống rejects unexpected unknown field; trả mã 400.
-    it('rejects unexpected unknown field', async () => {
+    it('rejects unexpected unknown field', () => {
       const result = shared.UpdateGeneralProfileSchema.safeParse({
         displayName: 'Name',
         unexpected: 'value',
@@ -1700,7 +1730,7 @@ describe('AccountProfileService (UF-132 to UF-175)', () => {
       expect(hashing.hash).not.toHaveBeenCalled();
     });
     // UTCID05: Từ chối tình huống rejects currentPassword missing; trả mã 400.
-    it('rejects currentPassword missing', async () => {
+    it('rejects currentPassword missing', () => {
       const result = shared.ChangePasswordSchema.safeParse({
         newPassword: 'NewPass1',
         confirmPassword: 'NewPass1',
@@ -1720,7 +1750,7 @@ describe('AccountProfileService (UF-132 to UF-175)', () => {
         ]);
     });
     // UTCID06: Từ chối tình huống rejects currentPassword empty; trả mã 400.
-    it('rejects currentPassword empty', async () => {
+    it('rejects currentPassword empty', () => {
       const result = shared.ChangePasswordSchema.safeParse({
         currentPassword: '',
         newPassword: 'NewPass1',
@@ -1738,7 +1768,7 @@ describe('AccountProfileService (UF-132 to UF-175)', () => {
         ]);
     });
     // UTCID07: Từ chối tình huống rejects confirmPassword mismatch; trả mã 400.
-    it('rejects confirmPassword mismatch', async () => {
+    it('rejects confirmPassword mismatch', () => {
       const result = shared.ChangePasswordSchema.safeParse({
         currentPassword: 'OldPass1',
         newPassword: 'NewPass1',
@@ -1756,7 +1786,7 @@ describe('AccountProfileService (UF-132 to UF-175)', () => {
         ]);
     });
     // UTCID08: Xử lý tình huống accepts newPassword minimum; đối chiếu kết quả và tác động phụ.
-    it('accepts newPassword minimum', async () => {
+    it('accepts newPassword minimum', () => {
       const result = shared.ChangePasswordSchema.safeParse({
         currentPassword: 'OldPass1',
         newPassword: 'NewPass1',
@@ -1771,7 +1801,7 @@ describe('AccountProfileService (UF-132 to UF-175)', () => {
         });
     });
     // UTCID09: Từ chối tình huống rejects newPassword below minimum; trả mã 400.
-    it('rejects newPassword below minimum', async () => {
+    it('rejects newPassword below minimum', () => {
       const result = shared.ChangePasswordSchema.safeParse({
         currentPassword: 'OldPass1',
         newPassword: 'NewPas1',
@@ -1789,7 +1819,7 @@ describe('AccountProfileService (UF-132 to UF-175)', () => {
         ]);
     });
     // UTCID10: Xử lý tình huống accepts newPassword maximum; đối chiếu kết quả và tác động phụ.
-    it('accepts newPassword maximum', async () => {
+    it('accepts newPassword maximum', () => {
       const result = shared.ChangePasswordSchema.safeParse({
         currentPassword: 'OldPass1',
         newPassword: 'A1xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
@@ -1804,7 +1834,7 @@ describe('AccountProfileService (UF-132 to UF-175)', () => {
         });
     });
     // UTCID11: Từ chối tình huống rejects newPassword above maximum; trả mã 400.
-    it('rejects newPassword above maximum', async () => {
+    it('rejects newPassword above maximum', () => {
       const result = shared.ChangePasswordSchema.safeParse({
         currentPassword: 'OldPass1',
         newPassword: 'A1xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
@@ -1822,7 +1852,7 @@ describe('AccountProfileService (UF-132 to UF-175)', () => {
         ]);
     });
     // UTCID12: Từ chối tình huống rejects newPassword without uppercase; trả mã 400.
-    it('rejects newPassword without uppercase', async () => {
+    it('rejects newPassword without uppercase', () => {
       const result = shared.ChangePasswordSchema.safeParse({
         currentPassword: 'OldPass1',
         newPassword: 'newpass1',
@@ -1840,7 +1870,7 @@ describe('AccountProfileService (UF-132 to UF-175)', () => {
         ]);
     });
     // UTCID13: Từ chối tình huống rejects newPassword without number; trả mã 400.
-    it('rejects newPassword without number', async () => {
+    it('rejects newPassword without number', () => {
       const result = shared.ChangePasswordSchema.safeParse({
         currentPassword: 'OldPass1',
         newPassword: 'NewPassx',
@@ -1858,7 +1888,7 @@ describe('AccountProfileService (UF-132 to UF-175)', () => {
         ]);
     });
     // UTCID14: Từ chối tình huống rejects newPassword same current; trả mã 400.
-    it('rejects newPassword same current', async () => {
+    it('rejects newPassword same current', () => {
       const result = shared.ChangePasswordSchema.safeParse({
         currentPassword: 'OldPass1',
         newPassword: 'OldPass1',
@@ -2081,6 +2111,7 @@ describe('AccountProfileService (UF-132 to UF-175)', () => {
     it('rejects an account without FREELANCER membership', async () => {
       repository.findUserWithRoles.mockResolvedValue({
         ...user,
+        role: null,
         userRoles: [],
       });
 
@@ -2417,6 +2448,7 @@ describe('AccountProfileService (UF-132 to UF-175)', () => {
       expect(result.status).toBe('REJECTED');
       expect(repository.createIdentityAiDocument).toHaveBeenCalledWith(
         expect.objectContaining({
+          identityNumber: '001234567890',
           duplicateOfId: 99,
           status: 'REJECTED',
           reviewNotes:

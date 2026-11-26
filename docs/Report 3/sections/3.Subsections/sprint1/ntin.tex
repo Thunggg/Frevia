@@ -18,8 +18,8 @@
 \subsubsection{ Create Contract}
 
 \fnhead{Function Trigger}
-A Client initiates contract creation from an accepted proposal page or clicks the ``Hire'' / ``Create Contract'' action button on a submitted job proposal.\newline
-\textbf{Navigation path:} Client Dashboard $\rightarrow$ My Jobs $\rightarrow$ Proposals (\texttt{/client/jobs/:id/proposals}) $\rightarrow$ Click ``Hire'' $\rightarrow$ Create Contract.
+A Client initiates contract creation by clicking the ``Hire'' / ``Create Contract'' action button on a submitted or hired job proposal.\newline
+\textbf{Navigation path:} Client Dashboard $\rightarrow$ My Jobs $\rightarrow$ Proposals (\texttt{/\allowbreak{}client/\allowbreak{}jobs/\allowbreak{}:\allowbreak{}id/\allowbreak{}proposals}) $\rightarrow$ Click ``Hire''.
 
 \fnhead{Function Description}
 
@@ -35,102 +35,99 @@ A Client initiates contract creation from an accepted proposal page or clicks th
 
 \sublabel{Interface}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-      \item Contract creation view at \texttt{/client/contracts/create} or modal accessed from proposal hiring flow.
-      \item Proposal summary card displaying job title, freelancer profile snapshot, bid amount, and estimated duration.
-      \item Contract terms editor with pre-fill template selector, custom clause textarea, and intellectual property provisions.
-      \item Milestone dynamic builder supporting addition, reordering, and removal of deliverable milestones (title, description, amount, due date).
-      \item Financial breakdown summary card calculating total milestone budget, platform fee percentage (10\%), client service fee, and aggregate contract value.
-      \item Action buttons: ``Save as Draft'' and ``Send Contract for Review''.
+      \item Contract creation dialog accessed directly from the proposal hiring flow at \texttt{/\allowbreak{}client/\allowbreak{}jobs/\allowbreak{}:\allowbreak{}id/\allowbreak{}proposals}.
+      \item Proposal summary displaying job title, freelancer profile snapshot, bid amount, and estimated duration.
+      \item Contract terms textarea (\texttt{terms}), contract expiration date picker (\texttt{expiresAt}), and total contract budget (\texttt{totalAmount}).
+      \item Milestone dynamic builder supporting addition and removal of deliverable milestones (\texttt{title}, \texttt{description}, \texttt{amount}, \texttt{dueDate}).
+      \item Financial breakdown summary displaying total milestone budget, the 3\% client platform fee (\texttt{clientPlatformFee}), and freelancer 5\% payout fee.
+      \item Primary action button: ``Create Contract''.
 \end{itemize}
 
 \sublabel{Data Processing Overview}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-      \item The client submits an HTTP request: \texttt{POST /api/contracts} with payload containing \texttt{proposalId}, \texttt{title}, \texttt{terms}, and an array of \texttt{milestones}.
-      \item The backend \texttt{AuthGuard} validates the Client's JWT token, and \texttt{RoleGuard} verifies \texttt{CLIENT} authorization.
-      \item \texttt{ContractService.createContract()} queries the proposal: verifies that the proposal exists, belongs to an active job owned by the calling client, and has status \texttt{ACCEPTED} or \texttt{SUBMITTED}.
-      \item The service validates that the sum of all milestone amounts equals \texttt{totalAmount} exactly, and calculates client and freelancer platform fee amounts.
-      \item A URL-friendly unique \texttt{slug} is generated from the contract title and random entropy.
-      \item Inside a database transaction, \texttt{ContractRepository} persists the \texttt{Contract} entity with initial status \texttt{PENDING} (or \texttt{DRAFT}), creates associated \texttt{Milestone} records with status \texttt{PENDING} and \texttt{paymentStatus = UNPAID}, and updates proposal status to \texttt{HIRED}.
-      \item An in-app real-time notification and email dispatch are sent to the Freelancer inviting them to review and sign the agreement.
+      \item The client submits an HTTP request: \texttt{POST /\allowbreak{}api/\allowbreak{}contracts} with payload containing \texttt{proposalId}, \texttt{totalAmount}, optional \texttt{terms}, required \texttt{expiresAt}, and optional \texttt{milestones}.
+      \item The backend \texttt{AccessTokenGuard} validates the Client's JWT token, and \texttt{PermissionGuard} verifies \texttt{CLIENT} authorization.
+      \item \texttt{ContractService.createContract()} queries the proposal: verifies that the proposal exists, belongs to a job owned by the calling client, has status \texttt{SUBMITTED} or \texttt{HIRED}, and that hiring slots remain available (\texttt{positionsFilled < positionsRequired}).
+      \item If milestones are provided, the service verifies each milestone \texttt{dueDate} does not exceed contract \texttt{expiresAt} and that milestone amounts sum to \texttt{totalAmount} exactly (within 0.01 tolerance); otherwise, a single default milestone is created.
+      \item A URL-friendly unique \texttt{slug} is generated from the job title and random entropy.
+      \item Inside a database transaction, \texttt{ContractRepository} persists the \texttt{Contract} entity with initial status \texttt{AWAITING\_PAYMENT} and 3\% \texttt{clientPlatformFee}, creates \texttt{Milestone} records with status \texttt{PENDING} and \texttt{paymentStatus = PENDING}, and transitions proposal status to \texttt{HIRED}.
+      \item An in-app notification is sent to the Freelancer inviting them to review the contract offer.
 \end{itemize}
 
 \fnhead{Screen Layout (Mock-up Description)}
 \screenfigure[0.95]{image/screenshot/sprint1/ntin/CreateContract.png}{Create Contract screen}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-      \item The page header displays the breadcrumb ``Contracts / Create New'' alongside a prominent title ``Create Project Contract''.
-      \item The left pane contains the contract scope form: title input, terms and conditions rich-text area, and milestone configuration list with ``+ Add Milestone'' button.
-      \item Each milestone block renders inputs for milestone name, deliverable description, monetary amount in USD, and date picker for completion deadline.
-      \item The right sticky sidebar displays the financial summary card: subtotal, platform processing fee (10\%), total contract commitment, and clear milestone progress indicator.
-      \item The bottom action footer provides ``Back'', ``Save Draft'', and ``Create \& Send Contract'' action triggers.
+      \item The modal/page header displays the contract creation title and associated job reference.
+      \item The form contains contract \texttt{expiresAt}, \texttt{terms} textarea, total amount input, and milestone configuration list with ``+ Add Milestone'' button.
+      \item Each milestone block renders inputs for milestone title, deliverable description, monetary amount in USD, and completion due date picker.
+      \item The financial summary displays milestone subtotal, the 3\% client platform fee, and total contract commitment.
+      \item Footer provides ``Cancel'' and ``Create Contract'' action triggers.
 \end{itemize}
 
 \fnhead{Function Details}
 
 \sublabel{Input Data}
 \begin{specdatatable}{Data Name}{Description}
-      \texttt{proposalId} & Unique numeric identifier of the accepted job proposal (integer).\\ \hline
-      \texttt{title} & Contract agreement title (string, 5--255 characters).\\ \hline
-      \texttt{terms} & Detailed contract scope, deliverables, and legal clauses (text, optional).\\ \hline
-      \texttt{milestones} & Array of milestone objects containing \texttt{title}, \texttt{description}, \texttt{amount}, and \texttt{dueDate}.\\ \hline
-      \texttt{milestone.amount} & Positive monetary value in USD (decimal, minimum 5.00).\\ \hline
-      \texttt{milestone.dueDate} & Target delivery deadline formatted as ISO 8601 date, must be a future date.\\ \hline
+      \texttt{proposalId} & Unique numeric identifier of the eligible job proposal (integer).\\ \hline
+      \texttt{totalAmount} & Total contractual budget in USD (positive number).\\ \hline
+      \texttt{terms} & Detailed contract scope, deliverables, and legal clauses (string, optional).\\ \hline
+      \texttt{expiresAt} & Contract expiration / deadline formatted as future ISO 8601 datetime (required).\\ \hline
+      \texttt{milestones} & Optional array of milestone objects containing \texttt{title}, optional \texttt{description}, positive \texttt{amount}, and future \texttt{dueDate}.\\ \hline
 \end{specdatatable}
 
 \sublabel{Validation Rules}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
       \item The calling user must be the verified owner (Client) of the associated job posting.
-      \item The proposal must not already be linked to an existing active or pending contract.
-      \item Total contract amount must be greater than zero and must equal the arithmetic sum of all milestone amounts.
-      \item Every milestone due date must be set strictly in the future relative to the submission timestamp.
-      \item The Freelancer account must have \texttt{status = ACTIVE} and verified identity.
+      \item The proposal must be in \texttt{SUBMITTED} or \texttt{HIRED} status and not already linked to a contract, and job \texttt{positionsFilled < positionsRequired}.
+      \item \texttt{totalAmount} must be strictly positive, and when milestones are supplied, their amounts must sum to \texttt{totalAmount}.
+      \item \texttt{expiresAt} and every milestone \texttt{dueDate} must be strictly in the future, with each \texttt{dueDate} not exceeding \texttt{expiresAt}.
 \end{itemize}
 
 \sublabel{Business Rules}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
       \item BR-CT-01: Only users authenticated with the \texttt{CLIENT} role shall create new contracts.
-      \item BR-CT-02: Total contract budget shall strictly match the aggregate sum of all defined milestone amounts.
-      \item BR-CT-03: Creating a contract locks the linked proposal, preventing duplicate contracts on the same proposal.
-      \item BR-CT-04: The contract shall be initialized in \texttt{PENDING} status until signed by both contract parties.
+      \item BR-CT-02: When milestones are specified, total contract budget shall strictly match the aggregate sum of all milestone amounts.
+      \item BR-CT-03: Creating a contract locks the linked proposal (\texttt{HIRED}), preventing duplicate contracts on the same proposal.
+      \item BR-CT-04: New contracts are initialized in \texttt{AWAITING\_PAYMENT} status (3\% client platform fee) until the client authorizes the Stripe payment hold (\texttt{PENDING\_SIGN}), after which sequential Client and Freelancer signatures activate execution.
 \end{itemize}
 
 \sublabel{Normal Flow}
 \begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
-      \item The Client navigates to the accepted proposal and clicks ``Hire / Create Contract''.
-      \item The web application loads the contract creation form with pre-populated proposal data.
-      \item The Client reviews project scope, customizes terms, and defines deliverable milestones.
-      \item The Client clicks ``Create \& Send Contract''.
-      \item The system validates input fields, financial budget allocations, and future milestone deadlines.
-      \item The backend persists the contract and milestone records inside a database transaction.
+      \item The Client navigates to the job proposals list and clicks ``Hire / Create Contract''.
+      \item The web application loads the contract creation dialog with pre-populated proposal data.
+      \item The Client reviews project scope, customizes terms, sets \texttt{expiresAt}, and defines deliverable milestones.
+      \item The Client clicks ``Create Contract''.
+      \item The system validates input fields, milestone total equality, and deadline bounds.
+      \item The backend persists the contract (\texttt{AWAITING\_PAYMENT}) and milestone records (\texttt{PENDING}) inside a database transaction.
       \item The linked proposal is transitioned to \texttt{HIRED} state.
-      \item The system dispatches an alert notification to the Freelancer and redirects the Client to the Contract Detail page.
+      \item The system dispatches a notification to the Freelancer and opens the Contract Detail workspace.
 \end{enumerate}
 
 \sublabel{Abnormal Flow / Exception Handling}
 \begin{flowtable}{Case}{Description}
-      A1 & The sum of milestone amounts does not match the total budget. The API returns HTTP 422 Unprocessable Entity with error \texttt{ContractMilestonesAmountMismatchException}; form highlights discrepancy.\\ \hline
-      A2 & The specified proposal is already contracted or not accepted. The API returns HTTP 400 Bad Request with error \texttt{ProposalAlreadyContractedException}.\\ \hline
-      A3 & Milestone due date is in the past. The form validation rejects submission and displays ``Milestone deadline must be a future date.''\\ \hline
-      A4 & The calling user is not the owner of the job. The backend rejects the request with HTTP 403 Forbidden; access denied.\\ \hline
-      A5 & Freelancer profile is suspended or banned. The system rejects contract creation with HTTP 422; displays notice to select an active freelancer.\\ \hline
-      A6 & Database connection failure during transaction persistence. The transaction rolls back and returns HTTP 500: ``Unable to create contract. Please try again.''\\ \hline
-      A7 & Client network connection drops during submission. The client displays retry banner without duplicating contract records.\\ \hline
+      A1 & The sum of milestone amounts does not match \texttt{totalAmount}. The API returns HTTP 422 Unprocessable Entity with \texttt{MilestoneAmountMismatchException}.\\ \hline
+      A2 & The specified proposal already has a contract or is not in an actionable status. The API returns HTTP 409 Conflict (\texttt{ContractAlreadyExistsException}) or HTTP 422 (\texttt{ProposalNotActionableException}).\\ \hline
+      A3 & \texttt{expiresAt} is missing/past or a milestone \texttt{dueDate} exceeds \texttt{expiresAt}. The API returns HTTP 422 (\texttt{ContractExpiresAtRequiredException} or \texttt{MilestoneDueDateExceedsContractException}).\\ \hline
+      A4 & The calling user is not the owner of the job. The backend rejects the request with HTTP 403 Forbidden (\texttt{ContractForbiddenException}).\\ \hline
+      A5 & All job positions are already filled. The backend rejects contract creation with HTTP 422 (\texttt{ProposalJobPositionsFilledException}).\\ \hline
+      A6 & Database failure during transaction persistence. The transaction rolls back and returns HTTP 500 (\texttt{FailedToCreateContractException}).\\ \hline
 \end{flowtable}
 
 \sublabel{Output Data}
 \begin{specdatatable}{Data Name}{Description}
       \texttt{id} & Unique auto-incrementing integer identifier of the created contract.\\ \hline
       \texttt{slug} & Unique URL-friendly slug identifier for bookmarking and routing.\\ \hline
-      \texttt{status} & Initial operational contract state (\texttt{PENDING} or \texttt{DRAFT}).\\ \hline
+      \texttt{status} & Initial operational contract state (\texttt{AWAITING\_PAYMENT}).\\ \hline
       \texttt{totalAmount} & Final aggregated contractual budget committed by the client.\\ \hline
-      \texttt{milestones[]} & Array of created milestone entities with generated sequence IDs and due dates.\\ \hline
+      \texttt{clientPlatformFee} & Calculated 3\% client platform service fee.\\ \hline
+      \texttt{milestones[]} & Array of created milestone entities with status \texttt{PENDING} and due dates.\\ \hline
       \texttt{createdAt} & ISO 8601 creation timestamp.\\ \hline
 \end{specdatatable}
 
 \sublabel{Post-Conditions}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-      \item A new \texttt{Contract} entity is persisted with status \texttt{PENDING}.
-      \item Milestone records are linked to the contract with \texttt{paymentStatus = UNPAID}.
-      \item An audit log record is created in the contract activity history.
+      \item A new \texttt{Contract} entity is persisted with status \texttt{AWAITING\_PAYMENT}.
+      \item Milestone records are linked to the contract with \texttt{status = PENDING} and \texttt{paymentStatus = PENDING}.
       \item An invitation notification is queued for the Freelancer.
 \end{itemize}
 
@@ -141,8 +138,8 @@ A Client initiates contract creation from an accepted proposal page or clicks th
 \subsubsection{ Update Contract}
 
 \fnhead{Function Trigger}
-A Client clicks the ``Edit Terms'' button on a pending contract detail workspace to revise agreement specifications before signature.\newline
-\textbf{Navigation path:} Client Dashboard $\rightarrow$ Contracts $\rightarrow$ Contract Detail (\texttt{/client/contracts/:slug}) $\rightarrow$ Click ``Edit Terms''.
+A Client clicks the ``Edit Terms'' button on a contract detail workspace to revise agreement specifications before activation.\newline
+\textbf{Navigation path:} Client Dashboard $\rightarrow$ Contracts $\rightarrow$ Contract Detail (\texttt{/\allowbreak{}client/\allowbreak{}contracts/\allowbreak{}:\allowbreak{}slug}) $\rightarrow$ Click ``Edit Terms''.
 
 \fnhead{Function Description}
 
@@ -158,31 +155,27 @@ A Client clicks the ``Edit Terms'' button on a pending contract detail workspace
 
 \sublabel{Interface}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-      \item Contract terms editor modal or dedicated edit view pre-populated with existing terms.
-      \item Milestone list editor allowing inline title, amount, description, and deadline modifications.
-      \item Interactive budget calculator displaying adjusted totals and fee implications.
-      \item Prominent warning notice: ``Updating contract terms will reset any existing signatures and require re-signing.''.
+      \item Contract terms editor modal pre-populated with existing \texttt{totalAmount}, \texttt{terms}, and \texttt{expiresAt}.
+      \item Milestone amounts and due dates are managed separately via the Milestone Management endpoints prior to contract activation.
+      \item Interactive budget summary displaying \texttt{totalAmount} (locked once payment hold is authorized).
       \item Action buttons: ``Save Changes'' and ``Cancel''.
 \end{itemize}
 
 \sublabel{Data Processing Overview}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-      \item The client submits an HTTP request: \texttt{PATCH /api/contracts/:id} with updated \texttt{title}, \texttt{terms}, and modified \texttt{milestones}.
-      \item \texttt{ContractService.updateContract()} verifies caller identity against \texttt{contract.clientId}.
-      \item The service validates that contract status is strictly \texttt{PENDING} or \texttt{DRAFT}; active or completed contracts are rejected.
-      \item If the freelancer has already digitally signed, the update automatically invalidates the signature by resetting \texttt{signedByFreelancer = false} and \texttt{freelancerSignedAt = null}.
-      \item The database updates the contract terms and synchronizes modified milestones inside a transaction.
-      \item The system records a contract revision event in the activity timeline and alerts the Freelancer of the revisions.
+      \item The client submits an HTTP request: \texttt{PATCH /\allowbreak{}api/\allowbreak{}contracts/\allowbreak{}:\allowbreak{}id} with optional \texttt{totalAmount}, \texttt{terms}, and \texttt{expiresAt}.
+      \item {\sloppy \texttt{Contract\allowbreak{}Service.\allowbreak{}update\allowbreak{}Contract()} checks ownership against \texttt{contract.clientId}.\par}
+      \item {\sloppy The service validates that contract status is strictly \texttt{AWAITING\_\allowbreak{}PAYMENT} or \texttt{PENDING\_\allowbreak{}SIGN}; active, completed, or cancelled contracts are rejected (\texttt{Contract\allowbreak{}Not\allowbreak{}Pending\allowbreak{}Sign\allowbreak{}Exception}).\par}
+      \item {\sloppy If a Stripe payment hold (\texttt{hold\allowbreak{}Payment\allowbreak{}Intent\allowbreak{}Id}) is already attached, attempts to alter \texttt{total\allowbreak{}Amount} are rejected; updates to \texttt{expires\allowbreak{}At} verify all milestone due dates remain valid.\par}
+      \item {\sloppy Updates modified \texttt{Contract} fields inside \texttt{Contract\allowbreak{}Repository.\allowbreak{}update\allowbreak{}Contract()}.\par}
 \end{itemize}
 
 \fnhead{Screen Layout (Mock-up Description)}
 \screenfigure[0.95]{image/screenshot/sprint1/ntin/UpdateContract.png}{Update Contract Terms screen}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-      \item The modal header displays the contract title, identifier, and current status badge.
-      \item An alert box at the top highlights that saving modifications invalidates previous signatures.
-      \item Form fields display editable contract scope, clause paragraphs, and milestone blocks with trash and add buttons.
-      \item Live calculation widget dynamically updates milestone total versus overall contract amount.
-      \item Footer contains ``Discard Changes'' secondary button and ``Save \& Notify Freelancer'' primary button.
+      \item The modal header displays the contract reference and current status badge.
+      \item Form fields display editable contract total budget (when no hold exists), contract expiration date, and terms textarea.
+      \item Footer contains ``Cancel'' secondary button and ``Save Changes'' primary button.
 \end{itemize}
 
 \fnhead{Function Details}
@@ -190,42 +183,41 @@ A Client clicks the ``Edit Terms'' button on a pending contract detail workspace
 \sublabel{Input Data}
 \begin{specdatatable}{Data Name}{Description}
       \texttt{contractId} & Unique numeric contract identifier passed as path parameter (integer).\\ \hline
+      \texttt{totalAmount} & Revised positive contract budget (number, optional; locked once \texttt{holdPaymentIntentId} is set).\\ \hline
       \texttt{terms} & Revised contract terms and scope text (string, optional).\\ \hline
-      \texttt{milestones} & Updated array of milestone specifications (title, amount, dueDate, description).\\ \hline
+      \texttt{expiresAt} & Revised future expiration timestamp (ISO 8601 string, optional; must not precede milestone due dates).\\ \hline
 \end{specdatatable}
 
 \sublabel{Validation Rules}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
       \item Only the Client who created the contract is permitted to update its terms.
-      \item The contract must currently reside in \texttt{PENDING} or \texttt{DRAFT} status.
-      \item Total modified milestone amounts must equal the updated total budget.
-      \item Future date requirements apply to all modified milestone deadlines.
+      \item The contract must currently reside in \texttt{AWAITING\_PAYMENT} or \texttt{PENDING\_SIGN} status.
+      \item \texttt{totalAmount} cannot change once a Stripe payment hold has been authorized.
+      \item If \texttt{expiresAt} changes, all existing milestone due dates must remain on or before the new deadline.
 \end{itemize}
 
 \sublabel{Business Rules}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
-      \item BR-CT-05: Modifying contract terms shall automatically invalidate any existing signatures, setting \texttt{signedByFreelancer = false} and \texttt{signedByClient = false}.
+      \item BR-CT-05: Contract updates in \texttt{AWAITING\_PAYMENT} or \texttt{PENDING\_SIGN} adjust \texttt{totalAmount} (pre-hold), \texttt{terms}, and \texttt{expiresAt} while preserving existing milestone definitions.
       \item BR-CT-06: Active, completed, or cancelled contracts cannot be modified directly.
 \end{itemize}
 
 \sublabel{Normal Flow}
 \begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
-      \item The Client navigates to the pending contract workspace and clicks ``Edit Terms''.
+      \item The Client navigates to the pre-active contract workspace and clicks ``Edit Terms''.
       \item The system opens the edit view with current agreement data loaded.
-      \item The Client modifies terms, deliverables, or milestone amounts.
+      \item The Client modifies \texttt{terms}, \texttt{expiresAt}, or pre-hold \texttt{totalAmount}.
       \item The Client clicks ``Save Changes''.
-      \item The system validates fields and updates records in the database.
-      \item Prior signatures are invalidated, and a revision log is recorded.
-      \item The Freelancer receives an update notification, and the updated contract is rendered.
+      \item The system validates status, hold lock, and milestone deadline bounds before updating the record.
+      \item The updated contract is rendered in the workspace.
 \end{enumerate}
 
 \sublabel{Abnormal Flow / Exception Handling}
 \begin{flowtable}{Case}{Description}
-      A1 & The contract has already transitioned to \texttt{ACTIVE} or \texttt{AWAITING\_PAYMENT}. The API returns HTTP 422 with error \texttt{ContractAlreadyActiveException}; editing is locked.\\ \hline
-      A2 & Caller is not the contract owner. The API returns HTTP 403 Forbidden; access denied.\\ \hline
-      A3 & Total revised milestone amounts do not sum up to total budget. Returns HTTP 422 with validation error.\\ \hline
-      A4 & Milestone due dates are set in the past. System highlights invalid date fields.\\ \hline
-      A5 & Database concurrency conflict occurs during record update. System prompts to refresh and re-apply edits.\\ \hline
+      A1 & The contract is not in \texttt{AWAITING\_PAYMENT} or \texttt{PENDING\_SIGN}, or \texttt{totalAmount} changed after a hold exists. The API returns HTTP 422 (\texttt{ContractNotPendingSignException}).\\ \hline
+      A2 & Caller is not the contract owner. The API returns HTTP 403 Forbidden (\texttt{ContractForbiddenException}).\\ \hline
+      A3 & New \texttt{expiresAt} precedes one or more milestone due dates. Returns HTTP 422 (\texttt{ContractExpiresAtBeforeMilestonesException}).\\ \hline
+      A4 & Database error occurs during update. API returns HTTP 500 (\texttt{FailedToUpdateContractException}).\\ \hline
 \end{flowtable}
 
 \sublabel{Output Data}
@@ -249,7 +241,7 @@ A Client clicks the ``Edit Terms'' button on a pending contract detail workspace
 
 \fnhead{Function Trigger}
 The Client clicks the ``Complete Contract'' button on an active contract detail workspace once all milestones have been finished and approved.\newline
-\textbf{Navigation path:} Client Dashboard $\rightarrow$ Contracts $\rightarrow$ Active Contract (\texttt{/client/contracts/:slug}) $\rightarrow$ Click ``Complete Contract''.
+\textbf{Navigation path:} Client Dashboard $\rightarrow$ Contracts $\rightarrow$ Active Contract (\texttt{/\allowbreak{}client/\allowbreak{}contracts/\allowbreak{}:\allowbreak{}slug}) $\rightarrow$ Click ``Complete Contract''.
 
 \fnhead{Function Description}
 
@@ -261,25 +253,22 @@ The Client clicks the ``Complete Contract'' button on an active contract detail 
 \end{itemize}
 
 \sublabel{Purpose}
-\noindent Concludes the contractual project engagement following complete delivery of all milestone deliverables and settlement of escrow funds. Completing the contract archives project state, unlocks review and rating submissions for both parties, and generates a completion certificate.
+\noindent Concludes the contractual project engagement following settlement of all milestone escrow funds. Completing the contract updates its status to \texttt{COMPLETED} and marks the engagement finalized.
 
 \sublabel{Interface}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
       \item ``Complete Contract'' primary action button displayed in the active contract header banner.
-      \item Confirmation dialog summarizing delivered milestones, total disbursed earnings, and completion effects.
-      \item Feedback prompt inviting the user to provide star ratings, skill endorsements, and written reviews.
+      \item Confirmation dialog summarizing milestone settlement status and completion confirmation.
       \item Action buttons: ``Confirm Completion'' and ``Cancel''.
 \end{itemize}
 
 \sublabel{Data Processing Overview}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-      \item Client submits an HTTP request: \texttt{PATCH /api/contracts/:id/complete}.
-      \item \texttt{ContractService.completeContract()} validates that the caller is the contract's Client.
+      \item Client submits an HTTP request: \texttt{PATCH /\allowbreak{}api/\allowbreak{}contracts/\allowbreak{}:\allowbreak{}id/\allowbreak{}complete}.
+      \item \texttt{ContractService.completeContract()} validates that the caller is the contract's Client (\texttt{contract.clientId}).
       \item The service verifies that contract status is currently \texttt{ACTIVE}.
-      \item Queries all associated milestones: verifies that every milestone has \texttt{status = COMPLETED} and \texttt{paymentStatus = RELEASED}.
-      \item Checks that no active disputes exist on any contract milestone.
-      \item Updates contract status to \texttt{COMPLETED} and sets \texttt{completedAt = new Date()}.
-      \item Issues mutual review tokens, notifies the Freelancer, and generates digital completion credentials.
+      \item Queries all associated milestones: verifies that every milestone has \texttt{paymentStatus} equal to \texttt{RELEASED} or \texttt{REFUNDED} (\texttt{ContractHasUnsettledMilestonesException} otherwise).
+      \item Updates contract status to \texttt{COMPLETED} and sets \texttt{completedAt = new Date()}, and notifies the Freelancer.
 \end{itemize}
 
 \fnhead{Screen Layout (Mock-up Description)}
@@ -302,26 +291,24 @@ The Client clicks the ``Complete Contract'' button on an active contract detail 
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
       \item The calling user must be the authenticated Client of the contract.
       \item The contract must currently reside in \texttt{ACTIVE} status.
-      \item All milestones must be in \texttt{COMPLETED} status and \texttt{RELEASED} payment status.
-      \item There must be no ongoing open disputes on the contract or its milestones.
+      \item Every milestone must have \texttt{paymentStatus} equal to \texttt{RELEASED} or \texttt{REFUNDED}.
 \end{itemize}
 
 \sublabel{Business Rules}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
-      \item BR-CT-07: A contract can only transition to \texttt{COMPLETED} when 100\% of its milestones have been released and no dispute is open.
+      \item BR-CT-07: A contract can only transition to \texttt{COMPLETED} when all milestones are settled (\texttt{RELEASED} or \texttt{REFUNDED}).
       \item BR-CT-08: Completed contracts are permanently closed from further deliverable submissions or financial adjustments.
-      \item BR-CT-09: Contract completion triggers automatic opening of the reciprocal 14-day review window.
+      \item BR-CT-09: Milestone review automation operates on a 7-day timeout (\texttt{CLIENT\_\allowbreak{}REVIEW\_\allowbreak{}TIMEOUT\_\allowbreak{}MS}) for auto-release, while contract completion closes the engagement for both parties.
 \end{itemize}
 
 \sublabel{Normal Flow}
 \begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
-      \item The Client navigates to the active contract workspace where all milestones are finished.
+      \item The Client navigates to the active contract workspace where all milestones are settled.
       \item The Client clicks ``Complete Contract''.
       \item The system displays the completion confirmation dialog.
       \item The Client clicks ``Confirm Completion''.
-      \item The system verifies all milestones are released and updates contract status to \texttt{COMPLETED}.
-      \item The system records the completion event in the activity log.
-      \item A success notification is displayed, the page transitions to completed state, and reciprocal review forms are unlocked.
+      \item The system verifies milestone settlement and updates contract status to \texttt{COMPLETED}.
+      \item The system sends a completion notification to the Freelancer and transitions the workspace to completed state.
 \end{enumerate}
 
 \sublabel{Abnormal Flow / Exception Handling}
@@ -348,10 +335,10 @@ The Client clicks the ``Complete Contract'' button on an active contract detail 
 \end{itemize}
 
 % -----------------------------------------------------------------
-% UC-13.04: View Contract List
+% UC-13.04: View Contracts List
 % -----------------------------------------------------------------
 \Needspace{12\baselineskip}
-\subsubsection{ View Contract List}
+\subsubsection{ View Contracts List}
 
 \fnhead{Function Trigger}
 An authenticated user (Client, Freelancer, or Admin) clicks ``Contracts'' in the dashboard main sidebar navigation.\newline
@@ -366,24 +353,23 @@ An authenticated user (Client, Freelancer, or Admin) clicks ``Contracts'' in the
 \end{itemize}
 
 \sublabel{Purpose}
-\noindent Provides a centralized contract management dashboard for users to browse, monitor, filter, and track all their freelance contracts across lifecycle states (Pending, Awaiting Payment, Active, Completed, Cancelled).
+\noindent Provides a centralized contract management dashboard for users to browse, filter by lifecycle status or proposal, and monitor their freelance contracts (\texttt{AWAITING\_PAYMENT}, \texttt{PENDING\_SIGN}, \texttt{ACTIVE}, \texttt{COMPLETED}, \texttt{DISPUTED}, \texttt{CANCELLED}, \texttt{REJECTED}, \texttt{EXPIRED}).
 
 \sublabel{Interface}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
       \item Contracts dashboard page at \texttt{/client/contracts} or \texttt{/freelancer/contracts}.
-      \item Status tab navigation bar: All, Pending Signature, Awaiting Payment, Active, Completed, Cancelled.
-      \item Search input field supporting keyword matching on contract title and counterpart name.
-      \item Contract card list rendering title, counterpart avatar and name, total budget, progress bar, milestone ratio, status badge, and ``View Contract'' button.
+      \item Status filter bar supporting contract lifecycle states.
+      \item Contract card list rendering job title, counterpart avatar and name, total budget, milestone summary, status badge, and ``View Contract'' link.
       \item Pagination controls footer with page numbers, page size selector, and item summary count.
       \item Empty-state placeholder with helpful guidance when no matching contracts exist.
 \end{itemize}
 
 \sublabel{Data Processing Overview}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-      \item The web client submits an HTTP request: \texttt{GET /api/contracts} with query parameters (\texttt{page}, \texttt{limit}, \texttt{status}, \texttt{search}).
+      \item The web client submits an HTTP request: \texttt{GET /\allowbreak{}api/\allowbreak{}contracts} with query parameters (\texttt{page}, \texttt{limit}, \texttt{status}, \texttt{proposalId}).
       \item The API validates the JWT access token and extracts \texttt{userId} and \texttt{roleName}.
       \item If \texttt{roleName === 'CLIENT'}, queries contracts where \texttt{clientId = userId}; if \texttt{roleName === 'FREELANCER'}, queries contracts where \texttt{freelancerId = userId}; Administrators can query across all contracts.
-      \item Applies status filters and case-insensitive substring search on \texttt{title}.
+      \item Applies optional \texttt{status} and \texttt{proposalId} filters.
       \item Computes pagination count in parallel via \texttt{prisma.contract.count()}.
       \item Returns HTTP 200 with contract summaries and pagination metadata.
 \end{itemize}
@@ -391,9 +377,8 @@ An authenticated user (Client, Freelancer, or Admin) clicks ``Contracts'' in the
 \fnhead{Screen Layout (Mock-up Description)}
 \screenfigure[0.95]{image/screenshot/sprint1/ntin/ViewContractList.png}{Contracts list dashboard}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-      \item The page title ``Contracts'' sits alongside a metric row showing total active contracts and total committed budget.
-      \item The filter bar features tabs for status categories and a search box with quick-clear button.
-      \item Each contract card displays counterpart information on the left, progress meter and milestone badge in the center, and total amount with ``View Contract'' link on the right.
+      \item The page title ``Contracts'' sits alongside status filter tabs.
+      \item Each contract card displays counterpart information, milestone progress, total amount, and ``View Contract'' link.
       \item The pagination component displays current page index, total contracts count, and next/prev controls.
 \end{itemize}
 
@@ -403,8 +388,8 @@ An authenticated user (Client, Freelancer, or Admin) clicks ``Contracts'' in the
 \begin{specdatatable}{Data Name}{Description}
       \texttt{page} & Page number for paginated retrieval (integer, default 1).\\ \hline
       \texttt{limit} & Number of contracts per page (integer, default 10, max 50).\\ \hline
-      \texttt{status} & Optional contract status filter (\texttt{PENDING}, \texttt{AWAITING\_PAYMENT}, \texttt{ACTIVE}, \texttt{COMPLETED}, \texttt{CANCELLED}).\\ \hline
-      \texttt{search} & Keyword search query matching contract titles or counterpart names.\\ \hline
+      \texttt{status} & Optional \texttt{ContractStatus} filter (\texttt{AWAITING\_PAYMENT}, \texttt{PENDING\_SIGN}, \texttt{ACTIVE}, \texttt{COMPLETED}, \texttt{DISPUTED}, \texttt{CANCELLED}, \texttt{REJECTED}, \texttt{EXPIRED}).\\ \hline
+      \texttt{proposalId} & Optional positive integer proposal filter.\\ \hline
 \end{specdatatable}
 
 \sublabel{Validation Rules}
@@ -451,10 +436,10 @@ An authenticated user (Client, Freelancer, or Admin) clicks ``Contracts'' in the
 \end{itemize}
 
 % -----------------------------------------------------------------
-% UC-13.05: View Contract Detail
+% UC-13.05: View Contract Details
 % -----------------------------------------------------------------
 \Needspace{12\baselineskip}
-\subsubsection{ View Contract Detail}
+\subsubsection{ View Contract Details}
 
 \fnhead{Function Trigger}
 A user clicks a contract item in the contract list or navigates directly to a contract URL.\newline
@@ -473,7 +458,7 @@ A user clicks a contract item in the contract list or navigates directly to a co
 
 \sublabel{Interface}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-      \item Contract workspace screen at \texttt{/client/contracts/:slug} or \texttt{/freelancer/contracts/:slug}.
+      \item Contract workspace screen at \texttt{/\allowbreak{}client/\allowbreak{}contracts/\allowbreak{}:\allowbreak{}slug} or \texttt{/\allowbreak{}freelancer/\allowbreak{}contracts/\allowbreak{}:\allowbreak{}slug}.
       \item Header banner: contract title, slug identifier, current status badge, counterpart summary, and contextual actions (Sign, Pay Fee, Complete, Cancel).
       \item Financial summary widget: total project budget, escrow funded balance, paid out earnings, and remaining balance.
       \item Workspace tab navigation: ``Milestones'', ``Contract Agreement (PDF)'', ``Shared Files'', and ``Activity History''.
@@ -577,25 +562,20 @@ A Client or Freelancer clicks the ``Sign Contract'' action button on a pending c
 
 \sublabel{Data Processing Overview}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-      \item The user submits an HTTP request: \texttt{PATCH /api/contracts/:id/sign}.
+      \item The user submits an HTTP request: \texttt{PATCH /\allowbreak{}api/\allowbreak{}contracts/\allowbreak{}:\allowbreak{}id/\allowbreak{}sign}.
       \item \texttt{ContractService.signContract()} verifies that the caller is either \texttt{contract.clientId} or \texttt{contract.freelancerId}.
-      \item Checks that contract status is \texttt{PENDING} or \texttt{AWAITING\_PAYMENT}.
-      \item Sets corresponding flag: if caller is Client, updates \texttt{signedByClient = true} and \texttt{clientSignedAt = now()}; if Freelancer, updates \texttt{signedByFreelancer = true} and \texttt{freelancerSignedAt = now()}.
-      \item If both parties have now signed:
-            \begin{itemize}[leftmargin=1.6em,topsep=2pt,itemsep=2pt,parsep=0pt]
-                  \item If platform fee is unpaid, sets \texttt{status = AWAITING\_PAYMENT}.
-                  \item If platform fee is already paid, transitions \texttt{status = ACTIVE} and sets \texttt{signedAt = now()}.
-                  \item Invokes \texttt{ContractPdfService.generateAndSaveContractPdf()} to generate and store immutable legal PDF.
-            \end{itemize}
-      \item Dispatches notification alerting the counterpart party.
+      \item Rejects signing while in \texttt{AWAITING\_PAYMENT} (\texttt{ContractAwaitingPaymentException}); requires status \texttt{PENDING\_SIGN} and non-expired \texttt{expiresAt}.
+      \item Enforces sequential signing order: Client must sign first (\texttt{signedByClient = true}); if a Freelancer attempts to sign before the Client, throws \texttt{ClientMustSignFirstException}.
+      \item When the Freelancer signs second, verifies Stripe Connect onboarding (\texttt{isConnected}, \texttt{stripeAccountId}, \texttt{payoutsEnabled}), requires \texttt{holdPaymentIntentId}, captures the payment hold via \texttt{paymentService.captureContractHold()}, and transitions contract status to \texttt{ACTIVE} (\texttt{signedAt = now()}).
+      \item Invokes \texttt{ContractPdfService.generateAndSaveContractPdf()} to generate and store the contract agreement PDF as a \texttt{SharedFile}, and notifies both parties upon activation.
 \end{itemize}
 
 \fnhead{Screen Layout (Mock-up Description)}
 \screenfigure[0.95]{image/screenshot/sprint1/ntin/SignContract.png}{Sign Contract dialog}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-      \item Modal dialog opens with legal paper motif and title ``Sign Contract Agreement''.
-      \item Scrollable document window renders full agreement clauses, project milestones, and total budget.
-      \item Signature section displays signer full name, authenticated email, and IP timestamp notice.
+      \item Modal dialog opens with legal agreement layout and title ``Sign Contract Agreement''.
+      \item Scrollable document window renders agreement clauses, project milestones, and total budget.
+      \item Signature section displays signer full name, authenticated email, and timestamp confirmation.
       \item Acceptance checkbox must be checked to enable the primary ``Confirm \& Sign'' button.
 \end{itemize}
 
@@ -609,41 +589,38 @@ A Client or Freelancer clicks the ``Sign Contract'' action button on a pending c
 \sublabel{Validation Rules}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
       \item Caller must be a recognized participant in the contract (Client or Freelancer).
-      \item The contract must currently reside in \texttt{PENDING} or \texttt{AWAITING\_PAYMENT} status.
-      \item The user must not have already signed the current version of the contract.
+      \item The contract must currently reside in \texttt{PENDING\_SIGN} status and not be expired.
+      \item Client must sign before the Freelancer, and the Freelancer must have verified Stripe Connect payouts enabled before final activation.
 \end{itemize}
 
 \sublabel{Business Rules}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
-      \item BR-CT-14: A contract transitions to \texttt{ACTIVE} only when both parties have signed and platform fee is settled.
-      \item BR-CT-15: Digital signing generates an immutable contract PDF audit document with cryptographic integrity.
+      \item BR-CT-14: A contract transitions to \texttt{ACTIVE} only after Client payment hold authorization (\texttt{PENDING\_SIGN}), sequential Client signature, Freelancer Stripe Connect payout verification, and payment hold capture upon Freelancer signature.
+      \item BR-CT-15: Digital signing generates a standard contract PDF audit document stored under \texttt{SharedFile}.
 \end{itemize}
 
 \sublabel{Normal Flow}
 \begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
-      \item The user opens the pending contract workspace and reviews project terms.
-      \item The user clicks ``Sign Contract''.
-      \item The system opens the signature modal dialog.
-      \item The user reviews the clauses and checks the agreement consent box.
-      \item The user clicks ``Confirm \& Digitally Sign''.
-      \item The system records the signature timestamp in the database.
-      \item If counterpart signature is already recorded, contract transitions to active/awaiting payment and generates PDF.
-      \item The system notifies the other party and updates the workspace view.
+      \item After the Client authorizes the Stripe payment hold (\texttt{PENDING\_SIGN}), the Client opens the contract workspace and clicks ``Sign Contract''.
+      \item The Client confirms the signature, setting \texttt{signedByClient = true}.
+      \item The Freelancer then opens the contract workspace and clicks ``Sign Contract''.
+      \item The backend validates Freelancer Stripe Connect payout readiness, captures the authorized hold via Stripe, updates \texttt{signedByFreelancer = true} and \texttt{status = ACTIVE}, and generates the contract PDF.
+      \item The system notifies the counterpart and updates the workspace view.
 \end{enumerate}
 
 \sublabel{Abnormal Flow / Exception Handling}
 \begin{flowtable}{Case}{Description}
-      A1 & User has already signed this contract. The API returns HTTP 422 with error \texttt{ContractAlreadySignedException}; button disabled.\\ \hline
-      A2 & Contract is in invalid status (e.g. \texttt{CANCELLED} or \texttt{COMPLETED}). The API returns HTTP 422; displays error message.\\ \hline
-      A3 & Caller is not a contract participant. The API returns HTTP 403 Forbidden; access denied.\\ \hline
-      A4 & PDF generation service fails temporarily. The signature is recorded and PDF generation is retried via background queue.\\ \hline
+      A1 & User has already signed or Freelancer attempts to sign before Client. The API returns HTTP 422 (\texttt{AlreadySignedException} or \texttt{ClientMustSignFirstException}).\\ \hline
+      A2 & Contract is still in \texttt{AWAITING\_PAYMENT}, expired, or not \texttt{PENDING\_SIGN}. The API returns HTTP 422 (\texttt{ContractAwaitingPaymentException}, \texttt{ContractExpiredException}, or \texttt{ContractNotPendingSignException}).\\ \hline
+      A3 & Freelancer lacks verified Stripe Connect payouts. The API returns HTTP 422 (\texttt{FreelancerStripeOnboardingRequiredException}).\\ \hline
+      A4 & Caller is not a contract participant. The API returns HTTP 403 Forbidden (\texttt{ContractForbiddenException}).\\ \hline
 \end{flowtable}
 
 \sublabel{Output Data}
 \begin{specdatatable}{Data Name}{Description}
       \texttt{signedByClient} & Boolean flag indicating whether the Client has signed.\\ \hline
       \texttt{signedByFreelancer} & Boolean flag indicating whether the Freelancer has signed.\\ \hline
-      \texttt{status} & Updated contract status (\texttt{PENDING}, \texttt{AWAITING\_PAYMENT}, or \texttt{ACTIVE}).\\ \hline
+      \texttt{status} & Updated contract status (\texttt{PENDING\_SIGN} or \texttt{ACTIVE}).\\ \hline
 \end{specdatatable}
 
 \sublabel{Post-Conditions}
@@ -673,7 +650,7 @@ A Client, Freelancer, or Administrator clicks the ``Download PDF Contract'' butt
 \end{itemize}
 
 \sublabel{Purpose}
-\noindent Compiles, formats, and exports the full electronic contract agreement into an immutable standard PDF document. Includes contractual clauses, milestones, payment statuses, financial totals, and digital cryptographic signature stamps.
+\noindent Compiles and exports the electronic contract agreement into a standard PDF document (\texttt{pdf-lib}). Includes contractual clauses, milestones, financial totals, and recorded participant signature timestamps.
 
 \sublabel{Interface}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
@@ -762,35 +739,30 @@ A Client or Freelancer clicks the ``Cancel Contract'' option from the contract a
 \end{itemize}
 
 \sublabel{Purpose}
-\noindent Allows a contract participant to terminate a pending or active agreement before project completion. Requires specifying a cancellation reason and automatically manages escrow refunds for unreleased milestone deposits according to platform rules.
+\noindent Allows a contract participant to terminate a pending or active agreement before project completion, voiding pre-capture Stripe holds or executing escrow settlement for active contracts.
 
 \sublabel{Interface}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
       \item ``Cancel Contract'' menu item in the contract header action dropdown.
-      \item Cancellation confirmation modal detailing cancellation terms and financial consequences.
-      \item Reason dropdown selector (e.g., Unresponsive counterpart, Scope change, Mutual agreement, Technical impediment).
-      \item Optional detailed explanation textarea.
+      \item Cancellation confirmation dialog detailing financial settlement consequences.
       \item Action buttons: ``Confirm Cancellation'' and ``Keep Contract''.
 \end{itemize}
 
 \sublabel{Data Processing Overview}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-      \item The user submits an HTTP request: \texttt{PATCH /api/contracts/:id/cancel}.
-      \item \texttt{ContractService.cancelContract()} validates caller authorization against participant IDs.
-      \item Checks that contract status is not already \texttt{COMPLETED} or \texttt{CANCELLED}.
-      \item Verifies that no active milestone disputes exist that require formal arbitration.
-      \item Inside a database transaction, updates contract \texttt{status = CANCELLED} and records cancellation reason.
-      \item For any milestones with \texttt{paymentStatus = FUNDED} that have not been released, marks them for escrow refund back to the Client.
-      \item Dispatches urgent alert notification to the counterpart party.
+      \item The user submits an HTTP request without a request body: \texttt{PATCH /\allowbreak{}api/\allowbreak{}contracts/\allowbreak{}:\allowbreak{}id/\allowbreak{}cancel}.
+      \item \texttt{ContractService.cancelContract()} validates caller authorization against \texttt{clientId} and \texttt{freelancerId}, rejecting \texttt{CANCELLED}, \texttt{COMPLETED}, or \texttt{DISPUTED} contracts.
+      \item If the contract has a pre-capture \texttt{holdPaymentIntentId} and is not \texttt{ACTIVE}, cancels the Stripe pre-authorization hold.
+      \item {\sloppy If the contract is \texttt{ACTIVE}, checks that no milestone is \texttt{DISPUTED} and invokes \texttt{PaymentService.\allowbreak{}settleContractEscrowOnCancel(\allowbreak{}contractId, cancelledByRole)}: when Client cancels, funded \texttt{IN\_PROGRESS}/\texttt{CHANGES\_REQUESTED}/\texttt{SUBMITTED} milestones release to Freelancer and unstarted \texttt{PENDING} funded milestones refund to Client; when Freelancer cancels, all funded milestones refund to Client.\par}
+      \item Updates contract \texttt{status = CANCELLED} and dispatches an urgent notification to the counterpart party.
 \end{itemize}
 
 \fnhead{Screen Layout (Mock-up Description)}
 \screenfigure[0.95]{image/screenshot/sprint1/ntin/CancelContract.png}{Cancel Contract modal}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-      \item Modal displays warning banner: ``Canceling a contract is irreversible and immediately halts all project work.''.
-      \item Financial summary indicates any escrow funds that will be refunded to the client.
-      \item Required dropdown to select cancellation category and textarea for explanation.
-      \item Red destructive button ``Cancel This Contract'' and neutral ``Go Back''.
+      \item Modal displays warning banner: ``Cancelling a contract is irreversible and immediately halts all project work.''
+      \item Financial summary explains the role-dependent escrow settlement behavior.
+      \item Footer buttons: red destructive ``Confirm Cancellation'' and neutral ``Keep Contract''.
 \end{itemize}
 
 \fnhead{Function Details}
@@ -798,46 +770,42 @@ A Client or Freelancer clicks the ``Cancel Contract'' option from the contract a
 \sublabel{Input Data}
 \begin{specdatatable}{Data Name}{Description}
       \texttt{contractId} & Numeric contract identifier (integer path parameter).\\ \hline
-      \texttt{reason} & Category and textual explanation for cancellation (string, optional).\\ \hline
 \end{specdatatable}
 
 \sublabel{Validation Rules}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-      \item Caller must be a recognized participant of the contract.
-      \item Contract must reside in \texttt{PENDING}, \texttt{AWAITING\_PAYMENT}, or \texttt{ACTIVE} status.
-      \item Completed contracts cannot be cancelled.
-      \item Contracts with unresolved disputes cannot be cancelled until dispute settlement.
+      \item Caller must be the Client or Freelancer participant of the contract.
+      \item Contract must not already be in \texttt{COMPLETED}, \texttt{CANCELLED}, or \texttt{DISPUTED} status.
+      \item Active contracts with any milestone in \texttt{DISPUTED} status cannot be cancelled.
 \end{itemize}
 
 \sublabel{Business Rules}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
       \item BR-CT-16: Cancelled contracts cannot be reopened or reactivated under any circumstance.
-      \item BR-CT-17: Unreleased escrow funds on cancelled contracts shall be refunded to the client unless contested via dispute.
+      \item BR-CT-17: Cancelling an active contract triggers \texttt{settleContractEscrowOnCancel}: Client-initiated cancellation releases funded started milestones to the Freelancer and refunds unstarted funded milestones, whereas Freelancer-initiated cancellation refunds all funded milestones to the Client.
 \end{itemize}
 
 \sublabel{Normal Flow}
 \begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
       \item The user navigates to the contract workspace and selects ``Cancel Contract''.
-      \item The system opens the cancellation confirmation modal.
-      \item The user selects a reason and provides an explanation.
+      \item The system opens the cancellation confirmation dialog.
       \item The user clicks ``Confirm Cancellation''.
-      \item The system validates contract state and updates status to \texttt{CANCELLED}.
-      \item Unreleased escrow funds are refunded to the client.
-      \item Both parties receive cancellation notifications, and the workspace reflects cancelled state.
+      \item The system validates contract and milestone states, settles escrow or cancels pre-auth hold, and updates status to \texttt{CANCELLED}.
+      \item Counterpart receives a cancellation notification, and the workspace reflects cancelled state.
 \end{enumerate}
 
 \sublabel{Abnormal Flow / Exception Handling}
 \begin{flowtable}{Case}{Description}
-      A1 & Contract is already completed. The API returns HTTP 422 with error \texttt{ContractAlreadyCompletedException}; cancellation blocked.\\ \hline
-      A2 & An active dispute is in progress. The API returns HTTP 422 with error \texttt{ContractHasActiveDisputeException}; prompts to resolve dispute first.\\ \hline
-      A3 & Caller is not a contract participant. The API returns HTTP 403 Forbidden; access denied.\\ \hline
-      A4 & Stripe refund processing fails. Refund is queued for automatic reconciliation, and contract is marked cancelled.\\ \hline
+      A1 & Contract is already completed or cancelled. The API returns HTTP 422 (\texttt{ContractAlreadyCompletedException} or \texttt{ContractAlreadyCancelledException}).\\ \hline
+      A2 & Contract or an active milestone is disputed. The API returns HTTP 422 (\texttt{ContractDisputedException}); cancellation blocked.\\ \hline
+      A3 & Caller is not a contract participant. The API returns HTTP 403 Forbidden (\texttt{ContractForbiddenException}).\\ \hline
+      A4 & Database update fails. The API returns HTTP 500 (\texttt{FailedToUpdateContractException}).\\ \hline
 \end{flowtable}
 
 \sublabel{Output Data}
 \begin{specdatatable}{Data Name}{Description}
+      \texttt{id} & Numeric identifier of the cancelled contract.\\ \hline
       \texttt{status} & Updated contract status (\texttt{CANCELLED}).\\ \hline
-      \texttt{cancelledAt} & ISO 8601 cancellation timestamp.\\ \hline
 \end{specdatatable}
 
 \sublabel{Post-Conditions}
@@ -974,10 +942,10 @@ A participant clicks the ``Upload File'' button or drops files into the file dro
 
 \sublabel{Data Processing Overview}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-      \item Client submits an HTTP \texttt{multipart/form-data} request: \texttt{POST /api/contracts/:contractId/files} with attached file payload.
-      \item \texttt{buildUploadFilePipe()} validates file size ($\le$ 25MB) and restricts malicious executable MIME types.
-      \item \texttt{SharedFileService.uploadSharedFile()} checks participant authorization.
-      \item Streams the file buffer to Cloudinary cloud storage under folder \texttt{frevia/contracts/:contractId}.
+      \item Client submits an HTTP \texttt{multipart/\allowbreak{}form-\allowbreak{}data} request: \texttt{POST /\allowbreak{}api/\allowbreak{}contracts/\allowbreak{}:\allowbreak{}contractId/\allowbreak{}files} with attached file payload.
+      \item \texttt{build\allowbreak{}Upload\allowbreak{}File\allowbreak{}Pipe()} validates file size ($\le$ 25MB) and restricts malicious executable MIME types.
+      \item \texttt{Shared\allowbreak{}File\allowbreak{}Service.\allowbreak{}upload\allowbreak{}Shared\allowbreak{}File()} checks participant authorization.
+      \item Streams the file buffer to Cloudinary cloud storage under folder \texttt{frevia/\allowbreak{}contracts/\allowbreak{}:\allowbreak{}contractId}.
       \item Persists \texttt{SharedFile} record in database with \texttt{contractId}, \texttt{uploaderId = userId}, \texttt{fileUrl}, \texttt{publicId}, and \texttt{fileName}.
       \item Returns HTTP 201 Created with the saved file record.
 \end{itemize}
@@ -1077,11 +1045,10 @@ The file uploader or an Administrator clicks the delete trash icon next to a sha
 
 \sublabel{Data Processing Overview}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-      \item Client submits an HTTP request: \texttt{DELETE /api/contracts/:contractId/files/:fileId}.
+      \item Client submits an HTTP request: \texttt{DELETE /\allowbreak{}api/\allowbreak{}contracts/\allowbreak{}:\allowbreak{}contractId/\allowbreak{}files/\allowbreak{}:\allowbreak{}fileId}.
       \item \texttt{SharedFileService.deleteSharedFile()} verifies that the caller is either the file's original \texttt{uploaderId} or possesses \texttt{ADMIN} role.
-      \item Checks that the file is not currently attached as active evidence in an open dispute.
-      \item Soft-deletes the database record by setting \texttt{deletedAt = new Date()}.
-      \item Initiates asynchronous asset deletion from Cloudinary cloud storage using \texttt{publicId}.
+      \item Enforces the 1-hour deletion window (\texttt{ONE\_HOUR\_MS}): non-admin uploaders cannot delete files uploaded more than 1 hour earlier (\texttt{SharedFileDeleteExpiredException}).
+      \item Initiates asset deletion from Cloudinary cloud storage using \texttt{publicId} when present and soft-deletes the database record (\texttt{deletedAt = new Date()}).
       \item Returns HTTP 200 with deletion confirmation.
 \end{itemize}
 
@@ -1103,15 +1070,15 @@ The file uploader or an Administrator clicks the delete trash icon next to a sha
 
 \sublabel{Validation Rules}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-      \item The file must exist and not already be marked as deleted.
+      \item The file must exist within \texttt{contractId} and not already be soft-deleted.
       \item Caller must be the original uploader of the file or an Administrator.
-      \item The file must not be locked as legal evidence in an active dispute case.
+      \item Non-admin uploaders may delete a shared file only within 1 hour of upload creation.
 \end{itemize}
 
 \sublabel{Business Rules}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
       \item BR-CT-22: Only the original file uploader or an Administrator shall delete a shared file.
-      \item BR-CT-23: Files cited in active arbitration disputes are locked from deletion until dispute resolution.
+      \item BR-CT-23: Non-admin uploaders can delete a shared file only within the 1-hour expiry window (\texttt{ONE\_HOUR\_MS}); Administrators are exempt from the expiry window.
 \end{itemize}
 
 \sublabel{Normal Flow}
@@ -1120,16 +1087,15 @@ The file uploader or an Administrator clicks the delete trash icon next to a sha
       \item The user clicks the trash icon next to a file they uploaded.
       \item The system opens the delete confirmation dialog.
       \item The user clicks ``Delete''.
-      \item The system validates ownership and marks \texttt{deletedAt = now()}.
-      \item The file asset is purged from cloud storage.
+      \item The system validates ownership, checks the 1-hour window for non-admins, deletes the cloud asset when \texttt{publicId} exists, and sets \texttt{deletedAt}.
       \item The dialog closes, the file is removed from the view, and a confirmation toast appears.
 \end{enumerate}
 
 \sublabel{Abnormal Flow / Exception Handling}
 \begin{flowtable}{Case}{Description}
       A1 & Caller is not the file uploader and not an Admin. The API returns HTTP 403 Forbidden with error \texttt{SharedFileForbiddenException}; access denied.\\ \hline
-      A2 & File is cited as evidence in an active dispute. The API returns HTTP 422 with error \texttt{FileLockedInDisputeException}; deletion rejected.\\ \hline
-      A3 & File not found or already deleted. The API returns HTTP 404 Not Found.\\ \hline
+      A2 & Non-admin uploader attempts deletion after the 1-hour expiry window. The API returns HTTP 422 with error \texttt{SharedFileDeleteExpiredException}; deletion rejected.\\ \hline
+      A3 & File not found or already deleted. The API returns HTTP 404 Not Found (\texttt{SharedFileNotFoundException}).\\ \hline
 \end{flowtable}
 
 \sublabel{Output Data}
@@ -1227,7 +1193,7 @@ A Freelancer clicks ``Reject Offer'' upon reviewing an incoming contract offer b
 \sublabel{Abnormal Flow / Exception Handling}
 \begin{flowtable}{Case}{Description}
       A1 & Caller is not the assigned Freelancer. The API returns HTTP 403 Forbidden.\\ \hline
-      A2 & Contract is not in a rejectable status (e.g. already active or canceled). The API returns HTTP 422 with error \texttt{ContractNotActionableForRejectionException}.\\ \hline
+      A2 & Contract is not in a rejectable status (e.g. already active or cancelled). The API returns HTTP 422 with error \texttt{ContractNotActionableForRejectionException}.\\ \hline
       A3 & Stripe hold cancellation encounters network error. The system logs the incident and proceeds with rejection fallback refund.\\ \hline
 \end{flowtable}
 

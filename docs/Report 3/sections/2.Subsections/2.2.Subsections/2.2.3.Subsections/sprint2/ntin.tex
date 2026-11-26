@@ -1,15 +1,15 @@
 \Needspace{12\baselineskip}
 \paragraph{Manage Milestone}
-\subparagraph{UC-24.01 View Milestone List}
+\subparagraph{UC-24.01 View Milestones List}
 
 \Needspace{12\baselineskip}
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
 
-\\rowcolor{fptHeader}UC ID and Name & \\multicolumn{3}{l|}{UC-24.01 View Milestone List} \\* \\hline
+\\rowcolor{fptHeader}UC ID and Name & \\multicolumn{3}{l|}{UC-24.01 View Milestones List} \\* \\hline
 \\endfirsthead
 \\hline
-\\rowcolor{fptHeader}UC ID and Name & \\multicolumn{3}{l|}{UC-24.01 View Milestone List \\textit{(cont.)}} \\* \\hline
+\\rowcolor{fptHeader}UC ID and Name & \\multicolumn{3}{l|}{UC-24.01 View Milestones List \\textit{(cont.)}} \\* \\hline
 \\endhead
 \\hline\\endfoot
 \\endlastfoot
@@ -19,7 +19,7 @@ Primary Actor: & Client, Freelancer & Secondary Actors: & N/A \\ \hline
 
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When a user accesses the Contract Details page from the contract list.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Allows an authenticated contract participant (Client or Freelancer) to view all project milestones associated with the contract, including their sequence, title, deliverable description, due date, escrow funding status, amount, and work progress status.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Allows an authenticated contract participant (Client or Freelancer) to view all project milestones associated with the contract, including their sequence, title, deliverable description, due date, escrow funding status, amount, and work progress status.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The user is authenticated in the system. \newline
@@ -34,7 +34,7 @@ Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
 } \\ \hline
 
 Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{A. View Milestone List} \newline
+\textbf{A. View Milestones List} \newline
 1. The User accesses the Contract Details page (\textbf{Contracts} $\rightarrow$ \textbf{Contract \#ID}). \newline
 2. The system queries the database to retrieve all milestones associated with the contract ID where \texttt{deletedAt = NULL}. \newline
 3. For each milestone, the system retrieves title, description, amount, due date, status, paymentStatus, and submission count. \newline
@@ -82,19 +82,19 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{The contract was previously agreed up
 \end{longtable}
 
 % =================================================================
-% UC-24.02 View Milestone Detail
+% UC-24.02 View Milestone Details
 % =================================================================
 
-\subparagraph{UC-24.02 View Milestone Detail}
+\subparagraph{UC-24.02 View Milestone Details}
 
 \Needspace{12\baselineskip}
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
 
-\\rowcolor{fptHeader}UC ID and Name & \\multicolumn{3}{l|}{UC-24.02 View Milestone Detail} \\* \\hline
+\\rowcolor{fptHeader}UC ID and Name & \\multicolumn{3}{l|}{UC-24.02 View Milestone Details} \\* \\hline
 \\endfirsthead
 \\hline
-\\rowcolor{fptHeader}UC ID and Name & \\multicolumn{3}{l|}{UC-24.02 View Milestone Detail \\textit{(cont.)}} \\* \\hline
+\\rowcolor{fptHeader}UC ID and Name & \\multicolumn{3}{l|}{UC-24.02 View Milestone Details \\textit{(cont.)}} \\* \\hline
 \\endhead
 \\hline\\endfoot
 \\endlastfoot
@@ -104,7 +104,7 @@ Primary Actor: & Client, Freelancer & Secondary Actors: & N/A \\ \hline
 
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When a user clicks on a milestone card header or chevron button in the milestone list.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Expands the milestone card to display full deliverable scope criteria, attached files, latest deliverable submission notes, external preview URLs, and change request revision history.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Expands the milestone card to display full deliverable scope criteria, attached files, latest deliverable submission notes, external preview URLs, and change request revision history.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The user is an authenticated contract participant (Client or Freelancer) or Admin. \newline
@@ -117,7 +117,7 @@ Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
 } \\ \hline
 
 Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{A. View Milestone Detail} \newline
+\textbf{A. View Milestone Details} \newline
 1. The User clicks the milestone header or expand chevron button. \newline
 2. The system retrieves the milestone submissions and deliverable attachments. \newline
 3. The system renders the deliverable requirements and acceptance criteria. \newline
@@ -180,7 +180,7 @@ Primary Actor: & Client & Secondary Actors: & N/A \\ \hline
 
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When the Client clicks the ``+ Add Milestone'' button on the Contract Details page.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Allows the client to create a new milestone by providing a title, deliverable scope description, funding amount, and target due date, validating that the amount does not exceed the remaining contract budget.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Allows the client to create a new milestone by providing a title, deliverable scope description, funding amount, and target due date, validating that the amount does not exceed the remaining contract budget.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The user is logged in as the Client of this contract. \newline
@@ -264,7 +264,7 @@ Primary Actor: & Client & Secondary Actors: & N/A \\ \hline
 
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When the Client selects ``Edit'' from the 3-dots dropdown menu on a pending milestone card.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Allows the client to modify the title, description, budget amount, or target due date of a milestone that has not yet started work.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Allows the client to modify the title, description, budget amount, or target due date of a milestone that has not yet started work.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The user is the Client of the contract. \newline
@@ -342,7 +342,7 @@ Primary Actor: & Client & Secondary Actors: & N/A \\ \hline
 
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When the Client selects ``Delete'' from the 3-dots dropdown menu on a pending milestone card.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Allows the client to delete an unstarted and unfunded milestone, restoring its allocated funds back to the contract's unallocated balance.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Allows the client to delete an unstarted and unfunded milestone, restoring its allocated funds back to the contract's unallocated balance.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The user is the Client of the contract. \newline
@@ -414,7 +414,7 @@ Primary Actor: & Freelancer & Secondary Actors: & N/A \\ \hline
 
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When the Freelancer clicks the ``Start Work'' button on a funded upcoming milestone card.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Transitions a milestone from Pending to In Progress, verifying that funds are secured in escrow and enforcing that only one milestone can be in progress at a time.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Transitions a milestone from Pending to In Progress, verifying that funds are secured in escrow and enforcing that only one milestone can be in progress at a time.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The user is the Freelancer assigned to the contract. \newline
@@ -498,7 +498,7 @@ Primary Actor: & Client, Freelancer & Secondary Actors: & N/A \\ \hline
 
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When a user views the attached deliverables of an expanded milestone or opens the submit work dialog.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Retrieves and displays all deliverable files uploaded for a milestone, indicating file name, file type icon, upload date, and secure download link.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Retrieves and displays all deliverable files uploaded for a milestone, indicating file name, file type icon, upload date, and secure download link.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The user is an authenticated contract participant (Client or Freelancer) or Admin. \newline
@@ -569,7 +569,7 @@ Primary Actor: & Freelancer & Secondary Actors: & N/A \\ \hline
 
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When the Freelancer selects a file or drops a file into the upload dropzone in the Submit Milestone dialog.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Uploads a deliverable file to Cloudinary storage and registers its metadata in the milestone files database, preparing it for inclusion in a submission.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Uploads a deliverable file to Cloudinary storage and registers its metadata in the milestone files database, preparing it for inclusion in a submission.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The user is the Freelancer (or Client) of the contract. \newline
@@ -644,7 +644,7 @@ Primary Actor: & Freelancer & Secondary Actors: & N/A \\ \hline
 
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When the user clicks the trash icon next to an uploaded file in the Submit Milestone dialog.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Allows the file uploader to remove a file they uploaded, purging the asset from Cloudinary storage and soft-deleting the database record.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Allows the file uploader to remove a file they uploaded, purging the asset from Cloudinary storage and soft-deleting the database record.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The user is the original uploader of the file (\texttt{uploaderId === userId}). \newline
@@ -721,7 +721,7 @@ Primary Actor: & Freelancer & Secondary Actors: & N/A \\ \hline
 
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When the Freelancer clicks ``Submit Work'' (or ``Resubmit Work'') on a milestone card.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Allows the freelancer to submit completed deliverables for client evaluation, bundling a message, external preview links, and uploaded files. The milestone transitions to Submitted status.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Allows the freelancer to submit completed deliverables for client evaluation, bundling a message, external preview links, and uploaded files. The milestone transitions to Submitted status.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The user is the Freelancer of the contract. \newline
@@ -787,16 +787,16 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{The milestone work is ready for clien
 % UC-26.02 Delete Milestone Submission
 % =================================================================
 
-\subparagraph{UC-26.02 View Milestone Submission List}
+\subparagraph{UC-26.02 View Milestone Submissions List}
 
 \Needspace{12\baselineskip}
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
 
-\\rowcolor{fptHeader}UC ID and Name & \\multicolumn{3}{l|}{UC-26.02 View Milestone Submission List} \\* \\hline
+\\rowcolor{fptHeader}UC ID and Name & \\multicolumn{3}{l|}{UC-26.02 View Milestone Submissions List} \\* \\hline
 \\endfirsthead
 \\hline
-\\rowcolor{fptHeader}UC ID and Name & \\multicolumn{3}{l|}{UC-26.02 View Milestone Submission List \\textit{(cont.)}} \\* \\hline
+\\rowcolor{fptHeader}UC ID and Name & \\multicolumn{3}{l|}{UC-26.02 View Milestone Submissions List \\textit{(cont.)}} \\* \\hline
 \\endhead
 \\hline\\endfoot
 \\endlastfoot
@@ -806,7 +806,7 @@ Primary Actor: & Client & Secondary Actors: & Freelancer, Admin \\ \hline
 
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When a user expands a milestone card with deliverable activity and toggles the ``Revision History'' view.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Displays the complete chronological list of all deliverable submissions made for a milestone, indicating version number, submission timestamp, review status, and feedback remarks.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Displays the complete chronological list of all deliverable submissions made for a milestone, indicating version number, submission timestamp, review status, and feedback remarks.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The user is an authenticated contract participant (Client or Freelancer) or Admin. \newline
@@ -854,19 +854,19 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{Submissions are linked to the current
 \end{longtable}
 
 % =================================================================
-% UC-26.04 View Milestone Submission Detail
+% UC-26.04 View Milestone Submission Details
 % =================================================================
 
-\subparagraph{UC-26.03 View Milestone Submission Detail}
+\subparagraph{UC-26.03 View Milestone Submission Details}
 
 \Needspace{12\baselineskip}
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
 
-\\rowcolor{fptHeader}UC ID and Name & \\multicolumn{3}{l|}{UC-26.03 View Milestone Submission Detail} \\* \\hline
+\\rowcolor{fptHeader}UC ID and Name & \\multicolumn{3}{l|}{UC-26.03 View Milestone Submission Details} \\* \\hline
 \\endfirsthead
 \\hline
-\\rowcolor{fptHeader}UC ID and Name & \\multicolumn{3}{l|}{UC-26.03 View Milestone Submission Detail \\textit{(cont.)}} \\* \\hline
+\\rowcolor{fptHeader}UC ID and Name & \\multicolumn{3}{l|}{UC-26.03 View Milestone Submission Details \\textit{(cont.)}} \\* \\hline
 \\endhead
 \\hline\\endfoot
 \\endlastfoot
@@ -876,7 +876,7 @@ Primary Actor: & Client & Secondary Actors: & Freelancer, Admin \\ \hline
 
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When the Client clicks ``Review Deliverables'' on a submitted milestone, or a participant clicks a submission in the history list.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Displays the comprehensive details of a specific milestone submission, including submission timestamp, review status, freelancer notes, preview links, attached downloadable files, and interactive evaluation buttons for the client.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Displays the comprehensive details of a specific milestone submission, including submission timestamp, review status, freelancer notes, preview links, attached downloadable files, and interactive evaluation buttons for the client.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The user is an authenticated contract participant or Admin. \newline
@@ -948,7 +948,7 @@ Primary Actor: & Client & Secondary Actors: & N/A \\ \hline
 
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When the Client reviews submitted work and clicks ``Request Changes''.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Allows the client to reject the current submission and ask for modifications, supplying detailed feedback and an optional revision deadline.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Allows the client to reject the current submission and ask for modifications, supplying detailed feedback and an optional revision deadline.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The user is the Client of the contract. \newline
@@ -1030,7 +1030,7 @@ Primary Actor: & Client & Secondary Actors: & N/A \\ \hline
 
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When the Client reviews submitted work and clicks ``Approve \& Release Payment''.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Enables the client to accept completed deliverables, marking the milestone as Completed and releasing escrowed funds to the freelancer's account.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Enables the client to accept completed deliverables, marking the milestone as Completed and releasing escrowed funds to the freelancer's account.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The user is the Client of the contract. \newline

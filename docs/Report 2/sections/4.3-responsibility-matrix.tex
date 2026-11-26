@@ -1,43 +1,37 @@
-The matrix assigns every output of the project to the members of the team. It uses the notation of the report template:
+The matrix assigns every report section and project deliverable to the members of the team. It uses the notation of the report template:
 
 \noindent\textit{D~Do;\; R~Review;\; S~Support;\; I~Informed;\; <blank> - Omitted}
 
 \vspace{0.3cm}
 
+\begingroup
 \small
 \setlength{\tabcolsep}{4pt}
-\renewcommand{\arraystretch}{1.3}
+\renewcommand{\arraystretch}{1.28}
 
-\begin{longtable}{|p{5.6cm}|c|c|c|c|c|}
+\begin{longtable}{|L{8.8cm}|C{1.0cm}|C{1.0cm}|C{1.0cm}|C{1.0cm}|C{1.0cm}|}
+\caption{Responsibility Assignments Matrix}
+\label{tab:raci} \\
 \hline
 \rowcolor{fptHeader}
 \textbf{Responsibility}
-&
-\textbf{VyPK}
-&
-\textbf{ThuanNT}
-&
-\textbf{TaiTP}
-&
-\textbf{TinVN}
-&
-\textbf{HuyNLN}
+& \rotatebox{90}{\,\textbf{VyPK CE182254}\hspace{5pt}}
+& \rotatebox{90}{\,\textbf{ThuanNT CE181024}\hspace{5pt}}
+& \rotatebox{90}{\,\textbf{TaiTP CE181632}\hspace{5pt}}
+& \rotatebox{90}{\,\textbf{TinVN CE180619}\hspace{5pt}}
+& \rotatebox{90}{\,\textbf{HuyNLN CE181196}\hspace{5pt}}
 \\ \hline
 \endfirsthead
 
+\caption[]{Responsibility Assignments Matrix \textit{(cont.)}} \\
 \hline
 \rowcolor{fptHeader}
 \textbf{Responsibility}
-&
-\textbf{VyPK}
-&
-\textbf{ThuanNT}
-&
-\textbf{TaiTP}
-&
-\textbf{TinVN}
-&
-\textbf{HuyNLN}
+& \rotatebox{90}{\,\textbf{VyPK CE182254}\hspace{5pt}}
+& \rotatebox{90}{\,\textbf{ThuanNT CE181024}\hspace{5pt}}
+& \rotatebox{90}{\,\textbf{TaiTP CE181632}\hspace{5pt}}
+& \rotatebox{90}{\,\textbf{TinVN CE180619}\hspace{5pt}}
+& \rotatebox{90}{\,\textbf{HuyNLN CE181196}\hspace{5pt}}
 \\ \hline
 \endhead
 
@@ -46,90 +40,102 @@ The matrix assigns every output of the project to the members of the team. It us
 \hline
 \endlastfoot
 
-Project initiation, scope and risk planning
-& DR & SI & SI & SI & SI \\ \hline
+% ========== REPORT I ==========
+\textbf{Report I: Project Introduction} & & & & & \\ \hline
+1. Overview & & & & & \\ \hline
+\quad 1.1. Project Information & D, I & & & & R \\ \hline
+\quad 1.2. Project Team & D, I & & & & R \\ \hline
+\quad 1.3. Supervisors & D, I & & & & R \\ \hline
+\quad 1.4. Experts & D, I & & & & R \\ \hline
+2. Product Background & R & D & S & I & \\ \hline
+3. Existing Systems & R & D & S & I & \\ \hline
+4. Business Opportunity & R & & I & & D \\ \hline
+5. Software Product Vision & R & & I & & D \\ \hline
+6. Project Scope \& Limitations & & & & & \\ \hline
+\quad 6.1. Major Features (FE-01--FE-21) & R & S & D & S & S \\ \hline
+\quad 6.2. Limitations \& Exclusions (LI-01--LI-13) & R & S & D & I & S \\ \hline
 
-Product Introduction Document
-& DR & SI & SI & SI & SI \\ \hline
+% ========== REPORT II ==========
+\textbf{Report II: Project Management Plan} & & & & & \\ \hline
+1. Overview & & & & & \\ \hline
+\quad 1.1. Scope \& Estimation & DR & D & D & S & S \\ \hline
+\quad 1.2. Project Objectives & DR & S & S & I & D \\ \hline
+\quad 1.3. Project Risks & R & D & S & D & S \\ \hline
+2. Management Approach & & & & & \\ \hline
+\quad 2.1. Project Process & DR & S & S & I & D \\ \hline
+\quad 2.2. Quality Management & R & D & S & D & S \\ \hline
+\quad 2.3. Training Plan & R & S & D & I & S \\ \hline
+3. Project Deliverables & DR & S & D & S & I \\ \hline
+4. Responsibility Assignments & & & & & \\ \hline
+\quad 4.1. Team \& Structure & DR & I & I & D & I \\ \hline
+\quad 4.2. Role \& Responsibilities & DR & I & I & D & I \\ \hline
+\quad 4.3. Responsibility Assignment Matrix & DR & S & S & D & S \\ \hline
+5. Project Communications & DR & I & I & D & I \\ \hline
+6. Configuration Management & & & & & \\ \hline
+\quad 6.1. Document Management & DR & S & I & I & S \\ \hline
+\quad 6.2. Source Code Management & R & D & S & S & I \\ \hline
+\quad 6.3. Tools \& Infrastructures & R & D & S & S & S \\ \hline
+\pagebreak
 
-Project Management Plan
-& DR & SI & SI & SI & SI \\ \hline
+% ========== REPORT III ==========
+\textbf{Report III: Software Requirements Specification} & & & & & \\* \hline
+1. Product Overview & DR & S & S & S & S \\ \hline
+2. User Requirements & & & & & \\ \hline
+\quad 2.1. Actors & DR & S & S & S & S \\ \hline
+\quad 2.2. Use Cases -- Authentication, RBAC \& Users & R & D & & I & \\ \hline
+\quad 2.3. Use Cases -- Profiles, eKYC \& Reviews & R & & S & & D \\ \hline
+\quad 2.4. Use Cases -- Jobs, Bookmarks \& Proposals & R & & D & & S \\ \hline
+\quad 2.5. Use Cases -- Contracts, Milestones \& Escrow & R & S & & D & \\ \hline
+\quad 2.6. Use Cases -- Forum, Messaging \& Moderation & D & & & S & R \\ \hline
+3. Functional Requirements & & & & & \\ \hline
+\quad 3.1. Screen Flow Diagrams & R & D & D & D & D \\ \hline
+\quad 3.2. Entity Relationship Diagrams (ERD) & R & D & D & D & D \\ \hline
+\quad 3.3. Detailed Functional Specifications (Sprints 1--5) & D & D & D & D & D \\ \hline
+4. Non-Functional Requirements & R & D & S & D & S \\ \hline
+5. Requirement Appendix & DR & S & S & S & S \\ \hline
 
-Requirements gathering and user stories
-& R & D & D & SI & SI \\ \hline
+% ========== REPORT IV ==========
+\textbf{Report IV: Software Design Document} & & & & & \\ \hline
+1. System Design & & & & & \\ \hline
+\quad 1.1. Architecture \& Component Design & R & D & S & D & S \\ \hline
+\quad 1.2. Monorepo, Docker \& AI Service Boundaries & R & D & & S & S \\ \hline
+2. Database Design (39 Entities \& Migrations) & R & D & D & D & D \\ \hline
+3. Detailed Design (Sprints 1--5) & & & & & \\ \hline
+\quad 3.1. Authentication, RBAC, Users \& Catalogs & R & D & & I & \\ \hline
+\quad 3.2. Profiles, eKYC, Expert \& Notifications & R & & & I & D \\ \hline
+\quad 3.3. Jobs, Saved Searches, Proposals \& Hiring & R & & D & & S \\ \hline
+\quad 3.4. Contracts, Milestones, Disputes \& Stripe Payouts & R & S & & D & \\ \hline
+\quad 3.5. Forum, Conversations, Moderation \& AI Checks & D & & S & S & R \\ \hline
 
-UI/UX prototype and component library
-& R & SI & D & SI & D \\ \hline
+% ========== REPORT V ==========
+\textbf{Report V: Software Test Documentation} & & & & & \\ \hline
+1. Test Plan \& Strategy & DR & S & S & S & S \\ \hline
+2. Unit Testing (UF-01--UF-84) & & & & & \\ \hline
+\quad 2.1. Forum, Conversation, Moderation \& eKYC & D & & & S & R \\ \hline
+\quad 2.2. Auth, Roles, Permissions, Users \& Catalogs & R & D & & S & \\ \hline
+\quad 2.3. Jobs, Bookmarks, Proposals \& Hiring & R & & D & & S \\ \hline
+3. Integration \& Security Testing (Stripe, Disputes, AI) & R & S & S & D & S \\ \hline
+4. System, Real-time \& Localisation UI Testing & R & S & S & S & D \\ \hline
+5. Test Execution Metrics \& Defect Summary & DR & S & S & S & S \\ \hline
 
-Software architecture and data model
-& R & D & D & D & D \\ \hline
+% ========== REPORT VI ==========
+\textbf{Report VI: Software User Guides} & & & & & \\ \hline
+1. Deliverable Package \& Local Installation Guide & R & S & & & D \\ \hline
+2. Docker Compose \& AI Services Verification & R & D & & & S \\ \hline
+3. User Manual: Auth, Sessions, RBAC \& Catalogs & R & D & & & \\ \hline
+4. User Manual: Public Showcase, Jobs \& Proposals & D & & S & & R \\ \hline
+5. User Manual: Contracts, Milestones \& Stripe Escrow & R & & D & S & \\ \hline
+6. User Manual: Chat, Forum, Disputes \& Moderation & R & & & D & S \\ \hline
+7. User Manual: Account, eKYC, Expert \& Reviews & R & & S & & D \\ \hline
 
-Authentication, permissions and session management
-& R & D & SI & SI & S \\ \hline
+% ========== REPORT VII ==========
+\textbf{Report VII: Final Report \& Presentation} & & & & & \\ \hline
+1. Final Project Report Consolidation & DR & D & D & D & D \\ \hline
+2. Deployment Package \& Demo Environment & R & D & S & D & S \\ \hline
+3. Thesis Presentation Slides \& Live Demo & DR & D & D & D & D \\ \hline
 
-Profile, skills, portfolio and curriculum vitae handling
-& R & S & SI & D & D \\ \hline
-
-Job marketplace, bookmarks and saved search
-& R & S & D & SI & D \\ \hline
-
-Proposal and hiring workflow
-& R & S & D & SI & S \\ \hline
-
-Contract signing, milestones and submissions
-& R & D & S & SI & D \\ \hline
-
-Stripe escrow, release, refund and reconciliation
-& R & S & SI & D & SI \\ \hline
-
-Dispute arbitration and settlement
-& R & D & S & S & SI \\ \hline
-
-Real-time messaging and notifications
-& R & D & SI & S & D \\ \hline
-
-Forum, moderation and content administration
-& DR & SI & S & SI & D \\ \hline
-
-AI integration: identity verification and CV analysis
-& R & S & SI & D & SI \\ \hline
-
-Administrative console, catalogues and banners
-& DR & S & SI & SI & D \\ \hline
-
-Frontend development
-& R & SI & D & SI & D \\ \hline
-
-Backend development
-& R & D & D & D & SI \\ \hline
-
-Unit testing
-& R & D & S & D & S \\ \hline
-
-Integration and end-to-end testing
-& R & S & D & D & D \\ \hline
-
-Payment and webhook security testing
-& R & S & SI & D & SI \\ \hline
-
-User acceptance testing
-& DR & I & I & I & I \\ \hline
-
-Technical training
-& DR & D & D & D & D \\ \hline
-
-Deployment and environment configuration
-& R & D & SI & D & SI \\ \hline
-
-Final project report
-& DR & D & D & D & D \\ \hline
-
-Thesis presentation
-& DR & D & D & D & D \\ \hline
-
-\caption{Responsibility Assignments Matrix}
-\label{tab:raci}
 \end{longtable}
+\endgroup
 
 \normalsize
 
