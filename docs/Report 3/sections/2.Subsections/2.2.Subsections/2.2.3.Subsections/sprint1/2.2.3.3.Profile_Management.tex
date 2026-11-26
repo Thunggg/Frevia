@@ -1,22 +1,25 @@
 % Nhuy -- canonical use-case identifiers, 08/11/2026
+\Needspace{12\baselineskip}
 \paragraph{Freelancer Profile Management}
-\Needspace{8\baselineskip}
+\Needspace{12\baselineskip}
 \subparagraph{UC-07.01 View Freelancer Profile}
 
 {\singlespacing
 \setlength{\extrarowheight}{3pt}
+\Needspace{12\baselineskip}
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{L{11.1cm}|}{UC-07.01 View Freelancer Profile} \\* \hline
 \endfirsthead
 \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{L{11.1cm}|}{UC-07.01 View Freelancer Profile \textit{(cont.)}} \\* \hline
 \endhead
 \hline\endfoot
 \endlastfoot
-UC ID and Name & \multicolumn{3}{L{11.1cm}|}{UC-07.01 View Freelancer Profile} \\ \hline
 Created By: & \multicolumn{3}{L{11.1cm}|}{Nguyen Lu Nhat Huy; updated 08/11/2026} \\ \hline
 Primary Actor: & \multicolumn{3}{L{11.1cm}|}{Guest, Client, Freelancer} \\ \hline
 Trigger: & \multicolumn{3}{L{11.1cm}|}{The actor selects View Freelancer Profile from /freelancer/profile; /profiles/[id].} \\ \hline
-Description: & \multicolumn{3}{L{11.1cm}|}{Retrieve approved Profile and FreelancerProfile fields in one response.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Retrieve approved Profile and FreelancerProfile fields in one response.} \\ \hline
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{The requested active profile or item exists. The relevant database and dependent services are available.} \\ \hline
 Post-conditions: & \multicolumn{3}{L{11.1cm}|}{Authorized data is displayed without modifying the underlying records.} \\ \hline
 Normal Flow: & \multicolumn{3}{L{11.1cm}|}{1. The actor opens /freelancer/profile; /profiles/[id] and selects View Freelancer Profile. \newline 2. The application submits the selected identifier or list filters. \newline 3. The API checks authentication where required, authorization, resource existence and input validity. \newline 4. Retrieve approved Profile and FreelancerProfile fields in one response. \newline 5. The screen renders the response, or an explicit empty state for a valid empty collection.} \\ \hline
@@ -30,23 +33,25 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{This specification defines the requir
 \end{longtable}
 }
 
-\Needspace{8\baselineskip}
+\Needspace{12\baselineskip}
 \subparagraph{UC-07.02 Update Freelancer Profile}
 
 {\singlespacing
 \setlength{\extrarowheight}{3pt}
+\Needspace{12\baselineskip}
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{L{11.1cm}|}{UC-07.02 Update Freelancer Profile} \\* \hline
 \endfirsthead
 \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{L{11.1cm}|}{UC-07.02 Update Freelancer Profile \textit{(cont.)}} \\* \hline
 \endhead
 \hline\endfoot
 \endlastfoot
-UC ID and Name & \multicolumn{3}{L{11.1cm}|}{UC-07.02 Update Freelancer Profile} \\ \hline
 Created By: & \multicolumn{3}{L{11.1cm}|}{Nguyen Lu Nhat Huy; updated 08/11/2026} \\ \hline
 Primary Actor: & \multicolumn{3}{L{11.1cm}|}{Freelancer} \\ \hline
 Trigger: & \multicolumn{3}{L{11.1cm}|}{The actor selects Update Freelancer Profile from /freelancer/profile; /profiles/[id].} \\ \hline
-Description: & \multicolumn{3}{L{11.1cm}|}{Persist basic and professional fields together or create a pending revision under the review policy.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Persist basic and professional fields together or create a pending revision under the review policy.} \\ \hline
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{The actor is authenticated and has the required role and resource permission. The relevant database and dependent services are available.} \\ \hline
 Post-conditions: & \multicolumn{3}{L{11.1cm}|}{Persist basic and professional fields together or create a pending revision under the review policy.} \\ \hline
 Normal Flow: & \multicolumn{3}{L{11.1cm}|}{1. The actor opens /freelancer/profile; /profiles/[id] and selects Update Freelancer Profile. \newline 2. The application presents the current values or action confirmation; the actor supplies the required data and submits. \newline 3. The API checks authentication where required, authorization, resource existence and input validity. \newline 4. Persist basic and professional fields together or create a pending revision under the review policy. \newline 5. After the transaction succeeds, the screen displays the result and reloads affected data; a pending revision is labeled as awaiting review.} \\ \hline

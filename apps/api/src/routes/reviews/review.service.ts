@@ -2,6 +2,7 @@ import { HttpException, Injectable } from '@nestjs/common';
 import { ContractStatus, Prisma } from '@prisma/client';
 import {
   ReviewMessage,
+  type FreelancerReviewsQueryType,
   type CreateReviewType,
   type UpdateReviewType,
 } from '@shared/types';
@@ -19,6 +20,34 @@ import { ReviewRepository } from './review.repo';
 @Injectable()
 export class ReviewService {
   constructor(private readonly repository: ReviewRepository) {}
+
+  async listForFreelancer(userId: number, query: FreelancerReviewsQueryType) {
+    const [reviews, summary] = await this.repository.listForFreelancer(
+      userId,
+      query.page,
+      query.limit,
+    );
+    return {
+      reviews: reviews.map((review) => ({
+        id: review.id,
+        overallRating: Number(review.overallRating),
+        comment: review.comment,
+        createdAt: review.createdAt,
+        reviewer: review.reviewer.profile,
+        response:
+          review.response && !review.response.deletedAt
+            ? { responseText: review.response.responseText }
+            : null,
+      })),
+      total: summary._count._all,
+      avgRating:
+        summary._avg.overallRating === null
+          ? null
+          : Number(summary._avg.overallRating),
+      page: query.page,
+      limit: query.limit,
+    };
+  }
 
   private async requireContractParticipant(userId: number, contractId: number) {
     const contract = await this.repository.findContract(contractId);

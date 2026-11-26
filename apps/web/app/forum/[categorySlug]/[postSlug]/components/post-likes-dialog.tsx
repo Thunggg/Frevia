@@ -48,7 +48,7 @@ export function PostLikesDialog({ postId, count }: PostLikesDialogProps) {
           disabled={count === 0}
           className="inline-flex items-center gap-1 text-sm text-muted-foreground transition-colors hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50"
         >
-          <Heart className="h-3.5 w-3.5" />
+          <Heart className="size-3.5" />
           {count} {tCommon("likes", { count })}
         </button>
       </DialogTrigger>
@@ -63,7 +63,7 @@ export function PostLikesDialog({ postId, count }: PostLikesDialogProps) {
         <div className="max-h-80 overflow-y-auto pr-2">
           {isLoading ? (
             <div className="flex items-center justify-center py-8">
-              <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+              <Loader2 className="size-5 animate-spin text-muted-foreground" />
             </div>
           ) : likers.length === 0 ? (
             <p className="py-8 text-center text-sm text-muted-foreground">

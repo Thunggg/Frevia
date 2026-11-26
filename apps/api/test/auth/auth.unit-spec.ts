@@ -55,6 +55,8 @@ describe('User Authentication (UF-37 to UF-41)', () => {
     createSession: jest.fn(),
     deleteSessionByRefreshToken: jest.fn(),
     findVerificationCode: jest.fn(),
+    findVerificationCodeByEmailAndType: jest.fn(),
+    upsertVerificationCode: jest.fn(),
     update: jest.fn(),
     deleteVerifycationCode: jest.fn(),
   };
@@ -674,24 +676,20 @@ describe('User Authentication (UF-37 to UF-41)', () => {
       );
     });
 
-    // Hỗ trợ nhánh tra cứu Admin roleId khi tham số role khác Client và Freelancer.
-    it('resolves the fallback role ID when a non-client and non-freelancer role is passed', async () => {
+    // Chặn leo thang đặc quyền sang Admin khi tham số role khác Client và Freelancer.
+    it('throws ForbiddenException and never resolves Admin role when a non-marketplace role is passed', async () => {
       authRepository.findUserByEmail.mockResolvedValue(null);
       authRepository.findVerificationCode.mockResolvedValue(validOtpRecord);
-      sharedRoleRepository.getAdminRoleId.mockResolvedValue(1);
-      hashingService.hash.mockResolvedValue('hashed-pwd');
-      authRepository.createUserAndRegister.mockResolvedValue({
-        id: 105,
-        email: 'newclient@frevia.com',
-        isBanned: false,
-      });
 
-      await service.register({
-        ...validRegisterBody,
-        role: RoleName.ADMIN as unknown as typeof validRegisterBody.role,
-      });
+      await expect(
+        service.register({
+          ...validRegisterBody,
+          role: RoleName.ADMIN as unknown as typeof validRegisterBody.role,
+        }),
+      ).rejects.toBeInstanceOf(ForbiddenException);
 
-      expect(sharedRoleRepository.getAdminRoleId).toHaveBeenCalled();
+      expect(sharedRoleRepository.getAdminRoleId).not.toHaveBeenCalled();
+      expect(authRepository.createUserAndRegister).not.toHaveBeenCalled();
     });
 
     // Lưu đúng họ tên đầy đủ (fullName) của người dùng vào hồ sơ khi khởi tạo tài khoản.
@@ -792,6 +790,27 @@ describe('User Authentication (UF-37 to UF-41)', () => {
         type: TypeOfVerificationCode.PASSWORD_RESET,
       });
       expect(result).toEqual({ message: 'Update password successfully' });
+    });
+
+    it('blocks the 6th OTP request within the rate-limit window', async () => {
+      authRepository.findUserByEmail.mockResolvedValue(null);
+      authRepository.findVerificationCodeByEmailAndType.mockResolvedValue({
+        id: 10,
+        email: 'user@frevia.com',
+        code: '123456',
+        type: TypeOfVerificationCode.EMAIL_VERIFICATION,
+        attempts: 5,
+        expiresAt: futureDate,
+        createdAt: new Date(),
+      });
+
+      await expect(
+        service.sendOTP({
+          email: 'user@frevia.com',
+          type: TypeOfVerificationCode.EMAIL_VERIFICATION,
+        }),
+      ).rejects.toBeInstanceOf(UnprocessableEntityException);
+      expect(emailService.sendOTP).not.toHaveBeenCalled();
     });
 
     // Báo lỗi 422 UnprocessableEntityException khi email yêu cầu đặt lại mật khẩu không tồn tại.
@@ -910,7 +929,7 @@ describe('User Authentication (UF-37 to UF-41)', () => {
     it('returns user info with dynamic role, permissions and permissionModules', async () => {
       authRepository.findUserById.mockResolvedValue(mockUserWithPermissions);
 
-      const result = await service.getMe(10, 5);
+      const result = await service.getMe(10);
 
       expect(result.id).toBe(10);
       expect(result.email).toBe('cskh@frevia.com');
@@ -938,7 +957,7 @@ describe('User Authentication (UF-37 to UF-41)', () => {
       };
       authRepository.findUserById.mockResolvedValue(mockAdminUser);
 
-      const result = await service.getMe(1, 1);
+      const result = await service.getMe(1);
 
       expect(result.permissions).toContain('*');
     });

@@ -1,4 +1,3 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
 <mxfile host="app.diagrams.net" version="29.0.3">
   <diagram id="UC-31.02-join-new-role" name="UC-31.02 - Join New Role">
     <mxGraphModel grid="1" gridSize="10" page="0" pageWidth="1600" pageHeight="6495" math="0" shadow="0">
@@ -273,13 +272,13 @@
             <mxPoint x="915" y="3250" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="c38" value="&lt;div&gt;5. joinRole (userId,&lt;/div&gt;&lt;div&gt;body.role)&lt;/div&gt;" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=12;" parent="1" edge="1">
+        <mxCell id="c38" value="&lt;div&gt;5. joinMarketplaceRole (userId,&lt;/div&gt;&lt;div&gt;body.role)&lt;/div&gt;" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=12;" parent="1" edge="1">
           <mxGeometry relative="1" as="geometry">
             <mxPoint x="925" y="3342" as="sourcePoint" />
             <mxPoint x="1120" y="3342" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="c39" value="&lt;div&gt;6. $transaction: find active&lt;/div&gt;&lt;div&gt;role; check assignment;&lt;/div&gt;&lt;div&gt;upsert Profile +&lt;/div&gt;&lt;div&gt;Client/Freelancer profile;&lt;/div&gt;&lt;div&gt;clear prior primary; create&lt;/div&gt;&lt;div&gt;primary UserRole&lt;/div&gt;" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=12;" parent="1" edge="1">
+        <mxCell id="c39" value="&lt;div&gt;6. $transaction: find active&lt;/div&gt;&lt;div&gt;role; check assignment;&lt;/div&gt;&lt;div&gt;upsert Profile +&lt;/div&gt;&lt;div&gt;Client/Freelancer profile;&lt;/div&gt;&lt;div&gt;create assignment; update roleId&lt;/div&gt;&lt;div&gt;primary UserRole&lt;/div&gt;" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=12;" parent="1" edge="1">
           <mxGeometry relative="1" as="geometry">
             <mxPoint x="1130" y="3502" as="sourcePoint" />
             <mxPoint x="1310" y="3502" as="targetPoint" />

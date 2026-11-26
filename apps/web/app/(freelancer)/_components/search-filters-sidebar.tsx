@@ -125,11 +125,23 @@ export function SearchFiltersSidebar({
     setMaxInput(selectedBudgetMax);
   }, [selectedBudgetMax]);
 
-  // Parse active category slugs
-  const selectedCategorySlugs = (selectedCategory || "")
-    .split(",")
-    .map((s) => s.trim())
-    .filter((s) => s && s !== "all");
+  // Optimistic category slugs to update checkboxes immediately without waiting for server navigation
+  const [optimisticCategorySlugs, setOptimisticCategorySlugs] = useState<string[]>(
+    () =>
+      (selectedCategory || "")
+        .split(",")
+        .map((s) => s.trim())
+        .filter((s) => s && s !== "all"),
+  );
+
+  useEffect(() => {
+    setOptimisticCategorySlugs(
+      (selectedCategory || "")
+        .split(",")
+        .map((s) => s.trim())
+        .filter((s) => s && s !== "all"),
+    );
+  }, [selectedCategory]);
 
   // Parse active skills
   const selectedSkills = (selectedSkill || "")
@@ -203,21 +215,47 @@ export function SearchFiltersSidebar({
   };
 
   const handleApplyCustomBudget = () => {
-    const minVal = minInput.trim() ? minInput.trim() : null;
-    const maxVal = maxInput.trim() ? maxInput.trim() : null;
+    const rawMin = minInput.trim();
+    const rawMax = maxInput.trim();
+    let minNum = rawMin ? Number(rawMin) : undefined;
+    let maxNum = rawMax ? Number(rawMax) : undefined;
+
+    if (minNum !== undefined && maxNum !== undefined && minNum > maxNum) {
+      const temp = minNum;
+      minNum = maxNum;
+      maxNum = temp;
+      setMinInput(String(minNum));
+      setMaxInput(String(maxNum));
+    }
+
     applyUpdates({
       budget: null,
-      budgetMin: minVal,
-      budgetMax: maxVal,
+      budgetMin: minNum !== undefined && Number.isFinite(minNum) ? String(minNum) : null,
+      budgetMax: maxNum !== undefined && Number.isFinite(maxNum) ? String(maxNum) : null,
     });
   };
 
   const toggleCategory = (slug: string) => {
-    const isChecked = selectedCategorySlugs.includes(slug);
-    const next = isChecked
-      ? selectedCategorySlugs.filter((s) => s !== slug)
-      : [...selectedCategorySlugs, slug];
-    applyUpdates({ category: next.length > 0 ? next.join(",") : null });
+    setOptimisticCategorySlugs((prev) => {
+      const isChecked = prev.includes(slug);
+      const next = isChecked
+        ? prev.filter((s) => s !== slug)
+        : [...prev, slug];
+      applyUpdates({ category: next.length > 0 ? next.join(",") : null });
+      return next;
+    });
+  };
+
+  const handleSelectAllCategories = () => {
+    setOptimisticCategorySlugs([]);
+    applyUpdates({ category: null });
+  };
+
+  const handleClearAllFilters = () => {
+    setOptimisticCategorySlugs([]);
+    setMinInput("");
+    setMaxInput("");
+    onClearFilters();
   };
 
   const handleAddSkill = (skillName: string) => {
@@ -242,7 +280,7 @@ export function SearchFiltersSidebar({
   );
 
   const hasActiveFilters = Boolean(
-    selectedCategorySlugs.length > 0 ||
+    optimisticCategorySlugs.length > 0 ||
       (selectedBudget && selectedBudget !== "all") ||
       selectedBudgetMin ||
       selectedBudgetMax ||
@@ -261,8 +299,8 @@ export function SearchFiltersSidebar({
         {hasActiveFilters && (
           <button
             type="button"
-            onClick={onClearFilters}
-            className="inline-flex items-center gap-1 text-xs font-semibold text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 cursor-pointer"
+            onClick={handleClearAllFilters}
+            className="inline-flex items-center gap-1 text-xs font-semibold text-[#0069D3] hover:text-[#005bb8] dark:text-blue-400 cursor-pointer"
           >
             <RotateCcw className="size-3" />
             <span>{t("sidebar.clearFilters")}</span>
@@ -275,7 +313,7 @@ export function SearchFiltersSidebar({
         <button
           type="button"
           onClick={() => toggleSection("category")}
-          className="flex w-full items-center justify-between font-semibold text-foreground hover:text-emerald-600 transition-colors cursor-pointer"
+          className="flex w-full items-center justify-between font-semibold text-foreground hover:text-[#0069D3] transition-colors cursor-pointer"
         >
           <span>{t("sidebar.category")}</span>
           {openSections.category ? (
@@ -292,17 +330,17 @@ export function SearchFiltersSidebar({
               type="button"
               onClick={() => setIsCategoryOpen((prev) => !prev)}
               aria-expanded={isCategoryOpen}
-              className="flex w-full items-center justify-between rounded-xl border border-border bg-card px-3 py-2 text-xs font-medium text-foreground hover:border-emerald-500/60 transition-colors cursor-pointer"
+              className="flex w-full items-center justify-between rounded-xl border border-border bg-card px-3 py-2 text-xs font-medium text-foreground hover:border-[#0069D3]/60 transition-colors cursor-pointer"
             >
               <span className="truncate pr-2">
-                {selectedCategorySlugs.length === 0
+                {optimisticCategorySlugs.length === 0
                   ? t("sidebar.allCategories")
-                  : selectedCategorySlugs.length === 1
+                  : optimisticCategorySlugs.length === 1
                     ? (categories.find(
-                        (c) => c.slug === selectedCategorySlugs[0],
-                      )?.name ?? selectedCategorySlugs[0])
+                        (c) => c.slug === optimisticCategorySlugs[0],
+                      )?.name ?? optimisticCategorySlugs[0])
                     : t("sidebar.categoriesSelected", {
-                        count: selectedCategorySlugs.length,
+                        count: optimisticCategorySlugs.length,
                       })}
               </span>
               <ChevronDown
@@ -323,7 +361,7 @@ export function SearchFiltersSidebar({
                     placeholder={t("sidebar.searchCategory")}
                     value={categorySearch}
                     onChange={(e) => setCategorySearch(e.target.value)}
-                    className="w-full rounded-lg border border-border bg-background pl-8 pr-7 py-1.5 text-xs text-foreground placeholder:text-muted-foreground outline-none focus:border-emerald-500"
+                    className="w-full rounded-lg border border-border bg-background pl-8 pr-7 py-1.5 text-xs text-foreground placeholder:text-muted-foreground outline-none focus:border-[#0069D3]"
                     autoFocus
                   />
                   {categorySearch && (
@@ -342,10 +380,8 @@ export function SearchFiltersSidebar({
                   {/* All Categories Option */}
                   <label className="flex items-center gap-2 rounded-lg px-2 py-1.5 hover:bg-muted/70 transition-colors cursor-pointer">
                     <Checkbox
-                      checked={selectedCategorySlugs.length === 0}
-                      onCheckedChange={() => {
-                        applyUpdates({ category: null });
-                      }}
+                      checked={optimisticCategorySlugs.length === 0}
+                      onCheckedChange={handleSelectAllCategories}
                     />
                     <span className="font-medium text-foreground">
                       {t("sidebar.allCategories")}
@@ -358,7 +394,7 @@ export function SearchFiltersSidebar({
                     </p>
                   ) : (
                     filteredCategories.map((cat) => {
-                      const isChecked = selectedCategorySlugs.includes(
+                      const isChecked = optimisticCategorySlugs.includes(
                         cat.slug,
                       );
                       return (
@@ -382,9 +418,9 @@ export function SearchFiltersSidebar({
             )}
 
             {/* Selected category chips */}
-            {selectedCategorySlugs.length > 0 && (
+            {optimisticCategorySlugs.length > 0 && (
               <div className="flex flex-wrap gap-1.5 mt-2.5">
-                {selectedCategorySlugs.map((slug) => {
+                {optimisticCategorySlugs.map((slug) => {
                   const cat = categories.find((c) => c.slug === slug);
                   return (
                     <span
@@ -415,7 +451,7 @@ export function SearchFiltersSidebar({
         <button
           type="button"
           onClick={() => toggleSection("budget")}
-          className="flex w-full items-center justify-between font-semibold text-foreground hover:text-emerald-600 transition-colors cursor-pointer"
+          className="flex w-full items-center justify-between font-semibold text-foreground hover:text-[#0069D3] transition-colors cursor-pointer"
         >
           <span>{t("sidebar.budget")}</span>
           {openSections.budget ? (
@@ -433,7 +469,7 @@ export function SearchFiltersSidebar({
                 return (
                   <label
                     key={preset.key}
-                    className="flex items-center gap-2 cursor-pointer text-foreground hover:text-emerald-600 transition-colors"
+                    className="flex items-center gap-2 cursor-pointer text-foreground hover:text-[#0069D3] transition-colors"
                   >
                     <Checkbox
                       checked={isSelected}
@@ -463,36 +499,57 @@ export function SearchFiltersSidebar({
                 {t("sidebar.customBudget")}
               </span>
               <div className="flex items-center gap-2">
-                <div className="flex items-center rounded-xl border border-border bg-card px-2.5 py-1.5 text-xs flex-1">
+                <div className="flex items-center rounded-xl border border-border bg-card px-2.5 py-1.5 text-xs flex-1 focus-within:border-[#0069D3] focus-within:ring-1 focus-within:ring-[#0069D3]/20 transition-all">
                   <span className="text-muted-foreground mr-1">$</span>
                   <input
-                    type="number"
-                    min="0"
+                    type="text"
+                    inputMode="decimal"
                     placeholder={t("sidebar.min")}
                     value={minInput}
-                    onChange={(e) => setMinInput(e.target.value)}
+                    onFocus={(e) => e.target.select()}
+                    onChange={(e) => {
+                      let val = e.target.value.replace(/[^\d.]/g, "");
+                      if (/^0\d/.test(val)) {
+                        val = val.replace(/^0+/, "");
+                        if (val === "") val = "0";
+                      }
+                      setMinInput(val);
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        e.preventDefault();
+                        handleApplyCustomBudget();
+                      }
+                    }}
                     className="w-full bg-transparent outline-none text-foreground placeholder:text-muted-foreground"
                   />
                 </div>
                 <span className="text-muted-foreground text-xs">–</span>
-                <div className="flex items-center rounded-xl border border-border bg-card px-2.5 py-1.5 text-xs flex-1">
+                <div className="flex items-center rounded-xl border border-border bg-card px-2.5 py-1.5 text-xs flex-1 focus-within:border-[#0069D3] focus-within:ring-1 focus-within:ring-[#0069D3]/20 transition-all">
                   <span className="text-muted-foreground mr-1">$</span>
                   <input
-                    type="number"
-                    min="0"
+                    type="text"
+                    inputMode="decimal"
                     placeholder={t("sidebar.max")}
                     value={maxInput}
-                    onChange={(e) => setMaxInput(e.target.value)}
+                    onFocus={(e) => e.target.select()}
+                    onChange={(e) => {
+                      let val = e.target.value.replace(/[^\d.]/g, "");
+                      if (/^0\d/.test(val)) {
+                        val = val.replace(/^0+/, "");
+                        if (val === "") val = "0";
+                      }
+                      setMaxInput(val);
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        e.preventDefault();
+                        handleApplyCustomBudget();
+                      }
+                    }}
                     className="w-full bg-transparent outline-none text-foreground placeholder:text-muted-foreground"
                   />
                 </div>
-                <button
-                  type="button"
-                  onClick={handleApplyCustomBudget}
-                  className="rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 text-xs font-semibold transition-colors cursor-pointer"
-                >
-                  {t("sidebar.apply")}
-                </button>
               </div>
             </div>
           </div>
@@ -504,7 +561,7 @@ export function SearchFiltersSidebar({
         <button
           type="button"
           onClick={() => toggleSection("hiringType")}
-          className="flex w-full items-center justify-between font-semibold text-foreground hover:text-emerald-600 transition-colors cursor-pointer"
+          className="flex w-full items-center justify-between font-semibold text-foreground hover:text-[#0069D3] transition-colors cursor-pointer"
         >
           <span>{t("sidebar.hiringType")}</span>
           {openSections.hiringType ? (
@@ -521,7 +578,7 @@ export function SearchFiltersSidebar({
               return (
                 <label
                   key={type.key}
-                  className="flex items-center gap-2 cursor-pointer text-foreground hover:text-emerald-600 transition-colors"
+                  className="flex items-center gap-2 cursor-pointer text-foreground hover:text-[#0069D3] transition-colors"
                 >
                   <Checkbox
                     checked={isSelected}
@@ -544,7 +601,7 @@ export function SearchFiltersSidebar({
         <button
           type="button"
           onClick={() => toggleSection("time")}
-          className="flex w-full items-center justify-between font-semibold text-foreground hover:text-emerald-600 transition-colors cursor-pointer"
+          className="flex w-full items-center justify-between font-semibold text-foreground hover:text-[#0069D3] transition-colors cursor-pointer"
         >
           <span>{t("sidebar.datePosted")}</span>
           {openSections.time ? (
@@ -561,7 +618,7 @@ export function SearchFiltersSidebar({
               return (
                 <label
                   key={opt.key}
-                  className="flex items-center gap-2 cursor-pointer text-foreground hover:text-emerald-600 transition-colors"
+                  className="flex items-center gap-2 cursor-pointer text-foreground hover:text-[#0069D3] transition-colors"
                 >
                   <Checkbox
                     checked={isSelected}
@@ -584,7 +641,7 @@ export function SearchFiltersSidebar({
         <button
           type="button"
           onClick={() => toggleSection("skill")}
-          className="flex w-full items-center justify-between font-semibold text-foreground hover:text-emerald-600 transition-colors cursor-pointer"
+          className="flex w-full items-center justify-between font-semibold text-foreground hover:text-[#0069D3] transition-colors cursor-pointer"
         >
           <span>{t("sidebar.skills")}</span>
           {openSections.skill ? (
@@ -617,7 +674,7 @@ export function SearchFiltersSidebar({
                     }
                   }
                 }}
-                className="w-full rounded-xl border border-border bg-card pl-9 pr-8 py-2 text-xs text-foreground placeholder:text-muted-foreground outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
+                className="w-full rounded-xl border border-border bg-card pl-9 pr-8 py-2 text-xs text-foreground placeholder:text-muted-foreground outline-none focus:border-[#0069D3] focus:ring-1 focus:ring-[#0069D3]"
               />
               {isSearchingSkills ? (
                 <Loader2 className="absolute right-2.5 size-3.5 animate-spin text-muted-foreground" />
@@ -645,7 +702,7 @@ export function SearchFiltersSidebar({
                     <button
                       type="button"
                       onClick={() => handleAddSkill(skillSearchText.trim())}
-                      className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-left text-xs font-medium text-emerald-600 dark:text-emerald-400 hover:bg-muted/70 transition-colors cursor-pointer"
+                      className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-left text-xs font-medium text-[#0069D3] dark:text-blue-400 hover:bg-muted/70 transition-colors cursor-pointer"
                     >
                       <span className="font-bold">+</span>
                       <span className="truncate">
@@ -696,7 +753,7 @@ export function SearchFiltersSidebar({
                 {selectedSkills.map((sk) => (
                   <span
                     key={sk}
-                    className="inline-flex items-center gap-1 rounded-full bg-emerald-50 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-200 border border-emerald-200 dark:border-emerald-800 px-2.5 py-0.5 text-xs font-medium"
+                    className="inline-flex items-center gap-1 rounded-full bg-blue-50 text-blue-800 dark:bg-blue-950 dark:text-blue-200 border border-blue-200 dark:border-blue-800 px-2.5 py-0.5 text-xs font-medium"
                   >
                     <span className="truncate max-w-[120px]">{sk}</span>
                     <button

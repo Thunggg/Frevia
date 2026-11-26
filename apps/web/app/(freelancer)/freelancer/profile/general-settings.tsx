@@ -38,7 +38,7 @@ import { CvAnalysisDialog } from "./cv-analysis-dialog";
 import { useActionPermission } from "@/hooks/use-action-permission";
 import { useBackendMessage } from "@/hooks/use-backend-message";
 import { useQueryClient } from "@tanstack/react-query";
-import { useLocale, useTranslations } from "next-intl";
+import { useTranslations } from "next-intl";
 import {
   AlertCircle,
   Camera,
@@ -141,7 +141,7 @@ function PasswordInput({
         />
         <button
           type="button"
-          className="absolute right-1 top-1/2 grid size-8 -translate-y-1/2 place-items-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#4fae2e]/40"
+          className="absolute right-1 top-1/2 grid size-8 -translate-y-1/2 place-items-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0069D3]/40"
           aria-label={
             visible
               ? t("hidePassword", { field: label })
@@ -169,8 +169,7 @@ export function GeneralSettings() {
   const tSettings = useTranslations("clientProfileSettings");
   const tRole = useTranslations("roleName");
   const tCommon = useTranslations("common");
-  const activeLocale = useLocale();
-  const { can } = useActionPermission();
+  const { can, isLoading: isPermissionLoading } = useActionPermission();
   const canViewAccountProfile = can("GET", "/api/account-profile");
   const canUpdateAccountProfile = can("PUT", "/api/account-profile");
   const canChangePassword = can("PUT", "/api/account-profile/password");
@@ -231,6 +230,7 @@ export function GeneralSettings() {
     (ROLE_KEYS as readonly string[]).includes(name) ? tRole(name) : name;
 
   const load = useCallback(async () => {
+    if (isPermissionLoading) return;
     if (!canViewAccountProfile) {
       setPending(null);
       return;
@@ -260,7 +260,7 @@ export function GeneralSettings() {
     } finally {
       setPending(null);
     }
-  }, [canViewAccountProfile, toMessage]);
+  }, [isPermissionLoading, canViewAccountProfile, toMessage]);
   useEffect(() => void load(), [load]);
 
   const busy = pending !== null;
@@ -295,7 +295,7 @@ export function GeneralSettings() {
         setCvAnalysisDialogOpen(true);
       } else {
         toastError({
-          message: "Không thể phân tích CV bằng AI. Vui lòng kiểm tra lại dịch vụ AI.",
+          message: t("aiAnalyzeFailed"),
         });
       }
     } catch (err) {
@@ -369,6 +369,8 @@ export function GeneralSettings() {
               }
             : current,
         );
+        await queryClient.invalidateQueries({ queryKey: ["me"] });
+        router.refresh();
       }
       toastSuccess({ message: response.data.message });
     } catch (error) {
@@ -461,15 +463,15 @@ export function GeneralSettings() {
     );
   }
 
-  if (!canViewAccountProfile) {
+  if (!isPermissionLoading && !canViewAccountProfile) {
     return (
       <div className="rounded-xl border border-border bg-card p-12 text-center text-muted-foreground shadow-sm">
         <UserRound className="mx-auto size-10 text-muted-foreground/60 mb-3" />
         <p className="font-medium text-base text-foreground">
-          Không có quyền truy cập
+          {t("noPermissionTitle")}
         </p>
         <p className="text-sm mt-1 text-muted-foreground">
-          Bạn không có quyền xem thông tin tài khoản cá nhân (#395).
+          {t("noPermissionViewProfile")}
         </p>
       </div>
     );
@@ -505,7 +507,7 @@ export function GeneralSettings() {
                   name: profile.displayName ?? t("userFallback"),
                 })}
               />
-              <AvatarFallback className="bg-[#4fae2e]/10 text-2xl font-semibold text-[#4fae2e]">
+              <AvatarFallback className="bg-[#0069D3]/10 text-2xl font-semibold text-[#0069D3]">
                 {(profile.displayName ?? profile.email)
                   .slice(0, 1)
                   .toUpperCase()}
@@ -513,7 +515,7 @@ export function GeneralSettings() {
             </Avatar>
             <div className="min-w-0 flex-1">
               <div className="flex items-center gap-2">
-                <Camera className="size-4 text-[#4fae2e]" />
+                <Camera className="size-4 text-[#0069D3]" />
                 <h2 className="text-lg font-semibold text-foreground">
                   {t("profilePhotoTitle")}
                 </h2>
@@ -578,7 +580,7 @@ export function GeneralSettings() {
 
         <section className="rounded-xl border border-border bg-card/30 p-5 sm:p-6">
           <div className="flex items-center gap-2">
-            <UserRound className="size-5 text-[#4fae2e]" />
+            <UserRound className="size-5 text-[#0069D3]" />
             <h2 className="text-lg font-semibold text-foreground">
               {t("generalInfoTitle")}
             </h2>
@@ -651,7 +653,7 @@ export function GeneralSettings() {
             )}
             {canUpdateAccountProfile && (
               <Button
-                className="bg-[#4fae2e] text-white hover:bg-[#459928]"
+                className="bg-[#0069D3] text-white hover:bg-[#005bb8]"
                 disabled={busy || !profileChanged}
               >
                 {pending === "profile" ? (
@@ -668,7 +670,7 @@ export function GeneralSettings() {
         {profile && isFreelancer ? (
           <section className="rounded-xl border border-border bg-card/30 p-5 sm:p-6">
             <div className="flex items-center gap-2">
-              <FileText className="size-5 text-[#4fae2e]" />
+              <FileText className="size-5 text-[#0069D3]" />
               <h2 className="text-lg font-semibold text-foreground">
                 Curriculum vitae
               </h2>
@@ -679,7 +681,7 @@ export function GeneralSettings() {
             {cvFileName ? (
               canDownloadCv ? (
                 <a
-                  className="mt-4 flex max-w-full min-w-0 items-center gap-2 text-sm font-medium text-[#438f2b] hover:underline"
+                  className="mt-4 flex max-w-full min-w-0 items-center gap-2 text-sm font-medium text-[#0069D3] hover:underline"
                   href={`/api/backend/profiles/${profile.id}/cv/file`}
                 >
                   <FileText className="size-4 shrink-0" />
@@ -710,7 +712,7 @@ export function GeneralSettings() {
             {canUploadCv && (
               <Button
                 type="button"
-                className="mt-4 bg-[#4fae2e] text-white hover:bg-[#459928]"
+                className="mt-4 bg-[#0069D3] text-white hover:bg-[#005bb8]"
                 disabled={busy}
                 onClick={() => cvInputRef.current?.click()}
               >
@@ -725,7 +727,7 @@ export function GeneralSettings() {
             {canAnalyzeCv && cvFileName ? (
               <Button
                 type="button"
-                className="mt-4 ml-2 bg-[#4fae2e] text-white hover:bg-[#439c28]"
+                className="mt-4 ml-2 bg-[#0069D3] text-white hover:bg-[#005bb8]"
                 disabled={busy}
                 onClick={() => void handleAnalyzeCv()}
               >
@@ -735,8 +737,8 @@ export function GeneralSettings() {
                   <Sparkles className="mr-1.5 size-4" />
                 )}
                 {pending === "cv-analyze"
-                  ? "Đang phân tích..."
-                  : "✨ Phân tích CV bằng AI"}
+                  ? t("analyzingCv")
+                  : t("analyzeCvWithAi")}
               </Button>
             ) : null}
             {canDeleteCv && cvFileName ? (
@@ -753,20 +755,19 @@ export function GeneralSettings() {
                     ) : (
                       <Trash2 />
                     )}
-                    Delete CV
+                    {t("deleteCvButton")}
                   </Button>
                 </AlertDialogTrigger>
                 <AlertDialogContent>
                   <AlertDialogHeader>
-                    <AlertDialogTitle>Delete your CV?</AlertDialogTitle>
+                    <AlertDialogTitle>{t("deleteCvTitle")}</AlertDialogTitle>
                     <AlertDialogDescription>
-                      Your CV will be removed from your profile and will no
-                      longer be downloadable. This action cannot be undone.
+                      {t("deleteCvDescription")}
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
                     <AlertDialogCancel disabled={pending === "cv-delete"}>
-                      Cancel
+                      {tCommon("cancel")}
                     </AlertDialogCancel>
                     <AlertDialogAction
                       disabled={pending === "cv-delete"}
@@ -780,7 +781,7 @@ export function GeneralSettings() {
                       ) : (
                         <Trash2 />
                       )}
-                      Delete CV
+                      {t("deleteCvButton")}
                     </AlertDialogAction>
                   </AlertDialogFooter>
                 </AlertDialogContent>
@@ -790,7 +791,7 @@ export function GeneralSettings() {
               id="profile-cv-help"
               className={`mt-2 text-xs ${cvError ? "text-destructive" : "text-muted-foreground"}`}
             >
-              {cvError ?? "Available to clients when you apply to a job."}
+              {cvError ?? t("cvClientHint")}
             </p>
           </section>
         ) : null}
@@ -799,15 +800,13 @@ export function GeneralSettings() {
       <div className="space-y-5">
         <section className="rounded-xl border border-border bg-card/30 p-5 sm:p-6">
           <div className="flex items-center gap-2">
-            <Sun className="size-5 text-[#4fae2e]" />
+            <Sun className="size-5 text-[#0069D3]" />
             <h2 className="text-lg font-semibold text-foreground">
               {tCommon("theme")} & {tCommon("language")}
             </h2>
           </div>
           <p className="mt-2 text-sm text-muted-foreground">
-            {activeLocale === "vi"
-              ? "Tùy chỉnh giao diện hiển thị và ngôn ngữ hệ thống."
-              : "Customize display theme and system language."}
+            {t("appearanceDescription")}
           </p>
           <div className="mt-4 flex flex-wrap items-center gap-3">
             <div className="flex items-center gap-2.5 rounded-lg border border-border bg-card px-3.5 py-2 shadow-2xs">
@@ -828,7 +827,7 @@ export function GeneralSettings() {
         {canChangePassword && (
           <section className="rounded-xl border border-border bg-card/30 p-5 sm:p-6">
             <div className="flex items-center gap-2">
-              <LockKeyhole className="size-5 text-[#4fae2e]" />
+              <LockKeyhole className="size-5 text-[#0069D3]" />
               <h2 className="text-lg font-semibold text-foreground">
                 {t("changePasswordTitle")}
               </h2>
@@ -912,8 +911,8 @@ export function GeneralSettings() {
             </p>
           </div>
         ) : (
-          <div className="flex gap-3 rounded-xl border border-[#4fae2e]/25 bg-[#4fae2e]/5 p-4 text-sm">
-            <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-[#4fae2e]" />
+          <div className="flex gap-3 rounded-xl border border-emerald-500/25 bg-emerald-500/5 p-4 text-sm">
+            <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-emerald-600 dark:text-emerald-400" />
             <p className="text-muted-foreground">
               {t("strengthOk")}
             </p>

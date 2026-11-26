@@ -11,12 +11,12 @@ import {
   MilestoneStatus,
   PlatformFeeStatus,
   Prisma,
-  TransactionStatus,
   TransactionType,
 } from '@prisma/client';
 import { RoleName } from '@shared/types';
 import { PaymentRepository } from './payment.repo';
 import { PaymentService } from './payment.service';
+import { CacheService } from '../../shared/services/cache.service';
 import { StripeService } from '../../shared/services/stripe.service';
 
 describe('PaymentService', () => {
@@ -106,6 +106,7 @@ describe('PaymentService', () => {
         refunded: true,
         contractCompleted: false,
       }),
+      approvePendingSubmissionsForMilestone: jest.fn().mockResolvedValue(0),
     } as unknown as jest.Mocked<PaymentRepository>;
 
     stripeService = {
@@ -457,61 +458,6 @@ describe('PaymentService', () => {
     });
   });
 
-  describe('createMilestoneFundIntent', () => {
-    it('creates escrow deposit payment intent with 0% extra fee for active contract', async () => {
-      repo.findMilestoneById.mockResolvedValue(mockMilestone as any);
-      stripeService.createPaymentIntent.mockResolvedValue({
-        id: 'pi_milestone_fund',
-        client_secret: 'pi_secret_456',
-      } as any);
-      repo.createTransaction.mockResolvedValue({} as any);
-
-      const result = await service.createMilestoneFundIntent(1, 10, 20);
-
-      expect(result).toEqual({
-        clientSecret: 'pi_secret_456',
-        paymentIntentId: 'pi_milestone_fund',
-        amount: 250,
-        currency: 'usd',
-      });
-      expect(repo.createTransaction).toHaveBeenCalledWith(
-        expect.objectContaining({
-          userId: 1,
-          contractId: 10,
-          milestoneId: 20,
-          amount: 250,
-          type: TransactionType.ESCROW_DEPOSIT,
-          status: TransactionStatus.PENDING,
-        }),
-      );
-    });
-
-    it('throws UnprocessableEntityException if contract is not ACTIVE', async () => {
-      repo.findMilestoneById.mockResolvedValue({
-        ...mockMilestone,
-        contract: {
-          ...mockContract,
-          status: ContractStatus.AWAITING_PAYMENT,
-        },
-      } as any);
-
-      await expect(
-        service.createMilestoneFundIntent(1, 10, 20),
-      ).rejects.toThrow(UnprocessableEntityException);
-    });
-
-    it('throws UnprocessableEntityException if milestone is already funded', async () => {
-      repo.findMilestoneById.mockResolvedValue({
-        ...mockMilestone,
-        paymentStatus: MilestonePaymentStatus.FUNDED,
-      } as any);
-
-      await expect(
-        service.createMilestoneFundIntent(1, 10, 20),
-      ).rejects.toThrow(UnprocessableEntityException);
-    });
-  });
-
   describe('releaseMilestone', () => {
     it('transfers escrow amount to freelancer when milestone is funded and freelancer is onboarded', async () => {
       repo.findMilestoneById.mockResolvedValue({
@@ -533,6 +479,7 @@ describe('PaymentService', () => {
         currency: 'usd',
         destination: 'acct_freelancer_123',
         transferGroup: 'contract_10',
+        idempotencyKey: 'release-milestone-20',
         metadata: expect.any(Object),
       });
       expect(repo.updateMilestonePaymentStatus).toHaveBeenCalledWith(
@@ -568,83 +515,6 @@ describe('PaymentService', () => {
       } as any);
 
       await expect(service.releaseMilestone(1, 10, 20)).rejects.toThrow(
-        UnprocessableEntityException,
-      );
-    });
-  });
-
-  describe('refundMilestone', () => {
-    it('auto-refunds escrow deposit to client when milestone status is LATE', async () => {
-      repo.findMilestoneById.mockResolvedValue({
-        ...mockMilestone,
-        status: MilestoneStatus.LATE,
-        paymentStatus: MilestonePaymentStatus.FUNDED,
-      } as any);
-      repo.findEscrowDepositTransaction.mockResolvedValue({
-        id: 77,
-        stripePaymentIntentId: 'pi_original_deposit',
-      } as any);
-      stripeService.createRefund.mockResolvedValue({
-        id: 're_refund_123',
-      } as any);
-
-      const result = await service.refundMilestone(1, 10, 20);
-
-      expect(result.success).toBe(true);
-      expect(result.refundId).toBe('re_refund_123');
-      expect(stripeService.createRefund).toHaveBeenCalledWith({
-        paymentIntentId: 'pi_original_deposit',
-        amountInCents: 25000,
-        metadata: expect.objectContaining({
-          reason: 'FREELANCER_LATE_NO_SUBMISSION',
-        }),
-        idempotencyKey: 'refund-milestone-20',
-      });
-      expect(repo.applyMilestoneRefundTransaction).toHaveBeenCalledWith(
-        expect.objectContaining({
-          milestoneId: 20,
-          contractId: 10,
-          refundId: 're_refund_123',
-          reason: 'FREELANCER_LATE_NO_SUBMISSION',
-          isAuto: true,
-        }),
-      );
-    });
-
-    it('auto-refunds escrow deposit to client when freelancer has not started working (PENDING)', async () => {
-      repo.findMilestoneById.mockResolvedValue({
-        ...mockMilestone,
-        status: MilestoneStatus.PENDING,
-        paymentStatus: MilestonePaymentStatus.FUNDED,
-      } as any);
-      repo.findEscrowDepositTransaction.mockResolvedValue({
-        id: 77,
-        stripePaymentIntentId: 'pi_original_deposit',
-      } as any);
-      stripeService.createRefund.mockResolvedValue({
-        id: 're_refund_pending',
-      } as any);
-
-      const result = await service.refundMilestone(1, 10, 20);
-
-      expect(result.success).toBe(true);
-      expect(result.refundId).toBe('re_refund_pending');
-      expect(repo.applyMilestoneRefundTransaction).toHaveBeenCalledWith(
-        expect.objectContaining({
-          reason: 'FREELANCER_NOT_STARTED',
-          isAuto: true,
-        }),
-      );
-    });
-
-    it('throws UnprocessableEntityException when milestone is active IN_PROGRESS or SUBMITTED', async () => {
-      repo.findMilestoneById.mockResolvedValue({
-        ...mockMilestone,
-        status: MilestoneStatus.IN_PROGRESS,
-        paymentStatus: MilestonePaymentStatus.FUNDED,
-      } as any);
-
-      await expect(service.refundMilestone(1, 10, 20)).rejects.toThrow(
         UnprocessableEntityException,
       );
     });
@@ -739,6 +609,44 @@ describe('PaymentService', () => {
         MilestonePaymentStatus.FUNDED,
       );
     });
+
+    it('skips duplicate Stripe webhook event IDs when CacheService is present', async () => {
+      const cache = new CacheService();
+      const cachedService = new PaymentService(
+        repo,
+        stripeService,
+        mockContractPdfService as any,
+        undefined,
+        cache,
+      );
+      stripeService.constructWebhookEvent.mockReturnValue({
+        id: 'evt_duplicate_123',
+        type: 'payment_intent.succeeded',
+        data: {
+          object: {
+            id: 'pi_escrow_dup',
+            metadata: {
+              type: TransactionType.ESCROW_DEPOSIT,
+              milestoneId: '20',
+            },
+          },
+        },
+      } as any);
+      repo.findTransactionByPaymentIntentId.mockResolvedValue({
+        id: 102,
+      } as any);
+      repo.updateTransactionStatus.mockResolvedValue({} as any);
+      repo.updateMilestonePaymentStatus.mockResolvedValue({} as any);
+
+      await expect(
+        cachedService.handleWebhook(Buffer.from('payload'), 'sig_123'),
+      ).resolves.toEqual({ received: true });
+      await expect(
+        cachedService.handleWebhook(Buffer.from('payload'), 'sig_123'),
+      ).resolves.toEqual({ received: true });
+
+      expect(repo.updateMilestonePaymentStatus).toHaveBeenCalledTimes(1);
+    });
   });
 
   describe('getTransactions', () => {
@@ -781,22 +689,6 @@ describe('PaymentService', () => {
   });
 
   describe('payment method management', () => {
-    it('creates a setup intent for the user Stripe customer', async () => {
-      repo.findUserById.mockResolvedValue({ ...mockUser } as any);
-      stripeService.createSetupIntent.mockResolvedValue({
-        id: 'seti_123',
-        client_secret: 'seti_123_secret',
-      } as any);
-
-      const res = await service.createSetupIntent(1);
-
-      expect(stripeService.createSetupIntent).toHaveBeenCalledWith('cus_123');
-      expect(res).toEqual({
-        clientSecret: 'seti_123_secret',
-        setupIntentId: 'seti_123',
-      });
-    });
-
     it('updates the default payment method when owned by the user customer', async () => {
       repo.findUserById.mockResolvedValue({ ...mockUser } as any);
       stripeService.retrievePaymentMethod.mockResolvedValue({

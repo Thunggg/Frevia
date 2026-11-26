@@ -5,18 +5,14 @@ import {
   CreateCheckoutSessionResponseSchema,
   CreateContractHoldBodySchema,
   CreateContractHoldResponseSchema,
-  CreateCustomerPortalSessionResponseSchema,
+  CreateMilestoneFundCheckoutSessionBodySchema,
   CreateOnboardingLinkBodySchema,
-  CreatePaymentIntentResponseSchema,
-  CreateSetupIntentResponseSchema,
   DisputeSettlementBodySchema,
   DisputeSettlementResponseSchema,
   GetSavedPaymentMethodsResponseSchema,
   GetTransactionListQuerySchema,
   GetTransactionListResponseSchema,
   PaymentMethodActionResponseSchema,
-  RefundMilestoneBodySchema,
-  RefundMilestoneResponseSchema,
   ReleaseMilestoneResponseSchema,
   SetDefaultPaymentMethodBodySchema,
   StripeConnectStatusResponseSchema,
@@ -28,14 +24,6 @@ import { createZodDto } from 'nestjs-zod';
 
 export class GetSavedPaymentMethodsResponseDTO extends createZodDto(
   GetSavedPaymentMethodsResponseSchema,
-) {}
-
-export class CreateCustomerPortalSessionResponseDTO extends createZodDto(
-  CreateCustomerPortalSessionResponseSchema,
-) {}
-
-export class CreateSetupIntentResponseDTO extends createZodDto(
-  CreateSetupIntentResponseSchema,
 ) {}
 
 export class SetDefaultPaymentMethodBodyDTO extends createZodDto(
@@ -64,10 +52,6 @@ export class GetTransactionListResponseDTO extends createZodDto(
   GetTransactionListResponseSchema,
 ) {}
 
-export class CreatePaymentIntentResponseDTO extends createZodDto(
-  CreatePaymentIntentResponseSchema,
-) {}
-
 export class CreateContractHoldBodyDTO extends createZodDto(
   CreateContractHoldBodySchema,
 ) {}
@@ -82,6 +66,10 @@ export class ContractHoldActionResponseDTO extends createZodDto(
 
 export class CreateCheckoutSessionResponseDTO extends createZodDto(
   CreateCheckoutSessionResponseSchema,
+) {}
+
+export class CreateMilestoneFundCheckoutSessionBodyDTO extends createZodDto(
+  CreateMilestoneFundCheckoutSessionBodySchema,
 ) {}
 
 export class SyncCheckoutSessionResponseDTO extends createZodDto(
@@ -108,14 +96,6 @@ export class DisputeSettlementResponseDTO extends createZodDto(
   DisputeSettlementResponseSchema,
 ) {}
 
-export class RefundMilestoneBodyDTO extends createZodDto(
-  RefundMilestoneBodySchema,
-) {}
-
 export class ReleaseMilestoneResponseDTO extends createZodDto(
   ReleaseMilestoneResponseSchema,
-) {}
-
-export class RefundMilestoneResponseDTO extends createZodDto(
-  RefundMilestoneResponseSchema,
 ) {}

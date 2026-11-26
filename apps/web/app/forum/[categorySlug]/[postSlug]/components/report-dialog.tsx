@@ -67,7 +67,8 @@ export function ReportDialog({
             .then(extractData)
         : forumApiRequest.checkPostReported(postId).then(extractData),
     select: (data) => data.reported ?? false,
-    enabled: canCheckReported,
+    // Chỉ kiểm tra khi người dùng mở hộp thoại báo cáo để tránh bão N+1 request trên danh sách bình luận
+    enabled: open && canCheckReported,
     staleTime: Infinity, // Nếu đã report thì không cần check lại
   });
 
@@ -113,7 +114,7 @@ export function ReportDialog({
   if (reported && !open) {
     return (
       <span className="inline-flex items-center gap-1.5 rounded-md bg-amber-50 px-2.5 py-1 text-xs font-medium text-amber-700 ring-1 ring-inset ring-amber-600/20 dark:bg-amber-950/40 dark:text-amber-300 dark:ring-amber-400/25">
-        <CheckCircle2 className="h-3.5 w-3.5" />
+        <CheckCircle2 className="size-3.5" />
         {t("reported")}
       </span>
     );
@@ -133,7 +134,7 @@ export function ReportDialog({
             size="xs"
             className="gap-1 text-muted-foreground hover:!text-amber-600"
           >
-            <Flag className="h-3.5 w-3.5" />
+            <Flag className="size-3.5" />
             {t("report")}
           </Button>
         )}
@@ -148,7 +149,7 @@ export function ReportDialog({
 
         {reported ? (
           <div className="flex flex-col items-center gap-3 py-6">
-            <CheckCircle2 className="h-12 w-12 text-amber-500" />
+            <CheckCircle2 className="size-12 text-amber-500" />
             <p className="text-sm text-muted-foreground">
               {t("alreadyReportedDetail")}
             </p>
@@ -183,9 +184,9 @@ export function ReportDialog({
               disabled={!reason.trim() || reportMutation.isPending}
             >
               {reportMutation.isPending ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
+                <Loader2 className="size-4 animate-spin" />
               ) : (
-                <Flag className="h-4 w-4" />
+                <Flag className="size-4" />
               )}
               {t("report")}
             </Button>

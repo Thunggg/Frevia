@@ -90,9 +90,11 @@ const proxyHandler = async (request: Request, { params }: RouteContext) => {
   const contentType = request.headers.get("content-type");
 
   // Không phải mọi method đều có body -> tránh đọc body khi rỗng.
-  // Đọc dưới dạng binary (arrayBuffer) để không làm hỏng file upload.
-  const hasBody = !["GET", "DELETE"].includes(request.method);
-  const rawBody = hasBody ? await request.arrayBuffer() : undefined;
+  // Đọc dưới dạng binary (arrayBuffer) để không làm hỏng file upload; cho phép body trên DELETE nếu client gửi.
+  const canHaveBody = !["GET", "HEAD"].includes(request.method);
+  const rawBody = canHaveBody ? await request.arrayBuffer() : undefined;
+  const forwardBody =
+    rawBody && rawBody.byteLength > 0 ? rawBody : undefined;
 
   // Hàm forward để forward request đến backend
   const forward = (token: string | undefined) =>
@@ -102,7 +104,7 @@ const proxyHandler = async (request: Request, { params }: RouteContext) => {
         ...(contentType ? { "Content-Type": contentType } : {}),
         ...(token ? { Authorization: `Bearer ${token}` } : {}),
       },
-      body: hasBody ? (rawBody as ArrayBuffer) : undefined,
+      body: forwardBody,
     });
 
   let nestRes = await forward(accessToken);
@@ -122,15 +124,19 @@ const proxyHandler = async (request: Request, { params }: RouteContext) => {
 
   const localized = localizeBody(responseBody, responseContentType, locale);
 
-  if (
-    nestRes.status === 403 &&
-    typeof localized === "string" &&
-    (localized.includes("Error.UserBanned") ||
-      localized.includes("Tài khoản của bạn đã bị khoá") ||
-      localized.includes("Your account has been banned"))
-  ) {
-    const { clearAuthCookies } = await import("@/lib/auth-session");
-    clearAuthCookies(cookieStore);
+  if (nestRes.status === 403) {
+    const bodyText =
+      typeof localized === "string"
+        ? localized
+        : new TextDecoder().decode(localized);
+    if (
+      bodyText.includes("Error.UserBanned") ||
+      bodyText.includes("Tài khoản của bạn đã bị khoá") ||
+      bodyText.includes("Your account has been banned")
+    ) {
+      const { clearAuthCookies } = await import("@/lib/auth-session");
+      clearAuthCookies(cookieStore);
+    }
   }
 
   // Chỉ forward Content-Type, KHÔNG forward nguyên res.headers

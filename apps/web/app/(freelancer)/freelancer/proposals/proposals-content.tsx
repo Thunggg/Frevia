@@ -30,7 +30,6 @@ import { useActionPermission } from "@/hooks/use-action-permission";
 const PROPOSAL_STATUSES = [
   "DRAFT",
   "SUBMITTED",
-  "INTERVIEWING",
   "HIRED",
   "REJECTED",
   "WITHDRAWN",
@@ -110,7 +109,7 @@ export function MyProposalsContent({
           className={
             embedded
               ? "border-b border-border bg-background"
-              : "border-b border-[#4fae2e]/15 bg-[#eaf8df] dark:border-white/10 dark:bg-[#1a1c1a]"
+              : "border-b border-[#0069D3]/15 bg-[#D0E1F8]/30 dark:border-white/10 dark:bg-[#111c2e]"
           }
         >
           <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
@@ -175,9 +174,7 @@ export function MyProposalsContent({
                           className={
                             proposal.status === "SUBMITTED"
                               ? "bg-amber-500/15 text-amber-800 dark:text-amber-200"
-                              : proposal.status === "INTERVIEWING"
-                                ? "bg-[#D0E1F8] text-[#0069D3] dark:bg-blue-950/60 dark:text-blue-300"
-                                : ""
+                              : ""
                           }
                         >
                           {tStatus(proposal.status)}
@@ -189,7 +186,7 @@ export function MyProposalsContent({
                       {canViewDetail ? (
                         <Link
                           href={`${effectiveBasePath}/${proposal.id}`}
-                          className="mt-2 block text-lg font-semibold tracking-tight hover:text-[#4fae2e]"
+                          className="mt-2 block text-lg font-semibold tracking-tight hover:text-[#0069D3]"
                         >
                           {proposal.job.title}
                         </Link>
@@ -237,14 +234,14 @@ export function MyProposalsContent({
             </div>
           ) : (
             <div className="rounded-xl border border-dashed border-border px-6 py-16 text-center">
-              <FileText className="mx-auto size-8 text-[#4fae2e]" />
+              <FileText className="mx-auto size-8 text-[#0069D3]" />
               <h2 className="mt-4 text-lg font-semibold">{t("empty")}</h2>
               <p className="mt-2 text-sm text-muted-foreground">
                 {t("emptyHint")}
               </p>
               <Button
                 asChild
-                className="mt-6 bg-[#4fae2e] text-white hover:bg-[#459928]"
+                className="mt-6 bg-[#0069D3] text-white hover:bg-[#005bb8]"
               >
                 <Link href="/freelancer">
                   {t("findWork")}

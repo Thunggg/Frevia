@@ -1,18 +1,20 @@
 % =================================================================
 % Manage Conversation - Start Conversation and Direct Message Management
 % Feature descriptions written against the real implementation:
-%   apps/web/app/(freelancer)/job/[slug]/job-detail-content.tsx
+%   apps/web/app/(freelancer)/freelancer/jobs/[slug]/job-detail-content.tsx
 %   apps/api/src/routes/conversations/* and apps/web/app/conversations/*
 % Procedures are described from the user interface point of view.
 % =================================================================
 
+\Needspace{12\baselineskip}
 \subsection{Manage Conversation}
 
+\Needspace{12\baselineskip}
 \subsubsection{Start Conversation}
 
-\functionfield{Function Trigger} A logged-in user starts a new chat, either by clicking the ``Connect with client'' button on the job detail page in Find Work, or by clicking the ``New message'' button in the conversation list.
+\functionfield{Function Trigger} A logged-in user starts a new chat by clicking the ``Connect with client'' button on the job detail page in Find Work.
 
-\functionfield{Function Description} This function allows a logged-in user to start a direct conversation with another user. When the chat is started from a job, the other participant is the client who posted that job. When the chat is started from the conversation list, the user chooses the other participant. The conversation is created and the user can write the first message. If a conversation with that user already exists, the existing conversation is reopened instead of creating a duplicate.
+\functionfield{Function Description} This function allows a logged-in user to start a direct conversation with a job's client from the Find Work job detail page. If a conversation with that client already exists, the existing conversation is reopened instead of creating a duplicate.
 
 \screenfield[0.95]{image/screenshot/sprint2/kvy/CreateConversation.png}{Start conversation screen}
 
@@ -26,16 +28,8 @@
         \end{itemize}
     \item \detailhead{Process}
         \begin{itemize}[leftmargin=2.2em,topsep=2pt,itemsep=3pt,parsep=0pt,label=$\circ$]
-            \item \textbf{Start a New Conversation}: The user starts the chat in one of two ways.\
-                \begin{itemize}[leftmargin=2.2em,topsep=2pt,itemsep=3pt,parsep=0pt,label=$\blacksquare$]
-                    \item From a job in Find Work, the user clicks the ``Connect with client'' button on the job detail page.
-                    \item From the conversation list, the user clicks the ``New message'' button.
-                \end{itemize}
-            \item \textbf{Choose the Participant}: The user provides or confirms the other participant.\
-                \begin{itemize}[leftmargin=2.2em,topsep=2pt,itemsep=3pt,parsep=0pt,label=$\blacksquare$]
-                    \item When the chat is started from a job, the client of that job is already selected, so the user does not have to choose anyone.
-                    \item When the chat is started from the conversation list, the user enters the identifier of the other participant in the dialog and confirms.
-                \end{itemize}
+            \item \textbf{Start a New Conversation}: From a job in Find Work, the user clicks the ``Connect with client'' button on the job detail page (navigating to \texttt{/conversations/new?participantId=...}).
+            \item \textbf{Identify the Participant}: The client who posted that job is pre-selected as the target participant.
             \item \textbf{Create or Reopen the Conversation}: The system checks whether a conversation between the two users already exists.\
                 \begin{itemize}[leftmargin=2.2em,topsep=2pt,itemsep=3pt,parsep=0pt,label=$\blacksquare$]
                     \item When no conversation exists, a new conversation between the two users is created.
@@ -71,7 +65,8 @@
 
 % =================================================================
 
-\subsubsection{View Conversation List}
+\Needspace{12\baselineskip}
+\subsubsection{View Conversations List}
 
 \functionfield{Function Trigger} The logged-in user opens the Messages area by clicking the chat icon in the main navigation.
 
@@ -103,12 +98,12 @@
                 \end{itemize}
             \item \textbf{Search for a Conversation}: The user types a keyword in the search box and the list shows only the conversations whose participant name or last message contains that keyword.
             \item \textbf{Sorting}: Pinned conversations are shown first, and the remaining conversations are ordered by the time of the last message, newest first.
-            \item \textbf{Open a Conversation}: The user clicks a conversation row to open the chat thread (see \textbf{View Conversation Detail}).
+            \item \textbf{Open a Conversation}: The user clicks a conversation row to open the chat thread (see \textbf{View Conversation Details}).
         \end{itemize}
     \item \detailhead{Alternative Flow}
 
         \begin{itemize}[leftmargin=2.2em,topsep=2pt,itemsep=3pt,parsep=0pt,label=$\circ$]
-            \item \textbf{No Conversation}: When the user has no conversation at all, the screen shows an empty state with a ``New message'' button, and the user can start a new chat from there (see \textbf{Create Conversation}).
+            \item \textbf{No Conversation}: When the user has no conversation at all, the screen shows the empty-state prompt (no separate ``New message'' button is rendered in the empty view).
             \item \textbf{No Search Result}: When the search keyword does not match any conversation, the list is replaced by a message telling the user that no chat matches the keyword.
         \end{itemize}
     \item \detailhead{Postconditions}
@@ -133,7 +128,8 @@
 
 % =================================================================
 
-\subsubsection{View Conversation Detail}
+\Needspace{12\baselineskip}
+\subsubsection{View Conversation Details}
 
 \functionfield{Function Trigger} The user clicks a conversation row in the conversation list.
 
@@ -204,6 +200,7 @@
 \end{itemize}
 
 
+\Needspace{12\baselineskip}
 \subsubsection{Send Message}
 
 \functionfield{Function Trigger} The user types a message in the input box at the bottom of the chat thread and clicks the send button.
@@ -267,6 +264,7 @@
 
 % =================================================================
 
+\Needspace{12\baselineskip}
 \subsubsection{Send File}
 
 \functionfield{Function Trigger} The user clicks the attach-file button in the input box of the chat thread and chooses a file from their device.
@@ -328,6 +326,7 @@
 
 % =================================================================
 
+\Needspace{12\baselineskip}
 \subsubsection{Mark Conversation as Read}
 
 \functionfield{Function Trigger} The user opens a conversation from the conversation list, or a new message arrives while the thread is already open.
@@ -390,6 +389,7 @@
 
 % =================================================================
 
+\Needspace{12\baselineskip}
 \subsubsection{Pin Conversation}
 
 \functionfield{Function Trigger} The user opens the ``...'' menu of a conversation row and chooses ``Pin chat''.
@@ -449,6 +449,7 @@
 
 % =================================================================
 
+\Needspace{12\baselineskip}
 \subsubsection{Delete Message}
 
 \functionfield{Function Trigger} The user moves the pointer over one of their own messages in the chat thread and clicks the delete button.

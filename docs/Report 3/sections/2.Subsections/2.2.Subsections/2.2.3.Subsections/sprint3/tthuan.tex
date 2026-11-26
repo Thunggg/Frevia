@@ -1,12 +1,19 @@
+\Needspace{12\baselineskip}
 \paragraph{Manage User}
 
 % =================================================================
-\subparagraph{UC-17.1 View User List}
+\subparagraph{UC-28.01 View Users List}
 
+\Needspace{12\baselineskip}
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
-
-UC ID and Name & \multicolumn{3}{l|}{UC-17.1 View User List} \\ \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-28.01 View Users List} \\* \hline
+\endfirsthead
+\hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-28.01 View Users List \textit{(cont.)}} \\* \hline
+\endhead
+\hline\endfoot
+\endlastfoot
 
 Created By: & ThuanNT & Date Created: & 14/09/2026 \\ \hline
 
@@ -14,7 +21,7 @@ Primary Actor: & Admin & Secondary Actors: & N/A \\ \hline
 
 Trigger: & \multicolumn{3}{L{11.1cm}|}{The Admin navigates to the \texttt{/admin/users} page or refreshes the user list view.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{The Admin retrieves a paginated, filterable, and sortable list of all active (non-soft-deleted) users in the system. The list displays user ID, email, display name, creation date, ban status, and assigned roles.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{The Admin retrieves a paginated, filterable, and sortable list of all active (non-soft-deleted) users in the system. The list displays user ID, email, display name, creation date, ban status, and assigned roles.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{\textbf{PRE-1} The Admin is authenticated with a valid access token and an active session. \newline \textbf{PRE-2} The Admin's role includes a permission record matching the \texttt{GET} method on the \texttt{/api/users} path.} \\ \hline
 
@@ -68,12 +75,18 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{The Admin has the necessary permissio
 \end{longtable}
 
 % =================================================================
-\subparagraph{UC-17.2 View User Detail}
+\subparagraph{UC-28.02 View User Details}
 
+\Needspace{12\baselineskip}
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
-
-UC ID and Name & \multicolumn{3}{l|}{UC-17.2 View User Detail} \\ \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-28.02 View User Details} \\* \hline
+\endfirsthead
+\hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-28.02 View User Details \textit{(cont.)}} \\* \hline
+\endhead
+\hline\endfoot
+\endlastfoot
 
 Created By: & ThuanNT & Date Created: & 14/09/2026 \\ \hline
 
@@ -81,7 +94,7 @@ Primary Actor: & Admin & Secondary Actors: & N/A \\ \hline
 
 Trigger: & \multicolumn{3}{L{11.1cm}|}{The Admin selects a user row from the user list or navigates directly to \texttt{/admin/users/[id]}.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{The Admin retrieves the full account information for a specific user, including general profile data, assigned roles with permissions, social links, activity statistics, and role-specific profile tabs (Client Profile, Freelancer Profile, Custom Role Profiles).} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{The Admin retrieves the full account information for a specific user, including general profile data, assigned roles with permissions, social links, activity statistics, and role-specific profile tabs (Client Profile, Freelancer Profile, Custom Role Profiles).} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{\textbf{PRE-1} The Admin is authenticated with a valid access token and an active session. \newline \textbf{PRE-2} The Admin's role includes a permission record matching the \texttt{GET} method on the \texttt{/api/users/:id} path.} \\ \hline
 
@@ -106,12 +119,18 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{The user ID is valid and corresponds 
 \end{longtable}
 
 % =================================================================
-\subparagraph{UC-17.3 Create User}
+\subparagraph{UC-28.03 Create User}
 
+\Needspace{12\baselineskip}
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
-
-UC ID and Name & \multicolumn{3}{l|}{UC-17.3 Create User} \\ \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-28.03 Create User} \\* \hline
+\endfirsthead
+\hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-28.03 Create User \textit{(cont.)}} \\* \hline
+\endhead
+\hline\endfoot
+\endlastfoot
 
 Created By: & ThuanNT & Date Created: & 14/09/2026 \\ \hline
 
@@ -119,7 +138,7 @@ Primary Actor: & Admin & Secondary Actors: & N/A \\ \hline
 
 Trigger: & \multicolumn{3}{L{11.1cm}|}{The Admin opens the ``Create User'' dialog (\texttt{CreateUserDialog}) from the user management page and submits the form.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{The Admin creates a new user account by providing a full name, email address, password, and selecting an initial role (Client, Freelancer, or a custom role). The system creates the user record, a profile with the display name, and assigns the selected primary role.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{The Admin creates a new user account by providing a full name, email address, password, and selecting an initial role (Client, Freelancer, or a custom role). The system creates the user record, a profile with the display name, and assigns the selected primary role.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{\textbf{PRE-1} The Admin is authenticated with a valid access token and an active session. \newline \textbf{PRE-2} The Admin's role includes a permission record matching the \texttt{POST} method on the \texttt{/api/users} path. \newline \textbf{PRE-3} The Admin has navigated to the \texttt{/admin/users} page.} \\ \hline
 
@@ -144,12 +163,18 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{At least one non-Admin role (Client, 
 \end{longtable}
 
 % =================================================================
-\subparagraph{UC-17.4 Edit User}
+\subparagraph{UC-28.04 Edit User}
 
+\Needspace{12\baselineskip}
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
-
-UC ID and Name & \multicolumn{3}{l|}{UC-17.4 Edit User} \\ \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-28.04 Edit User} \\* \hline
+\endfirsthead
+\hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-28.04 Edit User \textit{(cont.)}} \\* \hline
+\endhead
+\hline\endfoot
+\endlastfoot
 
 Created By: & ThuanNT & Date Created: & 14/09/2026 \\ \hline
 
@@ -157,7 +182,7 @@ Primary Actor: & Admin & Secondary Actors: & N/A \\ \hline
 
 Trigger: & \multicolumn{3}{L{11.1cm}|}{The Admin opens the ``Edit User'' dialog (\texttt{EditUserDialog}) for a specific user and submits changes to the general account fields.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{The Admin edits the general account information of an existing user, including email, full name (display name), and ban status. At least one field must be changed. The system validates the changes, updates the user and profile records, and returns the updated summary.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{The Admin edits the general account information of an existing user, including email, full name (display name), and ban status. At least one field must be changed. The system validates the changes, updates the user and profile records, and returns the updated summary.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{\textbf{PRE-1} The Admin is authenticated with a valid access token and an active session. \newline \textbf{PRE-2} The Admin's role includes a permission record matching the \texttt{PATCH} method on the \texttt{/api/users/:id} path. \newline \textbf{PRE-3} The target user exists and is not soft-deleted.} \\ \hline
 
@@ -182,12 +207,18 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{The target user exists and is not sof
 \end{longtable}
 
 % =================================================================
-\subparagraph{UC-17.5 Edit Client Profile}
+\subparagraph{UC-28.05 Edit Client Profile}
 
+\Needspace{12\baselineskip}
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
-
-UC ID and Name & \multicolumn{3}{l|}{UC-17.5 Edit Client Profile} \\ \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-28.05 Edit Client Profile} \\* \hline
+\endfirsthead
+\hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-28.05 Edit Client Profile \textit{(cont.)}} \\* \hline
+\endhead
+\hline\endfoot
+\endlastfoot
 
 Created By: & ThuanNT & Date Created: & 14/09/2026 \\ \hline
 
@@ -195,7 +226,7 @@ Primary Actor: & Admin & Secondary Actors: & N/A \\ \hline
 
 Trigger: & \multicolumn{3}{L{11.1cm}|}{The Admin clicks the ``Edit Client Profile'' button (\texttt{EditClientProfileButton}) on the Client Profile tab of a user's detail page and submits changes.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{The Admin edits the Client profile of a user who has the Client role, modifying the company name, company description, and/or website URL. The system validates the changes and upserts the client profile record.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{The Admin edits the Client profile of a user who has the Client role, modifying the company name, company description, and/or website URL. The system validates the changes and upserts the client profile record.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{\textbf{PRE-1} The Admin is authenticated with a valid access token and an active session. \newline \textbf{PRE-2} The Admin's role includes a permission record matching the \texttt{PATCH} method on the \texttt{/api/users/:id/client-profile} path. \newline \textbf{PRE-3} The target user exists, is not soft-deleted, and either has the Client role assigned or already has an existing client profile record.} \\ \hline
 
@@ -220,12 +251,18 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{The Admin is editing a user that has 
 \end{longtable}
 
 % =================================================================
-\subparagraph{UC-17.6 Edit Freelancer Basics}
+\subparagraph{UC-28.06 Edit Freelancer Basics}
 
+\Needspace{12\baselineskip}
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
-
-UC ID and Name & \multicolumn{3}{l|}{UC-17.6 Edit Freelancer Basics} \\ \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-28.06 Edit Freelancer Basics} \\* \hline
+\endfirsthead
+\hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-28.06 Edit Freelancer Basics \textit{(cont.)}} \\* \hline
+\endhead
+\hline\endfoot
+\endlastfoot
 
 Created By: & ThuanNT & Date Created: & 14/09/2026 \\ \hline
 
@@ -233,7 +270,7 @@ Primary Actor: & Admin & Secondary Actors: & N/A \\ \hline
 
 Trigger: & \multicolumn{3}{L{11.1cm}|}{The Admin clicks the ``Edit Freelancer Profile'' button (\texttt{EditFreelancerProfileButton}) on the Freelancer Profile tab of a user's detail page and submits changes to the basic profile fields.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{The Admin edits the Freelancer profile's basic fields (title, bio, languages, education, certifications) for a user who has the Freelancer role. The system validates the inputs and upserts the freelancer profile record.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{The Admin edits the Freelancer profile's basic fields (title, bio, languages, education, certifications) for a user who has the Freelancer role. The system validates the inputs and upserts the freelancer profile record.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{\textbf{PRE-1} The Admin is authenticated with a valid access token and an active session. \newline \textbf{PRE-2} The Admin's role includes a permission record matching the \texttt{PATCH} method on the \texttt{/api/users/:id/freelancer-profile} path. \newline \textbf{PRE-3} The target user exists, is not soft-deleted, and either has the Freelancer role assigned or already has an existing freelancer profile record.} \\ \hline
 
@@ -258,12 +295,18 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{The Admin is editing a user that has 
 \end{longtable}
 
 % =================================================================
-\subparagraph{UC-17.7 Edit Freelancer Skills}
+\subparagraph{UC-28.07 Edit Freelancer Skills}
 
+\Needspace{12\baselineskip}
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
-
-UC ID and Name & \multicolumn{3}{l|}{UC-17.7 Edit Freelancer Skills} \\ \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-28.07 Edit Freelancer Skills} \\* \hline
+\endfirsthead
+\hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-28.07 Edit Freelancer Skills \textit{(cont.)}} \\* \hline
+\endhead
+\hline\endfoot
+\endlastfoot
 
 Created By: & ThuanNT & Date Created: & 14/09/2026 \\ \hline
 
@@ -271,7 +314,7 @@ Primary Actor: & Admin & Secondary Actors: & N/A \\ \hline
 
 Trigger: & \multicolumn{3}{L{11.1cm}|}{The Admin clicks the ``Manage Freelancer Skills'' button (\texttt{ManageFreelancerSkillsButton}) on the Freelancer Profile tab of a user's detail page and submits the new skill set.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{The Admin replaces the entire skill set of a freelancer by selecting skills from the skill catalog with proficiency levels (1--10). The system deletes all existing skills and creates new ones from the provided list.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{The Admin replaces the entire skill set of a freelancer by selecting skills from the skill catalog with proficiency levels (1--10). The system deletes all existing skills and creates new ones from the provided list.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{\textbf{PRE-1} The Admin is authenticated with a valid access token and an active session. \newline \textbf{PRE-2} The Admin's role includes a permission record matching the \texttt{PUT} method on the \texttt{/api/users/:id/freelancer-profile/skills} path. \newline \textbf{PRE-3} The target user exists, is not soft-deleted, and has the Freelancer role or an existing freelancer profile.} \\ \hline
 
@@ -296,12 +339,18 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{The skill catalog is populated with a
 \end{longtable}
 
 % =================================================================
-\subparagraph{UC-17.8 Edit Freelancer Portfolio}
+\subparagraph{UC-28.08 Edit Freelancer Portfolio}
 
+\Needspace{12\baselineskip}
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
-
-UC ID and Name & \multicolumn{3}{l|}{UC-17.8 Edit Freelancer Portfolio} \\ \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-28.08 Edit Freelancer Portfolio} \\* \hline
+\endfirsthead
+\hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-28.08 Edit Freelancer Portfolio \textit{(cont.)}} \\* \hline
+\endhead
+\hline\endfoot
+\endlastfoot
 
 Created By: & ThuanNT & Date Created: & 14/09/2026 \\ \hline
 
@@ -309,7 +358,7 @@ Primary Actor: & Admin & Secondary Actors: & N/A \\ \hline
 
 Trigger: & \multicolumn{3}{L{11.1cm}|}{The Admin clicks the ``Manage Freelancer Portfolio'' button (\texttt{ManageFreelancerPortfolioButton}) on the Freelancer Profile tab of a user's detail page and performs create, edit, or delete operations on portfolio items.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{The Admin manages the portfolio items of a freelancer by creating new items, editing existing items, or soft-deleting items. Each portfolio item contains a title, description, technologies list, and optional project URL.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{The Admin manages the portfolio items of a freelancer by creating new items, editing existing items, or soft-deleting items. Each portfolio item contains a title, description, technologies list, and optional project URL.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{\textbf{PRE-1} The Admin is authenticated with a valid access token and an active session. \newline \textbf{PRE-2} The Admin's role includes permission records matching: \texttt{POST} on \texttt{/api/users/:id/freelancer-profile/portfolio-items} (create), \texttt{PATCH} on \texttt{/api/users/:id/freelancer-profile/portfolio-items/:itemId} (edit), and \texttt{DELETE} on \texttt{/api/users/:id/freelancer-profile/portfolio-items/:itemId} (delete). \newline \textbf{PRE-3} The target user exists, is not soft-deleted, has the Freelancer role or an existing freelancer profile.} \\ \hline
 

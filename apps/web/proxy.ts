@@ -74,7 +74,7 @@ export default async function proxy(request: NextRequest) {
   // của freelancer chưa xác minh danh tính nhưng phải bỏ qua /freelancer/profile)
   const requestHeaders = new Headers(request.headers);
   requestHeaders.set("x-pathname", pathname);
-  const response = NextResponse.next({ request: { headers: requestHeaders } });
+  let response = NextResponse.next({ request: { headers: requestHeaders } });
   response.headers.set("x-pathname", pathname);
 
   // Nếu có refresh token và access token cần refresh thì exchange refresh token
@@ -99,6 +99,10 @@ export default async function proxy(request: NextRequest) {
       );
     }
     if (tokens) {
+      // Truyền token mới xuống Server Components trong cùng request để tránh refresh lần 2
+      requestHeaders.set("x-refreshed-access-token", tokens.accessToken);
+      response = NextResponse.next({ request: { headers: requestHeaders } });
+      response.headers.set("x-pathname", pathname);
       applyAuthCookies(response, tokens);
       hasSession = true;
     } else {

@@ -3,14 +3,15 @@
 import { useCallback, useState } from "react";
 import { useFormatter, useTranslations } from "next-intl";
 import Link from "next/link";
+import { motion } from "motion/react";
 import {
-  Heart,
   Loader2,
   MessageSquare,
   Pencil,
   Send,
   Trash2,
 } from "@/components/icons";
+import { ForumLikeHeart } from "@/components/forum-like-heart";
 import { toast } from "@repo/ui/components/shadcn/sonner";
 
 import {
@@ -424,11 +425,15 @@ function CommentItem({
                 onClick={handleToggleLike}
                 disabled={toggleLike.isPending}
               >
-                <Heart
-                  className={`size-3.5 transition-transform ${
-                    liked ? "scale-110 fill-current" : ""
-                  }`}
-                />
+                <motion.span
+                  key={liked ? "liked" : "unliked"}
+                  initial={{ scale: 0.5, rotate: -14 }}
+                  animate={{ scale: 1, rotate: 0 }}
+                  transition={{ type: "spring", stiffness: 380, damping: 14 }}
+                  className="flex items-center"
+                >
+                  <ForumLikeHeart liked={liked} className="size-3.5" />
+                </motion.span>
                 {likeCount > 0 ? (
                   <span className="text-xs tabular-nums">{likeCount}</span>
                 ) : null}

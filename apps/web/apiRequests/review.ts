@@ -1,6 +1,7 @@
 import { http } from "@/lib/http";
 import type {
   CreateReviewResponseType,
+  FreelancerReviewsType,
   CreateReviewType,
   ReviewType,
   ReviewResponseType,
@@ -9,6 +10,10 @@ import type {
 } from "@shared/types";
 
 export const reviewApi = {
+  freelancerReviews: (userId: number, page = 1) =>
+    http.get<FreelancerReviewsType>(
+      `/reviews/freelancers/${userId}?page=${page}&limit=5`,
+    ),
   list: (contractId: number) =>
     http.get<ReviewType[]>(`/reviews/contracts/${contractId}`),
   detail: (reviewId: number) => http.get<ReviewType>(`/reviews/${reviewId}`),

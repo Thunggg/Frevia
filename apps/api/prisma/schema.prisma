@@ -22,7 +22,20 @@ model Role {
   deletedAt   DateTime?
 
   users           User[]
+  userRoles       UserRole[]
   rolePermissions RolePermission[]
+}
+
+model UserRole {
+  userId     Int
+  roleId     Int
+  assignedAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  role Role @relation(fields: [roleId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+
+  @@id([userId, roleId])
+  @@index([roleId])
 }
 
 model Permission {
@@ -75,6 +88,7 @@ model User {
   // --- Auth / core ---
   roleId        Int
   role          Role          @relation(fields: [roleId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+  userRoles     UserRole[]
   sessions      Session[]
   oauthAccounts OauthAccount[]
   twoFactorAuth TwoFactorAuth?
@@ -501,23 +515,9 @@ model Recommendation {
   createdAt        DateTime       @default(now())
 
   requester User                     @relation("RecommendationRequester", fields: [requesterId], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  feedbacks RecommendationFeedback[]
 
   @@index([requesterId, sourceType, sourceDocumentId, createdAt])
   @@index([targetType, targetDocumentId])
-}
-
-// Sự kiện phản hồi của người dùng với một kết quả recommendation.
-model RecommendationFeedback {
-  id               Int                        @id @default(autoincrement())
-  recommendationId Int
-  type             RecommendationFeedbackType
-  createdAt        DateTime                   @default(now())
-
-  recommendation Recommendation @relation(fields: [recommendationId], references: [id], onDelete: Cascade, onUpdate: NoAction)
-
-  @@index([recommendationId])
-  @@index([type, createdAt])
 }
 
 // Transactional outbox: sự kiện cần đồng bộ vector sang ChromaDB.
@@ -1023,17 +1023,27 @@ model Certificate {
 // 15. Disputes
 // ============================
 model Dispute {
-  id               Int           @id @default(autoincrement())
-  milestoneId      Int           @unique
+  id               Int                   @id @default(autoincrement())
+  milestoneId      Int                   @unique
   openedById       Int
   respondentId     Int
 
   reason           String
   description      String
+  resolutionType   DisputeResolutionType @default(FULL_REFUND)
 
-  status           DisputeStatus @default(OPEN)
+  proposedFreelancerAmount Decimal?      @db.Decimal(10, 2)
+  proposedClientAmount     Decimal?      @db.Decimal(10, 2)
+  proposedDueDate          DateTime?
+  previousMilestoneStatus  MilestoneStatus?
 
-  arbitrationFee   Decimal       @db.Decimal(10, 2)
+  declineReason    String?
+  declinedAt       DateTime?
+  escalatedAt      DateTime?
+
+  status           DisputeStatus         @default(WAITING_RESPONSE)
+
+  arbitrationFee   Decimal               @db.Decimal(10, 2)
   feeDeadline      DateTime
   responseDeadline DateTime?
 
@@ -1548,7 +1558,6 @@ enum HiringType {
 enum ProposalStatus {
   DRAFT
   SUBMITTED
-  INTERVIEWING
   HIRED
   REJECTED
   WITHDRAWN
@@ -1600,6 +1609,13 @@ enum DisputeStatus {
   CANCELLED
 }
 
+enum DisputeResolutionType {
+  EXTEND_DEADLINE
+  PARTIAL_REFUND
+  FULL_REFUND
+  FULL_RELEASE
+}
+
 enum DisputeFeeStatus {
   PENDING
   PAID
@@ -1629,6 +1645,8 @@ enum NotificationType {
   REVIEW_RESPONSE_RECEIVED
   SYSTEM_ANNOUNCEMENT
   MESSAGE_NEW
+  POST_COMMENT
+  POST_LIKE
   MILESTONE_COMPLETED
   TASK_OVERDUE
 }
@@ -1818,14 +1836,4 @@ enum OutboxEventStatus {
   PROCESSING
   PROCESSED
   FAILED
-}
-
-// Loại phản hồi của người dùng với một kết quả recommendation.
-enum RecommendationFeedbackType {
-  VIEW
-  SAVE
-  APPLY
-  DISMISS
-  SHORTLIST
-  HIRE
 }

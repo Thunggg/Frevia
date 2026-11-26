@@ -92,8 +92,11 @@ export function ClientProfileClient({
         <section className="border-b border-[#0069D3]/15 bg-[#D0E1F8]/20 dark:border-white/10 dark:bg-zinc-950">
           <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8 lg:py-10">
             <nav className="text-sm text-foreground/60">
-              <Link href="/" className="transition-colors hover:text-[#0069D3]">
-                {tCommon("home")}
+              <Link
+                href={headerRole === "STAFF" ? "/admin" : "/"}
+                className="transition-colors hover:text-[#0069D3]"
+              >
+                {headerRole === "STAFF" ? "Admin" : tCommon("home")}
               </Link>
               <span className="mx-2 text-foreground/35">/</span>
               <span className="font-medium text-foreground">

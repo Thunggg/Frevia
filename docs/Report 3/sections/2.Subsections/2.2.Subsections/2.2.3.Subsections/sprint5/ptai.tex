@@ -1,13 +1,20 @@
+\Needspace{12\baselineskip}
 \paragraph{Manage Job Category}
 % =================================================================
 % UC-________ View Job Categories (User)
 % =================================================================
-\subparagraph{UC View Job Categories (User)}
+\subparagraph{UC-46.07 View Job Categories List}
 
+\Needspace{12\baselineskip}
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
-
-UC ID and Name & \multicolumn{3}{l|}{UC View Job Categories (User)} \\ \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-46.07 View Job Categories List} \\* \hline
+\endfirsthead
+\hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-46.07 View Job Categories List \textit{(cont.)}} \\* \hline
+\endhead
+\hline\endfoot
+\endlastfoot
 
 Created By: & Tran Phat Tai & Date Created: & 23/10/2026 \\ \hline
 
@@ -15,7 +22,7 @@ Primary Actor: & User & Secondary Actors: & N/A \\ \hline
 
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When a user browses jobs, filters search results, or opens the job creation form.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Allows users to retrieve the list of available job categories for browsing and job creation.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Allows users to retrieve the list of available job categories for browsing and job creation.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The system is connected to the database.
@@ -56,9 +63,9 @@ Priority: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
 Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{High} \\ \hline
 
 Business Rules: & \multicolumn{3}{L{11.1cm}|}{
-BR-CAT-01: Only active job categories shall be returned. \newline
-BR-CAT-02: The category list shall be available to all users without authentication. \newline
-BR-CAT-03: Job categories drive job browsing, search filters, and the job creation form.
+BR-FCAT-01: Only active job categories shall be returned. \newline
+BR-FCAT-02: The category list shall be available to all users without authentication. \newline
+BR-FCAT-03: Job categories drive job browsing, search filters, and the job creation form.
 } \\ \hline
 
 Other Information: & \multicolumn{3}{L{11.1cm}|}{The category list is typically requested together with the job homepage and the search sidebar.} \\ \hline
@@ -68,14 +75,20 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{Job categories are maintained by admi
 \end{longtable}
 
 % =================================================================
-% UC-________ View Job Category Detail (User)
+% UC-________ View Job Category Details (User)
 % =================================================================
-\subparagraph{UC View Job Category Detail (User)}
+\subparagraph{UC-46.08 View Job Category Details}
 
+\Needspace{12\baselineskip}
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
-
-UC ID and Name & \multicolumn{3}{l|}{UC View Job Category Detail (User)} \\ \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-46.08 View Job Category Details} \\* \hline
+\endfirsthead
+\hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-46.08 View Job Category Details \textit{(cont.)}} \\* \hline
+\endhead
+\hline\endfoot
+\endlastfoot
 
 Created By: & Tran Phat Tai & Date Created: & 24/10/2026 \\ \hline
 
@@ -83,7 +96,7 @@ Primary Actor: & User & Secondary Actors: & N/A \\ \hline
 
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When a user opens a job category from the browse page.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Allows users to view category details and associated jobs.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Allows users to view category details and associated jobs.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The system is connected to the database.
@@ -96,7 +109,7 @@ Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
 } \\ \hline
 
 Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{A. View Job Category Detail} \newline
+\textbf{A. View Job Category Details} \newline
 1. The User opens a job category. \newline
 2. The system retrieves the category details (name, description). \newline
 3. The system retrieves the jobs belonging to the category. \newline
@@ -111,7 +124,7 @@ Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{
 3. The use case ends. \newline
 \textbf{A.2 Browse Jobs by Category} \textit{(branch at step 3)} \newline
 1. The User applies the category as a filter while browsing jobs. \newline
-2. Continue with UC View List Job.
+2. Continue with UC View Jobs List.
 } \\ \hline
 
 Exceptions: & \multicolumn{3}{L{11.1cm}|}{
@@ -132,11 +145,11 @@ Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
 Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
 
 Business Rules: & \multicolumn{3}{L{11.1cm}|}{
-BR-CAT-04: The category detail shall include name and description. \newline
-BR-CAT-05: The associated jobs shall be listed, or the category can be used as a job browse filter.
+BR-FCAT-04: The category detail shall include name and description. \newline
+BR-FCAT-05: The associated jobs shall be listed, or the category can be used as a job browse filter.
 } \\ \hline
 
-Other Information: & \multicolumn{3}{L{11.1cm}|}{Browsing a category applies the category filter to the job list (UC View List Job).} \\ \hline
+Other Information: & \multicolumn{3}{L{11.1cm}|}{Browsing a category applies the category filter to the job list (UC View Jobs List).} \\ \hline
 
 Assumptions: & \multicolumn{3}{L{11.1cm}|}{A category may have zero or more associated jobs.} \\ \hline
 
@@ -145,12 +158,18 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{A category may have zero or more asso
 % =================================================================
 % UC-________ View Job Categories (Admin)
 % =================================================================
-\subparagraph{UC View Job Categories (Admin)}
+\subparagraph{UC-46.01 View Job Categories List}
 
+\Needspace{12\baselineskip}
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
-
-UC ID and Name & \multicolumn{3}{l|}{UC View Job Categories (Admin)} \\ \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-46.01 View Job Categories List} \\* \hline
+\endfirsthead
+\hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-46.01 View Job Categories List \textit{(cont.)}} \\* \hline
+\endhead
+\hline\endfoot
+\endlastfoot
 
 Created By: & Tran Phat Tai & Date Created: & 25/10/2026 \\ \hline
 
@@ -158,7 +177,7 @@ Primary Actor: & Admin & Secondary Actors: & N/A \\ \hline
 
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When an admin opens the job category management page.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Allows admins to view and manage the list of job categories in the system.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Allows admins to view and manage the list of job categories in the system.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The admin is authenticated with the Admin role. \newline
@@ -199,8 +218,8 @@ Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
 Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
 
 Business Rules: & \multicolumn{3}{L{11.1cm}|}{
-BR-CAT-06: Only an admin can open the job category management page. \newline
-BR-CAT-07: The admin view shall include all categories regardless of status.
+BR-FCAT-06: Only an admin can open the job category management page. \newline
+BR-FCAT-07: The admin view shall include all categories regardless of status.
 } \\ \hline
 
 Other Information: & \multicolumn{3}{L{11.1cm}|}{From this page the admin can create, edit, or delete a category.} \\ \hline
@@ -210,14 +229,20 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{Job categories are maintained by admi
 \end{longtable}
 
 % =================================================================
-% UC-________ View Job Category Detail (Admin)
+% UC-________ View Job Category Details (Admin)
 % =================================================================
-\subparagraph{UC View Job Category Detail (Admin)}
+\subparagraph{UC-46.02 View Job Category Details}
 
+\Needspace{12\baselineskip}
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
-
-UC ID and Name & \multicolumn{3}{l|}{UC View Job Category Detail (Admin)} \\ \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-46.02 View Job Category Details} \\* \hline
+\endfirsthead
+\hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-46.02 View Job Category Details \textit{(cont.)}} \\* \hline
+\endhead
+\hline\endfoot
+\endlastfoot
 
 Created By: & Tran Phat Tai & Date Created: & 25/10/2026 \\ \hline
 
@@ -225,7 +250,7 @@ Primary Actor: & Admin & Secondary Actors: & N/A \\ \hline
 
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When an admin opens a job category from the management page.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Allows admins to view category details, status, and associated jobs.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Allows admins to view category details, status, and associated jobs.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The admin is authenticated with the Admin role. \newline
@@ -239,7 +264,7 @@ Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
 } \\ \hline
 
 Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
-\textbf{A. View Job Category Detail} \newline
+\textbf{A. View Job Category Details} \newline
 1. The Admin opens a job category. \newline
 2. The system retrieves the category details (name, description, status). \newline
 3. The system retrieves the jobs belonging to the category. \newline
@@ -272,8 +297,8 @@ Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
 Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
 
 Business Rules: & \multicolumn{3}{L{11.1cm}|}{
-BR-CAT-08: The admin category detail shall include name, description, and status. \newline
-BR-CAT-09: The associated jobs shall be listed in the admin detail view.
+BR-FCAT-08: The admin category detail shall include name, description, and status. \newline
+BR-FCAT-09: The associated jobs shall be listed in the admin detail view.
 } \\ \hline
 
 Other Information: & \multicolumn{3}{L{11.1cm}|}{The admin detail view supports editing or deleting the category.} \\ \hline
@@ -285,12 +310,18 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{A category may have zero or more asso
 % =================================================================
 % UC-________ Create Job Category
 % =================================================================
-\subparagraph{UC Create Job Category}
+\subparagraph{UC-46.03 Create Job Category}
 
+\Needspace{12\baselineskip}
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
-
-UC ID and Name & \multicolumn{3}{l|}{UC Create Job Category} \\ \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-46.03 Create Job Category} \\* \hline
+\endfirsthead
+\hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-46.03 Create Job Category \textit{(cont.)}} \\* \hline
+\endhead
+\hline\endfoot
+\endlastfoot
 
 Created By: & Tran Phat Tai & Date Created: & 26/10/2026 \\ \hline
 
@@ -298,7 +329,7 @@ Primary Actor: & Admin & Secondary Actors: & N/A \\ \hline
 
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When an admin chooses to create a job category in the admin category management page.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Create a new job category with name, description, and status.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Create a new job category with name, description, and status.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The admin is authenticated with the Admin role. \newline
@@ -351,9 +382,9 @@ Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
 Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Low} \\ \hline
 
 Business Rules: & \multicolumn{3}{L{11.1cm}|}{
-BR-CAT-10: A job category name is required and must be unique. \newline
-BR-CAT-11: New categories may be created as active or inactive. \newline
-BR-CAT-12: Only an admin can create job categories.
+BR-FCAT-10: A job category name is required and must be unique. \newline
+BR-FCAT-11: New categories may be created as active or inactive. \newline
+BR-FCAT-12: Only an admin can create job categories.
 } \\ \hline
 
 Other Information: & \multicolumn{3}{L{11.1cm}|}{A category created as inactive is hidden from public browsing.} \\ \hline
@@ -365,12 +396,18 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{Category names are managed exclusivel
 % =================================================================
 % UC-________ Edit Job Category
 % =================================================================
-\subparagraph{UC Edit Job Category}
+\subparagraph{UC-46.04 Update Job Category}
 
+\Needspace{12\baselineskip}
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
-
-UC ID and Name & \multicolumn{3}{l|}{UC Edit Job Category} \\ \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-46.04 Update Job Category} \\* \hline
+\endfirsthead
+\hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-46.04 Update Job Category \textit{(cont.)}} \\* \hline
+\endhead
+\hline\endfoot
+\endlastfoot
 
 Created By: & Tran Phat Tai & Date Created: & 27/10/2026 \\ \hline
 
@@ -378,7 +415,7 @@ Primary Actor: & Admin & Secondary Actors: & N/A \\ \hline
 
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When an admin chooses to edit a job category in the admin category management page.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Update job category information and status.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Update job category information and status.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The admin is authenticated with the Admin role. \newline
@@ -432,9 +469,9 @@ Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
 Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Low} \\ \hline
 
 Business Rules: & \multicolumn{3}{L{11.1cm}|}{
-BR-CAT-13: Only an admin can edit job categories. \newline
-BR-CAT-14: The category name is required and must be unique (excluding the category being edited). \newline
-BR-CAT-15: Deactivating a category hides it from public browsing.
+BR-FCAT-13: Only an admin can edit job categories. \newline
+BR-FCAT-14: The category name is required and must be unique (excluding the category being edited). \newline
+BR-FCAT-15: Deactivating a category hides it from public browsing.
 } \\ \hline
 
 Other Information: & \multicolumn{3}{L{11.1cm}|}{Editing a category does not affect jobs that already reference it.} \\ \hline
@@ -446,12 +483,18 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{Category metadata is managed exclusiv
 % =================================================================
 % UC-________ Delete Job Category
 % =================================================================
-\subparagraph{UC Delete Job Category}
+\subparagraph{UC-46.05 Delete Job Category}
 
+\Needspace{12\baselineskip}
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
-
-UC ID and Name & \multicolumn{3}{l|}{UC Delete Job Category} \\ \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-46.05 Delete Job Category} \\* \hline
+\endfirsthead
+\hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-46.05 Delete Job Category \textit{(cont.)}} \\* \hline
+\endhead
+\hline\endfoot
+\endlastfoot
 
 Created By: & Tran Phat Tai & Date Created: & 28/10/2026 \\ \hline
 
@@ -459,7 +502,7 @@ Primary Actor: & Admin & Secondary Actors: & N/A \\ \hline
 
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When an admin chooses to delete a job category in the admin category management page.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Delete or deactivate a job category after checking associated jobs.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Delete or deactivate a job category after checking associated jobs.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The admin is authenticated with the Admin role. \newline
@@ -514,9 +557,9 @@ Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
 Frequency of Use: & \multicolumn{3}{L{11.1cm}|}{Low} \\ \hline
 
 Business Rules: & \multicolumn{3}{L{11.1cm}|}{
-BR-CAT-16: Only an admin can delete job categories. \newline
-BR-CAT-17: If the category has associated jobs, it shall be deactivated rather than deleted. \newline
-BR-CAT-18: A deleted category shall not appear in public category lists.
+BR-FCAT-16: Only an admin can delete job categories. \newline
+BR-FCAT-17: If the category has associated jobs, it shall be deactivated rather than deleted. \newline
+BR-FCAT-18: A deleted category shall not appear in public category lists.
 } \\ \hline
 
 Other Information: & \multicolumn{3}{L{11.1cm}|}{Existing jobs referencing the category retain their category reference.} \\ \hline
@@ -525,16 +568,23 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{Category deletion is performed exclus
 
 \end{longtable}
 
+\Needspace{12\baselineskip}
 \paragraph{Manage CV}
 % =================================================================
 % UC-________ Upload CV
 % =================================================================
-\subparagraph{UC Upload CV}
+\subparagraph{UC-07.03 Upload CV}
 
+\Needspace{12\baselineskip}
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
-
-UC ID and Name & \multicolumn{3}{l|}{UC Upload CV} \\ \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-07.03 Upload CV} \\* \hline
+\endfirsthead
+\hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-07.03 Upload CV \textit{(cont.)}} \\* \hline
+\endhead
+\hline\endfoot
+\endlastfoot
 
 Created By: & Tran Phat Tai & Date Created: & 29/10/2026 \\ \hline
 
@@ -542,7 +592,7 @@ Primary Actor: & Freelancer & Secondary Actors: & N/A \\ \hline
 
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When a freelancer chooses to upload a CV on their profile page.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Allows a freelancer to upload a CV file in a supported format and associate it with their profile.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Allows a freelancer to upload a CV file in a supported format and associate it with their profile.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The freelancer is authenticated. \newline
@@ -551,7 +601,7 @@ Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 
 Post-conditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{POST-1} The CV file is stored and linked to the freelancer's profile. \newline
-\textbf{POST-2} The profile shows the CV as available (UC View CV).
+\textbf{POST-2} The profile shows the CV as available (UC-07.04 View CV).
 } \\ \hline
 
 Normal Flow: & \multicolumn{3}{L{11.1cm}|}{
@@ -601,7 +651,7 @@ BR-CV-03: The CV file shall not exceed the allowed size limit. \newline
 BR-CV-04: A freelancer can have at most one CV associated with their profile.
 } \\ \hline
 
-Other Information: & \multicolumn{3}{L{11.1cm}|}{Uploading a CV when one already exists replaces it (UC Replace CV).} \\ \hline
+Other Information: & \multicolumn{3}{L{11.1cm}|}{Uploading a CV when one already exists replaces it (UC-07.05 Replace CV).} \\ \hline
 
 Assumptions: & \multicolumn{3}{L{11.1cm}|}{The CV file is valid and belongs to the freelancer.} \\ \hline
 
@@ -610,12 +660,18 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{The CV file is valid and belongs to t
 % =================================================================
 % UC-________ View CV
 % =================================================================
-\subparagraph{UC View CV}
+\subparagraph{UC-07.04 View CV}
 
+\Needspace{12\baselineskip}
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
-
-UC ID and Name & \multicolumn{3}{l|}{UC View CV} \\ \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-07.04 View CV} \\* \hline
+\endfirsthead
+\hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-07.04 View CV \textit{(cont.)}} \\* \hline
+\endhead
+\hline\endfoot
+\endlastfoot
 
 Created By: & Tran Phat Tai & Date Created: & 29/10/2026 \\ \hline
 
@@ -623,7 +679,7 @@ Primary Actor: & Freelancer & Secondary Actors: & N/A \\ \hline
 
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When a freelancer chooses to view or download the CV on their profile.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Allows a freelancer to view or download the CV they have uploaded to their profile.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Allows a freelancer to view or download the CV they have uploaded to their profile.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The freelancer is authenticated.
@@ -679,12 +735,18 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{The freelancer has previously uploade
 % =================================================================
 % UC-________ Replace CV
 % =================================================================
-\subparagraph{UC Replace CV}
+\subparagraph{UC-07.05 Replace CV}
 
+\Needspace{12\baselineskip}
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
-
-UC ID and Name & \multicolumn{3}{l|}{UC Replace CV} \\ \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-07.05 Replace CV} \\* \hline
+\endfirsthead
+\hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-07.05 Replace CV \textit{(cont.)}} \\* \hline
+\endhead
+\hline\endfoot
+\endlastfoot
 
 Created By: & Tran Phat Tai & Date Created: & 30/10/2026 \\ \hline
 
@@ -692,7 +754,7 @@ Primary Actor: & Freelancer & Secondary Actors: & N/A \\ \hline
 
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When a freelancer uploads a new CV file while a CV already exists on their profile.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Allows a freelancer to replace the existing CV with a new file.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Allows a freelancer to replace the existing CV with a new file.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The freelancer is authenticated. \newline
@@ -749,7 +811,7 @@ BR-CV-06: Only a freelancer can replace their own CV. \newline
 BR-CV-07: Replacing a CV updates the profile reference to the new file and invalidates the old one.
 } \\ \hline
 
-Other Information: & \multicolumn{3}{L{11.1cm}|}{Replacement keeps at most one CV per profile, consistent with UC Upload CV.} \\ \hline
+Other Information: & \multicolumn{3}{L{11.1cm}|}{Replacement keeps at most one CV per profile, consistent with UC-07.03 Upload CV.} \\ \hline
 
 Assumptions: & \multicolumn{3}{L{11.1cm}|}{The freelancer already has a CV uploaded to their profile.} \\ \hline
 
@@ -758,12 +820,18 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{The freelancer already has a CV uploa
 % =================================================================
 % UC-________ Delete CV
 % =================================================================
-\subparagraph{UC Delete CV}
+\subparagraph{UC-07.06 Delete CV}
 
+\Needspace{12\baselineskip}
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
-
-UC ID and Name & \multicolumn{3}{l|}{UC Delete CV} \\ \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-07.06 Delete CV} \\* \hline
+\endfirsthead
+\hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-07.06 Delete CV \textit{(cont.)}} \\* \hline
+\endhead
+\hline\endfoot
+\endlastfoot
 
 Created By: & Tran Phat Tai & Date Created: & 31/10/2026 \\ \hline
 
@@ -771,7 +839,7 @@ Primary Actor: & Freelancer & Secondary Actors: & N/A \\ \hline
 
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When a freelancer chooses to delete the CV on their profile.} \\ \hline
 
-Description: & \multicolumn{3}{L{11.1cm}|}{Allows a freelancer to remove their uploaded CV from their profile.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Allows a freelancer to remove their uploaded CV from their profile.} \\ \hline
 
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The freelancer is authenticated.

@@ -204,12 +204,12 @@ Failure & Structured error without sensitive data; no successful UI state when t
 \subsection{Freelancer Skills Management}
 
 % -----------------------------------------------------------------
-% UC-08.01: View Freelancer Skill List
+% UC-08.01: View Freelancer Skills List
 % -----------------------------------------------------------------
-\subsubsection{View Freelancer Skill List}
+\subsubsection{View Freelancer Skills List}
 
 \fnhead{Function Trigger}
-The actor selects View Freelancer Skill List.\newline
+The actor selects View Freelancer Skills List.\newline
 \textbf{Navigation path:} Home $\rightarrow$ \texttt{/\allowbreak{}profiles/\allowbreak{}[id]} or \texttt{/\allowbreak{}freelancer/\allowbreak{}profile.}
 
 \fnhead{Function Description}
@@ -238,7 +238,7 @@ The actor selects View Freelancer Skill List.\newline
 \end{itemize}
 
 \fnhead{Screen Layout (Mock-up Description)}
-\screenfigure[0.95]{image/screenshot/sprint1/nhuy/View Freelancer Skill List.png}{View Freelancer Skill List interface}
+\screenfigure[0.95]{image/screenshot/sprint1/nhuy/View Freelancer Skill List.png}{View Freelancer Skills List interface}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
     \item Skill list with catalog name, proficiency /10 and owner-only remove action.
     \item Add Skill dialog with suggestions and level selector.
@@ -265,7 +265,7 @@ Selection & Current account or selected profile\texttt{/\allowbreak{}contract}; 
 
 \sublabel{Normal Flow}
 \begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
-    \item The actor opens \texttt{/\allowbreak{}profiles/\allowbreak{}[id]}; \texttt{/\allowbreak{}freelancer/\allowbreak{}profile} and selects View Freelancer Skill List.
+    \item The actor opens \texttt{/\allowbreak{}profiles/\allowbreak{}[id]}; \texttt{/\allowbreak{}freelancer/\allowbreak{}profile} and selects View Freelancer Skills List.
     \item The application submits the selected identifier or list filters.
     \item The API checks authentication where required, authorization, resource existence and input validity.
     \item Join FreelancerSkill with active Skill catalog entries and show proficiency levels.
@@ -482,12 +482,12 @@ Failure & Structured error without sensitive data; no successful UI state when t
 \subsection{Portfolio Management}
 
 % -----------------------------------------------------------------
-% UC-09.01: View Portfolio List
+% UC-09.01: View Portfolios List
 % -----------------------------------------------------------------
-\subsubsection{View Portfolio List}
+\subsubsection{View Portfolios List}
 
 \fnhead{Function Trigger}
-The actor selects View Portfolio List.\newline
+The actor selects View Portfolios List.\newline
 \textbf{Navigation path:} Home $\rightarrow$ \texttt{/\allowbreak{}profiles/\allowbreak{}[id]} or \texttt{/\allowbreak{}freelancer/\allowbreak{}profile.}
 
 \fnhead{Function Description}
@@ -518,7 +518,7 @@ The actor selects View Portfolio List.\newline
 \end{itemize}
 
 \fnhead{Screen Layout (Mock-up Description)}
-\screenfigure[0.95]{image/screenshot/sprint1/nhuy/View Portfolio List.png}{View Portfolio List interface}
+\screenfigure[0.95]{image/screenshot/sprint1/nhuy/View Portfolio List.png}{View Portfolios List interface}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
     \item Portfolio card grid with title, description and technologies.
     \item Detail dialog.
@@ -547,7 +547,7 @@ Selection & Current account or selected profile\texttt{/\allowbreak{}contract}; 
 
 \sublabel{Normal Flow}
 \begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
-    \item The actor opens \texttt{/\allowbreak{}profiles/\allowbreak{}[id]}; \texttt{/\allowbreak{}freelancer/\allowbreak{}profile} and selects View Portfolio List.
+    \item The actor opens \texttt{/\allowbreak{}profiles/\allowbreak{}[id]}; \texttt{/\allowbreak{}freelancer/\allowbreak{}profile} and selects View Portfolios List.
     \item The application submits the selected identifier or list filters.
     \item The API checks authentication where required, authorization, resource existence and input validity.
     \item List only non-deleted PortfolioItem records of the selected freelancer.
@@ -675,12 +675,12 @@ Failure & Structured error without sensitive data; no successful UI state when t
 \end{itemize}
 
 % -----------------------------------------------------------------
-% UC-09.03: View Portfolio Detail
+% UC-09.03: View Portfolio Details
 % -----------------------------------------------------------------
-\subsubsection{View Portfolio Detail}
+\subsubsection{View Portfolio Details}
 
 \fnhead{Function Trigger}
-The actor selects View Portfolio Detail.\newline
+The actor selects View Portfolio Details.\newline
 \textbf{Navigation path:} Home $\rightarrow$ \texttt{/\allowbreak{}profiles/\allowbreak{}[id]} or \texttt{/\allowbreak{}freelancer/\allowbreak{}profile.}
 
 \fnhead{Function Description}
@@ -711,7 +711,7 @@ The actor selects View Portfolio Detail.\newline
 \end{itemize}
 
 \fnhead{Screen Layout (Mock-up Description)}
-\screenfigure[0.95]{image/screenshot/sprint1/nhuy/View Portfolio Detail.png}{View Portfolio Detail interface}
+\screenfigure[0.95]{image/screenshot/sprint1/nhuy/View Portfolio Detail.png}{View Portfolio Details interface}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
     \item Portfolio card grid with title, description and technologies.
     \item Detail dialog.
@@ -740,7 +740,7 @@ Identifier & Positive resource ID from the route; ownership is checked by the AP
 
 \sublabel{Normal Flow}
 \begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
-    \item The actor opens \texttt{/\allowbreak{}profiles/\allowbreak{}[id]}; \texttt{/\allowbreak{}freelancer/\allowbreak{}profile} and selects View Portfolio Detail.
+    \item The actor opens \texttt{/\allowbreak{}profiles/\allowbreak{}[id]}; \texttt{/\allowbreak{}freelancer/\allowbreak{}profile} and selects View Portfolio Details.
     \item The application submits the selected identifier or list filters.
     \item The API checks authentication where required, authorization, resource existence and input validity.
     \item Display a single non-deleted portfolio item and its external project link.

@@ -3,7 +3,7 @@
 %====================================================
 % ENCODING & LANGUAGE
 %====================================================
-\usepackage[T1]{fontenc}
+\usepackage[T5,T1]{fontenc}
 \usepackage[utf8]{inputenc}
 \usepackage[english]{babel}
 
@@ -59,6 +59,7 @@
 %====================================================
 \usepackage{setspace}
 \onehalfspacing
+\usepackage{needspace}
 
 \usepackage{indentfirst}
 \setlength{\parindent}{1.27cm}
@@ -136,15 +137,17 @@
 \captionsetup{
     font=small,
     labelfont=bf,
+    labelsep=period,
     justification=centering,
     skip=6pt
 }
+\captionsetup[table]{position=above}
 
 % longtable captions use this width; the default 4 in is narrower than the tables
 \setlength{\LTcapwidth}{\textwidth}
 
 %====================================================
-% TABLE OF CONTENTS
+% TABLE OF CONTENTS, FIGURES & TABLES
 %====================================================
 \usepackage{tocloft}
 
@@ -152,24 +155,37 @@
 \renewcommand{\cftsecleader}{\cftdotfill{\cftdotsep}}
 \renewcommand{\cftsubsecleader}{\cftdotfill{\cftdotsep}}
 \renewcommand{\cftsubsubsecleader}{\cftdotfill{\cftdotsep}}
+\renewcommand{\cftfigleader}{\cftdotfill{\cftdotsep}}
+\renewcommand{\cfttableader}{\cftdotfill{\cftdotsep}}
 
 \renewcommand{\cftpartfont}{\normalfont\normalsize}
 \renewcommand{\cftpartpagefont}{\normalfont\normalsize}
 \renewcommand{\cftsecfont}{\normalfont}
 \renewcommand{\cftsecpagefont}{\normalfont}
 
+\renewcommand{\cftfigpresnum}{Figure\ }
+\renewcommand{\cftfigaftersnum}{.}
+\setlength{\cftfignumwidth}{5.2em}
+\renewcommand{\cfttabpresnum}{Table\ }
+\renewcommand{\cfttabaftersnum}{.}
+\setlength{\cfttabnumwidth}{4.8em}
+
 \setlength{\cftbeforepartskip}{8pt}
 \setlength{\cftbeforesecskip}{4pt}
 \setlength{\cftbeforesubsecskip}{2pt}
+\setlength{\cftbeforefigskip}{4pt}
+\setlength{\cftbeforetabskip}{4pt}
 
 \setlength{\cftsecindent}{0.4cm}
 \setlength{\cftsubsecindent}{0.8cm}
 \setlength{\cftsubsubsecindent}{1.2cm}
+\setlength{\cftfigindent}{0pt}
+\setlength{\cfttabindent}{0pt}
 
 %====================================================
 % HYPERLINKS
 %====================================================
-\usepackage{hyperref}
+\usepackage[plainpages=false,pdfpagelabels]{hyperref}
 
 \hypersetup{
     colorlinks=true,
@@ -196,20 +212,32 @@
 %====================================================
 % COVER PAGE
 %====================================================
+\pagenumbering{alph}
 \input{introduction}
 
-% The cover is page 1 of the template, so the table of contents starts on page 2.
-\setcounter{page}{2}
+% Front matter uses Roman numerals starting after the cover page.
+\clearpage
+\pagenumbering{roman}
+\setcounter{page}{1}
 
 %====================================================
-% TABLE OF CONTENTS
+% TABLE OF CONTENTS, FIGURES & TABLES
 %====================================================
 \input{table_of_contents}
 
 %====================================================
-% MAIN CONTENT
+% FRONT MATTER SECTIONS
 %====================================================
+\input{sections/definition_and_acronyms}
+
 \input{sections/record_of_changes}
+
+%====================================================
+% MAIN CONTENT (Arabic numerals starting from 1)
+%====================================================
+\clearpage
+\pagenumbering{arabic}
+\setcounter{page}{1}
 
 \part{Project Management Plan}
 
@@ -262,5 +290,7 @@
 
     \subsection{Tools \& Infrastructures}
     \input{sections/6.3-tools-infrastructures}
+
+\input{sections/references}
 
 \end{document}

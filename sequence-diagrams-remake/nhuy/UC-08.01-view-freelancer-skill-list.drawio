@@ -1,6 +1,6 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version='1.0' encoding='utf-8'?>
 <mxfile host="app.diagrams.net" version="29.0.3">
-  <diagram id="UC-08.01-view-freelancer-skill-list" name="UC-08.01 - View Freelancer Skill List">
+  <diagram id="UC-08.01-view-freelancer-skill-list" name="UC-08.01 - View Freelancer Skills List">
     <mxGraphModel grid="1" gridSize="10" page="0" pageWidth="1600" pageHeight="4443" math="0" shadow="0">
       <root>
         <mxCell id="0" />
@@ -17,7 +17,7 @@
         <mxCell id="c35" value="alt" style="shape=umlFrame;html=1;whiteSpace=wrap;pointerEvents=0;fillColor=none;width=45;height=24;fontSize=12;labelBackgroundColor=none;" parent="1" vertex="1">
           <mxGeometry x="6" y="3212" width="1519" height="971" as="geometry" />
         </mxCell>
-        <mxCell id="c47" value="UC-08.01 - View Freelancer Skill List" style="text;html=1;align=center;fontSize=20;fontStyle=1;" parent="1" vertex="1">
+        <mxCell id="c47" value="UC-08.01 - View Freelancer Skills List" style="text;html=1;align=center;fontSize=20;fontStyle=1;" parent="1" vertex="1">
           <mxGeometry x="100" y="20" width="1380" height="40" as="geometry" />
         </mxCell>
         <mxCell id="c48" value="Visitor / Freelancer" style="shape=umlActor;html=1;verticalLabelPosition=bottom;verticalAlign=top;fontSize=13;" parent="1" vertex="1">

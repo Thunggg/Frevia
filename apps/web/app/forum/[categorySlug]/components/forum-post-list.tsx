@@ -5,7 +5,6 @@ import { useFormatter, useTranslations } from "next-intl";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
-  Calendar,
   Heart,
   Inbox,
   MessageSquare,
@@ -58,13 +57,6 @@ type ForumPostListProps = {
   isMyPosts: boolean;
   topPosts: ForumTopPostType[];
 };
-
-function stripHtml(html: string): string {
-  return html
-    .replace(/<[^>]*>/g, "")
-    .replace(/&nbsp;/g, " ")
-    .trim();
-}
 
 export function ForumPostList({
   posts,
@@ -361,58 +353,78 @@ export function ForumPostList({
             ) : (
               <div className="divide-y divide-border border-y border-border">
                 {posts.map((post) => (
-                  <Link
+                  <div
                     key={post.id}
-                    href={`/forum/${buildSlugId(categorySlug, categoryId)}/${buildSlugId(post.slug, post.id)}`}
-                    className="group block space-y-3 px-3 py-6 transition-colors hover:bg-[#0069D3]/5 sm:px-5 sm:py-7 dark:hover:bg-white/[0.02]"
+                    className="flex items-center justify-between gap-4 py-4 sm:py-5 px-2 transition-colors hover:bg-black/[0.01] dark:hover:bg-white/[0.01]"
                   >
-                    <h3 className="text-base font-semibold tracking-tight text-foreground transition-colors group-hover:text-[#0069D3]">
-                      {post.title}
-                    </h3>
-                    <p className="line-clamp-2 text-sm leading-relaxed text-muted-foreground/60">
-                      {stripHtml(post.content)}
-                    </p>
-                    <div className="flex flex-wrap items-center gap-3 pt-1 text-xs text-muted-foreground/50">
-                      <span className="inline-flex items-center gap-2">
-                        <Avatar>
-                          <AvatarImage
-                            src={
-                              post.user?.profile?.avatarUrl ?? undefined
-                            }
-                            alt={
-                              post.user?.profile?.displayName ??
-                              t("userFallback", { id: post.userId })
-                            }
-                          />
-                          <AvatarFallback className="text-[10px]">
-                            {post.user?.profile?.displayName
-                              ?.charAt(0)
-                              ?.toUpperCase() ?? "?"}
-                          </AvatarFallback>
-                        </Avatar>
-                        <span className="font-medium text-foreground/70">
-                          {post.user?.profile?.displayName ??
-                            t("userFallback", { id: post.userId })}
-                        </span>
-                      </span>
-                      <span className="inline-flex items-center gap-1">
-                        <Calendar className="size-3 text-[#0069D3]/60" />
-                        {format.dateTime(new Date(post.createdAt), {
-                          month: "short",
-                          day: "numeric",
-                          year: "numeric",
-                        })}
-                      </span>
-                      <span className="inline-flex items-center gap-1">
-                        <Heart className="size-3 text-[#0069D3]/60" />
-                        {post.likeCount}
-                      </span>
-                      <span className="inline-flex items-center gap-1">
-                        <MessageSquare className="size-3" />
-                        {post.commentCount}
-                      </span>
+                    {/* Left: Author Avatar + Title + Meta */}
+                    <div className="flex items-start sm:items-center gap-3.5 min-w-0 flex-1">
+                      <Avatar className="size-10 shrink-0 ring-1 ring-border/80">
+                        <AvatarImage
+                          src={post.user?.profile?.avatarUrl ?? undefined}
+                          alt={
+                            post.user?.profile?.displayName ??
+                            t("userFallback", { id: post.userId })
+                          }
+                        />
+                        <AvatarFallback className="text-xs font-semibold bg-zinc-100 dark:bg-zinc-800">
+                          {post.user?.profile?.displayName
+                            ?.charAt(0)
+                            ?.toUpperCase() ?? "?"}
+                        </AvatarFallback>
+                      </Avatar>
+
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center gap-2">
+                          <span className="size-2 shrink-0 rounded-full bg-[#0069D3]" />
+                          <Link
+                            href={`/forum/${buildSlugId(categorySlug, categoryId)}/${buildSlugId(post.slug, post.id)}`}
+                            className="font-bold text-sm sm:text-base text-zinc-900 transition-colors hover:text-[#0069D3] line-clamp-1 dark:text-zinc-100"
+                          >
+                            {post.title}
+                          </Link>
+                        </div>
+
+                        <div className="mt-1 flex flex-wrap items-center gap-x-2 text-xs text-zinc-500 dark:text-zinc-400">
+                          <span className="font-medium text-zinc-700 dark:text-zinc-300">
+                            {post.user?.profile?.displayName ??
+                              t("userFallback", { id: post.userId })}
+                          </span>
+                          <span>
+                            {format.dateTime(new Date(post.createdAt), {
+                              month: "short",
+                              day: "numeric",
+                              year: "numeric",
+                            })}
+                          </span>
+                          <span>{post.commentCount} replies</span>
+                          <span className="text-zinc-400">Mute</span>
+                        </div>
+                      </div>
                     </div>
-                  </Link>
+
+                    {/* Right: Repliers / interactions */}
+                    <div className="shrink-0 pl-2">
+                      {post.commentCount > 0 ? (
+                        <div className="flex -space-x-2 overflow-hidden">
+                          {Array.from({
+                            length: Math.min(3, post.commentCount),
+                          }).map((_, i) => (
+                            <div
+                              key={i}
+                              className="inline-flex size-6 sm:size-7 items-center justify-center rounded-full bg-blue-100 text-[10px] font-bold text-blue-700 ring-2 ring-white dark:bg-zinc-800 dark:text-blue-400 dark:ring-zinc-950"
+                            >
+                              💬
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <span className="text-[11px] text-zinc-400 hidden sm:inline">
+                          0 comments
+                        </span>
+                      )}
+                    </div>
+                  </div>
                 ))}
               </div>
             )}

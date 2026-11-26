@@ -9,11 +9,10 @@ import { ManageProposalMessage } from "../message/manage-proposal.message";
 import { JobHiringTypeSchema } from "./job.model";
 
 // Vòng đời đề xuất:
-// DRAFT -> SUBMITTED -> (INTERVIEWING) -> HIRED | REJECTED | WITHDRAWN | EXPIRED
+// DRAFT -> SUBMITTED -> HIRED | REJECTED | WITHDRAWN | EXPIRED
 export const ProposalStatusSchema = z.enum([
   "DRAFT",
   "SUBMITTED",
-  "INTERVIEWING",
   "HIRED",
   "REJECTED",
   "WITHDRAWN",
@@ -23,17 +22,15 @@ export const ProposalStatusSchema = z.enum([
 // Trạng thái đã gửi cho khách hàng (dùng cho bộ lọc phía client).
 export const SubmittedProposalStatusSchema = z.enum([
   "SUBMITTED",
-  "INTERVIEWING",
   "HIRED",
   "REJECTED",
   "WITHDRAWN",
   "EXPIRED",
 ]);
 
-// Khách hàng còn có thể ra quyết định (phỏng vấn / từ chối / tuyển) trên các trạng thái này.
+// Khách hàng còn có thể ra quyết định (từ chối / tuyển) trên các trạng thái này.
 export const ActionableProposalStatusSchema = z.enum([
   "SUBMITTED",
-  "INTERVIEWING",
 ]);
 
 const CoverLetterSchema = z

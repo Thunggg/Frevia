@@ -1,4 +1,160 @@
 % =================================================================
 % Sprint 4 - section 3 feature description (kvy)
-% Placeholder: add the feature description for this sprint here.
+% AI content moderation for forum posts and AI face scan / identity
+% extraction with duplicate detection.
 % =================================================================
+
+% =================================================================
+% 3.x AI Content Moderation
+% Feature description written against the real implementation:
+%   apps/api/src/shared/services/ai-moderation.service.ts
+%   apps/api/src/routes/forums/forums-post/forums.service.ts
+%   apps/web/app/forum/[categorySlug]/components/create-post-dialog.tsx
+%   apps/web/app/admin/moderation/* and apps/web/app/admin/trash/*
+% Procedures are described from the user interface point of view.
+% =================================================================
+
+\Needspace{12\baselineskip}
+\subsection{AI Content Moderation}
+
+\Needspace{12\baselineskip}
+\subsubsection{Moderate Content by AI}
+
+\functionfield{Function Trigger} A logged-in Client or Freelancer opens a forum category, clicks \textbf{New Post}, fills in the title and content of the post and presses the \textbf{Post} button in the create-post dialog.
+
+\functionfield{Function Description} This function automatically scores the content of a forum post with an AI moderation service when the post is submitted. The title and content are sent to \texttt{AIModerationService} (via \texttt{AI\_MODERATION\_URL}/moderate), which returns a score, detected categories, and a moderation verdict (\texttt{BLOCK} mapped to \texttt{REJECTED}, \texttt{REVIEW} to \texttt{PENDING}, and \texttt{ALLOW} to \texttt{APPROVED}). Regardless of the verdict, the post is persisted in PostgreSQL with its moderation status: \texttt{REJECTED} posts stay hidden from public listings and appear in the administrator trash (with HTTP 201 returned and an error toast shown in the create dialog); \texttt{PENDING} posts wait in the moderation queue; and \texttt{APPROVED} posts become publicly visible immediately. When the external AI moderation service is unavailable, the backend defaults to \texttt{APPROVED} so posting is not blocked.
+
+\screenfield[0.92]{image/screenshot/sprint4/kvy/CreatePostDialog.png}{Create post dialog with title and rich-text content}
+\screenfield[0.92]{image/screenshot/sprint4/kvy/AdminModeration.png}{Administrator moderation queue for posts that need manual review}
+\screenfield[0.92]{image/screenshot/sprint4/kvy/AdminTrash.png}{Trash list with posts rejected during moderation}
+
+\functionfield{Function Details}
+\begin{itemize}[leftmargin=1.6em,topsep=4pt,itemsep=3pt,parsep=0pt,label=$\bullet$]
+    \item \detailhead{Precondition}
+        \begin{itemize}[leftmargin=2.2em,topsep=2pt,itemsep=3pt,parsep=0pt,label=$\circ$]
+            \item The user is logged in with a Client or Freelancer account.
+            \item The user is connected to the internet.
+            \item The forum category exists and the user is allowed to create a post in it.
+            \item The title and the content of the post are not empty.
+        \end{itemize}
+    \item \detailhead{Process}
+        \begin{itemize}[leftmargin=2.2em,topsep=2pt,itemsep=3pt,parsep=0pt,label=$\circ$]
+            \item \textbf{Open the Create Post Dialog}: The user opens a forum category and clicks \textbf{New Post}, then types a title and the content in the dialog.
+            \item \textbf{Submit the Post}: The user presses the \textbf{Post} button. The frontend sends the request to create the post to the backend.
+            \item \textbf{Run the AI Check}: The backend calls the AI moderation service with the combined title and content of the post and the context \texttt{forum-post} (falling back to \texttt{APPROVED} if unreachable).
+            \item \textbf{Receive the Result}: The service returns a score, detected categories, a decision (\texttt{BLOCK}/\texttt{REVIEW}/\texttt{ALLOW}), and a message.
+            \item \textbf{Persist Verdict and Apply Visibility}: The backend maps the verdict and creates the \texttt{ForumPost} record in PostgreSQL, returning HTTP 201.
+                \begin{itemize}[leftmargin=2.2em,topsep=2pt,itemsep=3pt,parsep=0pt,label=$\blacksquare$]
+                    \item \textbf{Rejected (\texttt{BLOCK} $\rightarrow$ \texttt{REJECTED})}: The post is saved with status \texttt{REJECTED} (hidden from public listings and visible in the administrator trash). The dialog stays open and shows an error toast explaining that the content was rejected.
+                    \item \textbf{Pending (\texttt{REVIEW} $\rightarrow$ \texttt{PENDING})}: The post is saved with status \texttt{PENDING}. The dialog closes, the form is cleared and an information message tells the user that the post is waiting for administrator review. The post is not shown in public listings.
+                    \item \textbf{Approved (\texttt{ALLOW} $\rightarrow$ \texttt{APPROVED})}: The post is saved with status \texttt{APPROVED}. The dialog closes, the form is cleared and a success message is shown. The user is taken to the detail page of the new post, which is immediately visible to everyone.
+                \end{itemize}
+            \item \textbf{Review by an Administrator}: When a post is \texttt{PENDING}, it appears in the administrator moderation queue, where it can be approved or rejected (see the sprint 3 moderation features).
+            \item \textbf{View Rejected Posts in Trash}: Both AI-\texttt{REJECTED} posts and administrator-rejected or soft-deleted posts appear in the administrator trash, where they can be restored.
+        \end{itemize}
+    \item \detailhead{Alternative Flow}
+        \begin{itemize}[leftmargin=2.2em,topsep=2pt,itemsep=3pt,parsep=0pt,label=$\circ$]
+            \item \textbf{Empty Title or Content}: The \textbf{Post} button stays disabled while the title or the content is empty, so no request is sent.
+            \item \textbf{Cancel the Dialog}: When the user closes the dialog or presses \textbf{Cancel}, no moderation request is made and nothing is saved.
+            \item \textbf{AI Service Unavailable}: When the AI service cannot be reached, \texttt{AIModerationService} defaults to \texttt{APPROVED} so users are not blocked, and the post is saved with status \texttt{APPROVED}.
+            \item \textbf{Lost Connection}: When the connection to the server is lost while submitting, the post is not created and the dialog shows an error message.
+        \end{itemize}
+    \item \detailhead{Postconditions}
+        \begin{itemize}[leftmargin=2.2em,topsep=2pt,itemsep=3pt,parsep=0pt,label=$\circ$]
+            \item An AI-\texttt{REJECTED} post is saved with status \texttt{REJECTED}, hidden from public listings, and visible in the administrator trash.
+            \item A pending post is stored with status \texttt{PENDING}, is absent from public listings and appears in the moderation queue.
+            \item An approved post is stored with status \texttt{APPROVED} and is visible in the forum immediately.
+            \item A post rejected by an administrator is hidden from the public and can be found in the trash for restoration.
+        \end{itemize}
+    \item \detailhead{Error Handling}
+        \begin{itemize}[leftmargin=2.2em,topsep=2pt,itemsep=3pt,parsep=0pt,label=$\circ$]
+            \item \textbf{Not Authenticated}: When a guest tries to create a post, the user is sent to the login page.
+            \item \textbf{Content Rejected}: When the AI verdict is \texttt{BLOCK}, the post is persisted as \texttt{REJECTED} and the frontend keeps the dialog open showing the moderation error message.
+            \item \textbf{Validation Error}: When the title or the content does not pass validation, the backend returns HTTP 400 and the form shows the corresponding error.
+            \item \textbf{Lost Connection}: When the connection to the server is lost, the post is not created and the dialog shows an error message.
+        \end{itemize}
+    \item \detailhead{Security Measures}
+        \begin{itemize}[leftmargin=2.2em,topsep=2pt,itemsep=3pt,parsep=0pt,label=$\circ$]
+            \item Only authenticated users may create forum posts, and the check is made again on the server.
+            \item Moderation verdicts are resolved on the server and cannot be bypassed from the browser.
+            \item Pending posts are never returned to ordinary users, because public listings only contain posts with status \texttt{APPROVED}.
+            \item The moderation queue and the trash are only available to administrators.
+        \end{itemize}
+\end{itemize}
+
+% =================================================================
+% 3.x AI Face Scan & Duplicate Detection
+% Feature description written against the real implementation:
+%   apps/api/src/routes/account-profile/account-profile.service.ts
+%   apps/web/app/(freelancer)/freelancer/profile/identity-verification-form.tsx
+%   apps/web/app/admin/identity-verifications/*
+% Procedures are described from the user interface point of view.
+% =================================================================
+
+\Needspace{12\baselineskip}
+\subsection{AI Face Scan \& Duplicate Detection}
+
+\Needspace{12\baselineskip}
+\subsubsection{Scan Face and Detect Duplicate Identity}
+
+\functionfield{Function Trigger} A logged-in Freelancer or Client opens \textbf{Profile} $\rightarrow$ \textbf{Identity} tab, uploads the required identity documents and selfie, completes the liveness check and submits the verification request.
+
+\functionfield{Function Description} This function uses an AI service (\texttt{id-verification} with RapidOCR, UltraFace/ArcFace ONNX, and MediaPipe) to verify the face from the uploaded images, extract OCR text and document number (\texttt{document\_number}), check liveness, and store the verification document in PostgreSQL. When an extracted document number matches an already-approved record of another user, the submission is recorded with status \texttt{REJECTED} and linked via \texttt{duplicateOfId}; otherwise, an AI \texttt{VERIFIED} outcome is saved as \texttt{PENDING} for administrator review, and an AI \texttt{REJECTED} or \texttt{RETRY} outcome is saved as \texttt{REJECTED}. Users can follow the request status from the Identity tab, and administrators review pending submissions from the identity verification console.
+
+\screenfield[0.92]{image/screenshot/sprint4/kvy/IdentityVerificationTab.png}{Freelancer profile with the identity verification tab}
+\screenfield[0.92]{image/screenshot/sprint4/kvy/IdentityLivenessCheck.png}{Liveness challenge while scanning the face}
+\screenfield[0.92]{image/screenshot/sprint4/kvy/AdminIdentityVerifications.png}{Administrator screen for reviewing identity verification requests}
+
+\functionfield{Function Details}
+\begin{itemize}[leftmargin=1.6em,topsep=4pt,itemsep=3pt,parsep=0pt,label=$\bullet$]
+    \item \detailhead{Precondition}
+        \begin{itemize}[leftmargin=2.2em,topsep=2pt,itemsep=3pt,parsep=0pt,label=$\circ$]
+            \item The user is logged in with a Freelancer or Client account.
+            \item The user is connected to the internet.
+            \item The front image of the identity document is provided, together with the selfie and the liveness frames required by the form.
+            \item The user does not already hold an \texttt{APPROVED} identity verification record.
+        \end{itemize}
+    \item \detailhead{Process}
+        \begin{itemize}[leftmargin=2.2em,topsep=2pt,itemsep=3pt,parsep=0pt,label=$\circ$]
+            \item \textbf{Open the Identity Tab}: The user opens their profile settings and selects the \textbf{Identity} tab, which shows the current verification status and the upload form.
+            \item \textbf{Upload the Documents}: The user selects the document type and uploads the front image of the document, and optionally the back image.
+            \item \textbf{Capture the Selfie and Liveness}: The user takes a selfie and completes the liveness challenge, which captures the frames used for the face scan.
+            \item \textbf{Submit the Request}: The user presses the submit button. The frontend sends the document type, the images and the liveness frames to \texttt{POST /api/identity-verifications/ai-check}.
+            \item \textbf{Validate the Files}: The backend checks that the required images are present, match JPEG/PNG/WebP formats, and do not exceed 10 MB.
+            \item \textbf{Scan the Face and Extract Document Number}: The backend calls the AI identity service, which runs RapidOCR to extract raw text and \texttt{document\_number}, compares the card photo and selfie with UltraFace/ArcFace, and verifies liveness poses with MediaPipe.
+            \item \textbf{Check Duplicate Identity Number}: Using any extracted \texttt{document\_number}, the backend queries existing \texttt{APPROVED} verification records of other users via \texttt{findApprovedIdentityDocumentByIdentityNumber}.
+            \item \textbf{Store the Result}: Uploaded images are persisted and an \texttt{IdVerificationDocument} row is created with status \texttt{PENDING} (when AI returns \texttt{VERIFIED} and no duplicate is found) or \texttt{REJECTED} (when AI returns \texttt{REJECTED}/\texttt{RETRY} or a duplicate \texttt{identityNumber} matches another account, recording \texttt{duplicateOfId}).
+            \item \textbf{Review by an Administrator}: Submissions saved as \texttt{PENDING} appear in the administrator identity verification screen, where an administrator reviews the uploaded images and approves or rejects the request.
+            \item \textbf{Show the Status}: The user sees the current status of the request in the Identity tab (\texttt{PENDING}, \texttt{APPROVED}, or \texttt{REJECTED} with notes).
+        \end{itemize}
+    \item \detailhead{Alternative Flow}
+        \begin{itemize}[leftmargin=2.2em,topsep=2pt,itemsep=3pt,parsep=0pt,label=$\circ$]
+            \item \textbf{Missing Required File}: When the front image, the selfie or the liveness frames are missing, the submission is rejected and the form asks the user to complete them.
+            \item \textbf{Unsupported File}: When an uploaded file is not an accepted image type or is too large (above 10 MB), the form or backend rejects it and no AI scan runs.
+            \item \textbf{AI Rejects or Requests Retry}: When the AI returns \texttt{REJECTED} or \texttt{RETRY}, the backend stores the document with status \texttt{REJECTED} and returns the rejection reason so the user can resubmit clearer photos.
+            \item \textbf{Duplicate Detected}: When the extracted document number matches another account's approved record, the submission is recorded with status \texttt{REJECTED} and \texttt{duplicateOfId} referencing the matched record.
+            \item \textbf{AI Service Unavailable}: When the AI service cannot be reached (HTTP 503/504), no verification document is created in PostgreSQL and the user is asked to try again later.
+        \end{itemize}
+    \item \detailhead{Postconditions}
+        \begin{itemize}[leftmargin=2.2em,topsep=2pt,itemsep=3pt,parsep=0pt,label=$\circ$]
+            \item On AI \texttt{VERIFIED} without duplicates, a verification record is stored with status \texttt{PENDING} alongside \texttt{aiSummary} and \texttt{aiSelfieSummary}.
+            \item On AI \texttt{REJECTED}/\texttt{RETRY} or duplicate detection, a verification record is stored with status \texttt{REJECTED} (and \texttt{duplicateOfId} when applicable).
+            \item The administrator can review, approve or reject pending requests from the identity verification screen.
+            \item The user can see the current status of the request from the Identity tab.
+        \end{itemize}
+    \item \detailhead{Error Handling}
+        \begin{itemize}[leftmargin=2.2em,topsep=2pt,itemsep=3pt,parsep=0pt,label=$\circ$]
+            \item \textbf{Not Authenticated}: When a guest tries to open the identity tab, the user is sent to the login page.
+            \item \textbf{Missing or Invalid File}: When a required file is missing or invalid, the backend returns an error and the form shows the corresponding message.
+            \item \textbf{AI Service Error or Timeout}: When the AI service is unreachable or times out, the backend throws an error without creating a verification record.
+            \item \textbf{Lost Connection}: When the connection to the server is lost during submission, the request is not saved and the user is asked to try again.
+        \end{itemize}
+    \item \detailhead{Security Measures}
+        \begin{itemize}[leftmargin=2.2em,topsep=2pt,itemsep=3pt,parsep=0pt,label=$\circ$]
+            \item Only the owner of the profile may submit identity documents, and the check is made again on the server.
+            \item Uploaded files are validated for type and size before they are processed.
+            \item Extracted identity data and file references are stored so that the request can be audited.
+            \item Duplicate detection is performed on the server, so repeated registrations cannot be hidden from the browser.
+            \item The identity verification screens are only available to administrators.
+        \end{itemize}
+\end{itemize}

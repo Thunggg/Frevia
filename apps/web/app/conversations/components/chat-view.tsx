@@ -4,8 +4,12 @@ import { useFormatter, useTranslations } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useQueryClient } from "@tanstack/react-query";
 import { useActionPermission } from "@/hooks/use-action-permission";
+import { notificationKeys } from "@/hooks/use-notifications";
 import {
+  appendMessageToConversationCaches,
+  removeMessageFromConversationCaches,
   useConversationDetail,
   useConversationMessages,
   useConversations,
@@ -33,12 +37,8 @@ import {
   Paperclip,
   Send,
   Trash2,
-  UserRound,
 } from "@/components/icons";
-import type {
-  DirectMessageType,
-  MessageAttachmentType,
-} from "@shared/types";
+import type { DirectMessageType, MessageAttachmentType } from "@shared/types";
 
 const MAX_FILE_SIZE = 25 * 1024 * 1024;
 
@@ -77,7 +77,8 @@ export function ChatView({
   const t = useTranslations("chat");
   const tCommon = useTranslations("common");
   const format = useFormatter();
-  const { can } = useActionPermission();
+  const queryClient = useQueryClient();
+  const { can, isLoading: isPermissionLoading } = useActionPermission();
   const canViewConversation = can("GET", "/api/conversations/:id");
   const canViewMessages = can("GET", "/api/conversations/:id/messages");
   const canSendMessage = can("POST", "/api/conversations/:id/messages");
@@ -112,11 +113,11 @@ export function ChatView({
       : Number(targetIdOrSlug) || 0);
 
   const { data: messages, isLoading } = useConversationMessages(
-    targetIdOrSlug ?? 0,
+    conversation?.id ?? targetIdOrSlug ?? 0,
     canViewMessages,
   );
   const restSend = useSendConversationMessage();
-  const restMarkRead = useMarkConversationRead();
+  const { mutate: markConversationRead } = useMarkConversationRead();
   const restDelete = useDeleteConversationMessage();
   const uploadFile = useUploadConversationFile();
 
@@ -126,6 +127,7 @@ export function ChatView({
   const [uploading, setUploading] = useState(false);
   const endRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const lastMarkedRef = useRef<string | null>(null);
   const otherTypingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(
     null,
   );
@@ -143,12 +145,26 @@ export function ChatView({
 
   useEffect(() => {
     if (!conversationId || !canMarkRead) return;
+    const mode = socket && connected ? "ws" : "rest";
+    const markKey = `${conversationId}:${mode}`;
+    if (lastMarkedRef.current === markKey) return;
+    lastMarkedRef.current = markKey;
+
     if (socket && connected) {
       socket.emit("message:read", { conversationId });
+      // Đọc hội thoại -> thông báo tin nhắn mới của hội thoại này hết chưa đọc
+      void queryClient.invalidateQueries({ queryKey: notificationKeys.all });
     } else {
-      restMarkRead.mutate(conversationId);
+      markConversationRead(conversationId);
     }
-  }, [socket, connected, conversationId, restMarkRead, canMarkRead]);
+  }, [
+    socket,
+    connected,
+    conversationId,
+    markConversationRead,
+    canMarkRead,
+    queryClient,
+  ]);
 
   useEffect(() => {
     if (!socket || !canMarkRead) return;
@@ -179,7 +195,10 @@ export function ChatView({
       clearTimeout(otherTypingTimeoutRef.current);
     }
 
-    const handler = (payload: { conversationId: number; isTyping: boolean }) => {
+    const handler = (payload: {
+      conversationId: number;
+      isTyping: boolean;
+    }) => {
       if (payload.conversationId !== conversationId) return;
 
       if (payload.isTyping) {
@@ -212,8 +231,26 @@ export function ChatView({
   }, [socket, conversationId]);
 
   useEffect(() => {
-    endRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+    const scrollToBottom = () => {
+      endRef.current?.scrollIntoView({ behavior: "auto", block: "end" });
+    };
+    scrollToBottom();
+    const timer = setTimeout(scrollToBottom, 120);
+    return () => clearTimeout(timer);
+  }, [messages, conversationId]);
+
+  useEffect(() => {
+    if (!socket) return;
+    const handler = (payload: { message?: string }) => {
+      toastError({
+        message: payload?.message || t("sendFailedFallback"),
+      });
+    };
+    socket.on("message:error", handler);
+    return () => {
+      socket.off("message:error", handler);
+    };
+  }, [socket, t]);
 
   const handleInputChange = (value: string) => {
     setInput(value);
@@ -229,15 +266,58 @@ export function ChatView({
     }, 1500);
   };
 
+  const activeSlug = conversation?.slug ?? conversationSlug;
+  const sendTarget = conversationId || targetIdOrSlug;
+
+  const sendMessageViaRest = (
+    text: string,
+    attachment?: MessageAttachmentType,
+  ) => {
+    if (!sendTarget) return;
+    restSend.mutate(
+      {
+        conversationId: sendTarget,
+        slug: activeSlug,
+        message: text,
+        attachment,
+      },
+      {
+        onError: (error) => {
+          toastError({
+            message: error.message || t("sendFailedFallback"),
+          });
+        },
+      },
+    );
+  };
+
   const handleSend = () => {
     const trimmed = input.trim();
-    if (!trimmed) return;
+    if (!trimmed || !sendTarget) return;
 
     if (socket && socket.connected) {
-      socket.emit("message:send", { conversationId, message: trimmed });
-      socket.emit("typing", { conversationId, isTyping: false });
+      socket.timeout(5000).emit(
+        "message:send",
+        { conversationId: sendTarget, message: trimmed },
+        (
+          err: Error | null,
+          ack?: { success?: boolean; message?: DirectMessageType },
+        ) => {
+          if (err || !ack?.success) {
+            sendMessageViaRest(trimmed);
+            return;
+          }
+          if (ack.message) {
+            appendMessageToConversationCaches(queryClient, ack.message, [
+              sendTarget,
+              activeSlug,
+            ]);
+          }
+        },
+      );
+      socket.emit("typing", { conversationId: sendTarget, isTyping: false });
     } else {
-      restSend.mutate({ conversationId, message: trimmed });
+      sendMessageViaRest(trimmed);
     }
 
     if (typingStopTimeoutRef.current) {
@@ -248,19 +328,38 @@ export function ChatView({
   };
 
   const sendAttachmentMessage = (attachment: MessageAttachmentType) => {
+    if (!sendTarget) return;
     if (socket && socket.connected) {
-      socket.emit("message:send", {
-        conversationId,
-        message: "",
-        attachment,
-      });
+      socket.timeout(5000).emit(
+        "message:send",
+        {
+          conversationId: sendTarget,
+          message: "",
+          attachment,
+        },
+        (
+          err: Error | null,
+          ack?: { success?: boolean; message?: DirectMessageType },
+        ) => {
+          if (err || !ack?.success) {
+            sendMessageViaRest("", attachment);
+            return;
+          }
+          if (ack.message) {
+            appendMessageToConversationCaches(queryClient, ack.message, [
+              sendTarget,
+              activeSlug,
+            ]);
+          }
+        },
+      );
     } else {
-      restSend.mutate({ conversationId, message: "", attachment });
+      sendMessageViaRest("", attachment);
     }
   };
 
   const handleFileSelect = (file: File | undefined) => {
-    if (!file) return;
+    if (!file || !sendTarget) return;
 
     if (file.size > MAX_FILE_SIZE) {
       toastError({
@@ -271,7 +370,7 @@ export function ChatView({
 
     setUploading(true);
     uploadFile.mutate(
-      { conversationId, file },
+      { conversationId: sendTarget, file },
       {
         onSuccess: (attachment) => {
           sendAttachmentMessage(attachment);
@@ -287,10 +386,34 @@ export function ChatView({
   };
 
   const handleDeleteMessage = (messageId: number) => {
+    if (!sendTarget) return;
     if (socket && socket.connected) {
-      socket.emit("message:delete", { conversationId, messageId });
+      socket.timeout(5000).emit(
+        "message:delete",
+        { conversationId: sendTarget, messageId },
+        (err: Error | null, ack?: { success?: boolean }) => {
+          if (err || !ack?.success) {
+            restDelete.mutate({
+              conversationId: sendTarget,
+              slug: activeSlug,
+              messageId,
+            });
+            return;
+          }
+          removeMessageFromConversationCaches(
+            queryClient,
+            sendTarget,
+            messageId,
+            [activeSlug],
+          );
+        },
+      );
     } else {
-      restDelete.mutate({ conversationId, messageId });
+      restDelete.mutate({
+        conversationId: sendTarget,
+        slug: activeSlug,
+        messageId,
+      });
     }
   };
 
@@ -306,11 +429,15 @@ export function ChatView({
     tCommon("userFallback", { id: otherUser?.id ?? "" });
   const avatarUrl = otherUser?.profile?.avatarUrl ?? undefined;
 
-  if (!canViewConversation) {
+  if (!isPermissionLoading && !canViewConversation) {
     return (
       <div className="flex h-full flex-col items-center justify-center p-6 text-center text-muted-foreground font-sans">
-        <p className="text-sm font-semibold text-foreground">Không có quyền truy cập</p>
-        <p className="mt-1 text-xs">Bạn không có quyền xem chi tiết cuộc trò chuyện này.</p>
+        <p className="text-sm font-semibold text-foreground">
+          {t("noPermissionTitle")}
+        </p>
+        <p className="mt-1 text-xs">
+          {t("noPermissionViewConversation")}
+        </p>
       </div>
     );
   }
@@ -333,32 +460,29 @@ export function ChatView({
             </AvatarFallback>
           </Avatar>
           <div className="min-w-0">
-            <h3 className="truncate text-sm font-bold text-foreground font-sans">
-              {displayName}
-            </h3>
-            <p className="text-[11px] text-muted-foreground flex items-center gap-1 font-normal">
-              <span className="inline-block size-1.5 rounded-full bg-[#0069D3]" />
-              {t("active")}
-            </p>
+            {otherUser?.id ? (
+              <Link
+                href={`/profiles/${otherUser.id}`}
+                className="truncate text-sm font-bold text-foreground font-sans hover:underline"
+              >
+                {displayName}
+              </Link>
+            ) : (
+              <h3 className="truncate text-sm font-bold text-foreground font-sans">
+                {displayName}
+              </h3>
+            )}
           </div>
         </div>
-
-        {otherUser?.id ? (
-          <Link
-            href={`/profiles/${otherUser.id}`}
-            className="rounded-full bg-[#F1F0F5] hover:bg-[#EAE9F0] dark:bg-zinc-800 dark:hover:bg-zinc-700 px-3.5 py-1.5 text-xs font-medium text-foreground transition-colors flex items-center gap-1.5 shrink-0"
-          >
-            <UserRound className="size-3.5 text-muted-foreground" />
-            <span>{t("profile")}</span>
-          </Link>
-        ) : null}
       </div>
 
       {/* Messages Stream */}
       <div className="flex-1 space-y-3 overflow-y-auto p-4 sm:p-6">
-        {!canViewMessages ? (
+        {!isPermissionLoading && !canViewMessages ? (
           <div className="flex h-full flex-col items-center justify-center text-center p-6 text-muted-foreground">
-            <p className="text-sm font-medium">Bạn không có quyền xem tin nhắn trong cuộc trò chuyện này.</p>
+            <p className="text-sm font-medium">
+              {t("noPermissionViewMessages")}
+            </p>
           </div>
         ) : isLoading ? (
           <div className="flex h-full items-center justify-center px-4 py-8">
@@ -563,9 +687,9 @@ export function ChatView({
 
       {/* Modern Capsule Input Bar */}
       <div className="border-t border-border bg-background/95 backdrop-blur p-3 sm:p-4">
-        {!canSendMessage ? (
+        {!isPermissionLoading && !canSendMessage ? (
           <div className="flex items-center justify-center rounded-xl bg-muted/40 p-3 text-xs text-muted-foreground">
-            Bạn không có quyền gửi tin nhắn trong cuộc hội thoại này.
+            {t("noPermissionSendMessage")}
           </div>
         ) : (
           <form

@@ -64,6 +64,8 @@ KINDS = {
 class Cls:
     def __init__(self, cid, name, attrs=None, methods=None, stereo=None, kind="class",
                  width=None, height=None):
+        if stereo and kind == "class":
+            kind = "stereo"
         self.id = cid
         self.name = name
         self.attrs = attrs or []
@@ -97,7 +99,7 @@ class Cls:
         if self.kind == "note":
             self.w = self.width or 380
         else:
-            self.w = self.width or max(300, min(640, int(longest * 7.45) + 26))
+            self.w = self.width or max(260, int(longest * 6.95) + 24)
 
 
 def C(cid, name, attrs=None, methods=None, stereo=None, kind="class", width=None):
@@ -140,31 +142,14 @@ def cell(cid, value, style, parent="1", vertex=True, geometry=None, extra=""):
 # Diagram builder
 # --------------------------------------------------------------------------
 
-COL_GAP = 110
-TOP_Y = 160
-STACK_GAP = 80
-EDGE_TOP_Y = 90
+COL_GAP = 95
+TOP_Y = 95
+STACK_GAP = 42
+ROW_GAP = 105
+EDGE_TOP_Y = 26
 
 
-def build(columns, edges, path):
-    """columns: list[list[Cls]] (one list per layer, left to right)."""
-    x = 40
-    placed = {}
-    for column in columns:
-        if not column:
-            continue
-        col_w = max(cls.compute_size() or cls.w for cls in column)
-        y = TOP_Y
-        for cls in column:
-            cls.x = x
-            cls.y = y
-            cls.compute_size()
-            cls.w = col_w if cls.kind != "note" else cls.w
-            y += cls.h + STACK_GAP
-            placed[cls.id] = cls
-        x += col_w + COL_GAP
-
-    # Fan out multiple edges leaving / entering the same class.
+def _route_edges(placed, column_of, stack_index, row_of, row1_bottom, row2_top, edges):
     outgoing = {}
     incoming = {}
     for src_id, tgt_id, _label, _dashed, _mode in edges:
@@ -174,52 +159,47 @@ def build(columns, edges, path):
     exit_frac = {}
     entry_frac = {}
     for src_id, targets in outgoing.items():
-        targets = sorted(targets, key=lambda tid: placed[tid].y)
+        targets = sorted(targets, key=lambda tid: (placed[tid].y, placed[tid].x))
         n = len(targets)
         for i, tid in enumerate(targets):
             exit_frac[(src_id, tid)] = 0.5 if n == 1 else 0.16 + 0.68 * i / (n - 1)
     for tgt_id, sources in incoming.items():
-        sources = sorted(sources, key=lambda sid: placed[sid].y)
+        sources = sorted(sources, key=lambda sid: (placed[sid].y, placed[sid].x))
         n = len(sources)
         for i, sid in enumerate(sources):
             entry_frac[(sid, tgt_id)] = 0.5 if n == 1 else 0.16 + 0.68 * i / (n - 1)
 
-    body = []
-    for column in columns:
-        for cls in column:
-            body.append(render_class(cls))
-
-    column_of = {}
-    stack_index = {}
-    for ci, column in enumerate(columns):
-        for si, cls in enumerate(column):
-            column_of[cls.id] = ci
-            stack_index[cls.id] = si
-
     top_lane = 0
     enum_lane = 0
+    gap_lane = 0
     long_lane = 0
     vr_lane = 0
+    corridor_lane = 0
+    cross_lane = 0
+    body = []
 
     for idx, (src_id, tgt_id, label, dashed, mode) in enumerate(edges):
         src = placed[src_id]
         tgt = placed[tgt_id]
         ef = exit_frac[(src_id, tgt_id)]
         nf = entry_frac[(src_id, tgt_id)]
+        sy = src.y + src.h * ef
+        ty = tgt.y + tgt.h * nf
 
         style = EDGE_BASE + ("dashed=1;" if dashed else "")
         points = []
         if mode == "v":
-            same_col = column_of[src_id] == column_of[tgt_id]
+            same_col = (row_of.get(src_id), column_of.get(src_id)) == (
+                row_of.get(tgt_id), column_of.get(tgt_id)
+            )
             adjacent = same_col and abs(stack_index[src_id] - stack_index[tgt_id]) == 1
             if adjacent:
-                if stack_index[tgt_id] > stack_index[src_id]:  # target below
+                if stack_index[tgt_id] > stack_index[src_id]:
                     style += "exitX=0.5;exitY=1;entryX=0.5;entryY=0;"
-                else:  # target above
+                else:
                     style += "exitX=0.5;exitY=0;entryX=0.5;entryY=1;"
             elif same_col:
-                # Long relation: route around the left side of the stack.
-                gx = src.x - 40 - 30 * long_lane
+                gx = src.x - 24 - 14 * long_lane
                 long_lane += 1
                 style += "exitX=0;exitY=0.5;entryX=0;entryY=0.5;"
                 points = [
@@ -227,31 +207,55 @@ def build(columns, edges, path):
                     (gx, tgt.y + tgt.h / 2),
                 ]
             else:
-                style += "exitX=0.5;exitY=1;entryX=0.5;entryY=0;"
+                if tgt.x >= src.x:
+                    lane_x = src.x + src.w + 18 + 14 * gap_lane
+                    gap_lane += 1
+                    style += f"exitX=1;exitY={ef:.4f};entryX=0;entryY={nf:.4f};"
+                    points = [(lane_x, sy), (lane_x, ty)]
+                else:
+                    lane_x = tgt.x + tgt.w + 18 + 14 * gap_lane
+                    gap_lane += 1
+                    style += f"exitX=0;exitY={ef:.4f};entryX=1;entryY={nf:.4f};"
+                    points = [(lane_x, sy), (lane_x, ty)]
         elif mode == "top":
-            lane_y = EDGE_TOP_Y - 30 * top_lane
-            off = 12 * top_lane
+            lane_y = EDGE_TOP_Y + 18 * top_lane
+            x1 = src.x + src.w + 18 + 12 * top_lane
+            x2 = tgt.x - 18 - 12 * top_lane
             top_lane += 1
             style += f"exitX=1;exitY={ef:.4f};entryX=0;entryY={nf:.4f};"
-            points = [
-                (src.x + src.w + 40 + off, lane_y),
-                (tgt.x - 40 - off, lane_y),
-            ]
+            points = [(x1, sy), (x1, lane_y), (x2, lane_y), (x2, ty)]
+        elif mode == "corridor":
+            mid_y = row1_bottom + 36 + 18 * corridor_lane
+            corridor_lane += 1
+            if row_of[src_id] == 0 and row_of[tgt_id] == 1:
+                style += f"exitX={ef:.4f};exitY=1;entryX={nf:.4f};entryY=0;"
+                points = [
+                    (src.x + src.w * ef, mid_y),
+                    (tgt.x + tgt.w * nf, mid_y),
+                ]
+            elif row_of[src_id] == 1 and row_of[tgt_id] == 0:
+                style += f"exitX={ef:.4f};exitY=0;entryX={nf:.4f};entryY=1;"
+                points = [
+                    (src.x + src.w * ef, mid_y),
+                    (tgt.x + tgt.w * nf, mid_y),
+                ]
+            else:
+                lane_y = row2_top - 26 - 18 * corridor_lane
+                x1 = src.x + src.w + 18
+                x2 = tgt.x - 18
+                style += f"exitX=1;exitY={ef:.4f};entryX=0;entryY={nf:.4f};"
+                points = [(x1, sy), (x1, lane_y), (x2, lane_y), (x2, ty)]
+        elif mode == "hl_col":
+            style += f"exitX=0;exitY={ef:.4f};entryX=1;entryY={nf:.4f};"
         elif mode == "enum":
-            # Schema -> enum: keep each link in its own vertical lane.
-            lane_x = src.x + src.w + 22 + 15 * enum_lane
+            lane_x = src.x + src.w + 18 + 11 * enum_lane
             enum_lane += 1
             style += f"exitX=1;exitY={ef:.4f};entryX=0;entryY={nf:.4f};"
-            points = [
-                (lane_x, src.y + src.h * ef),
-                (lane_x, tgt.y + tgt.h * nf),
-            ]
+            points = [(lane_x, sy), (lane_x, ty)]
         elif mode == "hl":
-            # Right-to-left link (service -> type) through the column gap.
             style += f"exitX=0;exitY={ef:.4f};entryX=1;entryY={nf:.4f};"
         elif mode == "vr":
-            # Same-column link routed down the right-hand gap.
-            lane_x = src.x + src.w + 35 + 25 * vr_lane
+            lane_x = src.x + src.w + 22 + 18 * vr_lane
             vr_lane += 1
             style += "exitX=1;exitY=0.5;entryX=1;entryY=0.5;"
             points = [
@@ -259,7 +263,22 @@ def build(columns, edges, path):
                 (lane_x, tgt.y + tgt.h / 2),
             ]
         else:  # horizontal
-            style += f"exitX=1;exitY={ef:.4f};entryX=0;entryY={nf:.4f};"
+            if tgt.x > src.x + src.w + 140 and row_of.get(src_id) == row_of.get(tgt_id):
+                lane_y = (
+                    (EDGE_TOP_Y + 18 * cross_lane)
+                    if row_of.get(src_id) == 0
+                    else (row2_top - 26 - 18 * cross_lane)
+                )
+                x1 = src.x + src.w + 18
+                x2 = tgt.x - 18
+                cross_lane += 1
+                style += f"exitX=1;exitY={ef:.4f};entryX=0;entryY={nf:.4f};"
+                points = [(x1, sy), (x1, lane_y), (x2, lane_y), (x2, ty)]
+            else:
+                if tgt.x >= src.x:
+                    style += f"exitX=1;exitY={ef:.4f};entryX=0;entryY={nf:.4f};"
+                else:
+                    style += f"exitX=0;exitY={ef:.4f};entryX=1;entryY={nf:.4f};"
 
         geo = '<mxGeometry relative="1" as="geometry">'
         if points:
@@ -276,6 +295,52 @@ def build(columns, edges, path):
             f"        </mxCell>"
         )
         body.append(edge)
+    return body
+
+
+def build_grid(row1_cols, row2_cols, edges, path):
+    """Arrange diagram in 2 compact horizontal bands (row1 above row2) for docs."""
+    placed = {}
+    column_of = {}
+    stack_index = {}
+    row_of = {}
+
+    def place_row(cols, row_idx, start_y):
+        x = 50
+        max_bottom = start_y
+        for ci, column in enumerate(cols):
+            if not column:
+                continue
+            col_w = max((cls.compute_size() or cls.w) for cls in column)
+            y = start_y
+            for si, cls in enumerate(column):
+                cls.x = x
+                cls.y = y
+                cls.compute_size()
+                cls.w = col_w if cls.kind != "note" else cls.w
+                y += cls.h + STACK_GAP
+                placed[cls.id] = cls
+                column_of[cls.id] = ci
+                stack_index[cls.id] = si
+                row_of[cls.id] = row_idx
+                if cls.y + cls.h > max_bottom:
+                    max_bottom = cls.y + cls.h
+            x += col_w + COL_GAP
+        return max_bottom
+
+    row1_bottom = place_row(row1_cols, 0, TOP_Y)
+    row2_top = row1_bottom + ROW_GAP
+    place_row(row2_cols, 1, row2_top)
+
+    body = []
+    for row_cols in (row1_cols, row2_cols):
+        for column in row_cols:
+            for cls in column:
+                body.append(render_class(cls))
+
+    body.extend(
+        _route_edges(placed, column_of, stack_index, row_of, row1_bottom, row2_top, edges)
+    )
 
     xml = f'''<mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/29.0.3 Chrome/140.0.7339.249 Electron/38.7.0 Safari/537.36" version="29.0.3">
   <diagram id="d" name="Class Diagram">
@@ -291,7 +356,18 @@ def build(columns, edges, path):
 '''
     with open(path, "w", encoding="utf-8", newline="\n") as fh:
         fh.write(xml)
-    print(f"wrote {os.path.basename(path)}  ({len(columns)} layers, {len(edges)} edges)")
+    all_x = [c.x + c.w for c in placed.values()]
+    all_y = [c.y + c.h for c in placed.values()]
+    w = max(all_x) - 50
+    h = max(all_y) - TOP_Y
+    print(f"wrote {os.path.basename(path)}  ({w}x{h}, ratio={w/h:.2f}, {len(edges)} edges)")
+
+
+def build(columns, edges, path):
+    """Legacy wrapper if needed; splits 7-col flow into 2 compact rows."""
+    row1 = columns[:3]
+    row2 = columns[3:]
+    build_grid(row1, row2, edges, path)
 
 
 def render_class(cls: Cls) -> str:
@@ -360,11 +436,11 @@ def permission_guard():
 # --------------------------------------------------------------------------
 
 def schema_job():
-    return C("sJob", "Job", kind="schema", attrs=[
+    return C("sJob", "Job", kind="schema", stereo="schema", attrs=[
         "+id: number", "+clientId: number", "+title: string", "+slug: string",
         "+description: string | null", "+budgetMin: Decimal | null",
         "+budgetMax: Decimal | null", "+budgetType: BudgetType",
-        "+deadline: Date | null", "+status: JobStatus", "+featured: boolean",
+        "+deadline: Date | null", "+status: JobStatus",
         "+expiryDate: Date | null", "+hiringType: HiringType",
         "+positionsRequired: number", "+positionsFilled: number",
         "+createdAt: Date", "+updatedAt: Date", "+deletedAt: Date | null",
@@ -372,12 +448,12 @@ def schema_job():
 
 
 def schema_job_skill():
-    return C("sJobSkill", "JobSkill", kind="schema",
+    return C("sJobSkill", "JobSkill", kind="schema", stereo="schema",
              attrs=["+jobId: number", "+skillId: number"])
 
 
 def schema_skill():
-    return C("sSkill", "Skill", kind="schema", attrs=[
+    return C("sSkill", "Skill", kind="schema", stereo="schema", attrs=[
         "+id: number", "+name: string", "+slug: string",
         "+description: string | null", "+deletedAt: Date | null",
         "+createdAt: Date", "+updatedAt: Date",
@@ -385,7 +461,7 @@ def schema_skill():
 
 
 def schema_job_category():
-    return C("sJobCategory", "JobCategory", kind="schema", attrs=[
+    return C("sJobCategory", "JobCategory", kind="schema", stereo="schema", attrs=[
         "+id: number", "+name: string", "+slug: string",
         "+description: string | null", "+status: JobCategoryStatus",
         "+deletedAt: Date | null", "+createdAt: Date", "+updatedAt: Date",
@@ -393,19 +469,19 @@ def schema_job_category():
 
 
 def schema_job_job_category():
-    return C("sJobJobCategory", "JobJobCategory", kind="schema",
+    return C("sJobJobCategory", "JobJobCategory", kind="schema", stereo="schema",
              attrs=["+jobId: number", "+categoryId: number"])
 
 
 def schema_user():
-    return C("sUser", "User", kind="schema", attrs=[
+    return C("sUser", "User", kind="schema", stereo="schema", attrs=[
         "+id: number", "+email: string", "+isBanned: boolean",
         "+deletedAt: Date | null", "+createdAt: Date",
     ])
 
 
 def schema_profile():
-    return C("sProfile", "Profile", kind="schema", attrs=[
+    return C("sProfile", "Profile", kind="schema", stereo="schema", attrs=[
         "+id: number", "+userId: number", "+displayName: string | null",
         "+avatarUrl: string | null", "+bio: string | null",
         "+availabilityStatus: AvailabilityStatus",
@@ -414,7 +490,7 @@ def schema_profile():
 
 
 def schema_freelancer_profile():
-    return C("sFreelancerProfile", "FreelancerProfile", kind="schema", attrs=[
+    return C("sFreelancerProfile", "FreelancerProfile", kind="schema", stereo="schema", attrs=[
         "+id: number", "+profileId: number", "+title: string | null",
         "+experience: string[]", "+education: string[]",
         "+certifications: string[]", "+languages: string[]",
@@ -445,14 +521,14 @@ def enum_job_category_status():
 
 def enum_proposal_status():
     return C("eProposalStatus", "ProposalStatus", kind="enum",
-             stereo="enum", attrs=["DRAFT", "SUBMITTED", "INTERVIEWING", "HIRED",
+             stereo="enum", attrs=["DRAFT", "SUBMITTED", "HIRED",
                                     "REJECTED", "WITHDRAWN", "EXPIRED"])
 
 
 def enum_contract_status():
     return C("eContractStatus", "ContractStatus", kind="enum", stereo="enum",
-             attrs=["PENDING_SIGN", "ACTIVE", "COMPLETED", "DISPUTED",
-                    "CANCELLED"])
+             attrs=["AWAITING_PAYMENT", "PENDING_SIGN", "ACTIVE", "COMPLETED",
+                    "DISPUTED", "CANCELLED", "REJECTED", "EXPIRED"])
 
 
 def enum_notification_type():
@@ -462,6 +538,7 @@ def enum_notification_type():
                                     "PAYMENT_RELEASED", "DISPUTE_OPENED",
                                     "REVIEW_RECEIVED", "REVIEW_RESPONSE_RECEIVED",
                                     "SYSTEM_ANNOUNCEMENT", "MESSAGE_NEW",
+                                    "POST_COMMENT", "POST_LIKE",
                                     "MILESTONE_COMPLETED", "TASK_OVERDUE"])
 
 
@@ -471,7 +548,7 @@ def enum_platform_fee_status():
 
 
 def schema_job_bookmark():
-    return C("sJobBookmark", "JobBookmark", kind="schema",
+    return C("sJobBookmark", "JobBookmark", kind="schema", stereo="schema",
              attrs=["+userId: number", "+jobId: number", "+createdAt: Date"])
 
 
@@ -480,8 +557,8 @@ def schema_job_bookmark():
 # --------------------------------------------------------------------------
 
 def diagram_job_browsing():
-    columns = [
-        [C("route", "BrowseJobRoutes", kind="route", attrs=[
+    row1 = [
+        [C("route", "BrowseJobRoutes", kind="route", stereo="route", attrs=[
             "+GET /jobs (Public)",
             "+GET /jobs/:slug (Public)",
         ])],
@@ -495,12 +572,15 @@ def diagram_job_browsing():
             C("d1", "ViewListJobQueryDto", stereo="dto", attrs=[
                 "+page: number", "+limit: number", "+search?: string",
                 "+status?: JobStatus", "+budgetType?: BudgetType",
+                "+hiringType?: HiringType",
                 "+budgetMin?: number", "+budgetMax?: number",
                 "+createdAfter?: Date", "+skill?: string", "+category?: string",
-                "+featured?: boolean", "+clientId?: number",
-                '+sortBy: "createdAt" | "updatedAt" | "title" | "budgetMin" | "budgetMax" | "deadline" | "expiryDate"',
+                "+clientId?: number",
+                '+sortBy: "createdAt" | "updatedAt" | ...',
                 '+order: "asc" | "desc"',
             ]),
+        ],
+        [
             C("t1", "ViewListJobResponseType", stereo="type", attrs=[
                 "+data: JobType[]", "+pagination: JobPaginationType",
             ]),
@@ -508,26 +588,29 @@ def diagram_job_browsing():
                 "+page: number", "+limit: number", "+total: number",
                 "+totalPages: number",
             ]),
-            C("t3", "ViewJobDetailResType", stereo="type",
-              attrs=["+skills: JobSkillType[]", "+jobCategories: JobCategoryRefType[]"]),
+            C("t3", "ViewJobDetailResType", stereo="type", attrs=[
+                "+skills: JobSkillType[]",
+                "+jobCategories?: JobCategoryRefType[]",
+                "+proposalsCount?: number",
+            ]),
         ],
+    ]
+    row2 = [
         [C("svc", "BrowseJobService",
            attrs=["-browseJobRepository: BrowseJobRepository"],
            methods=[
-               "+viewListJob(filter: ViewListJobParsedFilterType): Promise<ViewListJobResponseType>",
-               "+viewJobDetail(slug: string): Promise<ViewJobDetailResType>",
+               "+viewListJob(filter: ViewListJobParsedFilterType): ViewListJobResponseType",
+               "+viewJobDetail(slug: string): ViewJobDetailResType",
            ])],
         [C("repo", "BrowseJobRepository",
            attrs=["-prisma: PrismaService"],
            methods=[
-               "+getJobLists(filter: ViewListJobParsedFilterType): Promise<{ jobs: JobType[]; total: number }>",
-               "+viewJobDetail(slug: string): Promise<ViewJobDetailResType>",
+               "+getJobLists(filter): { jobs: JobType[]; total: number }",
+               "+viewJobDetail(slug: string): ViewJobDetailResType",
                "-normalizeJob<T>(job: T)",
            ])],
-        [
-            schema_job(), schema_job_skill(), schema_skill(),
-            schema_job_category(), schema_job_job_category(), schema_user(),
-        ],
+        [schema_user(), schema_job_skill(), schema_skill(), schema_job_job_category()],
+        [schema_job(), schema_job_category()],
         [
             enum_job_status(), enum_budget_type(), enum_hiring_type(),
             enum_job_category_status(),
@@ -536,12 +619,12 @@ def diagram_job_browsing():
     edges = [
         ("route", "ctrl", "maps to", True, "h"),
         ("ctrl", "d1", "", True, "h"),
-        ("ctrl", "t1", "returns", True, "h"),
-        ("ctrl", "t3", "returns", True, "h"),
+        ("ctrl", "t1", "returns", True, "top"),
+        ("ctrl", "t3", "returns", True, "top"),
         ("t1", "t2", "uses", True, "v"),
-        ("ctrl", "svc", "calls", False, "top"),
+        ("ctrl", "svc", "calls", False, "corridor"),
         ("svc", "repo", "calls", False, "h"),
-        ("repo", "sJob", "maps to", True, "h"),
+        ("repo", "sJob", "maps to", True, "corridor"),
         ("sUser", "sJob", "1..*", True, "v"),
         ("sJob", "sJobSkill", "1..*", True, "v"),
         ("sJobSkill", "sSkill", "*..1", True, "v"),
@@ -552,7 +635,7 @@ def diagram_job_browsing():
         ("sJob", "eHiringType", "hiringType", True, "enum"),
         ("sJobCategory", "eJobCategoryStatus", "status", True, "enum"),
     ]
-    build(columns, edges, "UC-10_Job_Browsing_Class_Diagram.drawio")
+    build_grid(row1, row2, edges, "UC-10_Job_Browsing_Class_Diagram.drawio")
 
 
 # --------------------------------------------------------------------------
@@ -560,116 +643,144 @@ def diagram_job_browsing():
 # --------------------------------------------------------------------------
 
 def diagram_job_management():
-    columns = [
-        [C("route", "ManageJobRoutes", kind="route", attrs=[
-            "+GET /manage-jobs (AuthGuard, PermissionGuard)",
-            "+GET /manage-jobs/skills (AuthGuard, PermissionGuard)",
-            "+GET /manage-jobs/:id (AuthGuard, PermissionGuard)",
-            "+POST /manage-jobs (AuthGuard, PermissionGuard)",
-            "+PATCH /manage-jobs/:id (AuthGuard, PermissionGuard)",
-            "+DELETE /manage-jobs/:id (AuthGuard, PermissionGuard)",
-            "+PATCH /manage-jobs/:id/status (AuthGuard, PermissionGuard)",
-        ])],
+    row1 = [
+        [
+            C("route", "ManageJobRoutes", kind="route", stereo="route", attrs=[
+                "+GET /manage-jobs (AuthGuard, PermissionGuard)",
+                "+GET /manage-jobs/skills (AuthGuard, PermissionGuard)",
+                "+POST /manage-jobs/check-language (AuthGuard, PermissionGuard)",
+                "+GET /manage-jobs/:id (AuthGuard, PermissionGuard)",
+                "+POST /manage-jobs (AuthGuard, PermissionGuard)",
+                "+PATCH /manage-jobs/:id (AuthGuard, PermissionGuard)",
+                "+DELETE /manage-jobs/:id (AuthGuard, PermissionGuard)",
+                "+PATCH /manage-jobs/:id/publish (AuthGuard, PermissionGuard)",
+                "+PATCH /manage-jobs/:id/close (AuthGuard, PermissionGuard)",
+                "+PATCH /manage-jobs/:id/reopen (AuthGuard, PermissionGuard)",
+            ]),
+            auth_guard(), permission_guard(),
+        ],
         [
             C("ctrl", "ManageJobController",
               attrs=["-manageJobService: ManageJobService"],
               methods=[
-                  "+searchSkills(roleName: string, search?: string)",
-                  "+viewClientJobs(userId: number, roleName: string, query: ViewClientJobQueryDto)",
-                  "+viewClientJobDetail(userId: number, roleName: string, id: number)",
-                  "+createJob(userId: number, body: CreateJobBodyDto)",
-                  "+updateJob(userId: number, id: number, body: UpdateJobBodyDto)",
-                  "+deleteJob(userId: number, id: number)",
-                  "+changeJobStatus(userId: number, id: number, body: ChangeJobStatusBodyDto)",
+                  "+searchSkills(roleName, search?)",
+                  "+checkLanguage(userId, roleName, body: CheckLanguageBody)",
+                  "+viewClientJobs(userId, roleName, query: ViewClientJobQueryDto)",
+                  "+viewClientJobDetail(userId, roleName, id)",
+                  "+createJob(userId, roleName, body: CreateJobBodyDto)",
+                  "+updateJob(id, userId, roleName, body: UpdateJobBodyDto)",
+                  "+deleteJob(id, userId, roleName)",
+                  "+publishJob(id, userId, roleName)",
+                  "+closeJob(id, userId, roleName)",
+                  "+reopenJob(id, userId, roleName)",
               ]),
-            auth_guard(), permission_guard(),
+            C("d3", "ViewClientJobQueryDto", stereo="dto", attrs=[
+                "+page: number", "+limit: number", "+search?: string",
+                "+status?: JobStatus", "+budgetType?: BudgetType",
+                "+hiringType?: HiringType",
+                "+budgetMin?: number", "+budgetMax?: number",
+                "+createdAfter?: Date", "+skill?: string", "+category?: string",
+                "+clientId?: number",
+                '+sortBy: "createdAt" | "updatedAt" | ...',
+                '+order: "asc" | "desc"',
+            ]),
         ],
         [
             C("d1", "CreateJobBodyDto", stereo="dto", attrs=[
-                "+title: string", "+description?: string | null",
-                "+budgetMin?: number | null", "+budgetMax?: number | null",
-                "+budgetType: BudgetType", "+deadline?: Date | null",
-                "+expiryDate?: Date | null", "+skills: number[]",
-                "+jobCategories?: number[]", "+hiringType: HiringType",
-                "+positionsRequired: number",
+                "+title: string", "+description: string",
+                "+budgetMin: number", "+budgetMax: number",
+                "+budgetType: BudgetType", "+deadline: Date",
+                "+expiryDate: Date", "+skills: number[]",
+                "+jobCategories: number[]", "+hiringType?: HiringType",
+                "+positionsRequired?: number",
             ]),
             C("d2", "UpdateJobBodyDto", stereo="dto", attrs=[
-                "+title: string", "+description?: string | null",
-                "+budgetMin?: number | null", "+budgetMax?: number | null",
-                "+budgetType: BudgetType", "+deadline?: Date | null",
-                "+expiryDate?: Date | null", "+skills: number[]",
-                "+jobCategories?: number[]", "+hiringType: HiringType",
-                "+positionsRequired: number",
+                "+title: string", "+description: string",
+                "+budgetMin: number", "+budgetMax: number",
+                "+budgetType: BudgetType", "+deadline: Date",
+                "+expiryDate: Date", "+skills: number[]",
+                "+jobCategories: number[]", "+hiringType?: HiringType",
+                "+positionsRequired?: number",
             ]),
-            C("d3", "ChangeJobStatusBodyDto", stereo="dto",
-              attrs=["+status: JobStatus"]),
-            C("d4", "ViewClientJobQueryDto", stereo="dto", attrs=[
-                "+page: number", "+limit: number", "+search?: string",
-                "+status?: JobStatus", "+budgetType?: BudgetType",
-                "+budgetMin?: number", "+budgetMax?: number",
-                "+createdAfter?: Date", "+skill?: string", "+category?: string",
-                "+featured?: boolean", "+clientId?: number",
-                '+sortBy: "createdAt" | "updatedAt" | "title" | "budgetMin" | "budgetMax" | "deadline" | "expiryDate"',
-                '+order: "asc" | "desc"',
-            ]),
+        ],
+        [
             C("t1", "JobType", stereo="type", attrs=[
                 "+id: number", "+slug: string", "+clientId: number",
                 "+title: string", "+description: string | null",
                 "+budgetMin: number | null", "+budgetMax: number | null",
                 "+budgetType: BudgetType", "+deadline: Date | null",
-                "+status: JobStatus", "+featured: boolean",
-                "+expiryDate: Date | null", "+hiringType: HiringType",
-                "+positionsRequired: number", "+positionsFilled: number",
+                "+status: JobStatus", "+expiryDate: Date | null",
+                "+hiringType: HiringType", "+positionsRequired: number",
+                "+positionsFilled: number", "+createdAt: Date", "+updatedAt: Date",
                 "+skills?: JobSkillType[]",
                 "+jobCategories?: JobCategoryRefType[]",
+                "+proposalsCount?: number",
             ]),
             C("t2", "JobSkillType", stereo="type",
               attrs=["+jobId: number", "+skillId: number", "+skill: { name: string }"]),
             C("t3", "JobCategoryRefType", stereo="type",
               attrs=["+id: number", "+name: string", "+slug: string"]),
         ],
+    ]
+    row2 = [
         [
             C("svc", "ManageJobService",
               attrs=["-manageJobRepository: ManageJobRepository",
-                     "-embeddingOutbox: EmbeddingOutboxService"],
+                     "-embeddingOutbox: EmbeddingOutboxService",
+                     "-fastTextService: FastTextService",
+                     "-cacheService?: CacheService"],
               methods=[
-                  "+viewClientJobs(userId: number, roleName: string, filter: ViewListJobParsedFilterType): Promise<ViewListJobResponseType>",
-                  "+searchSkills(roleName: string, search?: string): Promise<{ id: number; name: string }[]>",
-                  "+viewClientJobDetail(userId: number, roleName: string, jobId: number): Promise<ViewJobDetailResType>",
-                  "+createJob(userId: number, body: CreateJobBodyType): Promise<JobType>",
-                  "+updateJob(userId: number, jobId: number, body: UpdateJobBodyType): Promise<JobType>",
-                  "+deleteJob(userId: number, jobId: number): Promise<void>",
-                  "+changeJobStatus(userId: number, jobId: number, body: ChangeJobStatusBodyType): Promise<ChangeJobStatusResponseType>",
+                  "+checkLanguage(title?, description?, userId?, roleName?, excludeJobId?)",
+                  "+viewClientJobs(userId, roleName, filter): ViewListJobResponseType",
+                  "+searchSkills(roleName, search?): { id: number; name: string }[]",
+                  "+viewClientJobDetail(userId, roleName, jobId): ViewJobDetailResType",
+                  "+createJob(userId, roleName, body: CreateJobBodyType): JobType",
+                  "+updateJob(userId, roleName, jobId, body: UpdateJobBodyType): JobType",
+                  "+deleteJob(userId, roleName, jobId): Promise<void>",
+                  "+publishJob(userId, roleName, jobId): Promise<JobType>",
+                  "+closeJob(userId, roleName, jobId): Promise<JobType>",
+                  "+reopenJob(userId, roleName, jobId): Promise<JobType>",
+                  "-validateJobLanguage(title?, description?): Promise<void>",
+                  "-assertClientRole(roleName): void",
+                  "-invalidateJobCategoryCache(): void",
               ]),
-            C("outbox", "EmbeddingOutboxService",
-              attrs=["-prisma: PrismaService"],
+            C("outbox", "EmbeddingOutboxService", stereo="utility",
+              attrs=["-prisma: PrismaService", "-index: RecommendationIndexService"],
               methods=[
+                  "+enqueue(input: EmbeddingOutboxInput): Promise<void>",
                   "+enqueueAndProcess(input: EmbeddingOutboxInput): Promise<void>",
-                  "+processPending(limit: number): Promise<void>",
+                  "+processPending(limit?: number): { processed: number; failed: number }",
+              ]),
+            C("fasttext", "FastTextService", stereo="utility",
+              methods=[
+                  "+detect(text: string): Promise<string>",
+                  "+isEnglish(text: string): Promise<boolean>",
               ]),
         ],
         [C("repo", "ManageJobRepository",
            attrs=["-prisma: PrismaService"],
            methods=[
-               "+getClientJobLists(clientId: number, filter: ViewListJobParsedFilterType)",
-               "+getClientJobDetail(clientId: number, jobId: number)",
-               "+createJob(clientId: number, data: CreateJobBodyType)",
-               "+updateJob(userId: number, jobId: number, data: UpdateJobBodyType)",
-               "+deleteJob(userId: number, jobId: number)",
-               "+changeJobStatus(userId: number, jobId: number, status: JobStatus)",
-               "+searchSkills(search?: string): Promise<Array<{ id: number; name: string }>>",
-               "-checkJobOwner(userId: number, jobId: number): Promise<void>",
-               "-replaceJobSkills(tx, jobId: number, skillIds: number[])",
-               "-replaceJobCategories(tx, jobId: number, categoryIds: number[])",
-               "-assertJobCategoriesUsable(tx, categoryIds: number[])",
+               "+getClientJobLists(clientId, filter)",
+               "+getClientJobDetail(clientId, jobId)",
+               "+hasDuplicateTitle(clientId, title, excludeJobId?): boolean",
+               "+createJob(clientId, data: CreateJobBodyType): JobType",
+               "+updateJob(userId, jobId, data: UpdateJobBodyType): JobType",
+               "+deleteJob(userId, jobId): Promise<void>",
+               "+publishJob(userId, jobId): Promise<JobType>",
+               "+closeJob(userId, jobId): Promise<JobType>",
+               "+reopenJob(userId, jobId): Promise<JobType>",
+               "+searchSkills(search?): Array<{ id: number; name: string }>",
+               "-autoCloseExpiredJobs(clientId?): Promise<void>",
+               "-checkJobOwner(userId, jobId)",
+               "-replaceJobSkills(tx, jobId, skillIds)",
+               "-replaceJobCategories(tx, jobId, categoryIds)",
+               "-assertJobCategoriesUsable(tx, categoryIds)",
                "-normalizeJob<T>(job: T)",
-               "-slugify(value: string): string",
-               "-createJobSlug(title: string): string",
+               "-slugify(value): string",
+               "-createJobSlug(title): string",
            ])],
-        [
-            schema_job(), schema_job_skill(), schema_skill(),
-            schema_job_job_category(), schema_job_category(), schema_user(),
-        ],
+        [schema_user(), schema_job_skill(), schema_skill(), schema_job_job_category()],
+        [schema_job(), schema_job_category()],
         [
             enum_job_status(), enum_budget_type(), enum_hiring_type(),
             enum_job_category_status(),
@@ -677,19 +788,19 @@ def diagram_job_management():
     ]
     edges = [
         ("route", "ctrl", "maps to", True, "h"),
-        ("route", "gAuth", "uses", True, "h"),
-        ("route", "gPerm", "uses", True, "h"),
+        ("route", "gAuth", "uses", True, "v"),
+        ("route", "gPerm", "uses", True, "v"),
         ("ctrl", "d1", "", True, "h"),
         ("ctrl", "d2", "", True, "h"),
-        ("ctrl", "d3", "", True, "h"),
-        ("ctrl", "d4", "", True, "h"),
-        ("ctrl", "t1", "returns", True, "h"),
+        ("ctrl", "d3", "", True, "v"),
+        ("ctrl", "t1", "returns", True, "top"),
         ("t1", "t2", "uses", True, "v"),
         ("t1", "t3", "uses", True, "vr"),
-        ("ctrl", "svc", "calls", False, "top"),
+        ("ctrl", "svc", "calls", False, "corridor"),
         ("svc", "repo", "calls", False, "h"),
         ("svc", "outbox", "uses", False, "v"),
-        ("repo", "sJob", "maps to", True, "h"),
+        ("svc", "fasttext", "uses", False, "v"),
+        ("repo", "sJob", "maps to", True, "corridor"),
         ("sUser", "sJob", "1..*", True, "v"),
         ("sJob", "sJobSkill", "1..*", True, "v"),
         ("sJobSkill", "sSkill", "*..1", True, "v"),
@@ -700,7 +811,7 @@ def diagram_job_management():
         ("sJob", "eHiringType", "hiringType", True, "enum"),
         ("sJobCategory", "eJobCategoryStatus", "status", True, "enum"),
     ]
-    build(columns, edges, "UC-11_Job_Management_Class_Diagram.drawio")
+    build_grid(row1, row2, edges, "UC-11_Job_Management_Class_Diagram.drawio")
 
 
 # --------------------------------------------------------------------------
@@ -708,33 +819,36 @@ def diagram_job_management():
 # --------------------------------------------------------------------------
 
 def diagram_bookmarked_jobs():
-    columns = [
-        [C("route", "ManageJobRoutes", kind="route", attrs=[
-            "+GET /manage-jobs/bookmarks (AuthGuard, PermissionGuard)",
-            "+POST /manage-jobs/jobs/:slug/bookmark (AuthGuard, PermissionGuard)",
-            "+GET /manage-jobs/jobs/:slug/bookmark (AuthGuard, PermissionGuard)",
-            "+DELETE /manage-jobs/bookmarks/:slug (AuthGuard, PermissionGuard)",
-        ])],
+    row1 = [
+        [
+            C("route", "ManageJobRoutes", kind="route", stereo="route", attrs=[
+                "+GET /manage-jobs/bookmarks (AuthGuard, PermissionGuard)",
+                "+POST /manage-jobs/jobs/:slug/bookmark (AuthGuard, PermissionGuard)",
+                "+GET /manage-jobs/jobs/:slug/bookmark (AuthGuard, PermissionGuard)",
+                "+DELETE /manage-jobs/bookmarks/:slug (AuthGuard, PermissionGuard)",
+            ]),
+            auth_guard(), permission_guard(),
+        ],
         [
             C("ctrl", "ManageJobController",
               attrs=["-manageJobService: ManageJobService"],
               methods=[
-                  "+viewBookmarkedJob(userId: number, roleName: string, query: ViewBookmarkedJobQueryDto)",
-                  "+bookmarkJob(userId: number, roleName: string, slug: string)",
-                  "+getBookmarkStatus(userId: number, roleName: string, slug: string)",
-                  "+removeBookmark(userId: number, slug: string)",
+                  "+viewBookmarkedJob(userId, roleName, query: ViewBookmarkedJobQueryDto)",
+                  "+bookmarkJob(userId, roleName, slug)",
+                  "+getBookmarkStatus(userId, roleName, slug)",
+                  "+removeBookmark(userId, slug)",
               ]),
-            auth_guard(), permission_guard(),
         ],
         [
             C("d1", "ViewBookmarkedJobQueryDto", stereo="dto", attrs=[
                 "+page: number", "+limit: number", "+search?: string",
                 "+status?: JobStatus", "+budgetType?: BudgetType",
                 "+budgetMin?: number", "+budgetMax?: number", "+skill?: string",
-                "+featured?: boolean",
-                '+sortBy: "createdAt" | "updatedAt" | "title" | "budgetMin" | "budgetMax" | "deadline" | "expiryDate"',
+                '+sortBy: "createdAt" | "updatedAt" | ...',
                 '+order: "asc" | "desc"',
             ]),
+        ],
+        [
             C("t1", "ViewBookmarkedJobResponseType", stereo="type", attrs=[
                 "+data: ViewJobDetailResType[]",
                 "+pagination: JobPaginationType",
@@ -743,37 +857,39 @@ def diagram_bookmarked_jobs():
                 "+userId: number", "+jobId: number", "+createdAt: Date",
             ]),
         ],
+    ]
+    row2 = [
         [C("svc", "ManageJobService",
            attrs=["-manageJobRepository: ManageJobRepository"],
            methods=[
-               "+viewBookmarkedJob(userId: number, roleName: string, filter: ViewBookmarkedJobParsedFilterType): Promise<ViewBookmarkedJobResponseType>",
-               "+bookmarkJob(userId: number, roleName: string, slug: string): Promise<void>",
-               "+getBookmarkStatus(userId: number, roleName: string, slug: string): Promise<{ isBookmarked: boolean }>",
-               "+removeBookmark(userId: number, slug: string): Promise<void>",
-               "-assertFreelancerRole(roleName: string): void",
+               "+viewBookmarkedJob(userId, roleName, filter): ViewBookmarkedJobResponseType",
+               "+bookmarkJob(userId, roleName, slug): Promise<void>",
+               "+getBookmarkStatus(userId, roleName, slug): { isBookmarked: boolean }",
+               "+removeBookmark(userId, slug): Promise<void>",
+               "-assertFreelancerRole(roleName): void",
            ])],
         [C("repo", "ManageJobRepository",
            attrs=["-prisma: PrismaService"],
            methods=[
-               "+getBookmarkedJobLists(userId: number, filter: ViewBookmarkedJobParsedFilterType)",
-               "+findJobBySlug(slug: string): Promise<Pick<JobType, \"id\"> | null>",
-               "+findBookmark(userId: number, jobId: number): Promise<JobBookmarkType | null>",
-               "+bookmarkJob(userId: number, jobId: number): Promise<JobBookmarkType>",
-               "+removeBookmark(userId: number, jobId: number): Promise<JobBookmarkType>",
+               "+getBookmarkedJobLists(userId, filter)",
+               "+findJobBySlug(slug): Pick<JobType, \"id\"> | null",
+               "+findBookmark(userId, jobId): JobBookmarkType | null",
+               "+bookmarkJob(userId, jobId): Promise<JobBookmarkType>",
+               "+removeBookmark(userId, jobId): Promise<JobBookmarkType>",
                "-normalizeJob<T>(job: T)",
            ])],
-        [schema_job_bookmark(), schema_job(), schema_job_skill(), schema_skill(),
-         schema_user()],
+        [schema_user(), schema_job_bookmark(), schema_job_skill(), schema_skill()],
+        [schema_job()],
         [enum_job_status(), enum_budget_type(), enum_hiring_type()],
     ]
     edges = [
         ("route", "ctrl", "maps to", True, "h"),
-        ("route", "gAuth", "uses", True, "h"),
-        ("route", "gPerm", "uses", True, "h"),
+        ("route", "gAuth", "uses", True, "v"),
+        ("route", "gPerm", "uses", True, "v"),
         ("ctrl", "d1", "", True, "h"),
-        ("ctrl", "t1", "returns", True, "h"),
-        ("svc", "t2", "uses", True, "hl"),
-        ("ctrl", "svc", "calls", False, "top"),
+        ("ctrl", "t1", "returns", True, "top"),
+        ("svc", "t2", "uses", True, "corridor"),
+        ("ctrl", "svc", "calls", False, "corridor"),
         ("svc", "repo", "calls", False, "h"),
         ("repo", "sJobBookmark", "maps to", True, "h"),
         ("sUser", "sJobBookmark", "1..*", True, "v"),
@@ -784,7 +900,7 @@ def diagram_bookmarked_jobs():
         ("sJob", "eBudgetType", "budgetType", True, "enum"),
         ("sJob", "eHiringType", "hiringType", True, "enum"),
     ]
-    build(columns, edges, "UC-12_Bookmarked_Jobs_Management_Class_Diagram.drawio")
+    build_grid(row1, row2, edges, "UC-12_Bookmarked_Jobs_Management_Class_Diagram.drawio")
 
 
 # --------------------------------------------------------------------------
@@ -792,32 +908,33 @@ def diagram_bookmarked_jobs():
 # --------------------------------------------------------------------------
 
 def diagram_saved_search():
-    columns = [
-        [C("route", "SavedSearchRoutes", kind="route", attrs=[
-            "+GET /saved-searches (AuthGuard, PermissionGuard)",
-            "+GET /saved-searches/:id (AuthGuard, PermissionGuard)",
-            "+POST /saved-searches (AuthGuard, PermissionGuard)",
-            "+PATCH /saved-searches/:id (AuthGuard, PermissionGuard)",
-            "+DELETE /saved-searches/:id (AuthGuard, PermissionGuard)",
-        ])],
+    row1 = [
+        [
+            C("route", "SavedSearchRoutes", kind="route", stereo="route", attrs=[
+                "+GET /saved-searches (AuthGuard, PermissionGuard)",
+                "+GET /saved-searches/:id (AuthGuard, PermissionGuard)",
+                "+POST /saved-searches (AuthGuard, PermissionGuard)",
+                "+DELETE /saved-searches/:id (AuthGuard, PermissionGuard)",
+            ]),
+            auth_guard(), permission_guard(),
+        ],
         [
             C("ctrl", "SavedSearchController",
               attrs=["-savedSearchService: SavedSearchService"],
               methods=[
-                  "+getSavedSearches(userId: number)",
-                  "+getSavedSearchDetail(userId: number, id: number)",
-                  "+createSavedSearch(userId: number, body: CreateSavedSearchBodyDto)",
-                  "+updateSavedSearch(userId: number, id: number, body: UpdateSavedSearchBodyDto)",
-                  "+deleteSavedSearch(userId: number, id: number)",
+                  "+getSavedSearches(userId, query: GetSavedSearchesQueryDto)",
+                  "+getSavedSearchDetail(userId, id)",
+                  "+createSavedSearch(userId, body: CreateSavedSearchBodyDto)",
+                  "+deleteSavedSearch(userId, id)",
               ]),
-            auth_guard(), permission_guard(),
         ],
         [
-            C("d1", "CreateSavedSearchBodyDto", stereo="dto", attrs=[
+            C("d1", "GetSavedSearchesQueryDto", stereo="dto", attrs=[
+                "+search?: string", '+order: "asc" | "desc"',
+            ]),
+            C("d2", "CreateSavedSearchBodyDto", stereo="dto", attrs=[
                 "+name: string", "+searchParams: SavedSearchParamsType",
             ]),
-            C("d2", "UpdateSavedSearchBodyDto", stereo="dto",
-              attrs=["+name: string"]),
             C("t1", "SavedSearchType", stereo="type", attrs=[
                 "+id: number", "+userId: number", "+name: string",
                 "+searchParams: SavedSearchParamsType", "+createdAt: Date",
@@ -825,47 +942,47 @@ def diagram_saved_search():
             C("t2", "SavedSearchParamsType", stereo="type",
               attrs=["+[key: string]: unknown"]),
         ],
+    ]
+    row2 = [
         [C("svc", "SavedSearchService",
            attrs=["-savedSearchRepository: SavedSearchRepository"],
            methods=[
-               "+getSavedSearches(userId: number): Promise<SavedSearchType[]>",
-               "+getSavedSearchDetail(userId: number, id: number): Promise<SavedSearchType>",
-               "+createSavedSearch(userId: number, body: CreateSavedSearchBodyType): Promise<SavedSearchType>",
-               "+updateSavedSearch(userId: number, id: number, body: UpdateSavedSearchBodyType): Promise<SavedSearchType>",
-               "+deleteSavedSearch(userId: number, id: number): Promise<void>",
+               "+getSavedSearches(userId, query?): Promise<SavedSearchType[]>",
+               "+getSavedSearchDetail(userId, id): Promise<SavedSearchType>",
+               "+createSavedSearch(userId, body: CreateSavedSearchBodyType): SavedSearchType",
+               "+deleteSavedSearch(userId, id): Promise<void>",
            ])],
         [C("repo", "SavedSearchRepository",
            attrs=["-prisma: PrismaService"],
            methods=[
-               "+findAllByUserId(userId: number): Promise<SavedSearchType[]>",
-               "+findByIdAndUserId(id: number, userId: number): Promise<SavedSearchType | null>",
-               "+create(userId: number, data: CreateSavedSearchBodyType): Promise<SavedSearchType>",
-               "+update(id: number, userId: number, data: UpdateSavedSearchBodyType): Promise<SavedSearchType | null>",
-               "+delete(id: number, userId: number): Promise<boolean>",
+               "+findAllByUserId(userId, query?): Promise<SavedSearchType[]>",
+               "+countByUserId(userId): Promise<number>",
+               "+findByIdAndUserId(id, userId): SavedSearchType | null",
+               "+create(userId, data: CreateSavedSearchBodyType): SavedSearchType",
+               "+delete(id, userId): Promise<boolean>",
            ])],
         [
-            C("sSavedSearch", "SavedSearch", kind="schema", attrs=[
+            C("sSavedSearch", "SavedSearch", kind="schema", stereo="schema", attrs=[
                 "+id: number", "+userId: number", "+name: string",
                 "+searchParams: Json", "+createdAt: Date",
             ]),
             schema_user(),
         ],
-        [],
     ]
     edges = [
         ("route", "ctrl", "maps to", True, "h"),
-        ("route", "gAuth", "uses", True, "h"),
-        ("route", "gPerm", "uses", True, "h"),
+        ("route", "gAuth", "uses", True, "v"),
+        ("route", "gPerm", "uses", True, "v"),
         ("ctrl", "d1", "", True, "h"),
         ("ctrl", "d2", "", True, "h"),
         ("ctrl", "t1", "returns", True, "h"),
         ("t1", "t2", "uses", True, "v"),
-        ("ctrl", "svc", "calls", False, "top"),
+        ("ctrl", "svc", "calls", False, "corridor"),
         ("svc", "repo", "calls", False, "h"),
         ("repo", "sSavedSearch", "maps to", True, "h"),
         ("sUser", "sSavedSearch", "1..*", True, "v"),
     ]
-    build(columns, edges, "UC-22_Saved_Search_Management_Class_Diagram.drawio")
+    build_grid(row1, row2, edges, "UC-22_Saved_Search_Management_Class_Diagram.drawio")
 
 
 # --------------------------------------------------------------------------
@@ -873,98 +990,128 @@ def diagram_saved_search():
 # --------------------------------------------------------------------------
 
 def diagram_job_alert():
-    columns = [
-        [C("route", "JobAlertRoutes", kind="route", attrs=[
-            "+GET /job-alerts (AuthGuard, PermissionGuard)",
-            "+GET /job-alerts/:id (AuthGuard, PermissionGuard)",
-            "+POST /job-alerts (AuthGuard, PermissionGuard)",
-            "+PATCH /job-alerts/:id (AuthGuard, PermissionGuard)",
-            "+DELETE /job-alerts/:id (AuthGuard, PermissionGuard)",
-        ])],
+    row1 = [
+        [
+            C("route", "JobAlertRoutes", kind="route", stereo="route", attrs=[
+                "+GET /job-alerts (AuthGuard, PermissionGuard)",
+                "+GET /job-alerts/:id/matching-jobs (AuthGuard, PermissionGuard)",
+                "+GET /job-alerts/:id (AuthGuard, PermissionGuard)",
+                "+POST /job-alerts (AuthGuard, PermissionGuard)",
+                "+PATCH /job-alerts/:id (AuthGuard, PermissionGuard)",
+                "+DELETE /job-alerts/:id (AuthGuard, PermissionGuard)",
+            ]),
+            auth_guard(), permission_guard(),
+        ],
         [
             C("ctrl", "JobAlertController",
               attrs=["-jobAlertService: JobAlertService"],
               methods=[
-                  "+viewJobAlerts(userId: number)",
-                  "+getJobAlertDetail(userId: number, id: number)",
-                  "+createJobAlert(userId: number, payload: CreateJobAlertBodyDto)",
-                  "+updateJobAlert(userId: number, id: number, payload: UpdateJobAlertBodyDto)",
-                  "+deleteJobAlert(userId: number, id: number)",
+                  "+getJobAlerts(userId, roleName)",
+                  "+getMatchingJobs(userId, roleName, id)",
+                  "+getJobAlertDetail(userId, roleName, id)",
+                  "+createJobAlert(userId, roleName, body: CreateJobAlertBodyDto)",
+                  "+updateJobAlert(userId, roleName, id, body: UpdateJobAlertBodyDto)",
+                  "+deleteJobAlert(userId, roleName, id)",
               ]),
-            auth_guard(), permission_guard(),
         ],
         [
             C("d1", "CreateJobAlertBodyDto", stereo="dto", attrs=[
-                "+keywords?: string", "+skills: string[]",
-                "+frequency: AlertFrequency", "+channel: AlertChannel",
-                "+isActive: boolean",
+                "+name?: string", "+keywords?: string | null",
+                "+skills: string[]", "+frequency: JobAlertFrequency",
+                "+channels: NotificationChannel[]",
             ]),
             C("d2", "UpdateJobAlertBodyDto", stereo="dto", attrs=[
-                "+keywords?: string", "+skills?: string[]",
-                "+frequency?: AlertFrequency", "+channel?: AlertChannel",
-                "+isActive?: boolean",
-            ]),
-            C("t1", "JobAlertType", stereo="type", attrs=[
-                "+id: number", "+userId: number", "+keywords: string | null",
-                "+skills: string[]", "+frequency: AlertFrequency",
-                "+channel: AlertChannel", "+isActive: boolean",
-                "+createdAt: Date",
+                "+name?: string", "+keywords?: string | null",
+                "+skills?: string[]", "+frequency?: JobAlertFrequency",
+                "+channels?: NotificationChannel[]", "+isActive?: boolean",
             ]),
         ],
+        [
+            C("t1", "JobAlertType", stereo="type", attrs=[
+                "+id: number", "+userId: number", "+name?: string | null",
+                "+keywords?: string | null", "+skills: string[]",
+                "+frequency: JobAlertFrequency",
+                "+channels: NotificationChannel[]", "+isActive: boolean",
+                "+lastSentAt?: Date | null", "+createdAt: Date",
+                "+updatedAt: Date",
+            ]),
+            C("t2", "MatchingJobItemType", stereo="type", attrs=[
+                "+id: number", "+title: string", "+slug: string",
+                "+budgetMin?: number | null", "+budgetMax?: number | null",
+                "+budgetType: string", "+createdAt: Date",
+            ]),
+            C("t3", "DeleteJobAlertResponseType", stereo="type", attrs=[
+                "+success: boolean",
+            ]),
+        ],
+    ]
+    row2 = [
         [C("svc", "JobAlertService",
            attrs=["-jobAlertRepository: JobAlertRepository"],
            methods=[
-               "+getJobAlertLists(userId: number): Promise<JobAlertType[]>",
-               "+getJobAlertDetail(userId: number, id: number): Promise<JobAlertType>",
-               "+createJobAlert(userId: number, payload: CreateJobAlertBodyType): Promise<JobAlertType>",
-               "+updateJobAlert(userId: number, id: number, payload: UpdateJobAlertBodyType): Promise<JobAlertType>",
-               "+deleteJobAlert(userId: number, id: number): Promise<void>",
+               "+getJobAlerts(userId, roleName): Promise<JobAlertType[]>",
+               "+getJobAlertDetail(userId, roleName, id): Promise<JobAlertType>",
+               "+createJobAlert(userId, roleName, body: CreateJobAlertBodyType): JobAlertType",
+               "+updateJobAlert(userId, roleName, id, body: UpdateJobAlertBodyType): JobAlertType",
+               "+deleteJobAlert(userId, roleName, id): DeleteJobAlertResponseType",
+               "+getMatchingJobs(userId, roleName, id): Promise<MatchingJobItemType[]>",
+               "-assertFreelancerRole(roleName): void",
+               "-normalizeCriteria(keywords?, skills?)",
            ])],
         [C("repo", "JobAlertRepository",
            attrs=["-prisma: PrismaService"],
            methods=[
-               "+getJobAlertLists(userId: number): Promise<JobAlertType[]>",
-               "+findJobAlertById(id: number, userId: number): Promise<JobAlertType | null>",
-               "+createJobAlert(userId: number, data: CreateJobAlertBodyType): Promise<JobAlertType>",
-               "+updateJobAlert(id: number, userId: number, data: UpdateJobAlertBodyType): Promise<JobAlertType | null>",
-               "+deleteJobAlert(id: number, userId: number): Promise<boolean>",
+               "+countByUserId(userId): Promise<number>",
+               "+findAllByUserId(userId): Promise<JobAlertType[]>",
+               "+findByIdAndUserId(id, userId): JobAlertType | null",
+               "+findDuplicate(userId, keyword, skills, excludeId?): JobAlertType | null",
+               "+create(userId, data: CreateJobAlertBodyType): JobAlertType",
+               "+update(id, userId, data: UpdateJobAlertBodyType): JobAlertType | null",
+               "+delete(id, userId): Promise<boolean>",
+               "+findMatchingJobs(userId, keywords, skills, limit?): MatchingJobItemType[]",
            ])],
         [
-            C("sJobAlert", "JobAlert", kind="schema", attrs=[
-                "+id: number", "+userId: number", "+keywords: string | null",
-                "+skills: string[]", "+createdAt: Date",
+            C("sJobAlert", "JobAlert", kind="schema", stereo="schema", attrs=[
+                "+id: number", "+userId: number", "+name: string | null",
+                "+keywords: string | null", "+skills: string[]",
+                "+frequency: JobAlertFrequency",
+                "+channels: NotificationChannel[]", "+isActive: boolean",
+                "+lastSentAt: Date | null", "+createdAt: Date",
+                "+updatedAt: Date",
             ]),
+            schema_job(),
             schema_user(),
         ],
         [
-            C("eFrequency", "AlertFrequency", kind="enum", stereo="enum",
-              attrs=["DAILY", "WEEKLY", "INSTANT"]),
-            C("eChannel", "AlertChannel", kind="enum", stereo="enum",
-              attrs=["EMAIL", "IN_APP", "PUSH"]),
-            NOTE("note1",
-                 "NOTE: No job-alert module exists yet - the route, controller, "
-                 "service and repository above follow the UC-23 sequence design. "
-                 "That design stores criteria, frequency (daily / weekly / "
-                 "instant), delivery channel and an active flag, while "
-                 "schema.prisma currently declares only keywords, skills and "
-                 "createdAt; frequency, channel and isActive still need a "
-                 "migration.",
-                 width=430, height=170),
+            C("eFrequency", "JobAlertFrequency", kind="enum", stereo="enum",
+              attrs=["INSTANT", "DAILY", "WEEKLY"]),
+            C("eChannel", "NotificationChannel", kind="enum", stereo="enum",
+              attrs=["IN_APP", "EMAIL"]),
+            enum_job_status(),
+            enum_budget_type(),
         ],
     ]
     edges = [
         ("route", "ctrl", "maps to", True, "h"),
-        ("route", "gAuth", "uses", True, "h"),
-        ("route", "gPerm", "uses", True, "h"),
+        ("route", "gAuth", "uses", True, "v"),
+        ("route", "gPerm", "uses", True, "v"),
         ("ctrl", "d1", "", True, "h"),
         ("ctrl", "d2", "", True, "h"),
-        ("ctrl", "t1", "returns", True, "h"),
-        ("ctrl", "svc", "calls", False, "top"),
+        ("ctrl", "t1", "returns", True, "top"),
+        ("ctrl", "t2", "returns", True, "top"),
+        ("ctrl", "t3", "returns", True, "top"),
+        ("ctrl", "svc", "calls", False, "corridor"),
         ("svc", "repo", "calls", False, "h"),
         ("repo", "sJobAlert", "maps to", True, "h"),
+        ("repo", "sJob", "queries", True, "h"),
         ("sUser", "sJobAlert", "1..*", True, "v"),
+        ("sUser", "sJob", "1..*", True, "v"),
+        ("sJobAlert", "eFrequency", "frequency", True, "enum"),
+        ("sJobAlert", "eChannel", "channels", True, "enum"),
+        ("sJob", "eJobStatus", "status", True, "enum"),
+        ("sJob", "eBudgetType", "budgetType", True, "enum"),
     ]
-    build(columns, edges, "UC-23_Job_Alert_Management_Class_Diagram.drawio")
+    build_grid(row1, row2, edges, "UC-23_Job_Alert_Management_Class_Diagram.drawio")
 
 
 # --------------------------------------------------------------------------
@@ -972,31 +1119,35 @@ def diagram_job_alert():
 # --------------------------------------------------------------------------
 
 def diagram_freelancer_proposal():
-    columns = [
-        [C("route", "ProposalRoutes", kind="route", attrs=[
-            "+GET /proposals/my (AuthGuard, PermissionGuard)",
-            "+GET /proposals/jobs/:jobId/mine (AuthGuard, PermissionGuard)",
-            "+GET /proposals/:id (AuthGuard, PermissionGuard)",
-            "+POST /proposals/jobs/:jobId (AuthGuard, PermissionGuard)",
-            "+POST /proposals/jobs/:jobId/drafts (AuthGuard, PermissionGuard)",
-            "+PATCH /proposals/:id/draft (AuthGuard, PermissionGuard)",
-            "+PATCH /proposals/:id/submit (AuthGuard, PermissionGuard)",
-            "+PATCH /proposals/:id/withdraw (AuthGuard, PermissionGuard)",
-        ])],
+    row1 = [
+        [
+            C("route", "ProposalRoutes", kind="route", stereo="route", attrs=[
+                "+GET /proposals/my (AuthGuard, PermissionGuard)",
+                "+GET /proposals/jobs/:jobId/mine (AuthGuard, PermissionGuard)",
+                "+GET /proposals/:id (AuthGuard, PermissionGuard)",
+                "+POST /proposals/jobs/:jobId (AuthGuard, PermissionGuard)",
+                "+POST /proposals/jobs/:jobId/drafts (AuthGuard, PermissionGuard)",
+                "+PATCH /proposals/:id/draft (AuthGuard, PermissionGuard)",
+                "+PATCH /proposals/:id/submit (AuthGuard, PermissionGuard)",
+                "+PATCH /proposals/:id/withdraw (AuthGuard, PermissionGuard)",
+                "+PATCH /proposals/:id (AuthGuard, PermissionGuard)",
+            ]),
+            auth_guard(), permission_guard(),
+        ],
         [
             C("ctrl", "ProposalController",
               attrs=["-proposalService: ProposalService"],
               methods=[
-                  "+getMyProposals(userId: number, roleName: string, query: MyProposalsQueryDto)",
-                  "+getMyActiveProposalForJob(userId: number, roleName: string, jobId: number)",
-                  "+getProposalDetail(userId: number, roleName: string, proposalId: number)",
-                  "+createProposal(userId: number, roleName: string, jobId: number, body: CreateProposalBodyDto)",
-                  "+saveDraft(userId: number, roleName: string, jobId: number, body: SaveProposalDraftBodyDto)",
-                  "+updateDraft(userId: number, roleName: string, proposalId: number, body: SaveProposalDraftBodyDto)",
-                  "+submitDraft(userId: number, roleName: string, proposalId: number)",
-                  "+withdrawProposal(userId: number, roleName: string, proposalId: number)",
+                  "+getMyProposals(userId, roleName, query: MyProposalsQueryDto)",
+                  "+getMyActiveProposalForJob(userId, roleName, jobId)",
+                  "+getProposalDetail(userId, roleName, proposalId)",
+                  "+createProposal(userId, roleName, jobId, body: CreateProposalBodyDto)",
+                  "+saveDraft(userId, roleName, jobId, body: SaveProposalDraftBodyDto)",
+                  "+updateDraft(userId, roleName, proposalId, body: SaveProposalDraftBodyDto)",
+                  "+submitDraft(userId, roleName, proposalId)",
+                  "+withdrawProposal(userId, roleName, proposalId)",
+                  "+updateProposal(userId, roleName, proposalId, body: UpdateProposalBodyDto)",
               ]),
-            auth_guard(), permission_guard(),
         ],
         [
             C("d1", "CreateProposalBodyDto", stereo="dto", attrs=[
@@ -1007,10 +1158,16 @@ def diagram_freelancer_proposal():
                 "+coverLetter?: string", "+bidAmount?: number",
                 "+deliveryDays?: number",
             ]),
-            C("d3", "MyProposalsQueryDto", stereo="dto", attrs=[
+            C("d3", "UpdateProposalBodyDto", stereo="dto", attrs=[
+                "+coverLetter?: string", "+bidAmount?: number",
+                "+deliveryDays?: number",
+            ]),
+            C("d4", "MyProposalsQueryDto", stereo="dto", attrs=[
                 "+page: number", "+limit: number", "+jobId?: number",
                 "+status?: ProposalStatus",
             ]),
+        ],
+        [
             C("t1", "ProposalType", stereo="type", attrs=[
                 "+id: number", "+jobId: number", "+freelancerId: number",
                 "+coverLetter: string | null", "+bidAmount: number | null",
@@ -1028,43 +1185,51 @@ def diagram_freelancer_proposal():
                 "+totalPages: number", "+page: number", "+limit: number",
             ]),
         ],
+    ]
+    row2 = [
         [C("svc", "ProposalService",
            attrs=["-proposalRepository: ProposalRepository"],
            methods=[
-               "+getMyProposals(userId: number, roleName: string, query: MyProposalsQueryType): Promise<MyProposalsResponseType>",
-               "+getMyActiveProposalForJob(userId: number, roleName: string, jobId: number): Promise<ProposalType | null>",
-               "+getProposalDetail(userId: number, roleName: string, proposalId: number): Promise<ProposalDetailType>",
-               "+createProposal(userId: number, roleName: string, jobId: number, body: CreateProposalBodyType): Promise<ProposalType>",
-               "+saveDraft(userId: number, roleName: string, jobId: number, body: SaveProposalDraftBodyType): Promise<ProposalType>",
-               "+updateDraft(userId: number, roleName: string, proposalId: number, body: SaveProposalDraftBodyType): Promise<ProposalType>",
-               "+submitDraft(userId: number, roleName: string, proposalId: number): Promise<ProposalType>",
-               "+withdrawProposal(userId: number, roleName: string, proposalId: number): Promise<ProposalType>",
-               "-assertFreelancer(roleName: string): void",
+               "+getMyProposals(userId, roleName, query): MyProposalsResponseType",
+               "+getMyActiveProposalForJob(userId, roleName, jobId): ProposalType | null",
+               "+getProposalDetail(userId, roleName, proposalId): ProposalDetailType",
+               "+createProposal(userId, roleName, jobId, body): Promise<ProposalType>",
+               "+saveDraft(userId, roleName, jobId, body): Promise<ProposalType>",
+               "+updateDraft(userId, roleName, proposalId, body): Promise<ProposalType>",
+               "+updateProposal(userId, roleName, proposalId, body): Promise<ProposalType>",
+               "+submitDraft(userId, roleName, proposalId): Promise<ProposalType>",
+               "+withdrawProposal(userId, roleName, proposalId): Promise<ProposalType>",
+               "-assertFreelancer(roleName): void",
                "-assertActionable(status: ProposalStatusType): void",
-               "-assertCanPropose(userId: number, roleName: string, jobId: number, ignoredProposalId?: number): Promise<void>",
-               "-getOwnedDraft(userId: number, proposalId: number)",
+               "-assertCanPropose(userId, roleName, jobId, ignoredId?): Promise<void>",
+               "-assertBidSafeguard(bidAmount, budgetMin?, budgetMax?): void",
+               "-assertDeliveryDaysSafeguard(deliveryDays, deadline?): void",
+               "-getOwnedDraft(userId, proposalId)",
                "-expireStaleProposals(): Promise<void>",
            ])],
         [C("repo", "ProposalRepository",
            attrs=["-prisma: PrismaService"],
            methods=[
-               "+findJobForProposal(jobId: number)",
-               "+findActiveProposal(jobId: number, freelancerId: number, ignoredProposalId?: number)",
-               "+findMyActiveProposal(jobId: number, freelancerId: number)",
-               "+findProposal(proposalId: number)",
-               "+createDraft(jobId: number, freelancerId: number, data: SaveProposalDraftBodyType): Promise<ProposalType>",
-               "+createSubmitted(jobId: number, freelancerId: number, data: CreateProposalBodyType): Promise<ProposalType>",
-               "+updateDraft(proposalId: number, data: SaveProposalDraftBodyType): Promise<ProposalType>",
-               "+submitDraft(proposalId: number): Promise<ProposalType>",
-               "+withdrawProposal(proposalId: number): Promise<ProposalType>",
-               "+expireOverdueProposals(jobId?: number): Promise<number>",
-               "+getMyProposals(freelancerId: number, query: MyProposalsQueryType): Promise<MyProposalsResponseType>",
-               "+getProposalDetail(proposalId: number): Promise<ProposalDetailType | null>",
-               "-normalize(proposal: ProposalRow): ProposalType",
-               "-normalizeDetail(proposal: ProposalDetailRow): ProposalDetailType",
+               "+findJobForProposal(jobId)",
+               "+findFreelancerStatus(userId)",
+               "+countProposalsByFreelancerAndJob(freelancerId, jobId): number",
+               "+findActiveProposal(jobId, freelancerId, ignoredId?)",
+               "+findMyActiveProposal(jobId, freelancerId)",
+               "+findProposal(proposalId)",
+               "+createDraft(jobId, freelancerId, data): Promise<ProposalType>",
+               "+createSubmitted(jobId, freelancerId, data): Promise<ProposalType>",
+               "+updateDraft(proposalId, data): Promise<ProposalType>",
+               "+submitDraft(proposalId): Promise<ProposalType>",
+               "+withdrawProposal(proposalId): Promise<ProposalType>",
+               "+expireOverdueProposals(jobId?): Promise<number>",
+               "+getMyProposals(freelancerId, query): MyProposalsResponseType",
+               "+getProposalDetail(proposalId): ProposalDetailType | null",
+               "-normalize(proposal): ProposalType",
+               "-normalizeDetail(proposal): ProposalDetailType",
            ])],
+        [schema_user(), schema_profile(), schema_freelancer_profile()],
         [
-            C("sProposal", "Proposal", kind="schema", attrs=[
+            C("sProposal", "Proposal", kind="schema", stereo="schema", attrs=[
                 "+id: number", "+jobId: number", "+freelancerId: number",
                 "+coverLetter: string | null", "+bidAmount: Decimal | null",
                 "+deliveryDays: number | null", "+status: ProposalStatus",
@@ -1073,8 +1238,7 @@ def diagram_freelancer_proposal():
                 "+withdrawnAt: Date | null", "+expiresAt: Date | null",
                 "+updatedAt: Date", "+deletedAt: Date | null",
             ]),
-            schema_job(), schema_user(), schema_profile(),
-            schema_freelancer_profile(),
+            schema_job(),
         ],
         [
             enum_proposal_status(), enum_job_status(), enum_hiring_type(),
@@ -1083,18 +1247,19 @@ def diagram_freelancer_proposal():
     ]
     edges = [
         ("route", "ctrl", "maps to", True, "h"),
-        ("route", "gAuth", "uses", True, "h"),
-        ("route", "gPerm", "uses", True, "h"),
+        ("route", "gAuth", "uses", True, "v"),
+        ("route", "gPerm", "uses", True, "v"),
         ("ctrl", "d1", "", True, "h"),
         ("ctrl", "d2", "", True, "h"),
         ("ctrl", "d3", "", True, "h"),
-        ("ctrl", "t1", "returns", True, "h"),
-        ("ctrl", "t2", "returns", True, "h"),
-        ("ctrl", "t3", "returns", True, "h"),
+        ("ctrl", "d4", "", True, "h"),
+        ("ctrl", "t1", "returns", True, "top"),
+        ("ctrl", "t2", "returns", True, "top"),
+        ("ctrl", "t3", "returns", True, "top"),
         ("t3", "t2", "uses", True, "v"),
-        ("ctrl", "svc", "calls", False, "top"),
+        ("ctrl", "svc", "calls", False, "corridor"),
         ("svc", "repo", "calls", False, "h"),
-        ("repo", "sProposal", "maps to", True, "h"),
+        ("repo", "sProposal", "maps to", True, "corridor"),
         ("sJob", "sProposal", "1..*", True, "v"),
         ("sUser", "sProposal", "1..*", True, "v"),
         ("sUser", "sProfile", "1..1", True, "v"),
@@ -1104,7 +1269,7 @@ def diagram_freelancer_proposal():
         ("sJob", "eHiringType", "hiringType", True, "enum"),
         ("sJob", "eBudgetType", "budgetType", True, "enum"),
     ]
-    build(columns, edges, "UC-32_Freelancer_Proposal_Management_Class_Diagram.drawio")
+    build_grid(row1, row2, edges, "UC-32_Freelancer_Proposal_Management_Class_Diagram.drawio")
 
 
 # --------------------------------------------------------------------------
@@ -1112,35 +1277,33 @@ def diagram_freelancer_proposal():
 # --------------------------------------------------------------------------
 
 def diagram_client_proposal():
-    columns = [
+    row1 = [
         [
-            C("route", "ProposalRoutes", kind="route", attrs=[
+            C("route", "ProposalRoutes", kind="route", stereo="route", attrs=[
                 "+GET /proposals/jobs/:jobId/submitted (AuthGuard, PermissionGuard)",
                 "+GET /proposals/:id/client (AuthGuard, PermissionGuard)",
-                "+PATCH /proposals/:id/interview (AuthGuard, PermissionGuard)",
                 "+PATCH /proposals/:id/reject (AuthGuard, PermissionGuard)",
                 "+PATCH /proposals/:id/accept (AuthGuard, PermissionGuard)",
             ]),
-            C("route2", "ClientJobProposalsRoutes", kind="route", attrs=[
+            C("route2", "ClientJobProposalsRoutes", kind="route", stereo="route", attrs=[
                 "+GET /jobs/:jobId/proposals (AuthGuard, PermissionGuard)",
             ]),
+            auth_guard(), permission_guard(),
         ],
         [
             C("ctrl", "ProposalController",
               attrs=["-proposalService: ProposalService"],
               methods=[
-                  "+getSubmittedProposalsForClientJob(userId: number, roleName: string, jobId: number)",
-                  "+getProposalDetailForClient(userId: number, roleName: string, proposalId: number)",
-                  "+interviewProposal(userId: number, roleName: string, proposalId: number)",
-                  "+rejectProposal(userId: number, roleName: string, proposalId: number)",
-                  "+acceptProposal(userId: number, roleName: string, proposalId: number)",
+                  "+getSubmittedProposalsForClientJob(userId, roleName, jobId)",
+                  "+getProposalDetailForClient(userId, roleName, proposalId)",
+                  "+rejectProposal(userId, roleName, proposalId)",
+                  "+acceptProposal(userId, roleName, proposalId)",
               ]),
             C("ctrl2", "ClientJobProposalsController",
               attrs=["-proposalService: ProposalService"],
               methods=[
-                  "+getSubmittedProposals(userId: number, roleName: string, jobId: number, query: ClientJobProposalsQueryDto)",
+                  "+getSubmittedProposals(userId, roleName, jobId, query)",
               ]),
-            auth_guard(), permission_guard(),
         ],
         [
             C("d1", "ClientJobProposalsQueryDto", stereo="dto", attrs=[
@@ -1154,6 +1317,8 @@ def diagram_client_proposal():
                 "+data: ClientJobProposalType[]", "+totalItems: number",
                 "+totalPages: number", "+page: number", "+limit: number",
             ]),
+        ],
+        [
             C("t3", "ClientProposalDetailType", stereo="type", attrs=[
                 "+job: ProposalJobType", "+freelancer: ProposalFreelancerType",
             ]),
@@ -1167,34 +1332,36 @@ def diagram_client_proposal():
                 "+updatedAt: Date",
             ]),
         ],
+    ]
+    row2 = [
         [C("svc", "ProposalService",
            attrs=["-proposalRepository: ProposalRepository"],
            methods=[
-               "+getSubmittedProposalsForClientJob(userId: number, roleName: string, jobId: number): Promise<ClientJobProposalsResponseType>",
-               "+getSubmittedProposalsPageForClientJob(userId: number, roleName: string, jobId: number, query: ClientJobProposalsQueryType): Promise<ClientJobProposalsPageType>",
-               "+getProposalDetailForClient(userId: number, roleName: string, proposalId: number): Promise<ClientProposalDetailType>",
-               "+interviewProposal(userId: number, roleName: string, proposalId: number): Promise<ProposalType>",
-               "+rejectProposal(userId: number, roleName: string, proposalId: number): Promise<ProposalType>",
-               "+acceptProposal(userId: number, roleName: string, proposalId: number): Promise<ProposalType>",
+               "+getSubmittedProposalsForClientJob(userId, roleName, jobId)",
+               "+getSubmittedProposalsPageForClientJob(userId, roleName, jobId, query)",
+               "+getProposalDetailForClient(userId, roleName, proposalId)",
+               "+rejectProposal(userId, roleName, proposalId): Promise<ProposalType>",
+               "+acceptProposal(userId, roleName, proposalId): Promise<ProposalType>",
                "-assertActionable(status: ProposalStatusType): void",
                "-expireStaleProposals(): Promise<void>",
            ])],
         [C("repo", "ProposalRepository",
            attrs=["-prisma: PrismaService"],
            methods=[
-               "+findJobForClientProposals(jobId: number)",
-               "+findSubmittedProposalsForClientJob(jobId: number): Promise<ClientJobProposalsResponseType>",
-               "+findSubmittedProposalsPageForClientJob(jobId: number, query: ClientJobProposalsQueryType): Promise<ClientJobProposalsPageType>",
-               "+findProposalForClientDecision(proposalId: number)",
-               "+findProposalDetailForClient(proposalId: number): Promise<ClientProposalDetailType | null>",
-               "+interviewProposal(proposalId: number): Promise<ProposalType>",
-               "+rejectProposal(proposalId: number): Promise<ProposalType>",
+               "+findJobForClientProposals(jobId)",
+               "+findSubmittedProposalsForClientJob(jobId)",
+               "+findSubmittedProposalsPageForClientJob(jobId, query)",
+               "+findProposalForClientDecision(proposalId)",
+               "+findProposalDetailForClient(proposalId)",
+               "+rejectProposal(proposalId): Promise<ProposalType>",
                "+hireProposal(params: HireProposalParams): Promise<ProposalType>",
-               "+expireOverdueProposals(jobId?: number): Promise<number>",
-               "-normalize(proposal: ProposalRow): ProposalType",
+               "+expireOverdueProposals(jobId?): Promise<number>",
+               "+cancelPendingProposalsForJob(jobId): Promise<number>",
+               "-normalize(proposal): ProposalType",
            ])],
+        [schema_user(), schema_profile(), schema_freelancer_profile()],
         [
-            C("sProposal", "Proposal", kind="schema", attrs=[
+            C("sProposal", "Proposal", kind="schema", stereo="schema", attrs=[
                 "+id: number", "+jobId: number", "+freelancerId: number",
                 "+coverLetter: string | null", "+bidAmount: Decimal | null",
                 "+deliveryDays: number | null", "+status: ProposalStatus",
@@ -1203,20 +1370,19 @@ def diagram_client_proposal():
                 "+deletedAt: Date | null",
             ]),
             schema_job(),
-            C("sContract", "Contract", kind="schema", attrs=[
-                "+id: number", "+jobId: number", "+proposalId: number",
+            C("sContract", "Contract", kind="schema", stereo="schema", attrs=[
+                "+id: number", "+slug: string", "+jobId: number", "+proposalId: number",
                 "+clientId: number", "+freelancerId: number",
                 "+totalAmount: Decimal", "+status: ContractStatus",
                 "+signedByClient: boolean", "+signedByFreelancer: boolean",
                 "+platformFee: Decimal", "+platformFeeStatus: PlatformFeeStatus",
                 "+createdAt: Date", "+signedAt: Date | null",
             ]),
-            C("sNotification", "Notification", kind="schema", attrs=[
+            C("sNotification", "Notification", kind="schema", stereo="schema", attrs=[
                 "+id: number", "+userId: number", "+type: NotificationType",
                 "+title: string | null", "+message: string | null",
                 "+data: Json | null", "+isRead: boolean", "+createdAt: Date",
             ]),
-            schema_user(), schema_profile(), schema_freelancer_profile(),
         ],
         [
             enum_proposal_status(), enum_job_status(), enum_hiring_type(),
@@ -1227,17 +1393,19 @@ def diagram_client_proposal():
     edges = [
         ("route", "ctrl", "maps to", True, "h"),
         ("route2", "ctrl2", "maps to", True, "h"),
-        ("route", "gAuth", "uses", True, "h"),
-        ("route", "gPerm", "uses", True, "h"),
+        ("route", "gAuth", "uses", True, "v"),
+        ("route", "gPerm", "uses", True, "v"),
+        ("route2", "gAuth", "uses", True, "v"),
+        ("route2", "gPerm", "uses", True, "v"),
         ("ctrl2", "d1", "", True, "h"),
         ("ctrl2", "t2", "returns", True, "h"),
-        ("ctrl", "t3", "returns", True, "h"),
-        ("ctrl", "t4", "returns", True, "h"),
+        ("ctrl", "t3", "returns", True, "top"),
+        ("ctrl", "t4", "returns", True, "top"),
         ("t2", "t1", "uses", True, "v"),
-        ("ctrl", "svc", "calls", False, "top"),
-        ("ctrl2", "svc", "calls", False, "top"),
+        ("ctrl", "svc", "calls", False, "corridor"),
+        ("ctrl2", "svc", "calls", False, "corridor"),
         ("svc", "repo", "calls", False, "h"),
-        ("repo", "sProposal", "maps to", True, "h"),
+        ("repo", "sProposal", "maps to", True, "corridor"),
         ("sJob", "sProposal", "1..*", True, "v"),
         ("sProposal", "sContract", "1..1", True, "v"),
         ("sUser", "sContract", "1..*", True, "v"),
@@ -1251,16 +1419,16 @@ def diagram_client_proposal():
         ("sContract", "ePlatformFeeStatus", "platformFeeStatus", True, "enum"),
         ("sNotification", "eNotificationType", "type", True, "enum"),
     ]
-    build(columns, edges, "UC-32_Client_Proposal_Management_Class_Diagram.drawio")
+    build_grid(row1, row2, edges, "UC-32_Client_Proposal_Management_Class_Diagram.drawio")
 
 
 # --------------------------------------------------------------------------
-# 8. UC-46.06 / UC-46.07 — [Frevia - Freelancer] Job Category
+# 8. UC-46.07 / UC-46.08 — [Frevia - Freelancer] Job Category
 # --------------------------------------------------------------------------
 
 def diagram_job_category_browse():
-    columns = [
-        [C("route", "JobCategoriesRoutes", kind="route", attrs=[
+    row1 = [
+        [C("route", "JobCategoriesRoutes", kind="route", stereo="route", attrs=[
             "+GET /job-categories (Public)",
             "+GET /job-categories/:slug (Public)",
         ])],
@@ -1268,7 +1436,7 @@ def diagram_job_category_browse():
            attrs=["-service: JobCategoriesService"],
            methods=[
                "+viewJobCategoryList(query: JobCategoryBrowseQueryDto)",
-               "+viewJobCategoryDetail(slug: string, query: JobCategoryDetailQueryDto)",
+               "+viewJobCategoryDetail(slug, query: JobCategoryDetailQueryDto)",
            ])],
         [
             C("d1", "JobCategoryBrowseQueryDto", stereo="dto", attrs=[
@@ -1277,6 +1445,8 @@ def diagram_job_category_browse():
             C("d2", "JobCategoryDetailQueryDto", stereo="dto", attrs=[
                 "+page: number", "+limit: number",
             ]),
+        ],
+        [
             C("t1", "JobCategoryBrowseItemType", stereo="type", attrs=[
                 "+id: number", "+name: string", "+slug: string",
                 "+description: string | null", "+jobCount: number",
@@ -1286,27 +1456,38 @@ def diagram_job_category_browse():
                 "+pagination: PaginationType",
             ]),
             C("t3", "ViewJobCategoryDetailResponseType", stereo="type", attrs=[
+                "+id: number", "+name: string", "+slug: string",
+                "+description: string | null", "+jobCount: number",
                 "+jobs: ViewJobDetailResType[]", "+pagination: PaginationType",
             ]),
         ],
-        [C("svc", "JobCategoriesService",
-           attrs=["-repository: JobCategoriesRepository"],
-           methods=[
-               "+viewJobCategoryList(query: JobCategoryBrowseParsedQueryType): Promise<JobCategoryBrowseListResponseType>",
-               "+viewJobCategoryDetail(slug: string, page: number, limit: number): Promise<ViewJobCategoryDetailResponseType>",
-           ])],
+    ]
+    row2 = [
+        [
+            C("svc", "JobCategoriesService",
+              attrs=["-repository: JobCategoriesRepository",
+                     "-cacheService?: CacheService"],
+              methods=[
+                  "+viewJobCategoryList(query): JobCategoryBrowseListResponseType",
+                  "+viewJobCategoryDetail(slug, page, limit): ViewJobCategoryDetailResponseType",
+              ]),
+            C("cache", "CacheService", stereo="utility",
+              methods=[
+                  "+get<T>(key: string): T | undefined",
+                  "+set<T>(key: string, value: T, ttlSeconds: number): void",
+                  "+wrap<T>(key: string, fn, ttlSeconds): Promise<T>",
+              ]),
+        ],
         [C("repo", "JobCategoriesRepository",
            attrs=["-prisma: PrismaService"],
            methods=[
-               "+listJobCategories(query: JobCategoryBrowseParsedQueryType): Promise<JobCategoryBrowseListResponseType>",
-               "+getJobCategoryDetail(slug: string, page: number, limit: number): Promise<ViewJobCategoryDetailResponseType>",
+               "+listJobCategories(query): JobCategoryBrowseListResponseType",
+               "+getJobCategoryDetail(slug, page, limit): ViewJobCategoryDetailResponseType",
                "-toItem(row: JobCategoryRow): JobCategoryBrowseItemType",
                "-normalizeJob(job: BrowseJobRow)",
            ])],
-        [
-            schema_job_category(), schema_job_job_category(), schema_job(),
-            schema_job_skill(), schema_skill(),
-        ],
+        [schema_job_job_category(), schema_job_skill(), schema_skill()],
+        [schema_job_category(), schema_job()],
         [enum_job_category_status(), enum_job_status(), enum_budget_type(),
          enum_hiring_type()],
     ]
@@ -1314,12 +1495,13 @@ def diagram_job_category_browse():
         ("route", "ctrl", "maps to", True, "h"),
         ("ctrl", "d1", "", True, "h"),
         ("ctrl", "d2", "", True, "h"),
-        ("ctrl", "t2", "returns", True, "h"),
-        ("ctrl", "t3", "returns", True, "h"),
+        ("ctrl", "t2", "returns", True, "top"),
+        ("ctrl", "t3", "returns", True, "top"),
         ("t2", "t1", "uses", True, "v"),
-        ("ctrl", "svc", "calls", False, "top"),
+        ("ctrl", "svc", "calls", False, "corridor"),
         ("svc", "repo", "calls", False, "h"),
-        ("repo", "sJobCategory", "maps to", True, "h"),
+        ("svc", "cache", "uses", False, "v"),
+        ("repo", "sJobCategory", "maps to", True, "corridor"),
         ("sJobCategory", "sJobJobCategory", "1..*", True, "v"),
         ("sJobJobCategory", "sJob", "*..1", True, "v"),
         ("sJob", "sJobSkill", "1..*", True, "v"),
@@ -1329,7 +1511,7 @@ def diagram_job_category_browse():
         ("sJob", "eBudgetType", "budgetType", True, "enum"),
         ("sJob", "eHiringType", "hiringType", True, "enum"),
     ]
-    build(columns, edges, "UC-46.06_Job_Category_Class_Diagram.drawio")
+    build_grid(row1, row2, edges, "UC-46_Freelancer_Job_Category_Class_Diagram.drawio")
 
 
 # --------------------------------------------------------------------------

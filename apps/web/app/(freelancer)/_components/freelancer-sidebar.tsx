@@ -5,6 +5,7 @@ import { useLocale, useTranslations } from "next-intl";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState, useTransition } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { useTheme } from "next-themes";
 import {
   Bell,
@@ -24,7 +25,9 @@ import {
   Search,
   Shield,
   Sun,
+  SwitchCamera,
   Tag,
+  UserPlus,
   UserRound,
   Users,
 } from "@/components/icons";
@@ -36,10 +39,11 @@ import {
   AvatarFallback,
   AvatarImage,
 } from "@repo/ui/components/shadcn/avatar";
-import { useMe } from "@/hooks/use-auth";
 import { useActionPermission } from "@/hooks/use-action-permission";
+import { useMarketplaceRoleAction } from "@/hooks/use-marketplace-role-action";
 import { canAccessAdminPortal } from "@/lib/admin-access";
 import { useNotifications } from "@/hooks/use-notifications";
+import { useConversations } from "@/hooks/use-conversation";
 
 type NavItem = {
   href: string;
@@ -117,12 +121,22 @@ function NavLink({ item, collapsed }: { item: NavItem; collapsed: boolean }) {
 
 export function FreelancerSidebar() {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const t = useTranslations("sidebar");
   const tCommon = useTranslations("common");
   const tRole = useTranslations("roleName");
   const activeLocale = useLocale();
   const [isLocalePending, startLocaleTransition] = useTransition();
-  const { data: me } = useMe();
+  const {
+    me,
+    isMarketplaceUser,
+    hasTargetRole,
+    isMeLoading,
+    isPending: isRoleActionPending,
+    actionLabel: roleActionLabel,
+    executeRoleAction,
+  } = useMarketplaceRoleAction("FREELANCER");
+  const { data: conversations = [] } = useConversations();
   const { can } = useActionPermission();
   const canViewProposals = can("GET", "/api/proposals/my");
   const canViewContracts = can("GET", "/api/contracts");
@@ -168,6 +182,10 @@ export function FreelancerSidebar() {
 
   const isDark = mounted && resolvedTheme === "dark";
   const unreadNotifications = notifications.filter((n) => !n.isRead).length;
+  const unreadMessages = (conversations ?? []).reduce(
+    (sum, c) => sum + (c.unreadCount || 0),
+    0,
+  );
 
   const selectLocale = (nextLocale: string) => {
     if (!isLocale(nextLocale) || nextLocale === activeLocale) return;
@@ -214,6 +232,12 @@ export function FreelancerSidebar() {
       labelKey: "navMessages",
       icon: MessageSquare,
       matchPrefix: true,
+      badge:
+        unreadMessages > 0
+          ? unreadMessages > 99
+            ? "99+"
+            : unreadMessages
+          : undefined,
     },
     {
       href: "/forum",
@@ -248,6 +272,8 @@ export function FreelancerSidebar() {
 
   const logout = async () => {
     await fetch("/api/auth/logout", { method: "POST" });
+    queryClient.clear();
+    queryClient.setQueryData(["me"], null);
     router.push("/login");
     router.refresh();
   };
@@ -276,7 +302,7 @@ export function FreelancerSidebar() {
             />
           )}
           {!collapsed && (
-            <span className="font-semibold text-3xl tracking-tight">
+            <span className="font-aquire font-semibold text-3xl tracking-tight">
               Frevia
             </span>
           )}
@@ -392,7 +418,7 @@ export function FreelancerSidebar() {
                   className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-xs font-medium text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-950/40 transition-colors"
                 >
                   <Shield className="size-3.5" />
-                  Admin Portal
+                  {tCommon("adminPortal")}
                 </Link>
               )}
 
@@ -441,7 +467,7 @@ export function FreelancerSidebar() {
               {/* Language switcher */}
               <div className="flex items-center justify-between rounded-lg px-3 py-1.5 text-xs text-muted-foreground">
                 <span className="flex items-center gap-2.5 font-medium">
-                  <Languages className="size-3.5 text-emerald-500" />
+                  <Languages className="size-3.5 text-[#0069D3]" />
                   <span>{tCommon("language")}</span>
                 </span>
                 <div className="flex items-center gap-0.5 rounded-full bg-[#F1F0F5] dark:bg-zinc-800 p-0.5 border border-black/5 dark:border-white/10">
@@ -451,7 +477,7 @@ export function FreelancerSidebar() {
                     disabled={isLocalePending}
                     className={`flex h-6 px-2 items-center justify-center rounded-full text-[11px] font-semibold transition-all cursor-pointer ${
                       activeLocale === "en"
-                        ? "bg-white text-emerald-600 shadow-xs dark:bg-zinc-700 dark:text-emerald-300"
+                        ? "bg-white text-[#0069D3] shadow-xs dark:bg-zinc-700 dark:text-blue-200"
                         : "text-muted-foreground hover:text-foreground"
                     }`}
                     title="English"
@@ -464,7 +490,7 @@ export function FreelancerSidebar() {
                     disabled={isLocalePending}
                     className={`flex h-6 px-2 items-center justify-center rounded-full text-[11px] font-semibold transition-all cursor-pointer ${
                       activeLocale === "vi"
-                        ? "bg-white text-emerald-600 shadow-xs dark:bg-zinc-700 dark:text-emerald-300"
+                        ? "bg-white text-[#0069D3] shadow-xs dark:bg-zinc-700 dark:text-blue-200"
                         : "text-muted-foreground hover:text-foreground"
                     }`}
                     title="Tiếng Việt"
@@ -475,6 +501,29 @@ export function FreelancerSidebar() {
               </div>
 
               <div className="my-1 h-px bg-border" />
+
+              {isMarketplaceUser && (
+                <>
+                  <button
+                    type="button"
+                    disabled={isMeLoading || isRoleActionPending}
+                    onClick={() => {
+                      void executeRoleAction().then((didUpdate) => {
+                        if (didUpdate) setProfileOpen(false);
+                      });
+                    }}
+                    className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-xs font-medium text-foreground/80 transition-colors hover:bg-[#F1F0F5] hover:text-foreground dark:hover:bg-zinc-800 disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer"
+                  >
+                    {hasTargetRole ? (
+                      <SwitchCamera className="size-3.5 text-emerald-600 dark:text-emerald-400" />
+                    ) : (
+                      <UserPlus className="size-3.5 text-emerald-600 dark:text-emerald-400" />
+                    )}
+                    <span>{roleActionLabel}</span>
+                  </button>
+                  <div className="my-1 h-px bg-border" />
+                </>
+              )}
 
               <button
                 type="button"

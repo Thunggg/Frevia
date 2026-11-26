@@ -1,6 +1,7 @@
 \renewcommand{\arraystretch}{1.5}
 
 % Đổi p{2.2cm} thành 'c' để cột tự động khít với nội dung dài nhất
+\Needspace{12\baselineskip}
 \begin{longtable}{|c|p{12cm}|}
 
 \caption{Business Rules}
@@ -46,12 +47,12 @@
     BR-PORT-06 & Portfolio title remains a required field. \\ \hline
     BR-PORT-07 & Portfolio deletion must be a soft delete (updating the deleted\_at column). \\ \hline
     BR-PORT-08 & Soft-deleted portfolios must not be visible to clients or guests. \\ \hline
-    BR-FORUM-01 & Only categories with is\_active = TRUE shall be displayed. \\ \hline
+    BR-FORUM-01 & Only categories with deletedAt = NULL shall be displayed. \\ \hline
     BR-FORUM-02 & Category information displayed includes name and description. \\ \hline
-    BR-FORUM-03 & Only categories with is\_active = TRUE shall be accessible. \\ \hline
+    BR-FORUM-03 & Only categories with deletedAt = NULL shall be accessible. \\ \hline
     BR-FORUM-04 & Category information displayed includes name and description. \\ \hline
-    BR-FORUM-05 & Only posts with deleted\_at = NULL shall be displayed. \\ \hline
-    BR-FORUM-06 & Posts with is\_pinned = TRUE shall appear before regular posts. \\ \hline
+    BR-FORUM-05 & Only posts with deletedAt = NULL and moderationStatus = APPROVED shall be publicly displayed. \\ \hline
+    BR-FORUM-06 & Posts can be browsed in ForumTalksView across active, recent, unanswered, or popular feeds. \\ \hline
     BR-FORUM-07 & Posts shall be sorted by created\_at in descending order within each group. \\ \hline
     BR-FORUM-08 & The system shall support pagination for post listings. \\ \hline
     BR-FORUM-09 & Only posts with deleted\_at = NULL shall be displayed. \\ \hline
@@ -61,12 +62,12 @@
     BR-FORUM-13 & Only comments with deleted\_at = NULL shall be displayed. \\ \hline
     BR-FORUM-14 & Comment details shall include content, author, and created\_at information. \\ \hline
     BR-FORUM-15 & Only authenticated users can create posts. \\ \hline
-    BR-FORUM-16 & Every post must belong to exactly one category. \\ \hline
+    BR-FORUM-16 & Each post may optionally link to a valid forum category (or be uncategorized). \\ \hline
     BR-FORUM-17 & Title and content are required fields. \\ \hline
     BR-FORUM-18 & Only the author of a post can edit that post. \\ \hline
-    BR-FORUM-19 & Every post must belong to a valid category. \\ \hline
+    BR-FORUM-19 & Any supplied category\_id must reference an existing non-deleted forum category. \\ \hline
     BR-FORUM-20 & Title and content are required fields. \\ \hline
-    BR-FORUM-21 & Only the author of a post can delete that post. \\ \hline
+    BR-FORUM-21 & Only the post author or an Administrator can soft-delete a post. \\ \hline
     BR-FORUM-22 & Post deletion shall be implemented as a soft delete using the deleted\_at field. \\ \hline
     BR-FORUM-23 & Soft-deleted posts shall not appear in public forum listings. \\ \hline
     BR-FORUM-24 & Only authenticated users can like posts. \\ \hline
@@ -77,13 +78,13 @@
     BR-FORUM-29 & Removing a reaction shall delete the corresponding record from the forum\_likes table. \\ \hline
     BR-FORUM-30 & Only authenticated users can create comments. \\ \hline
     BR-FORUM-31 & Comment content cannot be empty. \\ \hline
-    BR-FORUM-32 & Comment content must contain at least 2 characters. \\ \hline
+    BR-FORUM-32 & Comment content must be a non-empty string of at least 1 character. \\ \hline
     BR-FORUM-33 & Each comment shall be associated with a valid post\_id and user\_id. \\ \hline
     BR-FORUM-34 & Only the owner of a comment can edit it. \\ \hline
     BR-FORUM-35 & Comment content cannot be empty. \\ \hline
-    BR-FORUM-36 & Comment content must contain at least 2 characters. \\ \hline
+    BR-FORUM-36 & Updated comment content must contain at least 1 character. \\ \hline
     BR-FORUM-37 & The system shall record the updated\_at timestamp when a comment is modified. \\ \hline
-    BR-FORUM-38 & Only the owner of a comment can delete it. \\ \hline
+    BR-FORUM-38 & Only the comment owner or an Administrator can delete it. \\ \hline
     BR-FORUM-39 & Comment deletion shall be implemented as a soft delete using the deleted\_at field. \\ \hline
     BR-FORUM-40 & Soft-deleted comments shall not be displayed in normal comment listings. \\ \hline
     BR-FORUM-41 & Only authenticated users can like comments. \\ \hline
@@ -96,53 +97,96 @@
     BR-FORUM-48 & Reports must be associated with either a post\_id or comment\_id. \\ \hline
     BR-FORUM-49 & New reports shall be created with status = PENDING. \\ \hline
     BR-FORUM-50 & A user may submit only one active report for the same content item. \\ \hline
-   BR-JOB-01 & Only jobs with status = 'open' or 'in\_progress' shall be displayed to freelancers and guests. \\ \hline
-BR-JOB-02 & Clients shall see all their jobs regardless of status. \\ \hline
-BR-JOB-03 & Default sorting shall be by created\_at in descending order. \\ \hline
-BR-JOB-04 & The system shall support pagination with default page size of 10. \\ \hline
-BR-JOB-05 & Search shall match keywords in title and description fields (case-insensitive). \\ \hline
-BR-JOB-06 & When multiple filters are applied, all conditions shall be combined using AND logic. \\ \hline
-BR-JOB-07 & Job information displayed includes: title, description, budget, deadline, category, required skills, client name, created date, status. \\ \hline
-BR-JOB-08 & If the job is inactive (status = 'closed' or 'deleted'), only the job owner can view full details. \\ \hline
-BR-JOB-09 & Job title is required and must not exceed 200 characters. \\ \hline
-BR-JOB-10 & Job description is required and must not exceed 5000 characters. \\ \hline
-BR-JOB-11 & Budget must be a positive number (greater than 0). \\ \hline
-BR-JOB-12 & Category must be selected from predefined categories. \\ \hline
-BR-JOB-13 & New jobs shall have status = 'draft' by default when saved as draft, or 'open' when published. \\ \hline
-BR-JOB-14 & Only the job owner can edit the job. \\ \hline
-BR-JOB-15 & Editing is restricted if the job has an active contract. \\ \hline
-BR-JOB-16 & All validation rules from UC-06.2 apply to edits. \\ \hline
-BR-JOB-17 & Edit actions shall be logged for auditing purposes. \\ \hline
-BR-JOB-18 & Only the job owner can delete the job. \\ \hline
-BR-JOB-19 & Deletion should be soft delete (set deleted\_at timestamp, status = 'deleted'). \\ \hline
-BR-JOB-20 & Jobs with active proposals or contracts cannot be deleted. \\ \hline
-BR-JOB-21 & Delete actions shall be logged for auditing purposes. \\ \hline
-BR-JOB-22 & Job status workflow: draft → open → in\_progress → completed → closed. \\ \hline
-BR-JOB-23 & Allowed transitions: draft → open (client); open → in\_progress (client, when contract created); open → closed (client, if cancelled); in\_progress → completed (client, when work done); in\_progress → closed (client, if cancelled); completed → closed (system/auto); Any status → deleted (soft delete). \\ \hline
-BR-JOB-24 & Only the job owner can manually change status. \\ \hline
-BR-JOB-25 & Status changes shall be logged for auditing purposes. \\ \hline
-BR-JOB-26 & Notifications shall be sent to freelancers when status changes from draft to open. \\ \hline
-BR-JOB-27 & Only the freelancer can view their own bookmarks. \\ \hline
-BR-JOB-28 & Bookmarks shall be sorted by created\_at in descending order by default. \\ \hline
-BR-JOB-29 & Displayed information includes: job title, budget, client name, bookmark date. \\ \hline
-BR-JOB-30 & The system shall support pagination with default page size of 10. \\ \hline
-BR-JOB-31 & Only freelancers can bookmark jobs. \\ \hline
-BR-JOB-32 & Bookmark is a toggle action. Clicking the button toggles between adding and removing. \\ \hline
-BR-JOB-33 & If the bookmark does not exist, the system creates it and changes the button to "Bookmarked". \\ \hline
-BR-JOB-34 & If the bookmark exists, the system deletes it and changes the button to "Bookmark". \\ \hline
-BR-JOB-35 & Bookmarks can only be created for active jobs (status = 'open' or 'in\_progress'). \\ \hline
-BR-JOB-36 & Only the freelancer can remove their own bookmarks. \\ \hline
-BR-JOB-37 & The system must check if the bookmark exists before deletion. \\ \hline
-BR-JOB-38 & If the bookmark does not exist, the system shall return a 404 Not Found error. \\ \hline
-BR-JOB-39 & Removing a bookmark is a hard delete from the database. \\ \hline
+    BR-JOB-01 & Public Open Visibility: Public job listings display strictly non-deleted jobs in \texttt{OPEN} status belonging to active, non-banned clients; \texttt{DRAFT}, \texttt{CLOSED}, \texttt{IN\_PROGRESS}, \texttt{COMPLETED}, \texttt{CANCELLED}, and soft-deleted jobs are excluded. \\ \hline
+    BR-JOB-02 & Multi-Criteria Overlapping Filter and Search: Text search matches case-insensitively across title, description, and skill names; budget bounds match overlapping offered budget ranges; skill filters support single or multi-skill matching; all active filters combine using logical AND. \\ \hline
+    BR-JOB-03 & Active Category Filter Visibility: Category filtering matches strictly non-deleted categories in \texttt{ACTIVE} status; inactive or soft-deleted categories return no public matches for that filter. \\ \hline
+    BR-JOB-04 & Pagination and Default Ordering: Public job browsing enforces a positive page number and 1--20 items per page (default 10), sorted newest-first by creation timestamp unless overridden by supported sort options. \\ \hline
+    BR-JOB-05 & Public vs. Owner Visibility Boundary: Public job detail access exposes strictly non-deleted \texttt{OPEN} jobs of active, non-banned clients; non-owners cannot inspect \texttt{DRAFT}, \texttt{CLOSED}, \texttt{IN\_PROGRESS}, \texttt{COMPLETED}, \texttt{CANCELLED}, or soft-deleted jobs. \\ \hline
+    BR-JOB-06 & Client Owner Job Detail Isolation: Client management detail views restrict access to the \texttt{CLIENT} role and strictly isolate non-deleted job inspection to the owning client across all lifecycle statuses. \\ \hline
+    BR-JOB-07 & Complete Metadata, Quota, and Apply Eligibility: Job details expose fixed-price budget bounds, distinct proposal \texttt{expiryDate} vs. project \texttt{deadline}, hiring quota (\texttt{SINGLE} or \texttt{MULTIPLE} with filled vs. required slots), skills, and category tags; applying is permitted only while \texttt{OPEN}, unexpired, and under quota. \\ \hline
+    BR-JOB-08 & Client Role and Ownership Isolation: Client job management listings enforce the \texttt{CLIENT} role and filter strictly to non-deleted jobs owned by the authenticated client. \\ \hline
+    BR-JOB-09 & Lifecycle Status and Proposal Aggregate Visibility: Clients can inspect and filter their own jobs across all lifecycle statuses (\texttt{DRAFT}, \texttt{OPEN}, \texttt{IN\_PROGRESS}, \texttt{CLOSED}, \texttt{COMPLETED}, \texttt{CANCELLED}) alongside live total proposal counts. \\ \hline
+    BR-JOB-10 & Lazy Auto-Close of Expired Open Jobs: Whenever a Client's job list is retrieved, any non-deleted \texttt{OPEN} job whose \texttt{expiryDate} has passed automatically closes to \texttt{CLOSED}, while its pending \texttt{SUBMITTED} proposals transition atomically to \texttt{EXPIRED}. \\ \hline
+    BR-JOB-11 & Client Creation and Draft Initialization: Only authenticated \texttt{CLIENT} accounts may create jobs; every newly created job initializes in \texttt{DRAFT} status with a generated unique URL slug, and callers cannot assign arbitrary initial statuses. \\ \hline
+    BR-JOB-12 & English Language and Duplicate Title Enforcement: Job title (10--255 characters) and description (20--5000 characters) must pass English language detection; pre-validation checks also warn against case-insensitive duplicate job titles owned by the same client. \\ \hline
+    BR-JOB-13 & Budget, Timeline, and Skill Bounds: Fixed-price jobs require minimum and maximum budgets of at least \$10 with \texttt{budgetMin} $\le$ \texttt{budgetMax}, valid future timelines where current time $<$ \texttt{expiryDate} $<$ \texttt{deadline}, and 1--10 valid skills. \\ \hline
+    BR-JOB-14 & Single Active Category Assignment: Every job must link to exactly one non-deleted \texttt{ACTIVE} job category; selecting multiple categories or an inactive category is prohibited. \\ \hline
+    BR-JOB-15 & Hiring Quota and Sync Side Effects: \texttt{SINGLE} hiring fixes required positions at 1 and \texttt{MULTIPLE} allows 2--100 positions with filled positions initialized at 0; job creation invalidates category caches and enqueues an embedding index update. \\ \hline
+    BR-JOB-16 & Draft Completeness Gate on Publish: Only the owning \texttt{CLIENT} may publish a job currently in \texttt{DRAFT} status, after re-verifying English language compliance, field lengths, budgets $\ge$ \$10, future \texttt{expiryDate} before \texttt{deadline}, 1--10 skills, 1 active category, and hiring quota. \\ \hline
+    BR-JOB-17 & Open Transition, Slug Freeze, and Indexing: Successful publishing transitions status strictly from \texttt{DRAFT} to \texttt{OPEN}, locks the public URL slug, invalidates job category caches, and dispatches an embedding synchronization event. \\ \hline
+    BR-JOB-18 & Editable Lifecycle States and Ownership: Only the owning \texttt{CLIENT} may edit jobs currently in \texttt{DRAFT}, \texttt{OPEN}, or \texttt{CLOSED} status; jobs in \texttt{IN\_PROGRESS}, \texttt{COMPLETED}, or \texttt{CANCELLED} status prohibit direct edits. \\ \hline
+    BR-JOB-19 & Slug Immutability and Position Quota Floor: Job URL slugs regenerate on title updates only while in \texttt{DRAFT} status and remain permanent once published; required positions cannot be lowered below already filled positions. \\ \hline
+    BR-JOB-20 & Existing Proposal Snapshot Preservation: Editing an \texttt{OPEN} job updates only job terms and never alters the submitted \texttt{bidAmount}, \texttt{deliveryDays}, or \texttt{coverLetter} snapshots of existing proposals; freelancers must withdraw and resubmit if wishing to revise terms. \\ \hline
+    BR-JOB-21 & Transactional Language, Category, and Skill Re-Validation: Updates re-verify English language detection and active category validity, replace skill and category links transactionally, invalidate category caches, and enqueue an embedding update. \\ \hline
+    BR-JOB-22 & Ownership and Active Contract Guard on Delete: Only the owning \texttt{CLIENT} may delete a job; deletion is prohibited if the job is in \texttt{IN\_PROGRESS} status or linked to any contract in \texttt{PENDING\_SIGN}, \texttt{ACTIVE}, or \texttt{DISPUTED} status. \\ \hline
+    BR-JOB-23 & Transactional Soft Delete and Proposal Expiration: Deletion sets a soft-delete timestamp to preserve audit integrity and atomically transitions pending \texttt{SUBMITTED} proposals on \texttt{OPEN} jobs to \texttt{EXPIRED}, while clearing caches and removing search index entries. \\ \hline
+    BR-JOB-24 & Open-State and No-Contract Close Guard: Only the owning \texttt{CLIENT} may close an \texttt{OPEN} job, and closing is prohibited whenever any linked contract exists in \texttt{PENDING\_SIGN}, \texttt{ACTIVE}, or \texttt{DISPUTED} status. \\ \hline
+    BR-JOB-25 & Closed State and Visibility Removal: Closing updates job status to \texttt{CLOSED}, excludes the job from public search and category listings, clears category caches, and removes the job from vector search indexing. \\ \hline
+    BR-JOB-26 & Closed-State Ownership Requirement on Reopen: Only the owning \texttt{CLIENT} may reopen a job currently in \texttt{CLOSED} status; jobs in \texttt{DRAFT}, \texttt{OPEN}, \texttt{IN\_PROGRESS}, \texttt{COMPLETED}, or \texttt{CANCELLED} status cannot be reopened. \\ \hline
+    BR-JOB-27 & 60-Day Reopen Window Enforcement: Closed jobs may reopen only within 60 days of their last update timestamp; requests past the 60-day window are rejected. \\ \hline
+    BR-JOB-28 & No Revival of Expired Proposals and Index Restoration: Reopening restores job status to \texttt{OPEN} and re-indexes it for discovery, without reviving previously \texttt{EXPIRED} proposals; freelancers must submit a new proposal if eligible. \\ \hline
+    BR-BMK-01 & Freelancer Ownership and Soft-Delete Exclusion: Saved bookmark access strictly enforces the \texttt{FREELANCER} role, scopes results to the caller's user identity, and automatically excludes soft-deleted jobs or banned/deleted clients. \\ \hline
+    BR-BMK-02 & Bookmark Preservation Across Job Lifecycle Changes: When a bookmarked job transitions to \texttt{CLOSED}, \texttt{IN\_PROGRESS}, \texttt{COMPLETED}, \texttt{CANCELLED}, or passes its \texttt{expiryDate}, the system preserves the bookmark for tracking rather than silently deleting it, while disabling applications for unavailable jobs. \\ \hline
+    BR-BMK-03 & Bookmark Search, Status Filtering, Sorting, and Pagination: Bookmarked job listings support filtering by job status, case-insensitive keyword search on title and description, ascending or descending sorting, and paginated retrieval. \\ \hline
+    BR-BMK-04 & Freelancer-Only and Self-Bookmark Guard: Only active \texttt{FREELANCER} accounts may bookmark jobs, and bookmarking one's own posted job is strictly prohibited. \\ \hline
+    BR-BMK-05 & Open and Non-Expired Target Check: Bookmarking requires the target job to exist as non-deleted under an active client, hold \texttt{OPEN} status, and have either no \texttt{expiryDate} or a future \texttt{expiryDate}. \\ \hline
+    BR-BMK-06 & Composite Uniqueness and Concurrency Protection: Composite uniqueness on \texttt{(userId, jobId)} permits at most one bookmark per freelancer per job; duplicate or concurrent duplicate requests are safely rejected without creating duplicate records. \\ \hline
+    BR-BMK-07 & Unconditional Hard Deletion and Ownership Verification: Removing a bookmark verifies target job and existing bookmark ownership before hard-deleting the \texttt{(userId, jobId)} record unconditionally, regardless of whether the job is \texttt{OPEN}, \texttt{CLOSED}, \texttt{COMPLETED}, or expired. \\ \hline
+    BR-SS-01 & Authenticated Owner Isolation: Saved search queries and management operations are strictly scoped to the authenticated user's own records so callers cannot view or alter another user's saved searches. \\ \hline
+    BR-SS-02 & Name Search and Chronological Ordering: Saved search listings support case-insensitive substring matching on the configuration name and ascending or descending chronological sorting (defaulting to newest first). \\ \hline
+    BR-SS-03 & Detail Ownership and Cross-User Isolation: Retrieving a saved search requires matching both the record identifier and the owning user; non-existent or third-party saved searches are treated as not found. \\ \hline
+    BR-SS-04 & Parameter Replay Compatibility: Stored search filter parameters preserve structured query criteria for direct replay onto job search while still honoring all public open-job visibility rules. \\ \hline
+    BR-SS-05 & Strict Label and Schema Validation: Creating a saved search requires a trimmed label between 1 and 100 characters and valid structured search parameters while rejecting unrecognized fields. \\ \hline
+    BR-SS-06 & Maximum Saved Search Quota: Each user may store at most \texttt{MAX\_SAVED\_SEARCHES\_PER\_USER} (30) saved searches; attempts to create additional configurations beyond 30 are rejected. \\ \hline
+    BR-SS-07 & Hard Delete with Owner Verification: Deleting a saved search verifies both record ownership and existence before permanently hard-deleting the record; missing or non-owned records cannot be deleted. \\ \hline
+    BR-SS-08 & Independent Search Persistence: Removing a saved search deletes only that saved preset and never alters job postings, bookmarks, or job alert subscriptions. \\ \hline
+    BR-JA-01 & Freelancer Role Restriction: Only authenticated users holding the \texttt{FREELANCER} role may list, inspect, create, update, delete, or preview job alerts; other roles are denied access. \\ \hline
+    BR-JA-02 & User Ownership Isolation and Chronological Ordering: Job alert listings return exclusively alerts owned by the authenticated freelancer, ordered chronologically newest first. \\ \hline
+    BR-JA-03 & Detail Ownership and Matching Preview Eligibility: Viewing alert details or matching previews enforces \texttt{FREELANCER} role and record ownership; previews return up to 5 newest non-deleted, unexpired \texttt{OPEN} jobs from active clients matching the alert criteria, excluding self-posted jobs and jobs already proposed to by the freelancer. \\ \hline
+    BR-JA-04 & Criteria, Frequency, and Channel Validation: Job alerts require at least one non-empty keyword (up to 200 characters) or at least one skill (up to 20 items), a supported frequency (\texttt{INSTANT}, \texttt{DAILY}, or \texttt{WEEKLY}), and at least one delivery channel (\texttt{IN\_APP} or \texttt{EMAIL}). \\ \hline
+    BR-JA-05 & Maximum Alert Quota: Each freelancer may maintain at most \texttt{MAX\_JOB\_ALERTS\_PER\_USER} (10) job alerts; exceeding 10 alerts is rejected. \\ \hline
+    BR-JA-06 & Case-Insensitive Duplicate Criteria Prevention: Alert keywords (trimmed lowercase) and skill sets (sorted lowercase) are normalized per user to block duplicate alert configurations upon creation or update. \\ \hline
+    BR-JA-07 & Partial Update Ownership and Criteria Integrity: Updating an alert verifies record ownership, ensures at least one keyword or skill criterion remains configured, and rejects updates that duplicate another existing alert belonging to the same user. \\ \hline
+    BR-JA-08 & Active Flag Persistence: Toggling an alert's active state (\texttt{isActive}) persists the paused/active status flag while preserving its criteria and quota slot for matching-job queries. \\ \hline
+    BR-JA-09 & Hard Delete and Quota Release: Deleting a job alert permanently removes the record and immediately frees one slot within the freelancer's 10-alert limit. \\ \hline
+    BR-JA-10 & Non-Owner Deletion Isolation: Attempting to delete an absent alert or an alert owned by another account is rejected as not found without exposing foreign alert existence. \\ \hline
+    BR-PROP-01 & Freelancer Role and Owned Proposal Scope: Only authenticated \texttt{FREELANCER} accounts may list their own submitted and draft proposals, returning strictly non-deleted records owned by the caller with pagination up to 50 items per page. \\ \hline
+    BR-PROP-02 & Lazy Proposal Expiration Synchronization: Prior to listing or reviewing proposals, overdue \texttt{SUBMITTED} proposals past \texttt{PROPOSAL\_EXPIRY\_DAYS} (30 days) automatically transition to \texttt{EXPIRED}. \\ \hline
+    BR-PROP-03 & Freelancer Proposal Detail Ownership: Viewing a freelancer proposal detail requires the \texttt{FREELANCER} role, synchronizes overdue expirations, and restricts access strictly to non-deleted proposals owned by the caller. \\ \hline
+    BR-PROP-04 & Embedded Job and Client Context Exposure: Proposal detail responses embed the linked job's budget terms, hiring quota, and client summary alongside the freelancer's submitted terms. \\ \hline
+    BR-PROP-05 & Account Eligibility and Self-Proposal Guard: Submitting or drafting a proposal requires an active, unbanned, non-deleted \texttt{FREELANCER} account; freelancers are forbidden from submitting proposals on their own jobs. \\ \hline
+    BR-PROP-06 & Job Eligibility and Hiring Slots Gate: Proposals may be created or submitted only for non-deleted \texttt{OPEN} jobs owned by active clients, prior to both \texttt{expiryDate} and \texttt{deadline}, and while open hiring positions remain unfilled. \\ \hline
+    BR-PROP-07 & Active Uniqueness and Resubmission Cap: At most 1 non-terminal active proposal (\texttt{DRAFT}, \texttt{SUBMITTED}, or \texttt{HIRED}) per job is allowed, and at most \texttt{MAX\_PROPOSALS\_PER\_JOB\_PER\_FREELANCER} (3) total non-deleted proposals per job per freelancer. \\ \hline
+    BR-PROP-08 & Bid Safeguard and Delivery Timeline Compliance: Bid amounts must fall within \$5 to \$1T USD and within ten times the job's minimum/maximum budget range; cover letters cannot exceed 5,000 characters; delivery days (1--365) must finish before the job deadline. \\ \hline
+    BR-PROP-09 & Draft Persistence and 30-Day Submission Window: Freelancers may save partial proposals as \texttt{DRAFT} or submit complete proposals as \texttt{SUBMITTED} with a 30-day review window (\texttt{PROPOSAL\_EXPIRY\_DAYS} = 30). \\ \hline
+    BR-PROP-10 & Editable Status Window and Ownership: Only the owning \texttt{FREELANCER} may edit proposals in \texttt{DRAFT} or \texttt{SUBMITTED} status; proposals already \texttt{HIRED}, \texttt{REJECTED}, \texttt{WITHDRAWN}, or \texttt{EXPIRED} cannot be modified. \\ \hline
+    BR-PROP-11 & Submission Completeness and Safeguard Re-Verification: Updating a proposal or submitting a draft requires non-empty cover letter, valid bid amount, and valid delivery days, and re-verifies live job eligibility, bid safeguards, and deadline compliance. \\ \hline
+    BR-PROP-12 & Owner and Actionable Status Guard on Withdrawal: Only the owning \texttt{FREELANCER} may withdraw a proposal, and withdrawal is permitted solely while it remains in actionable \texttt{SUBMITTED} status after overdue expiration synchronization. \\ \hline
+    BR-PROP-13 & Permanent Withdrawal Transition: Withdrawing sets proposal status permanently to \texttt{WITHDRAWN} and records \texttt{withdrawnAt}; proposals in \texttt{DRAFT}, \texttt{HIRED}, \texttt{REJECTED}, \texttt{WITHDRAWN}, or \texttt{EXPIRED} status cannot be withdrawn. \\ \hline
+    BR-PROP-14 & Client Ownership and Pre-Hiring Verification: Only the \texttt{CLIENT} owning a non-deleted \texttt{OPEN} job may hire an actionable \texttt{SUBMITTED} proposal with a valid bid amount while hiring positions remain unfilled. \\ \hline
+    BR-PROP-15 & Atomic Contract, Fee, Milestone, and Quota Transaction: Acceptance executes inside a single database transaction setting proposal status to \texttt{HIRED}, incrementing filled positions, creating the linked \texttt{Contract} (including a 3\% client platform fee), initializing Milestone 1 as \texttt{PENDING}, and notifying the hired freelancer. \\ \hline
+    BR-PROP-16 & Single vs. Multiple Hiring Fulfillment: On \texttt{SINGLE} jobs, hiring one applicant automatically rejects competing \texttt{SUBMITTED} proposals and sets the job to \texttt{IN\_PROGRESS}; on \texttt{MULTIPLE} jobs, competing proposals remain \texttt{SUBMITTED} until all required positions are filled. \\ \hline
+    BR-PROP-17 & Client Ownership and Actionable Status Guard on Rejection: Only the owning \texttt{CLIENT} of a non-deleted job may reject a candidate proposal currently in actionable \texttt{SUBMITTED} status after overdue expiration synchronization. \\ \hline
+    BR-PROP-18 & Finalized Rejection State: Rejecting sets proposal status to \texttt{REJECTED}, records \texttt{rejectedAt}, and clears \texttt{expiresAt}; proposals already \texttt{DRAFT}, \texttt{HIRED}, \texttt{WITHDRAWN}, \texttt{REJECTED}, or \texttt{EXPIRED} cannot be rejected. \\ \hline
+    BR-PROP-19 & Client Job Proposal Scope and Cleanup Synchronization: Listing proposals for a job enforces \texttt{CLIENT} job ownership, rejects soft-deleted jobs, excludes \texttt{DRAFT} proposals and banned or deleted applicants, synchronizes overdue expirations, and automatically rejects remaining \texttt{SUBMITTED} proposals if the job was \texttt{CANCELLED}. \\ \hline
+    BR-PROP-20 & Client Applicant Detail Authorization and Privacy: Inspecting an individual applicant's proposal requires \texttt{CLIENT} ownership of the non-deleted linked job, excludes drafts, synchronizes overdue expirations, and restricts candidate cover letters, terms, and profile details exclusively to the owning client. \\ \hline
+    BR-REC-01 & Role-Specific Recommendation Direction: Job recommendations (\texttt{cv2jd}) are strictly restricted to active \texttt{FREELANCER} callers with an existing freelancer profile, while candidate recommendations (\texttt{jd2cv}) are strictly restricted to the owning \texttt{CLIENT} of the target job. \\ \hline
+    BR-REC-02 & Candidate Pool Pre-Filtering and Skill Prioritization: Up to 35 candidates are pre-filtered per request, prioritizing skill overlap; recommended jobs include only non-deleted, unexpired, unfilled \texttt{OPEN} jobs from active non-banned clients (excluding self-posted jobs), and recommended candidates include only active non-banned freelancer profiles with skills (excluding the caller). \\ \hline
+    BR-REC-03 & Hybrid Multi-Signal Scoring: Match candidates are ranked using hybrid weighted scoring (\texttt{hybrid-1.0.0}), producing an overall composite score alongside individual semantic, skill, experience, budget, preference, and optional keyword signal components. \\ \hline
+    BR-REC-04 & Graceful Fallback on AI Service Degradation: When the AI ranking engine fails or times out, recommendation views fall back to returning eligible unranked items with zeroed scores instead of failing page load, while explanation queries return an unready fallback state. \\ \hline
+    BR-REC-05 & Recommendation Traceability and Index Synchronization: Ranked recommendation records are persisted asynchronously so explanation requests can verify requester ownership against historical match factors, while outbox and reindexing workflows keep vector embeddings synchronized. \\ \hline
+    BR-FCAT-01 & Public Access and Active Category Visibility: Job category directory and detail views are publicly accessible without authentication and expose strictly non-deleted categories in \texttt{ACTIVE} status. \\ \hline
+    BR-FCAT-02 & Accurate Open Job Count Aggregation: Public open job counts displayed per category tally strictly linked jobs in \texttt{OPEN} status that are non-deleted and belong to active, non-banned clients. \\ \hline
+    BR-FCAT-03 & Alphabetical Ordering, Search, and Cache Invalidation: Category listings are ordered alphabetically by name ascending, support case-insensitive search across name and description, and are cached for 300 seconds with automatic invalidation upon client job mutations. \\ \hline
+    BR-FCAT-04 & Category Detail Visibility and Open Jobs Feed: Inactive (\texttt{INACTIVE}) or soft-deleted categories cannot be accessed publicly; valid category details paginate strictly \texttt{OPEN}, non-deleted jobs from non-banned active clients with a positive page number and 1--50 items per page. \\ \hline
 
  
 
 % Nhuy -- Sprint 1--5 scoped rules
-BR-NH-18-01 & Only an authenticated freelancer submits or reads their own verification status. \\ \hline
-BR-NH-18-02 & At most one active PENDING or APPROVED request is allowed per freelancer. \\ \hline
+BR-NH-18-01 & Only an authenticated Client or Freelancer submits or reads their own verification status. \\ \hline
+BR-NH-18-02 & Approved accounts cannot create duplicate AI eKYC submissions; submissions with a duplicate verified \texttt{identityNumber} are automatically recorded as \texttt{REJECTED}. \\ \hline
 BR-NH-18-03 & Documents are confidential; storage delivery and file endpoints must enforce authorization. \\ \hline
-BR-NH-18-04 & AI success creates PENDING for administrator review; AI rejection records REJECTED with a reason. AI transport failure must not create a successful request. \\ \hline
+BR-NH-18-04 & AI \texttt{VERIFIED} without duplicates creates \texttt{PENDING} for administrator review; AI \texttt{REJECTED}/\texttt{RETRY} records \texttt{REJECTED} with notes. AI transport failure (503/504) throws an error without creating a document. \\ \hline
 BR-NH-18-05 & Rejected users may resubmit after correcting the stated problem. NOT\_SUBMITTED is displayed when API status is null. \\ \hline
 BR-NH-19-01 & Public client output contains approved company and profile fields, never password hashes, payment tokens or private identity documents. \\ \hline
 BR-NH-19-02 & Only the authenticated Client updates their own company; the server derives the user ID from authentication. \\ \hline
@@ -167,7 +211,7 @@ BR-NH-30-03 & Mark-read sets isRead=true; mark-all affects only the recipient un
 BR-NH-30-04 & Deletion is a soft delete and updates the displayed list and unread count. \\ \hline
 BR-NH-31-01 & Switch only to a role already assigned to the authenticated user. \\ \hline
 BR-NH-31-02 & Self-enrollment permits only Client or Freelancer; reject unsupported roles and duplicate UserRole mappings. \\ \hline
-BR-NH-31-03 & Maintain exactly one active primary role for an account; role-context changes issue updated session tokens. \\ \hline
+BR-NH-31-03 & Maintain one active primary \texttt{roleId} on the User record; role-context switches and enrollments return an updated JWT \texttt{accessToken}. \\ \hline
 BR-NH-31-04 & Switching roles does not create a second user account or grant access to other users records. \\ \hline
 BR-NH-39-01 & Only contract participants can list or view contract reviews. \\ \hline
 BR-NH-39-02 & A review can be created only after the contract is COMPLETED, for the other party. \\ \hline
@@ -204,4 +248,285 @@ BR-NH-CV-02 & Uploads are PDF-only, at most 10 MB, and must have a valid PDF sig
 BR-NH-CV-03 & Store CV URL, file name, public ID and upload time on FreelancerProfile. Do not expose private storage paths in public profile responses. \\ \hline
 BR-NH-CV-04 & A replacement updates metadata only after the new file is stored. A missing local file returns 404 without crashing the API. \\ \hline
 BR-NH-CV-05 & Deleting a CV clears its metadata and triggers a search-index update; it does not delete the profile or previously confirmed professional sections. \\ \hline
+    BR-CT-01 & Only users authenticated with the \texttt{CLIENT} role shall create new contracts. \\ \hline
+    BR-CT-02 & Total contract budget shall strictly match the aggregate sum of all defined milestone amounts. \\ \hline
+    BR-CT-03 & Creating a contract locks the linked proposal, preventing duplicate contracts on the same proposal. \\ \hline
+    BR-CT-04 & The contract shall be initialized in \texttt{AWAITING\_PAYMENT} status, moving to \texttt{PENDING\_SIGN} once the escrow hold is authorized. \\ \hline
+    BR-CT-05 & Updating editable contract terms, amount, or expiry date persists changes prior to activation without automatically resetting existing signature flags. \\ \hline
+    BR-CT-06 & Active, completed, cancelled, rejected, or expired contracts cannot be modified directly. \\ \hline
+    BR-CT-07 & A contract can only transition to \texttt{COMPLETED} when 100\% of its milestones have been settled and no dispute is open. \\ \hline
+    BR-CT-08 & Completed contracts are permanently closed from further deliverable submissions or financial adjustments. \\ \hline
+    BR-CT-09 & Submitted milestones enter a 7-day client review timeout window before eligible automation settlement. \\ \hline
+    BR-CT-10 & Clients and Freelancers shall only see contracts in which they are a verified participant. \\ \hline
+    BR-CT-11 & Administrators may inspect contract details and files via read-only API authorization. \\ \hline
+    BR-CT-12 & Strict data isolation ensures only authorized parties (Client, Freelancer, and Admin read endpoints) can view contract details. \\ \hline
+    BR-CT-13 & Contract financial figures must dynamically reflect verified ledger transactions. \\ \hline
+    BR-CT-14 & A contract transitions to \texttt{ACTIVE} only after both parties sign sequentially (Client first, then Freelancer with Stripe Connect \texttt{payoutsEnabled}) and the authorized hold intent is captured. \\ \hline
+    BR-CT-15 & Contract export generates a formatted PDF summary stored inside the contract's shared files. \\ \hline
+    BR-CT-16 & The exported PDF must display exact contractual terms, milestones, and platform fees at the time of export. \\ \hline
+    BR-CT-17 & If the contract is signed, the PDF must render verified signature blocks with signing timestamps. \\ \hline
+    BR-CT-18 & Only non-deleted files (\texttt{deletedAt = null}) belonging to the contract shall be returned. \\ \hline
+    BR-CT-19 & Contract file access is strictly restricted to contract participants and system administrators. \\ \hline
+    BR-CT-20 & Maximum individual file upload size shall be 25MB. \\ \hline
+    BR-CT-21 & Uploaded contract files shall be associated with the uploader's user ID for audit ownership. \\ \hline
+    BR-CT-22 & Only the original file uploader can delete a shared file (within 1 hour of upload). \\ \hline
+    BR-CT-23 & Shared contract files can only be deleted by the uploader within the 1-hour expiry window (\texttt{SharedFileDeleteExpiredException}). \\ \hline
+    BR-CT-24 & Only the assigned Freelancer can reject a pending contract offer. \\ \hline
+    BR-CT-25 & Rejecting a contract immediately voids any active Stripe escrow authorization hold with \$0 fee. \\ \hline
+    BR-CT-26 & A rejected contract offer cannot be reinstated; the Client must create a new contract proposal. \\ \hline
+    BR-UA-01 & Google OAuth shall follow standard OAuth 2.0 authorization code grant with secure PKCE/state verification. \\ \hline
+    BR-UA-02 & New users authenticated via Google OAuth shall be automatically provisioned with the \texttt{CLIENT} role. \\ \hline
+    BR-UA-03 & Banned accounts shall be denied access with an administrative notice. \\ \hline
+    BR-UA-04 & Issued JWT tokens are managed through secure HTTP-only cookies and Bearer authorization headers. \\ \hline
+    BR-UA-05 & Passwords must be verified using bcrypt comparison with salted hashes. \\ \hline
+    BR-UA-06 & Login differentiates unknown email (\texttt{Error.IncorrectEmail}, HTTP 401) from wrong password (\texttt{Error.IncorrectPassword}, HTTP 422). \\ \hline
+    BR-UA-07 & Registration validates a valid email OTP before persisting the new user account. \\ \hline
+    BR-UA-08 & Banned accounts shall be denied access across protected routes. \\ \hline
+    BR-UA-09 & Logout verifies and deletes the refresh-token session row before clearing browser session tokens. \\ \hline
+    BR-UA-10 & Terminated sessions shall be rejected on all subsequent API requests. \\ \hline
+    BR-UA-11 & Email addresses must be globally unique across all accounts. \\ \hline
+    BR-UA-12 & The registration DTO restricts role selection to \texttt{CLIENT} or \texttt{FREELANCER}. \\ \hline
+    BR-UA-13 & Passwords must be hashed with bcrypt prior to persistence. \\ \hline
+    BR-UA-14 & OTP codes expire after the configured \texttt{OTP\_EXPIRES\_IN} duration and are deleted once verified. \\ \hline
+    BR-UA-15 & Forgot password validates that the email exists (\texttt{EmailNotFoundException} 422 if absent) before issuing an OTP. \\ \hline
+    BR-UA-16 & Resetting a password validates the 6-digit \texttt{FORGOT\_PASSWORD} OTP before consumption and deletion. \\ \hline
+    BR-UA-17 & Resetting a password updates \texttt{User.password} without automatically revoking existing device sessions. \\ \hline
+    BR-RM-01 & Role management is strictly restricted to authenticated Administrators. \\ \hline
+    BR-RM-02 & Soft-deleted roles shall be excluded from the active list. \\ \hline
+    BR-RM-03 & Soft-deleted roles cannot be viewed in detail mode. \\ \hline
+    BR-RM-04 & System role names are immutable and reserved. \\ \hline
+    BR-RM-05 & Duplicate active role names are strictly rejected. \\ \hline
+    BR-RM-06 & Role ID remains unchanged throughout update. \\ \hline
+    BR-RM-07 & Deletion must be executed as a soft delete via \texttt{deletedAt}. \\ \hline
+    BR-RM-08 & Roles assigned to active users cannot be deleted until users are reassigned. \\ \hline
+    BR-RM-09 & Permission updates replace the role's entire permission mapping set. \\ \hline
+    BR-RM-10 & Permission changes take effect immediately across all active user sessions with that role. \\ \hline
+    BR-MS-01 & Only active milestones where \texttt{deletedAt = null} shall be returned. \\ \hline
+    BR-MS-02 & Milestones shall be ordered sequentially according to milestone sequence and creation order. \\ \hline
+    BR-MS-03 & Milestones in \texttt{SUBMITTED} or \texttt{CHANGES\_REQUESTED} state shall be automatically highlighted for action. \\ \hline
+    BR-MS-04 & Deliverable specifications and acceptance criteria are legally binding once the milestone is funded. \\ \hline
+    BR-MS-05 & Milestone submissions history must preserve all revision cycles for audit traceability. \\ \hline
+    BR-MS-06 & Adding a milestone dynamically updates total contract budget commitments. \\ \hline
+    BR-MS-07 & Newly created milestones are initialized with status \texttt{PENDING} and payment status \texttt{PENDING}. \\ \hline
+    BR-MS-08 & Milestones that have already been funded in escrow cannot be modified without formal cancellation or refund. \\ \hline
+    BR-MS-09 & Funded milestones cannot be deleted; only non-held \texttt{PENDING} milestones when more than one exists can be deleted. \\ \hline
+    BR-MS-10 & Creating a milestone validates that total milestone amounts do not exceed the contract total amount without altering \texttt{Contract.totalAmount}; deleting a milestone retains the contract total. \\ \hline
+    BR-MS-15 & Freelancers can only sequentially advance funded milestones to \texttt{IN\_PROGRESS}. \\ \hline
+    BR-MSF-01 & Only non-deleted files associated with the milestone shall be displayed. \\ \hline
+    BR-MSF-02 & Maximum milestone file attachment size is 25MB. \\ \hline
+    BR-MSF-03 & Uploaded files are tagged with uploader ID for ownership tracking. \\ \hline
+    BR-MSF-04 & Only the file uploader (as a contract participant) may delete an uploaded milestone file. \\ \hline
+    BR-MSS-01 & Submitting deliverables transitions milestone status to \texttt{SUBMITTED} and activates the client review countdown. \\ \hline
+    BR-MSS-02 & Submissions create an immutable audit record preserving files and notes for dispute protection. \\ \hline
+    BR-MSS-04 & Submission history records shall remain accessible throughout the contract lifecycle. \\ \hline
+    BR-MSS-05 & Submission details provide an immutable record of work deliverables submitted at that specific timestamp. \\ \hline
+    BR-MS-11 & Requesting changes transitions milestone status to \texttt{CHANGES\_REQUESTED} and resets the approval timer. \\ \hline
+    BR-MS-12 & The milestone remains funded in escrow while changes are being performed by the freelancer. \\ \hline
+    BR-MS-13 & Approving a milestone automatically initiates immediate escrow payout release to the freelancer. \\ \hline
+    BR-MS-14 & Approved milestones are permanently locked from further revision or refund requests. \\ \hline
+    BR-PERM-01 & Only active permissions with \texttt{deletedAt = null} shall be returned to the administrator. \\ \hline
+    BR-PERM-02 & Keyword search queries shall match \texttt{name}, \texttt{path}, or \texttt{module} case-insensitively using partial text matching. \\ \hline
+    BR-PERM-03 & The method filter shall filter records by exact HTTP verb equality. \\ \hline
+    BR-PERM-04 & The module filter shall perform case-insensitive exact matching against the permission module field. \\ \hline
+    BR-PERM-05 & The response must return distinct existing module names to dynamically populate client filter options. \\ \hline
+    BR-PERM-06 & Only active permissions with \texttt{deletedAt = null} are retrievable. Soft-deleted permissions return HTTP 404 Not Found. \\ \hline
+    BR-PERM-07 & The returned payload must include \texttt{id}, \texttt{name}, \texttt{path}, \texttt{method}, \texttt{module}, and \texttt{createdAt}. \\ \hline
+    BR-PERM-08 & Direct URL access to permission details requires an active Admin session with proper authorization. \\ \hline
+    BR-SES-01 & Users can only view sessions belonging strictly to their own authenticated \texttt{userId}. Cross-account session retrieval is forbidden. \\ \hline
+    BR-SES-02 & The \texttt{isCurrent} indicator is true if and only if the session ID in the database matches the \texttt{sessionId} embedded in the caller's JWT access token. \\ \hline
+    BR-SES-03 & Search queries must perform case-insensitive partial matching against both \texttt{ipAddress} and \texttt{deviceInfo}. \\ \hline
+    BR-SES-04 & Session expiration status is evaluated dynamically: a session is active when \texttt{expiresAt > now}, and expired otherwise. \\ \hline
+    BR-SES-05 & Pagination parameters must be strictly validated with a maximum limit of 100 records per page. \\ \hline
+    BR-SES-06 & A user can strictly view only session records that they own (\texttt{session.user\allowbreak Id == caller.user\allowbreak Id}). Attempting to access another user's session returns HTTP 404 Not Found to prevent ID enumeration. \\ \hline
+    BR-SES-07 & The returned payload must include \texttt{id}, \texttt{userId}, \texttt{deviceInfo}, \texttt{ipAddress}, \texttt{expiresAt}, \texttt{createdAt}, and \texttt{isCurrent}. \\ \hline
+    BR-SES-08 & Users can only revoke sessions belonging to their own user account. \\ \hline
+    BR-SES-09 & Already-expired sessions (\texttt{expiresAt <= now}) cannot be revoked; attempting to do so returns HTTP 400 Bad Request (\texttt{SESSION\_ALREADY\_EXPIRED}). \\ \hline
+    BR-SES-10 & Deletion of the session row immediately revokes the ability of the refresh token to issue new access tokens. \\ \hline
+    BR-SES-11 & If the user revokes their currently active session, the backend sets \texttt{loggedOut: true}, prompting the client application to terminate the current session and redirect to the sign-in screen. \\ \hline
+    BR-FCAT-05 & Newly created categories start with an initial post count of 0. \\ \hline
+    BR-FCAT-06 & Only Admin users can update forum categories. \\ \hline
+    BR-FCAT-07 & Partial updates are supported; name and description can be updated independently or simultaneously. \\ \hline
+    BR-FCAT-08 & If the category name is modified, it must be unique among active categories and its URL slug is regenerated automatically. \\ \hline
+    BR-FCAT-09 & Soft-deleted categories cannot be updated. Attempting to update a deleted category returns HTTP 404 Not Found. \\ \hline
+    BR-FCAT-10 & Only Admin users have authority to delete forum categories. \\ \hline
+    BR-FCAT-11 & Deletion is implemented as a soft delete by setting \texttt{deletedAt} to the current timestamp. \\ \hline
+    BR-FCAT-12 & In an atomic database transaction, active posts under this category are set to \texttt{categoryId = null} (Uncategorized) to preserve discussion history. \\ \hline
+    BR-FCAT-13 & Soft-deleted categories are hidden from the active category list and public forum dropdowns, but can be viewed and restored by administrators. \\ \hline
+    BR-FCAT-14 & Only users with the \texttt{ADMIN} role are authorized to access the category management catalog. \\ \hline
+    BR-FCAT-15 & When the \texttt{deleted} query parameter is omitted or \texttt{'false'}, only active categories (\texttt{deletedAt = null}) are returned. \\ \hline
+    BR-FCAT-16 & When \texttt{deleted = 'true'}, only soft-deleted categories (\texttt{deletedAt != null}) are returned. \\ \hline
+    BR-FCAT-17 & Post counts are calculated strictly for active posts (\texttt{deletedAt = null}) under each category. \\ \hline
+    BR-FCAT-18 & Sorting is supported on \texttt{id}, \texttt{name}, and \texttt{createdAt}. \\ \hline
+    BR-FCAT-19 & Only active categories with \texttt{deletedAt = null} are accessible via the detail view. Deleted categories return HTTP 404 Not Found. \\ \hline
+    BR-FCAT-20 & Detail payload includes \texttt{id}, \texttt{name}, \texttt{slug}, \texttt{description}, \texttt{createdAt}, \texttt{updatedAt}, and \texttt{postCount}. \\ \hline
+    BR-FCAT-21 & Access is restricted exclusively to authenticated users possessing the \texttt{ADMIN} role. \\ \hline
+    BR-FCAT-22 & Only users with the \texttt{ADMIN} role can restore forum categories. \\ \hline
+    BR-FCAT-23 & The category must currently be soft-deleted (\texttt{deletedAt != null}) to be eligible for restoration. \\ \hline
+    BR-FCAT-24 & Before restoration, the system must verify that no active category currently exists with the same name. If a naming collision is detected, restoration is rejected with HTTP 409 Conflict. \\ \hline
+    BR-FCAT-25 & Restoring resets \texttt{deletedAt = null}; previously detached posts remain in Uncategorized unless individually reclassified. \\ \hline
+    BR-DISPUTE-01 & Only direct contract parties (Client or Freelancer) can open a dispute. \\ \hline
+    BR-DISPUTE-02 & Filing a dispute immediately freezes milestone escrow balance from release, cancellation, or refund until resolution is achieved. \\ \hline
+    BR-DISPUTE-03 & A maximum of 5 evidence files can be uploaded during the initial dispute claim. \\ \hline
+    BR-DISPUTE-04 & Strict tenant-level isolation prevents users from browsing disputes outside their own contracts. \\ \hline
+    BR-DISPUTE-05 & Disputes with active response deadlines must display dynamic real-time countdown badges. \\ \hline
+    BR-DISPUTE-06 & Case evidence and claims are strictly accessible only to direct dispute participants (\texttt{openedById} or \texttt{respondentId}) on participant endpoints, and active Experts on escalated cases. \\ \hline
+    BR-DISPUTE-07 & Milestones linked to active disputes must prominently display dispute banners and disable standard milestone submission, modification, and approval buttons. \\ \hline
+    BR-DISPUTE-08 & Only the designated respondent can respond to the dispute. \\ \hline
+    BR-DISPUTE-09 & A respondent responds using \texttt{ACCEPT} (immediately finalizing the dispute) or \texttt{DECLINE} (transitioning to \texttt{UNDER\_REVIEW}). \\ \hline
+    BR-DISPUTE-10 & Declining a dispute proposal or escalating an overdue waiting dispute moves its status to \texttt{UNDER\_REVIEW}. \\ \hline
+    BR-DISPUTE-11 & Only the original opener can withdraw a dispute while in \texttt{OPEN} or \texttt{WAITING\_RESPONSE} status (\texttt{CANCELLED}). \\ \hline
+    BR-DISPUTE-12 & Withdrawing a dispute releases the escrow freeze and restores the previous milestone status. \\ \hline
+    BR-DISPUTE-13 & Escalation elevates a declined or overdue dispute to \texttt{UNDER\_REVIEW} for expert arbitration. \\ \hline
+    BR-DISPUTE-14 & Expert arbitration decisions (\texttt{FINALIZED}) are final and binding on both contract parties. \\ \hline
+    BR-DISPUTE-15 & Only users holding the \texttt{EXPERT} role (with an active Expert profile) can access \texttt{/api/expert/disputes}. \\ \hline
+    BR-DISPUTE-16 & Expert arbitration assignments use active \texttt{Expert} records without automated category or conflict-of-interest filtering. \\ \hline
+    BR-DISPUTE-17 & Experts must have access to symmetric evidence from both parties to ensure unbiased evaluation. \\ \hline
+    BR-DISPUTE-18 & The sum of awarded amounts must mathematically equal 100\% of the disputed milestone escrow funds. \\ \hline
+    BR-DISPUTE-19 & Expert arbitration rulings are irrevocable and trigger immediate automated financial settlement. \\ \hline
+    BR-DISPUTE-20 & Written justification must be provided and preserved for platform auditability and compliance. \\ \hline
+    BR-USER-01 & Only active user accounts with \texttt{deletedAt = null} shall be returned. Soft-deleted accounts are excluded. \\ \hline
+    BR-USER-02 & Default sort order is by \texttt{id} in descending order, displaying newly registered users first. \\ \hline
+    BR-USER-03 & The maximum page size is 100 records; if \texttt{limit} exceeds 100, the server caps it at 100. \\ \hline
+    BR-USER-04 & Search on \texttt{email} and \texttt{displayName} is case-insensitive with partial contains matching. \\ \hline
+    BR-USER-05 & Role filtering supports built-in roles, \texttt{CUSTOM} (matching any custom role), and specific custom role names. \\ \hline
+    BR-USER-06 & The \texttt{clientProfile}, \texttt{freelancerProfile}, and \texttt{expertProfile} fields may be \texttt{null} if the user does not possess the corresponding role or has not initialized that profile. \\ \hline
+    BR-USER-07 & The \texttt{customRoleProfiles} array contains only roles outside the built-in Client, Freelancer, and Admin roles. \\ \hline
+    BR-USER-08 & Each assigned role in the role list identifies a built-in or custom role; the user's primary active role is stored in \texttt{User.roleId}. \\ \hline
+    BR-USER-09 & The email address is automatically converted to lowercase before storage and must be at most 254 characters. \\ \hline
+    BR-USER-10 & Email uniqueness is enforced among all active accounts (\texttt{deletedAt = null}). \\ \hline
+    BR-USER-11 & Passwords must be hashed with bcrypt prior to storage; plaintext passwords are never persisted. \\ \hline
+    BR-USER-12 & The Admin role cannot be assigned during manual user creation to prevent privilege escalation; only Client, Freelancer, or custom roles are permitted. \\ \hline
+    BR-USER-13 & The selected role must exist and be active in the system. \\ \hline
+    BR-USER-14 & The newly assigned role is automatically designated as the user's primary role (\texttt{isPrimary = true}). \\ \hline
+    BR-USER-15 & An administrator is strictly prohibited from banning their own account (\texttt{isBanned = true} is rejected when \texttt{targetUserId == actorId}). \\ \hline
+    BR-USER-16 & Email uniqueness is enforced across all non-deleted users, excluding the target user being edited. \\ \hline
+    BR-USER-17 & At least one updatable field must be provided in the request payload. \\ \hline
+    BR-USER-18 & The email address is automatically converted to lowercase before updating. \\ \hline
+    BR-USER-19 & Setting \texttt{fullName} to null or empty string clears the user's display name. \\ \hline
+    BR-CLT-01 & The target user must possess the Client role or have an existing client profile record; otherwise, the update is rejected with HTTP 403 Forbidden. \\ \hline
+    BR-CLT-02 & Company name is limited to a maximum of 255 characters. \\ \hline
+    BR-CLT-03 & Company description is limited to a maximum of 5000 characters. \\ \hline
+    BR-CLT-04 & The website field must conform to standard URL format if supplied. \\ \hline
+    BR-CLT-05 & Empty string values are automatically converted to \texttt{null} to allow clearing field content. \\ \hline
+    BR-CLT-06 & The client profile record is upserted, creating the profile record if it does not yet exist. \\ \hline
+    BR-FLR-01 & The target user must possess the Freelancer role or have an existing freelancer profile record; otherwise, the update is rejected with HTTP 403 Forbidden. \\ \hline
+    BR-FLR-02 & Professional title is limited to a maximum of 255 characters. \\ \hline
+    BR-FLR-03 & Biography is limited to a maximum of 5000 characters. \\ \hline
+    BR-FLR-04 & Credential arrays (languages, education, certifications) may each contain at most 100 items, with each entry limited to 255 characters. \\ \hline
+    BR-FLR-05 & Empty string values are converted to \texttt{null}; empty or null arrays are normalized to \texttt{[]}. \\ \hline
+    BR-FLR-06 & The freelancer profile and parent Profile are upserted if not already present. \\ \hline
+    BR-FLR-07 & Skill updating uses full-replacement semantics (\texttt{PUT}): all pre-existing skills are removed and replaced by the submitted array. \\ \hline
+    BR-FLR-08 & Proficiency levels must strictly be integers between 1 and 10 inclusive. \\ \hline
+    BR-FLR-09 & A freelancer may possess a maximum of 100 skills. \\ \hline
+    BR-FLR-10 & Skill catalog lookup is case-insensitive; if a submitted skill does not exist in the master catalog, a new catalog entry is automatically provisioned. \\ \hline
+    BR-FLR-11 & Submitting an empty skills array effectively clears all skills for the freelancer. \\ \hline
+    BR-FLR-12 & Portfolio item deletion is implemented as a soft delete by setting \texttt{deletedAt = new Date()}; items are never permanently purged. \\ \hline
+    BR-FLR-13 & Project title is mandatory and limited to a maximum of 255 characters. \\ \hline
+    BR-FLR-14 & Project description is limited to a maximum of 5000 characters. \\ \hline
+    BR-FLR-15 & Technologies list may contain at most 50 items, each limited to 100 characters. \\ \hline
+    BR-FLR-16 & The project URL must conform to standard URL format if provided. \\ \hline
+    BR-FLR-17 & Edit and delete operations strictly verify item ownership: the target item must belong to the specified freelancer profile. \\ \hline
+    BR-FLR-18 & Soft-deleted portfolio items are excluded from active profile queries. \\ \hline
+    BR-EXP-01 & The target user must possess the Expert role; attempting to edit a non-expert user throws HTTP 403 Forbidden (\texttt{NOT\_AN\_EXPERT\_ACCOUNT}). \\ \hline
+    BR-EXP-02 & Administrative updates apply directly to the database without requiring review approval or revision tickets. \\ \hline
+    BR-EXP-03 & Years of experience must be an integer between 0 and 80. \\ \hline
+    BR-EXP-04 & Credential arrays (expertise, education, certifications) are deduplicated case-insensitively and sanitized on submission. \\ \hline
+    BR-EXP-05 & The \texttt{isActive} toggle controls whether the expert is searchable and listed on the public platform directory (\texttt{/experts}). \\ \hline
+    BR-EXP-06 & The expert's profile strength score is recalculated automatically upon each update. \\ \hline
+    BR-PAYMENT-01 & Freelancers must have a fully verified Stripe Connect account with payouts enabled to receive contract payments. \\ \hline
+    BR-PAYMENT-02 & Sensitive bank account numbers are stored exclusively within Stripe; the platform only persists the Stripe Account ID. \\ \hline
+    BR-PAYMENT-03 & Real-time capability synchronization ensures escrow releases are not attempted on restricted bank accounts. \\ \hline
+    BR-PAYMENT-04 & Full credit card numbers and CVV codes are never stored on platform servers; only PCI-compliant Stripe tokens and masked metadata are processed. \\ \hline
+    BR-PAYMENT-05 & Exactly one payment method can be designated as the customer default at any given time. \\ \hline
+    BR-PAYMENT-06 & Detaching a payment method does not affect active escrow deposits or already executed charges. \\ \hline
+    BR-PAYMENT-07 & Hold deposit intents must explicitly track contract ID and client ID in Stripe metadata for auditability. \\ \hline
+    BR-PAYMENT-08 & Escrow funds deposited via Stripe Checkout are held securely in platform accounts until milestone deliverables are formally approved. \\ \hline
+    BR-PAYMENT-09 & Off-session payments with saved cards must handle 3D Secure SCA (Strong Customer Authentication) challenges dynamically. \\ \hline
+    BR-PAYMENT-10 & Milestone escrow funds can only be released upon explicit client approval or administrative dispute resolution. \\ \hline
+    BR-PAYMENT-11 & Platform commission is deducted automatically at the moment of escrow transfer. \\ \hline
+    BR-PAYMENT-12 & Users can only inspect transaction records in which their account is directly involved as payer or payee. \\ \hline
+    BR-PAYMENT-13 & Status synchronization operations must be idempotent to prevent duplicate processing. \\ \hline
+    BR-PAYMENT-14 & Client-side redirect reconciliation must independently verify payment status against Stripe API server-side before updating database state. \\ \hline
+    BR-PAYMENT-15 & All webhook endpoints must enforce cryptographic HMAC SHA-256 signature verification. \\ \hline
+    BR-PAYMENT-16 & Webhook processing must be strictly idempotent to prevent duplicate fund transfers or state corruptions. \\ \hline
+    BR-BAN-01 & Admin Permission Verification: Only authenticated users with role \texttt{ADMIN} and matching route permission can query the administrative banner catalog. \\ \hline
+    BR-BAN-02 & Search and Position Filter Matching: Text search performs case-insensitive substring matching on \texttt{title}, while position filtering performs exact equality matching. \\ \hline
+    BR-BAN-03 & Default Pagination and Ordering: Default page size is 10 records, ordered by \texttt{id} in descending order so newly created banners appear first. \\ \hline
+    BR-BAN-04 & Active and Schedule Range Representation: Displays visual badges for active/inactive state along with formatted publication date intervals (\texttt{startDate} to \texttt{endDate}). \\ \hline
+    BR-BAN-05 & Direct Detail and Modification Actions: Each table row provides direct triggers to view detail, open update form modal, or initiate hard deletion. \\ \hline
+    BR-BAN-06 & Numeric Identifier Validation: The URL parameter \texttt{id} must parse strictly as a valid positive integer. \\ \hline
+    BR-BAN-07 & Advertisement Banner Existence: The requested banner must exist in the database; returns HTTP 404 (\texttt{Error.\allowbreak Banner\allowbreak Not\allowbreak Found}) if missing. \\ \hline
+    BR-BAN-08 & Complete Attribute Presentation: Displays all banner configuration data, responsive image asset preview, and external target link. \\ \hline
+    BR-BAN-09 & Direct Modification Access: Provides an ``Edit Banner'' trigger pre-populating current banner attributes into the form dialog. \\ \hline
+    BR-BAN-10 & Single Active Banner Per Position: Each position slot can only be occupied by one banner; if the position is already taken, creation is rejected with HTTP 409 (\texttt{Error.\allowbreak Banner\allowbreak Position\allowbreak Taken}). \\ \hline
+    BR-BAN-11 & Mandatory Title Trimming: Title is mandatory and leading/trailing whitespace is stripped before validation and database persistence. \\ \hline
+    BR-BAN-12 & Target and Image URL Validation: If provided, URLs must be strictly valid URI formats with a maximum length of 500 characters. \\ \hline
+    BR-BAN-13 & Valid Schedule Range: When both dates are specified, \texttt{startDate} must be earlier than or equal to \texttt{endDate}. \\ \hline
+    BR-BAN-14 & Image Upload Constraints: Image uploads are strictly limited to valid image MIME formats and maximum size of 10MB. \\ \hline
+    BR-BAN-15 & Auto-refresh and Feedback: Shows a success toast notification and refreshes the banner catalog upon successful creation. \\ \hline
+    BR-BAN-16 & Target Banner Existence: The targeted banner ID must exist in the database; returns HTTP 404 (\texttt{Error.\allowbreak Banner\allowbreak Not\allowbreak Found}) if not found. \\ \hline
+    BR-BAN-17 & Position Conflict Protection on Update: If updating the \texttt{position} slot, the new position must not be occupied by another banner; excludes current banner ID. \\ \hline
+    BR-BAN-18 & Date Range Consistency: If both dates are present after update, \texttt{startDate} must be earlier than or equal to \texttt{endDate}. \\ \hline
+    BR-BAN-19 & Partial Update Preservation: Unchanged fields retain their current values in the database. \\ \hline
+    BR-BAN-20 & Cache Invalidation and UI Synchronization: Immediately invalidates cached queries and triggers view refresh upon successful update. \\ \hline
+    BR-BAN-21 & Permanent Hard Deletion: Advertisement banners are permanently removed from the \texttt{advertisement\_banners} table via hard deletion. \\ \hline
+    BR-BAN-22 & Existence Verification: Throws HTTP 404 (\texttt{Error.\allowbreak Banner\allowbreak Not\allowbreak Found}) if the banner record does not exist or was already removed. \\ \hline
+    BR-BAN-23 & Explicit Confirmation Gate: Destruction requires explicit confirmation from the administrator via modal alert to prevent accidental deletion. \\ \hline
+    BR-BAN-24 & Immediate List Synchronization: The deleted banner row is purged from the UI table immediately upon successful response. \\ \hline
+    BR-SKL-01 & Admin Authorization: Access to the master skill catalog is strictly restricted to authenticated administrators. \\ \hline
+    BR-SKL-02 & Substring Multi-Field Search: Search performs case-insensitive substring matching across \texttt{name}, \texttt{slug}, and \texttt{description}. \\ \hline
+    BR-SKL-03 & Soft-Deletion State Filtering: Setting \texttt{deleted=true} filters for \texttt{deletedAt != null}, \texttt{deleted=false} filters for \texttt{deletedAt = null}, and omitting it lists all skills. \\ \hline
+    BR-SKL-04 & Associated Job Count Aggregation: Automatically aggregates and displays the exact count of job postings utilizing each skill via \texttt{\_count.jobs}. \\ \hline
+    BR-SKL-05 & Dynamic Status Badge and Action Switching: Active skills display green badges with Edit/Delete buttons; soft-deleted skills display muted badges with a Restore button. \\ \hline
+    BR-SKL-06 & Numeric Skill ID Validation: The URL parameter \texttt{id} must parse strictly as a valid positive integer. \\ \hline
+    BR-SKL-07 & Skill Record Existence: The requested skill must exist in the database; returns HTTP 404 (\texttt{Error.\allowbreak Skill\allowbreak Not\allowbreak Found}) if missing. \\ \hline
+    BR-SKL-08 & Complete Detail and Usage Metrics: Displays name, generated slug, description, creation date, update date, deletion timestamp, and total jobs utilizing this skill. \\ \hline
+    BR-SKL-09 & Contextual Action Toolbar: Shows Edit and Delete actions if skill is active; shows Restore action if skill is soft-deleted. \\ \hline
+    BR-SKL-10 & Case-Insensitive Name Uniqueness: Skill name must be unique among active skills; throws HTTP 409 (\texttt{Error.\allowbreak Skill\allowbreak Name\allowbreak Already\allowbreak Exists}) if conflict occurs. \\ \hline
+    BR-SKL-11 & Automated Unique Slug Generation: Automatically generates a URL-friendly slug by stripping diacritics, replacing special characters with hyphens, and suffixing numbers if collisions occur. \\ \hline
+    BR-SKL-12 & Name and Description Constraints: Name is mandatory trimmed 1 to 100 characters; description is optional up to 500 characters. \\ \hline
+    BR-SKL-13 & Concurrency Race-Condition Guard: Catches database \texttt{P2002} unique constraint violations and converts them gracefully to HTTP 409 conflict errors. \\ \hline
+    BR-SKL-14 & Dialog Reset and List Invalidation: Clears input values, closes modal dialog, and triggers Next.js router refresh upon success. \\ \hline
+    BR-SKL-15 & Skill Existence Verification: Target skill must exist in the database; returns HTTP 404 (\texttt{Error.\allowbreak Skill\allowbreak Not\allowbreak Found}) if missing. \\ \hline
+    BR-SKL-16 & Name Modification and Conflict Detection: If name is altered, verifies no other active skill shares the same case-insensitive name; throws HTTP 409 if conflict detected. \\ \hline
+    BR-SKL-17 & Automatic Slug Regeneration: If the name is changed, automatically regenerates a new unique URL-friendly slug based on the updated name. \\ \hline
+    BR-SKL-18 & Optional Description Nullability: Submitting an empty description string sets the description attribute to null in the database. \\ \hline
+    BR-SKL-19 & Synchronized UI Updates: Closes modal dialog, triggers success toast, and refreshes table or detail screen upon completion. \\ \hline
+    BR-SKL-20 & Soft-Deletion Principle: Skills are not permanently purged from the database; the system marks them soft-deleted by setting \texttt{deletedAt = new Date()}. \\ \hline
+    BR-SKL-21 & Automatic Freelancer Association Detachment: All associations in \texttt{freelancer\_skills} referencing this skill ID are deleted in the same atomic transaction. \\ \hline
+    BR-SKL-22 & Preservation of Historical Job Associations: Associations in \texttt{job\_skills} are preserved so existing job postings continue to render their legacy skill requirements accurately. \\ \hline
+    BR-SKL-23 & Dependent Job Warning in UI: The deletion dialog prominently displays an alert warning with the exact number of jobs currently linked to the skill. \\ \hline
+    BR-SKL-24 & Confirmation Modal Guard: Requires explicit confirmation from the administrator before executing soft deletion. \\ \hline
+    BR-SKL-25 & Restoration Eligibility: Target skill must currently be soft-deleted with \texttt{deletedAt != null}; returns HTTP 404 if not found or already active. \\ \hline
+    BR-SKL-26 & Conflict Prevention Against Interim Duplicates: If another active skill with the same name was created while this skill was deleted, restoration is blocked with HTTP 409 (\texttt{Error.\allowbreak Skill\allowbreak Name\allowbreak Already\allowbreak Exists}). \\ \hline
+    BR-SKL-27 & Soft-Deletion Flag Clearing: Sets \texttt{deletedAt = null}, fully restoring the skill to active catalog availability. \\ \hline
+    BR-SKL-28 & Immediate Status Synchronization: Returns restored skill data, displays success toast, and updates table view immediately. \\ \hline
+    BR-JCAT-01 & Admin Authorization: Access to the administrative job category catalog is strictly restricted to authenticated administrators. \\ \hline
+    BR-JCAT-02 & Multi-Field Case-Insensitive Search: Searches across \texttt{name}, \texttt{slug}, and \texttt{description} case-insensitively using partial substring matching. \\ \hline
+    BR-JCAT-03 & Active Job Count Link Filtering: Counts only jobs that are not soft-deleted (\texttt{job.deletedAt = null}) linked via the \texttt{JobJobCategory} relation table. \\ \hline
+    BR-JCAT-04 & Operational Status and Soft-Delete Filtering: Supports orthogonal filtering by operational state (\texttt{ACTIVE} or \texttt{INACTIVE}) and lifecycle deletion state (\texttt{deleted=true} or \texttt{deleted=false}). \\ \hline
+    BR-JCAT-05 & Contextual Action Buttons: Active categories display green badges with Edit and Delete action buttons; soft-deleted categories display red badges with a Restore button. \\ \hline
+    BR-JCAT-06 & Identifier Format Validation: The URL path parameter \texttt{id} must parse strictly as a valid positive integer. \\ \hline
+    BR-JCAT-07 & Job Category Existence Check: The targeted job category must exist in the database; returns HTTP 404 (\texttt{Error.\allowbreak Job\allowbreak Category\allowbreak Not\allowbreak Found}) if missing. \\ \hline
+    BR-JCAT-08 & Associated Job Retrieval Limit: Returns up to 10 latest non-deleted active jobs linked to this category through \texttt{JobJobCategory}. \\ \hline
+    BR-JCAT-09 & Contextual Action Toolbar: Shows Edit and Delete actions if category is active; shows Restore action if category is soft-deleted. \\ \hline
+    BR-JCAT-10 & Name Uniqueness Among Active Categories: Job category name must be unique among active categories (\texttt{deletedAt = null}), evaluated case-insensitively; throws HTTP 409 (\texttt{Error.\allowbreak Job\allowbreak Category\allowbreak Name\allowbreak Already\allowbreak Exists}) if conflict occurs. \\ \hline
+    BR-JCAT-11 & Automated Unique Slug Generation: Automatically generates a URL-friendly slug with diacritics stripping, hyphen replacement, and automatic numeric collision resolution (\texttt{-2}, \texttt{-3}). \\ \hline
+    BR-JCAT-12 & Default Operational Status: Newly created job categories default to \texttt{ACTIVE} status unless explicitly set to \texttt{INACTIVE}. \\ \hline
+    BR-JCAT-13 & Concurrency Race-Condition Guard: Catches database \texttt{P2002} unique constraint violations and converts them gracefully to HTTP 409 conflict errors. \\ \hline
+    BR-JCAT-14 & Modal Reset and Table Invalidation: Clears input values, closes modal dialog, and triggers Next.js router refresh upon success. \\ \hline
+    BR-JCAT-15 & Target Category Active State Requirement: Only active categories (\texttt{deletedAt = null}) can be updated; soft-deleted categories must be restored first. \\ \hline
+    BR-JCAT-16 & Name Conflict Detection on Modification: If name is altered, verifies no other active category shares the same case-insensitive name; throws HTTP 409 if conflict detected. \\ \hline
+    BR-JCAT-17 & Automatic Slug Regeneration: If the name is changed, automatically regenerates a new unique URL-friendly slug based on the updated name. \\ \hline
+    BR-JCAT-18 & Status Transition Freedom: Administrators can freely switch status between \texttt{ACTIVE} and \texttt{INACTIVE} at any time to temporarily suspend new job associations without deleting data. \\ \hline
+    BR-JCAT-19 & Synchronized UI Updates: Closes modal dialog, triggers success toast, and refreshes category table or detail screen upon completion. \\ \hline
+    BR-JCAT-20 & Active Job Dependency Deletion Guard: Deleting a job category is strictly blocked if one or more active jobs are linked to it (\texttt{\_count.jobs > 0}); the system throws HTTP 409 (\texttt{Error.\allowbreak Job\allowbreak Category\allowbreak Has\allowbreak Jobs}). \\ \hline
+    BR-JCAT-21 & Inactive Status Recommendation: If active jobs are attached, the UI advises administrators to set category status to \texttt{INACTIVE} instead of deleting it. \\ \hline
+    BR-JCAT-22 & Soft-Deletion Lifecycle: Categories without active jobs are soft-deleted by setting \texttt{deletedAt = new Date()} without purging relational records. \\ \hline
+    BR-JCAT-23 & Explicit Confirmation Modal: Deletion requires explicit confirmation via modal alert dialog to prevent accidental catalog damage. \\ \hline
+    BR-JCAT-24 & Immediate List Synchronization: Purges the category from default active views immediately upon successful soft deletion. \\ \hline
+    BR-JCAT-25 & Restoration Eligibility Requirement: Target category must currently be soft-deleted with \texttt{deletedAt != null}; returns HTTP 404 if not found or already active. \\ \hline
+    BR-JCAT-26 & Conflict Prevention Against Interim Duplicates: If another active category with the same name was created while this category was deleted, restoration is blocked with HTTP 409 (\texttt{Error.\allowbreak Job\allowbreak Category\allowbreak Name\allowbreak Already\allowbreak Exists}). \\ \hline
+    BR-JCAT-27 & Soft-Deletion Timestamp Reset: Clears \texttt{deletedAt = null}, fully restoring the category to active catalog availability. \\ \hline
+    BR-JCAT-28 & Real-Time UI Re-indexing: Returns restored category data, displays success toast, and updates table view immediately. \\ \hline
 \end{longtable}

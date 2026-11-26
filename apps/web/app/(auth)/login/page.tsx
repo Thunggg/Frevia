@@ -3,11 +3,11 @@ import { AuthShell } from "../components/auth-shell";
 import { LoginForm } from "./login-form";
 
 type LoginPageProps = {
-  searchParams: Promise<{ error?: string }>;
+  searchParams: Promise<{ error?: string; redirect?: string }>;
 };
 
 export default async function LoginPage({ searchParams }: LoginPageProps) {
-  const { error } = await searchParams;
+  const { error, redirect } = await searchParams;
   const t = await getTranslations("auth.login");
 
   return (
@@ -17,7 +17,7 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
       imageSrc="/auth/login.jpg"
       panelTitle={t("panelTitle")}
     >
-      <LoginForm oauthError={error} />
+      <LoginForm oauthError={error} redirectTo={redirect} />
     </AuthShell>
   );
 }

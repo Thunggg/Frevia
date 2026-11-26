@@ -1,8 +1,4 @@
-import {
-  ForbiddenException,
-  ServiceUnavailableException,
-} from '@nestjs/common';
-import { RoleName } from '@shared/types';
+import { ServiceUnavailableException } from '@nestjs/common';
 
 import type { EmbeddingOutboxService } from './embedding-outbox.service';
 import type { RecommendationIndexService } from './recommendation-index.service';
@@ -31,17 +27,10 @@ describe('RecommendationController', () => {
 
   describe('reindex', () => {
     it('lets an admin rebuild the index', async () => {
-      await expect(controller.reindex(RoleName.ADMIN)).resolves.toEqual({
+      await expect(controller.reindex()).resolves.toEqual({
         indexed: 3,
       });
       expect(recommendationIndexService.rebuild).toHaveBeenCalled();
-    });
-
-    it('forbids non-admin users from rebuilding the index', async () => {
-      await expect(
-        controller.reindex(RoleName.FREELANCER),
-      ).rejects.toBeInstanceOf(ForbiddenException);
-      expect(recommendationIndexService.rebuild).not.toHaveBeenCalled();
     });
 
     it('maps AI failures during rebuild to a service-unavailable error', async () => {
@@ -49,7 +38,7 @@ describe('RecommendationController', () => {
         new Error('AI down'),
       );
 
-      await expect(controller.reindex(RoleName.ADMIN)).rejects.toBeInstanceOf(
+      await expect(controller.reindex()).rejects.toBeInstanceOf(
         ServiceUnavailableException,
       );
     });
@@ -57,18 +46,11 @@ describe('RecommendationController', () => {
 
   describe('processOutbox', () => {
     it('lets an admin drain the outbox', async () => {
-      await expect(controller.processOutbox(RoleName.ADMIN)).resolves.toEqual({
+      await expect(controller.processOutbox()).resolves.toEqual({
         processed: 2,
         failed: 0,
       });
       expect(embeddingOutboxService.processPending).toHaveBeenCalled();
-    });
-
-    it('forbids non-admin users from processing the outbox', async () => {
-      await expect(
-        controller.processOutbox(RoleName.CLIENT),
-      ).rejects.toBeInstanceOf(ForbiddenException);
-      expect(embeddingOutboxService.processPending).not.toHaveBeenCalled();
     });
   });
 });

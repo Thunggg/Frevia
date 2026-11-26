@@ -21,9 +21,15 @@ export function PermissionDetail({ permissionId }: { permissionId: number }) {
   const tCommon = useTranslations("adminCommon");
   const format = useFormatter();
   const locale = useLocale();
-  const { can } = useActionPermission();
+  const { can, isLoading: isPermissionLoading } = useActionPermission();
   const canViewDetail = can("GET", "/api/permissions/:id");
-  const { data: permission, isLoading, isError } = usePermission(permissionId);
+  const { data: permission, isLoading, isError } = usePermission(
+    canViewDetail ? permissionId : 0,
+  );
+
+  if (isPermissionLoading || isLoading) {
+    return <AdminDetailSkeleton />;
+  }
 
   if (!canViewDetail) {
     return (
@@ -34,10 +40,6 @@ export function PermissionDetail({ permissionId }: { permissionId: number }) {
         </div>
       </div>
     );
-  }
-
-  if (isLoading) {
-    return <AdminDetailSkeleton />;
   }
 
   if (isError || !permission) {

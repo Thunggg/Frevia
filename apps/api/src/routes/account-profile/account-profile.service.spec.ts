@@ -35,6 +35,7 @@ describe('AccountProfileService', () => {
     updatePassword: jest.fn(),
     updateAvatar: jest.fn(),
     findClientProfile: jest.fn(),
+    findClients: jest.fn(),
     createClientProfile: jest.fn(),
   };
   const cloudinary = {
@@ -68,6 +69,39 @@ describe('AccountProfileService', () => {
 
   beforeEach(() => jest.clearAllMocks());
 
+  it('presents only directory fields, normalizes local avatars and supports clients without company details', async () => {
+    repository.findClients.mockResolvedValue({
+      profiles: [
+        {
+          userId: 7,
+          displayName: 'Client',
+          avatarUrl: 'local://avatars/7.png',
+          bio: null,
+          clientProfile: null,
+          email: 'private@example.com',
+        },
+      ],
+      total: 13,
+    });
+    const result = await service.findClients({ page: 1, limit: 12 });
+    expect(result).toEqual({
+      data: [
+        {
+          userId: 7,
+          displayName: 'Client',
+          avatarUrl: '/api/backend/account-profile/avatar/7/file',
+          bio: null,
+          companyName: null,
+          companyDescription: null,
+        },
+      ],
+      page: 1,
+      limit: 12,
+      total: 13,
+      totalPages: 2,
+    });
+  });
+
   it('returns a not-submitted status when the freelancer has no documents', async () => {
     repository.findUserWithRoles.mockResolvedValue(
       userWithRole(RoleName.FREELANCER),
@@ -80,9 +114,21 @@ describe('AccountProfileService', () => {
     });
   });
 
-  it('rejects identity verification for a client account', async () => {
+  it('allows identity verification for a client account', async () => {
     repository.findUserWithRoles.mockResolvedValue(
       userWithRole(RoleName.CLIENT),
+    );
+    repository.findIdentityDocuments.mockResolvedValue([]);
+
+    await expect(service.getIdentityStatus(1)).resolves.toEqual({
+      status: null,
+      documents: [],
+    });
+  });
+
+  it('rejects identity verification for an unsupported role account', async () => {
+    repository.findUserWithRoles.mockResolvedValue(
+      userWithRole(RoleName.EXPERT),
     );
 
     await expect(service.getIdentityStatus(1)).rejects.toBeInstanceOf(
@@ -280,6 +326,19 @@ describe('AccountProfileService', () => {
   });
 
   describe('getClientProfile', () => {
+    it('normalizes uploaded avatars in the public client profile', async () => {
+      repository.findClientProfile.mockResolvedValue({
+        id: 10,
+        userId: 370,
+        avatarUrl: 'local://avatars/client.png',
+        user: { role: { name: RoleName.CLIENT } },
+        clientProfile: { id: 1, profileId: 10, companyName: 'Acme Corp' },
+      });
+      expect((await service.getClientProfile(370)).avatarUrl).toBe(
+        '/api/backend/account-profile/avatar/370/file',
+      );
+    });
+
     it('throws ClientProfileNotFoundException if profile not found or user is not a client', async () => {
       repository.findClientProfile.mockResolvedValue(null);
       await expect(service.getClientProfile(1)).rejects.toMatchObject({

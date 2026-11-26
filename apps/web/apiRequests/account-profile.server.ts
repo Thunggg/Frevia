@@ -5,6 +5,7 @@ import { cookies } from "next/headers";
 import {
   accessTokenNeedsRefresh,
   exchangeRefreshToken,
+  getServerAccessToken,
 } from "@/lib/auth-session";
 
 import { envConfig } from "@/configs/validate-env";
@@ -15,8 +16,11 @@ import type {
 
 const getIdentityStatusInternal = cache(
   async (): Promise<IdentityVerificationStatusType | null> => {
-    const cookieStore = await cookies();
-    let accessToken = cookieStore.get("accessToken")?.value;
+    const [initialAccessToken, cookieStore] = await Promise.all([
+      getServerAccessToken(),
+      cookies(),
+    ]);
+    let accessToken = initialAccessToken;
     const refreshToken = cookieStore.get("refreshToken")?.value;
 
     const baseUrl = envConfig?.NESTJS_API_URL;

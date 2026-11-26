@@ -107,3 +107,10 @@ export const IdentityAlreadyVerifiedException = () =>
   new ConflictException(
     details('Your identity has already been verified.', 'documentType'),
   );
+export const IdentityPendingReviewException = () =>
+  new ConflictException(
+    details(
+      'An identity verification request is already pending review.',
+      'documentType',
+    ),
+  );

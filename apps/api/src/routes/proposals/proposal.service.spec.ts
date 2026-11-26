@@ -25,7 +25,6 @@ describe('ProposalService (UC-32)', () => {
     updateDraft: jest.fn(),
     submitDraft: jest.fn(),
     withdrawProposal: jest.fn(),
-    interviewProposal: jest.fn(),
     rejectProposal: jest.fn(),
     hireProposal: jest.fn(),
     getMyProposals: jest.fn(),

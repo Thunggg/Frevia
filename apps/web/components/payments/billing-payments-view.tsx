@@ -1,11 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
+import { useLocale, useTranslations } from "next-intl";
 import {
-  Copy,
-  ExternalLink,
   Eye,
   History,
   Loader2,
@@ -16,7 +14,6 @@ import {
   Wallet,
 } from "lucide-react";
 import { Button } from "@repo/ui/components/shadcn/button";
-import { toastSuccess } from "@repo/ui/components/shadcn/toast";
 import { useActionPermission } from "@/hooks/use-action-permission";
 import { paymentApiRequest } from "@/apiRequests/payment";
 import type {
@@ -28,8 +25,8 @@ import { PaymentMethodCard } from "./payment-method-card";
 import {
   formatCurrency,
   formatShortDate,
-  getTransactionTypeLabel,
   TransactionStatusPill,
+  usePaymentTypeLabel,
 } from "./payment-utils";
 import { StripeConnectCard } from "./stripe-connect-card";
 
@@ -41,6 +38,9 @@ interface BillingPaymentsViewProps {
  * Unified minimalist Billing & Payments view styled cleanly for Client and Freelancer roles.
  */
 export function BillingPaymentsView({ mode }: BillingPaymentsViewProps) {
+  const t = useTranslations("payments");
+  const locale = useLocale();
+  const getTransactionTypeLabel = usePaymentTypeLabel();
   const isClient = mode === "client";
   const basePath = isClient ? "/client" : "/freelancer";
   const returnPath = `${basePath}/payments`;
@@ -154,18 +154,13 @@ export function BillingPaymentsView({ mode }: BillingPaymentsViewProps) {
       )
       : 0;
 
-  const copyReference = (refId: string) => {
-    void navigator.clipboard.writeText(refId);
-    toastSuccess({ message: `Copied ${refId} to clipboard.` });
-  };
-
   return (
     <div className="space-y-5">
-      {/* ── Top Header Row: Wallet / Payment Method / Connect Stripe / Usage Overview ── */}
+      {/* Top Row: Virtual Payment Card / Connect Stripe + Usage Summary */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
         <div className="lg:col-span-5">
           {isClient ? (
-            <PaymentMethodCard returnPath={returnPath} />
+            <PaymentMethodCard />
           ) : (
             <StripeConnectCard returnPath={returnPath} />
           )}
@@ -173,145 +168,158 @@ export function BillingPaymentsView({ mode }: BillingPaymentsViewProps) {
 
         {/* Overview / Usage Card */}
         <div className="lg:col-span-7">
-          <div className="h-full flex flex-col gap-3.5 rounded-2xl border border-zinc-200/80 dark:border-zinc-800 bg-white dark:bg-zinc-950 p-5 shadow-[0_1px_2px_rgba(0,0,0,0.03)]">
-            <h3 className="text-[15px] font-semibold tracking-tight text-foreground">
-              {isClient ? "Escrow & Spend Usage" : "Earnings & Fee Summary"}
+          <div className="h-full flex flex-col justify-between gap-4 rounded-sm border border-zinc-200/80 dark:border-zinc-800 bg-white dark:bg-zinc-950 p-5 shadow-[0_1px_2px_rgba(0,0,0,0.03)]">
+            <h3 className="text-[15px] font-medium tracking-tight text-foreground">
+              {isClient
+                ? t("billing.clientUsageTitle")
+                : t("billing.freelancerUsageTitle")}
             </h3>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-              <div className="rounded-sm border border-zinc-200/70 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/30 p-3 space-y-2">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 flex-1">
+              <div className="flex flex-col justify-between rounded-xl border border-zinc-200/70 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/30 p-4 gap-4">
                 <div className="flex items-center gap-2.5">
-                  <div className="flex size-7 shrink-0 items-center justify-center rounded-lg bg-sky-50 dark:bg-sky-950/60 text-[#0069D3]">
+                  <div className="flex size-8 shrink-0 items-center justify-center rounded-lg border border-zinc-200/70 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-muted-foreground">
                     {isClient ? (
-                      <ShieldCheck className="size-3.5" />
+                      <ShieldCheck className="size-4" />
                     ) : (
-                      <Wallet className="size-3.5" />
+                      <Wallet className="size-4" />
                     )}
                   </div>
                   <span className="text-[13px] text-foreground">
-                    {isClient ? "Escrow Released" : "Net Payouts"}
-                  </span>
-                </div>
-
-                <div className="flex items-center justify-between text-xs gap-2">
-                  <span className="text-muted-foreground">
-                    {isClient ? "Released of funded" : "95% released"}
-                  </span>
-                  <span className=" tabular-nums text-foreground">
                     {isClient
-                      ? `${formatCurrency(totalPayouts)} / ${formatCurrency(totalEscrowDeposited)}`
-                      : `${formatCurrency(totalPayouts)} / ${formatCurrency(grossEarnings)}`}
+                      ? t("billing.escrowReleased")
+                      : t("billing.netPayouts")}
                   </span>
                 </div>
 
-                <div className="h-1.5 w-full rounded-full bg-zinc-200/80 dark:bg-zinc-800 overflow-hidden">
-                  <div
-                    className="h-full rounded-full bg-[#635BFF] transition-all duration-300"
-                    style={{
-                      width: `${isClient ? clientReleasePercent : freelancerNetPercent}%`,
-                    }}
-                  />
+                <div className="space-y-2">
+                  <div className="flex items-baseline justify-between text-xs gap-2">
+                    <span className="text-muted-foreground">
+                      {isClient
+                        ? t("billing.releasedOfFunded")
+                        : t("billing.percentReleased")}
+                    </span>
+                    <span className="tabular-nums text-foreground font-medium">
+                      {isClient
+                        ? `${formatCurrency(totalPayouts)} / ${formatCurrency(totalEscrowDeposited)}`
+                        : `${formatCurrency(totalPayouts)} / ${formatCurrency(grossEarnings)}`}
+                    </span>
+                  </div>
+
+                  <div className="h-1.5 w-full rounded-full bg-zinc-200/80 dark:bg-zinc-800 overflow-hidden">
+                    <div
+                      className="h-full rounded-full bg-zinc-900 dark:bg-zinc-200 transition-all duration-300"
+                      style={{
+                        width: `${isClient ? clientReleasePercent : freelancerNetPercent}%`,
+                      }}
+                    />
+                  </div>
                 </div>
               </div>
 
-              <div className="rounded-sm border border-zinc-200/70 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/30 p-3 space-y-2">
+              <div className="flex flex-col justify-between rounded-xl border border-zinc-200/70 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/30 p-4 gap-4">
                 <div className="flex items-center gap-2.5">
-                  <div className="flex size-7 shrink-0 items-center justify-center rounded-lg bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400">
-                    <Percent className="size-3.5" />
+                  <div className="flex size-8 shrink-0 items-center justify-center rounded-lg border border-zinc-200/70 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-muted-foreground">
+                    <Percent className="size-4" />
                   </div>
                   <span className="text-[13px] text-foreground">
                     {isClient
-                      ? "Platform Fees & Refunds"
-                      : "Platform Fees (5%)"}
+                      ? t("billing.clientFeesAndRefunds")
+                      : t("billing.freelancerPlatformFees")}
                   </span>
                 </div>
 
-                <div className="flex items-center justify-between text-xs gap-2">
-                  <span className="text-muted-foreground">
-                    {isClient
-                      ? `Refunded ${formatCurrency(totalRefunded)}`
-                      : "Deducted on release"}
-                  </span>
-                  <span className=" tabular-nums text-foreground">
-                    {formatCurrency(totalPlatformFees)}
-                  </span>
-                </div>
+                <div className="space-y-2">
+                  <div className="flex items-baseline justify-between text-xs gap-2">
+                    <span className="text-muted-foreground">
+                      {isClient
+                        ? t("billing.refundedAmount", {
+                            amount: formatCurrency(totalRefunded),
+                          })
+                        : t("billing.deductedOnRelease")}
+                    </span>
+                    <span className="tabular-nums text-foreground font-medium">
+                      {formatCurrency(totalPlatformFees)}
+                    </span>
+                  </div>
 
-                <div className="h-1.5 w-full rounded-full bg-zinc-200/80 dark:bg-zinc-800 overflow-hidden">
-                  <div
-                    className="h-full rounded-full bg-[#635BFF] transition-all duration-300"
-                    style={{
-                      width: `${isClient ? clientFeeRatioPercent : freelancerFeePercent}%`,
-                    }}
-                  />
+                  <div className="h-1.5 w-full rounded-full bg-zinc-200/80 dark:bg-zinc-800 overflow-hidden">
+                    <div
+                      className="h-full rounded-full bg-zinc-900 dark:bg-zinc-200 transition-all duration-300"
+                      style={{
+                        width: `${isClient ? clientFeeRatioPercent : freelancerFeePercent}%`,
+                      }}
+                    />
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-
-
       </div>
 
-      {/* ── Bottom Full-Width Section: Invoice & Payment History Table ── */}
+      {/* Bottom Section: Invoice & Payment History Table */}
       {canGetTransactions && (
-        <div>
-          <div className="rounded-sm border border-zinc-200/80 dark:border-zinc-800 bg-white dark:bg-zinc-950 p-5 sm:p-6 shadow-[0_1px_2px_rgba(0,0,0,0.03)] space-y-5">
+        <div className="rounded-sm border border-zinc-200/80 dark:border-zinc-800 bg-white dark:bg-zinc-950 p-5 sm:p-6 shadow-[0_1px_2px_rgba(0,0,0,0.03)] space-y-4">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-            <div className="flex flex-wrap items-center gap-2.5">
-              <h2 className="text-[15px] font-semibold tracking-tight text-foreground">
+            <div className="flex items-center gap-2">
+              <h2 className="text-[15px] font-medium tracking-tight text-foreground">
                 {isClient
-                  ? "Invoice & Payment History"
-                  : "Payout & Transaction History"}
+                  ? t("billing.clientHistoryTitle")
+                  : t("billing.freelancerHistoryTitle")}
               </h2>
-              <span className="rounded-md bg-zinc-100 dark:bg-zinc-800 px-2 py-0.5 text-[11px] font-medium text-muted-foreground">
+              <span className="rounded-full bg-zinc-100 dark:bg-zinc-800 px-2 py-0.5 text-[11px] text-muted-foreground tabular-nums">
                 {totalItems}
               </span>
             </div>
 
             <div className="flex flex-wrap items-center gap-2">
               <select
-                aria-label="Filter by transaction type"
+                aria-label={t("billing.filterByTypeAria")}
                 value={selectedType}
                 onChange={(e) => {
                   setSelectedType(e.target.value);
                   setPage(1);
                 }}
-                className="h-8 rounded-lg border border-zinc-200/80 dark:border-zinc-800 bg-zinc-50/70 dark:bg-zinc-900 px-2.5 text-xs font-medium text-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#0069D3] cursor-pointer"
+                className="h-8 rounded-lg border border-zinc-200/80 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-2.5 text-xs text-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-zinc-400 cursor-pointer"
               >
-                <option value="ALL">All Types</option>
-                <option value="ESCROW_DEPOSIT">Escrow Deposit</option>
-                <option value="MILESTONE_PAYOUT">Payout</option>
-                <option value="PLATFORM_FEE">Platform Fee</option>
-                <option value="REFUND">Refund</option>
+                <option value="ALL">{t("billing.allTypes")}</option>
+                <option value="ESCROW_DEPOSIT">
+                  {t("types.ESCROW_DEPOSIT")}
+                </option>
+                <option value="MILESTONE_PAYOUT">
+                  {t("types.PAYOUT_SHORT")}
+                </option>
+                <option value="PLATFORM_FEE">{t("types.PLATFORM_FEE")}</option>
+                <option value="REFUND">{t("types.REFUND")}</option>
               </select>
 
               <select
-                aria-label="Filter by transaction status"
+                aria-label={t("billing.filterByStatusAria")}
                 value={selectedStatus}
                 onChange={(e) => {
                   setSelectedStatus(e.target.value);
                   setPage(1);
                 }}
-                className="h-8 rounded-lg border border-zinc-200/80 dark:border-zinc-800 bg-zinc-50/70 dark:bg-zinc-900 px-2.5 text-xs font-medium text-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#0069D3] cursor-pointer"
+                className="h-8 rounded-lg border border-zinc-200/80 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-2.5 text-xs text-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-zinc-400 cursor-pointer"
               >
-                <option value="ALL">All Status</option>
-                <option value="SUCCEEDED">Paid</option>
-                <option value="PENDING">Pending</option>
-                <option value="FAILED">Failed</option>
+                <option value="ALL">{t("billing.allStatus")}</option>
+                <option value="SUCCEEDED">{t("statuses.PAID")}</option>
+                <option value="PENDING">{t("statuses.PENDING")}</option>
+                <option value="FAILED">{t("statuses.FAILED")}</option>
               </select>
 
               <div className="relative">
                 <Search className="absolute left-2.5 top-2 size-3.5 text-muted-foreground" />
                 <input
                   type="text"
-                  placeholder="Contract #"
+                  placeholder={t("billing.contractFilterPlaceholder")}
                   value={contractIdFilter}
                   onChange={(e) => {
                     setContractIdFilter(e.target.value);
                     setPage(1);
                   }}
-                  className="h-8 w-24 rounded-lg border border-zinc-200/80 dark:border-zinc-800 bg-zinc-50/70 dark:bg-zinc-900 pl-7 pr-2.5 text-xs text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#0069D3]"
+                  className="h-8 w-24 rounded-lg border border-zinc-200/80 dark:border-zinc-800 bg-white dark:bg-zinc-900 pl-7 pr-2.5 text-xs text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-zinc-400"
                 />
               </div>
 
@@ -319,7 +327,7 @@ export function BillingPaymentsView({ mode }: BillingPaymentsViewProps) {
                 type="button"
                 onClick={() => void refetch()}
                 disabled={isLoading || isRefetching}
-                aria-label="Refresh transaction history"
+                aria-label={t("billing.refreshHistoryAria")}
                 className="inline-flex size-8 items-center justify-center rounded-lg border border-zinc-200/80 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-muted-foreground hover:text-foreground hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors cursor-pointer"
               >
                 <RefreshCw
@@ -332,16 +340,24 @@ export function BillingPaymentsView({ mode }: BillingPaymentsViewProps) {
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs">
               <thead>
-                <tr className="bg-zinc-50/80 dark:bg-zinc-900/50 text-muted-foreground">
-                  <th className="rounded-l-lg px-3.5 py-2.5 font-medium">
-                    Transaction ID
+                <tr className="border-b border-zinc-200/80 dark:border-zinc-800 text-muted-foreground">
+                  <th className="px-3 py-2.5 font-normal">
+                    {t("billing.colTransaction")}
                   </th>
-                  <th className="px-3.5 py-2.5 font-medium">Type & Contract</th>
-                  <th className="px-3.5 py-2.5 font-medium">Date</th>
-                  <th className="px-3.5 py-2.5 font-medium">Amount</th>
-                  <th className="px-3.5 py-2.5 font-medium">Status</th>
-                  <th className="rounded-r-lg px-3.5 py-2.5 text-right font-medium">
-                    Action
+                  <th className="px-3 py-2.5 font-normal">
+                    {t("billing.colDescription")}
+                  </th>
+                  <th className="px-3 py-2.5 font-normal">
+                    {t("billing.colDate")}
+                  </th>
+                  <th className="px-3 py-2.5 font-normal">
+                    {t("billing.colAmount")}
+                  </th>
+                  <th className="px-3 py-2.5 font-normal">
+                    {t("billing.colStatus")}
+                  </th>
+                  <th className="px-3 py-2.5 text-right font-normal">
+                    {t("billing.colDetail")}
                   </th>
                 </tr>
               </thead>
@@ -350,30 +366,30 @@ export function BillingPaymentsView({ mode }: BillingPaymentsViewProps) {
                   <tr>
                     <td
                       colSpan={6}
-                      className="py-16 text-center text-muted-foreground"
+                      className="py-14 text-center text-muted-foreground"
                     >
-                      <Loader2 className="size-5 animate-spin mx-auto mb-2 text-[#0069D3]" />
-                      <span>Loading payment records...</span>
+                      <Loader2 className="size-4 animate-spin mx-auto mb-2" />
+                      <span>{t("billing.loadingRecords")}</span>
                     </td>
                   </tr>
                 ) : transactions.length === 0 ? (
                   <tr>
-                    <td colSpan={6} className="py-16 text-center">
-                      <div className="flex flex-col items-center justify-center max-w-xs mx-auto space-y-2">
-                        <div className="flex size-10 items-center justify-center rounded-sm bg-zinc-100 dark:bg-zinc-800 text-muted-foreground">
-                          <History className="size-5" />
+                    <td colSpan={6} className="py-14 text-center">
+                      <div className="flex flex-col items-center justify-center max-w-xs mx-auto space-y-1.5">
+                        <div className="flex size-9 items-center justify-center rounded-xl bg-zinc-100 dark:bg-zinc-800 text-muted-foreground mb-1">
+                          <History className="size-4" />
                         </div>
                         <p className="text-sm text-foreground">
-                          No transactions yet
+                          {t("billing.emptyTitle")}
                         </p>
                         <p className="text-xs text-muted-foreground leading-relaxed">
                           {selectedType !== "ALL" ||
                             selectedStatus !== "ALL" ||
                             contractIdFilter
-                            ? "Try adjusting your filters to view more transactions."
+                            ? t("billing.emptyFiltered")
                             : isClient
-                              ? "Authorized contract holds, milestone deposits, and fees will appear here."
-                              : "Completed milestone payouts and platform fee deductions will appear here."}
+                              ? t("billing.emptyClient")
+                              : t("billing.emptyFreelancer")}
                         </p>
                       </div>
                     </td>
@@ -381,81 +397,58 @@ export function BillingPaymentsView({ mode }: BillingPaymentsViewProps) {
                 ) : (
                   transactions.map((tx) => {
                     const txCode = `TX-${String(tx.id).padStart(4, "0")}`;
-                    const copyableRef =
-                      tx.stripePaymentIntentId ||
-                      tx.stripeTransferId ||
-                      tx.stripeRefundId ||
-                      txCode;
 
                     return (
                       <tr
                         key={tx.id}
                         onClick={() => setSelectedTransaction(tx)}
-                        className="hover:bg-zinc-50/60 dark:hover:bg-zinc-900/30 transition-colors cursor-pointer"
+                        className="hover:bg-zinc-50/70 dark:hover:bg-zinc-900/40 transition-colors cursor-pointer"
                       >
-                        <td className="px-3.5 py-3.5 whitespace-nowrap font-medium text-foreground tabular-nums">
+                        <td className="px-3 py-3.5 whitespace-nowrap font-mono text-muted-foreground tabular-nums">
                           {txCode}
                         </td>
-                        <td className="px-3.5 py-3.5">
-                          <p className="font-medium text-foreground">
+                        <td className="px-3 py-3.5">
+                          <p className="text-foreground">
                             {getTransactionTypeLabel(tx.type)}
                           </p>
                           {tx.contractId && (
-                            <p className="text-[11px] text-muted-foreground truncate max-w-[200px]">
-                              Contract #{tx.contractId}
+                            <p className="text-[11px] text-muted-foreground truncate max-w-[260px] mt-0.5">
+                              {t("detail.contractNumber", {
+                                id: tx.contractId,
+                              })}
                               {tx.contract?.job?.title
                                 ? ` · ${tx.contract.job.title}`
                                 : ""}
                             </p>
                           )}
                         </td>
-                        <td className="px-3.5 py-3.5 whitespace-nowrap text-muted-foreground">
-                          {formatShortDate(tx.createdAt)}
+                        <td className="px-3 py-3.5 whitespace-nowrap text-muted-foreground">
+                          {formatShortDate(tx.createdAt, locale)}
                         </td>
-                        <td className="px-3.5 py-3.5 whitespace-nowrap font-medium tabular-nums text-foreground">
+                        <td className="px-3 py-3.5 whitespace-nowrap font-medium tabular-nums text-foreground">
                           {formatCurrency(tx.amount, tx.currency)}
                         </td>
-                        <td className="px-3.5 py-3.5 whitespace-nowrap">
-                          <TransactionStatusPill status={tx.status} type={tx.type} />
+                        <td className="px-3 py-3.5 whitespace-nowrap">
+                          <TransactionStatusPill
+                            status={tx.status}
+                            type={tx.type}
+                          />
                         </td>
-                        <td className="px-3.5 py-3.5 whitespace-nowrap text-right">
-                          <div className="inline-flex items-center justify-end gap-1">
-                            <button
-                              type="button"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                setSelectedTransaction(tx);
-                              }}
-                              title="View payment detail"
-                              aria-label={`View payment detail ${txCode}`}
-                              className="inline-flex size-7 items-center justify-center rounded-lg text-muted-foreground hover:text-[#0069D3] hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors cursor-pointer"
-                            >
-                              <Eye className="size-3.5" />
-                            </button>
-                            <button
-                              type="button"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                copyReference(copyableRef);
-                              }}
-                              title={`Copy ${copyableRef}`}
-                              aria-label={`Copy ${copyableRef}`}
-                              className="inline-flex size-7 items-center justify-center rounded-lg text-muted-foreground hover:text-foreground hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors cursor-pointer"
-                            >
-                              <Copy className="size-3.5" />
-                            </button>
-                            {tx.contractId && (
-                              <Link
-                                href={`${basePath}/contracts/${tx.contractId}`}
-                                onClick={(e) => e.stopPropagation()}
-                                title={`Open Contract #${tx.contractId}`}
-                                aria-label={`Open Contract #${tx.contractId}`}
-                                className="inline-flex size-7 items-center justify-center rounded-lg text-muted-foreground hover:text-[#0069D3] hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
-                              >
-                                <ExternalLink className="size-3.5" />
-                              </Link>
-                            )}
-                          </div>
+                        <td className="px-3 py-3.5 whitespace-nowrap text-right">
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setSelectedTransaction(tx);
+                            }}
+                            aria-label={t("billing.viewDetailAria", {
+                              code: txCode,
+                            })}
+                            className="inline-flex items-center gap-1 rounded-lg px-2 py-1 text-xs text-muted-foreground hover:text-foreground hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors cursor-pointer"
+                          >
+                            <Eye className="size-3.5" />
+                            <span>{t("billing.view")}</span>
+                          </button>
                         </td>
                       </tr>
                     );
@@ -468,7 +461,7 @@ export function BillingPaymentsView({ mode }: BillingPaymentsViewProps) {
           {totalPages > 1 && (
             <div className="flex items-center justify-between pt-3 border-t border-zinc-100 dark:border-zinc-800/80 text-xs">
               <span className="text-muted-foreground">
-                Page {page} of {totalPages}
+                {t("billing.pageOf", { page, totalPages })}
               </span>
               <div className="flex items-center gap-2">
                 <Button
@@ -477,9 +470,9 @@ export function BillingPaymentsView({ mode }: BillingPaymentsViewProps) {
                   size="sm"
                   disabled={page <= 1}
                   onClick={() => setPage((p) => Math.max(1, p - 1))}
-                  className="h-7 rounded-lg px-2.5 text-xs"
+                  className="h-7 rounded-lg px-2.5 text-xs cursor-pointer"
                 >
-                  Previous
+                  {t("billing.previous")}
                 </Button>
                 <Button
                   type="button"
@@ -487,27 +480,24 @@ export function BillingPaymentsView({ mode }: BillingPaymentsViewProps) {
                   size="sm"
                   disabled={page >= totalPages}
                   onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-                  className="h-7 rounded-lg px-2.5 text-xs"
+                  className="h-7 rounded-lg px-2.5 text-xs cursor-pointer"
                 >
-                  Next
+                  {t("billing.next")}
                 </Button>
               </div>
             </div>
           )}
         </div>
-      </div>
       )}
 
-      {/* Right Slide-Over Payment Detail Popup */}
+      {/* Read-only Transaction Detail Sheet */}
       <PaymentDetailSheet
         transaction={selectedTransaction}
         open={Boolean(selectedTransaction)}
         onOpenChange={(open) => {
           if (!open) setSelectedTransaction(null);
         }}
-        basePath={basePath}
       />
     </div>
   );
 }
-

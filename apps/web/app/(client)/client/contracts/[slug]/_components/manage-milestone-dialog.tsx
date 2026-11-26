@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
 import { useQueryClient } from "@tanstack/react-query";
 import { DollarSign, Flag, Loader2 } from "lucide-react";
 import {
@@ -29,6 +30,7 @@ export interface MilestoneItemData {
   amount: number;
   dueDate?: Date | string | null;
   status?: string;
+  paymentStatus?: string | null;
 }
 
 interface ManageMilestoneDialogProps {
@@ -55,6 +57,8 @@ export function ManageMilestoneDialog({
   onSuccess,
 }: ManageMilestoneDialogProps) {
   const queryClient = useQueryClient();
+  const t = useTranslations("contractWorkspace.manageMilestone");
+  const tCommon = useTranslations("common");
   const { can } = useActionPermission();
 
   const canCreateMilestone = can("POST", "/api/contracts/:contractId/milestones");
@@ -63,7 +67,7 @@ export function ManageMilestoneDialog({
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [amount, setAmount] = useState<number>(0);
+  const [amount, setAmount] = useState<number | string>("");
   const [dueDate, setDueDate] = useState<string>("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -84,12 +88,12 @@ export function ManageMilestoneDialog({
       if (milestoneToEdit) {
         setTitle(milestoneToEdit.title);
         setDescription(milestoneToEdit.description || "");
-        setAmount(Number(milestoneToEdit.amount));
+        setAmount(milestoneToEdit.amount ? String(Number(milestoneToEdit.amount)) : "");
         setDueDate(toDateInputValue(milestoneToEdit.dueDate));
       } else {
         setTitle("");
         setDescription("");
-        setAmount(maxAvailable > 0 ? maxAvailable : 0);
+        setAmount(maxAvailable > 0 ? String(maxAvailable) : "");
         setDueDate("");
       }
     }
@@ -99,48 +103,50 @@ export function ManageMilestoneDialog({
     e.preventDefault();
 
     if (!hasPermission) {
-      toastError({ message: "You do not have permission to perform this action." });
+      toastError({ message: t("noPermission") });
       return;
     }
 
     if (!title.trim()) {
-      toastError({ message: "Milestone title is required." });
+      toastError({ message: t("titleRequired") });
       return;
     }
 
-    if (!amount || amount <= 0) {
-      toastError({ message: "Amount must be greater than 0." });
+    const parsedAmount = typeof amount === "number" ? amount : parseFloat(amount);
+    if (isNaN(parsedAmount) || parsedAmount <= 0) {
+      toastError({ message: t("amountRequired") });
       return;
     }
 
-    if (maxAvailable > 0 && amount > maxAvailable) {
+    if (totalContractAmount > 0 && parsedAmount > maxAvailable) {
       toastError({
-        message: `Milestone amount cannot exceed available contract balance of $${maxAvailable.toLocaleString("en-US", { minimumFractionDigits: 2 })}.`,
+        message: t("amountExceeds", {
+          amount: `$${maxAvailable.toLocaleString("en-US", { minimumFractionDigits: 2 })}`,
+        }),
       });
       return;
     }
 
     if (!contractExpiresAt) {
       toastError({
-        message:
-          "Please set a contract end date before adding or updating milestones.",
+        message: t("contractEndDateRequired"),
       });
       return;
     }
 
     if (!dueDate) {
-      toastError({ message: "Milestone due date is required." });
+      toastError({ message: t("dueDateRequired") });
       return;
     }
 
     if (dueDate < todayStr) {
-      toastError({ message: "Milestone due date cannot be in the past." });
+      toastError({ message: t("dueDatePast") });
       return;
     }
 
     if (contractEndDateStr && dueDate > contractEndDateStr) {
       toastError({
-        message: `Milestone due date cannot exceed the contract end date (${contractEndDateStr}).`,
+        message: t("dueDateExceedsContract", { date: contractEndDateStr }),
       });
       return;
     }
@@ -152,7 +158,7 @@ export function ManageMilestoneDialog({
       const payload = {
         title: title.trim(),
         description: description.trim() || undefined,
-        amount: Number(amount),
+        amount: parsedAmount,
         dueDate: formattedDueDate,
       };
 
@@ -162,10 +168,10 @@ export function ManageMilestoneDialog({
           milestoneToEdit.id,
           payload,
         );
-        toastSuccess({ message: "Milestone updated successfully!" });
+        toastSuccess({ message: t("updated") });
       } else {
         await contractApiRequest.createMilestone(contractId, payload);
-        toastSuccess({ message: "Milestone created successfully!" });
+        toastSuccess({ message: t("created") });
       }
 
       await queryClient.invalidateQueries({
@@ -181,7 +187,7 @@ export function ManageMilestoneDialog({
       onSuccess?.();
       onOpenChange(false);
     } catch (error) {
-      let errorMessage = "Failed to save milestone. Please try again.";
+      let errorMessage = t("saveFailed");
       if (error instanceof ApiFail) {
         const errResp = error.response as unknown as Record<string, unknown>;
         if (typeof errResp?.message === "string") {
@@ -204,6 +210,7 @@ export function ManageMilestoneDialog({
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent
         side="right"
+        closeLabel={tCommon("close")}
         className="w-full sm:max-w-md overflow-y-auto p-6 flex flex-col justify-between font-sans border-l border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 shadow-2xl z-50"
       >
         <div>
@@ -214,12 +221,10 @@ export function ManageMilestoneDialog({
               </div>
               <div>
                 <SheetTitle className="text-base font-bold text-zinc-950 dark:text-zinc-50">
-                  {milestoneToEdit ? "Edit Milestone" : "Add New Milestone"}
+                  {milestoneToEdit ? t("titleEdit") : t("titleNew")}
                 </SheetTitle>
                 <SheetDescription className="text-xs text-zinc-400 mt-0.5">
-                  {milestoneToEdit
-                    ? "Update milestone scope, budget allocation, or deadline."
-                    : "Break down your contract work into deliverable stages."}
+                  {milestoneToEdit ? t("descEdit") : t("descNew")}
                 </SheetDescription>
               </div>
             </div>
@@ -229,14 +234,14 @@ export function ManageMilestoneDialog({
             {/* Milestone Title */}
             <div>
               <label className="text-xs font-semibold text-zinc-900 dark:text-zinc-100">
-                Milestone Title <span className="text-rose-500">*</span>
+                {t("fieldTitle")} <span className="text-rose-500">*</span>
               </label>
               <input
                 type="text"
                 required
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                placeholder="e.g. Design Landing Page & UI components"
+                placeholder={t("titlePlaceholder")}
                 className="mt-1.5 w-full rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-3 py-2 text-xs text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 focus:border-[#0069D3] focus:outline-hidden"
               />
             </div>
@@ -245,29 +250,38 @@ export function ManageMilestoneDialog({
             <div>
               <div className="flex items-center justify-between">
                 <label className="text-xs font-semibold text-zinc-900 dark:text-zinc-100">
-                  Amount (USD) <span className="text-rose-500">*</span>
+                  {t("fieldAmount")} <span className="text-rose-500">*</span>
                 </label>
                 <span className="text-[11px] text-zinc-400 font-mono">
-                  Available: ${maxAvailable.toLocaleString("en-US", { minimumFractionDigits: 2 })}
+                  {t("available", {
+                    amount: `$${maxAvailable.toLocaleString("en-US", { minimumFractionDigits: 2 })}`,
+                  })}
                 </span>
               </div>
               <div className="relative mt-1.5">
                 <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-zinc-400" />
                 <input
-                  type="number"
-                  min="1"
-                  step="any"
+                  type="text"
+                  inputMode="decimal"
                   required
                   disabled={isAmountLocked}
-                  value={amount || ""}
-                  onChange={(e) => setAmount(Number(e.target.value))}
+                  value={amount}
+                  onFocus={(e) => e.target.select()}
+                  onChange={(e) => {
+                    let val = e.target.value.replace(/[^\d.]/g, "");
+                    if (/^0\d/.test(val)) {
+                      val = val.replace(/^0+/, "");
+                      if (val === "") val = "0";
+                    }
+                    setAmount(val);
+                  }}
                   placeholder="0.00"
                   className="w-full rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 py-2 pl-9 pr-3 text-xs text-zinc-900 dark:text-zinc-100 focus:border-[#0069D3] focus:outline-hidden disabled:opacity-60 disabled:cursor-not-allowed"
                 />
               </div>
               {isAmountLocked && (
                 <p className="mt-1 text-[11px] text-amber-600 dark:text-amber-400">
-                  Amount cannot be edited while this milestone is part of an authorized escrow hold.
+                  {t("amountLockedHint")}
                 </p>
               )}
             </div>
@@ -276,11 +290,11 @@ export function ManageMilestoneDialog({
             <div>
               <div className="flex items-center justify-between">
                 <label className="text-xs font-semibold text-zinc-900 dark:text-zinc-100">
-                  Due Date <span className="text-rose-500">*</span>
+                  {t("fieldDueDate")} <span className="text-rose-500">*</span>
                 </label>
                 {contractEndDateStr && (
                   <span className="text-[11px] text-zinc-400 font-mono">
-                    Max: {contractEndDateStr}
+                    {t("maxDate", { date: contractEndDateStr })}
                   </span>
                 )}
               </div>
@@ -299,11 +313,11 @@ export function ManageMilestoneDialog({
               />
               {!contractExpiresAt ? (
                 <p className="mt-1 text-[11px] text-rose-600 dark:text-rose-400">
-                  Please set a contract end date before adding or updating milestones.
+                  {t("contractEndDateRequired")}
                 </p>
               ) : contractEndDateStr && dueDate && dueDate > contractEndDateStr ? (
                 <p className="mt-1 text-[11px] text-rose-600 dark:text-rose-400">
-                  Milestone due date cannot exceed contract end date ({contractEndDateStr}).
+                  {t("dueDateExceedsContract", { date: contractEndDateStr })}
                 </p>
               ) : null}
             </div>
@@ -311,13 +325,13 @@ export function ManageMilestoneDialog({
             {/* Description */}
             <div>
               <label className="text-xs font-semibold text-zinc-900 dark:text-zinc-100">
-                Description & Deliverables
+                {t("fieldDescription")}
               </label>
               <textarea
                 rows={4}
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                placeholder="Describe deliverables required for this milestone..."
+                placeholder={t("descriptionPlaceholder")}
                 className="mt-1.5 w-full rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-3 text-xs text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 focus:border-[#0069D3] focus:outline-hidden resize-none leading-relaxed"
               />
             </div>
@@ -332,7 +346,7 @@ export function ManageMilestoneDialog({
             onClick={() => onOpenChange(false)}
             className="rounded-lg text-xs h-8 px-3 border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 cursor-pointer"
           >
-            Cancel
+            {tCommon("cancel")}
           </Button>
           {hasPermission && (
             <Button
@@ -342,7 +356,7 @@ export function ManageMilestoneDialog({
               className="rounded-lg bg-[#0069D3] hover:bg-[#005bb8] text-white text-xs font-semibold h-8 px-4 cursor-pointer"
             >
               {isSubmitting && <Loader2 className="mr-1.5 size-3.5 animate-spin" />}
-              {milestoneToEdit ? "Update Milestone" : "Add Milestone"}
+              {milestoneToEdit ? t("updateAction") : t("addAction")}
             </Button>
           )}
         </SheetFooter>

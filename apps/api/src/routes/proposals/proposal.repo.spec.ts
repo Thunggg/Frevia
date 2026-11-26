@@ -83,7 +83,7 @@ describe('ProposalRepository', () => {
       where: {
         id: 18,
         deletedAt: null,
-        status: { in: [ProposalStatus.SUBMITTED, ProposalStatus.INTERVIEWING] },
+        status: { in: [ProposalStatus.SUBMITTED] },
       },
       data: {
         status: ProposalStatus.HIRED,
@@ -105,7 +105,8 @@ describe('ProposalRepository', () => {
         clientId: 4,
         freelancerId: 12,
         totalAmount: 700,
-        platformFee: 7,
+        clientPlatformFee: 21,
+        platformFee: 21,
       },
       select: { id: true },
     });
@@ -126,7 +127,7 @@ describe('ProposalRepository', () => {
         message:
           'You have been hired for AI Dev App. Review and sign the contract to begin work.',
         data: {
-          href: '/proposals/18',
+          href: '/freelancer/proposals/18',
           proposalId: 18,
           jobId: 10,
           contractId: 22,
@@ -156,7 +157,7 @@ describe('ProposalRepository', () => {
         jobId: 10,
         id: { not: 18 },
         deletedAt: null,
-        status: { in: [ProposalStatus.SUBMITTED, ProposalStatus.INTERVIEWING] },
+        status: { in: [ProposalStatus.SUBMITTED] },
       },
       data: {
         status: ProposalStatus.REJECTED,

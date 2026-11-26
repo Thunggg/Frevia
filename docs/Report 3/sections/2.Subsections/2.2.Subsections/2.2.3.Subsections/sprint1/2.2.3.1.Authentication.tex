@@ -1,3 +1,4 @@
+\Needspace{12\baselineskip}
 \paragraph{Authentication}
 
 % =================================================================
@@ -7,20 +8,21 @@
 
 {\singlespacing
 \setlength{\extrarowheight}{4pt}
+\Needspace{12\baselineskip}
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
-UC ID and Name & \multicolumn{3}{l|}{UC-01 Login with Google} \\ \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-01 Login with Google} \\* \hline
 \endfirsthead
 \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-01 Login with Google \textit{(cont.)}} \\* \hline
 \endhead
-\hline
-\endfoot
+\hline\endfoot
 \endlastfoot
 
 Created By: & ThuanNT & Date Created: & 20/09/2026 \\ \hline
 Primary Actor: & Guest & Secondary Actors: & Google OAuth Server \\ \hline
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When a user clicks the ``Login with Google'' button on the login or registration page.} \\ \hline
-Description: & \multicolumn{3}{L{11.1cm}|}{Allows users to login/register using Google OAuth.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Allows users to login/register using Google OAuth.} \\ \hline
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The user is not currently authenticated. \newline
 \textbf{PRE-2} The system is connected to the Google OAuth Server.
@@ -87,20 +89,21 @@ Google OAuth 2.0 credentials are configured in the system. The Google OAuth Serv
 
 {\singlespacing
 \setlength{\extrarowheight}{4pt}
+\Needspace{12\baselineskip}
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
-UC ID and Name & \multicolumn{3}{l|}{UC-02 Login} \\ \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-02 Login} \\* \hline
 \endfirsthead
 \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-02 Login \textit{(cont.)}} \\* \hline
 \endhead
-\hline
-\endfoot
+\hline\endfoot
 \endlastfoot
 
 Created By: & ThuanNT & Date Created: & 20/09/2026 \\ \hline
 Primary Actor: & Guest & Secondary Actors: & N/A \\ \hline
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When a user submits their email and password on the login page.} \\ \hline
-Description: & \multicolumn{3}{L{11.1cm}|}{Allows users to log in using email/password and JWT authentication.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Allows users to log in using email/password and JWT authentication.} \\ \hline
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The user is not currently authenticated. \newline
 \textbf{PRE-2} The user has a registered account with email and password.
@@ -168,20 +171,21 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{Passwords are stored as hashed values
 
 {\singlespacing
 \setlength{\extrarowheight}{4pt}
+\Needspace{12\baselineskip}
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
-UC ID and Name & \multicolumn{3}{l|}{UC-03 Logout} \\ \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-03 Logout} \\* \hline
 \endfirsthead
 \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-03 Logout \textit{(cont.)}} \\* \hline
 \endhead
-\hline
-\endfoot
+\hline\endfoot
 \endlastfoot
 
 Created By: & ThuanNT & Date Created: & 20/09/2026 \\ \hline
 Primary Actor: & Client, Expert, Freelancer, Admin & Secondary Actors: & N/A \\ \hline
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When an authenticated user clicks the ``Logout'' button.} \\ \hline
-Description: & \multicolumn{3}{L{11.1cm}|}{Allows users to logout and terminate authentication session.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Allows users to logout and terminate authentication session.} \\ \hline
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The user is currently authenticated with a valid JWT stored in an httpOnly cookie.
 } \\ \hline
@@ -224,20 +228,21 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{The database is accessible to process
 
 {\singlespacing
 \setlength{\extrarowheight}{4pt}
+\Needspace{12\baselineskip}
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
-UC ID and Name & \multicolumn{3}{l|}{UC-04 Register} \\ \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-04 Register} \\* \hline
 \endfirsthead
 \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-04 Register \textit{(cont.)}} \\* \hline
 \endhead
-\hline
-\endfoot
+\hline\endfoot
 \endlastfoot
 
 Created By: & ThuanNT & Date Created: & 20/09/2026 \\ \hline
 Primary Actor: & Guest & Secondary Actors: & Email Server \\ \hline
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When a guest submits the registration form on the registration page.} \\ \hline
-Description: & \multicolumn{3}{L{11.1cm}|}{Allows users to create new accounts using email and password.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Allows users to create new accounts using email and password.} \\ \hline
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The user is not currently authenticated. \newline
 \textbf{PRE-2} The system is connected to the email server.
@@ -328,20 +333,21 @@ The email server is configured and accessible at the time of registration. Passw
 
 {\singlespacing
 \setlength{\extrarowheight}{4pt}
+\Needspace{12\baselineskip}
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
-UC ID and Name & \multicolumn{3}{l|}{UC-05 Forgot Password} \\ \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-05 Forgot Password} \\* \hline
 \endfirsthead
 \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{l|}{UC-05 Forgot Password \textit{(cont.)}} \\* \hline
 \endhead
-\hline
-\endfoot
+\hline\endfoot
 \endlastfoot
 
 Created By: & ThuanNT & Date Created: & 20/09/2026 \\ \hline
 Primary Actor: & Guest & Secondary Actors: & Email Server \\ \hline
 Trigger: & \multicolumn{3}{L{11.1cm}|}{When a user clicks the ``Forgot Password'' link on the login page and submits their email address.} \\ \hline
-Description: & \multicolumn{3}{L{11.1cm}|}{Allows users to request password reset via email verification link.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Allows users to request password reset via email verification link.} \\ \hline
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{
 \textbf{PRE-1} The user is not currently authenticated. \newline
 \textbf{PRE-2} The system is connected to the email server.

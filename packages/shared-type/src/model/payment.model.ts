@@ -90,6 +90,7 @@ export const SavedPaymentMethodSchema = z.object({
   expMonth: z.number(),
   expYear: z.number(),
   isDefault: z.boolean(),
+  cardholderName: z.string().nullable().optional(),
 });
 export type SavedPaymentMethodType = z.infer<typeof SavedPaymentMethodSchema>;
 
@@ -166,13 +167,6 @@ export type CreateOnboardingLinkBodyType = z.infer<
   typeof CreateOnboardingLinkBodySchema
 >;
 
-export const RefundMilestoneBodySchema = z.object({
-  reason: z.string().optional(),
-});
-export type RefundMilestoneBodyType = z.infer<
-  typeof RefundMilestoneBodySchema
->;
-
 export const ReleaseMilestoneResponseSchema = z.object({
   success: z.boolean(),
   message: z.string(),
@@ -180,15 +174,6 @@ export const ReleaseMilestoneResponseSchema = z.object({
 });
 export type ReleaseMilestoneResponseType = z.infer<
   typeof ReleaseMilestoneResponseSchema
->;
-
-export const RefundMilestoneResponseSchema = z.object({
-  success: z.boolean(),
-  message: z.string(),
-  refundId: z.string(),
-});
-export type RefundMilestoneResponseType = z.infer<
-  typeof RefundMilestoneResponseSchema
 >;
 
 export const SyncPaymentIntentResponseSchema = z.object({
@@ -202,6 +187,7 @@ export type SyncPaymentIntentResponseType = z.infer<
 export const CreateContractHoldBodySchema = z.object({
   milestoneIds: z.array(z.coerce.number().int().positive()).min(1),
   paymentMethodId: z.string().min(1).optional(),
+  returnUrl: z.string().url().optional(),
 });
 export type CreateContractHoldBodyType = z.infer<
   typeof CreateContractHoldBodySchema
@@ -217,9 +203,18 @@ export const CreateContractHoldResponseSchema = z.object({
   milestoneIds: z.array(z.number()),
   status: z.string().optional(),
   authorized: z.boolean().optional(),
+  checkoutUrl: z.string().url().optional(),
+  sessionId: z.string().optional(),
 });
 export type CreateContractHoldResponseType = z.infer<
   typeof CreateContractHoldResponseSchema
+>;
+
+export const CreateMilestoneFundCheckoutSessionBodySchema = z.object({
+  returnUrl: z.string().url().optional(),
+});
+export type CreateMilestoneFundCheckoutSessionBodyType = z.infer<
+  typeof CreateMilestoneFundCheckoutSessionBodySchema
 >;
 
 export const ContractHoldActionResponseSchema = z.object({

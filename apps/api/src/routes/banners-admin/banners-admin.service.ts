@@ -29,12 +29,12 @@ import { CacheService } from '../../shared/services/cache.service';
 export const MAX_BANNER_IMAGE_SIZE = 10 * 1024 * 1024;
 
 const BANNER_MIME_TO_EXTENSION: Record<string, string> = {
-  'image/jpeg': 'jpg',
-  'image/png': 'png',
-  'image/gif': 'gif',
-  'image/webp': 'webp',
-  'image/bmp': 'bmp',
-  'image/tiff': 'tiff',
+  'image/jpeg': '.jpg',
+  'image/png': '.png',
+  'image/gif': '.gif',
+  'image/webp': '.webp',
+  'image/bmp': '.bmp',
+  'image/tiff': '.tiff',
 };
 
 @Injectable()

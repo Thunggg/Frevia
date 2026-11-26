@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  Optional,
   Param,
   ParseIntPipe,
   Patch,
@@ -13,6 +14,7 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ZodSerializerDto, ZodValidationPipe } from 'nestjs-zod';
 import { UserActive } from '../../shared/decorators/user-active.decorators';
+import { ConversationsGateway } from './conversations.gateway';
 import { ConversationService } from './conversations.service';
 import {
   ConversationDetailResponseDto,
@@ -42,7 +44,10 @@ import type {
 
 @Controller('conversations')
 export class ConversationController {
-  constructor(private readonly conversationService: ConversationService) {}
+  constructor(
+    private readonly conversationService: ConversationService,
+    @Optional() private readonly conversationsGateway?: ConversationsGateway,
+  ) {}
 
   // Lấy danh sách hội thoại của user hiện tại,
   // mỗi hội thoại kèm tin nhắn cuối (preview) và số tin nhắn chưa đọc
@@ -86,18 +91,24 @@ export class ConversationController {
   // Gửi tin nhắn (REST fallback - realtime chính dùng socket)
   @Post(':id/messages')
   @ZodSerializerDto(SendMessageResponseDto)
-  sendMessage(
+  async sendMessage(
     @UserActive('userId') userId: number,
     @Param('id') id: string,
     @Body(new ZodValidationPipe(SendMessageBodyDto))
     body: SendMessageBodyType,
   ) {
-    return this.conversationService.sendMessage(
+    const savedMessage = await this.conversationService.sendMessage(
       userId,
       id,
       body.message,
       body.attachment,
     );
+    await this.conversationsGateway?.broadcastMessageSent(
+      id,
+      userId,
+      savedMessage,
+    );
+    return savedMessage;
   }
 
   // Upload file để đính kèm vào tin nhắn (chỉ participant được upload)
@@ -121,12 +132,22 @@ export class ConversationController {
   // Xóa mềm tin nhắn của bản thân (chỉ sender của tin nhắn mới được xóa)
   @Delete(':id/messages/:messageId')
   @ZodSerializerDto(DeleteMessageResponseDto)
-  deleteMessage(
+  async deleteMessage(
     @UserActive('userId') userId: number,
     @Param('id') id: string,
     @Param('messageId', ParseIntPipe) messageId: number,
   ) {
-    return this.conversationService.deleteMessage(userId, id, messageId);
+    const deleted = await this.conversationService.deleteMessage(
+      userId,
+      id,
+      messageId,
+    );
+    await this.conversationsGateway?.broadcastMessageDeleted(
+      id,
+      userId,
+      messageId,
+    );
+    return deleted;
   }
 
   // Đánh dấu tất cả tin nhắn của hội thoại là đã đọc

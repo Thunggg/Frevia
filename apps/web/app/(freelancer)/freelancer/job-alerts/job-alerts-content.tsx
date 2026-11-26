@@ -256,7 +256,7 @@ export function JobAlertsContent({
           <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
             <div>
               <h1 className="flex items-center gap-2.5 text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
-                <Bell className="size-6 text-[#4fae2e]" />
+                <Bell className="size-6 text-[#0069D3]" />
                 {t("title")}
               </h1>
               <p className="mt-1 text-xs font-normal text-muted-foreground max-w-xl">
@@ -273,7 +273,7 @@ export function JobAlertsContent({
                 <Button
                   onClick={handleOpenCreate}
                   disabled={isLimitReached}
-                  className="rounded-full bg-[#4fae2e] text-white hover:bg-[#459928] text-xs font-semibold h-10 px-4 gap-1.5"
+                  className="rounded-full bg-[#0069D3] text-white hover:bg-[#005bb8] text-xs font-semibold h-10 px-4 gap-1.5"
                 >
                   <Plus className="size-4" />
                   {t("createAlert")}
@@ -326,7 +326,7 @@ export function JobAlertsContent({
           </div>
         ) : alerts.length === 0 ? (
           <div className="rounded-xl border border-dashed border-border px-6 py-16 text-center">
-            <div className="mx-auto mb-4 flex size-14 items-center justify-center rounded-full bg-[#eaf8df] text-[#4fae2e] dark:bg-[#4fae2e]/15">
+            <div className="mx-auto mb-4 flex size-14 items-center justify-center rounded-full bg-[#D0E1F8] text-[#0069D3] dark:bg-blue-950/60 dark:text-blue-300">
               <Bell className="size-7" />
             </div>
             <h2 className="text-lg font-medium text-foreground">
@@ -338,7 +338,7 @@ export function JobAlertsContent({
             {canCreateJobAlert && (
               <Button
                 onClick={handleOpenCreate}
-                className="mt-6 rounded-full bg-[#4fae2e] text-white hover:bg-[#459928] text-xs font-semibold"
+                className="mt-6 rounded-full bg-[#0069D3] text-white hover:bg-[#005bb8] text-xs font-semibold"
               >
                 <Plus className="size-4 mr-1.5" />
                 {t("createAlert")}
@@ -362,7 +362,7 @@ export function JobAlertsContent({
               onClick={() => setSearchQuery("")}
             >
               <X className="size-3.5 mr-1.5" />
-              Đặt lại
+              {t("resetFilter")}
             </Button>
           </div>
         ) : (
@@ -370,7 +370,7 @@ export function JobAlertsContent({
             {filteredAlerts.map((alert) => (
               <article
                 key={alert.id}
-                className="group flex min-h-60 flex-col rounded-xl border border-border bg-card p-5 shadow-xs transition-all duration-200 hover:-translate-y-0.5 hover:border-[#4fae2e]/40 hover:shadow-md"
+                className="group flex min-h-60 flex-col rounded-xl border border-border bg-card p-5 shadow-xs transition-all duration-200 hover:-translate-y-0.5 hover:border-[#0069D3]/40 hover:shadow-md"
               >
                 {/* Header: Title & Switch */}
                 <div className="flex items-start justify-between gap-3">
@@ -378,7 +378,7 @@ export function JobAlertsContent({
                     <div className="flex items-center gap-2 mb-1.5">
                       <span
                         className={`inline-block size-2 rounded-full ${
-                          alert.isActive ? "bg-[#4fae2e]" : "bg-muted-foreground/40"
+                          alert.isActive ? "bg-[#0069D3]" : "bg-muted-foreground/40"
                         }`}
                       />
                       <span className="text-[11px] font-medium text-muted-foreground">
@@ -563,7 +563,7 @@ export function JobAlertsContent({
                   onClick={handleAddSkill}
                   className="rounded-full text-xs font-semibold px-4"
                 >
-                  <Plus className="size-3.5 mr-1" /> Thêm
+                  <Plus className="size-3.5 mr-1" /> {t("addSkillBtn")}
                 </Button>
               </div>
               {skills.length > 0 && (
@@ -602,7 +602,7 @@ export function JobAlertsContent({
                     onClick={() => setFrequency(opt.value)}
                     className={`rounded-xl border p-2.5 text-center text-xs font-medium transition-all ${
                       frequency === opt.value
-                        ? "border-[#4fae2e] bg-[#eaf8df] text-[#3f9225] font-semibold dark:bg-[#4fae2e]/15"
+                        ? "border-[#0069D3] bg-[#D0E1F8]/40 text-[#0069D3] font-semibold dark:bg-blue-950/40 dark:text-blue-300"
                         : "border-border bg-background text-muted-foreground hover:border-foreground/30"
                     }`}
                   >
@@ -657,7 +657,7 @@ export function JobAlertsContent({
               </Button>
               <Button
                 type="submit"
-                className="rounded-full bg-[#4fae2e] text-white hover:bg-[#459928] text-xs font-semibold"
+                className="rounded-full bg-[#0069D3] text-white hover:bg-[#005bb8] text-xs font-semibold"
                 disabled={isSubmitting}
               >
                 {isSubmitting ? t("saving") : t("save")}

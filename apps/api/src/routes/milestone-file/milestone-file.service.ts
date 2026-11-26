@@ -1,4 +1,5 @@
 import { HttpException, Injectable } from '@nestjs/common';
+import { MilestoneStatus } from '@prisma/client';
 import { RoleName } from '@shared/types';
 import { CloudinaryService } from '../../shared/services/cloudinary.service';
 import { MilestoneFileRepository } from './milestone-file.repo';
@@ -81,6 +82,10 @@ export class MilestoneFileService {
       if (milestone.contractId !== contractId)
         throw MilestoneFileForbiddenException();
 
+      if (milestone.status === MilestoneStatus.COMPLETED) {
+        throw MilestoneFileForbiddenException();
+      }
+
       const cloudinaryResult = await this.cloudinaryService.uploadFile(
         file,
         `frevia/milestones/${milestoneId}`,
@@ -128,6 +133,10 @@ export class MilestoneFileService {
 
       if (milestone.contractId !== contractId)
         throw MilestoneFileForbiddenException();
+
+      if (milestone.status === MilestoneStatus.COMPLETED) {
+        throw MilestoneFileForbiddenException();
+      }
 
       const file = await this.milestoneFileRepository.findFileById(fileId);
       if (!file || file.milestoneId !== milestoneId || file.deletedAt) {

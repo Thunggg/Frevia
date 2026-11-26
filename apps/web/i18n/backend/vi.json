@@ -180,6 +180,7 @@
   "Error.IdentityVerificationFileNotAvailable": "Tài liệu xác minh danh tính không khả dụng.",
   "Error.IdentityVerificationListNotFound": "Không tìm thấy yêu cầu xác minh nào",
   "Error.IdentityVerificationNotFound": "Không tìm thấy yêu cầu xác minh",
+  "Error.IdentityVerificationRequired": "Bạn cần hoàn tất xác minh danh tính (CCCD) trước khi tạo công việc mới.",
   "Error.IncorrectEmail": "Email không đúng",
   "Error.IncorrectPassword": "Mật khẩu không đúng",
   "Error.Internal": "Đã xảy ra lỗi. Vui lòng thử lại",

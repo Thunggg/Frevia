@@ -13,9 +13,16 @@ export class PortfolioRepository {
         id: profileId,
         user: {
           deletedAt: null,
-          role: {
-            name: RoleName.FREELANCER,
-          },
+          OR: [
+            { role: { name: RoleName.FREELANCER } },
+            {
+              userRoles: {
+                some: {
+                  role: { name: RoleName.FREELANCER, deletedAt: null },
+                },
+              },
+            },
+          ],
         },
       },
       include: {
@@ -23,6 +30,10 @@ export class PortfolioRepository {
         user: {
           include: {
             role: true,
+            userRoles: {
+              where: { role: { deletedAt: null } },
+              include: { role: true },
+            },
           },
         },
       },

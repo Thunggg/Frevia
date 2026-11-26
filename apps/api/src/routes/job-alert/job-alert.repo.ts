@@ -67,7 +67,10 @@ export class JobAlertRepository {
     const targetSkillsStr = sortedSkills.join(',');
     const found = alerts.find((alert) => {
       const alertKeyword = alert.keywords?.trim().toLowerCase() || null;
-      const alertSkillsStr = [...alert.skills].sort().join(',');
+      const alertSkillsStr = [...alert.skills]
+        .map((s) => s.trim().toLowerCase())
+        .sort()
+        .join(',');
       return (
         alertKeyword === normalizedKeyword && alertSkillsStr === targetSkillsStr
       );

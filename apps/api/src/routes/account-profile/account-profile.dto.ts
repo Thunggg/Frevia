@@ -2,6 +2,8 @@ import { createZodDto } from 'nestjs-zod';
 import {
   AddSocialLinkSchema,
   ClientProfileDetailSchema,
+  ClientDirectoryQuerySchema,
+  ClientDirectorySchema,
   FavoriteFreelancerSchema,
   FollowingFreelancerSchema,
   DiscoverFreelancerSchema,
@@ -30,6 +32,10 @@ export class IdentityVerificationStatusDto extends createZodDto(
 export class ClientProfileDetailDto extends createZodDto(
   ClientProfileDetailSchema,
 ) {}
+export class ClientDirectoryQueryDto extends createZodDto(
+  ClientDirectoryQuerySchema,
+) {}
+export class ClientDirectoryDto extends createZodDto(ClientDirectorySchema) {}
 export class UpdateClientProfileDto extends createZodDto(
   UpdateClientProfileSchema,
 ) {}

@@ -91,7 +91,10 @@ export function ContractLifecyclePanel({
         await contractApi.complete(contract.id);
         toastSuccess({ message: t("completed") });
       }
-      await queryClient.invalidateQueries({ queryKey: ["contracts"] });
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ["contracts"] }),
+        queryClient.invalidateQueries({ queryKey: ["contracts-list"] }),
+      ]);
       setConfirmAction(null);
     } catch (error) {
       toastError({ message: errorMessage(error, t("updateFailed")) });
@@ -164,8 +167,16 @@ export function ContractLifecyclePanel({
     contract.status === "PENDING_SIGN" &&
     role === "FREELANCER" &&
     !contract.signedByClient;
+  const hasUnsettledMilestones =
+    Array.isArray(contract.milestones) &&
+    contract.milestones.some(
+      (m) => m.paymentStatus !== "RELEASED" && m.paymentStatus !== "REFUNDED"
+    );
   const canComplete =
-    role === "CLIENT" && contract.status === "ACTIVE" && canCompleteContract;
+    role === "CLIENT" &&
+    contract.status === "ACTIVE" &&
+    canCompleteContract &&
+    !hasUnsettledMilestones;
   const isCompleted = contract.status === "COMPLETED";
   const statusText = (CONTRACT_STATUSES as readonly string[]).includes(
     contract.status,

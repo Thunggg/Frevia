@@ -15,29 +15,75 @@ import {
 
 import type { JobType, RecommendationComponentsType } from "@shared/types";
 
-export type JobCardJob = Pick<
-  JobType,
-  | "id"
-  | "slug"
-  | "title"
-  | "description"
-  | "budgetMin"
-  | "budgetMax"
-  | "budgetType"
-  | "status"
-  | "deadline"
-  | "expiryDate"
-  | "createdAt"
-  | "hiringType"
-  | "positionsRequired"
-  | "positionsFilled"
-  | "skills"
-  | "jobCategories"
-  | "proposalsCount"
->;
+export type JobCardJob = Partial<
+  Pick<
+    JobType,
+    | "deadline"
+    | "expiryDate"
+    | "hiringType"
+    | "positionsRequired"
+    | "positionsFilled"
+    | "jobCategories"
+    | "proposalsCount"
+  >
+> &
+  Pick<
+    JobType,
+    | "id"
+    | "slug"
+    | "title"
+    | "description"
+    | "budgetMin"
+    | "budgetMax"
+    | "budgetType"
+    | "status"
+  > & {
+    createdAt: Date | string;
+    skills?: unknown[];
+    jobCategories?: unknown[];
+    _count?: { proposals?: number };
+    proposals?: unknown[];
+  };
+
+type JobCardSkillInput =
+  | string
+  | {
+      id?: string | number;
+      skillId?: string | number;
+      name?: string;
+      skill?: { name?: string };
+    };
+
+type JobCardCategoryInput = {
+  id: string | number;
+  slug: string;
+  name: string;
+};
+
+type JobCardInput = {
+  id: string | number;
+  slug: string;
+  title: string;
+  description?: string | null;
+  budgetMin?: number | null;
+  budgetMax?: number | null;
+  budgetType?: string | null;
+  status?: string | null;
+  deadline?: string | Date | null;
+  expiryDate?: string | Date | null;
+  createdAt?: string | Date | null;
+  hiringType?: string | null;
+  positionsRequired?: number | null;
+  positionsFilled?: number | null;
+  skills?: JobCardSkillInput[] | null;
+  jobCategories?: JobCardCategoryInput[] | null;
+  proposalsCount?: number | null;
+  _count?: { proposals?: number };
+  proposals?: unknown[];
+};
 
 type JobCardProps = {
-  job: any;
+  job: JobCardInput & Record<string, unknown>;
   /** Trang danh sách job — mọi chip và nút "Xem chi tiết" đều trỏ về đây. */
   jobBaseUrl: string;
   /** Trang tìm việc để áp bộ lọc theo danh mục/kỹ năng. */
@@ -72,14 +118,12 @@ export function JobCard({
   isBookmarkPending = false,
   onToggleBookmark,
   matchScore,
-  components,
   recommendationId,
   onViewExplanation,
   showApplyButton = false,
 }: JobCardProps) {
   const t = useTranslations("findWork");
   const tRec = useTranslations("recommendation");
-  const tStatus = useTranslations("jobStatus");
   const tBudgetType = useTranslations("jobBudgetType");
   const tBookmark = useTranslations("bookmark");
   const tCommon = useTranslations("common");
@@ -93,7 +137,7 @@ export function JobCard({
 
   const normalizedSkills: Array<{ id: string | number; name: string }> = (
     job.skills ?? []
-  ).map((s: any, idx: number) => {
+  ).map((s, idx: number) => {
     if (typeof s === "string") {
       return { id: `skill-${idx}-${s}`, name: s };
     }
@@ -114,8 +158,8 @@ export function JobCard({
     if (diffHours < 24) return tCommon("hoursAgo", { hours: diffHours });
 
     const days = Math.floor(diffHours / 24);
-    if (days === 1) return "hôm qua";
-    return `${days} ngày trước`;
+    if (days === 1) return tCommon("yesterday");
+    return tCommon("daysAgo", { days });
   };
 
   // Lượng đề xuất THẬT từ schema dự án (không mockup)
@@ -129,7 +173,7 @@ export function JobCard({
     job.expiryDate && new Date(job.expiryDate).getTime() < Date.now();
 
   const budgetText =
-    job.budgetMin === null || job.budgetMax === null
+    job.budgetMin == null || job.budgetMax == null
       ? t("negotiable")
       : `$${format.number(job.budgetMin)} - $${format.number(job.budgetMax)}`;
 
@@ -138,7 +182,7 @@ export function JobCard({
     if (job.status === "CLOSED") {
       return (
         <span className="inline-flex items-center rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 border border-zinc-300 dark:border-zinc-700 px-2.5 py-0.5 text-xs font-semibold">
-          Đã đóng tuyển
+          {t("statusClosed")}
         </span>
       );
     }
@@ -146,7 +190,7 @@ export function JobCard({
     if (job.status === "IN_PROGRESS") {
       return (
         <span className="inline-flex items-center rounded-full bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-900 px-2.5 py-0.5 text-xs font-semibold">
-          Đang thực hiện
+          {t("statusInProgress")}
         </span>
       );
     }
@@ -154,7 +198,7 @@ export function JobCard({
     if (job.status === "COMPLETED") {
       return (
         <span className="inline-flex items-center rounded-full bg-teal-50 dark:bg-teal-950/60 text-teal-700 dark:text-teal-300 border border-teal-200 dark:border-teal-900 px-2.5 py-0.5 text-xs font-semibold">
-          Đã hoàn thành
+          {t("statusCompleted")}
         </span>
       );
     }
@@ -162,7 +206,7 @@ export function JobCard({
     if (job.status === "CANCELLED") {
       return (
         <span className="inline-flex items-center rounded-full bg-rose-50 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-900 px-2.5 py-0.5 text-xs font-semibold">
-          Đã hủy
+          {t("statusCancelled")}
         </span>
       );
     }
@@ -170,14 +214,14 @@ export function JobCard({
     if (isExpired) {
       return (
         <span className="inline-flex items-center rounded-full bg-amber-50 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border border-amber-200 dark:border-amber-900 px-2.5 py-0.5 text-xs font-semibold">
-          Đã hết hạn nộp
+          {t("statusExpired")}
         </span>
       );
     }
 
     return (
-      <span className="inline-flex items-center rounded-full bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-900 px-2.5 py-0.5 text-xs font-semibold">
-        Đang mở tuyển
+      <span className="inline-flex items-center rounded-full bg-blue-50 dark:bg-blue-950/60 text-[#0069D3] dark:text-blue-300 border border-blue-200 dark:border-blue-900 px-2.5 py-0.5 text-xs font-semibold">
+        {t("statusOpen")}
       </span>
     );
   };
@@ -194,17 +238,19 @@ export function JobCard({
         <div className="flex flex-wrap items-center gap-2">
           {renderJobStatusBadge()}
 
-          <span className="inline-flex items-center gap-1">
-            <Clock className="size-3.5" />
-            Đăng {formatPostedTime(job.createdAt)}
-          </span>
+          {job.createdAt && (
+            <span className="inline-flex items-center gap-1">
+              <Clock className="size-3.5" />
+              {t("postedLabel", { time: formatPostedTime(job.createdAt) })}
+            </span>
+          )}
 
           <span>•</span>
 
           {/* Lượng ứng viên thật */}
           <span className="inline-flex items-center gap-1 font-medium text-foreground">
             <Users className="size-3.5 text-muted-foreground" />
-            {realProposalsCount} đề xuất
+            {t("proposalsCountLabel", { count: realProposalsCount })}
           </span>
 
           {/* Match Score Badge (Gợi ý AI) */}
@@ -220,7 +266,7 @@ export function JobCard({
               }}
               className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors ${
                 recommendationId && onViewExplanation
-                  ? "border-[#4fae2e]/30 bg-[#eaf8df] text-[#2d6e1a] hover:bg-[#ddf2cd] dark:bg-[#4fae2e]/15 dark:text-[#7ad75d] dark:border-[#4fae2e]/30 cursor-pointer"
+                  ? "border-[#0069D3]/30 bg-[#D0E1F8]/40 text-[#0069D3] hover:bg-[#D0E1F8]/70 dark:bg-[#0069D3]/20 dark:text-blue-300 dark:border-[#0069D3]/30 cursor-pointer"
                   : "border-border bg-muted/40 text-foreground"
               }`}
             >
@@ -237,7 +283,10 @@ export function JobCard({
 
           {job.hiringType === "MULTIPLE" && (
             <span className="inline-flex items-center rounded-full border border-blue-500/20 bg-blue-50 dark:bg-blue-950/40 px-2.5 py-0.5 text-[11px] font-semibold text-blue-700 dark:text-blue-300">
-              Đã tuyển {job.positionsFilled ?? 0}/{job.positionsRequired ?? 1} vị trí
+              {t("positionsFilledLabel", {
+                filled: job.positionsFilled ?? 0,
+                required: job.positionsRequired ?? 1,
+              })}
             </span>
           )}
         </div>
@@ -251,7 +300,7 @@ export function JobCard({
             onClick={(event) => onToggleBookmark?.(job.slug, event)}
             className={`flex size-8 shrink-0 items-center justify-center rounded-full transition-all cursor-pointer ${
               isBookmarked
-                ? "bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 hover:bg-emerald-100 dark:hover:bg-emerald-900/40"
+                ? "bg-blue-50 dark:bg-blue-950/40 text-[#0069D3] hover:bg-blue-100 dark:hover:bg-blue-900/40"
                 : "text-muted-foreground hover:bg-muted hover:text-foreground"
             }`}
             title={
@@ -263,7 +312,7 @@ export function JobCard({
             ) : (
               <Heart
                 className={`size-4 ${
-                  isBookmarked ? "fill-emerald-600 text-emerald-600" : ""
+                  isBookmarked ? "fill-[#0069D3] text-[#0069D3]" : ""
                 }`}
               />
             )}
@@ -276,7 +325,7 @@ export function JobCard({
         <Link
           href={`${jobBaseUrl}/${job.slug}`}
           prefetch={false}
-          className="text-base sm:text-lg font-bold text-foreground hover:text-emerald-700 dark:hover:text-emerald-400 transition-colors leading-snug line-clamp-2 hover:underline"
+          className="text-base sm:text-lg font-bold text-foreground hover:text-[#0069D3] dark:hover:text-blue-400 transition-colors leading-snug line-clamp-2 hover:underline"
         >
           {job.title}
         </Link>
@@ -285,9 +334,9 @@ export function JobCard({
           <Link
             href={`${jobBaseUrl}/${job.slug}`}
             prefetch={false}
-            className="rounded-full bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-1.5 text-xs font-semibold shadow-xs transition-colors shrink-0 self-start sm:self-auto"
+            className="rounded-full bg-[#0069D3] hover:bg-[#005bb8] text-white px-4 py-1.5 text-xs font-semibold shadow-xs transition-colors shrink-0 self-start sm:self-auto"
           >
-            Ứng tuyển
+            {t("applyNow")}
           </Link>
         )}
       </div>
@@ -296,7 +345,8 @@ export function JobCard({
       <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs sm:text-sm text-foreground/80">
         <div>
           <span className="font-semibold text-foreground">
-            {tBudgetType(job.budgetType)}: {budgetText}
+            {job.budgetType ? `${tBudgetType(job.budgetType)}: ` : ""}
+            {budgetText}
           </span>
         </div>
 
@@ -305,7 +355,7 @@ export function JobCard({
           <div className="flex items-center gap-1 text-muted-foreground text-xs">
             <Calendar className="size-3.5" />
             <span>
-              Hạn nộp:{" "}
+              {t("expiryDateLabel")}{" "}
               {format.dateTime(new Date(job.expiryDate), {
                 year: "numeric",
                 month: "2-digit",
@@ -320,7 +370,7 @@ export function JobCard({
           <div className="flex items-center gap-1 text-muted-foreground text-xs">
             <Clock className="size-3.5" />
             <span>
-              Hạn hoàn thành:{" "}
+              {t("deadlineLabel")}{" "}
               {format.dateTime(new Date(job.deadline), {
                 year: "numeric",
                 month: "2-digit",
@@ -339,9 +389,9 @@ export function JobCard({
             <button
               type="button"
               onClick={() => setIsExpanded(false)}
-              className="text-emerald-600 hover:underline font-medium ml-1 cursor-pointer"
+              className="text-[#0069D3] hover:underline font-medium ml-1 cursor-pointer"
             >
-              Thu gọn
+              {t("showLess")}
             </button>
           </div>
         ) : (
@@ -353,9 +403,9 @@ export function JobCard({
               <button
                 type="button"
                 onClick={() => setIsExpanded(true)}
-                className="text-emerald-600 hover:underline font-medium ml-1 inline cursor-pointer"
+                className="text-[#0069D3] hover:underline font-medium ml-1 inline cursor-pointer"
               >
-                ... xem thêm
+                {t("showMore")}
               </button>
             )}
           </div>
@@ -381,12 +431,12 @@ export function JobCard({
           </span>
         )}
 
-        {jobCategories.map((cat: any) => (
+        {jobCategories.map((cat) => (
           <Link
             key={`${job.id}-cat-${cat.id}`}
             href={`${filterBasePath}?category=${encodeURIComponent(cat.slug)}`}
             prefetch={false}
-            className="inline-flex items-center gap-1 rounded-full border border-emerald-500/20 bg-emerald-50 dark:bg-emerald-950/30 px-3 py-1 text-xs font-medium text-emerald-700 dark:text-emerald-300 transition-colors hover:bg-emerald-100"
+            className="inline-flex items-center gap-1 rounded-full border border-blue-500/20 bg-blue-50 dark:bg-blue-950/30 px-3 py-1 text-xs font-medium text-[#0069D3] dark:text-blue-300 transition-colors hover:bg-blue-100"
           >
             <Tag className="size-3" />
             {cat.name}

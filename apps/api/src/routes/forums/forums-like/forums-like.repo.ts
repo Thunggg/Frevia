@@ -1,11 +1,12 @@
 import { Injectable } from '@nestjs/common';
+import { NotificationType } from '@prisma/client';
 import { PrismaService } from '../../../shared/services/prisma.service';
 
 @Injectable()
 export class ForumLikeRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  async findPostById(postId: number): Promise<{ id: number } | null> {
+  async findPostById(postId: number) {
     return this.prisma.forumPost.findFirst({
       where: {
         id: postId,
@@ -13,6 +14,97 @@ export class ForumLikeRepository {
       },
       select: {
         id: true,
+        userId: true,
+        slug: true,
+        categoryId: true,
+        category: {
+          select: {
+            id: true,
+            slug: true,
+          },
+        },
+      },
+    });
+  }
+
+  // Thông báo cho chủ bài viết khi có lượt thích mới
+  async createPostLikeNotification(input: {
+    postAuthorId: number;
+    likerId: number;
+    postId: number;
+    postSlug: string;
+    categoryId: number | null;
+    categorySlug: string | null;
+  }) {
+    const {
+      postAuthorId,
+      likerId,
+      postId,
+      postSlug,
+      categoryId,
+      categorySlug,
+    } = input;
+
+    if (postAuthorId === likerId) {
+      return null;
+    }
+
+    // Mỗi người chỉ tạo 1 thông báo cho 1 bài viết để tránh spam khi toggle like
+    const existing = await this.prisma.notification.findFirst({
+      where: {
+        userId: postAuthorId,
+        type: NotificationType.POST_LIKE,
+        deletedAt: null,
+        AND: [
+          {
+            data: {
+              path: ['postId'],
+              equals: postId,
+            },
+          },
+          {
+            data: {
+              path: ['likerId'],
+              equals: likerId,
+            },
+          },
+        ],
+      },
+      select: { id: true },
+    });
+
+    if (existing) {
+      return null;
+    }
+
+    const liker = await this.prisma.user.findUnique({
+      where: { id: likerId },
+      select: {
+        profile: {
+          select: { displayName: true },
+        },
+      },
+    });
+    const likerName = liker?.profile?.displayName || 'Someone';
+
+    const categorySegment =
+      categorySlug && categoryId
+        ? `${categorySlug}-${categoryId}`
+        : `category-${categoryId ?? postId}`;
+    const href = `/forum/${categorySegment}/${postSlug}-${postId}`;
+
+    return this.prisma.notification.create({
+      data: {
+        userId: postAuthorId,
+        type: NotificationType.POST_LIKE,
+        title: 'New like on your post',
+        message: `${likerName} liked your post.`,
+        data: {
+          href,
+          postId,
+          likerId,
+          likerName,
+        },
       },
     });
   }

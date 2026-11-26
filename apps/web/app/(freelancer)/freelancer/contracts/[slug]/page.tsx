@@ -1,7 +1,10 @@
+import { cookies } from "next/headers";
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
+import authServerRequest from "@/apiRequests/auth.server";
 import contractServerRequest from "@/apiRequests/contract.server";
 import { ContractDetail } from "@/app/(client)/client/contracts/[slug]/_components/contract-detail";
+import { getBrowserSocketUrl } from "@/configs/validate-env";
 
 export async function generateMetadata({
   params,
@@ -40,6 +43,9 @@ export default async function FreelancerContractDetailPage({
   if (!contract) notFound();
 
   const sharedFiles = await contractServerRequest.getSharedFiles(contract.id);
+  const cookieStore = await cookies();
+  const token = cookieStore.get("accessToken")?.value ?? null;
+  const user = await authServerRequest.getMe();
 
   return (
     <div className="min-h-full bg-background font-sans">
@@ -48,6 +54,9 @@ export default async function FreelancerContractDetailPage({
           initialContract={contract}
           initialSharedFiles={sharedFiles}
           basePath="/freelancer"
+          currentUserId={user?.id ?? null}
+          accessToken={token}
+          socketUrl={getBrowserSocketUrl()}
         />
       </div>
     </div>

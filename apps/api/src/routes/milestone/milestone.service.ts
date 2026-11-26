@@ -1,4 +1,4 @@
-import { HttpException, Injectable } from '@nestjs/common';
+import { HttpException, Injectable, Optional } from '@nestjs/common';
 import {
   CreateMilestoneBodyType,
   GetMilestoneListQueryType,
@@ -13,6 +13,7 @@ import {
   FailedToUpdateMilestoneException,
   MilestoneAmountExceedsContractException,
   MilestoneCannotBeDeletedException,
+  MilestoneCannotDeleteLastException,
   MilestoneCannotBeEditedException,
   MilestoneContractExpiresAtRequiredException,
   MilestoneContractNotFoundException,
@@ -24,17 +25,23 @@ import {
   FailedToProgressMilestoneException,
   MilestonePaymentStatusException,
   MilestoneAlreadyInProgressException,
+  MilestonePreviousNotCompletedException,
 } from './milestone.error';
 import { RoleName } from '@shared/types';
 import {
   ContractStatus,
   MilestonePaymentStatus,
   MilestoneStatus,
+  NotificationType,
 } from '@prisma/client';
+import { AppNotificationService } from '../../shared/services/app-notification.service';
 
 @Injectable()
 export class MilestoneService {
-  constructor(private readonly milestoneRepository: MilestoneRepository) {}
+  constructor(
+    private readonly milestoneRepository: MilestoneRepository,
+    @Optional() private readonly notificationService?: AppNotificationService,
+  ) {}
 
   async getMilestoneList(
     userId: number,
@@ -238,6 +245,12 @@ export class MilestoneService {
         throw MilestoneCannotBeDeletedException();
       }
 
+      const activeCount =
+        await this.milestoneRepository.countActiveMilestones(contractId);
+      if (activeCount <= 1) {
+        throw MilestoneCannotDeleteLastException();
+      }
+
       return await this.milestoneRepository.deleteMilestone(milestoneId);
     } catch (error) {
       if (error instanceof HttpException) throw error;
@@ -287,7 +300,32 @@ export class MilestoneService {
         throw MilestoneAlreadyInProgressException();
       }
 
-      return await this.milestoneRepository.progressMilestone(milestoneId);
+      const incompletePreviousMilestone =
+        await this.milestoneRepository.findIncompletePreviousMilestone(
+          contractId,
+          milestoneId,
+        );
+
+      if (incompletePreviousMilestone) {
+        throw MilestonePreviousNotCompletedException();
+      }
+
+      const result =
+        await this.milestoneRepository.progressMilestone(milestoneId);
+
+      await this.notificationService?.send({
+        userId: contract.clientId,
+        type: NotificationType.SYSTEM_ANNOUNCEMENT,
+        title: 'Milestone work started',
+        message: `Freelancer has started working on milestone "${milestone.title}".`,
+        data: {
+          contractId,
+          milestoneId,
+          href: `/client/contracts/${contract.slug ?? contractId}`,
+        },
+      });
+
+      return result;
     } catch (error) {
       if (error instanceof HttpException) throw error;
 

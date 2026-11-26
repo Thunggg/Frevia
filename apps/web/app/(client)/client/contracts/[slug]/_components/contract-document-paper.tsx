@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useFormatter } from "next-intl";
+import { useFormatter, useTranslations } from "next-intl";
 import {
   Calendar,
   FileText,
@@ -13,6 +13,11 @@ import {
   Pencil,
   Trash2,
   FileEdit,
+  ShieldCheck,
+  Check,
+  RotateCcw,
+  Scale,
+  Lock,
 } from "lucide-react";
 import { useActionPermission } from "@/hooks/use-action-permission";
 import type { ContractDetailType, SharedFileType } from "@shared/types";
@@ -39,6 +44,8 @@ export function ContractDocumentPaper({
   onDeleteMilestone,
 }: ContractDocumentPaperProps) {
   const format = useFormatter();
+  const t = useTranslations("contractWorkspace.paper");
+  const tPaymentStatus = useTranslations("paymentStatus");
 
   const formatDate = (date: string | Date | null | undefined): string => {
     if (!date) return "—";
@@ -50,15 +57,57 @@ export function ContractDocumentPaper({
     });
   };
 
+  const renderPaymentStatusBadge = (status?: string | null) => {
+    const paymentStatus = status || "PENDING";
+    switch (paymentStatus) {
+      case "FUNDED":
+        return (
+          <span className="inline-flex items-center gap-1 text-[11px] font-medium text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200/80">
+            <ShieldCheck className="size-3 shrink-0" />
+            <span>{tPaymentStatus("FUNDED")}</span>
+          </span>
+        );
+      case "RELEASED":
+        return (
+          <span className="inline-flex items-center gap-1 text-[11px] font-medium text-blue-700 bg-blue-50 px-2 py-0.5 rounded border border-blue-200/80">
+            <Check className="size-3 shrink-0" />
+            <span>{tPaymentStatus("RELEASED")}</span>
+          </span>
+        );
+      case "REFUNDED":
+        return (
+          <span className="inline-flex items-center gap-1 text-[11px] font-medium text-zinc-700 bg-zinc-100 px-2 py-0.5 rounded border border-zinc-200">
+            <RotateCcw className="size-3 shrink-0" />
+            <span>{tPaymentStatus("REFUNDED")}</span>
+          </span>
+        );
+      case "DISPUTED":
+        return (
+          <span className="inline-flex items-center gap-1 text-[11px] font-medium text-rose-700 bg-rose-50 px-2 py-0.5 rounded border border-rose-200/80">
+            <Scale className="size-3 shrink-0" />
+            <span>{tPaymentStatus("DISPUTED")}</span>
+          </span>
+        );
+      case "PENDING":
+      default:
+        return (
+          <span className="inline-flex items-center gap-1 text-[11px] font-medium text-amber-700 bg-amber-50 px-2 py-0.5 rounded border border-amber-200/80">
+            <Lock className="size-3 shrink-0" />
+            <span>{tPaymentStatus("PENDING")}</span>
+          </span>
+        );
+    }
+  };
+
   const clientName =
     contract.client?.profile?.displayName ||
     contract.client?.email?.split("@")[0] ||
-    "Client";
+    t("clientLabel");
 
   const freelancerName =
     contract.freelancer?.profile?.displayName ||
     contract.freelancer?.email?.split("@")[0] ||
-    "Freelancer";
+    t("freelancerLabel");
 
   const clientEmail = contract.client?.email || "client@example.com";
   const freelancerEmail =
@@ -94,16 +143,17 @@ export function ContractDocumentPaper({
       amount: Number(m.amount),
       dueDate: m.dueDate,
       status: m.status,
+      paymentStatus: m.paymentStatus,
     }))
     : [
       {
         id: 0,
-        title: contract.job?.title || "Complete deliverables & milestones",
-        description:
-          contract.terms || "Complete landing page design & development",
+        title: contract.job?.title || t("fallbackMilestoneTitle"),
+        description: contract.terms || t("fallbackMilestoneDesc"),
         amount: totalAmount,
         dueDate: contract.expiresAt || new Date(Date.now() + 14 * 86400000),
         status: "PENDING",
+        paymentStatus: "PENDING",
       },
     ];
 
@@ -145,7 +195,7 @@ export function ContractDocumentPaper({
         </div>
         <div className="text-right">
           <p className="text-[11px] font-bold uppercase tracking-wider text-zinc-900">
-            CONTRACT AGREEMENT
+            {t("topHeader")}
           </p>
           <p className="font-mono text-xs font-semibold text-zinc-700 mt-0.5">
             {contractCode}
@@ -157,13 +207,11 @@ export function ContractDocumentPaper({
       <div className="grid grid-cols-1 md:grid-cols-12 gap-6 my-8 items-start">
         <div className="md:col-span-8">
           <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-zinc-950 leading-tight">
-            Freelance <br />
-            Contract Agreement
+            {t("titleLine1")} <br />
+            {t("titleLine2")}
           </h1>
           <p className="text-xs sm:text-[13px] text-zinc-600 mt-3 leading-relaxed max-w-xl">
-            This Freelance Contract Agreement (&ldquo;Agreement&rdquo;) is made
-            and entered into between the parties below on this day, and governs
-            the terms of the freelance work.
+            {t("intro")}
           </p>
         </div>
 
@@ -174,7 +222,7 @@ export function ContractDocumentPaper({
             </div>
             <div>
               <span className="block text-[11px] font-medium text-zinc-500">
-                Created At
+                {t("createdAt")}
               </span>
               <span className="block text-xs font-semibold text-zinc-900">
                 {formatDate(contract.createdAt)}
@@ -188,7 +236,7 @@ export function ContractDocumentPaper({
             </div>
             <div>
               <span className="block text-[11px] font-medium text-zinc-500">
-                Contract End Date
+                {t("contractEndDate")}
               </span>
               <span className="block text-xs font-semibold text-zinc-900">
                 {formatDate(contract.expiresAt)}
@@ -202,7 +250,7 @@ export function ContractDocumentPaper({
             </div>
             <div>
               <span className="block text-[11px] font-medium text-zinc-500">
-                Version
+                {t("version")}
               </span>
               <span className="block text-xs font-semibold text-zinc-900">
                 v1.0
@@ -216,13 +264,13 @@ export function ContractDocumentPaper({
         {/* ── 1. PARTIES ── */}
         <section className="pt-2">
           <h2 className="text-sm font-bold uppercase tracking-wider text-zinc-950 mb-3">
-            1. PARTIES
+            {t("sec1Title")}
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Client */}
             <div>
               <span className="text-[11px] font-semibold text-zinc-500 uppercase tracking-wider block">
-                Client
+                {t("clientLabel")}
               </span>
               <p className="text-sm font-bold text-zinc-950 mt-1">
                 {clientName}
@@ -240,7 +288,7 @@ export function ContractDocumentPaper({
             {/* Freelancer */}
             <div className="md:border-l md:border-zinc-200 md:pl-6">
               <span className="text-[11px] font-semibold text-zinc-500 uppercase tracking-wider block">
-                Freelancer
+                {t("freelancerLabel")}
               </span>
               <p className="text-sm font-bold text-zinc-950 mt-1">
                 {freelancerName}
@@ -263,7 +311,7 @@ export function ContractDocumentPaper({
         <section>
           <div className="flex items-center justify-between mb-2">
             <h2 className="text-sm font-bold uppercase tracking-wider text-zinc-950">
-              2. SCOPE AND DELIVERABLES
+              {t("sec2Title")}
             </h2>
             {canEditContract && onEditContract && (
               <button
@@ -272,26 +320,27 @@ export function ContractDocumentPaper({
                 className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#0069D3] hover:underline cursor-pointer"
               >
                 <FileEdit className="size-3.5" />
-                <span>Edit Scope & Terms</span>
+                <span>{t("editScopeTerms")}</span>
               </button>
             )}
           </div>
-          <p className="text-zinc-600 mb-3">
-            The Freelancer agrees to provide the services described in the job proposal:
-          </p>
+          <p className="text-zinc-600 mb-3">{t("sec2Intro")}</p>
 
           <div className="border border-zinc-300 rounded-xs grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-zinc-300 text-xs">
             <div className="p-3">
-              <span className="font-bold text-zinc-950">Job Title: </span>
+              <span className="font-bold text-zinc-950">
+                {t("jobTitleLabel")}{" "}
+              </span>
               <span className="text-zinc-800">
-                {contract.job?.title || "Professional Services Project"}
+                {contract.job?.title || t("defaultProjectTitle")}
               </span>
             </div>
             <div className="p-3">
-              <span className="font-bold text-zinc-950">Deliverables: </span>
+              <span className="font-bold text-zinc-950">
+                {t("deliverablesLabel")}{" "}
+              </span>
               <span className="text-zinc-800">
-                {contract.terms?.slice(0, 150) ||
-                  "Fully functional website, complete source code, documentation and deployment setup."}
+                {contract.terms?.slice(0, 150) || t("defaultDeliverables")}
               </span>
             </div>
           </div>
@@ -303,7 +352,7 @@ export function ContractDocumentPaper({
         <section>
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2">
             <h2 className="text-sm font-bold uppercase tracking-wider text-zinc-950">
-              3. PRICE AND PAYMENT SCHEDULE
+              {t("sec3Title")}
             </h2>
             <div className="flex items-center gap-2 self-start sm:self-auto">
               {canEditMilestones && canCreateMilestone && onAddMilestone && (
@@ -313,24 +362,18 @@ export function ContractDocumentPaper({
                   className="w-full h-9 inline-flex items-center justify-center py-1 text-xs font-semibold text-[#0069D3] transition-colors cursor-pointer"
                 >
                   <Plus className="size-3.5" />
-                  <span>Add Milestone</span>
+                  <span>{t("addMilestone")}</span>
                 </button>
               )}
             </div>
           </div>
 
           <p className="text-zinc-600 mb-3">
-            The total contract value is{" "}
-            <strong className="text-zinc-950 font-mono">
-              ${totalAmount.toLocaleString("en-US", { minimumFractionDigits: 2 })} (USD)
-            </strong>
-            . Client authorizes an escrow hold for at least 1 milestone (or all
-            milestones) plus a {clientFeePercent}% Client contract fee ($
-            {clientFeeAmount.toLocaleString("en-US", {
-              minimumFractionDigits: 2,
+            {t("sec3Summary", {
+              totalAmount: `$${totalAmount.toLocaleString("en-US", { minimumFractionDigits: 2 })}`,
+              feePercent: clientFeePercent,
+              feeAmount: `$${clientFeeAmount.toLocaleString("en-US", { minimumFractionDigits: 2 })}`,
             })}
-            ) prior to signing; Freelancer is charged a 5% platform fee per
-            milestone upon release via Stripe.
           </p>
 
           <div className="overflow-x-auto border border-zinc-300 rounded-xs">
@@ -338,19 +381,24 @@ export function ContractDocumentPaper({
               <thead>
                 <tr className="bg-zinc-50 border-b border-zinc-300 text-zinc-900 font-semibold">
                   <th className="py-2.5 px-3 w-16 border-r border-zinc-300">
-                    Milestone
+                    {t("colMilestone")}
                   </th>
                   <th className="py-2.5 px-3 border-r border-zinc-300">
-                    Description
+                    {t("colDescription")}
                   </th>
                   <th className="py-2.5 px-3 w-28 border-r border-zinc-300">
-                    Amount (USD)
+                    {t("colAmount")}
+                  </th>
+                  <th className="py-2.5 px-3 w-32 border-r border-zinc-300">
+                    {t("colPaymentStatus")}
                   </th>
                   <th className="py-2.5 px-3 w-28 border-r border-zinc-300">
-                    Due Date
+                    {t("colDueDate")}
                   </th>
                   {canEditMilestones && (
-                    <th className="py-2.5 px-3 w-20 text-center">Actions</th>
+                    <th className="py-2.5 px-3 w-20 text-center">
+                      {t("colActions")}
+                    </th>
                   )}
                 </tr>
               </thead>
@@ -390,6 +438,9 @@ export function ContractDocumentPaper({
                           minimumFractionDigits: 2,
                         })}
                       </td>
+                      <td className="py-2.5 px-3 border-r border-zinc-200">
+                        {renderPaymentStatusBadge(m.paymentStatus)}
+                      </td>
                       <td className="py-2.5 px-3 border-r border-zinc-200 text-zinc-600 font-mono text-[11px]">
                         {formatDate(m.dueDate)}
                       </td>
@@ -403,7 +454,7 @@ export function ContractDocumentPaper({
                                 <button
                                   type="button"
                                   onClick={() => onEditMilestone(m)}
-                                  title="Edit milestone"
+                                  title={t("editMilestoneTooltip")}
                                   className="flex size-6 items-center justify-center rounded-md text-zinc-600 hover:bg-zinc-100 hover:text-[#0069D3] transition-colors cursor-pointer"
                                 >
                                   <Pencil className="size-3.5" />
@@ -418,7 +469,7 @@ export function ContractDocumentPaper({
                                   <button
                                     type="button"
                                     onClick={() => onDeleteMilestone(m.id, m.title)}
-                                    title="Delete milestone"
+                                    title={t("deleteMilestoneTooltip")}
                                     className="flex size-6 items-center justify-center rounded-md text-zinc-500 hover:bg-rose-50 hover:text-rose-600 transition-colors cursor-pointer"
                                   >
                                     <Trash2 className="size-3.5" />
@@ -443,12 +494,9 @@ export function ContractDocumentPaper({
         {/* ── 4. REVISIONS AND EXTRA WORK ── */}
         <section>
           <h2 className="text-sm font-bold uppercase tracking-wider text-zinc-950 mb-1.5">
-            4. REVISIONS AND EXTRA WORK
+            {t("sec4Title")}
           </h2>
-          <p className="text-zinc-600">
-            The Client is entitled to up to 2 free revisions. Any additional work
-            beyond the original scope will be discussed and billed separately.
-          </p>
+          <p className="text-zinc-600">{t("sec4Body")}</p>
         </section>
 
         <hr className="border-zinc-200" />
@@ -456,24 +504,12 @@ export function ContractDocumentPaper({
         {/* ── 5. TIMELINE AND CLIENT DEPENDENCIES ── */}
         <section>
           <h2 className="text-sm font-bold uppercase tracking-wider text-zinc-950 mb-1.5">
-            5. TIMELINE AND CLIENT DEPENDENCIES
+            {t("sec5Title")}
           </h2>
           <p className="text-zinc-600">
-            {contract.expiresAt && (
-              <>
-                This Agreement has a contract end date of{" "}
-                <strong className="text-zinc-950 font-semibold">
-                  {formatDate(contract.expiresAt)}
-                </strong>
-                .{" "}
-              </>
-            )}
-            The Freelancer agrees to complete the deliverables by{" "}
-            <strong className="text-zinc-950 font-semibold">
-              {formatDate(finalDueDate)}
-            </strong>
-            . The Client shall provide necessary materials and feedback in a
-            timely manner.
+            {contract.expiresAt &&
+              t("sec5EndDatePrefix", { endDate: formatDate(contract.expiresAt) })}
+            {t("sec5Body", { dueDate: formatDate(finalDueDate) })}
           </p>
         </section>
 
@@ -482,13 +518,9 @@ export function ContractDocumentPaper({
         {/* ── 6. OWNERSHIP ── */}
         <section>
           <h2 className="text-sm font-bold uppercase tracking-wider text-zinc-950 mb-1.5">
-            6. OWNERSHIP
+            {t("sec6Title")}
           </h2>
-          <p className="text-zinc-600">
-            Upon full payment, the intellectual property rights of the
-            deliverables shall belong to the Client, except for pre-existing
-            materials and tools used by the Freelancer.
-          </p>
+          <p className="text-zinc-600">{t("sec6Body")}</p>
         </section>
 
         <hr className="border-zinc-200" />
@@ -496,13 +528,9 @@ export function ContractDocumentPaper({
         {/* ── 7. DISPUTE RESOLUTION ── */}
         <section>
           <h2 className="text-sm font-bold uppercase tracking-wider text-zinc-950 mb-1.5">
-            7. DISPUTE RESOLUTION
+            {t("sec7Title")}
           </h2>
-          <p className="text-zinc-600">
-            In case of any dispute, both parties agree to follow Frevia&apos;s
-            dispute resolution process. If unresolved, the matter may be brought
-            to the competent court under applicable law.
-          </p>
+          <p className="text-zinc-600">{t("sec7Body")}</p>
         </section>
 
         <hr className="border-zinc-200" />
@@ -510,31 +538,31 @@ export function ContractDocumentPaper({
         {/* ── 8. SIGNATURES ── */}
         <section className="pt-2">
           <h2 className="text-sm font-bold uppercase tracking-wider text-zinc-950 mb-1.5">
-            8. SIGNATURES
+            {t("sec8Title")}
           </h2>
-          <p className="text-zinc-600 mb-8">
-            By signing this Agreement, both parties agree to the terms and
-            conditions stated above.
-          </p>
+          <p className="text-zinc-600 mb-8">{t("sec8Intro")}</p>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 text-center pt-4">
             {/* Client Signature */}
             <div className="flex flex-col items-center">
               <div className="w-56 border-t-2 border-zinc-900 pt-2 mb-1" />
               <p className="font-bold text-sm text-zinc-950">{clientName}</p>
-              <p className="text-xs text-zinc-500">Client</p>
+              <p className="text-xs text-zinc-500">{t("clientLabel")}</p>
               {contract.signedByClient ? (
                 <div className="inline-flex items-center gap-1 text-[11px] font-mono text-emerald-700 mt-1 font-semibold">
                   <CheckCircle2 className="size-3.5" />
                   <span>
-                    Signed:{" "}
-                    {formatDate(contract.clientSignedAt || contract.signedAt)}
+                    {t("signedDate", {
+                      date: formatDate(
+                        contract.clientSignedAt || contract.signedAt,
+                      ),
+                    })}
                   </span>
                 </div>
               ) : (
                 <div className="inline-flex items-center gap-1 text-[11px] font-mono text-zinc-400 mt-1 border border-dashed border-zinc-300 rounded px-2 py-0.5 bg-zinc-50">
                   <Clock className="size-3" />
-                  <span>Pending Signature</span>
+                  <span>{t("pendingSignature")}</span>
                 </div>
               )}
             </div>
@@ -543,21 +571,22 @@ export function ContractDocumentPaper({
             <div className="flex flex-col items-center">
               <div className="w-56 border-t-2 border-zinc-900 pt-2 mb-1" />
               <p className="font-bold text-sm text-zinc-950">{freelancerName}</p>
-              <p className="text-xs text-zinc-500">Freelancer</p>
+              <p className="text-xs text-zinc-500">{t("freelancerLabel")}</p>
               {contract.signedByFreelancer ? (
                 <div className="inline-flex items-center gap-1 text-[11px] font-mono text-emerald-700 mt-1 font-semibold">
                   <CheckCircle2 className="size-3.5" />
                   <span>
-                    Signed:{" "}
-                    {formatDate(
-                      contract.freelancerSignedAt || contract.signedAt,
-                    )}
+                    {t("signedDate", {
+                      date: formatDate(
+                        contract.freelancerSignedAt || contract.signedAt,
+                      ),
+                    })}
                   </span>
                 </div>
               ) : (
                 <div className="inline-flex items-center gap-1 text-[11px] font-mono text-zinc-400 mt-1 border border-dashed border-zinc-300 rounded px-2 py-0.5 bg-zinc-50">
                   <Clock className="size-3" />
-                  <span>Pending Signature</span>
+                  <span>{t("pendingSignature")}</span>
                 </div>
               )}
             </div>

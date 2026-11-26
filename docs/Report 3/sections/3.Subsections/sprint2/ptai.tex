@@ -4,835 +4,812 @@
 % Function Trigger, Function Description, Screen Layout and Function Details.
 % =================================================================
 
+\Needspace{12\baselineskip}
 \subsection{Saved Search Management}
 
 % -----------------------------------------------------------------
-% UC-22.01: View Saved Search List
+% UC-22.01: View Saved Searches List
 % -----------------------------------------------------------------
-\subsubsection{Function: View Saved Search List}
+\Needspace{12\baselineskip}
+\subsubsection{View Saved Searches List}
 
 \fnhead{Function Trigger}
-A freelancer clicks ``Saved Searches'' in the workspace navigation.\newline
-\textbf{Navigation path:} Freelancer Dashboard $\rightarrow$ Saved Searches (\texttt{/freelancer/saved-searches}).
+A freelancer opens the ``Saved Searches'' tab on Find Work or navigates to the saved searches page.\newline
+\textbf{Navigation path:} Find Work $\rightarrow$ Saved Searches (\texttt{/freelancer/find-work/saved-searches}) or \texttt{/freelancer/saved-searches}.
 
 \fnhead{Function Description}
 
 \sublabel{Actors / Roles}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
     \item \textbf{Primary Actor:} Freelancer.
-    \item \textbf{Supporting Systems:} Frevia Web application, Frevia REST API, and PostgreSQL database.
+    \item \textbf{Supporting Systems:} Frevia Web application (Next.js), Frevia REST API (\texttt{SavedSearchController}), Prisma ORM, and PostgreSQL database.
 \end{itemize}
 
 \sublabel{Purpose}
-\noindent Allows freelancers to inspect, search, and manage their saved job search queries, view summarized filter parameters, and execute stored searches with one click.
+\noindent Allows authenticated users to inspect, filter by name, and manage their stored job search filter configurations, displaying saved criteria tags and one-click execution links.
 
 \sublabel{Interface}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-    \item Saved searches management view at \texttt{/freelancer/saved-searches}.
-    \item Search input to filter saved queries by name.
-    \item Cards or table rows displaying search title, summary of criteria (keywords, skills, budget), and direct ``Run Search'' action button.
+    \item Saved Searches tab inside \texttt{/freelancer/find-work/saved-searches}.
+    \item Search input on saved search management view for client-side/server-side filtering by \texttt{name}.
+    \item Saved search cards showing title, criteria badges (keyword, category, budget), ``Search'' run button, detail link, and delete trash button.
 \end{itemize}
 
 \sublabel{Data Processing Overview}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-    \item Client dispatches \texttt{GET /api/freelancer/saved-searches}.
-    \item Backend filters \texttt{SavedSearch} records by authenticated \texttt{userId}.
-    \item Sorts by \texttt{createdAt DESC} with pagination support.
-    \item Returns list of saved search configurations.
+    \item Client dispatches \texttt{GET /api/saved-searches} with optional query params \texttt{search} and \texttt{order} (\texttt{asc} or \texttt{desc}, default \texttt{desc}).
+    \item {\sloppy Backend \texttt{AuthGuard} identifies \texttt{userId} from the JWT token; \texttt{SavedSearch\allowbreak{}Repository.\allowbreak{}findAll\allowbreak{}ByUserId()} queries \texttt{where: \{ userId \}} and filters case-insensitively on \texttt{name} if supplied.\par}
+    \item Returns array of \texttt{SavedSearch} records ordered by \texttt{createdAt}.
 \end{itemize}
 
 \fnhead{Screen Layout (Mock-up Description)}
 \screenfigure[0.95]{image/screenshot/sprint2/ptai/ViewSavedSearchList.png}{Saved searches list interface}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-    \item Top search bar to locate saved search filters by name.
-    \item Cards summarizing saved filters, monitored keywords, and target categories.
-    \item Action buttons on each item to run, edit, or delete the search configuration.
+    \item Find Work banner with search bar and workspace tab showing total saved search count.
+    \item Cards listing saved search label, summary criterion chips (Keyword, Budget, Category), blue ``Search'' execution button, and trash icon delete button.
+    \item Right profile summary panel.
 \end{itemize}
 
 \fnhead{Function Details}
 
 \sublabel{Input Data}
 \begin{specdatatable}{Data Name}{Description}
-JWT Token & Authenticated freelancer session token.\\ \hline
-\texttt{search} & Optional name search query string.\\ \hline
-\texttt{page} / \texttt{limit} & Pagination control numbers.\\ \hline
+JWT Token & Authenticated session token identifying \texttt{userId}.\\ \hline
+\texttt{search} & Optional trimmed text string to match saved search \texttt{name}.\\ \hline
+\texttt{order} & Optional sorting order: \texttt{asc} or \texttt{desc} (default \texttt{desc}).\\ \hline
 \end{specdatatable}
 
 \sublabel{Validation Rules}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-    \item Caller must have \texttt{FREELANCER} role.
+    \item \texttt{order}, when provided, must strictly be \texttt{asc} or \texttt{desc}.
+    \item Caller must be authenticated with a valid JWT access token.
 \end{itemize}
 
 \sublabel{Business Rules}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
-    \item BR-SS-01: Only authenticated freelancers may view their own saved searches.
-    \item BR-SS-02: Server strictly isolates queries using \texttt{where: { userId = currentUserId }}.
-    \item BR-SS-03: Default order is newest first (\texttt{createdAt: 'desc'}).
+    \item BR-SS-01: Authenticated Owner Isolation: Saved search queries and management operations are strictly scoped to the authenticated user's own records so callers cannot view or alter another user's saved searches.
+    \item BR-SS-02: Name Search and Chronological Ordering: Saved search listings support case-insensitive substring matching on the configuration name and ascending or descending chronological sorting (defaulting to newest first).
 \end{itemize}
 
 \sublabel{Normal Flow}
 \begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
-    \item Freelancer opens Saved Searches view.
-    \item Frontend requests \texttt{GET /api/freelancer/saved-searches}.
-    \item Backend fetches saved searches owned by user.
-    \item UI renders list with criteria badges and ``Run Search'' buttons.
+    \item Freelancer opens the Saved Searches tab (\texttt{/freelancer/find-work/saved-searches}).
+    \item Frontend requests \texttt{GET /api/saved-searches}.
+    \item Backend validates authentication and queries records owned by \texttt{userId}.
+    \item Returns HTTP 200 with array of saved search entities.
+    \item UI renders cards with criteria chips, Search action, and delete button.
 \end{enumerate}
 
 \sublabel{Abnormal Flow / Exception Handling}
-\begin{flowtable}{Case}{Description}
-A1 & No saved searches exist. UI displays empty state with a ``Save Your First Search'' prompt.\\ \hline
+\begin{flowtable}{Abnormal Case}{Handling \& System Response}
+Missing or invalid authentication token & Backend rejects with HTTP 401 Unauthorized. Frontend redirects to \texttt{/login}.\\ \hline
+User lacks route permission & \texttt{PermissionGuard} rejects with HTTP 403 Forbidden; UI displays access denied message.\\ \hline
+Invalid \texttt{order} query parameter & Zod DTO (\texttt{GetSavedSearchesQueryDto}) rejects values other than \texttt{asc}/\texttt{desc} with HTTP 400 Bad Request.\\ \hline
+No saved searches exist yet & Query returns \texttt{[]}; UI displays empty state prompting the user to save a search from Find Work.\\ \hline
+Database query failure or timeout & Service catches \texttt{PrismaClientKnownRequestError} and throws \texttt{FailedToLoadSavedSearchException} (HTTP 500).\\ \hline
 \end{flowtable}
 
 \sublabel{Output Data}
 \begin{specdatatable}{Data Name}{Description}
-\texttt{searches} & Array of objects (\texttt{id}, \texttt{name}, \texttt{query}, \texttt{categoryId}, \texttt{skills}, \texttt{budgetMin}, \texttt{createdAt}).\\ \hline
+Saved Search List & Array of \texttt{SavedSearch} objects containing integer \texttt{id}, \texttt{userId}, \texttt{name}, JSON \texttt{searchParams}, and \texttt{createdAt}.\\ \hline
 \end{specdatatable}
 
 \sublabel{Post-Conditions}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-    \item Freelancer views list of saved search criteria.
+    \item Freelancer inspects their saved search list and can open, run, or delete entries.
 \end{itemize}
 
 % -----------------------------------------------------------------
-% UC-22.02: View Saved Search Detail
+% UC-22.02: View Saved Search Details
 % -----------------------------------------------------------------
-\subsubsection{Function: View Saved Search Detail}
+\Needspace{12\baselineskip}
+\subsubsection{View Saved Search Details}
 
 \fnhead{Function Trigger}
-A freelancer clicks on a saved search card or clicks ``Run Search''.\newline
-\textbf{Navigation path:} Saved Searches $\rightarrow$ Click Search Item (\texttt{/freelancer/saved-searches/:id}).
+A freelancer navigates to the detail page of a specific saved search.\newline
+\textbf{Navigation path:} Saved Searches $\rightarrow$ View Details (\texttt{/freelancer/saved-searches/:id}).
 
 \fnhead{Function Description}
 
 \sublabel{Actors / Roles}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
     \item \textbf{Primary Actor:} Freelancer.
-    \item \textbf{Supporting Systems:} Frevia Web application, Frevia REST API, and PostgreSQL database.
+    \item \textbf{Supporting Systems:} Frevia Web application (Next.js), Frevia REST API (\texttt{SavedSearchController}), Prisma ORM, and PostgreSQL database.
 \end{itemize}
 
 \sublabel{Purpose}
-\noindent Displays full filter parameters for a saved query and allows immediate execution to retrieve matching real-time job listings.
+\noindent Displays all structured filter attributes stored inside a saved search configuration and provides a direct ``View matching jobs'' action to replay those filters against live job listings.
 
 \sublabel{Interface}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-    \item Saved search parameter view modal or dedicated page.
-    \item Criteria breakdown card with keywords, category, skills tags, budget bounds, and execute trigger.
+    \item Saved search detail page at \texttt{/freelancer/saved-searches/:id}.
+    \item Top back breadcrumb (\texttt{$\leftarrow$ Saved searches}) and saved search title header.
+    \item Filter breakdown tiles (Search keyword, Sort, Budget, Category, Skills, Hiring Type) and primary ``View matching jobs'' CTA button.
 \end{itemize}
 
 \sublabel{Data Processing Overview}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-    \item Client dispatches \texttt{GET /api/freelancer/saved-searches/:id}.
-    \item Backend verifies that the record belongs to the requesting freelancer.
-    \item Returns criteria object and preview count of matching open jobs.
+    \item Client dispatches \texttt{GET /api/saved-searches/:id} with positive integer path ID parsed by \texttt{ParseIntPipe}.
+    \item Backend invokes \texttt{SavedSearchRepository.findByIdAndUserId(id, userId)}.
+    \item {\sloppy Returns \texttt{SavedSearch} entity if found and owned; throws \texttt{Saved\allowbreak{}Search\allowbreak{}NotFound\allowbreak{}Exception} (HTTP 404) otherwise.\par}
 \end{itemize}
 
 \fnhead{Screen Layout (Mock-up Description)}
-\screenfigure[0.95]{image/screenshot/sprint2/ptai/ViewSavedSearchDetail.png}{Saved search detail view}
+\screenfigure[0.95]{image/screenshot/sprint2/ptai/ViewSavedSearchDetail.png}{Saved search detail interface}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-    \item Detailed criteria summary card (keywords, skills, budget).
-    \item Metric showing current count of matching jobs.
-    \item Prominent ``Execute Search Now'' action button.
+    \item Header icon, ``Saved search'' label, saved query title (e.g. ``Senior Backend \& AI Roles (\$1500+)''), and back link.
+    \item Structured ``Search filters'' summary panel listing active filter values, record ID badge, and blue ``View matching jobs'' action button.
 \end{itemize}
 
 \fnhead{Function Details}
 
 \sublabel{Input Data}
 \begin{specdatatable}{Data Name}{Description}
-\texttt{id} & UUID of the saved search record.\\ \hline
+\texttt{id} & Positive integer ID of the saved search record.\\ \hline
 \end{specdatatable}
 
 \sublabel{Validation Rules}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-    \item Search ID must belong to authenticated user.
+    \item Path parameter \texttt{id} must parse as a valid integer via \texttt{ParseIntPipe}.
+    \item Record must exist and belong to the authenticated \texttt{userId}.
 \end{itemize}
 
 \sublabel{Business Rules}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
-    \item BR-SS-04: Non-owner access attempts are rejected with HTTP 403 / 404.
-    \item BR-SS-05: Running a search applies active filters to the \texttt{/jobs} catalog.
+    \item BR-SS-03: Detail Ownership and Cross-User Isolation: Retrieving a saved search requires matching both the record identifier and the owning user; non-existent or third-party saved searches are treated as not found.
+    \item BR-SS-04: Parameter Replay Compatibility: Stored search filter parameters preserve structured query criteria for direct replay onto job search while still honoring all public open-job visibility rules.
 \end{itemize}
 
 \sublabel{Normal Flow}
 \begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
-    \item Freelancer selects a saved search.
-    \item Backend provides criteria details.
-    \item Freelancer clicks ``Execute Search''.
-    \item Frontend navigates to \texttt{/jobs} pre-populated with the saved filter parameters.
+    \item Freelancer opens \texttt{/freelancer/saved-searches/:id}.
+    \item Backend validates authentication, parses integer \texttt{id}, and verifies ownership.
+    \item Returns HTTP 200 with \texttt{SavedSearch} object.
+    \item UI renders breakdown cards for every stored filter criterion and the ``View matching jobs'' button.
 \end{enumerate}
 
 \sublabel{Abnormal Flow / Exception Handling}
-\begin{flowtable}{Case}{Description}
-A1 & Record not found or belongs to another user. Backend returns HTTP 404 Not Found.\\ \hline
+\begin{flowtable}{Abnormal Case}{Handling \& System Response}
+Missing or invalid authentication token & Global \texttt{AuthGuard} returns HTTP 401 Unauthorized; client redirects to \texttt{/login}.\\ \hline
+Non-numeric \texttt{id} path parameter & \texttt{ParseIntPipe} rejects invalid format with HTTP 400 Bad Request.\\ \hline
+Record does not exist or belongs to another user & \texttt{SavedSearchService.getSavedSearchDetail()} throws \texttt{SavedSearchNotFoundException} (HTTP 404). Next.js renders not-found view.\\ \hline
+Database query failure & Service catches \texttt{PrismaClientKnownRequestError} and throws \texttt{FailedToLoadSavedSearchException} (HTTP 500).\\ \hline
 \end{flowtable}
 
 \sublabel{Output Data}
 \begin{specdatatable}{Data Name}{Description}
-Saved Search Entity & Complete parameters object for query reproduction.\\ \hline
+Saved Search Object & Entity containing integer \texttt{id}, \texttt{userId}, \texttt{name}, JSON \texttt{searchParams}, and \texttt{createdAt}.\\ \hline
 \end{specdatatable}
 
 \sublabel{Post-Conditions}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-    \item Criteria details are displayed or executed in browse jobs view.
+    \item Complete saved filter criteria are shown ready for execution.
 \end{itemize}
 
 % -----------------------------------------------------------------
 % UC-22.03: Create Saved Search
 % -----------------------------------------------------------------
-\subsubsection{Function: Create Saved Search}
+\Needspace{12\baselineskip}
+\subsubsection{Create Saved Search}
 
 \fnhead{Function Trigger}
-A freelancer applies filters on the jobs page and clicks ``Save Search''.\newline
-\textbf{Navigation path:} Browse Jobs (\texttt{/jobs}) $\rightarrow$ Set Filters $\rightarrow$ Click ``Save Search''.
+A freelancer applies search or filter criteria on Search Jobs and clicks ``Save search''.\newline
+\textbf{Navigation path:} Search Jobs (\texttt{/freelancer/search/jobs}) $\rightarrow$ Apply Filters $\rightarrow$ Click ``Save search''.
 
 \fnhead{Function Description}
 
 \sublabel{Actors / Roles}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
     \item \textbf{Primary Actor:} Freelancer.
-    \item \textbf{Supporting Systems:} Frevia Web application, Frevia REST API, and PostgreSQL database.
+    \item \textbf{Supporting Systems:} Frevia Web application (Next.js), Frevia REST API (\texttt{SavedSearchController}), Prisma ORM, and PostgreSQL database.
 \end{itemize}
 
 \sublabel{Purpose}
-\noindent Saves the currently applied search parameters and keyword filters under a user-defined name for future access.
+\noindent Persists the current search keywords and filter settings under a concise user-provided name for quick reuse, while enforcing a 30-item quota per user.
 
 \sublabel{Interface}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-    \item ``Save Search'' button on job catalog filter bar.
-    \item Modal dialog prompting for a recognizable search name and optional alert preferences.
+    \item ``Save search'' trigger button in the Search Jobs toolbar.
+    \item ``Save search'' modal dialog containing a ``Saved search name'' text input, filter preview summary, Cancel button, and Save search CTA.
 \end{itemize}
 
 \sublabel{Data Processing Overview}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-    \item Client submits \texttt{POST /api/freelancer/saved-searches}.
-    \item Backend validates that name is 1--100 characters and filters are well-formed.
-    \item Persists search configuration associated with the user ID.
+    \item Frontend validates the trimmed label and posts \texttt{POST /api/saved-searches} with \texttt{\{ name, searchParams \}}.
+    \item Zod DTO (\texttt{CreateSavedSearchBodySchema.strict()}) validates \texttt{name} (trimmed, 1--100 chars) and \texttt{searchParams} record.
+    \item Service queries \texttt{countByUserId(userId)}; rejects with HTTP 400 if count $\ge 30$ (\texttt{MAX\_SAVED\_SEARCHES\_PER\_USER}).
+    \item Repository inserts new \texttt{SavedSearch} row and returns HTTP 201/200 with created entity.
 \end{itemize}
 
 \fnhead{Screen Layout (Mock-up Description)}
-\screenfigure[0.95]{image/screenshot/sprint2/ptai/CreateSavedSearch.png}{Save search modal interface}
+\screenfigure[0.95]{image/screenshot/sprint2/ptai/CreateSavedSearch.png}{Save search modal dialog interface}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-    \item Input field for naming the saved search.
-    \item Summary chips reflecting current active filters (keywords, category, budget).
-    \item Primary ``Save Search'' submission button.
+    \item Modal title ``Save search'' and explanatory subtitle.
+    \item Focus-ring input field for naming the saved search.
+    \item ``Search filters'' preview panel displaying active query parameters and ``Save search'' confirmation button.
 \end{itemize}
 
 \fnhead{Function Details}
 
 \sublabel{Input Data}
 \begin{specdatatable}{Data Name}{Description}
-\texttt{name} & String (1--100 chars), descriptive label.\\ \hline
-\texttt{criteria} & JSON object containing active query filters (\texttt{keywords}, \texttt{categoryId}, \texttt{skills}, \texttt{budgetMin}, \texttt{budgetMax}).\\ \hline
+\texttt{name} & Required trimmed string (1--100 characters) naming the filter preset.\\ \hline
+\texttt{searchParams} & Key-value JSON map representing active search/filter query criteria.\\ \hline
 \end{specdatatable}
 
 \sublabel{Validation Rules}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-    \item Search name must not be blank and $\le 100$ characters.
-    \item At least one search parameter must be present.
+    \item \texttt{name} must be a non-empty trimmed string between 1 and 100 characters.
+    \item Unknown extra keys in body are rejected via \texttt{CreateSavedSearchBodySchema.strict()}.
+    \item Current saved search count must be strictly less than 30 (\texttt{MAX\_SAVED\_SEARCHES\_PER\_USER = 30}).
 \end{itemize}
 
 \sublabel{Business Rules}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
-    \item BR-SS-06: Name is required and trimmed of whitespace.
-    \item BR-SS-07: Prevents duplicate identical configurations for the same freelancer.
+    \item BR-SS-05: Strict Label and Schema Validation: Creating a saved search requires a trimmed label between 1 and 100 characters and valid structured search parameters while rejecting unrecognized fields.
+    \item BR-SS-06: Maximum Saved Search Quota: Each user may store at most \texttt{MAX\_SAVED\_SEARCHES\_PER\_USER} (30) saved searches; attempts to create additional configurations beyond 30 are rejected.
 \end{itemize}
 
 \sublabel{Normal Flow}
 \begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
-    \item Freelancer clicks ``Save Search'' on browse jobs view.
-    \item Modal opens; freelancer inputs name.
-    \item Submits payload to backend.
-    \item Backend commits new \texttt{SavedSearch} entity.
-    \item Toast notification confirms creation.
+    \item Freelancer sets search filters on \texttt{/freelancer/search/jobs} and clicks ``Save search''.
+    \item Modal opens; freelancer enters a descriptive label and submits.
+    \item Backend validates schema and verifies user has fewer than 30 saved searches.
+    \item Repository persists \texttt{SavedSearch} in PostgreSQL and returns the created record.
+    \item Frontend closes modal and displays success feedback.
 \end{enumerate}
 
 \sublabel{Abnormal Flow / Exception Handling}
-\begin{flowtable}{Case}{Description}
-A1 & Name is empty. Client validation displays error ``Search name is required.''\\ \hline
+\begin{flowtable}{Abnormal Case}{Handling \& System Response}
+Missing or invalid authentication token & Backend returns HTTP 401 Unauthorized; client redirects to \texttt{/login}.\\ \hline
+Empty or whitespace-only name & Frontend blocks submission; backend Zod validator returns HTTP 400 Bad Request.\\ \hline
+Name exceeds 100 characters or unknown fields sent & Strict DTO validation fails with HTTP 400 Bad Request showing field errors.\\ \hline
+Saved search quota reached ($\ge 30$) & Service throws \texttt{SavedSearchLimitExceededException} (HTTP 400). UI shows limit-exceeded alert.\\ \hline
+Database write failure or timeout & Service catches \texttt{PrismaClientKnownRequestError} and throws \texttt{FailedToCreateSavedSearchException} (HTTP 500).\\ \hline
 \end{flowtable}
 
 \sublabel{Output Data}
 \begin{specdatatable}{Data Name}{Description}
-Created Entity & Saved search record with assigned UUID and timestamp.\\ \hline
+Created Saved Search & Newly inserted \texttt{SavedSearch} record with \texttt{id}, \texttt{userId}, \texttt{name}, \texttt{searchParams}, and \texttt{createdAt}.\\ \hline
 \end{specdatatable}
 
 \sublabel{Post-Conditions}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-    \item Search configuration is permanently saved.
+    \item New saved search is persisted in PostgreSQL and appears in Saved Searches.
 \end{itemize}
 
 % -----------------------------------------------------------------
-% UC-22.04: Update Saved Search
+% UC-22.04: Delete Saved Search
 % -----------------------------------------------------------------
-\subsubsection{Function: Update Saved Search}
+\Needspace{12\baselineskip}
+\subsubsection{Delete Saved Search}
 
 \fnhead{Function Trigger}
-A freelancer clicks ``Edit'' on an item in the saved searches list.\newline
-\textbf{Navigation path:} Saved Searches $\rightarrow$ Menu $\rightarrow$ Click ``Edit'' (\texttt{/freelancer/saved-searches/:id/edit}).
+A freelancer clicks the delete (trash) icon button on a saved search entry.\newline
+\textbf{Navigation path:} Saved Searches (\texttt{/freelancer/find-work/saved-searches}) $\rightarrow$ Click Delete button.
 
 \fnhead{Function Description}
 
 \sublabel{Actors / Roles}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
     \item \textbf{Primary Actor:} Freelancer.
-    \item \textbf{Supporting Systems:} Frevia Web application, Frevia REST API, and PostgreSQL database.
+    \item \textbf{Supporting Systems:} Frevia Web application (Next.js), Frevia REST API (\texttt{SavedSearchController}), Prisma ORM, and PostgreSQL database.
 \end{itemize}
 
 \sublabel{Purpose}
-\noindent Allows freelancers to rename an existing saved search or update its underlying filter criteria.
+\noindent Permanently removes an unwanted saved search configuration owned by the freelancer and immediately frees a slot within the 30-item quota.
 
 \sublabel{Interface}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-    \item Edit modal or settings form.
-    \item Text input for name and filter configuration adjusters.
+    \item Delete (trash) icon button on each saved search row/card.
+    \item Instant removal update on list and green confirmation toast notification.
 \end{itemize}
 
 \sublabel{Data Processing Overview}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-    \item Client submits \texttt{PATCH /api/freelancer/saved-searches/:id}.
-    \item Backend validates ownership and updates name or criteria JSON.
-    \item Returns updated entity.
+    \item Client dispatches \texttt{DELETE /api/saved-searches/:id} with positive integer ID.
+    \item Backend invokes \texttt{SavedSearchRepository.delete(id, userId)} enforcing both \texttt{id} and \texttt{userId}.
+    \item If zero rows deleted, throws \texttt{SavedSearchNotFoundException} (HTTP 404).
 \end{itemize}
 
 \fnhead{Screen Layout (Mock-up Description)}
-\screenfigure[0.95]{image/screenshot/sprint2/ptai/UpdateSavedSearch.png}{Edit saved search dialog}
+\screenfigure[0.95]{image/screenshot/sprint2/ptai/DeleteSavedSearch.png}{Delete saved search result and confirmation toast}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-    \item Form modal with editable title and criteria fields.
-    \item Save Changes button.
+    \item Updated Saved Searches list immediately removing the deleted entry and decrementing the tab badge count.
+    \item Top-right green confirmation toast displaying ``Saved search deleted''.
 \end{itemize}
 
 \fnhead{Function Details}
 
 \sublabel{Input Data}
 \begin{specdatatable}{Data Name}{Description}
-\texttt{id} & UUID of the saved search.\\ \hline
-\texttt{name} & Updated name string.\\ \hline
-\texttt{criteria} & Optional modified criteria object.\\ \hline
+\texttt{id} & Positive integer ID of the saved search to delete.\\ \hline
 \end{specdatatable}
 
 \sublabel{Validation Rules}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-    \item Must belong to authenticated freelancer.
+    \item Path parameter \texttt{id} must be a valid integer (\texttt{ParseIntPipe}).
+    \item Target record must exist and belong to authenticated caller \texttt{userId}.
 \end{itemize}
 
 \sublabel{Business Rules}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
-    \item BR-SS-08: Renaming must adhere to 1--100 character length.
-    \item BR-SS-09: Updated criteria take effect immediately on subsequent executions.
+    \item BR-SS-07: Hard Delete with Owner Verification: Deleting a saved search verifies both record ownership and existence before permanently hard-deleting the record; missing or non-owned records cannot be deleted.
+    \item BR-SS-08: Independent Search Persistence: Removing a saved search deletes only that saved preset and never alters job postings, bookmarks, or job alert subscriptions.
 \end{itemize}
 
 \sublabel{Normal Flow}
 \begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
-    \item Freelancer opens edit dialog.
-    \item Modifies name or criteria.
-    \item Clicks ``Save Changes''.
-    \item Backend updates record and confirms.
+    \item Freelancer clicks the delete icon on a saved search card.
+    \item Frontend dispatches \texttt{DELETE /api/saved-searches/:id}.
+    \item Backend deletes the owned row in PostgreSQL.
+    \item UI removes the item from state and shows ``Saved search deleted'' toast.
 \end{enumerate}
 
 \sublabel{Abnormal Flow / Exception Handling}
-\begin{flowtable}{Case}{Description}
-A1 & Record not found. Returns HTTP 404 Not Found.\\ \hline
+\begin{flowtable}{Abnormal Case}{Handling \& System Response}
+Missing or invalid authentication token & Global \texttt{AuthGuard} returns HTTP 401 Unauthorized; client redirects to \texttt{/login}.\\ \hline
+Non-numeric saved search ID & \texttt{ParseIntPipe} rejects malformed ID with HTTP 400 Bad Request.\\ \hline
+Record already deleted or owned by another user & Service throws \texttt{SavedSearchNotFoundException} (HTTP 404). Frontend shows error toast and rolls back optimistic state.\\ \hline
+Database connection or transaction error & Prisma error triggers HTTP 500 Internal Server Error; UI restores list item and shows failure toast.\\ \hline
 \end{flowtable}
 
 \sublabel{Output Data}
 \begin{specdatatable}{Data Name}{Description}
-Updated Entity & Saved search record reflecting updated values.\\ \hline
+HTTP Status & 200 OK confirming hard deletion from database.\\ \hline
 \end{specdatatable}
 
 \sublabel{Post-Conditions}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-    \item Modifications are persisted in database.
+    \item Saved search record is permanently deleted and user's 30-item quota slot is freed.
 \end{itemize}
 
-% -----------------------------------------------------------------
-% UC-22.05: Delete Saved Search
-% -----------------------------------------------------------------
-\subsubsection{Function: Delete Saved Search}
-
-\fnhead{Function Trigger}
-A freelancer clicks ``Delete'' on an item in the saved searches list.\newline
-\textbf{Navigation path:} Saved Searches $\rightarrow$ Menu $\rightarrow$ Click ``Delete''.
-
-\fnhead{Function Description}
-
-\sublabel{Actors / Roles}
-\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-    \item \textbf{Primary Actor:} Freelancer.
-    \item \textbf{Supporting Systems:} Frevia Web application, Frevia REST API, and PostgreSQL database.
-\end{itemize}
-
-\sublabel{Purpose}
-\noindent Permanently deletes a saved search configuration that is no longer needed.
-
-\sublabel{Interface}
-\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-    \item Destructive action button in saved search menu.
-    \item Confirmation modal dialog.
-\end{itemize}
-
-\sublabel{Data Processing Overview}
-\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-    \item Client dispatches \texttt{DELETE /api/freelancer/saved-searches/:id}.
-    \item Backend confirms ownership and hard-deletes record from PostgreSQL.
-\end{itemize}
-
-\fnhead{Screen Layout (Mock-up Description)}
-\screenfigure[0.95]{image/screenshot/sprint2/ptai/DeleteSavedSearch.png}{Delete saved search dialog}
-\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-    \item Confirmation modal explaining permanent deletion.
-    \item Red ``Delete Permanently'' action button.
-\end{itemize}
-
-\fnhead{Function Details}
-
-\sublabel{Input Data}
-\begin{specdatatable}{Data Name}{Description}
-\texttt{id} & UUID of the saved search to delete.\\ \hline
-\end{specdatatable}
-
-\sublabel{Validation Rules}
-\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-    \item Record must exist and belong to calling user.
-\end{itemize}
-
-\sublabel{Business Rules}
-\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
-    \item BR-SS-10: Deletion is permanent and irreversible.
-    \item BR-SS-11: Alerts uniquely linked to this search configuration are disabled.
-\end{itemize}
-
-\sublabel{Normal Flow}
-\begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
-    \item Freelancer selects ``Delete''.
-    \item Confirms deletion in modal.
-    \item Backend deletes record.
-    \item UI removes item immediately from display list.
-\end{enumerate}
-
-\sublabel{Abnormal Flow / Exception Handling}
-\begin{flowtable}{Case}{Description}
-A1 & Record not found. Returns HTTP 404; UI refreshes view.\\ \hline
-\end{flowtable}
-
-\sublabel{Output Data}
-\begin{specdatatable}{Data Name}{Description}
-Result & Status confirmation confirming deletion.\\ \hline
-\end{specdatatable}
-
-\sublabel{Post-Conditions}
-\begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-    \item Record is removed from database.
-\end{itemize}
-
+\Needspace{12\baselineskip}
 \subsection{Job Alert Management}
 
 % -----------------------------------------------------------------
-% UC-23.01: View Job Alert List
+% UC-23.01: View Job Alerts List
 % -----------------------------------------------------------------
-\subsubsection{Function: View Job Alert List}
+\Needspace{12\baselineskip}
+\subsubsection{View Job Alerts List}
 
 \fnhead{Function Trigger}
-A freelancer clicks ``Job Alerts'' in notification preferences.\newline
-\textbf{Navigation path:} Freelancer Dashboard $\rightarrow$ Settings $\rightarrow$ Job Alerts (\texttt{/freelancer/job-alerts}).
+A freelancer opens ``Job Alerts'' from the navigation or profile settings.\newline
+\textbf{Navigation path:} Freelancer Workspace $\rightarrow$ Job Alerts (\texttt{/freelancer/job-alerts}).
 
 \fnhead{Function Description}
 
 \sublabel{Actors / Roles}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
     \item \textbf{Primary Actor:} Freelancer.
-    \item \textbf{Supporting Systems:} Frevia Web application, Frevia REST API, and PostgreSQL database.
+    \item \textbf{Supporting Systems:} Frevia Web application (Next.js), Frevia REST API (\texttt{JobAlertController}), Prisma ORM, and PostgreSQL database.
 \end{itemize}
 
 \sublabel{Purpose}
-\noindent Manages automated alert notifications configured to notify freelancers when newly posted jobs match their skills, showing frequency, notification channels, and active toggles.
+\noindent Displays all job alert configurations saved by the freelancer alongside quota usage (\texttt{used/10 alerts}), keywords, skill tags, preferred frequency, delivery channels, active switch state, and Find Work shortcuts.
 
 \sublabel{Interface}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-    \item Job alert management panel at \texttt{/freelancer/job-alerts}.
-    \item Quota counter showing active alerts against maximum limit (e.g. ``[3/10 used]'').
-    \item Toggle switches for pausing/resuming alerts directly from the list.
+    \item Job Alerts workspace at \texttt{/freelancer/job-alerts}.
+    \item Top quota counter badge (\texttt{2/10 alerts}) and ``+ Create Job Alert'' button.
+    \item Client-side keyword/name search bar and grid of alert cards with Active/Paused toggle switch, ``View matching jobs'' link, Edit pencil button, and Delete trash button.
 \end{itemize}
 
 \sublabel{Data Processing Overview}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-    \item Client dispatches \texttt{GET /api/freelancer/job-alerts}.
-    \item Backend retrieves all \texttt{JobAlert} rows belonging to user.
-    \item Returns list ordered by \texttt{createdAt DESC}.
+    \item Client requests \texttt{GET /api/job-alerts}.
+    \item {\sloppy Backend enforces \texttt{roleName === 'FREELANCER'} (\texttt{JobAlert\allowbreak{}OnlyFor\allowbreak{}Freelancer\allowbreak{}Exception} HTTP 403 otherwise).\par}
+    \item Repository retrieves all \texttt{JobAlert} rows matching \texttt{userId} ordered chronologically descending.
 \end{itemize}
 
 \fnhead{Screen Layout (Mock-up Description)}
-\screenfigure[0.95]{image/screenshot/sprint2/ptai/ViewJobAlertList.png}{Job alerts configuration list}
+\screenfigure[0.95]{image/screenshot/sprint2/ptai/ViewJobAlertList.png}{Job alerts management list interface}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-    \item Header showing current usage quota (e.g., 3 of 10 used).
-    \item Cards detailing alert title, trigger frequency (INSTANT, DAILY, WEEKLY), and delivery channel.
-    \item Interactive Active/Paused toggle switch on each card.
+    \item Header bar displaying ``Job Alerts'' title, quota counter pill (\texttt{2/10 alerts}), and ``+ Create Job Alert'' CTA.
+    \item Search bar filtering alerts by keyword or alert name.
+    \item Alert cards displaying status dot, creation date, toggle switch, alert title, keyword string, skill pills, frequency label, channel badges (\texttt{In-App}, \texttt{Email}), ``View matching jobs'', Edit, and Delete icons.
 \end{itemize}
 
 \fnhead{Function Details}
 
 \sublabel{Input Data}
 \begin{specdatatable}{Data Name}{Description}
-JWT Token & Authenticated freelancer token.\\ \hline
+JWT Token & Authenticated session token identifying \texttt{userId} and active \texttt{FREELANCER} role.\\ \hline
 \end{specdatatable}
 
 \sublabel{Validation Rules}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-    \item User must possess the \texttt{FREELANCER} role.
+    \item Authenticated caller must hold active \texttt{FREELANCER} role.
 \end{itemize}
 
 \sublabel{Business Rules}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
-    \item BR-JA01: Maximum limit is capped at 10 alerts per freelancer.
-    \item BR-JA03: Strictly isolates alerts to the authenticated user.
+    \item BR-JA-01: Freelancer Role Restriction: Only authenticated users holding the \texttt{FREELANCER} role may list, inspect, create, update, delete, or preview job alerts; other roles are denied access.
+    \item BR-JA-02: User Ownership Isolation and Chronological Ordering: Job alert listings return exclusively alerts owned by the authenticated freelancer, ordered chronologically newest first.
 \end{itemize}
 
 \sublabel{Normal Flow}
 \begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
-    \item Freelancer opens Job Alerts page.
-    \item Backend returns active alert configurations.
-    \item UI renders alert cards and quota indicator.
+    \item Freelancer navigates to \texttt{/freelancer/job-alerts}.
+    \item Frontend dispatches \texttt{GET /api/job-alerts}.
+    \item Backend validates authentication and \texttt{FREELANCER} role.
+    \item Repository queries alerts belonging to \texttt{userId}.
+    \item UI displays alert cards, quota pill, and action buttons.
 \end{enumerate}
 
 \sublabel{Abnormal Flow / Exception Handling}
-\begin{flowtable}{Case}{Description}
-A1 & No alerts configured. UI displays onboarding banner encouraging alert setup.\\ \hline
+\begin{flowtable}{Abnormal Case}{Handling \& System Response}
+Missing or invalid authentication token & Global \texttt{AuthGuard} returns HTTP 401 Unauthorized; client redirects to \texttt{/login}.\\ \hline
+Non-freelancer active role (e.g. Client) & Service throws \texttt{JobAlertOnlyForFreelancerException} (HTTP 403 Forbidden).\\ \hline
+No alerts configured yet & Query returns empty array \texttt{[]}; UI renders onboarding empty state with ``Create Alert'' CTA.\\ \hline
+Search input yields zero matches & Frontend renders ``No results'' state with a ``Reset filter'' button.\\ \hline
+Database connection or query error & Service catches \texttt{PrismaClientKnownRequestError} and throws \texttt{FailedToLoadJobAlertException} (HTTP 500).\\ \hline
 \end{flowtable}
 
 \sublabel{Output Data}
 \begin{specdatatable}{Data Name}{Description}
-\texttt{alerts} & Array of job alert entities with \texttt{id}, \texttt{name}, \texttt{keywords}, \texttt{frequency}, \texttt{channels}, \texttt{isActive}.\\ \hline
+\texttt{alerts} & Array of \texttt{JobAlert} entities (\texttt{id}, \texttt{userId}, \texttt{name}, \texttt{keywords}, \texttt{skills}, \texttt{frequency}, \texttt{channels}, \texttt{isActive}, \texttt{lastSentAt}, \texttt{createdAt}).\\ \hline
 \end{specdatatable}
 
 \sublabel{Post-Conditions}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-    \item Freelancer views list and status of configured job alerts.
+    \item Freelancer views configured alert cards and remaining quota capacity.
 \end{itemize}
 
 % -----------------------------------------------------------------
-% UC-23.02: View Job Alert Detail
+% UC-23.02: View Job Alert Details
 % -----------------------------------------------------------------
-\subsubsection{Function: View Job Alert Detail}
+\Needspace{12\baselineskip}
+\subsubsection{View Job Alert Details}
 
 \fnhead{Function Trigger}
-A freelancer clicks on a specific job alert card.\newline
-\textbf{Navigation path:} Job Alerts $\rightarrow$ Click Alert (\texttt{/freelancer/job-alerts/:id}).
+A freelancer inspects an alert or clicks ``View matching jobs'' on a job alert card (or queries alert details and live matches).\newline
+\textbf{Navigation path:} Job Alerts (\texttt{/freelancer/job-alerts}) $\rightarrow$ Click ``View matching jobs'' (\texttt{/freelancer/find-work?keyword=...\&skills=...}).
 
 \fnhead{Function Description}
 
 \sublabel{Actors / Roles}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
     \item \textbf{Primary Actor:} Freelancer.
-    \item \textbf{Supporting Systems:} Frevia Web application, Frevia REST API, and PostgreSQL database.
+    \item \textbf{Supporting Systems:} Frevia Web application (Next.js), Frevia REST API (\texttt{JobAlertController}), Prisma ORM, and PostgreSQL database.
 \end{itemize}
 
 \sublabel{Purpose}
-\noindent Displays full configuration of an alert including keywords, skills, frequency, notification history, and preview of recently matched jobs.
+\noindent Allows freelancers to retrieve full metadata for a single alert (\texttt{GET /api/job-alerts/:id}) and preview or browse live matching \texttt{OPEN} jobs (\texttt{GET /api/job-alerts/:id/matching-jobs}) tailored to its keywords and skill tags.
 
 \sublabel{Interface}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-    \item Alert details view with delivery metrics and recent match feed.
+    \item Matching jobs destination view pre-populated with the alert's keyword and skill parameters.
+    \item Card summary fields displaying alert criteria, frequency, channels, and matching job cards.
 \end{itemize}
 
 \sublabel{Data Processing Overview}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-    \item Client dispatches \texttt{GET /api/freelancer/job-alerts/:id}.
-    \item Backend verifies user ownership.
-    \item Retrieves matching active jobs to verify filter accuracy.
+    \item Detail lookup (\texttt{GET /api/job-alerts/:id}) and matching preview (\texttt{GET /api/job-alerts/:id/matching-jobs}) both validate \texttt{FREELANCER} role and \texttt{findByIdAndUserId(id, userId)}; in the current implementation, automated background dispatch is not active, so \texttt{lastSentAt} remains \texttt{null} and these endpoints operate on demand at the API layer.
+    \item Matching endpoint executes \texttt{findMatchingJobs(userId, alert.keywords, alert.skills, 5)} querying up to 5 active open jobs.
+    \item Clicking ``View matching jobs'' navigates to \texttt{/freelancer/find-work} with \texttt{keyword} and \texttt{skills} query parameters (note: the Find Work page currently filters by \texttt{keyword} and ignores \texttt{skills}).
 \end{itemize}
 
 \fnhead{Screen Layout (Mock-up Description)}
-\screenfigure[0.95]{image/screenshot/sprint2/ptai/ViewJobAlertDetail.png}{Job alert detail interface}
+\screenfigure[0.95]{image/screenshot/sprint2/ptai/ViewJobAlertDetail.png}{Job alert detail and matching jobs view}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-    \item Overview card with frequency, channels, and total sent metrics.
-    \item Section showing recently dispatched job recommendations.
-    \item Quick action button to pause or edit alert.
+    \item Search bar automatically pre-filled with the alert's keyword criteria (e.g. ``Machine Learning Python Vector'').
+    \item Filtered feed rendering matching open jobs with status pill, budget range, description summary, and skill tags.
 \end{itemize}
 
 \fnhead{Function Details}
 
 \sublabel{Input Data}
 \begin{specdatatable}{Data Name}{Description}
-\texttt{id} & UUID of the job alert.\\ \hline
+\texttt{id} & Positive integer ID of the job alert.\\ \hline
 \end{specdatatable}
 
 \sublabel{Validation Rules}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-    \item Alert must belong to authenticated freelancer.
+    \item Path parameter \texttt{id} must be an integer (\texttt{ParseIntPipe}).
+    \item Caller must have \texttt{FREELANCER} role and own the target alert.
 \end{itemize}
 
 \sublabel{Business Rules}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
-    \item BR-JA04: Non-owner access attempts are rejected with HTTP 404.
-    \item BR-JA05: Preview queries only open, non-expired jobs.
+    \item BR-JA-03: Detail Ownership and Matching Preview Eligibility: Viewing alert details or matching previews enforces \texttt{FREELANCER} role and record ownership; previews return up to 5 newest non-deleted, unexpired \texttt{OPEN} jobs from active clients matching the alert criteria, excluding self-posted jobs and jobs already proposed to by the freelancer.
 \end{itemize}
 
 \sublabel{Normal Flow}
 \begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
-    \item Freelancer opens alert detail view.
-    \item Backend returns alert configuration and recent matches.
-    \item UI renders details and match preview.
+    \item Freelancer clicks ``View matching jobs'' on an alert card (or queries \texttt{:id} / \texttt{:id/matching-jobs}).
+    \item System verifies \texttt{FREELANCER} role and alert ownership.
+    \item Queries matching open jobs matching configured keywords/skills.
+    \item UI renders live matching jobs feed filtered by the alert's parameters.
 \end{enumerate}
 
 \sublabel{Abnormal Flow / Exception Handling}
-\begin{flowtable}{Case}{Description}
-A1 & Alert not found. Backend returns HTTP 404 Not Found.\\ \hline
+\begin{flowtable}{Abnormal Case}{Handling \& System Response}
+Missing or invalid authentication token & Global \texttt{AuthGuard} rejects with HTTP 401 Unauthorized; client redirects to \texttt{/login}.\\ \hline
+Non-freelancer active role & Service throws \texttt{JobAlertOnlyForFreelancerException} (HTTP 403 Forbidden).\\ \hline
+Invalid or non-numeric alert ID & \texttt{ParseIntPipe} returns HTTP 400 Bad Request.\\ \hline
+Alert not found or owned by another user & Service throws \texttt{JobAlertNotFoundException} (HTTP 404 Not Found).\\ \hline
+No open jobs currently match criteria & Endpoint returns \texttt{[]}; UI displays empty filter state prompting user to adjust search.\\ \hline
+Database query failure & Service catches \texttt{PrismaClientKnownRequestError} and throws \texttt{FailedToLoadJobAlertException} (HTTP 500).\\ \hline
 \end{flowtable}
 
 \sublabel{Output Data}
 \begin{specdatatable}{Data Name}{Description}
-Alert Entity & Detailed alert object and array of recently matched jobs.\\ \hline
+Alert / Matches & \texttt{JobAlert} detail entity or up to 5 matching open job summaries (\texttt{id}, \texttt{title}, \texttt{slug}, \texttt{budgetMin}, \texttt{budgetMax}, \texttt{budgetType}, \texttt{createdAt}).\\ \hline
 \end{specdatatable}
 
 \sublabel{Post-Conditions}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-    \item Full alert configuration and matching performance are displayed.
+    \item Alert metadata and live matching jobs are displayed accurately.
 \end{itemize}
 
 % -----------------------------------------------------------------
 % UC-23.03: Create Job Alert
 % -----------------------------------------------------------------
-\subsubsection{Function: Create Job Alert}
+\Needspace{12\baselineskip}
+\subsubsection{Create Job Alert}
 
 \fnhead{Function Trigger}
-A freelancer clicks ``Create Job Alert'' on the alerts page.\newline
-\textbf{Navigation path:} Job Alerts $\rightarrow$ Click ``Create Alert'' (\texttt{/freelancer/job-alerts/new}).
+A freelancer clicks ``+ Create Job Alert'' on the Job Alerts page.\newline
+\textbf{Navigation path:} Job Alerts (\texttt{/freelancer/job-alerts}) $\rightarrow$ Click ``+ Create Job Alert''.
 
 \fnhead{Function Description}
 
 \sublabel{Actors / Roles}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
     \item \textbf{Primary Actor:} Freelancer.
-    \item \textbf{Supporting Systems:} Frevia Web application, Frevia REST API, and PostgreSQL database.
+    \item \textbf{Supporting Systems:} Frevia Web application (Next.js), Frevia REST API (\texttt{JobAlertController}), Prisma ORM, and PostgreSQL database.
 \end{itemize}
 
 \sublabel{Purpose}
-\noindent Configures automated background delivery of matching job postings via In-App and Email notifications.
+\noindent Registers a new job alert subscription specifying alert name, keywords and/or skill tags, notification frequency, and delivery channels, subject to a 10-alert quota and anti-duplication validation.
 
 \sublabel{Interface}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-    \item Alert setup modal or form.
-    \item Inputs for name, keywords, skill selection, frequency selector (INSTANT, DAILY, WEEKLY), and channel checkboxes.
+    \item ``Create Job Alert'' modal dialog.
+    \item Inputs for optional ``Alert name'', ``Keywords'', ``Required skills'' pill builder, ``Notification frequency'' buttons (\texttt{Instant}, \texttt{Daily digest}, \texttt{Weekly digest}), and ``Notification channels'' checkboxes (\texttt{In-app notification}, \texttt{Email}).
 \end{itemize}
 
 \sublabel{Data Processing Overview}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-    \item Client submits payload to \texttt{POST /api/freelancer/job-alerts}.
-    \item Backend checks active alert count; rejects if user already has 10 alerts.
-    \item Validates criteria and checks for duplicate active rules.
-    \item Persists \texttt{JobAlert} record in PostgreSQL.
+    \item {\sloppy Client submits \texttt{POST /\allowbreak{}api/\allowbreak{}job-\allowbreak{}alerts} validated by \texttt{CreateJobAlertBodySchema.strict()}.\par}
+    \item Backend enforces \texttt{FREELANCER} role, then verifies \texttt{countByUserId(userId) < 10}.
+    \item Normalizes \texttt{keywords} (trimmed lowercase) and \texttt{skills} (trimmed, lowercased, sorted) to reject duplicate alert criteria for the same user.
+    \item Inserts \texttt{JobAlert} with \texttt{isActive = true} and returns HTTP 201/200.
 \end{itemize}
 
 \fnhead{Screen Layout (Mock-up Description)}
-\screenfigure[0.95]{image/screenshot/sprint2/ptai/CreateJobAlert.png}{Create job alert modal}
+\screenfigure[0.95]{image/screenshot/sprint2/ptai/CreateJobAlert.png}{Create job alert modal dialog interface}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-    \item Quota indicator (e.g. 3 of 10 used).
-    \item Inputs for alert name and target keywords.
-    \item Radio group for notification frequency and channel checkboxes.
-    \item Primary ``Activate Alert'' button.
+    \item Centered dialog displaying title ``Create Job Alert'' and helper text.
+    \item Form fields for alert name, keywords, dynamic skill tag addition, segmented frequency selector, channel checkboxes, Cancel, and blue ``Save alert'' button.
 \end{itemize}
 
 \fnhead{Function Details}
 
 \sublabel{Input Data}
 \begin{specdatatable}{Data Name}{Description}
-\texttt{name} & String (1--100 chars), alert title.\\ \hline
-\texttt{keywords} & Optional keyword string to match.\\ \hline
-\texttt{skills} & Array of skill UUIDs (up to 20 skills).\\ \hline
-\texttt{frequency} & Enum: \texttt{INSTANT}, \texttt{DAILY}, \texttt{WEEKLY}.\\ \hline
-\texttt{channels} & Array of enums: \texttt{IN\_APP}, \texttt{EMAIL}.\\ \hline
+\texttt{name} & Optional trimmed string (1--100 chars).\\ \hline
+\texttt{keywords} & Optional trimmed string ($\le 200$ chars; nullable).\\ \hline
+\texttt{skills} & Array of skill strings (1--100 chars each, max 20 skills, default \texttt{[]}).\\ \hline
+\texttt{frequency} & Enum: \texttt{INSTANT}, \texttt{DAILY} (default), or \texttt{WEEKLY}.\\ \hline
+\texttt{channels} & Non-empty array of \texttt{IN\_APP} and/or \texttt{EMAIL} (default \texttt{['IN\_APP']}).\\ \hline
 \end{specdatatable}
 
 \sublabel{Validation Rules}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-    \item Must specify at least one keyword or skill.
-    \item At least one notification channel must be selected.
-    \item User alert count must be $< 10$.
+    \item Either \texttt{keywords} (non-blank, $\le 200$ chars) or at least 1 skill ($\le 20$ skills) must be provided.
+    \item At least 1 valid delivery channel (\texttt{IN\_APP} or \texttt{EMAIL}) is required.
+    \item Current alert count per freelancer must be strictly $< 10$; strict schema rejects unrecognized keys.
 \end{itemize}
 
 \sublabel{Business Rules}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
-    \item BR-JA01: Rejects creation when user reaches 10 alerts limit.
-    \item BR-JA02: Prevents identical criteria from being registered twice.
-    \item BR-JA06: Instant notifications are queued immediately upon job publishing.
+    \item BR-JA-04: Criteria, Frequency, and Channel Validation: Job alerts require at least one non-empty keyword (up to 200 characters) or at least one skill (up to 20 items), a supported frequency (\texttt{INSTANT}, \texttt{DAILY}, or \texttt{WEEKLY}), and at least one delivery channel (\texttt{IN\_APP} or \texttt{EMAIL}).
+    \item BR-JA-05: Maximum Alert Quota: Each freelancer may maintain at most \texttt{MAX\_JOB\_ALERTS\_PER\_USER} (10) job alerts; exceeding 10 alerts is rejected.
+    \item BR-JA-06: Case-Insensitive Duplicate Criteria Prevention: Alert keywords (trimmed lowercase) and skill sets (sorted lowercase) are normalized per user to block duplicate alert configurations upon creation or update.
 \end{itemize}
 
 \sublabel{Normal Flow}
 \begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
-    \item Freelancer enters alert parameters.
-    \item Clicks ``Activate Alert''.
-    \item Backend validates quota and fields, then inserts record.
-    \item UI returns to list with new alert active.
+    \item Freelancer clicks ``+ Create Job Alert'', fills criteria, selects frequency and channels, and clicks ``Save alert''.
+    \item Frontend checks criteria/channel presence and submits \texttt{POST /api/job-alerts}.
+    \item Backend validates role, Zod schema, $< 10$ quota, and uniqueness of normalized criteria.
+    \item Persists new active \texttt{JobAlert} and returns it.
+    \item UI prepends the card, closes the modal, increments quota pill, and shows success toast.
 \end{enumerate}
 
 \sublabel{Abnormal Flow / Exception Handling}
-\begin{flowtable}{Case}{Description}
-A1 & Quota reached (10 alerts). Backend returns HTTP 400 Bad Request with message ``Maximum 10 alerts limit reached.''\\ \hline
-A2 & Duplicate criteria detected. Backend returns HTTP 400 with duplicate notice.\\ \hline
+\begin{flowtable}{Abnormal Case}{Handling \& System Response}
+Missing or invalid authentication token & Global \texttt{AuthGuard} returns HTTP 401 Unauthorized; client redirects to \texttt{/login}.\\ \hline
+Non-freelancer active role & Service throws \texttt{JobAlertOnlyForFreelancerException} (HTTP 403 Forbidden).\\ \hline
+Both \texttt{keywords} and \texttt{skills} empty, or 0 channels selected & Frontend toast blocks empty criteria; backend Zod refinement throws HTTP 400 Bad Request (\texttt{KEYWORD\_OR\_SKILL\_REQUIRED}).\\ \hline
+Maximum quota of 10 alerts reached & Service throws \texttt{JobAlertLimitExceededException} (HTTP 400 \texttt{LIMIT\_EXCEEDED}).\\ \hline
+Identical normalized criteria already exists for user & Service detects duplicate match and throws \texttt{JobAlertDuplicateCriteriaException} (HTTP 400 \texttt{DUPLICATE\_CRITERIA}).\\ \hline
+Database insert failure & Service catches \texttt{PrismaClientKnownRequestError} and throws \texttt{FailedToCreateJobAlertException} (HTTP 500).\\ \hline
 \end{flowtable}
 
 \sublabel{Output Data}
 \begin{specdatatable}{Data Name}{Description}
-Created Alert & New \texttt{JobAlert} entity with status \texttt{isActive = true}.\\ \hline
+Created Alert & Persisted \texttt{JobAlert} entity with \texttt{isActive = true} and assigned integer \texttt{id}.\\ \hline
 \end{specdatatable}
 
 \sublabel{Post-Conditions}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-    \item Alert is registered and background worker begins match dispatch.
+    \item Alert is active, persisted in PostgreSQL, and reflected in quota counter.
 \end{itemize}
 
 % -----------------------------------------------------------------
 % UC-23.04: Update Job Alert
 % -----------------------------------------------------------------
-\subsubsection{Function: Update Job Alert}
+\Needspace{12\baselineskip}
+\subsubsection{Update Job Alert}
 
 \fnhead{Function Trigger}
-A freelancer clicks ``Edit'' on an alert or toggles its pause switch.\newline
-\textbf{Navigation path:} Job Alerts $\rightarrow$ Alert Menu $\rightarrow$ Click ``Edit'' (\texttt{/freelancer/job-alerts/:id/edit}).
+A freelancer clicks the pencil ``Edit alert'' button or toggles the active switch on an alert card.\newline
+\textbf{Navigation path:} Job Alerts (\texttt{/freelancer/job-alerts}) $\rightarrow$ Edit icon or Active Switch.
 
 \fnhead{Function Description}
 
 \sublabel{Actors / Roles}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
     \item \textbf{Primary Actor:} Freelancer.
-    \item \textbf{Supporting Systems:} Frevia Web application, Frevia REST API, and PostgreSQL database.
+    \item \textbf{Supporting Systems:} Frevia Web application (Next.js), Frevia REST API (\texttt{JobAlertController}), Prisma ORM, and PostgreSQL database.
 \end{itemize}
 
 \sublabel{Purpose}
-\noindent Allows modifying search keywords, delivery frequency, channels, or pausing/resuming notification triggers.
+\noindent Allows freelancers to update an alert's name, keywords, skill tags, notification frequency, or delivery channels, or toggle its active/paused state without deleting the subscription.
 
 \sublabel{Interface}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-    \item Edit alert form modal and inline toggle switch.
+    \item ``Edit Job Alert'' dialog pre-populated with current alert values.
+    \item Inline toggle switch on each card calling \texttt{PATCH /api/job-alerts/:id} with \texttt{\{ isActive \}}.
 \end{itemize}
 
 \sublabel{Data Processing Overview}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-    \item Client issues \texttt{PATCH /api/freelancer/job-alerts/:id}.
-    \item Backend validates ownership and updates record.
+    \item Client sends \texttt{PATCH /api/job-alerts/:id} with partial body validated by \texttt{UpdateJobAlertBodySchema.strict()}.
+    \item Backend enforces \texttt{FREELANCER} role and checks existing owned alert via \texttt{findByIdAndUserId(id, userId)}.
+    \item Whenever \texttt{keywords} or \texttt{skills} change, merges updated vs existing criteria and re-runs normalized duplicate check (excluding current \texttt{id}).
+    \item Commits update to PostgreSQL and returns updated \texttt{JobAlert}.
 \end{itemize}
 
 \fnhead{Screen Layout (Mock-up Description)}
-\screenfigure[0.95]{image/screenshot/sprint2/ptai/UpdateJobAlert.png}{Edit job alert dialog}
+\screenfigure[0.95]{image/screenshot/sprint2/ptai/UpdateJobAlert.png}{Edit job alert modal interface}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-    \item Editable fields for title, frequency dropdown, and delivery channels.
-    \item ``Update Alert'' confirmation button.
+    \item Modal dialog titled ``Edit Job Alert'' pre-filled with existing alert name, keywords, and removable skill pills (\texttt{Python}, \texttt{PostgreSQL}, \texttt{Docker}).
+    \item Frequency selector, channel checkboxes, Cancel button, and blue ``Save alert'' confirmation button.
 \end{itemize}
 
 \fnhead{Function Details}
 
 \sublabel{Input Data}
 \begin{specdatatable}{Data Name}{Description}
-\texttt{id} & UUID of the job alert.\\ \hline
-Payload & Modified parameters (\texttt{name}, \texttt{frequency}, \texttt{channels}, \texttt{isActive}).\\ \hline
+\texttt{id} & Positive integer ID of the job alert.\\ \hline
+Payload & Optional partial fields: \texttt{name}, \texttt{keywords}, \texttt{skills}, \texttt{frequency}, \texttt{channels}, \texttt{isActive}.\\ \hline
 \end{specdatatable}
 
 \sublabel{Validation Rules}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-    \item Must belong to authenticated freelancer.
+    \item If either \texttt{keywords} or \texttt{skills} is included in the payload, at least one valid keyword or skill must remain non-empty.
+    \item Caller must have \texttt{FREELANCER} role and own the alert.
 \end{itemize}
 
 \sublabel{Business Rules}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
-    \item BR-JA07: Paused alerts stop generating new notifications immediately.
+    \item BR-JA-07: Partial Update Ownership and Criteria Integrity: Updating an alert verifies record ownership, ensures at least one keyword or skill criterion remains configured, and rejects updates that duplicate another existing alert belonging to the same user.
+    \item BR-JA-08: Pause and Resume State Control: Toggling an alert's active state (\texttt{isActive}) immediately persists the paused/active configuration state while preserving its criteria and quota slot (intended to gate scheduled delivery once a background dispatcher is enabled).
 \end{itemize}
 
 \sublabel{Normal Flow}
 \begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
-    \item Freelancer modifies parameters and clicks ``Update Alert''.
-    \item Backend commits updates to PostgreSQL.
-    \item UI reflects updated configuration.
+    \item Freelancer edits fields in the modal (or flips the toggle switch) and confirms.
+    \item Frontend dispatches \texttt{PATCH /api/job-alerts/:id}.
+    \item Backend verifies ownership, checks uniqueness when criteria change, and updates PostgreSQL.
+    \item UI updates the alert card state and displays confirmation toast.
 \end{enumerate}
 
 \sublabel{Abnormal Flow / Exception Handling}
-\begin{flowtable}{Case}{Description}
-A1 & Alert not found. Backend returns HTTP 404 Not Found.\\ \hline
+\begin{flowtable}{Abnormal Case}{Handling \& System Response}
+Missing or invalid authentication token & Global \texttt{AuthGuard} returns HTTP 401 Unauthorized; client redirects to \texttt{/login}.\\ \hline
+Non-freelancer active role & Service throws \texttt{JobAlertOnlyForFreelancerException} (HTTP 403 Forbidden).\\ \hline
+Invalid ID format or invalid field constraints & \texttt{ParseIntPipe} or Zod schema rejects with HTTP 400 Bad Request (e.g. clearing both keywords and skills, or 0 channels).\\ \hline
+Alert not found or owned by another user & Service throws \texttt{JobAlertNotFoundException} (HTTP 404 Not Found).\\ \hline
+Updated criteria duplicates another alert of user & Service rejects with \texttt{JobAlertDuplicateCriteriaException} (HTTP 400 \texttt{DUPLICATE\_CRITERIA}).\\ \hline
+Database update failure & Service catches \texttt{PrismaClientKnownRequestError} and throws \texttt{FailedToUpdateJobAlertException} (HTTP 500); UI rolls back switch toggle if optimistic.\\ \hline
 \end{flowtable}
 
 \sublabel{Output Data}
 \begin{specdatatable}{Data Name}{Description}
-Updated Alert & Modified \texttt{JobAlert} entity.\\ \hline
+Updated Alert & Modified \texttt{JobAlert} entity reflecting new criteria, channels, frequency, or active status.\\ \hline
 \end{specdatatable}
 
 \sublabel{Post-Conditions}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-    \item Alert parameters and delivery schedule are updated.
+    \item Alert settings are updated in PostgreSQL and applied immediately to subsequent job matching.
 \end{itemize}
 
 % -----------------------------------------------------------------
 % UC-23.05: Delete Job Alert
 % -----------------------------------------------------------------
-\subsubsection{Function: Delete Job Alert}
+\Needspace{12\baselineskip}
+\subsubsection{Delete Job Alert}
 
 \fnhead{Function Trigger}
-A freelancer clicks ``Delete'' on a job alert.\newline
-\textbf{Navigation path:} Job Alerts $\rightarrow$ Menu $\rightarrow$ Click ``Delete''.
+A freelancer clicks the red trash icon button on a job alert card and confirms deletion.\newline
+\textbf{Navigation path:} Job Alerts (\texttt{/freelancer/job-alerts}) $\rightarrow$ Click Delete icon $\rightarrow$ Confirm ``Delete alert''.
 
 \fnhead{Function Description}
 
 \sublabel{Actors / Roles}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
     \item \textbf{Primary Actor:} Freelancer.
-    \item \textbf{Supporting Systems:} Frevia Web application, Frevia REST API, and PostgreSQL database.
+    \item \textbf{Supporting Systems:} Frevia Web application (Next.js), Frevia REST API (\texttt{JobAlertController}), Prisma ORM, and PostgreSQL database.
 \end{itemize}
 
 \sublabel{Purpose}
-\noindent Permanently deletes an automated job alert and frees up a slot in the user's 10-alert quota.
+\noindent Permanently deletes an alert configuration owned by the freelancer, immediately reclaiming 1 slot in the 10-alert quota.
 
 \sublabel{Interface}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-    \item Delete button triggering confirmation alert dialog.
+    \item Confirmation modal dialog titled ``Delete job alert?'' with ``Cancel'' and destructive red ``Delete alert'' buttons.
 \end{itemize}
 
 \sublabel{Data Processing Overview}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-    \item Client sends \texttt{DELETE /api/freelancer/job-alerts/:id}.
-    \item Backend confirms ownership and hard-deletes record.
+    \item Client dispatches \texttt{DELETE /api/job-alerts/:id}.
+    \item Backend checks \texttt{FREELANCER} role, deletes row matching \texttt{(id, userId)}, and throws \texttt{JobAlertNotFoundException} (HTTP 404) if missing.
+    \item Returns \texttt{\{ success: true \}}.
 \end{itemize}
 
 \fnhead{Screen Layout (Mock-up Description)}
-\screenfigure[0.95]{image/screenshot/sprint2/ptai/DeleteJobAlert.png}{Delete job alert confirmation}
+\screenfigure[0.95]{image/screenshot/sprint2/ptai/DeleteJobAlert.png}{Delete job alert confirmation modal}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-    \item Confirmation modal indicating deletion is permanent.
-    \item Red ``Delete Alert'' button.
+    \item Modal dialog warning that removal is permanent and notifications will stop.
+    \item Cancel pill button and destructive red ``Delete alert'' confirmation button.
 \end{itemize}
 
 \fnhead{Function Details}
 
 \sublabel{Input Data}
 \begin{specdatatable}{Data Name}{Description}
-\texttt{id} & UUID of the job alert to delete.\\ \hline
+\texttt{id} & Positive integer ID of the job alert to delete.\\ \hline
 \end{specdatatable}
 
 \sublabel{Validation Rules}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-    \item Target alert must belong to caller.
+    \item Path parameter \texttt{id} must parse as an integer; caller must have \texttt{FREELANCER} role and own the alert.
 \end{itemize}
 
 \sublabel{Business Rules}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
-    \item BR-JA08: Deletion permanently stops all email and in-app triggers for this rule.
-    \item BR-JA09: Deleting an alert immediately decrements user quota.
+    \item BR-JA-09: Hard Delete and Quota Release: Deleting a job alert permanently removes the record and immediately frees one slot within the freelancer's 10-alert limit.
+    \item BR-JA-10: Non-Owner Deletion Isolation: Attempting to delete an absent alert or an alert owned by another account is rejected as not found without exposing foreign alert existence.
 \end{itemize}
 
 \sublabel{Normal Flow}
 \begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
-    \item Freelancer selects ``Delete Alert''.
-    \item Confirms in modal.
-    \item Backend removes record.
-    \item UI updates quota counter and removes card.
+    \item Freelancer clicks the delete trash icon and confirms ``Delete alert''.
+    \item Frontend optimistically removes the card and sends \texttt{DELETE /api/job-alerts/:id}.
+    \item Backend validates role and ownership, deletes the record, and returns \texttt{\{ success: true \}}.
+    \item Quota counter updates immediately alongside a deletion toast notification.
 \end{enumerate}
 
 \sublabel{Abnormal Flow / Exception Handling}
-\begin{flowtable}{Case}{Description}
-A1 & Alert not found. Returns HTTP 404; list reloads.\\ \hline
+\begin{flowtable}{Abnormal Case}{Handling \& System Response}
+Missing or invalid authentication token & Global \texttt{AuthGuard} returns HTTP 401 Unauthorized; client redirects to \texttt{/login}.\\ \hline
+Non-freelancer active role & Service throws \texttt{JobAlertOnlyForFreelancerException} (HTTP 403 Forbidden).\\ \hline
+Non-numeric \texttt{id} parameter & \texttt{ParseIntPipe} rejects invalid format with HTTP 400 Bad Request.\\ \hline
+Alert not found or belongs to another user & Service throws \texttt{JobAlertNotFoundException} (HTTP 404 Not Found); UI rolls back optimistic removal and shows error toast.\\ \hline
+Database deletion error & Service catches \texttt{PrismaClientKnownRequestError} and throws \texttt{FailedToDeleteJobAlertException} (HTTP 500); UI restores alert card.\\ \hline
 \end{flowtable}
 
 \sublabel{Output Data}
 \begin{specdatatable}{Data Name}{Description}
-Result & Status confirmation confirming alert removal.\\ \hline
+Result & Confirmation payload \texttt{\{ success: true \}}.\\ \hline
 \end{specdatatable}
 
 \sublabel{Post-Conditions}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-    \item Job alert is deleted and quota freed.
+    \item Alert record is deleted permanently and user quota slot is freed.
 \end{itemize}
-

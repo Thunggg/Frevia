@@ -1,131 +1,48 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { useEffect, useRef, useState } from "react";
-import {
-  Bookmark,
-  ChevronDown,
-  CreditCard,
-  Eye,
-  FileText,
-  LogOut,
-  Heart,
-  Link2,
-  Menu,
-  MessageSquare,
-  MonitorSmartphone,
-  Search,
-  ShieldCheck,
-  UserRound,
-  UserCheck,
-  X,
-} from "@/components/icons";
-
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "@repo/ui/components/shadcn/avatar";
+import { useState } from "react";
+import { Menu, X } from "@/components/icons";
 import { Button } from "@repo/ui/components/shadcn/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@repo/ui/components/shadcn/dropdown-menu";
 import { LanguageSwitcher } from "@/components/language-switcher";
 import { ThemeToggle } from "@/components/theme-toggle";
-import { MessageBell } from "@/components/notification-bell";
-import { NotificationsBell } from "@/components/notifications-bell";
-import { ContactDialog } from "@/components/contact-dialog";
 import { useMe } from "@/hooks/use-auth";
-import { useActionPermission } from "@/hooks/use-action-permission";
-import { canAccessAdminPortal } from "@/lib/admin-access";
 
-export type UserRole = "GUEST" | "CLIENT" | "FREELANCER";
+export type UserRole = "GUEST" | "CLIENT" | "FREELANCER" | "STAFF";
 
 export type HeaderProps = {
   role: UserRole;
 };
 
-type NavRoleKey = "guest" | "client" | "freelancer";
-
 type NavLinkKey =
   | "findWork"
-  | "hireTalent"
+  | "viewProfileFreelancer"
   | "forum"
-  | "myJobs"
-  | "contracts"
-  | "payments"
-  | "disputes"
-  | "bookmarks"
-  | "myProposals"
-  | "savedSearches";
+  | "policy";
 
 type NavLink = {
   href: string;
   labelKey: NavLinkKey;
   exact?: boolean;
-  excludePaths?: string[];
 };
 
-const roleConfig: Record<UserRole, { nameKey: NavRoleKey; links: NavLink[] }> = {
-  GUEST: {
-    nameKey: "guest",
-    links: [
-      { href: "/freelancer", labelKey: "findWork" },
-      { href: "/client/jobs/new", labelKey: "hireTalent" },
-      { href: "/forum", labelKey: "forum" },
-    ],
-  },
-  CLIENT: {
-    nameKey: "client",
-    links: [
-      {
-        href: "/client/jobs",
-        labelKey: "myJobs",
-        excludePaths: ["/client/jobs/new"],
-      },
-      { href: "/client/contracts", labelKey: "contracts" },
-      { href: "/client/payments", labelKey: "payments" },
-      { href: "/forum", labelKey: "forum" },
-    ],
-  },
-  FREELANCER: {
-    nameKey: "freelancer",
-    links: [
-      { href: "/freelancer", labelKey: "findWork" },
-      { href: "/freelancer?tab=saved-jobs", labelKey: "bookmarks" },
-      { href: "/freelancer/proposals", labelKey: "myProposals" },
-      { href: "/freelancer/contracts", labelKey: "contracts" },
-      { href: "/freelancer/payments", labelKey: "payments" },
-      { href: "/freelancer?tab=saved-searches", labelKey: "savedSearches" },
-      { href: "/forum", labelKey: "forum" },
-    ],
-  },
-};
+const guestLinks: NavLink[] = [
+  { href: "/find-work", labelKey: "findWork" },
+  { href: "/profiles", labelKey: "viewProfileFreelancer" },
+  { href: "/forum", labelKey: "forum" },
+  { href: "/privacy-policy", labelKey: "policy" },
+];
 
 function isNavLinkActive(link: NavLink, pathname: string) {
   if (link.exact) return pathname === link.href;
-  const pathMatches =
-    pathname === link.href || pathname.startsWith(`${link.href}/`);
-  if (!pathMatches) return false;
-  if (
-    link.excludePaths?.some(
-      (path) => pathname === path || pathname.startsWith(`${path}/`),
-    )
-  )
-    return false;
-  return true;
+  return pathname === link.href || pathname.startsWith(`${link.href}/`);
 }
 
-function Logo() {
+function Logo({ href = "/" }: { href?: string }) {
   return (
-    <Link href="/" className="flex shrink-0 items-center gap-2 mr-1 sm:mr-3">
+    <Link href={href} className="flex shrink-0 items-center gap-2 mr-1 sm:mr-3">
       <span className="text-3xl font-aquire tracking-tight sm:text-4xl">
         frevia
       </span>
@@ -134,456 +51,34 @@ function Logo() {
 }
 
 function HeaderNavigation({
-  role,
   mobile = false,
   onNavigate,
-}: HeaderProps & { mobile?: boolean; onNavigate?: () => void }) {
+}: {
+  mobile?: boolean;
+  onNavigate?: () => void;
+}) {
   const pathname = usePathname();
   const t = useTranslations("nav");
-  const { can } = useActionPermission();
-  const canViewProposals = can("GET", "/api/proposals/my");
-  const canViewJobs = can("GET", "/api/manage-jobs");
-  const canViewBookmarks = can("GET", "/api/manage-jobs/bookmarks");
-  const canViewSavedSearches = can("GET", "/api/saved-searches");
-  const canViewContracts = can("GET", "/api/contracts");
-  const canViewDisputes = can("GET", "/api/disputes");
-
-  const links = (roleConfig[role]?.links ?? []).filter((link) => {
-    if (link.href === "/freelancer/proposals" && !canViewProposals) return false;
-    if (link.href === "/client/jobs" && !canViewJobs) return false;
-    if (link.href === "/freelancer?tab=saved-jobs" && !canViewBookmarks) return false;
-    if (link.href === "/freelancer?tab=saved-searches" && !canViewSavedSearches) return false;
-    if (
-      (link.href === "/client/contracts" || link.href === "/freelancer/contracts") &&
-      !canViewContracts
-    )
-      return false;
-    if (
-      (link.href === "/disputes" ||
-        link.href === "/client/disputes" ||
-        link.href === "/freelancer/disputes") &&
-      !canViewDisputes
-    )
-      return false;
-    return true;
-  });
 
   return (
     <div className={mobile ? "space-y-1" : "hidden items-center gap-1 md:flex"}>
-      {links.map((link) => {
+      {guestLinks.map((link) => {
         const isActive = isNavLinkActive(link, pathname);
         return (
           <Link
             key={link.href}
             href={link.href}
             onClick={onNavigate}
-            className={`rounded-full text-sm font-medium transition-all duration-150 ${
-              mobile ? "block px-4 py-2" : "px-3.5 py-1.5"
-            } ${
-              isActive
+            className={`rounded-full text-sm font-medium transition-all duration-150 ${mobile ? "block px-4 py-2" : "px-3.5 py-1.5"
+              } ${isActive
                 ? "bg-slate-100 text-gray-950 font-semibold dark:bg-zinc-800 dark:text-white"
                 : "text-gray-600 hover:bg-black/[0.04] hover:text-gray-950 dark:text-gray-400 dark:hover:bg-white/[0.06] dark:hover:text-white"
-            }`}
+              }`}
           >
             {t(`links.${link.labelKey}`)}
           </Link>
         );
       })}
-      {role === "GUEST" && (
-        <ContactDialog
-          triggerClassName={`rounded-full text-sm font-medium transition-all duration-150 ${
-            mobile ? "block w-full text-left px-4 py-2" : "px-3.5 py-1.5"
-          } text-gray-600 hover:bg-black/[0.04] hover:text-gray-950 dark:text-gray-400 dark:hover:bg-white/[0.06] dark:hover:text-white`}
-        />
-      )}
-    </div>
-  );
-}
-
-function HeaderSearch({
-  className = "hidden max-w-xs flex-1 md:block lg:max-w-sm",
-}: {
-  className?: string;
-  role?: UserRole;
-}) {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const t = useTranslations("nav");
-  const [query, setQuery] = useState("");
-  const inputRef = useRef<HTMLInputElement>(null);
-
-  useEffect(() => setQuery(searchParams.get("keyword") ?? ""), [searchParams]);
-
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") {
-        e.preventDefault();
-        inputRef.current?.focus();
-      }
-    };
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, []);
-
-  return (
-    <form
-      className={className}
-      onSubmit={(event) => {
-        event.preventDefault();
-        const params = new URLSearchParams(searchParams.toString());
-        const keyword = query.trim();
-        if (keyword) {
-          params.set("keyword", keyword);
-        } else {
-          params.delete("keyword");
-        }
-        params.set("page", "1");
-        const searchBase = "/freelancer";
-        router.push(`${searchBase}?${params.toString()}`);
-      }}
-    >
-      <div className="relative flex items-center">
-        <Search
-          className="absolute left-3.5 size-4 text-muted-foreground"
-          strokeWidth={1.75}
-        />
-        <input
-          ref={inputRef}
-          value={query}
-          onChange={(event) => setQuery(event.target.value)}
-          placeholder={t("searchPlaceholder")}
-          className="h-9 w-full rounded-full border border-slate-200/80 dark:border-zinc-700/60 dark:bg-zinc-800/60 dark:text-foreground dark:placeholder:text-zinc-400 dark:focus:bg-zinc-900 focus:ring-blue-500/15 dark:focus:bg-zinc-900 bg-slate-100/70 pl-9.5 pr-14 text-xs sm:text-sm text-foreground placeholder:text-muted-foreground/60 outline-none transition-all focus:border-green-600 focus:bg-white focus:ring-2"
-        />
-        <kbd className="pointer-events-none font-semibold bg-slate-100/70 absolute right-2.5 hidden items-center gap-1 rounded-full border border-slate-300/80  px-1.5 py-0.5 font-sans text-[10px] font-medium text-muted-foreground dark:border-zinc-700 dark:bg-zinc-900 sm:flex">
-          <span className="text-xs">Ctrl K</span>
-        </kbd>
-      </div>
-    </form>
-  );
-}
-
-function ProfileDropdown({ role }: { role: Exclude<UserRole, "GUEST"> }) {
-  const router = useRouter();
-  const t = useTranslations("nav");
-  const profile = roleConfig[role];
-  const { data: me } = useMe();
-  const { can } = useActionPermission();
-  const canViewProposals = can("GET", "/api/proposals/my");
-  const canViewSavedSearches = can("GET", "/api/saved-searches");
-  const canViewContracts = can("GET", "/api/contracts");
-  const canViewSessions = can("GET", "/api/sessions");
-  const canViewSocialLinks = can("GET", "/api/social-links");
-  const displayName =
-    me?.profile?.displayName || t(`roles.${profile.nameKey}`);
-  const initial = displayName?.charAt(0)?.toUpperCase() ?? "?";
-  const publicProfileHref = me?.profile?.id
-    ? role === "FREELANCER"
-      ? `/profiles/${me.profile.id}`
-      : `/clients/${me.id}`
-    : null;
-
-  const logout = async () => {
-    await fetch("/api/auth/logout", { method: "POST" });
-    router.push("/login");
-    router.refresh();
-  };
-
-  return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <button
-          className="hidden items-center gap-2 rounded-full px-1.5 py-1 outline-none transition-colors hover:bg-black/[0.04] focus-visible:ring-2 focus-visible:ring-[#4fae2e]/30 dark:hover:bg-white/[0.06] sm:flex"
-          aria-label={t("openProfileMenu")}
-        >
-          <Avatar className="size-8">
-            {me?.profile?.avatarUrl && (
-              <AvatarImage src={me.profile.avatarUrl} alt={displayName ?? ""} />
-            )}
-            <AvatarFallback className="bg-[#4fae2e]/10 text-[11px] font-semibold text-[#4fae2e]">
-              {initial}
-            </AvatarFallback>
-          </Avatar>
-          <span className="max-w-[100px] truncate text-[13px] font-medium text-foreground/80">
-            {displayName}
-          </span>
-          <ChevronDown
-            className="size-3.5 text-muted-foreground"
-            strokeWidth={2}
-          />
-        </button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-64 p-1.5">
-        <DropdownMenuLabel className="flex items-center gap-3 px-2.5 py-3">
-          <Avatar size="lg">
-            {me?.profile?.avatarUrl && (
-              <AvatarImage src={me.profile.avatarUrl} alt={displayName ?? ""} />
-            )}
-            <AvatarFallback className="bg-[#4fae2e]/10 text-sm font-semibold text-[#4fae2e]">
-              {initial}
-            </AvatarFallback>
-          </Avatar>
-          <div className="min-w-0">
-            <p className="truncate text-sm font-semibold text-foreground">
-              {displayName}
-            </p>
-            <p className="text-xs text-muted-foreground">
-              {t(`roles.${profile.nameKey}`)}
-            </p>
-          </div>
-        </DropdownMenuLabel>
-        <DropdownMenuSeparator />
-        {publicProfileHref ? (
-          <DropdownMenuItem asChild>
-            <Link href={publicProfileHref} className="cursor-pointer">
-              <Eye className="size-4 text-muted-foreground" />
-              {t("viewPublicProfile")}
-            </Link>
-          </DropdownMenuItem>
-        ) : null}
-        <DropdownMenuItem asChild>
-          <Link
-            href={
-              canAccessAdminPortal(me)
-                ? "/admin/profile"
-                : role === "FREELANCER"
-                  ? "/freelancer/profile"
-                  : "/client/profile"
-            }
-            className="cursor-pointer"
-          >
-            <UserRound className="size-4 text-muted-foreground" />
-            {t("profileSettings")}
-          </Link>
-        </DropdownMenuItem>
-        {role === "FREELANCER" && (
-          <>
-            <DropdownMenuItem asChild>
-              <Link href="/freelancer/profile" className="cursor-pointer">
-                <ShieldCheck className="size-4 text-muted-foreground" />
-                {t("identityVerification")}
-              </Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem asChild>
-              <Link href="/freelancer/bookmarks" className="cursor-pointer">
-                <Bookmark className="size-4 text-muted-foreground" />
-                {t("myBookmarks")}
-              </Link>
-            </DropdownMenuItem>
-            {canViewProposals ? (
-              <DropdownMenuItem asChild>
-                <Link href="/freelancer/proposals" className="cursor-pointer">
-                  <FileText className="size-4 text-muted-foreground" />
-                  {t("myProposals")}
-                </Link>
-              </DropdownMenuItem>
-            ) : null}
-            {canViewContracts && (
-              <DropdownMenuItem asChild>
-                <Link href="/freelancer/contracts" className="cursor-pointer">
-                  <FileText className="size-4 text-muted-foreground" />
-                  {t("contracts")}
-                </Link>
-              </DropdownMenuItem>
-            )}
-            {canViewSavedSearches && (
-              <DropdownMenuItem asChild>
-                <Link
-                  href="/freelancer/saved-searches"
-                  className="cursor-pointer"
-                >
-                  <Search className="size-4 text-muted-foreground" />
-                  {t("savedSearches")}
-                </Link>
-              </DropdownMenuItem>
-            )}
-            <DropdownMenuItem asChild>
-              <Link
-                href="/freelancer/payments"
-                className="cursor-pointer"
-              >
-                <CreditCard className="size-4 text-muted-foreground" />
-                Billing & Payments
-              </Link>
-            </DropdownMenuItem>
-          </>
-        )}
-        {role === "CLIENT" && (
-          <>
-            <DropdownMenuItem asChild>
-              <Link href="/client/jobs" className="cursor-pointer">
-                <FileText className="size-4 text-muted-foreground" />
-                {t("myJobs")}
-              </Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem asChild>
-              <Link
-                href="/client/profile?tab=favorites"
-                className="cursor-pointer"
-              >
-                <Heart className="size-4 text-muted-foreground" />
-                {t("favoriteFreelancers")}
-              </Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem asChild>
-              <Link
-                href="/client/profile?tab=following"
-                className="cursor-pointer"
-              >
-                <UserCheck className="size-4 text-muted-foreground" />
-                {t("following")}
-              </Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem asChild>
-              <Link href="/client/payments" className="cursor-pointer">
-                <CreditCard className="size-4 text-muted-foreground" />
-                Billing & Payments
-              </Link>
-            </DropdownMenuItem>
-          </>
-        )}
-        {canViewSocialLinks && (
-          <DropdownMenuItem asChild>
-            <Link
-              href={
-                role === "FREELANCER"
-                  ? "/freelancer/profile?tab=social"
-                  : "/client/profile?tab=social"
-              }
-              className="cursor-pointer"
-            >
-              <Link2 className="size-4 text-muted-foreground" />
-              {t("socialLinks")}
-            </Link>
-          </DropdownMenuItem>
-        )}
-        <DropdownMenuSeparator />
-        {canViewSessions && (
-          <DropdownMenuItem asChild>
-            <Link href="/sessions" className="cursor-pointer">
-              <MonitorSmartphone className="size-4 text-muted-foreground" />
-              {t("sessions")}
-            </Link>
-          </DropdownMenuItem>
-        )}
-        {canAccessAdminPortal(me) && (
-          <DropdownMenuItem asChild>
-            <Link
-              href="/admin"
-              className="cursor-pointer font-medium text-[#4fae2e]"
-            >
-              <ShieldCheck className="size-4 text-[#4fae2e]" />
-              Admin Portal
-            </Link>
-          </DropdownMenuItem>
-        )}
-        <DropdownMenuSeparator />
-        <DropdownMenuItem
-          variant="destructive"
-          onSelect={logout}
-          className="cursor-pointer"
-        >
-          <LogOut className="size-4" />
-          {t("logout")}
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
-  );
-}
-
-function HeaderActions({ role }: HeaderProps) {
-  const t = useTranslations("nav");
-  const { can } = useActionPermission();
-  const canViewConversations = can("GET", "/api/conversations");
-  const canViewNotifications = can("GET", "/api/notifications");
-
-  if (role === "GUEST") {
-    return (
-      <div className="flex items-center gap-1.5 sm:gap-2">
-        <Button
-          asChild
-          className="hidden h-8.5 rounded-full bg-green-300 px-4 text-xs sm:text-sm font-semibold text-green-800 shadow-xs hover:bg-green-400 sm:inline-flex dark:bg-green-500 dark:hover:bg-green-700"
-        >
-          <Link href="/register">{t("register")}</Link>
-        </Button>
-        <Button
-          variant="ghost"
-          asChild
-          className="hidden h-8.5 rounded-full px-3 text-xs sm:text-sm font-medium text-foreground/80 hover:bg-black/[0.04] hover:text-foreground sm:inline-flex dark:hover:bg-white/[0.06]"
-        >
-          <Link href="/login">{t("login")}</Link>
-        </Button>
-        <div className="hidden h-4 w-px bg-border/70 sm:block" />
-        <LanguageSwitcher />
-        <ThemeToggle />
-      </div>
-    );
-  }
-
-  return (
-    <div className="ml-auto flex items-center gap-0.5 sm:gap-1">
-      <ContactDialog />
-      {canViewConversations && <MessageBell />}
-      {canViewNotifications && <NotificationsBell />}
-      <LanguageSwitcher />
-      <ThemeToggle />
-      <ProfileDropdown role={role} />
-    </div>
-  );
-}
-
-function MobileProfileNavigation({
-  role,
-  onNavigate,
-}: {
-  role: Exclude<UserRole, "GUEST">;
-  onNavigate: () => void;
-}) {
-  const t = useTranslations("nav");
-  const { data: me } = useMe();
-  const publicProfileHref = me?.profile?.id
-    ? role === "FREELANCER"
-      ? `/profiles/${me.profile.id}`
-      : `/clients/${me.id}`
-    : null;
-
-  return (
-    <div className="space-y-1">
-      {publicProfileHref ? (
-        <Link
-          href={publicProfileHref}
-          onClick={onNavigate}
-          className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-[13px] font-medium text-foreground/70 transition-colors hover:bg-black/[0.04] hover:text-foreground dark:hover:bg-white/[0.06]"
-        >
-          <Eye className="size-4 text-muted-foreground" />
-          {t("viewPublicProfile")}
-        </Link>
-      ) : null}
-      {canAccessAdminPortal(me) && (
-        <Link
-          href="/admin"
-          onClick={onNavigate}
-          className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-[13px] font-medium text-[#4fae2e] transition-colors hover:bg-[#4fae2e]/10"
-        >
-          <ShieldCheck className="size-4 text-[#4fae2e]" />
-          Admin Portal
-        </Link>
-      )}
-      <Link
-        href={
-          canAccessAdminPortal(me)
-            ? "/admin/profile"
-            : role === "FREELANCER"
-              ? "/freelancer/profile"
-              : role === "CLIENT"
-                ? "/client/profile"
-                : "/login"
-        }
-        onClick={onNavigate}
-        className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-[13px] font-medium text-foreground/70 transition-colors hover:bg-black/[0.04] hover:text-foreground dark:hover:bg-white/[0.06]"
-      >
-        <UserRound className="size-4 text-muted-foreground" />
-        {t("profileSettings")}
-      </Link>
     </div>
   );
 }
@@ -591,25 +86,42 @@ function MobileProfileNavigation({
 export function Header({ role }: HeaderProps) {
   const t = useTranslations("nav");
   const tCommon = useTranslations("common");
+  const { data: me } = useMe();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const closeMenu = () => setIsMenuOpen(false);
 
+  // Header CHỈ dành cho khách (Guest). Các role đã đăng nhập (freelancer, client, admin) không hiển thị header này.
+  if (role !== "GUEST" || Boolean(me)) {
+    return null;
+  }
+
   return (
     <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-xl text-foreground shadow-[0_1px_3px_rgba(0,0,0,0.02)] dark:border-white/[0.08] dark:bg-zinc-950/90">
-      <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-2 sm:px-6 lg:px-8">
-        <div className="flex items-center gap-2 sm:gap-4">
-          <Logo />
-          <HeaderNavigation role={role} />
+      <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-2.5 sm:px-6 lg:px-8">
+        <div className="flex items-center gap-2 sm:gap-6">
+          <Logo href="/" />
+          <HeaderNavigation />
         </div>
 
-        <div className="flex flex-1 items-center justify-end gap-2 sm:gap-3">
-          {(role === "FREELANCER" || role === "GUEST") && (
-            <HeaderSearch
-              role={role}
-              className="hidden max-w-xs flex-1 md:block lg:max-w-sm"
-            />
-          )}
-          <HeaderActions role={role} />
+        <div className="flex items-center justify-end gap-2 sm:gap-3">
+          <div className="hidden items-center gap-2 md:flex">
+            <LanguageSwitcher />
+            <ThemeToggle />
+            <Button
+              variant="ghost"
+              asChild
+              className="rounded-full text-sm font-medium hover:bg-black/[0.04] dark:hover:bg-white/[0.06]"
+            >
+              <Link href="/login">{t("login")}</Link>
+            </Button>
+            <Button
+              asChild
+              className="rounded-full bg-zinc-950 hover:bg-zinc-800 text-white text-sm font-semibold dark:bg-white dark:text-zinc-950 dark:hover:bg-zinc-200 px-5 shadow-xs"
+            >
+              <Link href="/register">{t("register")}</Link>
+            </Button>
+          </div>
+
           <button
             onClick={() => setIsMenuOpen((open) => !open)}
             className="rounded-full p-2 text-foreground/70 transition-colors hover:bg-black/[0.04] hover:text-foreground md:hidden dark:hover:bg-white/[0.06]"
@@ -624,63 +136,38 @@ export function Header({ role }: HeaderProps) {
           </button>
         </div>
       </div>
+
       {isMenuOpen && (
         <div className="space-y-3 border-t border-border/50 bg-white/98 p-4 backdrop-blur-xl shadow-xl md:hidden dark:border-white/[0.08] dark:bg-zinc-950/98">
-          {(role === "FREELANCER" || role === "GUEST") && (
-            <HeaderSearch role={role} className="block w-full" />
-          )}
-          <HeaderNavigation role={role} mobile onNavigate={closeMenu} />
-          {role === "GUEST" ? (
-            <div className="flex flex-col gap-2 border-t border-border/50 pt-3 dark:border-white/[0.08]">
-              <div className="flex items-center justify-between px-1">
-                <span className="text-xs font-medium text-muted-foreground">
-                  {tCommon("theme")}
-                </span>
-                <div className="flex items-center gap-1">
-                  <LanguageSwitcher />
-                  <ThemeToggle />
-                </div>
+          <HeaderNavigation mobile onNavigate={closeMenu} />
+          <div className="flex flex-col gap-2 border-t border-border/50 pt-3 dark:border-white/[0.08]">
+            <div className="flex items-center justify-between px-1">
+              <span className="text-xs font-medium text-muted-foreground">
+                {tCommon("theme")}
+              </span>
+              <div className="flex items-center gap-1">
+                <LanguageSwitcher />
+                <ThemeToggle />
               </div>
-              <Button
-                variant="outline"
-                asChild
-                className="h-9 w-full rounded-full border-border/60 bg-transparent text-sm font-medium dark:border-white/10"
-              >
-                <Link href="/login" onClick={closeMenu}>
-                  {t("login")}
-                </Link>
-              </Button>
-              <Button
-                asChild
-                className="h-9 w-full rounded-full bg-blue-600 text-sm font-semibold text-white shadow-xs hover:bg-blue-700"
-              >
-                <Link href="/register" onClick={closeMenu}>
-                  {t("register")}
-                </Link>
-              </Button>
             </div>
-          ) : (
-            <div className="space-y-1 border-t border-border/50 pt-3 dark:border-white/[0.08]">
-              <Link
-                href={
-                  role === "FREELANCER"
-                    ? "/freelancer/conversations"
-                    : role === "CLIENT"
-                      ? "/client/conversations"
-                      : "/conversations"
-                }
-                onClick={closeMenu}
-                className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-[13px] font-medium text-foreground/60 transition-colors hover:bg-black/[0.04] hover:text-foreground dark:text-foreground/65 dark:hover:bg-white/[0.06]"
-              >
-                <MessageSquare className="size-4 text-muted-foreground" />
-                {t("conversations")}
+            <Button
+              variant="outline"
+              asChild
+              className="h-9 w-full rounded-full border-border/60 bg-transparent text-sm font-medium dark:border-white/10"
+            >
+              <Link href="/login" onClick={closeMenu}>
+                {t("login")}
               </Link>
-              <MobileProfileNavigation role={role} onNavigate={closeMenu} />
-              <div className="px-3 pt-1 text-[11px] font-medium uppercase tracking-wider text-muted-foreground/60">
-                {t(`roles.${roleConfig[role].nameKey}`)}
-              </div>
-            </div>
-          )}
+            </Button>
+            <Button
+              asChild
+              className="h-9 w-full rounded-full bg-zinc-950 text-white hover:bg-zinc-800 dark:bg-white dark:text-zinc-950 text-sm font-semibold shadow-xs"
+            >
+              <Link href="/register" onClick={closeMenu}>
+                {t("register")}
+              </Link>
+            </Button>
+          </div>
         </div>
       )}
     </header>

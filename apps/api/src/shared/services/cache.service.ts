@@ -5,10 +5,21 @@ type CacheEntry<T> = {
   expiresAt: number;
 };
 
+const MAX_CACHE_ENTRIES = 2000;
+
 @Injectable()
 export class CacheService {
   private readonly logger = new Logger(CacheService.name);
   private readonly store = new Map<string, CacheEntry<unknown>>();
+
+  private sweepExpired(): void {
+    const now = Date.now();
+    for (const [key, entry] of this.store.entries()) {
+      if (now > entry.expiresAt) {
+        this.store.delete(key);
+      }
+    }
+  }
 
   /**
    * Lấy giá trị từ cache theo key. Trả về undefined nếu không tồn tại hoặc đã hết hạn.
@@ -27,9 +38,22 @@ export class CacheService {
 
   /**
    * Lưu giá trị vào cache với thời gian sống (TTL) tính bằng giây.
+   * Giới hạn tối đa MAX_CACHE_ENTRIES để tránh rò rỉ bộ nhớ (OOM).
    */
   set<T>(key: string, value: T, ttlSeconds: number): void {
     if (ttlSeconds <= 0) return;
+
+    if (this.store.has(key)) {
+      this.store.delete(key);
+    } else if (this.store.size >= MAX_CACHE_ENTRIES) {
+      this.sweepExpired();
+      while (this.store.size >= MAX_CACHE_ENTRIES) {
+        const oldest = this.store.keys().next();
+        if (oldest.done) break;
+        this.store.delete(oldest.value);
+      }
+    }
+
     this.store.set(key, {
       value,
       expiresAt: Date.now() + ttlSeconds * 1000,

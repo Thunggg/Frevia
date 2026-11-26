@@ -1,8 +1,6 @@
 import { createZodDto } from 'nestjs-zod';
 
 import {
-  RecommendationFeedbackBodySchema,
-  RecommendationFeedbackResponseSchema,
   RecommendationExplanationSchema,
   RecommendationOutboxProcessResponseSchema,
   RecommendationReindexResponseSchema,
@@ -30,14 +28,6 @@ export class RecommendedFreelancerResponseDto extends createZodDto(
 
 export class RecommendationExplanationDto extends createZodDto(
   RecommendationExplanationSchema,
-) {}
-
-export class RecommendationFeedbackBodyDto extends createZodDto(
-  RecommendationFeedbackBodySchema,
-) {}
-
-export class RecommendationFeedbackResponseDto extends createZodDto(
-  RecommendationFeedbackResponseSchema,
 ) {}
 
 export class RecommendationReindexResponseDto extends createZodDto(

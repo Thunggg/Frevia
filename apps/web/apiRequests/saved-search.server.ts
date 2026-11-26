@@ -1,6 +1,6 @@
 import "server-only";
 
-import { cookies } from "next/headers";
+import { getServerAccessToken } from "@/lib/auth-session";
 
 import { envConfig } from "@/configs/validate-env";
 import type { ApiResponse, SavedSearchType } from "@shared/types";
@@ -8,10 +8,7 @@ import type { ApiResponse, SavedSearchType } from "@shared/types";
 async function savedSearchServerFetch<T>(url: string): Promise<T | null> {
   if (!envConfig?.NESTJS_API_URL) return null;
 
-  const cookieStore = await cookies();
-  const accessToken =
-    cookieStore.get("accessToken")?.value ??
-    cookieStore.get("access_token")?.value;
+  const accessToken = await getServerAccessToken();
 
   if (!accessToken) return null;
 

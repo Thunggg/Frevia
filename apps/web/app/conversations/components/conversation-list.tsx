@@ -53,7 +53,7 @@ export function ConversationList({ currentUserId }: ConversationListProps) {
   const t = useTranslations("chat");
   const tCommon = useTranslations("common");
   const format = useFormatter();
-  const { can } = useActionPermission();
+  const { can, isLoading: isPermissionLoading } = useActionPermission();
 
   const canViewConversations = can("GET", "/api/conversations");
   const canPinConversation = can("PATCH", "/api/conversations/:id/pin");
@@ -185,16 +185,16 @@ export function ConversationList({ currentUserId }: ConversationListProps) {
 
       {/* List */}
       <div className="flex-1 overflow-y-auto py-2">
-        {!canViewConversations ? (
+        {!isPermissionLoading && !canViewConversations ? (
           <div className="px-6 py-14 text-center">
             <div className="mx-auto mb-3 flex size-12 items-center justify-center rounded-full bg-[#F1F0F5] dark:bg-zinc-800 text-muted-foreground">
               <MessageSquare className="size-5" />
             </div>
             <p className="text-sm font-semibold text-foreground">
-              Không có quyền truy cập
+              {t("noPermissionTitle")}
             </p>
             <p className="mx-auto mt-1 max-w-xs text-xs text-muted-foreground">
-              Bạn không có quyền xem danh sách cuộc hội thoại (#131).
+              {t("noPermissionViewConversations")}
             </p>
           </div>
         ) : isLoading ? (

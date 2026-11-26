@@ -35,19 +35,19 @@ export const request = async <T>(
     body: body ? JSON.stringify(body) : undefined,
   });
 
+  const rawText = await res.text().catch(() => "");
   let data: unknown;
 
   try {
-    data = await res.json();
+    data = rawText ? JSON.parse(rawText) : null;
   } catch {
-    const text = await res.text().catch(() => "");
     throw new ApiFail(
       {
         success: false,
         error: {
           code: String(res.status),
-          message: text
-            ? `Response is not valid JSON: ${text.slice(0, 300)}`
+          message: rawText
+            ? `Response is not valid JSON: ${rawText.slice(0, 300)}`
             : "Response is not valid JSON",
         },
         timestamp: new Date().toISOString(),
@@ -63,6 +63,10 @@ export const request = async <T>(
         window.location.pathname.startsWith("/register") ||
         window.location.pathname.startsWith("/forgot-password");
 
+      // Khách vãng lai trên trang public gọi /auth/me bị 401 là bình thường — không ép chuyển về /login.
+      const isSessionProbe =
+        formatUrl === "/auth/me" || formatUrl === "/api/auth/me";
+
       const errData = data as ApiError | undefined;
       const isBannedError =
         errData?.error?.message === "Error.UserBanned" ||
@@ -71,7 +75,8 @@ export const request = async <T>(
             errData.error.message.toLowerCase().includes("banned")));
 
       if (
-        (res.status === 401 || (res.status === 403 && isBannedError)) &&
+        ((res.status === 401 && !isSessionProbe) ||
+          (res.status === 403 && isBannedError)) &&
         !isAuthPage
       ) {
         window.location.href = `/login?redirect=${encodeURIComponent(

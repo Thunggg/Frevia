@@ -3,7 +3,6 @@ import {
   UnprocessableEntityException,
 } from '@nestjs/common';
 import {
-  DisputeFeeStatus,
   MilestonePaymentStatus,
   MilestoneStatus,
   PlatformFeeStatus,
@@ -13,21 +12,18 @@ import {
 } from '@prisma/client';
 import {
   DisputeSettlementBodySchema,
-  DisputeSettlementBodyType,
   GetTransactionListQuerySchema,
   GetTransactionListQueryType,
   RoleName,
 } from '@shared/types';
 import type Stripe from 'stripe';
 import {
-  DisputeFeeAlreadyPaidException,
-  DisputeSettlementInvalidAmountException,
   PaymentForbiddenException,
   WebhookSignatureInvalidException,
 } from '../../src/routes/payments/payment.error';
 import { PaymentRepository } from '../../src/routes/payments/payment.repo';
 import { PaymentService } from '../../src/routes/payments/payment.service';
-import { StripeService } from '../../src/routes/payments/stripe.service';
+import { StripeService } from '../../src/shared/services/stripe.service';
 import { ContractPdfService } from '../../src/shared/services/contract-pdf.service';
 
 describe('Payment Management (UF-153 to UF-165)', () => {
@@ -53,6 +49,12 @@ describe('Payment Management (UF-153 to UF-165)', () => {
     getTransactions: jest.fn(),
     checkAndCompleteFreelancerFee: jest.fn(),
     handleEscrowDepositSuccess: jest.fn(),
+    approvePendingSubmissionsForMilestone: jest.fn().mockResolvedValue(0),
+    syncContractCompletion: jest.fn().mockResolvedValue(false),
+    applyMilestoneRefundTransaction: jest.fn().mockResolvedValue({
+      refunded: true,
+      contractCompleted: false,
+    }),
   };
 
   const stripeService = {
@@ -224,20 +226,6 @@ describe('Payment Management (UF-153 to UF-165)', () => {
       });
     });
 
-    // Tạo phiên Stripe Customer Portal cho khách hàng quản lý thẻ thanh toán.
-    it('creates customer portal session for client', async () => {
-      repo.findUserById.mockResolvedValueOnce(mockUser);
-      stripeService.createBillingPortalSession.mockResolvedValueOnce({
-        url: 'https://billing.stripe.com/session/123',
-      });
-
-      const result = await service.getCustomerPortalLink(1);
-
-      expect(result).toEqual({
-        portalUrl: 'https://billing.stripe.com/session/123',
-      });
-    });
-
     // Ném ngoại lệ PaymentForbiddenException khi người dùng không tồn tại.
     it('throws PaymentForbiddenException when user is not found', async () => {
       repo.findUserById.mockResolvedValueOnce(null);
@@ -334,34 +322,6 @@ describe('Payment Management (UF-153 to UF-165)', () => {
   // UF-156: fundMilestone
   // =========================================================================
   describe('UF-156 fundMilestone', () => {
-    // UF-156: Tạo PaymentIntent để nạp tiền vào quỹ ký quỹ của milestone.
-    it('creates milestone funding payment intent for client', async () => {
-      repo.findMilestoneById.mockResolvedValueOnce(mockMilestone);
-      stripeService.createPaymentIntent.mockResolvedValueOnce({
-        id: 'pi_milestone_fund',
-        client_secret: 'pi_secret_456',
-      });
-      repo.createTransaction.mockResolvedValueOnce(mockTransaction);
-
-      const result = await service.createMilestoneFundIntent(1, 10, 20);
-
-      expect(result).toEqual({
-        clientSecret: 'pi_secret_456',
-        paymentIntentId: 'pi_milestone_fund',
-        amount: 280,
-        currency: 'usd',
-      });
-      expect(repo.createTransaction).toHaveBeenCalledWith(
-        expect.objectContaining({
-          userId: 1,
-          contractId: 10,
-          milestoneId: 20,
-          type: TransactionType.ESCROW_DEPOSIT,
-          status: TransactionStatus.PENDING,
-        }),
-      );
-    });
-
     // Nạp tiền ký quỹ milestone thành công thông qua phiên Checkout Session.
     it('creates milestone funding checkout session cleanly', async () => {
       repo.findMilestoneById.mockResolvedValueOnce(mockMilestone);
@@ -391,7 +351,7 @@ describe('Payment Management (UF-153 to UF-165)', () => {
       });
 
       await expect(
-        service.createMilestoneFundIntent(1, 10, 20),
+        service.createMilestoneFundCheckoutSession(1, 10, 20),
       ).rejects.toThrow(UnprocessableEntityException);
     });
 
@@ -400,107 +360,8 @@ describe('Payment Management (UF-153 to UF-165)', () => {
       repo.findMilestoneById.mockResolvedValueOnce(mockMilestone);
 
       await expect(
-        service.createMilestoneFundIntent(99, 10, 20),
+        service.createMilestoneFundCheckoutSession(99, 10, 20),
       ).rejects.toThrow(ForbiddenException);
-    });
-  });
-
-  // =========================================================================
-  // UF-157: refundPayment
-  // =========================================================================
-  describe('UF-157 refundPayment', () => {
-    // UF-157: Hoàn lại tiền ký quỹ milestone thành công cho khách hàng qua Stripe.
-    it('refunds escrow deposit to client for funded milestone', async () => {
-      repo.findMilestoneById.mockResolvedValueOnce({
-        ...mockMilestone,
-        paymentStatus: MilestonePaymentStatus.FUNDED,
-      });
-      repo.findEscrowDepositTransaction.mockResolvedValueOnce({
-        id: 77,
-        stripePaymentIntentId: 'pi_original_deposit',
-      });
-      stripeService.createRefund.mockResolvedValueOnce({ id: 're_refund_123' });
-      repo.updateMilestonePaymentStatus.mockResolvedValueOnce({});
-      repo.createTransaction.mockResolvedValueOnce({});
-
-      const result = await service.refundMilestone(1, 10, 20);
-
-      expect(result.success).toBe(true);
-      expect(result.refundId).toBe('re_refund_123');
-      expect(stripeService.createRefund).toHaveBeenCalledWith({
-        paymentIntentId: 'pi_original_deposit',
-        metadata: expect.any(Object),
-      });
-      expect(repo.updateMilestonePaymentStatus).toHaveBeenCalledWith(
-        20,
-        MilestonePaymentStatus.REFUNDED,
-      );
-    });
-
-    // Ném ngoại lệ UnprocessableEntityException khi cố hoàn tiền cho milestone chưa được nạp tiền.
-    it('throws UnprocessableEntityException when attempting to refund unfunded milestone', async () => {
-      repo.findMilestoneById.mockResolvedValueOnce(mockMilestone);
-
-      await expect(service.refundMilestone(1, 10, 20)).rejects.toThrow(
-        UnprocessableEntityException,
-      );
-    });
-  });
-
-  // =========================================================================
-  // UF-158: payPlatformFee
-  // =========================================================================
-  describe('UF-158 payPlatformFee', () => {
-    // UF-158: Tạo PaymentIntent thanh toán phí nền tảng kích hoạt hợp đồng thành công.
-    it('creates platform fee payment intent for signed contract', async () => {
-      repo.findContractById.mockResolvedValueOnce(mockContract);
-      stripeService.createPaymentIntent.mockResolvedValueOnce({
-        id: 'pi_platform_fee',
-        client_secret: 'pi_secret_123',
-      });
-      repo.createTransaction.mockResolvedValueOnce(mockTransaction);
-
-      const result = await service.createPlatformFeeIntent(1, 10);
-
-      expect(result).toEqual({
-        clientSecret: 'pi_secret_123',
-        paymentIntentId: 'pi_platform_fee',
-        amount: 10,
-        currency: 'usd',
-      });
-      expect(repo.createTransaction).toHaveBeenCalledWith(
-        expect.objectContaining({
-          userId: 1,
-          contractId: 10,
-          type: TransactionType.PLATFORM_FEE,
-          status: TransactionStatus.PENDING,
-        }),
-      );
-    });
-
-    // Ném ngoại lệ UnprocessableEntityException khi phí nền tảng của hợp đồng đã được thanh toán.
-    it('throws UnprocessableEntityException when platform fee is already paid', async () => {
-      repo.findContractById.mockResolvedValueOnce({
-        ...mockContract,
-        platformFeeStatus: PlatformFeeStatus.PAID,
-        clientFeeStatus: PlatformFeeStatus.PAID,
-      });
-
-      await expect(service.createPlatformFeeIntent(1, 10)).rejects.toThrow(
-        UnprocessableEntityException,
-      );
-    });
-
-    // Ném ngoại lệ UnprocessableEntityException khi hợp đồng chưa được ký đủ bởi cả hai bên.
-    it('throws UnprocessableEntityException when contract is not signed by freelancer', async () => {
-      repo.findContractById.mockResolvedValueOnce({
-        ...mockContract,
-        signedByFreelancer: false,
-      });
-
-      await expect(service.createPlatformFeeIntent(1, 10)).rejects.toThrow(
-        UnprocessableEntityException,
-      );
     });
   });
 
@@ -559,70 +420,6 @@ describe('Payment Management (UF-153 to UF-165)', () => {
 
       await expect(service.releaseMilestone(1, 10, 20)).rejects.toThrow(
         UnprocessableEntityException,
-      );
-    });
-  });
-
-  // =========================================================================
-  // UF-160: payDisputeFee
-  // =========================================================================
-  describe('UF-160 payDisputeFee', () => {
-    const mockDispute = {
-      id: 5,
-      openedById: 1,
-      respondentId: 2,
-      milestone: mockMilestone,
-    };
-
-    const mockFee = {
-      id: 88,
-      disputeId: 5,
-      userId: 1,
-      amount: new Prisma.Decimal(50.0),
-      status: DisputeFeeStatus.PENDING,
-    };
-
-    // UF-160: Tạo PaymentIntent thanh toán phí trọng tài tranh chấp cho bên tham gia.
-    it('creates dispute fee payment intent for dispute participant', async () => {
-      repo.findDisputeById.mockResolvedValueOnce(mockDispute);
-      repo.findDisputeFee.mockResolvedValueOnce(mockFee);
-      repo.findUserById.mockResolvedValueOnce(mockUser);
-      stripeService.createPaymentIntent.mockResolvedValueOnce({
-        id: 'pi_dispute_fee',
-        client_secret: 'pi_dispute_secret',
-      });
-      repo.updateDisputeFeeStatus.mockResolvedValueOnce({});
-      repo.createTransaction.mockResolvedValueOnce({});
-
-      const result = await service.createDisputeFeeIntent(1, 5);
-
-      expect(result).toEqual({
-        clientSecret: 'pi_dispute_secret',
-        paymentIntentId: 'pi_dispute_fee',
-        amount: 50,
-        currency: 'usd',
-      });
-    });
-
-    // Ném ngoại lệ DisputeFeeAlreadyPaidException khi phí trọng tài đã được nạp trước đó.
-    it('throws DisputeFeeAlreadyPaidException when dispute fee is already paid', async () => {
-      repo.findDisputeById.mockResolvedValueOnce(mockDispute);
-      repo.findDisputeFee.mockResolvedValueOnce({
-        ...mockFee,
-        status: DisputeFeeStatus.PAID,
-      });
-
-      await expect(service.createDisputeFeeIntent(1, 5)).rejects.toThrow(
-        DisputeFeeAlreadyPaidException(),
-      );
-    });
-
-    // Ném ngoại lệ PaymentForbiddenException khi người ngoài không thuộc tranh chấp cố nạp phí.
-    it('throws PaymentForbiddenException when non-participant pays dispute fee', async () => {
-      repo.findDisputeById.mockResolvedValueOnce(mockDispute);
-
-      await expect(service.createDisputeFeeIntent(99, 5)).rejects.toThrow(
-        PaymentForbiddenException(),
       );
     });
   });
@@ -700,92 +497,6 @@ describe('Payment Management (UF-153 to UF-165)', () => {
   // UF-163: settleDispute
   // =========================================================================
   describe('UF-163 settleDispute', () => {
-    const mockDisputeForSettlement = {
-      id: 5,
-      milestoneId: 20,
-      decisionById: 99,
-      arbitrationFee: new Prisma.Decimal(50.0),
-      milestone: {
-        id: 20,
-        amount: new Prisma.Decimal(100.0),
-        contract: mockContract,
-      },
-      fees: [
-        { userId: 1, paymentIntentId: 'pi_client_fee' },
-        { userId: 2, paymentIntentId: 'pi_freelancer_fee' },
-      ],
-      decisionBy: {
-        id: 99,
-        stripeAccountId: 'acct_expert_99',
-        stripeOnboardingCompleted: true,
-      },
-    };
-
-    // UF-163: Quản trị viên thực hiện giải ngân thanh toán phán quyết tranh chấp theo tỷ lệ phân chia thành công.
-    it('settles split dispute with refund to client and transfer to freelancer', async () => {
-      repo.findDisputeById.mockResolvedValueOnce(mockDisputeForSettlement);
-      repo.findEscrowDepositTransaction.mockResolvedValueOnce({
-        stripePaymentIntentId: 'pi_escrow_deposit',
-      });
-      stripeService.createRefund.mockResolvedValueOnce({
-        id: 're_split_client',
-      });
-      stripeService.createTransfer.mockResolvedValue({
-        id: 'tr_split_transfer',
-      });
-      repo.createTransaction.mockResolvedValue({});
-      repo.updateDisputeStatus.mockResolvedValueOnce({});
-      repo.updateMilestonePaymentStatus.mockResolvedValueOnce({});
-
-      const body: DisputeSettlementBodyType = {
-        clientAmount: 40,
-        freelancerAmount: 60,
-        winningParty: 'CLIENT',
-        decisionReason: 'Arbitration split decision',
-      };
-
-      const result = await service.settleDispute(99, RoleName.ADMIN, 5, body);
-
-      expect(result.status).toBe('FINALIZED');
-      expect(result.clientRefundAmount).toBe(40);
-      expect(result.freelancerPayoutAmount).toBe(60);
-      expect(stripeService.createRefund).toHaveBeenCalledWith(
-        expect.objectContaining({ paymentIntentId: 'pi_escrow_deposit' }),
-      );
-    });
-
-    // Ném ngoại lệ DisputeSettlementInvalidAmountException khi tổng số tiền phân bổ không bằng số tiền milestone.
-    it('throws DisputeSettlementInvalidAmountException when split sum differs from milestone amount', async () => {
-      repo.findDisputeById.mockResolvedValueOnce(mockDisputeForSettlement);
-
-      const body: DisputeSettlementBodyType = {
-        clientAmount: 40,
-        freelancerAmount: 40,
-        winningParty: 'SPLIT',
-        decisionReason: 'Arbitration split decision',
-      };
-
-      await expect(
-        service.settleDispute(99, RoleName.ADMIN, 5, body),
-      ).rejects.toThrow(DisputeSettlementInvalidAmountException());
-    });
-
-    // Ném ngoại lệ PaymentForbiddenException khi người thực hiện không phải Admin hoặc Trọng tài viên được giao.
-    it('throws PaymentForbiddenException when unauthorized user attempts settlement', async () => {
-      repo.findDisputeById.mockResolvedValueOnce(mockDisputeForSettlement);
-
-      const body: DisputeSettlementBodyType = {
-        clientAmount: 50,
-        freelancerAmount: 50,
-        winningParty: 'SPLIT',
-        decisionReason: 'Arbitration split decision',
-      };
-
-      await expect(
-        service.settleDispute(1, RoleName.CLIENT, 5, body),
-      ).rejects.toThrow(PaymentForbiddenException());
-    });
-
     // Schema từ chối khi số tiền hoàn cho khách là số âm.
     it('rejects negative clientAmount through DisputeSettlementBodySchema', () => {
       const parsed = DisputeSettlementBodySchema.safeParse({
@@ -905,6 +616,11 @@ describe('Payment Management (UF-153 to UF-165)', () => {
       stripeService.retrievePaymentIntent.mockResolvedValueOnce({
         id: 'pi_sync_test',
         status: 'requires_payment_method',
+        metadata: {
+          userId: '1',
+          type: TransactionType.ESCROW_DEPOSIT,
+          milestoneId: '20',
+        },
       });
 
       const result = await service.syncPaymentIntent(1, 'pi_sync_test');

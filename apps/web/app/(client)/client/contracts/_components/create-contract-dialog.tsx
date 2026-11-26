@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
-import { useFormatter } from "next-intl";
+import { useFormatter, useTranslations } from "next-intl";
 import { useQueryClient } from "@tanstack/react-query";
 import {
   Sheet,
@@ -55,7 +55,7 @@ interface MilestoneInputItem {
   id: string;
   title: string;
   description: string;
-  amount: number | "";
+  amount: number | string;
   dueDate: string;
 }
 
@@ -74,13 +74,14 @@ export function CreateContractDialog({
   jobId,
   jobTitle,
 }: CreateContractDialogProps) {
+  const t = useTranslations("createContract");
   const router = useRouter();
   const queryClient = useQueryClient();
   const format = useFormatter();
   const { can } = useActionPermission();
   const canCreateContract = can("POST", "/api/contracts");
 
-  const [totalAmount, setTotalAmount] = useState<number | "">(0);
+  const [totalAmount, setTotalAmount] = useState<number | string>("");
   const [expiresAt, setExpiresAt] = useState<string>("");
   const [terms, setTerms] = useState<string>("");
   const [milestones, setMilestones] = useState<MilestoneInputItem[]>([]);
@@ -89,34 +90,33 @@ export function CreateContractDialog({
   // Khởi tạo dữ liệu form khi proposal thay đổi hoặc sheet mở
   useEffect(() => {
     if (proposal && open) {
-      const bid = Number(proposal.bidAmount) || 0;
-      setTotalAmount(bid);
-      setTerms(
-        `Scope of work based on proposal for "${jobTitle}". All deliverables are subject to client review and approval.`,
-      );
+      const bid = Number(proposal.bidAmount);
+      const initialBid = !isNaN(bid) && bid > 0 ? String(bid) : "";
+      setTotalAmount(initialBid);
+      setTerms(t("defaultTerms", { jobTitle }));
       setExpiresAt("");
 
       // Mặc định tạo 1 milestone đầu tiên ứng với toàn bộ số tiền đề xuất
       setMilestones([
         {
           id: `m-${Date.now()}-1`,
-          title: `${jobTitle} - Milestone 1`,
-          description: "Project deliverables and completion",
-          amount: bid,
+          title: t("defaultMilestoneTitle", { jobTitle }),
+          description: t("defaultMilestoneDesc"),
+          amount: initialBid,
           dueDate: "",
         },
       ]);
     }
-  }, [proposal, jobTitle, open]);
+  }, [proposal, jobTitle, open, t]);
 
   // Khi người dùng đổi totalAmount và chỉ có 1 milestone duy nhất, tự đồng bộ số tiền milestone
-  const handleTotalAmountChange = (newVal: number | "") => {
+  const handleTotalAmountChange = (newVal: number | string) => {
     setTotalAmount(newVal);
     if (milestones.length === 1) {
       setMilestones((prev) => [
         {
           ...prev[0]!,
-          amount: newVal === "" ? "" : newVal,
+          amount: newVal,
         },
       ]);
     }
@@ -125,12 +125,12 @@ export function CreateContractDialog({
   // Tính tổng số tiền các milestones
   const milestonesTotal = useMemo(() => {
     return milestones.reduce((sum, item) => {
-      const val = typeof item.amount === "number" ? item.amount : 0;
+      const val = typeof item.amount === "number" ? item.amount : parseFloat(item.amount) || 0;
       return sum + val;
     }, 0);
   }, [milestones]);
 
-  const targetAmount = typeof totalAmount === "number" ? totalAmount : 0;
+  const targetAmount = typeof totalAmount === "number" ? totalAmount : parseFloat(totalAmount) || 0;
   const isBudgetValid = targetAmount > 0;
   const isAmountMatch = Math.abs(milestonesTotal - targetAmount) < 0.01;
   const amountDiff = Math.round((targetAmount - milestonesTotal) * 100) / 100;
@@ -143,7 +143,7 @@ export function CreateContractDialog({
       ...prev,
       {
         id: `m-${Date.now()}-${nextIndex}`,
-        title: `Milestone ${nextIndex}`,
+        title: t("milestoneDefaultName", { index: nextIndex }),
         description: "",
         amount: remaining > 0 ? remaining : 0,
         dueDate: "",
@@ -173,23 +173,26 @@ export function CreateContractDialog({
     if (!proposal || !canCreateContract) return;
 
     if (!isBudgetValid) {
-      toastError({ message: "Total contract budget must be greater than 0" });
+      toastError({ message: t("validation.budgetRequired") });
       return;
     }
 
     if (!expiresAt) {
-      toastError({ message: "Please select a contract end date" });
+      toastError({ message: t("validation.endDateRequired") });
       return;
     }
 
     if (expiresAt < todayStr) {
-      toastError({ message: "Contract end date cannot be in the past" });
+      toastError({ message: t("validation.endDatePast") });
       return;
     }
 
     if (!isAmountMatch) {
       toastError({
-        message: `Total milestone amount ($${milestonesTotal}) must equal contract total budget ($${targetAmount})`,
+        message: t("validation.amountMismatch", {
+          milestonesTotal,
+          targetAmount,
+        }),
       });
       return;
     }
@@ -198,30 +201,33 @@ export function CreateContractDialog({
       const m = milestones[i];
       if (!m) continue;
       if (!m.title.trim()) {
-        toastError({ message: `Please enter a title for Milestone ${i + 1}` });
+        toastError({
+          message: t("validation.milestoneTitleRequired", { index: i + 1 }),
+        });
         return;
       }
-      if (typeof m.amount !== "number" || m.amount <= 0) {
+      const numAmount = typeof m.amount === "number" ? m.amount : parseFloat(m.amount);
+      if (isNaN(numAmount) || numAmount <= 0) {
         toastError({
-          message: `Milestone ${i + 1} amount must be greater than 0`,
+          message: t("validation.milestoneAmountRequired", { index: i + 1 }),
         });
         return;
       }
       if (!m.dueDate) {
         toastError({
-          message: `Please select a due date for Milestone ${i + 1}`,
+          message: t("validation.milestoneDueDateRequired", { index: i + 1 }),
         });
         return;
       }
       if (m.dueDate < todayStr) {
         toastError({
-          message: `Milestone ${i + 1} due date cannot be in the past`,
+          message: t("validation.milestoneDueDatePast", { index: i + 1 }),
         });
         return;
       }
       if (m.dueDate > expiresAt) {
         toastError({
-          message: `Milestone ${i + 1} due date cannot exceed the contract end date`,
+          message: t("validation.milestoneDueDateExceeds", { index: i + 1 }),
         });
         return;
       }
@@ -249,12 +255,11 @@ export function CreateContractDialog({
         queryKey: ["client-job-proposals", jobId],
       });
       await queryClient.invalidateQueries({
-        queryKey: ["client-contracts"],
+        queryKey: ["contracts-list"],
       });
 
       toastSuccess({
-        message:
-          "Contract created successfully! Freelancer has been hired and proposal updated.",
+        message: t("createdAndHired"),
       });
 
       onOpenChange(false);
@@ -269,7 +274,7 @@ export function CreateContractDialog({
         message:
           error instanceof ApiFail
             ? error.response.error.message
-            : "Failed to create contract. Please check input and try again.",
+            : t("createFailedDetailed"),
       });
     } finally {
       setIsSubmitting(false);
@@ -286,11 +291,10 @@ export function CreateContractDialog({
       >
         <SheetHeader className="px-6 pr-12 py-5 border-b border-border/60 bg-background shrink-0 text-left">
           <SheetTitle className="text-lg font-bold text-foreground tracking-tight">
-            Create Contract & Hire Freelancer
+            {t("dialogTitle")}
           </SheetTitle>
           <SheetDescription className="text-xs text-muted-foreground mt-0.5">
-            Setup contract terms, budget, and milestones for{" "}
-            <span className="font-semibold text-foreground">{jobTitle}</span>.
+            {t("dialogDescription", { jobTitle })}
           </SheetDescription>
         </SheetHeader>
 
@@ -316,20 +320,20 @@ export function CreateContractDialog({
                       {proposal.freelancer.displayName}
                     </h4>
                     <p className="text-xs text-muted-foreground">
-                      {proposal.freelancer.title || "Freelancer"}
+                      {proposal.freelancer.title || t("freelancerFallbackTitle")}
                     </p>
                   </div>
                 </div>
 
                 <div className="text-right">
                   <span className="text-[11px] text-muted-foreground block">
-                    Proposal Bid
+                    {t("proposalBid")}
                   </span>
                   <span className="text-base font-bold text-foreground font-mono">
                     ${format.number(proposal.bidAmount)}
                   </span>
                   <span className="text-[11px] text-muted-foreground block">
-                    Est. {proposal.deliveryDays} days
+                    {t("estDays", { days: proposal.deliveryDays })}
                   </span>
                 </div>
               </div>
@@ -338,34 +342,37 @@ export function CreateContractDialog({
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div>
                   <label className="block text-xs font-semibold text-foreground mb-1.5">
-                    Total Contract Budget (USD){" "}
+                    {t("totalBudgetLabel")}{" "}
                     <span className="text-red-500">*</span>
                   </label>
                   <div className="relative">
                     <DollarSign className="absolute left-3 top-2.5 size-4 text-muted-foreground" />
                     <Input
-                      type="number"
-                      min={1}
-                      step="0.01"
+                      type="text"
+                      inputMode="decimal"
                       required
                       value={totalAmount}
-                      onChange={(e) =>
-                        handleTotalAmountChange(
-                          e.target.value === "" ? "" : Number(e.target.value),
-                        )
-                      }
+                      onFocus={(e) => e.target.select()}
+                      onChange={(e) => {
+                        let val = e.target.value.replace(/[^\d.]/g, "");
+                        if (/^0\d/.test(val)) {
+                          val = val.replace(/^0+/, "");
+                          if (val === "") val = "0";
+                        }
+                        handleTotalAmountChange(val);
+                      }}
                       className="pl-9 h-10 text-sm rounded-xl font-medium border-border/70 focus-visible:ring-[#0069D3]"
-                      placeholder="e.g. 500"
+                      placeholder={t("amountPlaceholder")}
                     />
                   </div>
                   <p className="mt-1.5 text-[11px] text-muted-foreground">
-                    Client authorizes at least 1 milestone (or all) + 3% contract fee hold before signing; Freelancer is charged 5% per released milestone.
+                    {t("totalBudgetHint")}
                   </p>
                 </div>
 
                 <div>
                   <label className="block text-xs font-semibold text-foreground mb-1.5">
-                    Contract End Date <span className="text-red-500">*</span>
+                    {t("endDateLabel")} <span className="text-red-500">*</span>
                   </label>
                   <div className="relative">
                     <Calendar className="absolute left-3 top-2.5 size-4 text-muted-foreground" />
@@ -379,7 +386,7 @@ export function CreateContractDialog({
                     />
                   </div>
                   <p className="mt-1.5 text-[11px] text-muted-foreground">
-                    Required contract expiration date. All milestones must be completed by this date.
+                    {t("endDateHint")}
                   </p>
                 </div>
               </div>
@@ -389,14 +396,13 @@ export function CreateContractDialog({
                 <div className="flex items-center justify-between gap-2">
                   <div>
                     <h4 className="text-sm font-bold text-foreground flex items-center gap-1.5">
-                      Contract Milestones
+                      {t("milestonesHeading")}
                       <span className="text-xs font-medium text-muted-foreground">
                         ({milestones.length})
                       </span>
                     </h4>
                     <p className="text-xs text-muted-foreground mt-0.5">
-                      Define deliverables and payment stages. Freelancer fee
-                      (5%) applies upon release.
+                      {t("milestonesSubtitle")}
                     </p>
                   </div>
 
@@ -408,7 +414,7 @@ export function CreateContractDialog({
                     className="rounded-full h-8 text-xs font-semibold border-[#0069D3]/40 text-[#0069D3] hover:bg-[#0069D3]/5 gap-1 cursor-pointer shrink-0 transition-colors"
                   >
                     <Plus className="size-3.5" />
-                    Add Milestone
+                    {t("addMilestone")}
                   </Button>
                 </div>
 
@@ -440,7 +446,9 @@ export function CreateContractDialog({
                                   e.target.value,
                                 )
                               }
-                              placeholder={`Milestone ${idx + 1} Title (required)`}
+                              placeholder={t("milestoneTitlePlaceholder", {
+                                index: idx + 1,
+                              })}
                               className="h-8 text-xs font-medium rounded-lg flex-1 border-border/70 focus-visible:ring-[#0069D3]"
                             />
                           </div>
@@ -449,21 +457,24 @@ export function CreateContractDialog({
                             <div className="relative flex-1">
                               <DollarSign className="absolute left-2.5 top-2 size-3 text-muted-foreground" />
                               <Input
-                                type="number"
-                                min={1}
-                                step="0.01"
+                                type="text"
+                                inputMode="decimal"
                                 required
                                 value={m.amount}
-                                onChange={(e) =>
+                                onFocus={(e) => e.target.select()}
+                                onChange={(e) => {
+                                  let val = e.target.value.replace(/[^\d.]/g, "");
+                                  if (/^0\d/.test(val)) {
+                                    val = val.replace(/^0+/, "");
+                                    if (val === "") val = "0";
+                                  }
                                   handleMilestoneChange(
                                     m.id,
                                     "amount",
-                                    e.target.value === ""
-                                      ? ""
-                                      : Number(e.target.value),
-                                  )
-                                }
-                                placeholder="Amount"
+                                    val,
+                                  );
+                                }}
+                                placeholder={t("amountFieldPlaceholder")}
                                 className="pl-7 h-8 text-xs font-semibold rounded-lg text-right border-border/70 focus-visible:ring-[#0069D3]"
                               />
                             </div>
@@ -494,7 +505,7 @@ export function CreateContractDialog({
                                   e.target.value,
                                 )
                               }
-                              placeholder="Deliverables description (optional)"
+                              placeholder={t("deliverablesPlaceholder")}
                               className="h-8 text-xs rounded-lg border-border/70 focus-visible:ring-[#0069D3]"
                             />
                           </div>
@@ -504,7 +515,9 @@ export function CreateContractDialog({
                               required
                               min={todayStr}
                               max={expiresAt || undefined}
-                              aria-label={`Milestone ${idx + 1} Due Date`}
+                              aria-label={t("milestoneDueDateAria", {
+                                index: idx + 1,
+                              })}
                               value={m.dueDate}
                               onChange={(e) =>
                                 handleMilestoneChange(
@@ -524,7 +537,7 @@ export function CreateContractDialog({
 
                         {isDateExceeding && (
                           <p className="pl-6 text-[11px] font-medium text-rose-600 dark:text-rose-400">
-                            Due date cannot exceed contract end date ({expiresAt}).
+                            {t("dueDateExceedsError", { date: expiresAt })}
                           </p>
                         )}
                       </div>
@@ -548,10 +561,14 @@ export function CreateContractDialog({
                     )}
                     <span>
                       {isAmountMatch
-                        ? "Milestone amounts match total budget perfectly"
+                        ? t("milestonesMatchBudget")
                         : amountDiff > 0
-                          ? `Remaining to allocate: $${amountDiff.toLocaleString()}`
-                          : `Milestones exceed budget by: $${Math.abs(amountDiff).toLocaleString()}`}
+                          ? t("remainingToAllocate", {
+                              amount: amountDiff.toLocaleString(),
+                            })
+                          : t("milestonesExceedBudget", {
+                              amount: Math.abs(amountDiff).toLocaleString(),
+                            })}
                     </span>
                   </div>
                   <div className="font-semibold text-foreground tabular-nums">
@@ -564,14 +581,14 @@ export function CreateContractDialog({
               {/* Terms / Scope of Work */}
               <div className="pt-4 border-t border-border/60">
                 <label className="block text-xs font-semibold text-foreground mb-1.5">
-                  Contract Terms & Scope of Work
+                  {t("termsSectionLabel")}
                 </label>
                 <Textarea
                   rows={4}
                   value={terms}
                   onChange={(e) => setTerms(e.target.value)}
                   className="text-xs rounded-xl resize-none leading-relaxed border-border/70 focus-visible:ring-[#0069D3]"
-                  placeholder="Describe deliverables, expectations, acceptance criteria..."
+                  placeholder={t("termsSectionPlaceholder")}
                 />
               </div>
             </div>
@@ -585,7 +602,7 @@ export function CreateContractDialog({
                 onClick={() => onOpenChange(false)}
                 className="rounded-full text-xs font-medium h-9 px-5 border-border/80 cursor-pointer"
               >
-                Cancel
+                {t("cancel")}
               </Button>
 
               <Button
@@ -598,7 +615,7 @@ export function CreateContractDialog({
                 ) : (
                   <FileText className="mr-1.5 size-3.5" />
                 )}
-                Create & Hire Freelancer
+                {t("createAndHire")}
               </Button>
             </SheetFooter>
           </form>

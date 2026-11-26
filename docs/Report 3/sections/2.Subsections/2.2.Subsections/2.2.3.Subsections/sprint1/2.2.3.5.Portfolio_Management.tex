@@ -1,25 +1,28 @@
 % Nhuy -- canonical use-case identifiers, 08/11/2026
+\Needspace{12\baselineskip}
 \paragraph{Portfolio Management}
-\Needspace{8\baselineskip}
-\subparagraph{UC-09.01 View Portfolio List}
+\Needspace{12\baselineskip}
+\subparagraph{UC-09.01 View Portfolios List}
 
 {\singlespacing
 \setlength{\extrarowheight}{3pt}
+\Needspace{12\baselineskip}
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{L{11.1cm}|}{UC-09.01 View Portfolios List} \\* \hline
 \endfirsthead
 \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{L{11.1cm}|}{UC-09.01 View Portfolios List \textit{(cont.)}} \\* \hline
 \endhead
 \hline\endfoot
 \endlastfoot
-UC ID and Name & \multicolumn{3}{L{11.1cm}|}{UC-09.01 View Portfolio List} \\ \hline
 Created By: & \multicolumn{3}{L{11.1cm}|}{Nguyen Lu Nhat Huy; updated 08/11/2026} \\ \hline
 Primary Actor: & \multicolumn{3}{L{11.1cm}|}{Guest, Client, Freelancer} \\ \hline
-Trigger: & \multicolumn{3}{L{11.1cm}|}{The actor selects View Portfolio List from /profiles/[id]; /freelancer/profile.} \\ \hline
-Description: & \multicolumn{3}{L{11.1cm}|}{List only non-deleted PortfolioItem records of the selected freelancer.} \\ \hline
+Trigger: & \multicolumn{3}{L{11.1cm}|}{The actor selects View Portfolios List from /profiles/[id]; /freelancer/profile.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{List only non-deleted PortfolioItem records of the selected freelancer.} \\ \hline
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{The requested active profile or item exists. The relevant database and dependent services are available.} \\ \hline
 Post-conditions: & \multicolumn{3}{L{11.1cm}|}{Authorized data is displayed without modifying the underlying records.} \\ \hline
-Normal Flow: & \multicolumn{3}{L{11.1cm}|}{1. The actor opens /profiles/[id]; /freelancer/profile and selects View Portfolio List. \newline 2. The application submits the selected identifier or list filters. \newline 3. The API checks authentication where required, authorization, resource existence and input validity. \newline 4. List only non-deleted PortfolioItem records of the selected freelancer. \newline 5. The screen renders the response, or an explicit empty state for a valid empty collection.} \\ \hline
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{1. The actor opens /profiles/[id]; /freelancer/profile and selects View Portfolios List. \newline 2. The application submits the selected identifier or list filters. \newline 3. The API checks authentication where required, authorization, resource existence and input validity. \newline 4. List only non-deleted PortfolioItem records of the selected freelancer. \newline 5. The screen renders the response, or an explicit empty state for a valid empty collection.} \\ \hline
 Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{No matching records: display an empty state. A failed request offers Retry.} \\ \hline
 Exceptions: & \multicolumn{3}{L{11.1cm}|}{\textbf{E1:} Missing or expired authentication, or insufficient role/ownership: deny the operation and do not change data. \newline \textbf{E2:} Missing, deleted or inaccessible resource: show a not-found result. \newline \textbf{A1:} A valid empty collection displays an empty state; it must not be treated as a missing account. \newline \textbf{E4:} Database, network or storage failure: report a retryable error; do not report success or terminate the API process.} \\ \hline
 Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
@@ -30,23 +33,25 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{This specification defines the requir
 \end{longtable}
 }
 
-\Needspace{8\baselineskip}
+\Needspace{12\baselineskip}
 \subparagraph{UC-09.02 Add Portfolio}
 
 {\singlespacing
 \setlength{\extrarowheight}{3pt}
+\Needspace{12\baselineskip}
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{L{11.1cm}|}{UC-09.02 Add Portfolio} \\* \hline
 \endfirsthead
 \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{L{11.1cm}|}{UC-09.02 Add Portfolio \textit{(cont.)}} \\* \hline
 \endhead
 \hline\endfoot
 \endlastfoot
-UC ID and Name & \multicolumn{3}{L{11.1cm}|}{UC-09.02 Add Portfolio} \\ \hline
 Created By: & \multicolumn{3}{L{11.1cm}|}{Nguyen Lu Nhat Huy; updated 08/11/2026} \\ \hline
 Primary Actor: & \multicolumn{3}{L{11.1cm}|}{Freelancer} \\ \hline
 Trigger: & \multicolumn{3}{L{11.1cm}|}{The actor selects Add Portfolio from /profiles/[id]; /freelancer/profile.} \\ \hline
-Description: & \multicolumn{3}{L{11.1cm}|}{Create an owned portfolio item with title, description, technologies and project link.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Create an owned portfolio item with title, description, technologies and project link.} \\ \hline
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{The actor is authenticated and has the required role and resource permission. The relevant database and dependent services are available.} \\ \hline
 Post-conditions: & \multicolumn{3}{L{11.1cm}|}{Create an owned portfolio item with title, description, technologies and project link.} \\ \hline
 Normal Flow: & \multicolumn{3}{L{11.1cm}|}{1. The actor opens /profiles/[id]; /freelancer/profile and selects Add Portfolio. \newline 2. The application presents the current values or action confirmation; the actor supplies the required data and submits. \newline 3. The API checks authentication where required, authorization, resource existence and input validity. \newline 4. Create an owned portfolio item with title, description, technologies and project link. \newline 5. After the transaction succeeds, the screen displays the result and reloads affected data; a pending revision is labeled as awaiting review.} \\ \hline
@@ -60,26 +65,28 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{This specification defines the requir
 \end{longtable}
 }
 
-\Needspace{8\baselineskip}
-\subparagraph{UC-09.03 View Portfolio Detail}
+\Needspace{12\baselineskip}
+\subparagraph{UC-09.03 View Portfolio Details}
 
 {\singlespacing
 \setlength{\extrarowheight}{3pt}
+\Needspace{12\baselineskip}
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{L{11.1cm}|}{UC-09.03 View Portfolio Details} \\* \hline
 \endfirsthead
 \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{L{11.1cm}|}{UC-09.03 View Portfolio Details \textit{(cont.)}} \\* \hline
 \endhead
 \hline\endfoot
 \endlastfoot
-UC ID and Name & \multicolumn{3}{L{11.1cm}|}{UC-09.03 View Portfolio Detail} \\ \hline
 Created By: & \multicolumn{3}{L{11.1cm}|}{Nguyen Lu Nhat Huy; updated 08/11/2026} \\ \hline
 Primary Actor: & \multicolumn{3}{L{11.1cm}|}{Guest, Client, Freelancer} \\ \hline
-Trigger: & \multicolumn{3}{L{11.1cm}|}{The actor selects View Portfolio Detail from /profiles/[id]; /freelancer/profile.} \\ \hline
-Description: & \multicolumn{3}{L{11.1cm}|}{Display a single non-deleted portfolio item and its external project link.} \\ \hline
+Trigger: & \multicolumn{3}{L{11.1cm}|}{The actor selects View Portfolio Details from /profiles/[id]; /freelancer/profile.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Display a single non-deleted portfolio item and its external project link.} \\ \hline
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{The requested active profile or item exists. The relevant database and dependent services are available.} \\ \hline
 Post-conditions: & \multicolumn{3}{L{11.1cm}|}{Authorized data is displayed without modifying the underlying records.} \\ \hline
-Normal Flow: & \multicolumn{3}{L{11.1cm}|}{1. The actor opens /profiles/[id]; /freelancer/profile and selects View Portfolio Detail. \newline 2. The application submits the selected identifier or list filters. \newline 3. The API checks authentication where required, authorization, resource existence and input validity. \newline 4. Display a single non-deleted portfolio item and its external project link. \newline 5. The screen renders the response, or an explicit empty state for a valid empty collection.} \\ \hline
+Normal Flow: & \multicolumn{3}{L{11.1cm}|}{1. The actor opens /profiles/[id]; /freelancer/profile and selects View Portfolio Details. \newline 2. The application submits the selected identifier or list filters. \newline 3. The API checks authentication where required, authorization, resource existence and input validity. \newline 4. Display a single non-deleted portfolio item and its external project link. \newline 5. The screen renders the response, or an explicit empty state for a valid empty collection.} \\ \hline
 Alternative Flows: & \multicolumn{3}{L{11.1cm}|}{No matching records: display an empty state. A failed request offers Retry.} \\ \hline
 Exceptions: & \multicolumn{3}{L{11.1cm}|}{\textbf{E1:} Missing or expired authentication, or insufficient role/ownership: deny the operation and do not change data. \newline \textbf{E2:} Missing, deleted or inaccessible resource: show a not-found result. \newline \textbf{A1:} A valid empty collection displays an empty state; it must not be treated as a missing account. \newline \textbf{E4:} Database, network or storage failure: report a retryable error; do not report success or terminate the API process.} \\ \hline
 Priority: & \multicolumn{3}{L{11.1cm}|}{Medium} \\ \hline
@@ -90,23 +97,25 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{This specification defines the requir
 \end{longtable}
 }
 
-\Needspace{8\baselineskip}
+\Needspace{12\baselineskip}
 \subparagraph{UC-09.04 Update Portfolio}
 
 {\singlespacing
 \setlength{\extrarowheight}{3pt}
+\Needspace{12\baselineskip}
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{L{11.1cm}|}{UC-09.04 Update Portfolio} \\* \hline
 \endfirsthead
 \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{L{11.1cm}|}{UC-09.04 Update Portfolio \textit{(cont.)}} \\* \hline
 \endhead
 \hline\endfoot
 \endlastfoot
-UC ID and Name & \multicolumn{3}{L{11.1cm}|}{UC-09.04 Update Portfolio} \\ \hline
 Created By: & \multicolumn{3}{L{11.1cm}|}{Nguyen Lu Nhat Huy; updated 08/11/2026} \\ \hline
 Primary Actor: & \multicolumn{3}{L{11.1cm}|}{Freelancer} \\ \hline
 Trigger: & \multicolumn{3}{L{11.1cm}|}{The actor selects Update Portfolio from /profiles/[id]; /freelancer/profile.} \\ \hline
-Description: & \multicolumn{3}{L{11.1cm}|}{Save validated edits on an owned, non-deleted portfolio item.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Save validated edits on an owned, non-deleted portfolio item.} \\ \hline
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{The actor is authenticated and has the required role and resource permission. The relevant database and dependent services are available.} \\ \hline
 Post-conditions: & \multicolumn{3}{L{11.1cm}|}{Save validated edits on an owned, non-deleted portfolio item.} \\ \hline
 Normal Flow: & \multicolumn{3}{L{11.1cm}|}{1. The actor opens /profiles/[id]; /freelancer/profile and selects Update Portfolio. \newline 2. The application presents the current values or action confirmation; the actor supplies the required data and submits. \newline 3. The API checks authentication where required, authorization, resource existence and input validity. \newline 4. Save validated edits on an owned, non-deleted portfolio item. \newline 5. After the transaction succeeds, the screen displays the result and reloads affected data; a pending revision is labeled as awaiting review.} \\ \hline
@@ -120,23 +129,25 @@ Assumptions: & \multicolumn{3}{L{11.1cm}|}{This specification defines the requir
 \end{longtable}
 }
 
-\Needspace{8\baselineskip}
+\Needspace{12\baselineskip}
 \subparagraph{UC-09.05 Delete Portfolio}
 
 {\singlespacing
 \setlength{\extrarowheight}{3pt}
+\Needspace{12\baselineskip}
 \begin{longtable}{|L{3.2cm}|L{4.1cm}|L{2.7cm}|L{4.1cm}|}
 \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{L{11.1cm}|}{UC-09.05 Delete Portfolio} \\* \hline
 \endfirsthead
 \hline
+\rowcolor{fptHeader}UC ID and Name & \multicolumn{3}{L{11.1cm}|}{UC-09.05 Delete Portfolio \textit{(cont.)}} \\* \hline
 \endhead
 \hline\endfoot
 \endlastfoot
-UC ID and Name & \multicolumn{3}{L{11.1cm}|}{UC-09.05 Delete Portfolio} \\ \hline
 Created By: & \multicolumn{3}{L{11.1cm}|}{Nguyen Lu Nhat Huy; updated 08/11/2026} \\ \hline
 Primary Actor: & \multicolumn{3}{L{11.1cm}|}{Freelancer} \\ \hline
 Trigger: & \multicolumn{3}{L{11.1cm}|}{The actor selects Delete Portfolio from /profiles/[id]; /freelancer/profile.} \\ \hline
-Description: & \multicolumn{3}{L{11.1cm}|}{Set deletedAt and remove the item from active list and detail results.} \\ \hline
+Description: & \multicolumn{3}{p{11.1cm}|}{Set deletedAt and remove the item from active list and detail results.} \\ \hline
 Preconditions: & \multicolumn{3}{L{11.1cm}|}{The actor is authenticated and has the required role and resource permission. The relevant database and dependent services are available.} \\ \hline
 Post-conditions: & \multicolumn{3}{L{11.1cm}|}{Set deletedAt and remove the item from active list and detail results.} \\ \hline
 Normal Flow: & \multicolumn{3}{L{11.1cm}|}{1. The actor opens /profiles/[id]; /freelancer/profile and selects Delete Portfolio. \newline 2. The application presents the current values or action confirmation; the actor supplies the required data and submits. \newline 3. The API checks authentication where required, authorization, resource existence and input validity. \newline 4. Set deletedAt and remove the item from active list and detail results. \newline 5. After the transaction succeeds, the screen displays the result and reloads affected data; a pending revision is labeled as awaiting review.} \\ \hline

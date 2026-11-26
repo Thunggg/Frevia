@@ -53,12 +53,12 @@ export function CategoryDetailContent({
 
   return (
     <div className="flex flex-1 flex-col bg-background font-sans">
-      <section className="border-b border-[#4fae2e]/15 bg-[#eaf8df] dark:border-white/10 dark:bg-[#1a1c1a]">
+      <section className="border-b border-[#0069D3]/15 bg-[#D0E1F8]/30 dark:border-white/10 dark:bg-[#111c2e]">
         <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 lg:py-10">
           <nav className="flex min-w-0 items-center gap-2 text-sm text-foreground/60">
             <Link
               href={CATEGORY_BASE_PATH}
-              className="transition-colors hover:text-[#4fae2e]"
+              className="transition-colors hover:text-[#0069D3]"
             >
               {t("allCategories")}
             </Link>
@@ -71,7 +71,7 @@ export function CategoryDetailContent({
           <div className="mt-5 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
             <div className="min-w-0 max-w-3xl">
               <div className="flex flex-wrap items-center gap-2">
-                <span className="inline-flex items-center gap-1.5 rounded-full bg-[#4fae2e] px-3 py-0.5 text-xs font-semibold text-white">
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-[#0069D3] px-3 py-0.5 text-xs font-semibold text-white">
                   <Tag className="size-3" />
                   {t("categoryBadge")}
                 </span>
@@ -91,7 +91,7 @@ export function CategoryDetailContent({
             <div className="flex shrink-0 flex-wrap gap-2">
               <Button
                 asChild
-                className="h-11 rounded-full bg-[#4fae2e] px-6 font-semibold text-white hover:bg-[#459928]"
+                className="h-11 rounded-full bg-[#0069D3] px-6 font-semibold text-white hover:bg-[#005bb8]"
               >
                 <Link
                   href={`${FIND_WORK_PATH}?category=${encodeURIComponent(jobCategory.slug)}`}
@@ -103,7 +103,7 @@ export function CategoryDetailContent({
               <Button
                 asChild
                 variant="outline"
-                className="h-11 rounded-full border-[#4fae2e]/35 bg-background"
+                className="h-11 rounded-full border-[#0069D3]/35 bg-background"
               >
                 <Link href={CATEGORY_BASE_PATH}>
                   <ArrowLeft className="size-4" />

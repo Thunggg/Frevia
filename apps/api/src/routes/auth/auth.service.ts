@@ -1,15 +1,22 @@
-import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  Logger,
+  NotFoundException,
+  Optional,
+} from '@nestjs/common';
 import { JsonWebTokenError } from '@nestjs/jwt';
 import {
   PrismaClientKnownRequestError,
   PrismaClientValidationError,
 } from '@prisma/client/runtime/client';
 import {
+  AuthMessage,
   EmailVerificationType,
   ForgotPasswordBodyType,
   GetAuthorizationUrlResType,
-  GoogleUserInfo,
   GetMeResType,
+  GoogleUserInfo,
+  JoinRoleBodyType,
   LoginBodyType,
   MessageResType,
   OauthProvider,
@@ -17,16 +24,19 @@ import {
   RegisterBodyType,
   RoleName,
   SendOTPBodyType,
+  SwitchRoleBodyType,
   TypeOfVerificationCode,
   UserType,
-  AuthMessage,
 } from '@shared/types';
 import { addMilliseconds } from 'date-fns';
+import { OAuth2Client } from 'google-auth-library';
 import ms, { StringValue } from 'ms';
 import { envConfig } from '../../shared/config/validate-env';
 import { ServerErrorException } from '../../shared/errors/shared-message.error';
+import { isAdminPermissionPath } from '../../shared/helper/admin-permission';
 import { generateOTP } from '../../shared/helper/generate-otp';
 import { SharedRoleRepository } from '../../shared/repositories/shared-role.repo';
+import { CacheService } from '../../shared/services/cache.service';
 import { EmailService } from '../../shared/services/email.service';
 import { HashingService } from '../../shared/services/hashing.service';
 import { TokenService } from '../../shared/services/token.service';
@@ -36,15 +46,19 @@ import {
   IncorrectEmailException,
   IncorrectPasswordException,
   InvalidVerificationCodeException,
+  MarketplaceRoleOnlyException,
   OTPExpiredException,
   RefreshTokenRevokedException,
+  RoleAlreadyAssignedException,
   RoleNotFoundException,
   TooManyAttemptsException,
   UniqueViolationException,
   UserBannedException,
 } from './auth.error';
 import { AuthRepository } from './auth.repo';
-import { OAuth2Client } from 'google-auth-library';
+
+export const AUTH_ME_CACHE_PREFIX = 'auth:me:';
+const AUTH_ME_CACHE_TTL_SECONDS = 45;
 
 @Injectable()
 export class AuthService {
@@ -57,6 +71,7 @@ export class AuthService {
     private readonly sharedRoleRepository: SharedRoleRepository,
     private readonly authRepository: AuthRepository,
     private readonly tokenService: TokenService,
+    @Optional() private readonly cacheService?: CacheService,
   ) {
     this.oauth2Client = new OAuth2Client({
       clientId: envConfig.GOOGLE_CLIENT_ID,
@@ -101,7 +116,7 @@ export class AuthService {
       } else if (role === RoleName.FREELANCER) {
         roleId = await this.sharedRoleRepository.getFreelancerRoleId();
       } else {
-        roleId = await this.sharedRoleRepository.getAdminRoleId();
+        throw MarketplaceRoleOnlyException();
       }
 
       const hashedPassword = await this.hashingService.hash(password as string);
@@ -167,7 +182,7 @@ export class AuthService {
         record &&
         now.getTime() - record.createdAt.getTime() > ATTEMPT_WINDOW_MS;
 
-      if (record && record.attempts > 5 && !windowExpired) {
+      if (record && record.attempts >= 5 && !windowExpired) {
         this.logger.warn(`OTP rate limit exceeded for email: ${email}`);
         throw TooManyAttemptsException();
       }
@@ -490,6 +505,17 @@ export class AuthService {
   }
 
   async getMe(userId: number): Promise<GetMeResType> {
+    if (this.cacheService) {
+      return this.cacheService.wrap(
+        `${AUTH_ME_CACHE_PREFIX}${userId}`,
+        () => this.loadMe(userId),
+        AUTH_ME_CACHE_TTL_SECONDS,
+      );
+    }
+    return this.loadMe(userId);
+  }
+
+  private async loadMe(userId: number): Promise<GetMeResType> {
     const user = await this.authRepository.findUserById(userId);
 
     if (!user) {
@@ -507,7 +533,15 @@ export class AuthService {
     const permissionsSet = new Set<string>();
     const modulesSet = new Set<string>();
 
-    if (userRole && 'rolePermissions' in userRole) {
+    const isMarketplaceRole =
+      userRole?.name === RoleName.CLIENT ||
+      userRole?.name === RoleName.FREELANCER;
+
+    if (userRole?.name === RoleName.ADMIN) {
+      permissionsSet.add('*');
+    }
+
+    if (!isMarketplaceRole && userRole && 'rolePermissions' in userRole) {
       const rps =
         (
           userRole as {
@@ -523,16 +557,62 @@ export class AuthService {
         ).rolePermissions ?? [];
 
       for (const rp of rps) {
-        if (rp.permission && !rp.permission.deletedAt) {
-          if (rp.permission.method && rp.permission.path) {
+        if (
+          rp.permission &&
+          !rp.permission.deletedAt &&
+          rp.permission.path &&
+          isAdminPermissionPath(rp.permission.path, rp.permission.method)
+        ) {
+          if (rp.permission.method) {
             permissionsSet.add(`${rp.permission.method} ${rp.permission.path}`);
           }
-          if (rp.permission.path) {
-            permissionsSet.add(rp.permission.path);
-          }
+          permissionsSet.add(rp.permission.path);
           if (rp.permission.module) {
             modulesSet.add(rp.permission.module.toUpperCase());
           }
+        }
+      }
+    }
+
+    const roles: GetMeResType['roles'] = userRole
+      ? [
+          {
+            id: userRole.id,
+            name: userRole.name,
+            description: userRole.description,
+            isPrimary: true,
+          },
+        ]
+      : [];
+
+    if (isMarketplaceRole && userRole) {
+      const ownedRoles =
+        (
+          user as {
+            userRoles?: Array<{
+              role: {
+                id: number;
+                name: string;
+                description: string | null;
+              };
+            }>;
+          }
+        ).userRoles ?? [];
+
+      for (const assignment of ownedRoles) {
+        const assignedRole = assignment.role;
+        if (
+          assignedRole &&
+          assignedRole.id !== userRole.id &&
+          (assignedRole.name === RoleName.CLIENT ||
+            assignedRole.name === RoleName.FREELANCER)
+        ) {
+          roles.push({
+            id: assignedRole.id,
+            name: assignedRole.name,
+            description: assignedRole.description,
+            isPrimary: false,
+          });
         }
       }
     }
@@ -548,19 +628,93 @@ export class AuthService {
             avatarUrl: user.profile.avatarUrl,
           }
         : null,
-      roles: userRole
-        ? [
-            {
-              id: userRole.id,
-              name: userRole.name,
-              description: userRole.description,
-              isPrimary: true,
-            },
-          ]
-        : [],
+      roles,
       permissions: Array.from(permissionsSet),
       permissionModules: Array.from(modulesSet),
     };
+  }
+
+  async switchRole(
+    userId: number,
+    sessionId: number,
+    body: SwitchRoleBodyType,
+  ) {
+    const result = await this.authRepository.switchMarketplaceRole(
+      userId,
+      body.role,
+    );
+
+    if (result.status === 'user-not-found') {
+      throw new NotFoundException([
+        { message: AuthMessage.EMAIL_NOT_FOUND, path: 'userId' },
+      ]);
+    }
+    if (result.status === 'banned') {
+      throw UserBannedException();
+    }
+    if (result.status === 'forbidden') {
+      throw MarketplaceRoleOnlyException();
+    }
+    if (result.status === 'not-owned') {
+      throw RoleNotFoundException();
+    }
+
+    this.cacheService?.del(`${AUTH_ME_CACHE_PREFIX}${userId}`);
+
+    const accessToken = await this.tokenService.signAccessToken({
+      userId,
+      roleId: result.role.id,
+      roleName: result.role.name,
+      sessionId,
+    });
+
+    return { accessToken };
+  }
+
+  async joinRole(userId: number, sessionId: number, body: JoinRoleBodyType) {
+    try {
+      const result = await this.authRepository.joinMarketplaceRole(
+        userId,
+        body.role,
+      );
+
+      if (result.status === 'user-not-found') {
+        throw new NotFoundException([
+          { message: AuthMessage.EMAIL_NOT_FOUND, path: 'userId' },
+        ]);
+      }
+      if (result.status === 'banned') {
+        throw UserBannedException();
+      }
+      if (result.status === 'forbidden') {
+        throw MarketplaceRoleOnlyException();
+      }
+      if (result.status === 'role-not-found') {
+        throw RoleNotFoundException();
+      }
+      if (result.status === 'already-assigned') {
+        throw RoleAlreadyAssignedException();
+      }
+
+      this.cacheService?.del(`${AUTH_ME_CACHE_PREFIX}${userId}`);
+
+      const accessToken = await this.tokenService.signAccessToken({
+        userId,
+        roleId: result.role.id,
+        roleName: result.role.name,
+        sessionId,
+      });
+
+      return { accessToken };
+    } catch (error) {
+      if (
+        error instanceof PrismaClientKnownRequestError &&
+        error.code === 'P2002'
+      ) {
+        throw RoleAlreadyAssignedException();
+      }
+      throw error;
+    }
   }
 
   getAuthorizationUrl(payload: {
@@ -622,7 +776,6 @@ export class AuthService {
       this.logger.error('Error parsing client information', error);
     }
 
-    // Lấy token từ Google
     const { tokens } = await this.oauth2Client.getToken(code as string);
     this.oauth2Client.setCredentials(tokens);
 

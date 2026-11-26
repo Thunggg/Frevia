@@ -1,7 +1,7 @@
 import "server-only";
 
 import { cache } from "react";
-import { cookies } from "next/headers";
+import { getServerAccessToken } from "@/lib/auth-session";
 
 import { envConfig } from "@/configs/validate-env";
 import type {
@@ -9,6 +9,8 @@ import type {
   ForumCategoryDetailResponseType,
   ForumCategoryListResponseType,
   ForumCategoryTopListResponseType,
+  ForumPostFilterType,
+  ForumPostListResponseType,
   ForumTopActiveUserListResponseType,
 } from "@shared/types";
 
@@ -17,7 +19,7 @@ async function forumServerFetch<T>(
   revalidateTime: number = 60,
   tags?: string[],
 ): Promise<T | null> {
-  const accessToken = (await cookies()).get("accessToken")?.value;
+  const accessToken = await getServerAccessToken();
 
   if (!envConfig?.NESTJS_API_URL) {
     return null;
@@ -79,6 +81,25 @@ const forumServerRequest = {
           `/api/forums/users/top?limit=${limit}`,
           120,
         )) ?? []
+      );
+    },
+  ),
+
+  getPosts: cache(
+    async (
+      params: Partial<ForumPostFilterType> = {},
+    ): Promise<ForumPostListResponseType | null> => {
+      const searchParams = new URLSearchParams();
+      if (params.page) searchParams.set("page", String(params.page));
+      if (params.limit) searchParams.set("limit", String(params.limit));
+      if (params.categoryId) searchParams.set("categoryId", String(params.categoryId));
+      if (params.userId) searchParams.set("userId", String(params.userId));
+      if (params.search) searchParams.set("search", params.search);
+      const qs = searchParams.toString();
+      return forumServerFetch<ForumPostListResponseType>(
+        `/api/forums/posts${qs ? `?${qs}` : ""}`,
+        30,
+        ["forum-posts"],
       );
     },
   ),

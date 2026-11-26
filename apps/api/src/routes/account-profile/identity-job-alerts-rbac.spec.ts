@@ -1,4 +1,7 @@
-import { matchRoutePath, normalizeApiPath } from '../../shared/helper/match-route-path';
+import {
+  matchRoutePath,
+  normalizeApiPath,
+} from '../../shared/helper/match-route-path';
 
 /**
  * Bộ kiểm thử Action-Level RBAC và Kiểm soát hiển thị giao diện UI cho 2 cụm chức năng:
@@ -204,7 +207,7 @@ describe('KYC VERIFICATION & JOB ALERTS - Action-Level RBAC & UI Control Specifi
   describe('1. Chuẩn hóa và Khớp nối Đường dẫn (Route Matching & Static Segments)', () => {
     test.each(KYC_JOB_ALERTS_PERMISSIONS)(
       'Khớp pattern permission: $description ($method $path)',
-      ({ method, path, testActualPath }) => {
+      ({ path, testActualPath }) => {
         expect(normalizeApiPath(path)).toBe(path);
         expect(matchRoutePath(path, testActualPath)).toBe(true);
       },
@@ -451,10 +454,18 @@ describe('KYC VERIFICATION & JOB ALERTS - Action-Level RBAC & UI Control Specifi
         ),
       ).toBe(false);
       expect(
-        checkPermission(fullPermissions, 'DELETE', '/api/identity-verifications/ai-check'),
+        checkPermission(
+          fullPermissions,
+          'DELETE',
+          '/api/identity-verifications/ai-check',
+        ),
       ).toBe(false);
       expect(
-        checkPermission(fullPermissions, 'POST', '/api/job-alerts/15/matching-jobs'),
+        checkPermission(
+          fullPermissions,
+          'POST',
+          '/api/job-alerts/15/matching-jobs',
+        ),
       ).toBe(false);
     });
 

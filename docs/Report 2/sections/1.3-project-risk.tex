@@ -1,27 +1,32 @@
 The following risks have been identified from the project backlog and from the technical characteristics of the system: payment escrow, an external identity verification pipeline, a real-time messaging layer, and a dispute process that produces decisions with financial consequences. Each risk is rated by impact and possibility, and is paired with a response plan that is owned by a named role in Section 4.2.
 
 \begingroup
+\small
 \setlength{\tabcolsep}{4pt}
-\begin{longtable}{|C{0.7cm}|L{4.6cm}|C{1.5cm}|C{1.9cm}|L{5.5cm}|}
+\renewcommand{\arraystretch}{1.2}
+\begin{longtable}{|C{0.7cm}|L{4.5cm}|C{1.5cm}|C{1.9cm}|L{5.6cm}|}
+\caption{Project Risks and Response Plans}
+\label{tab:project-risks} \\
 \hline
 \rowcolor{fptHeader} \textbf{\#} & \textbf{Risk Description} & \textbf{Impact} & \textbf{Possibility} & \textbf{Response Plans} \\
 \hline
 \endfirsthead
+\caption[]{Project Risks and Response Plans \textit{(cont.)}} \\
 \hline
 \rowcolor{fptHeader} \textbf{\#} & \textbf{Risk Description} & \textbf{Impact} & \textbf{Possibility} & \textbf{Response Plans} \\
 \hline
 \endhead
 \hline
 \endfoot
-1 & \textbf{Stripe escrow and webhook failures}
-(PaymentIntent and Checkout Session funding, transfer release, refund, and duplicate or out-of-order webhook events)
+1 & \textbf{Stripe escrow, hold deposit and webhook failures}
+(PaymentIntent, Checkout Session funding, contract hold deposit, transfer release, refund, and duplicate or out-of-order webhook events)
     & High & High &
     Develop and test exclusively in Stripe test mode. Verify the signature against the raw request body, make every handler idempotent by keying on the Stripe event identifier, and always reconcile local state from Stripe before writing. Keep an explicit synchronisation endpoint so an operator can repair a stuck record without a database edit. \\
 \hline
 2 & \textbf{Stripe Connect onboarding and regional payout limits}
 (Express account requirements, country availability, and capability restrictions)
     & High & Medium &
-    Detect onboarding completion from the account status instead of assuming success after the redirect. Block payout-dependent actions until the account is verified, show the reason to the user, and document the supported countries in the limitation section of Report 1. \\
+    Detect onboarding completion from the account status instead of assuming success after the redirect [3]. Block payout-dependent actions until the account is verified, show the reason to the user, and document the supported countries in the limitation section of Report 1. \\
 \hline
 3 & \textbf{External AI service unavailability}
 (curriculum vitae analysis and identity verification both call services outside the monorepo)
@@ -33,15 +38,15 @@ The following risks have been identified from the project backlog and from the t
     & High & Medium &
     Serve identity documents only through authenticated endpoints with ownership or administrator checks, never through the public static directory. Store only the verification outcome and summary on the profile, restrict the review queue to the administrator role, and define a retention rule for rejected submissions. \\
 \hline
-5 & \textbf{Arbitration load and perceived fairness}
-(an administrator must decide disputes with real money at stake)
+5 & \textbf{Arbitration load, expert escalation and perceived fairness}
+(disputes with financial stakes escalated to experts and decided with split payouts)
     & Medium & High &
-    Keep the evidence structure symmetric, record the reasoning with every decision, and expose the split amounts to both parties. Publish a target of 48 hours for a first decision, provide the review request as an escalation path, and rotate the deciding administrator when a review is requested. \\
+    Keep the evidence structure symmetric, record the reasoning with every decision, and expose the split amounts to both parties. Support escalating unresolved disputes to verified experts with a structured review timeline, and ensure the deciding party records explicit findings before funds are released. \\
 \hline
 6 & \textbf{Scope creep across five sprints}
-(214 SMAR items and a fixed envelope of 372 man-days)
+(218 SMAR items and a fixed envelope of 369 man-days)
     & High & High &
-    Freeze the backlog at sprint planning. Any addition must be exchanged for an item of comparable effort rather than added on top, and the sprint commitment may not exceed 67 man-days. Total effort must stay within 372 $\pm$ 5\% (max. 391 man-days). \\
+    Freeze the backlog at sprint planning. Any addition must be exchanged for an item of comparable effort rather than added on top, and the sprint commitment may not exceed the agreed sprint cap. Total effort must stay within 369 $\pm$ 5\% (max. 387 man-days). \\
 \hline
 7 & \textbf{Prisma schema evolution}
 (milestone payment state, dispute state, and transaction types change during delivery)
@@ -76,7 +81,7 @@ The following risks have been identified from the project backlog and from the t
 13 & \textbf{Data privacy and retention}
 (personal data, identity documents, and financial records are stored together)
     & Medium & Medium &
-    Avoid writing personal data into application logs, restrict document access by role, and define what is retained after a dispute is finalised. Keep the privacy notice and the consent step aligned with what the system actually collects. \\
+    Avoid writing personal data into application logs, restrict document access by role, and define what is retained after a dispute is finalised. Keep the privacy notice and the consent step aligned with what the system actually collects in compliance with Decree No. 13/2023/ND-CP [2]. \\
 \hline
 \end{longtable}
 \endgroup

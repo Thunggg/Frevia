@@ -41,12 +41,13 @@ export function EditContractSheet({
 }: EditContractSheetProps) {
   const queryClient = useQueryClient();
   const t = useTranslations("editContract");
+  const tExtra = useTranslations("contractWorkspace.editExtra");
   const tCommon = useTranslations("common");
   const format = useFormatter();
   const { can } = useActionPermission();
   const canUpdateContract = can("PATCH", "/api/contracts/:id");
-  const [totalAmount, setTotalAmount] = useState<number>(
-    Number(contract.totalAmount) || 0,
+  const [totalAmount, setTotalAmount] = useState<number | string>(
+    contract.totalAmount ? String(Number(contract.totalAmount)) : "",
   );
   const [terms, setTerms] = useState<string>(contract.terms || "");
   const [expiresAt, setExpiresAt] = useState<string>("");
@@ -64,7 +65,7 @@ export function EditContractSheet({
 
   useEffect(() => {
     if (open) {
-      setTotalAmount(Number(contract.totalAmount) || 0);
+      setTotalAmount(contract.totalAmount ? String(Number(contract.totalAmount)) : "");
       setTerms(contract.terms || "");
       setExpiresAt(toDateInputValue(contract.expiresAt));
     }
@@ -74,12 +75,14 @@ export function EditContractSheet({
     e.preventDefault();
     if (!canUpdateContract) return;
 
-    if (!totalAmount || totalAmount <= 0) {
+    const parsedTotalAmount =
+      typeof totalAmount === "number" ? totalAmount : parseFloat(totalAmount);
+    if (isNaN(parsedTotalAmount) || parsedTotalAmount <= 0) {
       toastError({ message: t("amountRequired") });
       return;
     }
 
-    if (minAllowedAmount > 0 && totalAmount < minAllowedAmount) {
+    if (minAllowedAmount > 0 && parsedTotalAmount < minAllowedAmount) {
       toastError({
         message: t("belowMilestones", {
           amount: format.number(minAllowedAmount),
@@ -89,18 +92,20 @@ export function EditContractSheet({
     }
 
     if (!expiresAt) {
-      toastError({ message: "Contract end date is required" });
+      toastError({ message: tExtra("endDateRequired") });
       return;
     }
 
     if (expiresAt < todayStr) {
-      toastError({ message: "Contract end date cannot be in the past" });
+      toastError({ message: tExtra("endDatePast") });
       return;
     }
 
     if (maxMilestoneDateStr && expiresAt < maxMilestoneDateStr) {
       toastError({
-        message: `Contract end date cannot be earlier than existing milestone due date (${maxMilestoneDateStr})`,
+        message: tExtra("endDateBeforeMilestone", {
+          date: maxMilestoneDateStr,
+        }),
       });
       return;
     }
@@ -119,7 +124,7 @@ export function EditContractSheet({
       };
 
       if (!isBudgetLocked) {
-        payload.totalAmount = Number(totalAmount);
+        payload.totalAmount = parsedTotalAmount;
       }
 
       if (terms.trim()) {
@@ -133,7 +138,7 @@ export function EditContractSheet({
         queryKey: ["client-contract-detail", contract.id],
       });
       await queryClient.invalidateQueries({
-        queryKey: ["client-contracts"],
+        queryKey: ["contracts-list"],
       });
 
       onSuccess?.();
@@ -213,16 +218,23 @@ export function EditContractSheet({
               <div className="relative mt-1.5">
                 <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
                 <input
-                  type="number"
-                  min={minAllowedAmount > 0 ? minAllowedAmount : 1}
-                  step="any"
+                  type="text"
+                  inputMode="decimal"
                   required
                   disabled={
                     Boolean(contract.holdPaymentIntentId) ||
                     contract.status !== "AWAITING_PAYMENT"
                   }
-                  value={totalAmount || ""}
-                  onChange={(e) => setTotalAmount(Number(e.target.value))}
+                  value={totalAmount}
+                  onFocus={(e) => e.target.select()}
+                  onChange={(e) => {
+                    let val = e.target.value.replace(/[^\d.]/g, "");
+                    if (/^0\d/.test(val)) {
+                      val = val.replace(/^0+/, "");
+                      if (val === "") val = "0";
+                    }
+                    setTotalAmount(val);
+                  }}
                   placeholder={t("amountPlaceholder")}
                   className="w-full rounded-xl border border-border bg-background py-2 pl-9 pr-3 text-sm text-foreground focus:border-[#0069D3] focus:outline-none focus:ring-1 focus:ring-[#0069D3] disabled:opacity-60 disabled:cursor-not-allowed"
                 />
@@ -230,7 +242,7 @@ export function EditContractSheet({
               {(Boolean(contract.holdPaymentIntentId) ||
                 contract.status !== "AWAITING_PAYMENT") && (
                 <p className="mt-1 text-[11px] text-amber-600">
-                  Total budget cannot be edited after the escrow hold is authorized.
+                  {tExtra("budgetLockedHint")}
                 </p>
               )}
             </div>
@@ -238,7 +250,7 @@ export function EditContractSheet({
             {/* Expiration Date */}
             <div>
               <label className="text-xs font-semibold text-foreground">
-                Contract End Date <span className="text-red-500">*</span>
+                {tExtra("endDateLabel")} <span className="text-red-500">*</span>
               </label>
               <input
                 type="date"
@@ -250,7 +262,7 @@ export function EditContractSheet({
               />
               {maxMilestoneDateStr && (
                 <p className="mt-1 text-[11px] text-muted-foreground">
-                  Must be on or after the latest milestone due date ({maxMilestoneDateStr}).
+                  {tExtra("endDateMinHint", { date: maxMilestoneDateStr })}
                 </p>
               )}
             </div>

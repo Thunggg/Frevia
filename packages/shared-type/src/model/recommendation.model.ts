@@ -2,16 +2,6 @@ import { z } from "zod";
 
 import { JobBudgetTypeSchema, JobStatusSchema } from "./job.model";
 
-// Loại phản hồi người dùng dành cho một kết quả recommendation (plan.cv.md §11.2).
-export const RecommendationFeedbackTypeSchema = z.enum([
-  "VIEW",
-  "SAVE",
-  "APPLY",
-  "DISMISS",
-  "SHORTLIST",
-  "HIRE",
-]);
-
 // Điểm thành phần của Hybrid Ranking (§7). `keyword` chỉ có khi caller gửi BM25.
 export const RecommendationComponentsSchema = z.object({
   semantic: z.number(),
@@ -98,21 +88,6 @@ export const RecommendationExplanationSchema = z.object({
   durationMs: z.number(),
 });
 
-// ----- Feedback (§11.2) -----
-
-export const RecommendationFeedbackBodySchema = z
-  .object({
-    type: RecommendationFeedbackTypeSchema,
-  })
-  .strict();
-
-export const RecommendationFeedbackResponseSchema = z.object({
-  id: z.number(),
-  recommendationId: z.number(),
-  type: RecommendationFeedbackTypeSchema,
-  createdAt: z.date(),
-});
-
 // ----- Reindex (§16 vận hành): nạp lại toàn bộ CV/job đang mở vào Chroma -----
 
 export const RecommendationReindexResponseSchema = z.object({
@@ -125,10 +100,6 @@ export const RecommendationOutboxProcessResponseSchema = z.object({
   processed: z.number(),
   failed: z.number(),
 });
-
-export type RecommendationFeedbackType = z.infer<
-  typeof RecommendationFeedbackTypeSchema
->;
 
 export type RecommendationComponentsType = z.infer<
   typeof RecommendationComponentsSchema
@@ -158,14 +129,6 @@ export type ViewRecommendedJobsQueryType = z.output<
 
 export type RecommendationExplanationType = z.infer<
   typeof RecommendationExplanationSchema
->;
-
-export type RecommendationFeedbackBodyType = z.infer<
-  typeof RecommendationFeedbackBodySchema
->;
-
-export type RecommendationFeedbackResponseType = z.infer<
-  typeof RecommendationFeedbackResponseSchema
 >;
 
 export type RecommendationReindexResponseType = z.infer<

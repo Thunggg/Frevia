@@ -5,6 +5,7 @@ import {
   JobStatus,
   Prisma,
   ProposalStatus,
+  VerificationStatus,
 } from '@prisma/client';
 
 import {
@@ -168,7 +169,7 @@ export class ManageJobRepository {
           where: {
             jobId: { in: expiredJobIds },
             status: {
-              in: [ProposalStatus.SUBMITTED, ProposalStatus.INTERVIEWING],
+              in: [ProposalStatus.SUBMITTED],
             },
           },
           data: { status: ProposalStatus.EXPIRED },
@@ -185,12 +186,14 @@ export class ManageJobRepository {
     await this.autoCloseExpiredJobs(clientId);
 
     const { page, limit, status, search, sortBy, order } = filter;
+    const searchTrimmed = search?.trim();
+
     const where = {
       clientId,
       deletedAt: null,
       ...(status && { status }),
-      ...(search && {
-        title: { contains: search, mode: Prisma.QueryMode.insensitive },
+      ...(searchTrimmed && {
+        title: { contains: searchTrimmed, mode: Prisma.QueryMode.insensitive },
       }),
     } satisfies Prisma.JobWhereInput;
     const [jobs, total] = await this.prisma.$transaction([
@@ -285,6 +288,20 @@ export class ManageJobRepository {
         },
       },
     });
+  }
+
+  async isIdentityVerified(userId: number): Promise<boolean> {
+    const approvedDocument = await this.prisma.idVerificationDocument.findFirst(
+      {
+        where: {
+          userId,
+          status: VerificationStatus.APPROVED,
+          deletedAt: null,
+        },
+        select: { id: true },
+      },
+    );
+    return Boolean(approvedDocument);
   }
 
   async createJob(clientId: number, data: CreateJobBodyType): Promise<JobType> {
@@ -460,7 +477,7 @@ export class ManageJobRepository {
             where: {
               jobId,
               status: {
-                in: [ProposalStatus.SUBMITTED, ProposalStatus.INTERVIEWING],
+                in: [ProposalStatus.SUBMITTED],
               },
             },
             data: {

@@ -1,8 +1,13 @@
-\subsubsection{Entity Relationship Diagram}
-
+\setlength{\tabcolsep}{3pt}
 % ===============================================
 % 4.1.5.1 ERD tong
 % ===============================================
+\begin{landscape}
+\thispagestyle{landscape}
+\Needspace{12\baselineskip}
+\subsubsection{Entity Relationship Diagram}
+
+\Needspace{12\baselineskip}
 \paragraph{Overall Entity Relationship Diagram}
 \label{sec:erd-overall}
 \begin{figure}[H]
@@ -11,33 +16,167 @@
     \caption{Overall Entity Relationship Diagram}
     \label{fig:erd-overall}
 \end{figure}
+\end{landscape}
 
 % ===============================================
 % 4.1.5.2 ERD1
 % ===============================================
+\Needspace{12\baselineskip}
 \paragraph{Authentication \& Sessions}
+
+This ERD describes the Authentication \& Sessions module. It stores account identities, one-time verification codes, device sessions, OAuth links, two-factor authentication settings, and user preferences. User is the root account table and links to Role and Profile. VerificationCode supports registration, email verification, and password reset. Session stores refresh tokens and device information for each login. OauthAccount links Google login to a User. TwoFactorAuth stores the TOTP secret and enabled flag. UserSetting stores theme, language, and notification preferences. These tables support registration, login, logout, password reset, session revocation, Google OAuth, and 2FA.
+
+\Needspace{12\baselineskip}
+\paragraph*{a) ERD}
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.78\textwidth]{image/ERD/ERD-ERD1.drawio.pdf}
     \caption{Authentication \& Sessions ERD}
-    \label{fig:erd-authentication-sessions}
+    \label{fig:erd-authentication--sessions}
 \end{figure}
+
+\Needspace{8\baselineskip}
+\paragraph*{b) Table of entities}\nopagebreak[4]
+\begin{center}\nopagebreak[4]
+\small\sloppy
+\begin{longtable}{|C{0.8cm}|L{3.8cm}|p{10.0cm}|}
+\hline
+\rowcolor{fptHeader}\textbf{No} & \textbf{Table} & \textbf{Description} \\* \hline
+\endfirsthead
+\hline
+\rowcolor{fptHeader}\textbf{No} & \textbf{Table} & \textbf{Description} \\* \hline
+\endhead
+\hline\endfoot
+\hline\endlastfoot
+1 & \texttt{User} & Account identity: e-mail, bcrypt password hash, ban flag, Stripe customer/Connect flags and timestamps. Carries the primary role through \texttt{roleId}.\par\smallskip
+\hspace*{1em}-- \texttt{id} (PK) \newline
+\hspace*{1em}-- \texttt{email} \newline
+\hspace*{1em}-- \texttt{password} \newline
+\hspace*{1em}-- \texttt{is\allowbreak Banned} \newline
+\hspace*{1em}-- \texttt{created\allowbreak At} \newline
+\hspace*{1em}-- \texttt{updated\allowbreak At} \newline
+\hspace*{1em}-- \texttt{deleted\allowbreak At} \newline
+\hspace*{1em}-- \texttt{stripe\allowbreak Customer\allowbreak Id} \newline
+\hspace*{1em}-- \texttt{stripe\allowbreak Account\allowbreak Id} \newline
+\hspace*{1em}-- \texttt{stripe\allowbreak Onboarding\allowbreak Completed} \newline
+\hspace*{1em}-- \texttt{role\allowbreak Id} (FK) \\ \hline
+2 & \texttt{Verification\allowbreak Code} & One-time code (OTP) issued for e-mail verification or password reset, with its purpose (\texttt{type}), verification attempt counter (\texttt{attempts}) and expiry; consumed codes are deleted.\par\smallskip
+\hspace*{1em}-- \texttt{id} (PK) \newline
+\hspace*{1em}-- \texttt{email} \newline
+\hspace*{1em}-- \texttt{code} \newline
+\hspace*{1em}-- \texttt{type} \newline
+\hspace*{1em}-- \texttt{attempts} \newline
+\hspace*{1em}-- \texttt{expires\allowbreak At} \newline
+\hspace*{1em}-- \texttt{created\allowbreak At} \\ \hline
+3 & \texttt{Session} & Server-side session per device: refresh-token hash, device/user-agent and IP address metadata, and expiry timestamp.\par\smallskip
+\hspace*{1em}-- \texttt{id} (PK) \newline
+\hspace*{1em}-- \texttt{user\allowbreak Id} (FK) \newline
+\hspace*{1em}-- \texttt{refresh\allowbreak Token} \newline
+\hspace*{1em}-- \texttt{device\allowbreak Info} \newline
+\hspace*{1em}-- \texttt{ip\allowbreak Address} \newline
+\hspace*{1em}-- \texttt{expires\allowbreak At} \newline
+\hspace*{1em}-- \texttt{created\allowbreak At} \\ \hline
+4 & \texttt{Oauth\allowbreak Account} & Link between an account and an external identity provider (Google) for federated login.\par\smallskip
+\hspace*{1em}-- \texttt{id} (PK) \newline
+\hspace*{1em}-- \texttt{user\allowbreak Id} (FK) \newline
+\hspace*{1em}-- \texttt{provider} \newline
+\hspace*{1em}-- \texttt{provider\allowbreak User\allowbreak Id} \newline
+\hspace*{1em}-- \texttt{created\allowbreak At} \\ \hline
+5 & \texttt{Two\allowbreak Factor\allowbreak Auth} & Two-factor authentication secret and enabled flag of an account (one row per account).\par\smallskip
+\hspace*{1em}-- \texttt{id} (PK) \newline
+\hspace*{1em}-- \texttt{user\allowbreak Id} (FK) \newline
+\hspace*{1em}-- \texttt{secret} \newline
+\hspace*{1em}-- \texttt{enabled} \newline
+\hspace*{1em}-- \texttt{created\allowbreak At} \\ \hline
+6 & \texttt{User\allowbreak Setting} & Per-account preferences: interface theme, language and the JSON notification preferences.\par\smallskip
+\hspace*{1em}-- \texttt{id} (PK) \newline
+\hspace*{1em}-- \texttt{user\allowbreak Id} (FK) \newline
+\hspace*{1em}-- \texttt{theme} \newline
+\hspace*{1em}-- \texttt{language} \newline
+\hspace*{1em}-- \texttt{notification\allowbreak Prefs} \\ \hline
+\end{longtable}
+\end{center}
 
 % ===============================================
 % 4.1.5.3 ERD2
 % ===============================================
+\Needspace{12\baselineskip}
 \paragraph{Role-Based Access Control}
+
+This ERD describes the Role-Based Access Control module. It stores roles, permissions, role-permission assignments, and user-role assignments. Role defines a named role; Permission defines a route-level permission; RolePermission links permissions to roles; UserRole links users to roles. These tables support RBAC guards, permission checks, and role switching without redeployment.
+
+\Needspace{12\baselineskip}
+\paragraph*{a) ERD}
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.78\textwidth]{image/ERD/ERD-ERD2.drawio.pdf}
     \caption{Role-Based Access Control ERD}
-    \label{fig:erd-rbac}
+    \label{fig:erd-role-based-access-control}
 \end{figure}
+
+\Needspace{8\baselineskip}
+\paragraph*{b) Table of entities}\nopagebreak[4]
+\begin{center}\nopagebreak[4]
+\small\sloppy
+\begin{longtable}{|C{0.8cm}|L{3.8cm}|p{10.0cm}|}
+\hline
+\rowcolor{fptHeader}\textbf{No} & \textbf{Table} & \textbf{Description} \\* \hline
+\endfirsthead
+\hline
+\rowcolor{fptHeader}\textbf{No} & \textbf{Table} & \textbf{Description} \\* \hline
+\endhead
+\hline\endfoot
+\hline\endlastfoot
+1 & \texttt{User} & Account identity: e-mail, bcrypt password hash, ban flag, Stripe customer/Connect flags and timestamps. Carries the primary role through \texttt{roleId}.\par\smallskip
+\hspace*{1em}-- \texttt{id} (PK) \newline
+\hspace*{1em}-- \texttt{email} \newline
+\hspace*{1em}-- \texttt{password} \newline
+\hspace*{1em}-- \texttt{is\allowbreak Banned} \newline
+\hspace*{1em}-- \texttt{created\allowbreak At} \newline
+\hspace*{1em}-- \texttt{updated\allowbreak At} \newline
+\hspace*{1em}-- \texttt{deleted\allowbreak At} \newline
+\hspace*{1em}-- \texttt{stripe\allowbreak Customer\allowbreak Id} \newline
+\hspace*{1em}-- \texttt{stripe\allowbreak Account\allowbreak Id} \newline
+\hspace*{1em}-- \texttt{stripe\allowbreak Onboarding\allowbreak Completed} \newline
+\hspace*{1em}-- \texttt{role\allowbreak Id} (FK) \\ \hline
+2 & \texttt{Role} & Role catalogue of the RBAC model (admin, client, freelancer, expert); carries the role code, name and description.\par\smallskip
+\hspace*{1em}-- \texttt{id} (PK) \newline
+\hspace*{1em}-- \texttt{name} \newline
+\hspace*{1em}-- \texttt{description} \newline
+\hspace*{1em}-- \texttt{created\allowbreak At} \newline
+\hspace*{1em}-- \texttt{deleted\allowbreak At} \\ \hline
+3 & \texttt{User\allowbreak Role} & Assignment of a role to an account, so one account can hold several roles and switch between them.\par\smallskip
+\hspace*{1em}-- \texttt{user\allowbreak Id} (PK, FK) \newline
+\hspace*{1em}-- \texttt{role\allowbreak Id} (PK, FK) \newline
+\hspace*{1em}-- \texttt{assigned\allowbreak At} \\ \hline
+4 & \texttt{Permission} & Catalogue of route-level permissions (\texttt{module.action} names) used by the permission guard.\par\smallskip
+\hspace*{1em}-- \texttt{id} (PK) \newline
+\hspace*{1em}-- \texttt{name} \newline
+\hspace*{1em}-- \texttt{path} \newline
+\hspace*{1em}-- \texttt{method} \newline
+\hspace*{1em}-- \texttt{module} \newline
+\hspace*{1em}-- \texttt{created\allowbreak By\allowbreak Id} \newline
+\hspace*{1em}-- \texttt{updated\allowbreak By\allowbreak Id} \newline
+\hspace*{1em}-- \texttt{deleted\allowbreak By\allowbreak Id} \newline
+\hspace*{1em}-- \texttt{deleted\allowbreak At} \newline
+\hspace*{1em}-- \texttt{created\allowbreak At} \newline
+\hspace*{1em}-- \texttt{updated\allowbreak At} \\ \hline
+5 & \texttt{Role\allowbreak Permission} & Permissions granted to a role; drives the effective permission list of every signed-in account.\par\smallskip
+\hspace*{1em}-- \texttt{role\allowbreak Id} (PK, FK) \newline
+\hspace*{1em}-- \texttt{permission\allowbreak Id} (PK, FK) \\ \hline
+\end{longtable}
+\end{center}
 
 % ===============================================
 % 4.1.5.4 ERD3
 % ===============================================
+\Needspace{12\baselineskip}
 \paragraph{Profile Core}
+
+This ERD describes the Profile Core module. It stores base profiles and role-specific profile extensions. Profile contains common display information; FreelancerProfile stores professional data; ClientProfile stores company data; Expert publishes expert directory entries; FreelancerSkill links freelancers to skills with proficiency. These tables support profile viewing/editing, freelancer/client/expert profiles, skills, and profile completion.
+
+\Needspace{12\baselineskip}
+\paragraph*{a) ERD}
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.78\textwidth]{image/ERD/ERD-ERD3.drawio.pdf}
@@ -45,54 +184,491 @@
     \label{fig:erd-profile-core}
 \end{figure}
 
+\Needspace{8\baselineskip}
+\paragraph*{b) Table of entities}\nopagebreak[4]
+\begin{center}\nopagebreak[4]
+\small\sloppy
+\begin{longtable}{|C{0.8cm}|L{3.8cm}|p{10.0cm}|}
+\hline
+\rowcolor{fptHeader}\textbf{No} & \textbf{Table} & \textbf{Description} \\* \hline
+\endfirsthead
+\hline
+\rowcolor{fptHeader}\textbf{No} & \textbf{Table} & \textbf{Description} \\* \hline
+\endhead
+\hline\endfoot
+\hline\endlastfoot
+1 & \texttt{User} & Account identity: e-mail, bcrypt password hash, ban flag, Stripe customer/Connect flags and timestamps. Carries the primary role through \texttt{roleId}.\par\smallskip
+\hspace*{1em}-- \texttt{id} (PK) \newline
+\hspace*{1em}-- \texttt{email} \newline
+\hspace*{1em}-- \texttt{password} \newline
+\hspace*{1em}-- \texttt{is\allowbreak Banned} \newline
+\hspace*{1em}-- \texttt{created\allowbreak At} \newline
+\hspace*{1em}-- \texttt{updated\allowbreak At} \newline
+\hspace*{1em}-- \texttt{deleted\allowbreak At} \newline
+\hspace*{1em}-- \texttt{stripe\allowbreak Customer\allowbreak Id} \newline
+\hspace*{1em}-- \texttt{stripe\allowbreak Account\allowbreak Id} \newline
+\hspace*{1em}-- \texttt{stripe\allowbreak Onboarding\allowbreak Completed} \newline
+\hspace*{1em}-- \texttt{role\allowbreak Id} (FK) \\ \hline
+2 & \texttt{Profile} & Base profile shared by all accounts: display name, avatar, cover, biography, availability status and completion percentage.\par\smallskip
+\hspace*{1em}-- \texttt{id} (PK) \newline
+\hspace*{1em}-- \texttt{user\allowbreak Id} (FK) \newline
+\hspace*{1em}-- \texttt{display\allowbreak Name} \newline
+\hspace*{1em}-- \texttt{avatar\allowbreak Url} \newline
+\hspace*{1em}-- \texttt{cover\allowbreak Url} \newline
+\hspace*{1em}-- \texttt{bio} \newline
+\hspace*{1em}-- \texttt{online\allowbreak Status} \newline
+\hspace*{1em}-- \texttt{availability\allowbreak Status} \newline
+\hspace*{1em}-- \texttt{profile\allowbreak Completion\allowbreak Percent} \newline
+\hspace*{1em}-- \texttt{wallet\allowbreak Address} \newline
+\hspace*{1em}-- \texttt{created\allowbreak At} \newline
+\hspace*{1em}-- \texttt{updated\allowbreak At} \\ \hline
+3 & \texttt{Freelancer\allowbreak Profile} & Professional data of a freelancer: professional title, education, certifications, languages, experience summaries, uploaded CV metadata and identity verification flag.\par\smallskip
+\hspace*{1em}-- \texttt{id} (PK) \newline
+\hspace*{1em}-- \texttt{profile\allowbreak Id} (FK) \newline
+\hspace*{1em}-- \texttt{title} \newline
+\hspace*{1em}-- \texttt{education} \newline
+\hspace*{1em}-- \texttt{certifications} \newline
+\hspace*{1em}-- \texttt{languages} \newline
+\hspace*{1em}-- \texttt{cv\allowbreak Url} \newline
+\hspace*{1em}-- \texttt{cv\allowbreak File\allowbreak Name} \newline
+\hspace*{1em}-- \texttt{cv\allowbreak Public\allowbreak Id} \newline
+\hspace*{1em}-- \texttt{cv\allowbreak Uploaded\allowbreak At} \newline
+\hspace*{1em}-- \texttt{experience} \newline
+\hspace*{1em}-- \texttt{id\allowbreak Verified} \newline
+\hspace*{1em}-- \texttt{created\allowbreak At} \newline
+\hspace*{1em}-- \texttt{updated\allowbreak At} \\ \hline
+4 & \texttt{Client\allowbreak Profile} & Client-side data: company name, company description and website URL.\par\smallskip
+\hspace*{1em}-- \texttt{id} (PK) \newline
+\hspace*{1em}-- \texttt{profile\allowbreak Id} (FK) \newline
+\hspace*{1em}-- \texttt{company\allowbreak Name} \newline
+\hspace*{1em}-- \texttt{company\allowbreak Description} \newline
+\hspace*{1em}-- \texttt{website} \newline
+\hspace*{1em}-- \texttt{created\allowbreak At} \newline
+\hspace*{1em}-- \texttt{updated\allowbreak At} \\ \hline
+5 & \texttt{Expert} & Expert entry published in the public expert directory, with specialisation and verification state.\par\smallskip
+\hspace*{1em}-- \texttt{id} (PK) \newline
+\hspace*{1em}-- \texttt{profile\allowbreak Id} (FK) \newline
+\hspace*{1em}-- \texttt{title} \newline
+\hspace*{1em}-- \texttt{expertise} \newline
+\hspace*{1em}-- \texttt{years\allowbreak Of\allowbreak Experience} \newline
+\hspace*{1em}-- \texttt{education} \newline
+\hspace*{1em}-- \texttt{certifications} \newline
+\hspace*{1em}-- \texttt{website} \newline
+\hspace*{1em}-- \texttt{is\allowbreak Active} \newline
+\hspace*{1em}-- \texttt{created\allowbreak At} \newline
+\hspace*{1em}-- \texttt{updated\allowbreak At} \\ \hline
+\end{longtable}
+\end{center}
+
 % ===============================================
 % 4.1.5.5 ERD4
 % ===============================================
+\Needspace{12\baselineskip}
 \paragraph{Profile History \& Social Links}
+
+This ERD describes the Profile History \& Social Links module. It stores profile revisions, portfolio items, CV analysis, experience, education, document processing jobs, embedding records, recommendations, feedback, embedding outbox events, social links, identity documents, and profile visit logs. These tables support profile revision review, portfolio, CV processing, recommendations, social links, identity verification, and profile visit tracking.
+
+\Needspace{12\baselineskip}
+\paragraph*{a) ERD}
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.86\textwidth]{image/ERD/ERD-ERD4.drawio.pdf}
+    \includegraphics[width=0.78\textwidth]{image/ERD/ERD-ERD4.drawio.pdf}
     \caption{Profile History \& Social Links ERD}
-    \label{fig:erd-profile-history}
+    \label{fig:erd-profile-history--social-links}
 \end{figure}
+
+\Needspace{8\baselineskip}
+\paragraph*{b) Table of entities}\nopagebreak[4]
+\begin{center}\nopagebreak[4]
+\small\sloppy
+\begin{longtable}{|C{0.8cm}|L{3.8cm}|p{10.0cm}|}
+\hline
+\rowcolor{fptHeader}\textbf{No} & \textbf{Table} & \textbf{Description} \\* \hline
+\endfirsthead
+\hline
+\rowcolor{fptHeader}\textbf{No} & \textbf{Table} & \textbf{Description} \\* \hline
+\endhead
+\hline\endfoot
+\hline\endlastfoot
+1 & \texttt{User} & Account identity: e-mail, bcrypt password hash, ban flag, Stripe customer/Connect flags and timestamps. Carries the primary role through \texttt{roleId}.\par\smallskip
+\hspace*{1em}-- \texttt{id} (PK) \newline
+\hspace*{1em}-- \texttt{email} \newline
+\hspace*{1em}-- \texttt{password} \newline
+\hspace*{1em}-- \texttt{is\allowbreak Banned} \newline
+\hspace*{1em}-- \texttt{created\allowbreak At} \newline
+\hspace*{1em}-- \texttt{updated\allowbreak At} \newline
+\hspace*{1em}-- \texttt{deleted\allowbreak At} \newline
+\hspace*{1em}-- \texttt{stripe\allowbreak Customer\allowbreak Id} \newline
+\hspace*{1em}-- \texttt{stripe\allowbreak Account\allowbreak Id} \newline
+\hspace*{1em}-- \texttt{stripe\allowbreak Onboarding\allowbreak Completed} \newline
+\hspace*{1em}-- \texttt{role\allowbreak Id} (FK) \\ \hline
+2 & \texttt{Profile} & Base profile shared by all accounts: display name, avatar, cover, biography, availability status and completion percentage.\par\smallskip
+\hspace*{1em}-- \texttt{id} (PK) \newline
+\hspace*{1em}-- \texttt{user\allowbreak Id} (FK) \newline
+\hspace*{1em}-- \texttt{display\allowbreak Name} \newline
+\hspace*{1em}-- \texttt{avatar\allowbreak Url} \newline
+\hspace*{1em}-- \texttt{cover\allowbreak Url} \newline
+\hspace*{1em}-- \texttt{bio} \newline
+\hspace*{1em}-- \texttt{online\allowbreak Status} \newline
+\hspace*{1em}-- \texttt{availability\allowbreak Status} \newline
+\hspace*{1em}-- \texttt{profile\allowbreak Completion\allowbreak Percent} \newline
+\hspace*{1em}-- \texttt{wallet\allowbreak Address} \newline
+\hspace*{1em}-- \texttt{created\allowbreak At} \newline
+\hspace*{1em}-- \texttt{updated\allowbreak At} \\ \hline
+3 & \texttt{Profile\allowbreak Revision} & Pending change request on a profile, reviewed and approved or rejected by an administrator.\par\smallskip
+\hspace*{1em}-- \texttt{id} (PK) \newline
+\hspace*{1em}-- \texttt{user\allowbreak Id} (FK) \newline
+\hspace*{1em}-- \texttt{profile\allowbreak Id} (FK) \newline
+\hspace*{1em}-- \texttt{profile\allowbreak Type} \newline
+\hspace*{1em}-- \texttt{status} \newline
+\hspace*{1em}-- \texttt{current\allowbreak Data} \newline
+\hspace*{1em}-- \texttt{proposed\allowbreak Data} \newline
+\hspace*{1em}-- \texttt{profile\allowbreak Strength} \newline
+\hspace*{1em}-- \texttt{admin\allowbreak Id} (FK) \newline
+\hspace*{1em}-- \texttt{review\allowbreak Notes} \newline
+\hspace*{1em}-- \texttt{created\allowbreak At} \newline
+\hspace*{1em}-- \texttt{updated\allowbreak At} \newline
+\hspace*{1em}-- \texttt{reviewed\allowbreak At} \\ \hline
+4 & \texttt{Social\allowbreak Link} & External link of a profile (website, LinkedIn, GitHub, Behance) shown on the public profile.\par\smallskip
+\hspace*{1em}-- \texttt{id} (PK) \newline
+\hspace*{1em}-- \texttt{profile\allowbreak Id} (FK) \newline
+\hspace*{1em}-- \texttt{platform} \newline
+\hspace*{1em}-- \texttt{url} \\ \hline
+5 & \texttt{Freelancer\allowbreak Profile} & Professional data of a freelancer: professional title, education, certifications, languages, experience summaries, uploaded CV metadata and identity verification flag.\par\smallskip
+\hspace*{1em}-- \texttt{id} (PK) \newline
+\hspace*{1em}-- \texttt{profile\allowbreak Id} (FK) \newline
+\hspace*{1em}-- \texttt{title} \newline
+\hspace*{1em}-- \texttt{education} \newline
+\hspace*{1em}-- \texttt{certifications} \newline
+\hspace*{1em}-- \texttt{languages} \newline
+\hspace*{1em}-- \texttt{cv\allowbreak Url} \newline
+\hspace*{1em}-- \texttt{cv\allowbreak File\allowbreak Name} \newline
+\hspace*{1em}-- \texttt{cv\allowbreak Public\allowbreak Id} \newline
+\hspace*{1em}-- \texttt{cv\allowbreak Uploaded\allowbreak At} \newline
+\hspace*{1em}-- \texttt{experience} \newline
+\hspace*{1em}-- \texttt{id\allowbreak Verified} \newline
+\hspace*{1em}-- \texttt{created\allowbreak At} \newline
+\hspace*{1em}-- \texttt{updated\allowbreak At} \\ \hline
+6 & \texttt{Cv\allowbreak Analysis} & AI analysis of a freelancer CV: upload metadata, extraction statistics, the structured JSON result (skills, experience, education, projects, summary) and the confirmation state. Generating a new analysis discards any prior \texttt{PENDING} draft for the profile.\par\smallskip
+\hspace*{1em}-- \texttt{id} (PK) \newline
+\hspace*{1em}-- \texttt{freelancer\allowbreak Profile\allowbreak Id} (FK) \newline
+\hspace*{1em}-- \texttt{status} \newline
+\hspace*{1em}-- \texttt{cv\allowbreak Url} \newline
+\hspace*{1em}-- \texttt{cv\allowbreak File\allowbreak Name} \newline
+\hspace*{1em}-- \texttt{cv\allowbreak Uploaded\allowbreak At} \newline
+\hspace*{1em}-- \texttt{source} \newline
+\hspace*{1em}-- \texttt{pages} \newline
+\hspace*{1em}-- \texttt{chars} \newline
+\hspace*{1em}-- \texttt{truncated} \newline
+\hspace*{1em}-- \texttt{ocr\allowbreak Used} \newline
+\hspace*{1em}-- \texttt{model} \newline
+\hspace*{1em}-- \texttt{duration\allowbreak Ms} \newline
+\hspace*{1em}-- \texttt{warnings} \newline
+\hspace*{1em}-- \texttt{payload} \newline
+\hspace*{1em}-- \texttt{confirmed\allowbreak At} \newline
+\hspace*{1em}-- \texttt{discarded\allowbreak At} \newline
+\hspace*{1em}-- \texttt{created\allowbreak At} \newline
+\hspace*{1em}-- \texttt{updated\allowbreak At} \\ \hline
+7 & \texttt{Freelancer\allowbreak Experience} & Experience item of a freelancer profile, either entered manually or imported from a CV, with company, dates and description.\par\smallskip
+\hspace*{1em}-- \texttt{id} (PK) \newline
+\hspace*{1em}-- \texttt{freelancer\allowbreak Profile\allowbreak Id} (FK) \newline
+\hspace*{1em}-- \texttt{title} \newline
+\hspace*{1em}-- \texttt{company} \newline
+\hspace*{1em}-- \texttt{start\allowbreak Date} \newline
+\hspace*{1em}-- \texttt{end\allowbreak Date} \newline
+\hspace*{1em}-- \texttt{is\allowbreak Current} \newline
+\hspace*{1em}-- \texttt{description} \newline
+\hspace*{1em}-- \texttt{source} \newline
+\hspace*{1em}-- \texttt{created\allowbreak At} \newline
+\hspace*{1em}-- \texttt{updated\allowbreak At} \newline
+\hspace*{1em}-- \texttt{deleted\allowbreak At} \\ \hline
+8 & \texttt{Freelancer\allowbreak Education} & Education item of a freelancer profile, either entered manually or imported from a CV, with degree, school and years.\par\smallskip
+\hspace*{1em}-- \texttt{id} (PK) \newline
+\hspace*{1em}-- \texttt{freelancer\allowbreak Profile\allowbreak Id} (FK) \newline
+\hspace*{1em}-- \texttt{degree} \newline
+\hspace*{1em}-- \texttt{school} \newline
+\hspace*{1em}-- \texttt{start\allowbreak Year} \newline
+\hspace*{1em}-- \texttt{end\allowbreak Year} \newline
+\hspace*{1em}-- \texttt{description} \newline
+\hspace*{1em}-- \texttt{source} \newline
+\hspace*{1em}-- \texttt{created\allowbreak At} \newline
+\hspace*{1em}-- \texttt{updated\allowbreak At} \newline
+\hspace*{1em}-- \texttt{deleted\allowbreak At} \\ \hline
+9 & \texttt{Document\allowbreak Processing\allowbreak Job} & Asynchronous processing job for an AI document (CV, job description, proposal): document type, document id, version, status, attempt counter and error message.\par\smallskip
+\hspace*{1em}-- \texttt{id} (PK) \newline
+\hspace*{1em}-- \texttt{document\allowbreak Type} \newline
+\hspace*{1em}-- \texttt{document\allowbreak Id} \newline
+\hspace*{1em}-- \texttt{document\allowbreak Version} \newline
+\hspace*{1em}-- \texttt{status} \newline
+\hspace*{1em}-- \texttt{attempt\allowbreak Count} \newline
+\hspace*{1em}-- \texttt{error\allowbreak Message} \newline
+\hspace*{1em}-- \texttt{created\allowbreak At} \newline
+\hspace*{1em}-- \texttt{updated\allowbreak At} \\ \hline
+10 & \texttt{Embedding\allowbreak Index\allowbreak Record} & Vector index record for a document section: embedding model, collection, vector record id, content hash and index status.\par\smallskip
+\hspace*{1em}-- \texttt{id} (PK) \newline
+\hspace*{1em}-- \texttt{document\allowbreak Type} \newline
+\hspace*{1em}-- \texttt{document\allowbreak Id} \newline
+\hspace*{1em}-- \texttt{document\allowbreak Version} \newline
+\hspace*{1em}-- \texttt{section} \newline
+\hspace*{1em}-- \texttt{embedding\allowbreak Model} \newline
+\hspace*{1em}-- \texttt{collection\allowbreak Name} \newline
+\hspace*{1em}-- \texttt{vector\allowbreak Record\allowbreak Id} \newline
+\hspace*{1em}-- \texttt{content\allowbreak Hash} \newline
+\hspace*{1em}-- \texttt{index\allowbreak Status} \newline
+\hspace*{1em}-- \texttt{indexed\allowbreak At} \newline
+\hspace*{1em}-- \texttt{created\allowbreak At} \newline
+\hspace*{1em}-- \texttt{updated\allowbreak At} \\ \hline
+11 & \texttt{Recommendation} & Job--CV recommendation result: requester, source and target document references, score breakdown (semantic, skill, experience, budget, preference), ranking version and embedding model.\par\smallskip
+\hspace*{1em}-- \texttt{id} (PK) \newline
+\hspace*{1em}-- \texttt{requester\allowbreak Id} (FK) \newline
+\hspace*{1em}-- \texttt{source\allowbreak Type} \newline
+\hspace*{1em}-- \texttt{source\allowbreak Document\allowbreak Id} \newline
+\hspace*{1em}-- \texttt{target\allowbreak Type} \newline
+\hspace*{1em}-- \texttt{target\allowbreak Document\allowbreak Id} \newline
+\hspace*{1em}-- \texttt{semantic\allowbreak Score} \newline
+\hspace*{1em}-- \texttt{skill\allowbreak Score} \newline
+\hspace*{1em}-- \texttt{experience\allowbreak Score} \newline
+\hspace*{1em}-- \texttt{budget\allowbreak Score} \newline
+\hspace*{1em}-- \texttt{preference\allowbreak Score} \newline
+\hspace*{1em}-- \texttt{final\allowbreak Score} \newline
+\hspace*{1em}-- \texttt{ranking\allowbreak Version} \newline
+\hspace*{1em}-- \texttt{embedding\allowbreak Model} \newline
+\hspace*{1em}-- \texttt{created\allowbreak At} \\ \hline
+12 & \texttt{Embedding\allowbreak Outbox\allowbreak Event} & Outbox event that triggers embedding or re-indexing of a document, with event type, document reference, status, attempt counter and processing timestamp.\par\smallskip
+\hspace*{1em}-- \texttt{id} (PK) \newline
+\hspace*{1em}-- \texttt{event\allowbreak Type} \newline
+\hspace*{1em}-- \texttt{document\allowbreak Type} \newline
+\hspace*{1em}-- \texttt{document\allowbreak Id} \newline
+\hspace*{1em}-- \texttt{document\allowbreak Version} \newline
+\hspace*{1em}-- \texttt{status} \newline
+\hspace*{1em}-- \texttt{attempt\allowbreak Count} \newline
+\hspace*{1em}-- \texttt{last\allowbreak Error} \newline
+\hspace*{1em}-- \texttt{created\allowbreak At} \newline
+\hspace*{1em}-- \texttt{processed\allowbreak At} \\ \hline
+\end{longtable}
+\end{center}
 
 % ===============================================
 % 4.1.5.6 ERD5
 % ===============================================
+\Needspace{12\baselineskip}
 \paragraph{Identity Verification \& Profile Visits}
+
+This ERD describes the Identity Verification \& Profile Visits module. It stores identity verification documents and profile visit logs. These tables support eKYC document upload/review and tracking profile views.
+
+\Needspace{12\baselineskip}
+\paragraph*{a) ERD}
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.95\textwidth]{image/ERD/ERD-ERD5.drawio.pdf}
+    \includegraphics[width=0.78\textwidth]{image/ERD/ERD-ERD5.drawio.pdf}
     \caption{Identity Verification \& Profile Visits ERD}
-    \label{fig:erd-identity-verification}
+    \label{fig:erd-identity-verification--profile-visits}
 \end{figure}
+
+\Needspace{8\baselineskip}
+\paragraph*{b) Table of entities}\nopagebreak[4]
+\begin{center}\nopagebreak[4]
+\small\sloppy
+\begin{longtable}{|C{0.8cm}|L{3.8cm}|p{10.0cm}|}
+\hline
+\rowcolor{fptHeader}\textbf{No} & \textbf{Table} & \textbf{Description} \\* \hline
+\endfirsthead
+\hline
+\rowcolor{fptHeader}\textbf{No} & \textbf{Table} & \textbf{Description} \\* \hline
+\endhead
+\hline\endfoot
+\hline\endlastfoot
+1 & \texttt{User} & Account identity: e-mail, bcrypt password hash, ban flag, Stripe customer/Connect flags and timestamps. Carries the primary role through \texttt{roleId}.\par\smallskip
+\hspace*{1em}-- \texttt{id} (PK) \newline
+\hspace*{1em}-- \texttt{email} \newline
+\hspace*{1em}-- \texttt{password} \newline
+\hspace*{1em}-- \texttt{is\allowbreak Banned} \newline
+\hspace*{1em}-- \texttt{created\allowbreak At} \newline
+\hspace*{1em}-- \texttt{updated\allowbreak At} \newline
+\hspace*{1em}-- \texttt{deleted\allowbreak At} \newline
+\hspace*{1em}-- \texttt{stripe\allowbreak Customer\allowbreak Id} \newline
+\hspace*{1em}-- \texttt{stripe\allowbreak Account\allowbreak Id} \newline
+\hspace*{1em}-- \texttt{stripe\allowbreak Onboarding\allowbreak Completed} \newline
+\hspace*{1em}-- \texttt{role\allowbreak Id} (FK) \\ \hline
+2 & \texttt{Id\allowbreak Verification\allowbreak Document} & Identity document uploaded for eKYC, with the AI check result and the administrator decision.\par\smallskip
+\hspace*{1em}-- \texttt{id} (PK) \newline
+\hspace*{1em}-- \texttt{user\allowbreak Id} (FK) \newline
+\hspace*{1em}-- \texttt{document\allowbreak Type} \newline
+\hspace*{1em}-- \texttt{file\allowbreak Url} \newline
+\hspace*{1em}-- \texttt{status} \newline
+\hspace*{1em}-- \texttt{admin\allowbreak Id} (FK) \newline
+\hspace*{1em}-- \texttt{review\allowbreak Notes} \newline
+\hspace*{1em}-- \texttt{created\allowbreak At} \newline
+\hspace*{1em}-- \texttt{reviewed\allowbreak At} \newline
+\hspace*{1em}-- \texttt{deleted\allowbreak At} \newline
+\hspace*{1em}-- \texttt{ai\allowbreak Status} \newline
+\hspace*{1em}-- \texttt{ai\allowbreak Score} \newline
+\hspace*{1em}-- \texttt{ai\allowbreak Summary} \newline
+\hspace*{1em}-- \texttt{ai\allowbreak Selfie\allowbreak Summary} \newline
+\hspace*{1em}-- \texttt{ai\allowbreak Error} \newline
+\hspace*{1em}-- \texttt{ai\allowbreak Scanned\allowbreak At} \newline
+\hspace*{1em}-- \texttt{back\allowbreak File\allowbreak Url} \newline
+\hspace*{1em}-- \texttt{identity\allowbreak Number} \newline
+\hspace*{1em}-- \texttt{duplicate\allowbreak Of\allowbreak Id} (FK) \\ \hline
+3 & \texttt{Profile\allowbreak Visit\allowbreak Log} & View log of a freelancer profile (\texttt{viewerId}, \texttt{targetFreelancerId}, \texttt{viewedAt}); source of the profile statistics.\par\smallskip
+\hspace*{1em}-- \texttt{id} (PK) \newline
+\hspace*{1em}-- \texttt{viewer\allowbreak Id} (FK) \newline
+\hspace*{1em}-- \texttt{target\allowbreak Freelancer\allowbreak Id} (FK) \newline
+\hspace*{1em}-- \texttt{viewed\allowbreak At} \\ \hline
+\end{longtable}
+\end{center}
 
 % ===============================================
 % 4.1.5.7 ERD6
 % ===============================================
+\Needspace{12\baselineskip}
 \paragraph{Portfolio \& Skills}
+
+This ERD describes the Portfolio \& Skills module. It stores portfolio items, freelancer skills, skill catalog, and portfolio likes. These tables support portfolio management, skill catalog, skill proficiency, and liking portfolios.
+
+\Needspace{12\baselineskip}
+\paragraph*{a) ERD}
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.78\textwidth]{image/ERD/ERD-ERD6.drawio.pdf}
     \caption{Portfolio \& Skills ERD}
-    \label{fig:erd-portfolio-skills}
+    \label{fig:erd-portfolio--skills}
 \end{figure}
+
+\Needspace{8\baselineskip}
+\paragraph*{b) Table of entities}\nopagebreak[4]
+\begin{center}\nopagebreak[4]
+\small\sloppy
+\begin{longtable}{|C{0.8cm}|L{3.8cm}|p{10.0cm}|}
+\hline
+\rowcolor{fptHeader}\textbf{No} & \textbf{Table} & \textbf{Description} \\* \hline
+\endfirsthead
+\hline
+\rowcolor{fptHeader}\textbf{No} & \textbf{Table} & \textbf{Description} \\* \hline
+\endhead
+\hline\endfoot
+\hline\endlastfoot
+1 & \texttt{User} & Account identity: e-mail, bcrypt password hash, ban flag, Stripe customer/Connect flags and timestamps. Carries the primary role through \texttt{roleId}.\par\smallskip
+\hspace*{1em}-- \texttt{id} (PK) \newline
+\hspace*{1em}-- \texttt{email} \newline
+\hspace*{1em}-- \texttt{password} \newline
+\hspace*{1em}-- \texttt{is\allowbreak Banned} \newline
+\hspace*{1em}-- \texttt{created\allowbreak At} \newline
+\hspace*{1em}-- \texttt{updated\allowbreak At} \newline
+\hspace*{1em}-- \texttt{deleted\allowbreak At} \newline
+\hspace*{1em}-- \texttt{stripe\allowbreak Customer\allowbreak Id} \newline
+\hspace*{1em}-- \texttt{stripe\allowbreak Account\allowbreak Id} \newline
+\hspace*{1em}-- \texttt{stripe\allowbreak Onboarding\allowbreak Completed} \newline
+\hspace*{1em}-- \texttt{role\allowbreak Id} (FK) \\ \hline
+2 & \texttt{Freelancer\allowbreak Profile} & Professional data of a freelancer: professional title, education, certifications, languages, experience summaries, uploaded CV metadata and identity verification flag.\par\smallskip
+\hspace*{1em}-- \texttt{id} (PK) \newline
+\hspace*{1em}-- \texttt{profile\allowbreak Id} (FK) \newline
+\hspace*{1em}-- \texttt{title} \newline
+\hspace*{1em}-- \texttt{education} \newline
+\hspace*{1em}-- \texttt{certifications} \newline
+\hspace*{1em}-- \texttt{languages} \newline
+\hspace*{1em}-- \texttt{cv\allowbreak Url} \newline
+\hspace*{1em}-- \texttt{cv\allowbreak File\allowbreak Name} \newline
+\hspace*{1em}-- \texttt{cv\allowbreak Public\allowbreak Id} \newline
+\hspace*{1em}-- \texttt{cv\allowbreak Uploaded\allowbreak At} \newline
+\hspace*{1em}-- \texttt{experience} \newline
+\hspace*{1em}-- \texttt{id\allowbreak Verified} \newline
+\hspace*{1em}-- \texttt{created\allowbreak At} \newline
+\hspace*{1em}-- \texttt{updated\allowbreak At} \\ \hline
+3 & \texttt{Freelancer\allowbreak Skill} & Many-to-many link between a freelancer profile and a skill, with the self-declared proficiency level.\par\smallskip
+\hspace*{1em}-- \texttt{id} (PK) \newline
+\hspace*{1em}-- \texttt{freelancer\allowbreak Profile\allowbreak Id} (FK) \newline
+\hspace*{1em}-- \texttt{skill\allowbreak Id} (FK) \newline
+\hspace*{1em}-- \texttt{proficiency\allowbreak Level} \\ \hline
+4 & \texttt{Skill} & Skill catalogue shared by freelancer profiles and jobs, with soft-delete support.\par\smallskip
+\hspace*{1em}-- \texttt{id} (PK) \newline
+\hspace*{1em}-- \texttt{name} \newline
+\hspace*{1em}-- \texttt{slug} \newline
+\hspace*{1em}-- \texttt{description} \newline
+\hspace*{1em}-- \texttt{deleted\allowbreak At} \newline
+\hspace*{1em}-- \texttt{created\allowbreak At} \newline
+\hspace*{1em}-- \texttt{updated\allowbreak At} \\ \hline
+5 & \texttt{Portfolio\allowbreak Item} & Portfolio entry of a profile: title, description, technologies list, project URL, content source and soft-delete support.\par\smallskip
+\hspace*{1em}-- \texttt{id} (PK) \newline
+\hspace*{1em}-- \texttt{freelancer\allowbreak Profile\allowbreak Id} (FK) \newline
+\hspace*{1em}-- \texttt{title} \newline
+\hspace*{1em}-- \texttt{description} \newline
+\hspace*{1em}-- \texttt{technologies} \newline
+\hspace*{1em}-- \texttt{project\allowbreak Url} \newline
+\hspace*{1em}-- \texttt{source} \newline
+\hspace*{1em}-- \texttt{created\allowbreak At} \newline
+\hspace*{1em}-- \texttt{updated\allowbreak At} \newline
+\hspace*{1em}-- \texttt{deleted\allowbreak At} \\ \hline
+6 & \texttt{Portfolio\allowbreak Like} & Like given on a portfolio item.\par\smallskip
+\hspace*{1em}-- \texttt{user\allowbreak Id} (PK, FK) \newline
+\hspace*{1em}-- \texttt{portfolio\allowbreak Item\allowbreak Id} (PK, FK) \newline
+\hspace*{1em}-- \texttt{created\allowbreak At} \\ \hline
+\end{longtable}
+\end{center}
 
 % ===============================================
 % 4.1.5.8 ERD7
 % ===============================================
+\Needspace{12\baselineskip}
 \paragraph{Favorites \& Follows}
+
+This ERD describes the Favorites \& Follows module. It stores favorite freelancer and follow relationships. These tables support bookmarking favorite freelancers and following/unfollowing.
+
+\Needspace{12\baselineskip}
+\paragraph*{a) ERD}
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.95\textwidth]{image/ERD/ERD-ERD7.drawio.pdf}
+    \includegraphics[width=0.78\textwidth]{image/ERD/ERD-ERD7.drawio.pdf}
     \caption{Favorites \& Follows ERD}
-    \label{fig:erd-favorites-follows}
+    \label{fig:erd-favorites--follows}
 \end{figure}
+
+\Needspace{8\baselineskip}
+\paragraph*{b) Table of entities}\nopagebreak[4]
+\begin{center}\nopagebreak[4]
+\small\sloppy
+\begin{longtable}{|C{0.8cm}|L{3.8cm}|p{10.0cm}|}
+\hline
+\rowcolor{fptHeader}\textbf{No} & \textbf{Table} & \textbf{Description} \\* \hline
+\endfirsthead
+\hline
+\rowcolor{fptHeader}\textbf{No} & \textbf{Table} & \textbf{Description} \\* \hline
+\endhead
+\hline\endfoot
+\hline\endlastfoot
+1 & \texttt{User} & Account identity: e-mail, bcrypt password hash, ban flag, Stripe customer/Connect flags and timestamps. Carries the primary role through \texttt{roleId}.\par\smallskip
+\hspace*{1em}-- \texttt{id} (PK) \newline
+\hspace*{1em}-- \texttt{email} \newline
+\hspace*{1em}-- \texttt{password} \newline
+\hspace*{1em}-- \texttt{is\allowbreak Banned} \newline
+\hspace*{1em}-- \texttt{created\allowbreak At} \newline
+\hspace*{1em}-- \texttt{updated\allowbreak At} \newline
+\hspace*{1em}-- \texttt{deleted\allowbreak At} \newline
+\hspace*{1em}-- \texttt{stripe\allowbreak Customer\allowbreak Id} \newline
+\hspace*{1em}-- \texttt{stripe\allowbreak Account\allowbreak Id} \newline
+\hspace*{1em}-- \texttt{stripe\allowbreak Onboarding\allowbreak Completed} \newline
+\hspace*{1em}-- \texttt{role\allowbreak Id} (FK) \\ \hline
+2 & \texttt{Favorite\allowbreak Freelancer} & Freelancers marked as favourite by a client account.\par\smallskip
+\hspace*{1em}-- \texttt{client\allowbreak Id} (PK, FK) \newline
+\hspace*{1em}-- \texttt{freelancer\allowbreak Id} (PK, FK) \newline
+\hspace*{1em}-- \texttt{created\allowbreak At} \\ \hline
+3 & \texttt{Follow\allowbreak Freelancer} & Follow relationship between two accounts, used by the activity feed.\par\smallskip
+\hspace*{1em}-- \texttt{client\allowbreak Id} (PK, FK) \newline
+\hspace*{1em}-- \texttt{freelancer\allowbreak Id} (PK, FK) \newline
+\hspace*{1em}-- \texttt{created\allowbreak At} \\ \hline
+\end{longtable}
+\end{center}
 
 % ===============================================
 % 4.1.5.9 ERD8
 % ===============================================
+\Needspace{12\baselineskip}
 \paragraph{Job Posting}
+
+This ERD describes the Job Posting module. It stores job categories, jobs, job-category links, and job-skill links. These tables support creating, editing, publishing, closing, and categorizing jobs.
+
+\Needspace{12\baselineskip}
+\paragraph*{a) ERD}
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.78\textwidth]{image/ERD/ERD-ERD8.drawio.pdf}
@@ -100,32 +676,263 @@
     \label{fig:erd-job-posting}
 \end{figure}
 
+\Needspace{8\baselineskip}
+\paragraph*{b) Table of entities}\nopagebreak[4]
+\begin{center}\nopagebreak[4]
+\small\sloppy
+\begin{longtable}{|C{0.8cm}|L{3.8cm}|p{10.0cm}|}
+\hline
+\rowcolor{fptHeader}\textbf{No} & \textbf{Table} & \textbf{Description} \\* \hline
+\endfirsthead
+\hline
+\rowcolor{fptHeader}\textbf{No} & \textbf{Table} & \textbf{Description} \\* \hline
+\endhead
+\hline\endfoot
+\hline\endlastfoot
+1 & \texttt{User} & Account identity: e-mail, bcrypt password hash, ban flag, Stripe customer/Connect flags and timestamps. Carries the primary role through \texttt{roleId}.\par\smallskip
+\hspace*{1em}-- \texttt{id} (PK) \newline
+\hspace*{1em}-- \texttt{email} \newline
+\hspace*{1em}-- \texttt{password} \newline
+\hspace*{1em}-- \texttt{is\allowbreak Banned} \newline
+\hspace*{1em}-- \texttt{created\allowbreak At} \newline
+\hspace*{1em}-- \texttt{updated\allowbreak At} \newline
+\hspace*{1em}-- \texttt{deleted\allowbreak At} \newline
+\hspace*{1em}-- \texttt{stripe\allowbreak Customer\allowbreak Id} \newline
+\hspace*{1em}-- \texttt{stripe\allowbreak Account\allowbreak Id} \newline
+\hspace*{1em}-- \texttt{stripe\allowbreak Onboarding\allowbreak Completed} \newline
+\hspace*{1em}-- \texttt{role\allowbreak Id} (FK) \\ \hline
+2 & \texttt{Job} & Job posting: slug, title, description, budget range and type, hiring type, positions required/filled, deadline, expiry date, status and the owning client.\par\smallskip
+\hspace*{1em}-- \texttt{id} (PK) \newline
+\hspace*{1em}-- \texttt{client\allowbreak Id} (FK) \newline
+\hspace*{1em}-- \texttt{title} \newline
+\hspace*{1em}-- \texttt{slug} \newline
+\hspace*{1em}-- \texttt{description} \newline
+\hspace*{1em}-- \texttt{budget\allowbreak Min} \newline
+\hspace*{1em}-- \texttt{budget\allowbreak Max} \newline
+\hspace*{1em}-- \texttt{budget\allowbreak Type} \newline
+\hspace*{1em}-- \texttt{deadline} \newline
+\hspace*{1em}-- \texttt{status} \newline
+\hspace*{1em}-- \texttt{expiry\allowbreak Date} \newline
+\hspace*{1em}-- \texttt{created\allowbreak At} \newline
+\hspace*{1em}-- \texttt{updated\allowbreak At} \newline
+\hspace*{1em}-- \texttt{deleted\allowbreak At} \newline
+\hspace*{1em}-- \texttt{hiring\allowbreak Type} \newline
+\hspace*{1em}-- \texttt{positions\allowbreak Required} \newline
+\hspace*{1em}-- \texttt{positions\allowbreak Filled} \\ \hline
+3 & \texttt{Job\allowbreak Category} & Flat job category (\texttt{name}, \texttt{slug}, \texttt{description}, \texttt{status}) with soft-delete support.\par\smallskip
+\hspace*{1em}-- \texttt{id} (PK) \newline
+\hspace*{1em}-- \texttt{name} \newline
+\hspace*{1em}-- \texttt{slug} \newline
+\hspace*{1em}-- \texttt{description} \newline
+\hspace*{1em}-- \texttt{status} \newline
+\hspace*{1em}-- \texttt{deleted\allowbreak At} \newline
+\hspace*{1em}-- \texttt{created\allowbreak At} \newline
+\hspace*{1em}-- \texttt{updated\allowbreak At} \\ \hline
+4 & \texttt{Job\allowbreak Job\allowbreak Category} & Many-to-many link between a job and the job categories it is published in.\par\smallskip
+\hspace*{1em}-- \texttt{job\allowbreak Id} (PK, FK) \newline
+\hspace*{1em}-- \texttt{category\allowbreak Id} (PK, FK) \\ \hline
+5 & \texttt{Job\allowbreak Skill} & Many-to-many link pairing a job with its required skills.\par\smallskip
+\hspace*{1em}-- \texttt{job\allowbreak Id} (PK, FK) \newline
+\hspace*{1em}-- \texttt{skill\allowbreak Id} (PK, FK) \\ \hline
+6 & \texttt{Skill} & Skill catalogue shared by freelancer profiles and jobs, with soft-delete support.\par\smallskip
+\hspace*{1em}-- \texttt{id} (PK) \newline
+\hspace*{1em}-- \texttt{name} \newline
+\hspace*{1em}-- \texttt{slug} \newline
+\hspace*{1em}-- \texttt{description} \newline
+\hspace*{1em}-- \texttt{deleted\allowbreak At} \newline
+\hspace*{1em}-- \texttt{created\allowbreak At} \newline
+\hspace*{1em}-- \texttt{updated\allowbreak At} \\ \hline
+\end{longtable}
+\end{center}
+
 % ===============================================
 % 4.1.5.10 ERD9
 % ===============================================
+\Needspace{12\baselineskip}
 \paragraph{Job Discovery \& Alerts}
+
+This ERD describes the Job Discovery \& Alerts module. It stores job bookmarks, recently viewed jobs, saved searches, and job alerts. These tables support browsing, bookmarking, saved filters, and alert notifications.
+
+\Needspace{12\baselineskip}
+\paragraph*{a) ERD}
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.78\textwidth]{image/ERD/ERD-ERD9.drawio.pdf}
     \caption{Job Discovery \& Alerts ERD}
-    \label{fig:erd-job-discovery}
+    \label{fig:erd-job-discovery--alerts}
 \end{figure}
+
+\Needspace{8\baselineskip}
+\paragraph*{b) Table of entities}\nopagebreak[4]
+\begin{center}\nopagebreak[4]
+\small\sloppy
+\begin{longtable}{|C{0.8cm}|L{3.8cm}|p{10.0cm}|}
+\hline
+\rowcolor{fptHeader}\textbf{No} & \textbf{Table} & \textbf{Description} \\* \hline
+\endfirsthead
+\hline
+\rowcolor{fptHeader}\textbf{No} & \textbf{Table} & \textbf{Description} \\* \hline
+\endhead
+\hline\endfoot
+\hline\endlastfoot
+1 & \texttt{User} & Account identity: e-mail, bcrypt password hash, ban flag, Stripe customer/Connect flags and timestamps. Carries the primary role through \texttt{roleId}.\par\smallskip
+\hspace*{1em}-- \texttt{id} (PK) \newline
+\hspace*{1em}-- \texttt{email} \newline
+\hspace*{1em}-- \texttt{password} \newline
+\hspace*{1em}-- \texttt{is\allowbreak Banned} \newline
+\hspace*{1em}-- \texttt{created\allowbreak At} \newline
+\hspace*{1em}-- \texttt{updated\allowbreak At} \newline
+\hspace*{1em}-- \texttt{deleted\allowbreak At} \newline
+\hspace*{1em}-- \texttt{stripe\allowbreak Customer\allowbreak Id} \newline
+\hspace*{1em}-- \texttt{stripe\allowbreak Account\allowbreak Id} \newline
+\hspace*{1em}-- \texttt{stripe\allowbreak Onboarding\allowbreak Completed} \newline
+\hspace*{1em}-- \texttt{role\allowbreak Id} (FK) \\ \hline
+2 & \texttt{Job} & Job posting: slug, title, description, budget range and type, hiring type, positions required/filled, deadline, expiry date, status and the owning client.\par\smallskip
+\hspace*{1em}-- \texttt{id} (PK) \newline
+\hspace*{1em}-- \texttt{client\allowbreak Id} (FK) \newline
+\hspace*{1em}-- \texttt{title} \newline
+\hspace*{1em}-- \texttt{slug} \newline
+\hspace*{1em}-- \texttt{description} \newline
+\hspace*{1em}-- \texttt{budget\allowbreak Min} \newline
+\hspace*{1em}-- \texttt{budget\allowbreak Max} \newline
+\hspace*{1em}-- \texttt{budget\allowbreak Type} \newline
+\hspace*{1em}-- \texttt{deadline} \newline
+\hspace*{1em}-- \texttt{status} \newline
+\hspace*{1em}-- \texttt{expiry\allowbreak Date} \newline
+\hspace*{1em}-- \texttt{created\allowbreak At} \newline
+\hspace*{1em}-- \texttt{updated\allowbreak At} \newline
+\hspace*{1em}-- \texttt{deleted\allowbreak At} \newline
+\hspace*{1em}-- \texttt{hiring\allowbreak Type} \newline
+\hspace*{1em}-- \texttt{positions\allowbreak Required} \newline
+\hspace*{1em}-- \texttt{positions\allowbreak Filled} \\ \hline
+3 & \texttt{Job\allowbreak Bookmark} & Jobs saved by a freelancer.\par\smallskip
+\hspace*{1em}-- \texttt{user\allowbreak Id} (PK, FK) \newline
+\hspace*{1em}-- \texttt{job\allowbreak Id} (PK, FK) \newline
+\hspace*{1em}-- \texttt{created\allowbreak At} \\ \hline
+4 & \texttt{Recently\allowbreak Viewed\allowbreak Job} & Recently opened job postings of an account, with the viewing timestamp.\par\smallskip
+\hspace*{1em}-- \texttt{id} (PK) \newline
+\hspace*{1em}-- \texttt{user\allowbreak Id} (FK) \newline
+\hspace*{1em}-- \texttt{job\allowbreak Id} (FK) \newline
+\hspace*{1em}-- \texttt{viewed\allowbreak At} \\ \hline
+5 & \texttt{Saved\allowbreak Search} & Stored job filter criteria (keyword, categories, budget, skills) that the freelancer can reapply.\par\smallskip
+\hspace*{1em}-- \texttt{id} (PK) \newline
+\hspace*{1em}-- \texttt{user\allowbreak Id} (FK) \newline
+\hspace*{1em}-- \texttt{name} \newline
+\hspace*{1em}-- \texttt{search\allowbreak Params} \newline
+\hspace*{1em}-- \texttt{created\allowbreak At} \\ \hline
+6 & \texttt{Job\allowbreak Alert} & User-level job alert configuration storing keywords, skills, frequency, notification channels and active flag.\par\smallskip
+\hspace*{1em}-- \texttt{id} (PK) \newline
+\hspace*{1em}-- \texttt{user\allowbreak Id} (FK) \newline
+\hspace*{1em}-- \texttt{name} \newline
+\hspace*{1em}-- \texttt{keywords} \newline
+\hspace*{1em}-- \texttt{skills} \newline
+\hspace*{1em}-- \texttt{frequency} \newline
+\hspace*{1em}-- \texttt{channels} \newline
+\hspace*{1em}-- \texttt{is\allowbreak Active} \newline
+\hspace*{1em}-- \texttt{last\allowbreak Sent\allowbreak At} \newline
+\hspace*{1em}-- \texttt{created\allowbreak At} \newline
+\hspace*{1em}-- \texttt{updated\allowbreak At} \\ \hline
+\end{longtable}
+\end{center}
 
 % ===============================================
 % 4.1.5.11 ERD10
 % ===============================================
+\Needspace{12\baselineskip}
 \paragraph{Proposal}
+
+This ERD describes the Proposal module. It stores proposals and proposal attachments. These tables support submitting, updating, withdrawing, accepting, and rejecting proposals.
+
+\Needspace{12\baselineskip}
+\paragraph*{a) ERD}
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.95\textwidth]{image/ERD/ERD-ERD10.drawio.pdf}
+    \includegraphics[width=0.78\textwidth]{image/ERD/ERD-ERD10.drawio.pdf}
     \caption{Proposal ERD}
     \label{fig:erd-proposal}
 \end{figure}
 
+\Needspace{8\baselineskip}
+\paragraph*{b) Table of entities}\nopagebreak[4]
+\begin{center}\nopagebreak[4]
+\small\sloppy
+\begin{longtable}{|C{0.8cm}|L{3.8cm}|p{10.0cm}|}
+\hline
+\rowcolor{fptHeader}\textbf{No} & \textbf{Table} & \textbf{Description} \\* \hline
+\endfirsthead
+\hline
+\rowcolor{fptHeader}\textbf{No} & \textbf{Table} & \textbf{Description} \\* \hline
+\endhead
+\hline\endfoot
+\hline\endlastfoot
+1 & \texttt{Job} & Job posting: slug, title, description, budget range and type, hiring type, positions required/filled, deadline, expiry date, status and the owning client.\par\smallskip
+\hspace*{1em}-- \texttt{id} (PK) \newline
+\hspace*{1em}-- \texttt{client\allowbreak Id} (FK) \newline
+\hspace*{1em}-- \texttt{title} \newline
+\hspace*{1em}-- \texttt{slug} \newline
+\hspace*{1em}-- \texttt{description} \newline
+\hspace*{1em}-- \texttt{budget\allowbreak Min} \newline
+\hspace*{1em}-- \texttt{budget\allowbreak Max} \newline
+\hspace*{1em}-- \texttt{budget\allowbreak Type} \newline
+\hspace*{1em}-- \texttt{deadline} \newline
+\hspace*{1em}-- \texttt{status} \newline
+\hspace*{1em}-- \texttt{expiry\allowbreak Date} \newline
+\hspace*{1em}-- \texttt{created\allowbreak At} \newline
+\hspace*{1em}-- \texttt{updated\allowbreak At} \newline
+\hspace*{1em}-- \texttt{deleted\allowbreak At} \newline
+\hspace*{1em}-- \texttt{hiring\allowbreak Type} \newline
+\hspace*{1em}-- \texttt{positions\allowbreak Required} \newline
+\hspace*{1em}-- \texttt{positions\allowbreak Filled} \\ \hline
+2 & \texttt{User} & Account identity: e-mail, bcrypt password hash, ban flag, Stripe customer/Connect flags and timestamps. Carries the primary role through \texttt{roleId}.\par\smallskip
+\hspace*{1em}-- \texttt{id} (PK) \newline
+\hspace*{1em}-- \texttt{email} \newline
+\hspace*{1em}-- \texttt{password} \newline
+\hspace*{1em}-- \texttt{is\allowbreak Banned} \newline
+\hspace*{1em}-- \texttt{created\allowbreak At} \newline
+\hspace*{1em}-- \texttt{updated\allowbreak At} \newline
+\hspace*{1em}-- \texttt{deleted\allowbreak At} \newline
+\hspace*{1em}-- \texttt{stripe\allowbreak Customer\allowbreak Id} \newline
+\hspace*{1em}-- \texttt{stripe\allowbreak Account\allowbreak Id} \newline
+\hspace*{1em}-- \texttt{stripe\allowbreak Onboarding\allowbreak Completed} \newline
+\hspace*{1em}-- \texttt{role\allowbreak Id} (FK) \\ \hline
+3 & \texttt{Proposal} & Proposal submitted by a freelancer for a job: cover letter, bid amount, estimated duration and lifecycle status.\par\smallskip
+\hspace*{1em}-- \texttt{id} (PK) \newline
+\hspace*{1em}-- \texttt{job\allowbreak Id} (FK) \newline
+\hspace*{1em}-- \texttt{freelancer\allowbreak Id} (FK) \newline
+\hspace*{1em}-- \texttt{cover\allowbreak Letter} \newline
+\hspace*{1em}-- \texttt{bid\allowbreak Amount} \newline
+\hspace*{1em}-- \texttt{delivery\allowbreak Days} \newline
+\hspace*{1em}-- \texttt{status} \newline
+\hspace*{1em}-- \texttt{created\allowbreak At} \newline
+\hspace*{1em}-- \texttt{submitted\allowbreak At} \newline
+\hspace*{1em}-- \texttt{accepted\allowbreak At} \newline
+\hspace*{1em}-- \texttt{rejected\allowbreak At} \newline
+\hspace*{1em}-- \texttt{withdrawn\allowbreak At} \newline
+\hspace*{1em}-- \texttt{expires\allowbreak At} \newline
+\hspace*{1em}-- \texttt{updated\allowbreak At} \newline
+\hspace*{1em}-- \texttt{deleted\allowbreak At} \\ \hline
+4 & \texttt{Proposal\allowbreak Attachment} & File attached to a proposal (portfolio sample, reference document) stored in Cloudinary.\par\smallskip
+\hspace*{1em}-- \texttt{id} (PK) \newline
+\hspace*{1em}-- \texttt{proposal\allowbreak Id} (FK) \newline
+\hspace*{1em}-- \texttt{file\allowbreak Url} \newline
+\hspace*{1em}-- \texttt{file\allowbreak Name} \newline
+\hspace*{1em}-- \texttt{file\allowbreak Size} \newline
+\hspace*{1em}-- \texttt{mime\allowbreak Type} \newline
+\hspace*{1em}-- \texttt{created\allowbreak At} \newline
+\hspace*{1em}-- \texttt{deleted\allowbreak At} \\ \hline
+\end{longtable}
+\end{center}
+
 % ===============================================
 % 4.1.5.12 ERD11
 % ===============================================
+\Needspace{12\baselineskip}
 \paragraph{Contract}
+
+This ERD describes the Contract module. It stores contracts and contract term templates. These tables support contract creation, signing, cancellation, terms, and status management.
+
+\Needspace{12\baselineskip}
+\paragraph*{a) ERD}
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.78\textwidth]{image/ERD/ERD-ERD11.drawio.pdf}
@@ -133,43 +940,420 @@
     \label{fig:erd-contract}
 \end{figure}
 
+\Needspace{8\baselineskip}
+\paragraph*{b) Table of entities}\nopagebreak[4]
+\begin{center}\nopagebreak[4]
+\small\sloppy
+\begin{longtable}{|C{0.8cm}|L{3.8cm}|p{10.0cm}|}
+\hline
+\rowcolor{fptHeader}\textbf{No} & \textbf{Table} & \textbf{Description} \\* \hline
+\endfirsthead
+\hline
+\rowcolor{fptHeader}\textbf{No} & \textbf{Table} & \textbf{Description} \\* \hline
+\endhead
+\hline\endfoot
+\hline\endlastfoot
+1 & \texttt{Job} & Job posting: slug, title, description, budget range and type, hiring type, positions required/filled, deadline, expiry date, status and the owning client.\par\smallskip
+\hspace*{1em}-- \texttt{id} (PK) \newline
+\hspace*{1em}-- \texttt{client\allowbreak Id} (FK) \newline
+\hspace*{1em}-- \texttt{title} \newline
+\hspace*{1em}-- \texttt{slug} \newline
+\hspace*{1em}-- \texttt{description} \newline
+\hspace*{1em}-- \texttt{budget\allowbreak Min} \newline
+\hspace*{1em}-- \texttt{budget\allowbreak Max} \newline
+\hspace*{1em}-- \texttt{budget\allowbreak Type} \newline
+\hspace*{1em}-- \texttt{deadline} \newline
+\hspace*{1em}-- \texttt{status} \newline
+\hspace*{1em}-- \texttt{expiry\allowbreak Date} \newline
+\hspace*{1em}-- \texttt{created\allowbreak At} \newline
+\hspace*{1em}-- \texttt{updated\allowbreak At} \newline
+\hspace*{1em}-- \texttt{deleted\allowbreak At} \newline
+\hspace*{1em}-- \texttt{hiring\allowbreak Type} \newline
+\hspace*{1em}-- \texttt{positions\allowbreak Required} \newline
+\hspace*{1em}-- \texttt{positions\allowbreak Filled} \\ \hline
+2 & \texttt{Proposal} & Proposal submitted by a freelancer for a job: cover letter, bid amount, estimated duration and lifecycle status.\par\smallskip
+\hspace*{1em}-- \texttt{id} (PK) \newline
+\hspace*{1em}-- \texttt{job\allowbreak Id} (FK) \newline
+\hspace*{1em}-- \texttt{freelancer\allowbreak Id} (FK) \newline
+\hspace*{1em}-- \texttt{cover\allowbreak Letter} \newline
+\hspace*{1em}-- \texttt{bid\allowbreak Amount} \newline
+\hspace*{1em}-- \texttt{delivery\allowbreak Days} \newline
+\hspace*{1em}-- \texttt{status} \newline
+\hspace*{1em}-- \texttt{created\allowbreak At} \newline
+\hspace*{1em}-- \texttt{submitted\allowbreak At} \newline
+\hspace*{1em}-- \texttt{accepted\allowbreak At} \newline
+\hspace*{1em}-- \texttt{rejected\allowbreak At} \newline
+\hspace*{1em}-- \texttt{withdrawn\allowbreak At} \newline
+\hspace*{1em}-- \texttt{expires\allowbreak At} \newline
+\hspace*{1em}-- \texttt{updated\allowbreak At} \newline
+\hspace*{1em}-- \texttt{deleted\allowbreak At} \\ \hline
+3 & \texttt{User} & Account identity: e-mail, bcrypt password hash, ban flag, Stripe customer/Connect flags and timestamps. Carries the primary role through \texttt{roleId}.\par\smallskip
+\hspace*{1em}-- \texttt{id} (PK) \newline
+\hspace*{1em}-- \texttt{email} \newline
+\hspace*{1em}-- \texttt{password} \newline
+\hspace*{1em}-- \texttt{is\allowbreak Banned} \newline
+\hspace*{1em}-- \texttt{created\allowbreak At} \newline
+\hspace*{1em}-- \texttt{updated\allowbreak At} \newline
+\hspace*{1em}-- \texttt{deleted\allowbreak At} \newline
+\hspace*{1em}-- \texttt{stripe\allowbreak Customer\allowbreak Id} \newline
+\hspace*{1em}-- \texttt{stripe\allowbreak Account\allowbreak Id} \newline
+\hspace*{1em}-- \texttt{stripe\allowbreak Onboarding\allowbreak Completed} \newline
+\hspace*{1em}-- \texttt{role\allowbreak Id} (FK) \\ \hline
+4 & \texttt{Contract} & Contract created when a proposal is accepted: slug, client, freelancer, total amount, terms, bilateral signature flags/timestamps, platform fee fields, Stripe hold reference, expiry/completion dates and status.\par\smallskip
+\hspace*{1em}-- \texttt{id} (PK) \newline
+\hspace*{1em}-- \texttt{slug} \newline
+\hspace*{1em}-- \texttt{job\allowbreak Id} (FK) \newline
+\hspace*{1em}-- \texttt{proposal\allowbreak Id} (FK) \newline
+\hspace*{1em}-- \texttt{client\allowbreak Id} (FK) \newline
+\hspace*{1em}-- \texttt{freelancer\allowbreak Id} (FK) \newline
+\hspace*{1em}-- \texttt{terms} \newline
+\hspace*{1em}-- \texttt{total\allowbreak Amount} \newline
+\hspace*{1em}-- \texttt{status} \newline
+\hspace*{1em}-- \texttt{signed\allowbreak By\allowbreak Client} \newline
+\hspace*{1em}-- \texttt{signed\allowbreak By\allowbreak Freelancer} \newline
+\hspace*{1em}-- \texttt{client\allowbreak Signed\allowbreak At} \newline
+\hspace*{1em}-- \texttt{freelancer\allowbreak Signed\allowbreak At} \newline
+\hspace*{1em}-- \texttt{client\allowbreak Platform\allowbreak Fee} \newline
+\hspace*{1em}-- \texttt{platform\allowbreak Fee} \newline
+\hspace*{1em}-- \texttt{platform\allowbreak Fee\allowbreak Status} \newline
+\hspace*{1em}-- \texttt{platform\allowbreak Fee\allowbreak Paid\allowbreak At} \newline
+\hspace*{1em}-- \texttt{client\allowbreak Fee\allowbreak Status} \newline
+\hspace*{1em}-- \texttt{client\allowbreak Fee\allowbreak Paid\allowbreak At} \newline
+\hspace*{1em}-- \texttt{freelancer\allowbreak Fee\allowbreak Status} \newline
+\hspace*{1em}-- \texttt{freelancer\allowbreak Fee\allowbreak Paid\allowbreak At} \newline
+\hspace*{1em}-- \texttt{hold\allowbreak Payment\allowbreak Intent\allowbreak Id} \newline
+\hspace*{1em}-- \texttt{hold\allowbreak Milestone\allowbreak Ids} \newline
+\hspace*{1em}-- \texttt{rejected\allowbreak At} \newline
+\hspace*{1em}-- \texttt{reject\allowbreak Reason} \newline
+\hspace*{1em}-- \texttt{created\allowbreak At} \newline
+\hspace*{1em}-- \texttt{signed\allowbreak At} \newline
+\hspace*{1em}-- \texttt{completed\allowbreak At} \newline
+\hspace*{1em}-- \texttt{expires\allowbreak At} \newline
+\hspace*{1em}-- \texttt{deleted\allowbreak At} \\ \hline
+5 & \texttt{Contract\allowbreak Term\allowbreak Template} & Reusable contract term template owned by a user, with category, content and soft-delete support.\par\smallskip
+\hspace*{1em}-- \texttt{id} (PK) \newline
+\hspace*{1em}-- \texttt{creator\allowbreak Id} (FK) \newline
+\hspace*{1em}-- \texttt{title} \newline
+\hspace*{1em}-- \texttt{content} \newline
+\hspace*{1em}-- \texttt{category} \newline
+\hspace*{1em}-- \texttt{is\allowbreak Active} \newline
+\hspace*{1em}-- \texttt{created\allowbreak At} \newline
+\hspace*{1em}-- \texttt{updated\allowbreak At} \newline
+\hspace*{1em}-- \texttt{deleted\allowbreak At} \\ \hline
+\end{longtable}
+\end{center}
+
 % ===============================================
 % 4.1.5.13 ERD12
 % ===============================================
+\Needspace{12\baselineskip}
 \paragraph{Milestone \& Project Progress}
+
+This ERD describes the Milestone \& Project Progress module. It stores milestones and project progress updates. These tables support milestone creation, updates, progress tracking, and client/freelancer collaboration.
+
+\Needspace{12\baselineskip}
+\paragraph*{a) ERD}
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.78\textwidth]{image/ERD/ERD-ERD12.drawio.pdf}
     \caption{Milestone \& Project Progress ERD}
-    \label{fig:erd-milestone-progress}
+    \label{fig:erd-milestone--project-progress}
 \end{figure}
+
+\Needspace{8\baselineskip}
+\paragraph*{b) Table of entities}\nopagebreak[4]
+\begin{center}\nopagebreak[4]
+\small\sloppy
+\begin{longtable}{|C{0.8cm}|L{3.8cm}|p{10.0cm}|}
+\hline
+\rowcolor{fptHeader}\textbf{No} & \textbf{Table} & \textbf{Description} \\* \hline
+\endfirsthead
+\hline
+\rowcolor{fptHeader}\textbf{No} & \textbf{Table} & \textbf{Description} \\* \hline
+\endhead
+\hline\endfoot
+\hline\endlastfoot
+1 & \texttt{User} & Account identity: e-mail, bcrypt password hash, ban flag, Stripe customer/Connect flags and timestamps. Carries the primary role through \texttt{roleId}.\par\smallskip
+\hspace*{1em}-- \texttt{id} (PK) \newline
+\hspace*{1em}-- \texttt{email} \newline
+\hspace*{1em}-- \texttt{password} \newline
+\hspace*{1em}-- \texttt{is\allowbreak Banned} \newline
+\hspace*{1em}-- \texttt{created\allowbreak At} \newline
+\hspace*{1em}-- \texttt{updated\allowbreak At} \newline
+\hspace*{1em}-- \texttt{deleted\allowbreak At} \newline
+\hspace*{1em}-- \texttt{stripe\allowbreak Customer\allowbreak Id} \newline
+\hspace*{1em}-- \texttt{stripe\allowbreak Account\allowbreak Id} \newline
+\hspace*{1em}-- \texttt{stripe\allowbreak Onboarding\allowbreak Completed} \newline
+\hspace*{1em}-- \texttt{role\allowbreak Id} (FK) \\ \hline
+2 & \texttt{Contract} & Contract created when a proposal is accepted: slug, client, freelancer, total amount, terms, bilateral signature flags/timestamps, platform fee fields, Stripe hold reference, expiry/completion dates and status.\par\smallskip
+\hspace*{1em}-- \texttt{id} (PK) \newline
+\hspace*{1em}-- \texttt{slug} \newline
+\hspace*{1em}-- \texttt{job\allowbreak Id} (FK) \newline
+\hspace*{1em}-- \texttt{proposal\allowbreak Id} (FK) \newline
+\hspace*{1em}-- \texttt{client\allowbreak Id} (FK) \newline
+\hspace*{1em}-- \texttt{freelancer\allowbreak Id} (FK) \newline
+\hspace*{1em}-- \texttt{terms} \newline
+\hspace*{1em}-- \texttt{total\allowbreak Amount} \newline
+\hspace*{1em}-- \texttt{status} \newline
+\hspace*{1em}-- \texttt{signed\allowbreak By\allowbreak Client} \newline
+\hspace*{1em}-- \texttt{signed\allowbreak By\allowbreak Freelancer} \newline
+\hspace*{1em}-- \texttt{client\allowbreak Signed\allowbreak At} \newline
+\hspace*{1em}-- \texttt{freelancer\allowbreak Signed\allowbreak At} \newline
+\hspace*{1em}-- \texttt{client\allowbreak Platform\allowbreak Fee} \newline
+\hspace*{1em}-- \texttt{platform\allowbreak Fee} \newline
+\hspace*{1em}-- \texttt{platform\allowbreak Fee\allowbreak Status} \newline
+\hspace*{1em}-- \texttt{platform\allowbreak Fee\allowbreak Paid\allowbreak At} \newline
+\hspace*{1em}-- \texttt{client\allowbreak Fee\allowbreak Status} \newline
+\hspace*{1em}-- \texttt{client\allowbreak Fee\allowbreak Paid\allowbreak At} \newline
+\hspace*{1em}-- \texttt{freelancer\allowbreak Fee\allowbreak Status} \newline
+\hspace*{1em}-- \texttt{freelancer\allowbreak Fee\allowbreak Paid\allowbreak At} \newline
+\hspace*{1em}-- \texttt{hold\allowbreak Payment\allowbreak Intent\allowbreak Id} \newline
+\hspace*{1em}-- \texttt{hold\allowbreak Milestone\allowbreak Ids} \newline
+\hspace*{1em}-- \texttt{rejected\allowbreak At} \newline
+\hspace*{1em}-- \texttt{reject\allowbreak Reason} \newline
+\hspace*{1em}-- \texttt{created\allowbreak At} \newline
+\hspace*{1em}-- \texttt{signed\allowbreak At} \newline
+\hspace*{1em}-- \texttt{completed\allowbreak At} \newline
+\hspace*{1em}-- \texttt{expires\allowbreak At} \newline
+\hspace*{1em}-- \texttt{deleted\allowbreak At} \\ \hline
+3 & \texttt{Milestone} & Milestone inside a contract: title, description, amount, due date, completion date, milestone lifecycle status and payment escrow status.\par\smallskip
+\hspace*{1em}-- \texttt{id} (PK) \newline
+\hspace*{1em}-- \texttt{contract\allowbreak Id} (FK) \newline
+\hspace*{1em}-- \texttt{title} \newline
+\hspace*{1em}-- \texttt{description} \newline
+\hspace*{1em}-- \texttt{amount} \newline
+\hspace*{1em}-- \texttt{status} \newline
+\hspace*{1em}-- \texttt{payment\allowbreak Status} \newline
+\hspace*{1em}-- \texttt{due\allowbreak Date} \newline
+\hspace*{1em}-- \texttt{completed\allowbreak At} \newline
+\hspace*{1em}-- \texttt{created\allowbreak At} \newline
+\hspace*{1em}-- \texttt{updated\allowbreak At} \newline
+\hspace*{1em}-- \texttt{deleted\allowbreak At} \\ \hline
+4 & \texttt{Milestone\allowbreak File} & Reference file attached to a milestone and shared with both parties.\par\smallskip
+\hspace*{1em}-- \texttt{id} (PK) \newline
+\hspace*{1em}-- \texttt{milestone\allowbreak Id} (FK) \newline
+\hspace*{1em}-- \texttt{uploader\allowbreak Id} (FK) \newline
+\hspace*{1em}-- \texttt{file\allowbreak Url} \newline
+\hspace*{1em}-- \texttt{public\allowbreak Id} \newline
+\hspace*{1em}-- \texttt{file\allowbreak Name} \newline
+\hspace*{1em}-- \texttt{created\allowbreak At} \newline
+\hspace*{1em}-- \texttt{deleted\allowbreak At} \\ \hline
+5 & \texttt{Project\allowbreak Progress\allowbreak Update} & Progress note posted by the freelancer on a contract, with the update timestamp.\par\smallskip
+\hspace*{1em}-- \texttt{id} (PK) \newline
+\hspace*{1em}-- \texttt{contract\allowbreak Id} (FK) \newline
+\hspace*{1em}-- \texttt{freelancer\allowbreak Id} (FK) \newline
+\hspace*{1em}-- \texttt{note} \newline
+\hspace*{1em}-- \texttt{updated\allowbreak At} \\ \hline
+\end{longtable}
+\end{center}
 
 % ===============================================
 % 4.1.5.14 ERD13
 % ===============================================
+\Needspace{12\baselineskip}
 \paragraph{Milestone Submission}
+
+This ERD describes the Milestone Submission module. It stores milestone files, submissions, and submission files. These tables support uploading deliverables, submitting milestones, and reviewing submissions.
+
+\Needspace{12\baselineskip}
+\paragraph*{a) ERD}
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.86\textwidth]{image/ERD/ERD-ERD13.drawio.pdf}
+    \includegraphics[width=0.78\textwidth]{image/ERD/ERD-ERD13.drawio.pdf}
     \caption{Milestone Submission ERD}
     \label{fig:erd-milestone-submission}
 \end{figure}
 
+\Needspace{8\baselineskip}
+\paragraph*{b) Table of entities}\nopagebreak[4]
+\begin{center}\nopagebreak[4]
+\small\sloppy
+\begin{longtable}{|C{0.8cm}|L{3.8cm}|p{10.0cm}|}
+\hline
+\rowcolor{fptHeader}\textbf{No} & \textbf{Table} & \textbf{Description} \\* \hline
+\endfirsthead
+\hline
+\rowcolor{fptHeader}\textbf{No} & \textbf{Table} & \textbf{Description} \\* \hline
+\endhead
+\hline\endfoot
+\hline\endlastfoot
+1 & \texttt{User} & Account identity: e-mail, bcrypt password hash, ban flag, Stripe customer/Connect flags and timestamps. Carries the primary role through \texttt{roleId}.\par\smallskip
+\hspace*{1em}-- \texttt{id} (PK) \newline
+\hspace*{1em}-- \texttt{email} \newline
+\hspace*{1em}-- \texttt{password} \newline
+\hspace*{1em}-- \texttt{is\allowbreak Banned} \newline
+\hspace*{1em}-- \texttt{created\allowbreak At} \newline
+\hspace*{1em}-- \texttt{updated\allowbreak At} \newline
+\hspace*{1em}-- \texttt{deleted\allowbreak At} \newline
+\hspace*{1em}-- \texttt{stripe\allowbreak Customer\allowbreak Id} \newline
+\hspace*{1em}-- \texttt{stripe\allowbreak Account\allowbreak Id} \newline
+\hspace*{1em}-- \texttt{stripe\allowbreak Onboarding\allowbreak Completed} \newline
+\hspace*{1em}-- \texttt{role\allowbreak Id} (FK) \\ \hline
+2 & \texttt{Milestone} & Milestone inside a contract: title, description, amount, due date, completion date, milestone lifecycle status and payment escrow status.\par\smallskip
+\hspace*{1em}-- \texttt{id} (PK) \newline
+\hspace*{1em}-- \texttt{contract\allowbreak Id} (FK) \newline
+\hspace*{1em}-- \texttt{title} \newline
+\hspace*{1em}-- \texttt{description} \newline
+\hspace*{1em}-- \texttt{amount} \newline
+\hspace*{1em}-- \texttt{status} \newline
+\hspace*{1em}-- \texttt{payment\allowbreak Status} \newline
+\hspace*{1em}-- \texttt{due\allowbreak Date} \newline
+\hspace*{1em}-- \texttt{completed\allowbreak At} \newline
+\hspace*{1em}-- \texttt{created\allowbreak At} \newline
+\hspace*{1em}-- \texttt{updated\allowbreak At} \newline
+\hspace*{1em}-- \texttt{deleted\allowbreak At} \\ \hline
+3 & \texttt{Milestone\allowbreak File} & Reference file attached to a milestone and shared with both parties.\par\smallskip
+\hspace*{1em}-- \texttt{id} (PK) \newline
+\hspace*{1em}-- \texttt{milestone\allowbreak Id} (FK) \newline
+\hspace*{1em}-- \texttt{uploader\allowbreak Id} (FK) \newline
+\hspace*{1em}-- \texttt{file\allowbreak Url} \newline
+\hspace*{1em}-- \texttt{public\allowbreak Id} \newline
+\hspace*{1em}-- \texttt{file\allowbreak Name} \newline
+\hspace*{1em}-- \texttt{created\allowbreak At} \newline
+\hspace*{1em}-- \texttt{deleted\allowbreak At} \\ \hline
+4 & \texttt{Milestone\allowbreak Submission} & Work submitted for a milestone, with the submitted note, timestamp and the client review decision.\par\smallskip
+\hspace*{1em}-- \texttt{id} (PK) \newline
+\hspace*{1em}-- \texttt{milestone\allowbreak Id} (FK) \newline
+\hspace*{1em}-- \texttt{freelancer\allowbreak Id} (FK) \newline
+\hspace*{1em}-- \texttt{message} \newline
+\hspace*{1em}-- \texttt{links} \newline
+\hspace*{1em}-- \texttt{status} \newline
+\hspace*{1em}-- \texttt{change\allowbreak Request\allowbreak Message} \newline
+\hspace*{1em}-- \texttt{change\allowbreak Request\allowbreak Due\allowbreak Date} \newline
+\hspace*{1em}-- \texttt{submitted\allowbreak At} \newline
+\hspace*{1em}-- \texttt{reviewed\allowbreak At} \newline
+\hspace*{1em}-- \texttt{created\allowbreak At} \newline
+\hspace*{1em}-- \texttt{updated\allowbreak At} \\ \hline
+5 & \texttt{Milestone\allowbreak Submission\allowbreak File} & Join table linking a submission to the milestone files it delivers.\par\smallskip
+\hspace*{1em}-- \texttt{submission\allowbreak Id} (PK, FK) \newline
+\hspace*{1em}-- \texttt{file\allowbreak Id} (PK, FK) \\ \hline
+\end{longtable}
+\end{center}
+
 % ===============================================
 % 4.1.5.15 ERD14
 % ===============================================
+\Needspace{12\baselineskip}
 \paragraph{Escrow, Payments \& Certificates}
+
+This ERD describes the Escrow, Payments \& Certificates module. It stores invoices, certificates, and transactions. These tables support funding, releasing, refunding, platform fees, payout tracking, and completion certificates.
+
+\Needspace{12\baselineskip}
+\paragraph*{a) ERD}
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.95\textwidth]{image/ERD/ERD-ERD14.drawio.pdf}
+    \includegraphics[width=0.78\textwidth]{image/ERD/ERD-ERD14.drawio.pdf}
     \caption{Escrow, Payments \& Certificates ERD}
-    \label{fig:erd-escrow-payments}
+    \label{fig:erd-escrow-payments--certificates}
 \end{figure}
+
+\Needspace{8\baselineskip}
+\paragraph*{b) Table of entities}\nopagebreak[4]
+\begin{center}\nopagebreak[4]
+\small\sloppy
+\begin{longtable}{|C{0.8cm}|L{3.8cm}|p{10.0cm}|}
+\hline
+\rowcolor{fptHeader}\textbf{No} & \textbf{Table} & \textbf{Description} \\* \hline
+\endfirsthead
+\hline
+\rowcolor{fptHeader}\textbf{No} & \textbf{Table} & \textbf{Description} \\* \hline
+\endhead
+\hline\endfoot
+\hline\endlastfoot
+1 & \texttt{User} & Account identity: e-mail, bcrypt password hash, ban flag, Stripe customer/Connect flags and timestamps. Carries the primary role through \texttt{roleId}.\par\smallskip
+\hspace*{1em}-- \texttt{id} (PK) \newline
+\hspace*{1em}-- \texttt{email} \newline
+\hspace*{1em}-- \texttt{password} \newline
+\hspace*{1em}-- \texttt{is\allowbreak Banned} \newline
+\hspace*{1em}-- \texttt{created\allowbreak At} \newline
+\hspace*{1em}-- \texttt{updated\allowbreak At} \newline
+\hspace*{1em}-- \texttt{deleted\allowbreak At} \newline
+\hspace*{1em}-- \texttt{stripe\allowbreak Customer\allowbreak Id} \newline
+\hspace*{1em}-- \texttt{stripe\allowbreak Account\allowbreak Id} \newline
+\hspace*{1em}-- \texttt{stripe\allowbreak Onboarding\allowbreak Completed} \newline
+\hspace*{1em}-- \texttt{role\allowbreak Id} (FK) \\ \hline
+2 & \texttt{Contract} & Contract created when a proposal is accepted: slug, client, freelancer, total amount, terms, bilateral signature flags/timestamps, platform fee fields, Stripe hold reference, expiry/completion dates and status.\par\smallskip
+\hspace*{1em}-- \texttt{id} (PK) \newline
+\hspace*{1em}-- \texttt{slug} \newline
+\hspace*{1em}-- \texttt{job\allowbreak Id} (FK) \newline
+\hspace*{1em}-- \texttt{proposal\allowbreak Id} (FK) \newline
+\hspace*{1em}-- \texttt{client\allowbreak Id} (FK) \newline
+\hspace*{1em}-- \texttt{freelancer\allowbreak Id} (FK) \newline
+\hspace*{1em}-- \texttt{terms} \newline
+\hspace*{1em}-- \texttt{total\allowbreak Amount} \newline
+\hspace*{1em}-- \texttt{status} \newline
+\hspace*{1em}-- \texttt{signed\allowbreak By\allowbreak Client} \newline
+\hspace*{1em}-- \texttt{signed\allowbreak By\allowbreak Freelancer} \newline
+\hspace*{1em}-- \texttt{client\allowbreak Signed\allowbreak At} \newline
+\hspace*{1em}-- \texttt{freelancer\allowbreak Signed\allowbreak At} \newline
+\hspace*{1em}-- \texttt{client\allowbreak Platform\allowbreak Fee} \newline
+\hspace*{1em}-- \texttt{platform\allowbreak Fee} \newline
+\hspace*{1em}-- \texttt{platform\allowbreak Fee\allowbreak Status} \newline
+\hspace*{1em}-- \texttt{platform\allowbreak Fee\allowbreak Paid\allowbreak At} \newline
+\hspace*{1em}-- \texttt{client\allowbreak Fee\allowbreak Status} \newline
+\hspace*{1em}-- \texttt{client\allowbreak Fee\allowbreak Paid\allowbreak At} \newline
+\hspace*{1em}-- \texttt{freelancer\allowbreak Fee\allowbreak Status} \newline
+\hspace*{1em}-- \texttt{freelancer\allowbreak Fee\allowbreak Paid\allowbreak At} \newline
+\hspace*{1em}-- \texttt{hold\allowbreak Payment\allowbreak Intent\allowbreak Id} \newline
+\hspace*{1em}-- \texttt{hold\allowbreak Milestone\allowbreak Ids} \newline
+\hspace*{1em}-- \texttt{rejected\allowbreak At} \newline
+\hspace*{1em}-- \texttt{reject\allowbreak Reason} \newline
+\hspace*{1em}-- \texttt{created\allowbreak At} \newline
+\hspace*{1em}-- \texttt{signed\allowbreak At} \newline
+\hspace*{1em}-- \texttt{completed\allowbreak At} \newline
+\hspace*{1em}-- \texttt{expires\allowbreak At} \newline
+\hspace*{1em}-- \texttt{deleted\allowbreak At} \\ \hline
+3 & \texttt{Invoice} & Invoice of a contract (one per contract): invoice number, total amount, status, issued, due and paid dates.\par\smallskip
+\hspace*{1em}-- \texttt{id} (PK) \newline
+\hspace*{1em}-- \texttt{contract\allowbreak Id} (FK) \newline
+\hspace*{1em}-- \texttt{invoice\allowbreak Number} \newline
+\hspace*{1em}-- \texttt{total\allowbreak Amount} \newline
+\hspace*{1em}-- \texttt{description} \newline
+\hspace*{1em}-- \texttt{status} \newline
+\hspace*{1em}-- \texttt{issued\allowbreak At} \newline
+\hspace*{1em}-- \texttt{due\allowbreak Date} \newline
+\hspace*{1em}-- \texttt{paid\allowbreak At} \newline
+\hspace*{1em}-- \texttt{created\allowbreak At} \newline
+\hspace*{1em}-- \texttt{updated\allowbreak At} \newline
+\hspace*{1em}-- \texttt{deleted\allowbreak At} \\ \hline
+4 & \texttt{Transaction} & Payment movement reconciled with Stripe (funding, release, refund, platform fee, dispute fee): type, amount, status, payment-intent id and timestamps.\par\smallskip
+\hspace*{1em}-- \texttt{id} (PK) \newline
+\hspace*{1em}-- \texttt{user\allowbreak Id} (FK) \newline
+\hspace*{1em}-- \texttt{contract\allowbreak Id} (FK) \newline
+\hspace*{1em}-- \texttt{milestone\allowbreak Id} \newline
+\hspace*{1em}-- \texttt{dispute\allowbreak Id} \newline
+\hspace*{1em}-- \texttt{amount} \newline
+\hspace*{1em}-- \texttt{currency} \newline
+\hspace*{1em}-- \texttt{type} \newline
+\hspace*{1em}-- \texttt{status} \newline
+\hspace*{1em}-- \texttt{stripe\allowbreak Payment\allowbreak Intent\allowbreak Id} \newline
+\hspace*{1em}-- \texttt{stripe\allowbreak Transfer\allowbreak Id} \newline
+\hspace*{1em}-- \texttt{stripe\allowbreak Refund\allowbreak Id} \newline
+\hspace*{1em}-- \texttt{metadata} \newline
+\hspace*{1em}-- \texttt{created\allowbreak At} \newline
+\hspace*{1em}-- \texttt{updated\allowbreak At} \\ \hline
+5 & \texttt{Certificate} & Completion certificate generated when a contract is finished: unique certificate UID, completion date and JSON metadata.\par\smallskip
+\hspace*{1em}-- \texttt{id} (PK) \newline
+\hspace*{1em}-- \texttt{contract\allowbreak Id} (FK) \newline
+\hspace*{1em}-- \texttt{freelancer\allowbreak Id} (FK) \newline
+\hspace*{1em}-- \texttt{client\allowbreak Id} (FK) \newline
+\hspace*{1em}-- \texttt{certificate\allowbreak Uid} \newline
+\hspace*{1em}-- \texttt{completion\allowbreak Date} \newline
+\hspace*{1em}-- \texttt{metadata} \newline
+\hspace*{1em}-- \texttt{created\allowbreak At} \\ \hline
+\end{longtable}
+\end{center}
 
 % ===============================================
 % 4.1.5.16 ERD15
 % ===============================================
+\Needspace{12\baselineskip}
 \paragraph{Dispute Core}
+
+This ERD describes the Dispute Core module. It stores disputes and dispute fees. These tables support opening disputes and charging dispute fees.
+
+\Needspace{12\baselineskip}
+\paragraph*{a) ERD}
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.78\textwidth]{image/ERD/ERD-ERD15.drawio.pdf}
@@ -177,10 +1361,124 @@
     \label{fig:erd-dispute-core}
 \end{figure}
 
+\Needspace{8\baselineskip}
+\paragraph*{b) Table of entities}\nopagebreak[4]
+\begin{center}\nopagebreak[4]
+\small\sloppy
+\begin{longtable}{|C{0.8cm}|L{3.8cm}|p{10.0cm}|}
+\hline
+\rowcolor{fptHeader}\textbf{No} & \textbf{Table} & \textbf{Description} \\* \hline
+\endfirsthead
+\hline
+\rowcolor{fptHeader}\textbf{No} & \textbf{Table} & \textbf{Description} \\* \hline
+\endhead
+\hline\endfoot
+\hline\endlastfoot
+1 & \texttt{Contract} & Contract created when a proposal is accepted: slug, client, freelancer, total amount, terms, bilateral signature flags/timestamps, platform fee fields, Stripe hold reference, expiry/completion dates and status.\par\smallskip
+\hspace*{1em}-- \texttt{id} (PK) \newline
+\hspace*{1em}-- \texttt{slug} \newline
+\hspace*{1em}-- \texttt{job\allowbreak Id} (FK) \newline
+\hspace*{1em}-- \texttt{proposal\allowbreak Id} (FK) \newline
+\hspace*{1em}-- \texttt{client\allowbreak Id} (FK) \newline
+\hspace*{1em}-- \texttt{freelancer\allowbreak Id} (FK) \newline
+\hspace*{1em}-- \texttt{terms} \newline
+\hspace*{1em}-- \texttt{total\allowbreak Amount} \newline
+\hspace*{1em}-- \texttt{status} \newline
+\hspace*{1em}-- \texttt{signed\allowbreak By\allowbreak Client} \newline
+\hspace*{1em}-- \texttt{signed\allowbreak By\allowbreak Freelancer} \newline
+\hspace*{1em}-- \texttt{client\allowbreak Signed\allowbreak At} \newline
+\hspace*{1em}-- \texttt{freelancer\allowbreak Signed\allowbreak At} \newline
+\hspace*{1em}-- \texttt{client\allowbreak Platform\allowbreak Fee} \newline
+\hspace*{1em}-- \texttt{platform\allowbreak Fee} \newline
+\hspace*{1em}-- \texttt{platform\allowbreak Fee\allowbreak Status} \newline
+\hspace*{1em}-- \texttt{platform\allowbreak Fee\allowbreak Paid\allowbreak At} \newline
+\hspace*{1em}-- \texttt{client\allowbreak Fee\allowbreak Status} \newline
+\hspace*{1em}-- \texttt{client\allowbreak Fee\allowbreak Paid\allowbreak At} \newline
+\hspace*{1em}-- \texttt{freelancer\allowbreak Fee\allowbreak Status} \newline
+\hspace*{1em}-- \texttt{freelancer\allowbreak Fee\allowbreak Paid\allowbreak At} \newline
+\hspace*{1em}-- \texttt{hold\allowbreak Payment\allowbreak Intent\allowbreak Id} \newline
+\hspace*{1em}-- \texttt{hold\allowbreak Milestone\allowbreak Ids} \newline
+\hspace*{1em}-- \texttt{rejected\allowbreak At} \newline
+\hspace*{1em}-- \texttt{reject\allowbreak Reason} \newline
+\hspace*{1em}-- \texttt{created\allowbreak At} \newline
+\hspace*{1em}-- \texttt{signed\allowbreak At} \newline
+\hspace*{1em}-- \texttt{completed\allowbreak At} \newline
+\hspace*{1em}-- \texttt{expires\allowbreak At} \newline
+\hspace*{1em}-- \texttt{deleted\allowbreak At} \\ \hline
+2 & \texttt{Milestone} & Milestone inside a contract: title, description, amount, due date, completion date, milestone lifecycle status and payment escrow status.\par\smallskip
+\hspace*{1em}-- \texttt{id} (PK) \newline
+\hspace*{1em}-- \texttt{contract\allowbreak Id} (FK) \newline
+\hspace*{1em}-- \texttt{title} \newline
+\hspace*{1em}-- \texttt{description} \newline
+\hspace*{1em}-- \texttt{amount} \newline
+\hspace*{1em}-- \texttt{status} \newline
+\hspace*{1em}-- \texttt{payment\allowbreak Status} \newline
+\hspace*{1em}-- \texttt{due\allowbreak Date} \newline
+\hspace*{1em}-- \texttt{completed\allowbreak At} \newline
+\hspace*{1em}-- \texttt{created\allowbreak At} \newline
+\hspace*{1em}-- \texttt{updated\allowbreak At} \newline
+\hspace*{1em}-- \texttt{deleted\allowbreak At} \\ \hline
+3 & \texttt{User} & Account identity: e-mail, bcrypt password hash, ban flag, Stripe customer/Connect flags and timestamps. Carries the primary role through \texttt{roleId}.\par\smallskip
+\hspace*{1em}-- \texttt{id} (PK) \newline
+\hspace*{1em}-- \texttt{email} \newline
+\hspace*{1em}-- \texttt{password} \newline
+\hspace*{1em}-- \texttt{is\allowbreak Banned} \newline
+\hspace*{1em}-- \texttt{created\allowbreak At} \newline
+\hspace*{1em}-- \texttt{updated\allowbreak At} \newline
+\hspace*{1em}-- \texttt{deleted\allowbreak At} \newline
+\hspace*{1em}-- \texttt{stripe\allowbreak Customer\allowbreak Id} \newline
+\hspace*{1em}-- \texttt{stripe\allowbreak Account\allowbreak Id} \newline
+\hspace*{1em}-- \texttt{stripe\allowbreak Onboarding\allowbreak Completed} \newline
+\hspace*{1em}-- \texttt{role\allowbreak Id} (FK) \\ \hline
+4 & \texttt{Shared\allowbreak File} & File shared in the workspace of a contract (both parties can upload and read).\par\smallskip
+\hspace*{1em}-- \texttt{id} (PK) \newline
+\hspace*{1em}-- \texttt{contract\allowbreak Id} (FK) \newline
+\hspace*{1em}-- \texttt{uploader\allowbreak Id} (FK) \newline
+\hspace*{1em}-- \texttt{file\allowbreak Url} \newline
+\hspace*{1em}-- \texttt{public\allowbreak Id} \newline
+\hspace*{1em}-- \texttt{file\allowbreak Name} \newline
+\hspace*{1em}-- \texttt{created\allowbreak At} \newline
+\hspace*{1em}-- \texttt{deleted\allowbreak At} \\ \hline
+5 & \texttt{Dispute} & Dispute opened on a contract or a milestone: reason, description, opened by, status, resolution and decision timestamps.\par\smallskip
+\hspace*{1em}-- \texttt{id} (PK) \newline
+\hspace*{1em}-- \texttt{milestone\allowbreak Id} (FK) \newline
+\hspace*{1em}-- \texttt{opened\allowbreak By\allowbreak Id} (FK) \newline
+\hspace*{1em}-- \texttt{respondent\allowbreak Id} (FK) \newline
+\hspace*{1em}-- \texttt{reason} \newline
+\hspace*{1em}-- \texttt{description} \newline
+\hspace*{1em}-- \texttt{resolution\allowbreak Type} \newline
+\hspace*{1em}-- \texttt{proposed\allowbreak Freelancer\allowbreak Amount} \newline
+\hspace*{1em}-- \texttt{proposed\allowbreak Client\allowbreak Amount} \newline
+\hspace*{1em}-- \texttt{proposed\allowbreak Due\allowbreak Date} \newline
+\hspace*{1em}-- \texttt{previous\allowbreak Milestone\allowbreak Status} \newline
+\hspace*{1em}-- \texttt{decline\allowbreak Reason} \newline
+\hspace*{1em}-- \texttt{declined\allowbreak At} \newline
+\hspace*{1em}-- \texttt{escalated\allowbreak At} \newline
+\hspace*{1em}-- \texttt{status} \newline
+\hspace*{1em}-- \texttt{arbitration\allowbreak Fee} \newline
+\hspace*{1em}-- \texttt{fee\allowbreak Deadline} \newline
+\hspace*{1em}-- \texttt{response\allowbreak Deadline} \newline
+\hspace*{1em}-- \texttt{freelancer\allowbreak Amount} \newline
+\hspace*{1em}-- \texttt{client\allowbreak Amount} \newline
+\hspace*{1em}-- \texttt{decision\allowbreak Reason} \newline
+\hspace*{1em}-- \texttt{decision\allowbreak By\allowbreak Id} (FK) \newline
+\hspace*{1em}-- \texttt{decision\allowbreak At} \newline
+\hspace*{1em}-- \texttt{final\allowbreak Decision\allowbreak At} \newline
+\hspace*{1em}-- \texttt{created\allowbreak At} \newline
+\hspace*{1em}-- \texttt{updated\allowbreak At} \\ \hline
+\end{longtable}
+\end{center}
+
 % ===============================================
 % 4.1.5.17 ERD16
 % ===============================================
+\Needspace{12\baselineskip}
 \paragraph{Dispute Resolution}
+
+This ERD describes the Dispute Resolution module. It stores dispute evidence and decision reviews. These tables support evidence submission and review of dispute decisions.
+
+\Needspace{12\baselineskip}
+\paragraph*{a) ERD}
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.78\textwidth]{image/ERD/ERD-ERD16.drawio.pdf}
@@ -188,68 +1486,608 @@
     \label{fig:erd-dispute-resolution}
 \end{figure}
 
+\Needspace{8\baselineskip}
+\paragraph*{b) Table of entities}\nopagebreak[4]
+\begin{center}\nopagebreak[4]
+\small\sloppy
+\begin{longtable}{|C{0.8cm}|L{3.8cm}|p{10.0cm}|}
+\hline
+\rowcolor{fptHeader}\textbf{No} & \textbf{Table} & \textbf{Description} \\* \hline
+\endfirsthead
+\hline
+\rowcolor{fptHeader}\textbf{No} & \textbf{Table} & \textbf{Description} \\* \hline
+\endhead
+\hline\endfoot
+\hline\endlastfoot
+1 & \texttt{User} & Account identity: e-mail, bcrypt password hash, ban flag, Stripe customer/Connect flags and timestamps. Carries the primary role through \texttt{roleId}.\par\smallskip
+\hspace*{1em}-- \texttt{id} (PK) \newline
+\hspace*{1em}-- \texttt{email} \newline
+\hspace*{1em}-- \texttt{password} \newline
+\hspace*{1em}-- \texttt{is\allowbreak Banned} \newline
+\hspace*{1em}-- \texttt{created\allowbreak At} \newline
+\hspace*{1em}-- \texttt{updated\allowbreak At} \newline
+\hspace*{1em}-- \texttt{deleted\allowbreak At} \newline
+\hspace*{1em}-- \texttt{stripe\allowbreak Customer\allowbreak Id} \newline
+\hspace*{1em}-- \texttt{stripe\allowbreak Account\allowbreak Id} \newline
+\hspace*{1em}-- \texttt{stripe\allowbreak Onboarding\allowbreak Completed} \newline
+\hspace*{1em}-- \texttt{role\allowbreak Id} (FK) \\ \hline
+2 & \texttt{Dispute} & Dispute opened on a contract or a milestone: reason, description, opened by, status, resolution and decision timestamps.\par\smallskip
+\hspace*{1em}-- \texttt{id} (PK) \newline
+\hspace*{1em}-- \texttt{milestone\allowbreak Id} (FK) \newline
+\hspace*{1em}-- \texttt{opened\allowbreak By\allowbreak Id} (FK) \newline
+\hspace*{1em}-- \texttt{respondent\allowbreak Id} (FK) \newline
+\hspace*{1em}-- \texttt{reason} \newline
+\hspace*{1em}-- \texttt{description} \newline
+\hspace*{1em}-- \texttt{resolution\allowbreak Type} \newline
+\hspace*{1em}-- \texttt{proposed\allowbreak Freelancer\allowbreak Amount} \newline
+\hspace*{1em}-- \texttt{proposed\allowbreak Client\allowbreak Amount} \newline
+\hspace*{1em}-- \texttt{proposed\allowbreak Due\allowbreak Date} \newline
+\hspace*{1em}-- \texttt{previous\allowbreak Milestone\allowbreak Status} \newline
+\hspace*{1em}-- \texttt{decline\allowbreak Reason} \newline
+\hspace*{1em}-- \texttt{declined\allowbreak At} \newline
+\hspace*{1em}-- \texttt{escalated\allowbreak At} \newline
+\hspace*{1em}-- \texttt{status} \newline
+\hspace*{1em}-- \texttt{arbitration\allowbreak Fee} \newline
+\hspace*{1em}-- \texttt{fee\allowbreak Deadline} \newline
+\hspace*{1em}-- \texttt{response\allowbreak Deadline} \newline
+\hspace*{1em}-- \texttt{freelancer\allowbreak Amount} \newline
+\hspace*{1em}-- \texttt{client\allowbreak Amount} \newline
+\hspace*{1em}-- \texttt{decision\allowbreak Reason} \newline
+\hspace*{1em}-- \texttt{decision\allowbreak By\allowbreak Id} (FK) \newline
+\hspace*{1em}-- \texttt{decision\allowbreak At} \newline
+\hspace*{1em}-- \texttt{final\allowbreak Decision\allowbreak At} \newline
+\hspace*{1em}-- \texttt{created\allowbreak At} \newline
+\hspace*{1em}-- \texttt{updated\allowbreak At} \\ \hline
+3 & \texttt{Dispute\allowbreak Fee} & Fee charged to open a dispute, with its amount, payment state and the transaction that settled it.\par\smallskip
+\hspace*{1em}-- \texttt{id} (PK) \newline
+\hspace*{1em}-- \texttt{dispute\allowbreak Id} (FK) \newline
+\hspace*{1em}-- \texttt{user\allowbreak Id} (FK) \newline
+\hspace*{1em}-- \texttt{amount} \newline
+\hspace*{1em}-- \texttt{status} \newline
+\hspace*{1em}-- \texttt{payment\allowbreak Intent\allowbreak Id} \newline
+\hspace*{1em}-- \texttt{paid\allowbreak At} \newline
+\hspace*{1em}-- \texttt{deadline} \newline
+\hspace*{1em}-- \texttt{created\allowbreak At} \newline
+\hspace*{1em}-- \texttt{updated\allowbreak At} \\ \hline
+4 & \texttt{Dispute\allowbreak Evidence} & Evidence attached by either party to a dispute (file, description, uploader).\par\smallskip
+\hspace*{1em}-- \texttt{id} (PK) \newline
+\hspace*{1em}-- \texttt{dispute\allowbreak Id} (FK) \newline
+\hspace*{1em}-- \texttt{submitted\allowbreak By\allowbreak Id} (FK) \newline
+\hspace*{1em}-- \texttt{type} \newline
+\hspace*{1em}-- \texttt{description} \newline
+\hspace*{1em}-- \texttt{file\allowbreak Id} (FK) \newline
+\hspace*{1em}-- \texttt{created\allowbreak At} \\ \hline
+5 & \texttt{Shared\allowbreak File} & File shared in the workspace of a contract (both parties can upload and read).\par\smallskip
+\hspace*{1em}-- \texttt{id} (PK) \newline
+\hspace*{1em}-- \texttt{contract\allowbreak Id} (FK) \newline
+\hspace*{1em}-- \texttt{uploader\allowbreak Id} (FK) \newline
+\hspace*{1em}-- \texttt{file\allowbreak Url} \newline
+\hspace*{1em}-- \texttt{public\allowbreak Id} \newline
+\hspace*{1em}-- \texttt{file\allowbreak Name} \newline
+\hspace*{1em}-- \texttt{created\allowbreak At} \newline
+\hspace*{1em}-- \texttt{deleted\allowbreak At} \\ \hline
+6 & \texttt{Dispute\allowbreak Decision\allowbreak Review} & Request of a party to reconsider a dispute decision, with the response, the reason and the timestamp.\par\smallskip
+\hspace*{1em}-- \texttt{id} (PK) \newline
+\hspace*{1em}-- \texttt{dispute\allowbreak Id} (FK) \newline
+\hspace*{1em}-- \texttt{user\allowbreak Id} (FK) \newline
+\hspace*{1em}-- \texttt{response} \newline
+\hspace*{1em}-- \texttt{reason} \newline
+\hspace*{1em}-- \texttt{created\allowbreak At} \\ \hline
+\end{longtable}
+\end{center}
+
 % ===============================================
 % 4.1.5.18 ERD17
 % ===============================================
+\Needspace{12\baselineskip}
 \paragraph{Reviews \& Reputation}
+
+This ERD describes the Reviews \& Reputation module. It stores reviews and review responses. These tables support rating contracts and responding to reviews.
+
+\Needspace{12\baselineskip}
+\paragraph*{a) ERD}
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.86\textwidth]{image/ERD/ERD-ERD17.drawio.pdf}
+    \includegraphics[width=0.52\textwidth]{image/ERD/ERD-ERD17.drawio.pdf}
     \caption{Reviews \& Reputation ERD}
-    \label{fig:erd-reviews}
+    \label{fig:erd-reviews--reputation}
 \end{figure}
+
+\Needspace{8\baselineskip}
+\paragraph*{b) Table of entities}\nopagebreak[4]
+\begin{center}\nopagebreak[4]
+\small\sloppy
+\begin{longtable}{|C{0.8cm}|L{3.8cm}|p{10.0cm}|}
+\hline
+\rowcolor{fptHeader}\textbf{No} & \textbf{Table} & \textbf{Description} \\* \hline
+\endfirsthead
+\hline
+\rowcolor{fptHeader}\textbf{No} & \textbf{Table} & \textbf{Description} \\* \hline
+\endhead
+\hline\endfoot
+\hline\endlastfoot
+1 & \texttt{Contract} & Contract created when a proposal is accepted: slug, client, freelancer, total amount, terms, bilateral signature flags/timestamps, platform fee fields, Stripe hold reference, expiry/completion dates and status.\par\smallskip
+\hspace*{1em}-- \texttt{id} (PK) \newline
+\hspace*{1em}-- \texttt{slug} \newline
+\hspace*{1em}-- \texttt{job\allowbreak Id} (FK) \newline
+\hspace*{1em}-- \texttt{proposal\allowbreak Id} (FK) \newline
+\hspace*{1em}-- \texttt{client\allowbreak Id} (FK) \newline
+\hspace*{1em}-- \texttt{freelancer\allowbreak Id} (FK) \newline
+\hspace*{1em}-- \texttt{terms} \newline
+\hspace*{1em}-- \texttt{total\allowbreak Amount} \newline
+\hspace*{1em}-- \texttt{status} \newline
+\hspace*{1em}-- \texttt{signed\allowbreak By\allowbreak Client} \newline
+\hspace*{1em}-- \texttt{signed\allowbreak By\allowbreak Freelancer} \newline
+\hspace*{1em}-- \texttt{client\allowbreak Signed\allowbreak At} \newline
+\hspace*{1em}-- \texttt{freelancer\allowbreak Signed\allowbreak At} \newline
+\hspace*{1em}-- \texttt{client\allowbreak Platform\allowbreak Fee} \newline
+\hspace*{1em}-- \texttt{platform\allowbreak Fee} \newline
+\hspace*{1em}-- \texttt{platform\allowbreak Fee\allowbreak Status} \newline
+\hspace*{1em}-- \texttt{platform\allowbreak Fee\allowbreak Paid\allowbreak At} \newline
+\hspace*{1em}-- \texttt{client\allowbreak Fee\allowbreak Status} \newline
+\hspace*{1em}-- \texttt{client\allowbreak Fee\allowbreak Paid\allowbreak At} \newline
+\hspace*{1em}-- \texttt{freelancer\allowbreak Fee\allowbreak Status} \newline
+\hspace*{1em}-- \texttt{freelancer\allowbreak Fee\allowbreak Paid\allowbreak At} \newline
+\hspace*{1em}-- \texttt{hold\allowbreak Payment\allowbreak Intent\allowbreak Id} \newline
+\hspace*{1em}-- \texttt{hold\allowbreak Milestone\allowbreak Ids} \newline
+\hspace*{1em}-- \texttt{rejected\allowbreak At} \newline
+\hspace*{1em}-- \texttt{reject\allowbreak Reason} \newline
+\hspace*{1em}-- \texttt{created\allowbreak At} \newline
+\hspace*{1em}-- \texttt{signed\allowbreak At} \newline
+\hspace*{1em}-- \texttt{completed\allowbreak At} \newline
+\hspace*{1em}-- \texttt{expires\allowbreak At} \newline
+\hspace*{1em}-- \texttt{deleted\allowbreak At} \\ \hline
+2 & \texttt{User} & Account identity: e-mail, bcrypt password hash, ban flag, Stripe customer/Connect flags and timestamps. Carries the primary role through \texttt{roleId}.\par\smallskip
+\hspace*{1em}-- \texttt{id} (PK) \newline
+\hspace*{1em}-- \texttt{email} \newline
+\hspace*{1em}-- \texttt{password} \newline
+\hspace*{1em}-- \texttt{is\allowbreak Banned} \newline
+\hspace*{1em}-- \texttt{created\allowbreak At} \newline
+\hspace*{1em}-- \texttt{updated\allowbreak At} \newline
+\hspace*{1em}-- \texttt{deleted\allowbreak At} \newline
+\hspace*{1em}-- \texttt{stripe\allowbreak Customer\allowbreak Id} \newline
+\hspace*{1em}-- \texttt{stripe\allowbreak Account\allowbreak Id} \newline
+\hspace*{1em}-- \texttt{stripe\allowbreak Onboarding\allowbreak Completed} \newline
+\hspace*{1em}-- \texttt{role\allowbreak Id} (FK) \\ \hline
+3 & \texttt{Review} & Review written after a contract is completed: rating, comment, author, recipient and the reviewed contract.\par\smallskip
+\hspace*{1em}-- \texttt{id} (PK) \newline
+\hspace*{1em}-- \texttt{contract\allowbreak Id} (FK) \newline
+\hspace*{1em}-- \texttt{reviewer\allowbreak Id} (FK) \newline
+\hspace*{1em}-- \texttt{reviewee\allowbreak Id} (FK) \newline
+\hspace*{1em}-- \texttt{overall\allowbreak Rating} \newline
+\hspace*{1em}-- \texttt{breakdown} \newline
+\hspace*{1em}-- \texttt{comment} \newline
+\hspace*{1em}-- \texttt{created\allowbreak At} \newline
+\hspace*{1em}-- \texttt{updated\allowbreak At} \newline
+\hspace*{1em}-- \texttt{deleted\allowbreak At} \\ \hline
+4 & \texttt{Review\allowbreak Response} & Reply of the reviewed party to a review (at most one per review).\par\smallskip
+\hspace*{1em}-- \texttt{id} (PK) \newline
+\hspace*{1em}-- \texttt{review\allowbreak Id} (FK) \newline
+\hspace*{1em}-- \texttt{user\allowbreak Id} (FK) \newline
+\hspace*{1em}-- \texttt{response\allowbreak Text} \newline
+\hspace*{1em}-- \texttt{created\allowbreak At} \newline
+\hspace*{1em}-- \texttt{updated\allowbreak At} \newline
+\hspace*{1em}-- \texttt{deleted\allowbreak At} \\ \hline
+\end{longtable}
+\end{center}
 
 % ===============================================
 % 4.1.5.19 ERD18
 % ===============================================
+\Needspace{12\baselineskip}
 \paragraph{Forum Posts \& Comments}
+
+This ERD describes the Forum Posts \& Comments module. It stores forum categories, posts, and comments. These tables support forum discussions and moderation.
+
+\Needspace{12\baselineskip}
+\paragraph*{a) ERD}
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.86\textwidth]{image/ERD/ERD-ERD18.drawio.pdf}
+    \includegraphics[width=0.78\textwidth]{image/ERD/ERD-ERD18.drawio.pdf}
     \caption{Forum Posts \& Comments ERD}
-    \label{fig:erd-forum-posts}
+    \label{fig:erd-forum-posts--comments}
 \end{figure}
+
+\Needspace{8\baselineskip}
+\paragraph*{b) Table of entities}\nopagebreak[4]
+\begin{center}\nopagebreak[4]
+\small\sloppy
+\begin{longtable}{|C{0.8cm}|L{3.8cm}|p{10.0cm}|}
+\hline
+\rowcolor{fptHeader}\textbf{No} & \textbf{Table} & \textbf{Description} \\* \hline
+\endfirsthead
+\hline
+\rowcolor{fptHeader}\textbf{No} & \textbf{Table} & \textbf{Description} \\* \hline
+\endhead
+\hline\endfoot
+\hline\endlastfoot
+1 & \texttt{Forum\allowbreak Category} & Forum category: slug, name, description and soft-delete support.\par\smallskip
+\hspace*{1em}-- \texttt{id} (PK) \newline
+\hspace*{1em}-- \texttt{name} \newline
+\hspace*{1em}-- \texttt{slug} \newline
+\hspace*{1em}-- \texttt{description} \newline
+\hspace*{1em}-- \texttt{created\allowbreak At} \newline
+\hspace*{1em}-- \texttt{updated\allowbreak At} \newline
+\hspace*{1em}-- \texttt{deleted\allowbreak At} \\ \hline
+2 & \texttt{Forum\allowbreak Post} & Forum post: title, content, author, category, moderation status, AI score, reviewer and soft-delete support.\par\smallskip
+\hspace*{1em}-- \texttt{id} (PK) \newline
+\hspace*{1em}-- \texttt{category\allowbreak Id} (FK) \newline
+\hspace*{1em}-- \texttt{user\allowbreak Id} (FK) \newline
+\hspace*{1em}-- \texttt{title} \newline
+\hspace*{1em}-- \texttt{slug} \newline
+\hspace*{1em}-- \texttt{content} \newline
+\hspace*{1em}-- \texttt{moderation\allowbreak Status} \newline
+\hspace*{1em}-- \texttt{moderation\allowbreak Score} \newline
+\hspace*{1em}-- \texttt{moderation\allowbreak Categories} \newline
+\hspace*{1em}-- \texttt{moderation\allowbreak Message} \newline
+\hspace*{1em}-- \texttt{moderation\allowbreak Language} \newline
+\hspace*{1em}-- \texttt{reviewed\allowbreak By\allowbreak Id} (FK) \newline
+\hspace*{1em}-- \texttt{reviewed\allowbreak At} \newline
+\hspace*{1em}-- \texttt{created\allowbreak At} \newline
+\hspace*{1em}-- \texttt{updated\allowbreak At} \newline
+\hspace*{1em}-- \texttt{deleted\allowbreak At} \\ \hline
+3 & \texttt{User} & Account identity: e-mail, bcrypt password hash, ban flag, Stripe customer/Connect flags and timestamps. Carries the primary role through \texttt{roleId}.\par\smallskip
+\hspace*{1em}-- \texttt{id} (PK) \newline
+\hspace*{1em}-- \texttt{email} \newline
+\hspace*{1em}-- \texttt{password} \newline
+\hspace*{1em}-- \texttt{is\allowbreak Banned} \newline
+\hspace*{1em}-- \texttt{created\allowbreak At} \newline
+\hspace*{1em}-- \texttt{updated\allowbreak At} \newline
+\hspace*{1em}-- \texttt{deleted\allowbreak At} \newline
+\hspace*{1em}-- \texttt{stripe\allowbreak Customer\allowbreak Id} \newline
+\hspace*{1em}-- \texttt{stripe\allowbreak Account\allowbreak Id} \newline
+\hspace*{1em}-- \texttt{stripe\allowbreak Onboarding\allowbreak Completed} \newline
+\hspace*{1em}-- \texttt{role\allowbreak Id} (FK) \\ \hline
+4 & \texttt{Forum\allowbreak Comment} & Comment on a forum post; comments are one level deep and can be soft-deleted. Review metadata is stored when an administrator moderates the comment.\par\smallskip
+\hspace*{1em}-- \texttt{id} (PK) \newline
+\hspace*{1em}-- \texttt{post\allowbreak Id} (FK) \newline
+\hspace*{1em}-- \texttt{user\allowbreak Id} (FK) \newline
+\hspace*{1em}-- \texttt{content} \newline
+\hspace*{1em}-- \texttt{moderation\allowbreak Status} \newline
+\hspace*{1em}-- \texttt{moderation\allowbreak Score} \newline
+\hspace*{1em}-- \texttt{moderation\allowbreak Categories} \newline
+\hspace*{1em}-- \texttt{moderation\allowbreak Message} \newline
+\hspace*{1em}-- \texttt{moderation\allowbreak Language} \newline
+\hspace*{1em}-- \texttt{reviewed\allowbreak By\allowbreak Id} (FK) \newline
+\hspace*{1em}-- \texttt{reviewed\allowbreak At} \newline
+\hspace*{1em}-- \texttt{created\allowbreak At} \newline
+\hspace*{1em}-- \texttt{updated\allowbreak At} \newline
+\hspace*{1em}-- \texttt{deleted\allowbreak At} \\ \hline
+\end{longtable}
+\end{center}
 
 % ===============================================
 % 4.1.5.20 ERD19
 % ===============================================
+\Needspace{12\baselineskip}
 \paragraph{Forum Likes}
+
+This ERD describes the Forum Likes module. It stores likes on posts and comments. These tables support reactions.
+
+\Needspace{12\baselineskip}
+\paragraph*{a) ERD}
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.95\textwidth]{image/ERD/ERD-ERD19.drawio.pdf}
+    \includegraphics[width=0.52\textwidth]{image/ERD/ERD-ERD19.drawio.pdf}
     \caption{Forum Likes ERD}
     \label{fig:erd-forum-likes}
 \end{figure}
 
+\Needspace{8\baselineskip}
+\paragraph*{b) Table of entities}\nopagebreak[4]
+\begin{center}\nopagebreak[4]
+\small\sloppy
+\begin{longtable}{|C{0.8cm}|L{3.8cm}|p{10.0cm}|}
+\hline
+\rowcolor{fptHeader}\textbf{No} & \textbf{Table} & \textbf{Description} \\* \hline
+\endfirsthead
+\hline
+\rowcolor{fptHeader}\textbf{No} & \textbf{Table} & \textbf{Description} \\* \hline
+\endhead
+\hline\endfoot
+\hline\endlastfoot
+1 & \texttt{User} & Account identity: e-mail, bcrypt password hash, ban flag, Stripe customer/Connect flags and timestamps. Carries the primary role through \texttt{roleId}.\par\smallskip
+\hspace*{1em}-- \texttt{id} (PK) \newline
+\hspace*{1em}-- \texttt{email} \newline
+\hspace*{1em}-- \texttt{password} \newline
+\hspace*{1em}-- \texttt{is\allowbreak Banned} \newline
+\hspace*{1em}-- \texttt{created\allowbreak At} \newline
+\hspace*{1em}-- \texttt{updated\allowbreak At} \newline
+\hspace*{1em}-- \texttt{deleted\allowbreak At} \newline
+\hspace*{1em}-- \texttt{stripe\allowbreak Customer\allowbreak Id} \newline
+\hspace*{1em}-- \texttt{stripe\allowbreak Account\allowbreak Id} \newline
+\hspace*{1em}-- \texttt{stripe\allowbreak Onboarding\allowbreak Completed} \newline
+\hspace*{1em}-- \texttt{role\allowbreak Id} (FK) \\ \hline
+2 & \texttt{Forum\allowbreak Post} & Forum post: title, content, author, category, moderation status, AI score, reviewer and soft-delete support.\par\smallskip
+\hspace*{1em}-- \texttt{id} (PK) \newline
+\hspace*{1em}-- \texttt{category\allowbreak Id} (FK) \newline
+\hspace*{1em}-- \texttt{user\allowbreak Id} (FK) \newline
+\hspace*{1em}-- \texttt{title} \newline
+\hspace*{1em}-- \texttt{slug} \newline
+\hspace*{1em}-- \texttt{content} \newline
+\hspace*{1em}-- \texttt{moderation\allowbreak Status} \newline
+\hspace*{1em}-- \texttt{moderation\allowbreak Score} \newline
+\hspace*{1em}-- \texttt{moderation\allowbreak Categories} \newline
+\hspace*{1em}-- \texttt{moderation\allowbreak Message} \newline
+\hspace*{1em}-- \texttt{moderation\allowbreak Language} \newline
+\hspace*{1em}-- \texttt{reviewed\allowbreak By\allowbreak Id} (FK) \newline
+\hspace*{1em}-- \texttt{reviewed\allowbreak At} \newline
+\hspace*{1em}-- \texttt{created\allowbreak At} \newline
+\hspace*{1em}-- \texttt{updated\allowbreak At} \newline
+\hspace*{1em}-- \texttt{deleted\allowbreak At} \\ \hline
+3 & \texttt{Forum\allowbreak Comment} & Comment on a forum post; comments are one level deep and can be soft-deleted. Review metadata is stored when an administrator moderates the comment.\par\smallskip
+\hspace*{1em}-- \texttt{id} (PK) \newline
+\hspace*{1em}-- \texttt{post\allowbreak Id} (FK) \newline
+\hspace*{1em}-- \texttt{user\allowbreak Id} (FK) \newline
+\hspace*{1em}-- \texttt{content} \newline
+\hspace*{1em}-- \texttt{moderation\allowbreak Status} \newline
+\hspace*{1em}-- \texttt{moderation\allowbreak Score} \newline
+\hspace*{1em}-- \texttt{moderation\allowbreak Categories} \newline
+\hspace*{1em}-- \texttt{moderation\allowbreak Message} \newline
+\hspace*{1em}-- \texttt{moderation\allowbreak Language} \newline
+\hspace*{1em}-- \texttt{reviewed\allowbreak By\allowbreak Id} (FK) \newline
+\hspace*{1em}-- \texttt{reviewed\allowbreak At} \newline
+\hspace*{1em}-- \texttt{created\allowbreak At} \newline
+\hspace*{1em}-- \texttt{updated\allowbreak At} \newline
+\hspace*{1em}-- \texttt{deleted\allowbreak At} \\ \hline
+4 & \texttt{Forum\allowbreak Like} & Reaction of a member on a post or a comment; a member can like a target only once.\par\smallskip
+\hspace*{1em}-- \texttt{id} (PK) \newline
+\hspace*{1em}-- \texttt{user\allowbreak Id} (FK) \newline
+\hspace*{1em}-- \texttt{post\allowbreak Id} (FK) \newline
+\hspace*{1em}-- \texttt{comment\allowbreak Id} (FK) \newline
+\hspace*{1em}-- \texttt{reaction\allowbreak Type} \newline
+\hspace*{1em}-- \texttt{created\allowbreak At} \\ \hline
+\end{longtable}
+\end{center}
+
 % ===============================================
 % 4.1.5.21 ERD20
 % ===============================================
+\Needspace{12\baselineskip}
 \paragraph{Forum Reports \& Moderation}
+
+This ERD describes the Forum Reports \& Moderation module. It stores forum reports, moderation queue, and banned keywords. These tables support reporting content and admin moderation.
+
+\Needspace{12\baselineskip}
+\paragraph*{a) ERD}
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.86\textwidth]{image/ERD/ERD-ERD20.drawio.pdf}
+    \includegraphics[width=0.52\textwidth]{image/ERD/ERD-ERD20.drawio.pdf}
     \caption{Forum Reports \& Moderation ERD}
-    \label{fig:erd-forum-reports}
+    \label{fig:erd-forum-reports--moderation}
 \end{figure}
+
+\Needspace{8\baselineskip}
+\paragraph*{b) Table of entities}\nopagebreak[4]
+\begin{center}\nopagebreak[4]
+\small\sloppy
+\begin{longtable}{|C{0.8cm}|L{3.8cm}|p{10.0cm}|}
+\hline
+\rowcolor{fptHeader}\textbf{No} & \textbf{Table} & \textbf{Description} \\* \hline
+\endfirsthead
+\hline
+\rowcolor{fptHeader}\textbf{No} & \textbf{Table} & \textbf{Description} \\* \hline
+\endhead
+\hline\endfoot
+\hline\endlastfoot
+1 & \texttt{User} & Account identity: e-mail, bcrypt password hash, ban flag, Stripe customer/Connect flags and timestamps. Carries the primary role through \texttt{roleId}.\par\smallskip
+\hspace*{1em}-- \texttt{id} (PK) \newline
+\hspace*{1em}-- \texttt{email} \newline
+\hspace*{1em}-- \texttt{password} \newline
+\hspace*{1em}-- \texttt{is\allowbreak Banned} \newline
+\hspace*{1em}-- \texttt{created\allowbreak At} \newline
+\hspace*{1em}-- \texttt{updated\allowbreak At} \newline
+\hspace*{1em}-- \texttt{deleted\allowbreak At} \newline
+\hspace*{1em}-- \texttt{stripe\allowbreak Customer\allowbreak Id} \newline
+\hspace*{1em}-- \texttt{stripe\allowbreak Account\allowbreak Id} \newline
+\hspace*{1em}-- \texttt{stripe\allowbreak Onboarding\allowbreak Completed} \newline
+\hspace*{1em}-- \texttt{role\allowbreak Id} (FK) \\ \hline
+2 & \texttt{Forum\allowbreak Post} & Forum post: title, content, author, category, moderation status, AI score, reviewer and soft-delete support.\par\smallskip
+\hspace*{1em}-- \texttt{id} (PK) \newline
+\hspace*{1em}-- \texttt{category\allowbreak Id} (FK) \newline
+\hspace*{1em}-- \texttt{user\allowbreak Id} (FK) \newline
+\hspace*{1em}-- \texttt{title} \newline
+\hspace*{1em}-- \texttt{slug} \newline
+\hspace*{1em}-- \texttt{content} \newline
+\hspace*{1em}-- \texttt{moderation\allowbreak Status} \newline
+\hspace*{1em}-- \texttt{moderation\allowbreak Score} \newline
+\hspace*{1em}-- \texttt{moderation\allowbreak Categories} \newline
+\hspace*{1em}-- \texttt{moderation\allowbreak Message} \newline
+\hspace*{1em}-- \texttt{moderation\allowbreak Language} \newline
+\hspace*{1em}-- \texttt{reviewed\allowbreak By\allowbreak Id} (FK) \newline
+\hspace*{1em}-- \texttt{reviewed\allowbreak At} \newline
+\hspace*{1em}-- \texttt{created\allowbreak At} \newline
+\hspace*{1em}-- \texttt{updated\allowbreak At} \newline
+\hspace*{1em}-- \texttt{deleted\allowbreak At} \\ \hline
+3 & \texttt{Forum\allowbreak Comment} & Comment on a forum post; comments are one level deep and can be soft-deleted. Review metadata is stored when an administrator moderates the comment.\par\smallskip
+\hspace*{1em}-- \texttt{id} (PK) \newline
+\hspace*{1em}-- \texttt{post\allowbreak Id} (FK) \newline
+\hspace*{1em}-- \texttt{user\allowbreak Id} (FK) \newline
+\hspace*{1em}-- \texttt{content} \newline
+\hspace*{1em}-- \texttt{moderation\allowbreak Status} \newline
+\hspace*{1em}-- \texttt{moderation\allowbreak Score} \newline
+\hspace*{1em}-- \texttt{moderation\allowbreak Categories} \newline
+\hspace*{1em}-- \texttt{moderation\allowbreak Message} \newline
+\hspace*{1em}-- \texttt{moderation\allowbreak Language} \newline
+\hspace*{1em}-- \texttt{reviewed\allowbreak By\allowbreak Id} (FK) \newline
+\hspace*{1em}-- \texttt{reviewed\allowbreak At} \newline
+\hspace*{1em}-- \texttt{created\allowbreak At} \newline
+\hspace*{1em}-- \texttt{updated\allowbreak At} \newline
+\hspace*{1em}-- \texttt{deleted\allowbreak At} \\ \hline
+4 & \texttt{Forum\allowbreak Report} & Content report filed by a member: reason, status and the administrator who handled it.\par\smallskip
+\hspace*{1em}-- \texttt{id} (PK) \newline
+\hspace*{1em}-- \texttt{reporter\allowbreak Id} (FK) \newline
+\hspace*{1em}-- \texttt{post\allowbreak Id} (FK) \newline
+\hspace*{1em}-- \texttt{comment\allowbreak Id} (FK) \newline
+\hspace*{1em}-- \texttt{reason} \newline
+\hspace*{1em}-- \texttt{status} \newline
+\hspace*{1em}-- \texttt{admin\allowbreak Id} (FK) \newline
+\hspace*{1em}-- \texttt{created\allowbreak At} \\ \hline
+\end{longtable}
+\end{center}
 
 % ===============================================
 % 4.1.5.22 ERD21
 % ===============================================
+\Needspace{12\baselineskip}
 \paragraph{Messaging \& Notifications}
+
+This ERD describes the Messaging \& Notifications module. It stores notifications, conversations, and direct messages. These tables support real-time chat and in-app notifications.
+
+\Needspace{12\baselineskip}
+\paragraph*{a) ERD}
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.86\textwidth]{image/ERD/ERD-ERD21.drawio.pdf}
+    \includegraphics[width=0.78\textwidth]{image/ERD/ERD-ERD21.drawio.pdf}
     \caption{Messaging \& Notifications ERD}
-    \label{fig:erd-messaging}
+    \label{fig:erd-messaging--notifications}
 \end{figure}
+
+\Needspace{8\baselineskip}
+\paragraph*{b) Table of entities}\nopagebreak[4]
+\begin{center}\nopagebreak[4]
+\small\sloppy
+\begin{longtable}{|C{0.8cm}|L{3.8cm}|p{10.0cm}|}
+\hline
+\rowcolor{fptHeader}\textbf{No} & \textbf{Table} & \textbf{Description} \\* \hline
+\endfirsthead
+\hline
+\rowcolor{fptHeader}\textbf{No} & \textbf{Table} & \textbf{Description} \\* \hline
+\endhead
+\hline\endfoot
+\hline\endlastfoot
+1 & \texttt{User} & Account identity: e-mail, bcrypt password hash, ban flag, Stripe customer/Connect flags and timestamps. Carries the primary role through \texttt{roleId}.\par\smallskip
+\hspace*{1em}-- \texttt{id} (PK) \newline
+\hspace*{1em}-- \texttt{email} \newline
+\hspace*{1em}-- \texttt{password} \newline
+\hspace*{1em}-- \texttt{is\allowbreak Banned} \newline
+\hspace*{1em}-- \texttt{created\allowbreak At} \newline
+\hspace*{1em}-- \texttt{updated\allowbreak At} \newline
+\hspace*{1em}-- \texttt{deleted\allowbreak At} \newline
+\hspace*{1em}-- \texttt{stripe\allowbreak Customer\allowbreak Id} \newline
+\hspace*{1em}-- \texttt{stripe\allowbreak Account\allowbreak Id} \newline
+\hspace*{1em}-- \texttt{stripe\allowbreak Onboarding\allowbreak Completed} \newline
+\hspace*{1em}-- \texttt{role\allowbreak Id} (FK) \\ \hline
+2 & \texttt{Conversation} & Direct conversation between two accounts, storing per-participant hide/pin timestamps and soft-delete support.\par\smallskip
+\hspace*{1em}-- \texttt{id} (PK) \newline
+\hspace*{1em}-- \texttt{slug} \newline
+\hspace*{1em}-- \texttt{participant1} (FK) \newline
+\hspace*{1em}-- \texttt{participant2} (FK) \newline
+\hspace*{1em}-- \texttt{created\allowbreak At} \newline
+\hspace*{1em}-- \texttt{deleted\allowbreak At} \newline
+\hspace*{1em}-- \texttt{participant1\allowbreak Hidden\allowbreak At} \newline
+\hspace*{1em}-- \texttt{participant2\allowbreak Hidden\allowbreak At} \newline
+\hspace*{1em}-- \texttt{participant1\allowbreak Pinned\allowbreak At} \newline
+\hspace*{1em}-- \texttt{participant2\allowbreak Pinned\allowbreak At} \\ \hline
+3 & \texttt{Direct\allowbreak Message} & Message of a conversation: sender, content, attachments, read state, recall (soft delete) flag and timestamp.\par\smallskip
+\hspace*{1em}-- \texttt{id} (PK) \newline
+\hspace*{1em}-- \texttt{conversation\allowbreak Id} (FK) \newline
+\hspace*{1em}-- \texttt{sender\allowbreak Id} (FK) \newline
+\hspace*{1em}-- \texttt{message} \newline
+\hspace*{1em}-- \texttt{file\allowbreak Url} \newline
+\hspace*{1em}-- \texttt{file\allowbreak Name} \newline
+\hspace*{1em}-- \texttt{file\allowbreak Size} \newline
+\hspace*{1em}-- \texttt{file\allowbreak Type} \newline
+\hspace*{1em}-- \texttt{is\allowbreak Read} \newline
+\hspace*{1em}-- \texttt{created\allowbreak At} \newline
+\hspace*{1em}-- \texttt{deleted\allowbreak At} \\ \hline
+4 & \texttt{Notification} & In-app notification of an account: type, title, body, target link and read state.\par\smallskip
+\hspace*{1em}-- \texttt{id} (PK) \newline
+\hspace*{1em}-- \texttt{user\allowbreak Id} (FK) \newline
+\hspace*{1em}-- \texttt{type} \newline
+\hspace*{1em}-- \texttt{title} \newline
+\hspace*{1em}-- \texttt{message} \newline
+\hspace*{1em}-- \texttt{data} \newline
+\hspace*{1em}-- \texttt{is\allowbreak Read} \newline
+\hspace*{1em}-- \texttt{created\allowbreak At} \newline
+\hspace*{1em}-- \texttt{deleted\allowbreak At} \\ \hline
+\end{longtable}
+\end{center}
 
 % ===============================================
 % 4.1.5.23 ERD22
 % ===============================================
+\Needspace{12\baselineskip}
 \paragraph{Administration \& System}
+
+This ERD describes the Administration \& System module. It stores announcement banners, system settings, and advertisement banners. These tables support admin configuration and banners.
+
+\Needspace{12\baselineskip}
+\paragraph*{a) ERD}
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.95\textwidth]{image/ERD/ERD-ERD22.drawio.pdf}
+    \includegraphics[width=0.78\textwidth]{image/ERD/ERD-ERD22.drawio.pdf}
     \caption{Administration \& System ERD}
-    \label{fig:erd-administration}
+    \label{fig:erd-administration--system}
 \end{figure}
+
+\Needspace{8\baselineskip}
+\paragraph*{b) Table of entities}\nopagebreak[4]
+\begin{center}\nopagebreak[4]
+\small\sloppy
+\begin{longtable}{|C{0.8cm}|L{3.8cm}|p{10.0cm}|}
+\hline
+\rowcolor{fptHeader}\textbf{No} & \textbf{Table} & \textbf{Description} \\* \hline
+\endfirsthead
+\hline
+\rowcolor{fptHeader}\textbf{No} & \textbf{Table} & \textbf{Description} \\* \hline
+\endhead
+\hline\endfoot
+\hline\endlastfoot
+1 & \texttt{User} & Account identity: e-mail, bcrypt password hash, ban flag, Stripe customer/Connect flags and timestamps. Carries the primary role through \texttt{roleId}.\par\smallskip
+\hspace*{1em}-- \texttt{id} (PK) \newline
+\hspace*{1em}-- \texttt{email} \newline
+\hspace*{1em}-- \texttt{password} \newline
+\hspace*{1em}-- \texttt{is\allowbreak Banned} \newline
+\hspace*{1em}-- \texttt{created\allowbreak At} \newline
+\hspace*{1em}-- \texttt{updated\allowbreak At} \newline
+\hspace*{1em}-- \texttt{deleted\allowbreak At} \newline
+\hspace*{1em}-- \texttt{stripe\allowbreak Customer\allowbreak Id} \newline
+\hspace*{1em}-- \texttt{stripe\allowbreak Account\allowbreak Id} \newline
+\hspace*{1em}-- \texttt{stripe\allowbreak Onboarding\allowbreak Completed} \newline
+\hspace*{1em}-- \texttt{role\allowbreak Id} (FK) \\ \hline
+2 & \texttt{Moderation\allowbreak Queue} & Queue of AI-flagged or user-reported content waiting for an administrator decision, with the item type (\texttt{contentType}), target identifier, reason, status, handling administrator and action taken.\par\smallskip
+\hspace*{1em}-- \texttt{id} (PK) \newline
+\hspace*{1em}-- \texttt{content\allowbreak Type} \newline
+\hspace*{1em}-- \texttt{content\allowbreak Id} \newline
+\hspace*{1em}-- \texttt{reporter\allowbreak Id} (FK) \newline
+\hspace*{1em}-- \texttt{reason} \newline
+\hspace*{1em}-- \texttt{status} \newline
+\hspace*{1em}-- \texttt{admin\allowbreak Id} (FK) \newline
+\hspace*{1em}-- \texttt{action\allowbreak Taken} \newline
+\hspace*{1em}-- \texttt{created\allowbreak At} \newline
+\hspace*{1em}-- \texttt{resolved\allowbreak At} \\ \hline
+3 & \texttt{Banned\allowbreak Keyword} & Reserved keyword table in the schema, currently unexposed by the application API.\par\smallskip
+\hspace*{1em}-- \texttt{id} (PK) \newline
+\hspace*{1em}-- \texttt{keyword} \newline
+\hspace*{1em}-- \texttt{created\allowbreak By} (FK) \newline
+\hspace*{1em}-- \texttt{created\allowbreak At} \\ \hline
+4 & \texttt{Announcement\allowbreak Banner} & Platform announcement shown in the application: message, link, display window, active flag and soft delete.\par\smallskip
+\hspace*{1em}-- \texttt{id} (PK) \newline
+\hspace*{1em}-- \texttt{message} \newline
+\hspace*{1em}-- \texttt{link} \newline
+\hspace*{1em}-- \texttt{start\allowbreak Date} \newline
+\hspace*{1em}-- \texttt{end\allowbreak Date} \newline
+\hspace*{1em}-- \texttt{is\allowbreak Active} \newline
+\hspace*{1em}-- \texttt{created\allowbreak At} \newline
+\hspace*{1em}-- \texttt{updated\allowbreak At} \newline
+\hspace*{1em}-- \texttt{deleted\allowbreak At} \\ \hline
+5 & \texttt{Advertisement\allowbreak Banner} & Advertising banner with title, image URL, target URL, position, schedule and active flag.\par\smallskip
+\hspace*{1em}-- \texttt{id} (PK) \newline
+\hspace*{1em}-- \texttt{title} \newline
+\hspace*{1em}-- \texttt{image\allowbreak Url} \newline
+\hspace*{1em}-- \texttt{link\allowbreak Url} \newline
+\hspace*{1em}-- \texttt{position} \newline
+\hspace*{1em}-- \texttt{start\allowbreak Date} \newline
+\hspace*{1em}-- \texttt{end\allowbreak Date} \newline
+\hspace*{1em}-- \texttt{is\allowbreak Active} \newline
+\hspace*{1em}-- \texttt{created\allowbreak At} \newline
+\hspace*{1em}-- \texttt{updated\allowbreak At} \\ \hline
+6 & \texttt{System\allowbreak Setting} & Platform-wide configuration values stored as key/value rows.\par\smallskip
+\hspace*{1em}-- \texttt{id} (PK) \newline
+\hspace*{1em}-- \texttt{key} \newline
+\hspace*{1em}-- \texttt{value} \newline
+\hspace*{1em}-- \texttt{created\allowbreak At} \newline
+\hspace*{1em}-- \texttt{updated\allowbreak At} \\ \hline
+\end{longtable}
+\end{center}

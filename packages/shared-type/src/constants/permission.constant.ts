@@ -101,10 +101,10 @@ export const PERMISSION_MAP: Record<string, PermissionDescriptor> = {
   "POST /api/admin/banners/upload-image": { en: "Upload Banner Image", vi: "Tải lên hình ảnh banner" },
 
   // ADMIN DISPUTES
-  "GET /api/admin/disputes": { en: "View Dispute List (Admin)", vi: "Xem danh sách tranh chấp (Admin)" },
-  "GET /api/admin/disputes/:id": { en: "View Dispute Detail (Admin)", vi: "Xem chi tiết tranh chấp (Admin)" },
-  "POST /api/admin/disputes/:id/decision": { en: "Make Dispute Decision (Admin)", vi: "Đưa ra phán quyết tranh chấp (Admin)" },
-  "POST /api/admin/disputes/:id/final-decision": { en: "Final Dispute Decision (Admin)", vi: "Phán quyết tranh chấp cuối cùng (Admin)" },
+  "GET /api/expert/disputes": { en: "View Dispute List (Expert)", vi: "Xem danh sách tranh chấp (Expert)" },
+  "GET /api/expert/disputes/:id": { en: "View Dispute Detail (Expert)", vi: "Xem chi tiết tranh chấp (Expert)" },
+  "POST /api/expert/disputes/:id/decision": { en: "Make Dispute Decision (Expert)", vi: "Đưa ra phán quyết tranh chấp (Expert)" },
+  "POST /api/expert/disputes/:id/final-decision": { en: "Final Dispute Decision (Expert)", vi: "Phán quyết tranh chấp cuối cùng (Expert)" },
 
   // ADMIN IDENTITY VERIFICATIONS
   "GET /api/admin/identity-verifications": { en: "View Identity Verification List", vi: "Xem danh sách yêu cầu xác thực danh tính" },
@@ -212,13 +212,13 @@ export const PERMISSION_MAP: Record<string, PermissionDescriptor> = {
 
   // DISPUTES
   "GET /api/disputes": { en: "View Dispute List", vi: "Xem danh sách tranh chấp" },
-  "POST /api/disputes": { en: "Open Dispute", vi: "Mở tranh chấp mới" },
+  "GET /api/disputes/reasons": { en: "View Resolution Reasons", vi: "Xem danh sách lý do giải quyết tranh chấp" },
+  "POST /api/disputes": { en: "Open Dispute", vi: "Mở yêu cầu giải quyết tranh chấp" },
   "GET /api/disputes/:id": { en: "View Dispute Detail", vi: "Xem chi tiết tranh chấp" },
-  "POST /api/disputes/:id/respond": { en: "Respond to Dispute", vi: "Phản hồi tranh chấp" },
-  "POST /api/disputes/:id/response": { en: "Submit Dispute Response", vi: "Gửi phản hồi tranh chấp" },
-  "POST /api/disputes/:id/review": { en: "Review Dispute", vi: "Xem xét tranh chấp" },
-  "POST /api/disputes/:id/propose-resolution": { en: "Propose Dispute Resolution", vi: "Đề xuất giải pháp hòa giải" },
-  "POST /api/disputes/:id/respond-resolution": { en: "Respond to Dispute Resolution", vi: "Phản hồi giải pháp hòa giải" },
+  "PATCH /api/disputes/:id/respond": { en: "Respond to Resolution", vi: "Phản hồi yêu cầu giải quyết (Đồng ý / Từ chối)" },
+  "PATCH /api/disputes/:id/withdraw": { en: "Withdraw Resolution", vi: "Rút lại yêu cầu giải quyết tranh chấp" },
+  "POST /api/disputes/:id/escalate": { en: "Escalate to Expert", vi: "Gửi khiếu nại lên Chuyên gia (Expert)" },
+  "POST /api/disputes/:id/review": { en: "Review Dispute", vi: "Xem xét phán quyết tranh chấp" },
   "GET /api/disputes/milestone/:milestoneId": { en: "View Dispute by Milestone", vi: "Xem tranh chấp theo milestone" },
 
   // PAYMENTS
@@ -293,7 +293,6 @@ export const PERMISSION_MAP: Record<string, PermissionDescriptor> = {
   "PATCH /api/proposals/:id/reject": { en: "Reject Proposal", vi: "Từ chối đề xuất" },
   "GET /api/proposals/:id/client": { en: "View Client Info for Proposal", vi: "Xem thông tin khách hàng cho đề xuất" },
   "PATCH /api/proposals/:id/draft": { en: "Update Proposal Draft", vi: "Cập nhật bản nháp đề xuất" },
-  "PATCH /api/proposals/:id/interview": { en: "Invite Proposal to Interview", vi: "Mời phỏng vấn đề xuất" },
   "PATCH /api/proposals/:id/submit": { en: "Submit Proposal Draft", vi: "Nộp chính thức bản nháp đề xuất" },
   "PATCH /api/proposals/:id/withdraw": { en: "Withdraw Proposal", vi: "Rút lại đề xuất" },
   "POST /api/proposals/jobs/:jobId": { en: "Submit Proposal for Job", vi: "Nộp đề xuất cho công việc" },

@@ -48,8 +48,8 @@ import {
 } from './proposal.error';
 import { ProposalRepository } from './proposal.repo';
 
-// Khách hàng còn có thể phỏng vấn / từ chối / tuyển trên các trạng thái này.
-const ACTIONABLE_STATUSES: ProposalStatusType[] = ['SUBMITTED', 'INTERVIEWING'];
+// Khách hàng còn có thể từ chối / tuyển trên các trạng thái này.
+const ACTIONABLE_STATUSES: ProposalStatusType[] = ['SUBMITTED'];
 
 @Injectable()
 export class ProposalService {
@@ -351,34 +351,6 @@ export class ProposalService {
 
     try {
       return await this.proposalRepository.withdrawProposal(proposal.id);
-    } catch (error) {
-      if (error instanceof PrismaClientKnownRequestError) {
-        throw FailedToUpdateProposalException();
-      }
-      throw error;
-    }
-  }
-
-  // Khách hàng phản hồi và bắt đầu trao đổi/phỏng vấn freelancer.
-  async interviewProposal(
-    userId: number,
-    roleName: string,
-    proposalId: number,
-  ): Promise<ProposalType> {
-    if (roleName !== RoleName.CLIENT) throw ProposalClientOnlyException();
-
-    await this.expireStaleProposals();
-    const proposal =
-      await this.proposalRepository.findProposalForClientDecision(proposalId);
-    if (!proposal || proposal.deletedAt) throw ProposalNotFoundException();
-    if (!proposal.job || proposal.job.deletedAt) {
-      throw ProposalJobUnavailableException();
-    }
-    if (proposal.job.clientId !== userId) throw ProposalForbiddenException();
-    this.assertActionable(proposal.status);
-
-    try {
-      return await this.proposalRepository.interviewProposal(proposal.id);
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError) {
         throw FailedToUpdateProposalException();

@@ -400,7 +400,7 @@ export function BookmarksContent({
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder={t("searchPlaceholder")}
-                  className="h-10 w-full rounded-full border border-border bg-muted/40 pl-10 pr-10 text-xs sm:text-sm text-foreground placeholder:text-muted-foreground focus:border-[#4fae2e] focus:bg-background focus:outline-none focus:ring-1 focus:ring-[#4fae2e] transition-colors"
+                  className="h-10 w-full rounded-full border border-border bg-muted/40 pl-10 pr-10 text-xs sm:text-sm text-foreground placeholder:text-muted-foreground focus:border-[#0069D3] focus:bg-background focus:outline-none focus:ring-1 focus:ring-[#0069D3] transition-colors"
                 />
                 {searchQuery ? (
                   <button
@@ -424,7 +424,7 @@ export function BookmarksContent({
                       onClick={() => handleStatusFilterChange(item.value)}
                       className={`rounded-full px-3 py-1 text-xs font-medium transition-colors cursor-pointer ${
                         statusFilter === item.value
-                          ? "bg-[#4fae2e] text-white shadow-xs font-semibold"
+                          ? "bg-[#0069D3] text-white shadow-xs font-semibold"
                           : "text-muted-foreground hover:text-foreground hover:bg-muted"
                       }`}
                     >
@@ -480,7 +480,7 @@ export function BookmarksContent({
           {/* Loading Transition Indicator */}
           {isPending ? (
             <div className="mb-4 flex items-center justify-center gap-2 py-4 text-xs font-medium text-muted-foreground animate-pulse">
-              <Loader2 className="size-4 animate-spin text-[#4fae2e]" />
+              <Loader2 className="size-4 animate-spin text-[#0069D3]" />
               <span>{tCommon("loading")}</span>
             </div>
           ) : null}
@@ -515,7 +515,7 @@ export function BookmarksContent({
                                   ? "bg-amber-50 text-amber-600 dark:bg-amber-950/50 dark:text-amber-300"
                                   : availability.isExpiring
                                     ? "bg-red-50 text-red-600 dark:bg-red-950/50 dark:text-red-300"
-                                    : "bg-emerald-50 text-emerald-600 dark:bg-emerald-950/50 dark:text-emerald-300"
+                                    : "bg-blue-50 text-[#0069D3] dark:bg-blue-950/50 dark:text-blue-300"
                             }`}
                           >
                             {t(availability.key)}
@@ -561,7 +561,7 @@ export function BookmarksContent({
                       <div className="mt-3 flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between">
                         <Link
                           href={`${jobBaseUrl}/${job.slug}`}
-                          className="text-base sm:text-lg font-bold text-foreground hover:text-[#4fae2e] transition-colors line-clamp-1"
+                          className="text-base sm:text-lg font-bold text-foreground hover:text-[#0069D3] transition-colors line-clamp-1"
                         >
                           {job.title}
                         </Link>
@@ -621,7 +621,7 @@ export function BookmarksContent({
                         {isAvailableToApply ? (
                           <Link
                             href={`${jobBaseUrl}/${job.slug}`}
-                            className="inline-flex items-center gap-1.5 rounded-full bg-[#4fae2e] text-white hover:bg-[#459928] px-4 py-2 text-xs font-semibold shadow-xs transition-all hover:translate-x-0.5"
+                            className="inline-flex items-center gap-1.5 rounded-full bg-[#0069D3] text-white hover:bg-[#005bb8] px-4 py-2 text-xs font-semibold shadow-xs transition-all hover:translate-x-0.5"
                           >
                             <BriefcaseBusiness className="size-3.5" />
                             <span>{t("viewJob")}</span>
@@ -691,7 +691,7 @@ export function BookmarksContent({
               </p>
               <Button
                 asChild
-                className="mt-6 gap-2 rounded-full bg-[#4fae2e] text-xs font-medium text-white hover:bg-[#459928]"
+                className="mt-6 gap-2 rounded-full bg-[#0069D3] text-xs font-medium text-white hover:bg-[#005bb8]"
               >
                 <Link href={embedded ? "/freelancer/find-work" : "/find-work"}>
                   {t("browseJobs")}
@@ -746,7 +746,7 @@ export function BookmarksContent({
                           size="sm"
                           className={`size-8 rounded-full p-0 text-xs cursor-pointer ${
                             p === pagination.page
-                              ? "bg-[#4fae2e] text-white hover:bg-[#459928]"
+                              ? "bg-[#0069D3] text-white hover:bg-[#005bb8]"
                               : ""
                           }`}
                           disabled={isPending}
@@ -789,7 +789,7 @@ export function BookmarksContent({
                     variant="outline"
                     className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${
                       quickViewJob.status === "OPEN"
-                        ? "border-emerald-500/40 bg-emerald-50 text-emerald-600 dark:bg-emerald-950/40 dark:text-emerald-300"
+                        ? "border-blue-500/40 bg-blue-50 text-[#0069D3] dark:bg-blue-950/40 dark:text-blue-300"
                         : "border-zinc-500/30 bg-zinc-100 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-300"
                     }`}
                   >
@@ -904,7 +904,7 @@ export function BookmarksContent({
                   {quickViewJob.status === "OPEN" ? (
                     <Button
                       asChild
-                      className="rounded-full bg-[#4fae2e] text-white hover:bg-[#459928] text-xs font-semibold cursor-pointer"
+                      className="rounded-full bg-[#0069D3] text-white hover:bg-[#005bb8] text-xs font-semibold cursor-pointer"
                     >
                       <Link href={`${jobBaseUrl}/${quickViewJob.slug}`}>
                         {t("applyJob")}

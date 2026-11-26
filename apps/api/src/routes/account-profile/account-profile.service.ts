@@ -1,8 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Optional } from '@nestjs/common';
 import { Prisma, VerificationStatus } from '@prisma/client';
 import {
   AddSocialLinkType,
   ChangePasswordType,
+  ClientDirectoryQueryType,
   DocumentTypeType,
   RoleName,
   UpdateClientProfileType,
@@ -12,12 +13,14 @@ import { randomUUID } from 'crypto';
 import { existsSync } from 'fs';
 import { mkdir, writeFile } from 'fs/promises';
 import { dirname, extname, isAbsolute, join, relative, resolve } from 'path';
+import { CacheService } from '../../shared/services/cache.service';
 import { CloudinaryService } from '../../shared/services/cloudinary.service';
 import { HashingService } from '../../shared/services/hashing.service';
 import {
   IdentityAiService,
   type IdentityAiVerifyResult,
 } from '../../shared/services/identity-ai.service';
+import { AUTH_ME_CACHE_PREFIX } from '../auth/auth.service';
 import { ProfileRevisionService } from '../profile-revisions/profile-revision.service';
 import {
   AccountProfileForbiddenException,
@@ -37,6 +40,7 @@ import {
   IdentityAiLivenessRequiredException,
   IdentityAiSelfieRequiredException,
   IdentityAlreadyVerifiedException,
+  IdentityPendingReviewException,
   IdentityDocumentNotFoundException,
   IdentityFileInvalidException,
   IdentityFileRequiredException,
@@ -55,6 +59,7 @@ export class AccountProfileService {
     private readonly cloudinary: CloudinaryService,
     private readonly hashing: HashingService,
     private readonly identityAi: IdentityAiService,
+    @Optional() private readonly cacheService?: CacheService,
   ) {}
 
   private presentAvatarUrl(
@@ -100,6 +105,27 @@ export class AccountProfileService {
     >,
   ) {
     if (!user.profile) throw ProfileNotFoundException();
+    const activeRoleName = user.role?.name;
+    const ownedRoles =
+      Array.isArray(user.userRoles) && user.userRoles.length > 0
+        ? user.userRoles
+            .map((ur) => ({
+              name: ur.role.name,
+              isPrimary:
+                typeof user.roleId === 'number'
+                  ? ur.roleId === user.roleId
+                  : ur.role.name === activeRoleName,
+            }))
+            .sort((a, b) => Number(b.isPrimary) - Number(a.isPrimary))
+        : activeRoleName
+          ? [
+              {
+                name: activeRoleName,
+                isPrimary: true,
+              },
+            ]
+          : [];
+
     return {
       ...user.profile,
       email: user.email,
@@ -108,14 +134,7 @@ export class AccountProfileService {
         user.profile.avatarUrl,
         user.profile.updatedAt,
       ),
-      roles: user.role
-        ? [
-            {
-              name: user.role.name,
-              isPrimary: true,
-            },
-          ]
-        : [],
+      roles: ownedRoles,
     };
   }
 
@@ -151,11 +170,13 @@ export class AccountProfileService {
         input,
         primaryRole,
       );
+      this.cacheService?.del(`${AUTH_ME_CACHE_PREFIX}${userId}`);
       return this.profileRevisionService.directUpdateResult(
         updated.profileCompletionPercent,
       );
     }
     await this.repository.updateGeneralProfile(userId, input);
+    this.cacheService?.del(`${AUTH_ME_CACHE_PREFIX}${userId}`);
     const updated = await this.repository.findGeneralProfile(userId);
     if (!updated?.profile) throw ProfileNotFoundException();
     return this.profileRevisionService.directUpdateResult(
@@ -209,6 +230,7 @@ export class AccountProfileService {
       avatarUrl = `local://${relativePath.replace(/\\/g, '/')}`;
     }
     const updated = await this.repository.updateAvatar(userId, avatarUrl);
+    this.cacheService?.del(`${AUTH_ME_CACHE_PREFIX}${userId}`);
     return {
       avatarUrl: this.presentAvatarUrl(
         userId,
@@ -254,6 +276,33 @@ export class AccountProfileService {
       throw AccountProfileForbiddenException();
     }
     return user;
+  }
+
+  private async requireAnyRole(userId: number, roleNames: string[]) {
+    const user = await this.repository.findUserWithRoles(userId);
+    if (!user?.profile) throw ProfileNotFoundException();
+    const hasRole =
+      (user.role?.name && roleNames.includes(user.role.name)) ||
+      user.userRoles?.some((ur) => roleNames.includes(ur.role.name));
+    if (!hasRole) {
+      throw AccountProfileForbiddenException();
+    }
+    return user;
+  }
+
+  private hasOwnedRole(
+    user:
+      | {
+          role?: { name: string } | null;
+          userRoles?: Array<{ role: { name: string } }>;
+        }
+      | null
+      | undefined,
+    roleName: string,
+  ): boolean {
+    if (!user) return false;
+    if (user.role?.name === roleName) return true;
+    return Boolean(user.userRoles?.some((ur) => ur.role.name === roleName));
   }
 
   /**
@@ -346,7 +395,7 @@ export class AccountProfileService {
     documentType: DocumentTypeType,
     file?: Express.Multer.File,
   ) {
-    await this.requireRole(userId, RoleName.FREELANCER);
+    await this.requireAnyRole(userId, [RoleName.FREELANCER, RoleName.CLIENT]);
     if (!file) throw IdentityFileRequiredException();
     const allowedTypes = ['application/pdf', 'image/jpeg', 'image/png'];
     if (!allowedTypes.includes(file.mimetype) || file.size > 10 * 1024 * 1024) {
@@ -390,7 +439,7 @@ export class AccountProfileService {
       liveness: Express.Multer.File[];
     },
   ) {
-    await this.requireRole(userId, RoleName.FREELANCER);
+    await this.requireAnyRole(userId, [RoleName.FREELANCER, RoleName.CLIENT]);
     const { front, back, selfie, liveness } = files;
     if (!front) throw IdentityAiFrontRequiredException();
     if (!selfie) throw IdentityAiSelfieRequiredException();
@@ -410,8 +459,11 @@ export class AccountProfileService {
     }
 
     const existing = await this.repository.findIdentityDocuments(userId);
-    if (existing[0]?.status === VerificationStatus.APPROVED) {
+    if (existing.some((doc) => doc.status === VerificationStatus.APPROVED)) {
       throw IdentityAlreadyVerifiedException();
+    }
+    if (existing.some((doc) => doc.status === VerificationStatus.PENDING)) {
+      throw IdentityPendingReviewException();
     }
 
     const ai: IdentityAiVerifyResult = await this.identityAi.verify({
@@ -465,6 +517,7 @@ export class AccountProfileService {
       documentType,
       fileUrl,
       backFileUrl,
+      identityNumber,
       status,
       reviewNotes,
       duplicateOfId,
@@ -501,14 +554,14 @@ export class AccountProfileService {
 
   /** Proxy 1 khung webcam → AI /liveness/pose (poll trong lúc làm thử thách). */
   async livenessPose(userId: number, file?: Express.Multer.File) {
-    await this.requireRole(userId, RoleName.FREELANCER);
+    await this.requireAnyRole(userId, [RoleName.FREELANCER, RoleName.CLIENT]);
     if (!file) throw IdentityAiFramesInvalidException();
     this.assertAiImage(file, 'file');
     return this.identityAi.livenessPose(file);
   }
 
   async getIdentityStatus(userId: number) {
-    await this.requireRole(userId, RoleName.FREELANCER);
+    await this.requireAnyRole(userId, [RoleName.FREELANCER, RoleName.CLIENT]);
     const documents = await this.repository.findIdentityDocuments(userId);
     return {
       status: documents[0]?.status ?? null,
@@ -523,7 +576,7 @@ export class AccountProfileService {
     id: number,
     side: 'front' | 'back' = 'front',
   ) {
-    await this.requireRole(userId, RoleName.FREELANCER);
+    await this.requireAnyRole(userId, [RoleName.FREELANCER, RoleName.CLIENT]);
     const document = await this.repository.findIdentityDocumentById(id);
     if (!document || document.userId !== userId) {
       throw IdentityDocumentNotFoundException();
@@ -551,17 +604,48 @@ export class AccountProfileService {
     };
   }
 
+  async findClients(query: ClientDirectoryQueryType) {
+    const { profiles, total } = await this.repository.findClients(query);
+    return {
+      data: profiles.map((profile) => ({
+        userId: profile.userId,
+        displayName: profile.displayName,
+        avatarUrl: this.presentAvatarUrl(
+          profile.userId,
+          profile.avatarUrl,
+          profile.updatedAt,
+        ),
+        bio: profile.bio,
+        companyName: profile.clientProfile?.companyName ?? null,
+        companyDescription: profile.clientProfile?.companyDescription ?? null,
+      })),
+      page: query.page,
+      limit: query.limit,
+      total,
+      totalPages: Math.ceil(total / query.limit),
+    };
+  }
+
   async getClientProfile(userId: number) {
     const profile = await this.repository.findClientProfile(userId);
-    const isClient = profile?.user?.role?.name === RoleName.CLIENT;
+    const isClient =
+      profile?.user?.role?.name === RoleName.CLIENT ||
+      profile?.user?.userRoles?.some(
+        (assignment) => assignment.role?.name === RoleName.CLIENT,
+      ) === true;
     if (!profile || !isClient) throw ClientProfileNotFoundException();
+    const avatarUrl = this.presentAvatarUrl(
+      profile.userId,
+      profile.avatarUrl,
+      profile.updatedAt,
+    );
     if (!profile.clientProfile) {
       const clientProfile = await this.repository.createClientProfile(
         profile.id,
       );
-      return { ...profile, clientProfile };
+      return { ...profile, avatarUrl, clientProfile };
     }
-    return profile;
+    return { ...profile, avatarUrl };
   }
 
   async updateClientProfile(userId: number, input: UpdateClientProfileType) {
@@ -623,7 +707,7 @@ export class AccountProfileService {
     await this.requireRole(clientId, RoleName.CLIENT);
     if (clientId === freelancerId) throw FreelancerNotFoundException();
     const freelancer = await this.repository.findUserWithRoles(freelancerId);
-    const isFreelancer = freelancer?.role?.name === RoleName.FREELANCER;
+    const isFreelancer = this.hasOwnedRole(freelancer, RoleName.FREELANCER);
     if (!freelancer?.profile || !isFreelancer)
       throw FreelancerNotFoundException();
     if (await this.repository.findFavorite(clientId, freelancerId)) {
@@ -670,7 +754,13 @@ export class AccountProfileService {
   async followFreelancer(clientId: number, freelancerId: number) {
     const client = await this.requireRole(clientId, RoleName.CLIENT);
     if (clientId === freelancerId) throw FreelancerNotFoundException();
-    await this.requireRole(freelancerId, RoleName.FREELANCER);
+    const freelancer = await this.repository.findUserWithRoles(freelancerId);
+    if (
+      !freelancer?.profile ||
+      !this.hasOwnedRole(freelancer, RoleName.FREELANCER)
+    ) {
+      throw FreelancerNotFoundException();
+    }
     if (await this.repository.findFollow(clientId, freelancerId)) {
       throw FollowDuplicateException();
     }

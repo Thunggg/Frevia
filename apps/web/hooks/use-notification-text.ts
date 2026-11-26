@@ -13,6 +13,9 @@ import { isLocale } from "@/i18n/config";
  * script `check-i18n` sẽ báo lỗi nếu hai bên lệch nhau.
  */
 export const TRANSLATABLE_NOTIFICATION_TYPES = [
+  "MESSAGE_NEW",
+  "POST_COMMENT",
+  "POST_LIKE",
   "NEW_FOLLOWER",
   "PROPOSAL_ACCEPTED",
   "REVIEW_RECEIVED",
@@ -40,6 +43,9 @@ const NAME_PARAM_KEYS = [
   "followerName",
   "reviewerName",
   "responderName",
+  "senderName",
+  "commenterName",
+  "likerName",
 ] as const;
 
 /**
@@ -123,6 +129,7 @@ export function useNotificationText() {
         jobTitle: readText(payload, "jobTitle"),
         contractId: readText(payload, "contractId"),
         notes: readText(payload, "reviewNotes"),
+        preview: notification.message ?? "",
       };
 
       const conditional = CONDITIONAL_MESSAGE_KEYS[key];

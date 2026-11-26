@@ -48,6 +48,32 @@ export const ReviewSchema = z.object({
 
 export const ReviewListSchema = z.array(ReviewSchema);
 
+export const FreelancerReviewsQuerySchema = z.object({
+  page: z.coerce.number().int().min(1).max(100000).default(1),
+  limit: z.coerce.number().int().min(1).max(20).default(5),
+});
+export const FreelancerReviewsSchema = z.object({
+  reviews: z.array(
+    ReviewSchema.pick({
+      id: true,
+      overallRating: true,
+      comment: true,
+      createdAt: true,
+    }).extend({
+      reviewer: ReviewUserSchema.shape.profile,
+      response: z.object({ responseText: z.string() }).nullable(),
+    }),
+  ),
+  total: z.number().int().nonnegative(),
+  avgRating: z.number().nullable(),
+  page: z.number().int(),
+  limit: z.number().int(),
+});
+export type FreelancerReviewsQueryType = z.infer<
+  typeof FreelancerReviewsQuerySchema
+>;
+export type FreelancerReviewsType = z.infer<typeof FreelancerReviewsSchema>;
+
 export const CreateReviewSchema = z
   .object({
     overallRating: RatingSchema,

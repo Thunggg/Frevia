@@ -6,6 +6,7 @@ import { useTranslatedResolver } from "@/lib/form-resolver";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { ArrowLeft, Loader2 } from "@/components/icons";
 import { Controller, useForm } from "react-hook-form";
 
@@ -41,7 +42,6 @@ import {
   CreateProposalBodySchema,
   ManageProposalMessage,
   SaveProposalDraftBodySchema,
-  MAX_PROPOSAL_DELIVERY_DAYS,
   type CreateProposalBodyType,
   type ProposalDetailType,
   type SaveProposalDraftBodyType,
@@ -60,6 +60,7 @@ export function ProposalDetailContent({
   basePath?: string;
 }) {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const t = useTranslations("proposalDetail");
   const tStatus = useTranslations("proposalStatus");
   const tList = useTranslations("proposals");
@@ -83,8 +84,7 @@ export function ProposalDetailContent({
 
   const isDraft = proposal.status === "DRAFT";
   // Freelancer chỉ rút được đề xuất đang chờ khách hàng xử lý.
-  const isActionable =
-    proposal.status === "SUBMITTED" || proposal.status === "INTERVIEWING";
+  const isActionable = proposal.status === "SUBMITTED";
   const canEditDraft =
     isDraft &&
     proposal.job.status === "OPEN" &&
@@ -94,12 +94,12 @@ export function ProposalDetailContent({
 
   const maxDaysFromDeadline = proposal.job.deadline
     ? Math.max(
-        1,
-        Math.ceil(
-          (new Date(proposal.job.deadline).getTime() - Date.now()) /
-            (24 * 60 * 60 * 1000),
-        ),
-      )
+      1,
+      Math.ceil(
+        (new Date(proposal.job.deadline).getTime() - Date.now()) /
+        (24 * 60 * 60 * 1000),
+      ),
+    )
     : undefined;
   const form = useForm<CreateProposalBodyType>({
     mode: "onChange",
@@ -196,6 +196,7 @@ export function ProposalDetailContent({
     setAction("save");
     try {
       await proposalApiRequest.updateDraft(proposal.id, body);
+      void queryClient.invalidateQueries({ queryKey: ["proposals"] });
       toastSuccess({ message: t("draftSaved") });
       router.refresh();
     } catch (error) {
@@ -221,6 +222,7 @@ export function ProposalDetailContent({
     try {
       await proposalApiRequest.updateDraft(proposal.id, body);
       await proposalApiRequest.submitDraft(proposal.id);
+      void queryClient.invalidateQueries({ queryKey: ["proposals"] });
       toastSuccess({ message: t("submitted") });
       router.refresh();
     } catch (error) {
@@ -237,6 +239,7 @@ export function ProposalDetailContent({
     setAction("withdraw");
     try {
       await proposalApiRequest.withdraw(proposal.id);
+      void queryClient.invalidateQueries({ queryKey: ["proposals"] });
       toastSuccess({ message: t("withdrawn") });
       setWithdrawOpen(false);
       router.refresh();
@@ -249,9 +252,8 @@ export function ProposalDetailContent({
 
   return (
     <div
-      className={`flex flex-col bg-background font-sans ${
-        embedded ? "min-h-0 flex-1" : "min-h-dvh"
-      }`}
+      className={`flex flex-col bg-background font-sans ${embedded ? "min-h-0 flex-1" : "min-h-dvh"
+        }`}
     >
       {!embedded && <Header role="FREELANCER" />}
       <main className="flex-1">
@@ -259,7 +261,7 @@ export function ProposalDetailContent({
           className={
             embedded
               ? "border-b border-border bg-background"
-              : "border-b border-[#4fae2e]/15 bg-[#eaf8df] dark:border-white/10 dark:bg-[#1a1c1a]"
+              : "border-b border-[#0069D3]/15 bg-[#D0E1F8]/30 dark:border-white/10 dark:bg-[#111c2e]"
           }
         >
           <div className="mx-auto max-w-5xl px-4 py-6 sm:px-6 lg:px-8">
@@ -355,16 +357,19 @@ export function ProposalDetailContent({
                           ) : null}
                         </div>
                         <Input
-                          type="number"
-                          min="0"
-                          step="0.01"
+                          type="text"
+                          inputMode="decimal"
                           disabled={!canEditDraft || action !== null}
                           value={field.value ?? ""}
+                          onFocus={(e) => e.target.select()}
                           onChange={(event) => {
+                            let val = event.target.value.replace(/[^\d.]/g, "");
+                            if (/^0\d/.test(val)) {
+                              val = val.replace(/^0+/, "");
+                              if (val === "") val = "0";
+                            }
                             field.onChange(
-                              event.target.value === ""
-                                ? undefined
-                                : Number(event.target.value),
+                              val === "" ? undefined : Number(val),
                             );
                             if (form.formState.errors.bidAmount) {
                               form.clearErrors("bidAmount");
@@ -408,24 +413,19 @@ export function ProposalDetailContent({
                           ) : null}
                         </div>
                         <Input
-                          type="number"
-                          min="1"
-                          max={
-                            maxDaysFromDeadline
-                              ? Math.min(
-                                  MAX_PROPOSAL_DELIVERY_DAYS,
-                                  maxDaysFromDeadline,
-                                )
-                              : MAX_PROPOSAL_DELIVERY_DAYS
-                          }
-                          step="1"
+                          type="text"
+                          inputMode="numeric"
                           disabled={!canEditDraft || action !== null}
                           value={field.value ?? ""}
+                          onFocus={(e) => e.target.select()}
                           onChange={(event) => {
+                            let val = event.target.value.replace(/[^\d]/g, "");
+                            if (/^0\d/.test(val)) {
+                              val = val.replace(/^0+/, "");
+                              if (val === "") val = "0";
+                            }
                             field.onChange(
-                              event.target.value === ""
-                                ? undefined
-                                : Number(event.target.value),
+                              val === "" ? undefined : Number(val),
                             );
                             if (form.formState.errors.deliveryDays) {
                               form.clearErrors("deliveryDays");
@@ -459,7 +459,7 @@ export function ProposalDetailContent({
                   {canSubmitDraft ? (
                     <Button
                       type="submit"
-                      className="bg-[#4fae2e] text-white hover:bg-[#459928]"
+                      className="bg-[#0069D3] text-white hover:bg-[#005bb8]"
                       disabled={action !== null}
                     >
                       {action === "submit" ? (
@@ -505,10 +505,10 @@ export function ProposalDetailContent({
                 <dd className="mt-1 font-medium">
                   {proposal.submittedAt
                     ? format.dateTime(new Date(proposal.submittedAt), {
-                        day: "numeric",
-                        month: "short",
-                        year: "numeric",
-                      })
+                      day: "numeric",
+                      month: "short",
+                      year: "numeric",
+                    })
                     : tList("notSubmitted")}
                 </dd>
               </div>

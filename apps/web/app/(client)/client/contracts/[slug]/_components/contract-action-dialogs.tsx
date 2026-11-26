@@ -1,5 +1,6 @@
 "use client";
 
+import { useMemo } from "react";
 import { useTranslations } from "next-intl";
 import {
   CheckCircle2,
@@ -8,6 +9,7 @@ import {
   ShieldCheck,
   XCircle,
 } from "@/components/icons";
+import { Trash2 } from "lucide-react";
 import { Button } from "@repo/ui/components/shadcn/button";
 import {
   AlertDialog,
@@ -69,6 +71,12 @@ interface ContractActionDialogsProps {
   onRejectReasonChange: (reason: string) => void;
   isRejecting: boolean;
   onReject: () => void;
+
+  // Milestone Delete Confirmation
+  milestoneToDelete?: { id: number; title: string } | null;
+  onMilestoneToDeleteChange?: (milestone: { id: number; title: string } | null) => void;
+  isDeletingMilestone?: boolean;
+  onDeleteMilestoneConfirm?: () => void;
 }
 
 export function ContractActionDialogs({
@@ -108,10 +116,73 @@ export function ContractActionDialogs({
   onRejectReasonChange,
   isRejecting,
   onReject,
+
+  milestoneToDelete,
+  onMilestoneToDeleteChange,
+  isDeletingMilestone,
+  onDeleteMilestoneConfirm,
 }: ContractActionDialogsProps) {
   const t = useTranslations("contractDetail");
+  const tDialogs = useTranslations("contractWorkspace.dialogs");
   const tCommon = useTranslations("common");
   const totalContractAmount = contract.totalAmount;
+
+  const fundedMilestones = useMemo(
+    () =>
+      (contract.milestones ?? []).filter(
+        (m) => (m.paymentStatus || "PENDING") === "FUNDED",
+      ),
+    [contract.milestones],
+  );
+
+  const inProgressFundedMilestones = useMemo(
+    () =>
+      fundedMilestones.filter(
+        (m) =>
+          m.status === "IN_PROGRESS" ||
+          m.status === "CHANGES_REQUESTED" ||
+          m.status === "SUBMITTED",
+      ),
+    [fundedMilestones],
+  );
+
+  const unstartedFundedMilestones = useMemo(
+    () =>
+      fundedMilestones.filter(
+        (m) =>
+          m.status !== "IN_PROGRESS" &&
+          m.status !== "CHANGES_REQUESTED" &&
+          m.status !== "SUBMITTED",
+      ),
+    [fundedMilestones],
+  );
+
+  const inProgressTotal = useMemo(
+    () =>
+      inProgressFundedMilestones.reduce(
+        (sum, m) => sum + Number(m.amount || 0),
+        0,
+      ),
+    [inProgressFundedMilestones],
+  );
+
+  const unstartedTotal = useMemo(
+    () =>
+      unstartedFundedMilestones.reduce(
+        (sum, m) => sum + Number(m.amount || 0),
+        0,
+      ),
+    [unstartedFundedMilestones],
+  );
+
+  const allFundedTotal = useMemo(
+    () =>
+      fundedMilestones.reduce(
+        (sum, m) => sum + Number(m.amount || 0),
+        0,
+      ),
+    [fundedMilestones],
+  );
 
   return (
     <>
@@ -249,14 +320,65 @@ export function ContractActionDialogs({
 
       {/* Dialog: Confirm Cancel Contract */}
       <AlertDialog open={confirmCancel} onOpenChange={onConfirmCancelChange}>
-        <AlertDialogContent className="max-w-sm rounded-[24px] border border-border bg-background p-5 shadow-2xl font-sans">
+        <AlertDialogContent className="max-w-md rounded-[24px] border border-border bg-background p-5 shadow-2xl font-sans">
           <div className="flex flex-col gap-3">
             <AlertDialogTitle className="text-base font-bold text-foreground">
               {t("cancelContract")}
             </AlertDialogTitle>
-            <AlertDialogDescription className="text-xs text-muted-foreground leading-relaxed">
-              {t("cancelHint")}
-            </AlertDialogDescription>
+
+            {isFreelancer ? (
+              <div className="text-xs text-muted-foreground leading-relaxed space-y-2">
+                <p>{tDialogs("cancelFreelancerConfirm")}</p>
+                {fundedMilestones.length > 0 && (
+                  <div className="rounded-xl border border-amber-500/20 bg-amber-500/5 p-3 text-amber-700 dark:text-amber-400">
+                    <p className="font-semibold mb-0.5">
+                      {tDialogs("escrowRefundNoticeTitle")}
+                    </p>
+                    <p>
+                      {tDialogs("escrowRefundNoticeDesc", {
+                        amount: money(allFundedTotal),
+                      })}
+                    </p>
+                  </div>
+                )}
+              </div>
+            ) : contract.status === "ACTIVE" && fundedMilestones.length > 0 ? (
+              <div className="text-xs text-muted-foreground leading-relaxed space-y-2.5">
+                <p>{tDialogs("cancelClientSettlementIntro")}</p>
+                <div className="rounded-xl border border-border bg-muted/30 p-3 space-y-2">
+                  {inProgressFundedMilestones.length > 0 && (
+                    <div className="flex justify-between items-center text-xs">
+                      <span className="text-foreground">
+                        {tDialogs("inProgressReleased", {
+                          name: freelancerName,
+                        })}
+                      </span>
+                      <span className="font-semibold text-emerald-600 dark:text-emerald-400 font-mono">
+                        {money(inProgressTotal)}
+                      </span>
+                    </div>
+                  )}
+                  {unstartedFundedMilestones.length > 0 && (
+                    <div className="flex justify-between items-center text-xs">
+                      <span className="text-foreground">
+                        {tDialogs("unstartedRefunded")}
+                      </span>
+                      <span className="font-semibold text-[#0069D3] font-mono">
+                        {money(unstartedTotal)}
+                      </span>
+                    </div>
+                  )}
+                </div>
+                <p className="text-[11px] text-muted-foreground">
+                  {tDialogs("disputeInsteadHint")}
+                </p>
+              </div>
+            ) : (
+              <AlertDialogDescription className="text-xs text-muted-foreground leading-relaxed">
+                {t("cancelHint")}
+              </AlertDialogDescription>
+            )}
+
             <div className="mt-2 flex flex-col gap-2">
               <Button
                 disabled={isCancelling}
@@ -307,18 +429,17 @@ export function ContractActionDialogs({
               <XCircle className="size-6" />
             </div>
             <AlertDialogTitle className="text-lg font-bold text-foreground">
-              Decline Contract Offer
+              {tDialogs("declineTitle")}
             </AlertDialogTitle>
             <AlertDialogDescription className="text-xs text-muted-foreground leading-relaxed">
-              Declining this contract releases the Client&apos;s card
-              authorization hold immediately with zero refund fee.
+              {tDialogs("declineDescription")}
             </AlertDialogDescription>
 
             <textarea
               rows={3}
               value={rejectReason}
               onChange={(e) => onRejectReasonChange(e.target.value)}
-              placeholder="Optional reason for declining..."
+              placeholder={tDialogs("declinePlaceholder")}
               className="w-full rounded-xl border border-border bg-background px-3 py-2 text-xs text-foreground focus:border-[#0069D3] focus:outline-none focus:ring-1 focus:ring-[#0069D3]"
             />
 
@@ -333,13 +454,57 @@ export function ContractActionDialogs({
                 ) : (
                   <XCircle className="mr-1.5 size-4" />
                 )}
-                Confirm Decline
+                {tDialogs("confirmDecline")}
               </Button>
               <AlertDialogCancel
                 disabled={isRejecting}
                 className="w-full rounded-full text-xs cursor-pointer"
               >
                 {t("goBack")}
+              </AlertDialogCancel>
+            </div>
+          </div>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Dialog: Confirm Delete Milestone */}
+      <AlertDialog
+        open={Boolean(milestoneToDelete)}
+        onOpenChange={(open) => {
+          if (!open && !isDeletingMilestone) {
+            onMilestoneToDeleteChange?.(null);
+          }
+        }}
+      >
+        <AlertDialogContent className="max-w-sm rounded-[24px] border border-border bg-background p-5 shadow-2xl font-sans">
+          <div className="flex flex-col gap-3">
+            <AlertDialogTitle className="text-base font-bold text-foreground">
+              {t("deleteMilestone")}
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-xs text-muted-foreground leading-relaxed">
+              {t("deleteMilestoneHint", {
+                title: milestoneToDelete?.title ?? "",
+              })}
+            </AlertDialogDescription>
+            <div className="mt-2 flex flex-col gap-2">
+              <Button
+                variant="destructive"
+                disabled={isDeletingMilestone}
+                onClick={onDeleteMilestoneConfirm}
+                className="w-full rounded-full bg-rose-600 hover:bg-rose-700 text-white text-xs font-semibold cursor-pointer"
+              >
+                {isDeletingMilestone ? (
+                  <Loader2 className="mr-1.5 size-3.5 animate-spin" />
+                ) : (
+                  <Trash2 className="mr-1.5 size-3.5" />
+                )}
+                {t("deleteMilestone")}
+              </Button>
+              <AlertDialogCancel
+                disabled={isDeletingMilestone}
+                className="w-full rounded-full text-xs cursor-pointer"
+              >
+                {tCommon("cancel")}
               </AlertDialogCancel>
             </div>
           </div>

@@ -1,4 +1,3 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
 <mxfile host="app.diagrams.net" version="29.0.3">
   <diagram id="UC-31.01-switch-role" name="UC-31.01 - Switch Role">
     <mxGraphModel grid="1" gridSize="10" page="0" pageWidth="1600" pageHeight="5489" math="0" shadow="0">
@@ -273,13 +272,13 @@
             <mxPoint x="915" y="3267" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="c38" value="&lt;div&gt;5. switchPrimaryRole&lt;/div&gt;&lt;div&gt;(userId, body.role)&lt;/div&gt;" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=12;" parent="1" edge="1">
+        <mxCell id="c38" value="&lt;div&gt;5. switchMarketplaceRole&lt;/div&gt;&lt;div&gt;(userId, body.role)&lt;/div&gt;" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=12;" parent="1" edge="1">
           <mxGeometry relative="1" as="geometry">
             <mxPoint x="925" y="3359" as="sourcePoint" />
             <mxPoint x="1120" y="3359" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="c39" value="&lt;div&gt;6. find assigned active&lt;/div&gt;&lt;div&gt;role; if found transaction&lt;/div&gt;&lt;div&gt;clears old primary flags&lt;/div&gt;&lt;div&gt;and sets selected&lt;/div&gt;&lt;div&gt;assignment primary&lt;/div&gt;" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=12;" parent="1" edge="1">
+        <mxCell id="c39" value="&lt;div&gt;6. find assigned active&lt;/div&gt;&lt;div&gt;role; if found transaction&lt;/div&gt;&lt;div&gt;updates user primary&lt;/div&gt;&lt;div&gt;roleId and returns&lt;/div&gt;&lt;div&gt;assigned role&lt;/div&gt;" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=12;" parent="1" edge="1">
           <mxGeometry relative="1" as="geometry">
             <mxPoint x="1130" y="3502" as="sourcePoint" />
             <mxPoint x="1310" y="3502" as="targetPoint" />

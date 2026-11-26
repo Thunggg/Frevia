@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { ChevronLeft } from "lucide-react";
 import { useActionPermission } from "@/hooks/use-action-permission";
 import type { ContractDetailType, MilestoneType } from "@shared/types";
@@ -16,8 +17,10 @@ export function MilestoneDetailHeader({
   milestone,
   basePath = "/client",
 }: MilestoneDetailHeaderProps) {
+  const t = useTranslations("milestoneWorkspace.breadcrumb");
   const { can } = useActionPermission();
   const canViewMilestones = can("GET", "/api/contracts/:contractId/milestones");
+
   const rawSlug = contract.slug || String(contract.id);
   const contractSlug = encodeURIComponent(rawSlug);
   const contractCode =
@@ -25,37 +28,40 @@ export function MilestoneDetailHeader({
       ? `#${contract.slug}`
       : `#CON-${contract.id}`;
 
+  const milestoneCode = `MLS-${String(milestone.id).padStart(4, "0")}`;
+
   return (
-    <div className="flex flex-wrap items-center gap-2 border-b border-border/60 pb-3 text-xs">
-      <Link
-        href={`${basePath}/contracts`}
-        className="inline-flex items-center gap-1 font-medium text-muted-foreground hover:text-foreground transition-colors"
-      >
-        <ChevronLeft className="size-4" />
-        <span>Contracts</span>
-      </Link>
-      <span className="text-muted-foreground/60">/</span>
-      <Link
-        href={`${basePath}/contracts/${contractSlug}`}
-        className="font-medium text-muted-foreground hover:text-foreground transition-colors"
-      >
-        {contract.slug || contractCode}
-      </Link>
-      {canViewMilestones && (
-        <>
-          <span className="text-muted-foreground/60">/</span>
-          <Link
-            href={`${basePath}/contracts/${contractSlug}/milestones`}
-            className="font-medium text-muted-foreground hover:text-foreground transition-colors"
-          >
-            Milestone
-          </Link>
-        </>
-      )}
-      <span className="text-muted-foreground/60">/</span>
-      <span className="font-semibold text-foreground truncate max-w-xs">
-        MLS-{String(milestone.id).padStart(4, "0")}
-      </span>
+    <div className="space-y-3 pb-3 border-b border-border/50">
+      {/* ── Breadcrumb ── */}
+      <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+        <Link
+          href={`${basePath}/contracts`}
+          className="inline-flex items-center gap-1 hover:text-foreground transition-colors"
+        >
+          <ChevronLeft className="size-4" />
+          <span>{t("contracts")}</span>
+        </Link>
+        <span>/</span>
+        <Link
+          href={`${basePath}/contracts/${contractSlug}`}
+          className="hover:text-foreground transition-colors"
+        >
+          {contract.slug || contractCode}
+        </Link>
+        {canViewMilestones && (
+          <>
+            <span>/</span>
+            <Link
+              href={`${basePath}/contracts/${contractSlug}/milestones`}
+              className="hover:text-foreground transition-colors"
+            >
+              {t("milestones")}
+            </Link>
+          </>
+        )}
+        <span>/</span>
+        <span className="text-foreground font-medium">{milestoneCode}</span>
+      </div>
     </div>
   );
 }
