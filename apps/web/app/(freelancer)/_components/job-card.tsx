@@ -5,9 +5,10 @@ import Link from "next/link";
 import { useState, type MouseEvent } from "react";
 import { motion } from "motion/react";
 import {
+  Bookmark,
+  BookmarkCheck,
   Calendar,
   Clock,
-  Heart,
   Loader2,
   Tag,
   Users,
@@ -309,12 +310,10 @@ export function JobCard({
           >
             {isBookmarkPending ? (
               <Loader2 className="size-4 animate-spin" />
+            ) : isBookmarked ? (
+              <BookmarkCheck className="size-4 text-[#0069D3]" />
             ) : (
-              <Heart
-                className={`size-4 ${
-                  isBookmarked ? "fill-[#0069D3] text-[#0069D3]" : ""
-                }`}
-              />
+              <Bookmark className="size-4" />
             )}
           </button>
         )}

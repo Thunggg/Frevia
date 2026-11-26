@@ -15,7 +15,6 @@ import {
 import { motion } from "motion/react";
 import {
   Bookmark,
-  InfoIcon,
   Loader2,
   RefreshCw,
   Search,
@@ -58,7 +57,6 @@ export type HomeTab =
   | "most-recent"
   | "saved-searches"
   | "saved-jobs"
-  | "invites"
   | "find-clients";
 
 type FindWorkContentProps = {
@@ -92,7 +90,6 @@ type FindWorkContentProps = {
 const EMPTY_SLUGS: string[] = [];
 const EMPTY_JOBS: ViewJobDetailResType[] = [];
 const EMPTY_SEARCHES: SavedSearchType[] = [];
-const EMPTY_ALERTS: JobAlertType[] = [];
 const EMPTY_CATEGORIES: JobCategoryBrowseItemType[] = [];
 const EMPTY_RECOMMENDATIONS: RecommendedJobType[] = [];
 
@@ -143,7 +140,6 @@ export function FindWorkContent({
   initialBookmarkedSlugs = EMPTY_SLUGS,
   initialBookmarkedJobs = EMPTY_JOBS,
   initialSavedSearches = EMPTY_SEARCHES,
-  initialJobAlerts = EMPTY_ALERTS,
   initialCategories = EMPTY_CATEGORIES,
   initialRecommendedJobs = EMPTY_RECOMMENDATIONS,
   embedded = false,
@@ -177,15 +173,11 @@ export function FindWorkContent({
     () => initialSavedSearches ?? [],
   );
   const [isLoadingSavedSearches, setIsLoadingSavedSearches] = useState(false);
-  const [jobAlerts, setJobAlerts] = useState<JobAlertType[]>(
-    () => initialJobAlerts ?? [],
-  );
 
   const { can } = useActionPermission();
   const canViewBookmarks = can("GET", "/api/manage-jobs/bookmarks");
   const canAddBookmark = can("POST", "/api/manage-jobs/jobs/:slug/bookmark");
   const canRemoveBookmark = can("DELETE", "/api/manage-jobs/bookmarks/:slug");
-  const canViewJobAlerts = can("GET", "/api/job-alerts");
   const canViewSavedSearches = can("GET", "/api/saved-searches");
   const canViewSavedSearchDetail = can("GET", "/api/saved-searches/:id");
   const canDeleteSavedSearch = can("DELETE", "/api/saved-searches/:id");
@@ -206,7 +198,6 @@ export function FindWorkContent({
     if (currentPath.includes("/most-recent")) return "most-recent";
     if (currentPath.includes("/saved-jobs")) return "saved-jobs";
     if (currentPath.includes("/saved-searches")) return "saved-searches";
-    if (currentPath.includes("/invites")) return "invites";
     if (currentPath.includes("/find-clients")) return "find-clients";
     if (currentPath.includes("/best-matches")) return "best-matches";
     if (initialTab) return initialTab;
@@ -218,7 +209,6 @@ export function FindWorkContent({
         "most-recent",
         "saved-searches",
         "saved-jobs",
-        "invites",
         "find-clients",
       ].includes(requestedTab)
     ) {
@@ -413,10 +403,6 @@ export function FindWorkContent({
   useEffect(() => {
     setSavedSearches(initialSavedSearches ?? []);
   }, [initialSavedSearches]);
-
-  useEffect(() => {
-    setJobAlerts(initialJobAlerts ?? []);
-  }, [initialJobAlerts]);
 
   useEffect(() => {
     setSearchInput(initialKeyword);
@@ -787,23 +773,6 @@ export function FindWorkContent({
                     )}
                   </button>
 
-                  {/* Invites */}
-                  <button
-                    type="button"
-                    onClick={() => handleTabSelect("invites")}
-                    className={`pb-3 text-sm font-semibold border-b-2 transition-all cursor-pointer whitespace-nowrap ${
-                      activeTab === "invites"
-                        ? "border-[#0069D3] text-[#0069D3] dark:text-blue-400"
-                        : "border-transparent text-muted-foreground hover:text-foreground"
-                    }`}
-                  >
-                    <span>{t("invites")}</span>
-                    {canViewJobAlerts && jobAlerts.length > 0 && (
-                      <span className="ml-1.5 rounded-full bg-muted text-muted-foreground px-2 py-0.5 text-xs font-normal">
-                        {jobAlerts.length}
-                      </span>
-                    )}
-                  </button>
                   <button
                     type="button"
                     onClick={() => handleTabSelect("find-clients")}
@@ -1154,50 +1123,6 @@ export function FindWorkContent({
                             isBookmarkPending={pendingBookmarkSlug === job.slug}
                             onToggleBookmark={toggleBookmark}
                           />
-                        ))
-                      )}
-                    </div>
-                  )}
-
-                  {/* TAB 5: INVITES & JOB ALERTS */}
-                  {activeTab === "invites" && (
-                    <div className="space-y-3">
-                      {!canViewJobAlerts || jobAlerts.length === 0 ? (
-                        <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-border bg-card/40 px-6 py-14 text-center font-sans">
-                          <InfoIcon className="size-10 text-muted-foreground mb-3" />
-                          <p className="text-base font-semibold text-foreground">
-                            {t("noInvites")}
-                          </p>
-                          <p className="mx-auto mt-1 max-w-sm text-xs text-muted-foreground">
-                            {t("noInvitesDesc")}
-                          </p>
-                        </div>
-                      ) : (
-                        jobAlerts.map((alert) => (
-                          <div
-                            key={alert.id}
-                            className="flex items-center justify-between rounded-2xl border border-border bg-card p-5 hover:border-black/20 dark:hover:border-white/20 transition-all font-sans"
-                          >
-                            <div className="space-y-1 min-w-0 flex-1 pr-4">
-                              <div className="flex items-center gap-2">
-                                <h3 className="text-sm font-bold text-foreground truncate">
-                                  {alert.name}
-                                </h3>
-                                <span className="rounded-full bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 text-[11px] font-semibold px-2 py-0.5">
-                                  {alert.frequency}
-                                </span>
-                              </div>
-                              <p className="text-xs text-muted-foreground truncate">
-                                Keywords: {alert.keywords || "Any"}
-                              </p>
-                            </div>
-                            <Link
-                              href="/freelancer/proposals"
-                              className="rounded-full border border-border hover:bg-muted px-4 py-1.5 text-xs font-semibold text-foreground transition-colors shrink-0"
-                            >
-                              View details
-                            </Link>
-                          </div>
                         ))
                       )}
                     </div>
