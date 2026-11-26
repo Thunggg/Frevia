@@ -1,12 +1,13 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { useQueryClient } from "@tanstack/react-query";
 import {
   FileText,
   Link2,
   Loader2,
+  Lock,
   Plus,
   Send,
   Trash2,
@@ -41,6 +42,7 @@ interface SubmitMilestoneDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onSuccess?: () => void;
+  contractExpiresAt?: string | Date | null;
 }
 
 export function SubmitMilestoneDialog({
@@ -49,6 +51,7 @@ export function SubmitMilestoneDialog({
   open,
   onOpenChange,
   onSuccess,
+  contractExpiresAt,
 }: SubmitMilestoneDialogProps) {
   const queryClient = useQueryClient();
   const t = useTranslations("milestoneWorkspace.submitDialog");
@@ -63,11 +66,40 @@ export function SubmitMilestoneDialog({
   const [message, setMessage] = useState("");
   const [linkInput, setLinkInput] = useState("");
   const [links, setLinks] = useState<string[]>([]);
-  const [uploadedFiles, setUploadedFiles] = useState<MilestoneFileType[]>([]);
+  const [milestoneFiles, setMilestoneFiles] = useState<MilestoneFileType[]>([]);
+  const [selectedFileIds, setSelectedFileIds] = useState<number[]>([]);
+  const [isLoadingFiles, setIsLoadingFiles] = useState(false);
   const [isUploadingFile, setIsUploadingFile] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [fileToRemove, setFileToRemove] = useState<MilestoneFileType | null>(null);
   const [isRemovingFile, setIsRemovingFile] = useState(false);
+
+  const isContractExpired = Boolean(
+    contractExpiresAt && new Date(contractExpiresAt).getTime() <= Date.now()
+  );
+
+  useEffect(() => {
+    if (open && milestone) {
+      let cancelled = false;
+      setIsLoadingFiles(true);
+      contractApiRequest
+        .getMilestoneFiles(contractId, milestone.id)
+        .then((res) => {
+          if (cancelled) return;
+          const files = (extractContractData(res) || []) as MilestoneFileType[];
+          setMilestoneFiles(files);
+          setSelectedFileIds(files.map((f) => f.id));
+        })
+        .catch(() => { })
+        .finally(() => {
+          if (!cancelled) setIsLoadingFiles(false);
+        });
+
+      return () => {
+        cancelled = true;
+      };
+    }
+  }, [open, contractId, milestone]);
 
   if (!milestone) return null;
 
@@ -132,8 +164,9 @@ export function SubmitMilestoneDialog({
         milestone.id,
         file,
       );
-      const data = extractContractData(res);
-      setUploadedFiles((prev) => [...prev, data]);
+      const data = extractContractData(res) as MilestoneFileType;
+      setMilestoneFiles((prev) => [...prev, data]);
+      setSelectedFileIds((prev) => [...prev, data.id]);
       toastSuccess({ message: t("uploaded", { name: file.name }) });
     } catch (error) {
       toastError({
@@ -152,6 +185,11 @@ export function SubmitMilestoneDialog({
 
   const handleConfirmRemoveFile = async () => {
     if (!fileToRemove || !milestone) return;
+    if (fileToRemove.isSubmitted) {
+      toastError({ message: t("submittedCannotDelete") });
+      setFileToRemove(null);
+      return;
+    }
     setIsRemovingFile(true);
     try {
       await contractApiRequest.deleteMilestoneFile(
@@ -159,7 +197,8 @@ export function SubmitMilestoneDialog({
         milestone.id,
         fileToRemove.id,
       );
-      setUploadedFiles((prev) => prev.filter((f) => f.id !== fileToRemove.id));
+      setMilestoneFiles((prev) => prev.filter((f) => f.id !== fileToRemove.id));
+      setSelectedFileIds((prev) => prev.filter((id) => id !== fileToRemove.id));
       toastSuccess({ message: t("removedFile") });
       setFileToRemove(null);
     } catch (error) {
@@ -176,6 +215,13 @@ export function SubmitMilestoneDialog({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (isContractExpired) {
+      toastError({
+        message: t("contractExpiredWarning"),
+      });
+      return;
+    }
 
     const finalLinks = [...links];
     if (linkInput.trim()) {
@@ -194,7 +240,7 @@ export function SubmitMilestoneDialog({
     if (
       !message.trim() &&
       finalLinks.length === 0 &&
-      uploadedFiles.length === 0
+      selectedFileIds.length === 0
     ) {
       toastError({
         message: t("missingContent"),
@@ -207,7 +253,7 @@ export function SubmitMilestoneDialog({
       await contractApiRequest.submitMilestone(contractId, milestone.id, {
         message: message.trim() || undefined,
         links: finalLinks,
-        fileIds: uploadedFiles.map((f) => f.id),
+        fileIds: selectedFileIds,
       });
 
       toastSuccess({
@@ -217,7 +263,6 @@ export function SubmitMilestoneDialog({
       setMessage("");
       setLinkInput("");
       setLinks([]);
-      setUploadedFiles([]);
 
       await queryClient.invalidateQueries({
         queryKey: ["client-contract-detail", contractId],
@@ -230,6 +275,9 @@ export function SubmitMilestoneDialog({
       });
       await queryClient.invalidateQueries({
         queryKey: ["milestone-submissions", contractId, milestone.id],
+      });
+      await queryClient.invalidateQueries({
+        queryKey: ["milestone-files", contractId, milestone.id],
       });
 
       onSuccess?.();
@@ -274,6 +322,12 @@ export function SubmitMilestoneDialog({
               </div>
             </div>
           </SheetHeader>
+
+          {isContractExpired && (
+            <div className="mt-4 rounded-xl border border-amber-300 bg-amber-50 p-3 text-xs text-amber-800 dark:border-amber-900/50 dark:bg-amber-950/40 dark:text-amber-300">
+              {t("contractExpiredWarning")}
+            </div>
+          )}
 
           <form id="submit-milestone-form" onSubmit={handleSubmit} className="space-y-4 pt-4">
             {/* Notes / Message */}
@@ -355,61 +409,106 @@ export function SubmitMilestoneDialog({
 
             {/* Attached Files */}
             <div className="space-y-2">
-              <label className="text-xs font-semibold text-zinc-900 dark:text-zinc-100 block">
-                {t("filesLabel")}
-              </label>
+              <div className="flex items-center justify-between">
+                <label className="text-xs font-semibold text-zinc-900 dark:text-zinc-100 block">
+                  {t("filesLabel")}
+                </label>
+                {canUploadFile && (
+                  <>
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      onChange={handleFileSelect}
+                      className="hidden"
+                      disabled={isContractExpired || isUploadingFile}
+                    />
 
-              {canUploadFile && (
-                <>
-                  <input
-                    ref={fileInputRef}
-                    type="file"
-                    onChange={handleFileSelect}
-                    className="hidden"
-                  />
-
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    disabled={isUploadingFile}
-                    onClick={() => fileInputRef.current?.click()}
-                    className="rounded-lg text-xs flex items-center gap-1.5 border-dashed border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 cursor-pointer h-8"
-                  >
-                    {isUploadingFile ? (
-                      <Loader2 className="size-3.5 animate-spin" />
-                    ) : (
-                      <Upload className="size-3.5" />
-                    )}
-                    <span>{t("uploadDeliverableFile")}</span>
-                  </Button>
-                </>
-              )}
-
-              {uploadedFiles.length > 0 && (
-                <div className="space-y-1.5 pt-1">
-                  {uploadedFiles.map((f) => (
-                    <div
-                      key={f.id}
-                      className="flex items-center justify-between rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/60 px-3 py-1.5 text-xs text-zinc-800 dark:text-zinc-200"
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      disabled={isUploadingFile || isContractExpired}
+                      onClick={() => fileInputRef.current?.click()}
+                      className="rounded-lg text-xs flex items-center gap-1.5 border-dashed border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 cursor-pointer h-7 px-2"
                     >
-                      <div className="flex items-center gap-2 truncate max-w-[260px]">
-                        <FileText className="size-3.5 text-zinc-400 shrink-0" />
-                        <span className="truncate font-medium">{f.fileName}</span>
-                      </div>
-                      {canDeleteFile && (
-                        <button
-                          type="button"
-                          onClick={() => setFileToRemove(f)}
-                          className="text-zinc-400 hover:text-rose-500 cursor-pointer p-0.5"
-                          title={t("removeFile")}
-                        >
-                          <Trash2 className="size-3.5" />
-                        </button>
+                      {isUploadingFile ? (
+                        <Loader2 className="size-3 animate-spin" />
+                      ) : (
+                        <Upload className="size-3" />
                       )}
-                    </div>
-                  ))}
+                      <span>{t("uploadDeliverableFile")}</span>
+                    </Button>
+                  </>
+                )}
+              </div>
+
+              {isLoadingFiles ? (
+                <div className="py-3 text-center text-xs text-muted-foreground flex items-center justify-center gap-1.5">
+                  <Loader2 className="size-3.5 animate-spin" />
+                  <span>Loading files...</span>
                 </div>
+              ) : milestoneFiles.length > 0 ? (
+                <div className="space-y-1.5 pt-1">
+                  <p className="text-[11px] text-muted-foreground">
+                    {t("selectFilesHint")}
+                  </p>
+                  {milestoneFiles.map((f) => {
+                    const isSelected = selectedFileIds.includes(f.id);
+                    const isSubmitted = Boolean(f.isSubmitted);
+                    return (
+                      <div
+                        key={f.id}
+                        className={`flex items-center justify-between rounded-lg border px-3 py-2 text-xs transition-colors ${isSelected
+                          ? "border-[#0069D3]/40 bg-blue-50/40 dark:border-blue-900/40 dark:bg-blue-950/20"
+                          : "border-zinc-200 bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-900/60"
+                          }`}
+                      >
+                        <label className="flex items-center gap-2.5 truncate max-w-[270px] cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={isSelected}
+                            onChange={(e) => {
+                              if (e.target.checked) {
+                                setSelectedFileIds((prev) => [...prev, f.id]);
+                              } else {
+                                setSelectedFileIds((prev) =>
+                                  prev.filter((id) => id !== f.id),
+                                );
+                              }
+                            }}
+                            className="size-3.5 rounded border-zinc-300 text-[#0069D3] focus:ring-0 cursor-pointer"
+                          />
+                          <FileText className="size-3.5 text-zinc-400 shrink-0" />
+                          <span className="truncate font-medium text-foreground">
+                            {f.fileName}
+                          </span>
+                        </label>
+
+                        <div className="flex items-center gap-1.5 shrink-0 ml-2">
+                          {isSubmitted ? (
+                            <span className="inline-flex items-center gap-1 rounded bg-zinc-200/70 px-1.5 py-0.5 text-[10px] font-medium text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300">
+                              <Lock className="size-2.5" />
+                              {t("submittedBadge")}
+                            </span>
+                          ) : canDeleteFile ? (
+                            <button
+                              type="button"
+                              onClick={() => setFileToRemove(f)}
+                              className="text-zinc-400 hover:text-rose-500 cursor-pointer p-0.5"
+                              title={t("removeFile")}
+                            >
+                              <Trash2 className="size-3.5" />
+                            </button>
+                          ) : null}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              ) : (
+                <p className="text-xs text-muted-foreground italic py-1">
+                  {t("noUploadedFiles")}
+                </p>
               )}
             </div>
           </form>
@@ -431,8 +530,8 @@ export function SubmitMilestoneDialog({
               type="submit"
               form="submit-milestone-form"
               size="sm"
-              disabled={isSubmitting || isUploadingFile}
-              className="rounded-lg bg-[#0069D3] hover:bg-[#0055b3] text-white text-xs font-semibold h-8 px-4 cursor-pointer"
+              disabled={isSubmitting || isUploadingFile || isContractExpired}
+              className="rounded-lg bg-[#0069D3] hover:bg-[#0055b3] text-white text-xs font-semibold h-8 px-4 cursor-pointer disabled:opacity-50"
             >
               {isSubmitting ? (
                 <Loader2 className="mr-1.5 size-3.5 animate-spin" />

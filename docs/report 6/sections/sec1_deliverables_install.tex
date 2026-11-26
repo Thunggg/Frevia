@@ -8,9 +8,13 @@
 
 The official release package (\textit{Release Package v1.0}) of the \textbf{Frevia -- AI-Powered Freelance Marketplace \& Community Platform} project encompasses the complete monorepo source codebase, database migration schemas, automated seed scripts, containerization specifications, and the comprehensive suite of engineering reports from Report 1 through Report 7. Table~\ref{tab:deliverable_package} outlines the deliverable inventory:
 
-\begin{center}
 \renewcommand{\arraystretch}{1.45}
-\begin{longtable}{|C{1.0cm}|L{4.2cm}|L{6.8cm}|C{2.6cm}|}
+\setlength{\tabcolsep}{5pt}
+\begin{longtable}{|C{0.9cm}|L{3.8cm}|L{7.2cm}|C{2.6cm}|}
+\caption{Deliverable package table}\label{tab:deliverable_package} \\
+\hline
+\rowcolor{hdrfill}\hd{No.} & \hd{Deliverable Item} & \hd{Description \& Storage Path} & \hd{Version / Format} \\ \hline
+\endfirsthead
 \hline
 \rowcolor{hdrfill}\hd{No.} & \hd{Deliverable Item} & \hd{Description \& Storage Path} & \hd{Version / Format} \\ \hline
 \endhead
@@ -24,14 +28,12 @@ The official release package (\textit{Release Package v1.0}) of the \textbf{Frev
 8 & Docker \& Orchestration Configs & Multi-service container orchestration scripts: \texttt{docker-compose.yml}, multi-stage container build specifications (\texttt{apps/api/Dockerfile}, \texttt{apps/web/Dockerfile}), and environment templates (\texttt{.env.example}). & \texttt{v1.0 (.yml)} \\ \hline
 9 & Presentation Slides \& Demo & Formal thesis defense slide deck and live demonstration script showcasing key system workflows. & \texttt{v1.0 (.pptx)} \\ \hline
 \end{longtable}
-\label{tab:deliverable_package}
-\end{center}
 
 \subsection*{Monorepo Directory Structure}
 
 The system is architected as an enterprise-grade \textbf{Turborepo Monorepo}, guaranteeing strict type-safety and shared Zod validation schemas across both client-side and server-side runtimes:
 
-\begin{lstlisting}[frame=single,basicstyle=\footnotesize\ttfamily,backgroundcolor=\color{codebg}]
+\begin{lstlisting}[frame=single,basicstyle=\scriptsize\ttfamily,backgroundcolor=\color{codebg}]
 Frevia/
 |-- apps/
 |   |-- api/                  # Backend RESTful API & WebSocket (NestJS 11 + Prisma 7)
@@ -64,9 +66,12 @@ Frevia/
 
 To ensure optimal execution and simultaneous operation of the database, memory cache, RESTful API server, and server-rendered web application, the host system must meet or exceed the following hardware specifications:
 
-\begin{center}
+\begin{table}[H]
+\centering
+\caption{Hardware requirements table}\label{tab:hardware_req}
 \renewcommand{\arraystretch}{1.4}
-\begin{tabular}{|L{3.2cm}|L{5.4cm}|L{5.6cm}|}
+\setlength{\tabcolsep}{5pt}
+\begin{tabular}{|L{2.8cm}|L{6.0cm}|L{6.0cm}|}
 \hline
 \rowcolor{hdrfill}\hd{Component} & \hd{Minimum Specification} & \hd{Recommended Specification} \\ \hline
 \textbf{CPU} & 4 cores (Intel Core i5 Gen 8 / AMD Ryzen 5 / Apple M1) & 8 cores or higher (Intel Core i7 / AMD Ryzen 7 / Apple M2 Pro) \\ \hline
@@ -74,15 +79,18 @@ To ensure optimal execution and simultaneous operation of the database, memory c
 \textbf{Storage} & 10 GB available SSD storage & 20 GB or higher available NVMe SSD storage \\ \hline
 \textbf{Network} & Broadband internet connection ($\ge 10$ Mbps) & High-speed internet connection ($\ge 50$ Mbps) \\ \hline
 \end{tabular}
-\end{center}
+\end{table}
 
 \subsubsection{Software Prerequisites}
 
 The following software environments, compilers, and container engines must be installed on the deployment machine:
 
-\begin{center}
+\begin{table}[H]
+\centering
+\caption{Software prerequisites table}\label{tab:software_prereq}
 \renewcommand{\arraystretch}{1.4}
-\begin{tabular}{|L{3.2cm}|L{4.0cm}|L{7.0cm}|}
+\setlength{\tabcolsep}{5pt}
+\begin{tabular}{|L{3.2cm}|L{4.0cm}|L{7.6cm}|}
 \hline
 \rowcolor{hdrfill}\hd{Software Environment} & \hd{Required Version} & \hd{Role \& Functional Scope} \\ \hline
 \textbf{Operating System} & Windows 10/11 (64-bit), macOS 13+, or Ubuntu 22.04 LTS & Host OS supporting Docker virtualization with WSL2 or native Linux containers. \\ \hline
@@ -91,7 +99,7 @@ The following software environments, compilers, and container engines must be in
 \textbf{pnpm Package Manager} & Version 9.x or higher & High-performance, disk-efficient package manager coordinating the monorepo workspace. \\ \hline
 \textbf{Git SCM} & Version 2.40.0 or higher & Distributed version control system used to clone repositories and manage revisions. \\ \hline
 \end{tabular}
-\end{center}
+\end{table}
 
 \subsection{Software Prerequisites \& Download Instructions}
 
@@ -123,7 +131,7 @@ Deploying the \textbf{Frevia} platform requires three core development runtimes 
   \item \rbadge{1} Navigate to the official Node.js download portal at \url{https://nodejs.org/en/download}.
   \item \rbadge{2} Select the stable \textbf{Node.js LTS (v22.x or v20.x)} distribution and download the 64-bit Windows Installer (\texttt{.msi}).
   \item After completing the Node.js installation, open a terminal with administrator privileges and run:
-\begin{lstlisting}[frame=single,basicstyle=\footnotesize\ttfamily,backgroundcolor=\color{codebg}]
+\begin{lstlisting}[frame=single,basicstyle=\scriptsize\ttfamily,backgroundcolor=\color{codebg}]
 # Enable Corepack and install the latest pnpm package manager
 corepack enable
 corepack prepare pnpm@latest --activate
@@ -164,9 +172,13 @@ Open Windows PowerShell or a Unix terminal and execute the verification commands
 
 The \textbf{Frevia} platform integrates several external cloud APIs to support authentication, asset storage, real-time communications, secure escrow payments, and AI capabilities:
 
-\begin{center}
 \renewcommand{\arraystretch}{1.45}
-\begin{longtable}{|L{3.2cm}|L{4.2cm}|L{6.8cm}|}
+\setlength{\tabcolsep}{5pt}
+\begin{longtable}{|L{3.0cm}|L{4.4cm}|L{7.4cm}|}
+\caption{Third-party services and environment variables table}\label{tab:third_party_env} \\
+\hline
+\rowcolor{hdrfill}\hd{Service Provider} & \hd{Environment Variables} & \hd{Role \& Functional Scope} \\ \hline
+\endfirsthead
 \hline
 \rowcolor{hdrfill}\hd{Service Provider} & \hd{Environment Variables} & \hd{Role \& Functional Scope} \\ \hline
 \endhead
@@ -176,7 +188,6 @@ The \textbf{Frevia} platform integrates several external cloud APIs to support a
 \textbf{Stripe Connect} & \texttt{STRIPE\_\allowbreak{}SECRET\_KEY} \newline \texttt{STRIPE\_\allowbreak{}WEBHOOK\_SECRET} & Milestone escrow payment processing, customer checkouts, and automated freelancer payouts. \\ \hline
 \textbf{Containerized AI \& Moderation} & \texttt{AI\_SERVICE\_URL}, \texttt{FREVIA\_AI\_URL} \newline \texttt{AI\_MODERATION\_URL} (optional) & Internal FastAPI services (\texttt{id-verification} on \texttt{8001} and \texttt{cv-matching} on \texttt{8000} backed by \texttt{OLLAMA\_URL} inside \texttt{cv-matching}), plus optional external text moderation (\texttt{8002}). \\ \hline
 \end{longtable}
-\end{center}
 
 \subsection{Monorepo Setup, Dependencies \& Database Initialization}
 
@@ -203,7 +214,7 @@ The \textbf{Frevia} platform integrates several external cloud APIs to support a
 
 \begin{itemize}[leftmargin=1.5em,itemsep=3pt]
   \item \rbadge{1} Navigate to \texttt{apps/api} and configure environment variables (either via Infisical CLI or local \texttt{.env}). Verify PostgreSQL credentials, JWT secrets, AI service URLs, and external integration keys:
-\begin{lstlisting}[frame=single,basicstyle=\footnotesize\ttfamily,backgroundcolor=\color{codebg}]
+\begin{lstlisting}[frame=single,basicstyle=\scriptsize\ttfamily,backgroundcolor=\color{codebg}]
 DIRECT_URL="postgresql://frevia_user:frevia_password@localhost:5432/frevia?schema=public"
 ACCESS_TOKEN_SECRET="frevia_dev_access_token_secret_change_me"
 REFRESH_TOKEN_SECRET="frevia_dev_refresh_token_secret_change_me"
@@ -213,7 +224,7 @@ AI_MODERATION_URL="http://127.0.0.1:8002"
 PORT=3000
 \end{lstlisting}
   \item \rbadge{2} Navigate to \texttt{apps/web} and configure \texttt{.env}. Configure public and server-side endpoints:
-\begin{lstlisting}[frame=single,basicstyle=\footnotesize\ttfamily,backgroundcolor=\color{codebg}]
+\begin{lstlisting}[frame=single,basicstyle=\scriptsize\ttfamily,backgroundcolor=\color{codebg}]
 APP_URL="http://localhost:3003"
 NESTJS_API_URL="http://backend:3000"
 NEXT_PUBLIC_SOCKET_URL="http://localhost:3002"

@@ -4,7 +4,7 @@
 % =============================================================================
 
 \newpage
-\subsection{Module 14: Administrator System, RBAC \& User Management}
+\subsection{Administrator System, RBAC \& User Management}
 
 The Administrator System, RBAC, and User Management module empowers system governors with a centralized management console (\textit{Admin Portal}). From this single pane of glass, administrators can monitor cross-platform operational metrics, configure fine-grained \textbf{Role-Based Access Control (RBAC)} down to specific API endpoints (\textit{HTTP Method + Path}), and oversee user account lifecycles along with their specialized multi-profile identities.
 
@@ -78,23 +78,28 @@ The Administrator System, RBAC, and User Management module empowers system gover
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.90\textwidth]{images/admin/m14_03_admin_roles.png}
-  \caption{System and Custom Roles management console at \texttt{/admin/roles}}
+  \includegraphics[width=0.76\textwidth]{images/admin/m14_03_admin_roles.png}
+  \caption{System and Custom Roles management console at \texttt{/admin/roles} (UC-06.01, UC-06.03--06.05)}
 \end{figure}
 
 \paragraph{Step-by-Step User Instructions:}
 \begin{enumerate}[leftmargin=1.8em,itemsep=3pt]
   \item In the Admin sidebar, navigate to \textbf{Roles \& Permissions} $\rightarrow$ \textbf{Roles}.
-  \item \rbadge{1} \textbf{Navigate to Assign Role for Permissions:} After reviewing roles on \texttt{/admin/roles}, open \textbf{Roles \& Permissions} $\rightarrow$ \textbf{Assign Role} (\texttt{/admin/assign-role}) when configuring endpoint permissions for custom or administrative roles.
-  \item \rbadge{2} \textbf{Create New Role (\textit{+ Create Role}):} Click \textbf{+ Create Role} to launch a dialog where custom roles (e.g., \textit{Moderator}, \textit{Auditor}) can be defined with a Name and Description.
-  \item \rbadge{3} \textbf{Inspect Roles Table (\textit{Roles Table}):} View listed roles with their \textit{ID}, \textit{Name}, \textit{Description}, \textit{Type} (distinguishing core \textbf{System Roles} from user-created \textbf{Custom Roles}), and creation timestamps.
-  \item \rbadge{4} \textbf{Perform Role Actions (\textit{Actions column}):}
+  \item \rbadge{1} \textbf{Create New Role (\textit{+ Create role}):} Click \textbf{+ Create role} (\texttt{UC-06.03}) to define a custom role with Name, Description, and initial permission IDs.
+  \item \rbadge{2} \textbf{Inspect Roles Table (\textit{Roles Table}):} Review listed roles (\texttt{UC-06.01}) with \textit{ID}, \textit{Name}, \textit{Description}, \textit{Type} (\textbf{System} vs. \textbf{Custom}), and \textit{Created} timestamp.
+  \item \rbadge{3} \textbf{Perform Role Actions (\textit{Actions column}):}
     \begin{itemize}
-      \item Click the eye icon (\textbf{Eye icon}) to inspect role details and currently mapped permissions.
-      \item Click the pencil icon (\textbf{Pencil icon}) to update custom role metadata.
-      \item Click the red trash icon (\textbf{Trash icon}) to delete custom roles. Core system roles are locked to prevent accidental deletion.
+      \item Click the eye icon to view role details at \texttt{/admin/roles/[id]} (\texttt{UC-06.02}).
+      \item Click the pencil icon to update custom role name, description, and permissions (\texttt{UC-06.04}).
+      \item Click the red trash icon to delete custom roles (\texttt{UC-06.05}; system roles are protected).
     \end{itemize}
 \end{enumerate}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.78\textwidth]{images/admin/m14_03b_admin_role_detail.png}
+  \caption{Role Detail screen displaying role metadata at \texttt{/admin/roles/1} (UC-06.02)}
+\end{figure}
 
 \paragraph{Expected Output \& Exception Handling:}
 \begin{itemize}[leftmargin=1.5em,itemsep=2pt]
@@ -114,17 +119,18 @@ The Administrator System, RBAC, and User Management module empowers system gover
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.90\textwidth]{images/admin/m14_04_role_permissions_matrix.png}
-  \caption{Dynamic RBAC role-permission matrix configuration at \texttt{/admin/assign-role}}
+  \includegraphics[width=0.80\textwidth]{images/admin/m14_04_role_permissions_matrix.png}
+  \caption{Dynamic RBAC role-permission matrix configuration at \texttt{/admin/assign-role} (UC-06.06)}
 \end{figure}
 
 \paragraph{Step-by-Step User Instructions:}
 \begin{enumerate}[leftmargin=1.8em,itemsep=3pt]
   \item In the Admin sidebar, navigate to \textbf{Roles \& Permissions} $\rightarrow$ \textbf{Assign Role}.
-  \item \rbadge{1} \textbf{Select Target Role (\textit{Select Role dropdown}):} Choose an administrative role to configure (e.g., \texttt{EXPERT}, \texttt{ADMIN}, or custom internal roles such as \textit{Moderator}). Marketplace roles (\texttt{CLIENT} and \texttt{FREELANCER}) use hardcoded permissions and are excluded from dynamic RBAC assignment.
-  \item \rbadge{2} \textbf{Persist Matrix Changes (\textit{Save Changes}):} After toggling permissions, click the \textbf{Save Changes} button to commit updates to the database.
-  \item \rbadge{3} \textbf{Toggle Permissions by Admin Feature Group (\textit{Permission Matrix}):} Scroll through the Admin Portal feature groups (\textit{KYC}, \textit{SKILLS}, \textit{JOB CATEGORIES}, \textit{BANNERS}, \textit{DISPUTES}, \textit{PROFILE REVISIONS}, \textit{FORUM MODERATION}, \textit{USERS}, \textit{ROLES}, \textit{PERMISSIONS}, \textit{AI OPS}). Toggle checkboxes to grant or revoke specific Admin API endpoints (\texttt{ADMIN} retains full Admin Portal access by default).
-  \item \rbadge{4} \textbf{Batch Module Toggles (\textit{Select All / Deselect All}):} Click group-level checkboxes or scope actions to toggle all contained Admin permissions in a single action.
+  \item \rbadge{1} \textbf{Select Target Role (\textit{SELECT A ROLE}):} Choose an administrative or custom role from the dropdown.
+  \item \rbadge{2} \textbf{Batch Module Selection (\textit{Select all / Deselect all}):} Use \textbf{Select all} or \textbf{Deselect all} to toggle all available permissions at once.
+  \item \rbadge{3} \textbf{Search \& Filter Permissions (\textit{Search, Method, Module}):} Filter the matrix by keyword, HTTP method, or feature module.
+  \item \rbadge{4} \textbf{Toggle Group or Endpoint Permissions (\textit{Permission Matrix}):} Check or uncheck individual API endpoints or entire feature groups (e.g., \textit{KYC (ADMIN)}, \textit{SKILLS (ADMIN)}).
+  \item \rbadge{5} \textbf{Persist Matrix Changes (\textit{Save permissions}):} Click the blue \textbf{Save permissions} button to commit updates to the database.
 \end{enumerate}
 
 \paragraph{Expected Output \& Exception Handling:}
@@ -134,7 +140,7 @@ The Administrator System, RBAC, and User Management module empowers system gover
 
 % -----------------------------------------------------------------------------
 \newpage
-\subsubsection[M14.05 -- API Permission Catalog \& Filtering (UC-15.01--15.02)]{M14.05 -- System API Permission Catalog \& Multi-Criteria Filtering (UC-15.01 to UC-15.02)}
+\subsubsection[M14.05 -- API Permission Catalog \& Detail (UC-15.01--15.02)]{M14.05 -- System API Permission Catalog \& Detail View (UC-15.01 to UC-15.02)}
 
 \begin{itemize}[leftmargin=1.5em,itemsep=2pt]
   \item \textbf{Screen Name \& Route Path:} Permissions Catalog -- \texttt{/admin/permissions}.
@@ -144,18 +150,24 @@ The Administrator System, RBAC, and User Management module empowers system gover
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.90\textwidth]{images/admin/m14_05_admin_permissions.png}
-  \caption{System API Permission catalog with method and module filters at \texttt{/admin/permissions}}
+  \includegraphics[width=0.80\textwidth]{images/admin/m14_05_admin_permissions.png}
+  \caption{System API Permission catalog with method and module filters at \texttt{/admin/permissions} (UC-15.01)}
 \end{figure}
 
 \paragraph{Step-by-Step User Instructions:}
 \begin{enumerate}[leftmargin=1.8em,itemsep=3pt]
   \item In the Admin sidebar, click \textbf{Roles \& Permissions} $\rightarrow$ \textbf{Permissions}.
-  \item \rbadge{1} \textbf{Search Permissions by Name or Path (\textit{Search box}):} Input keywords matching Admin permission names (e.g., \texttt{List users}), paths (e.g., \texttt{/api/admin/skills}), or descriptions.
-  \item \rbadge{2} \textbf{Filter by HTTP Method (\textit{Method filter}):} Select an HTTP verb from the dropdown (\textit{ALL}, \textit{GET}, \textit{POST}, \textit{PUT}, \textit{PATCH}, \textit{DELETE}) to isolate specific operations.
-  \item \rbadge{3} \textbf{Filter by Admin Module (\textit{Module filter}):} Select an administrative module (e.g., \textit{ADMIN}, \textit{USERS}, \textit{ROLES}, \textit{PERMISSIONS}, \textit{FORUMS}, \textit{EXPERT}) to view its endpoints.
-  \item \rbadge{4} \textbf{Inspect Permissions Table (\textit{Permissions table}):} View Admin Portal permission records with \textit{ID}, \textit{Name}, color-coded \textit{Method} badges (Blue for GET, Green for POST, Amber for PUT, Red for DELETE), \textit{Path}, and \textit{Module}.
+  \item \rbadge{1} \textbf{Search Permissions by Name or Path (\textit{Search box}):} Input keywords matching permission names, paths, or modules.
+  \item \rbadge{2} \textbf{Filter by HTTP Method \& Module (\textit{All methods / All modules}):} Filter records by HTTP verb (\textit{GET}, \textit{POST}, \textit{PATCH}, \textit{DELETE}) and module.
+  \item \rbadge{3} \textbf{Inspect Permissions Table (\textit{Permissions table}):} View records with \textit{ID}, \textit{Function Name}, \textit{Method}, \textit{Path}, \textit{Module}, and \textit{Created} date.
+  \item \rbadge{4} \textbf{View Permission Detail (\textit{Eye icon}):} Click the eye icon on any row to inspect full permission metadata at \texttt{/admin/permissions/[id]} (\texttt{UC-15.02}).
 \end{enumerate}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.78\textwidth]{images/admin/m14_05b_admin_permission_detail.png}
+  \caption{Permission Detail view displaying ID, Function Name, Method, Path, and Module (UC-15.02)}
+\end{figure}
 
 \paragraph{Expected Output \& Exception Handling:}
 \begin{itemize}[leftmargin=1.5em,itemsep=2pt]
@@ -174,21 +186,17 @@ The Administrator System, RBAC, and User Management module empowers system gover
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.90\textwidth]{images/admin/m14_06_admin_users_list_create.png}
-  \caption{User directory table and account provisioning interface at \texttt{/admin/users}}
+  \includegraphics[width=0.82\textwidth]{images/admin/m14_06_admin_users_list_create.png}
+  \caption{User directory table and account provisioning interface at \texttt{/admin/users} (UC-28.01, UC-28.03)}
 \end{figure}
 
 \paragraph{Step-by-Step User Instructions:}
 \begin{enumerate}[leftmargin=1.8em,itemsep=3pt]
   \item In the Admin sidebar, click \textbf{Users} $\rightarrow$ \textbf{User Management}.
   \item \rbadge{1} \textbf{Search Users by Name or Email (\textit{Search input}):} Type a query to search across user records in real time.
-  \item \rbadge{2} \textbf{Filter Accounts by Role (\textit{Role filter}):} Select \textit{All}, \textit{ADMIN}, \textit{CLIENT}, \textit{FREELANCER}, \textit{EXPERT}, or a custom role from the role dropdown.
-  \item \rbadge{3} \textbf{Direct Account Provisioning (\textit{+ Create User}):} Click \textbf{+ Create User} to open the modal dialog, input Full Name, Email, Password, and assign initial roles.
-  \item \rbadge{4} \textbf{Inspect User Table \& Row Actions (\textit{Users Table \& Actions}):} Review user attributes (\textit{ID}, \textit{Name}, \textit{Email}, \textit{Status}, \textit{Roles}, \textit{Created}). On each row:
-    \begin{itemize}
-      \item Click the eye icon (\textbf{Eye icon}) to open the user's multi-profile details view (\texttt{/admin/\allowbreak users/\allowbreak [id]}).
-      \item Click the pencil icon (\textbf{Pencil icon}) to open the \textit{Edit user} modal dialog.
-    \end{itemize}
+  \item \rbadge{2} \textbf{Filter Accounts by Role (\textit{Filter Role}):} Select \textit{All Roles}, \textit{ADMIN}, \textit{CLIENT}, \textit{FREELANCER}, \textit{EXPERT}, or custom roles.
+  \item \rbadge{3} \textbf{Direct Account Provisioning (\textit{+ Create User}):} Click \textbf{+ Create User} (\texttt{UC-28.03}) to create an account and select initial role(s).
+  \item \rbadge{4} \textbf{Inspect User Table \& Row Actions (\textit{Actions column}):} Click the eye icon to open \texttt{/admin/users/[id]} (\texttt{UC-28.02}), or click the pencil icon to open the \textit{Edit user} dialog (\texttt{UC-28.04}).
 \end{enumerate}
 
 \paragraph{Expected Output \& Exception Handling:}
@@ -214,15 +222,11 @@ The Administrator System, RBAC, and User Management module empowers system gover
 
 \paragraph{Step-by-Step User Instructions:}
 \begin{enumerate}[leftmargin=1.8em,itemsep=3pt]
-  \item \rbadge{1} \textbf{Open Edit User Dialog:} Click the pencil icon on any user row in \texttt{/admin/users}. The modal header displays \textit{"Edit User -- Update user profile and manage account status"}.
-  \item \rbadge{2} \textbf{Edit Full Name (\textit{Full Name field}):} Modify the user's name if required.
-  \item \rbadge{3} \textbf{Edit Email Address (\textit{Email field}):} Update the primary email address if necessary.
-  \item \rbadge{4} \textbf{Toggle Account Suspension (\textit{Banned account checkbox}):}
-    \begin{itemize}
-      \item \textbf{Suspend Account:} Check \textit{"Banned account -- Check to ban this user from accessing the system"}.
-      \item \textbf{Reactivate Account:} Uncheck the box to restore the user account to \textbf{Active} status.
-      \item Click \textbf{Save changes} to apply the update.
-    \end{itemize}
+  \item Click the pencil icon on any user row in \texttt{/admin/users} to open the \textit{Edit user} dialog.
+  \item \rbadge{1} \textbf{Edit Full Name (\textit{Full name field}):} Modify the user's display name if required.
+  \item \rbadge{2} \textbf{Edit Email Address (\textit{Email field}):} Update the primary email address if necessary.
+  \item \rbadge{3} \textbf{Toggle Account Suspension (\textit{Banned account checkbox}):} Check \textit{"Banned account"} to suspend access, or uncheck it to restore \textbf{Active} status.
+  \item \rbadge{4} \textbf{Persist Changes (\textit{Save changes}):} Click \textbf{Save changes} to commit updates (or \textbf{Cancel} to discard).
 \end{enumerate}
 
 \paragraph{Expected Output \& Exception Handling:}
@@ -242,18 +246,36 @@ The Administrator System, RBAC, and User Management module empowers system gover
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.90\textwidth]{images/admin/m14_08_admin_user_profile_tabs.png}
-  \caption{Admin inspection view of dual Client and Freelancer profiles at \texttt{/admin/users/2}}
+  \includegraphics[width=0.82\textwidth]{images/admin/m14_08_admin_user_profile_tabs.png}
+  \caption{Admin inspection view of Client Profile tab at \texttt{/admin/users/2} (UC-28.02, UC-28.05)}
 \end{figure}
 
 \paragraph{Step-by-Step User Instructions:}
 \begin{enumerate}[leftmargin=1.8em,itemsep=3pt]
-  \item Navigate to \texttt{/admin/users/2} (or click the eye icon for that user in the directory).
-  \item \rbadge{1} \textbf{Inspect Multi-Role Identity Badges:} Review the user header displaying Avatar, Display Name, Email, and active role badges (\textbf{Client}, \textbf{Freelancer}).
-  \item \rbadge{2} \textbf{Switch Between Role Tabs (\textit{Navigation tabs}):} Select from the available role-specific profile tabs: \textbf{Client Profile}, \textbf{Freelancer Profile}, \textbf{Expert Profile}, and \textbf{Admin \& Custom Roles}.
-  \item \rbadge{3} \textbf{Inspect Client Profile Details (\textit{Client profile view}):} Under \textit{Client Profile}, examine Company Name, Company Description, and Website.
-  \item \rbadge{4} \textbf{Inspect Freelancer \& Expert Profile Details (\textit{Freelancer / Expert tabs}):} Under \textit{Freelancer Profile}, inspect Professional Title, Education, Certifications, Languages, Work Experience, Skills, and CV metadata; under \textit{Expert Profile}, inspect Title, Expertise, Years of Experience, Education, Certifications, Website, and active status.
+  \item Navigate to \texttt{/admin/users/[id]} (or click the eye icon for a user in the directory) to inspect general account metrics and role profiles (\texttt{UC-28.02}).
+  \item \rbadge{1} \textbf{Switch Role Profile Tabs (\textit{Client / Freelancer / Expert}):} Select the role-specific profile tab associated with the user account.
+  \item \rbadge{2} \textbf{Update Client Profile (\textit{Edit profile} -- UC-28.05):} On the \textit{Client Profile} tab, click \textbf{Edit profile} to modify Company Name, Company Overview, and Website.
+  \item \rbadge{3} \textbf{Inspect Client Activity (\textit{Client summary cards}):} Review \textit{Jobs Posted by Client} and \textit{Contracts Commissioned}.
 \end{enumerate}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.74\textwidth]{images/admin/m14_08b_freelancer_tab.png}
+  \caption{Freelancer Profile tab with Edit Profile, Skills, and Portfolio management at \texttt{/admin/users/2} (UC-28.06--28.08)}
+\end{figure}
+
+\begin{enumerate}[leftmargin=1.8em,itemsep=3pt]
+  \item \rbadge{1} \textbf{Update Freelancer Basic Info (\textit{Edit profile} -- UC-28.06):} Modify Professional Title, Bio, Languages, Education, and Certifications.
+  \item \rbadge{2} \textbf{Update Freelancer Skills (\textit{Skills} -- UC-28.07):} Select skills from the master catalog and assign proficiency levels (1--10).
+  \item \rbadge{3} \textbf{Manage Freelancer Portfolio (\textit{Portfolio} -- UC-28.08):} Add, update, or soft-delete portfolio projects (title, description, technologies, project URL).
+  \item \rbadge{4} \textbf{Review Skills \& Showcased Portfolio:} Verify updated badges and project cards rendered below.
+\end{enumerate}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.74\textwidth]{images/admin/m14_08c_expert_tab.png}
+  \caption{Expert Profile tab and Edit Profile action for Expert accounts (UC-28.09)}
+\end{figure}
 
 \paragraph{Expected Output \& Exception Handling:}
 \begin{itemize}[leftmargin=1.5em,itemsep=2pt]

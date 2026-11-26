@@ -1,4 +1,13 @@
-import { HttpException, Injectable, Logger, Optional } from '@nestjs/common';
+import {
+  BadRequestException,
+  HttpException,
+  Injectable,
+  Logger,
+  Optional,
+} from '@nestjs/common';
+import { dirname, join } from 'path';
+import { mkdir, writeFile } from 'fs/promises';
+import { CloudinaryService } from '../../../shared/services/cloudinary.service';
 import {
   DisputeResolutionType,
   DisputeStatus,
@@ -45,6 +54,7 @@ export class DisputeService {
   constructor(
     private readonly disputeRepo: DisputeRepository,
     private readonly paymentService: PaymentService,
+    private readonly cloudinaryService: CloudinaryService,
     @Optional() private readonly notificationService?: AppNotificationService,
   ) {}
 
@@ -93,9 +103,9 @@ export class DisputeService {
           .filter((id): id is number => typeof id === 'number');
 
         if (fileIds.length > 0) {
-          const files = await this.disputeRepo.findSharedFilesByIds(
+          const files = await this.disputeRepo.findDisputeFilesByIds(
             fileIds,
-            contract.id,
+            userId,
           );
           if (files.length !== fileIds.length) {
             throw DisputeForbiddenException();
@@ -321,9 +331,9 @@ export class DisputeService {
           .filter((id): id is number => typeof id === 'number');
 
         if (fileIds.length > 0) {
-          const files = await this.disputeRepo.findSharedFilesByIds(
+          const files = await this.disputeRepo.findDisputeFilesByIds(
             fileIds,
-            dispute.milestone.contract.id,
+            userId,
           );
           if (files.length !== fileIds.length) {
             throw DisputeForbiddenException();
@@ -565,6 +575,43 @@ export class DisputeService {
       finalDecisionAt: new Date(),
       milestoneStatus: MilestoneStatus.COMPLETED,
       milestonePaymentStatus,
+    });
+  }
+
+  async uploadEvidenceFile(userId: number, file?: Express.Multer.File) {
+    if (!file) {
+      throw new BadRequestException('File is required');
+    }
+
+    let fileUrl: string;
+    let publicId: string;
+
+    if (this.cloudinaryService.isConfigured()) {
+      const cloudinaryResult = await this.cloudinaryService.uploadFile(
+        file,
+        'frevia/disputes',
+      );
+      fileUrl = cloudinaryResult.secure_url;
+      publicId = cloudinaryResult.public_id;
+    } else {
+      const relativePath = join(
+        'disputes',
+        `${Date.now()}-${file.originalname}`,
+      );
+      const absolutePath = join(process.cwd(), 'uploads', relativePath);
+      await mkdir(dirname(absolutePath), { recursive: true });
+      await writeFile(absolutePath, file.buffer);
+      fileUrl = `/uploads/${relativePath.replace(/\\/g, '/')}`;
+      publicId = `local-${Date.now()}`;
+    }
+
+    return this.disputeRepo.createDisputeFile({
+      uploaderId: userId,
+      fileUrl,
+      publicId,
+      fileName: file.originalname,
+      fileSize: file.size,
+      fileType: file.mimetype,
     });
   }
 }

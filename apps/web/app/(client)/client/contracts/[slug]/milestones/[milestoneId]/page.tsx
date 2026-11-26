@@ -46,13 +46,16 @@ export default async function ClientMilestoneDetailPage({
 
   if (!contract) notFound();
 
-  const [milestone, submissions, files] = await Promise.all([
-    contractServerRequest.getMilestoneDetail(contract.id, parsedMilestoneId),
+  const milestone = await contractServerRequest.getMilestoneDetail(
+    contract.id,
+    parsedMilestoneId,
+  );
+  if (!milestone) notFound();
+
+  const [submissions, files] = await Promise.all([
     contractServerRequest.getSubmissions(contract.id, parsedMilestoneId),
     contractServerRequest.getMilestoneFiles(contract.id, parsedMilestoneId),
   ]);
-
-  if (!milestone) notFound();
 
   const cookieStore = await cookies();
   const token = cookieStore.get("accessToken")?.value ?? null;

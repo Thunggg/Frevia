@@ -496,11 +496,10 @@ export function JobList({
             <button
               type="button"
               onClick={() => handleTabChange(activeTab === "DRAFT" ? "ALL" : "DRAFT")}
-              className={`rounded-xl border px-4 py-2.5 text-xs sm:text-sm font-semibold flex items-center gap-2 cursor-pointer transition-all shadow-xs ${
-                activeTab === "DRAFT"
-                  ? "border-[#0069D3] bg-blue-50 text-[#0069D3] dark:bg-blue-950/40 dark:text-blue-300"
-                  : "border-border/80 bg-white hover:bg-muted/70 text-foreground dark:bg-zinc-900"
-              }`}
+              className={`rounded-xl border px-4 py-2.5 text-xs sm:text-sm font-semibold flex items-center gap-2 cursor-pointer transition-all shadow-xs ${activeTab === "DRAFT"
+                ? "border-[#0069D3] bg-blue-50 text-[#0069D3] dark:bg-blue-950/40 dark:text-blue-300"
+                : "border-border/80 bg-white hover:bg-muted/70 text-foreground dark:bg-zinc-900"
+                }`}
             >
               <Inbox className="size-4 text-muted-foreground" />
               <span>{t("draftBox", { count: draftCount })}</span>
@@ -642,20 +641,18 @@ export function JobList({
                   key={tab.id}
                   type="button"
                   onClick={() => handleTabChange(tab.id)}
-                  className={`rounded-xl px-4 py-2 text-xs font-semibold flex items-center gap-2 cursor-pointer transition-all shrink-0 ${
-                    isActive
-                      ? "bg-[#F0F5FC] text-[#0069D3] dark:bg-blue-950/60 dark:text-blue-300 shadow-xs"
-                      : "text-muted-foreground hover:text-foreground hover:bg-muted/60"
-                  }`}
+                  className={`rounded-xl px-4 py-2 text-xs font-semibold flex items-center gap-2 cursor-pointer transition-all shrink-0 ${isActive
+                    ? "bg-[#F0F5FC] text-[#0069D3] dark:bg-blue-950/60 dark:text-blue-300 shadow-xs"
+                    : "text-muted-foreground hover:text-foreground hover:bg-muted/60"
+                    }`}
                 >
                   <span>{tab.label}</span>
                   {tab.count > 0 && (
                     <span
-                      className={`size-5 rounded-full text-[10px] font-bold flex items-center justify-center ${
-                        isActive
-                          ? "bg-blue-100 text-[#0069D3] dark:bg-blue-900 dark:text-blue-200"
-                          : "bg-muted text-muted-foreground"
-                      }`}
+                      className={`size-5 rounded-full text-[10px] font-bold flex items-center justify-center ${isActive
+                        ? "bg-blue-100 text-[#0069D3] dark:bg-blue-900 dark:text-blue-200"
+                        : "bg-muted text-muted-foreground"
+                        }`}
                     >
                       {tab.count}
                     </span>

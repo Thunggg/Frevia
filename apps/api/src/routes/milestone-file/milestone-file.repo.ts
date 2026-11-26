@@ -25,6 +25,7 @@ export class MilestoneFileRepository {
         clientId: true,
         freelancerId: true,
         status: true,
+        expiresAt: true,
       },
     });
   }
@@ -43,16 +44,38 @@ export class MilestoneFileRepository {
   async findFileById(fileId: number) {
     return this.prisma.milestoneFile.findUnique({
       where: { id: fileId },
-      select: milestoneFileSelect,
+      select: {
+        ...milestoneFileSelect,
+        submissions: {
+          select: { submissionId: true },
+        },
+      },
     });
   }
 
   async getMilestoneFiles(milestoneId: number) {
-    return this.prisma.milestoneFile.findMany({
+    const files = await this.prisma.milestoneFile.findMany({
       where: { milestoneId, deletedAt: null },
-      select: milestoneFileSelect,
+      select: {
+        ...milestoneFileSelect,
+        submissions: {
+          select: { submissionId: true },
+        },
+      },
       orderBy: { createdAt: 'desc' },
     });
+
+    return files.map((f) => ({
+      id: f.id,
+      milestoneId: f.milestoneId,
+      uploaderId: f.uploaderId,
+      fileUrl: f.fileUrl,
+      publicId: f.publicId,
+      fileName: f.fileName,
+      createdAt: f.createdAt,
+      deletedAt: f.deletedAt,
+      isSubmitted: f.submissions.length > 0,
+    }));
   }
 
   async createMilestoneFile(data: {
