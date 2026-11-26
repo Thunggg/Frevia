@@ -29,8 +29,7 @@ type NavLink = {
 };
 
 const guestLinks: NavLink[] = [
-  { href: "/find-work", labelKey: "findWork" },
-  { href: "/profiles", labelKey: "viewProfileFreelancer" },
+  { href: "/job", labelKey: "findWork" },
   { href: "/forum", labelKey: "forum" },
   { href: "/privacy-policy", labelKey: "policy" },
 ];

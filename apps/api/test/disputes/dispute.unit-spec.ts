@@ -34,6 +34,7 @@ import {
 import { DisputeRepository } from '../../src/routes/disputes/user/dispute.repo';
 import { DisputeService } from '../../src/routes/disputes/user/dispute.service';
 import { PaymentService } from '../../src/routes/payments/payment.service';
+import { CloudinaryService } from '../../src/shared/services/cloudinary.service';
 
 describe('Dispute Management (UF-147 to UF-152)', () => {
   const disputeRepo = {
@@ -41,6 +42,9 @@ describe('Dispute Management (UF-147 to UF-152)', () => {
     findDisputeById: jest.fn(),
     findDisputeByMilestoneId: jest.fn(),
     findSharedFilesByIds: jest.fn(),
+    findDisputeFilesByIds: jest
+      .fn()
+      .mockResolvedValue([{ id: 101, uploaderId: 1 }]),
     createDisputeTransaction: jest.fn(),
     declineDisputeTransaction: jest.fn(),
     acceptExtendDeadlineTransaction: jest.fn(),
@@ -65,9 +69,18 @@ describe('Dispute Management (UF-147 to UF-152)', () => {
     executeDisputeSettlementPayout: jest.fn().mockResolvedValue(undefined),
   };
 
+  const cloudinaryService = {
+    isConfigured: jest.fn().mockReturnValue(true),
+    uploadFile: jest.fn().mockResolvedValue({
+      secure_url: 'https://cloudinary.com/test.png',
+      public_id: 'test-public-id',
+    }),
+  };
+
   const service = new DisputeService(
     disputeRepo as unknown as DisputeRepository,
     paymentService as unknown as PaymentService,
+    cloudinaryService as unknown as CloudinaryService,
   );
 
   const expertService = new DisputesExpertService(

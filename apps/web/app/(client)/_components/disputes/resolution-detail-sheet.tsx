@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
@@ -8,9 +8,11 @@ import {
   Clock,
   FileText,
   Loader2,
+  Paperclip,
   Scale,
   ShieldAlert,
   Undo2,
+  Upload,
   X,
 } from "lucide-react";
 import {
@@ -26,7 +28,7 @@ import { Textarea } from "@repo/ui/components/shadcn/textarea";
 import { toastError, toastSuccess } from "@repo/ui/components/shadcn/toast";
 import { disputeApiRequest } from "@/apiRequests/dispute";
 import { useMe } from "@/hooks/use-auth";
-import type { DisputeDetailType } from "@shared/types";
+import type { DisputeDetailType, DisputeFileType } from "@shared/types";
 import {
   DisputeStatusBadge,
   formatResolutionCurrency,
@@ -68,6 +70,9 @@ export function ResolutionDetailSheet({
 
   const [showDeclineForm, setShowDeclineForm] = useState(false);
   const [declineReason, setDeclineReason] = useState("");
+  const [declineUploadedFiles, setDeclineUploadedFiles] = useState<DisputeFileType[]>([]);
+  const [isUploadingDeclineFile, setIsUploadingDeclineFile] = useState(false);
+  const declineFileInputRef = useRef<HTMLInputElement>(null);
   const [isBusy, setIsBusy] = useState(false);
 
   const { data: dispute, isLoading } = useQuery<DisputeDetailType | null>({
@@ -156,6 +161,40 @@ export function ResolutionDetailSheet({
     }
   };
 
+  const handleDeclineFileChange = async (
+    e: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    const files = Array.from(e.target.files || []);
+    if (!files.length) return;
+    if (declineUploadedFiles.length + files.length > 5) {
+      toastError({ message: "Tối đa 5 tệp bằng chứng" });
+      return;
+    }
+    setIsUploadingDeclineFile(true);
+    try {
+      for (const file of files) {
+        const res = await disputeApiRequest.uploadEvidenceFile(file);
+        if (res.data) {
+          setDeclineUploadedFiles((prev) => [...prev, res.data]);
+        }
+      }
+    } catch (error) {
+      toastError({
+        message: getDisputeApiErrorMessage(
+          error,
+          "Failed to upload evidence file",
+        ),
+      });
+    } finally {
+      setIsUploadingDeclineFile(false);
+      if (declineFileInputRef.current) declineFileInputRef.current.value = "";
+    }
+  };
+
+  const handleRemoveDeclineFile = (fileId: number) => {
+    setDeclineUploadedFiles((prev) => prev.filter((f) => f.id !== fileId));
+  };
+
   const handleDecline = async () => {
     if (!dispute) return;
     if (declineReason.trim().length < 5) {
@@ -169,10 +208,14 @@ export function ResolutionDetailSheet({
       const res = await disputeApiRequest.respondToDispute(dispute.id, {
         action: "DECLINE",
         reason: declineReason.trim(),
+        ...(declineUploadedFiles.length > 0 && {
+          evidenceFiles: declineUploadedFiles.map((f) => ({ fileId: f.id })),
+        }),
       });
       await invalidateAll(res.data);
       setShowDeclineForm(false);
       setDeclineReason("");
+      setDeclineUploadedFiles([]);
       toastSuccess({
         message: t("declineSuccess"),
       });
@@ -320,8 +363,8 @@ export function ResolutionDetailSheet({
               ))}
             </div>
 
-            {/* Proposed Resolution Summary */}
-            <div className="rounded-xl border border-zinc-200/80 dark:border-zinc-800 bg-zinc-50/60 dark:bg-zinc-900/30 p-4 space-y-2 text-xs">
+            {/* Proposed Resolution Summary (Clean, minimal, no heavy card border/bg) */}
+            <div className="py-2.5 space-y-2 text-xs border-y border-border/40">
               <div className="flex items-center justify-between gap-2">
                 <span className="text-muted-foreground">
                   {t("proposedResolution")}
@@ -367,11 +410,11 @@ export function ResolutionDetailSheet({
                 </div>
               )}
 
-              <div className="flex items-center justify-between gap-2 pt-1 border-t border-zinc-200/60 dark:border-zinc-800">
+              <div className="flex items-center justify-between gap-2 pt-1 border-t border-border/20">
                 <span className="text-muted-foreground">
                   {t("milestoneEscrow")}
                 </span>
-                <span className="tabular-nums text-foreground">
+                <span className="tabular-nums font-medium text-foreground">
                   {formatResolutionCurrency(dispute.milestone?.amount ?? 0)}
                 </span>
               </div>
@@ -402,54 +445,76 @@ export function ResolutionDetailSheet({
               {/* Evidence Files */}
               {dispute.evidences &&
                 dispute.evidences.some((ev) => ev.file?.fileUrl) && (
-                  <div className="space-y-1.5">
+                  <div className="space-y-2">
                     <span className="text-[11px] font-medium text-muted-foreground block">
                       {t("attachedEvidence")}
                     </span>
                     <div className="space-y-1.5">
                       {dispute.evidences
                         .filter((ev) => ev.file?.fileUrl)
-                        .map((ev) => (
-                          <a
-                            key={ev.id}
-                            href={ev.file!.fileUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="flex items-center gap-2 rounded-lg border border-zinc-200/80 dark:border-zinc-800 px-3 py-2 text-xs text-foreground hover:bg-zinc-50 dark:hover:bg-zinc-900/40 transition-colors"
-                          >
-                            <FileText className="size-3.5 text-muted-foreground shrink-0" />
-                            <span className="truncate">
-                              {ev.file?.fileName ||
-                                t("evidenceFallback", { id: ev.id })}
-                            </span>
-                          </a>
-                        ))}
+                        .map((ev) => {
+                          const isByOpener =
+                            ev.submittedById === dispute.openedById;
+                          const submitterLabel = isByOpener
+                            ? isOpener
+                              ? t("you")
+                              : dispute.openedBy?.email || t("counterparty")
+                            : isRespondent
+                              ? t("you")
+                              : dispute.respondent?.email || t("counterparty");
+                          return (
+                            <div
+                              key={ev.id}
+                              className="flex items-center justify-between gap-2 rounded-lg py-1.5 px-2 text-xs hover:bg-muted/30 transition-colors"
+                            >
+                              <a
+                                href={ev.file!.fileUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="flex items-center gap-2 text-foreground hover:underline truncate min-w-0 flex-1"
+                              >
+                                <FileText className="size-3.5 text-muted-foreground shrink-0" />
+                                <span className="truncate">
+                                  {ev.file?.fileName ||
+                                    t("evidenceFallback", { id: ev.id })}
+                                </span>
+                              </a>
+                              <span className="text-[10px] text-muted-foreground shrink-0 px-1.5 py-0.5 rounded bg-muted/60">
+                                {submitterLabel}
+                              </span>
+                            </div>
+                          );
+                        })}
                     </div>
                   </div>
                 )}
 
-              {/* Decline Reason Box */}
+              {/* Decline Reason Box (Clean left-border indicator, no heavy red card) */}
               {dispute.declineReason && (
-                <div className="rounded-xl border border-rose-200/80 dark:border-rose-900/60 bg-rose-50/60 dark:bg-rose-950/30 p-3.5 space-y-1">
-                  <div className="flex items-center justify-between text-[11px] text-rose-700 dark:text-rose-300">
-                    <span className="font-medium">{t("proposalDeclined")}</span>
+                <div className="border-l-2 border-rose-500/80 pl-3 py-1 space-y-1 text-xs">
+                  <div className="flex items-center justify-between text-[11px] text-rose-600 dark:text-rose-400">
+                    <span className="font-medium flex items-center gap-1.5">
+                      <span className="size-1.5 rounded-full bg-rose-500" />
+                      {t("proposalDeclined")}
+                    </span>
                     {dispute.declinedAt && (
-                      <span>{formatDateTime(dispute.declinedAt)}</span>
+                      <span className="text-muted-foreground">{formatDateTime(dispute.declinedAt)}</span>
                     )}
                   </div>
-                  <p className="text-xs text-rose-900 dark:text-rose-200 leading-relaxed whitespace-pre-wrap">
+                  <p className="text-muted-foreground leading-relaxed whitespace-pre-wrap">
                     {dispute.declineReason}
                   </p>
                 </div>
               )}
 
-              {/* Arbitrator Decision Box */}
+              {/* Arbitrator Decision Box (Clean left-border indicator, no heavy emerald card) */}
               {(dispute.status === "DECISION_MADE" ||
                 dispute.status === "REVIEW_REQUESTED" ||
                 dispute.status === "FINALIZED") &&
                 dispute.decisionReason && (
-                  <div className="rounded-xl border border-emerald-200/80 dark:border-emerald-900/60 bg-emerald-50/50 dark:bg-emerald-950/25 p-3.5 space-y-1.5">
-                    <span className="text-[11px] font-medium text-emerald-700 dark:text-emerald-300 block">
+                  <div className="border-l-2 border-emerald-500/80 pl-3 py-1 space-y-1.5 text-xs">
+                    <span className="text-[11px] font-medium text-emerald-600 dark:text-emerald-400 flex items-center gap-1.5">
+                      <span className="size-1.5 rounded-full bg-emerald-500" />
                       {dispute.status === "FINALIZED"
                         ? t("finalOutcome")
                         : t("expertDecision")}
@@ -517,7 +582,73 @@ export function ResolutionDetailSheet({
                       onChange={(e) => setDeclineReason(e.target.value)}
                       className="text-xs resize-none"
                     />
-                    <div className="flex items-center justify-end gap-2">
+
+                    {/* Decline Evidence Upload */}
+                    <div className="space-y-2 pt-1">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-medium text-foreground flex items-center gap-1.5">
+                          <Paperclip className="size-3.5 text-muted-foreground" />
+                          {t("attachDeclineEvidence")}
+                        </span>
+                        <div>
+                          <input
+                            ref={declineFileInputRef}
+                            type="file"
+                            multiple
+                            className="hidden"
+                            onChange={(e) => void handleDeclineFileChange(e)}
+                          />
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            disabled={
+                              isBusy ||
+                              isUploadingDeclineFile ||
+                              declineUploadedFiles.length >= 5
+                            }
+                            onClick={() =>
+                              declineFileInputRef.current?.click()
+                            }
+                            className="h-7 px-2.5 text-xs gap-1.5 cursor-pointer"
+                          >
+                            {isUploadingDeclineFile ? (
+                              <Loader2 className="size-3 animate-spin" />
+                            ) : (
+                              <Upload className="size-3" />
+                            )}
+                            <span>
+                              {isUploadingDeclineFile ? "Đang tải..." : "Chọn tệp"}
+                            </span>
+                          </Button>
+                        </div>
+                      </div>
+
+                      {declineUploadedFiles.length > 0 && (
+                        <div className="space-y-1">
+                          {declineUploadedFiles.map((f) => (
+                            <div
+                              key={f.id}
+                              className="flex items-center justify-between gap-2 rounded-lg border border-border bg-muted/40 px-2.5 py-1.5 text-xs"
+                            >
+                              <div className="flex items-center gap-2 truncate">
+                                <FileText className="size-3.5 text-muted-foreground shrink-0" />
+                                <span className="truncate">{f.fileName}</span>
+                              </div>
+                              <button
+                                type="button"
+                                onClick={() => handleRemoveDeclineFile(f.id)}
+                                className="text-muted-foreground hover:text-rose-500 cursor-pointer"
+                              >
+                                <X className="size-3.5" />
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="flex items-center justify-end gap-2 pt-1">
                       <Button
                         type="button"
                         variant="ghost"

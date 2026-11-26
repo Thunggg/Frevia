@@ -1,0 +1,1096 @@
+% ========================================================
+% FILE: sections/4.Software_Design_Description.tex
+% Part IV: Software Design Description (Verbatim from Report 4)
+% ========================================================
+\part{Software Design Description}
+
+\section{System Design}
+
+\subsection{System Architecture}
+
+The Frevia system follows an N-layer architecture, separating the client applications, presentation layer, business logic layer, data access layer, shared library layer, and external integration systems (Figure~\ref{fig:arch:overall}). The system also natively integrates with PostgreSQL, Cloudinary, Stripe, Google OAuth 2.0, Nodemailer, Infisical, and local Python FastAPI AI microservices backed by Ollama LLM.
+
+\kfig{0.95\textwidth}{images/architecture/frevia-overall-architecture}{System Architecture Diagram}{fig:arch:overall}
+
+\subsubsection*{Client Application}
+Frevia delivers a unified, responsive web application catering to five actor roles: Guest, Client, Freelancer, Expert, and Administrator.
+\begin{itemize}[leftmargin=*]
+    \item \textbf{Web Client:} Developed with Next.js 16 (React 19) and TypeScript utilizing the App Router architecture. It consists of:
+    \begin{itemize}[leftmargin=*]
+        \item \textit{Pages and Screens:} Built with React Server Components (RSC) for optimal search engine indexing and rapid initial page loads, complemented by Client Components for interactive user interfaces. Styled using TailwindCSS 4 and the \texttt{@repo/ui} component library (based on shadcn/ui), and localized into English and Vietnamese via \texttt{next-intl}.
+        \item \textit{Hooks and State Management:} Driven by TanStack Query (React Query) for server state caching, background revalidation, and optimistic mutations. Client-side form validation is managed via \texttt{react-hook-form} paired with Zod schemas.
+        \item \textit{API Services (\texttt{apiRequests/}):} A typed HTTP client layer encapsulating \texttt{lib/http.ts}. It automatically binds JWT access tokens to request headers, transparently handles token refreshes upon expiration, and interfaces with the Socket.io client for real-time messaging and notifications.
+    \end{itemize}
+\end{itemize}
+The client application transmits requests exclusively over HTTPS REST APIs and displays returned responses. It contains no direct database access logic and enforces no authoritative business rules.
+
+\subsubsection*{Presentation Layer}
+The Presentation Layer is implemented within the NestJS 11 Web Server Application (\texttt{apps/api}). It serves as the entry boundary for incoming client requests and real-time events:
+\begin{itemize}[leftmargin=*]
+    \item \textbf{Controllers:} Expose structured RESTful API endpoints (mounted under \texttt{/api}), receive client requests, bind validated request payloads, and delegate processing to domain services.
+    \item {\sloppy \textbf{Authentication and Authorization Guards:} Intercept requests to verify JWT tokens (\texttt{Access\allowbreak{}Token\allowbreak{}Guard}) and enforce role and fine-grained permission checks (\texttt{Permission\allowbreak{}Guard}).\par}
+    \item \textbf{Validation and Serialization:} Validates incoming request payloads using shared Zod DTOs and sanitizes outgoing responses using the global \texttt{ZodSerializerInterceptor}.
+    \item \textbf{Socket.io Gateway:} Manages real-time bidirectional WebSocket connections for peer-to-peer conversations and immediate notification pushes.
+\end{itemize}
+
+\subsubsection*{Business Logic Layer}
+The Business Logic Layer represents the core of the Frevia platform, encapsulating business rules, ownership verifications, and deterministic domain state machines across 33 route modules:
+\begin{itemize}[leftmargin=*]
+    \item \textbf{Authentication and Access Control Module:} Manages user registration, OTP verification, credential login, Google OAuth federated sign-in, token refresh, device sessions, roles, and granular permissions.
+    \item \textbf{User and Profile Management Module:} Handles administrator user accounts, account profiles, freelancer professional portfolios, CV uploads, and expert consultation profiles.
+    \item \textbf{Job and Proposal Management Module:} Governs client job postings, faceted job browsing, bookmarking, freelancer proposal submissions, and proposal acceptance/rejection workflows.
+    \item \textbf{Contract and Milestone Module:} Enforces contract lifecycle transitions (awaiting payment, pending signature, active, completion, cancellation, rejection) and sequential milestone workflows.
+    \item \textbf{Payment and Escrow Module:} Integrates Stripe Checkout for milestone escrow funding, platform fee collections, dispute fee handling, and automated Stripe Connect payouts to freelancer bank accounts.
+    \item \textbf{Communication and Community Module:} Facilitates real-time direct messaging, multi-category discussion forums, post interactions, and automated user notification feeds.
+    \item \textbf{Dispute Arbitration Module:} Provides formal dispute filing, evidence attachment, and administrator arbitration workflows.
+\end{itemize}
+
+\subsubsection*{Data Access Layer}
+The Data Access Layer encapsulates persistence logic using the Repository Pattern, Prisma 7 ORM, and the native PostgreSQL adapter (\texttt{@prisma/\allowbreak{}adapter-\allowbreak{}pg}):
+\begin{itemize}[leftmargin=*]
+    \item \textbf{Repositories:} Implement dedicated query methods, data filtering, pagination helpers, and soft-delete semantics (\texttt{deletedAt}). Controllers and services are strictly decoupled from raw database queries.
+    \item \textbf{Transaction Management:} Wraps complex multi-table workflows (such as escrow fund transfers, contract creation, and user onboarding cascades) inside atomic \texttt{\$transaction} blocks to maintain absolute relational integrity.
+\end{itemize}
+
+\subsubsection*{Shared Library Layer}
+The Shared Library Layer provides shared definitions and cross-cutting utilities utilized across the application tiers:
+\begin{itemize}[leftmargin=*]
+    \item \textbf{Contract Single Source of Truth (\texttt{@shared/types}):} Monorepo package defining shared Zod validation schemas, TypeScript interfaces, system constants, database enumerations, and standardized error codes.
+    \item \textbf{Backend Cross-Cutting Infrastructure (\texttt{src/shared}):} Contains global exception filters, authentication decorators, Cloudinary storage wrappers, Nodemailer integration, and the shared Prisma client service.
+\end{itemize}
+
+\subsubsection*{Data Storage}
+\begin{itemize}[leftmargin=*]
+    \item \textbf{PostgreSQL Database:} Stores all persistent platform data across 71 relational domain models and 43 enumerations, maintaining relational integrity with foreign keys, compound indexes, and audit timestamps.
+    \item \textbf{Cloudinary Object Storage:} Dedicated cloud repository storing binary multimedia files, including user profile avatars, citizen identity document photographs (CCCD), candidate resumes, and contract deliverable archives.
+\end{itemize}
+
+\subsubsection*{External Systems and Internal AI Services}
+\begin{itemize}[leftmargin=*]
+    \item \textbf{Google OAuth 2.0:} Facilitates federated single sign-on. The frontend retrieves a Google authorization credential, which the backend verifies to establish an authenticated Frevia session.
+    \item \textbf{Stripe:} Processes online financial transactions, managing escrow funding via Stripe Checkout, platform fee collection, dispute deposits, and automated freelancer payouts via Stripe Connect. Status updates are synchronized securely via cryptographic webhooks.
+    \item \textbf{Internal AI Microservices (FastAPI \& Python):}
+    \begin{itemize}[leftmargin=*]
+        \item \textit{eKYC ID Verification (\texttt{id-verification}, port 8001):} Employs RapidOCR for card text extraction, UltraFace and ArcFace (ONNX Runtime) for facial detection and biometric embeddings, and MediaPipe for liveness detection to detect fraudulent identity documents.
+        \item \textit{Section-Aware CV and Job Matching (\texttt{cv-matching}, port 8000):} BGE-M3 embeddings, ChromaDB vector indexing, and local Ollama LLM inference to parse candidate CVs and compute semantic candidate-to-job matching scores.
+        \item \textit{AI Content Moderation (\texttt{ai-moderation}, optional external service on port 8002):} Scores forum posts and comments when \texttt{AI\_\allowbreak{}MODERATION\_\allowbreak{}URL} is set, falling back to \texttt{APPROVED} when unavailable.
+    \end{itemize}
+    \item \textbf{SMTP Mail Service (Nodemailer):} Delivers transactional notifications, one-time passwords (OTP), and contract status alerts.
+    \item \textbf{Infisical:} Secure secrets manager that injects environment variables and credentials into application containers at startup.
+\end{itemize}
+
+\subsubsection*{Request-Response Data Flow}
+A typical user request originates on a Next.js Page or Screen, triggers a TanStack Query hook, and invokes a typed API method in \texttt{apiRequests/}. The service binds the JWT access token and issues an HTTPS REST call to the NestJS backend. The request passes through the \texttt{AccessTokenGuard}, \texttt{PermissionGuard}, and Zod DTO validation before reaching the appropriate Controller. The Controller delegates execution to the Service Layer, which validates business rules and state machines, then commands the Repository to execute queries through Prisma 7 to PostgreSQL. The resulting entity follows the reverse path, is sanitized by the Zod serializer interceptor, and is returned as a uniform JSON response to update the client-side cache and re-render the user interface. Real-time events follow an asynchronous parallel path via the Socket.io Gateway.
+
+\subsection{Package Diagram}
+\label{subsec:package-diagram}
+
+The Frevia repository is organized as a high-cohesion monorepo managed with \textbf{pnpm workspaces} and \textbf{Turborepo} (Figure~\ref{fig:arch:packages}). This structure cleanly separates the presentation tier (\texttt{apps/web}), the application tier (\texttt{apps/api}), the shared workspace packages (\texttt{packages/*}), and the independent AI microservices (\texttt{ai-services/}).
+
+\kfig{0.95\textwidth}{images/architecture/frevia-package-diagram}{Package diagram}{fig:arch:packages}
+
+\subsubsection*{Monorepo Architecture Rules}
+The monorepo enforces four key architectural rules illustrated in Figure~\ref{fig:arch:packages}:
+\begin{enumerate}[leftmargin=*]
+    \item \textbf{Strict Downward Dependencies:} Applications (\texttt{apps/web} and \texttt{apps/api}) depend on shared packages (\texttt{packages/*}); a shared package never imports code or types from an application.
+    \item \textbf{Module Isolation:} Domain route modules inside \texttt{apps/api/src/routes/} are strictly decoupled and never import controllers, services, or repositories from sibling modules. Cross-module data flows exclusively through database relationships at the Prisma ORM schema level.
+    \item \textbf{Universal Configuration:} Common configurations for linting (\texttt{@repo/eslint-config}) and TypeScript compilation (\texttt{@repo/typescript-config}) are inherited by all workspaces to guarantee uniform code quality.
+    \item \textbf{Independent AI Service Boundaries:} Containerized Python-based AI microservices (\texttt{id-\allowbreak{}verification} and \texttt{cv-\allowbreak{}matching} backed by Ollama) reside in \texttt{ai-services/}, alongside an optional external \texttt{ai-\allowbreak{}moderation} endpoint, and communicate with the backend via standard HTTP REST calls, maintaining complete independence from the TypeScript pnpm workspaces.
+\end{enumerate}
+
+\subsubsection*{Package Descriptions}
+Tables~\ref{tab:pkg:frontend}, \ref{tab:pkg:backend}, \ref{tab:pkg:shared}, and \ref{tab:pkg:ai} detail the responsibilities of every package in the Frevia project.
+
+{\small\setlength{\tabcolsep}{4pt}
+\begin{longtable}{|C{0.8cm}|L{4.6cm}|L{9.6cm}|}
+\caption{Frontend package description (\texttt{apps/web})}
+\label{tab:pkg:frontend}
+\\
+\hline
+\rowcolor{headerbg}\textbf{No} & \textbf{Package} & \textbf{Description} \\ \hline
+\endfirsthead
+\hline
+\rowcolor{headerbg}\textbf{No} & \textbf{Package} & \textbf{Description} \\ \hline
+\endhead
+\hline\endfoot
+\hline\endlastfoot
+01 & \texttt{app} & Next.js App Router entry points, layout definitions, error boundaries, and route groups: \texttt{(auth)}, \texttt{(client)}, \texttt{(freelancer)}, \texttt{admin/}, and public pages. \\ \hline
+02 & \texttt{components} & Reusable UI components, page section blocks, modals, and screen layouts specific to the web application. \\ \hline
+03 & \texttt{apiRequests} & Typed HTTP client callers for all domain modules (auth, jobs, proposals, contracts, payments, etc.) that attach the JWT token and coordinate API communication. \\ \hline
+04 & \texttt{lib} & Core HTTP fetch wrapper (\texttt{http.ts}), authentication session token management, form validation resolvers, string utilities, and formatters. \\ \hline
+05 & \texttt{i18n} & Internationalization configuration and localization message catalogues (\texttt{messages/en.json}, \texttt{messages/vi.json}) powered by \texttt{next-intl}. \\ \hline
+06 & \texttt{hooks} & Custom React hooks for server state caching (TanStack Query), form management, debouncing, and authentication monitoring. \\ \hline
+07 & \texttt{configs} & Client application environment configuration variables, API endpoints, and system runtime constants. \\ \hline
+08 & \texttt{providers} & Application-wide React context providers, including \texttt{QueryClientProvider}, \texttt{NextIntlClientProvider}, and theme state providers. \\ \hline
+\end{longtable}
+}
+
+{\small\setlength{\tabcolsep}{4pt}
+\begin{longtable}{|C{0.8cm}|L{4.6cm}|L{9.6cm}|}
+\caption{Backend package description (\texttt{apps/api})}
+\label{tab:pkg:backend}
+\\
+\hline
+\rowcolor{headerbg}\textbf{No} & \textbf{Package} & \textbf{Description} \\ \hline
+\endfirsthead
+\hline
+\rowcolor{headerbg}\textbf{No} & \textbf{Package} & \textbf{Description} \\ \hline
+\endhead
+\hline\endfoot
+\hline\endlastfoot
+01 & \texttt{src/routes} & 33 domain modules structured into Controller, Service, Repository, and DTO layers. \\ \hline
+02 & \texttt{src/routes/}\newline\texttt{auth} & User registration, OTP delivery, login, Google OAuth, token refresh, and role switching. \\ \hline
+03 & \texttt{src/routes/}\newline\texttt{sessions} & Device session telemetry tracking, session listing, and remote revocation. \\ \hline
+04 & \texttt{src/routes/}\newline\texttt{account-profile}, \newline\texttt{src/routes/}\newline\texttt{identity-verifications} & Account profile management, avatar uploads, citizen identity document submission (CCCD), and administrator verification reviews. \\ \hline
+05 & \texttt{src/routes/}\newline\texttt{users} & Administrator user management, account status control, and role assignments. \\ \hline
+06 & \texttt{src/routes/}\newline\texttt{roles}, \newline\texttt{src/routes/}\newline\texttt{permissions} & Role-based access control (RBAC) administration and granular permission mapping. \\ \hline
+07 & \texttt{src/routes/}\newline\texttt{profiles}, \newline\texttt{src/routes/}\newline\texttt{portfolios}, \newline\texttt{src/routes/}\newline\texttt{profile-revisions} & Freelancer professional resumes, CV analysis integration, portfolio showcases, skill tags, and profile revision audit history. \\ \hline
+08 & \texttt{src/routes/}\newline\texttt{expert-profile} & Expert directory listings, consultation profiles, and domain certifications. \\ \hline
+09 & \texttt{src/routes/}\newline\texttt{browse-job} & Public job search, keyword filtering, category navigation, and slug-based job details. \\ \hline
+10 & \texttt{src/routes/}\newline\texttt{manage-job} & Client job posting, draft editing, applicant review, and bookmark management. \\ \hline
+11 & \texttt{src/routes/}\newline\texttt{job-categories}, \newline\texttt{src/routes/}\newline\texttt{job-categories-admin}, \newline\texttt{src/routes/}\newline\texttt{skills-admin} & Flat job category taxonomy and administrative skill tags management. \\ \hline
+12 & \texttt{src/routes/}\newline\texttt{proposals} & Freelancer bid submissions, cover letters, proposed terms, and proposal lifecycle management. \\ \hline
+13 & \texttt{src/routes/}\newline\texttt{contract}, \newline\texttt{src/routes/}\newline\texttt{milestone} & Contract generation, bilateral digital signing, milestone lifecycle management, and sequential progress transitions. \\ \hline
+14 & \texttt{src/routes/}\newline\texttt{milestone-file}, \newline\texttt{src/routes/}\newline\texttt{milestone-submission}, \newline\texttt{src/routes/}\newline\texttt{shared-file} & Milestone file attachments, deliverable review submissions, and shared project documents. \\ \hline
+15 & \texttt{src/routes/}\newline\texttt{payments} & Stripe Connect onboarding, milestone escrow deposits, fund releases, platform fee deductions, and webhook handlers. \\ \hline
+16 & \texttt{src/routes/}\newline\texttt{disputes} & Contract dispute arbitration, claim filing, evidence submission, and expert arbitrator resolution. \\ \hline
+17 & \texttt{src/routes/}\newline\texttt{reviews} & Bilateral post-contract rating reviews, score aggregations, and public responses. \\ \hline
+18 & \texttt{src/routes/}\newline\texttt{conversations} & Direct real-time messaging, conversation threads, and message history persistence. \\ \hline
+19 & \texttt{src/routes/}\newline\texttt{notifications} & User notification feed generation, unread status tracking, and push alerts. \\ \hline
+20 & \texttt{src/routes/}\newline\texttt{forums}, \newline\texttt{src/routes/}\newline\texttt{forums-admin} & Public discussion forums, posts, comments, likes, reports, AI moderation queues, and soft-delete trash recovery. \\ \hline
+21 & \texttt{src/routes/}\newline\texttt{saved-search}, \newline\texttt{src/routes/}\newline\texttt{job-alert} & Saved job filter criteria and user-configured job alert criteria with matching-job queries. \\ \hline
+22 & \texttt{src/routes/}\newline\texttt{recommendations} & AI-assisted candidate and job recommendations based on semantic CV matching. \\ \hline
+23 & \texttt{src/routes/}\newline\texttt{banners}, \newline\texttt{src/routes/}\newline\texttt{banners-admin} & Promotional banner delivery, placement targeting, and administrative banner management. \\ \hline
+24 & \texttt{src/shared/}\newline\texttt{guards} & JWT authentication (\texttt{AccessTokenGuard}) and route permission (\texttt{PermissionGuard}) guards. \\ \hline
+25 & \texttt{src/shared/}\newline\texttt{filters} & Global exception filter converting internal exceptions into standard JSON error bodies. \\ \hline
+26 & \texttt{src/shared/}\newline\texttt{interceptors} & Zod response serialization and transformation interceptor. \\ \hline
+27 & \texttt{src/shared/}\newline\texttt{services} & Cross-cutting infrastructure services including Cloudinary media storage, Nodemailer email dispatch, and AI moderation client. \\ \hline
+28 & \texttt{src/shared/}\newline\texttt{repositories} & Base repository definitions and database query execution helpers. \\ \hline
+29 & \texttt{prisma} & Prisma 7 ORM persistence configuration, \texttt{schema.prisma} (71 models, 43 enums), database migrations, and seed scripts. \\ \hline
+\end{longtable}
+}
+
+{\small\setlength{\tabcolsep}{4pt}
+\begin{longtable}{|C{0.8cm}|L{4.6cm}|L{9.6cm}|}
+\caption{Shared and tooling packages description (\texttt{packages/})}
+\label{tab:pkg:shared}
+\\
+\hline
+\rowcolor{headerbg}\textbf{No} & \textbf{Package} & \textbf{Description} \\ \hline
+\endfirsthead
+\hline
+\rowcolor{headerbg}\textbf{No} & \textbf{Package} & \textbf{Description} \\ \hline
+\endhead
+\hline\endfoot
+\hline\endlastfoot
+01 & \texttt{packages/}\newline\texttt{ui} & Shared React component library (\texttt{@repo/ui}) styled with TailwindCSS 4 and shadcn/ui (buttons, dialogs, form controls, tables) imported exclusively by the web application. \\ \hline
+02 & \texttt{packages/}\newline\texttt{shared-type} & API contract single source of truth (\texttt{@shared/types}) providing Zod validation models, TypeScript interfaces, database enumerations, permission names, and error codes to both applications. \\ \hline
+03 & \texttt{packages/}\newline\texttt{typescript-config} & Shared TypeScript configuration baselines (\texttt{@repo/typescript-config}) that the applications extend for strict type checking. \\ \hline
+04 & \texttt{packages/}\newline\texttt{eslint-config} & Centralized ESLint configuration ruleset (\texttt{@repo/eslint-config}) enforced across every monorepo package. \\ \hline
+\end{longtable}
+}
+
+{\small\setlength{\tabcolsep}{4pt}
+\begin{longtable}{|C{0.8cm}|L{4.6cm}|L{9.6cm}|}
+\caption{AI microservices package description (\texttt{ai-services/})}
+\label{tab:pkg:ai}
+\\
+\hline
+\rowcolor{headerbg}\textbf{No} & \textbf{Package} & \textbf{Description} \\ \hline
+\endfirsthead
+\hline
+\rowcolor{headerbg}\textbf{No} & \textbf{Package} & \textbf{Description} \\ \hline
+\endhead
+\hline\endfoot
+\hline\endlastfoot
+01 & \texttt{id-verification} & FastAPI microservice (port 8001) performing Vietnamese citizen identity card (CCCD) OCR via RapidOCR, facial detection and biometric embedding via UltraFace and ArcFace (ONNX Runtime), and anti-spoofing liveness verification via MediaPipe. \\ \hline
+02 & \texttt{cv-matching} & FastAPI microservice (port 8000) performing section-aware candidate CV parsing, dense semantic vector embedding with BGE-M3, ChromaDB vector indexing, and candidate-job matching supported by Ollama LLM. \\ \hline
+03 & \texttt{ollama} & Containerized local Large Language Model runtime (port 11434) running instruction-tuned models (e.g., Qwen) for structured CV extraction and semantic matching. \\ \hline
+04 & \texttt{ai-moderation} & Optional external FastAPI microservice (default external port 8002 via \texttt{AI\_MODERATION\_URL}) providing automated toxic content classification and moderation scoring with fail-open \texttt{APPROVED} fallback in \texttt{AIModerationService}. \\ \hline
+\end{longtable}
+}
+
+
+\section{Database Design}
+
+Frevia persists every domain object in a single PostgreSQL database whose schema is
+declared with Prisma 7 in \texttt{apps/api/prisma/schema.prisma}. The schema contains
+71 models together with 43 enumerations, every table has a surrogate integer primary
+key generated by the database (nine membership tables use a composite key instead), and
+deletion is either restricted by a foreign-key rule (identity and money-related rows are
+never removed) or implemented as a soft delete through a \texttt{deletedAt} column
+(content that an administrator must be able to restore: jobs, forum categories and posts,
+skills, banners, contract term templates). Binary files are not stored in the database:
+only their Cloudinary URL is kept in the owning row.
+
+Figure~\ref{fig:db:erd} shows the entity--relationship diagram of the whole schema.
+Every table is drawn as a frameless box: the header carries the table name, each of the
+following rows is one column, and the key columns are flagged with \texttt{PK} (primary
+key) or \texttt{FK} (foreign key). A relationship is a line that leaves the many-side
+table with a crow's foot and ends on the one-side table with a single bar, so it reads
+from the row that holds the foreign key to the row it references.
+
+\kfig{0.95\textwidth}{images/database/erd}{Entity--relationship diagram of the Frevia database}{fig:db:erd}
+
+\subsection{Table Relationships}
+
+The 71 tables are grouped into nine families; inside a family the relationships are
+one-to-many, and membership tables carry the many-to-many links:
+
+\begin{itemize}[leftmargin=*]\sloppy
+    \item \textbf{Identity and access} --- \texttt{User} is the root of the schema and now also carries a required \texttt{roleId} that points to its primary \texttt{Role}; \texttt{UserRole} still links an account to any additional \texttt{Role}, and \texttt{RolePermission} links a role to a \texttt{Permission}, which yields the RBAC model enforced by the guards. Authentication adds \texttt{Session} (one row per device), \texttt{VerificationCode} (OTP for registration and password reset), \texttt{OauthAccount} (Google login), \texttt{TwoFactorAuth} and \texttt{UserSetting}.
+    \item \textbf{Profiles} --- \texttt{Profile} is shared by every account; \texttt{FreelancerProfile} and \texttt{ClientProfile} extend it with role-specific columns, \texttt{Expert} publishes an expert entry in the public directory, and \texttt{FreelancerSkill} joins a freelancer to the \texttt{Skill} catalogue. \texttt{PortfolioItem}, \texttt{SocialLink}, \texttt{Certificate}, \texttt{IdVerificationDocument}, \texttt{ProfileRevision}, \texttt{CvAnalysis}, \texttt{FreelancerExperience} and \texttt{FreelancerEducation} hang from the profile. AI indexing and matching are tracked separately through \texttt{DocumentProcessingJob}, \texttt{EmbeddingIndexRecord}, \texttt{Recommendation} and \texttt{EmbeddingOutboxEvent}.
+    \item \textbf{Jobs} --- \texttt{Job} belongs to a client and is classified through \texttt{JobJobCategory} (\texttt{JobCategory}) and \texttt{JobSkill} (\texttt{Skill}). \texttt{JobBookmark}, \texttt{RecentlyViewedJob}, \texttt{SavedSearch} and \texttt{JobAlert} record the browsing behaviour of a freelancer.
+    \item \textbf{Proposals and contracts} --- \texttt{Proposal} references one \texttt{Job} and one freelancer; accepting it creates exactly one \texttt{Contract}, which carries \texttt{ContractTermTemplate} snapshots and a list of \texttt{Milestone} rows. \texttt{ProjectProgressUpdate}, \texttt{SharedFile} and \texttt{MilestoneFile} document the work in progress, while \texttt{MilestoneSubmission} (with \texttt{MilestoneSubmissionFile}) records the deliverable and its review decision.
+    \item \textbf{Payments} --- \texttt{Transaction} stores every Stripe movement (funding, release, refund, platform fee, dispute fee) with its payment-intent identifier, and \texttt{Invoice} holds the invoice issued per contract. Money is never derived: the escrow balance of a milestone is the sum of its transactions.
+    \item \textbf{Disputes} --- \texttt{Dispute} is opened on a contract or a milestone, \texttt{DisputeEvidence} collects the attachments of both parties, \texttt{DisputeFee} records the fee charged to open it, and \texttt{DisputeDecisionReview} stores the request of a party that asks for the decision to be reconsidered.
+    \item \textbf{Reviews} --- one \texttt{Review} per completed contract, answered by at most one \texttt{ReviewResponse}.
+    \item \textbf{Messaging and notifications} --- \texttt{Conversation} groups the \texttt{DirectMessage} rows exchanged by two accounts (pin and read state are kept on the message and on the conversation), and \texttt{Notification} feeds the in-app bell.
+    \item \textbf{Community forum and configuration} --- \texttt{ForumCategory} contains \texttt{ForumPost}, a post contains \texttt{ForumComment}, and \texttt{ForumLike} / \texttt{ForumReport} attach reactions and reports to posts or comments. \texttt{ForumPost} and \texttt{ForumComment} may also store reviewer metadata for moderated content. Administrators manage reports through \texttt{ModerationQueue} (while \texttt{BannedKeyword} is reserved in the schema and currently unexposed by the API); platform-wide configuration lives in \texttt{SystemSetting}, \texttt{AnnouncementBanner} and \texttt{AdvertisementBanner}.
+\end{itemize}
+
+\subsubsection*{Table Descriptions}
+
+Table~\ref{tab:db:tables} describes the purpose of every table of the schema, in the
+order in which the models are declared in \texttt{schema.prisma}, together with its
+primary key and its foreign keys.
+
+{\small
+\begin{longtable}{|C{0.9cm}|L{5.0cm}|L{8.8cm}|}
+\caption{Table descriptions of the Frevia database}
+\label{tab:db:tables}
+\\
+\hline
+\rowcolor{headerbg}\textbf{No} & \textbf{Table} & \textbf{Description} \\ \hline
+\endfirsthead
+\hline
+\rowcolor{headerbg}\textbf{No} & \textbf{Table} & \textbf{Description} \\ \hline
+\endhead
+\hline\endfoot
+\hline\endlastfoot
+\texttt{01} & \texttt{Role} & Role catalogue of the RBAC model (admin, client, freelancer, expert); carries the role code, name and description.
+\newline \textbullet~\textbf{Primary keys:} \texttt{id}
+\newline \textbullet~\textbf{Foreign keys:} --- \\ \hline
+\texttt{02} & \texttt{UserRole} & Assignment of a role to an account, so one account can hold several roles and switch between them.
+\newline \textbullet~\textbf{Primary keys:} \texttt{userId}, \texttt{roleId}
+\newline \textbullet~\textbf{Foreign keys:} \texttt{userId} $\rightarrow$ \texttt{User}, \texttt{roleId} $\rightarrow$ \texttt{Role} \\ \hline
+\texttt{03} & \texttt{Permission} & Catalogue of route-level permissions (\texttt{module.action} names) used by the permission guard.
+\newline \textbullet~\textbf{Primary keys:} \texttt{id}
+\newline \textbullet~\textbf{Foreign keys:} --- \\ \hline
+\texttt{04} & \texttt{RolePermission} & Permissions granted to a role; drives the effective permission list of every signed-in account.
+\newline \textbullet~\textbf{Primary keys:} \texttt{roleId}, \texttt{permissionId}
+\newline \textbullet~\textbf{Foreign keys:} \texttt{roleId} $\rightarrow$ \texttt{Role}, \texttt{permissionId} $\rightarrow$ \texttt{Permission} \\ \hline
+\texttt{05} & \texttt{User} & Account identity: e-mail, bcrypt password hash, ban flag, Stripe customer/Connect flags and timestamps. Carries the primary role through \texttt{roleId}.
+\newline \textbullet~\textbf{Primary keys:} \texttt{id}
+\newline \textbullet~\textbf{Foreign keys:} \texttt{roleId} $\rightarrow$ \texttt{Role} \\ \hline
+\texttt{06} & \texttt{VerificationCode} & One-time code (OTP) issued for e-mail verification or password reset, with its purpose (\texttt{type}), verification attempt counter (\texttt{attempts}) and expiry; consumed codes are deleted.
+\newline \textbullet~\textbf{Primary keys:} \texttt{id}
+\newline \textbullet~\textbf{Foreign keys:} --- \\ \hline
+\texttt{07} & \texttt{Session} & Server-side session per device: refresh-token hash, device/user-agent and IP address metadata, and expiry timestamp.
+\newline \textbullet~\textbf{Primary keys:} \texttt{id}
+\newline \textbullet~\textbf{Foreign keys:} \texttt{userId} $\rightarrow$ \texttt{User} \\ \hline
+\texttt{08} & \texttt{OauthAccount} & Link between an account and an external identity provider (Google) for federated login.
+\newline \textbullet~\textbf{Primary keys:} \texttt{id}
+\newline \textbullet~\textbf{Foreign keys:} \texttt{userId} $\rightarrow$ \texttt{User} \\ \hline
+\texttt{09} & \texttt{TwoFactorAuth} & Two-factor authentication secret and enabled flag of an account (one row per account).
+\newline \textbullet~\textbf{Primary keys:} \texttt{id}
+\newline \textbullet~\textbf{Foreign keys:} \texttt{userId} $\rightarrow$ \texttt{User} \\ \hline
+\texttt{10} & \texttt{UserSetting} & Per-account preferences: interface theme, language and the JSON notification preferences.
+\newline \textbullet~\textbf{Primary keys:} \texttt{id}
+\newline \textbullet~\textbf{Foreign keys:} \texttt{userId} $\rightarrow$ \texttt{User} \\ \hline
+\texttt{11} & \texttt{Profile} & Base profile shared by all accounts: display name, avatar, cover, biography, availability status and completion percentage.
+\newline \textbullet~\textbf{Primary keys:} \texttt{id}
+\newline \textbullet~\textbf{Foreign keys:} \texttt{userId} $\rightarrow$ \texttt{User} \\ \hline
+\texttt{12} & \texttt{FreelancerProfile} & Professional data of a freelancer: professional title, education, certifications, languages, experience summaries, uploaded CV metadata and identity verification flag.
+\newline \textbullet~\textbf{Primary keys:} \texttt{id}
+\newline \textbullet~\textbf{Foreign keys:} \texttt{profileId} $\rightarrow$ \texttt{Profile} \\ \hline
+\texttt{13} & \texttt{FreelancerSkill} & Many-to-many link between a freelancer profile and a skill, with the self-declared proficiency level.
+\newline \textbullet~\textbf{Primary keys:} \texttt{id}
+\newline \textbullet~\textbf{Foreign keys:} \texttt{freelancerProfileId} $\rightarrow$ \texttt{FreelancerProfile}, \texttt{skillId} $\rightarrow$ \texttt{Skill} \\ \hline
+\texttt{14} & \texttt{ClientProfile} & Client-side data: company name, company description and website URL.
+\newline \textbullet~\textbf{Primary keys:} \texttt{id}
+\newline \textbullet~\textbf{Foreign keys:} \texttt{profileId} $\rightarrow$ \texttt{Profile} \\ \hline
+\texttt{15} & \texttt{Expert} & Expert entry published in the public expert directory, with specialisation and verification state.
+\newline \textbullet~\textbf{Primary keys:} \texttt{id}
+\newline \textbullet~\textbf{Foreign keys:} \texttt{profileId} $\rightarrow$ \texttt{Profile} \\ \hline
+\texttt{16} & \texttt{ProfileRevision} & Pending change request on a profile, reviewed and approved or rejected by an administrator.
+\newline \textbullet~\textbf{Primary keys:} \texttt{id}
+\newline \textbullet~\textbf{Foreign keys:} \texttt{userId} $\rightarrow$ \texttt{User}, \texttt{adminId} $\rightarrow$ \texttt{User}, \texttt{profileId} $\rightarrow$ \texttt{Profile} \\ \hline
+\texttt{17} & \texttt{PortfolioItem} & Portfolio entry of a profile: title, description, technologies list, project URL, content source and soft-delete support.
+\newline \textbullet~\textbf{Primary keys:} \texttt{id}
+\newline \textbullet~\textbf{Foreign keys:} \texttt{freelancerProfileId} $\rightarrow$ \texttt{FreelancerProfile} \\ \hline
+\texttt{18} & \texttt{CvAnalysis} & AI analysis of a freelancer CV: upload metadata, extraction statistics, the structured JSON result (skills, experience, education, projects, summary) and the confirmation state. Generating a new analysis discards any prior \texttt{PENDING} draft for the profile.
+\newline \textbullet~\textbf{Primary keys:} \texttt{id}
+\newline \textbullet~\textbf{Foreign keys:} \texttt{freelancerProfileId} $\rightarrow$ \texttt{FreelancerProfile} \\ \hline
+\texttt{19} & \texttt{FreelancerExperience} & Experience item of a freelancer profile, either entered manually or imported from a CV, with company, dates and description.
+\newline \textbullet~\textbf{Primary keys:} \texttt{id}
+\newline \textbullet~\textbf{Foreign keys:} \texttt{freelancerProfileId} $\rightarrow$ \texttt{FreelancerProfile} \\ \hline
+\texttt{20} & \texttt{FreelancerEducation} & Education item of a freelancer profile, either entered manually or imported from a CV, with degree, school and years.
+\newline \textbullet~\textbf{Primary keys:} \texttt{id}
+\newline \textbullet~\textbf{Foreign keys:} \texttt{freelancerProfileId} $\rightarrow$ \texttt{FreelancerProfile} \\ \hline
+\texttt{21} & \texttt{DocumentProcessingJob} & Asynchronous processing job for an AI document (CV, job description, proposal): document type, document id, version, status, attempt counter and error message.
+\newline \textbullet~\textbf{Primary keys:} \texttt{id}
+\newline \textbullet~\textbf{Foreign keys:} --- \\ \hline
+\texttt{22} & \texttt{EmbeddingIndexRecord} & Vector index record for a document section: embedding model, collection, vector record id, content hash and index status.
+\newline \textbullet~\textbf{Primary keys:} \texttt{id}
+\newline \textbullet~\textbf{Foreign keys:} --- \\ \hline
+\texttt{23} & \texttt{Recommendation} & Job--CV recommendation result: requester, source and target document references, score breakdown (semantic, skill, experience, budget, preference), ranking version and embedding model.
+\newline \textbullet~\textbf{Primary keys:} \texttt{id}
+\newline \textbullet~\textbf{Foreign keys:} \texttt{requesterId} $\rightarrow$ \texttt{User} \\ \hline
+\texttt{24} & \texttt{EmbeddingOutboxEvent} & Outbox event that triggers embedding or re-indexing of a document, with event type, document reference, status, attempt counter and processing timestamp.
+\newline \textbullet~\textbf{Primary keys:} \texttt{id}
+\newline \textbullet~\textbf{Foreign keys:} --- \\ \hline
+\texttt{25} & \texttt{SocialLink} & External link of a profile (website, LinkedIn, GitHub, Behance) shown on the public profile.
+\newline \textbullet~\textbf{Primary keys:} \texttt{id}
+\newline \textbullet~\textbf{Foreign keys:} \texttt{profileId} $\rightarrow$ \texttt{Profile} \\ \hline
+\texttt{26} & \texttt{IdVerificationDocument} & Identity document uploaded for eKYC, with the AI check result and the administrator decision.
+\newline \textbullet~\textbf{Primary keys:} \texttt{id}
+\newline \textbullet~\textbf{Foreign keys:} \texttt{userId} $\rightarrow$ \texttt{User}, \texttt{adminId} $\rightarrow$ \texttt{User}, \texttt{duplicateOfId} $\rightarrow$ \texttt{IdVerificationDocument} \\ \hline
+\texttt{27} & \texttt{ProfileVisitLog} & View log of a freelancer profile (\texttt{viewerId}, \texttt{targetFreelancerId}, \texttt{viewedAt}); source of the profile statistics.
+\newline \textbullet~\textbf{Primary keys:} \texttt{id}
+\newline \textbullet~\textbf{Foreign keys:} \texttt{viewerId} $\rightarrow$ \texttt{User}, \texttt{targetFreelancerId} $\rightarrow$ \texttt{User} \\ \hline
+\texttt{28} & \texttt{JobCategory} & Flat job category (\texttt{name}, \texttt{slug}, \texttt{description}, \texttt{status}) with soft-delete support.
+\newline \textbullet~\textbf{Primary keys:} \texttt{id}
+\newline \textbullet~\textbf{Foreign keys:} --- \\ \hline
+\texttt{29} & \texttt{Job} & Job posting: slug, title, description, budget range and type, hiring type, positions required/filled, deadline, expiry date, status and the owning client.
+\newline \textbullet~\textbf{Primary keys:} \texttt{id}
+\newline \textbullet~\textbf{Foreign keys:} \texttt{clientId} $\rightarrow$ \texttt{User} \\ \hline
+\texttt{30} & \texttt{JobJobCategory} & Many-to-many link between a job and the job categories it is published in.
+\newline \textbullet~\textbf{Primary keys:} \texttt{jobId}, \texttt{categoryId}
+\newline \textbullet~\textbf{Foreign keys:} \texttt{jobId} $\rightarrow$ \texttt{Job}, \texttt{categoryId} $\rightarrow$ \texttt{JobCategory} \\ \hline
+\texttt{31} & \texttt{Skill} & Skill catalogue shared by freelancer profiles and jobs, with soft-delete support.
+\newline \textbullet~\textbf{Primary keys:} \texttt{id}
+\newline \textbullet~\textbf{Foreign keys:} --- \\ \hline
+\texttt{32} & \texttt{JobSkill} & Many-to-many link pairing a job with its required skills.
+\newline \textbullet~\textbf{Primary keys:} \texttt{jobId}, \texttt{skillId}
+\newline \textbullet~\textbf{Foreign keys:} \texttt{jobId} $\rightarrow$ \texttt{Job}, \texttt{skillId} $\rightarrow$ \texttt{Skill} \\ \hline
+\texttt{33} & \texttt{JobBookmark} & Jobs saved by a freelancer.
+\newline \textbullet~\textbf{Primary keys:} \texttt{userId}, \texttt{jobId}
+\newline \textbullet~\textbf{Foreign keys:} \texttt{userId} $\rightarrow$ \texttt{User}, \texttt{jobId} $\rightarrow$ \texttt{Job} \\ \hline
+\texttt{34} & \texttt{RecentlyViewedJob} & Recently opened job postings of an account, with the viewing timestamp.
+\newline \textbullet~\textbf{Primary keys:} \texttt{id}
+\newline \textbullet~\textbf{Foreign keys:} \texttt{userId} $\rightarrow$ \texttt{User}, \texttt{jobId} $\rightarrow$ \texttt{Job} \\ \hline
+\texttt{35} & \texttt{SavedSearch} & Stored job filter criteria (keyword, categories, budget, skills) that the freelancer can reapply.
+\newline \textbullet~\textbf{Primary keys:} \texttt{id}
+\newline \textbullet~\textbf{Foreign keys:} \texttt{userId} $\rightarrow$ \texttt{User} \\ \hline
+\texttt{36} & \texttt{JobAlert} & User-level job alert configuration storing keywords, skills, frequency, notification channels and active flag.
+\newline \textbullet~\textbf{Primary keys:} \texttt{id}
+\newline \textbullet~\textbf{Foreign keys:} \texttt{userId} $\rightarrow$ \texttt{User} \\ \hline
+\texttt{37} & \texttt{Proposal} & Proposal submitted by a freelancer for a job: cover letter, bid amount, estimated duration and lifecycle status.
+\newline \textbullet~\textbf{Primary keys:} \texttt{id}
+\newline \textbullet~\textbf{Foreign keys:} \texttt{jobId} $\rightarrow$ \texttt{Job}, \texttt{freelancerId} $\rightarrow$ \texttt{User} \\ \hline
+\texttt{38} & \texttt{ProposalAttachment} & File attached to a proposal (portfolio sample, reference document) stored in Cloudinary.
+\newline \textbullet~\textbf{Primary keys:} \texttt{id}
+\newline \textbullet~\textbf{Foreign keys:} \texttt{proposalId} $\rightarrow$ \texttt{Proposal} \\ \hline
+\texttt{39} & \texttt{Contract} & Contract created when a proposal is accepted: slug, client, freelancer, total amount, terms, bilateral signature flags/timestamps, platform fee fields, Stripe hold reference, expiry/completion dates and status.
+\newline \textbullet~\textbf{Primary keys:} \texttt{id}
+\newline \textbullet~\textbf{Foreign keys:} \texttt{jobId} $\rightarrow$ \texttt{Job}, \texttt{proposalId} $\rightarrow$ \texttt{Proposal}, \texttt{clientId} $\rightarrow$ \texttt{User}, \texttt{freelancerId} $\rightarrow$ \texttt{User} \\ \hline
+\texttt{40} & \texttt{ContractTermTemplate} & Reusable contract term template owned by a user, with category, content and soft-delete support.
+\newline \textbullet~\textbf{Primary keys:} \texttt{id}
+\newline \textbullet~\textbf{Foreign keys:} \texttt{creatorId} $\rightarrow$ \texttt{User} \\ \hline
+\texttt{41} & \texttt{Milestone} & Milestone inside a contract: title, description, amount, due date, completion date, milestone lifecycle status and payment escrow status.
+\newline \textbullet~\textbf{Primary keys:} \texttt{id}
+\newline \textbullet~\textbf{Foreign keys:} \texttt{contractId} $\rightarrow$ \texttt{Contract} \\ \hline
+\texttt{42} & \texttt{MilestoneFile} & Reference file attached to a milestone and shared with both parties.
+\newline \textbullet~\textbf{Primary keys:} \texttt{id}
+\newline \textbullet~\textbf{Foreign keys:} \texttt{milestoneId} $\rightarrow$ \texttt{Milestone}, \texttt{uploaderId} $\rightarrow$ \texttt{User} \\ \hline
+\texttt{43} & \texttt{MilestoneSubmission} & Work submitted for a milestone, with the submitted note, timestamp and the client review decision.
+\newline \textbullet~\textbf{Primary keys:} \texttt{id}
+\newline \textbullet~\textbf{Foreign keys:} \texttt{milestoneId} $\rightarrow$ \texttt{Milestone}, \texttt{freelancerId} $\rightarrow$ \texttt{User} \\ \hline
+\texttt{44} & \texttt{MilestoneSubmissionFile} & Join table linking a submission to the milestone files it delivers.
+\newline \textbullet~\textbf{Primary keys:} \texttt{submissionId}, \texttt{fileId}
+\newline \textbullet~\textbf{Foreign keys:} \texttt{submissionId} $\rightarrow$ \texttt{MilestoneSubmission}, \texttt{fileId} $\rightarrow$ \texttt{MilestoneFile} \\ \hline
+\texttt{45} & \texttt{Invoice} & Invoice of a contract (one per contract): invoice number, total amount, status, issued, due and paid dates.
+\newline \textbullet~\textbf{Primary keys:} \texttt{id}
+\newline \textbullet~\textbf{Foreign keys:} \texttt{contractId} $\rightarrow$ \texttt{Contract} \\ \hline
+\texttt{46} & \texttt{Certificate} & Completion certificate generated when a contract is finished: unique certificate UID, completion date and JSON metadata.
+\newline \textbullet~\textbf{Primary keys:} \texttt{id}
+\newline \textbullet~\textbf{Foreign keys:} \texttt{contractId} $\rightarrow$ \texttt{Contract}, \texttt{freelancerId} $\rightarrow$ \texttt{User}, \texttt{clientId} $\rightarrow$ \texttt{User} \\ \hline
+\texttt{47} & \texttt{Dispute} & Dispute opened on a contract or a milestone: reason, description, opened by, status, resolution and decision timestamps.
+\newline \textbullet~\textbf{Primary keys:} \texttt{id}
+\newline \textbullet~\textbf{Foreign keys:} \texttt{milestoneId} $\rightarrow$ \texttt{Milestone}, \texttt{openedById} $\rightarrow$ \texttt{User}, \texttt{respondentId} $\rightarrow$ \texttt{User}, \texttt{decisionById} $\rightarrow$ \texttt{User} \\ \hline
+\texttt{48} & \texttt{DisputeFee} & Fee charged to open a dispute, with its amount, payment state and the transaction that settled it.
+\newline \textbullet~\textbf{Primary keys:} \texttt{id}
+\newline \textbullet~\textbf{Foreign keys:} \texttt{disputeId} $\rightarrow$ \texttt{Dispute}, \texttt{userId} $\rightarrow$ \texttt{User} \\ \hline
+\texttt{49} & \texttt{DisputeEvidence} & Evidence attached by either party to a dispute (file, description, uploader).
+\newline \textbullet~\textbf{Primary keys:} \texttt{id}
+\newline \textbullet~\textbf{Foreign keys:} \texttt{disputeId} $\rightarrow$ \texttt{Dispute}, \texttt{submittedById} $\rightarrow$ \texttt{User}, \texttt{fileId} $\rightarrow$ \texttt{SharedFile} \\ \hline
+\texttt{50} & \texttt{DisputeDecisionReview} & Request of a party to reconsider a dispute decision, with the response, the reason and the timestamp.
+\newline \textbullet~\textbf{Primary keys:} \texttt{id}
+\newline \textbullet~\textbf{Foreign keys:} \texttt{disputeId} $\rightarrow$ \texttt{Dispute}, \texttt{userId} $\rightarrow$ \texttt{User} \\ \hline
+\texttt{51} & \texttt{Transaction} & Payment movement reconciled with Stripe (funding, release, refund, platform fee, dispute fee): type, amount, status, payment-intent id and timestamps.
+\newline \textbullet~\textbf{Primary keys:} \texttt{id}
+\newline \textbullet~\textbf{Foreign keys:} \texttt{userId} $\rightarrow$ \texttt{User}, \texttt{contractId} $\rightarrow$ \texttt{Contract} \\ \hline
+\texttt{52} & \texttt{Review} & Review written after a contract is completed: rating, comment, author, recipient and the reviewed contract.
+\newline \textbullet~\textbf{Primary keys:} \texttt{id}
+\newline \textbullet~\textbf{Foreign keys:} \texttt{contractId} $\rightarrow$ \texttt{Contract}, \texttt{reviewerId} $\rightarrow$ \texttt{User}, \texttt{revieweeId} $\rightarrow$ \texttt{User} \\ \hline
+\texttt{53} & \texttt{ReviewResponse} & Reply of the reviewed party to a review (at most one per review).
+\newline \textbullet~\textbf{Primary keys:} \texttt{id}
+\newline \textbullet~\textbf{Foreign keys:} \texttt{reviewId} $\rightarrow$ \texttt{Review}, \texttt{userId} $\rightarrow$ \texttt{User} \\ \hline
+\texttt{54} & \texttt{ForumCategory} & Forum category: slug, name, description and soft-delete support.
+\newline \textbullet~\textbf{Primary keys:} \texttt{id}
+\newline \textbullet~\textbf{Foreign keys:} --- \\ \hline
+\texttt{55} & \texttt{ForumPost} & Forum post: title, content, author, category, moderation status, AI score, reviewer and soft-delete support.
+\newline \textbullet~\textbf{Primary keys:} \texttt{id}
+\newline \textbullet~\textbf{Foreign keys:} \texttt{categoryId} $\rightarrow$ \texttt{ForumCategory}, \texttt{userId} $\rightarrow$ \texttt{User}, \texttt{reviewedById} $\rightarrow$ \texttt{User} \\ \hline
+\texttt{56} & \texttt{ForumComment} & Comment on a forum post; comments are one level deep and can be soft-deleted. Review metadata is stored when an administrator moderates the comment.
+\newline \textbullet~\textbf{Primary keys:} \texttt{id}
+\newline \textbullet~\textbf{Foreign keys:} \texttt{postId} $\rightarrow$ \texttt{ForumPost}, \texttt{userId} $\rightarrow$ \texttt{User}, \texttt{reviewedById} $\rightarrow$ \texttt{User} \\ \hline
+\texttt{57} & \texttt{ForumLike} & Reaction of a member on a post or a comment; a member can like a target only once.
+\newline \textbullet~\textbf{Primary keys:} \texttt{id}
+\newline \textbullet~\textbf{Foreign keys:} \texttt{userId} $\rightarrow$ \texttt{User}, \texttt{postId} $\rightarrow$ \texttt{ForumPost}, \texttt{commentId} $\rightarrow$ \texttt{ForumComment} \\ \hline
+\texttt{58} & \texttt{ForumReport} & Content report filed by a member: reason, status and the administrator who handled it.
+\newline \textbullet~\textbf{Primary keys:} \texttt{id}
+\newline \textbullet~\textbf{Foreign keys:} \texttt{reporterId} $\rightarrow$ \texttt{User}, \texttt{postId} $\rightarrow$ \texttt{ForumPost}, \texttt{commentId} $\rightarrow$ \texttt{ForumComment}, \texttt{adminId} $\rightarrow$ \texttt{User} \\ \hline
+\texttt{59} & \texttt{Notification} & In-app notification of an account: type, title, body, target link and read state.
+\newline \textbullet~\textbf{Primary keys:} \texttt{id}
+\newline \textbullet~\textbf{Foreign keys:} \texttt{userId} $\rightarrow$ \texttt{User} \\ \hline
+\texttt{60} & \texttt{AnnouncementBanner} & Platform announcement shown in the application: message, link, display window, active flag and soft delete.
+\newline \textbullet~\textbf{Primary keys:} \texttt{id}
+\newline \textbullet~\textbf{Foreign keys:} --- \\ \hline
+\texttt{61} & \texttt{ModerationQueue} & Queue of AI-flagged or user-reported content waiting for an administrator decision, with the item type (\texttt{contentType}), target identifier, reason, status, handling administrator and action taken.
+\newline \textbullet~\textbf{Primary keys:} \texttt{id}
+\newline \textbullet~\textbf{Foreign keys:} \texttt{reporterId} $\rightarrow$ \texttt{User}, \texttt{adminId} $\rightarrow$ \texttt{User} \\ \hline
+\texttt{62} & \texttt{SystemSetting} & Platform-wide configuration values stored as key/value rows.
+\newline \textbullet~\textbf{Primary keys:} \texttt{id}
+\newline \textbullet~\textbf{Foreign keys:} --- \\ \hline
+\texttt{63} & \texttt{BannedKeyword} & Reserved keyword table in the schema, currently unexposed by the application API.
+\newline \textbullet~\textbf{Primary keys:} \texttt{id}
+\newline \textbullet~\textbf{Foreign keys:} \texttt{createdBy} $\rightarrow$ \texttt{User} \\ \hline
+\texttt{64} & \texttt{AdvertisementBanner} & Advertising banner with title, image URL, target URL, position, schedule and active flag.
+\newline \textbullet~\textbf{Primary keys:} \texttt{id}
+\newline \textbullet~\textbf{Foreign keys:} --- \\ \hline
+\texttt{65} & \texttt{FavoriteFreelancer} & Freelancers marked as favourite by a client account.
+\newline \textbullet~\textbf{Primary keys:} \texttt{clientId}, \texttt{freelancerId}
+\newline \textbullet~\textbf{Foreign keys:} \texttt{clientId} $\rightarrow$ \texttt{User}, \texttt{freelancerId} $\rightarrow$ \texttt{User} \\ \hline
+\texttt{66} & \texttt{FollowFreelancer} & Follow relationship between two accounts, used by the activity feed.
+\newline \textbullet~\textbf{Primary keys:} \texttt{clientId}, \texttt{freelancerId}
+\newline \textbullet~\textbf{Foreign keys:} \texttt{clientId} $\rightarrow$ \texttt{User}, \texttt{freelancerId} $\rightarrow$ \texttt{User} \\ \hline
+\texttt{67} & \texttt{PortfolioLike} & Like given on a portfolio item.
+\newline \textbullet~\textbf{Primary keys:} \texttt{userId}, \texttt{portfolioItemId}
+\newline \textbullet~\textbf{Foreign keys:} \texttt{userId} $\rightarrow$ \texttt{User}, \texttt{portfolioItemId} $\rightarrow$ \texttt{PortfolioItem} \\ \hline
+\texttt{68} & \texttt{ProjectProgressUpdate} & Progress note posted by the freelancer on a contract, with the update timestamp.
+\newline \textbullet~\textbf{Primary keys:} \texttt{id}
+\newline \textbullet~\textbf{Foreign keys:} \texttt{contractId} $\rightarrow$ \texttt{Contract}, \texttt{freelancerId} $\rightarrow$ \texttt{User} \\ \hline
+\texttt{69} & \texttt{SharedFile} & File shared in the workspace of a contract (both parties can upload and read).
+\newline \textbullet~\textbf{Primary keys:} \texttt{id}
+\newline \textbullet~\textbf{Foreign keys:} \texttt{contractId} $\rightarrow$ \texttt{Contract}, \texttt{uploaderId} $\rightarrow$ \texttt{User} \\ \hline
+\texttt{70} & \texttt{Conversation} & Direct conversation between two accounts, storing per-participant hide/pin timestamps and soft-delete support.
+\newline \textbullet~\textbf{Primary keys:} \texttt{id}
+\newline \textbullet~\textbf{Foreign keys:} \texttt{participant1} $\rightarrow$ \texttt{User}, \texttt{participant2} $\rightarrow$ \texttt{User} \\ \hline
+\texttt{71} & \texttt{DirectMessage} & Message of a conversation: sender, content, attachments, read state, recall (soft delete) flag and timestamp.
+\newline \textbullet~\textbf{Primary keys:} \texttt{id}
+\newline \textbullet~\textbf{Foreign keys:} \texttt{conversationId} $\rightarrow$ \texttt{Conversation}, \texttt{senderId} $\rightarrow$ \texttt{User} \\ \hline
+\end{longtable}
+}
+
+% ========================================================
+% 2.2 Module entity-relationship diagrams
+% One figure per functional module of Report 3 (ERD1 .. ERD22).
+% Source: database_design/ERD-ERD<n>.drawio
+%         -> images/database/erd-<nn>.svg -> erd-<nn>.pdf (tools/svg2pdf.js)
+% ========================================================
+\subsection{Module Entity--Relationship Diagrams}
+\label{sec:db:module-erds}
+
+\subsubsection{ERD1 --- Authentication \& Sessions}
+
+This ERD describes the Authentication \& Sessions module. It stores account identities, one-time verification codes, device sessions, OAuth links, two-factor authentication settings, and user preferences. User is the root account table and links to Role and Profile. VerificationCode supports registration, email verification, and password reset. Session stores refresh tokens and device information for each login. OauthAccount links Google login to a User. TwoFactorAuth stores the TOTP secret and enabled flag. UserSetting stores theme, language, and notification preferences. These tables support registration, login, logout, password reset, session revocation, Google OAuth, and 2FA.
+
+\kfig{0.95\textwidth}{images/database/erd-01}{ERD1 --- Authentication \& Sessions}{fig:db:erd1}
+
+\subsubsection{ERD2 --- Role-Based Access Control}
+
+This ERD describes the Role-Based Access Control module. It stores roles, permissions, role-permission assignments, and user-role assignments. Role defines a named role; Permission defines a route-level permission; RolePermission links permissions to roles; UserRole links users to roles. These tables support RBAC guards, permission checks, and role switching without redeployment.
+
+\kfig{0.95\textwidth}{images/database/erd-02}{ERD2 --- Role-Based Access Control}{fig:db:erd2}
+
+\subsubsection{ERD3 --- Profile Core}
+
+This ERD describes the Profile Core module. It stores base profiles and role-specific profile extensions. Profile contains common display information; FreelancerProfile stores professional data; ClientProfile stores company data; Expert publishes expert directory entries; FreelancerSkill links freelancers to skills with proficiency. These tables support profile viewing/editing, freelancer/client/expert profiles, skills, and profile completion.
+
+\kfig{0.95\textwidth}{images/database/erd-03}{ERD3 --- Profile Core}{fig:db:erd3}
+
+\subsubsection{ERD4 --- Profile History \& Social Links}
+
+This ERD describes the Profile History \& Social Links module. It stores profile revisions, portfolio items, CV analysis, experience, education, document processing jobs, embedding records, recommendations, embedding outbox events, social links, identity documents, and profile visit logs. The CV-analysis and embedding tables were added to support AI CV processing, vector indexing and job--CV recommendation; they are linked to \texttt{FreelancerProfile} or \texttt{User} and do not change the existing profile-revision and social-link relationships. These tables support profile revision review, portfolio, CV processing, recommendations, social links, identity verification, and profile visit tracking.
+
+\kfig{0.95\textwidth}{images/database/erd-04}{ERD4 --- Profile History \& Social Links}{fig:db:erd4}
+
+\subsubsection{ERD5 --- Identity Verification \& Profile Visits}
+
+This ERD describes the Identity Verification \& Profile Visits module. It stores identity verification documents and profile visit logs. These tables support eKYC document upload/review and tracking profile views.
+
+\kfig{0.95\textwidth}{images/database/erd-05}{ERD5 --- Identity Verification \& Profile Visits}{fig:db:erd5}
+
+\subsubsection{ERD6 --- Portfolio \& Skills}
+
+This ERD describes the Portfolio \& Skills module. It stores portfolio items, freelancer skills, skill catalog, and portfolio likes. These tables support portfolio management, skill catalog, skill proficiency, and liking portfolios.
+
+\kfig{0.95\textwidth}{images/database/erd-06}{ERD6 --- Portfolio \& Skills}{fig:db:erd6}
+
+\subsubsection{ERD7 --- Favorites \& Follows}
+
+This ERD describes the Favorites \& Follows module. It stores favorite freelancer and follow relationships. These tables support bookmarking favorite freelancers and managing follow relationships.
+
+\kfig{0.95\textwidth}{images/database/erd-07}{ERD7 --- Favorites \& Follows}{fig:db:erd7}
+
+\subsubsection{ERD8 --- Job Posting}
+
+This ERD describes the Job Posting module. It stores job categories, jobs, job-category links, and job-skill links. These tables support creating, editing, publishing, closing, and categorizing jobs.
+
+\kfig{0.95\textwidth}{images/database/erd-08}{ERD8 --- Job Posting}{fig:db:erd8}
+
+\subsubsection{ERD9 --- Job Discovery \& Alerts}
+
+This ERD describes the Job Discovery \& Alerts module. It stores job bookmarks, recently viewed jobs, saved searches, and job alerts. These tables support browsing, bookmarking, saved filters, and alert notifications.
+
+\kfig{0.95\textwidth}{images/database/erd-09}{ERD9 --- Job Discovery \& Alerts}{fig:db:erd9}
+
+\subsubsection{ERD10 --- Proposal}
+
+This ERD describes the Proposal module. It stores proposals and proposal attachments. These tables support submitting, updating, withdrawing, accepting, and rejecting proposals.
+
+\kfig{0.95\textwidth}{images/database/erd-10}{ERD10 --- Proposal}{fig:db:erd10}
+
+\subsubsection{ERD11 --- Contract}
+
+This ERD describes the Contract module. It stores contracts and contract term templates. These tables support contract creation, signing, cancellation, terms, and status management.
+
+\kfig{0.95\textwidth}{images/database/erd-11}{ERD11 --- Contract}{fig:db:erd11}
+
+\subsubsection{ERD12 --- Milestone \& Project Progress}
+
+This ERD describes the Milestone \& Project Progress module. It stores milestones and project progress updates. These tables support milestone creation, updates, progress tracking, and client/freelancer collaboration.
+
+\kfig{0.95\textwidth}{images/database/erd-12}{ERD12 --- Milestone \& Project Progress}{fig:db:erd12}
+
+\subsubsection{ERD13 --- Milestone Submission}
+
+This ERD describes the Milestone Submission module. It stores milestone files, submissions, and submission files. These tables support uploading deliverables, submitting milestones, and reviewing submissions.
+
+\kfig{0.95\textwidth}{images/database/erd-13}{ERD13 --- Milestone Submission}{fig:db:erd13}
+
+\subsubsection{ERD14 --- Escrow, Payments \& Certificates}
+
+This ERD describes the Escrow, Payments \& Certificates module. It stores invoices, certificates, and transactions. These tables support funding, releasing, refunding, platform fees, payout tracking, and completion certificates.
+
+\kfig{0.95\textwidth}{images/database/erd-14}{ERD14 --- Escrow, Payments \& Certificates}{fig:db:erd14}
+
+\subsubsection{ERD15 --- Dispute Core}
+
+This ERD describes the Dispute Core module. It stores disputes and dispute fees. These tables support opening disputes and charging dispute fees.
+
+\kfig{0.95\textwidth}{images/database/erd-15}{ERD15 --- Dispute Core}{fig:db:erd15}
+
+\subsubsection{ERD16 --- Dispute Resolution}
+
+This ERD describes the Dispute Resolution module. It stores dispute evidence and decision reviews. These tables support evidence submission and review of dispute decisions.
+
+\kfig{0.95\textwidth}{images/database/erd-16}{ERD16 --- Dispute Resolution}{fig:db:erd16}
+
+\subsubsection{ERD17 --- Reviews \& Reputation}
+
+This ERD describes the Reviews \& Reputation module. It stores reviews and review responses. These tables support rating contracts and responding to reviews.
+
+\kfig{0.95\textwidth}{images/database/erd-17}{ERD17 --- Reviews \& Reputation}{fig:db:erd17}
+
+\subsubsection{ERD18 --- Forum Posts \& Comments}
+
+This ERD describes the Forum Posts \& Comments module. It stores forum categories, posts, and comments. These tables support forum discussions and moderation.
+
+\kfig{0.95\textwidth}{images/database/erd-18}{ERD18 --- Forum Posts \& Comments}{fig:db:erd18}
+
+\subsubsection{ERD19 --- Forum Likes}
+
+This ERD describes the Forum Likes module. It stores likes on posts and comments. These tables support reactions.
+
+\kfig{0.95\textwidth}{images/database/erd-19}{ERD19 --- Forum Likes}{fig:db:erd19}
+
+\subsubsection{ERD20 --- Forum Reports \& Moderation}
+
+This ERD describes the Forum Reports \& Moderation module. It stores forum reports, moderation queue, and banned keywords. These tables support reporting content and admin moderation.
+
+\kfig{0.95\textwidth}{images/database/erd-20}{ERD20 --- Forum Reports \& Moderation}{fig:db:erd20}
+
+\subsubsection{ERD21 --- Messaging \& Notifications}
+
+This ERD describes the Messaging \& Notifications module. It stores notifications, conversations, and direct messages. These tables support real-time chat and in-app notifications.
+
+\kfig{0.95\textwidth}{images/database/erd-21}{ERD21 --- Messaging \& Notifications}{fig:db:erd21}
+
+\subsubsection{ERD22 --- Administration \& System}
+
+This ERD describes the Administration \& System module. It stores announcement banners, system settings, and advertisement banners. These tables support admin configuration and banners.
+
+\kfig{0.95\textwidth}{images/database/erd-22}{ERD22 --- Administration \& System}{fig:db:erd22}
+
+\section{Detailed Design}
+
+\subsection{Job Management}
+
+Job Management enables clients to manage their posted jobs throughout their lifecycle, including creating new jobs, editing job parameters, publishing drafts, closing completed or cancelled jobs, and soft-deleting job postings.
+
+\subsubsection{UC-11.01 -- View My Jobs}
+
+\paragraph*{a. Class diagram}
+\kfig{0.92\textwidth}{images/sprint1/ptai/class-diagrams/UC-11_Job_Management_Class_Diagram}{Class diagram of UC-11.01 View My Jobs}{fig:ptai-cls-uc-11-01}
+
+\paragraph*{b. Sequence diagram}
+\kfig{0.78\textwidth}{images/sprint1/ptai/UC-11.01_-_View_My_Jobs}{Sequence diagram of UC-11.01 View My Jobs}{fig:ptai-seq-uc-11-01}
+
+\subsubsection{UC-11.02 -- Create Job}
+
+\paragraph*{a. Class diagram}
+\kfig{0.92\textwidth}{images/sprint1/ptai/class-diagrams/UC-11_Job_Management_Class_Diagram}{Class diagram of UC-11.02 Create Job}{fig:ptai-cls-uc-11-02}
+
+\paragraph*{b. Sequence diagram}
+\kfig{0.78\textwidth}{images/sprint1/ptai/UC-11.02_-_Create_Job}{Sequence diagram of UC-11.02 Create Job}{fig:ptai-seq-uc-11-02}
+
+\subsubsection{UC-11.03 -- Publish Job}
+
+\paragraph*{a. Class diagram}
+\kfig{0.92\textwidth}{images/sprint1/ptai/class-diagrams/UC-11_Job_Management_Class_Diagram}{Class diagram of UC-11.03 Publish Job}{fig:ptai-cls-uc-11-03}
+
+\paragraph*{b. Sequence diagram}
+\kfig{0.78\textwidth}{images/sprint1/ptai/UC-11.03_-_Publish_Job}{Sequence diagram of UC-11.03 Publish Job}{fig:ptai-seq-uc-11-03}
+
+\subsubsection{UC-11.04 -- Update Job}
+
+\paragraph*{a. Class diagram}
+\kfig{0.92\textwidth}{images/sprint1/ptai/class-diagrams/UC-11_Job_Management_Class_Diagram}{Class diagram of UC-11.04 Update Job}{fig:ptai-cls-uc-11-04}
+
+\paragraph*{b. Sequence diagram}
+\kfig{0.78\textwidth}{images/sprint1/ptai/UC-11.04_-_Update_Job}{Sequence diagram of UC-11.04 Update Job}{fig:ptai-seq-uc-11-04}
+
+\subsubsection{UC-11.05 -- Delete Job}
+
+\paragraph*{a. Class diagram}
+\kfig{0.92\textwidth}{images/sprint1/ptai/class-diagrams/UC-11_Job_Management_Class_Diagram}{Class diagram of UC-11.05 Delete Job}{fig:ptai-cls-uc-11-05}
+
+\paragraph*{b. Sequence diagram}
+\kfig{0.78\textwidth}{images/sprint1/ptai/UC-11.05_-_Delete_Job}{Sequence diagram of UC-11.05 Delete Job}{fig:ptai-seq-uc-11-05}
+
+\subsubsection{UC-11.06 -- Close Job}
+
+\paragraph*{a. Class diagram}
+\kfig{0.92\textwidth}{images/sprint1/ptai/class-diagrams/UC-11_Job_Management_Class_Diagram}{Class diagram of UC-11.06 Close Job}{fig:ptai-cls-uc-11-06}
+
+\paragraph*{b. Sequence diagram}
+\kfig{0.78\textwidth}{images/sprint1/ptai/UC-11.06_-_Close_Job}{Sequence diagram of UC-11.06 Close Job}{fig:ptai-seq-uc-11-06}
+
+\subsubsection{UC-11.07 -- Reopen Job}
+
+\paragraph*{a. Class diagram}
+\kfig{0.92\textwidth}{images/sprint1/ptai/class-diagrams/UC-11_Job_Management_Class_Diagram}{Class diagram of UC-11.07 Reopen Job}{fig:ptai-cls-uc-11-07}
+
+\paragraph*{b. Sequence diagram}
+\kfig{0.78\textwidth}{images/sprint1/ptai/UC-11.07_-_Reopen_Job}{Sequence diagram of UC-11.07 Reopen Job}{fig:ptai-seq-uc-11-07}
+
+\subsection{Proposal Management}
+
+Proposal Management covers the full proposal workflow between freelancers and clients. Freelancers can submit proposals with cover letters, bid amounts, and delivery estimates, view their submitted proposals, modify pending proposals, or withdraw them. Clients can view all proposals submitted for their jobs, inspect detailed freelancer bids, and accept or reject proposals to initiate contracting.
+
+\subsubsection{UC-32.01 -- View My Proposals List}
+
+\paragraph*{a. Class diagram}
+\kfig{0.92\textwidth}{images/sprint3/ptai/class-diagrams/UC-32_Freelancer_Proposal_Management_Class_Diagram}{Class diagram of UC-32.01 View My Proposals List}{fig:ptai-cls-uc-32-01}
+
+\paragraph*{b. Sequence diagram}
+\kfig{0.78\textwidth}{images/sprint3/ptai/UC-32.01_-_View_My_Proposal_List}{Sequence diagram of UC-32.01 View My Proposals List}{fig:ptai-seq-uc-32-01}
+
+\subsubsection{UC-32.02 -- View My Proposal Details}
+
+\paragraph*{a. Class diagram}
+\kfig{0.92\textwidth}{images/sprint3/ptai/class-diagrams/UC-32_Freelancer_Proposal_Management_Class_Diagram}{Class diagram of UC-32.02 View My Proposal Details}{fig:ptai-cls-uc-32-02}
+
+\paragraph*{b. Sequence diagram}
+\kfig{0.78\textwidth}{images/sprint3/ptai/UC-32.02_-_View_My_Proposal_Detail}{Sequence diagram of UC-32.02 View My Proposal Details}{fig:ptai-seq-uc-32-02}
+
+\subsubsection{UC-32.03 -- Submit Proposal}
+
+\paragraph*{a. Class diagram}
+\kfig{0.92\textwidth}{images/sprint3/ptai/class-diagrams/UC-32_Freelancer_Proposal_Management_Class_Diagram}{Class diagram of UC-32.03 Submit Proposal}{fig:ptai-cls-uc-32-03}
+
+\paragraph*{b. Sequence diagram}
+\kfig{0.78\textwidth}{images/sprint3/ptai/UC-32.03_-_Submit_Proposal}{Sequence diagram of UC-32.03 Submit Proposal}{fig:ptai-seq-uc-32-03}
+
+\subsubsection{UC-32.04 -- Update Proposal}
+
+\paragraph*{a. Class diagram}
+\kfig{0.92\textwidth}{images/sprint3/ptai/class-diagrams/UC-32_Freelancer_Proposal_Management_Class_Diagram}{Class diagram of UC-32.04 Update Proposal}{fig:ptai-cls-uc-32-04}
+
+\paragraph*{b. Sequence diagram}
+\kfig{0.78\textwidth}{images/sprint3/ptai/UC-32.04_-_Update_Proposal}{Sequence diagram of UC-32.04 Update Proposal}{fig:ptai-seq-uc-32-04}
+
+\subsubsection{UC-32.05 -- Withdraw Proposal}
+
+\paragraph*{a. Class diagram}
+\kfig{0.92\textwidth}{images/sprint3/ptai/class-diagrams/UC-32_Freelancer_Proposal_Management_Class_Diagram}{Class diagram of UC-32.05 Withdraw Proposal}{fig:ptai-cls-uc-32-05}
+
+\paragraph*{b. Sequence diagram}
+\kfig{0.78\textwidth}{images/sprint3/ptai/UC-32.05_-_Withdraw_Proposal}{Sequence diagram of UC-32.05 Withdraw Proposal}{fig:ptai-seq-uc-32-05}
+
+\subsubsection{UC-32.06 -- Accept Proposal}
+
+\paragraph*{a. Class diagram}
+\kfig{0.92\textwidth}{images/sprint3/ptai/class-diagrams/UC-32_Client_Proposal_Management_Class_Diagram}{Class diagram of UC-32.06 Accept Proposal}{fig:ptai-cls-uc-32-06}
+
+\paragraph*{b. Sequence diagram}
+\kfig{0.78\textwidth}{images/sprint3/ptai/UC-32.06_-_Accept_Proposal}{Sequence diagram of UC-32.06 Accept Proposal}{fig:ptai-seq-uc-32-06}
+
+\subsubsection{UC-32.07 -- Reject Proposal}
+
+\paragraph*{a. Class diagram}
+\kfig{0.92\textwidth}{images/sprint3/ptai/class-diagrams/UC-32_Client_Proposal_Management_Class_Diagram}{Class diagram of UC-32.07 Reject Proposal}{fig:ptai-cls-uc-32-07}
+
+\paragraph*{b. Sequence diagram}
+\kfig{0.78\textwidth}{images/sprint3/ptai/UC-32.07_-_Reject_Proposal}{Sequence diagram of UC-32.07 Reject Proposal}{fig:ptai-seq-uc-32-07}
+
+\subsubsection{UC-32.08 -- View Job Proposals List}
+
+\paragraph*{a. Class diagram}
+\kfig{0.92\textwidth}{images/sprint3/ptai/class-diagrams/UC-32_Client_Proposal_Management_Class_Diagram}{Class diagram of UC-32.08 View Job Proposals List}{fig:ptai-cls-uc-32-08}
+
+\paragraph*{b. Sequence diagram}
+\kfig{0.78\textwidth}{images/sprint3/ptai/UC-32.08_-_View_Job_Proposal_List}{Sequence diagram of UC-32.08 View Job Proposals List}{fig:ptai-seq-uc-32-08}
+
+\subsubsection{UC-32.09 -- View Proposal Details}
+
+\paragraph*{a. Class diagram}
+\kfig{0.92\textwidth}{images/sprint3/ptai/class-diagrams/UC-32_Client_Proposal_Management_Class_Diagram}{Class diagram of UC-32.09 View Proposal Details}{fig:ptai-cls-uc-32-09}
+
+\paragraph*{b. Sequence diagram}
+\kfig{0.78\textwidth}{images/sprint3/ptai/UC-32.09_-_View_Proposal_Detail}{Sequence diagram of UC-32.09 View Proposal Details}{fig:ptai-seq-uc-32-09}
+
+\subsection{Contract Management}
+
+The Contract Management module governs the legal and operational agreement between clients and freelancers. It encompasses the complete lifecycle of fixed-price and milestone-based contracts, from initial offer generation, scope negotiation, and bilateral digital signature, through PDF contract export, file attachment sharing, and contract lifecycle termination (completion, cancellation, or rejection).
+
+\subsubsection{UC-13.01 -- Create Contract}
+
+\paragraph*{a. Class diagram}
+\kfig{0.92\textwidth}{images/sprint1/ntin/classDiagram/ContractManagement}{Class diagram of UC-13.01 Create Contract}{fig:ntin-cls-uc-13-01}
+
+\paragraph*{b. Sequence diagram}
+\kfig{0.78\textwidth}{images/sprint1/ntin/sequences/UC-13.01-create-contract}{Sequence diagram of UC-13.01 Create Contract}{fig:ntin-seq-uc-13-01}
+
+\subsubsection{UC-13.02 -- Update Contract}
+
+\paragraph*{a. Class diagram}
+\kfig{0.92\textwidth}{images/sprint1/ntin/classDiagram/ContractManagement}{Class diagram of UC-13.02 Update Contract}{fig:ntin-cls-uc-13-02}
+
+\paragraph*{b. Sequence diagram}
+\kfig{0.78\textwidth}{images/sprint1/ntin/sequences/UC-13.02-update-contract}{Sequence diagram of UC-13.02 Update Contract}{fig:ntin-seq-uc-13-02}
+
+\subsubsection{UC-13.03 -- Complete Contract}
+
+\paragraph*{a. Class diagram}
+\kfig{0.92\textwidth}{images/sprint1/ntin/classDiagram/ContractManagement}{Class diagram of UC-13.03 Complete Contract}{fig:ntin-cls-uc-13-03}
+
+\paragraph*{b. Sequence diagram}
+\kfig{0.78\textwidth}{images/sprint1/ntin/sequences/UC-13.03-complete-contract}{Sequence diagram of UC-13.03 Complete Contract}{fig:ntin-seq-uc-13-03}
+
+\subsubsection{UC-13.04 -- View Contracts List}
+
+\paragraph*{a. Class diagram}
+\kfig{0.92\textwidth}{images/sprint1/ntin/classDiagram/ContractManagement}{Class diagram of UC-13.04 View Contracts List}{fig:ntin-cls-uc-13-04}
+
+\paragraph*{b. Sequence diagram}
+\kfig{0.78\textwidth}{images/sprint1/ntin/sequences/UC-13.04-view-contract-list}{Sequence diagram of UC-13.04 View Contracts List}{fig:ntin-seq-uc-13-04}
+
+\subsubsection{UC-13.05 -- View Contract Details}
+
+\paragraph*{a. Class diagram}
+\kfig{0.92\textwidth}{images/sprint1/ntin/classDiagram/ContractManagement}{Class diagram of UC-13.05 View Contract Details}{fig:ntin-cls-uc-13-05}
+
+\paragraph*{b. Sequence diagram}
+\kfig{0.78\textwidth}{images/sprint1/ntin/sequences/UC-13.05-view-contract-detail}{Sequence diagram of UC-13.05 View Contract Details}{fig:ntin-seq-uc-13-05}
+
+\subsubsection{UC-13.06 -- Sign Contract}
+
+\paragraph*{a. Class diagram}
+\kfig{0.92\textwidth}{images/sprint1/ntin/classDiagram/ContractManagement}{Class diagram of UC-13.06 Sign Contract}{fig:ntin-cls-uc-13-06}
+
+\paragraph*{b. Sequence diagram}
+\kfig{0.78\textwidth}{images/sprint1/ntin/sequences/UC-13.06-sign-contract}{Sequence diagram of UC-13.06 Sign Contract}{fig:ntin-seq-uc-13-06}
+
+\subsubsection{UC-13.07 -- Export Contract PDF}
+
+\paragraph*{a. Class diagram}
+\kfig{0.92\textwidth}{images/sprint1/ntin/classDiagram/ContractManagement}{Class diagram of UC-13.07 Export Contract PDF}{fig:ntin-cls-uc-13-07}
+
+\paragraph*{b. Sequence diagram}
+\kfig{0.78\textwidth}{images/sprint1/ntin/sequences/UC-13.07-export-contract-pdf}{Sequence diagram of UC-13.07 Export Contract PDF}{fig:ntin-seq-uc-13-07}
+
+\subsubsection{UC-13.08 -- Cancel Contract}
+
+\paragraph*{a. Class diagram}
+\kfig{0.92\textwidth}{images/sprint1/ntin/classDiagram/ContractManagement}{Class diagram of UC-13.08 Cancel Contract}{fig:ntin-cls-uc-13-08}
+
+\paragraph*{b. Sequence diagram}
+\kfig{0.78\textwidth}{images/sprint1/ntin/sequences/UC-13.08-cancel-contract}{Sequence diagram of UC-13.08 Cancel Contract}{fig:ntin-seq-uc-13-08}
+
+\subsubsection{UC-13.09 -- View Contract Files}
+
+\paragraph*{a. Class diagram}
+\kfig{0.92\textwidth}{images/sprint1/ntin/classDiagram/ContractManagement}{Class diagram of UC-13.09 View Contract Files}{fig:ntin-cls-uc-13-09}
+
+\paragraph*{b. Sequence diagram}
+\kfig{0.78\textwidth}{images/sprint1/ntin/sequences/UC-13.09-view-contract-files}{Sequence diagram of UC-13.09 View Contract Files}{fig:ntin-seq-uc-13-09}
+
+\subsubsection{UC-13.10 -- Upload Contract File}
+
+\paragraph*{a. Class diagram}
+\kfig{0.92\textwidth}{images/sprint1/ntin/classDiagram/ContractManagement}{Class diagram of UC-13.10 Upload Contract File}{fig:ntin-cls-uc-13-10}
+
+\paragraph*{b. Sequence diagram}
+\kfig{0.78\textwidth}{images/sprint1/ntin/sequences/UC-13.10-upload-contract-file}{Sequence diagram of UC-13.10 Upload Contract File}{fig:ntin-seq-uc-13-10}
+
+\subsubsection{UC-13.11 -- Delete Contract File}
+
+\paragraph*{a. Class diagram}
+\kfig{0.92\textwidth}{images/sprint1/ntin/classDiagram/ContractManagement}{Class diagram of UC-13.11 Delete Contract File}{fig:ntin-cls-uc-13-11}
+
+\paragraph*{b. Sequence diagram}
+\kfig{0.78\textwidth}{images/sprint1/ntin/sequences/UC-13.11-delete-contract-file}{Sequence diagram of UC-13.11 Delete Contract File}{fig:ntin-seq-uc-13-11}
+
+\subsubsection{UC-13.12 -- Reject Contract Offer}
+
+\paragraph*{a. Class diagram}
+\kfig{0.92\textwidth}{images/sprint1/ntin/classDiagram/ContractManagement}{Class diagram of UC-13.12 Reject Contract Offer}{fig:ntin-cls-uc-13-12}
+
+\paragraph*{b. Sequence diagram}
+\kfig{0.78\textwidth}{images/sprint1/ntin/sequences/UC-13.12-reject-contract-offer}{Sequence diagram of UC-13.12 Reject Contract Offer}{fig:ntin-seq-uc-13-12}
+
+\subsection{Payment Management}
+
+The Payment Management module integrates Stripe to support escrow protection, customer payment tokenization, pre-authorized contract hold deposits, and automated freelancer disbursements. It enables freelancers to link verified bank accounts via Stripe Connect Express, clients to manage payment methods, milestone escrow funding via hosted Checkout or saved cards, and automated escrow payout release upon deliverable acceptance. Real-time reconciliation routines and cryptographic webhook listeners ensure distributed ledger consistency.
+
+\subsubsection{UC-43.01 -- Connect Stripe Account}
+
+\paragraph*{a. Class diagram}
+\kfig{0.92\textwidth}{images/sprint4/ntin/classDiagram/PaymentManagement}{Class diagram of UC-43.01 Connect Stripe Account}{fig:ntin-cls-uc-43-01}
+
+\paragraph*{b. Sequence diagram}
+\kfig{0.78\textwidth}{images/sprint4/ntin/sequences/UC-43.01-connect-stripe-account}{Sequence diagram of UC-43.01 Connect Stripe Account}{fig:ntin-seq-uc-43-01}
+
+\subsubsection{UC-43.02 -- Check Stripe Connect Status}
+
+\paragraph*{a. Class diagram}
+\kfig{0.92\textwidth}{images/sprint4/ntin/classDiagram/PaymentManagement}{Class diagram of UC-43.02 Check Stripe Connect Status}{fig:ntin-cls-uc-43-02}
+
+\paragraph*{b. Sequence diagram}
+\kfig{0.78\textwidth}{images/sprint4/ntin/sequences/UC-43.02-check-stripe-connect-status}{Sequence diagram of UC-43.02 Check Stripe Connect Status}{fig:ntin-seq-uc-43-02}
+
+\subsubsection{UC-43.03 -- View Saved Payment Methods}
+
+\paragraph*{a. Class diagram}
+\kfig{0.92\textwidth}{images/sprint4/ntin/classDiagram/PaymentManagement}{Class diagram of UC-43.03 View Saved Payment Methods}{fig:ntin-cls-uc-43-03}
+
+\paragraph*{b. Sequence diagram}
+\kfig{0.78\textwidth}{images/sprint4/ntin/sequences/UC-43.03-view-saved-payment-methods}{Sequence diagram of UC-43.03 View Saved Payment Methods}{fig:ntin-seq-uc-43-03}
+
+\subsubsection{UC-43.04 -- Set Default Payment Method}
+
+\paragraph*{a. Class diagram}
+\kfig{0.92\textwidth}{images/sprint4/ntin/classDiagram/PaymentManagement}{Class diagram of UC-43.04 Set Default Payment Method}{fig:ntin-cls-uc-43-04}
+
+\paragraph*{b. Sequence diagram}
+\kfig{0.78\textwidth}{images/sprint4/ntin/sequences/UC-43.04-set-default-payment-method}{Sequence diagram of UC-43.04 Set Default Payment Method}{fig:ntin-seq-uc-43-04}
+
+\subsubsection{UC-43.05 -- Remove Saved Payment Method}
+
+\paragraph*{a. Class diagram}
+\kfig{0.92\textwidth}{images/sprint4/ntin/classDiagram/PaymentManagement}{Class diagram of UC-43.05 Remove Saved Payment Method}{fig:ntin-cls-uc-43-05}
+
+\paragraph*{b. Sequence diagram}
+\kfig{0.78\textwidth}{images/sprint4/ntin/sequences/UC-43.05-remove-saved-payment-method}{Sequence diagram of UC-43.05 Remove Saved Payment Method}{fig:ntin-seq-uc-43-05}
+
+\subsubsection{UC-43.06 -- Create Contract Hold Deposit Intent}
+
+\paragraph*{a. Class diagram}
+\kfig{0.92\textwidth}{images/sprint4/ntin/classDiagram/PaymentManagement}{Class diagram of UC-43.06 Create Contract Hold Deposit Intent}{fig:ntin-cls-uc-43-06}
+
+\paragraph*{b. Sequence diagram}
+\kfig{0.78\textwidth}{images/sprint4/ntin/sequences/UC-43.06-create-contract-hold-deposit-intent}{Sequence diagram of UC-43.06 Create Contract Hold Deposit Intent}{fig:ntin-seq-uc-43-06}
+
+\subsubsection{UC-43.07 -- Fund Milestone via Stripe Checkout}
+
+\paragraph*{a. Class diagram}
+\kfig{0.92\textwidth}{images/sprint4/ntin/classDiagram/PaymentManagement}{Class diagram of UC-43.07 Fund Milestone via Stripe Checkout}{fig:ntin-cls-uc-43-07}
+
+\paragraph*{b. Sequence diagram}
+\kfig{0.78\textwidth}{images/sprint4/ntin/sequences/UC-43.07-fund-milestone-via-stripe-checkout}{Sequence diagram of UC-43.07 Fund Milestone via Stripe Checkout}{fig:ntin-seq-uc-43-07}
+
+\subsubsection{UC-43.08 -- Fund Milestone with Saved Card}
+
+\paragraph*{a. Class diagram}
+\kfig{0.92\textwidth}{images/sprint4/ntin/classDiagram/PaymentManagement}{Class diagram of UC-43.08 Fund Milestone with Saved Card}{fig:ntin-cls-uc-43-08}
+
+\paragraph*{b. Sequence diagram}
+\kfig{0.78\textwidth}{images/sprint4/ntin/sequences/UC-43.08-fund-milestone-with-saved-card}{Sequence diagram of UC-43.08 Fund Milestone with Saved Card}{fig:ntin-seq-uc-43-08}
+
+\subsubsection{UC-43.09 -- Release Milestone Escrow Payment}
+
+\paragraph*{a. Class diagram}
+\kfig{0.92\textwidth}{images/sprint4/ntin/classDiagram/PaymentManagement}{Class diagram of UC-43.09 Release Milestone Escrow Payment}{fig:ntin-cls-uc-43-09}
+
+\paragraph*{b. Sequence diagram}
+\kfig{0.78\textwidth}{images/sprint4/ntin/sequences/UC-43.09-release-milestone-escrow-payment}{Sequence diagram of UC-43.09 Release Milestone Escrow Payment}{fig:ntin-seq-uc-43-09}
+
+\subsubsection{UC-43.10 -- View Payment Transactions History}
+
+\paragraph*{a. Class diagram}
+\kfig{0.92\textwidth}{images/sprint4/ntin/classDiagram/PaymentManagement}{Class diagram of UC-43.10 View Payment Transactions History}{fig:ntin-cls-uc-43-10}
+
+\paragraph*{b. Sequence diagram}
+\kfig{0.78\textwidth}{images/sprint4/ntin/sequences/UC-43.10-view-payment-transactions-history}{Sequence diagram of UC-43.10 View Payment Transactions History}{fig:ntin-seq-uc-43-10}
+
+\subsubsection{UC-43.11 -- Sync Payment Intent Status}
+
+\paragraph*{a. Class diagram}
+\kfig{0.92\textwidth}{images/sprint4/ntin/classDiagram/PaymentManagement}{Class diagram of UC-43.11 Sync Payment Intent Status}{fig:ntin-cls-uc-43-11}
+
+\paragraph*{b. Sequence diagram}
+\kfig{0.78\textwidth}{images/sprint4/ntin/sequences/UC-43.11-sync-payment-intent-status}{Sequence diagram of UC-43.11 Sync Payment Intent Status}{fig:ntin-seq-uc-43-11}
+
+\subsubsection{UC-43.12 -- Sync Checkout Session Status}
+
+\paragraph*{a. Class diagram}
+\kfig{0.92\textwidth}{images/sprint4/ntin/classDiagram/PaymentManagement}{Class diagram of UC-43.12 Sync Checkout Session Status}{fig:ntin-cls-uc-43-12}
+
+\paragraph*{b. Sequence diagram}
+\kfig{0.78\textwidth}{images/sprint4/ntin/sequences/UC-43.12-sync-checkout-session-status}{Sequence diagram of UC-43.12 Sync Checkout Session Status}{fig:ntin-seq-uc-43-12}
+
+\subsubsection{UC-43.13 -- Handle Stripe Webhook Events}
+
+\paragraph*{a. Class diagram}
+\kfig{0.92\textwidth}{images/sprint4/ntin/classDiagram/PaymentManagement}{Class diagram of UC-43.13 Handle Stripe Webhook Events}{fig:ntin-cls-uc-43-13}
+
+\paragraph*{b. Sequence diagram}
+\kfig{0.78\textwidth}{images/sprint4/ntin/sequences/UC-43.13-handle-stripe-webhook-events}{Sequence diagram of UC-43.13 Handle Stripe Webhook Events}{fig:ntin-seq-uc-43-13}
+
+\subsection{Manage ID Verification}
+
+Manage ID Verification covers the UC-35 identity review workflow: listing the
+submitted identity documents, opening a request with its uploaded file, and
+approving or rejecting the request. A decision updates the verification status
+and the reviewer of the identity document.
+
+\subsubsection{UC-35.01 -- View ID Verification Requests List}
+
+\paragraph*{a. Class diagram}
+\kfig{0.92\textwidth}{images/sprint3/kvy/classDiagram/ManageIDVerification}{Class diagram of UC-35.01 View ID Verification Requests List}{fig:kvy-cls-uc-35-01}
+
+\paragraph*{b. Sequence diagram}
+\kfig{0.78\textwidth}{images/sprint3/kvy/sequences/UC-35.01-view-id-verification-request-list}{Sequence diagram of UC-35.01 View ID Verification Requests List}{fig:kvy-seq-uc-35-01}
+
+\subsubsection{UC-35.02 -- View ID Verification Request Details}
+
+\paragraph*{a. Class diagram}
+\kfig{0.92\textwidth}{images/sprint3/kvy/classDiagram/ManageIDVerification}{Class diagram of UC-35.02 View ID Verification Request Details}{fig:kvy-cls-uc-35-02}
+
+\paragraph*{b. Sequence diagram}
+\kfig{0.78\textwidth}{images/sprint3/kvy/sequences/UC-35.02-view-id-verification-request-detail}{Sequence diagram of UC-35.02 View ID Verification Request Details}{fig:kvy-seq-uc-35-02}
+
+\subsubsection{UC-35.03 -- Approve ID Verification}
+
+\paragraph*{a. Class diagram}
+\kfig{0.92\textwidth}{images/sprint3/kvy/classDiagram/ManageIDVerification}{Class diagram of UC-35.03 Approve ID Verification}{fig:kvy-cls-uc-35-03}
+
+\paragraph*{b. Sequence diagram}
+\kfig{0.78\textwidth}{images/sprint3/kvy/sequences/UC-35.03-approve-id-verification}{Sequence diagram of UC-35.03 Approve ID Verification}{fig:kvy-seq-uc-35-03}
+
+\subsubsection{UC-35.04 -- Reject ID Verification}
+
+\paragraph*{a. Class diagram}
+\kfig{0.92\textwidth}{images/sprint3/kvy/classDiagram/ManageIDVerification}{Class diagram of UC-35.04 Reject ID Verification}{fig:kvy-cls-uc-35-04}
+
+\paragraph*{b. Sequence diagram}
+\kfig{0.78\textwidth}{images/sprint3/kvy/sequences/UC-35.04-reject-id-verification}{Sequence diagram of UC-35.04 Reject ID Verification}{fig:kvy-seq-uc-35-04}
+
+\subsection{Dispute Management}
+
+The Dispute Management module provides a formal conflict resolution framework for contracts experiencing scope deadlock, substandard deliverables, or unresponsiveness. Filing a claim immediately freezes milestone escrow funds from release or refund. Counterparties can submit formal rebuttals and resolution proposals, or escalate unresolved disputes to platform domain expert arbitrators who formulate binding settlement rulings.
+
+\subsubsection{UC-33.01 -- Open Dispute}
+
+\paragraph*{a. Class diagram}
+\kfig{0.92\textwidth}{images/sprint3/ntin/classDiagram/DisputeManagement}{Class diagram of UC-33.01 Open Dispute}{fig:ntin-cls-uc-33-01}
+
+\paragraph*{b. Sequence diagram}
+\kfig{0.78\textwidth}{images/sprint3/ntin/sequences/UC-33.01-open-dispute}{Sequence diagram of UC-33.01 Open Dispute}{fig:ntin-seq-uc-33-01}
+
+\subsubsection{UC-33.02 -- View Disputes List}
+
+\paragraph*{a. Class diagram}
+\kfig{0.92\textwidth}{images/sprint3/ntin/classDiagram/DisputeManagement}{Class diagram of UC-33.02 View Disputes List}{fig:ntin-cls-uc-33-02}
+
+\paragraph*{b. Sequence diagram}
+\kfig{0.78\textwidth}{images/sprint3/ntin/sequences/UC-33.02-view-dispute-list}{Sequence diagram of UC-33.02 View Disputes List}{fig:ntin-seq-uc-33-02}
+
+\subsubsection{UC-33.03 -- View Dispute Details}
+
+\paragraph*{a. Class diagram}
+\kfig{0.92\textwidth}{images/sprint3/ntin/classDiagram/DisputeManagement}{Class diagram of UC-33.03 View Dispute Details}{fig:ntin-cls-uc-33-03}
+
+\paragraph*{b. Sequence diagram}
+\kfig{0.78\textwidth}{images/sprint3/ntin/sequences/UC-33.03-view-dispute-detail}{Sequence diagram of UC-33.03 View Dispute Details}{fig:ntin-seq-uc-33-03}
+
+\subsubsection{UC-33.04 -- View Dispute by Milestone}
+
+\paragraph*{a. Class diagram}
+\kfig{0.92\textwidth}{images/sprint3/ntin/classDiagram/DisputeManagement}{Class diagram of UC-33.04 View Dispute by Milestone}{fig:ntin-cls-uc-33-04}
+
+\paragraph*{b. Sequence diagram}
+\kfig{0.78\textwidth}{images/sprint3/ntin/sequences/UC-33.04-view-dispute-by-milestone}{Sequence diagram of UC-33.04 View Dispute by Milestone}{fig:ntin-seq-uc-33-04}
+
+\subsubsection{UC-33.05 -- Respond to Dispute}
+
+\paragraph*{a. Class diagram}
+\kfig{0.92\textwidth}{images/sprint3/ntin/classDiagram/DisputeManagement}{Class diagram of UC-33.05 Respond to Dispute}{fig:ntin-cls-uc-33-05}
+
+\paragraph*{b. Sequence diagram}
+\kfig{0.78\textwidth}{images/sprint3/ntin/sequences/UC-33.05-respond-to-dispute}{Sequence diagram of UC-33.05 Respond to Dispute}{fig:ntin-seq-uc-33-05}
+
+\subsubsection{UC-33.06 -- Withdraw Dispute}
+
+\paragraph*{a. Class diagram}
+\kfig{0.92\textwidth}{images/sprint3/ntin/classDiagram/DisputeManagement}{Class diagram of UC-33.06 Withdraw Dispute}{fig:ntin-cls-uc-33-06}
+
+\paragraph*{b. Sequence diagram}
+\kfig{0.78\textwidth}{images/sprint3/ntin/sequences/UC-33.06-withdraw-dispute}{Sequence diagram of UC-33.06 Withdraw Dispute}{fig:ntin-seq-uc-33-06}
+
+\subsubsection{UC-33.07 -- Escalate Dispute to Expert}
+
+\paragraph*{a. Class diagram}
+\kfig{0.92\textwidth}{images/sprint3/ntin/classDiagram/DisputeManagement}{Class diagram of UC-33.07 Escalate Dispute to Expert}{fig:ntin-cls-uc-33-07}
+
+\paragraph*{b. Sequence diagram}
+\kfig{0.78\textwidth}{images/sprint3/ntin/sequences/UC-33.07-escalate-dispute-to-expert}{Sequence diagram of UC-33.07 Escalate Dispute to Expert}{fig:ntin-seq-uc-33-07}
+
+\subsubsection{UC-33.08 -- View Expert Disputes List}
+
+\paragraph*{a. Class diagram}
+\kfig{0.92\textwidth}{images/sprint3/ntin/classDiagram/DisputeManagement}{Class diagram of UC-33.08 View Expert Disputes List}{fig:ntin-cls-uc-33-08}
+
+\paragraph*{b. Sequence diagram}
+\kfig{0.78\textwidth}{images/sprint3/ntin/sequences/UC-33.08-view-expert-dispute-list}{Sequence diagram of UC-33.08 View Expert Disputes List}{fig:ntin-seq-uc-33-08}
+
+\subsubsection{UC-33.09 -- View Expert Dispute Details}
+
+\paragraph*{a. Class diagram}
+\kfig{0.92\textwidth}{images/sprint3/ntin/classDiagram/DisputeManagement}{Class diagram of UC-33.09 View Expert Dispute Details}{fig:ntin-cls-uc-33-09}
+
+\paragraph*{b. Sequence diagram}
+\kfig{0.78\textwidth}{images/sprint3/ntin/sequences/UC-33.09-view-expert-dispute-detail}{Sequence diagram of UC-33.09 View Expert Dispute Details}{fig:ntin-seq-uc-33-09}
+
+\subsubsection{UC-33.10 -- Expert Make Dispute Decision}
+
+\paragraph*{a. Class diagram}
+\kfig{0.92\textwidth}{images/sprint3/ntin/classDiagram/DisputeManagement}{Class diagram of UC-33.10 Expert Make Dispute Decision}{fig:ntin-cls-uc-33-10}
+
+\paragraph*{b. Sequence diagram}
+\kfig{0.78\textwidth}{images/sprint3/ntin/sequences/UC-33.10-expert-make-dispute-decision}{Sequence diagram of UC-33.10 Expert Make Dispute Decision}{fig:ntin-seq-uc-33-10}
+

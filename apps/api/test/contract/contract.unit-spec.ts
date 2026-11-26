@@ -1,4 +1,4 @@
-import { ContractStatus, Prisma } from '@prisma/client';
+import { ContractStatus, MilestonePaymentStatus, Prisma } from '@prisma/client';
 import {
   CreateContractBodySchema,
   CreateContractBodyType,
@@ -52,7 +52,11 @@ describe('Contract Management (UF-122 to UF-131)', () => {
     cancelContract: jest.fn(),
     getContractList: jest.fn(),
     getContractDetail: jest.fn(),
-    findContractMilestonesWithStatus: jest.fn().mockResolvedValue([]),
+    findContractMilestonesWithStatus: jest
+      .fn()
+      .mockResolvedValue([
+        { id: 1, paymentStatus: MilestonePaymentStatus.RELEASED },
+      ]),
   };
 
   const contractPdfService = {

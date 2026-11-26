@@ -34,7 +34,7 @@ The Authentication and Session Management module delivers defense-in-depth secur
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.90\textwidth]{images/auth/m02_01_register.png}
+  \includegraphics[width=0.72\textwidth]{images/auth/m02_01_register.png}
   \caption{User Registration and Email OTP Verification interface at \texttt{/register}}
 \end{figure}
 
@@ -51,7 +51,7 @@ The Authentication and Session Management module delivers defense-in-depth secur
       \item \textbf{Find work (Freelancer):} Register as a service provider to build a portfolio and submit job proposals.
       \item \textbf{Hire talent (Client):} Register as an enterprise or individual client to publish jobs and contract talent.
     \end{itemize}
-  \item \rbadge{8} \textbf{Accept Terms of Service (\textit{Accept terms}):} Check the \textit{I accept the terms and conditions} checkbox to fulfill legal compliance requirements and enable form submission.
+  \item \rbadge{8} \textbf{Accept Terms of Service (\textit{Terms \& Privacy Policy}):} Check the \textit{I agree to the Freelancer User Agreement and Privacy Policy} checkbox to fulfill legal compliance requirements and enable form submission.
   \item \rbadge{9} \textbf{Submit Registration Form (\textit{Create account}):} Click the blue \textbf{Create account} button to submit the validated payload (or click \textit{Reset} to clear all fields).
 \end{enumerate}
 
@@ -84,11 +84,11 @@ The Authentication and Session Management module delivers defense-in-depth secur
 
 \paragraph{Step-by-Step User Instructions:}
 \begin{enumerate}[leftmargin=1.8em,itemsep=3pt]
-  \item \rbadge{1} \textbf{Enter Registered Email (\textit{Email}):} Input the account email into the \textit{Email} field (e.g., \texttt{admin@gmail.com} or \texttt{freelancer@gmail.com}).
+  \item \rbadge{1} \textbf{Enter Registered Email (\textit{Email address}):} Input the account email into the \textit{Email address} field (e.g., \texttt{admin@gmail.com} or \texttt{freelancer@gmail.com}).
   \item \rbadge{2} \textbf{Enter Password (\textit{Password}):} Input the account password into the \textit{Password} field.
   \item \rbadge{3} \textbf{Optional Form Checkbox (\textit{Remember me}):} Toggle the \textit{Remember me} checkbox on the login form (note: actual session lifetime is governed by the server-issued \texttt{HttpOnly} refresh token policy).
   \item \rbadge{4} \textbf{Password Recovery Link (\textit{Forgot password?}):} If credentials have been forgotten, click the \textit{Forgot password?} link to initiate the recovery flow.
-  \item \rbadge{5} \textbf{Click Sign In (\textit{Sign in}):} Click the blue \textbf{Sign in} button to authenticate.
+  \item \rbadge{5} \textbf{Click Log In (\textit{Log in}):} Click the blue \textbf{Log in} button to authenticate.
 \end{enumerate}
 
 \paragraph{Expected Output \& Exception Handling:}
@@ -111,7 +111,7 @@ The Authentication and Session Management module delivers defense-in-depth secur
 
 \begin{itemize}[leftmargin=1.5em,itemsep=2pt]
   \item \textbf{Screen Name \& Route Path:} Social Sign-In Interface -- \texttt{/login}.
-  \item \textbf{Target Actor:} Guest.
+  \item \textbf{Target Actor:} Guest (Client, Freelancer, Expert, Admin).
   \item \textbf{Preconditions:} The user possesses an active Google account.
 \end{itemize}
 
@@ -123,8 +123,8 @@ The Authentication and Session Management module delivers defense-in-depth secur
 
 \paragraph{Step-by-Step User Instructions:}
 \begin{enumerate}[leftmargin=1.8em,itemsep=3pt]
-  \item \rbadge{1} \textbf{Click Google Sign-In Button (\textit{Continue with Google}):} Click the \textbf{Google} button beneath the divider to initiate federated authentication via the standard Google OAuth 2.0 consent flow.
-  \item \rbadge{2} \textbf{Registration Navigation Link (\textit{Sign up}):} Alternatively, if the user does not possess an account, clicking \textit{Sign up} immediately routes to the registration view at \texttt{/register}.
+  \item \rbadge{1} \textbf{Click Google Sign-In Button (\textit{Google}):} Click the \textbf{Google} button beneath \textit{OR CONTINUE WITH} to initiate federated authentication via the Google OAuth 2.0 consent flow.
+  \item \rbadge{2} \textbf{Registration Navigation Link (\textit{Sign up}):} Alternatively, if the user does not yet have an account, click \textbf{Sign up} to navigate to \texttt{/register} (which also supports Google OAuth role selection).
 \end{enumerate}
 
 \paragraph{Expected Output \& Exception Handling:}
@@ -151,48 +151,54 @@ The Authentication and Session Management module delivers defense-in-depth secur
 
 \paragraph{Step-by-Step User Instructions:}
 \begin{enumerate}[leftmargin=1.8em,itemsep=3pt]
-  \item \rbadge{1} \textbf{Enter Account Email (\textit{Email address}):} Type the registered email into the \textit{Email address} field.
-  \item \rbadge{2} \textbf{Request Reset OTP (\textit{Send OTP}):} Click the blue \textbf{Send OTP} button to dispatch a reset code to the mailbox.
-  \item \rbadge{3} \textbf{Enter Verification OTP (\textit{OTP code}):} Retrieve the 6-digit code from the received email and input it into the \textit{OTP code} field.
-  \item \rbadge{4} \textbf{Enter New Password (\textit{New password}):} Type the replacement password (8 to 32 characters, including at least one uppercase letter and one digit).
-  \item \rbadge{5} \textbf{Confirm New Password (\textit{Confirm new password}):} Retype the new password to ensure consistency.
-  \item \rbadge{6} \textbf{Submit Password Reset (\textit{Reset password}):} Click the blue \textbf{Reset password} button to commit changes.
-  \item \rbadge{7} \textbf{Return to Sign In Link (\textit{Back to sign in}):} Click \textbf{Back to sign in} to return to \texttt{/login} without resetting.
+  \item \rbadge{1} \textbf{Enter Registered Email (\textit{Email address}):} Type the registered email into the \textit{Email address} field.
+  \item \rbadge{2} \textbf{Enter New Password (\textit{New password}):} Type the replacement password (8 to 32 characters, including at least one uppercase letter and one digit).
+  \item \rbadge{3} \textbf{Confirm New Password (\textit{Confirm password}):} Retype the new password to ensure consistency.
+  \item \rbadge{4} \textbf{Request Reset OTP (\textit{Send OTP}):} Click the \textbf{Send OTP} button inside the \textit{OTP code} field to dispatch a 6-digit reset code to the mailbox.
+  \item \rbadge{5} \textbf{Enter Verification OTP (\textit{OTP code}):} Retrieve the 6-digit code from the received email and enter it into \textit{OTP code}.
+  \item \rbadge{6} \textbf{Submit Password Reset (\textit{Update password / Reset}):} Click the blue \textbf{Update password} button to commit changes (or click \textbf{Reset} to clear the form).
+  \item \rbadge{7} \textbf{Return to Sign In Link (\textit{Log in}):} Click \textbf{Log in} next to \textit{Remember your password?} to return to \texttt{/login}.
 \end{enumerate}
 
 \paragraph{Expected Output \& Exception Handling:}
 \begin{itemize}[leftmargin=1.5em,itemsep=2pt]
-  \item \textbf{Success Scenario:} The server validates the OTP against the \texttt{VerificationCode} table, re-hashes the new password with bcrypt, deletes the consumed verification code, displays a confirmation toast, and redirects to \texttt{/login} (existing remote sessions can also be managed manually under \texttt{/sessions}).
+  \item \textbf{Success Scenario:} The server validates the OTP against the \texttt{VerificationCode} table, re-hashes the new password with bcrypt, deletes the consumed verification code, displays a confirmation toast, and redirects to \texttt{/login}.
   \item \textbf{Exception Scenarios:} If the OTP is invalid or expired, the submission is rejected with an explicit error alert.
 \end{itemize}
 
 % -----------------------------------------------------------------------------
 \newpage
-\subsubsection{M2.05 -- Active Login Session Monitoring \& Device Audit (UC-16.01)}
+\subsubsection[M2.05 -- Active Sessions \& Detail Audit (UC-16.01, UC-16.02)]{M2.05 -- Active Login Session Monitoring \& Device Detail Audit (UC-16.01, UC-16.02)}
 
 \begin{itemize}[leftmargin=1.5em,itemsep=2pt]
-  \item \textbf{Screen Name \& Route Path:} Session Management Console -- \texttt{/sessions}.
-  \item \textbf{Target Actor:} Authenticated User (Freelancer, Client, Expert, Admin).
+  \item \textbf{Screen Name \& Route Path:} Session Management Console -- \texttt{/sessions} (and \texttt{/admin/sessions} for Admin/Staff).
+  \item \textbf{Target Actor:} Authenticated User (Client, Freelancer, Expert).
   \item \textbf{Preconditions:} User is logged into the application with at least one active session record in the database.
 \end{itemize}
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.90\textwidth]{images/auth/m02_05_sessions_list.png}
-  \caption{Active login sessions audit table with search and filtering at \texttt{/sessions}}
+  \includegraphics[width=0.86\textwidth]{images/auth/m02_05_sessions_list.png}
+  \caption{Active login sessions audit table with search and sorting at \texttt{/sessions}}
 \end{figure}
 
 \paragraph{Step-by-Step User Instructions:}
 \begin{enumerate}[leftmargin=1.8em,itemsep=3pt]
-  \item Navigate to \texttt{/sessions} (e.g., \url{http://localhost:3003/sessions}) from the user settings menu.
-  \item \rbadge{1} \textbf{Filter Sessions by Device / IP (\textit{Search input}):} Type a browser name, operating system, or IP address into the search box to dynamically filter listed records.
-  \item \rbadge{2} \textbf{Inspect Active Session Records (\textit{Sessions table}):} Review session attributes across columns: \textit{Device / Browser} (detected User-Agent), \textit{IP Address}, \textit{Created} timestamp, and \textit{Status} (the active browser instance displays a blue \textbf{Current Session} badge).
-  \item \rbadge{3} \textbf{Revoke Remote Session Button (\textit{Trash icon}):} Click the red trash icon on any remote session row to disconnect that specific device.
+  \item Navigate to \texttt{/sessions} from the user account menu.
+  \item \rbadge{1} \textbf{Search Sessions by Device or IP (\textit{Search}):} Type a browser, device string, or IP address and click \textbf{Search} to filter listed records.
+  \item \rbadge{2} \textbf{Inspect Active Session Records (\textit{Sessions table}):} Review session attributes across columns: \textit{Device}, \textit{IP address}, \textit{Status} (\textbf{Active} and \textbf{Current} badge for the active browser), \textit{Created}, and \textit{Expires}.
+  \item \rbadge{3} \textbf{View Session Detail or Revoke (\textit{Actions column}):} Click the eye icon to inspect full device metadata (\texttt{UC-16.02}), or click the red shield icon to terminate a remote session (\texttt{UC-16.03}).
 \end{enumerate}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.76\textwidth]{images/auth/m02_05b_session_detail.png}
+  \caption{Session Detail modal displaying Session ID, User ID, Device, IP Address, and timestamps (UC-16.02)}
+\end{figure}
 
 \paragraph{Expected Output \& Exception Handling:}
 \begin{itemize}[leftmargin=1.5em,itemsep=2pt]
-  \item \textbf{Success Scenario:} The user gains full visibility over all authorized devices, identifying potential unauthorized account access.
+  \item \textbf{Success Scenario:} Clicking the eye icon opens the \textit{Session \#[id]} modal detailing Status badges, Session ID, User ID, Device info, IP Address, Created timestamp, and Expiration timestamp.
 \end{itemize}
 
 % -----------------------------------------------------------------------------
@@ -200,27 +206,27 @@ The Authentication and Session Management module delivers defense-in-depth secur
 \subsubsection{M2.06 -- Remote Session Revocation \& Security Enforcement (UC-16.03)}
 
 \begin{itemize}[leftmargin=1.5em,itemsep=2pt]
-  \item \textbf{Screen Name \& Route Path:} Remote Session Termination Confirmation Dialog -- \texttt{/sessions}.
-  \item \textbf{Target Actor:} Authenticated User.
+  \item \textbf{Screen Name \& Route Path:} Remote Session Revocation Confirmation Dialog -- \texttt{/sessions}.
+  \item \textbf{Target Actor:} Authenticated User (Client, Freelancer, Expert).
   \item \textbf{Preconditions:} At least one non-current active session exists in the sessions table.
 \end{itemize}
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.90\textwidth]{images/auth/m02_06_revoke_session.png}
+  \includegraphics[width=0.86\textwidth]{images/auth/m02_06_revoke_session.png}
   \caption{Confirmation modal dialog for revoking a remote session at \texttt{/sessions}}
 \end{figure}
 
 \paragraph{Step-by-Step User Instructions:}
 \begin{enumerate}[leftmargin=1.8em,itemsep=3pt]
-  \item \rbadge{1} \textbf{Click Revoke Session Button:} In the session table, locate the target remote device row and click its red trash icon.
-  \item \rbadge{2} \textbf{Read Revocation Warning (\textit{Dialog title \& description}):} An \texttt{AlertDialog} appears reading: \textit{"Revoke Session -- Are you sure you want to revoke this session? The device will be logged out immediately."}
-  \item \rbadge{3} \textbf{Confirm Revocation Action (\textit{Revoke button}):} Click the red \textbf{Revoke} button to confirm immediate termination (or click \textit{Cancel} to dismiss the dialog without taking action).
+  \item In the session table, locate the target remote device row and click its red revoke icon.
+  \item \rbadge{1} \textbf{Review Revocation Prompt (\textit{Revoke this session?}):} An \texttt{AlertDialog} appears warning that the targeted device will be signed out and must log in again to continue.
+  \item \rbadge{2} \textbf{Confirm Revocation Action (\textit{Revoke}):} Click the red \textbf{Revoke} button to terminate the remote session immediately (or click \textbf{Cancel} to dismiss).
 \end{enumerate}
 
 \paragraph{Expected Output \& Exception Handling:}
 \begin{itemize}[leftmargin=1.5em,itemsep=2pt]
-  \item \textbf{Success Scenario:} The backend invalidates the corresponding \texttt{Session} record in PostgreSQL so subsequent requests using the revoked token pair are rejected, redirecting the targeted device to \texttt{/login}. A green toast confirms: \textit{"Session revoked successfully"}.
+  \item \textbf{Success Scenario:} The backend invalidates the corresponding \texttt{Session} record in PostgreSQL so subsequent requests using the revoked token pair are rejected, redirecting the targeted device to \texttt{/login}.
 \end{itemize}
 
 % -----------------------------------------------------------------------------
@@ -228,21 +234,21 @@ The Authentication and Session Management module delivers defense-in-depth secur
 \subsubsection{M2.07 -- Secure User Sign-Out \& Session Invalidation (UC-03)}
 
 \begin{itemize}[leftmargin=1.5em,itemsep=2pt]
-  \item \textbf{Screen Name \& Route Path:} Sidebar / Header Navigation across all portals.
-  \item \textbf{Target Actor:} Authenticated User.
+  \item \textbf{Screen Name \& Route Path:} Header Account Profile Dropdown across portals.
+  \item \textbf{Target Actor:} Authenticated User (Client, Freelancer, Expert, Admin).
   \item \textbf{Preconditions:} User is currently logged into the system.
 \end{itemize}
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.90\textwidth]{images/auth/m02_07_logout.png}
-  \caption{User identity card and sign-out button located in the application navigation bar}
+  \includegraphics[width=0.88\textwidth]{images/auth/m02_07_logout.png}
+  \caption{Top-right account profile dropdown menu and Logout action}
 \end{figure}
 
 \paragraph{Step-by-Step User Instructions:}
 \begin{enumerate}[leftmargin=1.8em,itemsep=3pt]
-  \item {\sloppy \rbadge{1} \textbf{Open Account Profile Menu:} Locate the user avatar/account menu in the navigation bar (top-right profile menu in the Admin Portal, or in the Client/Freelancer portal) showing the signed-in identity and email.\par}
-  \item \rbadge{2} \textbf{Click Sign Out Button (\textit{Log out}):} Select the \textbf{Log out} action to terminate the active session.
+  \item \rbadge{1} \textbf{Open Account Profile Menu:} Click the user avatar dropdown in the top-right header to display identity details, \textit{Profile settings}, and \textit{Sessions}.
+  \item \rbadge{2} \textbf{Click Logout Button (\textit{Logout}):} Select \textbf{Logout} to terminate the active session.
 \end{enumerate}
 
 \paragraph{Expected Output \& Exception Handling:}

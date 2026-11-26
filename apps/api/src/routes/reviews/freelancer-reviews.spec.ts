@@ -69,22 +69,20 @@ describe('Freelancer profile reviews', () => {
       response: { responseText: 'Removed', deletedAt: new Date() },
     };
     const repository = {
-      listForFreelancer: jest
-        .fn()
-        .mockResolvedValue([
-          [
-            row,
-            {
-              ...row,
-              id: 2,
-              response: { responseText: 'Thanks', deletedAt: null },
-            },
-          ],
+      listForFreelancer: jest.fn().mockResolvedValue([
+        [
+          row,
           {
-            _count: { _all: 7 },
-            _avg: { overallRating: new Prisma.Decimal('4.5') },
+            ...row,
+            id: 2,
+            response: { responseText: 'Thanks', deletedAt: null },
           },
-        ]),
+        ],
+        {
+          _count: { _all: 7 },
+          _avg: { overallRating: new Prisma.Decimal('4.5') },
+        },
+      ]),
     };
     const result = await new ReviewService(
       repository as unknown as ReviewRepository,

@@ -19,7 +19,7 @@ export class ApiFail extends Error {
 export const request = async <T>(
   method: "GET" | "POST" | "PUT" | "DELETE" | "PATCH",
   url: string,
-  body?: object,
+  body?: object | FormData,
   isRequestToProxyAPI: boolean = true,
 ): Promise<ApiSuccess<T>> => {
   // chuẩn hóa lại url người dùng gửi lên
@@ -27,12 +27,20 @@ export const request = async <T>(
 
   const fullUrl = isRequestToProxyAPI ? `/api/backend${formatUrl}` : formatUrl;
 
+  const isFormData = typeof FormData !== "undefined" && body instanceof FormData;
+  const headers: Record<string, string> = {};
+  if (!isFormData) {
+    headers["Content-Type"] = "application/json";
+  }
+
   const res = await fetch(fullUrl, {
     method,
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: body ? JSON.stringify(body) : undefined,
+    headers,
+    body: body
+      ? isFormData
+        ? body
+        : JSON.stringify(body)
+      : undefined,
   });
 
   const rawText = await res.text().catch(() => "");
@@ -96,17 +104,17 @@ export const http = {
     return request<T>("GET", url, undefined, isRequestToProxyAPI);
   },
 
-  post: <T>(url: string, body: object, isRequestToProxyAPI: boolean = true) => {
+  post: <T>(url: string, body: object | FormData, isRequestToProxyAPI: boolean = true) => {
     return request<T>("POST", url, body, isRequestToProxyAPI);
   },
 
-  put: <T>(url: string, body: object, isRequestToProxyAPI: boolean = true) => {
+  put: <T>(url: string, body: object | FormData, isRequestToProxyAPI: boolean = true) => {
     return request<T>("PUT", url, body, isRequestToProxyAPI);
   },
 
   patch: <T>(
     url: string,
-    body: object,
+    body: object | FormData,
     isRequestToProxyAPI: boolean = true,
   ) => {
     return request<T>("PATCH", url, body, isRequestToProxyAPI);
@@ -114,7 +122,7 @@ export const http = {
 
   delete: <T>(
     url: string,
-    body?: object,
+    body?: object | FormData,
     isRequestToProxyAPI: boolean = true,
   ) => {
     return request<T>("DELETE", url, body, isRequestToProxyAPI);
