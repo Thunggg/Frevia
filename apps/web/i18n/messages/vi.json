@@ -2115,6 +2115,18 @@
     "cannotEditStatus": "Công việc ở trạng thái {status} không thể chỉnh sửa."
   },
   "freelancerSheet": {
+    "reviews": {
+      "title": "Đánh giá",
+      "loading": "Đang tải đánh giá…",
+      "count": "{count} đánh giá",
+      "empty": "Chưa có đánh giá nào",
+      "client": "Khách hàng",
+      "rating": "{rating} trên 5 sao",
+      "response": "Phản hồi từ freelancer",
+      "loadFailed": "Không thể tải đánh giá. Vui lòng thử lại.",
+      "retry": "Thử lại",
+      "more": "Xem thêm"
+    },
     "loadFailed": "Không thể tải đầy đủ thông tin freelancer.",
     "loadUnexpected": "Đã xảy ra lỗi không mong muốn khi tải hồ sơ.",
     "sheetTitle": "Hồ sơ {name}",

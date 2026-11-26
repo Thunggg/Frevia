@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
@@ -33,6 +33,7 @@ import {
   UserRound,
 } from "@/components/icons";
 import { profileApiRequest } from "@/apiRequests/profile";
+import { FreelancerReviews } from "./freelancer-reviews";
 import { useActionPermission } from "@/hooks/use-action-permission";
 import { useCreateConversation } from "@/hooks/use-conversation";
 import type {
@@ -53,7 +54,7 @@ interface FreelancerProfileSheetProps {
   };
 }
 
-type TabType = "overview" | "portfolio" | "qualifications";
+type TabType = "overview" | "portfolio" | "qualifications" | "reviews";
 
 export function FreelancerProfileSheet({
   profileId,
@@ -73,6 +74,7 @@ export function FreelancerProfileSheet({
   const [portfolios, setPortfolios] = useState<PortfolioItemType[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const loadVersion = useRef(0);
 
   const { can } = useActionPermission();
   const canCreateConversation = can("POST", "/api/conversations");
@@ -87,7 +89,11 @@ export function FreelancerProfileSheet({
 
   const loadData = useCallback(
     async (id: number) => {
+      const version = ++loadVersion.current;
       setLoading(true);
+      setProfile(null);
+      setSkills([]);
+      setPortfolios([]);
       setError(null);
       try {
         let activeId = id;
@@ -104,6 +110,7 @@ export function FreelancerProfileSheet({
             .catch(() => ({ ok: false as const, data: null }));
         }
 
+        if (version !== loadVersion.current) return;
         if (profileRes.ok && profileRes.data) {
           setProfile(profileRes.data);
           activeId = profileRes.data.id;
@@ -116,6 +123,7 @@ export function FreelancerProfileSheet({
           profileApiRequest.getPortfoliosList(activeId),
         ]);
 
+        if (version !== loadVersion.current) return;
         if (skillsRes.status === "fulfilled") {
           setSkills(skillsRes.value.data);
         }
@@ -124,11 +132,11 @@ export function FreelancerProfileSheet({
           setPortfolios(portfoliosRes.value.data);
         }
       } catch {
-        if (!hasInitialName) {
+        if (version === loadVersion.current && !hasInitialName) {
           setError(t("loadUnexpected"));
         }
       } finally {
-        setLoading(false);
+        if (version === loadVersion.current) setLoading(false);
       }
     },
     [t, hasInitialName, fallbackUserId],
@@ -144,6 +152,9 @@ export function FreelancerProfileSheet({
       setPortfolios([]);
       setError(null);
     }
+    return () => {
+      loadVersion.current += 1;
+    };
   }, [open, targetId, loadData]);
 
   const displayName =
@@ -289,7 +300,7 @@ export function FreelancerProfileSheet({
 
           {/* Clean Underline Tab Navigation */}
           <div className="sticky top-0 z-10 bg-background/95 backdrop-blur-md border-y border-border/70 px-6">
-            <div className="flex items-center gap-6">
+            <div className="flex items-center gap-6 overflow-x-auto [&>button]:shrink-0">
               <button
                 type="button"
                 onClick={() => setActiveTab("overview")}
@@ -333,6 +344,13 @@ export function FreelancerProfileSheet({
                 <GraduationCap className="size-3.5" />
                 <span>{t("tabQualifications")}</span>
               </button>
+              <button
+                type="button"
+                onClick={() => setActiveTab("reviews")}
+                className={`py-3 text-xs font-semibold border-b-2 transition-colors cursor-pointer ${activeTab === "reviews" ? "border-[#0069D3] text-[#0069D3]" : "border-transparent text-muted-foreground hover:text-foreground"}`}
+              >
+                {t("reviews.title")}
+              </button>
             </div>
           </div>
 
@@ -359,6 +377,15 @@ export function FreelancerProfileSheet({
               </div>
             ) : (
               <>
+                {open &&
+                  activeTab === "reviews" &&
+                  (userId ? (
+                    <FreelancerReviews key={userId} userId={userId} />
+                  ) : (
+                    <p role="alert" className="text-sm text-destructive">
+                      {t("reviews.loadFailed")}
+                    </p>
+                  ))}
                 {/* ── Tab: Overview & Skills ── */}
                 {activeTab === "overview" && (
                   <div className="space-y-6">

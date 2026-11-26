@@ -202,7 +202,7 @@ In accordance with the project scope limitations defined in Report 1, the follow
   \end{itemize}
   \item \textbf{Acceptance Criteria:}
   \begin{itemize}
-    \item {\sloppy System test cases across all 44 functional modules in \texttt{Report5\_Test Report.xlsx} (935 total TCs: 688 passed, 247 pending) pass with zero failures (73.58\% coverage).\par}
+    \item {\sloppy System test cases across all 44 functional modules in \texttt{Report5\_Test Report.xlsx} (935 total TCs: 886 passed, 49 pending) pass with zero failures (94.76\% coverage).\par}
     \item {\sloppy Zero Critical or Major defects remain open, and \texttt{docker compose build} / \texttt{docker compose up -d} start healthy containers.\par}
   \end{itemize}
 \end{itemize}
@@ -269,7 +269,7 @@ In accordance with the project scope limitations defined in Report 1, the follow
   \end{itemize}
   \item \textbf{Completion Criteria:}
   \begin{itemize}
-    \item All 935 system test cases in \texttt{Report5\_Test Report.xlsx} achieve zero failures (688 passed, 0 failed, 247 pending execution).
+    \item All 935 system test cases in \texttt{Report5\_Test Report.xlsx} achieve zero failures (886 passed, 0 failed, 49 pending execution).
     \item Zero open Critical or Major defects prior to Sprint Review and final release.
   \end{itemize}
 \end{itemize}
@@ -352,7 +352,7 @@ Pham Kha Vy \newline (\texttt{CE182254}) \newline {\scriptsize\texttt{vypkce1822
 Nguyen Tien Thuan \newline (\texttt{CE181024}) \newline {\scriptsize\texttt{thuanntce181024@fpt.edu.vn}} & Backend Developer / \newline Functional Tester & Authors and executes unit tests (\texttt{UF-37} to \texttt{UF-84}, 288 TCs) and system test cases (9 modules, 257 TCs) for User Authentication, Role Management, Manage Permission, Session Management, Forum Category, User Management, Banners, Skills, and Job Categories. \\ \hline
 Tran Phat Tai \newline (\texttt{CE181632}) \newline {\scriptsize\texttt{taitpce181632@fpt.edu.vn}} & Full-Stack Developer / \newline Integration Tester & Authors and executes unit tests (\texttt{UF-85}--\texttt{UF-93}, \texttt{UF-97}--\texttt{UF-121}, 423 passed TCs; workbook slice \texttt{UF-85}--\texttt{UF-121} totals 456 incl.\ 33 untested AI sheets by Pham Kha Vy) and system test cases (8 non-AI modules, 146 passed TCs; + 49 pending AI TCs by Pham Kha Vy) for Job Browsing/Management, Bookmarks, Saved Searches, Job Alerts, Proposals, AI Recommendation, and Job Category Browsing. \\ \hline
 Vo Nhut Tin \newline (\texttt{CE180619}) \newline {\scriptsize\texttt{tinvnce180619@fpt.edu.vn}} & Backend Developer / \newline Security \& AI Tester & Authors and executes unit tests (\texttt{UF-198} to \texttt{UF-246}, 454 TCs) and system test cases (4 modules, 131 TCs) for Contracts, Milestones, Disputes, and Stripe Connect Escrow Payments \& Webhooks. \\ \hline
-Nguyen Lu Nhat Huy \newline (\texttt{CE181196}) \newline {\scriptsize\texttt{huynlnce181196@fpt.edu.vn}} & Frontend Developer / \newline System Tester & Authors and executes unit tests (\texttt{UF-122} to \texttt{UF-197}, 588 Jest TCs) and executes system test cases (16 modules, 198 TCs: 194 passed, 0 failed after synchronizing 20 DTO pipe assertions to HTTP 422, 4 pending offline AI/DB setup) for Profiles, Skills, Portfolios, eKYC, Social Links, Favorites, Following, Notifications, Role Switching, Reviews, Account, and CV Management. \\ \hline
+Nguyen Lu Nhat Huy \newline (\texttt{CE181196}) \newline {\scriptsize\texttt{huynlnce181196@fpt.edu.vn}} & Frontend Developer / \newline System Tester & Authors and executes unit tests (\texttt{UF-122} to \texttt{UF-197}, 588 Jest TCs) and executes system test cases (16 modules, 198 TCs: 198 Passed in Round 1, recorded on 02/11/2026; later rounds blank) for Profiles, Skills, Portfolios, eKYC, Social Links, Favorites, Following, Notifications, Role Switching, Reviews, Account, and CV Management. \\ \hline
 \end{tabular}
 \endgroup
 \end{table}
@@ -401,7 +401,7 @@ Sprint 5 Regression \& UAT & 01/11/2026 & 10/11/2026 & Job Category tests, full 
 
 \section{Test Cases}
 
-The detailed unit test cases are provided in the file \textbf{Report5\_Unit Test.xls} (covering 246 backend service and validation functions across sheets \texttt{UF-01} to \texttt{UF-246} with a total of 2,005 unit test cases: 664 Normal, 979 Abnormal, and 362 Boundary; supplemented by the automated Jest run report \textbf{Report5\_Unit\_Test\_Backend.html} recording 1536/1536 passed cases across 39 suites). The detailed system test cases are provided in the file \textbf{Report5\_Test Report.xlsx} (covering 44 functional modules with a total of 935 system test cases: 882 Passed, 0 Failed, and 53 Pending execution).
+The detailed unit test cases are provided in the file \textbf{Report5\_Unit Test.xls} (covering 246 backend service and validation functions across sheets \texttt{UF-01} to \texttt{UF-246} with a total of 2,005 unit test cases: 664 Normal, 979 Abnormal, and 362 Boundary; supplemented by the automated Jest run report \textbf{Report5\_Unit\_Test\_Backend.html} recording 1536/1536 passed cases across 39 suites). The detailed system test cases are provided in the file \textbf{Report5\_Test Report.xlsx} (covering 44 functional modules with a total of 935 system test cases: 886 Passed, 0 Failed, and 49 Pending execution).
 
 \begin{table}[H]
 \caption{Summary of unit and system test cases in Report5\_Unit Test.xls and Report5\_Test Report.xlsx}
@@ -431,9 +431,9 @@ The detailed unit test cases are provided in the file \textbf{Report5\_Unit Test
 \hd{Test Type} & \hd{Total TCs} & \hd{Passed} & \hd{Failed} & \hd{Pending} & \hd{Coverage} \\ \hline
 Unit Testing & 2,005 & 1,972 & 0 & 33 & 98.35\% \\ \hline
 Integration Testing & 84 & 84 & 0 & 0 & 100.00\% \\ \hline
-System Testing & 935 & 882 & 0 & 53 & 94.33\% \\ \hline
+System Testing & 935 & 886 & 0 & 49 & 94.76\% \\ \hline
 Acceptance Testing & 42 & 42 & 0 & 0 & 100.00\% \\ \hline
-\hd{Total} & \hd{3,066} & \hd{2,980} & \hd{0} & \hd{86} & \hd{97.20\%} \\ \hline
+\hd{Total} & \hd{3,066} & \hd{2,984} & \hd{0} & \hd{82} & \hd{97.33\%} \\ \hline
 \end{tabular}
 \end{table}
 
@@ -455,13 +455,13 @@ Minor & 0 open \newline (9 resolved) & Nine earlier UI/i18n/pagination minor def
 
 \begin{itemize}
   \item \textbf{Unit Testing Coverage and Distribution:} Out of 2,005 unit test cases across 246 functions (\texttt{UF-01} to \texttt{UF-246}) in \texttt{Report5\_Unit Test.xls}, 1,972 cases passed with 0 failures and 33 remain untested (\texttt{98.35\%} execution coverage). Case distribution covers 664 normal scenarios (\texttt{33.12\%}), 979 abnormal/exception paths (\texttt{48.83\%}), and 362 boundary conditions (\texttt{18.05\%}). In addition, \texttt{Report5\_Unit\_Test\_Backend.html} verifies 1536/1536 passing Jest cases across all 39 backend suites (\texttt{UF-01}--\texttt{UF-181}).
-  \item \textbf{System and Integration Stability:} Across all 44 functional modules in \texttt{Report5\_Test Report.xlsx} (935 total system cases), 882 cases passed with 0 failures after synchronizing 20 \texttt{MyZodValidationPipe} DTO validation expectations to HTTP 422 and re-running the HTTP suite, and 53 cases remain Pending (49 offline AI cases of \texttt{kvy}, 3 offline AI cases and 1 global-role case of \texttt{nhuy}, giving \texttt{94.33\%} pass rate), alongside 84/84 passing integration workflow checks.
+  \item \textbf{System and Integration Stability:} Across all 44 functional modules in \texttt{Report5\_Test Report.xlsx} (935 total system cases), 886 cases are recorded as Passed with 0 failures in the system workbook, and 49 cases remain Pending (49 offline AI cases of \texttt{kvy}, giving \texttt{94.76\%} pass rate), alongside 84/84 passing integration workflow checks.
   \item \textbf{Defect Prevention via Shared Contracts:} Sharing Zod schemas (\texttt{@shared/types}) between the Next.js 16 frontend and NestJS 11 backend, combined with centralized RBAC enforcement in \texttt{AccessTokenGuard}, prevented client-server payload drift and eliminated unauthorized access regressions across all five sprints.
   \item \textbf{Defect Resolution Rate:} 100\% of tracked product defects (2 Critical, 6 Major, 9 Minor) were resolved prior to Sprint 5, and the 20 \texttt{MyZodValidationPipe} HTTP 422 specification mismatches from Round 1 were synchronized and verified passing on re-execution (0 open defects).
 \end{itemize}
 
 \subsection{Test Conclusion}
 
-Based on the execution results across 2,005 unit test cases (1,972 passed, 33 untested), 84 integration test cases (84 passed), 935 system test cases (882 passed, 0 failed, 53 pending), and 42 user acceptance test scenarios (42 passed)---achieving \textbf{2,980 passing cases across 3,066 total cases (97.20\%)} and \textbf{0 open defects}---the \textbf{Frevia -- Verified Freelance Marketplace Platform} (\texttt{SEP490\_04}) satisfies the core functional and non-functional quality gates specified in the Project Management Plan (Report 2) and Software Requirement Specification (Report 3).
+Based on the recorded test results across 2,005 unit test cases (1,972 passed, 33 untested), 84 integration test cases (84 passed), 935 system test cases (886 passed, 0 failed, 49 pending), and 42 user acceptance test scenarios (42 passed)---achieving \textbf{2,984 passing cases across 3,066 total cases (97.33\%)} and \textbf{0 open defects}---the \textbf{Frevia -- Verified Freelance Marketplace Platform} (\texttt{SEP490\_04}) satisfies the core functional and non-functional quality gates specified in the Project Management Plan (Report 2) and Software Requirement Specification (Report 3).
 
 \end{document}

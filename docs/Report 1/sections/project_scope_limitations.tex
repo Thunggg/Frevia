@@ -4,115 +4,146 @@
 
 The functional capabilities delivered in FREVIA are structured into ten coherent functional modules comprising 21 major features (\texttt{FE-01} through \texttt{FE-21}). Each feature adheres to the administrative management format, detailing its concrete business operations and explicitly distinguishing between \textbf{unauthenticated visitors} (Guest), \textbf{external authenticated users} (Client, Freelancer, and Expert), and \textbf{internal platform operators} (Administrator). Crucially, unauthenticated Guests do not possess login privileges; only registered account holders authenticate into the system.
 
+\Needspace{7\baselineskip}
 \paragraph*{Module 1: Authentication \& Authorization}
 \begin{itemize}[leftmargin=1.0cm, label=--]
 
-\item \textbf{FE-01: Manage Authentication} \\
+\Needspace{5\baselineskip}
+\item \textbf{FE-01: Manage Authentication} \\*
 Handles system access and user onboarding, where a Guest (unauthenticated visitor) can create personal accounts (Sign up) by providing credentials, selecting an initial role (Client or Freelancer), and submitting an emailed one-time verification code (OTP); external registered users (Client, Freelancer, Expert) and internal user (Administrator) can securely log in (via email/password credentials or Google OAuth 2.0 single sign-on) and reset forgotten passwords via email verification; and authenticated users (Client, Freelancer, Expert, Administrator) can securely log out of active sessions.
 
-\item \textbf{FE-02: Manage Roles \& Permissions} \\
+\Needspace{5\baselineskip}
+\item \textbf{FE-02: Manage Roles \& Permissions} \\*
 Administers dynamic role-based access control (RBAC) and multi-role memberships, where Administrator (internal user) can view, search, create, update, and delete platform roles, and assign or remove module-level route permissions at runtime; while registered external users (Client, Freelancer, Expert) can join additional roles and seamlessly switch their active role context within an active session.
 
-\item \textbf{FE-03: Manage User Accounts \& Sessions} \\
+\Needspace{5\baselineskip}
+\item \textbf{FE-03: Manage User Accounts \& Sessions} \\*
 Oversees user account lifecycles and device sessions, where registered users (Client, Freelancer, Expert, Administrator) can view their active login sessions with IP addresses and client user-agents and remotely revoke specific sessions; while Administrator (internal user) can search, filter, and inspect registered users, view profile statuses, update account attributes, and ban or unban accounts violating platform policies.
 
 \end{itemize}
 
+\Needspace{7\baselineskip}
 \paragraph*{Module 2: Profiles, Portfolios \& AI Skills}
 \begin{itemize}[leftmargin=1.0cm, label=--]
 
-\item \textbf{FE-04: Manage Profiles} \\
+\Needspace{5\baselineskip}
+\item \textbf{FE-04: Manage Profiles} \\*
 Administers personal presentation and professional credentials, where Guest can view public profiles; Client, Freelancer, and Expert can view and update display names, biographies, avatars, cover images, and availability statuses; Freelancer can manage educational backgrounds, professional certifications, and employment history; and Administrator can review and approve or reject profile revision requests and expert applications.
 
-\item \textbf{FE-05: Manage Skills Catalogue} \\
+\Needspace{5\baselineskip}
+\item \textbf{FE-05: Manage Skills Catalogue} \\*
 Handles professional competencies, where Freelancer can browse standardized skills, add skills to their profile, assign self-assessed proficiency ratings (1 to 10), and remove skills; while Administrator can create, view, update, soft-delete, and restore system skills.
 
-\item \textbf{FE-06: Manage Portfolios} \\
+\Needspace{5\baselineskip}
+\item \textbf{FE-06: Manage Portfolios} \\*
 Showcases delivered creative and technical projects, where Guest and Client can view portfolio showcases and case-study details; while Freelancer can create, view details, update, reorder, and delete portfolio items with demo links, technology tags, and project cover images.
 
-\item \textbf{FE-07: Manage Curriculum Vitae \& AI Skill Extraction} \\
+\Needspace{5\baselineskip}
+\item \textbf{FE-07: Manage Curriculum Vitae \& AI Skill Extraction} \\*
 Administers resume documents and automated competency extraction, where Freelancer can upload, view, preview in-browser, replace, and delete curriculum vitae documents (PDF format up to 10MB); and trigger an external AI parsing pipeline to extract technical skills and experience levels for interactive review and inclusion into their profile.
 
 \end{itemize}
 
+\Needspace{7\baselineskip}
 \paragraph*{Module 3: Identity Verification \& Trust}
 \begin{itemize}[leftmargin=1.0cm, label=--]
 
-\item \textbf{FE-08: Manage Identity Verification (KYC)} \\
+\Needspace{5\baselineskip}
+\item \textbf{FE-08: Manage Identity Verification (KYC)} \\*
 Ensures platform trust and account integrity, where Freelancer can submit national identity documents (front and back images of CCCD/Passport) and record facial liveness video frames; external AI services perform automated OCR data parsing, facial liveness comparison, and duplicate identity detection; and Administrator inspects verification requests and approves or rejects verified identity badges.
 
 \end{itemize}
 
+\Needspace{7\baselineskip}
 \paragraph*{Module 4: Job Marketplace \& Discovery}
 \begin{itemize}[leftmargin=1.0cm, label=--]
 
-\item \textbf{FE-09: Manage Job Postings} \\
+\Needspace{5\baselineskip}
+\item \textbf{FE-09: Manage Job Postings} \\*
 Administers fixed-price project listings, where Guest and Freelancer can search and browse published jobs, filter by category, required skills, and budget range, and view job details; while Client can create, view, update, close, and manage their job postings.
 
-\item \textbf{FE-10: Manage Job Categories} \\
+\Needspace{5\baselineskip}
+\item \textbf{FE-10: Manage Job Categories} \\*
 Administers marketplace classification, where Guest, Client, and Freelancer can browse job categories; while Administrator can create, view, update, soft-delete, and restore job categories.
 
-\item \textbf{FE-11: Manage Bookmarks \& Saved Searches} \\
+\Needspace{5\baselineskip}
+\item \textbf{FE-11: Manage Bookmarks \& Saved Searches} \\*
 Assists job opportunity tracking, where Freelancer can bookmark jobs, view bookmarked job lists, save custom search filters, and view personalized job alerts.
 
 \end{itemize}
 
+\Needspace{7\baselineskip}
 \paragraph*{Module 5: Proposals \& Hiring}
 \begin{itemize}[leftmargin=1.0cm, label=--]
 
-\item \textbf{FE-12: Manage Proposals \& Hiring} \\
+\Needspace{5\baselineskip}
+\item \textbf{FE-12: Manage Proposals \& Hiring} \\*
 Handles project bidding and talent acquisition, where Freelancer can draft, submit, view, update, and withdraw proposals containing bid prices, duration estimates, cover letters, and attachments; while Client can view received proposals, evaluate AI match scores, interview candidates via direct messaging, accept winning proposals to initiate contracts, or reject proposals.
 
 \end{itemize}
 
+\Needspace{7\baselineskip}
 \paragraph*{Module 6: Contracts \& Project Governance}
 \begin{itemize}[leftmargin=1.0cm, label=--]
 
-\item \textbf{FE-13: Manage Contracts} \\
+\Needspace{5\baselineskip}
+\item \textbf{FE-13: Manage Contracts} \\*
 Oversees legally binding agreements, where Client and Freelancer can view contract lists and details, negotiate contract term templates, execute dual digital signatures, upload and download shared workspace files, and track contract completion or mutual cancellation.
 
-\item \textbf{FE-14: Manage Milestones \& Deliverables} \\
+\Needspace{5\baselineskip}
+\item \textbf{FE-14: Manage Milestones \& Deliverables} \\*
 Administers progressive project stages, where Client and Freelancer can define milestone schedules, progress updates, and file attachments; Freelancer submits completed milestone deliverables; and Client reviews deliverables, requests modifications, or formally approves milestones for fund release.
 
 \end{itemize}
 
+\Needspace{7\baselineskip}
 \paragraph*{Module 7: Escrow Payments \& Financial Settlement}
 \begin{itemize}[leftmargin=1.0cm, label=--]
 
-\item \textbf{FE-15: Manage Payments \& Escrow} \\
-Administers financial transactions via Stripe Connect, where Freelancer connects their Stripe Express payout account and views payout history; Client funds milestone deposits into escrow, pays flat platform fees (\ fixed fee per contract), and approves payment releases upon milestone sign-off; and the system executes automated webhook synchronization and dispute fee settlements.
+\Needspace{5\baselineskip}
+\item \textbf{FE-15: Manage Payments \& Escrow} \\*
+Administers financial transactions via Stripe Connect, where Freelancer connects their Stripe Express payout account and views payout history; Client funds milestone deposits into escrow, pays flat platform fees (\$5 fixed fee per contract), and approves payment releases upon milestone sign-off; and the system executes automated webhook synchronization and dispute fee settlements.
 
 \end{itemize}
 
+\Needspace{7\baselineskip}
 \paragraph*{Module 8: Dispute Arbitration \& Reviews}
 \begin{itemize}[leftmargin=1.0cm, label=--]
 
-\item \textbf{FE-16: Manage Disputes \& Arbitration} \\
+\Needspace{5\baselineskip}
+\item \textbf{FE-16: Manage Disputes \& Arbitration} \\*
 Adjudicates contract conflicts through a transparent 5-stage legal workflow, where Client or Freelancer can file a dispute on a funded milestone and submit evidence; while Administrator (Arbitrator) evaluates claims, allocates escrow balances (full release, refund, or percentage split), and processes dispute decision reviews (appeals).
 
-\item \textbf{FE-17: Manage Contract Reviews \& Reputation} \\
+\Needspace{5\baselineskip}
+\item \textbf{FE-17: Manage Contract Reviews \& Reputation} \\*
 Governs post-contract evaluations, where Client and Freelancer submit star ratings, category breakdowns, and written reviews upon contract completion; and the evaluated party can post a single public review response.
 
 \end{itemize}
 
+\Needspace{7\baselineskip}
 \paragraph*{Module 9: Communication \& Community Forum}
 \begin{itemize}[leftmargin=1.0cm, label=--]
 
-\item \textbf{FE-18: Manage Direct Messaging \& Notifications} \\
+\Needspace{5\baselineskip}
+\item \textbf{FE-18: Manage Direct Messaging \& Notifications} \\*
 Facilitates platform communication and collaboration, where registered users (Client, Freelancer, Expert) can exchange real-time direct messages and attachments; and all users receive in-app notification alerts for contract, proposal, and payment milestones.
 
-\item \textbf{FE-19: Manage Community Forum} \\
+\Needspace{5\baselineskip}
+\item \textbf{FE-19: Manage Community Forum} \\*
 Encourages professional knowledge sharing, where Guest can view public categories and posts; registered users (Client, Freelancer, Expert) can author posts, write comments, like discussions, and report policy violations; while Administrator manages forum categories and restores soft-deleted items from trash.
 
-\item \textbf{FE-20: Manage Content Moderation} \\
+\Needspace{5\baselineskip}
+\item \textbf{FE-20: Manage Content Moderation} \\*
 Safeguards platform content standards, where automated AI filters submissions for profanity and banned keywords; and Administrator inspects moderation queues, evaluates user reports, and resolves tickets or removes inappropriate content.
 
 \end{itemize}
 
+\Needspace{7\baselineskip}
 \paragraph*{Module 10: Platform Administration \& Marketing}
 \begin{itemize}[leftmargin=1.0cm, label=--]
 
-\item \textbf{FE-21: Manage Banners \& Platform Settings} \\
+\Needspace{5\baselineskip}
+\item \textbf{FE-21: Manage Banners \& Platform Settings} \\*
 Administers platform marketing banners and system configurations, where Guest, Client, and Freelancer view active promotional and announcement banners; while Administrator creates, updates, schedules, and deletes display banners, and manages global platform settings.
 
 \end{itemize}
@@ -281,10 +312,14 @@ Section 3.30: Banner Management (\#3.30.1--3.30.5) &
 
 \subsection{Limitations \& Exclusions}
 
+\Needspace{8\baselineskip}
+\subsubsection{Limitations}
+
 Each limitation below details the concrete operational boundary, its resolution status in the delivered system, and the specific method, architectural mitigation, or technical roadmap implemented or proposed to address it.
 
 \begin{description}[leftmargin=2.0cm,labelwidth=1.8cm,align=left,font=\normalfont\bfseries]
 
+\Needspace{6\baselineskip}
 \item[LI-01] \textbf{Payment Gateway Scope \& Direct Settlement}
 \begin{itemize}[leftmargin=0.5cm, label=--]
 \item \textbf{Problem Statement:} All payment processing and disbursement functionality is provided exclusively by Stripe. Direct domestic bank transfers, Vietnamese local e-wallets (MoMo, VNPay, ZaloPay), mobile money, and blockchain/cryptocurrency settlement are outside the scope of the current implementation.
@@ -292,6 +327,7 @@ Each limitation below details the concrete operational boundary, its resolution 
 \item \textbf{Resolution / Mitigation Method:} The contract escrow and payment processing workflows interact with payment services via a decoupled abstraction layer (\texttt{PaymentService}). For the current release, Stripe manages card processing, escrow deposits, PCI-DSS compliance, and international payouts. Future local payment gateways (such as VNPay or MoMo) can be integrated by implementing the provider interface without altering core contract, escrow, or dispute resolution logic.
 \end{itemize}
 
+\Needspace{6\baselineskip}
 \item[LI-02] \textbf{Stripe Connect Geographic Availability \& Payouts}
 \begin{itemize}[leftmargin=0.5cm, label=--]
 \item \textbf{Problem Statement:} Payouts require freelancers to onboard through Stripe Connect Express, which is restricted to Stripe-supported countries. The platform does not hold user balances directly nor operate an internal sovereign banking ledger.
@@ -299,6 +335,7 @@ Each limitation below details the concrete operational boundary, its resolution 
 \item \textbf{Resolution / Mitigation Method:} Onboarding status is actively tracked on the user record (\texttt{stripeOnboardingCompleted}), with proactive validation preventing freelancers in unsupported countries from committing to contracts where payouts cannot be executed. Administrators can review affected accounts. Future expansion plans to integrate regional payout aggregators (e.g., Payoneer, Wise) using the payment provider abstraction.
 \end{itemize}
 
+\Needspace{6\baselineskip}
 \item[LI-03] \textbf{Contract Billing Model (Fixed-Price Only)}
 \begin{itemize}[leftmargin=0.5cm, label=--]
 \item \textbf{Problem Statement:} The platform supports only fixed-price milestone contracts. Hourly contracts, automated time-tracking desktop applications, activity screenshot logging, and automated hourly billing are excluded from the current scope.
@@ -306,6 +343,7 @@ Each limitation below details the concrete operational boundary, its resolution 
 \item \textbf{Resolution / Mitigation Method:} Fixed-price milestone contracts provide the strongest legal and financial protection for a new marketplace, as funds are guaranteed in escrow before work begins. To accommodate hourly billing in subsequent versions, the data model includes a contract type discriminator, allowing an independent hourly timesheet module to be introduced that plugs into the existing milestone release pipeline.
 \end{itemize}
 
+\Needspace{6\baselineskip}
 \item[LI-04] \textbf{Single Currency Handling (USD Only)}
 \begin{itemize}[leftmargin=0.5cm, label=--]
 \item \textbf{Problem Statement:} Monetary transactions, contract pricing, platform fees, and dispute deposits are calculated and denominated exclusively in United States Dollars (USD). Real-time multi-currency display, automatic forex conversion, and jurisdiction-specific tax invoicing are excluded.
@@ -313,6 +351,7 @@ Each limitation below details the concrete operational boundary, its resolution 
 \item \textbf{Resolution / Mitigation Method:} Stripe automatically handles foreign exchange conversion at checkout and payout based on the user's local card or bank currency. Contracts store explicit currency ISO codes (\texttt{USD}), allowing multi-currency pricing and localized display rates to be activated in future versions when multi-currency bank accounts are configured.
 \end{itemize}
 
+\Needspace{6\baselineskip}
 \item[LI-05] \textbf{Artificial Intelligence Scope and Autonomous Decision-Making}
 \begin{itemize}[leftmargin=0.5cm, label=--]
 \item \textbf{Problem Statement:} AI integration is scoped strictly to four advisory workflows: CV skill extraction, identity document OCR/liveness verification, community forum moderation scoring, and explainable job--freelancer recommendation ranking. Autonomous AI hiring, automated contract formation, and autonomous dispute adjudication are excluded.
@@ -320,6 +359,7 @@ Each limitation below details the concrete operational boundary, its resolution 
 \item \textbf{Resolution / Mitigation Method:} Keeping AI in an advisory role is a deliberate design decision to prevent algorithmic bias, hallucination, and legal liability. All legally binding decisions (hiring candidates, verifying identity badges, banning accounts, and settling financial disputes) strictly require explicit human authorization (Client or Administrator).
 \end{itemize}
 
+\Needspace{6\baselineskip}
 \item[LI-06] \textbf{External AI Service Availability and Fault Tolerance}
 \begin{itemize}[leftmargin=0.5cm, label=--]
 \item \textbf{Problem Statement:} AI functions rely on external cloud AI APIs over HTTP. Network latency, rate limits, or external provider downtime can disrupt automated parsing, document verification, or forum scanning.
@@ -327,13 +367,15 @@ Each limitation below details the concrete operational boundary, its resolution 
 \item \textbf{Resolution / Mitigation Method:} The backend implements fault-tolerant exception handling, timeouts, and fallback queues. When an external AI service is unreachable, requests fail gracefully with descriptive error codes rather than corrupted states. For identity verification and forum moderation, an Administrator fallback workflow allows manual inspection and approval directly from admin dashboards.
 \end{itemize}
 
+\Needspace{6\baselineskip}
 \item[LI-07] \textbf{Identity Verification Document Scope (CCCD Focus)}
 \begin{itemize}[leftmargin=0.5cm, label=--]
-\item \textbf{Problem Statement:} The identity verification OCR and liveness pipeline is tuned to Vietnamese National Identity Cards (C\u{a}n c\u{o}\textquotesingle{}c c\^{o}ng d\^{a}n -- CCCD). International passports, driver's licenses, and foreign identity cards may have lower OCR recognition rates.
+\item \textbf{Problem Statement:} The identity verification OCR and liveness pipeline is tuned to Vietnamese National Identity Cards ({\fontencoding{T5}\selectfont Căn cước công dân} -- CCCD). International passports, driver's licenses, and foreign identity cards may have lower OCR recognition rates.
 \item \textbf{Current Status:} Partially Mitigated.
 \item \textbf{Resolution / Mitigation Method:} Document type validation and OCR confidence scoring prevent misclassification. If an unusual or international document receives low confidence scores, the system automatically flags the submission for manual Administrator review, where admins can inspect front and back scans and approve valid credentials.
 \end{itemize}
 
+\Needspace{6\baselineskip}
 \item[LI-08] \textbf{Administrative Arbitration vs. Statutory Legal Proceedings}
 \begin{itemize}[leftmargin=0.5cm, label=--]
 \item \textbf{Problem Statement:} Platform dispute arbitration is an administrative contractual resolution conducted by system administrators, not an official court of law or statutory arbitration panel. The platform cannot execute wage garnishments or legal chargeback litigation.
@@ -341,6 +383,7 @@ Each limitation below details the concrete operational boundary, its resolution 
 \item \textbf{Resolution / Mitigation Method:} Users agree in the Terms of Service to abide by platform escrow distribution decisions. Furthermore, every dispute generates an immutable, exportable audit trail (including contract terms, milestone submissions, timestamped communications, and filed evidence) that either party can legally submit to civil courts or external arbitration authorities.
 \end{itemize}
 
+\Needspace{6\baselineskip}
 \item[LI-09] \textbf{Platform Form Factor (Responsive Web vs. Native Mobile Apps)}
 \begin{itemize}[leftmargin=0.5cm, label=--]
 \item \textbf{Problem Statement:} FREVIA is delivered as a responsive Progressive Web Application (PWA). Dedicated native mobile applications (iOS and Android) are excluded from the current capstone deliverables.
@@ -348,6 +391,7 @@ Each limitation below details the concrete operational boundary, its resolution 
 \item \textbf{Resolution / Mitigation Method:} The frontend is built using Next.js with responsive Tailwind CSS layouts optimized for desktop, tablet, and mobile screens. Because the backend is fully decoupled via a RESTful API with standard OpenAPI/Swagger specifications, native mobile apps (React Native or Flutter) can be developed in future phases consuming the existing backend endpoints without API modification.
 \end{itemize}
 
+\Needspace{6\baselineskip}
 \item[LI-10] \textbf{Communication and Verification Channel Delivery (Email Only)}
 \begin{itemize}[leftmargin=0.5cm, label=--]
 \item \textbf{Problem Statement:} Account OTP codes, password resets, and notifications are delivered via SMTP email. SMS delivery, WhatsApp messaging, and hardware authenticator (TOTP) apps are excluded.
@@ -355,6 +399,7 @@ Each limitation below details the concrete operational boundary, its resolution 
 \item \textbf{Resolution / Mitigation Method:} Email delivery uses a reliable SMTP provider with retry queues and clear delivery logging. The notification and verification service is architected behind an interface (\texttt{NotificationProvider}), enabling SMS gateways (e.g. Twilio) or push notification adapters (Firebase Cloud Messaging) to be plugged in seamlessly in future releases.
 \end{itemize}
 
+\Needspace{6\baselineskip}
 \item[LI-11] \textbf{Data Model Capabilities vs. Exposed User Interface Features}
 \begin{itemize}[leftmargin=0.5cm, label=--]
 \item \textbf{Problem Statement:} Several auxiliary capabilities are modeled in the database schema (e.g. detailed invoice generation, completion certificates, contract clause templates, TOTP two-factor secrets, banned keyword tables, and system settings) but are not yet exposed as dedicated UI screens.
@@ -362,6 +407,7 @@ Each limitation below details the concrete operational boundary, its resolution 
 \item \textbf{Resolution / Mitigation Method:} The underlying database schemas, relations, and migrations are fully defined and tested. Features are rolled out progressively across development sprints to ensure stability without requiring breaking database migrations later.
 \end{itemize}
 
+\Needspace{6\baselineskip}
 \item[LI-12] \textbf{Notification Delivery Model (Polling vs. Real-Time WebSocket Push)}
 \begin{itemize}[leftmargin=0.5cm, label=--]
 \item \textbf{Problem Statement:} While messaging uses real-time WebSockets, system notifications are persisted in the database and fetched via REST endpoints upon page load or client polling rather than pushed over WebSockets.
@@ -369,6 +415,7 @@ Each limitation below details the concrete operational boundary, its resolution 
 \item \textbf{Resolution / Mitigation Method:} Polling on route change and window focus provides high reliability, zero WebSocket connection overhead for background events, and complete offline persistence. A real-time notification push event can be hooked directly into the existing Socket.IO gateway by broadcasting on user-specific socket rooms in the next phase.
 \end{itemize}
 
+\Needspace{6\baselineskip}
 \item[LI-13] \textbf{Deployment Architecture \& High Availability Scaling}
 \begin{itemize}[leftmargin=0.5cm, label=--]
 \item \textbf{Problem Statement:} The current capstone deployment runs a single API container instance with in-memory WebSocket room state. Horizontal autoscaling across multiple cluster nodes behind a load balancer with distributed socket adapters is excluded from the current demo environment.
@@ -377,3 +424,16 @@ Each limitation below details the concrete operational boundary, its resolution 
 \end{itemize}
 
 \end{description}
+
+\Needspace{8\baselineskip}
+\subsubsection{Exclusions}
+
+The following capabilities are explicitly excluded from the current FREVIA capstone release:
+\begin{itemize}[leftmargin=1.0cm, label=--]
+\item \textbf{Native Mobile Applications (iOS / Android):} All workflows are delivered via a responsive web application; dedicated native mobile binaries are excluded.
+\item \textbf{Hourly Billing \& Automated Activity Monitoring:} Hourly contracts, time-tracking desktop daemons, and periodic screenshot surveillance are out of scope in favour of fixed-price milestone escrow.
+\item \textbf{Domestic E-Wallets, Direct Bank Rails, and Cryptocurrency Settlement:} Payments and payouts operate exclusively through Stripe Connect in USD; MoMo, VNPay, ZaloPay, local bank transfers, and crypto assets are excluded.
+\item \textbf{Multi-Currency Conversion Display \& Jurisdiction Tax Invoicing:} All ledger figures remain denominated in USD without VAT/tax-authority e-invoice generation.
+\item \textbf{Autonomous AI Hiring or Dispute Decisions:} AI outputs are strictly advisory; hiring, eKYC approval, content removal, and escrow dispute splits always require explicit human authorization.
+\item \textbf{SMS OTP, Messaging-App Delivery, and Hardware TOTP 2FA:} Verification codes and notifications are sent exclusively via email and in-app channels.
+\end{itemize}

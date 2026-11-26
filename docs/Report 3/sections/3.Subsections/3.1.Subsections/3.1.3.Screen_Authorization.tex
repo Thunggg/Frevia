@@ -6,8 +6,8 @@
 
 \Needspace{12\baselineskip}
 \begin{longtable}{|c|p{4.4cm}|c|c|c|c|c|}
-
-% Đầu bảng (lặp lại ở mỗi trang)
+\caption{Screen Authorization}
+\label{tab:screen-authorization-table} \\
 \hline
 \rowcolor{headerbg}
 \multicolumn{1}{|c|}{\textbf{No}} &
@@ -20,7 +20,7 @@
 \\ \hline
 \endfirsthead
 
-% Đầu bảng cho các trang tiếp theo
+\caption[]{Screen Authorization \textit{(cont.)}} \\
 \hline
 \rowcolor{headerbg}
 \multicolumn{1}{|c|}{\textbf{No}} &
@@ -36,10 +36,9 @@
 \hline
 \endfoot
 
-% Chân bảng cuối cùng
 \hline
 \endlastfoot
-1 & Homepage & \checkmark & \checkmark & \checkmark &  &  \\ \hline
+1 & Homepage & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark \\ \hline
 2 & Login & \checkmark &  &  &  &  \\ \hline
 3 & Google Login & \checkmark &  &  &  &  \\ \hline
 4 & Register & \checkmark &  &  &  &  \\ \hline
@@ -203,12 +202,9 @@
 162 & View Profile Update Request History &  &  &  & \checkmark &  \\ \hline
 163 & Approve Profile Update Request &  &  &  & \checkmark &  \\ \hline
 164 & Reject Profile Update Request &  &  &  & \checkmark &  \\ \hline
-165 & Admin Contract Oversight &  &  &  & \checkmark &  \\ \hline
-166 & Admin View Contract Details &  &  &  & \checkmark &  \\ \hline
-167 & Admin Update Contract Status &  &  &  & \checkmark &  \\ \hline
-168 & View Expert Disputes List &  &  &  &  & \checkmark \\ \hline
-169 & View Expert Dispute Details &  &  &  &  & \checkmark \\ \hline
-170 & Confirm Cancel Contract &  & \checkmark & \checkmark &  &  \\ \hline
-171 & Expert Make Dispute Decision &  &  &  &  & \checkmark \\ \hline
-172 & Session Management (Admin) &  &  &  & \checkmark & 
+165 & View Expert Disputes List &  &  &  &  & \checkmark \\ \hline
+166 & View Expert Dispute Details &  &  &  &  & \checkmark \\ \hline
+167 & Confirm Cancel Contract &  & \checkmark & \checkmark &  &  \\ \hline
+168 & Expert Make Dispute Decision &  &  &  &  & \checkmark \\ \hline
+169 & Session Management (Admin) &  &  &  & \checkmark &  \\ \hline
 \end{longtable}
