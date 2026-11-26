@@ -1,39 +1,64 @@
 % ========================================================
 % FILE: sections/record_of_changes.tex
 % Front matter of the template: I. Record of Changes
-% (same table as Report 3, so both reports share one front matter)
 % ========================================================
 \part{Record of Changes}
 
 \begin{center}
 \renewcommand{\arraystretch}{1.6}
 \setlength{\tabcolsep}{4pt}
-\begin{tabular}{|C{1.9cm}|C{1.7cm}|C{2.3cm}|L{9.0cm}|}
+\begin{longtable}{|C{2.1cm}|C{1.7cm}|C{2.3cm}|L{8.4cm}|}
 \hline
 \rowcolor{headerbg}
 \textbf{Date} &
 \textbf{\makecell{A*\\M, D}} &
 \textbf{In charge} &
-\textbf{Change Description} \\
+\textbf{Change Description} \\ \hline
+\endfirsthead
 \hline
- & & & \\ \hline
- & & & \\ \hline
- & & & \\ \hline
- & & & \\ \hline
- & & & \\ \hline
- & & & \\ \hline
- & & & \\ \hline
- & & & \\ \hline
- & & & \\ \hline
- & & & \\ \hline
- & & & \\ \hline
- & & & \\ \hline
- & & & \\ \hline
-\end{tabular}
+\rowcolor{headerbg}
+\textbf{Date} &
+\textbf{\makecell{A*\\M, D}} &
+\textbf{In charge} &
+\textbf{Change Description} \\ \hline
+\endhead
+\hline
+\endfoot
+19/09/2026 & A & VyPK & Initialized Report 4 structure, cover page, table of contents, and Software Design Document template \\ \hline
+21/09/2026 & A & ThuanNT & Added detailed design for Authentication and Role Management (UC-01--UC-05, UC-06.01--UC-06.06) \\ \hline
+23/09/2026 & A & ThuanNT & Added detailed design for Permission Management and Session Management (UC-15.01--UC-15.02, UC-16.01--UC-16.03) \\ \hline
+25/09/2026 & A & ThuanNT & Added detailed design for Forum Category Management (UC-17.01--UC-17.06) \\ \hline
+26/09/2026 & A & ThuanNT & Added detailed design for User Management (UC-28.01--UC-28.08) \\ \hline
+28/09/2026 & A & ThuanNT & Added detailed design for Banner Management and Skill Management (UC-37.01--UC-37.05, UC-38.01--UC-38.06) \\ \hline
+30/09/2026 & A & ThuanNT & Added detailed design for Expert Profile Management and Job Category Management (UC-28.09, UC-46.01--UC-46.06) \\ \hline
+02/10/2026 & A & HuyNLN & Added detailed design for Freelancer Profile Management (UC-07.01--UC-07.02) \\ \hline
+04/10/2026 & A & HuyNLN & Added detailed design for Freelancer Skill Management (UC-08.01--UC-08.03) \\ \hline
+06/10/2026 & A & HuyNLN & Added detailed design for Portfolio Management (UC-09.01--UC-09.05) \\ \hline
+08/10/2026 & A & HuyNLN & Added detailed design for Identity Verification and Client Profile Management (UC-18.01--UC-18.02, UC-19.01--UC-19.02) \\ \hline
+10/10/2026 & A & HuyNLN & Added detailed design for Social Link Management and Favorite Freelancer Management (UC-20.01--UC-20.03, UC-21.01--UC-21.03) \\ \hline
+11/10/2026 & A & HuyNLN & Added detailed design for Following Management, Notification Management, and Role Switching (UC-29.01--UC-29.03, UC-30.01--UC-30.04, UC-31.01--UC-31.02) \\ \hline
+13/10/2026 & A & HuyNLN & Added detailed design for Review Management and Review Response Management (UC-39.01--UC-39.05, UC-40.01--UC-40.03) \\ \hline
+15/10/2026 & A & HuyNLN & Added detailed design for Account Profile Management (UC-41.01--UC-41.04) \\ \hline
+17/10/2026 & A & HuyNLN & Added detailed design for Profile Update Review and Expert Profile Update (UC-47.01--UC-47.06) \\ \hline
+19/10/2026 & A & HuyNLN & Added detailed design for Freelancer CV Management (UC-07.03--UC-07.06) \\ \hline
+21/10/2026 & A & TaiTP & Added detailed design for Job Browsing, Job Management, and Bookmarked Jobs Management (UC-10.01--UC-10.02, UC-11.01--UC-11.07, UC-12.01--UC-12.03) \\ \hline
+23/10/2026 & A & TaiTP & Added detailed design for Saved Search Management, Job Alert Management, and Freelancer Job Category Browsing (UC-22.01--UC-22.04, UC-23.01--UC-23.05, UC-46.07--UC-46.08) \\ \hline
+24/10/2026 & A & TaiTP & Added detailed design for Proposal Management (UC-32.01--UC-32.09) \\ \hline
+28/10/2026 & A & TinVN & Added detailed design for Contract Management (UC-13.01--UC-13.12) \\ \hline
+30/10/2026 & A & TinVN & Added detailed design for Milestone Management, Milestone Files, and Milestone Submission (UC-24.01--UC-24.06, UC-25.01--UC-25.03, UC-26.01--UC-26.04) \\ \hline
+01/11/2026 & A & TinVN & Added detailed design for Dispute Management (UC-33.01--UC-33.06) \\ \hline
+03/11/2026 & A & TinVN & Added detailed design for Payment and Payout Management (UC-43.01--UC-43.13) \\ \hline
+05/11/2026 & A & VyPK & Added detailed design for Forum Management (UC-14.01--UC-14.17) \\ \hline
+07/11/2026 & A & VyPK & Added detailed design for Conversation Management (UC-27.01--UC-27.08) \\ \hline
+08/11/2026 & A & VyPK & Added detailed design for Moderation Queue, ID Verification Review, and Forum Trash Management (UC-34.01--UC-34.03, UC-35.01--UC-35.04, UC-36.01--UC-36.03) \\ \hline
+10/11/2026 & A & VyPK & Added detailed design for AI Content Moderation (UC-44.01) \\ \hline
+12/11/2026 & A & VyPK & Added detailed design for AI Face Scan and Duplicate Identity Detection (UC-45.01) \\ \hline
+14/11/2026 & M & VyPK & Finalized Software Design Document, consolidated detailed design sections, and prepared submission-ready Report 4 \\ \hline
+\end{longtable}
 \end{center}
 
 \vspace{0.3cm}
 
-\noindent\textit{*A - Added M - Modified D - Deleted}
+\noindent\textit{*A - Added \quad M - Modified \quad D - Deleted}
 
 \newpage

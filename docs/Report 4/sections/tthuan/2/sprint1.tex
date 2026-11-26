@@ -7,10 +7,11 @@
 
 \subsection{Verify JWT}
 
-Verify JWT is the shared security guard protecting API endpoints across all modules.
-Every incoming HTTP request with a Bearer token is intercepted, validated for cryptographic
+{\sloppy
+Verify JWT represents the shared global guard pipeline (\texttt{Auth\allowbreak{}Guard} followed by \texttt{Permission\allowbreak{}Guard}) protecting API endpoints across all modules.
+Every incoming HTTP request on a non-public route has its Bearer token extracted, validated for cryptographic
 signature and expiration time, and verified against the database to guarantee the associated
-session remains active and has not been revoked.
+session remains active and the user is neither banned nor deleted; afterwards, \texttt{Permission\allowbreak{}Guard} verifies route-level authorization against the caller's assigned role permissions (\texttt{Shared\allowbreak{}Permission\allowbreak{}Repository}) before allowing the controller to execute.\par}
 
 \subsubsection{UC-0 -- Verify JWT}
 
@@ -22,9 +23,9 @@ session remains active and has not been revoked.
 
 \subsection{Authentication}
 
-The authentication module covers account registration, email/password and
-Google OAuth login, logout, password recovery, and the JWT/session flow shared
-by all protected endpoints.
+The authentication module covers account registration, credential and Google OAuth
+login, logout, password recovery, and the JWT/session flow shared by all
+protected endpoints.
 
 \subsubsection{UC-01 -- Login with Google}
 
@@ -71,21 +72,21 @@ by all protected endpoints.
 Role Management lets an administrator inspect the role catalogue, maintain
 role metadata, and replace the permission set assigned to a role.
 
-\subsubsection{UC-06.01 -- View Role List}
+\subsubsection{UC-06.01 -- View Roles List}
 
 \paragraph*{a. Class diagram}
-\kfig{0.92\textwidth}{images/sprint1/tthuan/classDiagram/RoleManagement}{Class diagram of UC-06.01 View Role List}{fig:tthuan-cls-view-role-list}
+\kfig{0.92\textwidth}{images/sprint1/tthuan/classDiagram/RoleManagement}{Class diagram of UC-06.01 View Roles List}{fig:tthuan-cls-view-role-list}
 
 \paragraph*{b. Sequence diagram}
-\kfig{0.78\textwidth}{images/sprint1/tthuan/sequences/ViewRoleList}{Sequence diagram of UC-06.01 View Role List}{fig:tthuan-seq-view-role-list}
+\kfig{0.78\textwidth}{images/sprint1/tthuan/sequences/ViewRoleList}{Sequence diagram of UC-06.01 View Roles List}{fig:tthuan-seq-view-role-list}
 
-\subsubsection{UC-06.02 -- View Role Detail}
+\subsubsection{UC-06.02 -- View Role Details}
 
 \paragraph*{a. Class diagram}
-\kfig{0.92\textwidth}{images/sprint1/tthuan/classDiagram/RoleManagement}{Class diagram of UC-06.02 View Role Detail}{fig:tthuan-cls-view-role-detail}
+\kfig{0.92\textwidth}{images/sprint1/tthuan/classDiagram/RoleManagement}{Class diagram of UC-06.02 View Role Details}{fig:tthuan-cls-view-role-detail}
 
 \paragraph*{b. Sequence diagram}
-\kfig{0.78\textwidth}{images/sprint1/tthuan/sequences/ViewRoleDetail}{Sequence diagram of UC-06.02 View Role Detail}{fig:tthuan-seq-view-role-detail}
+\kfig{0.78\textwidth}{images/sprint1/tthuan/sequences/ViewRoleDetail}{Sequence diagram of UC-06.02 View Role Details}{fig:tthuan-seq-view-role-detail}
 
 \subsubsection{UC-06.03 -- Create Role}
 

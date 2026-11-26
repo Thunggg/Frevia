@@ -1,0 +1,112 @@
+% =================================================================
+% Sprint 4 -- Vo Nhut Tin
+% System Detailed Design: Payment Management
+% =================================================================
+
+\subsection{Payment Management}
+
+The Payment Management module integrates Stripe to support escrow protection, customer payment tokenization, pre-authorized contract hold deposits, and automated freelancer disbursements. It enables freelancers to link verified bank accounts via Stripe Connect Express, clients to manage payment methods, milestone escrow funding via hosted Checkout or saved cards, and automated escrow payout release upon deliverable acceptance. Real-time reconciliation routines and cryptographic webhook listeners ensure distributed ledger consistency.
+
+\subsubsection{UC-43.01 -- Connect Stripe Account}
+
+\paragraph*{a. Class diagram}
+\kfig{0.92\textwidth}{images/sprint4/ntin/classDiagram/PaymentManagement}{Class diagram of UC-43.01 Connect Stripe Account}{fig:ntin-cls-uc-43-01}
+
+\paragraph*{b. Sequence diagram}
+\kfig{0.78\textwidth}{images/sprint4/ntin/sequences/UC-43.01-connect-stripe-account}{Sequence diagram of UC-43.01 Connect Stripe Account}{fig:ntin-seq-uc-43-01}
+
+\subsubsection{UC-43.02 -- Check Stripe Connect Status}
+
+\paragraph*{a. Class diagram}
+\kfig{0.92\textwidth}{images/sprint4/ntin/classDiagram/PaymentManagement}{Class diagram of UC-43.02 Check Stripe Connect Status}{fig:ntin-cls-uc-43-02}
+
+\paragraph*{b. Sequence diagram}
+\kfig{0.78\textwidth}{images/sprint4/ntin/sequences/UC-43.02-check-stripe-connect-status}{Sequence diagram of UC-43.02 Check Stripe Connect Status}{fig:ntin-seq-uc-43-02}
+
+\subsubsection{UC-43.03 -- View Saved Payment Methods}
+
+\paragraph*{a. Class diagram}
+\kfig{0.92\textwidth}{images/sprint4/ntin/classDiagram/PaymentManagement}{Class diagram of UC-43.03 View Saved Payment Methods}{fig:ntin-cls-uc-43-03}
+
+\paragraph*{b. Sequence diagram}
+\kfig{0.78\textwidth}{images/sprint4/ntin/sequences/UC-43.03-view-saved-payment-methods}{Sequence diagram of UC-43.03 View Saved Payment Methods}{fig:ntin-seq-uc-43-03}
+
+\subsubsection{UC-43.04 -- Set Default Payment Method}
+
+\paragraph*{a. Class diagram}
+\kfig{0.92\textwidth}{images/sprint4/ntin/classDiagram/PaymentManagement}{Class diagram of UC-43.04 Set Default Payment Method}{fig:ntin-cls-uc-43-04}
+
+\paragraph*{b. Sequence diagram}
+\kfig{0.78\textwidth}{images/sprint4/ntin/sequences/UC-43.04-set-default-payment-method}{Sequence diagram of UC-43.04 Set Default Payment Method}{fig:ntin-seq-uc-43-04}
+
+\subsubsection{UC-43.05 -- Remove Saved Payment Method}
+
+\paragraph*{a. Class diagram}
+\kfig{0.92\textwidth}{images/sprint4/ntin/classDiagram/PaymentManagement}{Class diagram of UC-43.05 Remove Saved Payment Method}{fig:ntin-cls-uc-43-05}
+
+\paragraph*{b. Sequence diagram}
+\kfig{0.78\textwidth}{images/sprint4/ntin/sequences/UC-43.05-remove-saved-payment-method}{Sequence diagram of UC-43.05 Remove Saved Payment Method}{fig:ntin-seq-uc-43-05}
+
+\subsubsection{UC-43.06 -- Create Contract Hold Deposit Intent}
+
+\paragraph*{a. Class diagram}
+\kfig{0.92\textwidth}{images/sprint4/ntin/classDiagram/PaymentManagement}{Class diagram of UC-43.06 Create Contract Hold Deposit Intent}{fig:ntin-cls-uc-43-06}
+
+\paragraph*{b. Sequence diagram}
+\kfig{0.78\textwidth}{images/sprint4/ntin/sequences/UC-43.06-create-contract-hold-deposit-intent}{Sequence diagram of UC-43.06 Create Contract Hold Deposit Intent}{fig:ntin-seq-uc-43-06}
+
+\subsubsection{UC-43.07 -- Fund Milestone via Stripe Checkout}
+
+\paragraph*{a. Class diagram}
+\kfig{0.92\textwidth}{images/sprint4/ntin/classDiagram/PaymentManagement}{Class diagram of UC-43.07 Fund Milestone via Stripe Checkout}{fig:ntin-cls-uc-43-07}
+
+\paragraph*{b. Sequence diagram}
+\kfig{0.78\textwidth}{images/sprint4/ntin/sequences/UC-43.07-fund-milestone-via-stripe-checkout}{Sequence diagram of UC-43.07 Fund Milestone via Stripe Checkout}{fig:ntin-seq-uc-43-07}
+
+\subsubsection{UC-43.08 -- Fund Milestone with Saved Card}
+
+\paragraph*{a. Class diagram}
+\kfig{0.92\textwidth}{images/sprint4/ntin/classDiagram/PaymentManagement}{Class diagram of UC-43.08 Fund Milestone with Saved Card}{fig:ntin-cls-uc-43-08}
+
+\paragraph*{b. Sequence diagram}
+\kfig{0.78\textwidth}{images/sprint4/ntin/sequences/UC-43.08-fund-milestone-with-saved-card}{Sequence diagram of UC-43.08 Fund Milestone with Saved Card}{fig:ntin-seq-uc-43-08}
+
+\subsubsection{UC-43.09 -- Release Milestone Escrow Payment}
+
+\paragraph*{a. Class diagram}
+\kfig{0.92\textwidth}{images/sprint4/ntin/classDiagram/PaymentManagement}{Class diagram of UC-43.09 Release Milestone Escrow Payment}{fig:ntin-cls-uc-43-09}
+
+\paragraph*{b. Sequence diagram}
+\kfig{0.78\textwidth}{images/sprint4/ntin/sequences/UC-43.09-release-milestone-escrow-payment}{Sequence diagram of UC-43.09 Release Milestone Escrow Payment}{fig:ntin-seq-uc-43-09}
+
+\subsubsection{UC-43.10 -- View Payment Transactions History}
+
+\paragraph*{a. Class diagram}
+\kfig{0.92\textwidth}{images/sprint4/ntin/classDiagram/PaymentManagement}{Class diagram of UC-43.10 View Payment Transactions History}{fig:ntin-cls-uc-43-10}
+
+\paragraph*{b. Sequence diagram}
+\kfig{0.78\textwidth}{images/sprint4/ntin/sequences/UC-43.10-view-payment-transactions-history}{Sequence diagram of UC-43.10 View Payment Transactions History}{fig:ntin-seq-uc-43-10}
+
+\subsubsection{UC-43.11 -- Sync Payment Intent Status}
+
+\paragraph*{a. Class diagram}
+\kfig{0.92\textwidth}{images/sprint4/ntin/classDiagram/PaymentManagement}{Class diagram of UC-43.11 Sync Payment Intent Status}{fig:ntin-cls-uc-43-11}
+
+\paragraph*{b. Sequence diagram}
+\kfig{0.78\textwidth}{images/sprint4/ntin/sequences/UC-43.11-sync-payment-intent-status}{Sequence diagram of UC-43.11 Sync Payment Intent Status}{fig:ntin-seq-uc-43-11}
+
+\subsubsection{UC-43.12 -- Sync Checkout Session Status}
+
+\paragraph*{a. Class diagram}
+\kfig{0.92\textwidth}{images/sprint4/ntin/classDiagram/PaymentManagement}{Class diagram of UC-43.12 Sync Checkout Session Status}{fig:ntin-cls-uc-43-12}
+
+\paragraph*{b. Sequence diagram}
+\kfig{0.78\textwidth}{images/sprint4/ntin/sequences/UC-43.12-sync-checkout-session-status}{Sequence diagram of UC-43.12 Sync Checkout Session Status}{fig:ntin-seq-uc-43-12}
+
+\subsubsection{UC-43.13 -- Handle Stripe Webhook Events}
+
+\paragraph*{a. Class diagram}
+\kfig{0.92\textwidth}{images/sprint4/ntin/classDiagram/PaymentManagement}{Class diagram of UC-43.13 Handle Stripe Webhook Events}{fig:ntin-cls-uc-43-13}
+
+\paragraph*{b. Sequence diagram}
+\kfig{0.78\textwidth}{images/sprint4/ntin/sequences/UC-43.13-handle-stripe-webhook-events}{Sequence diagram of UC-43.13 Handle Stripe Webhook Events}{fig:ntin-seq-uc-43-13}
