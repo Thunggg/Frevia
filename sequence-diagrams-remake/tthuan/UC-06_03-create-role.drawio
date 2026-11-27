@@ -440,7 +440,7 @@
           <mxGeometry x="415" y="354.0" width="10" height="2356.0" as="geometry" />
         </mxCell>
         <mxCell id="zTKk2F94x-N6U4w28_5q-1" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};fontSize=13;fillColor=#ffffff;strokeColor=#000000;" parent="1" vertex="1">
-          <mxGeometry x="421" y="509.0" width="10" height="20.0" as="geometry" />
+          <mxGeometry x="421" y="499.0" width="10" height="20.0" as="geometry" />
         </mxCell>
         <mxCell id="zTKk2F94x-N6U4w28_5q-2" value="&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;span style=&quot;font-size: 11px;&quot;&gt;4. Check validate&amp;nbsp;&lt;/span&gt;&lt;div style=&quot;font-size: 11px;&quot;&gt;role data&lt;/div&gt;" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=13;labelBackgroundColor=#ffffff;" parent="1" edge="1">
           <mxGeometry x="0.4133" y="55" width="80" relative="1" as="geometry">
@@ -454,7 +454,7 @@
           </mxGeometry>
         </mxCell>
         <mxCell id="zTKk2F94x-N6U4w28_5q-3" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};fontSize=13;fillColor=#ffffff;strokeColor=#000000;" parent="1" vertex="1">
-          <mxGeometry x="967.0" y="1031.0" width="10" height="20.0" as="geometry" />
+          <mxGeometry x="967.0" y="1021.0" width="10" height="20.0" as="geometry" />
         </mxCell>
         <mxCell id="zTKk2F94x-N6U4w28_5q-4" value="8. Check name is not &#10;a system role name" style="verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=13;labelBackgroundColor=#ffffff;" parent="1" edge="1">
           <mxGeometry x="0.4458" y="75" width="80" relative="1" as="geometry">
@@ -474,7 +474,7 @@
           <mxGeometry x="1740.0" y="2044.0" width="10" height="49.0" as="geometry" />
         </mxCell>
         <mxCell id="zTKk2F94x-N6U4w28_5q-8" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};fontSize=13;fillColor=#ffffff;strokeColor=#000000;" parent="1" vertex="1">
-          <mxGeometry x="967.0" y="1644.0" width="10" height="20.0" as="geometry" />
+          <mxGeometry x="967.0" y="1634.0" width="10" height="20.0" as="geometry" />
         </mxCell>
         <mxCell id="zTKk2F94x-N6U4w28_5q-9" value="15. Check role name &#10;already exists" style="verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=13;labelBackgroundColor=#ffffff;" parent="1" edge="1">
           <mxGeometry x="0.4458" y="66" width="80" relative="1" as="geometry">
@@ -488,7 +488,7 @@
           </mxGeometry>
         </mxCell>
         <mxCell id="zTKk2F94x-N6U4w28_5q-10" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};fontSize=13;fillColor=#ffffff;strokeColor=#000000;" parent="1" vertex="1">
-          <mxGeometry x="966.0" y="2260.0" width="10" height="20.0" as="geometry" />
+          <mxGeometry x="966.0" y="2250.0" width="10" height="20.0" as="geometry" />
         </mxCell>
         <mxCell id="zTKk2F94x-N6U4w28_5q-11" value="22. Handle creation result" style="verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=13;html=1;labelBackgroundColor=#ffffff;" parent="1" edge="1">
           <mxGeometry x="0.2" y="80" width="80" relative="1" as="geometry">

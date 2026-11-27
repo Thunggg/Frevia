@@ -77,7 +77,7 @@
           </mxGeometry>
         </mxCell>
         <mxCell id="act_self_param" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};fontSize=13;labelBackgroundColor=none;" parent="1" vertex="1">
-          <mxGeometry x="340" y="415.0" width="10" height="20.0" as="geometry" />
+          <mxGeometry x="340" y="405.0" width="10" height="20.0" as="geometry" />
         </mxCell>
         <mxCell id="m2" value="2. Check job category&amp;nbsp;&lt;div&gt;id parameter&lt;/div&gt;" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=12;labelBackgroundColor=#ffffff;" parent="1" edge="1">
           <mxGeometry x="0.3" y="-75" relative="1" as="geometry">
@@ -190,7 +190,7 @@
           </mxGeometry>
         </mxCell>
         <mxCell id="act_self_check" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};fontSize=13;labelBackgroundColor=none;" parent="1" vertex="1">
-          <mxGeometry x="1000.0" y="1285.0" width="10" height="20.0" as="geometry" />
+          <mxGeometry x="1000.0" y="1275.0" width="10" height="20.0" as="geometry" />
         </mxCell>
         <mxCell id="m12" value="12. Handle find&lt;div&gt;&amp;nbsp;job category&amp;nbsp;&lt;span&gt;result&lt;/span&gt;&lt;/div&gt;" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=12;labelBackgroundColor=#ffffff;" parent="1" edge="1">
           <mxGeometry x="0" y="0" relative="1" as="geometry">
@@ -273,7 +273,7 @@
           </mxGeometry>
         </mxCell>
         <mxCell id="act_self_delete" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};fontSize=13;labelBackgroundColor=none;" parent="1" vertex="1">
-          <mxGeometry x="1000.5" y="1910.0" width="10" height="20.0" as="geometry" />
+          <mxGeometry x="1000.5" y="1900.0" width="10" height="20.0" as="geometry" />
         </mxCell>
         <mxCell id="m12_2_7" value="12.2.7. Handle delete&amp;nbsp;&lt;div&gt;job category&amp;nbsp;&lt;span&gt;result&lt;/span&gt;&lt;/div&gt;" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=12;labelBackgroundColor=#ffffff;" parent="1" edge="1">
           <mxGeometry x="0" y="0" relative="1" as="geometry">

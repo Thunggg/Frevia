@@ -146,7 +146,7 @@
           </mxGeometry>
         </mxCell>
         <mxCell id="act_self_query" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};fontSize=13;labelBackgroundColor=none;" parent="1" vertex="1">
-          <mxGeometry x="930.0" y="1095.0" width="10" height="20.0" as="geometry" />
+          <mxGeometry x="930.0" y="1085.0" width="10" height="20.0" as="geometry" />
         </mxCell>
         <mxCell id="m12" value="11. Handle query&amp;nbsp;&lt;div&gt;result&lt;/div&gt;" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=12;labelBackgroundColor=#ffffff;" parent="1" edge="1">
           <mxGeometry x="0.3" y="-75" relative="1" as="geometry">

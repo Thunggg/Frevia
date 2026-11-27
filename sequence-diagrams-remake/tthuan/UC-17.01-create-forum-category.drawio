@@ -86,7 +86,7 @@
           <mxGeometry x="72.5" y="90" width="10" height="2430" as="geometry" />
         </mxCell>
         <mxCell id="act_self_view_4" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};fontSize=13;" parent="ll_view" vertex="1">
-          <mxGeometry x="77.5" y="270.0" width="10" height="20.0" as="geometry" />
+          <mxGeometry x="77.5" y="260.0" width="10" height="20.0" as="geometry" />
         </mxCell>
         <mxCell id="ll_controller" value="&amp;lt;&amp;lt;controller&amp;gt;&amp;gt;&lt;br&gt;:ForumAdminController" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};size=48;" parent="1" vertex="1">
           <mxGeometry x="537.5" y="240" width="195" height="2620" as="geometry" />
@@ -101,10 +101,10 @@
           <mxGeometry x="92.5" y="880" width="10" height="1460" as="geometry" />
         </mxCell>
         <mxCell id="act_self_srv_14" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};fontSize=13;" parent="ll_service" vertex="1">
-          <mxGeometry x="97.5" y="1250.0" width="10" height="20.0" as="geometry" />
+          <mxGeometry x="97.5" y="1240.0" width="10" height="20.0" as="geometry" />
         </mxCell>
         <mxCell id="act_self_srv_14_2_7" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};fontSize=13;" parent="ll_service" vertex="1">
-          <mxGeometry x="97.5" y="1965.0" width="10" height="20.0" as="geometry" />
+          <mxGeometry x="97.5" y="1955.0" width="10" height="20.0" as="geometry" />
         </mxCell>
         <mxCell id="ll_repo" value="&amp;lt;&amp;lt;repository&amp;gt;&amp;gt;&lt;br&gt;:ForumAdminRepository" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};size=48;" parent="1" vertex="1">
           <mxGeometry x="1097.5" y="240" width="195" height="2620" as="geometry" />
