@@ -1,90 +1,48 @@
 % ========================================================
 % FILE: definition_and_acronyms.tex
-% Definitions and Acronyms table
+% Definition and Acronyms table matching docs_NA format
 % ========================================================
 \section*{\fontsize{16}{19}\selectfont\bfseries\color{fptred} Definition and Acronyms}
 \addcontentsline{toc}{part}{Definition and Acronyms}
 
-Table~\ref{tab:acronyms} details the definitions, technical terminology, and acronyms used throughout this document.
-
 \begingroup
 \small
-\setlength{\tabcolsep}{6pt}
-\renewcommand{\arraystretch}{1.3}
+\setlength{\tabcolsep}{8pt}
+\renewcommand{\arraystretch}{1.4}
 
-\begin{longtable}{|L{2.8cm}|L{12.4cm}|}
-\caption{Definition and Acronyms}
-\label{tab:acronyms} \\
+\begin{longtable}{|C{3.2cm}|L{11.6cm}|}
 \hline
 \rowcolor{fptHeader}
-\textbf{Acronym / Term} & \textbf{Definition / Description} \\
+\multicolumn{1}{|c|}{\textbf{Acronym}} & \multicolumn{1}{c|}{\textbf{Definition}} \\
 \hline
 \endfirsthead
 
-\caption[]{Definition and Acronyms \textit{(cont.)}} \\
 \hline
 \rowcolor{fptHeader}
-\textbf{Acronym / Term} & \textbf{Definition / Description} \\
+\multicolumn{1}{|c|}{\textbf{Acronym}} & \multicolumn{1}{c|}{\textbf{Definition}} \\
 \hline
 \endhead
 
-\hline
-\endfoot
+\hline\endfoot
+\hline\endlastfoot
 
-API & Application Programming Interface -- A structured communication interface allowing different software components to interact over network protocols. \\
-\hline
-AWS & Amazon Web Services -- A cloud platform providing computing, storage (S3), and database infrastructure. \\
-\hline
-BA & Business Analyst -- A role focused on understanding business needs, eliciting requirements, and producing specifications. \\
-\hline
-BR & Business Rule -- Formal policies that define or constrain aspects of business operations and workflows. \\
-\hline
-CCCD & Can Cuoc Cong Dan -- The National Citizen Identification Card in Vietnam, used in the eKYC verification pipeline. \\
-\hline
-CI/CD & Continuous Integration and Continuous Deployment -- Automated build, test, and release automation practices. \\
-\hline
-DTO & Data Transfer Object -- An object that encapsulates data and sends it between client and server layers. \\
-\hline
-eKYC & Electronic Know Your Customer -- Automated digital identity verification leveraging document OCR and biometric face matching. \\
-\hline
-ERD & Entity Relationship Diagram -- A graphical model illustrating database entities, attributes, and relationships. \\
-\hline
-Escrow & A contractual financial arrangement where a third party (Stripe) holds payment until milestone deliverables are approved. \\
-\hline
-GUI & Graphical User Interface -- Visual interactive user interface elements displayed in web browsers. \\
-\hline
-JWT & JSON Web Token -- A compact, URL-safe means of representing claims to be securely transmitted between two parties for stateless authentication. \\
-\hline
-MVC & Model-View-Controller -- Software design pattern separating internal data representations from user interfaces and business logic. \\
-\hline
-ORM & Object-Relational Mapping -- Software technique (e.g., Prisma) converting data between relational databases and object-oriented programming languages. \\
-\hline
-PM & Project Manager -- Person responsible for leading, planning, executing, and closing the project. \\
-\hline
-PWM & Professional Web Marketplace -- Web-based digital labor marketplace platform. \\
-\hline
-QA / QC & Quality Assurance / Quality Control -- Systematic processes to ensure software deliverables satisfy defined quality and performance metrics. \\
-\hline
-RACI & Responsible, Accountable, Consulted, Informed -- A matrix specifying role participation across project activities. \\
-\hline
-RBAC & Role-Based Access Control -- Authorization model restricting system access based on user roles (Guest, Client, Freelancer, Expert, Admin). \\
-\hline
-REST & Representational State Transfer -- Architectural style for stateless networked hypermedia applications communicating over HTTP. \\
-\hline
-SDD & Software Design Description -- Formal engineering artifact describing system architecture, components, interfaces, and data models (Report 4). \\
-\hline
-SPMP & Software Project Management Plan -- Document specifying technical and managerial processes to deliver the project (Report 2). \\
-\hline
-SRS & Software Requirement Specification -- Detailed description of software capabilities, behavior, actors, and constraints (Report 3). \\
-\hline
-UAT & User Acceptance Testing -- Formal testing phase verifying that the software meets end-user business requirements. \\
-\hline
-UC & Use Case -- A sequence of interactions between an external actor and the system delivering a tangible business outcome. \\
-\hline
-UI / UX & User Interface / User Experience -- Visual design and interactive experience presented to platform users. \\
-\hline
-WBS & Work Breakdown Structure -- Hierarchical decomposition of the total project scope into manageable work packages. \\
-\hline
+API & Application Programming Interface \\ \hline
+BFF & Backend-for-Frontend \\ \hline
+BR & Business Rule \\ \hline
+CCCD & Citizen Identity Card (\textit{Can Cuoc Cong Dan}) \\ \hline
+DTO & Data Transfer Object \\ \hline
+eKYC & Electronic Know Your Customer \\ \hline
+ERD & Entity Relationship Diagram \\ \hline
+JWT & JSON Web Token \\ \hline
+LI & Limitation \\ \hline
+ORM & Object-Relational Mapping (Prisma 7) \\ \hline
+OTP & One-Time Password \\ \hline
+RBAC & Role-Based Access Control \\ \hline
+REST & Representational State Transfer \\ \hline
+SDD & Software Design Description \\ \hline
+SRS & Software Requirement Specification \\ \hline
+TC & Test Case \\ \hline
+UC & Use Case \\ \hline
 \end{longtable}
 \endgroup
 \newpage

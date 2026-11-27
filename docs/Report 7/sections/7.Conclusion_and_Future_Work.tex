@@ -1,0 +1,30 @@
+% ========================================================
+% FILE: sections/7.Conclusion_and_Future_Work.tex
+% Part VII: Conclusion & Future Work (Executive format matching docs_NA)
+% ========================================================
+\part{Conclusion \& Future Work}
+
+\section{Project Conclusion}
+
+After 15 weeks of structured Agile Scrum execution across five iterative sprints, Group \texttt{SEP490\_04} successfully designed, implemented, verified, and packaged \textbf{Frevia -- Verified Freelance Marketplace Platform}. The delivered system achieves every functional and non-functional objective defined at project initiation:
+
+\begin{itemize}[leftmargin=1.0cm, itemsep=4pt]
+    \item \textbf{Complete Full-Stack Architecture:} Delivered a clean monorepo uniting Next.js 16 (bilingual \texttt{en}/\texttt{vi}), NestJS 11 REST \& Socket.IO services, Prisma 7 over PostgreSQL 16 (71 domain entities), Stripe Connect escrow settlement, and containerized Python FastAPI AI microservices.
+    \item \textbf{Trusted Onboarding \& Explainable AI:} Combines CCCD document OCR, facial liveness checks, administrator audit queues, and AI CV skill extraction so hiring and verification remain transparent and human-governed.
+    \item \textbf{End-to-End Contractual \& Financial Safety:} Establishes bilateral digital signatures, milestone-scoped escrow holds, flat \$5.00 USD client platform fees, automated Connect Express transfers, and a deterministic 5-stage dispute arbitration and appeal lifecycle.
+    \item \textbf{Verified Engineering Quality:} Completed \textbf{3,066 total test cases} across Unit, Integration, System, and UAT suites (\textbf{2,984 passed}, \textbf{0 failed}, \textbf{82 GPU-deferred AI assertions}, \textbf{97.33\%} overall pass rate) with \textbf{zero open defects} and clean multi-container \texttt{docker compose} execution.
+\end{itemize}
+
+\input{sections/limitations_verbatim}
+
+\section{Future Work}
+
+Building upon the decoupled monorepo and provider abstractions established in Frevia v1.0, future development iterations can expand the platform along five high-impact directions:
+
+\begin{enumerate}[leftmargin=1.2cm, itemsep=4pt]
+    \item \textbf{Multi-Currency \& Regional Payment Rails:} Extend the \texttt{PaymentService} abstraction to support domestic Vietnamese e-wallets (VNPay, MoMo) and localized multi-currency settlement alongside Stripe Connect.
+    \item \textbf{Hourly Billing \& Timesheet Tracking:} Activate hourly engagement contracts with verifiable work logs feeding directly into the existing weekly/milestone Stripe transfer ledger.
+    \item \textbf{Native Mobile Clients (iOS / Android):} Build companion mobile apps using React Native or Flutter consuming the existing OpenAPI/Swagger REST endpoints and JWT session layer.
+    \item \textbf{Distributed WebSocket \& Real-Time Push:} Plug Redis Pub/Sub (\texttt{@socket.io/redis-adapter}) into the Socket.IO gateway to support horizontal container autoscaling and push real-time notifications without polling.
+    \item \textbf{Multilingual OCR \& Two-Factor Hardware TOTP:} Expand eKYC extraction to international passports/visas and expose the schema-ready TOTP 2FA, invoice PDF generation, and completion certificate modules directly in the web UI.
+\end{enumerate}
