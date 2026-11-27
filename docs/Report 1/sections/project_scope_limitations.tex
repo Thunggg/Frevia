@@ -102,7 +102,7 @@ Administers progressive project stages, where Client and Freelancer can define m
 
 \Needspace{5\baselineskip}
 \item \textbf{FE-15: Manage Payments \& Escrow} \\*
-Administers financial transactions via Stripe Connect, where Freelancer connects their Stripe Express payout account and views payout history; Client funds milestone deposits into escrow, pays flat platform fees (\$5 fixed fee per contract), and approves payment releases upon milestone sign-off; and the system executes automated webhook synchronization and dispute fee settlements.
+Administers financial transactions via Stripe Connect, where Freelancer connects their Stripe Express payout account, checks payout readiness, and views transaction history; Client manages saved payment methods, authorizes contract hold deposits, funds milestone deposits into escrow (via Stripe Checkout or saved cards), pays flat platform fees (\$5 fixed fee per contract), and approves payment releases upon milestone sign-off; and the system executes automated webhook synchronization for escrow reconciliation.
 
 \end{itemize}
 
@@ -112,7 +112,7 @@ Administers financial transactions via Stripe Connect, where Freelancer connects
 
 \Needspace{5\baselineskip}
 \item \textbf{FE-16: Manage Disputes \& Arbitration} \\*
-Adjudicates contract conflicts through a transparent 5-stage legal workflow, where Client or Freelancer can file a dispute on a funded milestone and submit evidence; while Administrator (Arbitrator) evaluates claims, allocates escrow balances (full release, refund, or percentage split), and processes dispute decision reviews (appeals).
+Adjudicates contract conflicts through a structured arbitration workflow, where Client or Freelancer can file a dispute on a funded milestone, upload supporting evidence files, submit responses or withdraw unresolved claims before escalation, and escalate contested cases to a domain Expert; while Expert (Arbitrator) evaluates claims and evidence and allocates escrow balances (full release, refund, or percentage split).
 
 \Needspace{5\baselineskip}
 \item \textbf{FE-17: Manage Contract Reviews \& Reputation} \\*
@@ -255,27 +255,27 @@ Section 3.29: Proposal Management (\#3.29.1--3.29.9) &
 \textbf{External:} Client (Evaluate AI score, accept/reject proposal) \\ \hline
 
 \textbf{FE-13: Manage Contracts} & 
-Module 9: Contract Management (\#1.49--1.52) & 
-Section 3.8: Contract Management (\#3.8.1--3.8.10) & 
+Contract Management (\#1.33--1.44) & 
+Contract Management (UC-13.01--UC-13.06, UC-13.08--UC-13.12) & 
 \textbf{External:} Client, Freelancer (Negotiate terms, sign, upload files, complete/cancel) \\ \hline
 
 \textbf{FE-14: Manage Milestones \& Deliverables} & 
-Module 12: (\#2.13--2.18), Module 13: (\#2.19--2.21), Module 14: (\#2.22--2.26) & 
-Section 3.20: Milestone Management (\#3.20.1--3.20.15) & 
+Milestone Management, Files \& Submissions (\#2.35--2.48) & 
+Milestone Management, Files \& Submissions (UC-24.01--UC-26.05) & 
 \textbf{External:} Freelancer (Submit deliverable, update progress)\par
 \textbf{External:} Client (Approve milestone, request changes) \\ \hline
 
 \textbf{FE-15: Manage Payments \& Escrow} & 
-Module 27: Payment Management (\#4.1--4.13) & 
-Section 3.35: Payment Management (\#3.35.1--3.35.13) & 
+Payment Management (\#4.1--4.13) & 
+Payment Management (UC-43.01--UC-43.10) & 
 \textbf{External:} Freelancer (Stripe Connect, payouts)\par
-\textbf{External:} Client (Fund escrow, pay platform fee, release funds) \\ \hline
+\textbf{External:} Client (Manage cards, hold deposit, fund escrow, release funds) \\ \hline
 
 \textbf{FE-16: Manage Disputes \& Arbitration} & 
-Module 26: Dispute Management (\#3.48--3.52) & 
-Section 3.28: Dispute Management (\#3.28.1--3.28.6) & 
-\textbf{External:} Client, Freelancer (Open dispute, upload evidence)\par
-\textbf{Internal:} Administrator (Evaluate, split escrow, review appeal) \\ \hline
+Dispute Management (\#3.35--3.45) & 
+Dispute Management (UC-33.01--UC-33.11) & 
+\textbf{External:} Client, Freelancer (Open, respond, withdraw, escalate dispute, upload evidence)\par
+\textbf{External:} Expert (Evaluate claims, split escrow) \\ \hline
 
 \textbf{FE-17: Manage Contract Reviews \& Reputation} & 
 Module 15: Review and Rating (\#2.27--2.31) & 
@@ -356,7 +356,7 @@ Each limitation below details the concrete operational boundary, its resolution 
 \begin{itemize}[leftmargin=0.5cm, label=--]
 \item \textbf{Problem Statement:} AI integration is scoped strictly to four advisory workflows: CV skill extraction, identity document OCR/liveness verification, community forum moderation scoring, and explainable job--freelancer recommendation ranking. Autonomous AI hiring, automated contract formation, and autonomous dispute adjudication are excluded.
 \item \textbf{Current Status:} Solved by Architectural Design (Human-in-the-Loop Governance).
-\item \textbf{Resolution / Mitigation Method:} Keeping AI in an advisory role is a deliberate design decision to prevent algorithmic bias, hallucination, and legal liability. All legally binding decisions (hiring candidates, verifying identity badges, banning accounts, and settling financial disputes) strictly require explicit human authorization (Client or Administrator).
+\item \textbf{Resolution / Mitigation Method:} Keeping AI in an advisory role is a deliberate design decision to prevent algorithmic bias, hallucination, and legal liability. All legally binding decisions (hiring candidates, verifying identity badges, banning accounts, and settling financial disputes) strictly require explicit human authorization (Client, Expert, or Administrator).
 \end{itemize}
 
 \Needspace{6\baselineskip}
@@ -376,9 +376,9 @@ Each limitation below details the concrete operational boundary, its resolution 
 \end{itemize}
 
 \Needspace{6\baselineskip}
-\item[LI-08] \textbf{Administrative Arbitration vs. Statutory Legal Proceedings}
+\item[LI-08] \textbf{Platform Arbitration vs. Statutory Legal Proceedings}
 \begin{itemize}[leftmargin=0.5cm, label=--]
-\item \textbf{Problem Statement:} Platform dispute arbitration is an administrative contractual resolution conducted by system administrators, not an official court of law or statutory arbitration panel. The platform cannot execute wage garnishments or legal chargeback litigation.
+\item \textbf{Problem Statement:} Platform dispute arbitration is a contractual resolution conducted by domain expert arbitrators, not an official court of law or statutory arbitration panel. The platform cannot execute wage garnishments or legal chargeback litigation.
 \item \textbf{Current Status:} Addressed by Terms of Service and Exportable Evidence.
 \item \textbf{Resolution / Mitigation Method:} Users agree in the Terms of Service to abide by platform escrow distribution decisions. Furthermore, every dispute generates an immutable, exportable audit trail (including contract terms, milestone submissions, timestamped communications, and filed evidence) that either party can legally submit to civil courts or external arbitration authorities.
 \end{itemize}
