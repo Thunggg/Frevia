@@ -1,0 +1,245 @@
+<mxfile host="Electron" agent="Mozilla/5.0">
+  <diagram name="UC-45.10 View Payment Transactions History" id="uc4510">
+    <mxGraphModel dx="525" dy="417" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1540" pageHeight="1649" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="actor" parent="1" value="Client / Freelancer&lt;br&gt;/ Admin" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;whiteSpace=wrap;labelBackgroundColor=none;strokeColor=#000000;fillColor=#ffffff;" vertex="1">
+          <mxGeometry height="60" width="30" x="85" y="200" as="geometry" />
+        </mxCell>
+        <mxCell id="dash_actor" parent="1" value="" style="endArrow=none;dashed=1;html=1;rounded=0;labelBackgroundColor=none;strokeColor=#000000;" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="100" y="280" as="sourcePoint" />
+            <mxPoint x="100" y="1589" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="view" parent="1" value="&amp;lt;&amp;lt;boundary&amp;gt;&amp;gt;&lt;br&gt;BillingPaymentsView" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};size=52;labelBackgroundColor=none;strokeColor=#000000;fillColor=#ffffff;" vertex="1">
+          <mxGeometry height="1349" width="170" x="225" y="240" as="geometry" />
+        </mxCell>
+        <mxCell id="ctrl" parent="1" value="&amp;lt;&amp;lt;controller&amp;gt;&amp;gt;&lt;br&gt;:PaymentController" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};size=52;labelBackgroundColor=none;strokeColor=#000000;fillColor=#ffffff;" vertex="1">
+          <mxGeometry height="1349" width="210" x="415" y="240" as="geometry" />
+        </mxCell>
+        <mxCell id="svc" parent="1" value="&amp;lt;&amp;lt;service&amp;gt;&amp;gt;&lt;br&gt;:PaymentService" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};size=52;labelBackgroundColor=none;strokeColor=#000000;fillColor=#ffffff;" vertex="1">
+          <mxGeometry height="1349" width="190" x="645" y="240" as="geometry" />
+        </mxCell>
+        <mxCell id="repo" parent="1" value="&amp;lt;&amp;lt;repository&amp;gt;&amp;gt;&lt;br&gt;:PaymentRepository" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};size=52;labelBackgroundColor=none;strokeColor=#000000;fillColor=#ffffff;" vertex="1">
+          <mxGeometry height="1349" width="210" x="875" y="240" as="geometry" />
+        </mxCell>
+        <mxCell id="prisma" parent="1" value="&amp;lt;&amp;lt;service&amp;gt;&amp;gt;&lt;br&gt;:PrismaService" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};size=52;labelBackgroundColor=none;strokeColor=#000000;fillColor=#ffffff;" vertex="1">
+          <mxGeometry height="1349" width="140" x="1140" y="240" as="geometry" />
+        </mxCell>
+        <mxCell id="db" parent="1" value="" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;labelBackgroundColor=none;strokeColor=#000000;fillColor=#ffffff;" vertex="1">
+          <mxGeometry height="70" width="60" x="1380" y="220" as="geometry" />
+        </mxCell>
+        <mxCell id="db_lbl" parent="1" value="Database" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;labelBackgroundColor=none;strokeColor=none;fillColor=none;fontColor=#000000;" vertex="1">
+          <mxGeometry height="25" width="80" x="1370" y="292" as="geometry" />
+        </mxCell>
+        <mxCell id="dash_db" parent="1" value="" style="endArrow=none;dashed=1;html=1;rounded=0;labelBackgroundColor=none;strokeColor=#000000;" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1410" y="320" as="sourcePoint" />
+            <mxPoint x="1410" y="1589" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="act_38" parent="1" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};labelBackgroundColor=none;fillColor=#ffffff;strokeColor=#000000;" vertex="1">
+          <mxGeometry height="1122" width="10" x="95" y="340" as="geometry" />
+        </mxCell>
+        <mxCell id="act_39" parent="view" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};labelBackgroundColor=none;fillColor=#ffffff;strokeColor=#000000;" vertex="1">
+          <mxGeometry height="1122" width="10" x="80" y="100" as="geometry" />
+        </mxCell>
+        <mxCell id="act_40" parent="ctrl" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};labelBackgroundColor=none;fillColor=#ffffff;strokeColor=#000000;" vertex="1">
+          <mxGeometry height="1032" width="10" x="100" y="155" as="geometry" />
+        </mxCell>
+        <mxCell id="act_41" parent="svc" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};labelBackgroundColor=none;fillColor=#ffffff;strokeColor=#000000;" vertex="1">
+          <mxGeometry height="590" width="10" x="90" y="562" as="geometry" />
+        </mxCell>
+        <mxCell id="m_2" parent="1" value="1. Open Transactions History&lt;br&gt;&amp; select filter/page" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=#000000;" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="105" y="340" as="sourcePoint" />
+            <mxPoint x="305" y="340" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m_3" parent="1" value="2. GET /api/payments/transactions?&lt;br&gt;page=&amp;limit=&amp;type=&amp;status=" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=#000000;" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="315" y="395" as="sourcePoint" />
+            <mxPoint x="515" y="395" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="fr_ref_4" parent="1" value="ref" style="shape=umlFrame;whiteSpace=wrap;html=1;pointerEvents=0;width=50;height=22;fontSize=12;fillColor=none;strokeColor=#000000;labelBackgroundColor=none;" vertex="1">
+          <mxGeometry height="50" width="200" x="420" y="445" as="geometry" />
+        </mxCell>
+        <mxCell id="fr_ref_lbl_5" parent="1" value="3.1. Verify jwt" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=none;fillColor=none;fontColor=#000000;" vertex="1">
+          <mxGeometry height="20" width="140" x="470" y="460" as="geometry" />
+        </mxCell>
+        <mxCell id="g_7" parent="1" value="[no Bearer token ||&lt;br&gt;verify failed || session is null]" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=none;fillColor=none;fontColor=#000000;" vertex="1">
+          <mxGeometry height="32" width="260" x="115" y="518" as="geometry" />
+        </mxCell>
+        <mxCell id="m_8" parent="1" value="2.1.1. Return 401 response" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=#000000;" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="515" y="575" as="sourcePoint" />
+            <mxPoint x="315" y="575" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m_9" parent="1" value="2.1.2. Display error message" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=#000000;" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="305" y="605" as="sourcePoint" />
+            <mxPoint x="105" y="605" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="div_10" parent="1" value="" style="endArrow=none;dashed=1;html=1;rounded=0;labelBackgroundColor=none;strokeColor=#000000;" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="20" y="635" as="sourcePoint" />
+            <mxPoint x="620" y="635" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="g_11" parent="1" value="[user is banned || roleId is&lt;br&gt;missing || permission denied]" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=none;fillColor=none;fontColor=#000000;" vertex="1">
+          <mxGeometry height="32" width="260" x="115" y="643" as="geometry" />
+        </mxCell>
+        <mxCell id="m_12" parent="1" value="2.2.1. Return 403 response" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=#000000;" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="515" y="700" as="sourcePoint" />
+            <mxPoint x="315" y="700" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m_13" parent="1" value="2.2.2. Display error message" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=#000000;" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="305" y="730" as="sourcePoint" />
+            <mxPoint x="105" y="730" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="fr_6" parent="1" value="alt" style="shape=umlFrame;whiteSpace=wrap;html=1;pointerEvents=0;width=40;height=24;fontSize=12;fillColor=none;strokeColor=#000000;labelBackgroundColor=none;" vertex="1">
+          <mxGeometry height="250" width="600" x="20" y="510" as="geometry" />
+        </mxCell>
+        <mxCell id="m_14" parent="1" value="3. getTransactions(&lt;br&gt;userId, roleName, query)" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=#000000;" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="525" y="802" as="sourcePoint" />
+            <mxPoint x="735" y="802" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="act_self_15" parent="svc" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};labelBackgroundColor=none;fillColor=#ffffff;strokeColor=#000000;" vertex="1">
+          <mxGeometry height="36" width="10" x="95" y="612" as="geometry" />
+        </mxCell>
+        <mxCell id="ms_16" parent="1" value="4. Build role-based filter&lt;br&gt;(Admin: all / User: userId)" style="html=1;align=left;verticalAlign=middle;endArrow=block;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=#000000;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" target="act_self_15">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="10" as="offset" />
+            <Array as="points">
+              <mxPoint x="790" y="842" />
+              <mxPoint x="790" y="870" />
+            </Array>
+            <mxPoint x="745" y="842" as="sourcePoint" />
+            <mxPoint x="755" y="870" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m_17" parent="1" value="5.1. getTransactions(query, filter)" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=#000000;" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="745" y="904" as="sourcePoint" />
+            <mxPoint x="975" y="904" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m_18" parent="1" value="5.2. prisma.$transaction([&lt;br&gt;findMany, count])" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=#000000;" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="985" y="942" as="sourcePoint" />
+            <mxPoint x="1205" y="942" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m_19" parent="1" value="5.3. Execute SELECT &amp; COUNT" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=#000000;" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1215" y="980" as="sourcePoint" />
+            <mxPoint x="1405" y="980" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m_20" parent="1" value="5.4. Return {data, totalItems, ...}" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=#000000;" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1405" y="1018" as="sourcePoint" />
+            <mxPoint x="1215" y="1018" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m_21" parent="1" value="5.5. Return {data, totalItems, ...}" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=#000000;" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1205" y="1053" as="sourcePoint" />
+            <mxPoint x="985" y="1053" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m_22" parent="1" value="5.6. Return {data, totalItems, ...}" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=#000000;" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="975" y="1088" as="sourcePoint" />
+            <mxPoint x="745" y="1088" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="act_23" parent="repo" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};labelBackgroundColor=none;fillColor=#ffffff;strokeColor=#000000;" vertex="1">
+          <mxGeometry height="184" width="10" x="100" y="664" as="geometry" />
+        </mxCell>
+        <mxCell id="act_24" parent="prisma" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};labelBackgroundColor=none;fillColor=#ffffff;strokeColor=#000000;" vertex="1">
+          <mxGeometry height="111" width="10" x="65" y="702" as="geometry" />
+        </mxCell>
+        <mxCell id="act_25" parent="db" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};labelBackgroundColor=none;fillColor=#ffffff;strokeColor=#000000;" vertex="1">
+          <mxGeometry height="38" width="10" x="25" y="760" as="geometry" />
+        </mxCell>
+        <mxCell id="act_self_26" parent="svc" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};labelBackgroundColor=none;fillColor=#ffffff;strokeColor=#000000;" vertex="1">
+          <mxGeometry height="36" width="10" x="95" y="896" as="geometry" />
+        </mxCell>
+        <mxCell id="ms_27" parent="1" value="6. Handle load transactions result" style="html=1;align=left;verticalAlign=middle;endArrow=block;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=#000000;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" target="act_self_26">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="10" as="offset" />
+            <Array as="points">
+              <mxPoint x="790" y="1126" />
+              <mxPoint x="790" y="1154" />
+            </Array>
+            <mxPoint x="745" y="1126" as="sourcePoint" />
+            <mxPoint x="755" y="1154" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="g_29" parent="1" value="[load failed]" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=none;fillColor=none;fontColor=#000000;" vertex="1">
+          <mxGeometry height="22" width="260" x="115" y="1196" as="geometry" />
+        </mxCell>
+        <mxCell id="m_30" parent="1" value="6.1.1. throw 500&lt;br&gt;FailedToLoadTransactions" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=#000000;" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="735" y="1243" as="sourcePoint" />
+            <mxPoint x="525" y="1243" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m_31" parent="1" value="6.1.2. Return 500 response" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=#000000;" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="515" y="1277" as="sourcePoint" />
+            <mxPoint x="315" y="1277" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m_32" parent="1" value="6.1.3. Display error message" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=#000000;" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="305" y="1307" as="sourcePoint" />
+            <mxPoint x="105" y="1307" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="div_33" parent="1" value="" style="endArrow=none;dashed=1;html=1;rounded=0;labelBackgroundColor=none;strokeColor=#000000;" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="20" y="1337" as="sourcePoint" />
+            <mxPoint x="790" y="1337" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="g_34" parent="1" value="[load success]" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=none;fillColor=none;fontColor=#000000;" vertex="1">
+          <mxGeometry height="22" width="260" x="115" y="1345" as="geometry" />
+        </mxCell>
+        <mxCell id="m_35" parent="1" value="6.2.1. Return paginated transactions" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=#000000;" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="735" y="1392" as="sourcePoint" />
+            <mxPoint x="525" y="1392" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m_36" parent="1" value="6.2.2. Return 200 response" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=#000000;" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="515" y="1427" as="sourcePoint" />
+            <mxPoint x="315" y="1427" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m_37" parent="1" value="6.2.3. Render transaction history&lt;br&gt;&amp; pagination" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;strokeColor=#000000;" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="305" y="1462" as="sourcePoint" />
+            <mxPoint x="105" y="1462" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="fr_28" parent="1" value="alt" style="shape=umlFrame;whiteSpace=wrap;html=1;pointerEvents=0;width=40;height=24;fontSize=12;fillColor=none;strokeColor=#000000;labelBackgroundColor=none;" vertex="1">
+          <mxGeometry height="309" width="770" x="20" y="1188" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
