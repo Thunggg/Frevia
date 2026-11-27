@@ -2200,7 +2200,29 @@
     "noSkills": "Chưa có kỹ năng nào",
     "viewProfile": "Xem hồ sơ",
     "follow": "Theo dõi",
-    "unfollow": "Bỏ theo dõi"
+    "unfollow": "Bỏ theo dõi",
+    "overview": {
+      "nameFallback": "Khách hàng",
+      "completionHint": "Giới thiệu bản thân và doanh nghiệp để freelancer hiểu rõ hơn về người đứng sau dự án.",
+      "editCompany": "Chỉnh sửa thông tin công ty",
+      "aboutEmpty": "Giới thiệu đôi nét về bản thân và các dự án bạn muốn thực hiện.",
+      "companyTitle": "Thông tin công ty",
+      "companyEmpty": "Chưa bổ sung tên công ty",
+      "descriptionEmpty": "Mô tả công ty sẽ hiển thị tại đây sau khi được bổ sung.",
+      "websiteEmpty": "Chưa bổ sung website công ty"
+    },
+    "tabPersonal": "Thông tin cá nhân",
+    "personalHint": "Tên, ảnh và giới thiệu cá nhân thuộc tài khoản client. Thông tin công ty được quản lý riêng trong tab Công ty.",
+    "companyPendingHint": "Bạn đang chỉnh sửa bản đã gửi duyệt. Hồ sơ công khai giữ nguyên cho đến khi được phê duyệt.",
+    "companyReviewHint": "Thay đổi cần được quản trị viên duyệt trước khi hiển thị công khai.",
+    "companySaveHint": "Thay đổi sẽ hiển thị trên hồ sơ công khai ngay sau khi lưu.",
+    "companyValidationError": "Kiểm tra tên công ty (tối đa 255 ký tự), mô tả (tối đa 5.000 ký tự) và website hợp lệ (https://...).",
+    "retryCompany": "Tải lại hồ sơ",
+    "savingCompany": "Đang lưu…",
+    "submitCompanyReview": "Gửi duyệt thay đổi",
+    "resetCompany": "Hoàn tác thay đổi",
+    "tabIdentity": "Xác minh danh tính",
+    "deleteSocialLinkConfirm": "Bạn có chắc muốn xóa liên kết {platform} của mình?"
   },
   "accountProfile": {
     "breadcrumb": "Hồ sơ & cài đặt tin cậy",
@@ -2276,7 +2298,12 @@
     "followingState": "Đang theo dõi",
     "unfollowTitle": "Bỏ theo dõi {name}?",
     "unfollowHint": "Hồ sơ của họ sẽ bị xoá khỏi danh sách theo dõi. Bạn có thể theo dõi lại bất cứ lúc nào.",
-    "keepFollowing": "Giữ theo dõi"
+    "keepFollowing": "Giữ theo dõi",
+    "hideIdentityDetails": "Ẩn thông tin",
+    "showIdentityDetails": "Hiện thông tin",
+    "identityHiddenTitle": "Giấy tờ đang được che",
+    "identityHiddenHint": "Nhấn để xem thông tin và ảnh giấy tờ của bạn.",
+    "navPersonal": "Thông tin cá nhân"
   },
   "verificationStatus": {
     "NOT_SUBMITTED": "Chưa gửi",
@@ -2969,7 +2996,34 @@
     "professionalInfoSubtitle": "Chức danh, giới thiệu và trạng thái hoạt động công khai.",
     "bioPlaceholder": "Giới thiệu bản thân, chuyên môn thế mạnh và mục tiêu nghề nghiệp...",
     "experiencePlaceholder": "Senior Frontend Developer - ABC Corp (2022 - Nay)\nFullstack Developer - Freelance (2020 - 2022)",
-    "educationPlaceholder": "Đại học Bách Khoa\nKỹ thuật phần mềm (2018 - 2022)"
+    "educationPlaceholder": "Đại học Bách Khoa\nKỹ thuật phần mềm (2018 - 2022)",
+    "overview": {
+      "profileSummary": "T?m t?t h? s?",
+      "nameFallback": "Freelancer",
+      "editPersonal": "Ch?nh s?a th?ng tin c? nh?n",
+      "headlineEmpty": "Th?m ch?c danh chuy?n m?n c?a b?n",
+      "addSocialLinks": "Th?m li?n k?t m?ng x? h?i",
+      "viewCv": "Xem CV",
+      "completion": "M?c ?? ho?n thi?n h? s?",
+      "completionHint": "C?p nh?t kinh nghi?m v? k? n?ng ?? kh?ch h?ng hi?u r? h?n v? c?ng vi?c c?a b?n.",
+      "editProfessional": "Ch?nh s?a th?ng tin chuy?n m?n",
+      "loading": "?ang t?i th?ng tin chuy?n m?n",
+      "loadFailed": "Kh?ng th? t?i th?ng tin chuy?n m?n. Vui l?ng th? l?i.",
+      "retry": "Th? l?i",
+      "reviewUnavailable": "Ch?a th? t?i tr?ng th?i x?t duy?t. B?n d??i l? th?ng tin h? s? ?? l?u hi?n t?i.",
+      "about": "Gi?i thi?u",
+      "edit": "Ch?nh s?a",
+      "aboutEmpty": "Gi?i thi?u ??i n?t v? b?n th?n v? c?ng vi?c b?n ?ang l?m.",
+      "experience": "Kinh nghi?m",
+      "experienceEmpty": "Kinh nghi?m chuy?n m?n s? hi?n th? t?i ??y sau khi ???c b? sung.",
+      "skills": "K? n?ng",
+      "skillsEmpty": "K? n?ng c?a b?n s? hi?n th? t?i ??y sau khi ???c b? sung.",
+      "skillsFailed": "Kh?ng th? t?i danh s?ch k? n?ng.",
+      "education": "H?c v?n",
+      "educationEmpty": "Th?ng tin h?c v?n s? hi?n th? t?i ??y sau khi ???c b? sung.",
+      "languages": "Ng?n ng?",
+      "certifications": "Ch?ng ch?"
+    }
   },
   "forum": {
     "title": "Diễn đàn cộng đồng",

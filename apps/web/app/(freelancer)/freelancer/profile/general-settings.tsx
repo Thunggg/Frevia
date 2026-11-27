@@ -32,13 +32,24 @@ import {
   type CvAnalysisDraftType,
   type GeneralProfileType,
 } from "@shared/types";
+import {
+  FreelancerProfileOverview,
+  type FreelancerProfileOverviewProps,
+} from "./freelancer-profile-overview";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@repo/ui/components/shadcn/dialog";
 import { LanguageSwitcher } from "@/components/language-switcher";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { CvAnalysisDialog } from "./cv-analysis-dialog";
 import { useActionPermission } from "@/hooks/use-action-permission";
 import { useBackendMessage } from "@/hooks/use-backend-message";
 import { useQueryClient } from "@tanstack/react-query";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import {
   AlertCircle,
   Camera,
@@ -66,6 +77,7 @@ import {
   useRef,
   useState,
   type FormEvent,
+  type ReactNode,
 } from "react";
 
 const MAX_AVATAR_SIZE = 5 * 1024 * 1024;
@@ -141,7 +153,7 @@ function PasswordInput({
         />
         <button
           type="button"
-          className="absolute right-1 top-1/2 grid size-8 -translate-y-1/2 place-items-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0069D3]/40"
+          className="absolute right-1 top-1/2 grid size-8 -translate-y-1/2 place-items-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--profile-accent,#4fae2e)]/40"
           aria-label={
             visible
               ? t("hidePassword", { field: label })
@@ -162,13 +174,35 @@ function PasswordInput({
   );
 }
 
-export function GeneralSettings() {
+export function GeneralSettings({
+  hideFreelancerFields = false,
+  showAppearance = true,
+  accent = "green",
+  freelancerOverview,
+  personalOverview,
+  onPersonalProfileSaved,
+}: {
+  hideFreelancerFields?: boolean;
+  showAppearance?: boolean;
+  accent?: "green" | "blue";
+  personalOverview?: (
+    account: GeneralProfileType,
+    onEditPersonal: () => void,
+  ) => ReactNode;
+  onPersonalProfileSaved?: () => void;
+  freelancerOverview?: Omit<
+    FreelancerProfileOverviewProps,
+    "account" | "onEditPersonal"
+  >;
+} = {}) {
+  const hasOverview = Boolean(freelancerOverview || personalOverview);
   const router = useRouter();
   const queryClient = useQueryClient();
   const t = useTranslations("generalSettings");
   const tSettings = useTranslations("clientProfileSettings");
   const tRole = useTranslations("roleName");
   const tCommon = useTranslations("common");
+  const activeLocale = useLocale();
   const { can, isLoading: isPermissionLoading } = useActionPermission();
   const canViewAccountProfile = can("GET", "/api/account-profile");
   const canUpdateAccountProfile = can("PUT", "/api/account-profile");
@@ -183,6 +217,7 @@ export function GeneralSettings() {
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const cvInputRef = useRef<HTMLInputElement>(null);
+  const [personalEditorOpen, setPersonalEditorOpen] = useState(false);
   const [profile, setProfile] = useState<GeneralProfileType | null>(null);
   const [displayName, setDisplayName] = useState("");
   const [bio, setBio] = useState("");
@@ -242,9 +277,9 @@ export function GeneralSettings() {
       setProfile(response.data);
       setDisplayName(response.data.displayName ?? "");
       setBio(response.data.bio ?? "");
-      const isFreelancer = response.data.roles.some(
-        (role) => role.name === RoleName.FREELANCER,
-      );
+      const isFreelancer =
+        !hideFreelancerFields &&
+        response.data.roles.some((role) => role.name === RoleName.FREELANCER);
       if (isFreelancer) {
         try {
           const detail = await profileApiRequest.getProfileDetail(
@@ -260,12 +295,18 @@ export function GeneralSettings() {
     } finally {
       setPending(null);
     }
-  }, [isPermissionLoading, canViewAccountProfile, toMessage]);
+  }, [
+    isPermissionLoading,
+    canViewAccountProfile,
+    toMessage,
+    hideFreelancerFields,
+  ]);
   useEffect(() => void load(), [load]);
 
   const busy = pending !== null;
   const isFreelancer =
-    profile?.roles.some((role) => role.name === RoleName.FREELANCER) ?? false;
+    !hideFreelancerFields &&
+    (profile?.roles.some((role) => role.name === RoleName.FREELANCER) ?? false);
   const profileChanged =
     displayName !== (profile?.displayName ?? "") ||
     bio !== (profile?.bio ?? "");
@@ -371,6 +412,18 @@ export function GeneralSettings() {
         );
         await queryClient.invalidateQueries({ queryKey: ["me"] });
         router.refresh();
+      }
+      if (freelancerOverview) {
+        await queryClient.invalidateQueries({
+          queryKey: [
+            "freelancer-profile-overview",
+            freelancerOverview.profileId,
+          ],
+        });
+      }
+      if (hasOverview) {
+        setPersonalEditorOpen(false);
+        onPersonalProfileSaved?.();
       }
       toastSuccess({ message: response.data.message });
     } catch (error) {
@@ -481,9 +534,7 @@ export function GeneralSettings() {
     return (
       <div className="rounded-xl border border-destructive/40 bg-destructive/5 px-6 py-12 text-center">
         <AlertCircle className="mx-auto size-7 text-destructive" />
-        <h2 className="mt-3 text-lg font-semibold">
-          {t("loadFailedTitle")}
-        </h2>
+        <h2 className="mt-3 text-lg font-semibold">{t("loadFailedTitle")}</h2>
         <p className="mx-auto mt-1 max-w-md text-sm text-muted-foreground">
           {loadError ?? t("profileUnavailable")}
         </p>
@@ -495,182 +546,233 @@ export function GeneralSettings() {
     );
   }
 
-  return (
-    <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_360px]">
-      <div className="space-y-8">
-        <section className="rounded-xl border border-border bg-card/30 p-5 sm:p-6">
-          <div className="flex flex-col gap-5 sm:flex-row sm:items-center">
-            <Avatar className="size-24 border border-border shadow-sm">
-              <AvatarImage
-                src={avatarPreview ?? profile.avatarUrl ?? undefined}
-                alt={t("avatarAlt", {
-                  name: profile.displayName ?? t("userFallback"),
-                })}
-              />
-              <AvatarFallback className="bg-[#0069D3]/10 text-2xl font-semibold text-[#0069D3]">
-                {(profile.displayName ?? profile.email)
-                  .slice(0, 1)
-                  .toUpperCase()}
-              </AvatarFallback>
-            </Avatar>
-            <div className="min-w-0 flex-1">
-              <div className="flex items-center gap-2">
-                <Camera className="size-4 text-[#0069D3]" />
-                <h2 className="text-lg font-semibold text-foreground">
-                  {t("profilePhotoTitle")}
-                </h2>
-              </div>
-              <p className="mt-1 truncate text-sm text-muted-foreground">
-                {profile.email}
-              </p>
-              <div className="mt-3 flex flex-wrap gap-2">
-                {profile.roles.map((role) => (
-                  <Badge
-                    key={role.name}
-                    variant={role.isPrimary ? "default" : "secondary"}
-                  >
-                    {roleLabel(role.name)}
-                    {role.isPrimary ? t("activeRoleSuffix") : ""}
-                  </Badge>
-                ))}
-              </div>
+  const personalFields = (
+    <div className="space-y-8">
+      <section className="rounded-xl border border-border bg-card/30 p-5 sm:p-6">
+        <div className="flex flex-col gap-5 sm:flex-row sm:items-center">
+          <Avatar className="size-24 border border-border shadow-sm">
+            <AvatarImage
+              src={avatarPreview ?? profile.avatarUrl ?? undefined}
+              alt={t("avatarAlt", {
+                name: profile.displayName ?? t("userFallback"),
+              })}
+            />
+            <AvatarFallback className="bg-[var(--profile-accent,#4fae2e)]/10 text-2xl font-semibold text-[var(--profile-accent,#4fae2e)]">
+              {(profile.displayName ?? profile.email).slice(0, 1).toUpperCase()}
+            </AvatarFallback>
+          </Avatar>
+          <div className="min-w-0 flex-1">
+            <div className="flex items-center gap-2">
+              <Camera className="size-4 text-[var(--profile-accent,#4fae2e)]" />
+              <h2 className="text-lg font-semibold text-foreground">
+                {t("profilePhotoTitle")}
+              </h2>
             </div>
-          </div>
-          {canUploadAvatar && (
-            <form className="mt-6" onSubmit={uploadAvatar}>
-              <Label htmlFor="profile-avatar">{t("chooseNewPhoto")}</Label>
-              <div className="mt-2 flex flex-col gap-3 sm:flex-row">
-                <Input
-                  ref={fileInputRef}
-                  id="profile-avatar"
-                  type="file"
-                  accept="image/jpeg,image/png,image/webp"
-                  disabled={busy}
-                  aria-invalid={Boolean(avatarError)}
-                  aria-describedby="profile-avatar-help"
-                  onChange={(event) =>
-                    chooseAvatar(event.target.files?.[0] ?? null)
+            <p className="mt-1 truncate text-sm text-muted-foreground">
+              {profile.email}
+            </p>
+            <div className="mt-3 flex flex-wrap gap-2">
+              {profile.roles.map((role) => (
+                <Badge
+                  key={role.name}
+                  variant={role.isPrimary ? "default" : "secondary"}
+                  className={
+                    accent === "blue" && role.isPrimary
+                      ? "bg-[#0069D3] text-white hover:bg-[#0058b3]"
+                      : undefined
                   }
-                />
-                <Button
-                  type="submit"
-                  variant="outline"
-                  disabled={busy || !avatar}
                 >
-                  {pending === "avatar" ? (
-                    <Loader2 className="animate-spin" />
-                  ) : (
-                    <Camera />
-                  )}
-                  {t("uploadPhoto")}
-                </Button>
-              </div>
-              <p
-                id="profile-avatar-help"
-                className={`mt-2 text-xs ${avatarError ? "text-destructive" : "text-muted-foreground"}`}
-              >
-                {avatarError ??
-                  (avatar
-                    ? t("avatarSelected", { name: avatar.name })
-                    : t("avatarHelp"))}
-              </p>
-            </form>
-          )}
-        </section>
-
-        <section className="rounded-xl border border-border bg-card/30 p-5 sm:p-6">
-          <div className="flex items-center gap-2">
-            <UserRound className="size-5 text-[#0069D3]" />
-            <h2 className="text-lg font-semibold text-foreground">
-              {t("generalInfoTitle")}
-            </h2>
+                  {roleLabel(role.name)}
+                  {role.isPrimary ? t("activeRoleSuffix") : ""}
+                </Badge>
+              ))}
+            </div>
           </div>
-          <p className="mt-1 text-sm text-muted-foreground">
-            {t("generalInfoHint")}
-          </p>
-          <form className="mt-6 space-y-5" onSubmit={saveProfile} noValidate>
-            <div className="space-y-2">
-              <Label htmlFor="display-name">{t("displayNameLabel")}</Label>
+        </div>
+        {canUploadAvatar && (
+          <form className="mt-6" onSubmit={uploadAvatar}>
+            <Label htmlFor="profile-avatar">{t("chooseNewPhoto")}</Label>
+            <div className="mt-2 flex flex-col gap-3 sm:flex-row">
               <Input
-                id="display-name"
-                maxLength={255}
-                value={displayName}
+                ref={fileInputRef}
+                id="profile-avatar"
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
                 disabled={busy}
-                aria-invalid={Boolean(profileErrors.displayName)}
-                aria-describedby={
-                  profileErrors.displayName ? "display-name-error" : undefined
+                aria-invalid={Boolean(avatarError)}
+                aria-describedby="profile-avatar-help"
+                onChange={(event) =>
+                  chooseAvatar(event.target.files?.[0] ?? null)
                 }
-                onChange={(event) => {
-                  setDisplayName(event.target.value);
-                  setProfileErrors((errors) => ({
-                    ...errors,
-                    displayName: "",
-                    form: "",
-                  }));
-                }}
               />
-              {profileErrors.displayName && (
-                <p id="display-name-error" className="text-xs text-destructive">
-                  {profileErrors.displayName}
-                </p>
-              )}
-            </div>
-            <div className="space-y-2">
-              <div className="flex items-center justify-between gap-4">
-                <Label htmlFor="profile-bio">{t("bioLabel")}</Label>
-                <span className="text-xs tabular-nums text-muted-foreground">
-                  {t("bioCounter", { count: bio.length })}
-                </span>
-              </div>
-              <Textarea
-                id="profile-bio"
-                rows={6}
-                maxLength={5000}
-                value={bio}
-                disabled={busy}
-                aria-invalid={Boolean(profileErrors.bio)}
-                aria-describedby={
-                  profileErrors.bio ? "profile-bio-error" : undefined
-                }
-                placeholder={t("bioPlaceholder")}
-                onChange={(event) => {
-                  setBio(event.target.value);
-                  setProfileErrors((errors) => ({
-                    ...errors,
-                    bio: "",
-                    form: "",
-                  }));
-                }}
-              />
-              {profileErrors.bio && (
-                <p id="profile-bio-error" className="text-xs text-destructive">
-                  {profileErrors.bio}
-                </p>
-              )}
-            </div>
-            {profileErrors.form && (
-              <p className="text-sm text-destructive">{profileErrors.form}</p>
-            )}
-            {canUpdateAccountProfile && (
               <Button
-                className="bg-[#0069D3] text-white hover:bg-[#005bb8]"
-                disabled={busy || !profileChanged}
+                type="submit"
+                variant="outline"
+                disabled={busy || !avatar}
               >
-                {pending === "profile" ? (
+                {pending === "avatar" ? (
                   <Loader2 className="animate-spin" />
                 ) : (
-                  <Save />
+                  <Camera />
                 )}
-                {tSettings("saveChanges")}
+                {t("uploadPhoto")}
               </Button>
-            )}
+            </div>
+            <p
+              id="profile-avatar-help"
+              className={`mt-2 text-xs ${avatarError ? "text-destructive" : "text-muted-foreground"}`}
+            >
+              {avatarError ??
+                (avatar
+                  ? t("avatarSelected", { name: avatar.name })
+                  : t("avatarHelp"))}
+            </p>
           </form>
-        </section>
+        )}
+      </section>
+
+      <section className="rounded-xl border border-border bg-card/30 p-5 sm:p-6">
+        <div className="flex items-center gap-2">
+          <UserRound className="size-5 text-[var(--profile-accent,#4fae2e)]" />
+          <h2 className="text-lg font-semibold text-foreground">
+            {t("generalInfoTitle")}
+          </h2>
+        </div>
+        <p className="mt-1 text-sm text-muted-foreground">
+          {t("generalInfoHint")}
+        </p>
+        <form className="mt-6 space-y-5" onSubmit={saveProfile} noValidate>
+          <div className="space-y-2">
+            <Label htmlFor="display-name">{t("displayNameLabel")}</Label>
+            <Input
+              id="display-name"
+              maxLength={255}
+              value={displayName}
+              disabled={busy}
+              aria-invalid={Boolean(profileErrors.displayName)}
+              aria-describedby={
+                profileErrors.displayName ? "display-name-error" : undefined
+              }
+              onChange={(event) => {
+                setDisplayName(event.target.value);
+                setProfileErrors((errors) => ({
+                  ...errors,
+                  displayName: "",
+                  form: "",
+                }));
+              }}
+            />
+            {profileErrors.displayName && (
+              <p id="display-name-error" className="text-xs text-destructive">
+                {profileErrors.displayName}
+              </p>
+            )}
+          </div>
+          <div className="space-y-2">
+            <div className="flex items-center justify-between gap-4">
+              <Label htmlFor="profile-bio">{t("bioLabel")}</Label>
+              <span className="text-xs tabular-nums text-muted-foreground">
+                {t("bioCounter", { count: bio.length })}
+              </span>
+            </div>
+            <Textarea
+              id="profile-bio"
+              rows={6}
+              maxLength={5000}
+              value={bio}
+              disabled={busy}
+              aria-invalid={Boolean(profileErrors.bio)}
+              aria-describedby={
+                profileErrors.bio ? "profile-bio-error" : undefined
+              }
+              placeholder={t("bioPlaceholder")}
+              onChange={(event) => {
+                setBio(event.target.value);
+                setProfileErrors((errors) => ({
+                  ...errors,
+                  bio: "",
+                  form: "",
+                }));
+              }}
+            />
+            {profileErrors.bio && (
+              <p id="profile-bio-error" className="text-xs text-destructive">
+                {profileErrors.bio}
+              </p>
+            )}
+          </div>
+          {profileErrors.form && (
+            <p className="text-sm text-destructive">{profileErrors.form}</p>
+          )}
+          {canUpdateAccountProfile && (
+            <Button
+              className="bg-[var(--profile-accent,#4fae2e)] text-white hover:bg-[var(--profile-accent-hover,#459928)]"
+              disabled={busy || !profileChanged}
+            >
+              {pending === "profile" ? (
+                <Loader2 className="animate-spin" />
+              ) : (
+                <Save />
+              )}
+              {tSettings("saveChanges")}
+            </Button>
+          )}
+        </form>
+      </section>
+    </div>
+  );
+
+  return (
+    <div
+      className={
+        hasOverview
+          ? "space-y-8"
+          : "grid gap-8 lg:grid-cols-[minmax(0,1fr)_360px]"
+      }
+      style={
+        accent === "blue"
+          ? ({
+              "--profile-accent": "#0069D3",
+              "--profile-accent-hover": "#0058b3",
+            } as React.CSSProperties)
+          : undefined
+      }
+    >
+      <div className="space-y-8">
+        {hasOverview ? (
+          <>
+            {freelancerOverview ? (
+              <FreelancerProfileOverview
+                {...freelancerOverview}
+                account={profile}
+                onEditPersonal={() => setPersonalEditorOpen(true)}
+              />
+            ) : (
+              personalOverview?.(profile, () => setPersonalEditorOpen(true))
+            )}
+            <Dialog
+              open={personalEditorOpen}
+              onOpenChange={(open) => {
+                if (!busy) setPersonalEditorOpen(open);
+              }}
+            >
+              <DialogContent className="max-h-[85dvh] overflow-y-auto sm:max-w-2xl">
+                <DialogHeader>
+                  <DialogTitle>{t("generalInfoTitle")}</DialogTitle>
+                  <DialogDescription>{t("generalInfoHint")}</DialogDescription>
+                </DialogHeader>
+                {personalFields}
+              </DialogContent>
+            </Dialog>
+          </>
+        ) : (
+          personalFields
+        )}
 
         {profile && isFreelancer ? (
           <section className="rounded-xl border border-border bg-card/30 p-5 sm:p-6">
             <div className="flex items-center gap-2">
-              <FileText className="size-5 text-[#0069D3]" />
+              <FileText className="size-5 text-[var(--profile-accent,#4fae2e)]" />
               <h2 className="text-lg font-semibold text-foreground">
                 Curriculum vitae
               </h2>
@@ -712,7 +814,7 @@ export function GeneralSettings() {
             {canUploadCv && (
               <Button
                 type="button"
-                className="mt-4 bg-[#0069D3] text-white hover:bg-[#005bb8]"
+                className="mt-4 bg-[var(--profile-accent,#4fae2e)] text-white hover:bg-[var(--profile-accent-hover,#459928)]"
                 disabled={busy}
                 onClick={() => cvInputRef.current?.click()}
               >
@@ -727,7 +829,7 @@ export function GeneralSettings() {
             {canAnalyzeCv && cvFileName ? (
               <Button
                 type="button"
-                className="mt-4 ml-2 bg-[#0069D3] text-white hover:bg-[#005bb8]"
+                className="mt-4 ml-2 bg-[var(--profile-accent,#4fae2e)] text-white hover:bg-[var(--profile-accent-hover,#439c28)]"
                 disabled={busy}
                 onClick={() => void handleAnalyzeCv()}
               >
@@ -798,36 +900,40 @@ export function GeneralSettings() {
       </div>
 
       <div className="space-y-5">
-        <section className="rounded-xl border border-border bg-card/30 p-5 sm:p-6">
-          <div className="flex items-center gap-2">
-            <Sun className="size-5 text-[#0069D3]" />
-            <h2 className="text-lg font-semibold text-foreground">
-              {tCommon("theme")} & {tCommon("language")}
-            </h2>
-          </div>
-          <p className="mt-2 text-sm text-muted-foreground">
-            {t("appearanceDescription")}
-          </p>
-          <div className="mt-4 flex flex-wrap items-center gap-3">
-            <div className="flex items-center gap-2.5 rounded-lg border border-border bg-card px-3.5 py-2 shadow-2xs">
-              <span className="text-xs font-medium text-muted-foreground">
-                {tCommon("theme")}:
-              </span>
-              <ThemeToggle />
+        {showAppearance && (
+          <section className="rounded-xl border border-border bg-card/30 p-5 sm:p-6">
+            <div className="flex items-center gap-2">
+              <Sun className="size-5 text-[var(--profile-accent,#4fae2e)]" />
+              <h2 className="text-lg font-semibold text-foreground">
+                {tCommon("theme")} & {tCommon("language")}
+              </h2>
             </div>
-            <div className="flex items-center gap-2.5 rounded-lg border border-border bg-card px-3.5 py-2 shadow-2xs">
-              <span className="text-xs font-medium text-muted-foreground">
-                {tCommon("language")}:
-              </span>
-              <LanguageSwitcher />
+            <p className="mt-2 text-sm text-muted-foreground">
+              {activeLocale === "vi"
+                ? "Tùy chỉnh giao diện hiển thị và ngôn ngữ hệ thống."
+                : "Customize display theme and system language."}
+            </p>
+            <div className="mt-4 flex flex-wrap items-center gap-3">
+              <div className="flex items-center gap-2.5 rounded-lg border border-border bg-card px-3.5 py-2 shadow-2xs">
+                <span className="text-xs font-medium text-muted-foreground">
+                  {tCommon("theme")}:
+                </span>
+                <ThemeToggle />
+              </div>
+              <div className="flex items-center gap-2.5 rounded-lg border border-border bg-card px-3.5 py-2 shadow-2xs">
+                <span className="text-xs font-medium text-muted-foreground">
+                  {tCommon("language")}:
+                </span>
+                <LanguageSwitcher />
+              </div>
             </div>
-          </div>
-        </section>
+          </section>
+        )}
 
         {canChangePassword && (
           <section className="rounded-xl border border-border bg-card/30 p-5 sm:p-6">
             <div className="flex items-center gap-2">
-              <LockKeyhole className="size-5 text-[#0069D3]" />
+              <LockKeyhole className="size-5 text-[var(--profile-accent,#4fae2e)]" />
               <h2 className="text-lg font-semibold text-foreground">
                 {t("changePasswordTitle")}
               </h2>
@@ -835,7 +941,15 @@ export function GeneralSettings() {
             <p className="mt-2 text-sm text-muted-foreground">
               {t("passwordHint")}
             </p>
-            <form className="mt-5 space-y-4" onSubmit={changePassword} noValidate>
+            <form
+              className={
+                hasOverview
+                  ? "mt-5 grid gap-4 md:grid-cols-3"
+                  : "mt-5 space-y-4"
+              }
+              onSubmit={changePassword}
+              noValidate
+            >
               <PasswordInput
                 id="current-password"
                 label={t("currentPasswordLabel")}
@@ -885,11 +999,19 @@ export function GeneralSettings() {
                 }}
               />
               {passwordErrors.form && (
-                <p className="text-sm text-destructive">{passwordErrors.form}</p>
+                <p
+                  className={
+                    hasOverview
+                      ? "text-sm text-destructive md:col-span-3"
+                      : "text-sm text-destructive"
+                  }
+                >
+                  {passwordErrors.form}
+                </p>
               )}
               <Button
                 type="submit"
-                className="w-full"
+                className={hasOverview ? "md:col-span-3 md:w-fit" : "w-full"}
                 variant="outline"
                 disabled={busy}
               >
@@ -903,21 +1025,22 @@ export function GeneralSettings() {
             </form>
           </section>
         )}
-        {profile.profileCompletionPercent < 20 ? (
-          <div className="flex gap-3 rounded-xl border border-amber-300 bg-amber-50 p-4 text-sm text-amber-950 dark:border-amber-900 dark:bg-amber-950/30 dark:text-amber-100">
-            <Clock3 className="mt-0.5 size-4 shrink-0" />
-            <p>
-              {t("strengthLow", { percent: profile.profileCompletionPercent })}
-            </p>
-          </div>
-        ) : (
-          <div className="flex gap-3 rounded-xl border border-emerald-500/25 bg-emerald-500/5 p-4 text-sm">
-            <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-emerald-600 dark:text-emerald-400" />
-            <p className="text-muted-foreground">
-              {t("strengthOk")}
-            </p>
-          </div>
-        )}
+        {!hasOverview &&
+          (profile.profileCompletionPercent < 20 ? (
+            <div className="flex gap-3 rounded-xl border border-amber-300 bg-amber-50 p-4 text-sm text-amber-950 dark:border-amber-900 dark:bg-amber-950/30 dark:text-amber-100">
+              <Clock3 className="mt-0.5 size-4 shrink-0" />
+              <p>
+                {t("strengthLow", {
+                  percent: profile.profileCompletionPercent,
+                })}
+              </p>
+            </div>
+          ) : (
+            <div className="flex gap-3 rounded-xl border border-[var(--profile-accent,#4fae2e)]/25 bg-[var(--profile-accent,#4fae2e)]/5 p-4 text-sm">
+              <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-[var(--profile-accent,#4fae2e)]" />
+              <p className="text-muted-foreground">{t("strengthOk")}</p>
+            </div>
+          ))}
       </div>
 
       {cvAnalysisDraft && profile && canViewCvAnalysis && (
