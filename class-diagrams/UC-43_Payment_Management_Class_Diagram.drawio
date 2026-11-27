@@ -1,141 +1,65 @@
 <mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/29.0.3 Chrome/140.0.7339.249 Electron/38.7.0 Safari/537.36" version="29.0.3">
   <diagram id="d" name="Sprint 4 - Payment Management Class Diagram">
-<mxGraphModel dx="2500" dy="1650" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0"><root><mxCell id="0" /><mxCell id="1" parent="0" /><mxCell id="pay_route" value="&lt;&lt;route&gt;&gt;&#10;PaymentRoutes" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=56;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" parent="1" vertex="1">
-      <mxGeometry x="40" y="160" width="600" height="504" as="geometry" />
-    </mxCell>
-    <mxCell id="pay_route_r0" value="+POST /payments/connect/onboarding-link (AuthGuard)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="pay_route" vertex="1">
-      <mxGeometry y="56" width="600" height="28" as="geometry" />
-    </mxCell>
-    <mxCell id="pay_route_r1" value="+GET /payments/connect/status (AuthGuard)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="pay_route" vertex="1">
-      <mxGeometry y="84" width="600" height="28" as="geometry" />
-    </mxCell>
-    <mxCell id="pay_route_r2" value="+GET /payments/payment-methods (AuthGuard)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="pay_route" vertex="1">
-      <mxGeometry y="112" width="600" height="28" as="geometry" />
-    </mxCell>
-    <mxCell id="pay_route_r3" value="+POST /payments/customer-portal (AuthGuard)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="pay_route" vertex="1">
-      <mxGeometry y="140" width="600" height="28" as="geometry" />
-    </mxCell>
-    <mxCell id="pay_route_r4" value="+POST /payments/contracts/:id/platform-fee/intent (AuthGuard)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="pay_route" vertex="1">
-      <mxGeometry y="168" width="600" height="28" as="geometry" />
-    </mxCell>
-    <mxCell id="pay_route_r5" value="+POST /payments/contracts/:id/platform-fee/checkout-session (AuthGuard)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="pay_route" vertex="1">
-      <mxGeometry y="196" width="600" height="28" as="geometry" />
-    </mxCell>
-    <mxCell id="pay_route_r6" value="+POST /payments/contracts/:id/platform-fee/saved-card (AuthGuard)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="pay_route" vertex="1">
-      <mxGeometry y="224" width="600" height="28" as="geometry" />
-    </mxCell>
-    <mxCell id="pay_route_r7" value="+POST /payments/contracts/:cid/milestones/:mid/fund/intent (AuthGuard)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="pay_route" vertex="1">
-      <mxGeometry y="252" width="600" height="28" as="geometry" />
-    </mxCell>
-    <mxCell id="pay_route_r8" value="+POST /payments/contracts/:cid/milestones/:mid/fund/checkout-session (AuthGuard)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="pay_route" vertex="1">
-      <mxGeometry y="280" width="600" height="28" as="geometry" />
-    </mxCell>
-    <mxCell id="pay_route_r9" value="+POST /payments/contracts/:cid/milestones/:mid/fund/saved-card (AuthGuard)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="pay_route" vertex="1">
-      <mxGeometry y="308" width="600" height="28" as="geometry" />
-    </mxCell>
-    <mxCell id="pay_route_r10" value="+POST /payments/contracts/:cid/milestones/:mid/release (AuthGuard)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="pay_route" vertex="1">
-      <mxGeometry y="336" width="600" height="28" as="geometry" />
-    </mxCell>
-    <mxCell id="pay_route_r11" value="+POST /payments/contracts/:cid/milestones/:mid/refund (AuthGuard)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="pay_route" vertex="1">
-      <mxGeometry y="364" width="600" height="28" as="geometry" />
-    </mxCell>
-    <mxCell id="pay_route_r12" value="+POST /payments/disputes/:id/settle (AuthGuard)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="pay_route" vertex="1">
-      <mxGeometry y="392" width="600" height="28" as="geometry" />
-    </mxCell>
-    <mxCell id="pay_route_r13" value="+GET /payments/transactions (AuthGuard)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="pay_route" vertex="1">
-      <mxGeometry y="420" width="600" height="28" as="geometry" />
-    </mxCell>
-    <mxCell id="pay_route_r14" value="+POST /payments/checkout-sessions/:id/sync (AuthGuard)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="pay_route" vertex="1">
-      <mxGeometry y="448" width="600" height="28" as="geometry" />
-    </mxCell>
-    <mxCell id="pay_route_r15" value="+POST /payments/webhook (IsPublic)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="pay_route" vertex="1">
-      <mxGeometry y="476" width="600" height="28" as="geometry" />
-    </mxCell>
-
-    
-    <mxCell id="pay_ctrl" value="PaymentController" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=32;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" parent="1" vertex="1">
-      <mxGeometry x="800" y="160" width="520" height="470" as="geometry" />
+<mxGraphModel dx="2500" dy="1650" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0"><root><mxCell id="0" /><mxCell id="1" parent="0" /><mxCell id="pay_ctrl" value="&lt;&lt;controller&gt;&gt;&#10;PaymentController" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=56;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" parent="1" vertex="1">
+      <mxGeometry x="40" y="160" width="520" height="494" as="geometry" />
     </mxCell>
     <mxCell id="pay_ctrl_a0" value="-paymentService: PaymentService" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="pay_ctrl" vertex="1">
-      <mxGeometry y="32" width="520" height="30" as="geometry" />
+      <mxGeometry y="56" width="520" height="30" as="geometry" />
     </mxCell>
     <mxCell id="pay_ctrl_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=13;labelBackgroundColor=none;" parent="pay_ctrl" vertex="1">
-      <mxGeometry y="62" width="520" height="8" as="geometry" />
+      <mxGeometry y="86" width="520" height="8" as="geometry" />
     </mxCell>
     <mxCell id="pay_ctrl_m0" value="+createOnboardingLink(userId, body?)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="pay_ctrl" vertex="1">
-      <mxGeometry y="70" width="520" height="25" as="geometry" />
+      <mxGeometry y="94" width="520" height="25" as="geometry" />
     </mxCell>
     <mxCell id="pay_ctrl_m1" value="+getConnectStatus(userId)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="pay_ctrl" vertex="1">
-      <mxGeometry y="95" width="520" height="25" as="geometry" />
+      <mxGeometry y="119" width="520" height="25" as="geometry" />
     </mxCell>
     <mxCell id="pay_ctrl_m2" value="+getSavedPaymentMethods(userId)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="pay_ctrl" vertex="1">
-      <mxGeometry y="120" width="520" height="25" as="geometry" />
+      <mxGeometry y="144" width="520" height="25" as="geometry" />
     </mxCell>
     <mxCell id="pay_ctrl_m3" value="+createCustomerPortalSession(userId, returnUrl?)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="pay_ctrl" vertex="1">
-      <mxGeometry y="145" width="520" height="25" as="geometry" />
+      <mxGeometry y="169" width="520" height="25" as="geometry" />
     </mxCell>
     <mxCell id="pay_ctrl_m4" value="+createPlatformFeeIntent(userId, contractId)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="pay_ctrl" vertex="1">
-      <mxGeometry y="170" width="520" height="25" as="geometry" />
+      <mxGeometry y="194" width="520" height="25" as="geometry" />
     </mxCell>
     <mxCell id="pay_ctrl_m5" value="+createPlatformFeeCheckoutSession(userId, contractId)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="pay_ctrl" vertex="1">
-      <mxGeometry y="195" width="520" height="25" as="geometry" />
+      <mxGeometry y="219" width="520" height="25" as="geometry" />
     </mxCell>
     <mxCell id="pay_ctrl_m6" value="+chargeSavedCardForPlatformFee(userId, contractId, body?)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="pay_ctrl" vertex="1">
-      <mxGeometry y="220" width="520" height="25" as="geometry" />
+      <mxGeometry y="244" width="520" height="25" as="geometry" />
     </mxCell>
     <mxCell id="pay_ctrl_m7" value="+createMilestoneFundIntent(userId, contractId, milestoneId)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="pay_ctrl" vertex="1">
-      <mxGeometry y="245" width="520" height="25" as="geometry" />
+      <mxGeometry y="269" width="520" height="25" as="geometry" />
     </mxCell>
     <mxCell id="pay_ctrl_m8" value="+createMilestoneFundCheckoutSession(userId, contractId, milestoneId)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="pay_ctrl" vertex="1">
-      <mxGeometry y="270" width="520" height="25" as="geometry" />
+      <mxGeometry y="294" width="520" height="25" as="geometry" />
     </mxCell>
     <mxCell id="pay_ctrl_m9" value="+chargeSavedCardForMilestoneFund(userId, contractId, milestoneId, body?)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="pay_ctrl" vertex="1">
-      <mxGeometry y="295" width="520" height="25" as="geometry" />
+      <mxGeometry y="319" width="520" height="25" as="geometry" />
     </mxCell>
     <mxCell id="pay_ctrl_m10" value="+releaseMilestone(userId, contractId, milestoneId)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="pay_ctrl" vertex="1">
-      <mxGeometry y="320" width="520" height="25" as="geometry" />
+      <mxGeometry y="344" width="520" height="25" as="geometry" />
     </mxCell>
     <mxCell id="pay_ctrl_m11" value="+refundMilestone(userId, contractId, milestoneId)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="pay_ctrl" vertex="1">
-      <mxGeometry y="345" width="520" height="25" as="geometry" />
+      <mxGeometry y="369" width="520" height="25" as="geometry" />
     </mxCell>
     <mxCell id="pay_ctrl_m12" value="+settleDispute(userId, roleName, disputeId, body)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="pay_ctrl" vertex="1">
-      <mxGeometry y="370" width="520" height="25" as="geometry" />
+      <mxGeometry y="394" width="520" height="25" as="geometry" />
     </mxCell>
     <mxCell id="pay_ctrl_m13" value="+getTransactions(userId, roleName, query)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="pay_ctrl" vertex="1">
-      <mxGeometry y="395" width="520" height="25" as="geometry" />
+      <mxGeometry y="419" width="520" height="25" as="geometry" />
     </mxCell>
     <mxCell id="pay_ctrl_m14" value="+syncCheckoutSession(userId, sessionId)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="pay_ctrl" vertex="1">
-      <mxGeometry y="420" width="520" height="25" as="geometry" />
+      <mxGeometry y="444" width="520" height="25" as="geometry" />
     </mxCell>
     <mxCell id="pay_ctrl_m15" value="+handleWebhook(req, signature)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="pay_ctrl" vertex="1">
-      <mxGeometry y="445" width="520" height="25" as="geometry" />
+      <mxGeometry y="469" width="520" height="25" as="geometry" />
     </mxCell>
 
-    <mxCell id="pay_gAuth" value="AuthGuard" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=32;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" parent="1" vertex="1">
-      <mxGeometry x="800" y="685" width="520" height="190" as="geometry" />
-    </mxCell>
-    <mxCell id="pay_gAuth_a0" value="-tokenService: TokenService" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="pay_gAuth" vertex="1">
-      <mxGeometry y="32" width="520" height="30" as="geometry" />
-    </mxCell>
-    <mxCell id="pay_gAuth_a1" value="-prisma: PrismaService" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="pay_gAuth" vertex="1">
-      <mxGeometry y="62" width="520" height="30" as="geometry" />
-    </mxCell>
-    <mxCell id="pay_gAuth_a2" value="-reflector: Reflector" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="pay_gAuth" vertex="1">
-      <mxGeometry y="92" width="520" height="30" as="geometry" />
-    </mxCell>
-    <mxCell id="pay_gAuth_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=13;labelBackgroundColor=none;" parent="pay_gAuth" vertex="1">
-      <mxGeometry y="122" width="520" height="8" as="geometry" />
-    </mxCell>
-    <mxCell id="pay_gAuth_m0" value="+canActivate(context: ExecutionContext): Promise&lt;boolean&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="pay_gAuth" vertex="1">
-      <mxGeometry y="130" width="520" height="30" as="geometry" />
-    </mxCell>
-    <mxCell id="pay_gAuth_m1" value="-extractTokenFromHeader(request: Request): string | undefined" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="pay_gAuth" vertex="1">
-      <mxGeometry y="160" width="520" height="30" as="geometry" />
-    </mxCell>
-
-    
     <mxCell id="pay_dtoIntent" value="&lt;&lt;dto&gt;&gt;&#10;CreatePaymentIntentResponseDTO" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=44;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" parent="1" vertex="1">
-      <mxGeometry x="1480" y="160" width="440" height="142" as="geometry" />
+      <mxGeometry x="720" y="160" width="440" height="142" as="geometry" />
     </mxCell>
     <mxCell id="pay_dtoIntent_r0" value="+clientSecret: string" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="pay_dtoIntent" vertex="1">
       <mxGeometry y="44" width="440" height="24" as="geometry" />
@@ -154,7 +78,7 @@
     </mxCell>
 
     <mxCell id="pay_dtoCheckout" value="&lt;&lt;dto&gt;&gt;&#10;CreateCheckoutSessionResponseDTO" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=44;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" parent="1" vertex="1">
-      <mxGeometry x="1480" y="357" width="440" height="100" as="geometry" />
+      <mxGeometry x="720" y="372" width="440" height="100" as="geometry" />
     </mxCell>
     <mxCell id="pay_dtoCheckout_r0" value="+checkoutUrl: string" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="pay_dtoCheckout" vertex="1">
       <mxGeometry y="44" width="440" height="26" as="geometry" />
@@ -167,7 +91,7 @@
     </mxCell>
 
     <mxCell id="pay_dtoCard" value="&lt;&lt;dto&gt;&gt;&#10;ChargeSavedCardBodyDTO" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=44;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" parent="1" vertex="1">
-      <mxGeometry x="1480" y="512" width="440" height="74" as="geometry" />
+      <mxGeometry x="720" y="542" width="440" height="74" as="geometry" />
     </mxCell>
     <mxCell id="pay_dtoCard_r0" value="+paymentMethodId?: string" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="pay_dtoCard" vertex="1">
       <mxGeometry y="44" width="440" height="26" as="geometry" />
@@ -177,7 +101,7 @@
     </mxCell>
 
     <mxCell id="pay_dtoSettlement" value="&lt;&lt;dto&gt;&gt;&#10;DisputeSettlementBodyDTO" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=44;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" parent="1" vertex="1">
-      <mxGeometry x="1480" y="641" width="440" height="142" as="geometry" />
+      <mxGeometry x="720" y="686" width="440" height="142" as="geometry" />
     </mxCell>
     <mxCell id="pay_dtoSettlement_r0" value="+clientAmount: number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="pay_dtoSettlement" vertex="1">
       <mxGeometry y="44" width="440" height="24" as="geometry" />
@@ -196,7 +120,7 @@
     </mxCell>
 
     <mxCell id="pay_dtoTx" value="&lt;&lt;type&gt;&gt;&#10;TransactionType" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=44;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" parent="1" vertex="1">
-      <mxGeometry x="1480" y="838" width="440" height="338" as="geometry" />
+      <mxGeometry x="720" y="898" width="440" height="338" as="geometry" />
     </mxCell>
     <mxCell id="pay_dtoTx_r0" value="+id: number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="pay_dtoTx" vertex="1">
       <mxGeometry y="44" width="440" height="24" as="geometry" />
@@ -239,72 +163,72 @@
     </mxCell>
 
     
-    <mxCell id="pay_svc" value="PaymentService" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=32;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" parent="1" vertex="1">
-      <mxGeometry x="2080" y="160" width="540" height="444" as="geometry" />
+    <mxCell id="pay_svc" value="&lt;&lt;service&gt;&gt;&#10;PaymentService" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=56;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" parent="1" vertex="1">
+      <mxGeometry x="1320" y="160" width="540" height="468" as="geometry" />
     </mxCell>
     <mxCell id="pay_svc_a0" value="-paymentRepo: PaymentRepository" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="pay_svc" vertex="1">
-      <mxGeometry y="32" width="540" height="26" as="geometry" />
+      <mxGeometry y="56" width="540" height="26" as="geometry" />
     </mxCell>
     <mxCell id="pay_svc_a1" value="-stripeService: StripeService" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="pay_svc" vertex="1">
-      <mxGeometry y="58" width="540" height="26" as="geometry" />
+      <mxGeometry y="82" width="540" height="26" as="geometry" />
     </mxCell>
     <mxCell id="pay_svc_a2" value="-logger: Logger" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="pay_svc" vertex="1">
-      <mxGeometry y="84" width="540" height="26" as="geometry" />
+      <mxGeometry y="108" width="540" height="26" as="geometry" />
     </mxCell>
     <mxCell id="pay_svc_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=13;labelBackgroundColor=none;" parent="pay_svc" vertex="1">
-      <mxGeometry y="110" width="540" height="8" as="geometry" />
+      <mxGeometry y="134" width="540" height="8" as="geometry" />
     </mxCell>
     <mxCell id="pay_svc_m0" value="+getOnboardingLink(userId, returnUrl?)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="pay_svc" vertex="1">
-      <mxGeometry y="118" width="540" height="20" as="geometry" />
+      <mxGeometry y="142" width="540" height="20" as="geometry" />
     </mxCell>
     <mxCell id="pay_svc_m1" value="+getConnectStatus(userId)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="pay_svc" vertex="1">
-      <mxGeometry y="138" width="540" height="20" as="geometry" />
+      <mxGeometry y="162" width="540" height="20" as="geometry" />
     </mxCell>
     <mxCell id="pay_svc_m2" value="+getSavedPaymentMethods(userId)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="pay_svc" vertex="1">
-      <mxGeometry y="158" width="540" height="20" as="geometry" />
+      <mxGeometry y="182" width="540" height="20" as="geometry" />
     </mxCell>
     <mxCell id="pay_svc_m3" value="+getCustomerPortalLink(userId, returnUrl?)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="pay_svc" vertex="1">
-      <mxGeometry y="178" width="540" height="20" as="geometry" />
+      <mxGeometry y="202" width="540" height="20" as="geometry" />
     </mxCell>
     <mxCell id="pay_svc_m4" value="+createPlatformFeeIntent(userId, contractId)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="pay_svc" vertex="1">
-      <mxGeometry y="198" width="540" height="20" as="geometry" />
+      <mxGeometry y="222" width="540" height="20" as="geometry" />
     </mxCell>
     <mxCell id="pay_svc_m5" value="+createPlatformFeeCheckoutSession(userId, contractId)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="pay_svc" vertex="1">
-      <mxGeometry y="218" width="540" height="20" as="geometry" />
+      <mxGeometry y="242" width="540" height="20" as="geometry" />
     </mxCell>
     <mxCell id="pay_svc_m6" value="+chargeSavedCardForPlatformFee(userId, contractId, pmId?)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="pay_svc" vertex="1">
-      <mxGeometry y="238" width="540" height="20" as="geometry" />
+      <mxGeometry y="262" width="540" height="20" as="geometry" />
     </mxCell>
     <mxCell id="pay_svc_m7" value="+createMilestoneFundIntent(userId, contractId, milestoneId)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="pay_svc" vertex="1">
-      <mxGeometry y="258" width="540" height="20" as="geometry" />
+      <mxGeometry y="282" width="540" height="20" as="geometry" />
     </mxCell>
     <mxCell id="pay_svc_m8" value="+createMilestoneFundCheckoutSession(userId, contractId, milestoneId)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="pay_svc" vertex="1">
-      <mxGeometry y="278" width="540" height="20" as="geometry" />
+      <mxGeometry y="302" width="540" height="20" as="geometry" />
     </mxCell>
     <mxCell id="pay_svc_m9" value="+chargeSavedCardForMilestoneFund(userId, contractId, milestoneId, pmId?)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="pay_svc" vertex="1">
-      <mxGeometry y="298" width="540" height="20" as="geometry" />
+      <mxGeometry y="322" width="540" height="20" as="geometry" />
     </mxCell>
     <mxCell id="pay_svc_m10" value="+releaseMilestone(userId, contractId, milestoneId)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="pay_svc" vertex="1">
-      <mxGeometry y="318" width="540" height="20" as="geometry" />
+      <mxGeometry y="342" width="540" height="20" as="geometry" />
     </mxCell>
     <mxCell id="pay_svc_m11" value="+refundMilestone(userId, contractId, milestoneId)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="pay_svc" vertex="1">
-      <mxGeometry y="338" width="540" height="20" as="geometry" />
+      <mxGeometry y="362" width="540" height="20" as="geometry" />
     </mxCell>
     <mxCell id="pay_svc_m12" value="+settleDispute(callerUserId, callerRoleName, disputeId, body)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="pay_svc" vertex="1">
-      <mxGeometry y="358" width="540" height="20" as="geometry" />
+      <mxGeometry y="382" width="540" height="20" as="geometry" />
     </mxCell>
     <mxCell id="pay_svc_m13" value="+getTransactions(userId, roleName, query)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="pay_svc" vertex="1">
-      <mxGeometry y="378" width="540" height="20" as="geometry" />
+      <mxGeometry y="402" width="540" height="20" as="geometry" />
     </mxCell>
     <mxCell id="pay_svc_m14" value="+syncCheckoutSession(userId, sessionId)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="pay_svc" vertex="1">
-      <mxGeometry y="398" width="540" height="20" as="geometry" />
+      <mxGeometry y="422" width="540" height="20" as="geometry" />
     </mxCell>
     <mxCell id="pay_svc_m15" value="+handleWebhook(payload, signature)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="pay_svc" vertex="1">
-      <mxGeometry y="418" width="540" height="20" as="geometry" />
+      <mxGeometry y="442" width="540" height="20" as="geometry" />
     </mxCell>
 
     <mxCell id="pay_uStripe" value="&lt;&lt;utility&gt;&gt;&#10;StripeService" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=44;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" parent="1" vertex="1">
-      <mxGeometry x="2080" y="659" width="540" height="256" as="geometry" />
+      <mxGeometry x="1320" y="698" width="540" height="256" as="geometry" />
     </mxCell>
     <mxCell id="pay_uStripe_a0" value="-stripe: Stripe" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="pay_uStripe" vertex="1">
       <mxGeometry y="44" width="540" height="26" as="geometry" />
@@ -340,52 +264,52 @@
       <mxGeometry y="230" width="540" height="18" as="geometry" />
     </mxCell>
 
-    <mxCell id="pay_repo" value="PaymentRepository" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=32;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" parent="1" vertex="1">
-      <mxGeometry x="2780" y="160" width="540" height="325" as="geometry" />
+    <mxCell id="pay_repo" value="&lt;&lt;repository&gt;&gt;&#10;PaymentRepository" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=56;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" parent="1" vertex="1">
+      <mxGeometry x="2020" y="160" width="540" height="349" as="geometry" />
     </mxCell>
     <mxCell id="pay_repo_a0" value="-prisma: PrismaService" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="pay_repo" vertex="1">
-      <mxGeometry y="32" width="540" height="28" as="geometry" />
+      <mxGeometry y="56" width="540" height="28" as="geometry" />
     </mxCell>
     <mxCell id="pay_repo_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=13;labelBackgroundColor=none;" parent="pay_repo" vertex="1">
-      <mxGeometry y="60" width="540" height="8" as="geometry" />
+      <mxGeometry y="84" width="540" height="8" as="geometry" />
     </mxCell>
     <mxCell id="pay_repo_m0" value="+findUserById(userId: number)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="pay_repo" vertex="1">
-      <mxGeometry y="68" width="540" height="23" as="geometry" />
+      <mxGeometry y="92" width="540" height="23" as="geometry" />
     </mxCell>
     <mxCell id="pay_repo_m1" value="+updateUserStripe(userId: number, data)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="pay_repo" vertex="1">
-      <mxGeometry y="91" width="540" height="23" as="geometry" />
+      <mxGeometry y="115" width="540" height="23" as="geometry" />
     </mxCell>
     <mxCell id="pay_repo_m2" value="+findContractById(contractId: number)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="pay_repo" vertex="1">
-      <mxGeometry y="114" width="540" height="23" as="geometry" />
+      <mxGeometry y="138" width="540" height="23" as="geometry" />
     </mxCell>
     <mxCell id="pay_repo_m3" value="+updateContractPlatformFee(contractId, status, paidAt?)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="pay_repo" vertex="1">
-      <mxGeometry y="137" width="540" height="23" as="geometry" />
+      <mxGeometry y="161" width="540" height="23" as="geometry" />
     </mxCell>
     <mxCell id="pay_repo_m4" value="+findMilestoneById(milestoneId: number)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="pay_repo" vertex="1">
-      <mxGeometry y="160" width="540" height="23" as="geometry" />
+      <mxGeometry y="184" width="540" height="23" as="geometry" />
     </mxCell>
     <mxCell id="pay_repo_m5" value="+updateMilestonePaymentStatus(milestoneId, paymentStatus, status?)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="pay_repo" vertex="1">
-      <mxGeometry y="183" width="540" height="23" as="geometry" />
+      <mxGeometry y="207" width="540" height="23" as="geometry" />
     </mxCell>
     <mxCell id="pay_repo_m6" value="+findDisputeById(disputeId: number)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="pay_repo" vertex="1">
-      <mxGeometry y="206" width="540" height="23" as="geometry" />
+      <mxGeometry y="230" width="540" height="23" as="geometry" />
     </mxCell>
     <mxCell id="pay_repo_m7" value="+createTransaction(data)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="pay_repo" vertex="1">
-      <mxGeometry y="229" width="540" height="23" as="geometry" />
+      <mxGeometry y="253" width="540" height="23" as="geometry" />
     </mxCell>
     <mxCell id="pay_repo_m8" value="+updateTransactionStatus(id, status, extra?)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="pay_repo" vertex="1">
-      <mxGeometry y="252" width="540" height="23" as="geometry" />
+      <mxGeometry y="276" width="540" height="23" as="geometry" />
     </mxCell>
     <mxCell id="pay_repo_m9" value="+findTransactionByPaymentIntentId(paymentIntentId)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="pay_repo" vertex="1">
-      <mxGeometry y="275" width="540" height="23" as="geometry" />
+      <mxGeometry y="299" width="540" height="23" as="geometry" />
     </mxCell>
     <mxCell id="pay_repo_m10" value="+getTransactions(query, filter)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="pay_repo" vertex="1">
-      <mxGeometry y="298" width="540" height="23" as="geometry" />
+      <mxGeometry y="322" width="540" height="23" as="geometry" />
     </mxCell>
 
     
     <mxCell id="pay_schemaTx" value="&lt;&lt;schema&gt;&gt;&#10;Transaction" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=42;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" parent="1" vertex="1">
-      <mxGeometry x="3480" y="883" width="340" height="362" as="geometry" />
+      <mxGeometry x="2720" y="928" width="340" height="362" as="geometry" />
     </mxCell>
     <mxCell id="pay_schemaTx_r0" value="+id: number [PK]" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="pay_schemaTx" vertex="1">
       <mxGeometry y="42" width="340" height="24" as="geometry" />
@@ -431,7 +355,7 @@
     </mxCell>
 
     <mxCell id="pay_schemaContract" value="&lt;&lt;schema&gt;&gt;&#10;Contract" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=42;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" parent="1" vertex="1">
-      <mxGeometry x="3480" y="385" width="340" height="194" as="geometry" />
+      <mxGeometry x="2720" y="400" width="340" height="194" as="geometry" />
     </mxCell>
     <mxCell id="pay_schemaContract_r0" value="+id: number [PK]" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="pay_schemaContract" vertex="1">
       <mxGeometry y="42" width="340" height="24" as="geometry" />
@@ -456,7 +380,7 @@
     </mxCell>
 
     <mxCell id="pay_schemaMilestone" value="&lt;&lt;schema&gt;&gt;&#10;Milestone" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=42;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" parent="1" vertex="1">
-      <mxGeometry x="3480" y="634" width="340" height="194" as="geometry" />
+      <mxGeometry x="2720" y="664" width="340" height="194" as="geometry" />
     </mxCell>
     <mxCell id="pay_schemaMilestone_r0" value="+id: number [PK]" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="pay_schemaMilestone" vertex="1">
       <mxGeometry y="42" width="340" height="24" as="geometry" />
@@ -481,7 +405,7 @@
     </mxCell>
 
     <mxCell id="pay_schemaUser" value="&lt;&lt;schema&gt;&gt;&#10;User" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=42;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" parent="1" vertex="1">
-      <mxGeometry x="3480" y="160" width="340" height="170" as="geometry" />
+      <mxGeometry x="2720" y="160" width="340" height="170" as="geometry" />
     </mxCell>
     <mxCell id="pay_schemaUser_r0" value="+id: number [PK]" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="pay_schemaUser" vertex="1">
       <mxGeometry y="42" width="340" height="24" as="geometry" />
@@ -504,44 +428,33 @@
 
     
     
-    <mxCell id="pay_e_route_ctrl" value="maps to" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=#ffffff;exitX=1.0;exitY=0.16;exitDx=0;exitDy=0;entryX=0.0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="pay_route" target="pay_ctrl" edge="1">
-      <mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="691" y="241" /><mxPoint x="691" y="395" /></Array></mxGeometry>
-    </mxCell>
-
-    
-    <mxCell id="pay_e_route_auth" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=none;dashed=1;exitX=1.0;exitY=0.84;exitDx=0;exitDy=0;entryX=0.0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="pay_route" target="pay_gAuth" edge="1">
-      <mxGeometry relative="1" as="geometry">
-        <Array as="points"><mxPoint x="749" y="583" /><mxPoint x="749" y="780" /></Array></mxGeometry>
-    </mxCell>
-
-    
     <mxCell id="pay_e_ctrl_svc" value="calls" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=#ffffff;exitX=0.5;exitY=0.0;exitDx=0;exitDy=0;entryX=0.5;entryY=0.0;entryDx=0;entryDy=0;" parent="1" source="pay_ctrl" target="pay_svc" edge="1">
       <mxGeometry relative="1" as="geometry">
-        <Array as="points"><mxPoint x="1060" y="90" /><mxPoint x="2350" y="90" /></Array></mxGeometry>
+        <Array as="points"><mxPoint x="300" y="95" /><mxPoint x="1590" y="95" /></Array></mxGeometry>
     </mxCell>
 
     
-    <mxCell id="pay_e_ctrl_dtoIntent" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=none;dashed=1;exitX=1.0;exitY=0.16;exitDx=0;exitDy=0;entryX=0.0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="pay_ctrl" target="pay_dtoIntent" edge="1">
-      <mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="1361" y="235" /><mxPoint x="1361" y="231" /></Array></mxGeometry>
+    <mxCell id="pay_e_ctrl_dtoIntent" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=#ffffff;dashed=1;exitX=1.0;exitY=0.16;exitDx=0;exitDy=0;entryX=0.0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="pay_ctrl" target="pay_dtoIntent" edge="1">
+      <mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="600" y="239" /><mxPoint x="600" y="231" /></Array></mxGeometry>
     </mxCell>
 
-    <mxCell id="pay_e_ctrl_dtoCheckout" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=none;dashed=1;exitX=1.0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="pay_ctrl" target="pay_dtoCheckout" edge="1">
-      <mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="1400" y="395" /><mxPoint x="1400" y="407" /></Array></mxGeometry>
+    <mxCell id="pay_e_ctrl_dtoCheckout" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=#ffffff;dashed=1;exitX=1.0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="pay_ctrl" target="pay_dtoCheckout" edge="1">
+      <mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="640" y="407" /><mxPoint x="640" y="422" /></Array></mxGeometry>
     </mxCell>
 
-    <mxCell id="pay_e_ctrl_dtoCard" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=none;dashed=1;exitX=1.0;exitY=0.84;exitDx=0;exitDy=0;entryX=0.0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="pay_ctrl" target="pay_dtoCard" edge="1">
-      <mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="1439" y="555" /><mxPoint x="1439" y="549" /></Array></mxGeometry>
+    <mxCell id="pay_e_ctrl_dtoCard" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=#ffffff;dashed=1;exitX=1.0;exitY=0.84;exitDx=0;exitDy=0;entryX=0.0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="pay_ctrl" target="pay_dtoCard" edge="1">
+      <mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="680" y="575" /><mxPoint x="680" y="579" /></Array></mxGeometry>
     </mxCell>
 
     
-    <mxCell id="pay_e_svc_dtoSettlement" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=none;dashed=1;exitX=0.0;exitY=0.16;exitDx=0;exitDy=0;entryX=1.0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="pay_svc" target="pay_dtoSettlement" edge="1">
+    <mxCell id="pay_e_svc_dtoSettlement" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=#ffffff;dashed=1;exitX=0.0;exitY=0.16;exitDx=0;exitDy=0;entryX=1.0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="pay_svc" target="pay_dtoSettlement" edge="1">
       <mxGeometry relative="1" as="geometry">
-        <Array as="points"><mxPoint x="1971" y="231" /><mxPoint x="1971" y="712" /></Array></mxGeometry>
+        <Array as="points"><mxPoint x="1213" y="235" /><mxPoint x="1213" y="757" /></Array></mxGeometry>
     </mxCell>
 
-    <mxCell id="pay_e_svc_dtoTx" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=none;dashed=1;exitX=0.0;exitY=0.84;exitDx=0;exitDy=0;entryX=1.0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="pay_svc" target="pay_dtoTx" edge="1">
+    <mxCell id="pay_e_svc_dtoTx" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=#ffffff;dashed=1;exitX=0.0;exitY=0.84;exitDx=0;exitDy=0;entryX=1.0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="pay_svc" target="pay_dtoTx" edge="1">
       <mxGeometry relative="1" as="geometry">
-        <Array as="points"><mxPoint x="2029" y="533" /><mxPoint x="2029" y="1007" /></Array></mxGeometry>
+        <Array as="points"><mxPoint x="1267" y="553" /><mxPoint x="1267" y="1067" /></Array></mxGeometry>
     </mxCell>
 
     
@@ -552,28 +465,28 @@
     
     <mxCell id="pay_e_svc_repo" value="calls" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=#ffffff;exitX=1.0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.0;entryY=0.16;entryDx=0;entryDy=0;" parent="1" source="pay_svc" target="pay_repo" edge="1">
       <mxGeometry relative="1" as="geometry">
-        <Array as="points"><mxPoint x="2671" y="382" /><mxPoint x="2671" y="212" /></Array></mxGeometry>
+        <Array as="points"><mxPoint x="1913" y="394" /><mxPoint x="1913" y="216" /></Array></mxGeometry>
     </mxCell>
 
     
     <mxCell id="pay_e_stripe_repo" value="uses" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=#ffffff;dashed=1;exitX=1.0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.0;entryY=0.84;entryDx=0;entryDy=0;" parent="1" source="pay_uStripe" target="pay_repo" edge="1">
-      <mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="2729" y="787" /><mxPoint x="2729" y="433" /></Array></mxGeometry>
+      <mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="1967" y="826" /><mxPoint x="1967" y="453" /></Array></mxGeometry>
     </mxCell>
 
     
     <mxCell id="pay_e_repo_schemaTx" value="maps to" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=#ffffff;dashed=1;exitX=1.0;exitY=0.84;exitDx=0;exitDy=0;entryX=0.0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="pay_repo" target="pay_schemaTx" edge="1">
       <mxGeometry relative="1" as="geometry">
-        <Array as="points"><mxPoint x="3444" y="433" /><mxPoint x="3444" y="1064" /></Array></mxGeometry>
+        <Array as="points"><mxPoint x="2680" y="453" /><mxPoint x="2680" y="1109" /></Array></mxGeometry>
     </mxCell>
 
     <mxCell id="pay_e_repo_schemaContract" value="maps to" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=#ffffff;dashed=1;exitX=1.0;exitY=0.16;exitDx=0;exitDy=0;entryX=0.0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="pay_repo" target="pay_schemaContract" edge="1">
       <mxGeometry relative="1" as="geometry">
-        <Array as="points"><mxPoint x="3356" y="212" /><mxPoint x="3356" y="482" /></Array></mxGeometry>
+        <Array as="points"><mxPoint x="2600" y="216" /><mxPoint x="2600" y="497" /></Array></mxGeometry>
     </mxCell>
 
-    <mxCell id="pay_e_repo_schemaMilestone" value="maps to" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=#ffffff;dashed=1;exitX=1.0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.0;entryY=0.16;entryDx=0;entryDy=0;" parent="1" source="pay_repo" target="pay_schemaMilestone" edge="1">
+    <mxCell id="pay_e_repo_schemaMilestone" value="maps to" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=#ffffff;dashed=1;exitX=1.0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="pay_repo" target="pay_schemaMilestone" edge="1">
       <mxGeometry relative="1" as="geometry">
-        <Array as="points"><mxPoint x="3386" y="322" /><mxPoint x="3386" y="665" /></Array></mxGeometry>
+        <Array as="points"><mxPoint x="2640" y="334" /><mxPoint x="2640" y="761" /></Array></mxGeometry>
     </mxCell>
 
     
@@ -589,8 +502,8 @@
     </mxCell>
 
     
-    <mxCell id="pay_rel_user_milestone" value="1..*" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=#ffffff;exitX=0.0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.0;entryY=0.84;entryDx=0;entryDy=0;" parent="1" source="pay_schemaUser" target="pay_schemaMilestone" edge="1">
-      <mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="3414" y="245" /><mxPoint x="3414" y="797" /></Array></mxGeometry>
+    <mxCell id="pay_rel_user_milestone" value="1..*" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=#ffffff;exitX=1.0;exitY=0.5;exitDx=0;exitDy=0;entryX=1.0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="pay_schemaUser" target="pay_schemaMilestone" edge="1">
+      <mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="3095" y="245" /><mxPoint x="3095" y="761" /></Array></mxGeometry>
     </mxCell>
 
   </root></mxGraphModel>
