@@ -5,393 +5,321 @@
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
         <mxCell id="opt_data_frame" value="opt" style="shape=umlFrame;whiteSpace=wrap;html=1;pointerEvents=0;width=70;height=30;fontSize=12;fillColor=none;" parent="1" vertex="1">
-          <mxGeometry x="10" y="555" width="380" height="95" as="geometry" />
+          <mxGeometry x="10" y="555" width="410.0" height="101.0" as="geometry" />
         </mxCell>
-        <mxCell id="opt_data_label" value="[invalid data]" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;" parent="1" vertex="1">
-          <mxGeometry x="120" y="555" width="120" height="30" as="geometry" />
-        </mxCell>
-        <mxCell id="ref_frame" value="ref" style="shape=umlFrame;whiteSpace=wrap;html=1;pointerEvents=0;width=50;height=22;fontSize=12;fillColor=none;" parent="1" vertex="1">
-          <mxGeometry x="460" y="735" width="280" height="56" as="geometry" />
-        </mxCell>
-        <mxCell id="ref_label" value="5.1. Verify jwt" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;fontSize=12;" parent="1" vertex="1">
-          <mxGeometry x="555" y="748" width="175" height="30" as="geometry" />
-        </mxCell>
-        <mxCell id="opt_auth_frame" value="alt" style="shape=umlFrame;whiteSpace=wrap;html=1;pointerEvents=0;width=70;height=30;fontSize=12;fillColor=none;" parent="1" vertex="1">
-          <mxGeometry x="10" y="810" width="600" height="230" as="geometry" />
-        </mxCell>
-        <mxCell id="alt_auth_div" value="" style="endArrow=none;dashed=1;html=1;rounded=0;" parent="1" edge="1">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="10" y="920" as="sourcePoint" />
-            <mxPoint x="610" y="920" as="targetPoint" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="opt_auth_l2" value="[user is banned || roleId is missing&amp;nbsp;&lt;div&gt;|| permission denied]&lt;/div&gt;" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;" parent="1" vertex="1">
-          <mxGeometry x="115" y="922" width="208" height="32" as="geometry" />
-        </mxCell>
-        <mxCell id="inv1" value="5.1.1. Return 401 Unauthorized" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;" parent="1" edge="1">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="535" y="855" as="sourcePoint" />
-            <mxPoint x="345" y="855" as="targetPoint" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="inv2" value="5.1.2. Show message&lt;br&gt;&quot;Unauthorized&quot;" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;" parent="1" edge="1">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="335" y="895" as="sourcePoint" />
-            <mxPoint x="105" y="895" as="targetPoint" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="forb1" value="5.1.3. Return 403 Forbidden" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;" parent="1" edge="1">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="535" y="960" as="sourcePoint" />
-            <mxPoint x="345" y="960" as="targetPoint" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="forb2" value="5.1.4. Show message&lt;br&gt;&quot;Forbidden: Account inactive&quot;" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;" parent="1" edge="1">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="335" y="1000" as="sourcePoint" />
-            <mxPoint x="105" y="1000" as="targetPoint" />
-          </mxGeometry>
+        <mxCell id="opt_data_label" value="[invalid data]" style="text;html=1;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;align=left;fillColor=none;labelBackgroundColor=none;" parent="1" vertex="1">
+          <mxGeometry x="116.0" y="559.0" width="238.0" height="24.0" as="geometry" />
         </mxCell>
         <mxCell id="alt1" value="alt" style="shape=umlFrame;whiteSpace=wrap;html=1;pointerEvents=0;width=70;height=30;fillColor=none;" parent="1" vertex="1">
-          <mxGeometry y="1530" width="1560" height="1305" as="geometry" />
+          <mxGeometry y="1625.2" width="1840.0" height="1305" as="geometry" />
         </mxCell>
-        <mxCell id="alt1_div" value="" style="endArrow=none;dashed=1;html=1;rounded=0;exitX=0;exitY=0.203;exitDx=0;exitDy=0;exitPerimeter=0;" parent="1" edge="1" source="alt1">
+        <mxCell id="alt1_div" value="" style="endArrow=none;dashed=1;html=1;rounded=0;exitX=0;exitY=0.203;exitDx=0;exitDy=0;exitPerimeter=0;labelBackgroundColor=none;" parent="1" edge="1" source="alt1">
           <mxGeometry relative="1" as="geometry">
-            <mxPoint x="20" y="1795" as="sourcePoint" />
-            <mxPoint x="1560" y="1795" as="targetPoint" />
+            <mxPoint x="20" y="1890.2" as="sourcePoint" />
+            <mxPoint x="1840.0" y="1890.2" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="alt1_l1" value="[category name already&lt;br&gt;exists]" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
-          <mxGeometry x="120" y="1530" width="160" height="36" as="geometry" />
+        <mxCell id="alt1_l1" value="[category name already exists]" style="text;html=1;verticalAlign=middle;whiteSpace=wrap;rounded=0;align=left;fillColor=none;labelBackgroundColor=none;" parent="1" vertex="1">
+          <mxGeometry x="116.0" y="1629.2" width="238.0" height="24.0" as="geometry" />
         </mxCell>
-        <mxCell id="alt1_l2" value="[category name is&lt;br&gt;available]" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
-          <mxGeometry x="120" y="1795" width="160" height="40" as="geometry" />
+        <mxCell id="alt1_l2" value="[category name is available]" style="text;html=1;verticalAlign=middle;whiteSpace=wrap;rounded=0;align=left;fillColor=none;labelBackgroundColor=none;" parent="1" vertex="1">
+          <mxGeometry x="116.0" y="1894.2" width="238.0" height="24.0" as="geometry" />
         </mxCell>
         <mxCell id="alt2" value="alt" style="shape=umlFrame;whiteSpace=wrap;html=1;pointerEvents=0;width=70;height=30;fillColor=none;" parent="1" vertex="1">
-          <mxGeometry x="10" y="2245" width="1520" height="555" as="geometry" />
+          <mxGeometry x="10" y="2340.2" width="1800.0" height="555" as="geometry" />
         </mxCell>
-        <mxCell id="alt2_div" value="" style="endArrow=none;dashed=1;html=1;rounded=0;exitX=0;exitY=0.477;exitDx=0;exitDy=0;exitPerimeter=0;" parent="1" edge="1" source="alt2">
+        <mxCell id="alt2_div" value="" style="endArrow=none;dashed=1;html=1;rounded=0;exitX=0;exitY=0.477;exitDx=0;exitDy=0;exitPerimeter=0;labelBackgroundColor=none;" parent="1" edge="1" source="alt2">
           <mxGeometry relative="1" as="geometry">
-            <mxPoint x="50" y="2510" as="sourcePoint" />
-            <mxPoint x="1530" y="2510" as="targetPoint" />
+            <mxPoint x="50" y="2605.2" as="sourcePoint" />
+            <mxPoint x="1810.0" y="2605.2" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="alt2_l1" value="[create category&lt;br&gt;failed]" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
-          <mxGeometry x="150" y="2245" width="160" height="36" as="geometry" />
+        <mxCell id="alt2_l1" value="[create category failed]" style="text;html=1;verticalAlign=middle;whiteSpace=wrap;rounded=0;align=left;fillColor=none;labelBackgroundColor=none;" parent="1" vertex="1">
+          <mxGeometry x="116.0" y="2344.2" width="238.0" height="24.0" as="geometry" />
         </mxCell>
-        <mxCell id="alt2_l2" value="[create category&lt;br&gt;success]" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
-          <mxGeometry x="150" y="2510" width="160" height="40" as="geometry" />
+        <mxCell id="alt2_l2" value="[create category success]" style="text;html=1;verticalAlign=middle;whiteSpace=wrap;rounded=0;align=left;fillColor=none;labelBackgroundColor=none;" parent="1" vertex="1">
+          <mxGeometry x="116.0" y="2609.2" width="238.0" height="24.0" as="geometry" />
         </mxCell>
         <mxCell id="actor" value="Admin" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;whiteSpace=wrap;" parent="1" vertex="1">
           <mxGeometry x="85" y="200" width="30" height="60" as="geometry" />
         </mxCell>
-        <mxCell id="ll_view" value=":ForumCategoryView" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};" parent="1" vertex="1">
-          <mxGeometry x="265" y="240" width="150" height="2620" as="geometry" />
+        <mxCell id="ll_view" value="&amp;lt;&amp;lt;boundary&amp;gt;&amp;gt;&lt;br&gt;ForumCategoryView" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};size=48;" parent="1" vertex="1">
+          <mxGeometry x="292.5" y="240" width="155" height="2715.2" as="geometry" />
         </mxCell>
         <mxCell id="bar_view_0" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};" parent="ll_view" vertex="1">
-          <mxGeometry x="70" y="90" width="10" height="2430" as="geometry" />
+          <mxGeometry x="72.5" y="90" width="10" height="2525.2" as="geometry" />
         </mxCell>
         <mxCell id="act_self_view_4" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};fontSize=13;" parent="ll_view" vertex="1">
-          <mxGeometry x="75" y="260" width="10" height="25" as="geometry" />
+          <mxGeometry x="77.5" y="260.0" width="10" height="20.0" as="geometry" />
         </mxCell>
-        <mxCell id="ll_route" value=":ForumCategoryRoute" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};" parent="1" vertex="1">
-          <mxGeometry x="470" y="240" width="140" height="2620" as="geometry" />
-        </mxCell>
-        <mxCell id="bar_route_0" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};" parent="ll_route" vertex="1">
-          <mxGeometry x="65" y="465" width="10" height="1985" as="geometry" />
-        </mxCell>
-        <mxCell id="ll_controller" value=":ForumCategoryController" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};" parent="1" vertex="1">
-          <mxGeometry x="675" y="240" width="170" height="2620" as="geometry" />
+        <mxCell id="ll_controller" value="&amp;lt;&amp;lt;controller&amp;gt;&amp;gt;&lt;br&gt;:ForumAdminController" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};size=48;" parent="1" vertex="1">
+          <mxGeometry x="567.5" y="240" width="195" height="2715.2" as="geometry" />
         </mxCell>
         <mxCell id="bar_controller_0" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};" parent="ll_controller" vertex="1">
-          <mxGeometry x="80" y="825" width="10" height="1565" as="geometry" />
+          <mxGeometry x="92.5" y="471.0" width="10" height="2014.2" as="geometry" />
         </mxCell>
-        <mxCell id="ll_service" value=":ForumCategoryService" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};" parent="1" vertex="1">
-          <mxGeometry x="890" y="240" width="150" height="2620" as="geometry" />
+        <mxCell id="ll_service" value="&amp;lt;&amp;lt;service&amp;gt;&amp;gt;&lt;br&gt;:ForumAdminService" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};size=48;" parent="1" vertex="1">
+          <mxGeometry x="862.5" y="240" width="195" height="2715.2" as="geometry" />
         </mxCell>
         <mxCell id="bar_service_0" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};" parent="ll_service" vertex="1">
-          <mxGeometry x="70" y="880" width="10" height="1460" as="geometry" />
+          <mxGeometry x="92.5" y="975.2" width="10" height="1460" as="geometry" />
         </mxCell>
         <mxCell id="act_self_srv_14" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};fontSize=13;" parent="ll_service" vertex="1">
-          <mxGeometry x="75" y="1235" width="10" height="25" as="geometry" />
+          <mxGeometry x="97.5" y="1335.2" width="10" height="20.0" as="geometry" />
         </mxCell>
         <mxCell id="act_self_srv_14_2_7" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};fontSize=13;" parent="ll_service" vertex="1">
-          <mxGeometry x="75" y="1950" width="10" height="25" as="geometry" />
+          <mxGeometry x="97.5" y="2050.2" width="10" height="20.0" as="geometry" />
         </mxCell>
-        <mxCell id="ll_repo" value=":ForumCategoryRepo" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};" parent="1" vertex="1">
-          <mxGeometry x="1105" y="240" width="140" height="2620" as="geometry" />
+        <mxCell id="ll_repo" value="&amp;lt;&amp;lt;repository&amp;gt;&amp;gt;&lt;br&gt;:ForumAdminRepository" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};size=48;" parent="1" vertex="1">
+          <mxGeometry x="1152.5" y="240" width="195" height="2715.2" as="geometry" />
         </mxCell>
         <mxCell id="bar_repo_0" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};" parent="ll_repo" vertex="1">
-          <mxGeometry x="65" y="940" width="10" height="270" as="geometry" />
+          <mxGeometry x="92.5" y="1035.2" width="10" height="270" as="geometry" />
         </mxCell>
         <mxCell id="bar_repo_1" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};" parent="ll_repo" vertex="1">
-          <mxGeometry x="65" y="1645" width="10" height="255" as="geometry" />
+          <mxGeometry x="92.5" y="1715.2" width="10" height="280.0" as="geometry" />
         </mxCell>
-        <mxCell id="ll_model" value=":PrismaService" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};" parent="1" vertex="1">
-          <mxGeometry x="1290" y="240" width="140" height="2620" as="geometry" />
+        <mxCell id="ll_model" value="&amp;lt;&amp;lt;service&amp;gt;&amp;gt;&lt;br&gt;:PrismaService" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};size=48;" parent="1" vertex="1">
+          <mxGeometry x="1462.5" y="240" width="155" height="2715.2" as="geometry" />
         </mxCell>
         <mxCell id="bar_model_0" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};" parent="ll_model" vertex="1">
-          <mxGeometry x="65" y="995" width="10" height="165" as="geometry" />
+          <mxGeometry x="72.5" y="1090.2" width="10" height="165" as="geometry" />
         </mxCell>
         <mxCell id="bar_model_1" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};" parent="ll_model" vertex="1">
-          <mxGeometry x="65" y="1705" width="10" height="145" as="geometry" />
+          <mxGeometry x="72.5" y="1775.2" width="10" height="170.0" as="geometry" />
         </mxCell>
         <mxCell id="db_icon" value="" style="strokeWidth=2;html=1;shape=mxgraph.flowchart.database;whiteSpace=wrap;" parent="1" vertex="1">
-          <mxGeometry x="1490" y="220" width="60" height="70" as="geometry" />
+          <mxGeometry x="1770.0" y="220" width="60" height="70" as="geometry" />
         </mxCell>
-        <mxCell id="db_label" value="Database" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
-          <mxGeometry x="1490" y="292" width="60" height="30" as="geometry" />
+        <mxCell id="db_label" value="Database" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fillColor=none;labelBackgroundColor=none;" parent="1" vertex="1">
+          <mxGeometry x="1770.0" y="292" width="60" height="30" as="geometry" />
         </mxCell>
-        <mxCell id="actor_line" value="" style="endArrow=none;dashed=1;html=1;rounded=0;" parent="1" edge="1">
+        <mxCell id="actor_line" value="" style="endArrow=none;dashed=1;html=1;rounded=0;labelBackgroundColor=none;" parent="1" edge="1">
           <mxGeometry relative="1" as="geometry">
             <mxPoint x="100" y="282" as="sourcePoint" />
-            <mxPoint x="100" y="2860" as="targetPoint" />
+            <mxPoint x="100" y="2955.2" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="db_line" value="" style="endArrow=none;dashed=1;html=1;rounded=0;" parent="1" edge="1" source="bar_db_1">
+        <mxCell id="db_line" value="" style="endArrow=none;dashed=1;html=1;rounded=0;labelBackgroundColor=none;" parent="1" edge="1" source="bar_db_1">
           <mxGeometry relative="1" as="geometry">
-            <mxPoint x="1520" y="322" as="sourcePoint" />
-            <mxPoint x="1520" y="2860" as="targetPoint" />
+            <mxPoint x="1800.0" y="322" as="sourcePoint" />
+            <mxPoint x="1800.0" y="2955.2" as="targetPoint" />
           </mxGeometry>
         </mxCell>
         <mxCell id="bar_actor_0" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};" parent="1" vertex="1">
-          <mxGeometry x="95" y="330" width="10" height="2430" as="geometry" />
+          <mxGeometry x="95" y="330" width="10" height="2525.2" as="geometry" />
         </mxCell>
         <mxCell id="bar_db_0" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};" parent="1" vertex="1">
-          <mxGeometry x="1515" y="1290" width="10" height="60" as="geometry" />
+          <mxGeometry x="1795.0" y="1385.2" width="10" height="60" as="geometry" />
         </mxCell>
-        <mxCell id="m1" value="1. Click &quot;New category&quot;" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;" parent="1" edge="1">
-          <mxGeometry relative="1" as="geometry">
+        <mxCell id="m1" value="1. Click &quot;New category&quot;" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;labelBackgroundColor=none;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry" x="0">
             <mxPoint x="105" y="330" as="sourcePoint" />
-            <mxPoint x="335" y="330" as="targetPoint" />
+            <mxPoint x="365.0" y="330" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="m2" value="2. Display create&lt;br&gt;category form" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;" parent="1" edge="1">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="335" y="390" as="sourcePoint" />
+        <mxCell id="m2" value="2. Display create category form" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;labelBackgroundColor=none;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry" x="0">
+            <mxPoint x="365.0" y="390" as="sourcePoint" />
             <mxPoint x="105" y="390" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="m3" value="3. Fill in name, slug,&lt;br&gt;description" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;" parent="1" edge="1">
-          <mxGeometry relative="1" as="geometry">
+        <mxCell id="m3" value="3. Fill in name, slug,&lt;br&gt;description" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;labelBackgroundColor=none;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry" x="0">
             <mxPoint x="105" y="450" as="sourcePoint" />
-            <mxPoint x="335" y="450" as="targetPoint" />
+            <mxPoint x="365.0" y="450" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="val" value="4. Check validate&lt;br&gt;category data" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=12;" parent="1" target="act_self_view_4" edge="1">
-          <mxGeometry x="0.1429" y="55" relative="1" as="geometry">
-            <mxPoint as="offset" />
+        <mxCell id="val" value="4. Check validate category data" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=12;verticalAlign=middle;verticalAlign=middle;verticalAlign=middle;align=left;verticalAlign=middle;labelBackgroundColor=none;" parent="1" edge="1">
+          <mxGeometry x="0" relative="1" as="geometry">
             <Array as="points">
-              <mxPoint x="385" y="480" />
-              <mxPoint x="385" y="510" />
+              <mxPoint x="415.0" y="480.0" />
+              <mxPoint x="415.0" y="510.0" />
             </Array>
-            <mxPoint x="345" y="480" as="sourcePoint" />
-            <mxPoint x="350" y="510" as="targetPoint" />
+            <mxPoint x="375.0" y="480.0" as="sourcePoint" />
+            <mxPoint x="380.0" y="510.0" as="targetPoint" />
+          <mxPoint x="10" y="0" as="offset" /></mxGeometry>
+        </mxCell>
+        <mxCell id="valmsg" value="4.1. Display message that&lt;br&gt;required input valid fields" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;labelBackgroundColor=none;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry" x="0">
+            <mxPoint x="365.0" y="626.0" as="sourcePoint" />
+            <mxPoint x="105" y="626.0" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="valmsg" value="4.1. Display message that&lt;br&gt;required input valid fields" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;" parent="1" edge="1">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="335" y="620" as="sourcePoint" />
-            <mxPoint x="105" y="620" as="targetPoint" />
+        <mxCell id="rt" value="5. POST /api/forums/admin/categories" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;labelBackgroundColor=none;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry" x="0">
+            <mxPoint x="375.0" y="711.0" as="sourcePoint" />
+            <mxPoint x="660.0" y="711.0" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="rt" value="5. POST /api/forums/admin/categories" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;" parent="1" edge="1">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="345" y="705" as="sourcePoint" />
-            <mxPoint x="535" y="705" as="targetPoint" />
+        <mxCell id="c2" value="6. createCategory(dto)" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;labelBackgroundColor=none;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry" x="0">
+            <mxPoint x="670.0" y="1215.2" as="sourcePoint" />
+            <mxPoint x="955.0" y="1215.2" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="c1" value="6. createCategory(req, res)" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;" parent="1" edge="1">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="545" y="1065" as="sourcePoint" />
-            <mxPoint x="755" y="1065" as="targetPoint" />
+        <mxCell id="c3" value="7. findByName(name)" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;labelBackgroundColor=none;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry" x="0">
+            <mxPoint x="965.0" y="1275.2" as="sourcePoint" />
+            <mxPoint x="1245.0" y="1275.2" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="c2" value="7. createCategory(dto)" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;" parent="1" edge="1">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="765" y="1120" as="sourcePoint" />
-            <mxPoint x="960" y="1120" as="targetPoint" />
+        <mxCell id="c4" value="8. forumCategory.findFirst({where:&lt;br&gt;{name}})" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;labelBackgroundColor=none;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry" x="0">
+            <mxPoint x="1255.0" y="1330.2" as="sourcePoint" />
+            <mxPoint x="1535.0" y="1330.2" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="c3" value="8. findByName(name)" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;" parent="1" edge="1">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="970" y="1180" as="sourcePoint" />
-            <mxPoint x="1170" y="1180" as="targetPoint" />
+        <mxCell id="c5" value="9. Execute query to check&lt;br&gt;category name" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;labelBackgroundColor=none;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry" x="0">
+            <mxPoint x="1545.0" y="1385.2" as="sourcePoint" />
+            <mxPoint x="1795.0" y="1385.2" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="c4" value="9. forumCategory.findFirst({where: {name}})" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;" parent="1" edge="1">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="1180" y="1235" as="sourcePoint" />
-            <mxPoint x="1355" y="1235" as="targetPoint" />
+        <mxCell id="r1" value="10. Return result" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;labelBackgroundColor=none;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry" x="0">
+            <mxPoint x="1795.0" y="1445.2" as="sourcePoint" />
+            <mxPoint x="1545.0" y="1445.2" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="c5" value="10. Execute query to&lt;br&gt;check category name" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;" parent="1" edge="1">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="1365" y="1290" as="sourcePoint" />
-            <mxPoint x="1515" y="1290" as="targetPoint" />
+        <mxCell id="r2" value="11. Return result" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;labelBackgroundColor=none;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry" x="0">
+            <mxPoint x="1535.0" y="1495.2" as="sourcePoint" />
+            <mxPoint x="1255.0" y="1495.2" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="r1" value="11. Return result" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;" parent="1" edge="1">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="1515" y="1350" as="sourcePoint" />
-            <mxPoint x="1365" y="1350" as="targetPoint" />
+        <mxCell id="r3" value="12. Return result" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;labelBackgroundColor=none;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry" x="0">
+            <mxPoint x="1245.0" y="1545.2" as="sourcePoint" />
+            <mxPoint x="965.0" y="1545.2" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="r2" value="12. Return result" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;" parent="1" edge="1">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="1355" y="1400" as="sourcePoint" />
-            <mxPoint x="1180" y="1400" as="targetPoint" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="r3" value="13. Return result" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;" parent="1" edge="1">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="1170" y="1450" as="sourcePoint" />
-            <mxPoint x="970" y="1450" as="targetPoint" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="chk" value="14. Handle creation result" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=12;" parent="1" target="act_self_srv_14" edge="1">
-          <mxGeometry x="0.3" y="-80" relative="1" as="geometry">
-            <mxPoint x="80" y="80" as="offset" />
+        <mxCell id="chk" value="13. Handle creation result" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=12;verticalAlign=middle;verticalAlign=middle;verticalAlign=middle;align=left;verticalAlign=middle;labelBackgroundColor=none;" parent="1" edge="1">
+          <mxGeometry x="0" relative="1" as="geometry">
             <Array as="points">
-              <mxPoint x="1010" y="1465" />
-              <mxPoint x="1010" y="1490" />
+              <mxPoint x="1005.0" y="1560.2" />
+              <mxPoint x="1005.0" y="1585.2" />
             </Array>
-            <mxPoint x="970" y="1465" as="sourcePoint" />
-            <mxPoint x="975" y="1490" as="targetPoint" />
+            <mxPoint x="965.0" y="1560.2" as="sourcePoint" />
+            <mxPoint x="970.0" y="1585.2" as="targetPoint" />
+          <mxPoint x="10" y="0" as="offset" /></mxGeometry>
+        </mxCell>
+        <mxCell id="b11" value="13.1.1. Return error" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;labelBackgroundColor=none;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry" x="0">
+            <mxPoint x="955.0" y="1685.2" as="sourcePoint" />
+            <mxPoint x="670.0" y="1685.2" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="b11" value="14.1.1. Return error" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;" parent="1" edge="1">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="960" y="1590" as="sourcePoint" />
-            <mxPoint x="765" y="1590" as="targetPoint" />
+        <mxCell id="b12" value="13.1.2. Return error" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;labelBackgroundColor=none;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry" x="0">
+            <mxPoint x="660.0" y="1740.2" as="sourcePoint" />
+            <mxPoint x="375.0" y="1740.2" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="b12" value="14.1.2. Return error" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;" parent="1" edge="1">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="755" y="1645" as="sourcePoint" />
-            <mxPoint x="545" y="1645" as="targetPoint" />
+        <mxCell id="b14" value="13.1.3. Show message &quot;Category&lt;br&gt;name already exists&quot;" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;labelBackgroundColor=none;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry" x="0">
+            <mxPoint x="365.0" y="1855.2" as="sourcePoint" />
+            <mxPoint x="105" y="1855.2" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="b13" value="14.1.3. Return error" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;" parent="1" edge="1">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="535" y="1700" as="sourcePoint" />
-            <mxPoint x="345" y="1700" as="targetPoint" />
+        <mxCell id="b21" value="13.2.1. create(dto)" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;labelBackgroundColor=none;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry" x="0">
+            <mxPoint x="965.0" y="1955.2" as="sourcePoint" />
+            <mxPoint x="1245.0" y="1955.2" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="b14" value="14.1.4. Show message&lt;br&gt;&quot;Category name&lt;br&gt;already exists&quot;" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;" parent="1" edge="1">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="335" y="1760" as="sourcePoint" />
-            <mxPoint x="105" y="1760" as="targetPoint" />
+        <mxCell id="b22" value="13.2.2.&lt;br&gt;forumCategory.create({data})" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;labelBackgroundColor=none;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry" x="0">
+            <mxPoint x="1255.0" y="2015.2" as="sourcePoint" />
+            <mxPoint x="1535.0" y="2015.2" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="b21" value="14.2.1. create(dto)" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;" parent="1" edge="1">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="970" y="1860" as="sourcePoint" />
-            <mxPoint x="1170" y="1860" as="targetPoint" />
+        <mxCell id="b23" value="13.2.3. Execute insert query" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;labelBackgroundColor=none;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry" x="0">
+            <mxPoint x="1545.0" y="2075.2" as="sourcePoint" />
+            <mxPoint x="1795.0" y="2075.2" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="b22" value="14.2.2. forumCategory.create({data})" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;" parent="1" edge="1">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="1180" y="1920" as="sourcePoint" />
-            <mxPoint x="1355" y="1920" as="targetPoint" />
+        <mxCell id="b24" value="13.2.4. Return result" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;labelBackgroundColor=none;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry" x="0">
+            <mxPoint x="1795.0" y="2135.2" as="sourcePoint" />
+            <mxPoint x="1545.0" y="2135.2" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="b23" value="14.2.3. Execute&lt;br&gt;insert query" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;" parent="1" edge="1">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="1365" y="1980" as="sourcePoint" />
-            <mxPoint x="1515" y="1980" as="targetPoint" />
+        <mxCell id="b25" value="13.2.5. Return new category" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;labelBackgroundColor=none;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry" x="0">
+            <mxPoint x="1535.0" y="2185.2" as="sourcePoint" />
+            <mxPoint x="1255.0" y="2185.2" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="b24" value="14.2.4. Return result" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;" parent="1" edge="1">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="1515" y="2040" as="sourcePoint" />
-            <mxPoint x="1365" y="2040" as="targetPoint" />
+        <mxCell id="b26" value="13.2.6. Return result" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;labelBackgroundColor=none;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry" x="0">
+            <mxPoint x="1245.0" y="2235.2" as="sourcePoint" />
+            <mxPoint x="965.0" y="2235.2" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="b25" value="14.2.5. Return new&lt;br&gt;category" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;" parent="1" edge="1">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="1355" y="2090" as="sourcePoint" />
-            <mxPoint x="1180" y="2090" as="targetPoint" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="b26" value="14.2.6. Return result" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;" parent="1" edge="1">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="1170" y="2140" as="sourcePoint" />
-            <mxPoint x="970" y="2140" as="targetPoint" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="chk2" value="14.2.7. Handle&lt;br&gt;creation result" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=12;" parent="1" target="act_self_srv_14_2_7" edge="1">
-          <mxGeometry x="0.2" y="50" relative="1" as="geometry">
-            <mxPoint as="offset" />
+        <mxCell id="chk2" value="13.2.7. Handle creation result" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=12;verticalAlign=middle;verticalAlign=middle;verticalAlign=middle;align=left;verticalAlign=middle;labelBackgroundColor=none;" parent="1" edge="1">
+          <mxGeometry x="0" relative="1" as="geometry">
             <Array as="points">
-              <mxPoint x="1010" y="2180" />
-              <mxPoint x="1010" y="2205" />
+              <mxPoint x="1005.0" y="2275.2" />
+              <mxPoint x="1005.0" y="2300.2" />
             </Array>
-            <mxPoint x="970" y="2180" as="sourcePoint" />
-            <mxPoint x="975" y="2205" as="targetPoint" />
+            <mxPoint x="965.0" y="2275.2" as="sourcePoint" />
+            <mxPoint x="970.0" y="2300.2" as="targetPoint" />
+          <mxPoint x="10" y="0" as="offset" /></mxGeometry>
+        </mxCell>
+        <mxCell id="n11" value="13.2.7.1.1. Return error" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;labelBackgroundColor=none;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry" x="0">
+            <mxPoint x="955.0" y="2400.2" as="sourcePoint" />
+            <mxPoint x="670.0" y="2400.2" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="n11" value="14.2.7.1.1. Return error" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;" parent="1" edge="1">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="960" y="2305" as="sourcePoint" />
-            <mxPoint x="765" y="2305" as="targetPoint" />
+        <mxCell id="n12" value="13.2.7.1.2. Return error" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;labelBackgroundColor=none;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry" x="0">
+            <mxPoint x="660.0" y="2455.2" as="sourcePoint" />
+            <mxPoint x="375.0" y="2455.2" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="n12" value="14.2.7.1.2. Return error" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;" parent="1" edge="1">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="755" y="2360" as="sourcePoint" />
-            <mxPoint x="545" y="2360" as="targetPoint" />
+        <mxCell id="n14" value="13.2.7.1.3. Show message &quot;Create&lt;br&gt;category failed&quot;" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;labelBackgroundColor=none;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry" x="0">
+            <mxPoint x="365.0" y="2570.2" as="sourcePoint" />
+            <mxPoint x="105" y="2570.2" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="n13" value="14.2.7.1.3. Return error" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;" parent="1" edge="1">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="535" y="2415" as="sourcePoint" />
-            <mxPoint x="345" y="2415" as="targetPoint" />
+        <mxCell id="n21" value="13.2.7.2.1. Return result" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;labelBackgroundColor=none;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry" x="0">
+            <mxPoint x="955.0" y="2675.2" as="sourcePoint" />
+            <mxPoint x="670.0" y="2675.2" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="n14" value="14.2.7.1.4. Show message&lt;br&gt;&quot;Create category failed&quot;" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;" parent="1" edge="1">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="335" y="2475" as="sourcePoint" />
-            <mxPoint x="105" y="2475" as="targetPoint" />
+        <mxCell id="n22" value="13.2.7.2.2. Return result" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;labelBackgroundColor=none;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry" x="0">
+            <mxPoint x="660.0" y="2725.2" as="sourcePoint" />
+            <mxPoint x="374.0" y="2725.2" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="n21" value="14.2.7.2.1. Return result" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;" parent="1" edge="1">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="960" y="2580" as="sourcePoint" />
-            <mxPoint x="765" y="2580" as="targetPoint" />
+        <mxCell id="n24" value="13.2.7.2.3. Show message &quot;Create&lt;br&gt;category success&quot; and refresh&lt;br&gt;list" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;labelBackgroundColor=none;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry" x="0">
+            <mxPoint x="365.0" y="2855.2" as="sourcePoint" />
+            <mxPoint x="105" y="2855.2" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="n22" value="14.2.7.2.2. Return result" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;" parent="1" edge="1">
+        <mxCell id="calKcjXRFQBBi2KekoY4-1" value="" style="endArrow=none;dashed=1;html=1;rounded=0;labelBackgroundColor=none;" edge="1" parent="1" target="bar_db_1">
           <mxGeometry relative="1" as="geometry">
-            <mxPoint x="755" y="2630" as="sourcePoint" />
-            <mxPoint x="545" y="2630" as="targetPoint" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="n23" value="14.2.7.2.3. Return result" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;" parent="1" edge="1">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="534" y="2690" as="sourcePoint" />
-            <mxPoint x="344" y="2690" as="targetPoint" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="n24" value="14.2.7.2.4. Show message&lt;br&gt;&quot;Create category success&quot;&lt;br&gt;and refresh list" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;" parent="1" edge="1">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="335" y="2760" as="sourcePoint" />
-            <mxPoint x="105" y="2760" as="targetPoint" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="opt_auth_l1" value="[401 Unauthorized: missing / invalid token / session not found]" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;" parent="1" vertex="1">
-          <mxGeometry x="115" y="810" width="370" height="30" as="geometry" />
-        </mxCell>
-        <mxCell id="calKcjXRFQBBi2KekoY4-1" value="" style="endArrow=none;dashed=1;html=1;rounded=0;" edge="1" parent="1" target="bar_db_1">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="1520" y="322" as="sourcePoint" />
-            <mxPoint x="1520" y="2860" as="targetPoint" />
+            <mxPoint x="1800.0" y="322" as="sourcePoint" />
+            <mxPoint x="1800.0" y="2955.2" as="targetPoint" />
           </mxGeometry>
         </mxCell>
         <mxCell id="bar_db_1" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};" parent="1" vertex="1">
-          <mxGeometry x="1515" y="1980" width="10" height="60" as="geometry" />
+          <mxGeometry x="1795.0" y="2075.2" width="10" height="60" as="geometry" />
         </mxCell>
-      </root>
+      <mxCell id="ref_frame" value="ref" style="shape=umlFrame;whiteSpace=wrap;html=1;pointerEvents=0;fontSize=12;width=50;height=22;fillColor=#ffffff;labelBackgroundColor=none;" parent="1" vertex="1">
+          <mxGeometry x="535.0" y="741.0" width="260" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="ref_label" value="3.1. Verify jwt" style="text;html=1;whiteSpace=wrap;strokeColor=none;verticalAlign=middle;rounded=0;fontSize=12;align=center;fillColor=none;labelBackgroundColor=none;" parent="1" vertex="1">
+          <mxGeometry x="679.0" y="757.0" width="110.0" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="jwt_alt_fr" value="alt" style="shape=umlFrame;whiteSpace=wrap;html=1;pointerEvents=0;recursiveResize=0;container=1;collapsible=0;width=55;height=22;fontStyle=1;fontSize=12;fillColor=none;" parent="1" vertex="1"><mxGeometry x="25.0" y="813.0" width="682.0" height="238.2" as="geometry" /></mxCell><mxCell id="jwt_alt_g1" value="[no Bearer token || verify failed&lt;br&gt;|| sessionId missing || session&lt;br&gt;is null]" style="text;html=1;verticalAlign=middle;resizable=0;points=[];autosize=0;strokeColor=none;fontStyle=1;fontSize=12;align=left;fillColor=none;labelBackgroundColor=none;" parent="1" vertex="1"><mxGeometry x="116.0" y="817.0" width="238.0" height="50.1" as="geometry" /></mxCell><mxCell id="jwt_alt_div" value="" style="endArrow=none;dashed=1;html=1;rounded=0;strokeColor=#000000;labelBackgroundColor=none;" parent="1" edge="1"><mxGeometry relative="1" as="geometry"><mxPoint x="25.0" y="932.6" as="sourcePoint" /><mxPoint x="707.0" y="932.6" as="targetPoint" /></mxGeometry></mxCell><mxCell id="jwt_alt_g2" value="[user banned/deleted || roleId&lt;br&gt;missing || role/path rule or&lt;br&gt;permission denied]" style="text;html=1;verticalAlign=middle;resizable=0;points=[];autosize=0;strokeColor=none;fontStyle=1;fontSize=12;align=left;fillColor=none;labelBackgroundColor=none;" parent="1" vertex="1"><mxGeometry x="116.0" y="936.6" width="238.0" height="50.1" as="geometry" /></mxCell><mxCell id="jwt_alt_401_e1" value="5.1.1. Return 401 response" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;" parent="1" edge="1"><mxGeometry relative="1" as="geometry" x="0"><mxPoint x="660.0" y="894.6" as="sourcePoint" /><mxPoint x="375.0" y="894.6" as="targetPoint" /></mxGeometry></mxCell><mxCell id="jwt_alt_401_e2" value="5.1.2. Display error message" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;" parent="1" edge="1"><mxGeometry relative="1" as="geometry" x="0"><mxPoint x="365.0" y="920.6" as="sourcePoint" /><mxPoint x="105.0" y="920.6" as="targetPoint" /></mxGeometry></mxCell><mxCell id="jwt_alt_403_e1" value="5.2.1. Return 403 response" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;" parent="1" edge="1"><mxGeometry relative="1" as="geometry" x="0"><mxPoint x="660.0" y="1014.2" as="sourcePoint" /><mxPoint x="375.0" y="1014.2" as="targetPoint" /></mxGeometry></mxCell><mxCell id="jwt_alt_403_e2" value="5.2.2. Display error message" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;fontSize=12;labelBackgroundColor=none;" parent="1" edge="1"><mxGeometry relative="1" as="geometry" x="0"><mxPoint x="365.0" y="1040.2" as="sourcePoint" /><mxPoint x="105.0" y="1040.2" as="targetPoint" /></mxGeometry></mxCell></root>
     </mxGraphModel>
   </diagram>
 </mxfile>
