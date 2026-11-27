@@ -29,6 +29,7 @@ type RecommendationExplanationDialogProps = {
   onOpenChange: (open: boolean) => void;
   components?: RecommendationComponentsType;
   matchScore?: number;
+  variant?: "job" | "freelancer";
 };
 
 export function RecommendationExplanationDialog({
@@ -38,8 +39,19 @@ export function RecommendationExplanationDialog({
   onOpenChange,
   components,
   matchScore,
+  variant = "job",
 }: RecommendationExplanationDialogProps) {
   const t = useTranslations("recommendation");
+  const isCandidateMode = variant === "freelancer";
+  const detailsDesc = isCandidateMode
+    ? t("candidateMatchDetailsDesc")
+    : t("matchDetailsDesc");
+  const evidenceLabel = isCandidateMode
+    ? t("candidateEvidence")
+    : t("evidence");
+  const loadingMessage = isCandidateMode
+    ? t("loadingCandidateExplanation")
+    : t("loadingRecommendations");
   const { can } = useActionPermission();
   const canViewExplanation = can("GET", "/api/recommendations/:id/explanation");
 
@@ -99,7 +111,7 @@ export function RecommendationExplanationDialog({
           <div className="mt-4 rounded-2xl border border-border bg-accent/20 p-4 space-y-3">
             <div className="flex items-center justify-between">
               <span className="text-xs sm:text-sm font-semibold text-foreground">
-                {t("matchDetailsDesc")}
+                {detailsDesc}
               </span>
               {scorePercent !== null && (
                 <span className="inline-flex items-center rounded-full bg-[#D0E1F8]/40 dark:bg-[#0069D3]/20 border border-[#0069D3]/30 px-3 py-1 text-xs font-bold text-[#0069D3] dark:text-blue-300">
@@ -153,7 +165,7 @@ export function RecommendationExplanationDialog({
           {loading ? (
             <div className="flex flex-col items-center justify-center py-10 gap-3 text-muted-foreground">
               <Loader2 className="size-6 animate-spin text-[#0069D3]" />
-              <p className="text-xs">{t("loadingRecommendations")}</p>
+              <p className="text-xs">{loadingMessage}</p>
             </div>
           ) : explanation ? (
             <>
@@ -200,7 +212,7 @@ export function RecommendationExplanationDialog({
                             {claim.evidence && (
                               <p className="text-[11px] text-muted-foreground italic bg-background/50 rounded-md p-1.5 border border-border/40">
                                 <span className="font-semibold not-italic">
-                                  {t("evidence")}{" "}
+                                  {evidenceLabel}{" "}
                                 </span>
                                 &ldquo;{claim.evidence}&rdquo;
                               </p>
@@ -215,7 +227,7 @@ export function RecommendationExplanationDialog({
             </>
           ) : (
             <div className="rounded-xl border border-dashed border-border p-6 text-center text-xs text-muted-foreground">
-              {t("matchDetailsDesc")}
+              {detailsDesc}
             </div>
           )}
         </div>

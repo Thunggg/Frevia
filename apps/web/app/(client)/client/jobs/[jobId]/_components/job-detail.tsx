@@ -27,6 +27,7 @@ import { toastError, toastSuccess } from "@repo/ui/components/shadcn/toast";
 import type { JobType, ViewJobDetailResType } from "@shared/types";
 
 import { PostJobForm } from "../../_components/post-job-form";
+import { RecommendedFreelancersSection } from "@/app/(client)/_components/recommended-freelancers-section";
 
 const JOB_STATUS_KEYS = [
   "DRAFT",
@@ -582,6 +583,15 @@ export function JobDetail({
               </div>
             )}
           </div>
+        </div>
+
+        {/* ── AI Recommended Freelancers Section ── */}
+        <div className="mt-4">
+          <RecommendedFreelancersSection
+            jobId={job.id}
+            jobTitle={job.title}
+            jobStatus={job.status}
+          />
         </div>
       </div>
 

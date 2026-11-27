@@ -3780,7 +3780,22 @@
     "feedbackThanks": "Cảm ơn phản hồi của bạn!",
     "refreshRecommendations": "Làm mới",
     "helpful": "Hữu ích",
-    "notHelpful": "Chưa phù hợp"
+    "notHelpful": "Chưa phù hợp",
+    "candidateMatchDetailsDesc": "Đánh giá mức độ tương thích giữa hồ sơ ứng viên này và yêu cầu dự án của bạn.",
+    "candidateEvidence": "Bằng chứng từ hồ sơ:",
+    "loadingCandidateExplanation": "Đang phân tích mức độ phù hợp của ứng viên...",
+    "recommendedFreelancersTitle": "Ứng viên phù hợp do AI gợi ý",
+    "recommendedFreelancersDesc": "Xếp hạng dựa trên mức độ khớp kỹ năng chuyên môn, kinh nghiệm và mô tả dự án.",
+    "loadingRecommendedFreelancers": "Đang tìm kiếm ứng viên phù hợp nhất...",
+    "emptyRecommendedFreelancersTitle": "Chưa tìm thấy ứng viên gợi ý",
+    "emptyRecommendedFreelancersDesc": "Hãy bổ sung kỹ năng yêu cầu và mô tả chi tiết hơn cho công việc để AI tìm kiếm ứng viên sát hơn.",
+    "loadRecommendedFreelancersFailed": "Không thể tải danh sách ứng viên gợi ý lúc này.",
+    "retry": "Thử lại",
+    "viewProfile": "Xem hồ sơ",
+    "messageCandidate": "Nhắn tin",
+    "freelancerFallback": "Freelancer",
+    "moreSkills": "+{count} kỹ năng",
+    "aiSuggestedTab": "Gợi ý AI"
   },
   "jobAlerts": {
     "title": "Thông báo việc làm",

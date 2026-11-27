@@ -3780,7 +3780,22 @@
     "feedbackThanks": "Thank you for your feedback!",
     "refreshRecommendations": "Refresh",
     "helpful": "Helpful",
-    "notHelpful": "Not Relevant"
+    "notHelpful": "Not Relevant",
+    "candidateMatchDetailsDesc": "Evaluation of how well this candidate's profile matches your project requirements.",
+    "candidateEvidence": "Profile evidence:",
+    "loadingCandidateExplanation": "Analyzing candidate compatibility...",
+    "recommendedFreelancersTitle": "AI Recommended Candidates",
+    "recommendedFreelancersDesc": "Ranked by technical skill alignment, experience, and project relevance.",
+    "loadingRecommendedFreelancers": "Finding the best matching candidates...",
+    "emptyRecommendedFreelancersTitle": "No matching candidates found yet",
+    "emptyRecommendedFreelancersDesc": "Add required skills and a clearer project description so the AI can surface better-fitting candidates.",
+    "loadRecommendedFreelancersFailed": "Could not load AI candidate recommendations right now.",
+    "retry": "Retry",
+    "viewProfile": "View profile",
+    "messageCandidate": "Message",
+    "freelancerFallback": "Freelancer",
+    "moreSkills": "+{count} more",
+    "aiSuggestedTab": "AI Matches"
   },
   "jobAlerts": {
     "title": "Job Alerts",
