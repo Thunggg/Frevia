@@ -9,14 +9,14 @@ import { Reflector } from '@nestjs/core';
 import { REQUEST_USER_KEY } from '@shared/types';
 import { Request } from 'express';
 import { IS_PUBLIC_KEY } from '../decorators/auth.decorator';
-import { PrismaService } from '../services/prisma.service';
+import { SharedSessionRepository } from '../repositories/shared-session.repo';
 import { TokenService } from '../services/token.service';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
   constructor(
     private readonly tokenService: TokenService,
-    private readonly prisma: PrismaService,
+    private readonly sharedSessionRepository: SharedSessionRepository,
     private reflector: Reflector,
   ) {}
 
@@ -33,13 +33,11 @@ export class AuthGuard implements CanActivate {
         try {
           const payload = await this.tokenService.verifyAccessToken(token);
           if (payload.sessionId) {
-            const sessionWithUser = await this.prisma.session.findFirst({
-              where: { id: payload.sessionId, userId: payload.userId },
-              select: {
-                id: true,
-                user: { select: { isBanned: true, deletedAt: true } },
-              },
-            });
+            const sessionWithUser =
+              await this.sharedSessionRepository.findByIdAndUserIdWithUser(
+                payload.sessionId,
+                payload.userId,
+              );
             if (
               sessionWithUser &&
               !sessionWithUser.user.isBanned &&
@@ -71,21 +69,11 @@ export class AuthGuard implements CanActivate {
       }
 
       // Kiểm tra session còn hiệu lực (session đã revoke/xóa → 401)
-      const sessionWithUser = await this.prisma.session.findFirst({
-        where: {
-          id: payload.sessionId,
-          userId: payload.userId,
-        },
-        select: {
-          id: true,
-          user: {
-            select: {
-              isBanned: true,
-              deletedAt: true,
-            },
-          },
-        },
-      });
+      const sessionWithUser =
+        await this.sharedSessionRepository.findByIdAndUserIdWithUser(
+          payload.sessionId,
+          payload.userId,
+        );
 
       if (!sessionWithUser) {
         throw new UnauthorizedException();
