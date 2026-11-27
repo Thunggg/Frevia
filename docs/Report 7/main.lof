@@ -286,148 +286,148 @@
 \contentsline {figure}{\numberline {285}{\ignorespaces Sequence diagram of UC-13.12 Reject Contract Offer}}{691}{figure.caption.1161}%
 \contentsline {figure}{\numberline {286}{\ignorespaces Class diagram of UC-43.01 Connect Stripe Account}}{692}{figure.caption.1164}%
 \contentsline {figure}{\numberline {287}{\ignorespaces Sequence diagram of UC-43.01 Connect Stripe Account}}{693}{figure.caption.1165}%
-\contentsline {figure}{\numberline {288}{\ignorespaces Class diagram of UC-43.02 Check Stripe Connect Status}}{693}{figure.caption.1167}%
-\contentsline {figure}{\numberline {289}{\ignorespaces Sequence diagram of UC-43.02 Check Stripe Connect Status}}{694}{figure.caption.1168}%
-\contentsline {figure}{\numberline {290}{\ignorespaces Class diagram of UC-43.03 View Saved Payment Methods}}{694}{figure.caption.1170}%
-\contentsline {figure}{\numberline {291}{\ignorespaces Sequence diagram of UC-43.03 View Saved Payment Methods}}{695}{figure.caption.1171}%
-\contentsline {figure}{\numberline {292}{\ignorespaces Class diagram of UC-43.04 Set Default Payment Method}}{695}{figure.caption.1173}%
-\contentsline {figure}{\numberline {293}{\ignorespaces Sequence diagram of UC-43.04 Set Default Payment Method}}{696}{figure.caption.1174}%
-\contentsline {figure}{\numberline {294}{\ignorespaces Class diagram of UC-43.05 Remove Saved Payment Method}}{696}{figure.caption.1176}%
-\contentsline {figure}{\numberline {295}{\ignorespaces Sequence diagram of UC-43.05 Remove Saved Payment Method}}{697}{figure.caption.1177}%
-\contentsline {figure}{\numberline {296}{\ignorespaces Class diagram of UC-43.06 Create Contract Hold Deposit Intent}}{697}{figure.caption.1179}%
-\contentsline {figure}{\numberline {297}{\ignorespaces Sequence diagram of UC-43.06 Create Contract Hold Deposit Intent}}{698}{figure.caption.1180}%
-\contentsline {figure}{\numberline {298}{\ignorespaces Class diagram of UC-43.07 Fund Milestone via Stripe Checkout}}{699}{figure.caption.1182}%
-\contentsline {figure}{\numberline {299}{\ignorespaces Sequence diagram of UC-43.07 Fund Milestone via Stripe Checkout}}{699}{figure.caption.1183}%
-\contentsline {figure}{\numberline {300}{\ignorespaces Class diagram of UC-43.08 Fund Milestone with Saved Card}}{700}{figure.caption.1185}%
-\contentsline {figure}{\numberline {301}{\ignorespaces Sequence diagram of UC-43.08 Fund Milestone with Saved Card}}{701}{figure.caption.1186}%
-\contentsline {figure}{\numberline {302}{\ignorespaces Class diagram of UC-43.09 Release Milestone Escrow Payment}}{702}{figure.caption.1188}%
-\contentsline {figure}{\numberline {303}{\ignorespaces Sequence diagram of UC-43.09 Release Milestone Escrow Payment}}{703}{figure.caption.1189}%
-\contentsline {figure}{\numberline {304}{\ignorespaces Class diagram of UC-43.10 View Payment Transactions History}}{704}{figure.caption.1191}%
-\contentsline {figure}{\numberline {305}{\ignorespaces Sequence diagram of UC-43.10 View Payment Transactions History}}{704}{figure.caption.1192}%
-\contentsline {figure}{\numberline {306}{\ignorespaces Class diagram of UC-43.11 Sync Payment Intent Status}}{705}{figure.caption.1194}%
-\contentsline {figure}{\numberline {307}{\ignorespaces Sequence diagram of UC-43.11 Sync Payment Intent Status}}{705}{figure.caption.1195}%
-\contentsline {figure}{\numberline {308}{\ignorespaces Class diagram of UC-43.12 Sync Checkout Session Status}}{706}{figure.caption.1197}%
-\contentsline {figure}{\numberline {309}{\ignorespaces Sequence diagram of UC-43.12 Sync Checkout Session Status}}{706}{figure.caption.1198}%
-\contentsline {figure}{\numberline {310}{\ignorespaces Class diagram of UC-43.13 Handle Stripe Webhook Events}}{707}{figure.caption.1200}%
-\contentsline {figure}{\numberline {311}{\ignorespaces Sequence diagram of UC-43.13 Handle Stripe Webhook Events}}{707}{figure.caption.1201}%
-\contentsline {figure}{\numberline {312}{\ignorespaces Class diagram of UC-35.01 View ID Verification Requests List}}{708}{figure.caption.1204}%
-\contentsline {figure}{\numberline {313}{\ignorespaces Sequence diagram of UC-35.01 View ID Verification Requests List}}{708}{figure.caption.1205}%
-\contentsline {figure}{\numberline {314}{\ignorespaces Class diagram of UC-35.02 View ID Verification Request Details}}{709}{figure.caption.1207}%
-\contentsline {figure}{\numberline {315}{\ignorespaces Sequence diagram of UC-35.02 View ID Verification Request Details}}{709}{figure.caption.1208}%
-\contentsline {figure}{\numberline {316}{\ignorespaces Class diagram of UC-35.03 Approve ID Verification}}{710}{figure.caption.1210}%
-\contentsline {figure}{\numberline {317}{\ignorespaces Sequence diagram of UC-35.03 Approve ID Verification}}{711}{figure.caption.1211}%
-\contentsline {figure}{\numberline {318}{\ignorespaces Class diagram of UC-35.04 Reject ID Verification}}{712}{figure.caption.1213}%
-\contentsline {figure}{\numberline {319}{\ignorespaces Sequence diagram of UC-35.04 Reject ID Verification}}{713}{figure.caption.1214}%
-\contentsline {figure}{\numberline {320}{\ignorespaces Class diagram of UC-33.01 Open Dispute}}{714}{figure.caption.1217}%
-\contentsline {figure}{\numberline {321}{\ignorespaces Sequence diagram of UC-33.01 Open Dispute}}{715}{figure.caption.1218}%
-\contentsline {figure}{\numberline {322}{\ignorespaces Class diagram of UC-33.02 View Disputes List}}{716}{figure.caption.1220}%
-\contentsline {figure}{\numberline {323}{\ignorespaces Sequence diagram of UC-33.02 View Disputes List}}{716}{figure.caption.1221}%
-\contentsline {figure}{\numberline {324}{\ignorespaces Class diagram of UC-33.03 View Dispute Details}}{717}{figure.caption.1223}%
-\contentsline {figure}{\numberline {325}{\ignorespaces Sequence diagram of UC-33.03 View Dispute Details}}{717}{figure.caption.1224}%
-\contentsline {figure}{\numberline {326}{\ignorespaces Class diagram of UC-33.04 View Dispute by Milestone}}{718}{figure.caption.1226}%
-\contentsline {figure}{\numberline {327}{\ignorespaces Sequence diagram of UC-33.04 View Dispute by Milestone}}{718}{figure.caption.1227}%
-\contentsline {figure}{\numberline {328}{\ignorespaces Class diagram of UC-33.05 Respond to Dispute}}{719}{figure.caption.1229}%
-\contentsline {figure}{\numberline {329}{\ignorespaces Sequence diagram of UC-33.05 Respond to Dispute}}{720}{figure.caption.1230}%
-\contentsline {figure}{\numberline {330}{\ignorespaces Class diagram of UC-33.06 Withdraw Dispute}}{721}{figure.caption.1232}%
-\contentsline {figure}{\numberline {331}{\ignorespaces Sequence diagram of UC-33.06 Withdraw Dispute}}{722}{figure.caption.1233}%
-\contentsline {figure}{\numberline {332}{\ignorespaces Class diagram of UC-33.07 Escalate Dispute to Expert}}{723}{figure.caption.1235}%
-\contentsline {figure}{\numberline {333}{\ignorespaces Sequence diagram of UC-33.07 Escalate Dispute to Expert}}{724}{figure.caption.1236}%
-\contentsline {figure}{\numberline {334}{\ignorespaces Class diagram of UC-33.08 View Expert Disputes List}}{725}{figure.caption.1238}%
-\contentsline {figure}{\numberline {335}{\ignorespaces Sequence diagram of UC-33.08 View Expert Disputes List}}{726}{figure.caption.1239}%
-\contentsline {figure}{\numberline {336}{\ignorespaces Class diagram of UC-33.09 View Expert Dispute Details}}{726}{figure.caption.1241}%
-\contentsline {figure}{\numberline {337}{\ignorespaces Sequence diagram of UC-33.09 View Expert Dispute Details}}{727}{figure.caption.1242}%
-\contentsline {figure}{\numberline {338}{\ignorespaces Class diagram of UC-33.10 Expert Make Dispute Decision}}{728}{figure.caption.1244}%
-\contentsline {figure}{\numberline {339}{\ignorespaces Sequence diagram of UC-33.10 Expert Make Dispute Decision}}{729}{figure.caption.1245}%
-\contentsline {figure}{\numberline {340}{\ignorespaces Downloading the Git SCM installer for 64-bit Windows from the official website}}{748}{figure.caption.1315}%
-\contentsline {figure}{\numberline {341}{\ignorespaces Downloading the Node.js Long Term Support (LTS) installer from the official website}}{749}{figure.caption.1317}%
-\contentsline {figure}{\numberline {342}{\ignorespaces Downloading the Docker Desktop installer for Windows with WSL2 support}}{750}{figure.caption.1323}%
-\contentsline {figure}{\numberline {343}{\ignorespaces Verifying installed version signatures of Git, Node.js, pnpm, and Docker via PowerShell}}{751}{figure.caption.1325}%
-\contentsline {figure}{\numberline {344}{\ignorespaces Cloning repository and executing pnpm install across all monorepo packages}}{753}{figure.caption.1329}%
-\contentsline {figure}{\numberline {345}{\ignorespaces Verifying environment configuration files for API (\texttt {apps/api/.env}) and Web (\texttt {apps/web/.env})}}{754}{figure.caption.1331}%
-\contentsline {figure}{\numberline {346}{\ignorespaces Generating Prisma Client, executing database migrations, and executing seed scripts}}{755}{figure.caption.1345}%
-\contentsline {figure}{\numberline {347}{\ignorespaces Building and deploying all 5 system containers using Docker Compose}}{757}{figure.caption.1350}%
-\contentsline {figure}{\numberline {348}{\ignorespaces Verifying the Next.js web application running on the local Web portal}}{758}{figure.caption.1368}%
-\contentsline {figure}{\numberline {349}{\ignorespaces Verifying Backend RESTful API endpoints and response payloads via HTTP request}}{759}{figure.caption.1370}%
-\contentsline {figure}{\numberline {350}{\ignorespaces User Registration and Email OTP Verification interface at \texttt {/register}}}{762}{figure.caption.1381}%
-\contentsline {figure}{\numberline {351}{\ignorespaces User Login authentication screen at \texttt {/login}}}{764}{figure.caption.1394}%
-\contentsline {figure}{\numberline {352}{\ignorespaces Google OAuth 2.0 Single Sign-On button and registration link on the login screen}}{766}{figure.caption.1403}%
-\contentsline {figure}{\numberline {353}{\ignorespaces Password recovery and OTP reset interface at \texttt {/forgot-password}}}{767}{figure.caption.1409}%
-\contentsline {figure}{\numberline {354}{\ignorespaces Active login sessions audit table with search and sorting at \texttt {/sessions}}}{769}{figure.caption.1420}%
-\contentsline {figure}{\numberline {355}{\ignorespaces Session Detail modal displaying Session ID, User ID, Device, IP Address, and timestamps (UC-16.02)}}{770}{figure.caption.1426}%
-\contentsline {figure}{\numberline {356}{\ignorespaces Confirmation modal dialog for revoking a remote session at \texttt {/sessions}}}{771}{figure.caption.1429}%
-\contentsline {figure}{\numberline {357}{\ignorespaces Top-right account profile dropdown menu and Logout action}}{772}{figure.caption.1436}%
-\contentsline {figure}{\numberline {358}{\ignorespaces View client profile entry on a job detail page.}}{773}{figure.caption.1444}%
-\contentsline {figure}{\numberline {359}{\ignorespaces Client Personal information overview; edit actions are on the right.}}{776}{figure.caption.1458}%
-\contentsline {figure}{\numberline {360}{\ignorespaces Profile photo selection and upload controls.}}{778}{figure.caption.1466}%
-\contentsline {figure}{\numberline {361}{\ignorespaces Change password fields and submit action.}}{780}{figure.caption.1474}%
-\contentsline {figure}{\numberline {362}{\ignorespaces Social links: platform/URL form and saved links.}}{781}{figure.caption.1482}%
-\contentsline {figure}{\numberline {363}{\ignorespaces Account menu: add the other marketplace role.}}{782}{figure.caption.1491}%
-\contentsline {figure}{\numberline {364}{\ignorespaces Account menu: switch the active marketplace role.}}{784}{figure.caption.1499}%
-\contentsline {figure}{\numberline {365}{\ignorespaces Client workspace at My Jobs; example data varies by account.}}{786}{figure.caption.1507}%
-\contentsline {figure}{\numberline {366}{\ignorespaces Company profile editor and save action.}}{787}{figure.caption.1515}%
-\contentsline {figure}{\numberline {367}{\ignorespaces Add a Freelancer to favorites from the public profile (left); favorite freelancers tab and remove action.}}{789}{figure.caption.1523}%
-\contentsline {figure}{\numberline {368}{\ignorespaces Following workspace: Discover and Following lists (left); unfollow action on a followed Freelancer card.}}{790}{figure.caption.1531}%
-\contentsline {figure}{\numberline {369}{\ignorespaces Identity form: document images, liveness check and submission.}}{791}{figure.caption.1540}%
-\contentsline {figure}{\numberline {370}{\ignorespaces Verification status panel beside the submission form.}}{793}{figure.caption.1550}%
-\contentsline {figure}{\numberline {371}{\ignorespaces User Management filtered to Expert accounts; the eye action opens the selected user.}}{795}{figure.caption.1558}%
-\contentsline {figure}{\numberline {372}{\ignorespaces Expert Profile and Edit profile action (left); current Expert profile editor (right).}}{797}{figure.caption.1566}%
-\contentsline {figure}{\numberline {373}{\ignorespaces Expert credentials and Directory visibility in the current Admin editor.}}{799}{figure.caption.1576}%
-\contentsline {figure}{\numberline {374}{\ignorespaces Central Administrator Dashboard and operational KPI metrics at \texttt {/admin}}}{801}{figure.caption.1584}%
-\contentsline {figure}{\numberline {375}{\ignorespaces Administrator profile identity, standing, and granted privileges at \texttt {/admin/users/1}}}{803}{figure.caption.1592}%
-\contentsline {figure}{\numberline {376}{\ignorespaces System and Custom Roles management console at \texttt {/admin/roles} (UC-06.01, UC-06.03--06.05)}}{805}{figure.caption.1600}%
-\contentsline {figure}{\numberline {377}{\ignorespaces Role Detail screen displaying role metadata at \texttt {/admin/roles/1} (UC-06.02)}}{806}{figure.caption.1606}%
-\contentsline {figure}{\numberline {378}{\ignorespaces Dynamic RBAC role-permission matrix configuration at \texttt {/admin/assign-role} (UC-06.06)}}{807}{figure.caption.1609}%
-\contentsline {figure}{\numberline {379}{\ignorespaces System API Permission catalog with method and module filters at \texttt {/admin/permissions} (UC-15.01)}}{809}{figure.caption.1619}%
-\contentsline {figure}{\numberline {380}{\ignorespaces Permission Detail view displaying ID, Function Name, Method, Path, and Module (UC-15.02)}}{810}{figure.caption.1626}%
-\contentsline {figure}{\numberline {381}{\ignorespaces User directory table and account provisioning interface at \texttt {/admin/users} (UC-28.01, UC-28.03)}}{811}{figure.caption.1629}%
-\contentsline {figure}{\numberline {382}{\ignorespaces Edit User modal dialog featuring the Banned account toggle at \texttt {/admin/users}}}{813}{figure.caption.1638}%
-\contentsline {figure}{\numberline {383}{\ignorespaces Admin inspection view of Client Profile tab at \texttt {/admin/users/2} (UC-28.02, UC-28.05)}}{814}{figure.caption.1647}%
-\contentsline {figure}{\numberline {384}{\ignorespaces Freelancer Profile tab with Edit Profile, Skills, and Portfolio management at \texttt {/admin/users/2} (UC-28.06--28.08)}}{815}{figure.caption.1653}%
-\contentsline {figure}{\numberline {385}{\ignorespaces Expert Profile tab and Edit Profile action for Expert accounts (UC-28.09)}}{815}{figure.caption.1658}%
-\contentsline {figure}{\numberline {386}{\ignorespaces Skills catalog management console with search and soft delete at \texttt {/admin/skills}}}{817}{figure.caption.1662}%
-\contentsline {figure}{\numberline {387}{\ignorespaces Job Categories management console at \texttt {/admin/job-categories}}}{819}{figure.caption.1671}%
-\contentsline {figure}{\numberline {388}{\ignorespaces Forum Discussion Categories management console at \texttt {/admin/categories}}}{821}{figure.caption.1680}%
-\contentsline {figure}{\numberline {389}{\ignorespaces Advertisement Banners management console at \texttt {/admin/banners} (UC-37.01, UC-37.02, UC-37.04, UC-37.05)}}{823}{figure.caption.1689}%
-\contentsline {figure}{\numberline {390}{\ignorespaces Create New Banner dialog configuring title, position, image upload, target link, and schedule (UC-37.03)}}{824}{figure.caption.1696}%
-\contentsline {figure}{\numberline {391}{\ignorespaces Forum home displaying discussion tabs and category tags}}{825}{figure.caption.1700}%
-\contentsline {figure}{\numberline {392}{\ignorespaces Forum category detail page with search and post creation}}{826}{figure.caption.1708}%
-\contentsline {figure}{\numberline {393}{\ignorespaces Paginated list of approved forum posts}}{827}{figure.caption.1715}%
-\contentsline {figure}{\numberline {394}{\ignorespaces Forum post detail view with engagement bar and related posts}}{828}{figure.caption.1722}%
-\contentsline {figure}{\numberline {395}{\ignorespaces Create Post dialog with rich-text editor}}{829}{figure.caption.1730}%
-\contentsline {figure}{\numberline {396}{\ignorespaces Update Post modal for editing title or body}}{830}{figure.caption.1737}%
-\contentsline {figure}{\numberline {397}{\ignorespaces Soft-delete confirmation dialog for forum post}}{831}{figure.caption.1744}%
-\contentsline {figure}{\numberline {398}{\ignorespaces Liking a forum post}}{832}{figure.caption.1750}%
-\contentsline {figure}{\numberline {399}{\ignorespaces Removing a like from a forum post}}{833}{figure.caption.1756}%
-\contentsline {figure}{\numberline {400}{\ignorespaces Modal showing users who liked the post}}{834}{figure.caption.1762}%
-\contentsline {figure}{\numberline {401}{\ignorespaces Viewing post comments thread}}{835}{figure.caption.1768}%
-\contentsline {figure}{\numberline {402}{\ignorespaces Adding a new comment to a forum post}}{836}{figure.caption.1774}%
-\contentsline {figure}{\numberline {403}{\ignorespaces Editing an existing comment}}{837}{figure.caption.1780}%
-\contentsline {figure}{\numberline {404}{\ignorespaces Soft-deleting a comment}}{838}{figure.caption.1786}%
-\contentsline {figure}{\numberline {405}{\ignorespaces Liking a comment}}{839}{figure.caption.1792}%
-\contentsline {figure}{\numberline {406}{\ignorespaces Unliking a comment}}{840}{figure.caption.1797}%
-\contentsline {figure}{\numberline {407}{\ignorespaces Reporting inappropriate forum content}}{841}{figure.caption.1802}%
-\contentsline {figure}{\numberline {408}{\ignorespaces Conversation list with last message preview and unread count}}{842}{figure.caption.1809}%
-\contentsline {figure}{\numberline {409}{\ignorespaces Starting or resuming a direct conversation}}{843}{figure.caption.1816}%
-\contentsline {figure}{\numberline {410}{\ignorespaces Full chronological message thread view}}{844}{figure.caption.1823}%
-\contentsline {figure}{\numberline {411}{\ignorespaces Sending a real-time text message via Socket.IO}}{845}{figure.caption.1830}%
-\contentsline {figure}{\numberline {412}{\ignorespaces Marking incoming messages as read}}{846}{figure.caption.1837}%
-\contentsline {figure}{\numberline {413}{\ignorespaces Recalling a sent message}}{847}{figure.caption.1843}%
-\contentsline {figure}{\numberline {414}{\ignorespaces Pinning or unpinning a conversation to top}}{848}{figure.caption.1849}%
-\contentsline {figure}{\numberline {415}{\ignorespaces Real-time Messaging and File Attachment Sharing (/messages)}}{849}{figure.caption.1855}%
-\contentsline {figure}{\numberline {416}{\ignorespaces Admin Content Moderation Queue}}{851}{figure.caption.1864}%
-\contentsline {figure}{\numberline {417}{\ignorespaces Inspecting flagged moderation item details}}{852}{figure.caption.1871}%
-\contentsline {figure}{\numberline {418}{\ignorespaces Approving or rejecting a moderation item}}{853}{figure.caption.1878}%
-\contentsline {figure}{\numberline {419}{\ignorespaces Admin ID Verification Request queue}}{854}{figure.caption.1884}%
-\contentsline {figure}{\numberline {420}{\ignorespaces Admin Reviewing CCCD Images and Verification Detail}}{855}{figure.caption.1891}%
-\contentsline {figure}{\numberline {421}{\ignorespaces Approving an eKYC identity verification request}}{856}{figure.caption.1899}%
-\contentsline {figure}{\numberline {422}{\ignorespaces Rejecting an eKYC verification request with reason}}{857}{figure.caption.1906}%
-\contentsline {figure}{\numberline {423}{\ignorespaces Admin Forum Trash list of soft-deleted and rejected items}}{858}{figure.caption.1913}%
-\contentsline {figure}{\numberline {424}{\ignorespaces Inspecting deleted or rejected forum item details}}{859}{figure.caption.1920}%
-\contentsline {figure}{\numberline {425}{\ignorespaces Restoring a deleted or rejected forum item}}{860}{figure.caption.1926}%
-\contentsline {figure}{\numberline {426}{\ignorespaces AI Content Moderation scoring during post creation}}{861}{figure.caption.1933}%
-\contentsline {figure}{\numberline {427}{\ignorespaces User Guide: Profile Identity Tab -- CCCD Upload and Live AI Liveness Face Scan}}{862}{figure.caption.1941}%
-\contentsline {figure}{\numberline {428}{\ignorespaces Review form: rating, breakdown, comment and submit action.}}{864}{figure.caption.1951}%
-\contentsline {figure}{\numberline {429}{\ignorespaces Review response editor and Save response action.}}{865}{figure.caption.1960}%
-\contentsline {figure}{\numberline {430}{\ignorespaces Banner list, filters and Create Banner action (left); create Banner dialog and form fields.}}{867}{figure.caption.1968}%
-\contentsline {figure}{\numberline {431}{\ignorespaces Identity verification queue with search and status tabs.}}{869}{figure.caption.1977}%
-\contentsline {figure}{\numberline {432}{\ignorespaces Profile review queue and Review actions (left); published and Submitted field comparison.}}{871}{figure.caption.1985}%
+\contentsline {figure}{\numberline {288}{\ignorespaces Class diagram of UC-43.02 Check Stripe Connect Status}}{694}{figure.caption.1167}%
+\contentsline {figure}{\numberline {289}{\ignorespaces Sequence diagram of UC-43.02 Check Stripe Connect Status}}{695}{figure.caption.1168}%
+\contentsline {figure}{\numberline {290}{\ignorespaces Class diagram of UC-43.03 View Saved Payment Methods}}{696}{figure.caption.1170}%
+\contentsline {figure}{\numberline {291}{\ignorespaces Sequence diagram of UC-43.03 View Saved Payment Methods}}{696}{figure.caption.1171}%
+\contentsline {figure}{\numberline {292}{\ignorespaces Class diagram of UC-43.04 Set Default Payment Method}}{697}{figure.caption.1173}%
+\contentsline {figure}{\numberline {293}{\ignorespaces Sequence diagram of UC-43.04 Set Default Payment Method}}{698}{figure.caption.1174}%
+\contentsline {figure}{\numberline {294}{\ignorespaces Class diagram of UC-43.05 Remove Saved Payment Method}}{699}{figure.caption.1176}%
+\contentsline {figure}{\numberline {295}{\ignorespaces Sequence diagram of UC-43.05 Remove Saved Payment Method}}{700}{figure.caption.1177}%
+\contentsline {figure}{\numberline {296}{\ignorespaces Class diagram of UC-43.06 Create Contract Hold Deposit Intent}}{701}{figure.caption.1179}%
+\contentsline {figure}{\numberline {297}{\ignorespaces Sequence diagram of UC-43.06 Create Contract Hold Deposit Intent}}{702}{figure.caption.1180}%
+\contentsline {figure}{\numberline {298}{\ignorespaces Class diagram of UC-43.07 Fund Milestone via Stripe Checkout}}{703}{figure.caption.1182}%
+\contentsline {figure}{\numberline {299}{\ignorespaces Sequence diagram of UC-43.07 Fund Milestone via Stripe Checkout}}{704}{figure.caption.1183}%
+\contentsline {figure}{\numberline {300}{\ignorespaces Class diagram of UC-43.08 Fund Milestone with Saved Card}}{705}{figure.caption.1185}%
+\contentsline {figure}{\numberline {301}{\ignorespaces Sequence diagram of UC-43.08 Fund Milestone with Saved Card}}{706}{figure.caption.1186}%
+\contentsline {figure}{\numberline {302}{\ignorespaces Class diagram of UC-43.09 Release Milestone Escrow Payment}}{707}{figure.caption.1188}%
+\contentsline {figure}{\numberline {303}{\ignorespaces Sequence diagram of UC-43.09 Release Milestone Escrow Payment}}{708}{figure.caption.1189}%
+\contentsline {figure}{\numberline {304}{\ignorespaces Class diagram of UC-43.10 View Payment Transactions History}}{709}{figure.caption.1191}%
+\contentsline {figure}{\numberline {305}{\ignorespaces Sequence diagram of UC-43.10 View Payment Transactions History}}{709}{figure.caption.1192}%
+\contentsline {figure}{\numberline {306}{\ignorespaces Class diagram of UC-43.11 Sync Payment Intent Status}}{710}{figure.caption.1194}%
+\contentsline {figure}{\numberline {307}{\ignorespaces Sequence diagram of UC-43.11 Sync Payment Intent Status}}{710}{figure.caption.1195}%
+\contentsline {figure}{\numberline {308}{\ignorespaces Class diagram of UC-43.12 Sync Checkout Session Status}}{710}{figure.caption.1197}%
+\contentsline {figure}{\numberline {309}{\ignorespaces Sequence diagram of UC-43.12 Sync Checkout Session Status}}{711}{figure.caption.1198}%
+\contentsline {figure}{\numberline {310}{\ignorespaces Class diagram of UC-43.13 Handle Stripe Webhook Events}}{711}{figure.caption.1200}%
+\contentsline {figure}{\numberline {311}{\ignorespaces Sequence diagram of UC-43.13 Handle Stripe Webhook Events}}{711}{figure.caption.1201}%
+\contentsline {figure}{\numberline {312}{\ignorespaces Class diagram of UC-35.01 View ID Verification Requests List}}{712}{figure.caption.1204}%
+\contentsline {figure}{\numberline {313}{\ignorespaces Sequence diagram of UC-35.01 View ID Verification Requests List}}{712}{figure.caption.1205}%
+\contentsline {figure}{\numberline {314}{\ignorespaces Class diagram of UC-35.02 View ID Verification Request Details}}{713}{figure.caption.1207}%
+\contentsline {figure}{\numberline {315}{\ignorespaces Sequence diagram of UC-35.02 View ID Verification Request Details}}{713}{figure.caption.1208}%
+\contentsline {figure}{\numberline {316}{\ignorespaces Class diagram of UC-35.03 Approve ID Verification}}{714}{figure.caption.1210}%
+\contentsline {figure}{\numberline {317}{\ignorespaces Sequence diagram of UC-35.03 Approve ID Verification}}{715}{figure.caption.1211}%
+\contentsline {figure}{\numberline {318}{\ignorespaces Class diagram of UC-35.04 Reject ID Verification}}{716}{figure.caption.1213}%
+\contentsline {figure}{\numberline {319}{\ignorespaces Sequence diagram of UC-35.04 Reject ID Verification}}{717}{figure.caption.1214}%
+\contentsline {figure}{\numberline {320}{\ignorespaces Class diagram of UC-33.01 Open Dispute}}{718}{figure.caption.1217}%
+\contentsline {figure}{\numberline {321}{\ignorespaces Sequence diagram of UC-33.01 Open Dispute}}{719}{figure.caption.1218}%
+\contentsline {figure}{\numberline {322}{\ignorespaces Class diagram of UC-33.02 View Disputes List}}{720}{figure.caption.1220}%
+\contentsline {figure}{\numberline {323}{\ignorespaces Sequence diagram of UC-33.02 View Disputes List}}{720}{figure.caption.1221}%
+\contentsline {figure}{\numberline {324}{\ignorespaces Class diagram of UC-33.03 View Dispute Details}}{721}{figure.caption.1223}%
+\contentsline {figure}{\numberline {325}{\ignorespaces Sequence diagram of UC-33.03 View Dispute Details}}{722}{figure.caption.1224}%
+\contentsline {figure}{\numberline {326}{\ignorespaces Class diagram of UC-33.04 View Dispute by Milestone}}{723}{figure.caption.1226}%
+\contentsline {figure}{\numberline {327}{\ignorespaces Sequence diagram of UC-33.04 View Dispute by Milestone}}{724}{figure.caption.1227}%
+\contentsline {figure}{\numberline {328}{\ignorespaces Class diagram of UC-33.05 Respond to Dispute}}{725}{figure.caption.1229}%
+\contentsline {figure}{\numberline {329}{\ignorespaces Sequence diagram of UC-33.05 Respond to Dispute}}{726}{figure.caption.1230}%
+\contentsline {figure}{\numberline {330}{\ignorespaces Class diagram of UC-33.06 Withdraw Dispute}}{727}{figure.caption.1232}%
+\contentsline {figure}{\numberline {331}{\ignorespaces Sequence diagram of UC-33.06 Withdraw Dispute}}{728}{figure.caption.1233}%
+\contentsline {figure}{\numberline {332}{\ignorespaces Class diagram of UC-33.07 Escalate Dispute to Expert}}{729}{figure.caption.1235}%
+\contentsline {figure}{\numberline {333}{\ignorespaces Sequence diagram of UC-33.07 Escalate Dispute to Expert}}{730}{figure.caption.1236}%
+\contentsline {figure}{\numberline {334}{\ignorespaces Class diagram of UC-33.08 View Expert Disputes List}}{731}{figure.caption.1238}%
+\contentsline {figure}{\numberline {335}{\ignorespaces Sequence diagram of UC-33.08 View Expert Disputes List}}{732}{figure.caption.1239}%
+\contentsline {figure}{\numberline {336}{\ignorespaces Class diagram of UC-33.09 View Expert Dispute Details}}{733}{figure.caption.1241}%
+\contentsline {figure}{\numberline {337}{\ignorespaces Sequence diagram of UC-33.09 View Expert Dispute Details}}{734}{figure.caption.1242}%
+\contentsline {figure}{\numberline {338}{\ignorespaces Class diagram of UC-33.10 Expert Make Dispute Decision}}{735}{figure.caption.1244}%
+\contentsline {figure}{\numberline {339}{\ignorespaces Sequence diagram of UC-33.10 Expert Make Dispute Decision}}{736}{figure.caption.1245}%
+\contentsline {figure}{\numberline {340}{\ignorespaces Downloading the Git SCM installer for 64-bit Windows from the official website}}{755}{figure.caption.1315}%
+\contentsline {figure}{\numberline {341}{\ignorespaces Downloading the Node.js Long Term Support (LTS) installer from the official website}}{756}{figure.caption.1317}%
+\contentsline {figure}{\numberline {342}{\ignorespaces Downloading the Docker Desktop installer for Windows with WSL2 support}}{757}{figure.caption.1323}%
+\contentsline {figure}{\numberline {343}{\ignorespaces Verifying installed version signatures of Git, Node.js, pnpm, and Docker via PowerShell}}{758}{figure.caption.1325}%
+\contentsline {figure}{\numberline {344}{\ignorespaces Cloning repository and executing pnpm install across all monorepo packages}}{760}{figure.caption.1329}%
+\contentsline {figure}{\numberline {345}{\ignorespaces Verifying environment configuration files for API (\texttt {apps/api/.env}) and Web (\texttt {apps/web/.env})}}{761}{figure.caption.1331}%
+\contentsline {figure}{\numberline {346}{\ignorespaces Generating Prisma Client, executing database migrations, and executing seed scripts}}{762}{figure.caption.1345}%
+\contentsline {figure}{\numberline {347}{\ignorespaces Building and deploying all 5 system containers using Docker Compose}}{764}{figure.caption.1350}%
+\contentsline {figure}{\numberline {348}{\ignorespaces Verifying the Next.js web application running on the local Web portal}}{765}{figure.caption.1368}%
+\contentsline {figure}{\numberline {349}{\ignorespaces Verifying Backend RESTful API endpoints and response payloads via HTTP request}}{766}{figure.caption.1370}%
+\contentsline {figure}{\numberline {350}{\ignorespaces User Registration and Email OTP Verification interface at \texttt {/register}}}{769}{figure.caption.1381}%
+\contentsline {figure}{\numberline {351}{\ignorespaces User Login authentication screen at \texttt {/login}}}{771}{figure.caption.1394}%
+\contentsline {figure}{\numberline {352}{\ignorespaces Google OAuth 2.0 Single Sign-On button and registration link on the login screen}}{773}{figure.caption.1403}%
+\contentsline {figure}{\numberline {353}{\ignorespaces Password recovery and OTP reset interface at \texttt {/forgot-password}}}{774}{figure.caption.1409}%
+\contentsline {figure}{\numberline {354}{\ignorespaces Active login sessions audit table with search and sorting at \texttt {/sessions}}}{776}{figure.caption.1420}%
+\contentsline {figure}{\numberline {355}{\ignorespaces Session Detail modal displaying Session ID, User ID, Device, IP Address, and timestamps (UC-16.02)}}{777}{figure.caption.1426}%
+\contentsline {figure}{\numberline {356}{\ignorespaces Confirmation modal dialog for revoking a remote session at \texttt {/sessions}}}{778}{figure.caption.1429}%
+\contentsline {figure}{\numberline {357}{\ignorespaces Top-right account profile dropdown menu and Logout action}}{779}{figure.caption.1436}%
+\contentsline {figure}{\numberline {358}{\ignorespaces View client profile entry on a job detail page.}}{780}{figure.caption.1444}%
+\contentsline {figure}{\numberline {359}{\ignorespaces Client Personal information overview; edit actions are on the right.}}{783}{figure.caption.1458}%
+\contentsline {figure}{\numberline {360}{\ignorespaces Profile photo selection and upload controls.}}{785}{figure.caption.1466}%
+\contentsline {figure}{\numberline {361}{\ignorespaces Change password fields and submit action.}}{787}{figure.caption.1474}%
+\contentsline {figure}{\numberline {362}{\ignorespaces Social links: platform/URL form and saved links.}}{788}{figure.caption.1482}%
+\contentsline {figure}{\numberline {363}{\ignorespaces Account menu: add the other marketplace role.}}{789}{figure.caption.1491}%
+\contentsline {figure}{\numberline {364}{\ignorespaces Account menu: switch the active marketplace role.}}{791}{figure.caption.1499}%
+\contentsline {figure}{\numberline {365}{\ignorespaces Client workspace at My Jobs; example data varies by account.}}{793}{figure.caption.1507}%
+\contentsline {figure}{\numberline {366}{\ignorespaces Company profile editor and save action.}}{794}{figure.caption.1515}%
+\contentsline {figure}{\numberline {367}{\ignorespaces Add a Freelancer to favorites from the public profile (left); favorite freelancers tab and remove action.}}{796}{figure.caption.1523}%
+\contentsline {figure}{\numberline {368}{\ignorespaces Following workspace: Discover and Following lists (left); unfollow action on a followed Freelancer card.}}{797}{figure.caption.1531}%
+\contentsline {figure}{\numberline {369}{\ignorespaces Identity form: document images, liveness check and submission.}}{798}{figure.caption.1540}%
+\contentsline {figure}{\numberline {370}{\ignorespaces Verification status panel beside the submission form.}}{800}{figure.caption.1550}%
+\contentsline {figure}{\numberline {371}{\ignorespaces User Management filtered to Expert accounts; the eye action opens the selected user.}}{802}{figure.caption.1558}%
+\contentsline {figure}{\numberline {372}{\ignorespaces Expert Profile and Edit profile action (left); current Expert profile editor (right).}}{804}{figure.caption.1566}%
+\contentsline {figure}{\numberline {373}{\ignorespaces Expert credentials and Directory visibility in the current Admin editor.}}{806}{figure.caption.1576}%
+\contentsline {figure}{\numberline {374}{\ignorespaces Central Administrator Dashboard and operational KPI metrics at \texttt {/admin}}}{808}{figure.caption.1584}%
+\contentsline {figure}{\numberline {375}{\ignorespaces Administrator profile identity, standing, and granted privileges at \texttt {/admin/users/1}}}{810}{figure.caption.1592}%
+\contentsline {figure}{\numberline {376}{\ignorespaces System and Custom Roles management console at \texttt {/admin/roles} (UC-06.01, UC-06.03--06.05)}}{812}{figure.caption.1600}%
+\contentsline {figure}{\numberline {377}{\ignorespaces Role Detail screen displaying role metadata at \texttt {/admin/roles/1} (UC-06.02)}}{813}{figure.caption.1606}%
+\contentsline {figure}{\numberline {378}{\ignorespaces Dynamic RBAC role-permission matrix configuration at \texttt {/admin/assign-role} (UC-06.06)}}{814}{figure.caption.1609}%
+\contentsline {figure}{\numberline {379}{\ignorespaces System API Permission catalog with method and module filters at \texttt {/admin/permissions} (UC-15.01)}}{816}{figure.caption.1619}%
+\contentsline {figure}{\numberline {380}{\ignorespaces Permission Detail view displaying ID, Function Name, Method, Path, and Module (UC-15.02)}}{817}{figure.caption.1626}%
+\contentsline {figure}{\numberline {381}{\ignorespaces User directory table and account provisioning interface at \texttt {/admin/users} (UC-28.01, UC-28.03)}}{818}{figure.caption.1629}%
+\contentsline {figure}{\numberline {382}{\ignorespaces Edit User modal dialog featuring the Banned account toggle at \texttt {/admin/users}}}{820}{figure.caption.1638}%
+\contentsline {figure}{\numberline {383}{\ignorespaces Admin inspection view of Client Profile tab at \texttt {/admin/users/2} (UC-28.02, UC-28.05)}}{821}{figure.caption.1647}%
+\contentsline {figure}{\numberline {384}{\ignorespaces Freelancer Profile tab with Edit Profile, Skills, and Portfolio management at \texttt {/admin/users/2} (UC-28.06--28.08)}}{822}{figure.caption.1653}%
+\contentsline {figure}{\numberline {385}{\ignorespaces Expert Profile tab and Edit Profile action for Expert accounts (UC-28.09)}}{822}{figure.caption.1658}%
+\contentsline {figure}{\numberline {386}{\ignorespaces Skills catalog management console with search and soft delete at \texttt {/admin/skills}}}{824}{figure.caption.1662}%
+\contentsline {figure}{\numberline {387}{\ignorespaces Job Categories management console at \texttt {/admin/job-categories}}}{826}{figure.caption.1671}%
+\contentsline {figure}{\numberline {388}{\ignorespaces Forum Discussion Categories management console at \texttt {/admin/categories}}}{828}{figure.caption.1680}%
+\contentsline {figure}{\numberline {389}{\ignorespaces Advertisement Banners management console at \texttt {/admin/banners} (UC-37.01, UC-37.02, UC-37.04, UC-37.05)}}{830}{figure.caption.1689}%
+\contentsline {figure}{\numberline {390}{\ignorespaces Create New Banner dialog configuring title, position, image upload, target link, and schedule (UC-37.03)}}{831}{figure.caption.1696}%
+\contentsline {figure}{\numberline {391}{\ignorespaces Forum home displaying discussion tabs and category tags}}{832}{figure.caption.1700}%
+\contentsline {figure}{\numberline {392}{\ignorespaces Forum category detail page with search and post creation}}{833}{figure.caption.1708}%
+\contentsline {figure}{\numberline {393}{\ignorespaces Paginated list of approved forum posts}}{834}{figure.caption.1715}%
+\contentsline {figure}{\numberline {394}{\ignorespaces Forum post detail view with engagement bar and related posts}}{835}{figure.caption.1722}%
+\contentsline {figure}{\numberline {395}{\ignorespaces Create Post dialog with rich-text editor}}{836}{figure.caption.1730}%
+\contentsline {figure}{\numberline {396}{\ignorespaces Update Post modal for editing title or body}}{837}{figure.caption.1737}%
+\contentsline {figure}{\numberline {397}{\ignorespaces Soft-delete confirmation dialog for forum post}}{838}{figure.caption.1744}%
+\contentsline {figure}{\numberline {398}{\ignorespaces Liking a forum post}}{839}{figure.caption.1750}%
+\contentsline {figure}{\numberline {399}{\ignorespaces Removing a like from a forum post}}{840}{figure.caption.1756}%
+\contentsline {figure}{\numberline {400}{\ignorespaces Modal showing users who liked the post}}{841}{figure.caption.1762}%
+\contentsline {figure}{\numberline {401}{\ignorespaces Viewing post comments thread}}{842}{figure.caption.1768}%
+\contentsline {figure}{\numberline {402}{\ignorespaces Adding a new comment to a forum post}}{843}{figure.caption.1774}%
+\contentsline {figure}{\numberline {403}{\ignorespaces Editing an existing comment}}{844}{figure.caption.1780}%
+\contentsline {figure}{\numberline {404}{\ignorespaces Soft-deleting a comment}}{845}{figure.caption.1786}%
+\contentsline {figure}{\numberline {405}{\ignorespaces Liking a comment}}{846}{figure.caption.1792}%
+\contentsline {figure}{\numberline {406}{\ignorespaces Unliking a comment}}{847}{figure.caption.1797}%
+\contentsline {figure}{\numberline {407}{\ignorespaces Reporting inappropriate forum content}}{848}{figure.caption.1802}%
+\contentsline {figure}{\numberline {408}{\ignorespaces Conversation list with last message preview and unread count}}{849}{figure.caption.1809}%
+\contentsline {figure}{\numberline {409}{\ignorespaces Starting or resuming a direct conversation}}{850}{figure.caption.1816}%
+\contentsline {figure}{\numberline {410}{\ignorespaces Full chronological message thread view}}{851}{figure.caption.1823}%
+\contentsline {figure}{\numberline {411}{\ignorespaces Sending a real-time text message via Socket.IO}}{852}{figure.caption.1830}%
+\contentsline {figure}{\numberline {412}{\ignorespaces Marking incoming messages as read}}{853}{figure.caption.1837}%
+\contentsline {figure}{\numberline {413}{\ignorespaces Recalling a sent message}}{854}{figure.caption.1843}%
+\contentsline {figure}{\numberline {414}{\ignorespaces Pinning or unpinning a conversation to top}}{855}{figure.caption.1849}%
+\contentsline {figure}{\numberline {415}{\ignorespaces Real-time Messaging and File Attachment Sharing (/messages)}}{856}{figure.caption.1855}%
+\contentsline {figure}{\numberline {416}{\ignorespaces Admin Content Moderation Queue}}{858}{figure.caption.1864}%
+\contentsline {figure}{\numberline {417}{\ignorespaces Inspecting flagged moderation item details}}{859}{figure.caption.1871}%
+\contentsline {figure}{\numberline {418}{\ignorespaces Approving or rejecting a moderation item}}{860}{figure.caption.1878}%
+\contentsline {figure}{\numberline {419}{\ignorespaces Admin ID Verification Request queue}}{861}{figure.caption.1884}%
+\contentsline {figure}{\numberline {420}{\ignorespaces Admin Reviewing CCCD Images and Verification Detail}}{862}{figure.caption.1891}%
+\contentsline {figure}{\numberline {421}{\ignorespaces Approving an eKYC identity verification request}}{863}{figure.caption.1899}%
+\contentsline {figure}{\numberline {422}{\ignorespaces Rejecting an eKYC verification request with reason}}{864}{figure.caption.1906}%
+\contentsline {figure}{\numberline {423}{\ignorespaces Admin Forum Trash list of soft-deleted and rejected items}}{865}{figure.caption.1913}%
+\contentsline {figure}{\numberline {424}{\ignorespaces Inspecting deleted or rejected forum item details}}{866}{figure.caption.1920}%
+\contentsline {figure}{\numberline {425}{\ignorespaces Restoring a deleted or rejected forum item}}{867}{figure.caption.1926}%
+\contentsline {figure}{\numberline {426}{\ignorespaces AI Content Moderation scoring during post creation}}{868}{figure.caption.1933}%
+\contentsline {figure}{\numberline {427}{\ignorespaces User Guide: Profile Identity Tab -- CCCD Upload and Live AI Liveness Face Scan}}{869}{figure.caption.1941}%
+\contentsline {figure}{\numberline {428}{\ignorespaces Review form: rating, breakdown, comment and submit action.}}{871}{figure.caption.1951}%
+\contentsline {figure}{\numberline {429}{\ignorespaces Review response editor and Save response action.}}{872}{figure.caption.1960}%
+\contentsline {figure}{\numberline {430}{\ignorespaces Banner list, filters and Create Banner action (left); create Banner dialog and form fields.}}{874}{figure.caption.1968}%
+\contentsline {figure}{\numberline {431}{\ignorespaces Identity verification queue with search and status tabs.}}{876}{figure.caption.1977}%
+\contentsline {figure}{\numberline {432}{\ignorespaces Profile review queue and Review actions (left); published and Submitted field comparison.}}{878}{figure.caption.1985}%
