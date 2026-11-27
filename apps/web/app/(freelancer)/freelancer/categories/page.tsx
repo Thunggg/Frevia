@@ -43,11 +43,9 @@ export default async function FreelancerCategoriesPage({
       limit: CATEGORY_PAGE_SIZE,
       search,
     }),
-    search || page > 1
-      ? jobCategoryServerRequest
-          .getJobCategories({ page: 1, limit: CATEGORY_PAGE_SIZE })
-          .catch(() => null)
-      : Promise.resolve(null),
+    jobCategoryServerRequest
+      .getJobCategories({ page: 1, limit: 50 })
+      .catch(() => null),
   ]);
 
   // EX-01: không tải được danh mục (lỗi hệ thống/kết nối).

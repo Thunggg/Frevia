@@ -10,7 +10,11 @@ import { CategoryDetailContent } from "../_components/category-detail-content";
 
 type CategoryDetailParams = Promise<{ slug: string }>;
 
-type CategoryDetailSearchParams = Promise<{ page?: string }>;
+type CategoryDetailSearchParams = Promise<{
+  page?: string;
+  limit?: string;
+  search?: string;
+}>;
 
 type CategoryDetailPageProps = {
   params: CategoryDetailParams;
@@ -45,12 +49,15 @@ export default async function FreelancerCategoryDetailPage({
   const query = await searchParams;
   const parsedPage = Number(query.page);
   const page = Number.isInteger(parsedPage) && parsedPage > 0 ? parsedPage : 1;
+  const limit = Number(query.limit) === 20 ? 20 : CATEGORY_JOB_PAGE_SIZE;
+  const search = query.search?.trim() || undefined;
   const t = await getTranslations("jobCategories");
 
   const { data: jobCategory, status } =
     await jobCategoryServerRequest.getJobCategoryDetail(slug, {
       page,
-      limit: CATEGORY_JOB_PAGE_SIZE,
+      limit,
+      search,
     });
 
   // EX-01: danh mục không tồn tại (hoặc đã bị xoá/vô hiệu hoá).
@@ -62,14 +69,14 @@ export default async function FreelancerCategoryDetailPage({
   if (!jobCategory) {
     return (
       <div className="flex flex-1 items-center justify-center bg-background px-4 py-16 font-sans">
-        <div className="w-full max-w-md rounded-[28px] border border-border bg-card p-8 text-center">
+        <div className="w-full max-w-md rounded-xl border border-border bg-card p-8 text-center">
           <h1 className="text-base font-semibold text-foreground">
             {t("loadFailedTitle")}
           </h1>
           <p className="mt-2 text-xs text-muted-foreground">
             {t("loadFailedDescription")}
           </p>
-          <Button asChild variant="outline" className="mt-5 rounded-full text-xs">
+          <Button asChild variant="outline" className="mt-5 rounded-lg text-xs">
             <Link href="/freelancer/categories">{t("backToCategories")}</Link>
           </Button>
         </div>
@@ -77,5 +84,10 @@ export default async function FreelancerCategoryDetailPage({
     );
   }
 
-  return <CategoryDetailContent jobCategory={jobCategory} />;
+  return (
+    <CategoryDetailContent
+      jobCategory={jobCategory}
+      initialSearch={search ?? ""}
+    />
+  );
 }

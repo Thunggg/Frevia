@@ -96,10 +96,7 @@ export class ManageJobRepository {
         ...(status ? { status } : {}),
         ...(search
           ? {
-              OR: [
-                { title: { contains: search, mode: 'insensitive' } },
-                { description: { contains: search, mode: 'insensitive' } },
-              ],
+              title: { contains: search, mode: 'insensitive' },
             }
           : {}),
       },

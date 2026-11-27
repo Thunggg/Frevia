@@ -19,7 +19,6 @@ import {
   RefreshCw,
   Search,
   SearchX,
-  SlidersHorizontal,
   Trash2,
 } from "@/components/icons";
 
@@ -48,7 +47,6 @@ import { RecommendationExplanationDialog } from "../../_components/recommendatio
 import { HomeProfileSidebar } from "../../_components/home-profile-sidebar";
 import { ProjectHeroBanner } from "../../_components/project-hero-banner";
 import { JobPagination } from "../../_components/job-pagination";
-import { HomeFiltersModal } from "../../_components/home-filters-modal";
 import { SavedSearchDetailDialog } from "../saved-searches/saved-search-detail-dialog";
 import { ClientDirectory } from "./client-directory";
 
@@ -156,7 +154,6 @@ export function FindWorkContent({
   const [isPending, startTransition] = useTransition();
 
   const [searchInput, setSearchInput] = useState(initialKeyword);
-  const [isFiltersModalOpen, setIsFiltersModalOpen] = useState(false);
   const [viewingSavedSearch, setViewingSavedSearch] =
     useState<SavedSearchType | null>(null);
 
@@ -535,7 +532,6 @@ export function FindWorkContent({
 
   const handleTabSelect = (tab: HomeTab) => {
     setActiveTab(tab);
-    setIsFiltersModalOpen(false);
     const isFilterTab = tab === "best-matches" || tab === "most-recent";
     const params = new URLSearchParams(searchParams.toString());
     params.delete("tab");
@@ -781,22 +777,6 @@ export function FindWorkContent({
                     {t("findClients")}
                   </button>
                 </div>
-
-                {/* Right Filter Icon Button: Mở Filters Modal áp dụng cho Best matches và Most recent */}
-                {(activeTab === "best-matches" || activeTab === "most-recent") && (
-                  <button
-                    type="button"
-                    onClick={() => setIsFiltersModalOpen(true)}
-                    className={`flex size-9 shrink-0 items-center justify-center rounded-full border transition-all cursor-pointer ${
-                      activeFiltersCount > 0
-                        ? "border-[#0069D3] bg-blue-50 text-[#0069D3] dark:bg-blue-950/40 dark:border-blue-500 dark:text-blue-300 ring-2 ring-blue-500/20"
-                        : "border-border bg-card text-muted-foreground hover:text-foreground hover:bg-muted"
-                    }`}
-                    title={t("modal.filterTooltip")}
-                  >
-                    <SlidersHorizontal className="size-4" />
-                  </button>
-                )}
               </div>
 
               {/* 5. Two-Column Home Content */}
@@ -1158,38 +1138,6 @@ export function FindWorkContent({
         categories={initialCategories}
         onApply={applySavedSearch}
       />
-
-      {/* Home Quick Filters Modal (Best matches & Most recent) */}
-      {(activeTab === "best-matches" || activeTab === "most-recent") && (
-        <HomeFiltersModal
-          open={isFiltersModalOpen}
-          onOpenChange={setIsFiltersModalOpen}
-          categories={initialCategories}
-          currentFilters={{
-            category: searchParams.get("category"),
-            budget: searchParams.get("budget"),
-            proposals: searchParams.get("proposals")
-              ? searchParams.get("proposals")!.split(",")
-              : null,
-            hiringType:
-              searchParams.get("hiringType") === "SINGLE" ||
-              searchParams.get("hiringType") === "MULTIPLE"
-                ? (searchParams.get("hiringType") as "SINGLE" | "MULTIPLE")
-                : null,
-            time: searchParams.get("time"),
-          }}
-          onApply={(newFilters) => {
-            updateParams({
-              category: newFilters.category ?? null,
-              budget: newFilters.budget ?? null,
-              proposals: newFilters.proposals?.join(",") ?? null,
-              hiringType: newFilters.hiringType ?? null,
-              time: newFilters.time ?? null,
-              page: "1",
-            });
-          }}
-        />
-      )}
     </div>
   );
 }
