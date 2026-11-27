@@ -2553,6 +2553,9 @@
     }
   },
   "clientProfilePublic": {
+    "clientContact": "Người liên hệ",
+    "companyNameMissing": "Chưa có tên công ty",
+
     "breadcrumb": "Hồ sơ khách hàng",
     "memberSince": "Thành viên từ {year}",
     "companyDetails": "Thông tin công ty trên Frevia.",

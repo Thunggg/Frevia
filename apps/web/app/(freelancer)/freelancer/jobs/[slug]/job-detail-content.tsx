@@ -41,6 +41,7 @@ import {
   type ViewJobDetailResType,
 } from "@shared/types";
 import { ProposalDialog } from "./proposal-dialog";
+import { ClientProfileSheet } from "../../../_components/client-profile-sheet";
 
 type JobDetailContentProps = {
   job: ViewJobDetailResType;
@@ -136,6 +137,7 @@ export function JobDetailContent({
   const [isBookmarkLoading, setIsBookmarkLoading] = useState(false);
   const [isRemoveDialogOpen, setIsRemoveDialogOpen] = useState(false);
   const [isKYCDialogOpen, setIsKYCDialogOpen] = useState(false);
+  const [isClientProfileOpen, setIsClientProfileOpen] = useState(false);
   const [isProposalDialogOpen, setIsProposalDialogOpen] = useState(false);
   const [clientName, setClientName] = useState<string | null>(null);
   const [clientAvatar, setClientAvatar] = useState<string | null>(null);
@@ -776,10 +778,12 @@ export function JobDetailContent({
                     </p>
                   </div>
                 </div>
-                <Button asChild variant="outline" className="mt-4 h-11 w-full">
-                  <Link href={`/clients/${job.clientId}`}>
-                    {t("viewClientProfile")}
-                  </Link>
+                <Button
+                  variant="outline"
+                  className="mt-4 h-11 w-full"
+                  onClick={() => setIsClientProfileOpen(true)}
+                >
+                  {t("viewClientProfile")}
                 </Button>
                 {canBookmark || role === "GUEST" ? (
                   <Button
@@ -882,6 +886,12 @@ export function JobDetailContent({
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      <ClientProfileSheet
+        userId={job.clientId}
+        open={isClientProfileOpen}
+        onOpenChange={setIsClientProfileOpen}
+      />
 
       <ProposalDialog
         jobId={job.id}

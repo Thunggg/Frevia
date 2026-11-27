@@ -2553,6 +2553,9 @@
     }
   },
   "clientProfilePublic": {
+    "clientContact": "Client contact",
+    "companyNameMissing": "Company name not provided",
+
     "breadcrumb": "Client profile",
     "memberSince": "Member since {year}",
     "companyDetails": "Company details on Frevia.",
