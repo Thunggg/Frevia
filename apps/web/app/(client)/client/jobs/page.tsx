@@ -25,6 +25,7 @@ export default async function ClientJobsPage({
     "IN_PROGRESS",
     "COMPLETED",
     "CLOSED",
+    "EXPIRED",
     "CANCELLED",
   ];
   const parsedStatus =
@@ -38,6 +39,7 @@ export default async function ClientJobsPage({
     inProgressResult,
     completedResult,
     draftResult,
+    expiredResult,
   ] = await Promise.all([
     jobServerRequest.getClientJobs({
       page,
@@ -53,6 +55,7 @@ export default async function ClientJobsPage({
       .getClientJobs({ status: "COMPLETED", limit: 1 })
       .catch(() => null),
     jobServerRequest.getClientJobs({ status: "DRAFT", limit: 1 }).catch(() => null),
+    jobServerRequest.getClientJobs({ status: "EXPIRED", limit: 1 }).catch(() => null),
   ]);
 
   return (
@@ -66,6 +69,7 @@ export default async function ClientJobsPage({
         inProgress: inProgressResult?.pagination?.total ?? 0,
         completed: completedResult?.pagination?.total ?? 0,
         draft: draftResult?.pagination?.total ?? 0,
+        expired: expiredResult?.pagination?.total ?? 0,
       }}
       initialSearch={search?.trim() || ""}
       initialStatus={parsedStatus}

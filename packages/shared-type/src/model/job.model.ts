@@ -16,6 +16,7 @@ export const JobStatusSchema = z.enum([
   "IN_PROGRESS",
   "COMPLETED",
   "CLOSED",
+  "EXPIRED",
   "CANCELLED",
 ]);
 

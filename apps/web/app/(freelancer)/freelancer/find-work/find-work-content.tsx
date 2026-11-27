@@ -682,11 +682,11 @@ export function FindWorkContent({
                   value={searchInput}
                   onChange={(e) => setSearchInput(e.target.value)}
                   placeholder={t("searchPlaceholder")}
-                  className="h-11 w-full rounded-full border border-border bg-card pl-11 pr-24 text-sm font-medium text-foreground placeholder:text-muted-foreground shadow-xs outline-none focus:border-[#0069D3] focus:ring-2 focus:ring-[#0069D3]/20 transition-all"
+                  className="h-10 w-full rounded-xl border border-border bg-card pl-10 pr-24 text-sm text-foreground placeholder:text-muted-foreground outline-none focus:border-foreground/40"
                 />
                 <button
                   type="submit"
-                  className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-[#0069D3] hover:bg-[#005bb8] text-white px-4 py-1.5 text-xs font-semibold shadow-xs transition-colors cursor-pointer"
+                  className="absolute right-1.5 top-1/2 -translate-y-1/2 rounded-lg bg-[#0069D3] hover:bg-[#005bb8] text-white px-4 py-1.5 text-xs font-medium cursor-pointer"
                 >
                   {t("searchPage.search")}
                 </button>
@@ -700,15 +700,15 @@ export function FindWorkContent({
                     <button
                       type="button"
                       onClick={() => handleTabSelect("best-matches")}
-                      className={`pb-3 text-sm font-semibold border-b-2 transition-all cursor-pointer whitespace-nowrap ${
+                      className={`pb-3 text-sm font-medium border-b-2 cursor-pointer whitespace-nowrap ${
                         activeTab === "best-matches"
-                          ? "border-[#0069D3] text-[#0069D3] dark:text-blue-400"
+                          ? "border-foreground text-foreground font-semibold"
                           : "border-transparent text-muted-foreground hover:text-foreground"
                       }`}
                     >
                       <span>{t("bestMatches")}</span>
                       {filteredRecommendedJobs.length > 0 && (
-                        <span className="ml-1.5 rounded-full bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300 px-2 py-0.5 text-xs font-semibold">
+                        <span className="ml-1.5 rounded-md bg-muted text-muted-foreground px-1.5 py-0.5 text-xs font-normal tabular-nums">
                           {filteredRecommendedJobs.length}
                         </span>
                       )}
@@ -719,14 +719,14 @@ export function FindWorkContent({
                   <button
                     type="button"
                     onClick={() => handleTabSelect("most-recent")}
-                    className={`pb-3 text-sm font-semibold border-b-2 transition-all cursor-pointer whitespace-nowrap ${
+                    className={`pb-3 text-sm font-medium border-b-2 cursor-pointer whitespace-nowrap ${
                       activeTab === "most-recent"
-                        ? "border-[#0069D3] text-[#0069D3] dark:text-blue-400"
+                        ? "border-foreground text-foreground font-semibold"
                         : "border-transparent text-muted-foreground hover:text-foreground"
                     }`}
                   >
                     <span>{t("mostRecent")}</span>
-                    <span className="ml-1.5 rounded-full bg-muted text-muted-foreground px-2 py-0.5 text-xs font-normal">
+                    <span className="ml-1.5 rounded-md bg-muted text-muted-foreground px-1.5 py-0.5 text-xs font-normal tabular-nums">
                       {pagination.total}
                     </span>
                   </button>
@@ -736,15 +736,15 @@ export function FindWorkContent({
                     <button
                       type="button"
                       onClick={() => handleTabSelect("saved-searches")}
-                      className={`pb-3 text-sm font-semibold border-b-2 transition-all cursor-pointer whitespace-nowrap ${
+                      className={`pb-3 text-sm font-medium border-b-2 cursor-pointer whitespace-nowrap ${
                         activeTab === "saved-searches"
-                          ? "border-[#0069D3] text-[#0069D3] dark:text-blue-400"
+                          ? "border-foreground text-foreground font-semibold"
                           : "border-transparent text-muted-foreground hover:text-foreground"
                       }`}
                     >
                       <span>{t("savedSearches")}</span>
                       {savedSearches.length > 0 && (
-                        <span className="ml-1.5 rounded-full bg-muted text-muted-foreground px-2 py-0.5 text-xs font-normal">
+                        <span className="ml-1.5 rounded-md bg-muted text-muted-foreground px-1.5 py-0.5 text-xs font-normal tabular-nums">
                           {savedSearches.length}
                         </span>
                       )}
@@ -755,15 +755,15 @@ export function FindWorkContent({
                   <button
                     type="button"
                     onClick={() => handleTabSelect("saved-jobs")}
-                    className={`pb-3 text-sm font-semibold border-b-2 transition-all cursor-pointer whitespace-nowrap ${
+                    className={`pb-3 text-sm font-medium border-b-2 cursor-pointer whitespace-nowrap ${
                       activeTab === "saved-jobs"
-                        ? "border-[#0069D3] text-[#0069D3] dark:text-blue-400"
+                        ? "border-foreground text-foreground font-semibold"
                         : "border-transparent text-muted-foreground hover:text-foreground"
                     }`}
                   >
                     <span>{t("savedJobs")}</span>
                     {bookmarkedSlugs.size > 0 && (
-                      <span className="ml-1.5 rounded-full bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300 px-2 py-0.5 text-xs font-semibold">
+                      <span className="ml-1.5 rounded-md bg-muted text-muted-foreground px-1.5 py-0.5 text-xs font-normal tabular-nums">
                         {bookmarkedSlugs.size}
                       </span>
                     )}
@@ -772,7 +772,7 @@ export function FindWorkContent({
                   <button
                     type="button"
                     onClick={() => handleTabSelect("find-clients")}
-                    className={`pb-3 text-sm font-semibold border-b-2 transition-all cursor-pointer whitespace-nowrap ${activeTab === "find-clients" ? "border-emerald-600 text-emerald-600 dark:text-emerald-400" : "border-transparent text-muted-foreground hover:text-foreground"}`}
+                    className={`pb-3 text-sm font-medium border-b-2 cursor-pointer whitespace-nowrap ${activeTab === "find-clients" ? "border-foreground text-foreground font-semibold" : "border-transparent text-muted-foreground hover:text-foreground"}`}
                   >
                     {t("findClients")}
                   </button>
@@ -796,13 +796,9 @@ export function FindWorkContent({
                           type="button"
                           disabled={isLoadingRecs}
                           onClick={refreshRecommendations}
-                          className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors cursor-pointer disabled:opacity-50"
+                          className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-card px-3 py-1 text-xs font-medium text-muted-foreground hover:text-foreground cursor-pointer disabled:opacity-50"
                         >
-                          <RefreshCw
-                            className={`size-3 ${
-                              isLoadingRecs ? "animate-spin" : ""
-                            }`}
-                          />
+                          <RefreshCw className="size-3" />
                           <span>{t("refresh")}</span>
                         </button>
                       </div>
@@ -810,11 +806,7 @@ export function FindWorkContent({
                       {!hasFetchedRecs || isLoadingRecs ? (
                         <JobListSkeleton />
                       ) : filteredRecommendedJobs.length === 0 ? (
-                        <motion.div
-                          initial={{ opacity: 0, y: 12 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-border bg-card/40 px-6 py-14 text-center font-sans"
-                        >
+                        <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-border bg-card px-6 py-14 text-center font-sans">
                           <p className="text-base font-semibold text-foreground">
                             {recommendedJobs.length === 0
                               ? tRec("emptyRecommendationsTitle")
@@ -830,14 +822,14 @@ export function FindWorkContent({
                               <>
                                 <Link
                                   href="/freelancer/profile"
-                                  className="inline-flex items-center rounded-full bg-[#0069D3] text-white hover:bg-[#005bb8] px-4 py-2 text-xs font-semibold shadow-xs transition-colors"
+                                  className="inline-flex items-center rounded-lg bg-[#0069D3] text-white hover:bg-[#005bb8] px-4 py-2 text-xs font-medium"
                                 >
                                   Update profile
                                 </Link>
                                 <button
                                   type="button"
                                   onClick={() => handleTabSelect("most-recent")}
-                                  className="inline-flex items-center rounded-full border border-border bg-card hover:bg-accent/40 px-4 py-2 text-xs font-medium text-foreground transition-colors cursor-pointer"
+                                  className="inline-flex items-center rounded-lg border border-border bg-card hover:bg-muted/50 px-4 py-2 text-xs font-medium text-foreground cursor-pointer"
                                 >
                                   Browse recent jobs
                                 </button>
@@ -862,7 +854,7 @@ export function FindWorkContent({
                               </Button>
                             )}
                           </div>
-                        </motion.div>
+                        </div>
                       ) : (
                         <div className="space-y-3">
                           {filteredRecommendedJobs.map((rec, index) => (

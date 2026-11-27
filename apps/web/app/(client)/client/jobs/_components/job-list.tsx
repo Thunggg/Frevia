@@ -60,6 +60,7 @@ type JobListProps = {
     inProgress: number;
     completed: number;
     draft: number;
+    expired?: number;
   };
   initialSearch?: string;
   initialStatus?: string;
@@ -71,6 +72,7 @@ type TabFilterType =
   | "IN_PROGRESS"
   | "COMPLETED"
   | "CLOSED"
+  | "EXPIRED"
   | "DRAFT";
 
 export function JobList({
@@ -272,6 +274,14 @@ export function JobList({
     null,
   );
   const [isPublishing, setIsPublishing] = useState(false);
+  const [pendingCloseJobId, setPendingCloseJobId] = useState<number | null>(
+    null,
+  );
+  const [isClosing, setIsClosing] = useState(false);
+  const [pendingReopenJobId, setPendingReopenJobId] = useState<number | null>(
+    null,
+  );
+  const [isReopening, setIsReopening] = useState(false);
   const [isKYCDialogOpen, setIsKYCDialogOpen] = useState(false);
   const [isCheckingKyc, setIsCheckingKyc] = useState(false);
 
@@ -332,6 +342,7 @@ export function JobList({
   const openCount = overviewCounts?.open ?? 0;
   const inProgressCount = overviewCounts?.inProgress ?? 0;
   const completedCount = overviewCounts?.completed ?? 0;
+  const expiredCount = overviewCounts?.expired ?? 0;
 
   // Filtered jobs based on tab and search
   const filteredJobs = useMemo(() => {
@@ -345,6 +356,8 @@ export function JobList({
       list = list.filter((j) => j.status === "IN_PROGRESS");
     } else if (activeTab === "COMPLETED") {
       list = list.filter((j) => j.status === "COMPLETED");
+    } else if (activeTab === "EXPIRED") {
+      list = list.filter((j) => j.status === "EXPIRED");
     } else if (activeTab === "CLOSED") {
       list = list.filter(
         (j) => j.status === "CLOSED" || j.status === "CANCELLED",
@@ -401,11 +414,14 @@ export function JobList({
     }
   };
 
-  const closeJob = async (id: number) => {
+  const confirmCloseJob = async () => {
+    if (!pendingCloseJobId) return;
     if (!canClose) {
       toastError({ message: t("noPermissionAction") });
       return;
     }
+    const id = pendingCloseJobId;
+    setIsClosing(true);
     try {
       const response = await jobApiRequest.closeJob(id);
       if (!response.success) throw new Error();
@@ -415,17 +431,23 @@ export function JobList({
         ),
       );
       toastSuccess({ message: t("closed") });
+      setPendingCloseJobId(null);
       router.refresh();
     } catch {
       toastError({ message: t("closeFailed") });
+    } finally {
+      setIsClosing(false);
     }
   };
 
-  const reopenJob = async (id: number) => {
+  const confirmReopenJob = async () => {
+    if (!pendingReopenJobId) return;
     if (!canReopen) {
       toastError({ message: t("noPermissionAction") });
       return;
     }
+    const id = pendingReopenJobId;
+    setIsReopening(true);
     try {
       const response = await jobApiRequest.reopenJob(id);
       if (!response.success) throw new Error();
@@ -433,9 +455,12 @@ export function JobList({
         current.map((job) => (job.id === id ? { ...job, status: "OPEN" } : job)),
       );
       toastSuccess({ message: t("reopened") });
+      setPendingReopenJobId(null);
       router.refresh();
     } catch {
       toastError({ message: t("reopenFailed") });
+    } finally {
+      setIsReopening(false);
     }
   };
 
@@ -562,6 +587,24 @@ export function JobList({
           </div>
         </div>
 
+        {/* ── Expired Jobs Notice (when Client opens My Jobs) ── */}
+        {expiredCount > 0 && activeTab !== "EXPIRED" && (
+          <div className="mt-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 rounded-xl border border-border bg-muted/40 px-4 py-3 text-xs">
+            <p className="text-foreground">
+              {t("expiredJobsNotice", { count: expiredCount })}
+            </p>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => handleTabChange("EXPIRED")}
+              className="h-8 rounded-lg px-3 text-xs font-medium self-start sm:self-auto cursor-pointer shrink-0"
+            >
+              {t("viewExpiredJobs")}
+            </Button>
+          </div>
+        )}
+
         {/* ── Tabs & Search Filter Row ── */}
         <div className="mt-6 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 pb-3 border-b border-border">
           {/* Tabs */}
@@ -572,6 +615,7 @@ export function JobList({
               { id: "IN_PROGRESS" as const, label: t("tabInProgress") },
               { id: "COMPLETED" as const, label: t("tabCompleted") },
               { id: "CLOSED" as const, label: t("tabClosed") },
+              { id: "EXPIRED" as const, label: t("tabExpired") },
               { id: "DRAFT" as const, label: t("tabDraft") },
             ].map((tab) => {
               const isActive = activeTab === tab.id;
@@ -643,7 +687,9 @@ export function JobList({
               const isInProgress = job.status === "IN_PROGRESS";
               const isCompleted = job.status === "COMPLETED";
               const isClosed =
-                job.status === "CLOSED" || job.status === "CANCELLED";
+                job.status === "CLOSED" ||
+                job.status === "EXPIRED" ||
+                job.status === "CANCELLED";
 
               const isBookmarked = bookmarkedJobIds.has(job.id);
               const relativeDate = formatRelativeDays(job.createdAt);
@@ -665,9 +711,11 @@ export function JobList({
                     ? t("statusDraft")
                     : isCompleted
                       ? t("statusCompleted")
-                      : job.status === "CANCELLED"
-                        ? t("statusCancelled")
-                        : t("statusClosed");
+                      : job.status === "EXPIRED"
+                        ? t("statusExpired")
+                        : job.status === "CANCELLED"
+                          ? t("statusCancelled")
+                          : t("statusClosed");
 
               const formattedBudget =
                 job.budgetMin && job.budgetMax && job.budgetMin !== job.budgetMax
@@ -752,7 +800,7 @@ export function JobList({
 
                           {isOpen && canClose && (
                             <DropdownMenuItem
-                              onClick={() => void closeJob(job.id)}
+                              onClick={() => setPendingCloseJobId(job.id)}
                               className="flex items-center gap-2 text-xs font-medium text-muted-foreground cursor-pointer"
                             >
                               <XCircle className="size-3.5" />
@@ -762,7 +810,7 @@ export function JobList({
 
                           {isClosed && canReopen && (
                             <DropdownMenuItem
-                              onClick={() => void reopenJob(job.id)}
+                              onClick={() => setPendingReopenJobId(job.id)}
                               className="flex items-center gap-2 text-xs font-medium text-[#0069D3] cursor-pointer"
                             >
                               <CheckCircle2 className="size-3.5" />
@@ -989,6 +1037,55 @@ export function JobList({
               onClick={() => void confirmPublishJob()}
             >
               {isPublishing ? t("publishing") : t("confirmPublish")}
+            </Button>
+          </div>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Close Job Confirmation */}
+      <AlertDialog
+        open={pendingCloseJobId !== null}
+        onOpenChange={(open) => !open && setPendingCloseJobId(null)}
+      >
+        <AlertDialogContent className="rounded-2xl max-w-md">
+          <AlertDialogTitle>{t("closeConfirmTitle")}</AlertDialogTitle>
+          <AlertDialogDescription>{t("closeConfirmDesc")}</AlertDialogDescription>
+          <div className="mt-4 flex justify-end gap-2">
+            <AlertDialogCancel className="rounded-xl">
+              {t("cancel")}
+            </AlertDialogCancel>
+            <Button
+              disabled={isClosing}
+              variant="outline"
+              className="rounded-xl cursor-pointer"
+              onClick={() => void confirmCloseJob()}
+            >
+              {isClosing ? t("closing") : t("confirmClose")}
+            </Button>
+          </div>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Reopen Job Confirmation */}
+      <AlertDialog
+        open={pendingReopenJobId !== null}
+        onOpenChange={(open) => !open && setPendingReopenJobId(null)}
+      >
+        <AlertDialogContent className="rounded-2xl max-w-md">
+          <AlertDialogTitle>{t("reopenConfirmTitle")}</AlertDialogTitle>
+          <AlertDialogDescription>
+            {t("reopenConfirmDesc")}
+          </AlertDialogDescription>
+          <div className="mt-4 flex justify-end gap-2">
+            <AlertDialogCancel className="rounded-xl">
+              {t("cancel")}
+            </AlertDialogCancel>
+            <Button
+              disabled={isReopening}
+              className="rounded-xl bg-[#0069D3] hover:bg-[#005bb8] text-white cursor-pointer"
+              onClick={() => void confirmReopenJob()}
+            >
+              {isReopening ? t("reopening") : t("confirmReopen")}
             </Button>
           </div>
         </AlertDialogContent>

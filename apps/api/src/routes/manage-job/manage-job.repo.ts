@@ -3,6 +3,7 @@ import {
   ContractStatus,
   JobCategoryStatus,
   JobStatus,
+  OutboxEventStatus,
   Prisma,
   ProposalStatus,
   VerificationStatus,
@@ -144,7 +145,15 @@ export class ManageJobRepository {
     };
   }
 
-  private async autoCloseExpiredJobs(clientId?: number): Promise<void> {
+  async autoCloseExpiredJobs(clientId?: number): Promise<{
+    expiredJobs: Array<{
+      id: number;
+      clientId: number;
+      title: string;
+      slug: string;
+    }>;
+    expiredProposals: Array<{ jobId: number; freelancerId: number }>;
+  }> {
     const now = new Date();
     const expiredJobs = await this.prisma.job.findMany({
       where: {
@@ -153,27 +162,67 @@ export class ManageJobRepository {
         deletedAt: null,
         expiryDate: { lte: now },
       },
-      select: { id: true },
+      select: { id: true, clientId: true, title: true, slug: true },
     });
 
-    if (expiredJobs.length > 0) {
-      const expiredJobIds = expiredJobs.map((j) => j.id);
+    if (expiredJobs.length === 0) {
+      return { expiredJobs: [], expiredProposals: [] };
+    }
+
+    const expiredJobIds = expiredJobs.map((j) => j.id);
+    const expiredProposals = await this.prisma.proposal.findMany({
+      where: {
+        jobId: { in: expiredJobIds },
+        deletedAt: null,
+        status: ProposalStatus.SUBMITTED,
+      },
+      select: { jobId: true, freelancerId: true },
+    });
+
+    await this.prisma.$transaction([
+      this.prisma.job.updateMany({
+        where: { id: { in: expiredJobIds }, status: JobStatus.OPEN },
+        data: { status: JobStatus.EXPIRED },
+      }),
+      this.prisma.proposal.updateMany({
+        where: {
+          jobId: { in: expiredJobIds },
+          status: ProposalStatus.SUBMITTED,
+        },
+        data: { status: ProposalStatus.EXPIRED },
+      }),
+    ]);
+
+    return { expiredJobs, expiredProposals };
+  }
+
+  async cleanupTemporaryData(now = new Date()): Promise<{
+    verificationCodesDeleted: number;
+    sessionsDeleted: number;
+    outboxEventsDeleted: number;
+  }> {
+    const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+    const [verificationCodes, sessions, outboxEvents] =
       await this.prisma.$transaction([
-        this.prisma.job.updateMany({
-          where: { id: { in: expiredJobIds } },
-          data: { status: JobStatus.CLOSED },
+        this.prisma.verificationCode.deleteMany({
+          where: { expiresAt: { lt: now } },
         }),
-        this.prisma.proposal.updateMany({
+        this.prisma.session.deleteMany({
+          where: { expiresAt: { lt: now } },
+        }),
+        this.prisma.embeddingOutboxEvent.deleteMany({
           where: {
-            jobId: { in: expiredJobIds },
-            status: {
-              in: [ProposalStatus.SUBMITTED],
-            },
+            status: OutboxEventStatus.PROCESSED,
+            processedAt: { lt: sevenDaysAgo },
           },
-          data: { status: ProposalStatus.EXPIRED },
         }),
       ]);
-    }
+
+    return {
+      verificationCodesDeleted: verificationCodes.count,
+      sessionsDeleted: sessions.count,
+      outboxEventsDeleted: outboxEvents.count,
+    };
   }
 
   async getClientJobLists(
@@ -354,7 +403,6 @@ export class ManageJobRepository {
     const updatedJob = await this.prisma.$transaction(
       async (tx) => {
         await this.assertJobCategoriesUsable(tx, data.jobCategories);
-        await this.assertNotDuplicateJob(tx, clientId, data);
 
         // Không cho giảm số vị trí cần tuyển xuống dưới số vị trí đã tuyển.
         const current = await tx.job.findUniqueOrThrow({
@@ -362,11 +410,12 @@ export class ManageJobRepository {
           select: { positionsFilled: true, status: true, slug: true },
         });
 
-        // Chỉ cho phép chỉnh sửa khi công việc ở trạng thái DRAFT, OPEN hoặc CLOSED
+        // Chỉ cho phép chỉnh sửa khi công việc ở trạng thái DRAFT, OPEN, CLOSED hoặc EXPIRED
         const editableStatuses: JobStatus[] = [
           JobStatus.DRAFT,
           JobStatus.OPEN,
           JobStatus.CLOSED,
+          JobStatus.EXPIRED,
         ];
         if (!editableStatuses.includes(current.status)) {
           throw JobCannotBeEditedException();
@@ -636,7 +685,7 @@ export class ManageJobRepository {
   async reopenJob(userId: number, jobId: number): Promise<JobType> {
     const job = await this.checkJobOwner(userId, jobId);
 
-    if (job.status !== JobStatus.CLOSED) {
+    if (job.status !== JobStatus.CLOSED && job.status !== JobStatus.EXPIRED) {
       throw JobCannotBeReopenedException();
     }
 
