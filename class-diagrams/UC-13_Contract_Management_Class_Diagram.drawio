@@ -1,782 +1,438 @@
-<mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/29.0.3 Chrome/140.0.7339.249 Electron/38.7.0 Safari/537.36" version="29.0.3">
+<mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/29.0.3 Chrome/140.0.7339.249 Electron/38.7.0 Safari/537.36">
   <diagram id="d" name="Sprint 1 - Contract Management Class Diagram">
-<mxGraphModel dx="2500" dy="1650" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0"><root><mxCell id="0" /><mxCell id="1" parent="0" /><mxCell id="contract_route" value="&lt;&lt;route&gt;&gt;&#10;ContractRoutes" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=56;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" parent="1" vertex="1">
-      <mxGeometry x="40" y="160" width="600" height="294" as="geometry" />
-    </mxCell>
-    <mxCell id="contract_route_r0" value="+GET /contracts (AuthGuard, PermissionGuard)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="contract_route" vertex="1">
-      <mxGeometry y="56" width="600" height="34" as="geometry" />
-    </mxCell>
-    <mxCell id="contract_route_r1" value="+GET /contracts/:id (AuthGuard, PermissionGuard)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="contract_route" vertex="1">
-      <mxGeometry y="90" width="600" height="34" as="geometry" />
-    </mxCell>
-    <mxCell id="contract_route_r2" value="+POST /contracts (AuthGuard, PermissionGuard)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="contract_route" vertex="1">
-      <mxGeometry y="124" width="600" height="34" as="geometry" />
-    </mxCell>
-    <mxCell id="contract_route_r3" value="+PATCH /contracts/:id (AuthGuard, PermissionGuard)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="contract_route" vertex="1">
-      <mxGeometry y="158" width="600" height="34" as="geometry" />
-    </mxCell>
-    <mxCell id="contract_route_r4" value="+PATCH /contracts/:id/sign (AuthGuard, PermissionGuard)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="contract_route" vertex="1">
-      <mxGeometry y="192" width="600" height="34" as="geometry" />
-    </mxCell>
-    <mxCell id="contract_route_r5" value="+PATCH /contracts/:id/complete (AuthGuard, PermissionGuard)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="contract_route" vertex="1">
-      <mxGeometry y="226" width="600" height="34" as="geometry" />
-    </mxCell>
-    <mxCell id="contract_route_r6" value="+PATCH /contracts/:id/cancel (AuthGuard, PermissionGuard)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="contract_route" vertex="1">
-      <mxGeometry y="260" width="600" height="34" as="geometry" />
-    </mxCell>
-    <mxCell id="sf_route" value="&lt;&lt;route&gt;&gt;&#10;SharedFileRoutes" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=56;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" parent="1" vertex="1">
-      <mxGeometry x="40" y="509" width="560" height="158" as="geometry" />
-    </mxCell>
-    <mxCell id="sf_route_r0" value="+GET /contracts/:contractId/files (AuthGuard, PermissionGuard)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sf_route" vertex="1">
-      <mxGeometry y="56" width="560" height="34" as="geometry" />
-    </mxCell>
-    <mxCell id="sf_route_r1" value="+POST /contracts/:contractId/files (AuthGuard, PermissionGuard, FileInterceptor)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sf_route" vertex="1">
-      <mxGeometry y="90" width="560" height="34" as="geometry" />
-    </mxCell>
-    <mxCell id="sf_route_r2" value="+DELETE /contracts/:contractId/files/:fileId (AuthGuard, PermissionGuard)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sf_route" vertex="1">
-      <mxGeometry y="124" width="560" height="34" as="geometry" />
-    </mxCell>
-
-    
-    <mxCell id="contract_ctrl" value="ContractController" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=32;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" parent="1" vertex="1">
-      <mxGeometry x="800" y="160" width="540" height="280" as="geometry" />
-    </mxCell>
-    <mxCell id="contract_ctrl_a0" value="-contractService: ContractService" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="contract_ctrl" vertex="1">
-      <mxGeometry y="32" width="540" height="30" as="geometry" />
-    </mxCell>
-    <mxCell id="contract_ctrl_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=13;labelBackgroundColor=none;" parent="contract_ctrl" vertex="1">
-      <mxGeometry y="62" width="540" height="8" as="geometry" />
-    </mxCell>
-    <mxCell id="contract_ctrl_m0" value="+getContractList(userId, roleName, query: GetContractListQueryDTO)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="contract_ctrl" vertex="1">
-      <mxGeometry y="70" width="540" height="30" as="geometry" />
-    </mxCell>
-    <mxCell id="contract_ctrl_m1" value="+getContractDetail(userId, roleName, contractId: number)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="contract_ctrl" vertex="1">
-      <mxGeometry y="100" width="540" height="30" as="geometry" />
-    </mxCell>
-    <mxCell id="contract_ctrl_m2" value="+createContract(userId, body: CreateContractBodyDTO)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="contract_ctrl" vertex="1">
-      <mxGeometry y="130" width="540" height="30" as="geometry" />
-    </mxCell>
-    <mxCell id="contract_ctrl_m3" value="+updateContract(userId, contractId: number, body: UpdateContractBodyDTO)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="contract_ctrl" vertex="1">
-      <mxGeometry y="160" width="540" height="30" as="geometry" />
-    </mxCell>
-    <mxCell id="contract_ctrl_m4" value="+signContract(userId, contractId: number)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="contract_ctrl" vertex="1">
-      <mxGeometry y="190" width="540" height="30" as="geometry" />
-    </mxCell>
-    <mxCell id="contract_ctrl_m5" value="+completeContract(userId, contractId: number)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="contract_ctrl" vertex="1">
-      <mxGeometry y="220" width="540" height="30" as="geometry" />
-    </mxCell>
-    <mxCell id="contract_ctrl_m6" value="+cancelContract(userId, contractId: number)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="contract_ctrl" vertex="1">
-      <mxGeometry y="250" width="540" height="30" as="geometry" />
-    </mxCell>
-    <mxCell id="contract_gAuth" value="AuthGuard" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=32;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" parent="1" vertex="1">
-      <mxGeometry x="800" y="710" width="540" height="190" as="geometry" />
-    </mxCell>
-    <mxCell id="contract_gAuth_a0" value="-tokenService: TokenService" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="contract_gAuth" vertex="1">
-      <mxGeometry y="32" width="540" height="30" as="geometry" />
-    </mxCell>
-    <mxCell id="contract_gAuth_a1" value="-prisma: PrismaService" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="contract_gAuth" vertex="1">
-      <mxGeometry y="62" width="540" height="30" as="geometry" />
-    </mxCell>
-    <mxCell id="contract_gAuth_a2" value="-reflector: Reflector" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="contract_gAuth" vertex="1">
-      <mxGeometry y="92" width="540" height="30" as="geometry" />
-    </mxCell>
-    <mxCell id="contract_gAuth_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=13;labelBackgroundColor=none;" parent="contract_gAuth" vertex="1">
-      <mxGeometry y="122" width="540" height="8" as="geometry" />
-    </mxCell>
-    <mxCell id="contract_gAuth_m0" value="+canActivate(context: ExecutionContext): Promise&lt;boolean&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="contract_gAuth" vertex="1">
-      <mxGeometry y="130" width="540" height="30" as="geometry" />
-    </mxCell>
-    <mxCell id="contract_gAuth_m1" value="-extractTokenFromHeader(request: Request): string | undefined" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="contract_gAuth" vertex="1">
-      <mxGeometry y="160" width="540" height="30" as="geometry" />
-    </mxCell>
-    <mxCell id="contract_gPerm" value="PermissionGuard" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=32;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" parent="1" vertex="1">
-      <mxGeometry x="800" y="955" width="540" height="130" as="geometry" />
-    </mxCell>
-    <mxCell id="contract_gPerm_a0" value="-reflector: Reflector" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="contract_gPerm" vertex="1">
-      <mxGeometry y="32" width="540" height="30" as="geometry" />
-    </mxCell>
-    <mxCell id="contract_gPerm_a1" value="-sharedPermissionRepository: SharedPermissionRepository" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="contract_gPerm" vertex="1">
-      <mxGeometry y="62" width="540" height="30" as="geometry" />
-    </mxCell>
-    <mxCell id="contract_gPerm_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=13;labelBackgroundColor=none;" parent="contract_gPerm" vertex="1">
-      <mxGeometry y="92" width="540" height="8" as="geometry" />
-    </mxCell>
-    <mxCell id="contract_gPerm_m0" value="+canActivate(context: ExecutionContext): Promise&lt;boolean&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="contract_gPerm" vertex="1">
-      <mxGeometry y="100" width="540" height="30" as="geometry" />
-    </mxCell>
-    <mxCell id="sf_ctrl" value="SharedFileController" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=32;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" parent="1" vertex="1">
-      <mxGeometry x="800" y="495" width="500" height="160" as="geometry" />
-    </mxCell>
-    <mxCell id="sf_ctrl_a0" value="-sharedFileService: SharedFileService" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sf_ctrl" vertex="1">
-      <mxGeometry y="32" width="500" height="30" as="geometry" />
-    </mxCell>
-    <mxCell id="sf_ctrl_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=13;labelBackgroundColor=none;" parent="sf_ctrl" vertex="1">
-      <mxGeometry y="62" width="500" height="8" as="geometry" />
-    </mxCell>
-    <mxCell id="sf_ctrl_m0" value="+getSharedFiles(userId, roleName, contractId: number)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sf_ctrl" vertex="1">
-      <mxGeometry y="70" width="500" height="30" as="geometry" />
-    </mxCell>
-    <mxCell id="sf_ctrl_m1" value="+uploadSharedFile(userId, roleName, contractId: number, file)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sf_ctrl" vertex="1">
-      <mxGeometry y="100" width="500" height="30" as="geometry" />
-    </mxCell>
-    <mxCell id="sf_ctrl_m2" value="+deleteSharedFile(userId, roleName, contractId: number, fileId: number)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sf_ctrl" vertex="1">
-      <mxGeometry y="130" width="500" height="30" as="geometry" />
-    </mxCell>
-
-    <mxCell id="contract_dtoCreate" value="&lt;&lt;dto&gt;&gt;&#10;CreateContractBodyDTO" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=44;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" parent="1" vertex="1">
-      <mxGeometry x="1500" y="160" width="440" height="188" as="geometry" />
-    </mxCell>
-    <mxCell id="contract_dtoCreate_r0" value="+proposalId: number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="contract_dtoCreate" vertex="1">
-      <mxGeometry y="44" width="440" height="34" as="geometry" />
-    </mxCell>
-    <mxCell id="contract_dtoCreate_r1" value="+totalAmount: number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="contract_dtoCreate" vertex="1">
-      <mxGeometry y="78" width="440" height="34" as="geometry" />
-    </mxCell>
-    <mxCell id="contract_dtoCreate_r2" value="+terms?: string" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="contract_dtoCreate" vertex="1">
-      <mxGeometry y="112" width="440" height="34" as="geometry" />
-    </mxCell>
-    <mxCell id="contract_dtoCreate_r3" value="+expiresAt?: string" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="contract_dtoCreate" vertex="1">
-      <mxGeometry y="146" width="440" height="34" as="geometry" />
-    </mxCell>
-    <mxCell id="contract_dtoCreate_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=13;labelBackgroundColor=none;" parent="contract_dtoCreate" vertex="1">
-      <mxGeometry y="180" width="440" height="8" as="geometry" />
-    </mxCell>
-    <mxCell id="contract_dtoUpdate" value="&lt;&lt;dto&gt;&gt;&#10;UpdateContractBodyDTO" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=44;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" parent="1" vertex="1">
-      <mxGeometry x="1500" y="403" width="440" height="154" as="geometry" />
-    </mxCell>
-    <mxCell id="contract_dtoUpdate_r0" value="+totalAmount?: number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="contract_dtoUpdate" vertex="1">
-      <mxGeometry y="44" width="440" height="34" as="geometry" />
-    </mxCell>
-    <mxCell id="contract_dtoUpdate_r1" value="+terms?: string" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="contract_dtoUpdate" vertex="1">
-      <mxGeometry y="78" width="440" height="34" as="geometry" />
-    </mxCell>
-    <mxCell id="contract_dtoUpdate_r2" value="+expiresAt?: string" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="contract_dtoUpdate" vertex="1">
-      <mxGeometry y="112" width="440" height="34" as="geometry" />
-    </mxCell>
-    <mxCell id="contract_dtoUpdate_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=13;labelBackgroundColor=none;" parent="contract_dtoUpdate" vertex="1">
-      <mxGeometry y="146" width="440" height="8" as="geometry" />
-    </mxCell>
-    <mxCell id="contract_dtoQuery" value="&lt;&lt;dto&gt;&gt;&#10;GetContractListQueryDTO" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=44;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" parent="1" vertex="1">
-      <mxGeometry x="1500" y="612" width="440" height="188" as="geometry" />
-    </mxCell>
-    <mxCell id="contract_dtoQuery_r0" value="+page?: number = 1" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="contract_dtoQuery" vertex="1">
-      <mxGeometry y="44" width="440" height="34" as="geometry" />
-    </mxCell>
-    <mxCell id="contract_dtoQuery_r1" value="+limit?: number = 10" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="contract_dtoQuery" vertex="1">
-      <mxGeometry y="78" width="440" height="34" as="geometry" />
-    </mxCell>
-    <mxCell id="contract_dtoQuery_r2" value="+status?: ContractStatus" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="contract_dtoQuery" vertex="1">
-      <mxGeometry y="112" width="440" height="34" as="geometry" />
-    </mxCell>
-    <mxCell id="contract_dtoQuery_r3" value="+proposalId?: number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="contract_dtoQuery" vertex="1">
-      <mxGeometry y="146" width="440" height="34" as="geometry" />
-    </mxCell>
-    <mxCell id="contract_dtoQuery_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=13;labelBackgroundColor=none;" parent="contract_dtoQuery" vertex="1">
-      <mxGeometry y="180" width="440" height="8" as="geometry" />
-    </mxCell>
-    <mxCell id="contract_dtoResp" value="&lt;&lt;dto&gt;&gt;&#10;GetContractListResponseDTO" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=44;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" parent="1" vertex="1">
-      <mxGeometry x="1500" y="855" width="440" height="222" as="geometry" />
-    </mxCell>
-    <mxCell id="contract_dtoResp_r0" value="+data: ContractDetailType[]" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="contract_dtoResp" vertex="1">
-      <mxGeometry y="44" width="440" height="34" as="geometry" />
-    </mxCell>
-    <mxCell id="contract_dtoResp_r1" value="+totalItems: number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="contract_dtoResp" vertex="1">
-      <mxGeometry y="78" width="440" height="34" as="geometry" />
-    </mxCell>
-    <mxCell id="contract_dtoResp_r2" value="+totalPages: number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="contract_dtoResp" vertex="1">
-      <mxGeometry y="112" width="440" height="34" as="geometry" />
-    </mxCell>
-    <mxCell id="contract_dtoResp_r3" value="+page: number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="contract_dtoResp" vertex="1">
-      <mxGeometry y="146" width="440" height="34" as="geometry" />
-    </mxCell>
-    <mxCell id="contract_dtoResp_r4" value="+limit: number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="contract_dtoResp" vertex="1">
-      <mxGeometry y="180" width="440" height="34" as="geometry" />
-    </mxCell>
-    <mxCell id="contract_dtoResp_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=13;labelBackgroundColor=none;" parent="contract_dtoResp" vertex="1">
-      <mxGeometry y="214" width="440" height="8" as="geometry" />
-    </mxCell>
-    <mxCell id="contract_typeDetail" value="&lt;&lt;type&gt;&gt;&#10;ContractDetailType" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=44;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" parent="1" vertex="1">
-      <mxGeometry x="1500" y="1132" width="440" height="154" as="geometry" />
-    </mxCell>
-    <mxCell id="contract_typeDetail_r0" value="+client: { id, email, profile }" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="contract_typeDetail" vertex="1">
-      <mxGeometry y="44" width="440" height="34" as="geometry" />
-    </mxCell>
-    <mxCell id="contract_typeDetail_r1" value="+freelancer: { id, email, profile }" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="contract_typeDetail" vertex="1">
-      <mxGeometry y="78" width="440" height="34" as="geometry" />
-    </mxCell>
-    <mxCell id="contract_typeDetail_r2" value="+job: { id, title, slug }" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="contract_typeDetail" vertex="1">
-      <mxGeometry y="112" width="440" height="34" as="geometry" />
-    </mxCell>
-    <mxCell id="contract_typeDetail_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=13;labelBackgroundColor=none;" parent="contract_typeDetail" vertex="1">
-      <mxGeometry y="146" width="440" height="8" as="geometry" />
-    </mxCell>
-    <mxCell id="sf_dtoUpload" value="&lt;&lt;dto&gt;&gt;&#10;UploadSharedFileResponseDTO" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=44;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" parent="1" vertex="1">
-      <mxGeometry x="1500" y="1341" width="420" height="222" as="geometry" />
-    </mxCell>
-    <mxCell id="sf_dtoUpload_r0" value="+id: number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sf_dtoUpload" vertex="1">
-      <mxGeometry y="44" width="420" height="34" as="geometry" />
-    </mxCell>
-    <mxCell id="sf_dtoUpload_r1" value="+contractId: number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sf_dtoUpload" vertex="1">
-      <mxGeometry y="78" width="420" height="34" as="geometry" />
-    </mxCell>
-    <mxCell id="sf_dtoUpload_r2" value="+uploaderId: number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sf_dtoUpload" vertex="1">
-      <mxGeometry y="112" width="420" height="34" as="geometry" />
-    </mxCell>
-    <mxCell id="sf_dtoUpload_r3" value="+fileUrl: string" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sf_dtoUpload" vertex="1">
-      <mxGeometry y="146" width="420" height="34" as="geometry" />
-    </mxCell>
-    <mxCell id="sf_dtoUpload_r4" value="+fileName: string | null" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sf_dtoUpload" vertex="1">
-      <mxGeometry y="180" width="420" height="34" as="geometry" />
-    </mxCell>
-    <mxCell id="sf_dtoUpload_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=13;labelBackgroundColor=none;" parent="sf_dtoUpload" vertex="1">
-      <mxGeometry y="214" width="420" height="8" as="geometry" />
-    </mxCell>
-
-    <mxCell id="sf_dtoGet" value="&lt;&lt;dto&gt;&gt;&#10;GetSharedFilesResponseDTO" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=44;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" parent="1" vertex="1">
-      <mxGeometry x="1500" y="1618" width="420" height="120" as="geometry" />
-    </mxCell>
-    <mxCell id="sf_dtoGet_r0" value="+files: SharedFileType[]" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sf_dtoGet" vertex="1">
-      <mxGeometry y="44" width="420" height="34" as="geometry" />
-    </mxCell>
-    <mxCell id="sf_dtoGet_r1" value="+length: number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sf_dtoGet" vertex="1">
-      <mxGeometry y="78" width="420" height="34" as="geometry" />
-    </mxCell>
-    <mxCell id="sf_dtoGet_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=13;labelBackgroundColor=none;" parent="sf_dtoGet" vertex="1">
-      <mxGeometry y="112" width="420" height="8" as="geometry" />
-    </mxCell>
-
-    <mxCell id="sf_dtoDelete" value="&lt;&lt;dto&gt;&gt;&#10;DeleteSharedFileResponseDTO" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=44;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" parent="1" vertex="1">
-      <mxGeometry x="1500" y="1793" width="420" height="154" as="geometry" />
-    </mxCell>
-    <mxCell id="sf_dtoDelete_r0" value="+id: number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sf_dtoDelete" vertex="1">
-      <mxGeometry y="44" width="420" height="34" as="geometry" />
-    </mxCell>
-    <mxCell id="sf_dtoDelete_r1" value="+contractId: number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sf_dtoDelete" vertex="1">
-      <mxGeometry y="78" width="420" height="34" as="geometry" />
-    </mxCell>
-    <mxCell id="sf_dtoDelete_r2" value="+deletedAt: Date | null" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sf_dtoDelete" vertex="1">
-      <mxGeometry y="112" width="420" height="34" as="geometry" />
-    </mxCell>
-    <mxCell id="sf_dtoDelete_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=13;labelBackgroundColor=none;" parent="sf_dtoDelete" vertex="1">
-      <mxGeometry y="146" width="420" height="8" as="geometry" />
-    </mxCell>
-
-    <mxCell id="sf_typeShared" value="&lt;&lt;type&gt;&gt;&#10;SharedFileType" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=44;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" parent="1" vertex="1">
-      <mxGeometry x="1500" y="2002" width="420" height="250" as="geometry" />
-    </mxCell>
-    <mxCell id="sf_typeShared_r0" value="+id: number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sf_typeShared" vertex="1">
-      <mxGeometry y="44" width="420" height="28" as="geometry" />
-    </mxCell>
-    <mxCell id="sf_typeShared_r1" value="+contractId: number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sf_typeShared" vertex="1">
-      <mxGeometry y="72" width="420" height="28" as="geometry" />
-    </mxCell>
-    <mxCell id="sf_typeShared_r2" value="+uploaderId: number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sf_typeShared" vertex="1">
-      <mxGeometry y="100" width="420" height="28" as="geometry" />
-    </mxCell>
-    <mxCell id="sf_typeShared_r3" value="+fileUrl: string" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sf_typeShared" vertex="1">
-      <mxGeometry y="128" width="420" height="28" as="geometry" />
-    </mxCell>
-    <mxCell id="sf_typeShared_r4" value="+publicId: string" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sf_typeShared" vertex="1">
-      <mxGeometry y="156" width="420" height="28" as="geometry" />
-    </mxCell>
-    <mxCell id="sf_typeShared_r5" value="+fileName: string | null" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sf_typeShared" vertex="1">
-      <mxGeometry y="184" width="420" height="28" as="geometry" />
-    </mxCell>
-    <mxCell id="sf_typeShared_r6" value="+createdAt: Date" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sf_typeShared" vertex="1">
-      <mxGeometry y="212" width="420" height="28" as="geometry" />
-    </mxCell>
-    <mxCell id="sf_typeShared_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=13;labelBackgroundColor=none;" parent="sf_typeShared" vertex="1">
-      <mxGeometry y="240" width="420" height="8" as="geometry" />
-    </mxCell>
-
-    
-    <mxCell id="contract_svc" value="ContractService" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=32;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" parent="1" vertex="1">
-      <mxGeometry x="2100" y="160" width="540" height="280" as="geometry" />
-    </mxCell>
-    <mxCell id="contract_svc_a0" value="-contractRepository: ContractRepository" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="contract_svc" vertex="1">
-      <mxGeometry y="32" width="540" height="30" as="geometry" />
-    </mxCell>
-    <mxCell id="contract_svc_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=13;labelBackgroundColor=none;" parent="contract_svc" vertex="1">
-      <mxGeometry y="62" width="540" height="8" as="geometry" />
-    </mxCell>
-    <mxCell id="contract_svc_m0" value="+createContract(clientId: number, body: CreateContractBodyType)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="contract_svc" vertex="1">
-      <mxGeometry y="70" width="540" height="30" as="geometry" />
-    </mxCell>
-    <mxCell id="contract_svc_m1" value="+updateContract(clientId: number, contractId: number, body: UpdateContractBodyType)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="contract_svc" vertex="1">
-      <mxGeometry y="100" width="540" height="30" as="geometry" />
-    </mxCell>
-    <mxCell id="contract_svc_m2" value="+signContract(userId: number, contractId: number)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="contract_svc" vertex="1">
-      <mxGeometry y="130" width="540" height="30" as="geometry" />
-    </mxCell>
-    <mxCell id="contract_svc_m3" value="+completeContract(clientId: number, contractId: number)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="contract_svc" vertex="1">
-      <mxGeometry y="160" width="540" height="30" as="geometry" />
-    </mxCell>
-    <mxCell id="contract_svc_m4" value="+cancelContract(userId: number, contractId: number)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="contract_svc" vertex="1">
-      <mxGeometry y="190" width="540" height="30" as="geometry" />
-    </mxCell>
-    <mxCell id="contract_svc_m5" value="+getContractList(userId: number, roleName: string, query: GetContractListQueryType)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="contract_svc" vertex="1">
-      <mxGeometry y="220" width="540" height="30" as="geometry" />
-    </mxCell>
-    <mxCell id="contract_svc_m6" value="+getContractDetail(userId: number, roleName: string, contractId: number)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="contract_svc" vertex="1">
-      <mxGeometry y="250" width="540" height="30" as="geometry" />
-    </mxCell>
-    <mxCell id="sf_svc" value="SharedFileService" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=32;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" parent="1" vertex="1">
-      <mxGeometry x="2100" y="495" width="520" height="190" as="geometry" />
-    </mxCell>
-    <mxCell id="sf_svc_a0" value="-sharedFileRepository: SharedFileRepository" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sf_svc" vertex="1">
-      <mxGeometry y="32" width="520" height="30" as="geometry" />
-    </mxCell>
-    <mxCell id="sf_svc_a1" value="-cloudinaryService: CloudinaryService" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sf_svc" vertex="1">
-      <mxGeometry y="62" width="520" height="30" as="geometry" />
-    </mxCell>
-    <mxCell id="sf_svc_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=13;labelBackgroundColor=none;" parent="sf_svc" vertex="1">
-      <mxGeometry y="92" width="520" height="8" as="geometry" />
-    </mxCell>
-    <mxCell id="sf_svc_m0" value="+getSharedFiles(userId, roleName, contractId)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sf_svc" vertex="1">
-      <mxGeometry y="100" width="520" height="30" as="geometry" />
-    </mxCell>
-    <mxCell id="sf_svc_m1" value="+uploadSharedFile(userId, roleName, contractId, file)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sf_svc" vertex="1">
-      <mxGeometry y="130" width="520" height="30" as="geometry" />
-    </mxCell>
-    <mxCell id="sf_svc_m2" value="+deleteSharedFile(userId, roleName, contractId, fileId)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sf_svc" vertex="1">
-      <mxGeometry y="160" width="520" height="30" as="geometry" />
-    </mxCell>
-
-    <mxCell id="sf_uCloudinary" value="&lt;&lt;utility&gt;&gt;&#10;CloudinaryService" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=44;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" parent="1" vertex="1">
-      <mxGeometry x="2100" y="740" width="520" height="152" as="geometry" />
-    </mxCell>
-    <mxCell id="sf_uCloudinary_m0" value="+isConfigured(): boolean" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sf_uCloudinary" vertex="1">
-      <mxGeometry y="44" width="520" height="30" as="geometry" />
-    </mxCell>
-    <mxCell id="sf_uCloudinary_m1" value="+uploadFile(file: Express.Multer.File, folder?: string)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sf_uCloudinary" vertex="1">
-      <mxGeometry y="74" width="520" height="30" as="geometry" />
-    </mxCell>
-    <mxCell id="sf_uCloudinary_m2" value="+deleteFile(publicId: string): Promise&lt;any&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sf_uCloudinary" vertex="1">
-      <mxGeometry y="104" width="520" height="30" as="geometry" />
-    </mxCell>
-    <mxCell id="sf_uCloudinary_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=13;labelBackgroundColor=none;" parent="sf_uCloudinary" vertex="1">
-      <mxGeometry y="134" width="520" height="8" as="geometry" />
-    </mxCell>
-
-    <mxCell id="sf_repo" value="SharedFileRepository" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=32;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" parent="1" vertex="1">
-      <mxGeometry x="2800" y="585" width="520" height="220" as="geometry" />
-    </mxCell>
-    <mxCell id="sf_repo_a0" value="-prisma: PrismaService" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sf_repo" vertex="1">
-      <mxGeometry y="32" width="520" height="30" as="geometry" />
-    </mxCell>
-    <mxCell id="sf_repo_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=13;labelBackgroundColor=none;" parent="sf_repo" vertex="1">
-      <mxGeometry y="62" width="520" height="8" as="geometry" />
-    </mxCell>
-    <mxCell id="sf_repo_m0" value="+create(data: { contractId, uploaderId, fileUrl, publicId, fileName? })" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sf_repo" vertex="1">
-      <mxGeometry y="70" width="520" height="30" as="geometry" />
-    </mxCell>
-    <mxCell id="sf_repo_m1" value="+findById(id: number)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sf_repo" vertex="1">
-      <mxGeometry y="100" width="520" height="30" as="geometry" />
-    </mxCell>
-    <mxCell id="sf_repo_m2" value="+findByContractId(contractId: number)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sf_repo" vertex="1">
-      <mxGeometry y="130" width="520" height="30" as="geometry" />
-    </mxCell>
-    <mxCell id="sf_repo_m3" value="+softDelete(id: number)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sf_repo" vertex="1">
-      <mxGeometry y="160" width="520" height="30" as="geometry" />
-    </mxCell>
-    <mxCell id="sf_repo_m4" value="+findContractById(contractId: number)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sf_repo" vertex="1">
-      <mxGeometry y="190" width="520" height="30" as="geometry" />
-    </mxCell>
-
-    
-    <mxCell id="contract_repo" value="ContractRepository" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=32;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" parent="1" vertex="1">
-      <mxGeometry x="2800" y="160" width="520" height="370" as="geometry" />
-    </mxCell>
-    <mxCell id="contract_repo_a0" value="-prisma: PrismaService" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="contract_repo" vertex="1">
-      <mxGeometry y="32" width="520" height="30" as="geometry" />
-    </mxCell>
-    <mxCell id="contract_repo_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=13;labelBackgroundColor=none;" parent="contract_repo" vertex="1">
-      <mxGeometry y="62" width="520" height="8" as="geometry" />
-    </mxCell>
-    <mxCell id="contract_repo_m0" value="+findProposalWithJob(proposalId: number)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="contract_repo" vertex="1">
-      <mxGeometry y="70" width="520" height="30" as="geometry" />
-    </mxCell>
-    <mxCell id="contract_repo_m1" value="+findContractByProposalId(proposalId: number)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="contract_repo" vertex="1">
-      <mxGeometry y="100" width="520" height="30" as="geometry" />
-    </mxCell>
-    <mxCell id="contract_repo_m2" value="+findContractById(contractId: number)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="contract_repo" vertex="1">
-      <mxGeometry y="130" width="520" height="30" as="geometry" />
-    </mxCell>
-    <mxCell id="contract_repo_m3" value="+createContract(data: CreateContractBodyType, clientId, freelancerId, jobId)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="contract_repo" vertex="1">
-      <mxGeometry y="160" width="520" height="30" as="geometry" />
-    </mxCell>
-    <mxCell id="contract_repo_m4" value="+updateContract(contractId: number, data: UpdateContractBodyType)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="contract_repo" vertex="1">
-      <mxGeometry y="190" width="520" height="30" as="geometry" />
-    </mxCell>
-    <mxCell id="contract_repo_m5" value="+signContract(contractId: number, role: string)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="contract_repo" vertex="1">
-      <mxGeometry y="220" width="520" height="30" as="geometry" />
-    </mxCell>
-    <mxCell id="contract_repo_m6" value="+completeContract(contractId: number, jobId: number)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="contract_repo" vertex="1">
-      <mxGeometry y="250" width="520" height="30" as="geometry" />
-    </mxCell>
-    <mxCell id="contract_repo_m7" value="+cancelContract(contractId: number)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="contract_repo" vertex="1">
-      <mxGeometry y="280" width="520" height="30" as="geometry" />
-    </mxCell>
-    <mxCell id="contract_repo_m8" value="+getContractList(query: GetContractListQueryType, filter: object)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="contract_repo" vertex="1">
-      <mxGeometry y="310" width="520" height="30" as="geometry" />
-    </mxCell>
-    <mxCell id="contract_repo_m9" value="+getContractDetail(contractId: number)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="contract_repo" vertex="1">
-      <mxGeometry y="340" width="520" height="30" as="geometry" />
-    </mxCell>
-    <mxCell id="sf_schemaFile" value="&lt;&lt;schema&gt;&gt;&#10;SharedFile" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=42;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" parent="1" vertex="1">
-      <mxGeometry x="3480" y="160" width="320" height="274" as="geometry" />
-    </mxCell>
-    <mxCell id="sf_schemaFile_r0" value="+id: number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sf_schemaFile" vertex="1">
-      <mxGeometry y="42" width="320" height="28" as="geometry" />
-    </mxCell>
-    <mxCell id="sf_schemaFile_r1" value="+contractId: number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sf_schemaFile" vertex="1">
-      <mxGeometry y="70" width="320" height="28" as="geometry" />
-    </mxCell>
-    <mxCell id="sf_schemaFile_r2" value="+uploaderId: number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sf_schemaFile" vertex="1">
-      <mxGeometry y="98" width="320" height="28" as="geometry" />
-    </mxCell>
-    <mxCell id="sf_schemaFile_r3" value="+fileUrl: string" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sf_schemaFile" vertex="1">
-      <mxGeometry y="126" width="320" height="28" as="geometry" />
-    </mxCell>
-    <mxCell id="sf_schemaFile_r4" value="+publicId: string" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sf_schemaFile" vertex="1">
-      <mxGeometry y="154" width="320" height="28" as="geometry" />
-    </mxCell>
-    <mxCell id="sf_schemaFile_r5" value="+fileName: string | null" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sf_schemaFile" vertex="1">
-      <mxGeometry y="182" width="320" height="28" as="geometry" />
-    </mxCell>
-    <mxCell id="sf_schemaFile_r6" value="+createdAt: Date" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sf_schemaFile" vertex="1">
-      <mxGeometry y="210" width="320" height="28" as="geometry" />
-    </mxCell>
-    <mxCell id="sf_schemaFile_r7" value="+deletedAt: Date | null" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="sf_schemaFile" vertex="1">
-      <mxGeometry y="238" width="320" height="28" as="geometry" />
-    </mxCell>
-    <mxCell id="sf_schemaFile_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=13;labelBackgroundColor=none;" parent="sf_schemaFile" vertex="1">
-      <mxGeometry y="266" width="320" height="8" as="geometry" />
-    </mxCell>
-
-    <mxCell id="contract_schemaContract" value="&lt;&lt;schema&gt;&gt;&#10;Contract" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=42;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" parent="1" vertex="1">
-      <mxGeometry x="3480" y="489" width="340" height="554" as="geometry" />
-    </mxCell>
-    <mxCell id="contract_schemaContract_r0" value="+id: number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="contract_schemaContract" vertex="1">
-      <mxGeometry y="42" width="340" height="28" as="geometry" />
-    </mxCell>
-    <mxCell id="contract_schemaContract_r1" value="+jobId: number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="contract_schemaContract" vertex="1">
-      <mxGeometry y="70" width="340" height="28" as="geometry" />
-    </mxCell>
-    <mxCell id="contract_schemaContract_r2" value="+proposalId: number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="contract_schemaContract" vertex="1">
-      <mxGeometry y="98" width="340" height="28" as="geometry" />
-    </mxCell>
-    <mxCell id="contract_schemaContract_r3" value="+clientId: number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="contract_schemaContract" vertex="1">
-      <mxGeometry y="126" width="340" height="28" as="geometry" />
-    </mxCell>
-    <mxCell id="contract_schemaContract_r4" value="+freelancerId: number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="contract_schemaContract" vertex="1">
-      <mxGeometry y="154" width="340" height="28" as="geometry" />
-    </mxCell>
-    <mxCell id="contract_schemaContract_r5" value="+terms: string | null" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="contract_schemaContract" vertex="1">
-      <mxGeometry y="182" width="340" height="28" as="geometry" />
-    </mxCell>
-    <mxCell id="contract_schemaContract_r6" value="+totalAmount: Decimal" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="contract_schemaContract" vertex="1">
-      <mxGeometry y="210" width="340" height="28" as="geometry" />
-    </mxCell>
-    <mxCell id="contract_schemaContract_r7" value="+status: ContractStatus" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="contract_schemaContract" vertex="1">
-      <mxGeometry y="238" width="340" height="28" as="geometry" />
-    </mxCell>
-    <mxCell id="contract_schemaContract_r8" value="+signedByClient: boolean" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="contract_schemaContract" vertex="1">
-      <mxGeometry y="266" width="340" height="28" as="geometry" />
-    </mxCell>
-    <mxCell id="contract_schemaContract_r9" value="+signedByFreelancer: boolean" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="contract_schemaContract" vertex="1">
-      <mxGeometry y="294" width="340" height="28" as="geometry" />
-    </mxCell>
-    <mxCell id="contract_schemaContract_r10" value="+platformFee: Decimal" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="contract_schemaContract" vertex="1">
-      <mxGeometry y="322" width="340" height="28" as="geometry" />
-    </mxCell>
-    <mxCell id="contract_schemaContract_r11" value="+platformFeeStatus: PlatformFeeStatus" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="contract_schemaContract" vertex="1">
-      <mxGeometry y="350" width="340" height="28" as="geometry" />
-    </mxCell>
-    <mxCell id="contract_schemaContract_r12" value="+platformFeePaidAt: Date | null" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="contract_schemaContract" vertex="1">
-      <mxGeometry y="378" width="340" height="28" as="geometry" />
-    </mxCell>
-    <mxCell id="contract_schemaContract_r13" value="+createdAt: Date" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="contract_schemaContract" vertex="1">
-      <mxGeometry y="406" width="340" height="28" as="geometry" />
-    </mxCell>
-    <mxCell id="contract_schemaContract_r14" value="+signedAt: Date | null" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="contract_schemaContract" vertex="1">
-      <mxGeometry y="434" width="340" height="28" as="geometry" />
-    </mxCell>
-    <mxCell id="contract_schemaContract_r15" value="+completedAt: Date | null" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="contract_schemaContract" vertex="1">
-      <mxGeometry y="462" width="340" height="28" as="geometry" />
-    </mxCell>
-    <mxCell id="contract_schemaContract_r16" value="+expiresAt: Date | null" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="contract_schemaContract" vertex="1">
-      <mxGeometry y="490" width="340" height="28" as="geometry" />
-    </mxCell>
-    <mxCell id="contract_schemaContract_r17" value="+deletedAt: Date | null" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="contract_schemaContract" vertex="1">
-      <mxGeometry y="518" width="340" height="28" as="geometry" />
-    </mxCell>
-    <mxCell id="contract_schemaContract_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=13;labelBackgroundColor=none;" parent="contract_schemaContract" vertex="1">
-      <mxGeometry y="546" width="340" height="8" as="geometry" />
-    </mxCell>
-    <mxCell id="contract_schemaJob" value="&lt;&lt;schema&gt;&gt;&#10;Job" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=42;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" parent="1" vertex="1">
-      <mxGeometry x="3480" y="1098" width="340" height="218" as="geometry" />
-    </mxCell>
-    <mxCell id="contract_schemaJob_r0" value="+id: number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="contract_schemaJob" vertex="1">
-      <mxGeometry y="42" width="340" height="28" as="geometry" />
-    </mxCell>
-    <mxCell id="contract_schemaJob_r1" value="+clientId: number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="contract_schemaJob" vertex="1">
-      <mxGeometry y="70" width="340" height="28" as="geometry" />
-    </mxCell>
-    <mxCell id="contract_schemaJob_r2" value="+title: string" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="contract_schemaJob" vertex="1">
-      <mxGeometry y="98" width="340" height="28" as="geometry" />
-    </mxCell>
-    <mxCell id="contract_schemaJob_r3" value="+slug: string" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="contract_schemaJob" vertex="1">
-      <mxGeometry y="126" width="340" height="28" as="geometry" />
-    </mxCell>
-    <mxCell id="contract_schemaJob_r4" value="+status: JobStatus" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="contract_schemaJob" vertex="1">
-      <mxGeometry y="154" width="340" height="28" as="geometry" />
-    </mxCell>
-    <mxCell id="contract_schemaJob_r5" value="+createdAt: Date" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="contract_schemaJob" vertex="1">
-      <mxGeometry y="182" width="340" height="28" as="geometry" />
-    </mxCell>
-    <mxCell id="contract_schemaJob_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=13;labelBackgroundColor=none;" parent="contract_schemaJob" vertex="1">
-      <mxGeometry y="210" width="340" height="8" as="geometry" />
-    </mxCell>
-    <mxCell id="contract_schemaProposal" value="&lt;&lt;schema&gt;&gt;&#10;Proposal" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=42;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" parent="1" vertex="1">
-      <mxGeometry x="3480" y="1371" width="340" height="218" as="geometry" />
-    </mxCell>
-    <mxCell id="contract_schemaProposal_r0" value="+id: number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="contract_schemaProposal" vertex="1">
-      <mxGeometry y="42" width="340" height="28" as="geometry" />
-    </mxCell>
-    <mxCell id="contract_schemaProposal_r1" value="+jobId: number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="contract_schemaProposal" vertex="1">
-      <mxGeometry y="70" width="340" height="28" as="geometry" />
-    </mxCell>
-    <mxCell id="contract_schemaProposal_r2" value="+freelancerId: number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="contract_schemaProposal" vertex="1">
-      <mxGeometry y="98" width="340" height="28" as="geometry" />
-    </mxCell>
-    <mxCell id="contract_schemaProposal_r3" value="+bidAmount: Decimal" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="contract_schemaProposal" vertex="1">
-      <mxGeometry y="126" width="340" height="28" as="geometry" />
-    </mxCell>
-    <mxCell id="contract_schemaProposal_r4" value="+status: ProposalStatus" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="contract_schemaProposal" vertex="1">
-      <mxGeometry y="154" width="340" height="28" as="geometry" />
-    </mxCell>
-    <mxCell id="contract_schemaProposal_r5" value="+createdAt: Date" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="contract_schemaProposal" vertex="1">
-      <mxGeometry y="182" width="340" height="28" as="geometry" />
-    </mxCell>
-    <mxCell id="contract_schemaProposal_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=13;labelBackgroundColor=none;" parent="contract_schemaProposal" vertex="1">
-      <mxGeometry y="210" width="340" height="8" as="geometry" />
-    </mxCell>
-    <mxCell id="contract_schemaUser" value="&lt;&lt;schema&gt;&gt;&#10;User" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=42;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" parent="1" vertex="1">
-      <mxGeometry x="3480" y="1644" width="340" height="190" as="geometry" />
-    </mxCell>
-    <mxCell id="contract_schemaUser_r0" value="+id: number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="contract_schemaUser" vertex="1">
-      <mxGeometry y="42" width="340" height="28" as="geometry" />
-    </mxCell>
-    <mxCell id="contract_schemaUser_r1" value="+email: string" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="contract_schemaUser" vertex="1">
-      <mxGeometry y="70" width="340" height="28" as="geometry" />
-    </mxCell>
-    <mxCell id="contract_schemaUser_r2" value="+roleId: number" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="contract_schemaUser" vertex="1">
-      <mxGeometry y="98" width="340" height="28" as="geometry" />
-    </mxCell>
-    <mxCell id="contract_schemaUser_r3" value="+isBanned: boolean" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="contract_schemaUser" vertex="1">
-      <mxGeometry y="126" width="340" height="28" as="geometry" />
-    </mxCell>
-    <mxCell id="contract_schemaUser_r4" value="+deletedAt: Date | null" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="contract_schemaUser" vertex="1">
-      <mxGeometry y="154" width="340" height="28" as="geometry" />
-    </mxCell>
-    <mxCell id="contract_schemaUser_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=13;labelBackgroundColor=none;" parent="contract_schemaUser" vertex="1">
-      <mxGeometry y="182" width="340" height="8" as="geometry" />
-    </mxCell>
-    <mxCell id="contract_enumStatus" value="&lt;&lt;enum&gt;&gt;&#10;ContractStatus" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=42;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" parent="1" vertex="1">
-      <mxGeometry x="3980" y="160" width="220" height="188" as="geometry" />
-    </mxCell>
-    <mxCell id="contract_enumStatus_r0" value="+PENDING_SIGN" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="contract_enumStatus" vertex="1">
-      <mxGeometry y="42" width="220" height="28" as="geometry" />
-    </mxCell>
-    <mxCell id="contract_enumStatus_r1" value="+ACTIVE" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="contract_enumStatus" vertex="1">
-      <mxGeometry y="70" width="220" height="28" as="geometry" />
-    </mxCell>
-    <mxCell id="contract_enumStatus_r2" value="+COMPLETED" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="contract_enumStatus" vertex="1">
-      <mxGeometry y="98" width="220" height="28" as="geometry" />
-    </mxCell>
-    <mxCell id="contract_enumStatus_r3" value="+DISPUTED" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="contract_enumStatus" vertex="1">
-      <mxGeometry y="126" width="220" height="28" as="geometry" />
-    </mxCell>
-    <mxCell id="contract_enumStatus_r4" value="+CANCELLED" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="contract_enumStatus" vertex="1">
-      <mxGeometry y="154" width="220" height="28" as="geometry" />
-    </mxCell>
-    <mxCell id="contract_enumStatus_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=13;labelBackgroundColor=none;" parent="contract_enumStatus" vertex="1">
-      <mxGeometry y="180" width="220" height="8" as="geometry" />
-    </mxCell>
-    <mxCell id="contract_enumFee" value="&lt;&lt;enum&gt;&gt;&#10;PlatformFeeStatus" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=42;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" parent="1" vertex="1">
-      <mxGeometry x="3980" y="403" width="220" height="136" as="geometry" />
-    </mxCell>
-    <mxCell id="contract_enumFee_r0" value="+UNPAID" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="contract_enumFee" vertex="1">
-      <mxGeometry y="42" width="220" height="28" as="geometry" />
-    </mxCell>
-    <mxCell id="contract_enumFee_r1" value="+PAID" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="contract_enumFee" vertex="1">
-      <mxGeometry y="70" width="220" height="28" as="geometry" />
-    </mxCell>
-    <mxCell id="contract_enumFee_r2" value="+WAIVED" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" parent="contract_enumFee" vertex="1">
-      <mxGeometry y="98" width="220" height="28" as="geometry" />
-    </mxCell>
-    <mxCell id="contract_enumFee_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=13;labelBackgroundColor=none;" parent="contract_enumFee" vertex="1">
-      <mxGeometry y="128" width="220" height="8" as="geometry" />
-    </mxCell>
-    <mxCell id="contract_e_route_ctrl" value="maps to" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=#ffffff;dashed=1;exitX=1.0;exitY=0.16;exitDx=0;exitDy=0;entryX=0.0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="contract_route" target="contract_ctrl" edge="1">
-      <mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="672" y="207" /><mxPoint x="672" y="300" /></Array></mxGeometry>
-    </mxCell>
-    <mxCell id="contract_e_route_auth" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=none;dashed=1;exitX=1.0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.0;entryY=0.16;entryDx=0;entryDy=0;" parent="1" source="contract_route" target="contract_gAuth" edge="1">
-      <mxGeometry relative="1" as="geometry">
-        <Array as="points"><mxPoint x="691" y="307" /><mxPoint x="691" y="740" /></Array></mxGeometry>
-    </mxCell>
-    <mxCell id="contract_e_route_perm" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=none;dashed=1;exitX=1.0;exitY=0.84;exitDx=0;exitDy=0;entryX=0.0;entryY=0.16;entryDx=0;entryDy=0;" parent="1" source="contract_route" target="contract_gPerm" edge="1">
-      <mxGeometry relative="1" as="geometry">
-        <Array as="points"><mxPoint x="730" y="407" /><mxPoint x="730" y="976" /></Array></mxGeometry>
-    </mxCell>
-    <mxCell id="contract_e_ctrl_svc" value="calls" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=#ffffff;exitX=0.5;exitY=0.0;exitDx=0;exitDy=0;entryX=0.5;entryY=0.0;entryDx=0;entryDy=0;" parent="1" source="contract_ctrl" target="contract_svc" edge="1">
-      <mxGeometry relative="1" as="geometry">
-        <Array as="points"><mxPoint x="1070" y="90" /><mxPoint x="2370" y="90" /></Array></mxGeometry>
-    </mxCell>
-    <mxCell id="contract_e_ctrl_dtoCreate" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=none;dashed=1;exitX=1.0;exitY=0.16;exitDx=0;exitDy=0;entryX=0.0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="contract_ctrl" target="contract_dtoCreate" edge="1">
-      <mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="1368" y="205" /><mxPoint x="1368" y="254" /></Array></mxGeometry>
-    </mxCell>
-    <mxCell id="contract_e_svc_dtoCreate" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=none;dashed=1;exitX=0.0;exitY=0.16;exitDx=0;exitDy=0;entryX=1.0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="contract_svc" target="contract_dtoCreate" edge="1">
-      <mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="1968" y="205" /><mxPoint x="1968" y="254" /></Array></mxGeometry>
-    </mxCell>
-    <mxCell id="contract_e_ctrl_dtoUpdate" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=none;dashed=1;exitX=1.0;exitY=0.33;exitDx=0;exitDy=0;entryX=0.0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="contract_ctrl" target="contract_dtoUpdate" edge="1">
-      <mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="1394" y="252" /><mxPoint x="1394" y="480" /></Array></mxGeometry>
-    </mxCell>
-    <mxCell id="contract_e_svc_dtoUpdate" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=none;dashed=1;exitX=0.0;exitY=0.33;exitDx=0;exitDy=0;entryX=1.0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="contract_svc" target="contract_dtoUpdate" edge="1">
-      <mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="1991" y="252" /><mxPoint x="1991" y="480" /></Array></mxGeometry>
-    </mxCell>
-    <mxCell id="contract_e_ctrl_dtoQuery" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=none;dashed=1;exitX=1.0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="contract_ctrl" target="contract_dtoQuery" edge="1">
-      <mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="1407" y="300" /><mxPoint x="1407" y="706" /></Array></mxGeometry>
-    </mxCell>
-    <mxCell id="contract_e_svc_dtoQuery" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=none;dashed=1;exitX=0.0;exitY=0.5;exitDx=0;exitDy=0;entryX=1.0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="contract_svc" target="contract_dtoQuery" edge="1">
-      <mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="2003" y="300" /><mxPoint x="2003" y="706" /></Array></mxGeometry>
-    </mxCell>
-    <mxCell id="contract_e_ctrl_dtoResp" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=none;dashed=1;exitX=1.0;exitY=0.67;exitDx=0;exitDy=0;entryX=0.0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="contract_ctrl" target="contract_dtoResp" edge="1">
-      <mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="1420" y="348" /><mxPoint x="1420" y="966" /></Array></mxGeometry>
-    </mxCell>
-    <mxCell id="contract_e_svc_dtoResp" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=none;dashed=1;exitX=0.0;exitY=0.67;exitDx=0;exitDy=0;entryX=1.0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="contract_svc" target="contract_dtoResp" edge="1">
-      <mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="2014" y="348" /><mxPoint x="2014" y="966" /></Array></mxGeometry>
-    </mxCell>
-    <mxCell id="contract_e_ctrl_typeDetail" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=none;dashed=1;exitX=1.0;exitY=0.84;exitDx=0;exitDy=0;entryX=0.0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="contract_ctrl" target="contract_typeDetail" edge="1">
-      <mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="1433" y="395" /><mxPoint x="1433" y="1209" /></Array></mxGeometry>
-    </mxCell>
-    <mxCell id="contract_e_svc_typeDetail" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=none;dashed=1;exitX=0.0;exitY=0.84;exitDx=0;exitDy=0;entryX=1.0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="contract_svc" target="contract_typeDetail" edge="1">
-      <mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="2026" y="395" /><mxPoint x="2026" y="1209" /></Array></mxGeometry>
-    </mxCell>
-    <mxCell id="contract_e_svc_repo" value="calls" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=#ffffff;exitX=1.0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="contract_svc" target="contract_repo" edge="1">
-      <mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="2691" y="300" /><mxPoint x="2691" y="345" /></Array></mxGeometry>
-    </mxCell>
-    <mxCell id="contract_e_repo_contract" value="maps to" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=#ffffff;dashed=1;exitX=1.0;exitY=0.16;exitDx=0;exitDy=0;entryX=0.0;entryY=0.16;entryDx=0;entryDy=0;" parent="1" source="contract_repo" target="contract_schemaContract" edge="1">
-      <mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="3352" y="219" /><mxPoint x="3352" y="578" /></Array></mxGeometry>
-    </mxCell>
-    <mxCell id="contract_e_repo_job" value="maps to" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=#ffffff;dashed=1;exitX=1.0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="contract_repo" target="contract_schemaJob" edge="1">
-      <mxGeometry relative="1" as="geometry">
-        <Array as="points"><mxPoint x="3410" y="345" /><mxPoint x="3410" y="1207" /></Array></mxGeometry>
-    </mxCell>
-    <mxCell id="contract_e_repo_proposal" value="maps to" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=#ffffff;dashed=1;exitX=1.0;exitY=0.84;exitDx=0;exitDy=0;entryX=0.0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="contract_repo" target="contract_schemaProposal" edge="1">
-      <mxGeometry relative="1" as="geometry">
-        <Array as="points"><mxPoint x="3429" y="471" /><mxPoint x="3429" y="1480" /></Array></mxGeometry>
-    </mxCell>
-    <mxCell id="contract_rel_contract_job" value="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=#ffffff;dashed=1;exitX=0.5;exitY=1.0;exitDx=0;exitDy=0;entryX=0.5;entryY=0.0;entryDx=0;entryDy=0;" parent="1" source="contract_schemaContract" target="contract_schemaJob" edge="1">
-      <mxGeometry relative="1" as="geometry" />
-    </mxCell>
-    <mxCell id="contract_rel_job_proposal" value="1..*" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=#ffffff;dashed=1;exitX=0.5;exitY=1.0;exitDx=0;exitDy=0;entryX=0.5;entryY=0.0;entryDx=0;entryDy=0;" parent="1" source="contract_schemaJob" target="contract_schemaProposal" edge="1">
-      <mxGeometry relative="1" as="geometry" />
-    </mxCell>
-    <mxCell id="contract_rel_proposal_user" value="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=#ffffff;dashed=1;exitX=0.5;exitY=1.0;exitDx=0;exitDy=0;entryX=0.5;entryY=0.0;entryDx=0;entryDy=0;" parent="1" source="contract_schemaProposal" target="contract_schemaUser" edge="1">
-      <mxGeometry relative="1" as="geometry" />
-    </mxCell>
-    <mxCell id="contract_rel_contract_status" value="uses" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=#ffffff;dashed=1;exitX=1.0;exitY=0.16;exitDx=0;exitDy=0;entryX=0.0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="contract_schemaContract" target="contract_enumStatus" edge="1">
-      <mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="3871" y="578" /><mxPoint x="3871" y="254" /></Array></mxGeometry>
-    </mxCell>
-    <mxCell id="contract_rel_contract_fee" value="uses" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=#ffffff;dashed=1;exitX=1.0;exitY=0.84;exitDx=0;exitDy=0;entryX=0.0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="contract_schemaContract" target="contract_enumFee" edge="1">
-      <mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="3929" y="954" /><mxPoint x="3929" y="471" /></Array></mxGeometry>
-    </mxCell>
-  <mxCell id="sf_e_route_ctrl" value="maps to" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=#ffffff;dashed=1;exitX=1.0;exitY=0.16;exitDx=0;exitDy=0;entryX=0.0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="sf_route" target="sf_ctrl" edge="1">
-      <mxGeometry relative="1" as="geometry">
-        <Array as="points"><mxPoint x="710" y="534" /><mxPoint x="710" y="575" /></Array></mxGeometry>
-    </mxCell>
-
-    <mxCell id="sf_e_route_auth" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=none;dashed=1;exitX=1.0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.0;entryY=0.84;entryDx=0;entryDy=0;" parent="1" source="sf_route" target="contract_gAuth" edge="1">
-      <mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="749" y="588" /><mxPoint x="749" y="870" /></Array></mxGeometry>
-    </mxCell>
-
-    <mxCell id="sf_e_route_perm" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=none;dashed=1;exitX=1.0;exitY=0.84;exitDx=0;exitDy=0;entryX=0.0;entryY=0.84;entryDx=0;entryDy=0;" parent="1" source="sf_route" target="contract_gPerm" edge="1">
-      <mxGeometry relative="1" as="geometry">
-        <Array as="points"><mxPoint x="768" y="642" /><mxPoint x="768" y="1064" /></Array></mxGeometry>
-    </mxCell>
-
-    
-    <mxCell id="sf_e_ctrl_svc" value="calls" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=#ffffff;exitX=1.0;exitY=0.16;exitDx=0;exitDy=0;entryX=0.0;entryY=0.16;entryDx=0;entryDy=0;" parent="1" source="sf_ctrl" target="sf_svc" edge="1">
-      <mxGeometry relative="1" as="geometry">
-        <Array as="points"><mxPoint x="1381" y="521" /><mxPoint x="1381" y="45" /><mxPoint x="1979" y="45" /><mxPoint x="1979" y="525" /></Array></mxGeometry>
-    </mxCell>
-
-    
-    <mxCell id="sf_e_ctrl_dtoUpload" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=none;dashed=1;exitX=1.0;exitY=0.3867;exitDx=0;exitDy=0;entryX=0.0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="sf_ctrl" target="sf_dtoUpload" edge="1">
-      <mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="1446" y="557" /><mxPoint x="1446" y="1452" /></Array></mxGeometry>
-    </mxCell>
-
-    <mxCell id="sf_e_svc_dtoUpload" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=none;dashed=1;exitX=0.0;exitY=0.33;exitDx=0;exitDy=0;entryX=1.0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="sf_svc" target="sf_dtoUpload" edge="1">
-      <mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="2037" y="558" /><mxPoint x="2037" y="1452" /></Array></mxGeometry>
-    </mxCell>
-
-    <mxCell id="sf_e_ctrl_dtoGet" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=none;dashed=1;exitX=1.0;exitY=0.6133;exitDx=0;exitDy=0;entryX=0.0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="sf_ctrl" target="sf_dtoGet" edge="1">
-      <mxGeometry relative="1" as="geometry">
-        <Array as="points"><mxPoint x="1459" y="593" /><mxPoint x="1459" y="1678" /></Array></mxGeometry>
-    </mxCell>
-
-    <mxCell id="sf_e_svc_dtoGet" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=none;dashed=1;exitX=0.0;exitY=0.5;exitDx=0;exitDy=0;entryX=1.0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="sf_svc" target="sf_dtoGet" edge="1">
-      <mxGeometry relative="1" as="geometry">
-        <Array as="points"><mxPoint x="2049" y="590" /><mxPoint x="2049" y="1678" /></Array></mxGeometry>
-    </mxCell>
-
-    <mxCell id="sf_e_ctrl_dtoDelete" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=none;dashed=1;exitX=1.0;exitY=0.84;exitDx=0;exitDy=0;entryX=0.0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="sf_ctrl" target="sf_dtoDelete" edge="1">
-      <mxGeometry relative="1" as="geometry">
-        <Array as="points"><mxPoint x="1472" y="629" /><mxPoint x="1472" y="1870" /></Array></mxGeometry>
-    </mxCell>
-
-    <mxCell id="sf_e_svc_dtoDelete" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=none;dashed=1;exitX=0.0;exitY=0.67;exitDx=0;exitDy=0;entryX=1.0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="sf_svc" target="sf_dtoDelete" edge="1">
-      <mxGeometry relative="1" as="geometry">
-        <Array as="points"><mxPoint x="2061" y="622" /><mxPoint x="2061" y="1870" /></Array></mxGeometry>
-    </mxCell>
-
-    <mxCell id="sf_e_svc_typeShared" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=none;dashed=1;exitX=0.0;exitY=0.84;exitDx=0;exitDy=0;entryX=1.0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="sf_svc" target="sf_typeShared" edge="1">
-      <mxGeometry relative="1" as="geometry">
-        <Array as="points"><mxPoint x="2072" y="655" /><mxPoint x="2072" y="2127" /></Array></mxGeometry>
-    </mxCell>
-
-    
-    <mxCell id="sf_e_svc_cloudinary" value="calls" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=#ffffff;exitX=0.5;exitY=1.0;exitDx=0;exitDy=0;entryX=0.5;entryY=0.0;entryDx=0;entryDy=0;" parent="1" source="sf_svc" target="sf_uCloudinary" edge="1">
-      <mxGeometry relative="1" as="geometry" />
-    </mxCell>
-
-    
-    <mxCell id="sf_e_svc_repo" value="calls" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=#ffffff;exitX=1.0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="sf_svc" target="sf_repo" edge="1">
-      <mxGeometry relative="1" as="geometry">
-        <Array as="points"><mxPoint x="2749" y="590" /><mxPoint x="2749" y="695" /></Array></mxGeometry>
-    </mxCell>
-
-    
-    <mxCell id="sf_e_repo_file" value="maps to" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=#ffffff;dashed=1;exitX=1.0;exitY=0.16;exitDx=0;exitDy=0;entryX=0.0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="sf_repo" target="sf_schemaFile" edge="1">
-      <mxGeometry relative="1" as="geometry">
-        <Array as="points"><mxPoint x="3371" y="620" /><mxPoint x="3371" y="297" /></Array></mxGeometry>
-    </mxCell>
-
-    <mxCell id="sf_e_repo_contract" value="maps to" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=#ffffff;dashed=1;exitX=1.0;exitY=0.84;exitDx=0;exitDy=0;entryX=0.0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="sf_repo" target="contract_schemaContract" edge="1">
-      <mxGeometry relative="1" as="geometry">
-        <Array as="points"><mxPoint x="3390" y="770" /><mxPoint x="3390" y="766" /></Array></mxGeometry>
-    </mxCell>
-
-    
-    <mxCell id="sf_rel_file_contract" value="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=#ffffff;dashed=1;exitX=0.5;exitY=1.0;exitDx=0;exitDy=0;entryX=0.5;entryY=0.0;entryDx=0;entryDy=0;" parent="1" source="sf_schemaFile" target="contract_schemaContract" edge="1">
-      <mxGeometry relative="1" as="geometry" />
-    </mxCell>
-
-    <mxCell id="sf_rel_contract_user" value="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=#ffffff;dashed=1;exitX=0.0;exitY=0.84;exitDx=0;exitDy=0;entryX=0.0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="contract_schemaContract" target="contract_schemaUser" edge="1">
-      <mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="3448" y="954" /><mxPoint x="3448" y="1739" /></Array></mxGeometry>
-    </mxCell>
-  </root></mxGraphModel>
+    <mxGraphModel dx="1892" dy="1504" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="contract_ctrl" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=56;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" value="&lt;&lt;controller&gt;&gt;&#10;ContractController" vertex="1">
+          <mxGeometry height="304" width="540" x="40" y="160" as="geometry" />
+        </mxCell>
+        <mxCell id="contract_ctrl_a0" parent="contract_ctrl" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="-contractService: ContractService" vertex="1">
+          <mxGeometry height="30" width="540" y="56" as="geometry" />
+        </mxCell>
+        <mxCell id="contract_ctrl_sep" parent="contract_ctrl" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=13;labelBackgroundColor=none;" value="" vertex="1">
+          <mxGeometry height="8" width="540" y="86" as="geometry" />
+        </mxCell>
+        <mxCell id="contract_ctrl_m0" parent="contract_ctrl" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+getContractList(userId, roleName, query: GetContractListQueryDTO)" vertex="1">
+          <mxGeometry height="30" width="540" y="94" as="geometry" />
+        </mxCell>
+        <mxCell id="contract_ctrl_m1" parent="contract_ctrl" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+getContractDetail(userId, roleName, contractId: number)" vertex="1">
+          <mxGeometry height="30" width="540" y="124" as="geometry" />
+        </mxCell>
+        <mxCell id="contract_ctrl_m2" parent="contract_ctrl" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+createContract(userId, body: CreateContractBodyDTO)" vertex="1">
+          <mxGeometry height="30" width="540" y="154" as="geometry" />
+        </mxCell>
+        <mxCell id="contract_ctrl_m3" parent="contract_ctrl" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+updateContract(userId, contractId: number, body: UpdateContractBodyDTO)" vertex="1">
+          <mxGeometry height="30" width="540" y="184" as="geometry" />
+        </mxCell>
+        <mxCell id="contract_ctrl_m4" parent="contract_ctrl" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+signContract(userId, contractId: number)" vertex="1">
+          <mxGeometry height="30" width="540" y="214" as="geometry" />
+        </mxCell>
+        <mxCell id="contract_ctrl_m5" parent="contract_ctrl" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+completeContract(userId, contractId: number)" vertex="1">
+          <mxGeometry height="30" width="540" y="244" as="geometry" />
+        </mxCell>
+        <mxCell id="contract_ctrl_m6" parent="contract_ctrl" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+cancelContract(userId, contractId: number)" vertex="1">
+          <mxGeometry height="30" width="540" y="274" as="geometry" />
+        </mxCell>
+        <mxCell id="contract_dtoCreate" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=44;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" value="&lt;&lt;dto&gt;&gt;&#10;CreateContractBodyDTO" vertex="1">
+          <mxGeometry height="188" width="440" x="740" y="160" as="geometry" />
+        </mxCell>
+        <mxCell id="contract_dtoCreate_r0" parent="contract_dtoCreate" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+proposalId: number" vertex="1">
+          <mxGeometry height="34" width="440" y="44" as="geometry" />
+        </mxCell>
+        <mxCell id="contract_dtoCreate_r1" parent="contract_dtoCreate" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+totalAmount: number" vertex="1">
+          <mxGeometry height="34" width="440" y="78" as="geometry" />
+        </mxCell>
+        <mxCell id="contract_dtoCreate_r2" parent="contract_dtoCreate" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+terms?: string" vertex="1">
+          <mxGeometry height="34" width="440" y="112" as="geometry" />
+        </mxCell>
+        <mxCell id="contract_dtoCreate_r3" parent="contract_dtoCreate" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+expiresAt?: string" vertex="1">
+          <mxGeometry height="34" width="440" y="146" as="geometry" />
+        </mxCell>
+        <mxCell id="contract_dtoCreate_sep" parent="contract_dtoCreate" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=13;labelBackgroundColor=none;" value="" vertex="1">
+          <mxGeometry height="8" width="440" y="180" as="geometry" />
+        </mxCell>
+        <mxCell id="contract_dtoUpdate" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=44;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" value="&lt;&lt;dto&gt;&gt;&#10;UpdateContractBodyDTO" vertex="1">
+          <mxGeometry height="154" width="440" x="740" y="418" as="geometry" />
+        </mxCell>
+        <mxCell id="contract_dtoUpdate_r0" parent="contract_dtoUpdate" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+totalAmount?: number" vertex="1">
+          <mxGeometry height="34" width="440" y="44" as="geometry" />
+        </mxCell>
+        <mxCell id="contract_dtoUpdate_r1" parent="contract_dtoUpdate" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+terms?: string" vertex="1">
+          <mxGeometry height="34" width="440" y="78" as="geometry" />
+        </mxCell>
+        <mxCell id="contract_dtoUpdate_r2" parent="contract_dtoUpdate" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+expiresAt?: string" vertex="1">
+          <mxGeometry height="34" width="440" y="112" as="geometry" />
+        </mxCell>
+        <mxCell id="contract_dtoUpdate_sep" parent="contract_dtoUpdate" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=13;labelBackgroundColor=none;" value="" vertex="1">
+          <mxGeometry height="8" width="440" y="146" as="geometry" />
+        </mxCell>
+        <mxCell id="contract_dtoQuery" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=44;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" value="&lt;&lt;dto&gt;&gt;&#10;GetContractListQueryDTO" vertex="1">
+          <mxGeometry height="188" width="440" x="740" y="642" as="geometry" />
+        </mxCell>
+        <mxCell id="contract_dtoQuery_r0" parent="contract_dtoQuery" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+page?: number = 1" vertex="1">
+          <mxGeometry height="34" width="440" y="44" as="geometry" />
+        </mxCell>
+        <mxCell id="contract_dtoQuery_r1" parent="contract_dtoQuery" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+limit?: number = 10" vertex="1">
+          <mxGeometry height="34" width="440" y="78" as="geometry" />
+        </mxCell>
+        <mxCell id="contract_dtoQuery_r2" parent="contract_dtoQuery" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+status?: ContractStatus" vertex="1">
+          <mxGeometry height="34" width="440" y="112" as="geometry" />
+        </mxCell>
+        <mxCell id="contract_dtoQuery_r3" parent="contract_dtoQuery" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+proposalId?: number" vertex="1">
+          <mxGeometry height="34" width="440" y="146" as="geometry" />
+        </mxCell>
+        <mxCell id="contract_dtoQuery_sep" parent="contract_dtoQuery" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=13;labelBackgroundColor=none;" value="" vertex="1">
+          <mxGeometry height="8" width="440" y="180" as="geometry" />
+        </mxCell>
+        <mxCell id="contract_dtoResp" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=44;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" value="&lt;&lt;dto&gt;&gt;&#10;GetContractListResponseDTO" vertex="1">
+          <mxGeometry height="222" width="440" x="740" y="900" as="geometry" />
+        </mxCell>
+        <mxCell id="contract_dtoResp_r0" parent="contract_dtoResp" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+data: ContractDetailType[]" vertex="1">
+          <mxGeometry height="34" width="440" y="44" as="geometry" />
+        </mxCell>
+        <mxCell id="contract_dtoResp_r1" parent="contract_dtoResp" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+totalItems: number" vertex="1">
+          <mxGeometry height="34" width="440" y="78" as="geometry" />
+        </mxCell>
+        <mxCell id="contract_dtoResp_r2" parent="contract_dtoResp" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+totalPages: number" vertex="1">
+          <mxGeometry height="34" width="440" y="112" as="geometry" />
+        </mxCell>
+        <mxCell id="contract_dtoResp_r3" parent="contract_dtoResp" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+page: number" vertex="1">
+          <mxGeometry height="34" width="440" y="146" as="geometry" />
+        </mxCell>
+        <mxCell id="contract_dtoResp_r4" parent="contract_dtoResp" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+limit: number" vertex="1">
+          <mxGeometry height="34" width="440" y="180" as="geometry" />
+        </mxCell>
+        <mxCell id="contract_dtoResp_sep" parent="contract_dtoResp" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=13;labelBackgroundColor=none;" value="" vertex="1">
+          <mxGeometry height="8" width="440" y="214" as="geometry" />
+        </mxCell>
+        <mxCell id="contract_typeDetail" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=44;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" value="&lt;&lt;type&gt;&gt;&#10;ContractDetailType" vertex="1">
+          <mxGeometry height="154" width="440" x="740" y="1192" as="geometry" />
+        </mxCell>
+        <mxCell id="contract_typeDetail_r0" parent="contract_typeDetail" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+client: { id, email, profile }" vertex="1">
+          <mxGeometry height="34" width="440" y="44" as="geometry" />
+        </mxCell>
+        <mxCell id="contract_typeDetail_r1" parent="contract_typeDetail" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+freelancer: { id, email, profile }" vertex="1">
+          <mxGeometry height="34" width="440" y="78" as="geometry" />
+        </mxCell>
+        <mxCell id="contract_typeDetail_r2" parent="contract_typeDetail" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+job: { id, title, slug }" vertex="1">
+          <mxGeometry height="34" width="440" y="112" as="geometry" />
+        </mxCell>
+        <mxCell id="contract_typeDetail_sep" parent="contract_typeDetail" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=13;labelBackgroundColor=none;" value="" vertex="1">
+          <mxGeometry height="8" width="440" y="146" as="geometry" />
+        </mxCell>
+        <mxCell id="contract_svc" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=56;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" value="&lt;&lt;service&gt;&gt;&#10;ContractService" vertex="1">
+          <mxGeometry height="304" width="540" x="1340" y="160" as="geometry" />
+        </mxCell>
+        <mxCell id="contract_svc_a0" parent="contract_svc" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="-contractRepository: ContractRepository" vertex="1">
+          <mxGeometry height="30" width="540" y="56" as="geometry" />
+        </mxCell>
+        <mxCell id="contract_svc_sep" parent="contract_svc" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=13;labelBackgroundColor=none;" value="" vertex="1">
+          <mxGeometry height="8" width="540" y="86" as="geometry" />
+        </mxCell>
+        <mxCell id="contract_svc_m0" parent="contract_svc" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+createContract(clientId: number, body: CreateContractBodyType)" vertex="1">
+          <mxGeometry height="30" width="540" y="94" as="geometry" />
+        </mxCell>
+        <mxCell id="contract_svc_m1" parent="contract_svc" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+updateContract(clientId: number, contractId: number, body: UpdateContractBodyType)" vertex="1">
+          <mxGeometry height="30" width="540" y="124" as="geometry" />
+        </mxCell>
+        <mxCell id="contract_svc_m2" parent="contract_svc" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+signContract(userId: number, contractId: number)" vertex="1">
+          <mxGeometry height="30" width="540" y="154" as="geometry" />
+        </mxCell>
+        <mxCell id="contract_svc_m3" parent="contract_svc" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+completeContract(clientId: number, contractId: number)" vertex="1">
+          <mxGeometry height="30" width="540" y="184" as="geometry" />
+        </mxCell>
+        <mxCell id="contract_svc_m4" parent="contract_svc" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+cancelContract(userId: number, contractId: number)" vertex="1">
+          <mxGeometry height="30" width="540" y="214" as="geometry" />
+        </mxCell>
+        <mxCell id="contract_svc_m5" parent="contract_svc" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+getContractList(userId: number, roleName: string, query: GetContractListQueryType)" vertex="1">
+          <mxGeometry height="30" width="540" y="244" as="geometry" />
+        </mxCell>
+        <mxCell id="contract_svc_m6" parent="contract_svc" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+getContractDetail(userId: number, roleName: string, contractId: number)" vertex="1">
+          <mxGeometry height="30" width="540" y="274" as="geometry" />
+        </mxCell>
+        <mxCell id="contract_repo" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=56;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" value="&lt;&lt;repository&gt;&gt;&#10;ContractRepository" vertex="1">
+          <mxGeometry height="394" width="520" x="2040" y="160" as="geometry" />
+        </mxCell>
+        <mxCell id="contract_repo_a0" parent="contract_repo" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="-prisma: PrismaService" vertex="1">
+          <mxGeometry height="30" width="520" y="56" as="geometry" />
+        </mxCell>
+        <mxCell id="contract_repo_sep" parent="contract_repo" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=13;labelBackgroundColor=none;" value="" vertex="1">
+          <mxGeometry height="8" width="520" y="86" as="geometry" />
+        </mxCell>
+        <mxCell id="contract_repo_m0" parent="contract_repo" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+findProposalWithJob(proposalId: number)" vertex="1">
+          <mxGeometry height="30" width="520" y="94" as="geometry" />
+        </mxCell>
+        <mxCell id="contract_repo_m1" parent="contract_repo" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+findContractByProposalId(proposalId: number)" vertex="1">
+          <mxGeometry height="30" width="520" y="124" as="geometry" />
+        </mxCell>
+        <mxCell id="contract_repo_m2" parent="contract_repo" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+findContractById(contractId: number)" vertex="1">
+          <mxGeometry height="30" width="520" y="154" as="geometry" />
+        </mxCell>
+        <mxCell id="contract_repo_m3" parent="contract_repo" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+createContract(data: CreateContractBodyType, clientId, freelancerId, jobId)" vertex="1">
+          <mxGeometry height="30" width="520" y="184" as="geometry" />
+        </mxCell>
+        <mxCell id="contract_repo_m4" parent="contract_repo" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+updateContract(contractId: number, data: UpdateContractBodyType)" vertex="1">
+          <mxGeometry height="30" width="520" y="214" as="geometry" />
+        </mxCell>
+        <mxCell id="contract_repo_m5" parent="contract_repo" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+signContract(contractId: number, role: string)" vertex="1">
+          <mxGeometry height="30" width="520" y="244" as="geometry" />
+        </mxCell>
+        <mxCell id="contract_repo_m6" parent="contract_repo" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+completeContract(contractId: number, jobId: number)" vertex="1">
+          <mxGeometry height="30" width="520" y="274" as="geometry" />
+        </mxCell>
+        <mxCell id="contract_repo_m7" parent="contract_repo" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+cancelContract(contractId: number)" vertex="1">
+          <mxGeometry height="30" width="520" y="304" as="geometry" />
+        </mxCell>
+        <mxCell id="contract_repo_m8" parent="contract_repo" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+getContractList(query: GetContractListQueryType, filter: object)" vertex="1">
+          <mxGeometry height="30" width="520" y="334" as="geometry" />
+        </mxCell>
+        <mxCell id="contract_repo_m9" parent="contract_repo" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+getContractDetail(contractId: number)" vertex="1">
+          <mxGeometry height="30" width="520" y="364" as="geometry" />
+        </mxCell>
+        <mxCell id="contract_schemaContract" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=42;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" value="&lt;&lt;schema&gt;&gt;&#10;Contract" vertex="1">
+          <mxGeometry height="554" width="340" x="2720" y="489" as="geometry" />
+        </mxCell>
+        <mxCell id="contract_schemaContract_r0" parent="contract_schemaContract" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+id: number" vertex="1">
+          <mxGeometry height="28" width="340" y="42" as="geometry" />
+        </mxCell>
+        <mxCell id="contract_schemaContract_r1" parent="contract_schemaContract" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+jobId: number" vertex="1">
+          <mxGeometry height="28" width="340" y="70" as="geometry" />
+        </mxCell>
+        <mxCell id="contract_schemaContract_r2" parent="contract_schemaContract" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+proposalId: number" vertex="1">
+          <mxGeometry height="28" width="340" y="98" as="geometry" />
+        </mxCell>
+        <mxCell id="contract_schemaContract_r3" parent="contract_schemaContract" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+clientId: number" vertex="1">
+          <mxGeometry height="28" width="340" y="126" as="geometry" />
+        </mxCell>
+        <mxCell id="contract_schemaContract_r4" parent="contract_schemaContract" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+freelancerId: number" vertex="1">
+          <mxGeometry height="28" width="340" y="154" as="geometry" />
+        </mxCell>
+        <mxCell id="contract_schemaContract_r5" parent="contract_schemaContract" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+terms: string | null" vertex="1">
+          <mxGeometry height="28" width="340" y="182" as="geometry" />
+        </mxCell>
+        <mxCell id="contract_schemaContract_r6" parent="contract_schemaContract" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+totalAmount: Decimal" vertex="1">
+          <mxGeometry height="28" width="340" y="210" as="geometry" />
+        </mxCell>
+        <mxCell id="contract_schemaContract_r7" parent="contract_schemaContract" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+status: ContractStatus" vertex="1">
+          <mxGeometry height="28" width="340" y="238" as="geometry" />
+        </mxCell>
+        <mxCell id="contract_schemaContract_r8" parent="contract_schemaContract" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+signedByClient: boolean" vertex="1">
+          <mxGeometry height="28" width="340" y="266" as="geometry" />
+        </mxCell>
+        <mxCell id="contract_schemaContract_r9" parent="contract_schemaContract" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+signedByFreelancer: boolean" vertex="1">
+          <mxGeometry height="28" width="340" y="294" as="geometry" />
+        </mxCell>
+        <mxCell id="contract_schemaContract_r10" parent="contract_schemaContract" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+platformFee: Decimal" vertex="1">
+          <mxGeometry height="28" width="340" y="322" as="geometry" />
+        </mxCell>
+        <mxCell id="contract_schemaContract_r11" parent="contract_schemaContract" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+platformFeeStatus: PlatformFeeStatus" vertex="1">
+          <mxGeometry height="28" width="340" y="350" as="geometry" />
+        </mxCell>
+        <mxCell id="contract_schemaContract_r12" parent="contract_schemaContract" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+platformFeePaidAt: Date | null" vertex="1">
+          <mxGeometry height="28" width="340" y="378" as="geometry" />
+        </mxCell>
+        <mxCell id="contract_schemaContract_r13" parent="contract_schemaContract" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+createdAt: Date" vertex="1">
+          <mxGeometry height="28" width="340" y="406" as="geometry" />
+        </mxCell>
+        <mxCell id="contract_schemaContract_r14" parent="contract_schemaContract" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+signedAt: Date | null" vertex="1">
+          <mxGeometry height="28" width="340" y="434" as="geometry" />
+        </mxCell>
+        <mxCell id="contract_schemaContract_r15" parent="contract_schemaContract" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+completedAt: Date | null" vertex="1">
+          <mxGeometry height="28" width="340" y="462" as="geometry" />
+        </mxCell>
+        <mxCell id="contract_schemaContract_r16" parent="contract_schemaContract" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+expiresAt: Date | null" vertex="1">
+          <mxGeometry height="28" width="340" y="490" as="geometry" />
+        </mxCell>
+        <mxCell id="contract_schemaContract_r17" parent="contract_schemaContract" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+deletedAt: Date | null" vertex="1">
+          <mxGeometry height="28" width="340" y="518" as="geometry" />
+        </mxCell>
+        <mxCell id="contract_schemaContract_sep" parent="contract_schemaContract" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=13;labelBackgroundColor=none;" value="" vertex="1">
+          <mxGeometry height="8" width="340" y="546" as="geometry" />
+        </mxCell>
+        <mxCell id="contract_schemaJob" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=42;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" value="&lt;&lt;schema&gt;&gt;&#10;Job" vertex="1">
+          <mxGeometry height="218" width="340" x="2720" y="1113" as="geometry" />
+        </mxCell>
+        <mxCell id="contract_schemaJob_r0" parent="contract_schemaJob" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+id: number" vertex="1">
+          <mxGeometry height="28" width="340" y="42" as="geometry" />
+        </mxCell>
+        <mxCell id="contract_schemaJob_r1" parent="contract_schemaJob" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+clientId: number" vertex="1">
+          <mxGeometry height="28" width="340" y="70" as="geometry" />
+        </mxCell>
+        <mxCell id="contract_schemaJob_r2" parent="contract_schemaJob" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+title: string" vertex="1">
+          <mxGeometry height="28" width="340" y="98" as="geometry" />
+        </mxCell>
+        <mxCell id="contract_schemaJob_r3" parent="contract_schemaJob" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+slug: string" vertex="1">
+          <mxGeometry height="28" width="340" y="126" as="geometry" />
+        </mxCell>
+        <mxCell id="contract_schemaJob_r4" parent="contract_schemaJob" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+status: JobStatus" vertex="1">
+          <mxGeometry height="28" width="340" y="154" as="geometry" />
+        </mxCell>
+        <mxCell id="contract_schemaJob_r5" parent="contract_schemaJob" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+createdAt: Date" vertex="1">
+          <mxGeometry height="28" width="340" y="182" as="geometry" />
+        </mxCell>
+        <mxCell id="contract_schemaJob_sep" parent="contract_schemaJob" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=13;labelBackgroundColor=none;" value="" vertex="1">
+          <mxGeometry height="8" width="340" y="210" as="geometry" />
+        </mxCell>
+        <mxCell id="contract_schemaProposal" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=42;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" value="&lt;&lt;schema&gt;&gt;&#10;Proposal" vertex="1">
+          <mxGeometry height="218" width="340" x="2720" y="1401" as="geometry" />
+        </mxCell>
+        <mxCell id="contract_schemaProposal_r0" parent="contract_schemaProposal" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+id: number" vertex="1">
+          <mxGeometry height="28" width="340" y="42" as="geometry" />
+        </mxCell>
+        <mxCell id="contract_schemaProposal_r1" parent="contract_schemaProposal" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+jobId: number" vertex="1">
+          <mxGeometry height="28" width="340" y="70" as="geometry" />
+        </mxCell>
+        <mxCell id="contract_schemaProposal_r2" parent="contract_schemaProposal" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+freelancerId: number" vertex="1">
+          <mxGeometry height="28" width="340" y="98" as="geometry" />
+        </mxCell>
+        <mxCell id="contract_schemaProposal_r3" parent="contract_schemaProposal" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+bidAmount: Decimal" vertex="1">
+          <mxGeometry height="28" width="340" y="126" as="geometry" />
+        </mxCell>
+        <mxCell id="contract_schemaProposal_r4" parent="contract_schemaProposal" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+status: ProposalStatus" vertex="1">
+          <mxGeometry height="28" width="340" y="154" as="geometry" />
+        </mxCell>
+        <mxCell id="contract_schemaProposal_r5" parent="contract_schemaProposal" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+createdAt: Date" vertex="1">
+          <mxGeometry height="28" width="340" y="182" as="geometry" />
+        </mxCell>
+        <mxCell id="contract_schemaProposal_sep" parent="contract_schemaProposal" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=13;labelBackgroundColor=none;" value="" vertex="1">
+          <mxGeometry height="8" width="340" y="210" as="geometry" />
+        </mxCell>
+        <mxCell id="contract_schemaUser" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=42;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" value="&lt;&lt;schema&gt;&gt;&#10;User" vertex="1">
+          <mxGeometry height="190" width="340" x="2720" y="1689" as="geometry" />
+        </mxCell>
+        <mxCell id="contract_schemaUser_r0" parent="contract_schemaUser" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+id: number" vertex="1">
+          <mxGeometry height="28" width="340" y="42" as="geometry" />
+        </mxCell>
+        <mxCell id="contract_schemaUser_r1" parent="contract_schemaUser" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+email: string" vertex="1">
+          <mxGeometry height="28" width="340" y="70" as="geometry" />
+        </mxCell>
+        <mxCell id="contract_schemaUser_r2" parent="contract_schemaUser" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+roleId: number" vertex="1">
+          <mxGeometry height="28" width="340" y="98" as="geometry" />
+        </mxCell>
+        <mxCell id="contract_schemaUser_r3" parent="contract_schemaUser" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+isBanned: boolean" vertex="1">
+          <mxGeometry height="28" width="340" y="126" as="geometry" />
+        </mxCell>
+        <mxCell id="contract_schemaUser_r4" parent="contract_schemaUser" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+deletedAt: Date | null" vertex="1">
+          <mxGeometry height="28" width="340" y="154" as="geometry" />
+        </mxCell>
+        <mxCell id="contract_schemaUser_sep" parent="contract_schemaUser" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=13;labelBackgroundColor=none;" value="" vertex="1">
+          <mxGeometry height="8" width="340" y="182" as="geometry" />
+        </mxCell>
+        <mxCell id="contract_enumStatus" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=42;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" value="&lt;&lt;enum&gt;&gt;&#10;ContractStatus" vertex="1">
+          <mxGeometry height="188" width="220" x="3220" y="160" as="geometry" />
+        </mxCell>
+        <mxCell id="contract_enumStatus_r0" parent="contract_enumStatus" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+PENDING_SIGN" vertex="1">
+          <mxGeometry height="28" width="220" y="42" as="geometry" />
+        </mxCell>
+        <mxCell id="contract_enumStatus_r1" parent="contract_enumStatus" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+ACTIVE" vertex="1">
+          <mxGeometry height="28" width="220" y="70" as="geometry" />
+        </mxCell>
+        <mxCell id="contract_enumStatus_r2" parent="contract_enumStatus" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+COMPLETED" vertex="1">
+          <mxGeometry height="28" width="220" y="98" as="geometry" />
+        </mxCell>
+        <mxCell id="contract_enumStatus_r3" parent="contract_enumStatus" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+DISPUTED" vertex="1">
+          <mxGeometry height="28" width="220" y="126" as="geometry" />
+        </mxCell>
+        <mxCell id="contract_enumStatus_r4" parent="contract_enumStatus" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+CANCELLED" vertex="1">
+          <mxGeometry height="28" width="220" y="154" as="geometry" />
+        </mxCell>
+        <mxCell id="contract_enumStatus_sep" parent="contract_enumStatus" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=13;labelBackgroundColor=none;" value="" vertex="1">
+          <mxGeometry height="8" width="220" y="180" as="geometry" />
+        </mxCell>
+        <mxCell id="contract_enumFee" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=42;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" value="&lt;&lt;enum&gt;&gt;&#10;PlatformFeeStatus" vertex="1">
+          <mxGeometry height="136" width="220" x="3220" y="418" as="geometry" />
+        </mxCell>
+        <mxCell id="contract_enumFee_r0" parent="contract_enumFee" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+UNPAID" vertex="1">
+          <mxGeometry height="28" width="220" y="42" as="geometry" />
+        </mxCell>
+        <mxCell id="contract_enumFee_r1" parent="contract_enumFee" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+PAID" vertex="1">
+          <mxGeometry height="28" width="220" y="70" as="geometry" />
+        </mxCell>
+        <mxCell id="contract_enumFee_r2" parent="contract_enumFee" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+WAIVED" vertex="1">
+          <mxGeometry height="28" width="220" y="98" as="geometry" />
+        </mxCell>
+        <mxCell id="contract_enumFee_sep" parent="contract_enumFee" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=13;labelBackgroundColor=none;" value="" vertex="1">
+          <mxGeometry height="8" width="220" y="128" as="geometry" />
+        </mxCell>
+        <mxCell id="contract_e_ctrl_svc" edge="1" parent="1" source="contract_ctrl" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=#ffffff;exitX=0.5;exitY=0.0;exitDx=0;exitDy=0;entryX=0.5;entryY=0.0;entryDx=0;entryDy=0;" target="contract_svc" value="calls">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points"><mxPoint x="310" y="90" /><mxPoint x="1610" y="90" /></Array></mxGeometry>
+        </mxCell>
+        <mxCell id="contract_e_ctrl_dtoCreate" edge="1" parent="1" source="contract_ctrl" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=#ffffff;dashed=1;exitX=1.0;exitY=0.16;exitDx=0;exitDy=0;entryX=0.0;entryY=0.5;entryDx=0;entryDy=0;" target="contract_dtoCreate" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points"><mxPoint x="605" y="209" /><mxPoint x="605" y="254" /></Array></mxGeometry>
+        </mxCell>
+        <mxCell id="contract_e_svc_dtoCreate" edge="1" parent="1" source="contract_svc" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=#ffffff;dashed=1;exitX=0.0;exitY=0.16;exitDx=0;exitDy=0;entryX=1.0;entryY=0.5;entryDx=0;entryDy=0;" target="contract_dtoCreate" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points"><mxPoint x="1215" y="209" /><mxPoint x="1215" y="254" /></Array></mxGeometry>
+        </mxCell>
+        <mxCell id="contract_e_ctrl_dtoUpdate" edge="1" parent="1" source="contract_ctrl" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=#ffffff;dashed=1;exitX=1.0;exitY=0.33;exitDx=0;exitDy=0;entryX=0.0;entryY=0.5;entryDx=0;entryDy=0;" target="contract_dtoUpdate" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points"><mxPoint x="625" y="260" /><mxPoint x="625" y="495" /></Array></mxGeometry>
+        </mxCell>
+        <mxCell id="contract_e_svc_dtoUpdate" edge="1" parent="1" source="contract_svc" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=#ffffff;dashed=1;exitX=0.0;exitY=0.33;exitDx=0;exitDy=0;entryX=1.0;entryY=0.5;entryDx=0;entryDy=0;" target="contract_dtoUpdate" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points"><mxPoint x="1235" y="260" /><mxPoint x="1235" y="495" /></Array></mxGeometry>
+        </mxCell>
+        <mxCell id="contract_e_ctrl_dtoQuery" edge="1" parent="1" source="contract_ctrl" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=#ffffff;dashed=1;exitX=1.0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.0;entryY=0.5;entryDx=0;entryDy=0;" target="contract_dtoQuery" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points"><mxPoint x="645" y="312" /><mxPoint x="645" y="736" /></Array></mxGeometry>
+        </mxCell>
+        <mxCell id="contract_e_svc_dtoQuery" edge="1" parent="1" source="contract_svc" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=#ffffff;dashed=1;exitX=0.0;exitY=0.5;exitDx=0;exitDy=0;entryX=1.0;entryY=0.5;entryDx=0;entryDy=0;" target="contract_dtoQuery" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points"><mxPoint x="1255" y="312" /><mxPoint x="1255" y="736" /></Array></mxGeometry>
+        </mxCell>
+        <mxCell id="contract_e_ctrl_dtoResp" edge="1" parent="1" source="contract_ctrl" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=#ffffff;dashed=1;exitX=1.0;exitY=0.67;exitDx=0;exitDy=0;entryX=0.0;entryY=0.5;entryDx=0;entryDy=0;" target="contract_dtoResp" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points"><mxPoint x="665" y="364" /><mxPoint x="665" y="1011" /></Array></mxGeometry>
+        </mxCell>
+        <mxCell id="contract_e_svc_dtoResp" edge="1" parent="1" source="contract_svc" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=#ffffff;dashed=1;exitX=0.0;exitY=0.67;exitDx=0;exitDy=0;entryX=1.0;entryY=0.5;entryDx=0;entryDy=0;" target="contract_dtoResp" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points"><mxPoint x="1275" y="364" /><mxPoint x="1275" y="1011" /></Array></mxGeometry>
+        </mxCell>
+        <mxCell id="contract_e_ctrl_typeDetail" edge="1" parent="1" source="contract_ctrl" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=#ffffff;dashed=1;exitX=1.0;exitY=0.84;exitDx=0;exitDy=0;entryX=0.0;entryY=0.5;entryDx=0;entryDy=0;" target="contract_typeDetail" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points"><mxPoint x="685" y="415" /><mxPoint x="685" y="1269" /></Array></mxGeometry>
+        </mxCell>
+        <mxCell id="contract_e_svc_typeDetail" edge="1" parent="1" source="contract_svc" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=#ffffff;dashed=1;exitX=0.0;exitY=0.84;exitDx=0;exitDy=0;entryX=1.0;entryY=0.5;entryDx=0;entryDy=0;" target="contract_typeDetail" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points"><mxPoint x="1295" y="415" /><mxPoint x="1295" y="1269" /></Array></mxGeometry>
+        </mxCell>
+        <mxCell id="contract_e_svc_repo" edge="1" parent="1" source="contract_svc" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=#ffffff;exitX=1.0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.0;entryY=0.386;" target="contract_repo" value="calls">
+          <mxGeometry relative="1" x="0.0599" as="geometry">
+            </mxGeometry>
+        </mxCell>
+        <mxCell id="contract_e_repo_contract" edge="1" parent="1" source="contract_repo" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=#ffffff;dashed=1;exitX=1.0;exitY=0.25;exitDx=0;exitDy=0;entryX=0.0;entryY=0.16;entryDx=0;entryDy=0;" target="contract_schemaContract" value="maps to">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points"><mxPoint x="2600" y="258" /><mxPoint x="2600" y="578" /></Array></mxGeometry>
+        </mxCell>
+        <mxCell id="contract_e_repo_job" edge="1" parent="1" source="contract_repo" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=#ffffff;dashed=1;exitX=1.0;exitY=0.55;exitDx=0;exitDy=0;entryX=0.0;entryY=0.5;entryDx=0;entryDy=0;" target="contract_schemaJob" value="maps to">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points"><mxPoint x="2630" y="377" /><mxPoint x="2630" y="1222" /></Array></mxGeometry>
+        </mxCell>
+        <mxCell id="contract_e_repo_proposal" edge="1" parent="1" source="contract_repo" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=#ffffff;dashed=1;exitX=1.0;exitY=0.85;exitDx=0;exitDy=0;entryX=0.0;entryY=0.5;entryDx=0;entryDy=0;" target="contract_schemaProposal" value="maps to">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points"><mxPoint x="2660" y="495" /><mxPoint x="2660" y="1510" /></Array></mxGeometry>
+        </mxCell>
+        <mxCell id="contract_rel_contract_job" edge="1" parent="1" source="contract_schemaContract" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=#ffffff;dashed=1;exitX=0.5;exitY=1.0;exitDx=0;exitDy=0;entryX=0.5;entryY=0.0;entryDx=0;entryDy=0;" target="contract_schemaJob" value="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="contract_rel_job_proposal" edge="1" parent="1" source="contract_schemaJob" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=#ffffff;dashed=1;exitX=0.5;exitY=1.0;exitDx=0;exitDy=0;entryX=0.5;entryY=0.0;entryDx=0;entryDy=0;" target="contract_schemaProposal" value="1..*">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="contract_rel_proposal_user" edge="1" parent="1" source="contract_schemaProposal" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=#ffffff;dashed=1;exitX=0.5;exitY=1.0;exitDx=0;exitDy=0;entryX=0.5;entryY=0.0;entryDx=0;entryDy=0;" target="contract_schemaUser" value="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="contract_rel_contract_status" edge="1" parent="1" source="contract_schemaContract" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=#ffffff;dashed=1;exitX=1.0;exitY=0.2;exitDx=0;exitDy=0;entryX=0.0;entryY=0.5;entryDx=0;entryDy=0;" target="contract_enumStatus" value="uses">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points"><mxPoint x="3120" y="600" /><mxPoint x="3120" y="254" /></Array></mxGeometry>
+        </mxCell>
+        <mxCell id="contract_rel_contract_fee" edge="1" parent="1" source="contract_schemaContract" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=#ffffff;dashed=1;exitX=1.0;exitY=0.8;exitDx=0;exitDy=0;entryX=0.0;entryY=0.5;" target="contract_enumFee" value="uses">
+          <mxGeometry relative="1" x="0.0227" as="geometry">
+            <Array as="points"><mxPoint x="3155" y="932" /><mxPoint x="3155" y="486" /></Array></mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
   </diagram>
 </mxfile>
