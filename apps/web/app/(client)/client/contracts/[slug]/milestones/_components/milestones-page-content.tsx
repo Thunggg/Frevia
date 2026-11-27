@@ -8,12 +8,9 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   ChevronLeft,
   Clock,
-  Eye,
   Loader2,
   Plus,
-  Scale,
   Search,
-  ShieldAlert,
   Trash2,
 } from "lucide-react";
 import { Button } from "@repo/ui/components/shadcn/button";
@@ -28,11 +25,6 @@ import { toastError, toastSuccess } from "@repo/ui/components/shadcn/toast";
 import { contractApiRequest, extractContractData } from "@/apiRequests/contract";
 import { paymentApiRequest } from "@/apiRequests/payment";
 import { disputeApiRequest } from "@/apiRequests/dispute";
-import {
-  DisputeStatusBadge,
-  formatResolutionCurrency,
-  useResolutionHelpers,
-} from "@/app/(client)/_components/disputes/resolution-utils";
 import { useActionPermission } from "@/hooks/use-action-permission";
 import { ApiFail } from "@/lib/http";
 import type {
@@ -82,7 +74,6 @@ export function MilestonesPageContent({
   const canViewMilestones = can("GET", "/api/contracts/:contractId/milestones");
   const canCreateMilestone = can("POST", "/api/contracts/:contractId/milestones");
   const canViewDisputes = can("GET", "/api/disputes");
-  const { translateStoredReason } = useResolutionHelpers();
 
   const { data: contractDisputesData } = useQuery({
     queryKey: ["contract-disputes", initialContract.id],
@@ -378,7 +369,7 @@ export function MilestonesPageContent({
     },
     {
       key: "DISPUTED",
-      label: t("tabs.disputed") || "Tranh chấp",
+      label: t("tabs.disputed"),
       count:
         milestones.filter((m) => m.status === "DISPUTED").length ||
         contractDisputes.filter(
@@ -491,113 +482,6 @@ export function MilestonesPageContent({
           />
         </div>
       </div>
-
-      {/* Active Dispute Alert (When not on DISPUTED tab) */}
-      {statusFilter !== "DISPUTED" &&
-        contractDisputes.some(
-          (d) => d.status !== "FINALIZED" && d.status !== "CANCELLED",
-        ) && (
-          <div className="flex items-center justify-between gap-3 p-3 rounded-xl border border-blue-200/80 dark:border-blue-900/60 bg-blue-50/60 dark:bg-blue-950/30 text-xs text-blue-950 dark:text-blue-100">
-            <div className="flex items-center gap-2 min-w-0">
-              <ShieldAlert className="size-4 shrink-0 text-blue-600 dark:text-blue-400" />
-              <span className="truncate">
-                Hợp đồng này có{" "}
-                <strong>
-                  {
-                    contractDisputes.filter(
-                      (d) =>
-                        d.status !== "FINALIZED" && d.status !== "CANCELLED",
-                    ).length
-                  }
-                </strong>{" "}
-                tranh chấp đang được xử lý.
-              </span>
-            </div>
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={() => setStatusFilter("DISPUTED")}
-              className="h-7 px-2.5 text-xs shrink-0 cursor-pointer border-blue-300 dark:border-blue-800 text-blue-700 dark:text-blue-300 hover:bg-blue-100/60"
-            >
-              Xem tranh chấp
-            </Button>
-          </div>
-        )}
-
-      {/* Contract Disputes List Section (When on DISPUTED tab) */}
-      {statusFilter === "DISPUTED" && (
-        <div className="space-y-3 pb-2">
-          <div className="flex items-center gap-2 text-xs font-semibold text-foreground">
-            <Scale className="size-4 text-blue-600" />
-            <span>
-              Tranh chấp trong hợp đồng ({contractDisputes.length})
-            </span>
-          </div>
-
-          {contractDisputes.length === 0 ? (
-            <div className="rounded-xl border border-dashed border-border p-6 text-center text-xs text-muted-foreground">
-              Không có tranh chấp nào trong hợp đồng này.
-            </div>
-          ) : (
-            <div className="grid gap-3 sm:grid-cols-2">
-              {contractDisputes.map((dispute) => {
-                const caseCode = `RES-${String(dispute.id).padStart(4, "0")}`;
-                return (
-                  <div
-                    key={dispute.id}
-                    className="rounded-xl border border-border bg-card p-4 space-y-3 hover:border-zinc-400 dark:border-zinc-700 transition-colors shadow-xs"
-                  >
-                    <div className="flex items-center justify-between gap-2">
-                      <div className="flex items-center gap-1.5 font-mono text-xs font-semibold text-foreground">
-                        <Scale className="size-3.5 text-blue-600" />
-                        <span>{caseCode}</span>
-                      </div>
-                      <DisputeStatusBadge
-                        status={dispute.status}
-                        declinedAt={dispute.declinedAt}
-                      />
-                    </div>
-
-                    <div className="space-y-1 text-xs">
-                      <p className="font-medium text-foreground truncate">
-                        {dispute.milestone?.title ||
-                          `Milestone #${dispute.milestoneId}`}
-                      </p>
-                      <p className="text-[11px] text-muted-foreground line-clamp-2">
-                        {translateStoredReason(dispute.reason)} -{" "}
-                        {dispute.description}
-                      </p>
-                    </div>
-
-                    <div className="flex items-center justify-between pt-2 border-t border-border/60 text-xs">
-                      <span className="text-[11px] text-muted-foreground font-medium">
-                        Escrow:{" "}
-                        {formatResolutionCurrency(
-                          dispute.milestone?.amount ?? 0,
-                        )}
-                      </span>
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="sm"
-                        onClick={() =>
-                          setViewDisputeMilestoneId(dispute.milestoneId)
-                        }
-                        className="h-7 px-2.5 text-xs text-blue-600 hover:text-blue-700 hover:bg-blue-50 dark:hover:bg-blue-950/40 gap-1 cursor-pointer font-medium"
-                      >
-                        <Eye className="size-3" />
-                        <span>Chi tiết</span>
-                      </Button>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          )}
-        </div>
-      )}
-
       {/* ── Milestones List (Clean, borderless list) ── */}
       {!canViewMilestones ? (
         <div className="py-12 text-center space-y-1.5">

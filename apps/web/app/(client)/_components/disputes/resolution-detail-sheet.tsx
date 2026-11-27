@@ -167,7 +167,7 @@ export function ResolutionDetailSheet({
     const files = Array.from(e.target.files || []);
     if (!files.length) return;
     if (declineUploadedFiles.length + files.length > 5) {
-      toastError({ message: "Tối đa 5 tệp bằng chứng" });
+      toastError({ message: t("maxEvidenceToast") });
       return;
     }
     setIsUploadingDeclineFile(true);
@@ -182,7 +182,7 @@ export function ResolutionDetailSheet({
       toastError({
         message: getDisputeApiErrorMessage(
           error,
-          "Failed to upload evidence file",
+          t("evidenceUploadError"),
         ),
       });
     } finally {
@@ -618,7 +618,9 @@ export function ResolutionDetailSheet({
                               <Upload className="size-3" />
                             )}
                             <span>
-                              {isUploadingDeclineFile ? "Đang tải..." : "Chọn tệp"}
+                              {isUploadingDeclineFile
+                                ? t("uploadingFile")
+                                : t("chooseFile")}
                             </span>
                           </Button>
                         </div>

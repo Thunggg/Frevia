@@ -179,7 +179,12 @@ describe('RecommendationService', () => {
 
   it('falls back to cached job recommendations when AI service is unreachable', async () => {
     const { service, repository, ai } = buildService();
-    const job2: JobDocument = { ...job, id: 8, slug: 'frontend-job', title: 'Frontend' };
+    const job2: JobDocument = {
+      ...job,
+      id: 8,
+      slug: 'frontend-job',
+      title: 'Frontend',
+    };
     repository.findFreelancerByUserId.mockResolvedValue(freelancer);
     repository.listOpenJobs.mockResolvedValue([job, job2]);
     ai.embed.mockRejectedValue(new Error('AI service is unreachable.'));
@@ -214,7 +219,11 @@ describe('RecommendationService', () => {
 
   it('falls back to cached freelancer recommendations when AI service is unreachable', async () => {
     const { service, repository, ai } = buildService();
-    const freelancer2: FreelancerDocument = { ...freelancer, profileId: 12, userId: 3 };
+    const freelancer2: FreelancerDocument = {
+      ...freelancer,
+      profileId: 12,
+      userId: 3,
+    };
     repository.findJobById.mockResolvedValue(job);
     repository.listFreelancers.mockResolvedValue([freelancer, freelancer2]);
     ai.embed.mockRejectedValue(new Error('AI service is unreachable.'));

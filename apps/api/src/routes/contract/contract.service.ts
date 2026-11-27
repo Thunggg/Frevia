@@ -21,6 +21,7 @@ import {
   ContractAlreadyCompletedException,
   ContractAlreadyExistsException,
   ContractAwaitingPaymentException,
+  ContractCannotCancelCompletedMilestonesException,
   ContractDisputedException,
   ContractExpiredException,
   ContractExpiresAtBeforeMilestonesException,
@@ -410,6 +411,25 @@ export class ContractService implements OnModuleInit, OnModuleDestroy {
     }
   }
 
+  private hasSettledMilestonesForCompletion(
+    milestones: Array<{ paymentStatus: MilestonePaymentStatus }>,
+  ): boolean {
+    if (milestones.length === 0) {
+      return false;
+    }
+
+    const hasUnsettled = milestones.some(
+      (m) =>
+        m.paymentStatus !== MilestonePaymentStatus.RELEASED &&
+        m.paymentStatus !== MilestonePaymentStatus.REFUNDED,
+    );
+    const hasReleased = milestones.some(
+      (m) => m.paymentStatus === MilestonePaymentStatus.RELEASED,
+    );
+
+    return !hasUnsettled && hasReleased;
+  }
+
   async completeContract(clientId: number, contractId: number) {
     try {
       const contract =
@@ -430,25 +450,7 @@ export class ContractService implements OnModuleInit, OnModuleDestroy {
           contractId,
         );
 
-      if (milestones.length === 0) {
-        throw ContractHasUnsettledMilestonesException();
-      }
-
-      const hasUnsettled = milestones.some(
-        (m) =>
-          m.paymentStatus !== MilestonePaymentStatus.RELEASED &&
-          m.paymentStatus !== MilestonePaymentStatus.REFUNDED,
-      );
-
-      if (hasUnsettled) {
-        throw ContractHasUnsettledMilestonesException();
-      }
-
-      const hasReleased = milestones.some(
-        (m) => m.paymentStatus === MilestonePaymentStatus.RELEASED,
-      );
-
-      if (!hasReleased) {
+      if (!this.hasSettledMilestonesForCompletion(milestones)) {
         throw ContractHasUnsettledMilestonesException();
       }
 
@@ -537,6 +539,10 @@ export class ContractService implements OnModuleInit, OnModuleDestroy {
         );
         if (hasDisputedMilestone) {
           throw ContractDisputedException();
+        }
+
+        if (this.hasSettledMilestonesForCompletion(milestones)) {
+          throw ContractCannotCancelCompletedMilestonesException();
         }
 
         const isClient = contract.clientId === userId;

@@ -24,7 +24,7 @@ Table~\ref{tab:intro_summary} summarizes the high-level project profile and core
 \textbf{Project Code / Supervisor} & \texttt{SEP490\_04} -- Supervised by Ms. Cao Hong Nga (FPT University Can Tho) \\ \hline
 \textbf{Architecture} & Turborepo Monorepo: Next.js 16 (React 19) Web App, NestJS 11 API + Socket.IO, PostgreSQL 16 (Prisma 7 ORM), FastAPI Python AI Microservices \\ \hline
 \textbf{User Roles} & Guest, Client, Freelancer, Expert, and Platform Administrator \\ \hline
-\textbf{Monetization Model} & Flat \$5.00 USD platform fee per contract paid by Client; Freelancers retain 100\% of milestone payouts \\ \hline
+\textbf{Monetization Model} & 3\% client platform fee on initial contract escrow hold; 5\% freelancer platform fee deducted upon milestone payout (95\% net via Stripe Connect) \\ \hline
 \textbf{Scope Summary} & 10 Functional Modules covering 21 Major Features (\texttt{FE-01} to \texttt{FE-21}), 71 database entities, and Docker Compose deployment \\ \hline
 \end{tabular}
 \end{table}
@@ -41,7 +41,7 @@ Contemporary freelance marketplaces have largely solved initial job discovery, y
     \item \textbf{Unstructured Dispute Resolution and Scattered Communication:} When disagreements arise over deliverables, external chat logs and opaque support tickets make evidence gathering slow and arbitration decisions difficult to audit or appeal.
 \end{enumerate}
 
-Frevia addresses these problems through four concrete mechanisms: (i) \textbf{multi-step eKYC verification} combining CCCD OCR, facial liveness, and administrator review; (ii) \textbf{flat-fee milestone escrow} using Stripe Checkout and Connect Express transfers; (iii) \textbf{rule-bound 5-stage dispute arbitration} with evidence tracking, split settlement, and appeal review; and (iv) \textbf{explainable AI assistance} that parses uploaded CVs and pre-scores forum content while leaving every final hiring and moderation decision under explicit human control.
+Frevia addresses these problems through four concrete mechanisms: (i) \textbf{multi-step eKYC verification} combining CCCD OCR, facial liveness, and administrator review; (ii) \textbf{milestone-scoped escrow} using Stripe Checkout, hold deposits (3\% client fee), and Connect Express transfers (5\% freelancer payout fee); (iii) \textbf{rule-bound 2-tier dispute arbitration} (48-hour counterparty proposal followed by Frevia Expert ruling) with locked evidence tracking and automated split settlement; and (iv) \textbf{explainable AI assistance} that parses uploaded CVs and pre-scores forum content while leaving every final hiring and moderation decision under explicit human control.
 
 \section{Report 1 -- Feature List}
 
@@ -78,7 +78,7 @@ FE-12 & Manage Proposals \& Hiring & Client, Freelancer & Draft/submit/withdraw 
 FE-13 & Manage Contracts & Client, Freelancer & Contract editing, bilateral signing, shared files, PDF export, cancel/complete. \\ \hline
 FE-14 & Manage Milestones & Client, Freelancer & Milestone scheduling, file upload, deliverable submission, request changes, approve. \\ \hline
 FE-15 & Manage Payments \& Escrow & Client, Freelancer & Stripe Express onboarding, saved cards, hold deposit, escrow fund/release, ledger. \\ \hline
-FE-16 & Manage Disputes & Client, Freelancer, Expert & 5-stage milestone dispute filing, evidence, fee checkout, escalate, expert ruling. \\ \hline
+FE-16 & Manage Disputes & Client, Freelancer, Expert & 2-tier milestone dispute filing, locked evidence, response, escalate, expert ruling. \\ \hline
 FE-17 & Manage Reviews & Client, Freelancer & Post-contract bilateral star ratings, comments, and single public reply. \\ \hline
 FE-18 & Direct Messaging \& Alerts & Client, Freelancer, Expert & Real-time Socket.IO 1-on-1 chat, attachments, read/pin/recall, notifications. \\ \hline
 FE-19 & Manage Community Forum & Guest, All Auth, Admin & Category/post/comment browsing, authoring, likes, reporting, Admin trash restore. \\ \hline

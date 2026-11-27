@@ -58,11 +58,9 @@ PostgreSQL DB & Host / External & \texttt{5432} & \texttt{localhost:5432} (Confi
 
 \wffig[0.86]{images/install/a08_docker_compose_up.png}{Building and launching all five system containers via Docker Compose}{fig:rel_docker_up}
 
-\screenfigure[0.86]{images/install/a09_verify_web_running.png}{Post-deployment verification of the Frevia web application (\url{http://localhost:3003})}
-\label{fig:rel_web_verify}
+\wffig[0.86]{images/install/a09_verify_web_running.png}{Post-deployment verification of the Frevia web application (\url{http://localhost:3003})}{fig:rel_web_verify}
 
-\screenfigure[0.86]{images/install/a10_verify_api_swagger.png}{Post-deployment verification of the NestJS Swagger API console (\url{http://localhost:3002})}
-\label{fig:rel_api_verify}
+\wffig[0.86]{images/install/a10_verify_api_swagger.png}{Post-deployment verification of the NestJS Swagger API console (\url{http://localhost:3002})}{fig:rel_api_verify}
 
 \section{Representative User Workflows}
 
@@ -198,7 +196,7 @@ The Client inspects submitted artifacts and either issues structured revision fe
 \noindent\textit{Workflow Path: Onboard Stripe Express $\rightarrow$ Pay Contract Hold Fee $\rightarrow$ Fund Milestone Escrow (Checkout / Saved Card) $\rightarrow$ Release Escrow Payout $\rightarrow$ Audit Ledger}
 
 \subsubsection{Purpose}
-Provides transparent financial security by holding client funds in Stripe escrow prior to work execution, charging only a flat \$5.00 USD fee per contract, and transferring 100\% of milestone value to the freelancer upon approval.
+Provides transparent financial security by holding client funds in Stripe escrow prior to work execution, charging a 3\% client platform fee on initial contract hold authorization and deducting a 5\% freelancer service fee upon milestone approval (transferring 95\% net via Stripe Connect).
 
 \subsubsection{Step-by-Step User Guide}
 
@@ -207,17 +205,17 @@ Before signing contracts, Freelancers link their payout destination using the ho
 
 \wffig[0.85]{images/payments/m43_01_connect_stripe_guide.png}{Stripe Connect Express payout onboarding banner and activation flow}{fig:wf_m43_connect}
 
-\wfstep{Step 2: Authorize Flat \$5.00 Contract Hold Deposit}
-Upon contract creation, the Client authorizes the \$5.00 USD platform hold fee to transition the agreement from \texttt{AWAITING\_PAYMENT} into signature readiness (Figure~\ref{fig:wf_m43_hold}).
+\wfstep{Step 2: Authorize Contract Escrow Hold (+ 3\% Client Fee)}
+Upon contract creation, the Client selects one or more milestones (or all milestones) and authorizes a Stripe payment hold covering the selected escrow value plus the 3\% client platform fee to transition the agreement from \texttt{AWAITING\_PAYMENT} into signature readiness (Figure~\ref{fig:wf_m43_hold}).
 
-\wffig[0.85]{images/payments/m43_06_contract_hold_deposit_guide.png}{Authorizing the flat \$5.00 USD contract hold fee via Stripe}{fig:wf_m43_hold}
+\wffig[0.85]{images/payments/m43_06_contract_hold_deposit_guide.png}{Authorizing the initial contract escrow hold plus 3\% client platform fee via Stripe}{fig:wf_m43_hold}
 
 \wfstep{Step 3: Fund Individual Milestone Escrow (Checkout or Saved Card)}
 Clients fund upcoming milestones either through hosted Stripe Checkout (Figure~\ref{fig:wf_m43_checkout}) or one-click saved card authorization (Figure~\ref{fig:wf_m43_savedcard}).
 
 \wffig[0.85]{images/payments/m43_07_fund_milestone_checkout_guide.png}{Funding a milestone into escrow via Stripe Checkout Session}{fig:wf_m43_checkout}
 
-\wffig[0.85]{images/payments/m43_08_fund_milestone_saved_card_guide.png}{Funding a milestone directly with a saved Stripe payment method}{fig:wf_m43_savedcard}
+\wffig[0.85]{images/payments/m43_08_fund_milestone_saved_card_guide.png}{Funding a milestone directly via 1-Click Saved Card (or fallback Stripe Checkout)}{fig:wf_m43_savedcard}
 
 \wfstep{Step 4: Release Escrow Payout \& Inspect Transaction Ledger}
 Once the milestone deliverable is approved, the Client releases held escrow funds to trigger a Stripe transfer (Figure~\ref{fig:wf_m43_release}), and both parties can audit every settled event in the payment history ledger (Figure~\ref{fig:wf_m43_history}).
@@ -231,19 +229,19 @@ Once the milestone deliverable is approved, the Client releases held escrow fund
 \noindent\textit{Workflow Path: Open Dispute $\rightarrow$ Submit Respondent Defense $\rightarrow$ Escalate Dispute $\rightarrow$ Expert Arbitrator Decision $\rightarrow$ Post-Contract Review}
 
 \subsubsection{Purpose}
-Protects funded milestones against deadlocks through a symmetrical 5-stage arbitration procedure with evidence tracking and split escrow distribution, followed by mutual post-contract reputation reviews.
+Protects funded milestones against deadlocks through a symmetrical 2-tier arbitration procedure (48-hour counterparty proposal followed by Expert ruling) with locked evidence tracking and split escrow distribution, followed by mutual post-contract reputation reviews.
 
 \subsubsection{Step-by-Step User Guide}
 
 \wfstep{Step 1: Open Milestone Dispute \& Submit Respondent Defense}
-Either contracting party initiates a dispute on a funded milestone (Figure~\ref{fig:wf_m33_open}), freezing funds until the counterparty files an official response and supporting evidence (Figure~\ref{fig:wf_m33_respond}).
+Either contracting party initiates a dispute on a funded milestone (Figure~\ref{fig:wf_m33_open}), freezing funds until the counterparty accepts or submits a reasoned decline with counter-evidence (Figure~\ref{fig:wf_m33_respond}).
 
 \wffig[0.85]{images/disputes/m33_01_open_dispute_guide.png}{Opening a formal dispute with claim statement and evidence}{fig:wf_m33_open}
 
 \wffig[0.85]{images/disputes/m33_05_respond_to_dispute_guide.png}{Submitting the respondent counter-statement and evidence files}{fig:wf_m33_respond}
 
 \wfstep{Step 2: Escalate to Arbitration \& Render Expert Decision}
-Unresolved disputes escalate with payment of the arbitration fee (Figure~\ref{fig:wf_m33_escalate}), allowing an assigned Expert or Administrator to issue a binding full or split escrow ruling (Figure~\ref{fig:wf_m33_decision}).
+When the counterparty declines the proposal or the 48-hour response window expires, either party escalates the unresolved dispute to Step 2 Expert Arbitration (Figure~\ref{fig:wf_m33_escalate}), allowing an active Frevia Expert to issue a binding full or split escrow ruling (Figure~\ref{fig:wf_m33_decision}).
 
 \wffig[0.85]{images/disputes/m33_07_escalate_dispute_guide.png}{Escalating an unresolved dispute to formal arbitration review}{fig:wf_m33_escalate}
 

@@ -10,7 +10,6 @@ import {
   Paperclip,
   Scale,
   Upload,
-  X,
 } from "lucide-react";
 import {
   Sheet,
@@ -182,7 +181,7 @@ export function OpenResolutionDialog({
     if (!files.length) return;
 
     if (uploadedFiles.length + selectedFileIds.length + files.length > 5) {
-      toastError({ message: t("maxEvidenceToast") || "Maximum 5 evidence files allowed" });
+      toastError({ message: t("maxEvidenceToast") });
       return;
     }
 
@@ -196,16 +195,12 @@ export function OpenResolutionDialog({
       }
     } catch (error) {
       toastError({
-        message: getDisputeApiErrorMessage(error, "Failed to upload evidence file"),
+        message: getDisputeApiErrorMessage(error, t("evidenceUploadError")),
       });
     } finally {
       setIsUploadingFile(false);
       if (fileInputRef.current) fileInputRef.current.value = "";
     }
-  };
-
-  const handleRemoveUploadedFile = (fileId: number) => {
-    setUploadedFiles((prev) => prev.filter((f) => f.id !== fileId));
   };
 
   const clientNum = parseFloat(clientAmount) || 0;
@@ -365,33 +360,30 @@ export function OpenResolutionDialog({
                 <button
                   type="button"
                   onClick={() => handlePresetSplit(100)}
-                  className={`text-[11px] px-2.5 py-0.5 rounded-full border transition-colors cursor-pointer ${
-                    clientNum === milestoneAmount
-                      ? "border-foreground bg-muted/60 text-foreground font-medium"
-                      : "border-border/60 hover:bg-muted/30 text-muted-foreground"
-                  }`}
+                  className={`text-[11px] px-2.5 py-0.5 rounded-full border transition-colors cursor-pointer ${clientNum === milestoneAmount
+                    ? "border-foreground bg-muted/60 text-foreground font-medium"
+                    : "border-border/60 hover:bg-muted/30 text-muted-foreground"
+                    }`}
                 >
                   {t("presetRefundClient")}
                 </button>
                 <button
                   type="button"
                   onClick={() => handlePresetSplit(50)}
-                  className={`text-[11px] px-2.5 py-0.5 rounded-full border transition-colors cursor-pointer ${
-                    clientNum === Number((milestoneAmount / 2).toFixed(2))
-                      ? "border-foreground bg-muted/60 text-foreground font-medium"
-                      : "border-border/60 hover:bg-muted/30 text-muted-foreground"
-                  }`}
+                  className={`text-[11px] px-2.5 py-0.5 rounded-full border transition-colors cursor-pointer ${clientNum === Number((milestoneAmount / 2).toFixed(2))
+                    ? "border-foreground bg-muted/60 text-foreground font-medium"
+                    : "border-border/60 hover:bg-muted/30 text-muted-foreground"
+                    }`}
                 >
                   {t("presetFiftyFifty")}
                 </button>
                 <button
                   type="button"
                   onClick={() => handlePresetSplit(0)}
-                  className={`text-[11px] px-2.5 py-0.5 rounded-full border transition-colors cursor-pointer ${
-                    freelancerNum === milestoneAmount
-                      ? "border-foreground bg-muted/60 text-foreground font-medium"
-                      : "border-border/60 hover:bg-muted/30 text-muted-foreground"
-                  }`}
+                  className={`text-[11px] px-2.5 py-0.5 rounded-full border transition-colors cursor-pointer ${freelancerNum === milestoneAmount
+                    ? "border-foreground bg-muted/60 text-foreground font-medium"
+                    : "border-border/60 hover:bg-muted/30 text-muted-foreground"
+                    }`}
                 >
                   {t("presetPayFreelancer")}
                 </button>
@@ -488,17 +480,9 @@ export function OpenResolutionDialog({
                       <div className="flex items-center gap-2 min-w-0">
                         <FileText className="size-3.5 text-blue-600 shrink-0" />
                         <span className="truncate text-foreground font-medium">
-                          {file.fileName || `File #${file.id}`}
+                          {file.fileName || t("fileFallback", { id: file.id })}
                         </span>
                       </div>
-                      <button
-                        type="button"
-                        onClick={() => handleRemoveUploadedFile(file.id)}
-                        className="text-muted-foreground hover:text-rose-600 p-0.5 rounded cursor-pointer"
-                        title={t("evidenceRemoveTooltip")}
-                      >
-                        <X className="size-3.5" />
-                      </button>
                     </div>
                   ))}
                 </div>

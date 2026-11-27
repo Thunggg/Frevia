@@ -4336,7 +4336,14 @@
       "emptyFreelancer": "Không có cột mốc nào phù hợp bộ lọc này.",
       "addFirstMilestone": "Thêm cột mốc đầu tiên",
       "blockedPrevious": "Hoàn thành cột mốc trước đó trước",
-      "blockedActive": "Hoàn thành cột mốc đang thực hiện trước"
+      "blockedActive": "Hoàn thành cột mốc đang thực hiện trước",
+      "activeDisputeBanner": "Hợp đồng này có <strong>{count}</strong> tranh chấp đang được xử lý.",
+      "viewDisputesBtn": "Xem tranh chấp",
+      "contractDisputesTitle": "Tranh chấp trong hợp đồng ({count})",
+      "noContractDisputes": "Không có tranh chấp nào trong hợp đồng này.",
+      "milestoneFallback": "Cột mốc #{id}",
+      "escrowLabel": "Ký quỹ:",
+      "disputeDetailsBtn": "Chi tiết"
     },
     "toasts": {
       "escrowFunded": "Đã nạp tiền ký quỹ thành công qua Stripe!",
@@ -4740,7 +4747,8 @@
       "evidenceUploadBtn": "Tải lên",
       "evidenceSelectShared": "Chọn từ tệp chia sẻ hợp đồng:",
       "evidenceRemoveTooltip": "Xóa tệp trước khi gửi",
-      "evidenceLockedNotice": "* Tệp bằng chứng đã tải lên sẽ được lưu trữ cố định và không thể chỉnh sửa hoặc xóa nhằm bảo đảm tính minh bạch trong phán quyết."
+      "evidenceLockedNotice": "* Tệp bằng chứng đã tải lên sẽ được lưu trữ cố định và không thể chỉnh sửa hoặc xóa nhằm bảo đảm tính minh bạch trong phán quyết.",
+      "evidenceUploadError": "Không thể tải lên tệp bằng chứng."
     },
     "detailSheet": {
       "loading": "Đang tải chi tiết yêu cầu giải quyết...",
@@ -4794,7 +4802,11 @@
       "reviewReasonRequired": "Vui lòng giải thích lý do bạn yêu cầu phúc thẩm.",
       "reviewAcceptSuccess": "Bạn đã chấp nhận phán quyết của chuyên gia.",
       "reviewRejectSuccess": "Đã gửi yêu cầu phúc thẩm đến chuyên gia.",
-      "reviewError": "Không thể gửi phản hồi về phán quyết."
+      "reviewError": "Không thể gửi phản hồi về phán quyết.",
+      "maxEvidenceToast": "Bạn chỉ có thể đính kèm tối đa 5 tệp bằng chứng.",
+      "evidenceUploadError": "Không thể tải lên tệp bằng chứng.",
+      "uploadingFile": "Đang tải...",
+      "chooseFile": "Chọn tệp"
     },
     "listView": {
       "breadcrumbDashboard": "Bảng điều khiển",

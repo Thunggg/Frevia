@@ -18,8 +18,8 @@
 \subsubsection{ Connect Stripe Account}
 
 \fnhead{Function Trigger}
-A Freelancer clicks ``Set up Payouts'' or ``Connect Stripe'' in their Payments dashboard.\newline
-\textbf{Navigation path:} Freelancer Dashboard $\rightarrow$ Payments (\texttt{/\allowbreak{}freelancer/\allowbreak{}payments}) $\rightarrow$ Click ``Connect with Stripe''.
+A Freelancer clicks ``Connect Stripe Account'' inside the ``Stripe Payout Account'' card on the Billing \& Payments dashboard (or when prompted before signing a contract).\newline
+\textbf{Navigation path:} Freelancer Dashboard $\rightarrow$ Billing \& Payments (\texttt{/\allowbreak{}freelancer/\allowbreak{}payments}) $\rightarrow$ Click ``Connect Stripe Account''.
 
 \fnhead{Function Description}
 
@@ -31,15 +31,14 @@ A Freelancer clicks ``Set up Payouts'' or ``Connect Stripe'' in their Payments d
 \end{itemize}
 
 \sublabel{Purpose}
-\noindent Enables a Freelancer to link their bank account or debit card via Stripe Connect Express onboarding. Establishing this connection is required to receive automated escrow disbursements, milestone earnings payouts, and dispute resolution settlement funds.
+\noindent Enables a Freelancer to link their bank account or debit card via Stripe Connect Express onboarding. Establishing this connection is required to receive automated milestone escrow disbursements directly via Stripe (with a 5\% freelancer platform fee deducted on release).
 
 \sublabel{Interface}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-      \item Payments \& Payouts screen at \texttt{/freelancer/payments}.
-      \item Status banner indicating connection state: ``Unconnected'', ``Action Required'', or ``Connected \& Verified''.
-      \item Primary action button: ``Connect with Stripe'' or ``Update Payout Details''.
-      \item Stripe-hosted Express onboarding flow for identity verification, tax details, and bank account entry.
-      \item Return confirmation banner upon redirect back to Frevia.
+      \item ``Billing \& Payments'' workspace at \texttt{/freelancer/payments} containing the ``Stripe Payout Account'' card, ``Earnings \& Fee Summary'' card, and ``Payout \& Transaction History'' ledger.
+      \item ``Stripe Payout Account'' connection status badge: ``Not Connected'', ``Incomplete'', or ``Verified'', with a live refresh button.
+      \item Primary blue action button: ``Connect Stripe Account'' (or ``Continue Onboarding'' / ``Update Details'' once started).
+      \item Stripe-hosted Connect Express onboarding flow (``Get started with Stripe'') for email confirmation, identity verification, tax details, and bank/debit payout entry.
 \end{itemize}
 
 \sublabel{Data Processing Overview}
@@ -53,12 +52,11 @@ A Freelancer clicks ``Set up Payouts'' or ``Connect Stripe'' in their Payments d
 \end{itemize}
 
 \fnhead{Screen Layout (Mock-up Description)}
-\screenfigure[0.95]{image/screenshot/sprint4/ntin/ConnectStripeAccount.png}{Stripe Connect payout settings screen}
+\screenfigure[0.95]{image/screenshot/sprint4/ntin/ConnectStripeAccount1.png}{Freelancer Billing \& Payments dashboard showing Stripe Payout Account card (Step 1)}
+\screenfigure[0.95]{image/screenshot/sprint4/ntin/ConnectStripeAccount.png}{Stripe Connect Express hosted onboarding screen after clicking Connect Stripe Account (Step 2)}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-      \item Header renders title ``Payout Settings'' and a description of secure bank transfers powered by Stripe.
-      \item A prominent card displays the Stripe logo, current status badge (e.g., green ``Verified''), and bank account snippet.
-      \item If unlinked, a prominent purple ``Set Up Stripe Express Payouts'' button is centered with security badges.
-      \item A secondary link allows managing tax documents or changing payout schedules directly in Stripe.
+      \item In Step 1 (\texttt{Billing \& Payments}), the ``Stripe Payout Account'' card displays the ``Not Connected'' badge, ``Connect Bank / Debit via Stripe'' explanation (noting the 5\% freelancer fee), and primary blue ``Connect Stripe Account'' button alongside ``Earnings \& Fee Summary'' and ``Payout \& Transaction History''.
+      \item Clicking ``Connect Stripe Account'' redirects in Step 2 to the Stripe-hosted onboarding page (``Get started with Stripe'') with the freelancer's email pre-filled, purple ``Continue'' button, and ``Return to Frevia sandbox'' back link.
 \end{itemize}
 
 \fnhead{Function Details}
@@ -82,13 +80,13 @@ A Freelancer clicks ``Set up Payouts'' or ``Connect Stripe'' in their Payments d
 
 \sublabel{Normal Flow}
 \begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
-      \item Freelancer navigates to Payout Settings.
-      \item Freelancer clicks ``Connect with Stripe''.
+      \item Freelancer navigates to Billing \& Payments (\texttt{/freelancer/payments}).
+      \item Freelancer clicks ``Connect Stripe Account'' inside the Stripe Payout Account card.
       \item The system requests an onboarding link from the Stripe Connect API.
-      \item Freelancer is redirected to the Stripe-hosted onboarding flow.
+      \item Freelancer is redirected to the Stripe-hosted onboarding flow (``Get started with Stripe'').
       \item Freelancer provides banking, identity, and tax details to Stripe.
       \item Stripe redirects the Freelancer back to Frevia.
-      \item Payout status updates to ``Connected'' with a verified badge.
+      \item Payout status updates to ``Verified'' in the Stripe Payout Account card.
 \end{enumerate}
 
 \sublabel{Abnormal Flow / Exception Handling}
@@ -560,8 +558,8 @@ A Client initiates contract creation or signs a contract requiring an upfront se
 \subsubsection{ Fund Milestone via Stripe Checkout}
 
 \fnhead{Function Trigger}
-A Client clicks ``Deposit into Escrow'' on a milestone and chooses Stripe Checkout.\newline
-\textbf{Navigation path:} Contract Workspace $\rightarrow$ Milestones Tab $\rightarrow$ Milestone Card $\rightarrow$ Click ``Fund Milestone''.
+A Client clicks ``Fund Escrow'' on an unfunded milestone card and then clicks ``Pay with Another Card (Stripe Checkout)'' or ``Deposit via Stripe Checkout'' inside the ``Fund Milestone Escrow'' drawer.\newline
+\textbf{Navigation path:} Contract Workspace $\rightarrow$ Milestones Tab $\rightarrow$ Fund Escrow Drawer $\rightarrow$ Click Stripe Checkout button.
 
 \fnhead{Function Description}
 
@@ -573,15 +571,13 @@ A Client clicks ``Deposit into Escrow'' on a milestone and chooses Stripe Checko
 \end{itemize}
 
 \sublabel{Purpose}
-\noindent Initializes a hosted Stripe Checkout Session and redirects the Client to Stripe's secure payment page to fund an individual milestone into escrow using international credit/debit cards, Apple Pay, or Google Pay.
+\noindent Initializes a hosted Stripe Checkout Session and redirects the Client to Stripe's secure payment page to fund an individual milestone into escrow using international credit/debit cards, Apple Pay, or Link.
 
 \sublabel{Interface}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-      \item ``Fund Milestone'' action button on unfunded milestone cards.
-      \item Payment method modal: Option 1 ``Stripe Hosted Checkout''.
-      \item Summary showing milestone escrow amount and any applicable platform fee.
-      \item Stripe-hosted payment interface with card details, 3D Secure, and local payment methods.
-      \item Redirect success landing page with confirmed escrow deposit badge.
+      \item ``Fund Milestone Escrow'' right-hand slide-over sheet displaying Milestone title, Deposit Amount (\$USD), and ``Client Fee: \$0.00 (Covered in initial contract fee)''.
+      \item Checkout trigger button: ``Pay with Another Card (Stripe Checkout)'' when saved cards exist, or ``Deposit \$X.00 via Stripe Checkout'' otherwise.
+      \item Stripe Hosted Checkout page displaying currency selection, milestone escrow line item, Apple Pay / Link express buttons, card inputs, and optional ``Save my information for faster checkout'' toggle.
 \end{itemize}
 
 \sublabel{Data Processing Overview}
@@ -595,11 +591,11 @@ A Client clicks ``Deposit into Escrow'' on a milestone and chooses Stripe Checko
 \end{itemize}
 
 \fnhead{Screen Layout (Mock-up Description)}
-\screenfigure[0.95]{image/screenshot/sprint4/ntin/FundMilestoneViaStripeCheckout.png}{Stripe Checkout session funding screen}
+\screenfigure[0.95]{image/screenshot/sprint4/ntin/FundMilestoneViaStripeCheckout1.png}{Fund Milestone Escrow drawer with Stripe Checkout trigger (Step 1)}
+\screenfigure[0.95]{image/screenshot/sprint4/ntin/FundMilestoneViaStripeCheckout.png}{Stripe Hosted Checkout page after selecting Stripe Checkout (Step 2)}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-      \item Modal displays milestone title, delivery deadline, and deposit amount.
-      \item Button ``Proceed to Stripe Checkout'' redirects to Stripe's payment gateway.
-      \item Security badge highlights 256-bit SSL encryption and escrow protection.
+      \item Step 1 renders the ``Fund Milestone Escrow'' right slide-over drawer with milestone summary, ``Client Fee: \$0.00 (Covered in initial contract fee)'', saved card selector, and the outline ``Pay with Another Card (Stripe Checkout)'' button.
+      \item Clicking the Stripe Checkout option redirects in Step 2 to Stripe's hosted payment gateway showing the milestone escrow line item, currency selector, express pay (Apple Pay / Link), credit card form, ``Save my information for faster checkout'' checkbox, and blue ``Pay'' button.
 \end{itemize}
 
 \fnhead{Function Details}
@@ -654,8 +650,8 @@ A Client clicks ``Deposit into Escrow'' on a milestone and chooses Stripe Checko
 \subsubsection{ Fund Milestone with Saved Card}
 
 \fnhead{Function Trigger}
-A Client selects a saved payment card to fund a milestone escrow balance.\newline
-\textbf{Navigation path:} Milestone Card $\rightarrow$ Fund Milestone Modal $\rightarrow$ Select Saved Card $\rightarrow$ Click ``Confirm Payment''.
+A Client opens the ``Fund Milestone Escrow'' drawer, chooses a saved payment card under ``QUICK PAY WITH SAVED CARD'', and clicks ``Pay \$X.00 (1-Click Escrow Deposit)''.\newline
+\textbf{Navigation path:} Milestone Card $\rightarrow$ Click ``Fund Escrow'' $\rightarrow$ Select Saved Card $\rightarrow$ Click ``Pay \$X.00 (1-Click Escrow Deposit)'' $\rightarrow$ Confirm Payment.
 
 \fnhead{Function Description}
 
@@ -671,10 +667,9 @@ A Client selects a saved payment card to fund a milestone escrow balance.\newlin
 
 \sublabel{Interface}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-      \item Fund Milestone modal dialog.
-      \item Saved card dropdown selector displaying masked card snippet and brand logo.
-      \item Escrow deposit summary: Milestone Amount + Platform Fee.
-      \item Primary blue button: ``Deposit \$X.00 into Escrow''.
+      \item ``Fund Milestone Escrow'' right-hand slide-over sheet displaying Milestone summary, ``Deposit Amount'', and ``Client Fee: \$0.00 (Covered in initial contract fee)''.
+      \item ``QUICK PAY WITH SAVED CARD'' section (with link to ``Billing \& Payments'') listing saved cards as selectable cards with brand, masked last 4 digits, expiry date, and ``Selected'' badge.
+      \item Primary blue button ``Pay \$X.00 (1-Click Escrow Deposit)'', confirmation \texttt{AlertDialog} before charge execution, fallback ``Pay with Another Card (Stripe Checkout)'', and ``Cancel''.
 \end{itemize}
 
 \sublabel{Data Processing Overview}
@@ -688,11 +683,11 @@ A Client selects a saved payment card to fund a milestone escrow balance.\newlin
 \end{itemize}
 
 \fnhead{Screen Layout (Mock-up Description)}
-\screenfigure[0.95]{image/screenshot/sprint4/ntin/FundMilestoneWithSavedCard.png}{Fund milestone with saved card modal}
+\screenfigure[0.95]{image/screenshot/sprint4/ntin/FundMilestoneWithSavedCard.png}{Fund Milestone Escrow sheet with 1-Click Saved Card option}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-      \item Modal displays selected card snippet: Visa ending in 4242 with expiry date.
-      \item Deposit amount card shows total amount to be held in secure escrow.
-      \item Primary button ``Confirm Payment (\$X.00)'' with instant loading spinner.
+      \item Top summary card displays Milestone title, Deposit Amount (e.g., \$1,000.00), and ``Client Fee: \$0.00 (Covered in initial contract fee)''.
+      \item ``QUICK PAY WITH SAVED CARD'' renders selectable card rows (e.g., ``MASTERCARD •••• 5100 02/2027'' highlighted with ``Selected'') above the primary blue ``Pay \$1,000.00 (1-Click Escrow Deposit)'' button.
+      \item Fallback ``Pay with Another Card (Stripe Checkout)'' and footer ``Cancel'' buttons sit below.
 \end{itemize}
 
 \fnhead{Function Details}
@@ -718,8 +713,8 @@ A Client selects a saved payment card to fund a milestone escrow balance.\newlin
 
 \sublabel{Normal Flow}
 \begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
-      \item Client opens Fund Milestone modal and selects saved card.
-      \item Client clicks ``Confirm Payment''.
+      \item Client opens the ``Fund Milestone Escrow'' drawer and selects a saved card.
+      \item Client clicks ``Pay \$X.00 (1-Click Escrow Deposit)'' and confirms in the prompt dialog.
       \item System charges saved card off-session via Stripe PaymentIntent.
       \item System marks milestone paymentStatus as \texttt{FUNDED} and records transaction.
       \item Modal closes, displaying success receipt.
