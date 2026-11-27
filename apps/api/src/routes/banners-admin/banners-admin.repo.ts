@@ -88,14 +88,17 @@ export class BannersAdminRepository {
     data: BannerCreateBodyType,
   ): Promise<BannerAdminDetailResponseType> {
     const position = data.position ?? 'GLOBAL_HEADER';
+    const targetIsActive = data.isActive ?? true;
 
-    const existing = await this.prisma.advertisementBanner.findFirst({
-      where: { position },
-      select: { id: true },
-    });
+    if (targetIsActive) {
+      const existing = await this.prisma.advertisementBanner.findFirst({
+        where: { position, isActive: true },
+        select: { id: true },
+      });
 
-    if (existing) {
-      throw BannerPositionTakenException();
+      if (existing) {
+        throw BannerPositionTakenException();
+      }
     }
 
     return this.prisma.advertisementBanner.create({
@@ -106,7 +109,7 @@ export class BannersAdminRepository {
         position,
         startDate: data.startDate ?? null,
         endDate: data.endDate ?? null,
-        isActive: data.isActive ?? true,
+        isActive: targetIsActive,
       },
       select: bannerListSelect,
     });
@@ -119,7 +122,7 @@ export class BannersAdminRepository {
   ): Promise<BannerAdminDetailResponseType> {
     const banner = await this.prisma.advertisementBanner.findFirst({
       where: { id },
-      select: { id: true, position: true },
+      select: { id: true, position: true, isActive: true },
     });
 
     if (!banner) {
@@ -127,10 +130,14 @@ export class BannersAdminRepository {
     }
 
     const newPosition = data.position ?? banner.position;
+    const targetIsActive = data.isActive ?? banner.isActive;
 
-    if (data.position !== undefined && data.position !== banner.position) {
+    if (
+      targetIsActive &&
+      (newPosition !== banner.position || !banner.isActive)
+    ) {
       const existing = await this.prisma.advertisementBanner.findFirst({
-        where: { position: newPosition, id: { not: id } },
+        where: { position: newPosition, isActive: true, id: { not: id } },
         select: { id: true },
       });
 

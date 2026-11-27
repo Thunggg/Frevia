@@ -2,6 +2,7 @@ import { http } from "@/lib/http";
 import type {
   CreateDisputeBodyType,
   DisputeDetailType,
+  DisputeFileType,
   RespondDisputeBodyType,
 } from "@shared/types";
 
@@ -10,12 +11,18 @@ export const disputeApiRequest = {
    * Lấy danh sách yêu cầu giải quyết / tranh chấp của tôi (Client / Freelancer)
    */
   getMyDisputes(
-    query: { page?: number; limit?: number; status?: string } = {},
+    query: {
+      page?: number;
+      limit?: number;
+      status?: string;
+      contractId?: number;
+    } = {},
   ) {
     const params = new URLSearchParams();
     if (query.page) params.append("page", query.page.toString());
     if (query.limit) params.append("limit", query.limit.toString());
     if (query.status) params.append("status", query.status);
+    if (query.contractId) params.append("contractId", query.contractId.toString());
     const qs = params.toString();
     return http.get<{
       data: DisputeDetailType[];
@@ -33,6 +40,15 @@ export const disputeApiRequest = {
    */
   createDispute(body: CreateDisputeBodyType) {
     return http.post<DisputeDetailType>("/disputes", body);
+  },
+
+  /**
+   * Upload tệp bằng chứng cho tranh chấp (tối đa 5 tệp, lưu bảng DisputeFile, bất biến không thể sửa/xóa)
+   */
+  uploadEvidenceFile(file: File) {
+    const formData = new FormData();
+    formData.append("file", file);
+    return http.post<DisputeFileType>("/disputes/files/upload", formData);
   },
 
   /**

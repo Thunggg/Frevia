@@ -9,7 +9,7 @@
 The Administrator Master Data Catalog Management module empowers system administrators to maintain foundational classification dictionaries across \textbf{Frevia}, including: Technical Skills catalogs (\textbf{Skills}), Job \& Industry categories (\textbf{Job Categories}), and Community Forum topic boards (\textbf{Forum Categories}). To maintain data integrity across active job postings, freelancer portfolios, and historical community discussions, all catalog items utilize a non-destructive \textbf{Soft Delete and Restore} lifecycle architecture.
 
 % -----------------------------------------------------------------------------
-\subsubsection[M15.01 -- Skills Catalog Management (UC-11.01--11.06)]{M15.01 -- Skills Catalog Management with Soft Delete \& Restore (UC-11.01 to UC-11.06)}
+\subsubsection[M15.01 -- Skills Catalog Management (UC-38.01--38.06)]{M15.01 -- Skills Catalog Management with Soft Delete \& Restore (UC-38.01 to UC-38.06)}
 
 \begin{itemize}[leftmargin=1.5em,itemsep=2pt]
   \item \textbf{Screen Name \& Route Path:} Skills Management Console -- \texttt{/admin/skills}.
@@ -26,14 +26,14 @@ The Administrator Master Data Catalog Management module empowers system administ
 \paragraph{Step-by-Step User Instructions:}
 \begin{enumerate}[leftmargin=1.8em,itemsep=3pt]
   \item In the Admin sidebar, click \textbf{Skills}.
-  \item \rbadge{1} \textbf{Create New Skill (\textit{+ Create Skill}):} Click the blue \textbf{+ Create Skill} button in the top right to open the creation dialog (specify Skill Name, auto-generated or custom Slug, and Description).
-  \item \rbadge{2} \textbf{Search and Filter Skills (\textit{Search \& Status filter}):} Type a query into the \textit{Search by name, slug or description...} box, or select a status from \textit{Filter Status} (\textit{All}, \textit{Active}, or \textit{Deleted}).
-  \item \rbadge{3} \textbf{Inspect Skills Data Table (\textit{Skills Table}):} Review catalog rows displaying \textit{ID}, \textit{Name}, \textit{Slug}, \textit{Status} badge (\textbf{Active} or \textbf{Deleted}), \textit{Jobs using it} tally, and \textit{Created} date.
+  \item \rbadge{1} \textbf{Create New Skill (\textit{+ Create Skill}):} Click the green \textbf{+ Create Skill} button in the top right to open the creation dialog (specify Skill Name and optional Description; the URL slug is auto-generated on the backend).
+  \item \rbadge{2} \textbf{Search and Filter Skills (\textit{Search \& Filter Status}):} Type a query into \textit{Search by name, slug or description...} or filter by \textit{Filter Status} (\textit{All}, \textit{Active}, or \textit{Deleted}).
+  \item \rbadge{3} \textbf{Inspect Skills Data Table (\textit{Skills Table}):} Review paginated catalog rows displaying \textit{ID}, \textit{Name}, \textit{Slug}, \textit{Status} badge (\textbf{Active} or \textbf{Deleted}), \textit{Jobs using it}, and \textit{Created} date.
   \item \rbadge{4} \textbf{Perform Row Actions (\textit{Actions column}):}
     \begin{itemize}
-      \item Click the pencil icon (\textbf{Pencil icon}) to edit skill attributes.
-      \item Click the trash icon (\textbf{Trash icon}) to execute a \textbf{Soft Delete}. For previously deleted skills (indicated by a red \textbf{Deleted} badge), this button transforms into a circular restore icon (\textbf{Restore icon}), allowing the administrator to reactivate the skill back to \textbf{Active} status.
-      \item Click the eye icon (\textbf{Eye icon}) to view detailed skill metrics at \texttt{/admin/skills/[id]}.
+      \item Click the pencil icon (\textbf{Edit}) to update skill attributes (\texttt{UC-38.04}).
+      \item Click the trash icon (\textbf{Soft Delete}) to archive a skill (\texttt{UC-38.05}); for deleted skills, click the circular restore icon (\textbf{Restore}) to reactivate (\texttt{UC-38.06}).
+      \item Click the eye icon (\textbf{View Detail}) to inspect skill metrics at \texttt{/admin/skills/[id]} (\texttt{UC-38.02}).
     \end{itemize}
 \end{enumerate}
 
@@ -45,7 +45,7 @@ The Administrator Master Data Catalog Management module empowers system administ
 
 % -----------------------------------------------------------------------------
 \newpage
-\subsubsection[M15.02 -- Job Categories Management (UC-12.01--12.06)]{M15.02 -- Job Categories \& Industry Classification Management (UC-12.01 to UC-12.06)}
+\subsubsection[M15.02 -- Job Categories Management (UC-46.01--46.06)]{M15.02 -- Job Categories \& Industry Classification Management (UC-46.01 to UC-46.06)}
 
 \begin{itemize}[leftmargin=1.5em,itemsep=2pt]
   \item \textbf{Screen Name \& Route Path:} Job Category Management Console -- \texttt{/admin/job-categories}.
@@ -56,13 +56,13 @@ The Administrator Master Data Catalog Management module empowers system administ
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.90\textwidth]{images/admin/m15_02_admin_job_categories.png}
-  \caption{Job Categories management console with category hierarchy at \texttt{/admin/job-categories}}
+  \caption{Job Categories management console at \texttt{/admin/job-categories}}
 \end{figure}
 
 \paragraph{Step-by-Step User Instructions:}
 \begin{enumerate}[leftmargin=1.8em,itemsep=3pt]
   \item In the Admin sidebar, click \textbf{Job Categories}.
-  \item \rbadge{1} \textbf{Create New Job Category (\textit{+ Create Category}):} Click \textbf{+ Create Category} to open the category creation dialog (specify Category Name, Slug, Description, and Icon).
+  \item \rbadge{1} \textbf{Create New Job Category (\textit{+ Create Category}):} Click \textbf{+ Create Category} to open the category creation dialog (specify Category Name, optional Description, and initial Status; the slug is generated automatically).
   \item \rbadge{2} \textbf{Search and Status Filter (\textit{Search \& Filter}):} Filter categories by keyword or lifecycle state (\textit{All}, \textit{Active}, \textit{Deleted}).
   \item \rbadge{3} \textbf{Inspect Job Categories Table (\textit{Categories Table}):} Examine records displaying \textit{ID}, \textit{Category Name}, \textit{Slug}, \textit{Description}, \textit{Status}, and associated \textit{Jobs Count}.
   \item \rbadge{4} \textbf{Category Actions (\textit{Actions column}):} Click the pencil icon to update category details, or click the trash/restore icon to perform soft-delete or restore operations.
@@ -75,7 +75,7 @@ The Administrator Master Data Catalog Management module empowers system administ
 
 % -----------------------------------------------------------------------------
 \newpage
-\subsubsection{M15.03 -- Forum Discussion Categories Management (UC-13.01 to UC-13.06)}
+\subsubsection{M15.03 -- Forum Discussion Categories Management (UC-17.01 to UC-17.06)}
 
 \begin{itemize}[leftmargin=1.5em,itemsep=2pt]
   \item \textbf{Screen Name \& Route Path:} Forum Category Management Console -- \texttt{/admin/categories}.
@@ -92,13 +92,49 @@ The Administrator Master Data Catalog Management module empowers system administ
 \paragraph{Step-by-Step User Instructions:}
 \begin{enumerate}[leftmargin=1.8em,itemsep=3pt]
   \item In the Admin sidebar, navigate to \textbf{Forum} $\rightarrow$ \textbf{Categories} (\texttt{/admin/categories}).
-  \item \rbadge{1} \textbf{Create New Forum Category (\textit{+ Create Category}):} Click \textbf{+ Create Category} to open the creation dialog (enter Category Name, Slug, Description, and display order).
-  \item \rbadge{2} \textbf{Search Forum Categories (\textit{Search input}):} Filter community boards by keyword in real time.
-  \item \rbadge{3} \textbf{Inspect Forum Boards Table (\textit{Forum Categories Table}):} View category attributes including \textit{ID}, \textit{Category Name}, \textit{Slug}, \textit{Topics / Posts Count}, and \textit{Status}.
-  \item \rbadge{4} \textbf{Manage Forum Categories (\textit{Actions column}):} Use the action icons to edit category details, archive inactive boards via soft-delete, or restore previously archived boards.
+  \item \rbadge{1} \textbf{Create New Forum Category (\textit{+ Create Category}):} Click \textbf{+ Create Category} to open the creation dialog (enter Category Name and optional Description; the slug is generated automatically).
+  \item \rbadge{2} \textbf{Search \& Filter Forum Categories (\textit{Search \& Status}):} Filter community boards by keyword or status (\textit{All}, \textit{Active}, \textit{Deleted}).
+  \item \rbadge{3} \textbf{Inspect Forum Boards Table (\textit{Forum Categories Table}):} View category attributes including \textit{ID}, \textit{Name}, \textit{Slug}, \textit{Status} (\textbf{Active} or \textbf{Deleted}), \textit{Posts} count, and \textit{Created} date.
+  \item \rbadge{4} \textbf{Manage Forum Categories (\textit{Actions column}):} Click the eye icon to view category detail at \texttt{/admin/categories/[id]} (\texttt{UC-17.05}), the pencil icon to edit (\texttt{UC-17.02}), the trash icon to soft-delete (\texttt{UC-17.03}), or the restore icon on deleted rows to restore (\texttt{UC-17.06}).
 \end{enumerate}
 
 \paragraph{Expected Output \& Exception Handling:}
 \begin{itemize}[leftmargin=1.5em,itemsep=2pt]
   \item \textbf{Success Scenario:} Community discussion boards on \texttt{/forum} update in real time based on active category configurations.
+\end{itemize}
+
+% -----------------------------------------------------------------------------
+\newpage
+\subsubsection[M15.04 -- Advertisement Banners Management (UC-37.01--37.05)]{M15.04 -- Advertisement Banners Management (UC-37.01 to UC-37.05)}
+
+\begin{itemize}[leftmargin=1.5em,itemsep=2pt]
+  \item \textbf{Screen Name \& Route Path:} Banner Management Console -- \texttt{/admin/banners}.
+  \item \textbf{Target Actor:} Administrator.
+  \item \textbf{Preconditions:} Administrator has permissions to access \texttt{ADMIN\_BANNERS}.
+\end{itemize}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.84\textwidth]{images/admin/m15_04_admin_banners.png}
+  \caption{Advertisement Banners management console at \texttt{/admin/banners} (UC-37.01, UC-37.02, UC-37.04, UC-37.05)}
+\end{figure}
+
+\paragraph{Step-by-Step User Instructions:}
+\begin{enumerate}[leftmargin=1.8em,itemsep=3pt]
+  \item In the Admin sidebar, click \textbf{Banners} (\texttt{/admin/banners}).
+  \item \rbadge{1} \textbf{Create New Banner (\textit{+ Create Banner}):} Click \textbf{+ Create Banner} to open the banner creation modal (\texttt{UC-37.03}).
+  \item \rbadge{2} \textbf{Search \& Filter by Position (\textit{Search \& Position dropdown}):} Filter banners by title keyword or display slot (e.g., \textit{Global Header Strip}).
+  \item \rbadge{3} \textbf{Inspect Banners Table (\textit{Banners Table}):} Review banner \textit{ID}, thumbnail preview and \textit{Title}, \textit{Position}, \textit{Schedule} dates, \textit{Status}, and \textit{Created} date (\texttt{UC-37.01}).
+  \item \rbadge{4} \textbf{Perform Row Actions (\textit{Actions column}):} Click the pencil icon to update a banner (\texttt{UC-37.04}), the trash icon to permanently hard-delete a banner (\texttt{UC-37.05}), or the eye icon to view banner details at \texttt{/admin/banners/[id]} (\texttt{UC-37.02}).
+\end{enumerate}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.80\textwidth]{images/admin/m15_04b_admin_banner_dialog.png}
+  \caption{Create New Banner dialog configuring title, position, image upload, target link, and schedule (UC-37.03)}
+\end{figure}
+
+\paragraph{Expected Output \& Exception Handling:}
+\begin{itemize}[leftmargin=1.5em,itemsep=2pt]
+  \item \textbf{Success Scenario:} Published active banners within their scheduled date range render immediately in their assigned display positions across the platform. Hard deletion permanently removes the banner record from the database.
 \end{itemize}

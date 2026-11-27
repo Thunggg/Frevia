@@ -6,7 +6,6 @@ jest.mock('fs/promises', () => ({
 }));
 import { Prisma } from '@prisma/client';
 import * as shared from '@shared/types';
-import * as path from 'path';
 import * as storage from 'fs/promises';
 import { ReviewService } from '../../src/routes/reviews/review.service';
 
@@ -39,20 +38,11 @@ describe('ReviewService (UF-151 to UF-158)', () => {
     uploadFile: jest.fn(),
     deleteFile: jest.fn(),
   };
-  const hashing = { verify: jest.fn(), hash: jest.fn() };
   const outbox = { enqueueAndProcess: jest.fn() };
-  const ai = { analyze: jest.fn() };
-  const resolver = { resolveSkillEntries: jest.fn() };
-  const identityAi = { verify: jest.fn(), livenessPose: jest.fn() };
-  const token = { signAccessToken: jest.fn() };
   const fixedDate = new Date('2026-11-09T00:00:00Z');
   const service = new ReviewService(repository as never);
-  let profile: any;
-  let user: any;
   let contract: any;
   let review: any;
-  let revision: any;
-  let expertUser: any;
   beforeEach(() => {
     jest.clearAllMocks();
     jest.resetAllMocks();
@@ -331,19 +321,19 @@ describe('ReviewService (UF-151 to UF-158)', () => {
       );
     });
     // UTCID08: Xử lý tình huống accepts overallRating minimum; đối chiếu kết quả và tác động phụ.
-    it('accepts overallRating minimum', async () => {
+    it('accepts overallRating minimum', () => {
       const result = shared.CreateReviewSchema.safeParse({ overallRating: 1 });
       expect(result.success).toBe(true);
       if (result.success) expect(result.data).toEqual({ overallRating: 1 });
     });
     // UTCID09: Xử lý tình huống accepts overallRating maximum; đối chiếu kết quả và tác động phụ.
-    it('accepts overallRating maximum', async () => {
+    it('accepts overallRating maximum', () => {
       const result = shared.CreateReviewSchema.safeParse({ overallRating: 5 });
       expect(result.success).toBe(true);
       if (result.success) expect(result.data).toEqual({ overallRating: 5 });
     });
     // UTCID10: Từ chối tình huống rejects overallRating below minimum; trả mã 400.
-    it('rejects overallRating below minimum', async () => {
+    it('rejects overallRating below minimum', () => {
       const result = shared.CreateReviewSchema.safeParse({ overallRating: 0 });
       expect(result.success).toBe(false);
       if (!result.success)
@@ -360,7 +350,7 @@ describe('ReviewService (UF-151 to UF-158)', () => {
         ]);
     });
     // UTCID11: Từ chối tình huống rejects overallRating above maximum; trả mã 400.
-    it('rejects overallRating above maximum', async () => {
+    it('rejects overallRating above maximum', () => {
       const result = shared.CreateReviewSchema.safeParse({ overallRating: 6 });
       expect(result.success).toBe(false);
       if (!result.success)
@@ -377,7 +367,7 @@ describe('ReviewService (UF-151 to UF-158)', () => {
         ]);
     });
     // UTCID12: Xử lý tình huống accepts overallRating fraction; đối chiếu kết quả và tác động phụ.
-    it('accepts overallRating fraction', async () => {
+    it('accepts overallRating fraction', () => {
       const result = shared.CreateReviewSchema.safeParse({
         overallRating: 4.5,
       });
@@ -385,7 +375,7 @@ describe('ReviewService (UF-151 to UF-158)', () => {
       if (result.success) expect(result.data).toEqual({ overallRating: 4.5 });
     });
     // UTCID13: Xử lý tình huống accepts overallRating numeric string; đối chiếu kết quả và tác động phụ.
-    it('accepts overallRating numeric string', async () => {
+    it('accepts overallRating numeric string', () => {
       const result = shared.CreateReviewSchema.safeParse({
         overallRating: '4',
       });
@@ -393,7 +383,7 @@ describe('ReviewService (UF-151 to UF-158)', () => {
       if (result.success) expect(result.data).toEqual({ overallRating: 4 });
     });
     // UTCID14: Từ chối tình huống rejects overallRating not numeric; trả mã 400.
-    it('rejects overallRating not numeric', async () => {
+    it('rejects overallRating not numeric', () => {
       const result = shared.CreateReviewSchema.safeParse({
         overallRating: 'bad',
       });
@@ -412,7 +402,7 @@ describe('ReviewService (UF-151 to UF-158)', () => {
         ]);
     });
     // UTCID15: Xử lý tình huống accepts comment null; đối chiếu kết quả và tác động phụ.
-    it('accepts comment null', async () => {
+    it('accepts comment null', () => {
       const result = shared.CreateReviewSchema.safeParse({
         overallRating: 4,
         comment: null,
@@ -422,7 +412,7 @@ describe('ReviewService (UF-151 to UF-158)', () => {
         expect(result.data).toEqual({ overallRating: 4, comment: null });
     });
     // UTCID16: Xử lý tình huống accepts comment maximum; đối chiếu kết quả và tác động phụ.
-    it('accepts comment maximum', async () => {
+    it('accepts comment maximum', () => {
       const result = shared.CreateReviewSchema.safeParse({
         overallRating: 4,
         comment: 'x'.repeat(3000),
@@ -435,7 +425,7 @@ describe('ReviewService (UF-151 to UF-158)', () => {
         });
     });
     // UTCID17: Từ chối tình huống rejects comment above maximum; trả mã 400.
-    it('rejects comment above maximum', async () => {
+    it('rejects comment above maximum', () => {
       const result = shared.CreateReviewSchema.safeParse({
         overallRating: 4,
         comment: 'x'.repeat(3001),
@@ -455,7 +445,7 @@ describe('ReviewService (UF-151 to UF-158)', () => {
         ]);
     });
     // UTCID18: Xử lý tình huống accepts breakdown null; đối chiếu kết quả và tác động phụ.
-    it('accepts breakdown null', async () => {
+    it('accepts breakdown null', () => {
       const result = shared.CreateReviewSchema.safeParse({
         overallRating: 4,
         breakdown: null,
@@ -465,7 +455,7 @@ describe('ReviewService (UF-151 to UF-158)', () => {
         expect(result.data).toEqual({ overallRating: 4, breakdown: null });
     });
     // UTCID19: Xử lý tình huống accepts breakdown maximum count; đối chiếu kết quả và tác động phụ.
-    it('accepts breakdown maximum count', async () => {
+    it('accepts breakdown maximum count', () => {
       const result = shared.CreateReviewSchema.safeParse({
         overallRating: 4,
         breakdown: {
@@ -500,7 +490,7 @@ describe('ReviewService (UF-151 to UF-158)', () => {
         });
     });
     // UTCID20: Từ chối tình huống rejects breakdown above count; trả mã 400.
-    it('rejects breakdown above count', async () => {
+    it('rejects breakdown above count', () => {
       const result = shared.CreateReviewSchema.safeParse({
         overallRating: 4,
         breakdown: {
@@ -532,7 +522,7 @@ describe('ReviewService (UF-151 to UF-158)', () => {
         ]);
     });
     // UTCID21: Từ chối tình huống rejects breakdown invalid rating; trả mã 400.
-    it('rejects breakdown invalid rating', async () => {
+    it('rejects breakdown invalid rating', () => {
       const result = shared.CreateReviewSchema.safeParse({
         overallRating: 4,
         breakdown: { quality: 0 },
@@ -552,7 +542,7 @@ describe('ReviewService (UF-151 to UF-158)', () => {
         ]);
     });
     // UTCID22: Xử lý tình huống accepts breakdown maximum key; đối chiếu kết quả và tác động phụ.
-    it('accepts breakdown maximum key', async () => {
+    it('accepts breakdown maximum key', () => {
       const result = shared.CreateReviewSchema.safeParse({
         overallRating: 4,
         breakdown: { xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx: 4 },
@@ -565,7 +555,7 @@ describe('ReviewService (UF-151 to UF-158)', () => {
         });
     });
     // UTCID23: Từ chối tình huống rejects breakdown above key; trả mã 400.
-    it('rejects breakdown above key', async () => {
+    it('rejects breakdown above key', () => {
       const result = shared.CreateReviewSchema.safeParse({
         overallRating: 4,
         breakdown: { xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx: 4 },
@@ -588,7 +578,7 @@ describe('ReviewService (UF-151 to UF-158)', () => {
         ]);
     });
     // UTCID24: Từ chối tình huống rejects overallRating missing; trả mã 400.
-    it('rejects overallRating missing', async () => {
+    it('rejects overallRating missing', () => {
       const result = shared.CreateReviewSchema.safeParse({});
       expect(result.success).toBe(false);
       if (!result.success)
@@ -640,19 +630,19 @@ describe('ReviewService (UF-151 to UF-158)', () => {
       });
     });
     // UTCID04: Xử lý tình huống accepts overallRating minimum; đối chiếu kết quả và tác động phụ.
-    it('accepts overallRating minimum', async () => {
+    it('accepts overallRating minimum', () => {
       const result = shared.UpdateReviewSchema.safeParse({ overallRating: 1 });
       expect(result.success).toBe(true);
       if (result.success) expect(result.data).toEqual({ overallRating: 1 });
     });
     // UTCID05: Xử lý tình huống accepts overallRating maximum; đối chiếu kết quả và tác động phụ.
-    it('accepts overallRating maximum', async () => {
+    it('accepts overallRating maximum', () => {
       const result = shared.UpdateReviewSchema.safeParse({ overallRating: 5 });
       expect(result.success).toBe(true);
       if (result.success) expect(result.data).toEqual({ overallRating: 5 });
     });
     // UTCID06: Từ chối tình huống rejects overallRating below minimum; trả mã 400.
-    it('rejects overallRating below minimum', async () => {
+    it('rejects overallRating below minimum', () => {
       const result = shared.UpdateReviewSchema.safeParse({ overallRating: 0 });
       expect(result.success).toBe(false);
       if (!result.success)
@@ -669,7 +659,7 @@ describe('ReviewService (UF-151 to UF-158)', () => {
         ]);
     });
     // UTCID07: Từ chối tình huống rejects overallRating above maximum; trả mã 400.
-    it('rejects overallRating above maximum', async () => {
+    it('rejects overallRating above maximum', () => {
       const result = shared.UpdateReviewSchema.safeParse({ overallRating: 6 });
       expect(result.success).toBe(false);
       if (!result.success)
@@ -686,7 +676,7 @@ describe('ReviewService (UF-151 to UF-158)', () => {
         ]);
     });
     // UTCID08: Xử lý tình huống accepts overallRating fraction; đối chiếu kết quả và tác động phụ.
-    it('accepts overallRating fraction', async () => {
+    it('accepts overallRating fraction', () => {
       const result = shared.UpdateReviewSchema.safeParse({
         overallRating: 4.5,
       });
@@ -694,7 +684,7 @@ describe('ReviewService (UF-151 to UF-158)', () => {
       if (result.success) expect(result.data).toEqual({ overallRating: 4.5 });
     });
     // UTCID09: Xử lý tình huống accepts overallRating numeric string; đối chiếu kết quả và tác động phụ.
-    it('accepts overallRating numeric string', async () => {
+    it('accepts overallRating numeric string', () => {
       const result = shared.UpdateReviewSchema.safeParse({
         overallRating: '4',
       });
@@ -702,7 +692,7 @@ describe('ReviewService (UF-151 to UF-158)', () => {
       if (result.success) expect(result.data).toEqual({ overallRating: 4 });
     });
     // UTCID10: Từ chối tình huống rejects overallRating not numeric; trả mã 400.
-    it('rejects overallRating not numeric', async () => {
+    it('rejects overallRating not numeric', () => {
       const result = shared.UpdateReviewSchema.safeParse({
         overallRating: 'bad',
       });
@@ -721,7 +711,7 @@ describe('ReviewService (UF-151 to UF-158)', () => {
         ]);
     });
     // UTCID11: Xử lý tình huống accepts comment null; đối chiếu kết quả và tác động phụ.
-    it('accepts comment null', async () => {
+    it('accepts comment null', () => {
       const result = shared.UpdateReviewSchema.safeParse({
         overallRating: 4,
         comment: null,
@@ -731,7 +721,7 @@ describe('ReviewService (UF-151 to UF-158)', () => {
         expect(result.data).toEqual({ overallRating: 4, comment: null });
     });
     // UTCID12: Xử lý tình huống accepts comment maximum; đối chiếu kết quả và tác động phụ.
-    it('accepts comment maximum', async () => {
+    it('accepts comment maximum', () => {
       const result = shared.UpdateReviewSchema.safeParse({
         overallRating: 4,
         comment: 'x'.repeat(3000),
@@ -744,7 +734,7 @@ describe('ReviewService (UF-151 to UF-158)', () => {
         });
     });
     // UTCID13: Từ chối tình huống rejects comment above maximum; trả mã 400.
-    it('rejects comment above maximum', async () => {
+    it('rejects comment above maximum', () => {
       const result = shared.UpdateReviewSchema.safeParse({
         overallRating: 4,
         comment: 'x'.repeat(3001),
@@ -764,7 +754,7 @@ describe('ReviewService (UF-151 to UF-158)', () => {
         ]);
     });
     // UTCID14: Xử lý tình huống accepts breakdown null; đối chiếu kết quả và tác động phụ.
-    it('accepts breakdown null', async () => {
+    it('accepts breakdown null', () => {
       const result = shared.UpdateReviewSchema.safeParse({
         overallRating: 4,
         breakdown: null,
@@ -774,7 +764,7 @@ describe('ReviewService (UF-151 to UF-158)', () => {
         expect(result.data).toEqual({ overallRating: 4, breakdown: null });
     });
     // UTCID15: Xử lý tình huống accepts breakdown maximum count; đối chiếu kết quả và tác động phụ.
-    it('accepts breakdown maximum count', async () => {
+    it('accepts breakdown maximum count', () => {
       const result = shared.UpdateReviewSchema.safeParse({
         overallRating: 4,
         breakdown: {
@@ -809,7 +799,7 @@ describe('ReviewService (UF-151 to UF-158)', () => {
         });
     });
     // UTCID16: Từ chối tình huống rejects breakdown above count; trả mã 400.
-    it('rejects breakdown above count', async () => {
+    it('rejects breakdown above count', () => {
       const result = shared.UpdateReviewSchema.safeParse({
         overallRating: 4,
         breakdown: {
@@ -841,7 +831,7 @@ describe('ReviewService (UF-151 to UF-158)', () => {
         ]);
     });
     // UTCID17: Từ chối tình huống rejects breakdown invalid rating; trả mã 400.
-    it('rejects breakdown invalid rating', async () => {
+    it('rejects breakdown invalid rating', () => {
       const result = shared.UpdateReviewSchema.safeParse({
         overallRating: 4,
         breakdown: { quality: 0 },
@@ -861,7 +851,7 @@ describe('ReviewService (UF-151 to UF-158)', () => {
         ]);
     });
     // UTCID18: Xử lý tình huống accepts breakdown maximum key; đối chiếu kết quả và tác động phụ.
-    it('accepts breakdown maximum key', async () => {
+    it('accepts breakdown maximum key', () => {
       const result = shared.UpdateReviewSchema.safeParse({
         overallRating: 4,
         breakdown: { xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx: 4 },
@@ -874,7 +864,7 @@ describe('ReviewService (UF-151 to UF-158)', () => {
         });
     });
     // UTCID19: Từ chối tình huống rejects breakdown above key; trả mã 400.
-    it('rejects breakdown above key', async () => {
+    it('rejects breakdown above key', () => {
       const result = shared.UpdateReviewSchema.safeParse({
         overallRating: 4,
         breakdown: { xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx: 4 },
@@ -897,7 +887,7 @@ describe('ReviewService (UF-151 to UF-158)', () => {
         ]);
     });
     // UTCID20: Từ chối tình huống rejects overallRating empty update; trả mã 400.
-    it('rejects overallRating empty update', async () => {
+    it('rejects overallRating empty update', () => {
       const result = shared.UpdateReviewSchema.safeParse({});
       expect(result.success).toBe(false);
       if (!result.success)
@@ -1030,7 +1020,7 @@ describe('ReviewService (UF-151 to UF-158)', () => {
       });
     });
     // UTCID07: Từ chối tình huống rejects responseText missing; trả mã 400.
-    it('rejects responseText missing', async () => {
+    it('rejects responseText missing', () => {
       const result = shared.CreateReviewResponseSchema.safeParse({});
       expect(result.success).toBe(false);
       if (!result.success)
@@ -1047,7 +1037,7 @@ describe('ReviewService (UF-151 to UF-158)', () => {
         ]);
     });
     // UTCID08: Từ chối tình huống rejects responseText empty; trả mã 400.
-    it('rejects responseText empty', async () => {
+    it('rejects responseText empty', () => {
       const result = shared.CreateReviewResponseSchema.safeParse({
         responseText: '',
       });
@@ -1066,7 +1056,7 @@ describe('ReviewService (UF-151 to UF-158)', () => {
         ]);
     });
     // UTCID09: Xử lý tình huống accepts responseText minimum; đối chiếu kết quả và tác động phụ.
-    it('accepts responseText minimum', async () => {
+    it('accepts responseText minimum', () => {
       const result = shared.CreateReviewResponseSchema.safeParse({
         responseText: 'x',
       });
@@ -1074,7 +1064,7 @@ describe('ReviewService (UF-151 to UF-158)', () => {
       if (result.success) expect(result.data).toEqual({ responseText: 'x' });
     });
     // UTCID10: Xử lý tình huống accepts responseText maximum; đối chiếu kết quả và tác động phụ.
-    it('accepts responseText maximum', async () => {
+    it('accepts responseText maximum', () => {
       const result = shared.CreateReviewResponseSchema.safeParse({
         responseText: 'x'.repeat(3000),
       });
@@ -1083,7 +1073,7 @@ describe('ReviewService (UF-151 to UF-158)', () => {
         expect(result.data).toEqual({ responseText: 'x'.repeat(3000) });
     });
     // UTCID11: Từ chối tình huống rejects responseText above maximum; trả mã 400.
-    it('rejects responseText above maximum', async () => {
+    it('rejects responseText above maximum', () => {
       const result = shared.CreateReviewResponseSchema.safeParse({
         responseText: 'x'.repeat(3001),
       });
@@ -1139,7 +1129,7 @@ describe('ReviewService (UF-151 to UF-158)', () => {
       });
     });
     // UTCID04: Từ chối tình huống rejects responseText missing; trả mã 400.
-    it('rejects responseText missing', async () => {
+    it('rejects responseText missing', () => {
       const result = shared.UpdateReviewResponseSchema.safeParse({});
       expect(result.success).toBe(false);
       if (!result.success)
@@ -1156,7 +1146,7 @@ describe('ReviewService (UF-151 to UF-158)', () => {
         ]);
     });
     // UTCID05: Từ chối tình huống rejects responseText empty; trả mã 400.
-    it('rejects responseText empty', async () => {
+    it('rejects responseText empty', () => {
       const result = shared.UpdateReviewResponseSchema.safeParse({
         responseText: '',
       });
@@ -1175,7 +1165,7 @@ describe('ReviewService (UF-151 to UF-158)', () => {
         ]);
     });
     // UTCID06: Xử lý tình huống accepts responseText minimum; đối chiếu kết quả và tác động phụ.
-    it('accepts responseText minimum', async () => {
+    it('accepts responseText minimum', () => {
       const result = shared.UpdateReviewResponseSchema.safeParse({
         responseText: 'x',
       });
@@ -1183,7 +1173,7 @@ describe('ReviewService (UF-151 to UF-158)', () => {
       if (result.success) expect(result.data).toEqual({ responseText: 'x' });
     });
     // UTCID07: Xử lý tình huống accepts responseText maximum; đối chiếu kết quả và tác động phụ.
-    it('accepts responseText maximum', async () => {
+    it('accepts responseText maximum', () => {
       const result = shared.UpdateReviewResponseSchema.safeParse({
         responseText: 'x'.repeat(3000),
       });
@@ -1192,7 +1182,7 @@ describe('ReviewService (UF-151 to UF-158)', () => {
         expect(result.data).toEqual({ responseText: 'x'.repeat(3000) });
     });
     // UTCID08: Từ chối tình huống rejects responseText above maximum; trả mã 400.
-    it('rejects responseText above maximum', async () => {
+    it('rejects responseText above maximum', () => {
       const result = shared.UpdateReviewResponseSchema.safeParse({
         responseText: 'x'.repeat(3001),
       });

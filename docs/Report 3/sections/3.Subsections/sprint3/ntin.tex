@@ -28,7 +28,6 @@ A Client or Freelancer clicks the ``Open Dispute'' action button on a funded mil
 \sublabel{Actors / Roles}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
       \item \textbf{Primary Actor:} Client, Freelancer.
-      \item \textbf{Secondary Actor:} Administrator (\texttt{ADMIN} role).
       \item \textbf{Supporting Systems:} Frevia Web application (Next.js), Frevia REST API (NestJS), Prisma ORM layer, and PostgreSQL relational database.
 \end{itemize}
 
@@ -54,7 +53,7 @@ A Client or Freelancer clicks the ``Open Dispute'' action button on a funded mil
       \item Checks that no existing active dispute is currently open on this milestone.
       \item Inside a database transaction:
             \begin{itemize}[leftmargin=1.6em,topsep=2pt,itemsep=2pt,parsep=0pt]
-                  \item Creates a new \texttt{Dispute} entity with status \texttt{OPEN} and records the initiator ID and respondent ID.
+                  \item Creates a new \texttt{Dispute} entity with status \texttt{WAITING\_RESPONSE} and records the initiator ID and respondent ID.
                   \item Persists associated evidence records in \texttt{DisputeEvidence}.
                   \item Updates milestone status to \texttt{DISPUTED}, freezing funds in escrow.
             \end{itemize}
@@ -78,8 +77,8 @@ A Client or Freelancer clicks the ``Open Dispute'' action button on a funded mil
       \texttt{milestoneId} & Numeric identifier of the funded milestone being disputed (integer, positive).\\ \hline
       \texttt{reason} & Category summary of the dispute claim (string, 3--255 characters).\\ \hline
       \texttt{description} & Detailed claim narrative explaining the issue and requested outcome (string, 10--5000 characters).\\ \hline
-      \texttt{resolutionType} & Optional proposed resolution type (e.g., \texttt{REFUND}, \texttt{SPLIT}, \texttt{REVISE}).\\ \hline
-      \texttt{proposedFreelancerAmount} & Optional proposed amount to be paid to the freelancer (number, $\ge 0$).\\ \hline
+      \texttt{resolutionType} & Optional proposed resolution type (\texttt{FULL\_REFUND}, \texttt{FULL\_RELEASE}, \texttt{PARTIAL\_REFUND}, \texttt{EXTEND\_DEADLINE}).\\ \hline
+      \texttt{proposed\allowbreak{}Freelancer\allowbreak{}Amount} & Optional proposed amount to be paid to the freelancer (number, $\ge 0$).\\ \hline
       \texttt{proposedClientAmount} & Optional proposed refund amount to the client (number, $\ge 0$).\\ \hline
       \texttt{proposedDueDate} & Optional proposed revised milestone deadline (ISO 8601 datetime string).\\ \hline
       \texttt{evidenceFiles} & Array of file IDs and optional descriptions (max 5 items).\\ \hline
@@ -113,20 +112,20 @@ A Client or Freelancer clicks the ``Open Dispute'' action button on a funded mil
 
 \sublabel{Abnormal Flow / Exception Handling}
 \begin{flowtable}{Case}{Description}
-      A1 & Milestone not funded or already completed. API returns HTTP 400: ``Disputes can only be opened on funded, incomplete milestones.''\\ \hline
-      A2 & Dispute already active for this milestone. API returns HTTP 409 Conflict: ``A dispute is already active for this milestone.''\\ \hline
-      A3 & User is not a party to the contract. API returns HTTP 403 Forbidden: ``You do not have permission to dispute this milestone.''\\ \hline
-      A4 & Evidence file limit exceeded ($> 5$). API returns HTTP 422: ``Maximum 5 evidence files allowed.''\\ \hline
+      A1 & Milestone not funded or already completed. API returns HTTP 422 (\texttt{MilestoneCannotBeDisputedException}).\\ \hline
+      A2 & Dispute already active for this milestone. API returns HTTP 422 (\texttt{MilestoneAlreadyDisputedException}).\\ \hline
+      A3 & User is not a party to the contract. API returns HTTP 403 Forbidden (\texttt{DisputeForbiddenException}).\\ \hline
+      A4 & Evidence file limit exceeded ($> 5$). API returns HTTP 400 (\texttt{DisputeEvidenceLimitExceededException}).\\ \hline
 \end{flowtable}
 
 \sublabel{Output Data}
 \begin{specdatatable}{Data Name}{Description}
-      \texttt{dispute} & Full created dispute object including id, milestoneId, status (\texttt{OPEN}), responseDeadline, and evidence attachments.\\ \hline
+      \texttt{dispute} & Full created dispute object including id, milestoneId, status (\texttt{WAITING\_RESPONSE}), responseDeadline, and evidence attachments.\\ \hline
 \end{specdatatable}
 
 \sublabel{Post-Conditions}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-      \item Dispute record created with status \texttt{OPEN}.
+      \item Dispute record created with status \texttt{WAITING\_RESPONSE}.
       \item Milestone status transitioned to \texttt{DISPUTED}; escrow balance locked.
       \item Respondent notified with 48-hour deadline countdown.
 \end{itemize}
@@ -145,26 +144,25 @@ A user navigates to the ``Disputes'' section from the main navigation menu.\newl
 
 \sublabel{Actors / Roles}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-      \item \textbf{Primary Actor:} Client, Freelancer, Administrator, Expert.
+      \item \textbf{Primary Actor:} Client, Freelancer.
       \item \textbf{Supporting Systems:} Frevia Web application, Frevia REST API, Prisma ORM, and PostgreSQL database.
 \end{itemize}
 
 \sublabel{Purpose}
-\noindent Allows contract participants, administrators, or expert arbitrators to retrieve a comprehensive, paginated list of dispute cases associated with their account, complete with status filter tabs and urgency countdown indicators.
+\noindent Allows contract participants to retrieve a paginated list of dispute cases where they are a direct party, complete with status filters and urgency countdown indicators.
 
 \sublabel{Interface}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-      \item Disputes dashboard page with status filter tabs: ``All'', ``Waiting Response'', ``Under Review'', ``Escalated'', ``Resolved'', ``Closed''.
-      \item Search input allowing query by contract title or milestone name.
+      \item Disputes dashboard page with status filter tabs: ``All'', ``Waiting Response'', ``Under Review'', ``Finalized'', ``Cancelled''.
       \item Dispute summary cards rendering: Contract Name, Disputed Milestone, Counterparty Avatar/Name, Disputed Amount (\$USD), Response Deadline countdown, and Status Badge.
       \item Pagination controls footer with page size selector.
 \end{itemize}
 
 \sublabel{Data Processing Overview}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-      \item Client submits an HTTP request: \texttt{GET /api/disputes} with query parameters \texttt{status}, \texttt{page}, \texttt{limit}, \texttt{sortBy}, \texttt{order}.
-      \item \texttt{DisputeService.listMyDisputes()} filters disputes where \texttt{openedById === userId || respondentId === userId} (or all for Admin).
-      \item Queries database records ordered chronologically and computes pagination metadata.
+      \item Client submits an HTTP request: \texttt{GET /\allowbreak{}api/\allowbreak{}disputes} with query parameters \texttt{status}, \texttt{page}, \texttt{limit}, \texttt{sortBy}, \texttt{order}.
+      \item \texttt{DisputeService.listMyDisputes()} restricts query strictly to records where \texttt{openedById === userId || respondentId === userId}.
+      \item Queries database records ordered by \texttt{sortBy} and \texttt{order}, and computes pagination metadata.
       \item Returns HTTP 200 with the array of dispute records and pagination envelope.
 \end{itemize}
 
@@ -172,7 +170,7 @@ A user navigates to the ``Disputes'' section from the main navigation menu.\newl
 \screenfigure[0.95]{image/screenshot/sprint3/ntin/ViewDisputeList.png}{Disputes management list screen}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
       \item Header renders page title ``Dispute Resolution Center'' and informational count badges.
-      \item Filter tabs across the top allow switching between active disputes, urgent responses, and resolved archives.
+      \item Filter tabs across the top allow switching between waiting response, under review, finalized, and cancelled disputes.
       \item Case list displays card items with yellow/red urgency pills indicating hours remaining before automatic default.
       \item Action button ``View Case Details'' opens the dispute workspace.
 \end{itemize}
@@ -181,7 +179,7 @@ A user navigates to the ``Disputes'' section from the main navigation menu.\newl
 
 \sublabel{Input Data}
 \begin{specdatatable}{Data Name}{Description}
-      \texttt{status} & Optional dispute status filter (\texttt{OPEN}, \texttt{WAITING\_RESPONSE}, \texttt{UNDER\_REVIEW}, \texttt{ESCALATED\_TO\_EXPERT}, \texttt{RESOLVED}, \texttt{CLOSED}).\\ \hline
+      \texttt{status} & Optional \texttt{DisputeStatus} filter (\texttt{OPEN}, \texttt{WAITING\_RESPONSE}, \texttt{UNDER\_REVIEW}, \texttt{DECISION\_MADE}, \texttt{REVIEW\_REQUESTED}, \texttt{FINALIZED}, \texttt{CANCELLED}).\\ \hline
       \texttt{page} & Page number (integer, default 1).\\ \hline
       \texttt{limit} & Items per page (integer, default 10, max 50).\\ \hline
       \texttt{sortBy} & Sort column (\texttt{createdAt}, \texttt{updatedAt}, \texttt{responseDeadline}, default \texttt{createdAt}).\\ \hline
@@ -191,7 +189,7 @@ A user navigates to the ``Disputes'' section from the main navigation menu.\newl
 \sublabel{Validation Rules}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
       \item User must be authenticated.
-      \item Non-administrative callers receive only dispute records where they are a direct party.
+      \item Callers receive exclusively dispute records where they are a direct party (\texttt{openedById} or \texttt{respondentId}).
 \end{itemize}
 
 \sublabel{Business Rules}
@@ -239,7 +237,7 @@ A user clicks on a dispute card from the list or follows a dispute notification 
 
 \sublabel{Actors / Roles}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-      \item \textbf{Primary Actor:} Client, Freelancer, Administrator, Expert.
+      \item \textbf{Primary Actor:} Client, Freelancer.
       \item \textbf{Supporting Systems:} Frevia Web application, Frevia REST API, Prisma ORM, and PostgreSQL database.
 \end{itemize}
 
@@ -257,9 +255,9 @@ A user clicks on a dispute card from the list or follows a dispute notification 
 
 \sublabel{Data Processing Overview}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-      \item Client requests \texttt{GET /api/disputes/:id}.
-      \item \texttt{DisputeService.getDisputeDetail()} verifies caller authorization: caller must be \texttt{openedById}, \texttt{respondentId}, an \texttt{ADMIN}, or an assigned \texttt{EXPERT}.
-      \item Retrieves dispute entity with milestone, contract, evidence files, and decision review records.
+      \item Client requests \texttt{GET /\allowbreak{}api/\allowbreak{}disputes/\allowbreak{}:\allowbreak{}id}.
+      \item \texttt{DisputeService.getDisputeDetail()} verifies caller authorization strictly: caller must be \texttt{openedById} or \texttt{respondentId}.
+      \item Retrieves dispute entity with milestone, contract, and evidence files.
       \item Returns HTTP 200 with the complete dispute case file.
 \end{itemize}
 
@@ -282,12 +280,12 @@ A user clicks on a dispute card from the list or follows a dispute notification 
 \sublabel{Validation Rules}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
       \item Dispute ID must exist in the database.
-      \item Caller must be an authorized case participant, Administrator, or assigned Expert.
+      \item Caller must be a direct dispute participant (\texttt{openedById} or \texttt{respondentId}).
 \end{itemize}
 
 \sublabel{Business Rules}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
-      \item BR-DISPUTE-06: Case evidence and claims are strictly accessible only to direct case participants, designated administrators, and assigned experts.
+      \item BR-DISPUTE-06: On the user dispute endpoints, case evidence and claims are accessible exclusively to direct dispute participants (\texttt{openedById} or \texttt{respondentId}).
 \end{itemize}
 
 \sublabel{Normal Flow}
@@ -300,7 +298,7 @@ A user clicks on a dispute card from the list or follows a dispute notification 
 
 \sublabel{Abnormal Flow / Exception Handling}
 \begin{flowtable}{Case}{Description}
-      A1 & Caller is not a case participant or admin/expert. API returns HTTP 403 Forbidden: ``Access Denied: You do not have permission to view this dispute.''\\ \hline
+      A1 & Caller is not a dispute participant. API returns HTTP 403 Forbidden (\texttt{DisputeForbiddenException}).\\ \hline
       A2 & Dispute ID does not exist. API returns HTTP 404 Not Found: ``Dispute not found.''\\ \hline
 \end{flowtable}
 
@@ -328,7 +326,7 @@ A contract workspace view renders a milestone that has an active or historical d
 
 \sublabel{Actors / Roles}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-      \item \textbf{Primary Actor:} Client, Freelancer, Administrator.
+      \item \textbf{Primary Actor:} Client, Freelancer.
       \item \textbf{Supporting Systems:} Frevia Web application, Frevia REST API, Prisma ORM, and PostgreSQL database.
 \end{itemize}
 
@@ -338,15 +336,15 @@ A contract workspace view renders a milestone that has an active or historical d
 \sublabel{Interface}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
       \item Amber/red alert banner rendered atop the disputed milestone card.
-      \item Dispute summary indicator: Current Dispute Status (\texttt{OPEN}, \texttt{WAITING\_RESPONSE}, \texttt{UNDER\_REVIEW}, \texttt{ESCALATED\_TO\_EXPERT}), Initiator Name, and Escrow Locked notice.
+      \item Dispute summary indicator: Current Dispute Status (\texttt{OPEN}, \texttt{WAITING\_RESPONSE}, \texttt{UNDER\_REVIEW}, \texttt{DECISION\_MADE}, \texttt{REVIEW\_REQUESTED}, \texttt{FINALIZED}, \texttt{CANCELLED}), Initiator Name, and Escrow Locked notice.
       \item Direct action button: ``View Dispute Case \#ID''.
       \item Disabled standard milestone buttons with explanatory tooltip: ``Actions disabled while under formal dispute.''
 \end{itemize}
 
 \sublabel{Data Processing Overview}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-      \item Client requests \texttt{GET /api/disputes/milestone/:milestoneId}.
-      \item \texttt{DisputeService.getDisputeByMilestoneId()} validates caller is a contract participant or Admin.
+      \item Client requests \texttt{GET /\allowbreak{}api/\allowbreak{}disputes/\allowbreak{}milestone/\allowbreak{}:\allowbreak{}milestoneId}.
+      \item \texttt{DisputeService.\allowbreak{}getDisputeByMilestoneId()} validates caller is \texttt{openedById} or \texttt{respondentId}.
       \item Queries the active or most recent dispute linked to \texttt{milestoneId}.
       \item Returns HTTP 200 with dispute summary data or HTTP 404 if no dispute is associated.
 \end{itemize}
@@ -364,7 +362,7 @@ A contract workspace view renders a milestone that has an active or historical d
 \sublabel{Validation Rules}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
       \item Milestone ID must exist.
-      \item Caller must be a participant of the parent contract or an Administrator.
+      \item Caller must be \texttt{openedById} or \texttt{respondentId} of the associated dispute.
 \end{itemize}
 
 \sublabel{Business Rules}
@@ -420,32 +418,27 @@ The designated respondent clicks ``Submit Response'' on an open dispute case.\ne
 \sublabel{Interface}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
       \item Response action panel or modal dialog on the Dispute Detail page.
-      \item Action choice selector: Accept Claim or Submit Counter-Rebuttal.
-      \item Detailed counter-explanation textarea supporting rich Markdown (max 5000 characters).
-      \item Counter-evidence attachment dropzone supporting up to 5 files.
-      \item Remaining response countdown timer indicator.
-      \item Action buttons: ``Confirm \& Submit Response'' and ``Cancel''.
+      \item Action choice selector: Accept Proposal (\texttt{ACCEPT}) or Decline Proposal (\texttt{DECLINE}).
+      \item Decline reason textarea (at least 5 characters when declining).
+      \item Optional counter-evidence attachment dropzone supporting up to 5 contract shared files when declining.
+      \item Remaining response deadline indicator and ``Confirm \& Submit Response'' / ``Cancel'' buttons.
 \end{itemize}
 
 \sublabel{Data Processing Overview}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-      \item Respondent submits an HTTP request: \texttt{PATCH /api/disputes/:id/respond} with \texttt{action}, optional \texttt{reason}, and \texttt{evidenceFiles}.
-      \item \texttt{DisputeService.respondToDispute()} verifies that \texttt{userId === dispute.respondentId}.
-      \item Verifies that dispute status is \texttt{OPEN} or \texttt{WAITING\_RESPONSE}.
-      \item Verifies that current time has not exceeded \texttt{responseDeadline}.
-      \item Persists rebuttal narrative and counter-evidence records.
-      \item Transitions dispute status to \texttt{UNDER\_REVIEW}.
-      \item Dispatches notifications alerting the opener and administrator that the response has been submitted.
+      \item Respondent submits an HTTP request: \texttt{PATCH /\allowbreak{}api/\allowbreak{}disputes/\allowbreak{}:\allowbreak{}id/\allowbreak{}respond} with \texttt{action} (\texttt{ACCEPT} or \texttt{DECLINE}), optional \texttt{reason}, and optional \texttt{evidenceFiles}.
+      \item {\sloppy \texttt{DisputeService.\allowbreak{}respondToDispute()} verifies that \texttt{userId === dispute.respondentId}, dispute status is \texttt{OPEN} or \texttt{WAITING\_RESPONSE}, and no prior decline exists (\texttt{declinedAt} null).\par}
+      \item On \texttt{ACCEPT}: immediately finalizes resolution (extending milestone deadline for \texttt{EXTEND\_DEADLINE} or executing escrow payout/refund settlement and setting \texttt{FINALIZED}).
+      \item On \texttt{DECLINE}: requires \texttt{reason} ($\ge 5$ chars), optionally persists up to 5 evidence files, sets \texttt{declinedAt} and status \texttt{UNDER\_REVIEW}, and notifies the opener that the dispute can be escalated to a Frevia Expert.
 \end{itemize}
 
 \fnhead{Screen Layout (Mock-up Description)}
 \screenfigure[0.95]{image/screenshot/sprint3/ntin/RespondToDispute.png}{Respond to dispute rebuttal form}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
       \item Top banner displays the opener's claim summary and remaining response time badge.
-      \item Action selector allows choosing between accepting the claim or disputing it with counter-evidence.
-      \item Textarea provides prompts for addressing specific allegations (specifications, timeline, deliverable quality).
-      \item Dropzone allows uploading up to 5 rebuttal files with instant file size and extension validation.
-      \item Primary blue button ``Submit Rebuttal''.
+      \item Action selector allows choosing between accepting the proposal or declining with reason and counter-evidence.
+      \item Textarea prompts for explanation when declining; dropzone allows attaching up to 5 evidence files.
+      \item Primary blue button ``Submit Response''.
 \end{itemize}
 
 \fnhead{Function Details}
@@ -453,45 +446,43 @@ The designated respondent clicks ``Submit Response'' on an open dispute case.\ne
 \sublabel{Input Data}
 \begin{specdatatable}{Data Name}{Description}
       \texttt{id} & Numeric dispute identifier (integer path parameter).\\ \hline
-      \texttt{action} & Action enum (\texttt{ACCEPT}, \texttt{REJECT}, \texttt{COUNTER}).\\ \hline
-      \texttt{reason} & Detailed counter-explanation narrative (string, max 5000 characters).\\ \hline
-      \texttt{evidenceFiles} & Array of counter-evidence file IDs and descriptions (max 5 items).\\ \hline
+      \texttt{action} & Action enum (\texttt{ACCEPT}, \texttt{DECLINE}).\\ \hline
+      \texttt{reason} & Explanation narrative (string, required $\ge 5$ chars when \texttt{action === DECLINE}).\\ \hline
+      \texttt{evidenceFiles} & Optional array of counter-evidence file IDs and descriptions (max 5 items on decline).\\ \hline
 \end{specdatatable}
 
 \sublabel{Validation Rules}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
       \item Caller must be the designated respondent of the dispute.
-      \item Dispute status must be \texttt{OPEN} or \texttt{WAITING\_RESPONSE}.
-      \item Response must be submitted prior to the 48-hour response deadline.
-      \item Maximum 5 counter-evidence files allowed.
+      \item Dispute status must be \texttt{OPEN} or \texttt{WAITING\_RESPONSE} with \texttt{declinedAt = null}.
+      \item When declining, \texttt{reason} must have at least 5 non-whitespace characters and at most 5 evidence files may be attached.
 \end{itemize}
 
 \sublabel{Business Rules}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
       \item BR-DISPUTE-08: Only the designated respondent can submit a formal response.
-      \item BR-DISPUTE-09: A respondent is allowed exactly one rebuttal submission per dispute case.
-      \item BR-DISPUTE-10: Submitting a valid response moves the dispute status to \texttt{UNDER\_REVIEW}.
+      \item BR-DISPUTE-09: A respondent can decline only once (\texttt{Dispute\allowbreak{}Response\allowbreak{}Already\allowbreak{}Submitted\allowbreak{}Exception}).
+      \item BR-DISPUTE-10: Accepting transitions the dispute directly to \texttt{FINALIZED} settlement; declining transitions it to \texttt{UNDER\_REVIEW}.
 \end{itemize}
 
 \sublabel{Normal Flow}
 \begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
       \item The respondent opens the Dispute Detail view and clicks ``Submit Response''.
-      \item The respondent reviews the opener's claims and inputs a detailed counter-explanation.
-      \item The respondent attaches supporting counter-evidence files and clicks ``Confirm \& Submit Response''.
-      \item The system validates inputs, records the rebuttal, updates status to \texttt{UNDER\_REVIEW}, and notifies parties.
-      \item The dispute view updates with the submitted rebuttal.
+      \item The respondent selects \texttt{ACCEPT} or \texttt{DECLINE} (entering a reason and optional evidence files if declining).
+      \item The backend validates status and saves either \texttt{FINALIZED} mutual settlement or \texttt{UNDER\_REVIEW} decline state.
+      \item The opener receives a notification and the dispute view refreshes.
 \end{enumerate}
 
 \sublabel{Abnormal Flow / Exception Handling}
 \begin{flowtable}{Case}{Description}
-      A1 & Response deadline expired. API returns HTTP 400: ``The response window has closed. The case will be reviewed based on available evidence.''\\ \hline
-      A2 & Caller is not the designated respondent. API returns HTTP 403 Forbidden: ``Only the designated respondent can reply to this dispute.''\\ \hline
-      A3 & Rebuttal already submitted. API returns HTTP 409 Conflict: ``You have already submitted your response for this dispute.''\\ \hline
+      A1 & Dispute status is not \texttt{OPEN}/\texttt{WAITING\_RESPONSE} or decline was already submitted. API returns HTTP 422 (\texttt{DisputeResponseNotAllowedException} or \texttt{DisputeResponseAlreadySubmittedException}).\\ \hline
+      A2 & Caller is not the designated respondent. API returns HTTP 403 Forbidden (\texttt{DisputeForbiddenException}).\\ \hline
+      A3 & Missing/short decline reason ($< 5$ chars) or $> 5$ evidence files. API returns HTTP 400 (\texttt{DisputeDeclineReasonRequiredException} or \texttt{DisputeEvidenceLimitExceededException}).\\ \hline
 \end{flowtable}
 
 \sublabel{Output Data}
 \begin{specdatatable}{Data Name}{Description}
-      \texttt{dispute} & Updated dispute record with status \texttt{UNDER\_REVIEW} and attached counter-evidence.\\ \hline
+      \texttt{dispute} & Updated dispute record with status \texttt{FINALIZED} (on \texttt{ACCEPT}) or \texttt{UNDER\_REVIEW} (on \texttt{DECLINE}).\\ \hline
 \end{specdatatable}
 
 \sublabel{Post-Conditions}
@@ -529,12 +520,11 @@ The user who opened the dispute clicks the ``Withdraw Dispute'' action button.\n
 
 \sublabel{Data Processing Overview}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-      \item User submits an HTTP request: \texttt{PATCH /api/disputes/:id/withdraw}.
+      \item User submits an HTTP request without a request body: \texttt{PATCH /\allowbreak{}api/\allowbreak{}disputes/\allowbreak{}:\allowbreak{}id/\allowbreak{}withdraw}.
       \item \texttt{DisputeService.withdrawDispute()} verifies that \texttt{userId === dispute.openedById}.
-      \item Verifies that dispute status is \texttt{OPEN}, \texttt{WAITING\_RESPONSE}, or \texttt{UNDER\_REVIEW}.
-      \item Updates dispute status to \texttt{WITHDRAWN} and records withdrawal timestamp.
-      \item Restores milestone status from \texttt{DISPUTED} back to its previous status (\texttt{IN\_PROGRESS} or \texttt{FUNDED}).
-      \item Dispatches notifications to the counterpart and administrator.
+      \item Verifies that dispute status is strictly \texttt{OPEN} or \texttt{WAITING\_RESPONSE} (blocks \texttt{UNDER\_REVIEW} and later states with \texttt{DisputeWithdrawNotAllowedException}).
+      \item Updates dispute status to \texttt{CANCELLED} and restores milestone status from \texttt{DISPUTED} to \texttt{previousMilestoneStatus} (or \texttt{IN\_PROGRESS}).
+      \item Dispatches a notification alerting the respondent party.
 \end{itemize}
 
 \fnhead{Screen Layout (Mock-up Description)}
@@ -570,24 +560,24 @@ The user who opened the dispute clicks the ``Withdraw Dispute'' action button.\n
       \item The dispute opener clicks ``Withdraw Dispute''.
       \item The system displays the withdrawal confirmation modal.
       \item The opener confirms withdrawal.
-      \item The system transitions dispute status to \texttt{WITHDRAWN}, restores milestone status, and unlocks escrow.
+      \item The system transitions dispute status to \texttt{CANCELLED}, restores milestone status, and unlocks escrow.
       \item Success toast is displayed and the dispute view refreshes.
 \end{enumerate}
 
 \sublabel{Abnormal Flow / Exception Handling}
 \begin{flowtable}{Case}{Description}
-      A1 & Caller is not the dispute opener. API returns HTTP 403 Forbidden: ``Only the user who opened this dispute can withdraw it.''\\ \hline
-      A2 & Dispute already finalized. API returns HTTP 400: ``Disputes cannot be withdrawn after an arbitration ruling has been issued.''\\ \hline
+      A1 & Caller is not the dispute opener. API returns HTTP 403 Forbidden (\texttt{DisputeForbiddenException}).\\ \hline
+      A2 & Dispute is already under review or finalized. API returns HTTP 422 (\texttt{DisputeWithdrawNotAllowedException}).\\ \hline
 \end{flowtable}
 
 \sublabel{Output Data}
 \begin{specdatatable}{Data Name}{Description}
-      \texttt{dispute} & Updated dispute record with status \texttt{WITHDRAWN}.\\ \hline
+      \texttt{dispute} & Updated dispute record with status \texttt{CANCELLED}.\\ \hline
 \end{specdatatable}
 
 \sublabel{Post-Conditions}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-      \item Dispute status marked \texttt{WITHDRAWN}; milestone unfreezes.
+      \item Dispute status marked \texttt{CANCELLED}; milestone unfreezes.
 \end{itemize}
 
 % -----------------------------------------------------------------
@@ -597,44 +587,43 @@ The user who opened the dispute clicks the ``Withdraw Dispute'' action button.\n
 \subsubsection{ Escalate Dispute to Expert}
 
 \fnhead{Function Trigger}
-A dispute participant or Administrator clicks ``Escalate to Expert'' on an unresolved dispute.\newline
+A dispute participant clicks ``Escalate to Expert'' on an eligible dispute after decline or response-deadline expiry.\newline
 \textbf{Navigation path:} Dispute Detail $\rightarrow$ Click ``Escalate to Expert''.
 
 \fnhead{Function Description}
 
 \sublabel{Actors / Roles}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-      \item \textbf{Primary Actor:} Client, Freelancer, Administrator.
+      \item \textbf{Primary Actor:} Client, Freelancer.
       \item \textbf{Secondary Actor:} Expert Arbitrator.
       \item \textbf{Supporting Systems:} Frevia Web application, Frevia REST API, Prisma ORM, and PostgreSQL database.
 \end{itemize}
 
 \sublabel{Purpose}
-\noindent Escalates an unresolved dispute to a certified domain Expert arbitrator for formal technical evaluation and binding arbitration ruling when direct bilateral communication has broken down.
+\noindent Escalates an unresolved dispute to the Expert arbitration queue for formal technical evaluation and binding ruling after the counterparty declines or the 48-hour response deadline passes.
 
 \sublabel{Interface}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
       \item ``Escalate to Domain Expert'' action button on the Dispute Detail view.
       \item Escalation modal dialog explaining binding expert arbitration terms.
-      \item Domain category selection (pre-filled from contract job category).
       \item Action buttons: ``Confirm Escalation'' and ``Cancel''.
 \end{itemize}
 
 \sublabel{Data Processing Overview}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-      \item User submits an HTTP request: \texttt{POST /api/disputes/:id/escalate}.
-      \item \texttt{DisputeService.escalateDispute()} verifies caller authorization and case status (\texttt{OPEN}, \texttt{WAITING\_RESPONSE}, or \texttt{UNDER\_REVIEW}).
-      \item Updates dispute status to \texttt{ESCALATED\_TO\_EXPERT} and sets \texttt{escalatedAt = new Date()}.
-      \item Adds the dispute case to the Expert arbitration queue.
-      \item Dispatches notifications to certified experts in the contract's domain category.
+      \item Participant submits an HTTP request without a request body: \texttt{POST /\allowbreak{}api/\allowbreak{}disputes/\allowbreak{}:\allowbreak{}id/\allowbreak{}escalate}.
+      \item \texttt{DisputeService.escalateDispute()} verifies caller is \texttt{openedById} or \texttt{respondentId} (Admin is blocked).
+      \item Validates dispute status is \texttt{OPEN} or \texttt{WAITING\_RESPONSE} AND either \texttt{declinedAt} is set or \texttt{responseDeadline <= now} (\texttt{DisputeEscalateNotAllowedException}).
+      \item Transitions dispute status to \texttt{UNDER\_REVIEW} so active Frevia Experts can review it.
+      \item Dispatches notification alerting the other contract party.
 \end{itemize}
 
 \fnhead{Screen Layout (Mock-up Description)}
 \screenfigure[0.95]{image/screenshot/sprint3/ntin/EscalateDisputeToExpert.png}{Escalate dispute to expert modal}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
       \item Modal displays shield icon and title ``Escalate to Domain Expert Arbitrator''.
-      \item Explanation text clarifies that expert arbitration provides an impartial technical review and a binding fund distribution decision.
-      \item Summary displays contract category and disputed milestone escrow balance.
+      \item Explanation text clarifies that expert arbitration provides an impartial review and a binding fund distribution decision.
+      \item Summary displays disputed milestone escrow balance.
       \item Primary purple button ``Confirm Escalation to Expert''.
 \end{itemize}
 
@@ -647,13 +636,13 @@ A dispute participant or Administrator clicks ``Escalate to Expert'' on an unres
 
 \sublabel{Validation Rules}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-      \item Caller must be a dispute participant or Administrator.
-      \item Dispute status must be eligible for escalation (not already escalated or resolved).
+      \item Caller must be a direct dispute participant (\texttt{openedById} or \texttt{respondentId}).
+      \item Dispute status must be \texttt{OPEN} or \texttt{WAITING\_RESPONSE}, and either declined or past \texttt{responseDeadline}.
 \end{itemize}
 
 \sublabel{Business Rules}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
-      \item BR-DISPUTE-13: Escalation elevates the dispute to the platform expert arbitration pool.
+      \item BR-DISPUTE-13: Escalation requires either counterparty decline or expired 48-hour response deadline and moves the dispute to \texttt{UNDER\_REVIEW}.
       \item BR-DISPUTE-14: Expert arbitration decisions are final and binding on both contract parties.
 \end{itemize}
 
@@ -662,24 +651,24 @@ A dispute participant or Administrator clicks ``Escalate to Expert'' on an unres
       \item User clicks ``Escalate to Domain Expert''.
       \item The system opens the escalation confirmation modal.
       \item User confirms escalation.
-      \item The system transitions status to \texttt{ESCALATED\_TO\_EXPERT}, logs the event, and alerts qualified experts.
+      \item The system verifies participant role and decline/expiry eligibility, sets status to \texttt{UNDER\_REVIEW}, and notifies the counterparty.
       \item The system displays a confirmation toast and updates the case view.
 \end{enumerate}
 
 \sublabel{Abnormal Flow / Exception Handling}
 \begin{flowtable}{Case}{Description}
-      A1 & Dispute already escalated. API returns HTTP 400: ``Dispute is already escalated to an expert.''\\ \hline
-      A2 & Caller unauthorized. API returns HTTP 403 Forbidden.\\ \hline
+      A1 & Dispute is not in an escalatable state or response window has not been declined/expired. API returns HTTP 422 (\texttt{DisputeEscalateNotAllowedException}).\\ \hline
+      A2 & Caller is not a dispute participant. API returns HTTP 403 Forbidden (\texttt{DisputeForbiddenException}).\\ \hline
 \end{flowtable}
 
 \sublabel{Output Data}
 \begin{specdatatable}{Data Name}{Description}
-      \texttt{dispute} & Updated dispute record with status \texttt{ESCALATED\_TO\_EXPERT} and \texttt{escalatedAt} timestamp.\\ \hline
+      \texttt{dispute} & Updated dispute record with status \texttt{UNDER\_REVIEW}.\\ \hline
 \end{specdatatable}
 
 \sublabel{Post-Conditions}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-      \item Dispute queued for expert arbitration; notifications sent.
+      \item Dispute status is \texttt{UNDER\_REVIEW} and visible in the Expert worklist; counterparty notified.
 \end{itemize}
 
 % -----------------------------------------------------------------
@@ -689,68 +678,65 @@ A dispute participant or Administrator clicks ``Escalate to Expert'' on an unres
 \subsubsection{ View Expert Disputes List}
 
 \fnhead{Function Trigger}
-An authenticated Expert or Administrator navigates to the ``Expert Arbitration'' portal.\newline
-\textbf{Navigation path:} Expert Portal $\rightarrow$ Click ``Disputes'' (\texttt{/expert/disputes}).
+An authenticated Expert navigates to the ``Expert Arbitration'' portal.\newline
+\textbf{Navigation path:} Admin/Expert Portal $\rightarrow$ Click ``Disputes'' (\texttt{/admin/disputes}).
 
 \fnhead{Function Description}
 
 \sublabel{Actors / Roles}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-      \item \textbf{Primary Actor:} Expert Arbitrator, Administrator.
+      \item \textbf{Primary Actor:} Expert Arbitrator (\texttt{EXPERT} role only).
       \item \textbf{Supporting Systems:} Frevia Web application, Frevia REST API, Prisma ORM, and PostgreSQL database.
 \end{itemize}
 
 \sublabel{Purpose}
-\noindent Displays a specialized arbitration worklist of escalated dispute cases awaiting expert review, filtered by domain category, escrow amount, urgency, and assignment status.
+\noindent Displays the arbitration worklist of escalated dispute cases for active Frevia Experts, complete with status filtering and pagination.
 
 \sublabel{Interface}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-      \item Expert arbitration dashboard with queue metrics: Pending Cases, Active Evaluations, Completed Rulings.
-      \item Dispute worklist table with columns: Case ID, Category, Disputed Milestone, Escrow Balance (\$USD), Days in Escalation, Parties, and Actions.
-      \item Category filter dropdown (e.g., Fullstack, Mobile, UI/UX, AI/ML) and pagination controls.
-      \item Action button: ``Inspect Case'' opening the dedicated expert console.
+      \item Expert arbitration dashboard at \texttt{/admin/disputes} with status filter tabs and pagination controls.
+      \item Dispute worklist showing Case ID, Disputed Milestone, Escrow Balance (\$USD), Parties, and Actions.
+      \item Action button: ``Inspect Case'' opening the dedicated expert detail view.
 \end{itemize}
 
 \sublabel{Data Processing Overview}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-      \item Client requests \texttt{GET /api/expert/disputes} with query parameters \texttt{status}, \texttt{page}, \texttt{limit}.
-      \item \texttt{DisputesExpertService.listDisputes()} validates caller has role \texttt{EXPERT} or \texttt{ADMIN}.
-      \item Queries escalated disputes matching the expert's registered expertise categories.
-      \item Returns HTTP 200 with the worklist array and pagination metadata.
+      \item Client requests \texttt{GET /\allowbreak{}api/\allowbreak{}expert/\allowbreak{}disputes} with query parameters \texttt{status}, \texttt{page}, \texttt{limit}, \texttt{sortBy}, \texttt{order}.
+      \item \texttt{DisputesExpertService.listDisputes()} invokes \texttt{requireActiveExpert(roleName, userId)}, permitting strictly callers with \texttt{roleName === 'EXPERT'} and an active \texttt{ExpertProfile} (\texttt{isActive: true}); Administrators and other roles receive HTTP 403.
+      \item Returns HTTP 200 with the paginated worklist array.
 \end{itemize}
 
 \fnhead{Screen Layout (Mock-up Description)}
 \screenfigure[0.95]{image/screenshot/sprint3/ntin/ViewExpertDisputeList.png}{Expert arbitration queue screen}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-      \item Top KPI cards show Total Escalated Cases and Average Ruling Turnaround.
-      \item Filter bar includes domain category filter, status toggle, and sorting selector.
-      \item Table rows render case tags, escrow amount pill, and purple ``Review Case'' action button.
+      \item Top header shows Expert Disputes Queue overview and status filters.
+      \item Table/list rows render case metadata, escrow amount badge, status tag, and action button.
 \end{itemize}
 
 \fnhead{Function Details}
 
 \sublabel{Input Data}
 \begin{specdatatable}{Data Name}{Description}
-      \texttt{status} & Optional status filter (\texttt{ESCALATED\_TO\_EXPERT}, \texttt{RESOLVED}).\\ \hline
+      \texttt{status} & Optional status filter (\texttt{UNDER\_REVIEW}, \texttt{DECISION\_MADE}, \texttt{REVIEW\_REQUESTED}, \texttt{FINALIZED}).\\ \hline
       \texttt{page} & Page number (integer, default 1).\\ \hline
       \texttt{limit} & Items per page (integer, default 10, max 50).\\ \hline
 \end{specdatatable}
 
 \sublabel{Validation Rules}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-      \item Caller must hold \texttt{EXPERT} or \texttt{ADMIN} role.
+      \item Caller must hold the \texttt{EXPERT} role AND possess an active \texttt{ExpertProfile} (\texttt{isActive: true}).
 \end{itemize}
 
 \sublabel{Business Rules}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
-      \item BR-DISPUTE-15: Only users with verified Expert or Admin roles can access the Expert Dispute List.
-      \item BR-DISPUTE-16: Experts cannot view or arbitrate disputes involving contracts where they have an active conflict of interest.
+      \item BR-DISPUTE-15: Strictly active Expert accounts (\texttt{roleName === EXPERT} and \texttt{isActive === true}) can access \texttt{/api/expert/disputes}; Administrators are blocked with HTTP 403.
+      \item BR-DISPUTE-16: Expert dispute retrieval is governed by \texttt{requireActiveExpert} eligibility across active arbitration cases.
 \end{itemize}
 
 \sublabel{Normal Flow}
 \begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
-      \item Expert navigates to the Expert Arbitration Portal.
-      \item The system retrieves escalated cases matching domain expertise.
+      \item Expert navigates to \texttt{/admin/disputes}.
+      \item The system verifies \texttt{EXPERT} role and active \texttt{ExpertProfile}, then retrieves arbitration cases.
       \item The worklist is displayed with case cards and summary details.
       \item Expert clicks ``Inspect Case'' to open the evaluation console.
 \end{enumerate}
@@ -779,34 +765,33 @@ An authenticated Expert or Administrator navigates to the ``Expert Arbitration''
 \subsubsection{ View Expert Dispute Details}
 
 \fnhead{Function Trigger}
-An Expert or Administrator opens a specific dispute from the expert worklist.\newline
-\textbf{Navigation path:} Expert Dispute List $\rightarrow$ Click Case Card (\texttt{/expert/disputes/:id}).
+An Expert opens a specific dispute from the expert arbitration worklist.\newline
+\textbf{Navigation path:} Expert Dispute List $\rightarrow$ Select Dispute (\texttt{/admin/disputes}).
 
 \fnhead{Function Description}
 
 \sublabel{Actors / Roles}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-      \item \textbf{Primary Actor:} Expert Arbitrator, Administrator.
+      \item \textbf{Primary Actor:} Expert Arbitrator (\texttt{EXPERT} role only).
       \item \textbf{Supporting Systems:} Frevia Web application, Frevia REST API, Prisma ORM, and PostgreSQL database.
 \end{itemize}
 
 \sublabel{Purpose}
-\noindent Provides a specialized arbitration workbench allowing domain experts to examine milestone specifications, compare symmetric evidence side by side, review deliverable submissions, and prepare a binding ruling.
+\noindent Provides a specialized arbitration workbench allowing active Experts to examine milestone specifications, compare symmetric evidence side by side, inspect conversation history between parties, and prepare a binding ruling.
 
 \sublabel{Interface}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-      \item Multi-panel evaluation workbench layout.
+      \item Multi-panel evaluation workbench layout inside \texttt{/admin/disputes}.
       \item Contract and Milestone Specifications panel: Agreed deliverables, timeline, and escrow amount.
-      \item Symmetric Evidence Viewer: Client claims and proof documents displayed side by side with Freelancer rebuttal and work files.
-      \item Submission Deliverables Inspector: Direct links and inline previews of code repos, documents, and assets.
-      \item Binding Decision Formulation Panel with split sliders and justification editor.
+      \item Symmetric Evidence Viewer: Client and Freelancer claims, evidence files, and party conversation history.
+      \item Binding Decision Formulation Panel with split inputs and justification editor.
 \end{itemize}
 
 \sublabel{Data Processing Overview}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-      \item Client requests \texttt{GET /api/expert/disputes/:id}.
-      \item \texttt{DisputesExpertService.getDisputeDetail()} validates caller is an Expert or Admin and verifies absence of conflict of interest.
-      \item Queries complete dispute case including submissions, milestone files, and all evidence records.
+      \item Client requests \texttt{GET /\allowbreak{}api/\allowbreak{}expert/\allowbreak{}disputes/\allowbreak{}:\allowbreak{}id}.
+      \item {\sloppy \texttt{DisputesExpertService.\allowbreak{}getDisputeDetail()} enforces \texttt{requireActiveExpert(roleName, userId)} (strictly \texttt{EXPERT} with active profile; Admin receives HTTP 403).\par}
+      \item Queries complete dispute case including submissions, milestone files, evidence records, and participant \texttt{conversationMessages}.
       \item Returns HTTP 200 with comprehensive arbitration case data.
 \end{itemize}
 
@@ -827,26 +812,26 @@ An Expert or Administrator opens a specific dispute from the expert worklist.\ne
 
 \sublabel{Validation Rules}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-      \item Caller must have Expert or Admin privileges.
+      \item Caller must hold active \texttt{EXPERT} role with an active \texttt{ExpertProfile}.
       \item Dispute ID must exist.
 \end{itemize}
 
 \sublabel{Business Rules}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
-      \item BR-DISPUTE-17: Experts must have access to symmetric evidence from both parties to ensure unbiased evaluation.
+      \item BR-DISPUTE-17: Experts must have access to symmetric evidence and party conversation messages to ensure unbiased evaluation.
 \end{itemize}
 
 \sublabel{Normal Flow}
 \begin{enumerate}[leftmargin=1.8em,topsep=3pt,itemsep=2pt,parsep=0pt]
       \item Expert selects a dispute from the queue.
-      \item The system loads and presents contract specs, claims, rebuttals, and deliverable files.
+      \item The system loads and presents contract specs, claims, evidence files, and conversation logs.
       \item Expert inspects evidence and prepares findings.
 \end{enumerate}
 
 \sublabel{Abnormal Flow / Exception Handling}
 \begin{flowtable}{Case}{Description}
-      A1 & Conflict of interest detected. API returns HTTP 403: ``Conflict of interest detected. You cannot arbitrate this case.''\\ \hline
-      A2 & Dispute not found. API returns HTTP 404 Not Found.\\ \hline
+      A1 & Caller lacks active \texttt{EXPERT} privilege. API returns HTTP 403 Forbidden (\texttt{ExpertDisputeForbiddenException}).\\ \hline
+      A2 & Dispute not found. API returns HTTP 404 Not Found (\texttt{ExpertDisputeNotFoundException}).\\ \hline
 \end{flowtable}
 
 \sublabel{Output Data}
@@ -873,7 +858,7 @@ An Expert arbitrator completes evaluation and clicks ``Issue Binding Decision''.
 
 \sublabel{Actors / Roles}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-      \item \textbf{Primary Actor:} Expert Arbitrator, Administrator.
+      \item \textbf{Primary Actor:} Expert Arbitrator (\texttt{EXPERT} role only).
       \item \textbf{Secondary Actor:} Client, Freelancer.
       \item \textbf{Supporting Systems:} Frevia Web application, Frevia REST API, Stripe SDK, Prisma ORM, and PostgreSQL database.
 \end{itemize}
@@ -883,26 +868,21 @@ An Expert arbitrator completes evaluation and clicks ``Issue Binding Decision''.
 
 \sublabel{Interface}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-      \item Decision authoring panel on the expert console.
+      \item Decision authoring panel on the expert console (\texttt{/admin/disputes}).
       \item Amount input fields: Client Refund Amount (\$USD) and Freelancer Payout Amount (\$USD), with auto-balancing sliders.
       \item Preset split shortcut buttons: ``100\% Client'', ``100\% Freelancer'', ``50/50 Equal Split''.
-      \item Written arbitration findings and legal rationale textarea (min 5, max 3000 characters).
+      \item Written arbitration findings and legal rationale textarea (min 5 chars).
       \item Final binding confirmation modal with fund distribution breakdown.
       \item Primary action button: ``Issue Binding Decision'' (purple).
 \end{itemize}
 
 \sublabel{Data Processing Overview}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-      \item Expert submits an HTTP request: \texttt{POST /api/expert/disputes/:id/decision} with \texttt{clientAmount}, \texttt{freelancerAmount}, and \texttt{decisionReason}.
-      \item \texttt{DisputesExpertService.makeDecision()} validates that \texttt{clientAmount + freelancerAmount === milestone.amount}.
-      \item Inside a database transaction:
-            \begin{itemize}[leftmargin=1.6em,topsep=2pt,itemsep=2pt,parsep=0pt]
-                  \item Updates \texttt{Dispute} with \texttt{clientAmount}, \texttt{freelancerAmount}, \texttt{decisionReason}, \texttt{decisionById = userId}, \texttt{decisionAt = new Date()}, and status \texttt{RESOLVED}.
-                  \item Updates milestone payment status to \texttt{RELEASED} / \texttt{RESOLVED}.
-                  \item Records corresponding financial ledger transactions.
-            \end{itemize}
-      \item Triggers Stripe payout and refund operations according to split amounts.
-      \item Dispatches formal ruling notifications to Client and Freelancer with complete decision text.
+      \item Expert submits an HTTP request: \texttt{POST /\allowbreak{}api/\allowbreak{}expert/\allowbreak{}disputes/\allowbreak{}:\allowbreak{}id/\allowbreak{}decision} with \texttt{clientAmount}, \texttt{freelancerAmount}, and \texttt{decisionReason}.
+      \item \texttt{DisputesExpertService.makeDecision()} enforces \texttt{requireActiveExpert}, checks status is in \texttt{[UNDER\_REVIEW, DECISION\_MADE, REVIEW\_REQUESTED]} (not \texttt{FINALIZED}), and validates \texttt{clientAmount + freelancerAmount === milestone.amount}.
+      \item Calls \texttt{PaymentService.executeDisputeSettlementPayout()} to execute Stripe refund/transfer settlement.
+      \item Inside a database transaction (\texttt{finalizeDisputeTransaction}): marks dispute \texttt{FINALIZED} (recording \texttt{decisionById}, \texttt{decisionReason}, \texttt{finalDecisionAt}), sets milestone status \texttt{COMPLETED} and \texttt{paymentStatus} (\texttt{REFUNDED} or \texttt{RELEASED}).
+      \item Dispatches formal ruling notifications to Client and Freelancer.
 \end{itemize}
 
 \fnhead{Screen Layout (Mock-up Description)}
@@ -921,20 +901,21 @@ An Expert arbitrator completes evaluation and clicks ``Issue Binding Decision''.
       \texttt{id} & Numeric dispute identifier (integer path parameter).\\ \hline
       \texttt{clientAmount} & Escrow refund amount awarded to the client (number, $\ge 0$).\\ \hline
       \texttt{freelancerAmount} & Escrow payout amount awarded to the freelancer (number, $\ge 0$).\\ \hline
-      \texttt{decisionReason} & Written technical rationale and arbitration findings (string, 5--3000 characters).\\ \hline
+      \texttt{decisionReason} & Written technical rationale and arbitration findings (string, $\ge 5$ characters).\\ \hline
 \end{specdatatable}
 
 \sublabel{Validation Rules}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-      \item Caller must be an authorized Expert or Administrator.
-      \item The sum of \texttt{clientAmount} and \texttt{freelancerAmount} must equal exactly the total milestone escrow amount.
+      \item Caller must hold active \texttt{EXPERT} role (Admin is denied).
+      \item Dispute status must be \texttt{UNDER\_REVIEW}, \texttt{DECISION\_MADE}, or \texttt{REVIEW\_REQUESTED}.
+      \item The sum of \texttt{clientAmount} and \texttt{freelancerAmount} must equal the milestone escrow amount.
       \item Justification narrative must contain at least 5 characters.
 \end{itemize}
 
 \sublabel{Business Rules}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]\brrulelist
       \item BR-DISPUTE-18: The sum of awarded amounts must mathematically equal 100\% of the disputed milestone escrow funds.
-      \item BR-DISPUTE-19: Expert arbitration rulings are irrevocable and trigger immediate automated financial settlement.
+      \item BR-DISPUTE-19: Expert arbitration rulings are irrevocable, set status to \texttt{FINALIZED}, and trigger immediate financial settlement.
       \item BR-DISPUTE-20: Written justification must be provided and preserved for platform auditability and compliance.
 \end{itemize}
 
@@ -944,19 +925,19 @@ An Expert arbitrator completes evaluation and clicks ``Issue Binding Decision''.
       \item Expert enters split allocation and written findings.
       \item The system verifies that split amounts match milestone balance.
       \item Expert clicks ``Issue Binding Decision'' and confirms in the confirmation dialog.
-      \item The system updates dispute to \texttt{RESOLVED}, executes escrow disbursements, and notifies parties.
+      \item The system executes Stripe settlement, updates dispute to \texttt{FINALIZED}, updates milestone payment status, and notifies parties.
 \end{enumerate}
 
 \sublabel{Abnormal Flow / Exception Handling}
 \begin{flowtable}{Case}{Description}
-      A1 & Sum of split amounts does not equal milestone balance. API returns HTTP 400: ``Total split amount must exactly equal the milestone escrow amount.''\\ \hline
-      A2 & Caller is not authorized as an expert arbitrator. API returns HTTP 403 Forbidden.\\ \hline
-      A3 & Dispute is not in escalated status. API returns HTTP 400: ``Dispute is not in an eligible state for expert ruling.''\\ \hline
+      A1 & Sum of split amounts does not equal milestone balance. API returns HTTP 400 (\texttt{ExpertDisputeInvalidSplitAmountException}).\\ \hline
+      A2 & Caller lacks active \texttt{EXPERT} role. API returns HTTP 403 Forbidden (\texttt{ExpertDisputeForbiddenException}).\\ \hline
+      A3 & Dispute already finalized or not pending expert decision. API returns HTTP 422 (\texttt{ExpertDisputeAlreadyFinalizedException} or \texttt{ExpertDisputeDecisionNotPendingException}).\\ \hline
 \end{flowtable}
 
 \sublabel{Output Data}
 \begin{specdatatable}{Data Name}{Description}
-      \texttt{dispute} & Resolved dispute record with \texttt{status = RESOLVED}, allocated amounts, and ruling findings.\\ \hline
+      \texttt{dispute} & Finalized dispute record with \texttt{status = FINALIZED}, allocated amounts, and ruling findings.\\ \hline
 \end{specdatatable}
 
 \sublabel{Post-Conditions}

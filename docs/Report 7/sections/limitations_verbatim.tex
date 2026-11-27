@@ -1,0 +1,127 @@
+\section{Project Limitations}
+
+\Needspace{8\baselineskip}
+\subsubsection{Limitations}
+
+Each limitation below details the concrete operational boundary, its resolution status in the delivered system, and the specific method, architectural mitigation, or technical roadmap implemented or proposed to address it.
+
+\begin{description}[leftmargin=2.0cm,labelwidth=1.8cm,align=left,font=\normalfont\bfseries]
+
+\Needspace{6\baselineskip}
+\item[LI-01] \textbf{Payment Gateway Scope \& Direct Settlement}
+\begin{itemize}[leftmargin=0.5cm, label=--]
+\item \textbf{Problem Statement:} All payment processing and disbursement functionality is provided exclusively by Stripe. Direct domestic bank transfers, Vietnamese local e-wallets (MoMo, VNPay, ZaloPay), mobile money, and blockchain/cryptocurrency settlement are outside the scope of the current implementation.
+\item \textbf{Current Status:} Deferred to Future Phase (Partially Mitigated in Current Architecture).
+\item \textbf{Resolution / Mitigation Method:} The contract escrow and payment processing workflows interact with payment services via a decoupled abstraction layer (\texttt{PaymentService}). For the current release, Stripe manages card processing, escrow deposits, PCI-DSS compliance, and international payouts. Future local payment gateways (such as VNPay or MoMo) can be integrated by implementing the provider interface without altering core contract, escrow, or dispute resolution logic.
+\end{itemize}
+
+\Needspace{6\baselineskip}
+\item[LI-02] \textbf{Stripe Connect Geographic Availability \& Payouts}
+\begin{itemize}[leftmargin=0.5cm, label=--]
+\item \textbf{Problem Statement:} Payouts require freelancers to onboard through Stripe Connect Express, which is restricted to Stripe-supported countries. The platform does not hold user balances directly nor operate an internal sovereign banking ledger.
+\item \textbf{Current Status:} Partially Mitigated (Controlled Operational Constraint).
+\item \textbf{Resolution / Mitigation Method:} Onboarding status is actively tracked on the user record (\texttt{stripeOnboardingCompleted}), with proactive validation preventing freelancers in unsupported countries from committing to contracts where payouts cannot be executed. Administrators can review affected accounts. Future expansion plans to integrate regional payout aggregators (e.g., Payoneer, Wise) using the payment provider abstraction.
+\end{itemize}
+
+\Needspace{6\baselineskip}
+\item[LI-03] \textbf{Contract Billing Model (Fixed-Price Only)}
+\begin{itemize}[leftmargin=0.5cm, label=--]
+\item \textbf{Problem Statement:} The platform supports only fixed-price milestone contracts. Hourly contracts, automated time-tracking desktop applications, activity screenshot logging, and automated hourly billing are excluded from the current scope.
+\item \textbf{Current Status:} Solved by Scope Design (Controlled Scope).
+\item \textbf{Resolution / Mitigation Method:} Fixed-price milestone contracts provide the strongest legal and financial protection for a new marketplace, as funds are guaranteed in escrow before work begins. To accommodate hourly billing in subsequent versions, the data model includes a contract type discriminator, allowing an independent hourly timesheet module to be introduced that plugs into the existing milestone release pipeline.
+\end{itemize}
+
+\Needspace{6\baselineskip}
+\item[LI-04] \textbf{Single Currency Handling (USD Only)}
+\begin{itemize}[leftmargin=0.5cm, label=--]
+\item \textbf{Problem Statement:} Monetary transactions, contract pricing, platform fees, and dispute deposits are calculated and denominated exclusively in United States Dollars (USD). Real-time multi-currency display, automatic forex conversion, and jurisdiction-specific tax invoicing are excluded.
+\item \textbf{Current Status:} Partially Mitigated.
+\item \textbf{Resolution / Mitigation Method:} Stripe automatically handles foreign exchange conversion at checkout and payout based on the user's local card or bank currency. Contracts store explicit currency ISO codes (\texttt{USD}), allowing multi-currency pricing and localized display rates to be activated in future versions when multi-currency bank accounts are configured.
+\end{itemize}
+
+\Needspace{6\baselineskip}
+\item[LI-05] \textbf{Artificial Intelligence Scope and Autonomous Decision-Making}
+\begin{itemize}[leftmargin=0.5cm, label=--]
+\item \textbf{Problem Statement:} AI integration is scoped strictly to four advisory workflows: CV skill extraction, identity document OCR/liveness verification, community forum moderation scoring, and explainable job--freelancer recommendation ranking. Autonomous AI hiring, automated contract formation, and autonomous dispute adjudication are excluded.
+\item \textbf{Current Status:} Solved by Architectural Design (Human-in-the-Loop Governance).
+\item \textbf{Resolution / Mitigation Method:} Keeping AI in an advisory role is a deliberate design decision to prevent algorithmic bias, hallucination, and legal liability. All legally binding decisions (hiring candidates, verifying identity badges, banning accounts, and settling financial disputes) strictly require explicit human authorization (Client or Administrator).
+\end{itemize}
+
+\Needspace{6\baselineskip}
+\item[LI-06] \textbf{External AI Service Availability and Fault Tolerance}
+\begin{itemize}[leftmargin=0.5cm, label=--]
+\item \textbf{Problem Statement:} AI functions rely on external cloud AI APIs over HTTP. Network latency, rate limits, or external provider downtime can disrupt automated parsing, document verification, or forum scanning.
+\item \textbf{Current Status:} Solved and Mitigated.
+\item \textbf{Resolution / Mitigation Method:} The backend implements fault-tolerant exception handling, timeouts, and fallback queues. When an external AI service is unreachable, requests fail gracefully with descriptive error codes rather than corrupted states. For identity verification and forum moderation, an Administrator fallback workflow allows manual inspection and approval directly from admin dashboards.
+\end{itemize}
+
+\Needspace{6\baselineskip}
+\item[LI-07] \textbf{Identity Verification Document Scope (CCCD Focus)}
+\begin{itemize}[leftmargin=0.5cm, label=--]
+\item \textbf{Problem Statement:} The identity verification OCR and liveness pipeline is tuned to Vietnamese National Identity Cards ({\fontencoding{T5}\selectfont Căn cước công dân} -- CCCD). International passports, driver's licenses, and foreign identity cards may have lower OCR recognition rates.
+\item \textbf{Current Status:} Partially Mitigated.
+\item \textbf{Resolution / Mitigation Method:} Document type validation and OCR confidence scoring prevent misclassification. If an unusual or international document receives low confidence scores, the system automatically flags the submission for manual Administrator review, where admins can inspect front and back scans and approve valid credentials.
+\end{itemize}
+
+\Needspace{6\baselineskip}
+\item[LI-08] \textbf{Administrative Arbitration vs. Statutory Legal Proceedings}
+\begin{itemize}[leftmargin=0.5cm, label=--]
+\item \textbf{Problem Statement:} Platform dispute arbitration is an administrative contractual resolution conducted by system administrators, not an official court of law or statutory arbitration panel. The platform cannot execute wage garnishments or legal chargeback litigation.
+\item \textbf{Current Status:} Addressed by Terms of Service and Exportable Evidence.
+\item \textbf{Resolution / Mitigation Method:} Users agree in the Terms of Service to abide by platform escrow distribution decisions. Furthermore, every dispute generates an immutable, exportable audit trail (including contract terms, milestone submissions, timestamped communications, and filed evidence) that either party can legally submit to civil courts or external arbitration authorities.
+\end{itemize}
+
+\Needspace{6\baselineskip}
+\item[LI-09] \textbf{Platform Form Factor (Responsive Web vs. Native Mobile Apps)}
+\begin{itemize}[leftmargin=0.5cm, label=--]
+\item \textbf{Problem Statement:} FREVIA is delivered as a responsive Progressive Web Application (PWA). Dedicated native mobile applications (iOS and Android) are excluded from the current capstone deliverables.
+\item \textbf{Current Status:} Solved by Responsive Architecture.
+\item \textbf{Resolution / Mitigation Method:} The frontend is built using Next.js with responsive Tailwind CSS layouts optimized for desktop, tablet, and mobile screens. Because the backend is fully decoupled via a RESTful API with standard OpenAPI/Swagger specifications, native mobile apps (React Native or Flutter) can be developed in future phases consuming the existing backend endpoints without API modification.
+\end{itemize}
+
+\Needspace{6\baselineskip}
+\item[LI-10] \textbf{Communication and Verification Channel Delivery (Email Only)}
+\begin{itemize}[leftmargin=0.5cm, label=--]
+\item \textbf{Problem Statement:} Account OTP codes, password resets, and notifications are delivered via SMTP email. SMS delivery, WhatsApp messaging, and hardware authenticator (TOTP) apps are excluded.
+\item \textbf{Current Status:} Partially Mitigated.
+\item \textbf{Resolution / Mitigation Method:} Email delivery uses a reliable SMTP provider with retry queues and clear delivery logging. The notification and verification service is architected behind an interface (\texttt{NotificationProvider}), enabling SMS gateways (e.g. Twilio) or push notification adapters (Firebase Cloud Messaging) to be plugged in seamlessly in future releases.
+\end{itemize}
+
+\Needspace{6\baselineskip}
+\item[LI-11] \textbf{Data Model Capabilities vs. Exposed User Interface Features}
+\begin{itemize}[leftmargin=0.5cm, label=--]
+\item \textbf{Problem Statement:} Several auxiliary capabilities are modeled in the database schema (e.g. detailed invoice generation, completion certificates, contract clause templates, TOTP two-factor secrets, banned keyword tables, and system settings) but are not yet exposed as dedicated UI screens.
+\item \textbf{Current Status:} Solved by Foundation Readiness (Phased Rollout).
+\item \textbf{Resolution / Mitigation Method:} The underlying database schemas, relations, and migrations are fully defined and tested. Features are rolled out progressively across development sprints to ensure stability without requiring breaking database migrations later.
+\end{itemize}
+
+\Needspace{6\baselineskip}
+\item[LI-12] \textbf{Notification Delivery Model (Polling vs. Real-Time WebSocket Push)}
+\begin{itemize}[leftmargin=0.5cm, label=--]
+\item \textbf{Problem Statement:} While messaging uses real-time WebSockets, system notifications are persisted in the database and fetched via REST endpoints upon page load or client polling rather than pushed over WebSockets.
+\item \textbf{Current Status:} Resolved for Core Use Cases (Future Enhancement for Real-Time).
+\item \textbf{Resolution / Mitigation Method:} Polling on route change and window focus provides high reliability, zero WebSocket connection overhead for background events, and complete offline persistence. A real-time notification push event can be hooked directly into the existing Socket.IO gateway by broadcasting on user-specific socket rooms in the next phase.
+\end{itemize}
+
+\Needspace{6\baselineskip}
+\item[LI-13] \textbf{Deployment Architecture \& High Availability Scaling}
+\begin{itemize}[leftmargin=0.5cm, label=--]
+\item \textbf{Problem Statement:} The current capstone deployment runs a single API container instance with in-memory WebSocket room state. Horizontal autoscaling across multiple cluster nodes behind a load balancer with distributed socket adapters is excluded from the current demo environment.
+\item \textbf{Current Status:} Solved for Capstone Scale (Production Roadmap Defined).
+\item \textbf{Resolution / Mitigation Method:} Containerized Docker Compose deployment is completely isolated and reproducible with dedicated health checks. For multi-replica production scaling, the WebSocket adapter is designed to plug into Redis Pub/Sub (\texttt{@socket.io/redis-adapter}) to synchronize real-time messaging rooms across multiple load-balanced API nodes.
+\end{itemize}
+
+\end{description}
+
+\Needspace{8\baselineskip}
+\subsubsection{Exclusions}
+
+The following capabilities are explicitly excluded from the current FREVIA capstone release:
+\begin{itemize}[leftmargin=1.0cm, label=--]
+\item \textbf{Native Mobile Applications (iOS / Android):} All workflows are delivered via a responsive web application; dedicated native mobile binaries are excluded.
+\item \textbf{Hourly Billing \& Automated Activity Monitoring:} Hourly contracts, time-tracking desktop daemons, and periodic screenshot surveillance are out of scope in favour of fixed-price milestone escrow.
+\item \textbf{Domestic E-Wallets, Direct Bank Rails, and Cryptocurrency Settlement:} Payments and payouts operate exclusively through Stripe Connect in USD; MoMo, VNPay, ZaloPay, local bank transfers, and crypto assets are excluded.
+\item \textbf{Multi-Currency Conversion Display \& Jurisdiction Tax Invoicing:} All ledger figures remain denominated in USD without VAT/tax-authority e-invoice generation.
+\item \textbf{Autonomous AI Hiring or Dispute Decisions:} AI outputs are strictly advisory; hiring, eKYC approval, content removal, and escrow dispute splits always require explicit human authorization.
+\item \textbf{SMS OTP, Messaging-App Delivery, and Hardware TOTP 2FA:} Verification codes and notifications are sent exclusively via email and in-app channels.
+\end{itemize}

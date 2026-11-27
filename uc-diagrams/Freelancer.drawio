@@ -1,3 +1,4 @@
+<?xml version='1.0' encoding='utf-8'?>
 <mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/29.3.0 Chrome/140.0.7339.249 Electron/38.7.2 Safari/537.36" version="29.3.0" pages="7">
   <diagram name="Freelancer 1/7" id="Freelancer_1">
     <mxGraphModel dx="417" dy="270" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1250" pageHeight="1150" math="0" shadow="0">
@@ -992,6 +993,29 @@
             <Array as="points">
               <mxPoint x="920" y="660" />
             </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="uc_mod_34" parent="swimlane_frevia" style="ellipse;whiteSpace=wrap;html=1;fontSize=11;fontFamily=Tahoma;fontStyle=1;fillColor=#ffffff;strokeColor=#000000;" value="Role Switching and Enrollment&#10;UC-31" vertex="1">
+          <mxGeometry height="60" width="150" x="30" y="482" as="geometry" />
+        </mxCell>
+        <mxCell id="uc_sub_36" parent="swimlane_frevia" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;fontFamily=Tahoma;fillColor=#ffffff;strokeColor=#000000;" value="Switch Role&#10;UC-31.01" vertex="1">
+          <mxGeometry height="48" width="135" x="214" y="488" as="geometry" />
+        </mxCell>
+        <mxCell id="uc_sub_38" parent="swimlane_frevia" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;fontFamily=Tahoma;fillColor=#ffffff;strokeColor=#000000;" value="Join New Role&#10;UC-31.02" vertex="1">
+          <mxGeometry height="48" width="135" x="369" y="488" as="geometry" />
+        </mxCell>
+        <mxCell id="m_35" edge="1" parent="1" source="act_1" style="endArrow=none;html=1;rounded=0;fontFamily=Tahoma;fontSize=13;" target="uc_mod_34">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="m_37" edge="1" parent="swimlane_frevia" source="uc_mod_34" style="endArrow=none;html=1;rounded=0;fontFamily=Tahoma;fontSize=13;" target="uc_sub_36">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="m_39" edge="1" parent="swimlane_frevia" source="uc_mod_34" style="endArrow=none;html=1;rounded=0;fontFamily=Tahoma;fontSize=13;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" target="uc_sub_38">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="inc_35" edge="1" parent="1" source="uc_mod_34" style="edgeStyle=orthogonalEdgeStyle;rounded=0;endArrow=open;dashed=1;html=1;strokeColor=#000000;fontSize=10;fontFamily=Tahoma;labelBackgroundColor=#ffffff;align=center;verticalAlign=middle;" target="uc_2" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint as="offset" />
           </mxGeometry>
         </mxCell>
       </root>

@@ -10,6 +10,7 @@
 \Needspace{12\baselineskip}
 \paragraph{Overall Entity Relationship Diagram}
 \label{sec:erd-overall}
+The full-system schema overview across all platform domains is presented in Figure~\ref{fig:erd-overall} on an A4 landscape page. Because the complete schema spans over fifty tables and cross-domain foreign keys, detailed readable module-by-module entity relationship diagrams and field descriptions are provided in Sections~3.1.5.2 through~3.1.5.23 below.
 \begin{figure}[H]
     \centering
     \includegraphics[width=\linewidth]{image/ERD/ERD-ALL.drawio.pdf}
@@ -48,7 +49,7 @@ This ERD describes the Authentication \& Sessions module. It stores account iden
 \endhead
 \hline\endfoot
 \hline\endlastfoot
-1 & \texttt{User} & Account identity: e-mail, username, bcrypt password hash, status, verification and ban flags, preferred language and timestamps. Carries the primary role through \texttt{roleId}.\par\smallskip
+1 & \texttt{User} & Account identity: e-mail, bcrypt password hash, ban flag, Stripe customer/Connect flags and timestamps. Carries the primary role through \texttt{roleId}.\par\smallskip
 \hspace*{1em}-- \texttt{id} (PK) \newline
 \hspace*{1em}-- \texttt{email} \newline
 \hspace*{1em}-- \texttt{password} \newline
@@ -60,7 +61,7 @@ This ERD describes the Authentication \& Sessions module. It stores account iden
 \hspace*{1em}-- \texttt{stripe\allowbreak Account\allowbreak Id} \newline
 \hspace*{1em}-- \texttt{stripe\allowbreak Onboarding\allowbreak Completed} \newline
 \hspace*{1em}-- \texttt{role\allowbreak Id} (FK) \\ \hline
-2 & \texttt{Verification\allowbreak Code} & One-time code (OTP) issued for e-mail verification or password reset, with its purpose, expiry and consumed flag.\par\smallskip
+2 & \texttt{Verification\allowbreak Code} & One-time code (OTP) issued for e-mail verification or password reset, with its purpose (\texttt{type}), verification attempt counter (\texttt{attempts}) and expiry; consumed codes are deleted.\par\smallskip
 \hspace*{1em}-- \texttt{id} (PK) \newline
 \hspace*{1em}-- \texttt{email} \newline
 \hspace*{1em}-- \texttt{code} \newline
@@ -68,7 +69,7 @@ This ERD describes the Authentication \& Sessions module. It stores account iden
 \hspace*{1em}-- \texttt{attempts} \newline
 \hspace*{1em}-- \texttt{expires\allowbreak At} \newline
 \hspace*{1em}-- \texttt{created\allowbreak At} \\ \hline
-3 & \texttt{Session} & Server-side session per device: refresh-token hash, device/user-agent information, last activity and revocation time.\par\smallskip
+3 & \texttt{Session} & Server-side session per device: refresh-token hash, device/user-agent and IP address metadata, and expiry timestamp.\par\smallskip
 \hspace*{1em}-- \texttt{id} (PK) \newline
 \hspace*{1em}-- \texttt{user\allowbreak Id} (FK) \newline
 \hspace*{1em}-- \texttt{refresh\allowbreak Token} \newline
@@ -94,7 +95,7 @@ This ERD describes the Authentication \& Sessions module. It stores account iden
 \hspace*{1em}-- \texttt{theme} \newline
 \hspace*{1em}-- \texttt{language} \newline
 \hspace*{1em}-- \texttt{notification\allowbreak Prefs} \\ \hline
-\end{longtable}
+\end{longtable}\addtocounter{table}{-1}
 \end{center}
 
 % ===============================================
@@ -127,7 +128,7 @@ This ERD describes the Role-Based Access Control module. It stores roles, permis
 \endhead
 \hline\endfoot
 \hline\endlastfoot
-1 & \texttt{User} & Account identity: e-mail, username, bcrypt password hash, status, verification and ban flags, preferred language and timestamps. Carries the primary role through \texttt{roleId}.\par\smallskip
+1 & \texttt{User} & Account identity: e-mail, bcrypt password hash, ban flag, Stripe customer/Connect flags and timestamps. Carries the primary role through \texttt{roleId}.\par\smallskip
 \hspace*{1em}-- \texttt{id} (PK) \newline
 \hspace*{1em}-- \texttt{email} \newline
 \hspace*{1em}-- \texttt{password} \newline
@@ -164,7 +165,7 @@ This ERD describes the Role-Based Access Control module. It stores roles, permis
 5 & \texttt{Role\allowbreak Permission} & Permissions granted to a role; drives the effective permission list of every signed-in account.\par\smallskip
 \hspace*{1em}-- \texttt{role\allowbreak Id} (PK, FK) \newline
 \hspace*{1em}-- \texttt{permission\allowbreak Id} (PK, FK) \\ \hline
-\end{longtable}
+\end{longtable}\addtocounter{table}{-1}
 \end{center}
 
 % ===============================================
@@ -197,7 +198,7 @@ This ERD describes the Profile Core module. It stores base profiles and role-spe
 \endhead
 \hline\endfoot
 \hline\endlastfoot
-1 & \texttt{User} & Account identity: e-mail, username, bcrypt password hash, status, verification and ban flags, preferred language and timestamps. Carries the primary role through \texttt{roleId}.\par\smallskip
+1 & \texttt{User} & Account identity: e-mail, bcrypt password hash, ban flag, Stripe customer/Connect flags and timestamps. Carries the primary role through \texttt{roleId}.\par\smallskip
 \hspace*{1em}-- \texttt{id} (PK) \newline
 \hspace*{1em}-- \texttt{email} \newline
 \hspace*{1em}-- \texttt{password} \newline
@@ -209,7 +210,7 @@ This ERD describes the Profile Core module. It stores base profiles and role-spe
 \hspace*{1em}-- \texttt{stripe\allowbreak Account\allowbreak Id} \newline
 \hspace*{1em}-- \texttt{stripe\allowbreak Onboarding\allowbreak Completed} \newline
 \hspace*{1em}-- \texttt{role\allowbreak Id} (FK) \\ \hline
-2 & \texttt{Profile} & Base profile shared by all accounts: display name, avatar, cover, headline and biography.\par\smallskip
+2 & \texttt{Profile} & Base profile shared by all accounts: display name, avatar, cover, biography, availability status and completion percentage.\par\smallskip
 \hspace*{1em}-- \texttt{id} (PK) \newline
 \hspace*{1em}-- \texttt{user\allowbreak Id} (FK) \newline
 \hspace*{1em}-- \texttt{display\allowbreak Name} \newline
@@ -222,7 +223,7 @@ This ERD describes the Profile Core module. It stores base profiles and role-spe
 \hspace*{1em}-- \texttt{wallet\allowbreak Address} \newline
 \hspace*{1em}-- \texttt{created\allowbreak At} \newline
 \hspace*{1em}-- \texttt{updated\allowbreak At} \\ \hline
-3 & \texttt{Freelancer\allowbreak Profile} & Professional data of a freelancer: professional title, overview, hourly rate, availability and total earnings.\par\smallskip
+3 & \texttt{Freelancer\allowbreak Profile} & Professional data of a freelancer: professional title, education, certifications, languages, experience summaries, uploaded CV metadata and identity verification flag.\par\smallskip
 \hspace*{1em}-- \texttt{id} (PK) \newline
 \hspace*{1em}-- \texttt{profile\allowbreak Id} (FK) \newline
 \hspace*{1em}-- \texttt{title} \newline
@@ -237,7 +238,7 @@ This ERD describes the Profile Core module. It stores base profiles and role-spe
 \hspace*{1em}-- \texttt{id\allowbreak Verified} \newline
 \hspace*{1em}-- \texttt{created\allowbreak At} \newline
 \hspace*{1em}-- \texttt{updated\allowbreak At} \\ \hline
-4 & \texttt{Client\allowbreak Profile} & Client-side data: company name, company size, industry and billing information.\par\smallskip
+4 & \texttt{Client\allowbreak Profile} & Client-side data: company name, company description and website URL.\par\smallskip
 \hspace*{1em}-- \texttt{id} (PK) \newline
 \hspace*{1em}-- \texttt{profile\allowbreak Id} (FK) \newline
 \hspace*{1em}-- \texttt{company\allowbreak Name} \newline
@@ -257,7 +258,7 @@ This ERD describes the Profile Core module. It stores base profiles and role-spe
 \hspace*{1em}-- \texttt{is\allowbreak Active} \newline
 \hspace*{1em}-- \texttt{created\allowbreak At} \newline
 \hspace*{1em}-- \texttt{updated\allowbreak At} \\ \hline
-\end{longtable}
+\end{longtable}\addtocounter{table}{-1}
 \end{center}
 
 % ===============================================
@@ -290,7 +291,7 @@ This ERD describes the Profile History \& Social Links module. It stores profile
 \endhead
 \hline\endfoot
 \hline\endlastfoot
-1 & \texttt{User} & Account identity: e-mail, username, bcrypt password hash, status, verification and ban flags, preferred language and timestamps. Carries the primary role through \texttt{roleId}.\par\smallskip
+1 & \texttt{User} & Account identity: e-mail, bcrypt password hash, ban flag, Stripe customer/Connect flags and timestamps. Carries the primary role through \texttt{roleId}.\par\smallskip
 \hspace*{1em}-- \texttt{id} (PK) \newline
 \hspace*{1em}-- \texttt{email} \newline
 \hspace*{1em}-- \texttt{password} \newline
@@ -302,7 +303,7 @@ This ERD describes the Profile History \& Social Links module. It stores profile
 \hspace*{1em}-- \texttt{stripe\allowbreak Account\allowbreak Id} \newline
 \hspace*{1em}-- \texttt{stripe\allowbreak Onboarding\allowbreak Completed} \newline
 \hspace*{1em}-- \texttt{role\allowbreak Id} (FK) \\ \hline
-2 & \texttt{Profile} & Base profile shared by all accounts: display name, avatar, cover, headline and biography.\par\smallskip
+2 & \texttt{Profile} & Base profile shared by all accounts: display name, avatar, cover, biography, availability status and completion percentage.\par\smallskip
 \hspace*{1em}-- \texttt{id} (PK) \newline
 \hspace*{1em}-- \texttt{user\allowbreak Id} (FK) \newline
 \hspace*{1em}-- \texttt{display\allowbreak Name} \newline
@@ -334,7 +335,7 @@ This ERD describes the Profile History \& Social Links module. It stores profile
 \hspace*{1em}-- \texttt{profile\allowbreak Id} (FK) \newline
 \hspace*{1em}-- \texttt{platform} \newline
 \hspace*{1em}-- \texttt{url} \\ \hline
-5 & \texttt{Freelancer\allowbreak Profile} & Professional data of a freelancer: professional title, overview, hourly rate, availability and total earnings.\par\smallskip
+5 & \texttt{Freelancer\allowbreak Profile} & Professional data of a freelancer: professional title, education, certifications, languages, experience summaries, uploaded CV metadata and identity verification flag.\par\smallskip
 \hspace*{1em}-- \texttt{id} (PK) \newline
 \hspace*{1em}-- \texttt{profile\allowbreak Id} (FK) \newline
 \hspace*{1em}-- \texttt{title} \newline
@@ -349,7 +350,7 @@ This ERD describes the Profile History \& Social Links module. It stores profile
 \hspace*{1em}-- \texttt{id\allowbreak Verified} \newline
 \hspace*{1em}-- \texttt{created\allowbreak At} \newline
 \hspace*{1em}-- \texttt{updated\allowbreak At} \\ \hline
-6 & \texttt{Cv\allowbreak Analysis} & AI analysis of a freelancer CV: upload metadata, extraction statistics, the structured JSON result (skills, experience, education, projects, summary) and the confirmation state. One analysis is kept per CV version.\par\smallskip
+6 & \texttt{Cv\allowbreak Analysis} & AI analysis of a freelancer CV: upload metadata, extraction statistics, the structured JSON result (skills, experience, education, projects, summary) and the confirmation state. Generating a new analysis discards any prior \texttt{PENDING} draft for the profile.\par\smallskip
 \hspace*{1em}-- \texttt{id} (PK) \newline
 \hspace*{1em}-- \texttt{freelancer\allowbreak Profile\allowbreak Id} (FK) \newline
 \hspace*{1em}-- \texttt{status} \newline
@@ -445,7 +446,7 @@ This ERD describes the Profile History \& Social Links module. It stores profile
 \hspace*{1em}-- \texttt{last\allowbreak Error} \newline
 \hspace*{1em}-- \texttt{created\allowbreak At} \newline
 \hspace*{1em}-- \texttt{processed\allowbreak At} \\ \hline
-\end{longtable}
+\end{longtable}\addtocounter{table}{-1}
 \end{center}
 
 % ===============================================
@@ -478,7 +479,7 @@ This ERD describes the Identity Verification \& Profile Visits module. It stores
 \endhead
 \hline\endfoot
 \hline\endlastfoot
-1 & \texttt{User} & Account identity: e-mail, username, bcrypt password hash, status, verification and ban flags, preferred language and timestamps. Carries the primary role through \texttt{roleId}.\par\smallskip
+1 & \texttt{User} & Account identity: e-mail, bcrypt password hash, ban flag, Stripe customer/Connect flags and timestamps. Carries the primary role through \texttt{roleId}.\par\smallskip
 \hspace*{1em}-- \texttt{id} (PK) \newline
 \hspace*{1em}-- \texttt{email} \newline
 \hspace*{1em}-- \texttt{password} \newline
@@ -515,7 +516,7 @@ This ERD describes the Identity Verification \& Profile Visits module. It stores
 \hspace*{1em}-- \texttt{viewer\allowbreak Id} (FK) \newline
 \hspace*{1em}-- \texttt{target\allowbreak Freelancer\allowbreak Id} (FK) \newline
 \hspace*{1em}-- \texttt{viewed\allowbreak At} \\ \hline
-\end{longtable}
+\end{longtable}\addtocounter{table}{-1}
 \end{center}
 
 % ===============================================
@@ -548,7 +549,7 @@ This ERD describes the Portfolio \& Skills module. It stores portfolio items, fr
 \endhead
 \hline\endfoot
 \hline\endlastfoot
-1 & \texttt{User} & Account identity: e-mail, username, bcrypt password hash, status, verification and ban flags, preferred language and timestamps. Carries the primary role through \texttt{roleId}.\par\smallskip
+1 & \texttt{User} & Account identity: e-mail, bcrypt password hash, ban flag, Stripe customer/Connect flags and timestamps. Carries the primary role through \texttt{roleId}.\par\smallskip
 \hspace*{1em}-- \texttt{id} (PK) \newline
 \hspace*{1em}-- \texttt{email} \newline
 \hspace*{1em}-- \texttt{password} \newline
@@ -560,7 +561,7 @@ This ERD describes the Portfolio \& Skills module. It stores portfolio items, fr
 \hspace*{1em}-- \texttt{stripe\allowbreak Account\allowbreak Id} \newline
 \hspace*{1em}-- \texttt{stripe\allowbreak Onboarding\allowbreak Completed} \newline
 \hspace*{1em}-- \texttt{role\allowbreak Id} (FK) \\ \hline
-2 & \texttt{Freelancer\allowbreak Profile} & Professional data of a freelancer: professional title, overview, hourly rate, availability and total earnings.\par\smallskip
+2 & \texttt{Freelancer\allowbreak Profile} & Professional data of a freelancer: professional title, education, certifications, languages, experience summaries, uploaded CV metadata and identity verification flag.\par\smallskip
 \hspace*{1em}-- \texttt{id} (PK) \newline
 \hspace*{1em}-- \texttt{profile\allowbreak Id} (FK) \newline
 \hspace*{1em}-- \texttt{title} \newline
@@ -588,7 +589,7 @@ This ERD describes the Portfolio \& Skills module. It stores portfolio items, fr
 \hspace*{1em}-- \texttt{deleted\allowbreak At} \newline
 \hspace*{1em}-- \texttt{created\allowbreak At} \newline
 \hspace*{1em}-- \texttt{updated\allowbreak At} \\ \hline
-5 & \texttt{Portfolio\allowbreak Item} & Portfolio entry of a profile: title, description, media URL, project link and ordering position.\par\smallskip
+5 & \texttt{Portfolio\allowbreak Item} & Portfolio entry of a profile: title, description, technologies list, project URL, content source and soft-delete support.\par\smallskip
 \hspace*{1em}-- \texttt{id} (PK) \newline
 \hspace*{1em}-- \texttt{freelancer\allowbreak Profile\allowbreak Id} (FK) \newline
 \hspace*{1em}-- \texttt{title} \newline
@@ -603,7 +604,7 @@ This ERD describes the Portfolio \& Skills module. It stores portfolio items, fr
 \hspace*{1em}-- \texttt{user\allowbreak Id} (PK, FK) \newline
 \hspace*{1em}-- \texttt{portfolio\allowbreak Item\allowbreak Id} (PK, FK) \newline
 \hspace*{1em}-- \texttt{created\allowbreak At} \\ \hline
-\end{longtable}
+\end{longtable}\addtocounter{table}{-1}
 \end{center}
 
 % ===============================================
@@ -636,7 +637,7 @@ This ERD describes the Favorites \& Follows module. It stores favorite freelance
 \endhead
 \hline\endfoot
 \hline\endlastfoot
-1 & \texttt{User} & Account identity: e-mail, username, bcrypt password hash, status, verification and ban flags, preferred language and timestamps. Carries the primary role through \texttt{roleId}.\par\smallskip
+1 & \texttt{User} & Account identity: e-mail, bcrypt password hash, ban flag, Stripe customer/Connect flags and timestamps. Carries the primary role through \texttt{roleId}.\par\smallskip
 \hspace*{1em}-- \texttt{id} (PK) \newline
 \hspace*{1em}-- \texttt{email} \newline
 \hspace*{1em}-- \texttt{password} \newline
@@ -656,7 +657,7 @@ This ERD describes the Favorites \& Follows module. It stores favorite freelance
 \hspace*{1em}-- \texttt{client\allowbreak Id} (PK, FK) \newline
 \hspace*{1em}-- \texttt{freelancer\allowbreak Id} (PK, FK) \newline
 \hspace*{1em}-- \texttt{created\allowbreak At} \\ \hline
-\end{longtable}
+\end{longtable}\addtocounter{table}{-1}
 \end{center}
 
 % ===============================================
@@ -689,7 +690,7 @@ This ERD describes the Job Posting module. It stores job categories, jobs, job-c
 \endhead
 \hline\endfoot
 \hline\endlastfoot
-1 & \texttt{User} & Account identity: e-mail, username, bcrypt password hash, status, verification and ban flags, preferred language and timestamps. Carries the primary role through \texttt{roleId}.\par\smallskip
+1 & \texttt{User} & Account identity: e-mail, bcrypt password hash, ban flag, Stripe customer/Connect flags and timestamps. Carries the primary role through \texttt{roleId}.\par\smallskip
 \hspace*{1em}-- \texttt{id} (PK) \newline
 \hspace*{1em}-- \texttt{email} \newline
 \hspace*{1em}-- \texttt{password} \newline
@@ -701,7 +702,7 @@ This ERD describes the Job Posting module. It stores job categories, jobs, job-c
 \hspace*{1em}-- \texttt{stripe\allowbreak Account\allowbreak Id} \newline
 \hspace*{1em}-- \texttt{stripe\allowbreak Onboarding\allowbreak Completed} \newline
 \hspace*{1em}-- \texttt{role\allowbreak Id} (FK) \\ \hline
-2 & \texttt{Job} & Job posting: slug, title, description, budget range, duration, deadline, visibility, status and the owning client.\par\smallskip
+2 & \texttt{Job} & Job posting: slug, title, description, budget range and type, hiring type, positions required/filled, deadline, expiry date, status and the owning client.\par\smallskip
 \hspace*{1em}-- \texttt{id} (PK) \newline
 \hspace*{1em}-- \texttt{client\allowbreak Id} (FK) \newline
 \hspace*{1em}-- \texttt{title} \newline
@@ -719,7 +720,7 @@ This ERD describes the Job Posting module. It stores job categories, jobs, job-c
 \hspace*{1em}-- \texttt{hiring\allowbreak Type} \newline
 \hspace*{1em}-- \texttt{positions\allowbreak Required} \newline
 \hspace*{1em}-- \texttt{positions\allowbreak Filled} \\ \hline
-3 & \texttt{Job\allowbreak Category} & Hierarchical job category (parent reference, slug, name, icon) with soft-delete support.\par\smallskip
+3 & \texttt{Job\allowbreak Category} & Flat job category (\texttt{name}, \texttt{slug}, \texttt{description}, \texttt{status}) with soft-delete support.\par\smallskip
 \hspace*{1em}-- \texttt{id} (PK) \newline
 \hspace*{1em}-- \texttt{name} \newline
 \hspace*{1em}-- \texttt{slug} \newline
@@ -731,7 +732,7 @@ This ERD describes the Job Posting module. It stores job categories, jobs, job-c
 4 & \texttt{Job\allowbreak Job\allowbreak Category} & Many-to-many link between a job and the job categories it is published in.\par\smallskip
 \hspace*{1em}-- \texttt{job\allowbreak Id} (PK, FK) \newline
 \hspace*{1em}-- \texttt{category\allowbreak Id} (PK, FK) \\ \hline
-5 & \texttt{Job\allowbreak Skill} & Skills required by a job, with the required proficiency level.\par\smallskip
+5 & \texttt{Job\allowbreak Skill} & Many-to-many link pairing a job with its required skills.\par\smallskip
 \hspace*{1em}-- \texttt{job\allowbreak Id} (PK, FK) \newline
 \hspace*{1em}-- \texttt{skill\allowbreak Id} (PK, FK) \\ \hline
 6 & \texttt{Skill} & Skill catalogue shared by freelancer profiles and jobs, with soft-delete support.\par\smallskip
@@ -742,7 +743,7 @@ This ERD describes the Job Posting module. It stores job categories, jobs, job-c
 \hspace*{1em}-- \texttt{deleted\allowbreak At} \newline
 \hspace*{1em}-- \texttt{created\allowbreak At} \newline
 \hspace*{1em}-- \texttt{updated\allowbreak At} \\ \hline
-\end{longtable}
+\end{longtable}\addtocounter{table}{-1}
 \end{center}
 
 % ===============================================
@@ -775,7 +776,7 @@ This ERD describes the Job Discovery \& Alerts module. It stores job bookmarks, 
 \endhead
 \hline\endfoot
 \hline\endlastfoot
-1 & \texttt{User} & Account identity: e-mail, username, bcrypt password hash, status, verification and ban flags, preferred language and timestamps. Carries the primary role through \texttt{roleId}.\par\smallskip
+1 & \texttt{User} & Account identity: e-mail, bcrypt password hash, ban flag, Stripe customer/Connect flags and timestamps. Carries the primary role through \texttt{roleId}.\par\smallskip
 \hspace*{1em}-- \texttt{id} (PK) \newline
 \hspace*{1em}-- \texttt{email} \newline
 \hspace*{1em}-- \texttt{password} \newline
@@ -787,7 +788,7 @@ This ERD describes the Job Discovery \& Alerts module. It stores job bookmarks, 
 \hspace*{1em}-- \texttt{stripe\allowbreak Account\allowbreak Id} \newline
 \hspace*{1em}-- \texttt{stripe\allowbreak Onboarding\allowbreak Completed} \newline
 \hspace*{1em}-- \texttt{role\allowbreak Id} (FK) \\ \hline
-2 & \texttt{Job} & Job posting: slug, title, description, budget range, duration, deadline, visibility, status and the owning client.\par\smallskip
+2 & \texttt{Job} & Job posting: slug, title, description, budget range and type, hiring type, positions required/filled, deadline, expiry date, status and the owning client.\par\smallskip
 \hspace*{1em}-- \texttt{id} (PK) \newline
 \hspace*{1em}-- \texttt{client\allowbreak Id} (FK) \newline
 \hspace*{1em}-- \texttt{title} \newline
@@ -820,7 +821,7 @@ This ERD describes the Job Discovery \& Alerts module. It stores job bookmarks, 
 \hspace*{1em}-- \texttt{name} \newline
 \hspace*{1em}-- \texttt{search\allowbreak Params} \newline
 \hspace*{1em}-- \texttt{created\allowbreak At} \\ \hline
-6 & \texttt{Job\allowbreak Alert} & Alert configuration attached to a saved search (frequency, channel, active flag).\par\smallskip
+6 & \texttt{Job\allowbreak Alert} & User-level job alert configuration storing keywords, skills, frequency, notification channels and active flag.\par\smallskip
 \hspace*{1em}-- \texttt{id} (PK) \newline
 \hspace*{1em}-- \texttt{user\allowbreak Id} (FK) \newline
 \hspace*{1em}-- \texttt{name} \newline
@@ -832,7 +833,7 @@ This ERD describes the Job Discovery \& Alerts module. It stores job bookmarks, 
 \hspace*{1em}-- \texttt{last\allowbreak Sent\allowbreak At} \newline
 \hspace*{1em}-- \texttt{created\allowbreak At} \newline
 \hspace*{1em}-- \texttt{updated\allowbreak At} \\ \hline
-\end{longtable}
+\end{longtable}\addtocounter{table}{-1}
 \end{center}
 
 % ===============================================
@@ -865,7 +866,7 @@ This ERD describes the Proposal module. It stores proposals and proposal attachm
 \endhead
 \hline\endfoot
 \hline\endlastfoot
-1 & \texttt{Job} & Job posting: slug, title, description, budget range, duration, deadline, visibility, status and the owning client.\par\smallskip
+1 & \texttt{Job} & Job posting: slug, title, description, budget range and type, hiring type, positions required/filled, deadline, expiry date, status and the owning client.\par\smallskip
 \hspace*{1em}-- \texttt{id} (PK) \newline
 \hspace*{1em}-- \texttt{client\allowbreak Id} (FK) \newline
 \hspace*{1em}-- \texttt{title} \newline
@@ -883,7 +884,7 @@ This ERD describes the Proposal module. It stores proposals and proposal attachm
 \hspace*{1em}-- \texttt{hiring\allowbreak Type} \newline
 \hspace*{1em}-- \texttt{positions\allowbreak Required} \newline
 \hspace*{1em}-- \texttt{positions\allowbreak Filled} \\ \hline
-2 & \texttt{User} & Account identity: e-mail, username, bcrypt password hash, status, verification and ban flags, preferred language and timestamps. Carries the primary role through \texttt{roleId}.\par\smallskip
+2 & \texttt{User} & Account identity: e-mail, bcrypt password hash, ban flag, Stripe customer/Connect flags and timestamps. Carries the primary role through \texttt{roleId}.\par\smallskip
 \hspace*{1em}-- \texttt{id} (PK) \newline
 \hspace*{1em}-- \texttt{email} \newline
 \hspace*{1em}-- \texttt{password} \newline
@@ -920,7 +921,7 @@ This ERD describes the Proposal module. It stores proposals and proposal attachm
 \hspace*{1em}-- \texttt{mime\allowbreak Type} \newline
 \hspace*{1em}-- \texttt{created\allowbreak At} \newline
 \hspace*{1em}-- \texttt{deleted\allowbreak At} \\ \hline
-\end{longtable}
+\end{longtable}\addtocounter{table}{-1}
 \end{center}
 
 % ===============================================
@@ -953,7 +954,7 @@ This ERD describes the Contract module. It stores contracts and contract term te
 \endhead
 \hline\endfoot
 \hline\endlastfoot
-1 & \texttt{Job} & Job posting: slug, title, description, budget range, duration, deadline, visibility, status and the owning client.\par\smallskip
+1 & \texttt{Job} & Job posting: slug, title, description, budget range and type, hiring type, positions required/filled, deadline, expiry date, status and the owning client.\par\smallskip
 \hspace*{1em}-- \texttt{id} (PK) \newline
 \hspace*{1em}-- \texttt{client\allowbreak Id} (FK) \newline
 \hspace*{1em}-- \texttt{title} \newline
@@ -987,7 +988,7 @@ This ERD describes the Contract module. It stores contracts and contract term te
 \hspace*{1em}-- \texttt{expires\allowbreak At} \newline
 \hspace*{1em}-- \texttt{updated\allowbreak At} \newline
 \hspace*{1em}-- \texttt{deleted\allowbreak At} \\ \hline
-3 & \texttt{User} & Account identity: e-mail, username, bcrypt password hash, status, verification and ban flags, preferred language and timestamps. Carries the primary role through \texttt{roleId}.\par\smallskip
+3 & \texttt{User} & Account identity: e-mail, bcrypt password hash, ban flag, Stripe customer/Connect flags and timestamps. Carries the primary role through \texttt{roleId}.\par\smallskip
 \hspace*{1em}-- \texttt{id} (PK) \newline
 \hspace*{1em}-- \texttt{email} \newline
 \hspace*{1em}-- \texttt{password} \newline
@@ -999,7 +1000,7 @@ This ERD describes the Contract module. It stores contracts and contract term te
 \hspace*{1em}-- \texttt{stripe\allowbreak Account\allowbreak Id} \newline
 \hspace*{1em}-- \texttt{stripe\allowbreak Onboarding\allowbreak Completed} \newline
 \hspace*{1em}-- \texttt{role\allowbreak Id} (FK) \\ \hline
-4 & \texttt{Contract} & Contract created when a proposal is accepted: client, freelancer, total amount, terms, signature state, start/end dates and status.\par\smallskip
+4 & \texttt{Contract} & Contract created when a proposal is accepted: slug, client, freelancer, total amount, terms, bilateral signature flags/timestamps, platform fee fields, Stripe hold reference, expiry/completion dates and status.\par\smallskip
 \hspace*{1em}-- \texttt{id} (PK) \newline
 \hspace*{1em}-- \texttt{slug} \newline
 \hspace*{1em}-- \texttt{job\allowbreak Id} (FK) \newline
@@ -1040,7 +1041,7 @@ This ERD describes the Contract module. It stores contracts and contract term te
 \hspace*{1em}-- \texttt{created\allowbreak At} \newline
 \hspace*{1em}-- \texttt{updated\allowbreak At} \newline
 \hspace*{1em}-- \texttt{deleted\allowbreak At} \\ \hline
-\end{longtable}
+\end{longtable}\addtocounter{table}{-1}
 \end{center}
 
 % ===============================================
@@ -1073,7 +1074,7 @@ This ERD describes the Milestone \& Project Progress module. It stores milestone
 \endhead
 \hline\endfoot
 \hline\endlastfoot
-1 & \texttt{User} & Account identity: e-mail, username, bcrypt password hash, status, verification and ban flags, preferred language and timestamps. Carries the primary role through \texttt{roleId}.\par\smallskip
+1 & \texttt{User} & Account identity: e-mail, bcrypt password hash, ban flag, Stripe customer/Connect flags and timestamps. Carries the primary role through \texttt{roleId}.\par\smallskip
 \hspace*{1em}-- \texttt{id} (PK) \newline
 \hspace*{1em}-- \texttt{email} \newline
 \hspace*{1em}-- \texttt{password} \newline
@@ -1085,7 +1086,7 @@ This ERD describes the Milestone \& Project Progress module. It stores milestone
 \hspace*{1em}-- \texttt{stripe\allowbreak Account\allowbreak Id} \newline
 \hspace*{1em}-- \texttt{stripe\allowbreak Onboarding\allowbreak Completed} \newline
 \hspace*{1em}-- \texttt{role\allowbreak Id} (FK) \\ \hline
-2 & \texttt{Contract} & Contract created when a proposal is accepted: client, freelancer, total amount, terms, signature state, start/end dates and status.\par\smallskip
+2 & \texttt{Contract} & Contract created when a proposal is accepted: slug, client, freelancer, total amount, terms, bilateral signature flags/timestamps, platform fee fields, Stripe hold reference, expiry/completion dates and status.\par\smallskip
 \hspace*{1em}-- \texttt{id} (PK) \newline
 \hspace*{1em}-- \texttt{slug} \newline
 \hspace*{1em}-- \texttt{job\allowbreak Id} (FK) \newline
@@ -1116,7 +1117,7 @@ This ERD describes the Milestone \& Project Progress module. It stores milestone
 \hspace*{1em}-- \texttt{completed\allowbreak At} \newline
 \hspace*{1em}-- \texttt{expires\allowbreak At} \newline
 \hspace*{1em}-- \texttt{deleted\allowbreak At} \\ \hline
-3 & \texttt{Milestone} & Milestone inside a contract: title, description, amount, due date, escrow status, progress percentage and approval state.\par\smallskip
+3 & \texttt{Milestone} & Milestone inside a contract: title, description, amount, due date, completion date, milestone lifecycle status and payment escrow status.\par\smallskip
 \hspace*{1em}-- \texttt{id} (PK) \newline
 \hspace*{1em}-- \texttt{contract\allowbreak Id} (FK) \newline
 \hspace*{1em}-- \texttt{title} \newline
@@ -1144,7 +1145,7 @@ This ERD describes the Milestone \& Project Progress module. It stores milestone
 \hspace*{1em}-- \texttt{freelancer\allowbreak Id} (FK) \newline
 \hspace*{1em}-- \texttt{note} \newline
 \hspace*{1em}-- \texttt{updated\allowbreak At} \\ \hline
-\end{longtable}
+\end{longtable}\addtocounter{table}{-1}
 \end{center}
 
 % ===============================================
@@ -1177,7 +1178,7 @@ This ERD describes the Milestone Submission module. It stores milestone files, s
 \endhead
 \hline\endfoot
 \hline\endlastfoot
-1 & \texttt{User} & Account identity: e-mail, username, bcrypt password hash, status, verification and ban flags, preferred language and timestamps. Carries the primary role through \texttt{roleId}.\par\smallskip
+1 & \texttt{User} & Account identity: e-mail, bcrypt password hash, ban flag, Stripe customer/Connect flags and timestamps. Carries the primary role through \texttt{roleId}.\par\smallskip
 \hspace*{1em}-- \texttt{id} (PK) \newline
 \hspace*{1em}-- \texttt{email} \newline
 \hspace*{1em}-- \texttt{password} \newline
@@ -1189,7 +1190,7 @@ This ERD describes the Milestone Submission module. It stores milestone files, s
 \hspace*{1em}-- \texttt{stripe\allowbreak Account\allowbreak Id} \newline
 \hspace*{1em}-- \texttt{stripe\allowbreak Onboarding\allowbreak Completed} \newline
 \hspace*{1em}-- \texttt{role\allowbreak Id} (FK) \\ \hline
-2 & \texttt{Milestone} & Milestone inside a contract: title, description, amount, due date, escrow status, progress percentage and approval state.\par\smallskip
+2 & \texttt{Milestone} & Milestone inside a contract: title, description, amount, due date, completion date, milestone lifecycle status and payment escrow status.\par\smallskip
 \hspace*{1em}-- \texttt{id} (PK) \newline
 \hspace*{1em}-- \texttt{contract\allowbreak Id} (FK) \newline
 \hspace*{1em}-- \texttt{title} \newline
@@ -1227,7 +1228,7 @@ This ERD describes the Milestone Submission module. It stores milestone files, s
 5 & \texttt{Milestone\allowbreak Submission\allowbreak File} & Join table linking a submission to the milestone files it delivers.\par\smallskip
 \hspace*{1em}-- \texttt{submission\allowbreak Id} (PK, FK) \newline
 \hspace*{1em}-- \texttt{file\allowbreak Id} (PK, FK) \\ \hline
-\end{longtable}
+\end{longtable}\addtocounter{table}{-1}
 \end{center}
 
 % ===============================================
@@ -1260,7 +1261,7 @@ This ERD describes the Escrow, Payments \& Certificates module. It stores invoic
 \endhead
 \hline\endfoot
 \hline\endlastfoot
-1 & \texttt{User} & Account identity: e-mail, username, bcrypt password hash, status, verification and ban flags, preferred language and timestamps. Carries the primary role through \texttt{roleId}.\par\smallskip
+1 & \texttt{User} & Account identity: e-mail, bcrypt password hash, ban flag, Stripe customer/Connect flags and timestamps. Carries the primary role through \texttt{roleId}.\par\smallskip
 \hspace*{1em}-- \texttt{id} (PK) \newline
 \hspace*{1em}-- \texttt{email} \newline
 \hspace*{1em}-- \texttt{password} \newline
@@ -1272,7 +1273,7 @@ This ERD describes the Escrow, Payments \& Certificates module. It stores invoic
 \hspace*{1em}-- \texttt{stripe\allowbreak Account\allowbreak Id} \newline
 \hspace*{1em}-- \texttt{stripe\allowbreak Onboarding\allowbreak Completed} \newline
 \hspace*{1em}-- \texttt{role\allowbreak Id} (FK) \\ \hline
-2 & \texttt{Contract} & Contract created when a proposal is accepted: client, freelancer, total amount, terms, signature state, start/end dates and status.\par\smallskip
+2 & \texttt{Contract} & Contract created when a proposal is accepted: slug, client, freelancer, total amount, terms, bilateral signature flags/timestamps, platform fee fields, Stripe hold reference, expiry/completion dates and status.\par\smallskip
 \hspace*{1em}-- \texttt{id} (PK) \newline
 \hspace*{1em}-- \texttt{slug} \newline
 \hspace*{1em}-- \texttt{job\allowbreak Id} (FK) \newline
@@ -1341,7 +1342,7 @@ This ERD describes the Escrow, Payments \& Certificates module. It stores invoic
 \hspace*{1em}-- \texttt{completion\allowbreak Date} \newline
 \hspace*{1em}-- \texttt{metadata} \newline
 \hspace*{1em}-- \texttt{created\allowbreak At} \\ \hline
-\end{longtable}
+\end{longtable}\addtocounter{table}{-1}
 \end{center}
 
 % ===============================================
@@ -1374,7 +1375,7 @@ This ERD describes the Dispute Core module. It stores disputes and dispute fees.
 \endhead
 \hline\endfoot
 \hline\endlastfoot
-1 & \texttt{Contract} & Contract created when a proposal is accepted: client, freelancer, total amount, terms, signature state, start/end dates and status.\par\smallskip
+1 & \texttt{Contract} & Contract created when a proposal is accepted: slug, client, freelancer, total amount, terms, bilateral signature flags/timestamps, platform fee fields, Stripe hold reference, expiry/completion dates and status.\par\smallskip
 \hspace*{1em}-- \texttt{id} (PK) \newline
 \hspace*{1em}-- \texttt{slug} \newline
 \hspace*{1em}-- \texttt{job\allowbreak Id} (FK) \newline
@@ -1405,7 +1406,7 @@ This ERD describes the Dispute Core module. It stores disputes and dispute fees.
 \hspace*{1em}-- \texttt{completed\allowbreak At} \newline
 \hspace*{1em}-- \texttt{expires\allowbreak At} \newline
 \hspace*{1em}-- \texttt{deleted\allowbreak At} \\ \hline
-2 & \texttt{Milestone} & Milestone inside a contract: title, description, amount, due date, escrow status, progress percentage and approval state.\par\smallskip
+2 & \texttt{Milestone} & Milestone inside a contract: title, description, amount, due date, completion date, milestone lifecycle status and payment escrow status.\par\smallskip
 \hspace*{1em}-- \texttt{id} (PK) \newline
 \hspace*{1em}-- \texttt{contract\allowbreak Id} (FK) \newline
 \hspace*{1em}-- \texttt{title} \newline
@@ -1418,7 +1419,7 @@ This ERD describes the Dispute Core module. It stores disputes and dispute fees.
 \hspace*{1em}-- \texttt{created\allowbreak At} \newline
 \hspace*{1em}-- \texttt{updated\allowbreak At} \newline
 \hspace*{1em}-- \texttt{deleted\allowbreak At} \\ \hline
-3 & \texttt{User} & Account identity: e-mail, username, bcrypt password hash, status, verification and ban flags, preferred language and timestamps. Carries the primary role through \texttt{roleId}.\par\smallskip
+3 & \texttt{User} & Account identity: e-mail, bcrypt password hash, ban flag, Stripe customer/Connect flags and timestamps. Carries the primary role through \texttt{roleId}.\par\smallskip
 \hspace*{1em}-- \texttt{id} (PK) \newline
 \hspace*{1em}-- \texttt{email} \newline
 \hspace*{1em}-- \texttt{password} \newline
@@ -1466,7 +1467,7 @@ This ERD describes the Dispute Core module. It stores disputes and dispute fees.
 \hspace*{1em}-- \texttt{final\allowbreak Decision\allowbreak At} \newline
 \hspace*{1em}-- \texttt{created\allowbreak At} \newline
 \hspace*{1em}-- \texttt{updated\allowbreak At} \\ \hline
-\end{longtable}
+\end{longtable}\addtocounter{table}{-1}
 \end{center}
 
 % ===============================================
@@ -1499,7 +1500,7 @@ This ERD describes the Dispute Resolution module. It stores dispute evidence and
 \endhead
 \hline\endfoot
 \hline\endlastfoot
-1 & \texttt{User} & Account identity: e-mail, username, bcrypt password hash, status, verification and ban flags, preferred language and timestamps. Carries the primary role through \texttt{roleId}.\par\smallskip
+1 & \texttt{User} & Account identity: e-mail, bcrypt password hash, ban flag, Stripe customer/Connect flags and timestamps. Carries the primary role through \texttt{roleId}.\par\smallskip
 \hspace*{1em}-- \texttt{id} (PK) \newline
 \hspace*{1em}-- \texttt{email} \newline
 \hspace*{1em}-- \texttt{password} \newline
@@ -1573,7 +1574,7 @@ This ERD describes the Dispute Resolution module. It stores dispute evidence and
 \hspace*{1em}-- \texttt{response} \newline
 \hspace*{1em}-- \texttt{reason} \newline
 \hspace*{1em}-- \texttt{created\allowbreak At} \\ \hline
-\end{longtable}
+\end{longtable}\addtocounter{table}{-1}
 \end{center}
 
 % ===============================================
@@ -1606,7 +1607,7 @@ This ERD describes the Reviews \& Reputation module. It stores reviews and revie
 \endhead
 \hline\endfoot
 \hline\endlastfoot
-1 & \texttt{Contract} & Contract created when a proposal is accepted: client, freelancer, total amount, terms, signature state, start/end dates and status.\par\smallskip
+1 & \texttt{Contract} & Contract created when a proposal is accepted: slug, client, freelancer, total amount, terms, bilateral signature flags/timestamps, platform fee fields, Stripe hold reference, expiry/completion dates and status.\par\smallskip
 \hspace*{1em}-- \texttt{id} (PK) \newline
 \hspace*{1em}-- \texttt{slug} \newline
 \hspace*{1em}-- \texttt{job\allowbreak Id} (FK) \newline
@@ -1637,7 +1638,7 @@ This ERD describes the Reviews \& Reputation module. It stores reviews and revie
 \hspace*{1em}-- \texttt{completed\allowbreak At} \newline
 \hspace*{1em}-- \texttt{expires\allowbreak At} \newline
 \hspace*{1em}-- \texttt{deleted\allowbreak At} \\ \hline
-2 & \texttt{User} & Account identity: e-mail, username, bcrypt password hash, status, verification and ban flags, preferred language and timestamps. Carries the primary role through \texttt{roleId}.\par\smallskip
+2 & \texttt{User} & Account identity: e-mail, bcrypt password hash, ban flag, Stripe customer/Connect flags and timestamps. Carries the primary role through \texttt{roleId}.\par\smallskip
 \hspace*{1em}-- \texttt{id} (PK) \newline
 \hspace*{1em}-- \texttt{email} \newline
 \hspace*{1em}-- \texttt{password} \newline
@@ -1668,7 +1669,7 @@ This ERD describes the Reviews \& Reputation module. It stores reviews and revie
 \hspace*{1em}-- \texttt{created\allowbreak At} \newline
 \hspace*{1em}-- \texttt{updated\allowbreak At} \newline
 \hspace*{1em}-- \texttt{deleted\allowbreak At} \\ \hline
-\end{longtable}
+\end{longtable}\addtocounter{table}{-1}
 \end{center}
 
 % ===============================================
@@ -1701,7 +1702,7 @@ This ERD describes the Forum Posts \& Comments module. It stores forum categorie
 \endhead
 \hline\endfoot
 \hline\endlastfoot
-1 & \texttt{Forum\allowbreak Category} & Forum category: slug, name, description, display order, post counter and soft-delete support.\par\smallskip
+1 & \texttt{Forum\allowbreak Category} & Forum category: slug, name, description and soft-delete support.\par\smallskip
 \hspace*{1em}-- \texttt{id} (PK) \newline
 \hspace*{1em}-- \texttt{name} \newline
 \hspace*{1em}-- \texttt{slug} \newline
@@ -1726,7 +1727,7 @@ This ERD describes the Forum Posts \& Comments module. It stores forum categorie
 \hspace*{1em}-- \texttt{created\allowbreak At} \newline
 \hspace*{1em}-- \texttt{updated\allowbreak At} \newline
 \hspace*{1em}-- \texttt{deleted\allowbreak At} \\ \hline
-3 & \texttt{User} & Account identity: e-mail, username, bcrypt password hash, status, verification and ban flags, preferred language and timestamps. Carries the primary role through \texttt{roleId}.\par\smallskip
+3 & \texttt{User} & Account identity: e-mail, bcrypt password hash, ban flag, Stripe customer/Connect flags and timestamps. Carries the primary role through \texttt{roleId}.\par\smallskip
 \hspace*{1em}-- \texttt{id} (PK) \newline
 \hspace*{1em}-- \texttt{email} \newline
 \hspace*{1em}-- \texttt{password} \newline
@@ -1753,7 +1754,7 @@ This ERD describes the Forum Posts \& Comments module. It stores forum categorie
 \hspace*{1em}-- \texttt{created\allowbreak At} \newline
 \hspace*{1em}-- \texttt{updated\allowbreak At} \newline
 \hspace*{1em}-- \texttt{deleted\allowbreak At} \\ \hline
-\end{longtable}
+\end{longtable}\addtocounter{table}{-1}
 \end{center}
 
 % ===============================================
@@ -1786,7 +1787,7 @@ This ERD describes the Forum Likes module. It stores likes on posts and comments
 \endhead
 \hline\endfoot
 \hline\endlastfoot
-1 & \texttt{User} & Account identity: e-mail, username, bcrypt password hash, status, verification and ban flags, preferred language and timestamps. Carries the primary role through \texttt{roleId}.\par\smallskip
+1 & \texttt{User} & Account identity: e-mail, bcrypt password hash, ban flag, Stripe customer/Connect flags and timestamps. Carries the primary role through \texttt{roleId}.\par\smallskip
 \hspace*{1em}-- \texttt{id} (PK) \newline
 \hspace*{1em}-- \texttt{email} \newline
 \hspace*{1em}-- \texttt{password} \newline
@@ -1837,7 +1838,7 @@ This ERD describes the Forum Likes module. It stores likes on posts and comments
 \hspace*{1em}-- \texttt{comment\allowbreak Id} (FK) \newline
 \hspace*{1em}-- \texttt{reaction\allowbreak Type} \newline
 \hspace*{1em}-- \texttt{created\allowbreak At} \\ \hline
-\end{longtable}
+\end{longtable}\addtocounter{table}{-1}
 \end{center}
 
 % ===============================================
@@ -1870,7 +1871,7 @@ This ERD describes the Forum Reports \& Moderation module. It stores forum repor
 \endhead
 \hline\endfoot
 \hline\endlastfoot
-1 & \texttt{User} & Account identity: e-mail, username, bcrypt password hash, status, verification and ban flags, preferred language and timestamps. Carries the primary role through \texttt{roleId}.\par\smallskip
+1 & \texttt{User} & Account identity: e-mail, bcrypt password hash, ban flag, Stripe customer/Connect flags and timestamps. Carries the primary role through \texttt{roleId}.\par\smallskip
 \hspace*{1em}-- \texttt{id} (PK) \newline
 \hspace*{1em}-- \texttt{email} \newline
 \hspace*{1em}-- \texttt{password} \newline
@@ -1914,7 +1915,7 @@ This ERD describes the Forum Reports \& Moderation module. It stores forum repor
 \hspace*{1em}-- \texttt{created\allowbreak At} \newline
 \hspace*{1em}-- \texttt{updated\allowbreak At} \newline
 \hspace*{1em}-- \texttt{deleted\allowbreak At} \\ \hline
-4 & \texttt{Forum\allowbreak Report} & Content report filed by a member: reason, description, status and the administrator who handled it.\par\smallskip
+4 & \texttt{Forum\allowbreak Report} & Content report filed by a member: reason, status and the administrator who handled it.\par\smallskip
 \hspace*{1em}-- \texttt{id} (PK) \newline
 \hspace*{1em}-- \texttt{reporter\allowbreak Id} (FK) \newline
 \hspace*{1em}-- \texttt{post\allowbreak Id} (FK) \newline
@@ -1923,7 +1924,7 @@ This ERD describes the Forum Reports \& Moderation module. It stores forum repor
 \hspace*{1em}-- \texttt{status} \newline
 \hspace*{1em}-- \texttt{admin\allowbreak Id} (FK) \newline
 \hspace*{1em}-- \texttt{created\allowbreak At} \\ \hline
-\end{longtable}
+\end{longtable}\addtocounter{table}{-1}
 \end{center}
 
 % ===============================================
@@ -1956,7 +1957,7 @@ This ERD describes the Messaging \& Notifications module. It stores notification
 \endhead
 \hline\endfoot
 \hline\endlastfoot
-1 & \texttt{User} & Account identity: e-mail, username, bcrypt password hash, status, verification and ban flags, preferred language and timestamps. Carries the primary role through \texttt{roleId}.\par\smallskip
+1 & \texttt{User} & Account identity: e-mail, bcrypt password hash, ban flag, Stripe customer/Connect flags and timestamps. Carries the primary role through \texttt{roleId}.\par\smallskip
 \hspace*{1em}-- \texttt{id} (PK) \newline
 \hspace*{1em}-- \texttt{email} \newline
 \hspace*{1em}-- \texttt{password} \newline
@@ -1968,7 +1969,7 @@ This ERD describes the Messaging \& Notifications module. It stores notification
 \hspace*{1em}-- \texttt{stripe\allowbreak Account\allowbreak Id} \newline
 \hspace*{1em}-- \texttt{stripe\allowbreak Onboarding\allowbreak Completed} \newline
 \hspace*{1em}-- \texttt{role\allowbreak Id} (FK) \\ \hline
-2 & \texttt{Conversation} & Direct conversation between two accounts, with last-message cache and the pin state of each participant.\par\smallskip
+2 & \texttt{Conversation} & Direct conversation between two accounts, storing per-participant hide/pin timestamps and soft-delete support.\par\smallskip
 \hspace*{1em}-- \texttt{id} (PK) \newline
 \hspace*{1em}-- \texttt{slug} \newline
 \hspace*{1em}-- \texttt{participant1} (FK) \newline
@@ -2001,7 +2002,7 @@ This ERD describes the Messaging \& Notifications module. It stores notification
 \hspace*{1em}-- \texttt{is\allowbreak Read} \newline
 \hspace*{1em}-- \texttt{created\allowbreak At} \newline
 \hspace*{1em}-- \texttt{deleted\allowbreak At} \\ \hline
-\end{longtable}
+\end{longtable}\addtocounter{table}{-1}
 \end{center}
 
 % ===============================================
@@ -2034,7 +2035,7 @@ This ERD describes the Administration \& System module. It stores announcement b
 \endhead
 \hline\endfoot
 \hline\endlastfoot
-1 & \texttt{User} & Account identity: e-mail, username, bcrypt password hash, status, verification and ban flags, preferred language and timestamps. Carries the primary role through \texttt{roleId}.\par\smallskip
+1 & \texttt{User} & Account identity: e-mail, bcrypt password hash, ban flag, Stripe customer/Connect flags and timestamps. Carries the primary role through \texttt{roleId}.\par\smallskip
 \hspace*{1em}-- \texttt{id} (PK) \newline
 \hspace*{1em}-- \texttt{email} \newline
 \hspace*{1em}-- \texttt{password} \newline
@@ -2046,7 +2047,7 @@ This ERD describes the Administration \& System module. It stores announcement b
 \hspace*{1em}-- \texttt{stripe\allowbreak Account\allowbreak Id} \newline
 \hspace*{1em}-- \texttt{stripe\allowbreak Onboarding\allowbreak Completed} \newline
 \hspace*{1em}-- \texttt{role\allowbreak Id} (FK) \\ \hline
-2 & \texttt{Moderation\allowbreak Queue} & Queue of AI-flagged or user-reported content waiting for an administrator decision, with the item type, the score and the assignee.\par\smallskip
+2 & \texttt{Moderation\allowbreak Queue} & Queue of AI-flagged or user-reported content waiting for an administrator decision, with the item type (\texttt{contentType}), target identifier, reason, status, handling administrator and action taken.\par\smallskip
 \hspace*{1em}-- \texttt{id} (PK) \newline
 \hspace*{1em}-- \texttt{content\allowbreak Type} \newline
 \hspace*{1em}-- \texttt{content\allowbreak Id} \newline
@@ -2057,7 +2058,7 @@ This ERD describes the Administration \& System module. It stores announcement b
 \hspace*{1em}-- \texttt{action\allowbreak Taken} \newline
 \hspace*{1em}-- \texttt{created\allowbreak At} \newline
 \hspace*{1em}-- \texttt{resolved\allowbreak At} \\ \hline
-3 & \texttt{Banned\allowbreak Keyword} & Keyword list used by the moderation filter before the AI service is called.\par\smallskip
+3 & \texttt{Banned\allowbreak Keyword} & Reserved keyword table in the schema, currently unexposed by the application API.\par\smallskip
 \hspace*{1em}-- \texttt{id} (PK) \newline
 \hspace*{1em}-- \texttt{keyword} \newline
 \hspace*{1em}-- \texttt{created\allowbreak By} (FK) \newline
@@ -2072,7 +2073,7 @@ This ERD describes the Administration \& System module. It stores announcement b
 \hspace*{1em}-- \texttt{created\allowbreak At} \newline
 \hspace*{1em}-- \texttt{updated\allowbreak At} \newline
 \hspace*{1em}-- \texttt{deleted\allowbreak At} \\ \hline
-5 & \texttt{Advertisement\allowbreak Banner} & Advertising banner with image, target URL, position, schedule and click counter.\par\smallskip
+5 & \texttt{Advertisement\allowbreak Banner} & Advertising banner with title, image URL, target URL, position, schedule and active flag.\par\smallskip
 \hspace*{1em}-- \texttt{id} (PK) \newline
 \hspace*{1em}-- \texttt{title} \newline
 \hspace*{1em}-- \texttt{image\allowbreak Url} \newline
@@ -2089,5 +2090,5 @@ This ERD describes the Administration \& System module. It stores announcement b
 \hspace*{1em}-- \texttt{value} \newline
 \hspace*{1em}-- \texttt{created\allowbreak At} \newline
 \hspace*{1em}-- \texttt{updated\allowbreak At} \\ \hline
-\end{longtable}
+\end{longtable}\addtocounter{table}{-1}
 \end{center}

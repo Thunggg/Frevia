@@ -1172,7 +1172,7 @@ An administrator clicks ``Restore'' on a soft-deleted category in the trash view
 \sublabel{Data Processing Overview}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
     \item Administrator clicks ``Restore'' on a deleted category and confirms in the dialog.
-    \item The client issues an HTTP request: \texttt{PATCH /api/forums/admin/categories/:id/restore}.
+    \item The client issues an HTTP request: \texttt{PATCH /\allowbreak{}api/\allowbreak{}forums/\allowbreak{}admin/\allowbreak{}categories/\allowbreak{}:\allowbreak{}id/\allowbreak{}restore}.
     \item \texttt{ForumAdminService.restoreAdminCategory()} verifies \texttt{ADMIN} role.
     \item \texttt{ForumAdminRepo.restoreAdminCategory()} verifies that the category exists and is currently deleted (\texttt{deletedAt != null}). If missing, throws \texttt{ForumCategoryNotFoundException} (HTTP 404).
     \item The repository checks whether an active category (\texttt{deletedAt = null}) already exists with the same name. If a duplicate exists, throws \texttt{ForumCategoryAlreadyExistsException} (HTTP 409 Conflict).

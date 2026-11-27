@@ -1,26 +1,25 @@
-The work breakdown below is the basis for sprint planning. Each row is a SMAR (Specific, Measurable, Achievable, Relevant) item that can be demonstrated at the end of the sprint in which it is scheduled, and the identifier in the second column is the reference used by the task board, the review checklist, and the test cases. Complexity is rated Low, Medium or High according to technical uncertainty and integration risk rather than to effort alone; effort is estimated in man-days and rounded to whole days. Module header rows carry no estimate because their effort is already distributed across the items beneath them.
+The work breakdown below is the basis for sprint planning. Each row is a SMAR (Specific, Measurable, Achievable, Relevant) item that can be demonstrated at the end of the sprint in which it is scheduled, and the identifier in the first column is the reference used by the task board, the review checklist, and the test cases. Complexity is rated Low, Medium or High according to technical uncertainty and integration risk rather than to effort alone; effort is estimated in man-days and rounded to whole days. Module header rows carry no estimate because their effort is already distributed across the items beneath them.
 
 \begingroup
 \setlength{\tabcolsep}{4pt}
 
 \begin{longtable}{|
-C{0.8cm}|
-C{0.9cm}|
-L{5.9cm}|
-C{2.0cm}|
+C{1.0cm}|
+L{6.9cm}|
+C{1.8cm}|
 C{2.1cm}|
-C{2.2cm}|}
+C{2.3cm}|}
 
 \caption{Scope and Estimation (SMAR Work Breakdown)}
 \label{tab:scope-estimation} \\
 \hline
-\rowcolor{fptHeader} \textbf{No} & \textbf{\#} & \textbf{SMAR Item} & \textbf{Iteration Code} & \textbf{Complexity} & \textbf{Est. Effort (man days)} \\
+\rowcolor{fptHeader} \textbf{\#} & \textbf{SMAR Item} & \textbf{Iteration Code} & \textbf{Complexity} & \textbf{Est. Effort (man days)} \\
 \hline
 \endfirsthead
 
 \caption[]{Scope and Estimation (SMAR Work Breakdown) \textit{(cont.)}} \\
 \hline
-\rowcolor{fptHeader} \textbf{No} & \textbf{\#} & \textbf{SMAR Item} & \textbf{Iteration Code} & \textbf{Complexity} & \textbf{Est. Effort (man days)} \\
+\rowcolor{fptHeader} \textbf{\#} & \textbf{SMAR Item} & \textbf{Iteration Code} & \textbf{Complexity} & \textbf{Est. Effort (man days)} \\
 \hline
 \endhead
 
@@ -31,374 +30,349 @@ C{2.2cm}|}
 \endlastfoot
 % ========== SPRINT 1: IDENTITY, ACCESS, PROFILES, JOBS ==========
 
-1   & & \textbf{Authentication} & & -- & -- \\
-2   & 1.1 & Register with email one-time-code verification & \multirow{8}{=}{Sprint 1} & Medium & 3 \\
-3   & 1.2 & Google OAuth sign-in and account linking &  & Medium & 3 \\
-4   & 1.3 & Login and logout with JWT issuance &  & Low & 2 \\
-5   & 1.4 & Refresh token rotation and persisted sessions &  & Medium & 3 \\
-6   & 1.5 & Password reset through a one-time code &  & Low & 2 \\
-7   & 1.6 & Password change from account settings &  & Low & 1 \\
-8   & 1.7 & Multi-role membership, join role and role switching &  & Medium & 3 \\
-9   & 1.8 & Account profile with avatar and cover upload &  & Medium & 3 \\
+ & \textbf{Authentication} &  & -- & -- \\
+1.1 & Register with email one-time-code verification & Sprint 1 & Medium & 3 \\
+1.2 & Google OAuth sign-in and account linking & Sprint 1 & Medium & 3 \\
+1.3 & Login and logout with JWT issuance & Sprint 1 & Low & 2 \\
+1.4 & Refresh token rotation and persisted sessions & Sprint 1 & Medium & 3 \\
+1.5 & Password reset through a one-time code & Sprint 1 & Low & 2 \\
+1.6 & Password change from account settings & Sprint 1 & Low & 1 \\
+1.7 & Multi-role membership, join role and role switching & Sprint 1 & Medium & 3 \\
+1.8 & Account profile with avatar and cover upload & Sprint 1 & Medium & 3 \\
 \hline
 
-10  & & \textbf{Authorization and Administration} & & -- & -- \\
-11  & 1.9 & Permission model bound to method, path and module & \multirow{7}{=}{Sprint 1} & Medium & 3 \\
-12  & 1.10 & Permission guard and public route decorator &  & Medium & 3 \\
-13  & 1.11 & Administrative role management &  & Medium & 2 \\
-14  & 1.12 & Administrative permission assignment &  & Medium & 2 \\
-15  & 1.13 & Administrative user creation and update &  & Medium & 2 \\
-16  & 1.14 & Account ban and unban &  & Low & 1 \\
-17  & 1.15 & Session listing, detail and revocation &  & Medium & 2 \\
+ & \textbf{Authorization and Administration} &  & -- & -- \\
+1.9 & Permission model bound to method, path and module & Sprint 1 & Medium & 3 \\
+1.10 & Permission guard and public route decorator & Sprint 1 & Medium & 3 \\
+1.11 & Administrative role management & Sprint 1 & Medium & 2 \\
+1.12 & Administrative permission assignment & Sprint 1 & Medium & 2 \\
+1.13 & Administrative user creation and update & Sprint 1 & Medium & 2 \\
+1.14 & Account ban and unban & Sprint 1 & Low & 1 \\
+1.15 & Session listing, detail and revocation & Sprint 1 & Medium & 2 \\
 \hline
 
-18  & & \textbf{Profile and Portfolio} & & -- & -- \\
-19  & 1.16 & Freelancer profile with education and certifications & \multirow{8}{=}{Sprint 1} & Medium & 3 \\
-20  & 1.17 & Work experience entries with dates and description &  & Low & 2 \\
-21  & 1.18 & Client profile with company information &  & Low & 1 \\
-22  & 1.19 & Skills with proficiency level and suggestions &  & Medium & 2 \\
-23  & 1.20 & Portfolio items with technologies and cover image &  & Medium & 3 \\
-24  & 1.21 & Social link management &  & Low & 1 \\
-25  & 1.22 & Profile completion and strength scoring &  & Medium & 2 \\
-26  & 1.23 & Profile revision submission and approval &  & Medium & 3 \\
+ & \textbf{Profile and Portfolio} &  & -- & -- \\
+1.16 & Freelancer profile with education and certifications & Sprint 1 & Medium & 3 \\
+1.17 & Work experience entries with dates and description & Sprint 1 & Low & 2 \\
+1.18 & Client profile with company information & Sprint 1 & Low & 1 \\
+1.19 & Skills with proficiency level and suggestions & Sprint 1 & Medium & 2 \\
+1.20 & Portfolio items with technologies and cover image & Sprint 1 & Medium & 3 \\
+1.21 & Social link management & Sprint 1 & Low & 1 \\
+1.22 & Profile completion and strength scoring & Sprint 1 & Medium & 2 \\
+1.23 & Profile revision submission and approval & Sprint 1 & Medium & 3 \\
 \hline
 
-27  & & \textbf{Job Marketplace} & & -- & -- \\
-28  & 1.24 & Job creation with budget, deadline, skills and categories & \multirow{9}{=}{Sprint 1} & Medium & 3 \\
-29  & 1.25 & Job editing and deletion with ownership validation &  & Medium & 2 \\
-30  & 1.26 & Job status lifecycle &  & Medium & 2 \\
-31  & 1.27 & Client job list and detail &  & Medium & 2 \\
-32  & 1.28 & Public job search with keyword matching &  & Medium & 2 \\
-33  & 1.29 & Public job filters by category, skill and budget range &  & Medium & 3 \\
-34  & 1.30 & Job detail page with contextual actions &  & Medium & 2 \\
-35  & 1.31 & Job category browsing &  & Low & 1 \\
-36  & 1.32 & Unique, stable slug generated for every published job &  & Low & 2 \\
+ & \textbf{Job Marketplace} &  & -- & -- \\
+1.24 & Job creation with budget, deadline, skills and categories & Sprint 1 & Medium & 3 \\
+1.25 & Job editing and deletion with ownership validation & Sprint 1 & Medium & 2 \\
+1.26 & Job status lifecycle & Sprint 1 & Medium & 2 \\
+1.27 & Client job list and detail & Sprint 1 & Medium & 2 \\
+1.28 & Public job search with keyword matching & Sprint 1 & Medium & 2 \\
+1.29 & Public job filters by category, skill and budget range & Sprint 1 & Medium & 3 \\
+1.30 & Job detail page with contextual actions & Sprint 1 & Medium & 2 \\
+1.31 & Job category browsing & Sprint 1 & Low & 1 \\
+1.32 & Unique, stable slug generated for every published job & Sprint 1 & Low & 2 \\
 \hline
 
 % ========== SPRINT 2: CATALOGUES, PROPOSALS, HIRING, CONTRACTS, VERIFICATION ==========
 
-37  & & \textbf{Skill Catalogue} & & -- & -- \\
-38  & 2.1 & Skill creation & \multirow{5}{=}{Sprint 2} & Low & 1 \\
-39  & 2.2 & Skill listing and search &  & Low & 1 \\
-40  & 2.3 & Skill editing &  & Low & 1 \\
-41  & 2.4 & Skill soft deletion &  & Low & 1 \\
-42  & 2.5 & Skill restore &  & Low & 1 \\
+ & \textbf{Skill Catalogue} &  & -- & -- \\
+2.1 & Skill creation & Sprint 2 & Low & 1 \\
+2.2 & Skill listing and search & Sprint 2 & Low & 1 \\
+2.3 & Skill editing & Sprint 2 & Low & 1 \\
+2.4 & Skill soft deletion & Sprint 2 & Low & 1 \\
+2.5 & Skill restore & Sprint 2 & Low & 1 \\
 \hline
 
-43  & & \textbf{Job Categories} & & -- & -- \\
-44  & 2.6 & Category creation & \multirow{5}{=}{Sprint 2} & Low & 1 \\
-45  & 2.7 & Category listing and search &  & Low & 1 \\
-46  & 2.8 & Category editing &  & Low & 1 \\
-47  & 2.9 & Category soft deletion &  & Low & 1 \\
-48  & 2.10 & Category restore and status toggle &  & Low & 1 \\
+ & \textbf{Job Categories} &  & -- & -- \\
+2.6 & Category creation & Sprint 2 & Low & 1 \\
+2.7 & Category listing and search & Sprint 2 & Low & 1 \\
+2.8 & Category editing & Sprint 2 & Low & 1 \\
+2.9 & Category soft deletion & Sprint 2 & Low & 1 \\
+2.10 & Category restore and status toggle & Sprint 2 & Low & 1 \\
 \hline
 
-49  & & \textbf{Bookmarks and Saved Search} & & -- & -- \\
-50  & 2.11 & Job bookmark save, remove and status & \multirow{4}{=}{Sprint 2} & Low & 1 \\
-51  & 2.12 & Bookmarked job list &  & Low & 1 \\
-52  & 2.13 & Saved search creation and listing &  & Medium & 2 \\
-53  & 2.14 & Saved search update and deletion &  & Medium & 2 \\
+ & \textbf{Bookmarks and Saved Search} &  & -- & -- \\
+2.11 & Job bookmark save, remove and status & Sprint 2 & Low & 1 \\
+2.12 & Bookmarked job list & Sprint 2 & Low & 1 \\
+2.13 & Saved search creation and listing & Sprint 2 & Medium & 2 \\
+2.14 & Saved search update and deletion & Sprint 2 & Medium & 2 \\
 \hline
 
-54  & & \textbf{Saved Search Refinement} & & -- & -- \\
-55  & 2.15 & Saved search filters by category and budget & \multirow{4}{=}{Sprint 2} & Low & 1 \\
-56  & 2.16 & Saved search order and pagination &  & Low & 1 \\
-57  & 2.17 & Saved search naming and rename &  & Low & 1 \\
-58  & 2.18 & Saved search application to the job search screen &  & Low & 1 \\
+ & \textbf{Saved Search Refinement} &  & -- & -- \\
+2.15 & Saved search filters by category and budget & Sprint 2 & Low & 1 \\
+2.16 & Saved search order and pagination & Sprint 2 & Low & 1 \\
+2.17 & Saved search naming and rename & Sprint 2 & Low & 1 \\
+2.18 & Saved search application to the job search screen & Sprint 2 & Low & 1 \\
 \hline
 
-59  & & \textbf{Proposal Management} & & -- & -- \\
-60  & 2.19 & Proposal creation with bid, duration and cover letter & \multirow{9}{=}{Sprint 2} & Medium & 2 \\
-61  & 2.20 & Proposal attachments &  & Low & 1 \\
-62  & 2.21 & Save proposal as draft &  & Medium & 2 \\
-63  & 2.22 & Proposal editing &  & Medium & 2 \\
-64  & 2.23 & Proposal withdrawal &  & Low & 1 \\
-65  & 2.24 & Proposal expiry handling &  & Medium & 2 \\
-66  & 2.25 & Freelancer proposal list and filters &  & Low & 2 \\
-67  & 2.26 & Client proposal list for a job &  & Low & 2 \\
-68  & 2.27 & Proposal detail with applicant profile &  & Low & 1 \\
+ & \textbf{Proposal Management} &  & -- & -- \\
+2.19 & Proposal creation with bid, duration and cover letter & Sprint 2 & Medium & 2 \\
+2.20 & Proposal attachments & Sprint 2 & Low & 1 \\
+2.21 & Save proposal as draft & Sprint 2 & Medium & 2 \\
+2.22 & Proposal editing & Sprint 2 & Medium & 2 \\
+2.23 & Proposal withdrawal & Sprint 2 & Low & 1 \\
+2.24 & Proposal expiry handling & Sprint 2 & Medium & 2 \\
+2.25 & Freelancer proposal list and filters & Sprint 2 & Low & 2 \\
+2.26 & Client proposal list for a job & Sprint 2 & Low & 2 \\
+2.27 & Proposal detail with applicant profile & Sprint 2 & Low & 1 \\
 \hline
 
-69  & & \textbf{Hiring Decision} & & -- & -- \\
-70  & 2.28 & Accept proposal and create contract & \multirow{3}{=}{Sprint 2} & Medium & 3 \\
-71  & 2.29 & Reject proposal &  & Low & 1 \\
-72  & 2.30 & Position count enforcement for multiple hiring &  & Medium & 2 \\
+ & \textbf{Hiring Decision} &  & -- & -- \\
+2.28 & Accept proposal and create contract & Sprint 2 & Medium & 3 \\
+2.29 & Reject proposal & Sprint 2 & Low & 1 \\
+2.30 & Position count enforcement for multiple hiring & Sprint 2 & Medium & 2 \\
 \hline
 
-73  & & \textbf{Contract Management} & & -- & -- \\
-74  & 2.31 & Contract generation with agreed terms, budget and deposit rate & \multirow{12}{=}{Sprint 2} & Medium & 3 \\
-75  & 2.32 & Contract terms and scope revision before signing &  & Medium & 2 \\
-76  & 2.33 & Contract completion upon full milestone settlement &  & Medium & 2 \\
-77  & 2.34 & Contract listing with role-based status and date filters &  & Low & 1 \\
-78  & 2.35 & Contract detail view with terms, milestones and signatures &  & Low & 1 \\
-79  & 2.36 & Dual digital contract signing by client and freelancer &  & Medium & 3 \\
-80  & 2.37 & Contract PDF generation and export for offline archival &  & Medium & 2 \\
-81  & 2.38 & Contract cancellation with mandatory reason logging &  & Medium & 2 \\
-82  & 2.39 & Shared contract workspace file listing &  & Low & 1 \\
-83  & 2.40 & Shared contract document and deliverable upload &  & Medium & 2 \\
-84  & 2.41 & Shared contract file removal and deletion audit &  & Low & 1 \\
-85  & 2.42 & Contract offer rejection with decline reason &  & Low & 1 \\
+ & \textbf{Contract Management} &  & -- & -- \\*
+2.31 & Contract generation with agreed terms, budget and deposit rate & Sprint 2 & Medium & 3 \\
+2.32 & Contract terms and scope revision before signing & Sprint 2 & Medium & 2 \\
+2.33 & Contract completion upon full milestone settlement & Sprint 2 & Medium & 2 \\
+2.34 & Contract listing with role-based status and date filters & Sprint 2 & Low & 1 \\
+2.35 & Contract detail view with terms, milestones and signatures & Sprint 2 & Low & 1 \\
+2.36 & Dual digital contract signing by client and freelancer & Sprint 2 & Medium & 3 \\
+2.37 & Contract PDF generation and export for offline archival & Sprint 2 & Medium & 2 \\
+2.38 & Contract cancellation with mandatory reason logging & Sprint 2 & Medium & 2 \\
+2.39 & Shared contract workspace file listing & Sprint 2 & Low & 1 \\
+2.40 & Shared contract document and deliverable upload & Sprint 2 & Medium & 2 \\
+2.41 & Shared contract file removal and deletion audit & Sprint 2 & Low & 1 \\
+2.42 & Contract offer rejection with decline reason & Sprint 2 & Low & 1 \\
 \hline
 
-86  & & \textbf{Identity Verification Capture} & & -- & -- \\
-87  & 2.43 & Identity document upload with front and back images & \multirow{4}{=}{Sprint 2} & Medium & 3 \\
-88  & 2.44 & Selfie capture and liveness frame submission &  & Medium & 3 \\
-89  & 2.45 & AI verification request, timeout and result handling &  & High & 5 \\
-90  & 2.46 & Verification status display &  & Medium & 2 \\
+ & \textbf{Identity Verification Capture} &  & -- & -- \\
+2.43 & Identity document upload with front and back images & Sprint 2 & Medium & 3 \\
+2.44 & Selfie capture and liveness frame submission & Sprint 2 & Medium & 3 \\
+2.45 & AI verification request, timeout and result handling & Sprint 2 & High & 5 \\
+2.46 & Verification status display & Sprint 2 & Medium & 2 \\
 \hline
 
 % ========== SPRINT 3: MILESTONES, MESSAGING, NOTIFICATIONS, ADMINISTRATION ==========
 
-91  & & \textbf{Milestone Management} & & -- & -- \\
-92  & 3.1 & Milestone listing with delivery deadlines and escrow status & \multirow{6}{=}{Sprint 3} & Low & 1 \\
-93  & 3.2 & Milestone detail view with deliverables, requirements and history &  & Low & 1 \\
-94  & 3.3 & Milestone creation with title, description, budget and due date &  & Medium & 2 \\
-95  & 3.4 & Milestone editing and requirement updates before activation &  & Medium & 2 \\
-96  & 3.5 & Milestone deletion for unfunded draft milestones &  & Low & 1 \\
-97  & 3.6 & Milestone progress status update and in-progress transition &  & Low & 1 \\
+ & \textbf{Milestone Management} &  & -- & -- \\
+3.1 & Milestone listing with delivery deadlines and escrow status & Sprint 3 & Low & 1 \\
+3.2 & Milestone detail view with deliverables, requirements and history & Sprint 3 & Low & 1 \\
+3.3 & Milestone creation with title, description, budget and due date & Sprint 3 & Medium & 2 \\
+3.4 & Milestone editing and requirement updates before activation & Sprint 3 & Medium & 2 \\
+3.5 & Milestone deletion for unfunded draft milestones & Sprint 3 & Low & 1 \\
+3.6 & Milestone progress status update and in-progress transition & Sprint 3 & Low & 1 \\
 \hline
 
-98  & & \textbf{Milestone Files} & & -- & -- \\
-99  & 3.7 & Milestone deliverable file listing and download & \multirow{3}{=}{Sprint 3} & Low & 1 \\
-100 & 3.8 & Milestone deliverable file upload with format and size validation &  & Medium & 2 \\
-101 & 3.9 & Milestone deliverable file removal before final submission &  & Low & 1 \\
+ & \textbf{Milestone Files} &  & -- & -- \\
+3.7 & Milestone deliverable file listing and download & Sprint 3 & Low & 1 \\
+3.8 & Milestone deliverable file upload with format and size validation & Sprint 3 & Medium & 2 \\
+3.9 & Milestone deliverable file removal before final submission & Sprint 3 & Low & 1 \\
 \hline
 
-102 & & \textbf{Milestone Submissions} & & -- & -- \\
-103 & 3.10 & Milestone work submission with deliverable links and completion note & \multirow{5}{=}{Sprint 3} & Medium & 2 \\
-104 & 3.11 & Milestone submission history and revision iteration list &  & Low & 1 \\
-105 & 3.12 & Milestone submission detail with attachments and review status &  & Low & 1 \\
-106 & 3.13 & Change request with specific revision feedback and due date &  & Medium & 2 \\
-107 & 3.14 & Submission approval and milestone completion trigger &  & Medium & 3 \\
+ & \textbf{Milestone Submissions} &  & -- & -- \\
+3.10 & Milestone work submission with deliverable links and completion note & Sprint 3 & Medium & 2 \\
+3.11 & Milestone submission history and revision iteration list & Sprint 3 & Low & 1 \\
+3.12 & Milestone submission detail with attachments and review status & Sprint 3 & Low & 1 \\
+3.13 & Change request with specific revision feedback and due date & Sprint 3 & Medium & 2 \\
+3.14 & Submission approval and milestone completion trigger & Sprint 3 & Medium & 3 \\
 \hline
 
-108 & & \textbf{Real-time Messaging} & & -- & -- \\
-109 & 3.15 & Conversation model and conversation list & \multirow{9}{=}{Sprint 3} & Medium & 2 \\
-110 & 3.16 & Starting a conversation &  & Medium & 2 \\
-111 & 3.17 & Socket authentication and gateway setup &  & Medium & 3 \\
-112 & 3.18 & Sending text messages &  & Medium & 2 \\
-113 & 3.19 & File attachment messages &  & Medium & 2 \\
-114 & 3.20 & Read receipts &  & Low & 1 \\
-115 & 3.21 & Typing indicator &  & Low & 1 \\
-116 & 3.22 & Message deletion &  & Low & 1 \\
-117 & 3.23 & Conversation pinning, hiding and unread count &  & Medium & 2 \\
+ & \textbf{Real-time Messaging} &  & -- & -- \\
+3.15 & Conversation model and conversation list & Sprint 3 & Medium & 2 \\
+3.16 & Starting a conversation & Sprint 3 & Medium & 2 \\
+3.17 & Socket authentication and gateway setup & Sprint 3 & Medium & 3 \\
+3.18 & Sending text messages & Sprint 3 & Medium & 2 \\
+3.19 & File attachment messages & Sprint 3 & Medium & 2 \\
+3.20 & Read receipts & Sprint 3 & Low & 1 \\
+3.21 & Typing indicator & Sprint 3 & Low & 1 \\
+3.22 & Message deletion & Sprint 3 & Low & 1 \\
+3.23 & Conversation pinning, hiding and unread count & Sprint 3 & Medium & 2 \\
 \hline
 
-118 & & \textbf{Notification Centre} & & -- & -- \\
-119 & 3.24 & Notification creation from domain events & \multirow{5}{=}{Sprint 3} & Medium & 2 \\
-120 & 3.25 & Notification list with typed entries &  & Medium & 2 \\
-121 & 3.26 & Unread count and badge &  & Low & 1 \\
-122 & 3.27 & Mark as read and mark all as read &  & Low & 1 \\
-123 & 3.28 & Notification deletion &  & Low & 1 \\
+ & \textbf{Notification Centre} &  & -- & -- \\
+3.24 & Notification creation from domain events & Sprint 3 & Medium & 2 \\
+3.25 & Notification list with typed entries & Sprint 3 & Medium & 2 \\
+3.26 & Unread count and badge & Sprint 3 & Low & 1 \\
+3.27 & Mark as read and mark all as read & Sprint 3 & Low & 1 \\
+3.28 & Notification deletion & Sprint 3 & Low & 1 \\
 \hline
 
-124 & & \textbf{Session Management} & & -- & -- \\
-125 & 3.29 & Active session list with device and IP address & \multirow{3}{=}{Sprint 3} & Medium & 2 \\
-126 & 3.30 & Session detail &  & Low & 1 \\
-127 & 3.31 & Session revocation &  & Low & 1 \\
+ & \textbf{Session Management} &  & -- & -- \\
+3.29 & Active session list with device and IP address & Sprint 3 & Medium & 2 \\
+3.30 & Session detail & Sprint 3 & Low & 1 \\
+3.31 & Session revocation & Sprint 3 & Low & 1 \\
 \hline
 
-128 & & \textbf{Permission Administration} & & -- & -- \\
-129 & 3.32 & Permission creation & \multirow{3}{=}{Sprint 3} & Medium & 2 \\
-130 & 3.33 & Permission listing and editing &  & Low & 1 \\
-131 & 3.34 & Permission deletion and role binding review &  & Low & 1 \\
+ & \textbf{Permission Administration} &  & -- & -- \\
+3.32 & Permission creation & Sprint 3 & Medium & 2 \\
+3.33 & Permission listing and editing & Sprint 3 & Low & 1 \\
+3.34 & Permission deletion and role binding review & Sprint 3 & Low & 1 \\
 \hline
 
-132 & & \textbf{User Administration} & & -- & -- \\
-133 & 3.35 & Administrative user list with search and filters & \multirow{8}{=}{Sprint 3} & Medium & 2 \\
-134 & 3.36 & Administrative user detail &  & Low & 1 \\
-135 & 3.37 & Administrative user creation &  & Medium & 2 \\
-136 & 3.38 & Administrative user update &  & Medium & 2 \\
-137 & 3.39 & Ban and unban accounts &  & Low & 1 \\
-138 & 3.40 & Administrative client profile editing &  & Low & 1 \\
-139 & 3.41 & Administrative freelancer profile editing &  & Low & 1 \\
-140 & 3.42 & Skill catalogue lookup for administrative forms &  & Low & 1 \\
+ & \textbf{User Administration} &  & -- & -- \\
+3.35 & Administrative user list with search and filters & Sprint 3 & Medium & 2 \\
+3.36 & Administrative user detail & Sprint 3 & Low & 1 \\
+3.37 & Administrative user creation & Sprint 3 & Medium & 2 \\
+3.38 & Administrative user update & Sprint 3 & Medium & 2 \\
+3.39 & Ban and unban accounts & Sprint 3 & Low & 1 \\
+3.40 & Administrative client profile editing & Sprint 3 & Low & 1 \\
+3.41 & Administrative freelancer profile editing & Sprint 3 & Low & 1 \\
+3.42 & Skill catalogue lookup for administrative forms & Sprint 3 & Low & 1 \\
 \hline
 
-141 & & \textbf{Profile Revision Review} & & -- & -- \\
-142 & 3.43 & Revision queue with pending and approved filters & \multirow{3}{=}{Sprint 3} & Medium & 2 \\
-143 & 3.44 & Comparison of proposed and current profile data &  & Medium & 2 \\
-144 & 3.45 & Approve or reject a revision &  & Low & 1 \\
+ & \textbf{Profile Revision Review} &  & -- & -- \\
+3.43 & Revision queue with pending and approved filters & Sprint 3 & Medium & 2 \\
+3.44 & Comparison of proposed and current profile data & Sprint 3 & Medium & 2 \\
+3.45 & Approve or reject a revision & Sprint 3 & Low & 1 \\
 \hline
 
-145 & & \textbf{Identity Verification Review} & & -- & -- \\
-146 & 3.46 & Verification review queue & \multirow{3}{=}{Sprint 3} & Medium & 2 \\
-147 & 3.47 & Document viewer with access control &  & Low & 1 \\
-148 & 3.48 & Verification decision and badge publication &  & Medium & 2 \\
+ & \textbf{Identity Verification Review} &  & -- & -- \\
+3.46 & Verification review queue & Sprint 3 & Medium & 2 \\
+3.47 & Document viewer with access control & Sprint 3 & Low & 1 \\
+3.48 & Verification decision and badge publication & Sprint 3 & Medium & 2 \\
 \hline
 
 % ========== SPRINT 4: DISPUTES, PAYMENTS, FORUM, BANNERS ==========
 
-149 & & \textbf{Dispute Management} & & -- & -- \\
-150 & 4.1 & Dispute creation on funded milestone with claim evidence & \multirow{10}{=}{Sprint 4} & Medium & 3 \\
-151 & 4.2 & Dispute case listing with stage badges and response countdowns &  & Low & 1 \\
-152 & 4.3 & Dispute detail with claims, evidence timeline and deposit audit &  & Low & 1 \\
-153 & 4.4 & Milestone dispute state inspection and contextual dispute banner &  & Low & 1 \\
-154 & 4.5 & Dispute rebuttal submission with counter-evidence and defense notes &  & Medium & 2 \\
-155 & 4.6 & Dispute withdrawal by the initiating claimant before ruling &  & Low & 1 \\
-156 & 4.7 & Dispute escalation to specialized industry expert for arbitration &  & Medium & 2 \\
-157 & 4.8 & Expert arbitration queue with category filtering and priority ordering &  & Low & 1 \\
-158 & 4.9 & Expert case review console with symmetric evidence inspection &  & Low & 1 \\
-159 & 4.10 & Expert arbitration decision with fund split and legal reasoning &  & High & 3 \\
+ & \textbf{Dispute Management} &  & -- & -- \\
+4.1 & Dispute creation on funded milestone with claim evidence & Sprint 4 & Medium & 3 \\
+4.2 & Dispute case listing with stage badges and response countdowns & Sprint 4 & Low & 1 \\
+4.3 & Dispute detail with claims, evidence timeline and deposit audit & Sprint 4 & Low & 1 \\
+4.4 & Milestone dispute state inspection and contextual dispute banner & Sprint 4 & Low & 1 \\
+4.5 & Dispute rebuttal submission with counter-evidence and defense notes & Sprint 4 & Medium & 2 \\
+4.6 & Dispute withdrawal by the initiating claimant before ruling & Sprint 4 & Low & 1 \\
+4.7 & Dispute escalation to specialized industry expert for arbitration & Sprint 4 & Medium & 2 \\
+4.8 & Expert arbitration queue with category filtering and priority ordering & Sprint 4 & Low & 1 \\
+4.9 & Expert case review console with symmetric evidence inspection & Sprint 4 & Low & 1 \\
+4.10 & Expert arbitration decision with fund split and legal reasoning & Sprint 4 & High & 3 \\
 \hline
 
-160 & & \textbf{Payment Management} & & -- & -- \\
-161 & 4.11 & Stripe Connect Express onboarding link generation for freelancers & \multirow{13}{=}{Sprint 4} & Medium & 3 \\
-162 & 4.12 & Stripe Connect verification and payout readiness synchronization &  & Medium & 2 \\
-163 & 4.13 & Saved payment method listing with brand, last4 and expiry display &  & Low & 1 \\
-164 & 4.14 & Default payment method selection for recurring client billing &  & Low & 1 \\
-165 & 4.15 & Detachment and removal of obsolete saved payment cards &  & Low & 1 \\
-166 & 4.16 & Contract hold deposit authorization via Stripe PaymentIntent &  & Medium & 3 \\
-167 & 4.17 & Hosted Stripe Checkout Session for milestone escrow funding &  & Medium & 3 \\
-168 & 4.18 & Direct milestone escrow funding using customer saved payment method &  & Medium & 2 \\
-169 & 4.19 & Escrow fund release to freelancer connected account via Stripe transfer &  & High & 4 \\
-170 & 4.20 & Financial transaction ledger with filterable entry types and audit status &  & Medium & 2 \\
-171 & 4.21 & PaymentIntent status reconciliation endpoint for pending authorizations &  & Medium & 2 \\
-172 & 4.22 & Checkout Session verification and escrow state reconciliation &  & Medium & 2 \\
-173 & 4.23 & Signature-verified Stripe webhook handler with idempotent event processing &  & High & 3 \\
+ & \textbf{Payment Management} &  & -- & -- \\
+4.11 & Stripe Connect Express onboarding link generation for freelancers & Sprint 4 & Medium & 3 \\
+4.12 & Stripe Connect verification and payout readiness synchronization & Sprint 4 & Medium & 2 \\
+4.13 & Saved payment method listing with brand, last4 and expiry display & Sprint 4 & Low & 1 \\
+4.14 & Default payment method selection for recurring client billing & Sprint 4 & Low & 1 \\
+4.15 & Detachment and removal of obsolete saved payment cards & Sprint 4 & Low & 1 \\
+4.16 & Contract hold deposit authorization via Stripe PaymentIntent & Sprint 4 & Medium & 3 \\
+4.17 & Hosted Stripe Checkout Session for milestone escrow funding & Sprint 4 & Medium & 3 \\
+4.18 & Direct milestone escrow funding using customer saved payment method & Sprint 4 & Medium & 2 \\
+4.19 & Escrow fund release to freelancer connected account via Stripe transfer & Sprint 4 & High & 4 \\
+4.20 & Financial transaction ledger with filterable entry types and audit status & Sprint 4 & Medium & 2 \\
+4.21 & PaymentIntent status reconciliation endpoint for pending authorizations & Sprint 4 & Medium & 2 \\
+4.22 & Checkout Session verification and escrow state reconciliation & Sprint 4 & Medium & 2 \\
+4.23 & Signature-verified Stripe webhook handler with idempotent event processing & Sprint 4 & High & 3 \\
 \hline
 
-174 & & \textbf{Community Forum Foundation} & & -- & -- \\
-175 & 4.24 & Forum category listing & \multirow{5}{=}{Sprint 4} & Low & 1 \\
-176 & 4.25 & Forum post creation with rich text and tags &  & Medium & 3 \\
-177 & 4.26 & Forum post listing, search and detail &  & Medium & 2 \\
-178 & 4.27 & Comments, likes and reporting &  & Medium & 3 \\
-179 & 4.28 & Administrative approval of pending posts &  & Low & 1 \\
+ & \textbf{Community Forum Foundation} &  & -- & -- \\
+4.24 & Forum category listing & Sprint 4 & Low & 1 \\
+4.25 & Forum post creation with rich text and tags & Sprint 4 & Medium & 3 \\
+4.26 & Forum post listing, search and detail & Sprint 4 & Medium & 2 \\
+4.27 & Comments, likes and reporting & Sprint 4 & Medium & 3 \\
+4.28 & Administrative approval of pending posts & Sprint 4 & Low & 1 \\
 \hline
 
-180 & & \textbf{Forum Categories} & & -- & -- \\
-181 & 4.29 & Forum category creation & \multirow{4}{=}{Sprint 4} & Low & 1 \\
-182 & 4.30 & Forum category listing and search &  & Low & 1 \\
-183 & 4.31 & Forum category editing &  & Low & 1 \\
-184 & 4.32 & Forum category deletion &  & Low & 1 \\
+ & \textbf{Forum Categories} &  & -- & -- \\
+4.29 & Forum category creation & Sprint 4 & Low & 1 \\
+4.30 & Forum category listing and search & Sprint 4 & Low & 1 \\
+4.31 & Forum category editing & Sprint 4 & Low & 1 \\
+4.32 & Forum category deletion & Sprint 4 & Low & 1 \\
 \hline
 
-185 & & \textbf{Forum Moderation} & & -- & -- \\
-186 & 4.33 & AI moderation payload ingestion & \multirow{5}{=}{Sprint 4} & Medium & 2 \\
-187 & 4.34 & Moderation queue with risk filters &  & Medium & 2 \\
-188 & 4.35 & Approve and reject actions from the queue &  & Low & 1 \\
-189 & 4.36 & Report handling and resolution &  & Low & 1 \\
-190 & 4.37 & Forum trash and restore &  & Low & 1 \\
+ & \textbf{Forum Moderation} &  & -- & -- \\
+4.33 & AI moderation payload ingestion & Sprint 4 & Medium & 2 \\
+4.34 & Moderation queue with risk filters & Sprint 4 & Medium & 2 \\
+4.35 & Approve and reject actions from the queue & Sprint 4 & Low & 1 \\
+4.36 & Report handling and resolution & Sprint 4 & Low & 1 \\
+4.37 & Forum trash and restore & Sprint 4 & Low & 1 \\
 \hline
 
-191 & & \textbf{Advertisement Banners} & & -- & -- \\
-192 & 4.38 & Banner creation & \multirow{5}{=}{Sprint 4} & Low & 1 \\
-193 & 4.39 & Banner listing &  & Low & 1 \\
-194 & 4.40 & Banner editing &  & Low & 1 \\
-195 & 4.41 & Banner deletion and activation window &  & Low & 1 \\
-196 & 4.42 & Public banner display by placement position &  & Low & 1 \\
+ & \textbf{Advertisement Banners} &  & -- & -- \\
+4.38 & Banner creation & Sprint 4 & Low & 1 \\
+4.39 & Banner listing & Sprint 4 & Low & 1 \\
+4.40 & Banner editing & Sprint 4 & Low & 1 \\
+4.41 & Banner deletion and activation window & Sprint 4 & Low & 1 \\
+4.42 & Public banner display by placement position & Sprint 4 & Low & 1 \\
 \hline
 
-197 & & \textbf{Trust Indicators} & & -- & -- \\
-198 & 4.43 & Verified badge rendering on public profiles & \multirow{4}{=}{Sprint 4} & Low & 1 \\
-199 & 4.44 & Availability and online status display &  & Low & 1 \\
-200 & 4.45 & Profile completion indicator in navigation &  & Low & 1 \\
-201 & 4.46 & Verification status messaging and error states &  & Low & 1 \\
+ & \textbf{Trust Indicators} &  & -- & -- \\
+4.43 & Verified badge rendering on public profiles & Sprint 4 & Low & 1 \\
+4.44 & Availability and online status display & Sprint 4 & Low & 1 \\
+4.45 & Profile completion indicator in navigation & Sprint 4 & Low & 1 \\
+4.46 & Verification status messaging and error states & Sprint 4 & Low & 1 \\
 \hline
 
 % ========== SPRINT 5: REVIEWS, AI ANALYSIS, SOCIAL, QUALITY HARDENING ==========
 
-202 & & \textbf{Review and Rating} & & -- & -- \\
-203 & 5.1 & Contract review with overall rating and breakdown & \multirow{6}{=}{Sprint 5} & Medium & 3 \\
-204 & 5.2 & Review editing and deletion &  & Low & 1 \\
-205 & 5.3 & Contract review listing &  & Low & 1 \\
-206 & 5.4 & Review detail &  & Low & 1 \\
-207 & 5.5 & Review response creation &  & Low & 1 \\
-208 & 5.6 & Review response update and deletion &  & Low & 1 \\
+ & \textbf{Review and Rating} &  & -- & -- \\
+5.1 & Contract review with overall rating and breakdown & Sprint 5 & Medium & 3 \\
+5.2 & Review editing and deletion & Sprint 5 & Low & 1 \\
+5.3 & Contract review listing & Sprint 5 & Low & 1 \\
+5.4 & Review detail & Sprint 5 & Low & 1 \\
+5.5 & Review response creation & Sprint 5 & Low & 1 \\
+5.6 & Review response update and deletion & Sprint 5 & Low & 1 \\
 \hline
 
-209 & & \textbf{Curriculum Vitae Handling} & & -- & -- \\
-210 & 5.7 & CV upload and secure storage & \multirow{3}{=}{Sprint 5} & Medium & 2 \\
-211 & 5.8 & CV preview and download &  & Low & 1 \\
-212 & 5.9 & CV replacement and deletion &  & Low & 1 \\
+ & \textbf{Curriculum Vitae Handling} &  & -- & -- \\
+5.7 & CV upload and secure storage & Sprint 5 & Medium & 2 \\
+5.8 & CV preview and download & Sprint 5 & Low & 1 \\
+5.9 & CV replacement and deletion & Sprint 5 & Low & 1 \\
 \hline
 
-213 & & \textbf{AI Curriculum Vitae Analysis} & & -- & -- \\
-214 & 5.10 & AI service client with timeout and retry policy & \multirow{4}{=}{Sprint 5} & Medium & 3 \\
-215 & 5.11 & Skill suggestion parsing and validation &  & Medium & 2 \\
-216 & 5.12 & Suggested skill review interface &  & Medium & 2 \\
-217 & 5.13 & Graceful degradation when the AI service is unavailable &  & Low & 1 \\
+ & \textbf{AI Curriculum Vitae Analysis} &  & -- & -- \\
+5.10 & AI service client with timeout and retry policy & Sprint 5 & Medium & 3 \\
+5.11 & Skill suggestion parsing and validation & Sprint 5 & Medium & 2 \\
+5.12 & Suggested skill review interface & Sprint 5 & Medium & 2 \\
+5.13 & Graceful degradation when the AI service is unavailable & Sprint 5 & Low & 1 \\
 \hline
 
-218 & & \textbf{Expert Directory} & & -- & -- \\
-219 & 5.14 & Expert profile editing with revision approval & \multirow{4}{=}{Sprint 5} & Medium & 2 \\
-220 & 5.15 & Public expert list with filters &  & Low & 1 \\
-221 & 5.16 & Public expert detail &  & Low & 1 \\
-222 & 5.17 & Administrative expert profile editing &  & Medium & 2 \\
+ & \textbf{Expert Directory} &  & -- & -- \\
+5.14 & Expert profile editing with revision approval & Sprint 5 & Medium & 2 \\
+5.15 & Public expert list with filters & Sprint 5 & Low & 1 \\
+5.16 & Public expert detail & Sprint 5 & Low & 1 \\
+5.17 & Administrative expert profile editing & Sprint 5 & Medium & 2 \\
 \hline
 
-223 & & \textbf{Social Features} & & -- & -- \\
-224 & 5.18 & Follow and unfollow a freelancer & \multirow{6}{=}{Sprint 5} & Low & 1 \\
-225 & 5.19 & Follower and following lists &  & Low & 1 \\
-226 & 5.20 & Freelancer discovery with filters &  & Medium & 2 \\
-227 & 5.21 & Favourite freelancer toggle &  & Low & 1 \\
-228 & 5.22 & Favourite freelancer list &  & Low & 1 \\
-229 & 5.23 & Public freelancer profile page with skills, portfolio and experience &  & Low & 1 \\
+ & \textbf{Social Features} &  & -- & -- \\
+5.18 & Follow and unfollow a freelancer & Sprint 5 & Low & 1 \\
+5.19 & Follower and following lists & Sprint 5 & Low & 1 \\
+5.20 & Freelancer discovery with filters & Sprint 5 & Medium & 2 \\
+5.21 & Favourite freelancer toggle & Sprint 5 & Low & 1 \\
+5.22 & Favourite freelancer list & Sprint 5 & Low & 1 \\
+5.23 & Public freelancer profile page with skills, portfolio and experience & Sprint 5 & Low & 1 \\
 \hline
 
-230 & & \textbf{Localisation and Presentation} & & -- & -- \\
-231 & 5.24 & Bilingual message catalogue for all screens & \multirow{5}{=}{Sprint 5} & Medium & 4 \\
-232 & 5.25 & Locale switcher with cookie persistence &  & Low & 1 \\
-233 & 5.26 & Light and dark theme switcher &  & Low & 1 \\
-234 & 5.27 & Responsive layout adjustments &  & Medium & 2 \\
-235 & 5.28 & Public banner and announcement placement &  & Low & 1 \\
+ & \textbf{Localisation and Presentation} &  & -- & -- \\
+5.24 & Bilingual message catalogue for all screens & Sprint 5 & Medium & 4 \\
+5.25 & Locale switcher with cookie persistence & Sprint 5 & Low & 1 \\
+5.26 & Light and dark theme switcher & Sprint 5 & Low & 1 \\
+5.27 & Responsive layout adjustments & Sprint 5 & Medium & 2 \\
+5.28 & Public banner and announcement placement & Sprint 5 & Low & 1 \\
 \hline
 
-236 & & \textbf{Administrative Dashboards} & & -- & -- \\
-237 & 5.29 & Identity verification dashboard & \multirow{4}{=}{Sprint 5} & Medium & 2 \\
-238 & 5.30 & Profile revision dashboard &  & Medium & 2 \\
-239 & 5.31 & Moderation dashboard &  & Medium & 2 \\
-240 & 5.32 & Report detail view &  & Low & 1 \\
+ & \textbf{Administrative Dashboards} &  & -- & -- \\
+5.29 & Identity verification dashboard & Sprint 5 & Medium & 2 \\
+5.30 & Profile revision dashboard & Sprint 5 & Medium & 2 \\
+5.31 & Moderation dashboard & Sprint 5 & Medium & 2 \\
+5.32 & Report detail view & Sprint 5 & Low & 1 \\
 \hline
 
-241 & & \textbf{Quality Hardening} & & -- & -- \\
-242 & 5.33 & Shared validation schemas for all endpoints & \multirow{10}{=}{Sprint 5} & Medium & 2 \\
-243 & 5.34 & Response envelope and global exception filter &  & Medium & 2 \\
-244 & 5.35 & Guard and shared-service test coverage &  & Medium & 2 \\
-245 & 5.36 & Repository and service unit tests &  & Medium & 2 \\
-246 & 5.37 & API bootstrap end-to-end test &  & Medium & 2 \\
-247 & 5.38 & File upload validation and size limits &  & Low & 1 \\
-248 & 5.39 & Environment configuration validation &  & Low & 1 \\
-249 & 5.40 & Docker Compose for the API and web client &  & Medium & 2 \\
-250 & 5.41 & Database migration and seed scripts &  & Low & 1 \\
-251 & 5.42 & Demo accounts and sample data for acceptance testing &  & Low & 1 \\
+ & \textbf{Quality Hardening} &  & -- & -- \\
+5.33 & Shared validation schemas for all endpoints & Sprint 5 & Medium & 2 \\
+5.34 & Response envelope and global exception filter & Sprint 5 & Medium & 2 \\
+5.35 & Guard and shared-service test coverage & Sprint 5 & Medium & 2 \\
+5.36 & Repository and service unit tests & Sprint 5 & Medium & 2 \\
+5.37 & API bootstrap end-to-end test & Sprint 5 & Medium & 2 \\
+5.38 & File upload validation and size limits & Sprint 5 & Low & 1 \\
+5.39 & Environment configuration validation & Sprint 5 & Low & 1 \\
+5.40 & Docker Compose for the API and web client & Sprint 5 & Medium & 2 \\
+5.41 & Database migration and seed scripts & Sprint 5 & Low & 1 \\
+5.42 & Demo accounts and sample data for acceptance testing & Sprint 5 & Low & 1 \\
 \hline
 
-252 & & \textbf{Documentation and Acceptance} & & -- & -- \\
-253 & 5.43 & API reference and onboarding guide & \multirow{4}{=}{Sprint 5} & Medium & 2 \\
-254 & 5.44 & Deployment and environment guide &  & Low & 1 \\
-255 & 5.45 & User acceptance testing and defect fixes &  & Medium & 3 \\
-256 & 5.46 & Final stabilisation and release preparation &  & High & 4 \\
+ & \textbf{Documentation and Acceptance} &  & -- & -- \\
+5.43 & API reference and onboarding guide & Sprint 5 & Medium & 2 \\
+5.44 & Deployment and environment guide & Sprint 5 & Low & 1 \\
+5.45 & User acceptance testing and defect fixes & Sprint 5 & Medium & 3 \\
+5.46 & Final stabilisation and release preparation & Sprint 5 & High & 4 \\
+\hline
+\multicolumn{4}{|r|}{\textbf{Total Estimated Effort (man days)}} & \textbf{369} \\
 \hline
 \end{longtable}
 \endgroup
 
-Table \ref{tab:estimation-summary} aggregates the same rows by sprint. The five sprints cover fifteen calendar weeks, with each sprint running for an equal duration of three weeks.
-
-\begin{table}[H]
-\centering
-\caption{Estimation Summary by Sprint}
-\label{tab:estimation-summary}
-
-\renewcommand{\arraystretch}{1.4}
-
-\begin{tabular}{|c|c|c|c|c|}
-\hline
-\rowcolor{fptHeader} \textbf{Sprint} & \textbf{Weeks} & \textbf{Modules} & \textbf{SMAR Items} & \textbf{Est. Effort (man days)} \\
-\hline
-Sprint 1 & 1--3   & 4  & 32 & 71 \\
-\hline
-Sprint 2 & 4--6   & 8  & 46 & 75 \\
-\hline
-Sprint 3 & 7--9   & 10 & 48 & 73 \\
-\hline
-Sprint 4 & 10--12 & 7  & 46 & 75 \\
-\hline
-Sprint 5 & 13--15 & 9  & 46 & 75 \\
-\hline
-\textbf{Total} & \textbf{15 weeks} & \textbf{38} & \textbf{218} & \textbf{369} \\
-\hline
-\end{tabular}
-\end{table}
-
-All five three-week sprints maintain a balanced effort envelope (71--75 man-days) aligned with the five-member team's capacity per sprint. Sprint 1 delivers project setup, authentication, role-based access foundations, profiles, and the job marketplace. Sprint 2 covers skill and job catalogues, bookmarks, saved searches, proposals, hiring decisions, contracts, and eKYC capture. Sprint 3 delivers milestones, file deliverables, submissions, real-time messaging, notifications, and platform administration including identity review. Sprint 4 focuses on dispute management with expert arbitration, Stripe escrow payments, community forum, and advertisement banners. Sprint 5 delivers reviews and ratings, curriculum vitae handling with AI analysis, expert directory, social features, localisation, dashboards, quality hardening, and acceptance testing.
+\Needspace{6\baselineskip}
+All five development sprints (20/09/2026 -- 27/11/2026) maintain a balanced effort envelope (71--75 man-days) aligned with the five-member team's capacity per sprint. Sprint 1 delivers project setup, authentication, role-based access foundations, profiles, and the job marketplace. Sprint 2 covers skill and job catalogues, bookmarks, saved searches, proposals, hiring decisions, contracts, and eKYC capture. Sprint 3 delivers milestones, file deliverables, submissions, real-time messaging, notifications, and platform administration including identity review. Sprint 4 focuses on dispute management with expert arbitration, Stripe escrow payments, community forum, and advertisement banners. Sprint 5 delivers reviews and ratings, curriculum vitae handling with AI analysis, expert directory, social features, localisation, dashboards, quality hardening, and acceptance testing.

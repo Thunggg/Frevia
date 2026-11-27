@@ -97,4 +97,36 @@ describe('MilestoneService date validation', () => {
 
     expect(updateMilestone).toHaveBeenCalledTimes(1);
   });
+
+  it('allows freelancer to start work (progressMilestone) on a FUNDED milestone when status is PENDING or LATE', async () => {
+    const progressMilestone = jest
+      .fn()
+      .mockResolvedValue({ id: 101, status: MilestoneStatus.IN_PROGRESS });
+
+    const { service } = buildService({
+      findContractById: jest.fn().mockResolvedValue({
+        id: 50,
+        clientId: 10,
+        freelancerId: 20,
+        status: ContractStatus.ACTIVE,
+      }),
+      findMilestoneById: jest.fn().mockResolvedValue({
+        id: 101,
+        contractId: 50,
+        status: MilestoneStatus.LATE,
+        paymentStatus: 'FUNDED',
+        amount: 200,
+      }),
+      findInProgressMilestone: jest.fn().mockResolvedValue(null),
+      findIncompletePreviousMilestone: jest.fn().mockResolvedValue(null),
+      progressMilestone,
+    });
+
+    await expect(service.progressMilestone(20, 50, 101)).resolves.toEqual({
+      id: 101,
+      status: MilestoneStatus.IN_PROGRESS,
+    });
+
+    expect(progressMilestone).toHaveBeenCalledWith(101);
+  });
 });

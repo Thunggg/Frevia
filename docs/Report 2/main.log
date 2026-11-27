@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.9.28)  25 NOV 2026 12:12
+This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.9.28)  26 NOV 2026 12:34
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -25,7 +25,166 @@ File: size12.clo 2025/01/22 v1.4n Standard LaTeX file (size option)
 )
 (C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/base\fontenc.sty
 Package: fontenc 2025/07/18 v2.1d Standard LaTeX package
-)
+
+(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/vntex\t5enc.def
+File: t5enc.def 2006/11/21 v1.4 Vietnamese T5 encoding
+Now handling font encoding T5 ...
+... processing UTF-8 mapping file for font encoding T5
+
+(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/vntex\t5enc.dfu
+File: t5enc.dfu 2006/08/19 v1.1 UTF8 support for Vietnamese
+   defining Unicode char U+00AB (decimal 171)
+   defining Unicode char U+00BB (decimal 187)
+   defining Unicode char U+00C0 (decimal 192)
+   defining Unicode char U+00C1 (decimal 193)
+   defining Unicode char U+00C2 (decimal 194)
+   defining Unicode char U+00C3 (decimal 195)
+   defining Unicode char U+00C8 (decimal 200)
+   defining Unicode char U+00C9 (decimal 201)
+   defining Unicode char U+00CA (decimal 202)
+   defining Unicode char U+00CC (decimal 204)
+   defining Unicode char U+00CD (decimal 205)
+   defining Unicode char U+00D2 (decimal 210)
+   defining Unicode char U+00D3 (decimal 211)
+   defining Unicode char U+00D4 (decimal 212)
+   defining Unicode char U+00D5 (decimal 213)
+   defining Unicode char U+00D9 (decimal 217)
+   defining Unicode char U+00DA (decimal 218)
+   defining Unicode char U+00DD (decimal 221)
+   defining Unicode char U+00E0 (decimal 224)
+   defining Unicode char U+00E1 (decimal 225)
+   defining Unicode char U+00E2 (decimal 226)
+   defining Unicode char U+00E3 (decimal 227)
+   defining Unicode char U+00E8 (decimal 232)
+   defining Unicode char U+00E9 (decimal 233)
+   defining Unicode char U+00EA (decimal 234)
+   defining Unicode char U+00EC (decimal 236)
+   defining Unicode char U+00ED (decimal 237)
+   defining Unicode char U+00F2 (decimal 242)
+   defining Unicode char U+00F3 (decimal 243)
+   defining Unicode char U+00F4 (decimal 244)
+   defining Unicode char U+00F5 (decimal 245)
+   defining Unicode char U+00F9 (decimal 249)
+   defining Unicode char U+00FA (decimal 250)
+   defining Unicode char U+00FD (decimal 253)
+   defining Unicode char U+0102 (decimal 258)
+   defining Unicode char U+0103 (decimal 259)
+   defining Unicode char U+0110 (decimal 272)
+   defining Unicode char U+0111 (decimal 273)
+   defining Unicode char U+0128 (decimal 296)
+   defining Unicode char U+0129 (decimal 297)
+   defining Unicode char U+0131 (decimal 305)
+   defining Unicode char U+0168 (decimal 360)
+   defining Unicode char U+0169 (decimal 361)
+   defining Unicode char U+01A0 (decimal 416)
+   defining Unicode char U+01A1 (decimal 417)
+   defining Unicode char U+01AF (decimal 431)
+   defining Unicode char U+01B0 (decimal 432)
+   defining Unicode char U+1EA0 (decimal 7840)
+   defining Unicode char U+1EA1 (decimal 7841)
+   defining Unicode char U+1EA2 (decimal 7842)
+   defining Unicode char U+1EA3 (decimal 7843)
+   defining Unicode char U+1EA4 (decimal 7844)
+   defining Unicode char U+1EA5 (decimal 7845)
+   defining Unicode char U+1EA6 (decimal 7846)
+   defining Unicode char U+1EA7 (decimal 7847)
+   defining Unicode char U+1EA8 (decimal 7848)
+   defining Unicode char U+1EA9 (decimal 7849)
+   defining Unicode char U+1EAA (decimal 7850)
+   defining Unicode char U+1EAB (decimal 7851)
+   defining Unicode char U+1EAC (decimal 7852)
+   defining Unicode char U+1EAD (decimal 7853)
+   defining Unicode char U+1EAE (decimal 7854)
+   defining Unicode char U+1EAF (decimal 7855)
+   defining Unicode char U+1EB0 (decimal 7856)
+   defining Unicode char U+1EB1 (decimal 7857)
+   defining Unicode char U+1EB2 (decimal 7858)
+   defining Unicode char U+1EB3 (decimal 7859)
+   defining Unicode char U+1EB4 (decimal 7860)
+   defining Unicode char U+1EB5 (decimal 7861)
+   defining Unicode char U+1EB6 (decimal 7862)
+   defining Unicode char U+1EB7 (decimal 7863)
+   defining Unicode char U+1EB8 (decimal 7864)
+   defining Unicode char U+1EB9 (decimal 7865)
+   defining Unicode char U+1EBA (decimal 7866)
+   defining Unicode char U+1EBB (decimal 7867)
+   defining Unicode char U+1EBC (decimal 7868)
+   defining Unicode char U+1EBD (decimal 7869)
+   defining Unicode char U+1EBE (decimal 7870)
+   defining Unicode char U+1EBF (decimal 7871)
+   defining Unicode char U+1EC0 (decimal 7872)
+   defining Unicode char U+1EC1 (decimal 7873)
+   defining Unicode char U+1EC2 (decimal 7874)
+   defining Unicode char U+1EC3 (decimal 7875)
+   defining Unicode char U+1EC4 (decimal 7876)
+   defining Unicode char U+1EC5 (decimal 7877)
+   defining Unicode char U+1EC6 (decimal 7878)
+   defining Unicode char U+1EC7 (decimal 7879)
+   defining Unicode char U+1EC8 (decimal 7880)
+   defining Unicode char U+1EC9 (decimal 7881)
+   defining Unicode char U+1ECA (decimal 7882)
+   defining Unicode char U+1ECB (decimal 7883)
+   defining Unicode char U+1ECC (decimal 7884)
+   defining Unicode char U+1ECD (decimal 7885)
+   defining Unicode char U+1ECE (decimal 7886)
+   defining Unicode char U+1ECF (decimal 7887)
+   defining Unicode char U+1ED0 (decimal 7888)
+   defining Unicode char U+1ED1 (decimal 7889)
+   defining Unicode char U+1ED2 (decimal 7890)
+   defining Unicode char U+1ED3 (decimal 7891)
+   defining Unicode char U+1ED4 (decimal 7892)
+   defining Unicode char U+1ED5 (decimal 7893)
+   defining Unicode char U+1ED6 (decimal 7894)
+   defining Unicode char U+1ED7 (decimal 7895)
+   defining Unicode char U+1ED8 (decimal 7896)
+   defining Unicode char U+1ED9 (decimal 7897)
+   defining Unicode char U+1EDA (decimal 7898)
+   defining Unicode char U+1EDB (decimal 7899)
+   defining Unicode char U+1EDC (decimal 7900)
+   defining Unicode char U+1EDD (decimal 7901)
+   defining Unicode char U+1EDE (decimal 7902)
+   defining Unicode char U+1EDF (decimal 7903)
+   defining Unicode char U+1EE0 (decimal 7904)
+   defining Unicode char U+1EE1 (decimal 7905)
+   defining Unicode char U+1EE2 (decimal 7906)
+   defining Unicode char U+1EE3 (decimal 7907)
+   defining Unicode char U+1EE4 (decimal 7908)
+   defining Unicode char U+1EE5 (decimal 7909)
+   defining Unicode char U+1EE6 (decimal 7910)
+   defining Unicode char U+1EE7 (decimal 7911)
+   defining Unicode char U+1EE8 (decimal 7912)
+   defining Unicode char U+1EE9 (decimal 7913)
+   defining Unicode char U+1EEA (decimal 7914)
+   defining Unicode char U+1EEB (decimal 7915)
+   defining Unicode char U+1EEC (decimal 7916)
+   defining Unicode char U+1EED (decimal 7917)
+   defining Unicode char U+1EEE (decimal 7918)
+   defining Unicode char U+1EEF (decimal 7919)
+   defining Unicode char U+1EF0 (decimal 7920)
+   defining Unicode char U+1EF1 (decimal 7921)
+   defining Unicode char U+1EF2 (decimal 7922)
+   defining Unicode char U+1EF3 (decimal 7923)
+   defining Unicode char U+1EF4 (decimal 7924)
+   defining Unicode char U+1EF5 (decimal 7925)
+   defining Unicode char U+1EF6 (decimal 7926)
+   defining Unicode char U+1EF7 (decimal 7927)
+   defining Unicode char U+1EF8 (decimal 7928)
+   defining Unicode char U+1EF9 (decimal 7929)
+   defining Unicode char U+200C (decimal 8204)
+   defining Unicode char U+2013 (decimal 8211)
+   defining Unicode char U+2014 (decimal 8212)
+   defining Unicode char U+2018 (decimal 8216)
+   defining Unicode char U+2019 (decimal 8217)
+   defining Unicode char U+201A (decimal 8218)
+   defining Unicode char U+201C (decimal 8220)
+   defining Unicode char U+201D (decimal 8221)
+   defining Unicode char U+201E (decimal 8222)
+   defining Unicode char U+2030 (decimal 8240)
+   defining Unicode char U+2031 (decimal 8241)
+   defining Unicode char U+2039 (decimal 8249)
+   defining Unicode char U+203A (decimal 8250)
+   defining Unicode char U+2423 (decimal 9251)
+)))
 (C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/base\inputenc.sty
 Package: inputenc 2024/02/08 v1.3d Input encoding file
 \inpenc@prehook=\toks17
@@ -383,7 +542,9 @@ Package: iftex 2024/12/12 v1.0g TeX engine tests
 (C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/setspace\setspace.sty
 Package: setspace 2022/12/04 v6.7b set line spacing
 )
-(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/tools\indentfirst.sty
+(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/needspace\needspace.sty
+Package: needspace 2026/10/13 v1.3f reserve vertical space
+) (C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/tools\indentfirst.sty
 Package: indentfirst 2023/07/02 v1.03 Indent first paragraph (DPC)
 )
 (C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/titlesec\titlesec.sty
@@ -527,6 +688,8 @@ File: puenc.def 2025-07-12 v7.01o Hyperref: PDF Unicode definition (HO)
 Now handling font encoding PU ...
 ... no UTF-8 mapping file for font encoding PU
 )
+Package hyperref Info: Option `plainpages' set `false' on input line 4066.
+Package hyperref Info: Option `pdfpagelabels' set `true' on input line 4066.
 Package hyperref Info: Hyper figures OFF on input line 4195.
 Package hyperref Info: Link nesting OFF on input line 4200.
 Package hyperref Info: Hyper index ON on input line 4203.
@@ -585,9 +748,9 @@ Package uniquecounter Info: New unique counter `rerunfilecheck' on input line 2
 )
 \Hy@SectionHShift=\skip111
 )
-Package hyperref Info: Option `colorlinks' set `true' on input line 183.
-LaTeX Font Info:    Trying to load font information for T1+ptm on input line 19
-5.
+Package hyperref Info: Option `colorlinks' set `true' on input line 198.
+LaTeX Font Info:    Trying to load font information for T1+ptm on input line 21
+0.
 
 (C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\t1ptm.fd
 File: t1ptm.fd 2001/06/04 font definitions for T1/ptm.
@@ -599,24 +762,32 @@ File: l3backend-pdftex.def 2025-10-09 L3 backend support: PDF output (pdfTeX)
 ) (main.aux)
 \openout1 = `main.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 195.
-LaTeX Font Info:    ... okay on input line 195.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 195.
-LaTeX Font Info:    ... okay on input line 195.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 195.
-LaTeX Font Info:    ... okay on input line 195.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 195.
-LaTeX Font Info:    ... okay on input line 195.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 195.
-LaTeX Font Info:    ... okay on input line 195.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 195.
-LaTeX Font Info:    ... okay on input line 195.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 195.
-LaTeX Font Info:    ... okay on input line 195.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 195.
-LaTeX Font Info:    ... okay on input line 195.
-LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 195.
-LaTeX Font Info:    ... okay on input line 195.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 210.
+LaTeX Font Info:    ... okay on input line 210.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 210.
+LaTeX Font Info:    ... okay on input line 210.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 210.
+LaTeX Font Info:    ... okay on input line 210.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 210.
+LaTeX Font Info:    ... okay on input line 210.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 210.
+LaTeX Font Info:    ... okay on input line 210.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 210.
+LaTeX Font Info:    ... okay on input line 210.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 210.
+LaTeX Font Info:    ... okay on input line 210.
+LaTeX Font Info:    Checking defaults for T5/cmr/m/n on input line 210.
+LaTeX Font Info:    Trying to load font information for T5+cmr on input line 21
+0.
+
+(C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/vntex\t5cmr.fd
+File: t5cmr.fd 1999/05/25 v2.5h Standard LaTeX font definitions
+)
+LaTeX Font Info:    ... okay on input line 210.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 210.
+LaTeX Font Info:    ... okay on input line 210.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 210.
+LaTeX Font Info:    ... okay on input line 210.
 
 (C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/context/base/mkii\supp-pdf.mki
 i
@@ -681,14 +852,14 @@ Package caption Info: End \AtBeginDocument code.
 * \@reversemarginfalse
 * (1in=72.27pt=25.4mm, 1cm=28.453pt)
 
-Package hyperref Info: Link coloring ON on input line 195.
+Package hyperref Info: Link coloring ON on input line 210.
 (main.out) (main.out)
 \@outlinefile=\write3
 \openout3 = `main.out'.
 
  (introduction.tex
 Package hyperref Info: Option `pageanchor' set `false' on input line 4.
-<image/school_logo.png, id=91, 1284.8pt x 500.87125pt>
+<image/school_logo.png, id=99, 1284.8pt x 500.87125pt>
 File: image/school_logo.png Graphic file (type png)
 <use image/school_logo.png>
 Package pdftex.def Info: image/school_logo.png  used on input line 7.
@@ -741,7 +912,18 @@ LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <7> not available
 \openout4 = `main.toc'.
 
 
-[2]) (sections/record_of_changes.tex
+[1
+
+] (main.lof)
+\tf@lof=\write5
+\openout5 = `main.lof'.
+
+ [2] (main.lot)
+\tf@lot=\write6
+\openout6 = `main.lot'.
+
+ [3]) (sections/definition_and_acronyms.tex
+[4]) (sections/record_of_changes.tex
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <5> not available
 (Font)              Font shape `OT1/ptm/b/n' tried instead on input line 12.
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <10> not available
@@ -750,319 +932,95 @@ LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <7.4> not available
 (Font)              Font shape `OT1/ptm/b/n' tried instead on input line 16.
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <6> not available
 (Font)              Font shape `OT1/ptm/b/n' tried instead on input line 16.
- [3])
+ [5])
 (sections/1.1-scope-and-estimation.tex
+ignored error: Infinite glue shrinkage found in box being split [1
+
+]
+ignored error: Infinite glue shrinkage found in box being split [2]
+ignored error: Infinite glue shrinkage found in box being split [3]
 ignored error: Infinite glue shrinkage found in box being split [4]
 ignored error: Infinite glue shrinkage found in box being split [5]
 ignored error: Infinite glue shrinkage found in box being split [6]
 ignored error: Infinite glue shrinkage found in box being split [7]
 ignored error: Infinite glue shrinkage found in box being split [8]
 ignored error: Infinite glue shrinkage found in box being split [9]
-ignored error: Infinite glue shrinkage found in box being split [10]
-ignored error: Infinite glue shrinkage found in box being split [11]
-ignored error: Infinite glue shrinkage found in box being split [12]
-ignored error: Infinite glue shrinkage found in box being split [13]
-ignored error: Infinite glue shrinkage found in box being split [14] [15])
-(sections/1.2-project-objectives.tex [16]
+ignored error: Infinite glue shrinkage found in box being split [10])
+(sections/1.2-project-objectives.tex [11]
 LaTeX Font Info:    Trying to load font information for TS1+ptm on input line 9
 .
 
 (C:\Users\ASUS\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\ts1ptm.fd
 File: ts1ptm.fd 2001/06/04 font definitions for TS1/ptm.
 )
+[12]
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <10.95> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 31.
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 32.
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <8> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 31.
-
-[17]) (sections/1.3-project-risk.tex [18]
-ignored error: Infinite glue shrinkage found in box being split [19]
-ignored error: Infinite glue shrinkage found in box being split [20]
-ignored error: Infinite glue shrinkage found in box being split [21]
-ignored error: Infinite glue shrinkage found in box being split [22])
-(sections/2-management-approach.tex [23]) (sections/2.1-project-process.tex
-[24] [25]) (sections/2.2-quality-management.tex [26] [27] [28])
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 32.
+ [13]) (sections/1.3-project-risk.tex
+ignored error: Infinite glue shrinkage found in box being split [14]
+ignored error: Infinite glue shrinkage found in box being split [15]
+ignored error: Infinite glue shrinkage found in box being split [16])
+(sections/2-management-approach.tex [17] [18])
+(sections/2.1-project-process.tex [19]) [20]
+(sections/2.2-quality-management.tex [21] [22] [23])
 (sections/2.3-training-plan.tex
-ignored error: Infinite glue shrinkage found in box being split [29]
-ignored error: Infinite glue shrinkage found in box being split [30])
-(sections/3-project-deliverables.tex
-ignored error: Infinite glue shrinkage found in box being split [31])
+ignored error: Infinite glue shrinkage found in box being split [24])
+(sections/3-project-deliverables.tex [25]
+ignored error: Infinite glue shrinkage found in box being split [26])
 (sections/4-responsibility-assignments.tex) (sections/4.1-team-structures.tex
-[32]
-<./image/team-structure.jpg, id=266, 5629.03pt x 1694.33pt>
-File: ./image/team-structure.jpg Graphic file (type jpg)
-<use ./image/team-structure.jpg>
-Package pdftex.def Info: ./image/team-structure.jpg  used on input line 9.
-(pdftex.def)             Requested size: 362.37598pt x 109.04947pt.
+[27]
+<./image/team-structure.png, id=293, 3613.5pt x 1758.57pt>
+File: ./image/team-structure.png Graphic file (type png)
+<use ./image/team-structure.png>
+Package pdftex.def Info: ./image/team-structure.png  used on input line 9.
+(pdftex.def)             Requested size: 452.96826pt x 220.43788pt.
 ) (sections/4.2-role-responsibilities.tex
-ignored error: Infinite glue shrinkage found in box being split [33 <./image/te
-am-structure.jpg>]
-ignored error: Infinite glue shrinkage found in box being split [34])
-(sections/4.3-responsibility-matrix.tex
-ignored error: Infinite glue shrinkage found in box being split [35]
-ignored error: Infinite glue shrinkage found in box being split [36]
-ignored error: Infinite glue shrinkage found in box being split [37]) [38]
-(sections/5-project-communications.tex
-Underfull \hbox (badness 10000) in paragraph at lines 13--13
-[]|\T1/ptm/b/n/10.95 Communication
- []
-
-
-Underfull \hbox (badness 3058) in paragraph at lines 16--16
-[]|\T1/ptm/b/n/10.95 When, Fre-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 17--18
-[]|\T1/ptm/b/n/10.95 Type, Tool,
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 21--21
-[]|\T1/ptm/m/n/10.95 Development
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 23--23
-[]|\T1/ptm/m/n/10.95 Daily, 15
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 24--25
-[]|\T1/ptm/m/n/10.95 Discord voice
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 24--25
-\T1/ptm/m/n/10.95 chan-nel, short
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 28--28
-[]|\T1/ptm/m/n/10.95 Development
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 29--29
-[]|\T1/ptm/m/n/10.95 Re-estimate can-di-date
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 29--29
-\T1/ptm/m/n/10.95 items, split over-sized
- []
-
-
-Underfull \hbox (badness 1259) in paragraph at lines 29--29
-\T1/ptm/m/n/10.95 items, and con-firm de-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 31--32
-[]|\T1/ptm/m/n/10.95 GitHub project
- []
-
-
-Underfull \hbox (badness 8132) in paragraph at lines 31--32
-\T1/ptm/m/n/10.95 board, Dis-cord
- []
-
-
-Underfull \hbox (badness 7851) in paragraph at lines 35--35
-[]|\T1/ptm/m/n/10.95 Team mem-bers,
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 38--39
-[]|\T1/ptm/m/n/10.95 Google Meet,
- []
-
-
-Underfull \hbox (badness 7851) in paragraph at lines 42--42
-[]|\T1/ptm/m/n/10.95 Team mem-bers,
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 42--42
-\T1/ptm/m/n/10.95 su-per-vi-sor, in-
- []
-
-
-Underfull \hbox (badness 3375) in paragraph at lines 43--43
-[]|\T1/ptm/m/n/10.95 Demonstrate the in-cre-
- []
-
-
-Underfull \hbox (badness 1163) in paragraph at lines 44--44
-[]|\T1/ptm/m/n/10.95 End of each
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 45--46
-[]|\T1/ptm/m/n/10.95 Google Meet,
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 45--46
-\T1/ptm/m/n/10.95 live demon-
- []
-
-
-Underfull \hbox (badness 4084) in paragraph at lines 45--46
-\T1/ptm/m/n/10.95 stra-tion on the
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 48--48
-[]|\T1/ptm/m/n/10.95 Sprint Ret-ro-spec-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 49--49
-[]|\T1/ptm/m/n/10.95 Development
- []
-
-
-Underfull \hbox (badness 3536) in paragraph at lines 50--50
-\T1/ptm/m/n/10.95 cess changes and ver-
- []
-
-
-Underfull \hbox (badness 1163) in paragraph at lines 51--51
-[]|\T1/ptm/m/n/10.95 End of each
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 52--53
-[]|\T1/ptm/m/n/10.95 Discord, ret-ro-
- []
-
-
-Underfull \hbox (badness 5274) in paragraph at lines 52--53
-\T1/ptm/m/n/10.95 the doc-u-men-ta-
- []
-
-
-Underfull \hbox (badness 7851) in paragraph at lines 56--56
-[]|\T1/ptm/m/n/10.95 Team mem-bers,
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 58--58
-[]|\T1/ptm/m/n/10.95 Before
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 58--58
-\T1/ptm/m/n/10.95 each high-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 58--58
-\T1/ptm/m/n/10.95 complexity
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 59--60
-[]|\T1/ptm/m/n/10.95 Google Meet,
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 59--60
-\T1/ptm/m/n/10.95 de-sign note
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 63--63
-[]|\T1/ptm/m/n/10.95 Author and at
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 63--63
-\T1/ptm/m/n/10.95 least one re-
- []
-
-
-Underfull \hbox (badness 2205) in paragraph at lines 64--64
-[]|\T1/ptm/m/n/10.95 Check be-haviour, er-ror
- []
-
-
-Underfull \hbox (badness 4391) in paragraph at lines 64--64
-\T1/ptm/m/n/10.95 han-dling, au-tho-ri-sa-tion,
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 72--72
-[]|\T1/ptm/m/n/10.95 Twice per
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 73--74
-[]|\T1/ptm/m/n/10.95 GitHub is-sues
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 73--74
-\T1/ptm/m/n/10.95 with sever-ity
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 80--81
-[]|\T1/ptm/m/n/10.95 Written re-port
- []
-
-
-Underfull \hbox (badness 5970) in paragraph at lines 80--81
-\T1/ptm/m/n/10.95 sent by email,
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 80--81
-\T1/ptm/m/n/10.95 Google Meet
- []
-
-
-Underfull \hbox (badness 1983) in paragraph at lines 80--81
-\T1/ptm/m/n/10.95 when a dis-cus-
- []
-
-[39]) [40] (sections/6.1-document-management.tex [41])
-(sections/6.2-source-code-management.tex [42])
-Underfull \hbox (badness 1237) in paragraph at lines 20--263
+ignored error: Infinite glue shrinkage found in box being split [28 <./image/te
+am-structure.png (PNG copy)>]) (sections/4.3-responsibility-matrix.tex [29]
+ignored error: Infinite glue shrinkage found in box being split [30]
+ignored error: Infinite glue shrinkage found in box being split [31]
+ignored error: Infinite glue shrinkage found in box being split [32]
+ignored error: Infinite glue shrinkage found in box being split [33])
+(sections/5-project-communications.tex [34] [35])
+(sections/6.1-document-management.tex [36])
+(sections/6.2-source-code-management.tex [37])
+Underfull \hbox (badness 1237) in paragraph at lines 20--290
 \T1/cmtt/m/n/12 packages/shared-type \T1/ptm/m/n/12 con-tains the Zod schemas a
 nd the types de-rived from them,
  []
 
 (sections/6.3-tools-infrastructures.tex
-ignored error: Infinite glue shrinkage found in box being split [43]
-ignored error: Infinite glue shrinkage found in box being split [44]) [45]
-(main.aux)
+ignored error: Infinite glue shrinkage found in box being split [38]
+ignored error: Infinite glue shrinkage found in box being split [39])
+(sections/references.tex [40]) [41] (main.aux)
  ***********
 LaTeX2e <2025-11-01>
 L3 programming layer <2025-12-24>
  ***********
 Package rerunfilecheck Info: File `main.out' has not changed.
-(rerunfilecheck)             Checksum: D145CE9F19BE08D5692FBF98367B1E91;3595.
+(rerunfilecheck)             Checksum: B492BA61A23732BAB7A6B4BB8787C670;3858.
  ) 
 Here is how much of TeX's memory you used:
- 15853 strings out of 467871
- 254975 string characters out of 5418860
- 974088 words of memory out of 5000000
- 44335 multiletter control sequences out of 15000+600000
- 709835 words of font info for 155 fonts, out of 8000000 for 9000
+ 16330 strings out of 467871
+ 261664 string characters out of 5418860
+ 927494 words of memory out of 5000000
+ 44772 multiletter control sequences out of 15000+600000
+ 710901 words of font info for 159 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 75i,17n,83p,1034b,684s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 75i,17n,83p,1122b,683s stack positions out of 10000i,1000n,20000p,200000b,200000s
  <C:\Users\ASUS\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ectt1
-200.pk><C:/Users/ASUS/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts
-/cm/cmsy10.pfb><C:/Users/ASUS/AppData/Local/Programs/MiKTeX/fonts/type1/urw/tim
-es/utmb8a.pfb><C:/Users/ASUS/AppData/Local/Programs/MiKTeX/fonts/type1/urw/time
-s/utmbi8a.pfb><C:/Users/ASUS/AppData/Local/Programs/MiKTeX/fonts/type1/urw/time
-s/utmr8a.pfb><C:/Users/ASUS/AppData/Local/Programs/MiKTeX/fonts/type1/urw/times
-/utmri8a.pfb>
-Output written on main.pdf (45 pages, 472445 bytes).
+095.pk> <C:\Users\ASUS\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\
+ectt1200.pk><C:/Users/ASUS/AppData/Local/Programs/MiKTeX/fonts/type1/public/ams
+fonts/cm/cmsy10.pfb><C:/Users/ASUS/AppData/Local/Programs/MiKTeX/fonts/type1/ur
+w/times/utmb8a.pfb><C:/Users/ASUS/AppData/Local/Programs/MiKTeX/fonts/type1/urw
+/times/utmbi8a.pfb><C:/Users/ASUS/AppData/Local/Programs/MiKTeX/fonts/type1/urw
+/times/utmr8a.pfb><C:/Users/ASUS/AppData/Local/Programs/MiKTeX/fonts/type1/urw/
+times/utmri8a.pfb>
+Output written on main.pdf (47 pages, 496147 bytes).
 PDF statistics:
- 405 PDF objects out of 1000 (max. 8388607)
- 79 named destinations out of 1000 (max. 500000)
- 187 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 488 PDF objects out of 1000 (max. 8388607)
+ 90 named destinations out of 1000 (max. 500000)
+ 203 words of extra memory for PDF output out of 10000 (max. 10000000)
 

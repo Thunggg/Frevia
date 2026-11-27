@@ -1,4 +1,5 @@
 import { HttpException, Injectable } from '@nestjs/common';
+import { MilestoneStatus } from '@prisma/client';
 import { RoleName } from '@shared/types';
 import { CloudinaryService } from '../../shared/services/cloudinary.service';
 import { MilestoneFileRepository } from './milestone-file.repo';
@@ -11,6 +12,7 @@ import {
   MilestoneFileMilestoneNotFoundException,
   MilestoneFileNotFoundException,
   MilestoneFileRequiredException,
+  MilestoneFileSubmittedCannotDeleteException,
 } from './milestone-file.error';
 
 @Injectable()
@@ -81,6 +83,14 @@ export class MilestoneFileService {
       if (milestone.contractId !== contractId)
         throw MilestoneFileForbiddenException();
 
+      if (
+        milestone.status === MilestoneStatus.COMPLETED ||
+        (contract.expiresAt &&
+          new Date(contract.expiresAt).getTime() < Date.now())
+      ) {
+        throw MilestoneFileForbiddenException();
+      }
+
       const cloudinaryResult = await this.cloudinaryService.uploadFile(
         file,
         `frevia/milestones/${milestoneId}`,
@@ -129,9 +139,17 @@ export class MilestoneFileService {
       if (milestone.contractId !== contractId)
         throw MilestoneFileForbiddenException();
 
+      if (milestone.status === MilestoneStatus.COMPLETED) {
+        throw MilestoneFileForbiddenException();
+      }
+
       const file = await this.milestoneFileRepository.findFileById(fileId);
       if (!file || file.milestoneId !== milestoneId || file.deletedAt) {
         throw MilestoneFileNotFoundException();
+      }
+
+      if (file.submissions && file.submissions.length > 0) {
+        throw MilestoneFileSubmittedCannotDeleteException();
       }
 
       if (file.uploaderId !== userId) {

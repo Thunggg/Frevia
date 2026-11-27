@@ -25,6 +25,7 @@ describe('Nhuy current profile and review regressions', () => {
           website: null,
         },
       },
+      role: { name: 'Expert' },
       userRoles: [{ role: { name: 'Expert' } }],
     };
     const repository = { findByUserId: jest.fn() };
@@ -72,6 +73,7 @@ describe('Nhuy current profile and review regressions', () => {
     it('rejects a non-expert account with the exact forbidden message', async () => {
       repository.findByUserId.mockResolvedValue({
         ...expert,
+        role: { name: 'Client' },
         userRoles: [{ role: { name: 'Client' } }],
       });
       await expect(service.getMine(10)).rejects.toMatchObject({

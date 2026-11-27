@@ -9,4 +9,5 @@ export const ManageMilestoneFileMessage = {
     FAILED_TO_UPLOAD: 'Error.FailedToUploadMilestoneFile',
     FAILED_TO_LOAD: 'Error.FailedToLoadMilestoneFiles',
     FAILED_TO_DELETE: 'Error.FailedToDeleteMilestoneFile',
+    CANNOT_DELETE_SUBMITTED: 'Error.MilestoneFileSubmittedCannotDelete',
 } as const;

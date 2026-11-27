@@ -8,6 +8,7 @@ This appendix collects the requirements that apply across features rather than t
 
 The rules below are grouped by the feature they constrain. A use case that violates a rule is rejected, and the identifier of the rule is quoted in the corresponding alternative flow.
 
+\setcounter{table}{5}
 \input{sections/5.Subsections/5.1.Business_Rules}
 
 \Needspace{12\baselineskip}
@@ -37,6 +38,8 @@ The messages below are reused across features. The context column states when th
 
 \Needspace{12\baselineskip}
 \begin{longtable}{|C{0.8cm}|C{1.5cm}|L{3.2cm}|L{4.2cm}|L{4.9cm}|}
+\caption{Application Messages List}
+\label{tab:application-messages} \\
 \hline
 \rowcolor{headerbg}
 \textbf{\#} &
@@ -47,6 +50,7 @@ The messages below are reused across features. The context column states when th
 \hline
 \endfirsthead
 
+\caption[]{Application Messages List \textit{(cont.)}} \\
 \hline
 \rowcolor{headerbg}
 \textbf{\#} &
@@ -71,9 +75,6 @@ The messages below are reused across features. The context column states when th
 7 & MSG07 & Inline, under the field & The password confirmation differs from the password & Passwords do not match. \\ \hline
 8 & MSG08 & Toast, red & A requested record does not exist or has been soft-deleted & Post not found. / Comment not found. / Proposal not found. \\ \hline
 9 & MSG09 & Toast, green & A record has been saved & Profile updated successfully. / Skill added successfully. / Portfolio created successfully. \\ \hline
-
-\caption{Application Messages List}
-\label{tab:application-messages}
 \end{longtable}
 
 \endgroup

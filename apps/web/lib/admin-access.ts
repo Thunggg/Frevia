@@ -152,8 +152,6 @@ export function isHardcodedMarketplaceAllowed(
 
   if (roleName === RoleName.CLIENT) {
     if (
-      cleanPath === "/api/identity-verifications" ||
-      cleanPath.startsWith("/api/identity-verifications/") ||
       cleanPath === "/api/job-alerts" ||
       cleanPath.startsWith("/api/job-alerts/") ||
       cleanPath.includes("/bookmark")

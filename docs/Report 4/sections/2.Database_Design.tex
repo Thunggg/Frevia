@@ -28,7 +28,14 @@ key) or \texttt{FK} (foreign key). A relationship is a line that leaves the many
 table with a crow's foot and ends on the one-side table with a single bar, so it reads
 from the row that holds the foreign key to the row it references.
 
-\kfig{0.95\textwidth}{images/database/erd}{Entity--relationship diagram of the Frevia database}{fig:db:erd}
+\begin{landscape}
+\begin{figure}[p]
+    \centering
+    \includegraphics[width=0.98\linewidth,height=0.58\linewidth,keepaspectratio]{images/database/erd.pdf}
+    \caption{Entity--relationship diagram of the Frevia database}
+    \label{fig:db:erd}
+\end{figure}
+\end{landscape}
 
 \subsection{Table Relationships}
 
@@ -44,7 +51,7 @@ one-to-many, and membership tables carry the many-to-many links:
     \item \textbf{Disputes} --- \texttt{Dispute} is opened on a contract or a milestone, \texttt{DisputeEvidence} collects the attachments of both parties, \texttt{DisputeFee} records the fee charged to open it, and \texttt{DisputeDecisionReview} stores the request of a party that asks for the decision to be reconsidered.
     \item \textbf{Reviews} --- one \texttt{Review} per completed contract, answered by at most one \texttt{ReviewResponse}.
     \item \textbf{Messaging and notifications} --- \texttt{Conversation} groups the \texttt{DirectMessage} rows exchanged by two accounts (pin and read state are kept on the message and on the conversation), and \texttt{Notification} feeds the in-app bell.
-    \item \textbf{Community forum and configuration} --- \texttt{ForumCategory} contains \texttt{ForumPost}, a post contains \texttt{ForumComment}, and \texttt{ForumLike} / \texttt{ForumReport} attach reactions and reports to posts or comments. \texttt{ForumPost} and \texttt{ForumComment} may also store reviewer metadata for moderated content. Administrators work through \texttt{ModerationQueue} and \texttt{BannedKeyword}; platform-wide configuration lives in \texttt{SystemSetting}, \texttt{AnnouncementBanner} and \texttt{AdvertisementBanner}.
+    \item \textbf{Community forum and configuration} --- \texttt{ForumCategory} contains \texttt{ForumPost}, a post contains \texttt{ForumComment}, and \texttt{ForumLike} / \texttt{ForumReport} attach reactions and reports to posts or comments. \texttt{ForumPost} and \texttt{ForumComment} may also store reviewer metadata for moderated content. Administrators manage reports through \texttt{ModerationQueue} (while \texttt{BannedKeyword} is reserved in the schema and currently unexposed by the API); platform-wide configuration lives in \texttt{SystemSetting}, \texttt{AnnouncementBanner} and \texttt{AdvertisementBanner}.
 \end{itemize}
 
 \subsubsection*{Table Descriptions}
@@ -78,13 +85,13 @@ primary key and its foreign keys.
 \texttt{04} & \texttt{RolePermission} & Permissions granted to a role; drives the effective permission list of every signed-in account.
 \newline \textbullet~\textbf{Primary keys:} \texttt{roleId}, \texttt{permissionId}
 \newline \textbullet~\textbf{Foreign keys:} \texttt{roleId} $\rightarrow$ \texttt{Role}, \texttt{permissionId} $\rightarrow$ \texttt{Permission} \\ \hline
-\texttt{05} & \texttt{User} & Account identity: e-mail, username, bcrypt password hash, status, verification and ban flags, preferred language and timestamps. Carries the primary role through \texttt{roleId}.
+\texttt{05} & \texttt{User} & Account identity: e-mail, bcrypt password hash, ban flag, Stripe customer/Connect flags and timestamps. Carries the primary role through \texttt{roleId}.
 \newline \textbullet~\textbf{Primary keys:} \texttt{id}
 \newline \textbullet~\textbf{Foreign keys:} \texttt{roleId} $\rightarrow$ \texttt{Role} \\ \hline
-\texttt{06} & \texttt{VerificationCode} & One-time code (OTP) issued for e-mail verification or password reset, with its purpose, expiry and consumed flag.
+\texttt{06} & \texttt{VerificationCode} & One-time code (OTP) issued for e-mail verification or password reset, with its purpose (\texttt{type}), verification attempt counter (\texttt{attempts}) and expiry; consumed codes are deleted.
 \newline \textbullet~\textbf{Primary keys:} \texttt{id}
 \newline \textbullet~\textbf{Foreign keys:} --- \\ \hline
-\texttt{07} & \texttt{Session} & Server-side session per device: refresh-token hash, device/user-agent information, last activity and revocation time.
+\texttt{07} & \texttt{Session} & Server-side session per device: refresh-token hash, device/user-agent and IP address metadata, and expiry timestamp.
 \newline \textbullet~\textbf{Primary keys:} \texttt{id}
 \newline \textbullet~\textbf{Foreign keys:} \texttt{userId} $\rightarrow$ \texttt{User} \\ \hline
 \texttt{08} & \texttt{OauthAccount} & Link between an account and an external identity provider (Google) for federated login.
@@ -96,16 +103,16 @@ primary key and its foreign keys.
 \texttt{10} & \texttt{UserSetting} & Per-account preferences: interface theme, language and the JSON notification preferences.
 \newline \textbullet~\textbf{Primary keys:} \texttt{id}
 \newline \textbullet~\textbf{Foreign keys:} \texttt{userId} $\rightarrow$ \texttt{User} \\ \hline
-\texttt{11} & \texttt{Profile} & Base profile shared by all accounts: display name, avatar, cover, headline and biography.
+\texttt{11} & \texttt{Profile} & Base profile shared by all accounts: display name, avatar, cover, biography, availability status and completion percentage.
 \newline \textbullet~\textbf{Primary keys:} \texttt{id}
 \newline \textbullet~\textbf{Foreign keys:} \texttt{userId} $\rightarrow$ \texttt{User} \\ \hline
-\texttt{12} & \texttt{FreelancerProfile} & Professional data of a freelancer: professional title, overview, hourly rate, availability and total earnings.
+\texttt{12} & \texttt{FreelancerProfile} & Professional data of a freelancer: professional title, education, certifications, languages, experience summaries, uploaded CV metadata and identity verification flag.
 \newline \textbullet~\textbf{Primary keys:} \texttt{id}
 \newline \textbullet~\textbf{Foreign keys:} \texttt{profileId} $\rightarrow$ \texttt{Profile} \\ \hline
 \texttt{13} & \texttt{FreelancerSkill} & Many-to-many link between a freelancer profile and a skill, with the self-declared proficiency level.
 \newline \textbullet~\textbf{Primary keys:} \texttt{id}
 \newline \textbullet~\textbf{Foreign keys:} \texttt{freelancerProfileId} $\rightarrow$ \texttt{FreelancerProfile}, \texttt{skillId} $\rightarrow$ \texttt{Skill} \\ \hline
-\texttt{14} & \texttt{ClientProfile} & Client-side data: company name, company size, industry and billing information.
+\texttt{14} & \texttt{ClientProfile} & Client-side data: company name, company description and website URL.
 \newline \textbullet~\textbf{Primary keys:} \texttt{id}
 \newline \textbullet~\textbf{Foreign keys:} \texttt{profileId} $\rightarrow$ \texttt{Profile} \\ \hline
 \texttt{15} & \texttt{Expert} & Expert entry published in the public expert directory, with specialisation and verification state.
@@ -114,10 +121,10 @@ primary key and its foreign keys.
 \texttt{16} & \texttt{ProfileRevision} & Pending change request on a profile, reviewed and approved or rejected by an administrator.
 \newline \textbullet~\textbf{Primary keys:} \texttt{id}
 \newline \textbullet~\textbf{Foreign keys:} \texttt{userId} $\rightarrow$ \texttt{User}, \texttt{adminId} $\rightarrow$ \texttt{User}, \texttt{profileId} $\rightarrow$ \texttt{Profile} \\ \hline
-\texttt{17} & \texttt{PortfolioItem} & Portfolio entry of a profile: title, description, media URL, project link and ordering position.
+\texttt{17} & \texttt{PortfolioItem} & Portfolio entry of a profile: title, description, technologies list, project URL, content source and soft-delete support.
 \newline \textbullet~\textbf{Primary keys:} \texttt{id}
 \newline \textbullet~\textbf{Foreign keys:} \texttt{freelancerProfileId} $\rightarrow$ \texttt{FreelancerProfile} \\ \hline
-\texttt{18} & \texttt{CvAnalysis} & AI analysis of a freelancer CV: upload metadata, extraction statistics, the structured JSON result (skills, experience, education, projects, summary) and the confirmation state. One analysis is kept per CV version.
+\texttt{18} & \texttt{CvAnalysis} & AI analysis of a freelancer CV: upload metadata, extraction statistics, the structured JSON result (skills, experience, education, projects, summary) and the confirmation state. Generating a new analysis discards any prior \texttt{PENDING} draft for the profile.
 \newline \textbullet~\textbf{Primary keys:} \texttt{id}
 \newline \textbullet~\textbf{Foreign keys:} \texttt{freelancerProfileId} $\rightarrow$ \texttt{FreelancerProfile} \\ \hline
 \texttt{19} & \texttt{FreelancerExperience} & Experience item of a freelancer profile, either entered manually or imported from a CV, with company, dates and description.
@@ -147,10 +154,10 @@ primary key and its foreign keys.
 \texttt{27} & \texttt{ProfileVisitLog} & View log of a freelancer profile (\texttt{viewerId}, \texttt{targetFreelancerId}, \texttt{viewedAt}); source of the profile statistics.
 \newline \textbullet~\textbf{Primary keys:} \texttt{id}
 \newline \textbullet~\textbf{Foreign keys:} \texttt{viewerId} $\rightarrow$ \texttt{User}, \texttt{targetFreelancerId} $\rightarrow$ \texttt{User} \\ \hline
-\texttt{28} & \texttt{JobCategory} & Hierarchical job category (parent reference, slug, name, icon) with soft-delete support.
+\texttt{28} & \texttt{JobCategory} & Flat job category (\texttt{name}, \texttt{slug}, \texttt{description}, \texttt{status}) with soft-delete support.
 \newline \textbullet~\textbf{Primary keys:} \texttt{id}
 \newline \textbullet~\textbf{Foreign keys:} --- \\ \hline
-\texttt{29} & \texttt{Job} & Job posting: slug, title, description, budget range, duration, deadline, visibility, status and the owning client.
+\texttt{29} & \texttt{Job} & Job posting: slug, title, description, budget range and type, hiring type, positions required/filled, deadline, expiry date, status and the owning client.
 \newline \textbullet~\textbf{Primary keys:} \texttt{id}
 \newline \textbullet~\textbf{Foreign keys:} \texttt{clientId} $\rightarrow$ \texttt{User} \\ \hline
 \texttt{30} & \texttt{JobJobCategory} & Many-to-many link between a job and the job categories it is published in.
@@ -159,7 +166,7 @@ primary key and its foreign keys.
 \texttt{31} & \texttt{Skill} & Skill catalogue shared by freelancer profiles and jobs, with soft-delete support.
 \newline \textbullet~\textbf{Primary keys:} \texttt{id}
 \newline \textbullet~\textbf{Foreign keys:} --- \\ \hline
-\texttt{32} & \texttt{JobSkill} & Skills required by a job, with the required proficiency level.
+\texttt{32} & \texttt{JobSkill} & Many-to-many link pairing a job with its required skills.
 \newline \textbullet~\textbf{Primary keys:} \texttt{jobId}, \texttt{skillId}
 \newline \textbullet~\textbf{Foreign keys:} \texttt{jobId} $\rightarrow$ \texttt{Job}, \texttt{skillId} $\rightarrow$ \texttt{Skill} \\ \hline
 \texttt{33} & \texttt{JobBookmark} & Jobs saved by a freelancer.
@@ -171,7 +178,7 @@ primary key and its foreign keys.
 \texttt{35} & \texttt{SavedSearch} & Stored job filter criteria (keyword, categories, budget, skills) that the freelancer can reapply.
 \newline \textbullet~\textbf{Primary keys:} \texttt{id}
 \newline \textbullet~\textbf{Foreign keys:} \texttt{userId} $\rightarrow$ \texttt{User} \\ \hline
-\texttt{36} & \texttt{JobAlert} & Alert configuration attached to a saved search (frequency, channel, active flag).
+\texttt{36} & \texttt{JobAlert} & User-level job alert configuration storing keywords, skills, frequency, notification channels and active flag.
 \newline \textbullet~\textbf{Primary keys:} \texttt{id}
 \newline \textbullet~\textbf{Foreign keys:} \texttt{userId} $\rightarrow$ \texttt{User} \\ \hline
 \texttt{37} & \texttt{Proposal} & Proposal submitted by a freelancer for a job: cover letter, bid amount, estimated duration and lifecycle status.
@@ -180,13 +187,13 @@ primary key and its foreign keys.
 \texttt{38} & \texttt{ProposalAttachment} & File attached to a proposal (portfolio sample, reference document) stored in Cloudinary.
 \newline \textbullet~\textbf{Primary keys:} \texttt{id}
 \newline \textbullet~\textbf{Foreign keys:} \texttt{proposalId} $\rightarrow$ \texttt{Proposal} \\ \hline
-\texttt{39} & \texttt{Contract} & Contract created when a proposal is accepted: client, freelancer, total amount, terms, signature state, start/end dates and status.
+\texttt{39} & \texttt{Contract} & Contract created when a proposal is accepted: slug, client, freelancer, total amount, terms, bilateral signature flags/timestamps, platform fee fields, Stripe hold reference, expiry/completion dates and status.
 \newline \textbullet~\textbf{Primary keys:} \texttt{id}
 \newline \textbullet~\textbf{Foreign keys:} \texttt{jobId} $\rightarrow$ \texttt{Job}, \texttt{proposalId} $\rightarrow$ \texttt{Proposal}, \texttt{clientId} $\rightarrow$ \texttt{User}, \texttt{freelancerId} $\rightarrow$ \texttt{User} \\ \hline
 \texttt{40} & \texttt{ContractTermTemplate} & Reusable contract term template owned by a user, with category, content and soft-delete support.
 \newline \textbullet~\textbf{Primary keys:} \texttt{id}
 \newline \textbullet~\textbf{Foreign keys:} \texttt{creatorId} $\rightarrow$ \texttt{User} \\ \hline
-\texttt{41} & \texttt{Milestone} & Milestone inside a contract: title, description, amount, due date, escrow status, progress percentage and approval state.
+\texttt{41} & \texttt{Milestone} & Milestone inside a contract: title, description, amount, due date, completion date, milestone lifecycle status and payment escrow status.
 \newline \textbullet~\textbf{Primary keys:} \texttt{id}
 \newline \textbullet~\textbf{Foreign keys:} \texttt{contractId} $\rightarrow$ \texttt{Contract} \\ \hline
 \texttt{42} & \texttt{MilestoneFile} & Reference file attached to a milestone and shared with both parties.
@@ -225,7 +232,7 @@ primary key and its foreign keys.
 \texttt{53} & \texttt{ReviewResponse} & Reply of the reviewed party to a review (at most one per review).
 \newline \textbullet~\textbf{Primary keys:} \texttt{id}
 \newline \textbullet~\textbf{Foreign keys:} \texttt{reviewId} $\rightarrow$ \texttt{Review}, \texttt{userId} $\rightarrow$ \texttt{User} \\ \hline
-\texttt{54} & \texttt{ForumCategory} & Forum category: slug, name, description, display order, post counter and soft-delete support.
+\texttt{54} & \texttt{ForumCategory} & Forum category: slug, name, description and soft-delete support.
 \newline \textbullet~\textbf{Primary keys:} \texttt{id}
 \newline \textbullet~\textbf{Foreign keys:} --- \\ \hline
 \texttt{55} & \texttt{ForumPost} & Forum post: title, content, author, category, moderation status, AI score, reviewer and soft-delete support.
@@ -237,7 +244,7 @@ primary key and its foreign keys.
 \texttt{57} & \texttt{ForumLike} & Reaction of a member on a post or a comment; a member can like a target only once.
 \newline \textbullet~\textbf{Primary keys:} \texttt{id}
 \newline \textbullet~\textbf{Foreign keys:} \texttt{userId} $\rightarrow$ \texttt{User}, \texttt{postId} $\rightarrow$ \texttt{ForumPost}, \texttt{commentId} $\rightarrow$ \texttt{ForumComment} \\ \hline
-\texttt{58} & \texttt{ForumReport} & Content report filed by a member: reason, description, status and the administrator who handled it.
+\texttt{58} & \texttt{ForumReport} & Content report filed by a member: reason, status and the administrator who handled it.
 \newline \textbullet~\textbf{Primary keys:} \texttt{id}
 \newline \textbullet~\textbf{Foreign keys:} \texttt{reporterId} $\rightarrow$ \texttt{User}, \texttt{postId} $\rightarrow$ \texttt{ForumPost}, \texttt{commentId} $\rightarrow$ \texttt{ForumComment}, \texttt{adminId} $\rightarrow$ \texttt{User} \\ \hline
 \texttt{59} & \texttt{Notification} & In-app notification of an account: type, title, body, target link and read state.
@@ -246,16 +253,16 @@ primary key and its foreign keys.
 \texttt{60} & \texttt{AnnouncementBanner} & Platform announcement shown in the application: message, link, display window, active flag and soft delete.
 \newline \textbullet~\textbf{Primary keys:} \texttt{id}
 \newline \textbullet~\textbf{Foreign keys:} --- \\ \hline
-\texttt{61} & \texttt{ModerationQueue} & Queue of AI-flagged or user-reported content waiting for an administrator decision, with the item type, the score and the assignee.
+\texttt{61} & \texttt{ModerationQueue} & Queue of AI-flagged or user-reported content waiting for an administrator decision, with the item type (\texttt{contentType}), target identifier, reason, status, handling administrator and action taken.
 \newline \textbullet~\textbf{Primary keys:} \texttt{id}
 \newline \textbullet~\textbf{Foreign keys:} \texttt{reporterId} $\rightarrow$ \texttt{User}, \texttt{adminId} $\rightarrow$ \texttt{User} \\ \hline
 \texttt{62} & \texttt{SystemSetting} & Platform-wide configuration values stored as key/value rows.
 \newline \textbullet~\textbf{Primary keys:} \texttt{id}
 \newline \textbullet~\textbf{Foreign keys:} --- \\ \hline
-\texttt{63} & \texttt{BannedKeyword} & Keyword list used by the moderation filter before the AI service is called.
+\texttt{63} & \texttt{BannedKeyword} & Reserved keyword table in the schema, currently unexposed by the application API.
 \newline \textbullet~\textbf{Primary keys:} \texttt{id}
 \newline \textbullet~\textbf{Foreign keys:} \texttt{createdBy} $\rightarrow$ \texttt{User} \\ \hline
-\texttt{64} & \texttt{AdvertisementBanner} & Advertising banner with image, target URL, position, schedule and click counter.
+\texttt{64} & \texttt{AdvertisementBanner} & Advertising banner with title, image URL, target URL, position, schedule and active flag.
 \newline \textbullet~\textbf{Primary keys:} \texttt{id}
 \newline \textbullet~\textbf{Foreign keys:} --- \\ \hline
 \texttt{65} & \texttt{FavoriteFreelancer} & Freelancers marked as favourite by a client account.
@@ -273,7 +280,7 @@ primary key and its foreign keys.
 \texttt{69} & \texttt{SharedFile} & File shared in the workspace of a contract (both parties can upload and read).
 \newline \textbullet~\textbf{Primary keys:} \texttt{id}
 \newline \textbullet~\textbf{Foreign keys:} \texttt{contractId} $\rightarrow$ \texttt{Contract}, \texttt{uploaderId} $\rightarrow$ \texttt{User} \\ \hline
-\texttt{70} & \texttt{Conversation} & Direct conversation between two accounts, with last-message cache and the pin state of each participant.
+\texttt{70} & \texttt{Conversation} & Direct conversation between two accounts, storing per-participant hide/pin timestamps and soft-delete support.
 \newline \textbullet~\textbf{Primary keys:} \texttt{id}
 \newline \textbullet~\textbf{Foreign keys:} \texttt{participant1} $\rightarrow$ \texttt{User}, \texttt{participant2} $\rightarrow$ \texttt{User} \\ \hline
 \texttt{71} & \texttt{DirectMessage} & Message of a conversation: sender, content, attachments, read state, recall (soft delete) flag and timestamp.

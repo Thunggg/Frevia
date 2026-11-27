@@ -81,13 +81,13 @@ model User {
   deletedAt DateTime?
 
   // --- Stripe Payments ---
-  stripeCustomerId          String?   @db.VarChar(255)
-  stripeAccountId           String?   @db.VarChar(255)
-  stripeOnboardingCompleted Boolean   @default(false)
+  stripeCustomerId          String? @db.VarChar(255)
+  stripeAccountId           String? @db.VarChar(255)
+  stripeOnboardingCompleted Boolean @default(false)
 
   // --- Auth / core ---
   roleId        Int
-  role          Role          @relation(fields: [roleId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+  role          Role           @relation(fields: [roleId], references: [id], onDelete: Restrict, onUpdate: NoAction)
   userRoles     UserRole[]
   sessions      Session[]
   oauthAccounts OauthAccount[]
@@ -123,26 +123,26 @@ model User {
   milestoneSubmissions MilestoneSubmission[]
 
   // --- Certificates / Disputes / Reviews ---
-  certificatesAsFreelancer Certificate[]     @relation("CertificateFreelancer")
-  certificatesAsClient     Certificate[]     @relation("CertificateClient")
+  certificatesAsFreelancer Certificate[]           @relation("CertificateFreelancer")
+  certificatesAsClient     Certificate[]           @relation("CertificateClient")
   disputesOpened           Dispute[]               @relation("DisputeOpenedBy")
   disputesReceived         Dispute[]               @relation("DisputeRespondent")
   disputesDecided          Dispute[]               @relation("DisputeDecisionBy")
-  disputeFees              DisputeFee[]
+  disputeFiles             DisputeFile[]           @relation("DisputeFileUploader")
   disputeEvidences         DisputeEvidence[]       @relation("DisputeEvidenceSubmittedBy")
   disputeDecisionReviews   DisputeDecisionReview[]
-  reviewsGiven             Review[]          @relation("ReviewReviewer")
-  reviewsReceived          Review[]          @relation("ReviewReviewee")
+  reviewsGiven             Review[]                @relation("ReviewReviewer")
+  reviewsReceived          Review[]                @relation("ReviewReviewee")
   reviewResponses          ReviewResponse[]
 
   // --- Forum ---
-  forumPosts          ForumPost[]
-  forumPostsReviewed  ForumPost[]    @relation("ForumPostReviewedBy")
+  forumPosts            ForumPost[]
+  forumPostsReviewed    ForumPost[]    @relation("ForumPostReviewedBy")
   forumCommentsReviewed ForumComment[] @relation("ForumCommentReviewedBy")
-  forumComments       ForumComment[]
-  forumLikes          ForumLike[]
-  forumReportsMade    ForumReport[]  @relation("ForumReportReporter")
-  forumReportsHandled ForumReport[]  @relation("ForumReportAdmin")
+  forumComments         ForumComment[]
+  forumLikes            ForumLike[]
+  forumReportsMade      ForumReport[]  @relation("ForumReportReporter")
+  forumReportsHandled   ForumReport[]  @relation("ForumReportAdmin")
 
   // --- Notifications / Moderation / System ---
   notifications            Notification[]
@@ -165,7 +165,7 @@ model User {
   directMessages              DirectMessage[]
 
   // --- Transactions ---
-  transactions                Transaction[]
+  transactions Transaction[]
 
   // --- AI Recommendation (Job-CV matching) ---
   recommendations Recommendation[] @relation("RecommendationRequester")
@@ -275,7 +275,7 @@ model FreelancerProfile {
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 
-  profile        Profile           @relation(fields: [profileId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+  profile        Profile                @relation(fields: [profileId], references: [id], onDelete: Restrict, onUpdate: NoAction)
   skills         FreelancerSkill[]
   portfolioItems PortfolioItem[]
   cvAnalyses     CvAnalysis[]
@@ -321,7 +321,8 @@ model Expert {
   isActive          Boolean  @default(false)
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
-  profile Profile @relation(fields: [profileId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+  profile           Profile  @relation(fields: [profileId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+
   @@index([isActive])
 }
 
@@ -350,16 +351,16 @@ model ProfileRevision {
 }
 
 model PortfolioItem {
-  id                  Int       @id @default(autoincrement())
+  id                  Int                  @id @default(autoincrement())
   freelancerProfileId Int
-  title               String    @db.VarChar(255)
+  title               String               @db.VarChar(255)
   description         String?
-  technologies        String[]  @default([])
-  projectUrl          String?   @db.VarChar(500)
+  technologies        String[]             @default([])
+  projectUrl          String?              @db.VarChar(500)
   // Người dùng tự nhập hay nhập từ kết quả phân tích CV đã xác nhận.
   source              ProfileContentSource @default(MANUAL)
-  createdAt           DateTime  @default(now())
-  updatedAt           DateTime  @updatedAt
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
   deletedAt           DateTime?
 
   freelancerProfile FreelancerProfile @relation(fields: [freelancerProfileId], references: [id], onDelete: Restrict, onUpdate: NoAction)
@@ -386,13 +387,13 @@ model CvAnalysis {
 
   // meta do service AI trả về.
   source     CvSourceType
-  pages      Int       @default(0)
-  chars      Int       @default(0)
-  truncated  Boolean   @default(false)
-  ocrUsed    Boolean   @default(false)
-  model      String?   @db.VarChar(100)
+  pages      Int          @default(0)
+  chars      Int          @default(0)
+  truncated  Boolean      @default(false)
+  ocrUsed    Boolean      @default(false)
+  model      String?      @db.VarChar(100)
   durationMs Int?
-  warnings   String[]  @default([])
+  warnings   String[]     @default([])
 
   // Kết quả đã chuẩn hóa: skills / experience / education / projects / summary
   // kèm confidence + evidence của từng mục.
@@ -514,7 +515,7 @@ model Recommendation {
   embeddingModel   String         @db.VarChar(100)
   createdAt        DateTime       @default(now())
 
-  requester User                     @relation("RecommendationRequester", fields: [requesterId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  requester User @relation("RecommendationRequester", fields: [requesterId], references: [id], onDelete: Cascade, onUpdate: NoAction)
 
   @@index([requesterId, sourceType, sourceDocumentId, createdAt])
   @@index([targetType, targetDocumentId])
@@ -547,30 +548,30 @@ model SocialLink {
 }
 
 model IdVerificationDocument {
-  id                           Int                      @id @default(autoincrement())
-  userId                       Int
-  documentType                 DocumentType
-  fileUrl                      String                   @db.VarChar(500)
-  status                       VerificationStatus       @default(PENDING)
-  adminId                      Int?
-  reviewNotes                  String?
-  createdAt                    DateTime                 @default(now())
-  reviewedAt                   DateTime?
-  deletedAt                    DateTime?
-  aiStatus                     String?                  @db.VarChar(20)
-  aiScore                      Float?
-  aiSummary                    Json?
-  aiSelfieSummary              Json?
-  aiError                      String?
-  aiScannedAt                  DateTime?
-  backFileUrl                  String?                  @db.VarChar(500)
-  identityNumber               String?                  @db.VarChar(50)
-  duplicateOfId                Int?
+  id              Int                @id @default(autoincrement())
+  userId          Int
+  documentType    DocumentType
+  fileUrl         String             @db.VarChar(500)
+  status          VerificationStatus @default(PENDING)
+  adminId         Int?
+  reviewNotes     String?
+  createdAt       DateTime           @default(now())
+  reviewedAt      DateTime?
+  deletedAt       DateTime?
+  aiStatus        String?            @db.VarChar(20)
+  aiScore         Float?
+  aiSummary       Json?
+  aiSelfieSummary Json?
+  aiError         String?
+  aiScannedAt     DateTime?
+  backFileUrl     String?            @db.VarChar(500)
+  identityNumber  String?            @db.VarChar(50)
+  duplicateOfId   Int?
 
-  user                         User                     @relation("IdVerificationUser", fields: [userId], references: [id], onDelete: Restrict, onUpdate: NoAction)
-  admin                        User?                    @relation("IdVerificationAdmin", fields: [adminId], references: [id], onDelete: SetNull, onUpdate: NoAction)
-  duplicateOf                  IdVerificationDocument?  @relation("IdVerificationDuplicate", fields: [duplicateOfId], references: [id], onDelete: SetNull, onUpdate: NoAction)
-  duplicates                   IdVerificationDocument[] @relation("IdVerificationDuplicate")
+  user        User                     @relation("IdVerificationUser", fields: [userId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+  admin       User?                    @relation("IdVerificationAdmin", fields: [adminId], references: [id], onDelete: SetNull, onUpdate: NoAction)
+  duplicateOf IdVerificationDocument?  @relation("IdVerificationDuplicate", fields: [duplicateOfId], references: [id], onDelete: SetNull, onUpdate: NoAction)
+  duplicates  IdVerificationDocument[] @relation("IdVerificationDuplicate")
 
   @@index([identityNumber])
 }
@@ -632,9 +633,9 @@ model Job {
 
   // Tuyển dụng: SINGLE = 1 freelancer (nhận 1 người là đóng các đề xuất còn lại),
   // MULTIPLE = tuyển nhiều người theo positionsRequired.
-  hiringType       HiringType @default(SINGLE)
-  positionsRequired Int       @default(1)
-  positionsFilled   Int       @default(0)
+  hiringType        HiringType @default(SINGLE)
+  positionsRequired Int        @default(1)
+  positionsFilled   Int        @default(0)
 
   client           User                @relation(fields: [clientId], references: [id], onDelete: Restrict, onUpdate: NoAction)
   jobCategories    JobJobCategory[]
@@ -832,11 +833,11 @@ model Contract {
   holdMilestoneIds    Int[]             @default([])
   rejectedAt          DateTime?
   rejectReason        String?
-  createdAt          DateTime       @default(now())
-  signedAt           DateTime?
-  completedAt        DateTime?
-  expiresAt          DateTime?
-  deletedAt          DateTime?
+  createdAt           DateTime          @default(now())
+  signedAt            DateTime?
+  completedAt         DateTime?
+  expiresAt           DateTime?
+  deletedAt           DateTime?
 
   job                    Job                     @relation(fields: [jobId], references: [id], onDelete: Restrict, onUpdate: NoAction)
   proposal               Proposal                @relation(fields: [proposalId], references: [id], onDelete: Restrict, onUpdate: NoAction)
@@ -1023,75 +1024,71 @@ model Certificate {
 // 15. Disputes
 // ============================
 model Dispute {
-  id               Int                   @id @default(autoincrement())
-  milestoneId      Int                   @unique
-  openedById       Int
-  respondentId     Int
+  id           Int @id @default(autoincrement())
+  milestoneId  Int @unique
+  openedById   Int
+  respondentId Int
 
-  reason           String
-  description      String
-  resolutionType   DisputeResolutionType @default(FULL_REFUND)
+  reason         String
+  description    String
+  resolutionType DisputeResolutionType @default(FULL_REFUND)
 
-  proposedFreelancerAmount Decimal?      @db.Decimal(10, 2)
-  proposedClientAmount     Decimal?      @db.Decimal(10, 2)
+  proposedFreelancerAmount Decimal?         @db.Decimal(10, 2)
+  proposedClientAmount     Decimal?         @db.Decimal(10, 2)
   proposedDueDate          DateTime?
   previousMilestoneStatus  MilestoneStatus?
 
-  declineReason    String?
-  declinedAt       DateTime?
-  escalatedAt      DateTime?
+  declineReason String?
+  declinedAt    DateTime?
+  escalatedAt   DateTime?
 
-  status           DisputeStatus         @default(WAITING_RESPONSE)
+  status DisputeStatus @default(WAITING_RESPONSE)
 
-  arbitrationFee   Decimal               @db.Decimal(10, 2)
-  feeDeadline      DateTime
   responseDeadline DateTime?
 
-  freelancerAmount Decimal?      @db.Decimal(10, 2)
-  clientAmount     Decimal?      @db.Decimal(10, 2)
+  freelancerAmount Decimal? @db.Decimal(10, 2)
+  clientAmount     Decimal? @db.Decimal(10, 2)
   decisionReason   String?
 
-  decisionById     Int?
-  decisionAt       DateTime?
+  decisionById Int?
+  decisionAt   DateTime?
 
-  finalDecisionAt  DateTime?
+  finalDecisionAt DateTime?
 
-  createdAt        DateTime      @default(now())
-  updatedAt        DateTime      @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  milestone        Milestone     @relation(fields: [milestoneId], references: [id], onDelete: Restrict, onUpdate: NoAction)
-  openedBy         User          @relation("DisputeOpenedBy", fields: [openedById], references: [id], onDelete: Restrict, onUpdate: NoAction)
-  respondent       User          @relation("DisputeRespondent", fields: [respondentId], references: [id], onDelete: Restrict, onUpdate: NoAction)
-  decisionBy       User?         @relation("DisputeDecisionBy", fields: [decisionById], references: [id], onDelete: SetNull, onUpdate: NoAction)
+  milestone  Milestone @relation(fields: [milestoneId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+  openedBy   User      @relation("DisputeOpenedBy", fields: [openedById], references: [id], onDelete: Restrict, onUpdate: NoAction)
+  respondent User      @relation("DisputeRespondent", fields: [respondentId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+  decisionBy User?     @relation("DisputeDecisionBy", fields: [decisionById], references: [id], onDelete: SetNull, onUpdate: NoAction)
 
-  fees             DisputeFee[]
-  evidences        DisputeEvidence[]
-  decisionReviews  DisputeDecisionReview[]
+  files           DisputeFile[]
+  evidences       DisputeEvidence[]
+  decisionReviews DisputeDecisionReview[]
 
   @@index([status])
   @@index([openedById])
   @@index([respondentId])
 }
 
-model DisputeFee {
-  id              Int              @id @default(autoincrement())
-  disputeId       Int
-  userId          Int
-  amount          Decimal          @db.Decimal(10, 2)
-  status          DisputeFeeStatus @default(PENDING)
-  paymentIntentId String?
-  paidAt          DateTime?
-  deadline        DateTime?
+model DisputeFile {
+  id         Int      @id @default(autoincrement())
+  disputeId  Int?
+  uploaderId Int
+  fileUrl    String
+  publicId   String
+  fileName   String?
+  fileSize   Int?
+  fileType   String?
+  createdAt  DateTime @default(now())
 
-  createdAt       DateTime         @default(now())
-  updatedAt       DateTime         @updatedAt
+  dispute   Dispute?          @relation(fields: [disputeId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  uploader  User              @relation("DisputeFileUploader", fields: [uploaderId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+  evidences DisputeEvidence[]
 
-  dispute         Dispute          @relation(fields: [disputeId], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  user            User             @relation(fields: [userId], references: [id], onDelete: Restrict, onUpdate: NoAction)
-
-  @@unique([disputeId, userId])
   @@index([disputeId])
-  @@index([userId])
+  @@index([uploaderId])
 }
 
 model DisputeEvidence {
@@ -1103,9 +1100,9 @@ model DisputeEvidence {
   fileId        Int?
   createdAt     DateTime            @default(now())
 
-  dispute       Dispute             @relation(fields: [disputeId], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  submittedBy   User                @relation("DisputeEvidenceSubmittedBy", fields: [submittedById], references: [id], onDelete: Restrict, onUpdate: NoAction)
-  file          SharedFile?         @relation(fields: [fileId], references: [id], onDelete: SetNull, onUpdate: NoAction)
+  dispute     Dispute      @relation(fields: [disputeId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  submittedBy User         @relation("DisputeEvidenceSubmittedBy", fields: [submittedById], references: [id], onDelete: Restrict, onUpdate: NoAction)
+  file        DisputeFile? @relation(fields: [fileId], references: [id], onDelete: SetNull, onUpdate: NoAction)
 
   @@index([disputeId])
   @@index([submittedById])
@@ -1120,8 +1117,8 @@ model DisputeDecisionReview {
   reason    String?
   createdAt DateTime                @default(now())
 
-  dispute   Dispute                 @relation(fields: [disputeId], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  user      User                    @relation(fields: [userId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+  dispute Dispute @relation(fields: [disputeId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Restrict, onUpdate: NoAction)
 
   @@unique([disputeId, userId])
   @@index([disputeId])
@@ -1148,8 +1145,8 @@ model Transaction {
   createdAt             DateTime          @default(now())
   updatedAt             DateTime          @updatedAt
 
-  user                  User              @relation(fields: [userId], references: [id], onDelete: Restrict, onUpdate: NoAction)
-  contract              Contract?         @relation(fields: [contractId], references: [id], onDelete: SetNull, onUpdate: NoAction)
+  user     User      @relation(fields: [userId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+  contract Contract? @relation(fields: [contractId], references: [id], onDelete: SetNull, onUpdate: NoAction)
 
   @@index([userId])
   @@index([contractId])
@@ -1249,10 +1246,10 @@ model ForumPost {
 }
 
 model ForumComment {
-  id        Int       @id @default(autoincrement())
-  postId    Int
-  userId    Int
-  content   String
+  id                   Int             @id @default(autoincrement())
+  postId               Int
+  userId               Int
+  content              String
   // ============================
   // Moderation (nhúng bởi AI proxy SensitiveAI)
   // ============================
@@ -1479,8 +1476,6 @@ model SharedFile {
   contract Contract @relation(fields: [contractId], references: [id], onDelete: Restrict, onUpdate: NoAction)
   uploader User     @relation(fields: [uploaderId], references: [id], onDelete: Restrict, onUpdate: NoAction)
 
-  disputeEvidences DisputeEvidence[]
-
   @@index([contractId])
   @@index([uploaderId])
 }
@@ -1614,12 +1609,6 @@ enum DisputeResolutionType {
   PARTIAL_REFUND
   FULL_REFUND
   FULL_RELEASE
-}
-
-enum DisputeFeeStatus {
-  PENDING
-  PAID
-  OVERDUE
 }
 
 enum DisputeEvidenceType {

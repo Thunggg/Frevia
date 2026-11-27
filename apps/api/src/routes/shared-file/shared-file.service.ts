@@ -1,8 +1,10 @@
 import { HttpException, Injectable } from '@nestjs/common';
+import { ContractStatus } from '@prisma/client';
 import { RoleName } from '@shared/types';
 import { CloudinaryService } from '../../shared/services/cloudinary.service';
 import {
   ContractNotFoundException,
+  ContractPdfCannotBeDeletedException,
   FailedToDeleteSharedFileException,
   FailedToLoadSharedFilesException,
   FailedToUploadSharedFileException,
@@ -74,6 +76,25 @@ export class SharedFileService {
         throw SharedFileForbiddenException();
       }
 
+      const ALLOWED_UPLOAD_STATUSES: ContractStatus[] = [
+        ContractStatus.ACTIVE,
+        ContractStatus.PENDING_SIGN,
+        ContractStatus.AWAITING_PAYMENT,
+      ];
+
+      if (
+        !ALLOWED_UPLOAD_STATUSES.includes(contract.status as ContractStatus)
+      ) {
+        throw SharedFileForbiddenException();
+      }
+
+      if (
+        contract.expiresAt &&
+        new Date(contract.expiresAt).getTime() < Date.now()
+      ) {
+        throw SharedFileForbiddenException();
+      }
+
       const cloudinaryResult = await this.cloudinaryService.uploadFile(
         file,
         `frevia/contracts/${contractId}`,
@@ -111,6 +132,14 @@ export class SharedFileService {
       const file = await this.sharedFileRepository.findById(fileId);
       if (!file || file.contractId !== contractId || file.deletedAt) {
         throw SharedFileNotFoundException();
+      }
+
+      const fileNameLower = file.fileName?.toLowerCase() ?? '';
+      const isContractPdf =
+        fileNameLower.startsWith('contract-') && fileNameLower.endsWith('.pdf');
+
+      if (isContractPdf) {
+        throw ContractPdfCannotBeDeletedException();
       }
 
       const isUploader = file.uploaderId === userId;

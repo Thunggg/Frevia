@@ -9,6 +9,7 @@ export const MilestoneFileSchema = z.object({
     fileName: z.string().nullable(),
     createdAt: z.coerce.date(),
     deletedAt: z.coerce.date().nullable(),
+    isSubmitted: z.boolean().optional(),
 });
 
 export const UploadMilestoneFileResponseSchema = MilestoneFileSchema;

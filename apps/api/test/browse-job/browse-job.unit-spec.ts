@@ -245,9 +245,9 @@ describe('Job Browsing (UF-85 to UF-86)', () => {
       expect(parsed.success).toBe(false);
     });
 
-    // Schema bộ lọc từ chối khi limit vượt quá 20.
-    it('rejects limit > 20 through ViewListJobFilterSchema', () => {
-      const parsed = ViewListJobFilterSchema.safeParse({ page: 1, limit: 21 });
+    // Schema bộ lọc từ chối khi limit vượt quá 100.
+    it('rejects limit > 100 through ViewListJobFilterSchema', () => {
+      const parsed = ViewListJobFilterSchema.safeParse({ page: 1, limit: 101 });
       expect(parsed.success).toBe(false);
     });
 

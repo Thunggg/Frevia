@@ -4,9 +4,7 @@ jest.mock('fs/promises', () => ({
   unlink: jest.fn().mockResolvedValue(undefined),
   readFile: jest.fn().mockResolvedValue(Buffer.from('%PDF-1.7')),
 }));
-import { Prisma } from '@prisma/client';
 import * as shared from '@shared/types';
-import * as path from 'path';
 import * as storage from 'fs/promises';
 import { ExpertProfileService } from '../../src/routes/expert-profile/expert-profile.service';
 
@@ -30,22 +28,11 @@ describe('ExpertProfileService (UF-168 to UF-168)', () => {
     uploadFile: jest.fn(),
     deleteFile: jest.fn(),
   };
-  const hashing = { verify: jest.fn(), hash: jest.fn() };
   const outbox = { enqueueAndProcess: jest.fn() };
-  const ai = { analyze: jest.fn() };
-  const resolver = { resolveSkillEntries: jest.fn() };
-  const identityAi = { verify: jest.fn(), livenessPose: jest.fn() };
-  const token = { signAccessToken: jest.fn() };
-  const fixedDate = new Date('2026-11-09T00:00:00Z');
   const service = new ExpertProfileService(
     repository as never,
     revisions as never,
   );
-  let profile: any;
-  let user: any;
-  let contract: any;
-  let review: any;
-  let revision: any;
   let expertUser: any;
   beforeEach(() => {
     jest.clearAllMocks();
@@ -84,6 +71,7 @@ describe('ExpertProfileService (UF-168 to UF-168)', () => {
         profileCompletionPercent: 30,
         expertProfile: null,
       },
+      role: { name: 'Expert' },
       userRoles: [{ role: { name: 'Expert' } }],
     };
     repository.findByUserId.mockResolvedValue(expertUser);
@@ -132,6 +120,7 @@ describe('ExpertProfileService (UF-168 to UF-168)', () => {
     it('rejects an account without expert membership', async () => {
       repository.findByUserId.mockResolvedValue({
         ...expertUser,
+        role: { name: 'Client' },
         userRoles: [],
       });
 
@@ -175,7 +164,7 @@ describe('ExpertProfileService (UF-168 to UF-168)', () => {
       expect(revisions.submitExpert).not.toHaveBeenCalled();
     });
     // UTCID05: Từ chối tình huống rejects displayName missing; trả mã 400.
-    it('rejects displayName missing', async () => {
+    it('rejects displayName missing', () => {
       const result = shared.UpdateExpertProfileSchema.safeParse({
         expertise: [],
         education: [],
@@ -196,7 +185,7 @@ describe('ExpertProfileService (UF-168 to UF-168)', () => {
         ]);
     });
     // UTCID06: Từ chối tình huống rejects displayName empty; trả mã 400.
-    it('rejects displayName empty', async () => {
+    it('rejects displayName empty', () => {
       const result = shared.UpdateExpertProfileSchema.safeParse({
         displayName: '',
         expertise: [],
@@ -218,7 +207,7 @@ describe('ExpertProfileService (UF-168 to UF-168)', () => {
         ]);
     });
     // UTCID07: Xử lý tình huống accepts displayName minimum; đối chiếu kết quả và tác động phụ.
-    it('accepts displayName minimum', async () => {
+    it('accepts displayName minimum', () => {
       const result = shared.UpdateExpertProfileSchema.safeParse({
         displayName: 'x',
         expertise: [],
@@ -235,7 +224,7 @@ describe('ExpertProfileService (UF-168 to UF-168)', () => {
         });
     });
     // UTCID08: Xử lý tình huống accepts displayName maximum; đối chiếu kết quả và tác động phụ.
-    it('accepts displayName maximum', async () => {
+    it('accepts displayName maximum', () => {
       const result = shared.UpdateExpertProfileSchema.safeParse({
         displayName: 'x'.repeat(255),
         expertise: [],
@@ -252,7 +241,7 @@ describe('ExpertProfileService (UF-168 to UF-168)', () => {
         });
     });
     // UTCID09: Từ chối tình huống rejects displayName above maximum; trả mã 400.
-    it('rejects displayName above maximum', async () => {
+    it('rejects displayName above maximum', () => {
       const result = shared.UpdateExpertProfileSchema.safeParse({
         displayName: 'x'.repeat(256),
         expertise: [],
@@ -274,7 +263,7 @@ describe('ExpertProfileService (UF-168 to UF-168)', () => {
         ]);
     });
     // UTCID10: Xử lý tình huống accepts title null; đối chiếu kết quả và tác động phụ.
-    it('accepts title null', async () => {
+    it('accepts title null', () => {
       const result = shared.UpdateExpertProfileSchema.safeParse({
         displayName: 'Expert',
         expertise: [],
@@ -293,7 +282,7 @@ describe('ExpertProfileService (UF-168 to UF-168)', () => {
         });
     });
     // UTCID11: Xử lý tình huống accepts title maximum; đối chiếu kết quả và tác động phụ.
-    it('accepts title maximum', async () => {
+    it('accepts title maximum', () => {
       const result = shared.UpdateExpertProfileSchema.safeParse({
         displayName: 'Expert',
         expertise: [],
@@ -312,7 +301,7 @@ describe('ExpertProfileService (UF-168 to UF-168)', () => {
         });
     });
     // UTCID12: Từ chối tình huống rejects title above maximum; trả mã 400.
-    it('rejects title above maximum', async () => {
+    it('rejects title above maximum', () => {
       const result = shared.UpdateExpertProfileSchema.safeParse({
         displayName: 'Expert',
         expertise: [],
@@ -335,7 +324,7 @@ describe('ExpertProfileService (UF-168 to UF-168)', () => {
         ]);
     });
     // UTCID13: Xử lý tình huống accepts bio null; đối chiếu kết quả và tác động phụ.
-    it('accepts bio null', async () => {
+    it('accepts bio null', () => {
       const result = shared.UpdateExpertProfileSchema.safeParse({
         displayName: 'Expert',
         expertise: [],
@@ -354,7 +343,7 @@ describe('ExpertProfileService (UF-168 to UF-168)', () => {
         });
     });
     // UTCID14: Xử lý tình huống accepts bio maximum; đối chiếu kết quả và tác động phụ.
-    it('accepts bio maximum', async () => {
+    it('accepts bio maximum', () => {
       const result = shared.UpdateExpertProfileSchema.safeParse({
         displayName: 'Expert',
         expertise: [],
@@ -373,7 +362,7 @@ describe('ExpertProfileService (UF-168 to UF-168)', () => {
         });
     });
     // UTCID15: Từ chối tình huống rejects bio above maximum; trả mã 400.
-    it('rejects bio above maximum', async () => {
+    it('rejects bio above maximum', () => {
       const result = shared.UpdateExpertProfileSchema.safeParse({
         displayName: 'Expert',
         expertise: [],
@@ -396,7 +385,7 @@ describe('ExpertProfileService (UF-168 to UF-168)', () => {
         ]);
     });
     // UTCID16: Xử lý tình huống accepts yearsOfExperience null; đối chiếu kết quả và tác động phụ.
-    it('accepts yearsOfExperience null', async () => {
+    it('accepts yearsOfExperience null', () => {
       const result = shared.UpdateExpertProfileSchema.safeParse({
         displayName: 'Expert',
         expertise: [],
@@ -415,7 +404,7 @@ describe('ExpertProfileService (UF-168 to UF-168)', () => {
         });
     });
     // UTCID17: Xử lý tình huống accepts yearsOfExperience minimum; đối chiếu kết quả và tác động phụ.
-    it('accepts yearsOfExperience minimum', async () => {
+    it('accepts yearsOfExperience minimum', () => {
       const result = shared.UpdateExpertProfileSchema.safeParse({
         displayName: 'Expert',
         expertise: [],
@@ -434,7 +423,7 @@ describe('ExpertProfileService (UF-168 to UF-168)', () => {
         });
     });
     // UTCID18: Xử lý tình huống accepts yearsOfExperience maximum; đối chiếu kết quả và tác động phụ.
-    it('accepts yearsOfExperience maximum', async () => {
+    it('accepts yearsOfExperience maximum', () => {
       const result = shared.UpdateExpertProfileSchema.safeParse({
         displayName: 'Expert',
         expertise: [],
@@ -453,7 +442,7 @@ describe('ExpertProfileService (UF-168 to UF-168)', () => {
         });
     });
     // UTCID19: Từ chối tình huống rejects yearsOfExperience below minimum; trả mã 400.
-    it('rejects yearsOfExperience below minimum', async () => {
+    it('rejects yearsOfExperience below minimum', () => {
       const result = shared.UpdateExpertProfileSchema.safeParse({
         displayName: 'Expert',
         expertise: [],
@@ -476,7 +465,7 @@ describe('ExpertProfileService (UF-168 to UF-168)', () => {
         ]);
     });
     // UTCID20: Từ chối tình huống rejects yearsOfExperience above maximum; trả mã 400.
-    it('rejects yearsOfExperience above maximum', async () => {
+    it('rejects yearsOfExperience above maximum', () => {
       const result = shared.UpdateExpertProfileSchema.safeParse({
         displayName: 'Expert',
         expertise: [],
@@ -499,7 +488,7 @@ describe('ExpertProfileService (UF-168 to UF-168)', () => {
         ]);
     });
     // UTCID21: Từ chối tình huống rejects yearsOfExperience fraction; trả mã 400.
-    it('rejects yearsOfExperience fraction', async () => {
+    it('rejects yearsOfExperience fraction', () => {
       const result = shared.UpdateExpertProfileSchema.safeParse({
         displayName: 'Expert',
         expertise: [],
@@ -522,7 +511,7 @@ describe('ExpertProfileService (UF-168 to UF-168)', () => {
         ]);
     });
     // UTCID22: Xử lý tình huống accepts expertise normalized; đối chiếu kết quả và tác động phụ.
-    it('accepts expertise normalized', async () => {
+    it('accepts expertise normalized', () => {
       const result = shared.UpdateExpertProfileSchema.safeParse({
         displayName: 'Expert',
         expertise: [' AI ', 'ai', ''],
@@ -539,7 +528,7 @@ describe('ExpertProfileService (UF-168 to UF-168)', () => {
         });
     });
     // UTCID23: Xử lý tình huống accepts expertise maximum count; đối chiếu kết quả và tác động phụ.
-    it('accepts expertise maximum count', async () => {
+    it('accepts expertise maximum count', () => {
       const result = shared.UpdateExpertProfileSchema.safeParse({
         displayName: 'Expert',
         expertise: [
@@ -598,7 +587,7 @@ describe('ExpertProfileService (UF-168 to UF-168)', () => {
         });
     });
     // UTCID24: Từ chối tình huống rejects expertise above unique count; trả mã 400.
-    it('rejects expertise above unique count', async () => {
+    it('rejects expertise above unique count', () => {
       const result = shared.UpdateExpertProfileSchema.safeParse({
         displayName: 'Expert',
         expertise: [
@@ -642,7 +631,7 @@ describe('ExpertProfileService (UF-168 to UF-168)', () => {
         ]);
     });
     // UTCID25: Xử lý tình huống accepts expertise maximum raw count; đối chiếu kết quả và tác động phụ.
-    it('accepts expertise maximum raw count', async () => {
+    it('accepts expertise maximum raw count', () => {
       const result = shared.UpdateExpertProfileSchema.safeParse({
         displayName: 'Expert',
         expertise: [
@@ -760,7 +749,7 @@ describe('ExpertProfileService (UF-168 to UF-168)', () => {
         });
     });
     // UTCID26: Từ chối tình huống rejects expertise above raw count; trả mã 400.
-    it('rejects expertise above raw count', async () => {
+    it('rejects expertise above raw count', () => {
       const result = shared.UpdateExpertProfileSchema.safeParse({
         displayName: 'Expert',
         expertise: [
@@ -884,7 +873,7 @@ describe('ExpertProfileService (UF-168 to UF-168)', () => {
         ]);
     });
     // UTCID27: Xử lý tình huống accepts expertise maximum entry; đối chiếu kết quả và tác động phụ.
-    it('accepts expertise maximum entry', async () => {
+    it('accepts expertise maximum entry', () => {
       const result = shared.UpdateExpertProfileSchema.safeParse({
         displayName: 'Expert',
         expertise: ['x'.repeat(100)],
@@ -901,7 +890,7 @@ describe('ExpertProfileService (UF-168 to UF-168)', () => {
         });
     });
     // UTCID28: Từ chối tình huống rejects expertise above entry; trả mã 400.
-    it('rejects expertise above entry', async () => {
+    it('rejects expertise above entry', () => {
       const result = shared.UpdateExpertProfileSchema.safeParse({
         displayName: 'Expert',
         expertise: ['x'.repeat(101)],
@@ -923,7 +912,7 @@ describe('ExpertProfileService (UF-168 to UF-168)', () => {
         ]);
     });
     // UTCID29: Xử lý tình huống accepts education normalized; đối chiếu kết quả và tác động phụ.
-    it('accepts education normalized', async () => {
+    it('accepts education normalized', () => {
       const result = shared.UpdateExpertProfileSchema.safeParse({
         displayName: 'Expert',
         expertise: [],
@@ -940,7 +929,7 @@ describe('ExpertProfileService (UF-168 to UF-168)', () => {
         });
     });
     // UTCID30: Xử lý tình huống accepts education maximum count; đối chiếu kết quả và tác động phụ.
-    it('accepts education maximum count', async () => {
+    it('accepts education maximum count', () => {
       const result = shared.UpdateExpertProfileSchema.safeParse({
         displayName: 'Expert',
         expertise: [],
@@ -999,7 +988,7 @@ describe('ExpertProfileService (UF-168 to UF-168)', () => {
         });
     });
     // UTCID31: Từ chối tình huống rejects education above unique count; trả mã 400.
-    it('rejects education above unique count', async () => {
+    it('rejects education above unique count', () => {
       const result = shared.UpdateExpertProfileSchema.safeParse({
         displayName: 'Expert',
         expertise: [],
@@ -1043,7 +1032,7 @@ describe('ExpertProfileService (UF-168 to UF-168)', () => {
         ]);
     });
     // UTCID32: Xử lý tình huống accepts education maximum raw count; đối chiếu kết quả và tác động phụ.
-    it('accepts education maximum raw count', async () => {
+    it('accepts education maximum raw count', () => {
       const result = shared.UpdateExpertProfileSchema.safeParse({
         displayName: 'Expert',
         expertise: [],
@@ -1161,7 +1150,7 @@ describe('ExpertProfileService (UF-168 to UF-168)', () => {
         });
     });
     // UTCID33: Từ chối tình huống rejects education above raw count; trả mã 400.
-    it('rejects education above raw count', async () => {
+    it('rejects education above raw count', () => {
       const result = shared.UpdateExpertProfileSchema.safeParse({
         displayName: 'Expert',
         expertise: [],
@@ -1285,7 +1274,7 @@ describe('ExpertProfileService (UF-168 to UF-168)', () => {
         ]);
     });
     // UTCID34: Xử lý tình huống accepts education maximum entry; đối chiếu kết quả và tác động phụ.
-    it('accepts education maximum entry', async () => {
+    it('accepts education maximum entry', () => {
       const result = shared.UpdateExpertProfileSchema.safeParse({
         displayName: 'Expert',
         expertise: [],
@@ -1302,7 +1291,7 @@ describe('ExpertProfileService (UF-168 to UF-168)', () => {
         });
     });
     // UTCID35: Từ chối tình huống rejects education above entry; trả mã 400.
-    it('rejects education above entry', async () => {
+    it('rejects education above entry', () => {
       const result = shared.UpdateExpertProfileSchema.safeParse({
         displayName: 'Expert',
         expertise: [],
@@ -1324,7 +1313,7 @@ describe('ExpertProfileService (UF-168 to UF-168)', () => {
         ]);
     });
     // UTCID36: Xử lý tình huống accepts certifications normalized; đối chiếu kết quả và tác động phụ.
-    it('accepts certifications normalized', async () => {
+    it('accepts certifications normalized', () => {
       const result = shared.UpdateExpertProfileSchema.safeParse({
         displayName: 'Expert',
         expertise: [],
@@ -1341,7 +1330,7 @@ describe('ExpertProfileService (UF-168 to UF-168)', () => {
         });
     });
     // UTCID37: Xử lý tình huống accepts certifications maximum count; đối chiếu kết quả và tác động phụ.
-    it('accepts certifications maximum count', async () => {
+    it('accepts certifications maximum count', () => {
       const result = shared.UpdateExpertProfileSchema.safeParse({
         displayName: 'Expert',
         expertise: [],
@@ -1400,7 +1389,7 @@ describe('ExpertProfileService (UF-168 to UF-168)', () => {
         });
     });
     // UTCID38: Từ chối tình huống rejects certifications above unique count; trả mã 400.
-    it('rejects certifications above unique count', async () => {
+    it('rejects certifications above unique count', () => {
       const result = shared.UpdateExpertProfileSchema.safeParse({
         displayName: 'Expert',
         expertise: [],
@@ -1444,7 +1433,7 @@ describe('ExpertProfileService (UF-168 to UF-168)', () => {
         ]);
     });
     // UTCID39: Xử lý tình huống accepts certifications maximum raw count; đối chiếu kết quả và tác động phụ.
-    it('accepts certifications maximum raw count', async () => {
+    it('accepts certifications maximum raw count', () => {
       const result = shared.UpdateExpertProfileSchema.safeParse({
         displayName: 'Expert',
         expertise: [],
@@ -1562,7 +1551,7 @@ describe('ExpertProfileService (UF-168 to UF-168)', () => {
         });
     });
     // UTCID40: Từ chối tình huống rejects certifications above raw count; trả mã 400.
-    it('rejects certifications above raw count', async () => {
+    it('rejects certifications above raw count', () => {
       const result = shared.UpdateExpertProfileSchema.safeParse({
         displayName: 'Expert',
         expertise: [],
@@ -1686,7 +1675,7 @@ describe('ExpertProfileService (UF-168 to UF-168)', () => {
         ]);
     });
     // UTCID41: Xử lý tình huống accepts certifications maximum entry; đối chiếu kết quả và tác động phụ.
-    it('accepts certifications maximum entry', async () => {
+    it('accepts certifications maximum entry', () => {
       const result = shared.UpdateExpertProfileSchema.safeParse({
         displayName: 'Expert',
         expertise: [],
@@ -1703,7 +1692,7 @@ describe('ExpertProfileService (UF-168 to UF-168)', () => {
         });
     });
     // UTCID42: Từ chối tình huống rejects certifications above entry; trả mã 400.
-    it('rejects certifications above entry', async () => {
+    it('rejects certifications above entry', () => {
       const result = shared.UpdateExpertProfileSchema.safeParse({
         displayName: 'Expert',
         expertise: [],
@@ -1725,7 +1714,7 @@ describe('ExpertProfileService (UF-168 to UF-168)', () => {
         ]);
     });
     // UTCID43: Xử lý tình huống accepts website empty; đối chiếu kết quả và tác động phụ.
-    it('accepts website empty', async () => {
+    it('accepts website empty', () => {
       const result = shared.UpdateExpertProfileSchema.safeParse({
         displayName: 'Expert',
         expertise: [],
@@ -1744,7 +1733,7 @@ describe('ExpertProfileService (UF-168 to UF-168)', () => {
         });
     });
     // UTCID44: Xử lý tình huống accepts website null; đối chiếu kết quả và tác động phụ.
-    it('accepts website null', async () => {
+    it('accepts website null', () => {
       const result = shared.UpdateExpertProfileSchema.safeParse({
         displayName: 'Expert',
         expertise: [],
@@ -1763,7 +1752,7 @@ describe('ExpertProfileService (UF-168 to UF-168)', () => {
         });
     });
     // UTCID45: Từ chối tình huống rejects website invalid; trả mã 400.
-    it('rejects website invalid', async () => {
+    it('rejects website invalid', () => {
       const result = shared.UpdateExpertProfileSchema.safeParse({
         displayName: 'Expert',
         expertise: [],
@@ -1781,7 +1770,7 @@ describe('ExpertProfileService (UF-168 to UF-168)', () => {
         ).toEqual([{ path: ['website'], message: 'Invalid URL' }]);
     });
     // UTCID46: Xử lý tình huống accepts website maximum; đối chiếu kết quả và tác động phụ.
-    it('accepts website maximum', async () => {
+    it('accepts website maximum', () => {
       const result = shared.UpdateExpertProfileSchema.safeParse({
         displayName: 'Expert',
         expertise: [],
@@ -1802,7 +1791,7 @@ describe('ExpertProfileService (UF-168 to UF-168)', () => {
         });
     });
     // UTCID47: Từ chối tình huống rejects website above maximum; trả mã 400.
-    it('rejects website above maximum', async () => {
+    it('rejects website above maximum', () => {
       const result = shared.UpdateExpertProfileSchema.safeParse({
         displayName: 'Expert',
         expertise: [],

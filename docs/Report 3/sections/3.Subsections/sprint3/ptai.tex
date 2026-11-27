@@ -322,7 +322,7 @@ A freelancer edits cover letter, bid amount, or delivery days on an owned \textt
 
 \sublabel{Data Processing Overview}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-    \item General update calls \texttt{PATCH /api/proposals/:id}; draft updates call \texttt{PATCH /api/proposals/:id/draft}; draft promotion calls \texttt{PATCH /api/proposals/:id/submit}.
+    \item General update calls \texttt{PATCH /\allowbreak{}api/\allowbreak{}proposals/\allowbreak{}:\allowbreak{}id}; draft updates call \texttt{PATCH /\allowbreak{}api/\allowbreak{}proposals/\allowbreak{}:\allowbreak{}id/\allowbreak{}draft}; draft promotion calls \texttt{PATCH /\allowbreak{}api/\allowbreak{}proposals/\allowbreak{}:\allowbreak{}id/\allowbreak{}submit}.
     \item Backend validates \texttt{FREELANCER} role, ownership (\texttt{proposal.freelancerId === userId}), and editable status (\texttt{DRAFT} or \texttt{SUBMITTED}).
     \item Re-runs \texttt{assertCanPropose(..., proposal.id)} and validates any supplied \texttt{bidAmount} / \texttt{deliveryDays} against the current job state.
     \item Updates PostgreSQL row and returns updated \texttt{ProposalResponseDto}.
@@ -773,7 +773,7 @@ A client clicks ``View Proposal'' on an applicant card in the Job Proposals pipe
 
 \sublabel{Interface}
 \begin{itemize}[leftmargin=1.6em,topsep=3pt,itemsep=2pt,parsep=0pt,label=$\bullet$]
-    \item Slide-over \texttt{ProposalDetailSheet} drawer opened from \texttt{/client/jobs/:jobId/proposals}.
+    \item Slide-over \texttt{Proposal\allowbreak{}Detail\allowbreak{}Sheet} drawer opened from \texttt{/\allowbreak{}client/\allowbreak{}jobs/\allowbreak{}:\allowbreak{}jobId/\allowbreak{}proposals}.
     \item Freelancer header with avatar, name, headline, ``Message'' button (initiating chat), and ``Profile'' button (opening \texttt{FreelancerProfileSheet}).
     \item Footer decision bar showing ``Reject'' and ``Hire freelancer'' (or ``View contract'' if already hired).
 \end{itemize}

@@ -699,6 +699,38 @@ describe('Milestone Management (UF-132 to UF-146)', () => {
         submissionService.approveMilestone(1, RoleName.CLIENT, 10, 100, 50),
       ).rejects.toThrow(SubmissionNotPendingReviewException());
     });
+
+    it('throws MilestoneNotInProgressException (422) when approving a DISPUTED milestone', async () => {
+      submissionRepository.findContractById.mockResolvedValueOnce(mockContract);
+      submissionRepository.findMilestoneById.mockResolvedValueOnce({
+        ...mockMilestone,
+        status: MilestoneStatus.DISPUTED,
+      });
+      submissionRepository.findSubmissionById.mockResolvedValueOnce(
+        mockSubmission,
+      );
+
+      await expect(
+        submissionService.approveMilestone(1, RoleName.CLIENT, 10, 100, 50),
+      ).rejects.toThrow(MilestoneNotInProgressException());
+    });
+
+    it('throws MilestoneNotInProgressException (422) when requesting changes on a DISPUTED milestone', async () => {
+      submissionRepository.findContractById.mockResolvedValueOnce(mockContract);
+      submissionRepository.findMilestoneById.mockResolvedValueOnce({
+        ...mockMilestone,
+        status: MilestoneStatus.DISPUTED,
+      });
+      submissionRepository.findSubmissionById.mockResolvedValueOnce(
+        mockSubmission,
+      );
+
+      await expect(
+        submissionService.requestChanges(1, RoleName.CLIENT, 10, 100, 50, {
+          changeRequestMessage: 'Need updates',
+        }),
+      ).rejects.toThrow(MilestoneNotInProgressException());
+    });
   });
 
   // =========================================================================
@@ -1017,6 +1049,21 @@ describe('Milestone Management (UF-132 to UF-146)', () => {
       await expect(
         milestoneFileService.deleteMilestoneFile(2, 10, 100, 999),
       ).rejects.toThrow(MilestoneFileNotFoundException());
+    });
+
+    it('throws MilestoneFileForbiddenException when deleting file of a COMPLETED milestone', async () => {
+      milestoneFileRepository.findContractById.mockResolvedValueOnce(
+        mockContract,
+      );
+      milestoneFileRepository.findMilestoneById.mockResolvedValueOnce({
+        ...mockMilestone,
+        status: MilestoneStatus.COMPLETED,
+      });
+
+      await expect(
+        milestoneFileService.deleteMilestoneFile(2, 10, 100, 30),
+      ).rejects.toThrow(MilestoneFileForbiddenException());
+      expect(milestoneFileRepository.softDeleteFile).not.toHaveBeenCalled();
     });
   });
 

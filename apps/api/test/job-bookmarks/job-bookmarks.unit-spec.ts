@@ -270,9 +270,9 @@ describe('Job Bookmarks (UF-97 to UF-99)', () => {
       expect(parsed.success).toBe(false);
     });
 
-    // Schema từ chối khi số lượng mỗi trang vượt quá 20.
-    it('rejects limit greater than 20 in query schema validation', () => {
-      const parsed = ViewBookmarkedJobFilterSchema.safeParse({ limit: 21 });
+    // Schema từ chối khi số lượng mỗi trang vượt quá 100.
+    it('rejects limit greater than 100 in query schema validation', () => {
+      const parsed = ViewBookmarkedJobFilterSchema.safeParse({ limit: 101 });
 
       expect(parsed.success).toBe(false);
     });
@@ -525,6 +525,13 @@ describe('Job Bookmarks (UF-97 to UF-99)', () => {
       await expect(
         service.removeBookmark(1, 'senior-nestjs-engineer'),
       ).rejects.toThrow(FailedToRemoveBookmarkException());
+    });
+
+    it('throws BookmarkJobOnlyForFreelancerException when a non-freelancer removes bookmark with roleName', async () => {
+      await expect(
+        service.removeBookmark(1, 'senior-nestjs-engineer', RoleName.CLIENT),
+      ).rejects.toThrow(BookmarkJobOnlyForFreelancerException());
+      expect(repository.removeBookmark).not.toHaveBeenCalled();
     });
 
     // Kiểm tra trạng thái đã lưu trả về true khi đã bookmark và false khi chưa.

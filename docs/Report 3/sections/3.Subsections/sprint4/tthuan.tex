@@ -280,7 +280,7 @@ An administrator clicks the ``Create Banner'' button on the banner list page (\t
     \item The client issues an HTTP request: \texttt{POST /api/admin/banners} with JSON payload conforming to \texttt{BannerCreateBodySchema}.
     \item \texttt{BannersAdminRepository.createBanner()} checks whether an active banner already occupies the selected position slot (\texttt{prisma.advertisementBanner.findFirst({ where: { position } })}).
     \item If position is already occupied, the service throws \texttt{BannerPositionTakenException} (HTTP 409).
-    \item The repository inserts the new banner record via \texttt{prisma.advertisementBanner.create()}.
+    \item The repository inserts the new banner record via \texttt{prisma.\allowbreak{}advertisement\allowbreak{}Banner.\allowbreak{}create()}.
     \item The backend returns HTTP 201 with the created banner entity.
     \item The frontend shows a success toast notification, closes the dialog modal, and refreshes the banner list table.
 \end{itemize}

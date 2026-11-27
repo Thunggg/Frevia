@@ -56,6 +56,7 @@ export type AdminDisputeDecisionBodyType = z.infer<
 
 export const GetDisputeListQuerySchema = z.object({
   status: DisputeStatusEnum.optional(),
+  contractId: z.coerce.number().int().positive().optional(),
   page: z.coerce.number().int().min(1).default(1),
   limit: z.coerce.number().int().min(1).max(50).default(10),
   sortBy: z
@@ -83,6 +84,18 @@ export const DisputeEvidenceSchema = z.object({
     .optional(),
 });
 export type DisputeEvidenceTypeModel = z.infer<typeof DisputeEvidenceSchema>;
+
+export const DisputeFileSchema = z.object({
+  id: z.number(),
+  disputeId: z.number().nullable().optional(),
+  uploaderId: z.number(),
+  fileUrl: z.string(),
+  fileName: z.string().nullable().optional(),
+  fileSize: z.number().nullable().optional(),
+  fileType: z.string().nullable().optional(),
+  createdAt: z.coerce.date().optional(),
+});
+export type DisputeFileType = z.infer<typeof DisputeFileSchema>;
 
 export const DisputeDecisionReviewSchema = z.object({
   id: z.number(),

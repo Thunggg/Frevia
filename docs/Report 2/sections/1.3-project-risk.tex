@@ -1,8 +1,10 @@
 The following risks have been identified from the project backlog and from the technical characteristics of the system: payment escrow, an external identity verification pipeline, a real-time messaging layer, and a dispute process that produces decisions with financial consequences. Each risk is rated by impact and possibility, and is paired with a response plan that is owned by a named role in Section 4.2.
 
 \begingroup
+\small
 \setlength{\tabcolsep}{4pt}
-\begin{longtable}{|C{0.7cm}|L{4.6cm}|C{1.5cm}|C{1.9cm}|L{5.5cm}|}
+\renewcommand{\arraystretch}{1.2}
+\begin{longtable}{|C{0.7cm}|L{4.5cm}|C{1.5cm}|C{1.9cm}|L{5.6cm}|}
 \caption{Project Risks and Response Plans}
 \label{tab:project-risks} \\
 \hline
@@ -24,7 +26,7 @@ The following risks have been identified from the project backlog and from the t
 2 & \textbf{Stripe Connect onboarding and regional payout limits}
 (Express account requirements, country availability, and capability restrictions)
     & High & Medium &
-    Detect onboarding completion from the account status instead of assuming success after the redirect. Block payout-dependent actions until the account is verified, show the reason to the user, and document the supported countries in the limitation section of Report 1. \\
+    Detect onboarding completion from the account status instead of assuming success after the redirect [3]. Block payout-dependent actions until the account is verified, show the reason to the user, and document the supported countries in the limitation section of Report 1. \\
 \hline
 3 & \textbf{External AI service unavailability}
 (curriculum vitae analysis and identity verification both call services outside the monorepo)
@@ -79,7 +81,7 @@ The following risks have been identified from the project backlog and from the t
 13 & \textbf{Data privacy and retention}
 (personal data, identity documents, and financial records are stored together)
     & Medium & Medium &
-    Avoid writing personal data into application logs, restrict document access by role, and define what is retained after a dispute is finalised. Keep the privacy notice and the consent step aligned with what the system actually collects. \\
+    Avoid writing personal data into application logs, restrict document access by role, and define what is retained after a dispute is finalised. Keep the privacy notice and the consent step aligned with what the system actually collects in compliance with Decree No. 13/2023/ND-CP [2]. \\
 \hline
 \end{longtable}
 \endgroup

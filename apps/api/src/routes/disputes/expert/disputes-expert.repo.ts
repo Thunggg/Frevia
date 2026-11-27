@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import {
+  ContractStatus,
   DisputeDecisionResponse,
   DisputeStatus,
   MilestonePaymentStatus,
@@ -8,7 +9,7 @@ import {
 } from '@prisma/client';
 import { GetDisputeListQueryType } from '@shared/types';
 import { PrismaService } from '../../../shared/services/prisma.service';
-import { syncContractAndJobCompletion } from '../../../shared/helper/contract-activation.helper';
+import { syncContractAndJobCompletion } from '../../contract/contract.repo';
 
 const expertDisputeListInclude = {
   milestone: {
@@ -295,6 +296,22 @@ export class DisputesExpertRepository {
           completedAt: new Date(),
         },
       });
+
+      const otherDisputedCount = await tx.milestone.count({
+        where: {
+          contractId: updatedMilestone.contractId,
+          id: { not: data.milestoneId },
+          status: MilestoneStatus.DISPUTED,
+          deletedAt: null,
+        },
+      });
+
+      if (otherDisputedCount === 0) {
+        await tx.contract.update({
+          where: { id: updatedMilestone.contractId },
+          data: { status: ContractStatus.ACTIVE },
+        });
+      }
 
       await syncContractAndJobCompletion(tx, updatedMilestone.contractId);
 

@@ -62,6 +62,7 @@ export class SharedFileRepository {
         clientId: true,
         freelancerId: true,
         status: true,
+        expiresAt: true,
         signedByClient: true,
         signedByFreelancer: true,
       },

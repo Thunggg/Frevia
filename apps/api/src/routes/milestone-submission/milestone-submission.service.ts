@@ -85,6 +85,13 @@ export class MilestoneSubmissionService {
       );
 
       if (
+        contract.expiresAt &&
+        new Date(contract.expiresAt).getTime() < Date.now()
+      ) {
+        throw SubmissionForbiddenException();
+      }
+
+      if (
         milestone.status !== MilestoneStatus.IN_PROGRESS &&
         milestone.status !== MilestoneStatus.CHANGES_REQUESTED &&
         milestone.status !== MilestoneStatus.LATE
@@ -197,7 +204,7 @@ export class MilestoneSubmissionService {
       }
 
       if (milestone.status === MilestoneStatus.DISPUTED) {
-        throw FailedToRequestChangesException();
+        throw MilestoneNotInProgressException();
       }
 
       if (submission.status !== SubmissionStatus.PENDING_REVIEW) {
@@ -253,7 +260,7 @@ export class MilestoneSubmissionService {
       }
 
       if (milestone.status === MilestoneStatus.DISPUTED) {
-        throw FailedToApproveException();
+        throw MilestoneNotInProgressException();
       }
 
       if (submission.status !== SubmissionStatus.PENDING_REVIEW) {

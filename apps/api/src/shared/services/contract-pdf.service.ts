@@ -29,6 +29,42 @@ function formatDate(date: Date | null | undefined): string {
   }).format(new Date(date));
 }
 
+function wrapText(
+  text: string,
+  font: any,
+  fontSize: number,
+  maxWidth: number,
+): string[] {
+  const paragraphs = text.split(/\r?\n/);
+  const allLines: string[] = [];
+
+  for (const paragraph of paragraphs) {
+    if (!paragraph.trim()) {
+      allLines.push('');
+      continue;
+    }
+    const words = paragraph.split(/\s+/);
+    let currentLine = '';
+
+    for (const word of words) {
+      const testLine = currentLine ? `${currentLine} ${word}` : word;
+      const width = font.widthOfTextAtSize(testLine, fontSize);
+      if (width <= maxWidth) {
+        currentLine = testLine;
+      } else {
+        if (currentLine) {
+          allLines.push(currentLine);
+        }
+        currentLine = word;
+      }
+    }
+    if (currentLine) {
+      allLines.push(currentLine);
+    }
+  }
+  return allLines;
+}
+
 @Injectable()
 export class ContractPdfService {
   private readonly logger = new Logger(ContractPdfService.name);
@@ -87,6 +123,7 @@ export class ContractPdfService {
     };
 
     const drawDivider = () => {
+      checkPageBreak(16);
       page.drawLine({
         start: { x: margin, y: currentY },
         end: { x: margin + contentWidth, y: currentY },
@@ -94,6 +131,55 @@ export class ContractPdfService {
         color: rgb(0.85, 0.85, 0.85),
       });
       currentY -= 14;
+    };
+
+    const drawSectionHeader = (title: string) => {
+      checkPageBreak(25);
+      page.drawText(title, {
+        x: margin,
+        y: currentY,
+        size: 9.5,
+        font: fontBold,
+        color: rgb(0.05, 0.05, 0.05),
+      });
+      currentY -= 14;
+    };
+
+    const drawParagraph = (
+      text: string,
+      options?: {
+        isBold?: boolean;
+        size?: number;
+        color?: any;
+        indent?: number;
+        spacingAfter?: number;
+      },
+    ) => {
+      const f = options?.isBold ? fontBold : font;
+      const sz = options?.size ?? 7.5;
+      const clr = options?.color ?? rgb(0.3, 0.3, 0.3);
+      const indent = options?.indent ?? 0;
+      const lineHeight = sz * 1.35;
+      const spacingAfter = options?.spacingAfter ?? 6;
+      const maxW = contentWidth - indent;
+
+      const lines = wrapText(sanitizeText(text), f, sz, maxW);
+      for (const line of lines) {
+        if (!line.trim()) {
+          currentY -= lineHeight * 0.5;
+          continue;
+        }
+        checkPageBreak(lineHeight + 5);
+        page.drawText(line, {
+          x: margin + indent,
+          y: currentY,
+          size: sz,
+          font: f,
+          color: clr,
+        });
+        currentY -= lineHeight;
+      }
+      currentY -= spacingAfter;
     };
 
     // --- Format Header Codes ---
@@ -251,15 +337,9 @@ export class ContractPdfService {
 
     currentY -= 76;
 
-    // --- 1. PARTIES ---
-    page.drawText('1.   PARTIES', {
-      x: margin,
-      y: currentY,
-      size: 9.5,
-      font: fontBold,
-      color: rgb(0.05, 0.05, 0.05),
-    });
-    currentY -= 14;
+    // --- 1. PARTIES (No Location, clean names & emails) ---
+    checkPageBreak(50);
+    drawSectionHeader('1.   PARTIES');
 
     const partiesColWidth = (contentWidth - 20) / 2;
 
@@ -285,19 +365,12 @@ export class ContractPdfService {
       font,
       color: rgb(0.3, 0.3, 0.3),
     });
-    page.drawText('Location: Ho Chi Minh City, Vietnam', {
-      x: margin,
-      y: currentY - 35,
-      size: 7.5,
-      font,
-      color: rgb(0.3, 0.3, 0.3),
-    });
 
     // Divider line between parties
     const freelancerColX = margin + partiesColWidth + 20;
     page.drawLine({
       start: { x: freelancerColX - 10, y: currentY + 2 },
-      end: { x: freelancerColX - 10, y: currentY - 38 },
+      end: { x: freelancerColX - 10, y: currentY - 28 },
       thickness: 0.6,
       color: rgb(0.85, 0.85, 0.85),
     });
@@ -324,98 +397,34 @@ export class ContractPdfService {
       font,
       color: rgb(0.3, 0.3, 0.3),
     });
-    page.drawText('Location: Hanoi, Vietnam', {
-      x: freelancerColX,
-      y: currentY - 35,
-      size: 7.5,
-      font,
-      color: rgb(0.3, 0.3, 0.3),
-    });
 
-    currentY -= 50;
+    currentY -= 38;
     drawDivider();
 
-    // --- 2. SCOPE AND DELIVERABLES ---
-    page.drawText('2.   SCOPE AND DELIVERABLES', {
-      x: margin,
-      y: currentY,
-      size: 9.5,
-      font: fontBold,
-      color: rgb(0.05, 0.05, 0.05),
-    });
-    currentY -= 12;
-
-    page.drawText(
-      'The Freelancer agrees to provide the services described in the job proposal:',
-      {
-        x: margin,
-        y: currentY,
-        size: 7.5,
-        font,
-        color: rgb(0.35, 0.35, 0.35),
-      },
-    );
-    currentY -= 14;
-
-    const boxHeight = 22;
-    page.drawRectangle({
-      x: margin,
-      y: currentY - boxHeight,
-      width: contentWidth,
-      height: boxHeight,
-      borderColor: rgb(0.75, 0.75, 0.75),
-      borderWidth: 0.6,
-      color: rgb(1, 1, 1),
-    });
-
-    const boxMidX = margin + contentWidth / 2;
-    page.drawLine({
-      start: { x: boxMidX, y: currentY },
-      end: { x: boxMidX, y: currentY - boxHeight },
-      thickness: 0.6,
-      color: rgb(0.75, 0.75, 0.75),
-    });
-
+    // --- 2. SCOPE AND DELIVERABLES (Plain text wrapping, no table box) ---
     const jobTitle = sanitizeText(contract.job.title);
-    page.drawText(
-      `Job Title: ${jobTitle.length > 38 ? `${jobTitle.slice(0, 36)}...` : jobTitle}`,
-      {
-        x: margin + 6,
-        y: currentY - 14,
-        size: 7.5,
-        font,
-        color: rgb(0.15, 0.15, 0.15),
-      },
-    );
-
     const deliverablesSummary = sanitizeText(
       contract.terms ||
-        'Fully functional deliverables, source code and documentation.',
-    );
-    page.drawText(
-      `Deliverables: ${deliverablesSummary.length > 38 ? `${deliverablesSummary.slice(0, 36)}...` : deliverablesSummary}`,
-      {
-        x: boxMidX + 6,
-        y: currentY - 14,
-        size: 7.5,
-        font,
-        color: rgb(0.15, 0.15, 0.15),
-      },
+        'Fully functional deliverables, complete source code, design assets, and technical documentation.',
     );
 
-    currentY -= boxHeight + 10;
+    checkPageBreak(50);
+    drawSectionHeader('2.   SCOPE AND DELIVERABLES');
+    drawParagraph(
+      `The Freelancer agrees to perform the professional services and provide all agreed deliverables for the project: "${jobTitle}".`,
+      { size: 7.5, color: rgb(0.2, 0.2, 0.2) },
+    );
+    drawParagraph(`Deliverables & Scope of Work: ${deliverablesSummary}`, {
+      size: 7.5,
+      color: rgb(0.3, 0.3, 0.3),
+    });
+    drawParagraph(
+      'All deliverables shall adhere to technical best practices, industry quality standards, and the specifications agreed upon in the accepted job proposal. Deliverables must be fully functional and documented for Client review and acceptance.',
+      { size: 7.5, color: rgb(0.3, 0.3, 0.3) },
+    );
     drawDivider();
 
-    // --- 3. PRICE AND PAYMENT SCHEDULE ---
-    page.drawText('3.   PRICE AND PAYMENT SCHEDULE', {
-      x: margin,
-      y: currentY,
-      size: 9.5,
-      font: fontBold,
-      color: rgb(0.05, 0.05, 0.05),
-    });
-    currentY -= 12;
-
+    // --- 3. PRICE AND PAYMENT SCHEDULE (Plain text wrapping, no table grid) ---
     const clientContractFee =
       Number(contract.clientPlatformFee) > 0
         ? Number(contract.clientPlatformFee)
@@ -427,86 +436,6 @@ export class ContractPdfService {
         ? Math.round((clientContractFee / totalAmount) * 100)
         : 3;
 
-    page.drawText(
-      `The total contract value is ${formatMoney(totalAmount)} (USD). Client funds at least 1 milestone (or all milestones) plus a ${clientFeeRate}% Client contract fee (${formatMoney(clientContractFee)}) before signing; Freelancer is charged a 5% platform fee on each released milestone via Stripe.`,
-      {
-        x: margin,
-        y: currentY,
-        size: 7.5,
-        font,
-        color: rgb(0.35, 0.35, 0.35),
-        maxWidth: contentWidth,
-        lineHeight: 10,
-      },
-    );
-    currentY -= 26;
-
-    // Table Header
-    const rowHeight = 18;
-    page.drawRectangle({
-      x: margin,
-      y: currentY - rowHeight,
-      width: contentWidth,
-      height: rowHeight,
-      borderColor: rgb(0.75, 0.75, 0.75),
-      borderWidth: 0.6,
-      color: rgb(0.97, 0.97, 0.97),
-    });
-
-    const col1X = margin + 45;
-    const col2X = margin + 330;
-    const col3X = margin + 420;
-
-    page.drawLine({
-      start: { x: col1X, y: currentY },
-      end: { x: col1X, y: currentY - rowHeight },
-      thickness: 0.6,
-      color: rgb(0.75, 0.75, 0.75),
-    });
-    page.drawLine({
-      start: { x: col2X, y: currentY },
-      end: { x: col2X, y: currentY - rowHeight },
-      thickness: 0.6,
-      color: rgb(0.75, 0.75, 0.75),
-    });
-    page.drawLine({
-      start: { x: col3X, y: currentY },
-      end: { x: col3X, y: currentY - rowHeight },
-      thickness: 0.6,
-      color: rgb(0.75, 0.75, 0.75),
-    });
-
-    page.drawText('Milestone', {
-      x: margin + 6,
-      y: currentY - 12,
-      size: 7.5,
-      font: fontBold,
-      color: rgb(0.1, 0.1, 0.1),
-    });
-    page.drawText('Description', {
-      x: col1X + 6,
-      y: currentY - 12,
-      size: 7.5,
-      font: fontBold,
-      color: rgb(0.1, 0.1, 0.1),
-    });
-    page.drawText('Amount (USD)', {
-      x: col2X + 6,
-      y: currentY - 12,
-      size: 7.5,
-      font: fontBold,
-      color: rgb(0.1, 0.1, 0.1),
-    });
-    page.drawText('Due Date', {
-      x: col3X + 6,
-      y: currentY - 12,
-      size: 7.5,
-      font: fontBold,
-      color: rgb(0.1, 0.1, 0.1),
-    });
-
-    currentY -= rowHeight;
-
     const milestonesToRender =
       contract.milestones.length > 0
         ? contract.milestones
@@ -515,118 +444,58 @@ export class ContractPdfService {
               id: 1,
               title:
                 sanitizeText(contract.job.title) || 'Deliverables execution',
+              description: 'Initial deliverables and development progress',
               amount: totalAmount,
               dueDate: contract.expiresAt || new Date(),
             },
           ];
 
+    checkPageBreak(60);
+    drawSectionHeader('3.   PRICE AND PAYMENT SCHEDULE');
+    drawParagraph(
+      `The total agreed contract value is ${formatMoney(totalAmount)} (USD). Payment is structured into milestone-based disbursements administered via Frevia Escrow protection. The Client funds milestones in advance via Stripe prior to commencement of work. The Client contract fee is ${clientFeeRate}% (${formatMoney(clientContractFee)}). The Freelancer is charged a 5% platform service fee upon release of each approved milestone payout.`,
+      { size: 7.5, color: rgb(0.2, 0.2, 0.2) },
+    );
+
+    drawParagraph('Milestone Schedule:', {
+      size: 7.5,
+      isBold: true,
+      color: rgb(0.1, 0.1, 0.1),
+      spacingAfter: 3,
+    });
+
     for (let i = 0; i < milestonesToRender.length; i++) {
-      checkPageBreak(rowHeight + 10);
       const m = milestonesToRender[i];
+      const mTitle = sanitizeText(m.title) || `Milestone ${i + 1}`;
+      const mDesc = m.description ? ` - ${sanitizeText(m.description)}` : '';
+      const mText = `* Milestone ${i + 1}: ${mTitle}${mDesc}. Amount: ${formatMoney(m.amount)} USD. Target Due Date: ${formatDate(m.dueDate)}. (Protected by Frevia Escrow).`;
 
-      page.drawRectangle({
-        x: margin,
-        y: currentY - rowHeight,
-        width: contentWidth,
-        height: rowHeight,
-        borderColor: rgb(0.85, 0.85, 0.85),
-        borderWidth: 0.6,
-        color: rgb(1, 1, 1),
-      });
-
-      page.drawLine({
-        start: { x: col1X, y: currentY },
-        end: { x: col1X, y: currentY - rowHeight },
-        thickness: 0.6,
-        color: rgb(0.85, 0.85, 0.85),
-      });
-      page.drawLine({
-        start: { x: col2X, y: currentY },
-        end: { x: col2X, y: currentY - rowHeight },
-        thickness: 0.6,
-        color: rgb(0.85, 0.85, 0.85),
-      });
-      page.drawLine({
-        start: { x: col3X, y: currentY },
-        end: { x: col3X, y: currentY - rowHeight },
-        thickness: 0.6,
-        color: rgb(0.85, 0.85, 0.85),
-      });
-
-      page.drawText(String(i + 1), {
-        x: margin + 18,
-        y: currentY - 12,
+      drawParagraph(mText, {
         size: 7.5,
-        font,
-        color: rgb(0.2, 0.2, 0.2),
+        color: rgb(0.25, 0.25, 0.25),
+        indent: 10,
+        spacingAfter: 4,
       });
-
-      const title = sanitizeText(m.title);
-      page.drawText(title.length > 48 ? `${title.slice(0, 46)}...` : title, {
-        x: col1X + 6,
-        y: currentY - 12,
-        size: 7.5,
-        font,
-        color: rgb(0.2, 0.2, 0.2),
-      });
-
-      page.drawText(formatMoney(m.amount), {
-        x: col2X + 6,
-        y: currentY - 12,
-        size: 7.5,
-        font: fontBold,
-        color: rgb(0.1, 0.1, 0.1),
-      });
-
-      page.drawText(formatDate(m.dueDate), {
-        x: col3X + 6,
-        y: currentY - 12,
-        size: 7.5,
-        font,
-        color: rgb(0.3, 0.3, 0.3),
-      });
-
-      currentY -= rowHeight;
     }
 
-    currentY -= 8;
+    drawParagraph(
+      'Payment Protection & Escrow Release: All milestone funds remain securely held in Escrow and are disbursed to the Freelancer only after the Client formally inspects and approves the submitted work, or following a binding arbitration determination.',
+      { size: 7.5, color: rgb(0.3, 0.3, 0.3), spacingAfter: 6 },
+    );
     drawDivider();
 
-    // --- 4. REVISIONS AND EXTRA WORK ---
-    checkPageBreak(40);
-    page.drawText('4.   REVISIONS AND EXTRA WORK', {
-      x: margin,
-      y: currentY,
-      size: 9.5,
-      font: fontBold,
-      color: rgb(0.05, 0.05, 0.05),
-    });
-    currentY -= 12;
-
-    page.drawText(
-      'The Client is entitled to up to 2 free revisions. Any additional work beyond the original scope will be discussed and billed separately.',
-      {
-        x: margin,
-        y: currentY,
-        size: 7.5,
-        font,
-        color: rgb(0.35, 0.35, 0.35),
-      },
+    // --- 4. REVISIONS AND ACCEPTANCE CRITERIA ---
+    checkPageBreak(45);
+    drawSectionHeader('4.   REVISIONS AND ACCEPTANCE CRITERIA');
+    drawParagraph(
+      'The Client shall have a standard inspection period of up to 14 calendar days following milestone submission to review deliverables and request adjustments. The Client is entitled to up to 2 rounds of reasonable revisions within the original agreed scope. Any requested revisions exceeding the agreed scope or requiring fundamental architectural changes must be negotiated as an additional milestone or formal contract amendment.',
+      { size: 7.5, color: rgb(0.3, 0.3, 0.3) },
     );
-    currentY -= 14;
     drawDivider();
 
     // --- 5. TIMELINE AND CLIENT DEPENDENCIES ---
-    checkPageBreak(40);
-    page.drawText('5.   TIMELINE AND CLIENT DEPENDENCIES', {
-      x: margin,
-      y: currentY,
-      size: 9.5,
-      font: fontBold,
-      color: rgb(0.05, 0.05, 0.05),
-    });
-    currentY -= 12;
-
+    checkPageBreak(45);
+    drawSectionHeader('5.   TIMELINE AND CLIENT DEPENDENCIES');
     const latestMilestoneDue = milestonesToRender
       .map((m) => (m.dueDate ? new Date(m.dueDate).getTime() : 0))
       .reduce((max, t) => (t > max ? t : max), 0);
@@ -637,106 +506,89 @@ export class ContractPdfService {
     const contractEndClause = contract.expiresAt
       ? `This Agreement has a contract end date of ${formatDate(contract.expiresAt)}. `
       : '';
-    page.drawText(
-      `${contractEndClause}The Freelancer agrees to complete the deliverables by ${formatDate(finalDue)}. The Client shall provide necessary materials and feedback in a timely manner.`,
-      {
-        x: margin,
-        y: currentY,
-        size: 7.5,
-        font,
-        color: rgb(0.35, 0.35, 0.35),
-        maxWidth: contentWidth,
-        lineHeight: 10,
-      },
+    drawParagraph(
+      `${contractEndClause}The Freelancer agrees to complete the deliverables by ${formatDate(finalDue)}. The Client shall provide necessary materials, technical credentials, feedback, and approvals in a timely manner. Delays in Client-provided dependencies shall proportionally extend the delivery timeline.`,
+      { size: 7.5, color: rgb(0.3, 0.3, 0.3) },
     );
-    currentY -= 24;
     drawDivider();
 
-    // --- 6. OWNERSHIP ---
-    checkPageBreak(40);
-    page.drawText('6.   OWNERSHIP', {
-      x: margin,
-      y: currentY,
-      size: 9.5,
-      font: fontBold,
-      color: rgb(0.05, 0.05, 0.05),
-    });
-    currentY -= 12;
-
-    page.drawText(
-      'Upon full payment, the intellectual property rights of the deliverables shall belong to the Client, except for pre-existing materials and tools used by the Freelancer.',
-      {
-        x: margin,
-        y: currentY,
-        size: 7.5,
-        font,
-        color: rgb(0.35, 0.35, 0.35),
-      },
+    // --- 6. INTELLECTUAL PROPERTY AND WORK PRODUCT OWNERSHIP ---
+    checkPageBreak(50);
+    drawSectionHeader('6.   INTELLECTUAL PROPERTY AND OWNERSHIP');
+    drawParagraph(
+      'Upon full payment and release of milestone funds, all intellectual property rights, copyrights, and ownership in custom deliverables created under this Agreement shall belong exclusively to the Client. The Freelancer retains all rights to pre-existing tools, libraries, codebases, and general expertise utilized during the engagement. Unless restricted by a separate written Non-Disclosure Agreement, the Freelancer retains the right to showcase the completed project in their professional portfolio.',
+      { size: 7.5, color: rgb(0.3, 0.3, 0.3) },
     );
-    currentY -= 14;
     drawDivider();
 
-    // --- 7. DISPUTE RESOLUTION ---
-    checkPageBreak(40);
-    page.drawText('7.   DISPUTE RESOLUTION', {
-      x: margin,
-      y: currentY,
-      size: 9.5,
-      font: fontBold,
-      color: rgb(0.05, 0.05, 0.05),
-    });
-    currentY -= 12;
-
-    page.drawText(
-      "In case of any dispute, both parties agree to follow Frevia's dispute resolution process. If unresolved, the matter may be brought to the competent court under applicable law.",
-      {
-        x: margin,
-        y: currentY,
-        size: 7.5,
-        font,
-        color: rgb(0.35, 0.35, 0.35),
-      },
+    // --- 7. CONFIDENTIALITY AND DATA PROTECTION ---
+    checkPageBreak(45);
+    drawSectionHeader('7.   CONFIDENTIALITY AND NON-DISCLOSURE');
+    drawParagraph(
+      'Both parties agree to hold all proprietary data, business processes, source code, customer information, and project materials in strict confidence. Neither party shall disclose or utilize confidential information for any purpose outside the performance of this Agreement without prior written authorization, except as required by law.',
+      { size: 7.5, color: rgb(0.3, 0.3, 0.3) },
     );
-    currentY -= 14;
     drawDivider();
 
-    // --- 8. SIGNATURES ---
-    checkPageBreak(80);
-    page.drawText('8.   SIGNATURES', {
-      x: margin,
-      y: currentY,
-      size: 9.5,
-      font: fontBold,
-      color: rgb(0.05, 0.05, 0.05),
-    });
-    currentY -= 12;
-
-    page.drawText(
-      'By signing this Agreement, both parties agree to the terms and conditions stated above.',
-      {
-        x: margin,
-        y: currentY,
-        size: 7.5,
-        font,
-        color: rgb(0.35, 0.35, 0.35),
-      },
+    // --- 8. ESCROW ARBITRATION AND DISPUTE RESOLUTION ---
+    checkPageBreak(50);
+    drawSectionHeader('8.   ESCROW ARBITRATION AND DISPUTE RESOLUTION');
+    drawParagraph(
+      "If a dispute arises regarding milestone completion, deliverable quality, or fund release that cannot be resolved amicably, either party may formally initiate a Dispute through the Frevia Resolution Center. Both parties agree to participate in good faith, submit all relevant evidence, and abide by the final, binding determination issued by Frevia's arbitration staff.",
+      { size: 7.5, color: rgb(0.3, 0.3, 0.3) },
     );
-    currentY -= 25;
+    drawDivider();
 
+    // --- 9. ANTI-CIRCUMVENTION AND DIRECT ENGAGEMENT POLICY ---
+    checkPageBreak(45);
+    drawSectionHeader('9.   ANTI-CIRCUMVENTION AND PLATFORM INTEGRITY');
+    drawParagraph(
+      'In accordance with Frevia platform rules and the User Agreement, both parties agree to conduct all communication, milestone submissions, and payment transactions exclusively through Frevia and Stripe. Any attempt to solicit or process off-platform payments constitutes a material breach resulting in immediate contract termination, forfeiture of escrow protections, and account suspension.',
+      { size: 7.5, color: rgb(0.3, 0.3, 0.3) },
+    );
+    drawDivider();
+
+    // --- 10. TERMINATION AND CANCELLATION ---
+    checkPageBreak(45);
+    drawSectionHeader('10.   TERMINATION AND CANCELLATION');
+    drawParagraph(
+      'This Agreement may be terminated by mutual written agreement, or by either party upon notice in the event of a material breach by the other party. In the event of early termination, the Freelancer shall be compensated for all milestones completed and approved up to the date of termination. Any unallocated escrow funds for milestones not commenced shall be promptly refunded to the Client.',
+      { size: 7.5, color: rgb(0.3, 0.3, 0.3) },
+    );
+    drawDivider();
+
+    // --- 11. GENERAL TERMS AND INDEPENDENT CONTRACTOR STATUS ---
+    checkPageBreak(45);
+    drawSectionHeader('11.   GENERAL TERMS AND INDEPENDENT CONTRACTOR');
+    drawParagraph(
+      'The Freelancer acts as an independent contractor and not as an employee, agent, or partner of the Client or Frevia. This Agreement constitutes the complete understanding between the parties and supersedes all prior negotiations. If any provision is deemed unenforceable, the remaining provisions shall remain in full force and effect.',
+      { size: 7.5, color: rgb(0.3, 0.3, 0.3) },
+    );
+    drawDivider();
+
+    // --- 12. SIGNATURES AND ELECTRONIC ACKNOWLEDGEMENT ---
+    checkPageBreak(85);
+    drawSectionHeader('12.   SIGNATURES AND ELECTRONIC ACKNOWLEDGEMENT');
+    drawParagraph(
+      'By applying electronic signatures below, both parties confirm that they have read, understood, and agreed to all terms, milestone obligations, and platform rules set forth in this Agreement.',
+      { size: 7.5, color: rgb(0.35, 0.35, 0.35), spacingAfter: 20 },
+    );
+
+    checkPageBreak(55);
     const sigLineWidth = 160;
 
     // Client Signature Line
     page.drawLine({
-      start: { x: margin + 30, y: currentY },
-      end: { x: margin + 30 + sigLineWidth, y: currentY },
+      start: { x: margin + 20, y: currentY },
+      end: { x: margin + 20 + sigLineWidth, y: currentY },
       thickness: 1,
       color: rgb(0.2, 0.2, 0.2),
     });
 
     // Freelancer Signature Line
     page.drawLine({
-      start: { x: freelancerColX + 15, y: currentY },
-      end: { x: freelancerColX + 15 + sigLineWidth, y: currentY },
+      start: { x: freelancerColX + 10, y: currentY },
+      end: { x: freelancerColX + 10 + sigLineWidth, y: currentY },
       thickness: 1,
       color: rgb(0.2, 0.2, 0.2),
     });
@@ -745,14 +597,14 @@ export class ContractPdfService {
 
     // Client signature text
     page.drawText(clientName, {
-      x: margin + 30,
+      x: margin + 20,
       y: currentY,
       size: 8.5,
       font: fontBold,
       color: rgb(0.05, 0.05, 0.05),
     });
     page.drawText('Client', {
-      x: margin + 30,
+      x: margin + 20,
       y: currentY - 11,
       size: 7.5,
       font,
@@ -765,7 +617,7 @@ export class ContractPdfService {
         ? formatDate(clientSignDate)
         : '(Pending Signature)',
       {
-        x: margin + 30,
+        x: margin + 20,
         y: currentY - 21,
         size: 7,
         font,
@@ -775,14 +627,14 @@ export class ContractPdfService {
 
     // Freelancer signature text
     page.drawText(freelancerName, {
-      x: freelancerColX + 15,
+      x: freelancerColX + 10,
       y: currentY,
       size: 8.5,
       font: fontBold,
       color: rgb(0.05, 0.05, 0.05),
     });
     page.drawText('Freelancer', {
-      x: freelancerColX + 15,
+      x: freelancerColX + 10,
       y: currentY - 11,
       size: 7.5,
       font,
@@ -795,13 +647,41 @@ export class ContractPdfService {
         ? formatDate(freelancerSignDate)
         : '(Pending Signature)',
       {
-        x: freelancerColX + 15,
+        x: freelancerColX + 10,
         y: currentY - 21,
         size: 7,
         font,
         color: freelancerSignDate ? rgb(0.1, 0.5, 0.2) : rgb(0.5, 0.5, 0.5),
       },
     );
+
+    // Add page footers
+    const pages = pdfDoc.getPages();
+    for (let i = 0; i < pages.length; i++) {
+      const p = pages[i];
+      p.drawLine({
+        start: { x: margin, y: margin - 10 },
+        end: { x: margin + contentWidth, y: margin - 10 },
+        thickness: 0.5,
+        color: rgb(0.85, 0.85, 0.85),
+      });
+      p.drawText(`Frevia Freelance Agreement ${contractCode}`, {
+        x: margin,
+        y: margin - 20,
+        size: 7,
+        font,
+        color: rgb(0.45, 0.45, 0.45),
+      });
+      const pageNumberStr = `Page ${i + 1} of ${pages.length}`;
+      const pageNumWidth = font.widthOfTextAtSize(pageNumberStr, 7);
+      p.drawText(pageNumberStr, {
+        x: margin + contentWidth - pageNumWidth,
+        y: margin - 20,
+        size: 7,
+        font,
+        color: rgb(0.45, 0.45, 0.45),
+      });
+    }
 
     const pdfBytes = await pdfDoc.save();
     return Buffer.from(pdfBytes);
