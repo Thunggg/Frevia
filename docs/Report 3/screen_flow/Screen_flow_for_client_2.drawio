@@ -1,0 +1,466 @@
+<mxfile host="Electron" agent="Mozilla/5.0">
+  <diagram name="Screen Flow - Client (Part 2)" id="sf_cl_2">
+    <mxGraphModel dx="1400" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="2780" pageHeight="1584" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="hub" value="Client&lt;br&gt;Dashboard" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;strokeWidth=1.5;fontSize=15;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="980" y="700" width="200" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="signin" value="Sign in" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="500" y="400" width="160" height="84" as="geometry" />
+        </mxCell>
+        <mxCell id="sessions" value="Active Sessions" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="500" y="640" width="160" height="84" as="geometry" />
+        </mxCell>
+        <mxCell id="notif" value="Notifications List" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="500" y="860" width="160" height="84" as="geometry" />
+        </mxCell>
+        <mxCell id="forgot" value="Forgot password" style="ellipse;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="60" y="400" width="160" height="84" as="geometry" />
+        </mxCell>
+        <mxCell id="otp" value="Verify OTP" style="ellipse;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="60" y="160" width="160" height="84" as="geometry" />
+        </mxCell>
+        <mxCell id="reset" value="Reset password" style="ellipse;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="500" y="160" width="160" height="84" as="geometry" />
+        </mxCell>
+        <mxCell id="sess_det" value="Session Details" style="ellipse;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="60" y="580" width="160" height="84" as="geometry" />
+        </mxCell>
+        <mxCell id="sess_rev" value="Revoke Session" style="ellipse;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="60" y="700" width="160" height="84" as="geometry" />
+        </mxCell>
+        <mxCell id="notif_act" value="Mark Read / Delete" style="ellipse;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="60" y="860" width="160" height="84" as="geometry" />
+        </mxCell>
+        <mxCell id="profile" value="Client Profile" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="1480" y="300" width="160" height="84" as="geometry" />
+        </mxCell>
+        <mxCell id="payments" value="Billing &amp; Payments" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="1480" y="560" width="160" height="84" as="geometry" />
+        </mxCell>
+        <mxCell id="reviews" value="My Reviews" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="1480" y="800" width="160" height="84" as="geometry" />
+        </mxCell>
+        <mxCell id="pub_prof" value="Public Profile" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="1480" y="60" width="160" height="84" as="geometry" />
+        </mxCell>
+        <mxCell id="edit_prof" value="Edit Client Profile" style="ellipse;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="2000" y="200" width="160" height="84" as="geometry" />
+        </mxCell>
+        <mxCell id="favorites" value="Favorite Freelancers" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="2000" y="320" width="165" height="84" as="geometry" />
+        </mxCell>
+        <mxCell id="pm_cards" value="Manage Saved Cards" style="ellipse;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="2000" y="460" width="165" height="84" as="geometry" />
+        </mxCell>
+        <mxCell id="stripe_dlg" value="Stripe Payment" style="ellipse;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="2000" y="570" width="160" height="84" as="geometry" />
+        </mxCell>
+        <mxCell id="tx_det" value="Transaction Details" style="ellipse;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="2000" y="680" width="165" height="84" as="geometry" />
+        </mxCell>
+        <mxCell id="rev_form" value="Leave / Edit Review" style="ellipse;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="2000" y="800" width="165" height="84" as="geometry" />
+        </mxCell>
+        <mxCell id="msgs" value="Conversations List" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="780" y="1160" width="160" height="84" as="geometry" />
+        </mxCell>
+        <mxCell id="forum" value="Forum" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="1240" y="1160" width="160" height="84" as="geometry" />
+        </mxCell>
+        <mxCell id="chat" value="Chat Room" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="320" y="1100" width="160" height="84" as="geometry" />
+        </mxCell>
+        <mxCell id="new_chat" value="New Conversation" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="320" y="1230" width="160" height="84" as="geometry" />
+        </mxCell>
+        <mxCell id="create_post" value="Create Post" style="ellipse;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="1240" y="1420" width="160" height="84" as="geometry" />
+        </mxCell>
+        <mxCell id="forum_cat" value="Category Posts" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="1640" y="1160" width="160" height="84" as="geometry" />
+        </mxCell>
+        <mxCell id="post_det" value="Post Details" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="2060" y="1160" width="160" height="84" as="geometry" />
+        </mxCell>
+        <mxCell id="edit_post" value="Edit Post" style="ellipse;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="2540" y="1040" width="160" height="84" as="geometry" />
+        </mxCell>
+        <mxCell id="post_likes" value="Post Likes" style="ellipse;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="2540" y="1160" width="160" height="84" as="geometry" />
+        </mxCell>
+        <mxCell id="report_post" value="Report Content" style="ellipse;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="2540" y="1280" width="160" height="84" as="geometry" />
+        </mxCell>
+        <mxCell id="e_2" value="Click &quot;Sign out&quot;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;endFill=1;strokeColor=#000000;fontSize=10;labelBackgroundColor=#ffffff;exitX=0.0;exitY=0.08;exitDx=0;exitDy=0;entryX=1.0;entryY=0.25;entryDx=0;entryDy=0;" edge="1" parent="1" source="hub" target="signin">
+          <mxGeometry x="0.678" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="900" y="709" />
+              <mxPoint x="900" y="421" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_3" value="Click &quot;Sessions&quot; link" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;endFill=1;strokeColor=#000000;fontSize=10;labelBackgroundColor=#ffffff;exitX=0.0;exitY=0.29;exitDx=0;exitDy=0;entryX=1.0;entryY=0.25;entryDx=0;entryDy=0;" edge="1" parent="1" source="hub" target="sessions">
+          <mxGeometry x="0.499" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="878" y="732" />
+              <mxPoint x="878" y="661" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_4" value="Click sidebar" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;endFill=1;strokeColor=#000000;fontSize=10;labelBackgroundColor=#ffffff;exitX=1.0;exitY=0.75;exitDx=0;exitDy=0;entryX=0.0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="sessions" target="hub">
+          <mxGeometry x="-0.473" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="856" y="703" />
+              <mxPoint x="856" y="755" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_5" value="Click sidebar" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;endFill=1;strokeColor=#000000;fontSize=10;labelBackgroundColor=#ffffff;exitX=1.0;exitY=0.75;exitDx=0;exitDy=0;entryX=0.0;entryY=0.92;entryDx=0;entryDy=0;" edge="1" parent="1" source="notif" target="hub">
+          <mxGeometry x="-0.556" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="900" y="923" />
+              <mxPoint x="900" y="801" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_6" value="Click &quot;Notifications&quot; link" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;endFill=1;strokeColor=#000000;fontSize=10;labelBackgroundColor=#ffffff;exitX=0.0;exitY=0.71;exitDx=0;exitDy=0;entryX=1.0;entryY=0.25;entryDx=0;entryDy=0;" edge="1" parent="1" source="hub" target="notif">
+          <mxGeometry x="0.537" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="878" y="778" />
+              <mxPoint x="878" y="881" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_7" value="Click &quot;Forgot password&quot;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;endFill=1;strokeColor=#000000;fontSize=10;labelBackgroundColor=#ffffff;exitX=0.0;exitY=0.25;exitDx=0;exitDy=0;entryX=0.933;entryY=0.25;entryDx=0;entryDy=0;" edge="1" parent="1" source="signin" target="forgot">
+          <mxGeometry x="0.16" relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_8" value="Click &quot;Back to Sign in&quot;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;endFill=1;strokeColor=#000000;fontSize=10;labelBackgroundColor=#ffffff;exitX=0.933;exitY=0.75;exitDx=0;exitDy=0;entryX=0.0;entryY=0.75;entryDx=0;entryDy=0;" edge="1" parent="1" source="forgot" target="signin">
+          <mxGeometry x="0.16" relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_9" value="Click &quot;Send OTP&quot;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;endFill=1;strokeColor=#000000;fontSize=10;labelBackgroundColor=#ffffff;exitX=0.25;exitY=0.067;exitDx=0;exitDy=0;entryX=0.25;entryY=0.933;entryDx=0;entryDy=0;" edge="1" parent="1" source="forgot" target="otp">
+          <mxGeometry x="-0.35" relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_10" value="Click &quot;Back&quot;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;endFill=1;strokeColor=#000000;fontSize=10;labelBackgroundColor=#ffffff;exitX=0.75;exitY=0.933;exitDx=0;exitDy=0;entryX=0.75;entryY=0.067;entryDx=0;entryDy=0;" edge="1" parent="1" source="otp" target="forgot">
+          <mxGeometry x="-0.35" relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_11" value="Click &quot;Verify OTP&quot;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;endFill=1;strokeColor=#000000;fontSize=10;labelBackgroundColor=#ffffff;exitX=0.933;exitY=0.25;exitDx=0;exitDy=0;entryX=0.067;entryY=0.25;entryDx=0;entryDy=0;" edge="1" parent="1" source="otp" target="reset">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_12" value="Click &quot;Reset&quot; button" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;endFill=1;strokeColor=#000000;fontSize=10;labelBackgroundColor=#ffffff;exitX=0.5;exitY=1.0;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="reset" target="signin">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_13" value="Click &quot;Detail&quot; icon" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;endFill=1;strokeColor=#000000;fontSize=10;labelBackgroundColor=#ffffff;exitX=0.0;exitY=0.08;exitDx=0;exitDy=0;entryX=0.933;entryY=0.25;entryDx=0;entryDy=0;" edge="1" parent="1" source="sessions" target="sess_det">
+          <mxGeometry x="0.38" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="440" y="647" />
+              <mxPoint x="440" y="601" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_14" value="Click &quot;Close&quot;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;endFill=1;strokeColor=#000000;fontSize=10;labelBackgroundColor=#ffffff;exitX=0.933;exitY=0.75;exitDx=0;exitDy=0;entryX=0.0;entryY=0.36;entryDx=0;entryDy=0;" edge="1" parent="1" source="sess_det" target="sessions">
+          <mxGeometry x="-0.344" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="418" y="643" />
+              <mxPoint x="418" y="670" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_15" value="Click &quot;Confirm / Cancel&quot;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;endFill=1;strokeColor=#000000;fontSize=10;labelBackgroundColor=#ffffff;exitX=0.933;exitY=0.75;exitDx=0;exitDy=0;entryX=0.0;entryY=0.92;entryDx=0;entryDy=0;" edge="1" parent="1" source="sess_rev" target="sessions">
+          <mxGeometry x="-0.38" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="440" y="763" />
+              <mxPoint x="440" y="717" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_16" value="Click &quot;Revoke&quot; icon" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;endFill=1;strokeColor=#000000;fontSize=10;labelBackgroundColor=#ffffff;exitX=0.0;exitY=0.64;exitDx=0;exitDy=0;entryX=0.933;entryY=0.25;entryDx=0;entryDy=0;" edge="1" parent="1" source="sessions" target="sess_rev">
+          <mxGeometry x="0.344" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="418" y="694" />
+              <mxPoint x="418" y="721" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_17" value="Click notification item" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;endFill=1;strokeColor=#000000;fontSize=10;labelBackgroundColor=#ffffff;exitX=0.0;exitY=0.25;exitDx=0;exitDy=0;entryX=0.933;entryY=0.25;entryDx=0;entryDy=0;" edge="1" parent="1" source="notif" target="notif_act">
+          <mxGeometry x="0.16" relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_18" value="Click &quot;Close&quot;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;endFill=1;strokeColor=#000000;fontSize=10;labelBackgroundColor=#ffffff;exitX=0.933;exitY=0.75;exitDx=0;exitDy=0;entryX=0.0;entryY=0.75;entryDx=0;entryDy=0;" edge="1" parent="1" source="notif_act" target="notif">
+          <mxGeometry x="0.16" relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_19" value="Click &quot;Profile Settings&quot;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;endFill=1;strokeColor=#000000;fontSize=10;labelBackgroundColor=#ffffff;exitX=1.0;exitY=0.08;exitDx=0;exitDy=0;entryX=0.0;entryY=0.25;entryDx=0;entryDy=0;" edge="1" parent="1" source="hub" target="profile">
+          <mxGeometry x="0.776" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1260" y="709" />
+              <mxPoint x="1260" y="321" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_20" value="Click sidebar" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;endFill=1;strokeColor=#000000;fontSize=10;labelBackgroundColor=#ffffff;exitX=0.0;exitY=0.75;exitDx=0;exitDy=0;entryX=1.0;entryY=0.248;entryDx=0;entryDy=0;" edge="1" parent="1" source="profile" target="hub">
+          <mxGeometry x="-0.768" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1282" y="363" />
+              <mxPoint x="1282" y="727" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_21" value="Click &quot;Billing &amp; Payments&quot;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;endFill=1;strokeColor=#000000;fontSize=10;labelBackgroundColor=#ffffff;exitX=1.0;exitY=0.416;exitDx=0;exitDy=0;entryX=0.0;entryY=0.25;entryDx=0;entryDy=0;" edge="1" parent="1" source="hub" target="payments">
+          <mxGeometry x="0.669" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1304" y="746" />
+              <mxPoint x="1304" y="581" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_22" value="Click sidebar" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;endFill=1;strokeColor=#000000;fontSize=10;labelBackgroundColor=#ffffff;exitX=0.0;exitY=0.75;exitDx=0;exitDy=0;entryX=1.0;entryY=0.584;entryDx=0;entryDy=0;" edge="1" parent="1" source="payments" target="hub">
+          <mxGeometry x="-0.651" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1326" y="623" />
+              <mxPoint x="1326" y="764" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_23" value="Click sidebar" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;endFill=1;strokeColor=#000000;fontSize=10;labelBackgroundColor=#ffffff;exitX=0.0;exitY=0.75;exitDx=0;exitDy=0;entryX=1.0;entryY=0.92;entryDx=0;entryDy=0;" edge="1" parent="1" source="reviews" target="hub">
+          <mxGeometry x="-0.574" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1260" y="863" />
+              <mxPoint x="1260" y="801" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_24" value="Click &quot;Reviews&quot; link" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;endFill=1;strokeColor=#000000;fontSize=10;labelBackgroundColor=#ffffff;exitX=1.0;exitY=0.752;exitDx=0;exitDy=0;entryX=0.0;entryY=0.25;entryDx=0;entryDy=0;" edge="1" parent="1" source="hub" target="reviews">
+          <mxGeometry x="0.545" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1282" y="783" />
+              <mxPoint x="1282" y="821" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_25" value="Click &quot;View Public Profile&quot;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;endFill=1;strokeColor=#000000;fontSize=10;labelBackgroundColor=#ffffff;exitX=0.25;exitY=0.0;exitDx=0;exitDy=0;entryX=0.25;entryY=1.0;entryDx=0;entryDy=0;" edge="1" parent="1" source="profile" target="pub_prof">
+          <mxGeometry x="-0.35" relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_26" value="Click &quot;Back&quot;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;endFill=1;strokeColor=#000000;fontSize=10;labelBackgroundColor=#ffffff;exitX=0.75;exitY=1.0;exitDx=0;exitDy=0;entryX=0.75;entryY=0.0;entryDx=0;entryDy=0;" edge="1" parent="1" source="pub_prof" target="profile">
+          <mxGeometry x="-0.35" relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_27" value="Click &quot;Edit&quot; button" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;endFill=1;strokeColor=#000000;fontSize=10;labelBackgroundColor=#ffffff;exitX=1.0;exitY=0.08;exitDx=0;exitDy=0;entryX=0.067;entryY=0.25;entryDx=0;entryDy=0;" edge="1" parent="1" source="profile" target="edit_prof">
+          <mxGeometry x="0.446" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1710" y="307" />
+              <mxPoint x="1710" y="221" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_28" value="Click &quot;Save / Cancel&quot;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;endFill=1;strokeColor=#000000;fontSize=10;labelBackgroundColor=#ffffff;exitX=0.067;exitY=0.75;exitDx=0;exitDy=0;entryX=1.0;entryY=0.36;entryDx=0;entryDy=0;" edge="1" parent="1" source="edit_prof" target="profile">
+          <mxGeometry x="-0.423" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1734" y="263" />
+              <mxPoint x="1734" y="330" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_29" value="Click &quot;Favorites&quot; tab" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;endFill=1;strokeColor=#000000;fontSize=10;labelBackgroundColor=#ffffff;exitX=1.0;exitY=0.64;exitDx=0;exitDy=0;entryX=0.0;entryY=0.25;entryDx=0;entryDy=0;" edge="1" parent="1" source="profile" target="favorites">
+          <mxGeometry x="0.351" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1758" y="354" />
+              <mxPoint x="1758" y="341" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_30" value="Click &quot;Back&quot;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;endFill=1;strokeColor=#000000;fontSize=10;labelBackgroundColor=#ffffff;exitX=0.0;exitY=0.75;exitDx=0;exitDy=0;entryX=1.0;entryY=0.92;entryDx=0;entryDy=0;" edge="1" parent="1" source="favorites" target="profile">
+          <mxGeometry x="-0.338" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1710" y="383" />
+              <mxPoint x="1710" y="377" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_31" value="Click &quot;Default / Remove&quot;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;endFill=1;strokeColor=#000000;fontSize=10;labelBackgroundColor=#ffffff;exitX=1.0;exitY=0.08;exitDx=0;exitDy=0;entryX=0.067;entryY=0.25;entryDx=0;entryDy=0;" edge="1" parent="1" source="payments" target="pm_cards">
+          <mxGeometry x="0.437" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1710" y="567" />
+              <mxPoint x="1710" y="481" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_32" value="Click &quot;Save / Close&quot;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;endFill=1;strokeColor=#000000;fontSize=10;labelBackgroundColor=#ffffff;exitX=0.067;exitY=0.75;exitDx=0;exitDy=0;entryX=1.0;entryY=0.248;entryDx=0;entryDy=0;" edge="1" parent="1" source="pm_cards" target="payments">
+          <mxGeometry x="-0.401" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1732" y="523" />
+              <mxPoint x="1732" y="581" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_33" value="Click &quot;Pay&quot; button" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;endFill=1;strokeColor=#000000;fontSize=10;labelBackgroundColor=#ffffff;exitX=1.0;exitY=0.416;exitDx=0;exitDy=0;entryX=0.067;entryY=0.25;entryDx=0;entryDy=0;" edge="1" parent="1" source="payments" target="stripe_dlg">
+          <mxGeometry x="0.315" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1754" y="595" />
+              <mxPoint x="1754" y="591" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_34" value="Click &quot;Close&quot;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;endFill=1;strokeColor=#000000;fontSize=10;labelBackgroundColor=#ffffff;exitX=0.067;exitY=0.75;exitDx=0;exitDy=0;entryX=1.0;entryY=0.92;entryDx=0;entryDy=0;" edge="1" parent="1" source="tx_det" target="payments">
+          <mxGeometry x="-0.461" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1710" y="743" />
+              <mxPoint x="1710" y="637" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_35" value="Click &quot;Detail&quot; icon" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;endFill=1;strokeColor=#000000;fontSize=10;labelBackgroundColor=#ffffff;exitX=1.0;exitY=0.752;exitDx=0;exitDy=0;entryX=0.067;entryY=0.25;entryDx=0;entryDy=0;" edge="1" parent="1" source="payments" target="tx_det">
+          <mxGeometry x="0.427" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1732" y="623" />
+              <mxPoint x="1732" y="701" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_36" value="Click &quot;Pay / Cancel&quot;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;endFill=1;strokeColor=#000000;fontSize=10;labelBackgroundColor=#ffffff;exitX=0.067;exitY=0.75;exitDx=0;exitDy=0;entryX=1.0;entryY=0.584;entryDx=0;entryDy=0;" edge="1" parent="1" source="stripe_dlg" target="payments">
+          <mxGeometry x="-0.35" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1754" y="633" />
+              <mxPoint x="1754" y="609" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_37" value="Click &quot;Leave Review&quot;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;endFill=1;strokeColor=#000000;fontSize=10;labelBackgroundColor=#ffffff;exitX=1.0;exitY=0.25;exitDx=0;exitDy=0;entryX=0.067;entryY=0.25;entryDx=0;entryDy=0;" edge="1" parent="1" source="reviews" target="rev_form">
+          <mxGeometry x="-0.16" relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_38" value="Click &quot;Submit / Cancel&quot;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;endFill=1;strokeColor=#000000;fontSize=10;labelBackgroundColor=#ffffff;exitX=0.067;exitY=0.75;exitDx=0;exitDy=0;entryX=1.0;entryY=0.75;entryDx=0;entryDy=0;" edge="1" parent="1" source="rev_form" target="reviews">
+          <mxGeometry x="-0.16" relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_39" value="Click &quot;Messages&quot; link" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;endFill=1;strokeColor=#000000;fontSize=10;labelBackgroundColor=#ffffff;exitX=0.08;exitY=1.0;exitDx=0;exitDy=0;entryX=0.22;entryY=0.0;entryDx=0;entryDy=0;" edge="1" parent="1" source="hub" target="msgs">
+          <mxGeometry x="0.819" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="996" y="960" />
+              <mxPoint x="815" y="960" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_40" value="Click sidebar" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;endFill=1;strokeColor=#000000;fontSize=10;labelBackgroundColor=#ffffff;exitX=0.78;exitY=0.0;exitDx=0;exitDy=0;entryX=0.36;entryY=1.0;entryDx=0;entryDy=0;" edge="1" parent="1" source="msgs" target="hub">
+          <mxGeometry x="-0.474" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="905" y="988" />
+              <mxPoint x="1052" y="988" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_41" value="Click sidebar" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;endFill=1;strokeColor=#000000;fontSize=10;labelBackgroundColor=#ffffff;exitX=0.78;exitY=0.0;exitDx=0;exitDy=0;entryX=0.92;entryY=1.0;entryDx=0;entryDy=0;" edge="1" parent="1" source="forum" target="hub">
+          <mxGeometry x="-0.525" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1365" y="960" />
+              <mxPoint x="1164" y="960" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_42" value="Click &quot;Forum&quot; link" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;endFill=1;strokeColor=#000000;fontSize=10;labelBackgroundColor=#ffffff;exitX=0.64;exitY=1.0;exitDx=0;exitDy=0;entryX=0.22;entryY=0.0;entryDx=0;entryDy=0;" edge="1" parent="1" source="hub" target="forum">
+          <mxGeometry x="0.814" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1108" y="988" />
+              <mxPoint x="1275" y="988" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_43" value="Click conversation" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;endFill=1;strokeColor=#000000;fontSize=10;labelBackgroundColor=#ffffff;exitX=0.0;exitY=0.08;exitDx=0;exitDy=0;entryX=1.0;entryY=0.25;entryDx=0;entryDy=0;" edge="1" parent="1" source="msgs" target="chat">
+          <mxGeometry x="0.404" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="710" y="1167" />
+              <mxPoint x="710" y="1121" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_44" value="Click &quot;Back&quot;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;endFill=1;strokeColor=#000000;fontSize=10;labelBackgroundColor=#ffffff;exitX=1.0;exitY=0.75;exitDx=0;exitDy=0;entryX=0.0;entryY=0.36;entryDx=0;entryDy=0;" edge="1" parent="1" source="chat" target="msgs">
+          <mxGeometry x="-0.37" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="686" y="1163" />
+              <mxPoint x="686" y="1190" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_45" value="Click &quot;Back / Cancel&quot;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;endFill=1;strokeColor=#000000;fontSize=10;labelBackgroundColor=#ffffff;exitX=1.0;exitY=0.75;exitDx=0;exitDy=0;entryX=0.0;entryY=0.92;entryDx=0;entryDy=0;" edge="1" parent="1" source="new_chat" target="msgs">
+          <mxGeometry x="-0.421" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="710" y="1293" />
+              <mxPoint x="710" y="1237" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_46" value="Click &quot;New Message&quot;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;endFill=1;strokeColor=#000000;fontSize=10;labelBackgroundColor=#ffffff;exitX=0.0;exitY=0.64;exitDx=0;exitDy=0;entryX=1.0;entryY=0.25;entryDx=0;entryDy=0;" edge="1" parent="1" source="msgs" target="new_chat">
+          <mxGeometry x="0.389" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="686" y="1214" />
+              <mxPoint x="686" y="1251" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_47" value="Click &quot;Create Post&quot;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;endFill=1;strokeColor=#000000;fontSize=10;labelBackgroundColor=#ffffff;exitX=0.25;exitY=1.0;exitDx=0;exitDy=0;entryX=0.25;entryY=0.067;entryDx=0;entryDy=0;" edge="1" parent="1" source="forum" target="create_post">
+          <mxGeometry x="-0.35" relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_48" value="Click &quot;Publish / Cancel&quot;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;endFill=1;strokeColor=#000000;fontSize=10;labelBackgroundColor=#ffffff;exitX=0.75;exitY=0.067;exitDx=0;exitDy=0;entryX=0.75;entryY=1.0;entryDx=0;entryDy=0;" edge="1" parent="1" source="create_post" target="forum">
+          <mxGeometry x="-0.35" relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_49" value="Click category link" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;endFill=1;strokeColor=#000000;fontSize=10;labelBackgroundColor=#ffffff;exitX=1.0;exitY=0.25;exitDx=0;exitDy=0;entryX=0.0;entryY=0.25;entryDx=0;entryDy=0;" edge="1" parent="1" source="forum" target="forum_cat">
+          <mxGeometry x="-0.16" relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_50" value="Click &quot;Back to Forum&quot;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;endFill=1;strokeColor=#000000;fontSize=10;labelBackgroundColor=#ffffff;exitX=0.0;exitY=0.75;exitDx=0;exitDy=0;entryX=1.0;entryY=0.75;entryDx=0;entryDy=0;" edge="1" parent="1" source="forum_cat" target="forum">
+          <mxGeometry x="-0.16" relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_51" value="Click post item" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;endFill=1;strokeColor=#000000;fontSize=10;labelBackgroundColor=#ffffff;exitX=1.0;exitY=0.25;exitDx=0;exitDy=0;entryX=0.0;entryY=0.25;entryDx=0;entryDy=0;" edge="1" parent="1" source="forum_cat" target="post_det">
+          <mxGeometry x="-0.16" relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_52" value="Click &quot;Back to Posts&quot;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;endFill=1;strokeColor=#000000;fontSize=10;labelBackgroundColor=#ffffff;exitX=0.0;exitY=0.75;exitDx=0;exitDy=0;entryX=1.0;entryY=0.75;entryDx=0;entryDy=0;" edge="1" parent="1" source="post_det" target="forum_cat">
+          <mxGeometry x="-0.16" relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_53" value="Click &quot;Edit&quot; icon" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;endFill=1;strokeColor=#000000;fontSize=10;labelBackgroundColor=#ffffff;exitX=1.0;exitY=0.08;exitDx=0;exitDy=0;entryX=0.067;entryY=0.25;entryDx=0;entryDy=0;" edge="1" parent="1" source="post_det" target="edit_post">
+          <mxGeometry x="0.503" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="2290" y="1167" />
+              <mxPoint x="2290" y="1061" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_54" value="Click &quot;Save / Cancel&quot;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;endFill=1;strokeColor=#000000;fontSize=10;labelBackgroundColor=#ffffff;exitX=0.067;exitY=0.75;exitDx=0;exitDy=0;entryX=1.0;entryY=0.248;entryDx=0;entryDy=0;" edge="1" parent="1" source="edit_post" target="post_det">
+          <mxGeometry x="-0.47" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="2312" y="1103" />
+              <mxPoint x="2312" y="1181" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_55" value="Click likes count" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;endFill=1;strokeColor=#000000;fontSize=10;labelBackgroundColor=#ffffff;exitX=1.0;exitY=0.416;exitDx=0;exitDy=0;entryX=0.067;entryY=0.25;entryDx=0;entryDy=0;" edge="1" parent="1" source="post_det" target="post_likes">
+          <mxGeometry x="0.371" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="2334" y="1195" />
+              <mxPoint x="2334" y="1181" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_56" value="Click &quot;Submit / Cancel&quot;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;endFill=1;strokeColor=#000000;fontSize=10;labelBackgroundColor=#ffffff;exitX=0.067;exitY=0.75;exitDx=0;exitDy=0;entryX=1.0;entryY=0.92;entryDx=0;entryDy=0;" edge="1" parent="1" source="report_post" target="post_det">
+          <mxGeometry x="-0.503" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="2290" y="1343" />
+              <mxPoint x="2290" y="1237" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_57" value="Click &quot;Report&quot; icon" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;endFill=1;strokeColor=#000000;fontSize=10;labelBackgroundColor=#ffffff;exitX=1.0;exitY=0.752;exitDx=0;exitDy=0;entryX=0.067;entryY=0.25;entryDx=0;entryDy=0;" edge="1" parent="1" source="post_det" target="report_post">
+          <mxGeometry x="0.47" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="2312" y="1223" />
+              <mxPoint x="2312" y="1301" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_58" value="Click &quot;Close&quot;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;endFill=1;strokeColor=#000000;fontSize=10;labelBackgroundColor=#ffffff;exitX=0.067;exitY=0.75;exitDx=0;exitDy=0;entryX=1.0;entryY=0.584;entryDx=0;entryDy=0;" edge="1" parent="1" source="post_likes" target="post_det">
+          <mxGeometry x="-0.371" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="2334" y="1223" />
+              <mxPoint x="2334" y="1209" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

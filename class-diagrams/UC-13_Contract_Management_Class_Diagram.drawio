@@ -341,7 +341,7 @@
           <mxGeometry height="8" width="220" y="180" as="geometry" />
         </mxCell>
         <mxCell id="contract_enumFee" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=42;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fontSize=13;labelBackgroundColor=none;" value="&lt;&lt;enum&gt;&gt;&#10;PlatformFeeStatus" vertex="1">
-          <mxGeometry height="136" width="220" x="3420" y="418" as="geometry" />
+          <mxGeometry height="136" width="220" x="3420" y="448" as="geometry" />
         </mxCell>
         <mxCell id="contract_enumFee_r0" parent="contract_enumFee" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=13;labelBackgroundColor=none;" value="+UNPAID" vertex="1">
           <mxGeometry height="28" width="220" y="42" as="geometry" />
@@ -355,82 +355,82 @@
         <mxCell id="contract_enumFee_sep" parent="contract_enumFee" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;fontSize=13;labelBackgroundColor=none;" value="" vertex="1">
           <mxGeometry height="8" width="220" y="128" as="geometry" />
         </mxCell>
-        <mxCell id="contract_e_ctrl_svc" edge="1" parent="1" source="contract_ctrl" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=#ffffff;exitX=0.45;exitY=0.0;exitDx=0;exitDy=0;entryX=0.45;entryY=0.0;entryDx=0;entryDy=0;" target="contract_svc" value="calls">
+        <mxCell id="contract_e_ctrl_svc" edge="1" parent="1" source="contract_ctrl" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=#ffffff;exitX=0.45;exitY=0.0;exitDx=0;exitDy=0;entryX=0.45;entryY=0.0;entryDx=0;entryDy=0;rounded=0;" target="contract_svc" value="calls">
           <mxGeometry relative="1" as="geometry">
             <Array as="points"><mxPoint x="283" y="100" /><mxPoint x="1663" y="100" /></Array></mxGeometry>
         </mxCell>
-        <mxCell id="contract_e_ctrl_dtoCreate" edge="1" parent="1" source="contract_ctrl" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=#ffffff;dashed=1;exitX=1.0;exitY=0.14;exitDx=0;exitDy=0;entryX=0.0;entryY=0.5;entryDx=0;entryDy=0;" target="contract_dtoCreate" value="">
+        <mxCell id="contract_e_ctrl_dtoCreate" edge="1" parent="1" source="contract_ctrl" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=#ffffff;dashed=1;exitX=1.0;exitY=0.181;exitDx=0;exitDy=0;entryX=0.0;entryY=0.293;entryDx=0;entryDy=0;rounded=0;" target="contract_dtoCreate" value="">
           <mxGeometry relative="1" as="geometry">
-            <Array as="points"><mxPoint x="756" y="203" /><mxPoint x="756" y="254" /></Array></mxGeometry>
+            </mxGeometry>
         </mxCell>
-        <mxCell id="contract_e_svc_dtoCreate" edge="1" parent="1" source="contract_svc" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=#ffffff;dashed=1;exitX=0.0;exitY=0.14;exitDx=0;exitDy=0;entryX=1.0;entryY=0.5;entryDx=0;entryDy=0;" target="contract_dtoCreate" value="">
+        <mxCell id="contract_e_svc_dtoCreate" edge="1" parent="1" source="contract_svc" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=#ffffff;dashed=1;exitX=0.0;exitY=0.181;exitDx=0;exitDy=0;entryX=1.0;entryY=0.293;entryDx=0;entryDy=0;rounded=0;" target="contract_dtoCreate" value="">
           <mxGeometry relative="1" as="geometry">
-            <Array as="points"><mxPoint x="1244" y="203" /><mxPoint x="1244" y="254" /></Array></mxGeometry>
+            </mxGeometry>
         </mxCell>
-        <mxCell id="contract_e_ctrl_dtoUpdate" edge="1" parent="1" source="contract_ctrl" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=#ffffff;dashed=1;exitX=1.0;exitY=0.32;exitDx=0;exitDy=0;entryX=0.0;entryY=0.5;entryDx=0;entryDy=0;" target="contract_dtoUpdate" value="">
+        <mxCell id="contract_e_ctrl_dtoUpdate" edge="1" parent="1" source="contract_ctrl" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=#ffffff;dashed=1;exitX=1.0;exitY=0.378;exitDx=0;exitDy=0;entryX=0.0;entryY=0.5;entryDx=0;entryDy=0;rounded=0;" target="contract_dtoUpdate" value="">
           <mxGeometry relative="1" as="geometry">
-            <Array as="points"><mxPoint x="718" y="257" /><mxPoint x="718" y="495" /></Array></mxGeometry>
+            <Array as="points"><mxPoint x="718" y="275" /><mxPoint x="718" y="495" /></Array></mxGeometry>
         </mxCell>
-        <mxCell id="contract_e_svc_dtoUpdate" edge="1" parent="1" source="contract_svc" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=#ffffff;dashed=1;exitX=0.0;exitY=0.32;exitDx=0;exitDy=0;entryX=1.0;entryY=0.5;entryDx=0;entryDy=0;" target="contract_dtoUpdate" value="">
+        <mxCell id="contract_e_svc_dtoUpdate" edge="1" parent="1" source="contract_svc" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=#ffffff;dashed=1;exitX=0.0;exitY=0.378;exitDx=0;exitDy=0;entryX=1.0;entryY=0.5;entryDx=0;entryDy=0;rounded=0;" target="contract_dtoUpdate" value="">
           <mxGeometry relative="1" as="geometry">
-            <Array as="points"><mxPoint x="1282" y="257" /><mxPoint x="1282" y="495" /></Array></mxGeometry>
+            <Array as="points"><mxPoint x="1282" y="275" /><mxPoint x="1282" y="495" /></Array></mxGeometry>
         </mxCell>
-        <mxCell id="contract_e_ctrl_dtoQuery" edge="1" parent="1" source="contract_ctrl" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=#ffffff;dashed=1;exitX=1.0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.0;entryY=0.5;entryDx=0;entryDy=0;" target="contract_dtoQuery" value="">
+        <mxCell id="contract_e_ctrl_dtoQuery" edge="1" parent="1" source="contract_ctrl" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=#ffffff;dashed=1;exitX=1.0;exitY=0.553;exitDx=0;exitDy=0;entryX=0.0;entryY=0.5;entryDx=0;entryDy=0;rounded=0;" target="contract_dtoQuery" value="">
           <mxGeometry relative="1" as="geometry">
-            <Array as="points"><mxPoint x="680" y="312" /><mxPoint x="680" y="736" /></Array></mxGeometry>
+            <Array as="points"><mxPoint x="680" y="328" /><mxPoint x="680" y="736" /></Array></mxGeometry>
         </mxCell>
-        <mxCell id="contract_e_svc_dtoQuery" edge="1" parent="1" source="contract_svc" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=#ffffff;dashed=1;exitX=0.0;exitY=0.5;exitDx=0;exitDy=0;entryX=1.0;entryY=0.5;entryDx=0;entryDy=0;" target="contract_dtoQuery" value="">
+        <mxCell id="contract_e_svc_dtoQuery" edge="1" parent="1" source="contract_svc" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=#ffffff;dashed=1;exitX=0.0;exitY=0.553;exitDx=0;exitDy=0;entryX=1.0;entryY=0.5;entryDx=0;entryDy=0;rounded=0;" target="contract_dtoQuery" value="">
           <mxGeometry relative="1" as="geometry">
-            <Array as="points"><mxPoint x="1320" y="312" /><mxPoint x="1320" y="736" /></Array></mxGeometry>
+            <Array as="points"><mxPoint x="1320" y="328" /><mxPoint x="1320" y="736" /></Array></mxGeometry>
         </mxCell>
-        <mxCell id="contract_e_ctrl_dtoResp" edge="1" parent="1" source="contract_ctrl" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=#ffffff;dashed=1;exitX=1.0;exitY=0.68;exitDx=0;exitDy=0;entryX=0.0;entryY=0.5;entryDx=0;entryDy=0;" target="contract_dtoResp" value="">
+        <mxCell id="contract_e_ctrl_dtoResp" edge="1" parent="1" source="contract_ctrl" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=#ffffff;dashed=1;exitX=1.0;exitY=0.727;exitDx=0;exitDy=0;entryX=0.0;entryY=0.5;entryDx=0;entryDy=0;rounded=0;" target="contract_dtoResp" value="">
           <mxGeometry relative="1" as="geometry">
-            <Array as="points"><mxPoint x="642" y="367" /><mxPoint x="642" y="1011" /></Array></mxGeometry>
+            <Array as="points"><mxPoint x="642" y="381" /><mxPoint x="642" y="1011" /></Array></mxGeometry>
         </mxCell>
-        <mxCell id="contract_e_svc_dtoResp" edge="1" parent="1" source="contract_svc" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=#ffffff;dashed=1;exitX=0.0;exitY=0.68;exitDx=0;exitDy=0;entryX=1.0;entryY=0.5;entryDx=0;entryDy=0;" target="contract_dtoResp" value="">
+        <mxCell id="contract_e_svc_dtoResp" edge="1" parent="1" source="contract_svc" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=#ffffff;dashed=1;exitX=0.0;exitY=0.727;exitDx=0;exitDy=0;entryX=1.0;entryY=0.5;entryDx=0;entryDy=0;rounded=0;" target="contract_dtoResp" value="">
           <mxGeometry relative="1" as="geometry">
-            <Array as="points"><mxPoint x="1358" y="367" /><mxPoint x="1358" y="1011" /></Array></mxGeometry>
+            <Array as="points"><mxPoint x="1358" y="381" /><mxPoint x="1358" y="1011" /></Array></mxGeometry>
         </mxCell>
-        <mxCell id="contract_e_ctrl_typeDetail" edge="1" parent="1" source="contract_ctrl" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=#ffffff;dashed=1;exitX=1.0;exitY=0.86;exitDx=0;exitDy=0;entryX=0.0;entryY=0.5;entryDx=0;entryDy=0;" target="contract_typeDetail" value="">
+        <mxCell id="contract_e_ctrl_typeDetail" edge="1" parent="1" source="contract_ctrl" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=#ffffff;dashed=1;exitX=1.0;exitY=0.901;exitDx=0;exitDy=0;entryX=0.0;entryY=0.5;entryDx=0;entryDy=0;rounded=0;" target="contract_typeDetail" value="">
           <mxGeometry relative="1" as="geometry">
-            <Array as="points"><mxPoint x="604" y="421" /><mxPoint x="604" y="1269" /></Array></mxGeometry>
+            <Array as="points"><mxPoint x="604" y="434" /><mxPoint x="604" y="1269" /></Array></mxGeometry>
         </mxCell>
-        <mxCell id="contract_e_svc_typeDetail" edge="1" parent="1" source="contract_svc" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=#ffffff;dashed=1;exitX=0.0;exitY=0.86;exitDx=0;exitDy=0;entryX=1.0;entryY=0.5;entryDx=0;entryDy=0;" target="contract_typeDetail" value="">
+        <mxCell id="contract_e_svc_typeDetail" edge="1" parent="1" source="contract_svc" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=#ffffff;dashed=1;exitX=0.0;exitY=0.901;exitDx=0;exitDy=0;entryX=1.0;entryY=0.5;entryDx=0;entryDy=0;rounded=0;" target="contract_typeDetail" value="">
           <mxGeometry relative="1" as="geometry">
-            <Array as="points"><mxPoint x="1396" y="421" /><mxPoint x="1396" y="1269" /></Array></mxGeometry>
+            <Array as="points"><mxPoint x="1396" y="434" /><mxPoint x="1396" y="1269" /></Array></mxGeometry>
         </mxCell>
-        <mxCell id="contract_e_svc_repo" edge="1" parent="1" source="contract_svc" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=#ffffff;exitX=1.0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.0;entryY=0.5;" target="contract_repo" value="calls">
+        <mxCell id="contract_e_svc_repo" edge="1" parent="1" source="contract_svc" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=#ffffff;exitX=1.0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.0;entryY=0.386;rounded=0;" target="contract_repo" value="calls">
           <mxGeometry relative="1" as="geometry">
-            <Array as="points"><mxPoint x="2060" y="312" /><mxPoint x="2060" y="357" /></Array></mxGeometry>
+            </mxGeometry>
         </mxCell>
-        <mxCell id="contract_e_repo_contract" edge="1" parent="1" source="contract_repo" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=#ffffff;dashed=1;exitX=1.0;exitY=0.14;exitDx=0;exitDy=0;entryX=0.0;entryY=0.5;entryDx=0;entryDy=0;" target="contract_schemaContract" value="maps to">
+        <mxCell id="contract_e_repo_contract" edge="1" parent="1" source="contract_repo" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=#ffffff;dashed=1;exitX=1.0;exitY=0.14;exitDx=0;exitDy=0;entryX=0.0;entryY=0.5;entryDx=0;entryDy=0;rounded=0;" target="contract_schemaContract" value="maps to">
           <mxGeometry relative="1" as="geometry">
             <Array as="points"><mxPoint x="2856" y="215" /><mxPoint x="2856" y="766" /></Array></mxGeometry>
         </mxCell>
-        <mxCell id="contract_e_repo_job" edge="1" parent="1" source="contract_repo" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=#ffffff;dashed=1;exitX=1.0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.0;entryY=0.5;entryDx=0;entryDy=0;" target="contract_schemaJob" value="maps to">
+        <mxCell id="contract_e_repo_job" edge="1" parent="1" source="contract_repo" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=#ffffff;dashed=1;exitX=1.0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.0;entryY=0.5;entryDx=0;entryDy=0;rounded=0;" target="contract_schemaJob" value="maps to">
           <mxGeometry relative="1" as="geometry">
             <Array as="points"><mxPoint x="2780" y="357" /><mxPoint x="2780" y="1222" /></Array></mxGeometry>
         </mxCell>
-        <mxCell id="contract_e_repo_proposal" edge="1" parent="1" source="contract_repo" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=#ffffff;dashed=1;exitX=1.0;exitY=0.86;exitDx=0;exitDy=0;entryX=0.0;entryY=0.5;entryDx=0;entryDy=0;" target="contract_schemaProposal" value="maps to">
+        <mxCell id="contract_e_repo_proposal" edge="1" parent="1" source="contract_repo" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=#ffffff;dashed=1;exitX=1.0;exitY=0.86;exitDx=0;exitDy=0;entryX=0.0;entryY=0.5;entryDx=0;entryDy=0;rounded=0;" target="contract_schemaProposal" value="maps to">
           <mxGeometry relative="1" as="geometry">
             <Array as="points"><mxPoint x="2704" y="499" /><mxPoint x="2704" y="1510" /></Array></mxGeometry>
         </mxCell>
-        <mxCell id="contract_rel_contract_job" edge="1" parent="1" source="contract_schemaContract" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=#ffffff;dashed=1;exitX=0.5;exitY=1.0;exitDx=0;exitDy=0;entryX=0.5;entryY=0.0;entryDx=0;entryDy=0;" target="contract_schemaJob" value="1">
+        <mxCell id="contract_rel_contract_job" edge="1" parent="1" source="contract_schemaContract" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=#ffffff;dashed=1;exitX=0.5;exitY=1.0;exitDx=0;exitDy=0;entryX=0.5;entryY=0.0;entryDx=0;entryDy=0;rounded=0;" target="contract_schemaJob" value="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="contract_rel_job_proposal" edge="1" parent="1" source="contract_schemaJob" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=#ffffff;dashed=1;exitX=0.5;exitY=1.0;exitDx=0;exitDy=0;entryX=0.5;entryY=0.0;entryDx=0;entryDy=0;" target="contract_schemaProposal" value="1..*">
+        <mxCell id="contract_rel_job_proposal" edge="1" parent="1" source="contract_schemaJob" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=#ffffff;dashed=1;exitX=0.5;exitY=1.0;exitDx=0;exitDy=0;entryX=0.5;entryY=0.0;entryDx=0;entryDy=0;rounded=0;" target="contract_schemaProposal" value="1..*">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="contract_rel_proposal_user" edge="1" parent="1" source="contract_schemaProposal" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=#ffffff;dashed=1;exitX=0.5;exitY=1.0;exitDx=0;exitDy=0;entryX=0.5;entryY=0.0;entryDx=0;entryDy=0;" target="contract_schemaUser" value="1">
+        <mxCell id="contract_rel_proposal_user" edge="1" parent="1" source="contract_schemaProposal" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=#ffffff;dashed=1;exitX=0.5;exitY=1.0;exitDx=0;exitDy=0;entryX=0.5;entryY=0.0;entryDx=0;entryDy=0;rounded=0;" target="contract_schemaUser" value="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="contract_rel_contract_status" edge="1" parent="1" source="contract_schemaContract" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=#ffffff;dashed=1;exitX=1.0;exitY=0.14;exitDx=0;exitDy=0;entryX=0.0;entryY=0.5;entryDx=0;entryDy=0;" target="contract_enumStatus" value="uses">
+        <mxCell id="contract_rel_contract_status" edge="1" parent="1" source="contract_schemaContract" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=#ffffff;dashed=1;exitX=1.0;exitY=0.029;exitDx=0;exitDy=0;entryX=0.0;entryY=0.5;entryDx=0;entryDy=0;rounded=0;" target="contract_enumStatus" value="uses">
           <mxGeometry relative="1" as="geometry">
-            <Array as="points"><mxPoint x="3244" y="567" /><mxPoint x="3244" y="254" /></Array></mxGeometry>
+            <Array as="points"><mxPoint x="3244" y="505" /><mxPoint x="3244" y="254" /></Array></mxGeometry>
         </mxCell>
-        <mxCell id="contract_rel_contract_fee" edge="1" parent="1" source="contract_schemaContract" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=#ffffff;dashed=1;exitX=1.0;exitY=0.86;exitDx=0;exitDy=0;entryX=0.0;entryY=0.5;" target="contract_enumFee" value="uses">
+        <mxCell id="contract_rel_contract_fee" edge="1" parent="1" source="contract_schemaContract" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=open;endSize=12;fontSize=13;labelBackgroundColor=#ffffff;dashed=1;exitX=1.0;exitY=0.119;exitDx=0;exitDy=0;entryX=0.0;entryY=0.787;rounded=0;" target="contract_enumFee" value="uses">
           <mxGeometry relative="1" as="geometry">
-            <Array as="points"><mxPoint x="3396" y="965" /><mxPoint x="3396" y="486" /></Array></mxGeometry>
+            </mxGeometry>
         </mxCell>
       </root>
     </mxGraphModel>
