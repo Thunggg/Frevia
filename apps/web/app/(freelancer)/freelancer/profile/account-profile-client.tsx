@@ -1,12 +1,15 @@
 "use client";
 
+import { FreelancerProfileSheet } from "@/app/(client)/_components/freelancer-profile-sheet";
+import { LockKeyhole } from "lucide-react";
+
 import { accountProfileApi } from "@/apiRequests/account-profile";
 import { useActionPermission } from "@/hooks/use-action-permission";
 import { Footer } from "@/components/footer";
 import { Header, type UserRole } from "@/components/header";
 import {
-  CreditCard,
   Eye,
+  EyeOff,
   Link2,
   Loader2,
   Plus,
@@ -14,7 +17,6 @@ import {
   Search,
   Trash2,
 } from "@/components/icons";
-import { PaymentSettings } from "./payment-settings";
 import { ApiFail } from "@/lib/http";
 import {
   AlertDialog,
@@ -73,7 +75,7 @@ import {
 } from "lucide-react";
 import { useFormatter, useTranslations } from "next-intl";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useState, type FormEvent } from "react";
 import { FreelancerProfessionalSettings } from "./freelancer-professional-settings";
 import { GeneralSettings } from "./general-settings";
@@ -161,6 +163,9 @@ function FreelancerListSkeleton({ label }: { label: string }) {
   );
 }
 
+const profileTabClassName =
+  "h-auto flex-1 gap-2 rounded-full px-4 py-1.5 text-xs font-medium whitespace-nowrap text-muted-foreground transition-all duration-200 hover:bg-white/60 hover:text-foreground dark:hover:bg-zinc-800/60 sm:text-sm data-[state=active]:bg-white data-[state=active]:text-[#0069D3] data-[state=active]:font-semibold data-[state=active]:shadow-xs dark:data-[state=active]:bg-zinc-800 dark:data-[state=active]:text-blue-200 dark:data-[state=active]:border-transparent";
+
 export function AccountProfileClient({
   userId,
   profileId,
@@ -175,7 +180,6 @@ export function AccountProfileClient({
   const tPlatform = useTranslations("socialPlatform");
   const tAvailability = useTranslations("freelancerProfile.availability");
   const tCommon = useTranslations("common");
-  const tSidebar = useTranslations("sidebar");
   const tRole = useTranslations("roleName");
   const format = useFormatter();
 
@@ -296,7 +300,10 @@ export function AccountProfileClient({
             common,
             canViewFavorites
               ? accountProfileApi.getFavorites()
-              : Promise.resolve({ success: true, data: [] as FavoriteFreelancerType[] }),
+              : Promise.resolve({
+                  success: true,
+                  data: [] as FavoriteFreelancerType[],
+                }),
           ]);
         const profile = profileResponse.data;
         setCompanyName(profile.clientProfile.companyName ?? "");
@@ -310,7 +317,14 @@ export function AccountProfileClient({
     } finally {
       setLoading(false);
     }
-  }, [headerRole, userId, toMessage, canViewFavorites, canViewIdentityStatus, canViewSocialLinks]);
+  }, [
+    headerRole,
+    userId,
+    toMessage,
+    canViewFavorites,
+    canViewIdentityStatus,
+    canViewSocialLinks,
+  ]);
 
   const loadFreelancers = useCallback(async () => {
     if (!canDiscoverFreelancers) {
@@ -444,7 +458,14 @@ export function AccountProfileClient({
     }
   };
 
+  const router = useRouter();
+  const [selectedFreelancerProfileId, setSelectedFreelancerProfileId] =
+    useState<number | null>(null);
   const requestedTab = searchParams.get("tab");
+  const [identityVisible, setIdentityVisible] = useState(false);
+  useEffect(() => {
+    setIdentityVisible(false);
+  }, [requestedTab]);
   const normalizedFreelancerQuery = freelancerQuery.trim().toLowerCase();
   const followingCount = freelancers.filter(
     (freelancer) => freelancer.isFollowing,
@@ -476,7 +497,6 @@ export function AccountProfileClient({
           ...(canViewReviews ? ["reviews"] : []),
           "following",
           "favorites",
-          "payments",
         ]
       : [
           ...(profileId ? ["professional"] : []),
@@ -484,22 +504,21 @@ export function AccountProfileClient({
           "identity",
           "social",
           ...(canViewReviews ? ["reviews"] : []),
-          "payments",
         ];
+  const changeProfileTab = (tab: string) => {
+    const params = new URLSearchParams(searchParams.toString());
+    if (tab === "general") params.delete("tab");
+    else params.set("tab", tab);
+    router.replace(
+      "/freelancer/profile" + (params.size ? "?" + params.toString() : ""),
+      { scroll: false },
+    );
+  };
+
   const defaultTab =
     requestedTab && allowedTabs.includes(requestedTab)
       ? requestedTab
-      : headerRole === "FREELANCER" && profileId
-        ? "professional"
-        : "general";
-  const publicProfileHref =
-    headerRole === "FREELANCER"
-      ? profileId
-        ? `/profiles/${profileId}`
-        : null
-      : headerRole === "CLIENT" && userId
-        ? `/clients/${userId}`
-        : null;
+      : "general";
 
   return (
     <div
@@ -513,11 +532,11 @@ export function AccountProfileClient({
         <section
           className={
             embedded
-              ? "border-b border-border bg-background"
-              : "border-b border-[#0069D3]/15 bg-[#D0E1F8]/30 dark:border-white/10 dark:bg-[#111c2e]"
+              ? "bg-background"
+              : "border-b border-[#0069D3]/15 bg-[#D0E1F8] dark:border-white/10 dark:bg-[#1a1c1a]"
           }
         >
-          <div className="mx-auto max-w-6xl px-4 py-6 sm:px-6 lg:px-8">
+          <div className="w-full px-6 pt-8 lg:px-8">
             {!embedded && (
               <nav className="text-sm text-foreground/60">
                 <Link
@@ -535,95 +554,77 @@ export function AccountProfileClient({
             <div
               className={`${
                 !embedded ? "mt-4" : ""
-              } flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between`}
+              } flex flex-col gap-4 border-b border-border pb-6 sm:flex-row sm:items-center sm:justify-between`}
             >
               <div>
                 <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
                   {t("pageTitle")}
                 </h1>
-                <p className="mt-1 text-xs font-normal text-muted-foreground">
-                  {headerRole === "FREELANCER"
-                    ? t("pageSubtitleFreelancer")
-                    : t("pageSubtitleClient")}
-                </p>
-              </div>
-              <div className="flex flex-wrap items-center gap-2.5">
-                {publicProfileHref ? (
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="w-full shrink-0 border-border bg-background/80 text-foreground hover:bg-accent sm:w-auto text-xs"
-                    asChild
-                  >
-                    <Link href={publicProfileHref}>
-                      <Eye className="mr-2 size-4" />
-                      {headerRole === "FREELANCER"
-                        ? t("viewEditFreelancerProfile")
-                        : tSidebar("viewPublicProfile")}
-                    </Link>
-                  </Button>
-                ) : null}
               </div>
             </div>
           </div>
         </section>
 
-        <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
+        <div className="mx-auto w-full px-6 pt-6 pb-12 lg:px-8">
           {loading ? (
             <div className="flex justify-center py-20">
               <Loader2 className="size-8 animate-spin text-[#0069D3]" />
             </div>
           ) : (
-            <Tabs key={defaultTab} defaultValue={defaultTab}>
-              <TabsList
-                variant="line"
-                className="mb-8 w-full justify-start overflow-x-auto overflow-y-hidden"
-              >
+            <Tabs value={defaultTab} onValueChange={changeProfileTab}>
+              <TabsList className="mb-6 w-full justify-start overflow-x-auto overflow-y-hidden rounded-full bg-[#F3F3F7] p-0.5 shadow-xs dark:bg-zinc-900/90 group-data-[orientation=horizontal]/tabs:h-auto">
+                <TabsTrigger className={profileTabClassName} value="general">
+                  <UserRound /> {t("navPersonal")}
+                </TabsTrigger>
                 {headerRole === "FREELANCER" && profileId ? (
-                  <TabsTrigger value="professional">
+                  <TabsTrigger
+                    className={profileTabClassName}
+                    value="professional"
+                  >
                     <BriefcaseBusiness /> {t("navProfessional")}
                   </TabsTrigger>
                 ) : null}
-                <TabsTrigger value="general">
-                  <UserRound /> {t("navGeneral")}
-                </TabsTrigger>
+
                 {headerRole === "FREELANCER" && canViewIdentityTab ? (
-                  <TabsTrigger value="identity">
+                  <TabsTrigger className={profileTabClassName} value="identity">
                     <ShieldCheck /> {t("navIdentity")}
                   </TabsTrigger>
                 ) : null}
                 {headerRole === "CLIENT" ? (
-                  <TabsTrigger value="company">
+                  <TabsTrigger className={profileTabClassName} value="company">
                     <Building2 /> {t("navCompany")}
                   </TabsTrigger>
                 ) : null}
                 {canViewSocialLinks ? (
-                  <TabsTrigger value="social">
+                  <TabsTrigger className={profileTabClassName} value="social">
                     <Link2 /> {t("navSocial")}
                   </TabsTrigger>
                 ) : null}
                 {canViewReviews ? (
-                  <TabsTrigger value="reviews">
+                  <TabsTrigger className={profileTabClassName} value="reviews">
                     <Star /> {t("navReviews")}
                   </TabsTrigger>
                 ) : null}
                 {headerRole === "CLIENT" && canViewFollowingTab ? (
-                  <TabsTrigger value="following">
+                  <TabsTrigger
+                    className={profileTabClassName}
+                    value="following"
+                  >
                     <UserCheck /> {t("navFollowing")}
                   </TabsTrigger>
                 ) : null}
                 {headerRole === "CLIENT" && canViewFavorites ? (
-                  <TabsTrigger value="favorites">
+                  <TabsTrigger
+                    className={profileTabClassName}
+                    value="favorites"
+                  >
                     <Heart /> {t("navFavorites")}
                   </TabsTrigger>
                 ) : null}
-                <TabsTrigger value="payments">
-                  <CreditCard /> Payments
-                </TabsTrigger>
               </TabsList>
 
               {headerRole === "FREELANCER" && profileId ? (
-                <TabsContent value="professional">
+                <TabsContent className="mt-0" value="professional">
                   <FreelancerProfessionalSettings
                     profileId={profileId}
                     userId={userId}
@@ -631,11 +632,26 @@ export function AccountProfileClient({
                 </TabsContent>
               ) : null}
 
-              <TabsContent value="general">
-                <GeneralSettings />
+              <TabsContent className="mt-0" value="general">
+                <GeneralSettings
+                  hideFreelancerFields
+                  showAppearance={false}
+                  accent="blue"
+                  freelancerOverview={
+                    headerRole === "FREELANCER" && profileId
+                      ? {
+                          profileId,
+                          socialLinks,
+                          onEditProfessional: () =>
+                            changeProfileTab("professional"),
+                          onEditSocial: () => changeProfileTab("social"),
+                        }
+                      : undefined
+                  }
+                />
               </TabsContent>
 
-              <TabsContent value="company">
+              <TabsContent className="mt-0" value="company">
                 <div className="rounded-xl border border-border p-5 sm:p-6">
                   <h2 className="text-base font-semibold tracking-tight text-foreground">
                     {t("companyInfoTitle")}
@@ -690,7 +706,7 @@ export function AccountProfileClient({
                     </div>
                     {canUpdateClientProfile && (
                       <Button
-                        className="bg-[#0069D3] text-white hover:bg-[#005bb8]"
+                        className="bg-[#0069D3] text-white hover:bg-[#0058b3]"
                         disabled={pending === "company"}
                       >
                         {pending === "company" ? (
@@ -704,8 +720,10 @@ export function AccountProfileClient({
               </TabsContent>
 
               {canViewIdentityTab && (
-                <TabsContent value="identity">
-                  <div className={`grid gap-8 ${canAiCheck || canUploadIdentityDoc ? "lg:grid-cols-[1fr_360px]" : "max-w-xl"}`}>
+                <TabsContent className="mt-0" value="identity">
+                  <div
+                    className={`grid gap-8 ${canAiCheck || canUploadIdentityDoc ? "lg:grid-cols-[minmax(0,1fr)_420px]" : "max-w-xl"}`}
+                  >
                     {(canAiCheck || canUploadIdentityDoc) && (
                       <div className="rounded-xl border border-border p-5 sm:p-6">
                         <h2 className="text-base font-semibold tracking-tight text-foreground">
@@ -714,20 +732,22 @@ export function AccountProfileClient({
                         <p className="mt-1 text-sm text-muted-foreground">
                           {t("aiCheckHint")}
                         </p>
-                        <IdentityVerificationForm onSubmitted={() => void load()} />
+                        <IdentityVerificationForm
+                          onSubmitted={() => void load()}
+                        />
                       </div>
                     )}
 
                     {canViewIdentityStatus && (
                       <div className="rounded-xl border border-border p-5 sm:p-6">
-                        <h2 className="text-base font-semibold tracking-tight text-foreground">
-                          {t("verificationStatusTitle")}
-                        </h2>
-                        <div className="mt-5 space-y-4">
+                        <div className="flex items-start justify-between gap-3">
+                          <h2 className="text-base font-semibold tracking-tight text-foreground">
+                            {t("verificationStatusTitle")}
+                          </h2>
                           <Badge
                             className={
                               identity?.status === VerificationStatus.APPROVED
-                                ? "border-transparent bg-emerald-600 text-white hover:bg-emerald-600"
+                                ? "border-transparent bg-[#0069D3] text-white hover:bg-[#0069D3]"
                                 : ""
                             }
                             variant={
@@ -738,64 +758,110 @@ export function AccountProfileClient({
                           >
                             {verificationStatusLabel(identity?.status)}
                           </Badge>
+                        </div>
+                        <div className="mt-5 space-y-4">
                           {identity?.status !== VerificationStatus.APPROVED ? (
                             <p className="rounded-md border border-border bg-muted/40 p-3 text-xs text-muted-foreground">
                               {t("dashboardLockedHint")}
                             </p>
                           ) : null}
                           {identity?.documents.length ? (
-                            <ul className="divide-y divide-border border-y border-border">
-                              {identity.documents.map((document) => (
-                                <li
-                                  key={document.id}
-                                  className="flex items-center justify-between gap-3 py-3"
+                            identityVisible ? (
+                              <>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => setIdentityVisible(false)}
+                                  className="gap-2 text-[#0069D3]"
                                 >
-                                  <div>
-                                    <p className="font-medium text-foreground">
-                                      {documentTypeLabel(document.documentType)}
-                                    </p>
-                                    <p className="text-xs text-muted-foreground">
-                                      {format.dateTime(
-                                        new Date(document.createdAt),
-                                        {
-                                          dateStyle: "medium",
-                                          timeStyle: "short",
-                                        },
-                                      )}
-                                    </p>
-                                    {document.reviewNotes ? (
-                                      <p className="mt-1 text-sm text-destructive">
-                                        {document.reviewNotes}
-                                      </p>
-                                    ) : null}
-                                  </div>
-                                  <div className="flex shrink-0 items-start gap-2">
-                                    {canDownloadIdentityDoc ? (
-                                      <>
-                                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                                        <img
-                                          src={document.fileUrl}
-                                          alt={`${documentTypeLabel(document.documentType)} — ${t("frontImageLabel")}`}
-                                          className="h-16 w-24 rounded-md border border-border object-cover"
-                                        />
-                                        {document.backFileUrl ? (
-                                          /* eslint-disable-next-line @next/next/no-img-element */
-                                          <img
-                                            src={document.backFileUrl}
-                                            alt={`${documentTypeLabel(document.documentType)} — ${t("backImageLabel")}`}
-                                            className="h-16 w-24 rounded-md border border-border object-cover"
-                                          />
+                                  <EyeOff className="size-4" />
+                                  {t("hideIdentityDetails")}
+                                </Button>
+                                <ul className="divide-y divide-border border-y border-border">
+                                  {identity.documents.map((document) => (
+                                    <li
+                                      key={document.id}
+                                      className="flex flex-col gap-4 py-4"
+                                    >
+                                      <div>
+                                        <p className="font-medium text-foreground">
+                                          {documentTypeLabel(
+                                            document.documentType,
+                                          )}
+                                        </p>
+                                        <p className="text-xs text-muted-foreground">
+                                          {format.dateTime(
+                                            new Date(document.createdAt),
+                                            {
+                                              dateStyle: "medium",
+                                              timeStyle: "short",
+                                            },
+                                          )}
+                                        </p>
+                                        {document.reviewNotes ? (
+                                          <p className="mt-1 text-sm text-destructive">
+                                            {document.reviewNotes}
+                                          </p>
                                         ) : null}
-                                      </>
-                                    ) : (
-                                      <div className="flex h-16 w-24 items-center justify-center rounded-md border border-border bg-muted/40 text-xs text-muted-foreground">
-                                        {documentTypeLabel(document.documentType)}
                                       </div>
-                                    )}
-                                  </div>
-                                </li>
-                              ))}
-                            </ul>
+                                      <div className="flex min-w-0 flex-col gap-4">
+                                        {canDownloadIdentityDoc ? (
+                                          <>
+                                            <span className="text-xs font-medium text-muted-foreground">
+                                              {t("frontImageLabel")}
+                                            </span>
+                                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                                            <img
+                                              src={document.fileUrl}
+                                              alt={`${documentTypeLabel(document.documentType)} — ${t("frontImageLabel")}`}
+                                              className="aspect-[1.586] w-full rounded-lg border border-border object-contain bg-muted/20"
+                                            />
+                                            {document.backFileUrl ? (
+                                              <>
+                                                <span className="text-xs font-medium text-muted-foreground">
+                                                  {t("backImageLabel")}
+                                                </span>
+                                                {/* eslint-disable-next-line @next/next/no-img-element */}
+                                                <img
+                                                  src={document.backFileUrl}
+                                                  alt={`${documentTypeLabel(document.documentType)} — ${t("backImageLabel")}`}
+                                                  className="aspect-[1.586] w-full rounded-lg border border-border object-contain bg-muted/20"
+                                                />
+                                              </>
+                                            ) : null}
+                                          </>
+                                        ) : (
+                                          <div className="flex h-16 w-24 items-center justify-center rounded-md border border-border bg-muted/40 text-xs text-muted-foreground">
+                                            {documentTypeLabel(
+                                              document.documentType,
+                                            )}
+                                          </div>
+                                        )}
+                                      </div>
+                                    </li>
+                                  ))}
+                                </ul>
+                              </>
+                            ) : (
+                              <button
+                                type="button"
+                                onClick={() => setIdentityVisible(true)}
+                                aria-expanded={false}
+                                className="relative flex min-h-64 w-full flex-col items-center justify-center gap-3 overflow-hidden rounded-xl border border-dashed border-blue-200 bg-blue-50/60 p-6 text-center transition-colors hover:bg-blue-100/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0069D3] dark:border-blue-900 dark:bg-blue-950/20 dark:hover:bg-blue-950/40"
+                              >
+                                <LockKeyhole className="size-8 text-[#0069D3]" />
+                                <span className="text-sm font-semibold">
+                                  {t("identityHiddenTitle")}
+                                </span>
+                                <span className="text-xs text-muted-foreground">
+                                  {t("identityHiddenHint")}
+                                </span>
+                                <span className="inline-flex items-center gap-2 rounded-full bg-[#0069D3] px-4 py-2 text-xs font-semibold text-white">
+                                  <Eye className="size-4" />
+                                  {t("showIdentityDetails")}
+                                </span>
+                              </button>
+                            )
                           ) : (
                             <p className="text-sm text-muted-foreground">
                               {t("noDocumentsYet")}
@@ -809,14 +875,17 @@ export function AccountProfileClient({
               )}
 
               {canViewSocialLinks && (
-                <TabsContent value="social">
+                <TabsContent className="mt-0" value="social">
                   <div className="grid gap-8 lg:grid-cols-[360px_1fr]">
                     {canAddSocialLink && (
                       <div className="rounded-xl border border-border p-5 sm:p-6">
                         <h2 className="text-base font-semibold tracking-tight text-foreground">
                           {tSettings("addSocialLink")}
                         </h2>
-                        <form className="mt-5 space-y-4" onSubmit={addSocialLink}>
+                        <form
+                          className="mt-5 space-y-4"
+                          onSubmit={addSocialLink}
+                        >
                           <Select
                             value={platform}
                             onValueChange={(value) =>
@@ -839,10 +908,12 @@ export function AccountProfileClient({
                             required
                             placeholder="https://..."
                             value={socialUrl}
-                            onChange={(event) => setSocialUrl(event.target.value)}
+                            onChange={(event) =>
+                              setSocialUrl(event.target.value)
+                            }
                           />
                           <Button
-                            className="bg-[#0069D3] text-white hover:bg-[#005bb8]"
+                            className="bg-[#0069D3] text-white hover:bg-[#0058b3]"
                             disabled={pending === "social"}
                           >
                             <Plus /> {tSettings("addLink")}
@@ -864,7 +935,7 @@ export function AccountProfileClient({
                             >
                               <Link2 className="size-4 shrink-0 text-[#0069D3]" />
                               <a
-                                className="min-w-0 flex-1 truncate text-sm text-[#0069D3] transition-colors hover:text-[#005bb8]"
+                                className="min-w-0 flex-1 truncate text-sm text-[#0069D3] transition-colors hover:text-[#0058b3]"
                                 href={link.url}
                                 target="_blank"
                                 rel="noreferrer"
@@ -897,22 +968,20 @@ export function AccountProfileClient({
                 </TabsContent>
               )}
 
-              <TabsContent value="reviews">
+              <TabsContent className="mt-0" value="reviews">
                 {!isPermissionLoading && !canViewReviews ? (
                   <div className="rounded-xl border border-dashed border-border p-8 text-center text-muted-foreground">
                     <p className="font-semibold text-foreground">
                       {t("noPermissionTitle")}
                     </p>
-                    <p className="mt-1 text-sm">
-                      {t("noPermissionReviews")}
-                    </p>
+                    <p className="mt-1 text-sm">{t("noPermissionReviews")}</p>
                   </div>
                 ) : userId ? (
                   <ReviewManager userId={userId} />
                 ) : null}
               </TabsContent>
 
-              <TabsContent value="following">
+              <TabsContent className="mt-0" value="following">
                 <section aria-labelledby="following-heading">
                   <div className="border-b border-border pb-5">
                     <div>
@@ -1016,7 +1085,7 @@ export function AccountProfileClient({
                     </div>
                   ) : !freelancers.length ? (
                     <div className="mt-6 rounded-xl border border-dashed border-border px-6 py-14 text-center">
-                      <div className="mx-auto mb-4 flex size-14 items-center justify-center rounded-full bg-[#D0E1F8] text-[#0069D3] dark:bg-blue-950/60 dark:text-blue-300">
+                      <div className="mx-auto mb-4 flex size-14 items-center justify-center rounded-full bg-[#D0E1F8] text-[#0069D3] dark:bg-[#0069D3]/15">
                         <UserPlus className="size-7" />
                       </div>
                       <p className="text-lg font-medium text-foreground">
@@ -1045,7 +1114,7 @@ export function AccountProfileClient({
                       </p>
                       <Button
                         variant="link"
-                        className="mt-2 text-[#0069D3] dark:text-blue-400"
+                        className="mt-2 text-[#0069D3] dark:text-[#93c5fd]"
                         onClick={() => {
                           setFreelancerQuery("");
                           if (freelancerView === "following") {
@@ -1082,18 +1151,23 @@ export function AccountProfileClient({
                                   alt={displayName}
                                   className="object-cover"
                                 />
-                                <AvatarFallback className="bg-[#D0E1F8] text-lg font-semibold text-[#0069D3] dark:bg-blue-950/60 dark:text-blue-300">
+                                <AvatarFallback className="bg-[#D0E1F8] text-lg font-semibold text-[#0069D3] dark:bg-[#0069D3]/15 dark:text-[#93c5fd]">
                                   {displayName.charAt(0).toUpperCase()}
                                 </AvatarFallback>
                               </Avatar>
 
                               <div className="min-w-0 flex-1">
-                                <Link
-                                  href={`/profiles/${freelancer.profile.id}`}
-                                  className="block truncate text-base font-semibold tracking-tight text-foreground hover:text-[#0069D3] hover:underline hover:underline-offset-4 dark:hover:text-blue-400"
+                                <button
+                                  type="button"
+                                  onClick={() =>
+                                    setSelectedFreelancerProfileId(
+                                      freelancer.profile.id,
+                                    )
+                                  }
+                                  className="block truncate text-base font-semibold tracking-tight text-foreground hover:text-[#0069D3] hover:underline hover:underline-offset-4 dark:hover:text-[#93c5fd]"
                                 >
                                   {displayName}
-                                </Link>
+                                </button>
                                 <p className="mt-0.5 line-clamp-1 text-sm text-muted-foreground">
                                   {freelancer.profile.freelancerProfile.title ??
                                     tRole("FREELANCER")}
@@ -1108,7 +1182,7 @@ export function AccountProfileClient({
                                     .idVerified ? (
                                     <Badge
                                       variant="outline"
-                                      className="border-[#0069D3]/25 text-[#0069D3] dark:text-blue-400"
+                                      className="border-[#0069D3]/25 text-[#0069D3] dark:text-[#93c5fd]"
                                     >
                                       <ShieldCheck /> {tCommon("verified")}
                                     </Badge>
@@ -1123,7 +1197,7 @@ export function AccountProfileClient({
                                   <Badge
                                     key={skill.id}
                                     variant="secondary"
-                                    className="border border-[#0069D3]/20 bg-[#D0E1F8]/40 text-[#0069D3] dark:border-[#0069D3]/30 dark:bg-blue-950/40 dark:text-blue-300"
+                                    className="border border-[#0069D3]/20 bg-[#D0E1F8] dark:border-[#0069D3]/30 dark:bg-[#0069D3]/10"
                                   >
                                     {skill.skill.name}
                                   </Badge>
@@ -1147,11 +1221,16 @@ export function AccountProfileClient({
                                 className="flex-1 active:translate-y-px"
                                 asChild
                               >
-                                <Link
-                                  href={`/profiles/${freelancer.profile.id}`}
+                                <button
+                                  type="button"
+                                  onClick={() =>
+                                    setSelectedFreelancerProfileId(
+                                      freelancer.profile.id,
+                                    )
+                                  }
                                 >
                                   {tSettings("viewProfile")}
-                                </Link>
+                                </button>
                               </Button>
 
                               {freelancer.isFollowing ? (
@@ -1161,7 +1240,7 @@ export function AccountProfileClient({
                                       <Button
                                         variant="outline"
                                         size="sm"
-                                        className="border-[#0069D3]/35 text-[#0069D3] hover:bg-destructive/10 hover:text-destructive dark:text-blue-400"
+                                        className="border-[#0069D3]/35 text-[#0069D3] hover:bg-destructive/10 hover:text-destructive dark:text-[#93c5fd]"
                                         disabled={isPending}
                                       >
                                         {isPending ? (
@@ -1204,7 +1283,7 @@ export function AccountProfileClient({
                               ) : canFollowFreelancer ? (
                                 <Button
                                   size="sm"
-                                  className="bg-[#0069D3] text-white hover:bg-[#005bb8] active:translate-y-px"
+                                  className="bg-[#0069D3] text-white hover:bg-[#0058b3] active:translate-y-px"
                                   disabled={isPending}
                                   onClick={() =>
                                     void followFreelancer(freelancer)
@@ -1227,15 +1306,16 @@ export function AccountProfileClient({
                 </section>
               </TabsContent>
 
-              <TabsContent value="favorites">
+              <TabsContent className="mt-0" value="favorites">
                 {favorites.length ? (
                   <ul className="divide-y divide-border border-y border-border">
                     {favorites.map((favorite) => (
                       <li key={favorite.freelancerId}>
-                        <div className="flex items-start gap-4 px-3 py-5 transition-colors hover:bg-[#D0E1F8]/30 sm:px-5 dark:hover:bg-white/4">
+                        <div className="flex items-start gap-4 px-3 py-5 transition-colors hover:bg-[#D0E1F8]/35 sm:px-5 dark:hover:bg-white/4">
                           <div className="min-w-0 flex-1">
                             <p className="text-lg font-semibold tracking-tight text-foreground">
-                              {favorite.profile.displayName ?? tRole("FREELANCER")}
+                              {favorite.profile.displayName ??
+                                tRole("FREELANCER")}
                             </p>
                             <p className="text-sm text-muted-foreground">
                               {favorite.profile.freelancerProfile.title ??
@@ -1248,7 +1328,7 @@ export function AccountProfileClient({
                                   <Badge
                                     key={skill.id}
                                     variant="secondary"
-                                    className="border border-[#0069D3]/20 bg-[#D0E1F8]/40 text-[#0069D3] dark:border-[#0069D3]/30 dark:bg-blue-950/40 dark:text-blue-300"
+                                    className="border border-[#0069D3]/20 bg-[#D0E1F8] dark:border-[#0069D3]/30 dark:bg-[#0069D3]/10"
                                   >
                                     {skill.skill.name}
                                   </Badge>
@@ -1260,9 +1340,16 @@ export function AccountProfileClient({
                               size="sm"
                               asChild
                             >
-                              <Link href={`/profiles/${favorite.profile.id}`}>
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  setSelectedFreelancerProfileId(
+                                    favorite.profile.id,
+                                  )
+                                }
+                              >
                                 {tSettings("viewProfile")}
-                              </Link>
+                              </button>
                             </Button>
                           </div>
                           {canRemoveFavorite ? (
@@ -1285,7 +1372,7 @@ export function AccountProfileClient({
                   </ul>
                 ) : (
                   <div className="rounded-xl border border-dashed border-border px-6 py-16 text-center">
-                    <div className="mx-auto mb-4 flex size-14 items-center justify-center rounded-full bg-[#D0E1F8] text-[#0069D3] dark:bg-blue-950/60 dark:text-blue-300">
+                    <div className="mx-auto mb-4 flex size-14 items-center justify-center rounded-full bg-[#D0E1F8] text-[#0069D3] dark:bg-[#0069D3]/15">
                       <Heart className="size-7" />
                     </div>
                     <p className="text-lg font-medium text-foreground">
@@ -1295,7 +1382,7 @@ export function AccountProfileClient({
                       {tSettings("noFavoritesHint")}
                     </p>
                     <Button
-                      className="mt-6 bg-[#0069D3] text-white hover:bg-[#005bb8]"
+                      className="mt-6 bg-[#0069D3] text-white hover:bg-[#0058b3]"
                       asChild
                     >
                       <Link href="/forum">{t("visitForum")}</Link>
@@ -1303,14 +1390,17 @@ export function AccountProfileClient({
                   </div>
                 )}
               </TabsContent>
-
-              <TabsContent value="payments">
-                <PaymentSettings userRole={headerRole} />
-              </TabsContent>
             </Tabs>
           )}
         </div>
       </main>
+      <FreelancerProfileSheet
+        profileId={selectedFreelancerProfileId}
+        open={selectedFreelancerProfileId !== null}
+        onOpenChange={(open) => {
+          if (!open) setSelectedFreelancerProfileId(null);
+        }}
+      />
       {!embedded && <Footer />}
     </div>
   );

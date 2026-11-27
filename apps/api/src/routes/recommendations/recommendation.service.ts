@@ -24,7 +24,10 @@ import {
   buildJobPayload,
   buildJobText,
 } from './recommendation.payload';
-import { RecommendationRepository } from './recommendation.repo';
+import {
+  CachedRecommendationRow,
+  RecommendationRepository,
+} from './recommendation.repo';
 
 const RANKING_VERSION = 'hybrid-1.0.0';
 const MAX_CANDIDATES = 35;
@@ -129,34 +132,37 @@ export class RecommendationService {
       };
     } catch (error) {
       this.logger.warn(
-        `Failed to rank jobs via AI service for user ${userId}, falling back to unranked jobs: ${
+        `Failed to rank jobs via AI service for user ${userId}, falling back to cached recommendations: ${
           error instanceof Error ? error.message : error
         }`,
       );
 
+      const fallback = await this.rankFromCache({
+        requesterId: userId,
+        sourceType: 'CV',
+        sourceDocumentId: cv.profileId,
+        targetType: 'JOB',
+        candidates: jobs,
+        getId: (job) => job.id,
+        limit: query.limit,
+      });
+
       return {
-        data: jobs.slice(0, query.limit).map((job) => ({
-          recommendationId: null,
-          score: 0,
-          components: {
-            semantic: 0,
-            skills: 0,
-            experience: 0,
-            budget: 0,
-            preferences: 0,
-            keyword: null,
-          },
+        data: fallback.map(({ doc, recommendationId, score, components }) => ({
+          recommendationId,
+          score,
+          components,
           job: {
-            id: job.id,
-            slug: job.slug,
-            title: job.title,
-            description: job.description,
-            budgetMin: job.budgetMin,
-            budgetMax: job.budgetMax,
-            budgetType: job.budgetType,
-            status: job.status,
-            skills: job.skills,
-            createdAt: job.createdAt,
+            id: doc.id,
+            slug: doc.slug,
+            title: doc.title,
+            description: doc.description,
+            budgetMin: doc.budgetMin,
+            budgetMax: doc.budgetMax,
+            budgetType: doc.budgetType,
+            status: doc.status,
+            skills: doc.skills,
+            createdAt: doc.createdAt,
           },
         })),
       };
@@ -255,23 +261,26 @@ export class RecommendationService {
       };
     } catch (error) {
       this.logger.warn(
-        `Failed to rank freelancers via AI service for user ${userId}, falling back to unranked freelancers: ${
+        `Failed to rank freelancers via AI service for user ${userId}, falling back to cached recommendations: ${
           error instanceof Error ? error.message : error
         }`,
       );
 
+      const fallback = await this.rankFromCache({
+        requesterId: userId,
+        sourceType: 'JOB',
+        sourceDocumentId: job.id,
+        targetType: 'CV',
+        candidates: freelancers,
+        getId: (doc) => doc.profileId,
+        limit: query.limit,
+      });
+
       return {
-        data: freelancers.slice(0, query.limit).map((doc) => ({
-          recommendationId: null,
-          score: 0,
-          components: {
-            semantic: 0,
-            skills: 0,
-            experience: 0,
-            budget: 0,
-            preferences: 0,
-            keyword: null,
-          },
+        data: fallback.map(({ doc, recommendationId, score, components }) => ({
+          recommendationId,
+          score,
+          components,
           profileId: doc.profileId,
           userId: doc.userId,
           displayName: doc.displayName,
@@ -403,6 +412,74 @@ export class RecommendationService {
     });
 
     return { embeddingModel: model, items };
+  }
+
+  /**
+   * Fallback khi AI service tắt/lỗi: lấy lại điểm số đã tính và lưu gần nhất
+   * trong bảng `Recommendation` để UI không bị rơi về 0%.
+   */
+  private async rankFromCache<T>(input: {
+    requesterId: number;
+    sourceType: 'CV' | 'JOB';
+    sourceDocumentId: number;
+    targetType: 'CV' | 'JOB';
+    candidates: T[];
+    getId: (doc: T) => number;
+    limit: number;
+  }) {
+    const targetDocumentIds = input.candidates.map(input.getId);
+    const cachedRows: CachedRecommendationRow[] =
+      typeof this.repository.findLatestRecommendations === 'function'
+        ? await this.repository
+            .findLatestRecommendations({
+              requesterId: input.requesterId,
+              sourceType: input.sourceType,
+              sourceDocumentId: input.sourceDocumentId,
+              targetType: input.targetType,
+              targetDocumentIds,
+            })
+            .catch((err) => {
+              this.logger.warn('Failed to load cached recommendations', err);
+              return [];
+            })
+        : [];
+
+    const cachedByTarget = new Map(
+      cachedRows.map((row) => [row.targetDocumentId, row] as const),
+    );
+
+    return input.candidates
+      .map((doc, index) => {
+        const cached = cachedByTarget.get(input.getId(doc));
+        return {
+          index,
+          doc,
+          recommendationId: cached?.id ?? null,
+          score: cached ? safe(cached.finalScore) : 0,
+          components: cached
+            ? {
+                semantic: safe(cached.semanticScore),
+                skills: safe(cached.skillScore),
+                experience: safe(cached.experienceScore),
+                budget: safe(cached.budgetScore),
+                preferences: safe(cached.preferenceScore),
+                keyword: null,
+              }
+            : {
+                semantic: 0,
+                skills: 0,
+                experience: 0,
+                budget: 0,
+                preferences: 0,
+                keyword: null,
+              },
+        };
+      })
+      .sort((a, b) => {
+        if (b.score !== a.score) return b.score - a.score;
+        return a.index - b.index;
+      })
+      .slice(0, input.limit);
   }
 }
 

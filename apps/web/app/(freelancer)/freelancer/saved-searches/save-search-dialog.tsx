@@ -36,6 +36,8 @@ import { Label } from "@repo/ui/components/shadcn/label";
 import { toastError, toastSuccess } from "@repo/ui/components/shadcn/toast";
 import type { JobCategoryBrowseItemType, SavedSearchType } from "@shared/types";
 
+import { SavedSearchDetailDialog } from "./saved-search-detail-dialog";
+
 // ==========================================
 // Helper functions for parameter normalization & matching
 // ==========================================
@@ -44,6 +46,7 @@ export function getSavedSearchErrorMessage(
   error: unknown,
   fallbackMessage: string,
   limitReachedMessage?: string,
+  duplicateNameMessage?: string,
 ): string {
   if (error && typeof error === "object") {
     const apiError = (
@@ -61,12 +64,24 @@ export function getSavedSearchErrorMessage(
     if (Array.isArray(details)) {
       for (const issue of details) {
         if (
+          issue.message === "Error.SavedSearchDuplicateName" ||
+          issue.message?.includes("DuplicateName")
+        ) {
+          return duplicateNameMessage || fallbackMessage;
+        }
+        if (
           issue.message === "Error.SavedSearchLimitExceeded" ||
           issue.message?.includes("LimitExceeded")
         ) {
           return limitReachedMessage || fallbackMessage;
         }
       }
+    }
+    if (
+      apiError?.message === "Error.SavedSearchDuplicateName" ||
+      apiError?.message?.includes("DuplicateName")
+    ) {
+      return duplicateNameMessage || fallbackMessage;
     }
     if (
       apiError?.message === "Error.SavedSearchLimitExceeded" ||
@@ -76,6 +91,9 @@ export function getSavedSearchErrorMessage(
     }
     if (typeof (error as { message?: unknown }).message === "string") {
       const msg = (error as { message: string }).message;
+      if (msg.includes("DuplicateName")) {
+        return duplicateNameMessage || fallbackMessage;
+      }
       if (msg.includes("LimitExceeded") || msg.includes("limit")) {
         return limitReachedMessage || fallbackMessage;
       }
@@ -371,6 +389,7 @@ export function SaveSearchModal({
   const isSaveDisabled =
     isSubmitting ||
     !name.trim() ||
+    isNameDuplicate ||
     (isCurrentSearchSaved ? !isNameChanged : isLimitReached);
 
   const handleOpen = () => {
@@ -381,6 +400,10 @@ export function SaveSearchModal({
   const handleSave = async (e: FormEvent) => {
     e.preventDefault();
     if (!name.trim()) return;
+    if (isNameDuplicate) {
+      toastError({ message: t("duplicateNameWarning") });
+      return;
+    }
     if (isCurrentSearchSaved && !isNameChanged) return;
 
     setIsSubmitting(true);
@@ -412,6 +435,7 @@ export function SaveSearchModal({
           error,
           t("saveFailed"),
           t("limitReached"),
+          t("duplicateNameWarning"),
         ),
       });
     } finally {
@@ -587,6 +611,7 @@ export function SavedSearchesDialog({
   const setOpen = setControlledOpen || setUncontrolledOpen;
 
   const [deletingItem, setDeletingItem] = useState<SavedSearchType | null>(null);
+  const [viewingItem, setViewingItem] = useState<SavedSearchType | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const searchSummary = (params: SavedSearchType["searchParams"]) => {
@@ -710,17 +735,13 @@ export function SavedSearchesDialog({
                     {/* Actions: ONLY "Xem chi tiết" and "Xóa" */}
                     <div className="flex items-center gap-1 shrink-0">
                       <Button
-                        asChild
+                        type="button"
                         variant="ghost"
                         size="sm"
-                        className="h-8 rounded-lg text-xs font-semibold text-[#0069D3] hover:bg-blue-50 dark:hover:bg-blue-950/60 px-2.5"
+                        className="h-8 rounded-lg text-xs font-semibold text-[#0069D3] hover:bg-blue-50 dark:hover:bg-blue-950/60 px-2.5 cursor-pointer"
+                        onClick={() => setViewingItem(savedSearch)}
                       >
-                        <Link
-                          href={`/freelancer/saved-searches/${savedSearch.id}`}
-                          onClick={() => setOpen(false)}
-                        >
-                          {t("viewDetails")}
-                        </Link>
+                        {t("viewDetails")}
                       </Button>
 
                       {canDeleteSavedSearch && (
@@ -764,6 +785,18 @@ export function SavedSearchesDialog({
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Detail Popup Dialog */}
+      <SavedSearchDetailDialog
+        savedSearch={viewingItem}
+        open={Boolean(viewingItem)}
+        onOpenChange={(nextOpen) => !nextOpen && setViewingItem(null)}
+        categories={categories}
+        onApply={(savedSearch) => {
+          onApply(savedSearch);
+          setOpen(false);
+        }}
+      />
 
       {/* Delete Confirmation Dialog */}
       {deletingItem ? (

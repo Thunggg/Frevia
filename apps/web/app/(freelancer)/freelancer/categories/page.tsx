@@ -37,24 +37,29 @@ export default async function FreelancerCategoriesPage({
   const search = params.search?.trim() || undefined;
   const t = await getTranslations("jobCategories");
 
-  const result = await jobCategoryServerRequest.getJobCategories({
-    page,
-    limit: CATEGORY_PAGE_SIZE,
-    search,
-  });
+  const [result, suggestionsResult] = await Promise.all([
+    jobCategoryServerRequest.getJobCategories({
+      page,
+      limit: CATEGORY_PAGE_SIZE,
+      search,
+    }),
+    jobCategoryServerRequest
+      .getJobCategories({ page: 1, limit: 50 })
+      .catch(() => null),
+  ]);
 
   // EX-01: không tải được danh mục (lỗi hệ thống/kết nối).
   if (!result) {
     return (
       <div className="flex flex-1 items-center justify-center bg-background px-4 py-16 font-sans">
-        <div className="w-full max-w-md rounded-[28px] border border-border bg-card p-8 text-center">
+        <div className="w-full max-w-md rounded-xl border border-border bg-card p-8 text-center">
           <h1 className="text-base font-semibold text-foreground">
             {t("loadFailedTitle")}
           </h1>
           <p className="mt-2 text-xs text-muted-foreground">
             {t("loadFailedDescription")}
           </p>
-          <Button asChild variant="outline" className="mt-5 rounded-full text-xs">
+          <Button asChild variant="outline" className="mt-5 rounded-lg text-xs">
             <Link href="/freelancer/categories">{t("tryAgain")}</Link>
           </Button>
         </div>
@@ -62,9 +67,16 @@ export default async function FreelancerCategoriesPage({
     );
   }
 
+  const suggestionSource =
+    suggestionsResult?.jobCategories ?? result.jobCategories;
+  const popularCategories = [...suggestionSource]
+    .sort((a, b) => b.jobCount - a.jobCount)
+    .slice(0, 6);
+
   return (
     <CategoryListContent
       initialCategories={result.jobCategories}
+      popularCategories={popularCategories}
       initialPagination={result.pagination}
       initialSearch={search ?? ""}
     />

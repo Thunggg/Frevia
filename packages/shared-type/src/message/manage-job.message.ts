@@ -28,6 +28,7 @@ export const ManageJobMessage = {
   TITLE_TOO_SHORT: "Error.TitleTooShort",
   TITLE_TOO_LONG: "Error.TitleTooLong",
   JOB_TITLE_MUST_BE_ENGLISH: "Error.JobTitleMustBeEnglish",
+  JOB_DUPLICATE_CONTENT: "Error.JobDuplicateContent",
 
   DESCRIPTION_REQUIRED: "Error.DescriptionRequired",
   DESCRIPTION_TOO_SHORT: "Error.DescriptionTooShort",

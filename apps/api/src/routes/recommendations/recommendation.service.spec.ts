@@ -65,6 +65,7 @@ function buildService() {
     listFreelancers: jest.fn(),
     saveRecommendations: jest.fn(),
     findRecommendationById: jest.fn(),
+    findLatestRecommendations: jest.fn(),
     createFeedback: jest.fn(),
     findFreelancerByProfileId: jest.fn(),
   };
@@ -174,5 +175,73 @@ describe('RecommendationService', () => {
         targetDocumentId: 11,
       }),
     ]);
+  });
+
+  it('falls back to cached job recommendations when AI service is unreachable', async () => {
+    const { service, repository, ai } = buildService();
+    const job2: JobDocument = { ...job, id: 8, slug: 'frontend-job', title: 'Frontend' };
+    repository.findFreelancerByUserId.mockResolvedValue(freelancer);
+    repository.listOpenJobs.mockResolvedValue([job, job2]);
+    ai.embed.mockRejectedValue(new Error('AI service is unreachable.'));
+    repository.findLatestRecommendations.mockResolvedValue([
+      {
+        id: 201,
+        targetDocumentId: 8,
+        semanticScore: 0.88,
+        skillScore: 1,
+        experienceScore: 1,
+        budgetScore: 1,
+        preferenceScore: 1,
+        finalScore: 0.93,
+      },
+    ]);
+
+    const result = await service.getRecommendedJobs(2, 'Freelancer', {
+      limit: 10,
+    });
+
+    expect(result.data).toHaveLength(2);
+    // Cached high-scoring job (id 8) should be sorted first with its saved score
+    expect(result.data[0].job.id).toBe(8);
+    expect(result.data[0].recommendationId).toBe(201);
+    expect(result.data[0].score).toBe(0.93);
+    expect(result.data[0].components.skills).toBe(1);
+    // Uncached job (id 5) falls back to 0
+    expect(result.data[1].job.id).toBe(5);
+    expect(result.data[1].recommendationId).toBeNull();
+    expect(result.data[1].score).toBe(0);
+  });
+
+  it('falls back to cached freelancer recommendations when AI service is unreachable', async () => {
+    const { service, repository, ai } = buildService();
+    const freelancer2: FreelancerDocument = { ...freelancer, profileId: 12, userId: 3 };
+    repository.findJobById.mockResolvedValue(job);
+    repository.listFreelancers.mockResolvedValue([freelancer, freelancer2]);
+    ai.embed.mockRejectedValue(new Error('AI service is unreachable.'));
+    repository.findLatestRecommendations.mockResolvedValue([
+      {
+        id: 305,
+        targetDocumentId: 12,
+        semanticScore: 0.75,
+        skillScore: 0.8,
+        experienceScore: 1,
+        budgetScore: 1,
+        preferenceScore: 1,
+        finalScore: 0.82,
+      },
+    ]);
+
+    const result = await service.getRecommendedFreelancers(1, 'Client', {
+      jobId: 5,
+      limit: 10,
+    });
+
+    expect(result.data).toHaveLength(2);
+    expect(result.data[0].profileId).toBe(12);
+    expect(result.data[0].recommendationId).toBe(305);
+    expect(result.data[0].score).toBe(0.82);
+    expect(result.data[1].profileId).toBe(11);
+    expect(result.data[1].recommendationId).toBeNull();
+    expect(result.data[1].score).toBe(0);
   });
 });

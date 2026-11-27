@@ -6,7 +6,7 @@ import type { ProposalStatusType } from "@shared/types";
 import { MyProposalsContent } from "./proposals-content";
 
 type ProposalsPageProps = {
-  searchParams: Promise<{ page?: string; status?: string }>;
+  searchParams: Promise<{ page?: string; limit?: string; status?: string }>;
 };
 
 export async function generateMetadata() {
@@ -32,11 +32,12 @@ export default async function FreelancerProposalsPage({
   const candidatePage = Number(params.page);
   const page =
     Number.isInteger(candidatePage) && candidatePage > 0 ? candidatePage : 1;
+  const limit = Number(params.limit) === 20 ? 20 : 10;
   const status = params.status as ProposalStatusType | undefined;
   const proposals = canViewMyProposals
     ? await proposalServerRequest.getMyProposals({
         page,
-        limit: 10,
+        limit,
         status,
       })
     : null;
@@ -46,6 +47,9 @@ export default async function FreelancerProposalsPage({
       result={proposals}
       embedded={true}
       basePath="/freelancer/proposals"
+      initialPage={page}
+      initialLimit={limit}
+      initialStatus={status ?? null}
     />
   );
 }

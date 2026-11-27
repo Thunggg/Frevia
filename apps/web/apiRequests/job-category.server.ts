@@ -46,7 +46,7 @@ async function jobCategoryServerFetch<T>(
         // Danh mục công việc là dữ liệu công khai: token chỉ gửi kèm khi có.
         ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
       },
-      next: { revalidate: 300 },
+      cache: "no-store",
     });
 
     const contentType = response.headers.get("content-type");
@@ -87,7 +87,7 @@ const jobCategoryServerRequest = {
   getJobCategoryDetail: cache(
     async (
       slug: string,
-      params: Pick<JobCategoryBrowseQueryType, "page" | "limit"> = {},
+      params: Pick<JobCategoryBrowseQueryType, "page" | "limit" | "search"> = {},
     ) => {
       const normalizedSlug = slug.trim();
       if (!normalizedSlug) {

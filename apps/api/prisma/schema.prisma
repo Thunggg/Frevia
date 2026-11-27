@@ -1536,6 +1536,7 @@ enum JobStatus {
   IN_PROGRESS
   COMPLETED
   CLOSED
+  EXPIRED
   CANCELLED
 }
 

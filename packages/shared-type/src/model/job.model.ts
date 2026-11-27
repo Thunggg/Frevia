@@ -16,6 +16,7 @@ export const JobStatusSchema = z.enum([
   "IN_PROGRESS",
   "COMPLETED",
   "CLOSED",
+  "EXPIRED",
   "CANCELLED",
 ]);
 
@@ -24,6 +25,10 @@ export const JobBudgetTypeSchema = z.enum(["FIXED_PRICE"]);
 // SINGLE = chỉ tuyển 1 freelancer (nhận 1 người là các đề xuất còn lại bị từ chối).
 // MULTIPLE = tuyển nhiều người theo positionsRequired, các đề xuất khác giữ nguyên trạng thái.
 export const JobHiringTypeSchema = z.enum(["SINGLE", "MULTIPLE"]);
+
+export const MIN_JOB_POSITIONS_REQUIRED = 1;
+export const MIN_MULTIPLE_JOB_POSITIONS_REQUIRED = 2;
+export const MAX_JOB_POSITIONS_REQUIRED = 50;
 
 export const JobSchema = z.object({
   id: z.number(),
@@ -139,13 +144,22 @@ export const CreateJobBodySchema = z
     // Kiểu tuyển dụng + số lượng cần tuyển (positionsFilled do hệ thống quản lý).
     hiringType: JobHiringTypeSchema.optional().default("SINGLE"),
 
-    positionsRequired: z.coerce
-      .number({ error: ManageJobMessage.POSITIONS_REQUIRED_INVALID })
-      .int(ManageJobMessage.POSITIONS_REQUIRED_INVALID)
-      .min(1, ManageJobMessage.POSITIONS_REQUIRED_INVALID)
-      .max(100, ManageJobMessage.POSITIONS_REQUIRED_INVALID)
-      .optional()
-      .default(1),
+    positionsRequired: z.preprocess(
+      (val) => (val === "" || val === null ? NaN : val),
+      z.coerce
+        .number({ error: ManageJobMessage.POSITIONS_REQUIRED_INVALID })
+        .int(ManageJobMessage.POSITIONS_REQUIRED_INVALID)
+        .min(
+          MIN_JOB_POSITIONS_REQUIRED,
+          ManageJobMessage.POSITIONS_REQUIRED_INVALID,
+        )
+        .max(
+          MAX_JOB_POSITIONS_REQUIRED,
+          ManageJobMessage.POSITIONS_REQUIRED_INVALID,
+        )
+        .optional()
+        .default(MIN_JOB_POSITIONS_REQUIRED),
+    ),
   })
   .strict()
   .superRefine((data, ctx) => {

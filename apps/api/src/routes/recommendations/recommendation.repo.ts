@@ -63,6 +63,17 @@ export type RecommendationRow = {
   embeddingModel: string;
 };
 
+export type CachedRecommendationRow = {
+  id: number;
+  targetDocumentId: number;
+  semanticScore: number;
+  skillScore: number;
+  experienceScore: number;
+  budgetScore: number;
+  preferenceScore: number;
+  finalScore: number;
+};
+
 const freelancerSelect = {
   id: true,
   title: true,
@@ -334,6 +345,45 @@ export class RecommendationRepository {
 
   async findRecommendationById(id: number) {
     return this.prisma.recommendation.findUnique({ where: { id } });
+  }
+
+  /** Lấy bản ghi gợi ý gần nhất đã lưu theo từng target để fallback khi AI offline. */
+  async findLatestRecommendations(params: {
+    requesterId: number;
+    sourceType: AiDocumentType;
+    sourceDocumentId: number;
+    targetType: AiDocumentType;
+    targetDocumentIds: number[];
+  }): Promise<CachedRecommendationRow[]> {
+    if (params.targetDocumentIds.length === 0) {
+      return [];
+    }
+
+    return this.prisma.recommendation.findMany({
+      where: {
+        requesterId: params.requesterId,
+        sourceType: params.sourceType,
+        sourceDocumentId: params.sourceDocumentId,
+        targetType: params.targetType,
+        targetDocumentId: { in: params.targetDocumentIds },
+      },
+      orderBy: [
+        { targetDocumentId: 'asc' },
+        { createdAt: 'desc' },
+        { id: 'desc' },
+      ],
+      distinct: ['targetDocumentId'],
+      select: {
+        id: true,
+        targetDocumentId: true,
+        semanticScore: true,
+        skillScore: true,
+        experienceScore: true,
+        budgetScore: true,
+        preferenceScore: true,
+        finalScore: true,
+      },
+    });
   }
 }
 

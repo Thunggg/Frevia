@@ -17,7 +17,7 @@ export class JobCategoryDetailResponseDto extends createZodDto(
   ViewJobCategoryDetailResponseSchema,
 ) {}
 
-// Query riêng cho trang chi tiết danh mục: phân trang danh sách job thuộc danh mục.
+// Query riêng cho trang chi tiết danh mục: phân trang và tìm kiếm công việc thuộc danh mục.
 export class JobCategoryDetailQueryDto extends createZodDto(
-  JobCategoryBrowseQuerySchema.pick({ page: true, limit: true }),
+  JobCategoryBrowseQuerySchema.pick({ page: true, limit: true, search: true }),
 ) {}

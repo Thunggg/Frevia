@@ -117,6 +117,7 @@ export class JobCategoriesRepository {
     slug: string,
     page: number,
     limit: number,
+    search?: string,
   ): Promise<ViewJobCategoryDetailResponseType> {
     const category = await this.prisma.jobCategory.findFirst({
       where: { ...VISIBLE_CATEGORY_WHERE, slug },
@@ -127,9 +128,15 @@ export class JobCategoriesRepository {
       throw JobCategoryNotFoundException();
     }
 
+    const trimmedSearch = search?.trim();
     const where: Prisma.JobWhereInput = {
       ...VISIBLE_JOB_WHERE,
       jobCategories: { some: { categoryId: category.id } },
+      ...(trimmedSearch
+        ? {
+            title: { contains: trimmedSearch, mode: 'insensitive' },
+          }
+        : {}),
     };
 
     const [jobs, total] = await this.prisma.$transaction([
