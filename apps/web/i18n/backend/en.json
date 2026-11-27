@@ -258,7 +258,7 @@
   "Error.PortfolioTitleRequired": "Portfolio title is required",
   "Error.PortfolioTitleTooLong": "Portfolio title is too long",
   "Error.PositionsRequiredBelowFilled": "Positions needed cannot be lower than the number of freelancers already hired",
-  "Error.PositionsRequiredInvalid": "Positions needed must be a whole number between 1 and 100",
+  "Error.PositionsRequiredInvalid": "Positions needed must be a whole number between 1 and 50",
   "Error.PositionsRequiredMustBeGreaterThanOneForMultiple": "Multiple hiring requires hiring at least 2 freelancers",
   "Error.PositionsRequiredMustBeOneForSingle": "A single-freelancer job can only hire one freelancer",
   "Error.ProfileRevisionAlreadyReviewed": "This profile revision has already been reviewed",
@@ -384,8 +384,10 @@
   "You can only edit your own portfolios.": "You can only edit your own portfolio items",
   "You can only update your own profile.": "You can only update your own profile",
   "Error.SavedSearchLimitExceeded": "You have reached the maximum limit of 30 saved searches. Please delete some before creating a new one.",
+  "Error.SavedSearchDuplicateName": "You already have a saved search with this name.",
   "Error.JobAlertLimitExceeded": "You have reached the maximum limit of 10 job alerts. Please delete some before creating a new one.",
   "Error.JobAlertDuplicateCriteria": "You already have a job alert with these search criteria.",
+  "Error.JobDuplicateContent": "You already have an identical job with the same title, description, budget, category, and skills.",
   "Tài khoản của bạn đã bị khóa bởi Quản trị viên.": "Your account has been suspended by an Administrator.",
   "Phiên đăng nhập này đã bị thu hồi từ một thiết bị khác.": "This session has been revoked from another device."
 }

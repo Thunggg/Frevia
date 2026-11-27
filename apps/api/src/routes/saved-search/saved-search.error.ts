@@ -15,6 +15,11 @@ export const SavedSearchLimitExceededException = () =>
     { message: ManageSavedSearchMessage.LIMIT_EXCEEDED, path: 'limit' },
   ]);
 
+export const SavedSearchDuplicateNameException = () =>
+  new BadRequestException([
+    { message: ManageSavedSearchMessage.DUPLICATE_NAME, path: 'name' },
+  ]);
+
 export const FailedToCreateSavedSearchException = () =>
   new InternalServerErrorException([
     { message: ManageSavedSearchMessage.FAILED_TO_CREATE, path: '' },

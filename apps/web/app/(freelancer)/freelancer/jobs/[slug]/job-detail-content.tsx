@@ -15,14 +15,11 @@ import {
   MessageSquare,
 } from "@/components/icons";
 import {
-  MapPin,
   ShieldCheck,
   Briefcase,
   DollarSign,
   Tag,
   Users,
-  CheckCircle2,
-  HelpCircle,
 } from "lucide-react";
 
 import { accountProfileApi } from "@/apiRequests/account-profile";
@@ -504,10 +501,6 @@ export function JobDetailContent({
                   </h1>
                   <div className="flex flex-wrap items-center gap-4 text-xs sm:text-sm text-muted-foreground pt-1">
                     <span>{t("postedAt", { time: formatPostedTime(job.createdAt) })}</span>
-                    <span className="flex items-center gap-1">
-                      <MapPin className="size-3.5 text-muted-foreground" />
-                      <span>{t("worldwide")}</span>
-                    </span>
                   </div>
                 </div>
 
@@ -614,18 +607,20 @@ export function JobDetailContent({
                 </div>
               </div>
 
-              {/* 5. Location */}
-              <div className="flex items-start gap-3">
-                <MapPin className="size-5 text-muted-foreground mt-0.5 shrink-0" />
-                <div>
-                  <p className="text-sm font-bold text-foreground">
-                    {t("remoteJob")}
-                  </p>
-                  <p className="text-xs text-muted-foreground">
-                    {t("location")}
-                  </p>
+              {/* 5. Expiry Date */}
+              {job.expiryDate && (
+                <div className="flex items-start gap-3">
+                  <CalendarDays className="size-5 text-muted-foreground mt-0.5 shrink-0" />
+                  <div>
+                    <p className="text-sm font-bold text-foreground">
+                      {formatDate(job.expiryDate)}
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      {t("summary.expires")}
+                    </p>
+                  </div>
                 </div>
-              </div>
+              )}
 
               {/* 6. Project Status */}
               <div className="flex items-start gap-3">
@@ -635,7 +630,7 @@ export function JobDetailContent({
                     {tStatus(job.status)}
                   </p>
                   <p className="text-xs text-muted-foreground">
-                    {t("projectType")}
+                    {t("summary.status")}
                   </p>
                 </div>
               </div>
@@ -684,19 +679,8 @@ export function JobDetailContent({
                   <span className="text-foreground">
                     {t("proposalsActivity")}
                   </span>
-                  <HelpCircle className="size-3.5 text-muted-foreground/60" />
                   <span className="font-bold text-foreground ml-1">
                     {realProposalsCount}
-                  </span>
-                </div>
-
-                <div className="flex items-center gap-1.5">
-                  <span className="text-foreground">
-                    {t("lastViewedByClient")}
-                  </span>
-                  <HelpCircle className="size-3.5 text-muted-foreground/60" />
-                  <span className="font-medium text-foreground ml-1">
-                    {formatPostedTime(job.createdAt)}
                   </span>
                 </div>
               </div>
@@ -716,56 +700,45 @@ export function JobDetailContent({
                   })}
                 </p>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-1">
-                  <div className="space-y-2">
-                    <div className="flex items-center gap-3">
-                      {clientAvatar ? (
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img
-                          src={clientAvatar}
-                          alt={clientName ?? t("client")}
-                          className="size-11 rounded-full object-cover border border-border"
-                        />
-                      ) : (
-                        <div className="flex size-11 items-center justify-center rounded-full bg-zinc-100 text-sm font-semibold text-zinc-900 dark:bg-zinc-800 dark:text-zinc-100">
-                          {clientLoading ? "…" : clientInitial}
-                        </div>
-                      )}
-                      <div>
-                        <p className="font-semibold text-foreground text-sm">
-                          {clientLoading ? t("loading") : clientName}
-                        </p>
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-1">
+                  <div className="flex items-center gap-3">
+                    {clientAvatar ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={clientAvatar}
+                        alt={clientName ?? t("client")}
+                        onError={() => setClientAvatar(null)}
+                        className="size-11 rounded-full object-cover border border-border"
+                      />
+                    ) : (
+                      <div className="flex size-11 items-center justify-center rounded-full bg-zinc-100 text-sm font-semibold text-zinc-900 dark:bg-zinc-800 dark:text-zinc-100">
+                        {clientLoading ? "…" : clientInitial}
                       </div>
-                    </div>
-
-                    {!isClientRole && (
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="rounded-xl text-xs font-semibold border-zinc-300 dark:border-zinc-700 cursor-pointer"
-                        onClick={() => {
-                          requireFreelancer(() => {
-                            router.push(
-                              `/conversations/new?participantId=${job.clientId}`,
-                            );
-                          });
-                        }}
-                      >
-                        <MessageSquare className="mr-1.5 size-3.5" />
-                        {t("connectWithClient")}
-                      </Button>
                     )}
+                    <div>
+                      <p className="font-semibold text-foreground text-sm">
+                        {clientLoading ? t("loading") : clientName}
+                      </p>
+                    </div>
                   </div>
 
-                  <div className="space-y-1">
-                    <p className="text-xs font-semibold text-foreground flex items-center gap-1">
-                      <CheckCircle2 className="size-3.5 text-zinc-700 dark:text-zinc-300" />
-                      Payment method verified
-                    </p>
-                    <p className="text-xs text-muted-foreground">
-                      Escrow funded & verified
-                    </p>
-                  </div>
+                  {!isClientRole && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="rounded-xl text-xs font-semibold border-zinc-300 dark:border-zinc-700 cursor-pointer self-start sm:self-auto"
+                      onClick={() => {
+                        requireFreelancer(() => {
+                          router.push(
+                            `/conversations/new?participantId=${job.clientId}`,
+                          );
+                        });
+                      }}
+                    >
+                      <MessageSquare className="mr-1.5 size-3.5" />
+                      {t("connectWithClient")}
+                    </Button>
+                  )}
                 </div>
               </div>
             </section>
@@ -846,7 +819,11 @@ export function JobDetailContent({
                   {relatedJobs.map((item) => (
                     <li key={item.id}>
                       <Link
-                        href={`/job/${item.slug}`}
+                        href={
+                          role === "FREELANCER"
+                            ? `/freelancer/jobs/${item.slug}`
+                            : `/job/${item.slug}`
+                        }
                         className="group flex flex-col sm:flex-row sm:items-center sm:justify-between py-3 transition-colors hover:bg-muted/30 px-2 rounded-lg"
                       >
                         <span className="text-sm font-medium text-foreground group-hover:underline transition-colors">

@@ -12,7 +12,6 @@ const VALID_TABS: HomeTab[] = [
   "most-recent",
   "saved-searches",
   "saved-jobs",
-  "invites",
   "find-clients",
 ];
 
@@ -34,14 +33,12 @@ export async function generateMetadata({
     if (tab === "most-recent") titleSuffix = t("mostRecent");
     else if (tab === "saved-jobs") titleSuffix = t("savedJobs");
     else if (tab === "saved-searches") titleSuffix = t("savedSearches");
-    else if (tab === "invites") titleSuffix = t("invites");
     else if (tab === "find-clients") titleSuffix = t("findClients");
     else titleSuffix = t("bestMatches");
   } catch {
     if (tab === "most-recent") titleSuffix = "Most Recent";
     else if (tab === "saved-jobs") titleSuffix = "Saved Jobs";
     else if (tab === "saved-searches") titleSuffix = "Saved Searches";
-    else if (tab === "invites") titleSuffix = "Invites";
     else if (tab === "find-clients") titleSuffix = "Find Clients";
   }
 

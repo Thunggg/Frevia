@@ -10,6 +10,7 @@ import {
 import {
   FailedToCreateSavedSearchException,
   FailedToLoadSavedSearchException,
+  SavedSearchDuplicateNameException,
   SavedSearchLimitExceededException,
   SavedSearchNotFoundException,
 } from './saved-search.error';
@@ -60,6 +61,11 @@ export class SavedSearchService {
     if (currentCount >= MAX_SAVED_SEARCHES_PER_USER) {
       throw SavedSearchLimitExceededException();
     }
+    const isDuplicateName =
+      await this.savedSearchRepository.existsByNameAndUserId(userId, body.name);
+    if (isDuplicateName) {
+      throw SavedSearchDuplicateNameException();
+    }
     try {
       return await this.savedSearchRepository.create(userId, body);
     } catch (error) {
@@ -75,6 +81,17 @@ export class SavedSearchService {
     id: number,
     body: UpdateSavedSearchBodyType,
   ): Promise<SavedSearchType> {
+    if (body.name !== undefined) {
+      const isDuplicateName =
+        await this.savedSearchRepository.existsByNameAndUserId(
+          userId,
+          body.name,
+          id,
+        );
+      if (isDuplicateName) {
+        throw SavedSearchDuplicateNameException();
+      }
+    }
     const savedSearch = await this.savedSearchRepository.update(
       id,
       userId,

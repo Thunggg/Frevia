@@ -3,6 +3,7 @@ export const ManageSavedSearchMessage = {
   FAILED_TO_CREATE: 'Error.FailedToCreateSavedSearch',
   FAILED_TO_LOAD: 'Error.FailedToLoadSavedSearch',
   LIMIT_EXCEEDED: 'Error.SavedSearchLimitExceeded',
+  DUPLICATE_NAME: 'Error.SavedSearchDuplicateName',
 } as const;
 
 export const MAX_SAVED_SEARCHES_PER_USER = 30;

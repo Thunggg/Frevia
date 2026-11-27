@@ -258,7 +258,7 @@
   "Error.PortfolioTitleRequired": "Vui lòng nhập tiêu đề portfolio",
   "Error.PortfolioTitleTooLong": "Tiêu đề portfolio quá dài",
   "Error.PositionsRequiredBelowFilled": "Số lượng cần tuyển không được nhỏ hơn số freelancer đã tuyển",
-  "Error.PositionsRequiredInvalid": "Số lượng cần tuyển phải là số nguyên từ 1 đến 100",
+  "Error.PositionsRequiredInvalid": "Số lượng cần tuyển phải là số nguyên từ 1 đến 50",
   "Error.PositionsRequiredMustBeGreaterThanOneForMultiple": "Hình thức tuyển nhiều người yêu cầu tuyển từ 2 freelancer trở lên",
   "Error.PositionsRequiredMustBeOneForSingle": "Công việc tuyển một người chỉ có thể tuyển đúng 1 freelancer",
   "Error.ProfileRevisionAlreadyReviewed": "Yêu cầu chỉnh sửa hồ sơ này đã được xử lý",
@@ -384,8 +384,10 @@
   "You can only edit your own portfolios.": "Bạn chỉ có thể sửa mục portfolio của chính mình",
   "You can only update your own profile.": "Bạn chỉ có thể cập nhật hồ sơ của chính mình",
   "Error.SavedSearchLimitExceeded": "Bạn đã đạt giới hạn tối đa 30 tìm kiếm đã lưu. Vui lòng xóa bớt trước khi tạo mới.",
+  "Error.SavedSearchDuplicateName": "Bạn đã có một tìm kiếm đã lưu với tiêu đề này.",
   "Error.JobAlertLimitExceeded": "Bạn đã đạt giới hạn tối đa 10 thông báo việc làm. Vui lòng xóa bớt trước khi tạo mới.",
   "Error.JobAlertDuplicateCriteria": "Bạn đã có một thông báo việc làm với tiêu chí tìm kiếm này.",
+  "Error.JobDuplicateContent": "Bạn đã có một công việc trùng hoàn toàn về tiêu đề, mô tả, ngân sách, danh mục và kỹ năng.",
   "Tài khoản của bạn đã bị khóa bởi Quản trị viên.": "Tài khoản của bạn đã bị khóa bởi Quản trị viên.",
   "Phiên đăng nhập này đã bị thu hồi từ một thiết bị khác.": "Phiên đăng nhập này đã bị thu hồi từ một thiết bị khác."
 }

@@ -6,7 +6,7 @@ import {
   MIN_PROPOSAL_DELIVERY_DAYS,
 } from "../constants/proposal.constant";
 import { ManageProposalMessage } from "../message/manage-proposal.message";
-import { JobHiringTypeSchema } from "./job.model";
+import { JobHiringTypeSchema, JobStatusSchema } from "./job.model";
 
 // Vòng đời đề xuất:
 // DRAFT -> SUBMITTED -> HIRED | REJECTED | WITHDRAWN | EXPIRED
@@ -78,14 +78,7 @@ const ProposalJobSchema = z.object({
   budgetType: z.enum(["FIXED_PRICE"]),
   deadline: z.date().nullable(),
   expiryDate: z.date().nullable(),
-  status: z.enum([
-    "DRAFT",
-    "OPEN",
-    "IN_PROGRESS",
-    "COMPLETED",
-    "CLOSED",
-    "CANCELLED",
-  ]),
+  status: JobStatusSchema,
   // Thông tin tuyển dụng để client biết job còn bao nhiêu vị trí.
   hiringType: JobHiringTypeSchema,
   positionsRequired: z.number().int(),

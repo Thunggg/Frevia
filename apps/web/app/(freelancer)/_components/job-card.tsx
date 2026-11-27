@@ -3,11 +3,11 @@
 import { useFormatter, useTranslations } from "next-intl";
 import Link from "next/link";
 import { useState, type MouseEvent } from "react";
-import { motion } from "motion/react";
 import {
+  Bookmark,
+  BookmarkCheck,
   Calendar,
   Clock,
-  Heart,
   Loader2,
   Tag,
   Users,
@@ -112,7 +112,6 @@ export function JobCard({
   job,
   jobBaseUrl,
   filterBasePath,
-  index = 0,
   canBookmark = false,
   isBookmarked = false,
   isBookmarkPending = false,
@@ -170,7 +169,8 @@ export function JobCard({
 
   // Kiểm tra thời hạn nhận hồ sơ
   const isExpired =
-    job.expiryDate && new Date(job.expiryDate).getTime() < Date.now();
+    job.status === "EXPIRED" ||
+    (job.expiryDate && new Date(job.expiryDate).getTime() < Date.now());
 
   const budgetText =
     job.budgetMin == null || job.budgetMax == null
@@ -189,7 +189,7 @@ export function JobCard({
 
     if (job.status === "IN_PROGRESS") {
       return (
-        <span className="inline-flex items-center rounded-full bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-900 px-2.5 py-0.5 text-xs font-semibold">
+        <span className="inline-flex items-center rounded-md border border-border bg-muted/40 px-2 py-0.5 text-xs font-medium text-foreground">
           {t("statusInProgress")}
         </span>
       );
@@ -197,7 +197,7 @@ export function JobCard({
 
     if (job.status === "COMPLETED") {
       return (
-        <span className="inline-flex items-center rounded-full bg-teal-50 dark:bg-teal-950/60 text-teal-700 dark:text-teal-300 border border-teal-200 dark:border-teal-900 px-2.5 py-0.5 text-xs font-semibold">
+        <span className="inline-flex items-center rounded-md border border-border bg-muted/40 px-2 py-0.5 text-xs font-medium text-foreground">
           {t("statusCompleted")}
         </span>
       );
@@ -205,7 +205,7 @@ export function JobCard({
 
     if (job.status === "CANCELLED") {
       return (
-        <span className="inline-flex items-center rounded-full bg-rose-50 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-900 px-2.5 py-0.5 text-xs font-semibold">
+        <span className="inline-flex items-center rounded-md border border-border bg-muted/40 px-2 py-0.5 text-xs font-medium text-destructive">
           {t("statusCancelled")}
         </span>
       );
@@ -213,25 +213,22 @@ export function JobCard({
 
     if (isExpired) {
       return (
-        <span className="inline-flex items-center rounded-full bg-amber-50 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border border-amber-200 dark:border-amber-900 px-2.5 py-0.5 text-xs font-semibold">
+        <span className="inline-flex items-center rounded-md border border-border bg-muted/40 px-2 py-0.5 text-xs font-medium text-muted-foreground">
           {t("statusExpired")}
         </span>
       );
     }
 
     return (
-      <span className="inline-flex items-center rounded-full bg-blue-50 dark:bg-blue-950/60 text-[#0069D3] dark:text-blue-300 border border-blue-200 dark:border-blue-900 px-2.5 py-0.5 text-xs font-semibold">
+      <span className="inline-flex items-center rounded-md border border-border bg-muted/40 px-2 py-0.5 text-xs font-medium text-foreground">
         {t("statusOpen")}
       </span>
     );
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 6 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.25, delay: index * 0.02 }}
-      className="group relative flex flex-col justify-between rounded-2xl border border-border bg-card p-5 sm:p-6 transition-all hover:border-black/20 dark:hover:border-white/20 hover:shadow-xs font-sans space-y-3"
+    <div
+      className="group relative flex flex-col justify-between rounded-xl border border-border bg-card p-5 font-sans space-y-3"
     >
       {/* Hàng 1: Thời gian đăng + Trạng thái + Đề xuất thực tế + Bookmark */}
       <div className="flex items-center justify-between gap-3 text-xs text-muted-foreground">
@@ -264,17 +261,17 @@ export function JobCard({
                   onViewExplanation(recommendationId, job.title);
                 }
               }}
-              className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors ${
+              className={`inline-flex items-center gap-1 rounded-md border border-border bg-muted/40 px-2 py-0.5 text-xs font-medium text-foreground ${
                 recommendationId && onViewExplanation
-                  ? "border-[#0069D3]/30 bg-[#D0E1F8]/40 text-[#0069D3] hover:bg-[#D0E1F8]/70 dark:bg-[#0069D3]/20 dark:text-blue-300 dark:border-[#0069D3]/30 cursor-pointer"
-                  : "border-border bg-muted/40 text-foreground"
+                  ? "hover:bg-muted cursor-pointer"
+                  : ""
               }`}
             >
               <span>
                 {tRec("matchScore", { score: Math.round(matchScore * 100) })}
               </span>
               {recommendationId && onViewExplanation ? (
-                <span className="text-[10px] font-normal underline opacity-80">
+                <span className="text-[11px] text-muted-foreground underline">
                   {tRec("details")}
                 </span>
               ) : null}
@@ -282,7 +279,7 @@ export function JobCard({
           )}
 
           {job.hiringType === "MULTIPLE" && (
-            <span className="inline-flex items-center rounded-full border border-blue-500/20 bg-blue-50 dark:bg-blue-950/40 px-2.5 py-0.5 text-[11px] font-semibold text-blue-700 dark:text-blue-300">
+            <span className="inline-flex items-center rounded-md bg-muted px-2 py-0.5 text-xs font-medium text-muted-foreground">
               {t("positionsFilledLabel", {
                 filled: job.positionsFilled ?? 0,
                 required: job.positionsRequired ?? 1,
@@ -298,23 +295,17 @@ export function JobCard({
             disabled={isBookmarkPending}
             aria-label={isBookmarked ? tBookmark("remove") : tBookmark("save")}
             onClick={(event) => onToggleBookmark?.(job.slug, event)}
-            className={`flex size-8 shrink-0 items-center justify-center rounded-full transition-all cursor-pointer ${
-              isBookmarked
-                ? "bg-blue-50 dark:bg-blue-950/40 text-[#0069D3] hover:bg-blue-100 dark:hover:bg-blue-900/40"
-                : "text-muted-foreground hover:bg-muted hover:text-foreground"
-            }`}
+            className="flex size-8 shrink-0 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground cursor-pointer"
             title={
               isBookmarked ? tBookmark("removeTitle") : tBookmark("saveTitle")
             }
           >
             {isBookmarkPending ? (
               <Loader2 className="size-4 animate-spin" />
+            ) : isBookmarked ? (
+              <BookmarkCheck className="size-4 text-[#0069D3]" />
             ) : (
-              <Heart
-                className={`size-4 ${
-                  isBookmarked ? "fill-[#0069D3] text-[#0069D3]" : ""
-                }`}
-              />
+              <Bookmark className="size-4" />
             )}
           </button>
         )}
@@ -436,13 +427,13 @@ export function JobCard({
             key={`${job.id}-cat-${cat.id}`}
             href={`${filterBasePath}?category=${encodeURIComponent(cat.slug)}`}
             prefetch={false}
-            className="inline-flex items-center gap-1 rounded-full border border-blue-500/20 bg-blue-50 dark:bg-blue-950/30 px-3 py-1 text-xs font-medium text-[#0069D3] dark:text-blue-300 transition-colors hover:bg-blue-100"
+            className="inline-flex items-center gap-1 rounded-md bg-muted px-2.5 py-1 text-xs font-medium text-muted-foreground hover:text-foreground"
           >
             <Tag className="size-3" />
             {cat.name}
           </Link>
         ))}
       </div>
-    </motion.div>
+    </div>
   );
 }
