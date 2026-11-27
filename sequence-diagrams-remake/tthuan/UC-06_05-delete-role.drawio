@@ -35,16 +35,16 @@
           <mxGeometry x="72.5" y="710" width="10" height="2245" as="geometry" />
         </mxCell>
         <mxCell id="act_self_find_role" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};fontSize=13;" parent="lf_service" vertex="1">
-          <mxGeometry x="77.5" y="1050" width="10" height="20" as="geometry" />
+          <mxGeometry x="77.5" y="1050.0" width="10" height="20.0" as="geometry" />
         </mxCell>
         <mxCell id="act_self_sys_role" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};fontSize=13;" parent="lf_service" vertex="1">
-          <mxGeometry x="77.5" y="1390" width="10" height="20" as="geometry" />
+          <mxGeometry x="77.5" y="1400.0" width="10" height="20.0" as="geometry" />
         </mxCell>
         <mxCell id="act_self_user_count" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};fontSize=13;" parent="lf_service" vertex="1">
-          <mxGeometry x="77.5" y="2010" width="10" height="20" as="geometry" />
+          <mxGeometry x="77.5" y="2010.0" width="10" height="20.0" as="geometry" />
         </mxCell>
         <mxCell id="act_self_delete_role" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};fontSize=13;" parent="lf_service" vertex="1">
-          <mxGeometry x="77.5" y="2620" width="10" height="20" as="geometry" />
+          <mxGeometry x="77.5" y="2625.0" width="10" height="20.0" as="geometry" />
         </mxCell>
         <mxCell id="lf_repo" value="&amp;lt;&amp;lt;repository&amp;gt;&amp;gt;&lt;br&gt;:RolesRepository" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};size=48;" parent="1" vertex="1">
           <mxGeometry x="1057.5" y="240" width="155" height="3240" as="geometry" />
@@ -98,15 +98,15 @@
           </mxGeometry>
         </mxCell>
         <mxCell id="act_self_param" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};fontSize=13;" parent="1" vertex="1">
-          <mxGeometry x="340" y="410" width="10" height="20" as="geometry" />
+          <mxGeometry x="340" y="415.0" width="10" height="20.0" as="geometry" />
         </mxCell>
-        <mxCell id="m2" value="2. Check role id parameter" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=12;labelBackgroundColor=#ffffff;" parent="1" target="act_self_param" edge="1">
+        <mxCell id="m2" value="2. Check role id parameter" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=12;labelBackgroundColor=#ffffff;" parent="1" edge="1">
           <mxGeometry x="0.3" y="-75" relative="1" as="geometry">
-            <mxPoint x="345" y="390" as="sourcePoint" />
-            <mxPoint x="350" y="410" as="targetPoint" />
+            <mxPoint x="345.0" y="390.0" as="sourcePoint" />
+            <mxPoint x="350.0" y="415.0" as="targetPoint" />
             <Array as="points">
-              <mxPoint x="385" y="390" />
-              <mxPoint x="385" y="415" />
+              <mxPoint x="385.0" y="390.0" />
+              <mxPoint x="385.0" y="415.0" />
             </Array>
             <mxPoint x="75" y="75" as="offset" />
           </mxGeometry>
@@ -210,13 +210,13 @@
             <mxPoint x="875.0" y="1230" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="m12" value="12. Handle find role result" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=12;labelBackgroundColor=#ffffff;" parent="1" target="act_self_find_role" edge="1">
+        <mxCell id="m12" value="12. Handle find role result" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=12;labelBackgroundColor=#ffffff;" parent="1" edge="1">
           <mxGeometry x="-0.1579" y="35" relative="1" as="geometry">
-            <mxPoint x="875.0" y="1270" as="sourcePoint" />
-            <mxPoint x="880.0" y="1290" as="targetPoint" />
+            <mxPoint x="875.0" y="1270.0" as="sourcePoint" />
+            <mxPoint x="880.0" y="1290.0" as="targetPoint" />
             <Array as="points">
-              <mxPoint x="915.0" y="1270" />
-              <mxPoint x="915.0" y="1290" />
+              <mxPoint x="915.0" y="1270.0" />
+              <mxPoint x="915.0" y="1290.0" />
             </Array>
             <mxPoint as="offset" />
           </mxGeometry>
@@ -254,13 +254,13 @@
         <mxCell id="g_find_2" value="[role found]" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;" parent="1" vertex="1">
           <mxGeometry x="120" y="1575" width="150" height="30" as="geometry" />
         </mxCell>
-        <mxCell id="m12_2_1" value="12.2.1. Check role is&amp;nbsp;&lt;div&gt;not a system role&lt;/div&gt;" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=12;labelBackgroundColor=#ffffff;" parent="1" target="act_self_sys_role" edge="1">
+        <mxCell id="m12_2_1" value="12.2.1. Check role is&amp;nbsp;&lt;div&gt;not a system role&lt;/div&gt;" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=12;labelBackgroundColor=#ffffff;" parent="1" edge="1">
           <mxGeometry x="0.3333" y="-75" relative="1" as="geometry">
-            <mxPoint x="875.0" y="1610" as="sourcePoint" />
-            <mxPoint x="880.0" y="1630" as="targetPoint" />
+            <mxPoint x="875.0" y="1610.0" as="sourcePoint" />
+            <mxPoint x="880.0" y="1640.0" as="targetPoint" />
             <Array as="points">
-              <mxPoint x="915.0" y="1610" />
-              <mxPoint x="915.0" y="1640" />
+              <mxPoint x="915.0" y="1610.0" />
+              <mxPoint x="915.0" y="1640.0" />
             </Array>
             <mxPoint x="75" y="75" as="offset" />
           </mxGeometry>
@@ -335,13 +335,13 @@
             <mxPoint x="875.0" y="2190" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="m12_2_1_2_7" value="12.2.1.2.7. Handle&amp;nbsp;&lt;div&gt;user count result&lt;/div&gt;" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=12;labelBackgroundColor=#ffffff;" parent="1" target="act_self_user_count" edge="1">
+        <mxCell id="m12_2_1_2_7" value="12.2.1.2.7. Handle&amp;nbsp;&lt;div&gt;user count result&lt;/div&gt;" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=12;labelBackgroundColor=#ffffff;" parent="1" edge="1">
           <mxGeometry x="0.2632" y="56" relative="1" as="geometry">
-            <mxPoint x="875.0" y="2230" as="sourcePoint" />
-            <mxPoint x="880.0" y="2250" as="targetPoint" />
+            <mxPoint x="875.0" y="2230.0" as="sourcePoint" />
+            <mxPoint x="880.0" y="2250.0" as="targetPoint" />
             <Array as="points">
-              <mxPoint x="915.0" y="2230" />
-              <mxPoint x="915.0" y="2250" />
+              <mxPoint x="915.0" y="2230.0" />
+              <mxPoint x="915.0" y="2250.0" />
             </Array>
             <mxPoint x="55" y="-46" as="offset" />
           </mxGeometry>
@@ -416,13 +416,13 @@
             <mxPoint x="875.0" y="2800" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="m12_2_1_2_7_2_7" value="12.2.1.2.7.2.7. Handle&amp;nbsp;&lt;div&gt;delete&amp;nbsp;&lt;span style=&quot;background-color: light-dark(#ffffff, var(--ge-dark-color, #121212)); color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;role result&lt;/span&gt;&lt;/div&gt;" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=12;labelBackgroundColor=#ffffff;" parent="1" target="act_self_delete_role" edge="1">
+        <mxCell id="m12_2_1_2_7_2_7" value="12.2.1.2.7.2.7. Handle&amp;nbsp;&lt;div&gt;delete&amp;nbsp;&lt;span style=&quot;background-color: light-dark(#ffffff, var(--ge-dark-color, #121212)); color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;role result&lt;/span&gt;&lt;/div&gt;" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=12;labelBackgroundColor=#ffffff;" parent="1" edge="1">
           <mxGeometry x="0.3" y="-75" relative="1" as="geometry">
-            <mxPoint x="875.0" y="2840" as="sourcePoint" />
-            <mxPoint x="880.0" y="2860" as="targetPoint" />
+            <mxPoint x="875.0" y="2840.0" as="sourcePoint" />
+            <mxPoint x="880.0" y="2865.0" as="targetPoint" />
             <Array as="points">
-              <mxPoint x="915.0" y="2840" />
-              <mxPoint x="915.0" y="2865" />
+              <mxPoint x="915.0" y="2840.0" />
+              <mxPoint x="915.0" y="2865.0" />
             </Array>
             <mxPoint x="75" y="75" as="offset" />
           </mxGeometry>

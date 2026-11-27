@@ -455,101 +455,101 @@
           <mxGeometry x="1415.0" y="2674" width="10" height="44" as="geometry" />
         </mxCell>
         <mxCell id="chk_bar_2" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};fontSize=13;" parent="1" vertex="1">
-          <mxGeometry x="360" y="412" width="10" height="20" as="geometry" />
+          <mxGeometry x="360" y="422.0" width="10" height="20.0" as="geometry" />
         </mxCell>
         <mxCell id="chk_bar_12" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};fontSize=13;" parent="1" vertex="1">
-          <mxGeometry x="890.0" y="984" width="10" height="20" as="geometry" />
+          <mxGeometry x="890.0" y="994.0" width="10" height="20.0" as="geometry" />
         </mxCell>
         <mxCell id="chk_bar_13" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};fontSize=13;" parent="1" vertex="1">
-          <mxGeometry x="890.0" y="1336" width="10" height="20" as="geometry" />
+          <mxGeometry x="890.0" y="1346.0" width="10" height="20.0" as="geometry" />
         </mxCell>
         <mxCell id="sYIAzHmWfNpkjF6KHsbL-1" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};fontSize=13;" parent="1" vertex="1">
-          <mxGeometry x="890.0" y="1688" width="10" height="20" as="geometry" />
+          <mxGeometry x="890.0" y="1698.0" width="10" height="20.0" as="geometry" />
         </mxCell>
         <mxCell id="chk_16_bar" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};fontSize=13;" parent="1" vertex="1">
-          <mxGeometry x="890.0" y="2260" width="10" height="20" as="geometry" />
+          <mxGeometry x="890.0" y="2270.0" width="10" height="20.0" as="geometry" />
         </mxCell>
         <mxCell id="chk_18_bar" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};fontSize=13;" parent="1" vertex="1">
-          <mxGeometry x="890.0" y="2832" width="10" height="20" as="geometry" />
+          <mxGeometry x="890.0" y="2842.0" width="10" height="20.0" as="geometry" />
         </mxCell>
         <mxCell id="chk_20_bar" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};fontSize=13;" parent="1" vertex="1">
-          <mxGeometry x="890.0" y="3492" width="10" height="20" as="geometry" />
+          <mxGeometry x="890.0" y="3502.0" width="10" height="20.0" as="geometry" />
         </mxCell>
-        <mxCell id="s2" value="&lt;div&gt;&lt;br&gt;&lt;/div&gt;2.&amp;nbsp;Validate form" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=13;labelBackgroundColor=#ffffff;" parent="1" target="chk_bar_2" edge="1">
+        <mxCell id="s2" value="&lt;div&gt;&lt;br&gt;&lt;/div&gt;2.&amp;nbsp;Validate form" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=13;labelBackgroundColor=#ffffff;" parent="1" edge="1">
           <mxGeometry x="0.2" y="85" width="80" relative="1" as="geometry">
             <mxPoint as="offset" />
             <Array as="points">
-              <mxPoint x="390" y="392" />
-              <mxPoint x="390" y="422" />
+              <mxPoint x="390.0" y="392.0" />
+              <mxPoint x="390.0" y="422.0" />
             </Array>
-            <mxPoint x="365" y="392" as="sourcePoint" />
-            <mxPoint x="340" y="442" as="targetPoint" />
+            <mxPoint x="365.0" y="392.0" as="sourcePoint" />
+            <mxPoint x="370.0" y="422.0" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="s16" value="&lt;div&gt;&lt;br&gt;&lt;/div&gt;12.&amp;nbsp;Handle check&amp;nbsp;&lt;div&gt;account exists result&amp;nbsp;&lt;/div&gt;" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=13;labelBackgroundColor=#ffffff;" parent="1" target="chk_bar_12" edge="1">
+        <mxCell id="s16" value="&lt;div&gt;&lt;br&gt;&lt;/div&gt;12.&amp;nbsp;Handle check&amp;nbsp;&lt;div&gt;account exists result&amp;nbsp;&lt;/div&gt;" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=13;labelBackgroundColor=#ffffff;" parent="1" edge="1">
           <mxGeometry x="0.4667" y="75" width="80" relative="1" as="geometry">
             <mxPoint x="75" y="-69" as="offset" />
             <Array as="points">
-              <mxPoint x="920.0" y="964" />
-              <mxPoint x="920.0" y="994" />
+              <mxPoint x="920.0" y="964.0" />
+              <mxPoint x="920.0" y="994.0" />
             </Array>
-            <mxPoint x="895.0" y="964" as="sourcePoint" />
-            <mxPoint x="870.0" y="1014" as="targetPoint" />
+            <mxPoint x="895.0" y="964.0" as="sourcePoint" />
+            <mxPoint x="900.0" y="994.0" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="s26" value="&lt;div&gt;&lt;br&gt;&lt;/div&gt;13.&amp;nbsp;verifyPassword(input,&lt;br&gt;passwordHash)" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=13;labelBackgroundColor=#ffffff;" parent="1" target="chk_bar_13" edge="1">
+        <mxCell id="s26" value="&lt;div&gt;&lt;br&gt;&lt;/div&gt;13.&amp;nbsp;verifyPassword(input,&lt;br&gt;passwordHash)" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=13;labelBackgroundColor=#ffffff;" parent="1" edge="1">
           <mxGeometry x="0.2" y="114" width="80" relative="1" as="geometry">
             <mxPoint as="offset" />
             <Array as="points">
-              <mxPoint x="920.0" y="1316" />
-              <mxPoint x="920.0" y="1346" />
+              <mxPoint x="920.0" y="1316.0" />
+              <mxPoint x="920.0" y="1346.0" />
             </Array>
-            <mxPoint x="895.0" y="1316" as="sourcePoint" />
-            <mxPoint x="870.0" y="1366" as="targetPoint" />
+            <mxPoint x="895.0" y="1316.0" as="sourcePoint" />
+            <mxPoint x="900.0" y="1346.0" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="sYIAzHmWfNpkjF6KHsbL-2" value="&lt;div&gt;&lt;br&gt;&lt;/div&gt;14. Handle check&amp;nbsp;&lt;br&gt;&lt;span style=&quot;background-color: light-dark(#ffffff, var(--ge-dark-color, #121212)); color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;account status&lt;/span&gt;" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=13;labelBackgroundColor=#ffffff;" parent="1" target="sYIAzHmWfNpkjF6KHsbL-1" edge="1">
+        <mxCell id="sYIAzHmWfNpkjF6KHsbL-2" value="&lt;div&gt;&lt;br&gt;&lt;/div&gt;14. Handle check&amp;nbsp;&lt;br&gt;&lt;span style=&quot;background-color: light-dark(#ffffff, var(--ge-dark-color, #121212)); color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;account status&lt;/span&gt;" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=13;labelBackgroundColor=#ffffff;" parent="1" edge="1">
           <mxGeometry x="0.4667" y="-65" width="80" relative="1" as="geometry">
             <mxPoint x="65" y="65" as="offset" />
             <Array as="points">
-              <mxPoint x="920.0" y="1668" />
-              <mxPoint x="920.0" y="1698" />
+              <mxPoint x="920.0" y="1668.0" />
+              <mxPoint x="920.0" y="1698.0" />
             </Array>
-            <mxPoint x="895.0" y="1668" as="sourcePoint" />
-            <mxPoint x="870.0" y="1718" as="targetPoint" />
+            <mxPoint x="895.0" y="1668.0" as="sourcePoint" />
+            <mxPoint x="900.0" y="1698.0" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="chk_16" value="&lt;div&gt;&lt;br&gt;&lt;/div&gt;16. Handle check&amp;nbsp;&lt;div&gt;refresh token&lt;/div&gt;" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=13;labelBackgroundColor=#ffffff;" parent="1" target="chk_16_bar" edge="1">
+        <mxCell id="chk_16" value="&lt;div&gt;&lt;br&gt;&lt;/div&gt;16. Handle check&amp;nbsp;&lt;div&gt;refresh token&lt;/div&gt;" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=13;labelBackgroundColor=#ffffff;" parent="1" edge="1">
           <mxGeometry x="0.4667" y="76" width="80" relative="1" as="geometry">
             <mxPoint x="75" y="-66" as="offset" />
             <Array as="points">
-              <mxPoint x="920.0" y="2240" />
-              <mxPoint x="920.0" y="2270" />
+              <mxPoint x="920.0" y="2240.0" />
+              <mxPoint x="920.0" y="2270.0" />
             </Array>
-            <mxPoint x="895.0" y="2240" as="sourcePoint" />
-            <mxPoint x="870.0" y="2290" as="targetPoint" />
+            <mxPoint x="895.0" y="2240.0" as="sourcePoint" />
+            <mxPoint x="900.0" y="2270.0" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="chk_18" value="&lt;div&gt;&lt;br&gt;&lt;/div&gt;18. Handle check&amp;nbsp;&lt;div&gt;access token&lt;/div&gt;" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=13;labelBackgroundColor=#ffffff;" parent="1" target="chk_18_bar" edge="1">
+        <mxCell id="chk_18" value="&lt;div&gt;&lt;br&gt;&lt;/div&gt;18. Handle check&amp;nbsp;&lt;div&gt;access token&lt;/div&gt;" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=13;labelBackgroundColor=#ffffff;" parent="1" edge="1">
           <mxGeometry x="0.4133" y="65" width="80" relative="1" as="geometry">
             <mxPoint as="offset" />
             <Array as="points">
-              <mxPoint x="920.0" y="2812" />
-              <mxPoint x="920.0" y="2842" />
+              <mxPoint x="920.0" y="2812.0" />
+              <mxPoint x="920.0" y="2842.0" />
             </Array>
-            <mxPoint x="895.0" y="2812" as="sourcePoint" />
-            <mxPoint x="870.0" y="2862" as="targetPoint" />
+            <mxPoint x="895.0" y="2812.0" as="sourcePoint" />
+            <mxPoint x="900.0" y="2842.0" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="chk_20" value="&lt;div&gt;&lt;br&gt;&lt;/div&gt;20. Handle check&amp;nbsp;&lt;div&gt;create session&lt;/div&gt;" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=13;labelBackgroundColor=#ffffff;" parent="1" target="chk_20_bar" edge="1">
+        <mxCell id="chk_20" value="&lt;div&gt;&lt;br&gt;&lt;/div&gt;20. Handle check&amp;nbsp;&lt;div&gt;create session&lt;/div&gt;" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=13;labelBackgroundColor=#ffffff;" parent="1" edge="1">
           <mxGeometry x="0.4133" y="75" width="80" relative="1" as="geometry">
             <mxPoint as="offset" />
             <Array as="points">
-              <mxPoint x="920.0" y="3472" />
-              <mxPoint x="920.0" y="3502" />
+              <mxPoint x="920.0" y="3472.0" />
+              <mxPoint x="920.0" y="3502.0" />
             </Array>
-            <mxPoint x="895.0" y="3472" as="sourcePoint" />
-            <mxPoint x="870.0" y="3522" as="targetPoint" />
+            <mxPoint x="895.0" y="3472.0" as="sourcePoint" />
+            <mxPoint x="900.0" y="3502.0" as="targetPoint" />
           </mxGeometry>
         </mxCell>
       </root>
