@@ -2262,7 +2262,28 @@
     "noSkills": "No skills listed yet",
     "viewProfile": "View profile",
     "follow": "Follow",
-    "unfollow": "Unfollow"
+    "unfollow": "Unfollow",
+    "overview": {
+      "nameFallback": "Client",
+      "completionHint": "Introduce yourself and your company so freelancers can get to know the people behind your projects.",
+      "editCompany": "Edit company information",
+      "aboutEmpty": "Introduce yourself and the kind of projects you are looking to build.",
+      "companyTitle": "Company information",
+      "companyEmpty": "No company name added yet",
+      "descriptionEmpty": "Your company description will appear here once added.",
+      "websiteEmpty": "No company website added yet"
+    },
+    "tabPersonal": "Personal information",
+    "personalHint": "Your name, photo and personal introduction belong to your client account. Company details are managed separately in the Company tab.",
+    "companyPendingHint": "You are editing the submitted version. Your public profile stays unchanged until approval.",
+    "companyReviewHint": "These changes require administrator approval before appearing publicly.",
+    "companySaveHint": "Changes will appear on your public profile as soon as you save.",
+    "companyValidationError": "Check the company name (up to 255 characters), description (up to 5,000 characters), and a valid website (https://...).",
+    "retryCompany": "Reload profile",
+    "savingCompany": "Saving?",
+    "submitCompanyReview": "Submit changes for review",
+    "resetCompany": "Reset changes",
+    "deleteSocialLinkConfirm": "Are you sure you want to delete your {platform} link?"
   },
   "accountProfile": {
     "breadcrumb": "Profile & trust settings",
@@ -2338,7 +2359,12 @@
     "followingState": "Following",
     "unfollowTitle": "Unfollow {name}?",
     "unfollowHint": "Their profile will be removed from your following list. You can follow them again at any time.",
-    "keepFollowing": "Keep following"
+    "keepFollowing": "Keep following",
+    "hideIdentityDetails": "Hide details",
+    "showIdentityDetails": "Show details",
+    "identityHiddenTitle": "Identity documents are hidden",
+    "identityHiddenHint": "Select to reveal your document information and photos.",
+    "navPersonal": "Personal information"
   },
   "verificationStatus": {
     "NOT_SUBMITTED": "Not submitted",
@@ -2648,7 +2674,9 @@
     "website": "Website",
     "websiteMissing": "Website not provided.",
     "socialLinks": "Social links",
-    "noSocialLinks": "No social links available."
+    "noSocialLinks": "No social links available.",
+    "clientContact": "Client contact",
+    "companyNameMissing": "Company name not provided"
   },
   "accessDenied": {
     "badge": "403 • Restricted Access",
@@ -3047,7 +3075,34 @@
     "professionalInfoSubtitle": "Title, bio, and public availability status.",
     "bioPlaceholder": "Introduce yourself, your core strengths, and your career goals...",
     "experiencePlaceholder": "Senior Frontend Developer - ABC Corp (2022 - Present)\nFullstack Developer - Freelance (2020 - 2022)",
-    "educationPlaceholder": "University of Technology\nSoftware Engineering (2018 - 2022)"
+    "educationPlaceholder": "University of Technology\nSoftware Engineering (2018 - 2022)",
+    "overview": {
+      "profileSummary": "Profile summary",
+      "nameFallback": "Freelancer",
+      "editPersonal": "Edit personal information",
+      "headlineEmpty": "Add your professional headline",
+      "addSocialLinks": "Add social links",
+      "viewCv": "View resume",
+      "completion": "Profile completion",
+      "completionHint": "Keep your experience and skills up to date so clients can get to know your work.",
+      "editProfessional": "Edit professional information",
+      "loading": "Loading professional information",
+      "loadFailed": "We could not load your professional information. Please try again.",
+      "retry": "Try again",
+      "reviewUnavailable": "The review status is unavailable right now. Your current saved profile is shown below.",
+      "about": "About me",
+      "edit": "Edit",
+      "aboutEmpty": "Tell clients a little about yourself and the work you do.",
+      "experience": "Experience",
+      "experienceEmpty": "Your professional experience will appear here once added.",
+      "skills": "Skills",
+      "skillsEmpty": "Your skills will appear here once added.",
+      "skillsFailed": "We could not load your skills.",
+      "education": "Education",
+      "educationEmpty": "Your education will appear here once added.",
+      "languages": "Languages",
+      "certifications": "Certifications"
+    }
   },
   "forum": {
     "title": "Community Forum",

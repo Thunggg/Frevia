@@ -2262,7 +2262,28 @@
     "noSkills": "Chưa có kỹ năng nào",
     "viewProfile": "Xem hồ sơ",
     "follow": "Theo dõi",
-    "unfollow": "Bỏ theo dõi"
+    "unfollow": "Bỏ theo dõi",
+    "overview": {
+      "nameFallback": "Khách hàng",
+      "completionHint": "Giới thiệu bản thân và doanh nghiệp để freelancer hiểu rõ hơn về người đứng sau dự án.",
+      "editCompany": "Chỉnh sửa thông tin công ty",
+      "aboutEmpty": "Giới thiệu đôi nét về bản thân và các dự án bạn muốn thực hiện.",
+      "companyTitle": "Thông tin công ty",
+      "companyEmpty": "Chưa bổ sung tên công ty",
+      "descriptionEmpty": "Mô tả công ty sẽ hiển thị tại đây sau khi được bổ sung.",
+      "websiteEmpty": "Chưa bổ sung website công ty"
+    },
+    "tabPersonal": "Thông tin cá nhân",
+    "personalHint": "Tên, ảnh và giới thiệu cá nhân thuộc tài khoản client. Thông tin công ty được quản lý riêng trong tab Công ty.",
+    "companyPendingHint": "Bạn đang chỉnh sửa bản đã gửi duyệt. Hồ sơ công khai giữ nguyên cho đến khi được phê duyệt.",
+    "companyReviewHint": "Thay đổi cần được quản trị viên duyệt trước khi hiển thị công khai.",
+    "companySaveHint": "Thay đổi sẽ hiển thị trên hồ sơ công khai ngay sau khi lưu.",
+    "companyValidationError": "Kiểm tra tên công ty (tối đa 255 ký tự), mô tả (tối đa 5.000 ký tự) và website hợp lệ (https://...).",
+    "retryCompany": "Tải lại hồ sơ",
+    "savingCompany": "Đang lưu…",
+    "submitCompanyReview": "Gửi duyệt thay đổi",
+    "resetCompany": "Hoàn tác thay đổi",
+    "deleteSocialLinkConfirm": "Bạn có chắc muốn xóa liên kết {platform} của mình?"
   },
   "accountProfile": {
     "breadcrumb": "Hồ sơ & cài đặt tin cậy",
@@ -2338,7 +2359,12 @@
     "followingState": "Đang theo dõi",
     "unfollowTitle": "Bỏ theo dõi {name}?",
     "unfollowHint": "Hồ sơ của họ sẽ bị xoá khỏi danh sách theo dõi. Bạn có thể theo dõi lại bất cứ lúc nào.",
-    "keepFollowing": "Giữ theo dõi"
+    "keepFollowing": "Giữ theo dõi",
+    "hideIdentityDetails": "Ẩn thông tin",
+    "showIdentityDetails": "Hiện thông tin",
+    "identityHiddenTitle": "Giấy tờ đang được che",
+    "identityHiddenHint": "Nhấn để xem thông tin và ảnh giấy tờ của bạn.",
+    "navPersonal": "Thông tin cá nhân"
   },
   "verificationStatus": {
     "NOT_SUBMITTED": "Chưa gửi",
@@ -2648,7 +2674,9 @@
     "website": "Trang web",
     "websiteMissing": "Chưa cung cấp trang web.",
     "socialLinks": "Liên kết mạng xã hội",
-    "noSocialLinks": "Chưa có liên kết mạng xã hội nào."
+    "noSocialLinks": "Chưa có liên kết mạng xã hội nào.",
+    "clientContact": "Người liên hệ",
+    "companyNameMissing": "Chưa có tên công ty"
   },
   "accessDenied": {
     "badge": "403 • Truy cập bị hạn chế",
@@ -3047,7 +3075,34 @@
     "professionalInfoSubtitle": "Chức danh, giới thiệu và trạng thái hoạt động công khai.",
     "bioPlaceholder": "Giới thiệu bản thân, chuyên môn thế mạnh và mục tiêu nghề nghiệp...",
     "experiencePlaceholder": "Senior Frontend Developer - ABC Corp (2022 - Nay)\nFullstack Developer - Freelance (2020 - 2022)",
-    "educationPlaceholder": "Đại học Bách Khoa\nKỹ thuật phần mềm (2018 - 2022)"
+    "educationPlaceholder": "Đại học Bách Khoa\nKỹ thuật phần mềm (2018 - 2022)",
+    "overview": {
+      "profileSummary": "Tóm tắt hồ sơ",
+      "nameFallback": "Freelancer",
+      "editPersonal": "Chỉnh sửa thông tin cá nhân",
+      "headlineEmpty": "Thêm chức danh chuyên môn của bạn",
+      "addSocialLinks": "Thêm liên kết mạng xã hội",
+      "viewCv": "Xem CV",
+      "completion": "Mức độ hoàn thiện hồ sơ",
+      "completionHint": "Cập nhật kinh nghiệm và kỹ năng để khách hàng hiểu rõ hơn về công việc của bạn.",
+      "editProfessional": "Chỉnh sửa thông tin chuyên môn",
+      "loading": "Đang tải thông tin chuyên môn",
+      "loadFailed": "Không thể tải thông tin chuyên môn. Vui lòng thử lại.",
+      "retry": "Thử lại",
+      "reviewUnavailable": "Chưa thể tải trạng thái xét duyệt. Bên dưới là thông tin hồ sơ đã lưu hiện tại.",
+      "about": "Giới thiệu",
+      "edit": "Chỉnh sửa",
+      "aboutEmpty": "Giới thiệu đôi nét về bản thân và công việc bạn đang làm.",
+      "experience": "Kinh nghiệm",
+      "experienceEmpty": "Kinh nghiệm chuyên môn sẽ hiển thị tại đây sau khi được bổ sung.",
+      "skills": "Kỹ năng",
+      "skillsEmpty": "Kỹ năng của bạn sẽ hiển thị tại đây sau khi được bổ sung.",
+      "skillsFailed": "Không thể tải danh sách kỹ năng.",
+      "education": "Học vấn",
+      "educationEmpty": "Thông tin học vấn sẽ hiển thị tại đây sau khi được bổ sung.",
+      "languages": "Ngôn ngữ",
+      "certifications": "Chứng chỉ"
+    }
   },
   "forum": {
     "title": "Diễn đàn cộng đồng",
